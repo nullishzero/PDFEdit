@@ -12,6 +12,8 @@ class pdfEditWidget : public QMainWindow {
 public:
  pdfEditWidget(QWidget *parent = 0, const char *name = 0);
  void createNewWindow(); 
+protected:
+ void closeEvent(QCloseEvent *e);
 public slots:
  void exitApp();
  void closeWindow();

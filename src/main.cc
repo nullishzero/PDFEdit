@@ -4,7 +4,9 @@
 
 Settings *global;
 
-/** delete settings object (and save settings) at exit */
+/** delete settings object (and save settings)
+ This function is called at application exit
+ */
 void saveSettings(void) {
  delete global;//this causes settings to be saved to disk
 }

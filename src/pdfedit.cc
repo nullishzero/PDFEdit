@@ -14,7 +14,8 @@ int windowCount;
 /** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void pdfEditWidget::exitApp() {
  printf("exiting...\n");
- qApp->quit();
+ qApp->closeAllWindows();
+ //Application will exit after last window is closed
 }
 
 /** creates new windows and displays it */
@@ -22,17 +23,25 @@ void pdfEditWidget::createNewWindow() {
  createNewEditorWindow();
 }
 
-/** creates new windows and displays it */
+/** This is called on attempt to close window. If there is unsaved work,
+ dialog asking to save it would appear (TODO), otherwise the windows is closed. */
+void pdfEditWidget::closeEvent(QCloseEvent *e) {
+ //TODO: ask for save/discard/cancel if unsaved work and refuse close if necessary
+ e->accept();
+ windowCount--;
+ //The pdfEditWidget itself will be deleted on close();
+}
+
+/** Creates new windows and displays it */
 void createNewEditorWindow() {
  pdfEditWidget *main=new pdfEditWidget();
  main->show();
  windowCount++;
 }
 
+/** Close the window itself */
 void pdfEditWidget::closeWindow() {
- delete this;
- windowCount--;
- if (windowCount<=0) exitApp();
+ close();
 }
 
 /** Signal handler invoked on menu activation
@@ -48,7 +57,7 @@ void pdfEditWidget::menuActivated(int id) {
 }
 
 /** constructor of pdfEditWidget, creates window and fills it with elements, parameters are ignored */
-pdfEditWidget::pdfEditWidget(QWidget *parent, const char *name) : QMainWindow(parent, name) {
+pdfEditWidget::pdfEditWidget(QWidget *parent,const char *name):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  //TODO: tohle je pokusny kod, dodelat
 
  //SPLITTER
