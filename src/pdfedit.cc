@@ -4,11 +4,9 @@
 
 using namespace std;
 
-/** pdfEditWidget - class handling main application window */
-
 extern Settings *global;//global settings
 
-//TODO: system konfigurovatelnch menu, toolbar. a klvesovch zkratek
+//TODO: system konfigurovatelnch menu (castecne hotov), toolbar (nehotov). a klvesovch zkratek (neco uz je v shystemu menu)
 
 /** application exit handler */
 void pdfEditWidget::exiting() {

@@ -6,6 +6,7 @@
 #include <qsplitter.h>
 #include <qmainwindow.h>
 
+/** pdfEditWidget - class handling main application window */
 class pdfEditWidget : public QMainWindow {
  Q_OBJECT
 public:
