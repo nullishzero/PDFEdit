@@ -22,6 +22,6 @@ QStringList explode(char separator,const QString line) {
  for (unsigned int i=0;i<qs.count();i++) {
   qs[i]=qs[i].stripWhiteSpace();
  }
- return qs; 
+ return qs;
 }
 

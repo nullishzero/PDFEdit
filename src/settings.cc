@@ -3,6 +3,7 @@
 #include <iostream>
 #include <qfile.h>
 #include <qdir.h>
+#include "tbutton.h"
 
 using namespace std;
 
@@ -149,16 +150,14 @@ void Settings::loadItem(const QString name,QMenuData *parent,bool isRoot) {
   //Format: Caption, Action,[,accelerator, [,menu icon]]
   QStringList qs=explode(',',line);
   if (qs.count()<2) fatalError("Invalid menu item in config:\n"+line);
-  QString label=qs[0];
-  QString action=qs[1];
-  int menu_id=addAction(action);
-  parent->insertItem(label,menu_id);
+  int menu_id=addAction(qs[1]);
+  parent->insertItem(qs[0],menu_id);
   if (qs.count()>=3 && qs[2].length()>0) { //accelerator specified
    parent->setAccel(QKeySequence(qs[2]),menu_id);
   }
   if (qs.count()>=4 && qs[3].length()>0) { //menu icon specified
    QPixmap *pixmap=getIcon(qs[3]);
-   if (pixmap) parent->changeItem(menu_id,*pixmap,label); else cout << "Pixmap missing: " << qs[3] << endl;
+   if (pixmap) parent->changeItem(menu_id,*pixmap,qs[0]); else cout << "Pixmap missing: " << qs[3] << endl;
   }
  } else { //something invalid
   fatalError("Invalid menu item in config:\n"+line);
@@ -184,7 +183,7 @@ QMenuBar *Settings::loadMenu(QWidget *parent) {
  @param tb Toolbar for addition of item
  @param item Item name in configuration file
  */
-void Settings::loadToolBarItem(QToolBar *tb,QString item) {
+void Settings::loadToolBarItem(ToolBar *tb,QString item) {
  if (item=="-" || item=="") {
   tb->addSeparator();
   return;
@@ -193,14 +192,20 @@ void Settings::loadToolBarItem(QToolBar *tb,QString item) {
  if (line.startsWith("item ")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   line=line.remove(0,5);  
   QStringList qs=explode(',',line);
-  if (qs.count()<2) fatalError("Invalid toolbar item in config:\n"+line);
-  QString label=qs[0];
-  QString action=qs[1];
-  //....
-  //....
-  //TODO: merge somwhat code from menu item loading in some common function
- } 
- //TODO: this piece of code is work in progress
+  if (qs.count()<4) fatalError("Invalid toolbar item in config:\n"+line);
+  line=line.remove(0,5);
+  QPixmap *pixmap=getIcon(qs[3]);
+  int menu_id=addAction(qs[1]);
+  if (!pixmap) cout << "Pixmap missing: " << qs[3] << endl;
+  ToolButton *tbutton =new ToolButton(pixmap,qs[0],menu_id,tb);
+  if (qs[2].length()>0) { //accelerator specified
+   tbutton->setAccel(QKeySequence(qs[2]));
+  }
+  tb->addButton(tbutton);
+  tbutton->show();
+ } else {
+  fatalError("Invalid toolbar item in config:\n"+line);  
+ }
 }
 
 /**
@@ -210,20 +215,22 @@ void Settings::loadToolBarItem(QToolBar *tb,QString item) {
  @param parent Parent window
  @return loaded toolbar
  */
-QToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
+ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
  QString line=readItem(name);
+ cout << "loading toolbar " << name <<endl;
  if (line.startsWith("list ")) { // List of values - first is name, others are items in it
   line=line.remove(0,5);
   QStringList qs=explode(',',line);
-  QToolBar *tb=NULL;
+  ToolBar *tb=NULL;
   QStringList::Iterator it=qs.begin();
-  if (it!=qs.end()) { //add itself as popup menu to parent with given name
-   tb=new QToolBar(*it,parent);
+  if (it!=qs.end()) {
+   tb=new ToolBar(*it,parent);
    ++it;
   } else fatalError("Invalid toolbar item in config:\n"+line);
   for (;it!=qs.end();++it) { //load all subitems
    loadToolBarItem(tb,*it);
   }
+  tb->show();
   return tb;
  } else {
   fatalError("Invalid toolbar item in config:\n"+line);
@@ -235,12 +242,12 @@ QToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
  
  @param parent parent window for toolbar
  */
-void Settings::loadToolBars(QMainWindow *parent) {
- /* This code is not working now anyway ... 
+ToolBarList Settings::loadToolBars(QMainWindow *parent) {
+ ToolBarList list;
  QString line=set->readEntry(APP_KEY+"gui/toolbars");
  QStringList tool=explode(',',line);
  for (unsigned int i=0;i<tool.count();i++) {
-  loadToolbar(tool[i],parent);
+  list+=loadToolbar(tool[i],parent);
  }
- */
+ return list;
 }

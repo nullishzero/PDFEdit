@@ -55,7 +55,13 @@ pdfEditWidget::pdfEditWidget(QWidget *parent, const char *name) : QMainWindow(pa
  //Menu
  QMenuBar *qb=global->loadMenu(this);
  QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
- 
+
+ //ToolBars
+ ToolBarList tblist=global->loadToolBars(this);
+ for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
+  QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
+ }
+   
  //show splitter
  spl->show();
 }

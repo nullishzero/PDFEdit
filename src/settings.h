@@ -8,12 +8,13 @@
 #include <qpopupmenu.h>
 #include <qstring.h>
 #include <qpixmap.h>
-#include <qtoolbar.h>
+#include "toolbar.h"
 
 
 typedef QMap<QString, int> ActionMap;
 typedef QMap<int, QString> ActionMapInverse;
 typedef QMap<QString, QPixmap*> IconCache;
+typedef QValueList<ToolBar*> ToolBarList;
 
 /** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 
@@ -34,7 +35,7 @@ public:
  QMenuBar *loadMenu(QWidget *parent);
  QString getAction(int index);
  void flushSettings();
- void loadToolBars(QMainWindow *parent);
+ ToolBarList loadToolBars(QMainWindow *parent);
 private:
  int addAction(const QString action);
  void init();
@@ -42,8 +43,8 @@ private:
  void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
  void initSettings();
  QPixmap *getIcon(const QString name);
- QToolBar *loadToolbar(const QString name,QMainWindow *parent);
- void loadToolBarItem(QToolBar *tb,QString item);
+ ToolBar *loadToolbar(const QString name,QMainWindow *parent);
+ void loadToolBarItem(ToolBar *tb,QString item);
 
 };
 
