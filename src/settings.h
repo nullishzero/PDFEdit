@@ -1,3 +1,5 @@
+#ifndef __SETTINGS_H__
+#define __SETTINGS_H__
 #include "config.h"
 #include <qapplication.h>
 #include <qsettings.h>
@@ -6,13 +8,17 @@
 #include <qpopupmenu.h>
 #include <qstring.h>
 #include <qpixmap.h>
+#include <qtoolbar.h>
+
 
 typedef QMap<QString, int> ActionMap;
 typedef QMap<int, QString> ActionMapInverse;
 typedef QMap<QString, QPixmap*> IconCache;
 
+/** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
+
 class Settings {
- /** Cache storingh loaded icons */
+ /** Cache storing loaded icons */
  IconCache iconCache;
  /** Settings object used to load configuration */
  QSettings *set;
@@ -27,13 +33,18 @@ public:
  ~Settings();
  QMenuBar *loadMenu(QWidget *parent);
  QString getAction(int index);
-private:
- int addAction(QString action);
- void init();
- void fatalError(QString q);
- void loadItem(QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
- void initSettings();
  void flushSettings();
- QPixmap *getIcon(QString name);
+ void loadToolBars(QMainWindow *parent);
+private:
+ int addAction(const QString action);
+ void init();
+ QString readItem(const QString key,const QString root="gui/items/");
+ void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
+ void initSettings();
+ QPixmap *getIcon(const QString name);
+ QToolBar *loadToolbar(const QString name,QMainWindow *parent);
+ void loadToolBarItem(QToolBar *tb,QString item);
+
 };
 
+#endif

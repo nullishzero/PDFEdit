@@ -5,7 +5,7 @@
 Settings *global;
 
 /** creates and shows main window */
-void newWindow() {
+void newWindow(void) {
  pdfEditWidget *main=new pdfEditWidget();
  main->show();
 }

@@ -8,7 +8,7 @@ extern Settings *global;//global settings
 
 //TODO: system konfigurovatelnch menu (castecne hotov), toolbar (nehotov). a klvesovch zkratek (neco uz je v shystemu menu)
 
-/** application exit handler */
+/** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void pdfEditWidget::exiting() {
  printf("exiting...\n");
  qApp->quit();
@@ -20,7 +20,9 @@ void pdfEditWidget::createNewWindow() {
  main->show();
 }
 
-/** invoked on menu activation */
+/** Signal handler invoked on menu activation
+ @param id Menu ID of clicked item
+ */
 void pdfEditWidget::menuActivated(int id) {
  QString action=global->getAction(id);
  cout << "Performing action: " << action << endl;
@@ -30,7 +32,7 @@ void pdfEditWidget::menuActivated(int id) {
  else if (action=="newwindow") createNewWindow();
 }
 
-/** constructor pdfEditWidget, creates window and fills it with elements, parameters are ignored */
+/** constructor of pdfEditWidget, creates window and fills it with elements, parameters are ignored */
 pdfEditWidget::pdfEditWidget(QWidget *parent, const char *name) : QMainWindow(parent, name) {
  //TODO: tohle je pokusny kod, dodelat
 
@@ -52,9 +54,7 @@ pdfEditWidget::pdfEditWidget(QWidget *parent, const char *name) : QMainWindow(pa
 
  //Menu
  QMenuBar *qb=global->loadMenu(this);
- QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int)));
-  
-// qb->show();
+ QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
  
  //show splitter
  spl->show();
