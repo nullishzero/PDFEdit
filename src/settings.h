@@ -36,6 +36,8 @@ public:
  QString getAction(int index);
  void flushSettings();
  ToolBarList loadToolBars(QMainWindow *parent);
+ void saveWindow(QWidget *win,const QString name); 
+ void restoreWindow(QWidget *win,const QString name);
 private:
  int addAction(const QString action);
  void init();

@@ -28,13 +28,16 @@ void pdfEditWidget::createNewWindow() {
 void pdfEditWidget::closeEvent(QCloseEvent *e) {
  //TODO: ask for save/discard/cancel if unsaved work and refuse close if necessary
  e->accept();
+ saveWindowState();
  windowCount--;
+ delete this;
  //The pdfEditWidget itself will be deleted on close();
 }
 
 /** Creates new windows and displays it */
 void createNewEditorWindow() {
  pdfEditWidget *main=new pdfEditWidget();
+ main->restoreWindowState();
  main->show();
  windowCount++;
 }
@@ -43,6 +46,18 @@ void createNewEditorWindow() {
 void pdfEditWidget::closeWindow() {
  close();
 }
+
+/** Saves window state to application settings*/
+void pdfEditWidget::saveWindowState() {
+ global->saveWindow(this,"main"); 
+}
+
+/** Restores window state from application settings */
+void pdfEditWidget::restoreWindowState() {
+ global->restoreWindow(this,"main"); 
+}
+
+
 
 /** Signal handler invoked on menu activation
  @param id Menu ID of clicked item

@@ -64,6 +64,50 @@ Settings::~Settings() {
  delete set;
 }
 
+/** Save window/widget size and position to settings.
+ @param win Widget that will have it's size and position stored
+ @param name Name of key to be used in configuration */  
+void Settings::saveWindow(QWidget *win,const QString name) {
+ printf("save %d,%d,%d,%d\n",win->width(),win->height(),win->x(),win->y());
+ QString line;
+ line+=QString::number(win->width());
+ line+=",";
+ line+=QString::number(win->height());
+ line+=",";
+ line+=QString::number(win->x());
+ line+=",";
+ line+=QString::number(win->y());
+ set->writeEntry(APP_KEY+"gui/windowstate/"+name,line);  
+}
+
+/** Restore window/widget size and position from setting.
+ @param win Widget that will be resized and moved
+ @param name Name of key to be used in configuration */
+void Settings::restoreWindow(QWidget *win,const QString name) {
+ printf("restore\n");
+ QWidget *desk = QApplication::desktop();
+ QString line=set->readEntry(APP_KEY+"gui/windowstate/"+name);
+ QStringList pos=explode(',',line);
+ if (pos.count()!=4) return;//No previous window state information available, or it is invalid
+ int x,y,w,h;
+ w=atoi(pos[0]);
+ h=atoi(pos[1]);
+ x=atoi(pos[2]);
+ y=atoi(pos[3]);
+ if (w<=0 || h<=0) return;//Negative/null size is invalid
+ int dw=desk->width();
+ int dh=desk->height(); 
+ 
+ //if window is offscreen, move it to screen
+ if (x<-w+1) x=-w+1; //Offscreen -> Onscreen
+ if (y<-h+1) y=-h+1; //Offscreen -> Onscreen
+ if (x>dw-1) x=dw-1; //Offscreen -> Onscreen
+ if (y>dh-1) x=dh-1; //Offscreen -> Onscreen
+ win->resize(w,h);
+ win->move(x,y);
+}
+
+
 /** Adds action to menu, returning newly allocated menu Id or existing menu id if action is already present
  
  @param action Name of action
