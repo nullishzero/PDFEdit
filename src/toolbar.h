@@ -4,7 +4,9 @@
 #include "tbutton.h"
 
 
-/** Class wrapping QToolBar, providing "slot forwarding" from buttons  */
+/** Class wrapping QToolBar, providing "click forwarding" from TButtons.
+ Buttons must be added with addButton() for this to work properly
+ */
 
 class ToolBar : public QToolBar {
  Q_OBJECT

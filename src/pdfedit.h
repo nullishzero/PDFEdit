@@ -11,10 +11,13 @@ class pdfEditWidget : public QMainWindow {
  Q_OBJECT
 public:
  pdfEditWidget(QWidget *parent = 0, const char *name = 0);
-public slots:
- void exiting();
  void createNewWindow(); 
+public slots:
+ void exitApp();
+ void closeWindow();
  void menuActivated(int id);
 };
+
+void createNewEditorWindow();
 
 #endif

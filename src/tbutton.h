@@ -4,7 +4,9 @@
 #include <qpixmap.h>
 #include <qstring.h>
 
-/** Class wrapping QToolButton, providing different constructor (QPixmap instead of QIconSet)*/
+/** Class wrapping QToolButton, adding button ID and providing different constructor (QPixmap instead of QIconSet)
+ Also, emits clicked(id) signal in addition to normal clicked() signal
+ */
 
 class ToolButton : public QToolButton {
  Q_OBJECT

@@ -14,7 +14,7 @@ ToolBar::ToolBar(QMainWindow * parent,const char * name) : QToolBar(parent,name)
  }
 
 
-/** Add button to toolbar and link slots properly
+/** Add button to toolbar and link slots, so clicks from buttons are passed along with button ID to the application
  @param qb Button to add to this toolbar 
  */
 void ToolBar::addButton(ToolButton *qb) {

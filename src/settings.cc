@@ -18,12 +18,12 @@ void Settings::init() {
 
  /* DEBUG : will get out very soon*/
  set->beginGroup(APP_KEY);
- if (set->readEntry("debugTrashSaved")!="4") {
-  set->writeEntry("debugTrashSaved", "4");
+ if (set->readEntry("debugTrashSaved")!="5") {
+  set->writeEntry("debugTrashSaved", "5");
   set->writeEntry("keyboard/CtrlA", "dosomethingeverywhere()");
   set->writeEntry("keyboard/context/CtrlA", "dosomethingincontext()");
   set->writeEntry("gui/items/MainMenu",  "list Main menu,file,help");
-  set->writeEntry("gui/items/file", "list File,load,save,neww,closew,quit");
+  set->writeEntry("gui/items/file", "list File,load,save,neww,closew,quit,help");
   set->writeEntry("gui/items/help", "list Help,about,index");
   set->writeEntry("gui/items/neww",  "item &New Window, newwindow,Ctrl+N");
   set->writeEntry("gui/items/closew","item &Close Window, closewindow");
