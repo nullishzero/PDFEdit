@@ -1,0 +1,13 @@
+//this script will be run at start
+
+function quit() {
+ exitApp();
+}
+
+function closewindow() {
+ closeWindow();
+}
+
+function newwindow() {
+ createNewWindow();
+}

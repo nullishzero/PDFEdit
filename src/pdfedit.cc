@@ -1,6 +1,7 @@
 #include "pdfedit.h"
 #include "settings.h"
 #include <iostream>
+#include <qfile.h>
 
 using namespace std;
 
@@ -57,6 +58,12 @@ void pdfEditWidget::restoreWindowState() {
  global->restoreWindow(this,"main"); 
 }
 
+/** Runs given script code
+ @param script QT Script code to run
+ */
+void pdfEditWidget::runScript(QString script) {
+ qs->evaluate(script,this,"<GUI>");
+}
 
 
 /** Signal handler invoked on menu activation
@@ -65,16 +72,66 @@ void pdfEditWidget::restoreWindowState() {
 void pdfEditWidget::menuActivated(int id) {
  QString action=global->getAction(id);
  cout << "Performing action: " << action << endl;
- //TODO: call scripting here instead... 
  if (action=="quit") exitApp();
  else if (action=="closewindow") closeWindow();
  else if (action=="newwindow") createNewWindow();
+ runScript(action);
+}
+
+/** Load content of file to string. Empty string is returned if file does not exist or is unreadable.
+ @param name Filename of file to load
+ @return file contents in string.
+ */
+QString loadFromFile(QString name) {
+ QFile *f=new QFile(name);
+ f->open(IO_ReadOnly);
+ int size=f->size();
+ char* buffer=new char[size];
+ size=f->readBlock(buffer,size);
+ if (size==-1) return "";
+ f->close();
+ delete f;
+ QByteArray qb;
+ qb.assign(buffer,size);
+ QString res=QString(qb);
+ return res;
+}
+
+/** DEBUG: print stringlist to stdout
+ @param l String list to print
+ */
+void printList(QStringList l) {
+ QStringList::Iterator it=l.begin();
+ for (;it!=l.end();++it) { //load all subitems
+  QString x=*it;
+  cout << x << endl;
+  cout.flush();
+ }
+
 }
 
 /** constructor of pdfEditWidget, creates window and fills it with elements, parameters are ignored */
 pdfEditWidget::pdfEditWidget(QWidget *parent,const char *name):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  //TODO: tohle je pokusny kod, dodelat
 
+ //Gets new interpreter
+ qs=new QSInterpreter();
+ 
+ //run initscript
+ QString initScript="init.qs";
+ QString code=loadFromFile(initScript);
+ qs->evaluate(code,this,initScript);
+
+ /*
+ //DEBUG 
+ printf("<Functions\n");
+ printList(qs->functions());
+ printf("<Classes\n");
+ printList(qs->classes(QSInterpreter::AllClasses));
+ printf("<Var\n");
+ printList(qs->variables());
+ printf("<OK\n");*/
+ 
  //SPLITTER
  QSplitter *spl=new QSplitter(this);
 
