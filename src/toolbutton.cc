@@ -1,4 +1,7 @@
-#include "tbutton.h"
+/** @file
+ ToolButton - Class representing a single button on the toolbar
+*/
+#include "toolbutton.h"
 #include <qiconset.h>
 
 /** Constructor of ToolButton

@@ -1,3 +1,8 @@
+/** @file
+ ToolBar class, ancestor of QToolBar.
+ This toolbar can contain only buttons from ToolButton class
+*/
+
 #include "toolbar.h"
 
 /** Same constructor as QToolBar */

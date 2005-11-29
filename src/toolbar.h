@@ -1,7 +1,7 @@
 #ifndef __TOOLBAR_H__
 #define __TOOLBAR_H__
 #include <qtoolbar.h>
-#include "tbutton.h"
+#include "toolbutton.h"
 
 
 /** Class wrapping QToolBar, providing "click forwarding" from TButtons.

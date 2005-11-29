@@ -1,3 +1,6 @@
+/** @file
+ Various utility functions
+*/
 #include "util.h"
 #include <iostream>
 

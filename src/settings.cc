@@ -1,9 +1,15 @@
-#include "settings.h"
-#include "util.h"
+/** @file
+ Settings - class handling application settings,
+ like window positions, menu, toolbar and keyboard settings
+ and other general settings
+*/
+
 #include <iostream>
 #include <qfile.h>
 #include <qdir.h>
-#include "tbutton.h"
+#include "settings.h"
+#include "util.h"
+#include "toolbutton.h"
 
 using namespace std;
 

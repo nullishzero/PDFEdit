@@ -1,4 +1,7 @@
-#include "pdfedit.h"
+/** @file
+ Main function
+*/
+#include "pdfeditwindow.h"
 #include "settings.h"
 #include <stdlib.h>
 

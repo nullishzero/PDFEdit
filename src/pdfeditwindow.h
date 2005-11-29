@@ -7,24 +7,24 @@
 #include <qmainwindow.h>
 #include <qsinterpreter.h>
 
-/** pdfEditWidget - class handling main application window */
-class pdfEditWidget : public QMainWindow {
+/** PdfEditWindow - class handling main application window */
+class PdfEditWindow : public QMainWindow {
  Q_OBJECT
-private:
- QSInterpreter *qs;
 public:
- pdfEditWidget(QWidget *parent = 0, const char *name = 0);
+ PdfEditWindow(QWidget *parent = 0, const char *name = 0);
  void saveWindowState();
  void restoreWindowState();
-protected:
- void closeEvent(QCloseEvent *e);
- void runScript(QString script);
 public slots: //These will be exported to scripting
  void createNewWindow(); 
  void exitApp();
  void closeWindow();
+protected:
+ void closeEvent(QCloseEvent *e);
+ void runScript(QString script);
 protected slots:
  void menuActivated(int id);
+private:
+ QSInterpreter *qs;
 };
 
 void createNewEditorWindow();

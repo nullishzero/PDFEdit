@@ -12,12 +12,12 @@ class ToolButton : public QToolButton {
  Q_OBJECT
  public:
   ToolButton(QPixmap *icon, const QString tooltip, int id, QWidget *parent=0, const char *name="");
+ protected slots:
+  void slotClicked();
  private:
   int b_id;   
  signals:
   void clicked(int);
- protected slots:
-  void slotClicked();
 };
 
 #endif

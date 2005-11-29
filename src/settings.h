@@ -10,7 +10,6 @@
 #include <qpixmap.h>
 #include "toolbar.h"
 
-
 typedef QMap<QString, int> ActionMap;
 typedef QMap<int, QString> ActionMapInverse;
 typedef QMap<QString, QPixmap*> IconCache;
@@ -19,16 +18,6 @@ typedef QValueList<ToolBar*> ToolBarList;
 /** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 
 class Settings {
- /** Cache storing loaded icons */
- IconCache iconCache;
- /** Settings object used to load configuration */
- QSettings *set;
- /** Mapping between menu IDs and actions */
- ActionMap action_map;
- /** Inverse mapping between menu IDs and actions */
- ActionMapInverse action_map_i;
- /** Incrementing action index for menu items */
- int action_index;
 public:
  Settings();
  ~Settings();
@@ -39,6 +28,17 @@ public:
  void saveWindow(QWidget *win,const QString name); 
  void restoreWindow(QWidget *win,const QString name);
 private:
+ /** Cache storing loaded icons */
+ IconCache iconCache;
+ /** Settings object used to load configuration */
+ QSettings *set;
+ /** Mapping between menu IDs and actions */
+ ActionMap action_map;
+ /** Inverse mapping between menu IDs and actions */
+ ActionMapInverse action_map_i;
+ /** Incrementing action index for menu items */
+ int action_index;
+
  int addAction(const QString action);
  void init();
  QString readItem(const QString key,const QString root="gui/items/");
