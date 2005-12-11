@@ -2,6 +2,7 @@
  PdfEditWindow - class representing main application window
 */
 #include "pdfeditwindow.h"
+#include "propertyeditor.h"
 #include "settings.h"
 #include <iostream>
 #include <qfile.h>
@@ -89,7 +90,7 @@ QString loadFromFile(QString name) {
  QFile *f=new QFile(name);
  f->open(IO_ReadOnly);
  int size=f->size();
- char* buffer=new char[size];
+ char* buffer=(char *)malloc(size);
  size=f->readBlock(buffer,size);
  if (size==-1) return "";
  f->close();
@@ -146,10 +147,14 @@ PdfEditWindow::PdfEditWindow(QWidget *parent,const char *name):QMainWindow(paren
  quit->show();
 
  //Button NEW WINDOW
- QPushButton *neww=new QPushButton(tr("Nothing"), spl);
+ PropertyEditor *prop=new PropertyEditor(spl);
+ prop->show();
+ prop->setObject(0);//fill with demonstration properties
+
+// QPushButton *neww=new QPushButton(tr("Nothing"), spl);
 // QObject::connect(neww, SIGNAL(clicked()), this, SLOT(createNewWindow()));
  this->setCentralWidget(spl);
- neww->show();
+// neww->show();
 
  //Menu
  QMenuBar *qb=global->loadMenu(this);
@@ -163,4 +168,9 @@ PdfEditWindow::PdfEditWindow(QWidget *parent,const char *name):QMainWindow(paren
    
  //show splitter
  spl->show();
+}
+
+/** default destructor */
+PdfEditWindow::~PdfEditWindow() {
+ delete qs;
 }

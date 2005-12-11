@@ -207,7 +207,11 @@ void Settings::loadItem(const QString name,QMenuData *parent,bool isRoot) {
   }
   if (qs.count()>=4 && qs[3].length()>0) { //menu icon specified
    QPixmap *pixmap=getIcon(qs[3]);
-   if (pixmap) parent->changeItem(menu_id,*pixmap,qs[0]); else cout << "Pixmap missing: " << qs[3] << endl;
+   if (pixmap) {
+    parent->changeItem(menu_id,*pixmap,qs[0]);
+   } else {
+    cout << "Pixmap missing: " << qs[3] << endl;
+   }
   }
  } else { //something invalid
   fatalError("Invalid menu item in config:\n"+line);

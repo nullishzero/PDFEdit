@@ -7,5 +7,5 @@ TEMPLATE = app
 unix:LIBS       += -lqsa
 
 # Input
-HEADERS += pdfeditwindow.h settings.h util.h toolbutton.h toolbar.h
-SOURCES += pdfeditwindow.cc settings.cc main.cc util.cc toolbutton.cc toolbar.cc
+HEADERS += pdfeditwindow.h settings.h util.h toolbutton.h toolbar.h property.h stringproperty.h propertyeditor.h intproperty.h
+SOURCES += pdfeditwindow.cc settings.cc main.cc util.cc toolbutton.cc toolbar.cc property.cc stringproperty.cc propertyeditor.cc intproperty.cc
