@@ -1,8 +1,11 @@
 #ifndef __COUTLINE_H__
 #define __COUTLINE_H__
-#include "cany.h"
 
-class COutline : public CAny {
+#include "cobject.h"
+
+using namespace pdfobjects;
+
+class COutline : public CDict {
 
   //
   // Konstruktor
@@ -15,7 +18,9 @@ class COutline : public CAny {
   ~COutline ();
 
 /**  Vrati pole potomkov zadanej outline.*/
-  array [COutline*] get_children ();
+//  array [COutline*] get_children ();
 
 }
-#endif
+
+
+#endif // __COUTLINE_H__
