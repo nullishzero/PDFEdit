@@ -6,18 +6,24 @@ TEMPLATE = app
 
 unix:LIBS       += -lqsa
 
-# Input
-#HEADERS += pdfeditwindow.h settings.h util.h toolbutton.h toolbar.h property.h stringproperty.h propertyeditor.h intproperty.h
-#SOURCES += pdfeditwindow.cc settings.cc main.cc util.cc toolbutton.cc toolbar.cc property.cc stringproperty.cc propertyeditor.cc intproperty.cc
+#
+# Kernel special settings
+#
+exists (main_kernel.cc) {
+	HEADERS += cobject.h
+	SOURCES += main_kernel.cc
+	INCLUDEPATH = ../xpdf/ ../xpdf/xpdf ../xpdf/goo
+	CONFIG += WALL
+}
 
 
 #
-# My special settings
+# Gui settings
 #
-HEADERS += cobject.h
-SOURCES += main_kernel.cc
+!exists (main_kernel.cc) {
+	# Input
+	HEADERS += pdfeditwindow.h settings.h util.h toolbutton.h toolbar.h property.h stringproperty.h propertyeditor.h intproperty.h
+	SOURCES += pdfeditwindow.cc settings.cc main.cc util.cc toolbutton.cc toolbar.cc property.cc stringproperty.cc propertyeditor.cc intproperty.cc
+}
 
-INCLUDEPATH = ../xpdf/ ../xpdf/xpdf ../xpdf/goo
-CONFIG += WALL
 
-#DESTDIR = ../output
