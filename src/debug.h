@@ -15,6 +15,9 @@
  * =====================================================================================
  */
 
+#ifndef DEBUG_H
+#define DEBUG_H
+
 
 /**
  * Static (compile-time) assertions with a solid debug message
@@ -31,4 +34,4 @@ template<> struct CompileTimeChecker<false> {};
 				class ERROR_##msg {};	\
 				(void)sizeof(CompileTimeChecker<(expr) != 0> ((ERROR_##msg())));\
 		}
-
+#endif  // DEBUG_H

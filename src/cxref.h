@@ -1,7 +1,7 @@
 #ifndef __CPAGE_H__
 #define __CPAGE_H__
 
-#include"interface.h"
+#include"iproperty.h"
 #include"xpdf/Object.h"
 #include"xpdf/XRef.h"
 

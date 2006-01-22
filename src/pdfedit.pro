@@ -10,7 +10,7 @@ unix:LIBS       += -lqsa
 # Kernel special settings
 #
 exists (main_kernel.cc) {
-	HEADERS += cobject.h
+	HEADERS += cobject.h iproperty.h debug.h cxref.h
 	SOURCES += main_kernel.cc
 	INCLUDEPATH = ../xpdf/ ../xpdf/xpdf ../xpdf/goo
 	CONFIG += WALL

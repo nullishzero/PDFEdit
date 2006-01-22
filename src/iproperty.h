@@ -1,19 +1,9 @@
 /*
  * =====================================================================================
- * 
  *        Filename:  iproperty.h
- * 
  *     Description:  IProperty class 
- * 
- *         Version:  1.0
  *         Created:  01/19/2006 11:23:44 PM CET
- *        Revision:  none
- *        Compiler:  gcc
- * 
  *          Author:  jmisutka ()
- *         Company:  
- *           Email:  
- * 
  * =====================================================================================
  */
 
@@ -24,30 +14,32 @@
 #include <list>
 #include <map>
 #include <string>
+#include <iostream>
+
+// xpdf
+#include "Object.h"
 
 //
 #include "debug.h"
-
-// xpdf
-#include <Object.h>
-
-
-using namespace std;
 
 
 
 //=====================================================================================
 
-
-
 namespace pdfobjects
 {
-
+using namespace std;
 /**
  * Null and empty types.
  */
 class NullType {};
 struct EmptyType {};
+
+//
+// Forward definitions
+//
+class IObserver;
+
 
 /**
  * Enum describing the type of a property.
@@ -120,8 +112,6 @@ protected:
 }; /* class IId */
 
 
-class PropertyObserver;
-
 /** 
  * Narrow interface describing properties of every pdf object. We use this 
  * interface when we want to access or change properties of (x)pdf object.
@@ -130,14 +120,16 @@ class PropertyObserver;
  * direct access to all simple properties like ints, strings, reals etc.
  * So we won't call e.g. getAllPropertyNames on objects that do not have
  * properties. However, if we call e.g. a method accessing properties and 
- * the object does not support it, we simply get an error/exception.
+ * the object does not support it, we simply get an exception.
+ *
+ * Each IProperty is associated with one xpdf object. All modifying operations
+ * are directly performed on this object. The object represents current state.
+ * However, these changes are not visible by the (x)pdf till they are registered
+ * in CXref.
  *
  * When accessing complex properties, we have to know with which type we
  * are working. According to the type, we can cast this object to CObject<type> 
- * to get more functionanlity.
- *
- * Each IProperty is associated with one xpdf object. All modifying operations
- * are directly performed on this object.
+ * to get more functionality.
  *
  * With this interface, we get all property names, get the propery value types,
  * get property count and finally cast it to CObject.
@@ -147,22 +139,25 @@ class IProperty
 typedef string			PropertyName;
 typedef unsigned int	PropertyIndex;
 typedef unsigned int	PropertyCount;
-
+typedef std::list<IObserver*> ObserverList;
 
 private:
-  Object* obj;								/*< Xpdf object */
-  std::list<PropertyObserver*> observers;	/*< List of observers */
+ Object* 	  obj;			/*< Xpdf object */
+ ObserverList observers;	/*< List of observers */
 
   
-public:	
+private:	
   /**
    * @param o Xpdf object.
    */
   IProperty (Object* o): obj(o) {assert (NULL != o);};
   
-
+  
+public:
   /** 
    * Returns pointer to derived object. 
+   *
+   * @return Object casted to desired type.
    */
   template<typename T>
   T* getCObjectPtr () 
@@ -194,44 +189,50 @@ public:
 
 
 public:
-  
-  /**
-   * Notify something(CObject,XrefWriter?) object that this object has changed. It is necessary for 
-   * saving previous state of the object.
-   * REMARK: Changing specific properties can affect other objects. Return value
-   *		 will indicate whether it is necessary to reparse property tree again.
-   *
-   * @param 
-   * @return
-   */
-  virtual int dispatchChange (/*CXpdfWriter&*/) const /*=0;*/{/**/return 0;};
-
-
-public:
   /**
    * Attaches an observers.
    *
    * @param observer Observer beeing attached.
    */
-  virtual void registerObserver (PropertyObserver* /*observer*/);
+  virtual void registerObserver (IObserver* o) {assert(NULL != o); observers.push_back (o);}
   
   /**
    * Detaches an observer.
    * 
    * @param observer Observer beeing detached.
    */
-  virtual void unregisterObserver (PropertyObserver* /*observer*/);
+  virtual void unregisterObserver (IObserver* o)
+  {
+	assert(NULL != o);
+	ObserverList::iterator it = find (observers.begin (), observers.end(),o);
+	if (it != observers.end ())
+			observers.erase (it);
+  };
   
   /**
    * Notifies all observers about a change.
    */
-  virtual void notifyObservers ();
+  virtual void notifyObservers () = 0;
 
 
 }; /* class IProperty */
 
 
 
+/** 
+ * Interface for Observer.
+ * Implementator should implement notify, which is called each time the
+ * value of property is changed.
+ */
+class IObserver
+{
+public:
+	virtual void Update (IProperty*) = 0;
+    virtual ~IObserver();
+};
+
+
 }// namespace pdfobjects
+
 
 #endif  //IPROPERTY_H

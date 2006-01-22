@@ -13,67 +13,70 @@
 #include <map>
 #include <string>
 
+//xpdf
+
+
 //IProperty
+#include "debug.h"
 #include "iproperty.h"
 
-using namespace std;
+
 
 //=====================================================================================
+
 
 namespace pdfobjects
 {
 
+using namespace std;
 
 /**
  * Additional information that identifies variable type for writeValue function
+ *
+ * If someone tries to use unsupproted type (pCmd,....) she should get compile error
+ * because PropertyTrait<> has no body.
  */
-template<PropertyType T> class PropertyTrait;
-template<> class PropertyTrait<pNull>	{public: typedef NullType 	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pBool>	{public: typedef const bool	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pInt>	{public: typedef const int	writeType; typedef const NullType 	PropertyId;};
+template<PropertyType T> class PropertyTrait; 
+template<> class PropertyTrait<pNull>	{public: typedef NullType 		writeType; typedef const NullType 	PropertyId;};
+template<> class PropertyTrait<pBool>	{public: typedef const bool		writeType; typedef const NullType 	PropertyId;};
+template<> class PropertyTrait<pInt>	{public: typedef const int		writeType; typedef const NullType 	PropertyId;};
 template<> class PropertyTrait<pReal>	{public: typedef const double 	writeType; typedef const NullType 	PropertyId;};
 template<> class PropertyTrait<pString> {public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pStream> {public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
+template<> class PropertyTrait<pName>	{public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
 template<> class PropertyTrait<pArray>	{public: typedef const string 	writeType; typedef const unsigned int 	PropertyId;};
+template<> class PropertyTrait<pStream> {public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
 template<> class PropertyTrait<pDict>	{public: typedef const string 	writeType; typedef const string 	PropertyId;};
-//template<> class PropertyTrait<pRef> {public: typedef writeType;}
+template<> class PropertyTrait<pRef> 	{public: typedef const string	writeType; typedef const NullType	PropertyId;};
 
 
 /** 
  * Template class representing all PDF objects from specificaton v1.5.
  *
  * This dividing is crucial when making specific changes to specific objects
- * e.g. adding/deleting of properties in Dictionary.
+ * e.g. adding/deleting of properties can be done to Dictionary but not to Integer.
  *
  * The specific features are implemented using c++ feature called Incomplete Instantiation.
  * It means that, when it is not used, it is not instatiated, so e.g. CInt won't have
- * addDictProperty() method.
+ * addDictProperty() method
  *
- * This class can be either a final class (no child objects) or not final class 
+ * This class can be both, a final class (no child objects) or not final class 
  * (has child object). 
  *
- * When it is not a final class, it is a special object (CPdf, CPage,...). We can
- * find out the object by calling  virtual method getSpecialObjType(). This is necessary
- * for example for special manipulation with content stream, xobjects, ...
+ * When it is not final class, it is a special object (CPdf, CPage,...). We can
+ * find out the object by calling  virtual method getSpecialObjType(). 
+ * This can be helpful for example for special manipulation with content stream, xobjects, ...
  *
- * REMARK: it will be the responsibility of XrefWriter to remember a mapping
+ * REMARK: it will be the responsibility of iCXref to remember a mapping
  * between each xpdf Object and our representation. e.g. when we want to save
- * a pdf, we also want to save undo's, and if we would have multiple our objects 
+ * a pdf, we also want to save undo's, and if we would have more of our objects 
  * pointing to one xpdf Object we would have multiple undos and it could cause 
- * problems
- *
+ * problems.
  */
 template <PropertyType Tp>
 class CObject : public IId, public IProperty
 {
 
 private:
-	//
-	// We want to support undo operation... The question is, where shall the change be 
-	// saved. I decided to keep it here.
-	//
-	// std::vector<Object*> undoObjects;
-	
 	SpecialObjectType specialObjectType;	/*< Type indicating whether this object is a special object, like Cpdf, CAnnotation...*/
 
 	
@@ -217,6 +220,13 @@ public:
    */
   PropertyCount getPropertyCount ();
 
+  /**
+   * Notify CXref about changes made to objects. It is necessary to remember 
+   * previous state of the object.
+   * @param 
+   * @return
+   */
+  virtual int dispatchChange (/*CXref&*/) const /*=0;*/{/**/return 0;};
 
 	~CObject ()	{};
 
@@ -242,22 +252,6 @@ typedef CObject<pRef>	 CRef;
 
 
 
-/** 
- * Interface for Observer.
- * Implementator should implement notify, which is called each time the
- * value of property is changed.
- */
-class PropertyObserver
-{
-	
-public:
-    virtual ~PropertyObserver();
-    virtual void notify(IProperty* changedObj) = 0;
-
-protected:
-    PropertyObserver();
-};
-
 //
 // CObject types
 //
@@ -271,7 +265,7 @@ typedef CObject<pArray>	 CArray;
 typedef CObject<pDict>	 CDict;
 typedef CObject<pRef>	 CRef;
 
-} /* namespace pdfobjects */
+}; /* namespace pdfobjects */
 
 
 
