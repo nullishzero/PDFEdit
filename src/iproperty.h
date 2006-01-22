@@ -136,31 +136,39 @@ protected:
  */
 class IProperty
 {
-typedef string			PropertyName;
-typedef unsigned int	PropertyIndex;
-typedef unsigned int	PropertyCount;
 typedef std::list<IObserver*> ObserverList;
 
-private:
+protected:
  Object* 	  obj;			/*< Xpdf object */
  ObserverList observers;	/*< List of observers */
 
   
-private:	
+protected:	
+  /**
+   * 
+   */
+  IProperty () {printDbg (0,"IProperty () constructor.");};
   /**
    * @param o Xpdf object.
    */
-  IProperty (Object* o): obj(o) {assert (NULL != o);};
-  
+  IProperty (Object* o): obj(o) 
+  { 
+	assert (NULL != o);
+  	assert (obj->getType() != objCmd);
+	assert (obj->getType() != objEOF);
+	assert (obj->getType() != objNone);
+	assert (obj->getType() != objError);
+  };
   
 public:
+  
   /** 
    * Returns pointer to derived object. 
    *
    * @return Object casted to desired type.
    */
   template<typename T>
-  T* getCObjectPtr () 
+  T* getCObjectPtr () const
   {
 	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
 	return dynamic_cast<T*>(this);
@@ -171,7 +179,7 @@ public:
    *
    * @return Type of this class.
    */
-  PropertyType getCObjectType () 
+  PropertyType getCObjectType () const
   {
 	assert (obj->getType() != objCmd);
 	assert (obj->getType() != objEOF);

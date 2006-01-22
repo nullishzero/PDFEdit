@@ -1,38 +1,18 @@
 /*
  * =====================================================================================
- * 
  *        Filename:  iproperty.cc
- * 
  *     Description:  IProperty, IId, PropertyObserver implemetation
- * 
- *         Version:  1.0
  *         Created:  01/19/2006 11:40:18 PM CET
- *        Revision:  none
- *        Compiler:  gcc
- * 
  *          Author:  jmisutka (), 
- * 
  * =====================================================================================
  */
+#include "iproperty.h"
 
 
-virtual void 
-IProperty::registerObserver (PropertyObserver* /*observer*/)
+// =====================================================================================
+namespace pdfobjects
 {
-
-}
-  
-virtual void 
-IProperty::unregisterObserver (PropertyObserver* /*observer*/)
-{
-
-}
-  
-virtual void 
-IProperty::notifyObservers ()
-{
-
-}
+		
 
 
 
@@ -43,3 +23,6 @@ IProperty::notifyObservers ()
 
 
 
+
+
+} // namespace pdfobjects

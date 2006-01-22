@@ -11,7 +11,7 @@ unix:LIBS       += -lqsa
 #
 exists (main_kernel.cc) {
 	HEADERS += cobject.h iproperty.h debug.h cxref.h
-	SOURCES += main_kernel.cc
+	SOURCES += main_kernel.cc cobject.cc iproperty.cc
 	INCLUDEPATH = ../xpdf/ ../xpdf/xpdf ../xpdf/goo
 	CONFIG += WALL
 }
