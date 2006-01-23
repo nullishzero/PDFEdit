@@ -148,6 +148,7 @@ protected:
    * 
    */
   IProperty () {printDbg (0,"IProperty () constructor.");};
+  
   /**
    * @param o Xpdf object.
    */
@@ -158,8 +159,9 @@ protected:
 	assert (obj->getType() != objEOF);
 	assert (obj->getType() != objNone);
 	assert (obj->getType() != objError);
+	printDbg (0,"IProperty (Obj) constructor."); 
   };
-  
+
 public:
   
   /** 

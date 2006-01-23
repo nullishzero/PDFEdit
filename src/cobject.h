@@ -19,7 +19,7 @@
 //IProperty
 #include "debug.h"
 #include "iproperty.h"
-
+//#include "cxref.h"
 
 
 //=====================================================================================
@@ -84,13 +84,16 @@ class CObject : public IId, public IProperty
 
 private:
 	SpecialObjectType specialObjectType;	/*< Type indicating whether this object is a special object, like Cpdf, CAnnotation...*/
-
+//	CXref*	xref;							/*< Xref of pdf */	
 	
 public:
 	/**
 	 * Constructors. If no object is given, one is created.
+	 *
+	 * @param xr	our xref
+	 * @param objTp	Type of this object, whether it is a special object (CPdf,CPage,..) or not 
 	 */
-	CObject ();
+	CObject (/*CXref* xr,*/SpecialObjectType objTp = sNone);
 	CObject (Object& o);
 
 	/**
@@ -119,11 +122,12 @@ public:
 	 *
 	 * It is necessary for saving previous state of the object.
 	 *
-	 * @param 
+	 * Reference to CXref is stored in CObject::xref.
+	 *
 	 * @param makeValidCheck True if we want to verify that our changes preserve
 	 * 						 pdf validity.
 	 */
-	virtual void dispatchChange (/*CXpdf&,*/ bool makeValidCheck) const {}; 
+	virtual void dispatchChange (bool makeValidCheck) const {}; 
 
 	/**
 	 * Returns xpdf object.
@@ -288,12 +292,13 @@ typedef CObject<pRef>	 CRef;
 
 
 template<PropertyType Tp>
-CObject<Tp>::CObject ()
+CObject<Tp>::CObject (/*CXref* xr,*/SpecialObjectType objTp) : specialObjectType(objTp)//, xref (xr) 
 {
 	STATIC_CHECK (pOther != Tp,COBJECT_BAD_TYPE);
 	STATIC_CHECK (pOther1 != Tp,COBJECT_BAD_TYPE);
 	STATIC_CHECK (pOther2 != Tp,COBJECT_BAD_TYPE);
 	STATIC_CHECK (pOther3 != Tp,COBJECT_BAD_TYPE);
+	//assert (NULL != xr);
 	printDbg (0,"CObject constructor.");
 		
 	IProperty::obj = new Object ();
@@ -322,13 +327,13 @@ CObject<Tp>::CObject ()
 				obj = obj->initName ("");
 				break;
 		case pArray:
-//				obj = obj->initArray ();
+//				obj = obj->initArray (xref);
 				break;
 		case pDict:
-//				obj = obj->initDict ();
+//				obj = obj->initDict (xref);
 				break;
 		case pStream:
-//				obj = obj->initStream ();
+//				obj = obj->initStream (new MemStream(...));
 				break;
 		case pRef:
 				obj = obj->initRef (-1,-1);
@@ -338,6 +343,7 @@ CObject<Tp>::CObject ()
 				assert (false);
 				break;
 	}
+
 };
 
 
