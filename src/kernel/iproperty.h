@@ -16,7 +16,7 @@
 #include <string>
 #include <iostream>
 
-// xpdf Object
+// xpdf
 #include "xpdf/Object.h"
 
 // Debug routine

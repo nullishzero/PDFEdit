@@ -284,6 +284,30 @@ typedef CObject<pDict>	 CDict;
 typedef CObject<pRef>	 CRef;
 
 
+/** Interface for observer.
+ *
+ * Implementator should hanadle change of the property value in 
+ * notify method.
+ */
+class IObserver
+{
+public:
+        /** Notify method.
+         * @param prop Changed property.
+         *
+         * Property, which was changed, calls this method.
+         * To be able to notify about changes, observer has to be
+         * registered. To do so, use IProperty::registerObserver 
+         * method.
+         *
+         * @see IProperty
+         */
+        void notify (IProperty* prop) {};//= 0;
+};
+
+
+
+
 //=====================================================================================
 
 //
