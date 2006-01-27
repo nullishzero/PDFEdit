@@ -7,8 +7,8 @@
  * =====================================================================================
  */
 
-#ifndef IPROPERTY_H
-#define IPROPERTY_H
+#ifndef _IPROPERTY_H_
+#define _IPROPERTY_H_
 
 #include <vector>
 #include <list>
@@ -16,11 +16,11 @@
 #include <string>
 #include <iostream>
 
-// xpdf
-#include "Object.h"
+// xpdf Object
+#include "xpdf/Object.h"
 
-//
-#include "debug.h"
+// Debug routine
+#include "utils/debug.h"
 
 
 
@@ -227,19 +227,6 @@ public:
 
 }; /* class IProperty */
 
-
-
-/** 
- * Interface for Observer.
- * Implementator should implement notify, which is called each time the
- * value of property is changed.
- */
-class IObserver
-{
-public:
-	virtual void Update (IProperty*) = 0;
-    virtual ~IObserver();
-};
 
 
 }// namespace pdfobjects
