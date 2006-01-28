@@ -13,8 +13,6 @@
 #include <map>
 #include <string>
 
-//xpdf
-
 
 //IProperty
 #include "debug.h"
@@ -54,6 +52,10 @@ typedef unsigned int	PropertyCount;
 typedef unsigned int	PropertyIndex;
 typedef string			PropertyName;
 
+/*
+ * Forward declarations
+ */
+class CPdf;
 
 /** 
  * Template class representing all PDF objects from specification v1.5.
@@ -81,20 +83,21 @@ typedef string			PropertyName;
 template <PropertyType Tp>
 class CObject : public IId, public IProperty
 {
-
+		
 private:
-	SpecialObjectType specialObjectType;	/*< Type indicating whether this object is a special object, like Cpdf, CAnnotation...*/
-//	CXref*	xref;							/*< Xref of pdf */	
+	SpecialObjectType specialObjectType;	/*< Type indicating whether this object is a special object, like Cpdf, CAnnotation... */
+	CPdf*	pdf;							/*< Pdf to which this object belongs. */	
 	
 public:
 	/**
 	 * Constructors. If no object is given, one is created.
 	 *
-	 * @param xr	our xref
-	 * @param objTp	Type of this object, whether it is a special object (CPdf,CPage,..) or not 
+	 * @param pdf	Pointer to pdf object.
+	 * @param o		Xpdf object. 
+	 * @param objTp	Type of this object, whether it is a special object (CPdf,CPage,..) or not.
 	 */
-	CObject (/*CXref* xr,*/SpecialObjectType objTp = sNone);
-	CObject (Object& o);
+	CObject (CPdf* p,SpecialObjectType objTp = sNone);
+	CObject (CPdf* p,Object* o,SpecialObjectType objTp = sNone);
 
 	/**
 	 * Returns string representation of (x)pdf object.
@@ -127,7 +130,7 @@ public:
 	 * @param makeValidCheck True if we want to verify that our changes preserve
 	 * 						 pdf validity.
 	 */
-	virtual void dispatchChange (bool makeValidCheck) const {}; 
+	virtual void dispatchChange (bool /*makeValidCheck*/) const {}; 
 
 	/**
 	 * Returns xpdf object.
@@ -270,20 +273,6 @@ typedef CObject<pRef>	 CRef;
 
 
 
-//
-// CObject types
-//
-typedef CObject<pNull>	 CNull;
-typedef CObject<pBool>	 CBoolean;
-typedef CObject<pInt>	 CInt;
-typedef CObject<pReal>	 CReal;
-typedef CObject<pString> CString;
-typedef CObject<pStream> CStream;
-typedef CObject<pArray>	 CArray;
-typedef CObject<pDict>	 CDict;
-typedef CObject<pRef>	 CRef;
-
-
 /** Interface for observer.
  *
  * Implementator should hanadle change of the property value in 
@@ -302,7 +291,7 @@ public:
          *
          * @see IProperty
          */
-        void notify (IProperty* prop) {};//= 0;
+        void notify (IProperty* /*prop*/) {};//= 0;
 };
 
 
@@ -316,58 +305,18 @@ public:
 
 
 template<PropertyType Tp>
-CObject<Tp>::CObject (/*CXref* xr,*/SpecialObjectType objTp) : specialObjectType(objTp)//, xref (xr) 
+CObject<Tp>::CObject (CPdf* p,SpecialObjectType objTp) : specialObjectType(objTp),pdf(p)
 {
 	STATIC_CHECK (pOther != Tp,COBJECT_BAD_TYPE);
 	STATIC_CHECK (pOther1 != Tp,COBJECT_BAD_TYPE);
 	STATIC_CHECK (pOther2 != Tp,COBJECT_BAD_TYPE);
 	STATIC_CHECK (pOther3 != Tp,COBJECT_BAD_TYPE);
-	//assert (NULL != xr);
+	//assert (NULL != p);
 	printDbg (0,"CObject constructor.");
 		
-	IProperty::obj = new Object ();
-	assert (NULL != obj);
+	// Create the object
+//	pdf->getXref()->createObject((ObjType)Tp);
 	
-	// Init object with "default values" according to type
-	switch (Tp)
-	{
-		case pNull:
-				obj = obj->initNull ();
-				break;
-		case pBool:
-				obj = obj->initBool (false);
-				break;
-		case pInt:
-				obj = obj->initInt (-1);
-				break;
-		case pReal:
-				obj = obj->initReal (-1);
-				break;
-		case pString:
-				// Empty string
-				obj = obj->initString (new GString);
-				break;
-		case pName:
-				obj = obj->initName ("");
-				break;
-		case pArray:
-//				obj = obj->initArray (xref);
-				break;
-		case pDict:
-//				obj = obj->initDict (xref);
-				break;
-		case pStream:
-//				obj = obj->initStream (new MemStream(...));
-				break;
-		case pRef:
-				obj = obj->initRef (-1,-1);
-				break;
-		default:
-				// should not happen
-				assert (false);
-				break;
-	}
-
 };
 
 

@@ -70,6 +70,10 @@ enum PropertyType
 enum SpecialObjectType {sNone, sPdf, sPage, sPageTree, sContentStream};
 
 
+/** Object id number. */
+typedef unsigned int ObjNum;
+/** Object generation number. */
+typedef unsigned int GenNum;
 
 
 /** 
@@ -79,13 +83,9 @@ enum SpecialObjectType {sNone, sPdf, sPage, sPageTree, sContentStream};
  */
 class IId
 {
-typedef unsigned int ObjNum;
-typedef unsigned int GenNum;
-
-	
 private:
-  const ObjNum objNum;	/**< Object's pdf identification number */
-  const GenNum genNum;	/**< Object's pdf generation number */
+  ObjNum objNum;	/**< Object's pdf identification number */
+  GenNum genNum;	/**< Object's pdf generation number */
 
 public:
   IId (const ObjNum objN=0, const GenNum genN=0): objNum(objN),genNum(genN) {};
@@ -97,6 +97,13 @@ public:
    * @return Identification number of object.
    */
   ObjNum getObjNum () const {return objNum;};
+
+ /**
+  * Set object identification number.
+  *
+  * @param n Object id.
+  */
+  void setObjNum (ObjNum n) {objNum = n;};
   
   /**
    * Returns object's generation number. If it is an inline object
@@ -105,6 +112,13 @@ public:
    * @return Generation number of object.
    */
   GenNum getGenNum () const {return genNum;};
+ 
+ /**
+  * Set object generation number.
+  *
+  * @param n Object generation id.
+  */
+  void setGenNum (GenNum n) {genNum = n;};
   
 protected:
   ~IId () {};
@@ -145,7 +159,7 @@ protected:
   
 protected:	
   /**
-   * 
+   * Default constructor. We suppose that obj will be(was) set by CObject class.
    */
   IProperty () {printDbg (0,"IProperty () constructor.");};
   
@@ -223,7 +237,6 @@ public:
    * Notifies all observers about a change.
    */
   virtual void notifyObservers () = 0;
-
 
 }; /* class IProperty */
 

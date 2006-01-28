@@ -1,14 +1,75 @@
 #ifndef __CPDF_H__
 #define __CPDF_H__
 
+#include <map>
+#include <set>
+
 #include "cobject.h"
 
-using namespace pdfobjects;
+namespace pdfobjects {
 
-class CPdf : public CDict {
-  //
-  // Konstruktor
-  //
+//
+// Mapping between (x)pdf Object <--> IProperty
+//
+namespace
+{
+	typedef pair<ObjNum,GenNum> IdPair;
+
+	/**
+	 * Comparator of two mapped items.
+	 */
+	class IdComparator
+	{
+	public:
+		bool operator() (const IdPair one, const IdPair two) const
+		{
+				if (one.first == two.first)
+					return (one.second < two.second);
+				else
+					return (one.first < two.first);
+		}
+	};	
+
+	typedef map<IdPair,const IProperty*,IdComparator> Mapping;
+};
+		
+		
+/**
+ * CPdf special object.
+ *
+ * TODO: many things, right now mapping is finished because Raw CObject needs it...
+ */
+class CPdf : public CDict 
+{
+private:
+	/** Mapping between Object <--> IProperty*. It is necessary when accessing indirect objects. */
+	Mapping mapping;
+		
+public:
+	/**
+	 * Return IProperty associated with (x)pdf object's id and gen id, if any.
+	 *
+	 * @param id	Identification number.
+	 * @param genId Generation number.
+	 * @return Null if there is no mapping, IProperty* otherwise.
+	 */
+	IProperty* getExistingProperty (const ObjNum id, const GenNum genId) const;
+	
+	/**
+	 * Save relation between (x)pdf object(its id and gen id) and IProperty*. 
+	 *
+	 * @param n	(x)pdf object id.
+	 * @param g (x)pdf object gen id.
+	 */
+	void setPropertyMapping (const ObjNum n, const GenNum g, const IProperty* ip);
+
+
+
+public:
+	/**
+	 * Constructor
+	 */
+/**/CPdf () : CDict (NULL) {};
 //  CPdf (filename,mode);
 
  /** Vytvori vnutornu reprezentaciu pdf (pre pristup k objektom sa bude
@@ -95,7 +156,8 @@ class CPdf : public CDict {
 /**  Vrati mode danej revizie.*/
 //  mode get_modever ();
 
-}
+};
 
+} // namespace pdfobjects
 
 #endif // __CPDF_H__
