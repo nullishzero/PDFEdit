@@ -1,8 +1,19 @@
 #ifndef __CPAGE_H__
 #define __CPAGE_H__
 
+/** 
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.4  2006/01/29 21:18:15  hockm0bm
+ * minor changes for compilation (TODOs and FIXME comments)
+ *
+ *
+ */
+
 #include"iproperty.h"
 #include"utils/objectstorage.h"
+//#include"utils/cache.h"
 #include"xpdf/XRef.h"
 
 using namespace pdfobjects;
@@ -58,7 +69,7 @@ using namespace pdfobjects;
 class CXref: public XRef
 {
 private:
-        ObjectCache * cache=NULL;       /**< Cache for objects. */
+        //ObjectCache * cache=NULL;       /**< Cache for objects. */
 protected:        
         ObjectStorage changedStorage;   /**< Object storage for changed 
                                              objects. */
@@ -72,7 +83,7 @@ protected:
          * This constructor is protected to prevent uninitialized instances.
          * We need at least to specify stream with data.
          */
-        CXref(){};
+        CXref(): XRef(0){};
         
         /** Registers change in given object addressable through given num and 
          * gen.
@@ -137,7 +148,7 @@ protected:
                 Object * o;
                 
                 // at first try cache if one is used
-                /* FIXME
+                /* FIXME uncoment when the cache is ready
                 if(cache)
                 {
                         if((o=cache->get(ref)))
@@ -173,9 +184,12 @@ public:
          * Delegates to XRef constructor with the stream parameter and
          * sets cache instance.
          */
-        CXref(BaseStream * stream, ICache c):XRef(stream), cache(c)
+        /*
+        CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c)
         {
+                // FIXME: uncoment when cache is ready 
         }
+        */
         
         /** Destructor.
          *
@@ -183,8 +197,10 @@ public:
          */
         virtual ~CXref()
         {
-                if(c)
-                        delete c;
+                /* FIXME: uncoment when cache is ready.
+                if(cache)
+                        delete cache;
+                 */
         }
         
         /** Creates new xpdf indirect object.
@@ -204,10 +220,12 @@ public:
          * </ul>
          * Returned object MUST NOT be deallocated by user.
          *
-         * @return Object instance with given type.
+         * @return Object instance with given type or 0 if not able to create.
          */
         virtual Object * createObject(ObjType type, Ref * ref)
         {
+                // TODO get new num, add to the newStorage and return
+                return 0;
         }
 
         /** Gets value associated with name in trailer.
@@ -220,6 +238,8 @@ public:
          */
         virtual Object * getTrailerEntry(const string * name)
         {
+                // TODO work with the trailerDict - uses fetch if indirect
+                return 0;
         }
 
         // TODO reimplementation of inherited methods
@@ -232,6 +252,7 @@ public:
 
         virtual Object *getCatalog(Object *obj) 
         {
+                // uses this fetch implementation to get actual catalog
                 return fetch(rootNum, rootGen, obj); 
         }
 
