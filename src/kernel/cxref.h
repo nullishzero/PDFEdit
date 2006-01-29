@@ -2,7 +2,7 @@
 #define __CPAGE_H__
 
 #include"iproperty.h"
-#include"xpdf/Object.h"
+#include"utils/objectstorage.h"
 #include"xpdf/XRef.h"
 
 using namespace pdfobjects;
@@ -58,88 +58,192 @@ using namespace pdfobjects;
 class CXref: public XRef
 {
 private:
-    ObjectCache * cache;            /**< Cache for objects. */
+    //ObjectCache * cache;            /**< Cache for objects. */
 protected:        
-    ObjectStorage changedStorage;   /**< Object storage for changed objects. */
-    ObjectStorage newStorage;       /**< Object storage for newly created 
-                                         objects.*/
-    ObjectStorage releasedStorage;  /**< Object storage for release objects. */
-    
-    /** Registers change in given object addressable through given num and gen.
-     * @param instance Instance of object value (must be direct value,
-     * not indirect reference).
-     * @param num Object number.
-     * @param gen Genereation number of object (FIXME may be doesn't need).
-     *
-     * Discards object from cache and stores it to the changedStorage.
-     * Method should be called each time when object has changed its value.
-     * Object value is copied not use as it is (creates deep copy).
-     */
-    void changeObject(Object * instance, int num, int gen);
-    
-    /** Releases  given object addressable through given num and gen.
-     * @param instance Instance of object value (must be direct value,
-     * not indirect reference).
-     * @param num Object number.
-     * @param gen Genereation number of object (FIXME may be doesn't need).
-     *
-     * Discards object from cache, removes it from the changedStorage (if 
-     * presented) and stores it to the releasedStorage.
-     * Method should be called if indirect reference was removed from 
-     * compound value (e.g. changed by other indirect reference or direct
-     * value).
-     * Object value is copied not use as it is (creates deep copy).
-     */
-    void releaseObject(Object * instance, int num, int gen);
+        ObjectStorage changedStorage;   /**< Object storage for changed 
+                                                   objects. */
+        ObjectStorage newStorage;       /**< Object storage for newly 
+                                                   created objects.*/
+        ObjectStorage releasedStorage; /**< Object storage for release 
+                                                   objects. */
 
-    /** Changes entry in trailer dictionary.
-     * @param name Name of the value.
-     * @param value Value to be set.
-     *
-     * Makes changes to the trailer and if value should be set as indirect
-     * value, num and gen has to be non negative. In such case calls also
-     * changeObject method.
-     * <br>
-     * If given value is indirect reference, only change in trailer dictionary
-     * is made.
-     */
-    void changeTrailer(string name, Object * value);
-    
+        /** Registers change in given object addressable through given num and 
+         * gen.
+         * @param ref Object reference identificator.
+         * @param instance Instance of object value (must be direct value,
+         * not indirect reference).
+         *
+         * Discards object from cache and stores it to the changedStorage.
+         * Method should be called each time when object has changed its value.
+         * Object value is copied not use as it is (creates deep copy).
+         */
+        void changeObject(Ref ref, Object * instance);
+
+        /** Releases  given object addressable through given num and gen.
+         * @param ref Object reference identificator.
+         * @param instance Instance of object value (must be direct value,
+         * not indirect reference).
+         *
+         * Discards object from cache, removes it from the changedStorage (if 
+         * presented) and stores it to the releasedStorage.
+         * Method should be called if indirect reference was removed from 
+         * compound value (e.g. changed by other indirect reference or direct
+         * value).
+         * Object value is copied not use as it is (creates deep copy).
+         */
+        void releaseObject(Ref ref, Object * instance);
+
+        /** Changes entry in trailer dictionary.
+         * @param name Name of the value.
+         * @param value Value to be set.
+         *
+         * Makes changes to the trailer and if value should be set as indirect
+         * value, num and gen has to be non negative. In such case calls also
+         * changeObject method.
+         * <br>
+         * If given value is indirect reference, only change in trailer 
+         * dictionary is made.
+         */
+        void changeTrailer(string name, Object * value);
+
+        /** Tries to find object in storages.
+         * @param ref Object reference identificator.
+         * @param obj Object to be filled by value.
+         *
+         * Searches cache, newStorage and changedStorage in given order. If
+         * object associated with given reference is found, fills given obj
+         * to be initialized with found value (uses Object::copy method).
+         *
+         * @return obj initialized with found value or 0.
+         */
+        Object * probe(Ref ref, Object * obj)
+        {
+                Object * o;
+                
+                // at first try cache if one is used
+                /* FIXME
+                if(cache)
+                {
+                        if((o=cache->get(ref)))
+                                return o->copy(obj);
+                }
+                */
+                
+                // tries newStorage
+                if((o=newStorage.get(ref)))
+                        return o->copy(obj);
+                
+                // tries changedStorage
+                if((o=changedStorage.get(ref)))
+                        return o->copy(obj);
+
+                // nothing has been found
+                return 0;
+        }
 public:
-    /** Creates new xpdf indirect object.
-     * @param type Type of the object.
-     * Object instance is registered to the internal structures and so can be
-     * accessible throught its object number and generation number. 
-     * Implementation will initialized Object at least with type, obj and gen
-     * num and value in the object is intialized: 
-     * <ul>
-     * <li>numeric types with zero
-     * <li>strings allocated and empty
-     * <li>compound types (array, dict) allocated with no members
-     * </ul>
-     * Returned object MUST NOT be deallocated by user.
-     *
-     * @return Object instance with given type.
-     */
-    Object * createObject( type);
+        /** Creates new xpdf indirect object.
+         * @param type Type of the object.
+         * Object instance is registered to the internal structures and so can 
+         * be accessible throught its object number and generation number. 
+         * Implementation will initialized Object at least with type, obj and 
+         * gen num and value in the object is intialized: 
+         * <ul>
+         * <li>numeric types with zero
+         * <li>strings allocated and empty
+         * <li>compound types (array, dict) allocated with no members
+         * </ul>
+         * Returned object MUST NOT be deallocated by user.
+         *
+         * @return Object instance with given type.
+         */
+        virtual Object * createObject(ObjType type);
 
-    /** Gets value associated with name in trailer.
-     * @param name Name of the entry.
-     *
-     * If value is indirect reference (according specification almost all 
-     * compound entries), reference is returned, so normal xref interface
-     * can be used to ask for value.
-     * @return copy of the object value.
-     */
-    Object * getTrailerEntry(const string * name);
+        /** Gets value associated with name in trailer.
+         * @param name Name of the entry.
+         *
+         * If value is indirect reference (according specification almost all 
+         * compound entries), reference is returned, so normal xref interface
+         * can be used to ask for value.
+         * @return copy of the object value.
+         */
+        virtual Object * getTrailerEntry(const string * name);
+
+        // TODO reimplementation of inherited methods
+        // three steps
+        //      cache                   -|
+        //      maintained objects      -|-- probe
+        //      original implementation ---- Xref
+        // this is only for methods working with changeable objects
+        // e.g. getRootNum doesn't have to be change at all
+
+        virtual Object *getCatalog(Object *obj) 
+        {
+                return fetch(rootNum, rootGen, obj); 
+        }
+
+        virtual Object *fetch(int num, int gen, Object *obj)
+        {
+                // identificator of the catalog 
+                Ref objId={rootNum, rootGen};
+                
+                // check if catalog is not changed and if so
+                // uses changed one
+                if((obj=probe(objId, obj)))
+                        return obj;
+
+                // not found - has to use XRef original implementation
+                return XRef::fetch(num, gen, obj);
+        }
+
+        // Return the document's Info dictionary (if any).
+        virtual Object *getDocInfo(Object *obj)
+        {
+                // TODO
+
+                return XRef::getDocInfo(obj);
+        }
         
-    // TODO reimplementation of inherited methods
-    // three steps
-    //      cache
-    //      maintained objects
-    //      original implementation
-    // this is only for methods working with changeable objects
-    // e.g. getRootNum doesn't have to be change at all
-}
+        virtual Object *getDocInfoNF(Object *obj)
+        {
+                // TODO
+
+                return XRef::getDocInfoNF(obj);
+        }
+
+        // Return the number of objects in the xref table.
+        virtual int getNumObjects() 
+        { 
+                // TODO consider storages
+
+                return XRef::getNumObjects();
+        }
+
+        // Return the offset of the last xref table.
+        virtual Guint getLastXRefPos() 
+        { 
+                // TODO can change - when older version is used
+
+                return XRef::getLastXRefPos();
+        }
+        
+        //
+        // Get end position for a stream in a damaged file.
+        // Returns false if unknown or file is not damaged.
+        virtual GBool getStreamEnd(Guint streamStart, Guint *streamEnd)
+        {
+                // TODO figure out
+
+                return XRef::getStreamEnd(streamStart, streamEnd);
+        }
+
+        /* TODO figure out - this should not be changed (find out who does
+         * use it
+         */
+        /*
+        // Direct access.
+        virtual int getSize() { return size; }
+        virtual XRefEntry *getEntry(int i) { return &entries[i]; }
+        */
+};
 
 #endif
