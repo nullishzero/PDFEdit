@@ -58,15 +58,22 @@ using namespace pdfobjects;
 class CXref: public XRef
 {
 private:
-    //ObjectCache * cache;            /**< Cache for objects. */
+        ObjectCache * cache=NULL;       /**< Cache for objects. */
 protected:        
         ObjectStorage changedStorage;   /**< Object storage for changed 
-                                                   objects. */
+                                             objects. */
         ObjectStorage newStorage;       /**< Object storage for newly 
-                                                   created objects.*/
-        ObjectStorage releasedStorage; /**< Object storage for release 
-                                                   objects. */
+                                             created objects.*/
+        ObjectStorage releasedStorage;  /**< Object storage for release 
+                                             objects. */
 
+        /** Empty constructor.
+         *
+         * This constructor is protected to prevent uninitialized instances.
+         * We need at least to specify stream with data.
+         */
+        CXref(){};
+        
         /** Registers change in given object addressable through given num and 
          * gen.
          * @param ref Object reference identificator.
@@ -77,7 +84,10 @@ protected:
          * Method should be called each time when object has changed its value.
          * Object value is copied not use as it is (creates deep copy).
          */
-        void changeObject(Ref ref, Object * instance);
+        void changeObject(Ref ref, Object * instance)
+        {
+                // TODO
+        }
 
         /** Releases  given object addressable through given num and gen.
          * @param ref Object reference identificator.
@@ -91,7 +101,10 @@ protected:
          * value).
          * Object value is copied not use as it is (creates deep copy).
          */
-        void releaseObject(Ref ref, Object * instance);
+        void releaseObject(Ref ref, Object * instance)
+        {
+                // TODO
+        }
 
         /** Changes entry in trailer dictionary.
          * @param name Name of the value.
@@ -104,7 +117,10 @@ protected:
          * If given value is indirect reference, only change in trailer 
          * dictionary is made.
          */
-        void changeTrailer(string name, Object * value);
+        void changeTrailer(string name, Object * value)
+        {
+                // TODO
+        }
 
         /** Tries to find object in storages.
          * @param ref Object reference identificator.
@@ -141,12 +157,46 @@ protected:
                 return 0;
         }
 public:
+        /** Initialize constructor.
+         * @param stream Stream with file data.
+         *
+         * Delegates to XRef constructor with same parameter.
+         */
+        CXref(BaseStream * stream):XRef(stream)
+        {
+        }
+
+        /** Initialize constructor with cache.
+         * @param stream Stream with file data.
+         * @param c Cache instance.
+         *
+         * Delegates to XRef constructor with the stream parameter and
+         * sets cache instance.
+         */
+        CXref(BaseStream * stream, ICache c):XRef(stream), cache(c)
+        {
+        }
+        
+        /** Destructor.
+         *
+         * Destroys cache.
+         */
+        virtual ~CXref()
+        {
+                if(c)
+                        delete c;
+        }
+        
         /** Creates new xpdf indirect object.
          * @param type Type of the object.
+         * @param ref Structure where to put object num and gen (if null, 
+         * nothing is set).
+         * 
          * Object instance is registered to the internal structures and so can 
-         * be accessible throught its object number and generation number. 
-         * Implementation will initialized Object at least with type, obj and 
-         * gen num and value in the object is intialized: 
+         * be accessible throught its object number and generation number which
+         * is set the ref parameter. 
+         * Implementation will initialized Object at least with type and value:
+         * 
          * <ul>
          * <li>numeric types with zero
          * <li>strings allocated and empty
@@ -156,7 +206,9 @@ public:
          *
          * @return Object instance with given type.
          */
-        virtual Object * createObject(ObjType type);
+        virtual Object * createObject(ObjType type, Ref * ref)
+        {
+        }
 
         /** Gets value associated with name in trailer.
          * @param name Name of the entry.
@@ -166,7 +218,9 @@ public:
          * can be used to ask for value.
          * @return copy of the object value.
          */
-        virtual Object * getTrailerEntry(const string * name);
+        virtual Object * getTrailerEntry(const string * name)
+        {
+        }
 
         // TODO reimplementation of inherited methods
         // three steps
