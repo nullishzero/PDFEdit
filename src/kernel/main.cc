@@ -4,11 +4,13 @@
  * Kernel does not need QT 
  */
 
-#include <stdlib.h>
-
+#include <iostream>
+#include <aconf.h>
 
 #include "cobject.h"
+#include "cobjectI.h"
 #include "cpdf.h"
+#include "cpdfI.h"
 
 
 using namespace std;
@@ -45,19 +47,42 @@ IProperty* ip = pdf.getExistingProperty(77,77);
 */
 
 //======== test 3
+/*
+GString* fileName = new GString ("/home/jozo/_pdf/pdfedit/or_d0506.pdf");
+PDFDoc* doc = new PDFDoc (fileName,new GString(),new GString());
+cout << "Filename: "<< fileName->getCString() << endl;
+cout << "Number of pages: "<< doc->getNumPages () << endl;
+// Get an object from PDFDoc
+Object* obj; 
+*/
 
+//
+// Our stuff here
+//
+CPdf pdf;
+string str;
+/*XRef* xref = doc->getXRef();
 
+cout << "Xref: " << (unsigned int) xref << endl;
 
+obj = xref->getTrailerDict ();
+CPdf::objToString (obj,str);
+cout << str << endl;
+str = "";
 
+xref->getCatalog (obj);
+CPdf::objToString (obj,str);
+cout << str << endl;
+str = "";
 
-
-
-
-
-
-
+xref->getDocInfo (obj);
+CPdf::objToString (obj,str);
+cout << str << endl;
+str = "";
+*/
 
 
 
 return 0;
 }
+

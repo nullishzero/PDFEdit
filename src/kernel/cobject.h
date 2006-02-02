@@ -1,8 +1,13 @@
 /** 
- * Header file containing definition of IProperty and CObject classes.
- * Interface for GUI/...
- *
- * jmisutka 06/01/18
+ * =====================================================================================
+ *        Filename:  cobject.h
+ *     Description:  Header file containing definition of IProperty and CObject classes.
+ *         Created:  01/18/2006 
+ *       Revision:  none
+ *          Author:  jmisutka (06/01/19), 
+ * 			
+ * 			2006/01/29 added CPdf here, because of the recursive include problem + templates
+ * =====================================================================================
  */
 
 #ifndef COBJECT_H
@@ -12,12 +17,14 @@
 #include <list>
 #include <map>
 #include <string>
-
+#include <iostream>
+#include <sstream>
 
 //IProperty
 #include "debug.h"
+#include "observer.h"
+#include "exceptions.h"
 #include "iproperty.h"
-//#include "cxref.h"
 
 
 //=====================================================================================
@@ -26,10 +33,11 @@ namespace pdfobjects
 
 using namespace std;
 
+
 /**
- * Additional information that identifies variable type for writeValue function
+ * Additional information that identifies variable type, e.g. for writeValue function.
  *
- * If someone tries to use unsupproted type (pCmd,....), she should get compile error
+ * If someone tries to use unsupported type (pCmd,....), she should get compile error
  * because PropertyTrait<> has no body.
  */
 template<PropertyType T> class PropertyTrait; 
@@ -45,17 +53,21 @@ template<> class PropertyTrait<pDict>	{public: typedef const string 	writeType; 
 template<> class PropertyTrait<pRef> 	{public: typedef const string	writeType; typedef const NullType	PropertyId;};
 
 
-/**
+
+/*
  * Typedefs
  */
 typedef unsigned int	PropertyCount;
 typedef unsigned int	PropertyIndex;
 typedef string			PropertyName;
 
+
 /*
  * Forward declarations
  */
 class CPdf;
+
+
 
 /** 
  * Template class representing all PDF objects from specification v1.5.
@@ -81,63 +93,96 @@ class CPdf;
  * problems.
  */
 template <PropertyType Tp>
-class CObject : public IId, public IProperty
+class CObject : public IProperty
 {
+public:
+	/** Write type for writeValue function. */
+	typedef typename PropertyTrait<Tp>::writeType WriteType;
 		
 private:
-	SpecialObjectType specialObjectType;	/*< Type indicating whether this object is a special object, like Cpdf, CAnnotation... */
-	CPdf*	pdf;							/*< Pdf to which this object belongs. */	
+	
+	/** Type indicating whether this object is a special object, like Cpdf, CAnnotation... */
+	SpecialObjectType specialObjectType;
+
+	/** This object belongs to this pdf. */	
+	CPdf* pdf;
+	
 	
 public:
 	/**
-	 * Constructors. If no object is given, one is created.
+	 * Constructor. If no object is given, one is created.
 	 *
 	 * @param pdf	Pointer to pdf object.
-	 * @param o		Xpdf object. 
-	 * @param objTp	Type of this object, whether it is a special object (CPdf,CPage,..) or not.
+	 * @param objTp	Type of this object. Indicates whether it is a special object (CPdf,CPage,..) or not.
 	 */
 	CObject (CPdf* p,SpecialObjectType objTp = sNone);
-	CObject (CPdf* p,Object* o,SpecialObjectType objTp = sNone);
 
+	
 	/**
-	 * Returns string representation of (x)pdf object.
+	 * Constructor.
 	 *
-	 * @return String representing (x)pdf object.
+	 * @param pdf	Pointer to pdf object. If we create CPdf, p will be NULL so use CObject::this pointer.
+	 * @param o		Xpdf object. 
+	 * @param ref	Indirect reference numbers. When NULL we do not save mapping, because it is a direct object.
+	 * 				Caller will handle the mapping.
+	 * @param objTp	Type of this object. Indicates whether it is a special object (CPdf,CPage,..) or not.
 	 */
-	string& getStringRepresentation () const;
+	CObject (CPdf* p,Object* o,IndiRef* ref = NULL,SpecialObjectType objTp = sNone);
+
+	
+	/**
+	 * Returns string representation of (x)pdf object. 
+	 * 
+	 * @param str 	After successful call, it will hold string representation 
+	 * 				of current object.
+	 */
+	void getStringRepresentation (string& str) const;
+	friend void objToString (const Object* o,string& str);
+	
 	
 	/**
 	 * Make object from string.
+	 * <exception cref="..." />
 	 *
-	 * @param txt object in string form
+	 * @param str0 Object in a text form.
 	 */
 	void setStringRepresentation (const string& strO);
 
+	
 	/**
+	 * Change the value of an object. The variable type depends
+	 * on CObject type. For complex types, it is equal to setStringRepresentation().
+	 * 
 	 * We can define how best we want to represent an pdf object. E.g.
 	 * we can represent a dictionary with list<pair<string,string> > etc...
+	 *
+	 * @param val	Value that will be set.
 	 */
-	void writeValue (typename PropertyTrait<Tp>::writeType* val) {};
+	void writeValue (WriteType* val);
   
+	
 	/**
  	 * Notify Writer object that this object has changed. We have to call this
 	 * function to make changes visible.
 	 *
-	 * It is necessary for saving previous state of the object.
+	 * It is necessary for undo operation, that means saving previous state of the object.
 	 *
-	 * Reference to CXref is stored in CObject::xref.
+	 * We obtain reference to CXref from CObject::pdf.
 	 *
 	 * @param makeValidCheck True if we want to verify that our changes preserve
 	 * 						 pdf validity.
 	 */
-	virtual void dispatchChange (bool /*makeValidCheck*/) const {}; 
+	void dispatchChange (bool /*makeValidCheck*/) const {}; 
 
+	
 	/**
 	 * Returns xpdf object.
 	 *
 	 * @return Xpdf object.
 	 */
-	const Object* getRawObject () const {return obj;};
+	const Object* getRawObject () const {assert (NULL != obj); return obj;};
+	
+	
 	/**
 	 * Returns if it is one of special objects CPdf,CPage etc.
 	 *
@@ -145,22 +190,25 @@ public:
 	 */
 	virtual SpecialObjectType getSpecialObjType() const {return (SpecialObjectType)0;};
 
+	
 	/**
 	 * Returns pointer to derived object. 
 	 */
 	template<typename T>
-	T* getSpecialObjectPtr () const 
-	{
-			return dynamic_cast<T*>(this);
-	}
-  
+	T* getSpecialObjectPtr () const {return dynamic_cast<T*>(this);}
 
+	
+	/**
+	 * Release
+	 */
+  	/*******/
+	
+protected:
     /**
-     * Notify observers that a property has changed.
+     * Notify all observers that a property has changed.
      */
-    virtual void notifyObservers () {};
+    void notifyObservers ();
  
-	 
 	/**
 	 * Destructor
 	 */
@@ -170,7 +218,7 @@ public:
 	//
 	// Specific features by Incomplete Instantiation
 	//
-
+public:
 	/** 
      * Returns property count.
      *
@@ -214,6 +262,7 @@ public:
     	return pNull;
     }
 
+	
 	/**
 	 * Sets property type of an item.
 	 *
@@ -234,6 +283,7 @@ public:
 		//
 	};
 
+	
 	/**
 	 * Adds property to array/dict.
 	 *
@@ -241,6 +291,7 @@ public:
 	 */
 	template<typename T>
 	void addProperty (typename PropertyTrait<Tp>::PropertyId /*id*/, const T& /*val*/ ) {};
+	
 	
 	/**
 	 * Removes property from array/dict.
@@ -271,136 +322,6 @@ typedef CObject<pArray>	 CArray;
 typedef CObject<pDict>	 CDict;
 typedef CObject<pRef>	 CRef;
 
-
-
-/** Interface for observer.
- *
- * Implementator should hanadle change of the property value in 
- * notify method.
- */
-class IObserver
-{
-public:
-        /** Notify method.
-         * @param prop Changed property.
-         *
-         * Property, which was changed, calls this method.
-         * To be able to notify about changes, observer has to be
-         * registered. To do so, use IProperty::registerObserver 
-         * method.
-         *
-         * @see IProperty
-         */
-        void notify (IProperty* /*prop*/) {};//= 0;
-};
-
-
-
-
-//=====================================================================================
-
-//
-// Implementation of some member functions
-//
-
-
-template<PropertyType Tp>
-CObject<Tp>::CObject (CPdf* p,SpecialObjectType objTp) : specialObjectType(objTp),pdf(p)
-{
-	STATIC_CHECK (pOther != Tp,COBJECT_BAD_TYPE);
-	STATIC_CHECK (pOther1 != Tp,COBJECT_BAD_TYPE);
-	STATIC_CHECK (pOther2 != Tp,COBJECT_BAD_TYPE);
-	STATIC_CHECK (pOther3 != Tp,COBJECT_BAD_TYPE);
-	//assert (NULL != p);
-	printDbg (0,"CObject constructor.");
-		
-	// Create the object
-//	pdf->getXref()->createObject((ObjType)Tp);
-	
-};
-
-
-//	: IId(o.,o.), IProperty (o) {};
-
-
-//
-// Better 
-//
-/*template<PropertyType Tp>
-string& CObject<Tp>::getStringRepresentation () const
-{
-	//
-	// We better do it ourselves, because we can produce 
-	// errors during parsing and getting buffer from file
-	// structure is 
-	//
- Object.cc
-  Object obj;
-  int i;
-
-  switch (type) {
-  case objBool:
-    fprintf(f, "%s", booln ? "true" : "false");
-    break;
-  case objInt:
-    fprintf(f, "%d", intg);
-    break;
-  case objReal:
-    fprintf(f, "%g", real);
-    break;
-  case objString:
-    fprintf(f, "(");
-    fwrite(string->getCString(), 1, string->getLength(), stdout);
-    fprintf(f, ")");
-    break;
-  case objName:
-    fprintf(f, "/%s", name);
-    break;
-  case objNull:
-    fprintf(f, "null");
-    break;
-  case objArray:
-    fprintf(f, "[");
-    for (i = 0; i < arrayGetLength(); ++i) {
-      if (i > 0)
-	fprintf(f, " ");
-      arrayGetNF(i, &obj);
-      obj.print(f);
-      obj.free();
-    }
-    fprintf(f, "]");
-    break;
-  case objDict:
-    fprintf(f, "<<");
-    for (i = 0; i < dictGetLength(); ++i) {
-      fprintf(f, " /%s ", dictGetKey(i));
-      dictGetValNF(i, &obj);
-      obj.print(f);
-      obj.free();
-    }
-    fprintf(f, " >>");
-    break;
-  case objStream:
-    fprintf(f, "<stream>");
-    break;
-  case objRef:
-    fprintf(f, "%d %d R", ref.num, ref.gen);
-    break;
-  case objCmd:
-    fprintf(f, "%s", cmd);
-    break;
-  case objError:
-    fprintf(f, "<error>");
-    break;
-  case objEOF:
-    fprintf(f, "<EOF>");
-    break;
-  case objNone:
-    fprintf(f, "<none>");
-    break;
-  }
-};
-*/
 
 
 

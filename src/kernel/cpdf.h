@@ -1,77 +1,102 @@
+/*
+ * =====================================================================================
+ *        Filename:  cpdf.h
+ *     Description: CPdf class definition.
+ *         Created:  01/28/2006 03:48:14 AM CET
+ *          Author:  jmisutka (), 
+ *         Changes: 2006/1/28 added mapping support
+ *         			2006/1/30 tested objToString () -- ok
+ * =====================================================================================
+ */
+
+
 #ifndef __CPDF_H__
 #define __CPDF_H__
 
 #include <map>
 #include <set>
 
-#include "cobject.h"
 
+// =====================================================================================
 namespace pdfobjects {
+
 
 //
 // Mapping between (x)pdf Object <--> IProperty
 //
 namespace
 {
-	typedef pair<ObjNum,GenNum> IdPair;
-
 	/**
-	 * Comparator of two mapped items.
+	 * Comparator class for two mapped items.
 	 */
 	class IdComparator
 	{
 	public:
-		bool operator() (const IdPair one, const IdPair two) const
+		bool operator() (const IndiRef one, const IndiRef two) const
 		{
-				if (one.first == two.first)
-					return (one.second < two.second);
+				if (one.num == two.num)
+					return (one.gen < two.gen);
 				else
-					return (one.first < two.first);
-		}
+					return (one.num < two.num);
+		};
 	};	
 
-	typedef map<IdPair,const IProperty*,IdComparator> Mapping;
+	typedef map<const IndiRef,const IProperty*,IdComparator> Mapping;
 };
 		
-		
+
 /**
  * CPdf special object.
- *
+ * 
  * TODO: many things, right now mapping is finished because Raw CObject needs it...
  */
-class CPdf : public CDict 
+class CPdf : public CDict
 {
+
 private:
 	/** Mapping between Object <--> IProperty*. It is necessary when accessing indirect objects. */
 	Mapping mapping;
-		
-public:
-	/**
-	 * Return IProperty associated with (x)pdf object's id and gen id, if any.
-	 *
-	 * @param id	Identification number.
-	 * @param genId Generation number.
-	 * @return Null if there is no mapping, IProperty* otherwise.
-	 */
-	IProperty* getExistingProperty (const ObjNum id, const GenNum genId) const;
-	
-	/**
-	 * Save relation between (x)pdf object(its id and gen id) and IProperty*. 
-	 *
-	 * @param n	(x)pdf object id.
-	 * @param g (x)pdf object gen id.
-	 */
-	void setPropertyMapping (const ObjNum n, const GenNum g, const IProperty* ip);
-
-
+	/** CXref class which is (x)pdf xref with enhanced functionality.*/
+	//CXref*	xref;
 
 public:
 	/**
 	 * Constructor
 	 */
-/**/CPdf () : CDict (NULL) {};
+	CPdf ();
 //  CPdf (filename,mode);
 
+
+private:
+	/**
+	 * Returns IProperty associated with (x)pdf object's id and gen id, if any.
+	 *
+	 * @param id	Identification number.
+	 * @param genId Generation number.
+	 * @return Null if there is no mapping, IProperty* otherwise.
+	 */
+	IProperty* getExistingProperty (const IndiRef* ref) const;
+	
+
+	/**
+	 * Saves relation between (x)pdf object(its id and gen id) and IProperty*. 
+	 *
+	 * @param n	(x)pdf object id.
+	 * @param g (x)pdf object gen id.
+	 */
+	void setPropertyMapping (const IndiRef* ref, const IProperty* ip);
+
+	
+public:
+	/** Return xref associated with this pdf. */
+	//CXref* getXref() {return xref;};
+
+
+private:
+	/** Returns string representation of (x)pdf object. */
+	static void objToString (Object* o,string& str);
+	
+public:
  /** Vytvori vnutornu reprezentaciu pdf (pre pristup k objektom sa bude
   uplatnovat mode - READ_ONLY, READ_WRITE).*/
 //  int open (filename,mode);
@@ -158,6 +183,17 @@ public:
 
 };
 
+
+
+
+
+
+
+
+
+
+
+		
 } // namespace pdfobjects
 
 #endif // __CPDF_H__

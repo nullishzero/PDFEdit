@@ -17,7 +17,7 @@
 #include <iostream>
 
 // xpdf
-#include "xpdf/Object.h"
+#include <xpdf/Object.h>
 
 // Debug routine
 #include "utils/debug.h"
@@ -35,8 +35,10 @@ using namespace std;
 class NullType {};
 struct EmptyType {};
 
+
+
 //
-// Forward definitions
+// Forward declaration
 //
 class IObserver;
 
@@ -70,60 +72,22 @@ enum PropertyType
 enum SpecialObjectType {sNone, sPdf, sPage, sPageTree, sContentStream};
 
 
+/** Observer list for IProperty. */
+typedef std::list<IObserver*> ObserverList;
+
 /** Object id number. */
 typedef unsigned int ObjNum;
 /** Object generation number. */
 typedef unsigned int GenNum;
 
-
-/** 
- * Narrow interface describing unique pdf identification of every pdf object.
- *
- * Can be used when identifying direct objects within another objects.
- */
-class IId
+/** Values specifying indirect reference to an (x)pdf object. */
+typedef struct IndiRef
 {
-private:
-  ObjNum objNum;	/**< Object's pdf identification number */
-  GenNum genNum;	/**< Object's pdf generation number */
-
-public:
-  IId (const ObjNum objN=0, const GenNum genN=0): objNum(objN),genNum(genN) {};
-
-  /**
-   * Returns object's identification number. If it is an inline object
-   * returns id of parent object.
-   *
-   * @return Identification number of object.
-   */
-  ObjNum getObjNum () const {return objNum;};
-
- /**
-  * Set object identification number.
-  *
-  * @param n Object id.
-  */
-  void setObjNum (ObjNum n) {objNum = n;};
-  
-  /**
-   * Returns object's generation number. If it is an inline object
-   * returns generation number of parent object.
-   *
-   * @return Generation number of object.
-   */
-  GenNum getGenNum () const {return genNum;};
- 
- /**
-  * Set object generation number.
-  *
-  * @param n Object generation id.
-  */
-  void setGenNum (GenNum n) {genNum = n;};
-  
-protected:
-  ~IId () {};
-
-}; /* class IId */
+	ObjNum	num; /**< Object's pdf identification number */
+	GenNum	gen; /**< Object's pdf generation number */
+	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;};
+			
+} IndiRef;
 
 
 /** 
@@ -132,48 +96,43 @@ protected:
  *
  * Typically, we will start by CPage object which is a dictionary. We have 
  * direct access to all simple properties like ints, strings, reals etc.
- * So we won't call e.g. getAllPropertyNames on objects that do not have
- * properties. However, if we call e.g. a method accessing properties and 
- * the object does not support it, we simply get an exception.
  *
  * Each IProperty is associated with one xpdf object. All modifying operations
  * are directly performed on this object. The object represents current state.
  * However, these changes are not visible by the (x)pdf till they are registered
  * in CXref.
  *
- * When accessing complex properties, we have to know with which type we
+ * When accessing complex properties, we have to know the type with which type we
  * are working. According to the type, we can cast this object to CObject<type> 
  * to get more functionality.
- *
- * With this interface, we get all property names, get the propery value types,
- * get property count and finally cast it to CObject.
  */
 class IProperty
 {
 typedef std::list<IObserver*> ObserverList;
 
 protected:
- Object* 	  obj;			/*< Xpdf object */
- ObserverList observers;	/*< List of observers */
-
+ Object* 	  obj;			/**< Xpdf object. */
+ ObserverList observers;	/**< List of observers. */
+ IndiRef 	  ref;			/**< Object's pdf id and generation number. */
   
 protected:	
+
   /**
    * Default constructor. We suppose that obj will be(was) set by CObject class.
    */
-  IProperty () {printDbg (0,"IProperty () constructor.");};
+  IProperty () : obj(NULL) {printDbg (0,"IProperty () constructor.");};
   
   /**
    * @param o Xpdf object.
    */
-  IProperty (Object* o): obj(o) 
+  IProperty (Object* o,IndiRef& _ref): obj(o),ref(_ref) 
   { 
 	assert (NULL != o);
   	assert (obj->getType() != objCmd);
 	assert (obj->getType() != objEOF);
 	assert (obj->getType() != objNone);
 	assert (obj->getType() != objError);
-	printDbg (0,"IProperty (Obj) constructor."); 
+	printDbg (0,"IProperty constructor."); 
   };
 
 public:
@@ -190,6 +149,7 @@ public:
 	return dynamic_cast<T*>(this);
   }
 
+  
   /** 
    * Returns type of object. 
    *
@@ -205,6 +165,33 @@ public:
 	return static_cast<PropertyType>(obj->getType());
   };
 
+  
+  /**
+   * Returns object's identification number. If it is an inline object
+   * returns id of parent object.
+   *
+   * @return Indirect identification number and generation number.
+   */
+  const IndiRef* getIndiRef () const {return &ref;};
+
+  
+ /**
+  * Set object identification number and generation number.
+  *
+  * @param _r Indirect reference id and generation number.
+  */
+ void setIndiRef (IndiRef* _r) {ref = *_r;};
+
+ 
+ /**
+  * Set object identification number and generation number.
+  *
+  * @param n Object's id.
+  * @param g Object's generation number.
+  */
+  //void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
+
+  
   /**
    * When destroying IProperty, CObject associated with this IProperty (should be?) 
    * also destroyed.
@@ -218,14 +205,14 @@ public:
    *
    * @param observer Observer beeing attached.
    */
-  virtual void registerObserver (IObserver* o) {assert(NULL != o); observers.push_back (o);}
+  void registerObserver (IObserver* o) {assert(NULL != o); observers.push_back (o);}
   
   /**
    * Detaches an observer.
    * 
    * @param observer Observer beeing detached.
    */
-  virtual void unregisterObserver (IObserver* o)
+  void unregisterObserver (IObserver* o)
   {
 	assert(NULL != o);
 	ObserverList::iterator it = find (observers.begin (), observers.end(),o);
@@ -233,11 +220,6 @@ public:
 			observers.erase (it);
   };
   
-  /**
-   * Notifies all observers about a change.
-   */
-  virtual void notifyObservers () = 0;
-
 }; /* class IProperty */
 
 
