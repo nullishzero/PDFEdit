@@ -114,18 +114,32 @@ protected:
  Object* 	  obj;			/**< Xpdf object. */
  ObserverList observers;	/**< List of observers. */
  IndiRef 	  ref;			/**< Object's pdf id and generation number. */
-  
+ bool		  isDrect;		/**< Set if it is a direct object. */
+
+private:
+ 	/**
+	 * Copy constructor
+	 */
+ 	IProperty (const IProperty&) {};
+
 protected:	
 
   /**
    * Default constructor. We suppose that obj will be(was) set by CObject class.
    */
-  IProperty () : obj(NULL) {printDbg (0,"IProperty () constructor.");};
+  IProperty () : obj(NULL), isDrect(true)
+  {
+	printDbg (0,"IProperty () constructor.");
+
+	ref.num = 0;
+	ref.gen = 0;
+  };
   
   /**
    * @param o Xpdf object.
    */
-  IProperty (Object* o,IndiRef& _ref): obj(o),ref(_ref) 
+  explicit
+  IProperty (Object* o, bool _isDirect): obj(o), isDrect(_isDirect)
   { 
 	assert (NULL != o);
   	assert (obj->getType() != objCmd);
@@ -133,6 +147,9 @@ protected:
 	assert (obj->getType() != objNone);
 	assert (obj->getType() != objError);
 	printDbg (0,"IProperty constructor."); 
+
+	ref.num = 0;
+	ref.gen = 0;
   };
 
 public:
@@ -189,7 +206,32 @@ public:
   * @param n Object's id.
   * @param g Object's generation number.
   */
-  //void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
+  void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
+
+  
+  /**
+   * Set whether this object is direct or not.
+   *
+   * @param isDirect	This object is direct object.
+   */
+  void setIsDirect (bool _isDirect) {isDrect = _isDirect;};
+
+  /**
+   * Return whether this object is direct or not. This is
+   * crucial when deallocating objects. A direct object can
+   * be destroyed at will. 
+   * 
+   * @return True if this object is a direct one.
+   */
+  bool isDirect () {return isDrect;};
+  
+
+  /**
+   * Indicate that you do not want to use this object again.
+   * 
+   * If it is an indirect object, we have to notify CXref.
+   */
+  virtual void release () = 0;
 
   
   /**
@@ -197,7 +239,6 @@ public:
    * also destroyed.
    */
   virtual ~IProperty () {};
-
 
 public:
   /**

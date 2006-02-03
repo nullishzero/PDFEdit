@@ -13,17 +13,10 @@
 #ifndef COBJECT_H
 #define COBJECT_H
 
-#include <vector>
-#include <list>
-#include <map>
 #include <string>
 #include <iostream>
-#include <sstream>
 
-//IProperty
 #include "debug.h"
-#include "observer.h"
-#include "exceptions.h"
 #include "iproperty.h"
 
 
@@ -40,17 +33,57 @@ using namespace std;
  * If someone tries to use unsupported type (pCmd,....), she should get compile error
  * because PropertyTrait<> has no body.
  */
-template<PropertyType T> class PropertyTrait; 
-template<> class PropertyTrait<pNull>	{public: typedef NullType 		writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pBool>	{public: typedef const bool		writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pInt>	{public: typedef const int		writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pReal>	{public: typedef const double 	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pString> {public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pName>	{public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pArray>	{public: typedef const string 	writeType; typedef const unsigned int 	PropertyId;};
-template<> class PropertyTrait<pStream> {public: typedef const string 	writeType; typedef const NullType 	PropertyId;};
-template<> class PropertyTrait<pDict>	{public: typedef const string 	writeType; typedef const string 	PropertyId;};
-template<> class PropertyTrait<pRef> 	{public: typedef const string	writeType; typedef const NullType	PropertyId;};
+template<PropertyType T> struct PropertyTrait; 
+template<> struct PropertyTrait<pNull>
+{	public: 
+		typedef NullType		writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pBool>
+{	public: 
+		typedef const bool		writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pInt>	
+{	public: 
+		typedef const int		writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pReal>	
+{	public: 
+		typedef const double 	writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pString> 
+{	public: 
+		typedef const string& 	writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pName>	
+{	public: 
+		typedef const string& 	writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pArray>	
+{	public: 
+		typedef const string& 	writeType; 
+		typedef const unsigned int 	PropertyId;
+};
+template<> struct PropertyTrait<pStream> 
+{	public: 
+		typedef const string& 	writeType; 
+		typedef const NullType 	PropertyId;
+};
+template<> struct PropertyTrait<pDict>	
+{	public: 
+		typedef const string& 	writeType; 
+		typedef const string& 	PropertyId;
+};
+template<> struct PropertyTrait<pRef> 	
+{	public: 
+		typedef const IndiRef& 	writeType; 
+		typedef const NullType	PropertyId;
+};
 
 
 
@@ -66,7 +99,7 @@ typedef string			PropertyName;
  * Forward declarations
  */
 class CPdf;
-
+class Observer;
 
 
 /** 
@@ -107,27 +140,44 @@ private:
 	/** This object belongs to this pdf. */	
 	CPdf* pdf;
 	
+private:
+	/**
+	 * Copy constructor
+	 */
+	CObject (const CObject&) {};
 	
-public:
+protected:
+	/**
+	 * Constructor. Only kernel can call this constructor
+	 *
+	 * @param p		Pointer to pdf object. If we create CPdf, p will be NULL so use CObject::this pointer.
+	 * @param o		Xpdf object. 
+	 * @param ref	Indirect id and gen id.
+	 * @param isDirect	Indicates whether this is a direct/indirect object.
+	 * @param objTp	Type of this object. Indicates whether it is a special object (CPdf,CPage,..) or not.
+	 */
+	CObject (CPdf* p,Object* o,IndiRef& ref,bool isDirect, SpecialObjectType objTp = sNone);
+
+
 	/**
 	 * Constructor. If no object is given, one is created.
 	 *
-	 * @param pdf	Pointer to pdf object.
+	 * @param p		Pointer to pdf object.
 	 * @param objTp	Type of this object. Indicates whether it is a special object (CPdf,CPage,..) or not.
 	 */
 	CObject (CPdf* p,SpecialObjectType objTp = sNone);
 
-	
+public:	
+
 	/**
-	 * Constructor.
+	 * Public constructor. Can be used to creted direct/indirect objects.
 	 *
-	 * @param pdf	Pointer to pdf object. If we create CPdf, p will be NULL so use CObject::this pointer.
-	 * @param o		Xpdf object. 
-	 * @param ref	Indirect reference numbers. When NULL we do not save mapping, because it is a direct object.
-	 * 				Caller will handle the mapping.
-	 * @param objTp	Type of this object. Indicates whether it is a special object (CPdf,CPage,..) or not.
+	 * @param p		Pointer to pdf object in which this object will exist.
+	 * @param ip	If NULL an indirect object will be created. Otherwise, ip will 
+	 * 				point to an existing IProperty where the direct object will be placed by
+	 * 				a call to e.g. addProperty().
 	 */
-	CObject (CPdf* p,Object* o,IndiRef* ref = NULL,SpecialObjectType objTp = sNone);
+	CObject (CPdf* p, IProperty* ip = NULL);
 
 	
 	/**
@@ -156,9 +206,11 @@ public:
 	 * We can define how best we want to represent an pdf object. E.g.
 	 * we can represent a dictionary with list<pair<string,string> > etc...
 	 *
+	 * <exception cref="ObjBadValueE "/> When a value cannot be set due to bad value e.g. in complex types.
+	 *
 	 * @param val	Value that will be set.
 	 */
-	void writeValue (WriteType* val);
+	void writeValue (WriteType val);
   
 	
 	/**
@@ -195,14 +247,21 @@ public:
 	 * Returns pointer to derived object. 
 	 */
 	template<typename T>
-	T* getSpecialObjectPtr () const {return dynamic_cast<T*>(this);}
+	T* getSpecialObjectPtr () const
+	{
+		STATIC_CHECK(sizeof(T)>=sizeof(CObject<Tp>),DESTINATION_TYPE_TOO_NARROW); 
+		return dynamic_cast<T*>(this);
+	}
 
 	
 	/**
-	 * Release
+	 * Indicate that you do not want to use this object again.
+	 * 
+	 * If it is an indirect object, we have to notify CXref.
 	 */
-  	/*******/
+  	virtual void release ();
 	
+
 protected:
     /**
      * Notify all observers that a property has changed.
@@ -212,7 +271,8 @@ protected:
 	/**
 	 * Destructor
 	 */
-	~CObject ()	{};
+
+/*DEBUG*/public:	~CObject ()	{};
 
 
 	//
@@ -224,7 +284,7 @@ public:
      *
      * @return Property count.
      */
-    PropertyCount getPropertyCount ();
+    PropertyCount getPropertyCount () const;
  
 
 	/**
@@ -247,7 +307,10 @@ public:
      * @param name Name of the property
      */
     template <typename T>
-    T getPropertyValue (typename PropertyTrait<Tp>::PropertyId& name) const;
+    T getPropertyValue (typename PropertyTrait<Tp>::PropertyId name) const;
+	//
+	// Be carefull to inherit id's from parent
+	//
 
 	
 	/**
@@ -270,7 +333,7 @@ public:
 	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
 	 */
 	template<typename T>
-	void setPropertyValue (typename PropertyTrait<Tp>::PropertyId& /*name*/, const T& /*val*/)
+	void setPropertyValue (typename PropertyTrait<Tp>::PropertyId /*name*/, const T& /*val*/)
 	{
 		//
 		// Find the name in Object obj dictionary and change the value (type) of simple Object
@@ -303,7 +366,7 @@ public:
 
 
 private:
-	void createObj () const;
+	//void createObj () const;
 
 };
 

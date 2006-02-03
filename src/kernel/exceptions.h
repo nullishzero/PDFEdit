@@ -10,15 +10,19 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-/**
- *
- */
-class Exception {};
+#include <exception>
+
+
 
 /**
- *
+ * Exceptions occurs when (x)pdf object has incorrect type.
  */
-class ObjBadTypeE : public Exception {};
+struct ObjBadTypeE : std::exception
+{
+	char const* what() const throw() {return "(x)pdf object has bad type.";}
+};
+
+
 
 
 

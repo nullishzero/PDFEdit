@@ -10,13 +10,17 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
-#include "iproperty.h"
+
+/**
+ * Forward definitions
+ */
+class IProperty;
 
 
 //=====================================================================================
 namespace pdfobjects
 {
-
+	
 /** 
  * Observer interface.
  * When a property is changed, observer will be 

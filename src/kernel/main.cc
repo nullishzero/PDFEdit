@@ -13,6 +13,8 @@
 #include "cpdfI.h"
 
 
+
+
 using namespace std;
 using namespace pdfobjects;
 
@@ -59,8 +61,8 @@ Object* obj;
 //
 // Our stuff here
 //
-CPdf pdf;
-string str;
+//CPdf pdf;
+//string str;
 /*XRef* xref = doc->getXRef();
 
 cout << "Xref: " << (unsigned int) xref << endl;
@@ -82,6 +84,19 @@ str = "";
 */
 
 
+//======== test 4
+
+//Object* o = new Object ();
+//o->initBool (gFalse);
+
+//CBoolean cb (NULL);
+//CRef cr (NULL);
+
+//cr.release ();
+
+//cb.writeValue (false);
+
+// segmenation fault, Object is not defined
 
 return 0;
 }
