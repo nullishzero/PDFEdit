@@ -1,8 +1,20 @@
+/*
+ * $RCSfile$
+ *
+ * $log: $
+ *
+ */
+
 //========================================================================
 //
 // XRef.h
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
+//
+// Changes:
+// Michal Hocko - all public methods are virtual and private fields are
+//                protected (we need to create transparent wrapper/decorator
+//                to this class)
 //
 //========================================================================
 
@@ -46,57 +58,57 @@ public:
   XRef(BaseStream *strA);
 
   // Destructor.
-  ~XRef();
+  virtual ~XRef();
 
   // Is xref table valid?
-  GBool isOk() { return ok; }
+  virtual GBool isOk() { return ok; }
 
   // Get the error code (if isOk() returns false).
-  int getErrorCode() { return errCode; }
+  virtual int getErrorCode() { return errCode; }
 
   // Set the encryption parameters.
-  void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
+  virtual void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
 		     Guchar *fileKeyA, int keyLengthA, int encVersionA);
 
   // Is the file encrypted?
-  GBool isEncrypted() { return encrypted; }
+  virtual GBool isEncrypted() { return encrypted; }
 
   // Check various permissions.
-  GBool okToPrint(GBool ignoreOwnerPW = gFalse);
-  GBool okToChange(GBool ignoreOwnerPW = gFalse);
-  GBool okToCopy(GBool ignoreOwnerPW = gFalse);
-  GBool okToAddNotes(GBool ignoreOwnerPW = gFalse);
+  virtual GBool okToPrint(GBool ignoreOwnerPW = gFalse);
+  virtual GBool okToChange(GBool ignoreOwnerPW = gFalse);
+  virtual GBool okToCopy(GBool ignoreOwnerPW = gFalse);
+  virtual GBool okToAddNotes(GBool ignoreOwnerPW = gFalse);
 
   // Get catalog object.
-  Object *getCatalog(Object *obj) { return fetch(rootNum, rootGen, obj); }
+  virtual Object *getCatalog(Object *obj) { return fetch(rootNum, rootGen, obj); }
 
   // Fetch an indirect reference.
-  Object *fetch(int num, int gen, Object *obj);
+  virtual Object *fetch(int num, int gen, Object *obj);
 
   // Return the document's Info dictionary (if any).
-  Object *getDocInfo(Object *obj);
-  Object *getDocInfoNF(Object *obj);
+  virtual Object *getDocInfo(Object *obj);
+  virtual Object *getDocInfoNF(Object *obj);
 
   // Return the number of objects in the xref table.
-  int getNumObjects() { return size; }
+  virtual int getNumObjects() { return size; }
 
   // Return the offset of the last xref table.
-  Guint getLastXRefPos() { return lastXRefPos; }
+  virtual Guint getLastXRefPos() { return lastXRefPos; }
 
   // Return the catalog object reference.
-  int getRootNum() { return rootNum; }
-  int getRootGen() { return rootGen; }
+  virtual int getRootNum() { return rootNum; }
+  virtual int getRootGen() { return rootGen; }
 
   // Get end position for a stream in a damaged file.
   // Returns false if unknown or file is not damaged.
-  GBool getStreamEnd(Guint streamStart, Guint *streamEnd);
+  virtual GBool getStreamEnd(Guint streamStart, Guint *streamEnd);
 
   // Direct access.
-  int getSize() { return size; }
-  XRefEntry *getEntry(int i) { return &entries[i]; }
-  Object *getTrailerDict() { return &trailerDict; }
+  virtual int getSize() { return size; }
+  virtual XRefEntry *getEntry(int i) { return &entries[i]; }
+  virtual Object *getTrailerDict() { return &trailerDict; }
 
-private:
+protected:
 
   BaseStream *str;		// input stream
   Guint start;			// offset in file (to allow for garbage
