@@ -1,8 +1,18 @@
+/*
+ * $RCSfile$
+ *
+ * $log: $
+ *
+ */
+
 //========================================================================
 //
 // Object.h
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
+//
+// Changes:
+// Michal Hocko   - public clone method for deep copy of object
 //
 //========================================================================
 
@@ -80,6 +90,9 @@ public:
   Object():
     type(objNone) {}
 
+  // Deep copier
+  Object * clone()const;
+  
   // Initialize an object.
   Object *initBool(GBool boolnA)
     { initObj(objBool); booln = boolnA; return this; }

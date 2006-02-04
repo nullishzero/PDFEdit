@@ -1,8 +1,18 @@
+/*
+ * $RCSfile$
+ *
+ * $log: $
+ *
+ */
+
 //========================================================================
 //
 // Dict.h
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
+//
+// Changes: 
+// Michal Hocko   - public clone method for deep copy of Dict
 //
 //========================================================================
 
@@ -35,6 +45,9 @@ public:
   // Destructor.
   ~Dict();
 
+  // deep copier
+  Dict * clone()const;
+  
   // Reference counting.
   int incRef() { return ++ref; }
   int decRef() { return --ref; }

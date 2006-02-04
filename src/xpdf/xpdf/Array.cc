@@ -1,8 +1,18 @@
+/*
+ * $RCSfile$
+ *
+ * $log: $
+ *
+ */
+
 //========================================================================
 //
 // Array.cc
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
+//
+// Changes:
+// Michal Hocko   - public clone method for deep copy of Array
 //
 //========================================================================
 
@@ -35,6 +45,23 @@ Array::~Array() {
   for (i = 0; i < length; ++i)
     elems[i].free();
   gfree(elems);
+}
+
+/** Deep copier.
+ *
+ * Creates new Array instance with the same (deep) content.
+ * Uses clone method to each element.
+ */
+Array * Array::clone()const
+{
+   Array * result=new Array(xref);
+
+   // initialize 
+   result->size=size;
+   result->length=length;
+   result->elems=(Object *)greallocn(elems, size, sizeof(Object));
+   for(int i=0; i < length; i++)
+      result->elems[i]=*elems[i].clone();
 }
 
 void Array::add(Object *elem) {

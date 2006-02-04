@@ -1,8 +1,18 @@
+/*
+ * $RCSfile$
+ *
+ * $log: $
+ *
+ */
+
 //========================================================================
 //
 // Object.cc
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
+//
+// Changes:
+// Michal Hocko   - public clone method for deep copy of object
 //
 //========================================================================
 
@@ -45,6 +55,70 @@ char *objTypeNames[numObjTypes] = {
 int Object::numAlloc[numObjTypes] =
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
+
+/** Deep copier.
+ *
+ * Creates new Object instance with the same (deep) content.
+ * Changes made to the returned object takes no effect to this
+ * instanve.
+ * <br>
+ * Type specific behaviour:
+ * <ul>
+ * <li>stream - figure out
+ * </ul>
+ *
+ */
+Object * Object::clone()const
+{
+   Object * result=new Object();
+
+   // initializes type
+   result->type = this->type;
+   
+   // value depends on type
+   switch(result->type)
+   {
+      case objBool:
+         result->booln=booln;
+         break;
+      case objInt:
+         result->intg=intg;
+         break;
+      case objReal:
+         result->real=real;
+         break;
+      case objString:
+         result->string=new GString(string);
+         break;
+      case objName:
+         result->name=strdup(name);
+         break;
+      case objArray:
+         result->array=array->clone();
+         break;
+      case objDict:
+         result->dict=dict->clone();
+         break;
+      case objStream:
+         // TODO implement
+         break;
+      case objRef:
+         result->ref=ref;
+         break;
+      case objCmd:
+         result->cmd=strdup(cmd);
+         break;
+
+      // special object types with no value to initialize
+      case objNull:
+      case objError:
+      case objEOF:
+      case objNone:
+         break;
+   }
+
+   return result;
+}
 
 Object *Object::initArray(XRef *xref) {
   initObj(objArray);

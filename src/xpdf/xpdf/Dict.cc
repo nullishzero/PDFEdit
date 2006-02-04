@@ -1,8 +1,19 @@
+/*
+ * $RCSfile$
+ *
+ * $log: $
+ *
+ */
+
 //========================================================================
 //
 // Dict.cc
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
+//
+//
+// Changes: 
+// Michal Hocko   - public clone method for deep copy of Dict
 //
 //========================================================================
 
@@ -38,6 +49,29 @@ Dict::~Dict() {
     entries[i].val.free();
   }
   gfree(entries);
+}
+
+
+/** Deep copier.
+ *
+ * Creates new Dict instance with the same (deep) content.
+ * Uses clone method for each element.
+ */
+Dict * Dict::clone()const
+{
+   Dict * result=new Dict(xref);
+
+   // initializes
+   result->size=size;
+   result->length=length;
+   result->entries=(DictEntry *)greallocn(entries, size, sizeof(DictEntry));
+   for(int i=0; i < length; i++)
+   {
+      result->entries[i].key=strdup(entries[i].key);   
+      result->entries[i].val=*entries[i].val.clone();
+   }
+
+   return result;
 }
 
 void Dict::add(char *key, Object *val) {
