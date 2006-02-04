@@ -6,7 +6,7 @@
  *       Revision:  none
  *          Author:  jmisutka (06/01/19), 
  * 			
- * 			2006/01/29 added CPdf here, because of the recursive include problem + templates
+ *
  * =====================================================================================
  */
 
@@ -133,10 +133,8 @@ public:
 	typedef typename PropertyTrait<Tp>::writeType WriteType;
 		
 private:
-	
 	/** Type indicating whether this object is a special object, like Cpdf, CAnnotation... */
 	SpecialObjectType specialObjectType;
-
 	/** This object belongs to this pdf. */	
 	CPdf* pdf;
 	
@@ -187,7 +185,7 @@ public:
 	 * 				of current object.
 	 */
 	void getStringRepresentation (string& str) const;
-	friend void objToString (const Object* o,string& str);
+	//friend void objToString (const Object* o,string& str);
 	
 	
 	/**

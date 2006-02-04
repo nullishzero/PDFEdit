@@ -27,6 +27,151 @@ namespace pdfobjects
 {
 
 //
+// General object functions
+//
+namespace {
+
+/**
+ * Returns object in string representation.
+ */
+void
+objToString (Object* /*obj*/,string& /*str*/)
+{
+/*  assert (NULL != obj);
+  printDbg (0,"objToString(" << (unsigned int)obj << ")");
+  printDbg (0,"\tobjType = " << obj->getTypeName() );
+
+  ostringstream oss;
+  Object o;
+  int i;
+
+  switch (obj->getType()) 
+  {
+  
+  case objBool:
+    oss << ((obj->getBool()) ? "true" : "false");
+    break;
+  
+  case objInt:
+    oss << obj->getInt();
+    break;
+  
+  case objReal:
+    oss << obj->getReal ();
+    break;
+  
+  case objString:
+    oss << "("  << obj->getString()->getCString() << ")";
+    break;
+  
+  case objName:
+    oss << "/" << obj->getName();
+    break;
+  
+  case objNull:
+    oss << "null";
+    break;
+  
+  case objArray:
+    oss << "[";
+	for (i = 0; i < obj->arrayGetLength(); ++i) 
+	{
+      if (i > 0)
+		oss << " ";
+      obj->arrayGetNF (i,&o);
+      string tmp;
+	  CPdf::objToString (&o,tmp);
+	  oss << tmp;
+      o.free();
+    }
+    oss << "]";
+    break;
+  
+  case objDict:
+    oss << "<<";
+    for (i = 0; i <obj-> dictGetLength(); ++i) 
+	{
+      oss << " /" << obj->dictGetKey(i) << " ";
+      obj->dictGetValNF(i, &o);
+	  string tmp;
+	  CPdf::objToString (&o,tmp);
+	  oss << tmp;
+      o.free();
+    }
+    oss << " >>";
+    break;
+  
+  case objStream:
+    oss << "<stream>";
+    break;
+  
+  case objRef:
+    oss << obj->getRefNum() << " " << obj->getRefGen() << " R";
+    break;
+  
+  case objCmd:
+  case objError:
+  case objEOF:
+  case objNone:
+  default:
+	assert (false);	
+    break;
+  }
+
+  // convert oss to string
+  str = oss.str ();
+*/
+}
+
+
+	/**
+	 * Get all objects that are "in" an object with recursion
+	 * up to level 1. That means just direct descendats.
+	 *
+	 * @param o		xpdf Object.
+	 * @param store storage that implements push_back() function.
+	 */
+	template <typename Storage>
+	void getAllXpdfObjects (const Object& obj, Storage store)
+	{
+		assert (objCmd!=obj.getType());
+		assert (objError!=obj.getType());
+		assert (objEOF!=obj.getType());
+		assert (objNone!=obj.getType());
+		
+		switch (obj.getType())
+		{
+			case objArray:
+				int size = obj.arrayGetLength ();
+				for (int i = 0; i < size; i++)
+				{
+					//store.push_back (obj->
+				}
+						
+				break;
+			
+			case objDict:
+				break;
+
+			case objStream:
+				assert (!"not implemented yet...");
+				break;
+
+			case objRef:
+				assert (!"not implemented yet...");
+				break;
+
+			default:	// Null, Bool, Int, Real, String, Name
+				return;
+				break;
+		}	
+	}
+
+};
+
+
+		
+//
 // WriteProcessors
 //
 // We know that Storage is xpdf Object and value type depends on each writer type
@@ -311,29 +456,30 @@ CObject<Tp>::writeValue (WriteType val)
 //
 // Just a hint that we can free this object
 //
+// This is a generic function for all Simple Types
+//
 template<PropertyType Tp>
 void
 CObject<Tp>::release()
 {
+	assert (NULL != obj);
+	if (IProperty::isChanged ())
+		{printDbg (1,"Warning: CObject::release(). Object has been changed, but was not saved.");}
 	printDbg (0,"release()");
 
+	if (IProperty::isDirect ())
+	{	//	
+		// This is a simple direct object, we can free it recursivly if complex
+		// 		
+		//processObjectFamily (IProperty::obj,ObjectDeleteProcessor());
+			
+	}else
+	{
+		//
+		// TODO: This is a simple indirect object, what to do?
+		//
+	}
 	
-};
-
-
-template<>
-void
-CObject<pRef>::release()
-{
-	cout << "pRef";;
-};
-
-
-template<>
-void
-CObject<pDict>::release()
-{
-	cout << "pDict:";;
 };
 
 

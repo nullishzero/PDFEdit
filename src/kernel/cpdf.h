@@ -21,6 +21,7 @@
 namespace pdfobjects {
 
 
+
 //
 // Mapping between (x)pdf Object <--> IProperty
 //
@@ -29,30 +30,48 @@ namespace
 	/**
 	 * Comparator class for two mapped items.
 	 */
-	class IdComparator
+	class ObjComparator
 	{
 	public:
-		bool operator() (const IndiRef one, const IndiRef two) const
-		{
-				if (one.num == two.num)
-					return (one.gen < two.gen);
-				else
-					return (one.num < two.num);
+		bool operator() (const Object* one, const Object* two) const
+		{// one < two -- true,     one >= two -- false
+				return ((unsigned int)one < (unsigned int)two);
 		};
 	};	
 
-	typedef map<const IndiRef,const IProperty*,IdComparator> Mapping;
+  /**
+   * Mapping between (x)pdf Object <--> IProperty
+   *
+   * We have to know which IProperty is associated with an Object.
+   * We use this when implementing CObject::release (), CObject::~CObject.
+   * 
+   * This is because (x)pdf Object can traverse deeper in its nesting simply
+   * by looking at Object pointers. We use Object to hold information about 
+   * our properties because it has been well tested. 
+   * In spite of its very non-object implementation, we have decided 
+   * to use it because of its tremendous functionality. So we have to 
+   * make the mapping between IProperty and Object by ourselves.
+   * 
+   * REMARK:
+   * We can make this mapping simply with pointers, because we know
+   * that no other can destroy, reallocate our objects, just CObject and
+   * its children. CXref and/or GUI/CUI are not permitted to do this.
+   */
+  typedef map<const Object*,const IProperty*, ObjComparator> Mapping;
+
 };
+		
+
 		
 
 /**
  * CPdf special object.
  * 
- * TODO: many things, right now mapping is finished because Raw CObject needs it...
+ * TODO: many things. Right now mapping is finished because Raw CObject needs it...
  */
 class CPdf : public CDict
 {
-
+		
 private:
 	/** Mapping between Object <--> IProperty*. It is necessary when accessing indirect objects. */
 	Mapping mapping;
@@ -69,22 +88,21 @@ public:
 
 private:
 	/**
-	 * Returns IProperty associated with (x)pdf object's id and gen id, if any.
+	 * Returns IProperty associated with (x)pdf object if any.
 	 *
-	 * @param id	Identification number.
-	 * @param genId Generation number.
+	 * @param  o    (x)pdf object.
 	 * @return Null if there is no mapping, IProperty* otherwise.
 	 */
-	IProperty* getExistingProperty (const IndiRef* ref) const;
+	IProperty* getExistingProperty (const Object* o) const;
 	
 
 	/**
-	 * Saves relation between (x)pdf object(its id and gen id) and IProperty*. 
+	 * Saves relation between (x)pdf object and IProperty*. 
 	 *
-	 * @param n	(x)pdf object id.
-	 * @param g (x)pdf object gen id.
+	 * @param o	 (x)pdf object.
+	 * @param ip IProperty that will be mapped to Object o.
 	 */
-	void setPropertyMapping (const IndiRef* ref, const IProperty* ip);
+	void setPropertyMapping (const Object* o, const IProperty* ip);
 
 	
 public:
@@ -92,10 +110,6 @@ public:
 	//CXref* getXref() {return xref;};
 
 
-private:
-	/** Returns string representation of (x)pdf object. */
-	static void objToString (Object* o,string& str);
-	
 public:
  /** Vytvori vnutornu reprezentaciu pdf (pre pristup k objektom sa bude
   uplatnovat mode - READ_ONLY, READ_WRITE).*/

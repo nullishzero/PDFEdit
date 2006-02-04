@@ -114,7 +114,10 @@ protected:
  Object* 	  obj;			/**< Xpdf object. */
  ObserverList observers;	/**< List of observers. */
  IndiRef 	  ref;			/**< Object's pdf id and generation number. */
- bool		  isDrect;		/**< Set if it is a direct object. */
+ bool		  isDrect;		/**< Set, if this object is a direct object. */
+
+protected:
+ bool		  isChngd;		/**< DEBUGGING purposes: Set, if this object has been changed but not saved. */
 
 private:
  	/**
@@ -127,7 +130,7 @@ protected:
   /**
    * Default constructor. We suppose that obj will be(was) set by CObject class.
    */
-  IProperty () : obj(NULL), isDrect(true)
+  IProperty () : obj(NULL), isDrect(true), isChngd (false)
   {
 	printDbg (0,"IProperty () constructor.");
 
@@ -139,7 +142,7 @@ protected:
    * @param o Xpdf object.
    */
   explicit
-  IProperty (Object* o, bool _isDirect): obj(o), isDrect(_isDirect)
+  IProperty (Object* o, bool _isDirect): obj(o), isDrect(_isDirect), isChngd (false)
   { 
 	assert (NULL != o);
   	assert (obj->getType() != objCmd);
@@ -152,38 +155,23 @@ protected:
 	ref.gen = 0;
   };
 
-public:
-  
-  /** 
-   * Returns pointer to derived object. 
-   *
-   * @return Object casted to desired type.
-   */
-  template<typename T>
-  T* getCObjectPtr () const
-  {
-	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
-	return dynamic_cast<T*>(this);
-  }
-
-  
-  /** 
-   * Returns type of object. 
-   *
-   * @return Type of this class.
-   */
-  PropertyType getCObjectType () const
-  {
-	assert (obj->getType() != objCmd);
-	assert (obj->getType() != objEOF);
-	assert (obj->getType() != objNone);
-	assert (obj->getType() != objError);
-	
-	return static_cast<PropertyType>(obj->getType());
-  };
-
-  
   /**
+   * Indicate that the object has changed.
+   *
+   * @param changed TRUE if the object has been changed, but not saved. 
+   * 				FALSE if the object is to be saved.
+   */
+  void setIsChanged (bool changed) {isChngd = changed;};
+
+  /**
+   * Indicate whether the object has been changed.
+   * 
+   * @preturn TRUE if the object has been changed, but not saved. FALSE otherwise.
+   */
+  bool isChanged () const {return isChngd;};
+
+
+ /**
    * Returns object's identification number. If it is an inline object
    * returns id of parent object.
    *
@@ -224,8 +212,39 @@ public:
    * @return True if this object is a direct one.
    */
   bool isDirect () {return isDrect;};
-  
 
+
+public:
+  
+  /** 
+   * Returns pointer to derived object. 
+   *
+   * @return Object casted to desired type.
+   */
+  template<typename T>
+  T* getCObjectPtr () const
+  {
+	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
+	return dynamic_cast<T*>(this);
+  }
+
+  
+  /** 
+   * Returns type of object. 
+   *
+   * @return Type of this class.
+   */
+  PropertyType getCObjectType () const
+  {
+	assert (obj->getType() != objCmd);
+	assert (obj->getType() != objEOF);
+	assert (obj->getType() != objNone);
+	assert (obj->getType() != objError);
+	
+	return static_cast<PropertyType>(obj->getType());
+  };
+
+  
   /**
    * Indicate that you do not want to use this object again.
    * 
