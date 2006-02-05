@@ -86,7 +86,7 @@ public:
 //  CPdf (filename,mode);
 
 
-private:
+public:
 	/**
 	 * Returns IProperty associated with (x)pdf object if any.
 	 *
@@ -94,7 +94,6 @@ private:
 	 * @return Null if there is no mapping, IProperty* otherwise.
 	 */
 	IProperty* getExistingProperty (const Object* o) const;
-	
 
 	/**
 	 * Saves relation between (x)pdf object and IProperty*. 

@@ -3,10 +3,16 @@
  *        Filename:  cobject.h
  *     Description:  Header file containing definition of IProperty and CObject classes.
  *         Created:  01/18/2006 
- *       Revision:  none
+ *        Revision:  none
  *          Author:  jmisutka (06/01/19), 
  * 			
+ * 			2006/01     constructor, getStringRepresentation, observer stuff, writeValue,
+ *			2006/02/04	started implementing release () function (not trivial)
+ *						implemented several easy functions for complex types
  *
+ *
+ *			 TODO:  start to test new features...
+ *			 		add/complete objStream, objRef support
  * =====================================================================================
  */
 
@@ -185,7 +191,6 @@ public:
 	 * 				of current object.
 	 */
 	void getStringRepresentation (string& str) const;
-	//friend void objToString (const Object* o,string& str);
 	
 	
 	/**
@@ -264,7 +269,7 @@ protected:
     /**
      * Notify all observers that a property has changed.
      */
-    void notifyObservers ();
+    inline void notifyObservers ();
  
 	/**
 	 * Destructor
@@ -274,26 +279,32 @@ protected:
 
 
 	//
+	//
 	// Specific features by Incomplete Instantiation
+	//
 	//
 public:
 	/** 
      * Returns property count.
+	 *
+	 * REMARK: Specific for pArray, pDict and pStream.
      *
      * @return Property count.
      */
-    PropertyCount getPropertyCount () const;
+    inline PropertyCount getPropertyCount () const;
  
 
 	/**
      * Inserts all property names to container supplied by caller. This container must support 
      * push_back() function.
+	 *
+	 * REMARK: Specific for pDict and pStream.
      *
      * @param container Container of string objects. STL vector,list,deque,... must implement 
      * pust_back() function.
      */
     template <typename T>
-    void getAllPropertyNames (T& container) const {};
+    inline void getAllPropertyNames (T& container) const;
 
 
 	/**
@@ -301,13 +312,16 @@ public:
 	 *
 	 * So f.e. when we want to access dicionary item, we use string representation, when array
 	 * we use integer.
+	 *
+	 * REMARK: Specific for pArray, pDict and pStream
    	 *
-     * @param name Name of the property
+     * @param 	name Name of the property
+	 * @return 	T	  That type which we want
      */
     template <typename T>
     T getPropertyValue (typename PropertyTrait<Tp>::PropertyId name) const;
 	//
-	// Be carefull to inherit id's from parent
+	// Be carefull to inherit id's from parent if we return IProperty
 	//
 
 	
@@ -362,9 +376,6 @@ public:
 	 */
 	void delProperty (typename PropertyTrait<Tp>::PropertyId /*id*/) {};
 
-
-private:
-	//void createObj () const;
 
 };
 

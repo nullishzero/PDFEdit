@@ -31,108 +31,110 @@ namespace pdfobjects
 //
 namespace {
 
-/**
- * Returns object in string representation.
- */
-void
-objToString (Object* /*obj*/,string& /*str*/)
-{
-/*  assert (NULL != obj);
-  printDbg (0,"objToString(" << (unsigned int)obj << ")");
-  printDbg (0,"\tobjType = " << obj->getTypeName() );
-
-  ostringstream oss;
-  Object o;
-  int i;
-
-  switch (obj->getType()) 
-  {
-  
-  case objBool:
-    oss << ((obj->getBool()) ? "true" : "false");
-    break;
-  
-  case objInt:
-    oss << obj->getInt();
-    break;
-  
-  case objReal:
-    oss << obj->getReal ();
-    break;
-  
-  case objString:
-    oss << "("  << obj->getString()->getCString() << ")";
-    break;
-  
-  case objName:
-    oss << "/" << obj->getName();
-    break;
-  
-  case objNull:
-    oss << "null";
-    break;
-  
-  case objArray:
-    oss << "[";
-	for (i = 0; i < obj->arrayGetLength(); ++i) 
+	/**
+	 * Returns object in string representation.
+	 */
+	void
+	objToString (Object* /*obj*/,string& /*str*/)
 	{
-      if (i > 0)
-		oss << " ";
-      obj->arrayGetNF (i,&o);
-      string tmp;
-	  CPdf::objToString (&o,tmp);
-	  oss << tmp;
-      o.free();
-    }
-    oss << "]";
-    break;
-  
-  case objDict:
-    oss << "<<";
-    for (i = 0; i <obj-> dictGetLength(); ++i) 
-	{
-      oss << " /" << obj->dictGetKey(i) << " ";
-      obj->dictGetValNF(i, &o);
-	  string tmp;
-	  CPdf::objToString (&o,tmp);
-	  oss << tmp;
-      o.free();
-    }
-    oss << " >>";
-    break;
-  
-  case objStream:
-    oss << "<stream>";
-    break;
-  
-  case objRef:
-    oss << obj->getRefNum() << " " << obj->getRefGen() << " R";
-    break;
-  
-  case objCmd:
-  case objError:
-  case objEOF:
-  case objNone:
-  default:
-	assert (false);	
-    break;
-  }
+	/* 	assert (NULL != obj);
+	  printDbg (0,"objToString(" << (unsigned int)obj << ")");
+	  printDbg (0,"\tobjType = " << obj->getTypeName() );
+	
+	  ostringstream oss;
+	  Object o;
+	  int i;
 
-  // convert oss to string
-  str = oss.str ();
-*/
-}
+	  switch (obj->getType()) 
+	  {
+	  
+	  case objBool:
+	    oss << ((obj->getBool()) ? "true" : "false");
+	    break;
+  
+	  case objInt:
+	    oss << obj->getInt();
+	    break;
+  
+	  case objReal:
+	    oss << obj->getReal ();
+	    break;
+  
+	  case objString:
+	    oss << "("  << obj->getString()->getCString() << ")";
+	    break;
+  
+	  case objName:
+	    oss << "/" << obj->getName();
+	    break;
+  
+	  case objNull:
+	    oss << "null";
+    	break;
+  
+	  case objArray:
+	    oss << "[";
+		for (i = 0; i < obj->arrayGetLength(); ++i) 
+			{
+	      if (i > 0)
+			oss << " ";
+	      obj->arrayGetNF (i,&o);
+	      string tmp;
+		  CPdf::objToString (&o,tmp);
+		  oss << tmp;
+	      o.free();
+    	}
+	    oss << "]";
+    	break;
+  
+	  case objDict:
+    	oss << "<<";
+	    for (i = 0; i <obj-> dictGetLength(); ++i) 
+		{
+	      oss << " /" << obj->dictGetKey(i) << " ";
+    	  obj->dictGetValNF(i, &o);
+		  string tmp;
+		  CPdf::objToString (&o,tmp);
+		  oss << tmp;
+	      o.free();
+    	}
+	    oss << " >>";
+    	break;
+  
+	  case objStream:
+    	oss << "<stream>";
+	    break;
+  
+	  case objRef:
+    	oss << obj->getRefNum() << " " << obj->getRefGen() << " R";
+	    break;
+  
+	  case objCmd:
+	  case objError:
+	  case objEOF:
+	  case objNone:
+	  default:
+		assert (false);	
+	    break;
+	  }
+
+	  // convert oss to string
+	  str = oss.str ();
+	*/
+	}
 
 
 	/**
 	 * Get all objects that are "in" an object with recursion
 	 * up to level 1. That means just direct descendats.
 	 *
+	 * REMARK: Object can't be const because of the superb xpdf implementation.
+	 *
 	 * @param o		xpdf Object.
 	 * @param store storage that implements push_back() function.
 	 */
 	template <typename Storage>
-	void getAllXpdfObjects (const Object& obj, Storage store)
+	void getAllXpdfObjects (Object& obj, Storage& /*store*/) 
 	{
 		assert (objCmd!=obj.getType());
 		assert (objError!=obj.getType());
@@ -142,15 +144,21 @@ objToString (Object* /*obj*/,string& /*str*/)
 		switch (obj.getType())
 		{
 			case objArray:
-				int size = obj.arrayGetLength ();
-				for (int i = 0; i < size; i++)
+			{	//int size = obj.arrayGetLength ();
+				//for (int i = 0; i < size; i++)
 				{
-					//store.push_back (obj->
+					//store.push_back (obj.getArray()->elems[i]);
 				}
-						
+			}	return;	
 				break;
 			
 			case objDict:
+			{	//int size = obj.dictGetLength ();
+				//for (int i = 0; i < size; i++)
+				{
+					//store.push_back (obj.getDict()->entries[i].val);
+				}
+			}	return;	
 				break;
 
 			case objStream:
@@ -165,6 +173,185 @@ objToString (Object* /*obj*/,string& /*str*/)
 				return;
 				break;
 		}	
+	}
+
+	/**
+	 * Performs Processor.operator() action on all supplied objects
+	 *
+	 * @param store 		Objects in a container. Iterator must be implemented.
+	 * @param objProcessor	Object processor.
+	 */
+	template<typename ObjectStorage, typename ObjectProcessor>
+	void
+	processObjectFamily (ObjectStorage& store, ObjectProcessor objProcessor)
+	{
+		//
+		// Perform an action on all objects
+		// 
+		for (typename ObjectStorage::iterator it = store.begin(); it != store.end(); it++)
+		{
+			objProcessor (*it);
+		}
+	}
+
+
+	/**
+	 * Empty check struct.
+	 */
+	struct NoCheck
+	{public: void operator() (Object*){};};
+	
+	/**
+	 * Direct object check struct.
+	 */
+	struct CheckDirectObject
+	{
+	public: 
+		void operator() (Object* obj)
+		{
+			switch (obj->getType())
+			{
+				case objDict:
+					//assert (0 == obj->getDict()->decRef());
+					//obj->getDict()->incRef();
+					break;
+						
+				case objArray:
+				//	assert (0 == obj->getArray()->decRef());
+				//	obj->getArray()->incRef();
+					break;
+						
+				case objStream:
+				//	assert (0 == obj->getStream()->decRef());
+				//	obj->getStream()->incRef();
+					break;
+						
+				default:
+					return;
+			}
+		};
+	};
+
+	
+	/**
+	 * Performs a Release() function on an IProperty obtained from Object.
+	 *
+	 * This is a specialization of Xpdf object processor with the purpose to
+	 * destroy these objects.
+	 *
+	 * REMARK: We have to be a bit careful because Object::free() is a recursive
+	 * function which destroys e.g. all members of Dict etc...
+	 *
+	 * THIS CAN LEAD TO MEMORY LEAKS. E.g. we want to destroy a direct object which is a 
+	 * dictionary and has reference counter set to > 1. Then it will be not deleted.
+	 *
+	 * We can make a checks, with a class passed to this struct as a template argument
+	 */
+	template<typename Check = NoCheck>
+	class ObjectDeleteProcessor
+	{
+	 private:
+		CPdf& pdf;
+		Check check;
+
+	 public:
+		ObjectDeleteProcessor (CPdf& _pdf) : pdf(_pdf) {};
+		
+		void operator() (Object* obj)
+		{
+			IProperty* ip = pdf.getExistingProperty (obj);
+			
+			//
+			// There is no IProperty associated with this obj so free it
+			// If complex, then it will be freed recursively
+			// 
+			if (NULL == ip)
+			{
+				// make a check if any
+				check (obj);	
+				// free it
+				obj->free ();
+			
+			}else
+			{
+				ip->release ();
+			}
+		};
+	};
+
+
+	/**
+	 * Free an object. We assume that all child objects (if any)
+	 * have been already freed.
+	 *
+	 * Copy & paste from Object.h
+	 * 
+	 * @param obj	Object to be freed.
+	 */
+	void
+	objectFree (Object* obj)
+	{
+		printDbg (1,"objectFree(" << (unsigned int)obj << ")");
+		std::string str;
+		objToString (obj,str); 
+		printDbg (1,"\t..." << str);
+		
+  		switch (obj->getType()) 
+		{
+		  
+		  case objString:
+		    //delete obj->string;
+			//obj->string = NULL;
+		    break;
+		 
+		  case objName:
+		    //gfree(name);
+		    break;
+
+		  case objArray:
+			//
+			// A bit of a hack. That means do not free any nested
+			// objects, we have already done this.
+			//
+			//obj->getArray()->length = 0;
+		    //delete obj->getArray();
+			//obj->array = NULL;
+		    break;
+			
+		  case objDict:
+ 			//
+			// Another xpdf hack. That means do not free any nested
+			// objects, we have already done this.
+			//
+			//for (i = 0; i < obj->getDict()->length; ++i) 
+			{
+			//	gfree(obj->getDict()->entries[i].key);
+			//	obj->getDict()->entries[i].key = NULL;
+			}
+			//obj->getDict()->length = 0;
+		    //delete obj->getDict();
+			//obj->dict = NULL;
+		    break;
+			
+		  case objStream:
+			//
+			// really Everything??
+			//
+			//for (i = 0; i < obj->getStream()->getDict()->length; ++i) 
+			{
+			//	gfree(obj->getStream()getDict()->entries[i].key);
+			//	obj->getStream()->getDict()->entries[i].key = NULL;
+			}
+		    //obj->getStream()->getDict()->length = 0;
+		    //delete obj->getStream()->getDict();
+			break;
+			
+		  default:
+		    break;
+		  }
+
+		// delete main obj
+		delete obj;
 	}
 
 };
@@ -314,7 +501,7 @@ CObject<Tp>::CObject (CPdf* p,SpecialObjectType objTp) : specialObjectType(objTp
 	//IProperty::setIndiRef (ref.num, ref.gen);
 	// Save the mapping, because we have created new indirect object
 	//pdf->setPropertyMapping (IProperty::getIndiRef(),this);
-};
+}
 
 
 //
@@ -351,7 +538,7 @@ CObject<Tp>::CObject (CPdf* p, Object* o, IndiRef& ref, bool isDirect, SpecialOb
 		IProperty::setIsDirect (false);
 	
 	}
-};
+}
 
 
 //
@@ -389,7 +576,7 @@ CObject<Tp>::CObject (CPdf* p, IProperty* ip)
 	}
 
 		
-};
+}
 
 
 
@@ -404,8 +591,8 @@ CObject<Tp>::getStringRepresentation (string& str) const
   assert (NULL != IProperty::obj);
   assert (obj->getType() == (ObjType)Tp);
   
-  CPdf::objToString (IProperty::obj,str);
-};
+  objToString (IProperty::obj,str);
+}
 
 
 
@@ -420,7 +607,7 @@ CObject<Tp>::notifyObservers ()
 
   for (; it != IProperty::observers.end(); it++)
       (*it)->notify (this);
-};
+}
 
 
 
@@ -433,7 +620,7 @@ void
 CObject<pNull>::writeValue (WriteType)
 {
 	STATIC_CHECK (false,INCORRECT_USE_OF_FUNCTION);		
-};
+}
 
 //
 // Write a value.
@@ -450,37 +637,119 @@ CObject<Tp>::writeValue (WriteType val)
 	// Write it with specific writer (functor) according to template parameter
 	wp (IProperty::obj,val);
 		
-};
+}
 
 
 //
 // Just a hint that we can free this object
 //
-// This is a generic function for all Simple Types
+// This is a generic function for all types
 //
 template<PropertyType Tp>
 void
 CObject<Tp>::release()
 {
-	assert (NULL != obj);
+	assert (NULL != IProperty::obj);
 	if (IProperty::isChanged ())
 		{printDbg (1,"Warning: CObject::release(). Object has been changed, but was not saved.");}
 	printDbg (0,"release()");
 
 	if (IProperty::isDirect ())
 	{	//	
-		// This is a simple direct object, we can free it recursivly if complex
+		// This is a simple direct object, we can free it recursively if complex
 		// 		
-		//processObjectFamily (IProperty::obj,ObjectDeleteProcessor());
+		std::vector<Object*> objects;
+		getAllXpdfObjects (*IProperty::obj, objects);
+		processObjectFamily (objects, ObjectDeleteProcessor<CheckDirectObject> (*pdf) );
+
+		// We have freed everything "below" this object, now free Object
+		objectFree (IProperty::obj);
+		//IProperty::obj == NULL;
+		
+		// At last, free this
+		delete this;
 			
 	}else
 	{
 		//
-		// TODO: This is a simple indirect object, what to do?
+		// TODO: This is an indirect object, what to do?
 		//
 	}
 	
-};
+}
+
+
+//
+// Generic function is disabled for now...
+//
+template<PropertyType Tp>
+PropertyCount
+CObject<Tp>::getPropertyCount () const
+{
+	STATIC_CHECK ( (pArray==Tp) || (Tp==pDict) || (Tp==pStream),
+					BAD_COBJECT_TYPE);
+	assert (!"Called getPropertyCount() on not supporting type...");
+	return 0;	
+}
+
+template<>
+PropertyCount
+CObject<pArray>::getPropertyCount () const
+{
+	return 0;//IProperty::obj->arrayGetLength();	
+}
+
+template<>
+PropertyCount
+CObject<pDict>::getPropertyCount () const
+{
+	return 0;//IProperty::obj->dictGetLength();	
+}
+
+template<>
+PropertyCount
+CObject<pStream>::getPropertyCount () const
+{
+	return 0;//return IProperty::obj->streamGetDict()->getLength ();
+}
+
+
+
+//
+// This is nor really a generic function, it is just for pDict 
+//
+template<PropertyType Tp>
+template<typename T>
+void
+CObject<Tp>::getAllPropertyNames (T& container) const
+{
+	STATIC_CHECK(Tp==pDict,BAD_COBJECT_TYPE);
+	assert (!"Called getAllPropertyNames() on not supporting type...");
+}
+
+
+template<>
+template<typename T>
+void
+CObject<pDict>::getAllPropertyNames (T& container) const
+{
+	assert (NULL != obj);
+	//int size = IProperty:: dictGetLength();
+	//for (int i = 0; i < size; i++)
+	{
+	//	container.push_back (string (obj->dictGetKey (i)) );
+	}
+	
+}
+
+
+
+
+
+
+
+
+
 
 
 
