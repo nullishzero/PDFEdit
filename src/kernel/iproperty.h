@@ -11,16 +11,14 @@
 #define _IPROPERTY_H_
 
 #include <vector>
-#include <list>
-#include <map>
 #include <string>
-#include <iostream>
 
 // xpdf
 #include <xpdf/Object.h>
 
 // Debug routine
 #include "utils/debug.h"
+#include "observer.h"
 
 
 
@@ -28,7 +26,6 @@
 
 namespace pdfobjects
 {
-using namespace std;
 /**
  * Null and empty types.
  */
@@ -36,30 +33,26 @@ class NullType {};
 struct EmptyType {};
 
 
-
-//
-// Forward declaration
-//
-class IObserver;
-
-
 /**
  * Enum describing the type of a property.
  */
 enum PropertyType 
 {
+		// Simple
 		pNull 	= objNull, 
 		pBool 	= objBool, 
 		pInt 	= objInt, 
 		pReal 	= objReal, 
 		pString = objString,
 		pName	= objName,
+		pRef	= objRef,
+		
+		// Complex
 		pArray	= objArray, 
 		pDict	= objDict, 
 		pStream	= objStream, 
-		pRef	= objRef,
 
-		// debug
+		// Debug
 		pOther	= objCmd,
 		pOther1 = objError,
 		pOther2 = objEOF,
@@ -70,10 +63,6 @@ enum PropertyType
  * Enum describing the type of a special object.
  */
 enum SpecialObjectType {sNone, sPdf, sPage, sPageTree, sContentStream};
-
-
-/** Observer list for IProperty. */
-typedef std::list<IObserver*> ObserverList;
 
 /** Object id number. */
 typedef unsigned int ObjNum;
@@ -108,7 +97,7 @@ typedef struct IndiRef
  */
 class IProperty
 {
-typedef std::list<IObserver*> ObserverList;
+typedef std::vector<IObserver*> ObserverList;
 
 protected:
  Object* 	  obj;			/**< Xpdf object. */
@@ -128,7 +117,8 @@ private:
 protected:	
 
   /**
-   * Default constructor. We suppose that obj will be(was) set by CObject class.
+   * Default constructor. We suppose that obj will be (was) set by CObject class.
+   * This constructor is used, when someone wants to create a CObject.
    */
   IProperty () : obj(NULL), isDrect(true), isChngd (false)
   {
@@ -170,8 +160,25 @@ protected:
    */
   bool isChanged () const {return isChngd;};
 
+  /**
+   * Return whether this object is direct or not. This is
+   * crucial when deallocating objects. A direct object can
+   * be destroyed at will. 
+   * 
+   * @return True if this object is a direct one.
+   */
+  bool isDirect () {return isDrect;};
 
- /**
+  /**
+   * Set whether this object is direct or not.
+   *
+   * @param isDirect	This object is direct object.
+   */
+  void setIsDirect (bool _isDirect) {isDrect = _isDirect;};
+
+
+public:
+  /**
    * Returns object's identification number. If it is an inline object
    * returns id of parent object.
    *
@@ -185,7 +192,7 @@ protected:
   *
   * @param _r Indirect reference id and generation number.
   */
- void setIndiRef (IndiRef* _r) {ref = *_r;};
+ void setIndiRef (const IndiRef* _r) {ref = *_r;};
 
  
  /**
@@ -195,24 +202,6 @@ protected:
   * @param g Object's generation number.
   */
   void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
-
-  
-  /**
-   * Set whether this object is direct or not.
-   *
-   * @param isDirect	This object is direct object.
-   */
-  void setIsDirect (bool _isDirect) {isDrect = _isDirect;};
-
-  /**
-   * Return whether this object is direct or not. This is
-   * crucial when deallocating objects. A direct object can
-   * be destroyed at will. 
-   * 
-   * @return True if this object is a direct one.
-   */
-  bool isDirect () {return isDrect;};
-
 
 public:
   
@@ -252,7 +241,13 @@ public:
    */
   virtual void release () = 0;
 
-  
+  /**
+   * Returns string representation of actual object.
+   * 
+   * If it is an indirect object, we have to notify CXref.
+   */
+  virtual void getStringRepresentation (std::string& str) const = 0;
+ 
   /**
    * When destroying IProperty, CObject associated with this IProperty (should be?) 
    * also destroyed.
@@ -263,9 +258,13 @@ public:
   /**
    * Attaches an observers.
    *
-   * @param observer Observer beeing attached.
+   * @param observer Observer being attached.
    */
-  void registerObserver (IObserver* o) {assert(NULL != o); observers.push_back (o);}
+  void registerObserver (IObserver* o) 
+  {
+	assert(NULL != o);
+	observers.push_back (o);
+  }
   
   /**
    * Detaches an observer.
@@ -279,12 +278,22 @@ public:
 	if (it != observers.end ())
 			observers.erase (it);
   };
-  
+
+protected:
+    /**
+     * Notify all observers that a property has changed.
+     */
+    inline void notifyObservers ()
+	{
+		ObserverList::iterator it = IProperty::observers.begin ();
+		for (; it != IProperty::observers.end(); it++)
+    	  (*it)->notify (this);
+	}
+
 }; /* class IProperty */
 
 
-
-}// namespace pdfobjects
+} /* namespace pdfobjects */
 
 
 #endif  //IPROPERTY_H

@@ -11,16 +11,17 @@
 #define OBSERVER_H
 
 
+
+//=====================================================================================
+namespace pdfobjects
+{
+
 /**
  * Forward definitions
  */
 class IProperty;
 
 
-//=====================================================================================
-namespace pdfobjects
-{
-	
 /** 
  * Observer interface.
  * When a property is changed, observer will be 

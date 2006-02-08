@@ -16,10 +16,19 @@
 #include <map>
 #include <set>
 
+/**
+ * Forward declarations
+ */
+class Object;
+
 
 // =====================================================================================
 namespace pdfobjects {
 
+/**
+ * Forward declarations
+ */
+class IProperty;
 
 
 //
@@ -57,9 +66,9 @@ namespace
    * that no other can destroy, reallocate our objects, just CObject and
    * its children. CXref and/or GUI/CUI are not permitted to do this.
    */
-  typedef map<const Object*,const IProperty*, ObjComparator> Mapping;
+  typedef std::map<const Object*,const IProperty*, ObjComparator> Mapping;
 
-};
+}
 		
 
 		
