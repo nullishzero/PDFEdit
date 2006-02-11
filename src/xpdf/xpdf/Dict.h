@@ -13,6 +13,9 @@
 //
 // Changes: 
 // Michal Hocko   - public clone method for deep copy of Dict
+//                - public update method for updating value without any 
+//                  fetching or copying
+//                - DictEntry changed, value is pointer
 //
 //========================================================================
 
@@ -33,7 +36,7 @@
 
 struct DictEntry {
   char *key;
-  Object val;
+  Object *val;
 };
 
 class Dict {
@@ -54,8 +57,16 @@ public:
 
   // Get number of entries.
   int getLength() { return length; }
+  
+  /* Updates value with given key.
+   * If find with given key returns proper DictEntry,
+   * sets new value and returns old one. Otherwise
+   * calls add method.
+   */
+  Object * update(char * key, Object * val);
 
   // Add an entry.  NB: does not copy key.
+  // uses shallow copy on val (Object doesn't have explicit copy constructore)
   void add(char *key, Object *val);
 
   // Check if dictionary is of specified type.

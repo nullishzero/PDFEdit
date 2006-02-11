@@ -44,9 +44,17 @@ Dict::Dict(XRef *xrefA) {
 Dict::~Dict() {
   int i;
 
-  for (i = 0; i < length; ++i) {
-    gfree(entries[i].key);
-    entries[i].val.free();
+  for (i = 0; i < length; ++i) 
+  {
+    // skip non valid entries
+    if(entries[i].key)
+      gfree(entries[i].key);
+
+    if(entries[i].val)
+    {
+      entries[i].val->free();
+      gfree(entries[i].val);
+    }
   }
   gfree(entries);
 }
@@ -68,13 +76,24 @@ Dict * Dict::clone()const
    for(int i=0; i < length; i++)
    {
       result->entries[i].key=strdup(entries[i].key);   
-      result->entries[i].val=*entries[i].val.clone();
+      result->entries[i].val=entries[i].val->clone();
    }
 
    return result;
 }
 
-void Dict::add(char *key, Object *val) {
+void Dict::add(char *key, Object *val) 
+{
+  int pos = length;
+  
+  // tries to use any unavailable entry (produced when entry has been removed)
+  for(int i=0; i < length; i++)
+     if(!entries[i].key)
+     {
+        pos = i;
+        break;
+     }
+  
   if (length == size) {
     if (length == 0) {
       size = 8;
@@ -83,16 +102,25 @@ void Dict::add(char *key, Object *val) {
     }
     entries = (DictEntry *)greallocn(entries, size, sizeof(DictEntry));
   }
-  entries[length].key = key;
-  entries[length].val = *val;
-  ++length;
+   
+  // when we add, length must be increased and val has to be allocated
+  if(pos==length)
+  {
+     entries[pos].val=(Object *)gmalloc(sizeof(Object));
+     ++length;
+  }
+  
+  entries[pos].key = key;
+  *(entries[pos].val) = *val;
+
 }
 
 inline DictEntry *Dict::find(char *key) {
   int i;
 
-  for (i = 0; i < length; ++i) {
-    if (!strcmp(key, entries[i].key))
+  for (i = 0; i < length; ++i) 
+  {
+    if (entries[i].key && !strcmp(key, entries[i].key))
       return &entries[i];
   }
   return NULL;
@@ -101,19 +129,19 @@ inline DictEntry *Dict::find(char *key) {
 GBool Dict::is(char *type) {
   DictEntry *e;
 
-  return (e = find("Type")) && e->val.isName(type);
+  return (e = find("Type")) && e->val->isName(type);
 }
 
 Object *Dict::lookup(char *key, Object *obj) {
   DictEntry *e;
 
-  return (e = find(key)) ? e->val.fetch(xref, obj) : obj->initNull();
+  return (e = find(key)) ? e->val->fetch(xref, obj) : obj->initNull();
 }
 
 Object *Dict::lookupNF(char *key, Object *obj) {
   DictEntry *e;
 
-  return (e = find(key)) ? e->val.copy(obj) : obj->initNull();
+  return (e = find(key)) ? e->val->copy(obj) : obj->initNull();
 }
 
 char *Dict::getKey(int i) {
@@ -121,9 +149,42 @@ char *Dict::getKey(int i) {
 }
 
 Object *Dict::getVal(int i, Object *obj) {
-  return entries[i].val.fetch(xref, obj);
+
+  // boundary checks
+  if(i<0 || i>=length)
+     return obj->initNull();
+
+  DictEntry * entry=&entries[i];
+
+  // entry is valid, so fetches value
+  return entry->val->fetch(xref, obj);
 }
 
 Object *Dict::getValNF(int i, Object *obj) {
-  return entries[i].val.copy(obj);
+
+  // boundary checks
+  if(i<0 || i>=length)
+     return obj->initNull();
+
+  DictEntry * entry=&entries[i];
+
+  return entry->val->copy(obj);
+}
+
+Object * Dict::update(char * key, Object * val)
+{
+  DictEntry * entry=find(key);
+  if(!entry)
+  {
+     // not present, so adds 
+     add(key, val);
+
+     return NULL;
+  }
+  
+  // available, so return old value and sets new one
+  Object *old = entry->val;
+  entry->val = val;
+  
+  return old;
 }
