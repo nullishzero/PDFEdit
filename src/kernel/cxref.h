@@ -5,6 +5,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/02/13 21:11:54  hockm0bm
+ * Implementation of the class moved to cc file
+ * fetch method prepared for cache
+ *
  * Revision 1.6  2006/02/12 17:19:07  hockm0bm
  * first implementation (compileable) - not for real use
  *
@@ -140,7 +144,6 @@ protected:
          */
         ObjectStorage<Ref, int, RefComparator> releasedStorage;  
 
-        
         /** Registers change in given object addressable through given 
          * reference.
          * @param ref Object reference identificator.
@@ -162,34 +165,7 @@ protected:
          * @return Old value of object from changedStorage or NULL if it's first
          * revision of object.
          */
-        Object * changeObject(Ref ref, Object * instance)
-        {
-                // discards from cache
-                /* FIXME uncoment if cache is available
-                if(cache)
-                        cache->discard(ref);
-                */
-
-                // searches in changedStorage
-                // this is returned so it can be used for some
-                // history information - value keeper is responsible for
-                // deallocation
-                Object * changed = changedStorage.get(ref);
-                
-                // insert new version to changedStorage
-                // this is deep copy of given value
-                Object * object = instance->clone();
-                changedStorage.put(ref, object);
-
-                // object has been newly created, so we will set value in
-                // the newStorage to true (so we know, that the value has
-                // been set after initialization)
-                if(newStorage.contains(ref))
-                        newStorage.put(ref, true);
-                
-                // returns old version
-                return changed;
-        }
+        Object * changeObject(Ref ref, Object * instance);
 
         /** Releases  given object addressable through given reference.
          * @param ref Object reference identificator.
@@ -198,16 +174,7 @@ protected:
          * All released referencies are stored in releasedStorage with counter
          * which stores number of release operation on given reference. 
          */
-        void releaseObject(Ref ref)
-        {
-                // gets previous counter of reference
-                // NOTE: if reference is not on releaseObject, count is 0
-                // and so its ok
-                int count=releasedStorage.get(ref);
-                
-                // puts reference and increased counter association
-                releasedStorage.put(ref, ++count);
-        }
+        void releaseObject(Ref ref);
 
         /** Changes entry in trailer dictionary.
          * @param name Name of the value.
@@ -221,14 +188,7 @@ protected:
          * @return Previous value of object or 0 if previous revision not
          * available (new name value pair in trailer).
          */
-        Object * changeTrailer(char * name, Object * value)
-        {
-               Dict * trailer = trailerDict.getDict(); 
-
-               Object * prev = trailer->update(name, value);
-
-               return prev;
-        }
+        Object * changeTrailer(char * name, Object * value);
 public:
         /** Initialize constructor.
          * @param stream Stream with file data.
@@ -257,15 +217,7 @@ public:
          *
          * Destroys cache.
          */
-        virtual ~CXref()
-        {
-                // TODO figure out what to deallocate 
-                
-                /* FIXME: uncoment when cache is ready.
-                if(cache)
-                        delete cache;
-                 */
-        }
+        virtual ~CXref();
         
         /** Creates new xpdf indirect object.
          * @param type Type of the object.
@@ -307,89 +259,7 @@ public:
          *
          * @return Object instance with given type or 0 if not able to create.
          */
-        virtual Object * createObject(ObjType type, Ref * ref)
-        {
-                int i=1;
-                int num=-1, gen;
-                
-                // it's not possible to create indirect reference value or
-                // any other internaly (by xpdf) used object types
-                if(type==objRef || type==objError || type==objEOF || type==objNone)
-                        return 0;
-                
-                // goes through entries array in XRef class (xref entries)
-                // and reuses first free entry with increased gen number.
-                for(; i<size; i++)
-                        if(entries[i].type==xrefEntryFree)
-                        {
-                                num=i;
-                                gen=entries[i].gen+1;
-                                break;
-                        }
-
-                if(num==-1)
-                {
-                        // no entry is free, so we have to add new number
-                        // TODO integer limitations
-                        num=i+1;
-                        gen=0;
-                }
-
-                Object * obj=(Object *)gmalloc(sizeof(Object));
-                
-                // initialize according type
-                switch(type)
-                {
-                        case objBool:
-                                obj->initBool(false);
-                                break;
-                        case objInt:
-                                obj->initInt(0);
-                                break;
-                        case objReal:
-                                obj->initReal(0);
-                                break;
-                        case objString:
-                                obj->initString(NULL);
-                                break;
-                        case objName:
-                                obj->initName(NULL);
-                                break;
-                        case objArray:
-                                obj->initArray(this);
-                                break;
-                        case objDict:
-                                obj->initDict(this);
-                                break;
-                        case objStream:
-                                obj->initStream(NULL);
-                                break;
-                        case objCmd:
-                                obj->initCmd(NULL);
-                                break;
-                        case objNull:
-                                obj->initNull();
-                                break;
-                        default:
-                                // TODO assert
-
-                        break;
-                }
-                
-                // registers newly created object to the newStorage
-                // flag is set to false now and this is changed only if
-                // initialized value is overwritten by change method
-                // all objects with false flag should be ignored when
-                // writing to a file
-                Ref objRef={num, gen};
-                newStorage.put(objRef, false);
-
-                // sets reference parameter if not null
-                if(ref)
-                        *ref=objRef;
-
-                return obj;
-        }
+        virtual Object * createObject(ObjType type, Ref * ref);
 
         /** Checks if given reference is known.
          * @param ref Reference to check.
@@ -401,19 +271,7 @@ public:
          *
          * @return true if reference is known, false otherwise.
          */
-        virtual bool knowsRef(Ref ref)
-        {
-                // checks newly created object only with true flag
-                // not found returns 0, so it's ok
-                if(newStorage.get(ref))
-                        return true;
-
-                // has to be found in entries
-                if(entries[ref.num].type==xrefEntryFree)
-                        return false;
-                // object number is ok, so also gen must fit
-                return entries[ref.num].gen==ref.gen;
-        }
+        virtual bool knowsRef(Ref ref);
 
         /** Checks whether obj1 can replace obj2.
          * @param obj1 Original object.
@@ -434,37 +292,7 @@ public:
          *
          * @return true if obj2 can replace obj1, false otherwise.
          */
-        bool typeSafe(Object * obj1, Object * obj2)
-        {
-                if(!obj1 || !obj2)
-                        return false;
-
-                Object dObj1=*obj1, dObj2=*obj2;    // object for dereferenced 
-                                                    // values - we assume, it's
-                                                    // not indirect
-                // types for direct values.
-                ObjType type1=obj1->getType(), type2=obj2->getType();              
-                
-                // checks indirect
-                if(type1==objRef)
-                {
-                        fetch(dObj1.getRef().num, dObj1.getRef().gen, &dObj1);
-                        type1=dObj1.getType();
-                        // has to free object
-                        dObj1.free();
-                }
-                if(type2==objRef)
-                {
-                        fetch(dObj2.getRef().num, dObj2.getRef().gen, &dObj2);
-                        type2=dObj2.getType();
-                        // has to free object
-                        dObj2.free();
-                }
-
-                // no we have direct values' types
-                return type1==type2;
-        }
-
+        bool typeSafe(Object * obj1, Object * obj2);
 
         /** Gets value associated with name in trailer.
          * @param name Name of the entry.
@@ -480,55 +308,14 @@ public:
          *
          * @return Deep copy of the object value.
          */
-        virtual Object * getTrailerEntry(char * name)
-        {
-                Dict * trailer = trailerDict.getDict();
-
-                // lookupNF doesn't create deep copy, so 
-                // we have to get value and then make deep copy
-                // calling clone method. To keep clean reference counting
-                // obj has to be freed
-                Object obj;
-                trailer->lookupNF(name, &obj);
-
-                Object * retValue=obj.clone();
-                obj.free();
-
-                return retValue;
-        }
+        virtual Object * getTrailerEntry(char * name);
 
         // Returns the document's Info dictionary (if any).
-        virtual Object *getDocInfo(Object *obj)
-        {
-                // gets object
-                Object docObj;
-                XRef::getDocInfo(&docObj);
-
-                // creates deep copy and frees object from getDocInfo
-                // and initialize parameter from cloned value
-                Object * retObj=docObj.clone();
-                docObj.free();
-                *obj=*retObj;
-
-                return retObj;
-        }
+        virtual Object *getDocInfo(Object *obj);
         
-        virtual Object *getDocInfoNF(Object *obj)
-        {
-                // gets object
-                Object docObj;
-                XRef::getDocInfoNF(&docObj);
-
-                // creates deep copy and frees object (because getDocInfoNF 
-                // uses copy method) from getDocInfo
-                // and initialize parameter from cloned value
-                Object * retObj=docObj.clone();
-                docObj.free();
-                // shallow copy of the content (deep copied)
-                *obj=*retObj;
-
-                return retObj;
-        }
+        // Returns the document's Info dictionary (dereferenced
+        // if indirect value
+        virtual Object *getDocInfoNF(Object *obj);
 
         // Return the number of objects in the xref table.
         virtual int getNumObjects() 
@@ -537,12 +324,7 @@ public:
         }
 
         // Return the offset of the last xref table.
-        virtual Guint getLastXRefPos() 
-        { 
-                // TODO can change - when older version is used
-
-                return XRef::getLastXRefPos();
-        }
+        virtual Guint getLastXRefPos();
 
         /** Fetches object.
          * @param num Object number.
@@ -564,31 +346,7 @@ public:
          * @return Pointer with initialized object given as parameter, if not
          * found obj is set to objNull.
          */
-        virtual Object * fetch(int num, int gen, Object *obj)
-        {
-                Ref ref={num, gen};
-
-                Object * retObject=changedStorage.get(ref);
-                if(retObject)
-                {
-                        // object has been changed
-                        Object * deepCopy=retObject->clone();
-
-                        // shallow copy of content
-                        // content is deep copy of found object, so
-                        // this doesn't affect our Object in changedStorage
-                        *obj=*deepCopy;
-                        
-                        // dellocate deepCopy - constructor doesn't
-                        // destroy content which is copied (shallow)
-                        // to obj
-                        delete deepCopy; 
-                        return obj;
-                }
-
-                // delegates to original implementation
-                return XRef::fetch(num, gen, obj);
-        }
+        virtual Object * fetch(int num, int gen, Object *obj);
         
         /* TODO figure out - this should not be changed (find out who does
          * use it
