@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/02/13 22:03:53  hockm0bm
+ * Implementation moved to cc file
+ *
  * Revision 1.2  2006/02/12 18:30:07  hockm0bm
  * first implementation (compileable) - not for real use
  *
@@ -63,44 +66,7 @@ protected:
          * <br>
          * TODO error handlign exceptions
          */
-        bool paranoidCheck(Ref ref, Object * obj)
-        {
-                bool reinicialization=false;
-
-                if(mode==paranoid)
-                {
-                        // reference known test
-                        if(!knowsRef(ref))
-                        {
-                                // if reference is not known, it may be new 
-                                // which is not changed after initialization
-                                if(!(reinicialization=newStorage.contains(ref)))
-                                {
-                                        // TODO handle (not found at all)
-                                        return false;
-                                }
-                        }
-                        
-                        // type safety test only if object has initialized 
-                        // value already (so new and not changed are not test
-                        if(!reinicialization)
-                        {
-                                // gets original value and uses typeSafe to 
-                                // compare with given value type
-                                Object original;
-                                fetch(ref.num, ref.gen, &original);
-                                bool safe=typeSafe(&original, obj);
-                                original.free();
-                                if(!safe)
-                                {
-                                        // TODO handle type error
-                                        return false;
-                                }
-                        }
-                }
-
-                return true;
-        }
+        bool paranoidCheck(Ref ref, Object * obj);
 public:
         /** Initialize constructor with stream.
          * @param stream Stream fith file data.
@@ -146,19 +112,7 @@ public:
          * <br>
          * TODO provide undo information
          */
-        void releaseObject(int num, int gen)
-        {
-                Ref ref={num, gen};
-                // checks if reference exists
-                if(mode==paranoid && !knowsRef(ref))
-                {
-                        // TODO handle
-                        return;
-                }
-
-                // delegates to CXref
-                CXref::releaseObject(ref);
-        }
+        void releaseObject(int num, int gen);
 
         /** Inserts new object.
          * @param num Number of object.
@@ -174,16 +128,7 @@ public:
          * TODO provide undo information
          *
          */ 
-        void changeObject(int num, int gen, Object * obj)
-        {
-                Ref ref={num, gen};
-                
-                // paranoid checking
-                paranoidCheck(ref, obj);
-
-                // everything ok
-                CXref::changeObject(ref, obj);
-        }
+        void changeObject(int num, int gen, Object * obj);
 
         /** Changes trailer entry.
          * @param name Name of the entry.
@@ -198,51 +143,14 @@ public:
          * TODO provide undo information
          * 
          */
-        Object * changeTrailer(char * name, Object * value)
-        {
-                // paranoid checking
-                if(mode==paranoid)
-                {
-                        Object original;
-
-                        // checks if value if indirect and if so, checks
-                        // if reference is known
-                        if((value->getType()==objRef) &&
-                          (!CXref::knowsRef(value->getRef())))
-                        {
-                                // TODO handle
-                                return 0;
-                        }
-
-                        // gets original value of value
-                        Dict * dict=trailerDict.getDict();
-                        dict->lookupNF(name, &original);
-                        if(original.getType()!=objNull)
-                        {
-                                // original value exists, so checks type safety
-                                bool safe=typeSafe(&original, value);
-                                original.free();
-                                if(!safe)
-                                {
-                                        // TODO handle type error
-                                        return 0;
-                                }
-                        }
-                }
-
-                // everything ok
-                return CXref::changeTrailer(name, value);
-        }
+        Object * changeTrailer(char * name, Object * value);
 
         /** Saves xref with changes.
          * @param f File where to write (has to be open).
          *
          * Appends new xref with new trailer to the given file.
          */
-        void saveXref(FILE * f)const
-        {
-                // TODO
-        }
+        void saveXref(FILE * f)const;
 };
 
 #endif
