@@ -8,6 +8,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.2  2006/02/13 19:05:35  hockm0bm
+ * Template implementation of class.
+ *
  * Revision 1.1  2006/01/29 17:09:07  hockm0bm
  * Object storage implementation
  * TODO - implement in template way
@@ -49,13 +52,13 @@ public:
 
 /**
  */
-class ObjectStorage
+template<typename K, typename V, typename Comp> class ObjectStorage
 {
 private:
-        typedef std::map<Ref, Object *, RefComparator> Mapping;
-        typedef Mapping::iterator Iterator;
-        typedef Mapping::const_iterator ConstIterator;
-        typedef Mapping::value_type Association;
+        typedef std::map<K, V, Comp> Mapping;
+        typedef typename Mapping::iterator Iterator;
+        typedef typename Mapping::const_iterator ConstIterator;
+        typedef typename Mapping::value_type Association;
         Mapping mapping;
 
 public:
@@ -79,7 +82,7 @@ public:
          * @returns Value of the previous mapping or 0 if the key was inserted
          * to the mapping.
          */
-        Object * put(Ref key, Object * value)
+        V put(K key, V value)
         {
                 // try to find at first
                 Iterator iter=mapping.find(key);
@@ -89,7 +92,7 @@ public:
                         return 0;
                 }
                 
-                Object * old=iter->second;
+                V old=iter->second;
                 
                 // sets new value for association
                 iter->second=value;
@@ -99,14 +102,14 @@ public:
         };
 
         /** Finds value with the key.
-         * @param key Refey of the value.
+         * @param key Key of the value.
          *
          * Gets value associated with the key.
          *
          * @return value of the value (direct pointer) or 0 if no such key 
          * found.
          */
-        Object * get(Ref key)const
+        V get(K key)const
         {
                 ConstIterator iter=mapping.find(key);
                 if(iter==mapping.end())
@@ -116,14 +119,27 @@ public:
                 return iter->second;
         };
 
+        /** Checks of given key is in the storage.
+         * @param key Key object.
+         *
+         * @return true if given key is in the storage, false otherwise.
+         */
+        bool contains(K key)const
+        {
+                ConstIterator iter=mapping.find(key);
+
+                // end iterator means not found
+                return !(iter==mapping.end());
+        }
+
         /** Removes association.
-         * @param key Refey of the value.
+         * @param key Key of the value.
          *
          * Gets value of the key and removes association from mapping.
          *
-         * @return Object *alue of the key or 0 if not found (and not removed).
+         * @return Value of the key or 0 if not found (and not removed).
          */
-        Object * remove(Ref key)
+        V remove(K key)
         {
                 Iterator iter=mapping.find(key);
                 if(iter==mapping.end())
@@ -132,10 +148,15 @@ public:
 
                 // gets old value and
                 // removes association
-                Object * old=get(key);
+                V old=get(key);
                 mapping.erase(key);
                 
                 return old;
         };
+
+        size_t size()const
+        {
+           return mapping.size();
+        }
 };
 #endif
