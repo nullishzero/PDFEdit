@@ -1,19 +1,27 @@
 /*
  * =====================================================================================
- *        Filename:  cpdfI.h
+ *        Filename:  cpdf.cc
  *     Description: CPdf class implementation.
  *         Created:  01/28/2006 03:48:14 AM CET
  *          Author:  jmisutka (), 
  *         Changes: 2006/1/28 added mapping support
  *         			2006/1/30 tested objToString () -- ok
+ *         			2006/2/8  after a long battle againd g++ and ld + collect I made
+ *         					  the implementation of CPdf a .cc file
  * =====================================================================================
  */
 
 // debug
 #include "debug.h"
 
+//
+#include "iproperty.h"
+#include "cobject.h"
+#include "cobjectI.h"
+
 
 // =====================================================================================
+
 namespace pdfobjects
 {
 
