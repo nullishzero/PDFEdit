@@ -235,7 +235,7 @@ CObjectSimple<Tp>::writeValue (WriteType val)
 //
 //
 //
-template<> template<>
+/*template<> template<>
 inline bool 
 CObjectSimple<pBool>::getPropertyValue () const 
 	{return (0 != IProperty::obj->getBool());}
@@ -282,14 +282,14 @@ CObjectSimple<Tp>::getPropertyValue () const
 }
 
 template<PropertyType Tp> template<>
-std::string
+inline std::string
 CObjectSimple<Tp>::getPropertyValue () const
 {
-	string str;
+	std::string str;
 	getStringRepresentation (str);
 	return str;
 }
-
+*/
 //
 // Just a hint that we can free this object
 // This is a generic function for all types
