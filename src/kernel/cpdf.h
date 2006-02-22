@@ -48,6 +48,21 @@ namespace
 		};
 	};	
 
+	/**
+	 * Indirect mapping Comparator class for two mapped items.
+	 */
+	class IndComparator
+	{
+	public:
+		bool operator() (const IndiRef one, const IndiRef two) const
+		{
+				if (one.num == two.num)
+					return (one.gen < two.gen);
+				else
+					return (one.num < two.num);
+		};
+	};	
+
   /**
    * Mapping between (x)pdf Object <--> IProperty
    *
@@ -66,11 +81,19 @@ namespace
    * that no other can destroy, reallocate our objects, just CObject and
    * its children. CXref and/or GUI/CUI are not permitted to do this.
    */
-  typedef std::map<const Object*,const IProperty*, ObjComparator> Mapping;
+  typedef std::map<const Object*,const IProperty*, ObjComparator> ObjectMapping;
+  
+  /**
+   * Mapping between indirect objects <--> IProperty.
+   *
+   * This is essential when we want to access an indirect object from 
+   * pRef object. We know only the id and gen number.
+   * 
+   */
+  typedef std::map<const IndiRef,const IProperty*, IndComparator> IndirectMapping;
 
 }
 		
-
 		
 
 /**
@@ -82,8 +105,10 @@ class CPdf : public CDict
 {
 		
 private:
-	/** Mapping between Object <--> IProperty*. It is necessary when accessing indirect objects. */
-	Mapping mapping;
+	/** Mapping between Object <--> IProperty*. It is necessary when releasing objects. */
+	ObjectMapping objMap;
+	/** Mapping between Id + Gen <--> IProperty*. It is necessary when accessing indirect objects. */
+	IndirectMapping indMap;
 	/** CXref class which is (x)pdf xref with enhanced functionality.*/
 	//CXref*	xref;
 
@@ -103,6 +128,7 @@ public:
 	 * @return Null if there is no mapping, IProperty* otherwise.
 	 */
 	IProperty* getExistingProperty (const Object* o) const;
+	IProperty* getExistingProperty (const IndiRef& pair) const;
 
 	/**
 	 * Saves relation between (x)pdf object and IProperty*. 
@@ -110,7 +136,17 @@ public:
 	 * @param o	 (x)pdf object.
 	 * @param ip IProperty that will be mapped to Object o.
 	 */
-	void setPropertyMapping (const Object* o, const IProperty* ip);
+	void setObjectMapping (const Object* o, const IProperty* ip);
+	void setIndMapping (const IndiRef& pair, const IProperty* ip);
+
+	/**
+	 * Deletes relation between (x)pdf object and IProperty*. 
+	 *
+	 * @param o	 (x)pdf object.
+	 * @param ip IProperty that will be mapped to Object o.
+	 */
+	void delObjectMapping (const Object* o);
+	void delIndMapping (const IndiRef& pair);
 
 	
 public:

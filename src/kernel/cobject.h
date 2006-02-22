@@ -45,6 +45,13 @@
  *				
  *			 NEAR FUTURE:  start to test new functions with full linkage against the xpdf prject...
  *				 		add/complete objStream, objRef support
+ *
+ *			2006/02/20	changed constructor, addProperty has to be more clever
+ *						getStringRepresentation,writeValue,release finished
+ *
+ *			TODO:
+ *					INDIRECT -- refcounting
+ *
  * =====================================================================================
  */
 #ifndef COBJECT_H
@@ -150,11 +157,9 @@ public:
 	 * Public constructor. Can be used to creted direct/indirect objects.
 	 *
 	 * @param p		Pointer to pdf object in which this object will exist.
-	 * @param ip	If NULL an indirect object will be created. Otherwise, ip will 
-	 * 				point to an existing IProperty where the direct object will be placed by
-	 * 				a call to e.g. addProperty().
+	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 */
-	CObjectSimple (CPdf* p, IProperty* ip = NULL);
+	CObjectSimple (CPdf* p, bool isDirect);
 
 	
 	/**
@@ -192,8 +197,7 @@ public:
 	/**
 	 * Return property value
 	 */
-    template <typename T>
-    T getPropertyValue () const;
+    WriteType getPropertyValue () const;
 	
 
 	/**
@@ -245,7 +249,7 @@ public:
   	virtual void release ();
 	
 
-//proteced: 
+//protected: 
 /*DEBUG*/public:	
 	/**
 	 * Destructor
@@ -718,47 +722,31 @@ struct IntWriter
 
 template<typename Storage, typename Val>
 struct RealWriter
-{
-	public:
-		void 
-		operator() (Storage obj, Val val)
-		{
-			obj->initReal (val);
-		}
+{public:
+		void operator() (Storage obj, Val val)
+			{obj->initReal (val);}
 };
 
 template<typename Storage, typename Val>
 struct StringWriter
-{
-	public:
-		void 
-		operator() (Storage obj, Val val)
-		{
-			obj->initString (GString(val.c_str()));
-		}
+{public:
+		void operator() (Storage obj, Val val)
+			{obj->initString (GString(val.c_str()));}
 };
 
 template<typename Storage, typename Val>
 struct NameWriter
-{
-	public:
-		void 
-		operator() (Storage obj, Val val)
-		{
-			obj->initName (val.c_str());		
-		}
+{public:
+		void operator() (Storage obj, Val val)
+			{obj->initName (val.c_str());}
 };
 
 
 template<typename Storage, typename Val>
 struct RefWriter
-{
-	public:
-		void 
-		operator() (Storage obj, Val val)
-		{
-			obj->initRef (val.num, val.gen);
-		}
+{public:
+		void operator() (Storage obj, Val val)
+			{obj->initRef (val.num, val.gen);}
 };
 
 

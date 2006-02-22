@@ -12,6 +12,8 @@
 #ifndef COBJECTI_H
 #define COBJECTI_H
 
+#include <sstream>
+
 // xpdf
 #include <xpdf/Object.h>
 
@@ -75,6 +77,8 @@ CObjectSimple<Tp>::CObjectSimple (CPdf* p, Object* o, IndiRef& ref, bool isDirec
 	
 	// Save id and gen id
 	IProperty::setIndiRef (&ref);
+	// Save mapping between Object and IProperty
+	pdf->setObjectMapping (o,this);
 	
 	if (isDirect)
 	{// Direct object
@@ -85,8 +89,8 @@ CObjectSimple<Tp>::CObjectSimple (CPdf* p, Object* o, IndiRef& ref, bool isDirec
 	}else
 	{// Indirect object
 
-		// Save the mapping 
-		pdf->setPropertyMapping (&ref,this);
+		// Save indirect mapping 
+		pdf->setIndMapping (&ref,this);
 		// Set that it is an indirect object
 		IProperty::setIsDirect (false);
 	
@@ -98,35 +102,37 @@ CObjectSimple<Tp>::CObjectSimple (CPdf* p, Object* o, IndiRef& ref, bool isDirec
 // Public constructor
 //
 template<PropertyType Tp>
-CObjectSimple<Tp>::CObjectSimple (CPdf* p, IProperty* ip) : pdf(p)
+CObjectSimple<Tp>::CObjectSimple (CPdf* p, bool isDirect) : pdf(p)
 {
 	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
 					COBJECT_BAD_TYPE);
 	STATIC_CHECK ((pNull == Tp) || (pBool == Tp) || (pInt == Tp) || (pReal ==Tp) ||
 				  (pString == Tp) || (pName == Tp) || (pRef == Tp),COBJECT_BAD_TYPE);
-/**///assert	(NULL != p);
-	printDbg (0,"CObjectSimpl constructor.");
+/**///assert (NULL != p);
+	printDbg (0,"CObjectSimple constructor.");
 	
-	if (NULL == ip)
+
+	if (isDirect)
+	{// Direct object
+			
+		//IProperty::obj = pdf->getXref()->createObject(static_cast<ObjType>(Tp));
+		IProperty::setIsDirect (true);
+	
+	}else
 	{// Indirect object
-		
+
 		//Ref ref;
 		// Create the object
 		//IProperty::obj = pdf->getXref()->createObject(static_cast<ObjType>(Tp),&ref);
 		// We have created an indirect object
-		//IProperty::setIsDirect (false);
+		IProperty::setIsDirect (false);
 		//IProperty::setIndiRef (ref.num, ref.gen);
-		// Save the mapping, because we have created new indirect object
-		//pdf->setPropertyMapping (IProperty::getIndiRef(),this);
-		
-	}else
-	{// Direct object
-		
-		//IProperty::obj = pdf->getXref()->createObject(static_cast<ObjType>(Tp));
-		// Inherit id's from parent and inform that it is a direct object
-		IProperty::setIndiRef (ip->getIndiRef());
-		IProperty::setIsDirect (true);
+		//pdf->setIndMapping (ref,this);
 	}
+
+	// Save the mapping
+	//pdf->setObjectMapping (IProperty::obj,this);
+
 }
 
 
@@ -142,6 +148,68 @@ CObjectSimple<Tp>::getStringRepresentation (std::string& str) const
   assert (obj->getType() == (ObjType)Tp);
   
   utils::simpleObjToString (IProperty::obj,str);
+}
+
+
+//
+// Set string representation
+//
+template<PropertyType Tp>
+void
+CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
+{
+	switch (Tp)
+	{
+		case pNull:
+				assert (!"Setting value to NULL object.");
+				break;
+
+		case pBool:
+				if (strO == "true")
+					writeValue (true);
+				else if (strO == "false")
+					writeValue (false);
+				else
+					throw ObjBadValueE ();
+				break;
+
+		case pInt:
+				{
+				std::stringstream ss (strO);
+				int val = 0;
+				ss >> val;
+				writeValue (val);
+				}
+				break;
+				
+		case pReal:
+				{
+				double n = atof (strO.c_str());
+				writeValue (n);
+				}
+				break;
+				
+		case pString:
+		case pName:
+				writeValue (strO);
+				break;
+
+		case pRef:
+				{
+				int id = 0;
+				int gen = 0;
+				std::stringstream ss (strO);
+				ss >> id;
+				ss >> gen;
+				IndiRef ref = {id,gen};
+				writeValue (ref);
+				}
+				break;
+
+		default:
+				assert (!"Bad Tp value.");
+				break;
+	}
 }
 
 
@@ -165,6 +233,64 @@ CObjectSimple<Tp>::writeValue (WriteType val)
 
 
 //
+//
+//
+template<> template<>
+inline bool 
+CObjectSimple<pBool>::getPropertyValue () const 
+	{return (0 != IProperty::obj->getBool());}
+
+template<PropertyType Tp> template<>
+inline int 
+CObjectSimple<Tp>::getPropertyValue () const
+{
+	STATIC_CHECK ((pBool == Tp) || (pInt == Tp), INCORRECT_USE_OF_getPropertyvalue_FUNCTION);
+	
+	switch (Tp)
+	{
+		case pBool:
+			return IProperty::obj->getBool ();
+			
+		case pInt:
+			return IProperty::obj->getInt ();
+			
+		default:
+				assert (0);
+				break;
+	}
+}
+
+template<PropertyType Tp> template<>
+inline  double 
+CObjectSimple<Tp>::getPropertyValue () const
+{
+	STATIC_CHECK ((pBool == Tp) || (pInt == Tp) || (pReal == Tp), INCORRECT_USE_OF_getPropertyvalue_FUNCTION);
+	
+	switch (Tp)
+	{
+		case pBool:
+			return IProperty::obj->getBool ();
+			
+		case pInt:
+		case pReal:
+			return IProperty::obj->getNum ();
+				
+		default:
+				assert (0);
+				break;
+	}
+}
+
+template<PropertyType Tp> template<>
+std::string
+CObjectSimple<Tp>::getPropertyValue () const
+{
+	string str;
+	getStringRepresentation (str);
+	return str;
+}
+
+//
 // Just a hint that we can free this object
 // This is a generic function for all types
 //
@@ -181,10 +307,9 @@ CObjectSimple<Tp>::release()
 	// If it is direct, we can free it
 	//
 	if (IProperty::isDirect ())
-	{		
+	{	
+		pdf->delObjectMapping (IProperty::obj);
 		utils::objectFree (IProperty::obj);
-		// compiler emits a warning //IProperty::obj == NULL;
-		// At last, free this
 		delete this;
 			
 	}else
@@ -239,7 +364,7 @@ CObjectComplex<Tp>::CObjectComplex (CPdf* p,SpecialObjectType objTp) : specialOb
 	//IProperty::setIsDirect (false);
 	//IProperty::setIndiRef (ref.num, ref.gen);
 	// Save the mapping, because we have created new indirect object
-	//pdf->setPropertyMapping (IProperty::getIndiRef(),this);
+	//pdf->setObjectMapping (IProperty::getIndiRef(),this);
 }
 
 
@@ -271,7 +396,7 @@ CObjectComplex<Tp>::CObjectComplex (CPdf* p, Object* o, IndiRef& ref, bool isDir
 	{// Indirect object
 
 		// Save the mapping 
-		pdf->setPropertyMapping (&ref,this);
+		pdf->setObjectMapping (&ref,this);
 		// Set that it is an indirect object
 		IProperty::setIsDirect (false);
 	
@@ -301,7 +426,7 @@ CObjectComplex<Tp>::CObjectComplex (CPdf* p, IProperty* ip) : pdf(p)
 		//IProperty::setIsDirect (false);
 		//IProperty::setIndiRef (ref.num, ref.gen);
 		// Save the mapping, because we have created new indirect object
-		//pdf->setPropertyMapping (IProperty::getIndiRef(),this);
+		//pdf->setObjectMapping (IProperty::getIndiRef(),this);
 		
 	}else
 	{// Direct object
