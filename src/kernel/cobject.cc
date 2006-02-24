@@ -110,7 +110,7 @@ namespace {
 //
 //
 void
-complexObjToString (Object* /*obj*/,string& /*str*/)
+complexObjToString (Object* /*obj*/, string& /*str*/)
 {
 /* 	assert (NULL != obj);
 	printDbg (0,"objToString(" << (unsigned int)obj << ")");
@@ -123,80 +123,47 @@ complexObjToString (Object* /*obj*/,string& /*str*/)
 	switch (obj->getType()) 
 	{
 	
-	case objBool:
-	oss << ((obj->getBool()) ? "true" : "false");
-	break;
-
-	case objInt:
-	oss << obj->getInt();
-	break;
-
-	case objReal:
-	oss << obj->getReal ();
-	break;
-
-	case objString:
-	oss << "("  << obj->getString()->getCString() << ")";
-	break;
-
-	case objName:
-	oss << "/" << obj->getName();
-	break;
-
-	case objNull:
-	oss << "null";
-break;
-
 	case objArray:
-	oss << "[";
-	for (i = 0; i < obj->arrayGetLength(); ++i) 
+		oss << "[";
+		for (i = 0; i < obj->arrayGetLength(); ++i) 
 		{
-	if (i > 0)
-		oss << " ";
-	obj->arrayGetNF (i,&o);
-	string tmp;
-		objToString (&o,tmp);
-		oss << tmp;
-	o.free();
-}
-	oss << "]";
-break;
+			if (i > 0)
+				oss << " ";
+			obj->arrayGetNF (i,&o);
+			string tmp;
+			objToString (&o,tmp);
+			oss << tmp;
+		o.free();
+		}
+		oss << "]";
+		break;
 
 	case objDict:
-oss << "<<";
-	for (i = 0; i <obj-> dictGetLength(); ++i) 
-	{
-	oss << " /" << obj->dictGetKey(i) << " ";
-	obj->dictGetValNF(i, &o);
-		string tmp;
-		objToString (&o,tmp);
-		oss << tmp;
-	o.free();
-}
-	oss << " >>";
-break;
+		oss << "<<";
+		for (i = 0; i <obj-> dictGetLength(); ++i) 
+		{
+			oss << " /" << obj->dictGetKey(i) << " ";
+			obj->dictGetValNF(i, &o);
+			string tmp;
+			objToString (&o,tmp);
+			oss << tmp;
+			o.free();
+		}
+		oss << " >>";
+		break;
 
 	case objStream:
-oss << "<stream>";
-	break;
+		oss << "<stream>";
+		break;
 
-	case objRef:
-oss << obj->getRefNum() << " " << obj->getRefGen() << " R";
-	break;
-
-	case objCmd:
-	case objError:
-	case objEOF:
-	case objNone:
 	default:
-	assert (false);	
-	break;
+		assert (false);	
+		break;
 	}
 
 	// convert oss to string
 	str = oss.str ();
-*/
-}
+*/}
 
 
 //
@@ -245,7 +212,73 @@ void getAllXpdfObjects (Object& obj, Storage& /*store*/)
 template void getAllXpdfObjects<std::vector<Object*> > (Object& obj, std::vector<Object*>& /*store*/ );
 
 
+//
+// Purposeful only for Dict and Stream
+//
+Object*
+getObjectAtPos (Object& obj, const std::string& /*name*/)
+{
+	assert ((objDict == obj.getType()) || (objStream == obj.getType()) );
 
+	switch (obj.getType ())
+	{
+		case objDict:
+			//
+			// have to dig into Dict structure, because
+			// default functions just copy objects !!!
+			//
+			break;
+
+		case objStream:
+			//
+			// have to dig into Dict structure, because
+			// default functions just copy objects !!!
+			//
+			break;
+
+		default:
+			assert (!"bad type");
+			break;
+	}
+
+	return NULL;
+}
+
+Object*
+getObjectAtPos (Object& obj, const unsigned int /*pos*/)
+{
+	assert (objArray == obj.getType());
+	//
+	// have to dig into Dict structure, because
+	// default functions just copy objects !!!
+	//
+	return NULL;
+}
+
+
+//
+//
+//
+void
+removeObjectAtPos (Object& obj, const std::string& /*name*/)
+{
+	assert ((objDict == obj.getType()) || (objStream == obj.getType()) );
+
+	// Get the dictionary
+	//Dict* o = (objDict == obj.getType()) ? obj.getDict () : obj.streamGetDict ();
+	
+	//
+	// Dig into the structure
+	//
+
+}
+void
+removeObjectAtPos (Object& /*obj*/, const unsigned int /*pos*/)
+{
+}
+
+
+		
 //
 //
 //
@@ -348,6 +381,46 @@ template class ObjectDeleteProcessor<utils::CheckDirectObject>;
 template class ObjectDeleteProcessor<utils::NoCheck>;
 
 
+//
+//
+//
+inline void
+getSimpleValueFromString (const std::string& str, bool& val)
+{
+  if (str == "true")
+	val = true;
+  else if (str == "false")
+	val = false;
+  else
+	throw ObjBadValueE ();
+}
+
+void
+getSimpleValueFromString (const std::string& str, int& val)
+{
+	std::stringstream ss (str);
+	ss >> val;
+}
+
+inline void
+getSimpleValueFromString (const std::string& str, double& val)
+{
+	val = atof (str.c_str());
+}
+
+inline void
+getSimpleValueFromString (const std::string& str, std::string& val)
+{
+	val = str;
+}
+
+inline void
+getSimpleValueFromString (const std::string& str, IndiRef& val)
+{
+	std::stringstream ss (str);
+	ss >> val.num;
+	ss >> val.gen;
+}
 
 
 

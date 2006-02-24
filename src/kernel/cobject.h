@@ -11,46 +11,37 @@
  *						implemented several easy functions for complex types
  *			2006/02/08  for the past several days i have had a battle with g++ and ls + collect
  *						i think that i have won at last...
- *
- *			FILE ORGANIZATION:
- *				cobject.h  -- definition of cobject + definition and a few implementations of helper funcions
- *								+ helper classes, all this is in a nested namespace pdfobjects::utils, it is
- *								because e.g. in cpdf.cc we can have the same functions...
- *								
- *				cobject.cc -- helper function implementation
- *				cobjectI.h -- implementation of CObject class
- *
- *			OBJECTS:
- *				Because simple types can be implemented generic really nicely, i separated them. It also ensures
- *				better checking whether a member function was called from an appropriate CObject* class.
- *
- * 			REMARKS: 
- *
- * 				1)  templates have to be in the same file or files (else there will be a linkage error)
- * 					but they have to be included as well we address this problem with the inclusion model 
- * 					solution. include the implementation in the cobject.h file. (the suffix of the file is .h but can be .cc, whatever..)
- *				2)  nondependand classes derived from template classes behave like normal classes so the
- *					definition should be in .h file and the implementation in .cc file.
- *					we address this in cpdf.h and cpdf.cc files, etc. many more
- *				3) 	linkage problems (multiple definitions) are handled automaticly which means CFRONT model
- *					we could add -frepo to the g++ compiler options, but do not have to at the moment.
- *					The second solution is the explicit template specialization, we use this in
- *					pdfobjects::utils::getAllXpdfObjects () function. The linker would not find the function
- *					if not specialized explicitely, because definition and declaration are not in the same file 
- *					nor are they both included (cobject.h,cobject.cc)
- *				4) 	it is possible that we won't be able to make a dynamic library if classes and functions not
- *					explicitely instantiated. C++ standard is very primitive because of the nature of current compilers. 
- * 					most of the gcc front model has to be reimplemented ONLY to support export function and we do not talk
- * 					about the generic libraries.... so perhaps in future
- *				
- *			 NEAR FUTURE:  start to test new functions with full linkage against the xpdf prject...
- *				 		add/complete objStream, objRef support
- *
  *			2006/02/20	changed constructor, addProperty has to be more clever
  *						getStringRepresentation,writeValue,release finished
- *
+ *			2006/02/21	changed getPropertyValue to non - template, bacause we can't partially specialize member functions
+ *					also the way of passing return from return value to function argument, because
+ *						* do not want to alloc something in kernel and dealloc elsewhere
+ *						* pass by stack copying can be tricky when copying big amounts and we do not know 
+ *						  in pdf
+ *			2006/02/23	cobjectsimple implementation finished
+ *			2006/02/23	cobjectcomplex 
+ *					- getStringRepresentation
+ *					- writeValue
+ *					- release?, getPropertyCount
+ *					- getAllPropertyNames -- problem templates virtual
+ *			2006/02/24	- implementing addProperty for
+ *					IProperty*. (template f. can't be virtual)
+ *					all other functions, problems witch Object internal structure
+ *					  not public functions etc., etc., etc.
+ *			
+ * 
  *			TODO:
+ *					CObjectSimple testing
+ *					addProperty ... other than IProperty*
  *					INDIRECT -- refcounting
+ *					!! CPdf::addObject and addIndObject to replace mapping* functions
+ *					setPropertyValue what is its purpose? just simple types?
+ *					when shall we call notifyObservers
+ *					can't add IProperty when pdf is not NULL (just to simplify things)
+ *					   no real obstruction for removing this
+ *					allow adding indirect values (directly :))
+ *					utils::getObjectAtPos functions
+ *					utils::removeObjectAtPos functions
  *
  * =====================================================================================
  */
@@ -58,6 +49,9 @@
 #define COBJECT_H
 
 #include <string>
+#include <list>
+#include <vector>
+#include <deque>
 #include <iostream>
 
 #include "debug.h"
@@ -74,35 +68,40 @@ namespace pdfobjects
  *
  * If someone tries to use unsupported type (pCmd,....), she should get compile error
  * because PropertyTraitSimple<> has no body.
+ *
+ * REMARK: BE CAREFUL when manipulating this ones.
+ * It is used in setStringRepresentation(), writeValue(), getPropertyValue()
+ * 
  */
 template<PropertyType T> struct PropertyTraitSimple; 
 template<> struct PropertyTraitSimple<pNull>
 {	public: typedef NullType		writeType; 
+	public: typedef NullType		returnType; 
 };
 template<> struct PropertyTraitSimple<pBool>
 {	public: typedef const bool		writeType; 
+	public: typedef bool			returnType; 
 };
 template<> struct PropertyTraitSimple<pInt>	
 {	public: typedef const int		writeType; 
+	public: typedef int			returnType; 
 };
 template<> struct PropertyTraitSimple<pReal>	
-{	public: typedef const double 	writeType; 
+{	public: typedef const double 		writeType; 
+	public: typedef double			returnType; 
 };
 template<> struct PropertyTraitSimple<pString> 
 {	public: typedef const std::string& 	writeType; 
+	public: typedef std::string		returnType; 
 };
 template<> struct PropertyTraitSimple<pName>	
 {	public: typedef const std::string& 	writeType; 
+	public: typedef std::string		returnType; 
 };
 template<> struct PropertyTraitSimple<pRef> 	
-{	public: typedef const IndiRef& 	writeType; 
+{	public: typedef const IndiRef& 		writeType; 
+	public: typedef IndiRef			returnType; 
 };
-
-/*
- * Forward declarations
- */
-class CPdf;
-
 
 
 //=====================================================================================
@@ -125,12 +124,12 @@ class CObjectSimple : public IProperty
 public:
 	/** Write type for writeValue function. */
 	typedef typename PropertyTraitSimple<Tp>::writeType WriteType;
+	/** Write type for getPropertyValue function. */
+	typedef typename PropertyTraitSimple<Tp>::returnType ReturnType;
 		
 private:
 	/** Type indicating whether this object is a special object, like Cpdf, CAnnotation... */
 	// DO NOT NEED THIS IN SIMPLE TYPE // SpecialObjectType specialObjectType;
-	/** This object belongs to this pdf. */	
-	CPdf* pdf;
 	
 private:
 	/**
@@ -148,7 +147,7 @@ protected:
 	 * @param ref	Indirect id and gen id.
 	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 */
-	CObjectSimple (CPdf* p, Object* o, IndiRef& ref, bool isDirect);
+	CObjectSimple (CPdf& p, Object& o, IndiRef& ref, bool isDirect);
 
 
 public:	
@@ -159,8 +158,12 @@ public:
 	 * @param p		Pointer to pdf object in which this object will exist.
 	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 */
-	CObjectSimple (CPdf* p, bool isDirect);
+	CObjectSimple (CPdf& p, bool isDirect);
 
+#ifdef DEBUG
+CObjectSimple (){};
+#endif
+	
 	
 	/**
 	 * Returns string representation of (x)pdf object. 
@@ -184,10 +187,9 @@ public:
 	 * Change the value of an object. The variable type depends
 	 * on CObject type. For complex types, it is equal to setStringRepresentation().
 	 * 
-	 * We can define how best we want to represent an pdf object. E.g.
-	 * we can represent a dictionary with list<pair<string,string> > etc...
+	 * We can define how best we want to represent an pdf object.
 	 *
-	 * <exception cref="ObjBadValueE "/> When a value cannot be set due to bad value e.g. in complex types.
+	 * <exception cref="ObjBadValueE "/> Thrown when a value cannot be set.
 	 *
 	 * @param val	Value that will be set.
 	 */
@@ -195,9 +197,9 @@ public:
  
 
 	/**
-	 * Return property value
+	 * Return property value. Each property has its own return value.
 	 */
-    WriteType getPropertyValue () const;
+	void getPropertyValue (ReturnType& val) const;
 	
 
 	/**
@@ -211,16 +213,8 @@ public:
 	 * @param makeValidCheck True if we want to verify that our changes preserve
 	 * 						 pdf validity.
 	 */
-	void dispatchChange (bool /*makeValidCheck*/) const {}; 
+	void dispatchChange (bool makeValidCheck=false) const; 
 
-	
-	/**
-	 * Returns xpdf object.
-	 *
-	 * @return Xpdf object associated with this CObject.
-	 */
-	const Object* getRawObject () const {assert (NULL != obj); return obj;};
-	
 	
 	/**
 	 * Returns if it is one of special objects CPdf,CPage etc.
@@ -233,12 +227,12 @@ public:
 	/**
 	 * Returns pointer to derived object. 
 	 */
-	template<typename T>
+	/*template<typename T>
 	T* getSpecialObjectPtr () const
 	{
 		STATIC_CHECK(sizeof(T)>=sizeof(CObjectSimple<Tp>),DESTINATION_TYPE_TOO_NARROW); 
 		return dynamic_cast<T*>(this);
-	}
+	}*/
 
 	
 	/**
@@ -256,7 +250,26 @@ public:
 	 */
 	~CObjectSimple ()	{};
 
+
+	//
+	// Helper functions
+	//
+private:
+	/**
+	 *
+	 */
+	inline void
+	_objectChanged ()
+	{
+		// The object has been changed
+		IProperty::setIsChanged (true);
+		// Notify everybody about this change
+		IProperty::notifyObservers ();
+	}
+
 };
+
+
 
 
 //=====================================================================================
@@ -268,7 +281,7 @@ public:
  */
 typedef unsigned int	PropertyCount;
 typedef unsigned int	PropertyIndex;
-typedef std::string		PropertyName;
+typedef std::string	PropertyName;
 
 /**
  * Additional information that identifies variable type, e.g. for writeValue function.
@@ -280,17 +293,17 @@ template<PropertyType T> struct PropertyTraitComplex;
 template<> struct PropertyTraitComplex<pArray>	
 {	public: 
 		typedef const std::string& 	writeType; 
-		typedef const unsigned int 	PropertyId;
+		typedef const unsigned int 	propertyId;
 };
 template<> struct PropertyTraitComplex<pStream> 
 {	public: 
 		typedef const std::string& 	writeType; 
-		typedef const std::string& 	PropertyId;
+		typedef const std::string& 	propertyId;
 };
 template<> struct PropertyTraitComplex<pDict>	
 {	public: 
 		typedef const std::string& 	writeType; 
-		typedef const std::string& 	PropertyId;
+		typedef const std::string& 	propertyId;
 };
 
 
@@ -310,12 +323,6 @@ template<> struct PropertyTraitComplex<pDict>
  * When it is not final class, it is a special object (CPdf, CPage,...). We can
  * find out the object by calling  virtual method getSpecialObjType(). 
  * This can be helpful for example for special manipulation with content stream, xobjects, ...
- *
- * REMARK: it will be the responsibility of CXref to remember a mapping
- * between each xpdf Object and our representation. e.g. when we want to save
- * a pdf, we also want to save undo's, and if we would have more of our objects 
- * pointing to one xpdf Object we would have multiple undos and it could cause 
- * problems.
  */
 template <PropertyType Tp>
 class CObjectComplex : public IProperty
@@ -323,12 +330,12 @@ class CObjectComplex : public IProperty
 public:
 	/** Write type for writeValue function. */
 	typedef typename PropertyTraitComplex<Tp>::writeType WriteType;
-		
+	/** This type identifies a property. */
+	typedef typename PropertyTraitComplex<Tp>::propertyId PropertyId;
+	
 private:
 	/** Type indicating whether this object is a special object, like Cpdf, CAnnotation... */
 	SpecialObjectType specialObjectType;
-	/** This object belongs to this pdf. */	
-	CPdf* pdf;
 	
 private:
 	/**
@@ -346,7 +353,7 @@ protected:
 	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 * @param objTp	Type of this object. Indicates whether it is a special object (CPdf,CPage,..) or not.
 	 */
-	CObjectComplex (CPdf* p, Object* o, IndiRef& ref, bool isDirect, SpecialObjectType objTp = sNone);
+	CObjectComplex (CPdf& p, Object& o, IndiRef& ref, bool isDirect, SpecialObjectType objTp = sNone);
 
 
 	/**
@@ -363,11 +370,11 @@ public:
 	 * Public constructor. Can be used to creted direct/indirect objects.
 	 *
 	 * @param p		Pointer to pdf object in which this object will exist.
-	 * @param ip	If NULL an indirect object will be created. Otherwise, ip will 
-	 * 				point to an existing IProperty where the direct object will be placed by
-	 * 				a call to e.g. addProperty().
 	 */
-	CObjectComplex (CPdf* p, IProperty* ip = NULL);
+	CObjectComplex (CPdf& p, bool isDirect);
+#ifdef DEBUG
+CObjectComplex (){};
+#endif
 
 	
 	/**
@@ -417,14 +424,6 @@ public:
 
 	
 	/**
-	 * Returns xpdf object.
-	 *
-	 * @return Xpdf object associated with this CObject.
-	 */
-	const Object* getRawObject () const {assert (NULL != obj); return obj;};
-	
-	
-	/**
 	 * Returns if it is one of special objects CPdf,CPage etc.
 	 *
 	 * @return Type of special object.
@@ -466,57 +465,58 @@ public:
 	//
 public:
 	/** 
-     * Returns property count.
+	 * Returns property count.
 	 *
 	 * REMARK: Specific for pArray, pDict and pStream.
-     *
-     * @return Property count.
-     */
-    inline PropertyCount getPropertyCount () const;
+	 *
+	 * 
+	 * @return Property count.
+	 */
+	inline PropertyCount getPropertyCount () const;
  
 
 	/**
-     * Inserts all property names to container supplied by caller. This container must support 
-     * push_back() function.
+	 * Inserts all property names to container supplied by caller. This container must support 
+	 * push_back() function.
 	 *
 	 * REMARK: Specific for pDict and pStream.
-     *
-     * @param container Container of string objects. STL vector,list,deque,... must implement 
-     * pust_back() function.
-     */
-    template <typename T>
-    inline void getAllPropertyNames (T& container) const;
+     	 *
+	 * @param container Container of string objects. STL vector,list,deque,... must implement 
+	 * pust_back() function.
+	 */
+	virtual void getAllPropertyNames (std::vector<std::string>& container) const;
+	virtual void getAllPropertyNames (std::list<std::string>& container) const;
+	virtual void getAllPropertyNames (std::deque<std::string>& container) const;
 
 
 	/**
-     * Returns value of property identified by its name/position depending on type of this object.
+	 * Returns value of property identified by its name/position depending on type of this object.
 	 *
 	 * So f.e. when we want to access dicionary item, we use string representation, when array
 	 * we use integer.
 	 *
 	 * REMARK: Specific for pArray, pDict and pStream
    	 *
-     * @param 	name Name of the property
+     	 * @param 	name Name of the property
 	 * @return 	T	  That type which we want
-     */
-    template <typename T>
-    T getPropertyValue (typename PropertyTraitComplex<Tp>::PropertyId name) const;
+     	 */
+    	//getPropertyValue (ReturnType& val, typename PropertyTraitComplex<Tp>::PropertyId name) const;
 	//
 	// Be carefull to inherit id's from parent if we return IProperty
 	//
 
 	
 	/**
-     * Returns property type of an item.
-     *
-     * @param	name	Name of the property.
-     * @return		Property type.	
-     */
-    PropertyType getPropertyType (const PropertyName& name) const
-    {
+	 * Returns property type of an item.
+	 *
+	 * @param	name	Name of the property.
+	 * @return		Property type.	
+	 */
+	PropertyType getPropertyType (const PropertyName& name) const
+	{
 		assert (NULL != IProperty::obj);
   	   	return static_cast<PropertyType>(obj->getType());
-    }
+	}
 
 	
 	/**
@@ -525,28 +525,17 @@ public:
 	 * @param	id		Name/Index of property
 	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
 	 */
-	template<typename T>
-	void setPropertyValue (typename PropertyTraitComplex<Tp>::PropertyId /*name*/, const T& /*val*/)
-	{
-		//
-		// Find the name in Object obj dictionary and change the value (type) of simple Object
-		// simple conversions from int to string etc. can be done here
-		//
-		// If we want to set complex type we just get the Object from IProperty passed to this function
-		// and save the pointer
-		//
-		// All operations are directly written to xpdf Objects
-		//
-	}
-
+	virtual void setPropertyValue (PropertyId id, const IProperty& ip);
 	
 	/**
-	 * Adds property to array/dict.
+	 * Adds property to complex type. The property that should be added will
+	 * automaticly be associated with the pdf this object lives in.
 	 *
-	 * @param id Name/Index of property
+	 * @param newIp 	New property.
+	 * @param propertyName 	Name of the created property
 	 */
-	template<typename T>
-	void addProperty (typename PropertyTraitComplex<Tp>::PropertyId /*id*/, const T& /*val*/ ) {}
+	void addProperty (IProperty& newIp);
+	void addProperty (IProperty& newIp, const std::string& propertyName);
 	
 	
 	/**
@@ -555,8 +544,32 @@ public:
 	 *
 	 * @param id Name/Index of property
 	 */
-	void delProperty (typename PropertyTraitComplex<Tp>::PropertyId /*id*/) {};
+	void delProperty (PropertyId /*id*/);
 
+
+
+	//
+	// Helper functions
+	//
+private:
+	/**
+	 *
+	 */
+	template<typename T>
+	void 
+	_getAllPropertyNames (T& container) const;
+
+	/**
+	 *
+	 */
+	inline void
+	_objectChanged ()
+	{
+		// The object has been changed
+		IProperty::setIsChanged (true);
+		// Notify everybody about this change
+		IProperty::notifyObservers ();
+	}
 };
 
 
@@ -624,6 +637,22 @@ processObjectFamily (ObjectStorage& store, ObjectProcessor objProcessor)
 	// Perform an action on all objects
 	for_each (store.begin(), store.end(), objProcessor);
 }
+
+/**
+ * Parses string to get simple values like int, name, bool etc.
+ * 
+ * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
+ * 
+ * @param strO	String to be parsed.
+ * @param val	Desired value.
+ */
+void getSimpleValueFromString (const std::string& str, bool& val);
+void getSimpleValueFromString (const std::string& str, int& val);
+void getSimpleValueFromString (const std::string& str, double& val);
+void getSimpleValueFromString (const std::string& str, std::string& val);
+void getSimpleValueFromString (const std::string& str, IndiRef& val);
+
+
 
 
 /**
@@ -702,6 +731,66 @@ public:
 
 
 //
+// ReadProcessor
+//
+template<typename Storage, typename Val>
+struct BoolReader
+{public:
+		void operator() (Storage obj, Val val)
+			{val = (0 != obj->getBool());}
+};
+
+template<typename Storage, typename Val>
+struct IntReader
+{public:
+		void operator() (Storage obj, Val val)
+			{val = obj->getInt ();}
+};
+
+template<typename Storage, typename Val>
+struct RealReader
+{public:
+		void operator() (Storage obj, Val val)
+			{val = obj->getNum ();}
+};
+
+template<typename Storage, typename Val>
+struct StringReader
+{public:
+		void operator() (Storage obj, Val val)
+			{val = obj->getString ();}
+};
+
+template<typename Storage, typename Val>
+struct NameReader
+{public:
+		void operator() (Storage obj, Val val)
+			{val = obj->getName ();}
+};
+
+
+template<typename Storage, typename Val>
+struct RefReader
+{public:
+		void operator() (Storage obj, Val val)
+			{val.num = obj->getRefNum();
+			 val.gen = obj->getRefGen();}
+};
+
+
+/*template<typename Storage, typename Val, typename CObject>
+struct ComplexReader
+{
+	public:
+		void 
+		operator() (Storage obj, Val val, CObject* cobj)
+		{
+		}
+};
+*/
+
+
+//
 // WriteProcessors
 //
 // We know that Storage is xpdf Object and value type depends on each writer type
@@ -755,7 +844,7 @@ struct ComplexWriter
 {
 	public:
 		void 
-		operator() (Storage obj, Val val, CObject* cobj)
+		operator() (Storage /*obj*/, Val val, CObject* cobj)
 		{
 			//
 			// We will get string here
@@ -765,8 +854,10 @@ struct ComplexWriter
 		}
 };
 
-} /* namespace utils */
 
+
+
+} /* namespace utils */
 } /* namespace pdfobjects */
 
 

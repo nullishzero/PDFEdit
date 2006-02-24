@@ -27,6 +27,10 @@ struct ObjBadValueE : std::exception
 	char const* what() const throw() {return "(x)pdf object has bad value.";}
 };
 
+struct ObjInvalidObject : std::exception
+{
+	char const* what() const throw() {return "(x)pdf object is invalid.";}
+};
 
 
 

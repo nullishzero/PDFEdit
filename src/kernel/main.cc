@@ -8,11 +8,10 @@
 #include <aconf.h>
 
 #include "cobject.h"
-#include "cobjectI.h"
 #include "cpdf.h"
-#include "cpdfI.h"
 
 
+#include "lib.h"
 
 
 using namespace std;
@@ -98,6 +97,29 @@ str = "";
 
 // segmenation fault, Object is not defined
 
+
+//======== test 5
+//
+pdfobjects::CPdf pdf;
+
+
+CDict cmp;
+
+CInt ii;
+
+cmp.addProperty (ii, "jano");
+
+CInt smpl;
+
+
+//int j;
+//smpl.getPropertyValue (j);
+smpl.setStringRepresentation ("123");
+
+//cout << j << "  ..." << endl;
+
+f();
+		
 return 0;
 }
 
