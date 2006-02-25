@@ -170,7 +170,7 @@ complexObjToString (Object* /*obj*/, string& /*str*/)
 //
 //
 template <typename Storage>
-void getAllXpdfObjects (Object& obj, Storage& /*store*/) 
+void getAllDirectChildXpdfObjects (Object& obj, Storage& /*store*/) 
 {
 	switch (obj.getType())
 	{
@@ -193,11 +193,11 @@ void getAllXpdfObjects (Object& obj, Storage& /*store*/)
 			break;
 
 		case objStream:
-			assert (!"not implemented yet...");
+			assert (!"I'm not implemented yet...");
 			break;
 
 		case objRef:
-			assert (!"not implemented yet...");
+			assert (!"I'm not implemented yet...");
 			break;
 
 		default:	// Null, Bool, Int, Real, String, Name
@@ -209,49 +209,39 @@ void getAllXpdfObjects (Object& obj, Storage& /*store*/)
 //
 // We have to explicitely instantiate functions, because we have included them in header cobject.h
 //
-template void getAllXpdfObjects<std::vector<Object*> > (Object& obj, std::vector<Object*>& /*store*/ );
+template void getAllDirectChildXpdfObjects<std::vector<Object*> > (Object& obj, std::vector<Object*>& /*store*/ );
 
 
 //
 // Purposeful only for Dict and Stream
 //
 Object*
-getObjectAtPos (Object& obj, const std::string& /*name*/)
+getXpdfObjectAtPos (Object& obj, const std::string& /*name*/)
 {
 	assert ((objDict == obj.getType()) || (objStream == obj.getType()) );
 
-	switch (obj.getType ())
-	{
-		case objDict:
-			//
-			// have to dig into Dict structure, because
-			// default functions just copy objects !!!
-			//
-			break;
+	/*Dict* dict = (objDict == obj.getType ()) ? obj.getDict () : obj.streamGetDict();
+	Object* o = dict->find (name.c_str()).val;
 
-		case objStream:
-			//
-			// have to dig into Dict structure, because
-			// default functions just copy objects !!!
-			//
-			break;
+	if (NULL == o)
+		throw ObjInvalidPositionInComplex ();
 
-		default:
-			assert (!"bad type");
-			break;
-	}
-
+	return o;
+	*/
 	return NULL;
 }
 
 Object*
-getObjectAtPos (Object& obj, const unsigned int /*pos*/)
+getXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/)
 {
 	assert (objArray == obj.getType());
-	//
-	// have to dig into Dict structure, because
-	// default functions just copy objects !!!
-	//
+	//assert (pos < obj.arrayGetLength());
+	
+//	if (pos > obj.arrayGetLength ())
+//		throw ObjInvalidPositionInComplex ();
+
+	//return obj.getArray()->elems[pos];
+	
 	return NULL;
 }
 
@@ -260,22 +250,69 @@ getObjectAtPos (Object& obj, const unsigned int /*pos*/)
 //
 //
 void
-removeObjectAtPos (Object& obj, const std::string& /*name*/)
+removeXpdfObjectAtPos (Object& obj, const std::string& /*name*/)
 {
 	assert ((objDict == obj.getType()) || (objStream == obj.getType()) );
 
 	// Get the dictionary
-	//Dict* o = (objDict == obj.getType()) ? obj.getDict () : obj.streamGetDict ();
-	
-	//
-	// Dig into the structure
-	//
+	//Dict* dict = (objDict == obj.getType()) ? obj.getDict () : obj.streamGetDict ();
+
+	/*size_t len = dict->getLength() - 1;
+	for (int i = 0; i =< len; i++)
+	{
+		//
+		// If we find the item, get the last entry, copy it instead of the entry
+		// that will be removed and decrement dictionary length
+		//
+		if (name == dict->entries[i].key)
+		{
+			assert (utils::getXpdfObjectAtPos (*obj,name) == dict->entires[i].key);
+			
+			if (i != len )
+			{
+				// Free property name
+				delete dict->entries[i].key;
+
+				freeXpdfObject (dict->entries[i].val);
+				
+				// put the last entry at the position that will be removed
+				dict->entries[i].key = dict->entries[len].key;
+				dict->entries[i].val = dict->entries[len].val;
+				// to be sure
+				dict->entries[len].key = NULL;
+				dict->entries[len].val = NULL;
+			}
+			
+			// decrement the size of the dictionary
+			dict->length--;
+			
+			break;
+		}
+	}
+	*/
 
 }
 void
-removeObjectAtPos (Object& /*obj*/, const unsigned int /*pos*/)
+removeXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/)
 {
-}
+	assert (objArray == obj.getType());
+//	assert (pos < obj.arrayGetLength());
+//	if (pos < obj.arrayGetLength())
+//		throw ObjInvalidPositionInComplex ();
+
+/*	Array* a = obj.getArray();
+	assert (NULL != a);
+
+	freeXpdfObject (a->entries[pos]);
+
+	size_t len = a->getLength () - 1;
+	// put the last entry at the position that will be removed
+	a->entries[pos] = a->entries[len];
+	a->entries[len] = NULL;
+			
+	// decrement the size of the dictionary
+	a->length--;
+*/}
 
 
 		
@@ -283,7 +320,7 @@ removeObjectAtPos (Object& /*obj*/, const unsigned int /*pos*/)
 //
 //
 void
-objectFree (Object* obj)
+freeXpdfObject (Object* obj)
 {
 	printDbg (1,"objectFree(" << (unsigned int)obj << ")");
 	std::string str;
@@ -366,8 +403,9 @@ ObjectDeleteProcessor<Check>::operator() (Object* obj)
 		{
 			// make a check if any
 			check (obj);	
-			// free it
-			obj->free ();
+			// free it, use objectFree instead of obj->free, because
+			// we do not want to check ref count in Array and Dict
+			freeXpdfObject (obj);
 		
 		}//else
 		{

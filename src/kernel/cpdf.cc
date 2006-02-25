@@ -28,7 +28,7 @@ namespace pdfobjects
 //
 //
 //
-CPdf::CPdf () : CDict(NULL,sPdf)
+CPdf::CPdf () : CDict()
 {
 	printDbg (0,"CPdf constructor.");
 }

@@ -32,6 +32,10 @@ struct ObjInvalidObject : std::exception
 	char const* what() const throw() {return "(x)pdf object is invalid.";}
 };
 
+struct ObjInvalidPositionInComplex : std::exception
+{
+	char const* what() const throw() {return "(x)pdf object position is invalid.";}
+};
 
 
 

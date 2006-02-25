@@ -71,18 +71,20 @@ template<typename T, typename U> struct ProcessorTraitSimple<T,U,pRef>
 // Protected constructor, called when we have parsed an object
 //
 template<PropertyType Tp>
-CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, IndiRef& ref, bool isDirect) : IProperty(o)
+CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref, bool isDirect) : IProperty(o,isDirect)
 {
 	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
 					COBJECT_BAD_TYPE);
 	STATIC_CHECK ((pNull == Tp) || (pBool == Tp) || (pInt == Tp) || (pReal ==Tp) ||
 				  (pString == Tp) || (pName == Tp) || (pRef == Tp),COBJECT_BAD_TYPE);
+	assert (static_cast<PropertyType>(o.getType()) == Tp);
 	printDbg (0,"CObjectSimple constructor.");
+	
 	
 	// Save pdf
 	IProperty::pdf = &p;	
 	// Save id and gen id
-	IProperty::setIndiRef (&ref);
+	IProperty::setIndiRef (ref);
 	// Save mapping between Object and IProperty
 	IProperty::pdf->setObjectMapping (&o,this);
 	
@@ -96,7 +98,7 @@ CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, IndiRef& ref, bool isDirec
 	{// Indirect object
 
 		// Save indirect mapping 
-		IProperty::pdf->setIndMapping (&ref,this);
+		IProperty::pdf->setIndMapping (ref,this);
 		// Set that it is an indirect object
 		IProperty::setIsDirect (false);
 	
@@ -128,17 +130,17 @@ CObjectSimple<Tp>::CObjectSimple (CPdf& p, bool isDirect)
 	}else
 	{// Indirect object
 
-		//Ref ref;
+		Ref ref;
 		// Create the object
 		//IProperty::obj = pdf->getXref()->createObject(static_cast<ObjType>(Tp),&ref);
 		// We have created an indirect object
 		IProperty::setIsDirect (false);
-		//IProperty::setIndiRef (ref.num, ref.gen);
-		//pdf->setIndMapping (ref,this);
+		IProperty::setIndiRef (ref.num, ref.gen);
+		pdf->setIndMapping (ref,this);
 	}
 
 	// Save the mapping
-	//pdf->setObjectMapping (IProperty::obj,this);
+	pdf->setObjectMapping (IProperty::obj,this);
 }
 
 
@@ -237,7 +239,7 @@ CObjectSimple<Tp>::release()
 		pdf->delObjectMapping (IProperty::obj);
 		//IndiRef* ind = IProperty::getIndiRef ();
 		//pdf->getXrefWriter()->releaseObject (ind->num, ind->gen);
-		utils::objectFree (IProperty::obj);
+		utils::freeXpdfObject (IProperty::obj);
 		delete this;
 			
 	}else
@@ -279,9 +281,11 @@ CObjectSimple<Tp>::dispatchChange(bool makeValidCheck) const
 
 
 
+
 //=====================================================================================
 // CObjectComplex
 //
+
 
 template<typename T, typename U, PropertyType Tp> struct WriteProcessorTraitComplex; 
 template<typename T, typename U> struct WriteProcessorTraitComplex<T,U,pStream>
@@ -294,37 +298,16 @@ template<typename T, typename U> struct WriteProcessorTraitComplex<T,U,pDict>
 
 
 //
-//
+// Special constructor for CPdf
 //
 template<PropertyType Tp>
-CObjectComplex<Tp>::CObjectComplex (CPdf* p,SpecialObjectType objTp) : specialObjectType(objTp)
+CObjectComplex<Tp>::CObjectComplex ()
 {
-	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
-					COBJECT_BAD_TYPE);
-	STATIC_CHECK ((pArray == Tp) || (pStream == Tp) || (pDict == Tp),COBJECT_BAD_TYPE);
-	assert ((NULL != p) || (sPdf == objTp));
-	printDbg (0,"CObjectComplex constructor.");
+	STATIC_CHECK (pDict == Tp, COBJECT_BAD_TYPE);
+	printDbg (0,"CObjectComplex pdf constructor.");
 		
-	//
-	// If CPdf is beeing created, we don't have valid p
-	// 
-	if (sPdf == objTp)
-	{
-		assert (NULL == p);
-		IProperty::pdf = dynamic_cast<CPdf*>(this);
-	}else
-	{
-		IProperty::pdf = p;
-	}
-	
-	//Ref ref;
-	// Create the object
-	//IProperty::obj = pdf->getXref()->createObject(static_cast<ObjType>(Tp,)&ref);
-	// We have created an indirect object
-	//IProperty::setIsDirect (false);
-	//IProperty::setIndiRef (ref.num, ref.gen);
-	// Save the mapping, because we have created new indirect object
-	//pdf->setObjectMapping (IProperty::getIndiRef(),this);
+	IProperty::pdf = dynamic_cast<CPdf*>(this);
+	IProperty::setIsDirect (false);
 }
 
 
@@ -332,20 +315,21 @@ CObjectComplex<Tp>::CObjectComplex (CPdf* p,SpecialObjectType objTp) : specialOb
 // Protected constructor
 //
 template<PropertyType Tp>
-CObjectComplex<Tp>::CObjectComplex (CPdf& p, Object& o, IndiRef& ref, bool isDirect, SpecialObjectType objTp) 
-						:  IProperty(o),specialObjectType(objTp)
+CObjectComplex<Tp>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref, bool isDirect) : IProperty(o,isDirect)
 {
 	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
 					COBJECT_BAD_TYPE);
 	STATIC_CHECK ((pArray == Tp) || (pStream == Tp) || (pDict == Tp),COBJECT_BAD_TYPE);
-	assert (sPdf != objTp);
+	assert (static_cast<PropertyType>(o.getType()) == Tp);
 	printDbg (0,"CObjectComplex constructor.");
 	
 	// Save pdf
 	IProperty::pdf = &p;
 	// Save id and gen id
-	IProperty::setIndiRef (&ref);
-	
+	IProperty::setIndiRef (ref);
+	// Save mapping between Object and IProperty
+	IProperty::pdf->setObjectMapping (&o,this);
+
 	if (isDirect)
 	{// Direct object
 			
@@ -356,7 +340,7 @@ CObjectComplex<Tp>::CObjectComplex (CPdf& p, Object& o, IndiRef& ref, bool isDir
 	{// Indirect object
 
 		// Save the mapping 
-		pdf->setObjectMapping (&ref,this);
+		pdf->setIndMapping (ref,this);
 		// Set that it is an indirect object
 		IProperty::setIsDirect (false);
 	}
@@ -377,7 +361,7 @@ CObjectComplex<Tp>::CObjectComplex (CPdf& p, bool isDirect)
 
 	// Save pdf
 	IProperty::pdf = &p;
-	
+
 	if (isDirect)
 	{// Direct object
 
@@ -386,17 +370,17 @@ CObjectComplex<Tp>::CObjectComplex (CPdf& p, bool isDirect)
 	}else
 	{// Indirect object
 		
-		//Ref ref;
+		Ref ref;
 		// Create the object
 		//IProperty::obj = pdf->getXref()->createObject(static_cast<ObjType>(Tp),&ref);
 		// We have created an indirect object
 		IProperty::setIsDirect (false);
 		//IProperty::setIndiRef (ref.num, ref.gen);
-		//pdf->setIndMapping (ref,this);
+		pdf->setIndMapping (ref,this);
 	}
 	
 	// Save the mapping
-	//pdf->setObjectMapping (IProperty::getIndiRef(),this);
+	pdf->setObjectMapping (IProperty::getIndiRef(),this);
 }
 
 
@@ -455,7 +439,7 @@ CObjectComplex<Tp>::release()
 	if (IProperty::isDirect ())
 	{	
 		std::vector<Object*> objects;
-		utils::getAllXpdfObjects (*IProperty::obj, objects);
+		utils::getAllDirectChildXpdfObjects (*IProperty::obj, objects);
 		
 		processObjectFamily (objects, utils::ObjectDeleteProcessor<utils::CheckDirectObject> (pdf) );
 	
@@ -464,7 +448,7 @@ CObjectComplex<Tp>::release()
 		//pdf->getXrefWriter()->releaseObject (ind->num, ind->gen);
 
 		// We have freed everything "below" this object, now free Object
-		utils::objectFree (IProperty::obj);
+		utils::freeXpdfObject (IProperty::obj);
 		delete this;
 			
 	}else
@@ -476,8 +460,9 @@ CObjectComplex<Tp>::release()
 	
 }
 
+
 //
-// Generic function is disabled for now...
+// 
 //
 template<PropertyType Tp>
 PropertyCount
@@ -504,6 +489,18 @@ CObjectComplex<Tp>::getPropertyCount () const
 			break;
 	}
 }
+
+
+//
+//
+//
+template<PropertyType Tp>
+inline PropertyType 
+CObjectComplex<Tp>::getPropertyType (PropertyId id) const
+{
+	assert (NULL != IProperty::obj);
+	return static_cast<PropertyType>(utils::getXpdfObjectAtPos (*IProperty::obj,id)->getType());
+};
 
 
 
@@ -557,19 +554,17 @@ CObjectComplex<Tp>::delProperty (PropertyId id)
 	assert (NULL != IProperty::obj);
 	printDbg (0,"delProperty()");
 
-	Object* o = utils::getObjectAtPos (*IProperty::obj,id);
+	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
 	IProperty* ip = pdf->getExistingProperty (o);
 	
 	if (NULL == ip)
 	{ // No mapping exists
-		
-		utils::objectFree (o);
+
+		utils::removeXpdfObjectAtPos (*IProperty::obj,id);
 	}else
 	{
 		ip->release ();
 	}
-	
-	utils::removeObjectAtPos (*IProperty::obj,id);
 	
 	_objectChanged ();
 }
@@ -605,6 +600,7 @@ CObjectComplex<Tp>::addProperty (IProperty& newIp)
 	// set isDirect and notify observers
 	_objectChanged ();
 }
+
 
 //
 // Correctly add an object (with name) can be done only to Dict and Stream object
@@ -651,9 +647,90 @@ template<PropertyType Tp>
 void
 CObjectComplex<Tp>::setPropertyValue (PropertyId /*id*/, const IProperty& /*ip*/)
 {
-//
 // ??? what here?
+}
+
+
+
 //
+//
+//
+template<PropertyType Tp>
+void
+CObjectComplex<Tp>::getPropertyValue (IProperty* val, PropertyId id) const
+{
+	assert (NULL != IProperty::obj);
+	printDbg (0,"getPropertyValue()");
+	
+	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
+	assert (NULL != o);
+	IProperty* ip = pdf->getExistingProperty (o);
+
+	if (NULL == ip)
+	{ 
+		//
+		// Create new IProperty
+		// Saving the mapping is done in ctors.
+		//
+		switch (o->getType ())
+		{
+			case objBool:
+				ip = new CBool (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objInt:
+				ip = new CInt (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objReal:
+				ip = new CReal (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objString:
+				ip = new CString (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objName:
+				ip = new CName (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objNull:
+				ip = new CNull (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objArray:
+				ip = new CArray (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objDict:
+				//ip = new CDict (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objStream:
+				//ip = new CStream (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			case objRef:
+				ip = new CRef (*IProperty::pdf,*o,IProperty::ref,true);
+				break;
+
+			default:
+				assert (!"Bad type.");
+				break;
+		}
+		
+	}
+		
+	val = ip;
+}
+
+
+template<PropertyType Tp>
+template<typename T>
+void 
+CObjectComplex<Tp>::getPropertyValue (T* val, PropertyId id) const
+{
+	
 }
 
 
