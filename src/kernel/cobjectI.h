@@ -139,6 +139,7 @@ CObjectSimple<Tp>::CObjectSimple (CPdf& p, bool isDirect)
 		pdf->setIndMapping (ref,this);
 	}
 
+	assert (static_cast<PropertyType>(o.getType()) == Tp);
 	// Save the mapping
 	pdf->setObjectMapping (IProperty::obj,this);
 }
@@ -155,7 +156,7 @@ CObjectSimple<Tp>::getStringRepresentation (std::string& str) const
   assert (NULL != IProperty::obj);
   assert (obj->getType() == (ObjType)Tp);
   
-  utils::simpleObjToString (IProperty::obj,str);
+  utils::simpleXpdfObjToString (*IProperty::obj,str);
 }
 
 
@@ -186,7 +187,7 @@ template<PropertyType Tp>
 void
 CObjectSimple<Tp>::writeValue (WriteType val)
 {
-	assert (obj != NULL);
+	assert (IProperty::obj != NULL);
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (0,"writeValue()");
 
@@ -225,7 +226,7 @@ template<PropertyType Tp>
 void
 CObjectSimple<Tp>::release()
 {
-	assert (NULL != obj);
+	assert (NULL != IProperty::obj);
 	assert (NULL != IProperty::pdf);
 	if (IProperty::isChanged ())
 		{printDbg (1,"Warning: CObjectSimple::release(). Object has been changed, but was not saved.");}
@@ -260,6 +261,7 @@ CObjectSimple<Tp>::dispatchChange(bool makeValidCheck) const
 	STATIC_CHECK ((pNull != Tp), INCORRECT_USE_OF_dispatchChange_FUNCTION_FOR_pNULL_TYPE);
 	assert (IProperty::isChanged());
 	assert (NULL != IProperty::pdf);
+	assert (NULL != IProperty::obj);
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 	
 
@@ -299,6 +301,9 @@ template<typename T, typename U> struct WriteProcessorTraitComplex<T,U,pDict>
 
 //
 // Special constructor for CPdf
+//
+// This is the only place, where IProperty::obj is NULL after executing the constructor, 
+// but it will be set in CPdf constructor
 //
 template<PropertyType Tp>
 CObjectComplex<Tp>::CObjectComplex ()
@@ -379,6 +384,7 @@ CObjectComplex<Tp>::CObjectComplex (CPdf& p, bool isDirect)
 		pdf->setIndMapping (ref,this);
 	}
 	
+	//assert (static_cast<PropertyType>(o.getType()) == Tp);
 	// Save the mapping
 	pdf->setObjectMapping (IProperty::getIndiRef(),this);
 }
@@ -393,10 +399,9 @@ template<PropertyType Tp>
 void
 CObjectComplex<Tp>::getStringRepresentation (std::string& str) const
 {
-  assert (NULL != IProperty::obj);
-  assert (obj->getType() == (ObjType)Tp);
+	assert (NULL != IProperty::obj);
   
-  utils::complexObjToString (IProperty::obj,str);
+	utils::complexXpdfObjToString (*IProperty::obj,str);
 }
 
 
@@ -407,7 +412,7 @@ template<PropertyType Tp>
 void
 CObjectComplex<Tp>::writeValue (WriteType val)
 {
-	assert (NULL != obj);
+	assert (NULL != IProperty::obj);
 	printDbg (0,"writeValue()");
 
 	typename WriteProcessorTraitComplex<Object*, WriteType, Tp>::WriteProcessor wp;
@@ -419,6 +424,46 @@ CObjectComplex<Tp>::writeValue (WriteType val)
 	_objectChanged ();
 }
 
+
+//
+//
+//
+template<PropertyType Tp>
+void
+CObjectComplex<Tp>::dispatchChange(bool makeValidCheck) const
+{
+	typedef std::vector<IProperty*> IPList;
+	
+	assert (IProperty::isChanged());
+	assert (NULL != IProperty::pdf);
+	assert (NULL != IProperty::obj);
+	printDbg (0,"dispatchChange() [" << (int)this << "]" );
+	
+
+	if (makeValidCheck)
+	{
+		// Validate the object
+		//if (!CPDF::vali....(IProperty::obj))
+		//	throw ObjInvalidObject;
+	}
+	
+	// Dispatch the change
+	IndiRef* ind = IProperty::getIndiRef ();
+	//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,getRawObject ());
+	
+	// Indicate to all child objects that the change has been dispatched
+	IPList list;
+	getAllChildIPropertyObjects (*IProperty::pdf,*IProperty::obj,list);
+	IPList::iterator it = list.start ();
+	for ( ;it != list.end(); it++)
+		(*it)->setIsChanged (false);
+	// At last indicate to this, that the change has been dispatched
+	IProperty::setIsChanged (false);
+	
+}
+
+
+
 //
 // Just a hint that we can free this object
 // This is a generic function for all types
@@ -427,7 +472,7 @@ template<PropertyType Tp>
 void
 CObjectComplex<Tp>::release()
 {
-	assert (NULL != obj);
+	assert (NULL != IProperty::obj);
 	assert (NULL != IProperty::pdf);
 	if (IProperty::isChanged ())
 		{printDbg (1,"Warning: CObject::release(). Object has been changed, but was not saved.");}
@@ -457,7 +502,6 @@ CObjectComplex<Tp>::release()
 		// TODO: This is an indirect object, what to do?
 		//
 	}
-	
 }
 
 
@@ -465,7 +509,7 @@ CObjectComplex<Tp>::release()
 // 
 //
 template<PropertyType Tp>
-PropertyCount
+size_t
 CObjectComplex<Tp>::getPropertyCount () const
 {
 	STATIC_CHECK ( (pArray==Tp) || (Tp==pDict) || (Tp==pStream),
@@ -555,12 +599,19 @@ CObjectComplex<Tp>::delProperty (PropertyId id)
 	printDbg (0,"delProperty()");
 
 	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
-	IProperty* ip = pdf->getExistingProperty (o);
+	assert (NULL != o);
+	if (NULL == o)
+		throw ObjInvalidObject ();
+
+	// Remove the entry from dict/array structure
+	utils::removeXpdfObjectAtPos (*IProperty::obj,id);
 	
+	// Get mapping if any
+	IProperty* ip = pdf->getExistingProperty (o);
 	if (NULL == ip)
 	{ // No mapping exists
 
-		utils::removeXpdfObjectAtPos (*IProperty::obj,id);
+		freeXpdfObject (o);
 	}else
 	{
 		ip->release ();
@@ -664,6 +715,9 @@ CObjectComplex<Tp>::getPropertyValue (IProperty* val, PropertyId id) const
 	
 	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
 	assert (NULL != o);
+	if (NULL == o)
+		throw ObjInvalidObject ();
+
 	IProperty* ip = pdf->getExistingProperty (o);
 
 	if (NULL == ip)
@@ -703,11 +757,11 @@ CObjectComplex<Tp>::getPropertyValue (IProperty* val, PropertyId id) const
 				break;
 
 			case objDict:
-				//ip = new CDict (*IProperty::pdf,*o,IProperty::ref,true);
+				ip = new CDict (*IProperty::pdf,*o,IProperty::ref,true);
 				break;
 
 			case objStream:
-				//ip = new CStream (*IProperty::pdf,*o,IProperty::ref,true);
+				ip = new CStream (*IProperty::pdf,*o,IProperty::ref,true);
 				break;
 
 			case objRef:
@@ -726,15 +780,70 @@ CObjectComplex<Tp>::getPropertyValue (IProperty* val, PropertyId id) const
 
 
 template<PropertyType Tp>
-template<typename T>
 void 
-CObjectComplex<Tp>::getPropertyValue (T* val, PropertyId id) const
+CObjectComplex<Tp>::getPropertyValue (bool& val, PropertyId id) const
 {
+	assert (NULL != IProperty::obj);
+	printDbg (0,"getPropertyValue(bool)");
 	
+	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
+	assert (NULL != o);
+	assert (static_cast<PropertyType>(o.getType()) == pBool);
+	if ((NULL == o) || (o.getType() != objBool))
+		throw ObjInvalidObject ();
+
+	utils::BoolReader<Object*,bool&> rp;
+	rp (o,val);
 }
 
+template<PropertyType Tp>
+void 
+CObjectComplex<Tp>::getPropertyValue (int& val, PropertyId id) const
+{
+	assert (NULL != IProperty::obj);
+	printDbg (0,"getPropertyValue(int)");
+	
+	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
+	assert (NULL != o);
+	assert (static_cast<PropertyType>(o.getType()) == pInt);
+	if ((NULL == o) || (o.getType() != objInt))
+		throw ObjInvalidObject ();
 
+	utils::IntReader<Object*,int&> rp;
+	rp (o,val);
+}
 
+template<PropertyType Tp>
+void 
+CObjectComplex<Tp>::getPropertyValue (double& val, PropertyId id) const
+{
+	assert (NULL != IProperty::obj);
+	printDbg (0,"getPropertyValue(double)");
+	
+	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
+	assert (NULL != o);
+	assert (static_cast<PropertyType>(o.getType()) == pReal);
+	if ((NULL == o) || (o.getType() != objReal))
+		throw ObjInvalidObject ();
+
+	utils::RealReader<Object*,int&> rp;
+	rp (o,val);
+}
+
+template<PropertyType Tp>
+void 
+CObjectComplex<Tp>::getPropertyValue (std::string& val, PropertyId id) const
+{
+	assert (NULL != IProperty::obj);
+	printDbg (0,"getPropertyValue(string)");
+	
+	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
+	assert (NULL != o);
+	if (NULL == o)
+		throw ObjInvalidObject ();
+
+	utils::xpdfObjToString (*o,val);
+}
 
 
 } /* namespace pdfobjects */

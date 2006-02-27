@@ -113,11 +113,10 @@ template<> struct PropertyTraitSimple<pRef>
 /** 
  * Template class representing simple PDF objects from specification v1.5.
  *
- * REMARK: it will be the responsibility of CXref to remember a mapping
- * between each xpdf Object and our representation. e.g. when we want to save
- * a pdf, we also want to save undo's, and if we would have more of our objects 
- * pointing to one xpdf Object we would have multiple undos and it could cause 
- * problems.
+ * This class represents simple objects like null, string, number etc.
+ * It does not have special functions like CObjectComplex.
+ *
+ * The value is stored in xpdf Object class. 
  */
 template <PropertyType Tp>
 class CObjectSimple : public IProperty
@@ -139,7 +138,7 @@ public/*protected*/:
 	 * Constructor. Only kernel can call this constructor. It is dependant on the object, that we have
 	 * parsed.
 	 *
-	 * @param p		Pointer to pdf object. If we create CPdf, p will be NULL so use CObject::this pointer.
+	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
 	 * @param ref	Indirect id and gen id.
 	 * @param isDirect	Indicates whether this is a direct/indirect object.
@@ -158,14 +157,14 @@ public:
 	CObjectSimple (CPdf& p, bool isDirect);
 
 #ifdef DEBUG
-CObjectSimple (){};
+CObjectSimple () {};
 #endif
 	
 	
 	/**
 	 * Returns string representation of (x)pdf object. 
 	 * 
-	 * @param str 	After successful call, it will hold string representation 
+	 * @param str 	After successful call, it will hold the string representation 
 	 * 				of current object.
 	 */
 	void getStringRepresentation (std::string& str) const;
@@ -184,9 +183,9 @@ CObjectSimple (){};
 	 * Change the value of an object. The variable type depends
 	 * on CObject type. For complex types, it is equal to setStringRepresentation().
 	 * 
-	 * We can define how best we want to represent an pdf object.
+	 * We can define the best to represent an pdf object.
 	 *
-	 * <exception cref="ObjBadValueE "/> Thrown when a value cannot be set.
+ 	 * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
 	 *
 	 * @param val	Value that will be set.
 	 */
@@ -194,7 +193,7 @@ CObjectSimple (){};
  
 
 	/**
-	 * Return property value. Each property has its own return value.
+	 * Return property value. Each property has its own return type.
 	 *
 	 * @param val Out parameter where property value will be stored.
 	 */
@@ -274,12 +273,6 @@ private:
 // CObjectComplex
 //
 
-/*
- * Typedefs
- */
-typedef unsigned int	PropertyCount;
-typedef unsigned int	PropertyIndex;
-typedef std::string	PropertyName;
 
 /**
  * Additional information that identifies variable type, e.g. for writeValue function.
@@ -322,6 +315,10 @@ template <PropertyType Tp>
 class CObjectComplex : public IProperty
 {
 public:
+	/** Index identifying position in Array.*/
+	typedef unsigned int	PropertyIndex;
+	/** String identifying position in Dict/Stream.*/
+	typedef std::string	PropertyName;
 	/** Write type for writeValue function. */
 	typedef typename PropertyTraitComplex<Tp>::writeType WriteType;
 	/** This type identifies a property. */
@@ -344,7 +341,7 @@ protected:
 	/**
 	 * Constructor. Only kernel can call this constructor
 	 *
-	 * @param p		Pointer to pdf object. If we create CPdf, p will be NULL so use CObject::this pointer.
+	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
 	 * @param ref	Indirect id and gen id.
 	 * @param isDirect	Indicates whether this is a direct/indirect object.
@@ -390,7 +387,7 @@ CObjectComplex (int i){};
 	 * on CObject type. 
 	 * For complex types, it is equal to setStringRepresentation().
 	 * 
-	 * <exception cref="ObjBadValueE "/> When a value cannot be set due to bad value e.g. in complex types.
+	 * <exception cref="ObjBadValueE "/> Thrown When a value cannot be set due to bad value e.g. in complex types.
 	 *
 	 * @param val	Value that will be set.
 	 */
@@ -407,7 +404,7 @@ CObjectComplex (int i){};
 	 * @param makeValidCheck True if we want to verify that our changes preserve
 	 * 			 pdf validity.
 	 */
-	void dispatchChange (bool /*makeValidCheck*/) const {}; 
+	void dispatchChange (bool makeValidCheck = false) const; 
 
 	
 	/**
@@ -459,7 +456,7 @@ public:
 	 * 
 	 * @return Property count.
 	 */
-	inline PropertyCount getPropertyCount () const;
+	inline size_t getPropertyCount () const;
  
 
 	/**
@@ -467,8 +464,7 @@ public:
 	 * 
 	 * REMARK: Specific for pDict and pStream.
      	 *
-	 * @param container Container of string objects. STL vector,list,deque,... must implement 
-	 * pust_back() function.
+	 * @param container Container of string objects. STL vector,list,deque.
 	 */
 	virtual void getAllPropertyNames (std::vector<std::string>& container) const;
 	virtual void getAllPropertyNames (std::list<std::string>& container) const;
@@ -482,8 +478,10 @@ public:
      	 * @param 	id 	Variable identifying position of the property.
      	 */
     	void getPropertyValue (IProperty* val, PropertyId id) const;
-	template<typename T>
-	void getPropertyValue (T* val, PropertyId id) const;
+	void getPropertyValue (bool& val, PropertyId id) const;
+	void getPropertyValue (int& val, PropertyId id) const;
+	void getPropertyValue (double& val, PropertyId id) const;
+	void getPropertyValue (std::string& val, PropertyId id) const;
 
 	
 	/**
@@ -549,7 +547,7 @@ private:
 	
 	/**
 	 * Make everything needed to indicate that this object has changed.
-	 * Currently, itchanges status of IProperty::isChngd to true and
+	 * Currently changes status of IProperty::isChngd to true and
 	 * it also notifies all obervers associated with this property.
 	 */
 	inline void
@@ -583,22 +581,28 @@ typedef CObjectComplex<pDict>	CDict;
 
 
 
+
+
 //=====================================================================================
 //
 //  Helper functions located in cobject.cc
 //
 namespace utils {
 
-
 /**
  * Returns xpdf object string representation.
  */
-void simpleObjToString (Object* obj,std::string& str);
+void xpdfObjToString (Object& obj, std::string& str);
+	
+/**
+ * Returns simple xpdf object (null,number,string...) string representation.
+ */
+void simpleXpdfObjToString (Object& obj,std::string& str);
 
 /**
- * Returns xpdf object string representation.
+ * Returns complex xpdf object (array,dictionary,stream) string representation.
  */
-void complexObjToString (Object* /*obj*/,std::string& /*str*/);
+void complexXpdfObjToString (Object& /*obj*/,std::string& /*str*/);
 
 
 /**
@@ -613,7 +617,16 @@ void complexObjToString (Object* /*obj*/,std::string& /*str*/);
 template <typename Storage>
 void getAllDirectChildXpdfObjects (Object& obj, Storage& /*store*/);
 
-
+/**
+ * Finds all children xpdf objects and if the mapping between an xpdf object
+ * and IProperty exists, stores the IProperty pointer.
+ *
+ * @param ip	IProperty of parent object.
+ * @param store Storage for all the IProperty objects. Has to implement push_back function.
+ *
+ */
+template <typename Storage>
+void getAllChildIPropertyObjects (CPdf& pdf, Object& o, Storage& store);
 
 /**
  * Performs Processor.operator() action on all supplied objects
@@ -643,9 +656,9 @@ void getSimpleValueFromString (const std::string& str, double& val);
 void getSimpleValueFromString (const std::string& str, std::string& val);
 void getSimpleValueFromString (const std::string& str, IndiRef& val);
 
-
 /**
- * Removes xpdf object from Dict/Array.
+ * Removes xpdf object from Dict/Array. It DOES NOT free the xpdf object itself, 
+ * it just removes the entry from the structure.
  *
  * @param obj 	Object that will be changed
  * @param	Variable identifying position.
@@ -653,16 +666,14 @@ void getSimpleValueFromString (const std::string& str, IndiRef& val);
 void removeXpdfObjectAtPos (Object& obj, const std::string& /*name*/);
 void removeXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/);
 
-
 /**
- * Returns object at that position.
+ * Returns object at a position specified by second function argument.
  * 
  * @param obj 	Object that will be changed
  * @param	Variable identifying position.
  */
 Object* getXpdfObjectAtPos (Object& obj, const std::string& /*name*/);
 Object* getXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/);
-
 
 /**
  * Free an object. We assume that all child objects (if any)
@@ -674,6 +685,13 @@ Object* getXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/);
  */
 void freeXpdfObject (Object* obj);
 
+
+
+
+//=====================================================================================
+//
+//  Helper objects
+//
 
 /**
  * Empty check struct.
@@ -785,18 +803,6 @@ struct RefReader
 			{val.num = obj->getRefNum();
 			 val.gen = obj->getRefGen();}
 };
-
-
-/*template<typename Storage, typename Val, typename CObject>
-struct ComplexReader
-{
-	public:
-		void 
-		operator() (Storage obj, Val val, CObject* cobj)
-		{
-		}
-};
-*/
 
 
 //

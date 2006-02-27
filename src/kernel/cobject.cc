@@ -34,39 +34,57 @@ namespace pdfobjects
 namespace utils {
 
 using namespace std;
-		
+
+//
+//
+//
+inline void 
+xpdfObjToString (Object& obj, string& str)
+{
+	switch (obj.getType())
+	{
+		case objArray:
+		case objDict:
+		case objStream:
+				complexXpdfObjToString (obj,str);
+				break;
+		default:
+				simpleXpdfObjToString (obj,str);
+				break;
+	}
+}
+
 //
 //
 //
 void
-simpleObjToString (Object* obj,string& str)
+simpleXpdfObjToString (Object& obj,string& str)
 {
- 	assert (NULL != obj);
-	printDbg (0,"simpleObjToString(" << (unsigned int)obj << ")");
-	printDbg (0,"\tobjType = " << obj->getTypeName() );
+	printDbg (0,"simpleXpdfObjToString()");
+	printDbg (0,"\tobjType = " << obj.getTypeName() );
 
 	ostringstream oss;
 
-	switch (obj->getType()) 
+	switch (obj.getType()) 
 	{
 	case objBool:
-		oss << ((obj->getBool()) ? "true" : "false");
+		oss << ((obj.getBool()) ? "true" : "false");
 		break;
 
 	case objInt:
-		oss << obj->getInt();
+		oss << obj.getInt();
 		break;
 
 	case objReal:
-		oss << obj->getReal ();
+		oss << obj.getReal ();
 		break;
 
 	case objString:
-		oss << "("  << obj->getString()->getCString() << ")";
+		oss << "("  << obj.getString()->getCString() << ")";
 		break;
 
 	case objName:
-		oss << "/" << obj->getName();
+		oss << "/" << obj.getName();
 		break;
 
 	case objNull:
@@ -74,11 +92,11 @@ simpleObjToString (Object* obj,string& str)
 		break;
 
 	case objRef:
-		oss << obj->getRefNum() << " " << obj->getRefGen() << " R";
+		oss << obj.getRefNum() << " " << obj.getRefGen() << " R";
 		break;
 
 	default:
-		assert (!"Bad object passed to simpleObjToString.");
+		assert (!"Bad object passed to simpleXpdfObjToString.");
 		throw ObjBadTypeE(); 
 		break;
 	}
@@ -88,50 +106,32 @@ simpleObjToString (Object* obj,string& str)
 }
 
 
-namespace {
-
-	inline void objToString (Object* obj, string& str)
-	{
-		switch (obj->getType())
-		{
-			case objArray:
-			case objDict:
-			case objStream:
-					complexObjToString (obj,str);
-					break;
-			default:
-					simpleObjToString (obj,str);
-					break;
-		}
-	}
-}
-
 //
 //
 //
 void
-complexObjToString (Object* /*obj*/, string& /*str*/)
+complexXpdfObjToString (Object& /*obj*/, string& /*str*/)
 {
-/* 	assert (NULL != obj);
-	printDbg (0,"objToString(" << (unsigned int)obj << ")");
-	printDbg (0,"\tobjType = " << obj->getTypeName() );
+/* 	
+	printDbg (0,"complexXpdfObjToString(" << (unsigned int)obj << ")");
+	printDbg (0,"\tobjType = " << obj.getTypeName() );
 
 	ostringstream oss;
 	Object o;
 	int i;
 
-	switch (obj->getType()) 
+	switch (obj.getType()) 
 	{
 	
 	case objArray:
 		oss << "[";
-		for (i = 0; i < obj->arrayGetLength(); ++i) 
+		for (i = 0; i < obj.arrayGetLength(); ++i) 
 		{
 			if (i > 0)
 				oss << " ";
-			obj->arrayGetNF (i,&o);
+			obj.arrayGetNF (i,&o);
 			string tmp;
-			objToString (&o,tmp);
+			xpdfObjToString (&o,tmp);
 			oss << tmp;
 		o.free();
 		}
@@ -140,12 +140,12 @@ complexObjToString (Object* /*obj*/, string& /*str*/)
 
 	case objDict:
 		oss << "<<";
-		for (i = 0; i <obj-> dictGetLength(); ++i) 
+		for (i = 0; i <obj.dictGetLength(); ++i) 
 		{
-			oss << " /" << obj->dictGetKey(i) << " ";
-			obj->dictGetValNF(i, &o);
+			oss << " /" << obj.dictGetKey(i) << " ";
+			obj.dictGetValNF(i, &o);
 			string tmp;
-			objToString (&o,tmp);
+			xpdfObjToString (&o,tmp);
 			oss << tmp;
 			o.free();
 		}
@@ -201,7 +201,7 @@ void getAllDirectChildXpdfObjects (Object& obj, Storage& /*store*/)
 			break;
 
 		default:	// Null, Bool, Int, Real, String, Name
-			assert (!"Bad object passed to simpleObjToString.");
+			assert (!"Bad object passed to getAllDirectChildXpdfObjects.");
 			throw ObjBadTypeE ();
 			break;
 	}	
@@ -210,6 +210,72 @@ void getAllDirectChildXpdfObjects (Object& obj, Storage& /*store*/)
 // We have to explicitely instantiate functions, because we have included them in header cobject.h
 //
 template void getAllDirectChildXpdfObjects<std::vector<Object*> > (Object& obj, std::vector<Object*>& /*store*/ );
+
+
+namespace {
+
+	template<typename Storage>
+	void
+	getAllChildXpdfObjects (Object& obj, Storage& /*store*/)
+	{
+		switch (obj.getType())
+		{
+			case objArray:
+			{	//int size = obj.arrayGetLength ();
+				//for (int i = 0; i < size; i++)
+				{
+					//store.push_back (obj.getArray()->elems[i]);
+					//getAllChildXpdfObjects (obj.getArray()->elems[i]);
+				}
+			}	return;	
+				break;
+			
+			case objDict:
+			{	//int size = obj.dictGetLength ();
+				//for (int i = 0; i < size; i++)
+				{
+					//store.push_back (obj.getDict()->entries[i].val);
+					//getAllChildXpdfObjects (obj.getDict()->entries[i].val);
+				}
+			}	return;	
+				break;
+
+			case objStream:
+				assert (!"I'm not implemented yet...");
+				break;
+
+			default:	// Null, Bool, Int, Real, String, Name
+				break;
+		}	
+	}
+}
+
+
+//
+//
+//
+template <typename Storage>
+void getAllChildIPropertyObjects (CPdf& pdf, Object& o, Storage& store)
+{
+	typedef vector<Object*> ObjList;
+	
+	ObjList list;
+	getAllChildXpdfObjects (o,list);
+
+	ObjList::iterator it = list.begin ();
+	for ( ; it != list.end (); it++)
+	{
+		IProperty* ip = pdf.getExistingProperty (*it);
+		if (NULL != ip)
+			store.push_back (ip);
+	}
+}
+//
+// We have to explicitely instantiate functions, because we have included them in header cobject.h
+//
+template void getAllChildIPropertyObjects<std::vector<IProperty*> > (CPdf& pdf, Object& o, std::vector<IProperty*>& store );
+
+
 
 
 //
@@ -247,7 +313,7 @@ getXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/)
 
 
 //
-//
+// Does not free, just deletes the entry
 //
 void
 removeXpdfObjectAtPos (Object& obj, const std::string& /*name*/)
@@ -261,28 +327,33 @@ removeXpdfObjectAtPos (Object& obj, const std::string& /*name*/)
 	for (int i = 0; i =< len; i++)
 	{
 		//
-		// If we find the item, get the last entry, copy it instead of the entry
-		// that will be removed and decrement dictionary length
+		// If we find the item, move everything one back
 		//
 		if (name == dict->entries[i].key)
 		{
 			assert (utils::getXpdfObjectAtPos (*obj,name) == dict->entires[i].key);
 			
-			if (i != len )
+			if (i < len )
 			{
 				// Free property name
 				delete dict->entries[i].key;
 
-				freeXpdfObject (dict->entries[i].val);
-				
-				// put the last entry at the position that will be removed
-				dict->entries[i].key = dict->entries[len].key;
-				dict->entries[i].val = dict->entries[len].val;
-				// to be sure
-				dict->entries[len].key = NULL;
-				dict->entries[len].val = NULL;
+				for (int j = i; j < len; j++)
+				{
+					// copy every entry to the previous one
+					dict->entries[j].key = dict->entries[j+1].key;
+					dict->entries[j].val = dict->entries[j+1].val;
+				}
+			}else
+			{
+				assert (i == len);
+
+				// Free property name
+				delete dict->entries[len].key;
 			}
-			
+
+			// to be sure
+			dict->entries[len].key = dict->entries[len].val = NULL;
 			// decrement the size of the dictionary
 			dict->length--;
 			
@@ -292,24 +363,27 @@ removeXpdfObjectAtPos (Object& obj, const std::string& /*name*/)
 	*/
 
 }
+
 void
 removeXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/)
 {
 	assert (objArray == obj.getType());
 //	assert (pos < obj.arrayGetLength());
-//	if (pos < obj.arrayGetLength())
+//	if ((pos < obj.arrayGetLength()) || (0 == obj.arrayGetLength()))
 //		throw ObjInvalidPositionInComplex ();
 
 /*	Array* a = obj.getArray();
 	assert (NULL != a);
 
-	freeXpdfObject (a->entries[pos]);
-
 	size_t len = a->getLength () - 1;
-	// put the last entry at the position that will be removed
-	a->entries[pos] = a->entries[len];
+	// copy every entry to the previous one
+	for (int i = pos; i < len; i++)
+	{
+		a->entries[i] = a->entries[i+1];
+	}
+
+	// to be sure
 	a->entries[len] = NULL;
-			
 	// decrement the size of the dictionary
 	a->length--;
 */}
@@ -322,9 +396,12 @@ removeXpdfObjectAtPos (Object& obj, const unsigned int /*pos*/)
 void
 freeXpdfObject (Object* obj)
 {
-	printDbg (1,"objectFree(" << (unsigned int)obj << ")");
+	assert (obj != NULL);
+	if (NULL == obj)
+		throw ObjInvalidObject ();
+	printDbg (1,"objectFree()");
 	std::string str;
-	objToString (obj,str); 
+	xpdfObjToString (*obj,str); 
 	printDbg (1,"\t..." << str);
 	
 	switch (obj->getType()) 
