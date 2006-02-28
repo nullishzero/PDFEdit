@@ -22,12 +22,21 @@ Object * CXref::changeObject(Ref ref, Object * instance)
        // this is returned so it can be used for some
        // history information - value keeper is responsible for
        // deallocation
-       Object * changed = changedStorage.get(ref);
+       ObjectEntry * changedEntry = changedStorage.get(ref);
+       Object * changed=(changedEntry)?changedEntry->object:NULL;
        
        // insert new version to changedStorage
        // this is deep copy of given value
        Object * object = instance->clone();
-       changedStorage.put(ref, object);
+
+       // if changedEntry is NULL - object is change for the first time
+       // we have to allocate entry, otherwise, just sets new object
+       // value and reset stored to false
+       if(!changedEntry)
+               changedEntry=new ObjectEntry();
+       changedEntry->object=object;
+       changedEntry->stored=false;
+       changedStorage.put(ref, changedEntry);
 
        // object has been newly created, so we will set value in
        // the newStorage to true (so we know, that the value has
@@ -239,22 +248,15 @@ Object *CXref::getDocInfoNF(Object *obj)
        return retObj;
 }
 
-Guint CXref::getLastXRefPos() 
-{ 
-       // TODO can change - when older version is used
-
-       return XRef::getLastXRefPos();
-}
-
 Object * CXref::fetch(int num, int gen, Object *obj)
 {
        Ref ref={num, gen};
 
-       Object * retObject=changedStorage.get(ref);
-       if(retObject)
+       ObjectEntry * entry=changedStorage.get(ref);
+       if(entry)
        {
                // object has been changed
-               Object * deepCopy=retObject->clone();
+               Object * deepCopy=entry->object->clone();
 
                // shallow copy of content
                // content is deep copy of found object, so
@@ -277,4 +279,16 @@ Object * CXref::fetch(int num, int gen, Object *obj)
                cache->put(ref, obj->clone());
        */         
        return obj;
+}
+
+int CXref::getNumObjects() 
+{ 
+        size_t newSize=0;
+        ObjectStorage<Ref, bool, RefComparator>::Iterator begin, i;
+
+        for(i=newStorage.begin(); i!=newStorage.end(); i++)
+                if(i->second)
+                        newSize++;
+                
+        return XRef::getNumObjects() + newSize;
 }

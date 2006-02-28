@@ -5,6 +5,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/02/28 19:19:26  hockm0bm
+ * changeStorage changed  - Object is associated with stored flag
+ * getNumObjects - reimplemented (only initialized objects)
+ *
  * Revision 1.7  2006/02/13 21:11:54  hockm0bm
  * Implementation of the class moved to cc file
  * fetch method prepared for cache
@@ -65,6 +69,7 @@
 //#include"utils/cache.h"
 #include"xpdf/XRef.h"
 #include"xpdf/Object.h"
+#include "ErrorCodes.h"
 
 using namespace pdfobjects;
 
@@ -129,8 +134,25 @@ protected:
          */
         CXref(): XRef(NULL){};
 
-        /** Object storage for changed objects. */
-        ObjectStorage<Ref, Object *, RefComparator> changedStorage;   
+        /** Entry for ObjectStorage.
+         *
+         * Each entry contains pointer to changed object and flag which
+         * says whether this object has been stored to the file from last
+         * change.
+         */
+        typedef struct
+        {
+              Object * object;
+              bool stored;
+              
+        } ObjectEntry;
+        
+        /** Object storage for changed objects.
+         * Mapping from object referencies to the ObjectEntry structure.
+         * This structure contains new Object value for reference and 
+         * flag. 
+         */
+        ObjectStorage<Ref, ObjectEntry*, RefComparator> changedStorage;   
 
         /** Object storage for newly created objects.
          * Value is the flag, whether value has been changed after createObject
@@ -189,6 +211,7 @@ protected:
          * available (new name value pair in trailer).
          */
         Object * changeTrailer(char * name, Object * value);
+
 public:
         /** Initialize constructor.
          * @param stream Stream with file data.
@@ -197,6 +220,11 @@ public:
          */
         CXref(BaseStream * stream):XRef(stream)
         {
+                if(getErrorCode() !=errNone)
+                {
+                        // xref is corrupted
+                        // TODO throw an exception
+                }
         }
 
         /** Initialize constructor with cache.
@@ -271,7 +299,7 @@ public:
          *
          * @return true if reference is known, false otherwise.
          */
-        virtual bool knowsRef(Ref ref);
+        bool knowsRef(Ref ref);
 
         /** Checks whether obj1 can replace obj2.
          * @param obj1 Original object.
@@ -317,14 +345,14 @@ public:
         // if indirect value
         virtual Object *getDocInfoNF(Object *obj);
 
-        // Return the number of objects in the xref table.
-        virtual int getNumObjects() 
-        { 
-                return XRef::getNumObjects() + newStorage.size();
-        }
-
-        // Return the offset of the last xref table.
-        virtual Guint getLastXRefPos();
+        /** Returns number of indirect objects.
+         *
+         * Delegates to XRef::getNumObjects and adds also number of all
+         * newly inserted (and initialized) objects.
+         *
+         * @return Total number of objects.
+         */
+        virtual int getNumObjects(); 
 
         /** Fetches object.
          * @param num Object number.
@@ -347,20 +375,6 @@ public:
          * found obj is set to objNull.
          */
         virtual Object * fetch(int num, int gen, Object *obj);
-        
-        /* TODO figure out - this should not be changed (find out who does
-         * use it
-         */
-        /*
-        // Direct access.
-        virtual int getSize() { return size; }
-
-        // function is not used in xpdf code
-        virtual XRefEntry *getEntry(int i) 
-        { 
-                return &entries[i]; 
-        }
-        */
 };
 
 #endif
