@@ -8,6 +8,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.4  2006/02/28 19:10:12  hockm0bm
+ * Compile errors corrected
+ *
  * Revision 1.3  2006/02/28 19:04:00  hockm0bm
  * Add iterators manipulation with ObjectStorage
  *
@@ -187,24 +190,6 @@ public:
          * @return Iterator instance.
          */
         Iterator end()
-        {
-                return mapping.end();
-        }
-
-        /** Returns iterator to first element.
-         *
-         * @return Constant iterator instance.
-         */
-        ConstIterator begin()
-        {
-                return mapping.begin();
-        }
-        
-        /** Returns iterator to end iterator.
-         *
-         * @return Constant terator instance.
-         */
-        ConstIterator end()
         {
                 return mapping.end();
         }
