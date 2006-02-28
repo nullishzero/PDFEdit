@@ -41,6 +41,13 @@ bool XRefWriter::paranoidCheck(Ref ref, Object * obj)
 
 void XRefWriter::releaseObject(int num, int gen)
 {
+        if(revision)
+        {
+                // we are in later revision, so no changes can't be
+                // done
+                // TODO handle
+        }
+                
         Ref ref={num, gen};
         // checks if reference exists
         if(mode==paranoid && !knowsRef(ref))
@@ -55,6 +62,13 @@ void XRefWriter::releaseObject(int num, int gen)
 
 void XRefWriter::changeObject(int num, int gen, Object * obj)
 {
+        if(revision)
+        {
+                // we are in later revision, so no changes can't be
+                // done
+                // TODO handle
+        }
+
         Ref ref={num, gen};
         
         // paranoid checking
@@ -66,6 +80,13 @@ void XRefWriter::changeObject(int num, int gen, Object * obj)
 
 Object * XRefWriter::changeTrailer(char * name, Object * value)
 {
+        if(revision)
+        {
+                // we are in later revision, so no changes can't be
+                // done
+                // TODO handle
+        }
+                
         // paranoid checking
         if(mode==paranoid)
         {
@@ -100,7 +121,3 @@ Object * XRefWriter::changeTrailer(char * name, Object * value)
         return CXref::changeTrailer(name, value);
 }
 
-void XRefWriter::saveXref(FILE * f)const
-{
-        // TODO
-}
