@@ -8,6 +8,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.3  2006/02/28 19:04:00  hockm0bm
+ * Add iterators manipulation with ObjectStorage
+ *
  * Revision 1.2  2006/02/13 19:05:35  hockm0bm
  * Template implementation of class.
  *
@@ -56,12 +59,19 @@ template<typename K, typename V, typename Comp> class ObjectStorage
 {
 private:
         typedef std::map<K, V, Comp> Mapping;
-        typedef typename Mapping::iterator Iterator;
-        typedef typename Mapping::const_iterator ConstIterator;
         typedef typename Mapping::value_type Association;
         Mapping mapping;
 
 public:
+        /** Iterator type. */
+        typedef typename Mapping::iterator Iterator;
+
+        /* Constant iterator type. */
+        typedef typename Mapping::const_iterator ConstIterator;
+
+        /** Empty constructor.
+         *
+         */
         ObjectStorage(){};
 
         /** Clears mapping.
@@ -154,9 +164,49 @@ public:
                 return old;
         };
 
+        /** Number of elements.
+         *
+         * @return Elements count.
+         */
         size_t size()const
         {
            return mapping.size();
+        }
+
+        /** Returns iterator to first element.
+         *
+         * @return Iterator instance.
+         */
+        Iterator begin()
+        {
+                return mapping.begin();
+        }
+        
+        /** Returns iterator to end iterator.
+         *
+         * @return Iterator instance.
+         */
+        Iterator end()
+        {
+                return mapping.end();
+        }
+
+        /** Returns iterator to first element.
+         *
+         * @return Constant iterator instance.
+         */
+        ConstIterator begin()
+        {
+                return mapping.begin();
+        }
+        
+        /** Returns iterator to end iterator.
+         *
+         * @return Constant terator instance.
+         */
+        ConstIterator end()
+        {
+                return mapping.end();
         }
 };
 #endif
