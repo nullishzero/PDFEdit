@@ -2,6 +2,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/02/28 22:57:19  hockm0bm
+ * Just few obvious errors - still not compileable (due to errors in cobjectI.h)
+ *
  * Revision 1.8  2006/02/28 22:41:41  hockm0bm
  * Scratch of the implementation - not compileable
  * Most of functions described with kind of pseudocode
@@ -237,7 +240,7 @@ private:
          * <br>
          * NOTE: Assumes that xref corresponds to given trailer.
          */
-        void initRevisionSpecific(::Dict * trailer)
+        void initRevisionSpecific(::Dict * trailer);
 public:
         /** Factory method for CPdf instances.
          * @param filename File name with pdf content (if null, new document 
@@ -520,13 +523,13 @@ public:
 
         /** Returnes mode of this version.
          *
-         * Mode is READ_ONLY for all older version than last available and
+         * Mode is ReadOnly for all older version than last available and
          * last depends on mode set in creation time.
          */
         OpenMode getMode() const
         {
                 // 
-                return (!xref->getActualRevision())?mode:READ_ONLY;
+                return (!xref->getActualRevision())?mode:ReadOnly;
         }
 
         /** Revision type.
@@ -567,7 +570,7 @@ public:
          */
         size_t getRevisionsCount()const
         {
-                xref::getRevisionCount();
+                xref->getRevisionCount();
         }
 };
 
