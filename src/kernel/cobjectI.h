@@ -139,7 +139,7 @@ CObjectSimple<Tp>::CObjectSimple (CPdf& p, bool isDirect)
 		pdf->setIndMapping (ref,this);
 	}
 
-	assert (static_cast<PropertyType>(o.getType()) == Tp);
+	assert (static_cast<PropertyType>(IProperty::obj->getType()) == Tp);
 	// Save the mapping
 	pdf->setObjectMapping (IProperty::obj,this);
 }
@@ -211,7 +211,7 @@ CObjectSimple<Tp>::getPropertyValue (ReturnType& val) const
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (0,"getPropertyValue()");
 
-	typename ProcessorTraitSimple<Object*, ReturnType&, Tp>::ReadProcessor rp;
+	typename ProcessorTraitSimple<Object*, ReturnType, Tp>::ReadProcessor rp;
 	
 	// Read it with specific reader (functor)
 	rp (IProperty::obj,val);
@@ -453,8 +453,8 @@ CObjectComplex<Tp>::dispatchChange(bool makeValidCheck) const
 	
 	// Indicate to all child objects that the change has been dispatched
 	IPList list;
-	getAllChildIPropertyObjects (*IProperty::pdf,*IProperty::obj,list);
-	IPList::iterator it = list.start ();
+	utils::getAllChildIPropertyObjects<IPList> (*IProperty::pdf,*IProperty::obj,list);
+	IPList::iterator it = list.begin ();
 	for ( ;it != list.end(); it++)
 		(*it)->setIsChanged (false);
 	// At last indicate to this, that the change has been dispatched
@@ -525,7 +525,7 @@ CObjectComplex<Tp>::getPropertyCount () const
 
 		case pStream:
 			assert (!"...not supported...");
-			IProperty::obj->streamGetDict()->getLength ();
+			//IProperty::obj->streamGetDict()->getLength ();
 			break;
 
 		default:
@@ -544,7 +544,7 @@ CObjectComplex<Tp>::getPropertyType (PropertyId id) const
 {
 	assert (NULL != IProperty::obj);
 	return static_cast<PropertyType>(utils::getXpdfObjectAtPos (*IProperty::obj,id)->getType());
-};
+}
 
 
 
@@ -571,7 +571,7 @@ CObjectComplex<Tp>::getAllPropertyNames (std::deque<std::string>& container) con
 template<PropertyType Tp>
 template<typename T>
 inline void
-CObjectComplex<Tp>::_getAllPropertyNames (T& container) const
+CObjectComplex<Tp>::_getAllPropertyNames (T& /*container*/) const
 {
 /*	STATIC_CHECK((Tp == pDict) || (Tp == pStream),INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
 	
@@ -611,7 +611,7 @@ CObjectComplex<Tp>::delProperty (PropertyId id)
 	if (NULL == ip)
 	{ // No mapping exists
 
-		freeXpdfObject (o);
+		utils::freeXpdfObject (o);
 	}else
 	{
 		ip->release ();
@@ -632,12 +632,12 @@ CObjectComplex<Tp>::addProperty (IProperty& newIp)
 	assert (NULL != IProperty::obj);
 	assert (NULL != newIp.getRawObject() );
 	assert (NULL == newIp.getPdf());
-	printDbg (0,"addProperty(" << id << ", " << (unsigned int) &newIp << ")");
+	printDbg (0,"addProperty("<< (unsigned int) &newIp << ")");
 
 	if (IProperty::isDirect())
 	{
 		// Add it
-		IProperty::obj->arrayAdd (newIp.getRawObject());	
+		IProperty::obj->arrayAdd (const_cast<Object*>(newIp.getRawObject()));	
 		// Inherit id and gen number
 		newIp.setIndiRef (IProperty::ref);
 		
@@ -788,11 +788,11 @@ CObjectComplex<Tp>::getPropertyValue (bool& val, PropertyId id) const
 	
 	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
 	assert (NULL != o);
-	assert (static_cast<PropertyType>(o.getType()) == pBool);
-	if ((NULL == o) || (o.getType() != objBool))
+	assert (static_cast<PropertyType>(o->getType()) == pBool);
+	if ((NULL == o) || (o->getType() != objBool))
 		throw ObjInvalidObject ();
 
-	utils::BoolReader<Object*,bool&> rp;
+	utils::BoolReader<> rp;
 	rp (o,val);
 }
 
@@ -805,11 +805,11 @@ CObjectComplex<Tp>::getPropertyValue (int& val, PropertyId id) const
 	
 	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
 	assert (NULL != o);
-	assert (static_cast<PropertyType>(o.getType()) == pInt);
-	if ((NULL == o) || (o.getType() != objInt))
+	assert (static_cast<PropertyType>(o->getType()) == pInt);
+	if ((NULL == o) || (o->getType() != objInt))
 		throw ObjInvalidObject ();
 
-	utils::IntReader<Object*,int&> rp;
+	utils::IntReader<> rp;
 	rp (o,val);
 }
 
@@ -822,11 +822,11 @@ CObjectComplex<Tp>::getPropertyValue (double& val, PropertyId id) const
 	
 	Object* o = utils::getXpdfObjectAtPos (*IProperty::obj,id);
 	assert (NULL != o);
-	assert (static_cast<PropertyType>(o.getType()) == pReal);
-	if ((NULL == o) || (o.getType() != objReal))
+	assert (static_cast<PropertyType>(o->getType()) == pReal);
+	if ((NULL == o) || (o->getType() != objReal))
 		throw ObjInvalidObject ();
 
-	utils::RealReader<Object*,int&> rp;
+	utils::RealReader<> rp;
 	rp (o,val);
 }
 
