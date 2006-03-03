@@ -174,7 +174,8 @@ CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
 	
 	ReturnType val;
 	utils::getSimpleValueFromString (strO,val); 
-	
+
+	//Write the value it also indicated that the object has been changed
 	writeValue (val);	
 }
 
@@ -195,8 +196,7 @@ CObjectSimple<Tp>::writeValue (WriteType val)
 	
 	// Write it with specific writer (functor) according to the template parameter
 	wp (IProperty::obj,val);
-
-	// set isChanged and notify observers
+	// set isChanged and notify observers and dispatch the change
 	_objectChanged ();
 }	
 
@@ -256,7 +256,7 @@ CObjectSimple<Tp>::release()
 //
 template<PropertyType Tp>
 void
-CObjectSimple<Tp>::dispatchChange(bool makeValidCheck) const
+CObjectSimple<Tp>::dispatchChange() const
 {
 	STATIC_CHECK ((pNull != Tp), INCORRECT_USE_OF_dispatchChange_FUNCTION_FOR_pNULL_TYPE);
 	assert (IProperty::isChanged());
@@ -264,19 +264,11 @@ CObjectSimple<Tp>::dispatchChange(bool makeValidCheck) const
 	assert (NULL != IProperty::obj);
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 	
-
-	if (makeValidCheck)
-	{
-		// Validate the object
-		//if (!CPDF::vali....(IProperty::obj))
-		//	throw ObjInvalidObject;
-	}
-	
 	// Dispatch the change
-	IndiRef* ind = IProperty::getIndiRef ();
+	//  !!!! TODO dispatch the parent
+	//IndiRef* ind = IProperty::getIndiRef ();
 	//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,getRawObject ());
 	IProperty::setIsChanged (false);
-	
 }
 
 
@@ -430,7 +422,7 @@ CObjectComplex<Tp>::writeValue (WriteType val)
 //
 template<PropertyType Tp>
 void
-CObjectComplex<Tp>::dispatchChange(bool makeValidCheck) const
+CObjectComplex<Tp>::dispatchChange() const
 {
 	typedef std::vector<IProperty*> IPList;
 	
@@ -439,27 +431,19 @@ CObjectComplex<Tp>::dispatchChange(bool makeValidCheck) const
 	assert (NULL != IProperty::obj);
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 	
-
-	if (makeValidCheck)
-	{
-		// Validate the object
-		//if (!CPDF::vali....(IProperty::obj))
-		//	throw ObjInvalidObject;
-	}
-	
 	// Dispatch the change
-	IndiRef* ind = IProperty::getIndiRef ();
+	//  !!!! TODO dispatch the parent
+	//IndiRef* ind = IProperty::getIndiRef ();
 	//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,getRawObject ());
 	
 	// Indicate to all child objects that the change has been dispatched
-	IPList list;
-	utils::getAllChildIPropertyObjects<IPList> (*IProperty::pdf,*IProperty::obj,list);
-	IPList::iterator it = list.begin ();
-	for ( ;it != list.end(); it++)
-		(*it)->setIsChanged (false);
+	//IPList list;
+	//utils::getAllChildIPropertyObjects<IPList> (*IProperty::pdf,*IProperty::obj,list);
+	//IPList::iterator it = list.begin ();
+	//for ( ;it != list.end(); it++)
+	//	(*it)->setIsChanged (false);
 	// At last indicate to this, that the change has been dispatched
 	IProperty::setIsChanged (false);
-	
 }
 
 
@@ -658,7 +642,7 @@ CObjectComplex<Tp>::addProperty (IProperty& newIp)
 //
 template<PropertyType Tp>
 void
-CObjectComplex<Tp>::addProperty (IProperty& newIp, const std::string& propertyName)
+CObjectComplex<Tp>::addProperty (const std::string& propertyName, IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pDict) || (Tp == pStream), INCORRECT_USE_OF_addProperty_FUNCTION);
 	assert (NULL != IProperty::obj);
@@ -695,10 +679,19 @@ CObjectComplex<Tp>::addProperty (IProperty& newIp, const std::string& propertyNa
 //
 //
 template<PropertyType Tp>
-void
-CObjectComplex<Tp>::setPropertyValue (PropertyId /*id*/, const IProperty& /*ip*/)
+IProperty*
+CObjectComplex<Tp>::setPropertyValue (PropertyId id, IProperty& ip)
 {
-// ??? what here?
+	assert (NULL != IProperty::pdf);
+	assert (NULL != IProperty::obj);
+	assert (NULL != ip.getRawObject() );
+	assert (NULL == ip.getPdf());
+	printDbg (0,"setPropertyValue()");
+	
+	delProperty (id);
+	addProperty (id, ip);	
+
+	return &ip;
 }
 
 
