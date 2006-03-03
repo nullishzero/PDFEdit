@@ -33,16 +33,20 @@
  *			
  * 
  *			TODO:
- *					CObjectSimple testing
+ *					testing
  *					addProperty ... other than IProperty*
- *					INDIRECT -- refcounting
+ *					?? INDIRECT -- refcounting
  *					!! CPdf::addObject and addIndObject to replace mapping* functions
  *					setPropertyValue what is its purpose? just simple types?
- *					when shall we call notifyObservers
  *					can't add IProperty when pdf is not NULL (just to simplify things)
  *					   no real obstruction for removing this
  *					allow adding indirect values (directly :))
  *					better public/protected dividing
+ *					dispatchChange -- don't know whether we change the implementation so
+ *						i have NOT implemented it correctly !!!
+ *					setPropertyValue -- simple (stupid) implementation
+ *			REMARKS:
+ *					-- from pRef to IProperty -- CPdf::getObject (Ref)
  *
  * =====================================================================================
  */
@@ -80,15 +84,15 @@ template<> struct PropertyTraitSimple<pNull>
 	public: typedef NullType		returnType; 
 };
 template<> struct PropertyTraitSimple<pBool>
-{	public: typedef const bool		writeType; 
+{	public: typedef bool			writeType; 
 	public: typedef bool			returnType; 
 };
 template<> struct PropertyTraitSimple<pInt>	
-{	public: typedef const int		writeType; 
-	public: typedef int			returnType; 
+{	public: typedef int				writeType; 
+	public: typedef int				returnType; 
 };
 template<> struct PropertyTraitSimple<pReal>	
-{	public: typedef const double 		writeType; 
+{	public: typedef double 			writeType; 
 	public: typedef double			returnType; 
 };
 template<> struct PropertyTraitSimple<pString> 
@@ -201,18 +205,6 @@ CObjectSimple () {};
 	
 
 	/**
- 	 * Notify Writer object that this object has changed. We have to call this
-	 * function to make changes visible.
-	 *
-	 * It is necessary for undo operation, that means saving previous state of the object.
-	 * We obtain reference to CXref from CObject::pdf.
-	 *
-	 * @param makeValidCheck True if we want to verify that our changes preserve pdf validity.
-	 */
-	void dispatchChange (bool makeValidCheck = false) const; 
-
-	
-	/**
 	 * Returns if it is one of special objects CPdf,CPage etc.
 	 *
 	 * @return Type of special object.
@@ -246,6 +238,15 @@ CObjectSimple () {};
 	 */
 	~CObjectSimple () {};
 	
+protected:
+	/**
+ 	 * Notify Writer object that this object has changed. We have to call this
+	 * function to make changes visible.
+	 *
+	 * It is necessary for undo operation, that means saving previous state of the object.
+	 * We obtain reference to CXref from CObject::pdf.
+	 */
+	void dispatchChange () const; 
 
 
 	//
@@ -260,6 +261,8 @@ private:
 	{
 		// The object has been changed
 		IProperty::setIsChanged (true);
+		// Dispatch the change
+		//dispatchChange ();
 		// Notify everybody about this change
 		IProperty::notifyObservers ();
 	}
@@ -284,7 +287,7 @@ template<PropertyType T> struct PropertyTraitComplex;
 template<> struct PropertyTraitComplex<pArray>	
 {	public: 
 		typedef const std::string& 	writeType; 
-		typedef const unsigned int 	propertyId;
+		typedef unsigned int	 	propertyId;
 };
 template<> struct PropertyTraitComplex<pStream> 
 {	public: 
@@ -395,19 +398,6 @@ CObjectComplex (int /*i*/){};
   
 	
 	/**
- 	 * Notify Writer object that this object has changed. We have to call this
-	 * function to make changes visible.
-	 *
-	 * It is necessary for undo operation, that means saving previous state of the object.
-	 * We obtain reference to CXref from CObject::pdf.
-	 *
-	 * @param makeValidCheck True if we want to verify that our changes preserve
-	 * 			 pdf validity.
-	 */
-	void dispatchChange (bool makeValidCheck = false) const; 
-
-	
-	/**
 	 * Returns if it is one of special objects CPdf,CPage etc.
 	 *
 	 * @return Type of special object.
@@ -442,8 +432,16 @@ CObjectComplex (int /*i*/){};
 	 */
 	~CObjectComplex ()	{};
 
+protected:
+	/**
+ 	 * Notify Writer object that this object has changed. We have to call this
+	 * function to make changes visible.
+	 *
+	 * It is necessary for undo operation, that means saving previous state of the object.
+	 * We obtain reference to CXref from CObject::pdf.
+	 */
+	void dispatchChange () const; 
 
-	
 
 	//
 	//
@@ -475,9 +473,9 @@ public:
 	 * Returns value of property identified by its name/position depending on type of this object.
    	 *
 	 * @param	val	Variable where the value will be stored.
-     	 * @param 	id 	Variable identifying position of the property.
-     	 */
-    	void getPropertyValue (IProperty* val, PropertyId id) const;
+   	 * @param 	id 	Variable identifying position of the property.
+   	 */
+   	void getPropertyValue (IProperty* val, PropertyId id) const;
 	void getPropertyValue (bool& val, PropertyId id) const;
 	void getPropertyValue (int& val, PropertyId id) const;
 	void getPropertyValue (double& val, PropertyId id) const;
@@ -501,7 +499,7 @@ public:
 	 * @param	id		Name/Index of property
 	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
 	 */
-	virtual void setPropertyValue (PropertyId id, const IProperty& ip);
+	virtual IProperty* setPropertyValue (PropertyId id, IProperty& ip);
 	
 	/**
 	 * Adds property to array/dict/stream. The property that should be added will
@@ -512,7 +510,7 @@ public:
 	 * @param propertyName 	Name of the created property
 	 */
 	void addProperty (IProperty& newIp);
-	void addProperty (IProperty& newIp, const std::string& propertyName);
+	void addProperty (const std::string& propertyName, IProperty& newIp);
 	
 	
 	/**
@@ -555,6 +553,8 @@ private:
 	{
 		// The object has been changed
 		IProperty::setIsChanged (true);
+		// Dispatch the change
+		//dispatchChange ();
 		// Notify everybody about this change
 		IProperty::notifyObservers ();
 	}
