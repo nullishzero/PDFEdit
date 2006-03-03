@@ -176,7 +176,7 @@ public:
    * 
    * @return True if this object is a direct one.
    */
-  bool isDirect () {return isDrect;};
+  bool isDirect () const {return isDrect;};
 
   /**
    * Set whether this object is direct or not.
@@ -193,7 +193,7 @@ public:
 	 *
 	 * @param p pdf that this object belongs to
 	 */
-	void  setPdf (CPdf* p) 
+	void  setPdf (CPdf* p)
 	{
 		assert (NULL != p); 	// set NULL?
 		assert (NULL == pdf);	// modify association with a pdf?
@@ -206,7 +206,7 @@ public:
 	 *
 	 * @return Pdf that this object is associated with.
 	 */
-	CPdf* getPdf () 	{return pdf;};
+	CPdf* getPdf () const	{return pdf;};
 
 public:
 	/**
