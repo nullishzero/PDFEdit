@@ -101,14 +101,14 @@ typedef struct IndiRef
  */
 class IProperty
 {
-typedef std::vector<IObserver*> ObserverList;
+typedef std::vector<const IObserver*> ObserverList;
 
 protected:
- Object* 	obj;		/**< Xpdf object. */
+ Object* 		obj;		/**< Xpdf object. */
  ObserverList 	observers;	/**< List of observers. */
- IndiRef 	ref;		/**< Object's pdf id and generation number. */
- bool		isDrect;	/**< Set, if this object is a direct object. */
- CPdf* 		pdf;		/**< This object belongs to this pdf. */	
+ IndiRef 		ref;		/**< Object's pdf id and generation number. */
+ bool			isDrect;	/**< Set, if this object is a direct object. */
+ CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 
 protected:
  bool		isChngd;	/**< DEBUGGING purposes: Set, if this object has been changed but not saved. */
@@ -298,7 +298,7 @@ public:
 	 *
 	 * @param observer Observer being attached.
 	 */
-	void registerObserver (IObserver* o) 
+	void registerObserver (const IObserver* o) 
 	{
 		assert(NULL != o);
 		observers.push_back (o);
@@ -309,7 +309,7 @@ public:
 	* 
 	* @param observer Observer beeing detached.
 	*/
-	void unregisterObserver (IObserver* o)
+	void unregisterObserver (const IObserver* o)
 	{
 		assert(NULL != o);
 		ObserverList::iterator it = find (observers.begin (), observers.end(),o);
