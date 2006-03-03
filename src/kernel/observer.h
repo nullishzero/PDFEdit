@@ -40,7 +40,7 @@ public:
 		 * 
          * @param prop Changed property.
          */
-        void notify (IProperty* /*prop*/) {};//= 0;
+        void notify (IProperty* /*prop*/) const {};//= 0;
 };
 
 
