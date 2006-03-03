@@ -360,7 +360,7 @@ public:
 	CObjectComplex (CPdf& p, bool isDirect);
 
 #ifdef DEBUG
-CObjectComplex (int i){};
+CObjectComplex (int /*i*/){};
 #endif
 
 	
@@ -758,48 +758,48 @@ public:
 
 
 //
-// ReadProcessor
+// ReadProcessors for simple types
 //
-template<typename Storage, typename Val>
+template<typename Storage = Object*, typename Val = bool>
 struct BoolReader
 {public:
-		void operator() (Storage obj, Val val)
+		void operator() (Storage obj, Val& val)
 			{val = (0 != obj->getBool());}
 };
 
-template<typename Storage, typename Val>
+template<typename Storage = Object*, typename Val = int>
 struct IntReader
 {public:
-		void operator() (Storage obj, Val val)
+		void operator() (Storage obj, Val& val)
 			{val = obj->getInt ();}
 };
 
-template<typename Storage, typename Val>
+template<typename Storage = Object*, typename Val = double>
 struct RealReader
 {public:
-		void operator() (Storage obj, Val val)
+		void operator() (Storage obj, Val& val)
 			{val = obj->getNum ();}
 };
 
-template<typename Storage, typename Val>
+template<typename Storage = Object*, typename Val = std::string>
 struct StringReader
 {public:
-		void operator() (Storage obj, Val val)
+		void operator() (Storage obj, Val& val)
 			{val = obj->getString ();}
 };
 
-template<typename Storage, typename Val>
+template<typename Storage = Object*, typename Val = std::string>
 struct NameReader
 {public:
-		void operator() (Storage obj, Val val)
+		void operator() (Storage obj, Val& val)
 			{val = obj->getName ();}
 };
 
 
-template<typename Storage, typename Val>
+template<typename Storage = Object*, typename Val = IndiRef>
 struct RefReader
 {public:
-		void operator() (Storage obj, Val val)
+		void operator() (Storage obj, Val& val)
 			{val.num = obj->getRefNum();
 			 val.gen = obj->getRefGen();}
 };
