@@ -10,12 +10,12 @@ ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow) : QToolBar(labe
 }
 
 /** Same constructor as QToolBar */
-ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow,QWidget * parent,bool newLine,const char * name,WFlags f)
+ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow,QWidget * parent,bool newLine/*=FALSE*/,const char * name/*=0*/,WFlags f/*=0*/)
  : QToolBar(label,mainWindow,parent,newLine,name,f) {
 } 
 
 /** Same constructor as QToolBar */
-ToolBar::ToolBar(QMainWindow * parent,const char * name) : QToolBar(parent,name) {
+ToolBar::ToolBar(QMainWindow * parent,const char * name/*=0*/) : QToolBar(parent,name) {
  }
 
 

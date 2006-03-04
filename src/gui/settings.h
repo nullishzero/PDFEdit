@@ -41,7 +41,7 @@ private:
 
  int addAction(const QString action);
  void init();
- QString readItem(const QString key,const QString root="gui/items/");
+ QString readItem(const QString name,const QString root="gui/items/");
  void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
  void initSettings();
  QPixmap *getIcon(const QString name);

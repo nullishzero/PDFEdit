@@ -160,7 +160,7 @@ QPixmap *Settings::getIcon(const QString name) {
  @param root Root key to read from (default will be used if none specified)
  @return line from config file  
  */
-QString Settings::readItem(const QString name,const QString root) {
+QString Settings::readItem(const QString name,const QString root/*="gui/items/"*/) {
  QString line=set->readEntry(APP_KEY+root+name);
  line=line.simplifyWhiteSpace();
  if (line.length()==0) fatalError("Missing item in config:\n"+root+name);
@@ -174,7 +174,7 @@ QString Settings::readItem(const QString name,const QString root) {
  @param isRoot TRUE if main menubar is being loaded
  @param parent parent menu item (if isRoot == TRUE, this is the root menubar to add items to)
  */ 
-void Settings::loadItem(const QString name,QMenuData *parent,bool isRoot) {
+void Settings::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=FALSE*/) {
  QPopupMenu *item=NULL;
  if (name=="-" || name=="") { //separator
   parent->insertSeparator();

@@ -1,5 +1,5 @@
-#ifndef __TBUTTON_H__
-#define __TBUTTON_H__
+#ifndef __TOOLBUTTON_H__
+#define __TOOLBUTTON_H__
 #include <qtoolbutton.h>
 #include <qpixmap.h>
 #include <qstring.h>

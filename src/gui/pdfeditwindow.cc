@@ -6,6 +6,8 @@
 #include "settings.h"
 #include <iostream>
 #include <qfile.h>
+#include "aboutwindow.h"
+#include "version.h"
 
 using namespace std;
 
@@ -21,6 +23,12 @@ void PdfEditWindow::exitApp() {
  printf("exiting...\n");
  qApp->closeAllWindows();
  //Application will exit after last window is closed
+}
+
+/** Shows "About" window */
+void PdfEditWindow::about() {
+ AboutWindow *aboutWin= new AboutWindow(this);
+ aboutWin->show();
 }
 
 /** creates new windows and displays it */
@@ -115,9 +123,9 @@ void printList(QStringList l) {
 }
 
 /** constructor of PdfEditWindow, creates window and fills it with elements, parameters are ignored */
-PdfEditWindow::PdfEditWindow(QWidget *parent,const char *name):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
+PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  //TODO: tohle je pokusny kod, dodelat
-
+ setCaption(APP_NAME);
  //Gets new interpreter
  qs=new QSInterpreter();
  
