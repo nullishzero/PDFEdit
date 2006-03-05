@@ -14,11 +14,13 @@
 #include <string>
 
 // xpdf
-#include <xpdf/Object.h>
+#include <Object.h>
+
+#include "exceptions.h"
+#include "observer.h"
 
 // Debug routine
 #include "utils/debug.h"
-#include "observer.h"
 
 
 
@@ -55,6 +57,9 @@ enum PropertyType
 		pArray	= objArray, 
 		pDict	= objDict, 
 		pStream	= objStream, 
+
+		//
+		pInvalid,
 
 		// Debug
 		pOther	= objCmd,
@@ -104,14 +109,11 @@ class IProperty
 typedef std::vector<const IObserver*> ObserverList;
 
 protected:
- Object* 		obj;		/**< Xpdf object. */
+ PropertyType	type;		/**< Property type. */
  ObserverList 	observers;	/**< List of observers. */
  IndiRef 		ref;		/**< Object's pdf id and generation number. */
  bool			isDrect;	/**< Set, if this object is a direct object. */
  CPdf* 			pdf;		/**< This object belongs to this pdf. */	
-
-protected:
- bool		isChngd;	/**< DEBUGGING purposes: Set, if this object has been changed but not saved. */
 
 private:
   /**
@@ -125,7 +127,7 @@ protected:
    * Default constructor. We suppose that obj will be (was) set by CObject class.
    * This constructor is used, when someone wants to create a CObject.
    */
-  IProperty () : obj(NULL), isDrect(true), pdf(NULL), isChngd(false)
+  IProperty () : type(pInvalid), isDrect(true), pdf(NULL)
   {
 	printDbg (0,"IProperty () constructor.");
 
@@ -137,12 +139,8 @@ protected:
    * @param o Xpdf object.
    */
   explicit
-  IProperty (Object& o, bool _isDirect): obj(&o), isDrect(_isDirect), pdf(NULL),isChngd (false)
+  IProperty (PropertyType tp, bool _isDirect): type(tp), isDrect(_isDirect), pdf(NULL)
   { 
-  	assert (obj->getType() != objCmd);
-	assert (obj->getType() != objEOF);
-	assert (obj->getType() != objNone);
-	assert (obj->getType() != objError);
 	printDbg (0,"IProperty constructor."); 
 
 	ref.num = 0;
@@ -150,23 +148,6 @@ protected:
   };
 
   
-public:
-  
-  /**
-   * Indicate that the object has changed.
-   *
-   * @param changed TRUE if the object has been changed, but not saved. 
-   * 				FALSE if the object is to be saved.
-   */
-  void setIsChanged (bool changed) {isChngd = changed;};
-
-  /**
-   * Indicate whether the object has been changed.
-   * 
-   * @preturn TRUE if the object has been changed, but not saved. FALSE otherwise.
-   */
-  bool isChanged () const {return isChngd;};
-
 public:
 
   /**
@@ -196,7 +177,10 @@ public:
 	void  setPdf (CPdf* p)
 	{
 		assert (NULL != p); 	// set NULL?
-		assert (NULL == pdf);	// modify association with a pdf?
+		assert (NULL == pdf);	// modify existing association with a pdf?
+		
+		if (NULL ==p || NULL != pdf)
+				throw ObjInvalidOperation ();
 		
 		pdf = p;
 	};
@@ -215,7 +199,7 @@ public:
 	 *
 	 * @return Indirect identification number and generation number.
 	 */
-	const IndiRef* getIndiRef () const {return &ref;};
+	const IndiRef& getIndiRef () const {return ref;};
 
 
 	/**
@@ -255,22 +239,7 @@ public:
    *
    * @return Type of this class.
    */
-  PropertyType getCObjectType () const
-  {
-	assert (obj->getType() != objCmd);
-	assert (obj->getType() != objEOF);
-	assert (obj->getType() != objNone);
-	assert (obj->getType() != objError);
-	
-	return static_cast<PropertyType>(obj->getType());
-  };
-
-  	/**
-	 * Returns xpdf object.
-	 *
-	 * @return Xpdf object associated with this CObject.
-	 */
-	const Object* getRawObject () const {assert (NULL != obj); return obj;};
+  PropertyType getType () const  {return type;};
 
 	/**
 	* Indicate that you do not want to use this object again.
@@ -327,6 +296,14 @@ protected:
 	for (; it != IProperty::observers.end(); it++)
 		  (*it)->notify (this);
   }
+
+  /**
+   * Create xpdf object.
+   *
+   * @return Xpdf object(s).
+   */
+  virtual Object* _makeXpdfObject ()const = 0;
+
 
 }; /* class IProperty */
 
