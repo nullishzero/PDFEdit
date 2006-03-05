@@ -110,10 +110,11 @@ typedef std::vector<const IObserver*> ObserverList;
 
 protected:
  PropertyType	type;		/**< Property type. */
- ObserverList 	observers;	/**< List of observers. */
  IndiRef 		ref;		/**< Object's pdf id and generation number. */
- bool			isDrect;	/**< Set, if this object is a direct object. */
  CPdf* 			pdf;		/**< This object belongs to this pdf. */	
+
+private:
+ ObserverList 	observers;	/**< List of observers. */
 
 private:
   /**
@@ -127,7 +128,7 @@ protected:
    * Default constructor. We suppose that obj will be (was) set by CObject class.
    * This constructor is used, when someone wants to create a CObject.
    */
-  IProperty () : type(pInvalid), isDrect(true), pdf(NULL)
+  IProperty () : type(pInvalid), pdf(NULL)
   {
 	printDbg (0,"IProperty () constructor.");
 
@@ -139,32 +140,13 @@ protected:
    * @param o Xpdf object.
    */
   explicit
-  IProperty (PropertyType tp, bool _isDirect): type(tp), isDrect(_isDirect), pdf(NULL)
+  IProperty (PropertyType tp): type(tp), pdf(NULL)
   { 
 	printDbg (0,"IProperty constructor."); 
 
 	ref.num = 0;
 	ref.gen = 0;
   };
-
-  
-public:
-
-  /**
-   * Return whether this object is direct or not. This is
-   * crucial when deallocating objects. A direct object can
-   * be destroyed at will. 
-   * 
-   * @return True if this object is a direct one.
-   */
-  bool isDirect () const {return isDrect;};
-
-  /**
-   * Set whether this object is direct or not.
-   *
-   * @param isDirect	This object is direct object.
-   */
-  void setIsDirect (bool _isDirect) {isDrect = _isDirect;};
 
 
 public:
