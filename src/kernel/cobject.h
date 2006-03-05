@@ -64,6 +64,7 @@
 #include <vector>
 #include <deque>
 #include <iostream>
+#include <iomanip>
 
 #include "debug.h"
 #include "iproperty.h"
@@ -74,15 +75,22 @@ namespace pdfobjects
 {
 
 
+//
+// Forward declaration of memory checking policies for CObjectSimple
+//
+class NoMemChecker;
+class BasicMemChecker;
+/** Operations we can check. */
+enum eOperations { OPER_CREATE, OPER_DELETE };
+	
+
 /**
  * Additional information that identifies variable type, e.g. for writeValue function.
  *
  * If someone tries to use unsupported type (pCmd,....), she should get compile error
  * because PropertyTraitSimple<> has no body.
  *
- * REMARK: BE CAREFUL when manipulating this ones.
- * It is used in setStringRepresentation(), writeValue(), getPropertyValue()
- * 
+ * REMARK: BE CAREFUL when manipulating these ones.
  */
 template<PropertyType T> struct PropertyTraitSimple; 
 template<> struct PropertyTraitSimple<pNull>
@@ -119,14 +127,13 @@ template<> struct PropertyTraitSimple<pRef>
 // CObjectSimple
 //
 
-
 /** 
  * Template class representing simple PDF objects from specification v1.5.
  *
  * This class represents simple objects like null, string, number etc.
  * It does not have special functions like CObjectComplex.
  */
-template <PropertyType Tp>
+template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectSimple : public IProperty
 {
 public:
@@ -153,9 +160,8 @@ public/*protected*/:
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
 	 * @param ref	Indirect id and gen id.
-	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 */
-	CObjectSimple (CPdf& p, Object& o, const IndiRef& ref, bool isDirect);
+	CObjectSimple (CPdf& p, Object& o, const IndiRef& ref);
 
 
 public:	
@@ -164,12 +170,11 @@ public:
 	 * Public constructor. Can be used to creted direct/indirect objects.
 	 *
 	 * @param p		Pointer to pdf object in which this object will exist.
-	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 */
-	CObjectSimple (CPdf& p, bool isDirect);
+	CObjectSimple (CPdf& p);
 
 #ifdef DEBUG
-CObjectSimple () : value(Value()) {};
+CObjectSimple () : value(Value()) {Checker check (this, OPER_CREATE);};
 #endif
 	
 	
@@ -224,7 +229,7 @@ CObjectSimple () : value(Value()) {};
 	/**
 	 * Destructor
 	 */
-	~CObjectSimple () {};
+	~CObjectSimple () {Checker check (this, OPER_DELETE);};
 	
 protected:
 	/**
@@ -362,7 +367,7 @@ template<> struct PropertyTraitComplex<pDict>
  * find this out by calling virtual method getSpecialObjType(). 
  * This can be helpful for example for special manipulation with content stream, xobjects, ...
  */
-template <PropertyType Tp>
+template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : public IProperty
 {
 public:
@@ -404,23 +409,21 @@ protected:
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
 	 * @param ref	Indirect id and gen id.
-	 * @param isDirect	Indicates whether this is a direct/indirect object.
 	 */
-	CObjectComplex (CPdf& p, Object& o, const IndiRef& ref, bool isDirect);
+	CObjectComplex (CPdf& p, Object& o, const IndiRef& ref);
 
 
 public:	
 
 	/**
-	 * Public constructor. Can be used to create direct/indirect objects.
+	 * Public constructor. Can be used to create objects.
 	 *
 	 * @param p	Pointer to pdf object in which this object will exist.
-	 * @param isDirect	Indicates whether this object is direct or not.
 	 */
-	CObjectComplex (CPdf& p, bool isDirect);
+	CObjectComplex (CPdf& p);
 
 #ifdef DEBUG
-CObjectComplex (int /*i*/) : value(Value()){};
+CObjectComplex (int /*i*/) : value(Value()) {Checker check (this,OPER_CREATE);};
 #endif
 
 	
@@ -470,7 +473,7 @@ CObjectComplex (int /*i*/) : value(Value()){};
 	template<typename T>
 	T* getSpecialObjectPtr () const
 	{
-		STATIC_CHECK(sizeof(T)>=sizeof(CObjectComplex<Tp>),DESTINATION_TYPE_TOO_NARROW); 
+		STATIC_CHECK(sizeof(T)>=sizeof(CObjectComplex<Tp,Checker>),DESTINATION_TYPE_TOO_NARROW); 
 		return dynamic_cast<T*>(this);
 	}
 
@@ -487,7 +490,7 @@ CObjectComplex (int /*i*/) : value(Value()){};
 	/**
 	 * Destructor
 	 */
-	~CObjectComplex ()	{};
+	~CObjectComplex ()	{Checker check (this,OPER_DELETE);};
 
 protected:
 	/**
@@ -626,6 +629,78 @@ typedef CObjectComplex<pDict>	CDict;
 
 
 
+
+
+//=====================================================================================
+//
+//	Memory checker classes
+//
+
+
+/**
+ * No memory checks done.
+ */
+class NoMemChecker 
+{public: 
+	NoMemChecker (IProperty*, eOperations) {};
+};
+
+
+/**
+ * This class stores pointer to every created class in a container. When a class is destroyed, it is removed
+ * from the container.
+ *
+ * After the end of a program, we can count how many objects have not been released.
+ * 
+ */
+class BasicMemChecker
+{
+public:
+	typedef std::list<const IProperty*> _IPsList;
+private:
+	static _IPsList ips;
+
+public:
+	//
+	//
+	//	   
+	BasicMemChecker (const IProperty* ip, eOperations operation)
+	{
+		std::cout << std::setw (10) << std::setfill ('<') << "\t";
+		std::cout << std::setbase (16);
+		std::cout << "IProperty [0x"<< (unsigned)ip << "] ";
+				
+		switch (operation)
+		{
+			case OPER_DELETE:
+					{
+					std::cout << "deleted.";
+					_IPsList::iterator it = find (ips.begin(), ips.end(), ip);
+					if (it != ips.end())
+							ips.erase (it);
+					else
+							std::cout << std::endl << "!!!!!!!!!! deleting what was not created !!!!!!!!!!1" << std::endl;
+					}
+					break;
+
+			case OPER_CREATE:
+					std::cout << "created.";
+					ips.push_back (ip);
+					break;
+					
+			default:
+					break;
+		}
+		
+		std::cout << std::setbase (10);
+		std::cout << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
+	};
+	
+	//
+	// Get living IProperty count
+	//
+	size_t getCount () {return ips.size (); };
+};
 
 
 //=====================================================================================

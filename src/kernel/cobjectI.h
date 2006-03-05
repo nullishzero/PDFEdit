@@ -40,14 +40,11 @@ namespace pdfobjects
 //
 // Protected constructor, called when we have parsed an object
 //
-template<PropertyType Tp>
-CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref, bool isDirect) 
-	: IProperty(static_cast<PropertyType>(o.getType()),isDirect), value(Value())
+template<PropertyType Tp, typename Checker>
+CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref) 
+	: IProperty(static_cast<PropertyType>(o.getType())), value(Value())
 {
-	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
-					COBJECT_BAD_TYPE);
-	STATIC_CHECK ((pNull == Tp) || (pBool == Tp) || (pInt == Tp) || (pReal ==Tp) ||
-				  (pString == Tp) || (pName == Tp) || (pRef == Tp),COBJECT_BAD_TYPE);
+	Checker check (this, OPER_CREATE);
 	assert (IProperty::type == Tp);
 	printDbg (0,"CObjectSimple constructor.");
 	
@@ -57,13 +54,6 @@ CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref, bool i
 	// Save id and gen id
 	IProperty::setIndiRef (ref);
 	
-	if (!isDirect)
-	{// Indirect object
-			
-		// Save indirect mapping 
-		IProperty::pdf->setIndMapping (ref,this);
-	}
-
 	// Set object's value
 	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);
 }
@@ -72,41 +62,23 @@ CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref, bool i
 //
 // Public constructor
 //
-template<PropertyType Tp>
-CObjectSimple<Tp>::CObjectSimple (CPdf& p, bool isDirect) : value(Value())
+template<PropertyType Tp, typename Checker>
+CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p) : value(Value())
 {
-	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
-					COBJECT_BAD_TYPE);
-	STATIC_CHECK ((pNull == Tp) || (pBool == Tp) || (pInt == Tp) || (pReal ==Tp) ||
-				  (pString == Tp) || (pName == Tp) || (pRef == Tp),COBJECT_BAD_TYPE);
+	Checker check (this, OPER_CREATE);
 	printDbg (0,"CObjectSimple constructor.");
 
 	// Save pdf
 	IProperty::pdf = &p;
-	// Save direct/indirect
-	IProperty::setIsDirect (isDirect);
-
-	if (!isDirect)
-	{// Direct object
-	
-	}else
-	{// Indirect object
-
-		Ref ref = {42,43};
-		//TODO !! Create ref
-		// We have created an indirect object
-		IProperty::setIndiRef (ref.num, ref.gen);
-		pdf->setIndMapping (ref,this);
-	}
 }
 
 
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void 
-CObjectSimple<Tp>::getStringRepresentation (std::string& str) const
+CObjectSimple<Tp,Checker>::getStringRepresentation (std::string& str) const
 {
 	utils::simpleValueToString<Tp> (value,str);
 }
@@ -115,13 +87,11 @@ CObjectSimple<Tp>::getStringRepresentation (std::string& str) const
 //
 // Set string representation
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
+CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 {
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
-	STATIC_CHECK ((Tp == pBool) || (Tp == pInt) || (Tp == pReal) || (Tp == pString) || (Tp == pName) ||
-			(Tp == pRef), INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (0,"setStringRepresentation() " << strO);
 	
 	utils::simpleValueFromString (strO,value);
@@ -135,9 +105,9 @@ CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
 //
 // Write a value.
 // 
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp>::writeValue (WriteType val)
+CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (0,"writeValue()");
@@ -152,9 +122,9 @@ CObjectSimple<Tp>::writeValue (WriteType val)
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp>::getPropertyValue (Value& val) const
+CObjectSimple<Tp,Checker>::getPropertyValue (Value& val) const
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (0,"getPropertyValue()");
@@ -167,38 +137,22 @@ CObjectSimple<Tp>::getPropertyValue (Value& val) const
 // Just a hint that we can free this object
 // This is a generic function for all types
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp>::release()
+CObjectSimple<Tp,Checker>::release()
 {
 	assert (NULL != IProperty::pdf);
 	printDbg (0,"release()");
 
 	assert (!"not implemented yet");
-	
-	//
-	// If it is direct, we can free it
-	//
-	if (IProperty::isDirect ())
-	{	
-		//IndiRef* ind = IProperty::getIndiRef ();
-		//pdf->getXrefWriter()->releaseObject (ind->num, ind->gen);
-		delete this;
-			
-	}else
-	{
-		//
-		// TODO: This is an indirect object, what to do?
-		//
-	}
 }
 
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp>::dispatchChange() const
+CObjectSimple<Tp,Checker>::dispatchChange() const
 {
 	STATIC_CHECK ((pNull != Tp), INCORRECT_USE_OF_dispatchChange_FUNCTION_FOR_pNULL_TYPE);
 	assert (NULL != IProperty::pdf);
@@ -218,9 +172,9 @@ CObjectSimple<Tp>::dispatchChange() const
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 Object*
-CObjectSimple<Tp>::_makeXpdfObject () const
+CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 {
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
 }
@@ -241,27 +195,25 @@ CObjectSimple<Tp>::_makeXpdfObject () const
 // This is the only place, where Value is not what it should be after executing the constructor, 
 // but it will be set in CPdf constructor.
 //
-template<PropertyType Tp>
-CObjectComplex<Tp>::CObjectComplex ()
+template<PropertyType Tp, typename Checker>
+CObjectComplex<Tp,Checker>::CObjectComplex ()
 {
 	STATIC_CHECK (pDict == Tp, COBJECT_BAD_TYPE);
+	Checker check (this,OPER_CREATE);
 	printDbg (0,"CObjectComplex pdf constructor.");
 		
 	IProperty::pdf = dynamic_cast<CPdf*>(this);
-	IProperty::setIsDirect (false);
 }
 
 
 //
 // Protected constructor
 //
-template<PropertyType Tp>
-CObjectComplex<Tp>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref, bool isDirect) 
-	: IProperty(static_cast<PropertyType>(o.getType()),isDirect)
+template<PropertyType Tp, typename Checker>
+CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref) 
+	: IProperty(static_cast<PropertyType>(o.getType()))
 {
-	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
-					COBJECT_BAD_TYPE);
-	STATIC_CHECK ((pArray == Tp) || (pStream == Tp) || (pDict == Tp),COBJECT_BAD_TYPE);
+	Checker check (this,OPER_CREATE);
 	assert (IProperty::type == Tp);
 	printDbg (0,"CObjectComplex constructor.");
 	
@@ -269,15 +221,6 @@ CObjectComplex<Tp>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref, bool
 	IProperty::pdf = &p;
 	// Save id and gen id
 	IProperty::setIndiRef (ref);
-	// Save direct/indirect
-	IProperty::setIsDirect (isDirect);
-
-	if (!isDirect)
-	{// Indirect object
-
-		// Save the mapping 
-		pdf->setIndMapping (ref,this);
-	}
 
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
@@ -287,37 +230,23 @@ CObjectComplex<Tp>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref, bool
 //
 // Public constructor
 //
-template<PropertyType Tp>
-CObjectComplex<Tp>::CObjectComplex (CPdf& p, bool isDirect)
+template<PropertyType Tp, typename Checker>
+CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p)
 {
-	STATIC_CHECK ((pOther != Tp) && (pOther1 != Tp) && (pOther2 != Tp) && (pOther3 != Tp),
-					COBJECT_BAD_TYPE);
-	STATIC_CHECK ((pArray == Tp) || (pStream == Tp) || (pDict == Tp),COBJECT_BAD_TYPE);
+	Checker check (this,OPER_CREATE);
 	printDbg (0,"CObjectComplex constructor.");
 	
-
 	// Save pdf
 	IProperty::pdf = &p;
-	// Save direct/indirect
-	IProperty::setIsDirect (isDirect);
-
-	if (!isDirect)
-	{// Indirect object
-		
-		Ref ref;
-		//TODO !! get ref from somewhere
-		//IProperty::setIndiRef (ref.num, ref.gen);
-		pdf->setIndMapping (ref,this);
-	}
 }
 
 
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void 
-CObjectComplex<Tp>::getStringRepresentation (std::string& str) const 
+CObjectComplex<Tp,Checker>::getStringRepresentation (std::string& str) const 
 {
 	utils::complexValueToString<Tp> (value,str);
 }
@@ -326,9 +255,9 @@ CObjectComplex<Tp>::getStringRepresentation (std::string& str) const
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void 
-CObjectComplex<Tp>::setStringRepresentation (const std::string& strO)
+CObjectComplex<Tp,Checker>::setStringRepresentation (const std::string& strO)
 {
 	assert (!"not implemented");	
 }
@@ -336,9 +265,9 @@ CObjectComplex<Tp>::setStringRepresentation (const std::string& strO)
 //
 // Write a value.
 // 
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp>::writeValue (WriteType val)
+CObjectComplex<Tp,Checker>::writeValue (WriteType val)
 {
 	printDbg (0,"writeValue()" << val);
 
@@ -354,9 +283,9 @@ CObjectComplex<Tp>::writeValue (WriteType val)
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp>::dispatchChange() const
+CObjectComplex<Tp,Checker>::dispatchChange() const
 {
 	typedef std::vector<IProperty*> IPList;
 	
@@ -378,9 +307,9 @@ CObjectComplex<Tp>::dispatchChange() const
 //
 //
 //
-template <PropertyType Tp>
+template <PropertyType Tp, typename Checker>
 Object*
-CObjectComplex<Tp>::_makeXpdfObject () const
+CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 {
 	printDbg (0,"_makeXpdfObject");
 	
@@ -395,9 +324,9 @@ CObjectComplex<Tp>::_makeXpdfObject () const
 //
 // Just a hint that we can free this object
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp>::release()
+CObjectComplex<Tp,Checker>::release()
 {
 	assert (NULL != IProperty::pdf);
 	printDbg (0,"release()");
@@ -416,9 +345,9 @@ inline void
 CObjectComplex<pArray>::getAllPropertyNames (std::list<std::string>&) const
 	{assert (0);}
 
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 inline void
-CObjectComplex<Tp>::getAllPropertyNames (std::list<std::string>& container) const
+CObjectComplex<Tp,Checker>::getAllPropertyNames (std::list<std::string>& container) const
 {
 	STATIC_CHECK ((pArray != Tp), INCORRECT_USE_OF_getAllNames_FUNCTION); 
 	utils::getAllNames (container,value);
@@ -428,9 +357,9 @@ CObjectComplex<Tp>::getAllPropertyNames (std::list<std::string>& container) cons
 //
 // 
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp>::delProperty (PropertyId id)
+CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 {
 	printDbg (0,"delProperty(" << id << ")");
 
@@ -460,29 +389,22 @@ CObjectComplex<Tp>::delProperty (PropertyId id)
 //
 // Correctly to add an object (without name) can be done only to Array object
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp>::addProperty (IProperty& newIp)
+CObjectComplex<Tp,Checker>::addProperty (IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
 	assert (NULL == newIp.getPdf());
 	printDbg (0,"addProperty("<< (unsigned int) &newIp << ")");
 
-	if (IProperty::isDirect())
-	{
-		// Add it
-		value.push_back (&newIp);
-		// Inherit id and gen number
-		newIp.setIndiRef (IProperty::ref);
-		
-	}else
-	{
-		assert (!"not implemented yet");	
-	}
+	// Add it
+	value.push_back (&newIp);
+	// Inherit id and gen number
+	newIp.setIndiRef (IProperty::ref);
 
 	// Inherit pdf
 	newIp.setPdf (IProperty::pdf);
-	// set isDirect and notify observers
+	// notify observers and dispatch change
 	_objectChanged ();
 }
 
@@ -490,25 +412,18 @@ CObjectComplex<Tp>::addProperty (IProperty& newIp)
 //
 // Correctly add an object (with name) can be done only to Dict and Stream object
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp>::addProperty (const std::string& propertyName, IProperty& newIp)
+CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pDict) || (Tp == pStream), INCORRECT_USE_OF_addProperty_FUNCTION);
 	assert (NULL == newIp.getPdf());
 	printDbg (0,"addProperty(, " << (unsigned int) &newIp << ", " << propertyName << ")");
 
-	if (IProperty::isDirect())
-	{
-		// Store it
-		value.push_back (std::make_pair (propertyName,&newIp));
-		// Inherit id and gen number
-		newIp.setIndiRef (IProperty::ref);
-		
-	}else
-	{
-		assert (!"not implemented yet");	
-	}
+	// Store it
+	value.push_back (std::make_pair (propertyName,&newIp));
+	// Inherit id and gen number
+	newIp.setIndiRef (IProperty::ref);
 
 	// Inherit pdf
 	newIp.setPdf (IProperty::pdf);
@@ -520,9 +435,9 @@ CObjectComplex<Tp>::addProperty (const std::string& propertyName, IProperty& new
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 inline IProperty*
-CObjectComplex<Tp>::setPropertyValue (PropertyId id, IProperty& newIp)
+CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 {
 	assert (NULL != IProperty::pdf);
 	assert (NULL == newIp.getPdf());
@@ -593,9 +508,9 @@ CObjectComplex<pArray>::setPropertyValue (PropertyId id, IProperty& newIp)
 //
 //
 //
-template<PropertyType Tp>
+template<PropertyType Tp, typename Checker>
 IProperty*
-CObjectComplex<Tp>::getPropertyValue (PropertyId id) const
+CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
 {
 	printDbg (0,"getPropertyValue()");
 
