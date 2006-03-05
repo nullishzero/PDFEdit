@@ -34,6 +34,18 @@ namespace pdfobjects
 {
 
 //
+// Memory checkers
+//
+BasicMemChecker::_IPsList BasicMemChecker::ips;
+
+
+
+
+
+
+
+		
+//
 // General object functions
 //
 namespace utils {
@@ -46,40 +58,40 @@ namespace {
 		 * Creates CObject from xpdf object.
 		 */
 		IProperty*
-		createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref, bool direct)
+		createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
 		{
 
 				switch (obj.getType ())
 				{
 					case objBool:
-						return new CBool (pdf,obj,ref,direct);
+						return new CBool (pdf,obj,ref);
 
 					case objInt:
-						return new CInt (pdf,obj,ref,direct);
+						return new CInt (pdf,obj,ref);
 
 					case objReal:
-						return new CReal (pdf,obj,ref,direct);
+						return new CReal (pdf,obj,ref);
 
 					case objString:
-						return new CString (pdf,obj,ref,direct);
+						return new CString (pdf,obj,ref);
 
 					case objName:
-						return new CName (pdf,obj,ref,direct);
+						return new CName (pdf,obj,ref);
 
 					case objNull:
-						return new CNull (pdf,obj,ref,direct);
+						return new CNull (pdf,obj,ref);
 
 					case objRef:
-						return new CRef (pdf,obj,ref,direct);
+						return new CRef (pdf,obj,ref);
 
 					case objArray:
-						return new CArray (pdf,obj,ref,direct);
+						return new CArray (pdf,obj,ref);
 
 					case objDict:
-						return new CDict (pdf,obj,ref,direct);
+						return new CDict (pdf,obj,ref);
 
 					case objStream:
-						return new CStream (pdf,obj,ref,direct);
+						return new CStream (pdf,obj,ref);
 
 					default:
 						assert (!"Bad type.");
@@ -243,7 +255,7 @@ namespace {
 							// Get Object at i-th position
 					//		array.arrayGetNF (i, &obj);
 							// Create CObject from it
-							IProperty* cobj = createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef(), true);
+							IProperty* cobj = createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef());
 							assert (cobj);
 							if (NULL == cobj)
 									throw ObjInvalidObject ();
@@ -418,54 +430,6 @@ namespace {
 						simpleXpdfObjToString (obj,str);
 						break;
 			}
-		}
-
-
-		/**
-		 * Get all objects that are "in" an object with recursion
-		 * up to level 1. That means just direct descendats.
-		 *
-		 * REMARK: Object can't be const because of the superb xpdf implementation.
-		 *
-		 * @param o		xpdf Object.
-		 * @param store storage that implements push_back() function.
-		 */
-		template <typename Storage>
-		void getAllDirectChildXpdfObjects (Object& obj, Storage& /*store*/) 
-		{
-			switch (obj.getType())
-			{
-				case objArray:
-				{	//int size = obj.arrayGetLength ();
-					//for (int i = 0; i < size; i++)
-					{
-						//store.push_back (obj.getArray()->elems[i]);
-					}
-				}	return;	
-					break;
-				
-				case objDict:
-				{	//int size = obj.dictGetLength ();
-					//for (int i = 0; i < size; i++)
-					{
-						//store.push_back (obj.getDict()->entries[i].val);
-					}
-				}	return;	
-					break;
-
-				case objStream:
-					assert (!"I'm not implemented yet...");
-					break;
-
-				case objRef:
-					assert (!"I'm not implemented yet...");
-					break;
-
-				default:	// Null, Bool, Int, Real, String, Name
-					assert (!"Bad object passed to getAllDirectChildXpdfObjects.");
-					throw ObjBadTypeE ();
-					break;
-			}	
 		}
 
 } // anonymous namespace
@@ -807,7 +771,7 @@ xpdfObjFromString (const std::string& str)
 	// Create parser. It can create complex types. Lexer knows just simple types.
 	// Lexer SHOULD delete MemStream
 	//
-	auto_ptr<Parser> parser	(new Parser (NULL, 
+/*	auto_ptr<Parser> parser	(new Parser (NULL, 
 						       		      new Lexer (NULL, 
 												  	 new MemStream (strdup(str.c_str()), 0, str.length(), NULL)
 												     )
@@ -828,7 +792,7 @@ xpdfObjFromString (const std::string& str)
 	}
 
 	return obj;
-}
+*/return NULL;}
 
 	
 } /* namespace utils */
