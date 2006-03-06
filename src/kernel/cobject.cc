@@ -41,9 +41,6 @@ BasicMemChecker::_IPsList BasicMemChecker::ips;
 
 
 
-
-
-
 		
 //
 // General object functions
@@ -753,7 +750,7 @@ template void complexValueFromXpdfObj<pStream,std::list<std::pair<std::string,IP
 
 
 //
-//
+// Case insensitive comparator
 //
 namespace
 {
