@@ -109,7 +109,6 @@ class IProperty
 typedef std::vector<const IObserver*> ObserverList;
 
 protected:
- PropertyType	type;		/**< Property type. */
  IndiRef 		ref;		/**< Object's pdf id and generation number. */
  CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 
@@ -125,10 +124,9 @@ private:
 protected:	
 
   /**
-   * Default constructor. We suppose that obj will be (was) set by CObject class.
    * This constructor is used, when someone wants to create a CObject.
    */
-  IProperty () : type(pInvalid), pdf(NULL)
+  IProperty () : pdf(NULL)
   {
 	printDbg (0,"IProperty () constructor.");
 
@@ -137,17 +135,15 @@ protected:
   };
   
   /**
-   * @param o Xpdf object.
+   * This constructor is used, when someone wants to create a CObject.
    */
-  explicit
-  IProperty (PropertyType tp): type(tp), pdf(NULL)
-  { 
-	printDbg (0,"IProperty constructor."); 
+  IProperty (CPdf* _pdf) : pdf(_pdf)
+  {
+	printDbg (0,"IProperty () constructor.");
 
 	ref.num = 0;
 	ref.gen = 0;
   };
-
 
 public:
   
@@ -203,25 +199,25 @@ public:
 
 public:
   
-  /** 
-   * Returns pointer to derived object. 
-   *
-   * @return Object casted to desired type.
-   */
-  template<typename T>
-  T* getCObjectPtr () const
-  {
-	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
-	return dynamic_cast<T*>(this);
-  }
+    /** 
+     * Returns pointer to derived object. 
+     *
+     * @return Object casted to desired type.
+     */
+    template<typename T>
+    T* getCObjectPtr () const
+    {
+    	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
+  	  	return dynamic_cast<T*>(this);
+    }
 
   
-  /** 
-   * Returns type of object. 
-   *
-   * @return Type of this class.
-   */
-  PropertyType getType () const  {return type;};
+    /** 
+     * Returns type of object. 
+     *
+     * @return Type of this class.
+     */
+    virtual PropertyType getType () const = 0;
 
 	/**
 	* Indicate that you do not want to use this object again.
