@@ -17,8 +17,9 @@
 // xpdf
 #include <xpdf/Object.h>
 
-//
+// debug
 #include "debug.h"
+
 #include "observer.h"
 #include "exceptions.h"
 
@@ -41,16 +42,12 @@ namespace pdfobjects
 // Protected constructor, called when we have parsed an object
 //
 template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref) 
-	: IProperty(static_cast<PropertyType>(o.getType())), value(Value())
+CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref) : IProperty (&p), value(Value())
 {
 	Checker check (this, OPER_CREATE);
-	assert (IProperty::type == Tp);
 	printDbg (0,"CObjectSimple constructor.");
 	
 	
-	// Save pdf
-	IProperty::pdf = &p;	
 	// Save id and gen id
 	IProperty::setIndiRef (ref);
 	
@@ -63,13 +60,10 @@ CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref
 // Public constructor
 //
 template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p) : value(Value())
+CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p) : IProperty(&pdf), value(Value())
 {
 	Checker check (this, OPER_CREATE);
 	printDbg (0,"CObjectSimple constructor.");
-
-	// Save pdf
-	IProperty::pdf = &p;
 }
 
 
@@ -144,7 +138,14 @@ CObjectSimple<Tp,Checker>::release()
 	assert (NULL != IProperty::pdf);
 	printDbg (0,"release()");
 
-	assert (!"not implemented yet");
+	if (!_isIndirect())
+	{
+		delete this;
+
+	}else
+	{
+		assert (!"not implemented yet");
+	}
 }
 
 //
@@ -170,16 +171,27 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 }
 
 //
-//
+// Helper function
 //
 template<PropertyType Tp, typename Checker>
-Object*
+inline Object*
 CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 {
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
 }
 
-
+//
+// Helper function
+//
+template<PropertyType Tp, typename Checker>
+inline bool
+CObjectSimple<Tp,Checker>::_isIndirect () const
+{
+	if (this == pdf->getExistingProperty (IProperty::getIndiRef ()))
+		return true;
+	else
+		return false;
+}
 
 
 
@@ -210,15 +222,11 @@ CObjectComplex<Tp,Checker>::CObjectComplex ()
 // Protected constructor
 //
 template<PropertyType Tp, typename Checker>
-CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref) 
-	: IProperty(static_cast<PropertyType>(o.getType()))
+CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref) : IProperty (&p) 
 {
 	Checker check (this,OPER_CREATE);
-	assert (IProperty::type == Tp);
 	printDbg (0,"CObjectComplex constructor.");
 	
-	// Save pdf
-	IProperty::pdf = &p;
 	// Save id and gen id
 	IProperty::setIndiRef (ref);
 
@@ -231,13 +239,10 @@ CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& r
 // Public constructor
 //
 template<PropertyType Tp, typename Checker>
-CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p)
+CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p) : IProperty (&p)
 {
 	Checker check (this,OPER_CREATE);
 	printDbg (0,"CObjectComplex constructor.");
-	
-	// Save pdf
-	IProperty::pdf = &p;
 }
 
 
@@ -326,13 +331,21 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 //
 template<PropertyType Tp, typename Checker>
 void
-CObjectComplex<Tp,Checker>::release()
+CObjectComplex<Tp,Checker>::release ()
 {
 	assert (NULL != IProperty::pdf);
 	printDbg (0,"release()");
 
-	assert (!"not implemented yet");
+	if (!_isIndirect())
+	{
+		delete this;
+
+	}else
+	{
+		assert (!"not implemented yet");
+	}
 }
+
 
 
 //
@@ -399,11 +412,12 @@ CObjectComplex<Tp,Checker>::addProperty (IProperty& newIp)
 
 	// Add it
 	value.push_back (&newIp);
+	
 	// Inherit id and gen number
 	newIp.setIndiRef (IProperty::ref);
-
 	// Inherit pdf
 	newIp.setPdf (IProperty::pdf);
+	
 	// notify observers and dispatch change
 	_objectChanged ();
 }
@@ -422,11 +436,12 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, IPrope
 
 	// Store it
 	value.push_back (std::make_pair (propertyName,&newIp));
+	
 	// Inherit id and gen number
 	newIp.setIndiRef (IProperty::ref);
-
 	// Inherit pdf
 	newIp.setPdf (IProperty::pdf);
+
 	// notify observers and dispatch change
 	_objectChanged ();
 }
@@ -462,6 +477,7 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 	// Swap and delete
 	iter_swap (itExist,itNew);
 	value.pop_back();
+
 	// Delete IProperty
 	oldIp->release ();
 
@@ -522,6 +538,22 @@ CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
 	else
 			throw ObjInvalidPositionInComplex ();
 }
+
+
+//
+// Helper function
+//
+template<PropertyType Tp, typename Checker>
+inline bool
+CObjectComplex<Tp,Checker>::_isIndirect () const
+{
+	if (this == pdf->getExistingProperty (IProperty::getIndiRef ()))
+		return true;
+	else
+		return false;
+}
+
+
 
 
 } /* namespace pdfobjects */

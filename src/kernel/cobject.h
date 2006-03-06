@@ -31,25 +31,26 @@
  *					- several questions has arisen, that i cannot decide by myself
  *					- delProperty
  *
- * ------------ 2006/03/06 21:42 ----------- FUCK xpdf
+ * ------------ 2006/03/05 21:42 ----------- FUCK xpdf
  *  				- remove use of XPDF as value holders, question is Stream, but better 1 bad class
  *  				than 7.
  *  				03:24 -- CObjectSimple implemented withou XPDF
  *  				23:11 -- CObjectComplex 1st version
+ *
+ * 			2006/03/06
+ * 					added Memory checker and finishing implementation of cobjects, waiting for cpdf to be
+ * 						compilable
+ * 					CObjectSimple finished
+ * 					CObjectComplex finished except setStringRepresentation and writeValue (which is actually the same)
  * 
  *			TODO:
  *					testing
- *					?? INDIRECT -- refcounting
  *					!! CPdf::addObject and addIndObject to replace mapping* functions
  *					!! CPdf::getIndObject functions
+ *							function for getting unused Ref in CPdf
  *					can't add IProperty when pdf is not NULL (just to simplify things)
  *					   no real obstruction for removing this
- *					allow adding indirect values (directly :))
  *					better public/protected dividing
- *					setPropertyValue -- simple (stupid) implementation
- *					release is in "undefined" behaviour :)
- *					addProperty 10x na tu istu polozku -- pdf spec. undefined value, but possible
- *					function for getting unused Ref
  *		
  *			REMARKS:
  *					-- from pRef to IProperty -- CPdf::getObject (Ref)
@@ -132,10 +133,18 @@ template<> struct PropertyTraitSimple<pRef>
  *
  * This class represents simple objects like null, string, number etc.
  * It does not have special functions like CObjectComplex.
+ *
+ * Other xpdf objects like objCmd can't be instantiated although the PropertyType 
+ * exists. It is because PropertyTraitSimple is not specified for these types.
+ *
+ * We can use memory checking with this class which save information about living IProperties.
+ * Can be used to detect memory leaks etc.
+ *
  */
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectSimple : public IProperty
 {
+
 public:
 	/** Write type for writeValue function. */
 	typedef typename PropertyTraitSimple<Tp>::writeType	 WriteType;
@@ -146,13 +155,17 @@ private:
 	/** Object's value. */
 	Value value;
 	
+
 private:
+	
 	/**
 	 * Copy constructor
 	 */
 	CObjectSimple (const CObjectSimple&);
 	
+	
 public/*protected*/:
+	
 	/**
 	 * Constructor. Only kernel can call this constructor. It depends on the object, that we have
 	 * parsed.
@@ -177,14 +190,21 @@ public:
 CObjectSimple () : value(Value()) {Checker check (this, OPER_CREATE);};
 #endif
 	
-	
+	/**
+	 * Return type of this property.
+	 *
+	 * @return Type of this property.
+	 */
+	virtual PropertyType getType () const {return Tp;};
+			
+
 	/**
 	 * Returns string representation of (x)pdf object. 
 	 * 
 	 * @param str 	After successful call, it will hold the string representation 
 	 * 				of current object.
 	 */
-	void getStringRepresentation (std::string& str) const;
+	virtual void getStringRepresentation (std::string& str) const;
 	
 	
 	/**
@@ -246,14 +266,23 @@ protected:
 	// Helper functions
 	//
 protected:
+	
 	/**
 	 * Make xpdf Object from this object. This function allocates xpdf object, caller has to free it.
 	 *
 	 * @return Xpdf object representing actual value of this simple object.
 	 */
-	Object*	_makeXpdfObject () const;
+	virtual Object*	_makeXpdfObject () const;
 	
 private:
+	
+	/**
+	 * Finds out if this object is indirect.
+	 *
+	 * @return true if this object is indirect, false otherwise.
+	 */
+	bool _isIndirect () const;
+
 	/**
 	 * Indicate that the object has changed.
 	 */
@@ -278,51 +307,11 @@ private:
 
 
 //
-// Helper objects, functors, ...
+// Forward declaration of element finders
 //
-class ArrayIdxComparator
-{
-private:
-	unsigned int pos;
-	IProperty* ip;
-public:
-		ArrayIdxComparator (unsigned int p) : pos(p),ip(NULL) {};
-		
-		inline IProperty* getIProperty () {return ip;};
-		
-		bool operator() (IProperty* _ip)
-		{	
-			if (0 == pos)
-			{
-				ip = _ip;
-				return true;
-			}
-			pos--;
-			return false;
-		}
-};
+class ArrayIdxComparator;
+class DictIdxComparator;
 
-class DictIdxComparator
-{
-private:
-	std::string str;
-	IProperty* ip;
-public:
-		DictIdxComparator (const std::string& s) : str(s),ip(NULL) {};
-		
-		inline IProperty* getIProperty () {return ip;};
-		
-		bool operator() (std::pair<std::string,IProperty*> item)
-		{	
-			if (item.first == str)
-			{
-				ip = item.second;
-				return true;
-			}
-			
-			return false;
-		};
-};
 
 /**
  * Additional information that identifies variable type, e.g. for writeValue function.
@@ -333,24 +322,24 @@ public:
 template<PropertyType T> struct PropertyTraitComplex; 
 template<> struct PropertyTraitComplex<pArray>	
 {	public: 
-		typedef std::vector<IProperty*>	value; 
-		typedef const std::string& 	writeType; 
-		typedef unsigned int	 	propertyId;
+		typedef std::vector<IProperty*>		value; 
+		typedef const std::string& 			writeType; 
+		typedef unsigned int	 			propertyId;
 		typedef class ArrayIdxComparator	indexComparator;
 };
 template<> struct PropertyTraitComplex<pStream> 
 {	public: 
 		typedef std::list<std::pair<std::string,IProperty*> >	value; 
-		typedef const std::string& 	writeType; 
-		typedef const std::string& 	propertyId;
-		typedef class DictIdxComparator	indexComparator;
+		typedef const std::string& 			writeType; 
+		typedef const std::string& 			propertyId;
+		typedef class DictIdxComparator		indexComparator;
 };
 template<> struct PropertyTraitComplex<pDict>	
 {	public: 
 		typedef std::list<std::pair<std::string,IProperty*> >	value; 
-		typedef const std::string& 	writeType; 
-		typedef const std::string& 	propertyId;
-		typedef class DictIdxComparator	indexComparator;
+		typedef const std::string& 			writeType; 
+		typedef const std::string& 			propertyId;
+		typedef class DictIdxComparator		indexComparator;
 };
 
 
@@ -371,19 +360,14 @@ template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : public IProperty
 {
 public:
-	/** Index identifying position in Array.*/
-	typedef unsigned int	PropertyIndex;
-	/** String identifying position in Dict/Stream.*/
-	typedef std::string		PropertyName;
 	/** Write type for writeValue function. */
 	typedef typename PropertyTraitComplex<Tp>::writeType  		WriteType;
 	/** This type identifies a property. */
 	typedef typename PropertyTraitComplex<Tp>::propertyId 		PropertyId;
 	/** This functor can find an item in the value holder. */
 	typedef typename PropertyTraitComplex<Tp>::indexComparator	IndexComparator;
-			
 	/** Value holder. */
-	typedef typename PropertyTraitComplex<Tp>::value 	  Value;  
+	typedef typename PropertyTraitComplex<Tp>::value 	  		Value;  
 
 private:
 	/** Object's value. */
@@ -426,14 +410,22 @@ public:
 CObjectComplex (int /*i*/) : value(Value()) {Checker check (this,OPER_CREATE);};
 #endif
 
+
+	/**
+	 * Return type of this property.
+	 *
+	 * @return Type of this property.
+	 */
+	virtual PropertyType getType () const {return Tp;};
 	
+
 	/**
 	 * Returns string representation of (x)pdf object. 
 	 * 
 	 * @param str 	After successful call, it will hold string representation 
 	 * 				of current object.
 	 */
-	void getStringRepresentation (std::string& str) const;
+	virtual void getStringRepresentation (std::string& str) const;
 	
 	
 	/**
@@ -591,9 +583,17 @@ protected:
 	 *
 	 * @return Xpdf object representing actual value of this simple object.
 	 */
-	Object*	_makeXpdfObject () const;
+	virtual Object*	_makeXpdfObject () const;
 
 private:
+	
+	/**
+	 * Finds out if this object is indirect.
+	 *
+	 * @return true if this object is indirect, false otherwise.
+	 */
+	bool _isIndirect () const;
+
 	/**
 	 * Make everything needed to indicate that this object has changed.
 	 * Notifies all obervers associated with this property.
@@ -629,6 +629,70 @@ typedef CObjectComplex<pDict>	CDict;
 
 
 
+//=====================================================================================
+//
+//	Find element functors
+//
+
+
+/**
+ * This class is used as functor to stl find algorithm.
+ * Finds out an item specified by its position. 
+ *
+ * More effective algorithms could be used but this approach is 
+ * used to get more generic.
+ */
+class ArrayIdxComparator
+{
+private:
+	unsigned int pos;
+	IProperty* ip;
+public:
+		ArrayIdxComparator (unsigned int p) : pos(p),ip(NULL) {};
+		
+		inline IProperty* getIProperty () {return ip;};
+		
+		bool operator() (IProperty* _ip)
+		{	
+			if (0 == pos)
+			{
+				ip = _ip;
+				return true;
+			}
+			pos--;
+			return false;
+		}
+};
+
+
+/**
+ * This class is used as functor to stl find algorithm.
+ * Finds out an item specified by name. 
+ *
+ * Perhaps more effective algorithms could be used but this approach is 
+ * used to get more generic.
+ */
+class DictIdxComparator
+{
+private:
+	std::string str;
+	IProperty* ip;
+public:
+		DictIdxComparator (const std::string& s) : str(s),ip(NULL) {};
+		
+		inline IProperty* getIProperty () {return ip;};
+		
+		bool operator() (std::pair<std::string,IProperty*> item)
+		{	
+			if (item.first == str)
+			{
+				ip = item.second;
+				return true;
+			}
+			
+			return false;
+		};
+};
 
 
 //=====================================================================================
