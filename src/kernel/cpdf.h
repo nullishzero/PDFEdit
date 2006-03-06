@@ -2,6 +2,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/03/06 18:18:55  hockm0bm
+ * compilable changes - each module is compilable now
+ * each object in pdfobjects namespace
+ * more comments
+ * cpdf - most of methods are just comments how to implement
+ *
  * Revision 1.9  2006/02/28 22:57:19  hockm0bm
  * Just few obvious errors - still not compileable (due to errors in cobjectI.h)
  *
@@ -38,6 +44,7 @@
 // =====================================================================================
 namespace pdfobjects {
 
+// forward declarations
 class CPage;
 class COutline;
 
@@ -256,12 +263,12 @@ public:
         static CPdf * getInstance(const char * filename, OpenMode mode);
 
         /** Closes pdf file.
-         * @param save Flag which determine whether to save before close
+         * @param saveFlag Flag which determine whether to save before close
          *      (parameter may be omited and false is used by default).
          * Destroyes CPdf instance in safe way. Instant MUST NOT be used
          * after this method is called.
          */
-        int close(bool save=false);
+        int close(bool saveFlag=false);
 
         /** Returns pointer to cross reference table.
          *
@@ -570,7 +577,7 @@ public:
          */
         size_t getRevisionsCount()const
         {
-                xref->getRevisionCount();
+                return xref->getRevisionCount();
         }
 };
 

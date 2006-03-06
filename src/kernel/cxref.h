@@ -5,6 +5,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/03/06 18:18:55  hockm0bm
+ * compilable changes - each module is compilable now
+ * each object in pdfobjects namespace
+ * more comments
+ * cpdf - most of methods are just comments how to implement
+ *
  * Revision 1.8  2006/02/28 19:19:26  hockm0bm
  * changeStorage changed  - Object is associated with stored flag
  * getNumObjects - reimplemented (only initialized objects)
@@ -71,8 +77,9 @@
 #include"xpdf/Object.h"
 #include "ErrorCodes.h"
 
-using namespace pdfobjects;
-
+namespace pdfobjects
+{
+        
 /** Adapter for xpdf XRef class.
  * 
  * This class has responsibility to transparently (same way as XRef do) provide
@@ -142,7 +149,7 @@ protected:
          */
         typedef struct
         {
-              Object * object;
+              ::Object * object;
               bool stored;
               
         } ObjectEntry;
@@ -187,7 +194,7 @@ protected:
          * @return Old value of object from changedStorage or NULL if it's first
          * revision of object.
          */
-        Object * changeObject(Ref ref, Object * instance);
+        ::Object * changeObject(Ref ref, ::Object * instance);
 
         /** Releases  given object addressable through given reference.
          * @param ref Object reference identificator.
@@ -210,7 +217,7 @@ protected:
          * @return Previous value of object or 0 if previous revision not
          * available (new name value pair in trailer).
          */
-        Object * changeTrailer(char * name, Object * value);
+        ::Object * changeTrailer(char * name, ::Object * value);
 
 public:
         /** Initialize constructor.
@@ -287,7 +294,7 @@ public:
          *
          * @return Object instance with given type or 0 if not able to create.
          */
-        virtual Object * createObject(ObjType type, Ref * ref);
+        virtual ::Object * createObject(ObjType type, Ref * ref);
 
         /** Checks if given reference is known.
          * @param ref Reference to check.
@@ -320,7 +327,7 @@ public:
          *
          * @return true if obj2 can replace obj1, false otherwise.
          */
-        bool typeSafe(Object * obj1, Object * obj2);
+        bool typeSafe(::Object * obj1, ::Object * obj2);
 
         /** Gets value associated with name in trailer.
          * @param name Name of the entry.
@@ -336,14 +343,14 @@ public:
          *
          * @return Deep copy of the object value.
          */
-        virtual Object * getTrailerEntry(char * name);
+        virtual ::Object * getTrailerEntry(char * name);
 
         // Returns the document's Info dictionary (if any).
-        virtual Object *getDocInfo(Object *obj);
+        virtual ::Object *getDocInfo(::Object *obj);
         
         // Returns the document's Info dictionary (dereferenced
         // if indirect value
-        virtual Object *getDocInfoNF(Object *obj);
+        virtual ::Object *getDocInfoNF(::Object *obj);
 
         /** Returns number of indirect objects.
          *
@@ -374,7 +381,9 @@ public:
          * @return Pointer with initialized object given as parameter, if not
          * found obj is set to objNull.
          */
-        virtual Object * fetch(int num, int gen, Object *obj);
+        virtual ::Object * fetch(int num, int gen, ::Object *obj);
 };
+
+} // end of pdfobjects namespace
 
 #endif

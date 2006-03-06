@@ -1,6 +1,8 @@
 #include "xrefwriter.h"
 
-bool XRefWriter::paranoidCheck(Ref ref, Object * obj)
+using namespace pdfobjects;
+
+bool XRefWriter::paranoidCheck(Ref ref, ::Object * obj)
 {
         bool reinicialization=false;
 
@@ -24,7 +26,7 @@ bool XRefWriter::paranoidCheck(Ref ref, Object * obj)
                 {
                         // gets original value and uses typeSafe to 
                         // compare with given value type
-                        Object original;
+                        ::Object original;
                         fetch(ref.num, ref.gen, &original);
                         bool safe=typeSafe(&original, obj);
                         original.free();
@@ -60,7 +62,7 @@ void XRefWriter::releaseObject(int num, int gen)
         CXref::releaseObject(ref);
 }
 
-void XRefWriter::changeObject(int num, int gen, Object * obj)
+void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 {
         if(revision)
         {
@@ -78,7 +80,7 @@ void XRefWriter::changeObject(int num, int gen, Object * obj)
         CXref::changeObject(ref, obj);
 }
 
-Object * XRefWriter::changeTrailer(char * name, Object * value)
+::Object * XRefWriter::changeTrailer(char * name, ::Object * value)
 {
         if(revision)
         {
@@ -90,7 +92,7 @@ Object * XRefWriter::changeTrailer(char * name, Object * value)
         // paranoid checking
         if(mode==paranoid)
         {
-                Object original;
+                ::Object original;
 
                 // checks if value if indirect and if so, checks
                 // if reference is known

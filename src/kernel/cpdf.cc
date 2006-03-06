@@ -13,7 +13,7 @@
 
 // debug
 #include "cpdf.h"
-#include "debug.h"
+#include "utils/debug.h"
 
 //
 #include "iproperty.h"
@@ -23,19 +23,19 @@
 
 // =====================================================================================
 
-namespace pdfobjects
-{
+using namespace pdfobjects;
 
 /* TODO: refactor
- * doesn't check leaf because those are real objects. Just checks for all kids if they
- * are Page and if so, puts reference to the array. For Pages elements we have to go
- * deeper in recursion.
+ * doesn't check leaf because those are real objects. Just checks for all kids 
+ * if they are Page and if so, puts reference to the array. For Pages elements 
+ * we have to go deeper in recursion.
  *
- * TODO: think of IProperty interface to use to ease manipulation with Object and to
- * prevent code duplication
+ * TODO: think of IProperty interface to use to ease manipulation with Object 
+ * and to prevent code duplication
  */
-CPdf::fillPages(::Dict * pageNode)
+void CPdf::fillPages(::Dict * pageNode)
 {
+        /*
         Object type;
         bool leaf=true;
         
@@ -88,6 +88,7 @@ CPdf::fillPages(::Dict * pageNode)
 
         // frees type object
         type.free();
+        */
 }
 
 void CPdf::initRevisionSpecific(::Dict * trailer)
@@ -224,7 +225,7 @@ CPdf::delIndMapping (const IndiRef& pair)
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 {
        // openMode is read-only by default
-       char * openMode="r";
+       const char * openMode="r";
        // if mode is ReadWrite, set to read-write mode starting at the 
        // begining.
        if(mode == ReadWrite)
@@ -260,10 +261,10 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
        return instance;
 }
 
-int CPdf::close(bool save)
+int CPdf::close(bool saveFlag)
 {
         // saves if necessary
-        if(save)
+        if(saveFlag)
                 save(NULL);
         
         // deletes this instance
@@ -271,5 +272,3 @@ int CPdf::close(bool save)
         delete this;
 }
 
-
-} // namespace pdfobjects

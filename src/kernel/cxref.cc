@@ -1,5 +1,7 @@
 #include "cxref.h"
 
+using namespace pdfobjects;
+
 CXref::~CXref()
 {
        // TODO figure out what to deallocate 
@@ -10,7 +12,7 @@ CXref::~CXref()
         */
 }
 
-Object * CXref::changeObject(Ref ref, Object * instance)
+::Object * CXref::changeObject(Ref ref, ::Object * instance)
 {
        // discards from cache
        /* FIXME uncoment if cache is available
@@ -23,11 +25,11 @@ Object * CXref::changeObject(Ref ref, Object * instance)
        // history information - value keeper is responsible for
        // deallocation
        ObjectEntry * changedEntry = changedStorage.get(ref);
-       Object * changed=(changedEntry)?changedEntry->object:NULL;
+       ::Object * changed=(changedEntry)?changedEntry->object:NULL;
        
        // insert new version to changedStorage
        // this is deep copy of given value
-       Object * object = instance->clone();
+       ::Object * object = instance->clone();
 
        // if changedEntry is NULL - object is change for the first time
        // we have to allocate entry, otherwise, just sets new object
@@ -61,16 +63,16 @@ void CXref::releaseObject(Ref ref)
 }
 
 
-Object * CXref::changeTrailer(char * name, Object * value)
+::Object * CXref::changeTrailer(char * name, ::Object * value)
 {
       Dict * trailer = trailerDict.getDict(); 
 
-      Object * prev = trailer->update(name, value);
+      ::Object * prev = trailer->update(name, value);
 
       return prev;
 }
 
-Object * CXref::createObject(ObjType type, Ref * ref)
+::Object * CXref::createObject(ObjType type, Ref * ref)
 {
        int i=1;
        int num=-1, gen;
@@ -98,7 +100,7 @@ Object * CXref::createObject(ObjType type, Ref * ref)
                gen=0;
        }
 
-       Object * obj=(Object *)gmalloc(sizeof(Object));
+       ::Object * obj=(::Object *)gmalloc(sizeof(::Object));
        
        // initialize according type
        switch(type)
@@ -168,12 +170,12 @@ bool CXref::knowsRef(Ref ref)
        return entries[ref.num].gen==ref.gen;
 }
 
-bool CXref::typeSafe(Object * obj1, Object * obj2)
+bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
 {
        if(!obj1 || !obj2)
                return false;
 
-       Object dObj1=*obj1, dObj2=*obj2;    // object for dereferenced 
+       ::Object dObj1=*obj1, dObj2=*obj2;    // object for dereferenced 
                                            // values - we assume, it's
                                            // not indirect
        // types for direct values.
@@ -199,7 +201,7 @@ bool CXref::typeSafe(Object * obj1, Object * obj2)
        return type1==type2;
 }
 
-Object * CXref::getTrailerEntry(char * name)
+::Object * CXref::getTrailerEntry(char * name)
 {
        Dict * trailer = trailerDict.getDict();
 
@@ -207,40 +209,40 @@ Object * CXref::getTrailerEntry(char * name)
        // we have to get value and then make deep copy
        // calling clone method. To keep clean reference counting
        // obj has to be freed
-       Object obj;
+       ::Object obj;
        trailer->lookupNF(name, &obj);
 
-       Object * retValue=obj.clone();
+       ::Object * retValue=obj.clone();
        obj.free();
 
        return retValue;
 }
 
-Object *CXref::getDocInfo(Object *obj)
+::Object *CXref::getDocInfo(::Object *obj)
 {
        // gets object
-       Object docObj;
+       ::Object docObj;
        XRef::getDocInfo(&docObj);
 
        // creates deep copy and frees object from getDocInfo
        // and initialize parameter from cloned value
-       Object * retObj=docObj.clone();
+       ::Object * retObj=docObj.clone();
        docObj.free();
        *obj=*retObj;
 
        return retObj;
 }
 
-Object *CXref::getDocInfoNF(Object *obj)
+::Object *CXref::getDocInfoNF(::Object *obj)
 {
        // gets object
-       Object docObj;
+       ::Object docObj;
        XRef::getDocInfoNF(&docObj);
 
        // creates deep copy and frees object (because getDocInfoNF 
        // uses copy method) from getDocInfo
        // and initialize parameter from cloned value
-       Object * retObj=docObj.clone();
+       ::Object * retObj=docObj.clone();
        docObj.free();
        // shallow copy of the content (deep copied)
        *obj=*retObj;
@@ -248,7 +250,7 @@ Object *CXref::getDocInfoNF(Object *obj)
        return retObj;
 }
 
-Object * CXref::fetch(int num, int gen, Object *obj)
+::Object * CXref::fetch(int num, int gen, ::Object *obj)
 {
        Ref ref={num, gen};
 
@@ -256,11 +258,11 @@ Object * CXref::fetch(int num, int gen, Object *obj)
        if(entry)
        {
                // object has been changed
-               Object * deepCopy=entry->object->clone();
+               ::Object * deepCopy=entry->object->clone();
 
                // shallow copy of content
                // content is deep copy of found object, so
-               // this doesn't affect our Object in changedStorage
+               // this doesn't affect our ::Object in changedStorage
                *obj=*deepCopy;
                
                // dellocate deepCopy - constructor doesn't

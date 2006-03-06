@@ -5,6 +5,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/03/06 18:18:55  hockm0bm
+ * compilable changes - each module is compilable now
+ * each object in pdfobjects namespace
+ * more comments
+ * cpdf - most of methods are just comments how to implement
+ *
  * Revision 1.4  2006/02/28 19:52:10  hockm0bm
  * preparation for revision handling (kind of pseudocode)
  *         - RevisionStorage type and field
@@ -36,8 +42,9 @@
 #include <vector>
 #include "cxref.h"
 
-using namespace pdfobjects;
-
+namespace pdfobjects
+{
+        
 /** Mode for XRefWriter.
  * This controls behaviour. Following values are possible:
  * <ul>
@@ -112,7 +119,7 @@ protected:
          * <br>
          * TODO error handling exceptions
          */
-        bool paranoidCheck(Ref ref, Object * obj);
+        bool paranoidCheck(Ref ref, ::Object * obj);
 
         /** Collects all revisions information.
          *
@@ -201,7 +208,7 @@ public:
          * TODO provide undo information
          *
          */ 
-        void changeObject(int num, int gen, Object * obj);
+        void changeObject(int num, int gen, ::Object * obj);
 
         /** Changes trailer entry.
          * @param name Name of the entry.
@@ -219,7 +226,7 @@ public:
          * TODO provide undo information
          * 
          */
-        Object * changeTrailer(char * name, Object * value);
+        ::Object * changeTrailer(char * name, ::Object * value);
         
         /** Saves xref with changes and creates new revision.
          * @param f File where to write (has to be open).
@@ -318,7 +325,7 @@ public:
          * XRef::fetch method.
          * 
          */ 
-        virtual Object * fetch(int num, int gen, Object * obj)
+        virtual ::Object * fetch(int num, int gen, ::Object * obj)
         {
                 // newest revision may contain changes, so uses
                 // CXref implementation
@@ -362,7 +369,7 @@ public:
          * because it is not possible to do changes to a older release (TODO 
          * how to announce).
          */
-        virtual Object * createObject(ObjType type, Ref * ref)
+        virtual ::Object * createObject(ObjType type, Ref * ref)
         {
                 if(!revision)
                         CXref::createObject(type, ref);
@@ -387,4 +394,5 @@ public:
         }
 };
 
+} // end of pdfobjects namespace
 #endif
