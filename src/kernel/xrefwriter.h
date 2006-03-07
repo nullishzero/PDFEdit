@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/03/07 18:29:27  hockm0bm
+ * createObject returns CXref::createObject return value
+ *
  * Revision 1.5  2006/03/06 18:18:55  hockm0bm
  * compilable changes - each module is compilable now
  * each object in pdfobjects namespace
@@ -372,7 +375,7 @@ public:
         virtual ::Object * createObject(ObjType type, Ref * ref)
         {
                 if(!revision)
-                        CXref::createObject(type, ref);
+                        return CXref::createObject(type, ref);
 
                 // TODO handle
         };
