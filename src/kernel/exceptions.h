@@ -7,9 +7,10 @@
  * =====================================================================================
  */
 
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
+#ifndef _EXCEPTIONS_H
+#define _EXCEPTIONS_H
 
+// stl
 #include <exception>
 
 
@@ -46,5 +47,4 @@ struct ObjInvalidOperation : std::exception
 
 
 
-#endif // EXCEPTIONS_H
-
+#endif // _EXCEPTIONS_H

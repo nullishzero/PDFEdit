@@ -10,17 +10,18 @@
 #ifndef _IPROPERTY_H_
 #define _IPROPERTY_H_
 
-#include <vector>
-#include <string>
+#include "static.h"
+
+// stl
+//#include <vector>
+//#include <string>
 
 // xpdf
-#include <Object.h>
+#include "xpdf.h"
 
-#include "exceptions.h"
-#include "observer.h"
-
-// Debug routine
-#include "utils/debug.h"
+// our stuff
+//#include "exceptions.h"
+//#include "observer.h"
 
 
 
@@ -28,11 +29,7 @@
 
 namespace pdfobjects
 {
-/**
- * Null and empty types.
- */
-class NullType {};
-struct EmptyType {};
+
 
 /**
  * Forward declarations
@@ -108,8 +105,9 @@ class IProperty
 {
 typedef std::vector<const IObserver*> ObserverList;
 
-protected:
+private:
  IndiRef 		ref;		/**< Object's pdf id and generation number. */
+protected:
  CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 
 private:
@@ -145,6 +143,14 @@ protected:
 	ref.gen = 0;
   };
 
+  /**
+   * This constructor is used, when someone wants to create a CObject.
+   */
+  IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), pdf(_pdf)
+  {
+	printDbg (0,"IProperty () constructor.");
+  };
+
 public:
   
 	/**
@@ -152,12 +158,12 @@ public:
 	 *
 	 * @param p pdf that this object belongs to
 	 */
-	void  setPdf (CPdf* p)
+	void setPdf (CPdf* p)
 	{
-		assert (NULL != p); 	// set NULL?
+		assert (NULL != p);
 		assert (NULL == pdf);	// modify existing association with a pdf?
 		
-		if (NULL ==p || NULL != pdf)
+		if (NULL == p || NULL != pdf)
 				throw ObjInvalidOperation ();
 		
 		pdf = p;
@@ -177,7 +183,7 @@ public:
 	 *
 	 * @return Indirect identification number and generation number.
 	 */
-	const IndiRef& getIndiRef () const {return ref;};
+	inline const IndiRef& getIndiRef () const {return ref;};
 
 
 	/**
@@ -185,7 +191,7 @@ public:
 	 *
 	 * @param _r Indirect reference id and generation number.
 	 */
-	void setIndiRef (const IndiRef& _r) {ref = _r;};
+	inline void setIndiRef (const IndiRef& _r) {ref = _r;};
 
  
 	/**
@@ -194,7 +200,7 @@ public:
 	 * @param n Object's id.
 	 * @param g Object's generation number.
 	 */
-	void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
+	inline void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
 
 
 public:
@@ -280,7 +286,7 @@ protected:
    *
    * @return Xpdf object(s).
    */
-  virtual Object* _makeXpdfObject ()const = 0;
+  virtual Object* _makeXpdfObject () const = 0;
 
 
 }; /* class IProperty */
@@ -289,4 +295,4 @@ protected:
 } /* namespace pdfobjects */
 
 
-#endif  //IPROPERTY_H
+#endif  //_IPROPERTY_H
