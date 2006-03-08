@@ -5,6 +5,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/03/08 12:09:24  misuj1am
+ *
+ * -- commented out unused arguments
+ *
  * Revision 1.6  2006/03/07 18:29:27  hockm0bm
  * createObject returns CXref::createObject return value
  *
@@ -42,7 +46,10 @@
  *
  * Implementation of CXRef wrapper to enable making changes to the document.
  */
-#include <vector>
+
+#include "static.h"
+
+//#include <vector>
 #include "cxref.h"
 
 namespace pdfobjects
@@ -176,9 +183,9 @@ public:
          * @param mode Mode to set.
          *
          */
-        void setMode(XRefWriterMode mode)
+        void setMode(XRefWriterMode _mode)
         {
-                this->mode=mode;
+                this->mode=_mode;
         }
         
         /** Releases object.
@@ -248,7 +255,7 @@ public:
          * <br>
          * TODO some other kind of temporal saving - not new revision
          */
-        void saveXref(FILE * f)
+        void saveXref(FILE * )
         {
                 // IF revision == 0
                         // put unstored changed objects
@@ -283,7 +290,7 @@ public:
          * is possible to make changes in arbitrary revision with restriction, 
          * that change in older revision is possible only in separate file.
          */ 
-        void changeRevision(unsigned revNumber)
+        void changeRevision(unsigned )
         {
                // constrains check
                // empty XRef internals (entries, trailer, TODO find out ...)
@@ -377,6 +384,7 @@ public:
                 if(!revision)
                         return CXref::createObject(type, ref);
 
+				return NULL;
                 // TODO handle
         };
         
