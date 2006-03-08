@@ -1,10 +1,15 @@
-#ifndef __CPAGE_H__
-#define __CPAGE_H__
+#ifndef _CXREF_H_
+#define _CXREF_H_
 
 /** 
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/03/08 12:10:12  misuj1am
+ *
+ *
+ * -- precompiled headers support
+ *
  * Revision 1.9  2006/03/06 18:18:55  hockm0bm
  * compilable changes - each module is compilable now
  * each object in pdfobjects namespace
@@ -22,60 +27,22 @@
  * Revision 1.6  2006/02/12 17:19:07  hockm0bm
  * first implementation (compileable) - not for real use
  *
- * Revision 1.5  2006/02/02 15:44:58  misuj1am
- *
- *
- *
- * Zmeny (trochu vacsie).
- *
- * 0) spravil som exceptions.h a na observera spravil novy file
- * 1) vyhodil som IId, strcil som to do IProperty
- * 2) trochu "som si zlepsil" qt projekt file
- * 3) gcc ma s TEMPLATE stale problemy je to jednak slabou implementaciou gcc,
- * jednak samotnym standardom, kde sa kvoli jednoduchosti programovania kompileru zatial
- * vynechali nejake veci.
- *
- * POZOR: bacha na uplne nezmyselne compile errors suvisiace s template, vascinou to moze byt zabudnutie
- * strednika alebo podobna ptakovina...
- *
- *
- * Je par obmedzeni kvoli ktorym som sa rozhodol pridat/odstranit nejake subory:
- *
- * a)
- * template a implementacia musia byt v tom istom """priestore viditelnosti""", teda napr. v tom
- * istom subore, alebo vo viacerych suboroch, alebo sa moze pisat nieco ako
- * #include "123.cc"
- * a podobne. Ma to svoj zmysel napr. v tom, ze templates svojou podstatou nie su "kniznica", ze by
- * sa to musel nejako predkompilovat atd...
- *
- * Preto som nakoniec zvolil pomenovanie cobject.h <-- definicia cobjectI.h <-- samotna implementacia
- * niekedy bude implementacia aj v samotnom cobject.h, ale to je detail.
- *
- *
- * jozo
- *
- *
- * ////
- * /////// len tak mimochodom
- * ////
- * S CPdf je to trosku tazsie. CPdf musi pouzivat CObject a naopak.. I ked CPDf nie je templatova trieda nemoze byt v cpdf.cc.
- * Dovodom je, ze pri kompilovani
- * skompiluje gcc main.cc. Do main.o sa (napr.) vytvori instancia CPdf. Teda kompiler instaciuje danu triedu CObject z ktorej dedi CPdf,
- * teda CObject<pDict>. Z toho vyplyva, ze main.o obsahuje instanciu CObject<pDict>. Ked sa bude kompilovat samotny CPdf tak sa tiez
- * spravi instancia ale uz v cpdf.o a s tym moze (ma) linker problemy..... Preto som tam zbytocne nedaval .cc subory, ked ich nie je treba.
- *
  * Revision 1.4  2006/01/29 21:18:15  hockm0bm
  * minor changes for compilation (TODOs and FIXME comments)
  *
- *
  */
 
+#include "static.h"
+
+// xpdf
+#include "xpdf.h"
+
 #include"iproperty.h"
-#include"utils/objectstorage.h"
+//#include"utils/objectstorage.h"
 //#include"utils/cache.h"
-#include"xpdf/XRef.h"
-#include"xpdf/Object.h"
-#include "ErrorCodes.h"
+//#include"xpdf/XRef.h"
+//#include"xpdf/Object.h"
+//#include "ErrorCodes.h"
 
 namespace pdfobjects
 {
@@ -386,4 +353,4 @@ public:
 
 } // end of pdfobjects namespace
 
-#endif
+#endif // _CXREF_H_
