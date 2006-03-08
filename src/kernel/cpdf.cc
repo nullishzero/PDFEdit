@@ -6,24 +6,72 @@
  *          Author:  jmisutka (), 
  *         Changes: 2006/1/28 added mapping support
  *         			2006/1/30 tested objToString () -- ok
- *         			2006/2/8  after a long battle againd g++ and ld + collect I made
+ *         			2006/2/8  after a long battle against g++ and ld + collect I made
  *         					  the implementation of CPdf a .cc file
  * =====================================================================================
  */
 
-// debug
-#include "cpdf.h"
-#include "utils/debug.h"
+#include "static.h"
 
-//
 #include "iproperty.h"
 #include "cobject.h"
-#include "cobjectI.h"
+#include "cpdf.h"
 
 
 // =====================================================================================
 
 using namespace pdfobjects;
+
+namespace 
+{
+		/**
+		 * Get all child IProperty that you can get to from a root IProperty. 
+		 * It is not sorted and the position does not depend on the position in the tree.
+		 *
+		 * @param ip Root object.
+		 */
+		template<typename Storage>
+		void
+		getAllChildIProperty (const IProperty& ip, Storage& store) 
+		{
+				// Create a temporary storage
+				Storage tmp;
+				
+				switch (ip.getType())
+				{
+					case pArray:
+						ip.getCObjectPtr<const CArray>()->_getAllChildObjects (tmp);
+						break;
+									
+					case pDict:
+						ip.getCObjectPtr<const CDict>()->_getAllChildObjects (tmp);
+						break;
+
+					case pStream:
+						assert (!"I'm not implemented yet...");
+						break;
+
+					default:	// Null, Bool, Int, Real, String, Name
+						break;
+				}	
+				
+				// Recursively get all objects
+				typename Storage::iterator it = tmp.begin ();
+				for (; it != tmp.end (); it++)
+				{
+					assert (NULL != *it);
+					store.push_back (*it);
+					getAllChildIProperty (*(*it), store);
+				}
+
+		}
+		
+		
+} // namespace
+		
+
+
+
 
 /* TODO: refactor
  * doesn't check leaf because those are real objects. Just checks for all kids 
@@ -33,7 +81,7 @@ using namespace pdfobjects;
  * TODO: think of IProperty interface to use to ease manipulation with Object 
  * and to prevent code duplication
  */
-void CPdf::fillPages(::Dict * pageNode)
+void CPdf::fillPages(::Dict * /*pageNode*/)
 {
         /*
         Object type;
@@ -91,7 +139,7 @@ void CPdf::fillPages(::Dict * pageNode)
         */
 }
 
-void CPdf::initRevisionSpecific(::Dict * trailer)
+void CPdf::initRevisionSpecific(::Dict * /*trailer*/)
 {
         // gets catalog dictionary pointer (it is fetched, so
         // it has to be released)
@@ -135,26 +183,12 @@ CPdf::~CPdf()
 // 
 //
 IProperty*
-CPdf::getExistingProperty (const Object* o) const
+CPdf::getExistingProperty (const IndiRef& ref) const
 {
-	assert (NULL != o);
-	printDbg (0,"getExistingProperty(" << (unsigned int) o << ");");
+	printDbg (0,"getExistingProperty(" << ref.num << "," << ref.gen << ")");
 
 	// find the key, if it exists
-	ObjectMapping::const_iterator it = objMap.find (o);
-	return (it != objMap.end()) ? const_cast<IProperty*>((*it).second) : NULL ;
-}
-
-//
-// 
-//
-IProperty*
-CPdf::getExistingProperty (const IndiRef& pair) const
-{
-	printDbg (0,"getExistingProperty(pair);");
-
-	// find the key, if it exists
-	IndirectMapping::const_iterator it = indMap.find (pair);
+	IndirectMapping::const_iterator it = indMap.find (ref);
 	return (it != indMap.end()) ? const_cast<IProperty*>((*it).second) : NULL ;
 }
 
@@ -163,31 +197,15 @@ CPdf::getExistingProperty (const IndiRef& pair) const
 //
 //
 void
-CPdf::setObjectMapping (const Object* o, const IProperty* ip)
-{
-	assert (NULL != o);
-	assert (NULL != ip);
-	// Just check if there is no such mapping
-	// if there is such mapping that is a problem
-	assert (NULL == getExistingProperty(o));
-	printDbg (0,"setObjectMapping();");
-	
-	objMap [o] = ip;
-}
-
-//
-//
-//
-void
-CPdf::setIndMapping (const IndiRef& pair, const IProperty* ip)
+CPdf::setIndMapping (const IndiRef& ref, const IProperty* ip)
 {
 	assert (NULL != ip);
 	// Just check if there is no such mapping
 	// if there is such mapping that is a problem
-	assert (NULL == getExistingProperty(pair));
+	assert (NULL == getExistingProperty(ref));
 	printDbg (0,"setIndMapping();");
 	
-	indMap [pair] = ip;
+	indMap [ref] = ip;
 }
 
 
@@ -195,30 +213,48 @@ CPdf::setIndMapping (const IndiRef& pair, const IProperty* ip)
 //
 //
 void
-CPdf::delObjectMapping (const Object* o)
-{
-	assert (NULL != o);
-	// Just check if there is no such mapping
-	// if there is such mapping that is a problem
-	assert (NULL != getExistingProperty(o));
-	printDbg (0,"delPropertyMapping();");
-	
-	objMap.erase (o);
-}
-
-
-//
-//
-//
-void
-CPdf::delIndMapping (const IndiRef& pair)
+CPdf::delIndMapping (const IndiRef& ref)
 {
 	// Just check if there is no such mapping
 	// if there is such mapping that is a problem
-	assert (NULL != getExistingProperty(pair));
+	assert (NULL != getExistingProperty(ref));
 	printDbg (0,"delIndMapping();");
 	
-	indMap.erase (pair);
+	indMap.erase (ref);
+}
+
+
+//
+//
+//
+IndiRef
+CPdf::addIndirectObject (IProperty& ip)
+{
+	assert (NULL == ip.getPdf());
+	
+	// Indicate that it will belong to this pdf
+	ip.setPdf (this);
+
+	// Find free ref
+	IndiRef rf;	// = xref->findFreeRef ();
+	
+	// Find all objects in tree starting in ip
+	std::list<IProperty*> ipList;
+	getAllChildIProperty (ip,ipList);
+	
+	// Indicate that all objects in the tree starting in ip
+	//   -- belong to this pdf
+	//   -- are in indirect object with whose ref is rf
+	std::list<IProperty*>::iterator it = ipList.begin ();
+	for (; it != ipList.end (); it++)
+	{
+			assert (NULL == (*it)->getPdf());
+
+			(*it)->setPdf (this);
+			(*it)->setIndiRef (rf);
+	}
+	
+	return rf;
 }
 
 
@@ -270,5 +306,7 @@ int CPdf::close(bool saveFlag)
         // deletes this instance
         // all clean-up is made in destructor
         delete this;
+
+		return 0;
 }
 
