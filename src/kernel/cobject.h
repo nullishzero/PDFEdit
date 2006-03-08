@@ -173,11 +173,20 @@ public/*protected*/:
 public:	
 
 	/**
-	 * Public constructor. Can be used to creted direct/indirect objects.
+	 * Public constructor. Can be used to create direct/indirect objects.
 	 *
 	 * @param p		Pointer to pdf object in which this object will exist.
 	 */
 	CObjectSimple (CPdf& p);
+
+	/**
+	 * Public constructor. Can be used to create direct/indirect objects.
+	 *
+	 * @param p		Pointer to pdf object in which this object will exist.
+	 * @param val	Value that will this object hold.
+	 */
+	CObjectSimple (CPdf& p, const Value& val);
+
 
 #ifdef DEBUG
 CObjectSimple () : value(Value()) {Checker check (this, OPER_CREATE);};
