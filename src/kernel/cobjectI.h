@@ -44,6 +44,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
 {
 	Checker check (this, OPER_CREATE);
+	assert (NULL == p.getExistingProperty (rf));
 	printDbg (0,"CObjectSimple constructor.");
 	
 	// Set object's value
@@ -56,6 +57,16 @@ CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf)
 //
 template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p) : IProperty(&pdf), value(Value())
+{
+	Checker check (this, OPER_CREATE);
+	printDbg (0,"CObjectSimple constructor.");
+}
+
+//
+// Public constructor
+//
+template<PropertyType Tp, typename Checker>
+CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, const Value& val) : IProperty(&pdf), value(val)
 {
 	Checker check (this, OPER_CREATE);
 	printDbg (0,"CObjectSimple constructor.");
@@ -219,6 +230,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check (this,OPER_CREATE);
+	assert (NULL == p.getExistingProperty (rf));
 	printDbg (0,"CObjectComplex constructor.");
 	
 	// Build the tree from xpdf object
