@@ -45,46 +45,39 @@
  * 
  *			TODO:
  *					testing
- *					!! CPdf::addObject and addIndObject to replace mapping* functions
- *					!! CPdf::getIndObject functions
- *							function for getting unused Ref in CPdf
+ *					!! function for getting unused Ref in CPdf
  *					can't add IProperty when pdf is not NULL (just to simplify things)
  *					   no real obstruction for removing this
  *					better public/protected dividing
- *		
- *			REMARKS:
- *					-- from pRef to IProperty -- CPdf::getObject (Ref)
  *
  * =====================================================================================
  */
 #ifndef COBJECT_H
 #define COBJECT_H
 
-#include <string>
-#include <list>
-#include <vector>
-#include <deque>
-#include <iostream>
-#include <iomanip>
+#include "static.h"
 
-#include "debug.h"
 #include "iproperty.h"
+
 
 
 //=====================================================================================
 namespace pdfobjects
 {
 
+		
+//
+// Forward declarations of memory checkers
+//
 
-//
-// Forward declaration of memory checking policies for CObjectSimple
-//
 class NoMemChecker;
 class BasicMemChecker;
+		
 /** Operations we can check. */
-enum eOperations { OPER_CREATE, OPER_DELETE };
-	
+enum _eOperations { OPER_CREATE, OPER_DELETE };
 
+
+	
 /**
  * Additional information that identifies variable type, e.g. for writeValue function.
  *
@@ -172,9 +165,9 @@ public/*protected*/:
 	 *
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
-	 * @param ref	Indirect id and gen id.
+	 * @param rf	Indirect id and gen id.
 	 */
-	CObjectSimple (CPdf& p, Object& o, const IndiRef& ref);
+	CObjectSimple (CPdf& p, Object& o, const IndiRef& rf);
 
 
 public:	
@@ -218,7 +211,7 @@ CObjectSimple () : value(Value()) {Checker check (this, OPER_CREATE);};
 	
 	/**
 	 * Change the value of an object. The variable type depends
-	 * on CObject type. For complex types, it is equal to setStringRepresentation().
+	 * on CObject type.
 	 * 
 	 * We can define the best to represent an pdf object.
 	 *
@@ -343,6 +336,7 @@ template<> struct PropertyTraitComplex<pDict>
 };
 
 
+
 /** 
  * Template class representing complex PDF objects from specification v1.5.
  *
@@ -392,9 +386,9 @@ protected:
 	 *
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
-	 * @param ref	Indirect id and gen id.
+	 * @param rf	Indirect id and gen id.
 	 */
-	CObjectComplex (CPdf& p, Object& o, const IndiRef& ref);
+	CObjectComplex (CPdf& p, Object& o, const IndiRef& rf);
 
 
 public:	
@@ -434,7 +428,7 @@ CObjectComplex (int /*i*/) : value(Value()) {Checker check (this,OPER_CREATE);};
 	 *
 	 * @param str0 Object in a text form.
 	 */
-	void setStringRepresentation (const std::string& strO);
+	void setStringRepresentation (const std::string& strO) {assert (!"is this function really needed???");};
 
 	
 	/**
@@ -446,7 +440,7 @@ CObjectComplex (int /*i*/) : value(Value()) {Checker check (this,OPER_CREATE);};
 	 *
 	 * @param val	Value that will be set.
 	 */
-	void writeValue (WriteType val);
+	void writeValue (WriteType val) {assert (!"is this function really needed???");};
   
 	
 	/**
@@ -606,6 +600,17 @@ private:
 		// Notify everybody about this change
 		IProperty::notifyObservers ();
 	}
+
+
+public:
+	/**
+	 * Return all object we have access to.
+	 *
+	 * @param store Container of objects.
+	 */
+	template <typename Storage>
+	void _getAllChildObjects (Storage& store) const;
+
 };
 
 
@@ -626,6 +631,78 @@ typedef CObjectSimple<pRef> 	CRef;
 typedef CObjectComplex<pStream> CStream;
 typedef CObjectComplex<pArray>	CArray;
 typedef CObjectComplex<pDict>	CDict;
+
+
+
+
+//=====================================================================================
+//
+//	Memory checker classes
+//
+
+/**
+ * No memory checks done.
+ */
+class NoMemChecker 
+{public: 
+	NoMemChecker (IProperty*, _eOperations) {};
+};
+
+/**
+ * This class stores pointer to every created class in a container. When a class is destroyed, it is removed
+ * from the container.
+ *
+ * After the end of a program, we can count how many objects have not been released.
+ * 
+ */
+class BasicMemChecker
+{
+public:
+	typedef std::list<const IProperty*> _IPsList;
+private:
+	static _IPsList ips;
+
+public:
+	//
+	//
+	//	   
+	BasicMemChecker (const IProperty* ip, _eOperations operation)
+	{
+		std::cout << std::setw (10) << std::setfill ('<') << "\t";
+		std::cout << std::setbase (16);
+		std::cout << "IProperty [0x"<< (unsigned)ip << "] ";
+				
+		switch (operation)
+		{
+			case OPER_DELETE:
+					{
+					std::cout << "deleted.";
+					_IPsList::iterator it = find (ips.begin(), ips.end(), ip);
+					if (it != ips.end())
+							ips.erase (it);
+					else
+							std::cout << std::endl << "!!!!!!!!!! deleting what was not created !!!!!!!!!!1" << std::endl;
+					}
+					break;
+
+			case OPER_CREATE:
+					std::cout << "created.";
+					ips.push_back (ip);
+					break;
+					
+			default:
+					break;
+		}
+		
+		std::cout << std::setbase (10);
+		std::cout << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
+	};
+	
+	//
+	// Get living IProperty count
+	//
+	size_t getCount () {return ips.size (); };
+};
 
 
 
@@ -695,77 +772,6 @@ public:
 };
 
 
-//=====================================================================================
-//
-//	Memory checker classes
-//
-
-
-/**
- * No memory checks done.
- */
-class NoMemChecker 
-{public: 
-	NoMemChecker (IProperty*, eOperations) {};
-};
-
-
-/**
- * This class stores pointer to every created class in a container. When a class is destroyed, it is removed
- * from the container.
- *
- * After the end of a program, we can count how many objects have not been released.
- * 
- */
-class BasicMemChecker
-{
-public:
-	typedef std::list<const IProperty*> _IPsList;
-private:
-	static _IPsList ips;
-
-public:
-	//
-	//
-	//	   
-	BasicMemChecker (const IProperty* ip, eOperations operation)
-	{
-		std::cout << std::setw (10) << std::setfill ('<') << "\t";
-		std::cout << std::setbase (16);
-		std::cout << "IProperty [0x"<< (unsigned)ip << "] ";
-				
-		switch (operation)
-		{
-			case OPER_DELETE:
-					{
-					std::cout << "deleted.";
-					_IPsList::iterator it = find (ips.begin(), ips.end(), ip);
-					if (it != ips.end())
-							ips.erase (it);
-					else
-							std::cout << std::endl << "!!!!!!!!!! deleting what was not created !!!!!!!!!!1" << std::endl;
-					}
-					break;
-
-			case OPER_CREATE:
-					std::cout << "created.";
-					ips.push_back (ip);
-					break;
-					
-			default:
-					break;
-		}
-		
-		std::cout << std::setbase (10);
-		std::cout << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
-	};
-	
-	//
-	// Get living IProperty count
-	//
-	size_t getCount () {return ips.size (); };
-};
-
 
 //=====================================================================================
 //
@@ -776,7 +782,7 @@ namespace utils {
 
 		
 /**
- * Returns simple xpdf object (null,number,string...) in string representation.
+ * Return simple xpdf object (null,number,string...) in string representation.
  * 
  * REMARK: String can represent more different objects, so we have to distinguish among them.
  * This is done at compile time with use of templates, but because of this we have to
@@ -793,7 +799,10 @@ template <PropertyType Tp> void simpleValueToString (const NullType& val,std::st
 template <PropertyType Tp> void simpleValueToString (const IndiRef& val,std::string& str);
 
 /**
- * Returns complex xpdf object (null,number,string...) in string representation.
+ * Return complex xpdf object (null,number,string...) in string representation.
+ *
+ * REMARK: It is a template function because I think stream won't be converted to string
+ * as easily as a dictionary. So we specialize these function for pArray,pStream and pDict.
  *
  * @param Value that will be converted to string.
  * @param Output string
@@ -802,7 +811,7 @@ template <PropertyType Tp> void complexValueToString (const std::vector<IPropert
 template <PropertyType Tp> void complexValueToString (const std::list<std::pair<std::string,IProperty*> >& val,std::string& str);
 
 /**
- * Saves real xpdf object value to val.
+ * Save real xpdf object value to val.
  * 
  * @param obj	Xpdf object which holds the value.
  * @param val	Variable where the value will be stored.
@@ -811,7 +820,7 @@ template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (Object& obj, 
 template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, Object& obj, T val);
 
 /**
- * Creates xpdf Object which represents value.
+ * Create xpdf Object which represents value.
  * 
  * @param obj	Value where the value is stored.
  * @return 		Xpdf object where the value is stored.
@@ -835,6 +844,7 @@ getAllNames (T& container, const std::list<std::pair<std::string,IProperty*> >& 
 			container.push_back ((*it).first);
 	}
 }
+template<typename T, typename U> void getAllNames (T&, U&) {}
 
 
 /**
@@ -851,7 +861,6 @@ void simpleValueFromString (const std::string& str, double& val);
 void simpleValueFromString (const std::string& str, std::string& val);
 void simpleValueFromString (const std::string& str, IndiRef& val);
 
-
 /**
  * Free an object. We assume that all child objects (if any)
  * have been already freed.
@@ -866,8 +875,34 @@ void freeXpdfObject (Object* obj);
  * Create xpdf object from string.
  *
  * @param str String that should represent an xpdf object.
+ *
+ * @return Xpdf object whose string representation is in str.
  */
 Object* xpdfObjFromString (const std::string& str);
+
+
+/**
+ * Constructs an item containing IProperty of a special container from a value that we want to replace.
+ *
+ * @param item  Item that will be replaced
+ * @patam ip	IProperty that will be inserted;
+ */
+inline IProperty* 
+constructItemFromIProperty (IProperty*,IProperty& ip) {return &ip;}
+inline std::pair<std::string,IProperty*>
+constructItemFromIProperty (std::pair<std::string,IProperty*>& item,IProperty& ip) {return std::make_pair(item.first,&ip);}
+
+/**
+ * Get IProperty from an item of a special container.
+ *
+ * @param item Item of a special container.
+ */
+inline IProperty* 
+getIPropertyFromItem (IProperty* item) {return item;}
+inline IProperty*
+getIPropertyFromItem (const std::pair<std::string,IProperty*>& item) {return item.second;}
+
+
 
 
 } /* namespace utils */

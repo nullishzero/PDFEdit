@@ -9,22 +9,11 @@
  * =====================================================================================
  */
 
-#include <ostream>
-#include <iostream>
-#include <sstream>
-#include <string>
+// static
+#include "static.h"
+// xpdf
+#include "xpdf.h"
 
-//xpdf
-#include <Object.h>
-#include <Parser.h>
-#include <Lexer.h>
-#include <Stream.h>
-
-// debug
-#include "debug.h"
-
-//
-#include "exceptions.h"
 #include "cobject.h"
 
 
@@ -37,8 +26,6 @@ namespace pdfobjects
 // Memory checkers
 //
 BasicMemChecker::_IPsList BasicMemChecker::ips;
-
-
 
 
 		
@@ -354,10 +341,10 @@ namespace {
 		//
 		//
 		void
-		complexXpdfObjToString (Object& /*obj*/, string&/* str*/)
+		complexXpdfObjToString (Object& obj, string& str)
 		{
 		 	
-			/*printDbg (0,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
+			printDbg (0,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
 			printDbg (0,"\tobjType = " << obj.getTypeName() );
 
 			ostringstream oss;
@@ -406,7 +393,7 @@ namespace {
 			}
 
 			// convert oss to string
-			str = oss.str ();*/
+			str = oss.str ();
 		}
 
 
@@ -612,9 +599,10 @@ freeXpdfObject (Object* obj)
 	assert (obj != NULL);
 	if (NULL == obj)
 		throw ObjInvalidObject ();
-	printDbg (1,"freeXpdfObject()");
+	
 	std::string str;
 	xpdfObjToString (*obj,str); 
+	printDbg (1,"freeXpdfObject()");
 	printDbg (1,"\t..." << str);
 	
 	// delete all member variables
@@ -768,7 +756,7 @@ xpdfObjFromString (const std::string& str)
 	// Create parser. It can create complex types. Lexer knows just simple types.
 	// Lexer SHOULD delete MemStream
 	//
-/*	auto_ptr<Parser> parser	(new Parser (NULL, 
+	auto_ptr<Parser> parser	(new Parser (NULL, 
 						       		      new Lexer (NULL, 
 												  	 new MemStream (strdup(str.c_str()), 0, str.length(), NULL)
 												     )
@@ -782,15 +770,14 @@ xpdfObjFromString (const std::string& str)
 	
 	string null ("null");
 	
-	if ( equal(str.begin (), str.end (), null.begin (), nocase_compare) 
+	if ( !equal(str.begin (), str.end (), null.begin (), nocase_compare) 
 					&& (obj->isNull()))
 	{
 		throw ObjBadValueE ();
 	}
 
 	return obj;
-*/return NULL;}
+}
 
-	
 } /* namespace utils */
 } /* namespace pdfobjects */

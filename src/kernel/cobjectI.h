@@ -9,28 +9,27 @@
  * =====================================================================================
  */
 
-#ifndef COBJECTI_H
-#define COBJECTI_H
+#ifndef _COBJECTI_H
+#define _COBJECTI_H
 
-#include <sstream>
+#include "static.h"
 
 // xpdf
-#include <xpdf/Object.h>
+#include "xpdf.h"
 
-// debug
-#include "debug.h"
-
-#include "observer.h"
-#include "exceptions.h"
-
+#include "iproperty.h"
 #include "cobject.h"
 #include "cpdf.h"
+
+
 
 
 //=====================================================================================
 
 namespace pdfobjects 
 {
+
+
 
 		
 //=====================================================================================
@@ -42,14 +41,10 @@ namespace pdfobjects
 // Protected constructor, called when we have parsed an object
 //
 template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& ref) : IProperty (&p), value(Value())
+CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
 {
 	Checker check (this, OPER_CREATE);
 	printDbg (0,"CObjectSimple constructor.");
-	
-	
-	// Save id and gen id
-	IProperty::setIndiRef (ref);
 	
 	// Set object's value
 	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);
@@ -159,15 +154,14 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 	assert (NULL != IProperty::pdf);
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 	
-	// Dispatch the change
-	//IndiRef* ref = IProperty::getIndiRef ();
 	// Get IProperty to nearest indirect object
-	//IProperty* ip = pdf->getExistingProperty (ref);
-	//assert (ref == ip->getIndiRef());
+	IProperty* ip = pdf->getExistingProperty (IProperty::getIndiRef());
+	assert (IProperty::getIndiRef() == ip->getIndiRef());
 	//Object* obj = ip->_makeXpdfObject();
 	// This function saves a COPY of xpdf object(s) do we have to delete it
 	//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,obj);
 	//freeXpdfObject (obj);
+	;
 }
 
 //
@@ -222,14 +216,11 @@ CObjectComplex<Tp,Checker>::CObjectComplex ()
 // Protected constructor
 //
 template<PropertyType Tp, typename Checker>
-CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& ref) : IProperty (&p) 
+CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check (this,OPER_CREATE);
 	printDbg (0,"CObjectComplex constructor.");
 	
-	// Save id and gen id
-	IProperty::setIndiRef (ref);
-
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
 }
@@ -261,34 +252,6 @@ CObjectComplex<Tp,Checker>::getStringRepresentation (std::string& str) const
 //
 //
 template<PropertyType Tp, typename Checker>
-void 
-CObjectComplex<Tp,Checker>::setStringRepresentation (const std::string& strO)
-{
-	assert (!"not implemented");	
-}
-
-//
-// Write a value.
-// 
-template<PropertyType Tp, typename Checker>
-void
-CObjectComplex<Tp,Checker>::writeValue (WriteType val)
-{
-	printDbg (0,"writeValue()" << val);
-
-//	typename WriteProcessorTraitComplex<WriteType, Tp>::WriteProcessor wp;
-	// Write it with specific writer (functor) according to template parameter
-//	wp (val,this);
-
-	// notify observers and dispatch change
-	_objectChanged ();
-}
-
-
-//
-//
-//
-template<PropertyType Tp, typename Checker>
 void
 CObjectComplex<Tp,Checker>::dispatchChange() const
 {
@@ -297,11 +260,9 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 	assert (NULL != IProperty::pdf);
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 	
-	// Dispatch the change
-	//IndiRef* ref = IProperty::getIndiRef ();
 	// Get IProperty to nearest indirect object
-	//IProperty* ip = pdf->getExistingProperty (ref);
-	//assert (ref == ip->getIndiRef());
+	IProperty* ip = pdf->getExistingProperty (IProperty::getIndiRef());
+	assert (IProperty::getIndiRef() == ip->getIndiRef());
 	//Object* obj = ip->_makeXpdfObject();
 	// This function saves a COPY of xpdf object(s) do we have to delete it
 	//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,obj);
@@ -347,23 +308,30 @@ CObjectComplex<Tp,Checker>::release ()
 }
 
 
-
 //
 // Template  member functions can't be virutal (at least according to nowadays specification)
 //
-// It seems that virtual funcions are always instantiated
+// It seems that virtual functions are always instantiated
 //
-template<>
-inline void
-CObjectComplex<pArray>::getAllPropertyNames (std::list<std::string>&) const
-	{assert (0);}
-
 template<PropertyType Tp, typename Checker>
-inline void
+void
 CObjectComplex<Tp,Checker>::getAllPropertyNames (std::list<std::string>& container) const
 {
-	STATIC_CHECK ((pArray != Tp), INCORRECT_USE_OF_getAllNames_FUNCTION); 
-	utils::getAllNames (container,value);
+	printDbg (0, "getAllPropertyNames()");
+		
+	switch (Tp)
+	{
+			case pDict:
+			case pStream:
+					utils::getAllNames (container,value);
+					break;
+
+			case pArray:
+			default:
+					assert (!"Bad use of function...");
+					throw ObjInvalidOperation ();
+					break;
+	}
 }
 
 
@@ -414,7 +382,7 @@ CObjectComplex<Tp,Checker>::addProperty (IProperty& newIp)
 	value.push_back (&newIp);
 	
 	// Inherit id and gen number
-	newIp.setIndiRef (IProperty::ref);
+	newIp.setIndiRef (IProperty::getIndiRef());
 	// Inherit pdf
 	newIp.setPdf (IProperty::pdf);
 	
@@ -438,7 +406,7 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, IPrope
 	value.push_back (std::make_pair (propertyName,&newIp));
 	
 	// Inherit id and gen number
-	newIp.setIndiRef (IProperty::ref);
+	newIp.setIndiRef (IProperty::getIndiRef());
 	// Inherit pdf
 	newIp.setPdf (IProperty::pdf);
 
@@ -456,67 +424,29 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 {
 	assert (NULL != IProperty::pdf);
 	assert (NULL == newIp.getPdf());
-	printDbg (0,"setPropertyValue()");
+	printDbg (0,"setPropertyValue(" << id << ")");
 
 	//
 	// Check the bounds, if fails an exception is thrown
 	//
 	IndexComparator cmp (id);
-	typename Value::iterator itExist = find_if (value.begin(),value.end(),cmp);
-
-	if (itExist == value.end())
+	typename Value::iterator item = find_if (value.begin(),value.end(),cmp);
+	if (item == value.end())
 			throw ObjInvalidPositionInComplex ();
+
 	IProperty* oldIp = cmp.getIProperty ();
+	assert (NULL != oldIp);
 	//
 	// Insert the element we want to add at the end, swap with the element we want to
 	// delete and delete the last one
-	//
-	value.push_back (std::make_pair((*itExist).first,&newIp));
-	typename Value::reverse_iterator itNew = value.rbegin ()++;
-	
-	// Swap and delete
-	iter_swap (itExist,itNew);
-	value.pop_back();
+	//	
+	typename Value::iterator itemNext = item; itemNext++;
+	typename Value::value_type newVal = utils::constructItemFromIProperty (*item,newIp);
+	std::fill (item, itemNext, newVal);
 
 	// Delete IProperty
 	oldIp->release ();
 
-	return &newIp;
-}
-
-//
-//
-//
-template<>
-inline IProperty*
-CObjectComplex<pArray>::setPropertyValue (PropertyId id, IProperty& newIp)
-{
-	assert (NULL != IProperty::pdf);
-	assert (NULL == newIp.getPdf());
-	printDbg (0,"setPropertyValue<pArray>()");
-
-	//
-	// Check the bounds, if fails an exception is thrown
-	//
-	IndexComparator cmp (id);
-	Value::iterator itExist = find_if (value.begin(),value.end(),cmp);
-	
-	if (itExist == value.end())
-			throw ObjInvalidPositionInComplex ();
-	IProperty* oldIp = cmp.getIProperty ();
-	//
-	// Insert the element we want to add at the end, swap with the element we want to
-	// delete and delete the last one
-	//
-	value.push_back (&newIp);
-	Value::iterator itNew = value.end () - 1;
-	
-	// Swap and delete
-	iter_swap (itExist,itNew);
-	value.pop_back();
-	// Delete the IProperty
-	oldIp->release ();
-	
 	return &newIp;
 }
 
@@ -553,10 +483,24 @@ CObjectComplex<Tp,Checker>::_isIndirect () const
 		return false;
 }
 
-
-
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+template <typename Storage>
+void 
+CObjectComplex<Tp,Checker>::_getAllChildObjects (Storage& store) const
+{
+	typename Value::const_iterator it = value.begin ();
+	for	(; it != value.end (); it++)
+	{
+		IProperty* ip = utils::getIPropertyFromItem (*it);
+		store.push_back (ip);
+	}
+}
 
 } /* namespace pdfobjects */
 
 
-#endif // COBJECTI_H
+
+#endif // _COBJECTI_H
