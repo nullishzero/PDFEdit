@@ -7,8 +7,8 @@
  * =====================================================================================
  */
 
-#ifndef OBSERVER_H
-#define OBSERVER_H
+#ifndef _OBSERVER_H
+#define _OBSERVER_H
 
 
 
@@ -49,4 +49,4 @@ public:
 
 
 
-#endif  // OBSERVER_H
+#endif  // _OBSERVER_H
