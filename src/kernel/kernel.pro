@@ -3,8 +3,10 @@
 #
 
 TEMPLATE = app
-CONFIG += complete
+LANGUAGE = C++
+CONFIG += complete console precompile_header
 QMAKE_CXXFLAGS += -D DEBUG
+PRECOMPILED_HEADER = static.h
  
 #
 # Path to xpdf object files
@@ -13,15 +15,17 @@ QMAKE_CXXFLAGS += -D DEBUG
 _PATH = /usr/xpdf
 
 
+
 #
 # Kernel special settings
 #
 
-HEADERS += cobject.h cobjectI.h cpdf.h iproperty.h ../utils/debug.h observer.h exceptions.h lib.h
-SOURCES += cobject.cc cpdf.cc lib.cc cxref.cc xrefwriter.cc main.cc 
+HEADERS += cobject.h cobjectI.h cpdf.h iproperty.h ../utils/debug.h observer.h exceptions.h
+SOURCES += cobject.cc cpdf.cc cxref.cc xrefwriter.cc main.cc 
 #QMAKE_CXXFLAGS += -Wuninitialized -frepo
-#QMAKE_CXXFLAGS += -Wuninitialized -ansi -pedantic -Winline
-QMAKE_CXXFLAGS += -Wuninitialized -ansi -pedantic -Wno-unused-variable -Winline -finline-limit=10000 --param inline-unit-growth=600 --param large-function-growth=600
+#QMAKE_CXXFLAGS += -Wuninitialized -ansi -pedantic -Wno-unused-variable -Winline -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
+#QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
+QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable
 
 
 #
