@@ -1,7 +1,14 @@
 /*
+ * Created:  01/28/2006 03:48:14 AM CET
+
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/03/08 12:13:59  misuj1am
+ *
+ * -- precompiled headers support
+ * -- unused arguments commented out
+ *
  * Revision 1.10  2006/03/06 18:18:55  hockm0bm
  * compilable changes - each module is compilable now
  * each object in pdfobjects namespace
@@ -19,25 +26,18 @@
  *
  */
 
-/*
- * =====================================================================================
- *        Filename:  cpdf.h
- *     Description: CPdf class definition.
- *         Created:  01/28/2006 03:48:14 AM CET
- *          Author:  jmisutka (), 
- *         Changes: 2006/1/28 added mapping support
- *                              2006/1/30 tested objToString () -- ok
- * =====================================================================================
- */
-
-
 #ifndef __CPDF_H__
 #define __CPDF_H__
 
-#include <map>
-#include <set>
-#include <string>
-#include "xpdf/Object.h"
+#include "static.h"
+
+// xpdf
+#include "xpdf.h"
+
+//#include <map>
+//#include <set>
+//#include <string>
+//#include "xpdf/Object.h"
 #include "iproperty.h"
 #include "xrefwriter.h"
 
@@ -53,7 +53,7 @@ class COutline;
  * This class is responsible for pdf document maintainance.
  * 
  */
-class CPdf// : public CDict
+class CPdf //: public CDict
 {
 public:
         // NOTE: this declaration has to be here, because mode field is private and
@@ -102,41 +102,20 @@ protected:
         };      
 
         /**
-         * Mapping between (x)pdf Object <--> IProperty
-         *
-         * We have to know which IProperty is associated with an Object.
-         * We use this when implementing CObject::release (), CObject::~CObject.
-         * 
-         * This is because (x)pdf Object can traverse deeper in its nesting simply
-         * by looking at Object pointers. We use Object to hold information about 
-         * our properties because it has been well tested. 
-         * In spite of its very non-object implementation, we have decided 
-         * to use it because of its tremendous functionality. So we have to 
-         * make the mapping between IProperty and Object by ourselves.
-         * 
-         * REMARK:
-         * We can make this mapping simply with pointers, because we know
-         * that no other can destroy, reallocate our objects, just CObject and
-         * its children. CXref and/or GUI/CUI are not permitted to do this.
-         */
-        typedef std::map<const Object*,const IProperty*, ObjComparator> ObjectMapping;
-
-        /**
          * Mapping between indirect objects <--> IProperty.
          *
          * This is essential when we want to access an indirect object from 
          * pRef object. We know only the id and gen number.
-         * 
+		 *
+		 * It is also the only possibility to add indirect objects to a pdf file. 
+		 * We add objects directly with CObjectComplex::add(set)Property, but we can 
+		 * add CRef object and then add the propriate object with CPdf::addIndirectObject().
          */
         typedef std::map<const IndiRef,const IProperty*, IndComparator> IndirectMapping;
 private:
-        /** Mapping between Object <--> IProperty*. 
-         * It is necessary when releasing objects. 
-         */
-        ObjectMapping objMap;
         
         /** Mapping between Id + Gen <--> IProperty*. 
-         * It is necessary when accessing indirect objects. 
+         * It is necessary when adding accessing indirect objects. 
          */
         IndirectMapping indMap;
 
@@ -202,7 +181,8 @@ private:
          * If you want to create instance, please use static factory method 
          * getInstance.
          */
-        CPdf (){}//:CDict(NULL, sPdf){};
+public:
+		CPdf (){}//:CDict(NULL, sPdf){};
 
         /** Initializating constructor.
          * @param stream Stream with data.
@@ -213,7 +193,6 @@ private:
          * TODO initializes also other internal structures.
          */
         CPdf(BaseStream * stream, FILE * file, OpenMode openMode);
-
         /** Destructor.
          * 
          * It is no available outside class, because we whant to prevent
@@ -223,6 +202,7 @@ private:
          * using this destructor).
          */
         ~CPdf();
+private:
 
         /** Fills pages array with page objects.
          * @param pageNode Dictionary representing page tree node.
@@ -287,31 +267,39 @@ public:
         }
         
         /**
-         * Returns IProperty associated with (x)pdf object if any.
+         * Returns IProperty associated with pdf object if any.
          *
-         * @param  o    (x)pdf object.
+         * @param  ref  Id and gen number of an object.
          * @return Null if there is no mapping, IProperty* otherwise.
          */
-        IProperty* getExistingProperty (const Object* o) const;
         IProperty* getExistingProperty (const IndiRef& pair) const;
 
         /**
          * Saves relation between (x)pdf object and IProperty*. 
          *
-         * @param o      (x)pdf object.
-         * @param ip IProperty that will be mapped to Object o.
+         * @param  ref  Id and gen number of an object.
+         * @param ip 	IProperty that will be mapped to Object o.
          */
-        void setObjectMapping (const Object* o, const IProperty* ip);
-        void setIndMapping (const IndiRef& pair, const IProperty* ip);
+        void setIndMapping (const IndiRef& ref, const IProperty* ip);
 
         /**
          * Deletes relation between (x)pdf object and IProperty*. 
          *
-         * @param o      (x)pdf object.
+         * @param  ref  Id and gen number of an object.
          * @param ip IProperty that will be mapped to Object o.
          */
-        void delObjectMapping (const Object* o);
-        void delIndMapping (const IndiRef& pair);
+        void delIndMapping (const IndiRef& ref);
+
+		/**
+		 * Adds indirect object to the pdf. It also find free indirect and 
+		 * generation number. Adds it to the property and all its children.
+		 *
+		 * @param ip Indirect object.
+		 * @return Identification number and generation number associated with 
+		 * 		   added object.
+		 */
+		IndiRef addIndirectObject (IProperty& ip);
+		
 
         /** Saves CPdf content (whole document).
          * @param fname File name where to store.
@@ -321,23 +309,25 @@ public:
          * <br>
          * TODO distinguish saving and creating new revision.
          */
-        int save(const char * fname)
+        int save(const char * )
         {
                 // call xref->change for all changed objects
                 // call xref->saveXref
+				return 0;
         }
 
         /** Creates new empty page.
          * @param pos Position where to insert page.
          *
          */
-        CPage * createPage(int pos)
+        CPage * createPage(int)
         {
                 // create new object xref->createObject
                 // initialize with default values
                 // update PageTree dictionary
                 // update pages array
                 // call xref->change to new page and page tree
+				return NULL;
         }
 
         /** Inserts exisitng page.
@@ -346,22 +336,24 @@ public:
          *
          * Creates new page and uses initialize all stuff according given page.
          */
-        CPage * insertPage(const CPage * page, int pos)
+        CPage * insertPage(const CPage * , int )
         {
                 // create page deep copy (if from other file, also referencies)
                 // similar as create page
+				return NULL;
         }
 
         /** Removes page from given position.
          * @param pos Position of the page.
          */
-        int removePage(int pos)
+        int removePage(int )
         {
                 // get page object
                 // change PageTree object
                 // update pages array
                 // release this object (xref->release())
                 // deallocate object (checks number of referencies...)
+				return 0;
         }
 
         /** Returns absolute position of given page.
@@ -505,7 +497,7 @@ public:
          *
          * Removes also all children.
          */
-        void removeOutline(COutline * outline)
+        void removeOutline(COutline * /*outline*/)
         {
                 // actualize outlines
                 // remove from Outlines dictionary (in document catalog)
@@ -522,6 +514,7 @@ public:
                 // initialize with default outline information
                 // update Outlines dictionary in document catalog
                 // update outlines array
+				return NULL;
         }
 
 
@@ -562,7 +555,7 @@ public:
          *
          * see XRefWriter::changeRevision
          */
-        void changeRevision(revision_t revisionNum)
+        void changeRevision(revision_t /*revisionNum*/)
         {
                 // set revision xref->changeRevision
                 // call cleanupRevisionSpecific
