@@ -3,7 +3,7 @@
 
 #include <qwidget.h>
 
-class AboutWindow: public QWidget {
+class AboutWindow : public QWidget {
 public:
  AboutWindow(QWidget *parent=0,const char *name=0);
  ~AboutWindow();

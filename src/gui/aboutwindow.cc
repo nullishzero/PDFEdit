@@ -13,7 +13,6 @@ using namespace std;
 
 /** Version of program*/
 QString app=APP_NAME " " VERSION;
-/** Program info*/
 
 /** constructor of AboutWindow, creates window and fills it with elements, parameters are ignored */
 AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel) {

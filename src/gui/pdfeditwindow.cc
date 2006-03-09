@@ -74,7 +74,13 @@ void PdfEditWindow::restoreWindowState() {
  @param script QT Script code to run
  */
 void PdfEditWindow::runScript(QString script) {
+ qs->setErrorMode(QSInterpreter::Nothing);
+ cmdLine->addCommand(script);
  qs->evaluate(script,this,"<GUI>");
+ QString error=qs->errorMessage();
+ if (error!=QString::null) { /// some error occured
+  cmdLine->addError(error);
+ }
 }
 
 
@@ -144,15 +150,25 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  printList(qs->variables());
  printf("<OK\n");*/
  
- //SPLITTER
+ //Splitter for Property editor
  QSplitter *spl=new QSplitter(this);
 
+ //Splitter for command line
+ QSplitter *splCmd=new QSplitter(spl);
+ splCmd->setOrientation(Vertical);
+
  //Button QUIT
- QPushButton *quit=new QPushButton(tr("Quit"), spl);
+ QPushButton *quit=new QPushButton(tr("Quit"), splCmd);
  quit->resize(75, 30);
  quit->setFont(QFont("Times", 18, QFont::Bold));
  QObject::connect(quit, SIGNAL(clicked()), this, SLOT(exitApp()));
+
+ //Commandline
+ cmdLine=new CommandWindow(splCmd);
+ QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
+
  quit->show();
+ cmdLine->show();
 
  //Button NEW WINDOW
  PropertyEditor *prop=new PropertyEditor(spl);

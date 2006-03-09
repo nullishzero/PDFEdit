@@ -6,6 +6,7 @@
 #include <qsplitter.h>
 #include <qmainwindow.h>
 #include <qsinterpreter.h>
+#include "commandwindow.h"
 
 /** PdfEditWindow - class handling main application window */
 class PdfEditWindow : public QMainWindow {
@@ -22,10 +23,11 @@ public slots: //These will be exported to scripting
  void closeWindow();
 protected:
  void closeEvent(QCloseEvent *e);
- void runScript(QString script);
 protected slots:
+ void runScript(QString script);
  void menuActivated(int id);
 private:
+ CommandWindow *cmdLine;
  QSInterpreter *qs;
 };
 
