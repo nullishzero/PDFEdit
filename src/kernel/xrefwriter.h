@@ -5,6 +5,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/03/10 18:07:14  hockm0bm
+ * reserveRef method added
+ * createObject uses reserveRef
+ * one FIXME in createObject - commented
+ *
  * Revision 1.7  2006/03/08 12:09:24  misuj1am
  *
  * -- commented out unused arguments
@@ -129,7 +134,7 @@ protected:
          * <br>
          * TODO error handling exceptions
          */
-        bool paranoidCheck(Ref ref, ::Object * obj);
+        bool paranoidCheck(::Ref ref, ::Object * obj);
 
         /** Collects all revisions information.
          *
@@ -357,7 +362,7 @@ public:
          *
          * @return true if reference is known, false otherwise.
          */
-        virtual bool knowsRef(Ref ref)
+        virtual bool knowsRef(::Ref ref)
         {
                 // if we are in newest revision, delegates to CXref
                 if(!revision)
@@ -370,6 +375,23 @@ public:
                return entries[ref.num].gen==ref.gen;
         }
 
+        /** Registers new reference.
+         *
+         * This is just wrapper for CXref::reference method.
+         * Only thing which is done here is that revision field
+         * is checked and if revision is 0 (most recent), delegates 
+         * to the to the CXref::reserveRef. Otherwise deny to make create, 
+         * because it is not possible to do changes to a older release (TODO 
+         * how to announce).
+         */
+        virtual ::Ref reserveRef()
+        {
+                if(!revision)
+                        return CXref::reserveRef();
+
+                // TODO handle
+        };
+        
         /** Creates new indirect object.
          *
          * This is just wrapper for CXref::createObject method.
@@ -379,7 +401,7 @@ public:
          * because it is not possible to do changes to a older release (TODO 
          * how to announce).
          */
-        virtual ::Object * createObject(ObjType type, Ref * ref)
+        virtual ::Object * createObject(::ObjType type, ::Ref * ref)
         {
                 if(!revision)
                         return CXref::createObject(type, ref);

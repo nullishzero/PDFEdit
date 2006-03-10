@@ -2,7 +2,7 @@
 
 using namespace pdfobjects;
 
-bool XRefWriter::paranoidCheck(Ref ref, ::Object * obj)
+bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 {
         bool reinicialization=false;
 
@@ -50,7 +50,7 @@ void XRefWriter::releaseObject(int num, int gen)
                 // TODO handle
         }
                 
-        Ref ref={num, gen};
+        ::Ref ref={num, gen};
         // checks if reference exists
         if(mode==paranoid && !knowsRef(ref))
         {
@@ -71,7 +71,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
                 // TODO handle
         }
 
-        Ref ref={num, gen};
+        ::Ref ref={num, gen};
         
         // paranoid checking
         paranoidCheck(ref, obj);

@@ -5,6 +5,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/03/10 18:07:14  hockm0bm
+ * reserveRef method added
+ * createObject uses reserveRef
+ * one FIXME in createObject - commented
+ *
  * Revision 1.10  2006/03/08 12:10:12  misuj1am
  *
  *
@@ -126,19 +131,19 @@ protected:
          * This structure contains new Object value for reference and 
          * flag. 
          */
-        ObjectStorage<Ref, ObjectEntry*, RefComparator> changedStorage;   
+        ObjectStorage< ::Ref, ObjectEntry*, RefComparator> changedStorage;   
 
         /** Object storage for newly created objects.
          * Value is the flag, whether value has been changed after createObject
          * method has been called. Uninitialized values can be skipped.
          */
-        ObjectStorage<Ref, bool, RefComparator> newStorage;       
+        ObjectStorage< ::Ref, bool, RefComparator> newStorage;       
 
         /** Object storage for released referencies.
          * Value of the association stores number of releases called on 
          * given reference.
          */
-        ObjectStorage<Ref, int, RefComparator> releasedStorage;  
+        ObjectStorage< ::Ref, int, RefComparator> releasedStorage;  
 
         /** Registers change in given object addressable through given 
          * reference.
@@ -161,7 +166,7 @@ protected:
          * @return Old value of object from changedStorage or NULL if it's first
          * revision of object.
          */
-        ::Object * changeObject(Ref ref, ::Object * instance);
+        ::Object * changeObject(::Ref ref, ::Object * instance);
 
         /** Releases  given object addressable through given reference.
          * @param ref Object reference identificator.
@@ -170,7 +175,7 @@ protected:
          * All released referencies are stored in releasedStorage with counter
          * which stores number of release operation on given reference. 
          */
-        void releaseObject(Ref ref);
+        void releaseObject(::Ref ref);
 
         /** Changes entry in trailer dictionary.
          * @param name Name of the value.
@@ -221,16 +226,30 @@ public:
          */
         virtual ~CXref();
         
+        /** Reserves reference for new indirect object.
+         *
+         * Searches for free object number and generation number and uses
+         * it to register reference for new indirect object. Reference is stored
+         * to the newStorage with false flag. This is changed to true if real
+         * object is stored to the CXref (using change method). 
+         * <br>
+         * Created object is accesible only if default value has been changed.
+         * This means that returned object has to be changed and after change
+         * method has to be called. This is mainly because we want to prevent 
+         * unintialized object inside.
+         *
+         * @return Reference which can be used to add new indirect object.
+         */
+        virtual ::Ref reserveRef();
+        
         /** Creates new xpdf indirect object.
          * @param type Type of the object.
          * @param ref Structure where to put object num and gen (if null, 
          * nothing is set).
          * 
-         * New reference is registered to the newStorage with false flag. 
-         * Created object is accesible only if default value has been changed.
-         * This means that returned object has to be changed and after change
-         * method has to be called. This is mainly because we want to prevent 
-         * unintialized object inside.
+         * New reference is registered using reserveRef method. This is just 
+         * wrapper method to reserveRef with object initialization capability.
+         * 
          * <br>
          * Implementation will initialize Object with type and value depending 
          * on type:
@@ -261,7 +280,7 @@ public:
          *
          * @return Object instance with given type or 0 if not able to create.
          */
-        virtual ::Object * createObject(ObjType type, Ref * ref);
+        virtual ::Object * createObject(::ObjType type, ::Ref * ref);
 
         /** Checks if given reference is known.
          * @param ref Reference to check.
@@ -273,7 +292,7 @@ public:
          *
          * @return true if reference is known, false otherwise.
          */
-        bool knowsRef(Ref ref);
+        bool knowsRef(::Ref ref);
 
         /** Checks whether obj1 can replace obj2.
          * @param obj1 Original object.

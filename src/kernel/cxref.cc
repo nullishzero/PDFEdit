@@ -12,7 +12,7 @@ CXref::~CXref()
         */
 }
 
-::Object * CXref::changeObject(Ref ref, ::Object * instance)
+::Object * CXref::changeObject(::Ref ref, ::Object * instance)
 {
        // discards from cache
        /* FIXME uncoment if cache is available
@@ -51,7 +51,7 @@ CXref::~CXref()
 }
 
 
-void CXref::releaseObject(Ref ref)
+void CXref::releaseObject(::Ref ref)
 {
        // gets previous counter of reference
        // NOTE: if reference is not on releaseObject, count is 0
@@ -72,16 +72,11 @@ void CXref::releaseObject(Ref ref)
       return prev;
 }
 
-::Object * CXref::createObject(ObjType type, Ref * ref)
+::Ref CXref::reserveRef()
 {
        int i=1;
        int num=-1, gen;
-       
-       // it's not possible to create indirect reference value or
-       // any other internaly (by xpdf) used object types
-       if(type==objRef || type==objError || type==objEOF || type==objNone)
-               return 0;
-       
+
        // goes through entries array in XRef class (xref entries)
        // and reuses first free entry with increased gen number.
        for(; i<size; i++)
@@ -99,6 +94,30 @@ void CXref::releaseObject(Ref ref)
                num=i+1;
                gen=0;
        }
+       //
+       // registers newly created object to the newStorage
+       // flag is set to false now and this is changed only if
+       // initialized value is overwritten by change method
+       // all objects with false flag should be ignored when
+       // writing to a file
+       ::Ref objRef={num, gen};
+       newStorage.put(objRef, false);
+
+       return objRef;
+}
+
+::Object * CXref::createObject(ObjType type, ::Ref * ref)
+{
+       // reserves new reference for object 
+       ::Ref objRef=reserveRef();
+       
+       // it's not possible to create indirect reference value or
+       // any other internaly (by xpdf) used object types
+       // FIXME: why is this not compileable
+       /*
+       if(type==objRef || type==objError || type==objEOF || type==objNone)
+               return 0;
+       */
 
        ::Object * obj=(::Object *)gmalloc(sizeof(::Object));
        
@@ -141,13 +160,6 @@ void CXref::releaseObject(Ref ref)
                break;
        }
        
-       // registers newly created object to the newStorage
-       // flag is set to false now and this is changed only if
-       // initialized value is overwritten by change method
-       // all objects with false flag should be ignored when
-       // writing to a file
-       Ref objRef={num, gen};
-       newStorage.put(objRef, false);
 
        // sets reference parameter if not null
        if(ref)
@@ -156,7 +168,7 @@ void CXref::releaseObject(Ref ref)
        return obj;
 }
 
-bool CXref::knowsRef(Ref ref)
+bool CXref::knowsRef(::Ref ref)
 {
        // checks newly created object only with true flag
        // not found returns 0, so it's ok
@@ -179,7 +191,7 @@ bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
                                            // values - we assume, it's
                                            // not indirect
        // types for direct values.
-       ObjType type1=obj1->getType(), type2=obj2->getType();              
+       ::ObjType type1=obj1->getType(), type2=obj2->getType();              
        
        // checks indirect
        if(type1==objRef)
@@ -252,7 +264,7 @@ bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
 
 ::Object * CXref::fetch(int num, int gen, ::Object *obj)
 {
-       Ref ref={num, gen};
+       ::Ref ref={num, gen};
 
        ObjectEntry * entry=changedStorage.get(ref);
        if(entry)
@@ -286,7 +298,7 @@ bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
 int CXref::getNumObjects() 
 { 
         size_t newSize=0;
-        ObjectStorage<Ref, bool, RefComparator>::Iterator begin, i;
+        ObjectStorage< ::Ref, bool, RefComparator>::Iterator begin, i;
 
         for(i=newStorage.begin(); i!=newStorage.end(); i++)
                 if(i->second)
