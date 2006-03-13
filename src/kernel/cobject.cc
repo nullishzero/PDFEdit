@@ -23,6 +23,17 @@ namespace pdfobjects
 {
 
 //
+// Case insensitive comparator
+//
+namespace
+{
+		bool nocase_compare (char c1, char c2)
+		{
+			return toupper(c1) == toupper(c2);
+		}
+}
+
+//
 // Memory checkers
 //
 BasicMemChecker::_IPsList BasicMemChecker::ips;
@@ -35,6 +46,12 @@ BasicMemChecker::_IPsList BasicMemChecker::ips;
 namespace utils {
 
 using namespace std;
+
+//
+// Forward declaration
+//
+void xpdfObjToString (Object& obj, string& str);
+
 
 namespace {
 
@@ -88,35 +105,35 @@ namespace {
 		// ReadProcessors for simple types
 		//
 		template<typename Storage, typename Val>
-		struct BoolReader
+		struct xpdfBoolReader
 		{public:
 				void operator() (Storage obj, Val val)
 					{val = (0 != obj.getBool());}
 		};
 
 		template<typename Storage, typename Val>
-		struct IntReader
+		struct xpdfIntReader
 		{public:
 				void operator() (Storage obj, Val val)
 					{val = obj.getInt ();}
 		};
 
 		template<typename Storage, typename Val>
-		struct RealReader
+		struct xpdfRealReader
 		{public:
 				void operator() (Storage obj, Val val)
 					{val = obj.getNum ();}
 		};
 
 		template<typename Storage, typename Val>
-		struct StringReader
+		struct xpdfStringReader
 		{public:
 				void operator() (Storage obj, Val val)
 					{val = obj.getString ()->getCString();}
 		};
 
 		template<typename Storage, typename Val>
-		struct NameReader
+		struct xpdfNameReader
 		{public:
 				void operator() (Storage obj, Val val)
 					{val = obj.getName ();}
@@ -124,7 +141,7 @@ namespace {
 
 
 		template<typename Storage, typename Val>
-		struct RefReader
+		struct xpdfRefReader
 		{public:
 				void operator() (Storage obj, Val val)
 					{val.num = obj.getRefNum();
@@ -137,51 +154,49 @@ namespace {
 		// We know that Storage is xpdf Object and value type depends on each writer type
 		//
 		template<typename Storage, typename Val>
-		struct BoolWriter
+		struct xpdfBoolWriter
 		{public:
 				Object* operator() (Storage obj, Val val)
 					{return obj->initBool (GBool(val));}
 		};
 
 		template<typename Storage, typename Val>
-		struct IntWriter
+		struct xpdfIntWriter
 		{public:
 				Object* operator() (Storage obj, Val val)
 					{return obj->initInt (val);}
 		};
 
 		template<typename Storage, typename Val>
-		struct RealWriter
+		struct xpdfRealWriter
 		{public:
 				Object* operator() (Storage obj, Val val)
 					{return obj->initReal (val);}
 		};
 
 		template<typename Storage, typename Val>
-		struct StringWriter
+		struct xpdfStringWriter
 		{public:
-				Object* operator() (Storage /*obj*/, Val /*val*/)
-				//	{return obj->initString (new GString(val.c_str()));}
-					{return NULL;}
+				Object* operator() (Storage obj, Val val)
+					{return obj->initString (new GString(val.c_str()));}
 		};
 
 		template<typename Storage, typename Val>
-		struct NameWriter
+		struct xpdfNameWriter
 		{public:
-				Object* operator() (Storage /*obj*/, Val /*val*/)
-					//{return obj->initName (const_cast<char*>(val.c_str()));}
-					{return NULL;}
+				Object* operator() (Storage obj, Val val)
+					{return obj->initName (const_cast<char*>(val.c_str()));}
 		};
 
 		template<typename Storage, typename Val>
-		struct NullWriter
+		struct xpdfNullWriter
 		{public:
 				Object* operator() (Storage obj, Val)
 					{return obj->initNull ();}
 		};
 
 		template<typename Storage, typename Val>
-		struct RefWriter
+		struct xpdfRefWriter
 		{public:
 				Object* operator() (Storage obj, Val val)
 					{return obj->initRef (val.num, val.gen);}
@@ -197,39 +212,39 @@ namespace {
 		 */
 		template<typename T, typename U, PropertyType Tp> struct ProcessorTraitSimple; 
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pBool>  
-			{public: typedef struct utils::BoolWriter<T,U>	WriteProcessor;
-			public: typedef struct utils::BoolReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfBoolWriter<T,U>	xpdfWriteProcessor;
+			public: typedef struct utils::xpdfBoolReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pInt>   
-			{public: typedef struct utils::IntWriter<T,U> 	WriteProcessor;
-			public: typedef struct utils::IntReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfIntWriter<T,U> 	xpdfWriteProcessor;
+			public: typedef struct utils::xpdfIntReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pReal>  
-			{public: typedef struct utils::RealWriter<T,U> 	WriteProcessor;
-			public: typedef struct utils::RealReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfRealWriter<T,U> 	xpdfWriteProcessor;
+			public: typedef struct utils::xpdfRealReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pString>
-			{public: typedef struct utils::StringWriter<T,U> WriteProcessor;
-			public: typedef struct utils::StringReader<T,U> ReadProcessor;};
+			{public: typedef struct utils::xpdfStringWriter<T,U>xpdfWriteProcessor;
+			public: typedef struct utils::xpdfStringReader<T,U> xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pName>  
-			{public: typedef struct utils::NameWriter<T,U> 	WriteProcessor;
-			public: typedef struct utils::NameReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfNameWriter<T,U> 	xpdfWriteProcessor;
+			public: typedef struct utils::xpdfNameReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pNull>   
-			{public: typedef struct utils::NullWriter<T,U> 	WriteProcessor;};
+			{public: typedef struct utils::xpdfNullWriter<T,U> 	xpdfWriteProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pRef>   
-			{public: typedef struct utils::RefWriter<T,U> 	WriteProcessor;
-			public: typedef struct utils::RefReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfRefWriter<T,U> 	xpdfWriteProcessor;
+			public: typedef struct utils::xpdfRefReader<T,U> 	xpdfReadProcessor;};
 
 
 		//
 		//
 		//
 		template<typename Value, typename Storage>
-		struct ArrayReader
+		struct xpdfArrayReader
 		{public:
 				void operator() (IProperty& ip, const Value /*array*/, Storage val)
 				{
 					assert (NULL != ip.getPdf ());
 					//assert (objArray == array.getType());
 					//assert (0 <= array.arrayGetLength ());
-					//printDbg (0,"ArrayReader\tobjType = " << array.getTypeName() );
+					//printDbg (0,"xpdfArrayReader\tobjType = " << array.getTypeName() );
 					
 					Object obj;
 
@@ -239,9 +254,9 @@ namespace {
 							// Get Object at i-th position
 					//		array.arrayGetNF (i, &obj);
 							// Create CObject from it
-							IProperty* cobj = createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef());
-							assert (cobj);
-							if (NULL == cobj)
+							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef()));
+							assert (NULL != cobj.get ());
+							if (NULL == cobj.get ())
 									throw ObjInvalidObject ();
 
 							// Store it in the storage
@@ -251,18 +266,41 @@ namespace {
 		};
 
 		template<typename Value, typename Storage>
-		struct DictReader
+		struct xpdfDictReader
 		{public:
-				void operator() (IProperty&, Value /*obj*/, Storage /*val*/)
+				void operator() (IProperty& ip, const Value dict, Storage val)
 				{
+					assert (NULL != ip.getPdf ());
+					//assert (objDict == dict.getType());
+					//assert (0 <= dict.dictGetLength ());
+					//printDbg (0,"xpdfDictReader\tobjType = " << dict.getTypeName() );
+					
+					Object obj;
+
+					int len = 10;//dict.dictGetLength ();
+					for (int i = 0; i < len; i++)
+					{
+							// Get Object at i-th position
+							string key = dict.dictGetKey (i);
+					//		dict.dictGetVal (i,&obj);
+							// Create CObject from it
+							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef()));
+							assert (NULL != cobj.get ());
+							if (NULL == cobj.get ())
+									throw ObjInvalidObject ();
+
+							// Store it in the storage
+							val.push_back (make_pair(key,cobj));
+					}
 				}
 		};
 
 		template<typename Value, typename Storage>
-		struct StreamReader
+		struct xpdfStreamReader
 		{public:
 				void operator() (IProperty&, Value /*obj*/, Storage /*val*/)
 				{
+						assert (!"not implemented yet.");
 				}
 		};
 				
@@ -275,16 +313,12 @@ namespace {
 		 */
 		template<typename T, typename U, PropertyType Tp> struct ProcessorTraitComplex; 
 		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pArray>  
-			{public: typedef struct utils::ArrayReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfArrayReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pDict>   
-			{public: typedef struct utils::DictReader<T,U> 		ReadProcessor;};
+			{public: typedef struct utils::xpdfDictReader<T,U> 		xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pStream>   
-			{public: typedef struct utils::StreamReader<T,U> 	ReadProcessor;};
+			{public: typedef struct utils::xpdfStreamReader<T,U> 	xpdfReadProcessor;};
 
-		//
-		// Forward declaration
-		//
-		void xpdfObjToString (Object& obj, string& str);
 
 		/**
 		 *
@@ -292,8 +326,7 @@ namespace {
 		void
 		simpleXpdfObjToString (Object& obj,string& str)
 		{
-			printDbg (0,"simpleXpdfObjToString(" << (unsigned int)&obj << ")");
-			printDbg (0,"\tobjType = " << obj.getTypeName() );
+			printDbg (0,"simpleXpdfObjToString(" << (unsigned int)&obj << ") objType = " << obj.getTypeName() );
 
 			ostringstream oss;
 
@@ -373,14 +406,14 @@ namespace {
 				oss << "<<";
 				for (i = 0; i <obj.dictGetLength(); ++i) 
 				{
-					oss << " /" << obj.dictGetKey(i) << " ";
+					oss << std::endl << " /" << obj.dictGetKey(i) << " ";
 					obj.dictGetValNF(i, &o);
 					string tmp;
 					xpdfObjToString (o,tmp);
 					oss << tmp;
 					o.free();
 				}
-				oss << " >>";
+				oss << std::endl << ">>";
 				break;
 
 			case objStream:
@@ -396,30 +429,27 @@ namespace {
 			str = oss.str ();
 		}
 
-
-		/**
-		 *
-		 */
-		inline void 
-		xpdfObjToString (Object& obj, string& str)
-		{
-			switch (obj.getType())
-			{
-				case objArray:
-				case objDict:
-				case objStream:
-						complexXpdfObjToString (obj,str);
-						break;
-				default:
-						simpleXpdfObjToString (obj,str);
-						break;
-			}
-		}
-
 } // anonymous namespace
 
 
-
+//
+//
+//
+void 
+xpdfObjToString (Object& obj, string& str)
+{
+	switch (obj.getType())
+	{
+		case objArray:
+		case objDict:
+		case objStream:
+				complexXpdfObjToString (obj,str);
+				break;
+		default:
+				simpleXpdfObjToString (obj,str);
+				break;
+	}
+}
 
 //
 // Convert simple value from CObjectSimple to string
@@ -428,8 +458,6 @@ template <>
 void
 simpleValueToString<pBool> (bool val, string& str)
 {
-	printDbg (0,"simpleValueToString()");
-
 	str = ((val) ? "true" : "false");
 }
 template void simpleValueToString<pBool>	(bool val, string& str);
@@ -440,8 +468,6 @@ template <>
 void
 simpleValueToString<pInt> (int val, string& str)
 {
-	printDbg (0,"simpleValueToString()");
-
 	stringstream oss;
 	oss << val;
 	str = oss.str ();
@@ -454,8 +480,6 @@ template <>
 void
 simpleValueToString<pReal> (double val, string& str)
 {
-	printDbg (0,"simpleValueToString()");
-
 	stringstream oss;
 	oss << val;
 	str = oss.str ();
@@ -469,7 +493,6 @@ void
 simpleValueToString (const std::string& val, std::string& str)
 {
 	STATIC_CHECK ((pString == Tp) || (pName == Tp), COBJECT_INCORRECT_USE_OF_simpleObjToString_FUNCTION);
-	printDbg (0,"simpleValueToString()");
 
 	switch (Tp)
 	{
@@ -495,8 +518,6 @@ template<>
 void
 simpleValueToString<pNull> (const NullType&, string& str)
 {
-	printDbg (0,"simpleValueToString()");
-
 	str = "null";
 }
 template void simpleValueToString<pNull> (const NullType&, string& str);
@@ -507,8 +528,6 @@ template<>
 void
 simpleValueToString<pRef> (const IndiRef& ref, string& str)
 {
-	printDbg (0,"simpleValueToString()");
-
 	ostringstream oss;
 	oss << ref.num << " " << ref.gen << " R";
 	// convert oss to string
@@ -523,7 +542,7 @@ template void simpleValueToString<pRef> (const IndiRef&, string& str);
 //
 template<>
 void
-complexValueToString<pArray> (const vector<IProperty*>& val, string& str)
+complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
 {
 		printDbg (0,"complexValueToString<pArray>()" );
 		
@@ -535,7 +554,7 @@ complexValueToString<pArray> (const vector<IProperty*>& val, string& str)
 		//
 		// Loop through all items and get each string and append it to the result
 		//
-		vector<IProperty*>::const_iterator it = val.begin();
+		PropertyTraitComplex<pArray>::value::const_iterator it = val.begin();
 		for (; it != val.end(); it++) 
 		{
 			string tmp;
@@ -547,13 +566,13 @@ complexValueToString<pArray> (const vector<IProperty*>& val, string& str)
 		// end tag
 		str += "]";
 }
-template void complexValueToString<pArray> (const vector<IProperty*>& val, string& str);
+template void complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str);
 //
 //
 //
 template<>
 void
-complexValueToString<pDict> (const list<pair<string,IProperty*> >& val, string& str)
+complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
 {
 	printDbg (0,"complexValueToString<pDict>()");
 
@@ -564,30 +583,30 @@ complexValueToString<pDict> (const list<pair<string,IProperty*> >& val, string& 
 	// Loop through all items and get each items name + string representation
 	// and append it to the result
 	//
-	list<pair<string,IProperty*> >::const_iterator it = val.begin ();
+	PropertyTraitComplex<pDict>::value::const_iterator it = val.begin ();
 	for (; it != val.end(); it++) 
 	{
-		str +=" /" + (*it).first + " ";
+		str +="\n/" + (*it).first + " ";
 		string tmp;
 		(*it).second->getStringRepresentation (tmp);
 		str += tmp;
 	}
 
 	// end tag
-	str +=" >>";
+	str += "\n>>";
 }
-template void complexValueToString<pDict> (const list<pair<string,IProperty*> >& val, string& str);
+template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str);
 //
 //
 //
 template<>
 void
-complexValueToString<pStream> (const std::list<std::pair<std::string,IProperty*> >& /*val*/, string& str)
+complexValueToString<pStream> (const PropertyTraitComplex<pStream>::value& /*val*/, string& str)
 {
 	printDbg (0,"complexValueToString<pStream>()");
 	str = "<stream>";
 }
-template void complexValueToString<pStream> (const list<pair<string,IProperty*> >& val, string& str);
+template void complexValueToString<pStream> (const PropertyTraitComplex<pStream>::value& val, string& str);
 
 
 //
@@ -602,8 +621,7 @@ freeXpdfObject (Object* obj)
 	
 	std::string str;
 	xpdfObjToString (*obj,str); 
-	printDbg (1,"freeXpdfObject()");
-	printDbg (1,"\t..." << str);
+	printDbg (1,"freeXpdfObject()\t ..." << str);
 	
 	// delete all member variables
 	obj->free ();
@@ -616,22 +634,25 @@ freeXpdfObject (Object* obj)
 //
 //
 //
-inline void
+void
 simpleValueFromString (const std::string& str, bool& val)
 {
-  if (str == "true")
-	val = true;
-  else if (str == "false")
-	val = false;
-  else
-	throw ObjBadValueE ();
+	const string static __true = "true";
+	const string static __false = "false";
+	
+	if ( equal (str.begin(), str.end(), __true.begin(), nocase_compare))
+		val = true;
+	else if ( equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
+		val = false;
+	else
+		throw ObjBadValueE ();
 }
 
-inline void
+void
 simpleValueFromString (const std::string& str, int& val)
 {
 	std::stringstream ss (str);
-	ss.exceptions (stringstream::eofbit| stringstream::failbit | stringstream::badbit);
+	ss.exceptions (stringstream::failbit | stringstream::badbit);
 	try {
 		ss >> val;
 	}catch (stringstream::failure& e) 
@@ -640,7 +661,7 @@ simpleValueFromString (const std::string& str, int& val)
   	}					
 }
 
-inline void
+void
 simpleValueFromString (const std::string& str, double& val)
 {
 	double d = 42.11232;	// anything except 0.0
@@ -650,17 +671,17 @@ simpleValueFromString (const std::string& str, double& val)
 		throw ObjBadValueE ();
 }
 
-inline void
+void
 simpleValueFromString (const std::string& str, std::string& val)
 {
 	val = str;
 }
 
-inline void
+void
 simpleValueFromString (const std::string& str, IndiRef& val)
 {
 	std::stringstream ss (str);
-	ss.exceptions (stringstream::eofbit| stringstream::failbit | stringstream::badbit);
+	ss.exceptions (stringstream::failbit | stringstream::badbit);
 	try {
 		ss >> val.num;
 		ss >> val.gen;
@@ -679,7 +700,7 @@ simpleValueToXpdfObj (T val)
 {
 	Object* obj = new Object ();
 	
-	typename ProcessorTraitSimple<Object*, T, Tp>::WriteProcessor wp;
+	typename ProcessorTraitSimple<Object*, T, Tp>::xpdfWriteProcessor wp;
 	return wp (obj,val);
 }
 
@@ -698,7 +719,7 @@ template <PropertyType Tp,typename T>
 void
 simpleValueFromXpdfObj (Object& obj, T val)
 {
-	typename ProcessorTraitSimple<Object&, T, Tp>::ReadProcessor rp;
+	typename ProcessorTraitSimple<Object&, T, Tp>::xpdfReadProcessor rp;
 	rp (obj,val);
 }
 
@@ -707,7 +728,7 @@ simpleValueFromXpdfObj (Object& obj, T val)
 //
 template <> 
 inline void
-simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) {/*THIS IS HANDLED IN CALLER*/}
+simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) {assert (!"operation not permitted...");/*THIS IS FORBIDDEN IN THE CALLER*/}
 
 template void simpleValueFromXpdfObj<pBool, bool&> 		(Object& obj,  bool& val);
 template void simpleValueFromXpdfObj<pInt, int&> 		(Object& obj,  int& val);
@@ -724,29 +745,26 @@ template <PropertyType Tp,typename T>
 inline void
 complexValueFromXpdfObj (IProperty& ip, Object& obj, T val)
 {
-	typename ProcessorTraitComplex<Object&, T, Tp>::ReadProcessor rp;
+	typename ProcessorTraitComplex<Object&, T, Tp>::xpdfReadProcessor rp;
 	rp (ip, obj, val);
 }
 
-template void complexValueFromXpdfObj<pArray, std::vector<IProperty*>&> (IProperty& ip, Object& obj, std::vector<IProperty*>& val);
-template void complexValueFromXpdfObj<pDict,  std::list<std::pair<std::string,IProperty*> >&> 
-	(IProperty& ip, Object& obj, std::list<std::pair<std::string,IProperty*> >& val);
-template void complexValueFromXpdfObj<pStream,std::list<std::pair<std::string,IProperty*> >&> 
-	(IProperty& ip, Object& obj, std::list<std::pair<std::string,IProperty*> >& val);
+template void complexValueFromXpdfObj<pArray,PropertyTraitComplex<pArray>::value&> 
+		(IProperty& ip, 
+		 Object& obj, 
+		 PropertyTraitComplex<pArray>::value& val);
+
+template void complexValueFromXpdfObj<pDict, PropertyTraitComplex<pDict>::value&>
+		(IProperty& ip, 
+		 Object& obj, 
+		 PropertyTraitComplex<pDict>::value& val);
+
+template void complexValueFromXpdfObj<pStream, PropertyTraitComplex<pStream>::value&>
+		(IProperty& ip, 
+		 Object& obj, 
+		 PropertyTraitComplex<pStream>::value& val);
 
 
-
-
-//
-// Case insensitive comparator
-//
-namespace
-{
-		bool nocase_compare (char c1, char c2)
-		{
-			return toupper(c1) == toupper(c2);
-		}
-}
 
 
 Object*
