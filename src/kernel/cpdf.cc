@@ -230,6 +230,8 @@ CPdf::delIndMapping (const IndiRef& ref)
 IndiRef
 CPdf::addIndirectObject (IProperty& ip)
 {
+	typedef std::list<boost::shared_ptr<IProperty> >  IPList;
+		
 	assert (NULL == ip.getPdf());
 	
 	// Indicate that it will belong to this pdf
@@ -239,13 +241,13 @@ CPdf::addIndirectObject (IProperty& ip)
 	IndiRef rf;	// = xref->findFreeRef ();
 	
 	// Find all objects in tree starting in ip
-	std::list<IProperty*> ipList;
+	IPList ipList;
 	getAllChildIProperty (ip,ipList);
 	
 	// Indicate that all objects in the tree starting in ip
 	//   -- belong to this pdf
 	//   -- are in indirect object with whose ref is rf
-	std::list<IProperty*>::iterator it = ipList.begin ();
+	IPList::iterator it = ipList.begin ();
 	for (; it != ipList.end (); it++)
 	{
 			assert (NULL == (*it)->getPdf());
@@ -253,6 +255,10 @@ CPdf::addIndirectObject (IProperty& ip)
 			(*it)->setPdf (this);
 			(*it)->setIndiRef (rf);
 	}
+	
+	//
+	// \TODO: SET MODE !!!
+	//
 	
 	return rf;
 }
