@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/03/13 01:35:10  misuj1am
+ *
+ *
+ * -- modecontroller
+ * 	get/setModeController, if null OUR modecontroller is used
+ *
  * Revision 1.11  2006/03/08 12:13:59  misuj1am
  *
  * -- precompiled headers support
@@ -33,6 +39,9 @@
 
 // xpdf
 #include "xpdf.h"
+
+// mode controller
+#include "modecontroller.h"
 
 //#include <map>
 //#include <set>
@@ -141,6 +150,11 @@ private:
          */
         enum OpenMode mode;
 
+		/**
+		 *
+		 */
+		IModeController* modeController;
+
         /** Pdf trailer dictionary.
          *
          * Source of information about versions.
@@ -182,7 +196,7 @@ private:
          * getInstance.
          */
 public:
-		CPdf (){}//:CDict(NULL, sPdf){};
+		CPdf () : modeController (NULL) {}//:CDict(NULL, sPdf){};
 
         /** Initializating constructor.
          * @param stream Stream with data.
@@ -265,7 +279,28 @@ public:
         {
                 return (XRef *)xref;
         }
-        
+       
+		/**
+		 *
+		 *
+		 */
+		IModeController* getModeController ()
+		{
+			if (NULL == modeController)
+			{
+				modeController = & (ModeController::Instance ("./file"));
+			}
+
+			return modeController;
+		}
+
+		/**
+		 *
+		 *
+		 */
+		void setModeController (IModeController* ctrl)
+			{modeController = ctrl;}
+
         /**
          * Returns IProperty associated with pdf object if any.
          *
