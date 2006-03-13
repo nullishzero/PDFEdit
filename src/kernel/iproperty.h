@@ -10,7 +10,11 @@
 #ifndef _IPROPERTY_H_
 #define _IPROPERTY_H_
 
+// basic includes
 #include "static.h"
+
+// property modes
+#include "modecontroller.h"
 
 // stl
 //#include <vector>
@@ -31,14 +35,14 @@ namespace pdfobjects
 {
 
 
-/**
- * Forward declarations
- */
+//
+// Forward declarations
+// 
 class CPdf;
 
-/**
- * Enum describing the type of a property.
- */
+
+
+/** Enum describing the type of a property. */
 enum PropertyType 
 {
 		// Simple
@@ -55,9 +59,6 @@ enum PropertyType
 		pDict	= objDict, 
 		pStream	= objStream, 
 
-		//
-		pInvalid,
-
 		// Debug
 		pOther	= objCmd,
 		pOther1 = objError,
@@ -65,10 +66,13 @@ enum PropertyType
 		pOther3 = objNone
 };
 
-/**
- * Enum describing the type of a special object.
- */
-enum SpecialObjectType {sNone, sPdf, sPage, sPageTree, sContentStream};
+
+/** Enum describing the type of a special object. */
+enum SpecialObjectType 
+{
+		sNone, sPdf, sPage, sPageTree, sContentStream
+};
+
 
 /** Object id number. */
 typedef unsigned int ObjNum;
@@ -87,18 +91,14 @@ typedef struct IndiRef
 
 /** 
  * Narrow interface describing properties of every pdf object. We use this 
- * interface when we want to access or change properties of (x)pdf object.
+ * interface when we want to access properties of pdf object.
  *
- * Typically, we will start by CPage object which is a dictionary. We have 
- * direct access to all simple properties like ints, strings, reals etc.
- *
- * Each IProperty is associated with one xpdf object. All modifying operations
- * are directly performed on this object. The object represents current state.
+ * Each IProperty is associated with one pdf object. The object represents current state.
  * However, these changes are not visible by the (x)pdf till they are registered
- * in CXref.
+ * in CXref with dispatchChange() method.
  *
  * When accessing complex properties, we have to know the type with which type we
- * are working. According to the type, we can cast this object to CObject<type> 
+ * are working. According to the type, we can cast this object to CObjectComplex<type> 
  * to get more functionality.
  */
 class IProperty
@@ -107,63 +107,68 @@ typedef std::vector<const IObserver*> ObserverList;
 
 private:
  IndiRef 		ref;		/**< Object's pdf id and generation number. */
-protected:
+ PropertyMode	mode;		/**< Mode of this property. */
+ ObserverList 	observers;	/**< List of observers. */
  CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 
-private:
- ObserverList 	observers;	/**< List of observers. */
 
 private:
-  /**
-   * Copy constructor
-   */
+  /** Copy constructor. */
   IProperty (const IProperty&) {};
 
 protected:	
 
-  /**
-   * This constructor is used, when someone wants to create a CObject.
-   */
-  IProperty () : pdf(NULL)
+  /** Basic constructor. */
+  IProperty (CPdf* _pdf = NULL) : mode(mdUnknown), pdf(_pdf)
   {
 	printDbg (0,"IProperty () constructor.");
 
-	ref.num = 0;
-	ref.gen = 0;
-  };
-  
-  /**
-   * This constructor is used, when someone wants to create a CObject.
-   */
-  IProperty (CPdf* _pdf) : pdf(_pdf)
-  {
-	printDbg (0,"IProperty () constructor.");
-
-	ref.num = 0;
-	ref.gen = 0;
+	ref.num = ref.gen = 0;
   };
 
-  /**
-   * This constructor is used, when someone wants to create a CObject.
-   */
-  IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), pdf(_pdf)
+  /** Constructor. */
+  IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf)
   {
 	printDbg (0,"IProperty () constructor.");
   };
 
 public:
   
+  /**
+   * Copy constructor. Returns deep copy.
+   * 
+   * @param Deep copy of this object.
+   */
+  boost::shared_ptr<IProperty> clone () const
+  {
+		boost::shared_ptr<IProperty> ip (doClone ());
+		assert (typeid (*ip) == typeid (*this) && "doClone INCORRECTLY overriden!!" );
+		
+		return ip;
+  }
+
+protected:
+
+  /**
+   * Implementation of clone method
+   *
+   * @param Deep copy of this object.
+   */
+  virtual IProperty* doClone () const = 0;
+
+public:
+  
 	/**
 	 * Set member variable pdf.
+	 * <exception cref="ObjInvalidOperation"> Thrown when we want to set pdf association to 
+	 * already associated object.
 	 *
 	 * @param p pdf that this object belongs to
 	 */
 	void setPdf (CPdf* p)
 	{
-		assert (NULL != p);
 		assert (NULL == pdf);	// modify existing association with a pdf?
-		
-		if (NULL == p || NULL != pdf)
+		if (NULL != pdf)
 				throw ObjInvalidOperation ();
 		
 		pdf = p;
@@ -174,7 +179,8 @@ public:
 	 *
 	 * @return Pdf that this object is associated with.
 	 */
-	CPdf* getPdf () const	{return pdf;};
+	CPdf* getPdf () const {return pdf;};
+
 
 public:
 	/**
@@ -183,7 +189,7 @@ public:
 	 *
 	 * @return Indirect identification number and generation number.
 	 */
-	inline const IndiRef& getIndiRef () const {return ref;};
+	const IndiRef& getIndiRef () const {return ref;};
 
 
 	/**
@@ -191,7 +197,7 @@ public:
 	 *
 	 * @param _r Indirect reference id and generation number.
 	 */
-	inline void setIndiRef (const IndiRef& _r) {ref = _r;};
+	void setIndiRef (const IndiRef& rf) {ref = rf;};
 
  
 	/**
@@ -200,8 +206,24 @@ public:
 	 * @param n Object's id.
 	 * @param g Object's generation number.
 	 */
-	inline void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
+	void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
 
+public:
+
+	/**
+	 * Get mode of this property.
+	 *
+	 * @return Mode.
+	 */
+	PropertyMode getMode () const {return mode;};
+
+	/**
+	 * Set mode of a property.
+	 *
+	 * @param md Mode.
+	 */
+	void setMode (PropertyMode md) {mode = md;};
+	
 
 public:
   
@@ -226,26 +248,26 @@ public:
     virtual PropertyType getType () const = 0;
 
 	/**
-	* Indicate that you do not want to use this object again.
-	* 
-	* If it is an indirect object, we have to notify CXref.
-	*/
-	virtual void release () = 0;
-
-	/**
 	 * Returns string representation of actual object.
 	 * 
 	 * If it is an indirect object, we have to notify CXref.
 	 */
 	virtual void getStringRepresentation (std::string& str) const = 0;
  
+
 	/**
-	 * When destroying IProperty, CObject associated with this IProperty (should be?) 
-	 * also destroyed.
+ 	 * Notify Writer object that this object has changed. We have to call this
+	 * function to make changes visible.
+	 */
+	virtual void dispatchChange () const = 0; 
+	
+	/**
+	 * Destructor.
 	 */
 	virtual ~IProperty () {};
 
 public:
+	
 	/**
 	 * Attaches an observers.
 	 *
@@ -257,29 +279,32 @@ public:
 		observers.push_back (o);
 	}
   
-       /**
-	* Detaches an observer.
-	* 
-	* @param observer Observer beeing detached.
-	*/
-	void unregisterObserver (const IObserver* o)
-	{
+	/**
+	 * Detaches an observer.
+	 * 
+	 * @param observer Observer beeing detached.
+	 */
+	 void unregisterObserver (const IObserver* o)
+	 {
 		assert(NULL != o);
 		ObserverList::iterator it = find (observers.begin (), observers.end(),o);
 		if (it != observers.end ())
 			observers.erase (it);
-	};
+	 };
 
 protected:
+
   /**
    * Notify all observers that a property has changed.
    */
-  inline void notifyObservers ()
+  void notifyObservers ()
   {
 	ObserverList::iterator it = IProperty::observers.begin ();
 	for (; it != IProperty::observers.end(); it++)
 		  (*it)->notify (this);
   }
+
+protected:
 
   /**
    * Create xpdf object.

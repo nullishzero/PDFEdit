@@ -42,18 +42,20 @@
  * 						compilable
  * 					CObjectSimple finished
  * 					CObjectComplex finished except setStringRepresentation and writeValue (which is actually the same)
+ * 			2006/03/12
+ * 					finished 1st stage testing
+ * 					making changes, ptrs --> smart pointer
+ *
  * 
  *			TODO:
  *					testing
- *					!! function for getting unused Ref in CPdf
- *					can't add IProperty when pdf is not NULL (just to simplify things)
- *					   no real obstruction for removing this
  *					better public/protected dividing
+ *					StreamReader
  *
  * =====================================================================================
  */
-#ifndef COBJECT_H
-#define COBJECT_H
+#ifndef _COBJECT_H
+#define _COBJECT_H
 
 #include "static.h"
 
@@ -69,16 +71,12 @@ namespace pdfobjects
 //
 // Forward declarations of memory checkers
 //
-
 class NoMemChecker;
 class BasicMemChecker;
 		
-/** Operations we can check. */
-enum _eOperations { OPER_CREATE, OPER_DELETE };
-
-
 	
 /**
+ * CObjectSimple type trait.
  * Additional information that identifies variable type, e.g. for writeValue function.
  *
  * If someone tries to use unsupported type (pCmd,....), she should get compile error
@@ -125,7 +123,7 @@ template<> struct PropertyTraitSimple<pRef>
  * Template class representing simple PDF objects from specification v1.5.
  *
  * This class represents simple objects like null, string, number etc.
- * It does not have special functions like CObjectComplex.
+ * It does not have so many special functions as CObjectComplex.
  *
  * Other xpdf objects like objCmd can't be instantiated although the PropertyType 
  * exists. It is because PropertyTraitSimple is not specified for these types.
@@ -137,13 +135,9 @@ template<> struct PropertyTraitSimple<pRef>
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectSimple : public IProperty
 {
-
-public:
-	/** Write type for writeValue function. */
 	typedef typename PropertyTraitSimple<Tp>::writeType	 WriteType;
-	/** Value holder. */
 	typedef typename PropertyTraitSimple<Tp>::value 	 Value;  
-			
+
 private:
 	/** Object's value. */
 	Value value;
@@ -151,17 +145,14 @@ private:
 
 private:
 	
-	/**
-	 * Copy constructor
-	 */
+	/** Copy constructor. */
 	CObjectSimple (const CObjectSimple&);
-	
 	
 public/*protected*/:
 	
 	/**
 	 * Constructor. Only kernel can call this constructor. It depends on the object, that we have
-	 * parsed.
+	 * parsed. The object will read value from o and store it. We do NOT save any reference to o.
 	 *
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
@@ -173,25 +164,25 @@ public/*protected*/:
 public:	
 
 	/**
-	 * Public constructor. Can be used to create direct/indirect objects.
+	 * Public constructor. Can be used to create pdf objects. This object is created
+	 * as a standalone and does not belong to any pdf. When added to a pdf
+	 * the relation will be saved to IProperty::pdf.
 	 *
-	 * @param p		Pointer to pdf object in which this object will exist.
-	 */
-	CObjectSimple (CPdf& p);
-
-	/**
-	 * Public constructor. Can be used to create direct/indirect objects.
-	 *
-	 * @param p		Pointer to pdf object in which this object will exist.
 	 * @param val	Value that will this object hold.
 	 */
-	CObjectSimple (CPdf& p, const Value& val);
+	CObjectSimple (const Value& val = Value());
 
 
-#ifdef DEBUG
-CObjectSimple () : value(Value()) {Checker check (this, OPER_CREATE);};
-#endif
-	
+public:
+
+	/**
+	 * Clone. Performs deep copy.
+	 *
+	 * @return Deep copy of this object.
+	 */
+	virtual IProperty* doClone () const;
+
+
 	/**
 	 * Return type of this property.
 	 *
@@ -237,23 +228,8 @@ CObjectSimple () : value(Value()) {Checker check (this, OPER_CREATE);};
 	 * @param val Out parameter where property value will be stored.
 	 */
 	void getPropertyValue (Value& val) const;
-	
-	/**
-	 * Indicate that you do not want to use this object again.
-	 * 
-	 * If it is an indirect object, we have to notify CXref.
-	 */
-  	virtual void release ();
-	
 
-//protected: 
-/*DEBUG*/public:	
-	/**
-	 * Destructor
-	 */
-	~CObjectSimple () {Checker check (this, OPER_DELETE);};
 	
-protected:
 	/**
  	 * Notify Writer object that this object has changed. We have to call this
 	 * function to make changes visible.
@@ -261,14 +237,19 @@ protected:
 	 * It is necessary for undo operation, that means saving previous state of the object.
 	 * We obtain reference to CXref from CObject::pdf.
 	 */
-	void dispatchChange () const; 
+	virtual void dispatchChange () const; 
 
+
+	/**
+	 * Destructor
+	 */
+	~CObjectSimple ();
+	
 
 	//
 	// Helper functions
 	//
-protected:
-	
+public:	
 	/**
 	 * Make xpdf Object from this object. This function allocates xpdf object, caller has to free it.
 	 *
@@ -281,15 +262,14 @@ private:
 	/**
 	 * Finds out if this object is indirect.
 	 *
-	 * @return true if this object is indirect, false otherwise.
+	 * @return True if this object is indirect, false otherwise.
 	 */
 	bool _isIndirect () const;
 
 	/**
 	 * Indicate that the object has changed.
 	 */
-	inline void
-	_objectChanged ()
+	void _objectChanged ()
 	{
 		// Dispatch the change
 		dispatchChange ();
@@ -316,6 +296,7 @@ class DictIdxComparator;
 
 
 /**
+ * CObjectComplex type trait.
  * Additional information that identifies variable type, e.g. for writeValue function.
  *
  * If someone tries to use unsupported type (pCmd,....), she should get compile error
@@ -324,21 +305,21 @@ class DictIdxComparator;
 template<PropertyType T> struct PropertyTraitComplex; 
 template<> struct PropertyTraitComplex<pArray>	
 {	public: 
-		typedef std::vector<IProperty*>		value; 
+		typedef std::vector<boost::shared_ptr<IProperty> > value; 
 		typedef const std::string& 			writeType; 
 		typedef unsigned int	 			propertyId;
 		typedef class ArrayIdxComparator	indexComparator;
 };
 template<> struct PropertyTraitComplex<pStream> 
 {	public: 
-		typedef std::list<std::pair<std::string,IProperty*> >	value; 
+		typedef std::list<std::pair<std::string, boost::shared_ptr<IProperty> > > value;
 		typedef const std::string& 			writeType; 
 		typedef const std::string& 			propertyId;
 		typedef class DictIdxComparator		indexComparator;
 };
 template<> struct PropertyTraitComplex<pDict>	
 {	public: 
-		typedef std::list<std::pair<std::string,IProperty*> >	value; 
+		typedef std::list<std::pair<std::string, boost::shared_ptr<IProperty> > > value; 
 		typedef const std::string& 			writeType; 
 		typedef const std::string& 			propertyId;
 		typedef class DictIdxComparator		indexComparator;
@@ -362,32 +343,23 @@ template<> struct PropertyTraitComplex<pDict>
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : public IProperty
 {
-public:
-	/** Write type for writeValue function. */
 	typedef typename PropertyTraitComplex<Tp>::writeType  		WriteType;
-	/** This type identifies a property. */
 	typedef typename PropertyTraitComplex<Tp>::propertyId 		PropertyId;
-	/** This functor can find an item in the value holder. */
 	typedef typename PropertyTraitComplex<Tp>::indexComparator	IndexComparator;
-	/** Value holder. */
 	typedef typename PropertyTraitComplex<Tp>::value 	  		Value;  
-
+	
 private:
+	
 	/** Object's value. */
 	Value value;
 
+	
 private:
-	/**
-	 * Copy constructor
-	 */
+
+	/** Copy constructor */
 	CObjectComplex (const CObjectComplex&) {};
 	
-
 protected:
-	/**
-	 * Pdf constructor.
-	 */
-	CObjectComplex ();
 
 /*debug*/public:
 	/**
@@ -401,17 +373,21 @@ protected:
 
 
 public:	
+	
+	/** 
+	 * Public constructor. This object will not be associated with a pdf.
+	 */
+	CObjectComplex ();
+
+
+public:
 
 	/**
-	 * Public constructor. Can be used to create objects.
+	 * Clone. Performs deep copy.
 	 *
-	 * @param p	Pointer to pdf object in which this object will exist.
+	 * @return Deep copy of this object.
 	 */
-	CObjectComplex (CPdf& p);
-
-#ifdef DEBUG
-CObjectComplex (int /*i*/) : value(Value()) {Checker check (this,OPER_CREATE);};
-#endif
+	virtual IProperty* doClone () const;
 
 
 	/**
@@ -465,29 +441,14 @@ CObjectComplex (int /*i*/) : value(Value()) {Checker check (this,OPER_CREATE);};
 	 *
 	 * @return Pointer to special child object specified by template argument. 
 	 */
-	template<typename T>
+	/*template<typename T>
 	T* getSpecialObjectPtr () const
 	{
 		STATIC_CHECK(sizeof(T)>=sizeof(CObjectComplex<Tp,Checker>),DESTINATION_TYPE_TOO_NARROW); 
 		return dynamic_cast<T*>(this);
-	}
+	}*/
 
 	
-	/**
-	 * Indicate that you do not want to use this object again.
-	 * If it is an indirect object, we have to notify CXref.
-	 */
-  	virtual void release ();
-	
-
-//protected:
-/*DEBUG*/public:
-	/**
-	 * Destructor
-	 */
-	~CObjectComplex ()	{Checker check (this,OPER_DELETE);};
-
-protected:
 	/**
  	 * Notify Writer object that this object has changed. We have to call this
 	 * function to make changes visible.
@@ -495,9 +456,14 @@ protected:
 	 * It is necessary for undo operation, that means saving previous state of the object.
 	 * We obtain reference to CXref from CObject::pdf.
 	 */
-	void dispatchChange () const; 
+	virtual void dispatchChange () const; 
 
 
+	/**
+	 * Destructor
+	 */
+	~CObjectComplex ();
+	
 	//
 	//
 	// Specific features by Incomplete Instantiation
@@ -509,7 +475,7 @@ public:
 	 * 
 	 * @return Property count.
 	 */
-	inline size_t getPropertyCount () const {return value.size();};
+	size_t getPropertyCount () const {return value.size();};
  
 
 	/**
@@ -519,7 +485,7 @@ public:
      	 *
 	 * @param container Container of string objects. STL vector,list,deque.
 	 */
-	virtual void getAllPropertyNames (std::list<std::string>& container) const;
+	void getAllPropertyNames (std::list<std::string>& container) const;
 
 
 	/**
@@ -528,7 +494,7 @@ public:
    	 * @param 	id 	Variable identifying position of the property.
 	 * @return	Variable where the value will be stored.
    	 */
-   	IProperty* getPropertyValue (PropertyId id) const;
+	boost::shared_ptr<IProperty> getPropertyValue (PropertyId id) const;
 
 	
 	/**
@@ -545,22 +511,31 @@ public:
 	
 	/**
 	 * Sets property type of an item.
-	 *
+	 * 
+	 * Firstly, the property that is passed as argument is cloned, the argument itself is not set.
+	 * The cloned object replaces object specified by id.
+	 * 
 	 * @param	id		Name/Index of property
 	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
+	 *
+	 * @return Pointer to the new property.
 	 */
-	virtual IProperty* setPropertyValue (PropertyId id, IProperty& ip);
+	boost::shared_ptr<IProperty> setPropertyValue (PropertyId id, IProperty& ip);
 	
 	/**
-	 * Adds property to array/dict/stream. The property that should be added will
-	 * automaticly be associated with the pdf this object lives in.
-	 * Finally indicate that this object has changed.
+	 * Adds property to array/dict/stream. 
 	 *
-	 * @param newIp 	New property.
-	 * @param propertyName 	Name of the created property
+	 * Firstly, the property that is passed as argument is cloned, the argument itself is not added. 
+	 * The cloned object is added, automaticly associated with the pdf where the object is beeing added.
+	 * Indicate that this object has changed and return the pointer to the cloned object.
+	 *
+	 * @param newIp 		New property.
+	 * @param propertyName 	Name of the created property.
+	 *
+	 * @return Pointer to the new property.
 	 */
-	void addProperty (IProperty& newIp);
-	void addProperty (const std::string& propertyName, IProperty& newIp);
+	boost::shared_ptr<IProperty> addProperty (IProperty& newIp);
+	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, IProperty& newIp);
 	
 	
 	/**
@@ -573,7 +548,7 @@ public:
 	 * 
 	 * @param id Name/Index of property
 	 */
-	void delProperty (PropertyId /*id*/);
+	void delProperty (PropertyId id);
 
 
 
@@ -601,8 +576,7 @@ private:
 	 * Make everything needed to indicate that this object has changed.
 	 * Notifies all obervers associated with this property.
 	 */
-	inline void
-	_objectChanged ()
+	void _objectChanged ()
 	{
 		// Dispatch the change
 		dispatchChange ();
@@ -654,7 +628,9 @@ typedef CObjectComplex<pDict>	CDict;
  */
 class NoMemChecker 
 {public: 
-	NoMemChecker (IProperty*, _eOperations) {};
+	NoMemChecker () {};
+	void objectCreated (IProperty*) {};
+	void objectDeleted (IProperty*) {};
 };
 
 /**
@@ -673,44 +649,59 @@ private:
 
 public:
 	//
-	//
-	//	   
-	BasicMemChecker (const IProperty* ip, _eOperations operation)
-	{
-		std::cout << std::setw (10) << std::setfill ('<') << "\t";
-		std::cout << std::setbase (16);
-		std::cout << "IProperty [0x"<< (unsigned)ip << "] ";
-				
-		switch (operation)
-		{
-			case OPER_DELETE:
-					{
-					std::cout << "deleted.";
-					_IPsList::iterator it = find (ips.begin(), ips.end(), ip);
-					if (it != ips.end())
-							ips.erase (it);
-					else
-							std::cout << std::endl << "!!!!!!!!!! deleting what was not created !!!!!!!!!!1" << std::endl;
-					}
-					break;
+	BasicMemChecker () {};
 
-			case OPER_CREATE:
-					std::cout << "created.";
-					ips.push_back (ip);
-					break;
-					
-			default:
-					break;
+	//
+	//
+	//
+	void objectCreated (IProperty* ip)
+	{
+		_printHeader ();
+		std::cout << "IProperty [0x"<< (unsigned)ip << "] created.";
+		ips.push_back (ip);
+		
+		_printFooter ();
+	};
+
+	//
+	//
+	//
+	void objectDeleted (IProperty* ip)
+	{
+		_printHeader ();
+		std::cout << "IProperty [0x"<< (unsigned)ip << "] deleted";
+
+		_IPsList::iterator it = find (ips.begin(), ips.end(), ip);
+		if (it != ips.end())
+		{
+				ips.erase (it);
+		}
+		else
+		{
+				std::cout << std::endl << "!!!!!!!!!! deleting what was not created !!!!!!!!!!1" << std::endl;
 		}
 		
-		std::cout << std::setbase (10);
-		std::cout << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
+		_printFooter ();
 	};
-	
+		
 	//
 	// Get living IProperty count
 	//
 	size_t getCount () {return ips.size (); };
+
+private:
+	void _printHeader ()
+	{
+		std::cout << std::setw (10) << std::setfill ('<') << "\t";
+		std::cout << std::setbase (16);
+	}
+
+	void _printFooter ()
+	{
+		std::cout << std::setbase (10);
+		std::cout << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
+	}
+	
 };
 
 
@@ -722,8 +713,9 @@ public:
 
 
 /**
- * This class is used as functor to stl find algorithm.
- * Finds out an item specified by its position. 
+ * This class is used as functor to an equal algorithm to std::find_if algorithm.
+ * Finds out an item specified by its position. find_if CANNOT be used, because it 
+ * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor 
  *
  * More effective algorithms could be used but this approach is 
  * used to get more generic.
@@ -732,28 +724,36 @@ class ArrayIdxComparator
 {
 private:
 	unsigned int pos;
-	IProperty* ip;
+	boost::shared_ptr<IProperty> ip;
+
+private:
+	//
+	// We have a stateful object, so prevent copying
+	//
+	ArrayIdxComparator (const ArrayIdxComparator&);
+
 public:
-		ArrayIdxComparator (unsigned int p) : pos(p),ip(NULL) {};
+	ArrayIdxComparator (unsigned int p) : pos(p) {};
+	
+	boost::shared_ptr<IProperty> getIProperty () {return ip;};
 		
-		inline IProperty* getIProperty () {return ip;};
-		
-		bool operator() (IProperty* _ip)
-		{	
-			if (0 == pos)
-			{
-				ip = _ip;
-				return true;
-			}
-			pos--;
-			return false;
+	bool operator() (const PropertyTraitComplex<pArray>::value::value_type& _ip)
+	{	
+		if (0 == pos)
+		{
+			ip = _ip;
+			return true;
 		}
+		pos--;
+		return false;
+	}
 };
 
 
 /**
- * This class is used as functor to stl find algorithm.
- * Finds out an item specified by name. 
+ * This class is used as functor to an equal algorithm to std::find_if algorithm.
+ * Finds out an item specified by its position. find_if CANNOT be used, because it 
+ * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor 
  *
  * Perhaps more effective algorithms could be used but this approach is 
  * used to get more generic.
@@ -761,23 +761,30 @@ public:
 class DictIdxComparator
 {
 private:
-	std::string str;
-	IProperty* ip;
+	const std::string str;
+	boost::shared_ptr<IProperty> ip;
+
+private:
+	//
+	// We have a stateful object, so prevent copying
+	//
+	DictIdxComparator (const DictIdxComparator&);
+
 public:
-		DictIdxComparator (const std::string& s) : str(s),ip(NULL) {};
+	DictIdxComparator (const std::string& s) : str(s) {};
 		
-		inline IProperty* getIProperty () {return ip;};
+	boost::shared_ptr<IProperty> getIProperty () {return ip;};
 		
-		bool operator() (std::pair<std::string,IProperty*> item)
-		{	
-			if (item.first == str)
-			{
-				ip = item.second;
-				return true;
-			}
+	bool operator() (const PropertyTraitComplex<pDict>::value::value_type& item)
+	{	
+		if (item.first == str)
+		{
+			ip = item.second;
+			return true;
+		}
 			
-			return false;
-		};
+		return false;
+	};
 };
 
 
@@ -816,8 +823,10 @@ template <PropertyType Tp> void simpleValueToString (const IndiRef& val,std::str
  * @param Value that will be converted to string.
  * @param Output string
  */
-template <PropertyType Tp> void complexValueToString (const std::vector<IProperty*>& val,std::string& str);
-template <PropertyType Tp> void complexValueToString (const std::list<std::pair<std::string,IProperty*> >& val,std::string& str);
+template <PropertyType Tp> void complexValueToString (const typename PropertyTraitComplex<pArray>::value& val, 
+													  std::string& str);
+template <PropertyType Tp> void complexValueToString (const typename PropertyTraitComplex<pDict>::value& val, 
+													  std::string& str);
 
 /**
  * Save real xpdf object value to val.
@@ -844,10 +853,10 @@ template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
  * @param container Container to which all names will be added.
  */
 template<typename T>
-inline void 
-getAllNames (T& container, const std::list<std::pair<std::string,IProperty*> >& store)
+void 
+getAllNames (T& container, const typename PropertyTraitComplex<pDict>::value& store)
 {
-	for (std::list<std::pair<std::string,IProperty*> >::const_iterator it = store.begin();
+	for (typename PropertyTraitComplex<pDict>::value::const_iterator it = store.begin();
 		it != store.end(); it++)
 	{
 			container.push_back ((*it).first);
@@ -896,22 +905,31 @@ Object* xpdfObjFromString (const std::string& str);
  * @param item  Item that will be replaced
  * @patam ip	IProperty that will be inserted;
  */
-inline IProperty* 
-constructItemFromIProperty (IProperty*,IProperty& ip) {return &ip;}
-inline std::pair<std::string,IProperty*>
-constructItemFromIProperty (std::pair<std::string,IProperty*>& item,IProperty& ip) {return std::make_pair(item.first,&ip);}
+inline PropertyTraitComplex<pArray>::value::value_type 
+constructItemFromIProperty (const PropertyTraitComplex<pArray>::value::value_type,
+							PropertyTraitComplex<pArray>::value::value_type ip) {return ip;}
+
+inline PropertyTraitComplex<pDict>::value::value_type 
+constructItemFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item,
+							boost::shared_ptr<IProperty> ip) {return std::make_pair(item.first,ip);}
 
 /**
  * Get IProperty from an item of a special container.
  *
  * @param item Item of a special container.
  */
-inline IProperty* 
-getIPropertyFromItem (IProperty* item) {return item;}
-inline IProperty*
-getIPropertyFromItem (const std::pair<std::string,IProperty*>& item) {return item.second;}
+inline boost::shared_ptr<IProperty>  
+getIPropertyFromItem (PropertyTraitComplex<pArray>::value::value_type item) {return item;}
+inline boost::shared_ptr<IProperty>  
+getIPropertyFromItem (const PropertyTraitComplex<pDict>::value::value_type& item) {return item.second;}
 
-
+/**
+ * Convert xpdf object to string
+ *
+ * @param obj Xpdf object that will be converted.
+ * @param str This will hold the string representation of the object.
+ */
+void xpdfObjToString (Object& obj, std::string& str);
 
 
 } /* namespace utils */
@@ -926,5 +944,5 @@ getIPropertyFromItem (const std::pair<std::string,IProperty*>& item) {return ite
 #include "cobjectI.h"
 
 
-#endif // COBJECT_H
+#endif // _COBJECT_H
 
