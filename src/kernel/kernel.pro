@@ -20,12 +20,13 @@ _PATH = /usr/xpdf
 # Kernel special settings
 #
 
-HEADERS += cobject.h cobjectI.h cpdf.h iproperty.h ../utils/debug.h observer.h exceptions.h
-SOURCES += cobject.cc cpdf.cc cxref.cc xrefwriter.cc main.cc 
+HEADERS += ../utils/debug.h
+HEADERS += cobject.h cobjectI.h cpdf.h iproperty.h observer.h exceptions.h modecontroller.h
+SOURCES += modecontroller.cc cobject.cc cpdf.cc cxref.cc xrefwriter.cc main.cc 
 #QMAKE_CXXFLAGS += -Wuninitialized -frepo
 #QMAKE_CXXFLAGS += -Wuninitialized -ansi -pedantic -Wno-unused-variable -Winline -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
-QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable
+QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable
 
 
 #
