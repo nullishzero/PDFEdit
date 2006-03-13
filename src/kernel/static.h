@@ -10,7 +10,9 @@
 #ifndef _STATIC_H_
 #define _STATIC_H_
 
-
+//
+// stl
+//
 #include <ostream>
 #include <iostream>
 #include <sstream>
@@ -24,6 +26,15 @@
 #include <map>
 #include <set>
 
+//
+// boost
+//
+#include <boost/smart_ptr.hpp>
+
+
+//
+// our stuff
+//
 #include "utils/debug.h"
 #include "utils/objectstorage.h"
 
@@ -33,17 +44,30 @@
 #include "xpdf.h"
 
 
-/**
- * Null and empty types.
- */
+//============================================
+// 
+// Types
+//
+
+//
+// Null and empty types.
+// 
 class NullType {};
 struct EmptyType {};
 
 
+//
+// from CUJ 5/22, Herb Sutter ...
+// 
+const class 
+{
+public:
+	template<typename T> operator T*() const { return 0; }
+	template<typename C,typename T> operator T C::*() const { return 0; }
+private:
+	void operator&() const {}; // not defined  
 
-
-
-
+} nullPtr = {};
 
 
 
