@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 
 /**
@@ -70,9 +71,9 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
 {\
 		if ( __DEBUG_LEVEL <= dbgLevel) \
 		{\
-			(a) << __FILE__ << ":" << __LINE__ << ": ";\
-			(a) <<  b ;\
-			(a) << std::endl;\
+			(a) << __FILE__ << ":" << __LINE__ << ": " \
+			 	<<  b \
+			    << std::endl;\
 		}\
 }
 
@@ -100,5 +101,39 @@ printDbg (std::ostream& out, const std::string& msg)
 		out << __FILE__ << ":" << __LINE__ << ": " << msg << std::endl;
 }
 */
+
+
+namespace pdfobjects {
+namespace debug {
+		
+//
+// Returns name of objects type
+//
+template<int i> inline
+std::string getStringType () {return "Unknown";}
+template<> inline
+std::string getStringType<0> () {return "pBool";}
+template<> inline
+std::string getStringType<1> () {return "pInt";}
+template<> inline
+std::string getStringType<2> () {return "pReal";}
+template<> inline
+std::string getStringType<3> () {return "pString";}
+template<> inline
+std::string getStringType<4> () {return "pName";}
+template<> inline
+std::string getStringType<5> () {return "pNull";}
+template<> inline
+std::string getStringType<9> () {return "pRef";}
+template<> inline
+std::string getStringType<6> () {return "pArray";}
+template<> inline
+std::string getStringType<7> () {return "pDict";}
+template<> inline
+std::string getStringType<8> () {return "pStream";}
+
+
+} // namespace debug
+} // namespace pdfobjects
 
 #endif  // DEBUG_H
