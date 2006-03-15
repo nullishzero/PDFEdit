@@ -6,10 +6,38 @@
 
 #include "static.h"
 
-//#include <iostream>
+#include <iostream>
+#include <fstream>
 
 #include "cobject.h"
 #include "cpdf.h"
+
+
+
+// No output from KERNEL
+#define NO_KERNEL_COUT_OUTPUT
+
+
+
+
+//========= NASTY =============
+#ifdef NO_KERNEL_COUT_OUTPUT
+	#define KERNEL_OUTPUT 	ofstream redirect_file("/dev/null"); streambuf * strm_buffer = cout.rdbuf();cout.rdbuf(redirect_file.rdbuf());
+	#define KERNEL_OUTPUT_BACK	 cout.rdbuf(strm_buffer);
+	#define OUTPUT	cerr
+#else
+	#define KERNEL_OUTPUT
+	#define KERNEL_OUTPUT_BACK
+	#define	OUTPUT 	cout
+#endif
+
+#define TEST(a) 	OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
+#define START_TEST 	OUTPUT << endl << "Started testing..." << endl; KERNEL_OUTPUT;
+#define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
+#define OK_TEST		OUTPUT << "TEST PASSED..." << endl;
+
+#define MEM_CHECK	BasicMemChecker check;OUTPUT  << "OBJECTS UNALLOCATED: " << check.getCount () << endl;
+//==========================
 
 
 using namespace std;
@@ -132,12 +160,12 @@ namespace {
 		
 		if (val == expected)
 		{
-			cout << "*** Validation OK! <comparison of values>" << endl;
+			OUTPUT << "*** Validation OK! <comparison of values>" << endl;
 			return true;
 		}
 		else
 		{
-			cout << "DOES NOT MATCH: " << endl;
+			OUTPUT << "DOES NOT MATCH: " << endl;
 			throw;
 			return false;
 		}
@@ -149,12 +177,12 @@ namespace {
 		
 		if ((val.gen == expected.gen) && (val.num == expected.num))
 		{
-			cout << "*** Validation OK! <comparison of Indiref>" << endl;
+			OUTPUT << "*** Validation OK! <comparison of Indiref>" << endl;
 			return true;
 		}
 		else
 		{
-			cout << "DOES NOT MATCH: " << endl;
+			OUTPUT << "DOES NOT MATCH: " << endl;
 			throw;
 			return false;
 		}
@@ -169,12 +197,12 @@ namespace {
 
 		if (str == expected)
 		{
-			cout << "*** Validation OK! " << expected << endl;
+			OUTPUT << "*** Validation OK! " << expected << endl;
 			return true;
 		}
 		else
 		{
-			cout << "DOES NOT MATCH: " << str << " with " << expected << endl;
+			OUTPUT << "DOES NOT MATCH: " << str << " with " << expected << endl;
 			throw;
 			return false;
 		}
@@ -188,12 +216,12 @@ namespace {
 		
 		if (str == expected)
 		{
-			cout << "*** Validation OK! " << expected << endl;
+			OUTPUT << "*** Validation OK! " << expected << endl;
 			return true;
 		}
 		else
 		{
-			cout << "DOES NOT MATCH: " << str << " with " << expected << endl;
+			OUTPUT << "DOES NOT MATCH: " << str << " with " << expected << endl;
 			throw;
 			return false;
 		}
@@ -218,7 +246,7 @@ s_clone ()
 {
 		CNull null;
 		null.clone (); // object UNALLOCATED
-		cout << "null.getType(): " << null.getType () << endl;
+		OUTPUT << "null.getType(): " << null.getType () << endl;
 }
 
 //====================================================
@@ -468,7 +496,7 @@ s_rel ()
 {
 		CString cstr ("raz dva tri");
 		boost::shared_ptr<IProperty> ip = cstr.clone (); // object UNALLOCATED
-		cout << "unallocating " << endl;
+		OUTPUT << "unallocating " << endl;
 
 }
 
@@ -489,7 +517,7 @@ c_clone ()
 		dict.addProperty ("jano", item1);
 		
 		boost::shared_ptr<IProperty> clone_ = dict.clone (); // 2x object UNALLOCATED
-		cout << dict;
+		OUTPUT << dict;
 }
 
 
@@ -506,7 +534,7 @@ c_smrt ()
 		CString* str = new CString ("val3");	// UNALLOCATED if not freed manually
 		dict.addProperty ("item3", *str);
 
-		cout << dict;
+		OUTPUT << dict;
 		
 		boost::shared_ptr<IProperty> ipp = dict.getPropertyValue ("item3");
 
@@ -530,14 +558,6 @@ mdctrl ()
 
 
 
-#define TEST(a) 	cout << endl << endl << "//=================== " << (a) << endl << endl;
-#define START_TEST 	cout << endl << "Started testing..." << endl;
-#define END_TEST	cout << endl << "Ended testing..." << endl;
-#define OK_TEST		cout << "TEST PASSED..." << endl;
-
-#define MEM_CHECK	BasicMemChecker check;cout  << "OBJECTS UNALLOCATED: " << check.getCount () << endl;
-
-
 
 /**
  *  test main - load settings and launches a main window 
@@ -546,7 +566,7 @@ int main ()
 {
 
 		static example e;
-
+	
 		//
 		// TEST EXAMPLE
 		//
@@ -582,12 +602,11 @@ int main ()
 		//
 		//
 
-		
 		START_TEST;
 
-//		TEST(" test 1.1 -- clone");
-//		s_clone ();
-//		OK_TEST;
+		TEST(" test 1.1 -- clone");
+		s_clone ();
+		OK_TEST;
 		
 		TEST(" test 1.2 -- getString + constructors");
 		s_ctors (e);
@@ -613,17 +632,17 @@ int main ()
 		s_makeXpdf (e);
 		OK_TEST;
 
-//		TEST(" test 1.8 -- _");
-//		s_rel ();
-//		OK_TEST;
+		TEST(" test 1.8 -- _");
+		s_rel ();
+		OK_TEST;
 
-//		TEST(" test 2.1 - clone")
-//		c_clone ();
-//		OK_TEST;
+		TEST(" test 2.1 - clone")
+		c_clone ();
+		OK_TEST;
 
-//		TEST(" test 2.2 - smart ptrs")
-//		c_smrt ();
-//		OK_TEST;
+		TEST(" test 2.2 - smart ptrs")
+		c_smrt ();
+		OK_TEST;
 	
 		TEST(" test 2.3 - mode controller")
 		mdctrl ();
