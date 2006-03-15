@@ -351,7 +351,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 	//
 	IndexComparator cmp (id);
 	typename Value::iterator it = value.begin();
-	for (; it != value.end(); it++)
+	for (; it != value.end(); ++it)
 	{
 			if (cmp (*it))
 					break;
@@ -378,7 +378,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 //
 template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
-CObjectComplex<Tp,Checker>::addProperty (IProperty& newIp)
+CObjectComplex<Tp,Checker>::addProperty (const IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
 	printDbg (0,"addProperty(...)");
@@ -398,6 +398,10 @@ CObjectComplex<Tp,Checker>::addProperty (IProperty& newIp)
 	// notify observers and dispatch change
 	_objectChanged ();
 
+	//
+	// \TODO: Find out the mode
+	//
+
 	return newIpClone;
 }
 
@@ -407,7 +411,7 @@ CObjectComplex<Tp,Checker>::addProperty (IProperty& newIp)
 //
 template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
-CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, IProperty& newIp)
+CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pDict) || (Tp == pStream), INCORRECT_USE_OF_addProperty_FUNCTION);
 	printDbg (0,"addProperty( " << propertyName << ",...)");
@@ -453,7 +457,7 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 	//
 	IndexComparator cmp (id);
 	typename Value::const_iterator it = value.begin();
-	for (; it != value.end(); it++)
+	for (; it != value.end(); ++it)
 	{
 			if (cmp (*it))
 					break;
@@ -469,7 +473,7 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 	// Insert the element we want to add at the end, swap with the element we want to
 	// delete and delete the last one
 	//	
-	typename Value::iterator itemNext = it; itemNext++;
+	typename Value::iterator itemNext = it; ++itemNext;
 	typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
 	std::fill (it, itemNext, newVal);
 
@@ -493,7 +497,7 @@ CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
 	//
 	IndexComparator cmp (id);
 	typename Value::const_iterator it = value.begin();
-	for (; it != value.end(); it++)
+	for (; it != value.end(); ++it)
 	{
 			if (cmp (*it))
 					break;
@@ -506,7 +510,7 @@ CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
 			throw ObjInvalidPositionInComplex ();
 	
 	//
-	// Find out the mode
+	// \TODO Find out the mode
 	//
 	
 	return ip;
@@ -540,7 +544,7 @@ void
 CObjectComplex<Tp,Checker>::_getAllChildObjects (Storage& store) const
 {
 	typename Value::const_iterator it = value.begin ();
-	for	(; it != value.end (); it++)
+	for	(; it != value.end (); ++it)
 	{
 		boost::shared_ptr<IProperty> ip = utils::getIPropertyFromItem (*it);
 		store.push_back (ip);
@@ -565,7 +569,7 @@ CObjectComplex<Tp,Checker>::doClone () const
 	// Loop through all items and clone them as well and finally add them to the new object
 	//
 	typename Value::const_iterator it = value.begin ();
-	for (; it != value.end (); it ++)
+	for (; it != value.end (); ++it)
 	{
 		boost::shared_ptr<IProperty> newIp = utils::getIPropertyFromItem(*it)->clone ();
 		assert (NULL != newIp.get ());

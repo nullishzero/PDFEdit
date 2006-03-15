@@ -249,7 +249,7 @@ namespace {
 					Object obj;
 
 					int len = 10;//array.arrayGetLength ();
-					for (int i = 0; i < len; i++)
+					for (int i = 0; i < len; ++i)
 					{
 							// Get Object at i-th position
 					//		array.arrayGetNF (i, &obj);
@@ -278,7 +278,7 @@ namespace {
 					Object obj;
 
 					int len = 10;//dict.dictGetLength ();
-					for (int i = 0; i < len; i++)
+					for (int i = 0; i < len; ++i)
 					{
 							// Get Object at i-th position
 							string key = dict.dictGetKey (i);
@@ -555,7 +555,7 @@ complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, st
 		// Loop through all items and get each string and append it to the result
 		//
 		PropertyTraitComplex<pArray>::value::const_iterator it = val.begin();
-		for (; it != val.end(); it++) 
+		for (; it != val.end(); ++it) 
 		{
 			string tmp;
 			(*it)->getStringRepresentation (tmp);
@@ -584,7 +584,7 @@ complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, stri
 	// and append it to the result
 	//
 	PropertyTraitComplex<pDict>::value::const_iterator it = val.begin ();
-	for (; it != val.end(); it++) 
+	for (; it != val.end(); ++it) 
 	{
 		str +="\n/" + (*it).first + " ";
 		string tmp;

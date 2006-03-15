@@ -16,15 +16,8 @@ using namespace std;
 using namespace pdfobjects;
 
 
-static	Object obj;
-static	IndiRef ref;
-static	CPdf pdf;
-
-
-
-//=====================================================================================
-// CObjectSimple
-//
+namespace 
+{
 
 //
 // examples
@@ -69,6 +62,9 @@ typedef struct
 //
 namespace {
 
+	//
+	//
+	//
 	template<PropertyType T, typename U>
 	IProperty*
 	createSimpleObj (U val)
@@ -83,6 +79,9 @@ namespace {
 			return new CObjectComplex<T> (val);
 	}
 
+	//
+	//
+	//
 	template<PropertyType T>
 	IProperty*
 	createSimpleObjFromXpdf (CPdf& pdf, Object& obj, IndiRef ref)
@@ -108,7 +107,9 @@ namespace {
 		return os;
 	}
 	
-	
+	//
+	//
+	//
 	ostream& 
 	operator << (ostream& os, Object* o)
 	{
@@ -121,15 +122,54 @@ namespace {
 		return os;
 	}
 
+	//
+	//
+	//
+	template<typename T>
 	bool
-	ip_validate (IProperty& ip, string expected)
+	ip_validate (const T& val, const T& expected)
+	{
+		
+		if (val == expected)
+		{
+			cout << "*** Validation OK! <comparison of values>" << endl;
+			return true;
+		}
+		else
+		{
+			cout << "DOES NOT MATCH: " << endl;
+			throw;
+			return false;
+		}
+	}
+
+	bool
+	ip_validate (const IndiRef& val, const IndiRef& expected)
+	{
+		
+		if ((val.gen == expected.gen) && (val.num == expected.num))
+		{
+			cout << "*** Validation OK! <comparison of Indiref>" << endl;
+			return true;
+		}
+		else
+		{
+			cout << "DOES NOT MATCH: " << endl;
+			throw;
+			return false;
+		}
+	}
+
+	bool
+	ip_validate (Object* o, const string& expected)
 	{
 		string str;
-		ip.getStringRepresentation (str);
-		
+		assert (NULL != o);
+		utils::xpdfObjToString (*o,str);
+
 		if (str == expected)
 		{
-			cout << "Validation OK! " << expected << endl;
+			cout << "*** Validation OK! " << expected << endl;
 			return true;
 		}
 		else
@@ -139,8 +179,36 @@ namespace {
 			return false;
 		}
 	}
-	
+
+	bool
+	ip_validate (const IProperty& ip, const string& expected)
+	{
+		string str;
+		ip.getStringRepresentation (str);
+		
+		if (str == expected)
+		{
+			cout << "*** Validation OK! " << expected << endl;
+			return true;
+		}
+		else
+		{
+			cout << "DOES NOT MATCH: " << str << " with " << expected << endl;
+			throw;
+			return false;
+		}
+	}
+
 } // namespace
+
+
+//=====================================================================================
+// CObjectSimple
+//
+
+
+
+//====================================================
 
 //
 //
@@ -153,12 +221,18 @@ s_clone ()
 		cout << "null.getType(): " << null.getType () << endl;
 }
 
+//====================================================
+
 //
 //
 //
 void 
-s_ctors (example& e)
+s_ctors (const example& e)
 {
+		static Object obj;
+		static CPdf pdf;
+		static IndiRef ref;
+		
 		// bool
 		obj.initBool (e.b.xb);
 		CBool bl (pdf, obj, ref);
@@ -191,126 +265,115 @@ s_ctors (example& e)
 		ip_validate (f,e.ref.expected);
 }
 
-//
-//
-//
-void 
-s_ctors2 (example& e)
-{
-		// bool
-		CBool bl (e.b.b);
-		ip_validate (bl,e.b.expected);
-		
-		// int
-		CInt i (e.i.i);
-		ip_validate (i,e.i.expected);
+//====================================================
 
-		// Real
-		CReal r (e.r.r);
-		ip_validate (r,e.r.expected);
-		
-		// String
-		CString s (*(e.s.s));
-		ip_validate (s,e.s.expected);
-		
-		// Name
-		CName n (*(e.n.n));
-		ip_validate (n,e.n.expected);
-		
-		// Ref
-		IndiRef rf = *(e.ref.ref);
-		CRef f (rf);
-		ip_validate (f, e.ref.expected);
-		
-		// Null
-		CNull null;
-		ip_validate (null, "null");
+namespace
+{
+		template<typename T,typename U>
+		void _s_ctors2 (const U var, const string& expected)
+		{
+				T cl (var);
+				ip_validate (cl,expected);
+		}
+
 }
 
 //
 //
 //
 void 
-s_setString (example& e)
+s_ctors2 (const example& e)
 {
 		// bool
-		CBool bl;
-		bl.setStringRepresentation (e.b.value);
-		ip_validate (bl,e.b.expected);
-		
+		_s_ctors2<CBool> (e.b.b,e.b.expected);
 		// int
-		CInt i;
-		i.setStringRepresentation (e.i.value);
-		ip_validate (i,e.i.expected);
-		
+		_s_ctors2<CInt> (e.i.i,e.i.expected);
 		// Real
-		CReal r;
-		r.setStringRepresentation (e.r.value);
-		ip_validate (r,e.r.expected);
-		
+		_s_ctors2<CReal> (e.r.r,e.r.expected);
 		// String
-		CString s;
-		s.setStringRepresentation (e.s.value);
-		ip_validate (s,e.s.expected);
-		
+		_s_ctors2<CString> (*(e.s.s),e.s.expected);
 		// Name
-		CName n;
-		n.setStringRepresentation (e.n.value);
-		ip_validate (n,e.n.expected);
-		
+		_s_ctors2<CName> (*(e.n.n),e.n.expected);
 		// Ref
-		CRef f;
-		f.setStringRepresentation (e.ref.value);
-		ip_validate (f,e.ref.expected);
+		_s_ctors2<CRef> (*(e.ref.ref),e.ref.expected);
+
+		// Null
+		CNull null;
+		ip_validate (null, "null");
+}
+
+//====================================================
+
+namespace
+{
+		template<typename T,typename U>
+		void _s_setString (const U var, const string& expected)
+		{
+				T cl;
+				cl.setStringRepresentation (var);
+				ip_validate (cl,expected);
+		}
+
+}
+
+//
+//
+//
+void 
+s_setString (const example& e)
+{
+		// bool
+		_s_setString<CBool> (e.b.value,e.b.expected);
+		// int
+		_s_setString<CInt> (e.i.value,e.i.expected);
+		// Real
+		_s_setString<CReal> (e.r.value,e.r.expected);
+		// String
+		_s_setString<CString> (e.s.value,e.s.expected);
+		// Name
+		_s_setString<CName> (e.n.value,e.n.expected);
+		// Ref
+		_s_setString<CRef> (e.ref.value,e.ref.expected);
 
 		// should get compile error
 		// CNull null;
 		// null.setStringRepresentation ("");
 }
 
+
+
+//====================================================
+
+namespace
+{
+		template<typename T,typename U>
+		void _s_writeVal (const U var, const string& expected)
+		{
+				T cl;
+				cl.writeValue (var);
+				ip_validate (cl,expected);
+		}
+
+}
+
 //
 //
 //
 void 
-s_writeVal (example& e)
+s_writeVal (const example& e)
 {
-		string str;
 		// bool
-		CBool bl;
-		bl.writeValue (e.b.b);
-		cout << bl;
-		ip_validate (bl, e.b.expected);
-		
+		_s_writeVal<CBool> (e.b.b,e.b.expected);
 		// int
-		CInt i;
-		i.writeValue (e.i.i);
-		cout << i;
-		ip_validate (i, e.i.expected);
-		
+		_s_writeVal<CInt> (e.i.i,e.i.expected);
 		// Real
-		CReal r;
-		r.writeValue (e.r.r);
-		cout << r;
-		ip_validate (r,e.r.expected);
-		
+		_s_writeVal<CReal> (e.r.r,e.r.expected);
 		// String
-		CString s;
-		s.writeValue (*(e.s.s));
-		cout << s;
-		ip_validate (s, e.s.expected);
-		
+		_s_writeVal<CString> (*(e.s.s),e.s.expected);
 		// Name
-		CName n;
-		n.writeValue (*(e.n.n));
-		cout << n;
-		ip_validate (n, e.n.expected);
-		
+		_s_writeVal<CName> (*(e.n.n),e.n.expected);
 		// Ref
-		CRef f;
-		IndiRef rf = *(e.ref.ref);
-		f.writeValue (rf);
-		cout << f;
-		ip_validate (f, e.ref.expected);
+		_s_writeVal<CRef> (*(e.ref.ref),e.ref.expected);
 
 		// should get compile error
 		// CNull null;
@@ -318,45 +381,36 @@ s_writeVal (example& e)
 
 }
 
-void 
-s_getVal ()
+//====================================================
+
+namespace
 {
-		string str;
+		template<typename T,typename U>
+		void _s_getVal (const U expected)
+		{
+				T cl;
+				cl.writeValue (expected);
+				U val;
+				cl.getPropertyValue (val);
+				ip_validate (val,expected);
+		}
+}
+
+void 
+s_getVal (const example& e)
+{
 		// bool
-		CBool bl;
-		bl.writeValue (false);
-		bool blVal;
-		bl.getPropertyValue (blVal);
-		cout << "Bool: " << blVal << endl;
+		_s_getVal<CBool> (e.b.b);
 		// int
-		CInt i;
-		i.writeValue (-7);
-		int ii;
-		i.getPropertyValue (ii);
-		cout << "Int: " << ii << endl;
+		_s_getVal<CInt> (e.i.i);
 		// Real
-		CReal r;
-		r.writeValue (-0.12321);
-		double db;
-		r.getPropertyValue (db);
-		cout << "Real: " << db << endl;
+		_s_getVal<CReal> (e.r.r);
 		// String
-		CString s;
-		s.writeValue ("1232123");
-		s.getPropertyValue (str);
-		cout << "String: " << str << endl;
+		_s_getVal<CString> (*(e.s.s));
 		// Name
-		CName n;
-		n.writeValue ("namenamename");
-		n.getPropertyValue (str);
-		cout << "Name: " << str << endl;
+		_s_getVal<CName> (*(e.n.n));
 		// Ref
-		CRef f;
-		IndiRef rf = {7,9};
-		f.writeValue (rf);
-		rf.gen = ref.num = 0;
-		f.getPropertyValue (rf);
-		cout << "Ref: " << rf.num << " " << rf.gen << endl;
+		_s_getVal<CRef> (*(e.ref.ref));
 
 		// should get compile error
 		// CNull null;
@@ -364,56 +418,41 @@ s_getVal ()
 
 }
 
+//====================================================
+
+namespace
+{
+		template<typename T,typename U>
+		void _s_makeXpdf (const U var, const string& expected)
+		{
+				Object* obj;
+				T cl;
+				cl.writeValue (var);
+				obj = cl._makeXpdfObject ();
+				ip_validate (obj,expected);
+				utils::freeXpdfObject (obj);
+		}
+
+}
+
 //
 //
 //
 void 
-s_makeXpdf ()
+s_makeXpdf (const example& e)
 {
-		string str;
-		Object* obj;
 		// bool
-		CBool bl;
-		bl.writeValue (false);
-		obj = bl._makeXpdfObject ();
-		cout << obj;
-		utils::freeXpdfObject (obj);
-		
+		_s_makeXpdf<CBool> (e.b.b,e.b.expected);
 		// int
-		CInt i;
-		i.writeValue (-7);
-		obj = i._makeXpdfObject ();
-		cout << obj;
-		utils::freeXpdfObject (obj);
-		
+		_s_makeXpdf<CInt> (e.i.i,e.i.expected);
 		// Real
-		CReal r;
-		r.writeValue (-0.12321);
-		obj = r._makeXpdfObject ();
-		cout << obj;
-		utils::freeXpdfObject (obj);
-		
+		_s_makeXpdf<CReal> (e.r.r,e.r.expected);
 		// String
-		CString s;
-		s.writeValue ("1232123");
-		obj = s._makeXpdfObject ();
-		cout << obj;
-		utils::freeXpdfObject (obj);
-		
+		_s_makeXpdf<CString> (*(e.s.s),e.s.expected);
 		// Name
-		CName n;
-		n.writeValue ("namenamename");
-		n._makeXpdfObject ();
-		cout << obj;
-		utils::freeXpdfObject (obj);
-		
+		_s_makeXpdf<CName> (*(e.n.n),e.n.expected);
 		// Ref
-		CRef f;
-		IndiRef rf = {7,9};
-		f.writeValue (rf);
-		obj = f._makeXpdfObject ();
-		cout << obj;
-		utils::freeXpdfObject (obj);
+		_s_makeXpdf<CRef> (*(e.ref.ref),e.ref.expected);
 
 		// should get compile error
 		// CNull null;
@@ -421,6 +460,8 @@ s_makeXpdf ()
 
 }
 
+
+//====================================================
 
 void
 s_rel ()
@@ -437,6 +478,8 @@ s_rel ()
 //
 
 
+//=====================================================================================
+
 void
 c_clone ()
 {
@@ -449,6 +492,8 @@ c_clone ()
 		cout << dict;
 }
 
+
+//=====================================================================================
 
 void
 c_smrt ()
@@ -468,12 +513,20 @@ c_smrt ()
 		delete str;
 }
 
+
+//=====================================================================================
+
 void
 mdctrl ()
 {
 	CPdf pdf;
 	pdf.getModeController ();
 }
+
+
+//=====================================================================================
+
+} // namespace
 
 
 
@@ -483,6 +536,8 @@ mdctrl ()
 #define OK_TEST		cout << "TEST PASSED..." << endl;
 
 #define MEM_CHECK	BasicMemChecker check;cout  << "OBJECTS UNALLOCATED: " << check.getCount () << endl;
+
+
 
 /**
  *  test main - load settings and launches a main window 
@@ -534,7 +589,7 @@ int main ()
 //		s_clone ();
 //		OK_TEST;
 		
-/*		TEST(" test 1.2 -- getString + constructors");
+		TEST(" test 1.2 -- getString + constructors");
 		s_ctors (e);
 		OK_TEST;
 
@@ -549,14 +604,14 @@ int main ()
 		TEST(" test 1.5 -- writeValue");
 		s_writeVal (e);
 		OK_TEST;
-*/
-//		TEST(" test 1.6 -- getPropertyValue");
-//		s_getVal ();
-//		OK_TEST;
 
-//		TEST(" test 1.7 -- _makeXpdfObject");
-//		s_makeXpdf ();
-//		OK_TEST;
+		TEST(" test 1.6 -- getPropertyValue");
+		s_getVal (e);
+		OK_TEST;
+
+		TEST(" test 1.7 -- _makeXpdfObject");
+		s_makeXpdf (e);
+		OK_TEST;
 
 //		TEST(" test 1.8 -- _");
 //		s_rel ();

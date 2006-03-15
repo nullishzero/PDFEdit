@@ -233,10 +233,11 @@ public:
      * @return Object casted to desired type.
      */
     template<typename T>
-    T* getCObjectPtr () const
+    static
+	boost::shared_ptr<T> getSmartCObjectPtr (const boost::shared_ptr<IProperty>& ptr) 
     {
     	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
-  	  	return dynamic_cast<T*>(this);
+  	  	return boost::static_pointer_cast<T, IProperty> (ptr);
     }
 
   

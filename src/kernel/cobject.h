@@ -47,7 +47,7 @@
  * 					making changes, ptrs --> smart pointer
  *
  * 
- *			TODO:
+ *			\TODO:
  *					testing
  *					better public/protected dividing
  *					StreamReader
@@ -57,8 +57,8 @@
 #ifndef _COBJECT_H
 #define _COBJECT_H
 
+// all basic includes
 #include "static.h"
-
 #include "iproperty.h"
 
 
@@ -177,6 +177,7 @@ public:
 
 	/**
 	 * Clone. Performs deep copy.
+	 * REMARK: pRef DOES NOT copy the object to which it has reference.
 	 *
 	 * @return Deep copy of this object.
 	 */
@@ -332,7 +333,7 @@ template<> struct PropertyTraitComplex<pDict>
  *
  * The specific features are implemented using c++ feature called Incomplete Instantiation.
  * It means that, when it is not used, it is not instatiated, so e.g. CArray won't have
- * addProperty (IProperty& newIp, const std::string& propertyName) method.
+ * addProperty (IProperty& ,string&) method.
  *
  * This class can be both, a final class (no child objects) or a parent to a special class.
  *
@@ -384,6 +385,8 @@ public:
 
 	/**
 	 * Clone. Performs deep copy.
+	 * REMARK: It will not copy pdf indirect objects that are referenced from the pdf object tree 
+	 * starting in this object.
 	 *
 	 * @return Deep copy of this object.
 	 */
@@ -434,19 +437,6 @@ public:
 	 * @return Type of special object.
 	 */
 	virtual SpecialObjectType getSpecialObjType() const {return sNone;};
-
-	
-	/**
-	 * Returns pointer to special object.
-	 *
-	 * @return Pointer to special child object specified by template argument. 
-	 */
-	/*template<typename T>
-	T* getSpecialObjectPtr () const
-	{
-		STATIC_CHECK(sizeof(T)>=sizeof(CObjectComplex<Tp,Checker>),DESTINATION_TYPE_TOO_NARROW); 
-		return dynamic_cast<T*>(this);
-	}*/
 
 	
 	/**
@@ -534,9 +524,9 @@ public:
 	 *
 	 * @return Pointer to the new property.
 	 */
-	boost::shared_ptr<IProperty> addProperty (IProperty& newIp);
-	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, IProperty& newIp);
-	
+	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
+	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, const IProperty& newIp);
+
 	
 	/**
 	 * Remove property from array/dict/stream. If the xpdf Object to be removed is 
@@ -715,7 +705,9 @@ private:
 /**
  * This class is used as functor to an equal algorithm to std::find_if algorithm.
  * Finds out an item specified by its position. find_if CANNOT be used, because it 
- * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor 
+ * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor and
+ * this functor RELIES on these requirements.
+ * 
  *
  * More effective algorithms could be used but this approach is 
  * used to get more generic.
@@ -753,7 +745,8 @@ public:
 /**
  * This class is used as functor to an equal algorithm to std::find_if algorithm.
  * Finds out an item specified by its position. find_if CANNOT be used, because it 
- * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor 
+ * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor and
+ * this functor RELIES on these requirements.
  *
  * Perhaps more effective algorithms could be used but this approach is 
  * used to get more generic.
@@ -857,12 +850,11 @@ void
 getAllNames (T& container, const typename PropertyTraitComplex<pDict>::value& store)
 {
 	for (typename PropertyTraitComplex<pDict>::value::const_iterator it = store.begin();
-		it != store.end(); it++)
+		it != store.end(); ++it)
 	{
 			container.push_back ((*it).first);
 	}
 }
-template<typename T, typename U> void getAllNames (T&, U&) {}
 
 
 /**
@@ -906,7 +898,7 @@ Object* xpdfObjFromString (const std::string& str);
  * @patam ip	IProperty that will be inserted;
  */
 inline PropertyTraitComplex<pArray>::value::value_type 
-constructItemFromIProperty (const PropertyTraitComplex<pArray>::value::value_type,
+constructItemFromIProperty (const PropertyTraitComplex<pArray>::value::value_type&,
 							PropertyTraitComplex<pArray>::value::value_type ip) {return ip;}
 
 inline PropertyTraitComplex<pDict>::value::value_type 
