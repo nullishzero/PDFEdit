@@ -202,8 +202,8 @@ public:
 	
 	
 	/**
-	 * Make object from string.
-	 * <exception cref="..." />
+	 * Convert string to an object value.
+	 * <exception cref="ObjBadValueE" /> Thrown when we can't parse the string correctly.
 	 *
 	 * @param str0 Object in a text form.
 	 */
@@ -215,8 +215,6 @@ public:
 	 * on CObject type.
 	 * 
 	 * We can define the best to represent an pdf object.
-	 *
- 	 * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
 	 *
 	 * @param val	Value that will be set.
 	 */
@@ -254,6 +252,9 @@ public:
 	/**
 	 * Make xpdf Object from this object. This function allocates xpdf object, caller has to free it.
 	 *
+	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
+	 * object correctly.
+	 * 
 	 * @return Xpdf object representing actual value of this simple object.
 	 */
 	virtual Object*	_makeXpdfObject () const;
@@ -634,8 +635,14 @@ class BasicMemChecker
 {
 public:
 	typedef std::list<const IProperty*> _IPsList;
+
 private:
-	static _IPsList ips;
+	_IPsList&
+	getList ()
+	{
+		static _IPsList ips;
+		return ips;
+	};
 
 public:
 	//
@@ -648,9 +655,9 @@ public:
 	{
 		_printHeader ();
 		std::cout << "IProperty [0x"<< (unsigned)ip << "] created.";
-		ips.push_back (ip);
-		
 		_printFooter ();
+		
+		getList().push_back (ip);
 	};
 
 	//
@@ -661,10 +668,10 @@ public:
 		_printHeader ();
 		std::cout << "IProperty [0x"<< (unsigned)ip << "] deleted";
 
-		_IPsList::iterator it = find (ips.begin(), ips.end(), ip);
-		if (it != ips.end())
+		_IPsList::iterator it = find (getList().begin(), getList().end(), ip);
+		if (it != getList().end())
 		{
-				ips.erase (it);
+				getList().erase (it);
 		}
 		else
 		{
@@ -677,7 +684,7 @@ public:
 	//
 	// Get living IProperty count
 	//
-	size_t getCount () {return ips.size (); };
+	size_t getCount () {return getList().size (); };
 
 private:
 	void _printHeader ()
