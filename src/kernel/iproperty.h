@@ -305,7 +305,8 @@ protected:
 		  (*it)->notify (this);
   }
 
-protected:
+
+public:
 
   /**
    * Create xpdf object.
