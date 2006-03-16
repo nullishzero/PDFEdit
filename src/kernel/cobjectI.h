@@ -132,7 +132,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 
 	//
-	// Check if we are in a pdf.
+	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
 	//
 	CPdf* pdf = IProperty::getPdf ();
 	if (NULL == pdf)
@@ -146,7 +146,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 	{
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,obj);
+		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
 		utils::freeXpdfObject (obj);
 
 	}else
@@ -154,6 +154,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 		IProperty* ip = pdf->getExistingProperty (IProperty::getIndiRef());
 		assert (NULL != ip);
 		assert (IProperty::getIndiRef().num == ip->getIndiRef().num);
+		assert (IProperty::getIndiRef().gen == ip->getIndiRef().gen);
 		ip->dispatchChange ();
 	}
 }

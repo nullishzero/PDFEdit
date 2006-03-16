@@ -33,12 +33,6 @@ namespace
 		}
 }
 
-//
-// Memory checkers
-//
-BasicMemChecker::_IPsList BasicMemChecker::ips;
-
-
 		
 //
 // General object functions
@@ -787,10 +781,13 @@ xpdfObjFromString (const std::string& str)
 	parser->getObj (obj);
 	
 	string null ("null");
-	
-	if ( !equal(str.begin (), str.end (), null.begin (), nocase_compare) 
-					&& (obj->isNull()))
+
+	//
+	// If xpdf returned objNull and we did not give him null, an error occured
+	//
+	if ( (obj->isNull()) && !equal(str.begin (), str.end (), null.begin (), nocase_compare) )
 	{
+		delete obj;
 		throw ObjBadValueE ();
 	}
 
