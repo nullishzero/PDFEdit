@@ -18,9 +18,8 @@
 
 
 // =====================================================================================
-
-namespace pdfobjects
-{
+namespace pdfobjects{
+// =====================================================================================
 
 //
 // Case insensitive comparator
@@ -33,11 +32,13 @@ namespace
 		}
 }
 
-		
+
 //
 // General object functions
 //
+// =====================================================================================
 namespace utils {
+// =====================================================================================
 
 using namespace std;
 
@@ -47,7 +48,42 @@ using namespace std;
 void xpdfObjToString (Object& obj, string& str);
 
 
+//
+// String constants used when converting objects to strings
+//
+
+// pNull
+const string CNULL_NULL = "null";
+	
+// SimpleObjects
+const string CBOOL_TRUE  = 	"true";
+const string CBOOL_FALSE = 	"false";
+
+const string CNAME_PREFIX 	= "/";
+
+const string CSTRING_PREFIX = "(";
+const string CSTRING_SUFFIX = ")";
+
+const string CREF_MIDDLE 	= " ";
+const string CREF_SUFFIX 	= " R";
+
+// ComplexObjects
+const string CARRAY_PREFIX 	= "[";
+const string CARRAY_MIDDLE 	= " ";
+const string CARRAY_SUFFIX 	= " ]";
+
+const string CDICT_PREFIX 	= "<<";
+const string CDICT_MIDDLE 	= "\n/";
+const string CDICT_BETWEEN_NAMES = " ";
+const string CDICT_SUFFIX 	= "\n>>";
+
+const string CSTREAM_STREAM = "<stream>";
+
+
+
+// =====================================================================================
 namespace {
+// =====================================================================================
 
 		/**
 		 * Creates CObject from xpdf object.
@@ -327,7 +363,7 @@ namespace {
 			switch (obj.getType()) 
 			{
 			case objBool:
-				oss << ((obj.getBool()) ? "true" : "false");
+				oss << ((obj.getBool()) ? CBOOL_TRUE : CBOOL_FALSE);
 				break;
 
 			case objInt:
@@ -339,19 +375,19 @@ namespace {
 				break;
 
 			case objString:
-				oss << "("  << obj.getString()->getCString() << ")";
+				oss << CSTRING_PREFIX  << obj.getString()->getCString() << CSTRING_SUFFIX;
 				break;
 
 			case objName:
-				oss << "/" << obj.getName();
+				oss << CNAME_PREFIX << obj.getName();
 				break;
 
 			case objNull:
-				oss << "null";
+				oss << CNULL_NULL;
 				break;
 
 			case objRef:
-				oss << obj.getRefNum() << " " << obj.getRefGen() << " R";
+				oss << obj.getRefNum() << CREF_MIDDLE << obj.getRefGen() << CREF_SUFFIX;
 				break;
 
 			default:
@@ -382,36 +418,35 @@ namespace {
 			{
 			
 			case objArray:
-				oss << "[";
+				oss << CARRAY_PREFIX;
 				for (i = 0; i < obj.arrayGetLength(); ++i) 
 				{
-					if (i > 0)
-						oss << " ";
+					oss << CARRAY_MIDDLE;
 					obj.arrayGetNF (i,&o);
 					string tmp;
 					xpdfObjToString (o,tmp);
 					oss << tmp;
-				o.free();
+					o.free();
 				}
-				oss << "]";
+				oss << CARRAY_SUFFIX;
 				break;
 
 			case objDict:
-				oss << "<<";
+				oss << CDICT_PREFIX;
 				for (i = 0; i <obj.dictGetLength(); ++i) 
 				{
-					oss << std::endl << " /" << obj.dictGetKey(i) << " ";
+					oss << CDICT_MIDDLE << obj.dictGetKey(i) << CDICT_BETWEEN_NAMES;
 					obj.dictGetValNF(i, &o);
 					string tmp;
 					xpdfObjToString (o,tmp);
 					oss << tmp;
 					o.free();
 				}
-				oss << std::endl << ">>";
+				oss << CDICT_SUFFIX;
 				break;
 
 			case objStream:
-				oss << "<stream>";
+				oss << CSTREAM_STREAM;
 				break;
 
 			default:
@@ -423,7 +458,9 @@ namespace {
 			str = oss.str ();
 		}
 
+// =====================================================================================
 } // anonymous namespace
+// =====================================================================================
 
 
 //
@@ -452,7 +489,7 @@ template <>
 void
 simpleValueToString<pBool> (bool val, string& str)
 {
-	str = ((val) ? "true" : "false");
+	str = ((val) ? CBOOL_TRUE : CBOOL_FALSE);
 }
 template void simpleValueToString<pBool>	(bool val, string& str);
 //
@@ -491,11 +528,11 @@ simpleValueToString (const std::string& val, std::string& str)
 	switch (Tp)
 	{
 			case pString:
-				str = "(" + val + ")";
+				str = CSTRING_PREFIX + val + CSTRING_SUFFIX;
 				break;
 
 			case pName:
-				str = "/" + val;
+				str = CNAME_PREFIX + val;
 				break;
 
 			default:
@@ -512,7 +549,7 @@ template<>
 void
 simpleValueToString<pNull> (const NullType&, string& str)
 {
-	str = "null";
+	str = CNULL_NULL;
 }
 template void simpleValueToString<pNull> (const NullType&, string& str);
 //
@@ -523,7 +560,7 @@ void
 simpleValueToString<pRef> (const IndiRef& ref, string& str)
 {
 	ostringstream oss;
-	oss << ref.num << " " << ref.gen << " R";
+	oss << ref.num << CREF_MIDDLE << ref.gen << CREF_SUFFIX;
 	// convert oss to string
 	str = oss.str ();
 }
@@ -543,7 +580,7 @@ complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, st
 		ostringstream oss;
 
 		// start tag
-		str = "[ ";
+		str = CARRAY_PREFIX;
 		
 		//
 		// Loop through all items and get each string and append it to the result
@@ -551,14 +588,14 @@ complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, st
 		PropertyTraitComplex<pArray>::value::const_iterator it = val.begin();
 		for (; it != val.end(); ++it) 
 		{
+			str += CARRAY_MIDDLE;
 			string tmp;
 			(*it)->getStringRepresentation (tmp);
 			str += tmp;
-			str += " ";
 		}
 		
 		// end tag
-		str += "]";
+		str += CARRAY_SUFFIX;
 }
 template void complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str);
 //
@@ -571,7 +608,7 @@ complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, stri
 	printDbg (0,"complexValueToString<pDict>()");
 
 	// start tag
-	str = "<<";
+	str = CDICT_PREFIX;
 
 	//
 	// Loop through all items and get each items name + string representation
@@ -580,14 +617,14 @@ complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, stri
 	PropertyTraitComplex<pDict>::value::const_iterator it = val.begin ();
 	for (; it != val.end(); ++it) 
 	{
-		str +="\n/" + (*it).first + " ";
+		str += CDICT_MIDDLE + (*it).first + CDICT_BETWEEN_NAMES;
 		string tmp;
 		(*it).second->getStringRepresentation (tmp);
 		str += tmp;
 	}
 
 	// end tag
-	str += "\n>>";
+	str += CDICT_SUFFIX;
 }
 template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str);
 //
@@ -598,7 +635,7 @@ void
 complexValueToString<pStream> (const PropertyTraitComplex<pStream>::value& /*val*/, string& str)
 {
 	printDbg (0,"complexValueToString<pStream>()");
-	str = "<stream>";
+	str = CSTREAM_STREAM;
 }
 template void complexValueToString<pStream> (const PropertyTraitComplex<pStream>::value& val, string& str);
 
@@ -764,13 +801,17 @@ template void complexValueFromXpdfObj<pStream, PropertyTraitComplex<pStream>::va
 Object*
 xpdfObjFromString (const std::string& str)
 {
+
+	printDbg (0,"xpdfObjFromString from " << str);
+	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.
-	// Lexer SHOULD delete MemStream
+	// Lexer SHOULD delete MemStream.
 	//
+	auto_ptr<Object> dct (new Object());
 	auto_ptr<Parser> parser	(new Parser (NULL, 
 						       		      new Lexer (NULL, 
-												  	 new MemStream (strdup(str.c_str()), 0, str.length(), NULL)
+												  	 new MemStream (strdup(str.c_str()), 0, str.length(), dct.get())
 												     )
 										  ) 
 							);
@@ -794,5 +835,8 @@ xpdfObjFromString (const std::string& str)
 	return obj;
 }
 
+// =====================================================================================
 } /* namespace utils */
+// =====================================================================================
 } /* namespace pdfobjects */
+// =====================================================================================

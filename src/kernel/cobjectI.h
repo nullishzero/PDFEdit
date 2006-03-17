@@ -315,7 +315,6 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 	
 	std::string rpr;
 	getStringRepresentation (rpr);
-	printDbg (0,"\tfrom" << rpr);
 
 	return utils::xpdfObjFromString (rpr);
 }
@@ -327,13 +326,14 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 // It seems that virtual functions are always instantiated
 //
 template<PropertyType Tp, typename Checker>
+template<typename Container>
 void
-CObjectComplex<Tp,Checker>::getAllPropertyNames (std::list<std::string>& container) const
+CObjectComplex<Tp,Checker>::getAllPropertyNames (Container& container) const
 {
 	STATIC_CHECK ((Tp != pArray), INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
 	printDbg (0, "getAllPropertyNames()");
 
-	utils::getAllNames (container,value);
+	utils::getAllNames (container, value);
 }
 
 
@@ -457,7 +457,7 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 	// BEWARE using std::find_if with stateful functors !!!!!
 	//
 	IndexComparator cmp (id);
-	typename Value::const_iterator it = value.begin();
+	typename Value::iterator it = value.begin();
 	for (; it != value.end(); ++it)
 	{
 			if (cmp (*it))
@@ -474,9 +474,8 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 	// Insert the element we want to add at the end, swap with the element we want to
 	// delete and delete the last one
 	//	
-	typename Value::iterator itemNext = it; ++itemNext;
 	typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
-	std::fill (it, itemNext, newVal);
+	std::fill_n (it, 1, newVal);
 
 	return newIpClone;
 

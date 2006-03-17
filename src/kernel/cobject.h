@@ -48,6 +48,7 @@
  *
  * 
  *			\TODO:
+ *					uncomment Readers
  *					testing
  *					better public/protected dividing
  *					StreamReader
@@ -249,6 +250,7 @@ public:
 	// Helper functions
 	//
 public:	
+
 	/**
 	 * Make xpdf Object from this object. This function allocates xpdf object, caller has to free it.
 	 *
@@ -466,7 +468,11 @@ public:
 	 * 
 	 * @return Property count.
 	 */
-	size_t getPropertyCount () const {return value.size();};
+	size_t getPropertyCount () const 
+	{
+		printDbg (0, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
+		return value.size();
+	};
  
 
 	/**
@@ -476,7 +482,8 @@ public:
      	 *
 	 * @param container Container of string objects. STL vector,list,deque.
 	 */
-	void getAllPropertyNames (std::list<std::string>& container) const;
+	template<typename Container>
+	void getAllPropertyNames (Container& container) const;
 
 
 	/**
@@ -532,7 +539,7 @@ public:
 	/**
 	 * Remove property from array/dict/stream. If the xpdf Object to be removed is 
 	 * associated with an IProperty call release(). Otherwise just free the memory
-	 * occupied by the xpdf object.
+	 * occupied by the xpdf object. Properties start with index 0.
 	 * Finally indicate that this object has changed.
 	 *
 	 * <exception cref="ObjInvalidPositionInComplex "/> When the id does not correctly identify an item.
@@ -546,7 +553,8 @@ public:
 	//
 	// Helper functions
 	//
-protected:
+public:
+
 	/**
 	 * Make xpdf Object from this object.
 	 *
@@ -743,7 +751,7 @@ public:
 			ip = _ip;
 			return true;
 		}
-		pos--;
+		--pos;
 		return false;
 	}
 };
