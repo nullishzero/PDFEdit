@@ -49,6 +49,7 @@
  * 
  *			\TODO:
  *					uncomment Readers
+ *					check if format of REAL is the same as in the specification
  *					testing
  *					better public/protected dividing
  *					StreamReader
@@ -873,11 +874,21 @@ getAllNames (T& container, const typename PropertyTraitComplex<pDict>::value& st
 
 
 /**
+ * Create xpdf object from string.
+ *
+ * @param str String that should represent an xpdf object.
+ *
+ * @return Xpdf object whose string representation is in str.
+ */
+Object* xpdfObjFromString (const std::string& str);
+
+
+/**
  * Parses string to get simple values like int, name, bool etc.
  * 
  * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
  * 
- * @param strO	String to be parsed.
+ * @param str	String to be parsed.
  * @param val	Desired value.
  */
 void simpleValueFromString (const std::string& str, bool& val);
@@ -885,6 +896,7 @@ void simpleValueFromString (const std::string& str, int& val);
 void simpleValueFromString (const std::string& str, double& val);
 void simpleValueFromString (const std::string& str, std::string& val);
 void simpleValueFromString (const std::string& str, IndiRef& val);
+
 
 /**
  * Free an object. We assume that all child objects (if any)
@@ -895,15 +907,6 @@ void simpleValueFromString (const std::string& str, IndiRef& val);
  * @param obj	Object to be freed.
  */
 void freeXpdfObject (Object* obj);
-
-/**
- * Create xpdf object from string.
- *
- * @param str String that should represent an xpdf object.
- *
- * @return Xpdf object whose string representation is in str.
- */
-Object* xpdfObjFromString (const std::string& str);
 
 
 /**
