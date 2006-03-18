@@ -100,6 +100,9 @@ typedef struct IndiRef
  * When accessing complex properties, we have to know the type with which type we
  * are working. According to the type, we can cast this object to CObjectComplex<type> 
  * to get more functionality.
+ *
+ * REMARK: The connection to CPdf is stored in CPdf* and not smart pointer. This has a good reason
+ * namely cyclic references of smart pointers.
  */
 class IProperty
 {
