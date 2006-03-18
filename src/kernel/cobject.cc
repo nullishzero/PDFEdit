@@ -269,30 +269,34 @@ namespace {
 		template<typename Value, typename Storage>
 		struct xpdfArrayReader
 		{public:
-				void operator() (IProperty& ip, const Value /*array*/, Storage val)
+				void operator() (IProperty& ip, const Value array, Storage val)
 				{
+					assert (objArray == array.getType());
+					assert (0 <= array.arrayGetLength ());
+					printDbg (0,"xpdfArrayReader\tobjType = " << array.getTypeName() );
+					
+					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
-					//assert (objArray == array.getType());
-					//assert (0 <= array.arrayGetLength ());
-					//printDbg (0,"xpdfArrayReader\tobjType = " << array.getTypeName() );
 					
 					Object obj;
 
-					int len = 10;//array.arrayGetLength ();
+					int len = array.arrayGetLength ();
 					for (int i = 0; i < len; ++i)
 					{
 							// Get Object at i-th position
-					//		array.arrayGetNF (i, &obj);
+							array.arrayGetNF (i, &obj);
 							// Create CObject from it
-							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef()));
-							assert (NULL != cobj.get ());
-							if (NULL == cobj.get ())
-									throw ObjInvalidObject ();
+							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
+							if (cobj)
+							{
+								// Store it in the storage
+								val.push_back (cobj);
+								
+							}else
+								throw ObjInvalidObject ();
 
-							// Store it in the storage
-							val.push_back (cobj);
-					}
-				}
+					}	// for
+				}	// void operator
 		};
 
 		template<typename Value, typename Storage>
@@ -300,27 +304,30 @@ namespace {
 		{public:
 				void operator() (IProperty& ip, const Value dict, Storage val)
 				{
+					assert (objDict == dict.getType());
+					assert (0 <= dict.dictGetLength ());
+					printDbg (0,"xpdfDictReader\tobjType = " << dict.getTypeName() );
+					
+					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
-					//assert (objDict == dict.getType());
-					//assert (0 <= dict.dictGetLength ());
-					//printDbg (0,"xpdfDictReader\tobjType = " << dict.getTypeName() );
 					
 					Object obj;
 
-					int len = 10;//dict.dictGetLength ();
+					int len = dict.dictGetLength ();
 					for (int i = 0; i < len; ++i)
 					{
 							// Get Object at i-th position
 							string key = dict.dictGetKey (i);
-					//		dict.dictGetVal (i,&obj);
+							dict.dictGetVal (i,&obj);
 							// Create CObject from it
-							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*(ip.getPdf ()), obj, ip.getIndiRef()));
-							assert (NULL != cobj.get ());
-							if (NULL == cobj.get ())
-									throw ObjInvalidObject ();
+							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
+							if (cobj)
+							{
+								// Store it in the storage
+								val.push_back (make_pair(key,cobj));
 
-							// Store it in the storage
-							val.push_back (make_pair(key,cobj));
+							}else
+								throw ObjInvalidObject ();
 					}
 				}
 		};
@@ -661,67 +668,6 @@ freeXpdfObject (Object* obj)
 }
 
 
-
-//
-//
-//
-void
-simpleValueFromString (const std::string& str, bool& val)
-{
-	const string static __true = "true";
-	const string static __false = "false";
-	
-	if ( equal (str.begin(), str.end(), __true.begin(), nocase_compare))
-		val = true;
-	else if ( equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
-		val = false;
-	else
-		throw ObjBadValueE ();
-}
-
-void
-simpleValueFromString (const std::string& str, int& val)
-{
-	std::stringstream ss (str);
-	ss.exceptions (stringstream::failbit | stringstream::badbit);
-	try {
-		ss >> val;
-	}catch (stringstream::failure& e) 
-	{
-		throw ObjBadValueE ();
-  	}					
-}
-
-void
-simpleValueFromString (const std::string& str, double& val)
-{
-	double d = 42.11232;	// anything except 0.0
-	if (0.0 != (d=atof (str.c_str())))
-		val = d;
-	else
-		throw ObjBadValueE ();
-}
-
-void
-simpleValueFromString (const std::string& str, std::string& val)
-{
-	val = str;
-}
-
-void
-simpleValueFromString (const std::string& str, IndiRef& val)
-{
-	std::stringstream ss (str);
-	ss.exceptions (stringstream::failbit | stringstream::badbit);
-	try {
-		ss >> val.num;
-		ss >> val.gen;
-	}catch (stringstream::failure& e) 
-	{
-		throw ObjBadValueE ();
-	}
-}
-
 //
 //
 //
@@ -796,6 +742,68 @@ template void complexValueFromXpdfObj<pStream, PropertyTraitComplex<pStream>::va
 		 PropertyTraitComplex<pStream>::value& val);
 
 
+//
+//
+//
+void
+simpleValueFromString (const std::string& str, bool& val)
+{
+	const string static __true = "true";
+	const string static __false = "false";
+	
+	if ( equal (str.begin(), str.end(), __true.begin(), nocase_compare))
+		val = true;
+	else if ( equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
+		val = false;
+	else
+		throw ObjBadValueE ();
+}
+
+void
+simpleValueFromString (const std::string& str, int& val)
+{
+	std::stringstream ss (str);
+	ss.exceptions (stringstream::failbit | stringstream::badbit);
+	try {
+		ss >> val;
+	}catch (stringstream::failure& e) 
+	{
+		throw ObjBadValueE ();
+  	}					
+}
+
+void
+simpleValueFromString (const std::string& str, double& val)
+{
+	auto_ptr<Object> ptrObj (xpdfObjFromString (str));
+	
+	assert (objReal == ptrObj->getType ());
+	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
+		throw ObjBadValueE ();
+					
+	ProcessorTraitSimple<Object&, double&, pReal>::xpdfReadProcessor rp;
+	rp (*ptrObj, val);
+}
+
+void
+simpleValueFromString (const std::string& str, std::string& val)
+{
+	val = str;
+}
+
+void
+simpleValueFromString (const std::string& str, IndiRef& val)
+{
+	std::stringstream ss (str);
+	ss.exceptions (stringstream::failbit | stringstream::badbit);
+	try {
+		ss >> val.num;
+		ss >> val.gen;
+	}catch (stringstream::failure& e) 
+	{
+		throw ObjBadValueE ();
+	}
+}
 
 
 Object*
@@ -813,7 +821,7 @@ xpdfObjFromString (const std::string& str)
 						       		      new Lexer (NULL, 
 												  	 new MemStream (strdup(str.c_str()), 0, str.length(), dct.get())
 												     )
-										  ) 
+										) 
 							);
 	//
 	// Get xpdf obj from the stream
@@ -821,12 +829,12 @@ xpdfObjFromString (const std::string& str)
 	Object* obj = new Object;
 	parser->getObj (obj);
 	
-	string null ("null");
+	const string null ("null");
 
 	//
 	// If xpdf returned objNull and we did not give him null, an error occured
 	//
-	if ( (obj->isNull()) && !equal(str.begin (), str.end (), null.begin (), nocase_compare) )
+	if ( (obj->isNull()) && !equal(str.begin(), str.end(), null.begin(), nocase_compare) )
 	{
 		delete obj;
 		throw ObjBadValueE ();
