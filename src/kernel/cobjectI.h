@@ -21,6 +21,8 @@
 #include "cobject.h"
 #include "cpdf.h"
 
+// CStream filters
+#include "filters.h"
 
 
 
@@ -34,7 +36,7 @@ namespace pdfobjects
 		
 //=====================================================================================
 // CObjectSimple
-//
+//=====================================================================================
 
 
 //
@@ -44,7 +46,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
 {
 	Checker check; check.objectCreated (this);
-	assert (NULL == p.getExistingProperty (rf));
+	//assert (NULL == p.getExistingProperty (rf));
 	printDbg (0,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Set object's value
@@ -136,13 +138,15 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 	//
 	CPdf* pdf = IProperty::getPdf ();
 	if (NULL == pdf)
-			return;
+		return;
 
 	//
 	// If this object is indirect infrom xref about the change
 	// else find the closest indirect object and call dispatchChange on that object
 	// 
-	if (_isIndirect())
+	// objHasParent is the same as if it is an indirect object or not
+	//
+	if (utils::objHasParent (*this))
 	{
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
@@ -170,24 +174,6 @@ CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
 }
 
-//
-// Helper function
-//
-template<PropertyType Tp, typename Checker>
-bool
-CObjectSimple<Tp,Checker>::_isIndirect () const
-{
-	CPdf* pdf = IProperty::getPdf ();
-	assert (NULL != pdf);
-	if (NULL == pdf)
-		throw ObjInvalidOperation ();
-
-	if (this == pdf->getExistingProperty (IProperty::getIndiRef ()))
-		return true;
-	else
-		return false;
-}
-
 
 //
 // Clone method
@@ -210,14 +196,14 @@ CObjectSimple<Tp,Checker>::doClone () const
 template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::~CObjectSimple ()
 {
-	Checker check; check.objectDeleted(this);
+	Checker check; check.objectDeleted (this);
 	printDbg (0,"~CObjectSimple()");
 }
 
 
 //=====================================================================================
 // CObjectComplex
-//
+//=====================================================================================
 
 
 //
@@ -267,7 +253,7 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 	printDbg (0,"dispatchChange() [" << (int)this << "]" );
 
 	//
-	// Check if we are in a pdf
+	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
 	//
 	CPdf* pdf = IProperty::getPdf ();
 	if (NULL == pdf)
@@ -277,7 +263,9 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 	// If this object is indirect infrom xref about the change
 	// else find the closest indirect object and call dispatchChange on that object
 	// 
-	if (_isIndirect())
+	// objHasParent is the same as if it is an indirect object or not
+	//
+	if (utils::objHasParent (*this))
 	{
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
@@ -299,7 +287,7 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::~CObjectComplex ()
 {
-	Checker check; check.objectDeleted(this);
+	Checker check; check.objectDeleted (this);
 	printDbg (0,"~CObjectSimple()");
 }
 
@@ -362,13 +350,16 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 		throw ObjInvalidPositionInComplex ();
 	
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
-	assert (NULL != ip.get());
+	if (ip)
+	{
+		// Delete that item
+		value.erase (it);
 	
-	// Delete that item
-	value.erase (it);
-	
-	// Indicate that this object has changed
-	_objectChanged ();
+		// Indicate that this object has changed
+		_objectChanged ();
+		
+	}else
+		throw ObjInvalidObject ();
 
 	// deallocates ip, also *ip should be deallocated
 }
@@ -386,15 +377,19 @@ CObjectComplex<Tp,Checker>::addProperty (const IProperty& newIp)
 
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
-	assert (NULL != newIpClone.get());
 	
-	// Add it
-	value.push_back (newIpClone);
+	if (newIpClone)
+	{
+		// Add it
+		value.push_back (newIpClone);
 	
-	// Inherit id and gen number
-	newIpClone->setIndiRef (IProperty::getIndiRef());
-	// Inherit pdf
-	newIpClone->setPdf (IProperty::getPdf());
+		// Inherit id and gen number
+		newIpClone->setIndiRef (IProperty::getIndiRef());
+		// Inherit pdf
+		newIpClone->setPdf (IProperty::getPdf());
+		
+	}else
+		throw ObjInvalidObject ();
 	
 	// notify observers and dispatch change
 	_objectChanged ();
@@ -414,20 +409,23 @@ template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const IProperty& newIp)
 {
-	STATIC_CHECK ((Tp == pDict) || (Tp == pStream), INCORRECT_USE_OF_addProperty_FUNCTION);
+	STATIC_CHECK ((Tp == pDict), INCORRECT_USE_OF_addProperty_FUNCTION);
 	printDbg (0,"addProperty( " << propertyName << ",...)");
 
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
-	assert (NULL != newIpClone.get());
-
-	// Store it
-	value.push_back (std::make_pair (propertyName,newIpClone));
+	if (newIpClone)
+	{
+		// Store it
+		value.push_back (std::make_pair (propertyName,newIpClone));
 	
-	// Inherit id and gen number
-	newIpClone->setIndiRef (IProperty::getIndiRef());
-	// Inherit pdf
-	newIpClone->setPdf (IProperty::getPdf());
+		// Inherit id and gen number
+		newIpClone->setIndiRef (IProperty::getIndiRef());
+		// Inherit pdf
+		newIpClone->setPdf (IProperty::getPdf());
+		
+	}else
+		throw ObjInvalidObject ();
 
 	// notify observers and dispatch change
 	_objectChanged ();
@@ -449,11 +447,8 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 {
 	printDbg (0,"setPropertyValue(" << id << ")");
 	
-	// Clone the added property
-	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
-	assert (NULL != newIpClone.get());
-
 	//
+	// Find the item we want
 	// BEWARE using std::find_if with stateful functors !!!!!
 	//
 	IndexComparator cmp (id);
@@ -468,17 +463,23 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 	if (it == value.end())
 			throw ObjInvalidPositionInComplex ();
 
-	boost::shared_ptr<IProperty> oldIp = cmp.getIProperty ();
-	assert (NULL != oldIp.get());
-	//
-	// Insert the element we want to add at the end, swap with the element we want to
-	// delete and delete the last one
-	//	
-	typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
-	std::fill_n (it, 1, newVal);
+	// Clone the added property
+	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
+	
+	if (newIpClone)
+	{
+		//
+		// Insert the element we want to add at the end, swap with the element we want to
+		// delete and delete the last one
+		//	
+		typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
+		std::fill_n (it, 1, newVal);
+		
+	}else
+		throw ObjInvalidObject ();
+		
 
 	return newIpClone;
-
 	// newVal holds pointer to the object, that should be released, so now it should be deleted
 }
 
@@ -516,24 +517,6 @@ CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
 	return ip;
 }
 
-
-//
-// Helper function
-//
-template<PropertyType Tp, typename Checker>
-bool
-CObjectComplex<Tp,Checker>::_isIndirect () const
-{
-	CPdf* pdf = IProperty::getPdf ();
-	assert (NULL != pdf);
-	if (NULL == pdf)
-		throw ObjInvalidOperation ();
-
-	if (this == pdf->getExistingProperty (IProperty::getIndiRef ()))
-		return true;
-	else
-		return false;
-}
 
 //
 //
@@ -580,6 +563,131 @@ CObjectComplex<Tp,Checker>::doClone () const
 	return clone_;
 }
 
+//=====================================================================================
+// CObjectStream
+//=====================================================================================
+
+
+//
+//
+//
+template<typename Checker>
+CObjectStream<Checker>::CObjectStream (CPdf& /*p*/, Object& /*o*/, const IndiRef& /*rf*/)
+{
+	//Checker check; check.objectCreated (this);
+	printDbg (0,"CObjectComplex <pStream> >() constructor.");
+}
+
+//
+//
+//
+template<typename Checker>
+CObjectStream<Checker>::CObjectStream ()
+{
+	Checker check; check.objectCreated (this);
+	printDbg (0,"CObjectComplex <pStream> >() constructor.");
+
+}
+
+
+//
+//
+//
+template<typename Checker>
+IProperty*
+CObjectStream<Checker>::doClone () const
+{
+	return NULL;
+}
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::getStringRepresentation (std::string& str) const
+{
+	str = "<what shall i return?>";
+}
+	
+
+//
+//
+//
+template<typename Checker>
+void 
+CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
+{
+	// just an example
+	
+	// find the type
+	// find the params
+	// create appropriate filter and endcode data	
+	boost::scoped_ptr<filters::CFilter> filter = new filters::NoFilter ();
+	//save it
+	dispatchChange ();
+}
+
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::dispatchChange () const
+{
+	printDbg (0,"dispatchChange<pStream>() [" << (int)this << "]" );
+
+	//
+	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
+	//
+	CPdf* pdf = IProperty::getPdf ();
+	if (NULL == pdf)
+		return;
+
+	//
+	// If this object is indirect infrom xref about the change
+	// else find the closest indirect object and call dispatchChange on that object
+	//
+	// objHasParent is the same as if it is an indirect object or not
+	// 
+	if (utils::objHasParent (*this))
+	{
+		Object* obj = _makeXpdfObject ();
+		// This function saves a COPY of xpdf object(s) do we have to delete it
+		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,obj);
+		utils::freeXpdfObject (obj);
+
+	}else
+	{
+		IProperty* ip = pdf->getExistingProperty (IProperty::getIndiRef());
+		assert (NULL != ip);
+		assert (IProperty::getIndiRef().num == ip->getIndiRef().num);
+		ip->dispatchChange ();
+	}
+}	
+
+
+//
+//
+//
+template<typename Checker>
+Object*
+CObjectStream<Checker>::_makeXpdfObject () const
+{
+	return NULL;
+}
+
+
+//
+//
+//
+template<typename Checker>
+CObjectStream<Checker>::~CObjectStream ()
+{
+	Checker check; check.objectDeleted (this);
+	printDbg (0,"~CObjectStream()");
+}
 
 
 

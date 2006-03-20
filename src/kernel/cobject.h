@@ -119,7 +119,7 @@ template<> struct PropertyTraitSimple<pRef>
 
 //=====================================================================================
 // CObjectSimple
-//
+//=====================================================================================
 
 /** 
  * Template class representing simple PDF objects from specification v1.5.
@@ -254,6 +254,7 @@ public:
 
 	/**
 	 * Make xpdf Object from this object. This function allocates xpdf object, caller has to free it.
+	 * You have to call free() function on the Object to deallocate its resources.
 	 *
 	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
@@ -263,13 +264,6 @@ public:
 	virtual Object*	_makeXpdfObject () const;
 	
 private:
-	
-	/**
-	 * Finds out if this object is indirect.
-	 *
-	 * @return True if this object is indirect, false otherwise.
-	 */
-	bool _isIndirect () const;
 
 	/**
 	 * Indicate that the object has changed.
@@ -290,8 +284,7 @@ private:
 
 //=====================================================================================
 // CObjectComplex
-//
-
+//=====================================================================================
 
 //
 // Forward declaration of element finders
@@ -314,13 +307,6 @@ template<> struct PropertyTraitComplex<pArray>
 		typedef const std::string& 			writeType; 
 		typedef unsigned int	 			propertyId;
 		typedef class ArrayIdxComparator	indexComparator;
-};
-template<> struct PropertyTraitComplex<pStream> 
-{	public: 
-		typedef std::list<std::pair<std::string, boost::shared_ptr<IProperty> > > value;
-		typedef const std::string& 			writeType; 
-		typedef const std::string& 			propertyId;
-		typedef class DictIdxComparator		indexComparator;
 };
 template<> struct PropertyTraitComplex<pDict>	
 {	public: 
@@ -479,7 +465,7 @@ public:
 	/**
 	 * Inserts all property names to container supplied by caller. 
 	 * 
-	 * REMARK: Specific for pDict and pStream.
+	 * REMARK: Specific for pDict.
      	 *
 	 * @param container Container of string objects. STL vector,list,deque.
 	 */
@@ -506,7 +492,7 @@ public:
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
 		{return getPropertyValue(id)->getType();};
-
+	
 	
 	/**
 	 * Sets property type of an item.
@@ -558,20 +544,18 @@ public:
 
 	/**
 	 * Make xpdf Object from this object.
+	 * You have to call free() function on the Object to deallocate its resources.
 	 *
+	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
+	 * object correctly.
+
 	 * @return Xpdf object representing actual value of this simple object.
 	 */
 	virtual Object*	_makeXpdfObject () const;
 
+	
 private:
 	
-	/**
-	 * Finds out if this object is indirect.
-	 *
-	 * @return true if this object is indirect, false otherwise.
-	 */
-	bool _isIndirect () const;
-
 	/**
 	 * Make everything needed to indicate that this object has changed.
 	 * Notifies all obervers associated with this property.
@@ -598,6 +582,167 @@ public:
 
 
 
+
+//=====================================================================================
+// CObjectStream
+//=====================================================================================
+
+/**
+ * Special class representing xpdf streams. It is neither a simple object, because it does not
+ * contain just simple value, nor a complex object, because it can not be simple represented
+ * in that generic class. It contains a dictionary and a stream. It does not have methods common
+ * to complex objects.
+ *
+ * \TODO:
+ * 			buf & showing buf
+ * 				probably just STream::getChar() and try it
+ * 			podla typu sa bude vyberat dynamicky
+ * 				ked niekto zmeni typ, a potom ulozi dany stream, tak sa to prekoduje danym streamom
+ * 			ako ukladat stream
+ */
+template <typename Checker = BasicMemChecker>
+class CObjectStream : public IProperty
+{
+typedef CObjectComplex<pDict> CDict;
+		
+private:
+	
+	/** Object dictionary. */
+	CDict dict;
+		
+private:
+
+	/** Copy constructor */
+	CObjectStream (const CObjectStream&) {};
+	
+	
+protected:
+
+/*debug*/public:
+	/**
+	 * Constructor. Only kernel can call this constructor
+	 *
+	 * @param p		Pointer to pdf object.
+	 * @param o		Xpdf object. 
+	 * @param rf	Indirect id and gen id.
+	 */
+	CObjectStream (CPdf& p, Object& o, const IndiRef& rf);
+
+
+public:	
+	
+	/** 
+	 * Public constructor. This object will not be associated with a pdf.
+	 */
+	CObjectStream ();
+
+	
+protected:
+
+	/**
+     * Implementation of clone method
+     *
+     * @param Deep copy of this object.
+	 */
+	virtual IProperty* doClone () const;
+
+	
+public:	
+	
+	/** 
+     * Returns type of object. 
+     *
+     * @return Type of this class.
+     */
+    virtual PropertyType getType () const {return pStream;};
+
+	
+	/**
+	 * Returns string representation of actual object.
+	 * 
+	 * If it is an indirect object, we have to notify CXref.
+	 */
+	virtual void getStringRepresentation (std::string& str) const;
+ 
+	/**
+	 * Convert string to an object value.
+	 * <exception cref="ObjBadValueE" /> Thrown when we can't parse the string correctly.
+	 *
+	 * @param str0 Object in a text form.
+	 */
+	void setStringRepresentation (const std::string& strO);
+
+	/**
+ 	 * Notify Writer object that this object has changed. We have to call this
+	 * function to make changes visible.
+	 */
+	virtual void dispatchChange () const;
+
+	/**
+     * Create xpdf object.
+     *
+     * @return Xpdf object(s).
+     */
+    virtual Object* _makeXpdfObject () const; 
+
+public:
+
+	/**
+	 * Destructor.
+	 */
+	~CObjectStream ();
+
+//
+// Special functions
+//
+public:
+
+	/**
+	 * Return the list of all supported streams
+	 *
+	 * @return List of supported stream filters.
+	 */
+	static const std::list<std::string>& getSupportedStreams () 
+	{
+		std::list<std::string> supported;
+		//
+		// Initialize the list
+		//
+		if (supported.empty())
+		{
+			supported.push_back ("NoFilter");
+		}
+	
+		return &supported;
+	}
+
+	
+private:
+	
+	/**
+	 * Finds out if this object is indirect.
+	 *
+	 * @return True if this object is indirect, false otherwise.
+	 */
+	bool _isIndirect () const;
+
+	/**
+	 * Indicate that the object has changed.
+	 */
+	void _objectChanged ()
+	{
+		// Dispatch the change
+		dispatchChange ();
+		
+		// Notify everybody about this change
+		IProperty::notifyObservers ();
+	}
+
+};
+
+
+
+
 //=====================================================================================
 //
 // CObject types
@@ -611,9 +756,9 @@ typedef CObjectSimple<pString> 	CString;
 typedef CObjectSimple<pName> 	CName;
 typedef CObjectSimple<pRef> 	CRef;
 
-typedef CObjectComplex<pStream> CStream;
 typedef CObjectComplex<pArray>	CArray;
 typedef CObjectComplex<pDict>	CDict;
+typedef CObjectStream<>			CStream;
 
 
 
@@ -827,7 +972,7 @@ template <PropertyType Tp> void simpleValueToString (const IndiRef& val,std::str
  * Return complex xpdf object (null,number,string...) in string representation.
  *
  * REMARK: It is a template function because I think stream won't be converted to string
- * as easily as a dictionary. So we specialize these function for pArray,pStream and pDict.
+ * as easily as a dictionary. So we specialize these function for pArray and pDict.
  *
  * @param Value that will be converted to string.
  * @param Output string
@@ -940,6 +1085,17 @@ getIPropertyFromItem (const PropertyTraitComplex<pDict>::value::value_type& item
  * @param str This will hold the string representation of the object.
  */
 void xpdfObjToString (Object& obj, std::string& str);
+
+/**
+ * Returns true if object has a parent.
+ *
+ * <cref exception="ObjInvalidOperation"> Thrown when the object does not belong
+ * to a valid pdf.
+ *
+ * @param ip	IProperty of object. 
+ */
+bool objHasParent (const IProperty& ip);
+
 
 
 } /* namespace utils */

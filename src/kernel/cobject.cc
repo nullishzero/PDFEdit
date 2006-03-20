@@ -277,6 +277,8 @@ namespace {
 					
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
+					if (NULL == pdf)
+						throw ObjInvalidOperation ();
 					
 					Object obj;
 
@@ -291,6 +293,8 @@ namespace {
 							{
 								// Store it in the storage
 								val.push_back (cobj);
+								// Free resources allocated by the object
+								obj.free ();
 								
 							}else
 								throw ObjInvalidObject ();
@@ -310,7 +314,9 @@ namespace {
 					
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
-					
+					if (NULL == pdf)
+						throw ObjInvalidOperation ();
+				
 					Object obj;
 
 					int len = dict.dictGetLength ();
@@ -325,6 +331,8 @@ namespace {
 							{
 								// Store it in the storage
 								val.push_back (make_pair(key,cobj));
+								// Free resources allocated by the object
+								obj.free ();
 
 							}else
 								throw ObjInvalidObject ();
@@ -353,8 +361,6 @@ namespace {
 			{public: typedef struct utils::xpdfArrayReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pDict>   
 			{public: typedef struct utils::xpdfDictReader<T,U> 		xpdfReadProcessor;};
-		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pStream>   
-			{public: typedef struct utils::xpdfStreamReader<T,U> 	xpdfReadProcessor;};
 
 
 		/**
@@ -634,18 +640,6 @@ complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, stri
 	str += CDICT_SUFFIX;
 }
 template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str);
-//
-//
-//
-template<>
-void
-complexValueToString<pStream> (const PropertyTraitComplex<pStream>::value& /*val*/, string& str)
-{
-	printDbg (0,"complexValueToString<pStream>()");
-	str = CSTREAM_STREAM;
-}
-template void complexValueToString<pStream> (const PropertyTraitComplex<pStream>::value& val, string& str);
-
 
 //
 //
@@ -736,11 +730,6 @@ template void complexValueFromXpdfObj<pDict, PropertyTraitComplex<pDict>::value&
 		 Object& obj, 
 		 PropertyTraitComplex<pDict>::value& val);
 
-template void complexValueFromXpdfObj<pStream, PropertyTraitComplex<pStream>::value&>
-		(IProperty& ip, 
-		 Object& obj, 
-		 PropertyTraitComplex<pStream>::value& val);
-
 
 //
 //
@@ -817,9 +806,17 @@ xpdfObjFromString (const std::string& str)
 	// Lexer SHOULD delete MemStream.
 	//
 	auto_ptr<Object> dct (new Object());
+	//
+	// xpdf MemStream DOES NOT free buf unless doDecrypt is called, but IT IS NOT
+	// here, so we have to deallocate it !!
+	// 
+	size_t len = str.length ();
+	char* pStr = new char [len + 1];
+	strncpy (pStr, str.c_str(), len + 1);
+					
 	auto_ptr<Parser> parser	(new Parser (NULL, 
 						       		      new Lexer (NULL, 
-												  	 new MemStream (strdup(str.c_str()), 0, str.length(), dct.get())
+												  	 new MemStream (pStr, 0, len, dct.get())
 												     )
 										) 
 							);
@@ -829,6 +826,9 @@ xpdfObjFromString (const std::string& str)
 	Object* obj = new Object;
 	parser->getObj (obj);
 	
+	// delete string we don't need it anymore
+	delete[] pStr;
+	
 	const string null ("null");
 
 	//
@@ -836,12 +836,34 @@ xpdfObjFromString (const std::string& str)
 	//
 	if ( (obj->isNull()) && !equal(str.begin(), str.end(), null.begin(), nocase_compare) )
 	{
+		obj->free ();
 		delete obj;
 		throw ObjBadValueE ();
 	}
 
 	return obj;
 }
+
+
+//
+//
+//
+bool
+objHasParent (const IProperty& ip)
+{
+	CPdf* pdf = ip.getPdf ();
+	assert (NULL != pdf);
+	if (NULL == pdf)
+		throw ObjInvalidOperation ();
+
+	if ( &ip == pdf->getExistingProperty (ip.getIndiRef ()) )
+		return true;
+	else
+		return false;
+}
+
+
+
 
 // =====================================================================================
 } /* namespace utils */
