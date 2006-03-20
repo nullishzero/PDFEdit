@@ -221,6 +221,31 @@ namespace {
 	}
 
 	bool
+	ip_validate (Object& o, IProperty& ip, bool out = true)
+	{
+		string str;
+		utils::xpdfObjToString (o,str);
+
+		string str1;
+		ip.getStringRepresentation (str1);
+
+		if (str == str1)
+		{
+			if (out)
+				OUTPUT << "*** Validation OK! " << str << endl;
+			else
+				OUTPUT << "*** Validation OK! " << "<not shown, output probably too long>"<< endl;
+			return true;
+		}
+		else
+		{
+			OUTPUT << "DOES NOT MATCH: " << str << " with " << str1 << endl;
+			throw;
+			return false;
+		}
+	}
+
+	bool
 	ip_validate (const IProperty& ip, const string& expected, bool out = true)
 	{
 		string str;
@@ -380,6 +405,10 @@ s_ctors (const example& e)
 		obj.initName (e.n.xn);
 		CName n (pdf,obj,ref);
 		ip_validate (n,e.n.expected);
+		//
+		// NAME IS COPIED !!!! fuck xpdf
+		//		
+		obj.free ();
 		
 		// Ref
 		obj.initRef (e.ref.xref.num,e.ref.xref.gen);
@@ -701,7 +730,7 @@ c_getTp ()
 		// Dict
 		_c_getTp<CDict,pDict> ();
 		// Stream
-		_c_getTp<CStream,pStream> ();
+		//_c_getTp<CStream,pStream> ();
 
 
 }
@@ -1049,6 +1078,69 @@ c_set ()
 	ip_validate (d,"<<\n/1 (s1)\n/2 (s2)\n/3 (s3)\n>>", false);
 }
 
+//=====================================================================================
+
+void
+c_xpdfctor ()
+{
+	{
+		//
+		// Array
+		//
+		Object obj;
+		obj.initArray (NULL);
+
+		Object item1; item1.initBool 	(gFalse);
+		Object item2; item2.initBool	(gTrue);
+		Object item3; item3.initInt 	(-43);
+		Object item4; item4.initString 	(new GString ("item4"));
+
+		obj.arrayAdd (&item1);
+		obj.arrayAdd (&item2);
+		obj.arrayAdd (&item3);
+		obj.arrayAdd (&item4);
+		
+		CPdf pdf;
+		IndiRef ref = {12,11};
+		CArray ar (pdf,obj,ref);
+
+		ip_validate (obj,ar);
+		
+		obj.free ();
+	}
+	{
+		//
+		// Dict
+		//
+		Object obj;
+		obj.initDict ((XRef*)NULL);
+
+		Object item1; item1.initBool 	(gFalse);
+		Object item2; item2.initBool	(gTrue);
+		Object item3; item3.initInt 	(-43);
+		Object item4; item4.initString 	(new GString ("item4"));
+
+		char* it1 = strdup ("lajno1");
+		char* it2 = strdup ("lajno2");
+		char* it3 = strdup ("lajno3");
+		char* it4 = strdup ("lajno4");
+		obj.dictAdd (it1, &item1);
+		obj.dictAdd (it2, &item2);
+		obj.dictAdd (it3, &item3);
+		obj.dictAdd (it4, &item4);
+
+		CPdf pdf;
+		IndiRef ref = {12,11};
+		// CArray ar (pdf,obj,ref); // GOOOOOD -- assertation failed
+		CDict dc (pdf,obj,ref); 
+		
+		ip_validate (obj,dc);
+		ip_validate (dc, "<<\n/lajno1 false\n/lajno2 true\n/lajno3 -43\n/lajno4 (item4)\n>>");
+		
+		obj.free ();
+	}
+	
+}
 
 				
 //=====================================================================================
@@ -1196,6 +1288,10 @@ main (int argc, char* [])
 
 		TEST(" test 2.9 - setProp")
 		c_set ();
+		OK_TEST;
+
+		TEST(" test 2.10 - xpdf ctors")
+		c_xpdfctor ();
 		OK_TEST;
 
 		END_TEST;
