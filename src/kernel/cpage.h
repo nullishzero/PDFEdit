@@ -1,37 +1,94 @@
-#ifndef __CPAGE_H__
-#define __CPAGE_H__
+/*
+ * =====================================================================================
+ *        Filename:  cpage.cc
+ *     Description:  CPage.
+ *         Created:  20/03/2006 11:46:14 AM CET
+ * =====================================================================================
+ *
+ * \TODO
+ * 		......	
+ */
 
+#ifndef _CPAGE_H
+#define _CPAGE_H
+
+
+// all basic includes
+#include "static.h"
+
+// CDict
 #include "cobject.h"
 
-using namespace pdfobjects;
+
+//=====================================================================================
+namespace pdfobjects {
+//=====================================================================================
 
 
-class CPage : public CDict {
-  //
-  // Konstruktor
-  //
-  CPage ();
+		
+/** Invalid page number. */
+const unsigned int PAGE_NUMBER_INVALID = 0xFFFFFFFF;
 
-  //
-  // Destruktor
-  //
-  virtual ~CPage ();
+		
+/**
+ * CPage represents pdf page object. 
+ *
+ *
+ */
+class CPage : public CDict 
+{
+public:
+	typedef	unsigned int PageNumber;
+		
+private:
+
+	/** Page number of this page. */
+	PageNumber	pageNumber;
+		
+		
+public:
+		
+	/** Constructor. */
+	CPage ();
+
+public:
+	
+	/** Destructor. */
+	~CPage () { printDbg (0,"Page destroyed."); };
+
+
+public:
+	
+	/**
+	 * Return page number of this page.
+	 *
+	 * @return Page number of this page.
+	 */
+	PageNumber getPageNumber () { return pageNumber; };
+
+	/**
+	 * Set page number.
+	 *
+	 * @param num Page number.
+	 */
+	void setPageNumber (PageNumber num) {assert (PAGE_NUMBER_INVALID == pageNumber); pageNumber = num;};
+
+	
+
+/**  Vrati plain text zadanej stranky (ziadne zazraky)*/
+//  string text_export ();
+
+
 
 /**  Vlozi na stranku existujuci objekt a vytvori novy
   identifikator vlozeneho objektu, ktory vrati.*/
 //  CAny& insert_object (CAny,position);
-
-/**  Vrati cislo stranky v nasom cislovani.*/
-//  uint get_number ();
 
 /**  Vrati bounding box zadaneho objektu*/
 //  bbox get_object_bbox (CAny&);
 
 /**  Vrati pole vsetkych objektov na stranke.*/
 //  array [CAny*] get_objects (family mask);
-
-/**  Vrati plain text zadanej stranky (ziadne zazraky)*/
-//  string text_export ();
 
 /**  Vrati pole bbox pre kazde pismeno od ord_pos (v plaintexte)
   s dlzkou len.*/
@@ -57,7 +114,13 @@ class CPage : public CDict {
   na pozicii position (pozn. vzhladom k comu sa urcuje pozicia)*/
 //  CText create_text (string,position);
 
-}
+};
 
 
-#endif // __CPAGE_H__
+
+//=====================================================================================
+} /* namespace pdfobjects */
+//=====================================================================================
+
+
+#endif // _CPAGE_H

@@ -34,7 +34,7 @@ public:
 	typedef std::list<std::string> Params;
 
 protected:
-	CFilter ();			
+	CFilter () {};
 		
 public:
 
@@ -42,7 +42,7 @@ public:
 	virtual void decode (const Params& /*params , char* ... */) const = 0;
 
 	/** Destructor. */
-	virtual ~CFilter ();
+	virtual ~CFilter () {};
 
 };
   
