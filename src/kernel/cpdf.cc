@@ -40,11 +40,17 @@ namespace
 				switch (ip.getType())
 				{
 					case pArray:
-						ip.getCObjectPtr<const CArray>()->_getAllChildObjects (tmp);
+						{
+						const CArray* array = static_cast<const CArray*> (&ip);
+						array->_getAllChildObjects (tmp);
+						}
 						break;
 									
 					case pDict:
-						ip.getCObjectPtr<const CDict>()->_getAllChildObjects (tmp);
+						{
+						const CDict* dict = static_cast<const CDict*> (&ip);
+						dict->_getAllChildObjects (tmp);
+						}
 						break;
 
 					case pStream:
@@ -228,38 +234,47 @@ CPdf::delIndMapping (const IndiRef& ref)
 //
 //
 IndiRef
-CPdf::addIndirectObject (IProperty& ip)
+CPdf::addIndirectObject (IProperty& newIp)
 {
 	typedef std::list<boost::shared_ptr<IProperty> >  IPList;
-		
-	assert (NULL == ip.getPdf());
-	
-	// Indicate that it will belong to this pdf
-	ip.setPdf (this);
 
-	// Find free ref
-	IndiRef rf;	// = xref->findFreeRef ();
+	// Reference numbers
+	IndiRef rf;
+		
+	// Make a deep copy
+	boost::shared_ptr<IProperty> ip = newIp.clone ();
 	
-	// Find all objects in tree starting in ip
-	IPList ipList;
-	getAllChildIProperty (ip,ipList);
-	
-	// Indicate that all objects in the tree starting in ip
-	//   -- belong to this pdf
-	//   -- are in indirect object with whose ref is rf
-	IPList::iterator it = ipList.begin ();
-	for (; it != ipList.end (); it++)
+	if (ip)
 	{
+		// Indicate that it will belong to this pdf
+		ip->setPdf (this);
+
+		// Find free ref
+		//rf = xref->findFreeRef ();
+	
+		// Find all objects in tree starting in ip
+		IPList ipList;
+		getAllChildIProperty (*ip,ipList);
+	
+		// Indicate that all objects in the tree starting in ip
+		//   -- belong to this pdf
+		//   -- are in indirect object with whose ref is rf
+		IPList::iterator it = ipList.begin ();
+		for (; it != ipList.end (); it++)
+		{
 			assert (NULL == (*it)->getPdf());
 
 			(*it)->setPdf (this);
 			(*it)->setIndiRef (rf);
-	}
+		}
 	
-	//
-	// \TODO: SET MODE !!!
-	//
-	
+		//
+		// \TODO: SET MODE !!!
+		//
+
+	}else
+		throw ObjInvalidObject ();
+		
 	return rf;
 }
 

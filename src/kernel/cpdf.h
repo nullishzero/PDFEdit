@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/03/20 09:45:56  misuj1am
+ *
+ *
+ * -- + MALA zmena aby to slo skompilovat
+ *
  * Revision 1.12  2006/03/13 01:35:10  misuj1am
  *
  *
@@ -326,8 +331,9 @@ public:
         void delIndMapping (const IndiRef& ref);
 
 		/**
-		 * Adds indirect object to the pdf. It also find free indirect and 
-		 * generation number. Adds it to the property and all its children.
+		 * Adds indirect object to the pdf. It finds free pdf id and 
+		 * generation number. This number is set to all its children to indicate
+		 * that they live in this indirect object. A deep copy of that object is added to the pdf.
 		 *
 		 * @param ip Indirect object.
 		 * @return Identification number and generation number associated with 
