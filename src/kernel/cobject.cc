@@ -737,8 +737,8 @@ template void complexValueFromXpdfObj<pDict, PropertyTraitComplex<pDict>::value&
 void
 simpleValueFromString (const std::string& str, bool& val)
 {
-	const string static __true = "true";
-	const string static __false = "false";
+	static const string __true  ("true");
+	static const string __false ("false");
 	
 	if ( equal (str.begin(), str.end(), __true.begin(), nocase_compare))
 		val = true;
