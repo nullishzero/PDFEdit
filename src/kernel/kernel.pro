@@ -21,8 +21,10 @@ _PATH = /usr/xpdf
 #
 
 HEADERS += ../utils/debug.h
-HEADERS += cobject.h cobjectI.h cpdf.h iproperty.h observer.h exceptions.h modecontroller.h
-SOURCES += modecontroller.cc cobject.cc cpdf.cc cxref.cc xrefwriter.cc main.cc 
+HEADERS += observer.h exceptions.h modecontroller.h filters.h
+HEADERS += iproperty.h cobject.h cobjectI.h cpdf.h
+SOURCES += modecontroller.cc filters.cc cobject.cc cpdf.cc cxref.cc xrefwriter.cc main.cc 
+
 #QMAKE_CXXFLAGS += -Wuninitialized -frepo
 #QMAKE_CXXFLAGS += -Wuninitialized -ansi -pedantic -Wno-unused-variable -Winline -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
