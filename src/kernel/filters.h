@@ -22,41 +22,28 @@ namespace filters {
  * behave differently but on the same data with the same information avaliable. We make
  * them interchangeable. [GoF/Strategy]
  *
- * We also make 2 crucial decisions, that allow us this some sort of a "special" imlementation
- * of Strategy pattern.
- * 
- * 1. We can select the filter at compile time
- * 		i) 	we do not want to expose filters outside kernel -- because of simplicity
- * 		ii)	we know which filters are implemented, thanks to i)
- * 2. Filters won't be changed at runtime
- * 		i)	we won't have filters associated with Streams 1:1, they will be created on demand.
- *
  * If we would like to expose this interface outside, we would have to create a Mediator between Filter class
  * and CStream. Nothing more, nothing less.
  * 
+ * REMARK: We do not use template implementation because we do not know at compile time, which implementation will be used.
+ * REMARK2: Change getSupportedStreams & setStringRepresentation in order to expose newly created filters.
  */
-template <class SpecialFilter>
 class CFilter 
 {
-typedef std::list<std::string> Params;
+public:
+	typedef std::list<std::string> Params;
 
-private:
-	/** Specialized filter. */
-	SpecialFilter filter;
-
-	/** Parameters needed for compression. */
-	Params params;
-
+protected:
+	CFilter ();			
+		
 public:
 
-	/** Constructor. */
-	CFilter (Params pars) : params(pars) { printDbg (0,"Filter constructed."); };
+	/** Decode. */
+	virtual void decode (const Params& /*params , char* ... */) const = 0;
 
-	/** Encode. */
-	void operator() () const { printDbg (0,"Filter::operator()."); filter ();};
+	/** Destructor. */
+	virtual ~CFilter ();
 
-
-	~CFilter () { printDbg (0,"Filter destroyed."); }
 };
   
 
@@ -65,11 +52,18 @@ public:
  * Specific filter.
  *
  */
-class NoFilter
+class NoFilter : public CFilter
 {
 public:
+	/** Default constructor. */
+	NoFilter () { printDbg (0,"NoFilter created."); };
+		
 	/** Do the endcoding. */
-	void operator() () const;
+	virtual void decode (const Params& /*params , char* ... */) const;
+
+	/** Destructor. */
+	~NoFilter () { printDbg (0,"NoFilter destroyed."); };
+
 };
 
 

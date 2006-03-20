@@ -19,9 +19,10 @@ namespace filters  {
 //=======================================
 
 		
-void NoFilter::operator() () const
+void 
+NoFilter::decode (const Params& /*params , char* ... */) const
 {
-	printDbg (0,"NoFilter::operator()"); 
+	printDbg (0,"NoFilter::decode"); 
 }
 
 
