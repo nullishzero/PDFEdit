@@ -47,15 +47,21 @@ _ONELIB = Stream.o
 
 
 exists( $${_PATH}/xpdf/$${_ONELIB} ) {
+
+	OBJECTS += $$system( find $$_PATH/goo -name "*.o" )
+	OBJECTS += $$system( find $$_PATH/fofi -name "*.o" )
+	OBJECTS += $$system( find $$_PATH/xpdf -name "[^pdf]*.o" )
+
 }else{
 	
 	# Specific path
 	_PATH = /usr/xpdf
 	
 	exists( $${_PATH}/$${_ONELIB} ) {
+
+		OBJECTS += $$system( find $$_PATH/ -name "*.o" )
+		
 	}else{
 		error( "You do not have xpdf libraries compiled. [../xpdf/xpdf/Object.o, ../xpdf/xpdf/Stream.o, ....]" )
 	}
 }
-
-OBJECTS += $$system( find $$_PATH/ -name "*.o" )
