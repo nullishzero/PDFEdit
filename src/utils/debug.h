@@ -1,9 +1,10 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
- *        Filename:  debug.h
+ *	  Filename:  debug.h
  *     Description:  debugging macros & stuff
- *         Created:  01/19/2006 11:00:08 PM CET
- *          Author:  jmisutka ()
+ *	   Created:  01/19/2006 11:00:08 PM CET
+ *	    Author:  jmisutka ()
  * =====================================================================================
  */
 
@@ -30,15 +31,15 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
  * borrowed AND MODIFIED from Andrei Alexandrescu's book Modern C++ design
  * almost the same as in BOOST library (the example in the book does not work)
  * 
- * @param expr 	Expression to be evaluated.
+ * @param expr	Expression to be evaluated.
  * @param msg	Message that will be printed if the expression evaluates
- * 				to false. This has to be a valid variable name, e.g. 
- * 				BAD_EXPRESSION, COMPILE_TIME_CHECK_FAILED...
+ *				to false. This has to be a valid variable name, e.g. 
+ *				BAD_EXPRESSION, COMPILE_TIME_CHECK_FAILED...
  */
-#define STATIC_CHECK(expr, msg) 		\
-		{								\
-				CompileTimeChecker<(expr) != 0> (ERROR_##msg);\
-		}
+#define STATIC_CHECK(expr, msg)							\
+	{													\
+		CompileTimeChecker<(expr) != 0> (ERROR_##msg);	\
+	}
 
 
 
@@ -47,34 +48,108 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
 //
 //#define STATIC_CHECK(expr, msg) { char unnamed[(expr) ? 1 : 0];}
 
-/** 
- * 0 - everything 
- * 1 - less than everything
- * 2 - ...
+
+/** Debug priority macros.
+ *
+ * TODO make available for group of debug priority.
+ */
+
+/** Panic situation priority.
+ * After this kind of message, program usually ends without any resonable 
+ * rescue routines. It should contain the cause of this state.
+ */
+#define DBG_PANIC	0
+
+/** Critical error priority.
+ * After this kind of message, program also ends but with coordinate way.
+ */
+#define DBG_CRIT	1
+
+/** Error message priority.
+ *
+ * Priority for casual errors.
+ */
+#define DBG_ERR		2
+
+/** Warning massage priority.
+ * Messages which contains comments to some non casual behaviour.
+ */
+#define DBG_WARN	3
+
+/** Information message priority.
+ * It is designed for messages which informs about some important parts of
+ * internals important also if we are not in debuging mode.
+ */
+#define DBG_INFO	4
+
+/** Debug message priority.
+ * All debuging information should use this priority.
+ */
+#define DBG_DBG		5
+
+
+// may be defined from compilator 
+#ifndef __DEBUG_LEVEL
+
+/** Filter for message logging.
+ *
+ * Only messages with priority higher (lower number) then this filter are 
+ * printed when printDbg (TODO link) macro is used.
+ * <br>
+ * DEBUG_<PRIORITY> macro should be used for value
  */
 #define __DEBUG_LEVEL		0
+#endif
 
-/**
- * Print debug output.
+/** Prints message with given priority.
+ * @param dbgLevel Priority of message.
+ * @param msg Message to dump.
  *
+ * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
+ * massage is printed out to the standard error output with following format:
+ * @code 
+ * priority:fileName:line: message
+ * @endcode
+ * <br>
+ * <b>REMARKs</b><br>
+ * Don't use variables for dbgLevel.<br>
+ * Don't use direct priority numbers and use DBG_* macros instead.
+ * msg has to have operator &gt&gt implemented (or must be convertable to one
+ * that does).
+ * <br>
  * Can be used in many ways.
  * \code
- * printDbg (0,"getExistingProperty();");
- * printDbg (0,"setPropertyMapping(" << n << "," <<  g << ");");
- * \endcode
+ * printDbg(DBG_DBG,"getExistingProperty();");
  *
- * @param dbgLevel 	Debug level that will be associated with this message
- * @param msg 		Message that will be printed.
+ * printDbg(DBG_INFO, "Page moved to this location");
+ * 
+ * printDbg(DBG_WARN, "This should be done this way");
+ *
+ * printDbg(DBG_ERR, "Value of indirect object can't be reference");
+ *
+ * printDbg(DBG_CRIT, "Internal structures problem - program is about to exit");
+ * 
+ * printDbg(DBG_PANIC, "Memmory allocation problem");
+ * \endcode
  */
-#define printDbg(dbgLevel,msg)				_printDbg((dbgLevel),std::cout,msg);
-#define _printDbg(dbgLevel,a,b)	\
-{\
-		if ( __DEBUG_LEVEL <= dbgLevel) \
-		{\
-			(a) << __FILE__ << ":" << __LINE__ << ": " \
-			 	<<  b \
-			    << std::endl;\
-		}\
+#define printDbg(dbgLevel,msg)	_printDbg((dbgLevel),std::cerr,msg);
+
+/** Helper macro used by printDbg.
+ * @param dbgLevel Priority of message.
+ * @param a Stream where to dump message.
+ * @param b Message to dump.
+ *
+ * This macro should be used if different stream is about to be used than one
+ * used in printDbg macro.
+ */
+#define _printDbg(dbgLevel,a,b)										\
+{																	\
+	if ( __DEBUG_LEVEL >= dbgLevel) 								\
+	{																\
+		(a) << dbgLevel <<":"<< __FILE__ << ":" << __LINE__ << ": "	\
+			<<  b 													\
+			<< std::endl;											\
+	}																\
 }
 
 
@@ -136,4 +211,4 @@ std::string getStringType<8> () {return "pStream";}
 } // namespace debug
 } // namespace pdfobjects
 
-#endif  // DEBUG_H
+#endif	// DEBUG_H
