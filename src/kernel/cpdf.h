@@ -1,19 +1,21 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
+
 /*
  * Created:  01/28/2006 03:48:14 AM CET
 
  * $RCSfile$
  *
  * $Log$
- * Revision 1.13  2006/03/20 09:45:56  misuj1am
- *
- *
- * -- + MALA zmena aby to slo skompilovat
+ * Revision 1.14  2006/03/21 23:21:39  hockm0bm
+ * minor interface changes
+ * compileable but not usabe in this state
+ * CPage question not solved yet
  *
  * Revision 1.12  2006/03/13 01:35:10  misuj1am
  *
  *
  * -- modecontroller
- * 	get/setModeController, if null OUR modecontroller is used
+ *	get/setModeController, if null OUR modecontroller is used
  *
  * Revision 1.11  2006/03/08 12:13:59  misuj1am
  *
@@ -55,564 +57,544 @@
 #include "iproperty.h"
 #include "xrefwriter.h"
 
-// =====================================================================================
+// =============================================================================
 namespace pdfobjects {
 
-// forward declarations
+// forward declarations FIXME remove
 class CPage;
 class COutline;
 
 /** CPdf special object.
  *
- * This class is responsible for pdf document maintainance.
- * 
+ * This class is responsible for pdf document maintainance. 
+ * <p>
+ * <b>Instancing</b><br>
+ * Public constructor is not available and instances can be created on by 
+ * static factory getInstance method. Also no public destructor is available 
+ * and instance can be destroyed only by close method.
+ * <p>
+ * <b>Open mode</b><br>
+ * Each document may be open in several modes. Each open mode brings specific
+ * handling of document manipulation. Open mode for document is set only in 
+ * constructor and can't be changed during CPdf instance life cycle. (TODO link
+ * to OpenMode)
+ * <p>
+ * TODO indirect properties describtion
+ * TODO CXref usage describtion
+ * TODO produced objects describtion
+ * TODO ...
  */
-class CPdf //: public CDict
+class CPdf: public CDict
 {
 public:
-        // NOTE: this declaration has to be here, because mode field is private and
-        // so type has to be declared
+	// NOTE: this declaration has to be here, because mode field is private and
+	// so type has to be declared and also type has to be public
 
-        /** Mode for file opening.
-         *
-         * Possible values:
-         * <ul>
-         * <li>Advanced - content of PDF can be changed and no special checking
-         *      is peformed. So this brings the biggest control over content
-         *      but may lead to total content corruption.
-         * <li>ReadWrite - content of PDF can be changed.
-         * <li>ReadOnly - content can't be changed.
-         * </ul>
-         */
-        enum OpenMode {Advanced, ReadWrite, ReadOnly};
-        
+	/** Mode for file opening.
+	 *
+	 * Possible values:
+	 * <ul>
+	 * <li>Advanced - content of PDF can be changed and no special checking
+	 * is peformed. So this brings the biggest control over content
+	 * but may lead to total content corruption.
+	 * <li>ReadWrite - content of PDF can be changed.
+	 * <li>ReadOnly - content can't be changed.
+	 * </ul>
+	 */
+	enum OpenMode {Advanced, ReadWrite, ReadOnly};
+	
 protected:
-       /**
-        * Comparator class for two mapped items.
-        */
-       class ObjComparator
-       {
-        public:
-                /* FIXME maybe this can be handled by less<T> template */
-                bool operator() (const Object* one, const Object* two) const
-                {// one < two -- true,     one >= two -- false
-                        return ((unsigned int)one < (unsigned int)two);
-                };
-       };      
-
-       /**
-        * Indirect mapping Comparator class for two mapped items.
-        */
-       class IndComparator
-       {
-       public:
-               bool operator() (const IndiRef one, const IndiRef two) const
-               {
-                       if (one.num == two.num)
-                               return (one.gen < two.gen);
-                       else
-                               return (one.num < two.num);
-               };
-        };      
-
-        /**
-         * Mapping between indirect objects <--> IProperty.
-         *
-         * This is essential when we want to access an indirect object from 
-         * pRef object. We know only the id and gen number.
-		 *
-		 * It is also the only possibility to add indirect objects to a pdf file. 
-		 * We add objects directly with CObjectComplex::add(set)Property, but we can 
-		 * add CRef object and then add the propriate object with CPdf::addIndirectObject().
-         */
-        typedef std::map<const IndiRef,const IProperty*, IndComparator> IndirectMapping;
-private:
-        
-        /** Mapping between Id + Gen <--> IProperty*. 
-         * It is necessary when adding accessing indirect objects. 
-         */
-        IndirectMapping indMap;
-
-        /** File handle for pdf file.
-         *
-         * This field is initialized when pdf file is open (in constructor) and
-         * destroyed in close method.
-         */
-        FILE * pdfFile;
-
-        /** Cross reference table.
-         * This field holds XRefWriter implementation of XRef interface.
-         * It enables making changes to the table and also making changes to
-         * indirect objects.
-         * <br>
-         * This is only access point for making changes. It can be casted to 
-         * XRef types which provides information about actual object values,
-         * and so original xpdf code doesn't has to be changed.
-         */
-        XRefWriter * xref;
-
-        /** Open mode of document.
-         */
-        enum OpenMode mode;
-
-		/**
-		 *
-		 */
-		IModeController* modeController;
-
-        /** Pdf trailer dictionary.
-         *
-         * Source of information about versions.
-         */
-        ::Dict * trailer;
-
-        /** Document catalog dictionary.
-         *
-         * Contains properties of whole PDF document. It is source of
-         * information about pages, outlines, TODO ...
-         */
-        ::Dict * catalog;
-
-        /** Storage type for pages.
-         */
-        typedef std::vector<CPage *> PageStorage;
-        
-        /** Page objects array.
-         * All page objects are stored in this array, to be easily found.
-         */
-        PageStorage pages;
-
-        /** Storage type for outlines.
-         */
-        typedef std::vector<COutline *> OutlineStorage;
-        
-        /** Outline objects array.
-         *
-         * All top-level outlines are stored in this array.
-         */
-        OutlineStorage outlines;
-        
-        /** Empty constructor.
-         *
-         * This constructor is disabled, because we want to prevent uninitialized
-         * instances.
-         * <br>
-         * If you want to create instance, please use static factory method 
-         * getInstance.
-         */
-public:
-		CPdf () : modeController (NULL) {}//:CDict(NULL, sPdf){};
-
-        /** Initializating constructor.
-         * @param stream Stream with data.
-         * @param file File handle for stream.
-         * @param openMode Mode for this file.
-         *
-         * Creates XRefWriter and initialize xref field with it.
-         * TODO initializes also other internal structures.
-         */
-        CPdf(BaseStream * stream, FILE * file, OpenMode openMode);
-        /** Destructor.
-         * 
-         * It is no available outside class, because we whant to prevent
-         * deleting instances without control.
-         * <br>
-         * Instance can be destryed by close method (which destroyes it
-         * using this destructor).
-         */
-        ~CPdf();
-private:
-
-        /** Fills pages array with page objects.
-         * @param pageNode Dictionary representing page tree node.
-         *
-         * This method should be called with top pageNode and it recursively
-         * goes through page tree and inserts just Page leafs to the array.
-         *
-         * <br>
-         * TODO error handling
-         */
-        void fillPages(::Dict * pageNode);
-
-        /** Fills outlines array with outlines objects.
-         * TODO
-         */
-        void fillOutlines(::Dict * outlineNode);
-        
-        /** Intializes revision specific stuff.
-         * @param trailer Trailer dictionary for revision.
-         * 
-         * Gets document catalog and initializes pages and outlines arrays.
-         * <br>
-         * NOTE: Assumes that xref corresponds to given trailer.
-         */
-        void initRevisionSpecific(::Dict * trailer);
-public:
-        /** Factory method for CPdf instances.
-         * @param filename File name with pdf content (if null, new document 
-         *      will be created).
-         * @param mode Mode to open file.
-         *
-         * This is only way how to get instance of CPdf type. All necessary 
-         * initialization is done, also internal structures of kernel are
-         * initialized.
-         *
-         * @return Initialized (and ready to be used) CPdf instance.
-         */
-        static CPdf * getInstance(const char * filename, OpenMode mode);
-
-        /** Closes pdf file.
-         * @param saveFlag Flag which determine whether to save before close
-         *      (parameter may be omited and false is used by default).
-         * Destroyes CPdf instance in safe way. Instant MUST NOT be used
-         * after this method is called.
-         */
-        int close(bool saveFlag=false);
-
-        /** Returns pointer to cross reference table.
-         *
-         * This is pointer to XRef subtype of XRefWriter type field. It
-         * contains actual state of xref table. 
-         * If any of xpdf code is going to be used besides kernel, this
-         * can be safely used.
-         * <br>
-         * This method will return same pointer each time it is called.
-         *
-         * @return Pointer to XRefWriter field casted to XRef super type.
-         */
-        XRef * getXRef()
-        {
-                return (XRef *)xref;
-        }
-       
-		/**
-		 *
-		 *
-		 */
-		IModeController* getModeController ()
+	/**
+	 * Indirect mapping Comparator class for two mapped items.
+	 */
+	class IndComparator
+	{
+	public:
+		bool operator() (const IndiRef one, const IndiRef two) const
 		{
-			if (NULL == modeController)
-			{
-				modeController = & (ModeController::Instance ("./file"));
-			}
+			if (one.num == two.num)
+				return (one.gen < two.gen);
+			else
+				return (one.num < two.num);
+		};
+	};
 
-			return modeController;
+	/**
+	 * Indirect properties mapping type.
+	 */
+	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, IndComparator> IndirectMapping;
+private:
+	
+	/** Mapping between IndiRef and indirect properties. 
+	 *
+	 * This is essential when we want to access an indirect object from 
+	 * refernce. We know only the id and gen number. All indirect objects
+	 * with same reference has to share value and this is guarantied by this 
+	 * mapping.
+	 */
+	IndirectMapping indMap;
+
+	/** File handle for pdf file.
+	 *
+	 * This field is initialized when pdf file is open (in constructor) and
+	 * destroyed in close method.
+	 */
+	FILE * pdfFile;
+
+	/** Cross reference table.
+	 * This field holds XRefWriter implementation of XRef interface.
+	 * It enables making changes to the table and also making changes to
+	 * indirect objects.
+	 * <br>
+	 * This is only access point for making changes. It can be casted to 
+	 * XRef types which provides information about actual object values,
+	 * and so original xpdf code doesn't has to be changed.
+	 * <br>
+	 * This is only part which uses xpdf Object objects as arguments.
+	 * <br>
+	 * Instance is created in constructor.
+	 */
+	XRefWriter * xref;
+
+	/** Open mode of document.
+	 * 
+	 */
+	OpenMode mode;
+
+	/** Mode controller instance.
+	 *
+	 * This class is responsible for correct assigment of mode to 
+	 * properties. If not set, it's not used. 
+	 * <br>
+	 * Use setModeController to set one and getModeController to get
+	 * actually used one.
+	 */
+	IModeController* modeController;
+
+	/** Empty constructor.
+	 *
+	 * This constructor is disabled, because we want to prevent uninitialized
+	 * instances.
+	 * <br>
+	 * If you want to create instance, please use static factory method 
+	 * getInstance.
+	 */
+public:
+	CPdf (){};
+
+	/** Initializating constructor.
+	 * @param stream Stream with data.
+	 * @param file File handle for stream.
+	 * @param openMode Mode for this file.
+	 *
+	 * Creates XRefWriter and initialize xref field with it.
+	 * TODO initializes also other internal structures.
+	 */
+	CPdf(BaseStream * stream, FILE * file, OpenMode openMode);
+	
+	/** Destructor.
+	 * 
+	 * It is no available outside class, because we whant to prevent
+	 * deleting instances without control.
+	 * <br>
+	 * Instance can be destryed by close method (which destroyes it
+	 * using this destructor).
+	 */
+	~CPdf();
+private:
+	/** Intializes revision specific stuff.
+	 * @param trailer Trailer dictionary for revision.
+	 * 
+	 * NOTE: Assumes that xref corresponds to given trailer.
+	 */
+	void initRevisionSpecific(::Dict * trailer);
+public:
+	/** Factory method for CPdf instances.
+	 * @param filename File name with pdf content (if null, new document 
+	 *	will be created).
+	 * @param mode Mode to open file.
+	 *
+	 * This is only way how to get instance of CPdf type. All necessary 
+	 * initialization is done, also internal structures of kernel are
+	 * initialized.
+	 *
+	 * @return Initialized (and ready to be used) CPdf instance.
+	 */
+	static CPdf * getInstance(const char * filename, OpenMode mode);
+
+	/** Closes pdf file.
+	 * @param saveFlag Flag which determine whether to save before close
+	 *	(parameter may be omited and false is used by default).
+	 * Destroyes CPdf instance in safe way. Instant MUST NOT be used
+	 * after this method is called.
+	 */
+	int close(bool saveFlag=false);
+
+	/** Returns pointer to cross reference table.
+	 *
+	 * This is pointer to XRef subtype of XRefWriter type field. It
+	 * contains actual state of xref table. 
+	 * If any of xpdf code is going to be used besides kernel, this
+	 * can be safely used.
+	 * <br>
+	 * This method will return same pointer each time it is called.
+	 *
+	 * @return Pointer to XRefWriter field casted to XRef super type.
+	 */
+	XRef * getXRef()
+	{
+		return (XRef *)xref;
+	}
+       
+	/** Returns actually used mode controller.
+	 *
+	 * @return IModeController implementator or NULL, if no mode 
+	 * controller is used.
+	 */
+	IModeController* getModeController()
+	{
+		return modeController;
+	}
+
+	/** Sets mode controller.
+	 * @param ctrl Mode controller implementator (if NULL, controller
+	 * will be disabled).
+	 *
+	 */
+	void setModeController(IModeController* ctrl)
+	{
+		modeController = ctrl;
+	}
+
+	/** Returns IProperty associated with given reference.
+	 * @param  ref Id and gen number of an object.
+	 * 
+	 * If given reference is not found in mapping, tries to fetch
+	 * object using xref. If real object is returned (this means something
+	 * different than objNull), creates new property object (according
+	 * Object type) and creates mapping. In objNull case, returns CNull
+	 * property (according PDF specification).
+	 * 
+	 * @return IProperty wrapped by shared_ptr smart pointer.
+	 */
+	boost::shared_ptr<IProperty> getIndirectProperty(IndiRef ref);
+
+	/** Adds new indirect object.
+	 * @param prop Original property.
+	 *
+	 * This method is responsible for clear indirect object creation and
+	 * also safe indirect object copying between different documents.
+	 * <p>
+	 * Implementation details:
+	 * <br>
+	 * If given property is reference, than two things may happen. It 
+	 * depends on from where property is. If it is from same pdf, than
+	 * nothing is created and just reference is returned. Otherwise
+	 * dereference to get indirect object and process with following
+	 * <br>
+	 * If property comes from different pdf and it is complex type,
+	 * all children are checked if they are reference. If yes, this
+	 * method is called recursively on them. Normal values are untouched.
+	 * This is because referencies from different pdf may point on 
+	 * something in this pdf and so mass could be produced.
+	 * <br>
+	 * When property value is prepared, xpdf Object is created from
+	 * its content and new reference is reserved. After this is done
+	 * object can be be fully registered using xref::change method.
+	 * Reference is now definitive and so it is returned.
+	 * <p>
+	 * <b>REMARKS</b>: 
+	 * <ul>
+	 * <li>When object from different cpdf is given as parameter, 
+	 * allways copies whole property subtree.
+	 * <li>CNull properties are also registered.
+	 * </ul>
+	 *
+	 * @return Reference of new property (see restriction when given
+	 * property is reference itself).
+	 */ 
+	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop);
+
+	/**
+	 * Deletes relation between (x)pdf object and IProperty*. 
+	 *
+	 * @param  ref Id and gen number of an object.
+	 * @param ip IProperty that will be mapped to Object o.
+	 *
+	 * TODO remove
+	 */
+	void delIndMapping (const IndiRef& ref);
+
+	/** Saves CPdf content (whole document).
+	 * @param fname File name where to store.
+	 *
+	 * Saves actual content to given file. If fname is NULL, uses
+	 * original file used for instance creation.
+	 * <br>
+	 * TODO distinguish saving and creating new revision.
+	 */
+	int save(const char * )
+	{
+		// call xref->change for all changed objects
+		// call xref->saveXref
+		return 0;
+	}
+
+	/** Creates new empty page.
+	 * @param pos Position where to insert page.
+	 *
+	 */
+	CPage * createPage(int)
+	{
+		// create new object xref->createObject
+		// initialize with default values
+		// update PageTree dictionary
+		// update pages array
+		// call xref->change to new page and page tree
+		return NULL;
+	}
+
+	/** Inserts exisitng page.
+	 * @param page Page used for new page creation.
+	 * @param pos Position where to insert new page.
+	 *
+	 * Creates new page and uses initialize all stuff according given page.
+	 */
+	CPage * insertPage(const CPage * , int )
+	{
+		// create page deep copy (if from other file, also referencies)
+		// similar as create page
+		return NULL;
+	}
+
+	/** Removes page from given position.
+	 * @param pos Position of the page.
+	 */
+	int removePage(int )
+	{
+		// get page object
+		// change PageTree object
+		// update pages array
+		// release this object (xref->release())
+		// deallocate object (checks number of referencies...)
+		return 0;
+	}
+
+	/** Returns absolute position of given page.
+	 * @param page Page to look for.
+	 * 
+	 * NOTE: assume CPage implements == operator correctly
+	 */
+	int getPagePosition(const CPage * /*page*/)const
+	{
+		// TODO figure out
+		return 0;
+	}
+
+	/** Returnes page count.
+	 */
+	unsigned int getPageCount() const
+	{
+		// returns count field from Pages field
+		// if it is direct page then only one page
+		// is present
+		return 0;
+	}
+
+	// page iteration methods
+	// =======================
+
+	/** Returns page at given position.
+	 * @param pos Position (starting from 0).
+	 *
+	 * TODO error handling description
+	 * @return Pointer to CPage instance.
+	 */
+	CPage * getPage(int pos)
+	{
+		if(pos<0 || (unsigned long)pos>=getPageCount())
+		{
+			// out of range error
+			// TODO handle
 		}
 
-		/**
-		 *
-		 *
-		 */
-		void setModeController (IModeController* ctrl)
-			{modeController = ctrl;}
+		// uses utils::findPage method on Pages field
+		return NULL;
+	}
 
-        /**
-         * Returns IProperty associated with pdf object if any.
-         *
-         * @param  ref  Id and gen number of an object.
-         * @return Null if there is no mapping, IProperty* otherwise.
-         */
-        IProperty* getExistingProperty (const IndiRef& pair) const;
+	/** Returns first page.
+	 *
+	 * Calls getPage(0).
+	 *
+	 * @return Pointer to the first page instance.
+	 */
+	CPage * getFirstPage()
+	{
+		return getPage(0);
+	}
 
-        /**
-         * Saves relation between (x)pdf object and IProperty*. 
-         *
-         * @param  ref  Id and gen number of an object.
-         * @param ip 	IProperty that will be mapped to Object o.
-         */
-        void setIndMapping (const IndiRef& ref, const IProperty* ip);
-
-        /**
-         * Deletes relation between (x)pdf object and IProperty*. 
-         *
-         * @param  ref  Id and gen number of an object.
-         * @param ip IProperty that will be mapped to Object o.
-         */
-        void delIndMapping (const IndiRef& ref);
-
-		/**
-		 * Adds indirect object to the pdf. It finds free pdf id and 
-		 * generation number. This number is set to all its children to indicate
-		 * that they live in this indirect object. A deep copy of that object is added to the pdf.
-		 *
-		 * @param ip Indirect object.
-		 * @return Identification number and generation number associated with 
-		 * 		   added object.
-		 */
-		IndiRef addIndirectObject (IProperty& ip);
+	/** Returns next page.
+	 * @param page Pointer to the page.
+	 *
+	 * Returns page which is after given one.
+	 * TODO error handling description.
+	 *
+	 * @return CPage pointer.
+	 */ 
+	CPage * getNextPage(CPage * page)
+	{
+		size_t pos=getPagePosition(page)+1;
 		
+		if(pos>=getPageCount())
+		{
+			// no more pages error
+			// TODO handle
+		}
 
-        /** Saves CPdf content (whole document).
-         * @param fname File name where to store.
-         *
-         * Saves actual content to given file. If fname is NULL, uses
-         * original file used for instance creation.
-         * <br>
-         * TODO distinguish saving and creating new revision.
-         */
-        int save(const char * )
-        {
-                // call xref->change for all changed objects
-                // call xref->saveXref
-				return 0;
-        }
+		// uses utils::findPage method on Pages field
+		return NULL;
+	}
 
-        /** Creates new empty page.
-         * @param pos Position where to insert page.
-         *
-         */
-        CPage * createPage(int)
-        {
-                // create new object xref->createObject
-                // initialize with default values
-                // update PageTree dictionary
-                // update pages array
-                // call xref->change to new page and page tree
-				return NULL;
-        }
+	/** Returns previous page.
+	 * @param Pointer to the page.
+	 *
+	 * Returns page which is before given one.
+	 * TODO error handling description.
+	 *
+	 * @return CPage pointer.
+	 */
+	CPage * getPrevPage(CPage * page)
+	{
+		int pos=getPagePosition(page)-1;
+		if(pos<0)
+		{
+			// no previous page
+			// TODO handle
+		}
 
-        /** Inserts exisitng page.
-         * @param page Page used for new page creation.
-         * @param pos Position where to insert new page.
-         *
-         * Creates new page and uses initialize all stuff according given page.
-         */
-        CPage * insertPage(const CPage * , int )
-        {
-                // create page deep copy (if from other file, also referencies)
-                // similar as create page
-				return NULL;
-        }
+		// uses utils::findPage method on Pages field
+		return NULL;
+	}
 
-        /** Removes page from given position.
-         * @param pos Position of the page.
-         */
-        int removePage(int )
-        {
-                // get page object
-                // change PageTree object
-                // update pages array
-                // release this object (xref->release())
-                // deallocate object (checks number of referencies...)
-				return 0;
-        }
+	/** Returns last page.
+	 * 
+	 * Calls getPage(pages.size()-1).
+	 *
+	 * @return CPage pointer.
+	 */
+	CPage * getLastPage()
+	{
+		return getPage(getPageCount()-1);
+	}
 
-        /** Returns absolute position of given page.
-         * @param page Page to look for.
-         * 
-         * NOTE: assume CPage implements == operator correctly
-         */
-        int getPagePosition(const CPage * page)const
-        {
-                PageStorage::const_iterator iter=pages.begin();
-                for(int i=0; iter!=pages.end(); iter++,i++)
-                        if(*iter == page)
-                                return i;
+	// Outlines methods
+	// =================
 
-                // page not found
-                // TODO handle error
-        }
+	/** Returns all top-level outlines.
+	 * @param container Template type parameter which will contain outline
+	 * pointers (must be allocated and support push_back and clear methods).
+	 *
+	 * To get whole outline hierarchy, use COutline instances (contains 
+	 * information about children).
+	 * <br>
+	 * NOTE: In first step clears container (calls clear method) and then
+	 * fills it with top-level outline instances (uses push_back method).
+	 *
+	 */
+	template<typename T> void getOutlines(T * container)
+	{
+		if(!container)
+		{
+			// TODO handle
+		}
 
-        /** Returnes page count.
-         */
-        unsigned int getPageCount() const
-        {
-                return pages.size();
-        }
+		// clears actual content
+		container->clear();
+		
+		// get outlines from Outlines field
+		// TODO figure out
+	}
 
-        // page iteration methods
-        // =======================
+	/** Removes top-level outline.
+	 * @param outline Outlines to remove.
+	 *
+	 * Removes also all children.
+	 */
+	void removeOutline(COutline * /*outline*/)
+	{
+		// actualize outlines
+		// remove from Outlines dictionary (in document catalog)
+		// change Outline object
+		// destroy outline object
+	}
 
-        /** Returns page at given position.
-         * @param pos Position (starting from 0).
-         *
-         * TODO error handling description
-         * @return Pointer to CPage instance.
-         */
-        CPage * getPage(int pos)
-        {
-                if(pos<0 || (unsigned long)pos>=pages.size())
-                {
-                        // out of range error
-                        // TODO handle
-                }
-
-                return pages[pos];
-        }
-
-        /** Returns first page.
-         *
-         * Calls getPage(0).
-         *
-         * @return Pointer to the first page instance.
-         */
-        CPage * getFirstPage()
-        {
-                return getPage(0);
-        }
-
-        /** Returns next page.
-         * @param page Pointer to the page.
-         *
-         * Returns page which is after given one.
-         * TODO error handling description.
-         *
-         * @return CPage pointer.
-         */ 
-        CPage * getNextPage(CPage * page)
-        {
-                size_t pos=getPagePosition(page)+1;
-                
-                if(pos>=pages.size())
-                {
-                        // no more pages error
-                        // TODO handle
-                }
-
-                return pages[pos];
-        }
-
-        /** Returns previous page.
-         * @param Pointer to the page.
-         *
-         * Returns page which is before given one.
-         * TODO error handling description.
-         *
-         * @return CPage pointer.
-         */
-        CPage * getPrevPage(CPage * page)
-        {
-                int pos=getPagePosition(page)-1;
-                if(pos<0)
-                {
-                        // no previous page
-                        // TODO handle
-                }
-
-                return pages[pos];
-        }
-
-        /** Returns last page.
-         * 
-         * Calls getPage(pages.size()-1).
-         *
-         * @return CPage pointer.
-         */
-        CPage * getLastPage()
-        {
-                return getPage(pages.size()-1);
-        }
-
-        // Outlines methods
-        // =================
-
-        /** Returns all top-level outlines.
-         * @param container Template type parameter which will contain outline
-         * pointers (must be allocated and support push_back and clear methods).
-         *
-         * To get whole outline hierarchy, use COutline instances (contains 
-         * information about children).
-         * <br>
-         * NOTE: In first step clears container (calls clear method) and then
-         * fills it with top-level outline instances (uses push_back method).
-         *
-         */
-        template<typename T> void getOutlines(T * container)
-        {
-                if(!container)        
-                {
-                        // TODO handle
-                }
-
-                // clears actual content
-                container->clear();
-                
-                // copies elements (just pointers)
-                OutlineStorage::iterator iter;
-                for(iter=outlines.begin(); iter!=outlines.end(); iter++)
-                        container.push_back(*iter);
-        }
-
-        /** Removes top-level outline.
-         * @param outline Outlines to remove.
-         *
-         * Removes also all children.
-         */
-        void removeOutline(COutline * /*outline*/)
-        {
-                // actualize outlines
-                // remove from Outlines dictionary (in document catalog)
-                // change Outline object
-                // destroy outline object
-        }
-
-        /** Creates new top-level outline.
-         * TODO parameters (at least name, position a target)
-         */
-        COutline * createOutline()
-        {
-                // creates new object
-                // initialize with default outline information
-                // update Outlines dictionary in document catalog
-                // update outlines array
-				return NULL;
-        }
+	/** Creates new top-level outline.
+	 * TODO parameters (at least name, position a target)
+	 */
+	COutline * createOutline()
+	{
+		// creates new object
+		// initialize with default outline information
+		// update Outlines dictionary in document catalog
+		// update outlines array
+		return NULL;
+	}
 
 
-        // Version handling and work around
-        // =================================
+	// Version handling and work around
+	// =================================
 
-        /** Returnes mode of this version.
-         *
-         * Mode is ReadOnly for all older version than last available and
-         * last depends on mode set in creation time.
-         */
-        OpenMode getMode() const
-        {
-                // 
-                return (!xref->getActualRevision())?mode:ReadOnly;
-        }
+	/** Returnes mode of this version.
+	 *
+	 * Mode is ReadOnly for all older version than last available and
+	 * last depends on mode set in creation time.
+	 */
+	OpenMode getMode() const
+	{
+		// 
+		return (!xref->getActualRevision())?mode:ReadOnly;
+	}
 
-        /** Revision type.
-         * This is used to determine which revision should or is used.
-         * It is only alias to unsigned number and 0 stands for the 
-         * newest revision. An older revision has higher number than
-         * newer one.
-         */
-        typedef unsigned revision_t;
-                
-        /** Returns name of actual revision number.
-         *
-         * Just delegate to the XRefWriter typed xref field.
-         * see XRefWriter::getActualRevision() method
-         */
-        revision_t getActualRevision()const
-        {
-                return xref->getActualRevision();
-        }
+	/** Revision type.
+	 * This is used to determine which revision should or is used.
+	 * It is only alias to unsigned number and 0 stands for the 
+	 * newest revision. An older revision has higher number than
+	 * newer one.
+	 */
+	typedef unsigned revision_t;
 
-        /** Changes revision to given one.
-         * @param revisionNum Revision number (the newest is 0).
-         *
-         * see XRefWriter::changeRevision
-         */
-        void changeRevision(revision_t /*revisionNum*/)
-        {
-                // set revision xref->changeRevision
-                // call cleanupRevisionSpecific
-                // call initRevisionSpecific
-                // TODO kind of notification
-                // TODO what has to be dellocated ?
-        }
+	/** Returns name of actual revision number.
+	 *
+	 * Just delegate to the XRefWriter typed xref field.
+	 * see XRefWriter::getActualRevision() method
+	 */
+	revision_t getActualRevision()const
+	{
+		return xref->getActualRevision();
+	}
 
-        /** Returns number of available revisions.
-         *
-         * see XRefWriter::getRevisionCount
-         */
-        size_t getRevisionsCount()const
-        {
-                return xref->getRevisionCount();
-        }
+	/** Changes revision to given one.
+	 * @param revisionNum Revision number (the newest is 0).
+	 *
+	 * see XRefWriter::changeRevision
+	 */
+	void changeRevision(revision_t /*revisionNum*/)
+	{
+		// set revision xref->changeRevision
+		// call cleanupRevisionSpecific
+		// call initRevisionSpecific
+		// TODO kind of notification
+		// TODO what has to be dellocated ?
+	}
+
+	/** Returns number of available revisions.
+	 *
+	 * see XRefWriter::getRevisionCount
+	 */
+	size_t getRevisionsCount()const
+	{
+		return xref->getRevisionCount();
+	}
 };
 
 } // namespace pdfobjects
