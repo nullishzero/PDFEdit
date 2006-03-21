@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Documentation for Scripting</title>
+ </bookinfo>
+
+ <chapter>
+  <title>Function list</title>
+  <para>
+   <title><funcsynopsys>void about()</funcsynopsys></title>
+   Invokes "About" dialog
+  </para>
+  <para>
+   <title><funcsynopsys>void createNewWindow()</funcsynopsys></title>
+   Creates new empty editor window
+  </para>
+  <para>
+   <title><funcsynopsys>void exitApp()</funcsynopsys></title>
+   Terminates application
+  </para>
+  <para>
+   <title><funcsynopsys>void closeWindow()</funcsynopsys></title>
+   Closes current editor window
+  </para>
+  <para>
+   <title><funcsynopsys>void print(String)</funcsynopsys></title>
+   Outputs given string to command window, followed by newline.
+   Useful to output various debugging or status messages
+  </para>
+ </chapter>
+</book>
