@@ -455,7 +455,7 @@ public:
 	 */
 	size_t getPropertyCount () const 
 	{
-		printDbg (0, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
+		printDbg (DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
 		return value.size();
 	};
  
@@ -606,7 +606,7 @@ typedef CObjectComplex<pDict> CDict;
 private:
 	
 	/** Object dictionary. */
-	CDict dict;
+	boost::scoped_ptr<CDict> dict;
 		
 private:
 
@@ -805,9 +805,9 @@ public:
 	//
 	void objectCreated (IProperty* ip)
 	{
-		_printHeader ();
-		std::cout << "IProperty [0x"<< (unsigned)ip << "] created.";
-		_printFooter ();
+		_printHeader (std::cerr);
+		printDbg (DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] created.");
+		_printFooter (std::cerr);
 		
 		getList().push_back (ip);
 	};
@@ -817,8 +817,8 @@ public:
 	//
 	void objectDeleted (IProperty* ip)
 	{
-		_printHeader ();
-		std::cout << "IProperty [0x"<< (unsigned)ip << "] deleted";
+		_printHeader (std::cerr);
+		printDbg (DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] deleted.");
 
 		_IPsList::iterator it = find (getList().begin(), getList().end(), ip);
 		if (it != getList().end())
@@ -827,10 +827,10 @@ public:
 		}
 		else
 		{
-				std::cout << std::endl << "!!!!!!!!!! deleting what was not created !!!!!!!!!!1" << std::endl;
+				printDbg (DBG_CRIT, "!!!!!!!!!! deleting what was not created !!!!!!!!!!");
 		}
 		
-		_printFooter ();
+		_printFooter (std::cerr);
 	};
 		
 	//
@@ -839,16 +839,16 @@ public:
 	size_t getCount () {return getList().size (); };
 
 private:
-	void _printHeader ()
+	void _printHeader (std::ostream& oss)
 	{
-		std::cout << std::setw (10) << std::setfill ('<') << "\t";
-		std::cout << std::setbase (16);
+		oss << std::setw (10) << std::setfill ('<') << "\t";
+		oss << std::setbase (16);
 	}
 
-	void _printFooter ()
+	void _printFooter (std::ostream& oss)
 	{
-		std::cout << std::setbase (10);
-		std::cout << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
+		oss << std::setbase (10);
+		oss << "\t" << std::setw (10) << std::setfill ('>') << "" << std::endl;
 	}
 	
 };
@@ -950,6 +950,18 @@ public:
 //=====================================================================================
 namespace utils {
 //=====================================================================================
+
+
+/**
+ * Creates CObject* from xpdf object.
+ *
+ * @param pdf Pdf in which the created object will live. Parameter to CObject* constructor.
+ * @param obj Xpdf object from which the object will be created. Parameter to CObject* constructor.
+ * @param ref Indirect reference number of this object (or its parent).
+ *
+ * @return Pointer to newly created object.
+ */
+IProperty* createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref);
 
 		
 /**
