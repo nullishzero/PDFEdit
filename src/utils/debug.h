@@ -43,12 +43,6 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
 
 
 
-//
-// OLD BUT WORKING
-//
-//#define STATIC_CHECK(expr, msg) { char unnamed[(expr) ? 1 : 0];}
-
-
 /** Debug priority macros.
  *
  * TODO make available for group of debug priority.
@@ -58,34 +52,34 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
  * After this kind of message, program usually ends without any resonable 
  * rescue routines. It should contain the cause of this state.
  */
-#define DBG_PANIC	0
+const unsigned int DBG_PANIC 	= 0;
 
 /** Critical error priority.
  * After this kind of message, program also ends but with coordinate way.
  */
-#define DBG_CRIT	1
+const unsigned int  DBG_CRIT 	= 1;
 
 /** Error message priority.
  *
  * Priority for casual errors.
  */
-#define DBG_ERR		2
+const unsigned int  DBG_ERR		= 2;
 
 /** Warning massage priority.
  * Messages which contains comments to some non casual behaviour.
  */
-#define DBG_WARN	3
+const unsigned int  DBG_WARN 	= 3;
 
 /** Information message priority.
  * It is designed for messages which informs about some important parts of
  * internals important also if we are not in debuging mode.
  */
-#define DBG_INFO	4
+const unsigned int  DBG_INFO 	= 4;
 
 /** Debug message priority.
  * All debuging information should use this priority.
  */
-#define DBG_DBG		5
+const unsigned int  DBG_DBG 	= 5;
 
 
 // may be defined from compilator 
@@ -98,7 +92,7 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
  * <br>
  * DEBUG_<PRIORITY> macro should be used for value
  */
-#define __DEBUG_LEVEL		0
+#define __DEBUG_LEVEL	0
 #endif
 
 /** Prints message with given priority.
@@ -131,6 +125,9 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
  * 
  * printDbg(DBG_PANIC, "Memmory allocation problem");
  * \endcode
+ *
+ * REMARK: This is a macro, because we want to output line number and file name.
+ * We can't force GCC to do inlining, we can just give a hint.
  */
 #define printDbg(dbgLevel,msg)	_printDbg((dbgLevel),std::cerr,msg);
 
@@ -154,7 +151,7 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
 
 
 /**
- * If we want to print sometheing more complicated just
+ * If we want to print something more complicated just
  * overload this function
  */
 inline void
