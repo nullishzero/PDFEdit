@@ -6,5 +6,14 @@ TEMPLATE = app
 
 unix:LIBS       += -lqsa
 
-HEADERS += pdfeditwindow.h settings.h util.h toolbutton.h toolbar.h property.h stringproperty.h propertyeditor.h intproperty.h aboutwindow.h commandwindow.h
-SOURCES += pdfeditwindow.cc settings.cc main.cc util.cc toolbutton.cc toolbar.cc property.cc stringproperty.cc propertyeditor.cc intproperty.cc aboutwindow.cc commandwindow.cc
+#Widget classes
+HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h commandwindow.h treewindow.h 
+SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc 
+
+#Non-widget classes
+HEADERS += property.h stringproperty.h intproperty.h settings.h 
+SOURCES += property.cc stringproperty.cc intproperty.cc settings.cc 
+
+#Other source files
+HEADERS += util.h 
+SOURCES += main.cc util.cc 

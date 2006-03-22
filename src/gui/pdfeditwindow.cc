@@ -8,6 +8,7 @@
 #include <iostream>
 #include <qfile.h>
 #include "aboutwindow.h"
+#include "treewindow.h"
 #include "version.h"
 
 using namespace std;
@@ -121,18 +122,17 @@ void printList(QStringList l) {
 
 /** constructor of PdfEditWindow, creates window and fills it with elements, parameters are ignored */
 PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
- //TODO: tohle je pokusny kod, dodelat
  setCaption(APP_NAME);
-
  
- //Splitter for Property editor
+ //Horizontal splitter Preview + Commandline | Treeview + Property editor
  QSplitter *spl=new QSplitter(this);
 
- //Splitter for command line
+ //Splitter between command line and preview window
  QSplitter *splCmd=new QSplitter(spl);
  splCmd->setOrientation(Vertical);
 
- //Button QUIT
+
+ //Button QUIT -> will be replaced with preview window once completed
  QPushButton *quit=new QPushButton(tr("Quit"), splCmd);
  quit->resize(75, 30);
  quit->setFont(QFont("Times", 18, QFont::Bold));
@@ -142,18 +142,23 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  cmdLine=new CommandWindow(splCmd);
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
 
- quit->show();
- cmdLine->show();
+// quit->show();
+// cmdLine->show();
 
- //Button NEW WINDOW
- PropertyEditor *prop=new PropertyEditor(spl);
- prop->show();
+ //Splitter between treeview and property editor
+ QSplitter *splProp=new QSplitter(spl);
+ splProp->setOrientation(Vertical);
+
+ //object treeview
+ TreeWindow *tree=new TreeWindow(splProp);
+
+ //Property editor
+ PropertyEditor *prop=new PropertyEditor(splProp);
+// prop->show();
  prop->setObject(0);//fill with demonstration properties
 
-// QPushButton *neww=new QPushButton(tr("Nothing"), spl);
-// QObject::connect(neww, SIGNAL(clicked()), this, SLOT(createNewWindow()));
+
  this->setCentralWidget(spl);
-// neww->show();
 
  //Menu
  QMenuBar *qb=globalSettings->loadMenu(this);
@@ -194,5 +199,9 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
 
 /** default destructor */
 PdfEditWindow::~PdfEditWindow() {
- delete qs;
+ /* stopExecution is not in QSA 1.0.1, need 1.1.4
+ if (qs->isRunning()) {
+  qs->stopExecution()
+ }*/
+ delete qp;
 }

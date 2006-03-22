@@ -10,8 +10,6 @@
 
 /** PdfEditWindow - class handling main application window */
 class PdfEditWindow : public QMainWindow {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
  PdfEditWindow(QWidget *parent=0,const char *name=0);
