@@ -6,7 +6,28 @@
  </bookinfo>
 
  <chapter>
-  <title>Function list</title>
+  <title>Scripting in PDFEditor</title>
+  <para>
+   PDFEditor have support for scripting. Evey item in menu (or toolbar) runs a script
+   (mostly just short call of function, but using complex scripts form menu
+   is possible), and also user can type script commands directly into
+   commandline. Every invocation of script from menu will echo the command
+   to the commandline, so user can learn how to do things in menu directly
+   from commandline if he wants.
+  </para>
+  <para>
+   QSA is used for scripting, which is based on ECMAScript standard
+   (if you don't know what ECMAScript is, it is basically the same
+    syntax as JavaScript)
+  </para>
+  <para>
+   This documentation will not explain the language syntax, but will document
+   all functions and objects that are exported from the application to the
+   scripting engine so they may be used in scripts and menus.
+  </para>
+ </chapter>
+ <chapter>
+  <title>Static functions</title>
   <para>
    <title><funcsynopsys>void about()</funcsynopsys></title>
    Invokes "About" dialog
@@ -28,5 +49,18 @@
    Outputs given string to command window, followed by newline.
    Useful to output various debugging or status messages
   </para>
+ </chapter>
+ <chapter>
+  <title>Objects exported to scripting</title>
+  <sect1>
+   <title>settings</title>
+   <para>
+    This object hold application settings and can be used to read them.
+   <para>
+   <title><funcsynopsys>String settings.read(String)</funcsynopsys></title>
+   Returns application setting with given key
+   </para>
+   </para>
+  </sect1>
  </chapter>
 </book>
