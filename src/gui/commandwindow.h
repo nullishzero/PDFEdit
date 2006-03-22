@@ -11,6 +11,7 @@ public:
  CommandWindow(QWidget *parent=0,const char *name=0);
  void addCommand(const QString &command);
  void addError(const QString &message);
+ void addString(const QString &str);
  ~CommandWindow();
 public slots:
  void execute();

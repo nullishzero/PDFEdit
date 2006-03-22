@@ -12,5 +12,7 @@
 
 void fatalError(const QString message);
 QStringList explode(char separator,const QString line);
+QString htmlEnt(const QString &str);
+QString loadFromFile(QString name);
 
 #endif

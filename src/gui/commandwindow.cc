@@ -3,6 +3,7 @@
 */
 #include "commandwindow.h"
 #include "settings.h"
+#include "util.h"
 #include <iostream>
 #include <qlayout.h>
 
@@ -33,13 +34,18 @@ void CommandWindow::execute() {
 
 /** Add command executed from menu or any source to be echoed to command window */
 void CommandWindow::addCommand(const QString &command) {
- out->append("<b>&gt; </b>"+command);
+ out->append("<b>&gt; </b>"+htmlEnt(command));
+}
+
+/** Add string to be echoed to command window */
+void CommandWindow::addString(const QString &str) {
+ out->append(htmlEnt(str));
 }
 
 /** Add error message to be echoed to command window */
 void CommandWindow::addError(const QString &message) {
- out->append("<font color=red>! </font>"+message);}
-
+ out->append("<font color=red>! </font>"+htmlEnt(message));
+}
 
 /** default destructor */
 CommandWindow::~CommandWindow() {

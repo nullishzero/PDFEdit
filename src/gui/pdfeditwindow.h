@@ -10,6 +10,8 @@
 
 /** PdfEditWindow - class handling main application window */
 class PdfEditWindow : public QMainWindow {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public:
  PdfEditWindow(QWidget *parent=0,const char *name=0);
@@ -21,6 +23,7 @@ public slots: //These will be exported to scripting
  void createNewWindow(); 
  void exitApp();
  void closeWindow();
+ void print(QString str);
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
@@ -29,6 +32,7 @@ protected slots:
 private:
  CommandWindow *cmdLine;
  QSInterpreter *qs;
+ QSProject *qp;
 };
 
 void createNewEditorWindow();

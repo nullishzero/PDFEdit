@@ -33,11 +33,15 @@ StringProperty::~StringProperty() {
  delete ed;
 }
 
- /** write internal value to given PDF object */
+/** write internal value to given PDF object
+ @param pdfObject Object to write to
+ */
 void StringProperty::writeValue(void *pdfObject) {
  //TODO
 }
- /** read internal value from given PDF object */
+/** read internal value from given PDF object
+ @param pdfObject Object to read from
+ */
 void StringProperty::readValue(void *pdfObject) {
  //TODO
 }

@@ -17,7 +17,8 @@ typedef QValueList<ToolBar*> ToolBarList;
 
 /** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 
-class Settings {
+class Settings : public QObject {
+ Q_OBJECT
 public:
  Settings();
  ~Settings();
@@ -27,6 +28,8 @@ public:
  ToolBarList loadToolBars(QMainWindow *parent);
  void saveWindow(QWidget *win,const QString name); 
  void restoreWindow(QWidget *win,const QString name);
+public slots:
+ QString read(const QString &key);
 private:
  /** Cache storing loaded icons */
  IconCache iconCache;

@@ -4,6 +4,7 @@
 #include "pdfeditwindow.h"
 #include "propertyeditor.h"
 #include "settings.h"
+#include "util.h"
 #include <iostream>
 #include <qfile.h>
 #include "aboutwindow.h"
@@ -11,7 +12,8 @@
 
 using namespace std;
 
-extern Settings *global;//global settings
+/** One object for application, holding all global settings. */
+extern Settings *globalSettings;
 
 /** number of active editor windows -> when last is closed, application terminates */
 int windowCount;
@@ -23,6 +25,7 @@ void PdfEditWindow::exitApp() {
  printf("exiting...\n");
  qApp->closeAllWindows();
  //Application will exit after last window is closed
+ //todo: if invoked from qscript then handle specially
 }
 
 /** Shows "About" window */
@@ -62,12 +65,12 @@ void PdfEditWindow::closeWindow() {
 
 /** Saves window state to application settings*/
 void PdfEditWindow::saveWindowState() {
- global->saveWindow(this,"main"); 
+ globalSettings->saveWindow(this,"main"); 
 }
 
 /** Restores window state from application settings */
 void PdfEditWindow::restoreWindowState() {
- global->restoreWindow(this,"main"); 
+ globalSettings->restoreWindow(this,"main"); 
 }
 
 /** Runs given script code
@@ -84,35 +87,23 @@ void PdfEditWindow::runScript(QString script) {
 }
 
 
+/** Print given string to console, followed by newline
+ @param str String to add
+ */
+void PdfEditWindow::print(QString str) {
+ cmdLine->addString(str);
+}
+
 /** Signal handler invoked on menu activation
  @param id Menu ID of clicked item
  */
 void PdfEditWindow::menuActivated(int id) {
- QString action=global->getAction(id);
+ QString action=globalSettings->getAction(id);
  cout << "Performing action: " << action << endl;
  if (action=="quit") exitApp();
  else if (action=="closewindow") closeWindow();
  else if (action=="newwindow") createNewWindow();
  runScript(action);
-}
-
-/** Load content of file to string. Empty string is returned if file does not exist or is unreadable.
- @param name Filename of file to load
- @return file contents in string.
- */
-QString loadFromFile(QString name) {
- QFile *f=new QFile(name);
- f->open(IO_ReadOnly);
- int size=f->size();
- char* buffer=(char *)malloc(size);
- size=f->readBlock(buffer,size);
- if (size==-1) return "";
- f->close();
- delete f;
- QByteArray qb;
- qb.assign(buffer,size);
- QString res=QString(qb);
- return res;
 }
 
 /** DEBUG: print stringlist to stdout
@@ -132,23 +123,7 @@ void printList(QStringList l) {
 PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  //TODO: tohle je pokusny kod, dodelat
  setCaption(APP_NAME);
- //Gets new interpreter
- qs=new QSInterpreter();
- 
- //run initscript
- QString initScript="init.qs";
- QString code=loadFromFile(initScript);
- qs->evaluate(code,this,initScript);
 
- /*
- //DEBUG 
- printf("<Functions\n");
- printList(qs->functions());
- printf("<Classes\n");
- printList(qs->classes(QSInterpreter::AllClasses));
- printf("<Var\n");
- printList(qs->variables());
- printf("<OK\n");*/
  
  //Splitter for Property editor
  QSplitter *spl=new QSplitter(this);
@@ -181,17 +156,40 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
 // neww->show();
 
  //Menu
- QMenuBar *qb=global->loadMenu(this);
+ QMenuBar *qb=globalSettings->loadMenu(this);
  QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
 
  //ToolBars
- ToolBarList tblist=global->loadToolBars(this);
+ ToolBarList tblist=globalSettings->loadToolBars(this);
  for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
   QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
  }
    
  //show splitter
  spl->show();
+
+ //Script must be run AFTER creating all widgets
+ // -> script may need them, especially the command window
+
+ //Gets new interpreter
+ qp=new QSProject();
+ qs=qp->interpreter();//new QSInterpreter();
+ qp->addObject(globalSettings);
+ //run initscript
+ QString initScript="init.qs";
+ QString code=loadFromFile(initScript);
+ qs->evaluate(code,this,initScript);
+
+ /*
+ //DEBUG 
+ printf("<Functions\n");
+ printList(qs->functions());
+ printf("<Classes\n");
+ printList(qs->classes(QSInterpreter::AllClasses));
+ printf("<Var\n");
+ printList(qs->variables());
+ printf("<OK\n");*/
+
 }
 
 /** default destructor */

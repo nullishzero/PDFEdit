@@ -48,6 +48,13 @@ void Settings::init() {
  set->endGroup();
 }
 
+/** Read settings with given key from configuration file and return as QString
+ @param key Key to read from settings
+ @return Value of given setting */
+QString Settings::read(const QString &key) {
+ return set->readEntry(APP_KEY+key);
+}
+
 /** creates and inits new QSettings Object */
 void Settings::initSettings() {
  set=new QSettings(QSettings::Ini);

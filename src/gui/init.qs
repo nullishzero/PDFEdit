@@ -11,3 +11,5 @@ function closewindow() {
 function newwindow() {
  createNewWindow();
 }
+
+print("Windowstate of main is: "+settings.read("gui/windowstate/main"));

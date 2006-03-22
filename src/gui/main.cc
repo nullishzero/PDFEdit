@@ -5,19 +5,22 @@
 #include "settings.h"
 #include <stdlib.h>
 
-Settings *global;
+/** One object for application, holding all global settings.
+ Should be thread-safe */
+Settings *globalSettings;
 
 /** delete settings object (and save settings)
  This function is called at application exit
  */
 void saveSettings(void) {
- delete global;//this causes settings to be saved to disk
+ delete globalSettings;//this causes settings to be saved to disk
 }
 
 /** main - load settings and launches a main window */
 int main(int argc, char *argv[]){
  QApplication app(argc, argv);
- global=new Settings();
+ globalSettings=new Settings();
+ globalSettings->setName("settings");
  atexit(saveSettings);
  createNewEditorWindow();
  QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
