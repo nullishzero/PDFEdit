@@ -26,6 +26,8 @@
 #include <map>
 #include <set>
 
+#include <limits>
+
 //
 // boost
 //
@@ -40,6 +42,8 @@
 
 #include "observer.h"
 #include "exceptions.h"
+#include "filters.h"
+#include "modecontroller.h"
 
 #include "xpdf.h"
 

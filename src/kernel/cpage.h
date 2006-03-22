@@ -25,10 +25,28 @@ namespace pdfobjects {
 //=====================================================================================
 
 
-		
 /** Invalid page number. */
-const unsigned int PAGE_NUMBER_INVALID = 0xFFFFFFFF;
+const unsigned int PAGE_NUMBER_INVALID = std::numeric_limits<unsigned int>::max();
+/** Invalid coordinate. */
+const double COORDINATE_INVALID = std::numeric_limits<double>::max();
 
+/**
+ * Rectangle structure. Defined as in pdf specification v1.5 (p. 133)
+ */
+typedef struct Rect
+{
+	typedef double Coordinate;
+
+	Coordinate xleft;
+	Coordinate yleft;
+	Coordinate xright;
+	Coordinate yright;
+
+	// Constructor
+	Rect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
+
+} Rectangle;
+		
 		
 /**
  * CPage represents pdf page object. 
@@ -64,7 +82,7 @@ public:
 	 *
 	 * @return Page number of this page.
 	 */
-	PageNumber getPageNumber () { return pageNumber; };
+	PageNumber getPageNumber () const { return pageNumber; };
 
 	/**
 	 * Set page number.
@@ -75,28 +93,51 @@ public:
 
 	
 
-/**  Vrati plain text zadanej stranky (ziadne zazraky)*/
-//  string text_export ();
+	/**  
+	 * Returns plain text extracted from a page.
+	 *
+	 * @param text Container where the text will be saved.
+	 */
+ 	void getText (std::string& text) const {};
 
 
+	/**  
+	 *
+	 * Vlozi na stranku existujuci objekt a vytvori novy  identifikator vlozeneho objektu, ktory vrati.
+	 * 
+	 */
+	// boost::shared_ptr<IProperty> insertObject (CAny,position);
 
-/**  Vlozi na stranku existujuci objekt a vytvori novy
-  identifikator vlozeneho objektu, ktory vrati.*/
-//  CAny& insert_object (CAny,position);
+	
+	/**  
+	 * Return media box of this page. It is a required item in page dictionary (spec p.119).
+	 *
+	 * @return Rectangle specifying the box.
+	 */
+	 Rectangle getMediabox () const {};
 
-/**  Vrati bounding box zadaneho objektu*/
-//  bbox get_object_bbox (CAny&);
 
-/**  Vrati pole vsetkych objektov na stranke.*/
-//  array [CAny*] get_objects (family mask);
+	/** 
+	 * Returns all objects on a page.
+	 *
+	 * \TODO what here?
+	 */
+	 template<typename Container>
+	 void getAllObjects (Container& container) const {}
 
+	 
 /**  Vrati pole bbox pre kazde pismeno od ord_pos (v plaintexte)
   s dlzkou len.*/
 //  array [rectangle] get_textpos (ord_pos,len);
 
-/**  Odstrani zadany objekt zo stranky.*/
-//  void delete_object (CAny*);
+	/** 
+	 * Remove !!object!! from page.
+	 *
+	 * \TODO object?
+	 */
+	//void delete_object (CAny*);
 
+	 
 /**  Vytvori novy graficky objekt so zadanou velkostou a poziciou.
   Graficky objekt je prazdny a pre vkladanie sa pouzivaju metody
   objektu graphic*/
@@ -110,8 +151,11 @@ public:
   nastavenie je mozne urobit pomocou (get/set)_property.*/
 //  CAnnotation create_annotation (type,rectangle);
 
-/**  Vytvori novy textovy objekt, ktory obsahuje dany retazec a je umiestneny
-  na pozicii position (pozn. vzhladom k comu sa urcuje pozicia)*/
+	/**  
+	 * Create text !!object!! and put it at specified position.
+	 *
+	 * \TODO
+	 */
 //  CText create_text (string,position);
 
 };
