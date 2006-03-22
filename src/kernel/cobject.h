@@ -455,7 +455,7 @@ public:
 	 */
 	size_t getPropertyCount () const 
 	{
-		printDbg (DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
+		printDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
 		return value.size();
 	};
  
@@ -806,7 +806,7 @@ public:
 	void objectCreated (IProperty* ip)
 	{
 		_printHeader (std::cerr);
-		printDbg (DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] created.");
+		printDbg (debug::DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] created.");
 		_printFooter (std::cerr);
 		
 		getList().push_back (ip);
@@ -818,7 +818,7 @@ public:
 	void objectDeleted (IProperty* ip)
 	{
 		_printHeader (std::cerr);
-		printDbg (DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] deleted.");
+		printDbg (debug::DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] deleted.");
 
 		_IPsList::iterator it = find (getList().begin(), getList().end(), ip);
 		if (it != getList().end())
@@ -827,7 +827,7 @@ public:
 		}
 		else
 		{
-				printDbg (DBG_CRIT, "!!!!!!!!!! deleting what was not created !!!!!!!!!!");
+				printDbg (debug::DBG_CRIT, "!!!!!!!!!! deleting what was not created !!!!!!!!!!");
 		}
 		
 		_printFooter (std::cerr);

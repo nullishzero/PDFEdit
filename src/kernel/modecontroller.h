@@ -95,7 +95,7 @@ private:
 private:
 	ModeController (const ModeController&);
 	ModeController& operator= (const ModeController&);
-	~ModeController () {printDbg (DBG_INFO, "Mode controller destroyed.");};
+	~ModeController () {printDbg (debug::DBG_INFO, "Mode controller destroyed.");};
 };
 
 

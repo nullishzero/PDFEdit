@@ -16,6 +16,10 @@
 #include <iomanip>
 
 
+// =====================================================================================
+namespace debug {
+// =====================================================================================
+
 /**
  * Helper class for STATIC_CHECK.
  */
@@ -36,9 +40,9 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
  *				to false. This has to be a valid variable name, e.g. 
  *				BAD_EXPRESSION, COMPILE_TIME_CHECK_FAILED...
  */
-#define STATIC_CHECK(expr, msg)							\
-	{													\
-		CompileTimeChecker<(expr) != 0> (ERROR_##msg);	\
+#define STATIC_CHECK(expr, msg)									\
+	{															\
+		debug::CompileTimeChecker<(expr) != 0> (ERROR_##msg);	\
 	}
 
 
@@ -175,9 +179,6 @@ printDbg (std::ostream& out, const std::string& msg)
 */
 
 
-namespace pdfobjects {
-namespace debug {
-		
 //
 // Returns name of objects type
 //
@@ -205,7 +206,11 @@ template<> inline
 std::string getStringType<8> () {return "pStream";}
 
 
+
+// =====================================================================================
 } // namespace debug
-} // namespace pdfobjects
+// =====================================================================================
+
+
 
 #endif	// DEBUG_H

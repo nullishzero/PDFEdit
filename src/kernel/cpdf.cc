@@ -407,7 +407,7 @@ CPdf::delIndMapping (const IndiRef& ref)
  */ 
 IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 {
-	//printDbg(DBG_DBG,"");
+	//printDbg(debug::DBG_DBG,"");
 
 	PropertyType type=ip->getType();
 	ChildrenStorage childrenStorage;
@@ -416,9 +416,9 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 	{
 		case pRef:
 		{
-			//printDbg(DBG_DBG,"Property is reference - adding new indirect object");
+			//printDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
 			IndiRef indiRef=pdf->addIndirectProperty(ip);
-			//printDbg(DBG_DBG,"");
+			//printDbg(debug::DBG_DBG,"");
 			return new IndiRef(indiRef);
 		}	
 		// complex types (pArray and pDict) collects their children to the 
@@ -447,7 +447,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 			// new reference for this child
 			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(*i);
 			ref_ptr->writeValue(*ref);
-			//printDbg(DBG_DBG,"Reference changed to ["+ref->num+", "+ref->gen+"]");
+			//printDbg(debug::DBG_DBG,"Reference changed to ["+ref->num+", "+ref->gen+"]");
 			delete ref;
 			continue;
 		}
@@ -463,7 +463,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 //
 IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 {
-	//printDbg(DBG_DBG, *ip);
+	//printDbg(debug::DBG_DBG, *ip);
 
 	// place for propertyValue
 	// it is ip by default
@@ -485,7 +485,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 		// just returns reference
 		if(ip->getPdf()==this)
 		{
-			//printDbg(DBG_WARN, "Reference is from this file, nothing is added.");
+			//printDbg(debug::DBG_WARN, "Reference is from this file, nothing is added.");
 			return ref;
 		}
 
@@ -498,7 +498,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// added too
 	if(propValue->getPdf() != this)
 	{
-		//printDbg(DBG_DBG, "Adding property from different file.");
+		//printDbg(debug::DBG_DBG, "Adding property from different file.");
 		boost::shared_ptr<IProperty> clone;
 		switch(propValue->getType())
 		{
@@ -531,7 +531,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// be stored), registers new reference on xref		  
 	::Object * obj=propValue->_makeXpdfObject();
 	::Ref xpdfRef=xref->reserveRef();
-	//printDbg(DBG_DBG, "New reference reseved ["+ref.num+", "+gen+"]");
+	//printDbg(debug::DBG_DBG, "New reference reseved ["+ref.num+", "+gen+"]");
 	xref->changeObject(xpdfRef.num, xpdfRef.gen, obj);
 
 	// xpdf object has to be deallocated
@@ -540,14 +540,14 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// creates return value from xpdf reference structure
 	// and returns
 	IndiRef reference={xpdfRef.num, xpdfRef.gen};
-	//printDbg(DBG_INFO, "New indirect object inserted with reference ["+ref.num+", "+gen+"]");
+	//printDbg(debug::DBG_INFO, "New indirect object inserted with reference ["+ref.num+", "+gen+"]");
 	return reference;
 }
 
 
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 {
-	//printDbg(DBG_DBG, "");
+	//printDbg(debug::DBG_DBG, "");
 	
 	// openMode is read-only by default
 	const char * openMode="r";
@@ -560,11 +560,11 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	FILE * file=fopen(filename, openMode);
 	if(!file)
 	{
-		//printDbg(DBG_ERR, "Unable to open file (reason="+strerror(errno)+")");
+		//printDbg(debug::DBG_ERR, "Unable to open file (reason="+strerror(errno)+")");
 		// TODO some output
 		// exception
 	}
-	//printDbg(DBG_DBG,"File \""+filename+"\" open successfully in mode="+openMode);
+	//printDbg(debug::DBG_DBG,"File \""+filename+"\" open successfully in mode="+openMode);
 	
 	Object obj;
 	// NOTE: I didn't find meaning obj parameter meaning for BaseStream
@@ -572,19 +572,19 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	// this object
 	obj.initNull();
 	BaseStream * stream=new FileStream(file, 0, gFalse, 0, &obj);
-	//printDbg(DBG_DBG,"File stream created");
+	//printDbg(debug::DBG_DBG,"File stream created");
 
 	// stream is ready, creates CPdf instance
 	CPdf * instance=new CPdf(stream, file, mode);
 
-	//printDbg(DBG_INFO, "Instance created successfully openMode="+openMode);
+	//printDbg(debug::DBG_INFO, "Instance created successfully openMode="+openMode);
 
 	return instance;
 }
 
 int CPdf::close(bool saveFlag)
 {
-	//printDbg(DBG_DBG, "");
+	//printDbg(debug::DBG_DBG, "");
 	// saves if necessary
 	if(saveFlag)
 		save(NULL);
@@ -593,7 +593,7 @@ int CPdf::close(bool saveFlag)
 	// all clean-up is made in destructor
 	delete this;
 
-	//printDbg(DBG_INFO, "Instance deleted.")
+	//printDbg(debug::DBG_INFO, "Instance deleted.")
 	return 0;
 }
 

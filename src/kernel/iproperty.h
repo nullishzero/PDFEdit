@@ -124,7 +124,7 @@ protected:
   /** Basic constructor. */
   IProperty (CPdf* _pdf = NULL) : mode(mdUnknown), pdf(_pdf)
   {
-	printDbg (DBG_DBG, "IProperty () constructor.");
+	printDbg (debug::DBG_DBG, "IProperty () constructor.");
 
 	ref.num = ref.gen = 0;
   };
@@ -132,7 +132,7 @@ protected:
   /** Constructor. */
   IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf)
   {
-	printDbg (DBG_DBG, "IProperty () constructor.");
+	printDbg (debug::DBG_DBG, "IProperty () constructor.");
   };
 
 public:

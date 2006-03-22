@@ -229,7 +229,7 @@ namespace {
 				{
 					assert (objArray == array.getType());
 					assert (0 <= array.arrayGetLength ());
-					printDbg (DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
+					printDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 					
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
@@ -266,7 +266,7 @@ namespace {
 				{
 					assert (objDict == dict.getType());
 					assert (0 <= dict.dictGetLength ());
-					printDbg (DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
+					printDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 					
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
@@ -325,7 +325,7 @@ namespace {
 		void
 		simpleXpdfObjToString (Object& obj,string& str)
 		{
-			printDbg (DBG_DBG,"simpleXpdfObjToString(" << (unsigned int)&obj << ") objType = " << obj.getTypeName() );
+			printDbg (debug::DBG_DBG,"simpleXpdfObjToString(" << (unsigned int)&obj << ") objType = " << obj.getTypeName() );
 
 			ostringstream oss;
 
@@ -376,8 +376,8 @@ namespace {
 		complexXpdfObjToString (Object& obj, string& str)
 		{
 		 	
-			printDbg (DBG_DBG,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
-			printDbg (DBG_DBG,"\tobjType = " << obj.getTypeName() );
+			printDbg (debug::DBG_DBG,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
+			printDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 			ostringstream oss;
 			Object o;
@@ -590,7 +590,7 @@ template<>
 void
 complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
 {
-		printDbg (DBG_DBG,"complexValueToString<pArray>()" );
+		printDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
 		
 		ostringstream oss;
 
@@ -620,7 +620,7 @@ template<>
 void
 complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
 {
-	printDbg (DBG_DBG,"complexValueToString<pDict>()");
+	printDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
 
 	// start tag
 	str = CDICT_PREFIX;
@@ -655,7 +655,7 @@ freeXpdfObject (Object* obj)
 	
 	std::string str;
 	xpdfObjToString (*obj,str); 
-	printDbg (DBG_DBG, "freeXpdfObject()\t ..." << str);
+	printDbg (debug::DBG_DBG, "freeXpdfObject()\t ..." << str);
 	
 	// delete all member variables
 	obj->free ();
@@ -801,7 +801,7 @@ Object*
 xpdfObjFromString (const std::string& str)
 {
 
-	printDbg (DBG_DBG,"xpdfObjFromString from " << str);
+	printDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
 	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.

@@ -54,7 +54,7 @@ public:
 public:
 	
 	/** Destructor. */
-	~CPage () { printDbg (DBG_INFO, "Page destroyed."); };
+	~CPage () { printDbg (debug::DBG_INFO, "Page destroyed."); };
 
 
 public:

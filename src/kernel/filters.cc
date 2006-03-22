@@ -22,7 +22,7 @@ namespace filters  {
 void 
 NoFilter::decode (const Params& /*params , char* ... */) const
 {
-	printDbg (DBG_DBG, "NoFilter::decode"); 
+	printDbg (debug::DBG_DBG, "NoFilter::decode"); 
 }
 
 
