@@ -56,13 +56,13 @@ class NoFilter : public CFilter
 {
 public:
 	/** Default constructor. */
-	NoFilter () { printDbg (0,"NoFilter created."); };
+	NoFilter () { printDbg (DBG_DBG, "NoFilter created."); };
 		
 	/** Do the endcoding. */
 	virtual void decode (const Params& /*params , char* ... */) const;
 
 	/** Destructor. */
-	~NoFilter () { printDbg (0,"NoFilter destroyed."); };
+	~NoFilter () { printDbg (DBG_DBG, "NoFilter destroyed."); };
 
 };
 

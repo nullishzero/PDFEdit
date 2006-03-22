@@ -34,7 +34,7 @@ ModeController::Instance (const std::string& fileName)
 //
 ModeController::ModeController (const std::string& /*fileName*/) 
 {
-		printDbg (1,"Mode controller created.");
+		printDbg (DBG_INFO, "Mode controller created.");
 
 		//
 		// get the modes

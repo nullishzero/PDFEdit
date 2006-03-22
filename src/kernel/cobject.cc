@@ -85,51 +85,7 @@ const string CSTREAM_STREAM = "<stream>";
 namespace {
 // =====================================================================================
 
-		/**
-		 * Creates CObject from xpdf object.
-		 */
-		IProperty*
-		createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
-		{
 
-				switch (obj.getType ())
-				{
-					case objBool:
-						return new CBool (pdf,obj,ref);
-
-					case objInt:
-						return new CInt (pdf,obj,ref);
-
-					case objReal:
-						return new CReal (pdf,obj,ref);
-
-					case objString:
-						return new CString (pdf,obj,ref);
-
-					case objName:
-						return new CName (pdf,obj,ref);
-
-					case objNull:
-						return new CNull (pdf,obj,ref);
-
-					case objRef:
-						return new CRef (pdf,obj,ref);
-
-					case objArray:
-						return new CArray (pdf,obj,ref);
-
-					case objDict:
-						return new CDict (pdf,obj,ref);
-
-					case objStream:
-						return new CStream (pdf,obj,ref);
-
-					default:
-						assert (!"Bad type.");
-						break;
-				}
-
-		}
 
 		//
 		// ReadProcessors for simple types
@@ -273,7 +229,7 @@ namespace {
 				{
 					assert (objArray == array.getType());
 					assert (0 <= array.arrayGetLength ());
-					printDbg (0,"xpdfArrayReader\tobjType = " << array.getTypeName() );
+					printDbg (DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 					
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
@@ -310,7 +266,7 @@ namespace {
 				{
 					assert (objDict == dict.getType());
 					assert (0 <= dict.dictGetLength ());
-					printDbg (0,"xpdfDictReader\tobjType = " << dict.getTypeName() );
+					printDbg (DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 					
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
@@ -369,7 +325,7 @@ namespace {
 		void
 		simpleXpdfObjToString (Object& obj,string& str)
 		{
-			printDbg (0,"simpleXpdfObjToString(" << (unsigned int)&obj << ") objType = " << obj.getTypeName() );
+			printDbg (DBG_DBG,"simpleXpdfObjToString(" << (unsigned int)&obj << ") objType = " << obj.getTypeName() );
 
 			ostringstream oss;
 
@@ -420,8 +376,8 @@ namespace {
 		complexXpdfObjToString (Object& obj, string& str)
 		{
 		 	
-			printDbg (0,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
-			printDbg (0,"\tobjType = " << obj.getTypeName() );
+			printDbg (DBG_DBG,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
+			printDbg (DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 			ostringstream oss;
 			Object o;
@@ -474,6 +430,52 @@ namespace {
 // =====================================================================================
 } // anonymous namespace
 // =====================================================================================
+
+
+//
+// Creates CObject from xpdf object.
+// 
+IProperty*
+createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
+{
+
+		switch (obj.getType ())
+		{
+			case objBool:
+				return new CBool (pdf,obj,ref);
+
+			case objInt:
+				return new CInt (pdf,obj,ref);
+
+			case objReal:
+				return new CReal (pdf,obj,ref);
+
+			case objString:
+				return new CString (pdf,obj,ref);
+
+			case objName:
+				return new CName (pdf,obj,ref);
+
+			case objNull:
+				return new CNull (pdf,obj,ref);
+
+			case objRef:
+				return new CRef (pdf,obj,ref);
+
+			case objArray:
+				return new CArray (pdf,obj,ref);
+
+			case objDict:
+				return new CDict (pdf,obj,ref);
+
+			case objStream:
+				return new CStream (pdf,obj,ref);
+
+			default:
+				assert (!"Bad type.");
+				break;
+		}
+}
 
 
 //
@@ -588,7 +590,7 @@ template<>
 void
 complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
 {
-		printDbg (0,"complexValueToString<pArray>()" );
+		printDbg (DBG_DBG,"complexValueToString<pArray>()" );
 		
 		ostringstream oss;
 
@@ -618,7 +620,7 @@ template<>
 void
 complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
 {
-	printDbg (0,"complexValueToString<pDict>()");
+	printDbg (DBG_DBG,"complexValueToString<pDict>()");
 
 	// start tag
 	str = CDICT_PREFIX;
@@ -653,7 +655,7 @@ freeXpdfObject (Object* obj)
 	
 	std::string str;
 	xpdfObjToString (*obj,str); 
-	printDbg (1,"freeXpdfObject()\t ..." << str);
+	printDbg (DBG_DBG, "freeXpdfObject()\t ..." << str);
 	
 	// delete all member variables
 	obj->free ();
@@ -764,7 +766,7 @@ simpleValueFromString (const std::string& str, int& val)
 void
 simpleValueFromString (const std::string& str, double& val)
 {
-	auto_ptr<Object> ptrObj (xpdfObjFromString (str));
+	boost::scoped_ptr<Object> ptrObj (xpdfObjFromString (str));
 	
 	assert (objReal == ptrObj->getType ());
 	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
@@ -799,7 +801,7 @@ Object*
 xpdfObjFromString (const std::string& str)
 {
 
-	printDbg (0,"xpdfObjFromString from " << str);
+	printDbg (DBG_DBG,"xpdfObjFromString from " << str);
 	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.
@@ -856,7 +858,7 @@ objHasParent (const IProperty& ip)
 	if (NULL == pdf)
 		throw ObjInvalidOperation ();
 
-	if ( &ip == pdf->getExistingProperty (ip.getIndiRef ()) )
+	if ( &ip == pdf->getIndirectProperty(ip.getIndiRef()).get() )
 		return true;
 	else
 		return false;
