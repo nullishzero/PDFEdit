@@ -21,16 +21,20 @@
 
 //========= NASTY =============
 #ifdef NO_KERNEL_COUT_OUTPUT
-	#define KERNEL_OUTPUT 		ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;\
-								if (1 == argc) {strm_buffer = cout.rdbuf();cout.rdbuf(redirect_file.rdbuf());}
-	#define KERNEL_OUTPUT_BACK	if (1 == argc) {cout.rdbuf(strm_buffer);}
-	#define OUTPUT	cerr
+	#define OUTPUT		cout
+	#define KOUTPUT		cerr
+	#define OUTPUT_COND	(1==argc)
 #else
-	#define KERNEL_OUTPUT 		ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;\
-								if (1 != argc) {strm_buffer = cout.rdbuf();cout.rdbuf(redirect_file.rdbuf());}
-	#define KERNEL_OUTPUT_BACK	if (1 != argc) {cout.rdbuf(strm_buffer);}
-	#define	OUTPUT 	cout
+	#define	OUTPUT 		cerr
+	#define KOUTPUT		cout
+	#define OUTPUT_COND	(1!=argc)
 #endif
+
+#define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;
+#define	SWAP_BUFS			{strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
+#define SWAP_BUFS_BACK		{KOUTPUT.rdbuf(strm_buffer);}
+#define KERNEL_OUTPUT 		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;}
+#define KERNEL_OUTPUT_BACK	if (OUTPUT_COND) {SWAP_BUFS_BACK;}
 
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT  << "OBJECTS UNALLOCATED: " << check.getCount () << endl;}
 
@@ -1305,12 +1309,7 @@ main (int argc, char* [])
 
 
 
-		//======== test x
-		/*CPdf pdf;
-		CDict dc(&pdf);
-		IProperty* ip = pdf.getExistingProperty(77,77);
-		
-
+/*
 		//======== test xx
 		GString* fileName = new GString ("/home/jozo/_pdf/pdfedit/or_d0506.pdf");
 		PDFDoc* doc = new PDFDoc (fileName,new GString(),new GString());
@@ -1343,4 +1342,4 @@ main (int argc, char* [])
 		CPdf::objToString (obj,str);
 		cout << str << endl;
 		str = "";
-		*/
+*/
