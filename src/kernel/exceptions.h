@@ -22,17 +22,17 @@
  *
  * Kernel is using different types of exceptions for unexpected situation 
  * handling.
- * To keep system in them, they are separated to the following cathegories:
+ * To keep system in them, they are separated to the following categories:
  * <ul>
  * <li> XpdfException - exceptions related to problems with xpdf code usage. 
  * <li> CObjectException - exceptions related with cobjects.
- * <li> PdfException - exceptions related with pdf corruptio, specification, pdf
+ * <li> PdfException - exceptions related with pdf corruption, specification, pdf
  * usage problem (such as changing read-only document).
  * <li> ImplementationException - exceptions related with implementation
  * specific stuff.
  * </ul> 
  *
- * All these cathegories are base classes for specific exceptions. They are
+ * All these categories are base classes for specific exceptions. They are
  * std::exception subclasses.
  * <br>
  * TODO
@@ -46,11 +46,113 @@ class XpdfException : public std::exception
 {
 };
 
+
+/** Pdf error exception base class.
+ */
+class PdfException: public std::exception
+{
+};
+
+
 /** Cobject exception base class.
  */
 class CObjectException: public std::exception
 {
 };
+
+/** Exception is thrown when pdf structure doesn't confirm to PDF specification
+ * required for operation.
+ *
+ * TODO include also cause exception
+ */
+class MalformedFormatExeption: public PdfException
+{
+	const std::string message;
+	
+public:
+	MalformedFormatExeption(std::string msg):message(msg)
+	{
+	}
+
+	virtual ~MalformedFormatExeption() throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		return message.c_str();
+	}
+
+	/** Gets message from exception.
+	 * @param msg String where to set message.
+	 */
+	void getMessage(std::string &msg)
+	{
+		msg=message;
+	}
+};
+
+/** Exception is thrown when no page at postion can be found.
+ */
+class PageNotFoundException: public PdfException
+{
+	const size_t position;
+	
+public:
+	/** Exception constructor.
+	 * @param pos Postion which couldn't be found.
+	 */
+	PageNotFoundException(size_t pos):position(pos)
+	{
+	}
+
+	virtual ~PageNotFoundException() throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		std::string msg="Page not found at pos "+position;
+
+		return msg.c_str();
+	}
+
+	void getPosition(size_t & pos)
+	{
+		pos=position;
+	}
+};
+
+// requiered element missing
+// read-only mode
+
+
+/** Implementation exception base class.
+ */
+class ImplementationException: public std::exception
+{
+};
+
+
+//==================================
+// Concrete XpdfExceptions
+//==================================
+
+/**
+ * Exception occurs when xpdf object is in invalid state.
+ */
+struct XpdfInvalidObject : public XpdfException
+{
+	char const* what() const throw() {return "Invalid Xpdf object.";}
+};
+
+
+
+
+//==================================
+// Concrete CObjectExceptions
+//==================================
+
 
 /** Exception thrown when element can't be found in complex type.
  */
@@ -59,11 +161,12 @@ class ElementNotFoundException: public CObjectException
 private:
 	/** Complex typed name/identifier.
 	 */
-	std::string parent;
+	const std::string parent;
 
 	/** Child which wasn't found in dictionary.
 	 */
-	std::string child;
+	const std::string child;
+	
 public:
 	/** Exception constructor.
 	 * @param _parent Complex type.
@@ -108,14 +211,15 @@ public:
 	}
 };
 
-/** Exception thrown when cobject has or whould have bad type.
+
+/** Exception thrown when cobject has or would have bad type.
  * TODO howto store bad type information
  */
 class ElementBadTypeException: public CObjectException
 {
 	/** Element identifier.
 	 */
-	std::string element;
+	const std::string element;
 
 public:
 	/** Exception constructor.
@@ -140,114 +244,31 @@ public:
 	}
 };
 
-/** Pdf error exception base class.
- */
-class PdfException: public std::exception
-{
-};
-
-/** Exception is thrown when pdf structure doesn't confirm PDF specification
- * requiered for operation.
- *
- * TODO include also cause exception
- */
-class MalformedFormatExeption: public PdfException
-{
-	std::string message;
-public:
-	MalformedFormatExeption(std::string msg):message(msg)
-	{
-	}
-
-	virtual ~MalformedFormatExeption() throw()
-	{
-	}
-
-	virtual const char * what()const throw()
-	{
-		return message.c_str();
-	}
-
-	/** Gets message from exception.
-	 * @param msg String where to set message.
-	 */
-	void getMessage(std::string &msg)
-	{
-		msg=message;
-	}
-};
-
-/** Exception is thrown when no page at postion can be found.
- */
-class PageNotFoundException: public PdfException
-{
-	size_t position;
-public:
-	/** Exception constructor.
-	 * @param pos Postion which couldn't be found.
-	 */
-	PageNotFoundException(size_t pos):position(pos)
-	{
-	}
-
-	virtual ~PageNotFoundException() throw()
-	{
-	}
-
-	virtual const char * what()const throw()
-	{
-		std::string msg="Page not found at pos "+position;
-
-		return msg.c_str();
-	}
-
-	void getPosition(size_t & pos)
-	{
-		pos=position;
-	}
-};
-
-// requiered element missing
-// read-only mode
-
-
-/** Implementation exception base class.
- */
-class ImplementationException: public std::exception
-{
-};
-
-
-// TODO these exceptions should be changed to inherit from XpdfException base
-// exception class
 /**
- * Exceptions occurs when (x)pdf object has incorrect type.
+ * Exception occurs when CObject has got unexpected value. 
  */
-struct ObjBadTypeE : std::exception
+struct CObjBadValue : public CObjectException
 {
-	char const* what() const throw() {return "(x)pdf object has bad type.";}
+	char const* what() const throw() {return "CObject has got bad value.";}
 };
 
-struct ObjBadValueE : std::exception
+/**
+ * Exception occurs when object is in an invalid state or when an object
+ * is NULL but should not be.
+ */
+struct CObjInvalidObject : public CObjectException
 {
-	char const* what() const throw() {return "(x)pdf object has bad value.";}
+	char const* what() const throw() {return "CObject is in bad state.";}
 };
 
-struct ObjInvalidObject : std::exception
+/**
+ * Exception occurs when we want to perform an operation but the object is not
+ * in required state.
+ */
+struct CObjInvalidOperation : public CObjectException
 {
-	char const* what() const throw() {return "(x)pdf object is invalid.";}
+	char const* what() const throw() {return "Invalid operation on CObject.";}
 };
-
-struct ObjInvalidPositionInComplex : std::exception
-{
-	char const* what() const throw() {return "(x)pdf object position is invalid.";}
-};
-
-struct ObjInvalidOperation : std::exception
-{
-	char const* what() const throw() {return "Invalid operation.";}
-};
-
 
 
 
