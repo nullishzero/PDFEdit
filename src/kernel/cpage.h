@@ -53,16 +53,19 @@ typedef struct Rect
  *
  *
  */
-class CPage : public CDict 
+class CPage
 {
 public:
 	typedef	unsigned int PageNumber;
 		
 private:
 
+	/** Pdf dictionary representing a page. */
+	boost::shared_ptr<CDict> dictionary;
+
 	/** Page number of this page. */
 	PageNumber	pageNumber;
-		
+
 		
 public:
 		
@@ -76,6 +79,13 @@ public:
 
 
 public:
+	
+	/**
+	 * Get dictionary representing this CPage.
+	 *
+	 * @return Dictionary.
+	 */
+	boost::shared_ptr<CDict> getDictionary () const { return dictionary; };
 	
 	/**
 	 * Return page number of this page.
@@ -98,7 +108,7 @@ public:
 	 *
 	 * @param text Container where the text will be saved.
 	 */
- 	void getText (std::string& text) const {};
+ 	void getText (std::string& /*text*/) const {};
 
 
 	/**  
@@ -114,7 +124,7 @@ public:
 	 *
 	 * @return Rectangle specifying the box.
 	 */
-	 Rectangle getMediabox () const {};
+	 Rectangle getMediabox () const {return Rectangle ();};
 
 
 	/** 
