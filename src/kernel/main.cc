@@ -4,6 +4,7 @@
  */
 
 #include "static.h"
+#include "PDFDoc.h"
 
 #include <iostream>
 #include <fstream>
@@ -156,10 +157,76 @@ namespace {
 	{
 		string str;
 		assert (NULL != o);
-		utils::xpdfObjToString (*o,str);
+		
+		if (o->isCmd() || o->isEOF())
+		{
+			os << o->getCmd() << endl;
 
-		os << "[Xpdf Type " << o->getTypeName () << "] " << str << endl;
+		}else
+		{
+			utils::xpdfObjToString (*o,str);
+			//os << "[Xpdf Type " << o->getTypeName () << "] " << str << endl;
+			os << str;
+		}
 
+		return os;
+	}
+
+	//
+	//
+	//
+	void
+	print (ostream& os, Object* o, XRef* xref)
+	{
+		if (!o->isStream())
+			throw;
+		
+		Object obj;
+		assert (NULL != xref);
+		Parser* parser = new Parser(xref, new Lexer(xref, o));
+		parser->getObj(&obj);
+		while (!obj.isEOF()) 
+		{
+			os << &obj;
+			// grab the next object
+			parser->getObj(&obj);
+		}
+	}
+
+
+	//
+	//
+	//
+	ostream& 
+	operator << (ostream& os, Dict* d)
+	{
+		string str;
+		Object obj;
+		assert (NULL != d);
+
+		for (int i = 0; i < d->getLength(); i++)
+		{
+			os << d->getKey(i) << "\t" << d->getValNF (i, &obj) << endl;
+		}
+
+		return os;
+	}
+
+	//
+	//
+	//
+	ostream& 
+	operator << (ostream& os, Stream* s)
+	{
+		string str;
+		assert (NULL != s);
+
+		os << "Stream:";
+		int c;
+		while (EOF != (c=s->getRawChar()))
+			os << (char)c << " ";
+
+		os << endl;
 		return os;
 	}
 
@@ -346,6 +413,43 @@ namespace {
 		}
 	}
 
+	//
+	// Print content stream
+	//
+	void
+	getContentStream ()
+	{
+
+		const static string file = "../../doc/zadani.pdf";
+		const static int	pageNumber = 1;
+							   
+		//======== test xx
+		GString* fileName = new GString (file.c_str());
+		PDFDoc* doc = new PDFDoc (fileName, new GString(), new GString());
+		OUTPUT << "Filename: "<< fileName->getCString() << endl;
+		OUTPUT << "Number of pages: "<< doc->getNumPages () << endl;
+
+		//
+		// Our stuff here
+		//
+		Object* obj;
+
+		XRef* xref = doc->getXRef();
+
+		OUTPUT << "Xref: " << (unsigned int) xref << endl << endl;
+		OUTPUT << "Trailer:" << xref->getTrailerDict () << endl;
+		OUTPUT << "Catalog:" << xref->getCatalog (obj) << endl;
+		Catalog cat (xref);
+		OUTPUT << "Page:" << xref->fetch (cat.getPageRef(pageNumber)->num, cat.getPageRef(pageNumber)->gen, obj) << endl;
+		OUTPUT << "Contents:" << cat.getPage(pageNumber)->getContents(obj) << endl;
+		OUTPUT << "StreamDict:\n" << cat.getPage(pageNumber)->getContents(obj)->getStream()->getDict() << endl;
+
+		OUTPUT << "Stream:\n";
+		print (OUTPUT, cat.getPage(pageNumber)->getContents(obj), xref);
+		assert (xref->getDocInfo (obj));
+		OUTPUT << "Doc info:" << obj << endl;
+	}
+	
 } // namespace
 
 
@@ -1298,6 +1402,13 @@ main (int argc, char* [])
 		c_xpdfctor ();
 		OK_TEST;
 
+		//
+		// Special tests
+		//
+		TEST(" special test -- get content stream")
+		getContentStream ();
+		OK_TEST;
+		
 		END_TEST;
 		MEM_CHECK;
 
