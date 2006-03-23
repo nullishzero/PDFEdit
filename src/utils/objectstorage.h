@@ -8,6 +8,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.5  2006/03/23 22:32:53  hockm0bm
+ * documentation updated
+ *
  * Revision 1.4  2006/02/28 19:10:12  hockm0bm
  * Compile errors corrected
  *
@@ -91,6 +94,9 @@ public:
          * If the key is not in the mapping yet, associates it with the value
          * and puts to the mapping.
          * Otherwise update value of the previous mapping.
+         * <br>
+         * This method doesn't invalidate existing (if any) iterator pointing 
+         * to the association.
          *
          * @returns Value of the previous mapping or 0 if the key was inserted
          * to the mapping.
@@ -149,6 +155,9 @@ public:
          * @param key Key of the value.
          *
          * Gets value of the key and removes association from mapping.
+         * <br>
+         * This method doesn't invalidate interators, except one which points
+         * to the removed element.
          *
          * @return Value of the key or 0 if not found (and not removed).
          */
