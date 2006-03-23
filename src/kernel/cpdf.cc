@@ -12,6 +12,7 @@
  * =====================================================================================
  */
 
+#include <errno.h>
 #include "static.h"
 
 #include "iproperty.h"
@@ -31,6 +32,17 @@ typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
 namespace utils
 {
 
+/** Gets type of the dictionary.
+ * @param dict Dictionary wrapped in smart pointer.
+ *
+ * Tries to get /Type field from dictionary and returns its string value. If not
+ * present, returns an empty string.
+ *
+ * @return string name of the dictionary type or empty string if not able to
+ * find out.
+ */
+std::string getDictType(boost::shared_ptr<CDict> dict);
+
 /** Helper method for getting int property value from dictionary.
  * @param name Name of the property in the dictionary.
  * @param dict Dictionary where to search.
@@ -39,7 +51,8 @@ namespace utils
  * pInt, gets its int value which is returned.
  *
  * @throw ObjInvalidPositionInComplex if property is not found.
- * @throw ObjMalformed if property is found but doesn't contain integer value.
+ * @throw ElementBadTypeException if property is found but doesn't contain 
+ * integer value.
  * @return int value of the property.
  */
 int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
@@ -50,7 +63,7 @@ int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	if(prop_ptr->getType() != pInt)
 	{
 		// malformed dictionary
-		// TODO handle
+		throw ElementBadTypeException(name/*, prop_ptr->getType()*/);
 	}
 
 	shared_ptr<CInt> int_ptr=IProperty::getSmartCObjectPtr<CInt>(prop_ptr);
@@ -67,8 +80,9 @@ int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
  * Gets property according name. Checks property type and if it is realy
  * pString, gets its string value which is returned.
  *
- * @throw ObjInvalidPositionInComplex if property is not found.
- * @throw ObjMalformed if property is found but doesn't contain string value.
+ * @throw ElementNotFoundException if property is not found.
+ * @throw ElementBadTypeException if property is found but doesn't contain 
+ * string value.
  * @return std::string value of the property.
  */
 std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
@@ -79,7 +93,7 @@ std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	if(prop_ptr->getType() != pString)
 	{
 		// malformed dictionary
-		// TODO handle
+		throw ElementBadTypeException(name);
 	}
 
 	shared_ptr<CString> str_ptr=IProperty::getSmartCObjectPtr<CString>(prop_ptr);
@@ -96,8 +110,9 @@ std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
  * Gets property according name. Checks property type and if it is realy
  * pName, gets its string value which is returned.
  *
- * @throw ObjInvalidPositionInComplex if property is not found.
- * @throw ObjMalformed if property is found but doesn't contain name value.
+ * @throw ElementNotFoundException if property is not found.
+ * @throw ElementBadTypeException if property is found but doesn't contain 
+ * string value.
  * @return std::string value of the property.
  */
 std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
@@ -108,7 +123,7 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	if(prop_ptr->getType() != pName)
 	{
 		// malformed dictionary
-		// TODO handle
+		throw ElementBadTypeException(name);
 	}
 
 	shared_ptr<CName> name_ptr=IProperty::getSmartCObjectPtr<CName>(prop_ptr);
@@ -116,6 +131,21 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	name_ptr->getPropertyValue(value);
 
 	return value;
+}
+
+// implementation of method
+std::string getDictType(boost::shared_ptr<CDict> dict)
+{
+	try
+	{
+		return getNameFromDict("/Type", dict);
+	// FIXME change to proper exception
+	}catch(std::exception & e)
+	{
+		// not found so returns empty string
+	}
+
+	return std::string();
 }
 
 // TODO also for rest of simple objects
@@ -159,10 +189,11 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
  * If we have some intermediate <b>Pages</b> dictionary, startPos should be
  * lowest page number under this tree branch. This usage is recomended only if
  * caller exactly knows what he is doing, otherwise page position is wrong.
- * <p>
- * TODO malformed pdf handling - exception
- * TODO exception handling description (element not found, element malformed)
  *
+ * @throw PageNotFoundException if given position couldn't be found.
+ * @throw ElementBadTypeException if some of required element has bad type.
+ * @throw MalformedFormatExeption if page node count number doesn't match the
+ * reality (page count number is not reliable).
  * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
  * position.
  */
@@ -170,11 +201,14 @@ boost::shared_ptr<IProperty> findPage(CPdf * pdf, boost::shared_ptr<IProperty> p
 {
 using namespace boost;
 using namespace std;
+using namespace debug;
 
+	printDbg(DBG_DBG, "startPos=" << startPos << " pos=" << pos);
 	if(startPos > pos)
 	{
+		printDbg(DBG_ERR, "startPos > pos");
 		// impossible to find such page
-		// TODO handle
+		throw PageNotFoundException(pos);
 	}
 
 	// dictionary smart pointer holder
@@ -188,53 +222,64 @@ using namespace std;
 	// otherwise test if given type is dictionary and casts to dict_ptr
 	if(type==pRef)
 	{
+		printDbg(DBG_DBG, "pagesDict is reference");
 		IndiRef ref;
 		IProperty::getSmartCObjectPtr<CRef>(pagesDict)->getPropertyValue(ref);
 		shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
 		if(indirect_ptr->getType() != pDict)
 		{
+			printDbg(DBG_ERR, "target (indirect) object is not dictionary type="<< indirect_ptr->getType());
 			// malformed pdf
-			// TODO handle
+			throw ElementBadTypeException("pagesDict");
 		}
 		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
 	}else
 	{
 		if(type!=pDict)
 		{
+			printDbg(DBG_ERR, "pagesDict is not dictionary type="<< type);
 			// maloformed pdf
-			// TODO handle
+			throw ElementBadTypeException("pagesDict");
 		}
 		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
 	}
 
 	// gets type property from dictionary to find out what to do
 	string dict_type=getNameFromDict("/Type", dict_ptr);
+	printDbg(DBG_DBG, "dictionary type=" << dict_type);
 	
 	// if type is Page then we have page dictionary and so start_pos and pos 
 	// must match otherwise it is not possible to find pos page
 	if(dict_type=="/Page")
 	{
+		printDbg(DBG_DBG, "Page node is direct page");
 		// everything ok 
 		if(startPos == pos)
+		{
+			printDbg(DBG_INFO, "Page found");
 			return dict_ptr;
+		}
 		
 		// unable to find
-		// TODO handle - not able to find page in this subtree
+		printDbg(DBG_ERR, "Page not found startPos="<<startPos);
+		throw PageNotFoundException(pos);
 	}
 
 	// if type is Pages then we are in intermediate node
 	// in this case we have to start to dereference children from Kids array.
 	if(dict_type=="/Pages")
 	{
-
+		printDbg(DBG_DBG, "Page node is intermediate");
 		shared_ptr<CDict> pages_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
 		int count=getIntFromDict("/Count", pages_ptr);
 
+		printDbg(DBG_DBG, "Node has " << count << " pages");
 		// check if this subtree contains enought direct pages 
 		if(count + startPos <= pos )
 		{
+			printDbg(DBG_ERR, "page can't be found under this subtree startPos=" << startPos);
 			// no way to find given position under this subtree
-			// TODO handle
+			throw PageNotFoundException(pos);
 		}
 
 		// PAGE IS IN THIS SUBTREE, we have to find where
@@ -245,15 +290,17 @@ using namespace std;
 		ChildrenStorage children;
 		pages_ptr->_getAllChildObjects(children);
 		ChildrenStorage::iterator i;
-		size_t min_pos=startPos;
-		for(i=children.begin(); i!=children.end(); i++)
+		size_t min_pos=startPos, index=0;
+		for(i=children.begin(); i!=children.end(); i++, index++)
 		{
+			printDbg(DBG_DBG, index << " kid checking");
 			// all members of Kids array have to be referencies according
 			// PDF specification
 			if((*i)->getType() != pRef)
 			{
 				// malformed pdf
-				// TODO handle
+				printDbg(DBG_ERR, "Kid must be reference");
+				throw ElementBadTypeException(""+index);
 			}
 
 			// we have to dereference and indirect object has to be dictionary
@@ -265,13 +312,15 @@ using namespace std;
 			if(target_ptr->getType() != pDict)
 			{
 				// malformed pdf
-				// TODO handle
+				printDbg(DBG_ERR, "Dereferenced kid must be dictionary");
+				throw ElementBadTypeException(""+index);
 			}
 			shared_ptr<CDict> child_ptr=IProperty::getSmartCObjectPtr<CDict>(target_ptr);
 
 			// we can have page or pages dictionary in child_ptr
 			// Type field determine kind of node
 			string dict_type=getNameFromDict("/Type", child_ptr);
+			printDbg(DBG_DBG, "kid type="<<dict_type);
 
 			// Page dictionary is ok if min_pos equals pos, 
 			// otherwise it is skipped - can't use recursion here because it's
@@ -280,7 +329,10 @@ using namespace std;
 			if(dict_type=="/Page")
 			{
 				if(min_pos == pos)
+				{
+					printDbg(DBG_INFO, "page found");
 					return child_ptr;
+				}
 				min_pos++;
 				continue;
 			}
@@ -304,17 +356,20 @@ using namespace std;
 			}
 
 			// malformed pdf
-			// TODO handle
+			printDbg(DBG_ERR, "kid dictionary doesn't have correct Type field");
+			throw ElementBadTypeException(""+index);
 		}
 
 		// this should never happen, because given pos was in this subtree
 		// according Count Pages field
 		// PDF malformed 
-		// TODO handle
+		printDbg(DBG_ERR, "pages count field is not correct");
+		throw MalformedFormatExeption("Page node count number is not correct");
 	}
 	
 	// should not happen - malformed pdf document
-	// TODO handle
+	printDbg(DBG_ERR, "pagesDict dictionary doesn't have correct Type field");
+	throw ElementBadTypeException("pagesDict");
 
 }
 
@@ -349,13 +404,20 @@ CPdf::~CPdf()
 //
 boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
 {
-	//printDbg (0,"getExistingProperty(" << ref.num << "," << ref.gen << ")");
+using namespace debug;
+
+	printDbg (0,ref.num << "," << ref.gen );
 
 	// find the key, if it exists
 	IndirectMapping::iterator i = indMap.find(ref);
 	if(i!=indMap.end())
+	{
 		// mapping exists, so returns value
+		printDbg(DBG_DBG, "mapping exists");
 		return i->second;
+	}
+
+	printDbg(DBG_DBG, "mapping doesn't exist")
 
 	// mapping doesn't exist yet, so tries to create one
 	// fetches object according reference
@@ -366,10 +428,13 @@ boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
 	// parent is set to object reference (it is its own indirect parent)
 	// created object is wrapped to smart pointer and if not pNull also added to
 	// the mapping
-	IProperty * prop=NULL;// FIXME use createObjFromXpdfObj(*this, obj, ref);
+	IProperty * prop=utils::createObjFromXpdfObj(*this, obj, ref);
 	boost::shared_ptr<IProperty> prop_ptr(prop);
 	if(prop_ptr->getType() != pNull)
+	{
 		indMap.insert(IndirectMapping::value_type(ref, prop_ptr));
+		printDbg(DBG_DBG, "Mapping created");
+	}
 
 	return prop_ptr;
 }
@@ -382,7 +447,7 @@ void
 CPdf::delIndMapping (const IndiRef& ref)
 {
 	// if there is such mapping that is a problem
-	//printDbg (0,"");
+	printDbg (0,"");
 	
 	indMap.erase (ref);
 }
@@ -407,7 +472,7 @@ CPdf::delIndMapping (const IndiRef& ref)
  */ 
 IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 {
-	//printDbg(debug::DBG_DBG,"");
+	printDbg(debug::DBG_DBG,"");
 
 	PropertyType type=ip->getType();
 	ChildrenStorage childrenStorage;
@@ -416,9 +481,8 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 	{
 		case pRef:
 		{
-			//printDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
+			printDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
 			IndiRef indiRef=pdf->addIndirectProperty(ip);
-			//printDbg(debug::DBG_DBG,"");
 			return new IndiRef(indiRef);
 		}	
 		// complex types (pArray and pDict) collects their children to the 
@@ -447,7 +511,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 			// new reference for this child
 			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(*i);
 			ref_ptr->writeValue(*ref);
-			//printDbg(debug::DBG_DBG,"Reference changed to ["+ref->num+", "+ref->gen+"]");
+			printDbg(debug::DBG_DBG,"Reference changed to [" << ref->num << ", " <<ref->gen << "]");
 			delete ref;
 			continue;
 		}
@@ -463,7 +527,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 //
 IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 {
-	//printDbg(debug::DBG_DBG, *ip);
+	printDbg(debug::DBG_DBG, "");
 
 	// place for propertyValue
 	// it is ip by default
@@ -485,7 +549,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 		// just returns reference
 		if(ip->getPdf()==this)
 		{
-			//printDbg(debug::DBG_WARN, "Reference is from this file, nothing is added.");
+			printDbg(debug::DBG_WARN, "Reference is from this file, nothing is added.");
 			return ref;
 		}
 
@@ -498,7 +562,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// added too
 	if(propValue->getPdf() != this)
 	{
-		//printDbg(debug::DBG_DBG, "Adding property from different file.");
+		printDbg(debug::DBG_DBG, "Adding property from different file.");
 		boost::shared_ptr<IProperty> clone;
 		switch(propValue->getType())
 		{
@@ -531,7 +595,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// be stored), registers new reference on xref		  
 	::Object * obj=propValue->_makeXpdfObject();
 	::Ref xpdfRef=xref->reserveRef();
-	//printDbg(debug::DBG_DBG, "New reference reseved ["+ref.num+", "+gen+"]");
+	printDbg(debug::DBG_DBG, "New reference reseved ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
 	xref->changeObject(xpdfRef.num, xpdfRef.gen, obj);
 
 	// xpdf object has to be deallocated
@@ -540,14 +604,14 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// creates return value from xpdf reference structure
 	// and returns
 	IndiRef reference={xpdfRef.num, xpdfRef.gen};
-	//printDbg(debug::DBG_INFO, "New indirect object inserted with reference ["+ref.num+", "+gen+"]");
+	printDbg(debug::DBG_INFO, "New indirect object inserted with reference ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
 	return reference;
 }
 
 
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 {
-	//printDbg(debug::DBG_DBG, "");
+	printDbg(debug::DBG_DBG, "");
 	
 	// openMode is read-only by default
 	const char * openMode="r";
@@ -560,11 +624,11 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	FILE * file=fopen(filename, openMode);
 	if(!file)
 	{
-		//printDbg(debug::DBG_ERR, "Unable to open file (reason="+strerror(errno)+")");
+		printDbg(debug::DBG_ERR, "Unable to open file (reason="<<strerror(errno)<<")");
 		// TODO some output
 		// exception
 	}
-	//printDbg(debug::DBG_DBG,"File \""+filename+"\" open successfully in mode="+openMode);
+	printDbg(debug::DBG_DBG,"File \"" << filename << "\" open successfully in mode=" << openMode);
 	
 	Object obj;
 	// NOTE: I didn't find meaning obj parameter meaning for BaseStream
@@ -572,19 +636,19 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	// this object
 	obj.initNull();
 	BaseStream * stream=new FileStream(file, 0, gFalse, 0, &obj);
-	//printDbg(debug::DBG_DBG,"File stream created");
+	printDbg(debug::DBG_DBG,"File stream created");
 
 	// stream is ready, creates CPdf instance
 	CPdf * instance=new CPdf(stream, file, mode);
 
-	//printDbg(debug::DBG_INFO, "Instance created successfully openMode="+openMode);
+	printDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
 
 	return instance;
 }
 
 int CPdf::close(bool saveFlag)
 {
-	//printDbg(debug::DBG_DBG, "");
+	printDbg(debug::DBG_DBG, "");
 	// saves if necessary
 	if(saveFlag)
 		save(NULL);
@@ -593,7 +657,7 @@ int CPdf::close(bool saveFlag)
 	// all clean-up is made in destructor
 	delete this;
 
-	//printDbg(debug::DBG_INFO, "Instance deleted.")
+	printDbg(debug::DBG_INFO, "Instance deleted.")
 	return 0;
 }
 
