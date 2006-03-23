@@ -234,7 +234,7 @@ namespace {
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
 					if (NULL == pdf)
-						throw ObjInvalidOperation ();
+						throw CObjInvalidObject ();
 					
 					Object obj;
 
@@ -253,7 +253,7 @@ namespace {
 								obj.free ();
 								
 							}else
-								throw ObjInvalidObject ();
+								throw CObjInvalidObject ();
 
 					}	// for
 				}	// void operator
@@ -271,7 +271,7 @@ namespace {
 					CPdf* pdf = ip.getPdf ();
 					assert (NULL != ip.getPdf ());
 					if (NULL == pdf)
-						throw ObjInvalidOperation ();
+						throw CObjInvalidObject ();
 				
 					Object obj;
 
@@ -291,7 +291,7 @@ namespace {
 								obj.free ();
 
 							}else
-								throw ObjInvalidObject ();
+								throw CObjInvalidObject ();
 					}
 				}
 		};
@@ -361,7 +361,7 @@ namespace {
 
 			default:
 				assert (!"Bad object passed to simpleXpdfObjToString.");
-				throw ObjBadTypeE(); 
+				throw XpdfInvalidObject (); 
 				break;
 			}
 
@@ -651,7 +651,7 @@ freeXpdfObject (Object* obj)
 {
 	assert (obj != NULL);
 	if (NULL == obj)
-		throw ObjInvalidObject ();
+		throw XpdfInvalidObject ();
 	
 	std::string str;
 	xpdfObjToString (*obj,str); 
@@ -747,7 +747,7 @@ simpleValueFromString (const std::string& str, bool& val)
 	else if ( equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
 		val = false;
 	else
-		throw ObjBadValueE ();
+		throw CObjBadValue ();
 }
 
 void
@@ -759,7 +759,7 @@ simpleValueFromString (const std::string& str, int& val)
 		ss >> val;
 	}catch (stringstream::failure& e) 
 	{
-		throw ObjBadValueE ();
+		throw CObjBadValue ();
   	}					
 }
 
@@ -770,7 +770,7 @@ simpleValueFromString (const std::string& str, double& val)
 	
 	assert (objReal == ptrObj->getType ());
 	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
-		throw ObjBadValueE ();
+		throw CObjBadValue ();
 					
 	ProcessorTraitSimple<Object&, double&, pReal>::xpdfReadProcessor rp;
 	rp (*ptrObj, val);
@@ -792,7 +792,7 @@ simpleValueFromString (const std::string& str, IndiRef& val)
 		ss >> val.gen;
 	}catch (stringstream::failure& e) 
 	{
-		throw ObjBadValueE ();
+		throw CObjBadValue ();
 	}
 }
 
@@ -840,7 +840,7 @@ xpdfObjFromString (const std::string& str)
 	{
 		obj->free ();
 		delete obj;
-		throw ObjBadValueE ();
+		throw CObjBadValue ();
 	}
 
 	return obj;
@@ -856,7 +856,7 @@ objHasParent (const IProperty& ip)
 	CPdf* pdf = ip.getPdf ();
 	assert (NULL != pdf);
 	if (NULL == pdf)
-		throw ObjInvalidOperation ();
+		throw CObjInvalidOperation ();
 
 	if ( &ip == pdf->getIndirectProperty(ip.getIndiRef()).get() )
 		return true;

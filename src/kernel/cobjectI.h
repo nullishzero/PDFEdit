@@ -363,7 +363,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 	}
 	
 	if (it == value.end())
-		throw ObjInvalidPositionInComplex ();
+		throw ElementNotFoundException ("", "");
 	
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
 	if (ip)
@@ -375,7 +375,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 		_objectChanged ();
 		
 	}else
-		throw ObjInvalidObject ();
+		throw CObjInvalidObject ();
 
 	// deallocates ip, also *ip should be deallocated
 }
@@ -405,7 +405,7 @@ CObjectComplex<Tp,Checker>::addProperty (const IProperty& newIp)
 		newIpClone->setPdf (IProperty::getPdf());
 		
 	}else
-		throw ObjInvalidObject ();
+		throw CObjInvalidObject ();
 	
 	// notify observers and dispatch change
 	_objectChanged ();
@@ -441,7 +441,7 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 		newIpClone->setPdf (IProperty::getPdf());
 		
 	}else
-		throw ObjInvalidObject ();
+		throw CObjInvalidObject ();
 
 	// notify observers and dispatch change
 	_objectChanged ();
@@ -477,7 +477,7 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 
 	// Check the bounds, if fails an exception is thrown
 	if (it == value.end())
-			throw ObjInvalidPositionInComplex ();
+			throw ElementNotFoundException ("", "");
 
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
@@ -492,7 +492,7 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 		std::fill_n (it, 1, newVal);
 		
 	}else
-		throw ObjInvalidObject ();
+		throw CObjInvalidObject ();
 		
 
 	return newIpClone;
@@ -524,7 +524,7 @@ CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
 	assert (NULL != ip.get());
 	
 	if (it == value.end())
-			throw ObjInvalidPositionInComplex ();
+			throw ElementNotFoundException ("", "");
 	
 	//
 	// \TODO Find out the mode

@@ -464,7 +464,7 @@ public:
 	 * Inserts all property names to container supplied by caller. 
 	 * 
 	 * REMARK: Specific for pDict.
-     	 *
+   	 *
 	 * @param container Container of string objects. STL vector,list,deque.
 	 */
 	template<typename Container>

@@ -172,7 +172,7 @@ public:
 	{
 		assert (NULL == pdf);	// modify existing association with a pdf?
 		if (NULL != pdf)
-				throw ObjInvalidOperation ();
+			throw CObjInvalidOperation ();
 		
 		pdf = p;
 	};
