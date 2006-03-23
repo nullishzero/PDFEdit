@@ -1,10 +1,17 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #ifndef _CXREF_H_
 #define _CXREF_H_
 
-/** 
+/* 
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/03/23 22:13:51  hockm0bm
+ * printDbg added
+ * exception handling
+ * TODO removed
+ * FIXME for revisions handling - throwing exeption
+ *
  * Revision 1.11  2006/03/10 18:07:14  hockm0bm
  * reserveRef method added
  * createObject uses reserveRef
@@ -51,7 +58,7 @@
 
 namespace pdfobjects
 {
-        
+
 /** Adapter for xpdf XRef class.
  * 
  * This class has responsibility to transparently (same way as XRef do) provide
@@ -95,7 +102,7 @@ namespace pdfobjects
  * entries in trailer. If user whants to change indirect object values stored 
  * in trailer, it can be done in standard way as any other objects.
  * <p>
- * Objects returned by this interface are always copies of original object 
+ * Objects returned by this interface are always deep copies of original object 
  * stored inside and changes made to them are not visible through this interface
  * until changeObject or changeTrailer is called.
  * 
@@ -103,271 +110,278 @@ namespace pdfobjects
 class CXref: public XRef
 {
 private:
-        //ObjectCache * cache=NULL;       /**< Cache for objects. */
+	//ObjectCache * cache=NULL;		/**< Cache for objects. */
 
-protected:        
-        /** Empty constructor.
-         *
-         * This constructor is protected to prevent uninitialized instances.
-         * We need at least to specify stream with data.
-         */
-        CXref(): XRef(NULL){};
+protected:
+	/** Empty constructor.
+	 *
+	 * This constructor is protected to prevent uninitialized instances.
+	 * We need at least to specify stream with data.
+	 */
+	CXref(): XRef(NULL){};
 
-        /** Entry for ObjectStorage.
-         *
-         * Each entry contains pointer to changed object and flag which
-         * says whether this object has been stored to the file from last
-         * change.
-         */
-        typedef struct
-        {
-              ::Object * object;
-              bool stored;
-              
-        } ObjectEntry;
-        
-        /** Object storage for changed objects.
-         * Mapping from object referencies to the ObjectEntry structure.
-         * This structure contains new Object value for reference and 
-         * flag. 
-         */
-        ObjectStorage< ::Ref, ObjectEntry*, RefComparator> changedStorage;   
+	/** Entry for ObjectStorage.
+	 *
+	 * Each entry contains pointer to changed object and flag which
+	 * says whether this object has been stored to the file from last
+	 * change.
+	 */
+	typedef struct
+	{
+		::Object * object;
+		bool stored;
+	} ObjectEntry;
+	
+	/** Object storage for changed objects.
+	 * Mapping from object referencies to the ObjectEntry structure.
+	 * This structure contains new Object value for reference and 
+	 * flag. 
+	 */
+	ObjectStorage< ::Ref, ObjectEntry*, RefComparator> changedStorage;   
 
-        /** Object storage for newly created objects.
-         * Value is the flag, whether value has been changed after createObject
-         * method has been called. Uninitialized values can be skipped.
-         */
-        ObjectStorage< ::Ref, bool, RefComparator> newStorage;       
+	/** Object storage for newly created objects.
+	 * Value is the flag, whether value has been changed after createObject
+	 * method has been called. Uninitialized values can be skipped.
+	 */
+	ObjectStorage< ::Ref, bool, RefComparator> newStorage;
 
-        /** Object storage for released referencies.
-         * Value of the association stores number of releases called on 
-         * given reference.
-         */
-        ObjectStorage< ::Ref, int, RefComparator> releasedStorage;  
+	/** Object storage for released referencies.
+	 * Value of the association stores number of releases called on 
+	 * given reference.
+	 */
+	ObjectStorage< ::Ref, int, RefComparator> releasedStorage;  
 
-        /** Registers change in given object addressable through given 
-         * reference.
-         * @param ref Object reference identificator.
-         * @param instance Instance of object value (must be direct value,
-         * not indirect reference).
-         *
-         * Discards object from cache and stores it to the changedStorage.
-         * Method should be called each time when object has changed its value.
-         * Object value is copied not use as it is (creates deep copy).
-         * If object with same reference already was in changedStorage, this
-         * is returned to enable history handling (and also to deallocate it). 
-         * 0 return value means first revision of object.
-         * <br>
-         * If given reference is in newStorage, value is set to true to 
-         * signalize that value has been changed after object has been created.
-         * <br>
-         * Note that this function doesn't perform any value ckecking.
-         *
-         * @return Old value of object from changedStorage or NULL if it's first
-         * revision of object.
-         */
-        ::Object * changeObject(::Ref ref, ::Object * instance);
+	/** Registers change in given object addressable through given 
+	 * reference.
+	 * @param ref Object reference identificator.
+	 * @param instance Instance of object value (must be direct value,
+	 * not indirect reference).
+	 *
+	 * Discards object from cache and stores it to the changedStorage.
+	 * Method should be called each time when object has changed its value.
+	 * Object value is copied not use as it is (creates deep copy).
+	 * If object with same reference already was in changedStorage, this
+	 * is returned to enable history handling (and also to deallocate it). 
+	 * 0 return value means first revision of object.
+	 * <br>
+	 * If given reference is in newStorage, value is set to true to 
+	 * signalize that value has been changed after object has been created.
+	 * <br>
+	 * Note that this function doesn't perform any value ckecking.
+	 *
+	 * @return Old value of object from changedStorage or NULL if it's first
+	 * revision of object.
+	 */
+	::Object * changeObject(::Ref ref, ::Object * instance);
 
-        /** Releases  given object addressable through given reference.
-         * @param ref Object reference identificator.
-         *
-         * Notes, that given reference has been released from compund type. 
-         * All released referencies are stored in releasedStorage with counter
-         * which stores number of release operation on given reference. 
-         */
-        void releaseObject(::Ref ref);
+	/** Releases  given object addressable through given reference.
+	 * @param ref Object reference identificator.
+	 *
+	 * Notes, that given reference has been released from compund type. 
+	 * All released referencies are stored in releasedStorage with counter
+	 * which stores number of release operation on given reference. 
+	 */
+	void releaseObject(::Ref ref);
 
-        /** Changes entry in trailer dictionary.
-         * @param name Name of the value.
-         * @param value Value to be set.
-         *
-         * Makes changes to the trailer dictionary. If given value is indirect
-         * reference, it must be known.
-         * <br>
-         * NOTE: doesn't perform any value checking.
-         *
-         * @return Previous value of object or 0 if previous revision not
-         * available (new name value pair in trailer).
-         */
-        ::Object * changeTrailer(char * name, ::Object * value);
+	/** Changes entry in trailer dictionary.
+	 * @param name Name of the value.
+	 * @param value Value to be set.
+	 *
+	 * Makes changes to the trailer dictionary. If given value is indirect
+	 * reference, it must be known.
+	 * <br>
+	 * NOTE: doesn't perform any value checking.
+	 *
+	 * @return Previous value of object or 0 if previous revision not
+	 * available (new name value pair in trailer).
+	 */
+	::Object * changeTrailer(char * name, ::Object * value);
 
 public:
-        /** Initialize constructor.
-         * @param stream Stream with file data.
-         *
-         * Delegates to XRef constructor with same parameter.
-         */
-        CXref(BaseStream * stream):XRef(stream)
-        {
-                if(getErrorCode() !=errNone)
-                {
-                        // xref is corrupted
-                        // TODO throw an exception
-                }
-        }
+	/** Initialize constructor.
+	 * @param stream Stream with file data.
+	 *
+	 * Delegates to XRef constructor with same parameter.
+	 *
+	 * @throw MalformedFormatExeption if XRef creation fails (instance is
+	 * unusable in such situation).
+	 */
+	CXref(BaseStream * stream):XRef(stream)
+	{
+		if(getErrorCode() !=errNone)
+		{
+			// xref is corrupted
+			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode());
+		}
+	}
 
-        /** Initialize constructor with cache.
-         * @param stream Stream with file data.
-         * @param c Cache instance.
-         *
-         * Delegates to XRef constructor with the stream parameter and
-         * sets cache instance.
-         */
-        /* FIXME uncoment when cache is available
-        CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c)
-        {
-                // FIXME: uncoment when cache is ready 
-        }
-        */
-        
-        /** Destructor.
-         *
-         * Destroys cache.
-         */
-        virtual ~CXref();
-        
-        /** Reserves reference for new indirect object.
-         *
-         * Searches for free object number and generation number and uses
-         * it to register reference for new indirect object. Reference is stored
-         * to the newStorage with false flag. This is changed to true if real
-         * object is stored to the CXref (using change method). 
-         * <br>
-         * Created object is accesible only if default value has been changed.
-         * This means that returned object has to be changed and after change
-         * method has to be called. This is mainly because we want to prevent 
-         * unintialized object inside.
-         *
-         * @return Reference which can be used to add new indirect object.
-         */
-        virtual ::Ref reserveRef();
-        
-        /** Creates new xpdf indirect object.
-         * @param type Type of the object.
-         * @param ref Structure where to put object num and gen (if null, 
-         * nothing is set).
-         * 
-         * New reference is registered using reserveRef method. This is just 
-         * wrapper method to reserveRef with object initialization capability.
-         * 
-         * <br>
-         * Implementation will initialize Object with type and value depending 
-         * on type:
-         * <ul>
-         * <li>objBool - false
-         * <li>objInt - 0
-         * <li>objReal - 0
-         * <li>objString - NULL
-         * <li>objName - NULL
-         * <li>objArray - sets this instance as Xref parameter
-         * <li>objDict - sets this instance as Xref parameter
-         * <li>objCmd - NULL
-         * <li>objStream - NULL
-         * <li>objNull - no special value is used, Object is just pdf NULL 
-         *      object
-         * <ul>Following values are not supported (it doesn't make sense to
-         *      do so - because they can't be value of indirect object)
-         *      <li>objRef
-         *      <li>objError
-         *      <li>objEOF
-         *      <li>objNone
-         * </ul>
-         * </ul>
-         * To change value of the object, use init{Type} method then call
-         * change method to register change and makes object visible by
-         * fetch method.
-         * <br>
-         *
-         * @return Object instance with given type or 0 if not able to create.
-         */
-        virtual ::Object * createObject(::ObjType type, ::Ref * ref);
+	/** Initialize constructor with cache.
+	 * @param stream Stream with file data.
+	 * @param c Cache instance.
+	 *
+	 * Delegates to XRef constructor with the stream parameter and
+	 * sets cache instance.
+	 *
+	 * @throw MalformedFormatExeption if XRef creation fails (instance is
+	 * unusable in such situation).
+	 */
+	/* FIXME uncoment when cache is available
+	CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c)
+	{
+		if(getErrorCode() !=errNone)
+		{
+			// xref is corrupted
+			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode);
+		}
+	}
+	*/
+	
+	/** Destructor.
+	 *
+	 * Destroys cache.
+	 */
+	virtual ~CXref();
+	
+	/** Reserves reference for new indirect object.
+	 *
+	 * Searches for free object number and generation number and uses
+	 * it to register reference for new indirect object. Reference is stored
+	 * to the newStorage with false flag. This is changed to true if real
+	 * object is stored to the CXref (using change method). 
+	 * <br>
+	 * Created object is accesible only if default value has been changed.
+	 * This means that returned object has to be changed and after change
+	 * method has to be called. This is mainly because we want to prevent 
+	 * unintialized object inside.
+	 *
+	 * @return Reference which can be used to add new indirect object.
+	 */
+	virtual ::Ref reserveRef();
+	
+	/** Creates new xpdf indirect object.
+	 * @param type Type of the object.
+	 * @param ref Structure where to put object num and gen (if null, 
+	 * nothing is set).
+	 * 
+	 * New reference is registered using reserveRef method. This is just 
+	 * wrapper method to reserveRef with object initialization capability.
+	 * 
+	 * <br>
+	 * Implementation will initialize Object with type and value depending 
+	 * on type:
+	 * <ul>
+	 * <li>objBool - false
+	 * <li>objInt - 0
+	 * <li>objReal - 0
+	 * <li>objString - NULL
+	 * <li>objName - NULL
+	 * <li>objArray - sets this instance as Xref parameter
+	 * <li>objDict - sets this instance as Xref parameter
+	 * <li>objCmd - NULL
+	 * <li>objStream - NULL
+	 * <li>objNull - no special value is used, Object is just pdf NULL 
+	 *	object
+	 * <ul>Following values are not supported (it doesn't make sense to
+	 *	do so - because they can't be value of indirect object)
+	 *	<li>objRef
+	 *	<li>objError
+	 *	<li>objEOF
+	 *	<li>objNone
+	 * </ul>
+	 * </ul>
+	 * To change value of the object, use init{Type} method then call
+	 * change method to register change and makes object visible by
+	 * fetch method.
+	 * <br>
+	 *
+	 * @return Object instance with given type or 0 if not able to create.
+	 */
+	virtual ::Object * createObject(::ObjType type, ::Ref * ref);
 
-        /** Checks if given reference is known.
-         * @param ref Reference to check.
-         *
-         * First examine if reference is in newStorage and if not found
-         * tries to check entries array.
-         * <br>
-         * If returns true, object can be accessed by fetch method.
-         *
-         * @return true if reference is known, false otherwise.
-         */
-        bool knowsRef(::Ref ref);
+	/** Checks if given reference is known.
+	 * @param ref Reference to check.
+	 *
+	 * First examine if reference is in newStorage and if not found
+	 * tries to check entries array.
+	 * <br>
+	 * If returns true, object can be accessed by fetch method.
+	 *
+	 * @return true if reference is known, false otherwise.
+	 */
+	bool knowsRef(::Ref ref);
 
-        /** Checks whether obj1 can replace obj2.
-         * @param obj1 Original object.
-         * @param obj2 Replace object.
-         *
-         * obj2 can replace obj1 only iff at least 1 condition is true:
-         * <ul>
-         * <li>obj1 is direct and obj2 has same type (if indirect then
-         *      dereferenced value)
-         * <li>obj2 is indirect and obj2 has same type (if indirect then
-         *      derefereced value)
-         * </ul>
-         *
-         * This means that in indirect value can replace direct one only
-         * if both have same value type.
-         * <br>
-         * TODO: What to do with objNull
-         *
-         * @return true if obj2 can replace obj1, false otherwise.
-         */
-        bool typeSafe(::Object * obj1, ::Object * obj2);
+	/** Checks whether obj1 can replace obj2.
+	 * @param obj1 Original object.
+	 * @param obj2 Replace object.
+	 *
+	 * obj2 can replace obj1 only iff at least 1 condition is true:
+	 * <ul>
+	 * <li>obj1 is direct and obj2 has same type (if indirect then
+	 *	dereferenced value)
+	 * <li>obj2 is indirect and obj2 has same type (if indirect then
+	 *	derefereced value)
+	 * </ul>
+	 *
+	 * This means that in indirect value can replace direct one only
+	 * if both have same value type.
+	 *
+	 * @return true if obj2 can replace obj1, false otherwise.
+	 */
+	bool typeSafe(::Object * obj1, ::Object * obj2);
 
-        /** Gets value associated with name in trailer.
-         * @param name Name of the entry.
-         *
-         * If value is indirect reference (according specification almost all 
-         * compound entries), reference is returned, so normal xref interface
-         * can be used to ask for value.
-         * If no value with given name can be found, objNull type object is
-         * returned.
-         * <br>
-         * Changes made to returned object doesn't affect trailer entry with 
-         * given name.
-         *
-         * @return Deep copy of the object value.
-         */
-        virtual ::Object * getTrailerEntry(char * name);
+	/** Gets value associated with name in trailer.
+	 * @param name Name of the entry.
+	 *
+	 * If value is indirect reference (according specification almost all 
+	 * compound entries), reference is returned, so normal xref interface
+	 * can be used to ask for value.
+	 * If no value with given name can be found, objNull type object is
+	 * returned.
+	 * <br>
+	 * Changes made to returned object doesn't affect trailer entry with 
+	 * given name.
+	 *
+	 * @return Deep copy of the object value.
+	 */
+	virtual ::Object * getTrailerEntry(char * name);
 
-        // Returns the document's Info dictionary (if any).
-        virtual ::Object *getDocInfo(::Object *obj);
-        
-        // Returns the document's Info dictionary (dereferenced
-        // if indirect value
-        virtual ::Object *getDocInfoNF(::Object *obj);
+	// Returns the document's Info dictionary (if any).
+	virtual ::Object *getDocInfo(::Object *obj);
+	
+	// Returns the document's Info dictionary (dereferenced
+	// if indirect value
+	virtual ::Object *getDocInfoNF(::Object *obj);
 
-        /** Returns number of indirect objects.
-         *
-         * Delegates to XRef::getNumObjects and adds also number of all
-         * newly inserted (and initialized) objects.
-         *
-         * @return Total number of objects.
-         */
-        virtual int getNumObjects(); 
+	/** Returns number of indirect objects.
+	 *
+	 * Delegates to XRef::getNumObjects and adds also number of all
+	 * newly inserted (and initialized) objects.
+	 *
+	 * @return Total number of objects.
+	 */
+	virtual int getNumObjects(); 
 
-        /** Fetches object.
-         * @param num Object number.
-         * @param gen Object generation.
-         * @param obj Object where to store content.
-         *
-         * Try to find object in changedStorage and if not found, delegates
-         * to original implementation.
-         * <br>
-         * NOTE:
-         * Returned value is deepCopy of object and changes made to object 
-         * don't affect internally maintained values (e.g. it can be 
-         * deallocated). 
-         * To register a change use change method.
-         * <br>
-         * This method provide transparent access to changed objects throught
-         * XRef (xpdf class) interface.
-         *
-         * @return Pointer with initialized object given as parameter, if not
-         * found obj is set to objNull.
-         */
-        virtual ::Object * fetch(int num, int gen, ::Object *obj);
+	/** Fetches object.
+	 * @param num Object number.
+	 * @param gen Object generation.
+	 * @param obj Object where to store content.
+	 *
+	 * Try to find object in changedStorage and if not found, delegates
+	 * to original implementation.
+	 * <br>
+	 * NOTE:
+	 * Returned value is deepCopy of object and changes made to object 
+	 * don't affect internally maintained values (e.g. it can be 
+	 * deallocated). 
+	 * To register a change use change method.
+	 * <br>
+	 * This method provide transparent access to changed objects throught
+	 * XRef (xpdf class) interface.
+	 *
+	 * @return Pointer with initialized object given as parameter, if not
+	 * found obj is set to objNull.
+	 */
+	virtual ::Object * fetch(int num, int gen, ::Object *obj);
 };
 
 } // end of pdfobjects namespace
