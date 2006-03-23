@@ -22,7 +22,7 @@
  *
  * Kernel is using different types of exceptions for unexpected situation 
  * handling.
- * To keep system in them, they are separated to the following categories:
+ * To keep system in them, they are separated to the following cathegories:
  * <ul>
  * <li> XpdfException - exceptions related to problems with xpdf code usage. 
  * <li> CObjectException - exceptions related with cobjects.
@@ -32,7 +32,7 @@
  * specific stuff.
  * </ul> 
  *
- * All these categories are base classes for specific exceptions. They are
+ * All these cathegories are base classes for specific exceptions. They are
  * std::exception subclasses.
  * <br>
  * TODO
@@ -123,6 +123,34 @@ public:
 	}
 };
 
+/** Exception is thrown when change on read only document is about to be done.
+ */
+class ReadOnlyDocumentException: public PdfException
+{
+	std::string message;
+public:
+	/** Exception constructor.
+	 * @param msg Context message of action.
+	 */
+	ReadOnlyDocumentException(std::string msg):message(msg)
+	{
+	}
+
+	virtual ~ReadOnlyDocumentException() throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		return message.c_str();
+	}
+
+	void getMessage(std::string & msg)
+	{
+		msg=message;
+	}
+};
+
 // requiered element missing
 // read-only mode
 
@@ -133,6 +161,35 @@ class ImplementationException: public std::exception
 {
 };
 
+/** Functionality is not implemented exception.
+ */
+class NotImplementedException: public ImplementationException
+{
+	std::string feature;
+public:
+	/** Exception constructor.
+	 * @param _feature Feature description which is not implemented.
+	 */
+	NotImplementedException(std::string _feature):feature(_feature)
+	{
+	}
+
+	~NotImplementedException() throw()
+	{
+	}
+
+	const char * what()const throw()
+	{
+		std::string msg="feature=\""+feature+"\" is not implemented";
+
+		return msg.c_str();
+	}
+
+	void getFeature(std::string _feature)
+	{
+		_feature=feature;
+	}
+};
 
 //==================================
 // Concrete XpdfExceptions
@@ -153,6 +210,39 @@ struct XpdfInvalidObject : public XpdfException
 // Concrete CObjectExceptions
 //==================================
 
+class IndirectObjectNotFoundException: public CObjectException
+{
+	int num;
+	int gen;
+
+public:
+	/** Exception constructor.
+	 * @param _num Object number.
+	 * @param _gen Generation number.
+	 */
+	IndirectObjectNotFoundException(int _num, int _gen):num(_num),gen(_gen)
+	{
+	}
+
+	~IndirectObjectNotFoundException()throw()
+	{
+	}
+
+	const char * what()const throw()
+	{
+		// FIXME
+		//std::string msg="Indirect object with ref=[";
+		//msg+=num+", "+gen+"] not found";
+
+		return "FIXME";//msg.c_str();
+	}
+
+	void getReference(int & _num, int & _gen)
+	{
+		_num=num;
+		_gen=gen;
+	}
+};
 
 /** Exception thrown when element can't be found in complex type.
  */
