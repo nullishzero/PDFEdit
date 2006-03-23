@@ -413,43 +413,6 @@ namespace {
 		}
 	}
 
-	//
-	// Print content stream
-	//
-	void
-	getContentStream ()
-	{
-
-		const static string file = "../../doc/zadani.pdf";
-		const static int	pageNumber = 1;
-							   
-		//======== test xx
-		GString* fileName = new GString (file.c_str());
-		PDFDoc* doc = new PDFDoc (fileName, new GString(), new GString());
-		OUTPUT << "Filename: "<< fileName->getCString() << endl;
-		OUTPUT << "Number of pages: "<< doc->getNumPages () << endl;
-
-		//
-		// Our stuff here
-		//
-		Object* obj;
-
-		XRef* xref = doc->getXRef();
-
-		OUTPUT << "Xref: " << (unsigned int) xref << endl << endl;
-		OUTPUT << "Trailer:" << xref->getTrailerDict () << endl;
-		OUTPUT << "Catalog:" << xref->getCatalog (obj) << endl;
-		Catalog cat (xref);
-		OUTPUT << "Page:" << xref->fetch (cat.getPageRef(pageNumber)->num, cat.getPageRef(pageNumber)->gen, obj) << endl;
-		OUTPUT << "Contents:" << cat.getPage(pageNumber)->getContents(obj) << endl;
-		OUTPUT << "StreamDict:\n" << cat.getPage(pageNumber)->getContents(obj)->getStream()->getDict() << endl;
-
-		OUTPUT << "Stream:\n";
-		print (OUTPUT, cat.getPage(pageNumber)->getContents(obj), xref);
-		assert (xref->getDocInfo (obj));
-		OUTPUT << "Doc info:" << obj << endl;
-	}
-	
 } // namespace
 
 
@@ -1402,55 +1365,8 @@ main (int argc, char* [])
 		c_xpdfctor ();
 		OK_TEST;
 
-		//
-		// Special tests
-		//
-		TEST(" special test -- get content stream")
-		getContentStream ();
-		OK_TEST;
-		
 		END_TEST;
 		MEM_CHECK;
 
 		return 0;
 }
-
-
-
-
-
-
-/*
-		//======== test xx
-		GString* fileName = new GString ("/home/jozo/_pdf/pdfedit/or_d0506.pdf");
-		PDFDoc* doc = new PDFDoc (fileName,new GString(),new GString());
-		cout << "Filename: "<< fileName->getCString() << endl;
-		cout << "Number of pages: "<< doc->getNumPages () << endl;
-		// Get an object from PDFDoc
-		Object* obj; 
-		
-
-		//
-		// Our stuff here
-		//
-		//CPdf pdf;
-		//string str;
-		XRef* xref = doc->getXRef();
-
-		cout << "Xref: " << (unsigned int) xref << endl;
-
-		obj = xref->getTrailerDict ();
-		CPdf::objToString (obj,str);
-		cout << str << endl;
-		str = "";
-
-		xref->getCatalog (obj);
-		CPdf::objToString (obj,str);
-		cout << str << endl;
-		str = "";
-
-		xref->getDocInfo (obj);
-		CPdf::objToString (obj,str);
-		cout << str << endl;
-		str = "";
-*/
