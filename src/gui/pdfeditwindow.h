@@ -1,5 +1,8 @@
 #ifndef __PDFEDITWINDOW_H__
 #define __PDFEDITWINDOW_H__
+
+#include <cobject.h>
+#include <cpdf.h>
 #include <qapplication.h>
 #include <qpushbutton.h>
 #include <qfont.h>
@@ -7,6 +10,8 @@
 #include <qmainwindow.h>
 #include <qsinterpreter.h>
 #include "commandwindow.h"
+
+using namespace pdfobjects;
 
 /** PdfEditWindow - class handling main application window */
 class PdfEditWindow : public QMainWindow {
@@ -28,9 +33,14 @@ protected slots:
  void runScript(QString script);
  void menuActivated(int id);
 private:
+ /** Commandline window */
  CommandWindow *cmdLine;
- QSInterpreter *qs;
+ /** QSA Scripting Project */
  QSProject *qp;
+ /** QSA Interpreter - taken from project */
+ QSInterpreter *qs;
+ /** Edited PDF document */
+ IProperty *document;
 };
 
 void createNewEditorWindow();

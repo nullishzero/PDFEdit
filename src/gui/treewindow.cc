@@ -2,6 +2,7 @@
  TreeWindow - class with treeview of PDF objects
 */
 #include "treewindow.h"
+#include "treeitem.h"
 #include "settings.h"
 #include "util.h"
 #include <iostream>
@@ -21,9 +22,7 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->setSelectionMode(QListView::Single);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
- init(0);
- clear();
- init(0);
+// init(0);
 }
 
 /** Clears all items from TreeWindow */
@@ -37,15 +36,32 @@ void TreeWindow::clear() {
 /** Init contents of treeview from given PDF document
  @param pdfDoc Document used to initialize treeview
  */
-void TreeWindow::init(void *pdfDoc) {
+void TreeWindow::init(IProperty *pdfDoc) {
+ clear();
 //demo
- QListViewItem *li=new QListViewItem( tree, "file.pdf","Document");
- li->setOpen(TRUE);
-// li->setRenameEnabled(0,FALSE);
-// li->setRenameEnabled(1,FALSE);
- (void) new QListViewItem(li,"Page 1","Page");
- li=new QListViewItem(li,"Page 2","Page");
- (void) new QListViewItem(li,"pic000.jpg","Picture");
+ if (!pdfDoc) {//nothing specified, fill with testing data
+  QListViewItem *li=new QListViewItem(tree, "file.pdf","Document");
+  li->setOpen(TRUE);
+  (void) new QListViewItem(li,"Page 1","Page");
+  li=new QListViewItem(li,"Page 2","Page");
+  (void) new QListViewItem(li,"pic000.jpg","Picture");
+ } else {
+  TreeItem *root=new TreeItem(tree, pdfDoc); 
+  root->setOpen(TRUE);
+  addChilds(pdfDoc);
+ }
+}
+
+/** Recursively add all child of given object to treeview. Childs will be added with obj as parent.
+ @param obj Object to add*/
+void TreeWindow::addChilds(IProperty *obj) {
+/* if (obj is cdict) {
+  vector;
+  obj->getAllPropertyNames(list);
+ }
+*/
+//todo
+// TreeItem *child=new TreeItem(tree, obj); 
 }
 
 /** default destructor */

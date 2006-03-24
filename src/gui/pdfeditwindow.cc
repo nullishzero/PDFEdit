@@ -5,6 +5,7 @@
 #include "propertyeditor.h"
 #include "settings.h"
 #include "util.h"
+#include "test.h"
 #include <iostream>
 #include <qfile.h>
 #include "aboutwindow.h"
@@ -195,6 +196,9 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  printList(qs->variables());
  printf("<OK\n");*/
 
+ //create testing document
+ document=test::testPDF();
+ tree->init(document);
 }
 
 /** default destructor */
