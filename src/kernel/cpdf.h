@@ -6,6 +6,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/03/24 20:06:50  hockm0bm
+ * createPage and createOutline removed
+ *         - they don't make sense because Pages can be created directly and
+ *         then inserted
+ *         - same with outlines
+ * comments for most of nonimplemented methods
+ *
  * Revision 1.14  2006/03/21 23:21:39  hockm0bm
  * minor interface changes
  * compileable but not usabe in this state
@@ -57,8 +64,42 @@
 #include "iproperty.h"
 #include "xrefwriter.h"
 
+
 // =============================================================================
 namespace pdfobjects {
+
+namespace utils {
+
+/**
+ * Indirect referencies comparator.
+ *
+ * Handles comparing of Indirect referencies.
+ *
+ * FIXME find some more proper place for the class
+ */
+class IndComparator
+{
+public:
+	/** Ordering functional operator.
+	 * @param one Indirect reference.
+	 * @param two Indirect reference.
+	 *
+	 * Strict weak ordering comparision of referencies.
+	 * <br>
+	 * Referencies are compared by their fields. First num is compared (it is
+	 * more significant) and if nums are same, gen number is compared.
+	 *
+	 * @return true if one &lt two or false otherwise.
+	 */
+	bool operator() (const pdfobjects::IndiRef one, const pdfobjects::IndiRef two) const
+	{
+		if (one.num == two.num)
+			return (one.gen < two.gen);
+		else
+			return (one.num < two.num);
+	}
+};
+}
 
 // forward declarations FIXME remove
 class CPage;
@@ -84,7 +125,7 @@ class COutline;
  * TODO produced objects describtion
  * TODO ...
  */
-class CPdf: public CDict
+class CPdf
 {
 public:
 	// NOTE: this declaration has to be here, because mode field is private and
@@ -104,26 +145,16 @@ public:
 	enum OpenMode {Advanced, ReadWrite, ReadOnly};
 	
 protected:
-	/**
-	 * Indirect mapping Comparator class for two mapped items.
-	 */
-	class IndComparator
-	{
-	public:
-		bool operator() (const IndiRef one, const IndiRef two) const
-		{
-			if (one.num == two.num)
-				return (one.gen < two.gen);
-			else
-				return (one.num < two.num);
-		};
-	};
 
 	/**
 	 * Indirect properties mapping type.
 	 */
-	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, IndComparator> IndirectMapping;
+	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
 private:
+	
+	/**************************************************************************
+	 * Revision specific data
+	 *************************************************************************/
 	
 	/** Mapping between IndiRef and indirect properties. 
 	 *
@@ -134,6 +165,49 @@ private:
 	 */
 	IndirectMapping indMap;
 
+	/** Trailer dictionary for this revision.
+	 *
+	 * This dictionary contains all information for current revision. When
+	 * revision is changed this has to be initialized before
+	 * initRevisionSpecific method is called. First initialization is done in
+	 * constructor.
+	 * <br>
+	 * Trailer is direct object so it can't be obtained through
+	 * getIndirectProperty method. Only way how to do change, add or delete its
+	 * members (which is strongly unrecomended unless you know what you are
+	 * doing) is to use XRefWriter interface.
+	 */
+	boost::shared_ptr<CDict> trailer;
+		
+	/** Document catalog dictionary.
+	 *
+	 * It is used for document property handling. Initialization is done by
+	 * initRevisionSpecific method because catalog may be specific for each
+	 * revision (although this is not very often situation).
+	 * Value is wrapped by shared_ptr smart pointer for instance safety.
+	 */
+	boost::shared_ptr<CDict> docCatalog;
+
+	// TODO returned page list
+	// TODO returned outlines list
+
+	/** Intializes revision specific stuff.
+	 * 
+	 * trailer field must be initialized correctly before this method can be
+	 * called.
+	 *
+	 * @throw ElementNotFoundException if Root property is not found.
+	 * @throw ElementBadTypeException if Root property is found but doesn't 
+	 * contain reference or reference does not point to document catalog 
+	 * dictionary.
+	 * 
+	 */
+	void initRevisionSpecific();
+
+	/**************************************************************************
+	 * End of revision specific data
+	 *************************************************************************/
+	
 	/** File handle for pdf file.
 	 *
 	 * This field is initialized when pdf file is open (in constructor) and
@@ -179,7 +253,6 @@ private:
 	 * If you want to create instance, please use static factory method 
 	 * getInstance.
 	 */
-public:
 	CPdf (){};
 
 	/** Initializating constructor.
@@ -201,13 +274,6 @@ public:
 	 * using this destructor).
 	 */
 	~CPdf();
-private:
-	/** Intializes revision specific stuff.
-	 * @param trailer Trailer dictionary for revision.
-	 * 
-	 * NOTE: Assumes that xref corresponds to given trailer.
-	 */
-	void initRevisionSpecific(::Dict * trailer);
 public:
 	/** Factory method for CPdf instances.
 	 * @param filename File name with pdf content (if null, new document 
@@ -340,20 +406,16 @@ public:
 		return 0;
 	}
 
-	/** Creates new empty page.
-	 * @param pos Position where to insert page.
-	 *
+	/** Returns document catalog for property access.
+	 * 
+	 * @return Document catalog dictionary wrapped by smart pointer (using
+	 * shared_ptr from boost library).
 	 */
-	CPage * createPage(int)
+	boost::shared_ptr<CDict> getDictionary()
 	{
-		// create new object xref->createObject
-		// initialize with default values
-		// update PageTree dictionary
-		// update pages array
-		// call xref->change to new page and page tree
-		return NULL;
+		return docCatalog;
 	}
-
+		
 	/** Inserts exisitng page.
 	 * @param page Page used for new page creation.
 	 * @param pos Position where to insert new page.
@@ -387,19 +449,20 @@ public:
 	 */
 	int getPagePosition(const CPage * /*page*/)const
 	{
-		// TODO figure out
+		// check pdf of the page
+		// check returned page list
+		// 		if not found - kind of fake
 		return 0;
 	}
 
 	/** Returnes page count.
+	 *
+	 * Checks Pages field in document catalog. If it has Page type, returns 1
+	 * otherwise return Pages' count field value.
+	 *
+	 * @return Number of pages which are accessible.
 	 */
-	unsigned int getPageCount() const
-	{
-		// returns count field from Pages field
-		// if it is direct page then only one page
-		// is present
-		return 0;
-	}
+	unsigned int getPageCount() const;
 
 	// page iteration methods
 	// =======================
@@ -407,20 +470,16 @@ public:
 	/** Returns page at given position.
 	 * @param pos Position (starting from 0).
 	 *
-	 * TODO error handling description
+	 * Search for page position (uses find method). If page dictionary is found,
+	 * compares it with already returned pages list. If this page was already
+	 * returned and is valid (its position is same as given one), returns this 
+	 * CPage. Otherwise creates new CPage instance, adds it to the list and 
+	 * return.
+	 *
+	 * @throw PageNotFoundException if pos can't be found or out of range.
 	 * @return Pointer to CPage instance.
 	 */
-	CPage * getPage(int pos)
-	{
-		if(pos<0 || (unsigned long)pos>=getPageCount())
-		{
-			// out of range error
-			// TODO handle
-		}
-
-		// uses utils::findPage method on Pages field
-		return NULL;
-	}
+	CPage * getPage(int pos);
 
 	/** Returns first page.
 	 *
@@ -528,23 +587,10 @@ public:
 		// destroy outline object
 	}
 
-	/** Creates new top-level outline.
-	 * TODO parameters (at least name, position a target)
-	 */
-	COutline * createOutline()
-	{
-		// creates new object
-		// initialize with default outline information
-		// update Outlines dictionary in document catalog
-		// update outlines array
-		return NULL;
-	}
-
-
 	// Version handling and work around
 	// =================================
 
-	/** Returnes mode of this version.
+	/** Returns mode of this version.
 	 *
 	 * Mode is ReadOnly for all older version than last available and
 	 * last depends on mode set in creation time.

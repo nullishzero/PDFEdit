@@ -17,6 +17,7 @@
 
 #include "iproperty.h"
 #include "cobject.h"
+#include "cobjecthelpers.h"
 #include "cpdf.h"
 #include "factories.h"
 #include "utils/debug.h"
@@ -26,127 +27,12 @@
 
 
 using namespace pdfobjects;
+using namespace pdfobjects::utils;
+using namespace boost;
+using namespace std;
+using namespace debug;
 
 typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
-
-namespace utils
-{
-
-/** Gets type of the dictionary.
- * @param dict Dictionary wrapped in smart pointer.
- *
- * Tries to get /Type field from dictionary and returns its string value. If not
- * present, returns an empty string.
- *
- * @return string name of the dictionary type or empty string if not able to
- * find out.
- */
-std::string getDictType(boost::shared_ptr<CDict> dict);
-
-/** Helper method for getting int property value from dictionary.
- * @param name Name of the property in the dictionary.
- * @param dict Dictionary where to search.
- *
- * Gets property according name. Checks property type and if it is realy
- * pInt, gets its int value which is returned.
- *
- * @throw ObjInvalidPositionInComplex if property is not found.
- * @throw ElementBadTypeException if property is found but doesn't contain 
- * integer value.
- * @return int value of the property.
- */
-int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
-{
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
-	if(prop_ptr->getType() != pInt)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name/*, prop_ptr->getType()*/);
-	}
-
-	shared_ptr<CInt> int_ptr=IProperty::getSmartCObjectPtr<CInt>(prop_ptr);
-	int value;
-	int_ptr->getPropertyValue(value);
-
-	return value;
-}
-
-/** Helper method for getting string property value from dictionary.
- * @param name Name of the property in the dictionary.
- * @param dict Dictionary where to search.
- *
- * Gets property according name. Checks property type and if it is realy
- * pString, gets its string value which is returned.
- *
- * @throw ElementNotFoundException if property is not found.
- * @throw ElementBadTypeException if property is found but doesn't contain 
- * string value.
- * @return std::string value of the property.
- */
-std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
-{
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
-	if(prop_ptr->getType() != pString)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name);
-	}
-
-	shared_ptr<CString> str_ptr=IProperty::getSmartCObjectPtr<CString>(prop_ptr);
-	std::string value;
-	str_ptr->getPropertyValue(value);
-
-	return value;
-}
-	
-/** Helper method for getting name property value from dictionary.
- * @param name Name of the property in the dictionary.
- * @param dict Dictionary where to search.
- *
- * Gets property according name. Checks property type and if it is realy
- * pName, gets its string value which is returned.
- *
- * @throw ElementNotFoundException if property is not found.
- * @throw ElementBadTypeException if property is found but doesn't contain 
- * string value.
- * @return std::string value of the property.
- */
-std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
-{
-	using namespace boost;
-
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
-	if(prop_ptr->getType() != pName)
-	{
-		// malformed dictionary
-		throw ElementBadTypeException(name);
-	}
-
-	shared_ptr<CName> name_ptr=IProperty::getSmartCObjectPtr<CName>(prop_ptr);
-	std::string value;
-	name_ptr->getPropertyValue(value);
-
-	return value;
-}
-
-// implementation of method
-std::string getDictType(boost::shared_ptr<CDict> dict)
-{
-	try
-	{
-		return getNameFromDict("/Type", dict);
-	// FIXME change to proper exception
-	}catch(std::exception & e)
-	{
-		// not found so returns empty string
-	}
-
-	return std::string();
-}
 
 // TODO also for rest of simple objects
 
@@ -199,9 +85,6 @@ std::string getDictType(boost::shared_ptr<CDict> dict)
  */
 boost::shared_ptr<IProperty> findPage(CPdf * pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
 {
-using namespace boost;
-using namespace std;
-using namespace debug;
 
 	printDbg(DBG_DBG, "startPos=" << startPos << " pos=" << pos);
 	if(startPos > pos)
@@ -373,13 +256,48 @@ using namespace debug;
 
 }
 
-} // end of utils namespace
-
-void CPdf::initRevisionSpecific(::Dict * /*trailer*/)
+void CPdf::initRevisionSpecific()
 {
-	// cleanup indirect mapping
+
+	printDbg(DBG_DBG, "");
+
+
+	// Clean up part:
+	// =============
+	
+	// cleans up indirect mapping
+	if(indMap.size())
+	{
+		printDbg(DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
+		indMap.clear();
+	}
+	
 	// cleanup all returned pages + signalization that they are invalid.
 	// cleanup all returned outlines  -------------||----------------- 
+	// 
+	
+	// Initialization part:
+	// ===================
+	
+	// initialize trailer dictionary from xpdf trailer dictionary object
+	// no free should be called because trailer is returned directly from XRef
+	Object * trailerObj=xref->getTrailerDict();
+	trailer=boost::shared_ptr<CDict>(CDictFactory::getInstance(*trailerObj));
+	
+	// Intializes document catalog dictionary.
+	// gets Root field from trailer, which should contain reference to catalog.
+	// If no present or not reference, we have corrupted PDF file and exception
+	// is thrown
+	IndiRef rootRef=utils::getRefFromDict("/Root", trailer);
+	shared_ptr<IProperty> prop_ptr=getIndirectProperty(rootRef);
+	if(prop_ptr->getType()!=pDict)
+	{
+		printDbg(DBG_CRIT, "Trailer dictionary doesn't point to correct document catalog.");
+		throw ElementBadTypeException("Root");
+	}
+	printDbg(DBG_INFO, "Document catalog successfully fetched");
+	docCatalog=IProperty::getSmartCObjectPtr<CDict>(prop_ptr);
+	
 }
 
 CPdf::CPdf(BaseStream * stream, FILE * file, OpenMode openMode)
@@ -390,12 +308,17 @@ CPdf::CPdf(BaseStream * stream, FILE * file, OpenMode openMode)
 	mode=openMode;
 
 	// initializes revision specific data for the newest revision
-	initRevisionSpecific(xref->getTrailerDict()->getDict());
+	initRevisionSpecific();
 }
 
 CPdf::~CPdf()
 {
+	printDbg(DBG_DBG, "");
+
+	// indirect mapping is cleaned up automaticaly
+	
 	// TODO implementation
+	// discards all returned pages and outlines
 }
 
 
@@ -437,19 +360,6 @@ using namespace debug;
 	}
 
 	return prop_ptr;
-}
-
-
-//
-// TODO remove - on next commit
-//
-void
-CPdf::delIndMapping (const IndiRef& ref)
-{
-	// if there is such mapping that is a problem
-	printDbg (0,"");
-	
-	indMap.erase (ref);
 }
 
 /** Adds all indirect object from given property.
@@ -661,3 +571,33 @@ int CPdf::close(bool saveFlag)
 	return 0;
 }
 
+CPage * CPdf::getPage(int pos)
+{
+	printDbg(DBG_DBG, "");
+
+	if(pos<0 || (unsigned long)pos>=getPageCount())
+	{
+		printDbg(DBG_ERR, "Page out of range pos="<<pos);
+		throw PageNotFoundException(pos);
+	}
+
+	// gets Pages from docCatalog
+	// search page dictionary
+	// search returned CPage list
+	// if found 
+	// 		checks if old CPage has same pos
+	// 		if yes, returns
+	// 		otherwise invalidates page and creates new one
+	// otherwise
+	// 		creates new CPage
+	// adds new CPage to the returned list
+	return NULL;
+}
+
+unsigned int CPdf::getPageCount() const
+{
+	// returns count field from Pages field
+	// if it is direct page then only one page
+	// is present
+	return 0;
+}
