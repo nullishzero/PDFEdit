@@ -96,7 +96,7 @@ const unsigned int  DBG_DBG 	= 5;
  * <br>
  * DEBUG_<PRIORITY> macro should be used for value
  */
-#define __DEBUG_LEVEL	0
+#define __DEBUG_LEVEL	debug::DBG_DBG
 #endif
 
 /** Prints message with given priority.
@@ -147,7 +147,8 @@ const unsigned int  DBG_DBG 	= 5;
 {																	\
 	if ( __DEBUG_LEVEL >= dbgLevel) 								\
 	{																\
-		(a) << dbgLevel <<":"<< __FILE__ << ":" << __LINE__ << ": "	\
+		(a) << dbgLevel <<":"<< __FILE__ << ":" << __FUNCTION__ <<":" \
+		    << __LINE__ << ": "										\
 			<<  b 													\
 			<< std::endl;											\
 	}																\
