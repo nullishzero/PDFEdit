@@ -1,6 +1,7 @@
 /** @file
  TreeWindow - class with treeview of PDF objects
 */
+#include <utils/debug.h>
 #include "treewindow.h"
 #include "treeitem.h"
 #include "settings.h"
@@ -36,6 +37,7 @@ void TreeWindow::clear() {
  @param pdfDoc Document used to initialize treeview
  */
 void TreeWindow::init(CPdf *pdfDoc) {
+ assert(pdfDoc);
 //boost::shared_ptr<CDict> pd=pdfDoc->getDictionary();
  init(pdfDoc->getDictionary().get());
 }
@@ -62,9 +64,12 @@ void TreeWindow::init(IProperty *doc) {
  @param obj Object to add*/
 void TreeWindow::addChilds(IProperty *obj) {
  if (obj->getType()==pDict) {
+  printDbg(debug::DBG_DBG,"is-a-dict");
   CDict *dict=(CDict*)obj;
   vector<string> list;
+  printDbg(debug::DBG_DBG,"get-names");
   dict->getAllPropertyNames(list);
+  printDbg(debug::DBG_DBG,"end..");
  }
 
 //todo

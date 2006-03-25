@@ -4,6 +4,7 @@
  and other general settings
 */
 
+#include <utils/debug.h>
 #include <iostream>
 #include <qfile.h>
 #include <qdir.h>
@@ -81,7 +82,7 @@ Settings::~Settings() {
  @param win Widget that will have it's size and position stored
  @param name Name of key to be used in configuration */  
 void Settings::saveWindow(QWidget *win,const QString name) {
- printf("save %d,%d,%d,%d\n",win->width(),win->height(),win->x(),win->y());
+ printDbg(debug::DBG_DBG,"save window " << name);
  QString line;
  line+=QString::number(win->width());
  line+=",";
@@ -97,7 +98,7 @@ void Settings::saveWindow(QWidget *win,const QString name) {
  @param win Widget that will be resized and moved
  @param name Name of key to be used in configuration */
 void Settings::restoreWindow(QWidget *win,const QString name) {
- printf("restore\n");
+ printDbg(debug::DBG_DBG,"restore window " << name);
  QWidget *desk = QApplication::desktop();
  QString line=set->readEntry(APP_KEY+"gui/windowstate/"+name);
  QStringList pos=explode(',',line);
@@ -146,11 +147,11 @@ QString Settings::getAction(int index) {
 
 /** returns icon with given name, loading if necessary and caching for later use */
 QPixmap *Settings::getIcon(const QString name) {
- cout << "Loading:" << name << endl; 
+ printDbg(debug::DBG_INFO,"Loading icon:" << name);
  if (iconCache.contains(name)) return iconCache[name];
  QFile f(name);
  if (!f.open(IO_ReadOnly)) {
-  cout << "File not found:" << name << endl;
+  printDbg(debug::DBG_WARN,"File not found:" << name);
   return NULL;//file not found or unreadable or whatever ...
  }
  QByteArray qb=f.readAll();
@@ -217,7 +218,7 @@ void Settings::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoo
    if (pixmap) {
     parent->changeItem(menu_id,*pixmap,qs[0]);
    } else {
-    cout << "Pixmap missing: " << qs[3] << endl;
+    printDbg(debug::DBG_WARN, "Pixmap missing: " << qs[3]);
    }
   }
  } else { //something invalid
@@ -257,7 +258,9 @@ void Settings::loadToolBarItem(ToolBar *tb,QString item) {
   line=line.remove(0,5);
   QPixmap *pixmap=getIcon(qs[3]);
   int menu_id=addAction(qs[1]);
-  if (!pixmap) cout << "Pixmap missing: " << qs[3] << endl;
+  if (!pixmap) {
+   printDbg(debug::DBG_WARN, "Pixmap missing: " << qs[3]);
+  }
   ToolButton *tbutton =new ToolButton(pixmap,qs[0],menu_id,tb);
   if (qs[2].length()>0) { //accelerator specified
    tbutton->setAccel(QKeySequence(qs[2]));
@@ -278,7 +281,7 @@ void Settings::loadToolBarItem(ToolBar *tb,QString item) {
  */
 ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
  QString line=readItem(name);
- cout << "loading toolbar " << name <<endl;
+ printDbg(debug::DBG_INFO,"Loading toolbar:" << name);
  if (line.startsWith("list ")) { // List of values - first is name, others are items in it
   line=line.remove(0,5);
   QStringList qs=explode(',',line);

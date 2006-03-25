@@ -8,6 +8,8 @@ PropertyEditor - widget for editing properties of selected object
 #include <stdlib.h>
 #include "stringproperty.h"
 #include "intproperty.h"
+#include "realproperty.h"
+#include "boolproperty.h"
 
 
 //TODO: add functions for display & editing ... 
@@ -135,18 +137,13 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
  Property *prop;
  prop=new IntProperty("Intproperty",grid);
  addProperty(prop);
- addProperty("Property1");
- addProperty("Property2");
- addProperty("Property3");
- addProperty("Property4");
- addProperty("Property5");
- addProperty("Property34");
- addProperty("Property35");
- addProperty("Property36");
- addProperty("Property185");
- addProperty("Property186");
- addProperty("Property197");
- addProperty("Property108");
+ prop=new RealProperty("Realproperty",grid);
+ addProperty(prop);
+ prop=new BoolProperty("Boolproperty",grid);
+ addProperty(prop);
+ addProperty("StringProperty1");
+ addProperty("StringProperty2");
+ addProperty("StringProperty3");
 //TODO: debug example code end
 }
 

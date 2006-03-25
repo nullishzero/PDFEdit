@@ -1,6 +1,7 @@
 /** @file
  PdfEditWindow - class representing main application window
 */
+#include <utils/debug.h>
 #include "pdfeditwindow.h"
 #include "settings.h"
 #include "util.h"
@@ -22,7 +23,7 @@ int windowCount;
 
 /** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void PdfEditWindow::exitApp() {
- printf("exiting...\n");
+ printDbg(debug::DBG_INFO,"Exiting program");
  qApp->closeAllWindows();
  //Application will exit after last window is closed
  //todo: if invoked from qscript then handle specially
@@ -99,11 +100,16 @@ void PdfEditWindow::print(QString str) {
  */
 void PdfEditWindow::menuActivated(int id) {
  QString action=globalSettings->getAction(id);
- cout << "Performing action: " << action << endl;
+ printDbg(debug::DBG_INFO,"Performing menu action: " << action);
+ /* quit and closewindow are special - these can't be easily called from script
+    as regular function, because invoking them calls window destructor, removing
+    script interpreter instance in the process -> after returning from script
+    control is moved to already freed script interpreter
+  */
  if (action=="quit") exitApp();
  else if (action=="closewindow") closeWindow();
- else if (action=="newwindow") createNewWindow();
- runScript(action);
+// else if (action=="newwindow") createNewWindow();
+ else runScript(action);
 }
 
 /** DEBUG: print stringlist to stdout
@@ -113,8 +119,7 @@ void printList(QStringList l) {
  QStringList::Iterator it=l.begin();
  for (;it!=l.end();++it) { //load all subitems
   QString x=*it;
-  cout << x << endl;
-  cout.flush();
+  printDbg(debug::DBG_DBG,x);
  }
 
 }
@@ -174,41 +179,35 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  //Script must be run AFTER creating all widgets
  // -> script may need them, especially the command window
 
- printf("before qsproject\n");
  //Gets new interpreter
  qp=new QSProject();
- printf("before interp\n");
 // qs=new QSInterpreter();
  qs=qp->interpreter();//new QSInterpreter();
- printf("before setting\n");
  assert(globalSettings);
  qp->addObject(globalSettings);
- printf("before initscript\n");
  //run initscript
  QString initScript="init.qs";
  QString code=loadFromFile(initScript);
  qs->evaluate(code,this,initScript);
 
- printf("after initscript\n");
+ printDbg(debug::DBG_DBG,"after initscript");
 
  /*
  //DEBUG 
- printf("<Functions\n");
+ printDbg(debug::DBG_DBG,"<Functions");
  printList(qs->functions());
- printf("<Classes\n");
+ printDbg(debug::DBG_DBG,"<Classes");
  printList(qs->classes(QSInterpreter::AllClasses));
- printf("<Var\n");
+ printDbg(debug::DBG_DBG,"<Var");
  printList(qs->variables());
- printf("<OK\n");*/
+ printDbg(debug::DBG_DBG,"<OK");*/
 
  //create testing document
-// document=test::testPDF();
- printf("test document created\n");
-// tree->init(document);
+// document=CPdf::getInstance("../../doc/zadani.pdf",CPdf::ReadWrite);
+ //document=test::testPDF();
  tree->init((IProperty*)NULL);
- printf("test document init\n");
+// tree->init(document);//not yet implemented in kernel
  prop->setObject(0);//fill with demonstration properties
-
 }
 
 /** default destructor */

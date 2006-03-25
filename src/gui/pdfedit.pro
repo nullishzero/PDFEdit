@@ -12,13 +12,16 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel
 #must be specified, otherwise namespace debug will clash with debug() in QT
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 
+#debug information
+QMAKE_CXXFLAGS += -g
+
 #Widget classes
 HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h commandwindow.h treewindow.h 
 SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc 
 
 #Non-widget classes
-HEADERS += property.h  stringproperty.h  intproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
-SOURCES += property.cc stringproperty.cc intproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
+HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
+SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
 
 #CObject Wrapper classes
 HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h
@@ -43,3 +46,4 @@ exists( $${_KPATH}/$${_ONELIBK} ) {
 }
 
 include(../kernel/kernel-obj.pro)
+
