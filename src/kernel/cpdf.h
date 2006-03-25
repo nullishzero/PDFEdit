@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/03/25 11:56:39  hockm0bm
+ * debuging work around
+ *
  * Revision 1.15  2006/03/24 20:06:50  hockm0bm
  * createPage and createOutline removed
  *         - they don't make sense because Pages can be created directly and
@@ -245,6 +248,11 @@ private:
 	 */
 	IModeController* modeController;
 
+#ifdef DEBUG
+// debuging workaround to enable testing
+public:
+#endif
+	
 	/** Empty constructor.
 	 *
 	 * This constructor is disabled, because we want to prevent uninitialized
