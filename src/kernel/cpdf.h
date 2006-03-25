@@ -6,6 +6,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/03/25 21:23:57  hockm0bm
+ * pages handling implemented - pageList created
+ *         insertPage, removePage - only in design state
+ * page iteration methods implemented
+ * initRevisionSpecific handles pageList clean up
+ *
  * Revision 1.16  2006/03/25 11:56:39  hockm0bm
  * debuging work around
  *
@@ -191,7 +197,30 @@ private:
 	 */
 	boost::shared_ptr<CDict> docCatalog;
 
-	// TODO returned page list
+	/** Type of returned pages list.
+	 *
+	 * It is association of page position with CPage instance.
+	 */
+	typedef std::map<size_t, boost::shared_ptr<CPage> > PageList;
+
+	/** Returned pages list.
+	 *
+	 * This container stores CPage instances returned by this class. Each time
+	 * new page is returned, it is stored here with actual page position. This
+	 * is because, page position may change from property interface from page
+	 * tree. Each time this tree is changed, this list is consolidated and all
+	 * page instances which are no more available on its position are
+	 * invalidated (Uses CPage::invalidate method). 
+	 * <br>
+	 * pageList is invalidate on each revision change (with all its pages).
+	 * <br>
+	 * It is safe to try to find page in this list at first and if not found,
+	 * than searching is neccessary. 
+	 * <br>
+	 * This storage behaves like CPage cache.
+	 */
+	PageList pageList;
+
 	// TODO returned outlines list
 
 	/** Intializes revision specific stuff.
@@ -389,16 +418,6 @@ public:
 	 */ 
 	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop);
 
-	/**
-	 * Deletes relation between (x)pdf object and IProperty*. 
-	 *
-	 * @param  ref Id and gen number of an object.
-	 * @param ip IProperty that will be mapped to Object o.
-	 *
-	 * TODO remove
-	 */
-	void delIndMapping (const IndiRef& ref);
-
 	/** Saves CPdf content (whole document).
 	 * @param fname File name where to store.
 	 *
@@ -428,49 +447,58 @@ public:
 	 * @param page Page used for new page creation.
 	 * @param pos Position where to insert new page.
 	 *
-	 * Creates new page and uses initialize all stuff according given page.
+	 * Adds deep copy of given page before given position.
 	 */
-	CPage * insertPage(const CPage * , int )
+	CPage * insertPage(const CPage * , size_t )
 	{
-		// create page deep copy (if from other file, also referencies)
-		// similar as create page
+		// find page at given position if pos is pageCount+1 uses pageCount
+		// 	instead
+		// creates deep copy of page dictionary
+		// appends Kids array of found dictionary's parent
+		// consolidate pageList (all pages with pos >=)
+		// add page to the pageList with given pos
 		return NULL;
 	}
 
 	/** Removes page from given position.
 	 * @param pos Position of the page.
 	 */
-	int removePage(int )
+	int removePage(size_t )
 	{
-		// get page object
-		// change PageTree object
-		// update pages array
-		// release this object (xref->release())
-		// deallocate object (checks number of referencies...)
+		// try to find page
+		// 		if available invalidate
+		// find page at given position
+		// gets reference from page indirectParent (it is indirect object, so it
+		// 	stands for its own reference)
+		// remove reference from page's parent
+		// release reference
+		// consolidate all pages (all pages with pos >=)
 		return 0;
 	}
 
 	/** Returns absolute position of given page.
 	 * @param page Page to look for.
 	 * 
+	 * Returns actual position of given page. If given page hasn't been returned
+	 * by this CPdf instance or it is no longer available, exception is thrown.
+	 * <br>
 	 * NOTE: assume CPage implements == operator correctly
+	 *
+	 * @throw PageNotFoundException if given page is not recognized by CPdf
+	 * instance.
 	 */
-	int getPagePosition(const CPage * /*page*/)const
-	{
-		// check pdf of the page
-		// check returned page list
-		// 		if not found - kind of fake
-		return 0;
-	}
+	int getPagePosition(boost::shared_ptr<CPage> page);
 
 	/** Returnes page count.
 	 *
 	 * Checks Pages field in document catalog. If it has Page type, returns 1
 	 * otherwise return Pages' count field value.
 	 *
+	 * @throw MalformedFormatExeption if page count can't be found or it has bad
+	 * type (CPdf instance is almost unusable if this is not correct).
 	 * @return Number of pages which are accessible.
 	 */
-	unsigned int getPageCount() const;
+	unsigned int getPageCount();
 
 	// page iteration methods
 	// =======================
@@ -485,73 +513,58 @@ public:
 	 * return.
 	 *
 	 * @throw PageNotFoundException if pos can't be found or out of range.
-	 * @return Pointer to CPage instance.
+	 * @return CPage instance wrapped by smart pointer.
 	 */
-	CPage * getPage(int pos);
+	boost::shared_ptr<CPage> getPage(size_t pos);
 
 	/** Returns first page.
 	 *
-	 * Calls getPage(0).
+	 * Calls getPage(1).
 	 *
-	 * @return Pointer to the first page instance.
+	 * @return CPage instance wrapped by smart pointer.
 	 */
-	CPage * getFirstPage()
+	boost::shared_ptr<CPage> getFirstPage()
 	{
-		return getPage(0);
+		return getPage(1);
 	}
 
 	/** Returns next page.
 	 * @param page Pointer to the page.
 	 *
-	 * Returns page which is after given one.
-	 * TODO error handling description.
+	 * Returns page which is after given one. Uses getPagePosition to get actual
+	 * position.
+	 * <br>
+	 * Uses getPage method.
 	 *
-	 * @return CPage pointer.
+	 * @throw PageNotFoundException if page can't be found (given page is last
+	 * one or given page can't be found).
+	 * @return CPage instance wrapped by smart pointer.
 	 */ 
-	CPage * getNextPage(CPage * page)
-	{
-		size_t pos=getPagePosition(page)+1;
-		
-		if(pos>=getPageCount())
-		{
-			// no more pages error
-			// TODO handle
-		}
-
-		// uses utils::findPage method on Pages field
-		return NULL;
-	}
+	boost::shared_ptr<CPage> getNextPage(boost::shared_ptr<CPage> page);
 
 	/** Returns previous page.
 	 * @param Pointer to the page.
 	 *
-	 * Returns page which is before given one.
-	 * TODO error handling description.
+	 * Returns page which is before given one. Uses getPagePosition to get actual
+	 * position.
+	 * <br>
+	 * Uses getPage method.
 	 *
-	 * @return CPage pointer.
+	 * @throw PageNotFoundException if page can't be found (given page is last
+	 * one or given page can't be found).
+	 * @return CPage instance wrapped by smart pointer.
 	 */
-	CPage * getPrevPage(CPage * page)
-	{
-		int pos=getPagePosition(page)-1;
-		if(pos<0)
-		{
-			// no previous page
-			// TODO handle
-		}
-
-		// uses utils::findPage method on Pages field
-		return NULL;
-	}
+	boost::shared_ptr<CPage> getPrevPage(boost::shared_ptr<CPage> page);
 
 	/** Returns last page.
 	 * 
 	 * Calls getPage(pages.size()-1).
 	 *
-	 * @return CPage pointer.
+	 * @return CPage instance wrapped by smart pointer.
 	 */
-	CPage * getLastPage()
+	boost::shared_ptr<CPage> getLastPage()
 	{
-		return getPage(getPageCount()-1);
+		return getPage(getPageCount());
 	}
 
 	// Outlines methods
@@ -645,7 +658,7 @@ public:
 	 *
 	 * see XRefWriter::getRevisionCount
 	 */
-	size_t getRevisionsCount()const
+	size_t getRevisionsCount()
 	{
 		return xref->getRevisionCount();
 	}

@@ -26,16 +26,21 @@
 // =====================================================================================
 
 
-using namespace pdfobjects;
-using namespace pdfobjects::utils;
 using namespace boost;
 using namespace std;
 using namespace debug;
 
-typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
 
 // TODO also for rest of simple objects
 
+namespace pdfobjects
+{
+
+typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
+
+namespace utils 
+{
+	
 /** Helper method to find page at certain position.
  * @param CPdf Pdf instance where to search.
  * @param pagesDict Reference to or Page or Pages dictionary representing 
@@ -83,7 +88,7 @@ typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
  * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
  * position.
  */
-boost::shared_ptr<IProperty> findPage(CPdf * pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
+boost::shared_ptr<IProperty> findPage(CPdf & pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
 {
 
 	printDbg(DBG_DBG, "startPos=" << startPos << " pos=" << pos);
@@ -108,7 +113,7 @@ boost::shared_ptr<IProperty> findPage(CPdf * pdf, boost::shared_ptr<IProperty> p
 		printDbg(DBG_DBG, "pagesDict is reference");
 		IndiRef ref;
 		IProperty::getSmartCObjectPtr<CRef>(pagesDict)->getPropertyValue(ref);
-		shared_ptr<IProperty> indirect_ptr=pdf->getIndirectProperty(ref);
+		shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
 		if(indirect_ptr->getType() != pDict)
 		{
 			printDbg(DBG_ERR, "target (indirect) object is not dictionary type="<< indirect_ptr->getType());
@@ -191,7 +196,7 @@ boost::shared_ptr<IProperty> findPage(CPdf * pdf, boost::shared_ptr<IProperty> p
 			shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(*i);
 			IndiRef ref;
 			ref_ptr->getPropertyValue(ref);
-			shared_ptr<IProperty> target_ptr=pdf->getIndirectProperty(ref);
+			shared_ptr<IProperty> target_ptr=pdf.getIndirectProperty(ref);
 			if(target_ptr->getType() != pDict)
 			{
 				// malformed pdf
@@ -256,6 +261,8 @@ boost::shared_ptr<IProperty> findPage(CPdf * pdf, boost::shared_ptr<IProperty> p
 
 }
 
+} // end of utils namespace
+
 void CPdf::initRevisionSpecific()
 {
 
@@ -270,6 +277,20 @@ void CPdf::initRevisionSpecific()
 	{
 		printDbg(DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
 		indMap.clear();
+	}
+
+	// cleans up and invalidates all returned pages
+	if(pageList.size())
+	{
+		printDbg(DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
+		PageList::iterator i;
+		for(i=pageList.begin(); i!=pageList.end(); i++)
+		{
+			printDbg(DBG_DBG, "invalidating page at pos="<<i->first);
+			// FIXME uncoment when method is reay
+			//i->second->invalidate();
+		}
+		pageList.clear();
 	}
 	
 	// cleanup all returned pages + signalization that they are invalid.
@@ -571,33 +592,144 @@ int CPdf::close(bool saveFlag)
 	return 0;
 }
 
-CPage * CPdf::getPage(int pos)
+boost::shared_ptr<CPage> CPdf::getPage(size_t pos)
 {
+using namespace utils;
+
 	printDbg(DBG_DBG, "");
 
-	if(pos<0 || (unsigned long)pos>=getPageCount())
+	if(pos>getPageCount())
 	{
 		printDbg(DBG_ERR, "Page out of range pos="<<pos);
 		throw PageNotFoundException(pos);
 	}
 
-	// gets Pages from docCatalog
-	// search page dictionary
-	// search returned CPage list
-	// if found 
-	// 		checks if old CPage has same pos
-	// 		if yes, returns
-	// 		otherwise invalidates page and creates new one
-	// otherwise
-	// 		creates new CPage
-	// adds new CPage to the returned list
-	return NULL;
+	// checks if page is available in pageList
+	PageList::iterator i;
+	if((i=pageList.find(pos))!=pageList.end())
+	{
+		printDbg(DBG_INFO, "Page at pos="<<pos<<" found in pageList");
+		return i->second;
+	}
+
+	// page is not available in pageList, searching has to be done
+	// gets Pages field from document catalog (no special checking has to be
+	// done, because everithing is done in getPageCount method).
+	// find throws an exception if any problem found, otherwise pageDict_ptr
+	// contians Page dictionary at specified position.
+	shared_ptr<CRef> rootPages_ptr=IProperty::getSmartCObjectPtr<CRef>(docCatalog->getPropertyValue("/Pages"));
+	shared_ptr<CDict> pageDict_ptr=IProperty::getSmartCObjectPtr<CDict>(findPage(*this, rootPages_ptr, 1, pos));
+
+	// creates CPage instance from page dictionary and stores it to the pageList
+	CPage * page=CPageFactory::getInstance(pageDict_ptr);
+	shared_ptr<CPage> page_ptr(page);
+	pageList.insert(PageList::value_type(pos, page_ptr));
+
+	return page_ptr;
 }
 
-unsigned int CPdf::getPageCount() const
+unsigned int CPdf::getPageCount()
 {
-	// returns count field from Pages field
-	// if it is direct page then only one page
-	// is present
-	return 0;
+using namespace utils;
+	
+	// gets Pages field from document catalog
+	shared_ptr<IProperty> pages_ptr=docCatalog->getPropertyValue("/Pages");
+	
+	// pages_ptr must be refenerence according PDF specification
+	if(pages_ptr->getType()!=pRef)
+	{
+		printDbg(DBG_CRIT, "Pages entry has not required reference type");
+		throw MalformedFormatExeption("Pages field is not reference");
+	}
+
+	// gets reference number and its indirect object
+	IndiRef ref;
+	IProperty::getSmartCObjectPtr<CRef>(pages_ptr)->getPropertyValue(ref);
+	pages_ptr=getIndirectProperty(ref);
+	
+	// if pages_ptr is not CDict instance, PDF is corrupted and exception is
+	// thrown
+	if(pages_ptr->getType()!=pDict)
+	{
+		printDbg(DBG_CRIT, "Pages indirect object is not dictionary type="<<pages_ptr->getType());
+		throw MalformedFormatExeption("Pages field is not dictionary");
+	}
+
+	// gets type of the dictionary and find out if it is Page node or
+	// intermediate node
+	shared_ptr<CDict> dict_ptr=IProperty::getSmartCObjectPtr<CDict>(pages_ptr);
+	string dictType=getNameFromDict("/Type", dict_ptr);
+	if(dictType=="/Page")
+	{
+		// this document contains onlu one page
+		return 1;
+	}
+	if(dictType=="/Pages")
+	{
+		// gets count field
+		return getIntFromDict("/Count", dict_ptr);
+	}
+
+	printDbg(DBG_CRIT, "Pages dictionary has bad dictionary type type="<<dictType);
+	throw MalformedFormatExeption("Pages dictionary is not Page or Pages dictionary");
 }
+
+boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)
+{
+	printDbg(DBG_DBG, "");
+
+	size_t pos=getPagePosition(page);
+	printDbg(DBG_DBG, "Page position is "<<pos);
+	pos++;
+	
+	// checks if we are in boundary after incrementation
+	if(pos>=getPageCount())
+	{
+		printDbg(DBG_ERR, "Page is out of range pos="<<pos);
+		throw PageNotFoundException(pos);
+	}
+
+	// page in range, uses getPage
+	return getPage(pos);
+
+}
+
+boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)
+{
+	printDbg(DBG_DBG, "");
+
+	size_t pos=getPagePosition(page);
+	printDbg(DBG_DBG, "Page position is "<<pos);
+	pos--;
+	
+	// checks if we are in boundary after incrementation
+	if(pos>=getPageCount())
+	{
+		printDbg(DBG_ERR, "Page is out of range pos="<<pos);
+		throw PageNotFoundException(pos);
+	}
+
+	// page in range, uses getPage
+	return getPage(pos);
+}
+
+int CPdf::getPagePosition(boost::shared_ptr<CPage> page)
+{
+	printDbg(DBG_DBG, "");
+		
+	PageList::iterator i;
+	for(i=pageList.begin(); i!=pageList.end(); i++)
+	{
+		// checks page
+		if(i->second == page)
+		{
+			printDbg(DBG_INFO, "Page found pos="<<i->first);
+			return i->first;
+		}
+	}
+
+	// page not found, it hasn't been returned by this pdf
+	throw PageNotFoundException();
+}
+
+} // end of pdfobjects namespace
