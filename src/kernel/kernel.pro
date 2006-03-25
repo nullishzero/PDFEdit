@@ -9,7 +9,7 @@ CONFIG += console precompile_header
 #CONFIG -= qt
 QMAKE_CXXFLAGS += -D DEBUG
 
-PRECOMPILED_HEADER = static.h
+#PRECOMPILED_HEADER = static.h
  
 
 
