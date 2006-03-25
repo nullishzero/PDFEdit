@@ -83,6 +83,10 @@ public:
 	
 	/** Get current. */
 	Item getCurrent () {return _cur;};
+
+	/** Are we at the end. Doesn't matter whether in the front or at the back */
+	bool isEnd () { return (_cur) ? true : false; };
+
 };
 
 //==========================================================
