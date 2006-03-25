@@ -99,6 +99,12 @@ class PageNotFoundException: public PdfException
 	const size_t position;
 	
 public:
+	/** Exception constructor without position specified.
+	 */
+	PageNotFoundException():position(0)
+	{
+	}
+	
 	/** Exception constructor.
 	 * @param pos Postion which couldn't be found.
 	 */
