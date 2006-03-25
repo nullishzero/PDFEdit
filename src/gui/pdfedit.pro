@@ -20,6 +20,10 @@ SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwind
 HEADERS += property.h  stringproperty.h  intproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
 SOURCES += property.cc stringproperty.cc intproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
 
+#CObject Wrapper classes
+HEADERS += qsobject.h  qspdf.h  qspage.h  qsdict.h
+SOURCES += qsobject.cc qspdf.cc qspage.cc qsdict.cc
+
 #Other source files
 HEADERS += util.h 
 SOURCES += util.cc main.cc 
