@@ -57,7 +57,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CInt instance.
 	 */
 	static CInt * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -103,7 +103,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CReal instance.
 	 */
 	static CReal * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -149,7 +149,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CString instance.
 	 */
 	static CString * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -195,7 +195,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CName instance.
 	 */
 	static CName * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -241,7 +241,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CBool instance.
 	 */
 	static CBool * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -287,7 +287,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CRef instance.
 	 */
 	static CRef * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -341,7 +341,7 @@ public:
 	 * <b>REMARK</b>: <br>
 	 * If you don't know what exactly these parameters mean, DON'T use this
 	 * method.
-	 * @return Cint instance.
+	 * @return CDict instance.
 	 */
 	static CDict * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
 	{
@@ -353,11 +353,16 @@ public:
 	 *
 	 * @throw ElementBadTypeException If given object doesn't represent
 	 * dictionary object.
+	 *
+	 * @return CDict instance.
 	 */
 	static CDict * getInstance(Object & obj)
 	{
-		// FIXME implement
-		throw NotImplementedException("Constructor from xpdf Object not available");
+		// checks type
+		if(obj.getType()!=objDict)
+			throw ElementBadTypeException("CDict");
+
+		return new CDict(obj);
 	}
 };
 
