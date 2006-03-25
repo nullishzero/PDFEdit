@@ -1,4 +1,4 @@
-/** 
+/* 
  * =====================================================================================
  *        Filename:  cobject.h
  *     Description:  Header file containing definition of IProperty and CObject classes.
@@ -359,6 +359,13 @@ protected:
 	 * @param rf	Indirect id and gen id.
 	 */
 	CObjectComplex (CPdf& p, Object& o, const IndiRef& rf);
+
+	/**
+	 * Constructor. Only kernel can call this constructor
+	 *
+	 * @param o		Xpdf object. 
+	 */
+	CObjectComplex (Object& o);
 
 
 public:	

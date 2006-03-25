@@ -1,4 +1,4 @@
-/** 
+/*
  * =====================================================================================
  *        Filename:  cobjectI.h
  *     Description:  Header file containing implementation of CObject class.
@@ -222,6 +222,20 @@ CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& r
 	Checker check; check.objectCreated (this);
 	// assert (NULL == p.getIndirectProperty (rf)); TODO
 	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
+	
+	// Build the tree from xpdf object
+	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
+}
+
+//
+// Protected constructor
+//
+template<PropertyType Tp, typename Checker>
+CObjectComplex<Tp,Checker>::CObjectComplex (Object& o)
+{
+	Checker check; check.objectCreated (this);
+	// assert (NULL == p.getIndirectProperty (rf)); TODO
+	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
