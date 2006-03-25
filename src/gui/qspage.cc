@@ -5,7 +5,8 @@
 #include "qspage.h"
 
 /** Construct wrapper with given CPage */
-QSPage::QSPage(CPage *_page) : QSObject<CPage> (_page) {
+QSPage::QSPage(CPage *_page) : QSObject () {
+ obj=_page;
 }
 
 /** destructor */
@@ -33,6 +34,11 @@ QString QSPage::getText() {
  std::string text;
  obj->getText(text);
  return text;
+}
+
+/** get CPage held inside this class. Not exposed to scripting */
+CPage* QSPage::get() {
+ return obj;
 }
 
 //todo: incomplete

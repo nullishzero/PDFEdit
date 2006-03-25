@@ -11,11 +11,12 @@
 
 using namespace pdfobjects;
 
-class QSPdf : public QSObject<CPdf> {
+class QSPdf : public QSObject {
  Q_OBJECT
 public:
  QSPdf(CPdf *_pdf);
  virtual ~QSPdf();
+ CPdf* get();
 public slots:
  int save();
  int saveAs(QString name);
@@ -29,6 +30,9 @@ public slots:
  QSPage* getNextPage(QSPage *page);
  QSPage* getPrevPage(QSPage *page);
  QSPage* getLastPage();
+private:
+ /** Object held in class*/
+ CPdf *obj;
 };
 
 #endif

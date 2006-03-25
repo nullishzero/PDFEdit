@@ -9,16 +9,20 @@
 
 using namespace pdfobjects;
 
-class QSPage : public QSObject<CPage> {
+class QSPage : public QSObject {
  Q_OBJECT
 public:
  QSPage(CPage *_page);
  virtual ~QSPage();
+ CPage* get();
 public slots:
  QSDict *getDictionary();
  unsigned int getPageNumber();
  void setPageNumber(unsigned int num);
  QString getText();
+private:
+ /** Object held in class*/
+ CPage *obj;
 };
 
 #endif

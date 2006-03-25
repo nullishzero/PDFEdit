@@ -7,11 +7,15 @@
 
 using namespace pdfobjects;
 
-class QSDict : public QSObject<CDict> {
+class QSDict : public QSObject {
  Q_OBJECT
 public:
  QSDict(CDict *_dict);
  virtual ~QSDict();
+ CDict* get();
+private:
+ /** Object held in class*/
+ CDict *obj;
 };
 
 #endif

@@ -5,7 +5,8 @@
 #include "qspdf.h"
 
 /** Construct wrapper with given PDF document */
-QSPdf::QSPdf(CPdf *_pdf) : QSObject<CPdf> (_pdf) {
+QSPdf::QSPdf(CPdf *_pdf) : QSObject () {
+ obj=_pdf;
 }
 
 /** destructor */
@@ -69,6 +70,11 @@ QSPage* QSPdf::getPrevPage(QSPage *page) {
 /** Call CPdf::getLastPage() */
 QSPage* QSPdf::getLastPage() {
  return new QSPage(obj->getLastPage());
+}
+
+/** get CPdf held inside this class. Not exposed to scripting */
+CPdf* QSPdf::get() {
+ return obj;
 }
 
 //TODO: implement outlines and revisions, rest of functions ...

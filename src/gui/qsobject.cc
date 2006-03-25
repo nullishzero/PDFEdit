@@ -8,19 +8,14 @@
 //todo: add garbage collection
 
 /** Construct wrapper with given CObject */
-template<typename T> QSObject<T>::QSObject<T>(T *_obj) {
- obj=_obj;
+QSObject::QSObject() {
 //todo: add to some sort of garbage collector if necessary
 // addGC(this);
 }
 
 /** destructor */
-template<typename T> QSObject<T>::~QSObject<T>() {
+QSObject::~QSObject() {
 //todo: remove from  garbage collector if necessary. After returning from scripting, GC content is emptied ...
 // removeGC(this);
 }
 
-/** get CObject held inside this class. Not exposed to scripting */
-template<typename T> T *QSObject<T>::get() {
- return obj;
-}

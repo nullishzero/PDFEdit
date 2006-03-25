@@ -3,14 +3,11 @@
 
 #include <qobject.h>
 
-template <typename T> class QSObject : public QObject {
+class QSObject : public QObject {
+Q_OBJECT
 public:
- QSObject(T *_obj);
- T *QSObject::get();
+ QSObject();
  virtual ~QSObject();
-protected:
- /** Object held in class*/
- T *obj;
 };
 
 #endif
