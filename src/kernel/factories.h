@@ -4,6 +4,7 @@
 #define _FACTORIES_H_
 
 #include "cobjectI.h"
+#include "cpage.h"
 
 /** 
  * @file factories.h
@@ -366,5 +367,26 @@ public:
 	}
 };
 
+/******************************************************************************
+ * High level Cobjects factories
+ *****************************************************************************/
+
+/** CPageFactory factory class.
+ */
+class CPageFactory
+{
+public:
+	/** Creates CPage instance form page dictionary.
+	 * @param pageDict Page dictionary (must be CDict and Type field must me
+	 * /Page).
+	 *
+	 * @return CPage instance.
+	 */
+	static CPage * getInstance(boost::shared_ptr<CDict> pageDict)
+	{
+		return new CPage(pageDict);
+	}
+};
+ 
 }
 #endif
