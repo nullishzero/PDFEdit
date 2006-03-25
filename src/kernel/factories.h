@@ -313,5 +313,53 @@ public:
 
 };
 
+/** Factory class for CDict creation.
+ *
+ * Use getInstance methods for instants creation.
+ */
+class CDictFactory
+{
+public:
+	/** Creates default CDict instance.
+	 *
+	 * @return CDict instance with default (empty dictionary) value.
+	 */
+	static CDict * getInstance()
+	{
+		return new CDict();
+	}
+
+	/** Creates CDict for specific pdf from xpdf Object.
+	 * @param pdf Pdf for which to create CDict.
+	 * @param indirefParent Indirect reference to nearest indirect parent.
+	 * @param obj Xpdf object to use for intialization.
+	 *
+	 * This should be used only internaly by kernel. Instance initialized this
+	 * way is not checked in cobjects routines and so nonsense information may
+	 * lead to mass. 
+	 * <br>
+	 * <b>REMARK</b>: <br>
+	 * If you don't know what exactly these parameters mean, DON'T use this
+	 * method.
+	 * @return Cint instance.
+	 */
+	static CDict * getInstance(CPdf & pdf, IndiRef & indirefParent, Object & obj)
+	{
+		return new CDict(pdf, obj, indirefParent);
+	}
+
+	/** Creates CDict from xpdf Object.
+	 * @param obj Xpdf Object instance (must by objDict).
+	 *
+	 * @throw ElementBadTypeException If given object doesn't represent
+	 * dictionary object.
+	 */
+	static CDict * getInstance(Object & obj)
+	{
+		// FIXME implement
+		throw NotImplementedException("Constructor from xpdf Object not available");
+	}
+};
+
 }
 #endif
