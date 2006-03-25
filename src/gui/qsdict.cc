@@ -5,7 +5,7 @@
 #include "qsdict.h"
 
 /** Construct wrapper with given CDict */
-QSDict::QSDict(CDict *_dict) : QSObject () {
+QSDict::QSDict(CDict *_dict) : QSCObject () {
  obj=_dict;
 }
 

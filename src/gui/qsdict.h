@@ -3,11 +3,11 @@
 
 #include <qobject.h>
 #include <cobject.h>
-#include "qsobject.h"
+#include "qscobject.h"
 
 using namespace pdfobjects;
 
-class QSDict : public QSObject {
+class QSDict : public QSCObject {
  Q_OBJECT
 public:
  QSDict(CDict *_dict);

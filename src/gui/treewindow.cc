@@ -22,7 +22,6 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->setSelectionMode(QListView::Single);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
-// init(0);
 }
 
 /** Clears all items from TreeWindow */
@@ -46,7 +45,6 @@ void TreeWindow::init(CPdf *pdfDoc) {
  */
 void TreeWindow::init(IProperty *doc) {
  clear();
-//demo
  if (!doc) {//nothing specified, fill with testing data
   QListViewItem *li=new QListViewItem(tree, "file.pdf","Document");
   li->setOpen(TRUE);

@@ -10,6 +10,8 @@
 #include <qmainwindow.h>
 #include <qsinterpreter.h>
 #include "commandwindow.h"
+#include "propertyeditor.h"
+#include "treewindow.h"
 
 using namespace pdfobjects;
 
@@ -35,6 +37,10 @@ protected slots:
 private:
  /** Commandline window */
  CommandWindow *cmdLine;
+ /** Object treeview */
+ TreeWindow *tree;
+ /** Property editor */
+ PropertyEditor *prop;
  /** QSA Scripting Project */
  QSProject *qp;
  /** QSA Interpreter - taken from project */

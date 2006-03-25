@@ -2,14 +2,12 @@
  PdfEditWindow - class representing main application window
 */
 #include "pdfeditwindow.h"
-#include "propertyeditor.h"
 #include "settings.h"
 #include "util.h"
 #include "test.h"
 #include <iostream>
 #include <qfile.h>
 #include "aboutwindow.h"
-#include "treewindow.h"
 #include "version.h"
 
 using namespace std;
@@ -151,12 +149,11 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  splProp->setOrientation(Vertical);
 
  //object treeview
- TreeWindow *tree=new TreeWindow(splProp);
+ tree=new TreeWindow(splProp);
 
  //Property editor
- PropertyEditor *prop=new PropertyEditor(splProp);
+ prop=new PropertyEditor(splProp);
 // prop->show();
- prop->setObject(0);//fill with demonstration properties
 
 
  this->setCentralWidget(spl);
@@ -177,14 +174,22 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  //Script must be run AFTER creating all widgets
  // -> script may need them, especially the command window
 
+ printf("before qsproject\n");
  //Gets new interpreter
  qp=new QSProject();
+ printf("before interp\n");
+// qs=new QSInterpreter();
  qs=qp->interpreter();//new QSInterpreter();
+ printf("before setting\n");
+ assert(globalSettings);
  qp->addObject(globalSettings);
+ printf("before initscript\n");
  //run initscript
  QString initScript="init.qs";
  QString code=loadFromFile(initScript);
  qs->evaluate(code,this,initScript);
+
+ printf("after initscript\n");
 
  /*
  //DEBUG 
@@ -197,8 +202,13 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  printf("<OK\n");*/
 
  //create testing document
- document=test::testPDF();
- tree->init(document);
+// document=test::testPDF();
+ printf("test document created\n");
+// tree->init(document);
+ tree->init((IProperty*)NULL);
+ printf("test document init\n");
+ prop->setObject(0);//fill with demonstration properties
+
 }
 
 /** default destructor */

@@ -7,11 +7,11 @@
 #include <cpdf.h>
 #include "qspage.h"
 #include "qsdict.h"
-#include "qsobject.h"
+#include "qscobject.h"
 
 using namespace pdfobjects;
 
-class QSPdf : public QSObject {
+class QSPdf : public QSCObject {
  Q_OBJECT
 public:
  QSPdf(CPdf *_pdf);

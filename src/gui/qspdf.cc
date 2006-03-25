@@ -5,7 +5,7 @@
 #include "qspdf.h"
 
 /** Construct wrapper with given PDF document */
-QSPdf::QSPdf(CPdf *_pdf) : QSObject () {
+QSPdf::QSPdf(CPdf *_pdf) : QSCObject () {
  obj=_pdf;
 }
 

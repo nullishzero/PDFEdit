@@ -5,7 +5,7 @@
 #include "qspage.h"
 
 /** Construct wrapper with given CPage */
-QSPage::QSPage(CPage *_page) : QSObject () {
+QSPage::QSPage(CPage *_page) : QSCObject () {
  obj=_page;
 }
 

@@ -5,11 +5,11 @@
 #include <qobject.h>
 #include <cpage.h>
 #include "qsdict.h"
-#include "qsobject.h"
+#include "qscobject.h"
 
 using namespace pdfobjects;
 
-class QSPage : public QSObject {
+class QSPage : public QSCObject {
  Q_OBJECT
 public:
  QSPage(CPage *_page);
