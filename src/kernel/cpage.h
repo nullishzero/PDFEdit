@@ -73,6 +73,9 @@ public:
 	/** Constructor. */
 	CPage ();
 
+	/** Constructor. */
+	CPage (boost::shared_ptr<CDict>) {};
+
 public:
 	
 	/** Destructor. */
