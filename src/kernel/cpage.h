@@ -25,18 +25,19 @@ namespace pdfobjects {
 //=====================================================================================
 
 
+
 /** Invalid page number. */
 const unsigned int PAGE_NUMBER_INVALID = std::numeric_limits<unsigned int>::max();
+/** Coordinate. */
+typedef double Coordinate;
 /** Invalid coordinate. */
-const double COORDINATE_INVALID = std::numeric_limits<double>::max();
+const double COORDINATE_INVALID = std::numeric_limits<Coordinate>::max();
 
 /**
  * Rectangle structure. Defined as in pdf specification v1.5 (p. 133)
  */
 typedef struct Rect
 {
-	typedef double Coordinate;
-
 	Coordinate xleft;
 	Coordinate yleft;
 	Coordinate xright;
