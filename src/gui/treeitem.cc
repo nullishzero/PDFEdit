@@ -27,6 +27,7 @@ TreeItem::TreeItem(QListViewItem *parent,IProperty *pdfObj,const QString name/*=
 
 /** Initialize item from given PDF object */
 void TreeItem::init(IProperty *pdfObj,const QString name) {
+ obj=pdfObj;
  PropertyType typ=pdfObj->getType();
  IndiRef iref=pdfObj->getIndiRef();
  QString s;
@@ -41,6 +42,11 @@ void TreeItem::init(IProperty *pdfObj,const QString name) {
  setText(1,getTypeName(typ));
 }
 
+/** return CObject stored inside this item
+ @return stored object (IProperty) */
+IProperty* TreeItem::getObject() {
+ return obj;
+}
 /** default destructor */
 TreeItem::~TreeItem() {
 }

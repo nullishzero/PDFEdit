@@ -16,6 +16,7 @@ public:
 public slots:
  void execute();
 signals:
+ /** Signal emitted when command is executed from this command window */
  void commandExecuted(QString);
 private:
  /** Console widget */

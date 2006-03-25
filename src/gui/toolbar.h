@@ -16,6 +16,7 @@ class ToolBar : public QToolBar {
   ToolBar(QMainWindow * parent,const char * name=0);
   void addButton(ToolButton *qb);
  signals:
+  /** signal emitted when clicked on one of toolbar items. Send ID number associated with that item */
   void itemClicked(int);
  public slots:
   void slotClicked(int id);
