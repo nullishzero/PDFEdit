@@ -198,25 +198,25 @@ namespace {
 		 */
 		template<typename T, typename U, PropertyType Tp> struct ProcessorTraitSimple; 
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pBool>  
-			{public: typedef struct utils::xpdfBoolWriter<T,U>	xpdfWriteProcessor;
-			public: typedef struct utils::xpdfBoolReader<T,U> 	xpdfReadProcessor;};
+			{typedef struct utils::xpdfBoolWriter<T,U>	xpdfWriteProcessor;
+			 typedef struct utils::xpdfBoolReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pInt>   
-			{public: typedef struct utils::xpdfIntWriter<T,U> 	xpdfWriteProcessor;
-			public: typedef struct utils::xpdfIntReader<T,U> 	xpdfReadProcessor;};
+			{typedef struct utils::xpdfIntWriter<T,U> 	xpdfWriteProcessor;
+			 typedef struct utils::xpdfIntReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pReal>  
-			{public: typedef struct utils::xpdfRealWriter<T,U> 	xpdfWriteProcessor;
-			public: typedef struct utils::xpdfRealReader<T,U> 	xpdfReadProcessor;};
+			{typedef struct utils::xpdfRealWriter<T,U> 	xpdfWriteProcessor;
+			 typedef struct utils::xpdfRealReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pString>
-			{public: typedef struct utils::xpdfStringWriter<T,U>xpdfWriteProcessor;
-			public: typedef struct utils::xpdfStringReader<T,U> xpdfReadProcessor;};
+			{typedef struct utils::xpdfStringWriter<T,U>xpdfWriteProcessor;
+			 typedef struct utils::xpdfStringReader<T,U> xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pName>  
-			{public: typedef struct utils::xpdfNameWriter<T,U> 	xpdfWriteProcessor;
-			public: typedef struct utils::xpdfNameReader<T,U> 	xpdfReadProcessor;};
+			{typedef struct utils::xpdfNameWriter<T,U> 	xpdfWriteProcessor;
+			 typedef struct utils::xpdfNameReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pNull>   
-			{public: typedef struct utils::xpdfNullWriter<T,U> 	xpdfWriteProcessor;};
+			{typedef struct utils::xpdfNullWriter<T,U> 	xpdfWriteProcessor;};
 		template<typename T, typename U> struct ProcessorTraitSimple<T,U,pRef>   
-			{public: typedef struct utils::xpdfRefWriter<T,U> 	xpdfWriteProcessor;
-			public: typedef struct utils::xpdfRefReader<T,U> 	xpdfReadProcessor;};
+			{typedef struct utils::xpdfRefWriter<T,U> 	xpdfWriteProcessor;
+			 typedef struct utils::xpdfRefReader<T,U> 	xpdfReadProcessor;};
 
 
 		//
@@ -314,9 +314,9 @@ namespace {
 		 */
 		template<typename T, typename U, PropertyType Tp> struct ProcessorTraitComplex; 
 		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pArray>  
-			{public: typedef struct utils::xpdfArrayReader<T,U> 	xpdfReadProcessor;};
+			{typedef struct utils::xpdfArrayReader<T,U> 	xpdfReadProcessor;};
 		template<typename T, typename U> struct ProcessorTraitComplex<T,U,pDict>   
-			{public: typedef struct utils::xpdfDictReader<T,U> 		xpdfReadProcessor;};
+			{typedef struct utils::xpdfDictReader<T,U> 		xpdfReadProcessor;};
 
 
 		/**

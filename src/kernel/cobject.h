@@ -300,14 +300,14 @@ class DictIdxComparator;
  */
 template<PropertyType T> struct PropertyTraitComplex; 
 template<> struct PropertyTraitComplex<pArray>	
-{	public: 
+{	 
 		typedef std::vector<boost::shared_ptr<IProperty> > value; 
 		typedef const std::string& 			writeType; 
 		typedef unsigned int	 			propertyId;
 		typedef class ArrayIdxComparator	indexComparator;
 };
 template<> struct PropertyTraitComplex<pDict>	
-{	public: 
+{	 
 		typedef std::list<std::pair<std::string, boost::shared_ptr<IProperty> > > value; 
 		typedef const std::string& 			writeType; 
 		typedef const std::string& 			propertyId;
