@@ -21,6 +21,12 @@
     syntax as JavaScript)
   </para>
   <para>
+   When new editor window is launched (but before the document is loaded or created),
+   file <filename>init.qs</filename> is run. This file should contain declaration of all
+   functions used in toolbars or menus and may also contain any startup code to be run
+   before loading or creating new document.
+  </para>
+  <para>
    This documentation will not explain the language syntax, but will document
    all functions and objects that are exported from the application to the
    scripting engine so they may be used in scripts and menus.
