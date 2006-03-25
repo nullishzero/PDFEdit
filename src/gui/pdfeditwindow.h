@@ -40,7 +40,7 @@ private:
  /** QSA Interpreter - taken from project */
  QSInterpreter *qs;
  /** Edited PDF document */
- IProperty *document;
+ CPdf *document;
 };
 
 void createNewEditorWindow();

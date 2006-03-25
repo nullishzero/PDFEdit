@@ -3,7 +3,8 @@
 
 #include <qwidget.h>
 #include <qlistview.h>
-#include <iproperty.h>
+#include <cobject.h>
+#include <cpdf.h>
 
 using namespace pdfobjects;
 
@@ -11,7 +12,8 @@ class TreeWindow : public QWidget {
  Q_OBJECT
 public:
  void clear();
- void init(IProperty *pdfDoc);
+ void init(CPdf *pdfDoc);
+ void init(IProperty *doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
  void addChilds(IProperty *obj);
  ~TreeWindow();

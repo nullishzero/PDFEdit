@@ -36,30 +36,39 @@ void TreeWindow::clear() {
 /** Init contents of treeview from given PDF document
  @param pdfDoc Document used to initialize treeview
  */
-void TreeWindow::init(IProperty *pdfDoc) {
+void TreeWindow::init(CPdf *pdfDoc) {
+//boost::shared_ptr<CDict> pd=pdfDoc->getDictionary();
+ init(pdfDoc->getDictionary().get());
+}
+
+/** Init contents of treeview from given IProperty (dictionary, etc ...)
+ @param prop IProperty used to initialize treeview
+ */
+void TreeWindow::init(IProperty *doc) {
  clear();
 //demo
- if (!pdfDoc) {//nothing specified, fill with testing data
+ if (!doc) {//nothing specified, fill with testing data
   QListViewItem *li=new QListViewItem(tree, "file.pdf","Document");
   li->setOpen(TRUE);
   (void) new QListViewItem(li,"Page 1","Page");
   li=new QListViewItem(li,"Page 2","Page");
   (void) new QListViewItem(li,"pic000.jpg","Picture");
  } else {
-  TreeItem *root=new TreeItem(tree, pdfDoc); 
+  TreeItem *root=new TreeItem(tree, doc); 
   root->setOpen(TRUE);
-  addChilds(pdfDoc);
+  addChilds(doc);
  }
 }
 
 /** Recursively add all child of given object to treeview. Childs will be added with obj as parent.
  @param obj Object to add*/
 void TreeWindow::addChilds(IProperty *obj) {
-/* if (obj is cdict) {
-  vector;
-  obj->getAllPropertyNames(list);
+ if (obj->getType()==pDict) {
+  CDict *dict=(CDict*)obj;
+  vector<string> list;
+  dict->getAllPropertyNames(list);
  }
-*/
+
 //todo
 // TreeItem *child=new TreeItem(tree, obj); 
 }
