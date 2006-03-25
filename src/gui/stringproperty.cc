@@ -4,11 +4,14 @@ StringProperty - class for widget containing
 */
 
 #include "stringproperty.h"
+#include <string>
 #include <stdlib.h>
+
+using namespace std;
 
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
- @param name name of his property
+ @param name name of this property
  @param flags flags of this property items (default 0)
  */
 StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
@@ -36,12 +39,17 @@ StringProperty::~StringProperty() {
 /** write internal value to given PDF object
  @param pdfObject Object to write to
  */
-void StringProperty::writeValue(void *pdfObject) {
- //TODO
+void StringProperty::writeValue(IProperty *pdfObject) {
+ CString* obj=(CString*)pdfObject;
+ string val=ed->text();
+ obj->writeValue(val);
 }
 /** read internal value from given PDF object
  @param pdfObject Object to read from
  */
-void StringProperty::readValue(void *pdfObject) {
- //TODO
+void StringProperty::readValue(IProperty *pdfObject) {
+ CString* obj=(CString*)pdfObject;
+ string val;
+ obj->getPropertyValue(val);
+ ed->setText(val);
 }

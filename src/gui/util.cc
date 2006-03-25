@@ -66,21 +66,21 @@ QString loadFromFile(QString name) {
  */
 QString getTypeName(PropertyType typ) {
  switch (typ) {
-  case objNull:   return QObject::tr("Null",	"Type name"); 
-  case objBool:   return QObject::tr("Bool",	"Type name"); 
-  case objInt:    return QObject::tr("Int",	"Type name"); 
-  case objReal:   return QObject::tr("Real",	"Type name"); 
-  case objString: return QObject::tr("String",	"Type name");
-  case objName:   return QObject::tr("Name",	"Type name");
-  case objRef:    return QObject::tr("Ref",	"Type name");
-  case objArray:  return QObject::tr("Array",	"Type name"); 
-  case objDict:   return QObject::tr("Dict",	"Type name"); 
-  case objStream: return QObject::tr("Stream",	"Type name"); 
+  case pNull:   return QObject::tr("Null",	"Type name"); 
+  case pBool:   return QObject::tr("Bool",	"Type name"); 
+  case pInt:    return QObject::tr("Int",	"Type name"); 
+  case pReal:   return QObject::tr("Real",	"Type name"); 
+  case pString: return QObject::tr("String",	"Type name");
+  case pName:   return QObject::tr("Name",	"Type name");
+  case pRef:    return QObject::tr("Ref",	"Type name");
+  case pArray:  return QObject::tr("Array",	"Type name"); 
+  case pDict:   return QObject::tr("Dict",	"Type name"); 
+  case pStream: return QObject::tr("Stream",	"Type name"); 
 // Debug types
-  case objCmd:    return QObject::tr("DebugCmd",	"Type name");
-  case objError:  return QObject::tr("DebugError",	"Type name");
-  case objEOF:    return QObject::tr("DebugEOF",	"Type name");
-  case objNone:   return QObject::tr("DebugNone",	"Type name");
+  case pOther:    return QObject::tr("DebugCmd",	"Type name");
+  case pOther1:  return QObject::tr("DebugError",	"Type name");
+  case pOther2:    return QObject::tr("DebugEOF",	"Type name");
+  case pOther3:   return QObject::tr("DebugNone",	"Type name");
  }
  //Unknown type. Should not happen
  assert(0);

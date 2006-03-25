@@ -9,7 +9,7 @@ Should be subclassed for editing specific property types (integer, string, ...)
 
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
- @param name name of his property
+ @param name name of this property
  @param flags flags of this property items (default 0)
  */
 Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)

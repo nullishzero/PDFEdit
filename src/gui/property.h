@@ -4,6 +4,9 @@
 #include <qstring.h>
 #include <qlabel.h>
 #include <qwidget.h>
+#include <iproperty.h>
+
+using namespace pdfobjects;
 
 /** Property flags (hidden, readonly, unset ...) */
 typedef int PropertyFlags;
@@ -19,9 +22,9 @@ public:
  bool getReadOnly();
  void setReadOnly(bool _readonly);
  /** write internal value to given PDF object */
- virtual void writeValue(void *pdfObject) = 0; //virtual
+ virtual void writeValue(IProperty *pdfObject) = 0; //virtual
  /** read internal value from given PDF object */
- virtual void readValue(void *pdfObject) = 0; //virtual
+ virtual void readValue(IProperty *pdfObject) = 0; //virtual
 protected:
  /** Name of this property */
  QString name;

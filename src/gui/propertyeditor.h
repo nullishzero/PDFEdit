@@ -8,6 +8,7 @@
 #include <qwidget.h>
 #include <qgrid.h>
 #include <qlayout.h>
+#include <iproperty.h>
 #include "property.h"
 
 /** property editor widget */
@@ -17,7 +18,7 @@ public:
  PropertyEditor(QWidget *parent=0, const char *name=0);
  virtual ~PropertyEditor();
  void unsetObject();
- void setObject(void *pdfObject);
+ void setObject(IProperty *pdfObject);
  void commitProperties();
  void resizeEvent (QResizeEvent *e);
 public slots:

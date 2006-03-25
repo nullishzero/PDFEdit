@@ -17,12 +17,12 @@ HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h
 SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc 
 
 #Non-widget classes
-HEADERS += property.h stringproperty.h intproperty.h settings.h treeitem.h
-SOURCES += property.cc stringproperty.cc intproperty.cc settings.cc treeitem.cc
+HEADERS += property.h  stringproperty.h  intproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
+SOURCES += property.cc stringproperty.cc intproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
 
 #Other source files
 HEADERS += util.h 
-SOURCES += main.cc util.cc 
+SOURCES += util.cc main.cc 
 
 #Testing files (will be removed later)
 HEADERS += test.h 

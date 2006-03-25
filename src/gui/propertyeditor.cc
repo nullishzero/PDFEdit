@@ -127,7 +127,7 @@ void PropertyEditor::addProperty(QString name) {
 /** TODO: set PDF object to be active (edited) in this editor
  @param p pdfObject Objet to set for editing in the widget
  */
-void PropertyEditor::setObject(void *pdfObject) {
+void PropertyEditor::setObject(IProperty *pdfObject) {
  unsetObject();
  //TODO: ! real code: get all names, sort all names, then add all properties
  //TODO: ! get_property_all & in loop get_property, get_property_type & get_property_flag

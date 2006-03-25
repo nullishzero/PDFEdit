@@ -6,11 +6,9 @@ IntProperty - class for widget containing
 #include "intproperty.h"
 #include <qvalidator.h>
 
-//TODO: add functions for display & editing ... 
-
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
- @param name name of his property
+ @param name name of this property
  @param flags flags of this property items (default 0)
  */
 IntProperty::IntProperty (const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
@@ -24,10 +22,15 @@ IntProperty::~IntProperty() {
 }
 
  /** write internal value to given PDF object */
-void IntProperty::writeValue(void *pdfObject) {
- //TODO
+void IntProperty::writeValue(IProperty *pdfObject) {
+ CInt* obj=(CInt*)pdfObject;
+ int val=ed->text().toInt();
+ obj->writeValue(val);
 }
  /** read internal value from given PDF object */
-void IntProperty::readValue(void *pdfObject) {
- //TODO
+void IntProperty::readValue(IProperty *pdfObject) {
+ CInt* obj=(CInt*)pdfObject;
+ int val;
+ obj->getPropertyValue(val);
+ ed->setText(QString::number(val));
 }
