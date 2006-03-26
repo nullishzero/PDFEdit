@@ -17,7 +17,8 @@
 
 // No output from KERNEL
 #define NO_KERNEL_COUT_OUTPUT
-
+// Quick compilation
+#define __QUICK_TEST
 
 
 
@@ -38,7 +39,8 @@
 #define KERNEL_OUTPUT 		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;}
 #define KERNEL_OUTPUT_BACK	if (OUTPUT_COND) {SWAP_BUFS_BACK;}
 
-#define MEM_CHECK	{BasicMemChecker check;OUTPUT  << "OBJECTS UNALLOCATED: " << check.getCount () << endl;}
+#define MEM_CHECK	{BasicMemChecker check;OUTPUT  	<< "OBJECTS UNALLOCATED: " << check.getCount () \
+					 								<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
 
 #define TEST(a) 	OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
 #define START_TEST 	OUTPUT << endl << "Started testing..." << endl; KERNEL_OUTPUT;
@@ -51,8 +53,11 @@ using namespace std;
 using namespace pdfobjects;
 
 
+
 namespace 
 {
+
+#ifndef __QUICK_TEST
 
 //
 // examples
@@ -98,7 +103,7 @@ typedef struct
 
 } example;
 
-
+#endif // __QUICK_TEST
 
 //
 //
@@ -184,11 +189,12 @@ namespace {
 		
 		Object obj;
 		assert (NULL != xref);
-		Parser* parser = new Parser(xref, new Lexer(xref, o));
+		auto_ptr<Parser> parser (new Parser(xref, new Lexer(xref, o)));
 		parser->getObj(&obj);
 		while (!obj.isEOF()) 
 		{
 			os << &obj;
+			obj.free ();
 			// grab the next object
 			parser->getObj(&obj);
 		}
@@ -205,7 +211,7 @@ namespace {
 		Object obj;
 		assert (NULL != d);
 
-		for (int i = 0; i < d->getLength(); i++)
+		for (int i = 0; i < d->getLength(); ++i)
 		{
 			os << d->getKey(i) << "\t" << d->getValNF (i, &obj) << endl;
 		}
@@ -416,6 +422,7 @@ namespace {
 
 } // namespace
 
+#ifndef __QUICK_TEST
 
 //=====================================================================================
 // CObjectSimple
@@ -967,7 +974,7 @@ c_getNames ()
 	// expected item1, ... ,item9
 	//
 	vector<string> expected;
-	for (int i = 1; i <= 9; i++)
+	for (int i = 1; i <= 9; ++i)
 	{
 		ostringstream oss;
 		oss << i;
@@ -989,7 +996,7 @@ c_getNames ()
 	//
 	// other 1, ... ,9
 	//
-	for (int i = 1; i <= 9; i++)
+	for (int i = 1; i <= 9; ++i)
 	{
 		ostringstream oss;
 		oss << i;
@@ -1013,7 +1020,7 @@ c_getType ()
 
 	// create Array 1
 	makeArTest1 (arTest1);
-	for (size_t i = 0; i < arTest1.getPropertyCount (); i++)
+	for (size_t i = 0; i < arTest1.getPropertyCount (); ++i)
 	{
 		boost::shared_ptr<IProperty> ip = arTest1.getPropertyValue (i);
 		ip_validate (arTest1.getPropertyType (i), ip->getType ());
@@ -1213,10 +1220,43 @@ c_xpdfctor ()
 	
 }
 
+#endif // __QUICK_TEST
 
 //=====================================================================================
 // CContentStream
 //=====================================================================================
+
+void
+getContentStream (ostream& oss, const char* fileName, bool allPages)
+{
+		auto_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+		int pagesNum = (allPages) ? doc->getNumPages() : 1;
+		
+		oss << "Filename: " << fileName << endl;
+		oss << "Number of pages: " << pagesNum << endl;
+
+		//
+		// Our stuff here
+		//
+		Object obj;
+		XRef* xref = doc->getXRef();
+		Catalog cat (xref);
+
+		oss << "Trailer:" << xref->getTrailerDict () << endl;
+		oss << "Catalog:" << xref->getCatalog (&obj) << endl;
+		
+		for (int i = 1; i <= pagesNum; ++i)
+		{
+			oss << "Page:" 			<< xref->fetch (cat.getPageRef(i)->num, cat.getPageRef(i)->gen, &obj) << endl;
+			oss << "Contents:" 		<< cat.getPage(i)->getContents(&obj) << endl;
+			oss << "StreamDict:\n" 	<< cat.getPage(i)->getContents(&obj)->getStream()->getDict() << endl;
+			oss << "Stream:\n";		print (oss, cat.getPage(i)->getContents(&obj), xref);
+		}
+		
+		assert (xref->getDocInfo (&obj));
+		oss << "Doc info:" << &obj << endl;
+
+}
 
 extern const char OPER_STR1[] = "Td";
 
@@ -1269,14 +1309,76 @@ test_ccontentstream ()
 	///////// -- getString
 	if (5 != example.getParametersCount ())
 		throw;
-	
 }
 
-				
+void
+parseContentStream (ostream& oss, const char* fileName)
+{
+		CPdf pdf;
+		
+		auto_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+		int pagesNum = 1;
+		
+		//
+		// Our stuff here
+		//
+		Object obj;
+		XRef* xref = doc->getXRef();
+		assert (xref);
+		Catalog cat (xref);
+
+		cat.getPage(pagesNum)->getContents(&obj);
+		
+		if (!obj.isStream())
+			throw;
+		
+		Object o;
+		PdfOperator::Operands oper;
+
+		vector<boost::shared_ptr<PdfOperator> > pdfopers;
+		
+		auto_ptr<Parser> parser (new Parser(xref, new Lexer(xref, &obj)));
+		parser->getObj(&o);
+		while (!o.isEOF()) 
+		{
+			if (o.isCmd ())
+			{
+				pdfopers.push_back (boost::shared_ptr<UnknownPdfOperator> (new UnknownPdfOperator (oper, o.getCmd ())));
+				if (!oper.empty ())
+				{
+					oss << "Not empty after unknown.";
+					throw;
+				}
+					
+			}else
+			{
+				boost::shared_ptr<IProperty> pIp (utils::createObjFromXpdfObj (pdf, o, IndiRef()));
+				oper.push_back (pIp);
+			}
+
+			o.free ();
+			// grab the next object
+			parser->getObj(&o);
+		}
+		obj.free ();
+
+		for (vector<boost::shared_ptr<PdfOperator> >::iterator it = pdfopers.begin ();
+						it != pdfopers.end (); ++it)
+		{
+			static int i = 0;
+			string str;
+			(*it)->getStringRepresentation (str);
+
+			oss << str << "\t\t";
+			if (0 == (++i % 3))
+				oss << endl;
+		}
+
+}
+
 //=====================================================================================
-
 } // namespace
-
+//=====================================================================================
 
 
 
@@ -1287,6 +1389,9 @@ int
 main (int argc, char* [])
 {
 
+		START_TEST;
+		
+#ifndef __QUICK_TEST
 		static example e;
 	
 		//
@@ -1335,10 +1440,9 @@ main (int argc, char* [])
 		e.arTest2 = ar2;
 		e.dcTest2 = dc2;
 
+		//==================== Tests
 	
-		START_TEST;
-		
-/*		TEST(" test 1.0 -- getType_");
+		TEST(" test 1.0 -- getType_");
 		s_getTp ();
 		OK_TEST;
 
@@ -1423,13 +1527,24 @@ main (int argc, char* [])
 		TEST(" test 2.10 - xpdf ctors")
 		c_xpdfctor ();
 		OK_TEST;
-*/
-		//======================= CContentStream
 
-		TEST(" test 3.1 -- ccontentstream - operators")
-		test_ccontentstream ();
-		OK_TEST;
+#endif // __QUICK_TEST
 		
+		//======================= CContentStream
+static const char* pdffile= "../../doc/zadani.pdf";
+		
+//		TEST(" test 3.1 -- ccontentstream - getContentstream")
+//		getContentStream (cout, pdffile, false);
+//		OK_TEST;
+		
+//		TEST(" test 3.2 -- ccontentstream - operators")
+//		test_ccontentstream ();
+//		OK_TEST;
+
+		TEST(" test 3.3 -- ccontentstream - parse to our operators")
+		parseContentStream (cout, pdffile);
+		OK_TEST;
+	
 		END_TEST;
 		MEM_CHECK;
 
