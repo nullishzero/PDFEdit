@@ -32,6 +32,13 @@
 // boost
 //
 #include <boost/smart_ptr.hpp>
+// Typelists THIS IS NOT AN STL VECTOR not any other similar RUN-TIME container
+#include <boost/mpl/vector_c.hpp>
+#include <boost/mpl/vector/vector0_c.hpp>
+#include <boost/mpl/vector/vector10_c.hpp>
+#include <boost/mpl/size.hpp>
+#include <boost/mpl/reverse.hpp>
+#include <boost/mpl/at.hpp>
 
 
 //

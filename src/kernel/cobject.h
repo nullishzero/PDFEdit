@@ -813,7 +813,7 @@ public:
 	void objectCreated (IProperty* ip)
 	{
 		_printHeader (std::cerr);
-		printDbg (debug::DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] created.");
+		std::cerr << "IProperty [0x"<< (unsigned)ip << "] created.";
 		_printFooter (std::cerr);
 		
 		getList().push_back (ip);
@@ -825,7 +825,7 @@ public:
 	void objectDeleted (IProperty* ip)
 	{
 		_printHeader (std::cerr);
-		printDbg (debug::DBG_INFO, "IProperty [0x"<< (unsigned)ip << "] deleted.");
+		std::cerr << "IProperty [0x"<< (unsigned)ip << "] deleted.";
 
 		_IPsList::iterator it = find (getList().begin(), getList().end(), ip);
 		if (it != getList().end())

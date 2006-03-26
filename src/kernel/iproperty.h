@@ -140,7 +140,7 @@ public:
   /**
    * Copy constructor. Returns deep copy.
    * 
-   * @param Deep copy of this object.
+   * @return Deep copy of this object.
    */
   boost::shared_ptr<IProperty> clone () const
   {
@@ -155,7 +155,7 @@ protected:
   /**
    * Implementation of clone method
    *
-   * @param Deep copy of this object.
+   * @return Deep copy of this object.
    */
   virtual IProperty* doClone () const = 0;
 

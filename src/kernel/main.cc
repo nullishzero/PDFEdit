@@ -12,6 +12,7 @@
 #include "cobject.h"
 #include "cpdf.h"
 
+#include "ccontentstream.h"
 
 
 // No output from KERNEL
@@ -731,10 +732,9 @@ s_rel ()
 
 //=====================================================================================
 // CObjectComplex
-//
-
-
 //=====================================================================================
+
+
 
 void
 c_clone ()
@@ -1213,6 +1213,65 @@ c_xpdfctor ()
 	
 }
 
+
+//=====================================================================================
+// CContentStream
+//=====================================================================================
+
+extern const char OPER_STR1[] = "Td";
+
+void
+test_ccontentstream ()
+{
+	boost::shared_ptr<CInt> i (new CInt(3));
+	boost::shared_ptr<CString> s (new CString ("123"));
+	
+	PdfOperator::Operands p;
+	p.push_back (i);
+	p.push_back (s);
+	p.push_back (i);
+	p.push_back (i);
+	p.push_back (i);
+
+	///////// -- construct
+	SimpleGenericOperator<mpl::vector5_c<PropertyType, pInt, pString, pInt, pInt, pInt>, OPER_STR1> example (p);
+	
+	///////// -- bad construct
+	bool exc = false;
+	try {
+		SimpleGenericOperator<mpl::vector5_c<PropertyType, pInt, pNull, pInt, pInt, pInt>, OPER_STR1> example1 (p);
+	}catch (...)
+	{
+		exc = true;
+	}
+	if (!exc)
+		throw;
+
+	///////// -- bad function usage
+	exc = false;
+	try {
+			
+		example.push_back (boost::shared_ptr<PdfOperator> ());
+		
+	}catch (...)
+	{
+		exc = true;
+	}
+	if (!exc)
+		throw;
+
+	///////// -- getStringRepresentation
+	std::string str;
+	example.getStringRepresentation (str);
+	if ("3 (123) 3 3 3 Td" != str)
+		throw;
+
+	///////// -- getString
+	if (5 != example.getParametersCount ())
+		throw;
+	
+}
+
 				
 //=====================================================================================
 
@@ -1279,7 +1338,7 @@ main (int argc, char* [])
 	
 		START_TEST;
 		
-		TEST(" test 1.0 -- getType_");
+/*		TEST(" test 1.0 -- getType_");
 		s_getTp ();
 		OK_TEST;
 
@@ -1364,7 +1423,13 @@ main (int argc, char* [])
 		TEST(" test 2.10 - xpdf ctors")
 		c_xpdfctor ();
 		OK_TEST;
+*/
+		//======================= CContentStream
 
+		TEST(" test 3.1 -- ccontentstream - operators")
+		test_ccontentstream ();
+		OK_TEST;
+		
 		END_TEST;
 		MEM_CHECK;
 
