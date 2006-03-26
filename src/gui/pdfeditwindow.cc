@@ -74,13 +74,36 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreWindow(this,"main"); 
 }
 
+/** Create objects that should be available to scripting from current CPdf and related objects*/
+void PdfEditWindow::addDocumentObjects() {
+ qpdf=new QSPdf(document);
+// qpdf->setName("currentDocument");
+ import->addQSObj(qpdf,"currentDocument");
+ //TODO: problem: all functions loaded from initscript are deleted by addObject,
+ //               addObject clear QSInterpreter state
+// qp->addObject(qpdf);
+ //todo: Add also currentPage, currentObject
+}
+
+/** Removes all QSCObject descendants from scripting and destroys them */
+void PdfEditWindow::removeDocumentObjects() {
+// qp->removeObject(qpdf);
+ delete qpdf;
+ //todo: run garbage collector, remove any QSCObject descendants created for this window
+}
+
 /** Runs given script code
  @param script QT Script code to run
  */
 void PdfEditWindow::runScript(QString script) {
  qs->setErrorMode(QSInterpreter::Nothing);
  cmdLine->addCommand(script);
+
+ //Before running script, add document-related objects to scripting engine and remove tham afterwards
+ addDocumentObjects();
  qs->evaluate(script,this,"<GUI>");
+ removeDocumentObjects();
+
  QString error=qs->errorMessage();
  if (error!=QString::null) { /// some error occured
   cmdLine->addError(error);
@@ -108,7 +131,6 @@ void PdfEditWindow::menuActivated(int id) {
   */
  if (action=="quit") exitApp();
  else if (action=="closewindow") closeWindow();
-// else if (action=="newwindow") createNewWindow();
  else runScript(action);
 }
 
@@ -179,17 +201,18 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  //Script must be run AFTER creating all widgets
  // -> script may need them, especially the command window
 
- //Gets new interpreter
+ //Create new interpreter and project
  qp=new QSProject();
-// qs=new QSInterpreter();
- qs=qp->interpreter();//new QSInterpreter();
+ qs=qp->interpreter();
  assert(globalSettings);
  qp->addObject(globalSettings);
- //run initscript
- QString initScript="init.qs";
- QString code=loadFromFile(initScript);
- qs->evaluate(code,this,initScript);
-
+ //Create and add importer to QSProject and related QSInterpreter
+ import=new QSImporter(qp,this);
+ //Run initscript
+ QString initScriptFilename="init.qs";
+ QString code=loadFromFile(initScriptFilename);
+ //Any document-related classes are NOT available to the initscript, as no document is currently loaded
+ qs->evaluate(code,this,initScriptFilename);
  printDbg(debug::DBG_DBG,"after initscript");
 
  /*
@@ -208,6 +231,33 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  tree->init((IProperty*)NULL);
 // tree->init(document);//not yet implemented in kernel
  prop->setObject(0);//fill with demonstration properties
+}
+
+/** Print all objects that are in current script interpreter to console window*/
+void PdfEditWindow::objects() {
+ QObjectList objs=qs->presentObjects();
+ QObjectListIterator it(objs);
+ QObject *obj;
+ while ((obj=it.current())!=0) {
+  ++it;
+  print(obj->name());
+ }
+}
+
+/** Print all functions that are in current script interpreter to console window*/
+void PdfEditWindow::functions() {
+ QStringList objs=qs->functions(this);
+ for (QStringList::Iterator it=objs.begin();it!=objs.end();++it) {
+  print(*it);
+ }
+}
+
+/** Print all variables that are in current script interpreter to console window*/
+void PdfEditWindow::variables() {
+ QStringList objs=qs->variables(this);
+ for (QStringList::Iterator it=objs.begin();it!=objs.end();++it) {
+  print(*it);
+ }
 }
 
 /** default destructor */

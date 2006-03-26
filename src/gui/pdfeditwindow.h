@@ -12,6 +12,8 @@
 #include "commandwindow.h"
 #include "propertyeditor.h"
 #include "treewindow.h"
+#include "qspdf.h"
+#include "qsimporter.h"
 
 using namespace pdfobjects;
 
@@ -29,12 +31,17 @@ public slots: //These will be exported to scripting
  void exitApp();
  void closeWindow();
  void print(QString str);
+ void objects();
+ void functions();
+ void variables();
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
  void runScript(QString script);
  void menuActivated(int id);
 private:
+ void addDocumentObjects();
+ void removeDocumentObjects();
  /** Commandline window */
  CommandWindow *cmdLine;
  /** Object treeview */
@@ -47,6 +54,10 @@ private:
  QSInterpreter *qs;
  /** Edited PDF document */
  CPdf *document;
+ /** QObject wrapper around CPdf (document) that is exposed to scripting */
+ QSPdf *qpdf;
+ /** QSObject Importer */
+ QSImporter *import;
 };
 
 void createNewEditorWindow();

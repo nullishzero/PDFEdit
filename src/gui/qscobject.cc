@@ -3,19 +3,22 @@
  Provide garbage collection, etc ...
 */
 
+#include <utils/debug.h>
 #include "qscobject.h"
 
 //todo: add garbage collection
 
 /** Construct wrapper with given CObject */
 QSCObject::QSCObject() {
-//todo: add to some sort of garbage collector if necessary
+ printDbg(debug::DBG_DBG,"adding QSCObject");
+//todo: add to garbage collector. Garbage collector is one for each editor window.
 // addGC(this);
 }
 
 /** destructor */
 QSCObject::~QSCObject() {
-//todo: remove from  garbage collector if necessary. After returning from scripting, GC content is emptied ...
+ printDbg(debug::DBG_DBG,"removing QSCObject");
+//todo: remove from  garbage collector. After returning from scripting, GC content is emptied ...
 // removeGC(this);
 }
 

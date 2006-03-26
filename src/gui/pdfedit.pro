@@ -24,8 +24,8 @@ HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  realprop
 SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
 
 #CObject Wrapper classes
-HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h
-SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc
+HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  
+SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc 
 
 #Other source files
 HEADERS += util.h 

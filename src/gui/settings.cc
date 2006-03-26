@@ -25,16 +25,16 @@ void Settings::init() {
 
  /* DEBUG : will get out very soon*/
  set->beginGroup(APP_KEY);
- if (set->readEntry("debugTrashSaved")!="6") {
-  set->writeEntry("debugTrashSaved", "6");
+ if (set->readEntry("debugTrashSaved")!="7") {
+  set->writeEntry("debugTrashSaved", "7");
   set->writeEntry("keyboard/CtrlA", "dosomethingeverywhere()");
   set->writeEntry("keyboard/context/CtrlA", "dosomethingincontext()");
   set->writeEntry("gui/items/MainMenu",  "list Main menu,file,help");
   set->writeEntry("gui/items/file", "list File,load,save,neww,closew,quit,help");
   set->writeEntry("gui/items/help", "list Help,about,index");
   set->writeEntry("gui/items/neww",  "item &New Window, newwindow(),Ctrl+N");
-  set->writeEntry("gui/items/closew","item &Close Window, closewindow()");
-  set->writeEntry("gui/items/quit",  "item &Quit, quit()");
+  set->writeEntry("gui/items/closew","item &Close Window, closewindow");
+  set->writeEntry("gui/items/quit",  "item &Quit, quit");
   set->writeEntry("gui/items/load",  "item &Load, loadFile(),, iconload.png");
   set->writeEntry("gui/items/save",  "item &Save, saveFile(),, iconsave.png");
   set->writeEntry("gui/items/about",  "item &About, about()");
