@@ -15,11 +15,19 @@
 // iterator
 #include "../utils/iterator.h"
 
+// IProperty
+#include "iproperty.h"
+
 //==========================================================
 namespace pdfobjects {
 //==========================================================
 
-		
+namespace mpl = boost::mpl;
+
+//==========================================================
+// PdfOperator
+//==========================================================
+	
 /**
  * This class is the base class for COMPOSITE design pattern and also DECORATOR design pattern.
  * They are very similar in a way (COMPOSITE is a very special case of DECORATOR. 
@@ -37,6 +45,8 @@ class PdfOperator
 {	
 		
 public:
+	typedef std::list<boost::shared_ptr<IProperty> > Operands;
+	
 	typedef std::vector<boost::shared_ptr<IProperty> > IPContainer; 
 	typedef boost::shared_ptr<PdfOperator> ListItem;
 	typedef iterator::LinkedListIterator<boost::shared_ptr<PdfOperator> > Iterator;
@@ -111,7 +121,7 @@ public:
 	 *
 	 * @return Number of children.
 	 */
-	virtual size_t getChildrenCount () = 0;
+	virtual size_t getChildrenCount () const = 0;
 	
 	
 	//
@@ -121,6 +131,25 @@ public:
 private:
 	ListItem next;
 	ListItem prev;
+
+public:
+	/**
+	 * Set next or prev item.
+	 */
+	void setNext (ListItem nxt) 
+	{ 
+		if (next) 
+			printDbg (debug::DBG_DBG, "Changing valid next variable.");
+
+		next = nxt; 
+	};
+	void setPrev (ListItem prv) 
+	{ 
+		if (prev) 
+			printDbg (debug::DBG_DBG, "Changing valid prev variable.");
+		
+		prev = prv; 
+	};
 	
 private:
 	
@@ -130,7 +159,7 @@ private:
 	 *
 	 * @return Previous item.
 	 */
-	ListItem _next () {return next;};
+	ListItem _next () const {return next;};
 	
 	/**
 	 * Get next item in a list that is implemented by PdfOperator.
@@ -138,11 +167,15 @@ private:
 	 *
 	 * @return Next item.
 	 */
-	ListItem _prev () {return prev;};
+	ListItem _prev () const {return prev;};
 
 };
 
 
+
+//==========================================================
+// CompositePdfOperator
+//==========================================================
 
 /**
  * Composite object. It is just an interface.
@@ -196,6 +229,193 @@ public:
 // Concrete implementations of PdfOperator
 //==========================================================
 
+//
+// Generic function
+//
+template<typename TLIST, typename ITERATOR, int Position>
+struct CheckOperatorTypes
+{
+	bool operator() (ITERATOR it, ITERATOR end)
+	{
+		// Check if we are still in the array
+		if (it == end)
+			throw OutOfRange ();
+
+		// Store iterator
+		ITERATOR itOld = it;
+
+		// Increment the iterator
+		++it;
+		
+		// Check lower levels
+		struct CheckOperatorTypes<TLIST, ITERATOR, Position - 1> check;
+		if (true != check (it, end))
+			return false;
+
+		// Check the types at this level
+		if (mpl::at<TLIST, mpl::long_<Position> >::type::value == (*itOld)->getType ())
+			return true;
+		else
+			return false;
+	}
+};
+//
+// Partial specialization
+//
+template<typename TLIST, typename ITERATOR>
+struct CheckOperatorTypes<TLIST, ITERATOR, 0>
+{
+	bool operator() (ITERATOR it, ITERATOR end)
+	{
+		// Check if we are still in the array
+		if (it != end)
+		{
+			// Check the types
+			if (mpl::at<TLIST, mpl::long_<0> >::type::value == (*it)->getType ())
+				return true;
+			else
+				return false;
+		}else
+			throw OutOfRange ();
+	}
+};
+
+
+/**
+ * A very advance c++ template technique is used here to construct SimpleGenericOperator.
+ *
+ * It is called Typelists, firstly designed in Loki (perhaps). It is pure compile
+ * time job.
+ *
+ * Almost all simple operator will be constructed by specifying types of operands and the
+ * test representation of the operator. 
+ *
+ * <cref exception="MalformedFormatExeption"> Thrown when the operands do not match the specification.
+ * 
+ */
+template<typename TYPES, const char* OPSTRING>
+class SimpleGenericOperator : public PdfOperator
+{
+typedef std::list<boost::shared_ptr<IProperty> > Operands;
+
+
+private:
+	/** Operands. */
+	Operands operands;
+
+	/** Text representing the operator. */
+	const char* opText;
+	
+public:
+
+	/** 
+	 * Constructor. 
+	 * Create it as a standalone object. Prev and Next are not valid.
+	 *
+	 * Initialize opText with second template argument.
+	 * 
+	 * @param opers This is a stack of operands from which we take number specified
+	 * 				by template parameter.
+	 */
+	SimpleGenericOperator (Operands& opers) : PdfOperator (ListItem(), ListItem()), opText (OPSTRING)
+	{
+		printDbg (debug::DBG_DBG, "Opeartor [" << OPSTRING << "] Operator size: " << opers.size());
+
+		//
+		// We will traverse from back and compare the type of the template parameter at appropriate position 
+		// with the type of last operand
+		//
+		Operands::reverse_iterator first = opers.rbegin ();
+		Operands::reverse_iterator end = opers.rend ();
+		// Compare it to what we expect
+		struct CheckOperatorTypes<TYPES, Operands::reverse_iterator, mpl::size<TYPES>::value - 1> check;
+		if (!check (first, end))
+		{
+			throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
+		}
+
+		//
+		// Store the operands and remove it from the stack
+		//
+		for (int i = 0; i < mpl::size<TYPES>::value; i++)
+		{
+			Operands::value_type val = opers.back ();
+			// Store the last element of input parameter
+			operands.push_front (val);
+			// Remove the element from input parameter
+			opers.pop_back ();
+		}
+	};
+
+	//
+	// PdfOperator interface
+	//
+public:
+
+	virtual size_t getParametersCount () const {return mpl::size<TYPES>::value;};
+
+	virtual void getParameters (IPContainer& container) const
+		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
+
+	virtual void getStringRepresentation (std::string& str) const
+	{
+		std::string tmp;
+		for (Operands::const_iterator it = operands.begin(); it != operands.end (); it ++)
+		{
+			tmp = "";
+			(*it)->getStringRepresentation (tmp);
+			str += tmp + " ";
+		}
+
+		// Add operator string
+		str += opText;
+	};
+	
+
+	
+	//
+	// Composite interface
+	//
+public:
+
+	virtual void push_back (const boost::shared_ptr<PdfOperator>)
+		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
+	virtual void remove (boost::shared_ptr<PdfOperator>)
+		{ throw NotImplementedException ("PdfOperator::remove ()"); };
+	virtual size_t getChildrenCount () const
+		{ return 0; };
+};
+
+
+
+/**
+ * It consumes all operands from "stack", it should be safe.
+ */
+template<typename T>
+class UnknownOperator : public PdfOperator
+{
+	//
+	// PdfOperator interface
+	//
+	virtual size_t getParametersCount () const = 0;
+	virtual void getParameters (IPContainer& container) const = 0;
+	virtual void getStringRepresentation (std::string& str) const = 0;
+	
+
+	
+	//
+	// Composite interface
+	//
+public:
+	virtual void push_back (const boost::shared_ptr<PdfOperator> oper)
+		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
+	virtual void remove (boost::shared_ptr<PdfOperator> oper)
+		{ throw NotImplementedException ("PdfOperator::remove ()"); };
+	virtual size_t getChildrenCount () const
+		{return 0;};
+
+};
+
 
 
 //==========================================================
@@ -207,6 +427,11 @@ public:
  *
  *
  */
+template<typename T>
+class UnknownCompositePdfOperator : public CompositePdfOperator
+{
+	
+};
 
 
 

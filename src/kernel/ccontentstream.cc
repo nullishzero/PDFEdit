@@ -12,6 +12,10 @@
 //
 #include "ccontentstream.h"
 
+//
+#include "iproperty.h"
+
+
 //==========================================================
 namespace pdfobjects {
 //==========================================================
@@ -20,6 +24,16 @@ using namespace std;
 using namespace boost;
 using namespace debug;
 
+
+//==========================================================
+// Concrete implementations of PdfOperator
+//==========================================================
+
+
+
+//==========================================================
+// Concrete implementations of PdfOperator
+//==========================================================
 
 
 //
@@ -46,10 +60,6 @@ CompositePdfOperator::remove (shared_ptr<PdfOperator> oper)
 }
 
 
-
-
-
-
 //==========================================================
-}
+} // namespace pdfobjects
 //==========================================================
