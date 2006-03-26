@@ -796,12 +796,8 @@ public:
 	typedef std::list<const IProperty*> _IPsList;
 
 private:
-	_IPsList&
-	getList ()
-	{
-		static _IPsList ips;
-		return ips;
-	};
+	_IPsList& getList () {static _IPsList ips; return ips;};
+	size_t& getMax () {static size_t mx; return mx;};
 
 public:
 	//
@@ -817,6 +813,7 @@ public:
 		_printFooter (std::cerr);
 		
 		getList().push_back (ip);
+		++getMax ();
 	};
 
 	//
@@ -844,6 +841,7 @@ public:
 	// Get living IProperty count
 	//
 	size_t getCount () {return getList().size (); };
+	size_t getMaxCount () {return getMax(); };
 
 private:
 	void _printHeader (std::ostream& oss)

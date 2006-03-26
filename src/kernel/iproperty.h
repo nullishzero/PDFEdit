@@ -304,7 +304,7 @@ protected:
   void notifyObservers ()
   {
 	ObserverList::iterator it = IProperty::observers.begin ();
-	for (; it != IProperty::observers.end(); it++)
+	for (; it != IProperty::observers.end(); ++it)
 		  (*it)->notify (this);
   }
 
