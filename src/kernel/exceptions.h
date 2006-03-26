@@ -367,6 +367,13 @@ struct CObjInvalidOperation : public CObjectException
 };
 
 
+//==================================
+// Standard expcetions
+//==================================
 
+struct OutOfRange : public std::exception
+{
+	char const* what() const throw() {return "Out of range.";}
+};
 
 #endif // _EXCEPTIONS_H
