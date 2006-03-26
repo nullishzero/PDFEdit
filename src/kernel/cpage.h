@@ -25,7 +25,6 @@ namespace pdfobjects {
 //=====================================================================================
 
 
-
 /** Invalid page number. */
 const unsigned int PAGE_NUMBER_INVALID = std::numeric_limits<unsigned int>::max();
 /** Coordinate. */
@@ -81,6 +80,13 @@ public:
 	/** Destructor. */
 	~CPage () { printDbg (debug::DBG_INFO, "Page destroyed."); };
 
+public:
+	/** Compares if the objects are identical. */
+	bool operator== (const CPage& page)
+	{
+		return (this == &page) ? true : false;
+	};
+	
 
 public:
 	
