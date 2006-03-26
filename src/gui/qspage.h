@@ -12,9 +12,9 @@ using namespace pdfobjects;
 class QSPage : public QSCObject {
  Q_OBJECT
 public:
- QSPage(CPage *_page);
  virtual ~QSPage();
- CPage* get();
+ QSPage(boost::shared_ptr<CPage> _page);
+ boost::shared_ptr<CPage> get();
 public slots:
  QSDict *getDictionary();
  unsigned int getPageNumber();
@@ -22,7 +22,7 @@ public slots:
  QString getText();
 private:
  /** Object held in class*/
- CPage *obj;
+ boost::shared_ptr<CPage> obj;
 };
 
 #endif

@@ -30,7 +30,7 @@ QSDict* QSPdf::getDictionary() {
 
 /** Call CPdf::insertPage(page,position) */
 QSPage* QSPdf::insertPage(QSPage *page, int position) {
- return new QSPage(obj->insertPage(page->get(),position));
+ return new QSPage(boost::shared_ptr<CPage>(obj->insertPage(page->get().get(),position)));
 }
 /** Call CPdf::removePage(page,position) */
 int QSPdf::removePage(int position) {
@@ -58,12 +58,12 @@ QSPage* QSPdf::getFirstPage() {
 }
 
 /** Call CPdf::getNextPage(page) */
-QSPage* QSPdf::getNextPage(QSPage *page) {
+QSPage* QSPdf::getNextPage(QSPage* page) {
  return new QSPage(obj->getNextPage(page->get()));
 }
 
 /** Call CPdf::getPrevPage(page) */
-QSPage* QSPdf::getPrevPage(QSPage *page) {
+QSPage* QSPdf::getPrevPage(QSPage* page) {
  return new QSPage(obj->getPrevPage(page->get()));
 }
 

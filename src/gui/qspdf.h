@@ -24,11 +24,11 @@ public slots:
  int getPagePosition(QSPage *page);
  unsigned int getPageCount();
  QSDict* getDictionary();
- QSPage* insertPage(QSPage *page, int position);
+ QSPage* insertPage(QSPage* page, int position);
  QSPage* getPage(int position);
  QSPage* getFirstPage();
- QSPage* getNextPage(QSPage *page);
- QSPage* getPrevPage(QSPage *page);
+ QSPage* getNextPage(QSPage* page);
+ QSPage* getPrevPage(QSPage* page);
  QSPage* getLastPage();
 private:
  /** Object held in class*/

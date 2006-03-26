@@ -5,7 +5,7 @@
 #include "qspage.h"
 
 /** Construct wrapper with given CPage */
-QSPage::QSPage(CPage *_page) : QSCObject () {
+QSPage::QSPage(boost::shared_ptr<CPage> _page) : QSCObject () {
  obj=_page;
 }
 
@@ -37,7 +37,7 @@ QString QSPage::getText() {
 }
 
 /** get CPage held inside this class. Not exposed to scripting */
-CPage* QSPage::get() {
+boost::shared_ptr<CPage> QSPage::get() {
  return obj;
 }
 
