@@ -55,6 +55,21 @@
    Outputs given string to command window, followed by newline.
    Useful to output various debugging or status messages
   </para>
+  <para>
+   <title><funcsynopsys>void objects()</funcsynopsys></title>
+   Debugging function usable by script developers.
+   Print all objects that are in current script interpreter to command window
+  </para>
+  <para>
+   <title><funcsynopsys>void functions()</funcsynopsys></title>
+   Debugging function usable by script developers.
+   Print all functions that are in current script interpreter to command window
+  </para>
+  <para>
+   <title><funcsynopsys>void variables()</funcsynopsys></title>
+   Debugging function usable by script developers.
+   Print all variables that are in current script interpreter to command window
+  </para>
  </chapter>
  <chapter>
   <title>Objects exported to scripting</title>
