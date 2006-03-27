@@ -160,6 +160,15 @@ public/*protected*/:
 	 */
 	CObjectSimple (CPdf& p, Object& o, const IndiRef& rf);
 
+	
+	/**
+	 * Constructor. Only kernel can call this constructor. It depends on the object, that we have
+	 * parsed. The object will read value from o and store it. We do NOT save any reference to o.
+	 *
+	 * @param o		Xpdf object. 
+	 */
+	CObjectSimple (Object& o);
+
 
 public:	
 
@@ -633,6 +642,13 @@ protected:
 	 */
 	CObjectStream (CPdf& p, Object& o, const IndiRef& rf);
 
+	/**
+	 * Constructor. Only kernel can call this constructor
+	 *
+	 * @param o		Xpdf object. 
+	 */
+	CObjectStream (Object& o);
+
 
 public:	
 	
@@ -967,6 +983,16 @@ namespace utils {
  * @return Pointer to newly created object.
  */
 IProperty* createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref);
+
+/**
+ * Creates CObject* from xpdf object.
+ *
+ * @param obj Xpdf object from which the object will be created. Parameter to CObject* constructor.
+ *
+ * @return Pointer to newly created object.
+ */
+IProperty* createObjFromXpdfObj (Object& obj);
+
 
 		
 /**
