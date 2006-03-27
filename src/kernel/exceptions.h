@@ -40,6 +40,26 @@
  * exception which has caused throwing of this exception.
  */
 
+//
+// Forward declarations to make it readable
+//
+class MalformedFormatExeption;
+class PageNotFoundException;
+class ReadOnlyDocumentException;
+
+class NotImplementedException;
+class IndirectObjectNotFoundException;
+class ElementNotFoundException;
+class ElementBadTypeException;
+
+struct XpdfInvalidObject;
+
+struct CObjBadValue;
+struct CObjInvalidObject;
+struct CObjInvalidOperation;
+struct OutOfRange;
+
+
 /** XPDF exception base class.
  */
 class XpdfException : public std::exception
