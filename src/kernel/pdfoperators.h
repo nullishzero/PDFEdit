@@ -24,9 +24,6 @@ namespace pdfobjects {
 //==========================================================
 
 		
-namespace mpl = boost::mpl;
-
-
 //==========================================================
 // PdfOperator
 //==========================================================
@@ -92,11 +89,18 @@ public:
 	virtual void getParameters (IPContainer& container) const = 0;
 
 	/**
-	 * Get the string representation of this operator
+	 * Get the string representation of this operator.
 	 *
 	 * @param str String that will hold the representation of this operator.
 	 */
 	virtual void getStringRepresentation (std::string& str) const = 0;
+
+	/**
+	 * Get the string operator name.
+	 *
+	 * @param str String that will hold operator name.
+	 */
+	virtual void getOperatorName (std::string& first, std::string& last) const = 0;
 
 	
 	//
@@ -230,6 +234,7 @@ public:
 	virtual size_t getParametersCount () const = 0;
 	virtual void getParameters (IPContainer& container) const = 0;
 	virtual void getStringRepresentation (std::string& str) const = 0;
+	virtual void getOperatorName (std::string& first, std::string& last) const = 0;
 	
 	//
 	// Add an operator to the composite.
@@ -281,7 +286,7 @@ struct CheckOperatorTypes
 			return false;
 
 		// Check the types at this level
-		if (mpl::at<TLIST, mpl::long_<Position> >::type::value == (*itOld)->getType ())
+		if (boost::mpl::at<TLIST, boost::mpl::long_<Position> >::type::value == (*itOld)->getType ())
 			return true;
 		else
 			return false;
@@ -299,7 +304,7 @@ struct CheckOperatorTypes<TLIST, ITERATOR, 0>
 		if (it != end)
 		{
 			// Check the types
-			if (mpl::at<TLIST, mpl::long_<0> >::type::value == (*it)->getType ())
+			if (boost::mpl::at<TLIST, boost::mpl::long_<0> >::type::value == (*it)->getType ())
 				return true;
 			else
 				return false;
@@ -353,7 +358,7 @@ public:
 		Operands::reverse_iterator first = opers.rbegin ();
 		Operands::reverse_iterator end = opers.rend ();
 		// Compare it to what we expect
-		struct CheckOperatorTypes<TYPES, Operands::reverse_iterator, mpl::size<TYPES>::value - 1> check;
+		struct CheckOperatorTypes<TYPES, Operands::reverse_iterator, boost::mpl::size<TYPES>::value - 1> check;
 		if (!check (first, end))
 		{
 			throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
@@ -362,7 +367,7 @@ public:
 		//
 		// Store the operands and remove it from the stack
 		//
-		for (int i = 0; i < mpl::size<TYPES>::value; ++i)
+		for (int i = 0; i < boost::mpl::size<TYPES>::value; ++i)
 		{
 			Operands::value_type val = opers.back ();
 			// Store the last element of input parameter
@@ -379,13 +384,16 @@ public:
 
 	virtual size_t getParametersCount () const
 	{
-		assert ((int)mpl::size<TYPES>::value == operands.size());
-		return mpl::size<TYPES>::value;
+		assert ((int)boost::mpl::size<TYPES>::value == operands.size());
+		return boost::mpl::size<TYPES>::value;
 	};
 
 	virtual void getParameters (IPContainer& container) const
 		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
 
+	virtual void getOperatorName (std::string& first, std::string& last) const
+		{ first = opText; last = ""; }
+	
 	virtual void getStringRepresentation (std::string& str) const
 	{
 		std::string tmp;
@@ -420,7 +428,7 @@ private:
 public:
 	
 	/** Constructor. */
-	UnknownPdfOperator (Operands& opers, const char* opTxt);
+	UnknownPdfOperator (Operands& opers, const std::string& opTxt);
 		
 	//
 	// PdfOperator interface
@@ -428,6 +436,7 @@ public:
 	virtual size_t getParametersCount () const;
 	virtual void getParameters (IPContainer& container) const;
 	virtual void getStringRepresentation (std::string& str) const;
+	virtual void getOperatorName (std::string& first, std::string& last) const;
 	
 };
 
@@ -447,181 +456,6 @@ class UnknownCompositePdfOperator : public CompositePdfOperator
 {
 	
 };
-
-
-
-
-//==========================================================
-// Specialized classes representing operators
-//==========================================================
-
-
-// {"\"",  3, {tchkNum,    tchkNum,    tchkString},
-  
-extern const char OPER_MOVETONEXTLINE []; 
-typedef SimpleGenericOperator<mpl::vector1_c<PropertyType, pString>,OPER_MOVETONEXTLINE> 	COperMoveShowText;
-
-extern const char OPER_FILLSTROKE []; 
-typedef SimpleGenericOperator<mpl::vector1_c<PropertyType, pString>,OPER_FILLSTROKE> 		COperFillStroke;
-
-extern const char OPER_EOFILLSTROKE []; 
-typedef SimpleGenericOperator<mpl::vector1_c<PropertyType, pString>,OPER_EOFILLSTROKE> 		COperEoFillStroke;
-
-
-  /*{"B",   0, {tchkNone},
-          &Gfx::opFillStroke},
-  {"B*",  0, {tchkNone},
-          &Gfx::opEOFillStroke},
-  {"BDC", 2, {tchkName,   tchkProps},
-          &Gfx::opBeginMarkedContent},
-  {"BI",  0, {tchkNone},
-          &Gfx::opBeginImage},
-  {"BMC", 1, {tchkName},
-          &Gfx::opBeginMarkedContent},
-  {"BT",  0, {tchkNone},
-          &Gfx::opBeginText},
-  {"BX",  0, {tchkNone},
-          &Gfx::opBeginIgnoreUndef},
-  {"CS",  1, {tchkName},
-          &Gfx::opSetStrokeColorSpace},
-  {"DP",  2, {tchkName,   tchkProps},
-          &Gfx::opMarkPoint},
-  {"Do",  1, {tchkName},
-          &Gfx::opXObject},
-  {"EI",  0, {tchkNone},
-          &Gfx::opEndImage},
-  {"EMC", 0, {tchkNone},
-          &Gfx::opEndMarkedContent},
-  {"ET",  0, {tchkNone},
-          &Gfx::opEndText},
-  {"EX",  0, {tchkNone},
-          &Gfx::opEndIgnoreUndef},
-  {"F",   0, {tchkNone},
-          &Gfx::opFill},
-  {"G",   1, {tchkNum},
-          &Gfx::opSetStrokeGray},
-  {"ID",  0, {tchkNone},
-          &Gfx::opImageData},
-  {"J",   1, {tchkInt},
-          &Gfx::opSetLineCap},
-  {"K",   4, {tchkNum,    tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opSetStrokeCMYKColor},
-  {"M",   1, {tchkNum},
-          &Gfx::opSetMiterLimit},
-  {"MP",  1, {tchkName},
-          &Gfx::opMarkPoint},
-  {"Q",   0, {tchkNone},
-          &Gfx::opRestore},
-  {"RG",  3, {tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opSetStrokeRGBColor},
-  {"S",   0, {tchkNone},
-          &Gfx::opStroke},
-  {"SC",  -4, {tchkNum,   tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opSetStrokeColor},
-  {"SCN", -5, {tchkSCN,   tchkSCN,    tchkSCN,    tchkSCN,
-	       tchkSCN},
-          &Gfx::opSetStrokeColorN},
-  {"T*",  0, {tchkNone},
-          &Gfx::opTextNextLine},
-  {"TD",  2, {tchkNum,    tchkNum},
-          &Gfx::opTextMoveSet},
-  {"TJ",  1, {tchkArray},
-          &Gfx::opShowSpaceText},
-  {"TL",  1, {tchkNum},
-          &Gfx::opSetTextLeading},
-  {"Tc",  1, {tchkNum},
-          &Gfx::opSetCharSpacing},
-  {"Td",  2, {tchkNum,    tchkNum},
-          &Gfx::opTextMove},
-  {"Tf",  2, {tchkName,   tchkNum},
-          &Gfx::opSetFont},
-  {"Tj",  1, {tchkString},
-          &Gfx::opShowText},
-  {"Tm",  6, {tchkNum,    tchkNum,    tchkNum,    tchkNum,
-	      tchkNum,    tchkNum},
-          &Gfx::opSetTextMatrix},
-  {"Tr",  1, {tchkInt},
-          &Gfx::opSetTextRender},
-  {"Ts",  1, {tchkNum},
-          &Gfx::opSetTextRise},
-  {"Tw",  1, {tchkNum},
-          &Gfx::opSetWordSpacing},
-  {"Tz",  1, {tchkNum},
-          &Gfx::opSetHorizScaling},
-  {"W",   0, {tchkNone},
-          &Gfx::opClip},
-  {"W*",  0, {tchkNone},
-          &Gfx::opEOClip},
-  {"b",   0, {tchkNone},
-          &Gfx::opCloseFillStroke},
-  {"b*",  0, {tchkNone},
-          &Gfx::opCloseEOFillStroke},
-  {"c",   6, {tchkNum,    tchkNum,    tchkNum,    tchkNum,
-	      tchkNum,    tchkNum},
-          &Gfx::opCurveTo},
-  {"cm",  6, {tchkNum,    tchkNum,    tchkNum,    tchkNum,
-	      tchkNum,    tchkNum},
-          &Gfx::opConcat},
-  {"cs",  1, {tchkName},
-          &Gfx::opSetFillColorSpace},
-  {"d",   2, {tchkArray,  tchkNum},
-          &Gfx::opSetDash},
-  {"d0",  2, {tchkNum,    tchkNum},
-          &Gfx::opSetCharWidth},
-  {"d1",  6, {tchkNum,    tchkNum,    tchkNum,    tchkNum,
-	      tchkNum,    tchkNum},
-          &Gfx::opSetCacheDevice},
-  {"f",   0, {tchkNone},
-          &Gfx::opFill},
-  {"f*",  0, {tchkNone},
-          &Gfx::opEOFill},
-  {"g",   1, {tchkNum},
-          &Gfx::opSetFillGray},
-  {"gs",  1, {tchkName},
-          &Gfx::opSetExtGState},
-  {"h",   0, {tchkNone},
-          &Gfx::opClosePath},
-  {"i",   1, {tchkNum},
-          &Gfx::opSetFlat},
-  {"j",   1, {tchkInt},
-          &Gfx::opSetLineJoin},
-  {"k",   4, {tchkNum,    tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opSetFillCMYKColor},
-  {"l",   2, {tchkNum,    tchkNum},
-          &Gfx::opLineTo},
-  {"m",   2, {tchkNum,    tchkNum},
-          &Gfx::opMoveTo},
-  {"n",   0, {tchkNone},
-          &Gfx::opEndPath},
-  {"q",   0, {tchkNone},
-          &Gfx::opSave},
-  {"re",  4, {tchkNum,    tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opRectangle},
-  {"rg",  3, {tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opSetFillRGBColor},
-  {"ri",  1, {tchkName},
-          &Gfx::opSetRenderingIntent},
-  {"s",   0, {tchkNone},
-          &Gfx::opCloseStroke},
-  {"sc",  -4, {tchkNum,   tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opSetFillColor},
-  {"scn", -5, {tchkSCN,   tchkSCN,    tchkSCN,    tchkSCN,
-	       tchkSCN},
-          &Gfx::opSetFillColorN},
-  {"sh",  1, {tchkName},
-          &Gfx::opShFill},
-  {"v",   4, {tchkNum,    tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opCurveTo1},
-  {"w",   1, {tchkNum},
-          &Gfx::opSetLineWidth},
-  {"y",   4, {tchkNum,    tchkNum,    tchkNum,    tchkNum},
-          &Gfx::opCurveTo2},
-*/
-
-
-
-
-
 
 
 //==========================================================

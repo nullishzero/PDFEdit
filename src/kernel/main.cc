@@ -189,7 +189,7 @@ namespace {
 		
 		Object obj;
 		assert (NULL != xref);
-		auto_ptr<Parser> parser (new Parser(xref, new Lexer(xref, o)));
+		boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, o)));
 		parser->getObj(&obj);
 		while (!obj.isEOF()) 
 		{
@@ -1229,7 +1229,7 @@ c_xpdfctor ()
 void
 getContentStream (ostream& oss, const char* fileName, bool allPages)
 {
-		auto_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 		int pagesNum = (allPages) ? doc->getNumPages() : 1;
 		
 		oss << "Filename: " << fileName << endl;
@@ -1274,12 +1274,12 @@ test_ccontentstream ()
 	p.push_back (i);
 
 	///////// -- construct
-	SimpleGenericOperator<mpl::vector5_c<PropertyType, pInt, pString, pInt, pInt, pInt>, OPER_STR1> example (p);
+	SimpleGenericOperator<boost::mpl::vector5_c<PropertyType, pInt, pString, pInt, pInt, pInt>, OPER_STR1> example (p);
 	
 	///////// -- bad construct
 	bool exc = false;
 	try {
-		SimpleGenericOperator<mpl::vector5_c<PropertyType, pInt, pNull, pInt, pInt, pInt>, OPER_STR1> example1 (p);
+		SimpleGenericOperator<boost::mpl::vector5_c<PropertyType, pInt, pNull, pInt, pInt, pInt>, OPER_STR1> example1 (p);
 	}catch (...)
 	{
 		exc = true;
@@ -1316,7 +1316,7 @@ parseContentStream (ostream& oss, const char* fileName)
 {
 		CPdf pdf;
 		
-		auto_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 		int pagesNum = 1;
 		
 		//
@@ -1337,7 +1337,7 @@ parseContentStream (ostream& oss, const char* fileName)
 
 		vector<boost::shared_ptr<PdfOperator> > pdfopers;
 		
-		auto_ptr<Parser> parser (new Parser(xref, new Lexer(xref, &obj)));
+		boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, &obj)));
 		parser->getObj(&o);
 		while (!o.isEOF()) 
 		{
@@ -1376,6 +1376,38 @@ parseContentStream (ostream& oss, const char* fileName)
 
 }
 
+void
+contentStream (ostream& oss, const char* fileName)
+{
+		CPdf pdf;
+		
+		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+		int pagesNum = 1;
+		
+		//
+		// Our stuff here
+		//
+		Object obj;
+		XRef* xref = doc->getXRef();
+		assert (xref);
+		Catalog cat (xref);
+
+		cat.getPage(pagesNum)->getContents(&obj);
+		
+		if (!obj.isStream())
+			throw;
+		
+		//
+		// Parse the file
+		//
+		boost::shared_ptr<CStream> stream (new CStream(pdf,obj,IndiRef()) );
+		CContentStream cc (stream, &obj);
+
+		string tmp;
+		cc. getStringRepresentation (tmp);
+		oss << "String representation: " << tmp;
+
+}
 //=====================================================================================
 } // namespace
 //=====================================================================================
@@ -1533,18 +1565,22 @@ main (int argc, char* [])
 		//======================= CContentStream
 static const char* pdffile= "../../doc/zadani.pdf";
 		
-//		TEST(" test 3.1 -- ccontentstream - getContentstream")
-//		getContentStream (cout, pdffile, false);
-//		OK_TEST;
+/*		TEST(" test 3.1 -- ccontentstream - getContentstream")
+		getContentStream (cout, pdffile, false);
+		OK_TEST;
 		
-//		TEST(" test 3.2 -- ccontentstream - operators")
-//		test_ccontentstream ();
-//		OK_TEST;
+		TEST(" test 3.2 -- ccontentstream - operators")
+		test_ccontentstream ();
+		OK_TEST;
 
 		TEST(" test 3.3 -- ccontentstream - parse to our operators")
 		parseContentStream (cout, pdffile);
 		OK_TEST;
-	
+*/	
+		TEST(" test 3.4 -- ccontentstream - try ccontentstream class to parse a contentstream")
+		contentStream (cout, pdffile);
+		OK_TEST;
+		
 		END_TEST;
 		MEM_CHECK;
 

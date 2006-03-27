@@ -26,16 +26,10 @@ using namespace debug;
 //==========================================================
 
 
-
-extern const char OPER_MOVETONEXTLINE [] 		= "'"; 
-extern const char OPER_FILLSTROKE [] 			= "B"; 
-extern const char OPER_EOFILLSTROKE [] 			= "B*"; 
-
-
 //
 // Constructor
 //
-UnknownPdfOperator::UnknownPdfOperator (Operands& opers, const char* opTxt)
+UnknownPdfOperator::UnknownPdfOperator (Operands& opers, const string& opTxt)
 	: opText (opTxt)
 {
 	printDbg (DBG_DBG, "Unknown operator: " << opTxt);
@@ -70,6 +64,15 @@ UnknownPdfOperator::getParameters (IPContainer& container) const
 //
 //
 void 
+UnknownPdfOperator::getOperatorName (std::string& first, std::string& last) const
+{ 
+	first = opText; last = ""; 
+}
+	
+//
+//
+//
+void 
 UnknownPdfOperator::getStringRepresentation (std::string& str) const
 {	
 	std::string tmp;
@@ -83,7 +86,6 @@ UnknownPdfOperator::getStringRepresentation (std::string& str) const
 	// Add operator string
 	str += opText;
 }
-	
 
 //==========================================================
 // Concrete implementations of CompositePdfOperator
