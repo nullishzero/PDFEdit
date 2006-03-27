@@ -6,6 +6,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/03/27 22:28:42  hockm0bm
+ * consolidatePageList method added to CPdf
+ *
+ * Utils namespace:
+ * isDescendant method for subtree information
+ * getNodePosition method for CDict -> position
+ * searchTreeNode helper method
+ *
  * Revision 1.17  2006/03/25 21:23:57  hockm0bm
  * pages handling implemented - pageList created
  *         insertPage, removePage - only in design state
@@ -159,6 +167,52 @@ protected:
 	 * Indirect properties mapping type.
 	 */
 	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
+
+	/** Consolidates pageList.
+	 * @param oldValue Old reference (CNull if no previous state).
+	 * @param newValue New reference (CNull if no future state).
+	 *
+	 * Removes all CPages, which are in old reference sub tree (if oldValue is not
+	 * CNull), from pageList and invalidates them. Uses isDescendant method for all
+	 * pages from pageList to find out if it is in sub tree.
+	 * <br>
+	 * Also calculates difference between lost pages (if oldValue is not CNull) and
+	 * newly added pages (if newValue is not CNull - checks type of node and if node
+	 * is page, only 1 is lost, in case of intermediate node /Count field is used). 
+	 * This is used for consolidation of all pages which are behind newValue sub
+	 * tree. All those pages (minimum page position for newValue node - uses 
+	 * getNodeMinimumPosition() method + newValue node page count - 1 for simple 
+	 * page and /Count field value from intermediate node) are readded to the 
+	 * pageList with corrected position.
+	 * <br>
+	 * This guaranties, that pages from removed subtree are not available anymore
+	 * and also already returned CPage instances are associated with correct
+	 * position (also replacing subtree is considered - if any).
+	 * <p>
+	 * <b>Implementation notes</b><br>
+	 * This method should be called by handler of change event on Page tree.
+	 * <br>
+	 * No parameters checking is done here. Caller must be sure that:
+	 * <ul>
+	 * <li>parameter must be CNull or CRef
+	 * <li>CRef must point to dictionary
+	 * <li>dictionary must have Type field with value Page or Pages
+	 * <li>Pages dictionary must contain Count field with integer value
+	 * </ul>
+	 * <br>
+	 * oldValue and newValue can be CNull or CRef instances. CNull case stands for
+	 * adding (if oldValue) resp. deleting (if newValue) event. If both of them are
+	 * CNull no change is done by this method. CRef stands for reference from Kids 
+	 * array in Intermediate node. It has to refer to page or pages dictionary. 
+	 * <br>
+	 * If both values are CRef instances then oldValue has been replaced by newValue
+	 * reference. This implementation assumes that both of them were on same
+	 * position in the page tree - one sub tree was replaced by new one but on the
+	 * same position. It is not possible that these values could be on different
+	 * positions (this would cause page numbering problem).
+	 *
+	 */
+	void consolidatePageList(boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
 private:
 	
 	/**************************************************************************
@@ -328,6 +382,7 @@ public:
 	/** Closes pdf file.
 	 * @param saveFlag Flag which determine whether to save before close
 	 *	(parameter may be omited and false is used by default).
+	 *
 	 * Destroyes CPdf instance in safe way. Instant MUST NOT be used
 	 * after this method is called.
 	 */

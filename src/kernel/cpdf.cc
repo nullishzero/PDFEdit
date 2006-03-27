@@ -1,15 +1,17 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
- * =====================================================================================
- *	  Filename:  cpdf.cc
- *	   Description: CPdf class implementation.
- *	   Created:  01/28/2006 03:48:14 AM CET
- *		Author:  jmisutka (), 
- *	   Changes: 2006/1/28 added mapping support
- *				2006/1/30 tested objToString () -- ok
- *				2006/2/8  after a long battle against g++ and ld + collect I made
- *						  the implementation of CPdf a .cc file
- * =====================================================================================
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.16  2006/03/27 22:28:42  hockm0bm
+ * consolidatePageList method added to CPdf
+ *
+ * Utils namespace:
+ * isDescendant method for subtree information
+ * getNodePosition method for CDict -> position
+ * searchTreeNode helper method
+ *
+ *
  */
 
 #include <errno.h>
@@ -261,6 +263,214 @@ boost::shared_ptr<IProperty> findPage(CPdf & pdf, boost::shared_ptr<IProperty> p
 
 }
 
+/** Searches node in page tree structure.
+ * @param pdf Pdf where to search.
+ * @param superNode Node which to search.
+ * @param node Node to be found.
+ * @param startValue Position for first found node in this superNode.
+ *
+ * At first checks if node and superNode are same nodes (uses == operator to
+ * compare). Then tries to get Type of the dictionary. In Page case returns with
+ * startValue if given nodes are same or 0 (page not found).
+ * If type is Pages (intermediate node) goes through Kids array and recursively
+ * calls this method for each element until recursion returns with non 0 result.
+ * This means the end of recursion. startValue is actualized for each Kid's
+ * element (Page element increases 1, Pages element /Count).
+ *
+ * @throw ElementBadTypeException
+ * @throw ElementNotFoundException
+ * @return Position of the node or 0 if node couldn't be found under this
+ * superNode.
+ */
+size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict> node, size_t startValue)
+{
+	// TODO exceptions correct messages
+	
+	
+	// if nodes are same, startValue is returned.
+	if(superNode==node)
+		return startValue;
+
+	// gets type of dictionary
+	string superNodeType=getNameFromDict("/Type", superNode);
+	
+	// if type is Page we return with 0, because node is not this superNode and
+	// there is nowhere to go
+	if(superNodeType=="/Page")
+		return 0;
+
+	if(superNodeType!="/Pages")
+		throw ElementBadTypeException("/Node");
+
+	// if type is Pages, we go through Kids array and calls recursively for each
+	// element until first one returns with non 0. Otherwise startValue is
+	// updated by child node pages count.
+	shared_ptr<IProperty> arrayProp_ptr=superNode->getPropertyValue("/Kids");
+	if(arrayProp_ptr->getType()!=pArray)		// TODO can be reference?
+		throw ElementBadTypeException("Kids");
+	shared_ptr<CArray> array_ptr=IProperty::getSmartCObjectPtr<CArray>(arrayProp_ptr);
+	vector<shared_ptr<IProperty> > kidsContainer;
+	array_ptr->_getAllChildObjects(kidsContainer);
+	vector<shared_ptr<IProperty> >::iterator i;
+	for(i=kidsContainer.begin(); i!=kidsContainer.end(); i++)
+	{
+		// each element has to be reference
+		PropertyType type=(*i)->getType();
+		if(type!=pRef)
+			throw ElementBadTypeException("Kids");
+
+		// dereference indirect object - this has to be indirect object
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(*i)->getPropertyValue(ref);
+		shared_ptr<IProperty> element_ptr=pdf.getIndirectProperty(ref);
+		if(element_ptr->getType()!=pDict)
+			throw ElementBadTypeException("");
+		shared_ptr<CDict> elementDict_ptr=IProperty::getSmartCObjectPtr<CDict>(element_ptr);
+		string elementDictType=getNameFromDict("/Type", elementDict_ptr);
+		if(elementDictType=="/Page")
+		{
+			if(searchTreeNode(pdf, elementDict_ptr, node, startValue))
+				return startValue;
+
+			// this was not correct one, increments startValue
+			startValue++;
+			continue;
+		}
+		if(elementDictType=="/Pages")
+		{
+			size_t ret=searchTreeNode(pdf, elementDict_ptr, node, startValue);
+			if(ret)
+				return ret;
+
+			// we haven't found, so startValue is actualized with /Count value
+			// of this node
+			startValue+=getIntFromDict("/Count", elementDict_ptr);
+			continue;
+		}
+
+		// dictionary type is uncorrect
+		throw ElementBadTypeException("/Kids");
+	}
+
+	return 0;
+}
+
+/** Gets position of given node.
+ * @param pdf Pdf where to examine.
+ * @param node Node to find (CRef or CDict instances).
+ *
+ * Gets pdf's document catalog Pages field, which is the root of page tree.
+ * Also gets dictionary value from node (if reference, dereferencing is done)
+ * and starts searching using searchTreeNode method. If this returns real (non 0
+ * position) is returned, it is returned by this method too. Otherwise throws
+ * exception.
+ *
+ * @throw PageNotFoundException
+ * @throw ElementBadTypeException
+ * @throw MalformedFormatExeption
+ * @return Node position.
+ */
+size_t getNodePosition(CPdf & pdf, shared_ptr<IProperty> node)
+{
+	// node must by from given pdf
+	if(node->getPdf()!=&pdf)
+		throw PageNotFoundException(0);
+
+	// gets page tree root - it has to be Reference to Dictionary
+	shared_ptr<IProperty> rootRef_ptr=pdf.getDictionary()->getPropertyValue("/Pages");
+	if(rootRef_ptr->getType()!=pRef)
+		// reference is required
+		throw ElementBadTypeException("/Pages");
+	IndiRef rootRef;
+	IProperty::getSmartCObjectPtr<CRef>(rootRef_ptr)->getPropertyValue(rootRef);
+	shared_ptr<IProperty> rootDictProp_ptr=pdf.getIndirectProperty(rootRef);
+
+	// rootDictProp_ptr must be CDict instance
+	if(rootDictProp_ptr->getType()!=pDict)
+		throw MalformedFormatExeption("Page tree root doesn't refer to dictionary");
+	shared_ptr<CDict> rootDict_ptr=IProperty::getSmartCObjectPtr<CDict>(rootDictProp_ptr);
+	
+	// gets dictionary from node parameter. It can be reference and
+	// dereferencing has to be done or direct dictionary - otherwise error is
+	// reported
+	PropertyType nodeType=node->getType();
+	if(nodeType!=pRef && nodeType!=pDict)
+		throw ElementBadTypeException("node");
+	shared_ptr<CDict> nodeDict_ptr;
+	if(nodeType==pRef)
+	{
+		// dereferencing has to be done
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(node)->getPropertyValue(ref);
+		shared_ptr<IProperty> nodeProp_ptr=pdf.getIndirectProperty(ref);
+		if(nodeProp_ptr->getType()!=pDict)
+			throw ElementBadTypeException("node");
+
+		nodeDict_ptr=IProperty::getSmartCObjectPtr<CDict>(nodeProp_ptr);
+	}else
+		nodeDict_ptr=IProperty::getSmartCObjectPtr<CDict>(node);
+		
+	size_t pos=searchTreeNode(pdf, rootDict_ptr, nodeDict_ptr, 1);
+	if(pos)
+		return pos;
+
+	// node not found
+	throw PageNotFoundException(0);
+}
+
+/** Checks if given child is descendant of node with given reference.
+ * @param pdf Pdf where to resolv referencies.
+ * @param parent Reference of the parent.
+ * @param child Dictionary of page(s) node.
+ *
+ * Compares child's parent field - if not found, imediately returns false - 
+ * with given reference. If referencies are same, returns true. 
+ * Othwerwise resolves child's parent and starts recursion with it as
+ * new child paremeter (it is transitive relation). 
+ * <br>
+ * NOTE: this method doesn't perform any checking of parameters.
+ * <br>
+ * TODO implement with iteration - not recursion
+ *
+ * @throw MalformedFormatExeption if child contains /Parent field which doesn't
+ * point to the dictionary.
+ * @return true If given child belongs to parent subtree, false otherwise.
+ */
+bool isDescendant(CPdf & pdf, IndiRef parent, shared_ptr<CDict> child)
+{
+using namespace utils;
+
+	// tries to get child's direct parent node
+	// if not found, we catch the exception and return false
+	// this should happen in root node
+	IndiRef directParent;
+	try
+	{
+		directParent=getRefFromDict("/Parent", child);
+	}catch(std::exception & e)
+	{
+		// child is not really parent child
+		return false;
+	}
+
+	// we have direct parent reference
+	// if it is same as given parent, we are done and return true
+	// FIXME uncomment when IndiRef== is defined
+	/*
+	if(parent==directParent)
+		return true;
+	 */
+
+	// parent may be somewhere higher in the page tree
+	// Gets direct parent indirect object from given pdf and checks its type
+	// if it is NOT dictionary - we have malformed pdf - exception is thrown
+	// otherwise starts recursion with direct parent dictionary
+	shared_ptr<IProperty> directParent_ptr=pdf.getIndirectProperty(directParent);
+	if(directParent_ptr->getType()!=pDict)
+		throw MalformedFormatExeption("Page node parent field doesn't point to dictionary");
+	return isDescendant(pdf, parent, IProperty::getSmartCObjectPtr<CDict>(directParent_ptr));
+}
+
 } // end of utils namespace
 
 void CPdf::initRevisionSpecific()
@@ -293,9 +503,7 @@ void CPdf::initRevisionSpecific()
 		pageList.clear();
 	}
 	
-	// cleanup all returned pages + signalization that they are invalid.
 	// cleanup all returned outlines  -------------||----------------- 
-	// 
 	
 	// Initialization part:
 	// ===================
@@ -730,6 +938,126 @@ int CPdf::getPagePosition(boost::shared_ptr<CPage> page)
 
 	// page not found, it hasn't been returned by this pdf
 	throw PageNotFoundException();
+}
+
+
+void CPdf::consolidatePageList(shared_ptr<IProperty> oldValue, shared_ptr<IProperty> newValue)
+{
+using namespace utils;
+
+	// correction for all pages affected by this subtree change
+	int difference=0;
+
+	// handles original value - one before change
+	if(oldValue->getType()!=pNull)
+	{
+		// gets reference and dereference its value
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(oldValue)->getPropertyValue(ref);
+		shared_ptr<IProperty> oldProp_ptr=getIndirectProperty(ref);
+	
+		// gets dictionary type - it has to be page or pages node
+		shared_ptr<CDict> oldDict_ptr=IProperty::getSmartCObjectPtr<CDict>(oldProp_ptr);
+		string oldDictType=getNameFromDict("/Type", oldDict_ptr);
+
+		// simple page is compared with all from pageList and if found, removes
+		// it from list and invalidates it.
+		// Difference is set to - 1, because one page is removed
+		if(oldDictType=="/Page")
+		{
+			difference = -1;
+
+			PageList::iterator i;
+			for(i=pageList.begin(); i!=pageList.end(); i++)
+			{
+				// checks page's dictionary with old one
+				if(i->second->getDictionary() == oldDict_ptr)
+				{
+					// dictionary is ok
+					// FIXME: uncoment when method is ready
+					//i->second->invalidate();
+					pageList.erase(i);
+					break;
+				}
+			}
+		}else
+		{
+			// Pages dictionary stands for intermediate node and so all CPages
+			// from this sub tree are removed and invalidated
+			// difference is set to -/Count value (those number of pages are
+			// removed)
+			if(oldDictType=="/Pages")
+			{
+				difference = -getIntFromDict("/Count", oldDict_ptr);
+
+				PageList::iterator i;
+				for(i=pageList.begin(); i!=pageList.end(); i++)
+				{
+					// checks page's dictionary whether it is in oldDict_ptr sub
+					// tree and if so removes it from pageList
+					if(isDescendant(*this, ref, i->second->getDictionary()))
+						pageList.erase(i);
+				}
+			}
+		}
+	}
+
+	// number of added pages by newValue tree
+	int pagesCount=0;
+	
+	// handles new value - one after change
+	if(newValue->getType()!=pNull)
+	{
+		// dereference object and gets dictionary 
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(newValue)->getPropertyValue(ref);
+		shared_ptr<IProperty> newProp_ptr=getIndirectProperty(ref);
+
+		// gets dictionary type
+		shared_ptr<CDict> newDict_ptr=IProperty::getSmartCObjectPtr<CDict>(newProp_ptr);
+		string newDictType=getNameFromDict("/Type", newDict_ptr);
+
+		// page type adds only one page
+		if(newDictType=="/Page")
+			pagesCount=1;
+
+		// pages type adds /Count pages
+		if(newDictType=="/Pages")
+			pagesCount=getIntFromDict("/Count", newDict_ptr);
+		
+	}
+
+	// corrects difference with added pages
+	difference -= pagesCount;
+
+	// no difference means no speacial handling for other pages
+	if(difference==0)
+		return;
+
+	// all pages from oldValue tree are removed from pageList now
+	// TODO what if difference<0 && newValue==CNull what to consolidate?
+
+	// gets minimum page position of newValue and adds pagesCount. All pages
+	// behind this position has to be removed and readded with changes position
+	// (with difference added)
+	size_t minPos = getNodePosition(*this, newValue) + pagesCount;
+	PageList::iterator i;
+	vector<pair<size_t, shared_ptr<CPage> > > readdContainer;
+	for(i=pageList.begin(); i!=pageList.end(); i++)
+	{
+		// all pages >= minPos are removed and readded
+		if(i->first >= minPos)
+		{
+			// collects all removed
+			readdContainer.push_back(pair<size_t, shared_ptr<CPage> >(i->first, i->second));	
+			pageList.erase(i);
+		}
+	}
+	
+	// readds all removed with changed position (according difference)
+	vector<pair<size_t, shared_ptr<CPage> > >::iterator j;
+	for(j=readdContainer.begin(); j!=readdContainer.end(); j++)
+		pageList.insert(pair<size_t, shared_ptr<CPage> >(j->first+difference, j->second));	
 }
 
 } // end of pdfobjects namespace
