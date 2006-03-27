@@ -85,6 +85,7 @@ typedef struct IndiRef
 	ObjNum	num; /**< Object's pdf identification number */
 	GenNum	gen; /**< Object's pdf generation number */
 	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;};
+	bool operator== (const IndiRef& _r) { return (num == _r.num && gen == _r.gen) ? true : false;};
 			
 } IndiRef;
 
