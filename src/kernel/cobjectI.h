@@ -55,6 +55,20 @@ CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf)
 
 
 //
+// Protected constructor, called when we have parsed an object
+//
+template<PropertyType Tp, typename Checker>
+CObjectSimple<Tp,Checker>::CObjectSimple (Object& o) : value(Value())
+{
+	Checker check; check.objectCreated (this);
+	printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
+	
+	// Set object's value
+	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);
+}
+
+
+//
 // Public constructor
 //
 template<PropertyType Tp, typename Checker>
@@ -604,9 +618,21 @@ CObjectComplex<Tp,Checker>::doClone () const
 template<typename Checker>
 CObjectStream<Checker>::CObjectStream (CPdf& /*p*/, Object& /*o*/, const IndiRef& /*rf*/)
 {
-	//Checker check; check.objectCreated (this);
+	Checker check; check.objectCreated (this);
 	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
 }
+
+
+//
+//
+//
+template<typename Checker>
+CObjectStream<Checker>::CObjectStream (Object& /*o*/)
+{
+	Checker check; check.objectCreated (this);
+	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
+}
+
 
 //
 //
