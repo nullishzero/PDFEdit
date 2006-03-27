@@ -41,6 +41,7 @@ namespace utils {
 // =====================================================================================
 
 using namespace std;
+using namespace boost;
 
 //
 // Forward declaration
@@ -244,7 +245,7 @@ namespace {
 							// Get Object at i-th position
 							array.arrayGetNF (i, &obj);
 							// Create CObject from it
-							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
+							shared_ptr<IProperty> cobj (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
 							if (cobj)
 							{
 								// Store it in the storage
@@ -282,7 +283,7 @@ namespace {
 							string key = dict.dictGetKey (i);
 							dict.dictGetVal (i,&obj);
 							// Create CObject from it
-							boost::shared_ptr<IProperty> cobj (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
+							shared_ptr<IProperty> cobj (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
 							if (cobj)
 							{
 								// Store it in the storage
@@ -470,6 +471,48 @@ createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
 
 			case objStream:
 				return new CStream (pdf,obj,ref);
+
+			default:
+				assert (!"Bad type.");
+				break;
+		}
+}
+
+IProperty*
+createObjFromXpdfObj (Object& obj)
+{
+
+		switch (obj.getType ())
+		{
+			case objBool:
+				return new CBool (obj);
+
+			case objInt:
+				return new CInt (obj);
+
+			case objReal:
+				return new CReal (obj);
+
+			case objString:
+				return new CString (obj);
+
+			case objName:
+				return new CName (obj);
+
+			case objNull:
+				return new CNull (obj);
+
+			case objRef:
+				return new CRef (obj);
+
+			case objArray:
+				return new CArray (obj);
+
+			case objDict:
+				return new CDict (obj);
+
+			case objStream:
+				return new CStream (obj);
 
 			default:
 				assert (!"Bad type.");
@@ -766,7 +809,7 @@ simpleValueFromString (const std::string& str, int& val)
 void
 simpleValueFromString (const std::string& str, double& val)
 {
-	boost::scoped_ptr<Object> ptrObj (xpdfObjFromString (str));
+	scoped_ptr<Object> ptrObj (xpdfObjFromString (str));
 	
 	assert (objReal == ptrObj->getType ());
 	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
@@ -807,7 +850,7 @@ xpdfObjFromString (const std::string& str)
 	// Create parser. It can create complex types. Lexer knows just simple types.
 	// Lexer SHOULD delete MemStream.
 	//
-	auto_ptr<Object> dct (new Object());
+	scoped_ptr<Object> dct (new Object());
 	//
 	// xpdf MemStream DOES NOT free buf unless doDecrypt is called, but IT IS NOT
 	// here, so we have to deallocate it !!
@@ -816,7 +859,7 @@ xpdfObjFromString (const std::string& str)
 	char* pStr = new char [len + 1];
 	strncpy (pStr, str.c_str(), len + 1);
 					
-	auto_ptr<Parser> parser	(new Parser (NULL, 
+	scoped_ptr<Parser> parser	(new Parser (NULL, 
 						       		      new Lexer (NULL, 
 												  	 new MemStream (pStr, 0, len, dct.get())
 												     )
