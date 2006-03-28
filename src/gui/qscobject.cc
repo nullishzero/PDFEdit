@@ -6,7 +6,7 @@
 #include <utils/debug.h>
 #include "qscobject.h"
 
-//todo: add garbage collection
+//todo: add garbage collection if needed
 
 /** Construct wrapper with given CObject */
 QSCObject::QSCObject() {
@@ -18,7 +18,7 @@ QSCObject::QSCObject() {
 /** destructor */
 QSCObject::~QSCObject() {
  printDbg(debug::DBG_DBG,"removing QSCObject");
-//todo: remove from  garbage collector. After returning from scripting, GC content is emptied ...
+//todo: remove from  garbage collector. After returning from scripting, GC should be run ...
 // removeGC(this);
 }
 

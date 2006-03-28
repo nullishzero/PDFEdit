@@ -29,7 +29,7 @@ QSDict* QSPdf::getDictionary() {
 }
 
 /** Call CPdf::insertPage(page,position) */
-QSPage* QSPdf::insertPage(QSPage *page, int position) {
+QSPage* QSPdf::insertPage(QSPage* page, int position) {
  return new QSPage(boost::shared_ptr<CPage>(obj->insertPage(page->get().get(),position)));
 }
 /** Call CPdf::removePage(page,position) */

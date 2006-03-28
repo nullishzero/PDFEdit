@@ -13,6 +13,8 @@ public:
  QSDict(CDict *_dict);
  virtual ~QSDict();
  CDict* get();
+public slots:
+ QString getString();
 private:
  /** Object held in class*/
  CDict *obj;
