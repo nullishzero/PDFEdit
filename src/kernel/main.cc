@@ -1404,7 +1404,7 @@ contentStream (ostream& oss, const char* fileName)
 		CContentStream cc (stream, &obj);
 
 		string tmp;
-		cc. getStringRepresentation (tmp);
+		cc.getStringRepresentation (tmp);
 		oss << "String representation: " << tmp;
 
 }

@@ -268,7 +268,7 @@ public:
 template<typename TLIST, typename ITERATOR, int Position>
 struct CheckOperatorTypes
 {
-	bool operator() (ITERATOR it, ITERATOR end)
+	void operator() (ITERATOR it, ITERATOR end)
 	{
 		// Check if we are still in the array
 		if (it == end)
@@ -282,14 +282,11 @@ struct CheckOperatorTypes
 		
 		// Check lower levels
 		struct CheckOperatorTypes<TLIST, ITERATOR, Position - 1> check;
-		if (true != check (it, end))
-			return false;
+		check (it, end);
 
 		// Check the types at this level
-		if (boost::mpl::at<TLIST, boost::mpl::long_<Position> >::type::value == (*itOld)->getType ())
-			return true;
-		else
-			return false;
+		if (boost::mpl::at<TLIST, boost::mpl::long_<Position - 1> >::type::value != (*itOld)->getType ())
+			throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
 	}
 };
 //
@@ -298,19 +295,7 @@ struct CheckOperatorTypes
 template<typename TLIST, typename ITERATOR>
 struct CheckOperatorTypes<TLIST, ITERATOR, 0>
 {
-	bool operator() (ITERATOR it, ITERATOR end)
-	{
-		// Check if we are still in the array
-		if (it != end)
-		{
-			// Check the types
-			if (boost::mpl::at<TLIST, boost::mpl::long_<0> >::type::value == (*it)->getType ())
-				return true;
-			else
-				return false;
-		}else
-			throw OutOfRange ();
-	}
+	void operator() (ITERATOR, ITERATOR) {}
 };
 
 
@@ -349,7 +334,8 @@ public:
 	 */
 	SimpleGenericOperator (Operands& opers) : opText (OPSTRING)
 	{
-		printDbg (debug::DBG_DBG, "Opeartor [" << OPSTRING << "] Operator size: " << opers.size());
+		STATIC_CHECK ((boost::mpl::size<TYPES>::value >= 0), SMALL_TYPES_COUNT);
+		printDbg (debug::DBG_DBG, "Operator [" << OPSTRING << "] Operator size: " << opers.size());
 
 		//
 		// We will traverse from back and compare the type of the template parameter at appropriate position 
@@ -358,10 +344,23 @@ public:
 		Operands::reverse_iterator first = opers.rbegin ();
 		Operands::reverse_iterator end = opers.rend ();
 		// Compare it to what we expect
-		struct CheckOperatorTypes<TYPES, Operands::reverse_iterator, boost::mpl::size<TYPES>::value - 1> check;
-		if (!check (first, end))
-		{
-			throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
+		struct CheckOperatorTypes<TYPES, Operands::reverse_iterator, boost::mpl::size<TYPES>::value> check;
+		try {
+
+			check (first, end);
+			
+		}catch (OutOfRange&)
+		{	// Bad argument count
+				
+			//throw MalformedFormatExeption ("Incorrect content stream operator count.");
+			return;
+			
+		}catch (MalformedFormatExeption&)
+		{	// Types do not match
+				
+			//throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
+			return;
+
 		}
 
 		//
@@ -384,7 +383,7 @@ public:
 
 	virtual size_t getParametersCount () const
 	{
-		assert ((int)boost::mpl::size<TYPES>::value == operands.size());
+		// assert ((int)boost::mpl::size<TYPES>::value == operands.size());
 		return boost::mpl::size<TYPES>::value;
 	};
 
