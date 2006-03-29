@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/03/29 06:12:34  hockm0bm
+ * consolidatePageTree method added
+ * starting to use getPageFromRef
+ *
  * Revision 1.18  2006/03/27 22:28:42  hockm0bm
  * consolidatePageList method added to CPdf
  *
@@ -73,11 +77,6 @@
 
 // mode controller
 #include "modecontroller.h"
-
-//#include <map>
-//#include <set>
-//#include <string>
-//#include "xpdf/Object.h"
 #include "iproperty.h"
 #include "xrefwriter.h"
 
@@ -168,29 +167,65 @@ protected:
 	 */
 	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
 
-	/** Consolidates pageList.
+	/** Consolidates page tree.
+	 * @param interNode Intermediate node where the change has occured.
+	 *
+	 * Checks all direct children (from /Kids array field) whether they have
+	 * correct parent (given interNode). Then collects number of pages of each
+	 * and this calculated value uses for new /Count field value. Afterwards
+	 * calls this method also for its parent. Recusrion stops at root of the 
+	 * page tree.
+	 * <p>
+	 * <b>Implementation notes</b>:
+	 * <br>
+	 * This method should be called when some change occures in page tree. Given
+	 * parameter stands for intermediate node in which change occured (must be
+	 * Pages dictionary instance). This means that whenever reference property 
+	 * has been changed (or added, deleted), its indirect parent should be used. 
+	 * <br>
+	 * Doesn't perform any parameter checking. Relay on correct value. When som
+	 * error occures, exception is thrown.
+	 * <br>
+	 * Changes /Count field of interNode.
+	 * <br>
+	 * Sets /Parent field of direct children, if not set correctly.
+	 * <br>
+	 * If page tree was consistent before change undret this interNode occured,
+	 * it will be consistent after this consolidation too.
+	 */
+	void consolidatePageTree(boost::shared_ptr<CDict> interNode);
+	
+	/** Consolidates pageList after change in Page tree.
 	 * @param oldValue Old reference (CNull if no previous state).
 	 * @param newValue New reference (CNull if no future state).
 	 *
-	 * Removes all CPages, which are in old reference sub tree (if oldValue is not
-	 * CNull), from pageList and invalidates them. Uses isDescendant method for all
-	 * pages from pageList to find out if it is in sub tree.
+	 * Removes all CPages, which are in old reference sub tree (if oldValue is 
+	 * not CNull), from pageList and invalidates them. Uses isDescendant method 
+	 * for each page from pageList to find out if it is in sub tree.
 	 * <br>
-	 * Also calculates difference between lost pages (if oldValue is not CNull) and
-	 * newly added pages (if newValue is not CNull - checks type of node and if node
-	 * is page, only 1 is lost, in case of intermediate node /Count field is used). 
-	 * This is used for consolidation of all pages which are behind newValue sub
-	 * tree. All those pages (minimum page position for newValue node - uses 
-	 * getNodeMinimumPosition() method + newValue node page count - 1 for simple 
-	 * page and /Count field value from intermediate node) are readded to the 
-	 * pageList with corrected position.
+	 * Also calculates difference between lost pages (if oldValue is not CNull) 
+	 * and newly added pages (if newValue is not CNull - checks type of node 
+	 * and if node is page, only 1 is lost, in case of intermediate node /Count 
+	 * field is used).
 	 * <br>
-	 * This guaranties, that pages from removed subtree are not available anymore
-	 * and also already returned CPage instances are associated with correct
-	 * position (also replacing subtree is considered - if any).
+	 * Tries to determine which pages has to be consolidated (those which
+	 * position has changed). If newValue is CNull, we have no information about 
+	 * oldValue position so we can either get page information from all pages in 
+	 * the list or if at least one page from oldValue subtree has been removed 
+	 * from page, we can use this as starting point and just change position 
+	 * according calculated difference. 
+	 * Page position getting is rather complex operation and may lead to whole 
+	 * page tree searching. This is done only if no page position is available 
+	 * from oldValue subtree.
+	 * <br>
+	 * This guaranties, that pages from removed subtree are not available 
+	 * anymore and are invalidated and also valid returned CPage instances are 
+	 * associated with correct position.
 	 * <p>
 	 * <b>Implementation notes</b><br>
 	 * This method should be called by handler of change event on Page tree.
+	 * Some previous checking and consolidation of page tree should be done
+	 * before, because this method relies on proper page tree structure.
 	 * <br>
 	 * No parameters checking is done here. Caller must be sure that:
 	 * <ul>
@@ -200,17 +235,18 @@ protected:
 	 * <li>Pages dictionary must contain Count field with integer value
 	 * </ul>
 	 * <br>
-	 * oldValue and newValue can be CNull or CRef instances. CNull case stands for
-	 * adding (if oldValue) resp. deleting (if newValue) event. If both of them are
-	 * CNull no change is done by this method. CRef stands for reference from Kids 
-	 * array in Intermediate node. It has to refer to page or pages dictionary. 
+	 * oldValue and newValue can be CNull or CRef instances. CNull case stands 
+	 * for adding (if oldValue) resp. deleting (if newValue) event. If both of 
+	 * them are CNull no change is done by this method. 
 	 * <br>
-	 * If both values are CRef instances then oldValue has been replaced by newValue
-	 * reference. This implementation assumes that both of them were on same
-	 * position in the page tree - one sub tree was replaced by new one but on the
-	 * same position. It is not possible that these values could be on different
-	 * positions (this would cause page numbering problem).
-	 *
+	 * CRef stands for reference from Kids array in Intermediate node. It has 
+	 * to refer to page or pages dictionary. 
+	 * <br>
+	 * If both values are CRef instances then oldValue has been replaced by 
+	 * newValue reference. This implementation assumes that both of them were 
+	 * on same position in the page tree - one sub tree was replaced by new one
+	 * but on the same position. It is not possible that these values could be 
+	 * on different positions (this would cause page numbering problem).
 	 */
 	void consolidatePageList(boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
 private:

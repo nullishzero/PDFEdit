@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/03/29 06:12:34  hockm0bm
+ * consolidatePageTree method added
+ * starting to use getPageFromRef
+ *
  * Revision 1.16  2006/03/27 22:28:42  hockm0bm
  * consolidatePageList method added to CPdf
  *
@@ -33,7 +37,7 @@ using namespace std;
 using namespace debug;
 
 
-// TODO also for rest of simple objects
+// TODO exceptions unification
 
 namespace pdfobjects
 {
@@ -113,16 +117,14 @@ boost::shared_ptr<IProperty> findPage(CPdf & pdf, boost::shared_ptr<IProperty> p
 	if(type==pRef)
 	{
 		printDbg(DBG_DBG, "pagesDict is reference");
-		IndiRef ref;
-		IProperty::getSmartCObjectPtr<CRef>(pagesDict)->getPropertyValue(ref);
-		shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
-		if(indirect_ptr->getType() != pDict)
+		try
 		{
-			printDbg(DBG_ERR, "target (indirect) object is not dictionary type="<< indirect_ptr->getType());
+			dict_ptr=getDictFromRef(pagesDict);
+		}catch(ElementBadTypeException & e)
+		{
 			// malformed pdf
-			throw ElementBadTypeException("pagesDict");
+			throw MalformedFormatExeption("Reference target is not dictionary");
 		}
-		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
 	}else
 	{
 		if(type!=pDict)
@@ -195,17 +197,15 @@ boost::shared_ptr<IProperty> findPage(CPdf & pdf, boost::shared_ptr<IProperty> p
 
 			// we have to dereference and indirect object has to be dictionary
 			// child_ptr finally contains this dictionary
-			shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(*i);
-			IndiRef ref;
-			ref_ptr->getPropertyValue(ref);
-			shared_ptr<IProperty> target_ptr=pdf.getIndirectProperty(ref);
-			if(target_ptr->getType() != pDict)
+			shared_ptr<CDict> child_ptr; 
+			try
 			{
-				// malformed pdf
-				printDbg(DBG_ERR, "Dereferenced kid must be dictionary");
-				throw ElementBadTypeException(""+index);
+				child_ptr=getDictFromRef(*i);
+			}catch(ElementBadTypeException & e)
+			{
+				// target is not an dictionary
+				throw MalformedFormatExeption("Kid target is not dictionary");
 			}
-			shared_ptr<CDict> child_ptr=IProperty::getSmartCObjectPtr<CDict>(target_ptr);
 
 			// we can have page or pages dictionary in child_ptr
 			// Type field determine kind of node
@@ -822,10 +822,10 @@ using namespace utils;
 
 	// page is not available in pageList, searching has to be done
 	// gets Pages field from document catalog (no special checking has to be
-	// done, because everithing is done in getPageCount method).
+	// done, because everything is done in getPageCount method).
+	shared_ptr<CRef> rootPages_ptr=IProperty::getSmartCObjectPtr<CRef>(docCatalog->getPropertyValue("/Pages"));
 	// find throws an exception if any problem found, otherwise pageDict_ptr
 	// contians Page dictionary at specified position.
-	shared_ptr<CRef> rootPages_ptr=IProperty::getSmartCObjectPtr<CRef>(docCatalog->getPropertyValue("/Pages"));
 	shared_ptr<CDict> pageDict_ptr=IProperty::getSmartCObjectPtr<CDict>(findPage(*this, rootPages_ptr, 1, pos));
 
 	// creates CPage instance from page dictionary and stores it to the pageList
@@ -843,29 +843,9 @@ using namespace utils;
 	// gets Pages field from document catalog
 	shared_ptr<IProperty> pages_ptr=docCatalog->getPropertyValue("/Pages");
 	
-	// pages_ptr must be refenerence according PDF specification
-	if(pages_ptr->getType()!=pRef)
-	{
-		printDbg(DBG_CRIT, "Pages entry has not required reference type");
-		throw MalformedFormatExeption("Pages field is not reference");
-	}
-
-	// gets reference number and its indirect object
-	IndiRef ref;
-	IProperty::getSmartCObjectPtr<CRef>(pages_ptr)->getPropertyValue(ref);
-	pages_ptr=getIndirectProperty(ref);
-	
-	// if pages_ptr is not CDict instance, PDF is corrupted and exception is
-	// thrown
-	if(pages_ptr->getType()!=pDict)
-	{
-		printDbg(DBG_CRIT, "Pages indirect object is not dictionary type="<<pages_ptr->getType());
-		throw MalformedFormatExeption("Pages field is not dictionary");
-	}
-
 	// gets type of the dictionary and find out if it is Page node or
 	// intermediate node
-	shared_ptr<CDict> dict_ptr=IProperty::getSmartCObjectPtr<CDict>(pages_ptr);
+	shared_ptr<CDict> dict_ptr=getDictFromRef(pages_ptr);
 	string dictType=getNameFromDict("/Type", dict_ptr);
 	if(dictType=="/Page")
 	{
@@ -948,21 +928,21 @@ using namespace utils;
 	// correction for all pages affected by this subtree change
 	int difference=0;
 
+	// position of first page which has to be consolidated because of value
+	// change
+	size_t minPos=0;
+
 	// handles original value - one before change
+	// pNull means no previous value available (new sub tree has been added)
 	if(oldValue->getType()!=pNull)
 	{
-		// gets reference and dereference its value
-		IndiRef ref;
-		IProperty::getSmartCObjectPtr<CRef>(oldValue)->getPropertyValue(ref);
-		shared_ptr<IProperty> oldProp_ptr=getIndirectProperty(ref);
-	
 		// gets dictionary type - it has to be page or pages node
-		shared_ptr<CDict> oldDict_ptr=IProperty::getSmartCObjectPtr<CDict>(oldProp_ptr);
+		shared_ptr<CDict> oldDict_ptr=getDictFromRef(oldValue);
 		string oldDictType=getNameFromDict("/Type", oldDict_ptr);
 
 		// simple page is compared with all from pageList and if found, removes
 		// it from list and invalidates it.
-		// Difference is set to - 1, because one page is removed
+		// Difference is set to - 1, because one page is removed 
 		if(oldDictType=="/Page")
 		{
 			difference = -1;
@@ -990,31 +970,42 @@ using namespace utils;
 			{
 				difference = -getIntFromDict("/Count", oldDict_ptr);
 
+				// gets reference of oldValue - which is the root removed
+				// subtree
+				IndiRef ref;
+				IProperty::getSmartCObjectPtr<CRef>(oldValue)->getPropertyValue(ref);
+				
 				PageList::iterator i;
 				for(i=pageList.begin(); i!=pageList.end(); i++)
 				{
 					// checks page's dictionary whether it is in oldDict_ptr sub
 					// tree and if so removes it from pageList
 					if(isDescendant(*this, ref, i->second->getDictionary()))
+					{
+						// updates minPos with page position (if greater)
+						// +1 is added to keep idea of minimal position of first
+						// page which has to be consolidated
+						if(i->first+1 > minPos)
+							minPos=i->first+1;
+						
 						pageList.erase(i);
+					}
 				}
 			}
 		}
 	}
 
+	// oldValue subtree (if any) is consolidated now
+
 	// number of added pages by newValue tree
 	int pagesCount=0;
 	
 	// handles new value - one after change
+	// if pNull - no new value is available (subtree has been removed)
 	if(newValue->getType()!=pNull)
 	{
-		// dereference object and gets dictionary 
-		IndiRef ref;
-		IProperty::getSmartCObjectPtr<CRef>(newValue)->getPropertyValue(ref);
-		shared_ptr<IProperty> newProp_ptr=getIndirectProperty(ref);
-
 		// gets dictionary type
-		shared_ptr<CDict> newDict_ptr=IProperty::getSmartCObjectPtr<CDict>(newProp_ptr);
+		shared_ptr<CDict> newDict_ptr=getDictFromRef(newValue);
 		string newDictType=getNameFromDict("/Type", newDict_ptr);
 
 		// page type adds only one page
@@ -1024,40 +1015,124 @@ using namespace utils;
 		// pages type adds /Count pages
 		if(newDictType=="/Pages")
 			pagesCount=getIntFromDict("/Count", newDict_ptr);
-		
+
+		// gets position of this node and adds number of pages under this
+		// subtree to find out which pages has to be consolidated
+		minPos = getNodePosition(*this, newValue) + pagesCount;
 	}
 
 	// corrects difference with added pages
 	difference -= pagesCount;
 
 	// no difference means no speacial handling for other pages
+	// we have replaced old sub tree with new subtree with same number of pages
 	if(difference==0)
 		return;
 
-	// all pages from oldValue tree are removed from pageList now
-	// TODO what if difference<0 && newValue==CNull what to consolidate?
-
-	// gets minimum page position of newValue and adds pagesCount. All pages
-	// behind this position has to be removed and readded with changes position
-	// (with difference added)
-	size_t minPos = getNodePosition(*this, newValue) + pagesCount;
+	// minPos contains first position of page which has to be consolidated (if 
+	// it is in the list). 
 	PageList::iterator i;
-	vector<pair<size_t, shared_ptr<CPage> > > readdContainer;
+	PageList readdContainer;
 	for(i=pageList.begin(); i!=pageList.end(); i++)
 	{
 		// all pages >= minPos are removed and readded
 		if(i->first >= minPos)
 		{
 			// collects all removed
-			readdContainer.push_back(pair<size_t, shared_ptr<CPage> >(i->first, i->second));	
+			readdContainer.insert(PageList::value_type(i->first, i->second));	
 			pageList.erase(i);
 		}
 	}
 	
+	// checks minPos==0 and if so, we have to handle situation special way,
+	// because don't have any information about previous position of oldValue
+	// subtree. In such case all pages which should be readded are searched in
+	// page tree and actual position is used.
+	if(!minPos)
+	{
+		for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
+		{
+			// uses getNodePosition for each page's dictionary to find out
+			// current position
+			size_t pos=getNodePosition(*this, i->second->getDictionary());
+			pageList.insert(PageList::value_type(pos, i->second));	
+		}
+		return;
+	}
+	
+	// Information about page numbers which should be consolidated is available
+	// so just adds difference for each in readdContainer
 	// readds all removed with changed position (according difference)
-	vector<pair<size_t, shared_ptr<CPage> > >::iterator j;
-	for(j=readdContainer.begin(); j!=readdContainer.end(); j++)
-		pageList.insert(pair<size_t, shared_ptr<CPage> >(j->first+difference, j->second));	
+	for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
+		pageList.insert(PageList::value_type(i->first+difference, i->second));	
+}
+
+
+void CPdf::consolidatePageTree(boost::shared_ptr<CDict> interNode)
+{
+using namespace utils;
+
+	shared_ptr<IProperty> kidsArrayProp_ptr=interNode->getPropertyValue("/Kids");
+	if(kidsArrayProp_ptr->getType()!=pArray)
+	{
+		// Kids field value must be aray
+		throw ElementBadTypeException("/Kids");
+	}
+
+	// gets all children from array
+	shared_ptr<CArray> kidsArray_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsArrayProp_ptr);
+	vector<shared_ptr<IProperty> > kidsContainer;
+	kidsArray_ptr->_getAllChildObjects(kidsContainer);
+
+	// iterate through all children, dereference all of them and checks
+	// dictionary type. This used to get information about page count under this
+	// node (Page is 1 and Pages is /Count)
+	size_t count=0;
+	vector<shared_ptr<IProperty> >::iterator i;
+	for(i=kidsContainer.begin(); i!=kidsContainer.end(); i++)
+	{
+		if((*i)->getType()!=pRef)
+		{
+			// each element must be reference
+			throw ElementBadTypeException("/Kids");
+		}
+
+		shared_ptr<CDict> kidDict_ptr=getDictFromRef(*i);
+		string dictType=getNameFromDict("/Type", kidDict_ptr);
+		if(dictType=="/Page")
+			count++;
+		if(dictType=="/Pages")
+			count+=getIntFromDict("/Count", kidDict_ptr);
+		
+		// checks parentIProperty::getSmartCObjectPtr<CDict>(kidProp_ptr)
+		try
+		{
+			IndiRef parentRef;
+			parentRef=getRefFromDict("/Parent", kidDict_ptr);
+			if(! (parentRef==interNode->getIndiRef()))
+				kidDict_ptr->setPropertyValue("/Parent", *CRefFactory::getInstance(interNode->getIndiRef()));
+			
+		}catch(exception & e)
+		{
+			// no parent field found or it is not reference
+			// TODO handle in non critical way - correct value
+			throw ElementBadTypeException("/Parent");
+		}
+		// TODO handle bad dictionary type
+
+	}
+
+	// count is collected for this node, sets value and distribute it to all
+	// parents
+	CInt countProp(count);
+	interNode->setPropertyValue("/Count", countProp);
+	
+	// distribute value also to fathers
+	shared_ptr<IProperty> parentRef_ptr=interNode->getPropertyValue("/Parent");
+	shared_ptr<CDict> parentDict_ptr=getDictFromRef(parentRef_ptr);
+
+	// calls recursively
+	consolidatePageTree(parentDict_ptr);
 }
 
 } // end of pdfobjects namespace
