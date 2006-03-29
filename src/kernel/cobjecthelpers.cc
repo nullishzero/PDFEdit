@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/03/29 06:13:43  hockm0bm
+ * getDictFromRef helper method added
+ *
  * Revision 1.1  2006/03/24 17:37:57  hockm0bm
  * new file for helper methods for cobjects
  * in this time only for simple methods from dictionary
@@ -106,6 +109,22 @@ std::string getDictType(boost::shared_ptr<CDict> dict)
 	}
 
 	return std::string();
+}
+
+boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
+{
+	// TODO exception parameters
+	
+	if(refProp->getType()!=pRef)
+		throw ElementBadTypeException("");
+	
+	// gets reference value and dereferences indirect object
+	IndiRef ref;
+	IProperty::getSmartCObjectPtr<CRef>(pagesDict)->getPropertyValue(ref);
+	shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	if(indirect_ptr->getType() != pDict)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
 }
 
 } // end of utils namespace
