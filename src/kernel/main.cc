@@ -1274,21 +1274,10 @@ test_ccontentstream ()
 	p.push_back (i);
 
 	///////// -- construct
-	SimpleGenericOperator<boost::mpl::vector5_c<PropertyType, pInt, pString, pInt, pInt, pInt>, OPER_STR1> example (p);
+	SimpleGenericOperator example ("ADS", 5, p);
 	
-	///////// -- bad construct
-	bool exc = false;
-	try {
-		SimpleGenericOperator<boost::mpl::vector5_c<PropertyType, pInt, pNull, pInt, pInt, pInt>, OPER_STR1> example1 (p);
-	}catch (...)
-	{
-		exc = true;
-	}
-	if (!exc)
-		throw;
-
 	///////// -- bad function usage
-	exc = false;
+	bool exc = false;
 	try {
 			
 		example.push_back (boost::shared_ptr<PdfOperator> ());

@@ -16,13 +16,17 @@
 #include "../utils/iterator.h"
 
 // IProperty
-#include "iproperty.h"
+//#include "iproperty.h"
 
 
 //==========================================================
 namespace pdfobjects {
 //==========================================================
 
+//
+// Forward declaration
+//
+class IProperty;
 		
 //==========================================================
 // PdfOperator
@@ -259,59 +263,12 @@ public:
 //==========================================================
 
 /**
- * Generic function to check if operands are really the same type
- * as we want.
- *
- * It is evaluated till Position is 0. Partial template specialization
- * is used here.
- */
-template<typename TLIST, typename ITERATOR, int Position>
-struct CheckOperatorTypes
-{
-	void operator() (ITERATOR it, ITERATOR end)
-	{
-		// Check if we are still in the array
-		if (it == end)
-			throw OutOfRange ();
-
-		// Store iterator
-		ITERATOR itOld = it;
-
-		// Increment the iterator
-		++it;
-		
-		// Check lower levels
-		struct CheckOperatorTypes<TLIST, ITERATOR, Position - 1> check;
-		check (it, end);
-
-		// Check the types at this level
-		if (boost::mpl::at<TLIST, boost::mpl::long_<Position - 1> >::type::value != (*itOld)->getType ())
-			throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
-	}
-};
-//
-// Partial specialization of the function
-//
-template<typename TLIST, typename ITERATOR>
-struct CheckOperatorTypes<TLIST, ITERATOR, 0>
-{
-	void operator() (ITERATOR, ITERATOR) {}
-};
-
-
-/**
- * A very advanced c++ template technique is used here to construct SimpleGenericOperator.
- *
- * It is called metaprogramming (special Typelists), firstly designed in Loki (perhaps). It is pure compile
- * time business.
- *
  * Almost all simple operators will be constructed by specifying types of operands and the
  * text representation of the operator. 
  *
  * <cref exception="MalformedFormatExeption"> Thrown when the operands do not match the specification.
  * 
  */
-template<typename TYPES, const char* OPSTRING>
 class SimpleGenericOperator : public PdfOperator
 {
 private:
@@ -332,41 +289,17 @@ public:
 	 * @param opers This is a stack of operands from which we take number specified
 	 * 				by template parameter.
 	 */
-	SimpleGenericOperator (Operands& opers) : opText (OPSTRING)
+	SimpleGenericOperator (const char* opTxt, const unsigned int numOper, Operands& opers) : opText (opTxt)
 	{
-		STATIC_CHECK ((boost::mpl::size<TYPES>::value >= 0), SMALL_TYPES_COUNT);
-		printDbg (debug::DBG_DBG, "Operator [" << OPSTRING << "] Operator size: " << opers.size());
-
-		//
-		// We will traverse from back and compare the type of the template parameter at appropriate position 
-		// with the type of last operand
-		//
-		Operands::reverse_iterator first = opers.rbegin ();
-		Operands::reverse_iterator end = opers.rend ();
-		// Compare it to what we expect
-		struct CheckOperatorTypes<TYPES, Operands::reverse_iterator, boost::mpl::size<TYPES>::value> check;
-		try {
-
-			check (first, end);
-			
-		}catch (OutOfRange&)
-		{	// Bad argument count
-				
-			//throw MalformedFormatExeption ("Incorrect content stream operator count.");
-			return;
-			
-		}catch (MalformedFormatExeption&)
-		{	// Types do not match
-				
-			//throw MalformedFormatExeption ("Content stream operator has incorrect operands.");
-			return;
-
-		}
+		printDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
+		assert (opers.size() == numOper);
+		if (numOper != opers.size())
+			throw MalformedFormatExeption ("Operator operand size mismatch.");
 
 		//
 		// Store the operands and remove it from the stack
 		//
-		for (int i = 0; i < boost::mpl::size<TYPES>::value; ++i)
+		for (size_t i = 0; i < numOper; ++i)
 		{
 			Operands::value_type val = opers.back ();
 			// Store the last element of input parameter
@@ -382,10 +315,7 @@ public:
 public:
 
 	virtual size_t getParametersCount () const
-	{
-		// assert ((int)boost::mpl::size<TYPES>::value == operands.size());
-		return boost::mpl::size<TYPES>::value;
-	};
+		{ return operands.size (); };
 
 	virtual void getParameters (IPContainer& container) const
 		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
