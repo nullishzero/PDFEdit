@@ -40,7 +40,7 @@ _KPATH = ../kernel
 _ONELIBK = cobject.o
 
 exists( $${_KPATH}/$${_ONELIBK} ) {
- LIBS += $$system( find $$_KPATH -name "[^m]*.o" )
+ LIBS += $$system( find $$_KPATH -name "*.o" |grep -v main.o )
 }else{
  error( "You do not have kernel compiled. (../kernel/*.o)" )
 }
