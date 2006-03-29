@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/03/29 06:18:37  hockm0bm
+ * syntax error corrected in getDictFromRef
+ *
  * Revision 1.2  2006/03/29 06:13:43  hockm0bm
  * getDictFromRef helper method added
  *
@@ -120,8 +123,8 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
 	
 	// gets reference value and dereferences indirect object
 	IndiRef ref;
-	IProperty::getSmartCObjectPtr<CRef>(pagesDict)->getPropertyValue(ref);
-	shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	IProperty::getSmartCObjectPtr<CRef>(refProp)->getPropertyValue(ref);
+	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pDict)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
