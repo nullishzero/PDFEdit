@@ -163,24 +163,6 @@ public:
 		prev = prv; 
 	};
 	
-private:
-	
-	/**
-	 * Get previous item in a list that is implemented by PdfOperator.
-	 * It is the same as linked list.
-	 *
-	 * @return Previous item.
-	 */
-	ListItem _next () const {return next;};
-	
-	/**
-	 * Get next item in a list that is implemented by PdfOperator.
-	 * It is the same as linked list.
-	 *
-	 * @return Next item.
-	 */
-	ListItem _prev () const {return prev;};
-
 	/**
 	 * Put behind this object.
 	 *
@@ -200,7 +182,25 @@ private:
 			next = beh;
 			beh->setPrev (ListItem (this)); 
 		}
-	};
+	};	
+private:
+	
+	/**
+	 * Get previous item in a list that is implemented by PdfOperator.
+	 * It is the same as linked list.
+	 *
+	 * @return Previous item.
+	 */
+	ListItem _next () const {return next;};
+	
+	/**
+	 * Get next item in a list that is implemented by PdfOperator.
+	 * It is the same as linked list.
+	 *
+	 * @return Next item.
+	 */
+	ListItem _prev () const {return prev;};
+
 };
 
 
