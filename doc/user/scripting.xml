@@ -70,6 +70,16 @@
    Debugging function usable by script developers.
    Print all variables that are in current script interpreter to command window
   </para>
+  <para>
+   <title><funcsynopsys> void saveWindowState();</funcsynopsys></title>
+   Save state of current editor window (size and position of window and size of elements inside it)
+   State is saved to editor's configuration file.
+  </para>
+  <para>
+   <title><funcsynopsys> void restoreWindowState();</funcsynopsys></title>
+   Restore state of current editor window (size and position of window and size of elements inside it)
+   State is restored frmo state saved in editor's configuration file.   
+  </para>
  </chapter>
  <chapter>
   <title>Objects exported to scripting</title>
