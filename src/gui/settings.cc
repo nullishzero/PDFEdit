@@ -7,6 +7,7 @@
 #include <utils/debug.h>
 #include <iostream>
 #include <qfile.h>
+#include <qvaluelist.h> 
 #include <qdir.h>
 #include "settings.h"
 #include "util.h"
@@ -119,6 +120,39 @@ void Settings::restoreWindow(QWidget *win,const QString name) {
  if (y>dh-1) x=dh-1; //Offscreen -> Onscreen
  win->resize(w,h);
  win->move(x,y);
+}
+
+/** Save splitter positions  to settings.
+ @param spl Splitter to save positions
+ @param name Name of key to be used in configuration */  
+void Settings::saveSplitter(QSplitter *spl,const QString name) {
+ printDbg(debug::DBG_DBG,"save splitter " << name);
+ QValueList<int> siz=spl->sizes();
+ QString line;
+ int cnt=siz.size();
+ for (int i=0;i<cnt;i++) {
+  line+=QString::number(siz[i]);
+  if (i<cnt-1) line+=",";
+ }
+ set->writeEntry(APP_KEY+"gui/windowstate/"+name,line);  
+}
+
+/** Restore splitter positions from setting.
+ @param spl Splitter to be resized
+ @param name Name of key to be used in configuration */
+void Settings::restoreSplitter(QSplitter *spl,const QString name) {
+ printDbg(debug::DBG_DBG,"restore splitter " << name);
+ QString line=set->readEntry(APP_KEY+"gui/windowstate/"+name);
+ QStringList pos=explode(',',line);
+ int cnt=pos.count();
+ QValueList<int> splSize;
+ if (cnt<2) return;//No previous window state information available, or it is invalid
+ for(int i=0;i<cnt;i++) {
+  int v=atoi(pos[i]);
+  if (v<=0) return;//Negative/null size is invalid
+  splSize.append(v);
+ }
+ spl->setSizes(splSize);
 }
 
 

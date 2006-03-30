@@ -23,9 +23,9 @@ class PdfEditWindow : public QMainWindow {
 public:
  PdfEditWindow(QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
+public slots: //These will be exported to scripting
  void saveWindowState();
  void restoreWindowState();
-public slots: //These will be exported to scripting
  void about();
  void createNewWindow(); 
  void exitApp();
@@ -54,10 +54,16 @@ private:
  QSInterpreter *qs;
  /** Edited PDF document */
  CPdf *document;
- /** QObject wrapper around CPdf (document) that is exposed to scripting */
+ /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;
  /** QSObject Importer */
  QSImporter *import;
+ /** Horizontal splitter between (Preview + Commandline) and (Treeview + Property editor) */
+ QSplitter *spl;
+ /** Vertical splitter between command line and preview window */
+ QSplitter *splCmd;
+ /** Vertical splitter between treeview and property editor */
+ QSplitter *splProp;
 };
 
 void createNewEditorWindow();

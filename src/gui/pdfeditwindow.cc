@@ -67,28 +67,26 @@ void PdfEditWindow::closeWindow() {
 /** Saves window state to application settings*/
 void PdfEditWindow::saveWindowState() {
  globalSettings->saveWindow(this,"main"); 
+ globalSettings->saveSplitter(spl,"spl_main"); 
+ globalSettings->saveSplitter(splProp,"spl_right"); 
+ globalSettings->saveSplitter(splCmd,"spl_left"); 
 }
 
 /** Restores window state from application settings */
 void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreWindow(this,"main"); 
+ globalSettings->restoreSplitter(spl,"spl_main"); 
+ globalSettings->restoreSplitter(splProp,"spl_right"); 
+ globalSettings->restoreSplitter(splCmd,"spl_left"); 
 }
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
 void PdfEditWindow::addDocumentObjects() {
- qpdf=new QSPdf(document);
-// qpdf->setName("currentDocument");
- import->addQSObj(qpdf,"currentDocument");
- //TODO: problem: all functions loaded from initscript are deleted by addObject,
- //               addObject clear QSInterpreter state
-// qp->addObject(qpdf);
  //todo: Add also currentPage, currentObject
 }
 
 /** Removes all QSCObject descendants from scripting and destroys them */
 void PdfEditWindow::removeDocumentObjects() {
-// qp->removeObject(qpdf);
- delete qpdf;
  //todo: run garbage collector, remove any QSCObject descendants created for this window
 }
 
@@ -151,10 +149,10 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  setCaption(APP_NAME);
  
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
- QSplitter *spl=new QSplitter(this);
+ spl=new QSplitter(this);
 
  //Splitter between command line and preview window
- QSplitter *splCmd=new QSplitter(spl);
+ splCmd=new QSplitter(spl);
  splCmd->setOrientation(Vertical);
 
 
@@ -172,7 +170,7 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
 // cmdLine->show();
 
  //Splitter between treeview and property editor
- QSplitter *splProp=new QSplitter(spl);
+ splProp=new QSplitter(spl);
  splProp->setOrientation(Vertical);
 
  //object treeview
@@ -196,7 +194,7 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  }
    
  //show splitter
- spl->show();
+// spl->show();
 
  //Script must be run AFTER creating all widgets
  // -> script may need them, especially the command window
@@ -228,6 +226,9 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  //create testing document
 // document=CPdf::getInstance("../../doc/zadani.pdf",CPdf::ReadWrite);
  //document=test::testPDF();
+ qpdf=new QSPdf(document);
+ import->addQSObj(qpdf,"document");
+
  tree->init((IProperty*)NULL);
 // tree->init(document);//not yet implemented in kernel
  prop->setObject(0);//fill with demonstration properties
@@ -262,6 +263,8 @@ void PdfEditWindow::variables() {
 
 /** default destructor */
 PdfEditWindow::~PdfEditWindow() {
+ delete qpdf;
+ //todo: save/close document
  /* stopExecution is not in QSA 1.0.1, need 1.1.4
  if (qs->isRunning()) {
   qs->stopExecution()

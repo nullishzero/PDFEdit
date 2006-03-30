@@ -3,6 +3,7 @@
 #include "config.h"
 #include <qapplication.h>
 #include <qsettings.h>
+#include <qsplitter.h>
 #include <qmenudata.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -28,6 +29,8 @@ public:
  ToolBarList loadToolBars(QMainWindow *parent);
  void saveWindow(QWidget *win,const QString name); 
  void restoreWindow(QWidget *win,const QString name);
+ void saveSplitter(QSplitter *spl,const QString name);
+ void restoreSplitter(QSplitter *spl,const QString name);
 public slots:
  QString read(const QString &key);
 private:
