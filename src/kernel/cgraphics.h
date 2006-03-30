@@ -31,7 +31,7 @@ class CGraphic : public CDict {
 //  void add_ellipse (CGraphic&, ...);
 //  void add_polygon (CGraphic&, ...);
 
-}
+};
 
 
 #endif // __CGRAPHICS_H__
