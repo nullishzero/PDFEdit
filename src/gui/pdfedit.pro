@@ -16,8 +16,8 @@ QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 QMAKE_CXXFLAGS += -g
 
 #Widget classes
-HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h commandwindow.h treewindow.h 
-SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc 
+HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h commandwindow.h treewindow.h pagespace.h pageview.h
+SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc pagespace.cc pageview.cc
 
 #Non-widget classes
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h

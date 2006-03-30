@@ -1,6 +1,7 @@
 /** @file
  PdfEditWindow - class representing main application window
 */
+#include "pagespace.h"
 #include <utils/debug.h>
 #include "pdfeditwindow.h"
 #include "settings.h"
@@ -156,11 +157,8 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  splCmd->setOrientation(Vertical);
 
 
- //Button QUIT -> will be replaced with preview window once completed
- QPushButton *quit=new QPushButton(tr("Quit"), splCmd);
- quit->resize(75, 30);
- quit->setFont(QFont("Times", 18, QFont::Bold));
- QObject::connect(quit, SIGNAL(clicked()), this, SLOT(exitApp()));
+ //PageSpace
+ PageSpace *pagespc = new PageSpace(splCmd,"PageSpace");
 
  //Commandline
  cmdLine=new CommandWindow(splCmd);
