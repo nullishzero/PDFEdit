@@ -380,7 +380,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 
 	//
 	// BEWARE using std::find_if with stateful functors !!!!!
-	// We could have used getPropertyValue but we also need the iterator
+	// We could have used getProperty but we also need the iterator
 	//
 	IndexComparator cmp (id);
 	typename Value::iterator it = value.begin();
@@ -419,13 +419,46 @@ CObjectComplex<Tp,Checker>::addProperty (const IProperty& newIp)
 	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
 	printDbg (debug::DBG_DBG,"addProperty(...)");
 
+	return addProperty (value.size(), newIp);
+}
+
+//
+// Correctly to add an object (without name) can be done only to Array object
+//
+// REMARK: because of the compiler, we can't put PropertyId here
+//
+template<PropertyType Tp, typename Checker>
+boost::shared_ptr<IProperty>
+CObjectComplex<Tp,Checker>::addProperty (size_t id, const IProperty& newIp)
+{
+	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
+	printDbg (debug::DBG_DBG,"addProperty(" << id << ")");
+
+	//
+	// Check if we add to a valid position
+	//
+	if (id > value.size())
+		throw CObjInvalidOperation ();
+	
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
 	
 	if (newIpClone)
 	{
-		// Add it
-		value.push_back (newIpClone);
+		typename Value::iterator it;
+		// Find the correct position
+		if (value.size() == id)
+		{
+			it = value.end ();
+			
+		}else
+		{
+			for (it = value.begin(); 0 != id; ++it, --id)
+				;
+		}
+
+		// Insert it
+		value.insert (inserter(value,it), newIpClone);
 	
 		// Inherit id and gen number
 		newIpClone->setIndiRef (IProperty::getIndiRef());
@@ -487,9 +520,9 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 //
 template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
-CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
+CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 {
-	printDbg (debug::DBG_DBG,"setPropertyValue(" << id << ")");
+	printDbg (debug::DBG_DBG,"setProperty(" << id << ")");
 	
 	//
 	// Find the item we want
@@ -533,9 +566,9 @@ CObjectComplex<Tp,Checker>::setPropertyValue (PropertyId id, IProperty& newIp)
 //
 template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
-CObjectComplex<Tp,Checker>::getPropertyValue (PropertyId id) const
+CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 {
-	printDbg (debug::DBG_DBG,"getPropertyValue() " << id);
+	printDbg (debug::DBG_DBG,"getProperty() " << id);
 
 	//
 	// BEWARE using std::find_if with stateful functors !!!!!

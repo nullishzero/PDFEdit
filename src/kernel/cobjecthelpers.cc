@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/03/30 23:22:57  misuj1am
+ *
+ *
+ * -- CObjectComplex : get/set PropertyValue -> get/set Property
+ * -- ADD: addProperty (size_t position, IProperty)
+ *
  * Revision 1.3  2006/03/29 06:18:37  hockm0bm
  * syntax error corrected in getDictFromRef
  *
@@ -32,7 +38,7 @@ int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
 	using namespace boost;
 
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
+	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
 	if(prop_ptr->getType() != pInt)
 	{
 		// malformed dictionary
@@ -50,7 +56,7 @@ IndiRef getRefFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
 	using namespace boost;
 
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
+	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
 	if(prop_ptr->getType() != pRef)
 	{
 		// malformed dictionary
@@ -68,7 +74,7 @@ std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
 	using namespace boost;
 
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
+	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
 	if(prop_ptr->getType() != pString)
 	{
 		// malformed dictionary
@@ -86,7 +92,7 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
 	using namespace boost;
 
-	shared_ptr<IProperty> prop_ptr=dict->getPropertyValue(name);	
+	shared_ptr<IProperty> prop_ptr=dict->getProperty(name);	
 	if(prop_ptr->getType() != pName)
 	{
 		// malformed dictionary

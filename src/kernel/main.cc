@@ -782,9 +782,9 @@ c_smrt ()
 
 		OUTPUT << dict;
 		
-		boost::shared_ptr<IProperty> ipp1 = dict.getPropertyValue ("item3");
-		boost::shared_ptr<IProperty> ipp2 = dict.getPropertyValue ("item4");
-		boost::shared_ptr<IProperty> ipp3 = dict.getPropertyValue ("item5");
+		boost::shared_ptr<IProperty> ipp1 = dict.getProperty ("item3");
+		boost::shared_ptr<IProperty> ipp2 = dict.getProperty ("item4");
+		boost::shared_ptr<IProperty> ipp3 = dict.getProperty ("item5");
 }
 
 //=====================================================================================
@@ -1022,7 +1022,7 @@ c_getType ()
 	makeArTest1 (arTest1);
 	for (size_t i = 0; i < arTest1.getPropertyCount (); ++i)
 	{
-		boost::shared_ptr<IProperty> ip = arTest1.getPropertyValue (i);
+		boost::shared_ptr<IProperty> ip = arTest1.getProperty (i);
 		ip_validate (arTest1.getPropertyType (i), ip->getType ());
 	}
 	
@@ -1034,7 +1034,7 @@ c_getType ()
 	
 	for (vector<string>::iterator it = names.begin(); it != names.end(); ++it)
 	{
-		boost::shared_ptr<IProperty> ip = dcTest1.getPropertyValue (*it);
+		boost::shared_ptr<IProperty> ip = dcTest1.getProperty (*it);
 		ip_validate (dcTest1.getPropertyType (*it), ip->getType ());
 	}
 
@@ -1395,6 +1395,8 @@ contentStream (ostream& oss, const char* fileName)
 		string tmp;
 		cc.getStringRepresentation (tmp);
 		oss << "String representation: " << tmp;
+
+		obj.free ();
 
 }
 //=====================================================================================

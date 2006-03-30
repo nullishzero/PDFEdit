@@ -37,7 +37,7 @@ namespace
 	// Bit helper function
 	//
 	template<class T, class U>
-	inline bool isAnyBitSet(T value, U mask)
+	inline bool isBitSet(T value, U mask)
 		{ return (value & ((unsigned short)0x1 << mask)) != 0;}
 
 	inline unsigned short setNoneBitsShort()
@@ -247,7 +247,7 @@ namespace
 		for (size_t i = 0; i < ops.argNum; ++i, --j)
 		{			
 			assert (j >= 0);
-  			if (!isAnyBitSet(ops.types[j], (*it)->getType()))
+  			if (!isBitSet(ops.types[j], (*it)->getType()))
 			{
 				printDbg (DBG_ERR, "Bad " << i << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[i]);
 				return false;
@@ -270,7 +270,7 @@ namespace
 	 * @return Created pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (const string& op, PdfOperator::Operands& operands)
+	createOp (const string& op, PdfOperator::Operands& operands, PdfOperator* )
 	{
 		printDbg (DBG_DBG, "Finding operator: " << op);
 
@@ -310,61 +310,124 @@ namespace
 			// Result in lo
 			return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator 
 				(KNOWN_OPERATORS[lo].name, KNOWN_OPERATORS[lo].argNum, operands));
+		//
+		// \TODO complex types
+		//
 	}	
 
+	//
+	// Parse the stream into small objects
+	// 
+	void
+	parseContentStream (CContentStream::Operators& operators, Object* obj)
+	{
+		assert (obj->isStream() || obj->isArray());
+		
+		//
+		// Create the parser and lexer and get objects from it
+		//
+		scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, obj)));
+
+		PdfOperator::Operands operands;
+			
+		Object o;
+		parser->getObj(&o);
+
+		PdfOperator* cmplex = NULL;
+		//
+		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
+		//
+		while (!o.isEOF()) 
+		{
+			if (o.isCmd ())
+			{
+				// Create operator
+				boost::shared_ptr<PdfOperator> op =  createOp (string (o.getCmd ()), operands, cmplex);
+				//
+				// Put it either to operators or if it is a complex type, put it there
+				//
+				if (NULL == cmplex || cmplex == op.get())
+				{
+					if (!operators.empty())
+					{
+						operators.back ()->setNext (op);
+						op->setPrev (operators.back ());
+					}
+					// Make it the last one
+					operators.push_back (op);
+				
+				}else
+				{
+					cmplex->putBehind (op);
+				}
+				
+				assert (operands.empty());
+				if (!operands.empty ())
+					throw MalformedFormatExeption ("CContentStream::CContentStream() Operands left on stack in pdf content stream after operator.");
+					
+			}else
+			{
+				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
+				operands.push_back (pIp);
+			}
+
+			// free it else memory leak
+			o.free ();
+			// grab the next object
+			parser->getObj(&o);
+		}
+	}
+	
+
+
+	
 //==========================================================
 } // namespace
 //==========================================================
 
 
+//
+//
+//
+CContentStream::CContentStream (shared_ptr<IProperty> stream, Object* obj)
+{
+	// not implemented yet
+	assert (obj != NULL);
+	if (pStream != stream->getType())
+		throw CObjInvalidObject (); 
+	
+	contentstreams.push_back (stream);
 
+	//
+	// \TODO Set Pdf and Indiref to operators
+	//
+	
+	// Parse it into small objects
+	parseContentStream (operators, obj);
+
+}
 
 //
 // Parse the xpdf object, representing the content stream
 //
-CContentStream::CContentStream (shared_ptr<IProperty> stream, Object* obj) : contentstream (stream)
+CContentStream::CContentStream (ContentStreams& streams, Object* obj)
 {
 	// not implemented yet
 	assert (obj != NULL);
-
 	printDbg (DBG_DBG, "Creating content stream.");
-	
-	//
-	// Create the parser and lexer and get objects from it
-	//
-	scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, obj)));
+	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
+		if (pStream != (*it)->getType())
+			throw CObjInvalidObject (); 
 
-	PdfOperator::Operands operands;
-	
-	Object o;
-	parser->getObj(&o);
+	// Save content streams
+	copy (streams.begin(), streams.end(), back_inserter (contentstreams));
 
 	//
-	// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
+	// \TODO Set Pdf and Indiref to operators
 	//
-	while (!o.isEOF()) 
-	{
-		if (o.isCmd ())
-		{
-			// Create operator
-			operators.push_back (createOp (string (o.getCmd ()), operands));
-			
-			assert (operands.empty());
-			if (!operands.empty ())
-				throw MalformedFormatExeption ("CContentStream::CContentStream() Operands left on stack in pdf content stream after operator.");
-				
-		}else
-		{
-			shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
-			operands.push_back (pIp);
-		}
 
-		// free it else memory leak
-		o.free ();
-		// grab the next object
-		parser->getObj(&o);
-	}
-	
+	// Parse it into small objects
+	parseContentStream (operators, obj);	
 }
 
 //

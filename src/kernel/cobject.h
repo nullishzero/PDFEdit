@@ -13,7 +13,7 @@
  *						i think that i have won at last...
  *			2006/02/20	changed constructor, addProperty has to be more clever
  *						getStringRepresentation,writeValue,release finished
- *			2006/02/21	changed getPropertyValue to non - template, bacause we can't partially specialize member functions
+ *			2006/02/21	changed getProperty to non - template, bacause we can't partially specialize member functions
  *					also the way of passing return from return value to function argument, because
  *						* do not want to alloc something in kernel and dealloc elsewhere
  *						* pass by stack copying can be tricky when copying big amounts and we do not know 
@@ -310,7 +310,7 @@ class DictIdxComparator;
 template<PropertyType T> struct PropertyTraitComplex; 
 template<> struct PropertyTraitComplex<pArray>	
 {	 
-		typedef std::vector<boost::shared_ptr<IProperty> > value; 
+		typedef std::list<boost::shared_ptr<IProperty> > value; 
 		typedef const std::string& 			writeType; 
 		typedef unsigned int	 			propertyId;
 		typedef class ArrayIdxComparator	indexComparator;
@@ -493,7 +493,7 @@ public:
    	 * @param 	id 	Variable identifying position of the property.
 	 * @return	Variable where the value will be stored.
    	 */
-	boost::shared_ptr<IProperty> getPropertyValue (PropertyId id) const;
+	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
 
 	
 	/**
@@ -505,7 +505,7 @@ public:
 	 * @return		Property type.	
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
-		{return getPropertyValue(id)->getType();};
+		{return getProperty(id)->getType();};
 	
 	
 	/**
@@ -519,7 +519,7 @@ public:
 	 *
 	 * @return Pointer to the new property.
 	 */
-	boost::shared_ptr<IProperty> setPropertyValue (PropertyId id, IProperty& ip);
+	boost::shared_ptr<IProperty> setProperty (PropertyId id, IProperty& ip);
 	
 	/**
 	 * Adds property to array/dict/stream. 
@@ -534,6 +534,7 @@ public:
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
+	boost::shared_ptr<IProperty> addProperty (size_t id, const IProperty& newIp);
 	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, const IProperty& newIp);
 
 	
