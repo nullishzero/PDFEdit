@@ -429,15 +429,15 @@ CObjectComplex<Tp,Checker>::addProperty (const IProperty& newIp)
 //
 template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
-CObjectComplex<Tp,Checker>::addProperty (size_t id, const IProperty& newIp)
+CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
-	printDbg (debug::DBG_DBG,"addProperty(" << id << ")");
+	printDbg (debug::DBG_DBG,"addProperty(" << position << ")");
 
 	//
 	// Check if we add to a valid position
 	//
-	if (id > value.size())
+	if (position > value.size())
 		throw CObjInvalidOperation ();
 	
 	// Clone the added property
@@ -447,13 +447,13 @@ CObjectComplex<Tp,Checker>::addProperty (size_t id, const IProperty& newIp)
 	{
 		typename Value::iterator it;
 		// Find the correct position
-		if (value.size() == id)
+		if (value.size() == position)
 		{
 			it = value.end ();
 			
 		}else
 		{
-			for (it = value.begin(); 0 != id; ++it, --id)
+			for (it = value.begin(); 0 != position; ++it, --position)
 				;
 		}
 
@@ -594,6 +594,26 @@ CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 	return ip;
 }
 
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+size_t 
+CObjectComplex<Tp,Checker>::getPosition (const boost::shared_ptr<IProperty>& ip) const
+{
+	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_getPosition_FUNCTION);
+	printDbg (debug::DBG_DBG,"getPosition()");
+
+	size_t pos = 0;
+	typename Value::const_iterator it = value.begin();
+	for (; it != value.end(); ++it, ++pos)
+	{
+		if ((*it) == ip)
+			return pos;
+	}
+	
+	throw ElementNotFoundException ("","");  
+}
 
 //
 //

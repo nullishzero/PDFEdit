@@ -534,7 +534,7 @@ public:
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
-	boost::shared_ptr<IProperty> addProperty (size_t id, const IProperty& newIp);
+	boost::shared_ptr<IProperty> addProperty (size_t position, const IProperty& newIp);
 	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, const IProperty& newIp);
 
 	
@@ -551,6 +551,12 @@ public:
 	void delProperty (PropertyId id);
 
 
+	/**
+	 * Returns index of a property.
+	 *
+	 * @param ip Object for which we want to find out the position.
+	 */
+	size_t getPosition (const boost::shared_ptr<IProperty>& ip) const;
 
 	//
 	// Helper functions
