@@ -47,3 +47,9 @@ exists( $${_KPATH}/$${_ONELIBK} ) {
 
 include(../kernel/kernel-obj.pro)
 
+#directories to creating files
+unix {
+  UI_DIR = .ui
+  MOC_DIR = .moc
+  OBJECTS_DIR = .obj
+}
