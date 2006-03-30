@@ -6,6 +6,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/03/30 21:29:33  hockm0bm
+ * * findPage renamed to findPageDict
+ *         - return value changed to shared_ptr<CDict>
+ * * TODOs for exceptions unification
+ * * code simplification for dictionary handling
+ *         - using utils::getDictFromRef more often
+ * * printDbg for more methods
+ * * insertPage implemented
+ *
  * Revision 1.19  2006/03/29 06:12:34  hockm0bm
  * consolidatePageTree method added
  * starting to use getPageFromRef
@@ -540,16 +549,7 @@ public:
 	 *
 	 * Adds deep copy of given page before given position.
 	 */
-	CPage * insertPage(const CPage * , size_t )
-	{
-		// find page at given position if pos is pageCount+1 uses pageCount
-		// 	instead
-		// creates deep copy of page dictionary
-		// appends Kids array of found dictionary's parent
-		// consolidate pageList (all pages with pos >=)
-		// add page to the pageList with given pos
-		return NULL;
-	}
+	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
 
 	/** Removes page from given position.
 	 * @param pos Position of the page.
