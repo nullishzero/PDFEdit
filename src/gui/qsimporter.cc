@@ -7,6 +7,9 @@
 
 #include <utils/debug.h>
 #include "qsimporter.h"
+#include "qsdict.h"
+#include "qspage.h"
+#include "qspdf.h"
 
 /** Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated */
 QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
@@ -17,6 +20,34 @@ QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
  //add itself to Project
  qp->addObject(this);
  qs=qp->interpreter();
+}
+
+/** Overloaded factory function to create QSCObjects from various C... classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param dict CDict to wrap into to QSDict
+ @return QSDict(dict)
+ */
+QSCObject* QSImporter::createQSObject(CDict* dict) {
+ return new QSDict(dict);
+}
+
+
+/** Overloaded factory function to create QSCObjects from various C... classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param page CPage (shared_ptr) to wrap into to QSPage
+ @return QSPage(page)
+ */
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
+ return new QSPage(page);
+}
+
+/** Overloaded factory function to create QSCObjects from various C... classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param pdf CPdf to wrap into to QSPdf
+ @return QSPdf(pdf)
+ */
+QSCObject* QSImporter::createQSObject(CPdf* pdf) {
+ return new QSPdf(pdf);
 }
 
 /** Import object into interpreter under specified name

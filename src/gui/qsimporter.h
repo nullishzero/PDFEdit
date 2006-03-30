@@ -5,6 +5,12 @@
 #include <qstring.h>
 #include <qsproject.h>
 #include <qsinterpreter.h>
+#include "qscobject.h"
+#include <cobject.h>
+#include <cpage.h>
+#include <cpdf.h>
+
+using namespace pdfobjects;
 
 class QSImporter : public QObject {
  Q_OBJECT
@@ -12,6 +18,10 @@ public:
  QSImporter(QSProject *_qp,QObject *_context);
  virtual ~QSImporter();
  void addQSObj(QObject *obj,const QString &name);
+ //factory-style functions
+ QSCObject* createQSObject(CDict* dict);
+ QSCObject* createQSObject(boost::shared_ptr<CPage> page);
+ QSCObject* createQSObject(CPdf* pdf);
 public slots:
  QObject* getQSObj();
 private:
