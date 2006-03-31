@@ -1,3 +1,19 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
+
+/*
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.21  2006/03/31 21:14:40  hockm0bm
+ * * file format changed (tabulators - same style)
+ * * CVS header
+ * * main changed to contain only test functions
+ *         - all code from main moved to cobjects_test function
+ *         - added cpdf_tests function for CPdf testing
+ *
+ *
+ */
+
 /*
  * main.cc
  *
@@ -28,7 +44,7 @@
 	#define KOUTPUT		cerr
 	#define OUTPUT_COND	(1==argc)
 #else
-	#define	OUTPUT 		cerr
+	#define	OUTPUT		cerr
 	#define KOUTPUT		cout
 	#define OUTPUT_COND	(1!=argc)
 #endif
@@ -36,14 +52,14 @@
 #define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;
 #define	SWAP_BUFS			{strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
 #define SWAP_BUFS_BACK		{KOUTPUT.rdbuf(strm_buffer);}
-#define KERNEL_OUTPUT 		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;}
+#define KERNEL_OUTPUT		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;}
 #define KERNEL_OUTPUT_BACK	if (OUTPUT_COND) {SWAP_BUFS_BACK;}
 
-#define MEM_CHECK	{BasicMemChecker check;OUTPUT  	<< "OBJECTS UNALLOCATED: " << check.getCount () \
-					 								<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
+#define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS UNALLOCATED: " << check.getCount () \
+													<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
 
-#define TEST(a) 	OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
-#define START_TEST 	OUTPUT << endl << "Started testing..." << endl; KERNEL_OUTPUT;
+#define TEST(a)		OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
+#define START_TEST	OUTPUT << endl << "Started testing..." << endl; KERNEL_OUTPUT;
 #define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
 #define OK_TEST		OUTPUT << "TEST PASSED..." << endl; MEM_CHECK;
 //==========================
@@ -88,12 +104,12 @@ typedef struct
 typedef struct
 {
 	// simple
-	example_item 	b;
-	example_item 	i;
-	example_item 	r;
-	example_item 	s;
+	example_item	b;
+	example_item	i;
+	example_item	r;
+	example_item	s;
 	example_item	n;
-	example_item 	ref;
+	example_item	ref;
 
 	// complex
 	string			arTest1;
@@ -438,13 +454,13 @@ namespace {
 void 
 s_clone ()
 {
-		CNull null;
-		boost::shared_ptr<IProperty> ptr = null.clone ();
+	CNull null;
+	boost::shared_ptr<IProperty> ptr = null.clone ();
 
-		if (ptr)
-			OUTPUT << "null.getType(): " << null.getType () << endl;
-		else 
-			throw;
+	if (ptr)
+		OUTPUT << "null.getType(): " << null.getType () << endl;
+	else 
+		throw;
 }
 
 //====================================================
@@ -455,56 +471,56 @@ s_clone ()
 void 
 s_ctors (const example& e)
 {
-		Object obj;
-		CPdf pdf;
-		IndiRef ref;
-		
-		// bool
-		obj.initBool (e.b.xb);
-		CBool bl (pdf, obj, ref);
-		ip_validate (bl,e.b.expected);
+	Object obj;
+	CPdf pdf;
+	IndiRef ref;
+	
+	// bool
+	obj.initBool (e.b.xb);
+	CBool bl (pdf, obj, ref);
+	ip_validate (bl,e.b.expected);
 
-		// int
-		obj.initInt (e.i.xi);
-		CInt i (pdf,obj,ref);
-		ip_validate (i,e.i.expected);
-		
-		// Real
-		obj.initReal (e.r.xr);
-		CReal r (pdf,obj,ref);
-		ip_validate (r,e.r.expected);
-		
-		// String
-		obj.initString (e.s.xs);
-		CString s (pdf,obj,ref);
-		ip_validate (s,e.s.expected);
+	// int
+	obj.initInt (e.i.xi);
+	CInt i (pdf,obj,ref);
+	ip_validate (i,e.i.expected);
+	
+	// Real
+	obj.initReal (e.r.xr);
+	CReal r (pdf,obj,ref);
+	ip_validate (r,e.r.expected);
+	
+	// String
+	obj.initString (e.s.xs);
+	CString s (pdf,obj,ref);
+	ip_validate (s,e.s.expected);
 
-		
-		// Name
-		obj.initName (e.n.xn);
-		CName n (pdf,obj,ref);
-		ip_validate (n,e.n.expected);
-		//
-		// NAME IS COPIED !!!! fuck xpdf
-		//		
-		obj.free ();
-		
-		// Ref
-		obj.initRef (e.ref.xref.num,e.ref.xref.gen);
-		CRef f (pdf,obj,ref);
-		ip_validate (f,e.ref.expected);
+	
+	// Name
+	obj.initName (e.n.xn);
+	CName n (pdf,obj,ref);
+	ip_validate (n,e.n.expected);
+	//
+	// NAME IS COPIED !!!! fuck xpdf
+	//		
+	obj.free ();
+	
+	// Ref
+	obj.initRef (e.ref.xref.num,e.ref.xref.gen);
+	CRef f (pdf,obj,ref);
+	ip_validate (f,e.ref.expected);
 }
 
 //====================================================
 
 namespace
 {
-		template<typename T,typename U>
-		void _s_ctors2 (const U var, const string& expected)
-		{
-				T cl (var);
-				ip_validate (cl,expected);
-		}
+	template<typename T,typename U>
+	void _s_ctors2 (const U var, const string& expected)
+	{
+			T cl (var);
+			ip_validate (cl,expected);
+	}
 
 }
 
@@ -514,35 +530,35 @@ namespace
 void 
 s_ctors2 (const example& e)
 {
-		// bool
-		_s_ctors2<CBool> (e.b.b,e.b.expected);
-		// int
-		_s_ctors2<CInt> (e.i.i,e.i.expected);
-		// Real
-		_s_ctors2<CReal> (e.r.r,e.r.expected);
-		// String
-		_s_ctors2<CString> (*(e.s.s),e.s.expected);
-		// Name
-		_s_ctors2<CName> (*(e.n.n),e.n.expected);
-		// Ref
-		_s_ctors2<CRef> (*(e.ref.ref),e.ref.expected);
+	// bool
+	_s_ctors2<CBool> (e.b.b,e.b.expected);
+	// int
+	_s_ctors2<CInt> (e.i.i,e.i.expected);
+	// Real
+	_s_ctors2<CReal> (e.r.r,e.r.expected);
+	// String
+	_s_ctors2<CString> (*(e.s.s),e.s.expected);
+	// Name
+	_s_ctors2<CName> (*(e.n.n),e.n.expected);
+	// Ref
+	_s_ctors2<CRef> (*(e.ref.ref),e.ref.expected);
 
-		// Null
-		CNull null;
-		ip_validate (null, "null");
+	// Null
+	CNull null;
+	ip_validate (null, "null");
 }
 
 //====================================================
 
 namespace
 {
-		template<typename T,typename U>
-		void _s_setString (const U var, const string& expected)
-		{
-				T cl;
-				cl.setStringRepresentation (var);
-				ip_validate (cl,expected);
-		}
+	template<typename T,typename U>
+	void _s_setString (const U var, const string& expected)
+	{
+			T cl;
+			cl.setStringRepresentation (var);
+			ip_validate (cl,expected);
+	}
 
 }
 
@@ -552,34 +568,34 @@ namespace
 void 
 s_setString (const example& e)
 {
-		// bool
-		_s_setString<CBool> (e.b.value,e.b.expected);
-		// int
-		_s_setString<CInt> (e.i.value,e.i.expected);
-		// Real
-		_s_setString<CReal> (e.r.value,e.r.expected);
-		// String
-		_s_setString<CString> (e.s.value,e.s.expected);
-		// Name
-		_s_setString<CName> (e.n.value,e.n.expected);
-		// Ref
-		_s_setString<CRef> (e.ref.value,e.ref.expected);
+	// bool
+	_s_setString<CBool> (e.b.value,e.b.expected);
+	// int
+	_s_setString<CInt> (e.i.value,e.i.expected);
+	// Real
+	_s_setString<CReal> (e.r.value,e.r.expected);
+	// String
+	_s_setString<CString> (e.s.value,e.s.expected);
+	// Name
+	_s_setString<CName> (e.n.value,e.n.expected);
+	// Ref
+	_s_setString<CRef> (e.ref.value,e.ref.expected);
 
-		// should get compile error
-		// CNull null;
-		// null.setStringRepresentation ("");
+	// should get compile error
+	// CNull null;
+	// null.setStringRepresentation ("");
 }
 
 //====================================================
 
 namespace
 {
-		template<typename T,PropertyType Tp>
-		void _s_getTp ()
-		{
-				T cl;
-				ip_validate (Tp,cl.getType ());
-		}
+	template<typename T,PropertyType Tp>
+	void _s_getTp ()
+	{
+			T cl;
+			ip_validate (Tp,cl.getType ());
+	}
 
 }
 
@@ -589,20 +605,20 @@ namespace
 void 
 s_getTp ()
 {
-		// bool
-		_s_getTp<CBool,pBool> ();
-		// int
-		_s_getTp<CInt,pInt> ();
-		// Real
-		_s_getTp<CReal,pReal> ();
-		// String
-		_s_getTp<CString,pString> ();
-		// Name
-		_s_getTp<CName,pName> ();
-		// Ref
-		_s_getTp<CRef,pRef> ();
-		// Null
-		_s_getTp<CNull,pNull> ();
+	// bool
+	_s_getTp<CBool,pBool> ();
+	// int
+	_s_getTp<CInt,pInt> ();
+	// Real
+	_s_getTp<CReal,pReal> ();
+	// String
+	_s_getTp<CString,pString> ();
+	// Name
+	_s_getTp<CName,pName> ();
+	// Ref
+	_s_getTp<CRef,pRef> ();
+	// Null
+	_s_getTp<CNull,pNull> ();
 }
 
 
@@ -610,13 +626,13 @@ s_getTp ()
 
 namespace
 {
-		template<typename T,typename U>
-		void _s_writeVal (const U var, const string& expected)
-		{
-				T cl;
-				cl.writeValue (var);
-				ip_validate (cl,expected);
-		}
+	template<typename T,typename U>
+	void _s_writeVal (const U var, const string& expected)
+	{
+			T cl;
+			cl.writeValue (var);
+			ip_validate (cl,expected);
+	}
 
 }
 
@@ -626,22 +642,22 @@ namespace
 void 
 s_writeVal (const example& e)
 {
-		// bool
-		_s_writeVal<CBool> (e.b.b,e.b.expected);
-		// int
-		_s_writeVal<CInt> (e.i.i,e.i.expected);
-		// Real
-		_s_writeVal<CReal> (e.r.r,e.r.expected);
-		// String
-		_s_writeVal<CString> (*(e.s.s),e.s.expected);
-		// Name
-		_s_writeVal<CName> (*(e.n.n),e.n.expected);
-		// Ref
-		_s_writeVal<CRef> (*(e.ref.ref),e.ref.expected);
+	// bool
+	_s_writeVal<CBool> (e.b.b,e.b.expected);
+	// int
+	_s_writeVal<CInt> (e.i.i,e.i.expected);
+	// Real
+	_s_writeVal<CReal> (e.r.r,e.r.expected);
+	// String
+	_s_writeVal<CString> (*(e.s.s),e.s.expected);
+	// Name
+	_s_writeVal<CName> (*(e.n.n),e.n.expected);
+	// Ref
+	_s_writeVal<CRef> (*(e.ref.ref),e.ref.expected);
 
-		// should get compile error
-		// CNull null;
-		// null.writeValue ("");
+	// should get compile error
+	// CNull null;
+	// null.writeValue ("");
 
 }
 
@@ -649,36 +665,36 @@ s_writeVal (const example& e)
 
 namespace
 {
-		template<typename T,typename U>
-		void _s_getVal (const U expected)
-		{
-				T cl;
-				cl.writeValue (expected);
-				U val;
-				cl.getPropertyValue (val);
-				ip_validate (val,expected);
-		}
+	template<typename T,typename U>
+	void _s_getVal (const U expected)
+	{
+			T cl;
+			cl.writeValue (expected);
+			U val;
+			cl.getPropertyValue (val);
+			ip_validate (val,expected);
+	}
 }
 
 void 
 s_getVal (const example& e)
 {
-		// bool
-		_s_getVal<CBool> (e.b.b);
-		// int
-		_s_getVal<CInt> (e.i.i);
-		// Real
-		_s_getVal<CReal> (e.r.r);
-		// String
-		_s_getVal<CString> (*(e.s.s));
-		// Name
-		_s_getVal<CName> (*(e.n.n));
-		// Ref
-		_s_getVal<CRef> (*(e.ref.ref));
+	// bool
+	_s_getVal<CBool> (e.b.b);
+	// int
+	_s_getVal<CInt> (e.i.i);
+	// Real
+	_s_getVal<CReal> (e.r.r);
+	// String
+	_s_getVal<CString> (*(e.s.s));
+	// Name
+	_s_getVal<CName> (*(e.n.n));
+	// Ref
+	_s_getVal<CRef> (*(e.ref.ref));
 
-		// should get compile error
-		// CNull null;
-		// null.getPropertyValue ();
+	// should get compile error
+	// CNull null;
+	// null.getPropertyValue ();
 
 }
 
@@ -686,16 +702,16 @@ s_getVal (const example& e)
 
 namespace
 {
-		template<typename T,typename U>
-		void _s_makeXpdf (const U var, const string& expected)
-		{
-				Object* obj;
-				T cl;
-				cl.writeValue (var);
-				obj = cl._makeXpdfObject ();
-				ip_validate (obj,expected);
-				utils::freeXpdfObject (obj);
-		}
+	template<typename T,typename U>
+	void _s_makeXpdf (const U var, const string& expected)
+	{
+			Object* obj;
+			T cl;
+			cl.writeValue (var);
+			obj = cl._makeXpdfObject ();
+			ip_validate (obj,expected);
+			utils::freeXpdfObject (obj);
+	}
 
 }
 
@@ -705,22 +721,22 @@ namespace
 void 
 s_makeXpdf (const example& e)
 {
-		// bool
-		_s_makeXpdf<CBool> (e.b.b,e.b.expected);
-		// int
-		_s_makeXpdf<CInt> (e.i.i,e.i.expected);
-		// Real
-		_s_makeXpdf<CReal> (e.r.r,e.r.expected);
-		// String
-		_s_makeXpdf<CString> (*(e.s.s),e.s.expected);
-		// Name
-		_s_makeXpdf<CName> (*(e.n.n),e.n.expected);
-		// Ref
-		_s_makeXpdf<CRef> (*(e.ref.ref),e.ref.expected);
+	// bool
+	_s_makeXpdf<CBool> (e.b.b,e.b.expected);
+	// int
+	_s_makeXpdf<CInt> (e.i.i,e.i.expected);
+	// Real
+	_s_makeXpdf<CReal> (e.r.r,e.r.expected);
+	// String
+	_s_makeXpdf<CString> (*(e.s.s),e.s.expected);
+	// Name
+	_s_makeXpdf<CName> (*(e.n.n),e.n.expected);
+	// Ref
+	_s_makeXpdf<CRef> (*(e.ref.ref),e.ref.expected);
 
-		// should get compile error
-		// CNull null;
-		// null.getPropertyValue ();
+	// should get compile error
+	// CNull null;
+	// null.getPropertyValue ();
 
 }
 
@@ -730,9 +746,9 @@ s_makeXpdf (const example& e)
 void
 s_rel ()
 {
-		CString cstr ("raz dva tri");
-		boost::shared_ptr<IProperty> ip = cstr.clone (); // object UNALLOCATED
-		OUTPUT << "unallocating " << endl;
+	CString cstr ("raz dva tri");
+	boost::shared_ptr<IProperty> ip = cstr.clone (); // object UNALLOCATED
+	OUTPUT << "unallocating " << endl;
 
 }
 
@@ -746,13 +762,13 @@ s_rel ()
 void
 c_clone ()
 {
-		CDict dict;
+	CDict dict;
 
-		CString item1 ("fero");
-		dict.addProperty ("jano", item1);
-		
-		boost::shared_ptr<IProperty> clone_ = dict.clone (); // 2x objects allocated
-		ip_validate (dict, *clone_);
+	CString item1 ("fero");
+	dict.addProperty ("jano", item1);
+	
+	boost::shared_ptr<IProperty> clone_ = dict.clone (); // 2x objects allocated
+	ip_validate (dict, *clone_);
 }
 
 
@@ -761,54 +777,54 @@ c_clone ()
 void
 c_smrt ()
 {
-		CDict dict; 
-		CString val1 ("val1");
-		CString val2 ("val2");
-		dict.addProperty ("item1", val1);
-		dict.addProperty ("item2", val2);
+	CDict dict; 
+	CString val1 ("val1");
+	CString val2 ("val2");
+	dict.addProperty ("item1", val1);
+	dict.addProperty ("item2", val2);
 
 // BAD HABBIT
-		CString* ptrStr1 = new CString ("val3");	// UNALLOCATED if not freed manually
-		dict.addProperty ("item3", *ptrStr1);
-		delete ptrStr1;
+	CString* ptrStr1 = new CString ("val3");	// UNALLOCATED if not freed manually
+	dict.addProperty ("item3", *ptrStr1);
+	delete ptrStr1;
 // GOOD HABBIT
-		boost::shared_ptr<IProperty> ptrStr2 (new CString ("val4"));
-		dict.addProperty ("item4", *ptrStr2);
+	boost::shared_ptr<IProperty> ptrStr2 (new CString ("val4"));
+	dict.addProperty ("item4", *ptrStr2);
 // EVEN BETTER HABBIT
-		CString str3 ("val5");
-		dict.addProperty ("item5", str3);
+	CString str3 ("val5");
+	dict.addProperty ("item5", str3);
 // BEST HABBIT -- not functional (yet)
-		//dict.addProperty ("item5", CString ("val6"));
+	//dict.addProperty ("item5", CString ("val6"));
 
-		OUTPUT << dict;
-		
-		boost::shared_ptr<IProperty> ipp1 = dict.getProperty ("item3");
-		boost::shared_ptr<IProperty> ipp2 = dict.getProperty ("item4");
-		boost::shared_ptr<IProperty> ipp3 = dict.getProperty ("item5");
+	OUTPUT << dict;
+	
+	boost::shared_ptr<IProperty> ipp1 = dict.getProperty ("item3");
+	boost::shared_ptr<IProperty> ipp2 = dict.getProperty ("item4");
+	boost::shared_ptr<IProperty> ipp3 = dict.getProperty ("item5");
 }
 
 //=====================================================================================
 
 namespace
 {
-		template<typename U, PropertyType Tp>
-		void
-		_c_getTp ()
-		{
-			U obj;
-			ip_validate (Tp, obj.getType ());
-		}
+	template<typename U, PropertyType Tp>
+	void
+	_c_getTp ()
+	{
+		U obj;
+		ip_validate (Tp, obj.getType ());
+	}
 }
 
 void
 c_getTp ()
 {
-		// Array
-		_c_getTp<CArray,pArray> ();
-		// Dict
-		_c_getTp<CDict,pDict> ();
-		// Stream
-		//_c_getTp<CStream,pStream> ();
+	// Array
+	_c_getTp<CArray,pArray> ();
+	// Dict
+	_c_getTp<CDict,pDict> ();
+	// Stream
+	//_c_getTp<CStream,pStream> ();
 
 
 }
@@ -829,83 +845,83 @@ mdctrl ()
 
 namespace
 {
-		void
-		makeArTest1 (CArray& arTest1)
-		{
-			//
-			// Make an array, simple values
-			//
-			CString it1 ("item1");
-			CString it2 ("item2");
-			CString it3 ("item3");
-			arTest1.addProperty (it1);
-			arTest1.addProperty (it2);
-			arTest1.addProperty (it3);
-			CInt i1 (1);
-			CInt i2 (2);
-			CInt i3 (3);
-			CInt i4 (4);
-			arTest1.addProperty (i1);
-			arTest1.addProperty (i2);
-			arTest1.addProperty (i3);
-			arTest1.addProperty (i4);
-			IndiRef ref = {3,4};
-			CRef rf (ref);
-			arTest1.addProperty (rf);
-			CBool bl (false);
-			arTest1.addProperty (bl);
+	void
+	makeArTest1 (CArray& arTest1)
+	{
+		//
+		// Make an array, simple values
+		//
+		CString it1 ("item1");
+		CString it2 ("item2");
+		CString it3 ("item3");
+		arTest1.addProperty (it1);
+		arTest1.addProperty (it2);
+		arTest1.addProperty (it3);
+		CInt i1 (1);
+		CInt i2 (2);
+		CInt i3 (3);
+		CInt i4 (4);
+		arTest1.addProperty (i1);
+		arTest1.addProperty (i2);
+		arTest1.addProperty (i3);
+		arTest1.addProperty (i4);
+		IndiRef ref = {3,4};
+		CRef rf (ref);
+		arTest1.addProperty (rf);
+		CBool bl (false);
+		arTest1.addProperty (bl);
 
-		}
-	
-		void
-		makeDcTest1 (CDict& dcTest1)
-		{
-			//
-			// Make a dictionary, simple values
-			//
-			CString it1 ("item1");
-			CString it2 ("item2");
-			CString it3 ("item3");
-			dcTest1.addProperty ("item1", it1);
-			dcTest1.addProperty ("item2", it2);
-			dcTest1.addProperty ("item3", it3);
-			CInt i1 (1);
-			CInt i2 (2);
-			CInt i3 (3);
-			CInt i4 (4);
-			dcTest1.addProperty ("item4", i1);
-			dcTest1.addProperty ("item5", i2);
-			dcTest1.addProperty ("item6", i3);
-			dcTest1.addProperty ("item7", i4);
-			IndiRef ref = {3,4};
-			CRef rf (ref);
-			dcTest1.addProperty ("item8", rf);
-			CBool bl (false);
-			dcTest1.addProperty ("item9", bl);
+	}
 
-		}
+	void
+	makeDcTest1 (CDict& dcTest1)
+	{
+		//
+		// Make a dictionary, simple values
+		//
+		CString it1 ("item1");
+		CString it2 ("item2");
+		CString it3 ("item3");
+		dcTest1.addProperty ("item1", it1);
+		dcTest1.addProperty ("item2", it2);
+		dcTest1.addProperty ("item3", it3);
+		CInt i1 (1);
+		CInt i2 (2);
+		CInt i3 (3);
+		CInt i4 (4);
+		dcTest1.addProperty ("item4", i1);
+		dcTest1.addProperty ("item5", i2);
+		dcTest1.addProperty ("item6", i3);
+		dcTest1.addProperty ("item7", i4);
+		IndiRef ref = {3,4};
+		CRef rf (ref);
+		dcTest1.addProperty ("item8", rf);
+		CBool bl (false);
+		dcTest1.addProperty ("item9", bl);
 
-		void
-		makeArTest2 (CArray& arTest2, CArray& arTest1, CDict& dcTest1)
-		{
-			arTest2.addProperty (arTest1);
-			arTest2.addProperty (arTest1);
-			arTest2.addProperty (arTest1);
-			arTest2.addProperty (dcTest1);
-			arTest2.addProperty (dcTest1);
-			arTest2.addProperty (dcTest1);
-		}
+	}
 
-		void
-		makeDcTest2 (CDict& dcTest2, CArray& arTest1, CDict& dcTest1)
-		{
-			dcTest2.addProperty ("1", arTest1);
-			dcTest2.addProperty ("2", arTest1);
-			dcTest2.addProperty ("3", arTest1);
-			dcTest2.addProperty ("4", dcTest1);
-			dcTest2.addProperty ("5", dcTest1);
-			dcTest2.addProperty ("6", dcTest1);
-		}
+	void
+	makeArTest2 (CArray& arTest2, CArray& arTest1, CDict& dcTest1)
+	{
+		arTest2.addProperty (arTest1);
+		arTest2.addProperty (arTest1);
+		arTest2.addProperty (arTest1);
+		arTest2.addProperty (dcTest1);
+		arTest2.addProperty (dcTest1);
+		arTest2.addProperty (dcTest1);
+	}
+
+	void
+	makeDcTest2 (CDict& dcTest2, CArray& arTest1, CDict& dcTest1)
+	{
+		dcTest2.addProperty ("1", arTest1);
+		dcTest2.addProperty ("2", arTest1);
+		dcTest2.addProperty ("3", arTest1);
+		dcTest2.addProperty ("4", dcTest1);
+		dcTest2.addProperty ("5", dcTest1);
+		dcTest2.addProperty ("6", dcTest1);
+	}
 		
 }
 
@@ -1168,10 +1184,10 @@ c_xpdfctor ()
 		Object obj;
 		obj.initArray (NULL);
 
-		Object item1; item1.initBool 	(gFalse);
+		Object item1; item1.initBool	(gFalse);
 		Object item2; item2.initBool	(gTrue);
-		Object item3; item3.initInt 	(-43);
-		Object item4; item4.initString 	(new GString ("item4"));
+		Object item3; item3.initInt	(-43);
+		Object item4; item4.initString	(new GString ("item4"));
 
 		obj.arrayAdd (&item1);
 		obj.arrayAdd (&item2);
@@ -1193,10 +1209,10 @@ c_xpdfctor ()
 		Object obj;
 		obj.initDict ((XRef*)NULL);
 
-		Object item1; item1.initBool 	(gFalse);
+		Object item1; item1.initBool	(gFalse);
 		Object item2; item2.initBool	(gTrue);
-		Object item3; item3.initInt 	(-43);
-		Object item4; item4.initString 	(new GString ("item4"));
+		Object item3; item3.initInt	(-43);
+		Object item4; item4.initString	(new GString ("item4"));
 
 		char* it1 = strdup ("lajno1");
 		char* it2 = strdup ("lajno2");
@@ -1229,32 +1245,32 @@ c_xpdfctor ()
 void
 getContentStream (ostream& oss, const char* fileName, bool allPages)
 {
-		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-		int pagesNum = (allPages) ? doc->getNumPages() : 1;
-		
-		oss << "Filename: " << fileName << endl;
-		oss << "Number of pages: " << pagesNum << endl;
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	int pagesNum = (allPages) ? doc->getNumPages() : 1;
+	
+	oss << "Filename: " << fileName << endl;
+	oss << "Number of pages: " << pagesNum << endl;
 
-		//
-		// Our stuff here
-		//
-		Object obj;
-		XRef* xref = doc->getXRef();
-		Catalog cat (xref);
+	//
+	// Our stuff here
+	//
+	Object obj;
+	XRef* xref = doc->getXRef();
+	Catalog cat (xref);
 
-		oss << "Trailer:" << xref->getTrailerDict () << endl;
-		oss << "Catalog:" << xref->getCatalog (&obj) << endl;
-		
-		for (int i = 1; i <= pagesNum; ++i)
-		{
-			oss << "Page:" 			<< xref->fetch (cat.getPageRef(i)->num, cat.getPageRef(i)->gen, &obj) << endl;
-			oss << "Contents:" 		<< cat.getPage(i)->getContents(&obj) << endl;
-			oss << "StreamDict:\n" 	<< cat.getPage(i)->getContents(&obj)->getStream()->getDict() << endl;
-			oss << "Stream:\n";		print (oss, cat.getPage(i)->getContents(&obj), xref);
-		}
-		
-		assert (xref->getDocInfo (&obj));
-		oss << "Doc info:" << &obj << endl;
+	oss << "Trailer:" << xref->getTrailerDict () << endl;
+	oss << "Catalog:" << xref->getCatalog (&obj) << endl;
+	
+	for (int i = 1; i <= pagesNum; ++i)
+	{
+		oss << "Page:"			<< xref->fetch (cat.getPageRef(i)->num, cat.getPageRef(i)->gen, &obj) << endl;
+		oss << "Contents:"		<< cat.getPage(i)->getContents(&obj) << endl;
+		oss << "StreamDict:\n"	<< cat.getPage(i)->getContents(&obj)->getStream()->getDict() << endl;
+		oss << "Stream:\n";		print (oss, cat.getPage(i)->getContents(&obj), xref);
+	}
+	
+	assert (xref->getDocInfo (&obj));
+	oss << "Doc info:" << &obj << endl;
 
 }
 
@@ -1303,100 +1319,100 @@ test_ccontentstream ()
 void
 parseContentStream (ostream& oss, const char* fileName)
 {
-		CPdf pdf;
-		
-		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-		int pagesNum = 1;
-		
-		//
-		// Our stuff here
-		//
-		Object obj;
-		XRef* xref = doc->getXRef();
-		assert (xref);
-		Catalog cat (xref);
+	CPdf pdf;
+	
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	int pagesNum = 1;
+	
+	//
+	// Our stuff here
+	//
+	Object obj;
+	XRef* xref = doc->getXRef();
+	assert (xref);
+	Catalog cat (xref);
 
-		cat.getPage(pagesNum)->getContents(&obj);
-		
-		if (!obj.isStream())
-			throw;
-		
-		Object o;
-		PdfOperator::Operands oper;
+	cat.getPage(pagesNum)->getContents(&obj);
+	
+	if (!obj.isStream())
+		throw;
+	
+	Object o;
+	PdfOperator::Operands oper;
 
-		vector<boost::shared_ptr<PdfOperator> > pdfopers;
-		
-		boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, &obj)));
-		parser->getObj(&o);
-		while (!o.isEOF()) 
+	vector<boost::shared_ptr<PdfOperator> > pdfopers;
+	
+	boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, &obj)));
+	parser->getObj(&o);
+	while (!o.isEOF()) 
+	{
+		if (o.isCmd ())
 		{
-			if (o.isCmd ())
+			pdfopers.push_back (boost::shared_ptr<UnknownPdfOperator> (new UnknownPdfOperator (oper, o.getCmd ())));
+			if (!oper.empty ())
 			{
-				pdfopers.push_back (boost::shared_ptr<UnknownPdfOperator> (new UnknownPdfOperator (oper, o.getCmd ())));
-				if (!oper.empty ())
-				{
-					oss << "Not empty after unknown.";
-					throw;
-				}
-					
-			}else
-			{
-				boost::shared_ptr<IProperty> pIp (utils::createObjFromXpdfObj (pdf, o, IndiRef()));
-				oper.push_back (pIp);
+				oss << "Not empty after unknown.";
+				throw;
 			}
-
-			o.free ();
-			// grab the next object
-			parser->getObj(&o);
-		}
-		obj.free ();
-
-		for (vector<boost::shared_ptr<PdfOperator> >::iterator it = pdfopers.begin ();
-						it != pdfopers.end (); ++it)
+				
+		}else
 		{
-			static int i = 0;
-			string str;
-			(*it)->getStringRepresentation (str);
-
-			oss << str << "\t\t";
-			if (0 == (++i % 3))
-				oss << endl;
+			boost::shared_ptr<IProperty> pIp (utils::createObjFromXpdfObj (pdf, o, IndiRef()));
+			oper.push_back (pIp);
 		}
+
+		o.free ();
+		// grab the next object
+		parser->getObj(&o);
+	}
+	obj.free ();
+
+	for (vector<boost::shared_ptr<PdfOperator> >::iterator it = pdfopers.begin ();
+					it != pdfopers.end (); ++it)
+	{
+		static int i = 0;
+		string str;
+		(*it)->getStringRepresentation (str);
+
+		oss << str << "\t\t";
+		if (0 == (++i % 3))
+			oss << endl;
+	}
 
 }
 
 void
 contentStream (ostream& oss, const char* fileName)
 {
-		CPdf pdf;
-		
-		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-		int pagesNum = 1;
-		
-		//
-		// Our stuff here
-		//
-		Object obj;
-		XRef* xref = doc->getXRef();
-		assert (xref);
-		Catalog cat (xref);
+	CPdf pdf;
+	
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	int pagesNum = 1;
+	
+	//
+	// Our stuff here
+	//
+	Object obj;
+	XRef* xref = doc->getXRef();
+	assert (xref);
+	Catalog cat (xref);
 
-		cat.getPage(pagesNum)->getContents(&obj);
-		
-		if (!obj.isStream())
-			throw;
-		
-		//
-		// Parse the file
-		//
-		boost::shared_ptr<CStream> stream (new CStream(pdf,obj,IndiRef()) );
-		CContentStream cc (stream, &obj);
+	cat.getPage(pagesNum)->getContents(&obj);
+	
+	if (!obj.isStream())
+		throw;
+	
+	//
+	// Parse the file
+	//
+	boost::shared_ptr<CStream> stream (new CStream(pdf,obj,IndiRef()) );
+	CContentStream cc (stream, &obj);
 
-		string tmp;
-		cc.getStringRepresentation (tmp);
-		oss << "String representation: " << tmp;
+	string tmp;
+	cc.getStringRepresentation (tmp);
+	oss << "String representation: " << tmp;
 
-		obj.free ();
+	obj.free ();
 
 }
 //=====================================================================================
@@ -1404,176 +1420,192 @@ contentStream (ostream& oss, const char* fileName)
 //=====================================================================================
 
 
+void cobject_tests(int argc, char ** argv)
+{
+	START_TEST;
+	
+#ifndef __QUICK_TEST
+	static example e;
+
+	//
+	// TEST EXAMPLE
+	//
+	// Simple
+	//
+	e.b.xb			= gFalse;
+	e.b.b			= false;
+	e.b.value		= "false";
+	e.b.expected	= "false";
+	
+	e.i.xi = e.i.i	= 321;							
+	e.i.value		= "321";
+	e.i.expected	= "321";
+	
+	e.r.xr = e.r.r	= -3.2313;						
+	e.r.value		= "-3.2313";
+	e.r.expected	= "-3.2313";
+	
+	e.n.xn = new char [100]; strncpy (e.n.xn, "name",10);
+	e.n.n = new string ("name");
+	e.n.value		= "name";
+	e.n.expected	= "/name";
+	
+	e.s.xs = new GString("string");			
+	e.s.s = new string ("string");
+	e.s.value		= "string";
+	e.s.expected	= "(string)";
+	
+	e.ref.ref = new IndiRef;
+	e.ref.xref.num = e.ref.ref->num = 32;
+	e.ref.xref.gen = e.ref.ref->gen = 10;
+	e.ref.value	= "32 10";
+	e.ref.expected	= "32 10 R";
+	//
+	// Complex
+	//
+	e.arTest1 = "[ (item1) (item2) (item3) 1 2 3 4 3 4 R false ]";
+	e.dcTest1 = "<<\n/item1 (item1)\n/item2 (item2)\n/item3 (item3)\n/item4 1\n/item5 2\n/item6 "
+			    "3\n/item7 4\n/item8 3 4 R\n/item9 false\n>>";
+	const string ar2 ("[ "	+ e.arTest1 + " " + e.arTest1 + " " 
+							+ e.arTest1 + " " + e.dcTest1 + " " + e.dcTest1 + " " + e.dcTest1 + " ]");
+	const string dc2 ("<<\n/1 "	+ e.arTest1 + "\n/2 " + e.arTest1 + "\n/3 " + e.arTest1 + "\n/4 " 
+								+ e.dcTest1 + "\n/5 " + e.dcTest1 + "\n/6 " + e.dcTest1 + "\n>>");
+	e.arTest2 = ar2;
+	e.dcTest2 = dc2;
+
+	//==================== Tests
+
+	TEST(" test 1.0 -- getType_");
+	s_getTp ();
+	OK_TEST;
+
+	TEST(" test 1.1 -- clone");
+	s_clone ();
+	OK_TEST;
+	
+	TEST(" test 1.2 -- getString + constructors");
+	s_ctors (e);
+	OK_TEST;
+
+	TEST(" test 1.3 -- getString + constructors 2");
+	s_ctors2 (e);
+	OK_TEST;
+	
+	TEST(" test 1.4 -- setString");
+	s_setString (e);
+	OK_TEST;
+
+	TEST(" test 1.5 -- writeValue");
+	s_writeVal (e);
+	OK_TEST;
+
+	TEST(" test 1.6 -- getPropertyValue");
+	s_getVal (e);
+	OK_TEST;
+
+	TEST(" test 1.7 -- _makeXpdfObject");
+	s_makeXpdf (e);
+	OK_TEST;
+
+	TEST(" test 1.8 -- _");
+	s_rel ();
+	OK_TEST;
+
+	//======================= CObjectComplex
+	
+	TEST(" test 2.1.0 - getType")
+	c_getTp ();
+	OK_TEST;
+
+	TEST(" test 2.1 - clone")
+	c_clone ();
+	OK_TEST;
+
+	TEST(" test 2.2 - smart ptrs")
+	c_smrt ();
+	OK_TEST;
+
+	TEST(" test 2.3 - mode controller")
+	mdctrl ();
+	OK_TEST;
+
+	TEST(" test 2.4 - getStringRepre")
+	c_getString (e);
+	OK_TEST;
+
+	TEST(" test 2.5 - getPropCount")
+	c_getCnt ();
+	OK_TEST;
+
+	TEST(" test 2.6 - getAllPropNames")
+	c_getNames ();
+	OK_TEST;
+
+	TEST(" test 2.7 - getType")
+	c_getType ();
+	OK_TEST;
+
+	TEST(" test 2.8 - makeXpdf")
+	c_xpdf (e);
+	OK_TEST;
+
+	TEST(" test 2.9 - delProp")
+	c_del ();
+	OK_TEST;
+
+	TEST(" test 2.9 - setProp")
+	c_set ();
+	OK_TEST;
+
+	TEST(" test 2.10 - xpdf ctors")
+	c_xpdfctor ();
+	OK_TEST;
+
+#endif // __QUICK_TEST
+	
+	//======================= CContentStream
+static const char* pdffile= "../../doc/zadani.pdf";
+	
+/*		TEST(" test 3.1 -- ccontentstream - getContentstream")
+	getContentStream (cout, pdffile, false);
+	OK_TEST;
+	
+	TEST(" test 3.2 -- ccontentstream - operators")
+	test_ccontentstream ();
+	OK_TEST;
+
+	TEST(" test 3.3 -- ccontentstream - parse to our operators")
+	parseContentStream (cout, pdffile);
+	OK_TEST;
+*/	
+	TEST(" test 3.4 -- ccontentstream - try ccontentstream class to parse a contentstream")
+	contentStream (cout, pdffile);
+	OK_TEST;
+	
+	END_TEST;
+	MEM_CHECK;
+
+}
+
+#define FILE_NAME       "test_file.pdf"
+void cpdf_tests()
+{
+using namespace pdfobjects;
+	/* CPdf testing */
+	CPdf * cpdf=CPdf::getInstance(FILE_NAME, CPdf::Advanced);
+	boost::shared_ptr<CDict> dict=cpdf->getDictionary();
+
+	cpdf->close();
+
+}
 
 /**
  *  test main - load settings and launches a main window 
  */
 int 
-main (int argc, char* [])
+main (int argc, char** argv)
 {
+	cobject_tests(argc, argv);
+	cpdf_tests();
 
-		START_TEST;
-		
-#ifndef __QUICK_TEST
-		static example e;
-	
-		//
-		// TEST EXAMPLE
-		//
-		// Simple
-		//
-		e.b.xb 			= gFalse;
-		e.b.b 			= false;
-		e.b.value 		= "false";
-		e.b.expected	= "false";
-		
-		e.i.xi = e.i.i 	= 321;							
-		e.i.value 		= "321";
-		e.i.expected 	= "321";
-		
-		e.r.xr = e.r.r 	= -3.2313; 						
-		e.r.value 		= "-3.2313";
-		e.r.expected 	= "-3.2313";
-		
-		e.n.xn = new char [100]; strncpy (e.n.xn, "name",10);
-		e.n.n = new string ("name");
-		e.n.value 		= "name";
-		e.n.expected 	= "/name";
-		
-		e.s.xs = new GString("string");			
-		e.s.s = new string ("string");
-		e.s.value 		= "string";
-		e.s.expected 	= "(string)";
-		
-		e.ref.ref = new IndiRef;
-		e.ref.xref.num = e.ref.ref->num = 32;
-		e.ref.xref.gen = e.ref.ref->gen = 10;
-		e.ref.value 	= "32 10";
-		e.ref.expected 	= "32 10 R";
-		//
-		// Complex
-		//
-		e.arTest1 = "[ (item1) (item2) (item3) 1 2 3 4 3 4 R false ]";
-		e.dcTest1 = "<<\n/item1 (item1)\n/item2 (item2)\n/item3 (item3)\n/item4 1\n/item5 2\n/item6 "
-				    "3\n/item7 4\n/item8 3 4 R\n/item9 false\n>>";
-		const string ar2 ("[ " 	+ e.arTest1 + " " + e.arTest1 + " " 
-						 	  	+ e.arTest1 + " " + e.dcTest1 + " " + e.dcTest1 + " " + e.dcTest1 + " ]");
-		const string dc2 ("<<\n/1 "	+ e.arTest1 + "\n/2 " + e.arTest1 + "\n/3 " + e.arTest1 + "\n/4 " 
-									+ e.dcTest1 + "\n/5 " + e.dcTest1 + "\n/6 " + e.dcTest1 + "\n>>");
-		e.arTest2 = ar2;
-		e.dcTest2 = dc2;
-
-		//==================== Tests
-	
-		TEST(" test 1.0 -- getType_");
-		s_getTp ();
-		OK_TEST;
-
-		TEST(" test 1.1 -- clone");
-		s_clone ();
-		OK_TEST;
-		
-		TEST(" test 1.2 -- getString + constructors");
-		s_ctors (e);
-		OK_TEST;
-
-		TEST(" test 1.3 -- getString + constructors 2");
-		s_ctors2 (e);
-		OK_TEST;
-		
-		TEST(" test 1.4 -- setString");
-		s_setString (e);
-		OK_TEST;
-
-		TEST(" test 1.5 -- writeValue");
-		s_writeVal (e);
-		OK_TEST;
-
-		TEST(" test 1.6 -- getPropertyValue");
-		s_getVal (e);
-		OK_TEST;
-
-		TEST(" test 1.7 -- _makeXpdfObject");
-		s_makeXpdf (e);
-		OK_TEST;
-
-		TEST(" test 1.8 -- _");
-		s_rel ();
-		OK_TEST;
-	
-		//======================= CObjectComplex
-		
-		TEST(" test 2.1.0 - getType")
-		c_getTp ();
-		OK_TEST;
-
-		TEST(" test 2.1 - clone")
-		c_clone ();
-		OK_TEST;
-
-		TEST(" test 2.2 - smart ptrs")
-		c_smrt ();
-		OK_TEST;
-	
-		TEST(" test 2.3 - mode controller")
-		mdctrl ();
-		OK_TEST;
-	
-		TEST(" test 2.4 - getStringRepre")
-		c_getString (e);
-		OK_TEST;
-
-		TEST(" test 2.5 - getPropCount")
-		c_getCnt ();
-		OK_TEST;
-
-		TEST(" test 2.6 - getAllPropNames")
-		c_getNames ();
-		OK_TEST;
-
-		TEST(" test 2.7 - getType")
-		c_getType ();
-		OK_TEST;
-
-		TEST(" test 2.8 - makeXpdf")
-		c_xpdf (e);
-		OK_TEST;
-
-		TEST(" test 2.9 - delProp")
-		c_del ();
-		OK_TEST;
-
-		TEST(" test 2.9 - setProp")
-		c_set ();
-		OK_TEST;
-
-		TEST(" test 2.10 - xpdf ctors")
-		c_xpdfctor ();
-		OK_TEST;
-
-#endif // __QUICK_TEST
-		
-		//======================= CContentStream
-static const char* pdffile= "../../doc/zadani.pdf";
-		
-/*		TEST(" test 3.1 -- ccontentstream - getContentstream")
-		getContentStream (cout, pdffile, false);
-		OK_TEST;
-		
-		TEST(" test 3.2 -- ccontentstream - operators")
-		test_ccontentstream ();
-		OK_TEST;
-
-		TEST(" test 3.3 -- ccontentstream - parse to our operators")
-		parseContentStream (cout, pdffile);
-		OK_TEST;
-*/	
-		TEST(" test 3.4 -- ccontentstream - try ccontentstream class to parse a contentstream")
-		contentStream (cout, pdffile);
-		OK_TEST;
-		
-		END_TEST;
-		MEM_CHECK;
-
-		return 0;
 }
