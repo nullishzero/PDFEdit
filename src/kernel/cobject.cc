@@ -279,7 +279,7 @@ namespace {
 				{
 						// Get Object at i-th position
 						string key = dict.dictGetKey (i);
-						dict.dictGetVal (i,&obj);
+						dict.dictGetValNF (i,&obj);
 
 						shared_ptr<IProperty> cobj;
 						// Create CObject from it
