@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/03/31 16:09:56  hockm0bm
+ * printDbg messages with ref changed
+ *
  * Revision 1.5  2006/03/23 22:13:51  hockm0bm
  * printDbg added
  * exception handling
@@ -384,7 +387,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "num="<<num<<" gen"<<gen);
+	printDbg(DBG_DBG, "num="<<num<<" gen="<<gen);
 	
 	::Ref ref={num, gen};
 	
@@ -401,7 +404,7 @@ using namespace debug;
 	ObjectEntry * entry=changedStorage.get(ref);
 	if(entry)
 	{
-		printDbg(DBG_INFO, "[num="<<num<<" gen"<<gen<<"] is changed - using changedStorage");
+		printDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is changed - using changedStorage");
 		
 		// object has been changed
 		::Object * deepCopy=entry->object->clone();
@@ -418,7 +421,7 @@ using namespace debug;
 		return obj;
 	}
 
-	printDbg(DBG_INFO, "[num="<<num<<" gen"<<gen<<"] is not changed - using Xref");
+	printDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is not changed - using Xref");
 	// delegates to original implementation
 	obj=XRef::fetch(num, gen, obj);
 
