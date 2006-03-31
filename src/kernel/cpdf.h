@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/03/31 22:36:52  hockm0bm
+ * names changed from /Name -> Name
+ *
  * Revision 1.21  2006/03/31 21:03:00  hockm0bm
  * removePage implemented
  *
@@ -182,9 +185,9 @@ protected:
 	/** Consolidates page tree.
 	 * @param interNode Intermediate node where the change has occured.
 	 *
-	 * Checks all direct children (from /Kids array field) whether they have
+	 * Checks all direct children (from Kids array field) whether they have
 	 * correct parent (given interNode). Then collects number of pages of each
-	 * and this calculated value uses for new /Count field value. Afterwards
+	 * and this calculated value uses for new Count field value. Afterwards
 	 * calls this method also for its parent. Recusrion stops at root of the 
 	 * page tree.
 	 * <p>
@@ -198,9 +201,9 @@ protected:
 	 * Doesn't perform any parameter checking. Relay on correct value. When som
 	 * error occures, exception is thrown.
 	 * <br>
-	 * Changes /Count field of interNode.
+	 * Changes Count field of interNode.
 	 * <br>
-	 * Sets /Parent field of direct children, if not set correctly.
+	 * Sets Parent field of direct children, if not set correctly.
 	 * <br>
 	 * If page tree was consistent before change undret this interNode occured,
 	 * it will be consistent after this consolidation too.
@@ -217,7 +220,7 @@ protected:
 	 * <br>
 	 * Also calculates difference between lost pages (if oldValue is not CNull) 
 	 * and newly added pages (if newValue is not CNull - checks type of node 
-	 * and if node is page, only 1 is lost, in case of intermediate node /Count 
+	 * and if node is page, only 1 is lost, in case of intermediate node Count 
 	 * field is used).
 	 * <br>
 	 * Tries to determine which pages has to be consolidated (those which
@@ -558,7 +561,7 @@ public:
 	/** Removes page from given position.
 	 * @param pos Position of the page.
 	 *
-	 * Removes given page from its parent /Kids array. This method triggers
+	 * Removes given page from its parent Kids array. This method triggers
 	 * pageList and page tree consolidation (TODO link to description). As a 
 	 * result page count is decreased. 
 	 * <br>

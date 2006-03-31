@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/03/31 22:36:52  hockm0bm
+ * names changed from /Name -> Name
+ *
  * Revision 1.20  2006/03/31 21:03:00  hockm0bm
  * removePage implemented
  *
@@ -96,7 +99,7 @@ namespace utils
  * <p>
  * <b>Implementation notes</b>:<br>
  * When starting to search from root of all pages, pagesDict should be supplied
- * from pdf->getProperty("/Pages"). This is indirect reference (according
+ * from pdf->getProperty("Pages"). This is indirect reference (according
  * standard), but can be used in this method. startPos should be 1 (first page
  * is 1).
  * <br>
@@ -155,12 +158,12 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 	}
 
 	// gets type property from dictionary to find out what to do
-	string dict_type=getNameFromDict("/Type", dict_ptr);
+	string dict_type=getNameFromDict("Type", dict_ptr);
 	printDbg(DBG_DBG, "dictionary type=" << dict_type);
 	
 	// if type is Page then we have page dictionary and so start_pos and pos 
 	// must match otherwise it is not possible to find pos page
-	if(dict_type=="/Page")
+	if(dict_type=="Page")
 	{
 		printDbg(DBG_DBG, "Page node is direct page");
 		// everything ok 
@@ -177,11 +180,11 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 
 	// if type is Pages then we are in intermediate node
 	// in this case we have to start to dereference children from Kids array.
-	if(dict_type=="/Pages")
+	if(dict_type=="Pages")
 	{
 		printDbg(DBG_DBG, "Page node is intermediate");
 		shared_ptr<CDict> pages_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
-		int count=getIntFromDict("/Count", pages_ptr);
+		int count=getIntFromDict("Count", pages_ptr);
 
 		printDbg(DBG_DBG, "Node has " << count << " pages");
 		// check if this subtree contains enought direct pages 
@@ -227,14 +230,14 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 
 			// we can have page or pages dictionary in child_ptr
 			// Type field determine kind of node
-			string dict_type=getNameFromDict("/Type", child_ptr);
+			string dict_type=getNameFromDict("Type", child_ptr);
 			printDbg(DBG_DBG, "kid type="<<dict_type);
 
 			// Page dictionary is ok if min_pos equals pos, 
 			// otherwise it is skipped - can't use recursion here because it's
 			// not an error that this page is not correct one
 			// min_pos is incremented
-			if(dict_type=="/Page")
+			if(dict_type=="Page")
 			{
 				if(min_pos == pos)
 				{
@@ -248,9 +251,9 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 			// Pages dictionary is checked for its page count and if pos can
 			// be found there, starts recursion
 			// Otherwise increment min_pos with its count and continues
-			if(dict_type=="/Pages")
+			if(dict_type=="Pages")
 			{
-				int count=getIntFromDict("/Count", child_ptr);
+				int count=getIntFromDict("Count", child_ptr);
 
 				if(min_pos + count > pos )
 					// pos IS in this subtree
@@ -293,7 +296,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
  * If type is Pages (intermediate node) goes through Kids array and recursively
  * calls this method for each element until recursion returns with non 0 result.
  * This means the end of recursion. startValue is actualized for each Kid's
- * element (Page element increases 1, Pages element /Count).
+ * element (Page element increases 1, Pages element Count).
  *
  * @throw ElementBadTypeException
  * @throw ElementNotFoundException
@@ -310,20 +313,20 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 		return startValue;
 
 	// gets type of dictionary
-	string superNodeType=getNameFromDict("/Type", superNode);
+	string superNodeType=getNameFromDict("Type", superNode);
 	
 	// if type is Page we return with 0, because node is not this superNode and
 	// there is nowhere to go
-	if(superNodeType=="/Page")
+	if(superNodeType=="Page")
 		return 0;
 
-	if(superNodeType!="/Pages")
-		throw ElementBadTypeException("/Node");
+	if(superNodeType!="Pages")
+		throw ElementBadTypeException("Node");
 
 	// if type is Pages, we go through Kids array and calls recursively for each
 	// element until first one returns with non 0. Otherwise startValue is
 	// updated by child node pages count.
-	shared_ptr<IProperty> arrayProp_ptr=superNode->getProperty("/Kids");
+	shared_ptr<IProperty> arrayProp_ptr=superNode->getProperty("Kids");
 	if(arrayProp_ptr->getType()!=pArray)		// TODO can be reference?
 		throw ElementBadTypeException("Kids");
 	shared_ptr<CArray> array_ptr=IProperty::getSmartCObjectPtr<CArray>(arrayProp_ptr);
@@ -344,8 +347,8 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 		if(element_ptr->getType()!=pDict)
 			throw ElementBadTypeException("");
 		shared_ptr<CDict> elementDict_ptr=IProperty::getSmartCObjectPtr<CDict>(element_ptr);
-		string elementDictType=getNameFromDict("/Type", elementDict_ptr);
-		if(elementDictType=="/Page")
+		string elementDictType=getNameFromDict("Type", elementDict_ptr);
+		if(elementDictType=="Page")
 		{
 			if(searchTreeNode(pdf, elementDict_ptr, node, startValue))
 				return startValue;
@@ -354,20 +357,20 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 			startValue++;
 			continue;
 		}
-		if(elementDictType=="/Pages")
+		if(elementDictType=="Pages")
 		{
 			size_t ret=searchTreeNode(pdf, elementDict_ptr, node, startValue);
 			if(ret)
 				return ret;
 
-			// we haven't found, so startValue is actualized with /Count value
+			// we haven't found, so startValue is actualized with Count value
 			// of this node
-			startValue+=getIntFromDict("/Count", elementDict_ptr);
+			startValue+=getIntFromDict("Count", elementDict_ptr);
 			continue;
 		}
 
 		// dictionary type is uncorrect
-		throw ElementBadTypeException("/Kids");
+		throw ElementBadTypeException("Kids");
 	}
 
 	return 0;
@@ -397,7 +400,7 @@ size_t getNodePosition(CPdf & pdf, shared_ptr<IProperty> node)
 		throw PageNotFoundException(0);
 
 	// gets page tree root - it has to be Reference to Dictionary
-	shared_ptr<IProperty> rootRef_ptr=pdf.getDictionary()->getProperty("/Pages");
+	shared_ptr<IProperty> rootRef_ptr=pdf.getDictionary()->getProperty("Pages");
 	shared_ptr<CDict> rootDict_ptr=getDictFromRef(rootRef_ptr);
 	
 	// gets dictionary from node parameter. It can be reference and
@@ -431,11 +434,11 @@ size_t getNodePosition(CPdf & pdf, shared_ptr<IProperty> node)
  * new child paremeter (it is transitive relation). 
  * <br>
  * THis can be used for all dictionaries which keeps tree structure and where
- * children keeps reference to their parent in /Parent field.
+ * children keeps reference to their parent in Parent field.
  * <br>
  * NOTE: this method doesn't perform any checking of parameters.
  *
- * @throw MalformedFormatExeption if child contains /Parent field which doesn't
+ * @throw MalformedFormatExeption if child contains Parent field which doesn't
  * point to the dictionary.
  * @return true If given child belongs to parent subtree, false otherwise.
  */
@@ -449,7 +452,7 @@ using namespace utils;
 	IndiRef directParent;
 	try
 	{
-		directParent=getRefFromDict("/Parent", child);
+		directParent=getRefFromDict("Parent", child);
 	}catch(std::exception & e)
 	{
 		// child is not really parent child
@@ -461,7 +464,7 @@ using namespace utils;
 	if(parent==directParent)
 		return true;
 
-	// TODO solve problem when parent is the root of hierarchy and its /Parent
+	// TODO solve problem when parent is the root of hierarchy and its Parent
 	// field points to itself
 	
 	// parent may be somewhere higher in the page tree
@@ -521,7 +524,7 @@ void CPdf::initRevisionSpecific()
 	// gets Root field from trailer, which should contain reference to catalog.
 	// If no present or not reference, we have corrupted PDF file and exception
 	// is thrown
-	IndiRef rootRef=utils::getRefFromDict("/Root", trailer);
+	IndiRef rootRef=utils::getRefFromDict("Root", trailer);
 	shared_ptr<IProperty> prop_ptr=getIndirectProperty(rootRef);
 	if(prop_ptr->getType()!=pDict)
 	{
@@ -829,7 +832,7 @@ using namespace utils;
 	// page is not available in pageList, searching has to be done
 	// gets Pages field from document catalog (no special checking has to be
 	// done, because everything is done in getPageCount method).
-	shared_ptr<IProperty> rootPages_ptr=docCatalog->getProperty("/Pages");
+	shared_ptr<IProperty> rootPages_ptr=docCatalog->getProperty("Pages");
 	// find throws an exception if any problem found, otherwise pageDict_ptr
 	// contians Page dictionary at specified position.
 	shared_ptr<CDict> pageDict_ptr=findPageDict(*this, rootPages_ptr, 1, pos);
@@ -850,22 +853,22 @@ using namespace utils;
 	printDbg(DBG_DBG, "");
 	
 	// gets Pages field from document catalog
-	shared_ptr<IProperty> pages_ptr=docCatalog->getProperty("/Pages");
+	shared_ptr<IProperty> pages_ptr=docCatalog->getProperty("Pages");
 	
 	// gets type of the dictionary and find out if it is Page node or
 	// intermediate node
 	shared_ptr<CDict> dict_ptr=getDictFromRef(pages_ptr);
-	string dictType=getNameFromDict("/Type", dict_ptr);
-	if(dictType=="/Page")
+	string dictType=getNameFromDict("Type", dict_ptr);
+	if(dictType=="Page")
 	{
 		// this document contains onlu one page
 		printDbg(DBG_INFO, "Page count=1 no intermediate node.");
 		return 1;
 	}
-	if(dictType=="/Pages")
+	if(dictType=="Pages")
 	{
 		// gets count field
-		int count=getIntFromDict("/Count", dict_ptr);
+		int count=getIntFromDict("Count", dict_ptr);
 		printDbg(DBG_INFO, "Page count="<<count);
 		return count;
 	}
@@ -953,12 +956,12 @@ using namespace utils;
 	{
 		// gets dictionary type - it has to be page or pages node
 		shared_ptr<CDict> oldDict_ptr=getDictFromRef(oldValue);
-		string oldDictType=getNameFromDict("/Type", oldDict_ptr);
+		string oldDictType=getNameFromDict("Type", oldDict_ptr);
 
 		// simple page is compared with all from pageList and if found, removes
 		// it from list and invalidates it.
 		// Difference is set to - 1, because one page is removed 
-		if(oldDictType=="/Page")
+		if(oldDictType=="Page")
 		{
 			printDbg(DBG_DBG, "oldValue was simple page dictionary");
 			difference = -1;
@@ -982,12 +985,12 @@ using namespace utils;
 		{
 			// Pages dictionary stands for intermediate node and so all CPages
 			// from this sub tree are removed and invalidated
-			// difference is set to -/Count value (those number of pages are
+			// difference is set to -Count value (those number of pages are
 			// removed)
-			if(oldDictType=="/Pages")
+			if(oldDictType=="Pages")
 			{
 				printDbg(DBG_DBG, "oldValue was intermediate node dictionary.")
-				difference = -getIntFromDict("/Count", oldDict_ptr);
+				difference = -getIntFromDict("Count", oldDict_ptr);
 
 				// gets reference of oldValue - which is the root removed
 				// subtree
@@ -1030,15 +1033,15 @@ using namespace utils;
 	{
 		// gets dictionary type
 		shared_ptr<CDict> newDict_ptr=getDictFromRef(newValue);
-		string newDictType=getNameFromDict("/Type", newDict_ptr);
+		string newDictType=getNameFromDict("Type", newDict_ptr);
 
 		// page type adds only one page
-		if(newDictType=="/Page")
+		if(newDictType=="Page")
 			pagesCount=1;
 
-		// pages type adds /Count pages
-		if(newDictType=="/Pages")
-			pagesCount=getIntFromDict("/Count", newDict_ptr);
+		// pages type adds Count pages
+		if(newDictType=="Pages")
+			pagesCount=getIntFromDict("Count", newDict_ptr);
 
 		// if minPos is 0, we haven't been able to determine which page
 		// positions have to be consolidated, so we can say that all starting
@@ -1105,12 +1108,12 @@ using namespace utils;
 
 	printDbg(DBG_DBG, "");
 
-	shared_ptr<IProperty> kidsArrayProp_ptr=interNode->getProperty("/Kids");
+	shared_ptr<IProperty> kidsArrayProp_ptr=interNode->getProperty("Kids");
 	if(kidsArrayProp_ptr->getType()!=pArray)
 	{
 		printDbg(DBG_CRIT, "interNode's Kids field is not an array");
 		// Kids field value must be aray
-		throw ElementBadTypeException("/Kids");
+		throw ElementBadTypeException("Kids");
 	}
 
 	// gets all children from array
@@ -1120,7 +1123,7 @@ using namespace utils;
 
 	// iterate through all children, dereference all of them and checks
 	// dictionary type. This used to get information about page count under this
-	// node (Page is 1 and Pages is /Count)
+	// node (Page is 1 and Pages is Count)
 	size_t count=0;
 	vector<shared_ptr<IProperty> >::iterator i;
 	size_t index=0;
@@ -1130,16 +1133,16 @@ using namespace utils;
 		{
 			printDbg(DBG_ERR, "Kids["<<index<<"] element must be reference");
 			// each element must be reference
-			throw ElementBadTypeException("/Kids");
+			throw ElementBadTypeException("Kids");
 		}
 
 		shared_ptr<CDict> kidDict_ptr=getDictFromRef(*i);
-		string dictType=getNameFromDict("/Type", kidDict_ptr);
-		if(dictType=="/Page")
+		string dictType=getNameFromDict("Type", kidDict_ptr);
+		if(dictType=="Page")
 			count++;
 		else
-			if(dictType=="/Pages")
-				count+=getIntFromDict("/Count", kidDict_ptr);
+			if(dictType=="Pages")
+				count+=getIntFromDict("Count", kidDict_ptr);
 			else
 			{
 				// TODO handle bad type
@@ -1151,12 +1154,12 @@ using namespace utils;
 		try
 		{
 			IndiRef parentRef;
-			parentRef=getRefFromDict("/Parent", kidDict_ptr);
+			parentRef=getRefFromDict("Parent", kidDict_ptr);
 			if(! (parentRef==interNode->getIndiRef()))
 			{
 				printDbg(DBG_WARN, "Kids["<<index<<"] element dictionary doesn't have Parent with proper reference. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
 				CRef cref(interNode->getIndiRef());
-				kidDict_ptr->setProperty("/Parent", cref);
+				kidDict_ptr->setProperty("Parent", cref);
 			}
 			
 		}catch(ElementNotFoundException & e)
@@ -1164,14 +1167,14 @@ using namespace utils;
 			IndiRef parentRef=interNode->getIndiRef();
 			printDbg(DBG_WARN, "No Parent field found. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
 			CRef cref(parentRef);
-			kidDict_ptr->setProperty("/Parent", cref);
+			kidDict_ptr->setProperty("Parent", cref);
 		}catch(ElementBadTypeException & e)
 		{
 			IndiRef parentRef=interNode->getIndiRef();
 			printDbg(DBG_WARN, "Parent field found but with bad type. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
-			kidDict_ptr->delProperty("/Parent");
+			kidDict_ptr->delProperty("Parent");
 			CRef cref(parentRef);
-			kidDict_ptr->setProperty("/Parent", cref);
+			kidDict_ptr->setProperty("Parent", cref);
 		}
 
 	}
@@ -1179,13 +1182,13 @@ using namespace utils;
 	// count is collected for this node, sets value and distribute it to all
 	// parents
 	CInt countProp(count);
-	printDbg(DBG_INFO, "interNode /Count="<<count);
-	interNode->setProperty("/Count", countProp);
+	printDbg(DBG_INFO, "interNode Count="<<count);
+	interNode->setProperty("Count", countProp);
 	
 	// distribute value also to fathers - if any
 	try
 	{
-		shared_ptr<IProperty> parentRef_ptr=interNode->getProperty("/Parent");
+		shared_ptr<IProperty> parentRef_ptr=interNode->getProperty("Parent");
 		shared_ptr<CDict> parentDict_ptr=getDictFromRef(parentRef_ptr);
 
 		// calls recursively
@@ -1227,12 +1230,12 @@ using namespace utils;
 
 	// search for page at storePostion to get to intermediate parent node which
 	// maintains Kids array
-	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("/Pages"), 1, storePostion);
+	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("Pages"), 1, storePostion);
 	// FIXME this may be problem - because there may be only one page in
 	// document which doesn't have any parent
-	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("/Parent");
+	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
 	shared_ptr<CDict> interNode_ptr=getDictFromRef(parentRef_ptr);
-	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("/Kids");
+	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
 	if(kidsProp_ptr->getType()!=pArray)
 	{
 		printDbg(DBG_CRIT, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
@@ -1273,13 +1276,13 @@ using namespace utils;
 	// gets parent field which contains this page in Kids array and 
 	// page reference to be able to find page the position in the parent's 
 	// Kids array.
-	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("/Pages"), 1, pos);
+	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("Pages"), 1, pos);
 	// FIXME this may be problem - because there may be only one page in
 	// document which doesn't have any parent
-	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("/Parent");
+	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
 	IndiRef currentRef=currentPage_ptr->getIndiRef();
 	shared_ptr<CDict> interNode_ptr=getDictFromRef(parentRef_ptr);
-	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("/Kids");
+	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
 	if(kidsProp_ptr->getType()!=pArray)
 	{
 		printDbg(DBG_CRIT, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
