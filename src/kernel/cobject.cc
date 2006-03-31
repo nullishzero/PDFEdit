@@ -233,10 +233,6 @@ namespace {
 				printDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 				
 				CPdf* pdf = ip.getPdf ();
-				assert (NULL != ip.getPdf ());
-				if (NULL == pdf)
-					throw CObjInvalidObject ();
-				
 				Object obj;
 
 				int len = array.arrayGetLength ();
@@ -276,7 +272,6 @@ namespace {
 				printDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 				
 				CPdf* pdf = ip.getPdf ();
-			
 				Object obj;
 
 				int len = dict.dictGetLength ();
