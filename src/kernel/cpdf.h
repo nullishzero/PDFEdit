@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/03/31 23:05:11  hockm0bm
+ * * hasNextPage  - implemented
+ * * hasPrevPage  - implemented
+ *
  * Revision 1.22  2006/03/31 22:36:52  hockm0bm
  * names changed from /Name -> Name
  *
@@ -651,6 +655,44 @@ public:
 	 * @return CPage instance wrapped by smart pointer.
 	 */
 	boost::shared_ptr<CPage> getPrevPage(boost::shared_ptr<CPage> page);
+
+	/** Checks for next page.
+	 * @param page Page to check.
+	 *
+	 * @return true if getNextPage() method returns doesn't throw
+	 * PageNotFoundException, false otherwise. 
+	 */
+	bool hasNextPage(boost::shared_ptr<CPage> page)
+	{
+		try
+		{
+			getNextPage(page);
+			// next page was successful
+		}catch(PageNotFoundException & e)
+		{
+			// nextPage failed
+			return false;
+		}
+	}
+	
+	/** Checks for previous page.
+	 * @param page Page to check.
+	 *
+	 * @return true if getPrevPage() method returns doesn't throw
+	 * PageNotFoundException. 
+	 */
+	bool hasPrevPage(boost::shared_ptr<CPage> page)
+	{
+		try
+		{
+			getPrevPage(page);
+			// prev page was successful
+		}catch(PageNotFoundException & e)
+		{
+			// getPrevPage failed
+			return false;
+		}
+	}
 
 	/** Returns last page.
 	 * 
