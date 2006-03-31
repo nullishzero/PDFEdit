@@ -4,8 +4,6 @@
  *	   Description: CObject helper functions implementation.
  *		   Created:  08/02/2006 02:08:14 PM CET
  *			Author:  jmisutka (), 
- *		   Changes: Because anonymous namespaces in headers are in 99% not correct. 
- *					(I knew that but I had mixed it with templates.)
  * =====================================================================================
  */
 
@@ -21,9 +19,9 @@
 namespace pdfobjects{
 // =====================================================================================
 
-//
-// Case insensitive comparator
-//
+/**
+ * Case insensitive comparator.
+ */
 namespace
 {
 		bool nocase_compare (char c1, char c2)
@@ -52,32 +50,38 @@ void xpdfObjToString (Object& obj, string& str);
 //
 // String constants used when converting objects to strings
 //
-
-// pNull
+// CObjectSimple
+/** Object Null string representation. */
 const string CNULL_NULL = "null";
 	
-// SimpleObjects
+/** Object Bool string repersentation. */
 const string CBOOL_TRUE  =	"true";
 const string CBOOL_FALSE =	"false";
 
+/** Object Name string representation. */
 const string CNAME_PREFIX	= "/";
 
+/** Object String string representation. */
 const string CSTRING_PREFIX = "(";
 const string CSTRING_SUFFIX = ")";
 
+/** Object Ref string representation. */
 const string CREF_MIDDLE	= " ";
 const string CREF_SUFFIX	= " R";
 
-// ComplexObjects
+// CObjectComplex
+/** Object Arraystring representation. */
 const string CARRAY_PREFIX	= "[";
 const string CARRAY_MIDDLE	= " ";
 const string CARRAY_SUFFIX	= " ]";
 
+/** Object Dictionary string representation. */
 const string CDICT_PREFIX	= "<<";
 const string CDICT_MIDDLE	= "\n/";
 const string CDICT_BETWEEN_NAMES = " ";
 const string CDICT_SUFFIX	= "\n>>";
 
+/** Object Stream string representation. */
 const string CSTREAM_STREAM = "<stream>";
 
 
@@ -88,9 +92,9 @@ namespace {
 
 
 
-		//
-		// ReadProcessors for simple types
-		//
+		/**
+		 * Read processors for simple types.
+		 */
 		template<typename Storage, typename Val>
 		struct xpdfBoolReader
 		{public:
@@ -135,11 +139,11 @@ namespace {
 					 val.gen = obj.getRefGen();}
 		};
 		
-		//
-		// WriteProcessors
-		//
-		// We know that Storage is xpdf Object and value type depends on each writer type
-		//
+		/**
+		 * WriteProcessors
+		 *
+		 * We know that Storage is xpdf Object and value type depends on each writer type
+		 */
 		template<typename Storage, typename Val>
 		struct xpdfBoolWriter
 		{public:
@@ -220,13 +224,13 @@ namespace {
 			 typedef struct utils::xpdfRefReader<T,U>	xpdfReadProcessor;};
 
 
-		//
-		//
-		//
-		template<typename Value, typename Storage>
+		/**
+		 * This object parses xpdf object to CArray.
+		 */
+		template<typename ObjectToParse, typename CObject>
 		struct xpdfArrayReader
 		{public:
-			void operator() (IProperty& ip, const Value array, Storage val)
+			void operator() (IProperty& ip, const ObjectToParse array, CObject resultArray)
 			{
 				assert (objArray == array.getType());
 				assert (0 <= array.arrayGetLength ());
@@ -251,7 +255,7 @@ namespace {
 						if (cobj)
 						{
 							// Store it in the storage
-							val.push_back (cobj);
+							resultArray.push_back (cobj);
 							// Free resources allocated by the object
 							obj.free ();
 							
@@ -262,10 +266,10 @@ namespace {
 			}	// void operator
 		};
 
-		template<typename Value, typename Storage>
+		template<typename ObjectToParse, typename CObject>
 		struct xpdfDictReader
 		{public:
-			void operator() (IProperty& ip, const Value dict, Storage val)
+			void operator() (IProperty& ip, const ObjectToParse dict, CObject resultDict)
 			{
 				assert (objDict == dict.getType());
 				assert (0 <= dict.dictGetLength ());
@@ -291,7 +295,7 @@ namespace {
 						if (cobj)
 						{
 							// Store it in the storage
-							val.push_back (make_pair(key,cobj));
+							resultDict.push_back (make_pair(key,cobj));
 							// Free resources allocated by the object
 							obj.free ();
 
@@ -301,10 +305,10 @@ namespace {
 			}
 		};
 
-		template<typename Value, typename Storage>
+		template<typename ObjectToParse, typename CObject>
 		struct xpdfStreamReader
 		{public:
-				void operator() (IProperty&, Value /*obj*/, Storage /*val*/)
+				void operator() (IProperty&, ObjectToParse /*obj*/, CObject /*val*/)
 				{
 						assert (!"not implemented yet.");
 				}
@@ -325,7 +329,10 @@ namespace {
 
 
 		/**
+		 * Convert simple xpdf object to string.
 		 *
+		 * @param obj Object to parse.
+		 * @param str Result string representation.
 		 */
 		void
 		simpleXpdfObjToString (Object& obj,string& str)
@@ -374,9 +381,12 @@ namespace {
 			str = oss.str ();
 		}
 
-		//
-		//
-		//
+		/**
+		 * Convert complex xpdf object to string.
+		 *
+		 * @param obj Object to parse.
+		 * @param str Result string representation.
+		 */
 		void
 		complexXpdfObjToString (Object& obj, string& str)
 		{
