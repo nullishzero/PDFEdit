@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/03/31 21:03:00  hockm0bm
+ * removePage implemented
+ *
  * Revision 1.20  2006/03/30 21:29:33  hockm0bm
  * * findPage renamed to findPageDict
  *         - return value changed to shared_ptr<CDict>
@@ -547,25 +550,24 @@ public:
 	 * @param page Page used for new page creation.
 	 * @param pos Position where to insert new page.
 	 *
-	 * Adds deep copy of given page before given position.
+	 * Adds deep copy of given page before given position. This method triggers
+	 * pageList and page tree consolidation (TODO link to description).
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
 
 	/** Removes page from given position.
 	 * @param pos Position of the page.
+	 *
+	 * Removes given page from its parent /Kids array. This method triggers
+	 * pageList and page tree consolidation (TODO link to description). As a 
+	 * result page count is decreased. 
+	 * <br>
+	 * Intermediate nodes with no direct page are kept in page tree in this
+	 * implementation.
+	 *
+	 * @throw PageNotFoundException if given page couldn't be found.
 	 */
-	int removePage(size_t )
-	{
-		// try to find page
-		// 		if available invalidate
-		// find page at given position
-		// gets reference from page indirectParent (it is indirect object, so it
-		// 	stands for its own reference)
-		// remove reference from page's parent
-		// release reference
-		// consolidate all pages (all pages with pos >=)
-		return 0;
-	}
+	void removePage(size_t pos);
 
 	/** Returns absolute position of given page.
 	 * @param page Page to look for.

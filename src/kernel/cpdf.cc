@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/03/31 21:03:00  hockm0bm
+ * removePage implemented
+ *
  * Revision 1.19  2006/03/30 23:21:14  misuj1am
  *
  *
@@ -1247,15 +1250,54 @@ using namespace utils;
 	storePostion+=append;
 	//CRef pageCRef(pageRef);
 	//kids_ptr->addProperty(kidsIndex, pageCRef);
-
-	// page dictionary is stored to the tree, consolidation is done after
-	// kids_ptr->addProperty method by observer handler.
+	
+	// page dictionary is stored in the tree, consolidation is also done at this
+	// moment
 	// CPage can be created and inserted to the pageList
 	shared_ptr<CDict> newPageDict_ptr=IProperty::getSmartCObjectPtr<CDict>(getIndirectProperty(pageRef));
 	shared_ptr<CPage> newPage_ptr(CPageFactory::getInstance(newPageDict_ptr));
 	pageList.insert(PageList::value_type(storePostion, newPage_ptr));
 	printDbg(DBG_DBG, "New page added to the pageList size="<<pageList.size())
 	return newPage_ptr;
+}
+
+void CPdf::removePage(size_t pos)
+{
+using namespace utils;
+
+	// checks position
+	if(1<pos || pos>getPageCount())
+		throw PageNotFoundException(pos);
+
+	// searches for page dictionary at given pos
+	// gets parent field which contains this page in Kids array and 
+	// page reference to be able to find page the position in the parent's 
+	// Kids array.
+	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("/Pages"), 1, pos);
+	// FIXME this may be problem - because there may be only one page in
+	// document which doesn't have any parent
+	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("/Parent");
+	IndiRef currentRef=currentPage_ptr->getIndiRef();
+	shared_ptr<CDict> interNode_ptr=getDictFromRef(parentRef_ptr);
+	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("/Kids");
+	if(kidsProp_ptr->getType()!=pArray)
+	{
+		printDbg(DBG_CRIT, "Pages Kids field is not an array type="<<kidsProp_ptr->getType());
+		// Kids is not array - malformed intermediate node
+		throw MalformedFormatExeption("Intermediate node Kids field is not an array.");
+	}
+	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
+
+	// gets index of searched node in Kids array and removes element at found
+	// position
+	size_t kidsIndex=0;
+	// TODO gets kidsIndex of currentPage_ptr in kids_ptr
+	//CRef pageCRef(currentRef);
+	//kids_ptr->delProperty(kidsIndex, pageCRef);
+	kids_ptr->delProperty(kidsIndex);
+	
+	// page dictionary is removed from the tree, consolidation is also done at
+	// this moment
 }
 
 } // end of pdfobjects namespace
