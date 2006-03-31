@@ -581,12 +581,11 @@ CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 					break;
 	}
 
-	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
-	assert (NULL != ip.get());
-	
 	if (it == value.end())
 			throw ElementNotFoundException ("", "");
 	
+	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
+
 	//
 	// \TODO Find out the mode
 	//
@@ -598,21 +597,20 @@ CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 //
 //
 template<PropertyType Tp, typename Checker>
-size_t 
+typename PropertyTraitComplex<Tp>::propertyId
 CObjectComplex<Tp,Checker>::getPosition (const boost::shared_ptr<IProperty>& ip) const
 {
-	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_getPosition_FUNCTION);
 	printDbg (debug::DBG_DBG,"getPosition()");
 
-	size_t pos = 0;
-	typename Value::const_iterator it = value.begin();
-	for (; it != value.end(); ++it, ++pos)
+	typename Value::iterator it = value.begin();
+	for (size_t i = 0; it != value.end(); ++it, ++i)
 	{
-		if ((*it) == ip)
-			return pos;
+		// Have we found the item
+		if (getIPropertyFromItem (*it) == ip)
+			return utils::getPropertyIdFromItem (*it, i);
 	}
-	
-	throw ElementNotFoundException ("","");  
+
+	throw ElementNotFoundException ("", "");
 }
 
 //
