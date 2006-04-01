@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/04/01 16:45:17  hockm0bm
+ * getInstance throws PdfOpenException when file open fails
+ *
  * Revision 1.21  2006/03/31 22:36:52  hockm0bm
  * names changed from /Name -> Name
  *
@@ -773,8 +776,7 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	if(!file)
 	{
 		printDbg(debug::DBG_ERR, "Unable to open file (reason="<<strerror(errno)<<")");
-		// TODO some output
-		// exception
+		throw PdfOpenException("Unable to open file.");
 	}
 	printDbg(debug::DBG_DBG,"File \"" << filename << "\" open successfully in mode=" << openMode);
 	
