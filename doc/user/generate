@@ -1,0 +1,2 @@
+#!/bin/sh
+docbook2html -u scripting.xml

@@ -80,6 +80,15 @@
    Restore state of current editor window (size and position of window and size of elements inside it)
    State is restored frmo state saved in editor's configuration file.   
   </para>
+  <para>
+   <title><funcsynopsys> string version();</funcsynopsys></title>
+   Return version of editor (in format 'major.minor.release')
+  </para>
+  <para>
+   <title><funcsynopsys> string filename();</funcsynopsys></title>
+   Return name of file loaded in editor. If the file does not exist on disk
+   (not loaded, not saved or no file loaded), empty string is returned.
+  </para>
  </chapter>
  <chapter>
   <title>Objects exported to scripting</title>
@@ -87,10 +96,137 @@
    <title>settings</title>
    <para>
     This object hold application settings and can be used to read them.
-   <para>
-   <title><funcsynopsys>String settings.read(String)</funcsynopsys></title>
-   Returns application setting with given key
+    <para>
+     <title><funcsynopsys>string settings.read(string)</funcsynopsys></title>
+     Returns application setting with given key
+    </para>
    </para>
+  </sect1>
+ </chapter>
+ <chapter>
+  <title>Document-related objects bound to scripting</title>
+  <para>
+  These objects are set to reflect current items from edited document
+  Contents of these objects may (and often will) change between returning from script and invoking another script
+  </para>
+  <sect1>
+   <title>item</title>
+   <para>
+    This object represents currently selected object in editor.
+   </para>
+   <para>
+    Available function of this object depend on type of currently selected object.
+    Script should check type of this object before manipulating with it.
+   </para>
+   <para>
+    Types can be Pdf, Page, Dict or Array.<!--todo: more types as they are implemented.-->
+    You can use type() function to return name of the object's type
+   </para>
+  </sect1>
+  <sect1>
+   <title>document</title>
+   <para>
+   This object represents currently edited PDF document. Type of this object is Pdf
+   </para>
+  </sect1>
+  <sect1>
+   <title>page</title>
+   <para>
+   This object represents currently selected page. Type of this object is Page
+   </para>
+  </sect1>
+ </chapter>
+ <chapter>
+  <title>Object types</title>
+  <sect1 id="type_dict">
+   <title>Dict</title>
+   <para>
+   This type represents a dictionary in PDF document. It hold keys (String) and values. Each key is corresponding to one value.
+   Keys are strings, values can be of any type, either simple types (int, bool, float, string) or complex types (Dict, Array)
+   </para>
+  </sect1>
+  <sect1 id="type_array">
+   <title>Array</title>
+   <para>
+   This type represents an array in PDF document. It holds zero or more values, each is indexed by integer (starting from zero).
+   Values can be of any type, either simple types (int, bool, float, string) or complex types (Dict, Array)
+   </para>
+  </sect1>
+  <sect1 id="type_page">
+   <title>Page</title>
+   <para>
+    <para>
+     <title><funcsynopsys> Dict getDictionary();</funcsynopsys></title>
+     Returns page dictionary
+    </para>
+    <para>
+     <title><funcsynopsys> int getPageNumber();</funcsynopsys></title>
+     Return page number in document
+    </para>
+    <para>
+     <title><funcsynopsys> void setPageNumber(int);</funcsynopsys></title>
+     Sets page number in document  
+    </para>
+    <para>
+     <title><funcsynopsys> string getText();</funcsynopsys></title>
+     Return text representation of this page
+    </para>
+   </para>
+  </sect1>
+  <sect1 id="type_pdf">
+   <title>Pdf</title>
+   <para>
+    <para>
+     <title><funcsynopsys> int save();</funcsynopsys></title>
+     Save currently edited document.
+     If current document have no name, user will be asked for name.
+     If it is not possible to ask user or user presses cancel in file chooser,
+     document is not saved.
+    </para>
+    <para>
+     <title><funcsynopsys> int saveAs(string);</funcsynopsys></title>
+     Save currently edited document under different name.
+    </para>
+    <para>
+     <title><funcsynopsys> void removePage(int);</funcsynopsys></title>
+     Remove page with given number from document
+    </para>
+    <para>
+     <title><funcsynopsys> int getPagePosition(Page);</funcsynopsys></title>
+     Get position of given page in document
+    </para>
+    <para>
+     <title><funcsynopsys> int getPageCount();</funcsynopsys></title>
+     Get number of pages in document
+    </para>
+    <para>
+     <title><funcsynopsys> Dict getDictionary();</funcsynopsys></title>
+     Get document dictionary
+    </para>
+    <para>
+     <title><funcsynopsys> Page insertPage(Page,int);</funcsynopsys></title>
+     Insert given page in document, at given position. Return inserted page.
+    </para>
+    <para>
+     <title><funcsynopsys> Page getPage(int);</funcsynopsys></title>
+     Get Page, given its page number.
+    </para>
+    <para>
+     <title><funcsynopsys> Page getFirstPage();</funcsynopsys></title>
+     Get first page in document.
+    </para>
+    <para>
+     <title><funcsynopsys> Page getNextPage(Page);</funcsynopsys></title>
+     Get next page in document, relative to given page.
+    </para>
+    <para>
+     <title><funcsynopsys> Page getPrevPage(Page);</funcsynopsys></title>
+     Get previous page in document, relative to given page.
+    </para>
+    <para>
+     <title><funcsynopsys> Page getLastPage();</funcsynopsys></title>
+     Get last page in document.
+    </para>
    </para>
   </sect1>
  </chapter>
