@@ -3,6 +3,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/04/01 20:31:15  hockm0bm
+ * findPageDict
+ *         - Kids array handling errors corrected
+ *         - comments updated
+ * testing start
+ *
  * Revision 1.23  2006/04/01 17:47:29  hockm0bm
  * BUG fixed in findPageDict:
  * 189: shared_ptr<CDict> pages_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
@@ -208,16 +214,28 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 		}
 
 		// PAGE IS IN THIS SUBTREE, we have to find where
-		// from pages's Kids array
+		
+		// gets Kids array from pages dictionary and gets all its children
+		shared_ptr<IProperty> kidsProp_ptr=dict_ptr->getProperty("Kids");
+		if(kidsProp_ptr->getType()!=pArray)
+		{
+			printDbg(DBG_ERR,"Kids field is not an array. type="<<kidsProp_ptr->getType());
+			throw ElementBadTypeException("Kids");
+		}
+		shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
+		ChildrenStorage children;
+		kids_ptr->_getAllChildObjects(children);
+
 		// min_pos holds minimum position for actual child (at the begining
 		// startPos value and incremented by page number in node which can't
 		// contain pos (normal page 1 and Pages their count).
-		ChildrenStorage children;
-		dict_ptr->_getAllChildObjects(children);
 		ChildrenStorage::iterator i;
 		size_t min_pos=startPos, index=0;
 		for(i=children.begin(); i!=children.end(); i++, index++)
 		{
+			shared_ptr<IProperty> child=*i;
+
+			PropertyType childType=child->getType();
 			printDbg(DBG_DBG, index << " kid checking if it is reference");
 			// all members of Kids array have to be referencies according
 			// PDF specification
@@ -239,7 +257,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 				// target is not an dictionary
 				throw MalformedFormatExeption("Kid target is not dictionary");
 			}
-
+			
 			// we can have page or pages dictionary in child_ptr
 			// Type field determine kind of node
 			string dict_type=getNameFromDict("Type", child_ptr);
@@ -269,7 +287,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 
 				if(min_pos + count > pos )
 					// pos IS in this subtree
-					return findPageDict(pdf, child_ptr, startPos+min_pos, pos);
+					return findPageDict(pdf, child_ptr, min_pos, pos);
 
 				// pos is not in this subtree
 				// updates min_pos with its count and continues
@@ -339,7 +357,7 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 	// element until first one returns with non 0. Otherwise startValue is
 	// updated by child node pages count.
 	shared_ptr<IProperty> arrayProp_ptr=superNode->getProperty("Kids");
-	if(arrayProp_ptr->getType()!=pArray)		// TODO can be reference?
+	if(arrayProp_ptr->getType()!=pArray)
 		throw ElementBadTypeException("Kids");
 	shared_ptr<CArray> array_ptr=IProperty::getSmartCObjectPtr<CArray>(arrayProp_ptr);
 	vector<shared_ptr<IProperty> > kidsContainer;
@@ -1258,12 +1276,17 @@ using namespace utils;
 	// gets index of searched node in Kids array and stores new dictionary
 	// reference at this position, or after if append is true.
 	size_t kidsIndex=0;
-	// TODO gets kidsIndex of currentPage_ptr in kids_ptr
-	// positions are corrected according append flag
-	kidsIndex+=append;
+	// gets reference from current page and searches it in kids_ptr to get
+	// position where to store new page
+	// position is corrected according append flag
+	shared_ptr<CRef> currentRef_ptr(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
+	kidsIndex=kids_ptr->getPropertyId(currentPage_ptr)+append;
 	storePostion+=append;
-	//CRef pageCRef(pageRef);
-	//kids_ptr->addProperty(kidsIndex, pageCRef);
+
+	// adds newly created page dictionary to the kids array at kidsIndex
+	// position.
+	CRef pageCRef(pageRef);
+	kids_ptr->addProperty(kidsIndex, pageCRef);
 	
 	// page dictionary is stored in the tree, consolidation is also done at this
 	// moment
@@ -1302,10 +1325,10 @@ using namespace utils;
 	}
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
 
-	// gets index of searched node in Kids array and removes element at found
+	// gets index of searched node in Kids array and removes element from found
 	// position
-	size_t kidsIndex=0;
-	// TODO gets kidsIndex of currentPage_ptr in kids_ptr
+	shared_ptr<CRef> currentRef_ptr(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
+	size_t kidsIndex=kids_ptr->getPropertyId(currentRef_ptr);
 	//CRef pageCRef(currentRef);
 	//kids_ptr->delProperty(kidsIndex, pageCRef);
 	kids_ptr->delProperty(kidsIndex);
