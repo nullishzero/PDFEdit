@@ -43,6 +43,7 @@
 //
 // Forward declarations to make it readable
 //
+class PdfOpenException;
 class MalformedFormatExeption;
 class PageNotFoundException;
 class ReadOnlyDocumentException;
@@ -78,6 +79,35 @@ class PdfException: public std::exception
  */
 class CObjectException: public std::exception
 {
+};
+
+/** Pdf open exception.
+ *
+ * Exception is thrown if file open fail on what ever cause. Reason is in
+ * message string.
+ */
+class PdfOpenException: public PdfException
+{
+	const std::string message;
+public:
+	/** Exception constructor.
+	 * @param msg Cause message.
+	 */
+	PdfOpenException(std::string msg):message(msg){};
+
+	virtual ~PdfOpenException()throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		return message.c_str();
+	}
+	
+	void getMessage(std::string & msg)const
+	{
+		msg=message;
+	}
 };
 
 /** Exception is thrown when pdf structure doesn't confirm to PDF specification
