@@ -1035,7 +1035,55 @@ contentStream (ostream& oss, const char* fileName)
 
 }
 
+//=====================================================================================
 
+void
+c_addprop2 ()
+{
+	CDict dict;
+	CInt i (1);
+	CInt ii (11);
+
+	dict.addProperty ("1", i);
+	boost::shared_ptr<IProperty> b = dict.addProperty ("2", ii);
+	dict.addProperty ("3", i);
+	dict.addProperty ("4", ii);
+
+	if ("2" != dict.getPropertyId (b))
+		throw;
+
+	
+	CArray a;
+
+	a.addProperty (i);
+	boost::shared_ptr<IProperty> bb = a.addProperty (ii);
+	a.addProperty (i);
+	a.addProperty (ii);
+	ip_validate (a,"[ 1 11 1 11 ]");
+
+	if (1 != a.getPropertyId (bb))
+		throw;
+
+	CString s ("new");
+	a.addProperty (3,s);
+	a.addProperty (0,s);
+	a.addProperty (6,s);
+	ip_validate (a,"[ (new) 1 11 1 (new) 11 (new) ]");
+	
+	bool exc = false;
+	try
+	{
+		a.addProperty (16,s);
+	}catch(...)
+	{
+		exc = true;
+	}
+	if (!exc)
+		throw;
+}
+
+
+//=====================================================================================
 void cobject_tests(int , char **)
 {
 	
@@ -1174,10 +1222,14 @@ void cobject_tests(int , char **)
 	TEST(" test 2.10 - xpdf ctors")
 	c_xpdfctor ();
 	OK_TEST;
+*/
+	TEST(" test 2.11 - xpdf addProperty + getPosition")
+	c_addprop2 ();
+	OK_TEST;
 
 	//======================= CContentStream
 	
-	TEST(" test 3.1 -- ccontentstream - getContentstream")
+/*	TEST(" test 3.1 -- ccontentstream - getContentstream")
 	getContentStream (cout, TESTPDFFILE, false);
 	OK_TEST;
 	*/
