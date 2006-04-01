@@ -7,8 +7,9 @@ namespace test {
 
 /** Create and return some testing CPdf */
 CPdf* testPDF(void) {
- //todo: zprovoznit nejak tenhle test
+ //zatim nefunguje (CPdf::getInstance)
  CPdf *pdf=CPdf::getInstance(NULL,CPdf::ReadWrite);
+
  boost::shared_ptr<CDict> pd=pdf->getDictionary();
  CDict dict;
  CString val1("val1");
@@ -35,13 +36,41 @@ CPdf* testPDF(void) {
  return pdf;
 }
 
+/** Create and return some testing CDict */
+CDict* testDict(void) {
+ //todo: zprovoznit nejak tenhle test
+ CDict *pd=new CDict();
+ CDict dict;
+ CString val1("val1");
+ CString val2("val2");
+ CString item1("fero");
+ dict.addProperty("jano",item1);
+ dict.addProperty("item1",val1);
+ dict.addProperty("item2",val2);
+ CString str3("val5");
+ dict.addProperty("item5",str3);
+ CArray arTest1;
+ CArray arTest2;
+ CDict dcTest1;
+ CDict dcTest2;
+ makeArTest1(arTest1);
+ makeDcTest1(dcTest1);
+ makeArTest2(arTest2,arTest1,dcTest1);
+ makeDcTest2(dcTest2,arTest1,dcTest1);
+ pd->addProperty("somedict",dict);
+ pd->addProperty("atest1",arTest1);
+ pd->addProperty("atest2",arTest2);
+ pd->addProperty("dtest1",dcTest1);
+ pd->addProperty("dtest2",dcTest2);
+ return pd;
+}
+
 /** Fill arTest1 with some testing junk */
 void makeArTest1(CArray & arTest1) {
  CString it1("item1");
  CString it2("item2");
  CString it3("item3");
-//todo: Momentalne nefunguje! Chyba v kernelu ...
-/* arTest1.addProperty(it1);
+ arTest1.addProperty(it1);
  arTest1.addProperty(it2);
  arTest1.addProperty(it3);
  CInt i1(1);
@@ -56,7 +85,7 @@ void makeArTest1(CArray & arTest1) {
  CRef rf(ref);
  arTest1.addProperty(rf);
  CBool bl(false);
- arTest1.addProperty(bl);*/
+ arTest1.addProperty(bl);
 }
 
 /** Fill dcTest1 with some testing junk */
@@ -84,13 +113,12 @@ void makeDcTest1(CDict & dcTest1) {
 
 /** Fill arTest2 with some testing junk */
 void makeArTest2(CArray & arTest2,CArray & arTest1,CDict & dcTest1) {
-//todo: Momentalne nefunguje! Chyba v kernelu ...
-/* arTest2.addProperty(arTest1);
+ arTest2.addProperty(arTest1);
  arTest2.addProperty(arTest1);
  arTest2.addProperty(arTest1);
  arTest2.addProperty(dcTest1);
  arTest2.addProperty(dcTest1);
- arTest2.addProperty(dcTest1);*/
+ arTest2.addProperty(dcTest1);
 }
 
 /** Fill dcTest2 with some testing junk */

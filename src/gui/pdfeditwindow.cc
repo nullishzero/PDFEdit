@@ -231,13 +231,15 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
 
  //create testing document
 // document=CPdf::getInstance("../../doc/zadani.pdf",CPdf::ReadWrite);
- //document=test::testPDF();
+// document=test::testPDF();
+ document=NULL;
 
  item=NULL;//no item selected
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
 
- tree->init((IProperty*)NULL);
+ //This is a memory leak, but it is just for testing anyway ... 
+ tree->init(test::testDict());
 // tree->init(document);//not yet implemented in kernel
  prop->setObject(0);//fill with demonstration properties
 }

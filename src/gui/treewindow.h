@@ -5,6 +5,7 @@
 #include <qlistview.h>
 #include <cobject.h>
 #include <cpdf.h>
+#include "treeitem.h"
 
 using namespace pdfobjects;
 
@@ -15,7 +16,7 @@ public:
  void init(CPdf *pdfDoc);
  void init(IProperty *doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
- void addChilds(IProperty *obj);
+ void addChilds(TreeItem *parent);
  ~TreeWindow();
 signals:
  /** Signal emitted when selecting one of the objects in the tree window.

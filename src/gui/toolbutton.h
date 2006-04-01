@@ -17,7 +17,7 @@ class ToolButton : public QToolButton {
  private:
   int b_id;   
  signals:
-  /** signal emitted when cllicked on this button. The button sends ID of itself. */
+  /** signal emitted when clicked on this button. The button sends ID of itself. */
   void clicked(int);
 };
 

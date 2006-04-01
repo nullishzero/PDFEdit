@@ -8,6 +8,7 @@ using namespace std;
 using namespace pdfobjects;
 
 namespace test {
+ CDict* testDict(void);
  CPdf* testPDF(void);
  void makeArTest1(CArray & arTest1);
  void makeDcTest1(CDict & dcTest1);

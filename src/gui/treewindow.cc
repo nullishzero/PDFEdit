@@ -3,7 +3,6 @@
 */
 #include <utils/debug.h>
 #include "treewindow.h"
-#include "treeitem.h"
 #include "settings.h"
 #include "util.h"
 #include <iostream>
@@ -18,8 +17,9 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->setSorting(-1);
  QObject::connect(tree, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(treeSelectionChanged(QListViewItem *)));
  l->addWidget(tree);
- tree->addColumn("Object");
- tree->addColumn("Type");
+ tree->addColumn(tr("Object"));
+ tree->addColumn(tr("Type"));
+ tree->addColumn(tr("Ref"));
  tree->setSelectionMode(QListView::Single);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
@@ -29,11 +29,12 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
 void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  printDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
  TreeItem* it=dynamic_cast<TreeItem*>(item);
- if (!it) {
+ if (!it) { //Not holding IProperty
   printDbg(debug::DBG_WARN,"Not a TreeItem: " << item->text(0));
   //todo: handle this type properly
   return;
  }
+ //holding IProperty
  printDbg(debug::DBG_DBG,"Is a TreeItem: " << item->text(0));
  //We have a TreeItem -> emit signal with selected object
  emit objectSelected(it->getObject());
@@ -70,24 +71,45 @@ void TreeWindow::init(IProperty *doc) {
  } else {
   TreeItem *root=new TreeItem(tree, doc); 
   root->setOpen(TRUE);
-  addChilds(doc);
+  addChilds(root);
  }
 }
 
-/** Recursively add all child of given object to treeview. Childs will be added with obj as parent.
- @param obj Object to add*/
-void TreeWindow::addChilds(IProperty *obj) {
- if (obj->getType()==pDict) {
-  printDbg(debug::DBG_DBG,"is-a-dict");
+/** Recursively add all child of given object to treeview. Childs will be added under parent item.
+ @param parent Parent TreeItem of which to add childs
+*/
+void TreeWindow::addChilds(TreeItem *parent) {
+ IProperty *obj=parent->getObject();
+
+ if (obj->getType()==pDict) {	//Object is CDict
   CDict *dict=(CDict*)obj;
   vector<string> list;
-  printDbg(debug::DBG_DBG,"get-names");
   dict->getAllPropertyNames(list);
-  printDbg(debug::DBG_DBG,"end..");
+  vector<string>::iterator it;
+  for( it=list.begin();it!=list.end();++it) { // for each property
+   printDbg(debug::DBG_DBG,"Subproperty: " << *it);
+   boost::shared_ptr<IProperty> property=dict->getProperty(*it);
+   TreeItem *child=new TreeItem(parent, property.get(),*it); 
+   addChilds(child);
+  }
  }
 
-//todo
-// TreeItem *child=new TreeItem(tree, obj); 
+ if (obj->getType()==pArray) {	//Object is CArray
+  CArray *ar=(CArray*)obj;
+  size_t n=ar->getPropertyCount();
+  printDbg(debug::DBG_DBG,"Subproperties: " << n);
+  for(size_t i=0;i<n;i++) { //for each property
+   boost::shared_ptr<IProperty> property=ar->getProperty(i);
+   QString name;
+   name.sprintf("[%d]",i);
+   TreeItem *child=new TreeItem(parent, property.get(),name); 
+   addChilds(child);
+  }
+ }
+
+ //Null, Bool, Int, Real, String -> These are simple types without any children
+ //TODO: Name, pRef, pStream -> have they children?
+
 }
 
 /** default destructor */

@@ -32,14 +32,15 @@ void TreeItem::init(IProperty *pdfObj,const QString name) {
  IndiRef iref=pdfObj->getIndiRef();
  QString s;
  // object name
- //TODO: Maybe think of better naming convention
  if (name.isNull()) {
-  setText(0,s.sprintf("%d_%d",iref.gen,iref.num));
+  setText(0,QObject::tr("<no name>"));
  } else {
-  setText(0,name+s.sprintf("_%d_%d",iref.gen,iref.num));
+  setText(0,name);
  }
  // object type
  setText(1,getTypeName(typ));
+ // object generation and number
+ setText(2,s.sprintf("%d,%d",iref.gen,iref.num));
 }
 
 /** return CObject stored inside this item
@@ -47,6 +48,7 @@ void TreeItem::init(IProperty *pdfObj,const QString name) {
 IProperty* TreeItem::getObject() {
  return obj;
 }
+
 /** default destructor */
 TreeItem::~TreeItem() {
 }
