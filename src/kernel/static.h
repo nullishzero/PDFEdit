@@ -14,6 +14,7 @@
 // stl
 //
 #include <ostream>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -46,6 +47,7 @@
 //
 #include "utils/debug.h"
 #include "utils/objectstorage.h"
+#include "../utils/iterator.h"
 
 #include "observer.h"
 #include "exceptions.h"
@@ -54,6 +56,7 @@
 
 #include "xpdf.h"
 
+#include "iproperty.h"
 
 //============================================
 // 
