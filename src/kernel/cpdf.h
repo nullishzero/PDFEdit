@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/04/01 07:27:52  hockm0bm
+ * added include cpage.h
+ *
  * Revision 1.24  2006/04/01 00:23:22  hockm0bm
  * sync with CVS - no code change - CVS is complaining
  *
@@ -101,6 +104,7 @@
 #include "modecontroller.h"
 #include "iproperty.h"
 #include "xrefwriter.h"
+#include "cpage.h"
 
 
 // =============================================================================
