@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/04/01 07:56:04  hockm0bm
+ * CPage include changed to forward declaration
+ *         - module compilation ok when include but kernel compilation failed
+ *         - forward declaration works better
+ *
  * Revision 1.25  2006/04/01 07:27:52  hockm0bm
  * added include cpage.h
  *
@@ -104,7 +109,6 @@
 #include "modecontroller.h"
 #include "iproperty.h"
 #include "xrefwriter.h"
-#include "cpage.h"
 
 
 // =============================================================================
@@ -144,6 +148,7 @@ public:
 }
 
 // forward declarations FIXME remove
+class CPage;
 class COutline;
 
 /** CPdf special object.
