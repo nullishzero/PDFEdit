@@ -598,15 +598,15 @@ CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 //
 template<PropertyType Tp, typename Checker>
 typename PropertyTraitComplex<Tp>::propertyId
-CObjectComplex<Tp,Checker>::getPosition (const boost::shared_ptr<IProperty>& ip) const
+CObjectComplex<Tp,Checker>::getPropertyId (const boost::shared_ptr<IProperty>& ip) const
 {
-	printDbg (debug::DBG_DBG,"getPosition()");
+	printDbg (debug::DBG_DBG,"getPropertyId ()");
 
-	typename Value::iterator it = value.begin();
+	typename Value::const_iterator it = value.begin();
 	for (size_t i = 0; it != value.end(); ++it, ++i)
 	{
 		// Have we found the item
-		if (getIPropertyFromItem (*it) == ip)
+		if (utils::getIPropertyFromItem (*it) == ip)
 			return utils::getPropertyIdFromItem (*it, i);
 	}
 

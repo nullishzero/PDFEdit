@@ -556,7 +556,7 @@ public:
 	 *
 	 * @param ip Object for which we want to find out the position.
 	 */
-	PropertyId getPosition (const boost::shared_ptr<IProperty>& ip) const;
+	PropertyId getPropertyId (const boost::shared_ptr<IProperty>& ip) const;
 
 	//
 	// Helper functions
