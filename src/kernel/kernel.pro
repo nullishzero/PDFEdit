@@ -24,6 +24,7 @@ HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pd
 SOURCES += modecontroller.cc filters.cc 
 SOURCES += cxref.cc xrefwriter.cc 
 SOURCES += cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc cpage.cc cpdf.cc 
+SOURCES += ./tests/testcobject.cc 
 SOURCES += main.cc 
 
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
