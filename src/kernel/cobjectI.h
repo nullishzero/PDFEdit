@@ -458,7 +458,7 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 		}
 
 		// Insert it
-		value.insert (inserter(value,it), newIpClone);
+		value.insert (it,newIpClone);
 	
 		// Inherit id and gen number
 		newIpClone->setIndiRef (IProperty::getIndiRef());
