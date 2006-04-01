@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/04/01 17:55:44  misuj1am
+ *
+ *
+ * --ADD: MEM_CHECK at the end of testing
+ *
  * Revision 1.1  2006/04/01 00:39:51  misuj1am
  *
  *
@@ -57,7 +62,7 @@ static const char* TESTPDFFILE= "../../doc/zadani.pdf";
 
 #define TEST(a)		OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl; KERNEL_OUTPUT;
-#define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
+#define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
 #define OK_TEST		OUTPUT << "TEST PASSED..." << endl; MEM_CHECK;
 //==========================
 
