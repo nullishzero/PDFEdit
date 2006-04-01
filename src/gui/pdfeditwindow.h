@@ -54,6 +54,10 @@ private:
  QSInterpreter *qs;
  /** Edited PDF document */
  CPdf *document;
+ /** Currently selected page (for scripting)*/
+ boost::shared_ptr<CPage> page;
+ /** Currently selected object (for scripting)*/
+ IProperty *item;
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;
  /** QSObject Importer */

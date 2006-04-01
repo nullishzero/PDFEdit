@@ -83,12 +83,19 @@ void PdfEditWindow::restoreWindowState() {
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
 void PdfEditWindow::addDocumentObjects() {
- //todo: Add also currentPage, currentObject
+ //Import page and item (Currently selected page and currently selected object)
+ QSCObject *pg=import->createQSObject(page);
+ QSCObject *it=import->createQSObject(item);
+ import->addQSObj(pg,"page");
+ import->addQSObj(it,"item");
 }
 
-/** Removes all QSCObject descendants from scripting and destroys them */
+/** Removes objects added with addDocumentObject */
 void PdfEditWindow::removeDocumentObjects() {
- //todo: run garbage collector, remove any QSCObject descendants created for this window
+ //delete page and item variables from script -> they may change while script is not executing
+ qs->evaluate("item.deleteSelf();",this,"<delete_item>");
+ qs->evaluate("page.deleteSelf();",this,"<delete_page>");
+ //todo: run garbage collector? Is it needed?
 }
 
 /** Runs given script code
@@ -101,12 +108,13 @@ void PdfEditWindow::runScript(QString script) {
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addDocumentObjects();
  qs->evaluate(script,this,"<GUI>");
- removeDocumentObjects();
 
  QString error=qs->errorMessage();
  if (error!=QString::null) { /// some error occured
   cmdLine->addError(error);
  }
+
+ removeDocumentObjects();
 }
 
 
@@ -224,7 +232,9 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  //create testing document
 // document=CPdf::getInstance("../../doc/zadani.pdf",CPdf::ReadWrite);
  //document=test::testPDF();
- qpdf=new QSPdf(document);
+
+ item=NULL;//no item selected
+ qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
 
  tree->init((IProperty*)NULL);

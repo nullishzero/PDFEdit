@@ -22,3 +22,7 @@ QSCObject::~QSCObject() {
 // removeGC(this);
 }
 
+/** Deletes itself */
+void QSCObject::deleteSelf() {
+ delete this;
+}

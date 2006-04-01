@@ -8,8 +8,8 @@
 #include <utils/debug.h>
 #include "qsimporter.h"
 #include "qsdict.h"
+#include "qsiproperty.h"
 #include "qspage.h"
-#include "qspdf.h"
 
 /** Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated */
 QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
@@ -28,6 +28,7 @@ QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
  @return QSDict(dict)
  */
 QSCObject* QSImporter::createQSObject(CDict* dict) {
+ if (!dict) return NULL;
  return new QSDict(dict);
 }
 
@@ -38,7 +39,18 @@ QSCObject* QSImporter::createQSObject(CDict* dict) {
  @return QSPage(page)
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
+ if (!page.get()) return NULL;
  return new QSPage(page);
+}
+
+/** Overloaded factory function to create QSCObjects from various C... classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param ip IProperty to wrap into to QSIProperty
+ @return QSIProperty(ip)
+ */
+QSCObject* QSImporter::createQSObject(IProperty *ip) {
+ if (!ip) return NULL;
+ return new QSIProperty(ip);
 }
 
 /** Overloaded factory function to create QSCObjects from various C... classes
@@ -46,7 +58,8 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
  @param pdf CPdf to wrap into to QSPdf
  @return QSPdf(pdf)
  */
-QSCObject* QSImporter::createQSObject(CPdf* pdf) {
+QSPdf* QSImporter::createQSObject(CPdf* pdf) {
+ if (!pdf) return NULL;
  return new QSPdf(pdf);
 }
 
@@ -55,12 +68,16 @@ QSCObject* QSImporter::createQSObject(CPdf* pdf) {
  @param name Name of object in scripting
  */
 void QSImporter::addQSObj(QObject *obj,const QString &name) {
- obj->setName(name);
+ if (obj) obj->setName(name);//NULL can be imported too
  qobj=obj;
- printDbg(debug::DBG_DBG,"Importing " <<name);
+ if (obj) {
+  printDbg(debug::DBG_DBG,"Importing " <<name);
+ } else {
+  printDbg(debug::DBG_DBG,"Importing NULL " <<name);
+ }
  QString code=QString("var ")+name+"=importer.getQSObj();";
 // printDbg(debug::DBG_DBG,"Importing with code:" <<code);
- qs->evaluate(code,context,"qsimporter");
+ qs->evaluate(code,context,"<qsimporter>");
  QString err=qs->errorMessage();
  if (!err.isNull()) {
   printDbg(debug::DBG_ERR,"Failed import: " <<err);

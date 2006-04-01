@@ -9,6 +9,7 @@
 #include <cobject.h>
 #include <cpage.h>
 #include <cpdf.h>
+#include "qspdf.h"
 
 using namespace pdfobjects;
 
@@ -19,9 +20,10 @@ public:
  virtual ~QSImporter();
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
+ QSCObject* createQSObject(IProperty *ip);
  QSCObject* createQSObject(CDict* dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
- QSCObject* createQSObject(CPdf* pdf);
+ QSPdf* createQSObject(CPdf* pdf);
 public slots:
  QObject* getQSObj();
 private:

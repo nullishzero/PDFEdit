@@ -8,6 +8,8 @@ Q_OBJECT
 public:
  QSCObject();
  virtual ~QSCObject();
+public slots:
+ virtual void deleteSelf();
 };
 
 #endif
