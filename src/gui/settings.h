@@ -31,9 +31,13 @@ public:
  void restoreWindow(QWidget *win,const QString name);
  void saveSplitter(QSplitter *spl,const QString name);
  void restoreSplitter(QSplitter *spl,const QString name);
+ QString getIconFile(const QString &name);
+ QStringList loadPath(const QString &name);
 public slots:
  QString read(const QString &key);
 private:
+ /** List with paths to application icons */
+ QStringList iconPath;
  /** Cache storing loaded icons */
  IconCache iconCache;
  /** Settings object used to load configuration */
@@ -50,6 +54,7 @@ private:
  QString readItem(const QString name,const QString root="gui/items/");
  void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
  void initSettings();
+ void initPaths();
  QPixmap *getIcon(const QString name);
  ToolBar *loadToolbar(const QString name,QMainWindow *parent);
  void loadToolBarItem(ToolBar *tb,QString item);

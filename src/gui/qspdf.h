@@ -20,7 +20,7 @@ public:
 public slots:
  int save();
  int saveAs(QString name);
- int removePage(int position);
+ void removePage(int position);
  int getPagePosition(QSPage *page);
  unsigned int getPageCount();
  QSDict* getDictionary();

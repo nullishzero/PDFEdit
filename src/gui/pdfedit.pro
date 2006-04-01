@@ -13,7 +13,7 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 
 #debug information
-QMAKE_CXXFLAGS += -g
+#QMAKE_CXXFLAGS += -g
 
 #Widget classes
 HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h commandwindow.h treewindow.h pagespace.h pageview.h

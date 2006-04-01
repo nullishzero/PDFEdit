@@ -9,6 +9,7 @@
 #include <qfile.h>
 #include <qvaluelist.h> 
 #include <qdir.h>
+#include <qregexp.h>
 #include "settings.h"
 #include "util.h"
 #include "toolbutton.h"
@@ -26,8 +27,9 @@ void Settings::init() {
 
  /* DEBUG : will get out very soon*/
  set->beginGroup(APP_KEY);
- if (set->readEntry("debugTrashSaved")!="7") {
-  set->writeEntry("debugTrashSaved", "7");
+ if (set->readEntry("debugTrashSaved")!="10") {
+  set->writeEntry("debugTrashSaved", "10");
+  set->writeEntry("path/icon", "$HOME/.pdfedit/icon;" DATA_PATH "/icon;;./icon");
   set->writeEntry("keyboard/CtrlA", "dosomethingeverywhere()");
   set->writeEntry("keyboard/context/CtrlA", "dosomethingincontext()");
   set->writeEntry("gui/items/MainMenu",  "list Main menu,file,help");
@@ -36,11 +38,11 @@ void Settings::init() {
   set->writeEntry("gui/items/neww",  "item &New Window, newwindow(),Ctrl+N");
   set->writeEntry("gui/items/closew","item &Close Window, closewindow");
   set->writeEntry("gui/items/quit",  "item &Quit, quit");
-  set->writeEntry("gui/items/load",  "item &Load, loadFile(),, iconload.png");
-  set->writeEntry("gui/items/save",  "item &Save, saveFile(),, iconsave.png");
-  set->writeEntry("gui/items/about",  "item &About, about()");
+  set->writeEntry("gui/items/load",  "item &Load, loadFile(),, load.png");
+  set->writeEntry("gui/items/save",  "item &Save, saveFile(),, save.png");
+  set->writeEntry("gui/items/about",  "item &About, about(),, about.png");
   set->writeEntry("gui/items/index",  "item &Help index, showhelp('index')");
-  set->writeEntry("gui/items/MainToolbar",  "list Main Toolbar,load,save");
+  set->writeEntry("gui/items/MainToolbar",  "list Main Toolbar,load,save,about");
   set->writeEntry("gui/items/OtherToolbar",  "list Other Toolbar,save,load");
   QStringList vi;
   vi+="MainToolbar";
@@ -48,6 +50,23 @@ void Settings::init() {
   set->writeEntry("gui/toolbars",vi.join(","));/**/
  }
  set->endGroup();
+ initPaths();
+}
+
+/** Given name of the icon, finds and returns full path to the icon,
+     considering all relevant settings (icon path ..) */
+QString Settings::getIconFile(const QString &name) {
+ if (name.startsWith("/")) { //absolute path -> no change
+  return name;
+ }
+ QString absName;
+ for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
+  absName=*it+name;
+  printDbg(debug::DBG_DBG,"Looking for " <<name << " in: " << *it);
+  if (QFile::exists(absName)) return absName;
+ }
+ printDbg(debug::DBG_WARN,"Icon file not found: " << name);
+ return name;
 }
 
 /** Read settings with given key from configuration file and return as QString
@@ -57,10 +76,53 @@ QString Settings::read(const QString &key) {
  return set->readEntry(APP_KEY+key);
 }
 
-/** creates and inits new QSettings Object */
+/** creates and inits new QSettings Object.
+    Set paths to config files */
 void Settings::initSettings() {
+ QDir::home().mkdir(CONFIG_DIR);
  set=new QSettings(QSettings::Ini);
  set->insertSearchPath(QSettings::Unix,DATA_PATH);
+ set->insertSearchPath(QSettings::Unix,QDir::home().path()+"/"+CONFIG_DIR);
+}
+
+/** load and expand various PATHs from config file.
+  Must be done after config defaults are set */
+void Settings::initPaths() {
+ iconPath=loadPath("icon");
+}
+
+/** load path element from config file. Expands variables ($HOME, etc ...) and return as string list 
+    Path elements are expected to be separated by semicolon
+ @param name Identifier of path in config file
+ @return QStringList containing expanded path directories
+ */
+QStringList Settings::loadPath(const QString &name) {
+ set->beginGroup(APP_KEY);
+ QString path=set->readEntry(QString("path/")+name,".");
+ set->endGroup();
+ QStringList s=QStringList::split(";",path);
+ s.gres("$HOME",QDir::home().path());
+ QRegExp r("\\$([a-zA-Z0-9]+)");
+ QString var, envVar;
+ for(QStringList::Iterator it=s.begin();it!=s.end();++it) {
+  *it=(*it).stripWhiteSpace();
+  //now expand environment variables
+  int pos=0;
+  while((pos=r.search(*it,pos))!=-1) { //while variable
+   var=r.cap(1);
+   printDbg(debug::DBG_DBG,"Expand: " << var << " in " << *it);
+   envVar=getenv(var);
+   if (envVar==QString::null) {
+    printDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
+    envVar="";
+   }
+   printDbg(debug::DBG_DBG,"Expand before: " << *it);
+   *it=(*it).replace(pos,r.matchedLength(),envVar);
+   printDbg(debug::DBG_DBG,"Expand after: " << *it);
+   pos++;
+  }
+ }
+ return s;
 }
 
 /** flushes settings, saving all changes to disk */
@@ -183,9 +245,10 @@ QString Settings::getAction(int index) {
 QPixmap *Settings::getIcon(const QString name) {
  printDbg(debug::DBG_INFO,"Loading icon:" << name);
  if (iconCache.contains(name)) return iconCache[name];
- QFile f(name);
+ QString absName=getIconFile(name);
+ QFile f(absName);
  if (!f.open(IO_ReadOnly)) {
-  printDbg(debug::DBG_WARN,"File not found:" << name);
+  printDbg(debug::DBG_WARN,"File not found:" << absName);
   return NULL;//file not found or unreadable or whatever ...
  }
  QByteArray qb=f.readAll();

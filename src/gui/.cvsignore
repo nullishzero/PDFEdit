@@ -1,3 +1,6 @@
 moc_*.cpp
 Makefile
 pdfedit
+.moc
+.ui
+.obj
