@@ -3,6 +3,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/04/01 17:47:29  hockm0bm
+ * BUG fixed in findPageDict:
+ * 189: shared_ptr<CDict> pages_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
+ *      int count=getIntFromDict("Count", pages_ptr);
+ * Problem:
+ *      pagesDict is parameter and may be dictionary or reference (in this case
+ *      reference). Casting didn't fail so it was used!!!
+ * Solution:
+ *      dict_ptr is dereferenced dictionary for node.
+ *
  * Revision 1.22  2006/04/01 16:45:17  hockm0bm
  * getInstance throws PdfOpenException when file open fails
  *
@@ -186,8 +196,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 	if(dict_type=="Pages")
 	{
 		printDbg(DBG_DBG, "Page node is intermediate");
-		shared_ptr<CDict> pages_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
-		int count=getIntFromDict("Count", pages_ptr);
+		int count=getIntFromDict("Count", dict_ptr);
 
 		printDbg(DBG_DBG, "Node has " << count << " pages");
 		// check if this subtree contains enought direct pages 
@@ -204,7 +213,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 		// startPos value and incremented by page number in node which can't
 		// contain pos (normal page 1 and Pages their count).
 		ChildrenStorage children;
-		pages_ptr->_getAllChildObjects(children);
+		dict_ptr->_getAllChildObjects(children);
 		ChildrenStorage::iterator i;
 		size_t min_pos=startPos, index=0;
 		for(i=children.begin(); i!=children.end(); i++, index++)
