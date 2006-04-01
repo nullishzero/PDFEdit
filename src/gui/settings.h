@@ -34,14 +34,18 @@ public:
  QString getIconFile(const QString &name);
  QStringList loadPath(const QString &name);
 public slots:
- QString read(const QString &key);
+ QString read(const QString &key,const QString defValue=QString::null);
 private:
  /** List with paths to application icons */
  QStringList iconPath;
  /** Cache storing loaded icons */
  IconCache iconCache;
- /** Settings object used to load configuration */
+ /** Settings object used to load configuration
+  These settings takle precedence before staticSettings */
  QSettings *set;
+ /** Settings object used to load static configuration (menu, etc ...)
+  These settings are never changed (and never written) */
+ QSettings *staticSet;
  /** Mapping between menu IDs and actions */
  ActionMap action_map;
  /** Inverse mapping between menu IDs and actions */

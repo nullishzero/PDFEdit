@@ -1,0 +1,26 @@
+[gui]
+items/MainMenu=list Main menu,file,help
+items/MainToolbar=list Main Toolbar,load,save,about
+items/OtherToolbar=list Other Toolbar,save,load
+items/about=item &About,about(),, about.png
+items/closew=item &Close Window,closewindow
+items/file=list File,load,save,neww,closew,quit,help
+items/help=list Help,about,index
+items/index=item &Help,index, showhelp('index')
+items/load=item &Load,loadFile(),, load.png
+items/neww=item &New Window,newwindow(),Ctrl+N
+items/quit=item &Quit,quit
+items/save=item &Save,saveFile(),, save.png
+toolbars=MainToolbar,OtherToolbar
+windowstate/main=342,311,741,0
+windowstate/spl_left=123,119
+windowstate/spl_main=168,164
+windowstate/spl_right=208,34
+
+[keyboard]
+CtrlA=dosomethingeverywhere()
+context/CtrlA=dosomethingincontext()
+
+[path]
+icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;./icon///;/
+

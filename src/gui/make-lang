@@ -1,0 +1,4 @@
+#!/bin/sh
+# Update language files specified in projectfile according to sources
+lupdate pdfedit.pro
+lrelease pdfedit.pro

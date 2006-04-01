@@ -22,34 +22,6 @@ const QString APP_KEY = "/PDFedit/";
 void Settings::init() {
  action_index=1;
  initSettings();
- //DEBUG: aktualni adresar, ve finalni verzi nebude
- // settings.insertSearchPath( QSettings::Unix,".");
-
- /* DEBUG : will get out very soon*/
- set->beginGroup(APP_KEY);
- if (set->readEntry("debugTrashSaved")!="10") {
-  set->writeEntry("debugTrashSaved", "10");
-  set->writeEntry("path/icon", "$HOME/.pdfedit/icon;" DATA_PATH "/icon;;./icon");
-  set->writeEntry("keyboard/CtrlA", "dosomethingeverywhere()");
-  set->writeEntry("keyboard/context/CtrlA", "dosomethingincontext()");
-  set->writeEntry("gui/items/MainMenu",  "list Main menu,file,help");
-  set->writeEntry("gui/items/file", "list File,load,save,neww,closew,quit,help");
-  set->writeEntry("gui/items/help", "list Help,about,index");
-  set->writeEntry("gui/items/neww",  "item &New Window, newwindow(),Ctrl+N");
-  set->writeEntry("gui/items/closew","item &Close Window, closewindow");
-  set->writeEntry("gui/items/quit",  "item &Quit, quit");
-  set->writeEntry("gui/items/load",  "item &Load, loadFile(),, load.png");
-  set->writeEntry("gui/items/save",  "item &Save, saveFile(),, save.png");
-  set->writeEntry("gui/items/about",  "item &About, about(),, about.png");
-  set->writeEntry("gui/items/index",  "item &Help index, showhelp('index')");
-  set->writeEntry("gui/items/MainToolbar",  "list Main Toolbar,load,save,about");
-  set->writeEntry("gui/items/OtherToolbar",  "list Other Toolbar,save,load");
-  QStringList vi;
-  vi+="MainToolbar";
-  vi+="OtherToolbar";
-  set->writeEntry("gui/toolbars",vi.join(","));/**/
- }
- set->endGroup();
  initPaths();
 }
 
@@ -61,8 +33,8 @@ QString Settings::getIconFile(const QString &name) {
  }
  QString absName;
  for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
-  absName=*it+name;
-  printDbg(debug::DBG_DBG,"Looking for " <<name << " in: " << *it);
+  absName=*it+"/"+name;
+  printDbg(debug::DBG_DBG,"Looking for " <<name << " in: " << *it << " as " << absName);
   if (QFile::exists(absName)) return absName;
  }
  printDbg(debug::DBG_WARN,"Icon file not found: " << name);
@@ -71,9 +43,12 @@ QString Settings::getIconFile(const QString &name) {
 
 /** Read settings with given key from configuration file and return as QString
  @param key Key to read from settings
+ @param defValue default value to use if key not found in settings.
  @return Value of given setting */
-QString Settings::read(const QString &key) {
- return set->readEntry(APP_KEY+key);
+QString Settings::read(const QString &key,const QString defValue/*=QString::null*/) {
+ QString x=set->readEntry(APP_KEY+key);
+ if (x.isNull()) x=staticSet->readEntry(APP_KEY+key,defValue);
+ return x;
 }
 
 /** creates and inits new QSettings Object.
@@ -81,7 +56,12 @@ QString Settings::read(const QString &key) {
 void Settings::initSettings() {
  QDir::home().mkdir(CONFIG_DIR);
  set=new QSettings(QSettings::Ini);
- set->insertSearchPath(QSettings::Unix,DATA_PATH);
+ staticSet=new QSettings(QSettings::Ini);
+ #ifdef TESTING
+ //Look in current directory in testing versions -> lowest priority
+ staticSet->insertSearchPath(QSettings::Unix,QDir::current().path());
+ #endif
+ staticSet->insertSearchPath(QSettings::Unix,DATA_PATH);
  set->insertSearchPath(QSettings::Unix,QDir::home().path()+"/"+CONFIG_DIR);
 }
 
@@ -97,22 +77,24 @@ void Settings::initPaths() {
  @return QStringList containing expanded path directories
  */
 QStringList Settings::loadPath(const QString &name) {
- set->beginGroup(APP_KEY);
- QString path=set->readEntry(QString("path/")+name,".");
- set->endGroup();
+ QString path=read(QString("path/")+name,".");
  QStringList s=QStringList::split(";",path);
+ /* home() is special - it is equal to regular $HOME on unixes, but might
+    expand to "application data" directory on windows if HOME is not set */
  s.gres("$HOME",QDir::home().path());
  QRegExp r("\\$([a-zA-Z0-9]+)");
+ QRegExp stripTrail("(.)/+$");
  QString var, envVar;
  for(QStringList::Iterator it=s.begin();it!=s.end();++it) {
+  //Trim starting and ending whitespace
   *it=(*it).stripWhiteSpace();
-  //now expand environment variables
+  //Expand environment variables in path component
   int pos=0;
-  while((pos=r.search(*it,pos))!=-1) { //while variable
+  while((pos=r.search(*it,pos))!=-1) { //while found some variable
    var=r.cap(1);
    printDbg(debug::DBG_DBG,"Expand: " << var << " in " << *it);
    envVar=getenv(var);
-   if (envVar==QString::null) {
+   if (envVar==QString::null) { //variable not found in environment
     printDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
     envVar="";
    }
@@ -121,6 +103,8 @@ QStringList Settings::loadPath(const QString &name) {
    printDbg(debug::DBG_DBG,"Expand after: " << *it);
    pos++;
   }
+  //Trim trailing slashes
+  *it=(*it).replace(stripTrail,"\\1");
  }
  return s;
 }
@@ -128,6 +112,7 @@ QStringList Settings::loadPath(const QString &name) {
 /** flushes settings, saving all changes to disk */
 void Settings::flushSettings() {
  delete set;  
+ delete staticSet;
  initSettings();
 }
 
@@ -163,7 +148,7 @@ void Settings::saveWindow(QWidget *win,const QString name) {
 void Settings::restoreWindow(QWidget *win,const QString name) {
  printDbg(debug::DBG_DBG,"restore window " << name);
  QWidget *desk = QApplication::desktop();
- QString line=set->readEntry(APP_KEY+"gui/windowstate/"+name);
+ QString line=read("gui/windowstate/"+name);
  QStringList pos=explode(',',line);
  if (pos.count()!=4) return;//No previous window state information available, or it is invalid
  int x,y,w,h;
@@ -204,7 +189,7 @@ void Settings::saveSplitter(QSplitter *spl,const QString name) {
  @param name Name of key to be used in configuration */
 void Settings::restoreSplitter(QSplitter *spl,const QString name) {
  printDbg(debug::DBG_DBG,"restore splitter " << name);
- QString line=set->readEntry(APP_KEY+"gui/windowstate/"+name);
+ QString line=read("gui/windowstate/"+name);
  QStringList pos=explode(',',line);
  int cnt=pos.count();
  QValueList<int> splSize;
@@ -266,7 +251,7 @@ QPixmap *Settings::getIcon(const QString name) {
  @return line from config file  
  */
 QString Settings::readItem(const QString name,const QString root/*="gui/items/"*/) {
- QString line=set->readEntry(APP_KEY+root+name);
+ QString line=read(root+name);
  line=line.simplifyWhiteSpace();
  if (line.length()==0) fatalError("Missing item in config:\n"+root+name);
  return line; 
@@ -405,7 +390,7 @@ ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
  */
 ToolBarList Settings::loadToolBars(QMainWindow *parent) {
  ToolBarList list;
- QString line=set->readEntry(APP_KEY+"gui/toolbars");
+ QString line=read("gui/toolbars");
  QStringList tool=explode(',',line);
  for (unsigned int i=0;i<tool.count();i++) {
   list+=loadToolbar(tool[i],parent);

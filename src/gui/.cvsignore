@@ -1,6 +1,7 @@
 moc_*.cpp
 Makefile
 pdfedit
+menugenerator
 .moc
 .ui
 .obj
