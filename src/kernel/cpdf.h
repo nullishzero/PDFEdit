@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/04/01 00:23:22  hockm0bm
+ * sync with CVS - no code change - CVS is complaining
+ *
  * Revision 1.23  2006/03/31 23:05:11  hockm0bm
  * * hasNextPage  - implemented
  * * hasPrevPage  - implemented
@@ -137,7 +140,6 @@ public:
 }
 
 // forward declarations FIXME remove
-class CPage;
 class COutline;
 
 /** CPdf special object.
