@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/01 20:30:03  hockm0bm
+ * printProperty helper method for property printing
+ *
  * Revision 1.2  2006/03/29 06:13:43  hockm0bm
  * getDictFromRef helper method added
  *
@@ -103,6 +106,19 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict);
  * @return CDict instance wrapper ny shared_ptr smart pointer.
  */
 boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
+
+/** Helper method for property printing.
+ * @param ip Property to print.
+ *
+ * Gets string representation of given property and dumps it to standard output.
+ */
+void printProperty(shared_ptr<IProperty> ip)
+{
+		string str;
+		ip->getStringRepresentation(str);
+		cout << str << endl;
+}
+
 }// end of utils namespace
 
 }// end of pdfobjects namespace
