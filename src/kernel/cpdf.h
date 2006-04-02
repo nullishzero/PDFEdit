@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/04/02 08:26:40  hockm0bm
+ * PdfOpenException documented for getInstance method
+ *
  * Revision 1.26  2006/04/01 07:56:04  hockm0bm
  * CPage include changed to forward declaration
  *         - module compilation ok when include but kernel compilation failed
@@ -440,7 +443,10 @@ public:
 	 * This is only way how to get instance of CPdf type. All necessary 
 	 * initialization is done, also internal structures of kernel are
 	 * initialized.
+	 * <br>
+	 * TODO other possible exceptions describtion. 
 	 *
+	 * @throw PdfOpenException if file open fails.
 	 * @return Initialized (and ready to be used) CPdf instance.
 	 */
 	static CPdf * getInstance(const char * filename, OpenMode mode);
