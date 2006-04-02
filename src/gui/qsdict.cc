@@ -7,7 +7,7 @@
 //TODO: this is for CObjectComplex, not only CDict ...
 
 /** Construct wrapper with given CDict */
-QSDict::QSDict(CDict *_dict) : QSCObject () {
+QSDict::QSDict(CDict *_dict) : QSCObject ("Dict") {
  obj=_dict;
 }
 

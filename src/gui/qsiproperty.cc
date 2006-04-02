@@ -5,7 +5,12 @@
 #include "qsiproperty.h"
 
 /** Construct wrapper with given IProperty */
-QSIProperty::QSIProperty(IProperty *_ip) : QSCObject () {
+QSIProperty::QSIProperty(IProperty *_ip) : QSCObject ("IProperty") {
+ obj=_ip;
+}
+
+/** Construct wrapper with given IProperty and given type name*/
+QSIProperty::QSIProperty(IProperty *_ip, QString _className) : QSCObject (_className) {
  obj=_ip;
 }
 

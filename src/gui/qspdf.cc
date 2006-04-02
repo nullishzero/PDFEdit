@@ -5,7 +5,7 @@
 #include "qspdf.h"
 
 /** Construct wrapper with given PDF document */
-QSPdf::QSPdf(CPdf *_pdf) : QSCObject () {
+QSPdf::QSPdf(CPdf *_pdf) : QSCObject ("Pdf") {
  obj=_pdf;
 }
 
@@ -15,11 +15,13 @@ QSPdf::~QSPdf() {
 
 /** Call CPdf::save(NULL) */
 int QSPdf::save() {
+ //TODO: update name from/to GUI, disallow if name empty
  return obj->save(NULL);
 }
 
 /** Call CPdf::save(name) */
 int QSPdf::saveAs(QString name) {
+ //TODO: update name from/to GUI
  return obj->save(name);
 }
 

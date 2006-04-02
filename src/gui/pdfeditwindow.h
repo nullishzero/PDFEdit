@@ -34,6 +34,8 @@ public slots: //These will be exported to scripting
  void objects();
  void functions();
  void variables();
+ QString filename();
+ QString version();
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
@@ -58,6 +60,7 @@ private:
  boost::shared_ptr<CPage> page;
  /** Currently selected object (for scripting)*/
  IProperty *item;
+ //TODO: highlevel objects (Page, Anotation...) can be selected too
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;
  /** QSObject Importer */
@@ -68,6 +71,8 @@ private:
  QSplitter *splCmd;
  /** Vertical splitter between treeview and property editor */
  QSplitter *splProp;
+ /** Name of file loaded in editor */
+ QString fileName;
 };
 
 void createNewEditorWindow();

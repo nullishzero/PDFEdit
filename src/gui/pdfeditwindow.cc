@@ -263,6 +263,20 @@ void PdfEditWindow::functions() {
  }
 }
 
+/** Return version of editor
+ @return Version of editor (major.minor.release) */
+QString PdfEditWindow::version() {
+ return VERSION;
+}
+
+/** Return name of file loaded in editor. Return empty string if the document have no name
+ (if it is not loaded from disk and have not yet been saved)
+ @return Filename */
+QString PdfEditWindow::filename() {
+ if (fileName.isNull()) return "";
+ return fileName;
+}
+
 /** Print all variables that are in current script interpreter to console window*/
 void PdfEditWindow::variables() {
  QStringList objs=qs->variables(this);

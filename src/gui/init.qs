@@ -19,4 +19,4 @@ function test() {
  print("All functions from initscript are still alive in QSInterpreter");
 }
 
-print("Windowstate of main is: "+settings.read("gui/windowstate/main"));
+print("PDF Editor "+version());

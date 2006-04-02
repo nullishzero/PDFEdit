@@ -5,7 +5,7 @@
 #include "qspage.h"
 
 /** Construct wrapper with given CPage */
-QSPage::QSPage(boost::shared_ptr<CPage> _page) : QSCObject () {
+QSPage::QSPage(boost::shared_ptr<CPage> _page) : QSCObject ("Page") {
  obj=_page;
 }
 

@@ -13,6 +13,8 @@ public:
  QSIProperty(IProperty *_ip);
  virtual ~QSIProperty();
  IProperty* get();
+protected:
+ QSIProperty(IProperty *_ip, QString _className);
 private:
  /** Object held in class*/
  IProperty *obj;
