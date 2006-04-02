@@ -7,6 +7,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/02 08:21:03  hockm0bm
+ * printProperty helper method signature changed
+ *         - stream parameter is not reference
+ *         - default parameter is std::cout
+ * implementation moved to cc file
+ *
  * Revision 1.4  2006/04/01 20:43:48  hockm0bm
  * new output stream parameter for printProperty
  *
@@ -117,12 +123,7 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
  * Gets string representation of given property and dumps it to standard output.
  * TODO output stream as parameter.
  */
-void printProperty(boost::shared_ptr<IProperty> ip, std::ostream & out=std::cout)
-{
-	std::string str;
-	ip->getStringRepresentation(str);
-	out << str << std::endl;
-}
+void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
 
 }// end of utils namespace
 

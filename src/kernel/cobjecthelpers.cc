@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/02 08:21:03  hockm0bm
+ * printProperty helper method signature changed
+ *         - stream parameter is not reference
+ *         - default parameter is std::cout
+ * implementation moved to cc file
+ *
  * Revision 1.4  2006/03/30 23:22:57  misuj1am
  *
  *
@@ -134,6 +140,14 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
 	if(indirect_ptr->getType() != pDict)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
+}
+
+
+void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out)
+{
+	std::string str;
+	ip->getStringRepresentation(str);
+	out << str << std::endl;
 }
 
 } // end of utils namespace
