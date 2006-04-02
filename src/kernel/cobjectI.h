@@ -667,7 +667,7 @@ CObjectComplex<Tp,Checker>::doClone () const
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (CPdf& /*p*/, Object& /*o*/, const IndiRef& /*rf*/)
+CObjectStream<Checker>::CObjectStream (CPdf& p, Object& /*o*/, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
 	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
