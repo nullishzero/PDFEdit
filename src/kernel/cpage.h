@@ -73,7 +73,7 @@ public:
 	CPage ();
 
 	/** Constructor. */
-	CPage (boost::shared_ptr<CDict>) {};
+	CPage (boost::shared_ptr<CDict> pageDict):dictionary(pageDict) {};
 
 public:
 	
