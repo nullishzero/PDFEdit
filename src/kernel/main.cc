@@ -4,6 +4,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/04/02 17:12:59  misuj1am
+ *
+ *
+ * -- ADD: media box
+ * -- improved interface a bit
+ * -- testing
+ *
  * Revision 1.22  2006/04/01 00:39:28  misuj1am
  *
  *
@@ -31,6 +38,8 @@
 #include "tests/testcobject.h"
 // cpdf tests
 #include "tests/testcpdf.h"
+// cpage tests
+#include "tests/testcpage.h"
 
 
 /**
@@ -43,12 +52,14 @@ main (int argc, char** argv)
 	START_TEST;
 
 	// Test cobjects
-	cobject_tests (argc, argv);
-	
+	//cobject_tests (argc, argv);
 	MEM_CHECK;
 	
 	// Test cpdf
-	cpdf_tests ();
+	//cpdf_tests ();
+	MEM_CHECK;
 
+	// Test cpage
+	cpage_tests (argc, argv);
 	END_TEST;
 }

@@ -4,9 +4,6 @@
  *     Description:  CPage.
  *         Created:  20/03/2006 11:46:14 AM CET
  * =====================================================================================
- *
- * \TODO
- * 		......	
  */
 
 #ifndef _CPAGE_H
@@ -25,8 +22,6 @@ namespace pdfobjects {
 //=====================================================================================
 
 
-/** Invalid page number. */
-const unsigned int PAGE_NUMBER_INVALID = std::numeric_limits<unsigned int>::max();
 /** Coordinate. */
 typedef double Coordinate;
 /** Invalid coordinate. */
@@ -55,25 +50,18 @@ typedef struct Rect
  */
 class CPage
 {
-public:
-	typedef	unsigned int PageNumber;
-		
 private:
 
 	/** Pdf dictionary representing a page. */
 	boost::shared_ptr<CDict> dictionary;
 
-	/** Page number of this page. */
-	PageNumber	pageNumber;
-
-		
 public:
 		
 	/** Constructor. */
 	CPage ();
 
 	/** Constructor. */
-	CPage (boost::shared_ptr<CDict> pageDict):dictionary(pageDict) {};
+	CPage (boost::shared_ptr<CDict> pageDict) : dictionary(pageDict) {};
 
 public:
 	
@@ -97,21 +85,6 @@ public:
 	 */
 	boost::shared_ptr<CDict> getDictionary () const { return dictionary; };
 	
-	/**
-	 * Return page number of this page.
-	 *
-	 * @return Page number of this page.
-	 */
-	PageNumber getPageNumber () const { return pageNumber; };
-
-	/**
-	 * Set page number.
-	 *
-	 * @param num Page number.
-	 */
-	void setPageNumber (PageNumber num) {assert (PAGE_NUMBER_INVALID == pageNumber); pageNumber = num;};
-
-	
 
 	/**  
 	 * Returns plain text extracted from a page.
@@ -134,7 +107,7 @@ public:
 	 *
 	 * @return Rectangle specifying the box.
 	 */
-	 Rectangle getMediabox () const {return Rectangle ();};
+	 Rectangle getMediabox () const;
 
 
 	/** 
