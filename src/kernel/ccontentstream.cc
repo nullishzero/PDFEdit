@@ -4,6 +4,8 @@
  *         Created:  03/24/2006 10:33:34 PM CET
  *          Author:  jmisutka (), 
  * =====================================================================================
+ *
+ * \TODO: complex operators
  */
 
 // static
@@ -219,6 +221,26 @@ namespace
 
 		};
 
+	/**
+	 * Set pdf to operands.
+	 *
+	 * This is vital when changing those operands.
+	 *
+	 * @param pdf Pdf where operand will belong.
+	 * @param rf  Indiref of content's stream parent.
+	 * @param operands Operand stack.
+	 * @param count Count of objects to bind.
+	 */
+	void
+	operandsSetPdf (CPdf& pdf, IndiRef rf, PdfOperator::Operands& operands, int count = std::numeric_limits<int>::max())
+	{
+		PdfOperator::Operands::reverse_iterator it = operands.rbegin ();
+		for (; (it != operands.rend ()) && (0 <= count); ++it, --count)
+		{
+			(*it)->setPdf (&pdf);
+			(*it)->setIndiRef (rf);
+		}
+	}
 	
 	/**
 	 * Check if the operands match the specification.
@@ -228,7 +250,7 @@ namespace
 	 *
 	 * @return True if OK, false otherwise.
 	 */
-	bool check (const CheckTypes& ops, PdfOperator::Operands operands)
+	bool check (const CheckTypes& ops, PdfOperator::Operands& operands)
 	{
 		string str;
 		for (PdfOperator::Operands::iterator it = operands.begin();it != operands.end(); ++it)
@@ -261,16 +283,21 @@ namespace
 
 		
 	/**
-	 * Find the operator and create it.
+	 * Find the operator and create it. 
+	 *
+	 * Here is decided which implementation of a pdf operator is used.
 	 *
 	 * @param op String representation of the operator. It is used to find the operator and
 	 * 			 sometimes to initialize it.
 	 * @param operands Operand stack.
+	 * @param pdf Pdf where it will belong
+	 * @param rf  Id of the parent object.
+	 * @param
 	 *
 	 * @return Created pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (const string& op, PdfOperator::Operands& operands, PdfOperator* )
+	createOp (const string& op, PdfOperator::Operands& operands, CPdf& pdf, IndiRef rf, PdfOperator*& )
 	{
 		printDbg (DBG_DBG, "Finding operator: " << op);
 
@@ -299,34 +326,54 @@ namespace
 		if (0 != cmp)
 		{
 			printDbg (DBG_DBG, "Operator not found.");
+
+			// Set pdf to all operands
+			operandsSetPdf (pdf, rf, operands);
 			return shared_ptr<UnknownPdfOperator> (new UnknownPdfOperator (operands, op));
 		}
 				
 		printDbg (DBG_DBG, "Operator found. " << KNOWN_OPERATORS[lo].name);
 
 		if (!check (KNOWN_OPERATORS[lo], operands))
+		{
 			throw MalformedFormatExeption ("Content stream bad operator type. ");
-		else	
+		}
+		else
+		{
+			// Set pdf to all operands
+			operandsSetPdf (pdf, rf, operands, KNOWN_OPERATORS[lo].argNum);
 			// Result in lo
 			return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator 
 				(KNOWN_OPERATORS[lo].name, KNOWN_OPERATORS[lo].argNum, operands));
+		}
 		//
 		// \TODO complex types
 		//
 	}	
 
-	//
-	// Parse the stream into small objects
-	// 
+	/**
+	 * Parse the stream into small objects.
+	 *
+	 * @param operators Operator stack.
+	 * @param obj 	Xpdf content stream.
+	 * @param pdf 	Pdf where this content stream belongs (parent object)
+	 * @param rf 	Id of parent object.
+	 *
+	 *
+	 * \TODO 
+	 */
 	void
-	parseContentStream (CContentStream::Operators& operators, Object* obj)
+	parseContentStream (CContentStream::Operators& operators, 
+						Object& obj, 		
+						CPdf& pdf, 
+						IndiRef rf)
 	{
-		assert (obj->isStream() || obj->isArray());
+		assert (obj.isStream() || obj.isArray());
 		
 		//
 		// Create the parser and lexer and get objects from it
 		//
-		scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, obj)));
+		scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, &obj)));
 
 		PdfOperator::Operands operands;
 			
@@ -342,7 +389,9 @@ namespace
 			if (o.isCmd ())
 			{
 				// Create operator
-				boost::shared_ptr<PdfOperator> op =  createOp (string (o.getCmd ()), operands, cmplex);
+				boost::shared_ptr<PdfOperator> op =  createOp (string (o.getCmd ()), operands, 
+																pdf, rf,
+																cmplex);
 				//
 				// Put it either to operators or if it is a complex type, put it there
 				//
@@ -393,18 +442,19 @@ CContentStream::CContentStream (shared_ptr<IProperty> stream, Object* obj)
 {
 	// not implemented yet
 	assert (obj != NULL);
-	if (pStream != stream->getType())
+	if (pStream != stream->getType() || NULL == obj)
 		throw CObjInvalidObject (); 
+	printDbg (DBG_DBG, "Creating content stream.");
+
+	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
+	// the problem is with parsed pdfoperators
+	assert (NULL != stream->getPdf ());
 	
+	// Save stream
 	contentstreams.push_back (stream);
 
-	//
-	// \TODO Set Pdf and Indiref to operators
-	//
-	
 	// Parse it into small objects
-	parseContentStream (operators, obj);
-
+	parseContentStream (operators, *obj, *(stream->getPdf ()), stream->getIndiRef());
 }
 
 //
@@ -414,20 +464,23 @@ CContentStream::CContentStream (ContentStreams& streams, Object* obj)
 {
 	// not implemented yet
 	assert (obj != NULL);
-	printDbg (DBG_DBG, "Creating content stream.");
+	if (NULL == obj)
+		throw CObjInvalidObject (); 
 	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
+	{
 		if (pStream != (*it)->getType())
 			throw CObjInvalidObject (); 
-
+		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
+		// the problem is with parsed pdfoperators
+		assert (NULL != (*it)->getPdf());
+	}
+	printDbg (DBG_DBG, "Creating content stream.");
+	
 	// Save content streams
 	copy (streams.begin(), streams.end(), back_inserter (contentstreams));
 
-	//
-	// \TODO Set Pdf and Indiref to operators
-	//
-
 	// Parse it into small objects
-	parseContentStream (operators, obj);	
+	parseContentStream (operators, *obj, *(streams.front()->getPdf ()), streams.front()->getIndiRef ());
 }
 
 //
@@ -439,7 +492,7 @@ CContentStream::getStringRepresentation (string& str) const
 	printDbg (DBG_DBG, " ()");
 	string frst, lst, tmp;
 
-	str = "";
+	str.clear ();
 	for (Operators::const_iterator it = operators.begin (); it != operators.end(); ++it)
 	{
 			
@@ -448,7 +501,7 @@ CContentStream::getStringRepresentation (string& str) const
 		
 		(*it)->getStringRepresentation (tmp);
 		str += tmp + "\n";
-		tmp = "";
+		tmp.clear ();
 	}
 }
 

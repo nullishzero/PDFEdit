@@ -7,6 +7,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/04/02 17:12:14  misuj1am
+ *
+ *
+ * -- ADD get*FromArray, generic function, avaliable specification for Int and double
+ *
  * Revision 1.5  2006/04/02 08:21:03  hockm0bm
  * printProperty helper method signature changed
  *         - stream parameter is not reference
@@ -124,6 +129,77 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
  * TODO output stream as parameter.
  */
 void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
+
+
+//=========================================================
+//	Array helper methods
+//=========================================================
+
+/**
+ * Get simple value from array.
+ *
+ * \TODO Use MPL because ItemType and ItemPType depend on each other.!!
+ *
+ * @param array	Array.
+ * @param id 	Position in the array.
+ */
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+SimpleValueType
+getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)
+{
+	printDbg (debug::DBG_DBG, "array[" << position << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = array->getProperty (position);
+	if (ItemPType != ip->getType ())
+	{
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		throw ElementBadTypeException ("");
+	}
+
+	// Cast it to the correct type and return it
+	boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
+	SimpleValueType val = SimpleValueType ();
+	item->getPropertyValue (val);
+	return val;
+}
+
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+SimpleValueType
+getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)
+{
+	assert (pArray == ip->getType ());
+	if (pArray != ip->getType ())
+		throw ElementBadTypeException ("");
+
+	// Cast it to array
+	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
+
+	return getSimpleValueFromArray<SimpleValueType, ItemType, ItemPType> (array, position);
+}
+
+/** Get int from array. */
+template< typename IP>
+inline int
+getIntFromArray (const IP& ip, size_t position)
+	{ return getSimpleValueFromArray<int, CInt, pInt> (ip, position);}
+
+/** Get	double from array. */
+template< typename IP>
+inline double
+getDoubleFromArray (const IP& ip, size_t position)
+{ 
+	// Try getting int, if not successful try double
+	double val = 0;
+	try {
+		
+		return getIntFromArray (ip, position);
+		
+	}catch (ElementBadTypeException&) {}
+
+	return getSimpleValueFromArray<double, CReal, pReal> (ip, position);
+}
+
 
 }// end of utils namespace
 
