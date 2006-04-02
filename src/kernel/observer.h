@@ -10,6 +10,7 @@
 #ifndef _OBSERVER_H
 #define _OBSERVER_H
 
+#warning This header file is obsolet. utils/observer.h should be used instead.
 
 
 //=====================================================================================
