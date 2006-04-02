@@ -241,7 +241,7 @@ public:
 	boost::shared_ptr<T> getSmartCObjectPtr (const boost::shared_ptr<IProperty>& ptr) 
     {
     	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
-  	  	return boost::static_pointer_cast<T, IProperty> (ptr);
+  	  	return boost::dynamic_pointer_cast<T, IProperty> (ptr);
     }
 
   
