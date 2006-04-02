@@ -66,7 +66,7 @@ UnknownPdfOperator::getParameters (IPContainer& container) const
 void 
 UnknownPdfOperator::getOperatorName (std::string& first, std::string& last) const
 { 
-	first = opText; last = ""; 
+	first = opText; last.clear (); 
 }
 	
 //
@@ -78,7 +78,7 @@ UnknownPdfOperator::getStringRepresentation (std::string& str) const
 	std::string tmp;
 	for (Operands::const_iterator it = operands.begin(); it != operands.end (); ++it)
 	{
-		tmp = "";
+		tmp.clear ();
 		(*it)->getStringRepresentation (tmp);
 		str += tmp + " ";
 	}
@@ -91,29 +91,6 @@ UnknownPdfOperator::getStringRepresentation (std::string& str) const
 // Concrete implementations of CompositePdfOperator
 //==========================================================
 
-
-//
-// Add an operator to the composite.
-//
-void 
-CompositePdfOperator::push_back (const shared_ptr<PdfOperator> oper)
-{
-	printDbg (DBG_DBG, "CompositePdfOperator::add");
-	operators.push_back (oper);
-}
-
-//
-// Remove an operator.
-//
-void 
-CompositePdfOperator::remove (shared_ptr<PdfOperator> oper)
-{
-	printDbg (DBG_DBG, "CompositePdfOperator::add");
-
-	PdfOperators::iterator it = find (operators.begin(), operators.end(), oper);
-	
-	operators.erase (it);
-}
 
 
 //==========================================================

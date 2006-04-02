@@ -49,10 +49,11 @@ class PdfOperator
 {	
 		
 public:
-	typedef std::list<boost::shared_ptr<IProperty> > 	Operands;
-	typedef std::vector<boost::shared_ptr<IProperty> > 	IPContainer; 
-	typedef boost::shared_ptr<PdfOperator> 				ListItem;
+	typedef std::list<boost::shared_ptr<IProperty> > 	 Operands;
+	typedef std::vector<boost::shared_ptr<IProperty> > 	 IPContainer; 
+	typedef boost::shared_ptr<PdfOperator> 				 ListItem;
 	typedef iterator::LinkedListIterator<boost::shared_ptr<PdfOperator> > Iterator;
+	typedef std::vector<boost::shared_ptr<PdfOperator> > PdfOperators;
 
 	// iterator has to be a friend
 	friend class iterator::LinkedListIterator<ListItem>;
@@ -136,6 +137,14 @@ public:
 	virtual size_t getChildrenCount () const
 		{ return 0; };	
 	
+	/**
+	 * Get childrens.
+	 *
+	 * @param p Children container.
+	 */
+	virtual void getChildrens (PdfOperators& /*p*/) const
+		{ throw NotImplementedException ("PdfOperator::getChildrens ()"); };	
+	
 	//
 	// Iterator interface
 	//
@@ -216,40 +225,33 @@ private:
  */
 class CompositePdfOperator : public PdfOperator
 {
-typedef std::vector<boost::shared_ptr<PdfOperator> > PdfOperators;
-
 private:
 
-	/** List of all operators in this composite. */
-	PdfOperators operators;
+	/** Child operator, where all calls are redirected. */
+	boost::shared_ptr<PdfOperator> child;
 	
 protected:
 		
 	/**
 	 * Constructor.
+	 *
+	 * Implementation of the Decorator design pattern. All sub-operators
+	 * of the constructor argument will be added to this compostite.
+	 *
+	 * @param op Operator from which we will inherit all its children.
 	 */
-	CompositePdfOperator ();
+	CompositePdfOperator (boost::shared_ptr<PdfOperator> op) : child(op) {};
+
+	/**
+	 * Return all operators in this composite.
+	 *
+	 * @param container Container of operators.
+	 */
+	virtual void getAllChildren (PdfOperators& container) const = 0;
+
 	
 public:
 	
-	//
-	// Functions inherited from PdfOperator
-	//
-	virtual size_t getParametersCount () const = 0;
-	virtual void getParameters (IPContainer& container) const = 0;
-	virtual void getStringRepresentation (std::string& str) const = 0;
-	virtual void getOperatorName (std::string& first, std::string& last) const = 0;
-	
-	//
-	// Add an operator to the composite.
-	//
-	virtual void push_back (const boost::shared_ptr<PdfOperator> oper);
-
-	//
-	// Remove an operator.
-	//
-	virtual void remove (const boost::shared_ptr<PdfOperator> oper);
-
 	/**
 	 * Destructor.
 	 */
@@ -321,14 +323,14 @@ public:
 		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
 
 	virtual void getOperatorName (std::string& first, std::string& last) const
-		{ first = opText; last = ""; }
+		{ first = opText; last.clear (); }
 	
 	virtual void getStringRepresentation (std::string& str) const
 	{
 		std::string tmp;
 		for (Operands::const_iterator it = operands.begin(); it != operands.end (); ++it)
 		{
-			tmp = "";
+			tmp.clear ();
 			(*it)->getStringRepresentation (tmp);
 			str += tmp + " ";
 		}
