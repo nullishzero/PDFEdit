@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/02 17:15:17  misuj1am
+ *
+ *
+ * -- testing
+ *
  * Revision 1.2  2006/04/01 17:55:44  misuj1am
  *
  *
@@ -21,6 +26,7 @@
 #include "../static.h"
 #include "../iproperty.h"
 #include "../cobject.h"
+#include "../cpage.h"
 #include "../pdfoperators.h"
 
 // TFUJJ
@@ -57,7 +63,7 @@ static const char* TESTPDFFILE= "../../doc/zadani.pdf";
 #define KERNEL_OUTPUT		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;}
 #define KERNEL_OUTPUT_BACK	if (OUTPUT_COND) {SWAP_BUFS_BACK;}
 
-#define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS UNALLOCATED: " << check.getCount () \
+#define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS LEFT UNALLOCATED: " << check.getCount () \
 													<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
 
 #define TEST(a)		OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
@@ -191,6 +197,20 @@ operator << (ostream& os, Stream* s)
 		os << (char)c << " ";
 
 	os << endl;
+	return os;
+}
+
+//
+//
+//
+inline ostream& 
+operator << (ostream& os, Rectangle r)
+{
+	os  << "XLeft: "  << r.xleft << " "
+		<< "XRight: " << r.xright << " "
+		<< "YLeft: "  << r.yleft << " "
+		<< "YRight: " << r.yright << endl;
+
 	return os;
 }
 

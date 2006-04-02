@@ -1,6 +1,6 @@
 /*
  * =====================================================================================
- *        Filename:  cobjects.cc
+ *        Filename:  testcobject.cc
  *         Created:  04/01/2006 12:27:27 AM CEST
  *          Author:  jmisutka (), 
  * =====================================================================================
@@ -367,7 +367,6 @@ s_rel ()
 {
 	CString cstr ("raz dva tri");
 	boost::shared_ptr<IProperty> ip = cstr.clone (); // object UNALLOCATED
-	OUTPUT << "unallocating " << endl;
 
 }
 
@@ -415,11 +414,15 @@ c_smrt ()
 // BEST HABBIT -- not functional (yet)
 	//dict.addProperty ("item5", CString ("val6"));
 
-	OUTPUT << dict;
+	//OUTPUT << dict;
 	
 	boost::shared_ptr<IProperty> ipp1 = dict.getProperty ("item3");
 	boost::shared_ptr<IProperty> ipp2 = dict.getProperty ("item4");
 	boost::shared_ptr<IProperty> ipp3 = dict.getProperty ("item5");
+
+	ip_validate (*ipp1, "(val3)");
+	ip_validate (*ipp2, "(val4)");
+	ip_validate (*ipp3, "(val5)");
 }
 
 //=====================================================================================
@@ -882,8 +885,8 @@ getContentStream (ostream& oss, const char* fileName, bool allPages)
 	{
 		oss << "Page:"			<< xref->fetch (cat.getPageRef(i)->num, cat.getPageRef(i)->gen, &obj) << endl;
 		oss << "Contents:"		<< cat.getPage(i)->getContents(&obj) << endl;
-		oss << "StreamDict:\n"	<< cat.getPage(i)->getContents(&obj)->getStream()->getDict() << endl;
-		oss << "Stream:\n";		print (oss, cat.getPage(i)->getContents(&obj), xref);
+//		oss << "StreamDict:\n"	<< cat.getPage(i)->getContents(&obj)->getStream()->getDict() << endl;
+//		oss << "Stream:\n";		print (oss, cat.getPage(i)->getContents(&obj), xref);
 	}
 	
 	assert (xref->getDocInfo (&obj));
@@ -917,7 +920,6 @@ test_ccontentstream ()
 		
 	}catch (...)
 	{
-		OUTPUT << "Exc thrown:" << endl;
 		exc = true;
 	}
 	if (!exc)
@@ -926,7 +928,7 @@ test_ccontentstream ()
 	///////// -- getStringRepresentation
 	std::string str;
 	example.getStringRepresentation (str);
-	OUTPUT << "String repre: " << str;
+	//OUTPUT << "String repre: " << str;
 	if ("3 (123) 3 3 3 ADS" != str)
 		throw;
 
@@ -993,15 +995,15 @@ parseContentStream (ostream& oss, const char* fileName)
 		string str;
 		(*it)->getStringRepresentation (str);
 
-		oss << str << "\t\t";
-		if (0 == (++i % 3))
-			oss << endl;
+		//oss << str << "\t\t";
+		// if (0 == (++i % 3))
+			//oss << endl;
 	}
 
 }
 
 void
-contentStream (ostream& oss, const char* fileName)
+contentStream (ostream& , const char* fileName)
 {
 	CPdf pdf;
 	
@@ -1029,7 +1031,7 @@ contentStream (ostream& oss, const char* fileName)
 
 	string tmp;
 	cc.getStringRepresentation (tmp);
-	oss << "String representation: " << tmp;
+	//oss << "String representation: " << tmp;
 
 	obj.free ();
 
@@ -1137,7 +1139,7 @@ void cobject_tests(int , char **)
 
 	//==================== Tests
 
-/*	TEST(" test 1.0 -- getType_");
+	TEST(" test 1.0 -- getType_");
 	s_getTp ();
 	OK_TEST;
 
@@ -1222,17 +1224,17 @@ void cobject_tests(int , char **)
 	TEST(" test 2.10 - xpdf ctors")
 	c_xpdfctor ();
 	OK_TEST;
-*/
+
 	TEST(" test 2.11 - xpdf addProperty + getPosition")
 	c_addprop2 ();
 	OK_TEST;
 
 	//======================= CContentStream
 	
-/*	TEST(" test 3.1 -- ccontentstream - getContentstream")
+	TEST(" test 3.1 -- ccontentstream - getContentstream")
 	getContentStream (cout, TESTPDFFILE, false);
 	OK_TEST;
-	*/
+	
 	TEST(" test 3.2 -- ccontentstream - operators")
 	test_ccontentstream ();
 	OK_TEST;
@@ -1244,4 +1246,5 @@ void cobject_tests(int , char **)
 	TEST(" test 3.4 -- ccontentstream - try ccontentstream class to parse a contentstream")
 	contentStream (cout, TESTPDFFILE);
 	OK_TEST;
+
 }
