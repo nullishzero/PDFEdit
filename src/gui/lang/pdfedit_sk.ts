@@ -35,72 +35,91 @@
     <message>
         <source>Null</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Null</translation>
     </message>
     <message>
         <source>Bool</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bool</translation>
     </message>
     <message>
         <source>Int</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Int</translation>
     </message>
     <message>
         <source>Real</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Real</translation>
     </message>
     <message>
         <source>String</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>String</translation>
     </message>
     <message>
         <source>Name</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Name</translation>
     </message>
     <message>
         <source>Ref</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ref</translation>
     </message>
     <message>
         <source>Array</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Array</translation>
     </message>
     <message>
         <source>Dict</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Dict</translation>
     </message>
     <message>
         <source>Stream</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Stream</translation>
     </message>
     <message>
         <source>DebugCmd</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>DebugCmd</translation>
     </message>
     <message>
         <source>DebugError</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>DebugError</translation>
     </message>
     <message>
         <source>DebugEOF</source>
         <comment>Type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>DebugEOF</translation>
     </message>
     <message>
         <source>DebugNone</source>
         <comment>Type name</comment>
+        <translation>DebugNone</translation>
+    </message>
+    <message>
+        <source>&lt;no name&gt;</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TreeWindow</name>
+    <message>
+        <source>Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ref</source>
+        <translation type="unfinished">Ref</translation>
     </message>
 </context>
 </TS>
