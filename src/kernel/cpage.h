@@ -109,6 +109,14 @@ public:
 	 */
 	 Rectangle getMediabox () const;
 
+	 
+	/**  
+	 * Set media box of this page. 
+	 * 
+	 * @param rc Rectangle specifying the box.
+	 */
+	 void setMediabox (const Rectangle& rc);
+
 
 	/** 
 	 * Returns all objects on a page.
