@@ -4,6 +4,7 @@
 #include <qwidget.h>
 #include <qtextedit.h> 
 #include <qlineedit.h>
+#include <qcombobox.h>
 
 class CommandWindow : public QWidget {
  Q_OBJECT
@@ -19,10 +20,14 @@ signals:
  /** Signal emitted when command is executed from this command window */
  void commandExecuted(QString);
 private:
+ void loadHistory();
+ void saveHistory();
  /** Console widget */
  QTextEdit *out;
  /** Commandline widget */
  QLineEdit *cmd;
+ /** History widget */
+ QComboBox *history;
 };
 
 #endif
