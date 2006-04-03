@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Documentation for PDF Editor</title>
+ </bookinfo>
+
+ <chapter>
+  <title>PDF Editor Commandline parameters</title>
+  <para>
+   You can specify any number of filenames ars parameters on commandline.
+   One window will be opened for each file specified.
+   If no file is specified on commandline, editor will be loaded initially empty.
+  </para>
+  <para>
+   Name of files will can be mixed with options (parameter that begin with "-").
+   Invalid option on commandline will cause editor to abort with error message.
+   Names of options are case sensitive.
+  </para>
+  <sect1>
+   <title>Option <option>--help</option></title>
+   <para>
+    This option will cause editor to print brief help about commandline options on STDOUT and exit
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>--version</option></title>
+   <para>
+    This option will cause editor to print its version on STDOUT and exit
+   </para>
+  </sect1>
+ </chapter>
+</book>

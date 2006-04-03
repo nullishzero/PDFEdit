@@ -43,6 +43,18 @@
    Creates new empty editor window
   </para>
   <para>
+   <title><funcsynopsys> void closeFile()</funcsynopsys></title>
+   Closes file opened in this editor window   
+  </para>
+  <para>
+   <title><funcsynopsys> void openFile(string)</funcsynopsys></title>
+   Opens file with given name in this editor window
+  </para>
+  <para>
+   <title><funcsynopsys> void openFileNew(string)</funcsynopsys></title>
+   Opens file with given name in new editor window
+  </para>
+  <para>
    <title><funcsynopsys>void exitApp()</funcsynopsys></title>
    Terminates application
   </para>
