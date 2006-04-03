@@ -13,10 +13,7 @@
 #include "static.h"
 
 // iterator
-#include "../utils/iterator.h"
-
-// IProperty
-//#include "iproperty.h"
+#include "utils/iterator.h"
 
 
 //==========================================================
@@ -325,20 +322,7 @@ public:
 	virtual void getOperatorName (std::string& first, std::string& last) const
 		{ first = opText; last.clear (); }
 	
-	virtual void getStringRepresentation (std::string& str) const
-	{
-		std::string tmp;
-		for (Operands::const_iterator it = operands.begin(); it != operands.end (); ++it)
-		{
-			tmp.clear ();
-			(*it)->getStringRepresentation (tmp);
-			str += tmp + " ";
-		}
-
-		// Add operator string
-		str += opText;
-	};
-	
+	virtual void getStringRepresentation (std::string& str) const;
 };
 
 

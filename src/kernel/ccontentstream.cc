@@ -10,9 +10,9 @@
 
 // static
 #include "static.h"
+#include "ccontentstream.h"
 //
 #include "cobject.h"
-#include "ccontentstream.h"
 
 //==========================================================
 namespace pdfobjects {

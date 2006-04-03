@@ -9,8 +9,9 @@
 // static
 #include "static.h"
 //
-#include "ccontentstream.h"
-
+#include "pdfoperators.h"
+//
+#include "iproperty.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -24,6 +25,25 @@ using namespace debug;
 //==========================================================
 // Concrete implementations of PdfOperator
 //==========================================================
+
+//
+//
+//
+void 
+SimpleGenericOperator::getStringRepresentation (std::string& str) const
+{
+	std::string tmp;
+	for (Operands::const_iterator it = operands.begin(); it != operands.end (); ++it)
+	{
+		tmp.clear ();
+		(*it)->getStringRepresentation (tmp);
+		str += tmp + " ";
+	}
+
+	// Add operator string
+	str += opText;
+}
+	
 
 
 //

@@ -12,8 +12,6 @@
 // static includes
 #include "static.h"
 
-// 
-#include "iproperty.h"
 // iterator
 #include "pdfoperators.h"
 

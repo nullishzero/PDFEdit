@@ -16,16 +16,12 @@
 // property modes
 #include "modecontroller.h"
 
-// stl
-//#include <vector>
-//#include <string>
-
 // xpdf
 #include "xpdf.h"
 
 // our stuff
 //#include "exceptions.h"
-//#include "observer.h"
+#include "observer.h"
 
 
 

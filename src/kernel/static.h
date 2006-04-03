@@ -45,17 +45,17 @@
 // our stuff
 //
 #include "utils/debug.h"
-#include "utils/objectstorage.h"
-#include "../utils/iterator.h"
-
-#include "observer.h"
 #include "exceptions.h"
-#include "filters.h"
-#include "modecontroller.h"
+#include "utils/objectstorage.h"
+
+//#include "utils/iterator.h"
+//#include "observer.h"
+//#include "filters.h"
+//#include "modecontroller.h"
 
 #include "xpdf.h"
 
-#include "iproperty.h"
+//#include "iproperty.h"
 
 //============================================
 // 
