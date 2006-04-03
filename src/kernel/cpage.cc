@@ -53,6 +53,23 @@ CPage::getMediabox () const
 	return rc;
 }
 
+//
+//
+//
+void
+CPage::setMediabox (const Rectangle& rc)
+{
+	// Get the array representing media box
+	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
+	assert (pArray == mbox->getType ());
+	if (pArray != mbox->getType ())
+		throw MalformedFormatExeption ("Page::MediaBox is not array.");
+
+  	setDoubleInArray (mbox, 0, rc.xleft);
+	setDoubleInArray (mbox, 1, rc.xright);
+	setDoubleInArray (mbox, 2, rc.yleft);
+	setDoubleInArray (mbox, 3, rc.yright);
+}
 
 
 

@@ -758,7 +758,7 @@ simpleValueFromXpdfObj (Object& obj, T val)
 //
 template <> 
 inline void
-simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) {assert (!"operation not permitted...");/*THIS IS FORBIDDEN IN THE CALLER*/}
+simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) {/*assert (!"operation not permitted...");*//*THIS IS FORBIDDEN IN THE CALLER*/}
 
 template void simpleValueFromXpdfObj<pBool, bool&>		(Object& obj,  bool& val);
 template void simpleValueFromXpdfObj<pInt, int&>		(Object& obj,  int& val);
