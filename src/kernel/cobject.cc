@@ -916,9 +916,9 @@ objHasParent (const IProperty& ip)
 		throw CObjInvalidOperation ();
 
 	if ( &ip == pdf->getIndirectProperty(ip.getIndiRef()).get() )
-		return true;
-	else
 		return false;
+	else
+		return true;
 }
 
 

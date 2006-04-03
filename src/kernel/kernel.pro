@@ -26,7 +26,7 @@ HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 SOURCES += modecontroller.cc filters.cc 
 SOURCES += cxref.cc xrefwriter.cc 
 SOURCES += cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc cpage.cc cpdf.cc 
-SOURCES += ./tests/testcobject.cc ./tests/testcpage.cc
+SOURCES += tests/testcobject.cc tests/testcpage.cc
 SOURCES += main.cc 
 
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000

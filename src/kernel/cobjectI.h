@@ -155,19 +155,10 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 		return;
 
 	//
-	// If this object is indirect infrom xref about the change
+	// If this is an indirect object inform xref about the change
 	// else find the closest indirect object and call dispatchChange on that object
-	// 
-	// objHasParent is the same as if it is an indirect object or not
 	//
 	if (utils::objHasParent (*this))
-	{
-		Object* obj = _makeXpdfObject ();
-		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
-		utils::freeXpdfObject (obj);
-
-	}else
 	{
 		boost::shared_ptr<IProperty> pIp = pdf->getIndirectProperty (IProperty::getIndiRef());
 		if (pIp)
@@ -181,6 +172,12 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 		{
 			assert (!"Bad parent.");
 		}
+	}else
+	{
+		Object* obj = _makeXpdfObject ();
+		// This function saves a COPY of xpdf object(s) do we have to delete it
+		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
+		utils::freeXpdfObject (obj);
 	}
 }
 
