@@ -19,16 +19,6 @@ QSDict *QSPage::getDictionary() {
  return new QSDict(obj->getDictionary().get());
 }
 
-/** Call CPage::getPageNumber */
-unsigned int QSPage::getPageNumber() {
- return (unsigned int)obj->getPageNumber();
-}
-
-/** Call CPage::setPageNumber(num) */
-void QSPage::setPageNumber(unsigned int num) {
- obj->setPageNumber(num);
-}
-
 /** Call CPage::getText(ret); return ret */
 QString QSPage::getText() {
  std::string text;

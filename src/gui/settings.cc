@@ -51,6 +51,17 @@ QString Settings::read(const QString &key,const QString defValue/*=QString::null
  return x;
 }
 
+/** Read settings with given key from configuration file and return as QString
+ Any environment variable references (in form $VARIABLE) are expanded in the string
+ @param key Key to read from settings
+ @param defValue default value to use if key not found in settings.
+ @return Value of given setting */
+QString Settings::readExpand(const QString &key,const QString defValue/*=QString::null*/) {
+ QString x=read(key,defValue);
+ x=expand(x);
+ return x;
+}
+
 /** creates and inits new QSettings Object.
     Set paths to config files */
 void Settings::initSettings() {
@@ -68,41 +79,50 @@ void Settings::initSettings() {
 /** load and expand various PATHs from config file.
   Must be done after config defaults are set */
 void Settings::initPaths() {
- iconPath=loadPath("icon");
+ iconPath=readPath("icon");
 }
 
-/** load path element from config file. Expands variables ($HOME, etc ...) and return as string list 
-    Path elements are expected to be separated by semicolon
- @param name Identifier of path in config file
- @return QStringList containing expanded path directories
- */
-QStringList Settings::loadPath(const QString &name) {
- QString path=read(QString("path/")+name,".");
- QStringList s=QStringList::split(";",path);
- /* home() is special - it is equal to regular $HOME on unixes, but might
-    expand to "application data" directory on windows if HOME is not set */
- s.gres("$HOME",QDir::home().path());
- QRegExp r("\\$([a-zA-Z0-9]+)");
- QRegExp stripTrail("(.)/+$");
+/** Expand environment variables in given string (like $HOME, etc ..)
+ @param s String to expand
+ @return QString with variables expanded
+*/
+QString Settings::expand(QString s) {
+ QRegExp r("\\$([a-zA-Z0-9]+)");//todo: not expand \$something, epxand ${something}
  QString var, envVar;
- for(QStringList::Iterator it=s.begin();it!=s.end();++it) {
-  //Trim starting and ending whitespace
-  *it=(*it).stripWhiteSpace();
-  //Expand environment variables in path component
   int pos=0;
-  while((pos=r.search(*it,pos))!=-1) { //while found some variable
+  while((pos=r.search(s,pos))!=-1) { //while found some variable
    var=r.cap(1);
-   printDbg(debug::DBG_DBG,"Expand: " << var << " in " << *it);
-   envVar=getenv(var);
+   printDbg(debug::DBG_DBG,"Expand: " << var << " in " << s);
+   /* home() is special - it is equal to regular $HOME on unixes, but might
+    expand to "application data" directory on windows if HOME is not set */
+   if (var=="HOME") envVar=QDir::home().path();
+   else envVar=getenv(var);
    if (envVar==QString::null) { //variable not found in environment
     printDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
     envVar="";
    }
-   printDbg(debug::DBG_DBG,"Expand before: " << *it);
-   *it=(*it).replace(pos,r.matchedLength(),envVar);
-   printDbg(debug::DBG_DBG,"Expand after: " << *it);
+   printDbg(debug::DBG_DBG,"Expand before: " << s);
+   s=s.replace(pos,r.matchedLength(),envVar);
+   printDbg(debug::DBG_DBG,"Expand after: " << s);
    pos++;
   }
+ return s;
+}
+
+/** read path element from config file. Expands variables ($HOME, etc ...) and return as string list 
+    Path elements are expected to be separated by semicolon
+ @param name Identifier of path in config file
+ @return QStringList containing expanded path directories
+ */
+QStringList Settings::readPath(const QString &name) {
+ QString path=read(QString("path/")+name,".");
+ QStringList s=QStringList::split(";",path);
+ QRegExp stripTrail("(.)/+$");
+ for(QStringList::Iterator it=s.begin();it!=s.end();++it) {
+  //Trim starting and ending whitespace
+  *it=(*it).stripWhiteSpace();
+  //Expand environment variables in path component
+  *it=expand(*it);
   //Trim trailing slashes
   *it=(*it).replace(stripTrail,"\\1");
  }
@@ -139,7 +159,15 @@ void Settings::saveWindow(QWidget *win,const QString name) {
  line+=QString::number(win->x());
  line+=",";
  line+=QString::number(win->y());
- set->writeEntry(APP_KEY+"gui/windowstate/"+name,line);  
+ write("gui/windowstate/"+name,line);
+}
+
+/** Write settings with given key and value to configuration
+ @param key Key to write to settings
+ @param value Value to write to settings
+ */
+void Settings::write(const QString &key,const QString &value) {
+ set->writeEntry(APP_KEY+key,value);
 }
 
 /** Restore window/widget size and position from setting.
@@ -181,7 +209,7 @@ void Settings::saveSplitter(QSplitter *spl,const QString name) {
   line+=QString::number(siz[i]);
   if (i<cnt-1) line+=",";
  }
- set->writeEntry(APP_KEY+"gui/windowstate/"+name,line);  
+ write("gui/windowstate/"+name,line);  
 }
 
 /** Restore splitter positions from setting.
@@ -220,13 +248,15 @@ int Settings::addAction(const QString action) {
  
  @param index Menu ID of action
  @return Name of the specified action
-
  */
 QString Settings::getAction(int index) {
  return action_map_i[index];
 }
 
-/** returns icon with given name, loading if necessary and caching for later use */
+/** returns icon with given name, loading if necessary and caching for later use
+ @param name Name of icon to load
+ @return Pixmap containing specified icon
+ */
 QPixmap *Settings::getIcon(const QString name) {
  printDbg(debug::DBG_INFO,"Loading icon:" << name);
  if (iconCache.contains(name)) return iconCache[name];

@@ -17,8 +17,6 @@ public:
  boost::shared_ptr<CPage> get();
 public slots:
  QSDict *getDictionary();
- unsigned int getPageNumber();
- void setPageNumber(unsigned int num);
  QString getText();
 private:
  /** Object held in class*/

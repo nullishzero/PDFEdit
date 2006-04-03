@@ -32,9 +32,12 @@ public:
  void saveSplitter(QSplitter *spl,const QString name);
  void restoreSplitter(QSplitter *spl,const QString name);
  QString getIconFile(const QString &name);
- QStringList loadPath(const QString &name);
+ QStringList readPath(const QString &name);
 public slots:
+ QString readExpand(const QString &key,const QString defValue=QString::null);
  QString read(const QString &key,const QString defValue=QString::null);
+ void write(const QString &key,const QString &value);
+ QString expand(QString s);
 private:
  /** List with paths to application icons */
  QStringList iconPath;
