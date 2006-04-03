@@ -12,6 +12,7 @@ using namespace std;
 /** constructor of TreeItem - create root item from given object
  @param parent QListView in which to put item
  @param pdfObj Object contained in this item
+ @param name Name of this item - will be shown in treeview
  */
 TreeItem::TreeItem(QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/):QListViewItem(parent) {
  init(pdfObj,name);
@@ -20,12 +21,16 @@ TreeItem::TreeItem(QListView *parent,IProperty *pdfObj,const QString name/*=QStr
 /** constructor of TreeItem - create child item from given object
  @param parent QListViewItem which is parent of this object
  @param pdfObj Object contained in this item
+ @param name Name of this item - will be shown in treeview
  */
 TreeItem::TreeItem(QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/):QListViewItem(parent) {
  init(pdfObj,name);
 }
 
-/** Initialize item from given PDF object */
+/** Initialize item from given PDF object
+ @param pdfObj Object used to initialize this item
+ @param name Name of this item - will be shown in treeview
+ */
 void TreeItem::init(IProperty *pdfObj,const QString name) {
  obj=pdfObj;
  PropertyType typ=pdfObj->getType();

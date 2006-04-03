@@ -41,7 +41,7 @@ void MenuGenerator::addMenu(const QString &id,const QString &name,const QString 
 
 void MenuGenerator::generate() {
  set->beginGroup(APP_KEY);
- set->writeEntry("path/icon", "$HOME/.pdfedit/icon;" DATA_PATH "/icon"
+ set->writeEntry("path/icon", "$HOME/" CONFIG_DIR "/icon;" DATA_PATH "/icon"
 #ifdef TESTING
  ";./icon"
 #endif

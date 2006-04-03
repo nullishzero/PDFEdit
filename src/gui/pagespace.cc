@@ -147,7 +147,7 @@ void PageSpace::refresh ( CPage * pageToView ) {		// if pageToView is NULL, refr
 								// if pageToView == actualPage  refresh is not need
 	if ((pageToView != NULL) && (actualPage != pageToView)) {
 		actualPage = pageToView;
-		pageNumber->setNum( (int) pageToView->getPageNumber() );
+		pageNumber->setNum( 0/*(int) pageToView->getPageNumber()*/ );//MP: po zmene kernelu neslo zkompilovat (TODO)
 		actualSelectedObject = NULL;
 		/* TODO ziskat pixmap z CPage a ulozit ju do actualPagePixmap*/
 		/**/ refresh1( );

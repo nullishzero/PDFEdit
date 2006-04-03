@@ -11,7 +11,7 @@ using namespace std;
  @param message Error message to show
  */
 void fatalError(const QString message){
- cout << "Fatal Error: " << message << endl;
+ cout << QObject::tr("Fatal Error") << ": " << message << endl;
  exit(-1);
 }
 
@@ -85,4 +85,15 @@ QString getTypeName(PropertyType typ) {
  //Unknown type. Should not happen
  assert(0);
  return "?";
+}
+
+/** Print stringlist to stdout
+ @param l String list to print
+ */
+void printList(QStringList l) {
+ QStringList::Iterator it=l.begin();
+ for (;it!=l.end();++it) { //load all subitems
+  QString x=*it;
+  printDbg(debug::DBG_DBG,x);
+ }
 }

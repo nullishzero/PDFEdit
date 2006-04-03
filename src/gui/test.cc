@@ -8,7 +8,7 @@ namespace test {
 /** Create and return some testing CPdf */
 CPdf* testPDF(void) {
  //zatim nefunguje (CPdf::getInstance)
- CPdf *pdf=CPdf::getInstance(NULL,CPdf::ReadWrite);
+ CPdf *pdf=CPdf::getInstance(NULL,CPdf::Advanced);
 
  boost::shared_ptr<CDict> pd=pdf->getDictionary();
  CDict dict;

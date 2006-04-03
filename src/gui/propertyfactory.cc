@@ -12,8 +12,8 @@ PropertyFactory - static function that will return correct property widget based
     If property is of unknown or uneditable type, NULL is returned
  @param prop IProperty to create property from
  @param parent Parent widget
- @param name Name of this property
- @param flags Flags of this property items (default 0)
+ @param _name Name of this property
+ @param _flags Flags of this property items (default 0)
  @return subclass of Property widget (or NULL)
  */
 Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/) {

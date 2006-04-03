@@ -7,6 +7,7 @@
 #include <qpushbutton.h>
 #include <qfont.h>
 #include <qsplitter.h>
+#include <qstring.h>
 #include <qmainwindow.h>
 #include <qsinterpreter.h>
 #include "commandwindow.h"
@@ -21,9 +22,12 @@ using namespace pdfobjects;
 class PdfEditWindow : public QMainWindow {
  Q_OBJECT
 public:
- PdfEditWindow(QWidget *parent=0,const char *name=0);
+ PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
 public slots: //These will be exported to scripting
+ void closeFile();
+ void openFileNew(const QString &name);
+ void openFile(const QString &name);
  void saveWindowState();
  void restoreWindowState();
  void about();
@@ -42,6 +46,8 @@ protected slots:
  void runScript(QString script);
  void menuActivated(int id);
 private:
+ void destroyFile();
+ void emptyFile();
  void addDocumentObjects();
  void removeDocumentObjects();
  /** Commandline window */
@@ -75,6 +81,6 @@ private:
  QString fileName;
 };
 
-void createNewEditorWindow();
+void createNewEditorWindow(const QString &fName=QString::null);
 
 #endif

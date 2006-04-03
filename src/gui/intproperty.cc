@@ -8,8 +8,8 @@ IntProperty - class for widget containing
 
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
- @param name name of this property
- @param flags flags of this property items (default 0)
+ @param _name name of this property
+ @param _flags flags of this property items (default 0)
  */
 IntProperty::IntProperty (const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
  : StringProperty(_name,parent,_flags) {

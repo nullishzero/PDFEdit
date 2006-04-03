@@ -21,10 +21,10 @@ public:
  void setObject(IProperty *pdfObject);
  void commitProperties();
  void resizeEvent (QResizeEvent *e);
+ void clear();
 public slots:
  void update(Property &p);
 private:
- void clear();
  void addProperty(Property *prop);
  void addProperty(QString name);
 private:

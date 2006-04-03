@@ -44,6 +44,7 @@ void PropertyEditor::resizeEvent (QResizeEvent *e) {
  scroll->setFixedSize(e->size());
  grid->setFixedWidth(scroll->visibleWidth());
 }
+
 /** remove and delete all properties from the editor */
 void PropertyEditor::clear() {
  //remove all items from grid
@@ -98,7 +99,7 @@ void PropertyEditor::commitProperties() {
 }
 
 /** add single property
- @param p property to be added to this widget
+ @param prop property to be added to this widget
  */
 void PropertyEditor::addProperty(Property *prop) {
  QString name=prop->getName();
@@ -106,7 +107,7 @@ void PropertyEditor::addProperty(Property *prop) {
  label=new QLabel(name,grid);
  int labelHeight=label->sizeHint().height();
  int propHeight=prop->sizeHint().height();
- gridl->setRowSpacing(nObjects,max(labelHeight,propHeight));
+ gridl->setRowSpacing(nObjects,MAX(labelHeight,propHeight));
  gridl->addWidget(label,nObjects,0);
  gridl->addWidget(prop,nObjects,1);
  nObjects++;
@@ -117,7 +118,7 @@ void PropertyEditor::addProperty(Property *prop) {
 }
 
 /** add single property
- @param p property to be added to this widget
+ @param name property to be added to this widget
  */
 void PropertyEditor::addProperty(QString name) {
 //TODO: use Property factory and add type parameter
@@ -127,7 +128,7 @@ void PropertyEditor::addProperty(QString name) {
 }
 
 /** TODO: set PDF object to be active (edited) in this editor
- @param p pdfObject Objet to set for editing in the widget
+ @param pdfObject Object to set for editing in the widget
  */
 void PropertyEditor::setObject(IProperty *pdfObject) {
  unsetObject();

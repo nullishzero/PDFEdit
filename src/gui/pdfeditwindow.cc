@@ -36,9 +36,16 @@ void PdfEditWindow::about() {
  aboutWin->show();
 }
 
-/** creates new windows and displays it */
+/** create new empty editor window and display it */
 void PdfEditWindow::createNewWindow() {
  createNewEditorWindow();
+}
+
+/** Open file in a new editor window.
+ @param name Name of file to open
+*/
+void PdfEditWindow::openFileNew(const QString &name) {
+ createNewEditorWindow(name);
 }
 
 /** This is called on attempt to close window. If there is unsaved work,
@@ -52,9 +59,11 @@ void PdfEditWindow::closeEvent(QCloseEvent *e) {
  //The PdfEditWindow itself will be deleted on close();
 }
 
-/** Creates new windows and displays it */
-void createNewEditorWindow() {
- PdfEditWindow *main=new PdfEditWindow();
+/** Creates new windows and displays it.
+ @param fName Name of file to open in new window. If no file specified, new window is initially empty
+ */
+void createNewEditorWindow(const QString &fName) {
+ PdfEditWindow *main=new PdfEditWindow(fName);
  main->restoreWindowState();
  main->show();
  windowCount++;
@@ -141,20 +150,12 @@ void PdfEditWindow::menuActivated(int id) {
  else runScript(action);
 }
 
-/** DEBUG: print stringlist to stdout
- @param l String list to print
+/** constructor of PdfEditWindow, creates window and fills it with elements
+ @param parent parent widget containing this control
+ @param name name of widget (currently unused)
+ @param fName Name of file to open in this window. If empty or null, no file will be opened 
  */
-void printList(QStringList l) {
- QStringList::Iterator it=l.begin();
- for (;it!=l.end();++it) { //load all subitems
-  QString x=*it;
-  printDbg(debug::DBG_DBG,x);
- }
-
-}
-
-/** constructor of PdfEditWindow, creates window and fills it with elements, parameters are ignored */
-PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
+PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  setCaption(APP_NAME);
  
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
@@ -219,29 +220,60 @@ PdfEditWindow::PdfEditWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QMain
  qs->evaluate(code,this,initScriptFilename);
  printDbg(debug::DBG_DBG,"after initscript");
 
- /*
- //DEBUG 
- printDbg(debug::DBG_DBG,"<Functions");
- printList(qs->functions());
- printDbg(debug::DBG_DBG,"<Classes");
- printList(qs->classes(QSInterpreter::AllClasses));
- printDbg(debug::DBG_DBG,"<Var");
- printList(qs->variables());
- printDbg(debug::DBG_DBG,"<OK");*/
+ if (fName.isNull()) { //start with empty editor
+  emptyFile();
+ } else { //open file
+  openFile(fName);
+ }
+ prop->setObject(0);//fill with demonstration properties
+}
 
- //create testing document
-// document=CPdf::getInstance("../../doc/zadani.pdf",CPdf::ReadWrite);
-// document=test::testPDF();
- document=NULL;
+/** Closes file currently opened in editor */
+void PdfEditWindow::closeFile() {
+ destroyFile();
+ emptyFile();
+}
 
+/** Closes file currently opened in editor, without opening new empty one */
+void PdfEditWindow::destroyFile() {
+ if (!document) return;
  item=NULL;//no item selected
+ tree->clear();//clear treeview
+ prop->clear();//clear property editor
+ page.reset();
+ ///todo: ask for save -> if yes, save
+ document->close(false);
+ delete qpdf;
+ document=0;
+ fileName=QString::null;
+}
+
+/** Open file in editor.
+ @param name Name opf file to open
+*/
+void PdfEditWindow::openFile(const QString &name) {
+ destroyFile();
+ if (name.isNull()) return;
+ document=CPdf::getInstance(name,CPdf::Advanced);//todo: mode
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
+ tree->init(document);//.getDictionary()
+ fileName=name;
+ print(tr("Loaded file")+" : "+name);
+//test::testDict());
+}
 
- //This is a memory leak, but it is just for testing anyway ... 
+/** Opens new empty file in editor. */
+void PdfEditWindow::emptyFile() {
+ destroyFile();
+document=NULL;// document=test::testPDF();//todo: testing, should be something empty
+ qpdf=import->createQSObject(document);
+ import->addQSObj(qpdf,"document");
+//tree->init(document);//todo: testing, should be document
  tree->init(test::testDict());
-// tree->init(document);//not yet implemented in kernel
- prop->setObject(0);//fill with demonstration properties
+ fileName=QString::null;
+ print(tr("New file created"));
+//test::testDict());
 }
 
 /** Print all objects that are in current script interpreter to console window*/
@@ -287,8 +319,7 @@ void PdfEditWindow::variables() {
 
 /** default destructor */
 PdfEditWindow::~PdfEditWindow() {
- delete qpdf;
- //todo: save/close document
+ destroyFile();
  /* stopExecution is not in QSA 1.0.1, need 1.1.4
  if (qs->isRunning()) {
   qs->stopExecution()

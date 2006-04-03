@@ -10,7 +10,10 @@
 
 using namespace std;
 
-/** constructor of TreeWindow, creates window and fills it with elements, parameters are ignored */
+/** constructor of TreeWindow, creates window and fills it with elements, parameters are ignored
+ @param parent Parent widget
+ @param name Name of this widget (not used, just passed to QWidget)
+ */
 TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
  tree=new QListView(this);
@@ -25,7 +28,9 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->show();
 }
 
-/** Called upon changing selection in the tree window */
+/** Called upon changing selection in the tree window
+ @param item The item that was selected
+ */
 void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  printDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
  TreeItem* it=dynamic_cast<TreeItem*>(item);
@@ -69,9 +74,11 @@ void TreeWindow::init(IProperty *doc) {
   li=new QListViewItem(li,"Page 2","Page");
   (void) new QListViewItem(li,"pic000.jpg","Picture");
  } else {
+  setUpdatesEnabled( FALSE );
   TreeItem *root=new TreeItem(tree, doc); 
   root->setOpen(TRUE);
   addChilds(root);
+  setUpdatesEnabled( TRUE );
  }
 }
 
