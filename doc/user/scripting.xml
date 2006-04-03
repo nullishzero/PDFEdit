@@ -95,10 +95,22 @@
   <sect1>
    <title>settings</title>
    <para>
-    This object hold application settings and can be used to read them.
+    This object hold application settings and can be used to read or write them.
     <para>
      <title><funcsynopsys>string settings.read(string)</funcsynopsys></title>
      Returns application setting with given key
+    </para>
+    <para>
+     <title><funcsynopsys>string settings.readExpand(string)</funcsynopsys></title>
+     Returns application setting with given key. Environment variable references (in form $VARIABLE) are expanded.
+    </para>
+    <para>
+     <title><funcsynopsys>string settings.expand(string)</funcsynopsys></title>
+     Return string with environment variable references (in form $VARIABLE) expanded.
+    </para>
+    <para>
+     <title><funcsynopsys>string settings.write(string,string)</funcsynopsys></title>
+     Write application setting with given key and value
     </para>
    </para>
   </sect1>
@@ -158,14 +170,6 @@
     <para>
      <title><funcsynopsys> Dict getDictionary();</funcsynopsys></title>
      Returns page dictionary
-    </para>
-    <para>
-     <title><funcsynopsys> int getPageNumber();</funcsynopsys></title>
-     Return page number in document
-    </para>
-    <para>
-     <title><funcsynopsys> void setPageNumber(int);</funcsynopsys></title>
-     Sets page number in document  
     </para>
     <para>
      <title><funcsynopsys> string getText();</funcsynopsys></title>
