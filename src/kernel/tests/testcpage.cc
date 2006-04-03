@@ -8,6 +8,7 @@
 
 #include "testmain.h"
 #include "testcobject.h"
+#include "testcpdf.h"
 
 #include <PDFDoc.h>
 #include "../cpage.h"
@@ -32,11 +33,20 @@ mediabox (ostream& oss, const char* fileName)
 	oss << "Contents:"		<< cat.getPage(1)->getContents(&obj) << endl;
 	oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
 
-	CPdf pdf;
-	boost::shared_ptr<CDict> dict (new CDict (pdf, obj, IndiRef ()));
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (TESTPDFFILE));
+	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, IndiRef ()));
 	
 	CPage page (dict);
 
+	oss << page.getMediabox ();
+	
+	Rectangle rc;
+	rc.xleft = 42;
+	rc.xright = 12;
+	rc.yleft = 62;
+	rc.yright = 2342;
+	page.setMediabox (rc);
+	
 	oss << page.getMediabox ();
 }
 
