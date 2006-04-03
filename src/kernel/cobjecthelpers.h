@@ -7,6 +7,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/03 14:35:13  misuj1am
+ *
+ *
+ * -- ADD: set (int/.../) methods for array
+ *
  * Revision 1.6  2006/04/02 17:12:14  misuj1am
  *
  *
@@ -132,7 +137,7 @@ void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
 
 
 //=========================================================
-//	Array helper methods
+//	Array helper "get" methods
 //=========================================================
 
 /**
@@ -179,13 +184,13 @@ getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position
 }
 
 /** Get int from array. */
-template< typename IP>
+template<typename IP>
 inline int
 getIntFromArray (const IP& ip, size_t position)
 	{ return getSimpleValueFromArray<int, CInt, pInt> (ip, position);}
 
 /** Get	double from array. */
-template< typename IP>
+template<typename IP>
 inline double
 getDoubleFromArray (const IP& ip, size_t position)
 { 
@@ -198,6 +203,75 @@ getDoubleFromArray (const IP& ip, size_t position)
 	}catch (ElementBadTypeException&) {}
 
 	return getSimpleValueFromArray<double, CReal, pReal> (ip, position);
+}
+
+
+//=========================================================
+//	Array helper "set" methods
+//=========================================================
+
+
+/** 
+ * Set simple value in array. 
+ *
+ * @param ip Array property.
+ * @param position Position in the array.
+ * @param val Value to be written.
+ */
+template<typename Value, typename ItemType, PropertyType ItemPType>
+void
+setSimpleValueInArray (const boost::shared_ptr<CArray>& array, size_t position, Value val)
+{
+	printDbg (debug::DBG_DBG, "array[" << position << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = array->getProperty (position);
+	if (ItemPType != ip->getType ())
+	{
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		throw ElementBadTypeException ("");
+	}
+
+	// Cast it to the correct type and set value
+	boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
+	item->writeValue (val);
+}
+
+
+template<typename Value, typename ItemType, PropertyType ItemPType>
+void
+setSimpleValueInArray (const boost::shared_ptr<IProperty>& ip, size_t position, Value val)
+{
+	assert (pArray == ip->getType ());
+	if (pArray != ip->getType ())
+		throw ElementBadTypeException ("");
+
+	// Cast it to array
+	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
+	
+	setSimpleValueInArray<Value, ItemType, ItemPType> (array, position, val);
+}
+
+
+/** Set int in array. */
+template<typename IP>
+inline void
+setIntInArray (const IP& ip, size_t position, int val)
+	{ setSimpleValueInArray<int, CInt, pInt> (ip, position, val);}
+
+/** Set	double in array. */
+template<typename IP>
+inline void
+setDoubleInArray (const IP& ip, size_t position, double val)
+{ 
+	// Try setting double, if not successful try int
+	try {
+		
+		return setSimpleValueInArray<double, CReal, pReal> (ip, position, val);
+		
+	}catch (ElementBadTypeException&) {}
+
+	setIntInArray (ip, position, static_cast<int>(val));
 }
 
 
