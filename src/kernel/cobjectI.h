@@ -151,7 +151,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
 	//
 	CPdf* pdf = IProperty::getPdf ();
-	if (NULL == pdf)
+	if (NULL == pdf || pNull == Tp)
 		return;
 
 	//
@@ -171,6 +171,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 		}else
 		{
 			assert (!"Bad parent.");
+			throw ElementBadTypeException ("Bad pointer type.");
 		}
 	}else
 	{
@@ -317,6 +318,7 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 		}else
 		{
 			assert (!"Bad parent.");
+			throw ElementBadTypeException ("Bad pointer type.");
 		}
 	}
 
@@ -729,7 +731,7 @@ CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
 	// create appropriate filter and endcode data	
 	boost::scoped_ptr<filters::CFilter> filter = new filters::NoFilter ();
 	//save it
-	dispatchChange ();
+	_objectChanged ();
 }
 
 

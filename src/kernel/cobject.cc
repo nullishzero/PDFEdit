@@ -11,7 +11,8 @@
 #include "static.h"
 // xpdf
 #include "xpdf.h"
-
+//
+#include "factories.h"
 #include "cobject.h"
 
 
@@ -99,35 +100,45 @@ namespace {
 		struct xpdfBoolReader
 		{public:
 				void operator() (Storage obj, Val val)
-					{val = (0 != obj.getBool());}
+				{if (objBool != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+				 val = (0 != obj.getBool());}
 		};
 
 		template<typename Storage, typename Val>
 		struct xpdfIntReader
 		{public:
 				void operator() (Storage obj, Val val)
-					{val = obj.getInt ();}
+				{if (objInt != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+				 val = obj.getInt ();}
 		};
 
 		template<typename Storage, typename Val>
 		struct xpdfRealReader
 		{public:
 				void operator() (Storage obj, Val val)
-					{val = obj.getNum ();}
+				{if (!obj.isNum())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+				 val = obj.getNum ();}
 		};
 
 		template<typename Storage, typename Val>
 		struct xpdfStringReader
 		{public:
 				void operator() (Storage obj, Val val)
-					{val = obj.getString ()->getCString();}
+				{if (objString != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+				 val = obj.getString ()->getCString();}
 		};
 
 		template<typename Storage, typename Val>
 		struct xpdfNameReader
 		{public:
 				void operator() (Storage obj, Val val)
-					{val = obj.getName ();}
+				{if (objName != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+				 val = obj.getName ();}
 		};
 
 
@@ -135,8 +146,10 @@ namespace {
 		struct xpdfRefReader
 		{public:
 				void operator() (Storage obj, Val val)
-					{val.num = obj.getRefNum();
-					 val.gen = obj.getRefGen();}
+				{if (objRef != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+				val.num = obj.getRefNum();
+				val.gen = obj.getRefGen();}
 		};
 		
 		/**
@@ -457,31 +470,31 @@ createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
 		switch (obj.getType ())
 		{
 			case objBool:
-				return new CBool (pdf,obj,ref);
+				return CBoolFactory::getInstance (pdf, ref, obj);
 
 			case objInt:
-				return new CInt (pdf,obj,ref);
+				return CIntFactory::getInstance (pdf, ref, obj);
 
 			case objReal:
-				return new CReal (pdf,obj,ref);
+				return CRealFactory::getInstance (pdf, ref, obj);
 
 			case objString:
-				return new CString (pdf,obj,ref);
+				return CStringFactory::getInstance (pdf, ref, obj);
 
 			case objName:
-				return new CName (pdf,obj,ref);
+				return CNameFactory::getInstance (pdf, ref, obj);
 
 			case objNull:
-				return new CNull (pdf,obj,ref);
+				return CNullFactory::getInstance ();
 
 			case objRef:
-				return new CRef (pdf,obj,ref);
+				return CRefFactory::getInstance (pdf, ref, obj);
 
 			case objArray:
 				return new CArray (pdf,obj,ref);
 
 			case objDict:
-				return new CDict (pdf,obj,ref);
+				return CDictFactory::getInstance (pdf, ref, obj);
 
 			case objStream:
 				return new CStream (pdf,obj,ref);
@@ -499,31 +512,31 @@ createObjFromXpdfObj (Object& obj)
 		switch (obj.getType ())
 		{
 			case objBool:
-				return new CBool (obj);
+				return CBoolFactory::getInstance  (obj);
 
 			case objInt:
-				return new CInt (obj);
+				return CIntFactory::getInstance  (obj);
 
 			case objReal:
-				return new CReal (obj);
+				return CRealFactory::getInstance  (obj);
 
 			case objString:
-				return new CString (obj);
+				return CStringFactory::getInstance  (obj);
 
 			case objName:
-				return new CName (obj);
+				return CNameFactory::getInstance  (obj);
 
 			case objNull:
-				return new CNull (obj);
+				return CNullFactory::getInstance  ();
 
 			case objRef:
-				return new CRef (obj);
+				return CRefFactory::getInstance  (obj);
 
 			case objArray:
 				return new CArray (obj);
 
 			case objDict:
-				return new CDict (obj);
+				return CDictFactory::getInstance  (obj);
 
 			case objStream:
 				return new CStream (obj);

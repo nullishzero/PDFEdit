@@ -17,6 +17,7 @@
 #include <xpdf/Stream.h>
 #include <xpdf/XRef.h>
 #include <xpdf/Gfx.h>
+#include <xpdf/GfxState.h>
 #include <xpdf/ErrorCodes.h>
 
 #endif // _XPDF_H_

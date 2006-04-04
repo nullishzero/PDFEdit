@@ -135,8 +135,9 @@ template<> struct PropertyTraitSimple<pRef>
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectSimple : public IProperty
 {
+public:
 	typedef typename PropertyTraitSimple<Tp>::writeType	 WriteType;
-	typedef typename PropertyTraitSimple<Tp>::value 	 Value;  
+	typedef typename PropertyTraitSimple<Tp>::value 	 Value;
 
 private:
 	/** Object's value. */
@@ -341,6 +342,7 @@ template<> struct PropertyTraitComplex<pDict>
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : public IProperty
 {
+public:
 	typedef typename PropertyTraitComplex<Tp>::writeType  		WriteType;
 	typedef typename PropertyTraitComplex<Tp>::propertyId 		PropertyId;
 	typedef typename PropertyTraitComplex<Tp>::indexComparator	IndexComparator;
