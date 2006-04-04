@@ -53,8 +53,8 @@ HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h
 SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc pagespace.cc pageview.cc
 
 #Non-widget classes
-HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
-SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
+HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
+SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
 
 #CObject Wrapper classes
 HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h

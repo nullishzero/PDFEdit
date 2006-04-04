@@ -30,19 +30,35 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  items=new QDict<Property>();
  //create labels dictionary
  labels=new QDict<QLabel>();
- // create scrollview
- scroll=new QScrollView(this,"propertyeditor_scroll",0);
  //number of objects - empty
  nObjects=0;
+ // create scrollview
+ scroll=new QScrollView(this,"propertyeditor_scroll",0);
+ scroll->setHScrollBarMode(QScrollView::AlwaysOff);
+ scroll->setVScrollBarMode(QScrollView::AlwaysOn);
  //create grid in scrollview
  grid=new QFrame(scroll,"propertyeditor_grid");
- grid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Minimum));
+
+ createLayout();
+}
+
+/** Delete internal layout */
+void PropertyEditor::deleteLayout() {
+ delete gridl; gridl=NULL;
+}
+
+/** Create internal layout */
+void PropertyEditor::createLayout() {
+//grid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Minimum));
  gridl = new QGridLayout( grid, 1, 2 );
+ gridl->setSpacing(3);
+ gridl->setMargin(3);
  scroll->addChild(grid);
  //set key column to be fixed and value column to be expandable
  gridl->setColStretch(0,0);
  gridl->setColStretch(1,1);
 }
+
 
 /** Called on resizing of property editor */
 void PropertyEditor::resizeEvent (QResizeEvent *e) {
@@ -52,22 +68,20 @@ void PropertyEditor::resizeEvent (QResizeEvent *e) {
 
 /** remove and delete all properties from the editor */
 void PropertyEditor::clear() {
- QObjectList *ygl=grid->queryList(0,0,FALSE,FALSE);
- printDbg(debug::DBG_DBG,"QUERYLIST BEFORE " << ygl->count() << " items");
- delete ygl;
  //clear properties in property dictionary
  QDictIterator<Property> itp(*items);
  for (;itp.current();++itp) {
+  gridl->remove(itp.current());
   delete itp.current();
  }
  //clear labels in label dictionary
  QDictIterator<QLabel> itl(*labels);
  for (;itl.current();++itl) {
+  gridl->remove(itl.current());
   delete itl.current();
  }
- //remove all items from grid if there is something left
+ //remove all items from grid if there is something left just to be sure its empty
  QObjectList *gl=grid->queryList(0,0,FALSE,FALSE);
- printDbg(debug::DBG_DBG,"QUERYLIST " << gl->count() << " items");
  QObjectListIterator it_g(*gl);
  QObject *obj;
  while ((obj=it_g.current())!=0) {
@@ -85,6 +99,11 @@ void PropertyEditor::clear() {
  list->clear();
  obj=NULL;
  nObjects=0;
+
+ //Needed, grid will never shrink
+ deleteLayout();
+ createLayout();
+
 }
 
 /** called on update of value from a property
@@ -124,7 +143,7 @@ void PropertyEditor::addProperty(Property *prop) {
  nObjects++;
  list->append(name);
  items->insert(name,prop);
- labels->insert(name,label);
+ labels->insert(QString(" ")+name+" ",label);
  prop->show();
  label->show();
 }
@@ -145,18 +164,16 @@ void PropertyEditor::addProperty(QString name) {
 */
 void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty> value) {
  Property *p=propertyFactory(value.get(),name,grid);//todo: flags
- printDbg(debug::DBG_DBG,"ADDP " << name);
  if (!p) return;	//check if editable
- printDbg(debug::DBG_DBG,"ADDP " << name << " not null");
- addProperty(p);
  p->readValue(value.get());
- p->show();
+ addProperty(p);//Will add and show the property
 }
 
 /** set IProperty object to be active (edited) in this editor
  @param pdfObject Object to set for editing in the widget
  */
 void PropertyEditor::setObject(IProperty *pdfObject) {
+ setUpdatesEnabled( FALSE );
  unsetObject();
  obj=pdfObject;
  //TODO: need property flags/mode
@@ -170,7 +187,6 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
   addProperty(prop);
   addProperty("StringProperty1");
   addProperty("StringProperty2");
-  addProperty("StringProperty3");
  } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
   CDict *dict=(CDict*)pdfObject;
   vector<string> list;
@@ -187,10 +203,11 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
   QString name;
   for(size_t i=0;i<n;i++) { //for each property
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
-   name.sprintf("[%d]",i);
+   name.sprintf("[ %4d ]",i);
    addProperty(name,property);
   }
  }
+ setUpdatesEnabled( TRUE );
 }
 
 /** default destructor */

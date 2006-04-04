@@ -22,5 +22,5 @@ CtrlA=dosomethingeverywhere()
 context/CtrlA=dosomethingincontext()
 
 [path]
-icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;./icon///;/
+icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;./icon
 

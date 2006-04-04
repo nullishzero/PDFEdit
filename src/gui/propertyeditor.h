@@ -28,6 +28,8 @@ private:
  void addProperty(const QString &name,boost::shared_ptr<IProperty> value);
  void addProperty(Property *prop);
  void addProperty(QString name);
+ void deleteLayout();
+ void createLayout();
 private:
  /** Object currently edited */
  IProperty *obj;

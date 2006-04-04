@@ -9,6 +9,7 @@
 #include "test.h"
 #include <iostream>
 #include <qfile.h>
+#include <qregexp.h>
 #include "aboutwindow.h"
 #include "version.h"
 #include <qmessagebox.h> 
@@ -253,8 +254,11 @@ void PdfEditWindow::openFile(const QString &name) {
  import->addQSObj(qpdf,"document");
  tree->init(document);//.getDictionary()
  fileName=name;
- print(tr("Loaded file")+" : "+name);
+ QString baseName=name;
+ baseName.replace(QRegExp("^.*/"),"");
+ print(tr("Loaded file")+" : "+baseName);
 //test::testDict());
+ setCaption(QString(APP_NAME)+" - "+baseName);
 }
 
 /** Opens new empty file in editor. */
@@ -268,6 +272,7 @@ document=NULL;// document=test::testPDF();//todo: testing, should be something e
  fileName=QString::null;
  print(tr("New file created"));
 //test::testDict());
+ setCaption(APP_NAME);
 }
 
 /** Print all objects that are in current script interpreter to console window*/
