@@ -19,7 +19,7 @@ DEFINES += DEBUG
 #
 
 HEADERS += ../utils/debug.h ../utils/iterator.h
-HEADERS += observer.h exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h
+HEADERS += observer.h exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
 HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
 HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 
