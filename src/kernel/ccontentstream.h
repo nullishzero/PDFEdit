@@ -12,15 +12,18 @@
 // static includes
 #include "static.h"
 
-// iterator
-#include "pdfoperators.h"
-
 
 //==========================================================
 namespace pdfobjects {
 //==========================================================
 
+//
+// Forward declaration
+//
+class PdfOperator;
+class IProperty;
 
+		
 /**
  * Content stream of a pdf content stream.
  *
@@ -74,6 +77,7 @@ public:
 	CContentStream (boost::shared_ptr<IProperty> stream, Object* obj = NULL);
 
 	
+	
 	/**
 	 * Get string representation.
 	 *
@@ -81,8 +85,19 @@ public:
 	 */
 	void getStringRepresentation (std::string& str) const;
 			
+	/**
+	 * Get objects at specified position.
+	 *
+	 * @param operators Container that will hold all objects at position.
+	 */
+	template<typename Decider>
+	void getOperatorsAtPosition (Operators& ops, Decider& dc) const;
 	
-	
+	/** Destructor. */
+	~CContentStream ()
+	{
+		printDbg (debug::DBG_DBG, "destructing..");
+	};
 };
 
 

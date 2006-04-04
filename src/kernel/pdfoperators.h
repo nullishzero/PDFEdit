@@ -48,7 +48,7 @@ class PdfOperator
 public:
 	typedef std::list<boost::shared_ptr<IProperty> > 	 Operands;
 	typedef std::vector<boost::shared_ptr<IProperty> > 	 IPContainer; 
-	typedef boost::shared_ptr<PdfOperator> 				 ListItem;
+	typedef PdfOperator* 								 ListItem;
 	typedef iterator::LinkedListIterator<boost::shared_ptr<PdfOperator> > Iterator;
 	typedef std::vector<boost::shared_ptr<PdfOperator> > PdfOperators;
 
@@ -60,7 +60,7 @@ protected:
 	/**
 	 * Constructor.
 	 */
-	PdfOperator (ListItem prv = ListItem (), ListItem nxt = ListItem ()) : next(nxt), prev(prv) {};
+	PdfOperator (ListItem prv = NULL, ListItem nxt = NULL) : next(nxt), prev(prv) {};
 
 
 public:
@@ -154,20 +154,10 @@ public:
 	/**
 	 * Set next or prev item.
 	 */
-	void setNext (ListItem nxt) 
-	{ 
-		if (next) 
-			printDbg (debug::DBG_DBG, "Changing valid next variable.");
-
-		next = nxt; 
-	};
-	void setPrev (ListItem prv) 
-	{ 
-		if (prev) 
-			printDbg (debug::DBG_DBG, "Changing valid prev variable.");
-		
-		prev = prv; 
-	};
+	void setNext (boost::shared_ptr<PdfOperator> nxt) 
+		{ setNext (nxt.get ());	};
+	void setPrev (boost::shared_ptr<PdfOperator> prv) 
+		{ setPrev (prv.get ()); };
 	
 	/**
 	 * Put behind this object.
@@ -180,17 +170,36 @@ public:
 		if (next)
 		{
 			beh->setNext (next);
-			next->setPrev (beh);
-			beh->setPrev (ListItem (this));
-			next = beh;
+			next->setPrev (beh.get());
+			beh->setPrev (this);
+			next = beh.get();
 		}else
 		{
-			next = beh;
-			beh->setPrev (ListItem (this)); 
+			next = beh.get();
+			beh->setPrev (this); 
 		}
 	};	
-private:
 	
+private:
+
+	/**
+	 * Set next or prev item.
+	 */
+	void setNext (ListItem nxt) 
+	{ 
+		if (next) 
+			printDbg (debug::DBG_DBG, "Changing valid next variable.");
+
+		next = nxt;
+	};
+	void setPrev (ListItem prv) 
+	{ 
+		if (prev) 
+			printDbg (debug::DBG_DBG, "Changing valid prev variable.");
+		
+		prev = prv; 
+	};
+
 	/**
 	 * Get previous item in a list that is implemented by PdfOperator.
 	 * It is the same as linked list.

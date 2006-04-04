@@ -11,7 +11,9 @@
 // static
 #include "static.h"
 #include "ccontentstream.h"
+
 //
+#include "pdfoperators.h"
 #include "cobject.h"
 
 //==========================================================
@@ -40,14 +42,18 @@ namespace
 	//
 	template<class T, class U>
 	inline bool isBitSet(T value, U mask)
-		{ return (value & ((unsigned short)0x1 << mask)) != 0;}
+		{ 	// compare number of bits of where we want to store bit with the position 
+			assert ((int)(sizeof(short) * 8) > mask);
+			return (value & ((unsigned short)0x1 << mask)) != 0;}
 
 	inline unsigned short setNoneBitsShort()
 		{ return 0x0;}
 
 	template<class U>
 	inline unsigned short setNthBitsShort(U mask)
-		{ return ((unsigned short) 0x1 << mask);}
+		{ 	// compare number of bits of where we want to store bit with the position 
+			assert ((int)(sizeof(short) * 8) > mask);
+			return ((unsigned short) 0x1 << mask);}
 
 	template<class U>
 	inline unsigned short setNthBitsShort(U mask, U mask1)
@@ -296,7 +302,7 @@ namespace
 	 *
 	 * @return Created pdf operator.
 	 */
-	shared_ptr<PdfOperator>
+	PdfOperator*
 	createOp (const string& op, PdfOperator::Operands& operands, CPdf& pdf, IndiRef rf, PdfOperator*& )
 	{
 		printDbg (DBG_DBG, "Finding operator: " << op);
@@ -329,7 +335,7 @@ namespace
 
 			// Set pdf to all operands
 			operandsSetPdf (pdf, rf, operands);
-			return shared_ptr<UnknownPdfOperator> (new UnknownPdfOperator (operands, op));
+			return new UnknownPdfOperator (operands, op);
 		}
 				
 		printDbg (DBG_DBG, "Operator found. " << KNOWN_OPERATORS[lo].name);
@@ -343,8 +349,7 @@ namespace
 			// Set pdf to all operands
 			operandsSetPdf (pdf, rf, operands, KNOWN_OPERATORS[lo].argNum);
 			// Result in lo
-			return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator 
-				(KNOWN_OPERATORS[lo].name, KNOWN_OPERATORS[lo].argNum, operands));
+			return new SimpleGenericOperator (KNOWN_OPERATORS[lo].name, KNOWN_OPERATORS[lo].argNum, operands);
 		}
 		//
 		// \TODO complex types
@@ -389,9 +394,9 @@ namespace
 			if (o.isCmd ())
 			{
 				// Create operator
-				boost::shared_ptr<PdfOperator> op =  createOp (string (o.getCmd ()), operands, 
+				boost::shared_ptr<PdfOperator> op  (createOp (string (o.getCmd ()), operands, 
 																pdf, rf,
-																cmplex);
+																cmplex));
 				//
 				// Put it either to operators or if it is a complex type, put it there
 				//
@@ -504,6 +509,342 @@ CContentStream::getStringRepresentation (string& str) const
 		tmp.clear ();
 	}
 }
+
+//
+//
+//
+template<typename Decider>
+void
+CContentStream::getOperatorsAtPosition (Operators& ops, Decider& dc) const
+{
+/*
+	"m"	
+	state->moveTo(args[0].getNum(), args[1].getNum());
+	"l"
+	state->lineTo(args[0].getNum(), args[1].getNum());
+	"c"
+	state->curveTo(x1, y1, x2, y2, x3, y3);
+
+	"v"
+	  x1 = state->getCurX();
+  y1 = state->getCurY();
+  x2 = args[0].getNum();
+  y2 = args[1].getNum();
+  x3 = args[2].getNum();
+  y3 = args[3].getNum();
+  state->curveTo(x1, y1, x2, y2, x3, y3);
+  
+  "y"
+  x1 = args[0].getNum();
+  y1 = args[1].getNum();
+  x2 = args[2].getNum();
+  y2 = args[3].getNum();
+  x3 = x2;
+  y3 = y2;
+  state->curveTo(x1, y1, x2, y2, x3, y3);
+  
+  "re"
+  state->moveTo(x, y);
+  state->lineTo(x + w, y);
+  state->lineTo(x + w, y + h);
+  state->lineTo(x, y + h);
+  state->closePath();
+  
+  "h"
+ state->closePath();
+	
+
+Gfx.cc::#1478
+  
+  "BT"
+  state->setTextMat(1, 0, 0, 1, 0, 0);
+  state->textMoveTo(0, 0);
+
+  "Tc"
+  state->setCharSpace(args[0].getNum());
+
+  "Tf"
+  state->setFont(font, args[1].getNum());
+
+  "Ts"
+  text rise
+  
+  
+  "Tw"
+  state->setWordSpace(args[0].getNum());
+
+  "Tz"
+state->setHorizScaling(args[0].getNum());
+
+  "Td"
+  tx = state->getLineX() + args[0].getNum();
+  ty = state->getLineY() + args[1].getNum();
+  state->textMoveTo(tx, ty);
+
+  "TD"
+  tx = state->getLineX() + args[0].getNum();
+  ty = args[1].getNum();
+  state->setLeading(-ty);
+  ty += state->getLineY();
+  state->textMoveTo(tx, ty);
+ 
+
+
+  "Tm"
+ state->setTextMat(args[0].getNum(), args[1].getNum(),
+		    args[2].getNum(), args[3].getNum(),
+		    args[4].getNum(), args[5].getNum());
+  state->textMoveTo(0, 0);
+  out->updateTextMat(state);
+  out->updateTextPos(state);
+  
+  "T*"
+  tx = state->getLineX();
+  ty = state->getLineY() - state->getLeading();
+  state->textMoveTo(tx, ty)
+
+  "'"
+  tx = state->getLineX();
+  ty = state->getLineY() - state->getLeading();
+  state->textMoveTo(tx, ty);
+  doShowText
+
+  "TL"
+  state->setLeading(args[0].getNum());
+
+  "\"
+  state->setWordSpace(args[0].getNum());
+  state->setCharSpace(args[1].getNum());
+  tx = state->getLineX();
+  ty = state->getLineY() - state->getLeading();
+  state->textMoveTo(tx, ty);
+  doShowText
+		  
+  "TJ"
+void Gfx::opShowSpaceText(Object args[], int numArgs) {
+  Array *a;
+  Object obj;
+  int wMode;
+  int i;
+
+  if (!state->getFont()) {
+    error(getPos(), "No font in show/space");
+    return;
+  }
+  if (fontChanged) {
+    out->updateFont(state);
+    fontChanged = gFalse;
+  }
+  out->beginStringOp(state);
+  wMode = state->getFont()->getWMode();
+  a = args[0].getArray();
+  for (i = 0; i < a->getLength(); ++i) {
+    a->get(i, &obj);
+    if (obj.isNum()) {
+      // this uses the absolute value of the font size to match
+      // Acrobat's behavior
+      if (wMode) {
+	state->textShift(0, -obj.getNum() * 0.001 *
+			    fabs(state->getFontSize()));
+      } else {
+	state->textShift(-obj.getNum() * 0.001 *
+			 fabs(state->getFontSize()), 0);
+      }
+      out->updateTextShift(state, obj.getNum());
+    } else if (obj.isString()) {
+      doShowText(obj.getString());
+    } else {
+      error(getPos(), "Element of show/space array must be number or string");
+    }
+    obj.free();
+  }
+  out->endStringOp(state);
+}
+
+
+
+"!!!"
+void Gfx::doShowText(GString *s) {
+  GfxFont *font;
+  int wMode;
+  double riseX, riseY;
+  CharCode code;
+  Unicode u[8];
+  double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, lineX, lineY;
+  double originX, originY, tOriginX, tOriginY;
+  double oldCTM[6], newCTM[6];
+  double *mat;
+  Object charProc;
+  Dict *resDict;
+  Parser *oldParser;
+  char *p;
+  int len, n, uLen, nChars, nSpaces, i;
+
+  font = state->getFont();
+  wMode = font->getWMode();
+
+  if (out->useDrawChar()) {
+    out->beginString(state, s);
+  }
+
+  // handle a Type 3 char
+  if (font->getType() == fontType3 && out->interpretType3Chars()) {
+    mat = state->getCTM();
+    for (i = 0; i < 6; ++i) {
+      oldCTM[i] = mat[i];
+    }
+    mat = state->getTextMat();
+    newCTM[0] = mat[0] * oldCTM[0] + mat[1] * oldCTM[2];
+    newCTM[1] = mat[0] * oldCTM[1] + mat[1] * oldCTM[3];
+    newCTM[2] = mat[2] * oldCTM[0] + mat[3] * oldCTM[2];
+    newCTM[3] = mat[2] * oldCTM[1] + mat[3] * oldCTM[3];
+    mat = font->getFontMatrix();
+    newCTM[0] = mat[0] * newCTM[0] + mat[1] * newCTM[2];
+    newCTM[1] = mat[0] * newCTM[1] + mat[1] * newCTM[3];
+    newCTM[2] = mat[2] * newCTM[0] + mat[3] * newCTM[2];
+    newCTM[3] = mat[2] * newCTM[1] + mat[3] * newCTM[3];
+    newCTM[0] *= state->getFontSize();
+    newCTM[1] *= state->getFontSize();
+    newCTM[2] *= state->getFontSize();
+    newCTM[3] *= state->getFontSize();
+    newCTM[0] *= state->getHorizScaling();
+    newCTM[2] *= state->getHorizScaling();
+    state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
+    curX = state->getCurX();
+    curY = state->getCurY();
+    lineX = state->getLineX();
+    lineY = state->getLineY();
+    oldParser = parser;
+    p = s->getCString();
+    len = s->getLength();
+    while (len > 0) {
+      n = font->getNextChar(p, len, &code,
+			    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+			    &dx, &dy, &originX, &originY);
+      dx = dx * state->getFontSize() + state->getCharSpace();
+      if (n == 1 && *p == ' ') {
+	dx += state->getWordSpace();
+      }
+      dx *= state->getHorizScaling();
+      dy *= state->getFontSize();
+      state->textTransformDelta(dx, dy, &tdx, &tdy);
+      state->transform(curX + riseX, curY + riseY, &x, &y);
+      saveState();
+      state->setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
+      //~ out->updateCTM(???)
+      if (!out->beginType3Char(state, curX + riseX, curY + riseY, tdx, tdy,
+			       code, u, uLen)) {
+	((Gfx8BitFont *)font)->getCharProc(code, &charProc);
+	if ((resDict = ((Gfx8BitFont *)font)->getResources())) {
+	  pushResources(resDict);
+	}
+	if (charProc.isStream()) {
+	  display(&charProc, gFalse);
+	} else {
+	  error(getPos(), "Missing or bad Type3 CharProc entry");
+	}
+	out->endType3Char(state);
+	if (resDict) {
+	  popResources();
+	}
+	charProc.free();
+      }
+      restoreState();
+      // GfxState::restore() does *not* restore the current position,
+      // so we deal with it here using (curX, curY) and (lineX, lineY)
+      curX += tdx;
+      curY += tdy;
+      state->moveTo(curX, curY);
+      state->textSetPos(lineX, lineY);
+      p += n;
+      len -= n;
+    }
+    parser = oldParser;
+
+  } else if (out->useDrawChar()) {
+    state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
+    p = s->getCString();
+    len = s->getLength();
+    while (len > 0) {
+      n = font->getNextChar(p, len, &code,
+			    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+			    &dx, &dy, &originX, &originY);
+      if (wMode) {
+	dx *= state->getFontSize();
+	dy = dy * state->getFontSize() + state->getCharSpace();
+	if (n == 1 && *p == ' ') {
+	  dy += state->getWordSpace();
+	}
+      } else {
+	dx = dx * state->getFontSize() + state->getCharSpace();
+	if (n == 1 && *p == ' ') {
+	  dx += state->getWordSpace();
+	}
+	dx *= state->getHorizScaling();
+	dy *= state->getFontSize();
+      }
+      state->textTransformDelta(dx, dy, &tdx, &tdy);
+      originX *= state->getFontSize();
+      originY *= state->getFontSize();
+      state->textTransformDelta(originX, originY, &tOriginX, &tOriginY);
+      out->drawChar(state, state->getCurX() + riseX, state->getCurY() + riseY,
+		    tdx, tdy, tOriginX, tOriginY, code, n, u, uLen);
+      state->shift(tdx, tdy);
+      p += n;
+      len -= n;
+    }
+
+  } else {
+    dx = dy = 0;
+    p = s->getCString();
+    len = s->getLength();
+    nChars = nSpaces = 0;
+    while (len > 0) {
+      n = font->getNextChar(p, len, &code,
+			    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+			    &dx2, &dy2, &originX, &originY);
+      dx += dx2;
+      dy += dy2;
+      if (n == 1 && *p == ' ') {
+	++nSpaces;
+      }
+      ++nChars;
+      p += n;
+      len -= n;
+    }
+    if (wMode) {
+      dx *= state->getFontSize();
+      dy = dy * state->getFontSize()
+	   + nChars * state->getCharSpace()
+	   + nSpaces * state->getWordSpace();
+    } else {
+      dx = dx * state->getFontSize()
+	   + nChars * state->getCharSpace()
+	   + nSpaces * state->getWordSpace();
+      dx *= state->getHorizScaling();
+      dy *= state->getFontSize();
+    }
+    state->textTransformDelta(dx, dy, &tdx, &tdy);
+    out->drawString(state, s);
+    state->shift(tdx, tdy);
+  }
+
+  if (out->useDrawChar()) {
+    out->endString(state);
+  }
+
+  updateLevel += 10 * s->getLength();
+}
+
+  "Tj"
+ doShowText(args[0].getString());
+
+ 
+ \TODO 
+ XOBJECTS
+*/
+}
+
 
 //==========================================================
 } // namespace pdfobjects
