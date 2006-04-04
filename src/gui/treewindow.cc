@@ -108,9 +108,9 @@ void TreeWindow::addChilds(TreeItem *parent) {
   size_t n=ar->getPropertyCount();
   printDbg(debug::DBG_DBG,"Subproperties: " << n);
   TreeItem *last=NULL;
+  QString name;
   for(size_t i=0;i<n;i++) { //for each property
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
-   QString name;
    name.sprintf("[%d]",i);
    TreeItem *child=new TreeItem(parent, property.get(),name,last); 
    last=child;

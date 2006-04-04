@@ -11,6 +11,7 @@
 #include <qfile.h>
 #include "aboutwindow.h"
 #include "version.h"
+#include <qmessagebox.h> 
 
 using namespace std;
 
@@ -292,6 +293,23 @@ void PdfEditWindow::functions() {
  @return Version of editor (major.minor.release) */
 QString PdfEditWindow::version() {
  return VERSION;
+}
+
+/** Brings up informational messagebox with given message
+ @param msg Message to display
+ */
+void PdfEditWindow::message(const QString &msg) {
+ QMessageBox::information(this,APP_NAME,msg,tr("&Ok"),QString::null,QString::null,QMessageBox::Ok | QMessageBox::Default);
+}
+
+/** Asks question with Yes/No answer. "Yes" is default. Return true if user selected "yes", false if user selected "no"
+ @param msg Question to display
+ @return True if yes, false if no
+ */
+bool PdfEditWindow::question(const QString &msg) {
+ int answer=QMessageBox::question(this,APP_NAME,msg,tr("&Yes"),tr("&No"),QString::null,
+                                  QMessageBox::Yes | QMessageBox::Default,QMessageBox::No | QMessageBox::Escape);
+ return (answer==QMessageBox::Yes);
 }
 
 /** Return name of file loaded in editor. Return empty string if the document have no name

@@ -36,6 +36,7 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  nObjects=0;
  //create grid in scrollview
  grid=new QFrame(scroll,"propertyeditor_grid");
+ grid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Minimum));
  gridl = new QGridLayout( grid, 1, 2 );
  scroll->addChild(grid);
  //set key column to be fixed and value column to be expandable
@@ -148,6 +149,7 @@ void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
  if (!p) return;	//check if editable
  printDbg(debug::DBG_DBG,"ADDP " << name << " not null");
  addProperty(p);
+ p->readValue(value.get());
  p->show();
 }
 
@@ -157,37 +159,38 @@ void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
 void PropertyEditor::setObject(IProperty *pdfObject) {
  unsetObject();
  obj=pdfObject;
- if (!pdfObject) {
- //TODO: ! real code: get all names, sort all names, then add all properties
- //TODO: ! get_property_all & in loop get_property, get_property_type & get_property_flag
-//TODO: debug example code begin
- Property *prop;
- prop=new IntProperty("Intproperty",grid);
- addProperty(prop);
- prop=new RealProperty("Realproperty",grid);
- addProperty(prop);
- prop=new BoolProperty("Boolproperty",grid);
- addProperty(prop);
- addProperty("StringProperty1");
- addProperty("StringProperty2");
- addProperty("StringProperty3");
-//TODO: debug example code end
- } else {
- if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
-  printDbg(debug::DBG_DBG,"CDICT->PropertyEditor");
+ //TODO: need property flags/mode
+ if (!pdfObject) { //TODO: debug example
+  Property *prop;
+  prop=new IntProperty("Intproperty",grid);
+  addProperty(prop);
+  prop=new RealProperty("Realproperty",grid);
+  addProperty(prop);
+  prop=new BoolProperty("Boolproperty",grid);
+  addProperty(prop);
+  addProperty("StringProperty1");
+  addProperty("StringProperty2");
+  addProperty("StringProperty3");
+ } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
   CDict *dict=(CDict*)pdfObject;
   vector<string> list;
   dict->getAllPropertyNames(list);
   vector<string>::iterator it;
   for( it=list.begin();it!=list.end();++it) { // for each property
-   printDbg(debug::DBG_DBG,"Subproperty: " << *it);
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    addProperty(*it,property);
   }
   grid->update();
+ } else if (pdfObject->getType()==pArray) {	//Object is CArray
+  CArray *ar=(CArray*)pdfObject;
+  size_t n=ar->getPropertyCount();
+  QString name;
+  for(size_t i=0;i<n;i++) { //for each property
+   boost::shared_ptr<IProperty> property=ar->getProperty(i);
+   name.sprintf("[%d]",i);
+   addProperty(name,property);
+  }
  }
- }
- ///TODO: array
 }
 
 /** default destructor */

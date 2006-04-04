@@ -25,6 +25,8 @@ public:
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
 public slots: //These will be exported to scripting
+ void message(const QString &msg);
+ bool question(const QString &msg);
  void closeFile();
  void openFileNew(const QString &name);
  void openFile(const QString &name);
