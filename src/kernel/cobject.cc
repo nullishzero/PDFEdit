@@ -110,7 +110,7 @@ namespace {
 		{public:
 				void operator() (Storage obj, Val val)
 				{if (objInt != obj.getType())
-					throw ElementBadTypeException ("Xpdf object is not bool.");
+					throw ElementBadTypeException ("Xpdf object is not int.");
 				 val = obj.getInt ();}
 		};
 
@@ -119,7 +119,7 @@ namespace {
 		{public:
 				void operator() (Storage obj, Val val)
 				{if (!obj.isNum())
-					throw ElementBadTypeException ("Xpdf object is not bool.");
+					throw ElementBadTypeException ("Xpdf object is not real.");
 				 val = obj.getNum ();}
 		};
 
@@ -128,7 +128,7 @@ namespace {
 		{public:
 				void operator() (Storage obj, Val val)
 				{if (objString != obj.getType())
-					throw ElementBadTypeException ("Xpdf object is not bool.");
+					throw ElementBadTypeException ("Xpdf object is not string.");
 				 val = obj.getString ()->getCString();}
 		};
 
@@ -137,7 +137,7 @@ namespace {
 		{public:
 				void operator() (Storage obj, Val val)
 				{if (objName != obj.getType())
-					throw ElementBadTypeException ("Xpdf object is not bool.");
+					throw ElementBadTypeException ("Xpdf object is not name.");
 				 val = obj.getName ();}
 		};
 
@@ -147,7 +147,7 @@ namespace {
 		{public:
 				void operator() (Storage obj, Val val)
 				{if (objRef != obj.getType())
-					throw ElementBadTypeException ("Xpdf object is not bool.");
+					throw ElementBadTypeException ("Xpdf object is not ref.");
 				val.num = obj.getRefNum();
 				val.gen = obj.getRefGen();}
 		};
@@ -246,6 +246,8 @@ namespace {
 			void operator() (IProperty& ip, const ObjectToParse array, CObject resultArray)
 			{
 				assert (objArray == array.getType());
+				if (objArray != array.getType())
+					throw ElementBadTypeException ("Array reader got xpdf object that is not array.");
 				assert (0 <= array.arrayGetLength ());
 				printDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 				
@@ -285,6 +287,8 @@ namespace {
 			void operator() (IProperty& ip, const ObjectToParse dict, CObject resultDict)
 			{
 				assert (objDict == dict.getType());
+				if (objDict != dict.getType())
+					throw ElementBadTypeException ("Dict reader got xpdf object that is not dict.");
 				assert (0 <= dict.dictGetLength ());
 				printDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 				
