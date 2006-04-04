@@ -31,6 +31,17 @@
     </message>
 </context>
 <context>
+    <name>PdfEditWindow</name>
+    <message>
+        <source>Loaded file</source>
+        <translation>Nahrán soubor</translation>
+    </message>
+    <message>
+        <source>New file created</source>
+        <translation>Vytvořen nový soubor</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Null</source>
@@ -105,6 +116,38 @@
     <message>
         <source>&lt;no name&gt;</source>
         <translation>&lt;bez jména&gt;</translation>
+    </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation>Kritická chyba</translation>
+    </message>
+    <message>
+        <source>Usage: </source>
+        <translation>Použití: </translation>
+    </message>
+    <message>
+        <source> [option(s)] [files(s)]</source>
+        <translation> [přepínač(e)] [soubor(y)] </translation>
+    </message>
+    <message>
+        <source>Options: </source>
+        <translation>Přepínače: </translation>
+    </message>
+    <message>
+        <source>Print help and exit</source>
+        <translation>Vypsat nápovědu a skončit</translation>
+    </message>
+    <message>
+        <source>Print version and exit</source>
+        <translation>Vypsat verzi a skončit</translation>
+    </message>
+    <message>
+        <source>Stop processing options</source>
+        <translation>Přestat zpracovávat přepínače</translation>
+    </message>
+    <message>
+        <source>Invalid commandline option : </source>
+        <translation>Nesprávný přepínač na příkazové řádce : </translation>
     </message>
 </context>
 <context>

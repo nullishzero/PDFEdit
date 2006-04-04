@@ -31,6 +31,17 @@
     </message>
 </context>
 <context>
+    <name>PdfEditWindow</name>
+    <message>
+        <source>Loaded file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New file created</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Null</source>
@@ -104,6 +115,38 @@
     </message>
     <message>
         <source>&lt;no name&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Usage: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> [option(s)] [files(s)]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Options: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print help and exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print version and exit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid commandline option : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop processing options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
