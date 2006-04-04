@@ -135,7 +135,8 @@ public:
 	 */
 	static CNull * getInstance()
 	{
-		return new CNull();
+		static CNull null;
+		return &null;
 	}
 
 };
