@@ -43,6 +43,14 @@
    Creates new empty editor window
   </para>
   <para>
+   <title><funcsynopsys> void message(string)</funcsynopsys></title>
+   Show simple messagebox with given message and wait until user dismiss it
+  </para>
+  <para>
+   <title><funcsynopsys> bool question(string)</funcsynopsys></title>
+   Show Yes/No question and wait for answer. Return true if user selected "yes", or false if user selected "no"
+  </para>
+  <para>
    <title><funcsynopsys> void closeFile()</funcsynopsys></title>
    Closes file opened in this editor window   
   </para>
