@@ -3,6 +3,7 @@ Property - abstract class for widget containing one editable property
 Should be subclassed for editing specific property types (integer, string, ...)
 */
 
+#include <utils/debug.h>
 #include "property.h"
 
 //TODO: add functions for display & editing ... 
@@ -16,6 +17,7 @@ Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFla
  : QWidget (parent, "property",_flags){
  name=_name;
  flags=_flags;
+ printDbg(debug::DBG_DBG,"+ Property " << name);
 }
 
 /** return name of this property */
@@ -45,5 +47,5 @@ void Property::setReadOnly(bool _readonly) {
 
 /** default destructor */
 Property::~Property() {
-// delete name;
+  printDbg(debug::DBG_DBG,"- Property" << name);
 }

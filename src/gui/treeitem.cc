@@ -14,7 +14,7 @@ using namespace std;
  @param pdfObj Object contained in this item
  @param name Name of this item - will be shown in treeview
  */
-TreeItem::TreeItem(QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/):QListViewItem(parent) {
+TreeItem::TreeItem(QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  init(pdfObj,name);
 }
 
@@ -23,7 +23,7 @@ TreeItem::TreeItem(QListView *parent,IProperty *pdfObj,const QString name/*=QStr
  @param pdfObj Object contained in this item
  @param name Name of this item - will be shown in treeview
  */
-TreeItem::TreeItem(QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/):QListViewItem(parent) {
+TreeItem::TreeItem(QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  init(pdfObj,name);
 }
 

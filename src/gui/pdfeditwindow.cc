@@ -165,16 +165,11 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  splCmd=new QSplitter(spl);
  splCmd->setOrientation(Vertical);
 
-
  //PageSpace
  PageSpace *pagespc = new PageSpace(splCmd,"PageSpace");
 
  //Commandline
  cmdLine=new CommandWindow(splCmd);
- QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
-
-// quit->show();
-// cmdLine->show();
 
  //Splitter between treeview and property editor
  splProp=new QSplitter(spl);
@@ -185,8 +180,9 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  //Property editor
  prop=new PropertyEditor(splProp);
-// prop->show();
 
+ QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
+ QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), prop, SLOT(setObject(IProperty*)));
 
  this->setCentralWidget(spl);
 
@@ -200,9 +196,6 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
   QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
  }
    
- //show splitter
-// spl->show();
-
  //Script must be run AFTER creating all widgets
  // -> script may need them, especially the command window
 

@@ -25,6 +25,9 @@ typedef QMap<QString, optHandler> OptionMap;
 /** Option help map*/
 typedef QMap<QString, QString> OptionHelp;
 
+/** Stop processing options from comandline? */
+bool stopOpt=false;
+
 /** Name of the program (argv[0]) */
 QString binName;
 /** Option help texts */
@@ -47,6 +50,12 @@ void saveSettings(void) {
 void handleVersion(){
   cout << VERSION << endl;
   exit(0);
+}
+
+
+/** handle -- parameter (stop processing option) */
+void handleStopOpt(){
+ stopOpt=true;
 }
 
 /** handle --help parameter */
@@ -87,19 +96,7 @@ bool handleOption(const QString &param) {
 /** main - load settings and launches a main window */
 int main(int argc, char *argv[]){
  QApplication app(argc, argv);
- QStringList params;
- QString param;
- optionHandler("--help",handleHelp,QObject::tr("Print help and exit"));
- optionHandler("--version",handleVersion,QObject::tr("Print version and exit"));
- binName=app.argv()[0];
- for (int i=1;i<app.argc();i++) {
-  param=app.argv()[i];
-  if (param.startsWith("-")) { //option
-   if (!handleOption(param)) fatalError(QObject::tr("Invalid commandline option : ")+param);
-  } else {
-   params+=param;
-  }
- }
+
  //Translation support
  QTranslator translator;
  QString lang=QString("pdfedit_")+getenv("LANG");
@@ -117,9 +114,28 @@ int main(int argc, char *argv[]){
  }
  app.installTranslator(&translator);
 
+ //parse commandline parameters
+ QStringList params;
+ QString param;
+ optionHandler("--help",handleHelp,QObject::tr("Print help and exit"));
+ optionHandler("--version",handleVersion,QObject::tr("Print version and exit"));
+ optionHandler("--",handleStopOpt,QObject::tr("Stop processing options"));
+ binName=app.argv()[0];
+ for (int i=1;i<app.argc();i++) {
+  param=app.argv()[i];
+  if (param.startsWith("-") && !stopOpt) { //option
+   if (!handleOption(param)) fatalError(QObject::tr("Invalid commandline option : ")+param);
+  } else {
+   params+=param;
+  }
+ }
+
+ //load settings
  globalSettings=new Settings();
  globalSettings->setName("settings");
  atexit(saveSettings);
+
+ //open editor windows(s)
  int nFiles=params.size();
  if (nFiles) { //open files from cmdline
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {

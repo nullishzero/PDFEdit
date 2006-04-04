@@ -93,10 +93,12 @@ void TreeWindow::addChilds(TreeItem *parent) {
   vector<string> list;
   dict->getAllPropertyNames(list);
   vector<string>::iterator it;
+  TreeItem *last=NULL;
   for( it=list.begin();it!=list.end();++it) { // for each property
    printDbg(debug::DBG_DBG,"Subproperty: " << *it);
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
-   TreeItem *child=new TreeItem(parent, property.get(),*it); 
+   TreeItem *child=new TreeItem(parent, property.get(),*it,last); 
+   last=child;
    addChilds(child);
   }
  }
@@ -105,11 +107,13 @@ void TreeWindow::addChilds(TreeItem *parent) {
   CArray *ar=(CArray*)obj;
   size_t n=ar->getPropertyCount();
   printDbg(debug::DBG_DBG,"Subproperties: " << n);
+  TreeItem *last=NULL;
   for(size_t i=0;i<n;i++) { //for each property
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
    QString name;
    name.sprintf("[%d]",i);
-   TreeItem *child=new TreeItem(parent, property.get(),name); 
+   TreeItem *child=new TreeItem(parent, property.get(),name,last); 
+   last=child;
    addChilds(child);
   }
  }

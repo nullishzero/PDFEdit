@@ -8,8 +8,8 @@ using namespace pdfobjects;
 
 class TreeItem : public QListViewItem {
 public:
- TreeItem(QListView *parent,IProperty *pdfObj,const QString name=QString::null);
- TreeItem(QListViewItem *parent,IProperty *pdfObj,const QString name=QString::null);
+ TreeItem(QListView *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItem(QListViewItem *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
  ~TreeItem();
  IProperty* getObject();
 private:

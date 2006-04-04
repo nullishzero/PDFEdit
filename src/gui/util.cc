@@ -11,7 +11,7 @@ using namespace std;
  @param message Error message to show
  */
 void fatalError(const QString message){
- cout << QObject::tr("Fatal Error") << ": " << message << endl;
+ cout << endl << QObject::tr("Fatal Error") << "!" << endl << message << endl;
  exit(-1);
 }
 

@@ -2,26 +2,31 @@
 TEMPLATE = app
 TARGET = pdfedit
 
-#installation details
+# installation paths
 DATA_PATH = /usr/share/pdfedit
+DOC_PATH  = /usr/share/doc/pdfedit
 BIN_PATH  = /usr/bin
-data.path = $$DATA_PATH
-data.files= pdfeditrc
-data_icon.path = $$DATA_PATH/icon
-data_icon.files= icon/*.png
-data_lang.path = $$DATA_PATH/lang
-data_lang.files= lang/*.qm
-pdfedit.files = pdfedit
-pdfedit.path = $$BIN_PATH
-INSTALLS = data_icon data_lang data pdfedit
+
+# installation details
+data.path       = $$DATA_PATH
+data.files      = pdfeditrc
+data_icon.path  = $$DATA_PATH/icon
+data_icon.files = icon/*.png
+data_lang.path  = $$DATA_PATH/lang
+data_lang.files = lang/*.qm
+doc.path        = $$DOC_PATH
+doc.files       = ../../doc/user/*.html ../../doc/user/*.xml
+pdfedit.path    = $$BIN_PATH
+pdfedit.files   = pdfedit
+INSTALLS = data_icon data_lang data doc pdfedit
 
 #too complicated for small utility.
-menugenerator.target = menugenerator
-menugenerator.commands =$(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o $(SUBLIBS) -L$(QTDIR)/lib -L/usr/X11R6/lib -lqsa -lqt-mt -lXext -lX11 -lm
-menugenerator.depends = .obj/menugenerator.o
-menugenerator_o.target = .obj/menugenerator.o
-menugenerator_o.commands =$(CXX) -c $(CXXFLAGS) $(INCPATH) -o .obj/menugenerator.o menugenerator.cc
-menugenerator_o.depends = menugenerator.cc menugenerator.h
+menugenerator.target     = menugenerator
+menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o $(SUBLIBS) -L$(QTDIR)/lib -L/usr/X11R6/lib -lqsa -lqt-mt -lXext -lX11 -lm
+menugenerator.depends    = .obj/menugenerator.o
+menugenerator_o.target   = .obj/menugenerator.o
+menugenerator_o.commands = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o .obj/menugenerator.o menugenerator.cc
+menugenerator_o.depends  = menugenerator.cc menugenerator.h
 QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
 POST_TARGETDEPS = menugenerator
 
