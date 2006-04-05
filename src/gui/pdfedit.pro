@@ -42,27 +42,34 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 
 #debug information
-#QMAKE_CXXFLAGS += -g
+QMAKE_CXXFLAGS += -g
 
-#testing version
-#will look in current directory for data files
+#Testing version : will look in current directory for data files
 QMAKE_CXXFLAGS += -D TESTING
 
-#Widget classes
-HEADERS += pdfeditwindow.h toolbutton.h toolbar.h propertyeditor.h aboutwindow.h commandwindow.h treewindow.h pagespace.h pageview.h
-SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc propertyeditor.cc aboutwindow.cc commandwindow.cc treewindow.cc pagespace.cc pageview.cc
+#Main Window
+HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h
+SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc
 
-#Non-widget classes
-HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  settings.h  treeitem.h  propertyfactory.h
-SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc settings.cc treeitem.cc propertyfactory.cc
+#Dialogs
+HEADERS += aboutwindow.h  option.h  optionwindow.h
+SOURCES += aboutwindow.cc option.cc optionwindow.cc
+
+#Tree window
+HEADERS += treeitem.h  treewindow.h 
+SOURCES += treeitem.cc treewindow.cc
+
+#Property editor
+HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  propertyeditor.h  propertyfactory.h
+SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc propertyeditor.cc propertyfactory.cc
 
 #CObject Wrapper classes
 HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h
 SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
 
 #Other source files
-HEADERS += util.h 
-SOURCES += util.cc main.cc 
+HEADERS += util.h  settings.h 
+SOURCES += util.cc settings.cc main.cc 
 
 #Testing files (will be removed later)
 HEADERS += test.h 

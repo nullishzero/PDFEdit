@@ -2,7 +2,6 @@
 #define __PROPERTY_H__
 
 #include <qstring.h>
-#include <qlabel.h>
 #include <qwidget.h>
 #include <iproperty.h>
 

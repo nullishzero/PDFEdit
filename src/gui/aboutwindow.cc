@@ -15,7 +15,7 @@ using namespace std;
 QString app=APP_NAME " " VERSION;
 
 /** constructor of AboutWindow, creates window and fills it with elements, parameters are ignored */
-AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
+AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
  QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big>";
  QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"
                                +tr("Authors")+":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Josef Misutka<br>&nbsp; Martin Petricek<br>";
@@ -31,6 +31,11 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  l->addWidget(ok);
  ok->show();
  lb->show();
+}
+
+/** This is called on attempt to close window. */
+void AboutWindow::closeEvent(QCloseEvent *e) {
+ delete this;
 }
 
 /** default destructor */

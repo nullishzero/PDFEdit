@@ -7,6 +7,7 @@
 #include <qdict.h>
 #include <qwidget.h>
 #include <qgrid.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <iproperty.h>
 #include "property.h"
@@ -43,9 +44,9 @@ private:
  QScrollView *scroll;
  /** List of property names */
  QStringList *list;
- /** Dictionary wit property items */
+ /** Dictionary with property items */
  QDict<Property> *items;
- /** Dictionary wit property labels */
+ /** Dictionary with property labels */
  QDict<QLabel> *labels;
 };
 

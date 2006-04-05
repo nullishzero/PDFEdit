@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
  }
 
  //load settings
- globalSettings=new Settings();
+ globalSettings=Settings::getInstance();
  globalSettings->setName("settings");
  atexit(saveSettings);
 
@@ -139,7 +139,6 @@ int main(int argc, char *argv[]){
  int nFiles=params.size();
  if (nFiles) { //open files from cmdline
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {
-   //TODO: more than one file = segfault
    printDbg(debug::DBG_INFO,"Opening parameter: " << *it)
    createNewEditorWindow(*it);
   }

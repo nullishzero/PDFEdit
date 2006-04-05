@@ -21,8 +21,14 @@ typedef QValueList<ToolBar*> ToolBarList;
 class Settings : public QObject {
  Q_OBJECT
 public:
- Settings();
  ~Settings();
+ /** get Instance of Settings. Ensures only one instance of Settings is avalable */
+ static Settings* getInstance() {
+  static Settings* globalSettings=NULL;
+  if (!globalSettings) globalSettings=new Settings();
+  return globalSettings;
+ }
+// static Settings* getInstance();
  QMenuBar *loadMenu(QWidget *parent);
  QString getAction(int index);
  void flushSettings();
@@ -39,6 +45,8 @@ public slots:
  void write(const QString &key,const QString &value);
  QString expand(QString s);
 private:
+ //Constructor is private, use getInstance
+ Settings();
  /** List with paths to application icons */
  QStringList iconPath;
  /** Cache storing loaded icons */

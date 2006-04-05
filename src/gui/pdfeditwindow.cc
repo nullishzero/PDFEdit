@@ -13,6 +13,7 @@
 #include "aboutwindow.h"
 #include "version.h"
 #include <qmessagebox.h> 
+#include "optionwindow.h"
 
 using namespace std;
 
@@ -59,6 +60,11 @@ void PdfEditWindow::closeEvent(QCloseEvent *e) {
  windowCount--;
  delete this;
  //The PdfEditWindow itself will be deleted on close();
+}
+
+/** Show options dialog. Does not wait for dialog to finish. */
+void PdfEditWindow::options() {
+ OptionWindow::optionsDialog();
 }
 
 /** Creates new windows and displays it.
@@ -159,7 +165,7 @@ void PdfEditWindow::menuActivated(int id) {
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  setCaption(APP_NAME);
- 
+ document=NULL; 
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this);
 

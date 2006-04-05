@@ -5,8 +5,8 @@ PropertyEditor - widget for editing properties of selected object
 #include "propertyeditor.h"
 #include <utils/debug.h>
 #include "util.h"
-#include <qpoint.h>
-#include <stdlib.h>
+//#include <qpoint.h>
+//#include <stdlib.h>
 #include "stringproperty.h"
 #include "intproperty.h"
 #include "realproperty.h"
@@ -35,7 +35,7 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  // create scrollview
  scroll=new QScrollView(this,"propertyeditor_scroll",0);
  scroll->setHScrollBarMode(QScrollView::AlwaysOff);
- scroll->setVScrollBarMode(QScrollView::AlwaysOn);
+ scroll->setVScrollBarMode(QScrollView::AlwaysOn);//TODO:CHECK
  //create grid in scrollview
  grid=new QFrame(scroll,"propertyeditor_grid");
 
@@ -49,8 +49,7 @@ void PropertyEditor::deleteLayout() {
 
 /** Create internal layout */
 void PropertyEditor::createLayout() {
-//grid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Minimum));
- gridl = new QGridLayout( grid, 1, 2 );
+ gridl=new QGridLayout(grid,1,2);
  gridl->setSpacing(3);
  gridl->setMargin(3);
  scroll->addChild(grid);
@@ -63,7 +62,9 @@ void PropertyEditor::createLayout() {
 /** Called on resizing of property editor */
 void PropertyEditor::resizeEvent (QResizeEvent *e) {
  scroll->setFixedSize(e->size());
- grid->setFixedWidth(scroll->visibleWidth());
+ //TODO: may not be correct
+ grid->setFixedWidth(scroll->visibleWidth());//TODO:CHECK
+// grid->setFixedWidth(scroll->viewport()->width());//TODO:CHECK
 }
 
 /** remove and delete all properties from the editor */

@@ -8,5 +8,7 @@ Q_OBJECT
 public:
  AboutWindow(QWidget *parent=0,const char *name=0);
  ~AboutWindow();
+protected:
+ void closeEvent(QCloseEvent *e);
 };
 #endif
