@@ -56,6 +56,7 @@ OptionWindow::OptionWindow(QWidget *parent /*=0*/, const char *name /*=0*/) : QW
  QObject::connect(btCancel, SIGNAL(clicked()), this, SLOT(close()));
  QObject::connect(btApply,  SIGNAL(clicked()), this, SLOT(apply()));
  QObject::connect(btOk,	    SIGNAL(clicked()), this, SLOT(ok()));
+ Settings::getInstance()->restoreWindow(this,"options"); 
  printDbg(debug::DBG_DBG,"Options pre-init ...");
  init();
  printDbg(debug::DBG_DBG,"Options post-init ...");
@@ -100,7 +101,7 @@ QWidget* OptionWindow::addTab(const QString name) {
 /** add Option to the window
  @param otab Tab holding that option
  @param caption Label for this option
- @param prop Option to be added to this widget
+ @param opt Option to be added to this widget
  */
 void OptionWindow::addOption(QWidget *otab,const QString &caption,Option *opt) {
  QString key=opt->getName();
@@ -123,6 +124,40 @@ void OptionWindow::addOption(QWidget *otab,const QString &caption,Option *opt) {
  label->show();
 }
 
+/** add any widget to option (typically some label)
+ The widget will take one line
+ @param otab Tab holding that option
+ @param elem element to add
+ */
+void OptionWindow::addWidget(QWidget *otab,QWidget *elem) {
+// int lineHeight=elem->sizeHint().height();
+// gridl[otab]->setRowSpacing(nObjects[otab],lineHeight);
+ gridl[otab]->addMultiCellWidget(elem,nObjects[otab],nObjects[otab],0,1);
+// elem->setFixedHeight(lineHeight);
+ nObjects[otab]++;
+ elem->show();
+}
+
+/** add description text to option 
+ @param otab Tab holding that option
+ @param text Text to add. Using rich text format, so basically you can use HTML here
+ */
+void OptionWindow::addText(QWidget *otab,const QString &text) {
+ QLabel *txt=new QLabel(text,otab);
+ txt->setTextFormat(RichText);
+ addWidget(otab,txt);
+}
+
+/** Add padding to pad the tab window
+ @param otab Tab holding that option
+ */
+void OptionWindow::finishTab(QWidget *otab) {
+ QFrame *pad=new QFrame(otab);
+ pad->setMinimumHeight(1);
+ pad->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::MinimumExpanding);
+ addWidget(otab,pad);
+}
+
 /** add Option to the window (type of option is string)
  @param tab Tab holding that option
  @param caption Label for this option
@@ -139,15 +174,17 @@ void OptionWindow::init() {
  //TODO: this is just a stub
  //tab 1
  QWidget *tab1=addTab("tab1");
+ addText(tab1,"Here you can set path to icons");
  addOption(tab1,tr("Icon Path"),"path/icon");
  addOption(tab1,"Dummy 1","dummy1");
-// finishTab(tab1);
+ finishTab(tab1);
 
  //tab 2
  QWidget *tab2=addTab("tab2");
+ addText(tab2,"Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text ");
  addOption(tab2,"Dummy 2a","dummy2a");
  addOption(tab2,"Dummy 2b","dummy2b");
-// finishTab(tab2);
+ finishTab(tab2);
 
  setUpdatesEnabled( TRUE );
 }
@@ -162,6 +199,7 @@ void OptionWindow::closeEvent(QCloseEvent *e) {
 
 /** default destructor */
 OptionWindow::~OptionWindow() {
+ Settings::getInstance()->saveWindow(this,"options"); 
  delete labels;
  delete items;
  delete list;

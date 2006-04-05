@@ -37,6 +37,9 @@ private:
  QWidget* addTab(const QString name);
  void addOption(QWidget *otab,const QString &caption,Option *opt);
  void addOption(QWidget *otab,const QString &caption,const QString &key);
+ void addWidget(QWidget *otab,QWidget *elem);
+ void addText(QWidget *otab,const QString &text);
+ void finishTab(QWidget *otab);
 private:
  /** List of property names */
  QStringList *list;
