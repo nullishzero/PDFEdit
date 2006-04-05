@@ -31,6 +31,29 @@
     </message>
 </context>
 <context>
+    <name>OptionWindow</name>
+    <message>
+        <source>options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PdfEditWindow</name>
     <message>
         <source>Loaded file</source>
@@ -38,6 +61,18 @@
     </message>
     <message>
         <source>New file created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
