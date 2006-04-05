@@ -37,7 +37,7 @@ public slots: //These will be exported to scripting
  void createNewWindow(); 
  void exitApp();
  void closeWindow();
- void print(QString str);
+ void print(const QString &str);
  void objects();
  void functions();
  void variables();
@@ -46,7 +46,7 @@ public slots: //These will be exported to scripting
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
- void runScript(QString script);
+ void runScript(const QString &script);
  void menuActivated(int id);
 private:
  void destroyFile();

@@ -5,6 +5,10 @@ OptionWindow - widget for editing program options
 #include "optionwindow.h"
 #include <utils/debug.h>
 #include "util.h"
+#include "stringoption.h"
+#include "realoption.h"
+#include "booloption.h"
+#include "intoption.h"
 #include <qpoint.h>
 #include <stdlib.h>
 #include <qpushbutton.h>
@@ -164,27 +168,62 @@ void OptionWindow::finishTab(QWidget *otab) {
  @param key Key of the given option
  */
 void OptionWindow::addOption(QWidget *otab,const QString &caption,const QString &key) {
- addOption(otab,caption,new Option(key,otab));
+ addOption(otab,caption,new StringOption(key,otab));
+}
+
+/** add Option to the window (type of option is float)
+ @param tab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ */
+void OptionWindow::addOptionFloat(QWidget *otab,const QString &caption,const QString &key) {
+ addOption(otab,caption,new RealOption(key,otab));
+}
+
+/** add Option to the window (type of option is bool)
+ @param tab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ */
+void OptionWindow::addOptionBool(QWidget *otab,const QString &caption,const QString &key) {
+ addOption(otab,caption,new BoolOption(key,otab));
+}
+
+/** add Option to the window (type of option is int)
+ @param tab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ */
+void OptionWindow::addOptionInt(QWidget *otab,const QString &caption,const QString &key) {
+ addOption(otab,caption,new IntOption(key,otab));
 }
 
 /** Initialize window with options */
 void OptionWindow::init() {
  setUpdatesEnabled( FALSE );
 
- //TODO: this is just a stub
- //tab 1
- QWidget *tab1=addTab("tab1");
- addText(tab1,"Here you can set path to icons");
- addOption(tab1,tr("Icon Path"),"path/icon");
- addOption(tab1,"Dummy 1","dummy1");
- finishTab(tab1);
+ QWidget *edit_tab=addTab(tr("Editor"));
+ addOptionBool(edit_tab,tr("Advanced mode"),"mode/advanced");
+ addText(edit_tab,tr("Turning advanced mode on will allow more powerful (but also potentially more destructive) changes to edited document."));
+ addText(edit_tab,tr("<b>Note</b>: this will affect only newly opened files"));
+ finishTab(edit_tab);
 
- //tab 2
- QWidget *tab2=addTab("tab2");
- addText(tab2,"Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text Rather very long text ");
- addOption(tab2,"Dummy 2a","dummy2a");
- addOption(tab2,"Dummy 2b","dummy2b");
- finishTab(tab2);
+ QWidget *data_tab=addTab(tr("Data files"));
+ addText(data_tab,tr("Paths to data files"));
+ addOption(data_tab,tr("Icon Path"),"path/icon");
+ addText(data_tab,tr("<b>Note</b>: this will take effect on next program start"));//TODO: apply path now
+ finishTab(data_tab);
+
+ QWidget *tree_tab=addTab(tr("Tree View"));
+ addText(tree_tab,tr("You can specify what kind of objects will be displayed in the tree view"));
+ addOptionBool(tree_tab,tr("Document dictionary"),"mode/show_dict");
+ addOptionBool(tree_tab,tr("Object dictionaries"),"mode/show_objdict");
+ addOptionBool(tree_tab,tr("Outlines"),"mode/show_outline");
+ addOptionBool(tree_tab,tr("Graphic objects"),"mode/show_graphic");
+ addOptionBool(tree_tab,tr("Annotations"),"mode/show_annot");
+ addOptionBool(tree_tab,tr("Pages"),"mode/show_page");
+ addOptionBool(tree_tab,tr("Simple Objects"),"mode/show_simple");
+ finishTab(tree_tab);
 
  setUpdatesEnabled( TRUE );
 }

@@ -1,15 +1,16 @@
 [gui]
 items/MainMenu=list Main menu,file,help
-items/MainToolbar=list Main Toolbar,load,save,about
+items/MainToolbar=list Main Toolbar,new,load,save,opts,about
 items/OtherToolbar=list Other Toolbar,save,load
 items/about=item &About,about(),, about.png
 items/closew=item &Close Window,closewindow
-items/opts=item &Options,options()
+items/opts=item &Options,options(),,options.png
 items/file=list File,load,save,neww,closew,opts,quit,help
 items/help=list Help,about,index
-items/index=item &Help,index, showhelp('index')
+items/index=item &Help,index, showhelp('index'),,help.png
 items/load=item &Load,loadFile(),, load.png
-items/neww=item &New Window,newwindow(),Ctrl+N
+items/new=item &New Document,closeFile(),,new.png
+items/neww=item &New Window,newwindow(),Ctrl+N,new_window.png
 items/quit=item &Quit,quit
 items/save=item &Save,saveFile(),, save.png
 toolbars=MainToolbar,OtherToolbar

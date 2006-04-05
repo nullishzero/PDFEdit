@@ -51,6 +51,22 @@ QString Settings::read(const QString &key,const QString defValue/*=QString::null
  return x;
 }
 
+/** Read settings with given key from configuration file and return as bool
+ @param key Key to read from settings
+ @param defValue default value to use if key not found in settings.
+ @return Value of given setting (true or false) */
+bool Settings::readBool(const QString &key,bool defValue/*=false*/) {
+ QString k=read(key);
+ if (k.isNull()) return defValue;
+ //Positive integer, "T" and "True" (regardless of case) are considered "true". Everything else "false"
+ k=k.stripWhiteSpace().lower();
+ int intVal=k.toInt();
+ if (intVal>0) return true;
+ else if (k=="t") return true;
+ else if (k=="true") return true;
+ return false;
+}
+
 /** Read settings with given key from configuration file and return as QString
  Any environment variable references (in form $VARIABLE) are expanded in the string
  @param key Key to read from settings
@@ -73,7 +89,7 @@ void Settings::initSettings() {
  staticSet->insertSearchPath(QSettings::Unix,QDir::current().path());
  #endif
  staticSet->insertSearchPath(QSettings::Unix,DATA_PATH);
- set->insertSearchPath(QSettings::Unix,QDir::home().path()+"/"+CONFIG_DIR);
+ set->insertSearchPath(QSettings::Unix,QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR));
 }
 
 /** load and expand various PATHs from config file.
@@ -125,6 +141,7 @@ QStringList Settings::readPath(const QString &name) {
   *it=expand(*it);
   //Trim trailing slashes
   *it=(*it).replace(stripTrail,"\\1");
+  *it=QDir::convertSeparators(*it);
  }
  return s;
 }

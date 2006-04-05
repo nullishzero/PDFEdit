@@ -118,7 +118,7 @@ void PdfEditWindow::removeDocumentObjects() {
 /** Runs given script code
  @param script QT Script code to run
  */
-void PdfEditWindow::runScript(QString script) {
+void PdfEditWindow::runScript(const QString &script) {
  qs->setErrorMode(QSInterpreter::Nothing);
  cmdLine->addCommand(script);
 
@@ -138,7 +138,7 @@ void PdfEditWindow::runScript(QString script) {
 /** Print given string to console, followed by newline
  @param str String to add
  */
-void PdfEditWindow::print(QString str) {
+void PdfEditWindow::print(const QString &str) {
  cmdLine->addString(str);
 }
 
@@ -255,7 +255,8 @@ void PdfEditWindow::destroyFile() {
 void PdfEditWindow::openFile(const QString &name) {
  destroyFile();
  if (name.isNull()) return;
- document=CPdf::getInstance(name,CPdf::Advanced);//todo: mode
+ CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
+ document=CPdf::getInstance(name,mode);
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
  tree->init(document);//.getDictionary()

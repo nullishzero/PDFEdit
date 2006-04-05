@@ -160,7 +160,7 @@ int PageView::theNeerestResizingMode ( QRect * r, const QPoint & p ) {
 			break;
 		default:
 			int cz = (r->width() -2) / 3;
-			cz = min( cz, resizingCursorZone );
+			cz = MIN( cz, resizingCursorZone );
 			if (p.x() - r->left() -cz <= 0)
 				resizingMode |= left;
 			else if (p.x() - r->right() +cz >= 0)
@@ -180,7 +180,7 @@ int PageView::theNeerestResizingMode ( QRect * r, const QPoint & p ) {
 			break;
 		default:
 			int cz = (r->height() -2) / 3;
-			cz = min( cz, resizingCursorZone );
+			cz = MIN( cz, resizingCursorZone );
 			if (p.y() - r->top() -cz <= 0)
 				resizingMode |= top;
 			else if (p.y() - r->bottom() +cz >= 0)

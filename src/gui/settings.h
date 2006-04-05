@@ -42,6 +42,7 @@ public:
 public slots:
  QString readExpand(const QString &key,const QString defValue=QString::null);
  QString read(const QString &key,const QString defValue=QString::null);
+ bool readBool(const QString &key,bool defValue=false);
  void write(const QString &key,const QString &value);
  QString expand(QString s);
 private:
