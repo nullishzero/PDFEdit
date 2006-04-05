@@ -39,6 +39,10 @@
    Invokes "About" dialog
   </para>
   <para>
+   <title><funcsynopsys> void options()</funcsynopsys></title>
+   Invokes options dialog. Does not wait for dialog to finish.
+  </para>
+  <para>
    <title><funcsynopsys>void createNewWindow()</funcsynopsys></title>
    Creates new empty editor window
   </para>
