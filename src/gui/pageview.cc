@@ -5,30 +5,58 @@
 
 
 PageView::PageView (QWidget *parent) : QLabel(parent) {
-//	pageImage = NULL;
+	pageImage = NULL;
 	mouseRectSelected = NULL;
 	rectSelected = NULL;
+	oldRectSelected = NULL;
 	isPress = false;
 	isMoving = false;
 	quickSelection = false;
 	selectionMode = FillRectRectSelection;
+	resizeCoefficientX = 1;
+	resizeCoefficientY = 1;
+
+	for (int i = 0; i<16 ; i++)
+		mappingResizingModeToCursor [i] = Qt::ArrowCursor;
+	mappingResizingModeToCursor [ left  ] = Qt::SizeHorCursor;
+	mappingResizingModeToCursor [ top   ] = Qt::SizeVerCursor;
+	mappingResizingModeToCursor [ left | top  ] = Qt::SizeFDiagCursor;
+	mappingResizingModeToCursor [ right | top ] = Qt::SizeBDiagCursor;
+	mappingResizingModeToCursor [ left | right | top | bottom ] = Qt::SizeAllCursor;
+
+	mappingResizingModeToCursor [ right  ] = mappingResizingModeToCursor [ left ];
+	mappingResizingModeToCursor [ bottom ] = mappingResizingModeToCursor [ top ];
+	mappingResizingModeToCursor [ right | bottom ] = mappingResizingModeToCursor [ left | top ];
+	mappingResizingModeToCursor [ left | bottom  ] = mappingResizingModeToCursor [ right | top ];
+
+	setMouseTracking( true );	// the widget receives mouse move event even if no buttons is pressed
+
+	resizingCursorZone = 2;
 }
 
 PageView::~PageView () {
-//	delete pageImage;
+	delete pageImage;
 	delete mouseRectSelected;
 	delete rectSelected;
+	delete oldRectSelected;
+}
+
+void PageView::setResizingZone ( unsigned int width ) {
+	resizingCursorZone = width;
 }
 
 void PageView::setPixmap (const QPixmap & qp) {
 	this->QLabel::setPixmap(qp);
 
-//	delete pageImage;
-//	pageImage = new QPixmap(qp);
+	delete pageImage;
+	pageImage = new QPixmap(qp);
 	
 	delete mouseRectSelected;
+	delete rectSelected;
+	delete oldRectSelected;
 	mouseRectSelected = NULL;
 	rectSelected = NULL;
+	oldRectSelected = NULL;
 
 	isPress = false;
 	isMoving = false;
@@ -82,7 +110,7 @@ void PageView::unDrawSelection ( void ) {
 
 		changeSelection( IsSelected );
 
-		if (( rectSelected != NULL ) && (isMoving))
+		if (( rectSelected != NULL ) && (isMoving || isResizing))
 			drawRect( rectSelected, true );
 	} else {
 		changeSelection( IsSelected );
@@ -92,6 +120,7 @@ void PageView::unDrawSelection ( void ) {
 	}
 
 	isMoving = false;
+	isResizing = false;
 }
 
 void PageView::setSelectedRect ( QRect & newRect ) {
@@ -117,19 +146,112 @@ void PageView::unSelect ( ) {
 	}
 }
 
+int PageView::theNeerestResizingMode ( QRect * r, const QPoint & p ) {
+	int resizingMode = none;
+	switch (r->width()) {
+		case 0:
+			resizingMode |= right;
+			break;
+		case 1:
+			if (p.x() - r->left() > 0)
+				resizingMode |= right;
+			else
+				resizingMode |= left;
+			break;
+		default:
+			int cz = (r->width() -2) / 3;
+			cz = min( cz, resizingCursorZone );
+			if (p.x() - r->left() -cz <= 0)
+				resizingMode |= left;
+			else if (p.x() - r->right() +cz >= 0)
+				resizingMode |= right;
+			else
+				resizingMode |= left | right;
+	}
+	switch (r->height()) {
+		case 0:
+			resizingMode |= bottom;
+			break;
+		case 1:
+			if (p.y() - r->top() > 0)
+				resizingMode |= bottom;
+			else
+				resizingMode |= top;
+			break;
+		default:
+			int cz = (r->height() -2) / 3;
+			cz = min( cz, resizingCursorZone );
+			if (p.y() - r->top() -cz <= 0)
+				resizingMode |= top;
+			else if (p.y() - r->bottom() +cz >= 0)
+				resizingMode |= bottom;
+			else
+				resizingMode |= top | bottom;
+	}
+
+	switch (resizingMode) {
+		case left | top | bottom:
+		case right | top | bottom:
+			resizingMode ^= top | bottom;
+			break;
+		case left | right | top:
+		case left | right | bottom:
+			resizingMode ^= left | right;
+			break;
+//		default:
+	}
+
+	return resizingMode;
+}
+
 void PageView::mousePressEvent ( QMouseEvent * e ) {
 	if (e->button() == Qt::LeftButton) {
 		if (rectSelected != NULL) {
 			if (rectSelected->contains( e->pos() )) {
-				pointInRect.setX( e->x() - rectSelected->left() );	// it is positive (rectSelected is normalized)
-				pointInRect.setY( e->y() - rectSelected->top() );
-				* mouseRectSelected = * rectSelected;
-				isMoving = true;
-			} else {
-				drawRect( rectSelected, true );
+				if (cursorIsSetTo == (left | right | top | bottom) ) {	// is e->pos() inside selected area?
+					pointInRect.setX( e->x() - rectSelected->left() );
+					pointInRect.setY( e->y() - rectSelected->top() );
+									// it is positive (rectSelected is normalized)
+					* mouseRectSelected = * rectSelected;
+					isMoving = true;
+				} else {	// e->pos() is on the edge of selected area
+					// resizing selected area
+					if (cursorIsSetTo & left) {		// resizing to left side
+						mouseRectSelected->setLeft( rectSelected->right() );
+						mouseRectSelected->setRight( rectSelected->left() );
+					} else {			// resizing to right side or only vertical
+						mouseRectSelected->setLeft( rectSelected->left() );
+						mouseRectSelected->setRight( rectSelected->right() );
+					}
+
+					if ((cursorIsSetTo & (left | right)) == none)
+						resizeCoefficientX = 0;		// resizing only vertikal
+					else
+						resizeCoefficientX = 1;
+
+					if (cursorIsSetTo & top) {		// resizing to top side
+						mouseRectSelected->setTop( rectSelected->bottom() );
+						mouseRectSelected->setBottom( rectSelected->top() );
+					} else {			// resizing to bottom side or only horizontal
+						mouseRectSelected->setTop( rectSelected->top() );
+						mouseRectSelected->setBottom( rectSelected->bottom() );
+					}
+
+					if ((cursorIsSetTo & (top | bottom)) == none)
+						resizeCoefficientY = 0;		// risizing only horizontal
+					else
+						resizeCoefficientY = 1;
+
+					pointInRect = mouseRectSelected->bottomRight();
+					isResizing = true;
+				}
+			} else {	// create new selected area
+				drawRect( rectSelected, true );		// undraw old selected area
 				mouseRectSelected->setTopLeft( e->pos() );
 				mouseRectSelected->setBottomRight( e->pos()) ;
 				isMoving = false;
+				resizeCoefficientX = 1;
+				resizeCoefficientY = 1;
 			}
 		} else {
 			if (mouseRectSelected == NULL)
@@ -140,19 +262,26 @@ void PageView::mousePressEvent ( QMouseEvent * e ) {
 		}
 		isPress = true;
 		changeSelection( IsSelecting );
-		if ( isMoving )
+		if ( isMoving || isResizing )
 			drawRect( mouseRectSelected );
 	}
 }
 
 void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
-	if (! isPress ) {
-		e->ignore();
-		return;
-	}
-				printf("release button\n");
 	switch (e->button()) {
 		case Qt::LeftButton :
+			if (! isPress ) {
+				e->ignore();
+				return;
+			}
+			if (oldRectSelected == NULL) {
+				if (rectSelected != NULL) {
+					oldRectSelected = new QRect();
+					* oldRectSelected = * rectSelected;
+				}
+			} else {
+				* oldRectSelected = * rectSelected;
+			}
 			if (mouseRectSelected != NULL) {
 				drawRect( mouseRectSelected, true );
 				changeSelection( IsSelected );
@@ -162,8 +291,15 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 					if ( isMoving ) {
 						mouseRectSelected->moveTopLeft( e->pos() - pointInRect );
 						drawRect( rectSelected, mouseRectSelected );
+					} else if ( isResizing ) {
+						mouseRectSelected->setRight( pointInRect.x() * (! resizeCoefficientX) +
+										e->pos().x() * resizeCoefficientX );
+						mouseRectSelected->setBottom( pointInRect.y() * (! resizeCoefficientY) +
+										e->pos().y() * resizeCoefficientY );
+						drawRect( rectSelected, true );
 					} else
 						mouseRectSelected->setBottomRight( e->pos()) ;
+
 					* rectSelected = mouseRectSelected->normalize();
 				}
 				if ( ! isMoving ) {
@@ -177,12 +313,16 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 			if ( isMoving ) {
 				printf("emit moving\n");
 				emit selectionMovedTo( rectSelected->topLeft() );
+			} else if ( isResizing ) {
+				printf("emit resizing\n");
+				emit selectionResized( * oldRectSelected, * rectSelected );
 			} else {
 				printf("emit selecting\n");
 				emit leftClicked( * rectSelected );
 			}
 			isPress = false;
 			isMoving = false;
+			isResizing = false;
 			break;
 		case Qt::RightButton :
 			if ( rectSelected->contains( e->pos() ) ) {
@@ -205,9 +345,23 @@ void PageView::mouseMoveEvent ( QMouseEvent * e ) {
 	if ( isPress && (mouseRectSelected != NULL) ) {
 		if ( isMoving )
 			drawRect( mouseRectSelected, e->pos() - pointInRect );
-		else
-			drawRect( mouseRectSelected, e->pos() );
+		else {
+			QPoint p( pointInRect.x() * (! resizeCoefficientX) + e->pos().x() * resizeCoefficientX,
+				pointInRect.y() * (! resizeCoefficientY) + e->pos().y() * resizeCoefficientY );
+			drawRect( mouseRectSelected, p );
+		}
+		return ;
 	}
+
+	if ( (rectSelected != NULL) && (rectSelected->contains( e->pos() )) ) {
+		int pomCur =  theNeerestResizingMode( rectSelected, e->pos() );
+		if (pomCur != cursorIsSetTo)
+			setCursor( QCursor( mappingResizingModeToCursor[ cursorIsSetTo = pomCur ] ));
+		return ;
+	}
+
+	if (cursorIsSetTo != none )
+		setCursor( mappingResizingModeToCursor[ cursorIsSetTo = none ] );
 }
 
 // drawing selected area
@@ -217,8 +371,10 @@ void PageView::drawRect ( QRect * newRect, bool unDraw ) {
 
 	QPainter p( pm );
 	p.setRasterOp( Qt::NotXorROP );
+	p.setPen( QColor(85,170,170) );
 	if (! quickSelection) {
 		p.fillRect( newRect->normalize(), Qt::yellow );
+		p.drawRect( newRect->normalize() );
 	} else {
 		p.drawRect( newRect->normalize() );
 	}
@@ -230,11 +386,13 @@ void PageView::drawRect ( QRect * oldRect, QRect * newRect, enum SelectionSet ss
 
 	QPainter p( pm );
 	p.setRasterOp( Qt::NotXorROP );
+	p.setPen( QColor(85,170,170) );
 
 	// draw old rectangle
 	QRegion qr( oldRect->normalize() );
 	if (! quickSelection) {
 		p.fillRect( oldRect->normalize(), Qt::yellow );
+		p.drawRect( oldRect->normalize() );
 	} else {
 		QRect normRect;
 		normRect = oldRect->normalize();
@@ -248,6 +406,7 @@ void PageView::drawRect ( QRect * oldRect, QRect * newRect, enum SelectionSet ss
 	// draw new rectangle
 	if (! quickSelection) {
 		p.fillRect( newRect->normalize(), Qt::yellow );
+		p.drawRect( newRect->normalize() );
 		qr = qr.unite( newRect->normalize() );
 	} else {
 		QRect normRect;
@@ -270,8 +429,10 @@ void PageView::drawRect ( QRect * oldRect, const QPoint & toPoint ) {
 
 	QPainter p( pm );
 	p.setRasterOp( Qt::NotXorROP );
+	p.setPen( QColor(85,170,170) );
 	if (! quickSelection) {
 		p.fillRect( normRect, Qt::yellow );
+		p.drawRect( normRect );
 	} else {
 		p.drawRect( normRect );
 		qr = qr.eor( QRegion(normRect.left()+1, normRect.top()+1, normRect.width()-2, normRect.height()-2) );
@@ -285,6 +446,7 @@ void PageView::drawRect ( QRect * oldRect, const QPoint & toPoint ) {
 	normRect = oldRect->normalize();
 	if (! quickSelection) {
 		p.fillRect( normRect, Qt::yellow );
+		p.drawRect( normRect );
 		qr = qr.eor( normRect );
 	} else {
 		p.drawRect( normRect );
