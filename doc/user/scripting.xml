@@ -59,11 +59,11 @@
    Closes file opened in this editor window   
   </para>
   <para>
-   <title><funcsynopsys> void openFile(string)</funcsynopsys></title>
+   <title><funcsynopsys> void openFile(string filename)</funcsynopsys></title>
    Opens file with given name in this editor window
   </para>
   <para>
-   <title><funcsynopsys> void openFileNew(string)</funcsynopsys></title>
+   <title><funcsynopsys> void openFileNew(string filename)</funcsynopsys></title>
    Opens file with given name in new editor window
   </para>
   <para>
@@ -121,19 +121,29 @@
    <para>
     This object hold application settings and can be used to read or write them.
     <para>
-     <title><funcsynopsys>string settings.read(string)</funcsynopsys></title>
-     Returns application setting with given key
+     <title><funcsynopsys>string settings.read(string key,string default=NULL)</funcsynopsys></title>
+     Returns application setting with given key.
+     The parameter default specify default value returned when the setting does not exist.
+     It can be omitted, in that case NULL will be returned.
     </para>
     <para>
-     <title><funcsynopsys>string settings.readExpand(string)</funcsynopsys></title>
+     <title><funcsynopsys>bool settings.readBool(string key,bool default=false)</funcsynopsys></title>
+     Returns application setting with given key - treating it as boolean value.
+     The parameter default specify default value returned when the setting does not exist.
+     It can be omitted, in that case false will be returned.
+    </para>
+    <para>
+     <title><funcsynopsys>string settings.readExpand(string key,string default=NULL)</funcsynopsys></title>
      Returns application setting with given key. Environment variable references (in form $VARIABLE) are expanded.
+     The parameter default specify default value returned when the setting does not exist.
+     It can be omitted, in that case NULL will be returned.
     </para>
     <para>
      <title><funcsynopsys>string settings.expand(string)</funcsynopsys></title>
      Return string with environment variable references (in form $VARIABLE) expanded.
     </para>
     <para>
-     <title><funcsynopsys>string settings.write(string,string)</funcsynopsys></title>
+     <title><funcsynopsys>string settings.write(string key,string value)</funcsynopsys></title>
      Write application setting with given key and value
     </para>
    </para>
