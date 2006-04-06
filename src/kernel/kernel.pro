@@ -11,7 +11,13 @@ CONFIG += debug
 DEFINES += DEBUG
 
 #PRECOMPILED_HEADER = static.h
- 
+
+#build library (libkernel.a)
+libkernel.target     = libkernel.a
+libkernel.commands   = $(AR) libkernel.a $(OBJECTS:main.o=)
+libkernel.depends    = $(OBJECTS:main.o=)
+QMAKE_EXTRA_UNIX_TARGETS += libkernel
+POST_TARGETDEPS = libkernel.a
 
 
 #
