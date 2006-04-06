@@ -7,7 +7,7 @@ LANGUAGE = C++
 CONFIG += complete 
 CONFIG += console precompile_header
 CONFIG += debug
-#CONFIG -= qt
+CONFIG -= qt
 DEFINES += DEBUG
 
 #PRECOMPILED_HEADER = static.h
