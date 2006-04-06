@@ -35,6 +35,8 @@ OTHERLIBS = @LIBS@ @libpaper_LIBS@ \
 	-L$(GOOLIBDIR) -lGoo
 
 CXX = @CXX@
+AR = @AR@
+RANLIB = @RANLIB@
 
 LIBPREFIX = @LIBPREFIX@
 EXE = @EXE@
@@ -106,10 +108,10 @@ CXX_SRC = \
 #------------------------------------------------------------------------
 
 all: xpdf$(EXE) pdftops$(EXE) pdftotext$(EXE) pdfinfo$(EXE) \
-	pdffonts$(EXE) pdftoppm$(EXE) pdfimages$(EXE)
+	pdffonts$(EXE) pdftoppm$(EXE) pdfimages$(EXE) libxpdf
 
 all-no-x: pdftops$(EXE) pdftotext$(EXE) pdfinfo$(EXE) pdffonts$(EXE) \
-	pdfimages$(EXE)
+	pdfimages$(EXE) libxpdf
 
 #------------------------------------------------------------------------
 
@@ -226,6 +228,57 @@ pdfimages$(EXE): $(PDFIMAGES_OBJS) $(GOOLIBDIR)/$(LIBPREFIX)Goo.a
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o pdfimages$(EXE) $(PDFIMAGES_OBJS) \
 		$(PDFIMAGES_LIBS)
 
+#libxpdf
+
+GOO_CXX_OBJS = GHash.o GList.o GString.o gmempp.o gfile.o FixedPoint.o
+LIBXPDF_OBJS = \
+Annot.o \
+Array.o \
+BuiltinFont.o \
+BuiltinFontTables.o \
+CMap.o \
+Catalog.o \
+CharCodeToUnicode.o \
+Decrypt.o \
+Dict.o \
+Error.o \
+FontEncodingTables.o \
+Function.o \
+Gfx.o \
+GfxFont.o \
+GfxState.o \
+GlobalParams.o \
+ImageOutputDev.o \
+JArithmeticDecoder.o \
+JBIG2Stream.o \
+JPXStream.o \
+Lexer.o \
+Link.o \
+NameToCharCode.o \
+Object.o \
+Outline.o \
+OutputDev.o \
+PDFDoc.o \
+PDFDocEncoding.o \
+PSOutputDev.o \
+PSTokenizer.o \
+Page.o \
+Parser.o \
+SecurityHandler.o \
+Stream.o \
+TextOutputDev.o \
+UnicodeMap.o \
+UnicodeTypeTable.o \
+XRef.o \
+XpdfPluginAPI.o
+
+libxpdf:	$(LIBPREFIX)xpdf.a
+
+$(LIBPREFIX)xpdf.a: $(LIBXPDF_OBJS)
+	rm -f $(LIBPREFIX)xpdf.a
+	$(AR) $(LIBPREFIX)xpdf.a $(LIBXPDF_OBJS)
+	$(RANLIB) $(LIBPREFIX)xpdf.a
+
 #------------------------------------------------------------------------
 
 SecurityHandler.x.o: SecurityHandler.cc
@@ -242,6 +295,7 @@ clean:
 	rm -f $(PDFFONTS_OBJS) pdffonts$(EXE)
 	rm -f $(PDFTOPPM_OBJS) pdftoppm$(EXE)
 	rm -f $(PDFIMAGES_OBJS) pdfimages$(EXE)
+	rm -f $(LIBPREFIX)xpdf.a
 
 #------------------------------------------------------------------------
 
