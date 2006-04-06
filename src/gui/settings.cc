@@ -185,6 +185,7 @@ void Settings::saveWindow(QWidget *win,const QString name) {
  */
 void Settings::write(const QString &key,const QString &value) {
  set->writeEntry(APP_KEY+key,value);
+ emit settingChanged(key);
 }
 
 /** Restore window/widget size and position from setting.

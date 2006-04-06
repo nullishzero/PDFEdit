@@ -1,4 +1,5 @@
 #!/bin/sh
 # Update language files specified in projectfile according to sources
-lupdate pdfedit.pro
+lupdate pdfedit.pro -noobsolete
 lrelease pdfedit.pro
+#QT_TR_NOOP("text to mark")

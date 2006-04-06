@@ -9,6 +9,9 @@
 
 using namespace pdfobjects;
 
+//class private to TreeWindow
+class ShowData;
+
 class TreeWindow : public QWidget {
  Q_OBJECT
 public:
@@ -16,8 +19,9 @@ public:
  void init(CPdf *pdfDoc);
  void init(IProperty *doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
- void addChilds(TreeItem *parent);
  ~TreeWindow();
+public slots:
+ void settingUpdate(QString key);
 signals:
  /** Signal emitted when selecting one of the objects in the tree window.
      Pointer to CObject is sent in signal */
@@ -25,8 +29,17 @@ signals:
 private slots:
  void treeSelectionChanged(QListViewItem *item); 
 private:
+ bool isSimple(IProperty* prop);
+ bool isSimple(boost::shared_ptr<IProperty> prop);
+ void addChilds(TreeItem *parent);
+ void updateTreeSettings();
+private:
  /** Treeview */
  QListView *tree;
+ /** class with stored setting what to show */
+ ShowData *sh;
+ /** Root object of the tree*/
+ IProperty *obj;
 };
 
 #endif

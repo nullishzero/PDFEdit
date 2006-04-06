@@ -51,9 +51,9 @@ OptionWindow::OptionWindow(QWidget *parent /*=0*/, const char *name /*=0*/) : QW
  grl->setSpacing(16);
  grl->setMargin(8);
  grl->addWidget(new QLabel("Options",low),0,0);
- QPushButton* btOk=    new QPushButton(tr("&Ok"),low,"opt_ok");
- QPushButton* btApply= new QPushButton(tr("&Apply"),low,"opt_apply");
- QPushButton* btCancel=new QPushButton(tr("&Cancel"),low,"opt_cancel");
+ QPushButton* btOk=    new QPushButton(QObject::tr("&Ok"),low,"opt_ok");
+ QPushButton* btApply= new QPushButton(QObject::tr("&Apply"),low,"opt_apply");
+ QPushButton* btCancel=new QPushButton(QObject::tr("&Cancel"),low,"opt_cancel");
  grl->addWidget(btOk,0,1);
  grl->addWidget(btApply,0,2);
  grl->addWidget(btCancel,0,3);
@@ -204,7 +204,7 @@ void OptionWindow::init() {
 
  QWidget *edit_tab=addTab(tr("Editor"));
  addOptionBool(edit_tab,tr("Advanced mode"),"mode/advanced");
- addText(edit_tab,tr("Turning advanced mode on will allow more powerful (but also potentially more destructive) changes to edited document."));
+ addText(edit_tab,tr("Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document."));
  addText(edit_tab,tr("<b>Note</b>: this will affect only newly opened files"));
  finishTab(edit_tab);
 
@@ -214,8 +214,8 @@ void OptionWindow::init() {
  addText(data_tab,tr("<b>Note</b>: this will take effect on next program start"));//TODO: apply path now
  finishTab(data_tab);
 
- QWidget *tree_tab=addTab(tr("Tree View"));
- addText(tree_tab,tr("You can specify what kind of objects will be displayed in the tree view"));
+ QWidget *tree_tab=addTab(tr("Object tree"));
+ addText(tree_tab,tr("You can specify what kind of objects will be displayed in the object tree"));
  addOptionBool(tree_tab,tr("Document dictionary"),"mode/show_dict");
  addOptionBool(tree_tab,tr("Object dictionaries"),"mode/show_objdict");
  addOptionBool(tree_tab,tr("Outlines"),"mode/show_outline");

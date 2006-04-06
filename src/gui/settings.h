@@ -45,6 +45,10 @@ public slots:
  bool readBool(const QString &key,bool defValue=false);
  void write(const QString &key,const QString &value);
  QString expand(QString s);
+signals:
+ /** Signal emitted when any setting is changed. Key of changed settings is sent.
+     Can be used to monitor settings changes */
+ void settingChanged(QString);
 private:
  //Constructor is private, use getInstance
  Settings();
@@ -76,5 +80,8 @@ private:
  void loadToolBarItem(ToolBar *tb,QString item);
 
 };
+
+/** One object for application, holding all global settings. */
+extern Settings *globalSettings;
 
 #endif

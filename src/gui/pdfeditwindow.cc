@@ -18,9 +18,6 @@
 
 using namespace std;
 
-/** One object for application, holding all global settings. */
-extern Settings *globalSettings;
-
 /** number of active editor windows -> when last is closed, application terminates */
 int windowCount;
 
@@ -209,6 +206,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), prop, SLOT(setObject(IProperty*)));
+ QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
 
  this->setCentralWidget(spl);
 
@@ -329,7 +327,7 @@ QString PdfEditWindow::version() {
  @param msg Message to display
  */
 void PdfEditWindow::message(const QString &msg) {
- QMessageBox::information(this,APP_NAME,msg,tr("&Ok"),QString::null,QString::null,QMessageBox::Ok | QMessageBox::Default);
+ QMessageBox::information(this,APP_NAME,msg,QObject::tr("&Ok"),QString::null,QString::null,QMessageBox::Ok | QMessageBox::Default);
 }
 
 /** Asks question with Yes/No answer. "Yes" is default. Return true if user selected "yes", false if user selected "no"
@@ -337,7 +335,7 @@ void PdfEditWindow::message(const QString &msg) {
  @return True if yes, false if no
  */
 bool PdfEditWindow::question(const QString &msg) {
- int answer=QMessageBox::question(this,APP_NAME,msg,tr("&Yes"),tr("&No"),QString::null,
+ int answer=QMessageBox::question(this,APP_NAME,msg,QObject::tr("&Yes"),QObject::tr("&No"),QString::null,
                                   QMessageBox::Yes | QMessageBox::Default,QMessageBox::No | QMessageBox::Escape);
  return (answer==QMessageBox::Yes);
 }

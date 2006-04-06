@@ -75,15 +75,8 @@ SOURCES += util.cc settings.cc main.cc
 HEADERS += test.h 
 SOURCES += test.cc
 
-#Kernel objects
-_KPATH = ../kernel
-_ONELIBK = cobject.o
-
-exists( $${_KPATH}/$${_ONELIBK} ) {
- LIBS += $$system( find $$_KPATH -name "*.o" |grep -v main.o )
-}else{
- error( "You do not have kernel compiled. (../kernel/*.o)" )
-}
+#Kernel objects - now using library
+LIBS += -lkernel -L../kernel
 
 #Translations
 DEPENDPATH += lang
