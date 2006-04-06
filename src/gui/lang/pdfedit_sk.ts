@@ -26,7 +26,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ok</source>
+        <source>Homepage</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -37,19 +37,71 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Apply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Icon Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: this will affect only newly opened files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paths to data files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: this will take effect on next program start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document dictionary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object dictionaries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outlines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Graphic objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Annotations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Simple Objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can specify what kind of objects will be displayed in the object tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -61,18 +113,6 @@
     </message>
     <message>
         <source>New file created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Yes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;No</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -104,24 +144,9 @@
         <translation>String</translation>
     </message>
     <message>
-        <source>Name</source>
-        <comment>Type name</comment>
-        <translation>Name</translation>
-    </message>
-    <message>
         <source>Ref</source>
         <comment>Type name</comment>
         <translation>Ref</translation>
-    </message>
-    <message>
-        <source>Array</source>
-        <comment>Type name</comment>
-        <translation>Array</translation>
-    </message>
-    <message>
-        <source>Dict</source>
-        <comment>Type name</comment>
-        <translation>Dict</translation>
     </message>
     <message>
         <source>Stream</source>
@@ -182,6 +207,53 @@
     </message>
     <message>
         <source>Stop processing options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PDF files (*.pdf)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open file ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save file as ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <comment>Type name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Array</source>
+        <comment>Type name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dict</source>
+        <comment>Type name</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
