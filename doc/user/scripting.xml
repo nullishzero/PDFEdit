@@ -113,6 +113,14 @@
    Return name of file loaded in editor. If the file does not exist on disk
    (not loaded, not saved or no file loaded), empty string is returned.
   </para>
+  <para>
+   <title><funcsynopsys> string fileOpenDialog();</funcsynopsys></title>
+   Invokes "open file" dialog and return selected filename, or NULL if dialog was cancelled
+  </para>
+  <para>
+   <title><funcsynopsys> string fileSaveDialog(string oldName);</funcsynopsys></title>
+   Invokes "save file" dialog and return selected filename, or NULL if dialog was cancelled
+  </para>
  </chapter>
  <chapter>
   <title>Objects exported to scripting</title>
