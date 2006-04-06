@@ -13,7 +13,8 @@ _ONELIB = Stream.o
 
 exists( $${_PATH}/xpdf/$${_ONELIB} ) {
 
-	LIBS += $$system( find $$_PATH/xpdf -name "[^pdf]*.o" )
+#	LIBS += $$system( find $$_PATH/xpdf -name "[^pdf]*.o" )
+	LIBS += -lxpdf -L$$_PATH/xpdf
 	LIBS += -lfofi -lGoo -L$$_PATH/fofi -L$$_PATH/goo
 
 }else{
