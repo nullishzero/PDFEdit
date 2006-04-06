@@ -14,6 +14,7 @@
 #include "version.h"
 #include <qmessagebox.h> 
 #include "optionwindow.h"
+#include "dialog.h"
 
 using namespace std;
 
@@ -67,6 +68,23 @@ void PdfEditWindow::options() {
  OptionWindow::optionsDialog();
 }
 
+/** Show "open file" dialog and return file selected, or NULL if dialog was cancelled
+ @return name of selected file.
+ */
+QString PdfEditWindow::fileOpenDialog() {
+ printDbg(debug::DBG_DBG,"fileOpenDialog");
+ return openFileDialog(this);
+}
+
+/** Show "save file" dialog and return file selected, or NULL if dialog was cancelled
+ @param oldName Old name of the file (if known) - will be preselected
+ @return name of selected file.
+ */
+QString PdfEditWindow::fileSaveDialog(const QString &oldName/*=QString::null*/) {
+ printDbg(debug::DBG_DBG,"fileSaveDialog");
+ return saveFileDialog(this,oldName);
+}
+
 /** Creates new windows and displays it.
  @param fName Name of file to open in new window. If no file specified, new window is initially empty
  */
@@ -118,7 +136,7 @@ void PdfEditWindow::removeDocumentObjects() {
 /** Runs given script code
  @param script QT Script code to run
  */
-void PdfEditWindow::runScript(const QString &script) {
+void PdfEditWindow::runScript(QString script) {
  qs->setErrorMode(QSInterpreter::Nothing);
  cmdLine->addCommand(script);
 
