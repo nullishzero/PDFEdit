@@ -40,6 +40,7 @@ void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 		void newSelection ( const QRect & );
 		void requirementPopupMenu ( const QPoint &, const QRect & );
 		void moveSelection ( const QPoint & );
+		void resizeSelection ( const QRect &, const QRect & );
 	private:
 		void newPageView();
 		void newPageView( QPixmap &qp );

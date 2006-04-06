@@ -89,8 +89,11 @@ void PageSpace::newPageView() {
 	scrollPageSpace->addChild(pageImage);
 
 	connect( pageImage, SIGNAL( leftClicked(const QRect &) ), this, SLOT( newSelection(const QRect &) ) );
-	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRect &) ), this, SLOT( requirementPopupMenu(const QPoint &, const QRect &) ) );
+	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRect &) ),
+		this, SLOT( requirementPopupMenu(const QPoint &, const QRect &) ) );
 	connect( pageImage, SIGNAL( selectionMovedTo(const QPoint &) ), this, SLOT( moveSelection(const QPoint &) ) );
+	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &) ),
+		this, SLOT( resizeSelection(const QRect &, const QRect &) ) );
 }
 
 void PageSpace::newPageView( QPixmap &qp ) {
@@ -185,5 +188,8 @@ void PageSpace::requirementPopupMenu ( const QPoint & globalPos, const QRect & r
 		printf("non empty\n");
 }
 void PageSpace::moveSelection ( const QPoint & relativeMove ) {
+	// TODO
+}
+void PageSpace::resizeSelection ( const QRect &, const QRect & ) {
 	// TODO
 }

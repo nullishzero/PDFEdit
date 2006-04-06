@@ -108,6 +108,9 @@ void PageView::unDrawSelection ( void ) {
 		isPress = false;
 		drawRect( mouseRectSelected, true );
 
+		if ( isResizing )
+			drawRect( rectSelected );	// see end of mousePressEvent - see better
+
 		changeSelection( IsSelected );
 
 		if (( rectSelected != NULL ) && (isMoving || isResizing))
@@ -264,6 +267,9 @@ void PageView::mousePressEvent ( QMouseEvent * e ) {
 		changeSelection( IsSelecting );
 		if ( isMoving || isResizing )
 			drawRect( mouseRectSelected );
+
+		if ( isResizing )		// resizing - undraw edge of selected area - see better
+			drawRect( rectSelected, true );
 	}
 }
 
@@ -284,6 +290,10 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 			}
 			if (mouseRectSelected != NULL) {
 				drawRect( mouseRectSelected, true );
+
+				if ( isResizing )
+					drawRect( rectSelected );	// see end of mousePressEvent - see better
+
 				changeSelection( IsSelected );
 				if (rectSelected == NULL) {
 					rectSelected = new QRect( mouseRectSelected->topLeft(), e->pos() );
