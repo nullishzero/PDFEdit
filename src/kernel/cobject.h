@@ -282,7 +282,7 @@ private:
 		dispatchChange ();
 		
 		// Notify everybody about this change
-		IProperty::notifyObservers ();
+		//IProperty::notifyObservers ();
 	}
 
 };
@@ -588,7 +588,7 @@ private:
 		// Dispatch the change
 		dispatchChange ();
 		// Notify everybody about this change
-		IProperty::notifyObservers ();
+		//IProperty::notifyObservers ();
 	}
 
 
@@ -765,7 +765,7 @@ private:
 		dispatchChange ();
 		
 		// Notify everybody about this change
-		IProperty::notifyObservers ();
+		//IProperty::notifyObservers ();
 	}
 
 };

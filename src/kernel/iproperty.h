@@ -16,12 +16,8 @@
 // property modes
 #include "modecontroller.h"
 
-// xpdf
-#include "xpdf.h"
-
 // our stuff
 //#include "exceptions.h"
-#include "observer.h"
 
 
 
@@ -103,7 +99,11 @@ typedef struct IndiRef
  */
 class IProperty
 {
-typedef std::vector<const IObserver*> ObserverList;
+public:
+	/** Observers. */
+	typedef observer::IObserver<IProperty> Observer; 
+	typedef std::vector<boost::shared_ptr<const Observer> > ObserverList;
+	typedef observer::IChangeContext<IProperty> ObserverContext;
 
 private:
  IndiRef 		ref;		/**< Object's pdf id and generation number. */
@@ -274,10 +274,12 @@ public:
 	 *
 	 * @param observer Observer being attached.
 	 */
-	void registerObserver (const IObserver* o) 
+	void registerObserver (boost::shared_ptr<const Observer> o) 
 	{
-		assert(NULL != o);
-		observers.push_back (o);
+		if (o)
+			observers.push_back (o);
+		else
+			throw ElementBadTypeException ("IProperty::registerObserver got invalid observer.");
 	}
   
 	/**
@@ -285,12 +287,21 @@ public:
 	 * 
 	 * @param observer Observer beeing detached.
 	 */
-	 void unregisterObserver (const IObserver* o)
+	 void unregisterObserver (boost::shared_ptr<const Observer> o)
 	 {
-		assert(NULL != o);
-		ObserverList::iterator it = find (observers.begin (), observers.end(),o);
-		if (it != observers.end ())
-			observers.erase (it);
+		if (o)
+		{
+			ObserverList::iterator it = find (observers.begin (), observers.end(), o);
+			if (it != observers.end ())
+				observers.erase (it);
+			else
+			{
+				printDbg (debug::DBG_DBG, "unregisterObserver did not find the element to erase.");
+				ElementNotFoundException ("","");
+			}
+			
+		}else
+			throw ElementBadTypeException ("IProperty::unregisterObserver got invalid observer.");
 	 };
 
 protected:
@@ -298,11 +309,11 @@ protected:
   /**
    * Notify all observers that a property has changed.
    */
-  void notifyObservers ()
+  void notifyObservers (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const ObserverContext> context)
   {
 	ObserverList::iterator it = IProperty::observers.begin ();
 	for (; it != IProperty::observers.end(); ++it)
-		  (*it)->notify (this);
+		  (*it)->notify (newValue, context);
   }
 
 

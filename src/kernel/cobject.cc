@@ -505,6 +505,7 @@ createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
 
 			default:
 				assert (!"Bad type.");
+				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
 		}
 }
@@ -547,6 +548,7 @@ createObjFromXpdfObj (Object& obj)
 
 			default:
 				assert (!"Bad type.");
+				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
 		}
 }

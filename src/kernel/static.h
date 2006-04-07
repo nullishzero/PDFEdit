@@ -45,8 +45,10 @@
 // our stuff
 //
 #include "utils/debug.h"
-#include "exceptions.h"
 #include "utils/objectstorage.h"
+#include "utils/observer.h"
+
+#include "exceptions.h"
 
 //#include "utils/iterator.h"
 //#include "observer.h"

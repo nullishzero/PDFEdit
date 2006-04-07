@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/07 10:23:02  misuj1am
+ *
+ * -- new observers, they are NOT called if an object changes
+ *
  * Revision 1.7  2006/04/03 14:35:13  misuj1am
  *
  *
@@ -195,7 +199,6 @@ inline double
 getDoubleFromArray (const IP& ip, size_t position)
 { 
 	// Try getting int, if not successful try double
-	double val = 0;
 	try {
 		
 		return getIntFromArray (ip, position);
