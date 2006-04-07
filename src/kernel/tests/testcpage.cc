@@ -31,10 +31,12 @@ mediabox (ostream& oss, const char* fileName)
 	Catalog cat (xref);
 
 	oss << "Contents:"		<< cat.getPage(1)->getContents(&obj) << endl;
+	obj.free ();
 	oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
 
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (TESTPDFFILE));
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (TESTPDFFILE));
 	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, IndiRef ()));
+	obj.free ();
 	
 	CPage page (dict);
 

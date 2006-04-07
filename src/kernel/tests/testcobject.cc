@@ -880,18 +880,21 @@ getContentStream (ostream& oss, const char* fileName, bool allPages)
 
 	oss << "Trailer:" << xref->getTrailerDict () << endl;
 	oss << "Catalog:" << xref->getCatalog (&obj) << endl;
+	obj.free ();
 	
 	for (int i = 1; i <= pagesNum; ++i)
 	{
 		oss << "Page:"			<< xref->fetch (cat.getPageRef(i)->num, cat.getPageRef(i)->gen, &obj) << endl;
+		obj.free ();
 		oss << "Contents:"		<< cat.getPage(i)->getContents(&obj) << endl;
+		obj.free ();
 //		oss << "StreamDict:\n"	<< cat.getPage(i)->getContents(&obj)->getStream()->getDict() << endl;
 //		oss << "Stream:\n";		print (oss, cat.getPage(i)->getContents(&obj), xref);
 	}
 	
 	assert (xref->getDocInfo (&obj));
 	oss << "Doc info:" << &obj << endl;
-
+	obj.free ();
 }
 
 extern const char OPER_STR1[] = "Td";
@@ -991,7 +994,7 @@ parseContentStream (ostream& oss, const char* fileName)
 	for (vector<boost::shared_ptr<PdfOperator> >::iterator it = pdfopers.begin ();
 					it != pdfopers.end (); ++it)
 	{
-		static int i = 0;
+		//static int i = 0;
 		string str;
 		(*it)->getStringRepresentation (str);
 
@@ -1031,7 +1034,7 @@ contentStream (ostream& , const char* fileName)
 
 	string tmp;
 	cc.getStringRepresentation (tmp);
-	//oss << "String representation: " << tmp;
+	//os << "String representation: " << tmp;
 
 	obj.free ();
 
