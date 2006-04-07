@@ -36,7 +36,7 @@
   <title>Static functions</title>
   <para>
    <title><funcsynopsys>void about()</funcsynopsys></title>
-   Invokes "About" dialog
+   Invokes "About" dialog, showing information about this program and its authors
   </para>
   <para>
    <title><funcsynopsys> void options()</funcsynopsys></title>
@@ -44,7 +44,7 @@
   </para>
   <para>
    <title><funcsynopsys>void createNewWindow()</funcsynopsys></title>
-   Creates new empty editor window
+   Creates new editor window with empty document in it.
   </para>
   <para>
    <title><funcsynopsys> void message(string)</funcsynopsys></title>
@@ -95,30 +95,30 @@
    Print all variables that are in current script interpreter to command window
   </para>
   <para>
-   <title><funcsynopsys> void saveWindowState();</funcsynopsys></title>
-   Save state of current editor window (size and position of window and size of elements inside it)
+   <title><funcsynopsys> void saveWindowState()</funcsynopsys></title>
+   Save state of current editor window (size and position of window and elements inside it)
    State is saved to editor's configuration file.
   </para>
   <para>
-   <title><funcsynopsys> void restoreWindowState();</funcsynopsys></title>
-   Restore state of current editor window (size and position of window and size of elements inside it)
-   State is restored frmo state saved in editor's configuration file.   
+   <title><funcsynopsys> void restoreWindowState()</funcsynopsys></title>
+   Restore state of current editor window (size and position of window and elements inside it)
+   State is restored from state saved in editor's configuration file.   
   </para>
   <para>
-   <title><funcsynopsys> string version();</funcsynopsys></title>
+   <title><funcsynopsys> string version()</funcsynopsys></title>
    Return version of editor (in format 'major.minor.release')
   </para>
   <para>
-   <title><funcsynopsys> string filename();</funcsynopsys></title>
-   Return name of file loaded in editor. If the file does not exist on disk
-   (not loaded, not saved or no file loaded), empty string is returned.
+   <title><funcsynopsys> string filename()</funcsynopsys></title>
+   Return name of file loaded in editor window. If the file does not exist on disk
+   (not loaded any file, or file was never saved, having no name), empty string is returned.
   </para>
   <para>
-   <title><funcsynopsys> string fileOpenDialog();</funcsynopsys></title>
+   <title><funcsynopsys> string fileOpenDialog()</funcsynopsys></title>
    Invokes "open file" dialog and return selected filename, or NULL if dialog was cancelled
   </para>
   <para>
-   <title><funcsynopsys> string fileSaveDialog(string oldName);</funcsynopsys></title>
+   <title><funcsynopsys> string fileSaveDialog(string oldName)</funcsynopsys></title>
    Invokes "save file" dialog and return selected filename, or NULL if dialog was cancelled
   </para>
  </chapter>
@@ -154,6 +154,11 @@
      <title><funcsynopsys>string settings.write(string key,string value)</funcsynopsys></title>
      Write application setting with given key and value
     </para>
+    <para>
+     <title><funcsynopsys> void settings.flushSettings()</funcsynopsys></title>
+     Write all unsaved settings to disk. Unsaved settings are automatically writen
+     to disk on application exit, but this can flush them to disk explicitly.
+    </para>
    </para>
   </sect1>
  </chapter>
@@ -170,7 +175,8 @@
    </para>
    <para>
     Available function of this object depend on type of currently selected object.
-    Script should check type of this object before manipulating with it.
+    Script may want to check type of this object before manipulating with it as
+    various object types support different set of operations on them.
    </para>
    <para>
     Types can be Pdf, Page, Dict or Array.<!--todo: more types as they are implemented.-->
@@ -210,11 +216,11 @@
    <title>Page</title>
    <para>
     <para>
-     <title><funcsynopsys> Dict getDictionary();</funcsynopsys></title>
+     <title><funcsynopsys> Dict getDictionary()</funcsynopsys></title>
      Returns page dictionary
     </para>
     <para>
-     <title><funcsynopsys> string getText();</funcsynopsys></title>
+     <title><funcsynopsys> string getText()</funcsynopsys></title>
      Return text representation of this page
     </para>
    </para>
@@ -223,54 +229,54 @@
    <title>Pdf</title>
    <para>
     <para>
-     <title><funcsynopsys> int save();</funcsynopsys></title>
+     <title><funcsynopsys> int save()</funcsynopsys></title>
      Save currently edited document.
      If current document have no name, user will be asked for name.
      If it is not possible to ask user or user presses cancel in file chooser,
      document is not saved.
     </para>
     <para>
-     <title><funcsynopsys> int saveAs(string);</funcsynopsys></title>
+     <title><funcsynopsys> int saveAs(string)</funcsynopsys></title>
      Save currently edited document under different name.
     </para>
     <para>
-     <title><funcsynopsys> void removePage(int);</funcsynopsys></title>
+     <title><funcsynopsys> void removePage(int)</funcsynopsys></title>
      Remove page with given number from document
     </para>
     <para>
-     <title><funcsynopsys> int getPagePosition(Page);</funcsynopsys></title>
+     <title><funcsynopsys> int getPagePosition(Page)</funcsynopsys></title>
      Get position of given page in document
     </para>
     <para>
-     <title><funcsynopsys> int getPageCount();</funcsynopsys></title>
+     <title><funcsynopsys> int getPageCount()</funcsynopsys></title>
      Get number of pages in document
     </para>
     <para>
-     <title><funcsynopsys> Dict getDictionary();</funcsynopsys></title>
+     <title><funcsynopsys> Dict getDictionary()</funcsynopsys></title>
      Get document dictionary
     </para>
     <para>
-     <title><funcsynopsys> Page insertPage(Page,int);</funcsynopsys></title>
+     <title><funcsynopsys> Page insertPage(Page,int)</funcsynopsys></title>
      Insert given page in document, at given position. Return inserted page.
     </para>
     <para>
-     <title><funcsynopsys> Page getPage(int);</funcsynopsys></title>
+     <title><funcsynopsys> Page getPage(int)</funcsynopsys></title>
      Get Page, given its page number.
     </para>
     <para>
-     <title><funcsynopsys> Page getFirstPage();</funcsynopsys></title>
+     <title><funcsynopsys> Page getFirstPage()</funcsynopsys></title>
      Get first page in document.
     </para>
     <para>
-     <title><funcsynopsys> Page getNextPage(Page);</funcsynopsys></title>
+     <title><funcsynopsys> Page getNextPage(Page)</funcsynopsys></title>
      Get next page in document, relative to given page.
     </para>
     <para>
-     <title><funcsynopsys> Page getPrevPage(Page);</funcsynopsys></title>
+     <title><funcsynopsys> Page getPrevPage(Page)</funcsynopsys></title>
      Get previous page in document, relative to given page.
     </para>
     <para>
-     <title><funcsynopsys> Page getLastPage();</funcsynopsys></title>
+     <title><funcsynopsys> Page getLastPage()</funcsynopsys></title>
      Get last page in document.
     </para>
    </para>
