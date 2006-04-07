@@ -2,7 +2,7 @@
 
 .PHONY: clean
 
-docs=scripting.html application.html
+docs=scripting.html application.html install.html
 
 all: $(docs)
 
