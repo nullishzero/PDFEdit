@@ -30,5 +30,15 @@
   In CVS root (or root of distribution archive)
   type <command>make install</command> to install PDF Editor
  </chapter>
-
+ <chapter>
+  <title>Tested platforms</title>
+  PDF Editor has been compiled and tested on following platforms:
+   <informaltable frame="none">
+    <tgroup cols="2"><tbody>
+     <row><entry>Gentoo Linux x86</entry><entry> - ok</entry></row>
+     <row><entry>FreeBSD 6.0 x86</entry><entry> - docbook2html seems to be unavailable on FreeBSD</entry></row>
+     <row><entry>Ubuntu Linux 5.10 x86</entry><entry> - ok</entry></row>
+    </tbody></tgroup>
+   </informaltable>
+ </chapter>
 </book>
