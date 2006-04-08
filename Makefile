@@ -11,8 +11,9 @@ install: all
 
 #make documentation
 #GNU make is required to build documentation, BSD make will not work
+#GNU make is installed sometimes as gmake, sometimes as make
 doc:
-	cd doc/user && gmake
+	cd doc/user && ( gmake || make )
 
 #make application
 src:
