@@ -9,13 +9,19 @@ all: pdfedit
 pdfedit: kernel xpdf
 	cd gui && qmake && make
 
-# XPdf
+# Kernel
 kernel: xpdf
 	cd kernel && qmake && make
 
-# Kernel
-xpdf:
+# XPdf
+xpdf: xpdf_configure
 	cd xpdf && make
+
+# XPdf configure
+xpdf_configure: xpdf/config.status
+
+xpdf/config.status:
+	cd xpdf && ./configure 
 
 # Cleanup
 clean:
