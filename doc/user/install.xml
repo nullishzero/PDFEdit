@@ -17,6 +17,18 @@
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
    </informaltable>
+   For rebuilding documentation from DocBook .xml files, <command>docbook2html</command> and <command>gmake</command> (GNU make) is required
   </para>
  </chapter>
+ <chapter>
+  <title>Compiling from source</title>
+  In CVS root (or root of distribution archive)
+  type <command>make</command> to compile PDF Editor and re-genereate documentation (if needed)
+ </chapter>
+ <chapter>
+  <title>Installing from source</title>
+  In CVS root (or root of distribution archive)
+  type <command>make install</command> to install PDF Editor
+ </chapter>
+
 </book>
