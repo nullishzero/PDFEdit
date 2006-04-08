@@ -25,9 +25,9 @@ xpdf/config.status:
 
 # Cleanup
 clean:
-	cd xpdf && make clean
-	cd kernel && make clean
 	cd gui && make clean
+	cd kernel && make clean
+	cd xpdf && make clean
 
 # Installation
 install:
