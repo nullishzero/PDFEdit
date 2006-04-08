@@ -3,7 +3,7 @@
 .PHONY: clean doc src install all regen
 
 #make PDF editor - source and documentation
-all: doc src
+all: src doc
 
 #install PDF editor
 install: all
