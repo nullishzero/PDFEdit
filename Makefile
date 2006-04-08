@@ -10,8 +10,9 @@ install: all
 	cd src && make install
 
 #make documentation
+#GNU make is required to build documentation, BSD make will not work
 doc:
-	cd doc/user && make
+	cd doc/user && gmake
 
 #make application
 src:
