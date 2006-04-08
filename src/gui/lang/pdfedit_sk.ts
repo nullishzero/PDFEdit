@@ -104,6 +104,14 @@
         <source>Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show return value of executed scripts in console</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PdfEditWindow</name>
@@ -113,6 +121,17 @@
     </message>
     <message>
         <source>New file created</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PropertyEditor</name>
+    <message>
+        <source>This object does not have any directly editable properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No object selected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -254,6 +273,79 @@
     <message>
         <source>Dict</source>
         <comment>Type name</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <source>Main Toolbar</source>
+        <comment>MainToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New Document</source>
+        <comment>new</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Load</source>
+        <comment>load</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <comment>save</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Options</source>
+        <comment>opts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <comment>about</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other Toolbar</source>
+        <comment>OtherToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main menu</source>
+        <comment>MainMenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File</source>
+        <comment>file</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New Window</source>
+        <comment>neww</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close Window</source>
+        <comment>closew</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Quit</source>
+        <comment>quit</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <comment>help</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <comment>index</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

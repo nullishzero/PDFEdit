@@ -104,6 +104,14 @@
         <source>Simple Objects</source>
         <translation>Jednoduché objekty</translation>
     </message>
+    <message>
+        <source>Misc</source>
+        <translation>Různé</translation>
+    </message>
+    <message>
+        <source>Show return value of executed scripts in console</source>
+        <translation>Zobrazovat návratovou hodnotu skriptů v příkazovém řádku</translation>
+    </message>
 </context>
 <context>
     <name>PdfEditWindow</name>
@@ -114,6 +122,17 @@
     <message>
         <source>New file created</source>
         <translation>Vytvořen nový soubor</translation>
+    </message>
+</context>
+<context>
+    <name>PropertyEditor</name>
+    <message>
+        <source>This object does not have any directly editable properties</source>
+        <translation>Tento objekt nemá žádné přímo editovatelné položky</translation>
+    </message>
+    <message>
+        <source>No object selected</source>
+        <translation>Není zvolen žádný objekt</translation>
     </message>
 </context>
 <context>
@@ -255,6 +274,79 @@
     <message>
         <source>&amp;Cancel</source>
         <translation>&amp;Storno</translation>
+    </message>
+</context>
+<context>
+    <name>Settings</name>
+    <message>
+        <source>Main Toolbar</source>
+        <comment>MainToolbar</comment>
+        <translation>Hlavní toolbar</translation>
+    </message>
+    <message>
+        <source>&amp;New Document</source>
+        <comment>new</comment>
+        <translation>&amp;Nový dokument</translation>
+    </message>
+    <message>
+        <source>&amp;Load</source>
+        <comment>load</comment>
+        <translation>Nahrát</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <comment>save</comment>
+        <translation>&amp;Uložit</translation>
+    </message>
+    <message>
+        <source>&amp;Options</source>
+        <comment>opts</comment>
+        <translation>Nastavení</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <comment>about</comment>
+        <translation>O Programu</translation>
+    </message>
+    <message>
+        <source>Other Toolbar</source>
+        <comment>OtherToolbar</comment>
+        <translation>Další toolbar</translation>
+    </message>
+    <message>
+        <source>Main menu</source>
+        <comment>MainMenu</comment>
+        <translation>Hlavní menu</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <comment>file</comment>
+        <translation>Soubor</translation>
+    </message>
+    <message>
+        <source>&amp;New Window</source>
+        <comment>neww</comment>
+        <translation>&amp;Nové okno</translation>
+    </message>
+    <message>
+        <source>&amp;Close Window</source>
+        <comment>closew</comment>
+        <translation>Zavřít okno</translation>
+    </message>
+    <message>
+        <source>&amp;Quit</source>
+        <comment>quit</comment>
+        <translation>Konec</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <comment>help</comment>
+        <translation>Nápověda</translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <comment>index</comment>
+        <translation>Nápověda</translation>
     </message>
 </context>
 <context>
