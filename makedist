@@ -1,0 +1,6 @@
+#!/bin/sh
+#Get version number from src/gui/version.h
+VERSION=`grep "#define VERSION" <src/gui/version.h |sed 's/.*"\(.*\)".*/\1/'`
+#Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
+tar -cvzf pdfedit-$VERSION.tar.gz * --exclude-from=dist-exclude
+tar -cvjf pdfedit-$VERSION.tar.bz2 * --exclude-from=dist-exclude
