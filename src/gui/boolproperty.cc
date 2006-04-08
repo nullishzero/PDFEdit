@@ -15,6 +15,7 @@ using namespace std;
 BoolProperty::BoolProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
  : Property(_name,parent,_flags) {
  ed=new QCheckBox(this,"boolproperty_checkbox");
+ connect(ed,SIGNAL(clicked()),this,SLOT(emitChange()));
 }
 
 /** return size hint of this property editing control */
@@ -25,6 +26,11 @@ QSize BoolProperty::sizeHint() const {
 /** Called on resizing of property editing control */
 void BoolProperty::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
+}
+
+/** Called when clicked on the checkbox */
+void BoolProperty::emitChange() {
+ emit propertyChanged(this);
 }
 
 /** default destructor */
@@ -39,6 +45,7 @@ void BoolProperty::writeValue(IProperty *pdfObject) {
  CBool* obj=(CBool*)pdfObject;
  bool val=ed->isChecked();
  obj->writeValue(val);
+ changed=false;
 }
 /** read internal value from given PDF object
  @param pdfObject Object to read from
@@ -48,4 +55,5 @@ void BoolProperty::readValue(IProperty *pdfObject) {
  bool val;
  obj->getPropertyValue(val);
  ed->setChecked(val);
+ changed=false;
 }

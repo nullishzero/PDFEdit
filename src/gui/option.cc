@@ -14,7 +14,7 @@ Option::Option(const QString &_key/*=0*/,QWidget *parent/*=0*/)
  : QWidget (parent, "option"){
  key=_key;
  set=Settings::getInstance();
- printDbg(debug::DBG_DBG,"+ Option " << key);
+// printDbg(debug::DBG_DBG,"+ Option " << key);
 }
 
 /** return name of this option */
@@ -24,5 +24,5 @@ QString Option::getName() {
 
 /** default destructor */
 Option::~Option() {
- printDbg(debug::DBG_DBG,"- Option" << key);
+// printDbg(debug::DBG_DBG,"- Option " << key);
 }

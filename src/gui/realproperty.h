@@ -8,6 +8,7 @@
 using namespace pdfobjects;
 
 class RealProperty : public StringProperty {
+Q_OBJECT
 public:
  RealProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
  virtual ~RealProperty();

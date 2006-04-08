@@ -17,8 +17,20 @@ using namespace std;
 StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"stringproperty_edit");
-/* ed->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed));
- ed->setText(_name);//example text*/
+ connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
+ connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));
+ connect(ed,SIGNAL(textChanged(const QString&)),this,SLOT(enableChange(const QString&)));
+}
+
+/** Called when text is accepted */
+void StringProperty::emitChange() {
+ if (!changed) return;
+ emit propertyChanged(this);
+}
+
+/** Called when text changes */
+void StringProperty::enableChange(const QString &newText) {
+ changed=true;
 }
 
 /** return size hint of this property editing control */
@@ -43,6 +55,7 @@ void StringProperty::writeValue(IProperty *pdfObject) {
  CString* obj=(CString*)pdfObject;
  string val=ed->text();
  obj->writeValue(val);
+ changed=false;
 }
 /** read internal value from given PDF object
  @param pdfObject Object to read from
@@ -52,4 +65,5 @@ void StringProperty::readValue(IProperty *pdfObject) {
  string val;
  obj->getPropertyValue(val);
  ed->setText(val);
+ changed=false;
 }

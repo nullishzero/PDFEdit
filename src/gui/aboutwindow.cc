@@ -2,7 +2,6 @@
  AboutWindow - class representing about window. Display authors, application name and version
 */
 #include "aboutwindow.h"
-#include "settings.h"
 #include <iostream>
 #include <qlayout.h>
 #include <qlabel.h>

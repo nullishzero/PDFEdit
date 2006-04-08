@@ -139,8 +139,29 @@ void PdfEditWindow::runScript(QString script) {
 
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addDocumentObjects();
- qs->evaluate(script,this,"<GUI>");
-
+ QSArgument ret=qs->evaluate(script,this,"<GUI>");
+ if (globalSettings->readBool("console/showretvalue")) {
+  switch (ret.type()) {
+   case QSArgument::QObjectPtr: {
+    QObject *ob=ret.qobject();
+    print(QString("(Object:")+ob->className()+")");
+    break;
+   }
+   case QSArgument::VoidPointer: {
+    print("(Pointer)");
+    break;
+   }
+   case QSArgument::Variant: {
+    QVariant v=ret.variant();
+    print(v.toString());
+    break;
+   }
+   default: { 
+    //Invalid - print nothing
+    //print("(?)");
+   }
+  }
+ }
  QString error=qs->errorMessage();
  if (error!=QString::null) { /// some error occured
   cmdLine->addError(error);
@@ -182,7 +203,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  setCaption(APP_NAME);
  document=NULL; 
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
- spl=new QSplitter(this);
+ spl=new QSplitter(this,"horizontal_splitter");
+
 
  //Splitter between command line and preview window
  splCmd=new QSplitter(spl);
@@ -219,7 +241,18 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
   QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
  }
-   
+
+ //Need to name objects, so they will become invisible to scripting
+/* QLayout *w_l=this->layout();
+ if (w_l) {
+  w_l->setName("pdfedit_layout");
+ }
+ QMenuBar *w_m=this->menuBar();
+ if (w_m) {
+  w_m->setName("pdfedit_menu");
+ }
+ //TODO: can't do that for all objects anyway
+*/
  //Script must be run AFTER creating all widgets
  // -> script may need them, especially the command window
 

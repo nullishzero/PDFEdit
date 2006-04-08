@@ -17,7 +17,8 @@ Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFla
  : QWidget (parent, "property",_flags){
  name=_name;
  flags=_flags;
- printDbg(debug::DBG_DBG,"+ Property " << name);
+ changed=false;
+// printDbg(debug::DBG_DBG,"+ Property  " << name);
 }
 
 /** return name of this property */
@@ -47,5 +48,13 @@ void Property::setReadOnly(bool _readonly) {
 
 /** default destructor */
 Property::~Property() {
-  printDbg(debug::DBG_DBG,"- Property" << name);
+//  printDbg(debug::DBG_DBG,"- Property " << name);
+}
+
+/** Emit signal indicating change of the property and set state
+ of property to 'changed'*/
+void Property::emitChanged() {
+ emit propertyChanged(this);
+ printDbg(debug::DBG_DBG,"Property was edited: " << name);
+ changed=true;
 }

@@ -36,7 +36,7 @@ private:
  
  /** update internal data from settings */
  void update() {
-  check(show_simple,"mode/show_simple");
+  check(show_simple,"tree/show_simple");
  }
  /** Show simple objects (int,bool,string,name,real) in object tree? */
  bool show_simple;
@@ -77,9 +77,9 @@ void TreeWindow::updateTreeSettings() {
 
 /** Called when any settings are updated (in script, option editor, etc ...) */
 void TreeWindow::settingUpdate(QString key) {
- //TODO: only once per buch of mode/show signals ... setting blocks
+ //TODO: only once per buch of tree/show... signals ... setting blocks
  printDbg(debug::DBG_DBG,"Settings observer: " << key);
- if (key.startsWith("mode/show")) { //Updated settings of what to show and what not
+ if (key.startsWith("tree/show")) { //Updated settings of what to show and what not
   updateTreeSettings();
  }
 }

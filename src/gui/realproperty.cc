@@ -26,6 +26,7 @@ void RealProperty::writeValue(IProperty *pdfObject) {
  CReal* obj=(CReal*)pdfObject;
  double val=ed->text().toDouble();
  obj->writeValue(val);
+ changed=false;
 }
  /** read internal value from given PDF object */
 void RealProperty::readValue(IProperty *pdfObject) {
@@ -33,4 +34,5 @@ void RealProperty::readValue(IProperty *pdfObject) {
  double val;
  obj->getPropertyValue(val);
  ed->setText(QString::number(val));
+ changed=false;
 }

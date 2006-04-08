@@ -8,6 +8,7 @@
 using namespace pdfobjects;
 
 class BoolProperty : public Property {
+Q_OBJECT
 public:
  QSize sizeHint() const;
  void resizeEvent (QResizeEvent *e);
@@ -15,6 +16,8 @@ public:
  virtual ~BoolProperty();
  void writeValue(IProperty *pdfObject);
  void readValue(IProperty *pdfObject);
+protected slots:
+ void emitChange();
 protected:
  /** checkbox used for editing the value */
  QCheckBox *ed;

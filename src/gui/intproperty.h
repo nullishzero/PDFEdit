@@ -7,6 +7,7 @@
 using namespace pdfobjects;
 
 class IntProperty : public StringProperty {
+Q_OBJECT
 public:
  IntProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
  virtual ~IntProperty();

@@ -4,6 +4,7 @@
 #include <qapplication.h>
 #include <qsettings.h>
 #include <qsplitter.h>
+#include <qstringlist.h> 
 #include <qmenudata.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
@@ -31,7 +32,6 @@ public:
 // static Settings* getInstance();
  QMenuBar *loadMenu(QWidget *parent);
  QString getAction(int index);
- void flushSettings();
  ToolBarList loadToolBars(QMainWindow *parent);
  void saveWindow(QWidget *win,const QString name); 
  void restoreWindow(QWidget *win,const QString name);
@@ -39,7 +39,9 @@ public:
  void restoreSplitter(QSplitter *spl,const QString name);
  QString getIconFile(const QString &name);
  QStringList readPath(const QString &name);
+ QStringList readList(const QString &name,const QString separator=",");
 public slots:
+ void flushSettings();
  QString readExpand(const QString &key,const QString defValue=QString::null);
  QString read(const QString &key,const QString defValue=QString::null);
  bool readBool(const QString &key,bool defValue=false);

@@ -216,14 +216,18 @@ void OptionWindow::init() {
 
  QWidget *tree_tab=addTab(tr("Object tree"));
  addText(tree_tab,tr("You can specify what kind of objects will be displayed in the object tree"));
- addOptionBool(tree_tab,tr("Document dictionary"),"mode/show_dict");
- addOptionBool(tree_tab,tr("Object dictionaries"),"mode/show_objdict");
- addOptionBool(tree_tab,tr("Outlines"),"mode/show_outline");
- addOptionBool(tree_tab,tr("Graphic objects"),"mode/show_graphic");
- addOptionBool(tree_tab,tr("Annotations"),"mode/show_annot");
- addOptionBool(tree_tab,tr("Pages"),"mode/show_page");
- addOptionBool(tree_tab,tr("Simple Objects"),"mode/show_simple");
+ addOptionBool(tree_tab,tr("Document dictionary"),"tree/show_dict");
+ addOptionBool(tree_tab,tr("Object dictionaries"),"tree/show_objdict");
+ addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline");
+ addOptionBool(tree_tab,tr("Graphic objects"),"tree/show_graphic");
+ addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot");
+ addOptionBool(tree_tab,tr("Pages"),"tree/show_page");
+ addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple");
  finishTab(tree_tab);
+
+ QWidget *misc_tab=addTab(tr("Misc"));
+ addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
+ finishTab(misc_tab);
 
  setUpdatesEnabled( TRUE );
 }

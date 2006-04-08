@@ -26,6 +26,7 @@ void IntProperty::writeValue(IProperty *pdfObject) {
  CInt* obj=(CInt*)pdfObject;
  int val=ed->text().toInt();
  obj->writeValue(val);
+ changed=false;
 }
  /** read internal value from given PDF object */
 void IntProperty::readValue(IProperty *pdfObject) {
@@ -33,4 +34,5 @@ void IntProperty::readValue(IProperty *pdfObject) {
  int val;
  obj->getPropertyValue(val);
  ed->setText(QString::number(val));
+ changed=false;
 }

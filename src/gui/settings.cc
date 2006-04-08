@@ -146,6 +146,18 @@ QStringList Settings::readPath(const QString &name) {
  return s;
 }
 
+/** read list of values from config file and return as string list 
+    List elements are expected to be separated by defined separator (default is comma)
+ @param name Identifier of list in config file
+ @param separator String separating items in the list
+ @return QStringList containing items from list
+ */
+QStringList Settings::readList(const QString &name,const QString separator/*=","*/) {
+ QString lst=read(name,"");
+ QStringList s=QStringList::split(separator,lst);
+ return s;
+}
+
 /** flushes settings, saving all changes to disk */
 void Settings::flushSettings() {
  delete set;  
@@ -327,7 +339,7 @@ void Settings::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoo
   QStringList qs=explode(',',line);  
   QStringList::Iterator it=qs.begin();
   if (it!=qs.end()) { //add itself as popup menu to parent with given name
-   if (!isRoot) parent->insertItem(*it,item);
+   if (!isRoot) parent->insertItem(tr(*it,name),item);
    ++it;
   } else fatalError("Invalid menu item in config:\n"+line);
   for (;it!=qs.end();++it) { //load all subitems
@@ -339,6 +351,7 @@ void Settings::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoo
   QStringList qs=explode(',',line);
   if (qs.count()<2) fatalError("Invalid menu item in config:\n"+line);
   int menu_id=addAction(qs[1]);
+  qs[0]=tr(qs[0],name);
   parent->insertItem(qs[0],menu_id);
   if (qs.count()>=3 && qs[2].length()>0) { //accelerator specified
    parent->setAccel(QKeySequence(qs[2]),menu_id);
@@ -419,6 +432,7 @@ ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
   QStringList::Iterator it=qs.begin();
   if (it!=qs.end()) {
    tb=new ToolBar(*it,parent);
+   tb->setName(name);
    ++it;
   } else fatalError("Invalid toolbar item in config:\n"+line);
   for (;it!=qs.end();++it) { //load all subitems

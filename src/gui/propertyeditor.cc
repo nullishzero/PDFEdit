@@ -28,6 +28,8 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  list=new QStringList();
  //create property dictionary
  items=new QDict<Property>();
+ //create IProperty dictionary
+ props=new QMap<QString,boost::shared_ptr<IProperty> > ();
  //create labels dictionary
  labels=new QDict<QLabel>();
  //number of objects - empty
@@ -67,7 +69,7 @@ void PropertyEditor::resizeEvent (QResizeEvent *e) {
 // grid->setFixedWidth(scroll->viewport()->width());//TODO:CHECK
 }
 
-/** remove and delete all properties from the editor */
+/** remove and delete all properties from the editor, unset current object */
 void PropertyEditor::clear() {
  //clear properties in property dictionary
  QDictIterator<Property> itp(*items);
@@ -96,6 +98,7 @@ void PropertyEditor::clear() {
  labels->clear();
  //clear property dictionary
  items->clear();
+ props->clear();
  //clear string list
  list->clear();
  obj=NULL;
@@ -110,32 +113,24 @@ void PropertyEditor::clear() {
 /** called on update of value from a property
  @param p property that was just updated in GUI
  */
-void PropertyEditor::update(Property &p) {
- //TODO: read name from p
- //TODO: read value from p
- //TODO: update PDFObject 
+void PropertyEditor::update(Property *p) {
+ QString pname=p->getName();
+ printDbg(debug::DBG_DBG,"Updating property" << pname);
+ assert(props->contains(pname));
+ boost::shared_ptr<IProperty> obj=(*props)[pname];
+ p->writeValue(obj.get());
  //TODO: redraw, etc ...
  //TODO: call from properties
 }
 
-/** Unset current object from property editor, leving it empty (use when current object deleted, etc ..) */
-void PropertyEditor::unsetObject() {
- //TODO: unset object
- clear();
-}
-
-/** Add all internal properties to the widget */
-void PropertyEditor::commitProperties() {
- //TODO: remove, not used
-}
-
 /** add single property
  @param prop property to be added to this widget
+ @param value Value of property to be added
  */
-void PropertyEditor::addProperty(Property *prop) {
+void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> value) {
  QString name=prop->getName();
  QLabel *label;
- label=new QLabel(name,grid);
+ label=new QLabel(QString(" ")+name+" ",grid);
  int labelHeight=label->sizeHint().height();
  int propHeight=prop->sizeHint().height();
  gridl->setRowSpacing(nObjects,MAX(labelHeight,propHeight));
@@ -144,19 +139,11 @@ void PropertyEditor::addProperty(Property *prop) {
  nObjects++;
  list->append(name);
  items->insert(name,prop);
- labels->insert(QString(" ")+name+" ",label);
+ props->insert(name,value);
+ labels->insert(name,label);
+ connect(prop,SIGNAL(propertyChanged(Property*)),this,SLOT(update(Property*)));
  prop->show();
  label->show();
-}
-
-/** add single property
- @param name property to be added to this widget
- */
-void PropertyEditor::addProperty(QString name) {
-//TODO: use Property factory and add type parameter
- Property *prop;
- prop=new StringProperty(name,grid);
- addProperty(prop);
 }
 
 /** Add single property to the widget
@@ -167,7 +154,29 @@ void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
  Property *p=propertyFactory(value.get(),name,grid);//todo: flags
  if (!p) return;	//check if editable
  p->readValue(value.get());
- addProperty(p);//Will add and show the property
+ addProperty(p,value);//Will add and show the property
+}
+
+/** Show some message inside property editor instead of its usual contents
+ (like "this is not editable", "this object does not have properties", etc ...)
+ @param message Message to show
+ */
+void PropertyEditor::setObject(const QString &message) {
+ setUpdatesEnabled( FALSE );
+ clear();
+ obj=NULL;
+
+ QString name="the_label";
+ QLabel *label=new QLabel(message,grid);
+ label->setTextFormat(Qt::RichText);
+ int labelHeight=label->sizeHint().height();
+ gridl->setRowSpacing(nObjects,labelHeight);
+ gridl->addMultiCellWidget(label,0,0,0,1);
+ nObjects=1;
+ list->append(name);
+ labels->insert(name,label);
+ label->show();
+ setUpdatesEnabled( TRUE );
 }
 
 /** set IProperty object to be active (edited) in this editor
@@ -175,19 +184,11 @@ void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
  */
 void PropertyEditor::setObject(IProperty *pdfObject) {
  setUpdatesEnabled( FALSE );
- unsetObject();
+ clear();
  obj=pdfObject;
  //TODO: need property flags/mode
- if (!pdfObject) { //TODO: debug example
-  Property *prop;
-  prop=new IntProperty("Intproperty",grid);
-  addProperty(prop);
-  prop=new RealProperty("Realproperty",grid);
-  addProperty(prop);
-  prop=new BoolProperty("Boolproperty",grid);
-  addProperty(prop);
-  addProperty("StringProperty1");
-  addProperty("StringProperty2");
+ if (!pdfObject) {
+  setObject(tr("No object selected"));
  } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
   CDict *dict=(CDict*)pdfObject;
   vector<string> list;
@@ -197,6 +198,7 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    addProperty(*it,property);
   }
+  if (!nObjects) {setObject(tr("This object does not have any directly editable properties"));}
   grid->update();
  } else if (pdfObject->getType()==pArray) {	//Object is CArray
   CArray *ar=(CArray*)pdfObject;
@@ -207,13 +209,14 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
    name.sprintf("[ %4d ]",i);
    addProperty(name,property);
   }
+  if (!nObjects) {setObject(tr("This object does not have any directly editable properties"));}
  }
  setUpdatesEnabled( TRUE );
 }
 
 /** default destructor */
 PropertyEditor::~PropertyEditor() {
- unsetObject();//remove current object from editor
+ clear();//remove current object from editor
  delete labels;
  delete items;
  delete list;

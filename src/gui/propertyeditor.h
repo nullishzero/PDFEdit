@@ -5,6 +5,7 @@
 #include <qobjectlist.h>
 #include <qscrollview.h>
 #include <qdict.h>
+#include <qmap.h>
 #include <qwidget.h>
 #include <qgrid.h>
 #include <qlabel.h>
@@ -18,17 +19,15 @@ class PropertyEditor : public QWidget {
 public:
  PropertyEditor(QWidget *parent=0, const char *name=0);
  virtual ~PropertyEditor();
- void unsetObject();
- void commitProperties();
  void resizeEvent (QResizeEvent *e);
  void clear();
 public slots:
+ void setObject(const QString &message);
  void setObject(IProperty *pdfObject);
- void update(Property &p);
+ void update(Property *p);
 private:
  void addProperty(const QString &name,boost::shared_ptr<IProperty> value);
- void addProperty(Property *prop);
- void addProperty(QString name);
+ void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
  void deleteLayout();
  void createLayout();
 private:
@@ -46,6 +45,8 @@ private:
  QStringList *list;
  /** Dictionary with property items */
  QDict<Property> *items;
+ /** Dictionary with IProperty items */
+ QMap<QString,boost::shared_ptr<IProperty> > *props;
  /** Dictionary with property labels */
  QDict<QLabel> *labels;
 };
