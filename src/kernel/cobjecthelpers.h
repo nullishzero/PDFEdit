@@ -7,6 +7,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/04/09 21:27:13  misuj1am
+ *
+ *
+ * -- getTypeFromDictionary returns shared_ptr<Type> that we want (if possible)
+ * 	-- if CRef then try to fetch the indirect object and return it
+ *
  * Revision 1.8  2006/04/07 10:23:02  misuj1am
  *
  * -- new observers, they are NOT called if an object changes
@@ -139,6 +145,71 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
  */
 void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
 
+//=========================================================
+//	Dictionary helper "get type" methods
+//=========================================================
+
+
+/**
+ * Get iproperty casted to specific type from dictionary.
+ *
+ * @param dict Dictionary.
+ * @param id   Position in the array.
+ */
+template<typename ItemType, PropertyType ItemPType>
+boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)
+{
+	printDbg (debug::DBG_DBG, "dict[" << key << "]");
+	
+	// Get the item that is associated with specified key 
+	boost::shared_ptr<IProperty> ip = dict->getProperty (key);
+	//
+	// If it is a Ref forward it to the real object
+	// 
+	if (pRef == ip->getType())
+	{
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(ip)->getPropertyValue(ref);
+		ip = dict->getPdf()->getIndirectProperty (ref);
+	}
+
+	// Check the type
+	if (ItemPType != ip->getType ())
+	{
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		throw ElementBadTypeException ("getValueFromDictionary()");
+	}
+
+	// Cast it to the correct type and return it
+	return IProperty::getSmartCObjectPtr<ItemType> (ip);
+}
+//
+// If we got iproperty, cast it to Dict
+//
+template<typename ItemType, PropertyType ItemPType>
+boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
+{
+	assert (pDict == ip->getType ());
+	if (pDict != ip->getType ())
+		throw ElementBadTypeException ("getTypeFromDictionary()");
+
+	// Cast it to dict
+	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+
+	return getTypeFromDictionary<ItemType, ItemPType> (dict, key);
+}
+
+/** 
+ * Get stream from dictionary. If it is CRef fetch the object pointed at.
+ */
+template<typename IP>
+boost::shared_ptr<CStream>
+getCStreamFromDict (IP& ip, const std::string& key)
+	{return getTypeFromDictionary<CStream,pStream> (ip, key);}
+	
+
 
 //=========================================================
 //	Array helper "get" methods
@@ -163,7 +234,7 @@ getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position
 	if (ItemPType != ip->getType ())
 	{
 		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
-		throw ElementBadTypeException ("");
+		throw ElementBadTypeException ("getSimpleValueFromArray");
 	}
 
 	// Cast it to the correct type and return it
@@ -179,7 +250,7 @@ getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position
 {
 	assert (pArray == ip->getType ());
 	if (pArray != ip->getType ())
-		throw ElementBadTypeException ("");
+		throw ElementBadTypeException ("getSimpleValueFromArray()");
 
 	// Cast it to array
 	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
