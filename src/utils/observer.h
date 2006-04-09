@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/04/09 21:32:03  misuj1am
+ *
+ *
+ * -- changed a bit
+ * 	-- virtual destructor
+ * 	-- pointer to context changed to shared_ptr
+ *
  * Revision 1.3  2006/04/02 08:09:59  hockm0bm
  * new observer design
  * * IObserver - interface for observer implementation (template class)
@@ -146,7 +153,7 @@ public:
 	 * registered on complex type, it contains changed value (item) inside 
 	 * this complex type (value keeper part is changed).
 	 */
-	virtual void notify (boost::shared_ptr<T> newValue, const IChangeContext<T> * context) const = 0;
+	virtual void notify (boost::shared_ptr<T> newValue, boost::shared_ptr<const IChangeContext<T> > context) const = 0;
 
 	/** Returns priority of obsever.
 	 *
@@ -154,6 +161,11 @@ public:
 	 * @return Observer priority value.
 	 */
 	virtual priority_t getPriority()const =0;
+
+	/**
+	 * Virtual destructor.
+	 */
+	virtual ~IObserver () {};
 };
 
 /** Interface for notifiers.
