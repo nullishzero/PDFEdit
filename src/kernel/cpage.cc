@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  cpage.cc
@@ -25,11 +26,20 @@ using namespace utils;
 
 		
 //
+// Constructor
 //
-//
-CPage::CPage ()
+CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 {
+	printDbg (debug::DBG_DBG, "");
+	
+	//
+	// Get the stream representing content stream, make an xpdf object
+	// and instantiate CContentStream
+	//
+	boost::shared_ptr<CStream> stream = getCStreamFromDict (dictionary, "Contents");
+	contentstream = shared_ptr<CContentStream> (new CContentStream (stream, stream->_makeXpdfObject()));
 }
+
 
 //
 //
@@ -37,6 +47,8 @@ CPage::CPage ()
 Rectangle
 CPage::getMediabox () const
 {
+	printDbg (debug::DBG_DBG, "");
+	
 	// Get the array representing media box
 	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
 	assert (pArray == mbox->getType ());
@@ -59,6 +71,8 @@ CPage::getMediabox () const
 void
 CPage::setMediabox (const Rectangle& rc)
 {
+	printDbg (debug::DBG_DBG, "");
+
 	// Get the array representing media box
 	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
 	assert (pArray == mbox->getType ());

@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  cpage.cc
@@ -15,6 +16,8 @@
 
 // CDict
 #include "cobject.h"
+// CContentstream
+#include "ccontentstream.h"
 
 
 //=====================================================================================
@@ -22,27 +25,42 @@ namespace pdfobjects {
 //=====================================================================================
 
 
-/** Coordinate. */
-typedef double Coordinate;
-/** Invalid coordinate. */
-const double COORDINATE_INVALID = std::numeric_limits<Coordinate>::max();
-
 /**
- * Rectangle structure. Defined as in pdf specification v1.5 (p. 133)
+ * Comparator that will define area around specified point.
  */
-typedef struct Rect
+//
+// Default position comparator
+//
+struct PdfOpCmp
 {
-	Coordinate xleft;
-	Coordinate yleft;
-	Coordinate xright;
-	Coordinate yright;
+	/** Consructor. */
+	PdfOpCmp (const Point& pt) : pt_(pt) {};
+	
+	/** Is in in a range. */
+	bool operator() (const Point&) const
+	{
+		return true;
+	}
+	
+private:
+	const Point pt_;
+};
 
-	// Constructor
-	Rect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
+//
+// Constatnts needed by GfxState
+//
+// xpdf doesn't know the keyword CONST....
+//
+static double DEFAULT_HDPI = 72;
+static double DEFAULT_VDPI = 72;
+static int DEFAULT_ROTATE = 0;
 
-} Rectangle;
-		
-		
+static double DEFAULT_PAGE_LX = 0;
+static double DEFAULT_PAGE_LY = 0;
+static double DEFAULT_PAGE_RX = 700;
+static double DEFAULT_PAGE_RY = 700;
+
+
 /**
  * CPage represents pdf page object. 
  *
@@ -55,13 +73,20 @@ private:
 	/** Pdf dictionary representing a page. */
 	boost::shared_ptr<CDict> dictionary;
 
+	/** Class representing content stream. */
+	boost::shared_ptr<CContentStream> contentstream;
+
 public:
 		
 	/** Constructor. */
-	CPage ();
+	CPage () {};
 
-	/** Constructor. */
-	CPage (boost::shared_ptr<CDict> pageDict) : dictionary(pageDict) {};
+	/** 
+	 * Constructor. 
+	 *
+	 * @param pageDict Dictionary representing pdf page.
+	 */
+	CPage (boost::shared_ptr<CDict>& pageDict);
 
 public:
 	
@@ -86,6 +111,46 @@ public:
 	boost::shared_ptr<CDict> getDictionary () const { return dictionary; };
 	
 
+	/**
+	 * Get objects at specified position. This call will be delegated to
+	 * CContentStream class.
+	 *
+	 * @param pt Point around which we will be looking.
+	 * @param cmp Null if default kernel area comparator should be used
+	 * 				otherwise points to an object which will decide whether an operator 
+	 * 				is "near" a point.
+	 *
+	 */
+	template<typename OpContainer>
+	void getObjectsAtPosition (OpContainer& opContainer, const Point& pt) const
+	{	
+		printDbg (debug::DBG_DBG, " at point (" << pt.x << "," << pt.y << ")" );
+
+		// Set state
+		boost::scoped_ptr<PDFRectangle> rc (new PDFRectangle (DEFAULT_PAGE_LX,
+															  DEFAULT_PAGE_LY,
+															  DEFAULT_PAGE_RX,
+															  DEFAULT_PAGE_RY));
+		GfxState state (DEFAULT_HDPI, 
+						DEFAULT_VDPI, 
+						rc.get(), 
+						DEFAULT_ROTATE, 
+						gFalse);
+		
+		// Get the objects with specific comparator
+		contentstream->getOperatorsAtPosition (opContainer, PdfOpCmp(pt), state);
+	}
+
+	template<typename OpContainer, typename PositionComparator>
+	void getObjectsAtPosition (OpContainer& opContainer, PositionComparator& cmp) const
+	{	
+		printDbg (debug::DBG_DBG, "");
+
+		// Get the objects with specific comparator
+		contentstream->getOperatorsAtPosition (opContainer, cmp);
+	}
+
+	
 	/**  
 	 * Returns plain text extracted from a page.
 	 *
