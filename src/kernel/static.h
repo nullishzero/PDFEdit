@@ -84,6 +84,39 @@ private:
 
 } nullPtr = {};
 
+/** Coordinate. */
+typedef double Coordinate;
+/** Invalid coordinate. */
+const double COORDINATE_INVALID = std::numeric_limits<Coordinate>::max();
+
+/**
+ * Point. 
+ */
+typedef struct Point
+{
+	Coordinate x;
+	Coordinate y;
+	// Constructor
+	Point () {x = y = COORDINATE_INVALID;}
+	Point (Coordinate _x, Coordinate _y) : x(_x), y(_y) {}
+
+} Point;
+
+
+/**
+ * Rectangle structure. Defined as in pdf specification v1.5 (p. 133)
+ */
+typedef struct Rect
+{
+	Coordinate xleft;
+	Coordinate yleft;
+	Coordinate xright;
+	Coordinate yright;
+
+	// Constructor
+	Rect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
+
+} Rectangle;
 
 
 #endif // _STATIC_H_
