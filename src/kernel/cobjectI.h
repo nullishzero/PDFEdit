@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  cobjectI.h
@@ -666,10 +667,13 @@ CObjectComplex<Tp,Checker>::doClone () const
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (CPdf& p, Object& /*o*/, const IndiRef& rf) : IProperty (&p,rf) 
+CObjectStream<Checker>::CObjectStream (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
 	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
+
+	// Copy the stream
+	o.copy (&xpdfDict);
 }
 
 
@@ -677,10 +681,13 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, Object& /*o*/, const IndiRef& rf
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (Object& /*o*/)
+CObjectStream<Checker>::CObjectStream (Object& o)
 {
 	Checker check; check.objectCreated (this);
 	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
+
+	// Copy the stream
+	o.copy (&xpdfDict);
 }
 
 
@@ -789,7 +796,9 @@ template<typename Checker>
 Object*
 CObjectStream<Checker>::_makeXpdfObject () const
 {
-	return NULL;
+	Object* obj = new Object ();
+	xpdfDict.copy (obj);
+	return obj;
 }
 
 
@@ -801,6 +810,9 @@ CObjectStream<Checker>::~CObjectStream ()
 {
 	Checker check; check.objectDeleted (this);
 	printDbg (debug::DBG_DBG,"~CObjectStream()");
+
+	// Free xpdf object
+	xpdfDict.free ();
 }
 
 

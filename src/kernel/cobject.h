@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /* 
  * =====================================================================================
  *        Filename:  cobject.h
@@ -632,6 +633,10 @@ private:
 	
 	/** Object dictionary. */
 	boost::scoped_ptr<CDict> dict;
+	
+	/** Xpdf object. */
+	mutable Object xpdfDict;
+
 		
 private:
 
@@ -710,6 +715,8 @@ public:
 
 	/**
      * Create xpdf object.
+	 *
+	 * REMARK: Caller is responsible for deallocating the xpdf object.
      *
      * @return Xpdf object(s).
      */
@@ -832,9 +839,11 @@ public:
 	//
 	void objectCreated (IProperty* ip)
 	{
+		#if MEM_CHECKER_OUTPUT
 		_printHeader (std::cerr);
 		std::cerr << "IProperty [0x"<< (unsigned)ip << "] created.";
 		_printFooter (std::cerr);
+		#endif
 		
 		getList().push_back (ip);
 		++getMax ();
@@ -845,8 +854,10 @@ public:
 	//
 	void objectDeleted (IProperty* ip)
 	{
+		#if MEM_CHECKER_OUTPUT
 		_printHeader (std::cerr);
 		std::cerr << "IProperty [0x"<< (unsigned)ip << "] deleted.";
+		#endif
 
 		_IPsList::iterator it = find (getList().begin(), getList().end(), ip);
 		if (it != getList().end())
@@ -857,8 +868,9 @@ public:
 		{
 				printDbg (debug::DBG_CRIT, "!!!!!!!!!! deleting what was not created !!!!!!!!!!");
 		}
-		
+		#if MEM_CHECKER_OUTPUT
 		_printFooter (std::cerr);
+		#endif
 	};
 		
 	//
