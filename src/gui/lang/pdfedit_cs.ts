@@ -120,8 +120,12 @@
         <translation>Nahrán soubor</translation>
     </message>
     <message>
-        <source>New file created</source>
-        <translation>Vytvořen nový soubor</translation>
+        <source>New document created</source>
+        <translation>Vytvořen nový dokument</translation>
+    </message>
+    <message>
+        <source>Current file is not saved. Do you want to save it?</source>
+        <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
     </message>
 </context>
 <context>
@@ -275,6 +279,14 @@
         <source>&amp;Cancel</source>
         <translation>&amp;Storno</translation>
     </message>
+    <message>
+        <source>File &quot;</source>
+        <translation>Soubor &quot;</translation>
+    </message>
+    <message>
+        <source>&quot; already exists. Overwrite?</source>
+        <translation>&quot; již existuje. Přepsat?</translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
@@ -282,21 +294,6 @@
         <source>Main Toolbar</source>
         <comment>MainToolbar</comment>
         <translation>Hlavní toolbar</translation>
-    </message>
-    <message>
-        <source>&amp;New Document</source>
-        <comment>new</comment>
-        <translation>&amp;Nový dokument</translation>
-    </message>
-    <message>
-        <source>&amp;Load</source>
-        <comment>load</comment>
-        <translation>Nahrát</translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <comment>save</comment>
-        <translation>&amp;Uložit</translation>
     </message>
     <message>
         <source>&amp;Options</source>
@@ -319,16 +316,6 @@
         <translation>Hlavní menu</translation>
     </message>
     <message>
-        <source>File</source>
-        <comment>file</comment>
-        <translation>Soubor</translation>
-    </message>
-    <message>
-        <source>&amp;New Window</source>
-        <comment>neww</comment>
-        <translation>&amp;Nové okno</translation>
-    </message>
-    <message>
         <source>&amp;Close Window</source>
         <comment>closew</comment>
         <translation>Zavřít okno</translation>
@@ -339,14 +326,54 @@
         <translation>Konec</translation>
     </message>
     <message>
-        <source>Help</source>
+        <source>&amp;Help</source>
+        <comment>index</comment>
+        <translation>Nápověda</translation>
+    </message>
+    <message>
+        <source>&amp;New document</source>
+        <comment>fnew</comment>
+        <translation>&amp;Nový document</translation>
+    </message>
+    <message>
+        <source>&amp;Open...</source>
+        <comment>fload</comment>
+        <translation>&amp;Otevřít...</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <comment>fsave</comment>
+        <translation>&amp;Uložit</translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <comment>file</comment>
+        <translation>Soubor</translation>
+    </message>
+    <message>
+        <source>Save &amp;as...</source>
+        <comment>fsaveas</comment>
+        <translation>Uložit j&amp;ako...</translation>
+    </message>
+    <message>
+        <source>New &amp;Window</source>
+        <comment>neww</comment>
+        <translation>Nové okno</translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <comment>tools</comment>
+        <translation>Nástroje</translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
         <comment>help</comment>
         <translation>Nápověda</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
-        <comment>index</comment>
-        <translation>Nápověda</translation>
+        <source>Testing items</source>
+        <comment>test</comment>
+        <translation>Testovací menu</translation>
     </message>
 </context>
 <context>

@@ -120,7 +120,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New file created</source>
+        <source>New document created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current file is not saved. Do you want to save it?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -275,27 +279,20 @@
         <comment>Type name</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>File &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot; already exists. Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
         <source>Main Toolbar</source>
         <comment>MainToolbar</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New Document</source>
-        <comment>new</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Load</source>
-        <comment>load</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <comment>save</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -319,16 +316,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File</source>
-        <comment>file</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New Window</source>
-        <comment>neww</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Close Window</source>
         <comment>closew</comment>
         <translation type="unfinished"></translation>
@@ -339,13 +326,53 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Help</source>
-        <comment>help</comment>
+        <source>&amp;Help</source>
+        <comment>index</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Testing items</source>
+        <comment>test</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New document</source>
+        <comment>fnew</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open...</source>
+        <comment>fload</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <comment>fsave</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <comment>file</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save &amp;as...</source>
+        <comment>fsaveas</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New &amp;Window</source>
+        <comment>neww</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <comment>tools</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <comment>index</comment>
+        <comment>help</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
