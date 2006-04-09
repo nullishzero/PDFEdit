@@ -8,8 +8,6 @@
 using namespace pdfobjects;
 
 class StringProperty : public Property {
-//ADDED functions begin
-//ADDED functions end
 Q_OBJECT
 public:
  QSize sizeHint() const;

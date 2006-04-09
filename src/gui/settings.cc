@@ -397,7 +397,7 @@ void Settings::loadToolBarItem(ToolBar *tb,QString item) {
  if (line.startsWith("item ")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   line=line.remove(0,5);  
   QStringList qs=explode(',',line);
-  if (qs.count()<4) fatalError("Invalid toolbar item in config:\n"+line);
+  if (qs.count()<4) fatalError("Invalid toolbar item in config (must have 4 fields):\n"+line);
   line=line.remove(0,5);
   QPixmap *pixmap=getIcon(qs[3]);
   int menu_id=addAction(qs[1]);

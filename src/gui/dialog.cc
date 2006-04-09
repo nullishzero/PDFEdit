@@ -2,10 +2,12 @@
  Dialog - class with various static dialogs:
 OpenFileDialog
 SaveFileDialog
+readStringDialog
 */
 #include "dialog.h"
 #include "version.h"
 #include <qinputdialog.h> 
+#include <qmessagebox.h> 
 #include <qfiledialog.h> 
 #include <utils/debug.h>
 
@@ -20,7 +22,11 @@ QString openFileDialog(QWidget* parent) {
  fd.setShowHiddenFiles(TRUE);
  fd.setCaption(QObject::tr("Open file ..."));
  fd.setMode(QFileDialog::ExistingFile);
- if (fd.exec()==QDialog::Accepted) return fd.selectedFile();
+ if (fd.exec()==QDialog::Accepted) {
+  QString name=fd.selectedFile();
+  //TODO: check if not directory
+  return name;
+ }
  return QString::null;
 }
 
@@ -28,8 +34,9 @@ QString openFileDialog(QWidget* parent) {
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
  @param oldName Name of file to be saved - if specified, this name will be pre-selected.
+ @param askOverwrite If true and selected file exists, user will be asked to confirm overwriting it
  @return selected Filename*/
-QString saveFileDialog(QWidget* parent,const QString &oldname) {
+QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/) {
  printDbg(debug::DBG_DBG,"saveFileDialog invoked");
  QFileDialog fd(parent,"savefiledialog",TRUE);
  fd.setFilter(QObject::tr("PDF files (*.pdf)"));
@@ -37,8 +44,24 @@ QString saveFileDialog(QWidget* parent,const QString &oldname) {
  fd.setCaption(QObject::tr("Save file as ..."));
  if (!oldname.isNull()) fd.setSelection(oldname);
  fd.setMode(QFileDialog::AnyFile);
- if (fd.exec()==QDialog::Accepted) return fd.selectedFile();
- return QString::null;
+ for(;;) {
+  if (fd.exec()==QDialog::Accepted) {
+   QString name=fd.selectedFile();
+   //TODO: check if not directory
+   if (askOverwrite && QFile::exists(name)) { //File exists : ask if it should be overwritten
+    int answer=QMessageBox::question(parent,APP_NAME,QObject::tr("File \"")+name+QObject::tr("\" already exists. Overwrite?"),
+                                     QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),1,2);
+//                                     QMessageBox::Yes,QMessageBox::No | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape);
+    if (answer==0/*QMessageBox::Yes*/) return name;		  //Yes, overwrite is ok
+    if (answer==1/*QMessageBox::No*/) continue;		  //No, restart dialog
+    if (answer==2/*QMessageBox::Cancel*/) return QString::null;//Cancel, do not overwrite and exit
+   }
+   //Not asking about overwrite
+   return name;
+  }
+  //Dialog cancelled
+  return QString::null;
+ }
 }
 
 /** Invoke "read string" dialog. Show message and wait for user to type any string, 

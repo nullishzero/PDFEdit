@@ -13,16 +13,11 @@ QSPdf::QSPdf(CPdf *_pdf) : QSCObject ("Pdf") {
 QSPdf::~QSPdf() {
 }
 
-/** Call CPdf::save(NULL) */
-int QSPdf::save() {
- //TODO: update name from/to GUI, disallow if name empty
- return obj->save(NULL);
-}
-
 /** Call CPdf::save(name) */
 int QSPdf::saveAs(QString name) {
- //TODO: update name from/to GUI
+ if (name.isNull()) return false;//No empty names!
  return obj->save(name);
+ //TODO: how it is with CPDF::save() return values?
 }
 
 /** Call CPdf::getDictionary */

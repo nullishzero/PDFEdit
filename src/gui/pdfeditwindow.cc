@@ -21,7 +21,7 @@ using namespace std;
 /** number of active editor windows -> when last is closed, application terminates */
 int windowCount;
 
-//TODO: system konfigurovatelnch menu (castecne hotov), toolbar (nehotov). a klvesovch zkratek (neco uz je v shystemu menu)
+//TODO: system konfigurovatelnych toolbaru (ne zcela hotov). a klvesovych zkratek (neco uz je v systemu menu)
 
 /** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void PdfEditWindow::exitApp() {
@@ -50,14 +50,37 @@ void PdfEditWindow::openFileNew(const QString &name) {
 }
 
 /** This is called on attempt to close window. If there is unsaved work,
- dialog asking to save it would appear (TODO), otherwise the windows is closed. */
+ dialog asking to save it would appear, otherwise the windows is closed. */
 void PdfEditWindow::closeEvent(QCloseEvent *e) {
- //TODO: ask for save/discard/cancel if unsaved work and refuse close if necessary
+ if (!closeFile(true)) { //user does not want to close and lose unsaved work
+  e->ignore();
+  return;
+ }
  e->accept();
  saveWindowState();
  windowCount--;
  delete this;
  //The PdfEditWindow itself will be deleted on close();
+}
+
+/** Check whether given file exists
+ @param chkfileName Name of file to check
+ @return true if file exists, false otherwise
+*/
+bool PdfEditWindow::exists(const QString &chkFileName) {
+  return QFile::exists(chkFileName);
+}
+
+/** Check whether curretntly opened document was modified
+    since it was opened or last saved
+ @return true if document was modified, false if not
+*/
+bool PdfEditWindow::modified() {
+ if (!document) return false;//no document loaded at all
+
+ //TODO: implement. Now returns true for safety
+
+ return true;
 }
 
 /** Show options dialog. Does not wait for dialog to finish. */
@@ -79,7 +102,8 @@ QString PdfEditWindow::fileOpenDialog() {
  */
 QString PdfEditWindow::fileSaveDialog(const QString &oldName/*=QString::null*/) {
  printDbg(debug::DBG_DBG,"fileSaveDialog");
- return saveFileDialog(this,oldName);
+ QString ret=saveFileDialog(this,oldName);
+ return ret;
 }
 
 /** Creates new windows and displays it.
@@ -94,6 +118,12 @@ void createNewEditorWindow(const QString &fName) {
 
 /** Close the window itself */
 void PdfEditWindow::closeWindow() {
+/* TODO: Need QSA 1.1.4 for this
+ if (qs->isRunning()) {
+  qs->stopExecution();
+  deleteLater();  //Delete window when returning back to main loop
+  return;
+ }*/
  close();
 }
 
@@ -200,7 +230,7 @@ void PdfEditWindow::menuActivated(int id) {
  @param fName Name of file to open in this window. If empty or null, no file will be opened 
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
- setCaption(APP_NAME);
+ setFileName(QString::null);
  document=NULL; 
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
@@ -272,16 +302,81 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  if (fName.isNull()) { //start with empty editor
   emptyFile();
+  print(tr("New document created"));
  } else { //open file
   openFile(fName);
  }
  prop->setObject(0);//fill with demonstration properties
 }
 
-/** Closes file currently opened in editor */
-void PdfEditWindow::closeFile() {
+/** Closes file currently opened in editor.
+@param askSave Ask about saving changes?
+@return true if user accepted the close or saved the document before,
+ false if user refuses the close */
+bool PdfEditWindow::closeFile(bool askSave) {
+ if (modified() && askSave) {
+  int answer=question_ync(fileName+"\n"+tr("Current file is not saved. Do you want to save it?"));
+  if (answer==QMessageBox::Yes) { //save it
+   if (!save()) return false; //Unable to save document -> not closing
+  }
+  if (answer==QMessageBox::Cancel) return false; //abort closing
+  // QMessageBox::No -> continue happily, no saving wanted
+ }
  destroyFile();
  emptyFile();
+ return true;
+}
+
+/**
+Save currently edited document to disk
+If the document have no name (newly opened/generated document), it is solicited from used via dialog.
+@return true if saved succesfully, false if failed to save because of any reason
+ */
+bool PdfEditWindow::save() {
+ assert(document);
+ if (fileName.isNull()) { //We need a name
+  QString name=fileSaveDialog(filename());
+  if (name.isNull()) return false; //Still no name? Not saving ...
+  document->save(name);
+ //TODO: if failure saving return false;
+  setFileName(name);
+  return true;
+ }
+ //TODO: handle failure and nummfileName
+ document->save(fileName);
+ //TODO: if failure saving return false;
+ return true;
+}
+
+
+/**
+Save currently edited document to disk, using provided filename
+@param name New filename to save document under
+@return true if saved succesfully, false if failed to save because of any reason
+ */
+bool PdfEditWindow::saveAs(const QString &name) {
+ assert(document);
+ //TODO: what is returned from CPDF::save()?
+ document->save(name);
+ //TODO: if failure saving return false;
+ setFileName(name);
+ return true;
+}
+
+/**
+Assign given filename for document in editor. Also updates window title, etc ...
+@param name New filename for document
+ */
+void PdfEditWindow::setFileName(const QString &name) {
+ fileName=name;
+ if (name.isNull()) { //No name
+  setCaption(QString(APP_NAME));
+  return;
+ }
+ //Add name of file without path to window title
+ QString baseName=name;
+ baseName.replace(QRegExp("^.*/"),"");
+ setCaption(QString(APP_NAME)+" - "+baseName);
 }
 
 /** Closes file currently opened in editor, without opening new empty one */
@@ -291,11 +386,10 @@ void PdfEditWindow::destroyFile() {
  tree->clear();//clear treeview
  prop->clear();//clear property editor
  page.reset();
- ///todo: ask for save -> if yes, save
  document->close(false);
  delete qpdf;
  document=0;
- fileName=QString::null;
+ setFileName(QString::null);
 }
 
 /** Open file in editor.
@@ -308,27 +402,19 @@ void PdfEditWindow::openFile(const QString &name) {
  document=CPdf::getInstance(name,mode);
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
- tree->init(document);//.getDictionary()
- fileName=name;
- QString baseName=name;
- baseName.replace(QRegExp("^.*/"),"");
- print(tr("Loaded file")+" : "+baseName);
-//test::testDict());
- setCaption(QString(APP_NAME)+" - "+baseName);
+ tree->init(document);
+ print(tr("Loaded file")+" : "+name);
+ setFileName(name);
 }
 
 /** Opens new empty file in editor. */
 void PdfEditWindow::emptyFile() {
  destroyFile();
-document=NULL;// document=test::testPDF();//todo: testing, should be something empty
+ document=NULL;
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
-//tree->init(document);//todo: testing, should be document
- tree->init(test::testDict());
- fileName=QString::null;
- print(tr("New file created"));
-//test::testDict());
- setCaption(APP_NAME);
+ tree->init(test::testDict()); //todo: testing, should be NULL
+ setFileName(QString::null);
 }
 
 /** Print all objects that are in current script interpreter to console window*/
@@ -368,9 +454,28 @@ void PdfEditWindow::message(const QString &msg) {
  @return True if yes, false if no
  */
 bool PdfEditWindow::question(const QString &msg) {
- int answer=QMessageBox::question(this,APP_NAME,msg,QObject::tr("&Yes"),QObject::tr("&No"),QString::null,
-                                  QMessageBox::Yes | QMessageBox::Default,QMessageBox::No | QMessageBox::Escape);
- return (answer==QMessageBox::Yes);
+ int answer=QMessageBox::question(this,APP_NAME,msg,QObject::tr("&Yes"),QObject::tr("&No"),QString::null,0,1);
+//                                  QMessageBox::Yes | QMessageBox::Default,QMessageBox::No | QMessageBox::Escape);
+ return (answer==0);//QMessageBox::Yes);
+}
+
+/** Asks question with Yes/No/Cancel answer. "Yes" is default. <br />
+ Return on of these three according to user selection: <br />
+  QMessageBox::Yes     <br />
+  QMessageBox::No      <br />
+  QMessageBox::Cancel
+ @param msg Question to display
+ @return Selection of user.
+ */
+int PdfEditWindow::question_ync(const QString &msg) {
+ int answer=QMessageBox::question(this,APP_NAME,msg,QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),0,2);
+ // QMessageBox::Yes | QMessageBox::Default,QMessageBox::No, QMessageBox::Cancel | QMessageBox::Escape
+ switch (answer) {
+  case 0: return QMessageBox::Yes;
+  case 1: return QMessageBox::No;
+  case 2: return QMessageBox::Cancel;
+  default: assert(0);
+ }
 }
 
 /** Return name of file loaded in editor. Return empty string if the document have no name
@@ -394,7 +499,8 @@ PdfEditWindow::~PdfEditWindow() {
  destroyFile();
  /* stopExecution is not in QSA 1.0.1, need 1.1.4
  if (qs->isRunning()) {
-  qs->stopExecution()
+  qs->stopExecution();
+  deleteLater();  //Delete object when returning back to main loop
  }*/
  delete qp;
 }

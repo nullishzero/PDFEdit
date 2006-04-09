@@ -197,6 +197,7 @@ int main(int argc, char *argv[]){
   }
  } else { //check menus, do localization
    cout << "Checking menu" << endl;
+   //TODO: check accelerator conflicts in single menu
    m.check();
    cout << "Done checking menu" << endl;
  }

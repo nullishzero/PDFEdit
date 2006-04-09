@@ -24,13 +24,18 @@ class PdfEditWindow : public QMainWindow {
 public:
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
+ int question_ync(const QString &msg);
 public slots: //These will be exported to scripting
+ bool save();
+ bool saveAs(const QString &name);
  QString fileOpenDialog();
  QString fileSaveDialog(const QString &oldName=QString::null);
+ bool modified();
+ bool exists(const QString &chkFileName);
  void options();
  void message(const QString &msg);
  bool question(const QString &msg);
- void closeFile();
+ bool closeFile(bool askSave);
  void openFileNew(const QString &name);
  void openFile(const QString &name);
  void saveWindowState();
@@ -51,6 +56,7 @@ protected slots:
  void runScript(QString script);
  void menuActivated(int id);
 private:
+ void setFileName(const QString &name);
  void destroyFile();
  void emptyFile();
  void addDocumentObjects();
