@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/09 21:29:33  misuj1am
+ *
+ *
+ * -- changed the method that creates CPdf to match my views
+ *
  * Revision 1.2  2006/04/03 14:38:21  misuj1am
  *
  *
@@ -55,15 +60,15 @@ using namespace std;
 	boost::shared_ptr<CDict> dict=cpdf->getDictionary();
 	
 	// gets all pages
-	size_t pageCount=cpdf->getPageCount();
-	for(size_t i=1;i<=pageCount; i++)
+	//size_t pageCount=cpdf->getPageCount();
+	//for(size_t i=1;i<=pageCount; i++)
 	{
-		boost::shared_ptr<CPage> page=cpdf->getPage(i);	
-		printf("Page #%u\n", i);
-		vector<string> names;
-		boost::shared_ptr<CDict> pageDict_ptr=page->getDictionary();
-		//printProperty(pageDict_ptr);
-		printf("\n");
+	//	boost::shared_ptr<CPage> page=cpdf->getPage(i);	
+	//	printf("Page #%u\n", i);
+	//	vector<string> names;
+	//	boost::shared_ptr<CDict> pageDict_ptr=page->getDictionary();
+	//	//printProperty(pageDict_ptr);
+	//	printf("\n");
 	}
 
 	return cpdf;
