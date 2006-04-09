@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  pdfoperators.h
@@ -47,9 +48,8 @@ class PdfOperator
 		
 public:
 	typedef std::list<boost::shared_ptr<IProperty> > 	 Operands;
-	typedef std::vector<boost::shared_ptr<IProperty> > 	 IPContainer; 
-	typedef PdfOperator* 								 ListItem;
-	typedef iterator::LinkedListIterator<boost::shared_ptr<PdfOperator> > Iterator;
+	typedef boost::weak_ptr<PdfOperator>				 ListItem;
+	typedef iterator::LinkedListIterator<ListItem> 		 Iterator;
 	typedef std::vector<boost::shared_ptr<PdfOperator> > PdfOperators;
 
 	// iterator has to be a friend
@@ -60,7 +60,7 @@ protected:
 	/**
 	 * Constructor.
 	 */
-	PdfOperator (ListItem prv = NULL, ListItem nxt = NULL) : next(nxt), prev(prv) {};
+	PdfOperator (ListItem prv = ListItem(), ListItem nxt = ListItem()) : next(nxt), prev(prv) {};
 
 
 public:
@@ -88,7 +88,7 @@ public:
 	 *
 	 * @param container Will be used to store parameters.
 	 */
-	virtual void getParameters (IPContainer& container) const = 0;
+	virtual void getParameters (Operands& container) const = 0;
 
 	/**
 	 * Get the string representation of this operator.
@@ -151,34 +151,58 @@ private:
 	ListItem prev;
 
 public:
+
+	/**
+	 * Get iterator.
+	 * 
+	 * REMARK: We can't simply make getIterator a method, because we have to
+	 * know the smart pointer behind the object. Member variable "this" is not
+	 * sufficient.
+	 *
+	 * @param op Operator from which we want the iterator.
+	 * 
+	 * @return Iterator.
+	 */
+	static Iterator getIterator (boost::shared_ptr<PdfOperator> op) 
+		{ return Iterator (ListItem (op)); };
+
+	/**
+	 * Put behind.
+	 * 
+	 * REMARK: We can't simply make putBehind a method, because we have to
+	 * know the smart pointer behind the object. Member variable "this" is not
+	 * sufficient.
+	 *
+	 * @behindWhich Behind which elemnt.
+	 * @which 		Which element.
+	 */
+	static void putBehind (	boost::shared_ptr<PdfOperator> behindWhich, 
+							boost::shared_ptr<PdfOperator> which)
+	{
+		if (!behindWhich->next.expired ())
+		{ // we are not at the end
+		
+			which->setNext (behindWhich->next);
+			assert (behindWhich->next.lock());
+			behindWhich->next.lock()->setPrev (ListItem (which));
+			which->setPrev (ListItem (behindWhich));
+			behindWhich->setNext (ListItem (which));
+			
+		}else
+		{ // we are at the end
+			
+			behindWhich->setNext (ListItem (which));
+			which->setPrev (ListItem (behindWhich));
+		}
+	}
+	
 	/**
 	 * Set next or prev item.
 	 */
 	void setNext (boost::shared_ptr<PdfOperator> nxt) 
-		{ setNext (nxt.get ());	};
+		{ setNext (ListItem (nxt));	};
 	void setPrev (boost::shared_ptr<PdfOperator> prv) 
-		{ setPrev (prv.get ()); };
-	
-	/**
-	 * Put behind this object.
-	 *
-	 * @param beh Object that will be moved behind this object.
-	 */
-	void putBehind (boost::shared_ptr<PdfOperator> beh)
-	{
-		// Are we the end
-		if (next)
-		{
-			beh->setNext (next);
-			next->setPrev (beh.get());
-			beh->setPrev (this);
-			next = beh.get();
-		}else
-		{
-			next = beh.get();
-			beh->setPrev (this); 
-		}
-	};	
+		{ setPrev (ListItem (prv)); };
 	
 private:
 
@@ -187,14 +211,14 @@ private:
 	 */
 	void setNext (ListItem nxt) 
 	{ 
-		if (next) 
+		if (!next.expired ())
 			printDbg (debug::DBG_DBG, "Changing valid next variable.");
 
 		next = nxt;
 	};
 	void setPrev (ListItem prv) 
 	{ 
-		if (prev) 
+		if (!prev.expired ()) 
 			printDbg (debug::DBG_DBG, "Changing valid prev variable.");
 		
 		prev = prv; 
@@ -325,7 +349,7 @@ public:
 	virtual size_t getParametersCount () const
 		{ return operands.size (); };
 
-	virtual void getParameters (IPContainer& container) const
+	virtual void getParameters (Operands& container) const
 		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
 
 	virtual void getOperatorName (std::string& first, std::string& last) const
@@ -358,7 +382,7 @@ public:
 	// PdfOperator interface
 	//
 	virtual size_t getParametersCount () const;
-	virtual void getParameters (IPContainer& container) const;
+	virtual void getParameters (Operands& container) const;
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first, std::string& last) const;
 	

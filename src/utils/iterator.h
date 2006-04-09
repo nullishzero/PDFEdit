@@ -45,15 +45,15 @@ private:
 public:
 
 	/** Constructors. */
-	LinkedListIterator () {};
 	LinkedListIterator (Item oper) : _cur (oper) {};
 
 	/** Next. */
 	LinkedListIterator<Item>& next ()
 	{
-		if (_cur)
+		if (!_cur.expired())
 		{
-			_cur = _cur->_next ();
+			assert (_cur.lock());
+			_cur = _cur.lock()->_next ();
 					
 		}else
 			throw IteratorInvalidObject ();
@@ -64,9 +64,10 @@ public:
 	/** Previous. */
 	LinkedListIterator<Item>& prev ()
 	{
-		if (_cur)
+		if (!_cur.expired())
 		{
-			_cur = _cur->_prev ();
+			assert (_cur.lock());
+			_cur = _cur.lock()->_prev ();
 			
 		}else
 			throw IteratorInvalidObject ();
@@ -74,18 +75,11 @@ public:
 		return *this;
 	};
 	
-	/** Operator =. */
-	LinkedListIterator<Item>& operator= (LinkedListIterator<Item>& iter)
-	{
-		_cur = iter._cur;
-		return *this;
-	};
-	
 	/** Get current. */
-	Item getCurrent () {return _cur;};
+	Item getCurrent () const {return _cur;};
 
 	/** Are we at the end. Doesn't matter whether in the front or at the back */
-	bool isEnd () { return (_cur) ? true : false; };
+	bool isEnd () const { return (_cur.expired()) ? true : false; };
 
 };
 

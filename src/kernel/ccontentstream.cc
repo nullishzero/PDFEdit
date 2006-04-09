@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  ccontentstream.cc
@@ -32,6 +33,16 @@ using namespace utils;
 
 namespace
 {
+
+	//
+	// Actual state (position) updaters
+	//
+	void 
+	unknownUpdate (GfxState&, const PdfOperator::Operands&)
+	{
+		printDbg (debug::DBG_DBG, "!");
+	}
+	
 	//
 	// Maximum operator arguments
 	//
@@ -76,9 +87,10 @@ namespace
 	//
 	typedef struct
 	{
-		const char 				name[4];	
-		const size_t			argNum;
-		const unsigned short	types[MAX_OPERANDS];	// Bits represent what it should be
+		const char 				name[4];				/** Operator name. */
+		const size_t			argNum;					/** Number of arguments operator should get. */
+		const unsigned short	types[MAX_OPERANDS];	/** Bits are representing what it should be. */
+		void (*update) (GfxState& state, const PdfOperator::Operands& ops);/** Function to execute when updating position. */
 		
 	} CheckTypes;
 
@@ -87,144 +99,144 @@ namespace
 	 * 
 	 */
 	const CheckTypes KNOWN_OPERATORS[] = {
-			{"",  3, 	setNthBitsShort (pInt, pReal),
+			{"",  3, 	{setNthBitsShort (pInt, pReal),
 					 	setNthBitsShort (pInt, pReal),    
-					 	setNthBitsShort (pString) },
-			{"'", 1, 	setNthBitsShort (pString) },
-			{"B", 0, 	setNoneBitsShort () },
-			{"B*", 0, 	setNoneBitsShort () },
+					 	setNthBitsShort (pString)}, unknownUpdate},	
+/*			{"'", 1, 	setNthBitsShort (pString), unknownUpdate},	
+			{"B", 0, 	setNoneBitsShort (), unknownUpdate},	
+			{"B*", 0, 	setNoneBitsShort (), unknownUpdate},	
 			{"BDC", 2, 	setNthBitsShort (pName),   
-						setNthBitsShort (pDict, pName) },
-			{"BI", 0, 	setNoneBitsShort () },
-			{"BMC", 1, 	setNthBitsShort (pName) },
-			{"BT",  0, 	setNoneBitsShort () },
-			{"BX",  0, 	setNoneBitsShort () },
-			{"CS",  1, 	setNthBitsShort (pName) },
+						setNthBitsShort (pDict, pName), unknownUpdate},	
+			{"BI", 0, 	setNoneBitsShort (), unknownUpdate},	
+			{"BMC", 1, 	setNthBitsShort (pName), unknownUpdate},	
+			{"BT",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"BX",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"CS",  1, 	setNthBitsShort (pName), unknownUpdate},	
 			{"DP",  2,	setNthBitsShort (pName),   
-						setNthBitsShort (pDict, pName) },
-			{"Do",  1, 	setNthBitsShort (pName) },
-			{"EI",  0, 	setNoneBitsShort () },
-			{"EMC", 0, 	setNoneBitsShort () },
-			{"ET",  0, 	setNoneBitsShort () },
-			{"EX",  0, 	setNoneBitsShort () },
-			{"F",   0, 	setNoneBitsShort () },
-			{"G",   1, 	setNthBitsShort (pInt, pReal) },
-			{"ID",  0, 	setNoneBitsShort () },
-			{"J",   1, 	setNthBitsShort (pInt) },
+						setNthBitsShort (pDict, pName), unknownUpdate},	
+			{"Do",  1, 	setNthBitsShort (pName), unknownUpdate},	
+			{"EI",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"EMC", 0, 	setNoneBitsShort (), unknownUpdate},	
+			{"ET",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"EX",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"F",   0, 	setNoneBitsShort (), unknownUpdate},	
+			{"G",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"ID",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"J",   1, 	setNthBitsShort (pInt), unknownUpdate},	
 			{"K",   4, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),
 						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal) },
-			{"M",   1, 	setNthBitsShort (pInt, pReal) },
-			{"MP",  1, 	setNthBitsShort (pName) },
-			{"Q",   0, 	setNoneBitsShort () },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"M",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"MP",  1, 	setNthBitsShort (pName), unknownUpdate},	
+			{"Q",   0, 	setNoneBitsShort (), unknownUpdate},	
 			{"RG",  3, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
-			{"S",   0, 	setNoneBitsShort () },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"S",   0, 	setNoneBitsShort (), unknownUpdate},	
 			{"SC",  4, setNthBitsShort (pInt, pReal),   
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
   			{"SCN", 5, setNthBitsShort (pInt, pReal, pName),   
 						setNthBitsShort (pInt, pReal, pName),    
 						setNthBitsShort (pInt, pReal, pName),    
 						setNthBitsShort (pInt, pReal, pName),
-						setNthBitsShort (pInt, pReal, pName)},
-			{"T*",  0, 	setNoneBitsShort () },
+						setNthBitsShort (pInt, pReal, pName), unknownUpdate},	
+			{"T*",  0, 	setNoneBitsShort (), unknownUpdate},	
 			{"TD",  2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
-			{"TJ",  1, 	setNthBitsShort (pArray) },
-			{"TL",  1, 	setNthBitsShort (pInt, pReal) },
-			{"Tc",  1, 	setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"TJ",  1, 	setNthBitsShort (pArray), unknownUpdate},	
+			{"TL",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"Tc",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"Td",  2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"Tf",  2, 	setNthBitsShort (pName),   
-						setNthBitsShort (pInt, pReal) },
-			{"Tj",  1, 	setNthBitsShort (pString) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"Tj",  1, 	setNthBitsShort (pString), unknownUpdate},	
 			{"Tm",  6, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),
 						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal)},
-			{"Tr",  1, 	setNthBitsShort (pInt) },
-			{"Ts",  1, 	setNthBitsShort (pInt, pReal) },
-			{"Tw",  1, 	setNthBitsShort (pInt, pReal) },
-			{"Tz",  1, 	setNthBitsShort (pInt, pReal) },
-			{"W",   0, 	setNoneBitsShort () },
-			{"W*",  0, 	setNoneBitsShort () },
-			{"b",   0, 	setNoneBitsShort () },
-			{"b*",  0, 	setNoneBitsShort () },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"Tr",  1, 	setNthBitsShort (pInt), unknownUpdate},	
+			{"Ts",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"Tw",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"Tz",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"W",   0, 	setNoneBitsShort (), unknownUpdate},	
+			{"W*",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"b",   0, 	setNoneBitsShort (), unknownUpdate},	
+			{"b*",  0, 	setNoneBitsShort (), unknownUpdate},	
   			{"c",   6, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),
 						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal)},
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
   			{"cm",  6, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),
 						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal)},
-			{"cs",  1, 	setNthBitsShort (pName) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"cs",  1, 	setNthBitsShort (pName), unknownUpdate},	
 			{"d",   2, 	setNthBitsShort (pArray),  
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"d0",  2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
   			{"d1",  6, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal)},
-			{"f",   0, 	setNoneBitsShort () },
-			{"f*",  0, 	setNoneBitsShort () },
-			{"g",   1, 	setNthBitsShort (pInt, pReal) },
-			{"gs",  1, 	setNthBitsShort (pName) },
-			{"h",   0, 	setNoneBitsShort () },
-			{"i",   1, 	setNthBitsShort (pInt, pReal) },
-			{"j",   1, 	setNthBitsShort (pInt) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"f",   0, 	setNoneBitsShort (), unknownUpdate},	
+			{"f*",  0, 	setNoneBitsShort (), unknownUpdate},	
+			{"g",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"gs",  1, 	setNthBitsShort (pName), unknownUpdate},	
+			{"h",   0, 	setNoneBitsShort (), unknownUpdate},	
+			{"i",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"j",   1, 	setNthBitsShort (pInt), unknownUpdate},	
 			{"k",   4, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"l",   2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"m",   2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
-			{"n",   0, 	setNoneBitsShort () },
-			{"q",   0, 	setNoneBitsShort () },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"n",   0, 	setNoneBitsShort (), unknownUpdate},	
+			{"q",   0, 	setNoneBitsShort (), unknownUpdate},	
 			{"re",  4, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"rg",  3, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
-			{"ri",  1, 	setNthBitsShort (pName) },
-			{"s",   0, 	setNoneBitsShort () },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"ri",  1, 	setNthBitsShort (pName), unknownUpdate},	
+			{"s",   0, 	setNoneBitsShort (), unknownUpdate},	
 			{"sc",  4, setNthBitsShort (pInt, pReal),   
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
   			{"scn", 5, setNthBitsShort (pInt, pReal, pName),   
 						setNthBitsShort (pInt, pReal, pName),    
 						setNthBitsShort (pInt, pReal, pName),    
 						setNthBitsShort (pInt, pReal, pName),    
-						setNthBitsShort (pInt, pReal, pName)},
-			{"sh",  1, 	setNthBitsShort (pName) },
+						setNthBitsShort (pInt, pReal, pName), unknownUpdate},	
+			{"sh",  1, 	setNthBitsShort (pName), unknownUpdate},	
 			{"v",   4, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
-			{"w",   1, 	setNthBitsShort (pInt, pReal) },
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+			{"w",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
 			{"y",   4, 	setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal) },
-
+						setNthBitsShort (pInt, pReal), unknownUpdate},	
+*/
 		};
 
 	/**
@@ -287,6 +299,44 @@ namespace
 		return true;
 	}
 
+	/**
+	 * Find the operator by its name.
+	 *
+	 * @param opName Name of the operator.
+	 *
+	 * @return Structure defining the operator.
+	 */
+	const CheckTypes*
+	findOp (const string& opName)
+	{
+		int lo, hi, med, cmp;
+		
+		cmp = std::numeric_limits<int>::max ();
+		lo = -1;
+		hi = sizeof (KNOWN_OPERATORS) / sizeof (CheckTypes);
+		
+		printDbg (DBG_DBG, "size: " << hi );
+		
+		// 
+		// dividing of interval
+		// 
+		while (hi - lo > 1) 
+		{
+			med = (lo + hi) / 2;
+			cmp = opName.compare (KNOWN_OPERATORS[med].name);
+			if (cmp > 0)
+				lo = med;
+			else if (cmp < 0)
+				hi = med;
+			else
+				lo = hi = med;
+		}
+
+		if (0 == cmp)
+			return &(KNOWN_OPERATORS[lo]);
+		else
+			return NULL;
+	}
 		
 	/**
 	 * Find the operator and create it. 
@@ -303,33 +353,17 @@ namespace
 	 * @return Created pdf operator.
 	 */
 	PdfOperator*
-	createOp (const string& op, PdfOperator::Operands& operands, CPdf& pdf, IndiRef rf, PdfOperator*& )
+	createOp  ( const string& op, 
+				PdfOperator::Operands& operands, 
+				CPdf& pdf, 
+				IndiRef rf, 
+				boost::shared_ptr<PdfOperator>& )
 	{
 		printDbg (DBG_DBG, "Finding operator: " << op);
 
-		int lo, hi, med, cmp;
-		
-		cmp = std::numeric_limits<int>::max ();
-		lo = -1;
-		hi = sizeof (KNOWN_OPERATORS) / sizeof (CheckTypes);
-		
-		printDbg (DBG_DBG, "size: " << hi );
-		
-		// 
-		// dividing of interval
-		// 
-		while (hi - lo > 1) 
-		{
-			med = (lo + hi) / 2;
-			cmp = op.compare (KNOWN_OPERATORS[med].name);
-			if (cmp > 0)
-				lo = med;
-			else if (cmp < 0)
-				hi = med;
-			else
-				lo = hi = med;
-		}
-		if (0 != cmp)
+		// Try to find the op by its name
+		const CheckTypes* chcktp = findOp (op);
+		if (NULL == chcktp)
 		{
 			printDbg (DBG_DBG, "Operator not found.");
 
@@ -338,18 +372,19 @@ namespace
 			return new UnknownPdfOperator (operands, op);
 		}
 				
-		printDbg (DBG_DBG, "Operator found. " << KNOWN_OPERATORS[lo].name);
+		assert (NULL != chcktp);
+		printDbg (DBG_DBG, "Operator found. " << chcktp->name);
 
-		if (!check (KNOWN_OPERATORS[lo], operands))
+		if (!check (*chcktp, operands))
 		{
 			throw MalformedFormatExeption ("Content stream bad operator type. ");
 		}
 		else
 		{
 			// Set pdf to all operands
-			operandsSetPdf (pdf, rf, operands, KNOWN_OPERATORS[lo].argNum);
+			operandsSetPdf (pdf, rf, operands, chcktp->argNum);
 			// Result in lo
-			return new SimpleGenericOperator (KNOWN_OPERATORS[lo].name, KNOWN_OPERATORS[lo].argNum, operands);
+			return new SimpleGenericOperator (chcktp->name, chcktp->argNum, operands);
 		}
 		//
 		// \TODO complex types
@@ -385,7 +420,7 @@ namespace
 		Object o;
 		parser->getObj(&o);
 
-		PdfOperator* cmplex = NULL;
+		boost::shared_ptr<PdfOperator> cmplex;
 		//
 		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
 		//
@@ -394,13 +429,21 @@ namespace
 			if (o.isCmd ())
 			{
 				// Create operator
-				boost::shared_ptr<PdfOperator> op  (createOp (string (o.getCmd ()), operands, 
-																pdf, rf,
-																cmplex));
+				boost::shared_ptr<PdfOperator> op  (createOp (string (o.getCmd ()), 
+										operands, 
+										pdf, rf,
+										cmplex));
 				//
-				// Put it either to operators or if it is a complex type, put it there
+				// Put it either to operators when the operator itself is a complex type
+				// or if it is not a complex type
+				// Put it behind complex type when the operand itself is not complex but we are in a
+				// complex type (that is indicated by cmplex variable)
 				//
-				if (NULL == cmplex || cmplex == op.get())
+				if (cmplex && cmplex != op)
+				{
+					PdfOperator::putBehind (cmplex, op);
+				
+				}else
 				{
 					if (!operators.empty())
 					{
@@ -409,17 +452,14 @@ namespace
 					}
 					// Make it the last one
 					operators.push_back (op);
-				
-				}else
-				{
-					cmplex->putBehind (op);
 				}
 				
 				assert (operands.empty());
 				if (!operands.empty ())
-					throw MalformedFormatExeption ("CContentStream::CContentStream() Operands left on stack in pdf content stream after operator.");
+					throw MalformedFormatExeption ( "CContentStream::CContentStream() "
+									"Operands left on stack in pdf content stream after operator.");
 					
-			}else
+			}else // if (o.isCmd ())
 			{
 				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
 				operands.push_back (pIp);
@@ -433,90 +473,46 @@ namespace
 	}
 	
 
-
-	
 //==========================================================
 } // namespace
 //==========================================================
 
 
+//==========================================================
+namespace operatorparser {
+//==========================================================
+
 //
 //
 //
-CContentStream::CContentStream (shared_ptr<IProperty> stream, Object* obj)
+void 
+adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 {
-	// not implemented yet
-	assert (obj != NULL);
-	if (pStream != stream->getType() || NULL == obj)
-		throw CObjInvalidObject (); 
-	printDbg (DBG_DBG, "Creating content stream.");
-
-	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
-	// the problem is with parsed pdfoperators
-	assert (NULL != stream->getPdf ());
-	
-	// Save stream
-	contentstreams.push_back (stream);
-
-	// Parse it into small objects
-	parseContentStream (operators, *obj, *(stream->getPdf ()), stream->getIndiRef());
-}
-
-//
-// Parse the xpdf object, representing the content stream
-//
-CContentStream::CContentStream (ContentStreams& streams, Object* obj)
-{
-	// not implemented yet
-	assert (obj != NULL);
-	if (NULL == obj)
-		throw CObjInvalidObject (); 
-	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
+	if (op)
 	{
-		if (pStream != (*it)->getType())
-			throw CObjInvalidObject (); 
-		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
-		// the problem is with parsed pdfoperators
-		assert (NULL != (*it)->getPdf());
-	}
-	printDbg (DBG_DBG, "Creating content stream.");
-	
-	// Save content streams
-	copy (streams.begin(), streams.end(), back_inserter (contentstreams));
-
-	// Parse it into small objects
-	parseContentStream (operators, *obj, *(streams.front()->getPdf ()), streams.front()->getIndiRef ());
-}
-
-//
-// 
-//
-void
-CContentStream::getStringRepresentation (string& str) const
-{
-	printDbg (DBG_DBG, " ()");
-	string frst, lst, tmp;
-
-	str.clear ();
-	for (Operators::const_iterator it = operators.begin (); it != operators.end(); ++it)
-	{
+		// Get operator name
+		string frst, lst;
+		op->getOperatorName(frst, lst);
+		// Get operator specification
+		const CheckTypes* chcktp = findOp (frst);
+		// Get operands
+		PdfOperator::Operands ops;
+		op->getParameters (ops);
+		// If operator found use the function else use default
+		if (NULL != chcktp)
+		{
+			assert (ops.size () == chcktp->argNum);
+			(chcktp->update) (state, ops);
 			
-		(*it)->getOperatorName (frst, lst);
-		printDbg (DBG_DBG, "Operator name: " << frst << " " << lst << " param count: " << (*it)->getParametersCount() );
-		
-		(*it)->getStringRepresentation (tmp);
-		str += tmp + "\n";
-		tmp.clear ();
-	}
-}
+		}else
+		{
+			unknownUpdate (state, ops);
+		}
 
-//
-//
-//
-template<typename Decider>
-void
-CContentStream::getOperatorsAtPosition (Operators& ops, Decider& dc) const
-{
+	}else
+		throw ElementBadTypeException ("adjustActualPosition()");
+	
+}
 /*
 	"m"	
 	state->moveTo(args[0].getNum(), args[1].getNum());
@@ -843,6 +839,79 @@ void Gfx::doShowText(GString *s) {
  \TODO 
  XOBJECTS
 */
+
+//==========================================================
+} // namespace operatorparser
+//==========================================================
+
+//
+//
+//
+CContentStream::CContentStream (shared_ptr<IProperty> stream, Object* obj)
+{
+	// not implemented yet
+	assert (obj != NULL);
+	if (pStream != stream->getType() || NULL == obj)
+		throw CObjInvalidObject (); 
+	printDbg (DBG_DBG, "Creating content stream.");
+
+	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
+	// the problem is with parsed pdfoperators
+	assert (NULL != stream->getPdf ());
+	
+	// Save stream
+	contentstreams.push_back (stream);
+
+	// Parse it into small objects
+	parseContentStream (operators, *obj, *(stream->getPdf ()), stream->getIndiRef());
+}
+
+//
+// Parse the xpdf object, representing the content stream
+//
+CContentStream::CContentStream (ContentStreams& streams, Object* obj)
+{
+	// not implemented yet
+	assert (obj != NULL);
+	if (NULL == obj)
+		throw CObjInvalidObject (); 
+	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
+	{
+		if (pStream != (*it)->getType())
+			throw CObjInvalidObject (); 
+		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
+		// the problem is with parsed pdfoperators
+		assert (NULL != (*it)->getPdf());
+	}
+	printDbg (DBG_DBG, "Creating content stream.");
+	
+	// Save content streams
+	copy (streams.begin(), streams.end(), back_inserter (contentstreams));
+
+	// Parse it into small objects
+	parseContentStream (operators, *obj, *(streams.front()->getPdf ()), streams.front()->getIndiRef ());
+}
+
+//
+// 
+//
+void
+CContentStream::getStringRepresentation (string& str) const
+{
+	printDbg (DBG_DBG, " ()");
+	string frst, lst, tmp;
+
+	str.clear ();
+	for (Operators::const_iterator it = operators.begin (); it != operators.end(); ++it)
+	{
+			
+		(*it)->getOperatorName (frst, lst);
+		printDbg (DBG_DBG, "Operator name: " << frst << " " << lst << " param count: " << (*it)->getParametersCount() );
+		
+		(*it)->getStringRepresentation (tmp);
+		str += tmp + "\n";
+		tmp.clear ();
+	}
 }
 
 

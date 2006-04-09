@@ -12,6 +12,8 @@
 // static includes
 #include "static.h"
 
+// PdfOperator
+#include "pdfoperators.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -20,10 +22,65 @@ namespace pdfobjects {
 //
 // Forward declaration
 //
-class PdfOperator;
 class IProperty;
 
+//==========================================================
+namespace operatorparser  {
+//==========================================================
+
+/** 
+ * Adjust actual position. 
+ *
+ * @param op Actual operator.
+ * @param state Actual state that we should update.
+ */
+void adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state);
+	
 		
+/**
+ * PdfOperators parser.
+ * 
+ */
+template<typename PdfOpStorage, typename PdfOpPosComparator>
+class PdfOperatorPositionParser
+{
+public:
+
+	/**
+	 * Stores all operators at specific position.
+	 *
+	 * @param it Iterator that will be used to traverse all operators in
+	 * 				specific order.
+	 * @param container Container used to store all operators that are in a
+	 * 				specificied area.
+	 * @param comp Comparator that will decide whether an operator is in the
+	 * 				specified area or not.
+	 */
+	void
+	getOpAtSpecificPosition (PdfOperator::Iterator it, 
+							PdfOpStorage& container, 
+							const PdfOpPosComparator& cmp, 
+							GfxState& state)
+	{
+		printDbg (debug::DBG_DBG, "");
+		
+		while (!it.isEnd ())
+		{
+			adjustActualPosition (it.getCurrent().lock(), state);
+		
+			Point pt (state.getX1(), state.getY1());
+			if (cmp(pt))
+				container.push_back (boost::shared_ptr<PdfOperator> (it.getCurrent()));
+
+			it = it.next ();
+		}
+	};
+};
+
+//==========================================================
+} // namespace operatorparser
+//==========================================================
+
 /**
  * Content stream of a pdf content stream.
  *
@@ -90,8 +147,18 @@ public:
 	 *
 	 * @param operators Container that will hold all objects at position.
 	 */
-	template<typename Decider>
-	void getOperatorsAtPosition (Operators& ops, Decider& dc) const;
+	template<typename OpContainer, typename PdfOpPosComparator>
+	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state) const
+	{
+		printDbg (debug::DBG_DBG, "");
+		
+		operatorparser::PdfOperatorPositionParser<OpContainer, PdfOpPosComparator> posParser;
+		posParser.getOpAtSpecificPosition (PdfOperator::getIterator (operators.front()), 
+							opContainer, 
+							cmp, 
+							state);
+	}
+	
 	
 	/** Destructor. */
 	~CContentStream ()
@@ -99,7 +166,6 @@ public:
 		printDbg (debug::DBG_DBG, "destructing..");
 	};
 };
-
 
 
 

@@ -77,7 +77,7 @@ UnknownPdfOperator::getParametersCount () const
 //
 //
 void
-UnknownPdfOperator::getParameters (IPContainer& container) const
+UnknownPdfOperator::getParameters (Operands& container) const
 	{ copy (operands.begin(), operands.end (), back_inserter(container) ); }
 
 //
