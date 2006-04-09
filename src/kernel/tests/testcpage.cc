@@ -18,6 +18,39 @@
 // CPage
 //=====================================================================================
 
+using namespace boost;
+
+//=====================================================================================
+namespace
+//=====================================================================================
+{
+	boost::shared_ptr<CPage> 
+	getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1)
+	{
+		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+		
+		//
+		// Our stuff here
+		//
+		Object obj;
+		XRef* xref = doc->getXRef();
+		assert (xref);
+		Catalog cat (xref);
+
+		IndiRef ref;
+		ref.num = cat.getPageRef(pageNum)->num;
+		ref.gen = cat.getPageRef(pageNum)->gen;
+		xref->fetch (ref.num, ref.gen, &obj);
+		
+		boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, ref));
+		obj.free ();
+		
+		return boost::shared_ptr<CPage> (new CPage(dict));
+	}
+//=====================================================================================
+} // namespace
+//=====================================================================================
+
 void
 mediabox (ostream& oss, const char* fileName)
 {
@@ -52,10 +85,85 @@ mediabox (ostream& oss, const char* fileName)
 	oss << page.getMediabox ();
 }
 
+
+//=====================================================================================
+//
+void
+position (ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPage> page = getPage (fileName, pdf);
+
+	
+	std::vector<shared_ptr<PdfOperator> > ops;
+	page->getObjectsAtPosition (ops, Point (1,1));
+
+	oss << "Found objects #" << ops.size() << std::endl;
+
+	std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
+	for (; it != ops.end(); ++it)
+	{
+		std::string tmp, tmpl;
+		(*it)->getOperatorName (tmp,tmpl);
+		oss << tmp << " " << tmpl << " ";
+	}
+	oss << std::endl;
+	
+}
+
+void
+opcount (ostream& oss, const char* fileName)
+{
+
+	CPdf pdf;
+	
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	int pagesNum = 1;
+	
+	//
+	// Our stuff here
+	//
+	Object obj;
+	XRef* xref = doc->getXRef();
+	assert (xref);
+	Catalog cat (xref);
+
+	cat.getPage(pagesNum)->getContents(&obj);
+
+	scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, &obj)));
+	
+	Object o;
+	parser->getObj (&o);
+	int i = 0;
+	
+	while (!o.isEOF()) 
+	{
+		if (o.isCmd ())
+			i++;
+
+		// grab the next object
+		parser->getObj(&o);
+	}
+
+	
+	obj.free ();
+
+	oss << "Operands count: " << i << endl;
+}
+
 //=====================================================================================
 void cpage_tests(int , char **)
 {
-	TEST(" test 4.1 -- features");
-	mediabox (OUTPUT, TESTPDFFILE);
+	//TEST(" test 4.1 -- features");
+	//mediabox (OUTPUT, TESTPDFFILE);
+	//OK_TEST;
+
+	TEST(" test 4.2-- opcount");
+	opcount (OUTPUT, TESTPDFFILE);
 	OK_TEST;
+
+	TEST(" test 4.3-- getPosition");
+	position (OUTPUT, TESTPDFFILE);
+	OK_TEST;
+
 }

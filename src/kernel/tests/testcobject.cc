@@ -1006,7 +1006,7 @@ parseContentStream (ostream& oss, const char* fileName)
 }
 
 void
-contentStream (ostream& , const char* fileName)
+contentStream (ostream&, const char* fileName)
 {
 	CPdf pdf;
 	
@@ -1022,7 +1022,7 @@ contentStream (ostream& , const char* fileName)
 	Catalog cat (xref);
 
 	cat.getPage(pagesNum)->getContents(&obj);
-	
+
 	if (!obj.isStream())
 		throw;
 	
