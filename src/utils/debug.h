@@ -20,6 +20,10 @@
 namespace debug {
 // =====================================================================================
 
+/** Memory checker output. Comment out (or set to 0) if no output is desired. */
+#define MEM_CHECKER_OUTPUT	0
+
+	
 /**
  * Helper class for STATIC_CHECK.
  */
