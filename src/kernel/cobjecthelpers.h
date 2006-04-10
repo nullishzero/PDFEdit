@@ -7,6 +7,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/10 23:04:51  misuj1am
+ *
+ *
+ * -- ADD: setValueToSimple, improved the code
+ *
  * Revision 1.9  2006/04/09 21:27:13  misuj1am
  *
  *
@@ -145,10 +150,88 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
  */
 void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
 
+
+
+
 //=========================================================
-//	Dictionary helper "get type" methods
+//	CObjectSimple "get value" helper methods
 //=========================================================
 
+/**
+ * Get simple value from simple cobject.
+ *
+ * @param ip IProperty.
+ *
+ * @return Value.
+ */
+template<typename ItemType, PropertyType ItemPType, typename Value>
+inline Value
+getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
+{
+	if (ItemPType == ip->getType ())
+	{
+		// Cast it to the correct type and return it
+		boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
+		Value val = Value ();
+		item->getPropertyValue (val);
+		return val;
+
+	}else
+	{
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		throw ElementBadTypeException ("getValueFromSimple");
+	}
+}
+
+
+/** Get int from ip. */
+inline int 
+getIntFromIProperty (const boost::shared_ptr<IProperty>& ip)
+	{return getValueFromSimple<CInt, pInt, int> (ip);}
+
+/** Get double from ip. */
+inline double 
+getDoubleFromIProperty (const boost::shared_ptr<IProperty>& ip)
+{
+	return (pInt == ip->getType()) ? getValueFromSimple<CInt, pInt, int> (ip) :
+									 getValueFromSimple<CReal, pReal, double> (ip);
+}
+
+/** Get string from ip. */
+inline std::string
+getStringFromIProperty (const boost::shared_ptr<IProperty>& ip)
+		{return getValueFromSimple<CString, pString, std::string> (ip);}
+	
+//=========================================================
+//	CObjectSimple "set value" helper methods
+//=========================================================
+
+/**
+ * Set simple value.
+ *
+ * @param ip IProperty.
+ *
+ * @return Value.
+ */
+template<typename ItemType, PropertyType ItemPType, typename Value>
+inline void
+setValueToSimple (const boost::shared_ptr<IProperty>& ip, const Value& val)
+{
+	if (ItemPType != ip->getType ())
+	{
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		throw ElementBadTypeException ("");
+	}
+
+	// Cast it to the correct type and set value
+	boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
+	item->writeValue (val);
+}
+
+
+//=========================================================
+//	CDict "get type" helper methods
+//=========================================================
 
 /**
  * Get iproperty casted to specific type from dictionary.
@@ -157,7 +240,7 @@ void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
  * @param id   Position in the array.
  */
 template<typename ItemType, PropertyType ItemPType>
-boost::shared_ptr<ItemType>
+inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)
 {
 	printDbg (debug::DBG_DBG, "dict[" << key << "]");
@@ -188,7 +271,7 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& 
 // If we got iproperty, cast it to Dict
 //
 template<typename ItemType, PropertyType ItemPType>
-boost::shared_ptr<ItemType>
+inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
 {
 	assert (pDict == ip->getType ());
@@ -205,14 +288,13 @@ getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string
  * Get stream from dictionary. If it is CRef fetch the object pointed at.
  */
 template<typename IP>
-boost::shared_ptr<CStream>
+inline boost::shared_ptr<CStream>
 getCStreamFromDict (IP& ip, const std::string& key)
 	{return getTypeFromDictionary<CStream,pStream> (ip, key);}
-	
 
 
 //=========================================================
-//	Array helper "get" methods
+//	CArray "get value" helper methods
 //=========================================================
 
 /**
@@ -224,28 +306,19 @@ getCStreamFromDict (IP& ip, const std::string& key)
  * @param id 	Position in the array.
  */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
-SimpleValueType
+inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)
 {
 	printDbg (debug::DBG_DBG, "array[" << position << "]");
 	
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = array->getProperty (position);
-	if (ItemPType != ip->getType ())
-	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
-		throw ElementBadTypeException ("getSimpleValueFromArray");
-	}
-
-	// Cast it to the correct type and return it
-	boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
-	SimpleValueType val = SimpleValueType ();
-	item->getPropertyValue (val);
-	return val;
+	// Check the type and get the value
+	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
 }
 
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
-SimpleValueType
+inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)
 {
 	assert (pArray == ip->getType ());
@@ -254,7 +327,7 @@ getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position
 
 	// Cast it to array
 	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
-
+	// Get value from array
 	return getSimpleValueFromArray<SimpleValueType, ItemType, ItemPType> (array, position);
 }
 
@@ -281,7 +354,7 @@ getDoubleFromArray (const IP& ip, size_t position)
 
 
 //=========================================================
-//	Array helper "set" methods
+//	CArray "set value" helper methods
 //=========================================================
 
 
@@ -293,28 +366,21 @@ getDoubleFromArray (const IP& ip, size_t position)
  * @param val Value to be written.
  */
 template<typename Value, typename ItemType, PropertyType ItemPType>
-void
-setSimpleValueInArray (const boost::shared_ptr<CArray>& array, size_t position, Value val)
+inline void
+setSimpleValueInArray (const boost::shared_ptr<CArray>& array, size_t position, const Value& val)
 {
 	printDbg (debug::DBG_DBG, "array[" << position << "]");
 	
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = array->getProperty (position);
-	if (ItemPType != ip->getType ())
-	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
-		throw ElementBadTypeException ("");
-	}
-
 	// Cast it to the correct type and set value
-	boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
-	item->writeValue (val);
+	setValueToSimple<ItemType, ItemPType, Value> (ip, val);
 }
 
 
 template<typename Value, typename ItemType, PropertyType ItemPType>
-void
-setSimpleValueInArray (const boost::shared_ptr<IProperty>& ip, size_t position, Value val)
+inline void
+setSimpleValueInArray (const boost::shared_ptr<IProperty>& ip, size_t position, const Value& val)
 {
 	assert (pArray == ip->getType ());
 	if (pArray != ip->getType ())
