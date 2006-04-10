@@ -138,6 +138,10 @@
         <source>No object selected</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>This type of object does not have any properties</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>

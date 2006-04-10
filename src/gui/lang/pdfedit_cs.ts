@@ -138,6 +138,10 @@
         <source>No object selected</source>
         <translation>Není zvolen žádný objekt</translation>
     </message>
+    <message>
+        <source>This type of object does not have any properties</source>
+        <translation>Tento typ objektu nemá žádné položky</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
