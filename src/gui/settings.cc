@@ -287,7 +287,7 @@ QString Settings::getAction(int index) {
  @param name Name of icon to load
  @return Pixmap containing specified icon
  */
-QPixmap *Settings::getIcon(const QString name) {
+QPixmap* Settings::getIcon(const QString name) {
  printDbg(debug::DBG_INFO,"Loading icon:" << name);
  if (iconCache.contains(name)) return iconCache[name];
  QString absName=getIconFile(name);
@@ -377,7 +377,7 @@ void Settings::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoo
  @param parent QWidget that will contain the menubar
  @return loaded and initialized menubar
  */
-QMenuBar *Settings::loadMenu(QWidget *parent) {
+QMenuBar* Settings::loadMenu(QWidget *parent) {
  //menubar can't be cached and must be separate for each window (otherwise weird things happen)
  QMenuBar *menubar=new QMenuBar(parent);//Make new menubar
  loadItem(QString("MainMenu"),menubar,TRUE);//create root menu
@@ -420,9 +420,10 @@ void Settings::loadToolBarItem(ToolBar *tb,QString item) {
 
  @param name Toolbar name in configuration file
  @param parent Parent window
+ @param visible Will be toolbar initially visible?
  @return loaded toolbar
  */
-ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
+ToolBar* Settings::loadToolbar(const QString name,QMainWindow *parent,bool visible/*=true*/) {
  QString line=readItem(name);
  printDbg(debug::DBG_INFO,"Loading toolbar:" << name);
  if (line.startsWith("list ")) { // List of values - first is name, others are items in it
@@ -438,7 +439,8 @@ ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
   for (;it!=qs.end();++it) { //load all subitems
    loadToolBarItem(tb,*it);
   }
-  tb->show();
+  if (visible) tb->show();
+   else        tb->hide();
   return tb;
  } else {
   fatalError("Invalid toolbar item in config:\n"+line);
@@ -447,15 +449,32 @@ ToolBar *Settings::loadToolbar(const QString name,QMainWindow *parent) {
 }
 
 /** Load all toolbars from configuration files and add them to parent window
- 
- @param parent parent window for toolbar
+  @param parent parent window for toolbars
  */
 ToolBarList Settings::loadToolBars(QMainWindow *parent) {
- ToolBarList list;
+// ToolBarList list;
  QString line=read("gui/toolbars");
- QStringList tool=explode(',',line);
- for (unsigned int i=0;i<tool.count();i++) {
-  list+=loadToolbar(tool[i],parent);
+ toolbarNames=explode(',',line);
+ bool visible;
+ for (unsigned int i=0;i<toolbarNames.count();i++) {
+  visible=readBool(QString("toolbar/")+toolbarNames[i],true);
+  toolbarList[toolbarNames[i]]=loadToolbar(toolbarNames[i],parent,visible);//was ** += **
  }
- return list;
+ return toolbarList;
 }
+
+/** return list of toolbars
+ @return Toolbar list
+ */
+QStringList Settings::getToolbarList() {
+ return toolbarNames;
+}
+
+/** return toolbar with given name.
+ @return Toolbar, or NULL if toolbar not found
+ */
+ToolBar* Settings::getToolbar(const QString &name) {
+ if (!toolbarList.contains(name)) return NULL;
+ return toolbarList[name];
+}
+

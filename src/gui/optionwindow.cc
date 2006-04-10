@@ -15,6 +15,7 @@ OptionWindow - widget for editing program options
 #include <qlayout.h>
 #include "option.h"
 #include "version.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -60,7 +61,7 @@ OptionWindow::OptionWindow(QWidget *parent /*=0*/, const char *name /*=0*/) : QW
  QObject::connect(btCancel, SIGNAL(clicked()), this, SLOT(close()));
  QObject::connect(btApply,  SIGNAL(clicked()), this, SLOT(apply()));
  QObject::connect(btOk,	    SIGNAL(clicked()), this, SLOT(ok()));
- Settings::getInstance()->restoreWindow(this,"options"); 
+ globalSettings->restoreWindow(this,"options"); 
  printDbg(debug::DBG_DBG,"Options pre-init ...");
  init();
  printDbg(debug::DBG_DBG,"Options post-init ...");
@@ -76,7 +77,7 @@ void OptionWindow::apply() {
   c->writeValue();
  }
  //Write settings to disk (editor may crash or be killed, right?)
- Settings::getInstance()->flushSettings();
+ globalSettings->flushSettings();
 }
 
 /** Called on pushing 'OK' button */
@@ -184,9 +185,10 @@ void OptionWindow::addOptionFloat(QWidget *otab,const QString &caption,const QSt
  @param tab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
+ @param defValue Default value if option not found in configuration
  */
-void OptionWindow::addOptionBool(QWidget *otab,const QString &caption,const QString &key) {
- addOption(otab,caption,new BoolOption(key,otab));
+void OptionWindow::addOptionBool(QWidget *otab,const QString &caption,const QString &key,bool defValue/*=false*/) {
+ addOption(otab,caption,new BoolOption(key,otab,defValue));
 }
 
 /** add Option to the window (type of option is int)
@@ -229,6 +231,16 @@ void OptionWindow::init() {
  addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
  finishTab(misc_tab);
 
+ QWidget *tool_tab=addTab(tr("Toolbars"));
+ addText(tool_tab,tr("These toolbars will be shown"));
+ QStringList tbs=globalSettings->getToolbarList();
+ for (unsigned int i=0;i<tbs.count();i++) {
+  ToolBar* tb=globalSettings->getToolbar(tbs[i]);
+  if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
+  addOptionBool(tool_tab,tb->label(),QString("toolbar/")+tbs[i],true);
+ }
+ finishTab(tool_tab);
+
  setUpdatesEnabled( TRUE );
 }
 
@@ -242,7 +254,7 @@ void OptionWindow::closeEvent(QCloseEvent *e) {
 
 /** default destructor */
 OptionWindow::~OptionWindow() {
- Settings::getInstance()->saveWindow(this,"options"); 
+ globalSettings->saveWindow(this,"options"); 
  delete labels;
  delete items;
  delete list;

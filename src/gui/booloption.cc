@@ -7,10 +7,12 @@ BoolOption - class for widget containing one editable setting of type bool
 /** Default constructor of BoolOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
+ @param defValue Default value if property not found
  */
-BoolOption::BoolOption(const QString &_key/*=0*/,QWidget *parent/*=0*/)
+BoolOption::BoolOption(const QString &_key,QWidget *parent/*=0*/,bool _defValue/*=false*/)
  : Option (_key,parent) {
  ed=new QCheckBox(this,"booloption_checkbox");
+ defValue=_defValue;
 }
 
 /** default destructor */
@@ -36,7 +38,7 @@ void BoolOption::writeValue() {
 
 /** read value from settings for editing */
 void BoolOption::readValue() {
- bool val=set->readBool(key);
+ bool val=set->readBool(key,defValue);
  ed->setChecked(val);
 }
 

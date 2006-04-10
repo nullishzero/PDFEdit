@@ -60,8 +60,10 @@ HEADERS += treeitem.h  treewindow.h
 SOURCES += treeitem.cc treewindow.cc
 
 #Property editor
-HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  propertyeditor.h  propertyfactory.h
-SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc propertyeditor.cc propertyfactory.cc
+HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  refproperty.h
+SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc refproperty.cc
+HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h
+SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc
 
 #CObject Wrapper classes
 HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h

@@ -8,7 +8,7 @@
 class BoolOption : public Option {
  Q_OBJECT
 public:
- BoolOption(const QString &_key=0,QWidget *parent=0);
+ BoolOption(const QString &_key,QWidget *parent=0,bool _defValue=false);
  virtual ~BoolOption();
  virtual QSize sizeHint() const;
  virtual void writeValue();
@@ -18,6 +18,8 @@ protected:
 protected:
  /** checkbox used for editing the value */
  QCheckBox *ed;
+ /* Default value if option not found */
+ bool defValue;
 };
 
 #endif

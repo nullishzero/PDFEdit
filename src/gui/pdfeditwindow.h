@@ -55,6 +55,8 @@ protected:
 protected slots:
  void runScript(QString script);
  void menuActivated(int id);
+private slots:
+ void settingUpdate(QString key);
 private:
  void setFileName(const QString &name);
  void destroyFile();

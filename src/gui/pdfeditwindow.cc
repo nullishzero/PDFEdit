@@ -259,6 +259,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), prop, SLOT(setObject(IProperty*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
+ QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
 
  this->setCentralWidget(spl);
 
@@ -307,6 +308,18 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
   openFile(fName);
  }
  prop->setObject(0);//fill with demonstration properties
+}
+
+/** Called when any settings are updated (in script, option editor, etc ...) */
+void PdfEditWindow::settingUpdate(QString key) {
+ printDbg(debug::DBG_DBG,"Settings observer: " << key);
+ if (key.startsWith("toolbar/")) { //Show/hide toolbar
+  ToolBar *tb=globalSettings->getToolbar(key.mid(8));	// 8=strlen("toolbar/")
+  if (!tb) return; //Someone put invalid toolbar in settings. Just ignore it
+  bool vis=globalSettings->readBool(key,true);
+  if (vis) tb->show();
+   else    tb->hide();
+ }
 }
 
 /** Closes file currently opened in editor.

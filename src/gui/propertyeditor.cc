@@ -119,8 +119,7 @@ void PropertyEditor::update(Property *p) {
  assert(props->contains(pname));
  boost::shared_ptr<IProperty> obj=(*props)[pname];
  p->writeValue(obj.get());
- //TODO: redraw, etc ...
- //TODO: call from properties
+ emit propertyChanged(obj.get());
 }
 
 /** add single property
@@ -196,9 +195,12 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
   vector<string>::iterator it;
   for( it=list.begin();it!=list.end();++it) { // for each property
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
+   printDbg(debug::DBG_DBG,"HAVE: " << *it);
    addProperty(*it,property);
   }
-  if (!nObjects) {setObject(tr("This object does not have any directly editable properties"));}
+  if (!nObjects) { //No subproperties
+   setObject(tr("This object does not have any directly editable properties"));
+  }
   grid->update();
  } else if (pdfObject->getType()==pArray) {	//Object is CArray
   CArray *ar=(CArray*)pdfObject;
@@ -209,7 +211,11 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
    name.sprintf("[ %4d ]",i);
    addProperty(name,property);
   }
-  if (!nObjects) {setObject(tr("This object does not have any directly editable properties"));}
+  if (!nObjects) { //No subproperties
+   setObject(tr("This object does not have any directly editable properties"));
+  }
+ } else { //Simple or unknown type
+  setObject(tr("This type of object does not have any properties"));
  }
  setUpdatesEnabled( TRUE );
 }

@@ -15,7 +15,10 @@
 typedef QMap<QString, int> ActionMap;
 typedef QMap<int, QString> ActionMapInverse;
 typedef QMap<QString, QPixmap*> IconCache;
-typedef QValueList<ToolBar*> ToolBarList;
+//typedef QValueList<ToolBar*> ToolBarList;
+typedef QMap<QString, ToolBar*> ToolBarList;
+
+//TODO: neprehledne, rozdelit na Settings a CoreSettings
 
 /** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 
@@ -29,8 +32,9 @@ public:
   if (!globalSettings) globalSettings=new Settings();
   return globalSettings;
  }
-// static Settings* getInstance();
- QMenuBar *loadMenu(QWidget *parent);
+ QStringList getToolbarList();
+ ToolBar* getToolbar(const QString &name);
+ QMenuBar* loadMenu(QWidget *parent);
  QString getAction(int index);
  ToolBarList loadToolBars(QMainWindow *parent);
  void saveWindow(QWidget *win,const QString name); 
@@ -54,6 +58,16 @@ signals:
 private:
  //Constructor is private, use getInstance
  Settings();
+ int addAction(const QString action);
+ void init();
+ QString readItem(const QString name,const QString root="gui/items/");
+ void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
+ void initSettings();
+ void initPaths();
+ QPixmap* getIcon(const QString name);
+ ToolBar* loadToolbar(const QString name,QMainWindow *parent,bool visible=true);
+ void loadToolBarItem(ToolBar *tb,QString item);
+private:
  /** List with paths to application icons */
  QStringList iconPath;
  /** Cache storing loaded icons */
@@ -70,17 +84,10 @@ private:
  ActionMapInverse action_map_i;
  /** Incrementing action index for menu items */
  int action_index;
-
- int addAction(const QString action);
- void init();
- QString readItem(const QString name,const QString root="gui/items/");
- void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
- void initSettings();
- void initPaths();
- QPixmap *getIcon(const QString name);
- ToolBar *loadToolbar(const QString name,QMainWindow *parent);
- void loadToolBarItem(ToolBar *tb,QString item);
-
+ /** List of loaded toolbars names */
+ QStringList toolbarNames;
+ /** List of loaded toolbars */
+ ToolBarList toolbarList;
 };
 
 /** One object for application, holding all global settings. */

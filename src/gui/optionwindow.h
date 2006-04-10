@@ -37,7 +37,7 @@ private:
  QWidget* addTab(const QString name);
  void addOption(QWidget *otab,const QString &caption,Option *opt);
  void addOption(QWidget *otab,const QString &caption,const QString &key);
- void addOptionBool(QWidget *otab,const QString &caption,const QString &key);
+ void addOptionBool(QWidget *otab,const QString &caption,const QString &key,bool defValue=false);
  void addOptionFloat(QWidget *otab,const QString &caption,const QString &key);
  void addOptionInt(QWidget *otab,const QString &caption,const QString &key);
  void addWidget(QWidget *otab,QWidget *elem);

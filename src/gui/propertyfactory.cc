@@ -7,6 +7,7 @@ PropertyFactory - static function that will return correct property widget based
 #include "intproperty.h"
 #include "boolproperty.h"
 #include "realproperty.h"
+#include "refproperty.h"
 #include "nameproperty.h"
 
 /** Return one of the subclasses of Property widget for editing given property.
@@ -26,7 +27,7 @@ Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *pa
   case pReal:   return new RealProperty(_name,parent,_flags); 
   case pString: return new StringProperty(_name,parent,_flags);
   case pName:   return new NameProperty(_name,parent,_flags);
-  case pRef:    return NULL;//TODO
+  case pRef:    return new RefProperty(_name,parent,_flags);
   case pArray:  return NULL;//Not editable in property editor, editable in tree window
   case pDict:   return NULL;//Not editable in property editor, editable in tree window
   case pStream: return NULL;//TODO

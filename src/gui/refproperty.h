@@ -1,27 +1,31 @@
-#ifndef __STRINGPROPERTY_H__
-#define __STRINGPROPERTY_H__
+#ifndef __REFPROPERTY_H__
+#define __REFPROPERTY_H__
 
 #include "property.h"
 #include <qlineedit.h>
+#include <qpushbutton.h>
 #include <cobject.h>
 
 using namespace pdfobjects;
 
-class StringProperty : public Property {
+class RefProperty : public Property {
 Q_OBJECT
 public:
+ RefProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
  QSize sizeHint() const;
  void resizeEvent (QResizeEvent *e);
- StringProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
- virtual ~StringProperty();
+ ~RefProperty();
  void writeValue(IProperty *pdfObject);
  void readValue(IProperty *pdfObject);
 protected slots:
+ void selectRef();
  void emitChange();
  void enableChange(const QString &newText);
-protected:
+private:
  /** one line edit control used for editing the value */
  QLineEdit *ed;
+ /** Push button for GUI selection */
+ QPushButton *pb;
 };
 
 #endif

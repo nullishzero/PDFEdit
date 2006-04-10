@@ -25,6 +25,10 @@ public slots:
  void setObject(const QString &message);
  void setObject(IProperty *pdfObject);
  void update(Property *p);
+signals:
+ /** Signal emitted when any property is modified
+  Send property pointer with the signal */
+ void propertyChanged(IProperty *prop); 
 private:
  void addProperty(const QString &name,boost::shared_ptr<IProperty> value);
  void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
