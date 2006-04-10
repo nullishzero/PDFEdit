@@ -1,4 +1,7 @@
 [gui]
+CommandLine/HistoryFile=.pdfedit-history
+CommandLine/HistorySize=10
+PageSpace/ResizingZone=2
 items/MainMenu=list Main menu,file,tools,help,test
 items/MainToolbar=list Main Toolbar,fnew,fload,fsave,opts,about
 items/OtherToolbar=list Other Toolbar,closew
@@ -21,6 +24,12 @@ windowstate/main=342,311,741,0
 windowstate/spl_left=123,119
 windowstate/spl_main=168,164
 windowstate/spl_right=208,34
+
+[icon]
+FirstPage=first.png
+LastPage=last.png
+NextPage=next.png
+PrevPage=prev.png
 
 [keyboard]
 CtrlA=dosomethingeverywhere()

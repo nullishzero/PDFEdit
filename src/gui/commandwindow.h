@@ -16,6 +16,8 @@ public:
  ~CommandWindow();
 public slots:
  void execute();
+ void setHistorySize( int historySize );
+ void setHistoryFile( const QString & historyFile );
 signals:
  /** Signal emitted when command is executed from this command window */
  void commandExecuted(QString);

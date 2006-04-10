@@ -12,6 +12,12 @@
 
 using namespace std;
 
+QString CMD = "gui/CommandLine/";
+QString HISTORYSIZE = "HistorySize";
+QString HISTORYFILE = "HistoryFile";
+QString DEFAULT__HISTORYFILE = ".pdfedit-history";
+int DEFAULT__HISTORYSIZE = 10;
+
 /** constructor of CommandWindow, creates window and fills it with elements, parameters are ignored */
 CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):QWidget(parent,name) {
  QBoxLayout * l = new QVBoxLayout( this );
@@ -22,7 +28,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  history = new QComboBox( this );
  history->setLineEdit( cmd );
  history->setEditable( true );
- history->setMaxCount( 10 );		// TODO from settings
+ history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) );
  loadHistory();
  history->setInsertionPolicy( QComboBox::AtTop );
  cmd->setText( "" );			//clear commandline
@@ -33,11 +39,29 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  l->addWidget(history);
  out->setTextFormat(LogText);
  out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
+
+ // if settings for history is not saved => save
+ QString pom;
+ pom = globalSettings->read( CMD + HISTORYSIZE );
+ if ( pom.isNull() )
+	 setHistorySize( DEFAULT__HISTORYSIZE );
+ pom = globalSettings->read( CMD + HISTORYFILE );
+ if ( pom.isNull() )
+	 setHistoryFile( DEFAULT__HISTORYFILE );
+}
+
+void CommandWindow::setHistorySize( int historySize ){
+	printDbg(debug::DBG_DBG,"Write historySize");
+	globalSettings->write( CMD + HISTORYSIZE, historySize );
+}
+void CommandWindow::setHistoryFile( const QString & historyFile ){
+	printDbg(debug::DBG_DBG,"Write historyFile");
+	globalSettings->write( CMD + HISTORYFILE, historyFile );
 }
 
 /** Load command history */
 void CommandWindow::loadHistory() {
-	QFile file( ".pdfedit-history" );	// TODO from settings
+	QFile file( globalSettings->read( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
 		QString line;
@@ -46,13 +70,13 @@ void CommandWindow::loadHistory() {
 			history->insertItem( line );
 		}
 		file.close();
-	} else {
-		addString( "Cannot open pdfedit-history to read!!!\n" );	// TODO tr
+		return ;
 	}
+	printDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
 }
 /** Save current command history */
 void CommandWindow::saveHistory() {
-	QFile file( ".pdfedit-history" );	// TODO from settings
+	QFile file( globalSettings->read( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
 	if ( file.open( IO_WriteOnly ) ) {
 		if (history->listBox()->firstItem() != NULL) {
 			QTextStream stream( &file );
@@ -60,9 +84,9 @@ void CommandWindow::saveHistory() {
 				stream << it->text() << "\n";
 		}
 		file.close();
-	} else {
-		addString( "Cannot open pdfedit-history to write!!!" );	// TODO tr
+		return ;
 	}
+	printDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
 }
 /** Execute and clear current command */
 void CommandWindow::execute() {

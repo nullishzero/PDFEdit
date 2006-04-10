@@ -1,4 +1,5 @@
 #include "pagespace.h"
+#include "settings.h"
 #include <stdlib.h>
 #include <qlabel.h>
 #include <qstring.h>
@@ -12,6 +13,9 @@ void Init( initStruct * is ) {
 	is->labelWidth = pageNumber.width();
 	is->labelHeight = pageNumber.height();
 }
+
+QString PAGESPC = "gui/PageSpace/";
+QString ICON = "icon/";
 
 PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
 	initStruct is;
@@ -34,10 +38,10 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 //TODO: prepracovat vytvareni tlacitek tlacitka obrazek tlacitka nastavit ze skriptu (vcetne popup
 	hBox->addStretch();
 	bFirstPage = new QPushButton(this,"bFirstPage");
-	bFirstPage->setPixmap( QPixmap("icon/first.png"));
+	bFirstPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"FirstPage") ) ));
 	hBox->addWidget(bFirstPage);
 	bPrevPage = new QPushButton(this,"bPrevPage");
-	bPrevPage->setPixmap( QPixmap("icon/prev.png"));
+	bPrevPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"PrevPage") ) ));
 	hBox->addWidget(bPrevPage);
 connect( bFirstPage, SIGNAL(clicked()), this, SLOT(refresh1()));/*TODO smazat*/
 connect( bPrevPage, SIGNAL(clicked()), this, SLOT(refresh2()));/*TODO smazat*/
@@ -50,10 +54,10 @@ connect( bPrevPage, SIGNAL(clicked()), this, SLOT(refresh2()));/*TODO smazat*/
 
 //TODO: prepracovat vytvareni tlacitek tlacitka obrazek tlacitka nastavit ze skriptu
 	bNextPage = new QPushButton(this,"bNextPage");
-	bNextPage->setPixmap( QPixmap("icon/next.png"));
+	bNextPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"NextPage") ) ));
 	hBox->addWidget(bNextPage);
 	bLastPage = new QPushButton(this,"bLastPage");
-	bLastPage->setPixmap( QPixmap("icon/last.png"));
+	bLastPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"LastPage") ) ));
 	hBox->addWidget(bLastPage);
 	hBox->addStretch();
 	hBox->setResizeMode(QLayout::Minimum);
@@ -87,6 +91,8 @@ void PageSpace::newPageView() {
 	}
 	pageImage = new PageView(scrollPageSpace->viewport());
 	scrollPageSpace->addChild(pageImage);
+
+	pageImage->setResizingZone( globalSettings->readNum( PAGESPC + "ResizingZone" ) );
 
 	connect( pageImage, SIGNAL( leftClicked(const QRect &) ), this, SLOT( newSelection(const QRect &) ) );
 	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRect &) ),

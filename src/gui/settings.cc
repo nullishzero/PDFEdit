@@ -46,6 +46,16 @@ bool Settings::readBool(const QString &key,bool defValue/*=false*/) {
  return false;
 }
 
+/** Read settings with given key from configuration file and return as integer
+ @param key Key to read from settings
+ @param defValue default value to use if key not found in settings.
+ @return Value of given setting */
+int Settings::readNum(const QString &key,int defValue/*=0*/) {
+ int x=set->readNumEntry(APP_KEY+key, defValue);
+ if (x == defValue) x=staticSet->readNumEntry(APP_KEY+key,defValue);
+ return x;
+}
+
 /** Read settings with given key from configuration file and return as QString
  Any environment variable references (in form $VARIABLE) are expanded in the string
  @param key Key to read from settings
@@ -69,6 +79,27 @@ void Settings::initSettings() {
  #endif
  staticSet->insertSearchPath(QSettings::Unix,DATA_PATH);
  set->insertSearchPath(QSettings::Unix,QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR));
+}
+
+/** Given name of the file, finds and returns full path to the file,
+     considering all relevant settings
+ @param name of paths in settings for this file (e.g. "icon")
+ @param name of file
+ @return QString with full path to the file
+*/
+QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {
+ QStringList path = readPath( nameOfPath );
+ if (fileName.startsWith("/")) { //absolute path -> no change
+  return fileName;
+ }
+ QString absName;
+ for(QStringList::Iterator it=path.begin();it!=path.end();++it) {
+  absName=*it+"/"+fileName;
+  printDbg(debug::DBG_DBG,"Looking for " <<fileName << " in: " << *it << " as " << absName);
+  if (QFile::exists(absName)) return absName;
+ }
+ printDbg(debug::DBG_WARN,"File not found: " << fileName);
+ return fileName;
 }
 
 /** Expand environment variables in given string (like $HOME, etc ..)
@@ -170,6 +201,15 @@ void Settings::saveWindow(QWidget *win,const QString name) {
  @param value Value to write to settings
  */
 void Settings::write(const QString &key,const QString &value) {
+ set->writeEntry(APP_KEY+key,value);
+ emit settingChanged(key);
+}
+
+/** Write settings with given key and value to configuration
+ @param key Key to write to settings
+ @param value Value to write to settings
+ */
+void Settings::write(const QString &key, int value) {
  set->writeEntry(APP_KEY+key,value);
  emit settingChanged(key);
 }

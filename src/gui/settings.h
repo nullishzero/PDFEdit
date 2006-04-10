@@ -29,8 +29,11 @@ public slots:
  QString readExpand(const QString &key,const QString defValue=QString::null);
  QString read(const QString &key,const QString defValue=QString::null);
  bool readBool(const QString &key,bool defValue=false);
+ int readNum(const QString &key,int defValue=0);
  void write(const QString &key,const QString &value);
+ void write(const QString &key, int value);
  QString expand(QString s);
+ QString getFullPathName( QString nameOfPath , QString fileName );
 signals:
  /** Signal emitted when any setting is changed. Key of changed settings is sent.
      Can be used to monitor settings changes */
