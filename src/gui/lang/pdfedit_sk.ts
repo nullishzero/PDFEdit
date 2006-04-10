@@ -112,6 +112,14 @@
         <source>Show return value of executed scripts in console</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Toolbars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These toolbars will be shown</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PdfEditWindow</name>

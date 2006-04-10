@@ -112,6 +112,14 @@
         <source>Show return value of executed scripts in console</source>
         <translation>Zobrazovat návratovou hodnotu skriptů v příkazovém řádku</translation>
     </message>
+    <message>
+        <source>Toolbars</source>
+        <translation>Toolbary</translation>
+    </message>
+    <message>
+        <source>These toolbars will be shown</source>
+        <translation>Tyto toolbary budou zobrazeny</translation>
+    </message>
 </context>
 <context>
     <name>PdfEditWindow</name>
