@@ -51,8 +51,10 @@ bool Settings::readBool(const QString &key,bool defValue/*=false*/) {
  @param defValue default value to use if key not found in settings.
  @return Value of given setting */
 int Settings::readNum(const QString &key,int defValue/*=0*/) {
- int x=set->readNumEntry(APP_KEY+key, defValue);
- if (x == defValue) x=staticSet->readNumEntry(APP_KEY+key,defValue);
+ QString k=read(key);
+ bool ok;
+ int x=k.toInt(&ok);
+ if (!ok) return defValue;
  return x;
 }
 
@@ -107,24 +109,29 @@ QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {
  @return QString with variables expanded
 */
 QString Settings::expand(QString s) {
- QRegExp r("\\$([a-zA-Z0-9]+)");//todo: not expand \$something, epxand ${something}
+ QRegExp r("\\$([a-zA-Z0-9_]+|\\{[_a-zA-Z0-9]+\\})|(\\\\.)");
  QString var, envVar;
   int pos=0;
   while((pos=r.search(s,pos))!=-1) { //while found some variable
-   var=r.cap(1);
-   printDbg(debug::DBG_DBG,"Expand: " << var << " in " << s);
-   /* home() is special - it is equal to regular $HOME on unixes, but might
-    expand to "application data" directory on windows if HOME is not set */
-   if (var=="HOME") envVar=QDir::home().path();
-   else envVar=getenv(var);
-   if (envVar==QString::null) { //variable not found in environment
-    printDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
-    envVar="";
+   if (r.cap(2).length()>0) {// Found \something -> skip
+    envVar=r.cap(2).mid(1);
+   } else { //Found $VARIABLE
+    var=r.cap(1);
+    if (var[0]=='{') var=var.mid(1,var.length()-2);
+    printDbg(debug::DBG_DBG,"Expand: " << var << " in " << s);
+    /* home() is special - it is equal to regular $HOME on unixes, but might
+     expand to "application data" directory on windows if HOME is not set */
+    if (var=="HOME") envVar=QDir::home().path();
+    else envVar=getenv(var);
+    if (envVar==QString::null) { //variable not found in environment
+     printDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
+     envVar="";
+    }
    }
    printDbg(debug::DBG_DBG,"Expand before: " << s);
    s=s.replace(pos,r.matchedLength(),envVar);
    printDbg(debug::DBG_DBG,"Expand after: " << s);
-   pos++;
+   pos+=envVar.length();//Move to end of expanded string
   }
  return s;
 }
@@ -273,4 +280,3 @@ void Settings::restoreSplitter(QSplitter *spl,const QString name) {
  }
  spl->setSizes(splSize);
 }
-

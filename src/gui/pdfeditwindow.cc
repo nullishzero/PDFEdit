@@ -133,6 +133,13 @@ void PdfEditWindow::saveWindowState() {
  globalSettings->saveSplitter(spl,"spl_main"); 
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
+ //Save toolbar states
+ QStringList tbs=menuSystem->getToolbarList();
+ for (unsigned int i=0;i<tbs.count();i++) {
+  ToolBar* tb=menuSystem->getToolbar(tbs[i]);
+  if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
+  menuSystem->saveToolbar(tb,tbs[i],this);
+ }
 }
 
 /** Restores window state from application settings */
@@ -141,6 +148,13 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreSplitter(spl,"spl_main"); 
  globalSettings->restoreSplitter(splProp,"spl_right"); 
  globalSettings->restoreSplitter(splCmd,"spl_left"); 
+ //Restore toolbar states
+ QStringList tbs=menuSystem->getToolbarList();
+ for (unsigned int i=0;i<tbs.count();i++) {
+  ToolBar* tb=menuSystem->getToolbar(tbs[i]);
+  if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
+  menuSystem->restoreToolbar(tb,tbs[i],this);
+ }
 }
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/

@@ -231,6 +231,8 @@ void OptionWindow::init() {
 
  QWidget *misc_tab=addTab(tr("Misc"));
  addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
+ addOption    (misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
+ addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
  finishTab(misc_tab);
 
  QWidget *tool_tab=addTab(tr("Toolbars"));

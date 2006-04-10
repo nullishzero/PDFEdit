@@ -2,6 +2,7 @@
 #define __MENU_H__
 
 #include <qmenudata.h>
+#include <qmainwindow.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
 #include <qpixmap.h>
@@ -27,6 +28,8 @@ public:
  ToolBarList loadToolBars(QMainWindow *parent);
  ToolBar* getToolbar(const QString &name);
  QStringList getToolbarList();
+ void saveToolbar(QToolBar *tb,const QString &name,QMainWindow *main);
+ void restoreToolbar(QToolBar *tb,const QString &name,QMainWindow *main);
 private:
  void initPaths();
  QString getIconFile(const QString &name);

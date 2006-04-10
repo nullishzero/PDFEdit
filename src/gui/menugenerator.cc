@@ -97,6 +97,7 @@ void MenuGenerator::generate() {
  @param name Id of menu item
 */
 void MenuGenerator::setAvail(const QString &name) {
+ if (name=="-") return; //return if separator
  avail[name]+=1;
  if (avail[name]>=2) return; //already seen this one
  QString line=set->readEntry("gui/items/"+name);
@@ -105,7 +106,9 @@ void MenuGenerator::setAvail(const QString &name) {
   QStringList qs=explode(',',line);  
   QStringList::Iterator it=qs.begin();
   if (it!=qs.end()) {
-   addLocString(name,*it);
+   if (*it!="-") { //not a separator 
+    addLocString(name,*it);
+   }
    ++it;
   } else fatalError("Invalid menu item in config:\n"+line);
   for (;it!=qs.end();++it) { //load all subitems

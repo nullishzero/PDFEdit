@@ -52,7 +52,7 @@ void CommandWindow::setHistoryFile( const QString & historyFile ){
 
 /** Load command history */
 void CommandWindow::loadHistory() {
-	QFile file( globalSettings->read( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
+	QFile file( globalSettings->readExpand( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
 		QString line;
@@ -67,7 +67,7 @@ void CommandWindow::loadHistory() {
 }
 /** Save current command history */
 void CommandWindow::saveHistory() {
-	QFile file( globalSettings->read( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
+	QFile file( globalSettings->readExpand( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
 	if ( file.open( IO_WriteOnly ) ) {
 		if (history->listBox()->firstItem() != NULL) {
 			QTextStream stream( &file );

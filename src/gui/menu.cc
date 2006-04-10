@@ -261,3 +261,36 @@ ToolBar* Menu::getToolbar(const QString &name) {
  return toolbarList[name];
 }
 
+/** Save Toolbar state to configuration 
+ @param tb Toolbar to save state
+ @param name Name of toolbar
+ @param main Main application window
+*/
+void Menu::saveToolbar(QToolBar *tb,const QString &name,QMainWindow *main) {
+ printDbg(debug::DBG_DBG,"save toolbar " << name);
+ Qt::Dock dck;
+ int index;
+ bool nl;
+ int ofs;
+ if (!main->getLocation(tb,dck,index,nl,ofs)) return; //Toolbar not found
+ QString dock=QString::number(dck)+","+QString::number(index)+","+QString::number(nl)+","+QString::number(ofs);
+ globalSettings->write("gui/toolbarstate/"+name,dock);
+}
+
+/** Restore Toolbar state from configuration 
+ @param tb Toolbar to restore state
+ @param name Name of toolbar
+ @param main Main application window
+*/
+void Menu::restoreToolbar(QToolBar *tb,const QString &name,QMainWindow *main) {
+ printDbg(debug::DBG_DBG,"restore toolbar " << name);
+ QString dock=globalSettings->read("gui/toolbarstate/"+name);
+ if (dock.isNull()) return;  //Nothing saved
+ QStringList tbs=QStringList::split(",",dock);
+ if (tbs.count()!=4) return; //Invalid data
+ Qt::Dock dck=(Qt::Dock)tbs[0].toInt();
+ int index=tbs[1].toInt();
+ bool nl=tbs[2].toInt();
+ int ofs=tbs[3].toInt();
+ main->moveDockWindow(tb,dck,index,nl,ofs);
+}

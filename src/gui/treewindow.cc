@@ -179,7 +179,7 @@ void TreeWindow::addChilds(TreeItem *parent) {
   vector<string>::iterator it;
   TreeItem *last=NULL;
   for( it=list.begin();it!=list.end();++it) { // for each property
-   printDbg(debug::DBG_DBG,"Subproperty: " << *it);
+//   printDbg(debug::DBG_DBG,"Subproperty: " << *it);
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    if (!sh->show_simple && isSimple(property)) continue; //simple item -> skip it
    TreeItem *child=new TreeItem(parent, property.get(),*it,last); 
