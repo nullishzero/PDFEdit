@@ -13,6 +13,7 @@
 #include "commandwindow.h"
 #include "propertyeditor.h"
 #include "treewindow.h"
+#include "menu.h"
 #include "qspdf.h"
 #include "qsimporter.h"
 
@@ -92,6 +93,8 @@ private:
  QSplitter *splProp;
  /** Name of file loaded in editor */
  QString fileName;
+ /** Menus and toolbars */
+ Menu *menuSystem;
 };
 
 void createNewEditorWindow(const QString &fName=QString::null);

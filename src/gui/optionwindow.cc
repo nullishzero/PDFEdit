@@ -21,11 +21,13 @@ using namespace std;
 
 /** Default constructor of option window.
  The window is initially empty
+ @param msystem Menu system (Needed for toolbar list)
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
  */
-OptionWindow::OptionWindow(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
+OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
  printDbg(debug::DBG_DBG,"Options creating ...");
+ menuSystem=msystem;
  setCaption(QString(APP_NAME)+" - "+tr("options"));
  //create list of properties in this editor;
  list=new QStringList();
@@ -233,9 +235,9 @@ void OptionWindow::init() {
 
  QWidget *tool_tab=addTab(tr("Toolbars"));
  addText(tool_tab,tr("These toolbars will be shown"));
- QStringList tbs=globalSettings->getToolbarList();
+ QStringList tbs=menuSystem->getToolbarList();
  for (unsigned int i=0;i<tbs.count();i++) {
-  ToolBar* tb=globalSettings->getToolbar(tbs[i]);
+  ToolBar* tb=menuSystem->getToolbar(tbs[i]);
   if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
   addOptionBool(tool_tab,tb->label(),QString("toolbar/")+tbs[i],true);
  }

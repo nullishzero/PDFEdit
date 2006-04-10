@@ -85,7 +85,7 @@ bool PdfEditWindow::modified() {
 
 /** Show options dialog. Does not wait for dialog to finish. */
 void PdfEditWindow::options() {
- OptionWindow::optionsDialog();
+ OptionWindow::optionsDialog(menuSystem);
 }
 
 /** Show "open file" dialog and return file selected, or NULL if dialog was cancelled
@@ -212,7 +212,7 @@ void PdfEditWindow::print(const QString &str) {
  @param id Menu ID of clicked item
  */
 void PdfEditWindow::menuActivated(int id) {
- QString action=globalSettings->getAction(id);
+ QString action=menuSystem->getAction(id);
  printDbg(debug::DBG_INFO,"Performing menu action: " << action);
  /* quit and closewindow are special - these can't be easily called from script
     as regular function, because invoking them calls window destructor, removing
@@ -232,6 +232,7 @@ void PdfEditWindow::menuActivated(int id) {
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  setFileName(QString::null);
  document=NULL; 
+ menuSystem=new Menu();
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
 
@@ -264,11 +265,11 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  this->setCentralWidget(spl);
 
  //Menu
- QMenuBar *qb=globalSettings->loadMenu(this);
+ QMenuBar *qb=menuSystem->loadMenu(this);
  QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
 
  //ToolBars
- ToolBarList tblist=globalSettings->loadToolBars(this);
+ ToolBarList tblist=menuSystem->loadToolBars(this);
  for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
   QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
  }
@@ -314,7 +315,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 void PdfEditWindow::settingUpdate(QString key) {
  printDbg(debug::DBG_DBG,"Settings observer: " << key);
  if (key.startsWith("toolbar/")) { //Show/hide toolbar
-  ToolBar *tb=globalSettings->getToolbar(key.mid(8));	// 8=strlen("toolbar/")
+  ToolBar *tb=menuSystem->getToolbar(key.mid(8));	// 8=strlen("toolbar/")
   if (!tb) return; //Someone put invalid toolbar in settings. Just ignore it
   bool vis=globalSettings->readBool(key,true);
   if (vis) tb->show();
@@ -515,5 +516,6 @@ PdfEditWindow::~PdfEditWindow() {
   qs->stopExecution();
   deleteLater();  //Delete object when returning back to main loop
  }*/
+ delete menuSystem;
  delete qp;
 }

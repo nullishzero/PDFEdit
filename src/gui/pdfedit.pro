@@ -70,8 +70,8 @@ HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h 
 SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
 
 #Other source files
-HEADERS += util.h  settings.h 
-SOURCES += util.cc settings.cc main.cc 
+HEADERS += util.h  menu.h  settings.h 
+SOURCES += util.cc menu.cc settings.cc main.cc 
 
 #Testing files (will be removed later)
 HEADERS += test.h 

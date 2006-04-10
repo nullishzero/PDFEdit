@@ -8,23 +8,28 @@
 #include <qtabwidget.h> 
 #include <qlayout.h>
 #include "option.h"
+#include "menu.h"
 
 /** Pointer to running Options window or NULL if none active. Instance is in optionwindow.cc */
 class OptionWindow;
 extern OptionWindow *opt;
 
 class OptionWindow : public QWidget {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public slots:
  void apply();
  void ok();
 public:
- /** invoke option dialog. Ensure only one copy is running at time */
- static void optionsDialog() {
+ /** invoke option dialog. Ensure only one copy is running at time
+ @param msystem Menu system to 
+ */
+ static void optionsDialog(Menu *msystem) {
   if (opt) { //the dialog is already active
    opt->setActiveWindow();
   } else { //create new dialog
-   opt=new OptionWindow();
+   opt=new OptionWindow(msystem);
    opt->show();
   }
  }
@@ -32,7 +37,7 @@ public:
 protected:
  void closeEvent(QCloseEvent *e);
 private:
- OptionWindow(QWidget *parent=0, const char *name=0);
+ OptionWindow(Menu *msystem,QWidget *parent=0, const char *name=0);
  void init();
  QWidget* addTab(const QString name);
  void addOption(QWidget *otab,const QString &caption,Option *opt);
@@ -56,6 +61,8 @@ private:
  QMap<QWidget*,QGridLayout*> gridl;
  /** Number of objects in the tab */
  QMap<QWidget*,int> nObjects;
+ /** Menu system (for toolbar list ... ) */
+ Menu *menuSystem;
 };
 
 #endif
