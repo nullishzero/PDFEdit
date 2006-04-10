@@ -39,15 +39,6 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  l->addWidget(history);
  out->setTextFormat(LogText);
  out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
-
- // if settings for history is not saved => save
- QString pom;
- pom = globalSettings->read( CMD + HISTORYSIZE );
- if ( pom.isNull() )
-	 setHistorySize( DEFAULT__HISTORYSIZE );
- pom = globalSettings->read( CMD + HISTORYFILE );
- if ( pom.isNull() )
-	 setHistoryFile( DEFAULT__HISTORYFILE );
 }
 
 void CommandWindow::setHistorySize( int historySize ){
