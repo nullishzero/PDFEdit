@@ -120,6 +120,14 @@
         <source>These toolbars will be shown</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>History file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max. lines in history</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PdfEditWindow</name>

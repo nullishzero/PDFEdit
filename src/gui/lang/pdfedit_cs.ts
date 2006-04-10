@@ -120,6 +120,14 @@
         <source>These toolbars will be shown</source>
         <translation>Tyto toolbary budou zobrazeny</translation>
     </message>
+    <message>
+        <source>History file</source>
+        <translation>Soubor historie</translation>
+    </message>
+    <message>
+        <source>Max. lines in history</source>
+        <translation>Max. řádek v historii</translation>
+    </message>
 </context>
 <context>
     <name>PdfEditWindow</name>
