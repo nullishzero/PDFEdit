@@ -34,16 +34,16 @@ namespace pdfobjects {
 struct PdfOpCmp
 {
 	/** Consructor. */
-	PdfOpCmp (const Point& pt) : pt_(pt) {};
+	PdfOpCmp (const Rectangle& rc) : rc_(rc) {};
 	
 	/** Is in in a range. */
-	bool operator() (const Point&) const
+	bool operator() (const Rectangle&) const
 	{
 		return true;
 	}
 	
 private:
-	const Point pt_;
+	const Rectangle rc_;
 };
 
 //
@@ -122,23 +122,24 @@ public:
 	 *
 	 */
 	template<typename OpContainer>
-	void getObjectsAtPosition (OpContainer& opContainer, const Point& pt) const
+	void getObjectsAtPosition (OpContainer& opContainer, const Rectangle& rc) const
 	{	
-		printDbg (debug::DBG_DBG, " at point (" << pt.x << "," << pt.y << ")" );
+		printDbg (debug::DBG_DBG, " at point (" << rc.xleft << "," << rc.yleft << ","
+												<< rc.xright << "," << rc.yright << ")");
 
 		// Set state
-		boost::scoped_ptr<PDFRectangle> rc (new PDFRectangle (DEFAULT_PAGE_LX,
+		boost::scoped_ptr<PDFRectangle> pageRect (new PDFRectangle (DEFAULT_PAGE_LX,
 															  DEFAULT_PAGE_LY,
 															  DEFAULT_PAGE_RX,
 															  DEFAULT_PAGE_RY));
 		GfxState state (DEFAULT_HDPI, 
 						DEFAULT_VDPI, 
-						rc.get(), 
+						pageRect.get(), 
 						DEFAULT_ROTATE, 
 						gFalse);
 		
 		// Get the objects with specific comparator
-		contentstream->getOperatorsAtPosition (opContainer, PdfOpCmp(pt), state);
+		contentstream->getOperatorsAtPosition (opContainer, PdfOpCmp(rc), state);
 	}
 
 	template<typename OpContainer, typename PositionComparator>

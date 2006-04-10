@@ -96,7 +96,7 @@ position (ostream& oss, const char* fileName)
 
 	
 	std::vector<shared_ptr<PdfOperator> > ops;
-	page->getObjectsAtPosition (ops, Point (1,1));
+	page->getObjectsAtPosition (ops, Rectangle (1,1,10,10));
 
 	oss << "Found objects #" << ops.size() << std::endl;
 

@@ -12,6 +12,9 @@
 // static includes
 #include "static.h"
 
+// DEBUG output needs it
+#include "iproperty.h"
+
 // PdfOperator
 #include "pdfoperators.h"
 
@@ -68,8 +71,21 @@ public:
 		{
 			adjustActualPosition (it.getCurrent().lock(), state);
 		
-			Point pt (state.getX1(), state.getY1());
-			if (cmp(pt))
+			// Create rectangle from actual position
+			Rectangle rc (state.getCurX (), state.getCurY(), 0, 0);
+			
+			// DEBUG OUTPUT //
+			std::string frst, lst;
+			it.getCurrent().lock()->getOperatorName(frst,lst);
+			PdfOperator::Operands ops;
+			it.getCurrent().lock()->getParameters (ops);
+			std::string strop;
+			if (0 < ops.size())
+				ops[0]->getStringRepresentation (strop);
+			printDbg (debug::DBG_DBG, rc << " " << frst << " " << strop);
+			/////////////////
+
+			if (cmp(rc))
 				container.push_back (boost::shared_ptr<PdfOperator> (it.getCurrent()));
 
 			it = it.next ();

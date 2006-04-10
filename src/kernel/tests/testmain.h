@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/04/10 23:07:22  misuj1am
+ *
+ *
+ * -- ADD support for getObjectsAddPosition
+ * 	-- almost done
+ *
  * Revision 1.3  2006/04/02 17:15:17  misuj1am
  *
  *
@@ -72,23 +78,6 @@ static const char* TESTPDFFILE= "../../doc/zadani.pdf";
 #define OK_TEST		OUTPUT << "TEST PASSED..." << endl; MEM_CHECK;
 //==========================
 
-
-//
-//
-//
-template<PropertyType T, typename U>
-IProperty*
-createSimpleObj (U val)
-{
-		return new CObjectSimple<T> (val);
-}
-
-template<PropertyType T, typename U>
-IProperty*
-createComplexObj (U val)
-{
-		return new CObjectComplex<T> (val);
-}
 
 //
 //
@@ -197,20 +186,6 @@ operator << (ostream& os, Stream* s)
 		os << (char)c << " ";
 
 	os << endl;
-	return os;
-}
-
-//
-//
-//
-inline ostream& 
-operator << (ostream& os, Rectangle r)
-{
-	os  << "XLeft: "  << r.xleft << " "
-		<< "XRight: " << r.xright << " "
-		<< "YLeft: "  << r.yleft << " "
-		<< "YRight: " << r.yright << endl;
-
 	return os;
 }
 

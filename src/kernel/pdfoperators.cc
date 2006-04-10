@@ -83,11 +83,9 @@ UnknownPdfOperator::getParameters (Operands& container) const
 //
 //
 //
-void 
+void
 UnknownPdfOperator::getOperatorName (std::string& first, std::string& last) const
-{ 
-	first = opText; last.clear (); 
-}
+	{ first = opText; last.clear (); }
 	
 //
 //

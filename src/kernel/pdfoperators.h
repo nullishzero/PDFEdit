@@ -47,7 +47,7 @@ class PdfOperator
 {	
 		
 public:
-	typedef std::list<boost::shared_ptr<IProperty> > 	 Operands;
+	typedef std::deque<boost::shared_ptr<IProperty> > 	 Operands;
 	typedef boost::weak_ptr<PdfOperator>				 ListItem;
 	typedef iterator::LinkedListIterator<ListItem> 		 Iterator;
 	typedef std::vector<boost::shared_ptr<PdfOperator> > PdfOperators;
@@ -353,7 +353,7 @@ public:
 		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
 
 	virtual void getOperatorName (std::string& first, std::string& last) const
-		{ first = opText; last.clear (); }
+		{ first = opText; last.clear ();}
 	
 	virtual void getStringRepresentation (std::string& str) const;
 };

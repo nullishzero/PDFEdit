@@ -15,7 +15,11 @@
 
 //
 #include "pdfoperators.h"
+#include "cobjecthelpers.h"
 #include "cobject.h"
+
+//fabs
+#include <math.h>
 
 //==========================================================
 namespace pdfobjects {
@@ -34,14 +38,399 @@ using namespace utils;
 namespace
 {
 
-	//
+	
+	//==========================================================
 	// Actual state (position) updaters
+	//==========================================================
+	
+	//
+	void
+	printTextUpdate (GfxState& state, const std::string& txt)
+	{
+		GfxFont *font;
+		int wMode;
+		double riseX, riseY;
+		CharCode code;
+		Unicode u[8];
+		double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, lineX, lineY;
+		double originX = 0, originY, tOriginX, tOriginY;
+		double oldCTM[6], newCTM[6];
+		double *mat = NULL;
+		Dict *resDict = NULL;
+		std::string::const_iterator p;
+		int len = 0, n = 0, uLen = 0, nChars = 0, nSpaces = 0, i = 0;
+
+		p = txt.begin ();
+		len = txt.length ();
+
+		// handle a Type 3 char
+/*		if (font->getType() == fontType3 && out->interpretType3Chars()) 
+		{
+			mat = state.getCTM();
+			for (i = 0; i < 6; ++i) {
+			  oldCTM[i] = mat[i];
+			}
+			mat = state.getTextMat();
+			newCTM[0] = mat[0] * oldCTM[0] + mat[1] * oldCTM[2];
+			newCTM[1] = mat[0] * oldCTM[1] + mat[1] * oldCTM[3];
+			newCTM[2] = mat[2] * oldCTM[0] + mat[3] * oldCTM[2];
+			newCTM[3] = mat[2] * oldCTM[1] + mat[3] * oldCTM[3];
+			mat = font->getFontMatrix();
+			newCTM[0] = mat[0] * newCTM[0] + mat[1] * newCTM[2];
+			newCTM[1] = mat[0] * newCTM[1] + mat[1] * newCTM[3];
+			newCTM[2] = mat[2] * newCTM[0] + mat[3] * newCTM[2];
+			newCTM[3] = mat[2] * newCTM[1] + mat[3] * newCTM[3];
+			newCTM[0] *= state.getFontSize();
+			newCTM[1] *= state.getFontSize();
+			newCTM[2] *= state.getFontSize();
+			newCTM[3] *= state.getFontSize();
+			newCTM[0] *= state.getHorizScaling();
+			newCTM[2] *= state.getHorizScaling();
+			state.textTransformDelta(0, state.getRise(), &riseX, &riseY);
+			curX = state.getCurX();
+			curY = state.getCurY();
+			lineX = state.getLineX();
+			lineY = state.getLineY();
+			while (len > 0) 
+			{
+			//  n = font->getNextChar(p, len, &code,
+			//		    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+			//		    &dx, &dy, &originX, &originY);
+			  dx = dx * state.getFontSize() + state.getCharSpace();
+			  if (n == 1 && *p == ' ') 
+			  {
+				  dx += state.getWordSpace();
+			  }
+			  dx *= state.getHorizScaling();
+			  dy *= state.getFontSize();
+			  state.textTransformDelta(dx, dy, &tdx, &tdy);
+			  state.transform(curX + riseX, curY + riseY, &x, &y);
+			  
+			  state.setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
+			  
+			  curX += tdx;
+			  curY += tdy;
+			  state.moveTo(curX, curY);
+			  state.textSetPos(lineX, lineY);
+			  p += n;
+			  len -= n;
+			}
+		} else if (out->useDrawChar()) 
+*/		{
+		state.textTransformDelta(0, state.getRise(), &riseX, &riseY);
+		while (len > 0) 
+		{
+		 // n = font->getNextChar(p, len, &code,
+		//		    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+		//		    &dx, &dy, &originX, &originY);
+			n = 1; dy = 0;
+			dx = dx * state.getFontSize() + state.getCharSpace();
+			if (n == 1 && *p == ' ') 
+			{
+			  dx += state.getWordSpace();
+			}
+			dx *= state.getHorizScaling();
+			dy *= state.getFontSize();
+			
+			state.textTransformDelta(dx, dy, &tdx, &tdy);
+			originX *= state.getFontSize();
+			originY *= state.getFontSize();
+			state.textTransformDelta(originX, originY, &tOriginX, &tOriginY);
+			state.shift(tdx, tdy);
+			p += n;
+			len -= n;
+		}
+
+/*		} else 
+		{
+		dx = dy = 0;
+		nChars = nSpaces = 0;
+		while (len > 0) 
+		{
+		//  n = font->getNextChar(p, len, &code,
+		//		    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+		//		    &dx2, &dy2, &originX, &originY);
+		  dx += dx2;
+		  dy += dy2;
+		  if (n == 1 && *p == ' ') 
+		  {
+			++nSpaces;
+		  }
+		  ++nChars;
+		  p += n;
+		  len -= n;
+		}
+		if (wMode) 
+		{
+		  dx *= state.getFontSize();
+		  dy = dy * state.getFontSize()
+		   + nChars * state.getCharSpace()
+		   + nSpaces * state.getWordSpace();
+		} else {
+		  dx = dx * state.getFontSize()
+		   + nChars * state.getCharSpace()
+		   + nSpaces * state.getWordSpace();
+		  dx *= state.getHorizScaling();
+		  dy *= state.getFontSize();
+		}
+		state.textTransformDelta(dx, dy, &tdx, &tdy);
+		state.shift(tdx, tdy);
+	*/	}// if ()
+	}	
 	//
 	void 
 	unknownUpdate (GfxState&, const PdfOperator::Operands&)
+		{ printDbg (debug::DBG_DBG, "Unknown updater."); }
+
+	// "m"
+	void
+	opmUpdate (GfxState& state, const PdfOperator::Operands& args)
 	{
-		printDbg (debug::DBG_DBG, "!");
+		assert (2 <= args.size());
+		printDbg (debug::DBG_DBG, "");
+		state.moveTo (getDoubleFromIProperty (args[0]), getDoubleFromIProperty (args[1]));
 	}
+	// "Td"
+	void
+	opTdUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (2 <= args.size());
+		double tx = state.getLineX() + getDoubleFromIProperty (args[0]);
+		double ty = state.getLineY() + getDoubleFromIProperty (args[1]);
+		state.textMoveTo(tx, ty);
+	}
+	// "Tm"
+	void
+	opTmUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (6 <= args.size ());
+		printDbg (debug::DBG_DBG, "");
+		state.setTextMat (	getDoubleFromIProperty (args[0]), 
+							getDoubleFromIProperty (args[1]),
+							getDoubleFromIProperty (args[2]), 
+							getDoubleFromIProperty (args[3]),
+							getDoubleFromIProperty (args[4]), 
+							getDoubleFromIProperty (args[5])
+						  );
+		state.textMoveTo(0, 0);
+	}
+	// "BT"
+	void
+	opBTUpdate (GfxState& state, const PdfOperator::Operands&)
+	{
+		printDbg (debug::DBG_DBG, "");
+		state.setTextMat (1, 0, 0, 1, 0, 0);
+		state.textMoveTo (0, 0);
+	}
+	// "l"
+	void
+	oplUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (2 <= args.size ());
+		state.lineTo (getDoubleFromIProperty(args[0]), getDoubleFromIProperty (args[1]));
+	}
+	// "c"
+	void
+	opcUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (6 <= args.size ());
+		state.curveTo ( getDoubleFromIProperty(args[0]), getDoubleFromIProperty(args[1]),
+						getDoubleFromIProperty(args[2]), getDoubleFromIProperty(args[3]),
+						getDoubleFromIProperty(args[4]), getDoubleFromIProperty(args[5]));
+	}
+	// "v"
+	void
+	opvUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (4 <= args.size ());
+		state.curveTo ( state.getCurX(), state.getCurY(), 
+						getDoubleFromIProperty(args[0]),
+						getDoubleFromIProperty(args[1]),
+						getDoubleFromIProperty(args[2]),
+						getDoubleFromIProperty(args[3])
+					  );
+
+	}
+	// "y"
+	void
+	opyUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (4 <= args.size ());
+		state.curveTo ( getDoubleFromIProperty(args[0]),
+						getDoubleFromIProperty(args[1]),
+						getDoubleFromIProperty(args[2]),
+						getDoubleFromIProperty(args[3]),
+						getDoubleFromIProperty(args[2]),
+						getDoubleFromIProperty(args[3])
+					  );
+	}
+	// "re"
+	void
+	opreUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (4 <= args.size ());
+		double x = getDoubleFromIProperty(args[0]);
+		double y = getDoubleFromIProperty(args[1]);
+		double w = getDoubleFromIProperty(args[2]);
+		double h = getDoubleFromIProperty(args[3]);
+		state.moveTo(x, y);
+		state.lineTo(x + w, y);
+		state.lineTo(x + w, y + h);
+		state.lineTo(x, y + h);
+		state.closePath();
+	}
+	// "h"
+	void
+	ophUpdate (GfxState& state, const PdfOperator::Operands&)
+		{state.closePath ();}
+	// "Tc"
+	void
+	opTcUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size());
+  		state.setCharSpace (getDoubleFromIProperty(args[0]));
+	}
+	// "Tf"
+	void
+	opTfUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size ());
+		printDbg (debug::DBG_DBG, "NOT IMPLEMENTED YET");
+		GfxFont *font = NULL;
+
+		//if (!(font = res->lookupFont(args[0].getName())))
+		//	return;
+		state.setFont (font, getDoubleFromIProperty (args[1]));
+	}
+	// "Ts"
+	void
+	opTsUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size());
+		state.setRise (getDoubleFromIProperty (args[0])); 
+	}
+	// "Tw"
+	void
+	opTwUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size());
+  		state.setWordSpace (getDoubleFromIProperty (args[0]));
+	}
+	// "Tz"
+	void
+	opTzUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size());
+		state.setHorizScaling (getDoubleFromIProperty (args[0]));
+	}
+	// "TD"
+	void
+	opTDUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (2 <= args.size ());
+		double tx = state.getLineX() + getDoubleFromIProperty (args[0]);
+		double ty = getDoubleFromIProperty (args[1]);
+		state.setLeading(-ty);
+		ty += state.getLineY();
+		state.textMoveTo(tx, ty);
+	}
+	// "T*"
+	void
+	opTstarUpdate (GfxState& state, const PdfOperator::Operands&)
+	{
+		double tx = state.getLineX();
+		double ty = state.getLineY() - state.getLeading();
+		state.textMoveTo (tx, ty);
+	}
+	// "'"
+	void
+	opApoUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size ());
+		double tx = state.getLineX();
+		double ty = state.getLineY() - state.getLeading();
+		state.textMoveTo(tx, ty);
+		//printTextUpdate (state, getStringFromIProperty (args[0]));
+	}
+	// "TL"
+	void
+	opTLUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size ());
+  		state.setLeading ( getDoubleFromIProperty (args[0]));
+	}
+	// "\"
+	void
+	opSlashUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (3 <= args.size ());
+		state.setWordSpace (getDoubleFromIProperty (args[0]));
+		state.setCharSpace (getDoubleFromIProperty (args[1]));
+		double tx = state.getLineX();
+		double ty = state.getLineY() - state.getLeading();
+		state.textMoveTo(tx, ty);
+		//printTextUpdate (state, getStringFromIProperty (args[2]));
+	}
+	// "TJ"
+	void
+	opTJUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size ());
+		if (!state.getFont()) 
+			throw ElementBadTypeException ("opTJUpdate: State in bad state.");
+		if (pArray != args[0]->getType())
+			throw ElementBadTypeException ("opTJUpdate: Object in bad state.");
+			
+  		boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (args[0]);
+		for (size_t i = 0; i < array->getPropertyCount(); ++i) 
+		{
+			boost::shared_ptr<IProperty> item = array->getProperty (i);
+			PropertyType tp = item->getType ();
+			switch (tp) 
+			{
+		     	case pInt:
+				case pReal:
+					{
+					double dd = -getDoubleFromIProperty (item);
+					// Always horizontal writine WMode
+					state.textShift(dd * 0.001 * fabs(state.getFontSize()), 0);
+					}
+					break;
+					
+		    	case pString:
+		      		//printTextUpdate (state, getStringFromIProperty (item));
+				  break;
+
+				default:
+					throw ElementBadTypeException ("opTJUpdate: Bad object type.");
+			}// switch
+		}// for
+	}
+	// "Tj"
+	void
+	opTjUpdate (GfxState& /*state*/, const PdfOperator::Operands& args)
+	{
+		assert (1 <= args.size ());
+ 		//printTextUpdate (state, getStringFromIProperty (args[0]));
+	}
+	/*// ""
+	void
+	op (GfxState& state, const PdfOperator::Operands& args)
+	{
+	}
+	// ""
+	void
+	op (GfxState& state, const PdfOperator::Operands& args)
+	{
+	}
+	// ""
+	void
+	op (GfxState& state, const PdfOperator::Operands& args)
+	{
+	}
+*/
+
+	//==========================================================
 	
 	//
 	// Maximum operator arguments
@@ -90,7 +479,7 @@ namespace
 		const char 				name[4];				/** Operator name. */
 		const size_t			argNum;					/** Number of arguments operator should get. */
 		const unsigned short	types[MAX_OPERANDS];	/** Bits are representing what it should be. */
-		void (*update) (GfxState& state, const PdfOperator::Operands& ops);/** Function to execute when updating position. */
+		void (*update) (GfxState&, const PdfOperator::Operands& );/** Function to execute when updating position. */
 		
 	} CheckTypes;
 
@@ -99,144 +488,168 @@ namespace
 	 * 
 	 */
 	const CheckTypes KNOWN_OPERATORS[] = {
-			{"",  3, 	{setNthBitsShort (pInt, pReal),
-					 	setNthBitsShort (pInt, pReal),    
-					 	setNthBitsShort (pString)}, unknownUpdate},	
-/*			{"'", 1, 	setNthBitsShort (pString), unknownUpdate},	
-			{"B", 0, 	setNoneBitsShort (), unknownUpdate},	
-			{"B*", 0, 	setNoneBitsShort (), unknownUpdate},	
-			{"BDC", 2, 	setNthBitsShort (pName),   
-						setNthBitsShort (pDict, pName), unknownUpdate},	
-			{"BI", 0, 	setNoneBitsShort (), unknownUpdate},	
-			{"BMC", 1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"BT",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"BX",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"CS",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"DP",  2,	setNthBitsShort (pName),   
-						setNthBitsShort (pDict, pName), unknownUpdate},	
-			{"Do",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"EI",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"EMC", 0, 	setNoneBitsShort (), unknownUpdate},	
-			{"ET",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"EX",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"F",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"G",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"ID",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"J",   1, 	setNthBitsShort (pInt), unknownUpdate},	
-			{"K",   4, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"M",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"MP",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"Q",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"RG",  3, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"S",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"SC",  4, setNthBitsShort (pInt, pReal),   
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-  			{"SCN", 5, setNthBitsShort (pInt, pReal, pName),   
-						setNthBitsShort (pInt, pReal, pName),    
-						setNthBitsShort (pInt, pReal, pName),    
-						setNthBitsShort (pInt, pReal, pName),
-						setNthBitsShort (pInt, pReal, pName), unknownUpdate},	
-			{"T*",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"TD",  2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"TJ",  1, 	setNthBitsShort (pArray), unknownUpdate},	
-			{"TL",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Tc",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Td",  2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Tf",  2, 	setNthBitsShort (pName),   
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Tj",  1, 	setNthBitsShort (pString), unknownUpdate},	
-			{"Tm",  6, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Tr",  1, 	setNthBitsShort (pInt), unknownUpdate},	
-			{"Ts",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Tw",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"Tz",  1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"W",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"W*",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"b",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"b*",  0, 	setNoneBitsShort (), unknownUpdate},	
-  			{"c",   6, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-  			{"cm",  6, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal),
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"cs",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"d",   2, 	setNthBitsShort (pArray),  
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"d0",  2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-  			{"d1",  6, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"f",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"f*",  0, 	setNoneBitsShort (), unknownUpdate},	
-			{"g",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"gs",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"h",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"i",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"j",   1, 	setNthBitsShort (pInt), unknownUpdate},	
-			{"k",   4, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"l",   2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"m",   2, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"n",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"q",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"re",  4, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"rg",  3, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"ri",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"s",   0, 	setNoneBitsShort (), unknownUpdate},	
-			{"sc",  4, setNthBitsShort (pInt, pReal),   
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-  			{"scn", 5, setNthBitsShort (pInt, pReal, pName),   
-						setNthBitsShort (pInt, pReal, pName),    
-						setNthBitsShort (pInt, pReal, pName),    
-						setNthBitsShort (pInt, pReal, pName),    
-						setNthBitsShort (pInt, pReal, pName), unknownUpdate},	
-			{"sh",  1, 	setNthBitsShort (pName), unknownUpdate},	
-			{"v",   4, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"w",   1, 	setNthBitsShort (pInt, pReal), unknownUpdate},	
-			{"y",   4, 	setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal),    
-						setNthBitsShort (pInt, pReal), unknownUpdate},	
-*/
+			{"\\",    3, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pString)}, 
+					opSlashUpdate},	
+			{"'",   1, {setNthBitsShort (pString)}, 
+					opApoUpdate},	
+			{"B",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"B*",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"BDC", 2, {setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
+					unknownUpdate},	
+			{"BI",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"BMC", 1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"BT",  0, {setNoneBitsShort ()}, 
+					opBTUpdate},	
+			{"BX",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"CS",  1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"DP",  2,	{setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
+					unknownUpdate},	
+			{"Do",  1, {setNthBitsShort (pName)}, 
+				   	unknownUpdate},	
+			{"EI",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"EMC", 0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"ET",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"EX",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"F",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"G",   1, {setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"ID",  0, {setNoneBitsShort ()},
+					unknownUpdate},	
+			{"J",   1, {setNthBitsShort (pInt)}, 
+					unknownUpdate},	
+			{"K",   4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),
+					    setNthBitsShort (pInt, pReal),	setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"M",   1, {setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"MP",  1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"Q",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"RG",  3, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"S",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"SC",  4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						setNthBitsShort (pInt, pReal),	setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+  			{"SCN", 5,  {setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName), 
+						 setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName), 
+						 setNthBitsShort (pInt, pReal, pName)}, 
+					unknownUpdate},	
+			{"T*",  0, {setNoneBitsShort ()}, 
+					opTstarUpdate},	
+			{"TD",  2, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					opTDUpdate},	
+			{"TJ",  1, {setNthBitsShort (pArray)}, 
+					opTJUpdate},	
+			{"TL",  1, {setNthBitsShort (pInt, pReal)}, 
+					opTLUpdate},	
+			{"Tc",  1, {setNthBitsShort (pInt, pReal)}, 
+					opTcUpdate},	
+			{"Td",  2, 	{setNthBitsShort (pInt, pReal),	setNthBitsShort (pInt, pReal)}, 
+					opTdUpdate},	
+			{"Tf",  2, 	{setNthBitsShort (pName), setNthBitsShort (pInt, pReal)}, 
+					opTfUpdate},	
+			{"Tj",  1, {setNthBitsShort (pString)}, 
+					opTjUpdate},	
+			{"Tm",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					opTmUpdate},	
+			{"Tr",  1, {setNthBitsShort (pInt)}, 
+					unknownUpdate},	
+			{"Ts",  1, {setNthBitsShort (pInt, pReal)}, 
+					opTsUpdate},	
+			{"Tw",  1, {setNthBitsShort (pInt, pReal)}, 
+					opTwUpdate},	
+			{"Tz",  1, {setNthBitsShort (pInt, pReal)}, 
+					opTzUpdate},	
+			{"W",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"W*",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"b",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"b*",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+  			{"c",   6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					opcUpdate},	
+  			{"cm",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"cs",  1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"d",   2, 	{setNthBitsShort (pArray),setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"d0",  2, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+  			{"d1",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"f",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"f*",  0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"g",   1, {setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"gs",  1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"h",   0, {setNoneBitsShort ()}, 
+					ophUpdate},	
+			{"i",   1, {setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"j",   1, {setNthBitsShort (pInt)}, 
+					unknownUpdate},	
+			{"k",   4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), 
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"l",   2, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					oplUpdate},	
+			{"m",   2, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					opmUpdate},	
+			{"n",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"q",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"re",  4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), 
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					opreUpdate},	
+			{"rg",  3, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"ri",  1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"s",   0, {setNoneBitsShort ()}, 
+					unknownUpdate},	
+			{"sc",  4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+  			{"scn", 5,  {setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName),    
+						 setNthBitsShort (pInt, pReal, pName),  setNthBitsShort (pInt, pReal, pName),    
+						setNthBitsShort (pInt, pReal, pName)}, 
+					unknownUpdate},	
+			{"sh",  1, {setNthBitsShort (pName)}, 
+					unknownUpdate},	
+			{"v",   4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
+					opvUpdate},	
+			{"w",   1, {setNthBitsShort (pInt, pReal)}, 
+					unknownUpdate},	
+			{"y",   4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+						setNthBitsShort (pInt, pReal),  setNthBitsShort (pInt, pReal)}, 
+					opyUpdate},	
+
 		};
 
 	/**
@@ -314,8 +727,6 @@ namespace
 		cmp = std::numeric_limits<int>::max ();
 		lo = -1;
 		hi = sizeof (KNOWN_OPERATORS) / sizeof (CheckTypes);
-		
-		printDbg (DBG_DBG, "size: " << hi );
 		
 		// 
 		// dividing of interval
@@ -513,332 +924,6 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 		throw ElementBadTypeException ("adjustActualPosition()");
 	
 }
-/*
-	"m"	
-	state->moveTo(args[0].getNum(), args[1].getNum());
-	"l"
-	state->lineTo(args[0].getNum(), args[1].getNum());
-	"c"
-	state->curveTo(x1, y1, x2, y2, x3, y3);
-
-	"v"
-	  x1 = state->getCurX();
-  y1 = state->getCurY();
-  x2 = args[0].getNum();
-  y2 = args[1].getNum();
-  x3 = args[2].getNum();
-  y3 = args[3].getNum();
-  state->curveTo(x1, y1, x2, y2, x3, y3);
-  
-  "y"
-  x1 = args[0].getNum();
-  y1 = args[1].getNum();
-  x2 = args[2].getNum();
-  y2 = args[3].getNum();
-  x3 = x2;
-  y3 = y2;
-  state->curveTo(x1, y1, x2, y2, x3, y3);
-  
-  "re"
-  state->moveTo(x, y);
-  state->lineTo(x + w, y);
-  state->lineTo(x + w, y + h);
-  state->lineTo(x, y + h);
-  state->closePath();
-  
-  "h"
- state->closePath();
-	
-
-Gfx.cc::#1478
-  
-  "BT"
-  state->setTextMat(1, 0, 0, 1, 0, 0);
-  state->textMoveTo(0, 0);
-
-  "Tc"
-  state->setCharSpace(args[0].getNum());
-
-  "Tf"
-  state->setFont(font, args[1].getNum());
-
-  "Ts"
-  text rise
-  
-  
-  "Tw"
-  state->setWordSpace(args[0].getNum());
-
-  "Tz"
-state->setHorizScaling(args[0].getNum());
-
-  "Td"
-  tx = state->getLineX() + args[0].getNum();
-  ty = state->getLineY() + args[1].getNum();
-  state->textMoveTo(tx, ty);
-
-  "TD"
-  tx = state->getLineX() + args[0].getNum();
-  ty = args[1].getNum();
-  state->setLeading(-ty);
-  ty += state->getLineY();
-  state->textMoveTo(tx, ty);
- 
-
-
-  "Tm"
- state->setTextMat(args[0].getNum(), args[1].getNum(),
-		    args[2].getNum(), args[3].getNum(),
-		    args[4].getNum(), args[5].getNum());
-  state->textMoveTo(0, 0);
-  out->updateTextMat(state);
-  out->updateTextPos(state);
-  
-  "T*"
-  tx = state->getLineX();
-  ty = state->getLineY() - state->getLeading();
-  state->textMoveTo(tx, ty)
-
-  "'"
-  tx = state->getLineX();
-  ty = state->getLineY() - state->getLeading();
-  state->textMoveTo(tx, ty);
-  doShowText
-
-  "TL"
-  state->setLeading(args[0].getNum());
-
-  "\"
-  state->setWordSpace(args[0].getNum());
-  state->setCharSpace(args[1].getNum());
-  tx = state->getLineX();
-  ty = state->getLineY() - state->getLeading();
-  state->textMoveTo(tx, ty);
-  doShowText
-		  
-  "TJ"
-void Gfx::opShowSpaceText(Object args[], int numArgs) {
-  Array *a;
-  Object obj;
-  int wMode;
-  int i;
-
-  if (!state->getFont()) {
-    error(getPos(), "No font in show/space");
-    return;
-  }
-  if (fontChanged) {
-    out->updateFont(state);
-    fontChanged = gFalse;
-  }
-  out->beginStringOp(state);
-  wMode = state->getFont()->getWMode();
-  a = args[0].getArray();
-  for (i = 0; i < a->getLength(); ++i) {
-    a->get(i, &obj);
-    if (obj.isNum()) {
-      // this uses the absolute value of the font size to match
-      // Acrobat's behavior
-      if (wMode) {
-	state->textShift(0, -obj.getNum() * 0.001 *
-			    fabs(state->getFontSize()));
-      } else {
-	state->textShift(-obj.getNum() * 0.001 *
-			 fabs(state->getFontSize()), 0);
-      }
-      out->updateTextShift(state, obj.getNum());
-    } else if (obj.isString()) {
-      doShowText(obj.getString());
-    } else {
-      error(getPos(), "Element of show/space array must be number or string");
-    }
-    obj.free();
-  }
-  out->endStringOp(state);
-}
-
-
-
-"!!!"
-void Gfx::doShowText(GString *s) {
-  GfxFont *font;
-  int wMode;
-  double riseX, riseY;
-  CharCode code;
-  Unicode u[8];
-  double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, lineX, lineY;
-  double originX, originY, tOriginX, tOriginY;
-  double oldCTM[6], newCTM[6];
-  double *mat;
-  Object charProc;
-  Dict *resDict;
-  Parser *oldParser;
-  char *p;
-  int len, n, uLen, nChars, nSpaces, i;
-
-  font = state->getFont();
-  wMode = font->getWMode();
-
-  if (out->useDrawChar()) {
-    out->beginString(state, s);
-  }
-
-  // handle a Type 3 char
-  if (font->getType() == fontType3 && out->interpretType3Chars()) {
-    mat = state->getCTM();
-    for (i = 0; i < 6; ++i) {
-      oldCTM[i] = mat[i];
-    }
-    mat = state->getTextMat();
-    newCTM[0] = mat[0] * oldCTM[0] + mat[1] * oldCTM[2];
-    newCTM[1] = mat[0] * oldCTM[1] + mat[1] * oldCTM[3];
-    newCTM[2] = mat[2] * oldCTM[0] + mat[3] * oldCTM[2];
-    newCTM[3] = mat[2] * oldCTM[1] + mat[3] * oldCTM[3];
-    mat = font->getFontMatrix();
-    newCTM[0] = mat[0] * newCTM[0] + mat[1] * newCTM[2];
-    newCTM[1] = mat[0] * newCTM[1] + mat[1] * newCTM[3];
-    newCTM[2] = mat[2] * newCTM[0] + mat[3] * newCTM[2];
-    newCTM[3] = mat[2] * newCTM[1] + mat[3] * newCTM[3];
-    newCTM[0] *= state->getFontSize();
-    newCTM[1] *= state->getFontSize();
-    newCTM[2] *= state->getFontSize();
-    newCTM[3] *= state->getFontSize();
-    newCTM[0] *= state->getHorizScaling();
-    newCTM[2] *= state->getHorizScaling();
-    state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
-    curX = state->getCurX();
-    curY = state->getCurY();
-    lineX = state->getLineX();
-    lineY = state->getLineY();
-    oldParser = parser;
-    p = s->getCString();
-    len = s->getLength();
-    while (len > 0) {
-      n = font->getNextChar(p, len, &code,
-			    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
-			    &dx, &dy, &originX, &originY);
-      dx = dx * state->getFontSize() + state->getCharSpace();
-      if (n == 1 && *p == ' ') {
-	dx += state->getWordSpace();
-      }
-      dx *= state->getHorizScaling();
-      dy *= state->getFontSize();
-      state->textTransformDelta(dx, dy, &tdx, &tdy);
-      state->transform(curX + riseX, curY + riseY, &x, &y);
-      saveState();
-      state->setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
-      //~ out->updateCTM(???)
-      if (!out->beginType3Char(state, curX + riseX, curY + riseY, tdx, tdy,
-			       code, u, uLen)) {
-	((Gfx8BitFont *)font)->getCharProc(code, &charProc);
-	if ((resDict = ((Gfx8BitFont *)font)->getResources())) {
-	  pushResources(resDict);
-	}
-	if (charProc.isStream()) {
-	  display(&charProc, gFalse);
-	} else {
-	  error(getPos(), "Missing or bad Type3 CharProc entry");
-	}
-	out->endType3Char(state);
-	if (resDict) {
-	  popResources();
-	}
-	charProc.free();
-      }
-      restoreState();
-      // GfxState::restore() does *not* restore the current position,
-      // so we deal with it here using (curX, curY) and (lineX, lineY)
-      curX += tdx;
-      curY += tdy;
-      state->moveTo(curX, curY);
-      state->textSetPos(lineX, lineY);
-      p += n;
-      len -= n;
-    }
-    parser = oldParser;
-
-  } else if (out->useDrawChar()) {
-    state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
-    p = s->getCString();
-    len = s->getLength();
-    while (len > 0) {
-      n = font->getNextChar(p, len, &code,
-			    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
-			    &dx, &dy, &originX, &originY);
-      if (wMode) {
-	dx *= state->getFontSize();
-	dy = dy * state->getFontSize() + state->getCharSpace();
-	if (n == 1 && *p == ' ') {
-	  dy += state->getWordSpace();
-	}
-      } else {
-	dx = dx * state->getFontSize() + state->getCharSpace();
-	if (n == 1 && *p == ' ') {
-	  dx += state->getWordSpace();
-	}
-	dx *= state->getHorizScaling();
-	dy *= state->getFontSize();
-      }
-      state->textTransformDelta(dx, dy, &tdx, &tdy);
-      originX *= state->getFontSize();
-      originY *= state->getFontSize();
-      state->textTransformDelta(originX, originY, &tOriginX, &tOriginY);
-      out->drawChar(state, state->getCurX() + riseX, state->getCurY() + riseY,
-		    tdx, tdy, tOriginX, tOriginY, code, n, u, uLen);
-      state->shift(tdx, tdy);
-      p += n;
-      len -= n;
-    }
-
-  } else {
-    dx = dy = 0;
-    p = s->getCString();
-    len = s->getLength();
-    nChars = nSpaces = 0;
-    while (len > 0) {
-      n = font->getNextChar(p, len, &code,
-			    u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
-			    &dx2, &dy2, &originX, &originY);
-      dx += dx2;
-      dy += dy2;
-      if (n == 1 && *p == ' ') {
-	++nSpaces;
-      }
-      ++nChars;
-      p += n;
-      len -= n;
-    }
-    if (wMode) {
-      dx *= state->getFontSize();
-      dy = dy * state->getFontSize()
-	   + nChars * state->getCharSpace()
-	   + nSpaces * state->getWordSpace();
-    } else {
-      dx = dx * state->getFontSize()
-	   + nChars * state->getCharSpace()
-	   + nSpaces * state->getWordSpace();
-      dx *= state->getHorizScaling();
-      dy *= state->getFontSize();
-    }
-    state->textTransformDelta(dx, dy, &tdx, &tdy);
-    out->drawString(state, s);
-    state->shift(tdx, tdy);
-  }
-
-  if (out->useDrawChar()) {
-    out->endString(state);
-  }
-
-  updateLevel += 10 * s->getLength();
-}
-
-  "Tj"
- doShowText(args[0].getString());
-
- 
- \TODO 
- XOBJECTS
-*/
 
 //==========================================================
 } // namespace operatorparser
