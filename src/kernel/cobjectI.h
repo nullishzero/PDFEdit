@@ -134,8 +134,6 @@ void
 CObjectSimple<Tp,Checker>::getPropertyValue (Value& val) const
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
-	printDbg (debug::DBG_DBG,"getPropertyValue()");
-
 	val = value;
 }
 
@@ -217,7 +215,6 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::~CObjectSimple ()
 {
 	Checker check; check.objectDeleted (this);
-	printDbg (debug::DBG_DBG,"~CObjectSimple()");
 }
 
 
@@ -332,7 +329,6 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::~CObjectComplex ()
 {
 	Checker check; check.objectDeleted (this);
-	printDbg (debug::DBG_DBG,"~CObjectSimple()");
 }
 
 

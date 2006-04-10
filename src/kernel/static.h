@@ -115,8 +115,22 @@ typedef struct Rect
 
 	// Constructor
 	Rect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
+	Rect (double x1, double y1, double x2, double y2) : xleft(x1), yleft(y1), xright(x2), yright(y2) {}
 
 } Rectangle;
+
+/**
+ * Output rectangle.
+ */
+inline std::ostream& 
+operator << (std::ostream& os, const Rectangle& rc)
+{
+	os 	<< "xleft: " << rc.xleft << " yleft: " << rc.yleft
+		<< " xright: " << rc.xright << " yright: " << rc.yright ;
+	
+	return os;
+}
+
 
 
 #endif // _STATIC_H_
