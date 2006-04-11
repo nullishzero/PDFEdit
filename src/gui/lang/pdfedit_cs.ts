@@ -1,165 +1,5 @@
 <!DOCTYPE TS><TS>
 <context>
-    <name>AboutWindow</name>
-    <message>
-        <source>PDF editor for unix systems</source>
-        <translation>PDF editor pro unix systémy</translation>
-    </message>
-    <message>
-        <source>Project leader</source>
-        <translation>Vedoucí projektu</translation>
-    </message>
-    <message>
-        <source>Authors</source>
-        <translation>Autoři</translation>
-    </message>
-    <message>
-        <source>About program</source>
-        <translation>O programu</translation>
-    </message>
-    <message>
-        <source>Compiled</source>
-        <translation>Zkompilováno</translation>
-    </message>
-    <message>
-        <source>This program is distributed under terms of GNU GPL</source>
-        <translation>Tento program je distribuován pod GNU GPL licencí</translation>
-    </message>
-    <message>
-        <source>Homepage</source>
-        <translation>Stránka</translation>
-    </message>
-</context>
-<context>
-    <name>OptionWindow</name>
-    <message>
-        <source>options</source>
-        <translation>nastavení</translation>
-    </message>
-    <message>
-        <source>Icon Path</source>
-        <translation>Cesta k ikonám</translation>
-    </message>
-    <message>
-        <source>Editor</source>
-        <translation>Editor</translation>
-    </message>
-    <message>
-        <source>Advanced mode</source>
-        <translation>Režim pro pokročilé</translation>
-    </message>
-    <message>
-        <source>Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document.</source>
-        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: this will affect only newly opened files</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: ovlivní až nově otevřené soubory</translation>
-    </message>
-    <message>
-        <source>Data files</source>
-        <translation>Datové soubory</translation>
-    </message>
-    <message>
-        <source>Paths to data files</source>
-        <translation>Cesty k datovým souborům</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: this will take effect on next program start</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: bude mít efekt až při přístím startu programu</translation>
-    </message>
-    <message>
-        <source>Object tree</source>
-        <translation>Strom objektů</translation>
-    </message>
-    <message>
-        <source>You can specify what kind of objects will be displayed in the object tree</source>
-        <translation>Můžete nastavit jaké typy objektů budou zobrazeny ve stromu objektů</translation>
-    </message>
-    <message>
-        <source>Document dictionary</source>
-        <translation>Slovník dokumentu</translation>
-    </message>
-    <message>
-        <source>Object dictionaries</source>
-        <translation>Slovníky objektů</translation>
-    </message>
-    <message>
-        <source>Outlines</source>
-        <translation>Outliny</translation>
-    </message>
-    <message>
-        <source>Graphic objects</source>
-        <translation>Grafické objekty</translation>
-    </message>
-    <message>
-        <source>Annotations</source>
-        <translation>Anotace</translation>
-    </message>
-    <message>
-        <source>Pages</source>
-        <translation>Stránky</translation>
-    </message>
-    <message>
-        <source>Simple Objects</source>
-        <translation>Jednoduché objekty</translation>
-    </message>
-    <message>
-        <source>Misc</source>
-        <translation>Různé</translation>
-    </message>
-    <message>
-        <source>Show return value of executed scripts in console</source>
-        <translation>Zobrazovat návratovou hodnotu skriptů v příkazovém řádku</translation>
-    </message>
-    <message>
-        <source>Toolbars</source>
-        <translation>Toolbary</translation>
-    </message>
-    <message>
-        <source>These toolbars will be shown</source>
-        <translation>Tyto toolbary budou zobrazeny</translation>
-    </message>
-    <message>
-        <source>History file</source>
-        <translation>Soubor historie</translation>
-    </message>
-    <message>
-        <source>Max. lines in history</source>
-        <translation>Max. řádek v historii</translation>
-    </message>
-</context>
-<context>
-    <name>PdfEditWindow</name>
-    <message>
-        <source>Loaded file</source>
-        <translation>Nahrán soubor</translation>
-    </message>
-    <message>
-        <source>New document created</source>
-        <translation>Vytvořen nový dokument</translation>
-    </message>
-    <message>
-        <source>Current file is not saved. Do you want to save it?</source>
-        <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
-    </message>
-</context>
-<context>
-    <name>PropertyEditor</name>
-    <message>
-        <source>This object does not have any directly editable properties</source>
-        <translation>Tento objekt nemá žádné přímo editovatelné položky</translation>
-    </message>
-    <message>
-        <source>No object selected</source>
-        <translation>Není zvolen žádný objekt</translation>
-    </message>
-    <message>
-        <source>This type of object does not have any properties</source>
-        <translation>Tento typ objektu nemá žádné položky</translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
         <source>Null</source>
@@ -309,7 +149,174 @@
     </message>
 </context>
 <context>
-    <name>Settings</name>
+    <name>gui::AboutWindow</name>
+    <message>
+        <source>PDF editor for unix systems</source>
+        <translation>PDF editor pro unix systémy</translation>
+    </message>
+    <message>
+        <source>Project leader</source>
+        <translation>Vedoucí projektu</translation>
+    </message>
+    <message>
+        <source>Authors</source>
+        <translation>Autoři</translation>
+    </message>
+    <message>
+        <source>About program</source>
+        <translation>O programu</translation>
+    </message>
+    <message>
+        <source>Compiled</source>
+        <translation>Zkompilováno</translation>
+    </message>
+    <message>
+        <source>This program is distributed under terms of GNU GPL</source>
+        <translation>Tento program je distribuován pod GNU GPL licencí</translation>
+    </message>
+    <message>
+        <source>Homepage</source>
+        <translation>Stránka</translation>
+    </message>
+</context>
+<context>
+    <name>gui::HelpWindow</name>
+    <message>
+        <source>help</source>
+        <translation>nápověda</translation>
+    </message>
+</context>
+<context>
+    <name>gui::OptionWindow</name>
+    <message>
+        <source>options</source>
+        <translation>nastavení</translation>
+    </message>
+    <message>
+        <source>Icon Path</source>
+        <translation>Cesta k ikonám</translation>
+    </message>
+    <message>
+        <source>Editor</source>
+        <translation>Editor</translation>
+    </message>
+    <message>
+        <source>Advanced mode</source>
+        <translation>Režim pro pokročilé</translation>
+    </message>
+    <message>
+        <source>Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document.</source>
+        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: this will affect only newly opened files</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: ovlivní až nově otevřené soubory</translation>
+    </message>
+    <message>
+        <source>Data files</source>
+        <translation>Datové soubory</translation>
+    </message>
+    <message>
+        <source>Paths to data files</source>
+        <translation>Cesty k datovým souborům</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: this will take effect on next program start</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: bude mít efekt až při přístím startu programu</translation>
+    </message>
+    <message>
+        <source>Object tree</source>
+        <translation>Strom objektů</translation>
+    </message>
+    <message>
+        <source>You can specify what kind of objects will be displayed in the object tree</source>
+        <translation>Můžete nastavit jaké typy objektů budou zobrazeny ve stromu objektů</translation>
+    </message>
+    <message>
+        <source>Document dictionary</source>
+        <translation>Slovník dokumentu</translation>
+    </message>
+    <message>
+        <source>Object dictionaries</source>
+        <translation>Slovníky objektů</translation>
+    </message>
+    <message>
+        <source>Outlines</source>
+        <translation>Outliny</translation>
+    </message>
+    <message>
+        <source>Graphic objects</source>
+        <translation>Grafické objekty</translation>
+    </message>
+    <message>
+        <source>Annotations</source>
+        <translation>Anotace</translation>
+    </message>
+    <message>
+        <source>Pages</source>
+        <translation>Stránky</translation>
+    </message>
+    <message>
+        <source>Simple Objects</source>
+        <translation>Jednoduché objekty</translation>
+    </message>
+    <message>
+        <source>Misc</source>
+        <translation>Různé</translation>
+    </message>
+    <message>
+        <source>Show return value of executed scripts in console</source>
+        <translation>Zobrazovat návratovou hodnotu skriptů v příkazovém řádku</translation>
+    </message>
+    <message>
+        <source>Toolbars</source>
+        <translation>Toolbary</translation>
+    </message>
+    <message>
+        <source>These toolbars will be shown</source>
+        <translation>Tyto toolbary budou zobrazeny</translation>
+    </message>
+    <message>
+        <source>History file</source>
+        <translation>Soubor historie</translation>
+    </message>
+    <message>
+        <source>Max. lines in history</source>
+        <translation>Max. řádek v historii</translation>
+    </message>
+</context>
+<context>
+    <name>gui::PdfEditWindow</name>
+    <message>
+        <source>Loaded file</source>
+        <translation>Nahrán soubor</translation>
+    </message>
+    <message>
+        <source>New document created</source>
+        <translation>Vytvořen nový dokument</translation>
+    </message>
+    <message>
+        <source>Current file is not saved. Do you want to save it?</source>
+        <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
+    </message>
+</context>
+<context>
+    <name>gui::PropertyEditor</name>
+    <message>
+        <source>This object does not have any directly editable properties</source>
+        <translation>Tento objekt nemá žádné přímo editovatelné položky</translation>
+    </message>
+    <message>
+        <source>No object selected</source>
+        <translation>Není zvolen žádný objekt</translation>
+    </message>
+    <message>
+        <source>This type of object does not have any properties</source>
+        <translation>Tento typ objektu nemá žádné položky</translation>
+    </message>
+</context>
+<context>
+    <name>gui::Settings</name>
     <message>
         <source>Main Toolbar</source>
         <comment>MainToolbar</comment>
@@ -395,9 +402,14 @@
         <comment>test</comment>
         <translation>Testovací menu</translation>
     </message>
+    <message>
+        <source>&amp;Help</source>
+        <comment>helpindex</comment>
+        <translation>Nápověda</translation>
+    </message>
 </context>
 <context>
-    <name>TreeWindow</name>
+    <name>gui::TreeWindow</name>
     <message>
         <source>Object</source>
         <translation>Objekt</translation>
