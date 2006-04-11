@@ -38,6 +38,10 @@
    <title><funcsynopsys>void about()</funcsynopsys></title>
    Invokes "About" dialog, showing information about this program and its authors
   </sect1>
+  <sect1 id="help">
+   <title><funcsynopsys>void help(string topic)</funcsynopsys></title>
+   Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
+  </sect1>
   <sect1 id="options">
    <title><funcsynopsys> void options()</funcsynopsys></title>
    Invokes options dialog. Does not wait for dialog to finish.
