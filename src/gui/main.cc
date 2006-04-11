@@ -1,17 +1,18 @@
 /** @file
  Main function
 */
-#include "config.h"
-#include "util.h"
-#include "version.h"
-#include "pdfeditwindow.h"
-#include "settings.h"
 #include <stdlib.h>
 #include <qtranslator.h>
 #include <qdir.h>
 #include <iostream>
+#include "pdfeditwindow.h"
+#include "config.h"
+#include "util.h"
+#include "version.h"
+#include "settings.h"
 
 using namespace std;
+using namespace gui;
 
 /** Option handler function*/
 typedef void optHandlerFn(void);

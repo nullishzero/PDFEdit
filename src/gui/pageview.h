@@ -6,6 +6,8 @@
 #include <qpainter.h>
 #include <qcursor.h>
 
+namespace gui {
+
 /** QWidget's class for viewing a page.
  *  
  */
@@ -177,5 +179,7 @@ class PageView : public QLabel {
 		/** width of resizing zone */
 		int resizingCursorZone;
 };
+
+} // namespace gui
 
 #endif

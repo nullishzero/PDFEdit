@@ -3,6 +3,7 @@
 #include <qpixmap.h>
 #include "util.h"
 
+namespace gui {
 
 PageView::PageView (QWidget *parent) : QLabel(parent) {
 	pageImage = NULL;
@@ -466,3 +467,5 @@ void PageView::drawRect ( QRect * oldRect, const QPoint & toPoint ) {
 
 	repaint( qr, false );
 }
+
+} // namespace gui

@@ -1,5 +1,6 @@
 #ifndef __INTPROPERTY_H__
 #define __INTPROPERTY_H__
+
 #include "property.h"
 #include "stringproperty.h"
 #include <cobject.h>

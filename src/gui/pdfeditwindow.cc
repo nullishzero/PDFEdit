@@ -1,9 +1,9 @@
 /** @file
  PdfEditWindow - class representing main application window
 */
+#include "pdfeditwindow.h"
 #include "pagespace.h"
 #include <utils/debug.h>
-#include "pdfeditwindow.h"
 #include "settings.h"
 #include "util.h"
 #include "test.h"
@@ -14,7 +14,11 @@
 #include "version.h"
 #include <qmessagebox.h> 
 #include "optionwindow.h"
+#include "helpwindow.h"
 #include "dialog.h"
+//#include <qtextstream.h> 
+
+namespace gui {
 
 using namespace std;
 
@@ -127,19 +131,26 @@ void PdfEditWindow::closeWindow() {
  close();
 }
 
+
 /** Saves window state to application settings*/
 void PdfEditWindow::saveWindowState() {
  globalSettings->saveWindow(this,"main"); 
  globalSettings->saveSplitter(spl,"spl_main"); 
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
+ menuSystem->saveToolbars(this);
+ //TODO: bug, toolbars change order
+/* QString out;
+ QTextStream qs(out,IO_WriteOnly);
+ qs << this;
+ printDbg(debug::DBG_DBG,"SAVETOOL: " << out);
  //Save toolbar states
  QStringList tbs=menuSystem->getToolbarList();
  for (unsigned int i=0;i<tbs.count();i++) {
   ToolBar* tb=menuSystem->getToolbar(tbs[i]);
   if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
   menuSystem->saveToolbar(tb,tbs[i],this);
- }
+ }*/
 }
 
 /** Restores window state from application settings */
@@ -148,13 +159,14 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreSplitter(spl,"spl_main"); 
  globalSettings->restoreSplitter(splProp,"spl_right"); 
  globalSettings->restoreSplitter(splCmd,"spl_left"); 
+ menuSystem->restoreToolbars(this);
  //Restore toolbar states
- QStringList tbs=menuSystem->getToolbarList();
+/* QStringList tbs=menuSystem->getToolbarList();
  for (unsigned int i=0;i<tbs.count();i++) {
   ToolBar* tb=menuSystem->getToolbar(tbs[i]);
   if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
   menuSystem->restoreToolbar(tb,tbs[i],this);
- }
+ }*/
 }
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
@@ -522,6 +534,14 @@ void PdfEditWindow::variables() {
  }
 }
 
+/** Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
+@param topic Starting help topic
+ */
+void PdfEditWindow::help(const QString &topic/*=QString::null*/) {
+ HelpWindow *hb=new HelpWindow("TODO: topic");
+ hb->show();
+}
+
 /** default destructor */
 PdfEditWindow::~PdfEditWindow() {
  destroyFile();
@@ -533,3 +553,5 @@ PdfEditWindow::~PdfEditWindow() {
  delete menuSystem;
  delete qp;
 }
+
+} // namespace gui

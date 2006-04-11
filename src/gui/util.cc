@@ -6,6 +6,7 @@
 #include <qfile.h>
 
 using namespace std;
+using namespace pdfobjects;
 
 /** Prints error message and terminates application
  @param message Error message to show

@@ -10,6 +10,8 @@
 #include "option.h"
 #include "menu.h"
 
+namespace gui {
+
 /** Pointer to running Options window or NULL if none active. Instance is in optionwindow.cc */
 class OptionWindow;
 extern OptionWindow *opt;
@@ -64,5 +66,7 @@ private:
  /** Menu system (for toolbar list ... ) */
  Menu *menuSystem;
 };
+
+} // namespace gui
 
 #endif

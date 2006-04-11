@@ -7,6 +7,8 @@
 #include <cpdf.h>
 #include "treeitem.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 //class private to TreeWindow
@@ -41,5 +43,7 @@ private:
  /** Root object of the tree*/
  IProperty *obj;
 };
+
+} // namespace gui
 
 #endif

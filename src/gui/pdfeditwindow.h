@@ -1,6 +1,7 @@
 #ifndef __PDFEDITWINDOW_H__
 #define __PDFEDITWINDOW_H__
 
+#include "commandwindow.h"
 #include <cobject.h>
 #include <cpdf.h>
 #include <qapplication.h>
@@ -10,12 +11,13 @@
 #include <qstring.h>
 #include <qmainwindow.h>
 #include <qsinterpreter.h>
-#include "commandwindow.h"
 #include "propertyeditor.h"
 #include "treewindow.h"
 #include "menu.h"
 #include "qspdf.h"
 #include "qsimporter.h"
+
+namespace gui {
 
 using namespace pdfobjects;
 
@@ -42,6 +44,7 @@ public slots: //These will be exported to scripting
  void saveWindowState();
  void restoreWindowState();
  void about();
+ void help(const QString &topic=QString::null);
  void createNewWindow(); 
  void exitApp();
  void closeWindow();
@@ -98,5 +101,7 @@ private:
 };
 
 void createNewEditorWindow(const QString &fName=QString::null);
+
+} // namespace gui
 
 #endif

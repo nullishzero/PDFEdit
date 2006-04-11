@@ -11,6 +11,9 @@
 #include "menu.h"
 #include "util.h"
 #include "settings.h"
+#include <qtextstream.h> 
+
+namespace gui {
 
 /** Default constructor */
 Menu::Menu() {
@@ -294,3 +297,19 @@ void Menu::restoreToolbar(QToolBar *tb,const QString &name,QMainWindow *main) {
  int ofs=tbs[3].toInt();
  main->moveDockWindow(tb,dck,index,nl,ofs);
 }
+
+void Menu::saveToolbars(QMainWindow *main) {
+ QString out;
+ QTextStream qs(out,IO_WriteOnly);
+ qs << *main;
+ globalSettings->write("gui/toolbarpos",out);
+} 
+
+void Menu::restoreToolbars(QMainWindow *main) {
+ QString out=globalSettings->read("gui/toolbarpos");
+ if (out.isNull()) return;
+ QTextStream qs(out,IO_ReadOnly);
+ qs >> *main;
+} 
+
+} // namespace gui

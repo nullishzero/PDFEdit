@@ -10,6 +10,8 @@
 #include "pageview.h"
 #include "cpage.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class PageSpace : public QWidget {
@@ -61,5 +63,7 @@ void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 		QPixmap		* actualPagePixmap;
 QPixmap * r1, * r2; /*TODO smazat, jenom pro testovani */
 };
+
+} // namespace gui
 
 #endif

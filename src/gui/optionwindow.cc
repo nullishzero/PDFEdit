@@ -17,6 +17,8 @@ OptionWindow - widget for editing program options
 #include "version.h"
 #include "settings.h"
 
+namespace gui {
+
 using namespace std;
 
 /** Default constructor of option window.
@@ -265,3 +267,5 @@ OptionWindow::~OptionWindow() {
  opt=NULL;
  printDbg(debug::DBG_DBG,"Options closing ...");
 }
+
+} // namespace gui

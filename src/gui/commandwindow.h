@@ -6,6 +6,8 @@
 #include <qlineedit.h>
 #include <qcombobox.h>
 
+namespace gui {
+
 class CommandWindow : public QWidget {
  Q_OBJECT
 public:
@@ -31,5 +33,7 @@ private:
  /** History widget */
  QComboBox *history;
 };
+
+} // namespace gui
 
 #endif

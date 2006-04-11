@@ -10,6 +10,8 @@
 #include <qfile.h>
 #include <qlistbox.h>
 
+namespace gui {
+
 using namespace std;
 
 QString CMD = "gui/CommandLine/";
@@ -106,3 +108,5 @@ void CommandWindow::addError(const QString &message) {
 CommandWindow::~CommandWindow() {
 	saveHistory();
 }
+
+} // namespace gui

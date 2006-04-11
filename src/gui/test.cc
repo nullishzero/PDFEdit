@@ -4,6 +4,7 @@
 #include "test.h"
 
 namespace test {
+ using namespace pdfobjects;
 
 /** Create and return some testing CPdf */
 CPdf* testPDF(void) {

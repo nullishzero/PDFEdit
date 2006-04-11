@@ -5,6 +5,8 @@
 #include <qstring.h>
 #include <qpixmap.h>
 
+namespace gui {
+
 typedef struct { int labelWidth, labelHeight; } initStruct;
 // TODO asi prepracovat
 void Init( initStruct * is ) {
@@ -199,3 +201,5 @@ void PageSpace::moveSelection ( const QPoint & relativeMove ) {
 void PageSpace::resizeSelection ( const QRect &, const QRect & ) {
 	// TODO
 }
+
+} // namespace gui

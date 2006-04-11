@@ -42,18 +42,18 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 
 #debug information
-QMAKE_CXXFLAGS += -g
+#QMAKE_CXXFLAGS += -g
 
 #Testing version : will look in current directory for data files
 QMAKE_CXXFLAGS += -D TESTING
 
-#Main Window
-HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h
-SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc
-
 #Dialogs
 HEADERS += aboutwindow.h  option.h  optionwindow.h  stringoption.h  realoption.h  intoption.h  booloption.h  dialog.h
 SOURCES += aboutwindow.cc option.cc optionwindow.cc stringoption.cc realoption.cc intoption.cc booloption.cc dialog.cc
+
+#Help
+HEADERS += helpwindow.h
+SOURCES += helpwindow.cc
 
 #Tree window
 HEADERS += treeitem.h  treewindow.h 
@@ -72,6 +72,10 @@ SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc
 #Other source files
 HEADERS += util.h  menu.h  settings.h 
 SOURCES += util.cc menu.cc settings.cc main.cc 
+
+#Main Window
+HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h
+SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc
 
 #Testing files (will be removed later)
 HEADERS += test.h 

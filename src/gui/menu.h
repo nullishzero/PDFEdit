@@ -10,6 +10,8 @@
 #include <qstringlist.h> 
 #include <qstring.h>
 
+namespace gui {
+
 /** Action map type: mapping from to */
 typedef QMap<QString, int> ActionMap;
 /** Inverse action map: mapping from to  */
@@ -30,6 +32,8 @@ public:
  QStringList getToolbarList();
  void saveToolbar(QToolBar *tb,const QString &name,QMainWindow *main);
  void restoreToolbar(QToolBar *tb,const QString &name,QMainWindow *main);
+ void saveToolbars(QMainWindow *main);
+ void restoreToolbars(QMainWindow *main);
 private:
  void initPaths();
  QString getIconFile(const QString &name);
@@ -55,5 +59,7 @@ private:
  /** List of loaded toolbars */
  ToolBarList toolbarList;
 };
+
+} // namespace gui
 
 #endif

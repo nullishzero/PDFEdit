@@ -8,6 +8,8 @@
 #include <iostream>
 #include <qlayout.h>
 
+namespace gui {
+
 using namespace std;
 
 /** Subclass holding specific settings - what to show in treeview */
@@ -214,3 +216,5 @@ TreeWindow::~TreeWindow() {
  delete tree;
  delete sh;
 }
+
+} // namespace gui

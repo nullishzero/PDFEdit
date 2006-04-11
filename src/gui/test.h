@@ -4,10 +4,8 @@
 #include <cobject.h>
 #include <cpdf.h>
 
-using namespace std;
-using namespace pdfobjects;
-
 namespace test {
+ using namespace pdfobjects;
  CDict* testDict(void);
  CPdf* testPDF(void);
  void makeArTest1(CArray & arTest1);
