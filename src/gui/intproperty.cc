@@ -6,6 +6,8 @@ IntProperty - class for widget containing
 #include "intproperty.h"
 #include <qvalidator.h>
 
+namespace gui {
+
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
  @param _name name of this property
@@ -36,3 +38,5 @@ void IntProperty::readValue(IProperty *pdfObject) {
  ed->setText(QString::number(val));
  changed=false;
 }
+
+} // namespace gui

@@ -7,6 +7,8 @@ StringProperty - class for widget containing
 #include <string>
 #include <stdlib.h>
 
+namespace gui {
+
 using namespace std;
 
 /** Default constructor of property item
@@ -67,3 +69,5 @@ void StringProperty::readValue(IProperty *pdfObject) {
  ed->setText(val);
  changed=false;
 }
+
+} // namespace gui

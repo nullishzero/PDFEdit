@@ -4,6 +4,8 @@
 
 #include "qspdf.h"
 
+namespace gui {
+
 /** Construct wrapper with given PDF document */
 QSPdf::QSPdf(CPdf *_pdf) : QSCObject ("Pdf") {
  obj=_pdf;
@@ -73,5 +75,7 @@ QSPage* QSPdf::getLastPage() {
 CPdf* QSPdf::get() {
  return obj;
 }
+
+} // namespace gui 
 
 //TODO: implement outlines and revisions, rest of functions ...

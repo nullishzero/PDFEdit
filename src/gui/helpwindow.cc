@@ -6,6 +6,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include "settings.h"
 #include "version.h"
 
 namespace gui {
@@ -16,6 +17,7 @@ namespace gui {
 @param name Name of this window (for debugging)
  */
 HelpWindow::HelpWindow(const QString &fileName,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
+ globalSettings->restoreWindow(this,"help"); 
  setCaption(QString(APP_NAME)+" - "+tr("help"));
  QBoxLayout *l=new QVBoxLayout(this);
  help=new QTextBrowser(this,"help_browser");
@@ -36,6 +38,7 @@ void HelpWindow::closeEvent(QCloseEvent *e) {
 
 /** default destructor */
 HelpWindow::~HelpWindow() {
+ globalSettings->saveWindow(this,"help"); 
  delete help;
 }
 

@@ -10,6 +10,8 @@ PropertyFactory - static function that will return correct property widget based
 #include "refproperty.h"
 #include "nameproperty.h"
 
+namespace gui {
+
 /** Return one of the subclasses of Property widget for editing given property.
     If property is of unknown or uneditable type, NULL is returned
  @param prop IProperty to create property from
@@ -42,3 +44,4 @@ Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *pa
  return NULL;
 }
 
+} // namespace gui

@@ -4,6 +4,8 @@
 #include "toolbutton.h"
 #include <qiconset.h>
 
+namespace gui {
+
 /** Constructor of ToolButton
  @param icon Icon for this button
  @param tooltip Text to display as tooltip
@@ -25,3 +27,5 @@ ToolButton::ToolButton(QPixmap *icon, const QString tooltip, int id, QWidget *pa
 void ToolButton::slotClicked() {
  emit clicked(b_id);
 }
+
+} // namespace gui

@@ -5,6 +5,8 @@ BoolProperty - class for widget containing
 
 #include "boolproperty.h"
 
+namespace gui {
+
 using namespace std;
 
 /** Default constructor of property item
@@ -57,3 +59,5 @@ void BoolProperty::readValue(IProperty *pdfObject) {
  ed->setChecked(val);
  changed=false;
 }
+
+} // namespace gui

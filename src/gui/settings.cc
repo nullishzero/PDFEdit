@@ -11,9 +11,15 @@
 #include "settings.h"
 #include "util.h"
 
+namespace gui {
+
 using namespace std;
 
 const QString APP_KEY = "/PDFedit/";
+
+/** One object for application, holding all global settings.
+ Should be thread-safe. This instance is used from other files */
+Settings *globalSettings;
 
 /** private initialization function */
 void Settings::init() {
@@ -280,3 +286,5 @@ void Settings::restoreSplitter(QSplitter *spl,const QString name) {
  }
  spl->setSizes(splSize);
 }
+
+} // namespace gui

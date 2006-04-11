@@ -4,6 +4,8 @@
 
 #include "qsgraphics.h"
 
+namespace gui {
+
 /** Construct wrapper with given CDict */
 QSGraphics::QSGraphics(CGraphic *gfx) : QSDict (gfx) {
 }
@@ -16,5 +18,7 @@ QSGraphics::~QSGraphics() {
 CGraphic* QSGraphics::get() {
  return obj;
 }
+
+} // namespace gui
 
 //todo: incomplete

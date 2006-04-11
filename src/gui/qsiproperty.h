@@ -5,6 +5,8 @@
 #include <iproperty.h>
 #include "qscobject.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class QSIProperty : public QSCObject {
@@ -19,5 +21,7 @@ private:
  /** Object held in class*/
  IProperty *obj;
 };
+
+} // namespace gui
 
 #endif

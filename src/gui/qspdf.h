@@ -9,6 +9,8 @@
 #include "qsdict.h"
 #include "qscobject.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class QSPdf : public QSCObject {
@@ -33,5 +35,7 @@ private:
  /** Object held in class*/
  CPdf *obj;
 };
+
+} // namespace gui
 
 #endif

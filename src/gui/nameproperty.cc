@@ -9,6 +9,8 @@ Basically, CName is CString, but we might want differentiation in case we'll han
 #include <string>
 #include <stdlib.h>
 
+namespace gui {
+
 using namespace std;
 
 /** Default constructor of property item
@@ -24,3 +26,5 @@ NameProperty::NameProperty(const QString &_name, QWidget *parent/*=0*/, Property
 /** default destructor */
 NameProperty::~NameProperty() {
 }
+
+} // namespace gui

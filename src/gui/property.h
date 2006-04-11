@@ -5,6 +5,8 @@
 #include <qwidget.h>
 #include <iproperty.h>
 
+namespace gui {
+
 using namespace pdfobjects;
 
 /** Property flags (hidden, readonly, unset ...) */
@@ -44,5 +46,7 @@ protected:
  bool changed;
 
 };
+
+} // namespace gui
 
 #endif

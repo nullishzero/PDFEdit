@@ -3,6 +3,7 @@
 #include <qtoolbar.h>
 #include "toolbutton.h"
 
+namespace gui {
 
 /** Class wrapping QToolBar, providing "click forwarding" from TButtons.
  Buttons must be added with addButton() for this to work properly
@@ -21,5 +22,7 @@ class ToolBar : public QToolBar {
  public slots:
   void slotClicked(int id);
 };
+
+} // namespace gui
 
 #endif

@@ -5,13 +5,10 @@ PropertyEditor - widget for editing properties of selected object
 #include "propertyeditor.h"
 #include <utils/debug.h>
 #include "util.h"
-//#include <qpoint.h>
-//#include <stdlib.h>
-#include "stringproperty.h"
-#include "intproperty.h"
-#include "realproperty.h"
-#include "boolproperty.h"
+#include <cobject.h>
 #include "propertyfactory.h"
+
+namespace gui {
 
 using namespace std;
 
@@ -227,3 +224,5 @@ PropertyEditor::~PropertyEditor() {
  delete items;
  delete list;
 }
+
+} // namespace gui

@@ -5,6 +5,8 @@
 #include <qcheckbox.h>
 #include <cobject.h>
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class BoolProperty : public Property {
@@ -22,5 +24,7 @@ protected:
  /** checkbox used for editing the value */
  QCheckBox *ed;
 };
+
+} // namespace gui
 
 #endif

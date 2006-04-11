@@ -11,6 +11,8 @@ readStringDialog
 #include <qfiledialog.h> 
 #include <utils/debug.h>
 
+namespace gui {
+
 /** Invoke "open file" dialog. Wait for user to select one existing file and return its name.
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
@@ -76,3 +78,5 @@ QString readStringDialog(QWidget* parent,const QString &message, const QString &
  if (ok) return res;
  return QString::null;
 }
+
+} // namespace gui

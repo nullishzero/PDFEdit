@@ -6,6 +6,8 @@ Should be subclassed for editing specific property types (integer, string, ...)
 #include <utils/debug.h>
 #include "property.h"
 
+namespace gui {
+
 //TODO: add functions for display & editing ... 
 
 /** Default constructor of property item
@@ -58,3 +60,5 @@ void Property::emitChanged() {
  printDbg(debug::DBG_DBG,"Property was edited: " << name);
  changed=true;
 }
+
+} // namespace gui

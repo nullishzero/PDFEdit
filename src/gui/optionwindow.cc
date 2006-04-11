@@ -55,7 +55,7 @@ OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *nam
  grl->setColStretch(3,1);
  grl->setSpacing(16);
  grl->setMargin(8);
- grl->addWidget(new QLabel("Options",low),0,0);
+ grl->addWidget(new QLabel(CONFIG_DIR,low),0,0);
  QPushButton* btOk=    new QPushButton(QObject::tr("&Ok"),low,"opt_ok");
  QPushButton* btApply= new QPushButton(QObject::tr("&Apply"),low,"opt_apply");
  QPushButton* btCancel=new QPushButton(QObject::tr("&Cancel"),low,"opt_cancel");

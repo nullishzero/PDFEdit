@@ -13,6 +13,8 @@
 #include <iproperty.h>
 #include "property.h"
 
+namespace gui {
+
 /** property editor widget */
 class PropertyEditor : public QWidget {
  Q_OBJECT
@@ -54,5 +56,7 @@ private:
  /** Dictionary with property labels */
  QDict<QLabel> *labels;
 };
+
+} // namespace gui
 
 #endif

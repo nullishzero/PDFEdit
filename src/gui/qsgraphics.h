@@ -7,6 +7,8 @@
 #include "qsdict.h"
 #include "qscobject.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class QSGraphics : public QSDict {
@@ -19,5 +21,7 @@ private:
  /** Object held in class*/
  CGraphic *obj;
 };
+
+} // namespace gui
 
 #endif

@@ -8,6 +8,8 @@
 
 /** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 
+namespace gui {
+
 class Settings : public QObject {
  Q_OBJECT
 public:
@@ -54,5 +56,7 @@ private:
 
 /** One object for application, holding all global settings. */
 extern Settings *globalSettings;
+
+} // namespace gui
 
 #endif

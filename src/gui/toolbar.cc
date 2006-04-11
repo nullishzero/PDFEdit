@@ -5,6 +5,8 @@
 
 #include "toolbar.h"
 
+namespace gui {
+
 /** Same constructor as QToolBar */
 ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow) : QToolBar(label,mainWindow) {
 }
@@ -29,3 +31,5 @@ void ToolBar::addButton(ToolButton *qb) {
 void ToolBar::slotClicked(int id) {
  emit itemClicked(id);
 }
+
+} // namespace gui

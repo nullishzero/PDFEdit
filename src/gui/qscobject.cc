@@ -6,6 +6,8 @@
 #include <utils/debug.h>
 #include "qscobject.h"
 
+namespace gui {
+
 //todo: add garbage collection if needed
 
 /** Construct wrapper with given CObject */
@@ -33,3 +35,5 @@ QString QSCObject::type() {
 void QSCObject::deleteSelf() {
  delete this;
 }
+
+} // namespace gui

@@ -7,6 +7,8 @@
 #include "qsdict.h"
 #include "qscobject.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class QSPage : public QSCObject {
@@ -22,5 +24,7 @@ private:
  /** Object held in class*/
  boost::shared_ptr<CPage> obj;
 };
+
+} // namespace gui
 
 #endif

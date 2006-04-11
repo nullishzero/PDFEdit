@@ -4,6 +4,8 @@
 
 #include "qsiproperty.h"
 
+namespace gui {
+
 /** Construct wrapper with given IProperty */
 QSIProperty::QSIProperty(IProperty *_ip) : QSCObject ("IProperty") {
  obj=_ip;
@@ -22,5 +24,7 @@ QSIProperty::~QSIProperty() {
 IProperty* QSIProperty::get() {
  return obj;
 }
+
+} // namespace gui
 
 //todo: incomplete

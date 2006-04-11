@@ -7,6 +7,8 @@
 
 using namespace pdfobjects;
 
+namespace gui {
+
 class QSDict : public QSCObject {
  Q_OBJECT
 public:
@@ -19,5 +21,7 @@ private:
  /** Object held in class*/
  CDict *obj;
 };
+
+} // namespace gui 
 
 #endif

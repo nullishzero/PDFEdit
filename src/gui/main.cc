@@ -36,10 +36,6 @@ OptionHelp optHelp;
 /** Option handlers */
 OptionMap optMap;
 
-/** One object for application, holding all global settings.
- Should be thread-safe. This instance is used from other files */
-Settings *globalSettings;
-
 /** delete settings object (and save settings)
  This function is called at application exit
  */

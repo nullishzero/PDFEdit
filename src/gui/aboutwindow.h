@@ -3,6 +3,8 @@
 
 #include <qwidget.h>
 
+namespace gui {
+
 class AboutWindow : public QWidget {
 Q_OBJECT
 public:
@@ -11,4 +13,7 @@ public:
 protected:
  void closeEvent(QCloseEvent *e);
 };
+
+} // namespace gui
+
 #endif

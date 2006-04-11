@@ -4,6 +4,8 @@
 #include <qpixmap.h>
 #include <qstring.h>
 
+namespace gui {
+
 /** Class wrapping QToolButton, adding button ID and providing different constructor (QPixmap instead of QIconSet)
  Also, emits clicked(id) signal in addition to normal clicked() signal
  */
@@ -20,5 +22,7 @@ class ToolButton : public QToolButton {
   /** signal emitted when clicked on this button. The button sends ID of itself. */
   void clicked(int);
 };
+
+} // namespace gui
 
 #endif

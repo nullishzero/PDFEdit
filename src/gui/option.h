@@ -5,6 +5,8 @@
 #include <qlineedit.h>
 #include "settings.h"
 
+namespace gui {
+
 class Option : public QWidget{
  Q_OBJECT
 public:
@@ -19,5 +21,7 @@ protected:
  /** Settings used to read/write value*/
  Settings *set;
 };
+
+} // namespace gui 
 
 #endif

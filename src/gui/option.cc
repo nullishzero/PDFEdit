@@ -6,6 +6,8 @@ Can be subclassed for editing specific option types (integer, ...)
 #include <utils/debug.h>
 #include "option.h"
 
+namespace gui {
+
 /** Default constructor of option item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
@@ -26,3 +28,5 @@ QString Option::getName() {
 Option::~Option() {
 // printDbg(debug::DBG_DBG,"- Option " << key);
 }
+
+} // namespace gui

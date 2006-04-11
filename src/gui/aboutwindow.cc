@@ -8,6 +8,8 @@
 #include <qpushbutton.h>
 #include "version.h"
 
+namespace gui {
+
 using namespace std;
 
 /** Version of program*/
@@ -40,3 +42,5 @@ void AboutWindow::closeEvent(QCloseEvent *e) {
 /** default destructor */
 AboutWindow::~AboutWindow() {
 }
+
+} // namespace gui

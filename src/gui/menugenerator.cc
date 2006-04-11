@@ -161,7 +161,7 @@ void MenuGenerator::check() {
  @param name Caption of menu item
 */
 void MenuGenerator::addLocString(const QString &id,const QString &name) {
- trans+=QString("QT_TRANSLATE_NOOP( \"Settings\",\"")+name+"\",\""+id+"\")";
+ trans+=QString("QT_TRANSLATE_NOOP( \"gui::Settings\",\"")+name+"\",\""+id+"\")";
  cout << id << " = " << name << endl;
 }
 

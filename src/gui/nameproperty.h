@@ -6,6 +6,8 @@
 #include <qlineedit.h>
 #include <cobject.h>
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class NameProperty : public StringProperty {
@@ -14,5 +16,7 @@ public:
  NameProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
  virtual ~NameProperty();
 };
+
+} // namespace gui 
 
 #endif

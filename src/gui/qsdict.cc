@@ -4,6 +4,8 @@
 
 #include "qsdict.h"
 
+namespace gui {
+
 //TODO: this is for CObjectComplex, not only CDict ...
 
 /** Construct wrapper with given CDict */
@@ -26,5 +28,7 @@ QString QSDict::getString() {
  obj->getStringRepresentation(text);
  return text;
 }
+
+} // namespace gui
 
 //todo: incomplete

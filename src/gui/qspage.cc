@@ -4,6 +4,8 @@
 
 #include "qspage.h"
 
+namespace gui {
+
 /** Construct wrapper with given CPage */
 QSPage::QSPage(boost::shared_ptr<CPage> _page) : QSCObject ("Page") {
  obj=_page;
@@ -30,5 +32,7 @@ QString QSPage::getText() {
 boost::shared_ptr<CPage> QSPage::get() {
  return obj;
 }
+
+} // namespace gui
 
 //todo: incomplete

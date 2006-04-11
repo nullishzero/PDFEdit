@@ -5,6 +5,8 @@ StringOption - class for widget containing one editable setting of type string
 #include <utils/debug.h>
 #include "stringoption.h"
 
+namespace gui {
+
 /** Default constructor of StringOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
@@ -38,3 +40,5 @@ QSize StringOption::sizeHint() const {
 void StringOption::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }
+
+} // namespace gui

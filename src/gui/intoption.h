@@ -4,11 +4,15 @@
 #include <qstring.h>
 #include "stringoption.h"
 
+namespace gui {
+
 class IntOption : public StringOption {
  Q_OBJECT
 public:
  IntOption(const QString &_key=0,QWidget *parent=0);
  virtual ~IntOption();
 };
+
+} // namespace gui
 
 #endif

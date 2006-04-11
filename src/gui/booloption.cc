@@ -4,6 +4,8 @@ BoolOption - class for widget containing one editable setting of type bool
 
 #include "booloption.h"
 
+namespace gui {
+
 /** Default constructor of BoolOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
@@ -41,4 +43,6 @@ void BoolOption::readValue() {
  bool val=set->readBool(key,defValue);
  ed->setChecked(val);
 }
+
+} // namespace gui
 

@@ -6,6 +6,8 @@ RealProperty - class for widget containing
 #include "realproperty.h"
 #include <qvalidator.h>
 
+namespace gui {
+
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
  @param _name name of this property
@@ -36,3 +38,6 @@ void RealProperty::readValue(IProperty *pdfObject) {
  ed->setText(QString::number(val));
  changed=false;
 }
+
+} // namespace gui
+

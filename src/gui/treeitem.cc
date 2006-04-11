@@ -5,6 +5,8 @@
 #include "treeitem.h"
 #include "util.h"
 
+namespace gui {
+
 using namespace std;
 
 //todo: observers?
@@ -58,3 +60,4 @@ IProperty* TreeItem::getObject() {
 TreeItem::~TreeItem() {
 }
 
+} // namespace gui

@@ -11,6 +11,8 @@
 #include "qsiproperty.h"
 #include "qspage.h"
 
+namespace gui {
+
 /** Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated */
 QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
  setName("importer");
@@ -97,4 +99,6 @@ QSImporter::~QSImporter() {
  if (qp) qp->removeObject(this);
  printDbg(debug::DBG_DBG,"Destroying QSImporter");
 }
+
+} // namespace gui
 

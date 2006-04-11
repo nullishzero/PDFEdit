@@ -6,6 +6,8 @@
 #include <qpushbutton.h>
 #include <cobject.h>
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class RefProperty : public Property {
@@ -27,5 +29,7 @@ private:
  /** Push button for GUI selection */
  QPushButton *pb;
 };
+
+} // namespace gui
 
 #endif

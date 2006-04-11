@@ -5,6 +5,8 @@
 #include <qcheckbox.h>
 #include "option.h"
 
+namespace gui {
+
 class BoolOption : public Option {
  Q_OBJECT
 public:
@@ -21,5 +23,7 @@ protected:
  /* Default value if option not found */
  bool defValue;
 };
+
+} // namespace gui
 
 #endif

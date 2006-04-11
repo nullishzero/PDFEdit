@@ -9,6 +9,8 @@ RefProperty - class for widget containing
 #include <string>
 #include <stdlib.h>
 
+namespace gui {
+
 using namespace std;
 
 /** Default constructor of property item
@@ -90,3 +92,5 @@ void RefProperty::readValue(IProperty *pdfObject) {
  ed->setText(objString);
  changed=false;
 }
+
+} // namespace gui

@@ -6,6 +6,8 @@
 
 using namespace pdfobjects;
 
+namespace gui {
+
 class TreeItem : public QListViewItem {
 public:
  TreeItem(QListView *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
@@ -17,5 +19,7 @@ private:
  /** CObject stored in this TreeItem */
  IProperty *obj;
 };
+
+} // namespace gui
 
 #endif

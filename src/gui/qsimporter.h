@@ -11,6 +11,8 @@
 #include <cpdf.h>
 #include "qspdf.h"
 
+namespace gui {
+
 using namespace pdfobjects;
 
 class QSImporter : public QObject {
@@ -36,4 +38,7 @@ private:
  /** QSProject in which this importer is installed. */
  QSProject *qp;
 };
+
+} // namespace gui
+
 #endif

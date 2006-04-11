@@ -4,6 +4,8 @@
 
 #include "refvalidator.h"
 
+namespace gui {
+
 /** regexp for validation */
 QRegExp valid("(\\d+),(\\d+)");
 
@@ -37,3 +39,5 @@ QValidator::State RefValidator::validate(QString &input,int &pos) const {
  if (ivalid.exactMatch(input)) return Intermediate;
  return Invalid;
 }
+
+} // namespace gui

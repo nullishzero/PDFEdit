@@ -5,6 +5,8 @@
 #include <qlineedit.h>
 #include "option.h"
 
+namespace gui {
+
 class StringOption : public Option {
  Q_OBJECT
 public:
@@ -19,5 +21,7 @@ protected:
  /** one line edit control used for editing the value */
  QLineEdit *ed;
 };
+
+} // namespace gui
 
 #endif

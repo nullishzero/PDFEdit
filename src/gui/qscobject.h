@@ -4,6 +4,8 @@
 #include <qobject.h>
 #include <qstring.h>
 
+namespace gui {
+
 class QSCObject : public QObject {
 Q_OBJECT
 public:
@@ -16,5 +18,7 @@ private:
  /** Name of this objects's type */
  QString typeName;
 };
+
+} // namespace gui
 
 #endif
