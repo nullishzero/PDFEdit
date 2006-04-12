@@ -7,6 +7,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/12 21:08:13  hockm0bm
+ * printProperty method signature changed
+ *         - no implicit parameter
+ *         - output stream parameter is reference now
+ *
  * Revision 1.10  2006/04/10 23:04:51  misuj1am
  *
  *
@@ -148,7 +153,7 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
  * Gets string representation of given property and dumps it to standard output.
  * TODO output stream as parameter.
  */
-void printProperty(boost::shared_ptr<IProperty> ip, std::ostream out=std::cout);
+void printProperty(boost::shared_ptr<IProperty> ip, std::ostream &out);
 
 
 
