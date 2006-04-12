@@ -59,9 +59,10 @@
    Show Yes/No question and wait for answer. Return true if user selected "yes", or false if user selected "no"
   </sect1>
   <sect1 id="closeFile">
-   <title><funcsynopsys> bool closeFile(bool askSave)</funcsynopsys></title>
+   <title><funcsynopsys> bool closeFile(bool askSave,bool onlyAsk)</funcsynopsys></title>
    Closes file opened in this editor window.
    if askSave is true, user is asked to save the file if it is modified.
+   if onlyAsk is true, file is not actually closed, only user is asked if he want to save work (if not specified, defaults to false).
    returns true in case of success, or false if user decide not to close current document and keep it open.
   </sect1>
   <sect1 id="modified">
