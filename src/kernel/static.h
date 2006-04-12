@@ -131,6 +131,18 @@ operator << (std::ostream& os, const Rectangle& rc)
 	return os;
 }
 
+/**
+ * Output point.
+ */
+inline std::ostream& 
+operator << (std::ostream& os, const Point& pt)
+{
+	os 	<< "x: " << pt.x << " y: " << pt.y;
+	return os;
+}
+
+
+
 
 
 #endif // _STATIC_H_

@@ -16,22 +16,15 @@
 // property modes
 #include "modecontroller.h"
 
-// our stuff
-//#include "exceptions.h"
-
-
 
 //=====================================================================================
-
-namespace pdfobjects
-{
-
+namespace pdfobjects {
+//=====================================================================================
 
 //
 // Forward declarations
 // 
 class CPdf;
-
 
 
 /** Enum describing the type of a property. */
@@ -106,56 +99,54 @@ public:
 	typedef observer::IChangeContext<IProperty> ObserverContext;
 
 private:
- IndiRef 		ref;		/**< Object's pdf id and generation number. */
- PropertyMode	mode;		/**< Mode of this property. */
- ObserverList 	observers;	/**< List of observers. */
- CPdf* 			pdf;		/**< This object belongs to this pdf. */	
+	IndiRef 		ref;		/**< Object's pdf id and generation number. */
+	PropertyMode	mode;		/**< Mode of this property. */
+	ObserverList 	observers;	/**< List of observers. */
+	CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 
 
+	//
+	// Constructors
+	//
 private:
-  /** Copy constructor. */
-  IProperty (const IProperty&) {};
+	/** Copy constructor. */
+	IProperty (const IProperty&) {};
 
 protected:	
 
-  /** Basic constructor. */
-  IProperty (CPdf* _pdf = NULL) : mode(mdUnknown), pdf(_pdf)
-  {
-	printDbg (debug::DBG_DBG, "IProperty () constructor.");
+	/** Basic constructor. */
+	IProperty (CPdf* _pdf = NULL);
 
-	ref.num = ref.gen = 0;
-  };
+	/** Constructor. */
+	IProperty (CPdf* _pdf, const IndiRef& rf);
 
-  /** Constructor. */
-  IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf)
-  {
-	printDbg (debug::DBG_DBG, "IProperty () constructor.");
-  };
 
+	//
+	// Deep Copy
+	//
 public:
   
-  /**
-   * Copy constructor. Returns deep copy.
-   * 
-   * @return Deep copy of this object.
-   */
-  boost::shared_ptr<IProperty> clone () const
-  {
-		boost::shared_ptr<IProperty> ip (doClone ());
-		assert (typeid (*ip) == typeid (*this) && "doClone INCORRECTLY overriden!!" );
-		
-		return ip;
-  }
+	/**
+	 * Copy constructor. Returns deep copy.
+	 *
+	 * REMARK: This is an example of Template method design pattern.
+	 * 
+	 * @return Deep copy of this object.
+	 */
+	boost::shared_ptr<IProperty> clone () const;
 
 protected:
 
-  /**
-   * Implementation of clone method
-   *
-   * @return Deep copy of this object.
-   */
-  virtual IProperty* doClone () const = 0;
+	/**
+	 * Implementation of clone method
+ 	 *
+ 	 * @return Deep copy of this object.
+	 */
+	virtual IProperty* doClone () const = 0;
 
+	//
+	// Pdf
+	//
 public:
   
 	/**
@@ -165,14 +156,7 @@ public:
 	 *
 	 * @param p pdf that this object belongs to
 	 */
-	void setPdf (CPdf* p)
-	{
-		assert (NULL == pdf);	// modify existing association with a pdf?
-		if (NULL != pdf)
-			throw CObjInvalidOperation ();
-		
-		pdf = p;
-	};
+	void setPdf (CPdf* p);
 
 	/**
 	 * Returns pdf in which this object lives.
@@ -181,7 +165,9 @@ public:
 	 */
 	CPdf* getPdf () const {return pdf;};
 
-
+	//
+	// IndiRef
+	//
 public:
 	/**
 	 * Returns object's identification number. If it is an inline object
@@ -208,6 +194,9 @@ public:
 	 */
 	void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
 
+	//
+	// PropertyMode
+	//	
 public:
 
 	/**
@@ -233,15 +222,14 @@ public:
      * @return Object casted to desired type.
      */
     template<typename T>
-    static
+    inline static
 	boost::shared_ptr<T> getSmartCObjectPtr (const boost::shared_ptr<IProperty>& ptr) 
     {
     	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
   	  	return boost::dynamic_pointer_cast<T, IProperty> (ptr);
     }
 
-  
-    /** 
+	/** 
      * Returns type of object. 
      *
      * @return Type of this class.
@@ -254,19 +242,31 @@ public:
 	 * If it is an indirect object, we have to notify CXref.
 	 */
 	virtual void getStringRepresentation (std::string& str) const = 0;
- 
 
 	/**
- 	 * Notify Writer object that this object has changed. We have to call this
-	 * function to make changes visible.
+ 	 * Notify Writer object that this object has changed. 
+	 *
+	 * We have to call this function to make changes visible.
+	 *
+	 * REMARK: This is an example of Template method design pattern.
 	 */
-	virtual void dispatchChange () const = 0; 
-	
+	void dispatchChange () const;
+
+	/**
+	 * Create xpdf object.
+	 *
+	 * @return Xpdf object(s).
+	 */
+	virtual Object* _makeXpdfObject () const = 0;
+
 	/**
 	 * Destructor.
 	 */
 	virtual ~IProperty () {};
 
+	//
+	// Observer interface
+	//
 public:
 	
 	/**
@@ -274,59 +274,24 @@ public:
 	 *
 	 * @param observer Observer being attached.
 	 */
-	void registerObserver (boost::shared_ptr<const Observer> o) 
-	{
-		if (o)
-			observers.push_back (o);
-		else
-			throw ElementBadTypeException ("IProperty::registerObserver got invalid observer.");
-	}
+	void registerObserver (boost::shared_ptr<const Observer> o);
   
 	/**
 	 * Detaches an observer.
 	 * 
 	 * @param observer Observer beeing detached.
 	 */
-	 void unregisterObserver (boost::shared_ptr<const Observer> o)
-	 {
-		if (o)
-		{
-			ObserverList::iterator it = find (observers.begin (), observers.end(), o);
-			if (it != observers.end ())
-				observers.erase (it);
-			else
-			{
-				printDbg (debug::DBG_DBG, "unregisterObserver did not find the element to erase.");
-				ElementNotFoundException ("","");
-			}
-			
-		}else
-			throw ElementBadTypeException ("IProperty::unregisterObserver got invalid observer.");
-	 };
+	 void unregisterObserver (boost::shared_ptr<const Observer> o);
 
 protected:
 
-  /**
-   * Notify all observers that a property has changed.
-   */
-  void notifyObservers (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const ObserverContext> context)
-  {
-	ObserverList::iterator it = IProperty::observers.begin ();
-	for (; it != IProperty::observers.end(); ++it)
-		  (*it)->notify (newValue, context);
-  }
+	/**
+	 * Notify all observers that a property has changed.
+	 */
+	void notifyObservers (boost::shared_ptr<IProperty> newValue, 
+					  	  boost::shared_ptr<const ObserverContext> context);
 
-
-public:
-
-  /**
-   * Create xpdf object.
-   *
-   * @return Xpdf object(s).
-   */
-  virtual Object* _makeXpdfObject () const = 0;
-
-
+	
 }; /* class IProperty */
 
 

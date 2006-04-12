@@ -144,7 +144,7 @@ template<PropertyType Tp, typename Checker>
 void
 CObjectSimple<Tp,Checker>::dispatchChange() const
 {
-	printDbg (debug::DBG_DBG,"dispatchChange() [" << (int)this << "]" );
+	printDbg (debug::DBG_DBG,"CObjectSimple::dispatchChange() [" << (int)this << "]" );
 
 	//
 	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
@@ -159,6 +159,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 	//
 	if (utils::objHasParent (*this))
 	{
+		printDbg (debug::DBG_DBG, "TRUE");
 		boost::shared_ptr<IProperty> pIp = pdf->getIndirectProperty (IProperty::getIndiRef());
 		if (pIp)
 		{
@@ -174,6 +175,7 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 		}
 	}else
 	{
+		printDbg (debug::DBG_DBG, "TRUE");
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
 		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
@@ -281,7 +283,7 @@ template<PropertyType Tp, typename Checker>
 void
 CObjectComplex<Tp,Checker>::dispatchChange() const
 {
-	printDbg (debug::DBG_DBG,"dispatchChange() [" << (int)this << "]" );
+	printDbg (debug::DBG_DBG,"CObjectComplex::dispatchChange() [" << (int)this << "]" );
 
 	//
 	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
@@ -291,20 +293,12 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 		return;
 
 	//
-	// If this object is indirect infrom xref about the change
+	// If this is an indirect object inform xref about the change
 	// else find the closest indirect object and call dispatchChange on that object
-	// 
-	// objHasParent is the same as if it is an indirect object or not
 	//
 	if (utils::objHasParent (*this))
 	{
-		Object* obj = _makeXpdfObject ();
-		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
-		utils::freeXpdfObject (obj);
-
-	}else
-	{
+		printDbg (debug::DBG_DBG, "TRUE");
 		boost::shared_ptr<IProperty> pIp = pdf->getIndirectProperty (IProperty::getIndiRef());
 		if (pIp)
 		{
@@ -318,8 +312,14 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 			assert (!"Bad parent.");
 			throw ElementBadTypeException ("Bad pointer type.");
 		}
+	}else
+	{
+		printDbg (debug::DBG_DBG, "TRUE");
+		Object* obj = _makeXpdfObject ();
+		// This function saves a COPY of xpdf object(s) do we have to delete it
+		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
+		utils::freeXpdfObject (obj);
 	}
-
 }
 
 //
@@ -745,7 +745,7 @@ template<typename Checker>
 void
 CObjectStream<Checker>::dispatchChange () const
 {
-	printDbg (debug::DBG_DBG,"dispatchChange<pStream>() [" << (int)this << "]" );
+	printDbg (debug::DBG_DBG,"CObjectStream::dispatchChange<pStream>() [" << (int)this << "]" );
 
 	//
 	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
@@ -755,20 +755,12 @@ CObjectStream<Checker>::dispatchChange () const
 		return;
 
 	//
-	// If this object is indirect infrom xref about the change
+	// If this is an indirect object inform xref about the change
 	// else find the closest indirect object and call dispatchChange on that object
 	//
-	// objHasParent is the same as if it is an indirect object or not
-	// 
 	if (utils::objHasParent (*this))
 	{
-		Object* obj = _makeXpdfObject ();
-		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen,obj);
-		utils::freeXpdfObject (obj);
-
-	}else
-	{
+		printDbg (debug::DBG_DBG, "TRUE");
 		boost::shared_ptr<IProperty> pIp = pdf->getIndirectProperty (IProperty::getIndiRef());
 		if (pIp)
 		{
@@ -780,7 +772,15 @@ CObjectStream<Checker>::dispatchChange () const
 		}else
 		{
 			assert (!"Bad parent.");
+			throw ElementBadTypeException ("Bad pointer type.");
 		}
+	}else
+	{
+		printDbg (debug::DBG_DBG, "TRUE");
+		Object* obj = _makeXpdfObject ();
+		// This function saves a COPY of xpdf object(s) do we have to delete it
+		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
+		utils::freeXpdfObject (obj);
 	}
 }	
 

@@ -28,22 +28,34 @@ namespace pdfobjects {
 /**
  * Comparator that will define area around specified point.
  */
-//
-// Default position comparator
-//
-struct PdfOpCmp
+struct PdfOpCmpRc
 {
+private:
+	const Rectangle rc_;
+public:
 	/** Consructor. */
-	PdfOpCmp (const Rectangle& rc) : rc_(rc) {};
+	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {};
 	
 	/** Is in in a range. */
 	bool operator() (const Rectangle&) const
 	{
 		return true;
 	}
-	
+};
+
+struct PdfOpCmpPt
+{
 private:
-	const Rectangle rc_;
+	const Point pt_;
+public:
+	/** Consructor. */
+	PdfOpCmpPt (const Point& pt) : pt_(pt) {};
+	
+	/** Is in in a range. */
+	bool operator() (const Rectangle&) const
+	{
+		return true;
+	}
 };
 
 //
@@ -51,9 +63,9 @@ private:
 //
 // xpdf doesn't know the keyword CONST....
 //
-static double DEFAULT_HDPI = 72;
-static double DEFAULT_VDPI = 72;
-static int DEFAULT_ROTATE = 0;
+static double DEFAULT_HDPI 	= 72;
+static double DEFAULT_VDPI 	= 72;
+static int DEFAULT_ROTATE 	= 0;
 
 static double DEFAULT_PAGE_LX = 0;
 static double DEFAULT_PAGE_LY = 0;
@@ -115,40 +127,66 @@ public:
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
 	 *
-	 * @param pt Point around which we will be looking.
+	 * @param pt 		Point around which we will be looking.
+	 * @param cmp 		Null if default kernel area comparator should be used
+	 * 						otherwise points to an object which will decide whether an operator 
+	 * 						is "near" a point.
+	 * 	@param hDpi		Horizontal dpi.
+	 * 	@param vDpi		Vertival dpi.
+	 * 	@param pageRect Page bounding box.
+	 * 	@param rotata	Rotation.
+	 */
+	template<typename OpContainer>
+	void getObjectsAtPosition  (OpContainer& opContainer, 
+								const Rectangle& rc,
+								double hDpi = DEFAULT_HDPI, 
+								double vDpi = DEFAULT_VDPI, 
+								const Rectangle pageRect = Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY,
+																	  DEFAULT_PAGE_RX, DEFAULT_PAGE_RY), 
+								int rotate = DEFAULT_ROTATE) const
+	{	
+		printDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
+		// Get the objects with specific comparator
+		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc), hDpi, vDpi, pageRect, rotate);
+	}
+	/**
+	 * Get objects at specified position. This call will be delegated to
+	 * CContentStream class.
+	 *
+	 * @param rc Rectangle around which we will be looking.
 	 * @param cmp Null if default kernel area comparator should be used
 	 * 				otherwise points to an object which will decide whether an operator 
 	 * 				is "near" a point.
-	 *
+	 * 	@param hDpi		Horizontal dpi.
+	 * 	@param vDpi		Vertival dpi.
+	 * 	@param pageRect Page bounding box.
+	 * 	@param rotata	Rotation.
 	 */
 	template<typename OpContainer>
-	void getObjectsAtPosition (OpContainer& opContainer, const Rectangle& rc) const
+	void getObjectsAtPosition  (OpContainer& opContainer, 
+								const Point& pt,
+								double hDpi = DEFAULT_HDPI, 
+								double vDpi = DEFAULT_VDPI, 
+								const Rectangle pageRect = Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY,
+																	  DEFAULT_PAGE_RX, DEFAULT_PAGE_RY), 
+								int rotate = DEFAULT_ROTATE) const
 	{	
-		printDbg (debug::DBG_DBG, " at point (" << rc.xleft << "," << rc.yleft << ","
-												<< rc.xright << "," << rc.yright << ")");
-
-		// Set state
-		boost::scoped_ptr<PDFRectangle> pageRect (new PDFRectangle (DEFAULT_PAGE_LX,
-															  DEFAULT_PAGE_LY,
-															  DEFAULT_PAGE_RX,
-															  DEFAULT_PAGE_RY));
-		GfxState state (DEFAULT_HDPI, 
-						DEFAULT_VDPI, 
-						pageRect.get(), 
-						DEFAULT_ROTATE, 
-						gFalse);
-		
+		printDbg (debug::DBG_DBG, " at point (" << pt << ")");
 		// Get the objects with specific comparator
-		contentstream->getOperatorsAtPosition (opContainer, PdfOpCmp(rc), state);
+		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt), hDpi, vDpi, pageRect, rotate);
 	}
-
+	
 	template<typename OpContainer, typename PositionComparator>
-	void getObjectsAtPosition (OpContainer& opContainer, PositionComparator& cmp) const
+	void getObjectsAtPosition ( OpContainer& opContainer, PositionComparator cmp, 
+								double hDpi, double vDpi, const Rectangle& pageRect, int rotate ) const
 	{	
-		printDbg (debug::DBG_DBG, "");
-
+		// Create Media (Bounding) box
+		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (pageRect.xleft, pageRect.yleft,
+															  pageRect.xright, pageRect.yright));;
+		// Create state
+		GfxState state (hDpi, vDpi, rc.get(), rotate, gFalse);
 		// Get the objects with specific comparator
-		contentstream->getOperatorsAtPosition (opContainer, cmp);
+		contentstream->getOperatorsAtPosition (opContainer, cmp, state);
 	}
 
 	

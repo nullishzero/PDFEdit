@@ -72,7 +72,7 @@ public:
 			adjustActualPosition (it.getCurrent().lock(), state);
 		
 			// Create rectangle from actual position
-			Rectangle rc (state.getCurX (), state.getCurY(), 0, 0);
+			Rectangle rc (state.getCurX (), state.getPageHeight () - state.getCurY(), 0, 0);
 			
 			// DEBUG OUTPUT //
 			std::string frst, lst;
