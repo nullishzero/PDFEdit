@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/12 17:58:28  hockm0bm
+ * BasicChangeContext changed to BasicChangeContextType
+ *
  * Revision 1.4  2006/04/09 21:32:03  misuj1am
  *
  *
@@ -27,9 +30,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-// forward declaration
-//class IProperty;
-
 //=============================================================================
 namespace observer
 {
@@ -47,7 +47,7 @@ template<typename T> class IChangeContext
 public:
 	/** Supported context types.
 	 */
-	enum ChangeContextType {BasicChangeContext};
+	enum ChangeContextType {BasicChangeContextType};
 	
 	/** Returns context type.
 	 *
@@ -82,7 +82,7 @@ public:
 	 */
 	typename IChangeContext<T>::ChangeContextType getType()const
 	{
-		return IChangeContext<T>::BasicChangeContext;
+		return IChangeContext<T>::BasicChangeContextType;
 	}
 
 	/** Returns original value.
