@@ -191,6 +191,13 @@ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
 //------------------------------------------------------------------------
 
 XRef::XRef(BaseStream *strA) {
+  // inits stream and initializes internals
+  str = strA;
+  initInternals();
+}
+
+void XRef::initInternals()
+{
   Guint pos;
   Object obj;
 
@@ -207,7 +214,6 @@ XRef::XRef(BaseStream *strA) {
   ownerPasswordOk = gFalse;
 
   // read the trailer
-  str = strA;
   start = str->getStart();
   pos = getStartXref();
 
@@ -252,15 +258,23 @@ XRef::XRef(BaseStream *strA) {
   trailerDict.getDict()->setXRef(this);
 }
 
-XRef::~XRef() {
+void XRef::destroyInternals()
+{
   gfree(entries);
+  entries=NULL;
   trailerDict.free();
   if (streamEnds) {
     gfree(streamEnds);
+    streamEnds=NULL;
   }
   if (objStr) {
     delete objStr;
+    objStr=NULL;
   }
+}
+
+XRef::~XRef() {
+  destroyInternals();
 }
 
 // Read the 'startxref' position.

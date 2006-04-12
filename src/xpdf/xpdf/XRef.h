@@ -15,6 +15,9 @@
 // Michal Hocko - all public methods are virtual and private fields are
 //                protected (we need to create transparent wrapper/decorator
 //                to this class)
+//              - initialization and destruction of internal structures is 
+//                done separately in methods. Constructor and destructor code
+//                was moved to those methods and they just call this methods.
 //
 //========================================================================
 
@@ -131,6 +134,12 @@ protected:
   int keyLength;		// length of key, in bytes
   int encVersion;		// encryption algorithm
 
+  // inits all internal structures which may change
+  void initInternals();
+
+  // destroy all internal structures which may be reinitialized
+  void destroyInternals();
+  
   Guint getStartXref();
   GBool readXRef(Guint *pos);
   GBool readXRefTable(Parser *parser, Guint *pos);
