@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/04/12 20:19:33  hockm0bm
+ * methods reorganization
+ *
  * Revision 1.3  2006/04/09 21:29:33  misuj1am
  *
  *
@@ -34,44 +37,10 @@
 #include "testmain.h"
 #include "../cpage.h"
 
-#define FILE_NAME       "test_file.pdf"
+
+void cpdf_tests(pdfobjects::CPdf * pdf);
 
 inline 
-void cpdf_tests()
-{
-	using namespace pdfobjects;
-	/* CPdf testing */
-	CPdf * cpdf=CPdf::getInstance(TESTPDFFILE, CPdf::Advanced);
-	boost::shared_ptr<CDict> dict=cpdf->getDictionary();
-
-	cpdf->close();
-
-}
-
-inline 
-pdfobjects::CPdf * getTestCPdf(const char* filename)
-{
-using namespace pdfobjects;
-using namespace utils;
-using namespace std;
-
-	/* CPdf testing */
-	CPdf * cpdf=CPdf::getInstance(filename, CPdf::Advanced);
-	boost::shared_ptr<CDict> dict=cpdf->getDictionary();
-	
-	// gets all pages
-	//size_t pageCount=cpdf->getPageCount();
-	//for(size_t i=1;i<=pageCount; i++)
-	{
-	//	boost::shared_ptr<CPage> page=cpdf->getPage(i);	
-	//	printf("Page #%u\n", i);
-	//	vector<string> names;
-	//	boost::shared_ptr<CDict> pageDict_ptr=page->getDictionary();
-	//	//printProperty(pageDict_ptr);
-	//	printf("\n");
-	}
-
-	return cpdf;
-}
+pdfobjects::CPdf * getTestCPdf(const char* filename);
 
 #endif // _TESTCPDF_H_
