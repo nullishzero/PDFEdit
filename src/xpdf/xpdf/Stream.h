@@ -4,6 +4,12 @@
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
+// Changes:
+// Michal Hocko - FileStream private members are protected now to enable
+//                FileStreamWriter descendant to access them.
+//              - All direct Stream and BaseStream subclasses have virtual 
+//                inheritance
+//
 //========================================================================
 
 #ifndef STREAM_H
@@ -128,7 +134,7 @@ private:
 // This is the base class for all streams that read directly from a file.
 //------------------------------------------------------------------------
 
-class BaseStream: public Stream {
+class BaseStream: virtual public Stream {
 public:
 
   BaseStream(Object *dictA);
@@ -163,7 +169,7 @@ private:
 // This is the base class for all streams that filter another stream.
 //------------------------------------------------------------------------
 
-class FilterStream: public Stream {
+class FilterStream: virtual public Stream {
 public:
 
   FilterStream(Stream *strA);
@@ -257,7 +263,7 @@ private:
 
 #define fileStreamBufSize 256
 
-class FileStream: public BaseStream {
+class FileStream: virtual public BaseStream {
 public:
 
   FileStream(FILE *fA, Guint startA, GBool limitedA,
@@ -277,7 +283,7 @@ public:
   virtual Guint getStart() { return start; }
   virtual void moveStart(int delta);
 
-private:
+protected:
 
   GBool fillBuf();
 
@@ -297,7 +303,7 @@ private:
 // MemStream
 //------------------------------------------------------------------------
 
-class MemStream: public BaseStream {
+class MemStream: virtual public BaseStream {
 public:
 
   MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA);
@@ -338,7 +344,7 @@ private:
 // that creating a new FileStream (using makeSubStream).
 //------------------------------------------------------------------------
 
-class EmbedStream: public BaseStream {
+class EmbedStream: virtual public BaseStream {
 public:
 
   EmbedStream(Stream *strA, Object *dictA, GBool limitedA, Guint lengthA);
