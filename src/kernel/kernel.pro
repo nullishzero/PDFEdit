@@ -31,7 +31,8 @@ HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 
 SOURCES += modecontroller.cc filters.cc 
 SOURCES += cxref.cc xrefwriter.cc 
-SOURCES += cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc cpage.cc cpdf.cc 
+SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
+SOURCES += cpage.cc cpdf.cc 
 SOURCES += tests/testcobject.cc tests/testcpage.cc
 SOURCES += main.cc 
 
