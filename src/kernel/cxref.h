@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/12 17:48:46  hockm0bm
+ * reopen method added
+ *         - not implemented yet - throws an exception
+ *
  * Revision 1.12  2006/03/23 22:13:51  hockm0bm
  * printDbg added
  * exception handling
@@ -44,17 +48,10 @@
  *
  */
 
-#include "static.h"
-
 // xpdf
 #include "xpdf.h"
 
 #include"iproperty.h"
-//#include"utils/objectstorage.h"
-//#include"utils/cache.h"
-//#include"xpdf/XRef.h"
-//#include"xpdf/Object.h"
-//#include "ErrorCodes.h"
 
 namespace pdfobjects
 {
@@ -197,6 +194,19 @@ protected:
 	 */
 	::Object * changeTrailer(char * name, ::Object * value);
 
+	/** Reinitializes all internal structures.
+	 *
+	 * Clears all internal structures and forces XRef super type to throw away
+	 * all internal structures too and parse them again from stream.
+	 * <br>
+	 * This method should be called if new revision is appended to the stream.
+	 * Otherwise all information about changes are lost!
+	 */
+	void reopen()
+	{
+		// TODO implement
+		throw NotImplementedException("CXref::reopen");
+	}
 public:
 	/** Initialize constructor.
 	 * @param stream Stream with file data.
