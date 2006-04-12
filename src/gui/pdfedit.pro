@@ -42,7 +42,7 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 
 #debug information
-#QMAKE_CXXFLAGS += -g
+QMAKE_CXXFLAGS += -g
 
 #Testing version : will look in current directory for data files
 QMAKE_CXXFLAGS += -D TESTING

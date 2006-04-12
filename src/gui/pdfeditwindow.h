@@ -38,7 +38,7 @@ public slots: //These will be exported to scripting
  void options();
  void message(const QString &msg);
  bool question(const QString &msg);
- bool closeFile(bool askSave);
+ bool closeFile(bool askSave,bool onlyAsk=false);
  void openFileNew(const QString &name);
  void openFile(const QString &name);
  void saveWindowState();

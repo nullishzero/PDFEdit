@@ -5,13 +5,26 @@ SaveFileDialog
 readStringDialog
 */
 #include "dialog.h"
+#include "settings.h"
 #include "version.h"
+#include <qdir.h> 
 #include <qinputdialog.h> 
 #include <qmessagebox.h> 
 #include <qfiledialog.h> 
 #include <utils/debug.h>
 
 namespace gui {
+
+/** Get current directory from File Dialog
+ @param fd File Dialog
+ @return current directory
+ */
+QString getDir(QFileDialog &fd) {
+ const QDir *d=fd.dir();
+ QString name=d->absPath();
+ delete d;
+ return name;
+}
 
 /** Invoke "open file" dialog. Wait for user to select one existing file and return its name.
  Will return NULL if user cancels the dialog.
@@ -23,8 +36,12 @@ QString openFileDialog(QWidget* parent) {
  fd.setFilter(QObject::tr("PDF files (*.pdf)"));
  fd.setShowHiddenFiles(TRUE);
  fd.setCaption(QObject::tr("Open file ..."));
+ fd.setDir(globalSettings->read("history/filePath","."));
  fd.setMode(QFileDialog::ExistingFile);
+ globalSettings->restoreWindow(&fd,"file_dialog");
  if (fd.exec()==QDialog::Accepted) {
+  globalSettings->saveWindow(&fd,"file_dialog");
+  globalSettings->write("history/filePath",getDir(fd));
   QString name=fd.selectedFile();
   //TODO: check if not directory
   return name;
@@ -44,24 +61,31 @@ QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/
  fd.setFilter(QObject::tr("PDF files (*.pdf)"));
  fd.setShowHiddenFiles(TRUE);
  fd.setCaption(QObject::tr("Save file as ..."));
+ fd.setDir(globalSettings->read("history/filePath","."));
  if (!oldname.isNull()) fd.setSelection(oldname);
  fd.setMode(QFileDialog::AnyFile);
  for(;;) {
+  globalSettings->restoreWindow(&fd,"file_dialog");
   if (fd.exec()==QDialog::Accepted) {
+   globalSettings->saveWindow(&fd,"file_dialog");
    QString name=fd.selectedFile();
    //TODO: check if not directory
    if (askOverwrite && QFile::exists(name)) { //File exists : ask if it should be overwritten
     int answer=QMessageBox::question(parent,APP_NAME,QObject::tr("File \"")+name+QObject::tr("\" already exists. Overwrite?"),
                                      QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),1,2);
-//                                     QMessageBox::Yes,QMessageBox::No | QMessageBox::Default, QMessageBox::Cancel | QMessageBox::Escape);
-    if (answer==0/*QMessageBox::Yes*/) return name;		  //Yes, overwrite is ok
-    if (answer==1/*QMessageBox::No*/) continue;		  //No, restart dialog
-    if (answer==2/*QMessageBox::Cancel*/) return QString::null;//Cancel, do not overwrite and exit
+    if (answer==0) { //Yes, overwrite is ok
+     globalSettings->write("history/filePath",getDir(fd));
+     return name;		  
+    }
+    if (answer==1) continue;		  //No, restart dialog
+    if (answer==2) return QString::null;//Cancel, do not overwrite and exit
    }
+   globalSettings->write("history/filePath",getDir(fd));
    //Not asking about overwrite
    return name;
   }
   //Dialog cancelled
+  globalSettings->saveWindow(&fd,"file_dialog");
   return QString::null;
  }
 }

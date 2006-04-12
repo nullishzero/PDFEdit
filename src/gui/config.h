@@ -4,7 +4,7 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-/** Directory whera all data files of pdfedit would be stored
+/** Directory where all data files of pdfedit would be stored
  *  (icons, default config, etc ...)*/
 //todo: get from project file
 #define DATA_PATH "/usr/share/pdfedit"

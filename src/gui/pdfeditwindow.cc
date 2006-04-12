@@ -351,9 +351,10 @@ void PdfEditWindow::settingUpdate(QString key) {
 
 /** Closes file currently opened in editor.
 @param askSave Ask about saving changes?
+@param onlyAsk Only ask about closing/saving work, do not actually close file
 @return true if user accepted the close or saved the document before,
  false if user refuses the close */
-bool PdfEditWindow::closeFile(bool askSave) {
+bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
  if (modified() && askSave) {
   int answer=question_ync(fileName+"\n"+tr("Current file is not saved. Do you want to save it?"));
   if (answer==QMessageBox::Yes) { //save it
@@ -362,8 +363,10 @@ bool PdfEditWindow::closeFile(bool askSave) {
   if (answer==QMessageBox::Cancel) return false; //abort closing
   // QMessageBox::No -> continue happily, no saving wanted
  }
- destroyFile();
- emptyFile();
+ if (!onlyAsk) {
+  destroyFile();
+  emptyFile();
+ }
  return true;
 }
 

@@ -22,6 +22,7 @@ public:
  void init(IProperty *doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
  ~TreeWindow();
+ void addChilds(TreeItem *parent,bool expandReferences=true);
 public slots:
  void settingUpdate(QString key);
 signals:
@@ -33,7 +34,6 @@ private slots:
 private:
  bool isSimple(IProperty* prop);
  bool isSimple(boost::shared_ptr<IProperty> prop);
- void addChilds(TreeItem *parent);
  void updateTreeSettings();
 private:
  /** Treeview */

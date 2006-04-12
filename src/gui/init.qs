@@ -35,7 +35,7 @@ function func_saveas() {
 
 //Load from menu/toolbar
 function func_load() {
- if (!closeFile(true)) return;
+ if (!closeFile(true,true)) return;
  var name=fileOpenDialog();
  if (name) openFile(name);
 }

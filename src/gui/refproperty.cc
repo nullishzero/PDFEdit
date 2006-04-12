@@ -75,8 +75,8 @@ void RefProperty::writeValue(IProperty *pdfObject) {
  IndiRef val;
  QStringList ref=QStringList::split(",",ed->text());
  assert(ref.count()==2);
- val.gen=ref[0].toInt();
- val.num=ref[1].toInt();
+ val.num=ref[0].toInt();
+ val.gen=ref[1].toInt();
  obj->writeValue(val);
  changed=false;
 }
@@ -88,7 +88,7 @@ void RefProperty::readValue(IProperty *pdfObject) {
  IndiRef val;
  obj->getPropertyValue(val);
  QString objString;
- objString.sprintf("%d,%d",val.gen,val.num);
+ objString.sprintf("%d,%d",val.num,val.gen);
  ed->setText(objString);
  changed=false;
 }

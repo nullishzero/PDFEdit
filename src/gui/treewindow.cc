@@ -60,8 +60,8 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  l->addWidget(tree);
  tree->addColumn(tr("Object"));
  tree->addColumn(tr("Type"));
- tree->addColumn(tr("Ref"));
- tree->setSelectionMode(QListView::Single);
+ tree->addColumn(tr("Data"));
+ tree->setSelectionMode(QListView::Single/*Extended*/);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
  sh=new ShowData();
@@ -79,7 +79,7 @@ void TreeWindow::updateTreeSettings() {
 
 /** Called when any settings are updated (in script, option editor, etc ...) */
 void TreeWindow::settingUpdate(QString key) {
- //TODO: only once per buch of tree/show... signals ... setting blocks
+ //TODO: only once per bunch of tree/show... signals ... setting blocks
  printDbg(debug::DBG_DBG,"Settings observer: " << key);
  if (key.startsWith("tree/show")) { //Updated settings of what to show and what not
   updateTreeSettings();
@@ -126,17 +126,11 @@ void TreeWindow::init(CPdf *pdfDoc) {
 void TreeWindow::init(IProperty *doc) {
  obj=doc;
  clear();
- if (!doc) {//nothing specified, fill with testing data
-  QListViewItem *li=new QListViewItem(tree, "file.pdf","Document");
-  li->setOpen(TRUE);
-  (void) new QListViewItem(li,"Page 1","Page");
-  li=new QListViewItem(li,"Page 2","Page");
-  (void) new QListViewItem(li,"pic000.jpg","Picture");
- } else {
+ if (doc) {
   setUpdatesEnabled( FALSE );
-  TreeItem *root=new TreeItem(tree, doc); 
+  TreeItem *root=new TreeItem(this,tree, doc); 
   root->setOpen(TRUE);
-  addChilds(root);
+  addChilds(root,false);
   setUpdatesEnabled( TRUE );
  }
 }
@@ -170,8 +164,9 @@ bool TreeWindow::isSimple(boost::shared_ptr<IProperty> prop) {
 
 /** Recursively add all child of given object to treeview. Childs will be added under parent item.
  @param parent Parent TreeItem of which to add childs
+ @param expandReferences If true, references will be expanded to show their target as child of the reference
 */
-void TreeWindow::addChilds(TreeItem *parent) {
+void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
  IProperty *obj=parent->getObject();
 
  if (obj->getType()==pDict) {	//Object is CDict
@@ -184,9 +179,9 @@ void TreeWindow::addChilds(TreeItem *parent) {
 //   printDbg(debug::DBG_DBG,"Subproperty: " << *it);
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    if (!sh->show_simple && isSimple(property)) continue; //simple item -> skip it
-   TreeItem *child=new TreeItem(parent, property.get(),*it,last); 
+   TreeItem *child=new TreeItem(this,parent, property.get(),*it,last); 
    last=child;
-   addChilds(child);
+   addChilds(child,expandReferences);
   }
  }
 
@@ -200,9 +195,30 @@ void TreeWindow::addChilds(TreeItem *parent) {
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
    name.sprintf("[%d]",i);
    if (!sh->show_simple && isSimple(property)) continue; //simple item -> skip it
-   TreeItem *child=new TreeItem(parent, property.get(),name,last); 
+   TreeItem *child=new TreeItem(this,parent, property.get(),name,last); 
    last=child;
-   addChilds(child);
+   addChilds(child,expandReferences);
+  }
+ }
+
+ if (obj->getType()==pRef) {	//Object is CRef
+  if (expandReferences) {
+   //Add referenced object
+   QString s;
+   CPdf* pdf=obj->getPdf();
+   if (!pdf) return; //No document opened -> cannot parse references
+                     //Should happen only while testing
+   CRef* cref=(CRef*)obj;
+   IndiRef ref;
+   cref->getPropertyValue(ref);
+   printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
+   boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
+   TreeItem *child=new TreeItem(this,parent, rp.get(),s.sprintf("<%d,%d>",ref.num,ref.gen));
+   //TODO: store in index...
+   addChilds(child,false);
+  } else {
+   printDbg(debug::DBG_DBG," MARKING referenced property");
+   parent->setExpandable(true);
   }
  }
 
