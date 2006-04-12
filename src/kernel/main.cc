@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/04/12 22:46:48  misuj1am
+ *
+ *
+ * -- main.cc made usable
+ * 	-- REMARK it is good practise to rely only on those things that are in cvs tree
+ *
  * Revision 1.24  2006/04/12 20:32:21  hockm0bm
  * code for cpdf testing reorganized
  *
@@ -44,7 +50,8 @@
 // cpage tests
 #include "tests/testcpage.h"
 
-#define FILE_NAME       "test_file.pdf"
+
+const char* PDF_TEST_FILE_NAME = "../../doc/zadani.pdf";
 
 /**
  *  Test main
@@ -59,12 +66,10 @@ main (int argc, char** argv)
 	//cobject_tests (argc, argv);
 	MEM_CHECK;
 	
-	CPdf * testCPdf=getTestCPdf(FILE_NAME);
-	
 	// Test cpdf
+	CPdf * testCPdf=getTestCPdf(PDF_TEST_FILE_NAME);
 	cpdf_tests(testCPdf);
 	testCPdf->close();
-
 	MEM_CHECK;
 
 	// Test cpage
