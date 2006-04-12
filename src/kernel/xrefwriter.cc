@@ -4,6 +4,19 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/04/12 17:52:25  hockm0bm
+ * * saveChanges method replaces saveXRef method
+ *         - new semantic for saving changes
+ *              - temporary save
+ *              - new revision save
+ *         - storePos field added to mark starting
+ *           place where to store changes
+ *         - saveChanges moves with storePos if new
+ *           revision is should be created
+ * * findPDFEof function added
+ * * StreamWriter in place of BaseStream
+ *         - all changes will be done via StreamWriter
+ *
  * Revision 1.5  2006/03/23 22:13:51  hockm0bm
  * printDbg added
  * exception handling
@@ -13,9 +26,74 @@
  *
  */
 #include "xrefwriter.h"
+#include "cobject.h"
 
 using namespace pdfobjects;
+using namespace utils;
 using namespace debug;
+
+/** Searches for %%EOF PDF end of file.
+ * @param stream Stream where to find.
+ * @param startPos Position in the stream, where to start.
+ *
+ * Creates substream from given one from given position and searches for %%EOF
+ * string. If not found returns position at the end of the stream.
+ *
+ * @return Postion where it is safe to store changed objects.
+ */
+size_t findPDFEof(BaseStream * stream, size_t startPos)
+{
+	Object obj;
+	Stream * substream=stream->makeSubStream(startPos, gFalse, 0, &obj);	
+
+	// gets first line of substream - this should be startxref
+	char line[BUFSIZ];
+	memset(line, '\0', sizeof(line));
+	size_t pos=0;
+	
+	substream->getLine(line, (int)sizeof(line)-1);
+	// first line should be startxref
+	substream->getLine(line, sizeof(line)-1);
+	// second line should be offset
+	 
+	// Following line should contain %%EOF string, but only according to 
+	// specification reality may be different
+	// getLine returns NULL if we are at the end of the stream
+	while(substream->getLine(line, sizeof(line)-1))
+	{
+		// gets position from the beggining of the line 
+		size_t tmpPos=substream->getPos();
+
+		if(!strstr("%%%%EOF", line))
+		{
+			// line contains PDF end of file marker
+			pos=tmpPos;
+			break;
+		}
+	}
+
+	// If EOF not found we will use last position of the stream.
+	// Substream provides only position relative to its start, so we have 
+	// to add startPos
+	pos=startPos + (pos)?pos:substream->getPos();
+	
+	// clean up
+	// TODO check if it realy does what it should - XPdf code is unclear
+	delete substream;
+	obj.free();
+
+	return pos;
+}
+
+XRefWriter::XRefWriter(StreamWriter * stream):CXref(stream->getBaseStream()), mode(paranoid)
+{
+	// gets storePos
+	// searches %%EOF element from startxref position.
+	storePos=findPDFEof(stream->getBaseStream(), getStartXref());
+
+	// collects all available revisions
+	collectRevisions();
+}
 
 bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 {
@@ -213,3 +291,63 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	// delegates to CXref
 	return CXref::createObject(type, ref);
 }
+
+void XRefWriter::saveChanges(bool newRevision)
+{
+	// FIXME remove when implementation is ready
+	throw NotImplementedException("XRefWriter::saveChanges");
+
+	printDbg(DBG_DBG, "");
+
+	// casts stream (from XRef super type) and casts it to the FileStreamWriter
+	// instance - it is ok, because it is initialized with this type of stream
+	// in constructor
+	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(XRef::str);
+
+	// sets position to the storePos, where new data can be placed
+	streamWriter->setPos(storePos);
+
+	// goes over all objects in changedStorage and stores them to the end of 
+	// file and builds table which contains reference to file position mapping.
+	typedef std::map< ::Ref, size_t, RefComparator> OffsetTab;
+	OffsetTab offTable;
+	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
+	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
+	{
+		// associate given reference with actual position.
+		offTable.insert(OffsetTab::value_type(i->first, streamWriter->getPos()));		
+
+		// stores PDF representation of object to current position which is
+		// after moved behind written object
+		Object * obj=i->second->object;
+		std::string objPdfFormat;
+		xpdfObjToString(*obj, objPdfFormat);
+		streamWriter->putLine(objPdfFormat.c_str());
+	}
+
+	// all objects are saved xref table is constructed from offTable
+	// TODO - how to build table if it is stream table
+	
+	// stores trailer 
+	
+	// puts %%EOF behind but keeps position of marker start
+	size_t pos=streamWriter->getPos();
+	streamWriter->putLine("%%%%EOF");
+	
+	// if new revision should be created, moves storePos at PDF end of file
+	// marker position and forces CXref reopen to handle new revision - all
+	// chnaged objects are stored in file now.
+	if(newRevision)
+	{
+		storePos=pos;
+
+		// forces CXref::reopen
+		CXref::reopen();
+
+		// new revision number is added - we are adding number for new oldest
+		// revision
+		revisions.push_back(revisions.size());
+	}
+}
+
+

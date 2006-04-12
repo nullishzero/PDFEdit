@@ -4,6 +4,19 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/12 17:52:25  hockm0bm
+ * * saveChanges method replaces saveXRef method
+ *         - new semantic for saving changes
+ *              - temporary save
+ *              - new revision save
+ *         - storePos field added to mark starting
+ *           place where to store changes
+ *         - saveChanges moves with storePos if new
+ *           revision is should be created
+ * * findPDFEof function added
+ * * StreamWriter in place of BaseStream
+ *         - all changes will be done via StreamWriter
+ *
  * Revision 1.9  2006/03/23 22:13:51  hockm0bm
  * printDbg added
  * exception handling
@@ -19,6 +32,19 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/12 17:52:25  hockm0bm
+ * * saveChanges method replaces saveXRef method
+ *         - new semantic for saving changes
+ *              - temporary save
+ *              - new revision save
+ *         - storePos field added to mark starting
+ *           place where to store changes
+ *         - saveChanges moves with storePos if new
+ *           revision is should be created
+ * * findPDFEof function added
+ * * StreamWriter in place of BaseStream
+ *         - all changes will be done via StreamWriter
+ *
  * Revision 1.9  2006/03/23 22:13:51  hockm0bm
  * printDbg added
  * exception handling
@@ -74,8 +100,8 @@
 
 #include "static.h"
 
-//#include <vector>
 #include "cxref.h"
+#include "streamwriter.h"
 
 namespace pdfobjects
 {
@@ -138,12 +164,25 @@ private:
 	 */
 	RevisionStorage revisions;
 
+	/** File offset for write changes.
+	 *
+	 * This offset is used as file position where to start writing changes. It
+	 * is used by saveChanges method which can move this offset depending on
+	 * saving mode (it is moved if changes are saved as new revision).
+	 * <br>
+	 * The value is initialized by constructor to point to the PDF end of file
+	 * marker %%EOF. This invariant is allways kept.
+	 */
+	size_t storePos;
+	
 	/* Empty constructor.
 	 *
 	 * It's not available to prevent uninitialized instances.
 	 * Sets mode to paranoid.
 	 */
-	XRefWriter():CXref(), mode(paranoid), revision(0){}
+	XRefWriter():CXref(), mode(paranoid), revision(0)
+	{
+	}
 protected:
 
 	/** Checking for paranoid mode.
@@ -177,21 +216,20 @@ protected:
 		// ELSE ENDLOOP
 	}
 public:
-	/** Initialize constructor with stream.
-	 * @param stream Stream fith file data.
+	/** Initialize constructor with file stream writer.
+	 * @param stream File stream with pdf content.
 	 *
-	 * Delegates to CXref with stream parameter.
-	 * Sets mode to paranoid. Collects all revisions (uses collectRevisions
-	 * method).
+	 * Sets mode to paranoid. Sets file to FILE handle from stream. Collects 
+	 * all revisions (uses collectRevisions method) and sets storePos to the 
+	 * %%EOF position.
+	 * <br>
+	 * Stream is supplied to CXref constructor.
 	 *
 	 * @throw MalformedFormatExeption if XRef creation fails (instance is
 	 * unusable in such situation).
 	 * TODO collectRevisions error handling
 	 */
-	XRefWriter(BaseStream * stream):CXref(stream), mode(paranoid)
-	{
-		collectRevisions();
-	};
+	XRefWriter(StreamWriter * stream);
 
 	/** Initialize constructor with cache.
 	 * @param stream Stream with file data.
@@ -206,7 +244,7 @@ public:
 	 * TODO collectRevisions error handling
 	 */
 	/* FIXME uncoment when cache is available
-	XRefWriter(BaseStream * stream, ObjectCache * c):CXRef(stream, c){};
+	XRefWriter(FileStreamWriter * stream, ObjectCache * c):CXRef(stream, c){};
 	*/
 	
 	/** Gets mode.
@@ -280,51 +318,39 @@ public:
 	 * <br>
 	 * TODO provide undo information
 	 * 
-	 * @throw ReadOnlyDocumentException if we no changes ca be done - this may
+	 * @th not implemented yetrow ReadOnlyDocumentException if we no changes ca be done - this may
 	 * depend either on mode (mode is readOnly) or on revision (revisio is older
 	 * than newest).
 	 */
 	::Object * changeTrailer(char * name, ::Object * value);
 	
-	/** Saves xref with changes and creates new revision.
-	 * @param f File where to write (has to be open).
+	/** Saves changed objects and new xref and trailer.
+	 * @param newRevision Flag controlling new revision creation.
 	 *
-	 * This method has different semantic according actual revision.
-	 * Changes to the document may be done only in the newest revision.
-	 * So if revision is 0, saves all changed objects to the file and 
-	 * appends new xref with new trailer to the given file.
+	 * Checks all objects which are changed (in CXref::changeStorage) and stores
+	 * them from actual storePos file offset.
+	 * Also append new xref table for changed objects and finally new trailer is
+	 * added.
+	 * <p>
+	 * <b>Revision handling</b>:
 	 * <br>
-	 * In all later revisions saves all content until actual revision
-	 * to the file (and forget everything behind). This enables to create
-	 * new file with actual revision as newest and so making changes is
-	 * available in that file. (This is kind of document fork). 
-	 * Nevertheless caller must be aware that given file is not one actualy
-	 * used, otherwise document may be damaged.
+	 * Method gets also newRevision flag parameter which says whether to save
+	 * changes as new revision. If new revision is created, storePos is moved
+	 * after stored data (more precisely after new trailer) and CXref super type
+	 * is forced to reopen (CXref::reopen method is called TODO link) to handle
+	 * new revision creation.
+	 * Otherwise storePos is not moved and all objects from changeStorage are 
+	 * kept as they are. This means that default behaviour doens't have any 
+	 * influence on internal structure. 
 	 * <br>
-	 * TODO some other kind of temporal saving - not new revision
-	 *
-	 * @throw NotImplementedException because this feature is not implemented in
-	 * this moment (TODO change).
+	 * By default no new revision is set. This implies that each call of this
+	 * method overwrittes previous save (from same storePos).
+	 * <br>
+	 * Use default behaviour if you want to be sure that you don't lose your
+	 * changes and create new revision if you want to have certain set of
+	 * changes grouped together (e. g. when changes have some significancy).
 	 */
-	void saveXref(FILE * )
-	{
-		// IF revision == 0
-			// put unstored changed objects
-			// discard new storage (all new initialized are in 
-			//	changed now)
-			// select changed entries as stored
-			// put xref entries
-			// set trailer prev to lastXrefPos
-			// put trailer dictionary
-			// update startxref
-			// put new element to the revisions array (to the 
-			//	begining)
-			// parse xref table again
-		// ELSE
-			// saves everything until this revision
-			// f shouldn't be same as target of the XRef::stream
-		throw NotImplementedException("changeRevision method");
-	}
+	void saveChanges(bool newRevision=false);
 	
 	/** Changes revision of document.
 	 * @param revNumber Number of the revision.
