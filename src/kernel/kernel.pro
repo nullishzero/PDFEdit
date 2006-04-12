@@ -27,10 +27,11 @@ POST_TARGETDEPS = libkernel.a
 HEADERS += ../utils/debug.h ../utils/iterator.h
 HEADERS += ../utils/observer.h exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
 HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
+HEADERS += streamwriter.h
 HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 
 SOURCES += modecontroller.cc filters.cc 
-SOURCES += cxref.cc xrefwriter.cc 
+SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
 SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
 SOURCES += cpage.cc cpdf.cc 
 SOURCES += tests/testcobject.cc tests/testcpage.cc
