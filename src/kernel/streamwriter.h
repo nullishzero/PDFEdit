@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/04/12 20:49:03  hockm0bm
+ * FileStreamWriter methods flushes immediately after writing
+ *
  * Revision 1.1  2006/04/12 17:39:06  hockm0bm
  * StreamWriter base class wor all stream writers
  * FileStreamWriter writer for FileStreams
@@ -74,11 +77,13 @@ public:
 	virtual ~FileStreamWriter(){};
 	
 	/** Puts character to the file.
+	 * Additionally flushes all changes to the file.
 	 * @see BaseStreamWriter::putChar
 	 */
 	virtual void putChar(int ch);
 
 	/** Puts line to the file.
+	 * Additionally flushes all changes to the file.
 	 * @see BaseStreamWriter::putLine
 	 */
 	virtual void putLine(const char * line);
