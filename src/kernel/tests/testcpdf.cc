@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/12 21:41:38  hockm0bm
+ * pageListing function added
+ *
  * Revision 1.2  2006/04/12 20:40:44  hockm0bm
  * getTestCPdf is not inline now - because of linking problem for kernel binary
  *
@@ -35,9 +38,29 @@
  *
  */
 #include "testcpdf.h"
+#include "../cobjecthelpers.h"
+
+void pageListing(pdfobjects::CPdf * pdf)
+{
+using namespace pdfobjects;
+using namespace boost;
+
+	size_t count=pdf->getPageCount();
+	for(size_t i=1; i<=count; i++)
+	{
+		shared_ptr<CPage> page=pdf->getPage(i);
+		shared_ptr<CDict> pageDict=page->getDictionary();
+		IndiRef pageRef=pageDict->getIndiRef();
+		printf("Page #%d dictionary: ref=[%d,%d]\n", i, pageRef.num, pageRef.gen);
+		utils::printProperty(pageDict, std::cout);
+		printf("==========================\n\n");
+	}
+}
 
 void cpdf_tests(pdfobjects::CPdf * pdf)
 {
+	// lists all pages from document
+	pageListing(pdf);
 }
 
 pdfobjects::CPdf * getTestCPdf(const char* filename)
