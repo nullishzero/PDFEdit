@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Documentation for Observer</title>
+ </bookinfo>
+
+ <chapter>
+  <title>Observers in general</title>
+  <para>
+          Observers used for project are based on observer design pattern (TODO 
+          source). 
+  </para>
+  <para>
+          Our design splits observer mechanism into two parts. First one is used 
+          to mark target of observing entity and second to mark implementator of
+          change handler. More precisely IObserverHandler abstract class and
+          IObserver abstract class. First one is used to enable registration and
+          unregistration of observers. Second stands for change handler.
+          <chapter>
+            <subtitle>IObserverHandler</subtitle>
+            <para>
+                    This interface provides methods for Observers registration and
+                    unregistration (TODO link to doxygen documentation).
+                    Implementator has responsibility to call inform all
+                    observers about each change. 
+            </para>
+            <para>
+                   Informing about change is called notification and it is
+                   realized by calling notify method defined on observer
+                   implementator. This method consumes new value parameter and
+                   context. Context is represented by IChangeContext abstract
+                   class which contains just information about its type (TODO
+                   link to doxygen documentation). It depends on
+                   IObserverHandler implementator what type of context is used.
+           </para>
+           <para>
+                   IObserverHandler is template class to enable using for
+                   different (hierarchicaly not relative) values independantly
+                   and to prevent code duplication. Template type stands for
+                   value keeper maintained value type. This type has to be
+                   preserved also in used context.
+           </para>
+          </chapter>
+          <chapter>
+           <subtitle>IChangeContext</subtitle>
+           <para>
+                   Change context represents additional information which may
+                   help to handle notification from value keeper
+                   (IObserverHandler) site. It is created and destroyed by
+                   notifier and its type and data which it holds are fully
+                   dependant on provider.
+           </para>
+           <para>
+                   Consumer of given context should check its type by getType
+                   method and decide if it is usefull for him. If so, cast is
+                   neccessary to get concrete context type which provides
+                   concrete information.
+           </para>
+           <para>
+                   Class is template with type parameter which stands for type
+                   of value which has changed. 
+           </para>
+          </chapter>
+          <chapter>
+           <subtitle>IObserver</subtitle>
+           <para>
+                   Observer itself is represented by IObserver abstract template
+                   class. Template parameter stands for type of value which is
+                   observed. Implementator of class has to provide notify method
+                   which is called by IObserverHandler each time any change
+                   occures (as mentioned above). Therefore notify method is kind
+                   of change handler. It gets new value (one after change) and
+                   may also get change context.
+           </para>
+           <para>
+                   Observer implementators should take not do any operations
+                   which may lead to value change which is observed to prevent
+                   new notification - when old one is not ready yet.
+           </para>
+          </chapter>
+
+  </para>
+ </chapter>
+ <chapter>
+  <title>Observers in cobjects</title>
+  <para>
+          Generic observer mechanism described in previous chapter is used in
+          out cobject implementation. IProperty base class implements
+          IObserverHandler interface and so all its descendants are responsible
+          for notifying about changes. 
+  </para>
+  <para>
+          Observer is noified if with respect on cobject cathegory. If cobject
+          is CObjectSimple specialization (like CInt, CReal and so on), it is
+          notified on direct value change. In complex type case represented by
+          CObjectComplex specialization (CDict, CArray and CStream), it is
+          notified when an element is changed by CObjectComplex interface.
+  </para>
+  <para>
+          All cobjects provides BasicChangeContext which contains previous value
+          of changed one. Because complex types can add and remove its elements,
+          special behaviour is specified. New value given as mandatory parameter
+          of notify method may be CNull if element is deleted from comlex type.
+          Old value in the context may also CNull if element was added. It is
+          imposible to have both of them CNull.
+  </para>
+ </chapter>
+ <chapter>
+  <title>Observers in CPdf</title>
+  <para>
+          CPdf class as PDF file maintainer uses observers for synchronization
+          of structures which may be changed in two ways. This may occure
+          because all attributes can be accesible through properties (cobjects)
+          and also special object provided by CPdf - CPage for page
+          manipulation, COutline for outlines manipulation and so on. Special
+          objects keeps logic of concrete entities and manipulates with cobject
+          in that way. Property part is without any logic and enables making
+          changes which are not covered byt special objects. This advantage and
+          extensibility is payed by additional synchronization.
+  </para>
+  <chapter>
+   <title>Page tree synchronozation</title>
+   <para>
+   </para>
+  </chapter>
+  <chapter>
+   <title>Outlines synchronozation</title>
+   <para>
+   </para>
+  </chapter>
+ </chapter>
+</book>
