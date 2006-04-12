@@ -226,7 +226,16 @@ public:
 	boost::shared_ptr<T> getSmartCObjectPtr (const boost::shared_ptr<IProperty>& ptr) 
     {
     	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
-  	  	return boost::dynamic_pointer_cast<T, IProperty> (ptr);
+		boost::shared_ptr<T> newptr = boost::dynamic_pointer_cast<T, IProperty> (ptr);
+		if (newptr)
+		{
+	  	  	return newptr;
+		}
+		else
+		{
+			assert (!"doClone INCORRECTLY overriden!!" );
+			throw CObjInvalidObject (); 
+		}
     }
 
 	/** 

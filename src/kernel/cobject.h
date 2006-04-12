@@ -183,8 +183,10 @@ public:
 	 */
 	CObjectSimple (const Value& val = Value());
 
-
-public:
+	//
+	// Cloning
+	//
+protected:
 
 	/**
 	 * Clone. Performs deep copy.
@@ -195,6 +197,7 @@ public:
 	virtual IProperty* doClone () const;
 
 
+public:
 	/**
 	 * Return type of this property.
 	 *
@@ -387,8 +390,10 @@ public:
 	 */
 	CObjectComplex ();
 
-
-public:
+	//
+	// Cloning
+	//
+protected:
 
 	/**
 	 * Clone. Performs deep copy.
@@ -399,6 +404,8 @@ public:
 	 */
 	virtual IProperty* doClone () const;
 
+	
+public:
 
 	/**
 	 * Return type of this property.
@@ -671,7 +678,9 @@ public:
 	 */
 	CObjectStream ();
 
-	
+	//
+	// Cloning
+	//
 protected:
 
 	/**
