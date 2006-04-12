@@ -4,6 +4,10 @@
 //
 // Copyright 1998-2003 Glyph & Cog, LLC
 //
+// Changes:
+// Michal Hocko - c style casting from Stream is not possible because of
+//                virtual inheritance. dynamic_cast is used instead
+//
 //========================================================================
 
 #include <aconf.h>
@@ -56,7 +60,7 @@ void ImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
     }
 
     // initialize stream
-    str = ((DCTStream *)str)->getRawStream();
+    str = (dynamic_cast<DCTStream *>(str))->getRawStream();
     str->reset();
 
     // copy the stream
@@ -119,7 +123,7 @@ void ImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
     }
 
     // initialize stream
-    str = ((DCTStream *)str)->getRawStream();
+    str = (dynamic_cast<DCTStream *>(str))->getRawStream();
     str->reset();
 
     // copy the stream
