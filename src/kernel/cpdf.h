@@ -6,6 +6,21 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/04/12 17:55:21  hockm0bm
+ * * save method changed
+ * 		- fileName parameter removed
+ * 		- newRevision parameter added
+ * * new method clone
+ * * getPage method tested (everything based on this method
+ *   should be correct too)
+ * * getNodePosition handle ambigues problem
+ * 		- not soved yet - new exception should be created
+ * * all methods using getNodePosition also handles
+ *   problem with ambigues position of page dictionary
+ * * registerPageTreeObserver new method
+ * * constructor's BaseStream parameter changed to StreamWriter
+ *   due to XRefWriter constructor change
+ *
  * Revision 1.27  2006/04/02 08:26:40  hockm0bm
  * PdfOpenException documented for getInstance method
  *
@@ -148,7 +163,7 @@ public:
 			return (one.num < two.num);
 	}
 };
-}
+} // namespace utils
 
 // forward declarations FIXME remove
 class CPage;
@@ -201,30 +216,39 @@ protected:
 	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
 
 	/** Consolidates page tree.
-	 * @param interNode Intermediate node where the change has occured.
+	 * @param interNode Intermediate node dictionary under which change has
+	 * occured.
 	 *
-	 * Checks all direct children (from Kids array field) whether they have
-	 * correct parent (given interNode). Then collects number of pages of each
-	 * and this calculated value uses for new Count field value. Afterwards
-	 * calls this method also for its parent. Recusrion stops at root of the 
-	 * page tree.
+	 * Consolidation stards by getting number of direct pages under given node.
+	 * To do so, goes through Kids array from node and if element refers to Page
+	 * dictionary use 1 count and for Pages dictionary uses Count field. Sum is
+	 * used to be compared with node's Count field value. If these numbers match
+	 * immediatelly returns. Otherwise distribute count change to its parent by
+	 * calling this method to Parent dictionary.
+	 * <br>
+	 * Second step of consolidation checks whether all children from Kids array
+	 * have Parent set to given one. If not changes (or add if field is missing)
+	 * it the reference to given node.
 	 * <p>
 	 * <b>Implementation notes</b>:
-	 * <br>
+	 * <ul>
+	 * <li>
 	 * This method should be called when some change occures in page tree. Given
-	 * parameter stands for intermediate node in which change occured (must be
-	 * Pages dictionary instance). This means that whenever reference property 
-	 * has been changed (or added, deleted), its indirect parent should be used. 
-	 * <br>
-	 * Doesn't perform any parameter checking. Relay on correct value. When som
-	 * error occures, exception is thrown.
-	 * <br>
-	 * Changes Count field of interNode.
-	 * <br>
-	 * Sets Parent field of direct children, if not set correctly.
-	 * <br>
-	 * If page tree was consistent before change undret this interNode occured,
-	 * it will be consistent after this consolidation too.
+	 * parameter stands for dereferenced dictionary of intermediate node under
+	 * which change occures. Change may be:
+	 * <ul>
+	 * 		<li>Kids array element was deleted, added
+	 * 		<li>Kids array element has changed its value
+	 * </ul>
+	 * <li> Doesn't perform any parameter checking. Relay on correct value. When
+	 * some error occures, exception is thrown.
+	 * <li> Changes Count field of each intermediate node if neccessary.
+	 * <li> Sets Parent field of direct children, if not set correctly.
+	 * <li> Doesn't go deeply in to children
+	 * <li> If page tree was consistent before change under this interNode 
+	 * occured, it will be consistent after this consolidation too (NOTE all
+	 * children of given node must be correct too).
+	 * </ul>
 	 */
 	void consolidatePageTree(boost::shared_ptr<CDict> interNode);
 	
@@ -233,7 +257,7 @@ protected:
 	 * @param newValue New reference (CNull if no future state).
 	 *
 	 * Removes all CPages, which are in old reference sub tree (if oldValue is 
-	 * not CNull), from pageList and invalidates them. Uses isDescendant method 
+	 * not CNull) from pageList and invalidates them. Uses isDescendant method 
 	 * for each page from pageList to find out if it is in sub tree.
 	 * <br>
 	 * Also calculates difference between lost pages (if oldValue is not CNull) 
@@ -245,15 +269,16 @@ protected:
 	 * position has changed). If newValue is CNull, we have no information about 
 	 * oldValue position so we can either get page information from all pages in 
 	 * the list or if at least one page from oldValue subtree has been removed 
-	 * from page, we can use this as starting point and just change position 
-	 * according calculated difference. 
+	 * from pageList, we can use this as starting point and just change position
+	 * according calculated difference.
+	 * <br>
 	 * Page position getting is rather complex operation and may lead to whole 
 	 * page tree searching. This is done only if no page position is available 
 	 * from oldValue subtree.
 	 * <br>
 	 * This guaranties, that pages from removed subtree are not available 
 	 * anymore and are invalidated and also valid returned CPage instances are 
-	 * associated with correct position.
+	 * associated with correct position in pageList.
 	 * <p>
 	 * <b>Implementation notes</b><br>
 	 * This method should be called by handler of change event on Page tree.
@@ -282,11 +307,24 @@ protected:
 	 * on different positions (this would cause page numbering problem).
 	 */
 	void consolidatePageList(boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
+
+	// FIXME just for debug
+	friend void observerHandler(CPdf & cpdf, boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
+
+	/** Page tree observer instance.
+	 * This instance is inicialized in constructor.
+	 */
+	//PageTreeObserver pageTreeObserver;
 private:
 	
 	/**************************************************************************
 	 * Revision specific data
 	 *************************************************************************/
+	
+	/** Change flag.
+	 * @see isChanged
+	 */
+	bool change;
 	
 	/** Mapping between IndiRef and indirect properties. 
 	 *
@@ -413,7 +451,7 @@ public:
 	 * If you want to create instance, please use static factory method 
 	 * getInstance.
 	 */
-	CPdf (){};
+	CPdf ()/*:pageTreeObserver(this)*/{};
 
 	/** Initializating constructor.
 	 * @param stream Stream with data.
@@ -423,7 +461,7 @@ public:
 	 * Creates XRefWriter and initialize xref field with it.
 	 * TODO initializes also other internal structures.
 	 */
-	CPdf(BaseStream * stream, FILE * file, OpenMode openMode);
+	CPdf(StreamWriter * stream, FILE * file, OpenMode openMode);
 	
 	/** Destructor.
 	 * 
@@ -443,8 +481,6 @@ public:
 	 * This is only way how to get instance of CPdf type. All necessary 
 	 * initialization is done, also internal structures of kernel are
 	 * initialized.
-	 * <br>
-	 * TODO other possible exceptions describtion. 
 	 *
 	 * @throw PdfOpenException if file open fails.
 	 * @return Initialized (and ready to be used) CPdf instance.
@@ -486,6 +522,22 @@ public:
 		return modeController;
 	}
 
+	/** Checks whether there is something to save.
+	 *
+	 * If actual revision is 0, checks change field, otherwise returns false,
+	 * because it is not possible to have changes in older revision.
+	 *
+	 * @return true if there are some new changes, false otherwise.
+	 */
+	bool isChanged()const
+	{
+		if(xref->getActualRevision())
+			return false;
+
+		// the newest revision may be changed
+		return change;
+	}
+	
 	/** Sets mode controller.
 	 * @param ctrl Mode controller implementator (if NULL, controller
 	 * will be disabled).
@@ -545,20 +597,64 @@ public:
 	 */ 
 	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop);
 
-	/** Saves CPdf content (whole document).
-	 * @param fname File name where to store.
+	/** Saves changes to pdf file.
+	 * @param newRevision Flag for new revision creation.
 	 *
-	 * Saves actual content to given file. If fname is NULL, uses
-	 * original file used for instance creation.
+	 * If revision is 0 (the newest one), uses XRefWriter::saveChanges method to
+	 * store changes. Parameter newRevision has precisely the same meaning.
+	 * For more implementation information @see XRefWriter
+	 *
 	 * <br>
-	 * TODO distinguish saving and creating new revision.
+	 * Method will fail if actual revision is greater than 0.
+	 * <p>
+	 * <b>Usage</b>
+	 * <ul>
+	 * <li>
+	 * <pre>
+	 * save(true)
+	 * </pre>
+	 * should be used if changes are suitable to produce new revision. This can
+	 * be when we have finished work with some topic and we want to keep
+	 * information that this everything is related. 
+	 * 
+	 * <li><pre>
+	 * save()
+	 * </pre>
+	 * should be used if we want to temporarily store changes to be sure that we
+	 * don't lose information if some problem happens (e. g. application crashes).
+	 * Next call of this function will overwrite older one.
+	 * </ul>
+	 *
+	 * @throw TODO 
 	 */
-	int save(const char * )
-	{
-		// call xref->change for all changed objects
-		// call xref->saveXref
-		return 0;
-	}
+	void save(bool newRevision=false);
+
+	/** Makes clone to file.
+	 * @param fname File handle, where to store content.
+	 * 
+	 * Stores actual document state to the given file.
+	 * Actual document state stands for all obejcts from all revistions until 
+	 * current one. This means that kind of fork of document is done. Be
+	 * careful, because actual changes are not considered (in revision 0),
+	 * because they are not really part of document (you have to save them as
+	 * new revision at first and than clone will contain also actual changes).
+	 * <p>
+	 * <b>Usage</b>
+	 * <pre>
+	 * save(fileName)
+	 * </pre>
+	 * this should be used if we want to do fork or copy of document. This may 
+	 * be helpful when we want to make changes in older revision, what is not
+	 * possible normaly:
+	 * <pre>
+	 * cpdf->changeRevision(5);					// change to 5th revision
+	 * cpdf->save("5th_revision_clone.pdf");	// creates copy of everything
+	 * 											// until 5th revision
+	 * </pre>
+	 * Then you can open this document and make changes inside.
+	 *
+	 */
+	void clone(FILE * fname)const;
 
 	/** Returns document catalog for property access.
 	 * 
@@ -574,8 +670,22 @@ public:
 	 * @param page Page used for new page creation.
 	 * @param pos Position where to insert new page.
 	 *
-	 * Adds deep copy of given page before given position. This method triggers
-	 * pageList and page tree consolidation (TODO link to description).
+	 * Adds deep copy of given page before given position. If position is
+	 * greater than page count, it is added after last page. Storing to 0
+	 * position is same as if pos parameter was 1.
+	 * <br>
+	 * NOTE: Insertion before some position means storing at the position and
+	 * move everything starting with this position before storing.
+	 * <br>
+	 * Method may fail if page at given position is ambigues. This means that it
+	 * is not possible to get position of page reference in its parent Kids
+	 * array due to multiple occurance in Kids array. @see getNodePosition
+	 *
+	 * <br>
+	 * This method triggers pageList and page tree consolidation same as if the
+	 * change has been done manulualy.
+	 *
+	 * @throw TODO for ambigues.
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
 
@@ -583,13 +693,19 @@ public:
 	 * @param pos Position of the page.
 	 *
 	 * Removes given page from its parent Kids array. This method triggers
-	 * pageList and page tree consolidation (TODO link to description). As a 
-	 * result page count is decreased. 
+	 * pageList and page tree consolidation same way as it was removed manualy. 
+	 * As a result page count is decreased. 
+	 * <br>
+	 * Method may fail if page at given position is ambigues. This means that it
+	 * is not possible to get position of page reference in its parent Kids
+	 * array due to multiple occurance in Kids array. @see getNodePosition
+	 *
 	 * <br>
 	 * Intermediate nodes with no direct page are kept in page tree in this
 	 * implementation.
 	 *
 	 * @throw PageNotFoundException if given page couldn't be found.
+	 * @throw TODO for ambigues.
 	 */
 	void removePage(size_t pos);
 
@@ -803,7 +919,6 @@ public:
 	void changeRevision(revision_t /*revisionNum*/)
 	{
 		// set revision xref->changeRevision
-		// call cleanupRevisionSpecific
 		// call initRevisionSpecific
 		// TODO kind of notification
 		// TODO what has to be dellocated ?
