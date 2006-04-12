@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/04/12 20:32:21  hockm0bm
+ * code for cpdf testing reorganized
+ *
  * Revision 1.23  2006/04/02 17:12:59  misuj1am
  *
  *
@@ -41,6 +44,7 @@
 // cpage tests
 #include "tests/testcpage.h"
 
+#define FILE_NAME       "test_file.pdf"
 
 /**
  *  Test main
@@ -55,8 +59,12 @@ main (int argc, char** argv)
 	//cobject_tests (argc, argv);
 	MEM_CHECK;
 	
+	CPdf * testCPdf=getTestCPdf(FILE_NAME);
+	
 	// Test cpdf
-	//cpdf_tests ();
+	cpdf_tests(testCPdf);
+	testCPdf->close();
+
 	MEM_CHECK;
 
 	// Test cpage
