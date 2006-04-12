@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/12 20:40:44  hockm0bm
+ * getTestCPdf is not inline now - because of linking problem for kernel binary
+ *
  * Revision 1.4  2006/04/12 20:19:33  hockm0bm
  * methods reorganization
  *
@@ -40,7 +43,6 @@
 
 void cpdf_tests(pdfobjects::CPdf * pdf);
 
-inline 
 pdfobjects::CPdf * getTestCPdf(const char* filename);
 
 #endif // _TESTCPDF_H_
