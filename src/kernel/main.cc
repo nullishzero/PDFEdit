@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/04/13 18:07:19  hockm0bm
+ * if first parameter is regular file, uses it instead of default one
+ *
  * Revision 1.25  2006/04/12 22:46:48  misuj1am
  *
  *
@@ -40,6 +43,10 @@
  *
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "static.h"
 
 #include "tests/testmain.h"
@@ -59,6 +66,21 @@ const char* PDF_TEST_FILE_NAME = "../../doc/zadani.pdf";
 int 
 main (int argc, char** argv)
 {
+	// uses default file name
+	const char * fileName=PDF_TEST_FILE_NAME;
+	
+	// checks if first parameter is real file and if so, overwrites fileName
+	if(argc>0)
+	{
+		const char * param=argv[1];
+		struct stat info;
+		if(!stat(param, &info))
+		{
+			// checks if it is regular file and if so, uses it
+			if(S_ISREG(info.st_mode))
+				fileName=param;
+		}
+	}
 	
 	START_TEST;
 
@@ -67,7 +89,7 @@ main (int argc, char** argv)
 	MEM_CHECK;
 	
 	// Test cpdf
-	CPdf * testCPdf=getTestCPdf(PDF_TEST_FILE_NAME);
+	CPdf * testCPdf=getTestCPdf(fileName);
 	cpdf_tests(testCPdf);
 	testCPdf->close();
 	MEM_CHECK;
