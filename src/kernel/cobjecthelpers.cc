@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/13 18:14:09  hockm0bm
+ * getDictFromRef with reference and pdf parameters
+ *
  * Revision 1.6  2006/04/12 21:08:13  hockm0bm
  * printProperty method signature changed
  *         - no implicit parameter
@@ -142,6 +145,15 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getPropertyValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	if(indirect_ptr->getType() != pDict)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);
+}
+
+
+boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref)
+{
+	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pDict)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CDict>(indirect_ptr);

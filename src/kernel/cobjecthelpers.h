@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/13 18:14:09  hockm0bm
+ * getDictFromRef with reference and pdf parameters
+ *
  * Revision 1.11  2006/04/12 21:08:13  hockm0bm
  * printProperty method signature changed
  *         - no implicit parameter
@@ -59,7 +62,8 @@
  *
  */
 
-#include"cobjectI.h"
+#include "cobjectI.h"
+#include "iproperty.h"
 
 namespace pdfobjects
 {
@@ -142,9 +146,22 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict);
  *
  * @throw ElementBadTypeException if refProp is not CRef instance or indirect
  * object is not CDict instance.
- * @return CDict instance wrapper ny shared_ptr smart pointer.
+ * @return CDict instance wrapper by shared_ptr smart pointer.
  */
 boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
+
+/** Gets dictionary from reference and pdf instance.
+ * @param pdf Pdf istance.
+ * @param ref Indirect reference.
+ *
+ * Uses CPdf::getIndirectProperty to get dereferenced object from given
+ * reference on given pdf instance. Checks object type and if it is CDict,
+ * returns it, otherwise throws an axception.
+ *
+ * @throw ElementBadTypeException if indirect object is not CDict instance.
+ * @return CDict instance wrapper by shared_ptr smart pointer.
+ */
+boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref);
 
 /** Helper method for property printing.
  * @param ip Property to print.
