@@ -16,10 +16,11 @@ QSPdf::~QSPdf() {
 }
 
 /** Call CPdf::save(name) */
-int QSPdf::saveAs(QString name) {
- if (name.isNull()) return false;//No empty names!
- return obj->save(name);
- //TODO: how it is with CPDF::save() return values?
+void QSPdf::saveAs(QString name) {
+ if (name.isNull()) return;//No empty names!
+ assert(0);
+ //TODO: obj->clone(name);????
+ // obj->save(name);
 }
 
 /** Call CPdf::getDictionary */

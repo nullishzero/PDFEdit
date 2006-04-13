@@ -1,14 +1,15 @@
 #ifndef __TOOLBAR_H__
 #define __TOOLBAR_H__
+
 #include <qtoolbar.h>
-#include "toolbutton.h"
 
 namespace gui {
+
+class ToolButton;
 
 /** Class wrapping QToolBar, providing "click forwarding" from TButtons.
  Buttons must be added with addButton() for this to work properly
  */
-
 class ToolBar : public QToolBar {
  Q_OBJECT
  public:

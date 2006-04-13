@@ -2,11 +2,14 @@
  Various utility functions
 */
 #include "util.h"
+#include <utils/debug.h>
 #include <iostream>
 #include <qfile.h>
+#include <qstring.h>
+#include <qobject.h>
+#include <qstringlist.h>
 
 using namespace std;
-using namespace pdfobjects;
 
 /** Prints error message and terminates application
  @param message Error message to show
@@ -59,33 +62,6 @@ QString loadFromFile(QString name) {
  qb.assign(buffer,size);
  QString res=QString(qb);
  return res;
-}
-
-/** Return human-readable (and possibly localized) name of given type
- @param typ Type of PDF Object
- @return Human readable type name
- */
-QString getTypeName(PropertyType typ) {
- switch (typ) {
-  case pNull:   return QObject::tr("Null",	"Type name"); 
-  case pBool:   return QObject::tr("Bool",	"Type name"); 
-  case pInt:    return QObject::tr("Int",	"Type name"); 
-  case pReal:   return QObject::tr("Real",	"Type name"); 
-  case pString: return QObject::tr("String",	"Type name");
-  case pName:   return QObject::tr("Name",	"Type name");
-  case pRef:    return QObject::tr("Ref",	"Type name");
-  case pArray:  return QObject::tr("Array",	"Type name"); 
-  case pDict:   return QObject::tr("Dict",	"Type name"); 
-  case pStream: return QObject::tr("Stream",	"Type name"); 
-// Debug types
-  case pOther:    return QObject::tr("DebugCmd",	"Type name");
-  case pOther1:  return QObject::tr("DebugError",	"Type name");
-  case pOther2:    return QObject::tr("DebugEOF",	"Type name");
-  case pOther3:   return QObject::tr("DebugNone",	"Type name");
- }
- //Unknown type. Should not happen
- assert(0);
- return "?";
 }
 
 /** Print stringlist to stdout

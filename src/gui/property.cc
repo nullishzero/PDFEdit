@@ -5,10 +5,10 @@ Should be subclassed for editing specific property types (integer, string, ...)
 
 #include <utils/debug.h>
 #include "property.h"
+#include <iproperty.h>
+#include <qstring.h>
 
 namespace gui {
-
-//TODO: add functions for display & editing ... 
 
 /** Default constructor of property item
  @param parent parent Property Editor containing this control

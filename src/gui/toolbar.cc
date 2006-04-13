@@ -4,6 +4,7 @@
 */
 
 #include "toolbar.h"
+#include "toolbutton.h"
 
 namespace gui {
 

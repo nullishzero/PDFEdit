@@ -1,9 +1,8 @@
 #ifndef __HELPWINDOW_H__
 #define __HELPWINDOW_H__
 
-
-#include <qtextbrowser.h> 
 #include <qwidget.h>
+class QTextBrowser;
 
 namespace gui {
 

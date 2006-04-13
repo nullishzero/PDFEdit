@@ -6,10 +6,15 @@
 */
 
 #include <utils/debug.h>
+#include <qstring.h>
+#include <qsproject.h>
+#include <qsinterpreter.h>
 #include "qsimporter.h"
 #include "qsdict.h"
 #include "qsiproperty.h"
 #include "qspage.h"
+#include "qscobject.h"
+#include "qspdf.h"
 
 namespace gui {
 

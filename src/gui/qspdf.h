@@ -20,7 +20,7 @@ public:
  virtual ~QSPdf();
  CPdf* get();
 public slots:
- int saveAs(QString name);
+ void saveAs(QString name);
  void removePage(int position);
  int getPagePosition(QSPage *page);
  unsigned int getPageCount();

@@ -1,9 +1,9 @@
 #ifndef __BOOLOPTION_H__
 #define __BOOLOPTION_H__
 
-#include <qstring.h>
-#include <qcheckbox.h>
 #include "option.h"
+class QString;
+class QCheckBox;
 
 namespace gui {
 

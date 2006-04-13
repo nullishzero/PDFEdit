@@ -3,11 +3,15 @@
 */
 
 #include "qsgraphics.h"
+#include <cobject.h>
+#include <cgraphics.h>
 
 namespace gui {
 
-/** Construct wrapper with given CDict */
-QSGraphics::QSGraphics(CGraphic *gfx) : QSDict (gfx) {
+using namespace pdfobjects;
+
+/** Construct wrapper with given CGraphic */
+QSGraphics::QSGraphics(CGraphic *gfx) : QSCObject ("CGraphic") {
 }
 
 /** destructor */

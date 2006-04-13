@@ -8,6 +8,9 @@ RefProperty - class for widget containing
 #include "refvalidator.h"
 #include <string>
 #include <stdlib.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <cobject.h>
 
 namespace gui {
 

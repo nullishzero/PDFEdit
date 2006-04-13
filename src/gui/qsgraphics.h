@@ -2,16 +2,15 @@
 #define __QSGRAPHICS_H__
 
 #include <qobject.h>
+#include "qscobject.h"
 #include <cobject.h>
 #include <cgraphics.h>
-#include "qsdict.h"
-#include "qscobject.h"
 
 namespace gui {
 
 using namespace pdfobjects;
 
-class QSGraphics : public QSDict {
+class QSGraphics : public QSCObject {
  Q_OBJECT
 public:
  QSGraphics(CGraphic *gfx);

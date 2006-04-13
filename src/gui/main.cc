@@ -3,6 +3,7 @@
 */
 #include <stdlib.h>
 #include <qtranslator.h>
+#include <qapplication.h>
 #include <qdir.h>
 #include <iostream>
 #include "pdfeditwindow.h"
@@ -81,7 +82,7 @@ void optionHandler(const QString &param, optHandler h,const QString &help="") {
 }
 
 /** Adds option to option list. Some options (help) are processed immediately
- @param opt Commandline option to check
+ @param param Commandline option to check
  @return true if option is valid, false otherwise
  */
 bool handleOption(const QString &param) {

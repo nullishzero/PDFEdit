@@ -5,6 +5,7 @@
 
 #include <utils/debug.h>
 #include "qscobject.h"
+#include <qstring.h>
 
 namespace gui {
 

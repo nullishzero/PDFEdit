@@ -1,10 +1,11 @@
 #ifndef __NAMEPROPERTY_H__
 #define __NAMEPROPERTY_H__
 
-#include "property.h"
 #include "stringproperty.h"
-#include <qlineedit.h>
-#include <cobject.h>
+class QLineEdit;
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

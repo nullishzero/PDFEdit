@@ -11,7 +11,9 @@ readStringDialog
 #include <qinputdialog.h> 
 #include <qmessagebox.h> 
 #include <qfiledialog.h> 
+#include <qfileinfo.h> 
 #include <utils/debug.h>
+#include <qstring.h>
 
 namespace gui {
 
@@ -38,21 +40,27 @@ QString openFileDialog(QWidget* parent) {
  fd.setCaption(QObject::tr("Open file ..."));
  fd.setDir(globalSettings->read("history/filePath","."));
  fd.setMode(QFileDialog::ExistingFile);
- globalSettings->restoreWindow(&fd,"file_dialog");
- if (fd.exec()==QDialog::Accepted) {
-  globalSettings->saveWindow(&fd,"file_dialog");
-  globalSettings->write("history/filePath",getDir(fd));
-  QString name=fd.selectedFile();
-  //TODO: check if not directory
-  return name;
+ for(;;) {
+  globalSettings->restoreWindow(&fd,"file_dialog");
+  if (fd.exec()==QDialog::Accepted) {
+   globalSettings->saveWindow(&fd,"file_dialog");
+   globalSettings->write("history/filePath",getDir(fd));
+   QString name=fd.selectedFile();
+    if (QFileInfo(name).isDir()) { //directory was selected
+     //TODO: test this !
+     fd.setDir(name);
+     continue;//restart dialog
+    }
+   return name;
+  }
+  return QString::null;
  }
- return QString::null;
 }
 
 /** Invoke "save file" dialog. Wait for user to select or type a single file and return its name.
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
- @param oldName Name of file to be saved - if specified, this name will be pre-selected.
+ @param oldname Name of file to be saved - if specified, this name will be pre-selected.
  @param askOverwrite If true and selected file exists, user will be asked to confirm overwriting it
  @return selected Filename*/
 QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/) {

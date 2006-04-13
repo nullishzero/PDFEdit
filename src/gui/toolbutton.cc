@@ -3,6 +3,8 @@
 */
 #include "toolbutton.h"
 #include <qiconset.h>
+#include <qpixmap.h>
+#include <qstring.h>
 
 namespace gui {
 

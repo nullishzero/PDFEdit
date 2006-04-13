@@ -10,6 +10,10 @@
 #include <qregexp.h>
 #include "settings.h"
 #include "util.h"
+#include <qsettings.h>
+#include <qsplitter.h>
+#include <qstringlist.h> 
+#include <qstring.h>
 
 namespace gui {
 
@@ -91,8 +95,8 @@ void Settings::initSettings() {
 
 /** Given name of the file, finds and returns full path to the file,
      considering all relevant settings
- @param name of paths in settings for this file (e.g. "icon")
- @param name of file
+ @param nameOfPath Name of paths in settings for this file (e.g. "icon")
+ @param fileName Name of file
  @return QString with full path to the file
 */
 QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {

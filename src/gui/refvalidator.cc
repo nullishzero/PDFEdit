@@ -3,6 +3,7 @@
  */
 
 #include "refvalidator.h"
+#include <qstring.h> 
 
 namespace gui {
 
@@ -34,6 +35,7 @@ void RefValidator::fixup(QString &input) const {
 QValidator::State RefValidator::validate(QString &input,int &pos) const {
  if (valid.exactMatch(input)) {
   //TODO: validate with PDF -> if (!validRef) return Intermediate;
+  //TODO: use CXRef from Cpdf for this
   return Acceptable;
  }
  if (ivalid.exactMatch(input)) return Intermediate;

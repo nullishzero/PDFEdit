@@ -1,13 +1,12 @@
 #ifndef __QSDICT_H__
 #define __QSDICT_H__
 
-#include <qobject.h>
-#include <cobject.h>
 #include "qscobject.h"
-
-using namespace pdfobjects;
+#include <cobject.h>
 
 namespace gui {
+
+using namespace pdfobjects;
 
 class QSDict : public QSCObject {
  Q_OBJECT

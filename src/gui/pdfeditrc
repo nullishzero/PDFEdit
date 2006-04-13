@@ -39,3 +39,5 @@ context/CtrlA=dosomethingincontext()
 [path]
 icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;./icon
 
+[script]
+init=init.qs

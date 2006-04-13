@@ -7,12 +7,14 @@ PropertyEditor - widget for editing properties of selected object
 #include "util.h"
 #include <cobject.h>
 #include "propertyfactory.h"
+#include "property.h"
+#include <qscrollview.h>
+#include <qstringlist.h>
+#include <qlabel.h>
 
 namespace gui {
 
 using namespace std;
-
-//TODO: add functions for display & editing ... 
 
 /** Default constructor of property editor.
  On creation, no object is assigned to editor

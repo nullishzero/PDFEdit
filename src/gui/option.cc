@@ -4,6 +4,8 @@ Can be subclassed for editing specific option types (integer, ...)
 */
 
 #include <utils/debug.h>
+#include <qstring.h>
+#include "settings.h"
 #include "option.h"
 
 namespace gui {
@@ -15,7 +17,6 @@ namespace gui {
 Option::Option(const QString &_key/*=0*/,QWidget *parent/*=0*/)
  : QWidget (parent, "option"){
  key=_key;
- set=Settings::getInstance();
 // printDbg(debug::DBG_DBG,"+ Option " << key);
 }
 

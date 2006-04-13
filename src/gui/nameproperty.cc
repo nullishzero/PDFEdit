@@ -8,6 +8,8 @@ Basically, CName is CString, but we might want differentiation in case we'll han
 #include "nameproperty.h"
 #include <string>
 #include <stdlib.h>
+#include <qlineedit.h>
+#include <cobject.h>
 
 namespace gui {
 

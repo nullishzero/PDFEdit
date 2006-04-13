@@ -1,9 +1,8 @@
 #ifndef __OPTION_H__
 #define __OPTION_H__
 
-#include <qstring.h>
-#include <qlineedit.h>
-#include "settings.h"
+#include <qwidget.h>
+class QString;
 
 namespace gui {
 
@@ -18,8 +17,6 @@ public:
 protected:
  /** Name of this option */
  QString key;
- /** Settings used to read/write value*/
- Settings *set;
 };
 
 } // namespace gui 

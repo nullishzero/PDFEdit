@@ -2,7 +2,7 @@
 #define __QSCOBJECT_H__
 
 #include <qobject.h>
-#include <qstring.h>
+class QString;
 
 namespace gui {
 

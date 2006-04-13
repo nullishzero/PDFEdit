@@ -12,6 +12,14 @@
 #include "util.h"
 #include "settings.h"
 #include <qtextstream.h> 
+#include <qmenudata.h>
+#include <qmainwindow.h>
+#include <qmenubar.h>
+#include <qpopupmenu.h>
+#include <qpixmap.h>
+#include "toolbar.h"
+#include <qstringlist.h> 
+#include <qstring.h>
 
 namespace gui {
 
@@ -103,6 +111,9 @@ QString Menu::readItem(const QString name,const QString root/*="gui/items/"*/) {
  return line; 
 }
 
+//TODO: keyboard shortcuts sdilet, instalovat jen jednou
+//TODO: 
+
 /**
  load one menu item and insert it into parent menu. Recursively load subitems if item is a submenu.
 
@@ -127,7 +138,7 @@ void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=
   if (it!=qs.end()) { //add itself as popup menu to parent with given name
    if (!isRoot) parent->insertItem(Settings::tr(*it,name),item);
    ++it;
-  } else fatalError("Invalid menu item in config:\n"+line);
+  } else fatalError("Invalid menu list in config:\n"+line);
   for (;it!=qs.end();++it) { //load all subitems
    if (!isRoot) loadItem(*it,item); else loadItem(*it,parent);
   }
@@ -151,7 +162,7 @@ void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=
    }
   }
  } else { //something invalid
-  fatalError("Invalid menu item in config:\n"+line);
+  fatalError("Invalid menu list/item in config:\n"+line);
  } 
 }
 

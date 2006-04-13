@@ -2,16 +2,16 @@
 #define __OPTIONWINDOW_H__
 
 #include <qwidget.h>
-#include <qlabel.h>
 #include <qdict.h>
 #include <qmap.h>
-#include <qtabwidget.h> 
-#include <qlayout.h>
-#include "option.h"
-#include "menu.h"
+class QLabel;
+class QTabWidget;
+class QGridLayout;
 
 namespace gui {
 
+class Menu;
+class Option;
 /** Pointer to running Options window or NULL if none active. Instance is in optionwindow.cc */
 class OptionWindow;
 extern OptionWindow *opt;

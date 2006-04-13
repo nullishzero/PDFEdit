@@ -1,9 +1,10 @@
 #ifndef __REALPROPERTY_H__
 #define __REALPROPERTY_H__
 
-#include "property.h"
 #include "stringproperty.h"
-#include <cobject.h>
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

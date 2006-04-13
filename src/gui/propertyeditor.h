@@ -1,19 +1,23 @@
 #ifndef __PROPERTYEDITOR_H__
 #define __PROPERTYEDITOR_H__
 
-#include <qstringlist.h>
 #include <qobjectlist.h>
-#include <qscrollview.h>
 #include <qdict.h>
 #include <qmap.h>
 #include <qwidget.h>
 #include <qgrid.h>
-#include <qlabel.h>
 #include <qlayout.h>
 #include <iproperty.h>
-#include "property.h"
+
+class QScrollView;
+class QLabel;
+class QStringList;
 
 namespace gui {
+
+class Property;
+
+using namespace pdfobjects;
 
 /** property editor widget */
 class PropertyEditor : public QWidget {

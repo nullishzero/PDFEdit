@@ -5,6 +5,8 @@ RealProperty - class for widget containing
 
 #include "realproperty.h"
 #include <qvalidator.h>
+#include <qlineedit.h>
+#include <cobject.h>
 
 namespace gui {
 

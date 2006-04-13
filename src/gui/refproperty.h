@@ -2,9 +2,11 @@
 #define __REFPROPERTY_H__
 
 #include "property.h"
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <cobject.h>
+class QLineEdit;
+class QPushButton;
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

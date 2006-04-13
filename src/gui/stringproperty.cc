@@ -6,6 +6,8 @@ StringProperty - class for widget containing
 #include "stringproperty.h"
 #include <string>
 #include <stdlib.h>
+#include <qlineedit.h>
+#include <cobject.h>
 
 namespace gui {
 

@@ -4,6 +4,9 @@ StringOption - class for widget containing one editable setting of type string
 
 #include <utils/debug.h>
 #include "stringoption.h"
+#include <qstring.h>
+#include <qlineedit.h>
+#include "settings.h"
 
 namespace gui {
 
@@ -23,12 +26,12 @@ StringOption::~StringOption() {
 
 /** write edited value to settings */
 void StringOption::writeValue() {
- set->write(key,ed->text());
+ globalSettings->write(key,ed->text());
 }
 
 /** read value from settings for editing */
 void StringOption::readValue() {
- ed->setText(set->read(key));
+ ed->setText(globalSettings->read(key));
 }
 
 /** return size hint of this property editing control */

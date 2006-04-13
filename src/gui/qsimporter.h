@@ -2,16 +2,17 @@
 #define __QSIMPORTER_H__
 
 #include <qobject.h>
-#include <qstring.h>
-#include <qsproject.h>
-#include <qsinterpreter.h>
-#include "qscobject.h"
 #include <cobject.h>
 #include <cpage.h>
 #include <cpdf.h>
-#include "qspdf.h"
+class QSProject;
+class QSInterpreter;
+class QString;
 
 namespace gui {
+
+class QSCObject;
+class QSPdf;
 
 using namespace pdfobjects;
 

@@ -1,8 +1,8 @@
 #ifndef __INTOPTION_H__
 #define __INTOPTION_H__
 
-#include <qstring.h>
 #include "stringoption.h"
+class QString;
 
 namespace gui {
 

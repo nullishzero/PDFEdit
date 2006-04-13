@@ -2,9 +2,9 @@
 #define __COMMANDWINDOW_H__
 
 #include <qwidget.h>
-#include <qtextedit.h> 
-#include <qlineedit.h>
-#include <qcombobox.h>
+class QTextEdit;
+class QLineEdit;
+class QComboBox;
 
 namespace gui {
 

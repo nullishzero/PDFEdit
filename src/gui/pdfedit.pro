@@ -56,8 +56,8 @@ HEADERS += helpwindow.h
 SOURCES += helpwindow.cc
 
 #Tree window
-HEADERS += treeitem.h  treewindow.h 
-SOURCES += treeitem.cc treewindow.cc
+HEADERS += treeitem.h  treewindow.h  treedata.h
+SOURCES += treeitem.cc treewindow.cc treedata.cc 
 
 #Property editor
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  refproperty.h
@@ -70,8 +70,8 @@ HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h 
 SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
 
 #Other source files
-HEADERS += util.h  menu.h  settings.h 
-SOURCES += util.cc menu.cc settings.cc main.cc 
+HEADERS += pdfutil.h  util.h  menu.h  settings.h 
+SOURCES += pdfutil.cc util.cc menu.cc settings.cc main.cc 
 
 #Main Window
 HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h

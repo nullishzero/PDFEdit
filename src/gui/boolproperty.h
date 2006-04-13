@@ -2,8 +2,10 @@
 #define __BOOLPROPERTY_H__
 
 #include "property.h"
-#include <qcheckbox.h>
-#include <cobject.h>
+class QCheckBox;
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

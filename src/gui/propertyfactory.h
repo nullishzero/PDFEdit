@@ -1,9 +1,11 @@
 #ifndef __PROPERTYFACTORY_H__
 #define __PROPERTYFACTORY_H__
 
-#include <iproperty.h>
-#include <qwidget.h>
 #include "property.h"
+class QWidget;
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

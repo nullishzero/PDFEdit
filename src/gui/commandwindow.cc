@@ -4,11 +4,15 @@
 #include "commandwindow.h"
 #include "settings.h"
 #include "util.h"
+#include <utils/debug.h>
 #include <iostream>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qfile.h>
 #include <qlistbox.h>
+#include <qtextedit.h> 
+#include <qlineedit.h>
+#include <qcombobox.h>
 
 namespace gui {
 

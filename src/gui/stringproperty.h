@@ -2,8 +2,10 @@
 #define __STRINGPROPERTY_H__
 
 #include "property.h"
-#include <qlineedit.h>
-#include <cobject.h>
+class QLineEdit;
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

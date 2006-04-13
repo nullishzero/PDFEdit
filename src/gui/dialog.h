@@ -1,8 +1,8 @@
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
-#include <qstring.h>
 #include <qwidget.h>
+#include <qstring.h>
 
 namespace gui {
 

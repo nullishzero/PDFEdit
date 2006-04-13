@@ -1,16 +1,17 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#include <qmenudata.h>
-#include <qmainwindow.h>
-#include <qmenubar.h>
-#include <qpopupmenu.h>
-#include <qpixmap.h>
-#include "toolbar.h"
-#include <qstringlist.h> 
-#include <qstring.h>
+class QMainWindow;
+class QMenuBar;
+class QMenuData;
+class QPopupMenu;
+class QString;
+class QStringList;
+class QPixmap;
 
 namespace gui {
+
+class ToolBar;
 
 /** Action map type: mapping from to */
 typedef QMap<QString, int> ActionMap;

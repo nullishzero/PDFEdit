@@ -3,6 +3,9 @@ OptionWindow - widget for editing program options
 */
 
 #include "optionwindow.h"
+#include <qlabel.h>
+#include <qtabwidget.h> 
+#include <qlayout.h>
 #include <utils/debug.h>
 #include "util.h"
 #include "stringoption.h"
@@ -16,6 +19,9 @@ OptionWindow - widget for editing program options
 #include "option.h"
 #include "version.h"
 #include "settings.h"
+#include "option.h"
+#include "menu.h"
+#include "toolbar.h"
 
 namespace gui {
 
@@ -168,7 +174,7 @@ void OptionWindow::finishTab(QWidget *otab) {
 }
 
 /** add Option to the window (type of option is string)
- @param tab Tab holding that option
+ @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
  */
@@ -177,7 +183,7 @@ void OptionWindow::addOption(QWidget *otab,const QString &caption,const QString 
 }
 
 /** add Option to the window (type of option is float)
- @param tab Tab holding that option
+ @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
  */
@@ -186,7 +192,7 @@ void OptionWindow::addOptionFloat(QWidget *otab,const QString &caption,const QSt
 }
 
 /** add Option to the window (type of option is bool)
- @param tab Tab holding that option
+ @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
  @param defValue Default value if option not found in configuration
@@ -196,7 +202,7 @@ void OptionWindow::addOptionBool(QWidget *otab,const QString &caption,const QStr
 }
 
 /** add Option to the window (type of option is int)
- @param tab Tab holding that option
+ @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
  */

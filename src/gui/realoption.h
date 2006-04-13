@@ -1,8 +1,8 @@
 #ifndef __REALOPTION_H__
 #define __REALOPTION_H__
 
-#include <qstring.h>
 #include "stringoption.h"
+class QString;
 
 namespace gui {
 

@@ -7,6 +7,8 @@
 #include "util.h"
 #include <iostream>
 #include <qlayout.h>
+#include <qlistview.h>
+#include "treedata.h"
 
 namespace gui {
 
@@ -19,7 +21,8 @@ private:
  friend class TreeWindow;
  /** default constructor*/
  ShowData() {
-  dirty=true;
+  dirty=false;
+  needreload=false;
  }
  /** destructor - empty */
  ~ShowData() {
@@ -34,6 +37,7 @@ private:
   if (target==tmp) return;
   target=tmp;
   dirty=true;
+  needreload=true;
  }
  
  /** update internal data from settings */
@@ -44,6 +48,8 @@ private:
  bool show_simple;
  /** True, if any change since last time this was reset to false. Initial value is true */
  bool dirty;
+ /** True if the tree needs reloading */
+ bool needreload;
 };
 
 
@@ -66,15 +72,28 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->show();
  sh=new ShowData();
  sh->update();
+ data=new TreeData(this,tree);
 }
 
 /** Re-read tree settings from global settings */
 void TreeWindow::updateTreeSettings() {
  sh->update();
  if (sh->dirty) {
-  init(obj); //update object
+  printDbg(debug::DBG_DBG,"update tree settings: is dirty");
   sh->dirty=false;
+  update();//Update treeview itself
  }
+}
+
+/** Paint event handler -> if settings have been changed, reload tree */
+void TreeWindow::paintEvent(QPaintEvent *e) {
+ if (sh->needreload) {
+  printDbg(debug::DBG_DBG,"update tree settings: need reload");
+  init(obj); //update object if necessary
+  sh->needreload=false;
+ }
+ //Pass along
+ QWidget::paintEvent(e);
 }
 
 /** Called when any settings are updated (in script, option editor, etc ...) */
@@ -121,18 +140,24 @@ void TreeWindow::init(CPdf *pdfDoc) {
 }
 
 /** Init contents of treeview from given IProperty (dictionary, etc ...)
- @param prop IProperty used to initialize treeview
+ @param doc IProperty used to initialize treeview
  */
 void TreeWindow::init(IProperty *doc) {
  obj=doc;
  clear();
  if (doc) {
   setUpdatesEnabled( FALSE );
-  TreeItem *root=new TreeItem(this,tree, doc); 
+  TreeItem *root=new TreeItem(data,tree, doc); 
   root->setOpen(TRUE);
   addChilds(root,false);
   setUpdatesEnabled( TRUE );
  }
+}
+
+/** Resets th tree to be empty and show nothing */
+void TreeWindow::uninit() {
+ clear();
+ obj=NULL;
 }
 
 /** Return true, if this is simple property (editable as item in property editor and have no children), false otherwise
@@ -179,7 +204,7 @@ void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
 //   printDbg(debug::DBG_DBG,"Subproperty: " << *it);
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    if (!sh->show_simple && isSimple(property)) continue; //simple item -> skip it
-   TreeItem *child=new TreeItem(this,parent, property.get(),*it,last); 
+   TreeItem *child=new TreeItem(data,parent, property.get(),*it,last); 
    last=child;
    addChilds(child,expandReferences);
   }
@@ -195,7 +220,7 @@ void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
    name.sprintf("[%d]",i);
    if (!sh->show_simple && isSimple(property)) continue; //simple item -> skip it
-   TreeItem *child=new TreeItem(this,parent, property.get(),name,last); 
+   TreeItem *child=new TreeItem(data,parent, property.get(),name,last); 
    last=child;
    addChilds(child,expandReferences);
   }
@@ -213,7 +238,7 @@ void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
    cref->getPropertyValue(ref);
    printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
    boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
-   TreeItem *child=new TreeItem(this,parent, rp.get(),s.sprintf("<%d,%d>",ref.num,ref.gen));
+   TreeItem *child=new TreeItem(data,parent, rp.get(),s.sprintf("<%d,%d>",ref.num,ref.gen));
    //TODO: store in index...
    addChilds(child,false);
   } else {
@@ -229,6 +254,7 @@ void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
 
 /** default destructor */
 TreeWindow::~TreeWindow() {
+ delete data;
  delete tree;
  delete sh;
 }

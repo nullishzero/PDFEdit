@@ -6,6 +6,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qtextbrowser.h> 
 #include "settings.h"
 #include "version.h"
 

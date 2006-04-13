@@ -4,6 +4,8 @@ BoolProperty - class for widget containing
 */
 
 #include "boolproperty.h"
+#include <qcheckbox.h>
+#include <cobject.h>
 
 namespace gui {
 

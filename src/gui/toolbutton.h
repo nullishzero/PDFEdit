@@ -1,8 +1,9 @@
 #ifndef __TOOLBUTTON_H__
 #define __TOOLBUTTON_H__
+
 #include <qtoolbutton.h>
-#include <qpixmap.h>
-#include <qstring.h>
+class QPixmap;
+class QString;
 
 namespace gui {
 

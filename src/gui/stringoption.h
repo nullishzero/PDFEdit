@@ -1,9 +1,9 @@
 #ifndef __STRINGOPTION_H__
 #define __STRINGOPTION_H__
 
-#include <qstring.h>
-#include <qlineedit.h>
 #include "option.h"
+class QString;
+class QLineEdit;
 
 namespace gui {
 

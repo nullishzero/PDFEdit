@@ -1,23 +1,25 @@
 #ifndef __PDFEDITWINDOW_H__
 #define __PDFEDITWINDOW_H__
 
-#include "commandwindow.h"
 #include <cobject.h>
 #include <cpdf.h>
-#include <qapplication.h>
-#include <qpushbutton.h>
-#include <qfont.h>
-#include <qsplitter.h>
-#include <qstring.h>
 #include <qmainwindow.h>
-#include <qsinterpreter.h>
-#include "propertyeditor.h"
-#include "treewindow.h"
-#include "menu.h"
-#include "qspdf.h"
-#include "qsimporter.h"
+
+class QFont;
+class QPushButton;
+class QSInterpreter;
+class QSProject;
+class QSplitter;
+class QString;
 
 namespace gui {
+
+class CommandWindow;
+class QSImporter;
+class QSPdf;
+class TreeWindow;
+class PropertyEditor;
+class Menu;
 
 using namespace pdfobjects;
 
@@ -29,6 +31,7 @@ public:
  ~PdfEditWindow();
  int question_ync(const QString &msg);
 public slots: //These will be exported to scripting
+ void run(QString scriptName);
  bool save();
  bool saveAs(const QString &name);
  QString fileOpenDialog();

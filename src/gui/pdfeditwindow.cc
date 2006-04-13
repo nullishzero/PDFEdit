@@ -2,21 +2,33 @@
  PdfEditWindow - class representing main application window
 */
 #include "pdfeditwindow.h"
-#include "pagespace.h"
-#include <utils/debug.h>
-#include "settings.h"
-#include "util.h"
-#include "test.h"
 #include <iostream>
+#include <utils/debug.h>
 #include <qfile.h>
 #include <qregexp.h>
+#include <qmenubar.h>
+#include <qmessagebox.h> 
+#include <qsplitter.h>
+#include <qstring.h>
+#include <qfont.h>
+#include <qsinterpreter.h>
+#include <qpushbutton.h>
+#include <qapplication.h>
+#include "pagespace.h"
+#include "toolbar.h"
+#include "settings.h"
+#include "util.h"
 #include "aboutwindow.h"
 #include "version.h"
-#include <qmessagebox.h> 
 #include "optionwindow.h"
 #include "helpwindow.h"
 #include "dialog.h"
-//#include <qtextstream.h> 
+#include "qspdf.h"
+#include "qsimporter.h"
+#include "propertyeditor.h"
+#include "treewindow.h"
+#include "menu.h"
+#include "commandwindow.h"
 
 namespace gui {
 
@@ -68,7 +80,7 @@ void PdfEditWindow::closeEvent(QCloseEvent *e) {
 }
 
 /** Check whether given file exists
- @param chkfileName Name of file to check
+ @param chkFileName Name of file to check
  @return true if file exists, false otherwise
 */
 bool PdfEditWindow::exists(const QString &chkFileName) {
@@ -139,18 +151,6 @@ void PdfEditWindow::saveWindowState() {
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
  menuSystem->saveToolbars(this);
- //TODO: bug, toolbars change order
-/* QString out;
- QTextStream qs(out,IO_WriteOnly);
- qs << this;
- printDbg(debug::DBG_DBG,"SAVETOOL: " << out);
- //Save toolbar states
- QStringList tbs=menuSystem->getToolbarList();
- for (unsigned int i=0;i<tbs.count();i++) {
-  ToolBar* tb=menuSystem->getToolbar(tbs[i]);
-  if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
-  menuSystem->saveToolbar(tb,tbs[i],this);
- }*/
 }
 
 /** Restores window state from application settings */
@@ -160,13 +160,6 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreSplitter(splProp,"spl_right"); 
  globalSettings->restoreSplitter(splCmd,"spl_left"); 
  menuSystem->restoreToolbars(this);
- //Restore toolbar states
-/* QStringList tbs=menuSystem->getToolbarList();
- for (unsigned int i=0;i<tbs.count();i++) {
-  ToolBar* tb=menuSystem->getToolbar(tbs[i]);
-  if (!tb) continue; //Someone put invalid toolbar in settings. Just ignore it
-  menuSystem->restoreToolbar(tb,tbs[i],this);
- }*/
 }
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
@@ -184,6 +177,14 @@ void PdfEditWindow::removeDocumentObjects() {
  qs->evaluate("item.deleteSelf();",this,"<delete_item>");
  qs->evaluate("page.deleteSelf();",this,"<delete_page>");
  //todo: run garbage collector? Is it needed?
+}
+
+/** Runs script from given file
+ @param scriptName name of file with QT Script to run
+ */
+void PdfEditWindow::run(QString scriptName) {
+ QString code=loadFromFile(scriptName);
+ qs->evaluate(code,this,scriptName);
 }
 
 /** Runs given script code
@@ -322,10 +323,9 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Create and add importer to QSProject and related QSInterpreter
  import=new QSImporter(qp,this);
  //Run initscript
- QString initScriptFilename="init.qs";
- QString code=loadFromFile(initScriptFilename);
+ QString initScriptFilename=globalSettings->read("script/init");
  //Any document-related classes are NOT available to the initscript, as no document is currently loaded
- qs->evaluate(code,this,initScriptFilename);
+ run(initScriptFilename);
  printDbg(debug::DBG_DBG,"after initscript");
 
  if (fName.isNull()) { //start with empty editor
@@ -426,7 +426,7 @@ void PdfEditWindow::setFileName(const QString &name) {
 void PdfEditWindow::destroyFile() {
  if (!document) return;
  item=NULL;//no item selected
- tree->clear();//clear treeview
+ tree->uninit();//clear treeview
  prop->clear();//clear property editor
  page.reset();
  document->close(false);
@@ -456,7 +456,7 @@ void PdfEditWindow::emptyFile() {
  document=NULL;
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
- tree->init(test::testDict()); //todo: testing, should be NULL
+ tree->uninit();
  setFileName(QString::null);
 }
 
@@ -502,10 +502,10 @@ bool PdfEditWindow::question(const QString &msg) {
  return (answer==0);//QMessageBox::Yes);
 }
 
-/** Asks question with Yes/No/Cancel answer. "Yes" is default. <br />
- Return on of these three according to user selection: <br />
-  QMessageBox::Yes     <br />
-  QMessageBox::No      <br />
+/** Asks question with Yes/No/Cancel answer. "Yes" is default. <br>
+ Return on of these three according to user selection: <br>
+  QMessageBox::Yes     <br>
+  QMessageBox::No      <br>
   QMessageBox::Cancel
  @param msg Question to display
  @return Selection of user.

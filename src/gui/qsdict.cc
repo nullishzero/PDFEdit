@@ -3,9 +3,11 @@
 */
 
 #include "qsdict.h"
+#include <cobject.h>
 
 namespace gui {
 
+using namespace pdfobjects;
 //TODO: this is for CObjectComplex, not only CDict ...
 
 /** Construct wrapper with given CDict */

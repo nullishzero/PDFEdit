@@ -1,9 +1,11 @@
 #ifndef __PROPERTY_H__
 #define __PROPERTY_H__
 
-#include <qstring.h>
 #include <qwidget.h>
-#include <iproperty.h>
+class QString;
+namespace pdfobjects {
+ class IProperty;
+}
 
 namespace gui {
 

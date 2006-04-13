@@ -2,6 +2,8 @@
 PropertyFactory - static function that will return correct property widget based on type of object
 */
 
+#include <qwidget.h>
+#include <iproperty.h>
 #include "propertyfactory.h"
 #include "stringproperty.h"
 #include "intproperty.h"

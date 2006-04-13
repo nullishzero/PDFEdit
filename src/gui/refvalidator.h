@@ -2,7 +2,7 @@
 #define __REFVALIDATOR_H__
 
 #include <qvalidator.h> 
-#include <qstring.h> 
+class QString;
 
 namespace gui {
 

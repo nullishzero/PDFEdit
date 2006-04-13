@@ -4,6 +4,7 @@ RealOption - class for widget containing one editable setting of type float
 
 #include "realoption.h"
 #include <qvalidator.h>
+#include <qlineedit.h>
 
 namespace gui {
 

@@ -1,10 +1,12 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
+
 #include "config.h"
-#include <qsettings.h>
-#include <qsplitter.h>
-#include <qstringlist.h> 
-#include <qstring.h>
+#include <qobject.h>
+class QSettings;
+class QSplitter;
+class QStringList;
+class QString;
 
 /** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 

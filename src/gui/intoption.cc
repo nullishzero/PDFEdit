@@ -4,6 +4,8 @@ IntOption - class for widget containing one editable setting of type integer
 
 #include "intoption.h"
 #include <qvalidator.h>
+#include <qstring.h>
+#include <qlineedit.h>
 
 namespace gui {
 
