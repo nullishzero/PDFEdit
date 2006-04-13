@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Documentation for menu system</title>
+ </bookinfo>
+
+ <chapter>
+  <title>PDF Editor menu and toolbar system</title>
+  <para>
+   Configuration of menus and toolbars are in the main configuration file <filename>pdfeditrc</filename>,
+   which is placed in the data directory (by defalt it is configured as <filename>/usr/share/pdfedit</filename>).
+   Format of the file is 'ini file', where sections have heading composed of its name in square brackets,
+   followed by lines in format "<code>key=value</code>"
+  </para>
+  <para>
+   In home directory in file <filename>.pdfedit/pdfeditrc</filename> are user settings. User can redefine any key
+   in any section, thus he have possibility to modify editor menus as he deem appropriate.
+  </para>
+  <sect1>
+   <title>Menus and Toolbars</title>
+   <para>
+    Menus are stored in <structname>gui</structname> section. Each menu, menu item, toolbar or toolbar item have
+    a unique name (all these share common namespace) - also, menu items often can be used as toolbar items (as long
+    as they have icon) and toolbar items can be used as menu items (as long as they have text).
+   </para>
+   <sect2>
+    <title>Lists and items</title>
+    <para>
+     Each item is either a "list" or "item".
+     These are menus and menu items in context of menu, or toolbars and toolbar items in context of toolbar.
+    </para>
+    <para>
+    Usage is basically the same for menus and toolbars, but there are some differences:
+    </para>
+    <itemizedlist>
+     <listitem>Lists in menu can contain items (menu items) or lists (submenus).
+      Submenus can be nested to any level, but be careful not to create a loop.
+      List used as toolbar can contain only items</listitem>
+     <listitem>Menu item does not need icon, toolbar item needs icon</listitem>
+     <listitem>Caption in menu items will be used as text of the menu items, caption in toolbar items will be used as tooltip</listitem>
+    </itemizedlist>
+    <para>
+     List called <varname>MainMenu</varname> will be used as editor's main menu.
+     Key called <varname>toolbars</varname> contain comma separated list of toolbar names. Only toolbars specified here
+     will be available in editor.
+    </para>
+    <para>
+     <title>Format of one list</title>
+     <programlisting>items/<varname>name_of_list</varname>=list <varname>Caption of menu</varname>,<varname>menu item 1, menu item 2, ....</varname></programlisting>
+     Number of items in one list is not limited, but note that dimensions of screen where the menu or toolbars will be shown are limited.
+     Each menu items referenced in the list must exist, invalid item will cause editor not to start with an error message.
+     If you want to insert separator in the menu, use "-" (single dash) in place of items's name
+     <synopsis>Caption of item</synopsis> is text that will be shown as menu text/tooltip.
+     All further parameters (comma separated) following caption are items that will be contained in the list.
+    </para>
+    <para>
+     <title>Format of one item</title>
+     <programlisting>items/<varname>name_of_item</varname>=item <varname>Caption of item</varname>,<varname>Command</varname>,<varname>Keyboard_shortcut</varname>,<varname>Icon</varname></programlisting>
+     <synopsis>Icon</synopsis> is name of file with icon image.
+     The icon should may be in PNG, BMP, XBM, XPM or PNM format, although PNG is recommended.
+     Also supported may be JPEG, MNG and GIF - depend on how QT library used to compile the
+     editor is configures. You should not rely on support of these formats when creating menus.
+     Can be omitted or left blank.
+     <synopsis>Caption of item</synopsis> is text that will be shown as caption.
+     <synopsis>Command</synopsis> is any piece of script that will be run when this item is clicked.
+     For longer or more complex commands it is recommended to define them as functions in init.qs and from menu only call them ...
+     These are two special cases:
+     <itemizedlist>
+      <listitem>if the string used as command is "quit", the editor will quit (close all windows)</listitem>
+      <listitem>if the string used as command is "closewindow", the editor will close current windows</listitem>
+     </itemizedlist>
+     <synopsis>Keyboard_shortcut</synopsis>
+     This specifies keyboard shortcut that will invoke the action.
+     If two different items have the same shortcut, the result is undefined.
+     Can be omitted (if icon is also omitted) or just left blank (no keyboard shortcut).
+     Format is modifiers+key, for example: <keycombo>Ctrl+A</keycombo>, <keycombo>Shift+X</keycombo>, <keycombo>Ctrl+Alt+Z</keycombo>
+    </para>
+   </sect2>
+  </sect1>
+  <sect1>
+   <title>Icons</title>
+   Path where to look for icons is defined in <varname>path</varname> section of configuration file.
+   Key <varname>icon</varname> specifies semiciolon separated list of path, which will be searched from first to last intil the icon is found.
+   Path elements may contain variable references in shell style (<userinput>$VARIABLE</userinput> and <userinput>${VARIABLE}</userinput>),
+   which will be expanded automatically.
+   Default icon path is <filename>$HOME/.pdfedit/icon</filename>;<filename>/usr/share/pdfedit/icon</filename>.
+   Recommended way for user to install his own icons is doing it in by copying them to <filename>.pdfedit/icon</filename>
+   subdirectory in his home directory.
+  </sect1>  
+ </chapter>
+</book>
