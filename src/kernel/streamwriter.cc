@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/13 18:17:43  hockm0bm
+ * TODO for filter usage in FileStreamWriter if any
+ *
  * Revision 1.2  2006/04/12 20:49:03  hockm0bm
  * FileStreamWriter methods flushes immediately after writing
  *
@@ -16,6 +19,8 @@
 
 #include <stdio.h>
 #include"streamwriter.h"
+
+//TODO use stream encoding
 
 void FileStreamWriter::putChar(int ch)
 {
