@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/04/13 18:16:30  hockm0bm
+ * insert/removePage, addIndirectProperty, save throws ReadOnlyDocumentException
+ *
  * Revision 1.25  2006/04/12 17:55:21  hockm0bm
  * * save method changed
  * 		- fileName parameter removed
@@ -81,7 +84,6 @@
 #include "cpdf.h"
 #include "factories.h"
 #include "utils/debug.h"
-
 
 // =====================================================================================
 
@@ -717,7 +719,7 @@ void CPdf::initRevisionSpecific()
 CPdf::CPdf(StreamWriter * stream, FILE * file, OpenMode openMode)
 {
 	// gets xref writer - if error occures, exception is thrown 
-	xref=new XRefWriter(stream);
+	xref=new XRefWriter(stream, this);
 	pdfFile=file;
 	mode=openMode;
 
@@ -857,6 +859,12 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 {
 	printDbg(debug::DBG_DBG, "");
 
+	if(mode==ReadOnly)
+	{
+		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		throw ReadOnlyDocumentException("Document is in read-only mode.");
+	}
+	
 	// place for propertyValue
 	// it is ip by default
 	boost::shared_ptr<IProperty> propValue=ip;
@@ -1091,7 +1099,7 @@ boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)
 	return getPage(pos);
 }
 
-int CPdf::getPagePosition(boost::shared_ptr<CPage> page)
+size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)
 {
 	printDbg(DBG_DBG, "");
 		
@@ -1420,6 +1428,12 @@ using namespace utils;
 
 	printDbg(DBG_DBG, "pos="<<pos);
 
+	if(mode==ReadOnly)
+	{
+		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		throw ReadOnlyDocumentException("Document is in read-only mode.");
+	}
+		
 	// zero position is corrected to 1
 	if(pos==0)
 		pos=1;
@@ -1493,6 +1507,14 @@ void CPdf::removePage(size_t pos)
 {
 using namespace utils;
 
+	printDbg(DBG_DBG, "");
+
+	if(mode==ReadOnly)
+	{
+		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		throw ReadOnlyDocumentException("Document is in read-only mode.");
+	}
+
 	// checks position
 	if(1<pos || pos>getPageCount())
 		throw PageNotFoundException(pos);
@@ -1532,6 +1554,14 @@ using namespace utils;
 
 void CPdf::save(bool newRevision)
 {
+	printDbg(DBG_DBG, "");
+
+	if(mode==ReadOnly)
+	{
+		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		throw ReadOnlyDocumentException("Document is in read-only mode.");
+	}
+	
 	// checks actual revision
 	if(xref->getActualRevision())
 		// FIXME throw an exception
@@ -1541,7 +1571,6 @@ void CPdf::save(bool newRevision)
 	// delegates all work to the XRefWriter and set change to 
 	// mark, that no changes were stored
 	xref->saveChanges(newRevision);
-	change=false;
 }
 
 void CPdf::clone(FILE * fname)const

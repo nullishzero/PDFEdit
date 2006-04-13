@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2006/04/13 18:16:30  hockm0bm
+ * insert/removePage, addIndirectProperty, save throws ReadOnlyDocumentException
+ *
  * Revision 1.28  2006/04/12 17:55:21  hockm0bm
  * * save method changed
  * 		- fileName parameter removed
@@ -322,6 +325,7 @@ private:
 	 *************************************************************************/
 	
 	/** Change flag.
+	 * TODO consider also xref
 	 * @see isChanged
 	 */
 	bool change;
@@ -498,18 +502,18 @@ public:
 
 	/** Returns pointer to cross reference table.
 	 *
-	 * This is pointer to XRef subtype of XRefWriter type field. It
+	 * This is pointer to CXref subtype of XRefWriter type field. It
 	 * contains actual state of xref table. 
 	 * If any of xpdf code is going to be used besides kernel, this
 	 * can be safely used.
 	 * <br>
 	 * This method will return same pointer each time it is called.
 	 *
-	 * @return Pointer to XRefWriter field casted to XRef super type.
+	 * @return Pointer to XRefWriter field casted to CXref super type.
 	 */
-	XRef * getXRef()
+	CXref * getCXref()
 	{
-		return (XRef *)xref;
+		return (CXref *)xref;
 	}
        
 	/** Returns actually used mode controller.
@@ -534,7 +538,7 @@ public:
 		if(xref->getActualRevision())
 			return false;
 
-		// the newest revision may be changed
+		// the newest revision may be changed - asks XRefWriter
 		return change;
 	}
 	
@@ -592,6 +596,7 @@ public:
 	 * <li>CNull properties are also registered.
 	 * </ul>
 	 *
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
 	 * @return Reference of new property (see restriction when given
 	 * property is reference itself).
 	 */ 
@@ -626,6 +631,7 @@ public:
 	 * </ul>
 	 *
 	 * @throw TODO 
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
 	 */
 	void save(bool newRevision=false);
 
@@ -685,6 +691,7 @@ public:
 	 * This method triggers pageList and page tree consolidation same as if the
 	 * change has been done manulualy.
 	 *
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
 	 * @throw TODO for ambigues.
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
@@ -705,6 +712,7 @@ public:
 	 * implementation.
 	 *
 	 * @throw PageNotFoundException if given page couldn't be found.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
 	 * @throw TODO for ambigues.
 	 */
 	void removePage(size_t pos);
@@ -720,7 +728,7 @@ public:
 	 * @throw PageNotFoundException if given page is not recognized by CPdf
 	 * instance.
 	 */
-	int getPagePosition(boost::shared_ptr<CPage> page);
+	size_t getPagePosition(boost::shared_ptr<CPage> page);
 
 	/** Returnes page count.
 	 *
@@ -870,6 +878,8 @@ public:
 	 * @param outline Outlines to remove.
 	 *
 	 * Removes also all children.
+	 *
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
 	 */
 	void removeOutline(COutline * /*outline*/)
 	{
