@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/13 18:15:02  hockm0bm
+ * * releaseStorage removed
+ * * releaseObject method removed
+ *
  * Revision 1.6  2006/03/31 16:09:56  hockm0bm
  * printDbg messages with ref changed
  *
@@ -115,22 +119,6 @@ using namespace debug;
 	
 	// returns old version
 	return changed;
-}
-
-
-void CXref::releaseObject(::Ref ref)
-{
-using namespace debug;
-
-	printDbg(DBG_DBG, "ref=["<< ref.num<<", "<<ref.gen<<"]");
-	// gets previous counter of reference
-	// NOTE: if reference is not on releaseObject, count is 0
-	// and so its ok
-	int count=releasedStorage.get(ref);
-	
-	// puts reference and increased counter association
-	releasedStorage.put(ref, ++count);
-	printDbg(DBG_INFO,"refernce released "<<count<<" times");
 }
 
 
@@ -448,4 +436,24 @@ using namespace debug;
 
 	printDbg(DBG_INFO, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);
 	return XRef::getNumObjects() + newSize;
+}
+
+
+void CXref::reopen()
+{
+using namespace debug;
+
+	printDbg(DBG_DBG, "");
+
+	// clears all object storages
+	printDbg(DBG_DBG, "Clearing changed objects");
+	changedStorage.clear();
+	printDbg(DBG_DBG, "Clearing new referencies");
+	newStorage.clear();
+
+	// clears XRef internals and forces to fill them again
+	printDbg(DBG_DBG, "Destroing XRef internals");
+	XRef::destroyInternals();
+	printDbg(DBG_DBG, "Initializes XRef internals");
+	XRef::initInternals();
 }

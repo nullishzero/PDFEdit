@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/04/13 18:15:02  hockm0bm
+ * * releaseStorage removed
+ * * releaseObject method removed
+ *
  * Revision 1.13  2006/04/12 17:48:46  hockm0bm
  * reopen method added
  *         - not implemented yet - throws an exception
@@ -65,8 +69,7 @@ namespace pdfobjects
  * <ul>
  * <li>Maintaining layer - registers changes (in values or new objects), which
  *    uses ObjectStorage instances to know which objects are changed 
- *    (changedStorage field), which objects are new (newStorage field) and 
- *    which are released (releasedStorage field).  
+ *    (changedStorage field) and which objects are new (newStorage field).  
  * <li>xpdf layer - delegation to original xpdf implementation of XRef.  
  * <li>caching layer - holds objects which where required to prevent getting
  *    objects from xpdf (which has to parse stream each time indirect object
@@ -122,6 +125,8 @@ protected:
 	 * Each entry contains pointer to changed object and flag which
 	 * says whether this object has been stored to the file from last
 	 * change.
+	 * <br>
+	 * TODO stored flag is not used anymore - remove it
 	 */
 	typedef struct
 	{
@@ -141,12 +146,6 @@ protected:
 	 * method has been called. Uninitialized values can be skipped.
 	 */
 	ObjectStorage< ::Ref, bool, RefComparator> newStorage;
-
-	/** Object storage for released referencies.
-	 * Value of the association stores number of releases called on 
-	 * given reference.
-	 */
-	ObjectStorage< ::Ref, int, RefComparator> releasedStorage;  
 
 	/** Registers change in given object addressable through given 
 	 * reference.
@@ -171,15 +170,6 @@ protected:
 	 */
 	::Object * changeObject(::Ref ref, ::Object * instance);
 
-	/** Releases  given object addressable through given reference.
-	 * @param ref Object reference identificator.
-	 *
-	 * Notes, that given reference has been released from compund type. 
-	 * All released referencies are stored in releasedStorage with counter
-	 * which stores number of release operation on given reference. 
-	 */
-	void releaseObject(::Ref ref);
-
 	/** Changes entry in trailer dictionary.
 	 * @param name Name of the value.
 	 * @param value Value to be set.
@@ -202,11 +192,7 @@ protected:
 	 * This method should be called if new revision is appended to the stream.
 	 * Otherwise all information about changes are lost!
 	 */
-	void reopen()
-	{
-		// TODO implement
-		throw NotImplementedException("CXref::reopen");
-	}
+	void reopen();
 public:
 	/** Initialize constructor.
 	 * @param stream Stream with file data.
