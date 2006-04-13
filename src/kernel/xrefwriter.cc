@@ -4,6 +4,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/13 18:08:49  hockm0bm
+ * * releaseObject method removed
+ * * readOnly mode removed - makes no sense in here
+ * * documentation updated
+ * * contains information about CPdf
+ *         - because of pdf read only mode
+ * * buildXref method added
+ * * XREFROWLENGHT and EOFMARKER macros added
+ *
  * Revision 1.6  2006/04/12 17:52:25  hockm0bm
  * * saveChanges method replaces saveXRef method
  *         - new semantic for saving changes
@@ -32,7 +41,7 @@ using namespace pdfobjects;
 using namespace utils;
 using namespace debug;
 
-/** Searches for %%EOF PDF end of file.
+/** Searches for EOFMARKER PDF end of file.
  * @param stream Stream where to find.
  * @param startPos Position in the stream, where to start.
  *
@@ -64,7 +73,7 @@ size_t findPDFEof(BaseStream * stream, size_t startPos)
 		// gets position from the beggining of the line 
 		size_t tmpPos=substream->getPos();
 
-		if(!strstr("%%%%EOF", line))
+		if(!strstr(EOFMARKER, line))
 		{
 			// line contains PDF end of file marker
 			pos=tmpPos;
@@ -85,7 +94,7 @@ size_t findPDFEof(BaseStream * stream, size_t startPos)
 	return pos;
 }
 
-XRefWriter::XRefWriter(StreamWriter * stream):CXref(stream->getBaseStream()), mode(paranoid)
+XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf):CXref(stream->getBaseStream()), mode(paranoid), pdf(_pdf)
 {
 	// gets storePos
 	// searches %%EOF element from startxref position.
@@ -97,7 +106,6 @@ XRefWriter::XRefWriter(StreamWriter * stream):CXref(stream->getBaseStream()), mo
 
 bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 {
-
 	bool reinicialization=false;
 
 	printDbg(DBG_DBG, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType());
@@ -140,40 +148,10 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 	return true;
 }
 
-void XRefWriter::releaseObject(int num, int gen)
-{
-	printDbg(DBG_DBG, "num="<<num<<" gen="<<gen);
-	
-	if(revision)
-	{
-		// we are in later revision, so no changes can be
-		// done
-		printDbg(DBG_ERR, "no changes available. revision="<<revision);
-		throw ReadOnlyDocumentException("Document is not in latest revision.");
-	}
-	if(mode==readOnly)
-	{
-		// we are in read-only mode, no changes can be done
-		printDbg(DBG_ERR, "no changes availabe, mode=readOnly");
-		throw ReadOnlyDocumentException("Document is in readOnly mode.");
-	}
-		
-	::Ref ref={num, gen};
-	// checks if reference exists
-	// FIXME really only in paranoid mode?
-	if(mode==paranoid && !knowsRef(ref))
-	{
-		printDbg(DBG_ERR, "ref["<<ref.num<<", "<<ref.gen<<"] not found");
-		throw IndirectObjectNotFoundException(ref.num, ref.gen);
-	}
-
-	// delegates to CXref
-	CXref::releaseObject(ref);
-}
-
 void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 {
 	printDbg(DBG_DBG, "ref=["<< num<<", "<<gen<<"]");
+
 	if(revision)
 	{
 		// we are in later revision, so no changes can be
@@ -181,11 +159,11 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		printDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(mode==readOnly)
+	if(pdf->getMode()==CPdf::ReadOnly)
 	{
-		// we are in read-only mode, no changes can be done
-		printDbg(DBG_ERR, "no changes availabe, mode=readOnly");
-		throw ReadOnlyDocumentException("Document is in readOnly mode.");
+		// document is in read-only mode
+		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
 	::Ref ref={num, gen};
@@ -211,11 +189,11 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		printDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(mode==readOnly)
+	if(pdf->getMode()==CPdf::ReadOnly)
 	{
-		// we are in read-only mode, no changes can be done
-		printDbg(DBG_ERR, "no changes availabe, mode=readOnly");
-		throw ReadOnlyDocumentException("Document is in readOnly mode.");
+		// document is in read-only mode
+		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 		
 	// paranoid checking - can't use paranoidCheck because value may be also
@@ -254,11 +232,11 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		printDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(mode==readOnly)
+	if(pdf->getMode()==CPdf::ReadOnly)
 	{
-		// we are in read-only mode, no changes can be done
-		printDbg(DBG_ERR, "no changes availabe, mode=readOnly");
-		throw ReadOnlyDocumentException("Document is in readOnly mode.");
+		// document is in read-only mode
+		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
 	// changes are availabe
@@ -280,11 +258,11 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		printDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(mode==readOnly)
+	if(pdf->getMode()==CPdf::ReadOnly)
 	{
-		// we are in read-only mode, no changes can be done
-		printDbg(DBG_ERR, "no changes availabe, mode=readOnly");
-		throw ReadOnlyDocumentException("Document is in readOnly mode.");
+		// document is in read-only mode
+		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
 	// changes are availabe
@@ -292,13 +270,134 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	return CXref::createObject(type, ref);
 }
 
-void XRefWriter::saveChanges(bool newRevision)
+typedef std::map< ::Ref, size_t, RefComparator> OffsetTab;
+
+/** Builds Xref table from offset table.
+ * @param table Offset table containing reference to file offset mapping.
+ * @param stream StreamWriter which is used to write data.
+ *
+ * Constructs (old style) cross reference table from given reference to file
+ * offset mapping to the given stream accordinf PDF specification.
+ * <br>
+ * In first step table is used for cross reference table subsection creation.
+ * Then xref keyword is written to the stream.
+ * Finally so called SubSectionTab is dumpt to the file. Each subsection is
+ * preceeded by start object number and subsection size.
+ * <p>
+ * <b>PDF specification notes:</b>
+ * <br>
+ * TODO sections and subsections describtion
+ */
+void buildXref(OffsetTab & table, StreamWriter & stream)
 {
-	// FIXME remove when implementation is ready
-	throw NotImplementedException("XRefWriter::saveChanges");
+using namespace std;
 
 	printDbg(DBG_DBG, "");
+	
+	// subsection table type
+	// 	- key is object number of subsection leader
+	// 	- value is an array of entries (file offset and generation number
+	// 	  pairs). This array contains sequence of entries each for one object
+	// 	  number. This sequence is without holes (n-th element has key+n object
+	// 	  number - n starts from 0)
+	typedef pair<size_t, int> EntryType;
+	typedef vector<EntryType> EntriesType;
+	typedef map< int , EntriesType> SubSectionTab;
 
+	// creates subsection table from offset table:
+	// Starts with first element from offset table - inserts num as key and gen
+	// and offset as entry pair.
+	SubSectionTab subSectionTable;
+	SubSectionTab::iterator sub=subSectionTable.begin();
+	
+	printDbg(DBG_DBG, "Creating subsection table");
+	
+	// goes through rest entries of offset table
+	for(OffsetTab::iterator i=table.begin(); i!=table.end(); i++)
+	{
+		int num=(i->first).num;
+		int gen=(i->first).gen;
+		size_t off=i->second;
+		
+		// skips not assigned subsection
+		if(sub!=subSectionTable.end())
+		{
+			// if num can be added to current sub, appends entries array
+			// NOTE: num can be added if sub's key+entries size == num, which 
+			// means that entries array won't destry sequence without holes 
+			// condition after addition
+			if(num == sub->first + (sub->second).size())
+			{
+				printDbg(DBG_DBG, "Appending num="<<num<<" to section starting with num="<<sub->first);
+				(sub->second).push_back(EntryType(off, gen));
+				continue;
+			}
+		}
+
+		// num can't be added, so new subsection has to be created and this is
+		// used for next offset table elements
+		EntriesType entries;
+		entries.push_back(EntryType(off, gen));
+		pair<SubSectionTab::iterator, bool> ret=subSectionTable.insert(pair<int, EntriesType>(num, entries));
+		printDbg(DBG_DBG, "New subsection created with starting num="<<num);
+		sub=ret.first;
+	}
+
+	// cross reference table starts with xref row
+	// FIXME uncoment when ready and tested
+	//stream->putLine("xref");
+	printf("xref\n");
+
+	// subsection table is created, we can dump it to the file
+	// xrefRow represents one line of xref table which is exactly XREFROWLENGHT
+	// lenght
+	char xrefRow[XREFROWLENGHT];
+	memset(xrefRow, '\0', sizeof(xrefRow));
+	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++)
+	{
+		// at first writes head object number and number of elements in the
+		// subsection
+		EntriesType & entries=i->second;
+		int startNum=i->first;
+		printDbg(DBG_DBG, "Starting subsection with startPos="<<startNum<<" and size="<<entries.size());
+
+		snprintf(xrefRow, sizeof(xrefRow)-1, "%d %d", startNum, (int)entries.size());
+		// FIXME uncoment when ready and tested
+		//stream->putLine(xrefRow);
+		// FIXME remove when tested
+		printf("\"%s\"\n", xrefRow);
+
+		// now prints all entries for this subsection
+		// one entry on one line
+		// according specificat, line has following format:
+		// nnnnnnnnnn ggggg n \n
+		// 	where 
+		// 		n* stands for file offset of object (padded by leading 0)
+		// 		g* is generation number (padded by leading 0)
+		// 		n is literal keyword identifying in-use object
+		// We don't provide information about free objects
+		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
+		{
+			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n\n", entry->first, entry->second);
+			// FIXME uncoment when ready and tested
+			//stream->putLine(xrefRow);
+			// FIXME remove when tested
+			printf("\"%s\"\n", xrefRow);
+		}
+	}
+}
+
+void XRefWriter::saveChanges(bool newRevision)
+{
+	printDbg(DBG_DBG, "");
+
+	// if changedStorage is empty, there is nothing to do
+	if(changedStorage.size()==0)
+	{
+		printDbg(DBG_INFO, "Nothing to be saved - changedStorage is empty");
+		return;
+	}
+	
 	// casts stream (from XRef super type) and casts it to the FileStreamWriter
 	// instance - it is ok, because it is initialized with this type of stream
 	// in constructor
@@ -307,38 +406,78 @@ void XRefWriter::saveChanges(bool newRevision)
 	// sets position to the storePos, where new data can be placed
 	streamWriter->setPos(storePos);
 
-	// goes over all objects in changedStorage and stores them to the end of 
+	// goes over all objects in changedStorage and stores them to the
 	// file and builds table which contains reference to file position mapping.
-	typedef std::map< ::Ref, size_t, RefComparator> OffsetTab;
 	OffsetTab offTable;
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
 	{
+		::Ref ref=i->first;
 		// associate given reference with actual position.
-		offTable.insert(OffsetTab::value_type(i->first, streamWriter->getPos()));		
-
+		offTable.insert(OffsetTab::value_type(ref, streamWriter->getPos()));		
+		printDbg(DBG_DBG, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] stored at offset="<<streamWriter->getPos());
+		
 		// stores PDF representation of object to current position which is
 		// after moved behind written object
 		Object * obj=i->second->object;
 		std::string objPdfFormat;
 		xpdfObjToString(*obj, objPdfFormat);
-		streamWriter->putLine(objPdfFormat.c_str());
+		// FIXME uncoment when ready and tested
+		//streamWriter->putLine(objPdfFormat.c_str());
+		// FIXME remove when tested
+		printf("\"%s\"\n", objPdfFormat.c_str());
 	}
 
 	// all objects are saved xref table is constructed from offTable
-	// TODO - how to build table if it is stream table
+	// New xref section starts is stored to have information for startxref
+	// element which is behind trailer
+	size_t xrefPos=streamWriter->getPos();
+	buildXref(offTable, *streamWriter);
 	
-	// stores trailer 
+	// adds Prev field - to say where starts previous xref table 
+	// changeTrailer method is called on CXref because it despite of XRefWriter
+	// it doesn't do any checking (we know what we are doing)
+	Object prevObj;
+	prevObj.initInt(XRef::getLastXRefPos());
+	Object * oldPrev=CXref::changeTrailer("Prev", &prevObj);
+	if(oldPrev)
+	{
+		// if oldPrev was not 0, deallocates it
+		oldPrev->free();
+		delete oldPrev;
+	}
+
+	// stores changed trialer to the file
+	std::string objPdfFormat;
+	xpdfObjToString(trailerDict, objPdfFormat);
+	// FIXME uncoment when ready and tested
+	//streamWriter->putLine(objPdfFormat.c_str());
+	printDbg(DBG_DBG, "Trailer saved");
+
+	// stores offset of last (created one) xref table
+	// TODO adds also comment with time and date of creation
+	// FIXME uncoment when ready and tested
+	//streamWriter->putLine("startxref");
+	char xrefPosStr[128];
+	// FIXME uncoment when ready and tested
+	//streamWriter->putLine(objPdfFormat.c_str());
+	// FIXME remove when tested
+	printf("\"%s\"\n", objPdfFormat.c_str());
 	
-	// puts %%EOF behind but keeps position of marker start
+	// Finaly puts %%EOF behind but keeps position of marker start
 	size_t pos=streamWriter->getPos();
-	streamWriter->putLine("%%%%EOF");
+	// FIXME uncoment when ready and tested
+	//streamWriter->putLine(EOFMARKER);
+	// FIXME remove when tested
+	printf("\"%s\"\n", EOFMARKER);
+	printDbg(DBG_DBG, "PDF end of file marker saved");
 	
 	// if new revision should be created, moves storePos at PDF end of file
 	// marker position and forces CXref reopen to handle new revision - all
 	// chnaged objects are stored in file now.
 	if(newRevision)
 	{
+		printDbg(DBG_INFO, "Saving changes as new revision.");
 		storePos=pos;
 
 		// forces CXref::reopen
@@ -348,6 +487,8 @@ void XRefWriter::saveChanges(bool newRevision)
 		// revision
 		revisions.push_back(revisions.size());
 	}
+
+	printDbg(DBG_DBG, "finished");
 }
 
 

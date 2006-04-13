@@ -1,30 +1,4 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.10  2006/04/12 17:52:25  hockm0bm
- * * saveChanges method replaces saveXRef method
- *         - new semantic for saving changes
- *              - temporary save
- *              - new revision save
- *         - storePos field added to mark starting
- *           place where to store changes
- *         - saveChanges moves with storePos if new
- *           revision is should be created
- * * findPDFEof function added
- * * StreamWriter in place of BaseStream
- *         - all changes will be done via StreamWriter
- *
- * Revision 1.9  2006/03/23 22:13:51  hockm0bm
- * printDbg added
- * exception handling
- * TODO removed
- * FIXME for revisions handling - throwing exeption
- *
- *
- */
 #ifndef _XREFWRITER_
 #define _XREFWRITER_
 
@@ -32,6 +6,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/13 18:08:49  hockm0bm
+ * * releaseObject method removed
+ * * readOnly mode removed - makes no sense in here
+ * * documentation updated
+ * * contains information about CPdf
+ *         - because of pdf read only mode
+ * * buildXref method added
+ * * XREFROWLENGHT and EOFMARKER macros added
+ *
  * Revision 1.10  2006/04/12 17:52:25  hockm0bm
  * * saveChanges method replaces saveXRef method
  *         - new semantic for saving changes
@@ -99,9 +82,14 @@
  */
 
 #include "static.h"
-
 #include "cxref.h"
 #include "streamwriter.h"
+
+/** Size of buffer for xref table row.
+ * This includes also 1 byte for trailing '\0' (end of string marker).
+ */
+#define XREFROWLENGHT 21
+#define EOFMARKER "%%EOF"
 
 namespace pdfobjects
 {
@@ -112,8 +100,7 @@ namespace pdfobjects
  * This wrapper of the CXref class enables:
  * <ul>
  * <li> making changes to the CXref - overrides protected methods and makes 
- *	some checking. (changeTrailer, changeObject, releaseObject, 
- *	createObject methods).
+ *	some checking. (changeTrailer, changeObject, createObject methods).
  * <li> controling checking routines - mode field controls level of checking.
  *	(getMode, setMode methods).
  * <li> manipulating revisions of document. Revisions are available through
@@ -122,9 +109,10 @@ namespace pdfobjects
  *	read-only. (getRevisionCount, getActualRevision, changeRevision 
  *	methods).
  * </ul>
- *
  * <br>
- * TODO provide undo
+ * Each public method which produces content changes checks whether associated 
+ * pdf instance is not in ReadOnly mode and if it is, throws an exception to 
+ * prevent from change.
  */
 class XRefWriter:public CXref
 {
@@ -136,11 +124,21 @@ public:
 	 * <li>paranoid - type safety and reference existance is checked.
 	 * </ul>
 	 */
-	enum writerMode {readOnly, easy, paranoid};
+	enum writerMode {easy, paranoid};
 private:
 	/** Mode for checking. */
 	writerMode mode;
 
+	/** Pdf instance which maintains this xref writer.
+	 *
+	 * Instance is used to get higher level information whether making changes
+	 * is allowed.
+	 * <br>
+	 * Value is initialized in constructor and doesn't change during instance
+	 * life cycle.
+	 */
+	const CPdf * pdf;
+	
 	/** Actual revision.
 	 *
 	 * Latest revision is represented by 0 and each older one has bigger
@@ -180,7 +178,7 @@ private:
 	 * It's not available to prevent uninitialized instances.
 	 * Sets mode to paranoid.
 	 */
-	XRefWriter():CXref(), mode(paranoid), revision(0)
+	XRefWriter():CXref(), mode(paranoid), pdf(NULL), revision(0)
 	{
 	}
 protected:
@@ -218,6 +216,7 @@ protected:
 public:
 	/** Initialize constructor with file stream writer.
 	 * @param stream File stream with pdf content.
+	 * @param _pdf Pdf instance which maintains this instance.
 	 *
 	 * Sets mode to paranoid. Sets file to FILE handle from stream. Collects 
 	 * all revisions (uses collectRevisions method) and sets storePos to the 
@@ -229,7 +228,7 @@ public:
 	 * unusable in such situation).
 	 * TODO collectRevisions error handling
 	 */
-	XRefWriter(StreamWriter * stream);
+	XRefWriter(StreamWriter * stream, CPdf * _pdf);
 
 	/** Initialize constructor with cache.
 	 * @param stream Stream with file data.
@@ -265,22 +264,6 @@ public:
 		this->mode=_mode;
 	}
 	
-	/** Releases object.
-	 * @param num Number of object.
-	 * @param gen Generation number of object.
-	 *
-	 * If revision is 0 (most recent), delegates to the 
-	 * CXref::releaseObject method. Otherwise deny to make chage, because
-	 * it is not possible to do changes to a older release.
-	 * <br>
-	 * TODO provide undo information
-	 *
-	 * @throw ReadOnlyDocumentException if we no changes ca be done - this may
-	 * depend either on mode (mode is readOnly) or on revision (revisio is older
-	 * than newest).
-	 */
-	void releaseObject(int num, int gen);
-
 	/** Inserts new object.
 	 * @param num Number of object.
 	 * @param gen Generation number of object.
@@ -288,8 +271,7 @@ public:
 	 *
 	 * If revision is 0 (most recent), delegates to the to the 
 	 * CXref::insertObject method. Otherwise deny to make chage, because
-	 * it is not possible to do changes to a older release (TODO how to 
-	 * announce).
+	 * it is not possible to do changes to a older release.
 	 * <br>
 	 * If mode is set to paranoid, checks the reference existence and after
 	 * type safety. If tests are ok, operation is permitted otherwise 
@@ -297,9 +279,8 @@ public:
 	 * <br>
 	 * TODO provide undo information
 	 *
-	 * @throw ReadOnlyDocumentException if we no changes ca be done - this may
-	 * depend either on mode (mode is readOnly) or on revision (revisio is older
-	 * than newest).
+	 * @throw ReadOnlyDocumentException if no changes can be done because actual
+	 * revision is not the newest one or if pdf is in read-only mode.
 	 */ 
 	void changeObject(int num, int gen, ::Object * obj);
 
@@ -309,8 +290,7 @@ public:
 	 *
 	 * If revision is 0 (most recent), delegates to the 
 	 * CXref::changeTrailer method. Otherwise deny to make chage, because
-	 * it is not possible to do changes to a older release (TODO how to 
-	 * announce).
+	 * it is not possible to do changes to a older release.	 
 	 * <br>
 	 * If mode is set to paranoid, checks the reference existence and after
 	 * type safety. If tests are ok, operation is permitted otherwise 
@@ -318,9 +298,8 @@ public:
 	 * <br>
 	 * TODO provide undo information
 	 * 
-	 * @th not implemented yetrow ReadOnlyDocumentException if we no changes ca be done - this may
-	 * depend either on mode (mode is readOnly) or on revision (revisio is older
-	 * than newest).
+	 * @throw ReadOnlyDocumentException if no changes can be done because actual
+	 * revision is not the newest one or if pdf is in read-only mode.
 	 */
 	::Object * changeTrailer(char * name, ::Object * value);
 	
@@ -330,7 +309,8 @@ public:
 	 * Checks all objects which are changed (in CXref::changeStorage) and stores
 	 * them from actual storePos file offset.
 	 * Also append new xref table for changed objects and finally new trailer is
-	 * added.
+	 * added. Trailer's Prev field is set to contain file offset to previous
+	 * xref position.
 	 * <p>
 	 * <b>Revision handling</b>:
 	 * <br>
@@ -349,6 +329,9 @@ public:
 	 * Use default behaviour if you want to be sure that you don't lose your
 	 * changes and create new revision if you want to have certain set of
 	 * changes grouped together (e. g. when changes have some significancy).
+	 *
+	 * @throw ReadOnlyDocumentException if no changes can be done because actual
+	 * revision is not the newest one.
 	 */
 	void saveChanges(bool newRevision=false);
 	
@@ -457,13 +440,11 @@ public:
 	 * This is just wrapper for CXref::reference method.
 	 * Only thing which is done here is that revision field
 	 * is checked and if revision is 0 (most recent), delegates 
-	 * to the to the CXref::reserveRef. Otherwise deny to make create, 
-	 * because it is not possible to do changes to a older release (TODO 
-	 * how to announce).
+	 * to the to the CXref::reserveRef. Otherwise deny to create, 
+	 * because it is not possible to do changes to a older release.
 	 *
-	 * @throw ReadOnlyDocumentException if we no changes ca be done - this may
-	 * depend either on mode (mode is readOnly) or on revision (revisio is older
-	 * than newest).
+	 * @throw ReadOnlyDocumentException if no changes can be done because actual
+	 * revision is not the newest one or if pdf is in read-only mode.
 	 */
 	virtual ::Ref reserveRef();
 	
@@ -473,12 +454,10 @@ public:
 	 * Only thing which is done here is that revision field
 	 * is checked and if revision is 0 (most recent), delegates 
 	 * to the to the CXref::createObject. Otherwise deny to make create, 
-	 * because it is not possible to do changes to a older release (TODO 
-	 * how to announce).
+	 * because it is not possible to do changes to a older release.
 	 *
-	 * @throw ReadOnlyDocumentException if we no changes ca be done - this may
-	 * depend either on mode (mode is readOnly) or on revision (revisio is older
-	 * than newest).
+	 * @throw ReadOnlyDocumentException if no changes can be done because actual
+	 * revision is not the newest one or if pdf is in read-only mode.
 	 */
 	virtual ::Object * createObject(::ObjType type, ::Ref * ref);
 	
