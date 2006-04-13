@@ -22,7 +22,7 @@
   </para>
   <para>
    When new editor window is launched (but before the document is loaded or created),
-   file <filename>init.qs</filename> is run. This file should contain declaration of all
+   file <filename>init.qs</filename><footnote>This can be changed to different filename in settings</footnote> is run. This file should contain declaration of all
    functions used in toolbars or menus and may also contain any startup code to be run
    before loading or creating new document.
   </para>
@@ -41,6 +41,10 @@
   <sect1 id="help">
    <title><funcsynopsys>void help(string topic)</funcsynopsys></title>
    Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
+  </sect1>
+  <sect1 id="run">
+   <title><funcsynopsys>void run(string filename)</funcsynopsys></title>
+   Loads and runs script from given filename.
   </sect1>
   <sect1 id="options">
    <title><funcsynopsys> void options()</funcsynopsys></title>
