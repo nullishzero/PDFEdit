@@ -3,6 +3,7 @@ CVS
 dist-exclude
 makedist
 pdfedit*tar*
+doc/doxygen.warnings
 doc/navrh
 doc/programmer
 doc/xpdf_analyse
@@ -16,6 +17,7 @@ src/gui/pdfedit
 src/kernel/*.a
 src/kernel/*.o
 src/kernel/kernel
+src/kernel/kernel.gch
 src/utils/.keepme
 src/xpdf/Makefile
 src/xpdf/aconf.h
@@ -36,5 +38,7 @@ src/xpdf/xpdf/Makefile
 src/xpdf/xpdf/pdffonts
 src/xpdf/xpdf/pdfimages
 src/xpdf/xpdf/pdfinfo
+src/xpdf/xpdf/pdftoppm
 src/xpdf/xpdf/pdftops
 src/xpdf/xpdf/pdftotext
+src/xpdf/xpdf/xpdf
