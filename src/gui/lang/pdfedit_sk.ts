@@ -419,8 +419,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ref</source>
-        <translation type="unfinished">Ref</translation>
+        <source>Data</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

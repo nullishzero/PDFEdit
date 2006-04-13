@@ -419,8 +419,8 @@
         <translation>Typ</translation>
     </message>
     <message>
-        <source>Ref</source>
-        <translation>Ref</translation>
+        <source>Data</source>
+        <translation>Data</translation>
     </message>
 </context>
 </TS>
