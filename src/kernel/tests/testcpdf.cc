@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/04/13 18:12:57  hockm0bm
+ * * changePageTree method added
+ * * pageListing method updated
+ *
  * Revision 1.3  2006/04/12 21:41:38  hockm0bm
  * pageListing function added
  *
@@ -40,27 +44,111 @@
 #include "testcpdf.h"
 #include "../cobjecthelpers.h"
 
+/** Test for page listing methods.
+ * @param pdf Instance of pdf.
+ *
+ * Checks following methods:
+ * <ul>
+ * <li>CPdf::getPageCount - must not fail and all pages from range must be found
+ * <li>CPdf::getPage - returns correct page
+ * <li>CPdf::getFirstPage CPdf::getNextPage return correct page
+ * <li>CPdf::getPagePosition - position must be same as returned from getPage
+ * <li>CPdf::getIndirectProperty - indirect reference from page dictionary must
+ * refer to same as returned from this method
+ * <li>CPage::getDictionary - dictionary must be same as indirect object with
+ * same indirect reference
+ * </ul>
+ */
 void pageListing(pdfobjects::CPdf * pdf)
 {
 using namespace pdfobjects;
+using namespace pdfobjects::utils;
 using namespace boost;
 
 	size_t count=pdf->getPageCount();
+
+	// prints root of page tree
+	IndiRef rootRef=getRefFromDict("Pages", pdf->getDictionary());
+	shared_ptr<CDict> rootDict=getDictFromRef(*pdf, rootRef);
+	printf("Page tree root dictionary: ref[%d, %d]\n", rootRef.num, rootRef.gen);
+	printProperty(rootDict, std::cout);
+	printf("==========================\n\n");
+	
+	shared_ptr<CPage> page;
 	for(size_t i=1; i<=count; i++)
 	{
-		shared_ptr<CPage> page=pdf->getPage(i);
+		// gets page from iteration methods
+		if(i==1)
+			page=pdf->getFirstPage();
+		else
+			page=pdf->getNextPage(page);
+			
+		// gets page and its dictionary
 		shared_ptr<CDict> pageDict=page->getDictionary();
+
+		// gets reference of this dictionary and property with same reference.
 		IndiRef pageRef=pageDict->getIndiRef();
+		shared_ptr<IProperty> prop=pdf->getIndirectProperty(pageRef);
+
+		// resolved property must be same as page dictionary
+		assert(pageDict==prop);
+		// page position must be same as i
+		assert(i==pdf->getPagePosition(page));
+		// getPage returns same page
+		assert(pdf->getPage(i)==page);
+		
+		// prints page dictionary
 		printf("Page #%d dictionary: ref=[%d,%d]\n", i, pageRef.num, pageRef.gen);
 		utils::printProperty(pageDict, std::cout);
 		printf("==========================\n\n");
 	}
 }
 
+void changePageTree(pdfobjects::CPdf * pdf)
+{
+using namespace pdfobjects;
+using namespace pdfobjects::utils;
+using namespace boost;
+
+	// gets root of page dictionary and removes Kids array field
+	IndiRef rootRef=getRefFromDict("Pages", pdf->getDictionary());
+	shared_ptr<CDict> rootDict=getDictFromRef(*pdf, rootRef);
+	printf("Page tree root dictionary (before delProperty): ref[%d, %d]\n", rootRef.num, rootRef.gen);
+	printProperty(rootDict, std::cout);
+	printf("==========================\n\n");
+	rootDict->delProperty("Kids");
+
+	printf("Page tree root dictionary (after delProperty(Kids)): ref[%d, %d]\n", rootRef.num, rootRef.gen);
+	printProperty(rootDict, std::cout);
+	printf("==========================\n\n");
+	
+	// adds new empty one
+	IProperty * newKids=new CArray();
+	rootDict->addProperty("Kids", *newKids);
+	delete newKids;
+
+	printf("Page tree root dictionary (after addProperty(Kids)): ref[%d, %d]\n", rootRef.num, rootRef.gen);
+	printProperty(rootDict, std::cout);
+	printf("==========================\n\n");
+
+	// saves chnages temporarily to the file
+	pdf->save();
+}
+
 void cpdf_tests(pdfobjects::CPdf * pdf)
 {
+using namespace pdfobjects::utils;
+
+	// prints pdf dictionary - document catalog
+	printf("Document Catalog:\n");
+	printProperty(pdf->getDictionary(), std::cout);
+	printf("==========================\n\n");
+	
 	// lists all pages from document
-	pageListing(pdf);
+	//pageListing(pdf);
+
+	// changes page tree - all pages are thrown away
+	changePageTree(pdf);
 }
 
 pdfobjects::CPdf * getTestCPdf(const char* filename)
