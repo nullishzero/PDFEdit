@@ -9,8 +9,8 @@ namespace gui {
 
 typedef struct { int labelWidth, labelHeight; } initStruct;
 // TODO asi prepracovat
-void Init( initStruct * is ) {
-	QLabel pageNumber("00000",0);
+void Init( initStruct * is, const QString & s ) {
+	QLabel pageNumber( s ,0);
 	pageNumber.show();
 	is->labelWidth = pageNumber.width();
 	is->labelHeight = pageNumber.height();
@@ -18,10 +18,10 @@ void Init( initStruct * is ) {
 
 QString PAGESPC = "gui/PageSpace/";
 QString ICON = "icon/";
+QString format = "x:%d y:%d";
 
 PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
 	initStruct is;
-	Init( &is );
 
 	vBox = new QVBoxLayout(this);
 	
@@ -48,6 +48,7 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 connect( bFirstPage, SIGNAL(clicked()), this, SLOT(refresh1()));/*TODO smazat*/
 connect( bPrevPage, SIGNAL(clicked()), this, SLOT(refresh2()));/*TODO smazat*/
 //TODO: pevna minimalna velikost (bez init)
+	Init( &is , "00000" );
 	pageNumber = new QLabel( "0", this, "cisStr" );
 	pageNumber->setMinimumWidth( is.labelWidth );
 	pageNumber->setAlignment( AlignCenter | pageNumber->alignment() );
@@ -64,6 +65,15 @@ connect( bPrevPage, SIGNAL(clicked()), this, SLOT(refresh2()));/*TODO smazat*/
 	hBox->addStretch();
 	hBox->setResizeMode(QLayout::Minimum);
 
+	QString pom;
+	Init( &is , format + "0000" );
+	mousePositionOnPage = new QLabel( pom.sprintf( format, 0,0 ), this );
+	mousePositionOnPage->setMinimumWidth( is.labelWidth );
+	mousePositionOnPage->setAlignment( AlignRight | mousePositionOnPage->alignment() );
+	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
+
+	hBox->insertSpacing( 0, is.labelWidth );	// for center pageNambuer
+	
 r1=new QPixmap("obr/horse.png");r2=new QPixmap("obr/horse1.png"); /*TODO smazat*/
 }
 
@@ -102,6 +112,7 @@ void PageSpace::newPageView() {
 	connect( pageImage, SIGNAL( selectionMovedTo(const QPoint &) ), this, SLOT( moveSelection(const QPoint &) ) );
 	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &) ),
 		this, SLOT( resizeSelection(const QRect &, const QRect &) ) );
+	connect( pageImage, SIGNAL( changeMousePosition(const QPoint &) ), this, SLOT( showMousePosition(const QPoint &) ) );
 }
 
 void PageSpace::newPageView( QPixmap &qp ) {
@@ -200,6 +211,19 @@ void PageSpace::moveSelection ( const QPoint & relativeMove ) {
 }
 void PageSpace::resizeSelection ( const QRect &, const QRect & ) {
 	// TODO
+}
+
+void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, QPoint & pdfPos ) {
+	pdfPos.setX( pos.x() );
+	pdfPos.setY( -pos.y() );
+}
+
+void PageSpace::showMousePosition ( const QPoint & pos ) {
+	QString pom;
+	QPoint pdfPagePos;
+	convertPixmapPosToPdfPos( pos, pdfPagePos );
+	pom = pom.sprintf( format, pdfPagePos.x(), pdfPagePos.y() );
+	mousePositionOnPage->setText( pom );
 }
 
 } // namespace gui

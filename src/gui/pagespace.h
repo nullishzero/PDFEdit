@@ -19,6 +19,7 @@ class PageSpace : public QWidget {
 	public:
 		PageSpace (QWidget *parent=0, const char *name=0);
 		virtual ~PageSpace ( );
+		void convertPixmapPosToPdfPos( const QPoint & pos, QPoint & pdfPos );
 	public slots:
 void refresh1(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
@@ -43,12 +44,14 @@ void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 		void requirementPopupMenu ( const QPoint &, const QRect & );
 		void moveSelection ( const QPoint & );
 		void resizeSelection ( const QRect &, const QRect & );
+		void showMousePosition ( const QPoint & );
 	private:
 		void newPageView();
 		void newPageView( QPixmap &qp );
 		void centerPageView( );
 	private:
 		QLabel		* pageNumber;
+		QLabel		* mousePositionOnPage;
 		PageView	* pageImage;
 		QVBoxLayout	* vBox;	// mozna nebude potreba
 		QHBoxLayout	* hBox;	// mozna nebude potreba
