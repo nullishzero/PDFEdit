@@ -62,6 +62,8 @@ Array * Array::clone()const
    result->elems=(Object *)greallocn(elems, size, sizeof(Object));
    for(int i=0; i < length; i++)
       result->elems[i]=*elems[i].clone();
+
+   return result;
 }
 
 void Array::add(Object *elem) {
