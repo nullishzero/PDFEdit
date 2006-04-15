@@ -284,6 +284,42 @@
         <source>Max. lines in history</source>
         <translation>Max. řádek v historii</translation>
     </message>
+    <message>
+        <source>Look and Feel</source>
+        <translation>Vzhled</translation>
+    </message>
+    <message>
+        <source>You can set parameters of application font</source>
+        <translation>Zde lze nastavit parametry písma v editoru</translation>
+    </message>
+    <message>
+        <source>Font family</source>
+        <translation>Rodina písma</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>Velikost písma</translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation>Tučný</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Kurzíva</translation>
+    </message>
+    <message>
+        <source>You can specify overall visual style</source>
+        <translation>Zde lze nastavit celkový vzhled</translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation>Styl</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing style will take effect on next program start</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna stylu bude mít efekt až při přístím startu programu</translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>

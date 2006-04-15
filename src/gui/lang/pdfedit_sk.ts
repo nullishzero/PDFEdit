@@ -284,6 +284,42 @@
         <source>These toolbars will be shown</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Look and Feel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can set parameters of application font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font family</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can specify overall visual style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing style will take effect on next program start</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
