@@ -48,8 +48,8 @@ QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -D TESTING
 
 #Dialogs
-HEADERS += aboutwindow.h  option.h  optionwindow.h  stringoption.h  realoption.h  intoption.h  booloption.h  dialog.h
-SOURCES += aboutwindow.cc option.cc optionwindow.cc stringoption.cc realoption.cc intoption.cc booloption.cc dialog.cc
+HEADERS += aboutwindow.h  option.h  optionwindow.h  stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h  dialog.h
+SOURCES += aboutwindow.cc option.cc optionwindow.cc stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc dialog.cc
 
 #Help
 HEADERS += helpwindow.h

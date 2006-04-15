@@ -11,6 +11,7 @@
 #include "util.h"
 #include "version.h"
 #include "settings.h"
+#include "optionwindow.h"
 
 using namespace std;
 using namespace gui;
@@ -132,6 +133,19 @@ int main(int argc, char *argv[]){
  globalSettings=Settings::getInstance();
  globalSettings->setName("settings");
  atexit(saveSettings);
+
+ //style
+ QString style=globalSettings->read("gui/style","");
+ if (style!="") {
+  if (!app.setStyle(style)) globalSettings->write("gui/style",""); //No such style -> reset
+ }
+
+ //font
+ applyLookAndFeel(false);
+/* QString font=globalSettings->read("gui/font",app.font().family());
+ int fontsize=globalSettings->readNum("gui/fontsize",app.font().pointSize());
+ if (fontsize==-1) fontsize=12;
+ app.setFont(QFont(font,fontsize));*/
 
  //open editor windows(s)
  int nFiles=params.size();

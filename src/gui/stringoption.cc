@@ -13,10 +13,12 @@ namespace gui {
 /** Default constructor of StringOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
+ @param defValue Default value if option not found in configuration
  */
-StringOption::StringOption(const QString &_key/*=0*/,QWidget *parent/*=0*/)
+StringOption::StringOption(const QString &_key/*=0*/,QWidget *parent/*=0*/,const QString &defValue/*=QString::null*/)
  : Option (_key,parent) {
  ed=new QLineEdit(this,"option_edit");
+ if (!defValue.isNull()) ed->setText(defValue);
 }
 
 /** default destructor */
@@ -31,7 +33,9 @@ void StringOption::writeValue() {
 
 /** read value from settings for editing */
 void StringOption::readValue() {
- ed->setText(globalSettings->read(key));
+ QString value=globalSettings->read(key);
+ if (value.isNull()) return;
+ ed->setText(value);
 }
 
 /** return size hint of this property editing control */

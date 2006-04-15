@@ -9,6 +9,7 @@ RefProperty - class for widget containing
 #include <string>
 #include <stdlib.h>
 #include <qlineedit.h>
+#include <qcolor.h>
 #include <qpushbutton.h>
 #include <cobject.h>
 
@@ -26,6 +27,8 @@ RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFl
  ed=new QLineEdit(this,"RefProperty_edit");
  pb=new QPushButton("..",this,"refproperty_pickbutton");
  ed->setValidator(new RefValidator(ed));
+ //light yellow
+ ed->setPaletteBackgroundColor(QColor(255,255,224));
  connect(pb,SIGNAL(clicked())		,this,SLOT(selectRef()));
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
  connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));

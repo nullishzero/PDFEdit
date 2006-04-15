@@ -17,8 +17,6 @@ class OptionWindow;
 extern OptionWindow *opt;
 
 class OptionWindow : public QWidget {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public slots:
  void apply();
@@ -43,10 +41,11 @@ private:
  void init();
  QWidget* addTab(const QString name);
  void addOption(QWidget *otab,const QString &caption,Option *opt);
- void addOption(QWidget *otab,const QString &caption,const QString &key);
+ void addOption(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
+ void addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values);
+ void addOptionInt(QWidget *otab,const QString &caption,const QString &key,int defValue=0);
  void addOptionBool(QWidget *otab,const QString &caption,const QString &key,bool defValue=false);
  void addOptionFloat(QWidget *otab,const QString &caption,const QString &key);
- void addOptionInt(QWidget *otab,const QString &caption,const QString &key);
  void addWidget(QWidget *otab,QWidget *elem);
  void addText(QWidget *otab,const QString &text);
  void finishTab(QWidget *otab);
@@ -66,6 +65,8 @@ private:
  /** Menu system (for toolbar list ... ) */
  Menu *menuSystem;
 };
+
+void applyLookAndFeel(bool notify=false);
 
 } // namespace gui
 

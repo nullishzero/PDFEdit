@@ -10,7 +10,7 @@ namespace gui {
 class StringOption : public Option {
  Q_OBJECT
 public:
- StringOption(const QString &_key=0,QWidget *parent=0);
+ StringOption(const QString &_key=0,QWidget *parent=0,const QString &defValue=QString::null);
  virtual ~StringOption();
  virtual void writeValue();
  virtual void readValue();

@@ -10,11 +10,14 @@ OptionWindow - widget for editing program options
 #include "util.h"
 #include "stringoption.h"
 #include "realoption.h"
+#include "combooption.h"
 #include "booloption.h"
 #include "intoption.h"
 #include <qpoint.h>
 #include <stdlib.h>
 #include <qpushbutton.h>
+#include <qstylefactory.h>
+#include <qapplication.h>
 #include <qlayout.h>
 #include "option.h"
 #include "version.h"
@@ -88,7 +91,9 @@ void OptionWindow::apply() {
  }
  //Write settings to disk (editor may crash or be killed, right?)
  globalSettings->flushSettings();
+ applyLookAndFeel(true);
 }
+
 
 /** Called on pushing 'OK' button */
 void OptionWindow::ok() {
@@ -177,9 +182,20 @@ void OptionWindow::finishTab(QWidget *otab) {
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
+ @param defValue Default value if option not found in configuration
  */
-void OptionWindow::addOption(QWidget *otab,const QString &caption,const QString &key) {
- addOption(otab,caption,new StringOption(key,otab));
+void OptionWindow::addOption(QWidget *otab,const QString &caption,const QString &key,const QString &defValue/*=QString::null*/) {
+ addOption(otab,caption,new StringOption(key,otab,defValue));
+}
+
+/** add Option to the window (type of option is string, edited by combobox)
+ @param otab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ @param values List of allowed values for this combobox
+ */
+void OptionWindow::addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values) {
+ addOption(otab,caption,new ComboOption(values,key,otab));
 }
 
 /** add Option to the window (type of option is float)
@@ -205,9 +221,10 @@ void OptionWindow::addOptionBool(QWidget *otab,const QString &caption,const QStr
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
+ @param defValue Default value if option not found in configuration
  */
-void OptionWindow::addOptionInt(QWidget *otab,const QString &caption,const QString &key) {
- addOption(otab,caption,new IntOption(key,otab));
+void OptionWindow::addOptionInt(QWidget *otab,const QString &caption,const QString &key,int defValue/*=0*/) {
+ addOption(otab,caption,new IntOption(key,otab,defValue));
 }
 
 /** Initialize window with options */
@@ -252,6 +269,18 @@ void OptionWindow::init() {
   addOptionBool(tool_tab,tb->label(),QString("toolbar/")+tbs[i],true);
  }
  finishTab(tool_tab);
+ QWidget *laf_tab=addTab(tr("Look and Feel"));
+ addText(laf_tab,tr("You can set parameters of application font"));
+ addOption    (laf_tab,tr("Font family"),"gui/font",QApplication::font().family());
+ addOptionInt (laf_tab,tr("Font size"),"gui/fontsize",QApplication::font().pointSize());
+ addOptionBool(laf_tab,tr("Bold"),"gui/fontbold",QApplication::font().weight()>QFont::DemiBold);
+ addOptionBool(laf_tab,tr("Italic"),"gui/fontitalic",QApplication::font().italic());
+ addText(laf_tab,tr("You can specify overall visual style"));
+ QStringList styles=QStyleFactory::keys();
+ styles.prepend("");
+ addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
+ addText(data_tab,tr("<b>Note</b>: changing style will take effect on next program start"));//TODO: apply style now
+ finishTab(laf_tab);
 
  setUpdatesEnabled( TRUE );
 }
@@ -272,6 +301,18 @@ OptionWindow::~OptionWindow() {
  delete list;
  opt=NULL;
  printDbg(debug::DBG_DBG,"Options closing ...");
+}
+
+/** applies look and feel settings from options
+ @param notify If true, all fonts will be immediately changed in all widgets
+ */
+void applyLookAndFeel(bool notify) {
+ QString font=globalSettings->read("gui/font",QApplication::font().family());
+ int fontsize=globalSettings->readNum("gui/fontsize",QApplication::font().pointSize());
+ if (fontsize==-1) fontsize=12;
+ bool bold=globalSettings->readBool("gui/fontbold");
+ bool italic=globalSettings->readBool("gui/fontitalic");
+ QApplication::setFont(QFont(font,fontsize,bold?(QFont::Bold):(QFont::Normal),italic),notify);
 }
 
 } // namespace gui

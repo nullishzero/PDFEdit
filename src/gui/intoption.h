@@ -9,7 +9,7 @@ namespace gui {
 class IntOption : public StringOption {
  Q_OBJECT
 public:
- IntOption(const QString &_key=0,QWidget *parent=0);
+ IntOption(const QString &_key=0,QWidget *parent=0,int defValue=0);
  virtual ~IntOption();
 };
 
