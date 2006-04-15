@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/04/15 08:04:43  hockm0bm
+ * reserveRef and createObject are protected now
+ *
  * Revision 1.14  2006/04/13 18:15:02  hockm0bm
  * * releaseStorage removed
  * * releaseObject method removed
@@ -193,51 +196,7 @@ protected:
 	 * Otherwise all information about changes are lost!
 	 */
 	void reopen();
-public:
-	/** Initialize constructor.
-	 * @param stream Stream with file data.
-	 *
-	 * Delegates to XRef constructor with same parameter.
-	 *
-	 * @throw MalformedFormatExeption if XRef creation fails (instance is
-	 * unusable in such situation).
-	 */
-	CXref(BaseStream * stream):XRef(stream)
-	{
-		if(getErrorCode() !=errNone)
-		{
-			// xref is corrupted
-			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode());
-		}
-	}
 
-	/** Initialize constructor with cache.
-	 * @param stream Stream with file data.
-	 * @param c Cache instance.
-	 *
-	 * Delegates to XRef constructor with the stream parameter and
-	 * sets cache instance.
-	 *
-	 * @throw MalformedFormatExeption if XRef creation fails (instance is
-	 * unusable in such situation).
-	 */
-	/* FIXME uncoment when cache is available
-	CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c)
-	{
-		if(getErrorCode() !=errNone)
-		{
-			// xref is corrupted
-			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode);
-		}
-	}
-	*/
-	
-	/** Destructor.
-	 *
-	 * Destroys cache.
-	 */
-	virtual ~CXref();
-	
 	/** Reserves reference for new indirect object.
 	 *
 	 * Searches for free object number and generation number and uses
@@ -294,6 +253,51 @@ public:
 	 */
 	virtual ::Object * createObject(::ObjType type, ::Ref * ref);
 
+public:
+	/** Initialize constructor.
+	 * @param stream Stream with file data.
+	 *
+	 * Delegates to XRef constructor with same parameter.
+	 *
+	 * @throw MalformedFormatExeption if XRef creation fails (instance is
+	 * unusable in such situation).
+	 */
+	CXref(BaseStream * stream):XRef(stream)
+	{
+		if(getErrorCode() !=errNone)
+		{
+			// xref is corrupted
+			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode());
+		}
+	}
+
+	/** Initialize constructor with cache.
+	 * @param stream Stream with file data.
+	 * @param c Cache instance.
+	 *
+	 * Delegates to XRef constructor with the stream parameter and
+	 * sets cache instance.
+	 *
+	 * @throw MalformedFormatExeption if XRef creation fails (instance is
+	 * unusable in such situation).
+	 */
+	/* FIXME uncoment when cache is available
+	CXref(BaseStream * stream, ObjectCache * c):XRef(stream), cache(c)
+	{
+		if(getErrorCode() !=errNone)
+		{
+			// xref is corrupted
+			throw MalformedFormatExeption("XRef parsing problem errorCode="+getErrorCode);
+		}
+	}
+	*/
+	
+	/** Destructor.
+	 *
+	 * Destroys cache.
+	 */
+	virtual ~CXref();
+	
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.
 	 *

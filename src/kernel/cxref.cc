@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/15 08:04:43  hockm0bm
+ * reserveRef and createObject are protected now
+ *
  * Revision 1.7  2006/04/13 18:15:02  hockm0bm
  * * releaseStorage removed
  * * releaseObject method removed
@@ -92,11 +95,7 @@ using namespace debug;
 	ObjectEntry * changedEntry = changedStorage.get(ref);
 	::Object * changed=(changedEntry)?changedEntry->object:NULL;
 	
-	// insert new version to changedStorage
-	// this is deep copy of given value
-	::Object * object = instance->clone();
-
-	// if changedEntry is NULL - object is change for the first time
+	// if changedEntry is NULL - object is changed for the first time
 	// we have to allocate entry, otherwise, just sets new object
 	// value and reset stored to false
 	if(!changedEntry)
@@ -104,7 +103,7 @@ using namespace debug;
 		changedEntry=new ObjectEntry();
 		printDbg(DBG_DBG, "object is changed for the first time, creating changedEntry");
 	}
-	changedEntry->object=object;
+	changedEntry->object=instance->clone();
 	changedEntry->stored=false;
 	changedStorage.put(ref, changedEntry);
 
@@ -269,10 +268,9 @@ using namespace debug;
 			printDbg(DBG_ERR, "obj2 is null");
 		return false;
 	}
-
-	::Object dObj1=*obj1, dObj2=*obj2;	// object for dereferenced 
-						// values - we assume, it's
-						// not indirect
+	 
+	// object for dereferenced  values - we assume, it's not indirect
+	::Object dObj1=*obj1, dObj2=*obj2;	
 	// types for direct values.
 	::ObjType type1=obj1->getType(), type2=obj2->getType();
 	
@@ -299,10 +297,11 @@ using namespace debug;
 	// no we have direct values' types
 	bool ret=type1==type2;
 	
-	// if these types are not same, one more situation may occure:
+	// if these types are not same, one additional situation may occure:
 	// dereferenced obj1 is objRef (it is indirect) and dereferenced
 	// object is objNull (it is not present in pdf). In such situation, type2
-	// can be everything
+	// can be everything - other direction (obj1 is whatever and obj2 is objNull
+	// is not allowed)
 	if(!ret && (obj1->getType() == objRef && type1 == objNull))
 	{
 		::Ref ref=obj1->getRef();
