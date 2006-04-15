@@ -6,6 +6,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.30  2006/04/15 08:01:32  hockm0bm
+ * * pdfFile field removed
+ *         - we are using transparent StreamWriter now
+ * * PageTreeWatchDog class implemented as Observer handling page tree changes.
+ * * changeIndirectProperty method added
+ *         - registers changed property to the XRefWriter
+ *
  * Revision 1.29  2006/04/13 18:16:30  hockm0bm
  * insert/removePage, addIndirectProperty, save throws ReadOnlyDocumentException
  *
@@ -131,7 +138,6 @@
 #include "iproperty.h"
 #include "xrefwriter.h"
 
-
 // =============================================================================
 namespace pdfobjects {
 
@@ -213,6 +219,82 @@ public:
 	
 protected:
 
+	/** Observer for Page tree synchronization.
+	 *
+	 * This observer should be registered on all intermediate nodes for Kids
+	 * array and its members (referencies). It should be done before any changes
+	 * are done.
+	 * <br>
+	 * See notify method for implementation details.
+	 *
+	 */
+	class PageTreeWatchDog: public observer::IObserver<IProperty>
+	{
+		/** Pdf instance.
+		 * This instance is used as page tree holder, so watch dog uses it to
+		 * handle changes.
+		 */
+		CPdf * pdf;
+
+		public:
+			/** Initialization constructor.
+			 * @param _pdf CPdf instance.
+			 *
+			 * Sets pdf field according parameter.
+			 */
+			PageTreeWatchDog(CPdf * _pdf):pdf(_pdf)
+			{
+				// given parameter must be non NULL
+				// this is used only internaly by CPdf, so assert is enough for
+				// checking
+				assert(_pdf);
+			}
+
+			/** Empty destructor.
+			 */
+			virtual ~PageTreeWatchDog() throw(){}; 
+			
+			/** Observer handler.
+			 * @param newValue New value of changed property.
+			 * @param context Context of the change.
+			 *
+			 * Checks type of the context. If it is not BasicChangeContextType,
+			 * immediately returns, because it is not able to handle situation
+			 * without oldValue.
+			 * <br>
+			 * Checks newValue's type and if its type is CRef, registers 
+			 * observer (this instance) to it using registerPageTreeObserver
+			 * method on value (this will guarantee that if it is intermediate
+			 * node, observer will be register to whole sub tree) and starts 
+			 * consolidation of the page tree on indirect parent of newValue. 
+			 * <br>
+			 * Finaly starts consolidation of pageList where oldValue is used
+			 * from context.
+			 * <p>
+			 * newValue is always element of Kids array or CNull when this
+			 * element has been removed from array. Context contains oldValue
+			 * which is previous value of element on the same position as
+			 * newValue. It also may be CNull when no previous value existed 
+			 * (when new element is added to the array). 
+			 * <br>
+			 * This method guarantees that page tree will contain valid Count
+			 * and Parent fields in all affected nodes and pageList will
+			 * contain correct mapping from page position to CPage instances
+			 * and invalidates all pages which are not accessible anymore,
+			 * because whole subtree has been removed.
+			 *
+			 */
+			virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
+
+			/** Reurns observer priority.
+			 */
+			virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
+			{
+				// TODO some constant
+				return 0;
+			}
+	};
+	
 	/**
 	 * Indirect properties mapping type.
 	 */
@@ -311,13 +393,12 @@ protected:
 	 */
 	void consolidatePageList(boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
 
-	// FIXME just for debug
-	friend void observerHandler(CPdf & cpdf, boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
-
-	/** Page tree observer instance.
-	 * This instance is inicialized in constructor.
+	/** Page tree watch dog observer.
+	 *
+	 * This instance is used to handle changes in page tree.
 	 */
-	//PageTreeObserver pageTreeObserver;
+	PageTreeWatchDog pageTreeWatchDog;
+	
 private:
 	
 	/**************************************************************************
@@ -325,7 +406,9 @@ private:
 	 *************************************************************************/
 	
 	/** Change flag.
-	 * TODO consider also xref
+	 * Value is set to true anytime some change happens. We don't expose
+	 * XRefWriter to public so, changes can be done only by CPdf interface.
+	 *
 	 * @see isChanged
 	 */
 	bool change;
@@ -390,8 +473,13 @@ private:
 
 	/** Intializes revision specific stuff.
 	 * 
-	 * trailer field must be initialized correctly before this method can be
-	 * called.
+	 * Cleans up all internal structures which may depend on current revision.
+	 * This includes indirect mapping and pageList (all pages are invalidated).
+	 * After clean up is ready, initializes trailer field from Xref trailer xpdf
+	 * Object. docCatalog field is initialized same way.
+	 * <br>
+	 * Finally registers pageTreeWatchDog observer. Uses
+	 * registerPageTreeObserver method with Pages reference as parameter.
 	 *
 	 * @throw ElementNotFoundException if Root property is not found.
 	 * @throw ElementBadTypeException if Root property is found but doesn't 
@@ -405,13 +493,6 @@ private:
 	 * End of revision specific data
 	 *************************************************************************/
 	
-	/** File handle for pdf file.
-	 *
-	 * This field is initialized when pdf file is open (in constructor) and
-	 * destroyed in close method.
-	 */
-	FILE * pdfFile;
-
 	/** Cross reference table.
 	 * This field holds XRefWriter implementation of XRef interface.
 	 * It enables making changes to the table and also making changes to
@@ -444,6 +525,7 @@ private:
 
 #ifdef DEBUG
 // debuging workaround to enable testing
+// TODO remove
 public:
 #endif
 	
@@ -455,17 +537,17 @@ public:
 	 * If you want to create instance, please use static factory method 
 	 * getInstance.
 	 */
-	CPdf ()/*:pageTreeObserver(this)*/{};
+	CPdf ():pageTreeWatchDog(this), mode(ReadOnly){};
 
 	/** Initializating constructor.
 	 * @param stream Stream with data.
-	 * @param file File handle for stream.
 	 * @param openMode Mode for this file.
 	 *
-	 * Creates XRefWriter and initialize xref field with it.
-	 * TODO initializes also other internal structures.
+	 * Creates XRefWriter, initializes pageTreeWatchDog and finally calls
+	 * initRevisionSpecific method for initialization of internal structures
+	 * which depends on current revision.
 	 */
-	CPdf(StreamWriter * stream, FILE * file, OpenMode openMode);
+	CPdf(StreamWriter * stream, OpenMode openMode);
 	
 	/** Destructor.
 	 * 
@@ -483,8 +565,7 @@ public:
 	 * @param mode Mode to open file.
 	 *
 	 * This is only way how to get instance of CPdf type. All necessary 
-	 * initialization is done, also internal structures of kernel are
-	 * initialized.
+	 * initialization is done.
 	 *
 	 * @throw PdfOpenException if file open fails.
 	 * @return Initialized (and ready to be used) CPdf instance.
@@ -513,7 +594,7 @@ public:
 	 */
 	CXref * getCXref()
 	{
-		return (CXref *)xref;
+		return dynamic_cast<CXref *>(xref);
 	}
        
 	/** Returns actually used mode controller.
@@ -596,12 +677,32 @@ public:
 	 * <li>CNull properties are also registered.
 	 * </ul>
 	 *
-	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
+	 * older revision (where no changes are allowed).
 	 * @return Reference of new property (see restriction when given
 	 * property is reference itself).
 	 */ 
 	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop);
 
+	/** Registers change of indirect property to the xref.
+	 * @param prop Indirect property.
+	 *
+	 * Checks prop's pdf instance and if it is different than this, throws an
+	 * exception. Then checks if ther is mapping for prop's indiRef. If not also
+	 * throws an exception.
+	 * <br>
+	 * After all checking is done, creates xpdf Object from prop and calls
+	 * xref::change method and invalidates mapping for this property in indMap.
+	 *
+	 * @throw TODO if prop is not from this pdf.
+	 * @throw TODO if mapping is unknown.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
+	 * older revision (where no changes are allowed).
+	 * @throw ElementBadTypeException if XrefWriter is in paranoid mode and
+	 * paranoid check fails for new value.
+	 */
+	void changeIndirectProperty(boost::shared_ptr<IProperty> prop);
+	
 	/** Saves changes to pdf file.
 	 * @param newRevision Flag for new revision creation.
 	 *
@@ -658,6 +759,10 @@ public:
 	 * 											// until 5th revision
 	 * </pre>
 	 * Then you can open this document and make changes inside.
+	 * <p>
+	 * NOTE: this method doesn't check whether target of FILE handle is same
+	 * file as one used in StreamWriter, so caller must take care about this to
+	 * prevent unexpecting problems (overwriting currently used data in stream).
 	 *
 	 */
 	void clone(FILE * fname)const;
@@ -691,7 +796,8 @@ public:
 	 * This method triggers pageList and page tree consolidation same as if the
 	 * change has been done manulualy.
 	 *
-	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
+	 * older revision (where no changes are allowed).
 	 * @throw TODO for ambigues.
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
@@ -712,7 +818,8 @@ public:
 	 * implementation.
 	 *
 	 * @throw PageNotFoundException if given page couldn't be found.
-	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
+	 * older revision (where no changes are allowed).
 	 * @throw TODO for ambigues.
 	 */
 	void removePage(size_t pos);
@@ -879,7 +986,8 @@ public:
 	 *
 	 * Removes also all children.
 	 *
-	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
+	 * older revision (where no changes are allowed).
 	 */
 	void removeOutline(COutline * /*outline*/)
 	{

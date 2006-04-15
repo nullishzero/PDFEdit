@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/04/15 08:01:32  hockm0bm
+ * * pdfFile field removed
+ *         - we are using transparent StreamWriter now
+ * * PageTreeWatchDog class implemented as Observer handling page tree changes.
+ * * changeIndirectProperty method added
+ *         - registers changed property to the XRefWriter
+ *
  * Revision 1.26  2006/04/13 18:16:30  hockm0bm
  * insert/removePage, addIndirectProperty, save throws ReadOnlyDocumentException
  *
@@ -574,41 +581,15 @@ using namespace utils;
 
 
 
-// Just for testing
-void observerHandler(CPdf & cpdf, boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue)
-{
-	printDbg(DBG_DBG, "oldValue.type="<<oldValue->getType()<<" newValue.type="<<newValue->getType());
-	
-	// cast at least on value to reference - doesn't use CNull one - at least
-	// one must be non CNull
-	// Both oldValue and newValue must come from same interNode
-	IndiRef parentIndiRef=(oldValue->getType()==pNull)?newValue->getIndiRef():oldValue->getIndiRef();
-
-	// gets indirect value with parent reference 
-	shared_ptr<IProperty> parentProp_ptr=cpdf.getIndirectProperty(parentIndiRef);
-	if(parentProp_ptr->getType()!=pDict)
-	{
-		printDbg(DBG_ERR, "Indirect parent object is not a dictionary.");
-		// TODO handle
-	}
-	shared_ptr<CDict> interNode=IProperty::getSmartCObjectPtr<CDict>(parentProp_ptr);
-
-	// we have intermediate node where the change happened
-	// at first consolidates page tree
-	printDbg(DBG_INFO, "Consolidating Page tree");
-	cpdf.consolidatePageTree(interNode);
-
-	// page tree is consolidated - pageList has to be consolidated
-	printDbg(DBG_INFO, "Consolidating pageList");
-	cpdf.consolidatePageList(oldValue, newValue);
-}	
-
 /** Registers page tree observer.
  * @param ref Reference to page tree node.
+ * @param observer Pointer to observer to register.
  *
- * TODO doc
+ * Registers given observer to given reference. Then gets indirect property from
+ * reference and if it is Pages dictionary, Registers observer also on Kids
+ * array and recursively to all its elements (which are referencies).
  */
-void registerPageTreeObserver(boost::shared_ptr<CRef> ref)
+void registerPageTreeObserver(boost::shared_ptr<CRef> ref, const observer::IObserver<IProperty> * observer)
 {
 using namespace boost;
 using namespace std;
@@ -619,8 +600,8 @@ using namespace pdfobjects::utils;
 	printDbg(DBG_DBG, "ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
 
 	// registers observer for page tree handling
-	// TODO
-	//ref->registerObserver();
+	// FIXME uncomment
+	//ref->registerObserver(observer);
 	
 	// dereferences and if it is Pages dictionary, calls recursively to all
 	// children
@@ -643,8 +624,8 @@ using namespace pdfobjects::utils;
 		return;
 	}
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
-	// TODO
-	//kids_ptr->registerObserver();
+	// FIXME uncomment
+	//kids_ptr->registerObserver(observer);
 	vector<shared_ptr<IProperty> > container;
 	kids_ptr->_getAllChildObjects(container);
 	for(vector<shared_ptr<IProperty> >::iterator i=container.begin(); i!=container.end(); i++)
@@ -652,17 +633,83 @@ using namespace pdfobjects::utils;
 		// all reference kids are used for recursion call
 		shared_ptr<IProperty> elemProp_ptr=*i;
 		if(elemProp_ptr->getType()==pRef)
-			registerPageTreeObserver(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr));
+			registerPageTreeObserver(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr), observer);
 	}
 
 	printDbg(DBG_DBG, "All subnodes done for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+}
+
+void CPdf::PageTreeWatchDog::notify(boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw()
+{
+	using namespace observer;
+	using namespace boost;
+	using namespace debug;
+
+	// if not basic context type, does notnig
+	if(context->getType()!=IChangeContext<IProperty>::BasicChangeContextType)
+		return;
+
+	// gets basic context shared_ptr
+	shared_ptr<const BasicChangeContext<IProperty> > basicContext=
+		dynamic_pointer_cast<const BasicChangeContext<IProperty>, const IChangeContext<IProperty> >(context); 
+
+	if(newValue->getType()!=pNull)
+	{
+		// if newValue is not CNull and it is CRef instance, registers this 
+		// observer on it and if it is intermediate node, also to all children.
+		// Uses registerPageTreeObserver method
+		if(newValue->getType()==pRef)
+		{
+			shared_ptr<CRef> newValueRef_ptr=IProperty::getSmartCObjectPtr<CRef>(newValue);
+			try
+			{
+				registerPageTreeObserver(newValueRef_ptr, this);
+			}catch(CObjectException & e)
+			{
+				printDbg(DBG_ERR, "registerPageTreeObserver failed with cause="<<e.what());
+			}
+		}
+
+		// consolidates page tree starting from parent of newValue
+		// node - given value is always direct value
+		// Doesn't care if it is reference or not, because parent node has to be
+		// consolidated in any case (may be there is nothing to do, but we can't
+		// rely on it)
+		IndiRef parentRef=newValue->getIndiRef();
+		shared_ptr<IProperty> parentProp_ptr=pdf->getIndirectProperty(parentRef);
+		if(parentProp_ptr->getType()!=pDict)
+		{
+			// target of the parent reference is not dictionary,
+			// this should not happen - some one is doing something nasty
+			printDbg(DBG_WARN, "newValue's parent is not dictionary. THIS SHOUL NOT HAPPEN");
+		}
+		else
+		{
+			shared_ptr<CDict> parentDict_ptr=IProperty::getSmartCObjectPtr<CDict>(parentProp_ptr);
+			try
+			{
+				pdf->consolidatePageTree(parentDict_ptr);
+			}catch(CObjectException & e)
+			{
+				printDbg(DBG_ERR, "consolidatePageTree failed with cause="<<e.what());
+			}
+		}
+	}
+
+	// consolidates pageList 
+	try
+	{
+		pdf->consolidatePageList(basicContext->getOriginalValue(), newValue);
+	}catch(CObjectException &e)
+	{
+		printDbg(DBG_ERR, "consolidatePageList failed with cause="<<e.what());
+	}
 }
 
 void CPdf::initRevisionSpecific()
 {
 
 	printDbg(DBG_DBG, "");
-
 
 	// Clean up part:
 	// =============
@@ -714,13 +761,32 @@ void CPdf::initRevisionSpecific()
 	printDbg(DBG_INFO, "Document catalog successfully fetched");
 	docCatalog=IProperty::getSmartCObjectPtr<CDict>(prop_ptr);
 	
+	// calls registerPageTreeObserver to Document catalog Pages field which
+	// means that observer is registered to whole page tree.
+	// If Document catalog doesn't contain any Pages field, we don't have any
+	// pages and so nothing is registered
+	try
+	{
+		shared_ptr<IProperty> pageTreeProp_ptr=docCatalog->getProperty("Pages");
+		if(pageTreeProp_ptr->getType()!=pRef)
+		{
+			printDbg(DBG_ERR, "Pages field is not reference.");	
+			// TODO handle
+		}else
+		{
+			shared_ptr<CRef> pageTreeRoot_ptr=IProperty::getSmartCObjectPtr<CRef>(pageTreeProp_ptr);
+			registerPageTreeObserver(pageTreeRoot_ptr, &pageTreeWatchDog);
+		}
+	}catch(CObjectException & e)
+	{
+		printDbg(DBG_WARN, "Document doesn't contain Page tree.");
+	}
 }
 
-CPdf::CPdf(StreamWriter * stream, FILE * file, OpenMode openMode)
+CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(PageTreeWatchDog(this))
 {
 	// gets xref writer - if error occures, exception is thrown 
 	xref=new XRefWriter(stream, this);
-	pdfFile=file;
 	mode=openMode;
 
 	// initializes revision specific data for the newest revision
@@ -733,8 +799,15 @@ CPdf::~CPdf()
 
 	// indirect mapping is cleaned up automaticaly
 	
-	// TODO implementation
-	// discards all returned pages and outlines
+	// discards all returned pages
+	for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
+	{
+		printDbg(DBG_DBG, "Invalidating page at pos="<<i->first);
+		// FIXME uncoment when method is ready
+		//i->second->invalidate();
+	}
+
+	// TODO handle outlines when ready
 }
 
 
@@ -798,7 +871,7 @@ using namespace debug;
  * Returned reference has to be deallocated by caller.
  * 
  * @return Pointer to new reference, if new indirect property was created
- * for child (this means that child is reference) or NULL otherwise.
+ * for reference (caller must deallocate result).
  */ 
 IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 {
@@ -812,6 +885,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 		case pRef:
 		{
 			printDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
+			// this may fail because of ReadOnlyDocumentException
 			IndiRef indiRef=pdf->addIndirectProperty(ip);
 			return new IndiRef(indiRef);
 		}	
@@ -927,7 +1001,8 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 
 
 	// gets xpdf Object from propValue (which contain definitive value to
-	// be stored), registers new reference on xref		  
+	// be stored), registers new reference on xref
+	// reserveRef may throw if we are in older revision
 	::Object * obj=propValue->_makeXpdfObject();
 	::Ref xpdfRef=xref->reserveRef();
 	printDbg(debug::DBG_DBG, "New reference reseved ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
@@ -943,6 +1018,42 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	return reference;
 }
 
+void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
+{
+	printDbg(DBG_DBG, "");
+	
+	// checks property at first
+	// it must be from same pdf
+	if(prop->getPdf() != this)
+	{
+		printDbg(DBG_ERR, "Given property is not from same pdf.");
+		// TODO exception
+	}
+	// there must be mapping fro prop's indiref, but it doesn't have to be same
+	// instance.
+	IndiRef indiRef=prop->getIndiRef();
+	if(indMap.find(indiRef)==indMap.end())
+	{
+		printDbg(DBG_ERR, "Indirect mapping doesn't exist. prop seams to be fake.");
+		// TODO exception
+	}
+
+	// gets xpdf Object instance and calls xref->change
+	// changeObject meay throw if we are in read only mode or if xrefwriter is
+	// in paranoid mode and type check fails
+	Object * propObject=prop->_makeXpdfObject();
+	printDbg(DBG_DBG, "Registering change to the XRefWriter");
+	xref->changeObject(indiRef.num, indiRef.gen, propObject);
+	// FIXME SEGV problem 
+	//utils::freeXpdfObject(propObject);
+
+	// invalidates indMap mapping for this property
+	// This is because prop may be something different than original indirect
+	// property not just different state of same property. Mapping is created
+	// again when it is needed (when getIndirectProperty is called)
+	indMap.erase(indiRef);
+	printDbg(DBG_INFO, "Indirect mapping removed for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+}
 
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 {
@@ -964,13 +1075,14 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	}
 	printDbg(debug::DBG_DBG,"File \"" << filename << "\" open successfully in mode=" << openMode);
 	
+	// creates FileStream writer to enable changes to the File stream
 	Object obj;
 	obj.initNull();
 	StreamWriter * stream=new FileStreamWriter(file, 0, gFalse, 0, &obj);
 	printDbg(debug::DBG_DBG,"File stream created");
 
 	// stream is ready, creates CPdf instance
-	CPdf * instance=new CPdf(stream, file, mode);
+	CPdf * instance=new CPdf(stream, mode);
 
 	printDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
 
@@ -1544,10 +1656,6 @@ using namespace utils;
 	// TODO size_t kidsIndex=kids_ptr->getPropertyId(currentRef_ptr);
 	// kids_ptr->delProperty(kidsIndex);
 	
-	// FIXME just for testing
-	shared_ptr<CNull> cnull(CNullFactory::getInstance());
-	observerHandler(*this, currentRef_ptr, cnull);
-
 	// page dictionary is removed from the tree, consolidation is done also for
 	// pageList at this moment
 }
