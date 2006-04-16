@@ -1,8 +1,10 @@
+#
 #Makefile for documentation
+#
 
 .PHONY: clean
 
-docs=observers.html
+docs=observers.html pdfoperators.html cobjects.html
 
 all: $(docs)
 
