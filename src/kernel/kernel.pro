@@ -16,7 +16,7 @@ DEFINES += DEBUG
 #
 # Build library (libkernel.a)
 #
-OBJDIR = ./obj
+OBJDIR = .obj
 libkernel.target     = libkernel.a
 libkernel.commands   = $(AR) libkernel.a $(OBJECTS:$$OBJDIR/main.o=)
 libkernel.depends    = $(OBJECTS:$$OBJDIR/main.o=)
