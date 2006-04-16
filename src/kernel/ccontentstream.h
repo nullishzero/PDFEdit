@@ -150,7 +150,6 @@ public:
 	CContentStream (boost::shared_ptr<IProperty> stream, Object* obj = NULL);
 
 	
-	
 	/**
 	 * Get string representation.
 	 *

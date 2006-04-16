@@ -53,8 +53,9 @@ IProperty::clone () const
 void 
 IProperty::setPdf (CPdf* p)
 {
-	assert (NULL == pdf);	// modify existing association with a pdf?
-	if (NULL != pdf)
+	// modify existing association with a pdf? or we just want to reset the pdf
+	assert (NULL == pdf || NULL == p);	
+	if (NULL != pdf && NULL != p)
 		throw CObjInvalidOperation ();
 	
 	pdf = p;
@@ -80,16 +81,15 @@ IProperty::dispatchChange () const
 	// If this is an indirect object inform xref about the change
 	// else find the closest indirect object and call dispatchChange on that object
 	//
-	if (utils::objHasParent (*this))
+	boost::shared_ptr<IProperty> indiObj;
+	if (utils::objHasParent (*this, indiObj))
 	{
-		printDbg (debug::DBG_DBG, "TRUE");
-		boost::shared_ptr<IProperty> pIp = pdf->getIndirectProperty (IProperty::getIndiRef());
-		if (pIp)
+		if (indiObj)
 		{
-			assert (IProperty::getIndiRef().num == pIp->getIndiRef().num);
-			assert (IProperty::getIndiRef().gen == pIp->getIndiRef().gen);
+			assert (IProperty::getIndiRef().num == indiObj->getIndiRef().num);
+			assert (IProperty::getIndiRef().gen == indiObj->getIndiRef().gen);
 
-			pIp->dispatchChange ();
+			indiObj->dispatchChange ();
 			
 		}else
 		{
@@ -98,11 +98,8 @@ IProperty::dispatchChange () const
 		}
 	}else
 	{
-		printDbg (debug::DBG_DBG, "TRUE");
-		Object* obj = _makeXpdfObject ();
-		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
-		utils::freeXpdfObject (obj);
+		// Indicate to pdf that it should change this object
+		IProperty::getPdf()->changeIndirectProperty (indiObj);
 	}
 }
 

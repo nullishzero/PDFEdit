@@ -6,50 +6,7 @@
  *         Created:  01/18/2006 
  *        Revision:  none
  *          Author:  jmisutka (06/01/19), 
- * 			
- * 			2006/01     constructor, getStringRepresentation, observer stuff, writeValue,
- *			2006/02/04	started implementing release () function (not trivial)
- *						implemented several easy functions for complex types
- *			2006/02/08  for the past several days i have had a battle with g++ and ls + collect
- *						i think that i have won at last...
- *			2006/02/20	changed constructor, addProperty has to be more clever
- *						getStringRepresentation,writeValue,release finished
- *			2006/02/21	changed getProperty to non - template, bacause we can't partially specialize member functions
- *					also the way of passing return from return value to function argument, because
- *						* do not want to alloc something in kernel and dealloc elsewhere
- *						* pass by stack copying can be tricky when copying big amounts and we do not know 
- *						  in pdf
- *			2006/02/23	cobjectsimple implementation finished
- *			2006/02/23	cobjectcomplex 
- *					- getStringRepresentation
- *					- writeValue
- *					- release?, getPropertyCount
- *					- getAllPropertyNames -- problem templates virtual
- *			2006/02/24	- implementing addProperty for
- *					IProperty*. (template f. can't be virtual)
- *					all other functions, problems witch Object internal structure
- *					  not public functions etc., etc., etc.
- *					- several questions has arisen, that i cannot decide by myself
- *					- delProperty
- *
- * ------------ 2006/03/05 21:42 ----------- FUCK xpdf
- *  				- remove use of XPDF as value holders, question is Stream, but better 1 bad class
- *  				than 7.
- *  				03:24 -- CObjectSimple implemented withou XPDF
- *  				23:11 -- CObjectComplex 1st version
- *
- * 			2006/03/06
- * 					added Memory checker and finishing implementation of cobjects, waiting for cpdf to be
- * 						compilable
- * 					CObjectSimple finished
- * 					CObjectComplex finished except setStringRepresentation and writeValue (which is actually the same)
- * 			2006/03/12
- * 					finished 1st stage testing
- * 					making changes, ptrs --> smart pointer
- *
- * 
  *			\TODO:
- *					testing -- CStream
  *					better public/protected dividing
  *					StreamReader
  *
@@ -278,15 +235,46 @@ public:
 private:
 
 	/**
-	 * Indicate that the object has changed.
+	 * Create context of a change.
+	 *
+	 * REMARK: Be carefull. Deallocate this object.
+	 * 
+	 * @return Context in which a change occured.
 	 */
-	void _objectChanged ()
+	ObserverContext* 
+	_createContext () const
+	{
+		// Save original value for the context
+		boost::shared_ptr<IProperty> oldValue (this->clone());
+		// For safety
+		oldValue->setPdf (NULL);
+		oldValue->setIndiRef (0,0);
+		// Create the context
+		return new BasicObserverContext (oldValue);
+	}
+
+	/**
+	 * Indicate that the object has changed.
+	 * Notifies all observers associated with this property about the change.
+	 *
+	 * @param context Context in which a change occured.
+	 */
+	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
 		// Dispatch the change
 		dispatchChange ();
 		
-		// Notify everybody about this change
-		//IProperty::notifyObservers ();
+		if (context)
+		{
+			// Clone this new value
+			boost::shared_ptr<IProperty> newValue (this->clone());
+			// For safety
+			newValue->setPdf (NULL);
+			newValue->setIndiRef (0,0);
+			// Notify everybody about this change
+			IProperty::notifyObservers (newValue, context);
+		}else
+			throw CObjInvalidOperation ();
 	}
 
 };
@@ -588,15 +576,32 @@ public:
 private:
 	
 	/**
-	 * Make everything needed to indicate that this object has changed.
-	 * Notifies all obervers associated with this property.
+	 * Create context of a change.
+	 *
+	 * REMARK: Be carefull. Deallocate this object.
+	 * 
+	 * @return Context in which a change occured.
 	 */
-	void _objectChanged ()
+	ObserverContext* _createContext (boost::shared_ptr<IProperty>& changedIp);
+
+	/**
+	 * Indicate that the object has changed.
+	 * Notifies all observers associated with this property about the change.
+	 *
+	 * @param context Context in which a change occured.
+	 */
+	void _objectChanged (boost::shared_ptr<IProperty> newValue, 
+						 boost::shared_ptr<const ObserverContext> context)
 	{
 		// Dispatch the change
 		dispatchChange ();
-		// Notify everybody about this change
-		//IProperty::notifyObservers ();
+		
+		if (context)
+		{
+			// Notify everybody about this change
+			IProperty::notifyObservers (newValue, context);
+		}else
+			throw CObjInvalidOperation ();
 	}
 
 
@@ -766,22 +771,23 @@ public:
 private:
 	
 	/**
-	 * Finds out if this object is indirect.
-	 *
-	 * @return True if this object is indirect, false otherwise.
-	 */
-	bool _isIndirect () const;
-
-	/**
 	 * Indicate that the object has changed.
+	 * Notifies all observers associated with this property about the change.
+	 *
+	 * @param context Context in which a change occured.
 	 */
-	void _objectChanged ()
+	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
 		// Dispatch the change
 		dispatchChange ();
-		
-		// Notify everybody about this change
-		//IProperty::notifyObservers ();
+			
+		if (context)
+		{
+			assert (!"Not implemented yet");
+			// Notify everybody about this change
+			IProperty::notifyObservers (*this, context);
+		}else
+			throw CObjInvalidOperation ();
 	}
 
 };
@@ -1179,8 +1185,11 @@ void xpdfObjToString (Object& obj, std::string& str);
  * to a valid pdf.
  *
  * @param ip	IProperty of object. 
+ * @param indiObj Out parameter wheren indirect object will be saved, because
+ * finding the object can be an expensive operation.
  */
 bool objHasParent (const IProperty& ip);
+bool objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj);
 
 
 

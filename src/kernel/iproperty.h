@@ -94,9 +94,10 @@ class IProperty
 {
 public:
 	/** Observers. */
-	typedef observer::IObserver<IProperty> Observer; 
+	typedef observer::IObserver<IProperty> 					Observer; 
 	typedef std::vector<boost::shared_ptr<const Observer> > ObserverList;
-	typedef observer::IChangeContext<IProperty> ObserverContext;
+	typedef observer::IChangeContext<IProperty> 			ObserverContext;
+	typedef observer::BasicChangeContext<IProperty>		 	BasicObserverContext;
 
 private:
 	IndiRef 		ref;		/**< Object's pdf id and generation number. */
@@ -296,6 +297,13 @@ protected:
 
 	/**
 	 * Notify all observers that a property has changed.
+	 *
+	 * REMARK: Pointer to new value is NOT a shared pointer so
+	 * observers SHOULD NOT store its value. It can happen that the
+	 * pointer will get deallocated.
+	 * 
+	 * @param newValue Object with new value.
+	 * @param context Context in which the change has been made.
 	 */
 	void notifyObservers (boost::shared_ptr<IProperty> newValue, 
 					  	  boost::shared_ptr<const ObserverContext> context);

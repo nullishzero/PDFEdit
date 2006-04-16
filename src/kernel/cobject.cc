@@ -729,10 +729,6 @@ freeXpdfObject (Object* obj)
 	if (NULL == obj)
 		throw XpdfInvalidObject ();
 	
-	std::string str;
-	xpdfObjToString (*obj,str); 
-	printDbg (debug::DBG_DBG, "freeXpdfObject()\t ..." << str);
-	
 	// delete all member variables
 	obj->free ();
 	// delete the object itself
@@ -927,19 +923,21 @@ xpdfObjFromString (const std::string& str)
 //
 //
 bool
-objHasParent (const IProperty& ip)
+objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 {
 	CPdf* pdf = ip.getPdf ();
 	assert (NULL != pdf);
 	if (NULL == pdf)
 		throw CObjInvalidOperation ();
 
-	if ( &ip == pdf->getIndirectProperty(ip.getIndiRef()).get() )
+	if ( &ip == (indiObj=pdf->getIndirectProperty(ip.getIndiRef())).get() )
 		return false;
 	else
 		return true;
 }
-
+bool
+objHasParent (const IProperty& ip)
+{boost::shared_ptr<IProperty> indi;return objHasParent (ip,indi);}
 
 
 

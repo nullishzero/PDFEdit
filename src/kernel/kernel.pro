@@ -1,9 +1,10 @@
 #
-# Project file
+# Project file for kernel
 #
-
 TEMPLATE = app
 LANGUAGE = C++
+TARGET = kernel
+
 CONFIG += complete 
 CONFIG += console precompile_header
 CONFIG += debug
@@ -12,37 +13,54 @@ DEFINES += DEBUG
 
 #PRECOMPILED_HEADER = static.h
 
-#build library (libkernel.a)
+#
+# Build library (libkernel.a)
+#
+OBJDIR = ./obj
 libkernel.target     = libkernel.a
-libkernel.commands   = $(AR) libkernel.a $(OBJECTS:main.o=)
-libkernel.depends    = $(OBJECTS:main.o=)
+libkernel.commands   = $(AR) libkernel.a $(OBJECTS:$$OBJDIR/main.o=)
+libkernel.depends    = $(OBJECTS:$$OBJDIR/main.o=)
 QMAKE_EXTRA_UNIX_TARGETS += libkernel
 POST_TARGETDEPS = libkernel.a
+
+#
+# Common utils
+#
+HEADERS += ../utils/debug.h ../utils/iterator.h ../utils/observer.h
+
+#
+# Special utils
+#
+HEADERS += exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
+SOURCES += modecontroller.cc filters.cc 
+
+#
+# CObjects
+#
+HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
+HEADERS += streamwriter.h
+SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
+SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
+SOURCES += cpage.cc cpdf.cc 
+
+#
+# Tests
+#
+HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
+SOURCES += tests/testcobject.cc tests/testcpage.cc tests/testcpdf.cc
+SOURCES += main.cc 
 
 
 #
 # Kernel special settings
 #
-
-HEADERS += ../utils/debug.h ../utils/iterator.h
-HEADERS += ../utils/observer.h exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
-HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
-HEADERS += streamwriter.h
-HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
-
-SOURCES += modecontroller.cc filters.cc 
-SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
-SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
-SOURCES += cpage.cc cpdf.cc 
-SOURCES += tests/testcobject.cc tests/testcpage.cc tests/testcpdf.cc
-SOURCES += main.cc 
-
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
-
-QMAKE_CFLAGS_DEBUG += -O0
-QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings  -ansi -pedantic -Wno-unused-variable -O0
-
-
+QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings  -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function
 INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo
+
+#directories to creating files
+unix {
+  OBJECTS_DIR = $$OBJDIR
+}
 
 include(kernel-obj.pro)

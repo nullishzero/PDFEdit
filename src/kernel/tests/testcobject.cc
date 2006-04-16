@@ -8,6 +8,7 @@
 
 #include "testmain.h"
 #include "testcobject.h"
+#include "testcpdf.h"
 
 #include <PDFDoc.h>
 #include "../ccontentstream.h"
@@ -91,7 +92,8 @@ void
 s_ctors (const example& e)
 {
 	Object obj;
-	CPdf pdf;
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	CPdf& pdf = *_pdf;
 	IndiRef ref;
 	
 	// bool
@@ -456,7 +458,8 @@ c_getTp ()
 void
 mdctrl ()
 {
-	CPdf pdf;
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	CPdf& pdf = *_pdf;
 	pdf.getModeController ();
 }
 
@@ -816,7 +819,8 @@ c_xpdfctor ()
 		obj.arrayAdd (&item3);
 		obj.arrayAdd (&item4);
 		
-		CPdf pdf;
+		boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+		CPdf& pdf = *_pdf;
 		IndiRef ref = {12,11};
 		CArray ar (pdf,obj,ref);
 
@@ -845,7 +849,9 @@ c_xpdfctor ()
 		obj.dictAdd (it3, &item3);
 		obj.dictAdd (it4, &item4);
 
-		CPdf pdf;
+		boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+		CPdf& pdf = *_pdf;
+
 		IndiRef ref = {12,11};
 		// CArray ar (pdf,obj,ref); // GOOOOOD -- assertation failed
 		CDict dc (pdf,obj,ref); 
@@ -943,7 +949,9 @@ test_ccontentstream ()
 void
 parseContentStream (ostream& oss, const char* fileName)
 {
-	CPdf pdf;
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	CPdf& pdf = *_pdf;
+
 	
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	int pagesNum = 1;
@@ -1008,7 +1016,9 @@ parseContentStream (ostream& oss, const char* fileName)
 void
 contentStream (ostream&, const char* fileName)
 {
-	CPdf pdf;
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	CPdf& pdf = *_pdf;
+
 	
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	int pagesNum = 1;

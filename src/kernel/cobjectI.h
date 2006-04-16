@@ -26,15 +26,12 @@
 #include "filters.h"
 
 
-
 //=====================================================================================
 
 namespace pdfobjects 
 {
 
 
-
-		
 //=====================================================================================
 // CObjectSimple
 //=====================================================================================
@@ -99,12 +96,14 @@ void
 CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 {
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
-	printDbg (debug::DBG_DBG,"setStringRepresentation() text:" << strO);
-	
-	utils::simpleValueFromString (strO,value);
+	printDbg (debug::DBG_DBG,"text:" << strO);
 
+	// Create context in which the change occurs
+	boost::shared_ptr<ObserverContext> context (this->_createContext());
+	// Change our value
+	utils::simpleValueFromString (strO, this->value);
 	// notify observers and dispatch the change
-	_objectChanged ();
+	_objectChanged (context);
 }
 
 
@@ -119,10 +118,12 @@ CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (debug::DBG_DBG,"writeValue()");
 
+	// Create context in which the change occurs
+	boost::shared_ptr<ObserverContext> context (this->_createContext());
+	// Change the value
 	value = val;
-
 	// notify observers and dispatch the change
-	_objectChanged ();
+	_objectChanged (context);
 }	
 
 
@@ -178,7 +179,8 @@ CObjectSimple<Tp,Checker>::dispatchChange() const
 		printDbg (debug::DBG_DBG, "TRUE");
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
+		Ref ref = {IProperty::getIndiRef().num, IProperty::getIndiRef().gen};
+		//pdf->getCXref()->changeObject (ref, obj);
 		utils::freeXpdfObject (obj);
 	}
 }
@@ -317,7 +319,8 @@ CObjectComplex<Tp,Checker>::dispatchChange() const
 		printDbg (debug::DBG_DBG, "TRUE");
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
+		Ref ref = {IProperty::getIndiRef().num, IProperty::getIndiRef().gen};
+		//pdf->getCXref()->changeObject (ref, obj);
 		utils::freeXpdfObject (obj);
 	}
 }
@@ -392,16 +395,16 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
 	if (ip)
 	{
+		// Create the context
+		boost::shared_ptr<ObserverContext> context (this->_createContext(ip));
 		// Delete that item
 		value.erase (it);
-	
 		// Indicate that this object has changed
-		_objectChanged ();
+		boost::shared_ptr<IProperty> changedObj (new CNull());
+		_objectChanged (changedObj, context);
 		
 	}else
 		throw CObjInvalidObject ();
-
-	// deallocates ip, also *ip should be deallocated
 }
 
 
@@ -455,7 +458,6 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 
 		// Insert it
 		value.insert (it,newIpClone);
-	
 		// Inherit id and gen number
 		newIpClone->setIndiRef (IProperty::getIndiRef());
 		// Inherit pdf
@@ -464,8 +466,13 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 	}else
 		throw CObjInvalidObject ();
 	
-	// notify observers and dispatch change
-	_objectChanged ();
+	// Notify observers and dispatch change
+	_objectChanged (newIpClone, 
+					boost::shared_ptr<ObserverContext>
+						(new BasicObserverContext 
+						 	(boost::shared_ptr<IProperty> (new CNull ()))
+						)
+				   );
 
 	//
 	// \TODO: Find out the mode
@@ -491,7 +498,6 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	{
 		// Store it
 		value.push_back (std::make_pair (propertyName,newIpClone));
-	
 		// Inherit id and gen number
 		newIpClone->setIndiRef (IProperty::getIndiRef());
 		// Inherit pdf
@@ -501,7 +507,12 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 		throw CObjInvalidObject ();
 
 	// notify observers and dispatch change
-	_objectChanged ();
+	_objectChanged (newIpClone,
+					boost::shared_ptr<ObserverContext> 
+						(new BasicObserverContext 
+						 	(boost::shared_ptr<IProperty> (new CNull ()))
+						)
+					);
 
 	//
 	// \TODO: Find out the mode
@@ -654,6 +665,29 @@ CObjectComplex<Tp,Checker>::doClone () const
 	return clone_;
 }
 
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+IProperty::ObserverContext* 
+CObjectComplex<Tp,Checker>::_createContext (boost::shared_ptr<IProperty>& changedIp)
+{
+	printDbg (debug::DBG_DBG, "");
+
+	// Save original value for the context
+	boost::shared_ptr<IProperty> oldValue (changedIp->clone());
+	// For safety up to 1 level deeper
+	oldValue->setPdf (NULL);
+	oldValue->setIndiRef (0,0);
+	for (typename Value::iterator it = this->value.begin (); it != value.end (); ++it)
+	{
+		utils::getIPropertyFromItem(*it)->setPdf (NULL);
+		utils::getIPropertyFromItem(*it)->setIndiRef (0,0);
+	}
+	// Create the context
+	return new BasicObserverContext (oldValue);
+}
+
 //=====================================================================================
 // CObjectStream
 //=====================================================================================
@@ -727,6 +761,7 @@ template<typename Checker>
 void 
 CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
 {
+	assert (!"Not implemented yet.");
 	// just an example
 	
 	// find the type
@@ -779,11 +814,11 @@ CObjectStream<Checker>::dispatchChange () const
 		printDbg (debug::DBG_DBG, "TRUE");
 		Object* obj = _makeXpdfObject ();
 		// This function saves a COPY of xpdf object(s) do we have to delete it
-		//pdf->getXrefWriter()->changeObject (ind->num, ind->gen, obj);
+		Ref ref = {IProperty::getIndiRef().num, IProperty::getIndiRef().gen};
+		//pdf->getCXref()->changeObject (ref, obj);
 		utils::freeXpdfObject (obj);
 	}
 }	
-
 
 //
 //

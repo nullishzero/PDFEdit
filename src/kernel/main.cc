@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/04/16 23:09:34  misuj1am
+ *
+ *
+ * -- observers implemented
+ * -- changes delegated to pdf
+ *
  * Revision 1.26  2006/04/13 18:07:19  hockm0bm
  * if first parameter is regular file, uses it instead of default one
  *
@@ -85,7 +91,7 @@ main (int argc, char** argv)
 	START_TEST;
 
 	// Test cobjects
-	//cobject_tests (argc, argv);
+	cobject_tests (argc, argv);
 	MEM_CHECK;
 	
 	// Test cpdf
