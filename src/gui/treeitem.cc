@@ -98,25 +98,51 @@ QString TreeItem::getRef() {
  return selfRef;
 }
 
+/** Will remove itself from list of opened references and close itself*/
+void TreeItem::unOpen() {
+ assert(typ==pRef); //only usable on pRef
+ data->remove(this);
+ complete=false;
+ QListViewItem::setOpen(false);
+}
+
 /** Slot that will be called when item si opened/closed
  @param open True if item is being opened, false if closed
 */
 void TreeItem::setOpen(bool open) {
- printDbg(debug::DBG_DBG," Opening referenced property");
  if (!complete) { //not expanded
-  printDbg(debug::DBG_DBG," Opening referenced property incomplete");
+  printDbg(debug::DBG_DBG," Opening referenced property -> expanding ");
   if (open) {
    printDbg(debug::DBG_DBG," Opening referenced property open");
    if (typ==pRef) { // referenced object generation and number
-    printDbg(debug::DBG_DBG," Opening referenced property pREF");
+    printDbg(debug::DBG_DBG," Opening referenced property pREF : " << selfRef);
     TreeItem *up=parentCheck();
     if (up) { //some parent of this object is referencing the same object
      printDbg(debug::DBG_DBG,"Found ref in parent - not expanding item (-> infinite recursion)");
      data->tree()->setCurrentItem(up);
-
+     data->tree()->ensureItemVisible(up);
      //TODO: nefunguje pri otevreni pomoci sipky.
-//     tree->ensureItemVisible(up);
+     //QListViewItem::setOpen(false);//Keep closed
      return;//Do not expand references
+    }
+    TreeItem *other=data->find(selfRef);
+    if (other && other!=this) { //subtree already found elsewhere -> reparent
+     QListViewItem *otherChild;
+     printDbg(debug::DBG_DBG,"Will relocate child, counts: "<< this->childCount() << " , " << other->childCount());
+     while ((otherChild=other->firstChild())) {
+      printDbg(debug::DBG_DBG,"Relocating child");
+      other->takeItem(otherChild);
+      insertItem(otherChild);
+     }
+     printDbg(debug::DBG_DBG,"Done relocate child, counts: "<< this->childCount() << " , " << other->childCount());
+     other->unOpen();
+     data->add(this);//re-add itself
+     complete=true;
+     QListViewItem::setOpen(open);
+     return;//Do not expand references
+    } else { // subtree not found -> add to list
+     printDbg(debug::DBG_DBG,"Subtree not found");
+     data->add(this);
     }
     data->parent()->addChilds(this,true);
     complete=true;

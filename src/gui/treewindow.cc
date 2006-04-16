@@ -21,6 +21,7 @@ private:
  friend class TreeWindow;
  /** default constructor*/
  ShowData() {
+  update();
   dirty=false;
   needreload=false;
  }
@@ -35,13 +36,14 @@ private:
  void check(bool &target,const QString &key) {
   bool tmp=globalSettings->readBool(key);
   if (target==tmp) return;
+  printDbg(debug::DBG_DBG,"Tree settings check failed: " << key);
   target=tmp;
   dirty=true;
   needreload=true;
  }
  
  /** update internal data from settings */
- void update() {
+ void update(bool skipDirtyCheck=false) {
   check(show_simple,"tree/show_simple");
  }
  /** Show simple objects (int,bool,string,name,real) in object tree? */
@@ -71,7 +73,6 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
  sh=new ShowData();
- sh->update();
  data=new TreeData(this,tree);
 }
 
@@ -128,12 +129,14 @@ void TreeWindow::clear() {
  while ((li=tree->firstChild())) {
   delete li;
  }
+ data->clear();
 }
 
 /** Init contents of treeview from given PDF document
  @param pdfDoc Document used to initialize treeview
  */
 void TreeWindow::init(CPdf *pdfDoc) {
+ printDbg(debug::DBG_DBG,"Loading PDF into tree");
  assert(pdfDoc);
 //boost::shared_ptr<CDict> pd=pdfDoc->getDictionary();
  init(pdfDoc->getDictionary().get());
@@ -143,6 +146,7 @@ void TreeWindow::init(CPdf *pdfDoc) {
  @param doc IProperty used to initialize treeview
  */
 void TreeWindow::init(IProperty *doc) {
+ printDbg(debug::DBG_DBG,"Loading Iproperty into tree");
  obj=doc;
  clear();
  if (doc) {
@@ -239,7 +243,6 @@ void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
    printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
    boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
    TreeItem *child=new TreeItem(data,parent, rp.get(),s.sprintf("<%d,%d>",ref.num,ref.gen));
-   //TODO: store in index...
    addChilds(child,false);
   } else {
    printDbg(debug::DBG_DBG," MARKING referenced property");
@@ -248,7 +251,7 @@ void TreeWindow::addChilds(TreeItem *parent,bool expandReferences/*=true*/) {
  }
 
  //Null, Bool, Int, Real, Name, String -> These are simple types without any children
- //TODO: pRef, pStream -> have they children?
+ //TODO: pStream -> have they children?
 
 }
 

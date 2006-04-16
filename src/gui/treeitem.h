@@ -21,6 +21,7 @@ public:
  IProperty* getObject();
  QString getRef();
  virtual void setOpen(bool open);
+ void unOpen();
 private:
  TreeItem* parentCheck();
  void init(IProperty *pdfObj,const QString name);

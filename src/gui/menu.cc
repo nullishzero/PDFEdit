@@ -42,7 +42,7 @@ QString Menu::getIconFile(const QString &name) {
  QString absName;
  for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
   absName=*it+"/"+name;
-  printDbg(debug::DBG_DBG,"Looking for " <<name << " in: " << *it << " as " << absName);
+//  printDbg(debug::DBG_DBG,"Looking for " <<name << " in: " << *it << " as " << absName);
   if (QFile::exists(absName)) return absName;
  }
  printDbg(debug::DBG_WARN,"Icon file not found: " << name);
@@ -281,7 +281,7 @@ ToolBar* Menu::getToolbar(const QString &name) {
  @param main Main application window
 */
 void Menu::saveToolbar(QToolBar *tb,const QString &name,QMainWindow *main) {
- printDbg(debug::DBG_DBG,"save toolbar " << name);
+// printDbg(debug::DBG_DBG,"save toolbar " << name);
  Qt::Dock dck;
  int index;
  bool nl;
@@ -297,7 +297,7 @@ void Menu::saveToolbar(QToolBar *tb,const QString &name,QMainWindow *main) {
  @param main Main application window
 */
 void Menu::restoreToolbar(QToolBar *tb,const QString &name,QMainWindow *main) {
- printDbg(debug::DBG_DBG,"restore toolbar " << name);
+// printDbg(debug::DBG_DBG,"restore toolbar " << name);
  QString dock=globalSettings->read("gui/toolbarstate/"+name);
  if (dock.isNull()) return;  //Nothing saved
  QStringList tbs=QStringList::split(",",dock);
