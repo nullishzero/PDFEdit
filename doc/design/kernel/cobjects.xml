@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Representing pdf objects</title>
+ </bookinfo>
+
+ <chapter>
+
+  <sect1><title>Objects according to pdf specification</title>
+  <para>
+  Everything in pdf is an object, be careful as it is not the same as e.g. c++ objects. 
+  Objects can be either simple (number, string, name, boolean value, reference, null) or 
+  complex (array, dictionary, stream). Whole pdf (except "header" at the end of a file) is a
+  tree like structure with direct and indirect nodes referenced by 2 numbers that uniquely
+  identify an object.
+  </para>
+ </sect1>
+
+ <sect1><title>Objects</title>
+  <para>
+  All objects are derived from one base class IProperty. Pdf has a tree like structure.
+  Therfore, we can divide objects into single objects (leafs) and composite objects (nodes). This
+  is an example of <glossterm>Composite design patern</glossterm>. In contrast to xpdf implementation
+  where every pdf object is represented by one huge class. This has lead to many problems, one of them is
+  that it is total useless to inherit from such a horrible designed object. New objects had to be created. There is also
+  another interesting issue how these xpdf objects handle memory allocation. For example when creating an array of objects, 
+  they allocate one big piece of memory and copy objects one after another in to in. So when growing the 
+  array, memory has to be copied. The result is total uselessness of pointers to elements of the array (and 
+  other) and this leads to another result which is the impossibility to use xpdf objects as value holders of 
+  our objects.
+  </para>
+ 
+  <sect2><title>Simple objects</title>
+  <para>
+  As simple objects share method names and behaviour, they are naturally implemented with
+  use of c++ templates. One class represents all 7 types of simple objects.
+  </para>
+  </sect2>
+ <sect2><title>Complex objects</title>
+  <para>
+  However it is more difficult with complex types. Array and dictionary are implemented as one class
+  but stream has to be a completely new class. 
+  </para>
+ </sect2>
+ <para>
+ 	<mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/iproperty.png" format="PNG"/>
+	  </imageobject>
+	  <textobject><phrase>Pdfoperator class overview</phrase></textobject>
+	  <caption><para>Pdfoperator class overview</para></caption>
+	</mediaobject>
+ </para>
+ </sect1>
+
+ </chapter>
+</book>

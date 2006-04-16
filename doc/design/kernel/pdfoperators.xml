@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Representing pages</title>
+ </bookinfo>
+
+ <chapter>
+
+  <sect1><title>Pages according to pdf specification</title>
+  <para>
+  Pages, as described in pdf specification, are quite complex objects. They are references
+  from a page tree. The define all properties and objects on a page. Many difficulties arise, because
+  some properties are inherited (e.g. when changing rotation of one page and this attribute is inherited by 
+  other page objects, also those pages are affected...). Page contents is specified by content stream. All visible 
+  objects and objects needed by them are specified here. When no object is specified, the page is empty. This is our
+  main interest when editing pdf files, because all text, pictures are stored here. The content stream is processed 
+  sequentially. The difficulty is, that pdf specification does not put any constraints on text objects (e.g. text
+  order, text separated to words, letter order) and this can be hard to edit.
+  </para>
+ </sect1>
+
+ <sect1><title>Content stream</title>
+  <para>
+          Pdf specifiaction says, that every page has its content stream that describes every visible 
+	  and also some invisible objects on a page . Content stream consists of operators defining 
+	  operation to perform and their operands that are just arguments to these operators.
+	  These operators specify what is displayed. If no content stream is avaliable (or is empty)
+	  the approperiate page is empty. All text/text decorations/graphical objects are somehow 
+	  embedded in this content stream. This is the main reason why we need very general access to
+	  these operators. We have to be able to change many things in them.
+  </para>
+ <sect2><title>Pdf operators in general</title>
+  <para>
+          Pdf specifiaction says, that every page has its content stream that describes every visible 
+	  and also some invisible objects on a page . Content stream consists of operators defining 
+	  operation to perform and their operands that are just arguments to these operators.
+	  These operators specify what is displayed. If no content stream is avaliable (or is empty)
+	  the approperiate page is empty. All text/text decorations/graphical objects are somehow 
+	  embedded in this content stream. This is the main reason why we need very general access to
+	  these operators. We have to be able to change many things in them.
+  </para>
+ </sect2>
+ <sect2><title>Requirements for editing</title>
+  <para>
+        We neeed to put these requirements to meaningfully represent and edit content stream (operators): 
+	<orderedlist numeration="arabic">
+	<listitem>
+	<para>We need to sequentially traverse the list, the order has to be the same as in the file we edit - 
+	<glossterm>Iterator design pattern</glossterm></para>
+	</listitem>
+	<listitem>
+	<para>We want to group operators together - <glossterm>Component design pattern</glossterm> and 
+	<glossterm>Decorator design pattern</glossterm></para>
+	</listitem>
+	</orderedlist>
+	The first requirement is needed when simulating the display process of an pdf viewer. E.g. when 
+	finding out the absolute position of pdf operators. The Component design pattern used in representing content stream
+	is very useful, when changing objects .(e.g. We can simple change an existing text object to composite text object which
+	adds some special formatting) This becomes very useful with Decorator design pattern which allows us to change this object in
+	arbitrary ways not known to designer.
+	<mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/pdfoperator.png" format="PNG"/>
+	  </imageobject>
+	  <textobject><phrase>Pdfoperator class overview</phrase></textobject>
+	  <caption><para>Pdfoperator class overview</para></caption>
+	</mediaobject>
+  </para>
+  <sect3><title>Grouping operators together</title>
+  <para>Operators are stored in a tree like structure. CContentStream contains container of
+  operators. These operators are either components or leafs of a tree like structure. Leaf and
+  non leaf objects implement the same functions, but the output is different. (e.g. component is class 
+  CompositePdfOperator and leafs are either SimpleGenericOperator or UnknownPdfOperator) The CompositePdfOperator
+  class takes pointer to another pdfoperator in its constructor to implement the Decorator design pattern. As mentioned above
+  this is very general way how to extend each operator.
+  </para>
+  </sect3>
+  
+  <sect3><title>Traversing operators</title>
+  <para>The need for traversing operators in an ordered way, without needing to rely on ordering in container and
+  difficult, cumbersome and error prone coding, Iterator design pattern is used in a special way to accomplish this.
+  The special thing is that there is no "container", the clas PdfOperator itself has information about its nearest siblings.
+  It is similar to a linked list. Each operator can expose an iterator which we can use to traverse the list, without knowing
+  what is the "container". Special iterators can be used to traverse just text objects, etc.
+  </para>
+  </sect3>
+ </sect2>
+ </sect1>
+
+ </chapter>
+</book>
