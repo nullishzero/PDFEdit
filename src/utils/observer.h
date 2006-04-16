@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/04/16 23:04:53  misuj1am
+ *
+ *
+ * -- slightly changed observer interface
+ *
  * Revision 1.5  2006/04/12 17:58:28  hockm0bm
  * BasicChangeContext changed to BasicChangeContextType
  *
@@ -54,6 +59,9 @@ public:
 	 * @return context type.
 	 */
 	virtual ChangeContextType getType()const =0;
+
+	/** Destructor. */
+	virtual ~IChangeContext () {};
 };
 
 /** Basic change context template class.
@@ -166,38 +174,6 @@ public:
 	 * Virtual destructor.
 	 */
 	virtual ~IObserver () {};
-};
-
-/** Interface for notifiers.
- *
- * Each value keeper which whants to manage observers should implement this
- * interface. 
- * 
- */
-template<typename T> class IChangeContextHandler
-{
-public:
-	/** Registers new observer.
-	 * @param observer Observer to register (if NULL, nothing is registered).
-	 *
-	 * Adds given observer to the observer list which is (one by one) notified
-	 * about change when it occures.
-	 * <br>
-	 * Implementator should guarant that observers with higher priority (lower
-	 * priority numbers) should be noified sooner than lower priority ones.
-	 * Observers with same priotities should be notified in same ordered
-	 * accordind registration order.
-	 * <br>
-	 * Multiple calling with same observer should be ignored.
-	 */
-	virtual void registerObserver(const IObserver<T> * observer) =0;
-
-	/** Unregisters given observer.
-	 * @param observer Observer to unregister.
-	 *
-	 * Given one is not used in next change.
-	 */
-	virtual void unregisterObserver(const IObserver<T> * observer) =0;
 };
 
 
