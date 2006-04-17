@@ -20,20 +20,20 @@
   <sect1>
    <title>Option <option>--</option></title>
    <para>
-    This option will cause editor to stop processing options. Any further parameters after this one are treated as filenames.
+    Stop processing options. Any further parameters after this one are treated as filenames.
     This can be useful if you want to open file, that have name beginning with a dash.
    </para>
   </sect1>
   <sect1>
    <title>Option <option>--help</option></title>
    <para>
-    This option will cause editor to print brief help about commandline options on STDOUT and exit
+    Print brief help about commandline options on STDOUT and exit
    </para>
   </sect1>
   <sect1>
    <title>Option <option>--version</option></title>
    <para>
-    This option will cause editor to print its version on STDOUT and exit
+    Print editor version on STDOUT and exit
    </para>
   </sect1>
  </chapter>
