@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/17 17:08:10  hockm0bm
+ * throw() added to all methods which can't throw
+ *
  * Revision 1.6  2006/04/16 23:04:53  misuj1am
  *
  *
@@ -60,14 +63,19 @@ public:
 	 */
 	virtual ChangeContextType getType()const =0;
 
-	/** Destructor. */
-	virtual ~IChangeContext () {};
+	/** Virtual destructor.
+	 *
+	 */
+	virtual ~IChangeContext(){};
 };
 
 /** Basic change context template class.
  * 
  * Simplest subclass from IChangeContext. It holds previous value of changed
  * one. This value is wrapped by smart pointer to keep clear instancion policy.
+ * <br>
+ * Exception NOTE:
+ * No method throws an exception.
  */
 template<typename T> class BasicChangeContext:public IChangeContext<T>
 {
@@ -77,18 +85,18 @@ public:
 	/** Constructor with original value.
 	 * @param origVal Original value used for originalValue initialization.
 	 */
-	BasicChangeContext(boost::shared_ptr<T> origVal):originalValue(origVal){};
+	BasicChangeContext(boost::shared_ptr<T> origVal)throw() :originalValue(origVal){};
 
 	/** Destructor.
 	 * Just to mark all destructors in subtypes as virtual.
 	 */
-	virtual ~BasicChangeContext(){};
+	virtual ~BasicChangeContext()throw() {};
 
 	/** Returns type of context.
 	 *
 	 * @return BasicChangeContext value.
 	 */
-	typename IChangeContext<T>::ChangeContextType getType()const
+	typename IChangeContext<T>::ChangeContextType getType() const throw()
 	{
 		return IChangeContext<T>::BasicChangeContextType;
 	}
@@ -97,7 +105,7 @@ public:
 	 *
 	 * @return Orignal value wrapped by smart pointer.
 	 */
-	virtual boost::shared_ptr<T> getOriginalValue()const
+	virtual boost::shared_ptr<T> getOriginalValue() const throw()
 	{
 		return originalValue;
 	}
@@ -113,7 +121,8 @@ public:
  * <ul>
  * <li>value keeper which wants to enable observers has to implement
  * IObserverHandler interface which enables to register and unregister 
- * observers. It guaranties it calls notify on each registered observer.
+ * observers. It guaranties it calls notify on each registered observer after
+ * change was registered.
  * <li>implementator of class is responsible for notify method implementation
  * which handles situation.
  * <li>observer must be registered on target value keeper.
@@ -125,11 +134,13 @@ public:
  * subtypes).
  * <br>
  * Value change handling is done in notify method (see for more details). This
- * method is called after value has been changed. Only direct change of value is
- * announced.
+ * method is called after value has been changed. 
  * <br>
  * Each observer implementation has its priority which is used be value keeper
- * to determine order in which to notify obsevers.
+ * to determine order in which to notify obsevers, if there is more then one.
+ * <br>
+ * Exception NOTE:
+ * No method throws an exception.
  */
 template<typename T> class IObserver
 {
@@ -161,19 +172,19 @@ public:
 	 * registered on complex type, it contains changed value (item) inside 
 	 * this complex type (value keeper part is changed).
 	 */
-	virtual void notify (boost::shared_ptr<T> newValue, boost::shared_ptr<const IChangeContext<T> > context) const = 0;
+	virtual void notify (boost::shared_ptr<T> newValue, boost::shared_ptr<const IChangeContext<T> > context) const throw() = 0 ;
 
 	/** Returns priority of obsever.
 	 *
 	 * Lower number means higher priority.
 	 * @return Observer priority value.
 	 */
-	virtual priority_t getPriority()const =0;
+	virtual priority_t getPriority()const throw() =0;
 
 	/**
 	 * Virtual destructor.
 	 */
-	virtual ~IObserver () {};
+	virtual ~IObserver ()throw() {};
 };
 
 
