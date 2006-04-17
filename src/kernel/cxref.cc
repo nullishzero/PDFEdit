@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/04/17 17:45:47  hockm0bm
+ * bug in knowsRef corrected
+ *         - checking for object number added when accessing XRef::entries
+ *
  * Revision 1.8  2006/04/15 08:04:43  hockm0bm
  * reserveRef and createObject are protected now
  *
@@ -247,6 +251,10 @@ bool CXref::knowsRef(::Ref ref)
 	// not found returns 0, so it's ok
 	if(newStorage.get(ref))
 		return true;
+
+	// checks object num
+	if(ref.num<=0 || ref.num>XRef::size)
+		return false;
 
 	// has to be found in entries
 	if(entries[ref.num].type==xrefEntryFree)
