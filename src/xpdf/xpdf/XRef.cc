@@ -305,6 +305,19 @@ Guint XRef::getStartXref() {
   for (p = &buf[i+9]; isspace(*p); ++p) ;
   lastXRefPos = strToUnsigned(p);
 
+  // p points to file offset value for startxref now, we will try to 
+  // find %%EOF from here. If not found, we will use end of buffer as
+  // end of file position
+  for(; i<n; i++)
+     if(!strncmp(&buf[i], "%%EOF", 5))
+        break;
+
+  // calculates eofPos from position in buffer
+  // sets position to %%EOF start from buffer begining
+  // which starts at xrefSearchSize from the end of stream
+  str->setPos(xrefSearchSize+i, -1);
+  eofPos=str->getPos();
+
   return lastXRefPos;
 }
 

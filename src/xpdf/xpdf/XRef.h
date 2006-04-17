@@ -18,6 +18,8 @@
 //              - initialization and destruction of internal structures is 
 //                done separately in methods. Constructor and destructor code
 //                was moved to those methods and they just call this methods.
+//              - eofPos position added -> points to file offset where it is 
+//                safe to put new data
 //
 //========================================================================
 
@@ -123,6 +125,8 @@ protected:
   int errCode;			// error code (if <ok> is false)
   Object trailerDict;		// trailer dictionary
   Guint lastXRefPos;		// offset of last xref table
+  Guint eofPos;                 // %%EOF marker position or safe position to 
+                                //   store new data 
   Guint *streamEnds;		// 'endstream' positions - only used in
 				//   damaged files
   int streamEndsLen;		// number of valid entries in streamEnds
