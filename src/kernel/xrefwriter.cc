@@ -4,6 +4,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/17 19:57:30  hockm0bm
+ * * findPDFEof removed
+ *         - uses XRef eofPos value instead
+ * * string constants for pdf markers
+ *         - TRAILER_KEYWORD, XREF_KEYWORD, STARTXREF_KEYWORD
+ * * minor changes in saveChanges method and buildXref
+ *         - first testing - seems to work, but needs to test
+ *
  * Revision 1.7  2006/04/13 18:08:49  hockm0bm
  * * releaseObject method removed
  * * readOnly mode removed - makes no sense in here
@@ -41,64 +49,29 @@ using namespace pdfobjects;
 using namespace utils;
 using namespace debug;
 
-/** Searches for EOFMARKER PDF end of file.
- * @param stream Stream where to find.
- * @param startPos Position in the stream, where to start.
+/** Marker of trailer dictionary.
  *
- * Creates substream from given one from given position and searches for %%EOF
- * string. If not found returns position at the end of the stream.
- *
- * @return Postion where it is safe to store changed objects.
+ * Each trailer dictionary begins immediately after line containing this string.
  */
-size_t findPDFEof(BaseStream * stream, size_t startPos)
-{
-	Object obj;
-	Stream * substream=stream->makeSubStream(startPos, gFalse, 0, &obj);	
+const char * TRAILER_KEYWORD="trailer";
 
-	// gets first line of substream - this should be startxref
-	char line[BUFSIZ];
-	memset(line, '\0', sizeof(line));
-	size_t pos=0;
-	
-	substream->getLine(line, (int)sizeof(line)-1);
-	// first line should be startxref
-	substream->getLine(line, sizeof(line)-1);
-	// second line should be offset
-	 
-	// Following line should contain %%EOF string, but only according to 
-	// specification reality may be different
-	// getLine returns NULL if we are at the end of the stream
-	while(substream->getLine(line, sizeof(line)-1))
-	{
-		// gets position from the beggining of the line 
-		size_t tmpPos=substream->getPos();
+/** Marker of cross reference table.
+ * Each xref section begins immediately after line containing this string.
+ */
+const char * XREF_KEYWORD="xref";
 
-		if(!strstr(EOFMARKER, line))
-		{
-			// line contains PDF end of file marker
-			pos=tmpPos;
-			break;
-		}
-	}
 
-	// If EOF not found we will use last position of the stream.
-	// Substream provides only position relative to its start, so we have 
-	// to add startPos
-	pos=startPos + (pos)?pos:substream->getPos();
-	
-	// clean up
-	// TODO check if it realy does what it should - XPdf code is unclear
-	delete substream;
-	obj.free();
+/** Marker of last cross reference starting offset.
+ * This key word marks file offset where xref starts. The number is on following
+ * line.
+ */
+const char * STARTXREF_KEYWORD="startxref";
 
-	return pos;
-}
-
-XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf):CXref(stream->getBaseStream()), mode(paranoid), pdf(_pdf)
+XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf):CXref(stream), mode(paranoid), pdf(_pdf), revision(0)
 {
 	// gets storePos
 	// searches %%EOF element from startxref position.
-	storePos=findPDFEof(stream->getBaseStream(), getStartXref());
+	storePos=XRef::eofPos;
 
 	// collects all available revisions
 	collectRevisions();
@@ -344,9 +317,7 @@ using namespace std;
 	}
 
 	// cross reference table starts with xref row
-	// FIXME uncoment when ready and tested
-	//stream->putLine("xref");
-	printf("xref\n");
+	stream.putLine(XREF_KEYWORD);
 
 	// subsection table is created, we can dump it to the file
 	// xrefRow represents one line of xref table which is exactly XREFROWLENGHT
@@ -362,10 +333,7 @@ using namespace std;
 		printDbg(DBG_DBG, "Starting subsection with startPos="<<startNum<<" and size="<<entries.size());
 
 		snprintf(xrefRow, sizeof(xrefRow)-1, "%d %d", startNum, (int)entries.size());
-		// FIXME uncoment when ready and tested
-		//stream->putLine(xrefRow);
-		// FIXME remove when tested
-		printf("\"%s\"\n", xrefRow);
+		stream.putLine(xrefRow);
 
 		// now prints all entries for this subsection
 		// one entry on one line
@@ -378,11 +346,8 @@ using namespace std;
 		// We don't provide information about free objects
 		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
 		{
-			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n\n", entry->first, entry->second);
-			// FIXME uncoment when ready and tested
-			//stream->putLine(xrefRow);
-			// FIXME remove when tested
-			printf("\"%s\"\n", xrefRow);
+			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", entry->first, entry->second);
+			stream.putLine(xrefRow);
 		}
 	}
 }
@@ -412,6 +377,9 @@ void XRefWriter::saveChanges(bool newRevision)
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
 	{
+		// TODO objNull should be market for marking as free - e.g. position set
+		// to 0 and buildXref should those entries handled as free.
+		
 		::Ref ref=i->first;
 		// associate given reference with actual position.
 		offTable.insert(OffsetTab::value_type(ref, streamWriter->getPos()));		
@@ -422,10 +390,7 @@ void XRefWriter::saveChanges(bool newRevision)
 		Object * obj=i->second->object;
 		std::string objPdfFormat;
 		xpdfObjToString(*obj, objPdfFormat);
-		// FIXME uncoment when ready and tested
-		//streamWriter->putLine(objPdfFormat.c_str());
-		// FIXME remove when tested
-		printf("\"%s\"\n", objPdfFormat.c_str());
+		streamWriter->putLine(objPdfFormat.c_str());
 	}
 
 	// all objects are saved xref table is constructed from offTable
@@ -438,7 +403,7 @@ void XRefWriter::saveChanges(bool newRevision)
 	// changeTrailer method is called on CXref because it despite of XRefWriter
 	// it doesn't do any checking (we know what we are doing)
 	Object prevObj;
-	prevObj.initInt(XRef::getLastXRefPos());
+	prevObj.initInt(XRef::lastXRefPos);
 	Object * oldPrev=CXref::changeTrailer("Prev", &prevObj);
 	if(oldPrev)
 	{
@@ -450,26 +415,20 @@ void XRefWriter::saveChanges(bool newRevision)
 	// stores changed trialer to the file
 	std::string objPdfFormat;
 	xpdfObjToString(trailerDict, objPdfFormat);
-	// FIXME uncoment when ready and tested
-	//streamWriter->putLine(objPdfFormat.c_str());
+	streamWriter->putLine(TRAILER_KEYWORD);
+	streamWriter->putLine(objPdfFormat.c_str());
 	printDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table
 	// TODO adds also comment with time and date of creation
-	// FIXME uncoment when ready and tested
-	//streamWriter->putLine("startxref");
+	streamWriter->putLine(STARTXREF_KEYWORD);
 	char xrefPosStr[128];
-	// FIXME uncoment when ready and tested
-	//streamWriter->putLine(objPdfFormat.c_str());
-	// FIXME remove when tested
-	printf("\"%s\"\n", objPdfFormat.c_str());
+	sprintf(xrefPosStr, "%u", xrefPos);
+	streamWriter->putLine(xrefPosStr);
 	
 	// Finaly puts %%EOF behind but keeps position of marker start
 	size_t pos=streamWriter->getPos();
-	// FIXME uncoment when ready and tested
-	//streamWriter->putLine(EOFMARKER);
-	// FIXME remove when tested
-	printf("\"%s\"\n", EOFMARKER);
+	streamWriter->putLine(EOFMARKER);
 	printDbg(DBG_DBG, "PDF end of file marker saved");
 	
 	// if new revision should be created, moves storePos at PDF end of file
@@ -480,7 +439,7 @@ void XRefWriter::saveChanges(bool newRevision)
 		printDbg(DBG_INFO, "Saving changes as new revision.");
 		storePos=pos;
 
-		// forces CXref::reopen
+		// forces reinitialization of XRef and CXref internal structures
 		CXref::reopen();
 
 		// new revision number is added - we are adding number for new oldest
