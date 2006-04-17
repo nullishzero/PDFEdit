@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/04/17 19:58:41  hockm0bm
+ * FileStreamWriter::putLine checks parameter for NULL
+ *
  * Revision 1.3  2006/04/13 18:17:43  hockm0bm
  * TODO for filter usage in FileStreamWriter if any
  *
@@ -18,6 +21,7 @@
  */
 
 #include <stdio.h>
+#include <errno.h>
 #include"streamwriter.h"
 
 //TODO use stream encoding
@@ -30,6 +34,10 @@ void FileStreamWriter::putChar(int ch)
 
 void FileStreamWriter::putLine(const char * line)
 {
-	fprintf(FileStream::f, "%s\n", line);
+	// NULL line is ignored
+	if(!line)
+		return;
+	
+	fprintf(f, "%s\n", line);
 	fflush(f);
 }
