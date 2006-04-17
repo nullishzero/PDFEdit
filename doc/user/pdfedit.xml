@@ -5,7 +5,7 @@
   <title>Documentation for PDF Editor</title>
  </bookinfo>
 
- <chapter>
+ <chapter id="description">
   <title>PDF Editor Commandline parameters</title>
   <para>
    You can specify any number of filenames as parameters on commandline.
@@ -37,7 +37,7 @@
    </para>
   </sect1>
  </chapter>
- <chapter>
+ <chapter id="localization">
   <title>Localization</title>
   <para>
    PDF Editor is in english by default, but by setting environment variable <variable>LANG</variable> before launching
