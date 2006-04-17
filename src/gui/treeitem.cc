@@ -42,7 +42,8 @@ TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const
  init(pdfObj,name);
 }
 
-/** Return parent of this Tree Item
+/** Return parent of this Tree Item, if it is also TreeItem.
+ If not, return NULL
  @return parent TreeItem */
 TreeItem* TreeItem::parent() {
  return _parent;
@@ -63,8 +64,9 @@ void TreeItem::init(IProperty *pdfObj,const QString name) {
   setText(0,name);
  }
  // object type
- setText(1,getTypeName(typ));
+ setText(1,getTypeName(obj));
  addData();
+ initObserver();
 }
 
 /** Checks if any parent is not CRef referencing the same CObject as this item
@@ -86,13 +88,15 @@ void TreeItem::addData() {
   IndiRef iref=util::getRef(obj);
   selfRef=s.sprintf("%d,%d",iref.num,iref.gen);
   setText(2,QString("-> ")+selfRef);
+ } else {
+  setText(2,"");
  }
 }
 
 /** 
  If this item contains a CRef, return reference target in text form.
  Otherwise return QString::null;
-@return Rference target
+ @return Rerence target
 */
 QString TreeItem::getRef() {
  return selfRef;
@@ -161,8 +165,104 @@ IProperty* TreeItem::getObject() {
  return obj;
 }
 
+/** Reload itself - update self and all childs from state in kernel */
+void TreeItem::reloadSelf() {
+ printDbg(debug::DBG_DBG,"This item will now reload itself: " << getTypeName(obj));
+ data->parent()->reloadFrom(this);
+}
+
+/** Reload itself - update only data in itself, not any children */
+void TreeItem::reloadData() {
+ printDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+ if (typ==pRef) { // reference
+  QString old=selfRef;
+  //Update reference target
+  addData();
+  if (old!=selfRef) {
+   //Remove old reference from list of opened and available items
+   data->remove(old);
+   printDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
+   //Close itself
+   this->setOpen(false);
+   QListViewItem *item;
+   //Remove all child items
+   while ((item=this->firstChild())) {
+    printDbg(debug::DBG_DBG,"Deleting child (deletelater)");
+    delete item;
+    //TODO: "Warning: Do not delete any QListViewItem objects in slots connected to this signal."
+    //      in QT documentation -> why?
+   }
+   //Set as incomplete
+   complete=false;
+  }
+ } else {
+  addData();
+ }
+}
+
+/** Internal class providing observer */
+class TreeItemObserver: public IProperty::Observer {
+public:
+ /** Constructor
+ @param _parent Object to be reloaded on any change to monitored IProperty
+ */
+ TreeItemObserver(TreeItem* _parent){
+  parent=_parent;
+ };
+ /** Deactivate observer */
+ void deactivate() {
+  parent=0;
+ }
+ /** Notification function called by changing property */
+ virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const {
+  if (!parent) {
+   //Should never happen
+   printDbg(debug::DBG_ERR,"BUG: Kernel is holding observer for item already destroyed");
+   assert(parent);
+   return;
+  }
+  //Reload contents of parent
+  parent->reloadSelf();
+ }
+ /** Priority of this observer */
+ virtual priority_t getPriority()const {
+  return 0;//TODO: what priority?
+ }
+ /** Descructor */
+ virtual ~TreeItemObserver(){
+ };
+private:
+ /** Parent object holding observer property*/
+ TreeItem *parent;
+};
+
+
+/** Sets observer for this item */
+void TreeItem::initObserver() {
+ //TODO: Do not set on simple types
+ printDbg(debug::DBG_DBG,"Set Observer");
+ observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
+ obj->registerObserver(observer);
+}
+
+/** Unsets observer for this item */
+void TreeItem::uninitObserver() {
+ //TODO: Do not set on simple types
+ observer->deactivate();
+ obj->unregisterObserver(observer);
+ printDbg(debug::DBG_DBG,"UnSet Observer");
+}
+
+/** Check if childs of this items are yet unknown and to be parsed/added
+ @return true if item is expanded, false if it is incomplete */
+bool TreeItem::isComplete() {
+ return complete;
+}
+
 /** default destructor */
 TreeItem::~TreeItem() {
+ uninitObserver();
+ data->remove(this);
 }
 
 } // namespace gui

@@ -60,6 +60,7 @@ public slots: //These will be exported to scripting
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
+ void setObject(IProperty* obj);
  void runScript(QString script);
  void menuActivated(int id);
 private slots:
@@ -99,6 +100,8 @@ private:
  QSplitter *splProp;
  /** Name of file loaded in editor */
  QString fileName;
+ /** Name of file loaded in editor without path */
+ QString baseName;
  /** Menus and toolbars */
  Menu *menuSystem;
 };

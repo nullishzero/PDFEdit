@@ -39,6 +39,16 @@ void TreeData::remove(TreeItem *it) {
  while (refs.remove(ref));
 }
 
+/** Remove specific reference from the list
+ (Useful to call after reference in object itself was changed to remove old reference))
+ @param it TreeItem
+ */
+void TreeData::remove(const QString &ref) {
+ if (ref.isNull()) return;
+ while (refs.remove(ref));
+}
+
+
 /** Look in list for a treeItem with given reference and return it.
  @param ref Reference in string format
  @return TreeItem with given reference, or NULL if nothing found
@@ -51,7 +61,6 @@ TreeItem* TreeData::find(const QString &ref) {
 void TreeData::clear() {
  refs.clear();
 }
-
 
 /** Return parent of this TreeData
  @return parent TreeWindow */

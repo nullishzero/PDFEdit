@@ -9,6 +9,7 @@
 #include <qlayout.h>
 #include <qlistview.h>
 #include "treedata.h"
+#include "treeitempdf.h"
 
 namespace gui {
 
@@ -43,7 +44,7 @@ private:
  }
  
  /** update internal data from settings */
- void update(bool skipDirtyCheck=false) {
+ void update() {
   check(show_simple,"tree/show_simple");
  }
  /** Show simple objects (int,bool,string,name,real) in object tree? */
@@ -63,7 +64,8 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  QBoxLayout *l=new QVBoxLayout(this);
  tree=new QListView(this);
  tree->setSorting(-1);
- obj=NULL;
+ rootObj=NULL;
+ rootObjPdf=NULL;
  QObject::connect(tree, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(treeSelectionChanged(QListViewItem *)));
  l->addWidget(tree);
  tree->addColumn(tr("Object"));
@@ -74,6 +76,31 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->show();
  sh=new ShowData();
  data=new TreeData(this,tree);
+ //TODO: for debugging:
+
+ QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
+}
+
+/** Reload part of tree that have given item as root (including that item)
+ Reloading will stop at reference targets
+ @param item root of subtree to reload
+ */
+void TreeWindow::reloadFrom(TreeItem *item) {
+ item->reloadData();
+ if (!item->isComplete()) return; //No need to reload further -> nothing there
+ //Update children and call recursively on them
+ //TODO: implement
+}
+
+/** slot called when someone click with any mouse button in the tree*/
+void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column) {
+ printDbg(debug::DBG_DBG,"Clicked in tree: " << button);
+ if (button==4) { //Middle button
+  TreeItem *titem=dynamic_cast<TreeItem*> (item);
+  if (titem) {//is a TreeItem
+   reloadFrom(titem);
+  }
+ }
 }
 
 /** Re-read tree settings from global settings */
@@ -86,11 +113,17 @@ void TreeWindow::updateTreeSettings() {
  }
 }
 
+/** reinitialize tree after some major change */
+void TreeWindow::reinit() {
+ if (rootObjPdf)   init(rootObjPdf,rootName);
+ else if (rootObj) init(rootObj);
+}
+
 /** Paint event handler -> if settings have been changed, reload tree */
 void TreeWindow::paintEvent(QPaintEvent *e) {
  if (sh->needreload) {
   printDbg(debug::DBG_DBG,"update tree settings: need reload");
-  init(obj); //update object if necessary
+  reinit(); //update object if necessary
   sh->needreload=false;
  }
  //Pass along
@@ -135,11 +168,24 @@ void TreeWindow::clear() {
 /** Init contents of treeview from given PDF document
  @param pdfDoc Document used to initialize treeview
  */
-void TreeWindow::init(CPdf *pdfDoc) {
+void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  printDbg(debug::DBG_DBG,"Loading PDF into tree");
  assert(pdfDoc);
+ clear();
+ rootObj=NULL;
+ rootObjPdf=pdfDoc;
+ rootName=fileName;
 //boost::shared_ptr<CDict> pd=pdfDoc->getDictionary();
- init(pdfDoc->getDictionary().get());
+// init(pdfDoc->getDictionary().get());
+ setUpdatesEnabled( FALSE );
+ TreeItemPdf *root=new TreeItemPdf(data,pdfDoc,tree,fileName); 
+ root->setOpen(TRUE);
+
+ //Add dictionary
+ TreeItem *dict=new TreeItem(data,root,pdfDoc->getDictionary().get(),tr("Dictionary")); 
+ addChilds(dict,false);
+
+ setUpdatesEnabled( TRUE );
 }
 
 /** Init contents of treeview from given IProperty (dictionary, etc ...)
@@ -147,7 +193,8 @@ void TreeWindow::init(CPdf *pdfDoc) {
  */
 void TreeWindow::init(IProperty *doc) {
  printDbg(debug::DBG_DBG,"Loading Iproperty into tree");
- obj=doc;
+ rootObjPdf=NULL;
+ rootObj=doc;
  clear();
  if (doc) {
   setUpdatesEnabled( FALSE );
@@ -161,7 +208,9 @@ void TreeWindow::init(IProperty *doc) {
 /** Resets th tree to be empty and show nothing */
 void TreeWindow::uninit() {
  clear();
- obj=NULL;
+ rootObj=NULL;
+ rootObjPdf=NULL;
+ //TODO: special method for setting root object
 }
 
 /** Return true, if this is simple property (editable as item in property editor and have no children), false otherwise

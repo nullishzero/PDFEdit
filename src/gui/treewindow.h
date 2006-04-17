@@ -21,11 +21,13 @@ class TreeWindow : public QWidget {
  Q_OBJECT
 public:
  void uninit();
- void init(CPdf *pdfDoc);
+ void init(CPdf *pdfDoc,const QString &fileName);
  void init(IProperty *doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
  ~TreeWindow();
  void addChilds(TreeItem *parent,bool expandReferences=true);
+ void reloadFrom(TreeItem *item);
+ void reinit();
 public slots:
  void settingUpdate(QString key);
 signals:
@@ -36,6 +38,7 @@ protected:
  virtual void paintEvent(QPaintEvent *e);
 private slots:
  void treeSelectionChanged(QListViewItem *item); 
+ void mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column);
 private:
  void clear();
  bool isSimple(IProperty* prop);
@@ -48,8 +51,13 @@ private:
  ShowData *sh;
  /** Tree data shared with tree items */
  TreeData *data;
- /** Root object of the tree*/
- IProperty *obj;
+ /** Root object of the tree (if IProperty)*/
+ IProperty *rootObj;
+ /** Root object of the tree (if CPdf)*/
+ CPdf *rootObjPdf;
+ /** Name of root object - if applicable */
+ QString rootName;
+
 };
 
 } // namespace gui

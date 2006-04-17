@@ -87,16 +87,13 @@ bool PdfEditWindow::exists(const QString &chkFileName) {
   return QFile::exists(chkFileName);
 }
 
-/** Check whether curretntly opened document was modified
+/** Check whether currently opened document was modified
     since it was opened or last saved
  @return true if document was modified, false if not
 */
 bool PdfEditWindow::modified() {
  if (!document) return false;//no document loaded at all
-
- //TODO: implement. Now returns true for safety
-
- return true;
+ return document->isChanged();
 }
 
 /** Show options dialog. Does not wait for dialog to finish. */
@@ -196,26 +193,30 @@ void PdfEditWindow::runScript(QString script) {
 
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addDocumentObjects();
- QSArgument ret=qs->evaluate(script,this,"<GUI>");
- if (globalSettings->readBool("console/showretvalue")) {
+ QSArgument ret;
+ try {
+  ret=qs->evaluate(script,this,"<GUI>");
+ } catch (...) {
+  print(tr("Unknown exception in script occured"));
+ }
+ if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
   switch (ret.type()) {
-   case QSArgument::QObjectPtr: {
+   case QSArgument::QObjectPtr: { //QObject -> print type
     QObject *ob=ret.qobject();
     print(QString("(Object:")+ob->className()+")");
     break;
    }
-   case QSArgument::VoidPointer: {
+   case QSArgument::VoidPointer: { //void * 
     print("(Pointer)");
     break;
    }
-   case QSArgument::Variant: {
+   case QSArgument::Variant: { //Variant - simple type.
     QVariant v=ret.variant();
     print(v.toString());
     break;
    }
    default: { 
-    //Invalid - print nothing
-    //print("(?)");
+    //Invalid - print nothing (void, etc ...)
    }
   }
  }
@@ -286,6 +287,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), prop, SLOT(setObject(IProperty*)));
+ QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), this, SLOT(setObject(IProperty*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
 
@@ -337,7 +339,17 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  prop->setObject(0);//fill with demonstration properties
 }
 
-/** Called when any settings are updated (in script, option editor, etc ...) */
+/** Called upon selecting object in treeview
+ @param obj Object that was selected
+*/
+void PdfEditWindow::setObject(IProperty* obj) {
+ item=obj;
+ //TODO: what about other object types?
+}
+
+/** Called when any settings are updated (in script, option editor, etc ...)
+ @param key Key of setting that was updated
+ */
 void PdfEditWindow::settingUpdate(QString key) {
  printDbg(debug::DBG_DBG,"Settings observer: " << key);
  if (key.startsWith("toolbar/")) { //Show/hide toolbar
@@ -399,7 +411,6 @@ Save currently edited document to disk, using provided filename
  */
 bool PdfEditWindow::saveAs(const QString &name) {
  assert(document);
- //TODO: what is returned from CPDF::save()?
  document->save(name);
  //TODO: if failure saving return false;
  setFileName(name);
@@ -414,10 +425,11 @@ void PdfEditWindow::setFileName(const QString &name) {
  fileName=name;
  if (name.isNull()) { //No name
   setCaption(QString(APP_NAME));
+  baseName=QString::null;
   return;
  }
  //Add name of file without path to window title
- QString baseName=name;
+ baseName=name;
  baseName.replace(QRegExp("^.*/"),"");
  setCaption(QString(APP_NAME)+" - "+baseName);
 }
@@ -445,9 +457,9 @@ void PdfEditWindow::openFile(const QString &name) {
  document=CPdf::getInstance(name,mode);
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
- tree->init(document);
- print(tr("Loaded file")+" : "+name);
  setFileName(name);
+ tree->init(document,baseName);
+ print(tr("Loaded file")+" : "+name);
 }
 
 /** Opens new empty file in editor. */

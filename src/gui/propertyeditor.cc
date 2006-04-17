@@ -11,10 +11,12 @@ PropertyEditor - widget for editing properties of selected object
 #include <qscrollview.h>
 #include <qstringlist.h>
 #include <qlabel.h>
+#include "pdfutil.h"
 
 namespace gui {
 
 using namespace std;
+using namespace util;
 
 /** Default constructor of property editor.
  On creation, no object is assigned to editor
@@ -199,6 +201,7 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
   }
   if (!nObjects) { //No subproperties
    setObject(tr("This object does not have any directly editable properties"));
+   //TODO: diplay object type
   }
   grid->update();
  } else if (pdfObject->getType()==pArray) {	//Object is CArray
@@ -214,7 +217,7 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
    setObject(tr("This object does not have any directly editable properties"));
   }
  } else { //Simple or unknown type
-  setObject(tr("This type of object does not have any properties"));
+  setObject(tr("This type of object does not have any properties")+" ("+getTypeName(pdfObject)+")");
  }
  setUpdatesEnabled( TRUE );
 }

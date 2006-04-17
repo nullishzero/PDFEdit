@@ -18,6 +18,7 @@ public:
  QListView* tree();
  void add(TreeItem *it);
  void remove(TreeItem *it);
+ void remove(const QString &ref);
  TreeItem* find(const QString &ref);
  void clear();
 private:

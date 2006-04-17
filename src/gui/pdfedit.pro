@@ -56,8 +56,8 @@ HEADERS += helpwindow.h
 SOURCES += helpwindow.cc
 
 #Tree window
-HEADERS += treeitem.h  treewindow.h  treedata.h
-SOURCES += treeitem.cc treewindow.cc treedata.cc 
+HEADERS += treeitempage.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.h
+SOURCES += treeitempage.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc 
 
 #Property editor
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  refproperty.h

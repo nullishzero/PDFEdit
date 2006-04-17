@@ -21,6 +21,7 @@ using namespace std;
 StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"stringproperty_edit");
+ setFocusProxy(ed);
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
  connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));
  connect(ed,SIGNAL(textChanged(const QString&)),this,SLOT(enableChange(const QString&)));

@@ -25,6 +25,7 @@ using namespace std;
 RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"RefProperty_edit");
+ setFocusProxy(ed);
  pb=new QPushButton("..",this,"refproperty_pickbutton");
  ed->setValidator(new RefValidator(ed));
  //light yellow
@@ -73,16 +74,50 @@ RefProperty::~RefProperty() {
  delete pb;
 }
 
+ //TODO: move to pdfutils?
+/** Check for validity of reference - if ref is valid reference (have target) in given CPdf
+ @param pdf pdf to check for reference
+ @param ref Indirect reference to check
+ @return true if given reference target exists in given pdf, false otherwise
+*/
+bool isRefValid(CPdf *pdf,IndiRef ref) {
+ CXref *cxref=pdf->getCXref();
+ Ref _val;//TODO: why there is no knowsRef(IndiRef) ?
+ _val.num=ref.num;
+ _val.gen=ref.gen;
+ if (!cxref->knowsRef(_val)) { //ref not valid
+  printDbg(debug::DBG_DBG,"Unknown reference!");
+  return false;
+ }
+ return true;
+}
+
 /** write internal value to given PDF object
  @param pdfObject Object to write to
  */
 void RefProperty::writeValue(IProperty *pdfObject) {
- CRef* obj=(CRef*)pdfObject;
- IndiRef val;
+ CRef *obj=(CRef*)pdfObject;
  QStringList ref=QStringList::split(",",ed->text());
  assert(ref.count()==2);
+ IndiRef val;
  val.num=ref[0].toInt();
  val.gen=ref[1].toInt();
+
+/* CPdf *pdf=obj->getPdf();
+ CXref *cxref=pdf->getCXref();
+ Ref _val;//TODO: why there is no knowsRef(IndiRef) ?
+ _val.num=val.num;
+ _val.gen=val.gen;
+ if (!cxref->knowsRef(_val)) {
+  printDbg(debug::DBG_DBG,"Unknown reference!");
+  ed->setFocus();
+  return; //reference not valid ->" nothing written
+ }*/
+ //Check reference validity
+ if (!isRefValid(obj->getPdf(),val)) {
+  ed->setFocus();
+  return;
+ }
  obj->writeValue(val);
  changed=false;
 }

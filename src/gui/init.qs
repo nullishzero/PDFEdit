@@ -35,9 +35,13 @@ function func_saveas() {
 
 //Load from menu/toolbar
 function func_load() {
- if (!closeFile(true,true)) return;
- var name=fileOpenDialog();
- if (name) openFile(name);
+ try {
+  if (!closeFile(true,true)) return;
+  var name=fileOpenDialog();
+  if (name) openFile(name);
+ } catch (e) {
+  print("Error occured while loading file");
+ }
 }
 
 //Load from menu/toolbar

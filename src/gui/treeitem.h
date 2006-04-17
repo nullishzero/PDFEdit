@@ -12,6 +12,8 @@ using namespace pdfobjects;
 class TreeData;
 class TreeWindow;
 
+class TreeItemObserver;//internal class (observer)
+
 class TreeItem : public QListViewItem {
 public:
  TreeItem* parent();
@@ -22,6 +24,12 @@ public:
  QString getRef();
  virtual void setOpen(bool open);
  void unOpen();
+ void reloadSelf();
+ void reloadData();
+ bool isComplete();
+private:
+ void initObserver();
+ void uninitObserver();
 private:
  TreeItem* parentCheck();
  void init(IProperty *pdfObj,const QString name);
@@ -36,8 +44,10 @@ private:
  QString selfRef;
  /** Parent of this window if it is TreeItem. NULL if no parent or parent is not a TreeItem */
  TreeItem *_parent;
- /** Data frojm treewindow containing reference to it and other needed data */
+ /** Data from treewindow containing reference to it and other needed data */
  TreeData *data;
+ /** Observer registered for this item */
+ boost::shared_ptr<TreeItemObserver> observer;
 };
 
 } // namespace gui

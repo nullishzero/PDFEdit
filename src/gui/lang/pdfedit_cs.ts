@@ -147,6 +147,22 @@
         <source>&quot; already exists. Overwrite?</source>
         <translation>&quot; již existuje. Přepsat?</translation>
     </message>
+    <message>
+        <source>PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dictionary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -334,6 +350,10 @@
     <message>
         <source>Current file is not saved. Do you want to save it?</source>
         <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
+    </message>
+    <message>
+        <source>Unknown exception in script occured</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

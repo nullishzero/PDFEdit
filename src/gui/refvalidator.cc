@@ -21,7 +21,7 @@ QRegExp ivalid("(\\d+)?,?(\\d+)?");
 RefValidator::RefValidator(QObject *parent,const char *name/*=0*/) : QValidator(parent,name) {
 }
 
-/** Try to "fix" the string to be validates
+/** Try to "fix" the string to be valid
  @param input String to fix (reference)
 */
 void RefValidator::fixup(QString &input) const {
@@ -35,6 +35,7 @@ void RefValidator::fixup(QString &input) const {
 QValidator::State RefValidator::validate(QString &input,int &pos) const {
  if (valid.exactMatch(input)) {
   //TODO: validate with PDF -> if (!validRef) return Intermediate;
+  //TODO: may be slow, if slow, validate before write
   //TODO: use CXRef from Cpdf for this
   return Acceptable;
  }

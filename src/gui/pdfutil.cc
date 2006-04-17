@@ -1,10 +1,11 @@
 /** @file
- Various utility functions related to kernel
+ Various utility functions related to kernel and pdf objects
 */
 #include "pdfutil.h"
 #include <qstring.h>
 #include <qobject.h>
 #include <cobject.h>
+#include <cpdf.h>
 
 namespace util {
 
@@ -38,6 +39,14 @@ QString getTypeName(PropertyType typ) {
  return "?";
 }
 
+/** Return human-readable (and possibly localized) name of given object's type
+ @param typ Object
+ @return Human readable type name
+ */
+QString getTypeName(IProperty *obj) {
+ return getTypeName(obj->getType());
+}
+
 /** Get value (rerference target) of CRef
  @param CRef reference object
 */
@@ -46,6 +55,23 @@ IndiRef getRef(IProperty *ref) {
  IndiRef iref;
  ((CRef*)ref)->getPropertyValue(iref);
  return iref;
+}
+
+/** Check for validity of reference - if ref is valid reference (have target) in given CPdf
+ @param pdf pdf to check for reference
+ @param ref Indirect reference to check
+ @return true if given reference target exists in given pdf, false otherwise
+*/
+bool isRefValid(CPdf *pdf,IndiRef ref) {
+ CXref *cxref=pdf->getCXref();
+ Ref _val;//TODO: why there is no knowsRef(IndiRef) ?
+ _val.num=ref.num;
+ _val.gen=ref.gen;
+ if (!cxref->knowsRef(_val)) { //ref not valid
+  printDbg(debug::DBG_DBG,"Unknown reference!");
+  return false;
+ }
+ return true;
 }
 
 } // namespace util
