@@ -23,6 +23,7 @@
 #include <xpdf/Page.h>
 #include <xpdf/TextOutputDev.h>
 #include <xpdf/GlobalParams.h>
+#include <xpdf/Catalog.h>
 
 #endif // _XPDF_H_
 

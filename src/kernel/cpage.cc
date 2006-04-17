@@ -95,28 +95,42 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
 	// variable builtinFonts which causes that globalParams can NOT be nested
 	assert (NULL == globalParams);
-	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (""));
+	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
-	// Create xpdf object representing page
-	boost::scoped_ptr<Object> obj (dictionary->_makeXpdfObject());
 	
-	// Check its dictionary
-	assert (objDict == obj->getType ());
-	if (objDict != obj->getType ())
+	// Get xref
+	assert (NULL != dictionary->getPdf ());
+	if (NULL == dictionary->getPdf ())
 		throw XpdfInvalidObject ();
+	XRef* xref = dictionary->getPdf()->getCXref ();
+	assert (NULL != xref);
 	
-	// Get its dictionary
-	Dict* dict = obj->getDict ();
-	assert (NULL != dict);
+	// Create xpdf object representing CPage
+	boost::scoped_ptr<Object> xpdfPage (dictionary->_makeXpdfObject());
+	// Check page dictionary
+	assert (objDict == xpdfPage->getType ());
+	if (objDict != xpdfPage->getType ())
+		throw XpdfInvalidObject ();
+	// Get page dictionary
+	Dict* xpdfPageDict = xpdfPage->getDict ();
+	assert (NULL != xpdfPageDict);
+	
+	//
 	// Create default page attributes and make page
 	// ATTRIBUTES are deleted in Page destructor
-	Page page (dictionary->getPdf()->getCXref(), 0, dict, new PageAttrs (NULL, dict));
+	// 
+	Page page (xref, 0, xpdfPageDict, new PageAttrs (NULL, xpdfPageDict));
+	// Create catalog
+	scoped_ptr<Catalog> xpdfCatalog (new Catalog (xref));
 	// Page object display (..., useMediaBox, crop, links, catalog)
-	page.display (&out, hDpi, vDPI, rotate, gTrue, gFalse, NULL, NULL);
+	page.display (&out, hDpi, vDPI, rotate, gTrue, gFalse, NULL, xpdfCatalog.get());
 	
+	//
+	// Cleanup
+	//
 	// Free object
-	obj->free ();
+	xpdfPage->free ();
 	// Set global variable back to null
 	globalParams = oldGlobPar;
 }
