@@ -72,7 +72,7 @@ Dict * Dict::clone()const
    // initializes
    result->size=size;
    result->length=length;
-   result->entries=(DictEntry *)greallocn(entries, size, sizeof(DictEntry));
+   result->entries=(DictEntry *)gmallocn(size, sizeof(DictEntry));
    for(int i=0; i < length; i++)
    {
       result->entries[i].key=strdup(entries[i].key);   
