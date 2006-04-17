@@ -67,7 +67,7 @@ mediabox (ostream& oss, const char* fileName)
 	obj.free ();
 	oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
 
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (TESTPDFFILE));
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
 	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, IndiRef ()));
 	obj.free ();
 	
@@ -111,12 +111,11 @@ position (ostream& oss, const char* fileName)
 	
 }
 
+//=====================================================================================
+
 void
 opcount (ostream& oss, const char* fileName)
 {
-
-	CPdf pdf;
-	
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	int pagesNum = 1;
 	
@@ -152,11 +151,46 @@ opcount (ostream& oss, const char* fileName)
 }
 
 //=====================================================================================
+
+void
+display (ostream& oss, const char* fileName)
+{
+	oss << "display" << endl;
+	
+	// Open pdf and get the first page	
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+
+
+  	//TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
+  	TextOutputDev textOut ("1.txt", gFalse, gFalse, gFalse);
+	if (!textOut.isOk ())
+		throw;
+	
+	//
+	// Output to file
+	//
+	oss << "Creating 1.txt which contains text from a pdf." << endl;
+	page->displayPage (textOut);
+	
+	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (""));
+	GlobalParams* oldGlobPar = globalParams;
+	globalParams = aGlobPar.get();
+
+	oss << "Output from textoutputdevice." << endl;
+	oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
+
+	globalParams = oldGlobPar;
+}
+
+				
+
+//=====================================================================================
 void cpage_tests(int , char **)
 {
-	//TEST(" test 4.1 -- features");
-	//mediabox (OUTPUT, TESTPDFFILE);
-	//OK_TEST;
+	TEST(" test 4.1 -- features");
+	mediabox (OUTPUT, TESTPDFFILE);
+	OK_TEST;
 
 	TEST(" test 4.2-- opcount");
 	opcount (OUTPUT, TESTPDFFILE);
@@ -164,6 +198,10 @@ void cpage_tests(int , char **)
 
 	TEST(" test 4.3-- getPosition");
 	position (OUTPUT, TESTPDFFILE);
+	OK_TEST;
+
+	TEST(" test 4.4-- display");
+	display (OUTPUT, TESTPDFFILE);
 	OK_TEST;
 
 }
