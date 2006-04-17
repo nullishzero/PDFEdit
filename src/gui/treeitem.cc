@@ -214,7 +214,7 @@ public:
   parent=0;
  }
  /** Notification function called by changing property */
- virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const {
+ virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw() {
   if (!parent) {
    //Should never happen
    printDbg(debug::DBG_ERR,"BUG: Kernel is holding observer for item already destroyed");
@@ -225,11 +225,11 @@ public:
   parent->reloadSelf();
  }
  /** Priority of this observer */
- virtual priority_t getPriority()const {
+ virtual priority_t getPriority() const throw(){
   return 0;//TODO: what priority?
  }
  /** Descructor */
- virtual ~TreeItemObserver(){
+ virtual ~TreeItemObserver() throw(){
  };
 private:
  /** Parent object holding observer property*/
