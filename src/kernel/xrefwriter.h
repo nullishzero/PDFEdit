@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/17 19:53:34  hockm0bm
+ * documentation update
+ *
  * Revision 1.11  2006/04/13 18:08:49  hockm0bm
  * * releaseObject method removed
  * * readOnly mode removed - makes no sense in here
@@ -281,6 +284,8 @@ public:
 	 *
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
+	 * @throw ElementBadTypeException if mode is paranoid and paranoidCheck
+	 * method fails for obj.
 	 */ 
 	void changeObject(int num, int gen, ::Object * obj);
 
