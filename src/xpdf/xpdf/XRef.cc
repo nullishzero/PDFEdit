@@ -315,7 +315,7 @@ Guint XRef::getStartXref() {
   // calculates eofPos from position in buffer
   // sets position to %%EOF start from buffer begining
   // which starts at xrefSearchSize from the end of stream
-  str->setPos(xrefSearchSize+i, -1);
+  str->setPos(xrefSearchSize-i, -1);
   eofPos=str->getPos();
 
   return lastXRefPos;
