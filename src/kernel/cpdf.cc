@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/04/17 20:11:47  hockm0bm
+ * * OpenMode reorganized
+ *         - ReadOnly is first now
+ *         - values are ordered according what everything can be done with file
+ * * getInstance corrected
+ *         - file is opened in append mode (r+) anytime mode is >=ReadWrite
+ *           (also for advanced - this didn't work in previous version)
+ *
  * Revision 1.27  2006/04/15 08:01:32  hockm0bm
  * * pdfFile field removed
  *         - we are using transparent StreamWriter now
@@ -1061,9 +1069,10 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	
 	// openMode is read-only by default
 	const char * openMode="r";
-	// if mode is ReadWrite, set to read-write mode starting at the 
+	
+	// if mode is ReadWrite or higher, set to read-write mode starting at the 
 	// begining.
-	if(mode == ReadWrite)
+	if(mode >= ReadWrite)
 		openMode="r+";
 
 	// opens file and creates (xpdf) FileStream

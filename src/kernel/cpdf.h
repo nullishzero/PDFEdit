@@ -6,6 +6,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.31  2006/04/17 20:11:47  hockm0bm
+ * * OpenMode reorganized
+ *         - ReadOnly is first now
+ *         - values are ordered according what everything can be done with file
+ * * getInstance corrected
+ *         - file is opened in append mode (r+) anytime mode is >=ReadWrite
+ *           (also for advanced - this didn't work in previous version)
+ *
  * Revision 1.30  2006/04/15 08:01:32  hockm0bm
  * * pdfFile field removed
  *         - we are using transparent StreamWriter now
@@ -214,8 +222,12 @@ public:
 	 * <li>ReadWrite - content of PDF can be changed.
 	 * <li>ReadOnly - content can't be changed.
 	 * </ul>
+	 * Values are placed according power of making changes. ReadOnly provides no
+	 * changes, ReadWrite can change objects byt with some restrictions and
+	 * Advanced have full control. If you want to add new enum value please
+	 * consider this ordering.  
 	 */
-	enum OpenMode {Advanced, ReadWrite, ReadOnly};
+	enum OpenMode {ReadOnly, ReadWrite, Advanced};
 	
 protected:
 
