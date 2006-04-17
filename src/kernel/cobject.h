@@ -31,6 +31,7 @@ namespace pdfobjects {
 //
 class NoMemChecker;
 class BasicMemChecker;
+class CXRef;
 		
 	
 /**
@@ -1101,10 +1102,11 @@ getAllNames (T& container, const typename PropertyTraitComplex<pDict>::value& st
  * Create xpdf object from string.
  *
  * @param str String that should represent an xpdf object.
+ * @param xref Xref of actual pdf if any.
  *
  * @return Xpdf object whose string representation is in str.
  */
-Object* xpdfObjFromString (const std::string& str);
+Object* xpdfObjFromString (const std::string& str, XRef* xref = NULL);
 
 
 /**

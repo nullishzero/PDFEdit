@@ -14,6 +14,7 @@
 //
 #include "factories.h"
 #include "cobject.h"
+#include "cxref.h"
 
 
 // =====================================================================================
@@ -869,8 +870,11 @@ simpleValueFromString (const std::string& str, IndiRef& val)
 }
 
 
+//
+//
+//
 Object*
-xpdfObjFromString (const std::string& str)
+xpdfObjFromString (const std::string& str, XRef* xref)
 {
 
 	printDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
@@ -888,12 +892,12 @@ xpdfObjFromString (const std::string& str)
 	char* pStr = new char [len + 1];
 	strncpy (pStr, str.c_str(), len + 1);
 					
-	scoped_ptr<Parser> parser	(new Parser (NULL, 
-										  new Lexer (NULL, 
+	scoped_ptr<Parser> parser	(new Parser (xref, 
+										  new Lexer (xref, 
 													 new MemStream (pStr, 0, len, dct.get())
 													 )
-										) 
-							);
+											) 
+								);
 	//
 	// Get xpdf obj from the stream
 	//

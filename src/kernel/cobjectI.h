@@ -347,7 +347,10 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 	std::string rpr;
 	getStringRepresentation (rpr);
 
-	return utils::xpdfObjFromString (rpr);
+	if (NULL != IProperty::getPdf())
+		return utils::xpdfObjFromString (rpr, IProperty::getPdf()->getCXref());
+	else
+		return utils::xpdfObjFromString (rpr);
 }
 
 

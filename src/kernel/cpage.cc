@@ -85,7 +85,41 @@ CPage::setMediabox (const Rectangle& rc)
 	setDoubleInArray (mbox, 3, rc.yright);
 }
 
-
+//
+// Display a page
+//
+void
+CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) const
+{
+	// Xpdf Global variable TFUJ!!!
+	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
+	// variable builtinFonts which causes that globalParams can NOT be nested
+	assert (NULL == globalParams);
+	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (""));
+	GlobalParams* oldGlobPar = globalParams;
+	globalParams = aGlobPar.get();
+	// Create xpdf object representing page
+	boost::scoped_ptr<Object> obj (dictionary->_makeXpdfObject());
+	
+	// Check its dictionary
+	assert (objDict == obj->getType ());
+	if (objDict != obj->getType ())
+		throw XpdfInvalidObject ();
+	
+	// Get its dictionary
+	Dict* dict = obj->getDict ();
+	assert (NULL != dict);
+	// Create default page attributes and make page
+	// ATTRIBUTES are deleted in Page destructor
+	Page page (dictionary->getPdf()->getCXref(), 0, dict, new PageAttrs (NULL, dict));
+	// Page object display (..., useMediaBox, crop, links, catalog)
+	page.display (&out, hDpi, vDPI, rotate, gTrue, gFalse, NULL, NULL);
+	
+	// Free object
+	obj->free ();
+	// Set global variable back to null
+	globalParams = oldGlobPar;
+}
 
 // =====================================================================================
 } /* namespace pdfobjects */

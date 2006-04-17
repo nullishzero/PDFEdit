@@ -189,6 +189,28 @@ public:
 		contentstream->getOperatorsAtPosition (opContainer, cmp, state);
 	}
 
+	/**
+	 * Draw page on an output device.
+	 *
+	 * @param out Output device.
+ 	 * @param hDpi Horizontal dpi.
+	 * @param vDpi Vertival dpi.
+	 * @param rotata Rotation.
+	 */
+	void displayPage (	::OutputDev& out, 
+						double hDpi = DEFAULT_HDPI, 
+						double vDPI = DEFAULT_VDPI,
+						int rotate = DEFAULT_ROTATE
+						) const;
+	
+
+
+
+
+
+
+
+//========================= unimplemented yet
 	
 	/**  
 	 * Returns plain text extracted from a page.

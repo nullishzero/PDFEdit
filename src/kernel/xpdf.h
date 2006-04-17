@@ -20,6 +20,9 @@
 #include <xpdf/GfxState.h>
 #include <xpdf/GfxFont.h>
 #include <xpdf/ErrorCodes.h>
+#include <xpdf/Page.h>
+#include <xpdf/TextOutputDev.h>
+#include <xpdf/GlobalParams.h>
 
 #endif // _XPDF_H_
 
