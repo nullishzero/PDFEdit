@@ -30,6 +30,8 @@
 #include "menu.h"
 #include "commandwindow.h"
 
+#include "GlobalParams.h"
+
 namespace gui {
 
 using namespace std;

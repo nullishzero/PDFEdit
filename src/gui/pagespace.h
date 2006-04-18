@@ -19,7 +19,7 @@ class PageSpace : public QWidget {
 	public:
 		PageSpace (QWidget *parent=0, const char *name=0);
 		virtual ~PageSpace ( );
-		void convertPixmapPosToPdfPos( const QPoint & pos, QPoint & pdfPos );
+		void convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos );
 	public slots:
 void refresh1(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani

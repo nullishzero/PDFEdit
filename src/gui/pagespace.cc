@@ -5,6 +5,10 @@
 #include <qstring.h>
 #include <qpixmap.h>
 #include "cpage.h"
+#include "static.h"
+#include "QOutputDevPixmap.h"
+
+// using namespace std;
 
 namespace gui {
 
@@ -19,7 +23,7 @@ void Init( initStruct * is, const QString & s ) {
 
 QString PAGESPC = "gui/PageSpace/";
 QString ICON = "icon/";
-QString format = "x:%d y:%d";
+QString format = "x:%'.2f y:%'.2f";
 
 PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
 	initStruct is;
@@ -165,16 +169,50 @@ void PageSpace::refresh1(/* CPage * = NULL*/) {
 void PageSpace::refresh2(/* CPage * = NULL*/) {
 	newPageView( *r2 );
 }
+#define splashMakeRGB8(to, r, g, b) \
+	  (to[3]=0, to[2]=((r) & 0xff) , to[1]=((g) & 0xff) , to[0]=((b) & 0xff) )
 
 void PageSpace::refresh ( /* QSPdf * pdf,*/ QSPage * pageToView ) {		// if pageToView is NULL, refresh actual page
 								// if pageToView == actualPage  refresh is not need
+printf("1---------------------\n");
 	if ((pageToView != NULL) && (actualPage != pageToView)) {
+printf("2---------------------\n");
 		delete actualPage;
 		actualPage = new QSPage( pageToView->get() );
 //		pageNumber->setNum( 0/*(int) pageToView->getPageNumber()*/ );//MP: po zmene kernelu neslo zkompilovat (TODO)
 //		actualSelectedObject = NULL;
+//-		if (actualPage != NULL) {
+//-printf("3");
+//-			delete actualPage;
+//-		}
+//-printf("4");
+//-		actualPage = new QSPage( pageToView->get() );
+printf("5---------------------\n");
+		actualSelectedObjects = NULL;
+printf("6---------------------\n");
+//		pageNumber->setNum( actualPage->getDictionary()->getPdf()->getPagePosition( actualPage )  );
+
+		SplashColor paperColor;
+printf("7---------------------\n");
+		splashMakeRGB8(paperColor, 0xff, 0xff, 0xff);
+printf("8---------------------\n");
+		QOutputDevPixmap * output = new QOutputDevPixmap( paperColor );
+printf("9---------------------\n");
+		
+		actualPage->get()->displayPage( * output );
+printf("a---------------------\n");
+		delete r2;
+printf("b---------------------\n");
+		r2 = new QPixmap( output->getImage() );
+printf("c---------------------\n");
+		newPageView( *r2 );
+printf("d---------------------\n");
+
+		delete output;
+printf("e---------------------\n");
+
 		/* TODO ziskat pixmap z CPage a ulozit ju do actualPagePixmap*/
-		/**/ refresh1( );
+//		/**/ refresh1( );
 	} else {
 		if ((actualPage == NULL) || (pageToView != NULL))
 			return ;		// no page to refresh or refresh actual page is not need
@@ -185,6 +223,7 @@ void PageSpace::refresh ( /* QSPdf * pdf,*/ QSPage * pageToView ) {		// if pageT
 	/* TODO zobrazenie aktualnej stranky*/
 	/* newPageView( *actualPagePixmap ); */
 }
+#undef splashMakeRGB8
 
 void PageSpace::keyPressEvent ( QKeyEvent * e ) {
 	switch ( e->key() ) {
@@ -198,7 +237,21 @@ void PageSpace::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void PageSpace::newSelection ( const QRect & r) {
-	// TODO
+	// TODO napr. zoom
+	std::vector<boost::shared_ptr<PdfOperator> > ops;
+
+	if (actualPage != NULL) {
+		if ( r.topLeft() == r.bottomRight() ) {
+			Point p;
+			convertPixmapPosToPdfPos( r.topLeft(), p );
+			actualPage->get()->getObjectsAtPosition( ops, Point( p.x, p.y ) );
+		} else {
+			Point p1, p2;
+			convertPixmapPosToPdfPos( r.topLeft(), p1 );
+			convertPixmapPosToPdfPos( r.bottomRight(), p2 );
+			actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
+		}
+	}
 }
 void PageSpace::requirementPopupMenu ( const QPoint & globalPos, const QRect & r) {
 	// TODO
@@ -215,16 +268,25 @@ void PageSpace::resizeSelection ( const QRect &, const QRect & ) {
 	// TODO
 }
 
-void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, QPoint & pdfPos ) {
-	pdfPos.setX( pos.x() );
-	pdfPos.setY( -pos.y() );
+void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
+	if (actualPage == NULL) {
+		pdfPos.x = 0;
+		pdfPos.y = 0;
+		return ;
+	}
+//	pdfPos.setX( pos.x() );
+//	pdfPos.setY( -pos.y() );
+	Rectangle mediaBox;
+	pdfPos.x = pos.x();
+	mediaBox = actualPage->get()->getMediabox();
+	pdfPos.y = mediaBox.yright - pos.y();
 }
 
 void PageSpace::showMousePosition ( const QPoint & pos ) {
 	QString pom;
-	QPoint pdfPagePos;
+	Point pdfPagePos;
 	convertPixmapPosToPdfPos( pos, pdfPagePos );
-	pom = pom.sprintf( format, pdfPagePos.x(), pdfPagePos.y() );
+	pom = pom.sprintf( format, pdfPagePos.x, pdfPagePos.y );
 	mousePositionOnPage->setText( pom );
 }
 

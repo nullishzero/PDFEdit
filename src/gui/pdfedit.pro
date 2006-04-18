@@ -36,7 +36,7 @@ POST_TARGETDEPS = menugenerator
 unix:LIBS       += -lqsa
 
 #include headers from kernel and used by kernel
-INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel
+INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
 
 #must be specified, otherwise namespace debug will clash with debug() in QT
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
@@ -87,6 +87,12 @@ HEADERS += .menu-trans.h
 
 #Kernel objects - now using library
 LIBS += -lkernel -L../kernel
+
+#OutputDevice
+LIBS += -lt1
+LIBS += -lqoutputdevices -L../kpdf-kde-3.3.2
+LIBS += -lpokus -L../kpdf-kde-3.3.2
+LIBS += -lsplash -L../xpdf/splash
 
 #Translations
 DEPENDPATH += lang
