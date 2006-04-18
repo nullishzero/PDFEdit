@@ -34,9 +34,10 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  history = new QComboBox( this );
  history->setLineEdit( cmd );
  history->setEditable( true );
- history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) );
+ history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
  loadHistory();
- history->setInsertionPolicy( QComboBox::AtTop );
+// history->setInsertionPolicy( QComboBox::AtTop );
+ history->setInsertionPolicy( QComboBox::NoInsertion );
  cmd->setText( "" );			//clear commandline
 // history->setAutoCompletion( true );
 //todo: subclass qlineedit, add history ... 
@@ -50,6 +51,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 void CommandWindow::setHistorySize( int historySize ){
 	printDbg(debug::DBG_DBG,"Write historySize");
 	globalSettings->write( CMD + HISTORYSIZE, historySize );
+	history->setMaxCount( historySize + 1 );
 }
 void CommandWindow::setHistoryFile( const QString & historyFile ){
 	printDbg(debug::DBG_DBG,"Write historyFile");
@@ -67,8 +69,12 @@ void CommandWindow::loadHistory() {
 			history->insertItem( line );
 		}
 		file.close();
+		if (history->text( 0 ) != "") {
+			history->insertItem("",0);
+		}
 		return ;
 	}
+	history->insertItem("");
 	printDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
 }
 /** Save current command history */
@@ -87,9 +93,11 @@ void CommandWindow::saveHistory() {
 }
 /** Execute and clear current command */
 void CommandWindow::execute() {
- QString command=cmd->text();
+ QString command = cmd->text();
 // addCommand(command);			//add to console
  cmd->setText("");			//clear commandline
+ history->insertItem( command, 1 );
+ history->setCurrentItem(-1);
  emit commandExecuted(command);		//execute command via signal
 }
 
