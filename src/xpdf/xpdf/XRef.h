@@ -139,7 +139,7 @@ protected:
   int encVersion;		// encryption algorithm
 
   // inits all internal structures which may change
-  void initInternals();
+  void initInternals(Guint pos);
 
   // destroy all internal structures which may be reinitialized
   void destroyInternals();

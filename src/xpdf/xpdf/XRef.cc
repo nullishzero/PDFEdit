@@ -193,12 +193,18 @@ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
 XRef::XRef(BaseStream *strA) {
   // inits stream and initializes internals
   str = strA;
-  initInternals();
+  // gets position of last xref section
+  Guint pos = getStartXref();
+  initInternals(pos);
 }
 
-void XRef::initInternals()
+/** Initializes all XRef internal structures.
+ * @param pos Position of xref table.
+ *
+ * Assumes that str field is already initialized.
+ */
+void XRef::initInternals(Guint pos)
 {
-  Guint pos;
   Object obj;
 
   ok = gTrue;
@@ -215,7 +221,6 @@ void XRef::initInternals()
 
   // read the trailer
   start = str->getStart();
-  pos = getStartXref();
 
   // if there was a problem with the 'startxref' position, try to
   // reconstruct the xref table
