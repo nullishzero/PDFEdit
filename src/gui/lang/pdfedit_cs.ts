@@ -175,6 +175,52 @@
         <source>&amp;Close</source>
         <translation>Zavřít</translation>
     </message>
+    <message>
+        <source>Invalid %1 in config:
+Name: %2
+Data: %3
+</source>
+        <translation>Chybná položka typu %1 v konfiguraci:
+Jméno: %2
+Data: %3
+</translation>
+    </message>
+    <message>
+        <source>Expected: </source>
+        <translation>Očekáváno: </translation>
+    </message>
+    <message>
+        <source>Missing item in config</source>
+        <translation>Chybějící položka v konfiguraci</translation>
+    </message>
+    <message>
+        <source>menu definition</source>
+        <translation>definice menu</translation>
+    </message>
+    <message>
+        <source>parameter (name of list)</source>
+        <translation>parametr (jméno seznamu)</translation>
+    </message>
+    <message>
+        <source>menu item</source>
+        <translation>položka menu</translation>
+    </message>
+    <message>
+        <source>2 or more parameters in item definition</source>
+        <translation>2 nebo více parametrů v definici položky</translation>
+    </message>
+    <message>
+        <source>toolbar item</source>
+        <translation>položka toolbaru</translation>
+    </message>
+    <message>
+        <source>4 parameters in item definition</source>
+        <translation>4 parametry v definici položky</translation>
+    </message>
+    <message>
+        <source>toolbar definition</source>
+        <translation>definice toolbaru</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>

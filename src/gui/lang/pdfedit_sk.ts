@@ -175,6 +175,49 @@
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid %1 in config:
+Name: %2
+Data: %3
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing item in config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>menu definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>parameter (name of list)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>menu item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2 or more parameters in item definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>toolbar item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>4 parameters in item definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>toolbar definition</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
