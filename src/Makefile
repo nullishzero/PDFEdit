@@ -1,5 +1,4 @@
 #makefile for PDF editor
-
 .PHONY: clean pdfedit kernel xpdf
 
 #make PDF editor - source and documentation
