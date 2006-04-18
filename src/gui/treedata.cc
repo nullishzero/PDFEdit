@@ -11,7 +11,7 @@ namespace gui {
 using namespace std;
 
 /** Constructor of TreeData
- @param _parent TreeWindow holding these data
+ @param parent TreeWindow holding these data
  @param tree Tree holding list items
 */
 TreeData::TreeData(TreeWindow *parent,QListView *tree) {
@@ -21,7 +21,7 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree) {
 
 /** Add TreeItem that holds a CRef into list
  Will do nothing on TreeItems that do not hold a CRef.
- @param it TreeItem
+ @param it TreeItem holding CRef
  */
 void TreeData::add(TreeItem *it) {
  QString ref=it->getRef();
@@ -34,7 +34,7 @@ void TreeData::add(TreeItem *it) {
 
 /** Remove TreeItem that holds a CRef from list
  Will do nothing on TreeItems that do not hold a CRef.
- @param it TreeItem
+ @param it TreeItem with reference to remove
  */
 void TreeData::remove(TreeItem *it) {
  remove(it->getRef());
@@ -42,7 +42,7 @@ void TreeData::remove(TreeItem *it) {
 
 /** Remove specific reference from the list
  (Useful to call after reference in object itself was changed to remove old reference))
- @param it TreeItem
+ @param ref Reference to remove
  */
 void TreeData::remove(const QString &ref) {
  if (ref.isNull()) return;

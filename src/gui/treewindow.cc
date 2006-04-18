@@ -33,7 +33,8 @@ private:
  /** Check if setting have changed, updating if necessary.
   If setting is changed, set dirty to true.
   @param key Setting to check
-  @param target Pointer to setting to check */
+  @param target Pointer to setting to check
+ */
  void check(bool &target,const QString &key) {
   bool tmp=globalSettings->readBool(key);
   if (target==tmp) return;
@@ -92,7 +93,12 @@ void TreeWindow::reloadFrom(TreeItem *item) {
  //TODO: implement
 }
 
-/** slot called when someone click with any mouse button in the tree*/
+/** Slot called when someone click with mouse button anywhere in the tree
+@param button Which button(s) are clicked (1=left, 2=right, 4=middle)
+@param item Which item is clicked upon (NULL if clicked outside item)
+@param coord Coordinates of mouseclick
+@param column Clicked in which item's column? (if clicked on item)
+*/
 void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column) {
  printDbg(debug::DBG_DBG,"Clicked in tree: " << button);
  if (button==4) { //Middle button
@@ -167,6 +173,7 @@ void TreeWindow::clear() {
 
 /** Init contents of treeview from given PDF document
  @param pdfDoc Document used to initialize treeview
+ @param fileName Name of PDF document (will be shown in treeview as name of root element)
  */
 void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  printDbg(debug::DBG_DBG,"Loading PDF into tree");

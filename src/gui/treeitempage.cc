@@ -16,7 +16,7 @@ using namespace pdfobjects;
 /** constructor of TreeItemPage - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListView in which to put item
- @param _pdf CPage Object contained in this item
+ @param _page CPage Object contained in this item
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
@@ -28,7 +28,7 @@ TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const 
 /** constructor of TreeItemPage - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListViewItem which is parent of this object
- @param _pdf CPage Object contained in this item
+ @param _page CPage Object contained in this item
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
@@ -38,7 +38,7 @@ TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListViewItem *parent,co
 }
 
 /** Initialize item from given CPage
- @param pdfObj Object used to initialize this item
+ @param page Object used to initialize this item
  @param name Name of this item - will be shown in treeview
  */
 void TreeItemPage::init(CPage *page,const QString &name) {
@@ -59,7 +59,7 @@ CPage* TreeItemPage::getObject() {
  return obj;
 }
 
-//TODO: item reloading?
+//TODO: item reloading? -> TreeItemAbstract
 
 /** default destructor */
 TreeItemPage::~TreeItemPage() {

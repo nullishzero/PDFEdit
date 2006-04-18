@@ -14,6 +14,7 @@ class QString;
 
 namespace gui {
 
+class PageSpace;
 class CommandWindow;
 class QSImporter;
 class QSPdf;
@@ -31,6 +32,7 @@ public:
  ~PdfEditWindow();
  int question_ync(const QString &msg);
 public slots: //These will be exported to scripting
+ void qfix();
  void run(QString scriptName);
  bool save();
  bool saveAs(const QString &name);
@@ -104,6 +106,8 @@ private:
  QString baseName;
  /** Menus and toolbars */
  Menu *menuSystem;
+ /** Page space - page view Widget*/
+ PageSpace *pagespc;
 };
 
 void createNewEditorWindow(const QString &fName=QString::null);

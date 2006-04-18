@@ -40,7 +40,7 @@ QString getTypeName(PropertyType typ) {
 }
 
 /** Return human-readable (and possibly localized) name of given object's type
- @param typ Object
+ @param obj Object to get type from (IProperty)
  @return Human readable type name
  */
 QString getTypeName(IProperty *obj) {
@@ -48,7 +48,7 @@ QString getTypeName(IProperty *obj) {
 }
 
 /** Get value (rerference target) of CRef
- @param CRef reference object
+ @param ref CRef reference object
 */
 IndiRef getRef(IProperty *ref) {
  assert(ref->getType()==pRef);

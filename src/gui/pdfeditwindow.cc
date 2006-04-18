@@ -230,6 +230,12 @@ void PdfEditWindow::runScript(QString script) {
  removeDocumentObjects();
 }
 
+/** QUICK FIX dirty debugging function */
+void PdfEditWindow::qfix() {
+ //TODO: remove ASAP
+ boost::shared_ptr<pdfobjects::CPage> pg=document->getFirstPage();
+ pagespc->refresh(new QSPage(pg));
+}
 
 /** Print given string to console, followed by newline
  @param str String to add
@@ -272,7 +278,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  splCmd->setOrientation(Vertical);
 
  //PageSpace
- PageSpace *pagespc = new PageSpace(splCmd,"PageSpace");
+ pagespc = new PageSpace(splCmd,"PageSpace");
 
  //Commandline
  cmdLine=new CommandWindow(splCmd);

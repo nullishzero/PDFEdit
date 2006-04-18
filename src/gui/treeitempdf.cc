@@ -52,9 +52,9 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString name,
  initSpec(parent->getObject(),name);
 }
 
-/** Initialize item from given PDF object
- @param pdfObj Object used to initialize this item
- @param name Name of this item - will be shown in treeview
+/** Initialize item from given CPdf object
+ @param pdf CPdf used to initialize this item
+ @param name Name of this item - will be shown in treeview (usually name of PDF file)
  */
 void TreeItemPdf::init(CPdf *pdf,const QString &name) {
  obj=pdf;
@@ -72,8 +72,8 @@ void TreeItemPdf::init(CPdf *pdf,const QString &name) {
  TreeItemPdf *outlines=new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),pages); 
 }
 
-/** Initialize item from given PDF object and expected type
- @param pdfObj Object used to initialize this item
+/** Initialize special PDF subitem from given CPdf object and its name (which defines also type of this item)
+ @param pdf CPdf used to initialize this item
  @param name Name of this item - will be shown in treeview
  */
 void TreeItemPdf::initSpec(CPdf *pdf,const QString &name) {
