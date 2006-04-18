@@ -9,7 +9,7 @@ pdfedit: kernel xpdf qoutputdevices
 	cd gui && qmake && make
 
 # QOutputDevices
-qoutputdevices:
+qoutputdevices: xpdf
 	cd kpdf-kde-3.3.2 && qmake && make staticlib
 
 # Kernel
