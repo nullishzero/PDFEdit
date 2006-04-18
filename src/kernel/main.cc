@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/04/18 14:18:14  misuj1am
+ *
+ *
+ * -- improved main
+ *
  * Revision 1.27  2006/04/16 23:09:34  misuj1am
  *
  *
@@ -66,6 +71,8 @@
 
 const char* PDF_TEST_FILE_NAME = "../../doc/zadani.pdf";
 
+#define NOTONLYMYTEST 0
+
 /**
  *  Test main
  */
@@ -76,7 +83,7 @@ main (int argc, char** argv)
 	const char * fileName=PDF_TEST_FILE_NAME;
 	
 	// checks if first parameter is real file and if so, overwrites fileName
-	if(argc>0)
+	if(argc>1)
 	{
 		const char * param=argv[1];
 		struct stat info;
@@ -84,13 +91,18 @@ main (int argc, char** argv)
 		{
 			// checks if it is regular file and if so, uses it
 			if(S_ISREG(info.st_mode))
+			{
 				fileName=param;
+				--argc;
+				//++argv;
+			}
 		}
 	}
 	
 	START_TEST;
 
 	// Test cobjects
+	#if NOTONLYMYTEST
 	cobject_tests (argc, argv);
 	MEM_CHECK;
 	
@@ -99,8 +111,9 @@ main (int argc, char** argv)
 	cpdf_tests(testCPdf);
 	testCPdf->close();
 	MEM_CHECK;
-
+	#endif
+	
 	// Test cpage
-	cpage_tests (argc, argv);
+	cpage_tests (argc, argv, fileName);
 	END_TEST;
 }
