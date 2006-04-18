@@ -1,3 +1,5 @@
 Makefile
 kernel.pro
 main.cc
+kernel
+kernel.gch
