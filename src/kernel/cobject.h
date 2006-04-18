@@ -550,13 +550,6 @@ public:
 	void delProperty (PropertyId id);
 
 
-	/**
-	 * Returns index of a property.
-	 *
-	 * @param ip Object for which we want to find out the position.
-	 */
-	PropertyId getPropertyId (const boost::shared_ptr<IProperty>& ip) const;
-
 	//
 	// Helper functions
 	//
@@ -1158,18 +1151,6 @@ inline boost::shared_ptr<IProperty>
 getIPropertyFromItem (PropertyTraitComplex<pArray>::value::value_type item) {return item;}
 inline boost::shared_ptr<IProperty>  
 getIPropertyFromItem (const PropertyTraitComplex<pDict>::value::value_type& item) {return item.second;}
-
-/**
- * Return property id from an container item. It can be either the name or the position.
- *
- * @param item Item of a container.
- * 
- * @return Property Id.
- */
-inline size_t
-getPropertyIdFromItem (PropertyTraitComplex<pArray>::value::value_type, size_t pos) {return pos;}
-inline PropertyTraitComplex<pDict>::propertyId  
-getPropertyIdFromItem (const PropertyTraitComplex<pDict>::value::value_type& item, size_t) {return item.first;}
 
 
 /**

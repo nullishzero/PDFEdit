@@ -603,25 +603,6 @@ CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 	return ip;
 }
 
-//
-//
-//
-template<PropertyType Tp, typename Checker>
-typename PropertyTraitComplex<Tp>::propertyId
-CObjectComplex<Tp,Checker>::getPropertyId (const boost::shared_ptr<IProperty>& ip) const
-{
-	printDbg (debug::DBG_DBG,"getPropertyId ()");
-
-	typename Value::const_iterator it = value.begin();
-	for (size_t i = 0; it != value.end(); ++it, ++i)
-	{
-		// Have we found the item
-		if (utils::getIPropertyFromItem (*it) == ip)
-			return utils::getPropertyIdFromItem (*it, i);
-	}
-
-	throw ElementNotFoundException ("", "");
-}
 
 //
 //
