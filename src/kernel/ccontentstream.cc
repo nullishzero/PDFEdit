@@ -5,8 +5,6 @@
  *         Created:  03/24/2006 10:33:34 PM CET
  *          Author:  jmisutka (), 
  * =====================================================================================
- *
- * \TODO: complex operators
  */
 
 // static
@@ -418,16 +416,6 @@ namespace
 	op (GfxState& state, const PdfOperator::Operands& args)
 	{
 	}
-	// ""
-	void
-	op (GfxState& state, const PdfOperator::Operands& args)
-	{
-	}
-	// ""
-	void
-	op (GfxState& state, const PdfOperator::Operands& args)
-	{
-	}
 */
 
 	//==========================================================
@@ -469,186 +457,199 @@ namespace
 		{ return setNthBitsShort (mask,mask1,mask2,mask3) | setNthBitsShort (mask4); }
 
 
-	//
-	// Known operators, it is copied from pdf BECAUSE it is
-	// a private member variable of a class and we do not have
-	// access to it
-	//
+
+	/** Maximum operator name length. */
+	const static size_t MAX_OPERATOR_NAMELEN = 4;
+
+	/**
+	 * Known operators, it is copied from pdf BECAUSE it is
+	 * a private member variable of a class and we do not have
+	 *  access to it
+	 */
 	typedef struct
 	{
-		const char 				name[4];				/** Operator name. */
-		const size_t			argNum;					/** Number of arguments operator should get. */
-		const unsigned short	types[MAX_OPERANDS];	/** Bits are representing what it should be. */
-		void (*update) (GfxState&, const PdfOperator::Operands& );/** Function to execute when updating position. */
+		char name[MAX_OPERATOR_NAMELEN];	/**< Operator name. */
+		int argNum;						 	/**< Number of arguments operator should get. */
+		unsigned short types[MAX_OPERANDS];	/**< Bits are representing what it should be. */
+		
+		/** Function to execute when updating position. */
+		void (*update) (GfxState&, const PdfOperator::Operands& );
+		
+		char endTag[MAX_OPERATOR_NAMELEN]; /**< If it is a complex type, its end tag.*/	
 		
 	} CheckTypes;
 
 	/**
 	 * All known operators.
 	 * 
+	 * Operator number can be either >0, zero, <0. Zero means no operands are
+	 * needed. >0 means that exact argNum of operands are needed. <0 means that
+	 * at most argNum operands are needed.
+	 *
+	 * Each item of types indicate which types we accept.
 	 */
 	const CheckTypes KNOWN_OPERATORS[] = {
 			{"\\",    3, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pString)}, 
-					opSlashUpdate},	
+					opSlashUpdate, "" },	
 			{"'",   1, {setNthBitsShort (pString)}, 
-					opApoUpdate},	
+					opApoUpdate, "" },	
 			{"B",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"B*",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"BDC", 2, {setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"BI",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"BMC", 1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"BT",  0, {setNoneBitsShort ()}, 
-					opBTUpdate},	
+					opBTUpdate, "" },	
 			{"BX",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"CS",  1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"DP",  2,	{setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"Do",  1, {setNthBitsShort (pName)}, 
-				   	unknownUpdate},	
+				   	unknownUpdate, "" },	
 			{"EI",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"EMC", 0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"ET",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"EX",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"F",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"G",   1, {setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"ID",  0, {setNoneBitsShort ()},
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"J",   1, {setNthBitsShort (pInt)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"K",   4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),
 					    setNthBitsShort (pInt, pReal),	setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"M",   1, {setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"MP",  1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"Q",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"RG",  3, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"S",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
-			{"SC",  4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+					unknownUpdate, "" },	
+			{"SC",  -4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),	setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
-  			{"SCN", 5,  {setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName), 
+					unknownUpdate, "" },	
+  			{"SCN", -5,  {setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName), 
 						 setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName), 
 						 setNthBitsShort (pInt, pReal, pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"T*",  0, {setNoneBitsShort ()}, 
-					opTstarUpdate},	
+					opTstarUpdate, "" },	
 			{"TD",  2, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					opTDUpdate},	
+					opTDUpdate, "" },	
 			{"TJ",  1, {setNthBitsShort (pArray)}, 
-					opTJUpdate},	
+					opTJUpdate, "" },	
 			{"TL",  1, {setNthBitsShort (pInt, pReal)}, 
-					opTLUpdate},	
+					opTLUpdate, "" },	
 			{"Tc",  1, {setNthBitsShort (pInt, pReal)}, 
-					opTcUpdate},	
+					opTcUpdate, "" },	
 			{"Td",  2, 	{setNthBitsShort (pInt, pReal),	setNthBitsShort (pInt, pReal)}, 
-					opTdUpdate},	
+					opTdUpdate, "" },	
 			{"Tf",  2, 	{setNthBitsShort (pName), setNthBitsShort (pInt, pReal)}, 
-					opTfUpdate},	
+					opTfUpdate, "" },	
 			{"Tj",  1, {setNthBitsShort (pString)}, 
-					opTjUpdate},	
+					opTjUpdate, "" },	
 			{"Tm",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					opTmUpdate},	
+					opTmUpdate, "" },	
 			{"Tr",  1, {setNthBitsShort (pInt)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"Ts",  1, {setNthBitsShort (pInt, pReal)}, 
-					opTsUpdate},	
+					opTsUpdate, "" },	
 			{"Tw",  1, {setNthBitsShort (pInt, pReal)}, 
-					opTwUpdate},	
+					opTwUpdate, "" },	
 			{"Tz",  1, {setNthBitsShort (pInt, pReal)}, 
-					opTzUpdate},	
+					opTzUpdate, "" },	
 			{"W",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"W*",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"b",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"b*",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
   			{"c",   6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					opcUpdate},	
+					opcUpdate, "" },	
   			{"cm",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"cs",  1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"d",   2, 	{setNthBitsShort (pArray),setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"d0",  2, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
   			{"d1",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"f",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"f*",  0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"g",   1, {setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"gs",  1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"h",   0, {setNoneBitsShort ()}, 
-					ophUpdate},	
+					ophUpdate, "" },	
 			{"i",   1, {setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"j",   1, {setNthBitsShort (pInt)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"k",   4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), 
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"l",   2, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					oplUpdate},	
+					oplUpdate, "" },	
 			{"m",   2, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					opmUpdate},	
+					opmUpdate, "" },	
 			{"n",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"q",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"re",  4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), 
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					opreUpdate},	
+					opreUpdate, "" },	
 			{"rg",  3, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"ri",  1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"s",   0, {setNoneBitsShort ()}, 
-					unknownUpdate},	
-			{"sc",  4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
+					unknownUpdate, "" },	
+			{"sc",  -4, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
-  			{"scn", 5,  {setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName),    
+					unknownUpdate, "" },	
+  			{"scn", -5,  {setNthBitsShort (pInt, pReal, pName), setNthBitsShort (pInt, pReal, pName),    
 						 setNthBitsShort (pInt, pReal, pName),  setNthBitsShort (pInt, pReal, pName),    
 						setNthBitsShort (pInt, pReal, pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"sh",  1, {setNthBitsShort (pName)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"v",   4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal)}, 
-					opvUpdate},	
+					opvUpdate, "" },	
 			{"w",   1, {setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate},	
+					unknownUpdate, "" },	
 			{"y",   4, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						setNthBitsShort (pInt, pReal),  setNthBitsShort (pInt, pReal)}, 
-					opyUpdate},	
+					opyUpdate, "" },	
 
 		};
 
@@ -684,7 +685,7 @@ namespace
 	bool check (const CheckTypes& ops, PdfOperator::Operands& operands)
 	{
 		string str;
-		for (PdfOperator::Operands::iterator it = operands.begin();it != operands.end(); ++it)
+		for (PdfOperator::Operands::iterator it = operands.begin(); it != operands.end(); ++it)
 		{
 			string tmp;
 			(*it)->getStringRepresentation (tmp);
@@ -692,21 +693,29 @@ namespace
 		}
 		printDbg (DBG_DBG, "Operands: " << str);
 		
+		//
+		// Check operator size if > 0 than it is the exact size, maximum
+		// otherwise
+		//
+		if (   ((ops.argNum >= 0) && (operands.size() != static_cast<size_t> (ops.argNum))) 
+			|| ((ops.argNum <  0) && (operands.size() <= static_cast<size_t> (-ops.argNum))) )
+		{
+			printDbg (DBG_ERR, "Number of operands mismatch..");
+			return false;
+		}
+		
+		//
+		// Check arguments
+		//
 		PdfOperator::Operands::reverse_iterator it = operands.rbegin ();
-		//
-		// Check arguments in reverse order
-		//
-		int j = ops.argNum - 1;
-		for (size_t i = 0; i < ops.argNum; ++i, --j)
+		advance (it, ops.argNum);
+		for (int pos = 0; it != operands.rend (); ++it, ++pos)
 		{			
-			assert (j >= 0);
-  			if (!isBitSet(ops.types[j], (*it)->getType()))
+  			if (!isBitSet(ops.types[pos], (*it)->getType()))
 			{
-				printDbg (DBG_ERR, "Bad " << i << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[i]);
+				printDbg (DBG_ERR, "Bad " << pos << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[pos]);
 				return false;
 			}
-			// Next element
-			++it;
 		}
 
 		return true;
@@ -768,38 +777,45 @@ namespace
 				PdfOperator::Operands& operands, 
 				CPdf& pdf, 
 				IndiRef rf, 
-				boost::shared_ptr<PdfOperator>& )
+				PdfOperator* composite)
 	{
 		printDbg (DBG_DBG, "Finding operator: " << op);
 
+		// Set pdf to all operands
+		operandsSetPdf (pdf, rf, operands);
+
+		//
 		// Try to find the op by its name
+		// 
 		const CheckTypes* chcktp = findOp (op);
 		if (NULL == chcktp)
-		{
+		{// operator not found
 			printDbg (DBG_DBG, "Operator not found.");
-
-			// Set pdf to all operands
-			operandsSetPdf (pdf, rf, operands);
+			
+			// Create unknown operator
 			return new UnknownPdfOperator (operands, op);
 		}
-				
-		assert (NULL != chcktp);
 		printDbg (DBG_DBG, "Operator found. " << chcktp->name);
 
+		// Check the types against specification
 		if (!check (*chcktp, operands))
-		{
-			throw MalformedFormatExeption ("Content stream bad operator type. ");
-		}
-		else
-		{
-			// Set pdf to all operands
-			operandsSetPdf (pdf, rf, operands, chcktp->argNum);
-			// Result in lo
-			return new SimpleGenericOperator (chcktp->name, chcktp->argNum, operands);
-		}
+			throw MalformedFormatExeption ("Content stream bad operator type.");
+			
+		// Get operands count
+		size_t argNum = static_cast<size_t> 
+						((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
+
 		//
-		// \TODO complex types
-		//
+		// If endTag is "" it is a simple operator, complex otherwise
+		// 
+		if ('\0' == chcktp->endTag[0])
+		{// Simple operator
+			return new SimpleGenericOperator (chcktp->name, argNum, operands);
+		}else
+		{// Complex operator
+			
+			return (composite = new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
+		}
 	}	
 
 	/**
@@ -809,9 +825,6 @@ namespace
 	 * @param obj 	Xpdf content stream.
 	 * @param pdf 	Pdf where this content stream belongs (parent object)
 	 * @param rf 	Id of parent object.
-	 *
-	 *
-	 * \TODO 
 	 */
 	void
 	parseContentStream (CContentStream::Operators& operators, 
@@ -831,7 +844,8 @@ namespace
 		Object o;
 		parser->getObj(&o);
 
-		boost::shared_ptr<PdfOperator> cmplex;
+		// If composite we have to add into composite
+		PdfOperator* composite = NULL;
 		//
 		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
 		//
@@ -840,19 +854,17 @@ namespace
 			if (o.isCmd ())
 			{
 				// Create operator
-				boost::shared_ptr<PdfOperator> op  (createOp (string (o.getCmd ()), 
-										operands, 
-										pdf, rf,
-										cmplex));
+				boost::shared_ptr<PdfOperator> op  
+					(createOp (string(o.getCmd ()), operands, pdf, rf, composite));
 				//
 				// Put it either to operators when the operator itself is a complex type
 				// or if it is not a complex type
 				// Put it behind complex type when the operand itself is not complex but we are in a
 				// complex type (that is indicated by cmplex variable)
 				//
-				if (cmplex && cmplex != op)
+				if (composite && composite != op.get())
 				{
-					PdfOperator::putBehind (cmplex, op);
+					//PdfOperator::putBehind (cmplex, op);
 				
 				}else
 				{
@@ -902,8 +914,8 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 	if (op)
 	{
 		// Get operator name
-		string frst, lst;
-		op->getOperatorName(frst, lst);
+		string frst;
+		op->getOperatorName(frst);
 		// Get operator specification
 		const CheckTypes* chcktp = findOp (frst);
 		// Get operands
@@ -912,7 +924,8 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 		// If operator found use the function else use default
 		if (NULL != chcktp)
 		{
-			assert (ops.size () == chcktp->argNum);
+			assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
+			assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
 			(chcktp->update) (state, ops);
 			
 		}else
@@ -984,14 +997,14 @@ void
 CContentStream::getStringRepresentation (string& str) const
 {
 	printDbg (DBG_DBG, " ()");
-	string frst, lst, tmp;
+	string frst, tmp;
 
 	str.clear ();
 	for (Operators::const_iterator it = operators.begin (); it != operators.end(); ++it)
 	{
 			
-		(*it)->getOperatorName (frst, lst);
-		printDbg (DBG_DBG, "Operator name: " << frst << " " << lst << " param count: " << (*it)->getParametersCount() );
+		(*it)->getOperatorName (frst);
+		printDbg (DBG_DBG, "Operator name: " << frst << " param count: " << (*it)->getParametersCount() );
 		
 		(*it)->getStringRepresentation (tmp);
 		str += tmp + "\n";

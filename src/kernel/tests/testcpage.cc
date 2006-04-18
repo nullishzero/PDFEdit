@@ -103,9 +103,9 @@ position (ostream& oss, const char* fileName)
 	std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
 	for (; it != ops.end(); ++it)
 	{
-		std::string tmp, tmpl;
-		(*it)->getOperatorName (tmp,tmpl);
-		oss << tmp << " " << tmpl << " ";
+		std::string tmp;
+		(*it)->getOperatorName (tmp);
+		oss << tmp;
 	}
 	oss << std::endl;
 	
@@ -186,22 +186,22 @@ display (ostream& oss, const char* fileName)
 				
 
 //=====================================================================================
-void cpage_tests(int , char **)
+void cpage_tests(int , char **, const char* fileName)
 {
 	TEST(" test 4.1 -- features");
-	mediabox (OUTPUT, TESTPDFFILE);
+	mediabox (OUTPUT, fileName);
 	OK_TEST;
 
 	TEST(" test 4.2-- opcount");
-	opcount (OUTPUT, TESTPDFFILE);
+	opcount (OUTPUT, fileName);
 	OK_TEST;
 
 	TEST(" test 4.3-- getPosition");
-	position (OUTPUT, TESTPDFFILE);
+	position (OUTPUT, fileName);
 	OK_TEST;
 
 	TEST(" test 4.4-- display");
-	display (OUTPUT, TESTPDFFILE);
+	display (OUTPUT, fileName);
 	OK_TEST;
 
 }

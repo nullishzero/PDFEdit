@@ -102,7 +102,7 @@ public:
 	 *
 	 * @param str String that will hold operator name.
 	 */
-	virtual void getOperatorName (std::string& first, std::string& last) const = 0;
+	virtual void getOperatorName (std::string& first) const = 0;
 
 	
 	//
@@ -139,7 +139,7 @@ public:
 	 *
 	 * @param p Children container.
 	 */
-	virtual void getChildrens (PdfOperators& /*p*/) const
+	virtual void getChildren (PdfOperators&) const
 		{ throw NotImplementedException ("PdfOperator::getChildrens ()"); };	
 	
 	//
@@ -258,8 +258,8 @@ class CompositePdfOperator : public PdfOperator
 private:
 
 	/** Child operator, where all calls are redirected. */
-	boost::shared_ptr<PdfOperator> child;
-	
+	PdfOperators children;
+
 protected:
 		
 	/**
@@ -270,16 +270,37 @@ protected:
 	 *
 	 * @param op Operator from which we will inherit all its children.
 	 */
-	CompositePdfOperator (boost::shared_ptr<PdfOperator> op) : child(op) {};
+	CompositePdfOperator (boost::shared_ptr<PdfOperator> op)
+		{children.push_back (op);};
 
 	/**
-	 * Return all operators in this composite.
-	 *
-	 * @param container Container of operators.
+	 * Constructor.
+	 * @param ops Operators from which we will inherit all its children.
 	 */
-	virtual void getAllChildren (PdfOperators& container) const = 0;
+	CompositePdfOperator (PdfOperators* ops = NULL)
+	{
+		if (NULL != ops)
+			copy (ops->begin(), ops->end (), back_inserter (children));
+	};
 
-	
+	//
+	// Composite interface
+	//
+public:
+	virtual size_t getChildrenCount () const {return children.size ();};	
+	virtual void push_back (const boost::shared_ptr<PdfOperator> op);
+	virtual void remove (boost::shared_ptr<PdfOperator> op);
+	virtual void getChildren (PdfOperators& container) const;
+
+	//
+	// PdfOperator interface
+	//
+public:
+	virtual size_t getParametersCount () const {return 0;};
+	virtual void getParameters (Operands&) const {};
+	virtual void getStringRepresentation (std::string& str) const;
+	virtual void getOperatorName (std::string& first) const = 0;
+
 public:
 	
 	/**
@@ -316,22 +337,24 @@ public:
 	 * Constructor. 
 	 * Create it as a standalone object. Prev and Next are not valid.
 	 *
-	 * Initialize opText with second template argument.
-	 * 
+	 * @param opTxt Operator name text representation.
+	 * @param numOper (Maximum) Number of operands.
 	 * @param opers This is a stack of operands from which we take number specified
-	 * 				by template parameter.
+	 * 				by numOper or while any operand left.
 	 */
-	SimpleGenericOperator (const char* opTxt, const unsigned int numOper, Operands& opers) : opText (opTxt)
+	SimpleGenericOperator (const char* opTxt, const size_t numOper, Operands& opers) : opText (opTxt)
 	{
 		printDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
-		assert (opers.size() == numOper);
-		if (numOper != opers.size())
+		assert (numOper >= opers.size());
+		if (numOper < opers.size())
 			throw MalformedFormatExeption ("Operator operand size mismatch.");
 
 		//
 		// Store the operands and remove it from the stack
+		// REMARK: the op count can vary ("scn" operator takes arbitrary number of
+		// parameters)
 		//
-		for (size_t i = 0; i < numOper; ++i)
+		for (size_t i = 0; (i < numOper) && !opers.empty(); ++i)
 		{
 			Operands::value_type val = opers.back ();
 			// Store the last element of input parameter
@@ -352,8 +375,8 @@ public:
 	virtual void getParameters (Operands& container) const
 		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
 
-	virtual void getOperatorName (std::string& first, std::string& last) const
-		{ first = opText; last.clear ();}
+	virtual void getOperatorName (std::string& first) const
+		{ first = opText;}
 	
 	virtual void getStringRepresentation (std::string& str) const;
 };
@@ -384,7 +407,7 @@ public:
 	virtual size_t getParametersCount () const;
 	virtual void getParameters (Operands& container) const;
 	virtual void getStringRepresentation (std::string& str) const;
-	virtual void getOperatorName (std::string& first, std::string& last) const;
+	virtual void getOperatorName (std::string& first) const;
 	
 };
 
@@ -399,10 +422,33 @@ public:
  *
  *
  */
-template<typename T>
 class UnknownCompositePdfOperator : public CompositePdfOperator
 {
+private:
+		
+	/** Text representing the beginning operator. */
+	const char* opBegin;
+	/** Text representing the ending operator. */
+	const char* opEnd;
+
+public:
 	
+	/** 
+	 * Constructor. 
+	 * Create it as a standalone object. Prev and Next are not valid.
+	 *
+	 * @param opBegin_ Start operator name text representation.
+	 * @param opEnd_ End operator name text representation.
+	 * @param numOper (Maximum) Number of operands.
+	 * @param opers This is a stack of operands from which we take number specified
+	 * 				by numOper or while any operand left.
+	 */
+	UnknownCompositePdfOperator (const char* opBegin_, const char* opEnd_);
+
+public:
+	virtual void getStringRepresentation (std::string& str) const;
+	virtual void getOperatorName (std::string& first) const {first = opBegin;};
+
 };
 
 

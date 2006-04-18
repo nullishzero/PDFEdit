@@ -98,7 +98,8 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
-	
+	globalParams->setupBaseFonts (NULL);
+
 	// Get xref
 	assert (NULL != dictionary->getPdf ());
 	if (NULL == dictionary->getPdf ())

@@ -45,7 +45,6 @@ SimpleGenericOperator::getStringRepresentation (std::string& str) const
 }
 	
 
-
 //
 // Constructor
 //
@@ -84,8 +83,8 @@ UnknownPdfOperator::getParameters (Operands& container) const
 //
 //
 void
-UnknownPdfOperator::getOperatorName (std::string& first, std::string& last) const
-	{ first = opText; last.clear (); }
+UnknownPdfOperator::getOperatorName (std::string& first) const
+	{ first = opText; }
 	
 //
 //
@@ -105,11 +104,84 @@ UnknownPdfOperator::getStringRepresentation (std::string& str) const
 	str += opText;
 }
 
+
+
+//==========================================================
+// CompositePdfOperator
+//==========================================================
+
+//
+//
+//
+void 
+CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> op)
+	{ children.push_back (op); }
+
+//
+//
+//
+void
+CompositePdfOperator::remove (boost::shared_ptr<PdfOperator> op)
+	{ children.erase (find (children.begin(), children.end(), op)); }
+
+//
+//
+//
+void 
+CompositePdfOperator::getChildren (PdfOperators& container) const
+	{copy (children.begin(), children.end (), back_inserter (container));}
+
+//
+//
+//
+void
+CompositePdfOperator::getStringRepresentation (std::string& str) const
+{
+	//
+	// Get string representation of every child and append it
+	//
+	string tmp;
+	PdfOperators::const_iterator it = children.begin ();
+	for (; it != children.end(); ++it)
+	{
+		tmp.clear ();
+		(*it)->getStringRepresentation (tmp);
+		str += tmp + " ";
+	}
+}
+
+
 //==========================================================
 // Concrete implementations of CompositePdfOperator
 //==========================================================
 
 
+UnknownCompositePdfOperator::UnknownCompositePdfOperator 
+	(const char* opBegin_, const char* opEnd_) : CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_)
+{
+	printDbg (DBG_DBG, "Unknown composite operator: " << opBegin_ << " " << opEnd_);
+
+}
+
+//
+//
+//
+void
+UnknownCompositePdfOperator::getStringRepresentation (string& str) const
+{
+	// Header
+	str += opBegin; str += " ";
+	
+	// Delegate
+	CompositePdfOperator::getStringRepresentation (str);	
+
+	// Footer
+	str += opEnd;
+}
+
+//
+//
+//
 
 //==========================================================
 } // namespace pdfobjects

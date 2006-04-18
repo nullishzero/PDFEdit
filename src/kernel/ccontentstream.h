@@ -75,8 +75,8 @@ public:
 			Rectangle rc (state.getCurX (), state.getPageHeight () - state.getCurY(), 0, 0);
 			
 			// DEBUG OUTPUT //
-			std::string frst, lst;
-			it.getCurrent().lock()->getOperatorName(frst,lst);
+			std::string frst;
+			it.getCurrent().lock()->getOperatorName(frst);
 			PdfOperator::Operands ops;
 			it.getCurrent().lock()->getParameters (ops);
 			std::string strop;

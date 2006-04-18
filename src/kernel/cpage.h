@@ -127,7 +127,7 @@ public:
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
 	 *
-	 * @param pt 		Point around which we will be looking.
+	 * @param rc Rectangle around which we will be looking.
 	 * @param cmp 		Null if default kernel area comparator should be used
 	 * 						otherwise points to an object which will decide whether an operator 
 	 * 						is "near" a point.
@@ -153,7 +153,7 @@ public:
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
 	 *
-	 * @param rc Rectangle around which we will be looking.
+	 * @param pt 		Point around which we will be looking.
 	 * @param cmp Null if default kernel area comparator should be used
 	 * 				otherwise points to an object which will decide whether an operator 
 	 * 				is "near" a point.

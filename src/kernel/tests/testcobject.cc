@@ -1064,9 +1064,6 @@ c_addprop2 ()
 	dict.addProperty ("3", i);
 	dict.addProperty ("4", ii);
 
-	if ("2" != dict.getPropertyId (b))
-		throw;
-
 	
 	CArray a;
 
@@ -1076,8 +1073,6 @@ c_addprop2 ()
 	a.addProperty (ii);
 	ip_validate (a,"[ 1 11 1 11 ]");
 
-	if (1 != a.getPropertyId (bb))
-		throw;
 
 	CString s ("new");
 	a.addProperty (3,s);
