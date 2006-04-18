@@ -182,7 +182,7 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  root->setOpen(TRUE);
 
  //Add dictionary
- TreeItem *dict=new TreeItem(data,root,pdfDoc->getDictionary().get(),tr("Dictionary")); 
+ TreeItem *dict=new TreeItem(data,root,pdfDoc->getDictionary().get(),QObject::tr("Dictionary")); 
  addChilds(dict,false);
 
  setUpdatesEnabled( TRUE );

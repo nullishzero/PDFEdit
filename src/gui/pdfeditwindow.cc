@@ -553,7 +553,7 @@ void PdfEditWindow::variables() {
 @param topic Starting help topic
  */
 void PdfEditWindow::help(const QString &topic/*=QString::null*/) {
- HelpWindow *hb=new HelpWindow("TODO: topic");
+ HelpWindow *hb=new HelpWindow(topic);
  hb->show();
 }
 

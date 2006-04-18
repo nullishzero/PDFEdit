@@ -49,6 +49,12 @@ TreeItem* TreeItem::parent() {
  return _parent;
 }
 
+/** Set new parent of this object
+ @param parent New parent of this object if it is TreeItem (or NULL otherwise) */
+void TreeItem::setParent(TreeItem *parent) {
+ _parent=parent;
+}
+
 /** Initialize item from given PDF object
  @param pdfObj Object used to initialize this item
  @param name Name of this item - will be shown in treeview
@@ -133,10 +139,13 @@ void TreeItem::setOpen(bool open) {
     if (other && other!=this) { //subtree already found elsewhere -> reparent
      QListViewItem *otherChild;
      printDbg(debug::DBG_DBG,"Will relocate child, counts: "<< this->childCount() << " , " << other->childCount());
+//     data->remove(other);//remove old data from being available to browse/expand
      while ((otherChild=other->firstChild())) {
       printDbg(debug::DBG_DBG,"Relocating child");
       other->takeItem(otherChild);
       insertItem(otherChild);
+      TreeItem *oChild=dynamic_cast<TreeItem*> (otherChild);
+      if (oChild) oChild->setParent(this);
      }
      printDbg(debug::DBG_DBG,"Done relocate child, counts: "<< this->childCount() << " , " << other->childCount());
      other->unOpen();
@@ -180,7 +189,7 @@ void TreeItem::reloadData() {
   addData();
   if (old!=selfRef) {
    //Remove old reference from list of opened and available items
-   data->remove(old);
+   if (complete) data->remove(old);//Was complete -> remove data
    printDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
    //Close itself
    this->setOpen(false);
@@ -235,7 +244,6 @@ private:
  /** Parent object holding observer property*/
  TreeItem *parent;
 };
-
 
 /** Sets observer for this item */
 void TreeItem::initObserver() {

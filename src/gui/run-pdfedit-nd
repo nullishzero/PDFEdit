@@ -1,3 +1,3 @@
 #!/bin/sh
 #Run and filter out kernel debugging messages
-./pdfedit $* 2>&1|grep -v "5:../kernel"
+./pdfedit $* 2>&1| grep -v "5:\(\.\./kernel\|cpdf\|ccontent\|pdfoper\|iproperty\|cobject\|cxref\)"

@@ -4,14 +4,15 @@
 
 #include "refvalidator.h"
 #include <qstring.h> 
+#include <utils/debug.h> 
 
 namespace gui {
 
 /** regexp for validation */
-QRegExp valid("(\\d+),(\\d+)");
+QRegExp valid("\\d+,\\d+");
 
 /** regexp for intermediate validation */
-QRegExp ivalid("(\\d+)?,?(\\d+)?");
+QRegExp ivalid("\\d*,?\\d*");
 
 
 /** Constructor for this validator
@@ -34,12 +35,17 @@ void RefValidator::fixup(QString &input) const {
 */
 QValidator::State RefValidator::validate(QString &input,int &pos) const {
  if (valid.exactMatch(input)) {
+  printDbg(debug::DBG_DBG,"Validate: " << input << " Acceptable");
   //TODO: validate with PDF -> if (!validRef) return Intermediate;
   //TODO: may be slow, if slow, validate before write
   //TODO: use CXRef from Cpdf for this
   return Acceptable;
  }
- if (ivalid.exactMatch(input)) return Intermediate;
+ if (ivalid.exactMatch(input)) {
+  printDbg(debug::DBG_DBG,"Validate: " << input << " Intermediate");
+  return Intermediate;
+ }
+ printDbg(debug::DBG_DBG,"Validate: " << input << " Invalid");
  return Invalid;
 }
 

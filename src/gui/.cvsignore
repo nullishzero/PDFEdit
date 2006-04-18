@@ -6,3 +6,4 @@ menugenerator
 .moc
 .ui
 .obj
+.menu-trans.h

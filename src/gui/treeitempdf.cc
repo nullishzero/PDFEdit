@@ -3,9 +3,13 @@
 */
 
 #include "treeitempdf.h"
+#include "treeitem.h"
+#include "treedata.h"
+#include "treewindow.h"
 #include "treeitempage.h"
 #include <cobject.h>
 #include <cpdf.h>
+#include <cpage.h>
 #include <qobject.h>
 
 namespace gui {
@@ -88,7 +92,10 @@ void TreeItemPdf::initSpec(CPdf *pdf,const QString &name) {
   //TODO: add on demand somehow ... kernel is parsing the page if I call getPage() !
   for(unsigned int i=1;i<=count;i++) { //Add all pages
    CPage *page=pdf->getPage(i).get();
+   //TODO: dict add on demand
    last=new TreeItemPage(data,page,this,QString::number(i),last);
+   TreeItem *dict=new TreeItem(data,last,page->getDictionary().get(),QObject::tr("Dictionary"));
+   data->parent()->addChilds(dict,false);
   }
  } else if (name=="Oulines") { //Outline list
   //TODO : implement

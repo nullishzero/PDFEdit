@@ -98,21 +98,12 @@ bool isRefValid(CPdf *pdf,IndiRef ref) {
 void RefProperty::writeValue(IProperty *pdfObject) {
  CRef *obj=(CRef*)pdfObject;
  QStringList ref=QStringList::split(",",ed->text());
- assert(ref.count()==2);
+ assert(ref.count()==2); //Should never happen
+ if (ref.count()!=2) return;
  IndiRef val;
  val.num=ref[0].toInt();
  val.gen=ref[1].toInt();
 
-/* CPdf *pdf=obj->getPdf();
- CXref *cxref=pdf->getCXref();
- Ref _val;//TODO: why there is no knowsRef(IndiRef) ?
- _val.num=val.num;
- _val.gen=val.gen;
- if (!cxref->knowsRef(_val)) {
-  printDbg(debug::DBG_DBG,"Unknown reference!");
-  ed->setFocus();
-  return; //reference not valid ->" nothing written
- }*/
  //Check reference validity
  if (!isRefValid(obj->getPdf(),val)) {
   ed->setFocus();

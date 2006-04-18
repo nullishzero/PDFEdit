@@ -27,6 +27,7 @@ public:
  void reloadSelf();
  void reloadData();
  bool isComplete();
+ void setParent(TreeItem *parent);
 private:
  void initObserver();
  void uninitObserver();

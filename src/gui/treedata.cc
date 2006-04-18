@@ -26,6 +26,9 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree) {
 void TreeData::add(TreeItem *it) {
  QString ref=it->getRef();
  if (ref.isNull()) return;
+ //Remove any old data
+ while (refs.remove(ref));
+ //Add new data
  refs.insert(ref,it);
 }
 
@@ -34,9 +37,7 @@ void TreeData::add(TreeItem *it) {
  @param it TreeItem
  */
 void TreeData::remove(TreeItem *it) {
- QString ref=it->getRef();
- if (ref.isNull()) return;
- while (refs.remove(ref));
+ remove(it->getRef());
 }
 
 /** Remove specific reference from the list
