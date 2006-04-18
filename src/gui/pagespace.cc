@@ -4,6 +4,7 @@
 #include <qlabel.h>
 #include <qstring.h>
 #include <qpixmap.h>
+#include "cpage.h"
 
 namespace gui {
 
@@ -32,7 +33,7 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 
 	actualPage = NULL;
 	actualPagePixmap = NULL;
-	actualSelectedObject = NULL;
+	actualSelectedObjects = NULL;
 	pageImage = NULL;
 	newPageView();
 //	scrollPageSpace->setBackGroundRole(QPalette::Dark); // TODO configurovatelna farba
@@ -165,12 +166,13 @@ void PageSpace::refresh2(/* CPage * = NULL*/) {
 	newPageView( *r2 );
 }
 
-void PageSpace::refresh ( CPage * pageToView ) {		// if pageToView is NULL, refresh actual page
+void PageSpace::refresh ( /* QSPdf * pdf,*/ QSPage * pageToView ) {		// if pageToView is NULL, refresh actual page
 								// if pageToView == actualPage  refresh is not need
 	if ((pageToView != NULL) && (actualPage != pageToView)) {
-		actualPage = pageToView;
-		pageNumber->setNum( 0/*(int) pageToView->getPageNumber()*/ );//MP: po zmene kernelu neslo zkompilovat (TODO)
-		actualSelectedObject = NULL;
+		delete actualPage;
+		actualPage = new QSPage( pageToView->get() );
+//		pageNumber->setNum( 0/*(int) pageToView->getPageNumber()*/ );//MP: po zmene kernelu neslo zkompilovat (TODO)
+//		actualSelectedObject = NULL;
 		/* TODO ziskat pixmap z CPage a ulozit ju do actualPagePixmap*/
 		/**/ refresh1( );
 	} else {

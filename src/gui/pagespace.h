@@ -8,7 +8,7 @@
 #include <qscrollview.h>
 #include <qlayout.h>
 #include "pageview.h"
-#include "cpage.h"
+#include "qspage.h"
 
 namespace gui {
 
@@ -23,16 +23,14 @@ class PageSpace : public QWidget {
 	public slots:
 void refresh1(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
-		void refresh ( CPage * pageToView = NULL );	// if pageToView is NULL, refresh actual page
+		void refresh ( /* QSPdf * pdf,*/ QSPage * pageToView = NULL );	// if pageToView is NULL, refresh actual page
 		void hideButtonsAndPageNumber ( );
 		void showButtonsAndPageNumber ( );
 //		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );
 //		/*TODO*/void unselectObjectOnPage ( );
 //		/*TODO*/void zoomTo ( unsigned int percentage );
 	signals:
-		/*TODO*/ void changePage (/* CPage * , enum zmena (first,prev,next,last) */);
-		/*TODO nebo*/ void changePageToFirst ( ); /* ... */
-		/*TODO nebo*/ void changePageToNum ( int numberOfPage );
+		void changePageTo ( const QSPage &, int numberOfPage );
 
 		/*TODO*/ void popupMenu ( const QPoint & globalPos /*, Cobject & */ );
 	protected:
@@ -61,8 +59,8 @@ void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 				* bNextPage,
 				* bLastPage;
 
-		/*TODO CObject */ void		* actualSelectedObject;
-		CPage		* actualPage;
+		/*TODO CObject */ void		* actualSelectedObjects;
+		QSPage		* actualPage;
 		QPixmap		* actualPagePixmap;
 QPixmap * r1, * r2; /*TODO smazat, jenom pro testovani */
 };

@@ -97,7 +97,7 @@ void CommandWindow::execute() {
 // addCommand(command);			//add to console
  cmd->setText("");			//clear commandline
  history->insertItem( command, 1 );
- history->setCurrentItem(-1);
+ history->setCurrentItem(0);
  emit commandExecuted(command);		//execute command via signal
 }
 
