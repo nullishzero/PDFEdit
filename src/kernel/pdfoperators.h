@@ -179,21 +179,26 @@ public:
 	static void putBehind (	boost::shared_ptr<PdfOperator> behindWhich, 
 							boost::shared_ptr<PdfOperator> which)
 	{
-		if (!behindWhich->next.expired ())
-		{ // we are not at the end
+		if (behindWhich && which)
+		{
+			if (!behindWhich->next.expired ())
+			{ // we are not at the end
+			
+				which->setNext (behindWhich->next);
+				assert (behindWhich->next.lock());
+				behindWhich->next.lock()->setPrev (ListItem (which));
+				which->setPrev (ListItem (behindWhich));
+				behindWhich->setNext (ListItem (which));
+				
+			}else
+			{ // we are at the end
+				
+				behindWhich->setNext (ListItem (which));
+				which->setPrev (ListItem (behindWhich));
+			}
 		
-			which->setNext (behindWhich->next);
-			assert (behindWhich->next.lock());
-			behindWhich->next.lock()->setPrev (ListItem (which));
-			which->setPrev (ListItem (behindWhich));
-			behindWhich->setNext (ListItem (which));
-			
 		}else
-		{ // we are at the end
-			
-			behindWhich->setNext (ListItem (which));
-			which->setPrev (ListItem (behindWhich));
-		}
+			throw CObjInvalidOperation ();
 	}
 	
 	/**
@@ -265,9 +270,11 @@ protected:
 	/**
 	 * Constructor.
 	 *
-	 * Implementation of the Decorator design pattern. All sub-operators
-	 * of the constructor argument will be added to this compostite.
+	 * Implementation of the Decorator design pattern. 
 	 *
+	 * Be carefull, this function does NOT set prev and next, because it does
+	 * not have smart pointer to this object !
+	 * 
 	 * @param op Operator from which we will inherit all its children.
 	 */
 	CompositePdfOperator (boost::shared_ptr<PdfOperator> op)
@@ -344,7 +351,7 @@ public:
 	 */
 	SimpleGenericOperator (const char* opTxt, const size_t numOper, Operands& opers) : opText (opTxt)
 	{
-		printDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
+		//printDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
 		assert (numOper >= opers.size());
 		if (numOper < opers.size())
 			throw MalformedFormatExeption ("Operator operand size mismatch.");

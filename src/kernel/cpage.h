@@ -203,7 +203,12 @@ public:
 						int rotate = DEFAULT_ROTATE
 						) const;
 	
-
+	/** 
+	 * Get contents stream.
+	 *
+	 * @return Content stream.
+	 */
+	boost::shared_ptr<CContentStream> getContentStream () const { return contentstream; };
 
 
 

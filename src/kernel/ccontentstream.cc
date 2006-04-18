@@ -504,7 +504,7 @@ namespace
 			{"BMC", 1, {setNthBitsShort (pName)}, 
 					unknownUpdate, "" },	
 			{"BT",  0, {setNoneBitsShort ()}, 
-					opBTUpdate, "" },	
+					opBTUpdate, "ET" },	
 			{"BX",  0, {setNoneBitsShort ()}, 
 					unknownUpdate, "" },	
 			{"CS",  1, {setNthBitsShort (pName)}, 
@@ -658,19 +658,27 @@ namespace
 	 *
 	 * This is vital when changing those operands.
 	 *
+	 * @param first First operator to set pdf to.
 	 * @param pdf Pdf where operand will belong.
 	 * @param rf  Indiref of content's stream parent.
-	 * @param operands Operand stack.
-	 * @param count Count of objects to bind.
 	 */
 	void
-	operandsSetPdf (CPdf& pdf, IndiRef rf, PdfOperator::Operands& operands, int count = std::numeric_limits<int>::max())
+	operandsSetPdf (shared_ptr<PdfOperator> first, CPdf& pdf, IndiRef rf)
 	{
-		PdfOperator::Operands::reverse_iterator it = operands.rbegin ();
-		for (; (it != operands.rend ()) && (0 <= count); ++it, --count)
+		PdfOperator::Iterator it = PdfOperator::getIterator (first);
+		while (!it.isEnd())
 		{
-			(*it)->setPdf (&pdf);
-			(*it)->setIndiRef (rf);
+			PdfOperator::Operands operands;
+			it.getCurrent ().lock()->getParameters (operands);
+				
+			PdfOperator::Operands::iterator oper = operands.begin ();
+			for (; oper != operands.end (); ++oper)
+			{
+				(*oper)->setPdf (&pdf);
+				(*oper)->setIndiRef (rf);
+			}
+			
+			it = it.next ();
 		}
 	}
 	
@@ -691,7 +699,7 @@ namespace
 			(*it)->getStringRepresentation (tmp);
 			str += " " + tmp;
 		}
-		printDbg (DBG_DBG, "Operands: " << str);
+		//printDbg (DBG_DBG, "Operands: " << str);
 		
 		//
 		// Check operator size if > 0 than it is the exact size, maximum
@@ -763,59 +771,107 @@ namespace
 	 *
 	 * Here is decided which implementation of a pdf operator is used.
 	 *
-	 * @param op String representation of the operator. It is used to find the operator and
-	 * 			 sometimes to initialize it.
-	 * @param operands Operand stack.
-	 * @param pdf Pdf where it will belong
-	 * @param rf  Id of the parent object.
-	 * @param
+	 * @param parser Parser.
+	 * @param operands Operands.
+	 * @param last Last.
 	 *
 	 * @return Created pdf operator.
 	 */
-	PdfOperator*
-	createOp  ( const string& op, 
-				PdfOperator::Operands& operands, 
-				CPdf& pdf, 
-				IndiRef rf, 
-				PdfOperator* composite)
+	shared_ptr<PdfOperator>
+	createOp (::Parser& parser, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
 	{
-		printDbg (DBG_DBG, "Finding operator: " << op);
+		assert (&last);
 
-		// Set pdf to all operands
-		operandsSetPdf (pdf, rf, operands);
-
-		//
-		// Try to find the op by its name
-		// 
-		const CheckTypes* chcktp = findOp (op);
-		if (NULL == chcktp)
-		{// operator not found
-			printDbg (DBG_DBG, "Operator not found.");
-			
-			// Create unknown operator
-			return new UnknownPdfOperator (operands, op);
-		}
-		printDbg (DBG_DBG, "Operator found. " << chcktp->name);
-
-		// Check the types against specification
-		if (!check (*chcktp, operands))
-			throw MalformedFormatExeption ("Content stream bad operator type.");
-			
-		// Get operands count
-		size_t argNum = static_cast<size_t> 
-						((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
+		// Get first object
+		Object o;
+		parser.getObj (&o);
 
 		//
-		// If endTag is "" it is a simple operator, complex otherwise
-		// 
-		if ('\0' == chcktp->endTag[0])
-		{// Simple operator
-			return new SimpleGenericOperator (chcktp->name, argNum, operands);
-		}else
-		{// Complex operator
+		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
+		//
+		while (!o.isEOF()) 
+		{
+			if (o.isCmd ())
+			{// We have an OPERATOR
+
+				//
+				// Try to find the op by its name
+				// 
+				const CheckTypes* chcktp = findOp (o.getCmd());
+				if (NULL == chcktp)
+				{// operator not found, create unknown operator
+					
+					return shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
+
+				}
+				//printDbg (DBG_DBG, "Operator found. " << chcktp->name);
+
+				// Check the types against specification
+				if (!check (*chcktp, operands))
+					throw MalformedFormatExeption ("Content stream bad operator type.");
 			
-			return (composite = new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
-		}
+				// Get operands count
+				size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
+
+				//
+				// If endTag is "" it is a simple operator, complex otherwise
+				// 
+				if ('\0' == chcktp->endTag[0])
+				{// Simple operator
+					
+					shared_ptr<PdfOperator> op (new SimpleGenericOperator (chcktp->name, argNum, operands));
+					last = op;
+					return op;
+					
+				}else
+				{// Complex operator either beginning or ending
+					
+					shared_ptr<PdfOperator> composite (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
+					// The same as in parseContentStream
+					shared_ptr<PdfOperator> _last, _prevLast = composite;
+					while (!o.isEOF())
+					{
+						// Output parameter set to last created op
+						last = createOp (parser, operands, _last);
+						if (last)
+						{
+							PdfOperator::putBehind (_prevLast, last);
+							composite->push_back (last);
+							
+							// Is it the end tag?
+							string tag;
+							last->getOperatorName (tag);
+							if (tag == chcktp->endTag)
+								break;
+
+						}else
+						{// Indicate the end of stream
+							break;
+						}
+						
+						// Save last as previous
+						_prevLast = _last;
+					}
+					
+					// End composite
+					return composite;
+				}
+
+			}else // if (o.isCmd ())
+			{
+				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
+				operands.push_back (pIp);
+			}
+
+			// Free it, memory leak otherwise
+			o.free ();
+			// Grab the next object
+			parser.getObj (&o);
+			
+		} // while (!obj.isEOF())
+		
+		// Indicate nothing to read
+		return shared_ptr<PdfOperator> ();
 	}	
 
 	/**
@@ -837,62 +893,30 @@ namespace
 		//
 		// Create the parser and lexer and get objects from it
 		//
-		scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, &obj)));
-
+		scoped_ptr<Parser> parser (new ::Parser (NULL, new ::Lexer(NULL, &obj)));
+		shared_ptr<PdfOperator> last, previousLast;
+		shared_ptr<PdfOperator> actual;
 		PdfOperator::Operands operands;
-			
-		Object o;
-		parser->getObj(&o);
-
-		// If composite we have to add into composite
-		PdfOperator* composite = NULL;
+		
 		//
-		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
+		// actual is the top most last one, e.g. a composite
+		// last is the last operator, e.g. the last item of an composite
+		// we want to add new (actual) after the last one of LAST call to
+		// 	createOp
 		//
-		while (!o.isEOF()) 
+		while (actual=createOp (*parser, operands, last))
 		{
-			if (o.isCmd ())
+			if (previousLast)
 			{
-				// Create operator
-				boost::shared_ptr<PdfOperator> op  
-					(createOp (string(o.getCmd ()), operands, pdf, rf, composite));
-				//
-				// Put it either to operators when the operator itself is a complex type
-				// or if it is not a complex type
-				// Put it behind complex type when the operand itself is not complex but we are in a
-				// complex type (that is indicated by cmplex variable)
-				//
-				if (composite && composite != op.get())
-				{
-					//PdfOperator::putBehind (cmplex, op);
-				
-				}else
-				{
-					if (!operators.empty())
-					{
-						operators.back ()->setNext (op);
-						op->setPrev (operators.back ());
-					}
-					// Make it the last one
-					operators.push_back (op);
-				}
-				
-				assert (operands.empty());
-				if (!operands.empty ())
-					throw MalformedFormatExeption ( "CContentStream::CContentStream() "
-									"Operands left on stack in pdf content stream after operator.");
-					
-			}else // if (o.isCmd ())
-			{
-				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
-				operands.push_back (pIp);
+				// Insert it in to the pdfoperator chain
+				PdfOperator::putBehind (previousLast, actual);
 			}
-
-			// free it else memory leak
-			o.free ();
-			// grab the next object
-			parser->getObj(&o);
+			// Save it into our "top level" container
+			operators.push_back (actual);
+			previousLast = last;
 		}
+
+		operandsSetPdf (operators.front(), pdf, rf);
 	}
 	
 
@@ -1000,12 +1024,9 @@ CContentStream::getStringRepresentation (string& str) const
 	string frst, tmp;
 
 	str.clear ();
-	for (Operators::const_iterator it = operators.begin (); it != operators.end(); ++it)
+
+	for (Operators::const_iterator it = operators.begin (); it != operators.end (); ++it)
 	{
-			
-		(*it)->getOperatorName (frst);
-		printDbg (DBG_DBG, "Operator name: " << frst << " param count: " << (*it)->getParametersCount() );
-		
 		(*it)->getStringRepresentation (tmp);
 		str += tmp + "\n";
 		tmp.clear ();

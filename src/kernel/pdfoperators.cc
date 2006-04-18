@@ -140,6 +140,7 @@ CompositePdfOperator::getStringRepresentation (std::string& str) const
 	//
 	// Get string representation of every child and append it
 	//
+	// Indicate that we are a composite
 	string tmp;
 	PdfOperators::const_iterator it = children.begin ();
 	for (; it != children.end(); ++it)

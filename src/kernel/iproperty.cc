@@ -24,14 +24,14 @@ namespace pdfobjects {
 //
 IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf)
 {
-	printDbg (debug::DBG_DBG, "IProperty () constructor.");
-
+	//printDbg (debug::DBG_DBG, "IProperty () constructor.");
+	
 	ref.num = ref.gen = 0;
 }
 
 IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf)
 {
-	printDbg (debug::DBG_DBG, "IProperty () constructor.");
+	//printDbg (debug::DBG_DBG, "IProperty () constructor.");
 }
 
 //

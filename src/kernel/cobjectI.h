@@ -59,7 +59,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (Object& o) : value(Value())
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
+	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Set object's value
 	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);

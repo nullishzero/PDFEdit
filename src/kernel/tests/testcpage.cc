@@ -155,12 +155,9 @@ opcount (ostream& oss, const char* fileName)
 void
 display (ostream& oss, const char* fileName)
 {
-	oss << "display" << endl;
-	
 	// Open pdf and get the first page	
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
-
 
   	//TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
   	TextOutputDev textOut ("1.txt", gFalse, gFalse, gFalse);
@@ -183,7 +180,17 @@ display (ostream& oss, const char* fileName)
 	globalParams = oldGlobPar;
 }
 
-				
+void
+printContentStream (ostream& oss, const char* fileName)
+{
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+
+	// Print content stream
+	string str;
+	page->getContentStream()->getStringRepresentation (str);
+	oss << "Content stream representation: " << str << endl;
+}
 
 //=====================================================================================
 void cpage_tests(int , char **, const char* fileName)
@@ -192,16 +199,20 @@ void cpage_tests(int , char **, const char* fileName)
 	mediabox (OUTPUT, fileName);
 	OK_TEST;
 
-	TEST(" test 4.2-- opcount");
+	TEST(" test 4.2 -- opcount");
 	opcount (OUTPUT, fileName);
 	OK_TEST;
 
-	TEST(" test 4.3-- getPosition");
+	TEST(" test 4.3 -- getPosition");
 	position (OUTPUT, fileName);
 	OK_TEST;
 
-	TEST(" test 4.4-- display");
+	TEST(" test 4.4 -- display");
 	display (OUTPUT, fileName);
 	OK_TEST;
+
+	//TEST(" test 4.5 -- print contentstream");
+	//printContentStream (OUTPUT, fileName);
+	//OK_TEST;
 
 }
