@@ -45,7 +45,7 @@
      Key called <varname>toolbars</varname> contain comma separated list of toolbar names. Only toolbars specified here
      will be available in editor.
     </para>
-    <para>
+    <formalpara>
      <title>Format of one list</title>
      <programlisting>items/<varname>name_of_list</varname>=list <varname>Caption of menu</varname>,<varname>menu item 1, menu item 2, ....</varname></programlisting>
      Number of items in one list is not limited, but note that dimensions of screen where the menu or toolbars will be shown are limited.
@@ -53,8 +53,8 @@
      If you want to insert separator in the menu, use "-" (single dash) in place of items's name
      <synopsis>Caption of item</synopsis> is text that will be shown as menu text/tooltip.
      All further parameters (comma separated) following caption are items that will be contained in the list.
-    </para>
-    <para>
+    </formalpara>
+    <formalpara>
      <title>Format of one item</title>
      <programlisting>items/<varname>name_of_item</varname>=item <varname>Caption of item</varname>,<varname>Command</varname>,<varname>Keyboard_shortcut</varname>,<varname>Icon</varname></programlisting>
      <synopsis>Icon</synopsis> is name of file with icon image.
@@ -75,7 +75,7 @@
      If two different items have the same shortcut, the result is undefined.
      Can be omitted (if icon is also omitted) or just left blank (no keyboard shortcut).
      Format is modifiers+key, for example: <keycombo>Ctrl+A</keycombo>, <keycombo>Shift+X</keycombo>, <keycombo>Ctrl+Alt+Z</keycombo>
-    </para>
+    </formalpara>
    </sect2>
   </sect1>
   <sect1>

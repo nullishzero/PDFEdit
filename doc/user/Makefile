@@ -10,8 +10,11 @@ clean:
 	rm -f $(docs)
 
 #rule for procesing docbook documentation
+#prefer using xsltproc and docbook.xsl (nicer output and is also faster)
+# over docbook2html (which uses jade)
 %.html: %.xml
-	docbook2html -u $< 2>/dev/null || true
+	../tools/docbook2html $< 2>/dev/null || docbook2html -u $< 2>&1 >/dev/null ||  true
 
+#rule for generation manpage
 %.1: %.xml docbook2man.pl
-	./docbook2man.pl $< >$@
+	../tools/docbook2man.pl $< >$@

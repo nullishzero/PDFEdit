@@ -17,7 +17,9 @@
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
    </informaltable>
-   For rebuilding documentation from DocBook .xml files, <command>docbook2html</command> and <command>gmake</command> (GNU make) is required
+   For rebuilding documentation from DocBook .xml files, <command>gmake</command> (GNU make) is required
+ and you also need either <command>docbook2html</command> or <command>xsltproc</command> from libxslt
+ and docbook stylesheets 
   </para>
  </chapter>
  <chapter>
@@ -36,7 +38,7 @@
    <informaltable frame="none">
     <tgroup cols="2"><tbody>
      <row><entry>Gentoo Linux x86</entry><entry> - ok</entry></row>
-     <row><entry>FreeBSD 6.0 x86</entry><entry> - docbook2html seems to be unavailable on FreeBSD</entry></row>
+     <row><entry>FreeBSD 6.0 x86</entry><entry> - ok</entry></row>
      <row><entry>Ubuntu Linux 5.10 x86</entry><entry> - ok</entry></row>
     </tbody></tgroup>
    </informaltable>
