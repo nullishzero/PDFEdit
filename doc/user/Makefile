@@ -16,5 +16,5 @@ clean:
 	../tools/docbook2html $< 2>/dev/null || docbook2html -u $< 2>&1 >/dev/null ||  true
 
 #rule for generation manpage
-%.1: %.xml docbook2man.pl
+%.1: %.xml ../tools/docbook2man.pl
 	../tools/docbook2man.pl $< >$@
