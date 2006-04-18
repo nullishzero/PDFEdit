@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/18 17:25:29  hockm0bm
+ * IObserverHandler returned back
+ *
  * Revision 1.7  2006/04/17 17:08:10  hockm0bm
  * throw() added to all methods which can't throw
  *
@@ -185,6 +188,38 @@ public:
 	 * Virtual destructor.
 	 */
 	virtual ~IObserver ()throw() {};
+};
+
+/** Interface for notifiers.
+ *
+ * Each value keeper which wants to manage observers should implement this
+ * interface. 
+ * 
+ */
+template<typename T> class IObserverHandler
+{
+public:
+	/** Registers new observer.
+	 * @param observer Observer to register (if NULL, nothing is registered).
+	 *
+	 * Adds given observer to the observer list which is (one by one) notified
+	 * about change when it occures.
+	 * <br>
+	 * Implementator should guarant that observers with higher priority (lower
+	 * priority numbers) should be noified sooner than lower priority ones.
+	 * Observers with same priotities should be notified in same ordered
+	 * accordind registration order.
+	 * <br>
+	 * Multiple calling with same observer should be ignored.
+	 */
+	virtual void registerObserver(const IObserver<T> * observer) =0;
+
+	/** Unregisters given observer.
+	 * @param observer Observer to unregister.
+	 *
+	 * Given one is not used in next change.
+	 */
+	virtual void unregisterObserver(const IObserver<T> * observer) =0;
 };
 
 
