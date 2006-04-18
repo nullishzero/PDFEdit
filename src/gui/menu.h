@@ -1,13 +1,14 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
+#include <qmap.h>
+#include <qstringlist.h>
 class QMainWindow;
 class QMenuBar;
 class QMenuData;
 class QPopupMenu;
-class QString;
-class QStringList;
 class QPixmap;
+class QWidget;
 
 namespace gui {
 
@@ -21,6 +22,8 @@ typedef QMap<int, QString> ActionMapInverse;
 typedef QMap<QString, QPixmap*> IconCache;
 /** Toolbar list type: mapping from toolbar name to toolbar object */
 typedef QMap<QString, ToolBar*> ToolBarList;
+/** Mapping from accel name to widget that have this accel */
+typedef QMap<QString, QString> AccelList;
 
 class Menu {
 public:
@@ -31,11 +34,10 @@ public:
  ToolBarList loadToolBars(QMainWindow *parent);
  ToolBar* getToolbar(const QString &name);
  QStringList getToolbarList();
- void saveToolbar(QToolBar *tb,const QString &name,QMainWindow *main);
- void restoreToolbar(QToolBar *tb,const QString &name,QMainWindow *main);
  void saveToolbars(QMainWindow *main);
  void restoreToolbars(QMainWindow *main);
 private:
+ bool reserveAccel(const QString &accelDef,const QString &action);
  void initPaths();
  QString getIconFile(const QString &name);
  int addAction(const QString action);
@@ -59,6 +61,8 @@ private:
  QStringList toolbarNames;
  /** List of loaded toolbars */
  ToolBarList toolbarList;
+ /** List of installed accelerators */
+ AccelList accels;
 };
 
 } // namespace gui
