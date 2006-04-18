@@ -152,15 +152,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> pages</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Dictionary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> page(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -461,6 +473,17 @@
     <message>
         <source>&amp;Help</source>
         <comment>index</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::TreeItemPdf</name>
+    <message>
+        <source>Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Outlines</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

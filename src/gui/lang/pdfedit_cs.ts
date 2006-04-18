@@ -149,19 +149,31 @@
     </message>
     <message>
         <source>PDF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> pages</source>
-        <translation type="unfinished"></translation>
+        <translation>PDF</translation>
     </message>
     <message>
         <source>Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Slovník</translation>
     </message>
     <message>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Seznam</translation>
+    </message>
+    <message>
+        <source>Page</source>
+        <translation>Strana</translation>
+    </message>
+    <message>
+        <source> page(s)</source>
+        <translation> stran(a/y)</translation>
+    </message>
+    <message>
+        <source>&amp;Index</source>
+        <translation>Obsah</translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>Zavřít</translation>
     </message>
 </context>
 <context>
@@ -353,7 +365,7 @@
     </message>
     <message>
         <source>Unknown exception in script occured</source>
-        <translation type="unfinished"></translation>
+        <translation>Ve skriptu dolo k neznámé výjimce</translation>
     </message>
 </context>
 <context>
@@ -462,6 +474,17 @@
         <source>&amp;Help</source>
         <comment>helpindex</comment>
         <translation>Nápověda</translation>
+    </message>
+</context>
+<context>
+    <name>gui::TreeItemPdf</name>
+    <message>
+        <source>Pages</source>
+        <translation>Stránky</translation>
+    </message>
+    <message>
+        <source>Outlines</source>
+        <translation>Outliny</translation>
     </message>
 </context>
 <context>
