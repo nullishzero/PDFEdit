@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/19 06:01:59  hockm0bm
+ * reopen signature changed to enable jumping to start from specified offset
+ *         - synchronization with XRef::initInternals method
+ *
  * Revision 1.9  2006/04/17 17:45:47  hockm0bm
  * bug in knowsRef corrected
  *         - checking for object number added when accessing XRef::entries
@@ -446,7 +450,7 @@ using namespace debug;
 }
 
 
-void CXref::reopen()
+void CXref::reopen(size_t xrefOff)
 {
 using namespace debug;
 
@@ -462,5 +466,5 @@ using namespace debug;
 	printDbg(DBG_DBG, "Destroing XRef internals");
 	XRef::destroyInternals();
 	printDbg(DBG_DBG, "Initializes XRef internals");
-	XRef::initInternals();
+	XRef::initInternals(xrefOff);
 }

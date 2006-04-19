@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/04/19 06:01:59  hockm0bm
+ * reopen signature changed to enable jumping to start from specified offset
+ *         - synchronization with XRef::initInternals method
+ *
  * Revision 1.15  2006/04/15 08:04:43  hockm0bm
  * reserveRef and createObject are protected now
  *
@@ -188,14 +192,16 @@ protected:
 	::Object * changeTrailer(char * name, ::Object * value);
 
 	/** Reinitializes all internal structures.
+	 * @param xrefOff Offset of cross reference table from which to start.
 	 *
 	 * Clears all internal structures and forces XRef super type to throw away
-	 * all internal structures too and parse them again from stream.
+	 * all internal structures too and parse them again from stream starting
+	 * from given position.
 	 * <br>
 	 * This method should be called if new revision is appended to the stream.
 	 * Otherwise all information about changes are lost!
 	 */
-	void reopen();
+	void reopen(size_t xrefOff);
 
 	/** Reserves reference for new indirect object.
 	 *
