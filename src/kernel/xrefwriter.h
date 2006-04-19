@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/19 06:00:23  hockm0bm
+ * * changeRevision - first implementation (not tested yet)
+ * * collectRevisions -  first implementation (not tested yet)
+ * * minor changes in saveChanges
+ *
  * Revision 1.12  2006/04/17 19:53:34  hockm0bm
  * documentation update
  *
@@ -203,19 +208,7 @@ protected:
 	/** Collects all revisions information.
 	 *
 	 */
-	void collectRevisions()
-	{
-		// clear revisions if non empty
-		// store lastXrefPos revisions
-		// 
-		// LOOP (start with trailerDict)
-		// IF dict->prev
-			// jump to prev in stream (prev XRef start)
-			// append position to the revisions
-			// lookup trailer dict
-			// dict = parse trailer
-		// ELSE ENDLOOP
-	}
+	void collectRevisions();
 public:
 	/** Initialize constructor with file stream writer.
 	 * @param stream File stream with pdf content.
@@ -347,28 +340,15 @@ public:
 	 * have higher number. The oldest revision has getRevisionCount()-1
 	 * number.
 	 * <p>
-	 * XRefWriter is changed to read-only mode if revision is not 0 (most
+	 * XRefWriter doesn't enable to make changes if revision is not 0 (most
 	 * actual). This means that all methods producing changes are invalid 
 	 * and produces error when called.
 	 * <br>
 	 * This is because branching is not implementable in PDF structure.
-	 * saveXref method will forget everithing behind this revision, so it
-	 * is possible to make changes in arbitrary revision with restriction, 
-	 * that change in older revision is possible only in separate file.
-	 *
-	 * @throw NotImplementedException because this feature is not implemented in
-	 * this moment (TODO change).
+	 * 
+	 * @throw TODO if revNumber doesn't stand for any known revisions.
 	 */ 
-	void changeRevision(unsigned )
-	{
-		// constrains check
-		// empty XRef internals (entries, trailer, TODO find out ...)
-		// jump to the revisions[revNumber] position
-		// parse XRef from this position
-		// discard cache
-		// sets revision field
-		throw NotImplementedException("changeRevision method");
-	}
+	void changeRevision(unsigned revNumber);
 
 	/** Returns actual revision.
 	 *

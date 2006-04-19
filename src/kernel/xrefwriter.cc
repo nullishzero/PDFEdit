@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/04/19 06:00:23  hockm0bm
+ * * changeRevision - first implementation (not tested yet)
+ * * collectRevisions -  first implementation (not tested yet)
+ * * minor changes in saveChanges
+ *
  * Revision 1.8  2006/04/17 19:57:30  hockm0bm
  * * findPDFEof removed
  *         - uses XRef eofPos value instead
@@ -439,15 +444,121 @@ void XRefWriter::saveChanges(bool newRevision)
 		printDbg(DBG_INFO, "Saving changes as new revision.");
 		storePos=pos;
 
-		// forces reinitialization of XRef and CXref internal structures
-		CXref::reopen();
+		// forces reinitialization of XRef and CXref internal structures from
+		// last xref position
+		CXref::reopen(xrefPos);
 
-		// new revision number is added - we are adding number for new oldest
-		// revision
-		revisions.push_back(revisions.size());
+		// new revision number is added - we insert the newest revision so
+		// xrefPos value is stored
+		revisions.insert(revisions.begin(), xrefPos);
 	}
 
 	printDbg(DBG_DBG, "finished");
 }
 
+void XRefWriter::collectRevisions()
+{
+	printDbg(DBG_DBG, "");
 
+	// clears revisions if non empty
+	if(revisions.size())
+	{
+		printDbg(DBG_DBG, "Clearing revisions container.");
+		revisions.clear();
+	}
+
+	// starts with newest revision
+	size_t off=XRef::lastXRefPos;
+	// uses deep copy to prevent problems with original data
+	Object * trailer=XRef::trailerDict.clone();
+	bool cont=true;
+
+	do
+	{
+		printDbg(DBG_DBG, "XRef offset for "<<revisions.size()<<" revision is"<<off);
+		// pushes current offset as last revision
+		revisions.push_back(off);
+
+		// gets prev field from current trailer and if it is null object (not
+		// present) or doesn't have integer value, jumps out of loop
+		Object prev;
+		trailer->getDict()->lookupNF("Prev", &prev);
+		if(prev.getType()!=objInt)
+		{
+			printDbg(DBG_DBG, "Prev doesn't have int value. type="<<prev.getType()<<". Assuming no more revisions.");
+			break;
+		}
+
+		// sets new value for off
+		off=prev.getInt();
+		prev.free();
+
+		// searches for TRAILER_KEYWORD to be able to parse older trailer (one
+		// for xref on off position) - this works only for oldstyle XRef tables
+		// not XRef streams
+		str->setPos(off);
+		char buffer[1024];
+		memset(buffer, '\0', sizeof(buffer));
+		char * ret; 
+		while((ret=str->getLine(buffer, sizeof(buffer)-1)))
+		{
+			if(strstr(buffer, STARTXREF_KEYWORD))
+			{
+				// we have reached startxref keyword and haven't found trailer
+				printDbg(DBG_WARN, STARTXREF_KEYWORD<<" found but no trailer.");
+				cont=false;
+				break;
+			}
+			
+			if(strstr(buffer, TRAILER_KEYWORD))
+			{
+				// trailer found, parse it and set trailer to parsed one
+				Object obj;
+				::Parser * parser = new Parser(NULL,
+					new Lexer(NULL,
+						str->makeSubStream(str->getPos(), gFalse, 0, &obj)));
+				// deallocates current trailer and parses one for previous
+				// revision
+				trailer->free();
+				parser->getObj(trailer);
+				
+				delete parser;
+				break;
+			}
+		}
+		if(!ret)
+		{
+			// stream returned NULL, which means that no more data in stream is
+			// available
+			printDbg(DBG_DBG, "end of stream but no trailer found");
+			cont=false;
+		}
+		
+	// continues only if no problem with trailer occures
+	}while(cont); 
+
+	// deallocates the oldest one - no problem if the oldest is the newest at
+	// the same time, because we have used clone of trailer instance from XRef
+	trailer->free();
+	delete trailer;
+
+	printDbg(DBG_INFO, "This document contains "<<revisions.size()<<" revisions.");
+}
+
+void XRefWriter::changeRevision(unsigned revNumber)
+{
+	printDbg(DBG_DBG, "revNumber="<<revNumber);
+	
+	// constrains check
+	if(revNumber>revisions.size()-1)
+	{
+		printDbg(DBG_ERR, "unkown revision with number="<<revNumber);
+		// TODO throw an exception
+		return;
+	}
+	
+	// forces CXRef to reopen from revisions[revNumber] offset
+	// which points to start of xref section for that revision
+	size_t off=revisions[revNumber];
+	reopen(off);
+}
