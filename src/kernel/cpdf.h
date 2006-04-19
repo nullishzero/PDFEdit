@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.32  2006/04/19 05:57:46  hockm0bm
+ * * pageTreeWatchDog wrapped by shared_ptr
+ * * print messages consolidated a bit
+ * * exception handling and error prone in page tree functions
+ *
  * Revision 1.31  2006/04/17 20:11:47  hockm0bm
  * * OpenMode reorganized
  *         - ReadOnly is first now
@@ -409,7 +414,7 @@ protected:
 	 *
 	 * This instance is used to handle changes in page tree.
 	 */
-	PageTreeWatchDog pageTreeWatchDog;
+	boost::shared_ptr<PageTreeWatchDog> pageTreeWatchDog;
 	
 private:
 	
@@ -549,7 +554,7 @@ public:
 	 * If you want to create instance, please use static factory method 
 	 * getInstance.
 	 */
-	CPdf ():pageTreeWatchDog(this), mode(ReadOnly){};
+	CPdf ():mode(ReadOnly){};
 
 	/** Initializating constructor.
 	 * @param stream Stream with data.

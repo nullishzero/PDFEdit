@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2006/04/19 05:57:46  hockm0bm
+ * * pageTreeWatchDog wrapped by shared_ptr
+ * * print messages consolidated a bit
+ * * exception handling and error prone in page tree functions
+ *
  * Revision 1.28  2006/04/17 20:11:47  hockm0bm
  * * OpenMode reorganized
  *         - ReadOnly is first now
@@ -194,7 +199,8 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 		}catch(ElementBadTypeException & e)
 		{
 			// malformed pdf
-			throw MalformedFormatExeption("Reference target is not dictionary");
+			printDbg(DBG_ERR, "pagesDict doesn't refer to dictionary");
+			throw ElementBadTypeException("pagesDict");
 		}
 	}else
 	{
@@ -273,7 +279,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 			if((*i)->getType() != pRef)
 			{
 				// malformed pdf
-				printDbg(DBG_ERR, "Pages Kid must be reference");
+				printDbg(DBG_ERR, "Kid["<<index<<"] is not reference. type="<<(*i)->getType());
 				throw ElementBadTypeException(""+index);
 			}
 
@@ -285,8 +291,9 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 				child_ptr=getDictFromRef(*i);
 			}catch(ElementBadTypeException & e)
 			{
-				// target is not an dictionary
-				throw MalformedFormatExeption("Kid target is not dictionary");
+				// element is not dictionary, we will just print warning
+				printDbg(DBG_WARN, "Target of Kids["<<index<<"] is not dictionary.");
+				continue;
 			}
 			
 			// we can have page or pages dictionary in child_ptr
@@ -328,8 +335,8 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
 			}
 
 			// malformed pdf
-			printDbg(DBG_ERR, "kid dictionary doesn't have correct Type field");
-			throw ElementBadTypeException(""+index);
+			// we will, just print warning
+			printDbg(DBG_WARN, "kid dictionary doesn't have correct Type field");
 		}
 
 		// this should never happen, because given pos was in this subtree
@@ -398,7 +405,7 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 	// this node
 	if(superNodeType!="Pages")
 	{
-		printDbg(DBG_WARN, "Geven dictionary is not correct page tree node. type="<<superNodeType);
+		printDbg(DBG_WARN, "Given dictionary is not correct page tree node. type="<<superNodeType);
 		return 0;
 	}
 
@@ -432,8 +439,9 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 		PropertyType type=(*i)->getType();
 		if(type!=pRef)
 		{
-			printDbg(DBG_ERR, "Kids["<<index<<"] is not an reference. type="<<type);
-			throw ElementBadTypeException("Kids");
+			// we will just print warning and skips this element
+			printDbg(DBG_WARN, "Kids["<<index<<"] is not an reference. type="<<type);
+			continue;
 		}
 
 		// dereference indirect object - this has to be indirect object
@@ -442,8 +450,9 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 		shared_ptr<IProperty> element_ptr=pdf.getIndirectProperty(ref);
 		if(element_ptr->getType()!=pDict)
 		{
-			printDbg(DBG_ERR, "Kids["<<index<<"] doesn't refer to a dictionary. type="<<element_ptr->getType());
-			throw ElementBadTypeException("");
+			// we will just print warning and skips this element
+			printDbg(DBG_WARN, "Kids["<<index<<"] doesn't refer to a dictionary. type="<<element_ptr->getType());
+			continue;
 		}
 		shared_ptr<CDict> elementDict_ptr=IProperty::getSmartCObjectPtr<CDict>(element_ptr);
 
@@ -471,7 +480,7 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 		}
 		
 		// if node is not Page or Pages it is ignored.
-		printDbg(DBG_WARN, "Kids element dictionary is not Page or Pages node.");
+		printDbg(DBG_WARN, "Kids element dictionary is neither Page nor Pages node.");
 	}
 
 	return 0;
@@ -597,7 +606,7 @@ using namespace utils;
  * reference and if it is Pages dictionary, Registers observer also on Kids
  * array and recursively to all its elements (which are referencies).
  */
-void registerPageTreeObserver(boost::shared_ptr<CRef> ref, const observer::IObserver<IProperty> * observer)
+void registerPageTreeObserver(boost::shared_ptr<CRef> ref, shared_ptr<const observer::IObserver<IProperty> > observer)
 {
 using namespace boost;
 using namespace std;
@@ -608,8 +617,7 @@ using namespace pdfobjects::utils;
 	printDbg(DBG_DBG, "ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
 
 	// registers observer for page tree handling
-	// FIXME uncomment
-	//ref->registerObserver(observer);
+	ref->registerObserver(observer);
 	
 	// dereferences and if it is Pages dictionary, calls recursively to all
 	// children
@@ -632,8 +640,7 @@ using namespace pdfobjects::utils;
 		return;
 	}
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
-	// FIXME uncomment
-	//kids_ptr->registerObserver(observer);
+	kids_ptr->registerObserver(observer);
 	vector<shared_ptr<IProperty> > container;
 	kids_ptr->_getAllChildObjects(container);
 	for(vector<shared_ptr<IProperty> >::iterator i=container.begin(); i!=container.end(); i++)
@@ -671,7 +678,7 @@ void CPdf::PageTreeWatchDog::notify(boost::shared_ptr<IProperty> newValue, boost
 			shared_ptr<CRef> newValueRef_ptr=IProperty::getSmartCObjectPtr<CRef>(newValue);
 			try
 			{
-				registerPageTreeObserver(newValueRef_ptr, this);
+				registerPageTreeObserver(newValueRef_ptr, pdf->pageTreeWatchDog);
 			}catch(CObjectException & e)
 			{
 				printDbg(DBG_ERR, "registerPageTreeObserver failed with cause="<<e.what());
@@ -783,7 +790,7 @@ void CPdf::initRevisionSpecific()
 		}else
 		{
 			shared_ptr<CRef> pageTreeRoot_ptr=IProperty::getSmartCObjectPtr<CRef>(pageTreeProp_ptr);
-			registerPageTreeObserver(pageTreeRoot_ptr, &pageTreeWatchDog);
+			registerPageTreeObserver(pageTreeRoot_ptr, pageTreeWatchDog);
 		}
 	}catch(CObjectException & e)
 	{
@@ -791,7 +798,7 @@ void CPdf::initRevisionSpecific()
 	}
 }
 
-CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(PageTreeWatchDog(this))
+CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this))
 {
 	// gets xref writer - if error occures, exception is thrown 
 	xref=new XRefWriter(stream, this);
@@ -826,7 +833,7 @@ boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
 {
 using namespace debug;
 
-	printDbg (0,"ref=["<<ref.num << "," << ref.gen <<"]");
+	printDbg (DBG_DBG,"ref=["<<ref.num << "," << ref.gen <<"]");
 
 	// find the key, if it exists
 	IndirectMapping::iterator i = indMap.find(ref);
@@ -853,7 +860,7 @@ using namespace debug;
 	if(prop_ptr->getType() != pNull)
 	{
 		indMap.insert(IndirectMapping::value_type(ref, prop_ptr));
-		printDbg(DBG_DBG, "Mapping created");
+		printDbg(DBG_INFO, "Mapping created for ref=["<<ref.num<<", "<<ref.gen<<"]");
 	}
 
 	obj.free ();
@@ -1496,7 +1503,8 @@ using namespace utils;
 			// Parent is found but with bad type
 			// Parent field is removed in first step and than added with correct
 			// this is because of different type of field value which may lead
-			// to exception if types are checked
+			// to exception if types are checked (in paranoid mode of
+			// XRefWriter)
 			IndiRef parentRef=interNode->getIndiRef();
 			printDbg(DBG_WARN, "Parent field found but with bad type. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
 			kidDict_ptr->delProperty("Parent");
