@@ -3,6 +3,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.30  2006/04/19 18:46:12  hockm0bm
+ * * getPropertyValue replaced by getValueFromSimple helper
+ * * minor changes in searchTreeNode
+ * 	- getPropertyId is used
+ * 	- throws AmbiguesPageTreeException if not able to get node
+ * 	  position because of Kids array ambiguity
+ * * insertPage, removePage throws AmbiguesPageTreeException (same as above)
+ *         - uses getPropertyId used
+ *
  * Revision 1.29  2006/04/19 05:57:46  hockm0bm
  * * pageTreeWatchDog wrapped by shared_ptr
  * * print messages consolidated a bit
@@ -359,8 +368,8 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
  * @param startValue Position for first found node in this superNode.
  *
  * At first checks if node and superNode are same nodes (uses == operator to
- * compare). Then tries to get Type of the dictionary. In Page case returns with
- * startValue if given nodes are same or 0 (page not found).
+ * compare). Then tries to get Type of the superNode dictionary. In Page case 
+ * returns with startValue if given nodes are same or 0 (page not found).
  * If type is Pages (intermediate node) goes through Kids array and recursively
  * calls this method for each element until recursion returns with non 0 result.
  * This means the end of recursion. startValue is actualized for each Kid's
@@ -369,21 +378,21 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
  * If node is found as direct Kids member (this means that reference of target 
  * node is direct memeber of Kids array), then determines if the node position 
  * is unambigues - checks whether reference to the node is unique in Kids array. 
- * If not (TODO which) exception is thrown. This means that searchTreeNode 
- * function is not able to definitively determine node's position.
+ * If not throws exception. This means that searchTreeNode function is not able 
+ * to definitively determine node's position.
  *
  * @throw ElementBadTypeException If required element of pdf object has bad
  * type.
  * @throw ElementNotFoundException If required element of pdf object is not
  * found.
+ * @throw AmbiguesPageTreeException if page tree is ambigues and node position
+ * can't be determined.
  *
  * @return Position of the node or 0 if node couldn't be found under this
  * superNode.
  */
 size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict> node, size_t startValue)
 {
-	// TODO error handling unification
-	
 	printDbg(DBG_DBG, "startPos="<<startValue);
 	
 	// if nodes are same, startValue is returned.
@@ -420,15 +429,22 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 	}
 	shared_ptr<CArray> array_ptr=IProperty::getSmartCObjectPtr<CArray>(arrayProp_ptr);
 
-	// Checks if node's reference is presnt in Kids array
+	// Checks if node's reference is present in Kids array
 	// All nodes has to be indirect objects so getIndiRef returns node's
 	// reference
 	// If getPropertyId returns more than one element - position is ambigues and
 	// exception is thrown 
-	CRef nodeRef(node->getIndiRef());
-	// TODO array_ptr->getPropertyId();
+	shared_ptr<CRef> nodeRef(CRefFactory::getInstance(node->getIndiRef()));
+	vector<CArray::PropertyId> positions;
+	getPropertyId<CArray, vector<CArray::PropertyId> >(array_ptr, nodeRef, positions);
+	if(positions.size()>1)
+	{
+		printDbg(DBG_WARN, "Position of node is ambigues.");
+		throw AmbiguesPageTreeException();
+	}
 	
-	// node is not direct child of superNode we have to go deaper in subtree
+	// goes through all Kids and checks if node is one of them or go deeper in
+	// subtree in case of intermediate kid
 	vector<shared_ptr<IProperty> > kidsContainer;
 	array_ptr->_getAllChildObjects(kidsContainer);
 	vector<shared_ptr<IProperty> >::iterator i;
@@ -444,9 +460,8 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 			continue;
 		}
 
-		// dereference indirect object - this has to be indirect object
-		IndiRef ref;
-		IProperty::getSmartCObjectPtr<CRef>(*i)->getPropertyValue(ref);
+		// dereference indirect object - this has to be dictionary
+		IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(*i);
 		shared_ptr<IProperty> element_ptr=pdf.getIndirectProperty(ref);
 		if(element_ptr->getType()!=pDict)
 		{
@@ -456,17 +471,22 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 		}
 		shared_ptr<CDict> elementDict_ptr=IProperty::getSmartCObjectPtr<CDict>(element_ptr);
 
-		// starts recursion on elementDict_ptr as new superNode for its subtree
-		// checks Type field of elementDict_ptr dictionary to know how to update
-		// startValue if not found in this subtree
+		// compares element_ptr (kid) with node, if they are same, returns
+		// startValue
+		if(element_ptr==node)
+			return startValue;
+
+		// node and element_ptr are not same, so node can't be this page
 		string elementDictType=getNameFromDict("Type", elementDict_ptr);
 		if(elementDictType=="Page")
 		{
-			// this was not correct one because reference was not found in Kids, 
-			// increments startValue
+			// this was not correct one startValue is increased
 			startValue++;
 			continue;
 		}
+
+		// Pages dictionary means intermediarte node, so start recursion in this
+		// subtree
 		if(elementDictType=="Pages")
 		{
 			size_t ret=searchTreeNode(pdf, elementDict_ptr, node, startValue);
@@ -500,12 +520,12 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
  * @throw PageNotFoundException
  * @throw ElementBadTypeException
  * @throw MalformedFormatExeption
+ * @throw AmbiguesPageTreeException if node position can't be determined bacause
+ * of page tree ambiguity (see searchTreeNode for more information).
  * @return Node position.
  */
 size_t getNodePosition(CPdf & pdf, shared_ptr<IProperty> node)
 {
-	// TODO error handling unification
-
 	printDbg(DBG_DBG, "");
 	// node must by from given pdf
 	if(node->getPdf()!=&pdf)
@@ -582,7 +602,7 @@ using namespace utils;
 		return true;
 
 	// TODO solve problem when parent is the root of hierarchy and its Parent
-	// field points to itself
+	// field points to itself - this should NOT happen in normal pdf files
 	
 	// parent may be somewhere higher in the page tree
 	// Gets direct parent indirect object from given pdf and checks its type
@@ -612,8 +632,7 @@ using namespace boost;
 using namespace std;
 using namespace pdfobjects::utils;
 
-	IndiRef indiRef;
-	ref->getPropertyValue(indiRef);
+	IndiRef indiRef=getValueFromSimple<CRef, pRef, IndiRef>(ref);
 	printDbg(DBG_DBG, "ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
 
 	// registers observer for page tree handling
@@ -946,7 +965,11 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 //
 IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 {
-	printDbg(debug::DBG_DBG, "");
+using namespace utils;
+using namespace debug;
+using namespace boost;
+
+	printDbg(DBG_DBG, "");
 
 	if(mode==ReadOnly)
 	{
@@ -956,7 +979,7 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	
 	// place for propertyValue
 	// it is ip by default
-	boost::shared_ptr<IProperty> propValue=ip;
+	shared_ptr<IProperty> propValue=ip;
 	
 	// if we given ip is reference, we have to distinguish whether
 	// it comes from same file (and then nothing is to do and we
@@ -966,14 +989,12 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	PropertyType type=ip->getType();
 	if(type==pRef)
 	{
-		IndiRef ref;
-		boost::shared_ptr<CRef> cref_ptr=IProperty::getSmartCObjectPtr<CRef>(ip);
-		cref_ptr->getPropertyValue(ref);
+		IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(ip);
 		
 		// just returns reference
 		if(ip->getPdf()==this)
 		{
-			printDbg(debug::DBG_WARN, "Reference is from this file, nothing is added.");
+			printDbg(DBG_WARN, "Reference is from this file, nothing is added.");
 			return ref;
 		}
 
@@ -986,8 +1007,8 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// added too
 	if(propValue->getPdf() != this)
 	{
-		printDbg(debug::DBG_DBG, "Adding property from different file.");
-		boost::shared_ptr<IProperty> clone;
+		printDbg(DBG_DBG, "Adding property from different file.");
+		shared_ptr<IProperty> clone;
 		switch(propValue->getType())
 		{
 			// creates local clone for complex types - to keep 
@@ -1020,16 +1041,16 @@ IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
 	// reserveRef may throw if we are in older revision
 	::Object * obj=propValue->_makeXpdfObject();
 	::Ref xpdfRef=xref->reserveRef();
-	printDbg(debug::DBG_DBG, "New reference reseved ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
+	printDbg(DBG_DBG, "New reference reseved ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
 	xref->changeObject(xpdfRef.num, xpdfRef.gen, obj);
 
 	// xpdf object has to be deallocated
-	utils::freeXpdfObject(obj);
+	freeXpdfObject(obj);
 
 	// creates return value from xpdf reference structure
 	// and returns
 	IndiRef reference={xpdfRef.num, xpdfRef.gen};
-	printDbg(debug::DBG_INFO, "New indirect object inserted with reference ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
+	printDbg(DBG_INFO, "New indirect object inserted with reference ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
 	return reference;
 }
 
@@ -1042,7 +1063,9 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	if(prop->getPdf() != this)
 	{
 		printDbg(DBG_ERR, "Given property is not from same pdf.");
-		// TODO exception
+		// TODO throw an exception
+		return;
+
 	}
 	// there must be mapping fro prop's indiref, but it doesn't have to be same
 	// instance.
@@ -1050,7 +1073,8 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	if(indMap.find(indiRef)==indMap.end())
 	{
 		printDbg(DBG_ERR, "Indirect mapping doesn't exist. prop seams to be fake.");
-		// TODO exception
+		// TODO throw an exception
+		return;
 	}
 
 	// gets xpdf Object instance and calls xref->change
@@ -1059,8 +1083,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	Object * propObject=prop->_makeXpdfObject();
 	printDbg(DBG_DBG, "Registering change to the XRefWriter");
 	xref->changeObject(indiRef.num, indiRef.gen, propObject);
-	// FIXME SEGV problem 
-	//utils::freeXpdfObject(propObject);
+	utils::freeXpdfObject(propObject);
 
 	// invalidates indMap mapping for this property
 	// This is because prop may be something different than original indirect
@@ -1307,8 +1330,7 @@ using namespace utils;
 
 				// gets reference of oldValue - which is the root removed
 				// subtree
-				IndiRef ref;
-				IProperty::getSmartCObjectPtr<CRef>(oldValue)->getPropertyValue(ref);
+				IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
 				
 				PageList::iterator i;
 				for(i=pageList.begin(); i!=pageList.end(); i++)
@@ -1567,12 +1589,6 @@ using namespace utils;
 	if(pos==0)
 		pos=1;
 
-	// gets page's dictionary and adds it as new indirect property.
-	// All page dictionaries must be indirect objects and addIndirectProperty
-	// method also solves problems with deep copy and page from different file
-	// transition
-	IndiRef pageRef=addIndirectProperty(page->getDictionary());
-
 	// gets intermediate node which includes node at given position. To enable
 	// also to insert after last page, following work around is done:
 	// if page is greater than page count, append flag is set to true and so new
@@ -1592,11 +1608,12 @@ using namespace utils;
 	// page dictionary has to be an indirect object, so getIndiRef returns
 	// dictionary reference
 	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("Pages"), 1, storePostion);
-	CRef currRef(currentPage_ptr->getIndiRef());
+	shared_ptr<CRef> currRef(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 	
 	// gets parent of found dictionary which maintains Kids array
-	// FIXME this may be problem - because there may be only one page in
-	// document which doesn't have any parent
+	// TODO this may be problem - because there may be only one page in
+	// document which could have no parent (normal document have one intemediate
+	// node also for 1 page in document)
 	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
 	shared_ptr<CDict> interNode_ptr=getDictFromRef(parentRef_ptr);
 	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
@@ -1608,17 +1625,32 @@ using namespace utils;
 	}
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
 
-	// gets index of searched node in Kids array - if position can't be 
-	// determined unambiguesly (getPropertyId returns more positions), 
-	// (TODO which) exception is thrown
-	size_t kidsIndex=0;
-	// TODO kidsIndex=kids_ptr->getPropertyId(currentPage_ptr)+append;
+	// gets index of searched node's reference in Kids array - if position 
+	// can't be determined unambiguesly (getPropertyId returns more positions), 
+	// throws exception
+	vector<CArray::PropertyId> positions;
+	getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currRef, positions);
+	if(positions.size()>1)
+	{
+		printDbg(DBG_ERR, "Page can't be created, because page tree is ambigues for node at pos="<<storePostion);
+		throw AmbiguesPageTreeException();
+	}
+	size_t kidsIndex=positions[0]+append;
 
 	// if we are storing new last page (append is true) we will add one
 	storePostion+=append;
 
+	// gets page's dictionary and adds it as new indirect property.
+	// All page dictionaries must be indirect objects and addIndirectProperty
+	// method also solves problems with deep copy and page from different file
+	// transition
+	// Now it is safe to add indirect object, because there is nothing that can
+	// fail
+	IndiRef pageRef=addIndirectProperty(page->getDictionary());
+
 	// adds newly created page dictionary to the kids array at kidsIndex
-	// position.
+	// position. This triggers pageTreeWatchDog for consolidation and observer
+	// is registered also on newly added reference
 	CRef pageCRef(pageRef);
 	kids_ptr->addProperty(kidsIndex, pageCRef);
 	
@@ -1644,6 +1676,8 @@ using namespace utils;
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
 
+	// TODO question: Is it possible to have document with no pages?
+
 	// checks position
 	if(1<pos || pos>getPageCount())
 		throw PageNotFoundException(pos);
@@ -1654,7 +1688,7 @@ using namespace utils;
 	
 	// Gets parent field from found page dictionary and gets its Kids array
 	// FIXME this may be problem - because there may be only one page in
-	// document which doesn't have any parent
+	// document which could have no parent - same as in insertPage
 	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
 	shared_ptr<CDict> interNode_ptr=getDictFromRef(parentRef_ptr);
 	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
@@ -1668,10 +1702,19 @@ using namespace utils;
 
 	// gets index of searched node in Kids array and removes element from found
 	// position - if position can't be determined unambiguesly (getPropertyId
-	// returns more positions), (TODO which) exception is thrown
+	// returns more positions), exception is thrown
 	shared_ptr<CRef> currentRef_ptr(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
-	// TODO size_t kidsIndex=kids_ptr->getPropertyId(currentRef_ptr);
-	// kids_ptr->delProperty(kidsIndex);
+	vector<CArray::PropertyId> positions;
+	getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currentPage_ptr, positions);
+	if(positions.size()>1)
+	{
+		printDbg(DBG_ERR, "Page can't be created, because page tree is ambigues for node at pos="<<pos);
+		throw AmbiguesPageTreeException();
+	}
+	
+	// removing triggers pageTreeWatchDog consolidation
+	size_t kidsIndex=positions[0];
+	kids_ptr->delProperty(kidsIndex);
 	
 	// page dictionary is removed from the tree, consolidation is done also for
 	// pageList at this moment
@@ -1689,8 +1732,10 @@ void CPdf::save(bool newRevision)
 	
 	// checks actual revision
 	if(xref->getActualRevision())
-		// FIXME throw an exception
-		return;
+	{
+		printDbg(DBG_ERR, "Document is not in latest revision");
+		throw ReadOnlyDocumentException("Document is in read-only mode.");
+	}
 	
 	// we are in the newest revision, so changes can be saved
 	// delegates all work to the XRefWriter and set change to 
