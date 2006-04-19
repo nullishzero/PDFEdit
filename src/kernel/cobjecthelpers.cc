@@ -4,6 +4,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/19 18:40:23  hockm0bm
+ * * getPropertyId method implemented
+ *         - compilation problems in linking stage (probably because of bad getAllPropertyNames implementation)
+ * * operatator== for properties
+ * 	- supports only pRef comparing now
+ * * simpleEquals helper method for simple value comparing
+ *
  * Revision 1.7  2006/04/13 18:14:09  hockm0bm
  * getDictFromRef with reference and pdf parameters
  *
@@ -36,7 +43,6 @@
  *
  *
  */
-
 
 #include <string>
 #include "cobjecthelpers.h"
@@ -165,6 +171,66 @@ void printProperty(boost::shared_ptr<IProperty> ip, std::ostream & out)
 	std::string str;
 	ip->getStringRepresentation(str);
 	out << str << std::endl;
+}
+
+/** Compares two simple values.
+ * @param val1 value to compare.
+ * @param val2 value to compare.
+ *
+ * Helper methods for simple value comparing. Uses getValueFromSimple method to
+ * get value from property. Simple properties are same if values, which they
+ * holds are same.
+ * <br>
+ * SimpleClass template parameter stands for property class type (CRef, CInt,
+ * ...)
+ * <br>
+ * simpleType is property type - constant value returned by getType() method.
+ * <p>
+ * NOTE: no checking of parameters is done here.
+ */
+template<typename SimpleClass, PropertyType SimpleType> 
+bool simpleEquals(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr<IProperty> val2)throw()
+{
+	// type for value
+	typedef typename SimpleClass::Value Value;
+
+	// gets values
+	Value value1, value2;
+	IProperty::getSmartCObjectPtr<SimpleClass>(val1)->getPropertyValue(value1);
+	IProperty::getSmartCObjectPtr<SimpleClass>(val2)->getPropertyValue(value2);
+
+	return value1==value2;
+}
+
+bool operator==(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr<IProperty> val2)
+{
+	// types must be same
+	if(val1->getType()!=val2->getType())
+		return false;
+
+	// we have same type, so value has to be same too
+	switch(val1->getType())
+	{
+		case pNull:
+			// CNulls are all same
+			return true;
+		case pBool:
+			return simpleEquals<CBool, pBool>(val1, val2);
+		case pInt:
+			return simpleEquals<CInt, pInt>(val1, val2);
+		case pReal:
+			return simpleEquals<CReal, pReal>(val1, val2);
+		case pString:
+			return simpleEquals<CString, pString>(val1, val2);
+		case pName:
+			return simpleEquals<CName, pName>(val1, val2);
+		case pRef:
+			return simpleEquals<CRef, pRef>(val1, val2);
+		default:
+			// complex are not supported
+			throw NotImplementedException("operator== ");
+	}
+	
 }
 
 } // end of utils namespace

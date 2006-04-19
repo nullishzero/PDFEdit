@@ -7,6 +7,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/19 18:40:23  hockm0bm
+ * * getPropertyId method implemented
+ *         - compilation problems in linking stage (probably because of bad getAllPropertyNames implementation)
+ * * operatator== for properties
+ * 	- supports only pRef comparing now
+ * * simpleEquals helper method for simple value comparing
+ *
  * Revision 1.12  2006/04/13 18:14:09  hockm0bm
  * getDictFromRef with reference and pdf parameters
  *
@@ -436,6 +443,97 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 	setIntInArray (ip, position, static_cast<int>(val));
 }
 
+/** Equality operator for T type.
+ * @param val1 Value to compare (with T type wrapped by smart poiter).
+ * @param val2 Value to compare (with T type wrapped by smart poiter).
+ *
+ * Two values are equal iff:
+ * <ul>
+ * <li> have same types (getType returns same value)
+ * <ul> They have same values
+ * 	<li> if value is simple - direct values are same (getPropertyValue is used)
+ * 	<li> if value is complex - same number of elements and elements with same
+ * 	identifier are equal
+ * </ul>
+ * </ul>
+ *
+ * <b>Supported types</b><br>
+ * <ul>
+		<li> pNull
+		<li> pBool
+		<li> pInt
+		<li> pReal
+		<li> pString
+		<li> pName
+		<li> pRef
+ * </ul>
+ * @throw NotImplementedException if value type is not supported (see supported
+ * types table).
+ *
+ * @return true if values are equal, false otherwise.
+ */
+bool operator==(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr<IProperty> val2);
+
+/** Gets all identificators of property in parent complex type.
+ * @param parent Complex value where to search.
+ * @param child Property to search.
+ * @param container Container, where to place all identificators (array
+ * indexes).
+ *
+ * Goes through whole array elements and compares child width all of them and
+ * which matches (using operator== TODO link), their indexes are stored to
+ * container (it has to provide push_back and clear methods for int type value).
+ * <br>
+ * Complex template parameter stands for type of CObjectComplex where to search.
+ * This type has to provide typedef for propertyId and getAllPropertyNames,
+ * getProperty methods.
+ * <br>
+ * Container template parameter stands for type of storage where to place found
+ * indexes. This has to provide clear and push_back methods. Given container is
+ * cleared at start.
+ *
+ */
+template<typename Complex, typename Container > void 
+getPropertyId(boost::shared_ptr<Complex> parent, boost::shared_ptr<IProperty> child, Container & container) throw()
+{
+using namespace std;
+using namespace boost;
+using namespace debug;
+
+	printDbg(DBG_DBG, "");
+
+	// type of the storage where to place indexes
+	typedef vector<typename Complex::PropertyId> IdStorage;
+
+	// collects all properties identificators
+	IdStorage ids;
+	parent->getAllPropertyNames(ids);
+
+	// clears given container to prevent mixing with original data
+	container.clear();
+	
+	// goes over all identificators and compare each with given child
+	typename IdStorage::iterator i=ids.begin();
+	for(; i!=ids.end(); i++)
+	{
+		shared_ptr<IProperty> element=parent->getProperty(*i);
+		try
+		{
+			// uses == operator to compare properties
+			// it may throw, if element is not supported by operator, we will
+			// simply ignore such values
+			if(operator==(element, child))
+			{
+				printDbg(DBG_DBG, "Element matches at id="<<*i);
+				container.push_back(*i);
+			}
+		}catch(NotImplementedException & e)
+		{
+			// type of element is not supported
+			printDbg(DBG_WARN, "Element comparing not supported for typ="<<element->getType()<<". Ignoring element.");
+		}
+	}
+}
 
 }// end of utils namespace
 
