@@ -1,11 +1,12 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
- * =====================================================================================
- *        Filename:  exceptions.h
- *     Description:  Exceptions.
- *         Created:  01/29/2006 08:06:57 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.15  2006/04/19 18:41:29  hockm0bm
+ * AmbiguesPageTreeException added
+ *
+ * 
  */
 
 #ifndef _EXCEPTIONS_H
@@ -176,6 +177,36 @@ public:
 	void getPosition(size_t & pos)
 	{
 		pos=position;
+	}
+};
+
+/** Exception is thrown when page tree is ambbigues.
+ *
+ * This means that it is not possible to get Node position in its parent Kids
+ * array (because it is in this Kids array several times).
+ *
+ */
+class AmbiguesPageTreeException: public PdfException
+{
+	// TODO keep intermediate node with such ambigues Kids array
+public:
+	/** Exception constructor.
+	 */
+	AmbiguesPageTreeException()
+	{
+	}
+
+	virtual ~AmbiguesPageTreeException() throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		std::string msg="PageTree is ambigues";
+
+		// TODO add information about inter node
+
+		return msg.c_str();
 	}
 };
 
