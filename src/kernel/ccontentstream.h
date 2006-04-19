@@ -15,6 +15,9 @@
 // DEBUG output needs it
 #include "iproperty.h"
 
+//
+#include "cobject.h"
+
 // PdfOperator
 #include "pdfoperators.h"
 
@@ -117,7 +120,7 @@ class CContentStream
 {
 public:
 	typedef std::vector<boost::shared_ptr<PdfOperator> > Operators;
-	typedef std::vector<boost::shared_ptr<IProperty> > ContentStreams;
+	typedef std::vector<boost::shared_ptr<CStream> > ContentStreams;
 
 private:
 
@@ -147,7 +150,7 @@ public:
 	 * @param stream CStream representing content stream or dictionary of more content streams.
 	 * @param obj Object representing content stream.
 	 */
-	CContentStream (boost::shared_ptr<IProperty> stream, Object* obj = NULL);
+	CContentStream (boost::shared_ptr<CStream> stream, Object* obj = NULL);
 
 	
 	/**
@@ -166,12 +169,12 @@ public:
 	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state) const
 	{
 		printDbg (debug::DBG_DBG, "");
+		if (operators.empty())
+			return;
 		
 		operatorparser::PdfOperatorPositionParser<OpContainer, PdfOpPosComparator> posParser;
-		posParser.getOpAtSpecificPosition (PdfOperator::getIterator (operators.front()), 
-							opContainer, 
-							cmp, 
-							state);
+		posParser.getOpAtSpecificPosition 
+				(PdfOperator::getIterator (operators.front()), opContainer, cmp, state);
 	}
 	
 	

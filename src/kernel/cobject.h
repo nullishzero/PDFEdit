@@ -470,7 +470,7 @@ public:
 	 */
 	size_t getPropertyCount () const 
 	{
-		printDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
+		//printDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
 		return value.size();
 	};
  

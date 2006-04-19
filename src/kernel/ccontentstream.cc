@@ -374,11 +374,11 @@ namespace
 	opTJUpdate (GfxState& state, const PdfOperator::Operands& args)
 	{
 		assert (1 <= args.size ());
-		if (!state.getFont()) 
+		/*if (!state.getFont()) 
 			throw ElementBadTypeException ("opTJUpdate: State in bad state.");
 		if (pArray != args[0]->getType())
 			throw ElementBadTypeException ("opTJUpdate: Object in bad state.");
-			
+		*/	
   		boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (args[0]);
 		for (size_t i = 0; i < array->getPropertyCount(); ++i) 
 		{
@@ -513,8 +513,8 @@ namespace
 					unknownUpdate, "" },	
 			{"Do",  1, {setNthBitsShort (pName)}, 
 				   	unknownUpdate, "" },	
-			{"EI",  0, {setNoneBitsShort ()}, 
-					unknownUpdate, "" },	
+			{"EI",  -10, {setNoneBitsShort ()}, 
+					unknownUpdate, "BI" },	
 			{"EMC", 0, {setNoneBitsShort ()}, 
 					unknownUpdate, "" },	
 			{"ET",  0, {setNoneBitsShort ()}, 
@@ -525,7 +525,7 @@ namespace
 					unknownUpdate, "" },	
 			{"G",   1, {setNthBitsShort (pInt, pReal)}, 
 					unknownUpdate, "" },	
-			{"ID",  0, {setNoneBitsShort ()},
+			{"ID",  -10, {setNoneBitsShort ()},
 					unknownUpdate, "" },	
 			{"J",   1, {setNthBitsShort (pInt)}, 
 					unknownUpdate, "" },	
@@ -699,16 +699,18 @@ namespace
 			(*it)->getStringRepresentation (tmp);
 			str += " " + tmp;
 		}
-		//printDbg (DBG_DBG, "Operands: " << str);
+		printDbg (DBG_DBG, "Operands: " << str);
 		
+		size_t argNum = static_cast<size_t> ((ops.argNum > 0) ? ops.argNum : -ops.argNum);
+			
 		//
 		// Check operator size if > 0 than it is the exact size, maximum
 		// otherwise
 		//
-		if (   ((ops.argNum >= 0) && (operands.size() != static_cast<size_t> (ops.argNum))) 
-			|| ((ops.argNum <  0) && (operands.size() <= static_cast<size_t> (-ops.argNum))) )
+		if (   ((ops.argNum >= 0) && (operands.size() != argNum)) 
+			|| ((ops.argNum <  0) && (operands.size() > argNum)) )
 		{
-			printDbg (DBG_ERR, "Number of operands mismatch..");
+			printDbg (DBG_ERR, "Number of operands mismatch.. expected " << ops.argNum << " got: " << operands.size());
 			return false;
 		}
 		
@@ -716,7 +718,9 @@ namespace
 		// Check arguments
 		//
 		PdfOperator::Operands::reverse_iterator it = operands.rbegin ();
-		advance (it, ops.argNum);
+		// Be carefull of buffer overflow
+		argNum = std::min (argNum, operands.size());
+		advance (it, argNum);
 		for (int pos = 0; it != operands.rend (); ++it, ++pos)
 		{			
   			if (!isBitSet(ops.types[pos], (*it)->getType()))
@@ -804,7 +808,7 @@ namespace
 					return shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
 
 				}
-				//printDbg (DBG_DBG, "Operator found. " << chcktp->name);
+				printDbg (DBG_DBG, "Operator found. " << chcktp->name);
 
 				// Check the types against specification
 				if (!check (*chcktp, operands))
@@ -915,8 +919,9 @@ namespace
 			operators.push_back (actual);
 			previousLast = last;
 		}
-
-		operandsSetPdf (operators.front(), pdf, rf);
+	
+		if (!operators.empty())
+			operandsSetPdf (operators.front(), pdf, rf);
 	}
 	
 
@@ -969,12 +974,10 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 //
 //
 //
-CContentStream::CContentStream (shared_ptr<IProperty> stream, Object* obj)
+CContentStream::CContentStream (shared_ptr<CStream> stream, Object* obj)
 {
 	// not implemented yet
 	assert (obj != NULL);
-	if (pStream != stream->getType() || NULL == obj)
-		throw CObjInvalidObject (); 
 	printDbg (DBG_DBG, "Creating content stream.");
 
 	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
@@ -999,8 +1002,6 @@ CContentStream::CContentStream (ContentStreams& streams, Object* obj)
 		throw CObjInvalidObject (); 
 	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
 	{
-		if (pStream != (*it)->getType())
-			throw CObjInvalidObject (); 
 		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
 		// the problem is with parsed pdfoperators
 		assert (NULL != (*it)->getPdf());

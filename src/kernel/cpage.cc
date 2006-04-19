@@ -13,7 +13,9 @@
 
 // Page
 #include "cpage.h"
-
+// CContenteStream
+#include "ccontentstream.h"
+// Helper functions
 #include "cobjecthelpers.h"
 
 // =====================================================================================
@@ -34,10 +36,48 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 	
 	//
 	// Get the stream representing content stream, make an xpdf object
-	// and instantiate CContentStream
+	// and finally instantiate CContentStream
 	//
-	boost::shared_ptr<CStream> stream = getCStreamFromDict (dictionary, "Contents");
-	contentstream = shared_ptr<CContentStream> (new CContentStream (stream, stream->_makeXpdfObject()));
+	shared_ptr<IProperty> contents = dictionary->getProperty ("Contents");
+	if (pRef == contents->getType())
+	{
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(contents)->getPropertyValue(ref);
+		contents = contents->getPdf()->getIndirectProperty (ref);
+	}
+	
+	if (contents)
+	{
+		//
+		// Contents can be either stream or an array of streams
+		//
+		if (pStream == contents->getType())	
+		{
+			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
+			// Create contentstream from a stream
+			contentstream = shared_ptr<CContentStream> (new CContentStream (stream, stream->_makeXpdfObject()));
+		
+		}else if (pArray == contents->getType())
+		{
+			// Save all streams from array to a vector
+			CContentStream::ContentStreams streams;
+			shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
+			for (size_t i = 0; i < array->getPropertyCount(); ++i)
+				streams.push_back (getCStreamFromArray (array, i));
+			
+			// Create contentstream from array of streams
+			contentstream = shared_ptr<CContentStream> 
+				(new CContentStream (streams, array->_makeXpdfObject()));
+			
+		}else // Neither stream nor array
+		{
+			printDbg (debug::DBG_DBG, "Content stream type: " << contents->getType());
+			throw ElementBadTypeException ("Bad content stream type.");
+		}
+	
+	}else
+		throw ElementBadTypeException ("Bad pointer to content stream.");
+		
 }
 
 

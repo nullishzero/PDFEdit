@@ -578,8 +578,7 @@ template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 {
-	printDbg (debug::DBG_DBG,"getProperty() " << id);
-
+	//printDbg (debug::DBG_DBG,"getProperty() " << id);
 	//
 	// BEWARE using std::find_if with stateful functors !!!!!
 	//
