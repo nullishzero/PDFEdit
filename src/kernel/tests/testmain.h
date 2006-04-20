@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/20 18:27:57  misuj1am
+ *
+ * -- cppunit tests
+ *
  * Revision 1.6  2006/04/20 13:22:23  misuj1am
  *
  * --ADD: cppunittests, improved other tests
@@ -67,23 +71,36 @@ extern FileList fileList;
 
 
 //========= NASTY =============
-#define OUTPUT_MAGIC_WORD	"all"
-
 #define OUTPUT		cout
 #define KOUTPUT		cerr
-#define OUTPUT_COND	(NULL == argv[1] || 0 != strcmp(argv[1],OUTPUT_MAGIC_WORD))
 
-#define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;
-#define	SWAP_BUFS			{strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
+#define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;bool swap = false;
+#define	SWAP_BUFS			{swap=true;strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
 #define SWAP_BUFS_BACK		{KOUTPUT.rdbuf(strm_buffer);}
-#define KERNEL_OUTPUT		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;--argc;++argv;}
-#define KERNEL_OUTPUT_BACK	if (OUTPUT_COND) {SWAP_BUFS_BACK;}
+#define OUTPUT_MAGIC_WORD 	"all"
+#define CHECK_OUTPUT(a,b)	INIT_BUFS;\
+							if (NULL != argv[1] && 0 == strcmp(argv[1],OUTPUT_MAGIC_WORD))\
+							{--(a);++(b);}\
+							else\
+							{SWAP_BUFS;}
+
+#define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
+
+//const char* OUTPUT_MAGIC_WORD = "all";
+/*inline void
+check_output (int& argc, char**& argv)
+{
+	if (NULL == argv[1] || 0 != strcmp(argv[1],OUTPUT_MAGIC_WORD))
+	{
+		SWAP_BUFS;
+		--argc;++argv;
+	}
+}*/
 
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS LEFT UNALLOCATED: " << check.getCount () \
 													<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
-
 #define TEST(a)		OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
-#define START_TEST	OUTPUT << endl << "Started testing..." << endl; KERNEL_OUTPUT;
+#define START_TEST	OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
 #define OK_TEST		OUTPUT << "TEST PASSED..." << endl; MEM_CHECK;
 //==========================

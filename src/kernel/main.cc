@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.31  2006/04/20 18:27:57  misuj1am
+ *
+ * -- cppunit tests
+ *
  * Revision 1.30  2006/04/20 15:00:57  misuj1am
  *
  * -- cobject tests splitted to testcobjectsimple and testcobjectcomplex
@@ -84,32 +88,38 @@ FileList fileList;
 int 
 main (int argc, char** argv)
 {
+	//
+	// If first parameter is "all" clear it
+	//
+	CHECK_OUTPUT (argc,argv);
+	
 	// uses default file name
-	const char * fileName=PDF_TEST_FILE_NAME;
+	const char * fileName = PDF_TEST_FILE_NAME;
+	
 	// checks if first parameter is real file and if so, overwrites fileName
-	if(argc>1)
+	while (1 < argc)
 	{
-		const char * param=argv[1];
 		struct stat info;
-		if(!stat(param, &info))
+		if(!stat(argv[1], &info))
 		{
 			// checks if it is regular file and if so, uses it
 			if(S_ISREG(info.st_mode))
 			{
-				fileName=param;
-				--argc;
-				++argv;
+				// Push all files for testing into this conatiner	
+				fileName = argv[1];
+				fileList.push_back (fileName);
+				
+				--argc;++argv;
+				continue;
 			}
 		}
-	}
-	
-	//
-	// Push all files for testing into this conatiner	
-	// 
-	fileList.push_back (fileName);
-	
+		break;
+		
+	}// while (1 < argc)
 
-	
+	//
+	// Start testing
+	//
 	START_TEST;
 	
 	// Test cpdf
@@ -122,10 +132,10 @@ main (int argc, char** argv)
 	//
 	// CPage test
 	//
+	CPPUNIT_NS::TextTestRunner runner;
 	try 
 	{
-		CPPUNIT_NS::TextTestRunner runner;
-/*		if (1 < argc) 
+		if (1 < argc) 
 		{// Run only specified
            for (size_t i = 1; i < argc; ++i) 
 		   {
@@ -135,7 +145,7 @@ main (int argc, char** argv)
            }
 
 	    } else 
-*/		{// Get the top level suite from the registry
+		{// Get the top level suite from the registry
 			
 			CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
 			// Adds the test to the list of test to run
@@ -144,20 +154,29 @@ main (int argc, char** argv)
 		
 		// Change the default outputter to a compiler error format outputter
 		runner.setOutputter(new	CPPUNIT_NS::CompilerOutputter(&runner.result(),OUTPUT));
-		
-		//
-		// Run the tests.
-		// 
-		std::cout << "Tests started." << std::endl;
-		bool wasSucessful=runner.run();
-		// Return error code 1 if the one of test failed.
-		return wasSucessful ? 0 : 1;
 	
 	}catch (...) 
 	{
-		OUTPUT << "Stopped" << std::endl;
+		OUTPUT << "Could not initialize tests..." << std::endl;
+		return 1;
 	}
+	
+
+	//
+	// Run the tests.
+	// 
+	bool wasSucessful;
+	try
+	{
+		std::cout << "Tests started." << std::endl;
+		wasSucessful=runner.run();
+		
+	}catch (...) 
+		{ OUTPUT << "Exception thrown..." << std::endl;	}
 
 	END_TEST;
+
+	// Return error code 1 if the one of test failed.
+	return wasSucessful ? 0 : 1;
 
 } // main
