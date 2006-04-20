@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/04/20 13:22:23  misuj1am
+ *
+ * --ADD: cppunittests, improved other tests
+ *
  * Revision 1.5  2006/04/20 12:17:51  misuj1am
  *
  * -- IMPORTANT: when kernel output in tests needed, write ./kernel [file] all
@@ -39,7 +43,7 @@
 #include "../cpage.h"
 #include "../pdfoperators.h"
 
-/*//CPPUNITTEST
+//CPPUNITTEST
 #include <cppunit/TestRunner.h>
 #include <cppunit/TestResult.h>
 #include <cppunit/TestResultCollector.h>
@@ -49,12 +53,17 @@
 #include <cppunit/ui/text/TextTestRunner.h>
 #include <cppunit/CompilerOutputter.h>
 
-*/
+
 
 // TFUJJ
 using namespace std;
 using namespace pdfobjects;
 
+//
+// Extern variable that will hold files that we should test
+//
+typedef std::vector<std::string> FileList;
+extern FileList fileList;
 
 
 //========= NASTY =============

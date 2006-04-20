@@ -89,10 +89,10 @@ s_clone ()
 //
 //
 void 
-s_ctors (const example& e)
+s_ctors (const char* filename, const example& e)
 {
 	Object obj;
-	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
 	CPdf& pdf = *_pdf;
 	IndiRef ref;
 	
@@ -456,9 +456,9 @@ c_getTp ()
 //=====================================================================================
 
 void
-mdctrl ()
+mdctrl (const char* filename)
 {
-	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
 	CPdf& pdf = *_pdf;
 	pdf.getModeController ();
 }
@@ -800,7 +800,7 @@ c_set ()
 //=====================================================================================
 
 void
-c_xpdfctor ()
+c_xpdfctor (const char* filename)
 {
 	{
 		//
@@ -819,7 +819,7 @@ c_xpdfctor ()
 		obj.arrayAdd (&item3);
 		obj.arrayAdd (&item4);
 		
-		boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+		boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
 		CPdf& pdf = *_pdf;
 		IndiRef ref = {12,11};
 		CArray ar (pdf,obj,ref);
@@ -849,7 +849,7 @@ c_xpdfctor ()
 		obj.dictAdd (it3, &item3);
 		obj.dictAdd (it4, &item4);
 
-		boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+		boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
 		CPdf& pdf = *_pdf;
 
 		IndiRef ref = {12,11};
@@ -869,12 +869,12 @@ c_xpdfctor ()
 //=====================================================================================
 
 void
-getContentStream (ostream& oss, const char* fileName, bool allPages)
+getContentStream (ostream& oss, const char* filename, bool allPages)
 {
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(filename), NULL, NULL));
 	int pagesNum = (allPages) ? doc->getNumPages() : 1;
 	
-	oss << "Filename: " << fileName << endl;
+	oss << "Filename: " << filename << endl;
 	oss << "Number of pages: " << pagesNum << endl;
 
 	//
@@ -947,13 +947,13 @@ test_ccontentstream ()
 }
 
 void
-parseContentStream (ostream& oss, const char* fileName)
+parseContentStream (ostream& oss, const char* filename)
 {
-	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
 	CPdf& pdf = *_pdf;
 
 	
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(filename), NULL, NULL));
 	int pagesNum = 1;
 	
 	//
@@ -1014,13 +1014,13 @@ parseContentStream (ostream& oss, const char* fileName)
 }
 
 void
-contentStream (ostream&, const char* fileName)
+contentStream (ostream&, const char* filename)
 {
-	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (TESTPDFFILE));
+	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
 	CPdf& pdf = *_pdf;
 
 	
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(filename), NULL, NULL));
 	int pagesNum = 1;
 	
 	//
@@ -1094,7 +1094,7 @@ c_addprop2 ()
 
 
 //=====================================================================================
-void cobject_tests(int , char **)
+void cobject_tests(int , char **, const char* filename)
 {
 	
 	static example e;
@@ -1156,7 +1156,7 @@ void cobject_tests(int , char **)
 	OK_TEST;
 	
 	TEST(" test 1.2 -- getString + constructors");
-	s_ctors (e);
+	s_ctors (filename, e);
 	OK_TEST;
 
 	TEST(" test 1.3 -- getString + constructors 2");
@@ -1198,7 +1198,7 @@ void cobject_tests(int , char **)
 	OK_TEST;
 
 	TEST(" test 2.3 - mode controller")
-	mdctrl ();
+	mdctrl (filename);
 	OK_TEST;
 
 	TEST(" test 2.4 - getStringRepre")
@@ -1230,7 +1230,7 @@ void cobject_tests(int , char **)
 	OK_TEST;
 
 	TEST(" test 2.10 - xpdf ctors")
-	c_xpdfctor ();
+	c_xpdfctor (filename);
 	OK_TEST;
 
 	TEST(" test 2.11 - xpdf addProperty + getPosition")
@@ -1240,7 +1240,7 @@ void cobject_tests(int , char **)
 	//======================= CContentStream
 	
 	TEST(" test 3.1 -- ccontentstream - getContentstream")
-	getContentStream (cout, TESTPDFFILE, false);
+	getContentStream (cout, filename, false);
 	OK_TEST;
 	
 	TEST(" test 3.2 -- ccontentstream - operators")
@@ -1248,11 +1248,11 @@ void cobject_tests(int , char **)
 	OK_TEST;
 
 	TEST(" test 3.3 -- ccontentstream - parse to our operators")
-	parseContentStream (cout, TESTPDFFILE);
+	parseContentStream (cout, filename);
 	OK_TEST;
 	
 	TEST(" test 3.4 -- ccontentstream - try ccontentstream class to parse a contentstream")
-	contentStream (cout, TESTPDFFILE);
+	contentStream (cout, filename);
 	OK_TEST;
 
 }

@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/04/20 13:22:22  misuj1am
+ *
+ * --ADD: cppunittests, improved other tests
+ *
  * Revision 1.1  2006/04/01 00:39:50  misuj1am
  *
  *
@@ -22,5 +26,5 @@
 /**
  * Cobject test function.
  */
-void cobject_tests(int argc, char ** argv);
+void cobject_tests(int argc, char ** argv, const char*);
 

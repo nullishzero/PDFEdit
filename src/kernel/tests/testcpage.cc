@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  testcpage.cc
@@ -15,43 +16,42 @@
 
 
 //=====================================================================================
-// CPage
+//namespace {
 //=====================================================================================
 
 using namespace boost;
 
+
 //=====================================================================================
-namespace
-//=====================================================================================
+
+boost::shared_ptr<CPage> 
+getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1)
 {
-	boost::shared_ptr<CPage> 
-	getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1)
-	{
-		boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-		
-		//
-		// Our stuff here
-		//
-		Object obj;
-		XRef* xref = doc->getXRef();
-		assert (xref);
-		Catalog cat (xref);
+	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	
+	//
+	// Our stuff here
+	//
+	Object obj;
+	XRef* xref = doc->getXRef();
+	assert (xref);
+	Catalog cat (xref);
 
-		IndiRef ref;
-		ref.num = cat.getPageRef(pageNum)->num;
-		ref.gen = cat.getPageRef(pageNum)->gen;
-		xref->fetch (ref.num, ref.gen, &obj);
-		
-		boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, ref));
-		obj.free ();
-		
-		return boost::shared_ptr<CPage> (new CPage(dict));
-	}
-//=====================================================================================
-} // namespace
+	IndiRef ref;
+	ref.num = cat.getPageRef(pageNum)->num;
+	ref.gen = cat.getPageRef(pageNum)->gen;
+	xref->fetch (ref.num, ref.gen, &obj);
+	
+	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, ref));
+	obj.free ();
+	
+	return boost::shared_ptr<CPage> (new CPage(dict));
+}
+
+
 //=====================================================================================
 
-void
+bool
 mediabox (ostream& oss, const char* fileName)
 {
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
@@ -83,12 +83,14 @@ mediabox (ostream& oss, const char* fileName)
 	page.setMediabox (rc);
 	
 	oss << page.getMediabox ();
+
+	return true;
 }
 
 
 //=====================================================================================
-//
-void
+
+bool
 position (ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
@@ -109,11 +111,12 @@ position (ostream& oss, const char* fileName)
 	}
 	oss << std::endl;
 	
+	return true;
 }
 
 //=====================================================================================
 
-void
+bool
 opcount (ostream& oss, const char* fileName)
 {
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
@@ -148,11 +151,13 @@ opcount (ostream& oss, const char* fileName)
 	obj.free ();
 
 	oss << "Operands count: " << i << endl;
+
+	return true;
 }
 
 //=====================================================================================
 
-void
+bool
 display (ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
@@ -178,9 +183,14 @@ display (ostream& oss, const char* fileName)
 	oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
 
 	globalParams = oldGlobPar;
+
+	return true;
 }
 
-void
+
+//=====================================================================================
+
+bool
 printContentStream (ostream& oss, const char* fileName)
 {
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
@@ -190,29 +200,67 @@ printContentStream (ostream& oss, const char* fileName)
 	string str;
 	page->getContentStream()->getStringRepresentation (str);
 	oss << "Content stream representation: " << str << endl;
+
+	return true;
 }
+
+
+
+//=========================================================================
+// class TestCPage
+//=========================================================================
+
+class TestCPage : public CppUnit::TestFixture 
+{
+	CPPUNIT_TEST_SUITE(TestCPage);
+		CPPUNIT_TEST(Test);
+	CPPUNIT_TEST_SUITE_END();
+
+public:
+	void setUp() {}
+	void tearDown() {}
+
+public:
+	void Test()
+	{
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			
+			TEST(" test 4.1 -- features");
+			CPPUNIT_ASSERT (mediabox (OUTPUT, (*it).c_str()));
+			OK_TEST;
+
+			TEST(" test 4.2 -- opcount");
+			CPPUNIT_ASSERT (opcount (OUTPUT, (*it).c_str()));
+			OK_TEST;
+
+			TEST(" test 4.3 -- getPosition");
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str()));
+			OK_TEST;
+
+			TEST(" test 4.4 -- display");
+			CPPUNIT_ASSERT (display (OUTPUT, (*it).c_str()));
+			OK_TEST;
+
+			TEST(" test 4.5 -- print contentstream");
+			CPPUNIT_ASSERT (printContentStream (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+
+};
+
+CPPUNIT_TEST_SUITE_REGISTRATION(TestCPage);
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPage, "TEST_CPAGE");
 
 //=====================================================================================
-void cpage_tests(int , char **, const char* fileName)
-{
-	TEST(" test 4.1 -- features");
-	mediabox (OUTPUT, fileName);
-	OK_TEST;
+//} // namespace
+//=====================================================================================
 
-	TEST(" test 4.2 -- opcount");
-	opcount (OUTPUT, fileName);
-	OK_TEST;
 
-	TEST(" test 4.3 -- getPosition");
-	position (OUTPUT, fileName);
-	OK_TEST;
 
-	TEST(" test 4.4 -- display");
-	display (OUTPUT, fileName);
-	OK_TEST;
 
-	//TEST(" test 4.5 -- print contentstream");
-	//printContentStream (OUTPUT, fileName);
-	//OK_TEST;
 
-}
+
+
+

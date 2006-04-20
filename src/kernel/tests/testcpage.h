@@ -4,5 +4,3 @@
  * $RCSfile$
  *
  */
-void cpage_tests(int argc, char ** argv, const char* fileName);
-
