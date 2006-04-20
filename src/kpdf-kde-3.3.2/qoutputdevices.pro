@@ -1,15 +1,6 @@
 TEMPLATE = lib
 
-
-#
-# Build library (libpokus.a)
-#
-OBJDIR = ../xpdf/xpdf
-libpokus.target     = libpokus.a
-libpokus.commands   = $(AR) libpokus.a $$OBJDIR/SplashOutputDev.o
-libpokus.depends    = $$OBJDIR/SplashOutputDev.o
-QMAKE_EXTRA_UNIX_TARGETS += libpokus
-POST_TARGETDEPS +=  libpokus.a
+TARGET = qoutputdevices
 
 #debug information
 QMAKE_CXXFLAGS += -g
@@ -23,12 +14,4 @@ SOURCES += QOutputDevPixmap.cpp
 HEADERS += QOutputDev.h
 SOURCES += QOutputDev.cpp
 
-#
-# Path to xpdf object files
-#
-
-_PATH = ../xpdf
-
-#LIBS += -lxpdf -L$$_PATH/xpdf
-LIBS += -lsplash -L$$_PATH/splash
-LIBS += -lpokus -L.
+OBJECTS += ../xpdf/xpdf/SplashOutputDev.o

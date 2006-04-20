@@ -89,9 +89,9 @@ HEADERS += .menu-trans.h
 LIBS += -lkernel -L../kernel
 
 #OutputDevice
+# TODO libraries of fonts depends on xpdf comfigure
 LIBS += -lt1
 LIBS += -lqoutputdevices -L../kpdf-kde-3.3.2
-LIBS += -lpokus -L../kpdf-kde-3.3.2
 LIBS += -lsplash -L../xpdf/splash
 
 #Translations
