@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/04/20 18:46:33  hockm0bm
+ * correction of header - commited by mistake
+ *
  * Revision 1.15  2006/04/20 18:02:59  hockm0bm
  * * operator== replaced by propertyEquals method
  * * parameters for getPropertyId and propertyEquals are const referencies
@@ -453,9 +456,6 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 	setIntInArray (ip, position, static_cast<int>(val));
 }
 
-<<<<<<< cobjecthelpers.h
-/** Equality method for T type.
-=======
 
 //=========================================================
 //	CArray "get type" helper methods
@@ -526,7 +526,6 @@ getCStreamFromArray (IP& ip, size_t pos)
 
 
 /** Equality operator for T type.
->>>>>>> 1.14
  * @param val1 Value to compare (with T type wrapped by smart poiter).
  * @param val2 Value to compare (with T type wrapped by smart poiter).
  *
