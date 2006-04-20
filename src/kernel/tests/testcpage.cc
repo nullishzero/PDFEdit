@@ -52,7 +52,7 @@ getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1)
 //=====================================================================================
 
 bool
-mediabox (ostream& oss, const char* fileName)
+mediabox (ostream& /*oss*/, const char* fileName)
 {
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	
@@ -63,9 +63,9 @@ mediabox (ostream& oss, const char* fileName)
 	XRef* xref = doc->getXRef();
 	Catalog cat (xref);
 
-	oss << "Contents:"		<< cat.getPage(1)->getContents(&obj) << endl;
+	/*oss << "Contents:"		<< */cat.getPage(1)->getContents(&obj) /*<< endl*/;
 	obj.free ();
-	oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
+	/*oss << "Page:"			<< */xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) /*<< endl*/;
 
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
 	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, IndiRef ()));
@@ -73,7 +73,7 @@ mediabox (ostream& oss, const char* fileName)
 	
 	CPage page (dict);
 
-	oss << page.getMediabox ();
+	/*oss <<*/ page.getMediabox ();
 	
 	Rectangle rc;
 	rc.xleft = 42;
@@ -82,9 +82,11 @@ mediabox (ostream& oss, const char* fileName)
 	rc.yright = 2342;
 	page.setMediabox (rc);
 	
-	oss << page.getMediabox ();
-
-	return true;
+	if (42 == page.getMediabox ().xleft &&
+			62 == page.getMediabox ().yleft)
+		return true;
+	else
+		return false;
 }
 
 
@@ -107,9 +109,9 @@ position (ostream& oss, const char* fileName)
 	{
 		std::string tmp;
 		(*it)->getOperatorName (tmp);
-		oss << tmp;
+		//oss << tmp;
 	}
-	oss << std::endl;
+	//oss << std::endl;
 	
 	return true;
 }
@@ -158,7 +160,7 @@ opcount (ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-display (ostream& oss, const char* fileName)
+display (ostream& /*oss*/, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
@@ -172,15 +174,16 @@ display (ostream& oss, const char* fileName)
 	//
 	// Output to file
 	//
-	oss << "Creating 1.txt which contains text from a pdf." << endl;
+	//oss << "Creating 1.txt which contains text from a pdf." << endl;
 	page->displayPage (textOut);
 	
 	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (""));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
 
-	oss << "Output from textoutputdevice." << endl;
-	oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
+	//oss << "Output from textoutputdevice." << endl;
+	//oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
+	textOut.getText(0, 0, 1000, 1000)->getCString();
 
 	globalParams = oldGlobPar;
 
@@ -191,7 +194,7 @@ display (ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-printContentStream (ostream& oss, const char* fileName)
+printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
@@ -199,7 +202,7 @@ printContentStream (ostream& oss, const char* fileName)
 	// Print content stream
 	string str;
 	page->getContentStream()->getStringRepresentation (str);
-	oss << "Content stream representation: " << str << endl;
+	//oss << "Content stream representation: " << str << endl;
 
 	return true;
 }

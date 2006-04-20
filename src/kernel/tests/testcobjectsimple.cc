@@ -77,7 +77,9 @@ s_clone ()
 	boost::shared_ptr<IProperty> ptr = null.clone ();
 
 	if (ptr)
-		OUTPUT << "null.getType(): " << null.getType () << endl;
+	{
+		//OUTPUT << "null.getType(): " << null.getType () << endl;
+	}
 	else 
 		return false;
 

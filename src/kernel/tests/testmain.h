@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/20 19:06:28  misuj1am
+ *
+ * -- tests improved
+ *
  * Revision 1.7  2006/04/20 18:27:57  misuj1am
  *
  * -- cppunit tests
@@ -99,10 +103,10 @@ check_output (int& argc, char**& argv)
 
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS LEFT UNALLOCATED: " << check.getCount () \
 													<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
-#define TEST(a)		OUTPUT << endl << endl << "//=================== " << (a) << endl << endl;
+#define TEST(a)		OUTPUT << endl << "//=================== " << (a) << endl;
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
-#define OK_TEST		OUTPUT << "TEST PASSED..." << endl; MEM_CHECK;
+#define OK_TEST		OUTPUT << "TEST PASSED..."; MEM_CHECK;
 //==========================
 
 
@@ -129,7 +133,7 @@ operator << (ostream& os, IProperty& ip)
 	string str;
 	ip.getStringRepresentation (str);
 
-	os << "[CObject Type " << ip.getType () << "] " << str << endl;
+	//os << "[CObject Type " << ip.getType () << "] " << str << endl;
 
 	return os;
 }
@@ -151,7 +155,7 @@ operator << (ostream& os, Object* o)
 	{
 		utils::xpdfObjToString (*o,str);
 		//os << "[Xpdf Type " << o->getTypeName () << "] " << str << endl;
-		os << str;
+		//os << str;
 	}
 
 	return os;
@@ -172,7 +176,7 @@ print (ostream& os, Object* o, XRef* xref)
 	parser->getObj(&obj);
 	while (!obj.isEOF()) 
 	{
-		os << &obj;
+		//os << &obj;
 		obj.free ();
 		// grab the next object
 		parser->getObj(&obj);
@@ -192,7 +196,7 @@ operator << (ostream& os, Dict* d)
 
 	for (int i = 0; i < d->getLength(); ++i)
 	{
-		os << d->getKey(i) << "\t" << d->getValNF (i, &obj) << endl;
+		//os << d->getKey(i) << "\t" << d->getValNF (i, &obj) << endl;
 	}
 
 	return os;
@@ -226,7 +230,7 @@ ip_validate (const T& val, const T& expected)
 	
 	if (val == expected)
 	{
-		OUTPUT << "*** Validation OK! <comparison of values>" << endl;
+		//OUTPUT << "*** Validation OK! <comparison of values>" << endl;
 		return true;
 	}
 	else
@@ -243,7 +247,7 @@ ip_validate (const IndiRef& val, const IndiRef& expected)
 	
 	if ((val.gen == expected.gen) && (val.num == expected.num))
 	{
-		OUTPUT << "*** Validation OK! <comparison of Indiref>" << endl;
+		//OUTPUT << "*** Validation OK! <comparison of Indiref>" << endl;
 		return true;
 	}
 	else
@@ -255,7 +259,7 @@ ip_validate (const IndiRef& val, const IndiRef& expected)
 }
 
 inline bool
-ip_validate (Object* o, const string& expected, bool out = true)
+ip_validate (Object* o, const string& expected,__attribute__((unused)) bool out = true)
 {
 	string str;
 	assert (NULL != o);
@@ -263,10 +267,10 @@ ip_validate (Object* o, const string& expected, bool out = true)
 
 	if (str == expected)
 	{
-		if (out)
-			OUTPUT << "*** Validation OK! " << expected << endl;
-		else
-			OUTPUT << "*** Validation OK! " << "<not shown, output probably too long>"<< endl;
+		//if (out)
+		//	OUTPUT << "*** Validation OK! " << expected << endl;
+		//else
+		//	OUTPUT << "*** Validation OK! " << "<not shown, output probably too long>"<< endl;
 		return true;
 	}
 	else
@@ -288,11 +292,11 @@ ip_validate (Object& o, IProperty& ip, bool out = true)
 
 	if (str == str1)
 	{
-		if (out)
+		/*if (out)
 			OUTPUT << "*** Validation OK! " << str << endl;
 		else
 			OUTPUT << "*** Validation OK! " << "<not shown, output probably too long>"<< endl;
-		return true;
+		*/return true;
 	}
 	else
 	{
@@ -303,18 +307,18 @@ ip_validate (Object& o, IProperty& ip, bool out = true)
 }
 
 inline bool
-ip_validate (const IProperty& ip, const string& expected, bool out = true)
+ip_validate (const IProperty& ip, const string& expected,__attribute__((unused)) bool out = true)
 {
 	string str;
 	ip.getStringRepresentation (str);
 	
 	if (str == expected)
 	{
-		if (out)
+		/*if (out)
 			OUTPUT << "*** Validation OK! " << expected << endl;
 		else
 			OUTPUT << "*** Validation OK! " << "<not shown, output probably too long>"<< endl;
-				
+		*/		
 		return true;
 	}
 	else
@@ -334,7 +338,7 @@ ip_validate (const IProperty& ip1, const IProperty& ip2)
 	
 	if (str1 == str2)
 	{
-		OUTPUT << "*** Validation OK! " << str1 << endl;
+		//OUTPUT << "*** Validation OK! " << str1 << endl;
 		return true;
 	}
 	else
@@ -350,7 +354,7 @@ ip_validate (PropertyType tp1, PropertyType tp2)
 {
 	if (tp1 == tp2)
 	{
-		OUTPUT << "*** validation ok! " << tp1 << endl;
+		//OUTPUT << "*** validation ok! " << tp1 << endl;
 		return true;
 	}
 	else
@@ -366,7 +370,7 @@ ip_validate (size_t n, size_t m)
 {
 	if (n == m)
 	{
-		OUTPUT << "*** validation ok! size:" << n << endl;
+		//OUTPUT << "*** validation ok! size:" << n << endl;
 		return true;
 	}
 	else
@@ -382,7 +386,7 @@ ip_validate (vector<string>& n, vector<string>& m)
 {
 	if (equal (n.begin(), n.end(), m.begin()))
 	{
-		OUTPUT << "*** validation ok!" <<  endl;
+		//OUTPUT << "*** validation ok!" <<  endl;
 		return true;
 	}
 	else
