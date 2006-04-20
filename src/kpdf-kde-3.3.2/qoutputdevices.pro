@@ -6,7 +6,7 @@ TARGET = qoutputdevices
 QMAKE_CXXFLAGS += -g
 
 #include headers from kernel and used by kernel
-INCLUDEPATH += ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash
+INCLUDEPATH += ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash ../xpdf/fofi
 
 #QOutputDevices source files
 HEADERS += QOutputDevPixmap.h
