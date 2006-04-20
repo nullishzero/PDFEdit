@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/04/20 22:35:44  hockm0bm
+ * typeSafe is firtual now to enable XRefWriter transparent overloading
+ *
  * Revision 1.16  2006/04/19 06:01:59  hockm0bm
  * reopen signature changed to enable jumping to start from specified offset
  *         - synchronization with XRef::initInternals method
@@ -333,7 +336,7 @@ public:
 	 *
 	 * @return true if obj2 can replace obj1, false otherwise.
 	 */
-	bool typeSafe(::Object * obj1, ::Object * obj2);
+	virtual bool typeSafe(::Object * obj1, ::Object * obj2);
 
 	/** Gets value associated with name in trailer.
 	 * @param name Name of the entry.
