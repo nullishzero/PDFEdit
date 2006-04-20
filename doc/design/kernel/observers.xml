@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 <book>
- <bookinfo>
-  <title>Documentation for Observer</title>
- </bookinfo>
 
  <chapter>
   <title>Observers in general</title>
@@ -13,75 +10,85 @@
   </para>
   <para>
           Our design splits observer mechanism into two parts. First one is used 
-          to mark target of observing entity and second to mark implementator of
+          to mark target of observable entity and second to mark implementator of
           change handler. More precisely IObserverHandler abstract class and
           IObserver abstract class. First one is used to enable registration and
           unregistration of observers. Second stands for change handler.
-          <chapter>
-            <subtitle>IObserverHandler</subtitle>
-            <para>
-                    This interface provides methods for Observers registration and
-                    unregistration (TODO link to doxygen documentation).
-                    Implementator has responsibility to call inform all
-                    observers about each change. 
-            </para>
-            <para>
-                   Informing about change is called notification and it is
-                   realized by calling notify method defined on observer
-                   implementator. This method consumes new value parameter and
-                   context. Context is represented by IChangeContext abstract
-                   class which contains just information about its type (TODO
-                   link to doxygen documentation). It depends on
-                   IObserverHandler implementator what type of context is used.
-           </para>
-           <para>
-                   IObserverHandler is template class to enable using for
-                   different (hierarchicaly not relative) values independantly
-                   and to prevent code duplication. Template type stands for
-                   value keeper maintained value type. This type has to be
-                   preserved also in used context.
-           </para>
-          </chapter>
-          <chapter>
-           <subtitle>IChangeContext</subtitle>
-           <para>
-                   Change context represents additional information which may
-                   help to handle notification from value keeper
-                   (IObserverHandler) site. It is created and destroyed by
-                   notifier and its type and data which it holds are fully
-                   dependant on provider.
-           </para>
-           <para>
-                   Consumer of given context should check its type by getType
-                   method and decide if it is usefull for him. If so, cast is
-                   neccessary to get concrete context type which provides
-                   concrete information.
-           </para>
-           <para>
-                   Class is template with type parameter which stands for type
-                   of value which has changed. 
-           </para>
-          </chapter>
-          <chapter>
-           <subtitle>IObserver</subtitle>
-           <para>
-                   Observer itself is represented by IObserver abstract template
-                   class. Template parameter stands for type of value which is
-                   observed. Implementator of class has to provide notify method
-                   which is called by IObserverHandler each time any change
-                   occures (as mentioned above). Therefore notify method is kind
-                   of change handler. It gets new value (one after change) and
-                   may also get change context.
-           </para>
-           <para>
-                   Observer implementators should take not do any operations
-                   which may lead to value change which is observed to prevent
-                   new notification - when old one is not ready yet.
-           </para>
-          </chapter>
+  </para>
+  <sect1>
+    <title>IObserverHandler</title>
+    <para>
+            This interface provides methods for Observers registration and
+            unregistration (TODO link to doxygen documentation).
+            Implementator has responsibility to keep all registered obsever and 
+            to inform all of them if some change occures.
+    </para>
+    <para>
+           Informing about change is called notification and it is
+           realized by calling notify method defined on observer
+           implementator. This method consumes new value parameter and
+           context. Context is represented by IChangeContext abstract
+           class which contains just information about its type (TODO
+           link to doxygen documentation). It depends on
+           IObserverHandler implementator what type of context is used.
+   </para>
+   <para>
+           Second (besides informing) responsibility of observer handler 
+           implementator is to call observers in order defined by their 
+           priority (which can be obtained from IObserver::getProperty method).
+           This property mechanism can guarantee that some handling is done
+           before other, but property assignment is in full control of 
+           observer users (implementators).
+   </para>
+   <para>
+           IObserverHandler is template class to enable using for
+           different (hierarchicaly not relative) values independantly
+           and to prevent code duplication. Template type stands for
+           value keeper maintained value type. This type has to be
+           preserved also in used context.
+   </para>
+  </sect1>
+  <sect1>
+   <title>IChangeContext</title>
+   <para>
+           Change context represents additional information which may
+           help to handle notification from value keeper
+           (IObserverHandler) site. It is created and destroyed by
+           notifier and its type and data which it holds are fully
+           dependant on provider.
+   </para>
+   <para>
+           Consumer of given context should check its type by getType
+           method and decide if it is usefull for him. If so, cast is
+           neccessary to get concrete context type which provides
+           concrete information.
+   </para>
+   <para>
+           Class is template with type parameter which stands for type
+           of value which has changed. 
+   </para>
+  </sect1>
+  <sect1>
+   <subtitle>IObserver</subtitle>
+   <para>
+           Observer itself is represented by IObserver abstract template
+           class. Template parameter stands for type of value which is
+           observed. Implementator of class has to provide notify method
+           which is called by IObserverHandler each time any change
+           occures (as mentioned above). Therefore notify method is kind
+           of change handler. It gets new value (one after change) and
+           may also get change context.
+   </para>
+   <para>
+           Observer implementators should not do any operations
+           which may lead to value change which is observed to prevent
+           new notification - when old one is not ready yet.
+   </para>
+  </sect1>
 
   </para>
  </chapter>
+
  <chapter>
   <title>Observers in cobjects</title>
   <para>
@@ -105,29 +112,100 @@
           Old value in the context may also CNull if element was added. It is
           imposible to have both of them CNull.
   </para>
- </chapter>
- <chapter>
-  <title>Observers in CPdf</title>
-  <para>
+  
+  <sect1>
+   <title>Observers in CPdf</title>
+   
+   <para>
           CPdf class as PDF file maintainer uses observers for synchronization
           of structures which may be changed in two ways. This may occure
           because all attributes can be accesible through properties (cobjects)
-          and also special object provided by CPdf - CPage for page
+          and also special objects provided by CPdf - CPage for page
           manipulation, COutline for outlines manipulation and so on. Special
           objects keeps logic of concrete entities and manipulates with cobject
           in that way. Property part is without any logic and enables making
-          changes which are not covered byt special objects. This advantage and
-          extensibility is payed by additional synchronization.
-  </para>
-  <chapter>
-   <title>Page tree synchronozation</title>
-   <para>
+          changes which are not covered by special objects. This advantage and
+          extensibility is payed by additional synchronization. 
+          <note>Property tree doesn't know the way how it was changed).</note>
    </para>
+  
+    <sect2>
+     <title>Page tree synchronization</title>
+     <para>
+             Page tree, as mentiont above, can be changed from property site of 
+             view by making changes directly to the tree or by CPdf using 
+             <programlisting>
+             CPdf::insertPage
+             Cpdf::removePage
+             </programlisting>
+             methods. Second way is safer, because all necessary warkaround are 
+             done correctly here which is not guaranteed by property site, where 
+             any kind of data can be supplied.
+     </para>
+     <para>
+             To handle this situation, each intermediate node in page tree has 
+             observer registered to Kids array field and also to all referencies 
+             which are in this array. CPdf uses PageTreeWatchDog inner class.
+             In short, this method:
+             <listitem>registers itself to new value (if it is reference of 
+                     course). If new value reference points to intermediate node
+                     registers also to all children (recursively). This will 
+                     guarantee, that next time value is changed, observer will
+                     be called and so change can be handled (we don't trust that
+                     someone else do it).
+             </listitem>
+             <listitem>consolidates page tree. It starts from new value and 
+                     checks Count field whether it has correct value and whether 
+                     all <emphasis>direct</emphasis> children have Parent field 
+                     with reference to new value. All bad values are corrected. 
+                     Then it uses same process to new value's parent. This will 
+                     propagate changes up to page tree root node.
+                     As a result intermediate node's Count field contains correct
+                     value and also all nodes contain correct reference to their
+                     parents.
+             </listitem>
+             <listitem>Cleans up oldValue reference from given context. This 
+                     means, that all pages (CPage instances which contains 
+                     dictionary which is referenced by oldValue reference) are 
+                     removed from pages list and invalidated. oldValue may stand
+                     for intermediate node to, so part of tree may be destroyed.
+                     As a result, no page which has been removed because 
+                     oldValue has been removed is no longer valid and present in
+                     CPdf internal structures.
+             </listitem>
+             <listitem>
+                     Consolidates pages list, becase removing oldValue or adding 
+                     newValue may produce different numbering of already existing
+                     pages. All pages which dictionary can't get actual position
+                     are invalidated too.
+                     <note>This may happen if page tree becomes ambiguous, because
+                             someone has added reference to this page to the Kids
+                             array again and so mapping from dictionary to 
+                             position is not possible
+                     </note>
+                     All other pages are just repositioned. This means that their
+                     position (key in the pages list) is accureted to have correct
+                     value.
+             </listitem>
+             Observer must be registered on Kids and also its element too because
+             change may be done by setProperty on kids array property or directly
+             on reference. Changing indirect object pointed by some reference is 
+             ok, because it doesn't make any change in page tree.
+             <note>
+                     Unless Kids or Count fields are changed. Which results pdf 
+                     content destruction. Normaly user is not / should not be able
+                     to change such data.
+             </note>
+     </para>
+    </sect2>
+    
+    <sect2>
+     <title>Outlines synchronozation</title>
+     <para>
+     </para>
+    </sect2>
+    
+  </sect1>
   </chapter>
-  <chapter>
-   <title>Outlines synchronozation</title>
-   <para>
-   </para>
-  </chapter>
- </chapter>
+  
 </book>
