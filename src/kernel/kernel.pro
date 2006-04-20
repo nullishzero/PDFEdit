@@ -50,15 +50,24 @@ HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 SOURCES += tests/testcobject.cc tests/testcpage.cc tests/testcpdf.cc
 SOURCES += main.cc 
 
+#QMAKE_LFLAGS += -static
+INCLUDEPATH += ./tests/cppunit/include
+LIBS += -ldl -lcppunit -L../cppunit/src/cppunit/.libs
 
 #
 # Kernel special settings
 #
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
 QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings  -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function
+
+#
+# xpdf and utils
+#
 INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo
 
-#directories to creating files
+#
+# Directories to creating files
+#
 unix {
   OBJECTS_DIR = $$OBJDIR
 }

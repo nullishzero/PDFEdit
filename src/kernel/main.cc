@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2006/04/20 13:21:41  misuj1am
+ *
+ * -- ADD: cppunit tests
+ *
  * Revision 1.28  2006/04/18 14:18:14  misuj1am
  *
  *
@@ -61,17 +65,14 @@
 #include "static.h"
 
 #include "tests/testmain.h"
-// cobject tests
 #include "tests/testcobject.h"
-// cpdf tests
 #include "tests/testcpdf.h"
-// cpage tests
-#include "tests/testcpage.h"
 
-
+// Default rest pdf file
 const char* PDF_TEST_FILE_NAME = "../../doc/zadani.pdf";
 
-#define NOTONLYMYTEST 0
+// Filelist
+FileList fileList;
 
 /**
  *  Test main
@@ -81,7 +82,6 @@ main (int argc, char** argv)
 {
 	// uses default file name
 	const char * fileName=PDF_TEST_FILE_NAME;
-	
 	// checks if first parameter is real file and if so, overwrites fileName
 	if(argc>1)
 	{
@@ -94,16 +94,17 @@ main (int argc, char** argv)
 			{
 				fileName=param;
 				--argc;
-				//++argv;
+				++argv;
 			}
 		}
 	}
 	
+	// Push all files for testing into this conatiner	
+	fileList.push_back (fileName);
+	
 	START_TEST;
-
 	// Test cobjects
-	#if NOTONLYMYTEST
-	cobject_tests (argc, argv);
+	cobject_tests (argc, argv, fileName);
 	MEM_CHECK;
 	
 	// Test cpdf
@@ -111,9 +112,47 @@ main (int argc, char** argv)
 	cpdf_tests(testCPdf);
 	testCPdf->close();
 	MEM_CHECK;
-	#endif
 	
-	// Test cpage
-	cpage_tests (argc, argv, fileName);
+
+	//
+	// CPage test
+	//
+	try 
+	{
+		CPPUNIT_NS::TextTestRunner runner;
+/*		if (1 < argc) 
+		{// Run only specified
+           for (size_t i = 1; i < argc; ++i) 
+		   {
+				CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry(argv[i]).makeTest();
+                // Adds the test to the list of test to run
+				runner.addTest(suite);
+           }
+
+	    } else 
+*/		{// Get the top level suite from the registry
+			
+			CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
+			// Adds the test to the list of test to run
+			runner.addTest(suite);
+		}
+		
+		// Change the default outputter to a compiler error format outputter
+		runner.setOutputter(new	CPPUNIT_NS::CompilerOutputter(&runner.result(),OUTPUT));
+		
+		//
+		// Run the tests.
+		// 
+		std::cout << "Tests started." << std::endl;
+		bool wasSucessful=runner.run();
+		// Return error code 1 if the one of test failed.
+		return wasSucessful ? 0 : 1;
+	
+	}catch (...) 
+	{
+		OUTPUT << "Stopped" << std::endl;
+	}
+
 	END_TEST;
-}
+
+} // main
