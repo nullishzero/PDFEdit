@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/04/20 18:05:36  hockm0bm
+ * AmbiguousPageTreeException spelling corrected
+ *
  * Revision 1.15  2006/04/19 18:41:29  hockm0bm
  * AmbiguesPageTreeException added
  *
@@ -180,23 +183,23 @@ public:
 	}
 };
 
-/** Exception is thrown when page tree is ambbigues.
+/** Exception is thrown when page tree is ambiguous.
  *
  * This means that it is not possible to get Node position in its parent Kids
  * array (because it is in this Kids array several times).
  *
  */
-class AmbiguesPageTreeException: public PdfException
+class AmbiguousPageTreeException: public PdfException
 {
 	// TODO keep intermediate node with such ambigues Kids array
 public:
 	/** Exception constructor.
 	 */
-	AmbiguesPageTreeException()
+	AmbiguousPageTreeException()
 	{
 	}
 
-	virtual ~AmbiguesPageTreeException() throw()
+	virtual ~AmbiguousPageTreeException() throw()
 	{
 	}
 
