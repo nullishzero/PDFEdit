@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/20 20:22:40  hockm0bm
+ * charachter writing moves position - uses setPos() in both putChar and putLine
+ *
  * Revision 1.4  2006/04/17 19:58:41  hockm0bm
  * FileStreamWriter::putLine checks parameter for NULL
  *
@@ -28,8 +31,10 @@
 
 void FileStreamWriter::putChar(int ch)
 {
+	size_t pos=getPos();
 	fputc(ch, f);
 	fflush(f);
+	setPos(pos+1);
 }
 
 void FileStreamWriter::putLine(const char * line)
@@ -38,6 +43,8 @@ void FileStreamWriter::putLine(const char * line)
 	if(!line)
 		return;
 	
-	fprintf(f, "%s\n", line);
+	size_t pos=getPos();
+	int writen=fprintf(f, "%s\n", line);
 	fflush(f);
+	setPos(pos+writen);
 }

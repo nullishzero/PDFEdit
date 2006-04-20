@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/20 20:22:40  hockm0bm
+ * charachter writing moves position - uses setPos() in both putChar and putLine
+ *
  * Revision 1.2  2006/04/12 20:49:03  hockm0bm
  * FileStreamWriter methods flushes immediately after writing
  *
@@ -77,13 +80,15 @@ public:
 	virtual ~FileStreamWriter(){};
 	
 	/** Puts character to the file.
-	 * Additionally flushes all changes to the file.
+	 * Additionally flushes all changes to the file and position is moved after
+	 * inserted character.
 	 * @see BaseStreamWriter::putChar
 	 */
 	virtual void putChar(int ch);
 
 	/** Puts line to the file.
-	 * Additionally flushes all changes to the file.
+	 * Additionally flushes all changes to the file. and position is moved after
+	 * inserted string.
 	 * @see BaseStreamWriter::putLine
 	 */
 	virtual void putLine(const char * line);
