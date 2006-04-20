@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.32  2006/04/20 22:34:37  hockm0bm
+ * freeXpdfObject cloning seems to be problem (for array - TODO solve)
+ *         - just to prevent SEGV (this solution means memmory leak)
+ *
  * Revision 1.31  2006/04/20 18:04:36  hockm0bm
  * ambigues spell error corrected
  *
@@ -1086,7 +1090,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	Object * propObject=prop->_makeXpdfObject();
 	printDbg(DBG_DBG, "Registering change to the XRefWriter");
 	xref->changeObject(indiRef.num, indiRef.gen, propObject);
-	utils::freeXpdfObject(propObject);
+	//utils::freeXpdfObject(propObject);
 
 	// invalidates indMap mapping for this property
 	// This is because prop may be something different than original indirect
