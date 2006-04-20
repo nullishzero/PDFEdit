@@ -47,7 +47,9 @@ SOURCES += cpage.cc cpdf.cc
 # Tests
 #
 HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
-SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcpage.cc tests/testcpdf.cc
+SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc 
+SOURCES += tests/testcpage.cc tests/testccontentstream.cc
+SOURCES += tests/testcpdf.cc
 SOURCES += main.cc 
 
 #QMAKE_LFLAGS += -static

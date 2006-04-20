@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/04/20 21:53:20  misuj1am
+ *
+ * --minor improvments
+ *
  * Revision 1.8  2006/04/20 19:06:28  misuj1am
  *
  * -- tests improved
@@ -282,7 +286,7 @@ ip_validate (Object* o, const string& expected,__attribute__((unused)) bool out 
 }
 
 inline bool
-ip_validate (Object& o, IProperty& ip, bool out = true)
+ip_validate (Object& o, IProperty& ip,__attribute__((unused)) bool out = true)
 {
 	string str;
 	utils::xpdfObjToString (o,str);

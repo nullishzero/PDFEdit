@@ -32,8 +32,7 @@ namespace pdfobjects {
 class NoMemChecker;
 class BasicMemChecker;
 class CXRef;
-		
-	
+
 /**
  * CObjectSimple type trait.
  * Additional information that identifies variable type, e.g. for writeValue function.
@@ -307,6 +306,16 @@ template<> struct PropertyTraitComplex<pDict>
 		typedef class DictIdxComparator		indexComparator;
 };
 
+//
+// Forward declarations
+//
+namespace utils 
+{
+std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
+	constructIdPairFromIProperty (const PropertyTraitComplex<pArray>::value::value_type& item, size_t pos);
+PropertyTraitComplex<pDict>::value::value_type
+	constructIdPairFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item, size_t);
+}
 
 
 /** 
@@ -437,7 +446,7 @@ public:
 		typename Value::iterator it = value.begin ();
 		for (; it != value.end (); ++it, ++pos)
 		{
-			fctor (constructIdPairFromIProperty (*it, pos));
+			fctor (utils::constructIdPairFromIProperty (*it, pos));
 		}
 	}
 	

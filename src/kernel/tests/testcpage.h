@@ -4,3 +4,7 @@
  * $RCSfile$
  *
  */
+
+boost::shared_ptr<CPage> 
+getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1);
+

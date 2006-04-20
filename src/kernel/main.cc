@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.33  2006/04/20 21:53:20  misuj1am
+ *
+ * --minor improvments
+ *
  * Revision 1.32  2006/04/20 19:06:47  misuj1am
  *
  * -- default test added
@@ -145,7 +149,7 @@ main (int argc, char** argv)
 	{
 		if (1 < argc) 
 		{// Run only specified
-           for (size_t i = 1; i < argc; ++i) 
+           for (int i = 1; i < argc; ++i) 
 		   {
 				CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry(argv[i]).makeTest();
                 // Adds the test to the list of test to run
@@ -161,7 +165,7 @@ main (int argc, char** argv)
 		}
 		
 		// Change the default outputter to a compiler error format outputter
-		runner.setOutputter(new	CPPUNIT_NS::CompilerOutputter(&runner.result(),OUTPUT));
+		//runner.setOutputter(new	CPPUNIT_NS::CompilerOutputter(&runner.result(),OUTPUT));
 	
 	}catch (...) 
 	{

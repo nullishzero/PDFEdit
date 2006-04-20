@@ -9,6 +9,7 @@
 
 #include "testmain.h"
 #include "testcobject.h"
+#include "testcpage.h"
 #include "testcpdf.h"
 
 #include <PDFDoc.h>
@@ -16,16 +17,9 @@
 
 
 //=====================================================================================
-namespace {
-//=====================================================================================
-
-using namespace boost;
-
-
-//=====================================================================================
 
 boost::shared_ptr<CPage> 
-getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1)
+getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum)
 {
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	
@@ -48,6 +42,11 @@ getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1)
 	return boost::shared_ptr<CPage> (new CPage(dict));
 }
 
+//=====================================================================================
+namespace {
+//=====================================================================================
+
+using namespace boost;
 
 //=====================================================================================
 
@@ -93,73 +92,6 @@ mediabox (ostream& /*oss*/, const char* fileName)
 //=====================================================================================
 
 bool
-position (ostream& oss, const char* fileName)
-{
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
-	boost::shared_ptr<CPage> page = getPage (fileName, pdf);
-
-	
-	std::vector<shared_ptr<PdfOperator> > ops;
-	page->getObjectsAtPosition (ops, Rectangle (1,1,10,10));
-
-	oss << "Found objects #" << ops.size() << std::endl;
-
-	std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
-	for (; it != ops.end(); ++it)
-	{
-		std::string tmp;
-		(*it)->getOperatorName (tmp);
-		//oss << tmp;
-	}
-	//oss << std::endl;
-	
-	return true;
-}
-
-//=====================================================================================
-
-bool
-opcount (ostream& oss, const char* fileName)
-{
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-	int pagesNum = 1;
-	
-	//
-	// Our stuff here
-	//
-	Object obj;
-	XRef* xref = doc->getXRef();
-	assert (xref);
-	Catalog cat (xref);
-
-	cat.getPage(pagesNum)->getContents(&obj);
-
-	scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, &obj)));
-	
-	Object o;
-	parser->getObj (&o);
-	int i = 0;
-	
-	while (!o.isEOF()) 
-	{
-		if (o.isCmd ())
-			i++;
-
-		// grab the next object
-		parser->getObj(&o);
-	}
-
-	
-	obj.free ();
-
-	oss << "Operands count: " << i << endl;
-
-	return true;
-}
-
-//=====================================================================================
-
-bool
 display (ostream& /*oss*/, const char* fileName)
 {
 	// Open pdf and get the first page	
@@ -191,24 +123,6 @@ display (ostream& /*oss*/, const char* fileName)
 }
 
 
-//=====================================================================================
-
-bool
-printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
-{
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
-
-	// Print content stream
-	string str;
-	page->getContentStream()->getStringRepresentation (str);
-	//oss << "Content stream representation: " << str << endl;
-
-	return true;
-}
-
-
-
 //=========================================================================
 // class TestCPage
 //=========================================================================
@@ -229,24 +143,12 @@ public:
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
 			
-			TEST(" test 4.1 -- features");
+			TEST(" test CPage -- features");
 			CPPUNIT_ASSERT (mediabox (OUTPUT, (*it).c_str()));
 			OK_TEST;
 
-			TEST(" test 4.2 -- opcount");
-			CPPUNIT_ASSERT (opcount (OUTPUT, (*it).c_str()));
-			OK_TEST;
-
-			TEST(" test 4.3 -- getPosition");
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str()));
-			OK_TEST;
-
-			TEST(" test 4.4 -- display");
+			TEST(" test CPage -- display");
 			CPPUNIT_ASSERT (display (OUTPUT, (*it).c_str()));
-			OK_TEST;
-
-			TEST(" test 4.5 -- print contentstream");
-			CPPUNIT_ASSERT (printContentStream (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
