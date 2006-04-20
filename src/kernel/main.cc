@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.32  2006/04/20 19:06:47  misuj1am
+ *
+ * -- default test added
+ *
  * Revision 1.31  2006/04/20 18:27:57  misuj1am
  *
  * -- cppunit tests
@@ -117,6 +121,10 @@ main (int argc, char** argv)
 		
 	}// while (1 < argc)
 
+	if (fileList.empty ())
+		fileList.push_back (fileName);
+	
+	
 	//
 	// Start testing
 	//
@@ -176,6 +184,7 @@ main (int argc, char** argv)
 
 	END_TEST;
 
+	std::cout << "Tests completed." << std::endl;
 	// Return error code 1 if the one of test failed.
 	return wasSucessful ? 0 : 1;
 
