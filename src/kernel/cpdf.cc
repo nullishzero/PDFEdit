@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.31  2006/04/20 18:04:36  hockm0bm
+ * ambigues spell error corrected
+ *
  * Revision 1.30  2006/04/19 18:46:12  hockm0bm
  * * getPropertyValue replaced by getValueFromSimple helper
  * * minor changes in searchTreeNode
@@ -377,7 +380,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
  * <br>
  * If node is found as direct Kids member (this means that reference of target 
  * node is direct memeber of Kids array), then determines if the node position 
- * is unambigues - checks whether reference to the node is unique in Kids array. 
+ * is unambiguous - checks whether reference to the node is unique in Kids array. 
  * If not throws exception. This means that searchTreeNode function is not able 
  * to definitively determine node's position.
  *
@@ -385,7 +388,7 @@ boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> p
  * type.
  * @throw ElementNotFoundException If required element of pdf object is not
  * found.
- * @throw AmbiguesPageTreeException if page tree is ambigues and node position
+ * @throw AmbiguousPageTreeException if page tree is ambiguous and node position
  * can't be determined.
  *
  * @return Position of the node or 0 if node couldn't be found under this
@@ -432,15 +435,15 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 	// Checks if node's reference is present in Kids array
 	// All nodes has to be indirect objects so getIndiRef returns node's
 	// reference
-	// If getPropertyId returns more than one element - position is ambigues and
+	// If getPropertyId returns more than one element - position is ambiguous and
 	// exception is thrown 
 	shared_ptr<CRef> nodeRef(CRefFactory::getInstance(node->getIndiRef()));
 	vector<CArray::PropertyId> positions;
 	getPropertyId<CArray, vector<CArray::PropertyId> >(array_ptr, nodeRef, positions);
 	if(positions.size()>1)
 	{
-		printDbg(DBG_WARN, "Position of node is ambigues.");
-		throw AmbiguesPageTreeException();
+		printDbg(DBG_WARN, "Position of node is ambiguous.");
+		throw AmbiguousPageTreeException();
 	}
 	
 	// goes through all Kids and checks if node is one of them or go deeper in
@@ -520,7 +523,7 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
  * @throw PageNotFoundException
  * @throw ElementBadTypeException
  * @throw MalformedFormatExeption
- * @throw AmbiguesPageTreeException if node position can't be determined bacause
+ * @throw AmbiguousPageTreeException if node position can't be determined bacause
  * of page tree ambiguity (see searchTreeNode for more information).
  * @return Node position.
  */
@@ -1380,7 +1383,7 @@ using namespace utils;
 
 		// try to get position of newValue node.  No pages from this sbtree can
 		// be in the pageList, so we can set minPos to its position.
-		// If getNodePosition throws, then this node is ambigues and so we have
+		// If getNodePosition throws, then this node is ambiguous and so we have
 		// no information
 		try
 		{
@@ -1436,7 +1439,7 @@ using namespace utils;
 				pageList.insert(PageList::value_type(pos, i->second));	
 			}catch(exception & e)
 			{
-				// page position is ambigues and so it has to be invalidate
+				// page position is ambiguous and so it has to be invalidate
 				//TODO uncoment when method is ready
 				//i->second->invalidate();
 			}
@@ -1626,14 +1629,14 @@ using namespace utils;
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
 
 	// gets index of searched node's reference in Kids array - if position 
-	// can't be determined unambiguesly (getPropertyId returns more positions), 
+	// can't be determined unambiguously (getPropertyId returns more positions), 
 	// throws exception
 	vector<CArray::PropertyId> positions;
 	getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currRef, positions);
 	if(positions.size()>1)
 	{
-		printDbg(DBG_ERR, "Page can't be created, because page tree is ambigues for node at pos="<<storePostion);
-		throw AmbiguesPageTreeException();
+		printDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="<<storePostion);
+		throw AmbiguousPageTreeException();
 	}
 	size_t kidsIndex=positions[0]+append;
 
@@ -1701,15 +1704,15 @@ using namespace utils;
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
 
 	// gets index of searched node in Kids array and removes element from found
-	// position - if position can't be determined unambiguesly (getPropertyId
+	// position - if position can't be determined unambiguously (getPropertyId
 	// returns more positions), exception is thrown
 	shared_ptr<CRef> currentRef_ptr(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 	vector<CArray::PropertyId> positions;
 	getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currentPage_ptr, positions);
 	if(positions.size()>1)
 	{
-		printDbg(DBG_ERR, "Page can't be created, because page tree is ambigues for node at pos="<<pos);
-		throw AmbiguesPageTreeException();
+		printDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="<<pos);
+		throw AmbiguousPageTreeException();
 	}
 	
 	// removing triggers pageTreeWatchDog consolidation
