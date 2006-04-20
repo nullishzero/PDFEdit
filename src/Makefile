@@ -13,7 +13,7 @@ qoutputdevices: xpdf
 	cd kpdf-kde-3.3.2 && qmake && make staticlib
 
 # Kernel
-kernel: xpdf
+kernel: xpdf cppunit
 	cd kernel && qmake && make
 
 # XPdf
@@ -24,13 +24,25 @@ xpdf: xpdf_configure
 xpdf_configure: xpdf/config.status
 
 xpdf/config.status:
-	cd xpdf && ./configure 
+	cd xpdf && ./configure
+
+# XPdf
+cppunit: cppunit_configure
+	cd cppunit && make
+
+# XPdf configure
+cppunit_configure: cppunit/config.status
+
+cppunit/config.status:
+	cd cppunit && ./configure && ./libtoolize --copy --force
+
 
 # Cleanup
 clean:
 	cd gui && make clean
 	cd kernel && make clean
 	cd xpdf && make clean
+	cd cppunit && make clean
 	cd kpdf-kde-3.3.2 && make clean
 
 # Installation
