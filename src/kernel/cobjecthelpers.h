@@ -7,6 +7,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/04/20 22:30:47  hockm0bm
+ * * IdCollector class added - helper fo getPropertyId
+ * * getPropertyId
+ *         - use parent->forEach method with IdCollector as functor
+ *
  * Revision 1.16  2006/04/20 18:46:33  hockm0bm
  * correction of header - commited by mistake
  *
@@ -556,6 +561,65 @@ getCStreamFromArray (IP& ip, size_t pos)
  */
 bool propertyEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2);
 
+/** Collector of all Id complying given condition.
+ */
+template <typename Container, typename IdType> class IdCollector
+{
+	Container & container;
+	const boost::shared_ptr<IProperty> & searched;
+public:
+	/** Constructor with initialization.
+	 * @param cont Container where to store ids.
+	 * @param search Property to be searched.
+	 *
+	 */
+	IdCollector(Container & cont, const boost::shared_ptr<IProperty> & search):container(cont), searched(search){};
+
+	/** Filters ids of properties which equals searched.
+	 * @param entry Entry which contains identificator, property pair.
+	 *
+	 * If entry's property equals searched one, adds id to the container.
+	 * Uses propertyEquals method for comparision. TODO make it template
+	 * parameter.
+	 */
+	void operator()(std::pair<boost::shared_ptr<IProperty>, IdType> entry)
+	{
+	using namespace debug;
+		try
+		{
+			// uses propertyEquals method to compare properties
+			// it may throw, if element is not supported by operator, we will
+			// simply ignore such values
+			if(propertyEquals(searched, entry.second))
+			{
+				printDbg(DBG_DBG, "Element matches at id="<<entry.first);
+				container.push_back(entry.first);
+			}
+		}catch(NotImplementedException & e)
+		{
+			// type of element is not supported
+			printDbg(DBG_WARN, "Element comparing not supported for typ="<<entry.second->getType()<<". Ignoring element.");
+		}
+	}
+
+	/**
+	 * Returns container.
+	 *
+	 * @return Reference to container.
+	 */
+	Container & getContainer()
+	{
+		return container;
+	}
+	
+	/** Clears container.
+	 */
+	void reset()
+	{
+		container.clear();
+	}
+};
+
 /** Gets all identificators of property in parent complex type.
  * @param parent Complex value where to search.
  * @param child Property to search.
@@ -584,38 +648,12 @@ using namespace debug;
 
 	printDbg(DBG_DBG, "");
 
-	// type of the storage where to place indexes
-	typedef vector<typename Complex::PropertyId> IdStorage;
-
-	// collects all properties identificators
-	IdStorage ids;
-	// FIXME uncoment when ready
-	//parent->getAllPropertyNames(ids);
-
-	// clears given container to prevent mixing with original data
-	container.clear();
+	// collects all properties identificators which are same as child
+	// uses forEach with IdCollector functor
+	typedef IdCollector<Container, typename Complex::PropertyId> IdCollectorType;
+	IdCollectorType collector(container, child);
+	parent->forEach(collector);
 	
-	// goes over all identificators and compare each with given child
-	typename IdStorage::iterator i=ids.begin();
-	for(; i!=ids.end(); i++)
-	{
-		shared_ptr<IProperty> element=parent->getProperty(*i);
-		try
-		{
-			// uses == operator to compare properties
-			// it may throw, if element is not supported by operator, we will
-			// simply ignore such values
-			if(propertyEquals(element, child))
-			{
-				printDbg(DBG_DBG, "Element matches at id="<<*i);
-				container.push_back(*i);
-			}
-		}catch(NotImplementedException & e)
-		{
-			// type of element is not supported
-			printDbg(DBG_WARN, "Element comparing not supported for typ="<<element->getType()<<". Ignoring element.");
-		}
-	}
 }
 
 }// end of utils namespace
