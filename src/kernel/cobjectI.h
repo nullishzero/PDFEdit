@@ -45,7 +45,7 @@ CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf)
 {
 	Checker check; check.objectCreated (this);
 	//assert (NULL == p.getIndirectProperty (rf).get()); TODO
-	printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
+	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Set object's value
 	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);
@@ -73,7 +73,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (const Value& val) : IProperty(), value(val)
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(val) constructor.");
+	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(val) constructor.");
 }
 
 
@@ -84,7 +84,7 @@ template<PropertyType Tp, typename Checker>
 void 
 CObjectSimple<Tp,Checker>::getStringRepresentation (std::string& str) const
 {
-	utils::simpleValueToString<Tp> (value,str);
+	utils::simpleValueToString<Tp> (value, str);
 }
 
 

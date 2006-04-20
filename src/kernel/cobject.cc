@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *		  Filename:  cobject.cc
@@ -86,7 +87,9 @@ const string CDICT_SUFFIX	= "\n>>";
 /** Object Stream string representation. */
 const string CSTREAM_STREAM = "<stream>";
 
-
+/** Indirect Object header and footer. */
+const string INDIRECT_HEADER = "num ";
+const string INDIRECT_FOOTER = "\nendobj";
 
 // =====================================================================================
 namespace {
@@ -942,6 +945,22 @@ objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 bool
 objHasParent (const IProperty& ip)
 {boost::shared_ptr<IProperty> indi;return objHasParent (ip,indi);}
+
+
+//
+//
+//
+void 
+createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& val, std::string& output)
+{
+	ostringstream oss;
+
+	oss << INDIRECT_HEADER << rf.num << " " << rf.gen << "\n";
+	oss << val;
+	oss << INDIRECT_FOOTER;
+
+	output = oss.str ();
+}
 
 
 

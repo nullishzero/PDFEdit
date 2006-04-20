@@ -1135,11 +1135,11 @@ constructItemFromIProperty (const PropertyTraitComplex<pDict>::value::value_type
 
 inline std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
 constructIdPairFromIProperty (const PropertyTraitComplex<pArray>::value::value_type& item, size_t pos)
-	{return std::make_pair (pos, item);};
+	{return std::make_pair (pos, item);}
 
 inline PropertyTraitComplex<pDict>::value::value_type
 constructIdPairFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item, size_t)
-	{return item;};
+	{return item;}
 
 /**
  * Get IProperty from an item of a special container.
@@ -1173,6 +1173,14 @@ void xpdfObjToString (Object& obj, std::string& str);
 bool objHasParent (const IProperty& ip);
 bool objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj);
 
+/**
+ * Create text representation of an indirect object from string and IndiRef.
+ *
+ * @param rf IndiRef.
+ * @param val Value of an object.
+ * @param output Output string.
+ */
+ void createIndirectObjectStringFromString (const IndiRef& rf, const std::string& val, std::string& output);
 
 
 //=====================================================================================
