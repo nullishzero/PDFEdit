@@ -202,16 +202,6 @@ public:
 
 	
 	/**
- 	 * Notify Writer object that this object has changed. We have to call this
-	 * function to make changes visible.
-	 *
-	 * It is necessary for undo operation, that means saving previous state of the object.
-	 * We obtain reference to CXref from CObject::pdf.
-	 */
-	virtual void dispatchChange () const; 
-
-
-	/**
 	 * Destructor
 	 */
 	~CObjectSimple ();
@@ -263,7 +253,7 @@ private:
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
 		// Dispatch the change
-		dispatchChange ();
+		IProperty::dispatchChange ();
 		
 		if (context)
 		{
@@ -443,16 +433,6 @@ public:
 
 	
 	/**
- 	 * Notify Writer object that this object has changed. We have to call this
-	 * function to make changes visible.
-	 *
-	 * It is necessary for undo operation, that means saving previous state of the object.
-	 * We obtain reference to CXref from CObject::pdf.
-	 */
-	virtual void dispatchChange () const; 
-
-
-	/**
 	 * Destructor
 	 */
 	~CObjectComplex ();
@@ -588,7 +568,7 @@ private:
 						 boost::shared_ptr<const ObserverContext> context)
 	{
 		// Dispatch the change
-		dispatchChange ();
+		IProperty::dispatchChange ();
 		
 		if (context)
 		{
@@ -716,12 +696,6 @@ public:
 	void setStringRepresentation (const std::string& strO);
 
 	/**
- 	 * Notify Writer object that this object has changed. We have to call this
-	 * function to make changes visible.
-	 */
-	virtual void dispatchChange () const;
-
-	/**
      * Create xpdf object.
 	 *
 	 * REMARK: Caller is responsible for deallocating the xpdf object.
@@ -773,7 +747,7 @@ private:
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
 		// Dispatch the change
-		dispatchChange ();
+		IProperty::dispatchChange ();
 			
 		if (context)
 		{

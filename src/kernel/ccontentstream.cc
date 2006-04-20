@@ -459,7 +459,7 @@ namespace
 
 
 	/** Maximum operator name length. */
-	const static size_t MAX_OPERATOR_NAMELEN = 4;
+	static const size_t MAX_OPERATOR_NAMELEN = 4;
 
 	/**
 	 * Known operators, it is copied from pdf BECAUSE it is
