@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/04/20 18:02:59  hockm0bm
+ * * operator== replaced by propertyEquals method
+ * * parameters for getPropertyId and propertyEquals are const referencies
+ * * getPropertyId - not useable now, because I don't have mechanism to get
+ *         all available ids - but it is compileable
+ *
  * Revision 1.8  2006/04/19 18:40:23  hockm0bm
  * * getPropertyId method implemented
  *         - compilation problems in linking stage (probably because of bad getAllPropertyNames implementation)
@@ -189,7 +195,7 @@ void printProperty(boost::shared_ptr<IProperty> ip, std::ostream & out)
  * NOTE: no checking of parameters is done here.
  */
 template<typename SimpleClass, PropertyType SimpleType> 
-bool simpleEquals(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr<IProperty> val2)throw()
+bool simpleEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2)throw()
 {
 	// type for value
 	typedef typename SimpleClass::Value Value;
@@ -202,7 +208,7 @@ bool simpleEquals(const boost::shared_ptr<IProperty> val1, const boost::shared_p
 	return value1==value2;
 }
 
-bool operator==(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr<IProperty> val2)
+bool propertyEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2)
 {
 	// types must be same
 	if(val1->getType()!=val2->getType())
@@ -228,7 +234,7 @@ bool operator==(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr
 			return simpleEquals<CRef, pRef>(val1, val2);
 		default:
 			// complex are not supported
-			throw NotImplementedException("operator== ");
+			throw NotImplementedException("propertyEquals for type="+val1->getType());
 	}
 	
 }

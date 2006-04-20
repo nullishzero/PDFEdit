@@ -7,6 +7,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/04/20 18:02:59  hockm0bm
+ * * operator== replaced by propertyEquals method
+ * * parameters for getPropertyId and propertyEquals are const referencies
+ * * getPropertyId - not useable now, because I don't have mechanism to get
+ *         all available ids - but it is compileable
+ *
  * Revision 1.14  2006/04/20 10:24:23  misuj1am
  *
  * --ADD getCSTreamFromArray
@@ -447,6 +453,9 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 	setIntInArray (ip, position, static_cast<int>(val));
 }
 
+<<<<<<< cobjecthelpers.h
+/** Equality method for T type.
+=======
 
 //=========================================================
 //	CArray "get type" helper methods
@@ -517,6 +526,7 @@ getCStreamFromArray (IP& ip, size_t pos)
 
 
 /** Equality operator for T type.
+>>>>>>> 1.14
  * @param val1 Value to compare (with T type wrapped by smart poiter).
  * @param val2 Value to compare (with T type wrapped by smart poiter).
  *
@@ -545,7 +555,7 @@ getCStreamFromArray (IP& ip, size_t pos)
  *
  * @return true if values are equal, false otherwise.
  */
-bool operator==(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr<IProperty> val2);
+bool propertyEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2);
 
 /** Gets all identificators of property in parent complex type.
  * @param parent Complex value where to search.
@@ -567,7 +577,7 @@ bool operator==(const boost::shared_ptr<IProperty> val1, const boost::shared_ptr
  *
  */
 template<typename Complex, typename Container > void 
-getPropertyId(boost::shared_ptr<Complex> parent, boost::shared_ptr<IProperty> child, Container & container) throw()
+getPropertyId(const boost::shared_ptr<Complex> & parent, const boost::shared_ptr<IProperty> &child, Container & container) throw()
 {
 using namespace std;
 using namespace boost;
@@ -580,7 +590,8 @@ using namespace debug;
 
 	// collects all properties identificators
 	IdStorage ids;
-	parent->getAllPropertyNames(ids);
+	// FIXME uncoment when ready
+	//parent->getAllPropertyNames(ids);
 
 	// clears given container to prevent mixing with original data
 	container.clear();
@@ -595,7 +606,7 @@ using namespace debug;
 			// uses == operator to compare properties
 			// it may throw, if element is not supported by operator, we will
 			// simply ignore such values
-			if(operator==(element, child))
+			if(propertyEquals(element, child))
 			{
 				printDbg(DBG_DBG, "Element matches at id="<<*i);
 				container.push_back(*i);
