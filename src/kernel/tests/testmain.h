@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/20 12:17:51  misuj1am
+ *
+ * -- IMPORTANT: when kernel output in tests needed, write ./kernel [file] all
+ *
  * Revision 1.4  2006/04/10 23:07:22  misuj1am
  *
  *
@@ -35,38 +39,35 @@
 #include "../cpage.h"
 #include "../pdfoperators.h"
 
+/*//CPPUNITTEST
+#include <cppunit/TestRunner.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/BriefTestProgressListener.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TextTestRunner.h>
+#include <cppunit/CompilerOutputter.h>
+
+*/
+
 // TFUJJ
 using namespace std;
 using namespace pdfobjects;
 
 
-//
-// Test pdf file
-//
-static const char* TESTPDFFILE= "../../doc/zadani.pdf";
-
-
-// No output from KERNEL
-#define NO_KERNEL_COUT_OUTPUT
-// Quick compilation
-#define __QUICK_TEST
-
 
 //========= NASTY =============
-#ifdef NO_KERNEL_COUT_OUTPUT
-	#define OUTPUT		cout
-	#define KOUTPUT		cerr
-	#define OUTPUT_COND	(1==argc)
-#else
-	#define	OUTPUT		cerr
-	#define KOUTPUT		cout
-	#define OUTPUT_COND	(1!=argc)
-#endif
+#define OUTPUT_MAGIC_WORD	"all"
+
+#define OUTPUT		cout
+#define KOUTPUT		cerr
+#define OUTPUT_COND	(NULL == argv[1] || 0 != strcmp(argv[1],OUTPUT_MAGIC_WORD))
 
 #define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;
 #define	SWAP_BUFS			{strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
 #define SWAP_BUFS_BACK		{KOUTPUT.rdbuf(strm_buffer);}
-#define KERNEL_OUTPUT		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;}
+#define KERNEL_OUTPUT		INIT_BUFS; if (OUTPUT_COND) {SWAP_BUFS;--argc;++argv;}
 #define KERNEL_OUTPUT_BACK	if (OUTPUT_COND) {SWAP_BUFS_BACK;}
 
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS LEFT UNALLOCATED: " << check.getCount () \
@@ -372,4 +373,4 @@ ip_validate (vector<string>& n, vector<string>& m)
 	}
 }
 
-#endif // __QUICK_TEST
+#endif // _TESTMAIN_H_
