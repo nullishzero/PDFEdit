@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/04/20 15:00:58  misuj1am
+ *
+ * -- cobject tests splitted to testcobjectsimple and testcobjectcomplex
+ *
  * Revision 1.2  2006/04/20 13:22:22  misuj1am
  *
  * --ADD: cppunittests, improved other tests
@@ -26,5 +30,5 @@
 /**
  * Cobject test function.
  */
-void cobject_tests(int argc, char ** argv, const char*);
+//void cobject_tests(int argc, char ** argv, const char*);
 

@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.30  2006/04/20 15:00:57  misuj1am
+ *
+ * -- cobject tests splitted to testcobjectsimple and testcobjectcomplex
+ *
  * Revision 1.29  2006/04/20 13:21:41  misuj1am
  *
  * -- ADD: cppunit tests
@@ -99,13 +103,14 @@ main (int argc, char** argv)
 		}
 	}
 	
+	//
 	// Push all files for testing into this conatiner	
+	// 
 	fileList.push_back (fileName);
 	
+
+	
 	START_TEST;
-	// Test cobjects
-	cobject_tests (argc, argv, fileName);
-	MEM_CHECK;
 	
 	// Test cpdf
 	CPdf * testCPdf=getTestCPdf(fileName);
