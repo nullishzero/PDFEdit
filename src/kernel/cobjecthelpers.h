@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/04/20 10:24:23  misuj1am
+ *
+ * --ADD getCSTreamFromArray
+ *
  * Revision 1.13  2006/04/19 18:40:23  hockm0bm
  * * getPropertyId method implemented
  *         - compilation problems in linking stage (probably because of bad getAllPropertyNames implementation)
@@ -442,6 +446,75 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 
 	setIntInArray (ip, position, static_cast<int>(val));
 }
+
+
+//=========================================================
+//	CArray "get type" helper methods
+//=========================================================
+
+/**
+ * Get iproperty casted to specific type from array.
+ *
+ * @param dict Dictionary.
+ * @param id   Position in the array.
+ */
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
+{
+	printDbg (debug::DBG_DBG, "array[" << pos << "]");
+	
+	// Get the item that is associated with specified key 
+	boost::shared_ptr<IProperty> ip = array->getProperty (pos);
+	//
+	// If it is a Ref forward it to the real object
+	// 
+	if (pRef == ip->getType())
+	{
+		IndiRef ref;
+		IProperty::getSmartCObjectPtr<CRef>(ip)->getPropertyValue(ref);
+		ip = array->getPdf()->getIndirectProperty (ref);
+	}
+
+	// Check the type
+	if (ItemPType != ip->getType ())
+	{
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		throw ElementBadTypeException ("getValueFromArray()");
+	}
+
+	// Cast it to the correct type and return it
+	return IProperty::getSmartCObjectPtr<ItemType> (ip);
+}
+//
+// If we got iproperty, cast it to Dict
+//
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
+{
+	assert (pArray == ip->getType ());
+	if (pArray != ip->getType ())
+		throw ElementBadTypeException ("getTypeFromArray()");
+
+	// Cast it to dict
+	boost::shared_ptr<CArray> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+
+	return getTypeFromArray<ItemType, ItemPType> (dict, pos);
+}
+
+/** 
+ * Get stream from array. If it is CRef fetch the object pointed at.
+ */
+template<typename IP>
+inline boost::shared_ptr<CStream>
+getCStreamFromArray (IP& ip, size_t pos)
+	{return getTypeFromArray<CStream,pStream> (ip, pos);}
+
+
+
+//=========================================================
+
 
 /** Equality operator for T type.
  * @param val1 Value to compare (with T type wrapped by smart poiter).
