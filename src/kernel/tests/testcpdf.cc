@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/04/20 18:56:04  hockm0bm
+ * file saving is disabled now
+ *
  * Revision 1.4  2006/04/13 18:12:57  hockm0bm
  * * changePageTree method added
  * * pageListing method updated
@@ -43,6 +46,7 @@
  */
 #include "testcpdf.h"
 #include "../cobjecthelpers.h"
+#include "../factories.h"
 
 /** Test for page listing methods.
  * @param pdf Instance of pdf.
@@ -51,7 +55,7 @@
  * <ul>
  * <li>CPdf::getPageCount - must not fail and all pages from range must be found
  * <li>CPdf::getPage - returns correct page
- * <li>CPdf::getFirstPage CPdf::getNextPage return correct page
+ * <li>CPdf::getFirstPage, CPdf::getNextPage and getLastPage return correct page
  * <li>CPdf::getPagePosition - position must be same as returned from getPage
  * <li>CPdf::getIndirectProperty - indirect reference from page dictionary must
  * refer to same as returned from this method
@@ -102,6 +106,10 @@ using namespace boost;
 		utils::printProperty(pageDict, std::cout);
 		printf("==========================\n\n");
 	}
+
+	// getLastPage must be same as last from loop
+	assert(pdf->getLastPage()==page);
+	assert(pdf->getLastPage()==pdf->getPage(pdf->getPageCount()));
 }
 
 void changePageTree(pdfobjects::CPdf * pdf)
@@ -109,34 +117,25 @@ void changePageTree(pdfobjects::CPdf * pdf)
 using namespace pdfobjects;
 using namespace pdfobjects::utils;
 using namespace boost;
-
-	// gets root of page dictionary and removes Kids array field
-	IndiRef rootRef=getRefFromDict("Pages", pdf->getDictionary());
-	shared_ptr<CDict> rootDict=getDictFromRef(*pdf, rootRef);
-	printf("Page tree root dictionary (before delProperty): ref[%d, %d]\n", rootRef.num, rootRef.gen);
-	printProperty(rootDict, std::cout);
-	printf("==========================\n\n");
-	rootDict->delProperty("Kids");
-
-	printf("Page tree root dictionary (after delProperty(Kids)): ref[%d, %d]\n", rootRef.num, rootRef.gen);
-	printProperty(rootDict, std::cout);
-	printf("==========================\n\n");
 	
-	// adds new empty one
-	IProperty * newKids=new CArray();
-	rootDict->addProperty("Kids", *newKids);
-	delete newKids;
-
-	printf("Page tree root dictionary (after addProperty(Kids)): ref[%d, %d]\n", rootRef.num, rootRef.gen);
-	printProperty(rootDict, std::cout);
-	printf("==========================\n\n");
-
+	// removes 1st page
+	//pdf->removePage(1);
+	
+	// gets root dictionary and calls changeIndirectProperty to simulate change
+	// of its value
+	IndiRef rootRef=getRefFromDict("Pages", pdf->getDictionary());
+	shared_ptr<CDict> rootDict_ptr=getDictFromRef(*pdf, rootRef);
+	pdf->changeIndirectProperty(rootDict_ptr);
+	
+	
 	// saves chnages temporarily to the file
-	pdf->save();
+	//pdf->save();
 }
 
 void cpdf_tests(pdfobjects::CPdf * pdf)
 {
+using namespace std;
+using namespace boost;
 using namespace pdfobjects::utils;
 
 	// prints pdf dictionary - document catalog
@@ -145,7 +144,7 @@ using namespace pdfobjects::utils;
 	printf("==========================\n\n");
 	
 	// lists all pages from document
-	//pageListing(pdf);
+	pageListing(pdf);
 
 	// changes page tree - all pages are thrown away
 	changePageTree(pdf);
