@@ -25,8 +25,7 @@ public:
  void init(IProperty *doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
  ~TreeWindow();
- void addChilds(TreeItem *parent,bool expandReferences=true);
- void reloadFrom(TreeItem *item);
+ void reloadFrom(TreeItemAbstract *item);
  void reinit();
 public slots:
  void settingUpdate(QString key);
@@ -41,14 +40,10 @@ private slots:
  void mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column);
 private:
  void clear();
- bool isSimple(IProperty* prop);
- bool isSimple(boost::shared_ptr<IProperty> prop);
  void updateTreeSettings();
 private:
  /** Treeview */
  QListView *tree;
- /** class with stored setting what to show */
- ShowData *sh;
  /** Tree data shared with tree items */
  TreeData *data;
  /** Root object of the tree (if IProperty)*/
@@ -57,7 +52,8 @@ private:
  CPdf *rootObjPdf;
  /** Name of root object - if applicable */
  QString rootName;
-
+ /** Root treeitem */
+ TreeItemAbstract *root;
 };
 
 } // namespace gui

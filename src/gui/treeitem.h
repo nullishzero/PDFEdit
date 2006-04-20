@@ -3,6 +3,7 @@
 
 #include <iproperty.h>
 #include <qlistview.h>
+#include "treeitemabstract.h"
 class QString;
 
 namespace gui {
@@ -14,7 +15,7 @@ class TreeWindow;
 
 class TreeItemObserver;//internal class (observer)
 
-class TreeItem : public QListViewItem {
+class TreeItem : public TreeItemAbstract {
 public:
  TreeItem* parent();
  TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
@@ -24,10 +25,13 @@ public:
  QString getRef();
  virtual void setOpen(bool open);
  void unOpen();
- void reloadSelf();
- void reloadData();
- bool isComplete();
  void setParent(TreeItem *parent);
+ bool isComplete();
+ virtual void insertItem( QListViewItem * newChild);
+ //From TreeItemAbstract interface
+ virtual TreeItemAbstract* createChild(const QString &name,QListViewItem *after=NULL);
+ virtual QStringList getChildNames();
+ virtual void reloadSelf();
 private:
  void initObserver();
  void uninitObserver();

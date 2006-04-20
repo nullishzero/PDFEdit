@@ -74,4 +74,32 @@ bool isRefValid(CPdf *pdf,IndiRef ref) {
  return true;
 }
 
+/** Return true, if this is simple property (editable as item in property editor and have no children), false otherwise
+ @param prop IProperty to check
+ @return true if simple property, false otherwise
+ */
+bool isSimple(IProperty* prop) {
+ PropertyType pt=prop->getType();
+ switch(pt) {
+  case pNull: 
+  case pBool: 
+  case pInt: 
+  case pReal: 
+  case pName: 
+  case pString:
+   return true;
+  default:
+   return false;
+ } 
+}
+
+/** Return true, if this is simple property (editable as item in property editor and have no children), false otherwise
+ @param prop IProperty to check
+ @return true if simple property, false otherwise
+ */
+bool isSimple(boost::shared_ptr<IProperty> prop) {
+ return isSimple(prop.get());
+}
+
+
 } // namespace util

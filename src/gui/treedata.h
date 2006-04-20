@@ -21,6 +21,14 @@ public:
  void remove(const QString &ref);
  TreeItem* find(const QString &ref);
  void clear();
+ //ShowData
+ void check(bool &target,const QString &key);
+ void update();
+ bool showSimple();
+ bool isDirty();
+ void resetDirty();
+ bool needReload();
+ void resetReload();
 private:
  /** Tree window holding these data */
  TreeWindow *_parent;
@@ -28,6 +36,13 @@ private:
  QListView *_tree;
  /** Dictionary holding tree items that are references */
  QDict<TreeItem> refs;
+ //ShowData
+ /** Show simple objects (int,bool,string,name,real) in object tree? */
+ bool show_simple;
+ /** True, if any change since last time this was reset to false. Initial value is true */
+ bool dirty;
+ /** True if the tree needs reloading */
+ bool needreload;
 };
 
 } // namespace gui 

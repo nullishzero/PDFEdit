@@ -15,6 +15,8 @@ QString getTypeName(PropertyType typ);
 QString getTypeName(IProperty *obj);
 IndiRef getRef(IProperty *ref);
 bool isRefValid(CPdf *pdf,IndiRef ref);
+bool isSimple(IProperty* prop);
+bool isSimple(boost::shared_ptr<IProperty> prop);
 
 } // namespace util
 

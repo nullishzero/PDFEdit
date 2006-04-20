@@ -5,6 +5,7 @@
 #include "treedata.h"
 #include "treewindow.h"
 #include "treeitem.h"
+#include "settings.h"
 
 namespace gui {
 
@@ -17,8 +18,56 @@ using namespace std;
 TreeData::TreeData(TreeWindow *parent,QListView *tree) {
  _parent=parent;
  _tree=tree;
+ //ShowData
+ update();
+ dirty=false;
+ needreload=false;
 }
 
+ /** Check if setting have changed, updating if necessary.
+  If setting is changed, set dirty to true.
+  @param key Setting to check
+  @param target Pointer to setting to check
+ */
+ void TreeData::check(bool &target,const QString &key) {
+  bool tmp=globalSettings->readBool(key);
+  if (target==tmp) return;
+  printDbg(debug::DBG_DBG,"Tree settings check failed: " << key);
+  target=tmp;
+  dirty=true;
+  needreload=true;
+ }
+ 
+ /** update internal data from settings */
+ void TreeData::update() {
+  check(show_simple,"tree/show_simple");
+ }
+
+ /** Return show_simple setting
+  @return True if show_simple is set, false if not
+  */
+ bool TreeData::showSimple() {
+  return show_simple;
+ }
+
+ bool TreeData::needReload() {
+  return needreload;
+ }
+
+ void TreeData::resetReload() {
+  needreload=false;
+ }
+ /** Return state of 'dirty' flag
+  @return variable 'dirty'
+  */
+ bool TreeData::isDirty() {
+  return dirty;
+ }
+
+ /** Reset state of 'dirty' flag */
+ void TreeData::resetDirty() {
+  dirty=false;
+ }
 /** Add TreeItem that holds a CRef into list
  Will do nothing on TreeItems that do not hold a CRef.
  @param it TreeItem holding CRef

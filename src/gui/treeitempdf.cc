@@ -24,7 +24,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_pdf,name);
 }
@@ -36,7 +36,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QStr
  @param name Name of file - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_pdf,name);
 }
@@ -47,7 +47,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const 
  @param name Name (type) of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString name,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString name,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  initSpec(parent->getObject(),name);
 }
@@ -64,12 +64,17 @@ void TreeItemPdf::init(CPdf *pdf,const QString &name) {
  } else {
   setText(0,name);
  }
- // object type
- setText(1,QObject::tr("PDF"));
- // Page count
- setText(2,QString::number(pdf->getPageCount())+QObject::tr(" page(s)"));
- TreeItemPdf *pages=new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Pages"),NULL); 
- TreeItemPdf *outlines=new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),pages); 
+ reload(false); //Add all subchilds, etc ...
+}
+
+/** reload itself */
+void TreeItemPdf::reloadSelf() {
+ if (nType.isNull()) { ///Not special type
+  // object type
+  setText(1,QObject::tr("PDF"));
+  // Page count
+  setText(2,QString::number(obj->getPageCount())+QObject::tr(" page(s)"));
+ }
 }
 
 /** Initialize special PDF subitem from given CPdf object and its name (which defines also type of this item)
@@ -86,20 +91,8 @@ void TreeItemPdf::initSpec(CPdf *pdf,const QString &name) {
  }
  // object type
  setText(1,QObject::tr("List"));
- if (name=="Pages") { //Pages list
-  unsigned int count=pdf->getPageCount();
-  TreeItemPage *last=NULL;
-  //TODO: add on demand somehow ... kernel is parsing the page if I call getPage() !
-  for(unsigned int i=1;i<=count;i++) { //Add all pages
-   CPage *page=pdf->getPage(i).get();
-   //TODO: dict add on demand
-   last=new TreeItemPage(data,page,this,QString::number(i),last);
-   TreeItem *dict=new TreeItem(data,last,page->getDictionary().get(),QObject::tr("Dictionary"));
-   data->parent()->addChilds(dict,false);
-  }
- } else if (name=="Oulines") { //Outline list
-  //TODO : implement
- }
+ nType=name;//Set node type
+ reload(false);//Add all childs
 }
 
 /** return CPdf stored inside this item
@@ -108,10 +101,62 @@ CPdf* TreeItemPdf::getObject() {
  return obj;
 }
 
-//TODO: item reloading?
-
 /** default destructor */
 TreeItemPdf::~TreeItemPdf() {
+}
+
+/** Create child */
+TreeItemAbstract* TreeItemPdf::createChild(const QString &name,QListViewItem *after/*=NULL*/) {
+ if (nType.isNull()) { //Childs under PDF document
+  if (name=="Dict") { //get Dictionary
+   return new TreeItem(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"));
+  }
+  if (name=="Pages") { //get Page list
+   return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Pages"),after); 
+  }
+  if (name=="Outlines") { //get Outline List
+   return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),after); 
+  }
+  assert(0);//Unknown
+  return NULL;
+ }
+ if (nType=="Pages") { //Pages - get page given its number
+  //name = Page number
+  unsigned int i=name.toUInt();
+  printDbg(debug::DBG_DBG,"Adding page by reload() - " << i);
+  CPage *page=obj->getPage(i).get();
+  return new TreeItemPage(data,page,this,name,after);
+ }
+ if (nType=="Outlines") { //Outlines - get specific outline
+  //TODO: implement
+  return NULL;
+ }
+ assert(0);//Unknown
+ return NULL;
+}
+/** Return list of child names */
+QStringList TreeItemPdf::getChildNames() {
+ if (nType.isNull()) {//PDF document
+  QStringList items;
+  items += "Dict";
+  items += "Pages";
+  items += "Outlines";
+  return items;
+ }
+ if (nType=="Pages") {
+  unsigned int count=obj->getPageCount();
+  QStringList items;
+  for(unsigned int i=1;i<=count;i++) { //Add all pages
+   items += QString::number(i);
+  }
+  return items;
+ }
+ if (nType=="Outlines") {
+  //TODO : implement outlines
+  return QStringList();
+ }
+ assert(0); //Should not happen
+ return QStringList();
 }
 
 } // namespace gui

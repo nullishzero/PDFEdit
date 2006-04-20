@@ -23,7 +23,7 @@ using namespace util;
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItem::TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  _parent=NULL; //If not TreeItem, _parent will be NULL
  data=_data;
  init(pdfObj,name);
@@ -36,7 +36,7 @@ TreeItem::TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QSt
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  _parent=dynamic_cast<TreeItem*>(parent); //If not TreeItem, _parent will be NULL
  data=_data;
  init(pdfObj,name);
@@ -72,6 +72,7 @@ void TreeItem::init(IProperty *pdfObj,const QString name) {
  // object type
  setText(1,getTypeName(obj));
  addData();
+ reload(false);
  initObserver();
 }
 
@@ -94,7 +95,10 @@ void TreeItem::addData() {
   IndiRef iref=util::getRef(obj);
   selfRef=s.sprintf("%d,%d",iref.num,iref.gen);
   setText(2,QString("-> ")+selfRef);
+  //TODO: better dynamic generation, using reload() and TreeItemAbstract
+  setExpandable(true);
  } else {
+  complete=true;
   setText(2,"");
  }
 }
@@ -132,21 +136,13 @@ void TreeItem::setOpen(bool open) {
      data->tree()->setCurrentItem(up);
      data->tree()->ensureItemVisible(up);
      //TODO: nefunguje pri otevreni pomoci sipky.
-     //QListViewItem::setOpen(false);//Keep closed
-     return;//Do not expand references
+     return;//Do not expand references and keep closed
     }
     TreeItem *other=data->find(selfRef);
     if (other && other!=this) { //subtree already found elsewhere -> reparent
      QListViewItem *otherChild;
      printDbg(debug::DBG_DBG,"Will relocate child, counts: "<< this->childCount() << " , " << other->childCount());
-//     data->remove(other);//remove old data from being available to browse/expand
-     while ((otherChild=other->firstChild())) {
-      printDbg(debug::DBG_DBG,"Relocating child");
-      other->takeItem(otherChild);
-      insertItem(otherChild);
-      TreeItem *oChild=dynamic_cast<TreeItem*> (otherChild);
-      if (oChild) oChild->setParent(this);
-     }
+     moveAllChildsFrom(other);
      printDbg(debug::DBG_DBG,"Done relocate child, counts: "<< this->childCount() << " , " << other->childCount());
      other->unOpen();
      data->add(this);//re-add itself
@@ -157,8 +153,9 @@ void TreeItem::setOpen(bool open) {
      printDbg(debug::DBG_DBG,"Subtree not found");
      data->add(this);
     }
-    data->parent()->addChilds(this,true);
+    //Reload as "complete and opened item"
     complete=true;
+    reload();
    }
   }
  }
@@ -168,45 +165,18 @@ void TreeItem::setOpen(bool open) {
  QListViewItem::setOpen(open);
 }
 
+void TreeItem::insertItem( QListViewItem * newChild) {
+ printDbg(debug::DBG_DBG,"Reparenting item");
+ QListViewItem::insertItem(newChild);
+ TreeItem *oChild=dynamic_cast<TreeItem*> (newChild);
+ if (oChild) oChild->setParent(this);
+}
+
+
 /** return CObject stored inside this item
  @return stored object (IProperty) */
 IProperty* TreeItem::getObject() {
  return obj;
-}
-
-/** Reload itself - update self and all childs from state in kernel */
-void TreeItem::reloadSelf() {
- printDbg(debug::DBG_DBG,"This item will now reload itself: " << getTypeName(obj));
- data->parent()->reloadFrom(this);
-}
-
-/** Reload itself - update only data in itself, not any children */
-void TreeItem::reloadData() {
- printDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
- if (typ==pRef) { // reference
-  QString old=selfRef;
-  //Update reference target
-  addData();
-  if (old!=selfRef) {
-   //Remove old reference from list of opened and available items
-   if (complete) data->remove(old);//Was complete -> remove data
-   printDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
-   //Close itself
-   this->setOpen(false);
-   QListViewItem *item;
-   //Remove all child items
-   while ((item=this->firstChild())) {
-    printDbg(debug::DBG_DBG,"Deleting child (deletelater)");
-    delete item;
-    //TODO: "Warning: Do not delete any QListViewItem objects in slots connected to this signal."
-    //      in QT documentation -> why?
-   }
-   //Set as incomplete
-   complete=false;
-  }
- } else {
-  addData();
- }
 }
 
 /** Internal class providing observer */
@@ -231,7 +201,7 @@ public:
    return;
   }
   //Reload contents of parent
-  parent->reloadSelf();
+  parent->reload();
  }
  /** Priority of this observer */
  virtual priority_t getPriority() const throw(){
@@ -272,5 +242,102 @@ TreeItem::~TreeItem() {
  uninitObserver();
  data->remove(this);
 }
+
+/** Reload itself - update only data in itself, not any children */
+void TreeItem::reloadSelf() {
+ printDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+ if (typ==pRef) { // reference
+  QString old=selfRef;
+  //Update reference target
+  addData();
+  if (old!=selfRef) {
+   //Remove old reference from list of opened and available items
+   if (complete) data->remove(old);//Was complete -> remove data
+   printDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
+   //Close itself
+   this->setOpen(false);
+   //Set as incomplete
+   complete=false;
+   //Childs will go away in reload() later
+   //TODO: delete them all now
+  }
+ } else {
+  addData();
+ }
+}
+
+/** Create subchild */
+TreeItemAbstract* TreeItem::createChild(const QString &name,QListViewItem *after/*=NULL*/) {
+ if (obj->getType()==pDict) {	//Object is CDict
+  CDict *dict=(CDict*)obj;
+  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  if (!data->showSimple() && isSimple(property)) return NULL; //simple item -> skip it
+  return new TreeItem(data,this,property.get(),name,after);//TODO: factory
+ }
+ if (obj->getType()==pArray) {	//Object is CArray
+  CArray *ar=(CArray*)obj;
+  unsigned int i=name.toUInt();
+  boost::shared_ptr<IProperty> property=ar->getProperty(i);
+  if (!data->showSimple() && isSimple(property)) return NULL; //simple item -> skip it
+  QString oname;
+  oname.sprintf("[%d]",i);
+  return new TreeItem(data,this, property.get(),oname,after);//TODO: factory
+ }
+ if (obj->getType()==pRef) {	//Object is CRef
+  assert(name=="Target");
+  QString s;
+  CPdf* pdf=obj->getPdf();
+  if (!pdf) return NULL; //No document opened -> cannot parse references
+                    //Should happen only while testing
+  CRef* cref=(CRef*)obj;
+  IndiRef ref;
+  cref->getPropertyValue(ref);
+  printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
+  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
+  return new TreeItem(data,this, rp.get(),s.sprintf("<%d,%d>",ref.num,ref.gen),after);//TODO: factory
+ }
+ assert(0);
+ return NULL;
+}
+/** Return list of child names */
+QStringList TreeItem::getChildNames() {
+ if (!complete) return QStringList(); //Childs not loaded yet
+ if (obj->getType()==pDict) {	//Object is CDict
+  QStringList itemList;
+  CDict *dict=(CDict*)obj;
+  vector<string> list;
+  dict->getAllPropertyNames(list);
+  vector<string>::iterator it;
+  for( it=list.begin();it!=list.end();++it) { // for each property
+   boost::shared_ptr<IProperty> property=dict->getProperty(*it);
+   if (!data->showSimple() && isSimple(property)) continue; //simple item -> skip it
+   itemList += *it;
+  }
+  return itemList;
+ }
+ if (obj->getType()==pArray) {	//Object is CArray
+  QStringList itemList;
+  CArray *ar=(CArray*)obj;
+  size_t n=ar->getPropertyCount();
+  QString name;
+  for(size_t i=0;i<n;i++) { //for each property
+   boost::shared_ptr<IProperty> property=ar->getProperty(i);
+   if (!data->showSimple() && isSimple(property)) continue; //simple item -> skip it
+   itemList += QString::number(i);
+  }
+  return itemList;
+ }
+
+ if (obj->getType()==pRef) {	//Object is CRef
+  return QStringList("Target");
+ }
+
+ //Null, Bool, Int, Real, Name, String -> These are simple types without any children
+ //TODO: pStream -> have they children?
+
+ return QStringList(); 
+}
+
+//TODO: break into TreeItem(Simple|Ref|Dict|Array)
 
 } // namespace gui

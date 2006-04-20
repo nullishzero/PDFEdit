@@ -4,6 +4,7 @@
 
 #include <cobject.h>
 #include <cpdf.h>
+#include <cpage.h>
 #include "treeitempage.h"
 #include "treeitem.h"
 #include <qobject.h>
@@ -20,7 +21,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_page,name);
 }
@@ -32,7 +33,7 @@ TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const 
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_page,name);
 }
@@ -51,6 +52,7 @@ void TreeItemPage::init(CPage *page,const QString &name) {
  }
  // object type
  setText(1,QObject::tr("Page"));
+ reload(false);//get childs
 }
 
 /** return CPage stored inside this item
@@ -59,10 +61,26 @@ CPage* TreeItemPage::getObject() {
  return obj;
 }
 
-//TODO: item reloading? -> TreeItemAbstract
-
 /** default destructor */
 TreeItemPage::~TreeItemPage() {
+}
+
+/** Return list of child names */
+TreeItemAbstract* TreeItemPage::createChild(const QString &name,QListViewItem *after/*=NULL*/) {
+ if (name=="Dict") { //Return page dictionary
+  return new TreeItem(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"),after);
+ }
+ assert(0);
+ return NULL;
+}
+/** Return list of child names */
+QStringList TreeItemPage::getChildNames() {
+ return QStringList("Dict");
+}
+
+/** Reload itself*/
+void TreeItemPage::reloadSelf() {
+ //Basically, nothing to reload (all content is in children)
 }
 
 } // namespace gui

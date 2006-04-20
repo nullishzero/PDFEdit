@@ -233,6 +233,7 @@ void PdfEditWindow::runScript(QString script) {
 /** QUICK FIX dirty debugging function */
 void PdfEditWindow::qfix() {
  //TODO: remove ASAP
+ if (!document) return;
  boost::shared_ptr<pdfobjects::CPage> pg=document->getFirstPage();
  pagespc->refresh(new QSPage(pg));
 }
