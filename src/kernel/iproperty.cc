@@ -86,8 +86,7 @@ IProperty::dispatchChange () const
 	{
 		if (indiObj)
 		{
-			assert (IProperty::getIndiRef().num == indiObj->getIndiRef().num);
-			assert (IProperty::getIndiRef().gen == indiObj->getIndiRef().gen);
+			assert (IProperty::getIndiRef() == indiObj->getIndiRef());
 
 			indiObj->dispatchChange ();
 			
@@ -99,7 +98,7 @@ IProperty::dispatchChange () const
 	}else
 	{
 		// Indicate to pdf that it should change this object
-		IProperty::getPdf()->changeIndirectProperty (indiObj);
+		pdf->changeIndirectProperty (indiObj);
 	}
 }
 
