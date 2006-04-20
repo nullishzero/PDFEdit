@@ -34,7 +34,7 @@ cppunit: cppunit_configure
 cppunit_configure: cppunit/config.status
 
 cppunit/config.status:
-	cd cppunit && ./configure && ./libtoolize --copy --force
+	cd cppunit && ./configure && libtoolize --copy --force
 
 
 # Cleanup
