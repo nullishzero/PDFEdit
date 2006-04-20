@@ -423,6 +423,23 @@ public:
 	 */
 	void writeValue (WriteType val) {assert (!"is this function really needed???");};
   
+	/**
+	 * Perform an action on each element.
+	 *
+	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
+	 * 
+	 * @param fnc Functor that will do the work.
+	 */
+	template<typename Fctor>
+	void forEach (Fctor& fctor)
+	{
+		int pos = 0;
+		typename Value::iterator it = value.begin ();
+		for (; it != value.end (); ++it, ++pos)
+		{
+			fctor (constructIdPairFromIProperty (*it, pos));
+		}
+	}
 	
 	/**
 	 * Returns if it is one of special objects CPdf,CPage etc.
@@ -1115,6 +1132,14 @@ constructItemFromIProperty (const PropertyTraitComplex<pArray>::value::value_typ
 inline PropertyTraitComplex<pDict>::value::value_type 
 constructItemFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item,
 							boost::shared_ptr<IProperty> ip) {return std::make_pair(item.first,ip);}
+
+inline std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
+constructIdPairFromIProperty (const PropertyTraitComplex<pArray>::value::value_type& item, size_t pos)
+	{return std::make_pair (pos, item);};
+
+inline PropertyTraitComplex<pDict>::value::value_type
+constructIdPairFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item, size_t)
+	{return item;};
 
 /**
  * Get IProperty from an item of a special container.
