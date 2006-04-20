@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/20 22:32:09  hockm0bm
+ * just debug message added
+ *
  * Revision 1.9  2006/04/19 06:00:23  hockm0bm
  * * changeRevision - first implementation (not tested yet)
  * * collectRevisions -  first implementation (not tested yet)
@@ -329,6 +332,7 @@ using namespace std;
 	// lenght
 	char xrefRow[XREFROWLENGHT];
 	memset(xrefRow, '\0', sizeof(xrefRow));
+	printDbg(DBG_DBG, "Writing "<<subSectionTable.size()<<" subsections");
 	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++)
 	{
 		// at first writes head object number and number of elements in the
