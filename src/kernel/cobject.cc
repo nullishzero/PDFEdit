@@ -88,7 +88,7 @@ const string CDICT_SUFFIX	= "\n>>";
 const string CSTREAM_STREAM = "<stream>";
 
 /** Indirect Object header and footer. */
-const string INDIRECT_HEADER = "num ";
+const string INDIRECT_HEADER = "obj ";
 const string INDIRECT_FOOTER = "\nendobj";
 
 // =====================================================================================
@@ -955,7 +955,7 @@ createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& va
 {
 	ostringstream oss;
 
-	oss << INDIRECT_HEADER << rf.num << " " << rf.gen << "\n";
+	oss << rf.num << " " << rf.gen << INDIRECT_HEADER << "\n";
 	oss << val;
 	oss << INDIRECT_FOOTER;
 
