@@ -6,6 +6,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.33  2006/04/21 20:40:02  hockm0bm
+ * * changeIndirectProperty use freeXpdfObject with out problems
+ * * PageTreeWatchDog::notify bug fix
+ * 	- if newValue is CNull page tree consolidation wasn't done.
+ * 	  Uses oldValue parent if new value is CNull
+ * 	- additional checking for proper old and new values
+ * 	- code reorganization and simplification
+ * * caches page number in field pageCount
+ * 	- invalidation is done in consolidatePageTree and initRevisionSpecific
+ *
  * Revision 1.32  2006/04/19 05:57:46  hockm0bm
  * * pageTreeWatchDog wrapped by shared_ptr
  * * print messages consolidated a bit
@@ -321,38 +331,45 @@ protected:
 	 * @param interNode Intermediate node dictionary under which change has
 	 * occured.
 	 *
-	 * Consolidation stards by getting number of direct pages under given node.
-	 * To do so, goes through Kids array from node and if element refers to Page
-	 * dictionary use 1 count and for Pages dictionary uses Count field. Sum is
-	 * used to be compared with node's Count field value. If these numbers match
-	 * immediatelly returns. Otherwise distribute count change to its parent by
-	 * calling this method to Parent dictionary.
+	 * In first step checks the number of page nodes in interNode's subtree.
+	 * Collects number for pages just from direct subnodes - members of Kids
+	 * array (Page dictionary for 1 and Pages for Count).
 	 * <br>
 	 * Second step of consolidation checks whether all children from Kids array
-	 * have Parent set to given one. If not changes (or add if field is missing)
-	 * it the reference to given node.
+	 * have Parent set to given interNode. If not, Parent reference is changed to
+	 * contain correct value.
 	 * <p>
 	 * <b>Implementation notes</b>:
 	 * <ul>
 	 * <li>
 	 * This method should be called when some change occures in page tree. Given
 	 * parameter stands for dereferenced dictionary of intermediate node under
-	 * which change occures. Change may be:
+	 * which change occures (it should be indirect parent of changed value - 
+	 * reference or Kids array). If given dictionary has not Pages type, throws 
+	 * exception.
+	 * Change event may be:
 	 * <ul>
-	 * 		<li>Kids array element was deleted, added
+	 * 		<li>Kids array element has been deleted/added
 	 * 		<li>Kids array element has changed its value
 	 * </ul>
-	 * <li> Doesn't perform any parameter checking. Relay on correct value. When
-	 * some error occures, exception is thrown.
+	 * <li> Doesn't perform any parameter checking. Relay on correct value.
 	 * <li> Changes Count field of each intermediate node if neccessary.
 	 * <li> Sets Parent field of direct children, if not set correctly.
 	 * <li> Doesn't go deeply in to children
 	 * <li> If page tree was consistent before change under this interNode 
 	 * occured, it will be consistent after this consolidation too (NOTE all
 	 * children of given node must be correct too).
+	 * <li> Exception is thrown only if page tree demage and method is not able
+	 * to handle it.
 	 * </ul>
+	 *
+	 * @throw ElementBadTypeException if given dictionary has not Pages type or
+	 * Kids array can't be found or any other required field has bad type.
+	 * @throw ElementNotFoundException if any of required field can't be found.
+	 *
+	 * @return true if tree consolidation kept pages count, false otherwise.
 	 */
-	void consolidatePageTree(boost::shared_ptr<CDict> interNode);
+	bool consolidatePageTree(boost::shared_ptr<CDict> interNode);
 	
 	/** Consolidates pageList after change in Page tree.
 	 * @param oldValue Old reference (CNull if no previous state).
@@ -485,6 +502,18 @@ private:
 	 * This storage behaves like CPage cache.
 	 */
 	PageList pageList;
+
+	/** Number of pages in document.
+	 *
+	 * Keeps value of actual number of pages or 0 if value is invalid and
+	 * getPageCount has to find out it. Whenever this is set to non 0 and change
+	 * in page tree occures which can change total number of pages, it is set to
+	 * 0. Value is also invalidated in initRevisionSpecific method.
+	 * <br>
+	 * This is kind of optimalization to prevent geting Root of page tree node
+	 * each time when total number of pages is required.
+	 */
+	size_t pageCount;
 
 	// TODO returned outlines list
 
