@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/21 11:02:07  misuj1am
+ *
+ * --Changes made by miso
+ *
  * Revision 1.9  2006/04/20 18:02:59  hockm0bm
  * * operator== replaced by propertyEquals method
  * * parameters for getPropertyId and propertyEquals are const referencies
@@ -208,7 +212,7 @@ bool simpleEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared
 	return value1==value2;
 }
 
-bool propertyEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2)
+bool PropertyEquals::operator()(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2)const
 {
 	// types must be same
 	if(val1->getType()!=val2->getType())
@@ -236,7 +240,6 @@ bool propertyEquals(const boost::shared_ptr<IProperty> & val1, const boost::shar
 			// complex are not supported
 			throw NotImplementedException("propertyEquals for type="+val1->getType());
 	}
-	
 }
 
 } // end of utils namespace

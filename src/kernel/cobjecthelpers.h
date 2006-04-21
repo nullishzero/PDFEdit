@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/04/21 11:02:07  misuj1am
+ *
+ * --Changes made by miso
+ *
  * Revision 1.17  2006/04/20 22:30:47  hockm0bm
  * * IdCollector class added - helper fo getPropertyId
  * * getPropertyId
@@ -529,60 +533,90 @@ getCStreamFromArray (IP& ip, size_t pos)
 
 //=========================================================
 
-
-/** Equality operator for T type.
- * @param val1 Value to compare (with T type wrapped by smart poiter).
- * @param val2 Value to compare (with T type wrapped by smart poiter).
- *
- * Two values are equal iff:
- * <ul>
- * <li> have same types (getType returns same value)
- * <ul> They have same values
- * 	<li> if value is simple - direct values are same (getPropertyValue is used)
- * 	<li> if value is complex - same number of elements and elements with same
- * 	identifier are equal
- * </ul>
- * </ul>
- *
- * <b>Supported types</b><br>
- * <ul>
-		<li> pNull
-		<li> pBool
-		<li> pInt
-		<li> pReal
-		<li> pString
-		<li> pName
-		<li> pRef
- * </ul>
- * @throw NotImplementedException if value type is not supported (see supported
- * types table).
- *
- * @return true if values are equal, false otherwise.
+/** Equality functor for properties.
+ * 
+ * Class with function operator to compare two properties. Class can be used as
+ * normal function.
  */
-bool propertyEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2);
+class PropertyEquals
+{
+public:
+	/** Equality function operator.
+	 * @param val1 Value to compare (with T type wrapped by smart poiter).
+	 * @param val2 Value to compare (with T type wrapped by smart poiter).
+	 *
+	 * Two values are equal iff:
+	 * <ul>
+	 * <li> have same types (getType returns same value)
+	 * <ul> They have same values
+	 * 	<li> if value is simple - direct values are same (getPropertyValue is used)
+	 * 	<li> if value is complex - same number of elements and elements with same
+	 * 	identifier are equal
+	 * </ul>
+	 * </ul>
+	 *
+	 * <b>Supported types</b><br>
+	 * <ul>
+			<li> pNull
+			<li> pBool
+			<li> pInt
+			<li> pReal
+			<li> pString
+			<li> pName
+			<li> pRef
+	 * </ul>
+	 * @throw NotImplementedException if value type is not supported (see supported
+	 * types table).
+	 *
+	 * @return true if values are equal, false otherwise.
+	 */
+	bool operator()(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2) const;
+};
 
 /** Collector of all Id complying given condition.
+ *
+ * Class instance is constructed from container which should be filled and
+ * searched property. This is used compared - using Comparator type - with entry
+ * given to functional operator.
+ * <br>
+ * Container is type of storage where elements of IdType are stored. Comparator
+ * has to implement functional operator with two IProperty types wrapped by
+ * shared_ptr smart pointers. Comparator can throw only NotImplementedException
+ * to say that it is unable to compare such properties. PropertyEquals functor
+ * is used as default type for Comparator.
+ * <br>
+ * Container instance given, as reference, to the constructor is not encapsulated
+ * by class and can expose its state by getContainer method. Class is therefore
+ * not responsible for deallocation of its instance. Content of the container
+ * can be cleared by reset method (each time new collection should be done, it
+ * should be called).
  */
-template <typename Container, typename IdType> class IdCollector
+template <typename Container, typename IdType, typename Comparator=PropertyEquals> 
+class IdCollector
 {
 	Container & container;
 	const boost::shared_ptr<IProperty> & searched;
+	const Comparator comp;
 public:
 	/** Constructor with initialization.
 	 * @param cont Container where to store ids.
 	 * @param search Property to be searched.
 	 *
 	 */
-	IdCollector(Container & cont, const boost::shared_ptr<IProperty> & search):container(cont), searched(search){};
+	IdCollector(Container & cont, const boost::shared_ptr<IProperty> & search)
+		:container(cont), searched(search), comp(Comparator())
+		{};
 
 	/** Filters ids of properties which equals searched.
 	 * @param entry Entry which contains identificator, property pair.
 	 *
-	 * If entry's property equals searched one, adds id to the container.
-	 * Uses propertyEquals method for comparision. TODO make it template
-	 * parameter.
+	 * If entry's property equals according Comparator with searched one, adds 
+	 * id to the container. 
+	 * <br>
+	 * Operator can hadle situation when Comparator throws
+	 * NotImplementedException and ignores such element.
 	 */
-	void operator()(std::pair<boost::shared_ptr<IProperty>, IdType> entry)
+	void operator()(std::pair<IdType, boost::shared_ptr<IProperty> > entry)
 	{
 	using namespace debug;
 		try
@@ -590,7 +624,7 @@ public:
 			// uses propertyEquals method to compare properties
 			// it may throw, if element is not supported by operator, we will
 			// simply ignore such values
-			if(propertyEquals(searched, entry.second))
+			if(comp(searched, entry.second))
 			{
 				printDbg(DBG_DBG, "Element matches at id="<<entry.first);
 				container.push_back(entry.first);
@@ -626,9 +660,8 @@ public:
  * @param container Container, where to place all identificators (array
  * indexes).
  *
- * Goes through whole array elements and compares child width all of them and
- * which matches (using operator== TODO link), their indexes are stored to
- * container (it has to provide push_back and clear methods for int type value).
+ * Uses CObjectComplex::forEach method with IdCollector functor to collect all
+ * ids to given container.
  * <br>
  * Complex template parameter stands for type of CObjectComplex where to search.
  * This type has to provide typedef for propertyId and getAllPropertyNames,
