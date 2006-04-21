@@ -596,7 +596,8 @@ c_addprop2 ()
 class TestCObjectComplex : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCObjectComplex);
-		CPPUNIT_TEST(Test);
+		CPPUNIT_TEST(TestGet);
+		CPPUNIT_TEST(TestSet);
 	CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -622,66 +623,77 @@ public:
 	void tearDown() {}
 
 public:
-	void Test()
+	void TestGet()
 	{
+		OUTPUT << "CObjectComplex getter methods..." << endl;
+
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
-
-			//======================= CObjectComplex
+			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" test 2.1.0 - getType")
+			TEST(" getType")
 			CPPUNIT_ASSERT (c_getTp ());
 			OK_TEST;
 
-			TEST(" test 2.1 - clone")
+			TEST(" clone")
 			CPPUNIT_ASSERT (c_clone ());
 			OK_TEST;
 
-			TEST(" test 2.2 - smart ptrs")
+			TEST(" smart ptrs")
 			CPPUNIT_ASSERT (c_smrt ());
 			OK_TEST;
 
-			TEST(" test 2.3 - mode controller")
+			TEST(" mode controller")
 			CPPUNIT_ASSERT (mdctrl ((*it).c_str()));
 			OK_TEST;
 
-			TEST(" test 2.4 - getStringRepre")
+			TEST(" getStringRepre")
 			CPPUNIT_ASSERT (c_getString (e));
 			OK_TEST;
 
-			TEST(" test 2.5 - getPropCount")
+			TEST(" getPropCount")
 			CPPUNIT_ASSERT (c_getCnt ());
 			OK_TEST;
 
-			TEST(" test 2.6 - getAllPropNames")
+			TEST(" getAllPropNames")
 			CPPUNIT_ASSERT (c_getNames ());
 			OK_TEST;
 
-			TEST(" test 2.7 - getType")
+			TEST(" getType")
 			CPPUNIT_ASSERT (c_getType ());
 			OK_TEST;
 
-			TEST(" test 2.8 - makeXpdf")
+			TEST(" makeXpdf")
 			CPPUNIT_ASSERT (c_xpdf (e));
 			OK_TEST;
 
-			TEST(" test 2.9 - delProp")
+			TEST(" xpdf ctors")
+			CPPUNIT_ASSERT (c_xpdfctor ((*it).c_str()));
+			OK_TEST;
+		}
+	}
+
+	void TestSet()
+	{
+		OUTPUT << "CObjectComplex setter methods..." << endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			//======================= CObjectComplex
+			
+			TEST(" delProp")
 			CPPUNIT_ASSERT (c_del ());
 			OK_TEST;
 
-			TEST(" test 2.9 - setProp")
+			TEST(" setProp")
 			CPPUNIT_ASSERT (c_set ());
 			OK_TEST;
 
-			TEST(" test 2.10 - xpdf ctors")
-			CPPUNIT_ASSERT (c_xpdfctor ((*it).c_str()));
-			OK_TEST;
-
-			TEST(" test 2.11 - xpdf addProperty + getPosition")
+			TEST(" xpdf addProperty + getPosition")
 			CPPUNIT_ASSERT (c_addprop2 ());
 			OK_TEST;
-
-
 		}
 	}
 

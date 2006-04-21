@@ -61,10 +61,6 @@ typedef struct example
 
 //=====================================================================================
 // CObjectSimple
-//
-
-
-
 //====================================================
 
 //
@@ -439,48 +435,54 @@ public:
 public:
 	void TestGet()
 	{
+		OUTPUT << "CObjectSimple getter methods..." << endl;
+		
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
+			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" test CObjectSimple -- getType_");
+			TEST(" getType_");
 			CPPUNIT_ASSERT (s_getTp ());
 			OK_TEST;
 
-			TEST(" test CObjectSimple -- clone");
+			TEST(" clone");
 			CPPUNIT_ASSERT (s_clone ());
 			OK_TEST;
 			
-			TEST(" test CObjectSimple -- getString + constructors");
+			TEST(" getString + constructors");
 			CPPUNIT_ASSERT (s_ctors ((*it).c_str(), e));
 			OK_TEST;
 
-			TEST(" test CObjectSimple -- getString + constructors 2");
+			TEST(" getString + constructors 2");
 			CPPUNIT_ASSERT (s_ctors2 (e));
 			OK_TEST;
 			
-			TEST(" test CObjectSimple -- getPropertyValue");
+			TEST(" getPropertyValue");
 			CPPUNIT_ASSERT (s_getVal (e));
 			OK_TEST;
 		}
 	}
 	void TestSet()
 	{
+		OUTPUT << "CObjectSimple setter methods..." << endl;
+		
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
+			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" test CObjectSimple -- setString");
+			TEST(" setString");
 			CPPUNIT_ASSERT (s_setString (e));
 			OK_TEST;
 
-			TEST(" test CObjectSimple -- writeValue");
+			TEST(" writeValue");
 			CPPUNIT_ASSERT (s_writeVal (e));
 			OK_TEST;
 
-			TEST(" test CObjectSimple -- _makeXpdfObject");
+			TEST(" _makeXpdfObject");
 			CPPUNIT_ASSERT (s_makeXpdf (e));
 			OK_TEST;
 
-			TEST(" test CObjectSimple -- _");
+			TEST(" __");
 			CPPUNIT_ASSERT (s_rel ());
 			OK_TEST;
 		}
