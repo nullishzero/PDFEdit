@@ -18,10 +18,11 @@ class TreeItemPage : public TreeItemAbstract {
 public:
  TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const QString name=QString::null,QListViewItem *after=NULL);
  TreeItemPage(TreeData *_data,CPage *_page,QListViewItem *parent,const QString name=QString::null,QListViewItem *after=NULL);
- ~TreeItemPage();
+ virtual ~TreeItemPage();
  CPage* getObject();
  //From TreeItemAbstract interface
- virtual TreeItemAbstract* createChild(const QString &name,QListViewItem *after=NULL);
+ virtual ChildType getChildType(const QString &name);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual void reloadSelf();
 private:

@@ -46,10 +46,6 @@ private:
  QListView *tree;
  /** Tree data shared with tree items */
  TreeData *data;
- /** Root object of the tree (if IProperty)*/
- IProperty *rootObj;
- /** Root object of the tree (if CPdf)*/
- CPdf *rootObjPdf;
  /** Name of root object - if applicable */
  QString rootName;
  /** Root treeitem */

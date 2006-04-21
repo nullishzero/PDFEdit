@@ -1,5 +1,6 @@
 /** @file
  TreeWindow - class with treeview of PDF objects
+ @author Martin Petricek
 */
 #include <utils/debug.h>
 #include "treewindow.h"
@@ -26,8 +27,6 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree=new QListView(this);
  tree->setSorting(-1);
  root=NULL;
- rootObj=NULL;
- rootObjPdf=NULL;
  QObject::connect(tree, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(treeSelectionChanged(QListViewItem *)));
  l->addWidget(tree);
  tree->addColumn(tr("Object"));
@@ -38,7 +37,6 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->show();
  data=new TreeData(this,tree);
  //TODO: for debugging:
-
  QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
 }
 
@@ -79,8 +77,6 @@ void TreeWindow::updateTreeSettings() {
 /** reinitialize tree after some major change */
 void TreeWindow::reinit() {
  root->reload();
-// if (rootObjPdf)   init(rootObjPdf,rootName);
-// else if (rootObj) init(rootObj);
 }
 
 /** Paint event handler -> if settings have been changed, reload tree */
@@ -139,8 +135,6 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  printDbg(debug::DBG_DBG,"Loading PDF into tree");
  assert(pdfDoc);
  clear();
- rootObj=NULL;
- rootObjPdf=pdfDoc;
  rootName=fileName;
  setUpdatesEnabled( FALSE );
  root=new TreeItemPdf(data,pdfDoc,tree,fileName); 
@@ -153,12 +147,10 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  */
 void TreeWindow::init(IProperty *doc) {
  printDbg(debug::DBG_DBG,"Loading Iproperty into tree");
- rootObjPdf=NULL;
- rootObj=doc;
  clear();
  if (doc) {
   setUpdatesEnabled( FALSE );
-  root=new TreeItem(data,tree, doc); 
+  root=TreeItem::create(data,tree, doc); 
   root->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
@@ -167,9 +159,6 @@ void TreeWindow::init(IProperty *doc) {
 /** Resets th tree to be empty and show nothing */
 void TreeWindow::uninit() {
  clear();
- rootObj=NULL;
- rootObjPdf=NULL;
- //TODO: special method for setting root object
 }
 
 /** default destructor */

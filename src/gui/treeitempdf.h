@@ -19,10 +19,11 @@ public:
  TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString name=QString::null,QListViewItem *after=NULL);
  TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString name=QString::null,QListViewItem *after=NULL);
  TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString name,QListViewItem *after=NULL);
- ~TreeItemPdf();
+ virtual ~TreeItemPdf();
  CPdf* getObject();
  //From TreeItemAbstract interface
- virtual TreeItemAbstract* createChild(const QString &name,QListViewItem *after=NULL);
+ virtual ChildType getChildType(const QString &name);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual void reloadSelf();
 private:

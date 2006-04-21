@@ -8,21 +8,24 @@ class QString;
 namespace gui {
 
 class TreeItem;
+class TreeItemRef;
 class TreeWindow;
 
 class TreeData {
+//ADDED functions begin
+//ADDED functions end
 public:
  TreeData(TreeWindow *parent,QListView *tree);
  ~TreeData();
  TreeWindow* parent();
  QListView* tree();
- void add(TreeItem *it);
- void remove(TreeItem *it);
+ void add(TreeItemRef *it);
+ void remove(TreeItemRef *it);
  void remove(const QString &ref);
- TreeItem* find(const QString &ref);
+ TreeItemRef* find(const QString &ref);
  void clear();
  //ShowData
- void check(bool &target,const QString &key);
+ void checkSetting(bool &target,const QString &key);
  void update();
  bool showSimple();
  bool isDirty();
@@ -35,7 +38,7 @@ private:
  /** List view from inside the tree window */
  QListView *_tree;
  /** Dictionary holding tree items that are references */
- QDict<TreeItem> refs;
+ QDict<TreeItemRef> refs;
  //ShowData
  /** Show simple objects (int,bool,string,name,real) in object tree? */
  bool show_simple;

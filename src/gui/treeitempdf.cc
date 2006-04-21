@@ -1,5 +1,6 @@
 /** @file
- TreeItemPdf - class holding CPDF in tree, descendant of QListViewItem
+ TreeItemPdf - class holding CPDF in tree, descendant of TreeItemAbstract
+ @author Martin Petricek
 */
 
 #include "treeitempdf.h"
@@ -13,6 +14,9 @@
 #include <qobject.h>
 
 namespace gui {
+
+/** Child type specific for TreeItemPdf*/
+enum childType {invalidItem=-1, pageList=1, outlineList, pageItem, outlineItem, dictItem};
 
 using namespace std;
 using namespace pdfobjects;
@@ -67,15 +71,6 @@ void TreeItemPdf::init(CPdf *pdf,const QString &name) {
  reload(false); //Add all subchilds, etc ...
 }
 
-/** reload itself */
-void TreeItemPdf::reloadSelf() {
- if (nType.isNull()) { ///Not special type
-  // object type
-  setText(1,QObject::tr("PDF"));
-  // Page count
-  setText(2,QString::number(obj->getPageCount())+QObject::tr(" page(s)"));
- }
-}
 
 /** Initialize special PDF subitem from given CPdf object and its name (which defines also type of this item)
  @param pdf CPdf used to initialize this item
@@ -105,36 +100,52 @@ CPdf* TreeItemPdf::getObject() {
 TreeItemPdf::~TreeItemPdf() {
 }
 
-/** Create child */
-TreeItemAbstract* TreeItemPdf::createChild(const QString &name,QListViewItem *after/*=NULL*/) {
- if (nType.isNull()) { //Childs under PDF document
-  if (name=="Dict") { //get Dictionary
-   return new TreeItem(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"));
-  }
-  if (name=="Pages") { //get Page list
-   return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Pages"),after); 
-  }
-  if (name=="Outlines") { //get Outline List
-   return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),after); 
-  }
-  assert(0);//Unknown
-  return NULL;
+//See TreeItemAbstract for description of this virtual method
+void TreeItemPdf::reloadSelf() {
+ if (nType.isNull()) { ///Not special type
+  // object type
+  setText(1,QObject::tr("PDF"));
+  // Page count
+  setText(2,QString::number(obj->getPageCount())+QObject::tr(" page(s)"));
  }
- if (nType=="Pages") { //Pages - get page given its number
+}
+
+//See TreeItemAbstract for description of this virtual method
+TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+ if (typ==dictItem) return TreeItem::create(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"));
+ if (typ==pageList) return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Pages"),after); 
+ if (typ==outlineList) return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),after); 
+ if (typ==pageItem) { //Pages - get page given its number
   //name = Page number
   unsigned int i=name.toUInt();
   printDbg(debug::DBG_DBG,"Adding page by reload() - " << i);
   CPage *page=obj->getPage(i).get();
   return new TreeItemPage(data,page,this,name,after);
  }
- if (nType=="Outlines") { //Outlines - get specific outline
+ if (typ==outlineItem) { //Outlines - get specific outline
   //TODO: implement
   return NULL;
  }
  assert(0);//Unknown
  return NULL;
 }
-/** Return list of child names */
+
+//See TreeItemAbstract for description of this virtual method
+ChildType TreeItemPdf::getChildType(const QString &name) {
+ if (nType.isNull()) {//PDF document
+  if (name=="Dict") return dictItem;
+  if (name=="Pages") return pageList;
+  if (name=="Outlines") return outlineList;
+  assert(0); //Error
+  return invalidItem;
+ }
+ if (nType=="Pages") return pageItem;
+ if (nType=="Outlines") return outlineItem;
+ assert(0); //Error
+ return invalidItem;
+}
+
+//See TreeItemAbstract for description of this virtual method
 QStringList TreeItemPdf::getChildNames() {
  if (nType.isNull()) {//PDF document
   QStringList items;

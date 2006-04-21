@@ -1,5 +1,6 @@
 /** @file
- TreeItemPage - class holding CPage in tree, descendant of QListViewItem
+ TreeItemPage - class holding CPage in tree, descendant of TreeItemAbstract
+ @author Martin Petricek
 */
 
 #include <cobject.h>
@@ -65,22 +66,33 @@ CPage* TreeItemPage::getObject() {
 TreeItemPage::~TreeItemPage() {
 }
 
-/** Return list of child names */
-TreeItemAbstract* TreeItemPage::createChild(const QString &name,QListViewItem *after/*=NULL*/) {
- if (name=="Dict") { //Return page dictionary
-  return new TreeItem(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"),after);
+//See TreeItemAbstract for description of this virtual method
+TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+ if (typ==0) { //Return page dictionary
+  return TreeItem::create(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"),after);
  }
  assert(0);
  return NULL;
 }
-/** Return list of child names */
+
+//See TreeItemAbstract for description of this virtual method
+ChildType TreeItemPage::getChildType(const QString &name) {
+ if (name=="Dict") { //Return page dictionary
+  return 0;
+ }
+ assert(0);//Error
+ return -1;
+}
+
+//See TreeItemAbstract for description of this virtual method
 QStringList TreeItemPage::getChildNames() {
+ //TODO: consult treedata for settings
  return QStringList("Dict");
 }
 
-/** Reload itself*/
+//See TreeItemAbstract for description of this virtual method
 void TreeItemPage::reloadSelf() {
- //Basically, nothing to reload (all content is in children)
+ //Basically, nothing to reload (all useful content is in children)
 }
 
 } // namespace gui
