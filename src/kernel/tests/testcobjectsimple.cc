@@ -394,7 +394,8 @@ s_rel ()
 class TestCObjectSimple : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCObjectSimple);
-		CPPUNIT_TEST(Test);
+		CPPUNIT_TEST(TestGet);
+		CPPUNIT_TEST(TestSet);
 	CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -436,44 +437,50 @@ public:
 	void tearDown() {}
 
 public:
-	void Test()
+	void TestGet()
 	{
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
 
-			TEST(" test 1.0 -- getType_");
+			TEST(" test CObjectSimple -- getType_");
 			CPPUNIT_ASSERT (s_getTp ());
 			OK_TEST;
 
-			TEST(" test 1.1 -- clone");
+			TEST(" test CObjectSimple -- clone");
 			CPPUNIT_ASSERT (s_clone ());
 			OK_TEST;
 			
-			TEST(" test 1.2 -- getString + constructors");
+			TEST(" test CObjectSimple -- getString + constructors");
 			CPPUNIT_ASSERT (s_ctors ((*it).c_str(), e));
 			OK_TEST;
 
-			TEST(" test 1.3 -- getString + constructors 2");
+			TEST(" test CObjectSimple -- getString + constructors 2");
 			CPPUNIT_ASSERT (s_ctors2 (e));
 			OK_TEST;
 			
-			TEST(" test 1.4 -- setString");
+			TEST(" test CObjectSimple -- getPropertyValue");
+			CPPUNIT_ASSERT (s_getVal (e));
+			OK_TEST;
+		}
+	}
+	void TestSet()
+	{
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+
+			TEST(" test CObjectSimple -- setString");
 			CPPUNIT_ASSERT (s_setString (e));
 			OK_TEST;
 
-			TEST(" test 1.5 -- writeValue");
+			TEST(" test CObjectSimple -- writeValue");
 			CPPUNIT_ASSERT (s_writeVal (e));
 			OK_TEST;
 
-			TEST(" test 1.6 -- getPropertyValue");
-			CPPUNIT_ASSERT (s_getVal (e));
-			OK_TEST;
-
-			TEST(" test 1.7 -- _makeXpdfObject");
+			TEST(" test CObjectSimple -- _makeXpdfObject");
 			CPPUNIT_ASSERT (s_makeXpdf (e));
 			OK_TEST;
 
-			TEST(" test 1.8 -- _");
+			TEST(" test CObjectSimple -- _");
 			CPPUNIT_ASSERT (s_rel ());
 			OK_TEST;
 		}
