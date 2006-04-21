@@ -312,9 +312,9 @@ template<> struct PropertyTraitComplex<pDict>
 namespace utils 
 {
 std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
-	constructIdPairFromIProperty (const PropertyTraitComplex<pArray>::value::value_type& item, size_t pos);
+	constructIdPairFromIProperty (size_t pos, const PropertyTraitComplex<pArray>::value::value_type& item);
 PropertyTraitComplex<pDict>::value::value_type
-	constructIdPairFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item, size_t);
+	constructIdPairFromIProperty (size_t, const PropertyTraitComplex<pDict>::value::value_type& item);
 }
 
 
@@ -446,7 +446,7 @@ public:
 		typename Value::iterator it = value.begin ();
 		for (; it != value.end (); ++it, ++pos)
 		{
-			fctor (utils::constructIdPairFromIProperty (*it, pos));
+			fctor (utils::constructIdPairFromIProperty (pos, *it));
 		}
 	}
 	
@@ -1143,11 +1143,11 @@ constructItemFromIProperty (const PropertyTraitComplex<pDict>::value::value_type
 							boost::shared_ptr<IProperty> ip) {return std::make_pair(item.first,ip);}
 
 inline std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
-constructIdPairFromIProperty (const PropertyTraitComplex<pArray>::value::value_type& item, size_t pos)
+constructIdPairFromIProperty (size_t pos, const PropertyTraitComplex<pArray>::value::value_type& item)
 	{return std::make_pair (pos, item);}
 
 inline PropertyTraitComplex<pDict>::value::value_type
-constructIdPairFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item, size_t)
+constructIdPairFromIProperty (size_t, const PropertyTraitComplex<pDict>::value::value_type& item)
 	{return item;}
 
 /**
