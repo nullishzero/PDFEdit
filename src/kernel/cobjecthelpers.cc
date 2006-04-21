@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/21 20:36:57  hockm0bm
+ * just comments for changes commited by Jozo
+ * * propertyEquals changed by functor PropertyEquals
+ * * IdCollector class added
+ * * getPropertyId uses CObjectComplex::forEach with IdCollector and PropertyEquals
+ *
  * Revision 1.10  2006/04/21 11:02:07  misuj1am
  *
  * --Changes made by miso
@@ -214,6 +220,8 @@ bool simpleEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared
 
 bool PropertyEquals::operator()(const boost::shared_ptr<IProperty> & val1, const boost::shared_ptr<IProperty> & val2)const
 {
+using namespace debug;
+	
 	// types must be same
 	if(val1->getType()!=val2->getType())
 		return false;
