@@ -77,10 +77,6 @@ SOURCES += pdfutil.cc util.cc menu.cc settings.cc main.cc
 HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h
 SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc
 
-#Testing files (will be removed later)
-HEADERS += test.h 
-SOURCES += test.cc
-
 #Dummy header file for menu translation
 HEADERS += .menu-trans.h 
 

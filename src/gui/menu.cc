@@ -3,6 +3,8 @@
  Menus, menu items, toolbars and toolbar items share the same namespace and often
  menu and toolbar items are interchangable (only difference is that toolbar item
  must have icon, while menu item can be without an icon)
+ For more information about menus and toolbars, check doc/design/gui/menu.xml
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -21,7 +23,6 @@
 #include <qstring.h>
 
 namespace gui {
-
 
 /** 
  Exit with error message after encountering invalid menu/toolbar item
@@ -45,6 +46,13 @@ Menu::Menu() {
 
 /** Destructor */
 Menu::~Menu() {
+ QValueList<QString> pixmaps=iconCache.keys();
+ //Delete all pixmaps from icon cache
+ for (QValueList<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
+  QPixmap *rm=iconCache[*it];
+  delete rm;
+ }
+ iconCache.clear();
 }
 
 /** Given name of the icon, finds and returns full path to the icon,
@@ -56,7 +64,6 @@ QString Menu::getIconFile(const QString &name) {
  QString absName;
  for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
   absName=*it+"/"+name;
-//  printDbg(debug::DBG_DBG,"Looking for " <<name << " in: " << *it << " as " << absName);
   if (QFile::exists(absName)) return absName;
  }
  printDbg(debug::DBG_WARN,"Icon file not found: " << name);
@@ -70,7 +77,6 @@ void Menu::initPaths() {
 }
 
 /** Adds action to menu, returning newly allocated menu Id or existing menu id if action is already present
- 
  @param action Name of action
  @return Menu ID of the specified action
  */
@@ -83,7 +89,6 @@ int Menu::addAction(const QString action) {
 }
 
 /** return action string from given menu ID
- 
  @param index Menu ID of action
  @return Name of the specified action
  */
@@ -124,9 +129,6 @@ QString Menu::readItem(const QString name,const QString root/*="gui/items/"*/) {
  if (line.length()==0) fatalError(QObject::tr("Missing item in config")+":\n"+root+name);
  return line; 
 }
-
-//TODO: keyboard shortcuts sdilet, instalovat jen jednou
-//TODO: 
 
 /**
  load one menu item and insert it into parent menu. Recursively load subitems if item is a submenu.

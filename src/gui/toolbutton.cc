@@ -1,5 +1,7 @@
 /** @file
  ToolButton - Class representing a single button on the toolbar
+ Same as QToolButton, difference is that ToolButton also emit its ID in signal
+ @author Martin Petricek
 */
 #include "toolbutton.h"
 #include <qiconset.h>

@@ -33,6 +33,7 @@ public:
 
  /** Create one subchild
   @param name Name of child (the same as in list returned from getChildNames)
+  @param typ Type of TreeItemAbstract's child. (see ChildType)
   @param after QListViewItem after which will be this item added. If unspecified (or  NULL), it is added before any other items
   @return Pointer to subchild. If returned NULL, the subchild can not be created
   \see getChildNames

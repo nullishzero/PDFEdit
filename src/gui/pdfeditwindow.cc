@@ -574,6 +574,7 @@ PdfEditWindow::~PdfEditWindow() {
   qs->stopExecution();
   deleteLater();  //Delete object when returning back to main loop
  }*/
+ delete import;
  delete menuSystem;
  delete qp;
 }

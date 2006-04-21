@@ -228,6 +228,7 @@ PropertyEditor::~PropertyEditor() {
  delete labels;
  delete items;
  delete list;
+ delete props;
 }
 
 } // namespace gui
