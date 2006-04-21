@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/21 20:38:08  hockm0bm
+ * saveChanges writes indirect objects correctly
+ *         - uses createIndirectObjectStringFromString method
+ *
  * Revision 1.10  2006/04/20 22:32:09  hockm0bm
  * just debug message added
  *
@@ -384,6 +388,7 @@ void XRefWriter::saveChanges(bool newRevision)
 	// file and builds table which contains reference to file position mapping.
 	OffsetTab offTable;
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
+	//streamWriter->putLine();
 	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
 	{
 		// TODO objNull should be market for marking as free - e.g. position set
@@ -399,7 +404,13 @@ void XRefWriter::saveChanges(bool newRevision)
 		Object * obj=i->second->object;
 		std::string objPdfFormat;
 		xpdfObjToString(*obj, objPdfFormat);
-		streamWriter->putLine(objPdfFormat.c_str());
+
+		// we have to add some more information to write indirect object (this
+		// includes header and footer
+		std::string indirectFormat;
+		IndiRef indiRef={ref.num, ref.gen};
+		createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
+		streamWriter->putLine(indirectFormat.c_str());
 	}
 
 	// all objects are saved xref table is constructed from offTable
