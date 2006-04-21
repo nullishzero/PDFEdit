@@ -59,7 +59,7 @@ Array * Array::clone()const
    // initialize 
    result->size=size;
    result->length=length;
-   result->elems=(Object *)greallocn(elems, size, sizeof(Object));
+   result->elems=(Object *)gmallocn(size, sizeof(Object));
    for(int i=0; i < length; i++)
       result->elems[i]=*elems[i].clone();
 
