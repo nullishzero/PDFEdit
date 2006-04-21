@@ -12,9 +12,6 @@ namespace gui {
 
 class Menu;
 class Option;
-/** Pointer to running Options window or NULL if none active. Instance is in optionwindow.cc */
-class OptionWindow;
-extern OptionWindow *opt;
 
 class OptionWindow : public QWidget {
  Q_OBJECT
@@ -22,17 +19,7 @@ public slots:
  void apply();
  void ok();
 public:
- /** invoke option dialog. Ensure only one copy is running at time
- @param msystem Menu system to 
- */
- static void optionsDialog(Menu *msystem) {
-  if (opt) { //the dialog is already active
-   opt->setActiveWindow();
-  } else { //create new dialog
-   opt=new OptionWindow(msystem);
-   opt->show();
-  }
- }
+ static void optionsDialog(Menu *msystem);
  ~OptionWindow();
 protected:
  void closeEvent(QCloseEvent *e);

@@ -4,7 +4,6 @@
 #include <qwidget.h>
 #include <cobject.h>
 #include <cpdf.h>
-#include "treeitem.h"
 class QListView;
 class QListViewItem;
 
@@ -13,9 +12,7 @@ namespace gui {
 using namespace pdfobjects;
 
 class TreeData;
-
-//class private to TreeWindow
-class ShowData;
+class TreeItemAbstract;
 
 class TreeWindow : public QWidget {
  Q_OBJECT

@@ -5,8 +5,8 @@
  @author Martin Petricek
 */
 
-#include <assert.h>
 #include "treeitemabstract.h"
+#include <assert.h>
 #include <utils/debug.h>
 
 namespace gui {

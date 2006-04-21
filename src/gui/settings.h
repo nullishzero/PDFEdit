@@ -16,12 +16,7 @@ class Settings : public QObject {
  Q_OBJECT
 public:
  ~Settings();
- /** get Instance of Settings. Ensures only one instance of Settings is avalable */
- static Settings* getInstance() {
-  static Settings* globalSettings=NULL;
-  if (!globalSettings) globalSettings=new Settings();
-  return globalSettings;
- }
+ static Settings* getInstance();
  void saveWindow(QWidget *win,const QString name); 
  void restoreWindow(QWidget *win,const QString name);
  void saveSplitter(QSplitter *spl,const QString name);

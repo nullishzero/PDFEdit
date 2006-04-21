@@ -4,10 +4,11 @@
 */
 
 #include <cobject.h>
-#include <cpdf.h>
+//#include <cpdf.h>
 #include <cpage.h>
-#include "treeitempage.h"
 #include "treeitem.h"
+#include "treeitempage.h"
+#include "treedata.h"
 #include <qobject.h>
 
 namespace gui {
@@ -86,13 +87,13 @@ ChildType TreeItemPage::getChildType(const QString &name) {
 
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemPage::getChildNames() {
- //TODO: consult treedata for settings
- return QStringList("Dict");
+ if (data->showODict()) return QStringList("Dict");
+ else return QStringList();
 }
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPage::reloadSelf() {
- //Basically, nothing to reload (all useful content is in children)
+ //Basically, nothing to reload (any useful content is in children)
 }
 
 } // namespace gui

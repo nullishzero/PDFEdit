@@ -1,5 +1,9 @@
 /** @file
-OptionWindow - widget for editing program options
+ OptionWindow - widget for editing program options
+ Options are arranged to tabs and it is ensured, that only one dialog at once is active
+ (via Private constructor and static method to invoke the dialog, which will focus on
+ existing dialog if it exists, insetad of creating second one) 
+ @author Martin Petricek
 */
 
 #include "optionwindow.h"
@@ -29,6 +33,23 @@ OptionWindow - widget for editing program options
 namespace gui {
 
 using namespace std;
+
+/** The only Option window - 
+ Pointer to running OptionWindow instance or NULL if none active.
+ */
+OptionWindow *opt=NULL;
+
+/** invoke option dialog. Ensure only one copy is running at time
+@param msystem Menu system to 
+*/
+void OptionWindow::optionsDialog(Menu *msystem) {
+ if (opt) { //the dialog is already active
+  opt->setActiveWindow();
+ } else { //create new dialog
+  opt=new OptionWindow(msystem);
+  opt->show();
+ }
+}
 
 /** Default constructor of option window.
  The window is initially empty
@@ -285,8 +306,6 @@ void OptionWindow::init() {
  setUpdatesEnabled( TRUE );
 }
 
-/** The only Option window */
-OptionWindow *opt=NULL;
 
 /** This is called on attempt to close window. */
 void OptionWindow::closeEvent(QCloseEvent *e) {
@@ -299,7 +318,7 @@ OptionWindow::~OptionWindow() {
  delete labels;
  delete items;
  delete list;
- opt=NULL;
+ opt=NULL;//No instance active now
  printDbg(debug::DBG_DBG,"Options closing ...");
 }
 

@@ -4,12 +4,12 @@
 */
 
 #include "treedata.h"
-#include "treewindow.h"
-#include "treeitem.h"
 #include "treeitemref.h"
 #include "settings.h"
 
 namespace gui {
+
+class TreeWindow;
 
 using namespace std;
 
@@ -21,7 +21,7 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree) {
  _parent=parent;
  _tree=tree;
  //ShowData
- show_simple=false;
+ show_outline=show_page=show_odict=show_dict=show_simple=false;
  update();
  dirty=false;
  needreload=false;
@@ -43,7 +43,12 @@ void TreeData::checkSetting(bool &target,const QString &key) {
 
 /** update internal data from settings */
 void TreeData::update() {
- checkSetting(show_simple,"tree/show_simple");
+ checkSetting(show_simple,"tree/show_simple");	//Simple objects
+ checkSetting(show_dict,"tree/show_dict");	//Document dictionary
+ checkSetting(show_odict,"tree/show_objdict");	//Objects dictionaries
+ checkSetting(show_outline,"tree/show_outline");//Show Outlines
+ checkSetting(show_page,"tree/show_page");	//Show Pages
+
 }
 
 /** Return value of show_simple setting
@@ -51,6 +56,34 @@ void TreeData::update() {
  */
 bool TreeData::showSimple() {
  return show_simple;
+}
+
+/** Return value of show_dict setting
+ @return True if show_dict is set, false if not
+ */
+bool TreeData::showDict() {
+ return show_dict;
+}
+
+/** Return value of show_odict setting
+ @return True if show_odict is set, false if not
+ */
+bool TreeData::showODict() {
+ return show_odict;
+}
+
+/** Return value of show_outline setting
+ @return True if show_outline is set, false if not
+ */
+bool TreeData::showOutline() {
+ return show_outline;
+}
+
+/** Return value of show_page setting
+ @return True if show_page is set, false if not
+ */
+bool TreeData::showPage() {
+ return show_page;
 }
 
 /** Return true, if the tree should be reloaded because the settings changed

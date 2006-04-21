@@ -1,7 +1,12 @@
 /** @file
- Settings - class handling application settings,
- like window positions, menu, toolbar and keyboard settings
- and other general settings
+ Settings - class handling basic application settings,
+ reading and writing values with keys and also storing and 
+ restoring more complex settings (window and toolbar positions),
+ reading Paths and expanding environment variables in settings.
+ QSettings with two files (user file in $HOME (readwrite)
+ and system file with default settings (readonly)) is used as
+ backend for storing the data
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -23,7 +28,18 @@ const QString APP_KEY = "/PDFedit/";
 
 /** One object for application, holding all global settings.
  Should be thread-safe. This instance is used from other files */
-Settings *globalSettings;
+Settings *globalSettings=NULL;
+
+ /** return Instance of Settings.
+  Ensures only one instance of Settings exists at any time (singleton)
+  If no instance exists, it is created.
+  @return existing Settings object
+ */
+Settings* Settings::getInstance() {
+//  static Settings* globalSettings=NULL;
+ if (!globalSettings) globalSettings=new Settings();
+ return globalSettings;
+}
 
 /** private initialization function */
 void Settings::init() {

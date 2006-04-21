@@ -6,7 +6,6 @@
 #include "treeitempdf.h"
 #include "treeitem.h"
 #include "treedata.h"
-#include "treewindow.h"
 #include "treeitempage.h"
 #include <cobject.h>
 #include <cpdf.h>
@@ -31,6 +30,7 @@ using namespace pdfobjects;
 TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_pdf,name);
+ reloadSelf();
 }
 
 /** constructor of TreeItemPdf - create child item from given object
@@ -43,6 +43,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QStr
 TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_pdf,name);
+ reloadSelf();
 }
 
 /** constructor of TreeItemPdf - create special child item of TreeItemPdf
@@ -149,9 +150,9 @@ ChildType TreeItemPdf::getChildType(const QString &name) {
 QStringList TreeItemPdf::getChildNames() {
  if (nType.isNull()) {//PDF document
   QStringList items;
-  items += "Dict";
-  items += "Pages";
-  items += "Outlines";
+  if (data->showDict()) items += "Dict";
+  if (data->showPage()) items += "Pages";
+  if (data->showOutline()) items += "Outlines";
   return items;
  }
  if (nType=="Pages") {

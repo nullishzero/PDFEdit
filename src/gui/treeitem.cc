@@ -9,17 +9,14 @@
 #include "treeitemsimple.h"
 #include "treeitemdict.h"
 #include "treeitemarray.h"
-#include "treedata.h"
-#include "treewindow.h"
-#include "util.h"
 #include "pdfutil.h"
 
 namespace gui {
 
+class TreeData;
+
 using namespace std;
 using namespace util;
-
-//todo: observers?
 
 /** constructor of TreeItem - create root item from given object
  @param parent QListView in which to put item

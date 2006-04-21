@@ -12,8 +12,6 @@ class TreeItemRef;
 class TreeWindow;
 
 class TreeData {
-//ADDED functions begin
-//ADDED functions end
 public:
  TreeData(TreeWindow *parent,QListView *tree);
  ~TreeData();
@@ -27,6 +25,10 @@ public:
  //ShowData
  void checkSetting(bool &target,const QString &key);
  void update();
+ bool showDict();
+ bool showODict();
+ bool showOutline();
+ bool showPage();
  bool showSimple();
  bool isDirty();
  void resetDirty();
@@ -42,6 +44,14 @@ private:
  //ShowData
  /** Show simple objects (int,bool,string,name,real) in object tree? */
  bool show_simple;
+ /** Show document dictionary? */
+ bool show_dict;
+ /** Show dictionary of separate CObjects? */
+ bool show_odict;
+ /** Show Outlines under PDF document? */
+ bool show_outline;
+ /** Show Pages under PDF document? */
+ bool show_page;
  /** True, if any change since last time this was reset to false. Initial value is true */
  bool dirty;
  /** True if the tree needs reloading */

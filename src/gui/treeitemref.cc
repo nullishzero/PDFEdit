@@ -6,8 +6,6 @@
 #include <cobject.h>
 #include "treeitemref.h"
 #include "treedata.h"
-#include "treewindow.h"
-#include "util.h"
 #include "pdfutil.h"
 
 namespace gui {

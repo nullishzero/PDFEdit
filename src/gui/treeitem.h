@@ -25,9 +25,6 @@ public:
  void setParent(TreeItem *parent);
  virtual void insertItem(QListViewItem *newChild);
  //From TreeItemAbstract interface
-// virtual ChildType getChildType(const QString &name);
-// virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
-// virtual QStringList getChildNames();
  virtual void reloadSelf();
 protected:
  TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);

@@ -4,17 +4,13 @@
 */
 
 #include <cobject.h>
-#include "treeitem.h"
 #include "treeitemsimple.h"
-#include "treedata.h"
-#include "treewindow.h"
-#include "util.h"
-#include "pdfutil.h"
 
 namespace gui {
 
+class TreeData;
+
 using namespace std;
-using namespace util;
 
 /**
  @copydoc TreeItem(TreeData *,QListView *,IProperty *,const QString,QListViewItem *)

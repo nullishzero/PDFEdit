@@ -12,6 +12,7 @@
 #include "treedata.h"
 #include "pdfutil.h"
 #include "treeitempdf.h"
+#include "treeitem.h"
 
 namespace gui {
 

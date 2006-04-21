@@ -4,11 +4,8 @@
 */
 
 #include <cobject.h>
-#include "treeitem.h"
 #include "treeitemdict.h"
 #include "treedata.h"
-#include "treewindow.h"
-#include "util.h"
 #include "pdfutil.h"
 
 namespace gui {
