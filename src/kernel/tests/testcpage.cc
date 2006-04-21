@@ -135,26 +135,32 @@ class TestCPage : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE_END();
 
 public:
-	void setUp() {}
+	void setUp() {OUTPUT << endl;}
 	void tearDown() {}
 
 public:
 	void Test()
 	{
+		OUTPUT << "CPage methods..." << endl;
+
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
+			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" test CPage -- features");
+			TEST(" features");
 			CPPUNIT_ASSERT (mediabox (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
 	void TestDisplay()
 	{
+		OUTPUT << "CPage display methods..." << endl;
+		
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
+			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" test CPage -- display");
+			TEST(" display");
 			CPPUNIT_ASSERT (display (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}

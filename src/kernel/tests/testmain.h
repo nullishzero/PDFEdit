@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/21 20:39:50  misuj1am
+ *
+ * -- test output improved
+ *
  * Revision 1.10  2006/04/21 19:06:21  misuj1am
  *
  * -- tests improved
@@ -96,12 +100,12 @@ extern FileList fileList;
 							else\
 							{SWAP_BUFS;}
 #define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
-#define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "OBJECTS LEFT UNALLOCATED: " << check.getCount () \
-													<< " OBJECTS ALLOCATED: " << check.getMaxCount () << endl;}
-#define TEST(a)		OUTPUT << endl << "//=================== " << (a) << endl;
+#define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
+													<< " ALLOCATED: " << check.getMaxCount () << endl;}
+#define TEST(a)		OUTPUT << "//== " << (a);
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
-#define OK_TEST		OUTPUT << "TEST PASSED..."; MEM_CHECK;
+#define OK_TEST		OUTPUT << "\t...TEST PASSED..."; MEM_CHECK;
 //==========================
 
 // if set validation functions will output

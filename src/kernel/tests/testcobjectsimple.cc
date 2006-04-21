@@ -400,6 +400,8 @@ private:
 public:
 	void setUp() 
 	{
+		OUTPUT << endl;
+
 		// TEST EXAMPLE
 		e.b.xb			= gFalse;
 		e.b.b			= false;

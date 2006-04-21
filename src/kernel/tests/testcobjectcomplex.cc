@@ -606,6 +606,8 @@ private:
 public:
 	void setUp() 
 	{
+		OUTPUT << endl;
+		//
 		// Complex
 		//
 		e.arTest1 = "[ (item1) (item2) (item3) 1 2 3 4 3 4 R false ]";

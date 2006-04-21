@@ -35,7 +35,7 @@ position (ostream& oss, const char* fileName)
 	std::vector<shared_ptr<PdfOperator> > ops;
 	page->getObjectsAtPosition (ops, Rectangle (1,1,10,10));
 
-	oss << "Found objects #" << ops.size() << std::endl;
+	oss << "Found objects #" << ops.size();
 
 	std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
 	for (; it != ops.end(); ++it)
@@ -85,7 +85,7 @@ opcount (ostream& oss, const char* fileName)
 	
 	obj.free ();
 
-	oss << "Operands count: " << i << endl;
+	oss << "Operands count: " << i;
 
 	return true;
 }
@@ -120,24 +120,27 @@ class TestCContentStream : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE_END();
 
 public:
-	void setUp() {}
+	void setUp() {OUTPUT << endl;}
 	void tearDown() {}
 
 public:
 	void Test()
 	{
+		OUTPUT << "CContentStream..." << endl;
+		
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
+			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" test CContentstream -- opcount");
+			TEST(" opcount");
 			CPPUNIT_ASSERT (opcount (OUTPUT, (*it).c_str()));
 			OK_TEST;
 
-			TEST(" test CContentstream -- getPosition");
+			TEST(" getPosition");
 			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str()));
 			OK_TEST;
 
-			TEST(" test CContentstream -- print contentstream");
+			TEST(" print contentstream");
 			CPPUNIT_ASSERT (printContentStream (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
