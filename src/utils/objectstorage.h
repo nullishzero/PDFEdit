@@ -8,6 +8,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.6  2006/04/21 19:26:41  hockm0bm
+ * RefComparator changed because it didn't have correct behaviour
+ *
  * Revision 1.5  2006/03/23 22:32:53  hockm0bm
  * documentation updated
  *
@@ -45,10 +48,13 @@ public:
          * @returns true iff v1.num and v1.gen are less than v2.num and v2.gen.
          *
          */ 
-        bool operator()(const Ref v1, const Ref v2)const
+        bool operator()(const Ref & v1, const Ref & v2)const
         {
-                return (v1.num < v2.num) && (v1.gen < v2.gen);
-        };
+                if(v1.num == v2.num)
+                        return v1.gen < v2.gen;
+                else
+                        return v1.num < v2.num;
+        }
 };
 
 /**
@@ -56,7 +62,7 @@ public:
  *
  * File which implements template object storage class. This is basicaly
  * mapping keys to objects and provide simple interface to manipulate 
- * with.
+ * with it. It wrapps STL map class functionality.
  */
 
 /**
