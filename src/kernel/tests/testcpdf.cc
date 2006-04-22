@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/04/22 19:46:12  hockm0bm
+ * test case Test added to CPPUnit tests of CPdf suite
+ *
  * Revision 1.6  2006/04/22 19:32:20  hockm0bm
  * * old test style replaced by CPPUINT TestCPdf class
  * * TestCPdf::pageIterationTC method implemented
@@ -24,6 +27,7 @@ namespace {
 class TestCPdf: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCPdf);
+		CPPUNIT_TEST(Test);
 	CPPUNIT_TEST_SUITE_END();
 
 	typedef std::vector<CPdf *> PdfList;
@@ -162,11 +166,10 @@ public:
 		}
 	}
 };
+CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPdf, "TEST_CPDF");
 
 pdfobjects::CPdf * getTestCPdf(const char* filename)
 {
 	return CPdf::getInstance(filename, CPdf::Advanced);
 }
-
-CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPdf, "TEST_CPDF");
