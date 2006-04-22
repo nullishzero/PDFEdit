@@ -104,6 +104,7 @@ void CommandWindow::execute() {
 /** Add command executed from menu or any source to be echoed to command window */
 void CommandWindow::addCommand(const QString &command) {
  out->append("<b>&gt; </b>"+htmlEnt(command));
+ consoleLog("> "+command,globalSettings->readExpand("path/console_log"));
 }
 
 /** Add string to be echoed to command window */
@@ -114,6 +115,7 @@ void CommandWindow::addString(const QString &str) {
 /** Add error message to be echoed to command window */
 void CommandWindow::addError(const QString &message) {
  out->append("<font color=red>! </font>"+htmlEnt(message));
+ consoleLog("! "+message,globalSettings->readExpand("path/console_log"));
 }
 
 /** default destructor */

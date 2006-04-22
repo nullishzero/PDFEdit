@@ -7,6 +7,7 @@
 #include "treeitemdict.h"
 #include "treedata.h"
 #include "pdfutil.h"
+#include "qsdict.h"
 
 namespace gui {
 
@@ -58,6 +59,13 @@ QStringList TreeItemDict::getChildNames() {
   itemList += *it;
  }
  return itemList;
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemDict::getQSObject() {
+ CDict *dict=dynamic_cast<CDict*>(obj);
+ assert(dict);
+ return new QSDict(dict);
 }
 
 /** default destructor */

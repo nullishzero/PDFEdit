@@ -31,6 +31,7 @@ public slots:
  int readNum(const QString &key,int defValue=0);
  void write(const QString &key,const QString &value);
  void write(const QString &key, int value);
+ void remove(const QString &key);
  QString expand(QString s);
  QString getFullPathName( QString nameOfPath , QString fileName );
 signals:

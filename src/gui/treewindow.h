@@ -13,6 +13,7 @@ using namespace pdfobjects;
 
 class TreeData;
 class TreeItemAbstract;
+class QSCObject;
 
 class TreeWindow : public QWidget {
  Q_OBJECT
@@ -24,12 +25,20 @@ public:
  ~TreeWindow();
  void reloadFrom(TreeItemAbstract *item);
  void reinit();
+ QSCObject* getSelected();
 public slots:
  void settingUpdate(QString key);
 signals:
- /** Signal emitted when selecting one of the objects in the tree window.
-     Pointer to CObject is sent in signal */
+ /** Signal emitted when selecting one of the IProperty objects in the tree window.
+  Not emitted on other object types
+  Pointer to CObject is sent in signal
+ */
  void objectSelected(IProperty*);
+ /** Signal emitted when selecting any of objects in the tree window.
+  You can call getSelected to obtain QSCObject from currentyl selected item
+  \see getSelected
+ */
+ void itemSelected();
 protected:
  virtual void paintEvent(QPaintEvent *e);
 private slots:
@@ -47,6 +56,8 @@ private:
  QString rootName;
  /** Root treeitem */
  TreeItemAbstract *root;
+ /** Selected treeitem */
+ TreeItemAbstract *selected;
 };
 
 } // namespace gui

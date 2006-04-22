@@ -1,8 +1,9 @@
 /** @file
- Dialog - class with various static dialogs:
-OpenFileDialog
-SaveFileDialog
-readStringDialog
+ Dialog - class with various static dialogs:<br>
+ OpenFileDialog - pick a filename for opening it<br>
+ SaveFileDialog - pick a filename for saving as<br>
+ readStringDialog - Ask user a question end expect him to enter some string as answer<br>
+ @author Martin Petricek
 */
 #include "dialog.h"
 #include "settings.h"
@@ -44,7 +45,7 @@ QString openFileDialog(QWidget* parent) {
   globalSettings->restoreWindow(&fd,"file_dialog");
   if (fd.exec()==QDialog::Accepted) {
    globalSettings->saveWindow(&fd,"file_dialog");
-   globalSettings->write("history/filePath",getDir(fd));
+   if (globalSettings->readBool("history/save_filePath",true)) globalSettings->write("history/filePath",getDir(fd));
    QString name=fd.selectedFile();
     if (QFileInfo(name).isDir()) { //directory was selected
      //TODO: test this !
@@ -82,13 +83,13 @@ QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/
     int answer=QMessageBox::question(parent,APP_NAME,QObject::tr("File \"")+name+QObject::tr("\" already exists. Overwrite?"),
                                      QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),1,2);
     if (answer==0) { //Yes, overwrite is ok
-     globalSettings->write("history/filePath",getDir(fd));
+     if (globalSettings->readBool("history/save_filePath",true)) globalSettings->write("history/filePath",getDir(fd));
      return name;		  
     }
     if (answer==1) continue;		  //No, restart dialog
     if (answer==2) return QString::null;//Cancel, do not overwrite and exit
    }
-   globalSettings->write("history/filePath",getDir(fd));
+   if (globalSettings->readBool("history/save_filePath",true)) globalSettings->write("history/filePath",getDir(fd));
    //Not asking about overwrite
    return name;
   }

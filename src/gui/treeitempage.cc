@@ -10,6 +10,7 @@
 #include "treeitempage.h"
 #include "treedata.h"
 #include <qobject.h>
+#include "qspage.h"
 
 namespace gui {
 
@@ -23,7 +24,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_page,name);
 }
@@ -35,7 +36,7 @@ TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListView *parent,const 
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  data=_data;
  init(_page,name);
 }
@@ -44,7 +45,7 @@ TreeItemPage::TreeItemPage(TreeData *_data,CPage *_page,QListViewItem *parent,co
  @param page Object used to initialize this item
  @param name Name of this item - will be shown in treeview
  */
-void TreeItemPage::init(CPage *page,const QString &name) {
+void TreeItemPage::init(boost::shared_ptr<CPage> page,const QString &name) {
  obj=page;
  // object name
  if (name.isNull()) {
@@ -59,7 +60,7 @@ void TreeItemPage::init(CPage *page,const QString &name) {
 
 /** return CPage stored inside this item
  @return stored object (CPage) */
-CPage* TreeItemPage::getObject() {
+boost::shared_ptr<CPage> TreeItemPage::getObject() {
  return obj;
 }
 
@@ -94,6 +95,11 @@ QStringList TreeItemPage::getChildNames() {
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPage::reloadSelf() {
  //Basically, nothing to reload (any useful content is in children)
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemPage::getQSObject() {
+ return new QSPage(obj);
 }
 
 } // namespace gui

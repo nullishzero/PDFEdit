@@ -130,6 +130,14 @@ QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {
  return fileName;
 }
 
+/** 
+ Remove key from user settings, effectively restoring the setting to its default value
+ @param key Key to remove
+*/
+void Settings::remove(const QString &key) {
+ set->removeEntry(key);
+}
+
 /** Expand environment variables in given string (like $HOME, etc ..)
  @param s String to expand
  @return QString with variables expanded

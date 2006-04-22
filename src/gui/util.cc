@@ -14,7 +14,7 @@ using namespace std;
 /** Prints error message and terminates application
  @param message Error message to show
  */
-void fatalError(const QString message){
+void fatalError(const QString &message){
  cout << endl << QObject::tr("Fatal Error") << "!" << endl << message << endl;
  exit(-1);
 }
@@ -37,7 +37,7 @@ QString htmlEnt(const QString &str) {
 @param line String containing elements separated with separator
 @return QStringlist with elements
  */
-QStringList explode(char separator,const QString line) {
+QStringList explode(char separator,const QString &line) {
  QStringList qs=QStringList::split(separator,line,TRUE);
  for (unsigned int i=0;i<qs.count();i++) {
   qs[i]=qs[i].stripWhiteSpace();
@@ -49,7 +49,7 @@ QStringList explode(char separator,const QString line) {
  @param name Filename of file to load
  @return file contents in string.
  */
-QString loadFromFile(QString name) {
+QString loadFromFile(const QString &name) {
  QFile *f=new QFile(name);
  f->open(IO_ReadOnly);
  int size=f->size();
@@ -67,10 +67,25 @@ QString loadFromFile(QString name) {
 /** Print stringlist to stdout
  @param l String list to print
  */
-void printList(QStringList l) {
- QStringList::Iterator it=l.begin();
+void printList(const QStringList &l) {
+ QStringList::ConstIterator it=l.begin();
  for (;it!=l.end();++it) { //load all subitems
   QString x=*it;
   printDbg(debug::DBG_DBG,x);
  }
+}
+
+/** 
+ Write line to specified logfile
+ @param message Line to write to logfile
+ @param fileName Name of log file. If this is null or empty string, nothing is done
+*/
+void consoleLog(const QString &message,const QString &fileName) {
+ if (fileName.isNull()) return;
+ if (fileName=="") return;
+ QFile con(fileName);
+ con.open(IO_WriteOnly | IO_Append);
+ QTextStream conOut(&con);
+ conOut << message << "\n";
+ con.close();
 }

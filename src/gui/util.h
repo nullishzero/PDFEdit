@@ -10,10 +10,11 @@ class QStringList;
 /** macro returning lesser of two values */
 #define MIN(x,y) ((x)<=(y)?(x):(y))
 
-void fatalError(const QString message);
-QStringList explode(char separator,const QString line);
+void fatalError(const QString &message);
+QStringList explode(char separator,const QString &line);
 QString htmlEnt(const QString &str);
-QString loadFromFile(QString name);
-void printList(QStringList l);
+QString loadFromFile(const QString &name);
+void printList(const QStringList &l);
+void consoleLog(const QString &message,const QString &fileName);
 
 #endif

@@ -10,6 +10,7 @@
 #include "treeitemdict.h"
 #include "treeitemarray.h"
 #include "pdfutil.h"
+#include "qsiproperty.h"
 
 namespace gui {
 
@@ -110,6 +111,7 @@ IProperty* TreeItem::getObject() {
  return obj;
 }
 
+
 /** Insert existing item as child of this item
  @param newChild child QListViewItem to be inserted
  */
@@ -178,6 +180,11 @@ TreeItem::~TreeItem() {
 void TreeItem::reloadSelf() {
  assert(typ!=pRef);//Must not be called on CRefs
  printDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItem::getQSObject() {
+ return new QSIProperty(obj);
 }
 
 } // namespace gui

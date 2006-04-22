@@ -9,6 +9,8 @@ class QStringList;
 
 namespace gui {
 
+class QSCObject;
+
 /** Type of TreeItemAbstract's child.
  The type is arbitrary integer and must be unique only across single type
  (different types must have different values).
@@ -31,6 +33,11 @@ public:
 
  //Abstract functions
 
+ /** 
+  Create and return object for scripting representing this tree  item
+  @return object for scripting
+ */
+ virtual QSCObject* getQSObject()=0;
  /** Create one subchild
   @param name Name of child (the same as in list returned from getChildNames)
   @param typ Type of TreeItemAbstract's child. (see ChildType)

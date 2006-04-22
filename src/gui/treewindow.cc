@@ -27,7 +27,7 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  QBoxLayout *l=new QVBoxLayout(this);
  tree=new QListView(this);
  tree->setSorting(-1);
- root=NULL;
+ selected=root=NULL;
  QObject::connect(tree, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(treeSelectionChanged(QListViewItem *)));
  l->addWidget(tree);
  tree->addColumn(tr("Object"));
@@ -106,6 +106,8 @@ void TreeWindow::settingUpdate(QString key) {
 void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  printDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
  TreeItem* it=dynamic_cast<TreeItem*>(item);
+ selected=dynamic_cast<TreeItemAbstract*>(item);
+ emit itemSelected();
  if (!it) { //Not holding IProperty
   //TODO: TreeItemAbstract & add "return QSObject" to TreeItemAbstract
   printDbg(debug::DBG_WARN,"Not a TreeItem: " << item->text(0));
@@ -116,6 +118,15 @@ void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  printDbg(debug::DBG_DBG,"Is a TreeItem: " << item->text(0));
  //We have a TreeItem -> emit signal with selected object
  emit objectSelected(it->getObject());
+}
+
+/** 
+ Return QSCObject from currently selected item
+ Caller is responsible for freeing object
+*/
+QSCObject* TreeWindow::getSelected() {
+ if (!selected) return NULL; //nothing selected
+ return selected->getQSObject();
 }
 
 /** Clears all items from TreeWindow */

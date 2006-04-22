@@ -39,8 +39,6 @@ using namespace std;
 /** number of active editor windows -> when last is closed, application terminates */
 int windowCount;
 
-//TODO: system konfigurovatelnych toolbaru (ne zcela hotov). a klvesovych zkratek (neco uz je v systemu menu)
-
 /** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void PdfEditWindow::exitApp() {
  printDbg(debug::DBG_INFO,"Exiting program");
@@ -165,15 +163,15 @@ void PdfEditWindow::restoreWindowState() {
 void PdfEditWindow::addDocumentObjects() {
  //Import page and item (Currently selected page and currently selected object)
  QSCObject *pg=import->createQSObject(page);
- QSCObject *it=import->createQSObject(item);
+// QSCObject *it=import->createQSObject(item);
  import->addQSObj(pg,"page");
- import->addQSObj(it,"item");
+ import->addQSObj(selected,"item");
 }
 
 /** Removes objects added with addDocumentObject */
 void PdfEditWindow::removeDocumentObjects() {
  //delete page and item variables from script -> they may change while script is not executing
- qs->evaluate("item.deleteSelf();",this,"<delete_item>");
+// qs->evaluate("item.deleteSelf();",this,"<delete_item>");
  qs->evaluate("page.deleteSelf();",this,"<delete_page>");
  //todo: run garbage collector? Is it needed?
 }
@@ -214,7 +212,8 @@ void PdfEditWindow::runScript(QString script) {
    }
    case QSArgument::Variant: { //Variant - simple type.
     QVariant v=ret.variant();
-    print(v.toString());
+    QString retVar=v.toString();
+    if (!retVar.isNull()) print(retVar);
     break;
    }
    default: { 
@@ -242,6 +241,7 @@ void PdfEditWindow::qfix() {
  @param str String to add
  */
 void PdfEditWindow::print(const QString &str) {
+ consoleLog(str,globalSettings->readExpand("path/console_log"));
  cmdLine->addString(str);
 }
 
@@ -268,7 +268,7 @@ void PdfEditWindow::menuActivated(int id) {
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  setFileName(QString::null);
- document=NULL; 
+ document=NULL;item=NULL;selected=NULL;
  menuSystem=new Menu();
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
@@ -295,6 +295,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  prop=new PropertyEditor(splProp);
 
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
+ QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
  QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), prop, SLOT(setObject(IProperty*)));
  QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), this, SLOT(setObject(IProperty*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
@@ -348,12 +349,19 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  prop->setObject(0);//fill with demonstration properties
 }
 
-/** Called upon selecting object in treeview
+/** Called upon selecting object in treeview (if it is IProperty)
  @param obj Object that was selected
 */
 void PdfEditWindow::setObject(IProperty* obj) {
  item=obj;
- //TODO: what about other object types?
+}
+
+/** Called upon selecting item in treeview
+ @param obj Object that was selected
+*/
+void PdfEditWindow::setObject() {
+ if (selected) delete selected;
+ selected=tree->getSelected();
 }
 
 /** Called when any settings are updated (in script, option editor, etc ...)
@@ -367,6 +375,9 @@ void PdfEditWindow::settingUpdate(QString key) {
   bool vis=globalSettings->readBool(key,true);
   if (vis) tb->show();
    else    tb->hide();
+ }
+ if (key=="history/save_filePath") { //Do not remember path -> remove path
+  if (!globalSettings->readBool("history/save_filePath")) globalSettings->remove("history/filePath");
  }
 }
 

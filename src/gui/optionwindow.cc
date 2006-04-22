@@ -254,18 +254,19 @@ void OptionWindow::init() {
 
  QWidget *edit_tab=addTab(tr("Editor"));
  addOptionBool(edit_tab,tr("Advanced mode"),"mode/advanced");
- addText(edit_tab,tr("Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document."));
- addText(edit_tab,tr("<b>Note</b>: this will affect only newly opened files"));
- finishTab(edit_tab);
+ addText      (edit_tab,tr("Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document."));
+ addText      (edit_tab,tr("<b>Note</b>: changing Advanced mode will affect only newly opened files"));
+ finishTab    (edit_tab);
 
- QWidget *data_tab=addTab(tr("Data files"));
- addText(data_tab,tr("Paths to data files"));
+ QWidget *data_tab=addTab(tr("Paths"));
+ addText  (data_tab,tr("You can use environment variables (for example $HOME) in settings on this page"));
  addOption(data_tab,tr("Icon Path"),"path/icon");
- addText(data_tab,tr("<b>Note</b>: this will take effect on next program start"));//TODO: apply path now
+ addText  (data_tab,tr("<b>Note</b>: changing Icon Path will take effect on next program start"));//TODO: apply path now
+ addOption(data_tab,tr("Console log file"),"path/console_log");
  finishTab(data_tab);
 
  QWidget *tree_tab=addTab(tr("Object tree"));
- addText(tree_tab,tr("You can specify what kind of objects will be displayed in the object tree"));
+ addText      (tree_tab,tr("These objects will be shown in the object tree"));
  addOptionBool(tree_tab,tr("Document dictionary"),"tree/show_dict");
  addOptionBool(tree_tab,tr("Object dictionaries"),"tree/show_objdict");
  addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline");
@@ -273,16 +274,18 @@ void OptionWindow::init() {
  addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot");
  addOptionBool(tree_tab,tr("Pages"),"tree/show_page");
  addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple");
- finishTab(tree_tab);
+ finishTab    (tree_tab);
 
  QWidget *misc_tab=addTab(tr("Misc"));
  addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
+ addText      (misc_tab,tr("<br>History-related options"));
  addOption    (misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
  addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
- finishTab(misc_tab);
+ addOptionBool(misc_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
+ finishTab    (misc_tab);
 
  QWidget *tool_tab=addTab(tr("Toolbars"));
- addText(tool_tab,tr("These toolbars will be shown"));
+ addText(tool_tab,tr("These toolbars will be shown:"));
  QStringList tbs=menuSystem->getToolbarList();
  for (unsigned int i=0;i<tbs.count();i++) {
   ToolBar* tb=menuSystem->getToolbar(tbs[i]);
@@ -290,18 +293,19 @@ void OptionWindow::init() {
   addOptionBool(tool_tab,tb->label(),QString("toolbar/")+tbs[i],true);
  }
  finishTab(tool_tab);
+
  QWidget *laf_tab=addTab(tr("Look and Feel"));
- addText(laf_tab,tr("You can set parameters of application font"));
- addOption    (laf_tab,tr("Font family"),"gui/font",QApplication::font().family());
- addOptionInt (laf_tab,tr("Font size"),"gui/fontsize",QApplication::font().pointSize());
- addOptionBool(laf_tab,tr("Bold"),"gui/fontbold",QApplication::font().weight()>QFont::DemiBold);
- addOptionBool(laf_tab,tr("Italic"),"gui/fontitalic",QApplication::font().italic());
- addText(laf_tab,tr("You can specify overall visual style"));
  QStringList styles=QStyleFactory::keys();
  styles.prepend("");
+ addText       (laf_tab,tr("You can set parameters of application font"));
+ addOption     (laf_tab,tr("Font family"),"gui/font",QApplication::font().family());
+ addOptionInt  (laf_tab,tr("Font size"),"gui/fontsize",QApplication::font().pointSize());
+ addOptionBool (laf_tab,tr("Bold"),"gui/fontbold",QApplication::font().weight()>QFont::DemiBold);
+ addOptionBool (laf_tab,tr("Italic"),"gui/fontitalic",QApplication::font().italic());
+ addText       (laf_tab,tr("You can specify overall visual style"));
  addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
- addText(data_tab,tr("<b>Note</b>: changing style will take effect on next program start"));//TODO: apply style now
- finishTab(laf_tab);
+ addText       (laf_tab,tr("<b>Note</b>: changing style will take effect on next program start"));//TODO: apply style now
+ finishTab     (laf_tab);
 
  setUpdatesEnabled( TRUE );
 }

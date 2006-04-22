@@ -11,6 +11,7 @@
 #include <cpdf.h>
 #include <cpage.h>
 #include <qobject.h>
+#include "qspdf.h"
 
 namespace gui {
 
@@ -107,7 +108,12 @@ void TreeItemPdf::reloadSelf() {
   // object type
   setText(1,QObject::tr("PDF"));
   // Page count
-  setText(2,QString::number(obj->getPageCount())+QObject::tr(" page(s)"));
+  int count=obj->getPageCount();
+  QString pages=QString::number(count);
+  if (count==1) pages+=QObject::tr(" page","1");
+  else if (count>=2 && count<=4) pages+=QObject::tr(" pages","2-4");
+  else pages+=QObject::tr(" pages","5+");
+  setText(2,pages);
  }
 }
 
@@ -120,8 +126,7 @@ TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QLi
   //name = Page number
   unsigned int i=name.toUInt();
   printDbg(debug::DBG_DBG,"Adding page by reload() - " << i);
-  CPage *page=obj->getPage(i).get();
-  return new TreeItemPage(data,page,this,name,after);
+  return new TreeItemPage(data,obj->getPage(i),this,name,after);
  }
  if (typ==outlineItem) { //Outlines - get specific outline
   //TODO: implement
@@ -169,6 +174,11 @@ QStringList TreeItemPdf::getChildNames() {
  }
  assert(0); //Should not happen
  return QStringList();
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemPdf::getQSObject() {
+ return new QSPdf(obj);
 }
 
 } // namespace gui

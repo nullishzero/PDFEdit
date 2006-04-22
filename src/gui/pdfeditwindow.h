@@ -17,6 +17,7 @@ namespace gui {
 class PageSpace;
 class CommandWindow;
 class QSImporter;
+class QSCObject;
 class QSPdf;
 class TreeWindow;
 class PropertyEditor;
@@ -65,6 +66,7 @@ protected slots:
  void setObject(IProperty* obj);
  void runScript(QString script);
  void menuActivated(int id);
+ void setObject();
 private slots:
  void settingUpdate(QString key);
 private:
@@ -87,8 +89,10 @@ private:
  CPdf *document;
  /** Currently selected page (for scripting)*/
  boost::shared_ptr<CPage> page;
- /** Currently selected object (for scripting)*/
+ /** Currently selected IProperty*/
  IProperty *item;
+ /** Currently selected object (for scripting)*/
+ QSCObject *selected;
  //TODO: highlevel objects (Page, Anotation...) can be selected too
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;
