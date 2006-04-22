@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.35  2006/04/22 20:11:06  hockm0bm
+ * bug fix corrected
+ *         - hasNextPage, hasPrevPage returns true if successful
+ *
  * Revision 1.34  2006/04/22 17:22:14  hockm0bm
  * * getPageCount caches/uses value to/from pageCount field
  * * getNextPage, getPrevPage boundary checking corrected
@@ -967,6 +971,7 @@ public:
 		{
 			getNextPage(page);
 			// next page was successful
+			return true;
 		}catch(PageNotFoundException & e)
 		{
 			// nextPage failed
@@ -986,6 +991,7 @@ public:
 		{
 			getPrevPage(page);
 			// prev page was successful
+			return true;
 		}catch(PageNotFoundException & e)
 		{
 			// getPrevPage failed
