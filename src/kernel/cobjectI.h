@@ -309,15 +309,16 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 		boost::shared_ptr<ObserverContext> context (this->_createContext(ip));
 		// Delete that item
 		value.erase (it);
-		// Be sure, clear it
-		ip->setPdf (NULL);
-		ip->setIndiRef (IndiRef());
 		// Indicate that this object has changed
 		boost::shared_ptr<IProperty> changedObj (new CNull());
 		_objectChanged (changedObj, context);
 		
 	}else
 		throw CObjInvalidObject ();
+
+	// Be sure
+	ip->setPdf (NULL);
+	ip->setIndiRef (IndiRef());
 }
 
 
@@ -371,9 +372,8 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 
 		// Insert it
 		value.insert (it,newIpClone);
-		// Inherit id and gen number
+		// Inherit id, gen number and pdf
 		newIpClone->setIndiRef (IProperty::getIndiRef());
-		// Inherit pdf
 		newIpClone->setPdf (IProperty::getPdf());
 		
 	}else
@@ -411,9 +411,8 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	{
 		// Store it
 		value.push_back (std::make_pair (propertyName,newIpClone));
-		// Inherit id and gen number
+		// Inherit id, gen number and pdf
 		newIpClone->setIndiRef (IProperty::getIndiRef());
-		// Inherit pdf
 		newIpClone->setPdf (IProperty::getPdf());
 		
 	}else
@@ -460,23 +459,32 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	if (it == value.end())
 			throw ElementNotFoundException ("", "");
 
+	// Save the old one
+	boost::shared_ptr<IProperty> oldIp = cmp.getIProperty ();
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
 	
 	if (newIpClone)
 	{
-		// Be sure
-		cmp.getIProperty()->setPdf (NULL);
-		cmp.getIProperty()->setIndiRef (IndiRef());
-		//
 		// Construct item, and replace it with this one
-		//	
 		typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
 		std::fill_n (it, 1, newVal);
 		
 	}else
 		throw CObjInvalidObject ();
-		
+	
+	// Create context
+	boost::shared_ptr<ObserverContext> context (_createContext (oldIp));	
+	// Notify observers and dispatch change
+	_objectChanged (newIpClone, context);
+
+	// Be sure
+	oldIp->setPdf (NULL);
+	oldIp->setIndiRef (IndiRef());
+
+	//
+	// \TODO: Find out the mode
+	//
 
 	return newIpClone;
 }
@@ -568,18 +576,8 @@ CObjectComplex<Tp,Checker>::_createContext (boost::shared_ptr<IProperty>& change
 {
 	printDbg (debug::DBG_DBG, "");
 
-	// Save original value for the context
-	boost::shared_ptr<IProperty> oldValue (changedIp->clone());
-	oldValue->setPdf (IProperty::getPdf());
-	oldValue->setIndiRef (IProperty::getIndiRef());
-	// For safety up to 1 level deeper
-	for (typename Value::iterator it = this->value.begin (); it != value.end (); ++it)
-	{
-		utils::getIPropertyFromItem(*it)->setPdf (IProperty::getPdf());
-		utils::getIPropertyFromItem(*it)->setIndiRef (IProperty::getIndiRef());
-	}
 	// Create the context
-	return new BasicObserverContext (oldValue);
+	return new BasicObserverContext (changedIp);
 }
 
 //=====================================================================================

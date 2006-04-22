@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/22 14:57:52  misuj1am
+ *
+ * --Observers improved
+ *
  * Revision 1.12  2006/04/22 02:36:50  misuj1am
  *
  * -- observer correction
@@ -108,7 +112,7 @@ extern FileList fileList;
 													<< " ALLOCATED: " << check.getMaxCount () << endl;}
 #define TEST(a)		OUTPUT << "\t//== " << (a);
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
-#define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
+#define END_TEST	OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
 #define OK_TEST		OUTPUT << "\t...TEST PASSED..."; MEM_CHECK;
 //==========================
 

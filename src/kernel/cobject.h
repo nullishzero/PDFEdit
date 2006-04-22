@@ -572,7 +572,6 @@ public:
 	 */
 	virtual Object*	_makeXpdfObject () const;
 
-	
 private:
 	
 	/**
