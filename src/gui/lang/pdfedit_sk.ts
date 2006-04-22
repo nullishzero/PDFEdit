@@ -164,10 +164,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> page(s)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Index</source>
         <translation type="unfinished"></translation>
     </message>
@@ -216,6 +212,21 @@ Data: %3
     </message>
     <message>
         <source>toolbar definition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> page</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> pages</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> pages</source>
+        <comment>5+</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -272,35 +283,11 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: this will affect only newly opened files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Data files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paths to data files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Icon Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: this will take effect on next program start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Object tree</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can specify what kind of objects will be displayed in the object tree</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -352,10 +339,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>These toolbars will be shown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Look and Feel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -389,6 +372,46 @@ Data: %3
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing style will take effect on next program start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remember path of last opened/saved file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing Advanced mode will affect only newly opened files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paths</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can use environment variables (for example $HOME) in settings on this page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing Icon Path will take effect on next program start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Console log file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These objects will be shown in the object tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;History-related options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>These toolbars will be shown:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -428,11 +451,6 @@ Data: %3
 </context>
 <context>
     <name>gui::Settings</name>
-    <message>
-        <source>Main Toolbar</source>
-        <comment>MainToolbar</comment>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>&amp;New document</source>
         <comment>fnew</comment>
@@ -516,6 +534,11 @@ Data: %3
     <message>
         <source>&amp;Help</source>
         <comment>index</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main Toolbar</source>
+        <comment>MainToolbar</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

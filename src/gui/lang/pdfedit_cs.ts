@@ -164,10 +164,6 @@
         <translation>Strana</translation>
     </message>
     <message>
-        <source> page(s)</source>
-        <translation> stran(a/y)</translation>
-    </message>
-    <message>
         <source>&amp;Index</source>
         <translation>Obsah</translation>
     </message>
@@ -220,6 +216,21 @@ Data: %3
     <message>
         <source>toolbar definition</source>
         <translation>definice toolbaru</translation>
+    </message>
+    <message>
+        <source> page</source>
+        <comment>1</comment>
+        <translation> strana</translation>
+    </message>
+    <message>
+        <source> pages</source>
+        <comment>2-4</comment>
+        <translation> strany</translation>
+    </message>
+    <message>
+        <source> pages</source>
+        <comment>5+</comment>
+        <translation> stran</translation>
     </message>
 </context>
 <context>
@@ -279,32 +290,8 @@ Data: %3
         <translation>Režim pro pokročilé</translation>
     </message>
     <message>
-        <source>Turning advanced mode on will allow more powerful (but also more dangerous) changes to edited document.</source>
-        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: this will affect only newly opened files</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: ovlivní až nově otevřené soubory</translation>
-    </message>
-    <message>
-        <source>Data files</source>
-        <translation>Datové soubory</translation>
-    </message>
-    <message>
-        <source>Paths to data files</source>
-        <translation>Cesty k datovým souborům</translation>
-    </message>
-    <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: this will take effect on next program start</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: bude mít efekt až při přístím startu programu</translation>
-    </message>
-    <message>
         <source>Object tree</source>
         <translation>Strom objektů</translation>
-    </message>
-    <message>
-        <source>You can specify what kind of objects will be displayed in the object tree</source>
-        <translation>Můžete nastavit jaké typy objektů budou zobrazeny ve stromu objektů</translation>
     </message>
     <message>
         <source>Document dictionary</source>
@@ -345,10 +332,6 @@ Data: %3
     <message>
         <source>Toolbars</source>
         <translation>Toolbary</translation>
-    </message>
-    <message>
-        <source>These toolbars will be shown</source>
-        <translation>Tyto toolbary budou zobrazeny</translation>
     </message>
     <message>
         <source>History file</source>
@@ -393,6 +376,46 @@ Data: %3
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing style will take effect on next program start</source>
         <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna stylu bude mít efekt až při přístím startu programu</translation>
+    </message>
+    <message>
+        <source>Remember path of last opened/saved file</source>
+        <translation>Pamatovat si cestu k poslednímu otevřenému/uloženému souboru</translation>
+    </message>
+    <message>
+        <source>Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document.</source>
+        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing Advanced mode will affect only newly opened files</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna Režimu pro pokročilé ovlivní až nově otevřené soubory</translation>
+    </message>
+    <message>
+        <source>Paths</source>
+        <translation>Cesty</translation>
+    </message>
+    <message>
+        <source>You can use environment variables (for example $HOME) in settings on this page</source>
+        <translation>Lze použít proměnné prostředí (např. $HOME) v nastavení na této stránce</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing Icon Path will take effect on next program start</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna cesty k ikonám bude mít efekt až při přístím startu programu</translation>
+    </message>
+    <message>
+        <source>Console log file</source>
+        <translation>Log soubor pro konzoli</translation>
+    </message>
+    <message>
+        <source>These objects will be shown in the object tree</source>
+        <translation>Tyto objekty budou zobrazeny ve stromu objektů</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;History-related options</source>
+        <translation>&lt;br&gt;Nastavení historie</translation>
+    </message>
+    <message>
+        <source>These toolbars will be shown:</source>
+        <translation>Tyto toolbary budou zobrazeny:</translation>
     </message>
 </context>
 <context>
