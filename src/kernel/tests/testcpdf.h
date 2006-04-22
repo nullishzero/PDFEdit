@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/04/22 19:32:21  hockm0bm
+ * * old test style replaced by CPPUINT TestCPdf class
+ * * TestCPdf::pageIterationTC method implemented
+ *
  * Revision 1.5  2006/04/12 20:40:44  hockm0bm
  * getTestCPdf is not inline now - because of linking problem for kernel binary
  *
@@ -38,10 +42,7 @@
 #define _TESTCPDF_H_
 
 #include "testmain.h"
-#include "../cpage.h"
 
-
-void cpdf_tests(pdfobjects::CPdf * pdf);
 
 pdfobjects::CPdf * getTestCPdf(const char* filename);
 
