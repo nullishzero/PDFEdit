@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/22 02:36:50  misuj1am
+ *
+ * -- observer correction
+ *
  * Revision 1.11  2006/04/21 20:39:50  misuj1am
  *
  * -- test output improved
@@ -102,7 +106,7 @@ extern FileList fileList;
 #define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
 													<< " ALLOCATED: " << check.getMaxCount () << endl;}
-#define TEST(a)		OUTPUT << "//== " << (a);
+#define TEST(a)		OUTPUT << "\t//== " << (a);
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST	OUTPUT << endl << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
 #define OK_TEST		OUTPUT << "\t...TEST PASSED..."; MEM_CHECK;

@@ -237,8 +237,8 @@ private:
 		// Save original value for the context
 		boost::shared_ptr<IProperty> oldValue (this->clone());
 		// For safety
-		oldValue->setPdf (NULL);
-		oldValue->setIndiRef (0,0);
+		oldValue->setPdf (IProperty::getPdf());
+		oldValue->setIndiRef (IProperty::getIndiRef());
 		// Create the context
 		return new BasicObserverContext (oldValue);
 	}
@@ -258,9 +258,9 @@ private:
 		{
 			// Clone this new value
 			boost::shared_ptr<IProperty> newValue (this->clone());
-			// For safety
-			newValue->setPdf (NULL);
-			newValue->setIndiRef (0,0);
+			// Fill them with correct values
+			newValue->setPdf (IProperty::getPdf());
+			newValue->setIndiRef (IProperty::getIndiRef());
 			// Notify everybody about this change
 			IProperty::notifyObservers (newValue, context);
 		}else

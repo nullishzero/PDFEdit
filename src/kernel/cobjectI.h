@@ -309,6 +309,9 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 		boost::shared_ptr<ObserverContext> context (this->_createContext(ip));
 		// Delete that item
 		value.erase (it);
+		// Be sure, clear it
+		ip->setPdf (NULL);
+		ip->setIndiRef (IndiRef());
 		// Indicate that this object has changed
 		boost::shared_ptr<IProperty> changedObj (new CNull());
 		_objectChanged (changedObj, context);
@@ -462,9 +465,11 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	
 	if (newIpClone)
 	{
+		// Be sure
+		cmp.getIProperty()->setPdf (NULL);
+		cmp.getIProperty()->setIndiRef (IndiRef());
 		//
-		// Insert the element we want to add at the end, swap with the element we want to
-		// delete and delete the last one
+		// Construct item, and replace it with this one
 		//	
 		typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
 		std::fill_n (it, 1, newVal);
@@ -474,7 +479,6 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 		
 
 	return newIpClone;
-	// newVal holds pointer to the object, that should be released, so now it should be deleted
 }
 
 
@@ -566,13 +570,13 @@ CObjectComplex<Tp,Checker>::_createContext (boost::shared_ptr<IProperty>& change
 
 	// Save original value for the context
 	boost::shared_ptr<IProperty> oldValue (changedIp->clone());
+	oldValue->setPdf (IProperty::getPdf());
+	oldValue->setIndiRef (IProperty::getIndiRef());
 	// For safety up to 1 level deeper
-	oldValue->setPdf (NULL);
-	oldValue->setIndiRef (0,0);
 	for (typename Value::iterator it = this->value.begin (); it != value.end (); ++it)
 	{
-		utils::getIPropertyFromItem(*it)->setPdf (NULL);
-		utils::getIPropertyFromItem(*it)->setIndiRef (0,0);
+		utils::getIPropertyFromItem(*it)->setPdf (IProperty::getPdf());
+		utils::getIPropertyFromItem(*it)->setIndiRef (IProperty::getIndiRef());
 	}
 	// Create the context
 	return new BasicObserverContext (oldValue);

@@ -29,6 +29,9 @@ using namespace debug;
 using namespace utils;
 
 
+/** Name for inline image properties in property editor. */
+const char* NAME_INLINE_IMAGE_PROPS = "Properties";
+
 //==========================================================
 // Specialized classes representing operators
 //==========================================================
@@ -525,7 +528,7 @@ namespace
 					unknownUpdate, "" },	
 			{"G",   1, {setNthBitsShort (pInt, pReal)}, 
 					unknownUpdate, "" },	
-			{"ID",  -10, {setNoneBitsShort ()},
+			{"ID",  0, {setNoneBitsShort ()},
 					unknownUpdate, "" },	
 			{"J",   1, {setNthBitsShort (pInt)}, 
 					unknownUpdate, "" },	
@@ -810,6 +813,22 @@ namespace
 				}
 				printDbg (DBG_DBG, "Operator found. " << chcktp->name);
 
+
+				//
+				// SPECIAL CASE for inline image
+				//
+				if ( last && 0 == strncmp (chcktp->name,"ID",3))
+				{
+					string name;
+					last->getOperatorName (name);
+					// Is it really an image
+					if ("BI" == name)
+					{// Add all operands to the composite in an UnknownPdfOperator
+						assert (0 == last->getChildrenCount());
+						last->push_back (shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, NAME_INLINE_IMAGE_PROPS)));
+					}
+				}
+				
 				// Check the types against specification
 				if (!check (*chcktp, operands))
 					throw MalformedFormatExeption ("Content stream bad operator type.");
