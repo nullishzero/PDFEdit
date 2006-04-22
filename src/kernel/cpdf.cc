@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.36  2006/04/22 20:12:50  hockm0bm
+ * Last commit was accident
+ * getInstance catches exceptions possibly thrown in CPdf and throws
+ *         PdfOpenException
+ *
  * Revision 1.35  2006/04/22 20:07:08  hockm0bm
  * bug fix
  *         - getPrevPage, getNextPage didn't return true if successful
@@ -129,11 +134,6 @@
  *
  */
 
-/************************************************
- * FOR CVS
- * * getInstance catches exceptions possibly thrown in CPdf and throws
- * PdfOpenException
- */
 
 #include <errno.h>
 #include "static.h"
