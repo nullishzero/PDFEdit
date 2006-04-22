@@ -192,6 +192,10 @@
     <title><funcsynopsis>string settings.write(string key,string value)</funcsynopsis></title>
     Write application setting with given key and value
    </sect2>
+   <sect2 id="settings.remove">
+    <title><funcsynopsis>string settings.remove(string key)</funcsynopsis></title>
+    Remove key from user settings, effectively restoring the setting to its default value
+   </sect2>
    <sect2 id="settings.flushSettings">
     <title><funcsynopsis>void settings.flushSettings()</funcsynopsis></title>
     Write all unsaved settings to disk. Unsaved settings are automatically writen
