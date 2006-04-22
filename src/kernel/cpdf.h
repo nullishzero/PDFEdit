@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.34  2006/04/22 17:22:14  hockm0bm
+ * * getPageCount caches/uses value to/from pageCount field
+ * * getNextPage, getPrevPage boundary checking corrected
+ *
  * Revision 1.33  2006/04/21 20:40:02  hockm0bm
  * * changeIndirectProperty use freeXpdfObject with out problems
  * * PageTreeWatchDog::notify bug fix
@@ -885,8 +889,9 @@ public:
 
 	/** Returnes page count.
 	 *
-	 * Checks Pages field in document catalog. If it has Page type, returns 1
-	 * otherwise return Pages' count field value.
+	 * Try to use pageCount field value (if it is valid) or gets value from Page
+	 * tree root node (sets new value of pageCount field).
+	 * 
 	 *
 	 * @throw MalformedFormatExeption if page count can't be found or it has bad
 	 * type (CPdf instance is almost unusable if this is not correct).

@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.34  2006/04/22 17:22:14  hockm0bm
+ * * getPageCount caches/uses value to/from pageCount field
+ * * getNextPage, getPrevPage boundary checking corrected
+ *
  * Revision 1.33  2006/04/21 20:40:02  hockm0bm
  * * changeIndirectProperty use freeXpdfObject with out problems
  * * PageTreeWatchDog::notify bug fix
@@ -1243,6 +1247,14 @@ using namespace utils;
 	
 	printDbg(DBG_DBG, "");
 	
+	// try to use cached value - if zero, we have to get it from Page tree root
+	if(pageCount)
+	{
+		printDbg(DBG_DBG, "Uses cached value");
+		printDbg(DBG_INFO, "Page Count="<<pageCount);
+		return pageCount;
+	}
+	
 	// gets Pages field from document catalog
 	shared_ptr<IProperty> pages_ptr=docCatalog->getProperty("Pages");
 	
@@ -1252,18 +1264,21 @@ using namespace utils;
 	string dictType=getNameFromDict("Type", dict_ptr);
 	if(dictType=="Page")
 	{
-		// this document contains onlu one page
+		// this document contains only one page
+		// This is not standard situation
 		printDbg(DBG_INFO, "Page count=1 no intermediate node.");
-		return 1;
+		return pageCount=1;
 	}
 	if(dictType=="Pages")
 	{
 		// gets count field
 		int count=getIntFromDict("Count", dict_ptr);
 		printDbg(DBG_INFO, "Page count="<<count);
-		return count;
+		return pageCount=count;
 	}
 
+	// unable to ge page count 
+	pageCount=0;
 	printDbg(DBG_CRIT, "Pages dictionary has bad dictionary type type="<<dictType);
 	throw MalformedFormatExeption("Pages dictionary is not Page or Pages dictionary");
 }
@@ -1277,7 +1292,7 @@ boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)
 	pos++;
 	
 	// checks if we are in boundary after incrementation
-	if(pos>=getPageCount())
+	if(pos==0 || pos>getPageCount())
 	{
 		printDbg(DBG_ERR, "Page is out of range pos="<<pos);
 		throw PageNotFoundException(pos);
@@ -1297,7 +1312,7 @@ boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)
 	pos--;
 	
 	// checks if we are in boundary after incrementation
-	if(pos>=getPageCount())
+	if(pos==0 || pos>getPageCount())
 	{
 		printDbg(DBG_ERR, "Page is out of range pos="<<pos);
 		throw PageNotFoundException(pos);
