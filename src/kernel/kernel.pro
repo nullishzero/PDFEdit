@@ -53,7 +53,7 @@ SOURCES += tests/testcpdf.cc
 SOURCES += main.cc 
 
 #QMAKE_LFLAGS += -static
-INCLUDEPATH += ./tests/cppunit/include
+INCLUDEPATH += ../cppunit/include
 LIBS += -ldl -lcppunit -L../cppunit/src/cppunit/.libs
 
 #
