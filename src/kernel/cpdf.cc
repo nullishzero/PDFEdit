@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.35  2006/04/22 20:07:08  hockm0bm
+ * bug fix
+ *         - getPrevPage, getNextPage didn't return true if successful
+ *
  * Revision 1.34  2006/04/22 17:22:14  hockm0bm
  * * getPageCount caches/uses value to/from pageCount field
  * * getNextPage, getPrevPage boundary checking corrected
@@ -123,6 +127,12 @@
  * searchTreeNode helper method
  *
  *
+ */
+
+/************************************************
+ * FOR CVS
+ * * getInstance catches exceptions possibly thrown in CPdf and throws
+ * PdfOpenException
  */
 
 #include <errno.h>
@@ -1156,6 +1166,8 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 {
+using namespace std;
+
 	printDbg(debug::DBG_DBG, "");
 	
 	// openMode is read-only by default
@@ -1182,11 +1194,16 @@ CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
 	printDbg(debug::DBG_DBG,"File stream created");
 
 	// stream is ready, creates CPdf instance
-	CPdf * instance=new CPdf(stream, mode);
-
-	printDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
-
-	return instance;
+	try
+	{
+		CPdf * instance=new CPdf(stream, mode);
+		printDbg(debug::DBG_INFO, "Instance created successfully openMode=" << openMode);
+		return instance;
+	}catch(exception &e)
+	{
+		printDbg(DBG_CRIT, "Pdf instance creation failed. cause="<<e.what());
+		throw PdfOpenException("CPdf failed. reason=");
+	}
 }
 
 int CPdf::close(bool saveFlag)
