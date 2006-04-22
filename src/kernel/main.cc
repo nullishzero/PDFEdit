@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.34  2006/04/22 19:33:30  hockm0bm
+ * test_cpdf removed - only CPP Unit test style remained
+ *
  * Revision 1.33  2006/04/20 21:53:20  misuj1am
  *
  * --minor improvments
@@ -134,13 +137,6 @@ main (int argc, char** argv)
 	//
 	START_TEST;
 	
-	// Test cpdf
-	CPdf * testCPdf=getTestCPdf(fileName);
-	cpdf_tests(testCPdf);
-	testCPdf->close();
-	MEM_CHECK;
-	
-
 	//
 	// CPage test
 	//
