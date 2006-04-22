@@ -356,9 +356,7 @@ void PdfEditWindow::setObject(IProperty* obj) {
  item=obj;
 }
 
-/** Called upon selecting item in treeview
- @param obj Object that was selected
-*/
+/** Called upon selecting item in treeview */
 void PdfEditWindow::setObject() {
  if (selected) delete selected;
  selected=tree->getSelected();

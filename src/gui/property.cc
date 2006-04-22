@@ -1,6 +1,7 @@
 /** @file
-Property - abstract class for widget containing one editable property
-Should be subclassed for editing specific property types (integer, string, ...)
+ Property - abstract class for widget containing one editable property<br>
+ Should be subclassed for editing specific property types (integer, string, ...)
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -20,37 +21,48 @@ Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFla
  name=_name;
  flags=_flags;
  changed=false;
-// printDbg(debug::DBG_DBG,"+ Property  " << name);
+ //Default flags
+ hidden=readonly=false; 
 }
 
-/** return name of this property */
+/** return name of this property
+ @return name
+ */
 QString Property::getName() {
  return name;
 }
 
-/** return flags of this property */
+/** return flags of this property
+ @return flags
+ */
 PropertyFlags Property::getFlags() {
  return flags;
 }
 
-/** set flags of this property */
+/** set flags of this property
+ @param flag New value for property flags
+ */
 void Property::setFlags(PropertyFlags flag) {
  flags=flag;
 }
 
-/** returns readonly flag of this property */
+/** returns readonly flag of this property
+ @return readonly flag
+ */
 bool Property::getReadOnly() {
  return readonly;
 }
 
-/** set readonly flag of this property */
+/** set readonly flag of this property
+ @param _readonly New value for readonly flag
+ */
 void Property::setReadOnly(bool _readonly) {
  readonly=_readonly;
 }
 
 /** default destructor */
 Property::~Property() {
-//  printDbg(debug::DBG_DBG,"- Property " << name);
+
 }
 
 /** Emit signal indicating change of the property and set state

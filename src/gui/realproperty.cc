@@ -1,6 +1,8 @@
 /** @file
-RealProperty - class for widget containing
- one editable property of type "Real" (internally a double)
+ RealProperty - class for widget containing one editable property of type "Real"<br>
+ (internally represented as a double)<br>
+ Used as one item in property editor
+ @author Martin Petricek
 */
 
 #include "realproperty.h"
@@ -25,14 +27,16 @@ RealProperty::RealProperty (const QString &_name, QWidget *parent/*=0*/, Propert
 RealProperty::~RealProperty() {
 }
 
- /** write internal value to given PDF object */
+/** @copydoc StringProperty::writeValue */
 void RealProperty::writeValue(IProperty *pdfObject) {
+ if (readonly) return;//Honor readonly setting
  CReal* obj=(CReal*)pdfObject;
  double val=ed->text().toDouble();
  obj->writeValue(val);
  changed=false;
 }
- /** read internal value from given PDF object */
+
+/** @copydoc StringProperty::readValue */
 void RealProperty::readValue(IProperty *pdfObject) {
  CReal* obj=(CReal*)pdfObject;
  double val;
@@ -42,4 +46,3 @@ void RealProperty::readValue(IProperty *pdfObject) {
 }
 
 } // namespace gui
-

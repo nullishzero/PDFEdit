@@ -1,5 +1,9 @@
 /** @file
-PropertyFactory - static function that will return correct property widget based on type of object
+ propertyFactory
+ - static function that will return correct property widget based on type of object<br>
+ Will work only for simple types (bool, int, real, string, name) and ref (reference)<br>
+ Will return NULL for Arrays and Dictionaries, as these are not editable in property editor<br>
+ @author Martin Petricek
 */
 
 #include <qwidget.h>
@@ -34,11 +38,11 @@ Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *pa
   case pRef:    return new RefProperty(_name,parent,_flags);
   case pArray:  return NULL;//Not editable in property editor, editable in tree window
   case pDict:   return NULL;//Not editable in property editor, editable in tree window
-  case pStream: return NULL;//TODO
-// Debug types - uneditable, not shown
-  case pOther:  return NULL;
-  case pOther1: return NULL;
-  case pOther2: return NULL;
+  case pStream: return NULL;//TODO: editable in property editor or in tree window?
+  // Debug types - All of them uneditable, not shown
+  case pOther:
+  case pOther1:
+  case pOther2:
   case pOther3: return NULL;
  }
  //Unknown type. Should not happen

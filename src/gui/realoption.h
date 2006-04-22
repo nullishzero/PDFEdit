@@ -9,7 +9,7 @@ namespace gui {
 class RealOption : public StringOption {
  Q_OBJECT
 public:
- RealOption(const QString &_key=0,QWidget *parent=0);
+ RealOption(const QString &_key=0,QWidget *parent=0,double defValue=0);
  virtual ~RealOption();
 };
 

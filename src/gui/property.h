@@ -46,7 +46,6 @@ protected:
  bool hidden;
  /** was the property edited since last readValue or writeValue? */
  bool changed;
-
 };
 
 } // namespace gui

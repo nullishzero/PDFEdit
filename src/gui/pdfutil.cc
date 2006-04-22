@@ -101,5 +101,4 @@ bool isSimple(boost::shared_ptr<IProperty> prop) {
  return isSimple(prop.get());
 }
 
-
 } // namespace util

@@ -1,6 +1,7 @@
 /** @file
-StringProperty - class for widget containing
- one editable property of type "String"
+ StringProperty - class for widget containing one editable property of type "String"<br>
+ Used as one item in property editor
+ @author Martin Petricek
 */
 
 #include "stringproperty.h"
@@ -33,17 +34,23 @@ void StringProperty::emitChange() {
  emit propertyChanged(this);
 }
 
-/** Called when text changes */
+/** Called when text changes
+ @param newText value of new text
+ */
 void StringProperty::enableChange(const QString &newText) {
  changed=true;
 }
 
-/** return size hint of this property editing control */
+/** return size hint of this property editing control
+ @return preferred size for this widget
+ */
 QSize StringProperty::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of property editing control */
+/** Called on resizing of property editing control
+ @param e resize event containing new widget size
+ */
 void StringProperty::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }
@@ -57,11 +64,13 @@ StringProperty::~StringProperty() {
  @param pdfObject Object to write to
  */
 void StringProperty::writeValue(IProperty *pdfObject) {
+ if (readonly) return;//Honor readonly setting
  CString* obj=(CString*)pdfObject;
  string val=ed->text();
  obj->writeValue(val);
  changed=false;
 }
+
 /** read internal value from given PDF object
  @param pdfObject Object to read from
  */

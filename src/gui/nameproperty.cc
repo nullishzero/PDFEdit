@@ -1,15 +1,11 @@
 /** @file
-NameProperty - class for widget containing
- one editable property of type "Name"
-
-Basically, CName is CString, but we might want differentiation in case we'll handle names specially in future
+ NameProperty - class for widget containing one editable property of type "Name"<br>
+ Basically, CName is CString, but we might want differentiation in case we'll handle names specially in future<br>
+ Used as one item in property editor
+ @author Martin Petricek
 */
 
 #include "nameproperty.h"
-#include <string>
-#include <stdlib.h>
-#include <qlineedit.h>
-#include <cobject.h>
 
 namespace gui {
 

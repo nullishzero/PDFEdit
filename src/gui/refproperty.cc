@@ -1,6 +1,8 @@
 /** @file
-RefProperty - class for widget containing
- one editable property of type "Ref"
+ RefProperty - class for widget containing one editable property of type "Ref"<br>
+ Represented by editable line and button allowing to pick reference target from the list<br>
+ Used as one item in property editor
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -12,10 +14,12 @@ RefProperty - class for widget containing
 #include <qcolor.h>
 #include <qpushbutton.h>
 #include <cobject.h>
+#include "pdfutil.h"
 
 namespace gui {
 
 using namespace std;
+using namespace util;
 
 /** Default constructor of property item
  @param parent parent Property Editor containing this control
@@ -28,7 +32,7 @@ RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFl
  setFocusProxy(ed);
  pb=new QPushButton("..",this,"refproperty_pickbutton");
  ed->setValidator(new RefValidator(ed));
- //light yellow
+ //light yellow background color
  ed->setPaletteBackgroundColor(QColor(255,255,224));
  connect(pb,SIGNAL(clicked())		,this,SLOT(selectRef()));
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
@@ -42,23 +46,23 @@ void RefProperty::selectRef() {
  //TODO: implement
 }
 
-/** Called when text is accepted */
+/** Called when text is accepted -> will emit signal informing about change */
 void RefProperty::emitChange() {
  if (!changed) return;
  emit propertyChanged(this);
 }
 
-/** Called when text changes */
+/** @copydoc StringProperty::enableChange */
 void RefProperty::enableChange(const QString &newText) {
  changed=true;
 }
 
-/** return size hint of this property editing control */
+/** @copydoc StringProperty::sizeHint */
 QSize RefProperty::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of property editing control */
+/** @copydoc StringProperty::resizeEvent */
 void RefProperty::resizeEvent (QResizeEvent *e) {
  int w=e->size().width();
  int h=e->size().height();
@@ -74,28 +78,9 @@ RefProperty::~RefProperty() {
  delete pb;
 }
 
- //TODO: move to pdfutils?
-/** Check for validity of reference - if ref is valid reference (have target) in given CPdf
- @param pdf pdf to check for reference
- @param ref Indirect reference to check
- @return true if given reference target exists in given pdf, false otherwise
-*/
-bool isRefValid(CPdf *pdf,IndiRef ref) {
- CXref *cxref=pdf->getCXref();
- Ref _val;//TODO: why there is no knowsRef(IndiRef) ?
- _val.num=ref.num;
- _val.gen=ref.gen;
- if (!cxref->knowsRef(_val)) { //ref not valid
-  printDbg(debug::DBG_DBG,"Unknown reference!");
-  return false;
- }
- return true;
-}
-
-/** write internal value to given PDF object
- @param pdfObject Object to write to
- */
+/** @copydoc StringProperty::writeValue */
 void RefProperty::writeValue(IProperty *pdfObject) {
+ if (readonly) return;//Honor readonly setting
  CRef *obj=(CRef*)pdfObject;
  QStringList ref=QStringList::split(",",ed->text());
  assert(ref.count()==2); //Should never happen
@@ -105,16 +90,15 @@ void RefProperty::writeValue(IProperty *pdfObject) {
  val.gen=ref[1].toInt();
 
  //Check reference validity
- if (!isRefValid(obj->getPdf(),val)) {
+ if (!isRefValid(obj->getPdf(),val)) { 
   ed->setFocus();
-  return;
+  return; //not valid
  }
  obj->writeValue(val);
  changed=false;
 }
-/** read internal value from given PDF object
- @param pdfObject Object to read from
- */
+
+/** @copydoc StringProperty::readValue */
 void RefProperty::readValue(IProperty *pdfObject) {
  CRef* obj=(CRef*)pdfObject;
  IndiRef val;

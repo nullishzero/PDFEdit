@@ -96,9 +96,7 @@ OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *nam
  QObject::connect(btApply,  SIGNAL(clicked()), this, SLOT(apply()));
  QObject::connect(btOk,	    SIGNAL(clicked()), this, SLOT(ok()));
  globalSettings->restoreWindow(this,"options"); 
- printDbg(debug::DBG_DBG,"Options pre-init ...");
  init();
- printDbg(debug::DBG_DBG,"Options post-init ...");
 }
 
 /** Called on pushing 'Apply' button */

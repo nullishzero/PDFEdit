@@ -1,6 +1,7 @@
 /** @file
-IntProperty - class for widget containing
- one editable property of type "Int"
+ IntProperty - class for widget containing one editable property of type "Int"<br>
+ Used as one item in property editor
+ @author Martin Petricek
 */
 
 #include "intproperty.h"
@@ -25,14 +26,16 @@ IntProperty::IntProperty (const QString &_name, QWidget *parent/*=0*/, PropertyF
 IntProperty::~IntProperty() {
 }
 
- /** write internal value to given PDF object */
+/** @copydoc StringProperty::writeValue */
 void IntProperty::writeValue(IProperty *pdfObject) {
+ if (readonly) return;//Honor readonly setting
  CInt* obj=(CInt*)pdfObject;
  int val=ed->text().toInt();
  obj->writeValue(val);
  changed=false;
 }
- /** read internal value from given PDF object */
+
+/** @copydoc StringProperty::readValue */
 void IntProperty::readValue(IProperty *pdfObject) {
  CInt* obj=(CInt*)pdfObject;
  int val;

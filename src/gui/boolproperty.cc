@@ -1,6 +1,8 @@
 /** @file
-BoolProperty - class for widget containing
- one editable property of type "Bool" (checkbox)
+ BoolProperty - class for widget containing one editable property of type "Bool"<br>
+ (represented by checkbox)
+ Used as one item in property editor
+ @author Martin Petricek
 */
 
 #include "boolproperty.h"
@@ -22,12 +24,12 @@ BoolProperty::BoolProperty(const QString &_name, QWidget *parent/*=0*/, Property
  connect(ed,SIGNAL(clicked()),this,SLOT(emitChange()));
 }
 
-/** return size hint of this property editing control */
+/** @copydoc StringProperty::sizeHint */
 QSize BoolProperty::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of property editing control */
+/** @copydoc StringProperty::resizeEvent */
 void BoolProperty::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }
@@ -42,18 +44,16 @@ BoolProperty::~BoolProperty() {
  delete ed;
 }
 
-/** write internal value to given PDF object
- @param pdfObject Object to write to
- */
+/** @copydoc StringProperty::writeValue */
 void BoolProperty::writeValue(IProperty *pdfObject) {
+ if (readonly) return;//Honor readonly setting
  CBool* obj=(CBool*)pdfObject;
  bool val=ed->isChecked();
  obj->writeValue(val);
  changed=false;
 }
-/** read internal value from given PDF object
- @param pdfObject Object to read from
- */
+
+/** @copydoc StringProperty::readValue */
 void BoolProperty::readValue(IProperty *pdfObject) {
  CBool* obj=(CBool*)pdfObject;
  bool val;
