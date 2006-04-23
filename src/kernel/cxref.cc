@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/23 22:03:40  hockm0bm
+ * reopen sets lastXRefPos to given offset
+ *
  * Revision 1.10  2006/04/19 06:01:59  hockm0bm
  * reopen signature changed to enable jumping to start from specified offset
  *         - synchronization with XRef::initInternals method
@@ -467,4 +470,8 @@ using namespace debug;
 	XRef::destroyInternals();
 	printDbg(DBG_DBG, "Initializes XRef internals");
 	XRef::initInternals(xrefOff);
+
+	// sets lastXRefPos to xrefOff, because initRevisionSpecific doesn't do it
+	lastXRefPos=xrefOff;
+	printDbg(DBG_DBG, "New lastXRefPos value="<<lastXRefPos);
 }
