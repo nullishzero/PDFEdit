@@ -503,7 +503,7 @@ namespace
 			{"BDC", 2, {setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
 					unknownUpdate, "" },	
 			{"BI",  0, {setNoneBitsShort ()}, 
-					unknownUpdate, "" },	
+					unknownUpdate, "EI" },	
 			{"BMC", 1, {setNthBitsShort (pName)}, 
 					unknownUpdate, "" },	
 			{"BT",  0, {setNoneBitsShort ()}, 
@@ -787,8 +787,6 @@ namespace
 	shared_ptr<PdfOperator>
 	createOp (::Parser& parser, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
 	{
-		assert (&last);
-
 		// Get first object
 		Object o;
 		parser.getObj (&o);
@@ -817,7 +815,7 @@ namespace
 				//
 				// SPECIAL CASE for inline image
 				//
-				if ( last && 0 == strncmp (chcktp->name,"ID",3))
+				if ( last && 0 == strncmp (chcktp->name, "ID", 2))
 				{
 					string name;
 					last->getOperatorName (name);
@@ -825,6 +823,7 @@ namespace
 					if ("BI" == name)
 					{// Add all operands to the composite in an UnknownPdfOperator
 						assert (0 == last->getChildrenCount());
+
 						last->push_back (shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, NAME_INLINE_IMAGE_PROPS)));
 					}
 				}
@@ -851,7 +850,8 @@ namespace
 					
 					shared_ptr<PdfOperator> composite (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
 					// The same as in parseContentStream
-					shared_ptr<PdfOperator> _last, _prevLast = composite;
+					shared_ptr<PdfOperator> _last = composite;
+					shared_ptr<PdfOperator> _prevLast = composite;
 					while (!o.isEOF())
 					{
 						// Output parameter set to last created op
@@ -1027,11 +1027,14 @@ CContentStream::CContentStream (ContentStreams& streams, Object* obj)
 	}
 	printDbg (DBG_DBG, "Creating content stream.");
 	
-	// Save content streams
-	copy (streams.begin(), streams.end(), back_inserter (contentstreams));
-
-	// Parse it into small objects
-	parseContentStream (operators, *obj, *(streams.front()->getPdf ()), streams.front()->getIndiRef ());
+	// If streams are not empty, save and parse them
+	if (!streams.empty())
+	{
+		// Save content streams
+		copy (streams.begin(), streams.end(), back_inserter (contentstreams));
+		// Parse it into small objects
+		parseContentStream (operators, *obj, *(streams.front()->getPdf ()), streams.front()->getIndiRef ());
+	}
 }
 
 //

@@ -33,13 +33,33 @@ using namespace utils;
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 {
 	printDbg (debug::DBG_DBG, "");
-	
+
+	// Parse the content stream if found
+	parseContentStream ();	
+}
+
+//
+//
+//
+bool CPage::parseContentStream ()
+{
 	//
-	// Get the stream representing content stream, make an xpdf object
+	// Get the stream representing content stream (if any), make an xpdf object
 	// and finally instantiate CContentStream
 	//
-	shared_ptr<IProperty> contents = dictionary->getProperty ("Contents");
-	if (pRef == contents->getType())
+	shared_ptr<IProperty> contents;
+	try 
+	{
+		contents = dictionary->getProperty ("Contents");
+
+	}catch (ElementNotFoundException&)
+	{ 
+		// No content stream return
+		return false;
+	}
+	
+	// If indirect, get the real object
+	if (isRef (contents))
 	{
 		IndiRef ref;
 		IProperty::getSmartCObjectPtr<CRef>(contents)->getPropertyValue(ref);
@@ -51,13 +71,13 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 		//
 		// Contents can be either stream or an array of streams
 		//
-		if (pStream == contents->getType())	
+		if (isStream (contents))	
 		{
 			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
 			// Create contentstream from a stream
 			contentstream = shared_ptr<CContentStream> (new CContentStream (stream, stream->_makeXpdfObject()));
 		
-		}else if (pArray == contents->getType())
+		}else if (isArray (contents))
 		{
 			// Save all streams from array to a vector
 			CContentStream::ContentStreams streams;
@@ -77,9 +97,10 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 	
 	}else
 		throw ElementBadTypeException ("Bad pointer to content stream.");
-		
-}
 
+	// Everything went ok
+	return true;
+}
 
 //
 //
@@ -91,8 +112,8 @@ CPage::getMediabox () const
 	
 	// Get the array representing media box
 	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
-	assert (pArray == mbox->getType ());
-	if (pArray != mbox->getType ())
+	assert (isArray (mbox));
+	if (!isArray (mbox))
 		throw MalformedFormatExeption ("Page::MediaBox is not array.");
 
 	Rectangle rc;
@@ -111,7 +132,7 @@ CPage::getMediabox () const
 void
 CPage::setMediabox (const Rectangle& rc)
 {
-	printDbg (debug::DBG_DBG, "");
+	printDbg (debug::DBG_DBG, " [" << rc << "]");
 
 	// Get the array representing media box
 	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");

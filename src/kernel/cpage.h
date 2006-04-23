@@ -73,6 +73,9 @@ static double DEFAULT_PAGE_RX = 700;
 static double DEFAULT_PAGE_RY = 700;
 
 
+
+//=====================================================================================
+
 /**
  * CPage represents pdf page object. 
  *
@@ -95,7 +98,8 @@ public:
 
 	/** 
 	 * Constructor. 
-	 *
+	 * If the dicionary contains not empty content stream, it is parsed.
+	 * 
 	 * @param pageDict Dictionary representing pdf page.
 	 */
 	CPage (boost::shared_ptr<CDict>& pageDict);
@@ -212,10 +216,17 @@ public:
 
 
 
+	/**
+	 * Parse content stream. 
+	 * Content stream is optional property. When found it is parsed,
+	 * nothing is done otherwise.
+	 *
+	 * @return True if content stream was found and was parsed, false otherwise.
+	 */
+	bool parseContentStream ();
 
 
-
-//========================= unimplemented yet
+//========================= not implemented yet
 	
 	/**  
 	 * Returns plain text extracted from a page.

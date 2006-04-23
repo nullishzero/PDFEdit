@@ -51,7 +51,7 @@ SimpleGenericOperator::getStringRepresentation (std::string& str) const
 UnknownPdfOperator::UnknownPdfOperator (Operands& opers, const string& opTxt)
 	: opText (opTxt)
 {
-	printDbg (DBG_DBG, "Unknown operator: " << opTxt);
+	printDbg (DBG_DBG, opTxt);
 
 	//
 	// Store the operands and remove it from opers
