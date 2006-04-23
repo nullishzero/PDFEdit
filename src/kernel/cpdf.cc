@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.37  2006/04/23 13:14:02  hockm0bm
+ * clone method implemented
+ *
  * Revision 1.36  2006/04/22 20:12:50  hockm0bm
  * Last commit was accident
  * getInstance catches exceptions possibly thrown in CPdf and throws
@@ -1890,11 +1893,20 @@ void CPdf::save(bool newRevision)
 	xref->saveChanges(newRevision);
 }
 
-void CPdf::clone(FILE * fname)const
+void CPdf::clone(FILE * file)const
 {
-	throw NotImplementedException("CPdf::clone");
-	// copies everything until xref->getLastXRefPos
-	// copy also xref and trailer
+using namespace debug;
+
+	printDbg(DBG_DBG, "");
+
+	if(!file)
+	{
+		printDbg(DBG_ERR, "output file is NULL");
+		return;
+	}
+	
+	// delagates to XRefWriter
+	xref->cloneRevision(file);
 }
 
 } // end of pdfobjects namespace
