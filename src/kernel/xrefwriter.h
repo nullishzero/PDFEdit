@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/04/23 15:09:34  hockm0bm
+ * note for getRefisionEOF method in documentation
+ *
  * Revision 1.14  2006/04/23 13:13:20  hockm0bm
  * * getRevisionEnd method added
  *         - to get end of stream contnet for current revision
@@ -388,7 +391,8 @@ public:
 	 * This method assumes that revision has been added by incremental update
 	 * and no object from this revision can be behind this position.
 	 * <br>
-	 * If revision is 0 (the newest one) eofPos is returned.
+	 * If revision is 0 (the newest one) eofPos is returned, this is not proper
+	 * for linearized Pdfs!
 	 *
 	 * @return Offset immeediately after last information for this revision.
 	 */
