@@ -97,7 +97,7 @@ CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (debug::DBG_DBG,"text:" << strO);
 
-	if (isInValidPdf(this))
+	if (isInValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
@@ -275,7 +275,7 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 	std::string rpr;
 	getStringRepresentation (rpr);
 
-	if (isInValidPdf(this))
+	if (isInValidPdf (this))
 		return utils::xpdfObjFromString (rpr, IProperty::getPdf()->getCXref());
 	else
 		return utils::xpdfObjFromString (rpr);
@@ -457,7 +457,7 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	}else
 		throw CObjInvalidObject ();
 
-	if (isInValidPdf (this));
+	if (isInValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
