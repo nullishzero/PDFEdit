@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/23 13:13:20  hockm0bm
+ * * getRevisionEnd method added
+ *         - to get end of stream contnet for current revision
+ * * cloneRevision method added
+ *         - to support cloning of pdf in certain revision
+ *
  * Revision 1.11  2006/04/21 20:38:08  hockm0bm
  * saveChanges writes indirect objects correctly
  *         - uses createIndirectObjectStringFromString method
@@ -576,4 +582,46 @@ void XRefWriter::changeRevision(unsigned revNumber)
 	// which points to start of xref section for that revision
 	size_t off=revisions[revNumber];
 	reopen(off);
+}
+
+size_t XRefWriter::getRevisionEnd()const
+{
+	// the newest revision ends at eofPos
+	if(!revision)
+		return eofPos;
+	
+	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(str);
+
+	// starts from last xref position
+	streamWriter->setPos(lastXRefPos);
+	char buffer[BUFSIZ];
+	size_t length=0;
+	memset(buffer, '\0', sizeof(buffer));
+	while(streamWriter->getLine(buffer, sizeof(buffer)))
+	{
+		if(!strncmp(buffer, STARTXREF_KEYWORD, strlen(STARTXREF_KEYWORD)))
+		{
+			// we have found startstreamWriter key word, next line should contain
+			// value of offset - this information is not important, we just have
+			// to get behind and calculates number of bytes
+			streamWriter->getLine(buffer, sizeof(buffer));
+			break;
+		}
+	}
+
+	// returns current position
+	return streamWriter->getPos();
+}
+
+void XRefWriter::cloneRevision(FILE * file)const
+{
+using namespace debug;
+
+	printDbg(DBG_ERR, "");
+
+	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(str);
+	size_t revisionEOF=getRevisionEnd();
+
+	printDbg(DBG_DBG, "Copies until "<<revisionEOF<<" offset");
+	streamWriter->clone(file, 0, revisionEOF);
 }

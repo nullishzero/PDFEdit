@@ -6,6 +6,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/04/23 13:13:20  hockm0bm
+ * * getRevisionEnd method added
+ *         - to get end of stream contnet for current revision
+ * * cloneRevision method added
+ *         - to support cloning of pdf in certain revision
+ *
  * Revision 1.13  2006/04/19 06:00:23  hockm0bm
  * * changeRevision - first implementation (not tested yet)
  * * collectRevisions -  first implementation (not tested yet)
@@ -116,6 +122,8 @@ namespace pdfobjects
  *	Changes can be made only in newest revision. Older revisions are only 
  *	read-only. (getRevisionCount, getActualRevision, changeRevision 
  *	methods).
+ * <li> enables writing content to the stream and duplication of current revision
+ * to other file.
  * </ul>
  * <br>
  * Each public method which produces content changes checks whether associated 
@@ -368,6 +376,33 @@ public:
 		// revisions contains all revisions
 		return revisions.size();
 	}
+
+	/** Returns end of current revision offset. 
+	 *
+	 * Finds startxref from current startXRefPos and returns offset to the first
+	 * byte after xref offset number line or end of stream position if startxref
+	 * has not been found.
+	 * <p>
+	 * <b>Implementation notes:</b>
+	 * <br>
+	 * This method assumes that revision has been added by incremental update
+	 * and no object from this revision can be behind this position.
+	 * <br>
+	 * If revision is 0 (the newest one) eofPos is returned.
+	 *
+	 * @return Offset immeediately after last information for this revision.
+	 */
+	size_t getRevisionEnd()const;
+
+	/** Clones content of stream until end of current position.
+	 * @param file File handle where to copy content.
+	 * 
+	 * Clone contains everything from stream starting from 0 position until 
+	 * getRevisionEnd.
+	 * <br>
+	 * @see XRefWriter::getRevisionEnd for limitations.
+	 */
+	void cloneRevision(FILE * file)const;
 
 	/**********************************************************************
 	 *
