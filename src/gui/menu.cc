@@ -117,8 +117,8 @@ QPixmap* Menu::getIcon(const QString name) {
  return pix; 
 }
 
-/** load one GUI item from config file, exiting application with fatal error if item not found 
- 
+/**
+ Load one GUI item from config file, exiting application with fatal error if item not found 
  @param name Name of the item to read
  @param root Root key to read from (default will be used if none specified)
  @return line from config file  
@@ -131,13 +131,24 @@ QString Menu::readItem(const QString name,const QString root/*="gui/items/"*/) {
 }
 
 /**
- load one menu item and insert it into parent menu. Recursively load subitems if item is a submenu.
-
+ Load one menu item and insert it into parent menu. Recursively load subitems if item is a submenu.
  @param name name of item to be loaded from config file
  @param isRoot TRUE if main menubar is being loaded
  @param parent parent menu item (if isRoot == TRUE, this is the root menubar to add items to)
  */ 
-void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=FALSE*/) {
+void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=FALSE*/,QStringList prev/*=QStringList()*/) {
+ //Check for cycles (unhandled cycle in menu = crash in QT)
+ if (prev.contains(name)) {
+  fatalError(QObject::tr("Cycle in menu detected")+":\n"+prev.join(" > ")+" > "+name);
+ }
+ prev+=name;
+ //Check Menu cache
+ if (mCache.contains(name)) {
+  //This item is already in cache, insert it
+  printDbg(debug::DBG_DBG,"MENU - Fetching from cache :" << name);
+  parent->insertItem(mCacheName[name],mCache[name]);
+  return;
+ }
  QPopupMenu *item=NULL;
  if (name=="-" || name=="") { //separator
   parent->insertSeparator();
@@ -152,12 +163,19 @@ void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=
   QStringList qs=explode(',',line);  
   QStringList::Iterator it=qs.begin();
   if (it!=qs.end()) { //add itself as popup menu to parent with given name
-   if (!isRoot) parent->insertItem(Settings::tr(*it,name),item);
+   if (!isRoot) {
+    QString menuName=Settings::tr(*it,name);
+    parent->insertItem(menuName,item);
+    //Add this item to cache
+    mCache[name]=item;
+    mCacheName[name]=menuName;
+   }
    ++it;
   } else invalidItem(QObject::tr("menu definition"),name,line,QObject::tr("parameter (name of list)"));
   for (;it!=qs.end();++it) { //load all subitems
-   if (!isRoot) loadItem(*it,item); else loadItem(*it,parent);
+   if (!isRoot) loadItem(*it,item,false,prev); else loadItem(*it,parent,false,prev);
   }
+
  } else if (line.startsWith("item ")) { // A single item
   line=line.remove(0,5);
   //Format: Caption, Action,[,accelerator, [,menu icon]]
@@ -204,7 +222,12 @@ QMenuBar* Menu::loadMenu(QWidget *parent) {
  @return true if accelerator was not in list before, false otherwise
 */
 bool Menu::reserveAccel(const QString &accelDef,const QString &action) {
- if (accels.contains(accelDef)) return false;
+ if (accels.contains(accelDef)) {
+  if (accels[accelDef]!=action) {
+   printDbg(debug::DBG_WARN,"Attempt to redefine accel " << accelDef << " from '" << accels[accelDef] << "' to '" << action << "'");
+  }
+  return false;
+ }
  accels[accelDef]=action;
  return true;
 }

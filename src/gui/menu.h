@@ -24,6 +24,10 @@ typedef QMap<QString, QPixmap*> IconCache;
 typedef QMap<QString, ToolBar*> ToolBarList;
 /** Mapping from accel name to widget that have this accel */
 typedef QMap<QString, QString> AccelList;
+/** Cache of already defined menu items (some menus may be used on more than one place) */
+typedef QMap<QString, QPopupMenu*> MenuCache;
+/** Cache of already defined menu items (names) */
+typedef QMap<QString, QString> MenuNames;
 
 class Menu {
 public:
@@ -43,7 +47,7 @@ private:
  int addAction(const QString action);
  QPixmap* getIcon(const QString name);
  QString readItem(const QString name,const QString root="gui/items/");
- void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE);
+ void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE,QStringList prev=QStringList());
  void loadToolBarItem(ToolBar *tb,QString item);
  ToolBar* loadToolbar(const QString name,QMainWindow *parent,bool visible=true);
 private:
@@ -63,6 +67,10 @@ private:
  ToolBarList toolbarList;
  /** List of installed accelerators */
  AccelList accels;
+ /** Cache for menu items */
+ MenuCache mCache;
+ /** Cache for menu items - names */
+ MenuNames mCacheName;
 };
 
 } // namespace gui
