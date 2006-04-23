@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/23 22:06:22  hockm0bm
+ * minor changes in PropertyEquals functor
+ *         - types are in parameters for better debuging
+ *
  * Revision 1.11  2006/04/21 20:36:57  hockm0bm
  * just comments for changes commited by Jozo
  * * propertyEquals changed by functor PropertyEquals
@@ -223,7 +227,11 @@ bool PropertyEquals::operator()(const boost::shared_ptr<IProperty> & val1, const
 using namespace debug;
 	
 	// types must be same
-	if(val1->getType()!=val2->getType())
+
+	PropertyType val1Type=val1->getType(),
+				 val2Type=val2->getType();
+	
+	if(val1Type!=val2Type)
 		return false;
 
 	// we have same type, so value has to be same too
