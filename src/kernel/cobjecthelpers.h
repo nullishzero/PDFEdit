@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/04/23 09:45:33  misuj1am
+ *
+ * -- started using helper methods in iproperty.h isInValidPdf, isArray ..
+ *
  * Revision 1.18  2006/04/21 11:02:07  misuj1am
  *
  * --Changes made by miso
@@ -244,8 +248,8 @@ getIntFromIProperty (const boost::shared_ptr<IProperty>& ip)
 inline double 
 getDoubleFromIProperty (const boost::shared_ptr<IProperty>& ip)
 {
-	return (pInt == ip->getType()) ? getValueFromSimple<CInt, pInt, int> (ip) :
-									 getValueFromSimple<CReal, pReal, double> (ip);
+	return (isInt (ip)) ? getValueFromSimple<CInt, pInt, int> (ip) :
+						 getValueFromSimple<CReal, pReal, double> (ip);
 }
 
 /** Get string from ip. */
@@ -301,7 +305,7 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& 
 	//
 	// If it is a Ref forward it to the real object
 	// 
-	if (pRef == ip->getType())
+	if (isRef (ip))
 	{
 		IndiRef ref;
 		IProperty::getSmartCObjectPtr<CRef>(ip)->getPropertyValue(ref);
@@ -325,8 +329,8 @@ template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
 {
-	assert (pDict == ip->getType ());
-	if (pDict != ip->getType ())
+	assert (isDict (ip));
+	if (isDict(ip))
 		throw ElementBadTypeException ("getTypeFromDictionary()");
 
 	// Cast it to dict
@@ -372,8 +376,8 @@ template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)
 {
-	assert (pArray == ip->getType ());
-	if (pArray != ip->getType ())
+	assert (isArray (ip));
+	if (isArray (ip))
 		throw ElementBadTypeException ("getSimpleValueFromArray()");
 
 	// Cast it to array
@@ -433,8 +437,8 @@ template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
 setSimpleValueInArray (const boost::shared_ptr<IProperty>& ip, size_t position, const Value& val)
 {
-	assert (pArray == ip->getType ());
-	if (pArray != ip->getType ())
+	assert (isArray (ip));
+	if (isArray (ip))
 		throw ElementBadTypeException ("");
 
 	// Cast it to array
@@ -487,7 +491,7 @@ getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 	//
 	// If it is a Ref forward it to the real object
 	// 
-	if (pRef == ip->getType())
+	if (isRef (ip))
 	{
 		IndiRef ref;
 		IProperty::getSmartCObjectPtr<CRef>(ip)->getPropertyValue(ref);
@@ -511,8 +515,8 @@ template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
 {
-	assert (pArray == ip->getType ());
-	if (pArray != ip->getType ())
+	assert (isArray (ip));
+	if (isArray (ip))
 		throw ElementBadTypeException ("getTypeFromArray()");
 
 	// Cast it to dict

@@ -266,7 +266,7 @@ namespace {
 						
 						shared_ptr<IProperty> cobj;
 						// Create CObject from it
-						if (NULL != pdf)
+						if (isInValidPdf(pdf))
 							cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
 						else
 							cobj = shared_ptr<IProperty> (createObjFromXpdfObj (obj));
@@ -308,7 +308,7 @@ namespace {
 
 						shared_ptr<IProperty> cobj;
 						// Create CObject from it
-						if (NULL != pdf)
+						if (isInValidPdf (pdf))
 							cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
 						else
 							cobj = shared_ptr<IProperty> (createObjFromXpdfObj (obj));
@@ -932,11 +932,11 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 bool
 objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 {
-	CPdf* pdf = ip.getPdf ();
-	assert (NULL != pdf);
-	if (NULL == pdf)
+	assert (isInValidPdf (ip));
+	if (isInValidPdf (ip))
 		throw CObjInvalidOperation ();
 
+	CPdf* pdf = ip.getPdf ();
 	if ( &ip == (indiObj=pdf->getIndirectProperty(ip.getIndiRef())).get() )
 		return false;
 	else

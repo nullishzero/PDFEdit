@@ -68,14 +68,11 @@ IProperty::setPdf (CPdf* p)
 void 
 IProperty::dispatchChange () const
 {
-	printDbg (debug::DBG_DBG,"CObjectComplex::dispatchChange() [" << (int)this << "]" );
+	assert (isInValidPdf (this));
+	if (!isInValidPdf (this))
+		throw CObjInvalidObject ();
 
-	//
-	// Check if we are in a pdf. If not, we have nowhere to dispatch the change
-	//
-	CPdf* pdf = IProperty::getPdf ();
-	if (NULL == pdf)
-		return;
+	printDbg (debug::DBG_DBG,"CObjectComplex::dispatchChange() [" << (int)this << "]" );
 
 	//
 	// If this is an indirect object inform xref about the change
@@ -98,6 +95,8 @@ IProperty::dispatchChange () const
 	}else
 	{
 		// Indicate to pdf that it should change this object
+		CPdf* pdf = IProperty::getPdf ();
+		assert (pdf);
 		pdf->changeIndirectProperty (indiObj);
 	}
 }

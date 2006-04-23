@@ -251,6 +251,10 @@ private:
 	 */
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
+		// Do not notify anything if we are not in a valid pdf
+		if (!isInValidPdf (this))
+			return;
+		
 		// Dispatch the change
 		IProperty::dispatchChange ();
 		
@@ -324,12 +328,6 @@ PropertyTraitComplex<pDict>::value::value_type
  * The specific features are implemented using c++ feature called Incomplete Instantiation.
  * It means that, when it is not used, it is not instatiated, so e.g. CArray won't have
  * addProperty (IProperty& ,string&) method.
- *
- * This class can be both, a final class (no child objects) or a parent to a special class.
- *
- * When it is not a final class, it is a special object (CPdf, CPage,...). We can
- * find this out by calling virtual method getSpecialObjType(). 
- * This can be helpful for example for special manipulation with content stream, xobjects, ...
  */
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : public IProperty
@@ -449,14 +447,6 @@ public:
 			fctor (utils::constructIdPairFromIProperty (pos, *it));
 		}
 	}
-	
-	/**
-	 * Returns if it is one of special objects CPdf,CPage etc.
-	 *
-	 * @return Type of special object.
-	 */
-	virtual SpecialObjectType getSpecialObjType() const {return sNone;};
-
 	
 	/**
 	 * Destructor
@@ -592,6 +582,10 @@ private:
 	void _objectChanged (boost::shared_ptr<IProperty> newValue, 
 						 boost::shared_ptr<const ObserverContext> context)
 	{
+		// Do not notify anything if we are not in a valid pdf
+		if (!isInValidPdf (this))
+			return;
+
 		// Dispatch the change
 		IProperty::dispatchChange ();
 		
@@ -599,6 +593,7 @@ private:
 		{
 			// Notify everybody about this change
 			IProperty::notifyObservers (newValue, context);
+
 		}else
 			throw CObjInvalidOperation ();
 	}
@@ -771,6 +766,10 @@ private:
 	 */
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
+		// Do not notify anything if we are not in a valid pdf
+		if (!isInValidPdf (this))
+			return;
+
 		// Dispatch the change
 		IProperty::dispatchChange ();
 			
@@ -779,6 +778,7 @@ private:
 			assert (!"Not implemented yet");
 			// Notify everybody about this change
 			IProperty::notifyObservers (*this, context);
+
 		}else
 			throw CObjInvalidOperation ();
 	}

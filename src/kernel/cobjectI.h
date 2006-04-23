@@ -44,7 +44,6 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
 {
 	Checker check; check.objectCreated (this);
-	//assert (NULL == p.getIndirectProperty (rf).get()); TODO
 	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Set object's value
@@ -188,7 +187,6 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
-	// assert (NULL == p.getIndirectProperty (rf)); TODO
 	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Build the tree from xpdf object
@@ -202,7 +200,6 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (Object& o)
 {
 	Checker check; check.objectCreated (this);
-	// assert (NULL == p.getIndirectProperty (rf)); TODO
 	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Build the tree from xpdf object
@@ -254,7 +251,7 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 	std::string rpr;
 	getStringRepresentation (rpr);
 
-	if (NULL != IProperty::getPdf())
+	if (isInValidPdf(this))
 		return utils::xpdfObjFromString (rpr, IProperty::getPdf()->getCXref());
 	else
 		return utils::xpdfObjFromString (rpr);
@@ -559,7 +556,7 @@ CObjectComplex<Tp,Checker>::doClone () const
 	for (; it != value.end (); ++it)
 	{
 		boost::shared_ptr<IProperty> newIp = utils::getIPropertyFromItem(*it)->clone ();
-		assert (NULL != newIp.get ());
+		assert (newIp);
 		typename Value::value_type item =  utils::constructItemFromIProperty (*it, newIp);
 		clone_->value.push_back (item);
 	}

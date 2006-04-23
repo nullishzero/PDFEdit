@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  iproperty.h
@@ -49,13 +50,6 @@ enum PropertyType
 		pOther1 = objError,
 		pOther2 = objEOF,
 		pOther3 = objNone
-};
-
-
-/** Enum describing the type of a special object. */
-enum SpecialObjectType 
-{
-		sNone, sPdf, sPage, sPageTree, sContentStream
 };
 
 
@@ -312,7 +306,32 @@ protected:
 }; /* class IProperty */
 
 
-} /* namespace pdfobjects */
+//
+// Helper functions
+//
+
+/** Does property belong to a valid pdf. */
+inline bool isInValidPdf (CPdf* pdf) {return (NULL != pdf);}
+inline bool isInValidPdf (const IProperty& ip) {return (NULL != ip.getPdf());}
+template<typename T> inline bool isInValidPdf (T ip) {return (NULL != ip->getPdf());}
+//
+template<PropertyType Type>
+inline bool isIPType (boost::shared_ptr<IProperty> ip) {return (Type == ip->getType());}
+/** Is IProperty of specified type. */
+template<typename T> inline bool isNull	 (T ip) {return isIPType<pNull> (ip);}
+template<typename T> inline bool isInt 	 (T ip) {return isIPType<pInt> (ip);}
+template<typename T> inline bool isReal  (T ip) {return isIPType<pReal> (ip);}
+template<typename T> inline bool isString(T ip) {return isIPType<pString> (ip);}
+template<typename T> inline bool isName  (T ip) {return isIPType<pName> (ip);}
+template<typename T> inline bool isRef 	 (T ip) {return isIPType<pRef> (ip);}
+template<typename T> inline bool isDict  (T ip) {return isIPType<pDict> (ip);}
+template<typename T> inline bool isArray (T ip) {return isIPType<pArray> (ip);}
+template<typename T> inline bool isStream(T ip) {return isIPType<pStream> (ip);}
+	
+
+// =====================================================================================
+} // namespace pdfobjects
+// =====================================================================================
 
 
 #endif  //_IPROPERTY_H
