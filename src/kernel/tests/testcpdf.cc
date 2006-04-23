@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/04/23 11:16:48  hockm0bm
+ * pageManipulationTC added
+ *         - insertPage, removePage test cases
+ *
  * Revision 1.7  2006/04/22 19:46:12  hockm0bm
  * test case Test added to CPPUnit tests of CPdf suite
  *
@@ -130,6 +134,47 @@ public:
 			CPPUNIT_ASSERT(pdf->hasNextPage(pdf->getPage(i)));
 		}
 	}
+
+	void pageManipulationTC(CPdf * pdf)
+	{
+	using namespace boost;
+
+		printf("%s\n", __FUNCTION__);
+
+		printf("TC01\tremovePage, insertPage changes pageCount\n");
+		size_t pageCount=pdf->getPageCount();
+		shared_ptr<CPage> page=pdf->getPage(1);
+		// remove page implies pageCount decrementation test
+		pdf->removePage(1);
+		CPPUNIT_ASSERT(pageCount-1==pdf->getPageCount());
+		// insert page implies pageCount incrementation test
+		// and newPage must be defferent instance than original one
+		shared_ptr<CPage> newPage=pdf->insertPage(page, 1);
+		CPPUNIT_ASSERT(pageCount==pdf->getPageCount());
+
+		printf("TC02\tinsertPage returns different instance than parameter\n");
+		CPPUNIT_ASSERT(page!=newPage);
+
+		printf("TC03\t removePage out of range test\n");
+		// remove from 0 page should fail
+		try
+		{
+			pdf->removePage(0);
+			CPPUNIT_FAIL("removePage should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// everything ok
+		}
+		// remove from pageCount()+1 should fail
+		try
+		{
+			pdf->removePage(pdf->getPageCount()+1);
+			CPPUNIT_FAIL("removePage should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// everything ok
+		}
+	}
 	
 	void setUp()
 	{
@@ -163,6 +208,7 @@ public:
 		{
 			// all tests for page itaration
 			pageIterationTC(*i);
+			pageManipulationTC(*i);
 		}
 	}
 };
