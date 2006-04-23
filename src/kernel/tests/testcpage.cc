@@ -94,7 +94,7 @@ mediabox (ostream& __attribute__((unused)) oss, const char* fileName)
 //=====================================================================================
 
 bool
-display (ostream& /*oss*/, const char* fileName)
+display (ostream& __attribute__((unused)) oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
@@ -133,7 +133,7 @@ class TestCPage : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCPage);
 		CPPUNIT_TEST(Test);
-		//CPPUNIT_TEST(TestDisplay);
+		CPPUNIT_TEST(TestDisplay);
 	CPPUNIT_TEST_SUITE_END();
 
 public:

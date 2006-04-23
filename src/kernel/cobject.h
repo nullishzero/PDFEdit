@@ -529,6 +529,8 @@ public:
 	 * @param newIp 		New property.
 	 * @param propertyName 	Name of the created property.
 	 *
+	 * \TODO SET PDF AND REF
+	 * 
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
