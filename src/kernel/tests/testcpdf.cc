@@ -4,6 +4,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/04/23 22:09:48  hockm0bm
+ * * pageIterationTC finished
+ *         - all tests are ok
+ * * pageManipulationTC
+ *         - almost finised (interNode removing is TODO)
+ *         - all tests until now are ok
+ * * revisionsTC
+ *         - just skeleton
+ *
  * Revision 1.8  2006/04/23 11:16:48  hockm0bm
  * pageManipulationTC added
  *         - insertPage, removePage test cases
@@ -21,12 +30,8 @@
 
 #include "testmain.h"
 #include "testcpdf.h"
-
-namespace {
-
-
-
-} // end of annonym namespace
+#include "../factories.h"
+#include "../cobjecthelpers.h"
 
 class TestCPdf: public CppUnit::TestFixture
 {
@@ -45,6 +50,7 @@ public:
 	void pageIterationTC(CPdf * pdf)
 	{
 	using namespace boost;
+	using namespace utils;
 
 		printf("%s\n", __FUNCTION__);
 		
@@ -75,12 +81,15 @@ public:
 			}
 		}
 		
-		printf("TC03\tgetPage, getFirstPage and getLastPage test\n");
-		CPPUNIT_ASSERT(pdf->getPage(1)==pdf->getFirstPage());
-		CPPUNIT_ASSERT(pdf->getPage(pdf->getPageCount())==pdf->getLastPage());
+		printf("TC03:\tgetPage, getFirstPage and getLastPage test\n");
+		if(pdf->getPageCount())
+		{
+			CPPUNIT_ASSERT(pdf->getPage(1)==pdf->getFirstPage());
+			CPPUNIT_ASSERT(pdf->getPage(pdf->getPageCount())==pdf->getLastPage());
+		}
 
 		// out of range page positions must throw
-		printf("TC04\tgetPage, getNextPage, getPrevPage out of range test\n");
+		printf("TC04:\tgetPage, getNextPage, getPrevPage out of range test\n");
 
 		// 0 page is out of range
 		try
@@ -105,7 +114,7 @@ public:
 		try
 		{
 			pdf->getPrevPage(pdf->getFirstPage());
-			CPPUNIT_FAIL("getPrevPage(getFirstPage()) should have filed");
+			CPPUNIT_FAIL("getPrevPage(getFirstPage()) should have failed");
 		}catch(PageNotFoundException &e)
 		{
 			// ok, exception has been thrown
@@ -115,47 +124,121 @@ public:
 		try
 		{
 			pdf->getNextPage(pdf->getLastPage());
-			CPPUNIT_FAIL("getNextPage(getLastPage()) should have filed");
+			CPPUNIT_FAIL("getNextPage(getLastPage()) should have failed");
 		}catch(PageNotFoundException &e)
 		{
 			// ok, exception has been thrown
 		}
 
-		printf("TC05\thasNextPage, hasPrevPage test\n");
+		printf("TC05:\thasNextPage, hasPrevPage test\n");
 
-		// first page hasPrevPage should return false
-		CPPUNIT_ASSERT(!pdf->hasPrevPage(pdf->getFirstPage()));
-		// last page hasNextPage should return false
-		CPPUNIT_ASSERT(!pdf->hasNextPage(pdf->getLastPage()));
-		// hasNextPage and hasPrevPage should return true for all other pages
-		for(size_t i=2; i<pageCount; i++)
+		if(pdf->getPageCount())
 		{
-			CPPUNIT_ASSERT(pdf->hasPrevPage(pdf->getPage(i)));
-			CPPUNIT_ASSERT(pdf->hasNextPage(pdf->getPage(i)));
+			// first page hasPrevPage should return false
+			CPPUNIT_ASSERT(!pdf->hasPrevPage(pdf->getFirstPage()));
+			// last page hasNextPage should return false
+			CPPUNIT_ASSERT(!pdf->hasNextPage(pdf->getLastPage()));
+			// hasNextPage and hasPrevPage should return true for all other 
+			// pages
+			for(size_t i=2; i<pageCount; i++)
+			{
+				CPPUNIT_ASSERT(pdf->hasPrevPage(pdf->getPage(i)));
+				CPPUNIT_ASSERT(pdf->hasNextPage(pdf->getPage(i)));
+			}
 		}
+
+		printf("TC06:\tgetPagePosition, getNextPage, getPrevPage with fake page parameter test\n");
+		// page from empty page dictionary - no pdf specified inside
+		/* TODO uncoment when ready
+		shared_ptr<CDict> fakeDict1(CDictFactory::getInstance());
+		shared_ptr<CPage> fake1(new CPage(fakeDict1));
+		Object fakeXpdfDict;
+		XRef * fakeXref=pdf->getCXref();
+		fakeXpdfDict.initDict(fakeXref);
+		IndiRef fakeIndiRef={10, 0};
+		shared_ptr<CDict> fakeDict2(CDictFactory::getInstance(*pdf, fakeIndiRef, fakeXpdfDict));
+		shared_ptr<CPage> fake2(new CPage(fakeDict2));
+
+		// getPagePosition should fail on both fakes
+		try
+		{
+			pdf->getPagePosition(fake1);
+			CPPUNIT_FAIL("getPagePosition(fake1) should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// ok, exception has been thrown
+		}
+		try
+		{
+			pdf->getPagePosition(fake2);
+			CPPUNIT_FAIL("getPagePosition(fake2) should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// ok, exception has been thrown
+		}
+
+		// getPrevPage should fail on both fakes
+		try
+		{
+			pdf->getPrevPage(fake1);
+			CPPUNIT_FAIL("getPrevPage(fake1) should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// ok, exception has been thrown
+		}
+		try
+		{
+			pdf->getPrevPage(fake2);
+			CPPUNIT_FAIL("getPrevPage(fake2) should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// ok, exception has been thrown
+		}
+
+		// getNextPage should fail on both fakes
+		try
+		{
+			pdf->getNextPage(fake1);
+			CPPUNIT_FAIL("getNextPage(fake1) should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// ok, exception has been thrown
+		}
+		try
+		{
+			pdf->getNextPage(fake2);
+			CPPUNIT_FAIL("getNextPage(fake2) should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			// ok, exception has been thrown
+		}
+		*/
 	}
 
 	void pageManipulationTC(CPdf * pdf)
 	{
 	using namespace boost;
+	using namespace utils;
 
 		printf("%s\n", __FUNCTION__);
 
-		printf("TC01\tremovePage, insertPage changes pageCount\n");
+		printf("TC01:\tremovePage, insertPage changes pageCount\n");
 		size_t pageCount=pdf->getPageCount();
 		shared_ptr<CPage> page=pdf->getPage(1);
 		// remove page implies pageCount decrementation test
 		pdf->removePage(1);
+		pdf->save();
+
 		CPPUNIT_ASSERT(pageCount-1==pdf->getPageCount());
 		// insert page implies pageCount incrementation test
 		// and newPage must be defferent instance than original one
 		shared_ptr<CPage> newPage=pdf->insertPage(page, 1);
 		CPPUNIT_ASSERT(pageCount==pdf->getPageCount());
 
-		printf("TC02\tinsertPage returns different instance than parameter\n");
+		printf("TC02:\tinsertPage returns different instance than parameter\n");
 		CPPUNIT_ASSERT(page!=newPage);
 
-		printf("TC03\t removePage out of range test\n");
+		printf("TC03:\tremovePage out of range test\n");
 		// remove from 0 page should fail
 		try
 		{
@@ -174,6 +257,89 @@ public:
 		{
 			// everything ok
 		}
+
+		printf("TC04:\tremoved page is no longer available test\n");
+		// try to remove last page
+		shared_ptr<CPage> removedPage=pdf->getLastPage();
+		pdf->removePage(pdf->getPageCount());
+		// FIXME uncoment when ready
+		//CPPUNIT_ASSERT(! removePage->isValid());
+		try
+		{
+			pdf->getPagePosition(removedPage);
+			CPPUNIT_FAIL("getPagePosition on removed page should have failed.");
+		}catch(PageNotFoundException & e)
+		{
+			/* ok, it should fail */
+		}
+		// restore to previous state and returns back last page
+		pdf->insertPage(removedPage, pdf->getPageCount()+1);
+
+		printf("TC05:\tremoving page's dictionary invalidates page\n");
+		page=pdf->getPage(1);
+		shared_ptr<CDict> pageDict=page->getDictionary();
+		shared_ptr<CRef> pageRef(CRefFactory::getInstance(pageDict->getIndiRef()));
+		// gets parent of page dictionary and removes reference of this page
+		// from Kids array
+		shared_ptr<CRef> parentRef=IProperty::getSmartCObjectPtr<CRef>(pageDict->getProperty("Parent"));
+		shared_ptr<CDict> parentDict=IProperty::getSmartCObjectPtr<CDict>(
+				pdf->getIndirectProperty(getValueFromSimple<CRef, pRef, IndiRef>(parentRef)));
+		shared_ptr<CArray> kidsArray=IProperty::getSmartCObjectPtr<CArray>(
+				parentDict->getProperty("Kids"));
+		vector<CArray::PropertyId> positions;
+		getPropertyId<CArray, vector<CArray::PropertyId> >(kidsArray, pageRef, positions);
+		CPPUNIT_ASSERT(positions.size()>0);
+		kidsArray->delProperty(positions[0]);
+		// FIXME uncoment when ready
+		//CPPUNIT_ASSERT(! page->isValid());
+		try
+		{
+			pdf->getPagePosition(page);
+			CPPUNIT_FAIL("getPagePosition on removed page should have failed");
+		}catch(PageNotFoundException & e)
+		{
+			/* ok, it should fail */
+		}
+		
+		printf("TC06:\tremovig inter node removes all pages under\n");
+		// Uses 1st page parent from previous test case
+		// paretDict has to be different from root of page tree
+		PropertyEquals pe;
+		if(pe(pdf->getDictionary()->getProperty("Pages"), parentDict))
+			printf("\t\tnot suitable test input data\n");
+		else
+		{
+			// collects all pages under this node
+			// gets parent's parent and removes parent from kids array
+			// all collected pages should be invalidated
+			// TODO
+		}
+	}
+
+/** Multiversion file name. */
+#define MV_F "multiversion.pdf"
+
+/** Multiversion revisin count. */
+#define MV_RC  2
+
+	void revisionsTC()
+	{
+		printf("%s\n", __FUNCTION__);
+
+		// opens special test file
+		CPdf *pdf=getTestCPdf(MV_F);
+
+		// number of revision must match
+		printf("TC01:\tRevisions count test\n");
+		CPPUNIT_ASSERT(pdf->getRevisionsCount()==MV_RC);
+		pdf->close();
+
+		printf("TC02:\tchangeRevision tests\n");
+		for(CPdf::revision_t i=1; i<pdf->getRevisionsCount(); i++)
+			pdf->changeRevision(i);
+		// TODO prepare test data with multiple revision each
+		// specific by pagecount
+		
 	}
 	
 	void setUp()
@@ -207,8 +373,10 @@ public:
 		for(PdfList::iterator i=pdfs.begin(); i!=pdfs.end(); i++)
 		{
 			// all tests for page itaration
+			
 			pageIterationTC(*i);
 			pageManipulationTC(*i);
+			revisionsTC();
 		}
 	}
 };
