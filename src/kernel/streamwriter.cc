@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/04/23 13:11:38  hockm0bm
+ * clone method added to StreamWriter
+ *
  * Revision 1.5  2006/04/20 20:22:40  hockm0bm
  * charachter writing moves position - uses setPos() in both putChar and putLine
  *
@@ -27,6 +30,14 @@
 #include <errno.h>
 #include"streamwriter.h"
 
+/** Returns minimum of given values.
+ * @param a Value to compare.
+ * @param b Value to compare.
+ *
+ */
+#define min(a, b)\
+	((a)<(b))?(a):(b)
+
 //TODO use stream encoding
 
 void FileStreamWriter::putChar(int ch)
@@ -47,4 +58,37 @@ void FileStreamWriter::putLine(const char * line)
 	int writen=fprintf(f, "%s\n", line);
 	fflush(f);
 	setPos(pos+writen);
+}
+
+size_t FileStreamWriter::clone(FILE * file, size_t start, size_t length)
+{
+	if(!file)
+		return 0;
+
+	// if length is negative value, content until file end is duplicated
+	bool wholeContent=false;
+	if(length=0)
+		wholeContent=true;
+		
+	
+	setPos(start);
+	char buffer[BUFSIZ];
+	size_t read=0;
+	size_t writen=0, totalWriten=0;
+
+	// copies content until there is something to read or length is fulfilled.
+	while((read=fread(buffer, sizeof(char), min(BUFSIZ, length), f))>0)
+	{
+		// TODO be sure all bytes were writen
+		if((writen=fwrite(buffer, sizeof(char), read, file))<=0)
+			break;
+		totalWriten+=writen;
+
+		// if we don't copy whole content, we will decreases total length to be
+		// written
+		if(!wholeContent)
+			length-=writen;
+	}
+
+	return totalWriten;
 }

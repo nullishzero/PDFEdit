@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/04/23 13:11:38  hockm0bm
+ * clone method added to StreamWriter
+ *
  * Revision 1.3  2006/04/20 20:22:40  hockm0bm
  * charachter writing moves position - uses setPos() in both putChar and putLine
  *
@@ -61,6 +64,18 @@ public:
 	 * Given string is appended by newline character. 
 	 */
 	virtual void putLine(const char * line)=0;
+	
+	/** Duplicates content to given file.
+	 * @param file File where to put duplicated content.
+	 * @param start Position where to start duplication.
+	 * @param length Number of bytes to be duplicated.
+	 *
+	 * Copies up to length bytes from start postion from stream to given file.
+	 * If length is 0, copies content until end of stream.
+	 *
+	 * @return number of bytes writen to given file.
+	 */ 
+	virtual size_t clone(FILE * file, size_t start, size_t length) =0;
 };
 
 /** FileStream writer.
@@ -92,6 +107,18 @@ public:
 	 * @see BaseStreamWriter::putLine
 	 */
 	virtual void putLine(const char * line);
+
+	/** Duplicates content ro given file.
+	 * @param file File where to put duplicated content.
+	 * @param start Position where to start duplication.
+	 * @param length Number of bytes to be duplicated.
+	 *
+	 * Copies up to length bytes from start postion from stream to given file.
+	 * If length is 0, copies content until end of stream.
+	 *
+	 * @return number of bytes writen to given file.
+	 */ 
+	virtual size_t clone(FILE * file, size_t start, size_t length);
 };
 
 #endif
