@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.36  2006/04/23 10:37:53  hockm0bm
+ * insertPage and removePage
+ *         - AmbiguouPageTreeException added to documentation
+ *
  * Revision 1.35  2006/04/22 20:11:06  hockm0bm
  * bug fix corrected
  *         - hasNextPage, hasPrevPage returns true if successful
@@ -852,7 +856,8 @@ public:
 	 *
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
 	 * older revision (where no changes are allowed).
-	 * @throw TODO for ambigues.
+	 * @throw AmbiguesPageTreeException if page can't be inserted to given
+	 * position because of ambiguous page tree.
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
 
@@ -874,7 +879,8 @@ public:
 	 * @throw PageNotFoundException if given page couldn't be found.
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
 	 * older revision (where no changes are allowed).
-	 * @throw TODO for ambigues.
+	 * @throw AmbiguesPageTreeException if page can't be inserted to given
+	 * position because of ambiguous page tree.
 	 */
 	void removePage(size_t pos);
 
