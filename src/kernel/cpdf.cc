@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.38  2006/04/23 15:12:58  hockm0bm
+ * changeIndirectProperty behaviour changed
+ *         - indirect mapping removed only if given property is different
+ *           instance than given one
+ *         - throws CObjInvalidObject exception is thrown if prop is not from this
+ *           pdf or mapping doesn't exist
+ *
  * Revision 1.37  2006/04/23 13:14:02  hockm0bm
  * clone method implemented
  *
@@ -688,7 +695,7 @@ using namespace pdfobjects::utils;
 	if(dictType!="Pages")
 		return;
 
-	printDbg(DBG_DBG, "reference to Pages dictionary.");
+	printDbg(DBG_DBG, "Intermediate node. Registers to Kids array and all its elements");
 
 	// gets Kids field from dictionary and all children from array and 
 	// registers observer to array and to each member reference
@@ -1137,9 +1144,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	if(prop->getPdf() != this)
 	{
 		printDbg(DBG_ERR, "Given property is not from same pdf.");
-		// TODO throw an exception
-		return;
-
+		throw CObjInvalidObject();
 	}
 	// there must be mapping fro prop's indiref, but it doesn't have to be same
 	// instance.
@@ -1147,8 +1152,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	if(indMap.find(indiRef)==indMap.end())
 	{
 		printDbg(DBG_ERR, "Indirect mapping doesn't exist. prop seams to be fake.");
-		// TODO throw an exception
-		return;
+		throw CObjInvalidObject();
 	}
 
 	// gets xpdf Object instance and calls xref->change
@@ -1159,12 +1163,19 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	xref->changeObject(indiRef.num, indiRef.gen, propObject);
 	utils::freeXpdfObject(propObject);
 
-	// invalidates indMap mapping for this property
-	// This is because prop may be something different than original indirect
-	// property not just different state of same property. Mapping is created
-	// again when it is needed (when getIndirectProperty is called)
-	indMap.erase(indiRef);
-	printDbg(DBG_INFO, "Indirect mapping removed for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+	// checks whether prop is same instance as one in mapping. If so, keeps
+	// indirect mapping, because it has just changed some of its direct fields. 
+	// Otherwise removes it, because new value is something totaly different. 
+	// Mapping will be created in next getIndirectProperty call.
+	if(prop==getIndirectProperty(indiRef))
+	{
+		printDbg(DBG_INFO,  "Indirect mapping kept for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+	}
+	else
+	{
+		indMap.erase(indiRef);
+		printDbg(DBG_INFO, "Indirect mapping removed for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+	}
 }
 
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
@@ -1754,18 +1765,33 @@ using namespace utils;
 		printDbg(DBG_INFO, "inserting after (new last page) position="<<storePostion);
 	}
 
-	// search for page at storePostion and gets its reference
-	// page dictionary has to be an indirect object, so getIndiRef returns
-	// dictionary reference
-	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("Pages"), 1, storePostion);
-	shared_ptr<CRef> currRef(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
-	
-	// gets parent of found dictionary which maintains Kids array
-	// TODO this may be problem - because there may be only one page in
-	// document which could have no parent (normal document have one intemediate
-	// node also for 1 page in document)
-	shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
-	shared_ptr<CDict> interNode_ptr=getDictFromRef(parentRef_ptr);
+	// gets intermediate node where to insert new page
+	// in degenerated case, when there are no pages in the tree, we have to
+	// handle it special way
+	shared_ptr<CDict> interNode_ptr;
+	shared_ptr<CRef> currRef;
+	if(!count)
+	{
+		// no pages in the tree, new page should be added to the Root of page
+		// tree internode
+		shared_ptr<IProperty> rootProp_ptr=docCatalog->getProperty("Pages");
+		interNode_ptr=getDictFromRef(IProperty::getSmartCObjectPtr<CRef>(rootProp_ptr));
+	}else
+	{
+		// stores new page at position of existing page
+		
+		// searches for page at storePosition and gets its reference
+		// page dictionary has to be an indirect object, so getIndiRef returns
+		// dictionary reference
+		shared_ptr<CDict> currentPage_ptr=findPageDict(*this, docCatalog->getProperty("Pages"), 1, storePostion);
+		currRef=shared_ptr<CRef>(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
+		
+		// gets parent of found dictionary which maintains 
+		shared_ptr<IProperty> parentRef_ptr=currentPage_ptr->getProperty("Parent");
+		interNode_ptr=getDictFromRef(parentRef_ptr);
+	}
+
+	// gets Kids array where to insert new page dictionary
 	shared_ptr<IProperty> kidsProp_ptr=interNode_ptr->getProperty("Kids");
 	if(kidsProp_ptr->getType()!=pArray)
 	{
@@ -1774,21 +1800,24 @@ using namespace utils;
 		throw MalformedFormatExeption("Intermediate node Kids field is not an array.");
 	}
 	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
-
-	// gets index of searched node's reference in Kids array - if position 
-	// can't be determined unambiguously (getPropertyId returns more positions), 
-	// throws exception
-	vector<CArray::PropertyId> positions;
-	getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currRef, positions);
-	if(positions.size()>1)
+	
+	// gets index in Kids array where to store.
+	// by default insert at 1st position (index is 0)
+	size_t kidsIndex=0;
+	if(count)
 	{
-		printDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="<<storePostion);
-		throw AmbiguousPageTreeException();
+		// gets index of searched node's reference in Kids array - if position 
+		// can't be determined unambiguously (getPropertyId returns more positions), 
+		// throws exception
+		vector<CArray::PropertyId> positions;
+		getPropertyId<CArray, vector<CArray::PropertyId> >(kids_ptr, currRef, positions);
+		if(positions.size()>1)
+		{
+			printDbg(DBG_ERR, "Page can't be created, because page tree is ambiguous for node at pos="<<storePostion);
+			throw AmbiguousPageTreeException();
+		}
+		kidsIndex=positions[0]+append;
 	}
-	size_t kidsIndex=positions[0]+append;
-
-	// if we are storing new last page (append is true) we will add one
-	storePostion+=append;
 
 	// gets page's dictionary and adds it as new indirect property.
 	// All page dictionaries must be indirect objects and addIndirectProperty

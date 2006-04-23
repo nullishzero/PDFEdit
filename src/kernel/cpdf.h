@@ -6,6 +6,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.37  2006/04/23 15:12:58  hockm0bm
+ * changeIndirectProperty behaviour changed
+ *         - indirect mapping removed only if given property is different
+ *           instance than given one
+ *         - throws CObjInvalidObject exception is thrown if prop is not from this
+ *           pdf or mapping doesn't exist
+ *
  * Revision 1.36  2006/04/23 10:37:53  hockm0bm
  * insertPage and removePage
  *         - AmbiguouPageTreeException added to documentation
@@ -746,14 +753,18 @@ public:
 	 * @param prop Indirect property.
 	 *
 	 * Checks prop's pdf instance and if it is different than this, throws an
-	 * exception. Then checks if ther is mapping for prop's indiRef. If not also
-	 * throws an exception.
+	 * exception. Then checks if there is mapping for prop's indiRef. If not 
+	 * also throws an exception.
 	 * <br>
 	 * After all checking is done, creates xpdf Object from prop and calls
-	 * xref::change method and invalidates mapping for this property in indMap.
+	 * xref::change method. 
+	 * If prop is same instance as one in mapping, keeps mapping, because this
+	 * means that indirect property has changed its contnet (value). Otherwise
+	 * removes mapping because original property has been replaced by new
+	 * property.
 	 *
-	 * @throw TODO if prop is not from this pdf.
-	 * @throw TODO if mapping is unknown.
+	 * @throw CObjInvalidObject if prop is not from same pdf or indirect mapping
+	 * doesn't exist yet.
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
 	 * older revision (where no changes are allowed).
 	 * @throw ElementBadTypeException if XrefWriter is in paranoid mode and
