@@ -29,7 +29,9 @@ bool
 position (ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
-	boost::shared_ptr<CPage> page = getPage (fileName, pdf);
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
 	
 	std::vector<shared_ptr<PdfOperator> > ops;
@@ -64,6 +66,8 @@ opcount (ostream& oss, const char* fileName)
 	XRef* xref = doc->getXRef();
 	assert (xref);
 	Catalog cat (xref);
+	if (1 > cat.getNumPages())
+		return true;
 
 	cat.getPage(pagesNum)->getContents(&obj);
 
@@ -97,6 +101,8 @@ bool
 printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	if (1 > pdf->getPageCount())
+		return true;
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
 	// Print content stream

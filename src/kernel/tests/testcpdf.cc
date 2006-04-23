@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/04/23 23:20:40  misuj1am
+ *
+ * -- improved: zero page (incorrect) document handling
+ *
  * Revision 1.9  2006/04/23 22:09:48  hockm0bm
  * * pageIterationTC finished
  *         - all tests are ok
@@ -57,6 +61,8 @@ public:
 		// getPage and getPagePosition must match for all pages
 		printf("TC01:\tPageCount, getPage, getPagePosition\n");
 		size_t pageCount=pdf->getPageCount();
+		if (0 == pageCount)
+			return;
 		for(size_t i=1; i<=pageCount; i++)
 		{
 			shared_ptr<CPage> page=pdf->getPage(i);
@@ -224,6 +230,8 @@ public:
 
 		printf("TC01:\tremovePage, insertPage changes pageCount\n");
 		size_t pageCount=pdf->getPageCount();
+		if (0 == pageCount)
+			return;
 		shared_ptr<CPage> page=pdf->getPage(1);
 		// remove page implies pageCount decrementation test
 		pdf->removePage(1);
