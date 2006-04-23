@@ -51,7 +51,7 @@ using namespace boost;
 //=====================================================================================
 
 bool
-mediabox (ostream& /*oss*/, const char* fileName)
+mediabox (ostream& __attribute__((unused)) oss, const char* fileName)
 {
 	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
 	
@@ -62,9 +62,11 @@ mediabox (ostream& /*oss*/, const char* fileName)
 	XRef* xref = doc->getXRef();
 	Catalog cat (xref);
 
-	/*oss << "Contents:"		<< */cat.getPage(1)->getContents(&obj) /*<< endl*/;
+	//oss << "Contents:"		<< cat.getPage(1)->getContents(&obj) << endl;
+	cat.getPage(1)->getContents(&obj);
 	obj.free ();
-	/*oss << "Page:"			<< */xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) /*<< endl*/;
+	//oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
+	xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj);
 
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
 	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, IndiRef ()));
@@ -131,7 +133,7 @@ class TestCPage : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCPage);
 		CPPUNIT_TEST(Test);
-		CPPUNIT_TEST(TestDisplay);
+		//CPPUNIT_TEST(TestDisplay);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -146,8 +148,8 @@ public:
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
-			
-			TEST(" features");
+		
+			TEST(" mediabox");
 			CPPUNIT_ASSERT (mediabox (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}

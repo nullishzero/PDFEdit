@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/04/23 11:10:04  misuj1am
+ *
+ * -- small code improvment
+ *
  * Revision 1.19  2006/04/23 09:45:33  misuj1am
  *
  * -- started using helper methods in iproperty.h isInValidPdf, isArray ..
@@ -330,7 +334,7 @@ inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
 {
 	assert (isDict (ip));
-	if (isDict(ip))
+	if (!isDict(ip))
 		throw ElementBadTypeException ("getTypeFromDictionary()");
 
 	// Cast it to dict
@@ -377,7 +381,7 @@ inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)
 {
 	assert (isArray (ip));
-	if (isArray (ip))
+	if (!isArray (ip))
 		throw ElementBadTypeException ("getSimpleValueFromArray()");
 
 	// Cast it to array
@@ -438,7 +442,7 @@ inline void
 setSimpleValueInArray (const boost::shared_ptr<IProperty>& ip, size_t position, const Value& val)
 {
 	assert (isArray (ip));
-	if (isArray (ip))
+	if (!isArray (ip))
 		throw ElementBadTypeException ("");
 
 	// Cast it to array
@@ -516,7 +520,7 @@ inline boost::shared_ptr<ItemType>
 getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
 {
 	assert (isArray (ip));
-	if (isArray (ip))
+	if (!isArray (ip))
 		throw ElementBadTypeException ("getTypeFromArray()");
 
 	// Cast it to dict

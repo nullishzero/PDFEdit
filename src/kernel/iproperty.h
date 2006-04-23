@@ -315,6 +315,13 @@ inline bool isInValidPdf (CPdf* pdf) {return (NULL != pdf);}
 inline bool isInValidPdf (const IProperty& ip) {return (NULL != ip.getPdf());}
 template<typename T> inline bool isInValidPdf (T ip) {return (NULL != ip->getPdf());}
 //
+template<typename T> inline bool hasValidRef (T ip) 
+{
+	IndiRef rf;
+	rf.gen = rf.num = 0;
+	return !(rf == ip->getIndiRef());
+}
+//
 template<PropertyType Type>
 inline bool isIPType (boost::shared_ptr<IProperty> ip) {return (Type == ip->getType());}
 /** Is IProperty of specified type. */

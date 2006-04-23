@@ -236,7 +236,7 @@ private:
 	{
 		// Save original value for the context
 		boost::shared_ptr<IProperty> oldValue (this->clone());
-		// For safety
+		// Set original values
 		oldValue->setPdf (IProperty::getPdf());
 		oldValue->setIndiRef (IProperty::getIndiRef());
 		// Create the context
@@ -251,9 +251,12 @@ private:
 	 */
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
+		printDbg (debug::DBG_DBG, "CObjectSimple");
 		// Do not notify anything if we are not in a valid pdf
 		if (!isInValidPdf (this))
 			return;
+
+		assert (hasValidRef(this));
 		
 		// Dispatch the change
 		IProperty::dispatchChange ();
@@ -585,6 +588,9 @@ private:
 		// Do not notify anything if we are not in a valid pdf
 		if (!isInValidPdf (this))
 			return;
+
+		assert (isInValidPdf (this));
+		assert (hasValidRef (this));
 
 		// Dispatch the change
 		IProperty::dispatchChange ();

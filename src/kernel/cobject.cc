@@ -933,7 +933,7 @@ bool
 objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 {
 	assert (isInValidPdf (ip));
-	if (isInValidPdf (ip))
+	if (!isInValidPdf (ip))
 		throw CObjInvalidOperation ();
 
 	CPdf* pdf = ip.getPdf ();

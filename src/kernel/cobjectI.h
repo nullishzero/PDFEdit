@@ -97,12 +97,24 @@ CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
 	printDbg (debug::DBG_DBG,"text:" << strO);
 
-	// Create context in which the change occurs
-	boost::shared_ptr<ObserverContext> context (this->_createContext());
-	// Change our value
-	utils::simpleValueFromString (strO, this->value);
-	// notify observers and dispatch the change
-	_objectChanged (context);
+	if (isInValidPdf(this))
+	{
+		assert (hasValidRef (this));
+		
+		// Create context in which the change occurs
+		boost::shared_ptr<ObserverContext> context (this->_createContext());
+		// Change our value
+		utils::simpleValueFromString (strO, this->value);
+		// notify observers and dispatch the change
+		_objectChanged (context);
+
+	}else
+	{
+		assert (!hasValidRef (this));
+
+		// Change our value
+		utils::simpleValueFromString (strO, this->value);
+	}
 }
 
 
@@ -115,14 +127,26 @@ void
 CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
-	printDbg (debug::DBG_DBG,"writeValue()");
+	printDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
 
-	// Create context in which the change occurs
-	boost::shared_ptr<ObserverContext> context (this->_createContext());
-	// Change the value
-	value = val;
-	// notify observers and dispatch the change
-	_objectChanged (context);
+	if (isInValidPdf (this))
+	{
+		assert (hasValidRef (this));
+		
+		// Create context in which the change occurs
+		boost::shared_ptr<ObserverContext> context (this->_createContext());
+		// Change the value
+		value = val;
+		// notify observers and dispatch the change
+		_objectChanged (context);
+	
+	}else
+	{
+		assert (!hasValidRef (this));
+
+		// Change the value
+		value = val;
+	}
 }	
 
 
@@ -302,20 +326,32 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
 	if (ip)
 	{
-		// Create the context
-		boost::shared_ptr<ObserverContext> context (this->_createContext(ip));
-		// Delete that item
-		value.erase (it);
-		// Indicate that this object has changed
-		boost::shared_ptr<IProperty> changedObj (new CNull());
-		_objectChanged (changedObj, context);
+		if (isInValidPdf (this))
+		{
+			assert (hasValidRef (this));
+			
+			// Create the context
+			boost::shared_ptr<ObserverContext> context (this->_createContext(ip));
+			// Delete that item
+			value.erase (it);
+			// Indicate that this object has changed
+			boost::shared_ptr<IProperty> changedObj (new CNull());
+			_objectChanged (changedObj, context);
+			
+			// Be sure
+			ip->setPdf (NULL);
+			ip->setIndiRef (IndiRef());
+	
+		}else
+		{
+			assert (!hasValidRef (this));
+			// Delete that item
+			value.erase (it);
+		}
 		
 	}else
 		throw CObjInvalidObject ();
 
-	// Be sure
-	ip->setPdf (NULL);
-	ip->setIndiRef (IndiRef());
 }
 
 
@@ -348,7 +384,7 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 	// Check if we add to a valid position
 	//
 	if (position > value.size())
-		throw CObjInvalidOperation ();
+		throw OutOfRange ();
 	
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
@@ -367,23 +403,28 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 				;
 		}
 
-		// Insert it
-		value.insert (it,newIpClone);
 		// Inherit id, gen number and pdf
 		newIpClone->setIndiRef (IProperty::getIndiRef());
 		newIpClone->setPdf (IProperty::getPdf());
+		// Insert it
+		value.insert (it,newIpClone);
 		
 	}else
 		throw CObjInvalidObject ();
 	
-	// Notify observers and dispatch change
-	_objectChanged (newIpClone, 
+	if (isInValidPdf (this))
+	{
+		assert (hasValidRef (this));
+		
+		// Notify observers and dispatch change
+		_objectChanged (newIpClone, 
 					boost::shared_ptr<ObserverContext>
 						(new BasicObserverContext 
 						 	(boost::shared_ptr<IProperty> (new CNull ()))
 						)
 				   );
-
+	}
+	
 	//
 	// \TODO: Find out the mode
 	//
@@ -406,22 +447,28 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
 	if (newIpClone)
 	{
-		// Store it
-		value.push_back (std::make_pair (propertyName,newIpClone));
 		// Inherit id, gen number and pdf
 		newIpClone->setIndiRef (IProperty::getIndiRef());
 		newIpClone->setPdf (IProperty::getPdf());
+	
+		// Store it
+		value.push_back (std::make_pair (propertyName,newIpClone));
 		
 	}else
 		throw CObjInvalidObject ();
 
-	// notify observers and dispatch change
-	_objectChanged (newIpClone,
+	if (isInValidPdf (this));
+	{
+		assert (hasValidRef (this));
+		
+		// notify observers and dispatch change
+		_objectChanged (newIpClone,
 					boost::shared_ptr<ObserverContext> 
 						(new BasicObserverContext 
 						 	(boost::shared_ptr<IProperty> (new CNull ()))
 						)
 					);
+	}
 
 	//
 	// \TODO: Find out the mode
@@ -438,7 +485,7 @@ template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 {
-	printDbg (debug::DBG_DBG,"setProperty(" << id << ")");
+	printDbg (debug::DBG_DBG, "setProperty(" << id << ")");
 	
 	//
 	// Find the item we want
@@ -470,14 +517,19 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	}else
 		throw CObjInvalidObject ();
 	
-	// Create context
-	boost::shared_ptr<ObserverContext> context (_createContext (oldIp));	
-	// Notify observers and dispatch change
-	_objectChanged (newIpClone, context);
+	if (isInValidPdf (this))
+	{	
+		assert (hasValidRef (this));
+		
+		// Create context
+		boost::shared_ptr<ObserverContext> context (_createContext (oldIp));	
+		// Notify observers and dispatch change
+		_objectChanged (newIpClone, context);
 
-	// Be sure
-	oldIp->setPdf (NULL);
-	oldIp->setIndiRef (IndiRef());
+		// Be sure
+		oldIp->setPdf (NULL);
+		oldIp->setIndiRef (IndiRef());
+	}
 
 	//
 	// \TODO: Find out the mode

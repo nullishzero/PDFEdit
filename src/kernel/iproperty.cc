@@ -69,10 +69,11 @@ void
 IProperty::dispatchChange () const
 {
 	assert (isInValidPdf (this));
+	assert (hasValidRef (this));
 	if (!isInValidPdf (this))
 		throw CObjInvalidObject ();
 
-	printDbg (debug::DBG_DBG,"CObjectComplex::dispatchChange() [" << (int)this << "]" );
+	printDbg (debug::DBG_DBG,"[" << (int)this << "]" );
 
 	//
 	// If this is an indirect object inform xref about the change
