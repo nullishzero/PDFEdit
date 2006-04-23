@@ -12,6 +12,8 @@
 #include "testcpage.h"
 #include "testcpdf.h"
 
+#include "factories.h"
+
 #include <PDFDoc.h>
 #include "../cpage.h"
 
@@ -51,43 +53,24 @@ using namespace boost;
 //=====================================================================================
 
 bool
-mediabox (ostream& __attribute__((unused)) oss, const char* fileName)
+mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char* fileName)
 {
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-	
-	//
-	// Our stuff here
-	//
-	Object obj;
-	XRef* xref = doc->getXRef();
-	Catalog cat (xref);
-
-	//oss << "Contents:"		<< cat.getPage(1)->getContents(&obj) << endl;
-	//cat.getPage(1)->getContents(&obj);
-	//obj.free ();
-	//oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
-	IndiRef ref;
-	ref.num = cat.getPageRef(1)->num;
-	ref.gen = cat.getPageRef(1)->gen;
-	xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj);
-
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, ref));
-	obj.free ();
-	
-	CPage page (dict);
+	boost::shared_ptr<CPage> page = pdf->getPage (1);
 
-	/*oss <<*/ page.getMediabox ();
+	/* oss << */ page->getMediabox ();
 	
 	Rectangle rc;
 	rc.xleft = 42;
 	rc.xright = 12;
 	rc.yleft = 62;
 	rc.yright = 2342;
-	page.setMediabox (rc);
+	page->setMediabox (rc);
 	
-	if (42 == page.getMediabox ().xleft &&
-			62 == page.getMediabox ().yleft)
+	/* oss << */ page->getMediabox ();
+
+	if (42 == page->getMediabox ().xleft &&
+			62 == page->getMediabox ().yleft)
 		return true;
 	else
 		return false;
@@ -97,7 +80,7 @@ mediabox (ostream& __attribute__((unused)) oss, const char* fileName)
 //=====================================================================================
 
 bool
-display (ostream& __attribute__((unused)) oss, const char* fileName)
+display (__attribute__((unused)) ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
@@ -128,6 +111,21 @@ display (ostream& __attribute__((unused)) oss, const char* fileName)
 }
 
 
+//=====================================================================================
+bool creation (__attribute__((unused)) ostream& oss)
+{
+	shared_ptr<CDict> dict (CDictFactory::getInstance());
+	CArray array;
+	shared_ptr<CPage> page (new CPage(dict));
+	CPPUNIT_ASSERT (false == page->parseContentStream ());
+
+	dict->addProperty ("Contents", array);
+	CPPUNIT_ASSERT (true == page->parseContentStream ());
+
+	return true;
+}
+
+
 //=========================================================================
 // class TestCPage
 //=========================================================================
@@ -136,6 +134,7 @@ class TestCPage : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCPage);
 		CPPUNIT_TEST(Test);
+		CPPUNIT_TEST(TestCreation);
 		CPPUNIT_TEST(TestDisplay);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -144,7 +143,7 @@ public:
 	void tearDown() {}
 
 public:
-	void Test()
+	void Test ()
 	{
 		OUTPUT << "CPage methods..." << endl;
 
@@ -157,7 +156,7 @@ public:
 			OK_TEST;
 		}
 	}
-	void TestDisplay()
+	void TestDisplay ()
 	{
 		OUTPUT << "CPage display methods..." << endl;
 		
@@ -169,6 +168,14 @@ public:
 			CPPUNIT_ASSERT (display (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
+	}
+	void TestCreation ()
+	{
+		OUTPUT << "CPage creation methods..." << endl;
+		
+		TEST(" creation");
+		CPPUNIT_ASSERT (creation (OUTPUT));
+		OK_TEST;
 	}
 
 };

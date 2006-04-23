@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/04/23 23:01:28  misuj1am
+ *
+ * -- tests improved
+ *
  * Revision 1.13  2006/04/22 14:57:52  misuj1am
  *
  * --Observers improved
@@ -216,6 +220,18 @@ operator << (ostream& os, Dict* d)
 
 	return os;
 }
+
+//
+//
+//
+//
+inline std::ostream& 
+operator << (ostream& os, const IndiRef& rf)
+{
+	os  << " Num: " << rf.num << "Gen: " << rf.gen;
+	return os;
+}
+
 
 //
 //

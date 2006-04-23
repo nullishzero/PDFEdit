@@ -588,6 +588,34 @@ c_addprop2 ()
 	return true;
 }
 
+//=====================================================================================
+namespace{
+	struct printer {
+		ostream* oss;
+		printer (ostream* os) : oss (os) {};
+		void operator() (std::pair<std::string, boost::shared_ptr<IProperty> > pair) 
+		{
+			assert (hasValidRef (pair.second));
+			assert (isInValidPdf (pair.second));
+			//*oss << "Valid pdf: " << endl;
+			//*oss << (pair.second)->getIndiRef ();
+		};
+	};
+}
+
+bool
+c_forEach (std::ostream& oss, const char* filename)
+{
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (filename));
+	if (0 < pdf->getPageCount())
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (1);
+		printer p (&oss);
+		page->getDictionary()->forEach (p);
+	} 
+	
+	return true;
+}
 
 //=========================================================================
 // class TestCObjectComplex
@@ -598,6 +626,7 @@ class TestCObjectComplex : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE(TestCObjectComplex);
 		CPPUNIT_TEST(TestGet);
 		CPPUNIT_TEST(TestSet);
+		CPPUNIT_TEST(TestForEach);
 	CPPUNIT_TEST_SUITE_END();
 
 private:
@@ -697,6 +726,22 @@ public:
 			CPPUNIT_ASSERT (c_addprop2 ());
 			OK_TEST;
 		}
+	}
+	void TestForEach ()
+	{
+		OUTPUT << "CObjectComplex forEach method..." << endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			//======================= CObjectComplex
+			
+			TEST(" forEach")
+			CPPUNIT_ASSERT (c_forEach (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+
 	}
 
 };
