@@ -73,8 +73,6 @@ IProperty::dispatchChange () const
 	if (!isInValidPdf (this))
 		throw CObjInvalidObject ();
 
-	printDbg (debug::DBG_DBG,"[" << (int)this << "]" );
-
 	//
 	// If this is an indirect object inform xref about the change
 	// else find the closest indirect object and call dispatchChange on that object

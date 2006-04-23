@@ -872,7 +872,7 @@ public:
 	{
 		#if MEM_CHECKER_OUTPUT
 		_printHeader (std::cerr);
-		std::cerr << "IProperty [0x"<< (unsigned)ip << "] created.";
+		std::cerr << "IProperty created.";
 		_printFooter (std::cerr);
 		#endif
 		
@@ -887,7 +887,7 @@ public:
 	{
 		#if MEM_CHECKER_OUTPUT
 		_printHeader (std::cerr);
-		std::cerr << "IProperty [0x"<< (unsigned)ip << "] deleted.";
+		std::cerr << "IProperty deleted.";
 		#endif
 
 		_IPsList::iterator it = find (getList().begin(), getList().end(), ip);
