@@ -151,7 +151,7 @@ public:
 	 *
 	 * @param p pdf that this object belongs to
 	 */
-	void setPdf (CPdf* p);
+	virtual void setPdf (CPdf* p);
 
 	/**
 	 * Returns pdf in which this object lives.
@@ -178,7 +178,7 @@ public:
 	 *
 	 * @param _r Indirect reference id and generation number.
 	 */
-	void setIndiRef (const IndiRef& rf) {ref = rf;};
+	virtual void setIndiRef (const IndiRef& rf) {ref = rf;};
 
  
 	/**
@@ -321,6 +321,13 @@ template<typename T> inline bool hasValidRef (T ip)
 	rf.gen = rf.num = 0;
 	return !(rf == ip->getIndiRef());
 }
+inline bool hasValidRef (IProperty& ip) 
+{
+	IndiRef rf;
+	rf.gen = rf.num = 0;
+	return !(rf == ip.getIndiRef());
+}
+
 //
 template<PropertyType Type>
 inline bool isIPType (boost::shared_ptr<IProperty> ip) {return (Type == ip->getType());}

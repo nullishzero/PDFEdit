@@ -267,9 +267,14 @@ namespace {
 						shared_ptr<IProperty> cobj;
 						// Create CObject from it
 						if (isInValidPdf(pdf))
+						{
+							hasValidRef (ip);
 							cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
-						else
+
+						}else
+						{
 							cobj = shared_ptr<IProperty> (createObjFromXpdfObj (obj));
+						}
 
 						if (cobj)
 						{

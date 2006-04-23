@@ -63,13 +63,16 @@ mediabox (ostream& __attribute__((unused)) oss, const char* fileName)
 	Catalog cat (xref);
 
 	//oss << "Contents:"		<< cat.getPage(1)->getContents(&obj) << endl;
-	cat.getPage(1)->getContents(&obj);
-	obj.free ();
+	//cat.getPage(1)->getContents(&obj);
+	//obj.free ();
 	//oss << "Page:"			<< xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj) << endl;
+	IndiRef ref;
+	ref.num = cat.getPageRef(1)->num;
+	ref.gen = cat.getPageRef(1)->gen;
 	xref->fetch (cat.getPageRef(1)->num, cat.getPageRef(1)->gen, &obj);
 
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, IndiRef ()));
+	boost::shared_ptr<CDict> dict (new CDict (*pdf, obj, ref));
 	obj.free ();
 	
 	CPage page (dict);

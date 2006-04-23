@@ -252,6 +252,37 @@ CObjectComplex<Tp,Checker>::getStringRepresentation (std::string& str) const
 	utils::complexValueToString<Tp> (value,str);
 }
 
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+void 
+CObjectComplex<Tp,Checker>::setPdf (CPdf* pdf)
+{
+	// Set pdf to this object
+	IProperty::setPdf (pdf);
+
+	// Set new pdf to all its children
+	typename Value::iterator it = value.begin();
+	for (; it != value.end(); ++it)
+		utils::getIPropertyFromItem (*it)->setPdf (pdf);
+}
+
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+void 
+CObjectComplex<Tp,Checker>::setIndiRef (const IndiRef& rf)
+{
+	// Set pdf to this object
+	IProperty::setIndiRef (rf);
+
+	// Set new pdf to all its children
+	typename Value::iterator it = value.begin();
+	for (; it != value.end(); ++it)
+		utils::getIPropertyFromItem (*it)->setIndiRef (rf);
+}
 
 //
 // Destructor
@@ -404,8 +435,8 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 		}
 
 		// Inherit id, gen number and pdf
-		newIpClone->setIndiRef (IProperty::getIndiRef());
 		newIpClone->setPdf (IProperty::getPdf());
+		newIpClone->setIndiRef (IProperty::getIndiRef());
 		// Insert it
 		value.insert (it,newIpClone);
 		
@@ -457,6 +488,9 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	}else
 		throw CObjInvalidObject ();
 
+	//
+	// Dispatch change if we are in valid pdf
+	// 
 	if (isInValidPdf (this))
 	{
 		assert (hasValidRef (this));
@@ -510,13 +544,20 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	
 	if (newIpClone)
 	{
+		// Inherit id, gen number and pdf
+		newIpClone->setIndiRef (IProperty::getIndiRef());
+		newIpClone->setPdf (IProperty::getPdf());
+
 		// Construct item, and replace it with this one
 		typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
 		std::fill_n (it, 1, newVal);
 		
 	}else
 		throw CObjInvalidObject ();
-	
+
+	//
+	// Dispatch change if we are in valid pdf
+	// 
 	if (isInValidPdf (this))
 	{	
 		assert (hasValidRef (this));

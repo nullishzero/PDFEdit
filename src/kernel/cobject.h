@@ -394,6 +394,9 @@ protected:
 	virtual IProperty* doClone () const;
 
 	
+	//
+	// IProperty operations
+	//
 public:
 
 	/**
@@ -412,7 +415,20 @@ public:
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 	
-	
+	/**
+	 * Set pdf to itself and also tu all children
+	 *
+	 * @param pdf New pdf.
+	 */
+	virtual void setPdf (CPdf* pdf);
+
+	/**
+	 * Set ref to itself and also tu all children
+	 *
+	 * @param pdf New indirect reference numbers.
+	 */
+	virtual void setIndiRef (const IndiRef& rf);
+
 	/**
 	 * Try to make an (x)pdf object from string.
 	 * <exception cref="..." />
@@ -434,34 +450,16 @@ public:
 	void writeValue (WriteType val) {assert (!"is this function really needed???");};
   
 	/**
-	 * Perform an action on each element.
-	 *
-	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
-	 * 
-	 * @param fnc Functor that will do the work.
-	 */
-	template<typename Fctor>
-	void forEach (Fctor& fctor)
-	{
-		int pos = 0;
-		typename Value::iterator it = value.begin ();
-		for (; it != value.end (); ++it, ++pos)
-		{
-			fctor (utils::constructIdPairFromIProperty (pos, *it));
-		}
-	}
-	
-	/**
 	 * Destructor
 	 */
 	~CObjectComplex ();
 	
+	
 	//
-	//
-	// Specific features by Incomplete Instantiation
-	//
+	// Specific functions for complex types
 	//
 public:
+	
 	/** 
 	 * Returns property count.
 	 * 
@@ -484,6 +482,23 @@ public:
 	template<typename Container>
 	void getAllPropertyNames (Container& container) const;
 
+	/**
+	 * Perform an action on each element.
+	 *
+	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
+	 * 
+	 * @param fnc Functor that will do the work.
+	 */
+	template<typename Fctor>
+	void forEach (Fctor& fctor)
+	{
+		int pos = 0;
+		typename Value::iterator it = value.begin ();
+		for (; it != value.end (); ++it, ++pos)
+		{
+			fctor (utils::constructIdPairFromIProperty (pos, *it));
+		}
+	}
 
 	/**
 	 * Returns value of property identified by its name/position depending on type of this object.
