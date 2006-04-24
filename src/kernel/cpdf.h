@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.38  2006/04/24 01:09:10  jahom0bm
+ * Oprava vytvarania obrazu stranok pre PageSpace.
+ *
  * Revision 1.37  2006/04/23 15:12:58  hockm0bm
  * changeIndirectProperty behaviour changed
  *         - indirect mapping removed only if given property is different
@@ -994,6 +997,7 @@ public:
 			// nextPage failed
 			return false;
 		}
+		return true;
 	}
 	
 	/** Checks for previous page.
@@ -1014,6 +1018,7 @@ public:
 			// getPrevPage failed
 			return false;
 		}
+		return true;
 	}
 
 	/** Returns last page.

@@ -9,6 +9,7 @@
 #include <qlayout.h>
 #include "pageview.h"
 #include "qspage.h"
+#include "qspdf.h"
 
 namespace gui {
 
@@ -23,12 +24,17 @@ class PageSpace : public QWidget {
 	public slots:
 void refresh1(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
-		void refresh ( /* QSPdf * pdf,*/ QSPage * pageToView = NULL );	// if pageToView is NULL, refresh actual page
+		void refresh ( QSPdf * pdf = NULL, QSPage * pageToView = NULL );	// if pageToView is NULL, refresh actual page
+		void refresh ( /*QSPdf * */ QObject * pdf, QSPage * pageToView = NULL );	// same as above
 		void hideButtonsAndPageNumber ( );
 		void showButtonsAndPageNumber ( );
 //		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );
 //		/*TODO*/void unselectObjectOnPage ( );
 //		/*TODO*/void zoomTo ( unsigned int percentage );
+		void firstPage ( );
+		void prevPage ( );
+		void nextPage ( );
+		void lastPage ( );
 	signals:
 		void changePageTo ( const QSPage &, int numberOfPage );
 
@@ -60,6 +66,7 @@ void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
 				* bLastPage;
 
 		/*TODO CObject */ void		* actualSelectedObjects;
+		QSPdf		* actualPdf;
 		QSPage		* actualPage;
 		QPixmap		* actualPagePixmap;
 QPixmap * r1, * r2; /*TODO smazat, jenom pro testovani */

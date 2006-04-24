@@ -265,6 +265,7 @@ PSTokenizer.o \
 Page.o \
 Parser.o \
 SecurityHandler.o \
+SplashOutputDev.o \
 Stream.o \
 TextOutputDev.o \
 UnicodeMap.o \

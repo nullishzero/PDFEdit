@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------
 
 QOutputDev::QOutputDev(SplashColor paperColor)
-	: SplashOutputDev(splashModeRGB8, 1, false, paperColor)
+	: SplashOutputDev(splashModeBGRA8, 1, false, paperColor)
 {
 	// create text object
 	m_text = new TextPage ( gFalse );
@@ -47,7 +47,7 @@ void QOutputDev::drawChar(GfxState *state, double x, double y, double dx, double
 
 GBool QOutputDev::beginType3Char(GfxState *state, double x, double y, double dx, double dy, CharCode code, Unicode *u, int uLen)
 {
-//TODO pridat nBytes	m_text->addChar(state, x, y, dx, dy, code, u, uLen);
+	m_text->addChar(state, x, y, dx, dy, code, 1/* TODO ? nBytes */, u, uLen);
 	return SplashOutputDev::beginType3Char(state, x, y, dx, dy, code, u, uLen);
 }
 

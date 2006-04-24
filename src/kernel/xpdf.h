@@ -22,6 +22,7 @@
 #include <xpdf/ErrorCodes.h>
 #include <xpdf/Page.h>
 #include <xpdf/TextOutputDev.h>
+#include <xpdf/SplashOutputDev.h>
 #include <xpdf/GlobalParams.h>
 #include <xpdf/Catalog.h>
 

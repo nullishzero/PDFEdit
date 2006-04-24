@@ -159,7 +159,7 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
-	globalParams->setupBaseFonts (NULL);
+//	globalParams->setupBaseFonts (NULL);
 
 	// Get xref
 	assert (NULL != dictionary->getPdf ());
@@ -177,7 +177,12 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	// Get page dictionary
 	Dict* xpdfPageDict = xpdfPage->getDict ();
 	assert (NULL != xpdfPageDict);
-	
+
+	SplashOutputDev * sout = dynamic_cast<SplashOutputDev *> (& out);
+	if (sout) {
+		sout->startDoc( xref );
+	}
+
 	//
 	// Create default page attributes and make page
 	// ATTRIBUTES are deleted in Page destructor
