@@ -102,6 +102,9 @@ private:
 	Value value;
 	
 
+	//
+	// Constructors
+	//
 private:
 	
 	/** Copy constructor. */
@@ -140,6 +143,7 @@ public:
 	 */
 	CObjectSimple (const Value& val = Value());
 
+
 	//
 	// Cloning
 	//
@@ -147,13 +151,16 @@ protected:
 
 	/**
 	 * Clone. Performs deep copy.
-	 * REMARK: pRef DOES NOT copy the object to which it has reference.
+	 * REMARK: pRef DOES NOT copy the referenced object.
 	 *
 	 * @return Deep copy of this object.
 	 */
 	virtual IProperty* doClone () const;
 
 
+	//
+	// Get methods
+	//
 public:
 	/**
 	 * Return type of this property.
@@ -171,7 +178,17 @@ public:
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 	
-	
+	/**
+	 * Return property value. Each property has its own return type.
+	 *
+	 * @param val Out parameter where property value will be stored.
+	 */
+	void getPropertyValue (Value& val) const;
+
+	//
+	// Set methods
+	//
+public:
 	/**
 	 * Convert string to an object value.
 	 * <exception cref="ObjBadValueE" /> Thrown when we can't parse the string correctly.
@@ -190,16 +207,12 @@ public:
 	 * @param val	Value that will be set.
 	 */
 	void writeValue (WriteType val);
- 
 
-	/**
-	 * Return property value. Each property has its own return type.
-	 *
-	 * @param val Out parameter where property value will be stored.
-	 */
-	void getPropertyValue (Value& val) const;
 
-	
+	//
+	// Destructor
+	//
+public:
 	/**
 	 * Destructor
 	 */
@@ -207,7 +220,7 @@ public:
 	
 
 	//
-	// Helper functions
+	// Helper methods
 	//
 public:	
 
@@ -346,7 +359,10 @@ private:
 	/** Object's value. */
 	Value value;
 
-	
+
+	//
+	// Constructors
+	//
 private:
 
 	/** Copy constructor */
@@ -395,7 +411,7 @@ protected:
 
 	
 	//
-	// IProperty operations
+	// Get methods
 	//
 public:
 
@@ -414,7 +430,54 @@ public:
 	 * 				of current object.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
+
 	
+	/** 
+	 * Returns property count.
+	 * 
+	 * @return Property count.
+	 */
+	size_t getPropertyCount () const 
+	{
+		//printDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
+		return value.size();
+	};
+ 
+
+	/**
+	 * Inserts all property names to container supplied by caller. 
+	 * 
+	 * REMARK: Specific for pDict.
+   	 *
+	 * @param container Container of string objects. STL vector,list,deque.
+	 */
+	template<typename Container>
+	void getAllPropertyNames (Container& container) const;
+
+	/**
+	 * Returns value of property identified by its name/position depending on type of this object.
+   	 *
+   	 * @param 	id 	Variable identifying position of the property.
+	 * @return	Variable where the value will be stored.
+   	 */
+	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
+
+	/**
+	 * Returns property type of an item identified by name/position.
+	 *
+	 * <exception cref="ObjInvalidPositionInComplex "/> When the id does not correctly identify an item.
+	 *
+	 * @param	name	Name of the property.
+	 * @return		Property type.	
+	 */
+	PropertyType getPropertyType (PropertyId id) const 
+		{return getProperty(id)->getType();};
+
+	
+	//
+	// Set methods
+	//
+public:
 	/**
 	 * Set pdf to itself and also tu all children
 	 *
@@ -448,79 +511,7 @@ public:
 	 * @param val	Value that will be set.
 	 */
 	void writeValue (WriteType val) {assert (!"is this function really needed???");};
-  
-	/**
-	 * Destructor
-	 */
-	~CObjectComplex ();
-	
-	
-	//
-	// Specific functions for complex types
-	//
-public:
-	
-	/** 
-	 * Returns property count.
-	 * 
-	 * @return Property count.
-	 */
-	size_t getPropertyCount () const 
-	{
-		//printDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
-		return value.size();
-	};
  
-
-	/**
-	 * Inserts all property names to container supplied by caller. 
-	 * 
-	 * REMARK: Specific for pDict.
-   	 *
-	 * @param container Container of string objects. STL vector,list,deque.
-	 */
-	template<typename Container>
-	void getAllPropertyNames (Container& container) const;
-
-	/**
-	 * Perform an action on each element.
-	 *
-	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
-	 * 
-	 * @param fnc Functor that will do the work.
-	 */
-	template<typename Fctor>
-	void forEach (Fctor& fctor)
-	{
-		int pos = 0;
-		typename Value::iterator it = value.begin ();
-		for (; it != value.end (); ++it, ++pos)
-		{
-			fctor (utils::constructIdPairFromIProperty (pos, *it));
-		}
-	}
-
-	/**
-	 * Returns value of property identified by its name/position depending on type of this object.
-   	 *
-   	 * @param 	id 	Variable identifying position of the property.
-	 * @return	Variable where the value will be stored.
-   	 */
-	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
-
-	
-	/**
-	 * Returns property type of an item identified by name/position.
-	 *
-	 * <exception cref="ObjInvalidPositionInComplex "/> When the id does not correctly identify an item.
-	 *
-	 * @param	name	Name of the property.
-	 * @return		Property type.	
-	 */
-	PropertyType getPropertyType (PropertyId id) const 
-		{return getProperty(id)->getType();};
-	
-	
 	/**
 	 * Sets property type of an item.
 	 * 
@@ -544,8 +535,6 @@ public:
 	 * @param newIp 		New property.
 	 * @param propertyName 	Name of the created property.
 	 *
-	 * \TODO SET PDF AND REF
-	 * 
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
@@ -567,9 +556,37 @@ public:
 
 
 	//
-	// Helper functions
+	// Destructor
 	//
 public:
+	/**
+	 * Destructor
+	 */
+	~CObjectComplex ();
+	
+
+	//
+	// Helper methods
+	//
+public:
+
+	/**
+	 * Perform an action on each element.
+	 *
+	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
+	 * 
+	 * @param fnc Functor that will do the work.
+	 */
+	template<typename Fctor>
+	void forEach (Fctor& fctor)
+	{
+		int pos = 0;
+		typename Value::iterator it = value.begin ();
+		for (; it != value.end (); ++it, ++pos)
+		{
+			fctor (utils::constructIdPairFromIProperty (pos, *it));
+		}
+	}
 
 	/**
 	 * Make xpdf Object from this object.
@@ -666,15 +683,15 @@ private:
 	/** Xpdf object. */
 	mutable Object xpdfDict;
 
-		
+	
+	//
+	// Constructors
+	//
 private:
 
 	/** Copy constructor */
 	CObjectStream (const CObjectStream&) {};
 	
-	
-protected:
-
 /*debug*/public:
 	/**
 	 * Constructor. Only kernel can call this constructor
@@ -700,6 +717,7 @@ public:
 	 */
 	CObjectStream ();
 
+	
 	//
 	// Cloning
 	//
@@ -713,6 +731,9 @@ protected:
 	virtual IProperty* doClone () const;
 
 	
+	//
+	// Get methods
+	//
 public:	
 	
 	/** 
@@ -729,7 +750,12 @@ public:
 	 * If it is an indirect object, we have to notify CXref.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
- 
+
+	
+	//
+	// Set methods
+	//
+public:
 	/**
 	 * Convert string to an object value.
 	 * <exception cref="ObjBadValueE" /> Thrown when we can't parse the string correctly.
@@ -738,6 +764,23 @@ public:
 	 */
 	void setStringRepresentation (const std::string& strO);
 
+
+	//
+	// Destructor
+	//
+public:
+
+	/**
+	 * Destructor.
+	 */
+	~CObjectStream ();
+
+
+
+	//
+	// Helper methods
+	//
+public:
 	/**
      * Create xpdf object.
 	 *
@@ -747,38 +790,7 @@ public:
      */
     virtual Object* _makeXpdfObject () const; 
 
-public:
 
-	/**
-	 * Destructor.
-	 */
-	~CObjectStream ();
-
-//
-// Special functions
-//
-public:
-
-	/**
-	 * Return the list of all supported streams
-	 *
-	 * @return List of supported stream filters.
-	 */
-	static const std::list<std::string>& getSupportedStreams () 
-	{
-		std::list<std::string> supported;
-		//
-		// Initialize the list
-		//
-		if (supported.empty())
-		{
-			supported.push_back ("NoFilter");
-		}
-	
-		return &supported;
-	}
-
-	
 private:
 	
 	/**
@@ -804,6 +816,31 @@ private:
 
 		}else
 			throw CObjInvalidOperation ();
+	}
+
+	
+	//
+	// Special functions
+	//
+public:
+
+	/**
+	 * Return the list of all supported streams
+	 *
+	 * @return List of supported stream filters.
+	 */
+	static const std::list<std::string>& getSupportedStreams () 
+	{
+		std::list<std::string> supported;
+		//
+		// Initialize the list
+		//
+		if (supported.empty())
+		{
+			supported.push_back ("NoFilter");
+		}
+	
+		return &supported;
 	}
 
 };

@@ -178,6 +178,9 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	Dict* xpdfPageDict = xpdfPage->getDict ();
 	assert (NULL != xpdfPageDict);
 
+	//
+	// We need to handle special cases
+	//
 	SplashOutputDev * sout = dynamic_cast<SplashOutputDev *> (& out);
 	if (sout) {
 		sout->startDoc( xref );

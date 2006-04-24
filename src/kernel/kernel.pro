@@ -47,9 +47,9 @@ SOURCES += cpage.cc cpdf.cc
 # Tests
 #
 HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
-SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcobjecthelpers.cc
-SOURCES += tests/testcpage.cc tests/testccontentstream.cc
-SOURCES += tests/testcpdf.cc
+SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcstream.cc
+SOURCES += tests/testcobjecthelpers.cc
+SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
 SOURCES += main.cc 
 
 #QMAKE_LFLAGS += -static
@@ -65,7 +65,7 @@ QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings  -ansi
 #
 # xpdf and utils
 #
-INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash
+INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash ../xpdf/fofi
 
 #
 # Directories to creating files

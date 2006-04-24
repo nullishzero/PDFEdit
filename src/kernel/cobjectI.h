@@ -27,15 +27,17 @@
 
 
 //=====================================================================================
-
-namespace pdfobjects 
-{
+namespace pdfobjects {
+//=====================================================================================
 
 
 //=====================================================================================
 // CObjectSimple
 //=====================================================================================
 
+//
+// Constructors
+//
 
 //
 // Protected constructor, called when we have parsed an object
@@ -77,6 +79,10 @@ CObjectSimple<Tp,Checker>::CObjectSimple (const Value& val) : IProperty(), value
 
 
 //
+// Get methods
+//
+
+//
 // Turn object to string
 //
 template<PropertyType Tp, typename Checker>
@@ -86,6 +92,21 @@ CObjectSimple<Tp,Checker>::getStringRepresentation (std::string& str) const
 	utils::simpleValueToString<Tp> (value, str);
 }
 
+//
+// Get the value of an property
+//
+template<PropertyType Tp, typename Checker>
+void
+CObjectSimple<Tp,Checker>::getPropertyValue (Value& val) const
+{
+	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
+	val = value;
+}
+
+
+//
+// Set methods
+//
 
 //
 // Set string representation
@@ -116,7 +137,6 @@ CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 		utils::simpleValueFromString (strO, this->value);
 	}
 }
-
 
 
 //
@@ -150,20 +170,13 @@ CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 }	
 
 
-//
-// Get the value of an property
-//
-template<PropertyType Tp, typename Checker>
-void
-CObjectSimple<Tp,Checker>::getPropertyValue (Value& val) const
-{
-	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
-	val = value;
-}
-
 
 //
 // Helper function
+//
+
+//
+//
 //
 template<PropertyType Tp, typename Checker>
 Object*
@@ -203,6 +216,9 @@ CObjectSimple<Tp,Checker>::~CObjectSimple ()
 // CObjectComplex
 //=====================================================================================
 
+//
+// Constructors
+//
 
 //
 // Protected constructor
@@ -243,6 +259,10 @@ CObjectComplex<Tp,Checker>::CObjectComplex ()
 
 
 //
+// Get methods
+//
+
+//
 //
 //
 template<PropertyType Tp, typename Checker>
@@ -251,6 +271,56 @@ CObjectComplex<Tp,Checker>::getStringRepresentation (std::string& str) const
 {
 	utils::complexValueToString<Tp> (value,str);
 }
+
+//
+// Template  member functions can't be virutal (at least according to nowadays specification)
+//
+template<PropertyType Tp, typename Checker>
+template<typename Container>
+void
+CObjectComplex<Tp,Checker>::getAllPropertyNames (Container& container) const
+{
+	STATIC_CHECK ((Tp != pArray), INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
+	printDbg (debug::DBG_DBG, "getAllPropertyNames()");
+
+	utils::getAllNames (container, value);
+}
+
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+boost::shared_ptr<IProperty>
+CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
+{
+	//printDbg (debug::DBG_DBG,"getProperty() " << id);
+	//
+	// BEWARE using std::find_if with stateful functors !!!!!
+	//
+	IndexComparator cmp (id);
+	typename Value::const_iterator it = value.begin();
+	for (; it != value.end(); ++it)
+	{
+			if (cmp (*it))
+					break;
+	}
+
+	if (it == value.end())
+			throw ElementNotFoundException ("", "");
+	
+	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
+
+	//
+	// \TODO Find out the mode
+	//
+	
+	return ip;
+}
+
+
+//
+// Set methods
+//
 
 //
 //
@@ -282,51 +352,6 @@ CObjectComplex<Tp,Checker>::setIndiRef (const IndiRef& rf)
 	typename Value::iterator it = value.begin();
 	for (; it != value.end(); ++it)
 		utils::getIPropertyFromItem (*it)->setIndiRef (rf);
-}
-
-//
-// Destructor
-//
-template<PropertyType Tp, typename Checker>
-CObjectComplex<Tp,Checker>::~CObjectComplex ()
-{
-	Checker check; check.objectDeleted (this);
-}
-
-
-//
-//
-//
-template <PropertyType Tp, typename Checker>
-Object*
-CObjectComplex<Tp,Checker>::_makeXpdfObject () const
-{
-	printDbg (debug::DBG_DBG,"_makeXpdfObject");
-	
-	std::string rpr;
-	getStringRepresentation (rpr);
-
-	if (isInValidPdf (this))
-		return utils::xpdfObjFromString (rpr, IProperty::getPdf()->getCXref());
-	else
-		return utils::xpdfObjFromString (rpr);
-}
-
-
-//
-// Template  member functions can't be virutal (at least according to nowadays specification)
-//
-// It seems that virtual functions are always instantiated
-//
-template<PropertyType Tp, typename Checker>
-template<typename Container>
-void
-CObjectComplex<Tp,Checker>::getAllPropertyNames (Container& container) const
-{
-	STATIC_CHECK ((Tp != pArray), INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
-	printDbg (debug::DBG_DBG, "getAllPropertyNames()");
-
-	utils::getAllNames (container, value);
 }
 
 
@@ -581,34 +606,25 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 
 
 //
+// Helper methods
+//
+
 //
 //
-template<PropertyType Tp, typename Checker>
-boost::shared_ptr<IProperty>
-CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
+//
+template <PropertyType Tp, typename Checker>
+Object*
+CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 {
-	//printDbg (debug::DBG_DBG,"getProperty() " << id);
-	//
-	// BEWARE using std::find_if with stateful functors !!!!!
-	//
-	IndexComparator cmp (id);
-	typename Value::const_iterator it = value.begin();
-	for (; it != value.end(); ++it)
-	{
-			if (cmp (*it))
-					break;
-	}
-
-	if (it == value.end())
-			throw ElementNotFoundException ("", "");
+	printDbg (debug::DBG_DBG,"_makeXpdfObject");
 	
-	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
+	std::string rpr;
+	getStringRepresentation (rpr);
 
-	//
-	// \TODO Find out the mode
-	//
-	
-	return ip;
+	if (isInValidPdf (this))
+		return utils::xpdfObjFromString (rpr, IProperty::getPdf()->getCXref());
+	else
+		return utils::xpdfObjFromString (rpr);
 }
 
 
@@ -670,10 +686,23 @@ CObjectComplex<Tp,Checker>::_createContext (boost::shared_ptr<IProperty>& change
 	return new BasicObserverContext (changedIp);
 }
 
+
+//
+// Destructor
+//
+template<PropertyType Tp, typename Checker>
+CObjectComplex<Tp,Checker>::~CObjectComplex ()
+{
+	Checker check; check.objectDeleted (this);
+}
+
 //=====================================================================================
 // CObjectStream
 //=====================================================================================
 
+//
+// Constructors
+//
 
 //
 //
@@ -714,6 +743,9 @@ CObjectStream<Checker>::CObjectStream ()
 
 }
 
+//
+// Cloning
+//
 
 //
 //
@@ -726,6 +758,10 @@ CObjectStream<Checker>::doClone () const
 }
 
 //
+// Get methods
+//
+
+//
 //
 //
 template<typename Checker>
@@ -735,6 +771,9 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 	str = "<what shall i return?>";
 }
 	
+//
+// Set methods
+//
 
 //
 //
@@ -754,6 +793,9 @@ CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
 	_objectChanged ();
 }
 
+//
+// Helper methods
+//
 
 //
 //
@@ -769,7 +811,7 @@ CObjectStream<Checker>::_makeXpdfObject () const
 
 
 //
-//
+// Destructor
 //
 template<typename Checker>
 CObjectStream<Checker>::~CObjectStream ()
@@ -783,7 +825,9 @@ CObjectStream<Checker>::~CObjectStream ()
 
 
 
-} /* namespace pdfobjects */
+//=====================================================================================
+} // namespace pdfobjects
+//=====================================================================================
 
 
 
