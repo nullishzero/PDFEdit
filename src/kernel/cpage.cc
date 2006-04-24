@@ -152,48 +152,59 @@ CPage::setMediabox (const Rectangle& rc)
 void
 CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) const
 {
+	//
 	// Xpdf Global variable TFUJ!!!
 	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
 	// variable builtinFonts which causes that globalParams can NOT be nested
+	// 
 	assert (NULL == globalParams);
 	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
 //	globalParams->setupBaseFonts (NULL);
 
-	// Get xref
-	assert (NULL != dictionary->getPdf ());
-	if (NULL == dictionary->getPdf ())
+	// Are we in valid pdf
+	assert (isInValidPdf (dictionary));
+	assert (hasValidRef (dictionary));
+	if (!isInValidPdf (dictionary) || !hasValidRef (dictionary))
 		throw XpdfInvalidObject ();
+
+	// Get xref
 	XRef* xref = dictionary->getPdf()->getCXref ();
 	assert (NULL != xref);
 	
+	//
 	// Create xpdf object representing CPage
+	//
 	boost::scoped_ptr<Object> xpdfPage (dictionary->_makeXpdfObject());
 	// Check page dictionary
 	assert (objDict == xpdfPage->getType ());
 	if (objDict != xpdfPage->getType ())
 		throw XpdfInvalidObject ();
+	
 	// Get page dictionary
 	Dict* xpdfPageDict = xpdfPage->getDict ();
 	assert (NULL != xpdfPageDict);
 
 	//
-	// We need to handle special cases
+	// We need to handle special case
 	//
-	SplashOutputDev * sout = dynamic_cast<SplashOutputDev *> (& out);
-	if (sout) {
+	SplashOutputDev* sout = dynamic_cast<SplashOutputDev*> (&out);
+	if (sout)
 		sout->startDoc( xref );
-	}
 
 	//
 	// Create default page attributes and make page
 	// ATTRIBUTES are deleted in Page destructor
 	// 
 	Page page (xref, 0, xpdfPageDict, new PageAttrs (NULL, xpdfPageDict));
+	
 	// Create catalog
 	scoped_ptr<Catalog> xpdfCatalog (new Catalog (xref));
+	
+	//
 	// Page object display (..., useMediaBox, crop, links, catalog)
+	// 
 	page.display (&out, hDpi, vDPI, rotate, gTrue, gFalse, NULL, xpdfCatalog.get());
 	
 	//
