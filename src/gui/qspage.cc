@@ -1,8 +1,13 @@
 /** @file
- QObject wrapper around CPage
+ QObject wrapper around CPage (Page in document)<br>
+ Export some functions to scripting.<br>
+ See doc/user/scripting.xml or kernel documentation for more informations about these functions
+ @author Martin Petricek
 */
 
 #include "qspage.h"
+#include <qstring.h>
+#include "qscontentstream.h"
 
 namespace gui {
 
@@ -17,7 +22,7 @@ QSPage::~QSPage() {
 
 
 /** Call CPage::getDictionary */
-QSDict *QSPage::getDictionary() {
+QSDict* QSPage::getDictionary() {
  return new QSDict(obj->getDictionary().get());
 }
 
@@ -26,6 +31,11 @@ QString QSPage::getText() {
  std::string text;
  obj->getText(text);
  return text;
+}
+
+/** Call CPage::getContentStream() */
+QSContentStream* QSPage::getContentStream() {
+ return new QSContentStream(obj->getContentStream());
 }
 
 /** get CPage held inside this class. Not exposed to scripting */

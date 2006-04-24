@@ -66,8 +66,8 @@ HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h
 SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc
 
 #CObject Wrapper classes
-HEADERS += qscobject.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h
-SOURCES += qscobject.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
+HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h
+SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
 
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h 

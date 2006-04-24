@@ -1,13 +1,15 @@
 #ifndef __QSPAGE_H__
 #define __QSPAGE_H__
 
-#include <qstring.h>
 #include <qobject.h>
 #include <cpage.h>
 #include "qsdict.h"
-#include "qscobject.h"
+class QString;
 
 namespace gui {
+
+class QSContentStream;
+class QSDict;
 
 using namespace pdfobjects;
 
@@ -18,7 +20,8 @@ public:
  QSPage(boost::shared_ptr<CPage> _page);
  boost::shared_ptr<CPage> get();
 public slots:
- QSDict *getDictionary();
+ QSContentStream* getContentStream();
+ QSDict* getDictionary();
  QString getText();
 private:
  /** Object held in class*/

@@ -156,6 +156,11 @@ void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=
  }
  QString line=readItem(name);
  if (line.startsWith("list ")) { // List of values - a submenu, first is name of submenu, others are items in it
+  QString add=globalSettings->read("gui/items_add/"+name);
+  if (!add.isNull()) { //Read user-specified additional items and append them
+   line+=",";
+   line+=add;
+  }
   if (!isRoot) {
    item=new QPopupMenu();
   }
@@ -284,6 +289,11 @@ ToolBar* Menu::loadToolbar(const QString name,QMainWindow *parent,bool visible/*
   return NULL;
  }
  line=line.remove(0,5);
+ QString add=globalSettings->read("gui/items_add/"+name);
+ if (!add.isNull()) { //Read user-specified additional items and append them
+  line+=",";
+  line+=add;
+ }
  QStringList qs=explode(',',line);
  ToolBar *tb=NULL;
  QStringList::Iterator it=qs.begin();

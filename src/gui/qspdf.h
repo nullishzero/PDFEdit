@@ -31,6 +31,9 @@ public slots:
  QSPage* getNextPage(QSPage* page);
  QSPage* getPrevPage(QSPage* page);
  QSPage* getLastPage();
+ bool hasNextPage(QSPage* page);
+ bool hasPrevPage(QSPage* page);
+ size_t getRevisionsCount();
 private:
  /** Object held in class*/
  CPdf *obj;

@@ -1,5 +1,8 @@
 /** @file
- QObject wrapper around CPdf
+ QObject wrapper around CPdf (PDF document)<br>
+ Export some functions to scripting.<br>
+ See doc/user/scripting.xml or kernel documentation for more informations about these functions
+ @author Martin Petricek
 */
 
 #include "qspdf.h"
@@ -65,6 +68,21 @@ QSPage* QSPdf::getNextPage(QSPage* page) {
 /** Call CPdf::getPrevPage(page) */
 QSPage* QSPdf::getPrevPage(QSPage* page) {
  return new QSPage(obj->getPrevPage(page->get()));
+}
+
+/** Call CPdf::hasNextPage(page) */
+bool QSPdf::hasNextPage(QSPage* page) {
+ return obj->hasNextPage(page->get());
+}
+
+/** Call CPdf::hasPrevPage(page) */
+bool QSPdf::hasPrevPage(QSPage* page) {
+ return obj->hasPrevPage(page->get());
+}
+
+/** Call CPdf::getRevisionsCount() */
+size_t QSPdf::getRevisionsCount() {
+ return obj->getRevisionsCount();
 }
 
 /** Call CPdf::getLastPage() */

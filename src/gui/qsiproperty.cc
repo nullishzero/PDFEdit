@@ -1,8 +1,12 @@
 /** @file
- QObject wrapper around CDict
+ QObject wrapper around IProperty (one property in dictionary or array)<br>
+ Export some functions to scripting.<br>
+ See doc/user/scripting.xml or kernel documentation for more informations about these functions
+ @author Martin Petricek
 */
 
 #include "qsiproperty.h"
+#include <qstring.h>
 
 namespace gui {
 
@@ -14,6 +18,13 @@ QSIProperty::QSIProperty(IProperty *_ip) : QSCObject ("IProperty") {
 /** Construct wrapper with given IProperty and given type name*/
 QSIProperty::QSIProperty(IProperty *_ip, QString _className) : QSCObject (_className) {
  obj=_ip;
+}
+
+/** Call IProperty::getStringRepresentation(ret); return ret */
+QString QSIProperty::getText() {
+ std::string text;
+ obj->getStringRepresentation(text);
+ return text;
 }
 
 /** destructor */
