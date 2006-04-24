@@ -222,7 +222,8 @@
    </para>
    <para>
     Types can be <link linkend="type_pdf">Pdf</link>, <link linkend="type_page">Page</link>,
-    <link linkend="type_dict">Dict</link> or <link linkend="type_array">Array</link>.
+    <link linkend="type_dict">Dict</link>, <link linkend="type_contentstream">ContentStream</link>
+    or <link linkend="type_array">Array</link>.
     <!--todo: more types as they are implemented.-->
     You can use type() function to return name of the object's type
    </para>
@@ -265,11 +266,26 @@
     <title><funcsynopsis>Dict getDictionary()</funcsynopsis></title>
     Returns page dictionary
    </sect2>
+   <sect2 id="page.getContentStream">
+    <title><funcsynopsis>ContentStream getContentStream()</funcsynopsis></title>
+    Returns content stream of this page
+   </sect2>
    <sect2 id="page.getText">
     <title><funcsynopsis>string getText()</funcsynopsis></title>
     Return text representation of this page
    </sect2>
   </sect1>
+  <sect1 id="type_contentstream">
+   <title>ContentStream</title>
+   <para>
+    This type of object represents content stream in document (page).
+   </para>
+   <sect2 id="contentstream.getText">
+    <title><funcsynopsis>string getText()</funcsynopsis></title>
+    Return text representation of this content stream
+   </sect2>
+  </sect1>
+<!--TYPE: qsiproperty.h -->
   <sect1 id="type_pdf">
    <title>Pdf</title>
    <para>
@@ -316,6 +332,18 @@
    <sect2 id="pdf.getPrevPage">
     <title><funcsynopsis>Page getPrevPage(Page)</funcsynopsis></title>
     Get previous page in document, relative to given page.
+   </sect2>
+   <sect2 id="pdf.hasNextPage">
+    <title><funcsynopsis>bool hasNextPage(Page)</funcsynopsis></title>
+    Return true, if there is next page in document for given page.
+   </sect2>
+   <sect2 id="pdf.hasPrevPage">
+    <title><funcsynopsis>bool hasPrevPage(Page)</funcsynopsis></title>
+    Return true, if there is previous page in document for given page.
+   </sect2>
+   <sect2 id="pdf.getRevisionCount">
+    <title><funcsynopsis>int getRevisionCount()</funcsynopsis></title>
+    Return number of available revisions
    </sect2>
    <sect2 id="pdf.getLastPage">
     <title><funcsynopsis>Page getLastPage()</funcsynopsis></title>

@@ -18,3 +18,6 @@ clean:
 #rule for generation manpage
 %.1: %.xml ../tools/docbook2man.pl
 	../tools/docbook2man.pl $< >$@
+
+scripting.xml: scripting-src.xml scripting.gen.pl
+	./scripting.gen.pl $<  >$@
