@@ -7,7 +7,7 @@ docs=scripting.html pdfedit.html install.html pdfedit.1
 all: $(docs)
 
 clean:
-	rm -f $(docs)
+	rm -f $(docs) scripting.xml
 
 #rule for procesing docbook documentation
 #prefer using xsltproc and docbook.xsl (nicer output and is also faster)
