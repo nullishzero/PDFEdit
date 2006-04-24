@@ -35,7 +35,7 @@
     </para>
     <itemizedlist>
      <listitem>Lists in menu can contain items (menu items) or lists (submenus).
-      Submenus can be nested to any level, but be careful not to create a loop.
+      Submenus can be nested to any level, but you cannot create a loop. Program will tell you about the loop and will not start if you do so.
       List used as toolbar can contain only items</listitem>
      <listitem>Menu item does not need icon, toolbar item needs icon</listitem>
      <listitem>Caption in menu items will be used as text of the menu items, caption in toolbar items will be used as tooltip</listitem>
@@ -53,6 +53,14 @@
      If you want to insert separator in the menu, use "-" (single dash) in place of items's name
      <synopsis>Caption of item</synopsis> is text that will be shown as menu text/tooltip.
      All further parameters (comma separated) following caption are items that will be contained in the list.
+    </formalpara>
+    <formalpara>
+     <title>Appending items to list</title>
+     <programlisting>items_add/<varname>name_of_list</varname>=<varname>menu item 1, menu item 2, ....</varname></programlisting>
+     This way you can add items to an existing list. Only one "item_add" field can exist for each list and is used mostly for
+     adding extra items to any of the menus in user configuration file, without having to redefine entire list and its items.
+     This field is composed of comma separated menu items to be appended at end of the menu, syntax of items is same as items
+     in ordinary list.
     </formalpara>
     <formalpara>
      <title>Format of one item</title>
