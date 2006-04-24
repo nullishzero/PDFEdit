@@ -13,6 +13,7 @@ class QSDict;
 
 using namespace pdfobjects;
 
+/*= This type of object represents one page in document. */
 class QSPage : public QSCObject {
  Q_OBJECT
 public:
@@ -20,8 +21,11 @@ public:
  QSPage(boost::shared_ptr<CPage> _page);
  boost::shared_ptr<CPage> get();
 public slots:
+ /*- Returns content stream of this page */
  QSContentStream* getContentStream();
+ /*- Returns page dictionary */
  QSDict* getDictionary();
+ /*- Return text representation of this page */
  QString getText();
 private:
  /** Object held in class*/

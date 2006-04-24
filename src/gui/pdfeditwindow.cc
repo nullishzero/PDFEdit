@@ -225,7 +225,6 @@ void PdfEditWindow::runScript(QString script) {
  if (error!=QString::null) { /// some error occured
   cmdLine->addError(error);
  }
-
  removeDocumentObjects();
 }
 
@@ -237,7 +236,8 @@ void PdfEditWindow::qfix() {
  pagespc->refresh(new QSPdf(document), new QSPage(pg));
 }
 
-/** Print given string to console, followed by newline
+/**
+ Print given string to console, followed by newline
  @param str String to add
  */
 void PdfEditWindow::print(const QString &str) {
@@ -245,7 +245,8 @@ void PdfEditWindow::print(const QString &str) {
  cmdLine->addString(str);
 }
 
-/** Signal handler invoked on menu activation
+/**
+ Signal handler invoked on menu activation
  @param id Menu ID of clicked item
  */
 void PdfEditWindow::menuActivated(int id) {
@@ -261,7 +262,23 @@ void PdfEditWindow::menuActivated(int id) {
  else runScript(action);
 }
 
-/** constructor of PdfEditWindow, creates window and fills it with elements
+/** 
+ Call a callback function (no arguments, no return value) in a script
+ @param name Function name
+*/
+void PdfEditWindow::call(const QString &name) {
+ addDocumentObjects();
+ try {
+  //Call the function. Do not care about result
+  qs->evaluate(name+"();",this,"<GUI>");
+ } catch (...) {
+  //Do not care about exception in callbacks either ... 
+ }
+ removeDocumentObjects();
+}
+
+/**
+ constructor of PdfEditWindow, creates window and fills it with elements
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
  @param fName Name of file to open in this window. If empty or null, no file will be opened 
@@ -466,7 +483,7 @@ void PdfEditWindow::destroyFile() {
 }
 
 /** Open file in editor.
- @param name Name opf file to open
+ @param name Name of file to open
 */
 void PdfEditWindow::openFile(const QString &name) {
  destroyFile();
@@ -478,6 +495,8 @@ void PdfEditWindow::openFile(const QString &name) {
  setFileName(name);
  tree->init(document,baseName);
  print(tr("Loaded file")+" : "+name);
+ call("onLoad");
+ call("onLoadUser");
 }
 
 /** Opens new empty file in editor. */

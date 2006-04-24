@@ -10,6 +10,7 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/*= This type of object represents content stream in document (in page) */
 class QSContentStream : public QSCObject {
  Q_OBJECT
 public:
@@ -17,6 +18,7 @@ public:
  virtual ~QSContentStream();
  boost::shared_ptr<CContentStream> get();
 public slots:
+ /*- Return text representation of this content stream */
  QString getText();
 private:
  /** Object held in class*/

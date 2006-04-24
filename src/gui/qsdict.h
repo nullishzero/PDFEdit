@@ -1,23 +1,29 @@
 #ifndef __QSDICT_H__
 #define __QSDICT_H__
 
-#include "qscobject.h"
+#include "qsiproperty.h"
 #include <cobject.h>
 
 namespace gui {
 
 using namespace pdfobjects;
 
-class QSDict : public QSCObject {
+/*= This type represents a dictionary in PDF document.
+It hold keys (String) and values. Each key is corresponding to one value.
+Keys are strings, values can be of any type, either simple types (int, bool, float, string)
+or complex types (Dict, Array)
+*/
+class QSDict : public QSIProperty {
  Q_OBJECT
 public:
  QSDict(CDict *_dict);
  virtual ~QSDict();
  CDict* get();
 public slots:
- QString getString();
+ /*- Return string representation of this dictionary */
+ QString getText();
 private:
- /** Object held in class*/
+ /** Object held in class */
  CDict *obj;
 };
 

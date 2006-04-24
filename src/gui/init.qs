@@ -49,4 +49,15 @@ function func_new() {
  closeFile(true);
 }
 
+//Go to page number x
+function go(x) {
+ PageSpace.refresh(document,document.getPage(x));
+}
+
+//Called after document is loaded
+function onLoad() {
+ //show first page
+ PageSpace.refresh(document,document.getFirstPage());
+}
+
 print("PDF Editor "+version());

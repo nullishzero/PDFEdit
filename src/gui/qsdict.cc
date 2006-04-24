@@ -1,5 +1,8 @@
 /** @file
  QObject wrapper around CDict
+ Export some functions to scripting.<br>
+ See doc/user/scripting.xml or kernel documentation for more informations about these functions
+ @author Martin Petricek
 */
 
 #include "qsdict.h"
@@ -8,7 +11,6 @@
 namespace gui {
 
 using namespace pdfobjects;
-//TODO: this is for CObjectComplex, not only CDict ...
 
 /** Construct wrapper with given CDict */
 QSDict::QSDict(CDict *_dict) : QSCObject ("Dict") {
@@ -25,7 +27,7 @@ CDict* QSDict::get() {
 }
 
 /** call CDict::getStringRepresentation(ret); return ret */
-QString QSDict::getString() {
+QString QSDict::getText() {
  std::string text;
  obj->getStringRepresentation(text);
  return text;

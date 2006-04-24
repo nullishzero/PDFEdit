@@ -6,6 +6,7 @@ class QString;
 
 namespace gui {
 
+/*= Base class for all PDF objects used in scripts */
 class QSCObject : public QObject {
 Q_OBJECT
 public:
@@ -13,6 +14,7 @@ public:
  virtual ~QSCObject();
 public slots:
  virtual void deleteSelf();
+ /*- return name of this object's type */
  virtual QString type();
 private:
  /** Name of this objects's type */

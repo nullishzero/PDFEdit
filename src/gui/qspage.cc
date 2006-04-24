@@ -20,7 +20,6 @@ QSPage::QSPage(boost::shared_ptr<CPage> _page) : QSCObject ("Page") {
 QSPage::~QSPage() {
 }
 
-
 /** Call CPage::getDictionary */
 QSDict* QSPage::getDictionary() {
  return new QSDict(obj->getDictionary().get());

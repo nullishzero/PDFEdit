@@ -32,6 +32,7 @@ public:
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
  int question_ync(const QString &msg);
+ void call(const QString &name);
 public slots: //These will be exported to scripting
  void qfix();
  void run(QString scriptName);
