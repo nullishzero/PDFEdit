@@ -26,11 +26,11 @@ xpdf_configure: xpdf/config.status
 xpdf/config.status:
 	cd xpdf && ./configure
 
-# XPdf
+# CPPunit
 cppunit: cppunit_configure
 	cd cppunit && make
 
-# XPdf configure
+# CPPunit configure
 cppunit_configure: cppunit/config.status
 
 cppunit/config.status:
