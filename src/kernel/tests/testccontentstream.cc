@@ -33,6 +33,8 @@ position (ostream& oss, const char* fileName)
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
+	// parse the content stream
+	page->parseContentStream ();
 	
 	std::vector<shared_ptr<PdfOperator> > ops;
 	page->getObjectsAtPosition (ops, Rectangle (1,1,10,10));
@@ -107,7 +109,12 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 
 	// Print content stream
 	string str;
-	page->getContentStream()->getStringRepresentation (str);
+	if (page)
+	{
+		page->getContentStream()->getStringRepresentation (str);
+	}
+	else 
+		return false;
 	//oss << "Content stream representation: " << str << endl;
 
 	return true;

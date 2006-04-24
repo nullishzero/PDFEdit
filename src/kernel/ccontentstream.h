@@ -130,6 +130,12 @@ private:
 	/** Parsed content stream operators. */
 	Operators operators;
 
+	/** Change indicator. */
+	bool _changed;
+
+	//
+	// Constructors
+	//
 public:
 
 	/**
@@ -152,7 +158,10 @@ public:
 	 */
 	CContentStream (boost::shared_ptr<CStream> stream, Object* obj = NULL);
 
-	
+	//
+	// Get methods
+	//
+public:	
 	/**
 	 * Get string representation.
 	 *
@@ -176,8 +185,30 @@ public:
 		posParser.getOpAtSpecificPosition 
 				(PdfOperator::getIterator (operators.front()), opContainer, cmp, state);
 	}
+
+	//
+	// Helper methods
+	//
+public:
+	/**
+	 * Change indicator.
+	 * 
+	 * @return True if the contentstream was changed, false otherwise.
+	 */
+	bool changed () const {return _changed;};
+
 	
-	
+	/**
+	 * Change indicator.
+	 * 
+	 * @return True if the contentstream was changed, false otherwise.
+	 */
+	bool empty () const {return operators.empty ();};
+
+	//
+	// Destructor
+	//
+public:
 	/** Destructor. */
 	~CContentStream ()
 	{

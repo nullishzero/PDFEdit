@@ -990,10 +990,15 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 } // namespace operatorparser
 //==========================================================
 
+
+//==========================================================
+// CContentStream
+//==========================================================
+
 //
+// Constructors
 //
-//
-CContentStream::CContentStream (shared_ptr<CStream> stream, Object* obj)
+CContentStream::CContentStream (shared_ptr<CStream> stream, Object* obj) : _changed (false)
 {
 	// not implemented yet
 	assert (obj != NULL);
@@ -1013,7 +1018,7 @@ CContentStream::CContentStream (shared_ptr<CStream> stream, Object* obj)
 //
 // Parse the xpdf object, representing the content stream
 //
-CContentStream::CContentStream (ContentStreams& streams, Object* obj)
+CContentStream::CContentStream (ContentStreams& streams, Object* obj) : _changed (false)
 {
 	// not implemented yet
 	assert (obj != NULL);
@@ -1038,6 +1043,10 @@ CContentStream::CContentStream (ContentStreams& streams, Object* obj)
 }
 
 //
+// Get methods
+//
+
+//
 // 
 //
 void
@@ -1055,6 +1064,7 @@ CContentStream::getStringRepresentation (string& str) const
 		tmp.clear ();
 	}
 }
+
 
 
 //==========================================================

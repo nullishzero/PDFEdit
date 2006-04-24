@@ -79,7 +79,7 @@ static double DEFAULT_PAGE_RY = 700;
 /**
  * CPage represents pdf page object. 
  *
- *
+ * Content stream is parsed on demand because it can be horribly slow.
  */
 class CPage
 {
@@ -131,14 +131,13 @@ public:
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
 	 *
-	 * @param rc Rectangle around which we will be looking.
-	 * @param cmp 		Null if default kernel area comparator should be used
-	 * 						otherwise points to an object which will decide whether an operator 
-	 * 						is "near" a point.
-	 * 	@param hDpi		Horizontal dpi.
-	 * 	@param vDpi		Vertival dpi.
-	 * 	@param pageRect Page bounding box.
-	 * 	@param rotata	Rotation.
+	 * @param opContainer Operator container where operators in specified are
+	 * 						wil be stored.
+	 * @param rc 		Rectangle around which we will be looking.
+	 * @param hDpi		Horizontal dpi.
+	 * @param vDpi		Vertical dpi.
+	 * @param pageRect 	Page bounding box.
+	 * @param rotata	Rotation.
 	 */
 	template<typename OpContainer>
 	void getObjectsAtPosition  (OpContainer& opContainer, 
@@ -147,7 +146,7 @@ public:
 								double vDpi = DEFAULT_VDPI, 
 								const Rectangle pageRect = Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY,
 																	  DEFAULT_PAGE_RX, DEFAULT_PAGE_RY), 
-								int rotate = DEFAULT_ROTATE) const
+								int rotate = DEFAULT_ROTATE)
 	{	
 		printDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
 		// Get the objects with specific comparator
@@ -156,15 +155,14 @@ public:
 	/**
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
-	 *
+	 * 
+	 * @param opContainer Operator container where operators in specified are
+	 * 						wil be stored.
 	 * @param pt 		Point around which we will be looking.
-	 * @param cmp Null if default kernel area comparator should be used
-	 * 				otherwise points to an object which will decide whether an operator 
-	 * 				is "near" a point.
-	 * 	@param hDpi		Horizontal dpi.
-	 * 	@param vDpi		Vertival dpi.
-	 * 	@param pageRect Page bounding box.
-	 * 	@param rotata	Rotation.
+	 * @param hDpi		Horizontal dpi.
+	 * @param vDpi		Vertical dpi.
+	 * @param pageRect Page bounding box.
+	 * @param rotata	Rotation.
 	 */
 	template<typename OpContainer>
 	void getObjectsAtPosition  (OpContainer& opContainer, 
@@ -173,22 +171,40 @@ public:
 								double vDpi = DEFAULT_VDPI, 
 								const Rectangle pageRect = Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY,
 																	  DEFAULT_PAGE_RX, DEFAULT_PAGE_RY), 
-								int rotate = DEFAULT_ROTATE) const
+								int rotate = DEFAULT_ROTATE)
 	{	
 		printDbg (debug::DBG_DBG, " at point (" << pt << ")");
 		// Get the objects with specific comparator
 		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt), hDpi, vDpi, pageRect, rotate);
 	}
-	
+	/**
+	 * Get objects at specified position. This call will be delegated to
+	 * CContentStream class.
+	 *
+	 * @param opContainer Operator container where operators in specified are
+	 * 						wil be stored.
+	 * @param cmp 	Null if default kernel area comparator should be used otherwise points 
+	 * 				 to an object which will decide whether an operator is "near" a point.
+	 * @param hDpi		Horizontal dpi.
+	 * @param vDpi		Vertical dpi.
+	 * @param pageRect 	Page bounding box.
+	 * @param rotata	Rotation.
+	 */
+
 	template<typename OpContainer, typename PositionComparator>
 	void getObjectsAtPosition ( OpContainer& opContainer, PositionComparator cmp, 
-								double hDpi, double vDpi, const Rectangle& pageRect, int rotate ) const
+								double hDpi, double vDpi, const Rectangle& pageRect, int rotate ) 
 	{	
 		// Create Media (Bounding) box
 		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (pageRect.xleft, pageRect.yleft,
 															  pageRect.xright, pageRect.yright));;
 		// Create state
 		GfxState state (hDpi, vDpi, rc.get(), rotate, gFalse);
+		
+		// If changed or empty try to parse it
+		if (contentstream->empty () || contentstream->changed ())
+			parseContentStream ();
+
 		// Get the objects with specific comparator
 		contentstream->getOperatorsAtPosition (opContainer, cmp, state);
 	}
@@ -212,8 +228,7 @@ public:
 	 *
 	 * @return Content stream.
 	 */
-	boost::shared_ptr<CContentStream> getContentStream () const { return contentstream; };
-
+	boost::shared_ptr<CContentStream> getContentStream ();
 
 
 	/**
