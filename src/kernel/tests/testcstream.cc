@@ -71,12 +71,12 @@ bool getString (std::ostream& oss, const char* fileName)
 
 	oss << tmp << endl;
 
-	IndiRef rf = {7,0};
-	boost::shared_ptr<IProperty> ip = pdf->getIndirectProperty (rf);
+	boost::shared_ptr<IProperty> ip = stream->getProperty ("Length");
+	ip = utils::getReferencedObject (ip);
 
 	tmp.clear ();
 	ip->getStringRepresentation (tmp);
-	oss << "object 7 0 : " << tmp << endl;
+	oss << "Length: " << tmp << endl;
 
 	return true;
 }
