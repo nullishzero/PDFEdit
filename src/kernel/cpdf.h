@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.39  2006/04/25 22:16:41  misuj1am
+ *
+ * -- ADD: headers cobject.h
+ *
  * Revision 1.38  2006/04/24 01:09:10  jahom0bm
  * Oprava vytvarania obrazu stranok pre PageSpace.
  *
@@ -181,6 +185,7 @@
 // mode controller
 #include "modecontroller.h"
 #include "iproperty.h"
+#include "cobject.h"
 #include "xrefwriter.h"
 
 // =============================================================================
