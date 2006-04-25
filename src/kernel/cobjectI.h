@@ -19,7 +19,7 @@
 #include "xpdf.h"
 
 #include "iproperty.h"
-#include "cobject.h"
+#include "cobjecthelpers.h"
 #include "cpdf.h"
 
 // CStream filters
@@ -708,13 +708,31 @@ CObjectComplex<Tp,Checker>::~CObjectComplex ()
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
+CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
+	printDbg (debug::DBG_DBG,"");
 
 	// Copy the stream
 	o.copy (&xpdfDict);
+	
+	// Make sure it is a stream
+	assert (objStream == o.getType());
+	if (objStream != o.getType())
+		throw XpdfInvalidObject ();
+	
+	// Get the dictionary and init CDict with it
+	::Object objDict;
+	::Dict* dict = o.streamGetDict();
+	assert (NULL != dict);
+	objDict.initDict (dict);
+	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
+	// Set pdf and ref
+	dictionary.setPdf (&p);
+	dictionary.setIndiRef (rf);
+	
+	// Save the contents of the container
+	utils::parseStreamToContainer (buffer, o);
 }
 
 
@@ -722,13 +740,28 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, Object& o, const IndiRef& rf) : 
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (Object& o)
+CObjectStream<Checker>::CObjectStream (::Object& o)
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
+	printDbg (debug::DBG_DBG,"");
 
 	// Copy the stream
 	o.copy (&xpdfDict);
+
+	// Make sure it is a stream
+	assert (objStream == o.getType());
+	if (objStream != o.getType())
+		throw XpdfInvalidObject ();
+	
+	// Get the dictionary and init CDict with it
+	::Object objDict;
+	::Dict* dict = o.streamGetDict();
+	assert (NULL != dict);
+	objDict.initDict (dict);
+	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
+
+	// Save the contents of the container
+	utils::parseStreamToContainer (buffer, o);
 }
 
 
@@ -739,7 +772,7 @@ template<typename Checker>
 CObjectStream<Checker>::CObjectStream ()
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectComplex <pStream> >() constructor.");
+	printDbg (debug::DBG_DBG,"");
 
 }
 
@@ -754,7 +787,27 @@ template<typename Checker>
 IProperty*
 CObjectStream<Checker>::doClone () const
 {
-	return NULL;
+	printDbg (debug::DBG_DBG,"CObjectStream::doClone");
+	
+	// Make new stream object
+	// NOTE: We do not want to inherit any IProperty variable
+	CObjectStream<Checker>* clone_ = new CObjectStream<Checker> ();
+	
+	//
+	// Loop through all items and clone them as well and finally add them to the new object
+	//
+	CDict::Value::const_iterator it = dictionary.value.begin ();
+	for (; it != dictionary.value.end (); ++it)
+	{
+		boost::shared_ptr<IProperty> newIp = ((*it).second)->clone ();
+		assert (newIp);
+		CDict::Value::value_type item =  std::make_pair ((*it).first, newIp);
+		clone_->dictionary.value.push_back (item);
+	}
+
+	std::copy (buffer.begin(), buffer.end(), clone_->buffer.begin());
+	
+	return clone_;
 }
 
 //
@@ -768,12 +821,51 @@ template<typename Checker>
 void
 CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 {
-	str = "<what shall i return?>";
+	printDbg (debug::DBG_DBG, "");
+
+	// Set the length of the stream	
+	utils::setDoubleInDict (dictionary, std::string ("Length"), buffer.size());
+			
+	// Get dictionary string representation
+	std::string strDict, strBuf;
+	dictionary.getStringRepresentation (strDict);
+
+	// Get buffer string representation
+	for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
+		strBuf += static_cast<char> (*it);
+
+	// Put them together
+	utils::streamToString (strDict, strBuf, str);
 }
 	
 //
 // Set methods
 //
+
+//
+//
+//
+template<typename Checker>
+void 
+CObjectStream<Checker>::setPdf (CPdf* pdf)
+{
+	// Set pdf to this object and dictionary it contains
+	IProperty::setPdf (pdf);
+	dictionary.setPdf (pdf);
+}
+
+//
+//
+//
+template<typename Checker>
+void 
+CObjectStream<Checker>::setIndiRef (const IndiRef& rf)
+{
+	// Set pdf to this object and dictionary it contains
+	IProperty::setIndiRef (rf);
+	dictionary.setIndiRef (rf);
+}
+
 
 //
 //
@@ -788,7 +880,10 @@ CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
 	// find the type
 	// find the params
 	// create appropriate filter and endcode data	
-	boost::scoped_ptr<filters::CFilter> filter = new filters::NoFilter ();
+	filtered_streambuf<output> out;
+	filters::CFilterFactory::addFilters (out, "");
+	out.push (vector_sink(buffer));
+			
 	//save it
 	_objectChanged ();
 }

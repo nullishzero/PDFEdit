@@ -18,7 +18,8 @@
 // all basic includes
 #include "static.h"
 #include "iproperty.h"
-
+// Filters
+#include "filters.h"
 
 
 //=====================================================================================
@@ -337,6 +338,8 @@ PropertyTraitComplex<pDict>::value::value_type
 	constructIdPairFromIProperty (size_t, const PropertyTraitComplex<pDict>::value::value_type& item);
 }
 
+template <typename Checker> class CObjectStream;
+
 
 /** 
  * Template class representing complex PDF objects from specification v1.5.
@@ -348,6 +351,8 @@ PropertyTraitComplex<pDict>::value::value_type
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : public IProperty
 {
+	template<typename T> friend class CObjectStream;
+	
 public:
 	typedef typename PropertyTraitComplex<Tp>::writeType  		WriteType;
 	typedef typename PropertyTraitComplex<Tp>::propertyId 		PropertyId;
@@ -498,7 +503,7 @@ public:
 	 *
 	 * @param str0 Object in a text form.
 	 */
-	void setStringRepresentation (const std::string& strO) {assert (!"is this function really needed???");};
+	void setStringRepresentation (const std::string& strO) {assert (!"is this function really needed???");}
 
 	
 	/**
@@ -510,7 +515,7 @@ public:
 	 *
 	 * @param val	Value that will be set.
 	 */
-	void writeValue (WriteType val) {assert (!"is this function really needed???");};
+	void writeValue (WriteType val) {assert (!"is this function really needed???");}
  
 	/**
 	 * Sets property type of an item.
@@ -673,17 +678,28 @@ public:
 template <typename Checker = BasicMemChecker>
 class CObjectStream : public IProperty
 {
-typedef CObjectComplex<pDict> CDict;
-		
+	typedef CObjectSimple<pName> 	CName;
+	typedef CObjectSimple<pInt> 	CInt;
+	typedef CObjectComplex<pDict> 	CDict;
+	typedef CObjectComplex<pArray> 	CArray;
+	typedef boost::iostreams::filtering_streambuf<boost::iostreams::output> filtering_ostreambuf;
+	typedef std::string PropertyId;
+
+public:
+	typedef std::vector<int> Buffer;
+
 private:
 	
 	/** Object dictionary. */
-	boost::scoped_ptr<CDict> dict;
+	CDict dictionary;
 	
 	/** Xpdf object. */
 	mutable Object xpdfDict;
 
-	
+	/** Buffer. */
+	Buffer buffer;
+		
+
 	//
 	// Constructors
 	//
@@ -717,7 +733,66 @@ public:
 	 */
 	CObjectStream ();
 
-	
+
+	//
+	// Dictionary handling from CObjectComplex
+	//
+public:
+	//
+	//
+	//
+	size_t getPropertyCount () const
+		{return dictionary.getPropertyCount ();}
+	//
+	//
+	//
+	template<typename Container> 
+	void getAllPropertyNames (Container& container) const
+		{dictionary.getAllPropertyNames (container);}
+	//
+	//
+	//
+	boost::shared_ptr<IProperty> getProperty (PropertyId id) const
+		{return dictionary.getProperty (id);}
+	//
+	//
+	//
+	PropertyType getPropertyType (PropertyId id) const
+		{return dictionary.getPropertyType (id);}
+	//
+	//
+	//
+	boost::shared_ptr<IProperty> setProperty (PropertyId id, IProperty& ip)
+		{return dictionary.setProperty (id, ip);}
+	//
+	//
+	//
+	boost::shared_ptr<IProperty> addProperty (PropertyId id, const IProperty& newIp)
+		{return dictionary.addProperty (id, newIp);}
+	//
+	//
+	//
+	void delProperty (PropertyId id)
+		{dictionary.delProperty ();}
+
+	//
+	// Set methods
+	//
+public:
+	/**
+	 * Set pdf to itself and also tu all children
+	 *
+	 * @param pdf New pdf.
+	 */
+	virtual void setPdf (CPdf* pdf);
+
+	/**
+	 * Set ref to itself and also tu all children
+	 *
+	 * @param pdf New indirect reference numbers.
+	 */
+	virtual void setIndiRef (const IndiRef& rf);
+
 	//
 	// Cloning
 	//
@@ -741,16 +816,93 @@ public:
      *
      * @return Type of this class.
      */
-    virtual PropertyType getType () const {return pStream;};
+    virtual PropertyType getType () const {return pStream;}
 
 	
 	/**
 	 * Returns string representation of actual object.
-	 * 
-	 * If it is an indirect object, we have to notify CXref.
+	 *
+	 * REMARK: String can contain also NOT printable characters.
+	 *
+	 * @param str String representation.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 
+	/**
+	 * Get filters.
+	 *
+	 * @param container Container of filter names.
+	 */
+	template<typename Container>
+	void getFilters (Container& container) const
+	{
+		boost::shared_ptr<IProperty> ip;
+		//
+		// Get optional value Filter
+		//
+		try	
+		{
+			ip = dictionary.getProperty ("Filter");
+			
+		}catch (ElementNotFoundException&)
+		{
+			// No filter found
+			printDbg (debug::DBG_DBG, "No filter found.");
+			return;
+		}
+	
+		//
+		// If it is a name just store it
+		// 
+		if (isName (ip))
+		{
+			std::string fltr;
+			boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
+			if (name)
+			{
+				name->getPropertyValue (fltr);
+				container.push_back (fltr);
+			
+				printDbg (debug::DBG_DBG, "Filter name:" << fltr);
+			}else
+				throw CObjInvalidObject ();
+		//
+		// If it is an array, iterate through its properties
+		//
+		}else if (isArray (ip))
+		{
+			boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(ip);
+			if (array)
+			{
+				CArray::Value::iterator it = array->value.begin ();
+				for (; it != array->value.end(); ++it)
+				{
+					std::string fltr;
+					boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
+					if (name)
+					{
+						name->getPropertyValue (fltr);
+						container.push_back (fltr);
+					
+						printDbg (debug::DBG_DBG, "Filter name:" << fltr);
+					
+					}else // if (name)
+						throw CObjInvalidObject ();
+				
+				} // for (; it != array->value.end(); ++it)
+				
+			}else // if (array)
+				throw CObjInvalidObject ();
+		}
+	}
+
+	/**
+	 * Get encoded string representation.
+	 *
+	 * 
+	 */
+	//void getEncodedStringRepresentation () const;
+	
 	
 	//
 	// Set methods
@@ -818,6 +970,13 @@ private:
 			throw CObjInvalidOperation ();
 	}
 
+	/**
+	 * Encode buffer with specified filter.
+	 *
+	 * @param
+	 */
+	//void encode () const;
+	
 	
 	//
 	// Special functions
@@ -829,19 +988,9 @@ public:
 	 *
 	 * @return List of supported stream filters.
 	 */
-	static const std::list<std::string>& getSupportedStreams () 
-	{
-		std::list<std::string> supported;
-		//
-		// Initialize the list
-		//
-		if (supported.empty())
-		{
-			supported.push_back ("NoFilter");
-		}
-	
-		return &supported;
-	}
+	template<typename Container>
+	static void getSupportedStreams (Container& supported) 
+		{ filters::CFilterFactory::getSupportedStreams (supported); }
 
 };
 
@@ -1060,6 +1209,9 @@ public:
 namespace utils {
 //=====================================================================================
 
+//
+// Creation functions
+//
 
 /**
  * Creates CObject* from xpdf object.
@@ -1081,7 +1233,73 @@ IProperty* createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref);
  */
 IProperty* createObjFromXpdfObj (Object& obj);
 
+/**
+ * Save real xpdf object value to val.
+ * 
+ * @param obj	Xpdf object which holds the value.
+ * @param val	Variable where the value will be stored.
+ */
+template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (Object& obj, T val);
+template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, Object& obj, T val);
 
+/**
+ * Create xpdf Object which represents value.
+ * 
+ * @param obj	Value where the value is stored.
+ * @return 		Xpdf object where the value is stored.
+ */
+template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
+
+/**
+ * Create xpdf object from string.
+ *
+ * @param str String that should represent an xpdf object.
+ * @param xref Xref of actual pdf if any.
+ *
+ * @return Xpdf object whose string representation is in str.
+ */
+Object* xpdfObjFromString (const std::string& str, XRef* xref = NULL);
+
+/**
+ * Parses string to get simple values like int, name, bool etc.
+ * 
+ * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
+ * 
+ * @param str	String to be parsed.
+ * @param val	Desired value.
+ */
+void simpleValueFromString (const std::string& str, bool& val);
+void simpleValueFromString (const std::string& str, int& val);
+void simpleValueFromString (const std::string& str, double& val);
+void simpleValueFromString (const std::string& str, std::string& val);
+void simpleValueFromString (const std::string& str, IndiRef& val);
+
+/**
+ * Constructs an item containing IProperty of a special container from a value that we want to replace.
+ *
+ * @param item  Item that will be replaced
+ * @patam ip	IProperty that will be inserted;
+ */
+inline PropertyTraitComplex<pArray>::value::value_type 
+constructItemFromIProperty (const PropertyTraitComplex<pArray>::value::value_type&,
+							PropertyTraitComplex<pArray>::value::value_type ip) {return ip;}
+
+inline PropertyTraitComplex<pDict>::value::value_type 
+constructItemFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item,
+							boost::shared_ptr<IProperty> ip) {return std::make_pair(item.first,ip);}
+
+inline std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
+constructIdPairFromIProperty (size_t pos, const PropertyTraitComplex<pArray>::value::value_type& item)
+	{return std::make_pair (pos, item);}
+
+inline PropertyTraitComplex<pDict>::value::value_type
+constructIdPairFromIProperty (size_t, const PropertyTraitComplex<pDict>::value::value_type& item)
+	{return item;}
+
+
+//
+// To string functions
+// 
 		
 /**
  * Return simple xpdf object (null,number,string...) in string representation.
@@ -1115,21 +1333,54 @@ template <PropertyType Tp> void complexValueToString (const typename PropertyTra
 													  std::string& str);
 
 /**
- * Save real xpdf object value to val.
- * 
- * @param obj	Xpdf object which holds the value.
- * @param val	Variable where the value will be stored.
+ * CStream object to string
+ *
+ * @param strDict Dictionary string representation.
+ * @param buf Buffer string representation
+ * @param str Output string.
  */
-template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (Object& obj, T val);
-template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, Object& obj, T val);
+void streamToString (const std::string& strDict, const std::string& buf, std::string& str);
 
 /**
- * Create xpdf Object which represents value.
- * 
- * @param obj	Value where the value is stored.
- * @return 		Xpdf object where the value is stored.
+ * Convert xpdf object to string
+ *
+ * @param obj Xpdf object that will be converted.
+ * @param str This will hold the string representation of the object.
  */
-template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
+void xpdfObjToString (Object& obj, std::string& str);
+
+/**
+ * Create text representation of an indirect object from string and IndiRef.
+ *
+ * @param rf IndiRef.
+ * @param val Value of an object.
+ * @param output Output string.
+ */
+ void createIndirectObjectStringFromString (const IndiRef& rf, const std::string& val, std::string& output);
+
+/**
+ * Parse stream object to a container
+ *
+ * @param container Container of characters (ints).
+ * @param obj Stream object.
+ */
+template <typename Container>
+void parseStreamToContainer (Container& container, Object& obj)
+{
+	if (!obj.isStream())
+		throw XpdfInvalidObject ();
+
+	obj.streamReset ();
+	typename Container::value_type c;
+	while (EOF != (c = obj.streamGetChar())) 
+		container.push_back (c);
+	obj.streamClose ();
+}
+
+
+//
+// Get functions
+//
 
 /**
  * Template functions can't be virutal, so this is a helper
@@ -1151,65 +1402,6 @@ getAllNames (T& container, const typename PropertyTraitComplex<pDict>::value& st
 
 
 /**
- * Create xpdf object from string.
- *
- * @param str String that should represent an xpdf object.
- * @param xref Xref of actual pdf if any.
- *
- * @return Xpdf object whose string representation is in str.
- */
-Object* xpdfObjFromString (const std::string& str, XRef* xref = NULL);
-
-
-/**
- * Parses string to get simple values like int, name, bool etc.
- * 
- * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
- * 
- * @param str	String to be parsed.
- * @param val	Desired value.
- */
-void simpleValueFromString (const std::string& str, bool& val);
-void simpleValueFromString (const std::string& str, int& val);
-void simpleValueFromString (const std::string& str, double& val);
-void simpleValueFromString (const std::string& str, std::string& val);
-void simpleValueFromString (const std::string& str, IndiRef& val);
-
-
-/**
- * Free an object. We assume that all child objects (if any)
- * have been already freed.
- *
- * Copy & paste from Object.h
- * 
- * @param obj	Object to be freed.
- */
-void freeXpdfObject (Object* obj);
-
-
-/**
- * Constructs an item containing IProperty of a special container from a value that we want to replace.
- *
- * @param item  Item that will be replaced
- * @patam ip	IProperty that will be inserted;
- */
-inline PropertyTraitComplex<pArray>::value::value_type 
-constructItemFromIProperty (const PropertyTraitComplex<pArray>::value::value_type&,
-							PropertyTraitComplex<pArray>::value::value_type ip) {return ip;}
-
-inline PropertyTraitComplex<pDict>::value::value_type 
-constructItemFromIProperty (const PropertyTraitComplex<pDict>::value::value_type& item,
-							boost::shared_ptr<IProperty> ip) {return std::make_pair(item.first,ip);}
-
-inline std::pair<size_t, PropertyTraitComplex<pArray>::value::value_type>
-constructIdPairFromIProperty (size_t pos, const PropertyTraitComplex<pArray>::value::value_type& item)
-	{return std::make_pair (pos, item);}
-
-inline PropertyTraitComplex<pDict>::value::value_type
-constructIdPairFromIProperty (size_t, const PropertyTraitComplex<pDict>::value::value_type& item)
-	{return item;}
-
-/**
  * Get IProperty from an item of a special container.
  *
  * @param item Item of a special container.
@@ -1220,13 +1412,19 @@ inline boost::shared_ptr<IProperty>
 getIPropertyFromItem (const PropertyTraitComplex<pDict>::value::value_type& item) {return item.second;}
 
 
+//
+// Other funcions
+//
+
 /**
- * Convert xpdf object to string
+ * Free an object. We assume that all child objects (if any)
+ * have been already freed.
  *
- * @param obj Xpdf object that will be converted.
- * @param str This will hold the string representation of the object.
+ * Copy & paste from Object.h
+ * 
+ * @param obj	Object to be freed.
  */
-void xpdfObjToString (Object& obj, std::string& str);
+void freeXpdfObject (Object* obj);
 
 /**
  * Returns true if object has a parent.
@@ -1240,16 +1438,6 @@ void xpdfObjToString (Object& obj, std::string& str);
  */
 bool objHasParent (const IProperty& ip);
 bool objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj);
-
-/**
- * Create text representation of an indirect object from string and IndiRef.
- *
- * @param rf IndiRef.
- * @param val Value of an object.
- * @param output Output string.
- */
- void createIndirectObjectStringFromString (const IndiRef& rf, const std::string& val, std::string& output);
-
 
 //=====================================================================================
 } /* namespace utils */

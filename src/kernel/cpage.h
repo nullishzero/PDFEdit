@@ -24,6 +24,41 @@
 namespace pdfobjects {
 //=====================================================================================
 
+//
+// Constatnts needed by GfxState
+// xpdf doesn't know the keyword CONST....
+//
+static const double DEFAULT_HDPI 	= 72;
+static const double DEFAULT_VDPI 	= 72;
+static const int DEFAULT_ROTATE 	= 0;
+
+static const double DEFAULT_PAGE_LX = 0;
+static const double DEFAULT_PAGE_LY = 0;
+static const double DEFAULT_PAGE_RX = 700;
+static const double DEFAULT_PAGE_RY = 700;
+
+/** Graphical state parameters. */
+typedef struct DisplayParams
+{
+	/** Paramaters */
+	double 		hDpi;		/*< Horizontal DPI. */
+	double 		vDpi; 		/*< Vertical DPI. */
+	Rectangle 	pageRect;	/*< Page rectangle. */
+	int 		rotate;		/*< Page rotation. */
+	GBool		useMediaBox;/*< Use page media box. */
+	GBool		crop;		/*< Crop the page. */
+	GBool		upsideDown;	/*< Upside down. */
+	
+	/** Constructor. */
+	DisplayParams () : hDpi (DEFAULT_HDPI), 
+					   vDpi (DEFAULT_VDPI),
+					   pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, 
+								   			DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
+					   rotate (DEFAULT_ROTATE),
+					   useMediaBox (gTrue),
+					   crop (gFalse),
+					   upsideDown (gFalse) {};
+} DisplayParams;
 
 /**
  * Comparator that will define area around specified point.
@@ -57,22 +92,6 @@ public:
 		return true;
 	}
 };
-
-//
-// Constatnts needed by GfxState
-//
-// xpdf doesn't know the keyword CONST....
-//
-static double DEFAULT_HDPI 	= 72;
-static double DEFAULT_VDPI 	= 72;
-static int DEFAULT_ROTATE 	= 0;
-
-static double DEFAULT_PAGE_LX = 0;
-static double DEFAULT_PAGE_LY = 0;
-static double DEFAULT_PAGE_RX = 700;
-static double DEFAULT_PAGE_RY = 700;
-
-
 
 //=====================================================================================
 
@@ -134,23 +153,16 @@ public:
 	 * @param opContainer Operator container where operators in specified are
 	 * 						wil be stored.
 	 * @param rc 		Rectangle around which we will be looking.
-	 * @param hDpi		Horizontal dpi.
-	 * @param vDpi		Vertical dpi.
-	 * @param pageRect 	Page bounding box.
-	 * @param rotata	Rotation.
+ 	 * @param params Display parameters.
 	 */
 	template<typename OpContainer>
 	void getObjectsAtPosition  (OpContainer& opContainer, 
 								const Rectangle& rc,
-								double hDpi = DEFAULT_HDPI, 
-								double vDpi = DEFAULT_VDPI, 
-								const Rectangle pageRect = Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY,
-																	  DEFAULT_PAGE_RX, DEFAULT_PAGE_RY), 
-								int rotate = DEFAULT_ROTATE)
+								const DisplayParams params = DisplayParams())
 	{	
 		printDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
 		// Get the objects with specific comparator
-		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc), hDpi, vDpi, pageRect, rotate);
+		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc), params);
 	}
 	/**
 	 * Get objects at specified position. This call will be delegated to
@@ -159,23 +171,16 @@ public:
 	 * @param opContainer Operator container where operators in specified are
 	 * 						wil be stored.
 	 * @param pt 		Point around which we will be looking.
-	 * @param hDpi		Horizontal dpi.
-	 * @param vDpi		Vertical dpi.
-	 * @param pageRect Page bounding box.
-	 * @param rotata	Rotation.
+ 	 * @param params Display parameters.
 	 */
 	template<typename OpContainer>
 	void getObjectsAtPosition  (OpContainer& opContainer, 
 								const Point& pt,
-								double hDpi = DEFAULT_HDPI, 
-								double vDpi = DEFAULT_VDPI, 
-								const Rectangle pageRect = Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY,
-																	  DEFAULT_PAGE_RX, DEFAULT_PAGE_RY), 
-								int rotate = DEFAULT_ROTATE)
+								const DisplayParams params = DisplayParams())
 	{	
 		printDbg (debug::DBG_DBG, " at point (" << pt << ")");
 		// Get the objects with specific comparator
-		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt), hDpi, vDpi, pageRect, rotate);
+		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt), params);
 	}
 	/**
 	 * Get objects at specified position. This call will be delegated to
@@ -185,21 +190,19 @@ public:
 	 * 						wil be stored.
 	 * @param cmp 	Null if default kernel area comparator should be used otherwise points 
 	 * 				 to an object which will decide whether an operator is "near" a point.
-	 * @param hDpi		Horizontal dpi.
-	 * @param vDpi		Vertical dpi.
-	 * @param pageRect 	Page bounding box.
-	 * @param rotata	Rotation.
+ 	 * @param params Display parameters.
 	 */
 
 	template<typename OpContainer, typename PositionComparator>
-	void getObjectsAtPosition ( OpContainer& opContainer, PositionComparator cmp, 
-								double hDpi, double vDpi, const Rectangle& pageRect, int rotate ) 
+	void getObjectsAtPosition ( OpContainer& opContainer, 
+								PositionComparator cmp,
+								const DisplayParams params = DisplayParams())
 	{	
 		// Create Media (Bounding) box
-		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (pageRect.xleft, pageRect.yleft,
-															  pageRect.xright, pageRect.yright));;
+		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (params.pageRect.xleft, params.pageRect.yleft,
+															  params.pageRect.xright, params.pageRect.yright));;
 		// Create state
-		GfxState state (hDpi, vDpi, rc.get(), rotate, gFalse);
+		GfxState state (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown);
 		
 		// If changed or empty try to parse it
 		if (contentstream->empty () || contentstream->changed ())
@@ -213,15 +216,9 @@ public:
 	 * Draw page on an output device.
 	 *
 	 * @param out Output device.
- 	 * @param hDpi Horizontal dpi.
-	 * @param vDpi Vertival dpi.
-	 * @param rotata Rotation.
+ 	 * @param params Display parameters.
 	 */
-	void displayPage (	::OutputDev& out, 
-						double hDpi = DEFAULT_HDPI, 
-						double vDPI = DEFAULT_VDPI,
-						int rotate = DEFAULT_ROTATE
-						) const;
+	void displayPage (	::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
 	
 	/** 
 	 * Get contents stream.

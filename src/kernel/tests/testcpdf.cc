@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/04/25 02:28:05  misuj1am
+ *
+ * -- improved cpage, cstream, tests
+ *
  * Revision 1.10  2006/04/23 23:20:40  misuj1am
  *
  * -- improved: zero page (incorrect) document handling
@@ -235,7 +239,7 @@ public:
 		shared_ptr<CPage> page=pdf->getPage(1);
 		// remove page implies pageCount decrementation test
 		pdf->removePage(1);
-		pdf->save();
+		//pdf->save();
 
 		CPPUNIT_ASSERT(pageCount-1==pdf->getPageCount());
 		// insert page implies pageCount incrementation test

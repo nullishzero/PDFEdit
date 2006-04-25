@@ -33,12 +33,17 @@
 // boost
 //
 #include <boost/smart_ptr.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
 // Typelists THIS IS NOT AN STL VECTOR not any other similar RUN-TIME container
 //#include <boost/mpl/vector.hpp>
 //#include <boost/mpl/size.hpp>
 //#include <boost/mpl/reverse.hpp>
 //#include <boost/mpl/insert.hpp>
 //#include <boost/mpl/at.hpp>
+// Filters
+#include <boost/iostreams/categories.hpp> // output_filter_tag
+#include <boost/iostreams/operations.hpp> // put
+#include <boost/iostreams/concepts.hpp> // multichar_output_filter
 
 
 //
@@ -49,15 +54,7 @@
 #include "utils/observer.h"
 
 #include "exceptions.h"
-
-//#include "utils/iterator.h"
-//#include "observer.h"
-//#include "filters.h"
-//#include "modecontroller.h"
-
 #include "xpdf.h"
-
-//#include "iproperty.h"
 
 //============================================
 // 

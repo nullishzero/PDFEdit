@@ -330,17 +330,19 @@ inline bool hasValidRef (IProperty& ip)
 
 //
 template<PropertyType Type>
+inline bool isIPType (const IProperty& ip) {return (Type == ip.getType());}
+template<PropertyType Type>
 inline bool isIPType (boost::shared_ptr<IProperty> ip) {return (Type == ip->getType());}
 /** Is IProperty of specified type. */
-template<typename T> inline bool isNull	 (T ip) {return isIPType<pNull> (ip);}
-template<typename T> inline bool isInt 	 (T ip) {return isIPType<pInt> (ip);}
-template<typename T> inline bool isReal  (T ip) {return isIPType<pReal> (ip);}
-template<typename T> inline bool isString(T ip) {return isIPType<pString> (ip);}
-template<typename T> inline bool isName  (T ip) {return isIPType<pName> (ip);}
-template<typename T> inline bool isRef 	 (T ip) {return isIPType<pRef> (ip);}
-template<typename T> inline bool isDict  (T ip) {return isIPType<pDict> (ip);}
-template<typename T> inline bool isArray (T ip) {return isIPType<pArray> (ip);}
-template<typename T> inline bool isStream(T ip) {return isIPType<pStream> (ip);}
+template<typename T> inline bool isNull	 (T& ip) {return isIPType<pNull> (ip);}
+template<typename T> inline bool isInt 	 (T& ip) {return isIPType<pInt> (ip);}
+template<typename T> inline bool isReal  (T& ip) {return isIPType<pReal> (ip);}
+template<typename T> inline bool isString(T& ip) {return isIPType<pString> (ip);}
+template<typename T> inline bool isName  (T& ip) {return isIPType<pName> (ip);}
+template<typename T> inline bool isRef 	 (T& ip) {return isIPType<pRef> (ip);}
+template<typename T> inline bool isDict  (T& ip) {return isIPType<pDict> (ip);}
+template<typename T> inline bool isArray (T& ip) {return isIPType<pArray> (ip);}
+template<typename T> inline bool isStream(T& ip) {return isIPType<pStream> (ip);}
 	
 
 // =====================================================================================

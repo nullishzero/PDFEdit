@@ -85,11 +85,14 @@ const string CDICT_BETWEEN_NAMES = " ";
 const string CDICT_SUFFIX	= "\n>>";
 
 /** Object Stream string representation. */
-const string CSTREAM_STREAM = "<stream>";
+const string CSTREAM_STREAM = "<<stream>>";
+const string CSTREAM_HEADER = "\nstream\n";
+const string CSTREAM_FOOTER = "endstream";
 
 /** Indirect Object header and footer. */
 const string INDIRECT_HEADER = "obj ";
 const string INDIRECT_FOOTER = "\nendobj";
+
 
 // =====================================================================================
 namespace {
@@ -473,6 +476,10 @@ namespace {
 // =====================================================================================
 
 
+// =====================================================================================
+//  Creation functions
+// =====================================================================================
+
 //
 // Creates CObject from xpdf object.
 // 
@@ -560,188 +567,6 @@ createObjFromXpdfObj (Object& obj)
 				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
 		}
-}
-
-
-//
-//
-//
-void 
-xpdfObjToString (Object& obj, string& str)
-{
-	switch (obj.getType())
-	{
-		case objArray:
-		case objDict:
-		case objStream:
-				complexXpdfObjToString (obj,str);
-				break;
-		default:
-				simpleXpdfObjToString (obj,str);
-				break;
-	}
-}
-
-//
-// Convert simple value from CObjectSimple to string
-//
-template <>
-void
-simpleValueToString<pBool> (bool val, string& str)
-{
-	str = ((val) ? CBOOL_TRUE : CBOOL_FALSE);
-}
-template void simpleValueToString<pBool>	(bool val, string& str);
-//
-//
-//
-template <>
-void
-simpleValueToString<pInt> (int val, string& str)
-{
-	stringstream oss;
-	oss << val;
-	str = oss.str ();
-}
-template void simpleValueToString<pInt> (int val, string& str);
-//
-//
-//
-template <>
-void
-simpleValueToString<pReal> (double val, string& str)
-{
-	stringstream oss;
-	oss << val;
-	str = oss.str ();
-}
-template void simpleValueToString<pReal> (double val, string& str);
-//
-// Special case for pString
-//
-template<PropertyType Tp>
-void
-simpleValueToString (const std::string& val, std::string& str)
-{
-	STATIC_CHECK ((pString == Tp) || (pName == Tp), COBJECT_INCORRECT_USE_OF_simpleObjToString_FUNCTION);
-
-	switch (Tp)
-	{
-			case pString:
-				str = CSTRING_PREFIX + val + CSTRING_SUFFIX;
-				break;
-
-			case pName:
-				str = CNAME_PREFIX + val;
-				break;
-
-			default:
-				assert (0);
-				break;
-	}
-}
-template void simpleValueToString<pString> (const string& val, string& str);
-template void simpleValueToString<pName> (const string& val, string& str);
-//
-// Special case for pNull
-//
-template<>
-void
-simpleValueToString<pNull> (const NullType&, string& str)
-{
-	str = CNULL_NULL;
-}
-template void simpleValueToString<pNull> (const NullType&, string& str);
-//
-// Special case for pRef
-//
-template<>
-void
-simpleValueToString<pRef> (const IndiRef& ref, string& str)
-{
-	ostringstream oss;
-	oss << ref.num << CREF_MIDDLE << ref.gen << CREF_SUFFIX;
-	// convert oss to string
-	str = oss.str ();
-}
-template void simpleValueToString<pRef> (const IndiRef&, string& str);
-
-
-
-//
-// Convert complex value from CObjectComplex to string
-//
-template<>
-void
-complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
-{
-		printDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
-		
-		ostringstream oss;
-
-		// start tag
-		str = CARRAY_PREFIX;
-		
-		//
-		// Loop through all items and get each string and append it to the result
-		//
-		PropertyTraitComplex<pArray>::value::const_iterator it = val.begin();
-		for (; it != val.end(); ++it) 
-		{
-			str += CARRAY_MIDDLE;
-			string tmp;
-			(*it)->getStringRepresentation (tmp);
-			str += tmp;
-		}
-		
-		// end tag
-		str += CARRAY_SUFFIX;
-}
-template void complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str);
-//
-//
-//
-template<>
-void
-complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
-{
-	printDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
-
-	// start tag
-	str = CDICT_PREFIX;
-
-	//
-	// Loop through all items and get each items name + string representation
-	// and append it to the result
-	//
-	PropertyTraitComplex<pDict>::value::const_iterator it = val.begin ();
-	for (; it != val.end(); ++it) 
-	{
-		str += CDICT_MIDDLE + (*it).first + CDICT_BETWEEN_NAMES;
-		string tmp;
-		(*it).second->getStringRepresentation (tmp);
-		str += tmp;
-	}
-
-	// end tag
-	str += CDICT_SUFFIX;
-}
-template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str);
-
-//
-//
-//
-void
-freeXpdfObject (Object* obj)
-{
-	assert (obj != NULL);
-	if (NULL == obj)
-		throw XpdfInvalidObject ();
-	
-	// delete all member variables
-	obj->free ();
-	// delete the object itself
-	delete obj;
 }
 
 
@@ -931,6 +756,227 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 }
 
 
+// =====================================================================================
+//  To/From string functions
+// =====================================================================================
+
+//
+//
+//
+void 
+xpdfObjToString (Object& obj, string& str)
+{
+	switch (obj.getType())
+	{
+		case objArray:
+		case objDict:
+		case objStream:
+				complexXpdfObjToString (obj,str);
+				break;
+		default:
+				simpleXpdfObjToString (obj,str);
+				break;
+	}
+}
+
+//
+// Convert simple value from CObjectSimple to string
+//
+template <>
+void
+simpleValueToString<pBool> (bool val, string& str)
+{
+	str = ((val) ? CBOOL_TRUE : CBOOL_FALSE);
+}
+template void simpleValueToString<pBool>	(bool val, string& str);
+//
+//
+//
+template <>
+void
+simpleValueToString<pInt> (int val, string& str)
+{
+	stringstream oss;
+	oss << val;
+	str = oss.str ();
+}
+template void simpleValueToString<pInt> (int val, string& str);
+//
+//
+//
+template <>
+void
+simpleValueToString<pReal> (double val, string& str)
+{
+	stringstream oss;
+	oss << val;
+	str = oss.str ();
+}
+template void simpleValueToString<pReal> (double val, string& str);
+//
+// Special case for pString
+//
+template<PropertyType Tp>
+void
+simpleValueToString (const std::string& val, std::string& str)
+{
+	STATIC_CHECK ((pString == Tp) || (pName == Tp), COBJECT_INCORRECT_USE_OF_simpleObjToString_FUNCTION);
+
+	switch (Tp)
+	{
+			case pString:
+				str = CSTRING_PREFIX + val + CSTRING_SUFFIX;
+				break;
+
+			case pName:
+				str = CNAME_PREFIX + val;
+				break;
+
+			default:
+				assert (0);
+				break;
+	}
+}
+template void simpleValueToString<pString> (const string& val, string& str);
+template void simpleValueToString<pName> (const string& val, string& str);
+//
+// Special case for pNull
+//
+template<>
+void
+simpleValueToString<pNull> (const NullType&, string& str)
+{
+	str = CNULL_NULL;
+}
+template void simpleValueToString<pNull> (const NullType&, string& str);
+//
+// Special case for pRef
+//
+template<>
+void
+simpleValueToString<pRef> (const IndiRef& ref, string& str)
+{
+	ostringstream oss;
+	oss << ref.num << CREF_MIDDLE << ref.gen << CREF_SUFFIX;
+	// convert oss to string
+	str = oss.str ();
+}
+template void simpleValueToString<pRef> (const IndiRef&, string& str);
+
+
+
+//
+// Convert complex value from CObjectComplex to string
+//
+template<>
+void
+complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
+{
+		printDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
+		
+		ostringstream oss;
+
+		// start tag
+		str = CARRAY_PREFIX;
+		
+		//
+		// Loop through all items and get each string and append it to the result
+		//
+		PropertyTraitComplex<pArray>::value::const_iterator it = val.begin();
+		for (; it != val.end(); ++it) 
+		{
+			str += CARRAY_MIDDLE;
+			string tmp;
+			(*it)->getStringRepresentation (tmp);
+			str += tmp;
+		}
+		
+		// end tag
+		str += CARRAY_SUFFIX;
+}
+template void complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str);
+//
+//
+//
+template<>
+void
+complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
+{
+	printDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
+
+	// start tag
+	str = CDICT_PREFIX;
+
+	//
+	// Loop through all items and get each items name + string representation
+	// and append it to the result
+	//
+	PropertyTraitComplex<pDict>::value::const_iterator it = val.begin ();
+	for (; it != val.end(); ++it) 
+	{
+		str += CDICT_MIDDLE + (*it).first + CDICT_BETWEEN_NAMES;
+		string tmp;
+		(*it).second->getStringRepresentation (tmp);
+		str += tmp;
+	}
+
+	// end tag
+	str += CDICT_SUFFIX;
+}
+template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str);
+
+//
+//
+//
+void 
+streamToString (const std::string& strDict, const std::string& buf, std::string& str)
+{
+	str = strDict;
+	str += CSTREAM_HEADER;
+	str += buf;
+	str += CSTREAM_FOOTER;
+}
+
+
+//
+//
+//
+void 
+createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& val, std::string& output)
+{
+	ostringstream oss;
+
+	oss << rf.num << " " << rf.gen << INDIRECT_HEADER << "\n";
+	oss << val;
+	oss << INDIRECT_FOOTER;
+
+	output = oss.str ();
+}
+
+
+// =====================================================================================
+//  Other functions
+// =====================================================================================
+
+//
+//
+//
+void
+freeXpdfObject (Object* obj)
+{
+	assert (obj != NULL);
+	if (NULL == obj)
+		throw XpdfInvalidObject ();
+	
+	// delete all member variables
+	obj->free ();
+	// delete the object itself
+	delete obj;
+}
+
+
+
+
 //
 //
 //
@@ -950,22 +996,6 @@ objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 bool
 objHasParent (const IProperty& ip)
 {boost::shared_ptr<IProperty> indi;return objHasParent (ip,indi);}
-
-
-//
-//
-//
-void 
-createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& val, std::string& output)
-{
-	ostringstream oss;
-
-	oss << rf.num << " " << rf.gen << INDIRECT_HEADER << "\n";
-	oss << val;
-	oss << INDIRECT_FOOTER;
-
-	output = oss.str ();
-}
 
 
 

@@ -104,17 +104,17 @@ CPage::setMediabox (const Rectangle& rc)
 	if (!isArray(mbox))
 		throw MalformedFormatExeption ("Page::MediaBox is not array.");
 
-  	setDoubleInArray (mbox, 0, rc.xleft);
-	setDoubleInArray (mbox, 1, rc.xright);
-	setDoubleInArray (mbox, 2, rc.yleft);
-	setDoubleInArray (mbox, 3, rc.yright);
+  	setDoubleInArray (*mbox, 0, rc.xleft);
+	setDoubleInArray (*mbox, 1, rc.xright);
+	setDoubleInArray (*mbox, 2, rc.yleft);
+	setDoubleInArray (*mbox, 3, rc.yright);
 }
 
 //
 // Display a page
 //
 void
-CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) const
+CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 {
 	//
 	// Xpdf Global variable TFUJ!!!
@@ -154,7 +154,7 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	//
 	SplashOutputDev* sout = dynamic_cast<SplashOutputDev*> (&out);
 	if (sout)
-		sout->startDoc( xref );
+		sout->startDoc (xref);
 
 	//
 	// Create default page attributes and make page
@@ -168,7 +168,9 @@ CPage::displayPage (::OutputDev& out, double hDpi, double vDPI, int rotate) cons
 	//
 	// Page object display (..., useMediaBox, crop, links, catalog)
 	// 
-	page.display (&out, hDpi, vDPI, rotate, gTrue, gFalse, NULL, xpdfCatalog.get());
+	page.display   (&out, params.hDpi, params.vDpi, 
+					params.rotate, params.useMediaBox, 
+					params.crop, NULL, xpdfCatalog.get());
 	
 	//
 	// Cleanup
@@ -204,12 +206,7 @@ bool CPage::parseContentStream ()
 	}
 	
 	// If indirect, get the real object
-	if (isRef (contents))
-	{
-		IndiRef ref;
-		IProperty::getSmartCObjectPtr<CRef>(contents)->getPropertyValue(ref);
-		contents = contents->getPdf()->getIndirectProperty (ref);
-	}
+	contents = utils::getReferencedObject (contents);
 	
 	if (contents)
 	{
