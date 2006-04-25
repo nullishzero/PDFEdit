@@ -234,7 +234,7 @@ public:
 	 * 
 	 * @return Xpdf object representing actual value of this simple object.
 	 */
-	virtual Object*	_makeXpdfObject () const;
+	virtual ::Object*	_makeXpdfObject () const;
 	
 private:
 
@@ -686,7 +686,8 @@ class CObjectStream : public IProperty
 	typedef std::string PropertyId;
 
 public:
-	typedef std::vector<int> Buffer;
+	//typedef std::vector<char> Buffer;
+	typedef std::vector<filters::StreamChar> Buffer;
 
 private:
 	
@@ -829,6 +830,13 @@ public:
 	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
+	 * Get buffer.
+	 *
+	 * @return Buffer.
+	 */
+	const Buffer& getBuffer () const {return buffer;}
+	
+	/**
 	 * Get filters.
 	 *
 	 * @param container Container of filter names.
@@ -896,14 +904,7 @@ public:
 		}
 	}
 
-	/**
-	 * Get encoded string representation.
-	 *
-	 * 
-	 */
-	//void getEncodedStringRepresentation () const;
-	
-	
+
 	//
 	// Set methods
 	//
@@ -914,7 +915,7 @@ public:
 	 *
 	 * @param str0 Object in a text form.
 	 */
-	void setStringRepresentation (const std::string& strO);
+	void setBuffer (const Buffer& buf);
 
 
 	//
@@ -971,13 +972,13 @@ private:
 	}
 
 	/**
-	 * Encode buffer with specified filter.
+	 * Get encoded string representation.
 	 *
-	 * @param
+	 * @param container Output container.
 	 */
-	//void encode () const;
-	
-	
+	void encodeBuffer (Buffer& container) const;
+
+
 	//
 	// Special functions
 	//

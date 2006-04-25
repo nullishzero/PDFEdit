@@ -116,7 +116,7 @@ void
 CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 {
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
-	printDbg (debug::DBG_DBG,"text:" << strO);
+	//printDbg (debug::DBG_DBG,"text:" << strO);
 
 	if (isInValidPdf (this))
 	{
@@ -147,7 +147,7 @@ void
 CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
-	printDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
+	//printDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
 
 	if (isInValidPdf (this))
 	{
@@ -182,7 +182,7 @@ template<PropertyType Tp, typename Checker>
 Object*
 CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 {
-	printDbg (debug::DBG_DBG,"_makeXpdfObject");
+	//printDbg (debug::DBG_DBG,"_makeXpdfObject");
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
 }
 
@@ -227,7 +227,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
+	//printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
@@ -240,7 +240,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (Object& o)
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(o) constructor.");
+	//printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
@@ -254,7 +254,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex ()
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">() constructor.");
+	//printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">() constructor.");
 }
 
 
@@ -281,7 +281,7 @@ void
 CObjectComplex<Tp,Checker>::getAllPropertyNames (Container& container) const
 {
 	STATIC_CHECK ((Tp != pArray), INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
-	printDbg (debug::DBG_DBG, "getAllPropertyNames()");
+	//printDbg (debug::DBG_DBG, "getAllPropertyNames()");
 
 	utils::getAllNames (container, value);
 }
@@ -616,7 +616,7 @@ template <PropertyType Tp, typename Checker>
 Object*
 CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 {
-	printDbg (debug::DBG_DBG,"_makeXpdfObject");
+	//printDbg (debug::DBG_DBG,"_makeXpdfObject");
 	
 	std::string rpr;
 	getStringRepresentation (rpr);
@@ -652,7 +652,7 @@ template<PropertyType Tp, typename Checker>
 IProperty*
 CObjectComplex<Tp,Checker>::doClone () const
 {
-	printDbg (debug::DBG_DBG,"CObjectComplex::doClone");
+	//printDbg (debug::DBG_DBG,"CObjectComplex::doClone");
 	
 	// Make new complex object
 	// NOTE: We do not want to inherit any IProperty variable
@@ -680,7 +680,7 @@ template<PropertyType Tp, typename Checker>
 IProperty::ObserverContext* 
 CObjectComplex<Tp,Checker>::_createContext (boost::shared_ptr<IProperty>& changedIp)
 {
-	printDbg (debug::DBG_DBG, "");
+	//printDbg (debug::DBG_DBG, "");
 
 	// Create the context
 	return new BasicObserverContext (changedIp);
@@ -823,15 +823,21 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 {
 	printDbg (debug::DBG_DBG, "");
 
+	//
+	// Try filters if any
+	//
+	Buffer tmp;
+	encodeBuffer (tmp);
+	
 	// Set the length of the stream	
-	utils::setDoubleInDict (dictionary, std::string ("Length"), buffer.size());
+	utils::setDoubleInDict (dictionary, std::string ("Length"), tmp.size());
 			
 	// Get dictionary string representation
 	std::string strDict, strBuf;
 	dictionary.getStringRepresentation (strDict);
 
-	// Get buffer string representation
-	for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
+	// Get tmp string representation
+	for (Buffer::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
 		strBuf += static_cast<char> (*it);
 
 	// Put them together
@@ -872,17 +878,11 @@ CObjectStream<Checker>::setIndiRef (const IndiRef& rf)
 //
 template<typename Checker>
 void 
-CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
+CObjectStream<Checker>::setBuffer (const Buffer& buf)
 {
-	assert (!"Not implemented yet.");
-	// just an example
-	
-	// find the type
-	// find the params
-	// create appropriate filter and endcode data	
-	filtered_streambuf<output> out;
-	filters::CFilterFactory::addFilters (out, "");
-	out.push (vector_sink(buffer));
+
+	buffer.clear ();
+	std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
 			
 	//save it
 	_objectChanged ();
@@ -896,12 +896,57 @@ CObjectStream<Checker>::setStringRepresentation (const std::string& strO)
 //
 //
 template<typename Checker>
-Object*
+::Object*
 CObjectStream<Checker>::_makeXpdfObject () const
 {
-	Object* obj = new Object ();
-	xpdfDict.copy (obj);
+	//return &xpdfDict;
+
+	std::string tmp;
+	getStringRepresentation (tmp);
+
+	assert (isInValidPdf (this));
+	assert (hasValidRef (this));
+			
+	printDbg (debug::DBG_DBG, tmp);
+	Object* obj = utils::xpdfObjFromString (tmp, IProperty::getPdf()->getCXref());
+	assert (objStream == obj->getType());
+	if (objStream != obj->getType())
+		throw XpdfInvalidObject ();
+
 	return obj;
+}
+
+//
+//
+//
+template<typename Checker>
+void 
+CObjectStream<Checker>::encodeBuffer (Buffer& container) const
+{
+
+	//
+	// Create input filtes and add filters according to Filter item in
+	// stream dictionary
+	// 
+	boost::iostreams::filtering_wistream in;
+	std::vector<std::string> filters;
+	getFilters (filters);
+	filters::CFilterFactory::addFilters (in, filters);
+	
+	// Create input source from buffer
+	boost::iostreams::stream<filters::buffer_source<Buffer> > input (buffer);
+	in.push (input);
+	// Create output sink from container
+	//boost::iostreams::stream<filters::buffer_sink<Buffer> > output (container);
+	// Copy it to container
+	Buffer::value_type c;
+	while (!in.eof())
+	{//\TODO Improve this !!!!
+		in.get (c);
+		container.push_back (c);
+	}
+	// Close the stream
+	in.reset ();
 }
 
 

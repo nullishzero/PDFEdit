@@ -33,7 +33,6 @@
 // boost
 //
 #include <boost/smart_ptr.hpp>
-#include <boost/iostreams/filtering_streambuf.hpp>
 // Typelists THIS IS NOT AN STL VECTOR not any other similar RUN-TIME container
 //#include <boost/mpl/vector.hpp>
 //#include <boost/mpl/size.hpp>
@@ -44,7 +43,10 @@
 #include <boost/iostreams/categories.hpp> // output_filter_tag
 #include <boost/iostreams/operations.hpp> // put
 #include <boost/iostreams/concepts.hpp> // multichar_output_filter
-
+#include <boost/iostreams/device/array.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
 
 //
 // our stuff
@@ -137,10 +139,6 @@ operator << (std::ostream& os, const Point& pt)
 	os 	<< "x: " << pt.x << " y: " << pt.y;
 	return os;
 }
-
-
-
-
 
 #endif // _STATIC_H_
 

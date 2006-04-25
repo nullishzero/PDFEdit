@@ -18,6 +18,9 @@
 namespace filters {
 //=======================================
 
+/** I/O Character type. */
+typedef wchar_t	StreamChar;
+	
 //
 // Forward declarations
 //
@@ -51,7 +54,7 @@ struct CFilterFactory
 	 * @return Filter, if not found, NoFilter is created.
 	 */
 	template<typename OUTPUT, typename FILTERS>
-	static void addFilters (OUTPUT& out, const FILTERS& filterNames)
+	static void addFilters (OUTPUT& out, const FILTERS& /*filterNames*/)
 	{
 		out.push (NoFilter ());
 	}
@@ -76,23 +79,88 @@ struct CFilterFactory
 /**
  * Specific filter.
  */
-struct NoFilter : public boost::iostreams::multichar_output_filter
+struct NoFilter : public boost::iostreams::input_filter
 {
+	typedef StreamChar	char_type;
+	typedef boost::iostreams::input_filter_tag  category;
+	
 	/** Default constructor. */
-	NoFilter () { printDbg (debug::DBG_DBG, "NoFilter created."); };
+	NoFilter () {printDbg (debug::DBG_DBG, "NoFilter created."); };
 
-	/** Multi char output function. */
-	template<typename Sink>
-	void write(Sink& snk, const char* s, std::streamsize n) 
+	/** Single char output function. */
+	template<typename Source>
+	int get (Source& src) 
 	{ 
-		while (n-- > 0)
-			boost::iostreams::put (snk, *s);
+		return boost::iostreams::get (src);
 	}
 
 	/** Destructor. */
 	~NoFilter () { printDbg (debug::DBG_DBG, "NoFilter destroyed."); };
 
 };
+
+/**
+ *
+ */
+template<typename T>
+class buffer_source 
+{
+private:
+    typedef typename T::size_type   size_type;
+	const T& buffer;
+	size_type pos;
+
+public:
+	typedef typename T::value_type  char_type;
+	typedef struct boost::iostreams::source_tag category;
+
+	/** Constructor. */
+	buffer_source (const T& _b) : buffer (_b), pos(0) {printDbg (debug::DBG_DBG, "");};
+
+	/** Read function.*/
+    std::streamsize 
+	read (char_type* s, std::streamsize n)
+    {
+        using namespace std;
+        streamsize amt = static_cast<streamsize>(buffer.size() - pos);
+        streamsize result = min (n, amt);
+        if (0 != result) 
+		{
+			printDbg (debug::DBG_DBG, "Position: " << pos << "Size: " << n);
+            std::copy (buffer.begin() + pos, buffer.begin() + pos + result, s);
+            pos += result;
+            return result;
+			
+        } else 
+            return EOF;
+    }
+
+};
+
+/**
+ * Container sink.
+ */
+template<typename T>
+class buffer_sink 
+{
+	T& buffer;
+
+public:
+    typedef typename T::value_type  char_type;
+    typedef boost::iostreams::sink_tag category;
+    
+	buffer_sink (T& container) : buffer(container) {}
+	
+    std::streamsize 
+	write(const char_type* s, std::streamsize n)
+    {
+        buffer.insert (buffer.end(), s, s + n);
+        return n;
+    }
+    
+	T& getBuffer() {return buffer;}
+};
+
 
 //=======================================
 } // namespace filters

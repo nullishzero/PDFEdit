@@ -91,7 +91,8 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
   	//TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
-  	TextOutputDev textOut ("1.txt", gFalse, gFalse, gFalse);
+	const char* FILE_OUT = "1.txt";
+  	TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
 	if (!textOut.isOk ())
 		throw;
 	
@@ -101,7 +102,8 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 	//oss << "Creating 1.txt which contains text from a pdf." << endl;
 	page->displayPage (textOut);
 	
-	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (""));
+	const char* NOPARAM = "";
+	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (const_cast<char*>(NOPARAM)));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
 

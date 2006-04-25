@@ -710,7 +710,7 @@ Object*
 xpdfObjFromString (const std::string& str, XRef* xref)
 {
 
-	printDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
+	//printDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
 	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.
