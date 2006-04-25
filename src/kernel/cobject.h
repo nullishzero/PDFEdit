@@ -774,7 +774,7 @@ public:
 	//
 	//
 	void delProperty (PropertyId id)
-		{dictionary.delProperty ();}
+		{dictionary.delProperty (id);}
 
 	//
 	// Set methods
