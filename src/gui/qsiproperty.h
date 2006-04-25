@@ -23,7 +23,7 @@ public slots:
  QString getText();
 protected:
  QSIProperty(IProperty *_ip, QString _className);
-private:
+protected:
  /** Object held in class*/
  IProperty *obj;
 };

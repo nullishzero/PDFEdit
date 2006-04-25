@@ -22,9 +22,6 @@ public:
 public slots:
  /*- Return string representation of this dictionary */
  QString getText();
-private:
- /** Object held in class */
- CDict *obj;
 };
 
 } // namespace gui 
