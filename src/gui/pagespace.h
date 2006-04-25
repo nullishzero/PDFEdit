@@ -22,10 +22,10 @@ class PageSpace : public QWidget {
 		virtual ~PageSpace ( );
 		void convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos );
 	public slots:
-void refresh1(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
-void refresh2(/* CPage * = NULL*/);  //TODO smazat, jen pro testovani
-		void refresh ( QSPdf * pdf = NULL, QSPage * pageToView = NULL );	// if pageToView is NULL, refresh actual page
-		void refresh ( /*QSPdf * */ QObject * pdf, QSPage * pageToView = NULL );	// same as above
+		void refresh ( QSPage * pageToView = NULL, QSPdf * pdf = NULL );	// if pageToView is NULL, refresh actual page
+		void refresh ( QSPage * pageToView, /*QSPdf * */ QObject * pdf );	// same as above
+		void refresh ( int pageToView, QSPdf * pdf = NULL );			// if pdf is NULL refresh page from current pdf
+		void refresh ( int pageToView, /*QSPdf * */ QObject * pdf );	// same as above
 		void hideButtonsAndPageNumber ( );
 		void showButtonsAndPageNumber ( );
 //		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );

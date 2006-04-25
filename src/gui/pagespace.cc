@@ -43,7 +43,6 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	newPageView();
 //	scrollPageSpace->setBackGroundRole(QPalette::Dark); // TODO configurovatelna farba
 	
-//TODO: prepracovat vytvareni tlacitek tlacitka obrazek tlacitka nastavit ze skriptu (vcetne popup
 	hBox->addStretch();
 	bFirstPage = new QPushButton(this,"bFirstPage");
 	bFirstPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"FirstPage") ) ));
@@ -61,7 +60,6 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	//pageNumber->setNum( 0 );
 	hBox->addWidget( pageNumber );
 
-//TODO: prepracovat vytvareni tlacitek tlacitka obrazek tlacitka nastavit ze skriptu
 	bNextPage = new QPushButton(this,"bNextPage");
 	bNextPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"NextPage") ) ));
 	hBox->addWidget(bNextPage);
@@ -82,8 +80,6 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
 
 	hBox->insertSpacing( 0, is.labelWidth );	// for center pageNambuer
-	
-r1=new QPixmap("obr/horse.png");r2=new QPixmap("obr/horse1.png"); /*TODO smazat*/
 }
 
 PageSpace::~PageSpace() {
@@ -167,29 +163,47 @@ void PageSpace::resizeEvent ( QResizeEvent * re) {
 	centerPageView();
 }
 
-//TODO smazat
-void PageSpace::refresh1(/* CPage * = NULL*/) {
-	newPageView( *r1 );
-}
-//TODO smazat
-void PageSpace::refresh2(/* CPage * = NULL*/) {
-	newPageView( *r2 );
-}
-
-void PageSpace::refresh ( /*QSPdf * */ QObject * pdf, QSPage * pageToView ) {
+void PageSpace::refresh ( int pageToView, /*QSPdf * */ QObject * pdf ) {	// same as above
 	QSPdf * p = dynamic_cast<QSPdf *>(pdf);
 	if (p)
-		refresh( p, pageToView );
+		refresh( pageToView, p );
+}
+void PageSpace::refresh ( QSPage * pageToView, /*QSPdf * */ QObject * pdf ) {
+	QSPdf * p = dynamic_cast<QSPdf *>(pdf);
+	if (p)
+		refresh( pageToView, p );
+}
+
+void PageSpace::refresh ( int pageToView, QSPdf * pdf ) {			// if pdf is NULL refresh page from current pdf
+	int pageCount;
+
+	if (pdf == NULL) {
+		if (actualPdf == NULL)
+			return ;
+		pdf = actualPdf;
+	}
+
+	if (pageToView < 1)
+			pageToView = 1;
+		
+	pageCount = pdf->get()->getPageCount();
+	if (pageToView > pageCount)
+			pageToView = pageCount;
+		
+	QSPage p( pdf->get()->getPage( pageToView ) );
+	refresh( &p, pdf );
 }
 
 #define splashMakeRGB8(to, r, g, b) \
 	  (to[3]=0, to[2]=((r) & 0xff) , to[1]=((g) & 0xff) , to[0]=((b) & 0xff) )
 
-void PageSpace::refresh ( QSPdf * pdf, QSPage * pageToView ) {		// if pageToView is NULL, refresh actual page
+void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView is NULL, refresh actual page
 									// if pageToView == actualPage  refresh is not need
-	if ((pageToView != NULL) && (actualPage != pageToView)) {
-		delete actualPdf;
-		actualPdf = new QSPdf( pdf->get() );
+	if ((pageToView != NULL) && (actualPage != pageToView) && (pdf != NULL)) {
+		if (pdf != actualPdf) {
+			delete actualPdf;
+			actualPdf = new QSPdf( pdf->get() );
+		}
 		delete actualPage;
 		actualPage = new QSPage( pageToView->get() );
 //		pageNumber->setNum( 0/*(int) pageToView->getPageNumber()*/ );//MP: po zmene kernelu neslo zkompilovat (TODO)
@@ -221,7 +235,6 @@ void PageSpace::refresh ( QSPdf * pdf, QSPage * pageToView ) {		// if pageToView
 			return ;		// no page to refresh or refresh actual page is not need
 		
 		/* TODO zmazat */
-		/**/ refresh2( );
 	}
 	/* TODO zobrazenie aktualnej stranky*/
 	/* newPageView( *actualPagePixmap ); */
@@ -293,7 +306,7 @@ void PageSpace::firstPage ( ) {
 	if (!actualPdf)
 		return;
 	QSPage p (actualPdf->get()->getFirstPage());
-	refresh( actualPdf, &p );
+	refresh( &p, actualPdf );
 }
 void PageSpace::prevPage ( ) {
 	if (!actualPdf)
@@ -305,7 +318,7 @@ void PageSpace::prevPage ( ) {
 
 	if ( (actualPdf->get()->hasPrevPage( actualPage->get() )) == true) {
 		QSPage p (actualPdf->get()->getPrevPage( actualPage->get() ));
-		refresh( actualPdf, &p );
+		refresh( &p, actualPdf );
 	}
 }
 void PageSpace::nextPage ( ) {
@@ -318,13 +331,13 @@ void PageSpace::nextPage ( ) {
 
 	if ( (actualPdf->get()->hasNextPage( actualPage->get() )) == true) {
 		QSPage p (actualPdf->get()->getNextPage( actualPage->get() ));
-		refresh( actualPdf, &p );
+		refresh( &p, actualPdf );
 	}
 }
 void PageSpace::lastPage ( ) {
 	if (!actualPdf)
 		return;
 	QSPage p (actualPdf->get()->getLastPage());
-	refresh( actualPdf, &p );
+	refresh( &p, actualPdf );
 }
 } // namespace gui

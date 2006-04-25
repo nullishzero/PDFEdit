@@ -233,7 +233,7 @@ void PdfEditWindow::qfix() {
  //TODO: remove ASAP
  if (!document) return;
  boost::shared_ptr<pdfobjects::CPage> pg=document->getFirstPage();
- pagespc->refresh(new QSPdf(document), new QSPage(pg));
+ pagespc->refresh(new QSPage(pg), new QSPdf(document));
 }
 
 /**

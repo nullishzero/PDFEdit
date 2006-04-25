@@ -51,13 +51,13 @@ function func_new() {
 
 //Go to page number x
 function go(x) {
- PageSpace.refresh(document,document.getPage(x));
+ PageSpace.refresh(document.getPage(x),document);
 }
 
 //Called after document is loaded
 function onLoad() {
  //show first page
- PageSpace.refresh(document,document.getFirstPage());
+ PageSpace.refresh(document.getFirstPage(),document);
 }
 
 print("PDF Editor "+version());
