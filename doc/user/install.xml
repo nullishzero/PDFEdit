@@ -17,6 +17,10 @@
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
    </informaltable>
+  </para>
+  <para>
+   For building kernel tests, you need to have CPPunit installed
+  </para>
    For rebuilding documentation from DocBook .xml files, <command>gmake</command> (GNU make) is required
  and you also need either <command>docbook2html</command> or <command>xsltproc</command> from libxslt
  and docbook stylesheets 
