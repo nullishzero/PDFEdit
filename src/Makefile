@@ -9,11 +9,11 @@ pdfedit: kernel xpdf qoutputdevices
 	cd gui && qmake && make
 
 # QOutputDevices
-qoutputdevices: xpdf
+qoutputdevices: xpdf config_xpdf_variables
 	cd kpdf-kde-3.3.2 && qmake && make staticlib
 
 # Kernel
-kernel: xpdf cppunit
+kernel: xpdf cppunit config_xpdf_variables
 	cd kernel && qmake && make
 
 # XPdf
@@ -25,6 +25,9 @@ xpdf_configure: xpdf/config.status
 
 xpdf/config.status:
 	cd xpdf && ./configure
+
+config_xpdf_variables: xpdf/config.status
+	cat xpdf/config.status | grep s,@[^@,]*@, | sed 's/^s,@\([^@,]*\)@,\([^,]*\),.*/config_xpdf_\1=\2/g' > config_xpdf_variables
 
 # CPPunit
 cppunit: cppunit_configure

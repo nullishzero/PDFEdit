@@ -13,5 +13,3 @@ HEADERS += QOutputDevPixmap.h
 SOURCES += QOutputDevPixmap.cpp
 HEADERS += QOutputDev.h
 SOURCES += QOutputDev.cpp
-
-OBJECTS += ../xpdf/xpdf/SplashOutputDev.o
