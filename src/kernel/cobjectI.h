@@ -15,11 +15,7 @@
 
 #include "static.h"
 
-// xpdf
-#include "xpdf.h"
-
 #include "iproperty.h"
-#include "cobjecthelpers.h"
 #include "cpdf.h"
 
 // CStream filters
