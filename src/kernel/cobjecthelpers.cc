@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/25 02:26:17  misuj1am
+ *
+ * -- ADD: set*ToDict, set*ToArray improved to automaticly fetch object if ref
+ *
  * Revision 1.12  2006/04/23 22:06:22  hockm0bm
  * minor changes in PropertyEquals functor
  *         - types are in parameters for better debuging
@@ -64,8 +68,9 @@
  *
  */
 
-#include <string>
+#include "static.h"
 #include "cobjecthelpers.h"
+#include "cpdf.h"
 
 namespace pdfobjects
 {
@@ -257,6 +262,38 @@ using namespace debug;
 			throw NotImplementedException("propertyEquals for type="+val1->getType());
 	}
 }
+
+
+//=========================================================
+//	CObject* "delegate" helper methods
+//=========================================================
+
+//
+//
+//
+boost::shared_ptr<IProperty>
+getReferencedObject (boost::shared_ptr<IProperty> ip)
+{
+	if (ip)
+	{
+		if (isRef (ip))
+		{// Fetch the right object
+			assert (isInValidPdf (ip));
+			assert (hasValidRef (ip));
+			if (!isInValidPdf (ip) || !hasValidRef (ip))
+				throw CObjInvalidObject ();
+
+			IndiRef ref;
+			IProperty::getSmartCObjectPtr<CRef>(ip)->getPropertyValue(ref);
+			return ip->getPdf()->getIndirectProperty (ref);
+
+		}else
+			return ip;
+	}else
+		throw CObjInvalidOperation ();
+}
+
+
 
 } // end of utils namespace
 

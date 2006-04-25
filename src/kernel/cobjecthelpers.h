@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/04/25 02:26:17  misuj1am
+ *
+ * -- ADD: set*ToDict, set*ToArray improved to automaticly fetch object if ref
+ *
  * Revision 1.20  2006/04/23 11:10:04  misuj1am
  *
  * -- small code improvment
@@ -99,7 +103,7 @@
  *
  */
 
-#include "cobjectI.h"
+#include "cobject.h"
 #include "iproperty.h"
 
 namespace pdfobjects
@@ -210,6 +214,17 @@ boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref);
 void printProperty(boost::shared_ptr<IProperty> ip, std::ostream &out);
 
 
+//=========================================================
+//	CObject* "delegate" helper methods
+//=========================================================
+
+
+/**
+ * If the object is a reference, fetch the "real" object
+ *
+ * @param ip IProperty.
+ */
+boost::shared_ptr<IProperty> getReferencedObject (boost::shared_ptr<IProperty> ip);
 
 
 //=========================================================
@@ -261,6 +276,7 @@ inline std::string
 getStringFromIProperty (const boost::shared_ptr<IProperty>& ip)
 		{return getValueFromSimple<CString, pString, std::string> (ip);}
 	
+
 //=========================================================
 //	CObjectSimple "set value" helper methods
 //=========================================================
@@ -352,6 +368,79 @@ getCStreamFromDict (IP& ip, const std::string& key)
 	{return getTypeFromDictionary<CStream,pStream> (ip, key);}
 
 
+	
+//=========================================================
+//	CDict "set value" helper methods
+//=========================================================
+
+
+/** 
+ * Set simple value in dict. 
+ * If it is a reference, set fetch it and set it to the fetched object.
+ *
+ * @param ip Dict property.
+ * @param name Name of property.
+ * @param val Value to be written.
+ */
+template<typename Value, typename ItemType, PropertyType ItemPType>
+inline void
+setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& val)
+{
+	printDbg (debug::DBG_DBG, "dict[" << name << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = dict.getProperty (name);
+	// If it is a ref DELEGATE it
+	if (isRef (ip))
+	{
+		assert (isInValidPdf (ip));
+		assert (hasValidRef (ip));
+		if (!isInValidPdf (ip) || !hasValidRef (ip))
+			throw CObjInvalidObject ();
+		
+		ip = getReferencedObject (ip);
+	}
+	// Cast it to the correct type and set value
+	setValueToSimple<ItemType, ItemPType, Value> (ip, val);
+}
+
+
+template<typename Value, typename ItemType, PropertyType ItemPType>
+inline void
+setSimpleValueInDict (const IProperty& ip, const std::string& name, const Value& val)
+{
+	assert (isDict (ip));
+	if (!isDict (ip))
+		throw ElementBadTypeException ("");
+
+	// Cast it to dict
+	CDict* dict = dynamic_cast<const CDict*> (&ip);
+	setSimpleValueInDict<Value, ItemType, ItemPType> (*dict, name, val);
+}
+
+
+/** Set int in array. */
+template<typename IP>
+inline void
+setIntInDict (const IP& ip, const std::string& name, int val)
+	{ setSimpleValueInDict<int, CInt, pInt> (ip, name, val);}
+
+/** Set	double in array. */
+template<typename IP>
+inline void
+setDoubleInDict (const IP& ip, const std::string& name, double val)
+{ 
+	// Try setting double, if not successful try int
+	try {
+		
+		return setSimpleValueInDict<double, CReal, pReal> (ip, name, val);
+		
+	}catch (ElementBadTypeException&) {}
+
+	setIntInDict (ip, name, static_cast<int>(val));
+}
+
+
 //=========================================================
 //	CArray "get value" helper methods
 //=========================================================
@@ -419,6 +508,7 @@ getDoubleFromArray (const IP& ip, size_t position)
 
 /** 
  * Set simple value in array. 
+ * If it is a reference, set fetch it and set it to the fetched object.
  *
  * @param ip Array property.
  * @param position Position in the array.
@@ -426,12 +516,22 @@ getDoubleFromArray (const IP& ip, size_t position)
  */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInArray (const boost::shared_ptr<CArray>& array, size_t position, const Value& val)
+setSimpleValueInArray (const CArray& array, size_t position, const Value& val)
 {
 	printDbg (debug::DBG_DBG, "array[" << position << "]");
 	
 	// Get the item and check if it is the correct type
-	boost::shared_ptr<IProperty> ip = array->getProperty (position);
+	boost::shared_ptr<IProperty> ip = array.getProperty (position);
+	// If it is a ref DELEGATE it
+	if (isRef (ip))
+	{
+		assert (isInValidPdf (ip));
+		assert (hasValidRef (ip));
+		if (!isInValidPdf (ip) || !hasValidRef (ip))
+			throw CObjInvalidObject ();
+		
+		ip = getReferencedObject (ip);
+	}
 	// Cast it to the correct type and set value
 	setValueToSimple<ItemType, ItemPType, Value> (ip, val);
 }
@@ -439,16 +539,16 @@ setSimpleValueInArray (const boost::shared_ptr<CArray>& array, size_t position, 
 
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInArray (const boost::shared_ptr<IProperty>& ip, size_t position, const Value& val)
+setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)
 {
 	assert (isArray (ip));
 	if (!isArray (ip))
 		throw ElementBadTypeException ("");
 
 	// Cast it to array
-	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
+	const CArray* array = dynamic_cast<const CArray*> (&ip);
 	
-	setSimpleValueInArray<Value, ItemType, ItemPType> (array, position, val);
+	setSimpleValueInArray<Value, ItemType, ItemPType> (*array, position, val);
 }
 
 
