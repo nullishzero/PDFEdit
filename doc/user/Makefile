@@ -20,11 +20,11 @@ clean:
 #prefer using xsltproc and docbook.xsl (nicer XHTML output and is also faster)
 # over docbook2html (which uses jade)
 %.html: %.xml
-	../tools/docbook2html $< 2>/dev/null || docbook2html -u $< 2>&1 >/dev/null || true
+	../tools/docbook2html $< || docbook2html -u $< 2>&1 >/dev/null || true
 
 #generate similar documentation in HTML format in application help directory too
 $(html_help_dir)/%.html: %.xml
-	../tools/docbook2html $< $@ html 2>/dev/null || docbook2html -o $(html_help_dir) -u $< 2>&1 >/dev/null || true
+	../tools/docbook2html $< $@ html || docbook2html -o $(html_help_dir) -u $< 2>&1 >/dev/null || true
 
 #rule for generating manpage
 %.1: %.xml ../tools/docbook2man.pl
