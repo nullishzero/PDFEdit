@@ -13,7 +13,9 @@ using namespace pdfobjects;
 
 QString getTypeName(PropertyType typ);
 QString getTypeName(IProperty *obj);
+QString getTypeName(boost::shared_ptr<IProperty> obj);
 IndiRef getRef(IProperty *ref);
+IndiRef getRef(boost::shared_ptr<IProperty> ref);
 bool isRefValid(CPdf *pdf,IndiRef ref);
 bool isSimple(IProperty* prop);
 bool isSimple(boost::shared_ptr<IProperty> prop);

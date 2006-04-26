@@ -1,5 +1,7 @@
 /** @file
-StringOption - class for widget containing one editable setting of type string
+ StringOption - class for widget containing one editable setting of type string
+ Also a base class for editing some more specific types.
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -26,24 +28,29 @@ StringOption::~StringOption() {
  delete ed;
 }
 
-/** write edited value to settings */
+/** write edited value to settings (using key specified in contructor) */
 void StringOption::writeValue() {
  globalSettings->write(key,ed->text());
 }
 
-/** read value from settings for editing */
+/** read value from settings for editing (using key specified in contructor) */
 void StringOption::readValue() {
  QString value=globalSettings->read(key);
  if (value.isNull()) return;
  ed->setText(value);
 }
 
-/** return size hint of this property editing control */
+/** return size hint of this property editing control
+ @return size hint from inner editbox
+  */
 QSize StringOption::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of property editing control */
+/** Called on resizing of property editing control
+ Will simply set the same fixed size to inner editbox
+ @param e resize event
+ */
 void StringOption::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }

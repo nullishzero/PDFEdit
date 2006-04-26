@@ -17,8 +17,8 @@ class TreeItemObserver;//internal class (observer)
 
 class TreeItemRef : public TreeItem {
 public:
- TreeItemRef(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemRef(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemRef(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
  virtual ~TreeItemRef();
  QString getRef();
  virtual void setOpen(bool open);

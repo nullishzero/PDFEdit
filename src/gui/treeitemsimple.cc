@@ -13,17 +13,17 @@ class TreeData;
 using namespace std;
 
 /**
- @copydoc TreeItem(TreeData *,QListView *,IProperty *,const QString,QListViewItem *)
+ @copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
  */
-TreeItemSimple::TreeItemSimple(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemSimple::TreeItemSimple(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
 }
 
 /**
-@copydoc TreeItem(TreeData *,QListViewItem *,IProperty *,const QString,QListViewItem *)
+@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
  */
-TreeItemSimple::TreeItemSimple(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemSimple::TreeItemSimple(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
 }

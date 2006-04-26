@@ -23,8 +23,8 @@ public:
  virtual ~QSImporter();
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
- QSCObject* createQSObject(IProperty *ip);
- QSCObject* createQSObject(CDict* dict);
+ QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
+ QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
  QSPdf* createQSObject(CPdf* pdf);
 public slots:

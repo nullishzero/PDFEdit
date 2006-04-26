@@ -1,5 +1,5 @@
 /** @file
- TreeWindow - class with treeview of PDF objects
+ TreeWindow - class providing treeview of PDF objects
  @author Martin Petricek
 */
 #include <utils/debug.h>
@@ -117,7 +117,7 @@ void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  //holding IProperty
  printDbg(debug::DBG_DBG,"Is a TreeItem: " << item->text(0));
  //We have a TreeItem -> emit signal with selected object
- emit objectSelected(it->getObject());
+ emit objectSelected(item->text(0),it->getObject());
 }
 
 /** 
@@ -157,12 +157,12 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
 /** Init contents of treeview from given IProperty (dictionary, etc ...)
  @param doc IProperty used to initialize treeview
  */
-void TreeWindow::init(IProperty *doc) {
+void TreeWindow::init(boost::shared_ptr<IProperty> doc) {
  printDbg(debug::DBG_DBG,"Loading Iproperty into tree");
  clear();
- if (doc) {
+ if (doc.get()) {
   setUpdatesEnabled( FALSE );
-  root=TreeItem::create(data,tree, doc); 
+  root=TreeItem::create(data,tree,doc); 
   root->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }

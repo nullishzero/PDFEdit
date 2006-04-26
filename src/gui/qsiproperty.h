@@ -15,17 +15,17 @@ using namespace pdfobjects;
 class QSIProperty : public QSCObject {
  Q_OBJECT
 public:
- QSIProperty(IProperty *_ip);
+ QSIProperty(boost::shared_ptr<IProperty> _ip);
  virtual ~QSIProperty();
- IProperty* get();
+ boost::shared_ptr<IProperty> get();
 public slots:
  /*- Return text representation of this property */
  QString getText();
 protected:
- QSIProperty(IProperty *_ip, QString _className);
+ QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className);
 protected:
  /** Object held in class*/
- IProperty *obj;
+ boost::shared_ptr<IProperty> obj;
 };
 
 } // namespace gui

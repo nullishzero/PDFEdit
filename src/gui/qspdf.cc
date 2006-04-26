@@ -28,7 +28,7 @@ void QSPdf::saveAs(QString name) {
 
 /** Call CPdf::getDictionary */
 QSDict* QSPdf::getDictionary() {
- return new QSDict(obj->getDictionary().get());
+ return new QSDict(obj->getDictionary());
 }
 
 /** Call CPdf::insertPage(page,position) */

@@ -20,7 +20,7 @@ class TreeWindow : public QWidget {
 public:
  void uninit();
  void init(CPdf *pdfDoc,const QString &fileName);
- void init(IProperty *doc);
+ void init(boost::shared_ptr<IProperty> doc);
  TreeWindow(QWidget *parent=0,const char *name=0);
  ~TreeWindow();
  void reloadFrom(TreeItemAbstract *item);
@@ -31,9 +31,9 @@ public slots:
 signals:
  /** Signal emitted when selecting one of the IProperty objects in the tree window.
   Not emitted on other object types
-  Pointer to CObject is sent in signal
+  Name of object and a pointer to CObject is sent in signal
  */
- void objectSelected(IProperty*);
+ void objectSelected(const QString&,boost::shared_ptr<IProperty>);
  /** Signal emitted when selecting any of objects in the tree window.
   You can call getSelected to obtain QSCObject from currentyl selected item
   \see getSelected

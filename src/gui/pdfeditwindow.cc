@@ -285,7 +285,7 @@ void PdfEditWindow::call(const QString &name) {
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  setFileName(QString::null);
- document=NULL;item=NULL;selected=NULL;
+ document=NULL;item.reset();selected=NULL;
  menuSystem=new Menu();
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
@@ -313,8 +313,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
- QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), prop, SLOT(setObject(IProperty*)));
- QObject::connect(tree, SIGNAL(objectSelected(IProperty*)), this, SLOT(setObject(IProperty*)));
+ QObject::connect(tree, SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)), prop, SLOT(setObject(const QString&,boost::shared_ptr<IProperty>)));
+ QObject::connect(tree, SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)), this, SLOT(setObject(const QString&,boost::shared_ptr<IProperty>)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
 
@@ -363,13 +363,13 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  } else { //open file
   openFile(fName);
  }
- prop->setObject(0);//fill with demonstration properties
 }
 
 /** Called upon selecting object in treeview (if it is IProperty)
+ @param name Name of the object that was selected
  @param obj Object that was selected
 */
-void PdfEditWindow::setObject(IProperty* obj) {
+void PdfEditWindow::setObject(const QString &name,boost::shared_ptr<IProperty> obj) {
  item=obj;
 }
 
@@ -472,10 +472,10 @@ void PdfEditWindow::setFileName(const QString &name) {
 /** Closes file currently opened in editor, without opening new empty one */
 void PdfEditWindow::destroyFile() {
  if (!document) return;
- item=NULL;//no item selected
+ item.reset();//no item selected
  tree->uninit();//clear treeview
  prop->clear();//clear property editor
- page.reset();
+ page.reset();//no page selected
  document->close(false);
  delete qpdf;
  document=0;

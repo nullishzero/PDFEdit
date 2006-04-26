@@ -64,7 +64,7 @@ public slots: //These will be exported to scripting
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
- void setObject(IProperty* obj);
+ void setObject(const QString &name,boost::shared_ptr<IProperty> obj);
  void runScript(QString script);
  void menuActivated(int id);
  void setObject();
@@ -91,7 +91,7 @@ private:
  /** Currently selected page (for scripting)*/
  boost::shared_ptr<CPage> page;
  /** Currently selected IProperty*/
- IProperty *item;
+ boost::shared_ptr<IProperty> item;
  /** Currently selected object (for scripting)*/
  QSCObject *selected;
  //TODO: highlevel objects (Page, Anotation...) can be selected too

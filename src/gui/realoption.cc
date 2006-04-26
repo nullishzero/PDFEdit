@@ -16,9 +16,9 @@ namespace gui {
  @param _key Key in settings for this option
  @param _defValue Default value if property not found
  */
-RealOption::RealOption(const QString &_key/*=0*/,QWidget *parent/*=0*/,double defValue/*=0*/)
+RealOption::RealOption(const QString &_key/*=0*/,QWidget *parent/*=0*/,double _defValue/*=0*/)
  : StringOption (_key,parent) {
- ed->setText(QString::number(defValue));
+ ed->setText(QString::number(_defValue));
  ed->setValidator(new QDoubleValidator(ed));
 }
 

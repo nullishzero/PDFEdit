@@ -1,5 +1,8 @@
 /** @file
-PropertyEditor - widget for editing properties of selected object
+ PropertyEditor - widget for editing properties of selected object
+ Can edit Dict and Array containing primitive types and also primitive type as one items itself
+ Primitive types are: int, bool, string, name, real, ref
+ @author Martin Petricek
 */
 
 #include "propertyeditor.h"
@@ -24,7 +27,7 @@ using namespace util;
  @param name name of widget (currently unused)
  */
 PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
- obj=NULL;
+ obj.reset();
  //create list of properties in this editor;
  list=new QStringList();
  //create property dictionary
@@ -149,12 +152,14 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
 /** Add single property to the widget
  @param name Name of property to be added
  @param value Value of property to be added
+ @return true if this property is editable and was added. false if this property is uneditable (unknown type)
 */
-void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty> value) {
+bool PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty> value) {
  Property *p=propertyFactory(value.get(),name,grid);//todo: flags
- if (!p) return;	//check if editable
+ if (!p) return false;	//check if editable
  p->readValue(value.get());
  addProperty(p,value);//Will add and show the property
+ return true;
 }
 
 /** Show some message inside property editor instead of its usual contents
@@ -164,7 +169,7 @@ void PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
 void PropertyEditor::setObject(const QString &message) {
  setUpdatesEnabled( FALSE );
  clear();
- obj=NULL;
+ obj.reset();
 
  QString name="the_label";
  QLabel *label=new QLabel(message,grid);
@@ -182,15 +187,15 @@ void PropertyEditor::setObject(const QString &message) {
 /** set IProperty object to be active (edited) in this editor
  @param pdfObject Object to set for editing in the widget
  */
-void PropertyEditor::setObject(IProperty *pdfObject) {
+void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
  setUpdatesEnabled( FALSE );
  clear();
  obj=pdfObject;
  //TODO: need property flags/mode
- if (!pdfObject) {
+ if (!pdfObject.get()) {
   setObject(tr("No object selected"));
  } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
-  CDict *dict=(CDict*)pdfObject;
+  CDict *dict=dynamic_cast<CDict*>(pdfObject.get());
   vector<string> list;
   dict->getAllPropertyNames(list);
   vector<string>::iterator it;
@@ -205,7 +210,7 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
   }
   grid->update();
  } else if (pdfObject->getType()==pArray) {	//Object is CArray
-  CArray *ar=(CArray*)pdfObject;
+  CArray *ar=dynamic_cast<CArray*>(pdfObject.get());
   size_t n=ar->getPropertyCount();
   QString name;
   for(size_t i=0;i<n;i++) { //for each property
@@ -220,6 +225,30 @@ void PropertyEditor::setObject(IProperty *pdfObject) {
   setObject(tr("This type of object does not have any properties")+" ("+getTypeName(pdfObject)+")");
  }
  setUpdatesEnabled( TRUE );
+}
+
+/** set single IProperty object to be active (edited) in this editor
+ This is variant for editing single object - from parent, only this object will be shown and editable
+ @param name Name under which will be this property shown in editor
+ @param pdfObject Object to set for editing in the widget
+ */
+void PropertyEditor::setObject(const QString &name,boost::shared_ptr<IProperty> pdfObject) {
+ if (!pdfObject.get()) {
+  setObject(pdfObject);//NULL object? Pass along
+ } else if (pdfObject->getType()==pDict || pdfObject->getType()==pArray) {
+  //Object is CDict or CArray -> call original function
+  setObject(pdfObject);
+ } else { //Simple or unknown type -> we try to edit it as single item
+  setUpdatesEnabled( FALSE );
+  clear();
+  //Editing dictionary from parent, but showing only one object
+  obj.reset();//parent;
+  if (!addProperty(name,pdfObject)) { //Unknown type
+   setObject(tr("This type of object does not have any properties")+" ("+getTypeName(pdfObject)+")");
+  }
+  grid->update();
+  setUpdatesEnabled( TRUE );
+ }
 }
 
 /** default destructor */

@@ -16,9 +16,9 @@ or complex types (Dict, Array)
 class QSDict : public QSIProperty {
  Q_OBJECT
 public:
- QSDict(CDict *_dict);
+ QSDict(boost::shared_ptr<CDict> _dict);
  virtual ~QSDict();
- CDict* get();
+ boost::shared_ptr<CDict> get();
 public slots:
  /*- Return string representation of this dictionary */
  QString getText();

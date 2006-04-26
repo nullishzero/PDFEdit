@@ -3,6 +3,9 @@
  Adding objects via addObject have disadvantage of clearing interpreter state
  (thus removing all functions loaded from initscript)
  Adding via addTransientObject disallow removing the object later.
+ Can import any QObject into scripting layer under specified name and also can create
+ QSCObjects from some common types (dict, page ..)
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -34,8 +37,8 @@ QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
  @param dict CDict to wrap into to QSDict
  @return QSDict(dict)
  */
-QSCObject* QSImporter::createQSObject(CDict* dict) {
- if (!dict) return NULL;
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<CDict> dict) {
+ if (!dict.get()) return NULL;
  return new QSDict(dict);
 }
 
@@ -55,8 +58,8 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
  @param ip IProperty to wrap into to QSIProperty
  @return QSIProperty(ip)
  */
-QSCObject* QSImporter::createQSObject(IProperty *ip) {
- if (!ip) return NULL;
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
+ if (!ip.get()) return NULL;
  return new QSIProperty(ip);
 }
 

@@ -13,7 +13,7 @@ namespace gui {
 using namespace pdfobjects;
 
 /** Construct wrapper with given CDict */
-QSDict::QSDict(CDict *_dict) : QSIProperty (_dict,"Dict") {
+QSDict::QSDict(boost::shared_ptr<CDict> _dict) : QSIProperty (_dict,"Dict") {
 }
 
 /** destructor */
@@ -21,13 +21,13 @@ QSDict::~QSDict() {
 }
 
 /** get CDict held inside this class. Not exposed to scripting */
-CDict* QSDict::get() {
- return dynamic_cast<CDict*>(obj);
+boost::shared_ptr<CDict> QSDict::get() {
+ return boost::dynamic_pointer_cast<CDict>(obj);
 }
 
 /** call CDict::getStringRepresentation(ret); return ret */
 QString QSDict::getText() {
- CDict *dict=dynamic_cast<CDict*>(obj);
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
  std::string text;
  dict->getStringRepresentation(text);
  return text;

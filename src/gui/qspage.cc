@@ -22,7 +22,7 @@ QSPage::~QSPage() {
 
 /** Call CPage::getDictionary */
 QSDict* QSPage::getDictionary() {
- return new QSDict(obj->getDictionary().get());
+ return new QSDict(obj->getDictionary());
 }
 
 /** Call CPage::getText(ret); return ret */

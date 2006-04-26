@@ -119,7 +119,7 @@ void TreeItemPdf::reloadSelf() {
 
 //See TreeItemAbstract for description of this virtual method
 TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
- if (typ==dictItem) return TreeItem::create(data,this,obj->getDictionary().get(),QObject::tr("Dictionary"));
+ if (typ==dictItem) return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"));
  if (typ==pageList) return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Pages"),after); 
  if (typ==outlineList) return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),after); 
  if (typ==pageItem) { //Pages - get page given its number

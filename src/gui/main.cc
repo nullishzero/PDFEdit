@@ -142,10 +142,6 @@ int main(int argc, char *argv[]){
 
  //font
  applyLookAndFeel(false);
-/* QString font=globalSettings->read("gui/font",app.font().family());
- int fontsize=globalSettings->readNum("gui/fontsize",app.font().pointSize());
- if (fontsize==-1) fontsize=12;
- app.setFont(QFont(font,fontsize));*/
 
  //open editor windows(s)
  int nFiles=params.size();

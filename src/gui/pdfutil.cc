@@ -1,6 +1,9 @@
 /** @file
- Various utility functions related to kernel and pdf objects
+ Various utility functions for examining and manipulating pdf objects,
+ related to kernel
+ @author Martin Petricek
 */
+
 #include "pdfutil.h"
 #include <qstring.h>
 #include <qobject.h>
@@ -47,7 +50,12 @@ QString getTypeName(IProperty *obj) {
  return getTypeName(obj->getType());
 }
 
-/** Get value (rerference target) of CRef
+/** @copydoc getTypeName(IProperty *) */
+QString getTypeName(boost::shared_ptr<IProperty> obj) {
+ return getTypeName(obj.get());
+}
+
+/** Get value (reference target) of CRef
  @param ref CRef reference object
 */
 IndiRef getRef(IProperty *ref) {
@@ -55,6 +63,11 @@ IndiRef getRef(IProperty *ref) {
  IndiRef iref;
  ((CRef*)ref)->getPropertyValue(iref);
  return iref;
+}
+
+/** @copydoc getRef(IProperty *) */
+IndiRef getRef(boost::shared_ptr<IProperty> ref) {
+ return getRef(ref.get());
 }
 
 /** Check for validity of reference - if ref is valid reference (have target) in given CPdf

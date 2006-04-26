@@ -26,7 +26,7 @@ using namespace util;
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItem::TreeItem(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  _parent=NULL; //If not TreeItem, _parent will be NULL
  data=_data;
  init(pdfObj,name);
@@ -39,7 +39,7 @@ TreeItem::TreeItem(TreeData *_data,QListView *parent,IProperty *pdfObj,const QSt
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
  _parent=dynamic_cast<TreeItem*>(parent); //If not TreeItem, _parent will be NULL
  data=_data;
  init(pdfObj,name);
@@ -47,9 +47,9 @@ TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const
 
 /**
 "Constructor" that will create object of proper class based on type of IProperty <br>
-@copydoc TreeItem(TreeData *,QListView *,IProperty *,const QString,QListViewItem *)
+@copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
 */
-TreeItem* TreeItem::create(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/) {
+TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/) {
  assert(_data);
  PropertyType type=pdfObj->getType();
  printDbg(debug::DBG_DBG,"create root:" << getTypeName(type) << "  " << name);
@@ -61,9 +61,9 @@ TreeItem* TreeItem::create(TreeData *_data,QListView *parent,IProperty *pdfObj,c
 
 /**
 "Constructor" that will create object of proper class based on type of IProperty <br>
-@copydoc TreeItem(TreeData *,QListViewItem *,IProperty *,const QString,QListViewItem *)
+@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
 */
-TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/) {
+TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/) {
  assert(_data);
  PropertyType type=pdfObj->getType();
  printDbg(debug::DBG_DBG,"create item:" << getTypeName(type) << "  " << name);
@@ -90,7 +90,7 @@ void TreeItem::setParent(TreeItem *parent) {
  @param pdfObj Object used to initialize this item
  @param name Name of this item - will be shown in treeview
  */
-void TreeItem::init(IProperty *pdfObj,const QString &name) {
+void TreeItem::init(boost::shared_ptr<IProperty> pdfObj,const QString &name) {
  obj=pdfObj;
  typ=obj->getType();
  printDbg(debug::DBG_DBG,"init type -> " << getTypeName(typ));
@@ -107,7 +107,7 @@ void TreeItem::init(IProperty *pdfObj,const QString &name) {
 
 /** return CObject stored inside this item
  @return stored object (IProperty) */
-IProperty* TreeItem::getObject() {
+boost::shared_ptr<IProperty> TreeItem::getObject() {
  return obj;
 }
 

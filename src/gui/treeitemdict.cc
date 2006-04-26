@@ -15,18 +15,18 @@ using namespace std;
 using namespace util;
 
 /**
- @copydoc TreeItem(TreeData *,QListView *,IProperty *,const QString,QListViewItem *)
+ @copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
  */
-TreeItemDict::TreeItemDict(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemDict::TreeItemDict(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 /**
-@copydoc TreeItem(TreeData *,QListViewItem *,IProperty *,const QString,QListViewItem *)
+@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
  */
-TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
@@ -34,14 +34,14 @@ TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,IProperty *pdfO
 
 //See TreeItemAbstract for description of this virtual method
 TreeItemAbstract* TreeItemDict::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
- CDict *dict=dynamic_cast<CDict*>(obj);
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
  boost::shared_ptr<IProperty> property=dict->getProperty(name);
- return TreeItem::create(data,this,property.get(),name,after);
+ return TreeItem::create(data,this,property,name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemDict::getChildType(const QString &name) {
- CDict *dict=dynamic_cast<CDict*>(obj);
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
  boost::shared_ptr<IProperty> property=dict->getProperty(name);
  return property->getType();
 }
@@ -49,7 +49,7 @@ ChildType TreeItemDict::getChildType(const QString &name) {
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemDict::getChildNames() {
  QStringList itemList;
- CDict *dict=dynamic_cast<CDict*>(obj);
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
  vector<string> list;
  dict->getAllPropertyNames(list);
  vector<string>::iterator it;
@@ -63,8 +63,8 @@ QStringList TreeItemDict::getChildNames() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemDict::getQSObject() {
- CDict *dict=dynamic_cast<CDict*>(obj);
- assert(dict);
+ boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
+ assert(dict.get());
  return new QSDict(dict);
 }
 

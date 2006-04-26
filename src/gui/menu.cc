@@ -135,6 +135,7 @@ QString Menu::readItem(const QString name,const QString root/*="gui/items/"*/) {
  @param name name of item to be loaded from config file
  @param isRoot TRUE if main menubar is being loaded
  @param parent parent menu item (if isRoot == TRUE, this is the root menubar to add items to)
+ @param prev String list containing names of all parents of this menu item (used for loop detection)
  */ 
 void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=FALSE*/,QStringList prev/*=QStringList()*/) {
  //Check for cycles (unhandled cycle in menu = crash in QT)

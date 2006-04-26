@@ -14,8 +14,8 @@ class TreeData;
 
 class TreeItemSimple : public TreeItem {
 public:
- TreeItemSimple(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemSimple(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemSimple(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemSimple(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
  virtual ~TreeItemSimple();
  //From TreeItemAbstract interface
  virtual ChildType getChildType(const QString &name);

@@ -29,20 +29,21 @@ public:
  void clear();
 public slots:
  void setObject(const QString &message);
- void setObject(IProperty *pdfObject);
+ void setObject(boost::shared_ptr<IProperty> pdfObject);
+ void setObject(const QString &name,boost::shared_ptr<IProperty> pdfObject);
  void update(Property *p);
 signals:
  /** Signal emitted when any property is modified
   Send property pointer with the signal */
  void propertyChanged(IProperty *prop); 
 private:
- void addProperty(const QString &name,boost::shared_ptr<IProperty> value);
+ bool addProperty(const QString &name,boost::shared_ptr<IProperty> value);
  void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
  void deleteLayout();
  void createLayout();
 private:
  /** Object currently edited */
- IProperty *obj;
+ boost::shared_ptr<IProperty> obj;
  /** Number of objects in proiperty editor */
  int nObjects;
  /** Grid holding all property editing widgets*/

@@ -14,9 +14,9 @@ using namespace std;
 using namespace util;
 
 /**
- @copydoc TreeItem(TreeData *,QListView *,IProperty *,const QString,QListViewItem *)
+ @copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
  */
-TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
  complete=false;
  addData();
  reload(false);
@@ -24,9 +24,9 @@ TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,IProperty *pdfObj,con
 }
 
 /**
-@copydoc TreeItem(TreeData *,QListViewItem *,IProperty *,const QString,QListViewItem *)
+@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
  */
-TreeItemRef::TreeItemRef(TreeData *_data,QListViewItem *parent,IProperty *pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemRef::TreeItemRef(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
  complete=false;
  addData();
  reload(false);
@@ -150,12 +150,12 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,ChildType typ,QLi
  CPdf* pdf=obj->getPdf();
  if (!pdf) return NULL; //No document opened -> cannot parse references
                    //Should happen only while testing
- CRef* cref=(CRef*)obj;
+ CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
  cref->getPropertyValue(ref);
  printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
- return TreeItem::create(data,this, rp.get(),s.sprintf("<%d,%d>",ref.num,ref.gen),after);
+ return TreeItem::create(data,this, rp,s.sprintf("<%d,%d>",ref.num,ref.gen),after);
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -164,7 +164,7 @@ ChildType TreeItemRef::getChildType(const QString &name) {
  CPdf* pdf=obj->getPdf();
  if (!pdf) return -1; //No document opened -> cannot parse references
                       //Should happen only while testing
- CRef* cref=(CRef*)obj;
+ CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
  cref->getPropertyValue(ref);
  printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
