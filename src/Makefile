@@ -23,7 +23,7 @@ xpdf: xpdf_configure
 # XPdf configure
 xpdf_configure: xpdf/config.status
 
-xpdf/config.status:
+xpdf/config.status: xpdf/Makefile.in xpdf/xpdf/Makefile.in xpdf/splash/Makefile.in xpdf/goo/Makefile.in xpdf/fofi/Makefile.in
 	cd xpdf && ./configure
 
 config_xpdf_variables: xpdf/config.status
