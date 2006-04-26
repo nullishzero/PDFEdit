@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+
+ <chapter>
+  <title>Changes to pdf document</title>
+  <para>
+        As mentioned before (TODO link), pdf document is represented by number 
+        of objects. Most of these objects (with exception of document trailer) 
+        are so called indirect objects. Those are accessibly by cross reference 
+        table which provides with object and generation number mapping to file 
+        offset where such object is stored. 
+  </para>
+  <para>
+        Pdf format enables document changes natively by so called incremental
+        update mechanism. This enables to have several cross reference tables 
+        each describing objects specific for that revision. All objects which
+        have to be changed are just writen to the end of file with new cross 
+        reference table which describes this new object. All pdf files viewers
+        should be awared of incremental update and if object is accessible from
+        several cross reference tables, the newest one is always used. 
+  </para>
+  <para>
+        Previous very short describtion says that making changes requires take
+        over of cross reference table manipulation. This has to be done 
+        transparently that the nobody knows that object is changed actualy.
+  </para>
+  <sect1>
+    <title>3 layer model</title>
+    <para>
+        Cross reference table is mantained by XRef class in xpdf code. This 
+        class keeps just table of this information and it is not designed to 
+        be extensible for making changes very well. So we have reused this 
+        class as lowest layer in our 3 layer model designed to enable making 
+        changes to document. This XRef layer keeps logic of pdf file parsing
+        and correct assignment of object referencies (object and generation
+        number) and objects.
+    </para>
+    <para>
+        To enable this reusability in C++ language we had to make some minor 
+        changes to xpdf code, basicaly prepare them for transparent dynamic 
+        inheritance, so all neccessary methods were virtualized and also data 
+        fields turned to protected (from private).
+    </para>
+    <para>
+        Second layer model layer is formed by CXref - extension of XRef class. 
+        Prime responsibility is to create methods which can register changes and
+        keeps them available. All methods which enables making changes are not
+        public to hide them from normal usage (see below for reason). It 
+        overwrites public methods from XRef and always use changed objects
+        if they are avialable. Otherwise delegates to lower layer. This aproach
+        enables to use CXref transparently anytime when XRef instance is 
+        required (e. g. in rest of xpdf code which may be reuseable) with 
+        advantage of access to changed values without any special logic from
+        class user. To prevent inconsistencies and to make usage and 
+        implementation easier, all methods providing change functionality are
+        protected. They are implemented without any special logic. All changes
+        are stored to the mapping where they can be accessible. No special
+        checking is performed. It is also safe to return CXref instance, because
+        it is guarantied that nobody can use this class to make chages.
+    </para>
+    <para>
+        Highest layer is represented by XRefWriter class - extension of CXref 
+        class. It's responsibility is to keep logic upon changes, to enable
+        writing them to the file and to maintain revisions of the document. 
+        Logic upon changes means some type checking to prevent object type 
+        inconsistency. XRefWriter defines mode in which it works to control
+        checking mechanism. Second responsibility is to enable writing changes
+        to the file to make them visible after all required changes are 
+        finished. To be able to do so, uses all collected information from
+        CXref superclass and just adds logic how to store objects. Finaly adds
+        revision handling which means that enables to access to objects 
+        specific for selected revision (each revision is specific by its cross 
+        reference table and so document have so many revision as cross tables).
+        PDF format is prepared for such revision and multi version documents 
+        very well, but doesn't support any kind of branching which means that
+        changes can be done only for newest revision. XRefWriter take in mind
+        also this aspect and so all methods take care of current revision.
+    </para>
+    <para>
+        For more information about responsibility and functionality separation
+        see following figure.
+ 	<mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/xref_layer_diagram" format="PNG"/>
+	  </imageobject>
+	  <textobject><phrase>3 layers diagram</phrase></textobject>
+	  <caption><para>3 layers diagram</para></caption>
+	</mediaobject>
+  </para>
+  </sect1>
+  <sect1>
+   <title>Document saving</title>
+   <para>
+        As it was mantioned above, PDF format supports changes in document in so 
+        called incremental update (all changed objects are stored from document 
+        end and adds new cross reference table with new trailer - just to repete
+        in short). This means that each set of changes forms new revision. This
+        brings little task to think about. What should be stored in one revision
+        and which changes are not worth of new revision?
+   </para>
+   <para>
+        Application using XRefWriter (directly or wrapped by other object) should
+        provide Save functionality. User usually wants to save everything because
+        of fear of data lost and doesn't thing about some revisions. If each save
+        created it would lead to mess with horible number of referencies without
+        any meaning. To enable usable save functionality, XRefWriter defines two
+        types of saving:
+        <listitem>temporal saving, which dumps all changes with correct cross 
+                reference table and trailer at the end of document but doesn't
+                care for it (no internal structures are touch and they are kept
+                as if no save has been done). If any problem occures changed data
+                are stored, so no data lost happens. Whenever save is done again
+                it will rewrite older temporarily saved changes.
+        </listitem>
+        <listitem>revision saving, which do the very same as previous one except
+                all internal structures are prepared to state as if this document
+                was opend again after saving. This means that we are working on 
+                freshly created revision after saving. This makes sense when 
+                user knows that changes made by him are gathered together in one
+                revision and nothing else messes with it.
+        </listitem>
+        It is up to user to use the way how he wants to save changes. However 
+        temporal changes are default and new revision saving is done only if
+        it is explicitly said.
+   </para>
+   <sect2>
+    <title>Document cloning</title>
+    <para>
+        To be able to effectively solve problem with PDF disability to branche 
+        document and so making changes to older revisions XRefWriter brings
+        so called cloning capability. This means copying document content until
+        current revision (including current one). If user wants to change 
+        something in such revision, he can switch to that revision and clone 
+        it to different file. Changes are enabled to this document, because
+        current revision in original document is the newest one in cloned
+        document. Nevertheless document merging is not implemented yet, so 
+        there is no way (using this program) to get those changes back to main
+        document.
+    </para>
+   </sect2>
+  </sect1>
+ </chapter>
+
+  
+</book>
+

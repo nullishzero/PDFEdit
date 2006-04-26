@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+
+ <chapter>
+  <title>CPdf</title>
+  <para>
+        CPdf class is main pdf document class. It maintains document content 
+        using XRefWriter field, document catalog PDF dictionary and provides 
+        other specialized highlevel objects such as CPage and COutline.
+  </para>
+  <para>
+        Main responsibility is to keep all objects (it provides) synchronized 
+        with data which are used for them. As an example, it has to keep
+        CPage instances synchronized with current state of page tree (see 
+        Observers chapter - TODO link). 
+  </para>
+  <para>
+        In design terminology, CPdf provides Facade pattern (TODO literature 
+        link) to manipulate with file in document scope of view. 
+  </para>
+  <sect1>
+    <title>Instance life cycle</title>
+    <para>
+        Instance of CPdf can be create and destroyedonly in described way 
+        (see programming documentation for more information). Inbetween it
+        maintains exactly one documnet. 
+    </para>
+  </sect1>
+  <sect1>
+    <title>CPdf modes</title>
+    <para>
+        Each document may be opened in one of several modes. Each controls
+        set of activities which can be done. ReadOnly mode guaranties that
+        no change can be done to document. ReadWrite mode enables making
+        changes but with some restriction (see programming documentation
+        for more information). Finaly Advanced mode brigns full control
+        upon document.
+    </para>
+  </sect1>
+  <sect1>
+    <title>Properties changing and revision handling</title>
+    <para>
+        All changes to the document are done using XRefWriter  as 
+        described in Changes to pdf document (TODO link) chapter. Additional
+        logic and responsibility of CPdf in this direction is to make adpater
+        from IProperty interface of property to xpdf Object required by 
+        XRefWriter. Even more it also provides interface to get indirect
+        objects in IProperty form. This means that it obscures low level 
+        information about who is doing parsing and storing and what data
+        types are used. Also guaranties that all indirect properties are
+        represented by same instance of IProperty to enable their reasonable 
+        usage.
+    </para>
+    <para>
+        To enable also inter document data exchange (in form of properties),
+        it provides functionality for adding of indirect properties. When
+        property is from other CPdf (this may mean other document), it'll do 
+        all neccesary handling for this situation (e. g. all other indirect
+        objects which are refered from added one are added too).
+    </para>
+    <para>
+        Revision handling is done similar way but in this case without any 
+        special logic. Revision changing and geting current revision or 
+        cloning is directly delegated to XRefWriter. If document save
+        is required, just checks whether mode is not read only and delegates
+        the rest to XRefWriter
+    </para>
+  </sect1>
+  <sect1>
+    <title>Provided high level objects</title>
+    <para>
+        CPdf provides high level objects maintaining some specialized part
+        of document catalog. These objects bring logic on properties with
+        special meaning in pdf document.
+    </para>
+    <sect2>
+      <title>CPage special objects</title>
+      <para>
+        CPage objects (see TODO) keeps logic on Page dictionary property. 
+        Responsibility of CPdf is to keep it synchronized with page tree and to
+        provide simple interface how to get to their instances according
+        absolute and relative position in document. Pages are considered
+        to be same if they are in same position (numbering) and they are 
+        represented by same CPage instances.
+      </para>
+      <para>
+        To enable all these requirements, CPdf keeps and maintains pageList
+        storage which maps postions to returned CPage instances. It is
+        created in lazy mode, which means that page is added if it is 
+        required. This aproach enables iteration methods (such as 
+        getNextPage, getPrevPage with CPage as parameter) to be implemented
+        very easily, but brings problem with synchronization which has
+        to be done each time page tree is chnaged (see for more information
+        in Observer chapter TODO link).
+      </para>
+    </sect2>
+    <sect2>
+      <title>COutline special objects</title>
+      <para>
+      </para>
+      <para>
+      </para>
+    </sect2>
+    <para>
+        For more information about responsibility and functionality separation
+        see following figure.
+ 	<mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/xref_layer_diagram" format="PNG"/>
+	  </imageobject>
+	  <textobject><phrase>3 layers diagram</phrase></textobject>
+	  <caption><para>3 layers diagram</para></caption>
+	</mediaobject>
+  </para>
+  </sect1>
+ </chapter>
+
+  
+</book>
+
+
