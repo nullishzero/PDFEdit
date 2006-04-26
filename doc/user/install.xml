@@ -13,7 +13,7 @@
     <tgroup cols="2"><tbody>
      <row><entry>qt3</entry><entry>Qt GUI Toolkit (Version 3.x)</entry></row>
      <row><entry>qsa</entry><entry>Qt Script for Applications</entry></row>
-     <row><entry>boost</entry><entry>Boost C++ Libraries</entry></row>
+     <row><entry>boost</entry><entry>Boost C++ Libraries (smart_ptr, iostreams)</entry></row>
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
    </informaltable>
