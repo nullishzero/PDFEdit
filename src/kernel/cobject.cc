@@ -946,7 +946,7 @@ createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& va
 {
 	ostringstream oss;
 
-	oss << rf.num << " " << rf.gen << INDIRECT_HEADER << "\n";
+	oss << rf.num << " " << rf.gen << " " << INDIRECT_HEADER << "\n";
 	oss << val;
 	oss << INDIRECT_FOOTER;
 
