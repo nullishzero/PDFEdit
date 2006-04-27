@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/04/27 18:21:09  hockm0bm
+ * * deallocation of Object corrected
+ * * changeRevision
+ *         - saves revision
+ *
  * Revision 1.15  2006/04/23 15:09:34  hockm0bm
  * note for getRefisionEOF method in documentation
  *
@@ -310,7 +315,7 @@ public:
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
 	 */
-	::Object * changeTrailer(char * name, ::Object * value);
+	::Object * changeTrailer(const char * name, ::Object * value);
 	
 	/** Saves changed objects and new xref and trailer.
 	 * @param newRevision Flag controlling new revision creation.

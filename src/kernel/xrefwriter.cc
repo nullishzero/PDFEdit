@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/27 18:21:09  hockm0bm
+ * * deallocation of Object corrected
+ * * changeRevision
+ *         - saves revision
+ *
  * Revision 1.12  2006/04/23 13:13:20  hockm0bm
  * * getRevisionEnd method added
  *         - to get end of stream contnet for current revision
@@ -170,7 +175,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	CXref::changeObject(ref, obj);
 }
 
-::Object * XRefWriter::changeTrailer(char * name, ::Object * value)
+::Object * XRefWriter::changeTrailer(const char * name, ::Object * value)
 {
 	printDbg(DBG_DBG, "name="<<name);
 	if(revision)
@@ -430,12 +435,13 @@ void XRefWriter::saveChanges(bool newRevision)
 	// it doesn't do any checking (we know what we are doing)
 	Object prevObj;
 	prevObj.initInt(XRef::lastXRefPos);
+
 	Object * oldPrev=CXref::changeTrailer("Prev", &prevObj);
 	if(oldPrev)
 	{
 		// if oldPrev was not 0, deallocates it
 		oldPrev->free();
-		delete oldPrev;
+		gfree(oldPrev);
 	}
 
 	// stores changed trialer to the file
@@ -504,9 +510,16 @@ void XRefWriter::collectRevisions()
 		// present) or doesn't have integer value, jumps out of loop
 		Object prev;
 		trailer->getDict()->lookupNF("Prev", &prev);
+		if(prev.getType()==objNull)
+		{
+			// objNull doesn't need free
+			printDbg(DBG_DBG, "No previous revision.");
+			break;
+		}
 		if(prev.getType()!=objInt)
 		{
 			printDbg(DBG_DBG, "Prev doesn't have int value. type="<<prev.getType()<<". Assuming no more revisions.");
+			prev.free();
 			break;
 		}
 
@@ -561,7 +574,7 @@ void XRefWriter::collectRevisions()
 	// deallocates the oldest one - no problem if the oldest is the newest at
 	// the same time, because we have used clone of trailer instance from XRef
 	trailer->free();
-	delete trailer;
+	gfree(trailer);
 
 	printDbg(DBG_INFO, "This document contains "<<revisions.size()<<" revisions.");
 }
@@ -569,6 +582,14 @@ void XRefWriter::collectRevisions()
 void XRefWriter::changeRevision(unsigned revNumber)
 {
 	printDbg(DBG_DBG, "revNumber="<<revNumber);
+	
+	// change to same revision
+	if(revNumber==revision)
+	{
+		// nothing to do, we are already here
+		printDbg(DBG_INFO, "Revision changed to "<<revNumber);
+		return;
+	}
 	
 	// constrains check
 	if(revNumber>revisions.size()-1)
@@ -582,6 +603,10 @@ void XRefWriter::changeRevision(unsigned revNumber)
 	// which points to start of xref section for that revision
 	size_t off=revisions[revNumber];
 	reopen(off);
+
+	// everything ok, so current revision can be set
+	revision=revNumber;
+	printDbg(DBG_INFO, "Revision changed to "<<revision);
 }
 
 size_t XRefWriter::getRevisionEnd()const
