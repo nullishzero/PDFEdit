@@ -3,6 +3,7 @@
 
 #include <qmap.h>
 #include <qstringlist.h>
+#include "invalidmenuexception.h"
 class QMainWindow;
 class QMenuBar;
 class QMenuData;
@@ -34,22 +35,24 @@ public:
  Menu();
  ~Menu();
  QString getAction(int index);
- QMenuBar* loadMenu(QWidget *parent);
- ToolBarList loadToolBars(QMainWindow *parent);
+ QMenuBar* loadMenu(QWidget *parent) throw (InvalidMenuException);
+ ToolBarList loadToolBars(QMainWindow *parent) throw (InvalidMenuException);
  ToolBar* getToolbar(const QString &name);
  QStringList getToolbarList();
  void saveToolbars(QMainWindow *main);
  void restoreToolbars(QMainWindow *main);
+ static QString readItem(const QString name,const QString root="gui/items/");
 private:
+ void addItem(QString line,QString name,QMenuData *parent) throw (InvalidMenuException);
+ void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
  bool reserveAccel(const QString &accelDef,const QString &action);
  void initPaths();
  QString getIconFile(const QString &name);
  int addAction(const QString action);
  QPixmap* getIcon(const QString name);
- QString readItem(const QString name,const QString root="gui/items/");
- void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE,QStringList prev=QStringList());
- void loadToolBarItem(ToolBar *tb,QString item);
- ToolBar* loadToolbar(const QString name,QMainWindow *parent,bool visible=true);
+ void loadItem(const QString name,QMenuData *parent=NULL,bool isRoot=FALSE,QStringList prev=QStringList()) throw (InvalidMenuException);
+ void loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException);
+ ToolBar* loadToolbar(const QString name,QMainWindow *parent,bool visible=true) throw (InvalidMenuException);
 private:
  /** List with paths to application icons */
  QStringList iconPath;

@@ -1,6 +1,8 @@
 /** @file
- QSCObject -> ancestor of all QObject wrappers used in scripting
- Provide garbage collection, etc ...
+ QSCObject -> base class of all QObject wrappers used in scripting<br>
+ Export some functions to scripting.<br>
+ See doc/user/scripting.xml or kernel documentation for more informations about these functions<br>
+ @author Martin Petricek
 */
 
 #include <utils/debug.h>
@@ -16,6 +18,13 @@ QSCObject::QSCObject(QString _typeName) {
  typeName=_typeName;
  printDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
 //todo: add to garbage collector. Garbage collector is one for each editor window.
+// addGC(this);
+}
+
+/** Copy constructor */
+QSCObject::QSCObject(QSCObject &source) {
+ typeName=source.typeName;
+ printDbg(debug::DBG_DBG,"adding QSCObject (copy) "<< typeName);
 // addGC(this);
 }
 

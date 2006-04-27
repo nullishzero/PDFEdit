@@ -1,5 +1,5 @@
 /** @file
- QObject wrapper around CDict
+ QObject wrapper around CDict<br>
  Export some functions to scripting.<br>
  See doc/user/scripting.xml or kernel documentation for more informations about these functions
  @author Martin Petricek
@@ -14,6 +14,10 @@ using namespace pdfobjects;
 
 /** Construct wrapper with given CDict */
 QSDict::QSDict(boost::shared_ptr<CDict> _dict) : QSIProperty (_dict,"Dict") {
+}
+
+/** Copy constructor */
+QSDict::QSDict(QSDict &source) : QSIProperty (source.obj,"Dict") {
 }
 
 /** destructor */

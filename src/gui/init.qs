@@ -51,13 +51,35 @@ function func_new() {
 
 //Go to page number x
 function go(x) {
- PageSpace.refresh(document.getPage(x),document);
+ PageSpace.refresh(x,document);
 }
 
 //Called after document is loaded
 function onLoad() {
  //show first page
  PageSpace.refresh(document.getFirstPage(),document);
+}
+
+//Handler for click with right mouse button
+function onTreeRightClick() {
+ print('Right click, type of item = '+treeitem.itemtype());
+ print('String representation:');
+ print(treeitem.item().getText());
+}
+
+//Handler for click with left mouse button
+function onTreeLeftClick() {
+ print('Left click, type of item = '+treeitem.itemtype());
+}
+
+//Handler for click with middle mouse button
+function onTreeMiddleClick() {
+ print('Middle click, type of item = '+treeitem.itemtype());
+}
+
+//Handler for doubleclick with left mouse button
+function onTreeDoubleClick() {
+ print("Doubleclick, type of item = "+treeitem.itemtype());
 }
 
 print("PDF Editor "+version());

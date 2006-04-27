@@ -14,6 +14,7 @@ class QSGraphics : public QSCObject {
  Q_OBJECT
 public:
  QSGraphics(CGraphic *gfx);
+ QSGraphics(QSGraphics &source);
  virtual ~QSGraphics();
  CGraphic* get();
 private:

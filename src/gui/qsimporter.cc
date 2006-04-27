@@ -1,5 +1,5 @@
 /** @file
- QSImporter -> import QObjects from application without reevaluating project
+ QSImporter -> import QObjects from application without reevaluating project<br>
  Adding objects via addObject have disadvantage of clearing interpreter state
  (thus removing all functions loaded from initscript)
  Adding via addTransientObject disallow removing the object later.
@@ -18,6 +18,7 @@
 #include "qspage.h"
 #include "qscobject.h"
 #include "qspdf.h"
+#include "qstreeitem.h"
 
 namespace gui {
 
@@ -71,6 +72,16 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
 QSPdf* QSImporter::createQSObject(CPdf* pdf) {
  if (!pdf) return NULL;
  return new QSPdf(pdf);
+}
+
+/** Overloaded factory function to create QSCObjects from various C... classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param item TreeItemAbstract to wrap into to QSTreeItem
+ @return QSTreeItem(item)
+ */
+QSCObject* QSImporter::createQSObject(TreeItemAbstract *item) {
+ if (!item) return NULL;
+ return new QSTreeItem(item);
 }
 
 /** Import object into interpreter under specified name

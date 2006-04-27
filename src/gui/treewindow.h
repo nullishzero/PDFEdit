@@ -26,6 +26,7 @@ public:
  void reloadFrom(TreeItemAbstract *item);
  void reinit();
  QSCObject* getSelected();
+ TreeItemAbstract* getSelectedItem();
 public slots:
  void settingUpdate(QString key);
 signals:
@@ -39,11 +40,17 @@ signals:
   \see getSelected
  */
  void itemSelected();
+ /** Signal emitted when clicked anywhere in tree windows
+  Button used to click is sent as first parameter (1=left, 2=right, 4=middle, 8=doubleclick with left)
+  If clicked on tree item, it is sent in second parameter (otherwise NULL is sent)
+ */
+ void treeClicked(int,QListViewItem*);
 protected:
  virtual void paintEvent(QPaintEvent *e);
 private slots:
  void treeSelectionChanged(QListViewItem *item); 
  void mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column);
+ void mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column);
 private:
  void clear();
  void updateTreeSettings();

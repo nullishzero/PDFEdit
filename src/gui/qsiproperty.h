@@ -16,6 +16,7 @@ class QSIProperty : public QSCObject {
  Q_OBJECT
 public:
  QSIProperty(boost::shared_ptr<IProperty> _ip);
+ QSIProperty(QSIProperty &source);
  virtual ~QSIProperty();
  boost::shared_ptr<IProperty> get();
 public slots:

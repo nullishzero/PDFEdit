@@ -1,5 +1,8 @@
 /** @file
- QObject wrapper around CGraphics
+ QObject wrapper around CGraphics<br>
+ Export some functions to scripting.<br>
+ See doc/user/scripting.xml or kernel documentation for more informations about these functions
+ @author Martin Petricek
 */
 
 #include "qsgraphics.h"
@@ -12,6 +15,12 @@ using namespace pdfobjects;
 
 /** Construct wrapper with given CGraphic */
 QSGraphics::QSGraphics(CGraphic *gfx) : QSCObject ("CGraphic") {
+ obj=gfx;
+}
+
+/** Copy constructor */
+QSGraphics::QSGraphics(QSGraphics &source) : QSCObject ("CGraphic") {
+ obj=source.obj;
 }
 
 /** destructor */

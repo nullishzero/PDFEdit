@@ -15,6 +15,11 @@ QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip) : QSCObject ("IProper
  obj=_ip;
 }
 
+/** Copy constructor */
+QSIProperty::QSIProperty(QSIProperty &source) : QSCObject ("IProperty") {
+ obj=source.obj;
+}
+
 /** Construct wrapper with given IProperty and given type name*/
 QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className) : QSCObject (_className) {
  obj=_ip;

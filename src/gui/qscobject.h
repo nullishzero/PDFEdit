@@ -11,6 +11,7 @@ class QSCObject : public QObject {
 Q_OBJECT
 public:
  QSCObject(QString _typeName);
+ QSCObject(QSCObject &source);
  virtual ~QSCObject();
 public slots:
  virtual void deleteSelf();

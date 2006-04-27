@@ -13,6 +13,7 @@ namespace gui {
 
 class QSCObject;
 class QSPdf;
+class TreeItemAbstract;
 
 using namespace pdfobjects;
 
@@ -26,6 +27,7 @@ public:
  QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
+ QSCObject* createQSObject(TreeItemAbstract *item);
  QSPdf* createQSObject(CPdf* pdf);
 public slots:
  QObject* getQSObj();

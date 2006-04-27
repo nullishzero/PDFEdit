@@ -30,10 +30,7 @@ menugenerator_o.depends  = menugenerator.cc menugenerator.h
 QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
 POST_TARGETDEPS = menugenerator
 
-#tohle nefunguje. Resim jinak
-#load( qsa )
-
-unix:LIBS       += -lqsa
+LIBS       += -lqsa
 
 #include headers from kernel and used by kernel
 INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
@@ -56,8 +53,10 @@ HEADERS += helpwindow.h
 SOURCES += helpwindow.cc
 
 #Tree window
-HEADERS += treeitemabstract.h  treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.h
-SOURCES += treeitemabstract.cc treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc 
+HEADERS += treeitemabstract.h  treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h
+SOURCES += treeitemabstract.cc treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
+HEADERS += treeitempdf.h  treeitem.h  treewindow.h  treedata.h
+SOURCES += treeitempdf.cc treeitem.cc treewindow.cc treedata.cc 
 
 #Property editor
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  refproperty.h
@@ -67,11 +66,17 @@ SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc
 
 #CObject Wrapper classes
 HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h
+HEADERS += qstreeitem.h  qsmenu.h
 SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
+SOURCES += qstreeitem.cc qsmenu.cc
 
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h 
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc main.cc 
+
+#exeptions
+HEADERS += invalidmenuexception.h
+SOURCES += invalidmenuexception.cc
 
 #Main Window
 HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h
@@ -79,7 +84,6 @@ SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.
 
 #Dummy header file for menu translation
 HEADERS += .menu-trans.h 
-
 
 #Kernel objects - now using library
 LIBS += -lkernel -L../kernel

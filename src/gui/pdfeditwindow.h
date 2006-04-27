@@ -5,6 +5,7 @@
 #include <cpdf.h>
 #include <qmainwindow.h>
 
+class QListViewItem;
 class QFont;
 class QPushButton;
 class QSInterpreter;
@@ -20,6 +21,7 @@ class QSImporter;
 class QSCObject;
 class QSPdf;
 class TreeWindow;
+class TreeItemAbstract;
 class PropertyEditor;
 class Menu;
 
@@ -34,7 +36,6 @@ public:
  int question_ync(const QString &msg);
  void call(const QString &name);
 public slots: //These will be exported to scripting
- void qfix();
  void run(QString scriptName);
  bool save();
  bool saveAs(const QString &name);
@@ -64,6 +65,7 @@ public slots: //These will be exported to scripting
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
+ void treeClicked(int button,QListViewItem *item);
  void setObject(const QString &name,boost::shared_ptr<IProperty> obj);
  void runScript(QString script);
  void menuActivated(int id);
@@ -88,12 +90,12 @@ private:
  QSInterpreter *qs;
  /** Edited PDF document */
  CPdf *document;
- /** Currently selected page (for scripting)*/
- boost::shared_ptr<CPage> page;
- /** Currently selected IProperty*/
- boost::shared_ptr<IProperty> item;
- /** Currently selected object (for scripting)*/
- QSCObject *selected;
+ /** Currently selected page (for scripting) */
+ boost::shared_ptr<CPage> selectedPage;
+ /** Currently selected IProperty (in editor) */
+ boost::shared_ptr<IProperty> selectedProperty;
+ /** Currently selected tree item (for scripting) */
+ TreeItemAbstract *selectedTreeItem;
  //TODO: highlevel objects (Page, Anotation...) can be selected too
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;

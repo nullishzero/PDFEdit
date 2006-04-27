@@ -29,6 +29,7 @@
 #include "treewindow.h"
 #include "menu.h"
 #include "commandwindow.h"
+#include "treeitemabstract.h"
 
 #include "GlobalParams.h"
 
@@ -162,16 +163,19 @@ void PdfEditWindow::restoreWindowState() {
 /** Create objects that should be available to scripting from current CPdf and related objects*/
 void PdfEditWindow::addDocumentObjects() {
  //Import page and item (Currently selected page and currently selected object)
- QSCObject *pg=import->createQSObject(page);
-// QSCObject *it=import->createQSObject(item);
- import->addQSObj(pg,"page");
- import->addQSObj(selected,"item");
+ QSCObject *page=import->createQSObject(selectedPage);
+ QSCObject *trit=import->createQSObject(selectedTreeItem);
+ QSCObject *item=import->createQSObject(selectedProperty);
+ import->addQSObj(page,"page");
+ import->addQSObj(trit,"treeitem");
+ import->addQSObj(item,"item");
 }
 
 /** Removes objects added with addDocumentObject */
 void PdfEditWindow::removeDocumentObjects() {
  //delete page and item variables from script -> they may change while script is not executing
-// qs->evaluate("item.deleteSelf();",this,"<delete_item>");
+ qs->evaluate("item.deleteSelf();",this,"<delete_item>");
+ qs->evaluate("treeitem.deleteSelf();",this,"<delete_item>");
  qs->evaluate("page.deleteSelf();",this,"<delete_page>");
  //todo: run garbage collector? Is it needed?
 }
@@ -228,14 +232,6 @@ void PdfEditWindow::runScript(QString script) {
  removeDocumentObjects();
 }
 
-/** QUICK FIX dirty debugging function */
-void PdfEditWindow::qfix() {
- //TODO: remove ASAP
- if (!document) return;
- boost::shared_ptr<pdfobjects::CPage> pg=document->getFirstPage();
- pagespc->refresh(new QSPage(pg), new QSPdf(document));
-}
-
 /**
  Print given string to console, followed by newline
  @param str String to add
@@ -267,6 +263,7 @@ void PdfEditWindow::menuActivated(int id) {
  @param name Function name
 */
 void PdfEditWindow::call(const QString &name) {
+ printDbg(debug::DBG_INFO,"Performing callback: " << name);
  addDocumentObjects();
  try {
   //Call the function. Do not care about result
@@ -285,7 +282,8 @@ void PdfEditWindow::call(const QString &name) {
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
  setFileName(QString::null);
- document=NULL;item.reset();selected=NULL;
+ document=NULL;
+ selectedTreeItem=NULL;
  menuSystem=new Menu();
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
@@ -311,25 +309,31 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Property editor
  prop=new PropertyEditor(splProp);
 
+ //Connections
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
  QObject::connect(tree, SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)), prop, SLOT(setObject(const QString&,boost::shared_ptr<IProperty>)));
  QObject::connect(tree, SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)), this, SLOT(setObject(const QString&,boost::shared_ptr<IProperty>)));
+ QObject::connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
 
  this->setCentralWidget(spl);
 
  //Menu
- QMenuBar *qb=menuSystem->loadMenu(this);
- QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
+ try {
+  QMenuBar *qb=menuSystem->loadMenu(this);
+  QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
 
- //ToolBars
- ToolBarList tblist=menuSystem->loadToolBars(this);
- for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
-  QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
+  //ToolBars
+  ToolBarList tblist=menuSystem->loadToolBars(this);
+  for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
+   QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
+  }
+ } catch (InvalidMenuException &e) {
+  printDbg(debug::DBG_WARN,"Exception in menu loading raised");
+  fatalError(e.message());
  }
-
  //Need to name objects, so they will become invisible to scripting
 /* QLayout *w_l=this->layout();
  if (w_l) {
@@ -370,13 +374,12 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  @param obj Object that was selected
 */
 void PdfEditWindow::setObject(const QString &name,boost::shared_ptr<IProperty> obj) {
- item=obj;
+ selectedProperty=obj;
 }
 
 /** Called upon selecting item in treeview */
 void PdfEditWindow::setObject() {
- if (selected) delete selected;
- selected=tree->getSelected();
+ selectedTreeItem=tree->getSelectedItem();
 }
 
 /** Called when any settings are updated (in script, option editor, etc ...)
@@ -472,10 +475,10 @@ void PdfEditWindow::setFileName(const QString &name) {
 /** Closes file currently opened in editor, without opening new empty one */
 void PdfEditWindow::destroyFile() {
  if (!document) return;
- item.reset();//no item selected
+ selectedProperty.reset();//no item selected
  tree->uninit();//clear treeview
  prop->clear();//clear property editor
- page.reset();//no page selected
+ selectedPage.reset();//no page selected
  document->close(false);
  delete qpdf;
  document=0;
@@ -586,6 +589,25 @@ void PdfEditWindow::variables() {
  }
 }
 
+/**
+ Called when clicked anywhere in tree windows
+ @param button Button used to click (1=left, 2=right, 4=middle, 8=doubleclick with left)
+ @param item Item that was clicked on, if clicked outside item, NULL is sent
+*/
+void PdfEditWindow::treeClicked(int button,QListViewItem *item) {
+ //clicks outside any items are irrelevant
+ if (!item) return;
+ TreeItemAbstract* it=dynamic_cast<TreeItemAbstract*>(item);
+ //Some unknown tree item?
+ if (!it) return;
+ selectedTreeItem=it;
+ if (button &1) call("onTreeLeftClick");
+ if (button &2) call("onTreeRightClick");
+ if (button &4) call("onTreeMiddleClick");
+ if (button &8) call("onTreeDoubleClick");
+}
+
+
 /** Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
 @param topic Starting help topic
  */
@@ -597,11 +619,9 @@ void PdfEditWindow::help(const QString &topic/*=QString::null*/) {
 /** default destructor */
 PdfEditWindow::~PdfEditWindow() {
  destroyFile();
- /* stopExecution is not in QSA 1.0.1, need 1.1.4
  if (qs->isRunning()) {
   qs->stopExecution();
-  deleteLater();  //Delete object when returning back to main loop
- }*/
+ }
  delete import;
  delete menuSystem;
  delete qp;

@@ -37,8 +37,8 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
  data=new TreeData(this,tree);
- //TODO: for debugging:
  QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
+ QObject::connect(tree,SIGNAL(doubleClicked(QListViewItem*,const QPoint &,int)),this,SLOT(mouseDoubleClicked(QListViewItem*,const QPoint &,int)));
 }
 
 /** Reload part of tree that have given item as root (including that item)
@@ -63,6 +63,17 @@ void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord
    reloadFrom(titem);
   }
  }
+ emit treeClicked(button,item);
+}
+
+/** Slot called when someone doubleclick with left mouse button anywhere in the tree
+@param item Which item is clicked upon (NULL if clicked outside item)
+@param coord Coordinates of mouseclick
+@param column Clicked in which item's column? (if clicked on item)
+*/
+void TreeWindow::mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column) {
+ printDbg(debug::DBG_DBG,"DoubleClicked in tree:");
+ emit treeClicked(8,item);
 }
 
 /** Re-read tree settings from global settings */
@@ -123,10 +134,20 @@ void TreeWindow::treeSelectionChanged(QListViewItem *item) {
 /** 
  Return QSCObject from currently selected item
  Caller is responsible for freeing object
+ @return QSCObject from current item
 */
 QSCObject* TreeWindow::getSelected() {
  if (!selected) return NULL; //nothing selected
  return selected->getQSObject();
+}
+
+/** 
+ Return pointer to currently selected tree item
+ @return current item
+*/
+TreeItemAbstract* TreeWindow::getSelectedItem() {
+ if (!selected) return NULL; //nothing selected
+ return selected;
 }
 
 /** Clears all items from TreeWindow */
