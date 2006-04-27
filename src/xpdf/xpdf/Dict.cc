@@ -115,7 +115,7 @@ void Dict::add(char *key, Object *val)
 
 }
 
-inline DictEntry *Dict::find(char *key) {
+inline DictEntry *Dict::find(const char *key) {
   int i;
 
   for (i = 0; i < length; ++i) 
@@ -126,19 +126,19 @@ inline DictEntry *Dict::find(char *key) {
   return NULL;
 }
 
-GBool Dict::is(char *type) {
+GBool Dict::is(const char *type) {
   DictEntry *e;
 
   return (e = find("Type")) && e->val->isName(type);
 }
 
-Object *Dict::lookup(char *key, Object *obj) {
+Object *Dict::lookup(const char *key, Object *obj) {
   DictEntry *e;
 
   return (e = find(key)) ? e->val->fetch(xref, obj) : obj->initNull();
 }
 
-Object *Dict::lookupNF(char *key, Object *obj) {
+Object *Dict::lookupNF(const char *key, Object *obj) {
   DictEntry *e;
 
   return (e = find(key)) ? e->val->copy(obj) : obj->initNull();
@@ -182,9 +182,10 @@ Object * Dict::update(char * key, Object * val)
      return NULL;
   }
   
-  // available, so return old value and sets new one
+  // available, so return old value, allocates new and intializes it
   Object *old = entry->val;
-  entry->val = val;
+  entry->val=(Object *)gmalloc(sizeof(Object));
+  *(entry->val) = *val;
   
   return old;
 }
