@@ -66,11 +66,15 @@ int Object::numAlloc[numObjTypes] =
  * <ul>
  * <li>stream - figure out
  * </ul>
+ * NOTE: Object instance is allocated by gmalloc method and should
+ * be deallocated by gfree function. Value inside Object should be
+ * deallocated before Object instance by Object::free method which
+ * knows type specific behaviour.
  *
  */
 Object * Object::clone()const
 {
-   Object * result=new Object();
+   Object * result=(Object *)gmalloc(sizeof(Object));
 
    // initializes type
    result->type = this->type;
