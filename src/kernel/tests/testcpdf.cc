@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/27 18:35:50  hockm0bm
+ * revisionsTC new test cases
+ *        - changeRevision seams to be tested quite well
+ *
  * Revision 1.11  2006/04/25 02:28:05  misuj1am
  *
  * -- improved cpage, cstream, tests
@@ -329,30 +333,114 @@ public:
 	}
 
 /** Multiversion file name. */
-#define MV_F "multiversion.pdf"
+#define MV_F "tests/multiversion.pdf"
 
 /** Multiversion revisin count. */
-#define MV_RC  2
+#define MV_RC  4
 
+#define TRY_READONLY_OP(method, errorMsg)\
+	{\
+		try\
+		{\
+			method;\
+			CPPUNIT_FAIL(errorMsg);\
+		}catch(ReadOnlyDocumentException &e)\
+		{\
+			/* passed */\
+		}\
+	}
 	void revisionsTC()
 	{
+	using namespace boost;
+
 		printf("%s\n", __FUNCTION__);
 
 		// opens special test file
+		printf("Using file \"%s\"\n", MV_F);
 		CPdf *pdf=getTestCPdf(MV_F);
+		CPdf::OpenMode mode=pdf->getMode();
 
 		// number of revision must match
 		printf("TC01:\tRevisions count test\n");
 		CPPUNIT_ASSERT(pdf->getRevisionsCount()==MV_RC);
-		pdf->close();
 
-		printf("TC02:\tchangeRevision tests\n");
-		for(CPdf::revision_t i=1; i<pdf->getRevisionsCount(); i++)
+		printf("TC02:\tchangeRevision, getActualRevision tests\n");
+		for(CPdf::revision_t i=0; i<pdf->getRevisionsCount(); i++)
+		{
 			pdf->changeRevision(i);
-		// TODO prepare test data with multiple revision each
-		// specific by pagecount
+			CPPUNIT_ASSERT(pdf->getActualRevision()==i);
+		}
+
+		printf("TC03:\tgetPageCount for revision test\n");
+		// starts from the oldest one - each revision has number of pages one
+		// more than revision number
+		for(CPdf::revision_t i=pdf->getRevisionsCount()-1; ; i--)
+		{
+			pdf->changeRevision(i);
+			CPPUNIT_ASSERT(pdf->getPageCount()==i+1);
+			if(i==0)
+				break;
+			
+		}
+
+		printf("TC04:\tgetCXref::getNumObjects is same for all revisions\n");
+		// no changes has been done, so all revisions has to have same number
+		// of objects
+		int number=0;
+		for(CPdf::revision_t i=0; i<pdf->getPageCount(); i++)
+		{
+			pdf->changeRevision(i);
+			if(!number)
+			{
+				// first information is just stored to number
+				number=pdf->getCXref()->getNumObjects();
+				continue;
+			}
+			CPPUNIT_ASSERT(pdf->getCXref()->getNumObjects()==number);
+		}
+
+		printf("TC05:\tolder revisions has to be readOnly\n");
+		for(CPdf::revision_t i=1; i<pdf->getRevisionsCount(); i++)
+		{
+			pdf->changeRevision(i);
+			CPPUNIT_ASSERT(pdf->getMode()==CPdf::ReadOnly);
+		}
+
+		printf("TC06:\tThe newest revision has mode same as set in getInstace\n");
+		pdf->changeRevision(0);
+		CPPUNIT_ASSERT(pdf->getMode()==mode);
 		
+		printf("TC07:\tno changes can be done in older revisions\n");
+		for(CPdf::revision_t i=1; i<pdf->getRevisionsCount(); i++)
+		{
+			printf("\trevision=%d\n", i);
+			pdf->changeRevision(i);
+			
+			// addIndirectProperty
+			printf("\t\taddIndirectProperty\n");
+			shared_ptr<IProperty> prop(CIntFactory::getInstance(1));
+			TRY_READONLY_OP(pdf->addIndirectProperty(prop),"addIndirectProperty should have failed");
+
+			// changeIndirectProperty
+			printf("\t\tchangeIndirectProperty\n");
+			TRY_READONLY_OP(pdf->changeIndirectProperty(prop),"changeIndirectProperty should have failed");
+			
+			// insertPage
+			shared_ptr<CDict> pageDict(CDictFactory::getInstance());
+			shared_ptr<CPage> page(CPageFactory::getInstance(pageDict));
+			printf("\t\tinsertPage\n");
+			TRY_READONLY_OP(pdf->insertPage(page,1), "insertPage should have failed");
+
+			// removePage
+			printf("\t\tremovePage\n");
+			TRY_READONLY_OP(pdf->removePage(1), "removePage should have failed");
+			
+			// removeOutline TODO
+		}
+		
+		pdf->close();
 	}
+#undef TRY_READONLY_OP
 	
 	void setUp()
 	{
