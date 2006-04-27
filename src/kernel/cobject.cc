@@ -734,7 +734,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	//
 	// Get xpdf obj from the stream
 	//
-	Object* obj = new Object;
+	Object* obj = XPdfObjectFactory::getInstance();
 	parser->getObj (obj);
 	
 	// delete string we don't need it anymore
@@ -748,7 +748,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	if ( (obj->isNull()) && !equal(str.begin(), str.end(), null.begin(), nocase_compare) )
 	{
 		obj->free ();
-		delete obj;
+		gfree(obj);
 		throw CObjBadValue ();
 	}
 
@@ -971,7 +971,7 @@ freeXpdfObject (Object* obj)
 	// delete all member variables
 	obj->free ();
 	// delete the object itself
-	delete obj;
+	gfree(obj);
 }
 
 
