@@ -6,6 +6,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/04/27 18:09:34  hockm0bm
+ * * cleanUp method added
+ * * debug messages minor changes
+ * * changeTrailer handles trailer->update used correctly (key parameter)
+ * * correct Object instancing
+ *
  * Revision 1.17  2006/04/20 22:35:44  hockm0bm
  * typeSafe is firtual now to enable XRefWriter transparent overloading
  *
@@ -192,7 +198,7 @@ protected:
 	 * @return Previous value of object or 0 if previous revision not
 	 * available (new name value pair in trailer).
 	 */
-	::Object * changeTrailer(char * name, ::Object * value);
+	::Object * changeTrailer(const char * name, ::Object * value);
 
 	/** Reinitializes all internal structures.
 	 * @param xrefOff Offset of cross reference table from which to start.
@@ -257,11 +263,22 @@ protected:
 	 * change method to register change and makes object visible by
 	 * fetch method.
 	 * <br>
+	 * Returned object has to be deallocated by Object::free and gfree methods 
+	 * (first one for value deallocation and second for Object instance itself)
+	 * or by pdfobjects::utils::freeXpdfObject method.
 	 *
 	 * @return Object instance with given type or 0 if not able to create.
 	 */
 	virtual ::Object * createObject(::ObjType type, ::Ref * ref);
 
+	/** Deallocates all internal structures.
+	 *
+	 * Cleanes up chnagedStorage and deallocates all its entries.
+	 * <br>
+	 * This method is responsible for deallocation of all internal structures
+	 * specific for CXref.
+	 */
+	void cleanUp();
 public:
 	/** Initialize constructor.
 	 * @param stream Stream with file data.

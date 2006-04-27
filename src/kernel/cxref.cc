@@ -3,6 +3,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/04/27 18:09:34  hockm0bm
+ * * cleanUp method added
+ * * debug messages minor changes
+ * * changeTrailer handles trailer->update used correctly (key parameter)
+ * * correct Object instancing
+ *
  * Revision 1.11  2006/04/23 22:03:40  hockm0bm
  * reopen sets lastXRefPos to given offset
  *
@@ -34,23 +40,21 @@
  */
 #include "cxref.h"
 #include "utils/debug.h"
+#include "factories.h"
 
 using namespace pdfobjects;
 
-CXref::~CXref()
+void CXref::cleanUp()
 {
 using namespace debug;
 
 	printDbg(DBG_DBG, "");
-	/* FIXME: uncoment when cache is ready.
-	if(cache)
-		delete cache;
-	*/
-	
+
 	// deallocates changed storage
 	// goes through all elemenents, erases all of them and deallocates value
 	// returned from remove object (iterators are not invalidated by remove
 	// method)
+	printDbg(DBG_DBG, "Deallocating changedStorage");
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
 	for(i=changedStorage.begin(); i!= changedStorage.end(); i++)
 	{
@@ -61,7 +65,7 @@ using namespace debug;
 		if(!entry)
 		{
 			// this shouldn't happen
-			printDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<" doesn't have entry.");
+			printDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] doesn't have entry.");
 			continue;
 		}
 
@@ -69,21 +73,39 @@ using namespace debug;
 		if(!entry->object)
 		{
 			// this shouldn't happen
-			printDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<" entry doesn't have an object");
+			printDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] entry doesn't have an object");
 			delete entry;
 			continue;
 		}
 
-		// check if object is stored
-		// if not, prints warning
-		if(!entry->stored)
-			printDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<" entry is not stored");
-	
-		delete entry->object;
+		printDbg(DBG_DBG, "Deallocating entry for ref=["<<ref.num<<", "<<ref.gen<<"]");
+		entry->object->free();
+		gfree(entry->object);
 		delete entry;
-
 	}
+	printDbg(DBG_DBG, "changedStorage cleaned up");
 
+	printDbg(DBG_DBG, "Cleaning newStorage");
+	// newStorage doesn't need special entries deallocation
+	newStorage.clear();
+	printDbg(DBG_DBG, "newStorage cleaned up");
+}
+
+CXref::~CXref()
+{
+using namespace debug;
+
+	printDbg(DBG_DBG, "");
+	/* FIXME: uncoment when cache is ready.
+	if(cache)
+	{
+		printDbg(DBG_INFO, "Deallocating cache");
+		delete cache;
+	}
+	*/
+	
+	printDbg(DBG_INFO, "Deallocating internal structures");
+	cleanUp();
 	
 }
 
@@ -132,7 +154,7 @@ using namespace debug;
 }
 
 
-::Object * CXref::changeTrailer(char * name, ::Object * value)
+::Object * CXref::changeTrailer(const char * name, ::Object * value)
 {
 using namespace debug;
 
@@ -140,7 +162,13 @@ using namespace debug;
 	
 	Dict * trailer = trailerDict.getDict(); 
 
-	::Object * prev = trailer->update(name, value);
+	char * key=strdup(name);
+	::Object * prev = trailer->update(key, value);
+
+	// update doesn't store key if key, value has been already in the 
+	// dictionary
+	if(prev)
+		free(key);
 
 	return prev;
 }
@@ -202,7 +230,7 @@ using namespace debug;
 		return 0;
 	*/
 
-	::Object * obj=(::Object *)gmalloc(sizeof(::Object));
+	::Object * obj=XPdfObjectFactory::getInstance();
 	
 	// initialize according type
 	switch(type)
@@ -416,10 +444,9 @@ using namespace debug;
 		// this doesn't affect our ::Object in changedStorage
 		*obj=*deepCopy;
 		
-		// dellocate deepCopy - constructor doesn't
-		// destroy content which is copied (shallow)
-		// to obj
-		delete deepCopy; 
+		// dellocate deepCopy - content is kept if it is pointer
+		// because Object has no destructor
+		gfree(deepCopy); 
 		return obj;
 	}
 
@@ -430,7 +457,10 @@ using namespace debug;
 	// if object is not null, caches object's deep copy
 	/* FIXME uncoment, when cache is ready
 	if(cache && obj->getType()!=objNull)
+	{
+		printDbg(DBG_DBG, "Caching object "[num="<<num<<" gen="<<gen<<"]");
 		cache->put(ref, obj->clone());
+	}
 	*/   
 	return obj;
 }
@@ -460,15 +490,13 @@ using namespace debug;
 	printDbg(DBG_DBG, "");
 
 	// clears all object storages
-	printDbg(DBG_DBG, "Clearing changed objects");
-	changedStorage.clear();
-	printDbg(DBG_DBG, "Clearing new referencies");
-	newStorage.clear();
+	printDbg(DBG_INFO, "Destroying CXref internals");
+	cleanUp();
 
 	// clears XRef internals and forces to fill them again
-	printDbg(DBG_DBG, "Destroing XRef internals");
+	printDbg(DBG_INFO, "Destroing XRef internals");
 	XRef::destroyInternals();
-	printDbg(DBG_DBG, "Initializes XRef internals");
+	printDbg(DBG_INFO, "Initializes XRef internals");
 	XRef::initInternals(xrefOff);
 
 	// sets lastXRefPos to xrefOff, because initRevisionSpecific doesn't do it
