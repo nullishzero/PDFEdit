@@ -6,6 +6,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.41  2006/04/27 18:29:11  hockm0bm
+ * * all methods which could be set to const are const now
+ * * pageList is mutable to enable getPage (and all depended in getPage)
+ *   to be const methods
+ * * pageCount is mutable to enable getPageCount to be conts
+ * * methods which should fail in read-only mode doesn't compare mode
+ *   directly but use getMode - because it consideres also current revision
+ * * changeIndirectProperty bug fixed - checking for mode is done now
+ *
  * Revision 1.40  2006/04/27 05:55:39  hockm0bm
  * * changeRevision implemented
  * * documentation update
@@ -201,8 +210,6 @@ namespace utils {
  * Indirect referencies comparator.
  *
  * Handles comparing of Indirect referencies.
- *
- * FIXME find some more proper place for the class
  */
 class IndComparator
 {
@@ -226,6 +233,7 @@ public:
 			return (one.num < two.num);
 	}
 };
+
 } // namespace utils
 
 // forward declarations FIXME remove
@@ -615,7 +623,7 @@ private:
 	 * <br>
 	 * This storage behaves like CPage cache.
 	 */
-	PageList pageList;
+	mutable PageList pageList;
 
 	/** Number of pages in document.
 	 *
@@ -627,7 +635,7 @@ private:
 	 * This is kind of optimalization to prevent geting Root of page tree node
 	 * each time when total number of pages is required.
 	 */
-	size_t pageCount;
+	mutable size_t pageCount;
 
 	// TODO returned outlines list
 
@@ -752,7 +760,7 @@ public:
 	 *
 	 * @return Pointer to XRefWriter field casted to CXref super type.
 	 */
-	CXref * getCXref()
+	CXref * getCXref()const
 	{
 		return dynamic_cast<CXref *>(xref);
 	}
@@ -762,7 +770,7 @@ public:
 	 * @return IModeController implementator or NULL, if no mode 
 	 * controller is used.
 	 */
-	IModeController* getModeController()
+	IModeController* getModeController()const
 	{
 		return modeController;
 	}
@@ -1001,7 +1009,7 @@ public:
 	 * @throw PageNotFoundException if given page is not recognized by CPdf
 	 * instance.
 	 */
-	size_t getPagePosition(boost::shared_ptr<CPage> page);
+	size_t getPagePosition(boost::shared_ptr<CPage> page)const;
 
 	/** Returnes page count.
 	 *
@@ -1013,7 +1021,7 @@ public:
 	 * type (CPdf instance is almost unusable if this is not correct).
 	 * @return Number of pages which are accessible.
 	 */
-	unsigned int getPageCount();
+	unsigned int getPageCount()const;
 
 	// page iteration methods
 	// =======================
@@ -1030,7 +1038,7 @@ public:
 	 * @throw PageNotFoundException if pos can't be found or out of range.
 	 * @return CPage instance wrapped by smart pointer.
 	 */
-	boost::shared_ptr<CPage> getPage(size_t pos);
+	boost::shared_ptr<CPage> getPage(size_t pos)const;
 
 	/** Returns first page.
 	 *
@@ -1038,7 +1046,7 @@ public:
 	 *
 	 * @return CPage instance wrapped by smart pointer.
 	 */
-	boost::shared_ptr<CPage> getFirstPage()
+	boost::shared_ptr<CPage> getFirstPage()const
 	{
 		return getPage(1);
 	}
@@ -1055,7 +1063,7 @@ public:
 	 * one or given page can't be found).
 	 * @return CPage instance wrapped by smart pointer.
 	 */ 
-	boost::shared_ptr<CPage> getNextPage(boost::shared_ptr<CPage> page);
+	boost::shared_ptr<CPage> getNextPage(boost::shared_ptr<CPage> page)const;
 
 	/** Returns previous page.
 	 * @param Pointer to the page.
@@ -1069,7 +1077,7 @@ public:
 	 * one or given page can't be found).
 	 * @return CPage instance wrapped by smart pointer.
 	 */
-	boost::shared_ptr<CPage> getPrevPage(boost::shared_ptr<CPage> page);
+	boost::shared_ptr<CPage> getPrevPage(boost::shared_ptr<CPage> page)const;
 
 	/** Checks for next page.
 	 * @param page Page to check.
@@ -1077,7 +1085,7 @@ public:
 	 * @return true if getNextPage() method returns doesn't throw
 	 * PageNotFoundException, false otherwise. 
 	 */
-	bool hasNextPage(boost::shared_ptr<CPage> page)
+	bool hasNextPage(boost::shared_ptr<CPage> page)const
 	{
 		try
 		{
@@ -1098,7 +1106,7 @@ public:
 	 * @return true if getPrevPage() method returns doesn't throw
 	 * PageNotFoundException. 
 	 */
-	bool hasPrevPage(boost::shared_ptr<CPage> page)
+	bool hasPrevPage(boost::shared_ptr<CPage> page)const
 	{
 		try
 		{
@@ -1119,7 +1127,7 @@ public:
 	 *
 	 * @return CPage instance wrapped by smart pointer.
 	 */
-	boost::shared_ptr<CPage> getLastPage()
+	boost::shared_ptr<CPage> getLastPage()const
 	{
 		return getPage(getPageCount());
 	}
@@ -1206,6 +1214,9 @@ public:
 	 *
 	 * Delegates to xref field and reinitializes all internal structures
 	 * which are revision specific.
+	 * <br>
+	 * NOTE: indirect mapping is cleared so, all indirect properties are lost
+	 * and shouldn't be used anymore.
 	 *
 	 * @see XRefWriter::changeRevision
 	 * @see initRevisionSpecific

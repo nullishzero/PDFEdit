@@ -3,6 +3,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.40  2006/04/27 18:29:10  hockm0bm
+ * * all methods which could be set to const are const now
+ * * pageList is mutable to enable getPage (and all depended in getPage)
+ *   to be const methods
+ * * pageCount is mutable to enable getPageCount to be conts
+ * * methods which should fail in read-only mode doesn't compare mode
+ *   directly but use getMode - because it consideres also current revision
+ * * changeIndirectProperty bug fixed - checking for mode is done now
+ *
  * Revision 1.39  2006/04/27 05:55:39  hockm0bm
  * * changeRevision implemented
  * * documentation update
@@ -223,7 +232,7 @@ namespace utils
  * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
  * position.
  */
-boost::shared_ptr<CDict> findPageDict(CPdf & pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
+boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
 {
 	// TODO error handling unification
 	
@@ -914,12 +923,17 @@ CPdf::~CPdf()
 	}
 
 	// TODO handle outlines when ready
+	
+	
+	// deallocates XRefWriter
+	delete xref;
 }
 
 
 //
 // 
-//
+// this method can't be const because createObjFromXpdfObj requires 
+// CPdf * not const CPdf * given by this
 boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
 {
 using namespace debug;
@@ -1049,9 +1063,9 @@ using namespace boost;
 
 	printDbg(DBG_DBG, "");
 
-	if(mode==ReadOnly)
+	if(getMode()==ReadOnly)
 	{
-		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		printDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
 	
@@ -1135,6 +1149,12 @@ using namespace boost;
 void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 {
 	printDbg(DBG_DBG, "");
+	
+	if(getMode()==ReadOnly)
+	{
+		printDbg(DBG_ERR, "Document is in read-only mode now");
+		throw ReadOnlyDocumentException("Document is in read-only mode.");
+	}
 	
 	// checks property at first
 	// it must be from same pdf
@@ -1232,7 +1252,7 @@ int CPdf::close(bool saveFlag)
 	return 0;
 }
 
-boost::shared_ptr<CPage> CPdf::getPage(size_t pos)
+boost::shared_ptr<CPage> CPdf::getPage(size_t pos)const
 {
 using namespace utils;
 
@@ -1245,7 +1265,7 @@ using namespace utils;
 	}
 
 	// checks if page is available in pageList
-	PageList::iterator i;
+	PageList::const_iterator i;
 	if((i=pageList.find(pos))!=pageList.end())
 	{
 		printDbg(DBG_INFO, "Page at pos="<<pos<<" found in pageList");
@@ -1269,7 +1289,7 @@ using namespace utils;
 	return page_ptr;
 }
 
-unsigned int CPdf::getPageCount()
+unsigned int CPdf::getPageCount()const
 {
 using namespace utils;
 	
@@ -1311,7 +1331,7 @@ using namespace utils;
 	throw MalformedFormatExeption("Pages dictionary is not Page or Pages dictionary");
 }
 
-boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)
+boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
 {
 	printDbg(DBG_DBG, "");
 
@@ -1331,7 +1351,7 @@ boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)
 
 }
 
-boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)
+boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)const
 {
 	printDbg(DBG_DBG, "");
 
@@ -1350,7 +1370,7 @@ boost::shared_ptr<CPage> CPdf::getPrevPage(boost::shared_ptr<CPage> page)
 	return getPage(pos);
 }
 
-size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)
+size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
 {
 	printDbg(DBG_DBG, "");
 		
@@ -1737,9 +1757,9 @@ using namespace utils;
 
 	printDbg(DBG_DBG, "pos="<<pos);
 
-	if(mode==ReadOnly)
+	if(getMode()==ReadOnly)
 	{
-		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		printDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
 		
@@ -1847,9 +1867,9 @@ using namespace utils;
 
 	printDbg(DBG_DBG, "");
 
-	if(mode==ReadOnly)
+	if(getMode()==ReadOnly)
 	{
-		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		printDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
 
@@ -1901,9 +1921,9 @@ void CPdf::save(bool newRevision)
 {
 	printDbg(DBG_DBG, "");
 
-	if(mode==ReadOnly)
+	if(getMode()==ReadOnly)
 	{
-		printDbg(DBG_ERR, "Document is opened in read-only mode");
+		printDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
 	
