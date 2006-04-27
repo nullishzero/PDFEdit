@@ -8,6 +8,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.7  2006/04/27 17:44:16  hockm0bm
+ * minor documentation update
+ *
  * Revision 1.6  2006/04/21 19:26:41  hockm0bm
  * RefComparator changed because it didn't have correct behaviour
  *
@@ -87,6 +90,8 @@ public:
         ObjectStorage(){};
 
         /** Clears mapping.
+         *
+         * Doesn't deallocate values!
          */
         void clear()
         {
