@@ -229,6 +229,10 @@ Data: %3
         <comment>5+</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cycle in menu detected</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>

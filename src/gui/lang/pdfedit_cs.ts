@@ -232,6 +232,10 @@ Data: %3
         <comment>5+</comment>
         <translation> stran</translation>
     </message>
+    <message>
+        <source>Cycle in menu detected</source>
+        <translation>Nalezen cyklus v menu</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
