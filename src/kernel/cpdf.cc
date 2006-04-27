@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.39  2006/04/27 05:55:39  hockm0bm
+ * * changeRevision implemented
+ * * documentation update
+ *
  * Revision 1.38  2006/04/23 15:12:58  hockm0bm
  * changeIndirectProperty behaviour changed
  *         - indirect mapping removed only if given property is different
@@ -156,13 +160,6 @@
 #include "utils/debug.h"
 
 // =====================================================================================
-
-/****************************************************************************
- * FOR CVS
- * * removePage bug fix getPropertyId had bad parameter (page dictionary instead of reference) 
- * * consolidatePageTree checks dictionary type (must be Pages)
- * * getIndirectProperty creates CNull directly if fetch returns objNull Object
- */
 
 using namespace boost;
 using namespace std;
@@ -880,7 +877,6 @@ void CPdf::initRevisionSpecific()
 		if(pageTreeProp_ptr->getType()!=pRef)
 		{
 			printDbg(DBG_ERR, "Pages field is not reference.");	
-			// TODO handle
 		}else
 		{
 			shared_ptr<CRef> pageTreeRoot_ptr=IProperty::getSmartCObjectPtr<CRef>(pageTreeProp_ptr);
@@ -895,6 +891,7 @@ void CPdf::initRevisionSpecific()
 CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this))
 {
 	// gets xref writer - if error occures, exception is thrown 
+	// TODO start to use mode !!!
 	xref=new XRefWriter(stream, this);
 	mode=openMode;
 
@@ -1062,7 +1059,7 @@ using namespace boost;
 	// it is ip by default
 	shared_ptr<IProperty> propValue=ip;
 	
-	// if we given ip is reference, we have to distinguish whether
+	// if given ip is reference, we have to distinguish whether
 	// it comes from same file (and then nothing is to do and we
 	// just simply return ip reference) 
 	// or from different file, when we need to dereference and after 
@@ -1819,12 +1816,13 @@ using namespace utils;
 		kidsIndex=positions[0]+append;
 	}
 
+	// Now it is safe to add indirect object, because there is nothing that can
+	// fail
+	
 	// gets page's dictionary and adds it as new indirect property.
 	// All page dictionaries must be indirect objects and addIndirectProperty
 	// method also solves problems with deep copy and page from different file
 	// transition
-	// Now it is safe to add indirect object, because there is nothing that can
-	// fail
 	IndiRef pageRef=addIndirectProperty(page->getDictionary());
 
 	// adds newly created page dictionary to the kids array at kidsIndex
@@ -1858,7 +1856,7 @@ using namespace utils;
 	// TODO question: Is it possible to have document with no pages?
 
 	// checks position
-	if(1<pos || pos>getPageCount())
+	if(1>pos || pos>getPageCount())
 		throw PageNotFoundException(pos);
 
 	// Searches for page dictionary at given pos and gets its reference.
@@ -1936,6 +1934,17 @@ using namespace debug;
 	
 	// delagates to XRefWriter
 	xref->cloneRevision(file);
+}
+
+void CPdf::changeRevision(revision_t revisionNum)
+{
+	printDbg(DBG_DBG, "");
+	
+	// set revision xref->changeRevision
+	xref->changeRevision(revisionNum);
+	
+	// prepares internal structures for new revision
+	initRevisionSpecific();
 }
 
 } // end of pdfobjects namespace

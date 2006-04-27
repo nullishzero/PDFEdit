@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.40  2006/04/27 05:55:39  hockm0bm
+ * * changeRevision implemented
+ * * documentation update
+ *
  * Revision 1.39  2006/04/25 22:16:41  misuj1am
  *
  * -- ADD: headers cobject.h
@@ -230,23 +234,106 @@ class COutline;
 
 /** CPdf special object.
  *
- * This class is responsible for pdf document maintainance. 
+ * This class is responsible for pdf document maintainance. It provides wrapper
+ * on document catalog dictionary with advanced logic concering revision
+ * handling, high level object creation and their synchronization with actual
+ * properties state and mode depending operations.
+ *
  * <p>
  * <b>Instancing</b><br>
  * Public constructor is not available and instances can be created on by 
  * static factory getInstance method. Also no public destructor is available 
  * and instance can be destroyed only by close method.
+ * 
  * <p>
  * <b>Open mode</b><br>
  * Each document may be open in several modes. Each open mode brings specific
  * handling of document manipulation. Open mode for document is set only in 
- * constructor and can't be changed during CPdf instance life cycle. (TODO link
- * to OpenMode)
+ * constructor and can't be changed during CPdf instance life cycle. 
+ * @see CPdf::openMode
+ *
  * <p>
- * TODO indirect properties describtion
- * TODO CXref usage describtion
- * TODO produced objects describtion
- * TODO ...
+ * <b>Document changes</b><br>
+ * CPdf instance contains XRefWriter typed field which maintains all changes to
+ * document content. It is not accessible outside from class to keep full
+ * control upon instance in CPdf. To enable using also xpdf code outside CPdf
+ * CXref casted instance of XRefWriter is returned in getCXref. This instance
+ * doesn't enable any chnages but enables access to most accurate indirect
+ * objects. Changes to XRefWriter can be done only by CPdf methods. Note that
+ * changes can be be done only in newest revision (@see save).
+ * 
+ * <p>
+ * <b>Document properties</b><br>
+ * Properties from document can be accessible from document catalog which is
+ * returned by getDictionary method. New indirect property, which may be used in
+ * some other property (by its reference) can be created by addIndirectProperty.
+ * Change of indirect property can be registered by changeIndirectProperty.
+ * Finaly each indirect property is accessible by getIndirectProperty. All these
+ * methods are just some wrappers to XRefWriter internal field with CObject to
+ * xpdf Object conversion logic. Using them guaranties that all changes are
+ * synchronized correctly.
+ *
+ * <p>
+ * <b>Pages maintainance</b><br>
+ * One of CPdf responsiblities is to keep CPage instances synchronized with
+ * current state of page tree. Page instances (CPage typed) can be obtained by
+ * getPage, getFirstPage, getLastPage, getNextPage, getPrevPage methods. All
+ * returned instances are kept in pageList to guarantee that request for page at
+ * same position returns same page instance (unless page tree is not changed).
+ * CPdf uses PageTreeWatchDog inner class for page tree synchronization. So
+ * changes can be done also directly in page tree (not using CPdf methods) and
+ * pageList will contain correct (available) CPage instances.
+ * <br>
+ * insertPage and removePage enables inserting and removing new pages to the
+ * page tree. This way is prefered for making such changes. Other way (as
+ * mentioned above) is to change page tree directly using property interface.
+ * This way may lead to errors which are not recoverable and so it is strongly
+ * discouraged.
+ * <br>
+ * Pages are counted from 1 (first page) up to getPageCount return value. Note
+ * that this may not represent values used for inner page counting writen on the
+ * page. CPdf doesn't handle any kind of special document numbering.
+ *
+ * TODO outlines describtion
+ *
+ * <p>
+ * <b>Revision manipulation</b><br>
+ * CPdf provides access for working with document revision handled in XRefWriter
+ * field. Actual revision number (the newest revision has 0 number and grows to
+ * older revisions) can be obtained by getActualRevision method. Current
+ * revision can be changed by changeRevision method. As a result, just object
+ * included until current revisions are available. Also no changes can be done
+ * if revision is not the newest one, because PDF document doesn't support
+ * revision branching.
+ * <br>
+ * All internal data structures which may depend on current revision are
+ * intialized and cleaned up in initRevisionSpecific method.
+ *
+ * <p>
+ * <b>Document saving</b><br>
+ * Actual changes can be saved by save method. This works in two modes depending
+ * on given parameter. One creates new revision with changes, which
+ * means swithces to this revision whereas second approach saves changes to the
+ * end of file and doesn't change revision. Both of apporoaches have their pros
+ * and cons. Basicaly, new revision should be used if changes are ended and
+ * saving with no revision should be used if we want to temporarily store
+ * changes to prevent data lost by program crash or whatever problem.
+ * @see save(bool).
+ * 
+ * Different way of page content storing is so called document clonig done by
+ * clone method. This method stores document content of current revision. This
+ * enables to nake snapshot of document of arbitrary revision to separate
+ * document and this document (as it has that revision as the newest one)
+ * enables making changes.
+ * 
+ * <p>
+ * <b>Implementation notes and limitations</b><br>
+ * This version of CPdf and all its components doesn't support linearized pdf
+ * files very well. Revision handling and all related, are not prepared for
+ * special format and objects deployed for such documents.
+ * <br>
+ * Newly created revision always uses old style cross reference tables.
+ *
  */
 class CPdf
 {
@@ -546,7 +633,7 @@ private:
 
 	/** Intializes revision specific stuff.
 	 * 
-	 * Cleans up all internal structures which may depend on current revision.
+	 * Cleans up all internal structures which may depend on current discourage  revision.
 	 * This includes indirect mapping and pageList (all pages are invalidated).
 	 * After clean up is ready, initializes trailer field from Xref trailer xpdf
 	 * Object. docCatalog field is initialized same way.
@@ -909,7 +996,7 @@ public:
 	 * Returns actual position of given page. If given page hasn't been returned
 	 * by this CPdf instance or it is no longer available, exception is thrown.
 	 * <br>
-	 * NOTE: assume CPage implements == operator correctly
+	 * NOTE: instances are same if they are stand for same instance.
 	 *
 	 * @throw PageNotFoundException if given page is not recognized by CPdf
 	 * instance.
@@ -1091,7 +1178,8 @@ public:
 	 */
 	OpenMode getMode() const
 	{
-		// 
+		// mode is used only if we are in the newest revision, otherwise we are
+		// in ReadOnly
 		return (!xref->getActualRevision())?mode:ReadOnly;
 	}
 
@@ -1116,15 +1204,13 @@ public:
 	/** Changes revision to given one.
 	 * @param revisionNum Revision number (the newest is 0).
 	 *
-	 * see XRefWriter::changeRevision
+	 * Delegates to xref field and reinitializes all internal structures
+	 * which are revision specific.
+	 *
+	 * @see XRefWriter::changeRevision
+	 * @see initRevisionSpecific
 	 */
-	void changeRevision(revision_t /*revisionNum*/)
-	{
-		// set revision xref->changeRevision
-		// call initRevisionSpecific
-		// TODO kind of notification
-		// TODO what has to be dellocated ?
-	}
+	void changeRevision(revision_t revisionNum);
 
 	/** Returns number of available revisions.
 	 *
