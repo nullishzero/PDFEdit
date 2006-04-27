@@ -61,7 +61,18 @@ Array * Array::clone()const
    result->length=length;
    result->elems=(Object *)gmallocn(size, sizeof(Object));
    for(int i=0; i < length; i++)
-      result->elems[i]=*elems[i].clone();
+   {
+      // creates clone because elems[i] may keep value as pointer
+      // (e. g. objDict, objArray ...)
+      Object * clone=elems[i].clone();
+      
+      // copies just elements with no = operator
+      result->elems[i]=*clone;
+
+      // no destruct for Object available so internal pointers
+      // are kept and result->elems[i] is not affected
+      gfree(clone);
+   }
 
    return result;
 }
