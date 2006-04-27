@@ -84,6 +84,27 @@ public:
 	}
 };
 
+/** Factory class for xpdf Objects.
+ *
+ * Creates instance of xpdf Object class. Instances has to be deallocated by
+ * gfree method or pdfobjects::utils::freeXpdfObject.
+ */
+class XPdfObjectFactory
+{
+public:
+	/** Creates Object instance with objNull type.
+	 *
+	 * @return Object instance with objNull type.
+	 */
+	static Object * getInstance()
+	{
+		Object * instance=(Object *)gmalloc(sizeof(Object));
+		instance->initNull();
+
+		return instance;
+	}
+};
+
 /** Factory class for CInt creation.
  *
  * Use getInstance methods for instants creation.
