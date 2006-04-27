@@ -9,10 +9,12 @@ my $srcdir="../../src/gui";
 sub convert_definition {
  my $def=shift;
  #convert some C++ types to QSA types
- $def=~s/virtual\s+//;
- $def=~s/size_t\s+/int /;
+ $def=~s/(virtual|const)\s+//;	# keywords - have nmo meaning in QSA
+ $def=~s/&//;			# references - the same
+ $def=~s/size_t\s+/int /;	# size_t -> int
  $def=~s/QString\s+/string /;
- $def=~s/QS(Page|ContentStream|Dict)\s*\*\s*/\1 /g;
+ $def=~s/QStringList\s+/string[] /;
+ $def=~s/QS(Page|ContentStream|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
  #trim unnecessary blank characters
  $def=~s/^\s+//;
  $def=~s/;\s*[\r\n]+$//;
@@ -98,5 +100,7 @@ while (<>) {
  if (/<!--TYPE:\s*([a-zA-Z0-9_\.\-]+)\s*-->/) {
   $_=get_doc($1);
  }
+ #slightly disformat the result to discourage accidental editing or generated XML
+ s/ +/ /mg;
  print;
 }
