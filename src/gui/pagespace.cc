@@ -21,9 +21,11 @@ void Init( initStruct * is, const QString & s ) {
 	is->labelHeight = pageNumber.height();
 }
 
+
 QString PAGESPC = "gui/PageSpace/";
 QString ICON = "icon/";
 QString format = "x:%'.2f y:%'.2f";
+
 
 PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
 	initStruct is;
@@ -74,12 +76,17 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 
 	QString pom;
 	Init( &is , format + "0000" );
-	mousePositionOnPage = new QLabel( pom.sprintf( format, 0,0 ), this );
+	mousePositionOnPage = new QLabel( pom.sprintf( format, 0.0,0.0 ), this );
 	mousePositionOnPage->setMinimumWidth( is.labelWidth );
 	mousePositionOnPage->setAlignment( AlignRight | mousePositionOnPage->alignment() );
 	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
 
 	hBox->insertSpacing( 0, is.labelWidth );	// for center pageNambuer
+
+	basePpP		= QPaintDevice::x11AppDpiX() / 72.0;
+	zoomFactor	= 1;
+
+	// displayParams is initialized
 }
 
 PageSpace::~PageSpace() {
@@ -199,45 +206,49 @@ void PageSpace::refresh ( int pageToView, QSPdf * pdf ) {			// if pdf is NULL re
 
 void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView is NULL, refresh actual page
 									// if pageToView == actualPage  refresh is not need
-	if ((pageToView != NULL) && (actualPage != pageToView) && (pdf != NULL)) {
-		if (pdf != actualPdf) {
+	if ((pageToView != NULL) && ( (actualPage == NULL) || (actualPage->get() != pageToView->get()) ) && ( (pdf != NULL) || (actualPdf != NULL) ) ) {
+		if ((actualPdf == NULL) || (pdf->get() != actualPdf->get())) {
 			delete actualPdf;
 			actualPdf = new QSPdf( pdf->get() );
+
+			zoomFactor = 1;
+			displayParams = DisplayParams();
 		}
 		delete actualPage;
 		actualPage = new QSPage( pageToView->get() );
-//		pageNumber->setNum( 0/*(int) pageToView->getPageNumber()*/ );//MP: po zmene kernelu neslo zkompilovat (TODO)
-//		actualSelectedObject = NULL;
-//-		if (actualPage != NULL) {
-//-printf("3");
-//-			delete actualPage;
-//-		}
-//-printf("4");
-//-		actualPage = new QSPage( pageToView->get() );
-		actualSelectedObjects = NULL;
+
+		actualSelectedObjects = NULL; // TODO
+
 		pageNumber->setNum( actualPdf->getPagePosition( actualPage ) );
 
-		SplashColor paperColor;
-		splashMakeRGB8(paperColor, 0xff, 0xff, 0xff);
-		QOutputDevPixmap output ( paperColor );
-
-		actualPage->get()->displayPage( output );
-		delete r2;
-		QImage img = output.getImage();
-		if (img.isNull())
-			r2 = new QPixmap();
-		else {
-			r2 = new QPixmap( img );
-		}
-		newPageView( *r2 );
 	} else {
-		if ((actualPage == NULL) || (pageToView != NULL))
-			return ;		// no page to refresh or refresh actual page is not need
-		
-		/* TODO zmazat */
+		if ((actualPage == NULL) || (actualPdf == NULL) || (pageToView != NULL))
+			return ;					// no page to refresh
+		// else  need reload page ( changed zoom, ... )
+		//TODO actualSelectedObjects ?
 	}
-	/* TODO zobrazenie aktualnej stranky*/
-	/* newPageView( *actualPagePixmap ); */
+
+	// initialize create pixmap for page
+	SplashColor paperColor;
+	splashMakeRGB8(paperColor, 0xff, 0xff, 0xff);
+	QOutputDevPixmap output ( paperColor );
+
+	// create pixmap for page
+	actualPage->get()->displayPage( output, displayParams );
+
+	// get created pixmap
+	delete actualPagePixmap;
+	QImage img = output.getImage();
+	if (img.isNull())
+		actualPagePixmap = new QPixmap();
+	else {
+		actualPagePixmap = new QPixmap( img );
+	}
+
+	// show new pixmap
+	newPageView( * actualPagePixmap );
+
+	emit changedPageTo( * actualPage, actualPdf->getPagePosition( actualPage ) );
 }
 #undef splashMakeRGB8
 
@@ -253,7 +264,7 @@ void PageSpace::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void PageSpace::newSelection ( const QRect & r) {
-	// TODO napr. zoom
+	// TODO pracovat s vracenymi operatori
 	std::vector<boost::shared_ptr<PdfOperator> > ops;
 
 	if (actualPage != NULL) {
@@ -291,8 +302,48 @@ void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
 		return ;
 	}
 	pdfPos.x = pos.x();
-	pdfPos.y = r2->height() - pos.y();
+	pdfPos.y = actualPagePixmap->height() - pos.y();
 }
+
+//  ------------------------------------------------------  //
+//  --------------------   ZOOM  -------------------------  //
+//  ------------------------------------------------------  //
+void PageSpace::setZoomFactor ( float set_zoomFactor ) {
+	if (zoomFactor == set_zoomFactor)
+		return;
+
+	if (displayParams.useMediaBox == gFalse) {
+		float pom = set_zoomFactor / zoomFactor;
+		zoomFactor = set_zoomFactor;
+		// TODO
+		return ;
+	}
+
+	zoomFactor = set_zoomFactor;
+	displayParams.hDpi = basePpP * zoomFactor * 72;
+	displayParams.vDpi = basePpP * zoomFactor * 72;
+	refresh ();
+}
+void PageSpace::zoomTo ( int percentage ) {
+	if (percentage < 1)
+		percentage = 1;
+
+	float pom = percentage;
+	pom=pom/100;
+	fprintf(stderr,"%f\n",pom);
+	setZoomFactor ( pom );
+}
+void PageSpace::zoomIn ( float step ) {
+	setZoomFactor ( zoomFactor + step );
+}
+void PageSpace::zoomOut ( float step ) {
+	if (zoomFactor - step < 0.01)
+		setZoomFactor ( 0.01 );
+	else
+		setZoomFactor ( zoomFactor - step );
+}
+
+// ------------------------- end  ZOOM
 
 void PageSpace::showMousePosition ( const QPoint & pos ) {
 	QString pom;

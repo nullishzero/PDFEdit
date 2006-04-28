@@ -26,17 +26,24 @@ class PageSpace : public QWidget {
 		void refresh ( QSPage * pageToView, /*QSPdf * */ QObject * pdf );	// same as above
 		void refresh ( int pageToView, QSPdf * pdf = NULL );			// if pdf is NULL refresh page from current pdf
 		void refresh ( int pageToView, /*QSPdf * */ QObject * pdf );	// same as above
+
 		void hideButtonsAndPageNumber ( );
 		void showButtonsAndPageNumber ( );
+
 //		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );
 //		/*TODO*/void unselectObjectOnPage ( );
-//		/*TODO*/void zoomTo ( unsigned int percentage );
+
+		void setZoomFactor ( float set_zoomFactor );
+		void zoomTo ( int percentage );
+		void zoomIn ( float step = 0.1 );
+		void zoomOut ( float step = 0.1 );
+
 		void firstPage ( );
 		void prevPage ( );
 		void nextPage ( );
 		void lastPage ( );
 	signals:
-		void changePageTo ( const QSPage &, int numberOfPage );
+		void changedPageTo ( const QSPage &, int numberOfPage );
 
 		/*TODO*/ void popupMenu ( const QPoint & globalPos /*, Cobject & */ );
 	protected:
@@ -69,7 +76,14 @@ class PageSpace : public QWidget {
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;
 		QPixmap		* actualPagePixmap;
-QPixmap * r1, * r2; /*TODO smazat, jenom pro testovani */
+
+		/** Pixels per point when zoom is 100 % */
+		float		basePpP;
+		/** Zoom factor requirement by user */
+		float		zoomFactor;
+
+		/** Display parameters ( hDpi, vDpi, rotate, ... ) */
+		DisplayParams	displayParams;
 };
 
 } // namespace gui

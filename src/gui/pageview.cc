@@ -33,6 +33,8 @@ PageView::PageView (QWidget *parent) : QLabel(parent) {
 	mappingResizingModeToCursor [ right | bottom ] = mappingResizingModeToCursor [ left | top ];
 	mappingResizingModeToCursor [ left | bottom  ] = mappingResizingModeToCursor [ right | top ];
 
+	cursorIsSetTo = none;
+
 	// the widget receives mouse move event even if no buttons is pressed
 	setMouseTracking( true );
 
