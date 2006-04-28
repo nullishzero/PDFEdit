@@ -4,6 +4,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/28 17:18:17  hockm0bm
+ * * instancingTC
+ *         - just skeleton
+ * * revisionsTC removed from pdfs loop in Test method
+ * * indirectPropertyTC
+ *         - first test cases
+ *
  * Revision 1.12  2006/04/27 18:35:50  hockm0bm
  * revisionsTC new test cases
  *        - changeRevision seams to be tested quite well
@@ -44,6 +51,7 @@
 #include "testcpdf.h"
 #include "../factories.h"
 #include "../cobjecthelpers.h"
+#include "../cpdf.h"
 
 class TestCPdf: public CppUnit::TestFixture
 {
@@ -163,7 +171,6 @@ public:
 
 		printf("TC06:\tgetPagePosition, getNextPage, getPrevPage with fake page parameter test\n");
 		// page from empty page dictionary - no pdf specified inside
-		/* TODO uncoment when ready
 		shared_ptr<CDict> fakeDict1(CDictFactory::getInstance());
 		shared_ptr<CPage> fake1(new CPage(fakeDict1));
 		Object fakeXpdfDict;
@@ -226,7 +233,6 @@ public:
 		{
 			// ok, exception has been thrown
 		}
-		*/
 	}
 
 	void pageManipulationTC(CPdf * pdf)
@@ -243,7 +249,6 @@ public:
 		shared_ptr<CPage> page=pdf->getPage(1);
 		// remove page implies pageCount decrementation test
 		pdf->removePage(1);
-		//pdf->save();
 
 		CPPUNIT_ASSERT(pageCount-1==pdf->getPageCount());
 		// insert page implies pageCount incrementation test
@@ -274,7 +279,13 @@ public:
 			// everything ok
 		}
 
-		printf("TC04:\tremoved page is no longer available test\n");
+		printf("TC04:\tinsert page never causes ambiguous page tree\n");
+		// inserts first page again and tries to to call getNodePosition
+		shared_ptr<CPage> addedPage=pdf->insertPage(pdf->getFirstPage(), 1);
+		size_t pos=getNodePosition(*pdf, addedPage->getDictionary());
+		CPPUNIT_ASSERT(pos==1);
+
+		printf("TC05:\tremoved page is no longer available test\n");
 		// try to remove last page
 		shared_ptr<CPage> removedPage=pdf->getLastPage();
 		pdf->removePage(pdf->getPageCount());
@@ -290,8 +301,8 @@ public:
 		}
 		// restore to previous state and returns back last page
 		pdf->insertPage(removedPage, pdf->getPageCount()+1);
-
-		printf("TC05:\tremoving page's dictionary invalidates page\n");
+		
+		printf("TC06:\tremoving page's dictionary invalidates page\n");
 		page=pdf->getPage(1);
 		shared_ptr<CDict> pageDict=page->getDictionary();
 		shared_ptr<CRef> pageRef(CRefFactory::getInstance(pageDict->getIndiRef()));
@@ -459,6 +470,58 @@ public:
 
 	}
 
+	void instancingTC()
+	{
+		printf("%s\n", __FUNCTION__);
+
+		// checks whether getInstance works correctly
+		
+	}
+
+	void indirectPropertyTC(CPdf * pdf)
+	{
+	using namespace boost;
+	using namespace utils;
+	
+		printf("%s\n", __FUNCTION__);
+
+		printf("TC01:\taddIndirectProperty with property with no pdf test\n");
+		// creates new property and adds it
+		shared_ptr<IProperty> prop(CIntFactory::getInstance(1));
+		IndiRef addedRef=pdf->addIndirectProperty(prop);
+		
+		printf("TC02:\tgetIndirectProperty knows newly added property with correct type, value, pdf and indiref\n");
+		shared_ptr<IProperty> added=pdf->getIndirectProperty(addedRef);
+		// type must be same
+		CPPUNIT_ASSERT(added->getType()==prop->getType());
+		// value must be same (we know that prop is CInt
+		int addedValue=getValueFromSimple<CInt, pInt, int>(added);
+		int propValue=getValueFromSimple<CInt, pInt, int>(prop);
+		CPPUNIT_ASSERT(addedValue==propValue);
+		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
+		
+		printf("TC03:\taddIndirectProperty makes deep copy and returns new reference\n");
+		CPPUNIT_ASSERT(! (addedRef==prop->getIndiRef()));
+		CPPUNIT_ASSERT(added!=prop);
+
+		printf("TC04:\taddIndirectProperty with CRef from same pdf makes no change\n");
+		// uses root of page tree, which has to be reference
+		shared_ptr<IProperty> rootProp=pdf->getDictionary()->getProperty("Pages");
+		if(isRef(rootProp))
+		{
+			shared_ptr<CRef> rootCRef=IProperty::getSmartCObjectPtr<CRef>(rootProp);
+			addedRef=pdf->addIndirectProperty(rootCRef);
+			IndiRef rootRef=getValueFromSimple<CRef, pRef, IndiRef>(rootCRef);
+			CPPUNIT_ASSERT(addedRef==rootRef);
+		}
+		
+		printf("TC05:\t\n");
+		printf("TC06:\t\n");
+		printf("TC07:\t\n");
+		printf("TC08:\t\n");
+	}
+
 	void tearDown()
 	{
 		// closes all opened pdfs and removes them all from pdfs list
@@ -470,14 +533,14 @@ public:
 
 	void Test()
 	{
+		instancingTC();
 		for(PdfList::iterator i=pdfs.begin(); i!=pdfs.end(); i++)
 		{
-			// all tests for page itaration
-			
+			indirectPropertyTC(*i);
 			pageIterationTC(*i);
 			pageManipulationTC(*i);
-			revisionsTC();
 		}
+		revisionsTC();
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
