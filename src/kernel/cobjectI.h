@@ -373,7 +373,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 	}
 	
 	if (it == value.end())
-		throw ElementNotFoundException ("", "");
+		throw ElementNotFoundException ("CObjectComplex", "item not found");
 	
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
 	if (ip)
@@ -708,12 +708,20 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 {
 	Checker check; check.objectCreated (this);
 	printDbg (debug::DBG_DBG,"");
+	assert (objStream == o.getType());
 
+	//   debug \TODO remove
+	//std::ofstream out ("_got.obj");
+	//std::string str;
+	//utils::xpdfObjToString (o, str);
+	//out << str << std::endl;
+	//
+	
 	// Copy the stream
 	o.copy (&xpdfDict);
 	
 	// Make sure it is a stream
-	assert (objStream == o.getType());
+	assert (objStream == xpdfDict.getType());
 	if (objStream != o.getType())
 		throw XpdfInvalidObject ();
 	
@@ -815,7 +823,7 @@ CObjectStream<Checker>::doClone () const
 //
 template<typename Checker>
 void
-CObjectStream<Checker>::getStringRepresentation (std::string& str) const
+CObjectStream<Checker>::getStringRepresentation (std::string& str) const 
 {
 	printDbg (debug::DBG_DBG, "");
 
@@ -824,9 +832,19 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 	//
 	Buffer tmp;
 	encodeBuffer (tmp);
+	printDbg (debug::DBG_DBG, "Stream length: " << tmp.size());
 	
 	// Set the length of the stream	
 	utils::setDoubleInDict (dictionary, std::string ("Length"), tmp.size());
+	try 
+	{
+		dictionary.delProperty ("Filter");
+	
+	}catch (ElementNotFoundException&)
+	{
+			// No filter found
+			printDbg (debug::DBG_DBG, "No filter found.");
+	}
 			
 	// Get dictionary string representation
 	std::string strDict, strBuf;
@@ -899,15 +917,22 @@ CObjectStream<Checker>::_makeXpdfObject () const
 
 	std::string tmp;
 	getStringRepresentation (tmp);
+	//printDbg (debug::DBG_DBG, tmp);
 
 	assert (isInValidPdf (this));
 	assert (hasValidRef (this));
 			
-	printDbg (debug::DBG_DBG, tmp);
 	Object* obj = utils::xpdfObjFromString (tmp, IProperty::getPdf()->getCXref());
+	assert (NULL != obj);
 	assert (objStream == obj->getType());
 	if (objStream != obj->getType())
 		throw XpdfInvalidObject ();
+
+	// \TODO remove
+	//std::ofstream out ("_made.obj");
+	//std::string str;
+	//utils::xpdfObjToString (*obj, str);
+	//out << str << std::endl;
 
 	return obj;
 }
@@ -953,7 +978,7 @@ template<typename Checker>
 CObjectStream<Checker>::~CObjectStream ()
 {
 	Checker check; check.objectDeleted (this);
-	printDbg (debug::DBG_DBG,"~CObjectStream()");
+	printDbg (debug::DBG_DBG,"");
 
 	// Free xpdf object
 	xpdfDict.free ();

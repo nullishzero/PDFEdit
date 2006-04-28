@@ -41,7 +41,10 @@ bool createStream (std::ostream& oss, const char* fileName)
 
 	cat.getPage(pagesNum)->getContents(&obj);
 
-	CStream stream (obj);
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	IndiRef rf = {6,0};
+	CStream stream (*pdf, obj, rf);
+	Object* o = stream._makeXpdfObject ();
 
 	vector<string> names;
 	stream.getAllPropertyNames (names);
@@ -66,10 +69,12 @@ bool getString (std::ostream& oss, const char* fileName)
 
 	boost::shared_ptr<CStream> stream = utils::getCStreamFromDict (dict, "Contents");
 
+	Object* obj = stream->_makeXpdfObject ();
+
 	string tmp;
 	stream->getStringRepresentation (tmp);
 
-	oss << tmp << endl;
+	//oss << tmp << endl;
 
 	boost::shared_ptr<IProperty> ip = stream->getProperty ("Length");
 	ip = utils::getReferencedObject (ip);
@@ -134,7 +139,7 @@ class TestCStream : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCStream);
 		CPPUNIT_TEST(Test);
-		CPPUNIT_TEST(TestString);
+		//CPPUNIT_TEST(TestString);
 	CPPUNIT_TEST_SUITE_END();
 
 public:

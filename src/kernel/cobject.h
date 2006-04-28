@@ -692,7 +692,7 @@ public:
 private:
 	
 	/** Object dictionary. */
-	CDict dictionary;
+	mutable CDict dictionary;
 	
 	/** Xpdf object. */
 	mutable Object xpdfDict;

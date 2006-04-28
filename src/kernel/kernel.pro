@@ -52,9 +52,7 @@ SOURCES += tests/testcobjecthelpers.cc
 SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
 SOURCES += main.cc 
 
-#QMAKE_LFLAGS += -static
-INCLUDEPATH += ../cppunit/include
-LIBS += -ldl -lcppunit -L../cppunit/src/cppunit/.libs
+LIBS += -ldl -lcppunit 
 
 #
 # Kernel special settings

@@ -85,7 +85,7 @@ const string CDICT_BETWEEN_NAMES = " ";
 const string CDICT_SUFFIX	= "\n>>";
 
 /** Object Stream string representation. */
-const string CSTREAM_STREAM = "<<stream>>";
+//const string CSTREAM_STREAM = "<<stream>>";
 const string CSTREAM_HEADER = "\nstream\n";
 const string CSTREAM_FOOTER = "endstream";
 
@@ -366,7 +366,7 @@ namespace {
 		void
 		simpleXpdfObjToString (Object& obj,string& str)
 		{
-			printDbg (debug::DBG_DBG,"simpleXpdfObjToString(" << (unsigned int)&obj << ") objType = " << obj.getTypeName() );
+			printDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
 
 			ostringstream oss;
 
@@ -420,7 +420,6 @@ namespace {
 		complexXpdfObjToString (Object& obj, string& str)
 		{
 			
-			printDbg (debug::DBG_DBG,"complexXpdfObjToString(" << (unsigned int)&obj << ")");
 			printDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 			ostringstream oss;
@@ -459,7 +458,24 @@ namespace {
 				break;
 
 			case objStream:
-				oss << CSTREAM_STREAM;
+				obj.streamReset ();
+				assert (0 == obj.streamGetPos());
+				{
+					Dict* dict = obj.streamGetDict ();
+					assert (NULL != dict);
+					o.initDict (dict);
+					std::string str;
+					complexXpdfObjToString (o, str);
+					oss << str;
+				}
+				
+				oss << CSTREAM_HEADER;
+				obj.streamReset ();
+				char c;
+				while (EOF != (c = obj.streamGetChar())) 
+					oss << c;
+				obj.streamClose ();
+				oss << CSTREAM_FOOTER;
 				break;
 
 			default:
@@ -709,8 +725,8 @@ simpleValueFromString (const std::string& str, IndiRef& val)
 Object*
 xpdfObjFromString (const std::string& str, XRef* xref)
 {
-
 	//printDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
+	printDbg (debug::DBG_DBG,"xpdfObjFromString size " << str.size());
 	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.
@@ -736,6 +752,13 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	//
 	Object* obj = XPdfObjectFactory::getInstance();
 	parser->getObj (obj);
+
+	//\TODO remove it
+	//{
+	//std::string str;
+	//utils::xpdfObjToString (*obj,str);
+	//std::cout << "!!!!!!!!!!!!!!!!!!!!!!!" << str << std::endl;
+	//}
 	
 	// delete string we don't need it anymore
 	delete[] pStr;
