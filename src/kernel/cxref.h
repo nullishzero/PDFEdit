@@ -6,6 +6,18 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/04/28 17:16:51  hockm0bm
+ * * reserveRef bug fixes
+ * 	- reusing didn't check whether reference is in newStorage
+ * 	- also not realy free entries were considered (XRef marks
+ * 	  all entries as free by default and allocates entries array
+ * 	  by blocks, so all behind last real objects are free too but
+ * 	  they are not free in pdf)
+ * 	- gen number is not increase if reusing entry
+ * 	- gen number == MAXOBJGEN is never reused
+ * * MAXOBJNUM constant added
+ * * MAXOBJGEN constant added
+ *
  * Revision 1.18  2006/04/27 18:09:34  hockm0bm
  * * cleanUp method added
  * * debug messages minor changes
@@ -75,6 +87,11 @@
 
 namespace pdfobjects
 {
+
+/** Maximal object number.
+ */
+const int MAXOBJNUM = 32768;
+const int MAXOBJGEN = 65535;
 
 /** Adapter for xpdf XRef class.
  * 
@@ -224,6 +241,7 @@ protected:
 	 * method has to be called. This is mainly because we want to prevent 
 	 * unintialized object inside.
 	 *
+	 * @throw TODO if all object numbers has been used.
 	 * @return Reference which can be used to add new indirect object.
 	 */
 	virtual ::Ref reserveRef();

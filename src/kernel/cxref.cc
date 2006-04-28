@@ -3,6 +3,18 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/04/28 17:16:51  hockm0bm
+ * * reserveRef bug fixes
+ * 	- reusing didn't check whether reference is in newStorage
+ * 	- also not realy free entries were considered (XRef marks
+ * 	  all entries as free by default and allocates entries array
+ * 	  by blocks, so all behind last real objects are free too but
+ * 	  they are not free in pdf)
+ * 	- gen number is not increase if reusing entry
+ * 	- gen number == MAXOBJGEN is never reused
+ * * MAXOBJNUM constant added
+ * * MAXOBJGEN constant added
+ *
  * Revision 1.12  2006/04/27 18:09:34  hockm0bm
  * * cleanUp method added
  * * debug messages minor changes
@@ -178,35 +190,91 @@ using namespace debug;
 using namespace debug;
 
 	int i=1;
-	int num=-1, gen;
+	int num, gen;
 
 	printDbg(DBG_DBG, "");
 	
 	// goes through entries array in XRef class (xref entries)
-	// and reuses first free entry with increased gen number.
-	for(; i<size; i++)
-		if(entries[i].type==xrefEntryFree)
+	// and reuses first free entry with its gen number.
+	// Considers just first getNumObjects because entries array
+	// is allocated by blocks and so many entries are marked as
+	// free but they are not realy removed objects.
+	int objectCount=0, totalCount=getNumObjects();
+	for(; i<size && i<MAXOBJNUM && objectCount<totalCount; i++)
+	{
+		if(entries[i].type!=xrefEntryFree)
 		{
-			printDbg(DBG_DBG, "reusing entry");
-			num=i;
-			gen=entries[i].gen+1;
-			break;
+			objectCount++;
+			continue;
 		}
 
+		// reference is never reused if generation number is MAXOBJGEN
+		// according specification
+		if(entries[i].gen>=MAXOBJGEN)
+		{
+			printDbg(DBG_DBG, "Entry ["<<i<<", "<<entries[i].gen<<"] can't be reused.");
+			continue;
+		}
+
+		// entry is marked as free, we can reuse it only if it is not in
+		// reservation process - not in newStorage
+		Ref ref={i, entries[i].gen};
+		if(newStorage.contains(ref))
+		{
+			printDbg(DBG_DBG, "Cannot reuse entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
+			continue;
+		}
+
+		// Entry is free and not used yet. 
+		if(ref.gen)
+		{
+			printDbg(DBG_DBG, "Reusing entry ["<<ref.num<<", "<<ref.gen<<"]");
+		}
+		else
+		{
+			// gen is 0, so entry couldn't have been removed - so say that it is
+			// new entry
+			printDbg(DBG_DBG, "Using new entry ["<<ref.num<<", "<<ref.gen<<"]");
+		}
+			
+		num=ref.num;
+		gen=ref.gen;
+		break;
+	}
+
+	// no entry for reuse, so new has to be used
 	if(num==-1)
 	{
-		// no entry is free, so we have to add new number
-		// TODO integer limitations
-		num=i+1;
+		// checks if num, gen is not in newStorage and if yes,
+		// use num+1
+		for(;i<MAXOBJNUM; i++)
+		{
+			Ref ref={i, 0};
+			if(!newStorage.contains(ref))
+			{
+				printDbg(DBG_DBG, "Cannot use new entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
+				num=i;
+				break;
+			}
+		}
+
+		if(num==-1)
+		{
+			// all object numbers are used, no more indirect objects
+			// can be created
+			// TODO throw exception
+			Ref ref={0,0};
+			return ref;
+		}
+
+		// ok, we have new num and gen is 0, because object is new
 		gen=0;
-		printDbg(DBG_DBG, "using new entry");
+		printDbg(DBG_DBG, "Using new entry ["<<num<<", "<<gen<<"]");
 	}
-	//
-	// registers newly created object to the newStorage
-	// flag is set to false now and this is changed only if
-	// initialized value is overwritten by change method
-	// all objects with false flag should be ignored when
-	// writing to a file
+	
+	// Registers newly created reference to the newStorage.
+	// Flag is set to false now and this is changed only if
+	// initialized value is overwritten by change method.
 	::Ref objRef={num, gen};
 	newStorage.put(objRef, false);
 	printDbg(DBG_INFO, "ref=["<<num<<", "<<gen<<"]"<<" registered to newStorage");
