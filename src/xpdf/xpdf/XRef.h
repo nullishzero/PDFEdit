@@ -20,6 +20,8 @@
 //                was moved to those methods and they just call this methods.
 //              - eofPos position added -> points to file offset where it is 
 //                safe to put new data
+//              - getNumObjects rewriten to return just number of real objects
+//                not size of entries array
 //
 //========================================================================
 
@@ -95,7 +97,16 @@ public:
   virtual Object *getDocInfoNF(Object *obj);
 
   // Return the number of objects in the xref table.
-  virtual int getNumObjects() { return size; }
+  virtual int getNumObjects() 
+  { 
+     int count=0;
+     for(int i=0; i<size; i++)
+        // counts just not free entries
+        if(entries[i].type != xrefEntryFree)
+           count++;
+
+     return count; 
+  }
 
   // Return the offset of the last xref table.
   virtual Guint getLastXRefPos() { return lastXRefPos; }
