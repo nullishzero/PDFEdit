@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.41  2006/04/28 17:15:50  hockm0bm
+ * * helper functions exported by header file now
+ *
  * Revision 1.40  2006/04/27 18:29:10  hockm0bm
  * * all methods which could be set to const are const now
  * * pageList is mutable to enable getPage (and all depended in getPage)
@@ -185,53 +188,6 @@ typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
 namespace utils 
 {
 	
-/** Helper method to find page at certain position.
- * @param CPdf Pdf instance where to search.
- * @param pagesDict Reference to or Page or Pages dictionary representing 
- * page node (see Pdf standard notes).
- * @param startPos Starting position for searching (see note below).
- * @param pos Page position (starting from 1) to find.
- *
- * Method recursively goes through pages dictionary until given page 
- * position is found or no such position can be found. If position can't be
- * found under given page node, exception is thrown.
- * <br>
- * If given pagesDict is reference, uses CPdf::getIndirectProperty to get 
- * dictionary.
- * 
- * <p>
- * <b>Pdf standard notes</b>:
- * <br>
- * Pdf tree structure contains of two types of page dictionaries. 
- * <ul>
- * <li>Pages dictionary - which is just intermediate node in the tree and
- * contains children nodes. These may be direct pages or another Pages node.
- * It doesn't represent page itself. All children are stored in Kids array.
- * Dictionary also contains Count information which holds number of all
- * Page dictionaries under this node.
- * <li>Page dictionary - which represents direct page.
- * </ul>
- * This structure is rather complex but enables effective way to access 
- * arbitrary page in short time (some applications provide balanced tree form
- * to enable very effective access).
- * <p>
- * <b>Implementation notes</b>:<br>
- * When starting to search from root of all pages, pagesDict should be supplied
- * from pdf->getProperty("Pages"). This is indirect reference (according
- * standard), but can be used in this method. startPos should be 1 (first page
- * is 1).
- * <br>
- * If we have some intermediate <b>Pages</b> dictionary, startPos should be
- * lowest page number under this tree branch. This usage is recomended only if
- * caller exactly knows what he is doing, otherwise page position is wrong.
- *
- * @throw PageNotFoundException if given position couldn't be found.
- * @throw ElementBadTypeException if some of required element has bad type.
- * @throw MalformedFormatExeption if page node count number doesn't match the
- * reality (page count number is not reliable).
- * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
- * position.
- */
 boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
 {
 	// TODO error handling unification
@@ -560,24 +516,6 @@ size_t searchTreeNode(CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict>
 	return 0;
 }
 
-/** Gets position of given node.
- * @param pdf Pdf where to examine.
- * @param node Node to find (CRef or CDict instances).
- *
- * Start searching of given node from root of the page tree (document catalog
- * Pages field). Uses recursive searchTreeNode function for searching and
- * provides just error handling wrapper to this method.
- * <br>
- * Prefer to use this function instead of searchTreeNode if you are not sure you
- * know what you are doing.
- *
- * @throw PageNotFoundException
- * @throw ElementBadTypeException
- * @throw MalformedFormatExeption
- * @throw AmbiguousPageTreeException if node position can't be determined bacause
- * of page tree ambiguity (see searchTreeNode for more information).
- * @return Node position.
- */
 size_t getNodePosition(CPdf & pdf, shared_ptr<IProperty> node)
 {
 	printDbg(DBG_DBG, "");
@@ -617,22 +555,6 @@ size_t getNodePosition(CPdf & pdf, shared_ptr<IProperty> node)
 	throw PageNotFoundException(0);
 }
 
-/** Checks if given child is descendant of node with given reference.
- * @param pdf Pdf where to resolv referencies.
- * @param parent Reference of the parent.
- * @param child Dictionary of page(s) node.
- *
- * Checks if child's Parent field has same reference as given one as parent
- * parameter. If yes then child dictionary is descendant of node with parent
- * reference. If not, dereference child's parent and continues in recursion
- * using derefenced direct parent as new child for recursion call.
- * <br>
- * NOTE: this method doesn't perform any checking of parameters.
- *
- * @throw MalformedFormatExeption if child contains Parent field which doesn't
- * point to the dictionary.
- * @return true If given child belongs to parent subtree, false otherwise.
- */
 bool isDescendant(CPdf & pdf, IndiRef parent, shared_ptr<CDict> child)
 {
 using namespace utils;
