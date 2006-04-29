@@ -7,6 +7,7 @@ doc/doxygen.warnings
 doc/navrh
 doc/programmer
 doc/xpdf_analyse
+src/config_xpdf_variables
 src/gui/.moc
 src/gui/.obj
 src/gui/.headergen.ignore
@@ -14,8 +15,13 @@ src/gui/.pdfeditrc.lock
 src/gui/.ui
 src/gui/menugenerator
 src/gui/pdfedit
+src/gui/run-pdfedit-nd
+src/gui/ulab-fix
+src/kpdf-kde-3.3.2/*.a
+src/kpdf-kde-3.3.2/*.o
 src/kernel/*.a
 src/kernel/*.o
+src/kernel/.obj
 src/kernel/kernel
 src/kernel/kernel.gch
 src/utils/.keepme
@@ -42,3 +48,9 @@ src/xpdf/xpdf/pdftoppm
 src/xpdf/xpdf/pdftops
 src/xpdf/xpdf/pdftotext
 src/xpdf/xpdf/xpdf
+test/documents/*.pdf
+test/gui-misc/misc
+test/gui-misc/Makefile
+test/propedit/Makefile
+test/qt-multi-window/Makefile
+test/*/*.o
