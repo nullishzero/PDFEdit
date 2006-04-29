@@ -17,7 +17,8 @@ class Menu;
 /*=
  This type of object represent one popup menu.
  You can add menu items and submenus to it and you can execute the menu,
- which will then execute the action picked by user (if any)
+ which will then return the action picked by user (if any)
+ To create new popup menu object, use the <link linkend="popupMenu">popupMenu</link> function
 */
 class QSMenu : public QSCObject {
  Q_OBJECT
@@ -31,7 +32,7 @@ public slots:
   Return script for action selected in menu
  */
  QString popup();
- /*- Reset the menu and remove all items from it */
+ /*- Reset the menu, removing all items from it */
  void reset();
  /*- Append item (only item, not a list) to menu using its definition */
  void addItemDef(QString def);

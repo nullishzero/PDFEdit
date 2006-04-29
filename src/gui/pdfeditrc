@@ -1,6 +1,6 @@
 [gui]
 CommandLine/HistoryFile=$HOME/.pdfedit/history
-CommandLine/HistorySize=10
+CommandLine/HistorySize=20
 PageSpace/ResizingZone=2
 items/MainMenu=list Main menu,file,tools,help,test
 items/MainToolbar=list Main Toolbar,fnew,fload,fsave,opts,about
@@ -36,9 +36,14 @@ LastPage=last.png
 NextPage=next.png
 PrevPage=prev.png
 
-[keyboard]
-CtrlA=dosomethingeverywhere()
-context/CtrlA=dosomethingincontext()
+[tree]
+show_annot=1
+show_dict=1
+show_graphic=1
+show_objdict=1
+show_outline=1
+show_page=1
+show_simple=1
 
 [path]
 icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;./icon

@@ -93,4 +93,9 @@ function printTreeChilds() {
  }
 }
 
+//Set zoom level
+function zoom(x) {
+ PageSpace.zoomTo(x);
+}
+
 print("PDF Editor "+version());

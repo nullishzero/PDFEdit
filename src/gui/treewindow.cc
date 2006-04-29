@@ -57,12 +57,6 @@ void TreeWindow::reloadFrom(TreeItemAbstract *item) {
 */
 void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column) {
  printDbg(debug::DBG_DBG,"Clicked in tree: " << button);
- if (button==4) { //Middle button
-  TreeItemAbstract *titem=dynamic_cast<TreeItemAbstract*> (item);
-  if (titem) {//is a TreeItem
-   reloadFrom(titem);
-  }
- }
  emit treeClicked(button,item);
 }
 
