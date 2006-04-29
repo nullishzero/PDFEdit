@@ -90,10 +90,18 @@
    <title><funcsynopsis>void exitApp()</funcsynopsis></title>
    Terminates application
   </sect1>
-  <sect1 id="closeWindo">
+  <sect1 id="popupMenu">
+   <title><funcsynopsis>Menu popupMenu(string menuName)</funcsynopsis></title>
+   Create and return a <link linkend="type_Menu">Menu</link> object. The menuName parameter specifies
+   name of item or list from configuration, that will be used to initially fill the menu with items.
+   If this parameter is not specified or invalid, the menu will be initially empty.
+   See documentation for <link linkend="type_Menu">Menu</link> object type for more info about
+   using popup menus.
+  </sect1>
+  <sect1 id="closeWindow">
    <title><funcsynopsis>void closeWindow()</funcsynopsis></title>
    Closes current editor window.
-   Closes without any questions, does not ask user to save changes to current file, etc ...
+   If the file is not saved, user is asked to save changes to current file.
   </sect1>
   <sect1 id="print">
    <title><funcsynopsis>void print(String)</funcsynopsis></title>
