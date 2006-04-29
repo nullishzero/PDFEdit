@@ -16,5 +16,6 @@ QString htmlEnt(const QString &str);
 QString loadFromFile(const QString &name);
 void printList(const QStringList &l);
 void consoleLog(const QString &message,const QString &fileName);
+QString getUntil(char separator,QString &line);
 
 #endif

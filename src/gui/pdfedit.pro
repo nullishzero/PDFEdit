@@ -71,8 +71,8 @@ SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimport
 SOURCES += qstreeitem.cc qsmenu.cc
 
 #Other source files
-HEADERS += pdfutil.h  util.h  menu.h  settings.h 
-SOURCES += pdfutil.cc util.cc menu.cc settings.cc main.cc 
+HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h
+SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc main.cc 
 
 #exeptions
 HEADERS += invalidmenuexception.h

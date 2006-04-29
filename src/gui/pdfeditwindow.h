@@ -24,6 +24,7 @@ class TreeWindow;
 class TreeItemAbstract;
 class PropertyEditor;
 class Menu;
+class QSMenu;
 
 using namespace pdfobjects;
 
@@ -36,6 +37,7 @@ public:
  int question_ync(const QString &msg);
  void call(const QString &name);
 public slots: //These will be exported to scripting
+ QSMenu* popupMenu(const QString &menuName=QString::null);
  void run(QString scriptName);
  bool save();
  bool saveAs(const QString &name);

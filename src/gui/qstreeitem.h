@@ -25,6 +25,8 @@ public slots:
   Childs that are "not yet known" (unopened references) are not returned too.
  */
  QStringList getChildNames();
+ /*- Explicitly reload contents of this item and its subtree from current state of PDF document */
+ void reload();
 public:
  QSTreeItem(TreeItemAbstract *item);
  virtual ~QSTreeItem();

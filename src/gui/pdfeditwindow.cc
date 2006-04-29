@@ -28,6 +28,7 @@
 #include "propertyeditor.h"
 #include "treewindow.h"
 #include "menu.h"
+#include "qsmenu.h"
 #include "commandwindow.h"
 #include "treeitemabstract.h"
 
@@ -180,7 +181,8 @@ void PdfEditWindow::removeDocumentObjects() {
  //todo: run garbage collector? Is it needed?
 }
 
-/** Runs script from given file
+/**
+ Runs script from given file
  @param scriptName name of file with QT Script to run
  */
 void PdfEditWindow::run(QString scriptName) {
@@ -188,6 +190,15 @@ void PdfEditWindow::run(QString scriptName) {
  qs->evaluate(code,this,scriptName);
 }
 
+/**
+ Create and return new popup menu, build from menu list/item  identified by this name.
+ If no item specified, menu is initially empty
+ @param menuName Name of menu inconfiguration to use as template
+ @return initialized QSMenu Object
+*/
+QSMenu* PdfEditWindow::popupMenu(const QString &menuName/*=QString::null*/) {
+ return new QSMenu(menuSystem,menuName);
+}
 /** Runs given script code
  @param script QT Script code to run
  */

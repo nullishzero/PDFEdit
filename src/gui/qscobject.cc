@@ -35,6 +35,14 @@ QSCObject::~QSCObject() {
 // removeGC(this);
 }
 
+void QSCObject::disconnectNotify(const char* signal) {
+ printDbg(debug::DBG_DBG,"Disconnect notify" <<typeName << " - " << signal);
+}
+
+void QSCObject::connectNotify(const char* signal) {
+ printDbg(debug::DBG_DBG,"connect notify" <<typeName << " - " << signal);
+}
+
 /** Return name of this object's type
   @return name of this object's type
 */

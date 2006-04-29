@@ -89,3 +89,23 @@ void consoleLog(const QString &message,const QString &fileName) {
  conOut << message << "\n";
  con.close();
 }
+
+/**
+ Return string from line up to first separator character and remove that string and the separator from the line.
+ If separator is not found, entire string is returned and the line is set to empty string
+ @param separator Separator of string elements
+ @param line line to get from and remove first element
+ @return first string element (contents of string until separator)
+*/
+QString getUntil(char separator,QString &line) {
+ int pos=line.find(separator);
+ if (pos==-1) { //Not found
+  QString _line=line;
+  line="";
+  return _line;
+ } else { //Found
+  QString first=line.left(pos);
+  line=line.mid(pos+1);
+  return first;
+ }
+}

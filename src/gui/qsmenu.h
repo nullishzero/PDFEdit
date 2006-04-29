@@ -3,8 +3,17 @@
 
 #include <qobject.h>
 #include "qscobject.h"
+#include <qptrlist.h> 
+#include <qstringlist.h> 
+
+class QPopupMenu;
+class QMenuData;
+class QString;
 
 namespace gui {
+
+class Menu;
+
 /*=
  This type of object represent one popup menu.
  You can add menu items and submenus to it and you can execute the menu,
@@ -13,20 +22,32 @@ namespace gui {
 class QSMenu : public QSCObject {
  Q_OBJECT
 public:
- QSMenu(const QString &name);
+ QSMenu(Menu *_msys,const QString &name=QString::null);
+ QString getAction(int id);
+ virtual ~QSMenu();
+public slots:
  /*-
   Invoke popup menu near position of mouse pointer.
-  If any action is selected from menu, it is immediately executed
+  Return script for action selected in menu
  */
- void popup();
+ QString popup();
  /*- Reset the menu and remove all items from it */
  void reset();
- /*- Append item or submenu (list) to menu using its definition */
- void addItem(const QString &def);
- virtual ~QSMenu();
+ /*- Append item (only item, not a list) to menu using its definition */
+ void addItemDef(QString def);
+ /*- Append item or submenu (list) to menu using its name (it will be loaded from configuration) */
+ void addItem(const QString &name);
+ /*- Add separator to the menu */
+ void addSeparator();
 private:
  /** Menu held in class*/
- //TODO
+ QPopupMenu *menu;
+ /** Menu system of window in which this popup menu will be shown */
+ Menu *msys;
+ /** last used action ID */
+ int actionId;
+ /** List of menu actions */
+ QStringList actions;
 };
 
 } // namespace gui

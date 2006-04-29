@@ -17,6 +17,9 @@ public slots:
  virtual void deleteSelf();
  /*- return name of this object's type */
  virtual QString type();
+protected:
+ virtual void disconnectNotify(const char* signal);
+ virtual void connectNotify(const char* signal);
 private:
  /** Name of this objects's type */
  QString typeName;

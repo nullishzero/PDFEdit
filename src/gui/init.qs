@@ -62,24 +62,35 @@ function onLoad() {
 
 //Handler for click with right mouse button
 function onTreeRightClick() {
- print('Right click, type of item = '+treeitem.itemtype());
- print('String representation:');
- print(treeitem.item().getText());
+// print('Right click, type of item = '+treeitem.itemtype());
+ menu=popupMenu("popup_generic");
+ menu.addSeparator();
+ menu.addItemDef("item ("+treeitem.itemtype()+"),");
+ eval(menu.popup());
 }
 
 //Handler for click with left mouse button
 function onTreeLeftClick() {
- print('Left click, type of item = '+treeitem.itemtype());
+// print('Left click, type of item = '+treeitem.itemtype());
 }
 
 //Handler for click with middle mouse button
 function onTreeMiddleClick() {
- print('Middle click, type of item = '+treeitem.itemtype());
+// print('Middle click, type of item = '+treeitem.itemtype());
+ treeitem.reload();
 }
 
 //Handler for doubleclick with left mouse button
 function onTreeDoubleClick() {
- print("Doubleclick, type of item = "+treeitem.itemtype());
+// print("Doubleclick, type of item = "+treeitem.itemtype());
+}
+
+//Print tree childs
+function printTreeChilds() {
+ names=treeitem.getChildNames();
+ for(var i=0;i<names.length;i++) {
+  print(names[i]);
+ }
 }
 
 print("PDF Editor "+version());

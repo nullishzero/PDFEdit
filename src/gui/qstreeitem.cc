@@ -35,6 +35,11 @@ QString QSTreeItem::itemtype() {
  return type;
 }
 
+/** Explicitly reload contents of this item and its subtree from current state of PDF document */
+void QSTreeItem::reload() {
+ obj->reload();
+}
+
 /**
  Return list of all possibly visible childs names of this treeitem.
  Childs that are not shown in treeview (because of treeview settings, etc ...) are not returned.

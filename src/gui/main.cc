@@ -1,5 +1,8 @@
 /** @file
- Main function
+ Main function<br>
+ Handle commandline options and then open editor window(s)
+ - unless commandline parameters specify something different
+ @author Martin Petricek
 */
 #include <stdlib.h>
 #include <qtranslator.h>
@@ -98,17 +101,22 @@ int main(int argc, char *argv[]){
 
  //Translation support
  QTranslator translator;
- QString lang=QString("pdfedit_")+getenv("LANG");
- if (!translator.load(lang,QString(DATA_PATH)+"/lang")) { 
-  if (!translator.load(lang,QDir::home().path()+"/"+CONFIG_DIR+"/lang")) { 
-   #ifdef TESTING
-   //look in current directory for testing version
-   if (!translator.load(lang,"./lang")) { 
-   #endif
-    printDbg(debug::DBG_WARN,"Translation file " << lang << "not found");
-   #ifdef TESTING
+ char *lang=getenv("LANG");
+ if (lang) {//LANG variable is present in environment -> attempt to load localization
+  QString lang=QString("pdfedit_")+lang;
+  //look for translation file in DATA_PATH
+  if (!translator.load(lang,QString(DATA_PATH)+"/lang")) {
+   //Look for translation file in config directory in $HOME
+   if (!translator.load(lang,QDir::home().path()+"/"+CONFIG_DIR+"/lang")) {
+    #ifdef TESTING
+    //look in current directory for testing version
+    if (!translator.load(lang,"./lang")) { 
+    #endif
+     printDbg(debug::DBG_WARN,"Translation file " << lang << "not found");
+    #ifdef TESTING
+    }
+    #endif
    }
-   #endif
   }
  }
  app.installTranslator(&translator);

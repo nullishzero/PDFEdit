@@ -21,8 +21,14 @@
 #include <qpixmap.h>
 #include "toolbar.h"
 #include <qstring.h>
+#include "iconcache.h"
 
 namespace gui {
+
+/** root key for system menu items */
+const QString ROOT="gui/items/";
+/** root key for user menu items appended to system menu items (lists) */
+const QString ROOT_ADD="gui/items_add/";
 
 /** 
  Exit with error message after encountering invalid menu/toolbar item
@@ -41,46 +47,20 @@ void Menu::invalidItem(const QString &type,const QString &name,const QString &li
 /** Default constructor */
 Menu::Menu() {
  action_index=1;
- initPaths();
+ cache=new IconCache();
 }
 
 /** Destructor */
 Menu::~Menu() {
- QValueList<QString> pixmaps=iconCache.keys();
- //Delete all pixmaps from icon cache
- for (QValueList<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
-  QPixmap *rm=iconCache[*it];
-  delete rm;
- }
- iconCache.clear();
+ delete cache;
 }
 
-/** Given name of the icon, finds and returns full path to the icon,
-     considering all relevant settings (icon path ..) */
-QString Menu::getIconFile(const QString &name) {
- if (name.startsWith("/")) { //absolute path -> no change
-  return name;
- }
- QString absName;
- for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
-  absName=*it+"/"+name;
-  if (QFile::exists(absName)) return absName;
- }
- printDbg(debug::DBG_WARN,"Icon file not found: " << name);
- return name;
-}
-
-/** load and expand various PATHs from config file.
-  Must be done after config defaults are set */
-void Menu::initPaths() {
- iconPath=globalSettings->readPath("icon");
-}
-
-/** Adds action to menu, returning newly allocated menu Id or existing menu id if action is already present
+/**
+ Adds action to menu, returning newly allocated menu Id or existing menu id if action is already present
  @param action Name of action
  @return Menu ID of the specified action
- */
-int Menu::addAction(const QString action) {
+*/
+int Menu::addAction(const QString &action) {
  if (action_map.contains(action)) return action_map[action];
  action_index++;
  action_map[action]=action_index;
@@ -88,146 +68,178 @@ int Menu::addAction(const QString action) {
  return action_index;
 }
 
-/** return action string from given menu ID
+/**
+ Return action string from given menu ID
  @param index Menu ID of action
  @return Name of the specified action
- */
+*/
 QString Menu::getAction(int index) {
  return action_map_i[index];
-}
-
-/** returns icon with given name, loading if necessary and caching for later use
- @param name Name of icon to load
- @return Pixmap containing specified icon
- */
-QPixmap* Menu::getIcon(const QString name) {
-// printDbg(debug::DBG_INFO,"Loading icon:" << name);
- if (iconCache.contains(name)) return iconCache[name];
- QString absName=getIconFile(name);
- QFile f(absName);
- if (!f.open(IO_ReadOnly)) {
-  printDbg(debug::DBG_WARN,"File not found:" << absName);
-  return NULL;//file not found or unreadable or whatever ...
- }
- QByteArray qb=f.readAll();
- f.close();
- QPixmap *pix=new QPixmap();
- pix->loadFromData (qb,0,0);
- iconCache[name]=pix;
- return pix; 
 }
 
 /**
  Load one GUI item from config file, exiting application with fatal error if item not found 
  @param name Name of the item to read
- @param root Root key to read from (default will be used if none specified)
  @return line from config file  
  */
-QString Menu::readItem(const QString name,const QString root/*="gui/items/"*/) {
- QString line=globalSettings->read(root+name);
+QString Menu::readItem(const QString &name) throw (InvalidMenuException) {
+ QString line=globalSettings->read(ROOT+name);
+ if (line.isNull()) throw InvalidMenuException(QObject::tr("Missing item in config")+":\n"+ROOT+name);
  line=line.simplifyWhiteSpace();
- if (line.length()==0) throw InvalidMenuException(QObject::tr("Missing item in config")+":\n"+root+name);
+ if (line.length()==0) throw InvalidMenuException(QObject::tr("Missing item in config")+":\n"+ROOT+name);
+ if (isList(line)) { //Read user-specified additional items and append them if this is a list
+  QString add=globalSettings->read(ROOT_ADD+name);
+  if (!add.isNull()) { 
+   add=add.simplifyWhiteSpace();
+   line+=",";
+   line+=add;
+  }
+ }
  return line; 
+}
+
+/**
+ Check if menu item with given definition is a list
+ @param line Definition of the item to check
+ @return true if menu is a list
+ */
+bool Menu::isList(const QString &line) {
+ return (line.startsWith("list "));
+}
+
+/**
+ Load all needed items into existing menu list
+ @param line comma separated list of childs
+ @param menu menu in which to load items (menu bar or popup menu)
+ @param prev String list containing names of all parents of this menu item (used for loop detection)
+*/
+void Menu::loadItemsDef(QString line,QMenuData *menu,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
+ QStringList qs=explode(',',line);  
+ QStringList::Iterator it=qs.begin();
+ for (;it!=qs.end();++it) { //load all subitems
+  loadItem(*it,menu,prev);
+ }
+}
+
+/**
+ Parse name of list or item from line.
+ List is then modified to contain only list of its items, or in case if item the rest of parameters
+ @param line Line with menu list definition
+ @param name Name (key) of this menu item (for locatization)
+ @return localized caption of the menu item
+*/
+QString Menu::parseName(QString &line, const QString &name/*=QString::null*/) {
+ line=line.remove(0,5);//"item " or "list "
+ QString caption=getUntil(',',line);
+ QString menuName;
+ if (name.isNull()) {
+  menuName=Settings::tr(caption);
+ } else {
+  menuName=Settings::tr(caption,name);
+ }
+ return menuName;
+}
+
+/**
+ Load all needed items into existing menu list
+ @param name name of item to be loaded from config file
+ @param menu menu in which to load items (menu bar or popup menu)
+ @param prev String list containing names of all parents of this menu item (used for loop detection)
+*/
+void Menu::loadItems(const QString &name,QMenuData *menu,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
+ QString line=readItem(name);
+ if (isList(line)) {
+  parseName(line,name);//Name ignored
+  loadItemsDef(line,menu,prev);
+ } else { //We expect a list here
+  invalidItem(QObject::tr("menu definition"),name,line,QObject::tr("Menu items list"));
+ }
 }
 
 /**
  Load one menu item and insert it into parent menu. Recursively load subitems if item is a submenu.
  @param name name of item to be loaded from config file
- @param isRoot TRUE if main menubar is being loaded
- @param parent parent menu item (if isRoot == TRUE, this is the root menubar to add items to)
+ @param parent parent menu item. If NULL and the item is list, the item is loaded in cache, but not added anywhere
  @param prev String list containing names of all parents of this menu item (used for loop detection)
  */ 
-void Menu::loadItem(const QString name,QMenuData *parent/*=NULL*/,bool isRoot/*=FALSE*/,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
+void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
  //Check for cycles (unhandled cycle in menu = crash in QT)
  if (prev.contains(name)) {
   throw InvalidMenuException(QObject::tr("Cycle in menu detected")+":\n"+prev.join(" > ")+" > "+name);
  }
  prev+=name;
  //Check Menu cache
+ //There are currently some problems with the cache, so it is turned off
+/*
  if (mCache.contains(name)) {
-  //This item is already in cache, insert it
+  //This item is already in cache, insert it in parent and return
   printDbg(debug::DBG_DBG,"MENU - Fetching from cache :" << name);
-  parent->insertItem(mCacheName[name],mCache[name]);
+  if (parent) parent->insertItem(mCacheName[name],mCache[name]);
   return;
  }
- QPopupMenu *item=NULL;
- if (name=="-" || name=="") { //separator
-  parent->insertSeparator();
+*/
+ //Separator requested - insert it and return
+ if (name=="-" || name=="") {
+  if (parent) parent->insertSeparator();
   return;
  }
+ //Load items into list
  QString line=readItem(name);
- if (line.startsWith("list ")) { // List of values - a submenu, first is name of submenu, others are items in it
-  QString add=globalSettings->read("gui/items_add/"+name);
-  if (!add.isNull()) { //Read user-specified additional items and append them
-   line+=",";
-   line+=add;
-  }
-  if (!isRoot) {
-   item=new QPopupMenu();
-  }
-  line=line.remove(0,5);
-  QStringList qs=explode(',',line);  
-  QStringList::Iterator it=qs.begin();
-  if (it!=qs.end()) { //add itself as popup menu to parent with given name
-   if (!isRoot) {
-    QString menuName=Settings::tr(*it,name);
-    parent->insertItem(menuName,item);
-    //Add this item to cache
-    mCache[name]=item;
-    mCacheName[name]=menuName;
-   }
-   ++it;
-  } else invalidItem(QObject::tr("menu definition"),name,line,QObject::tr("parameter (name of list)"));
-  for (;it!=qs.end();++it) { //load all subitems
-   if (!isRoot) loadItem(*it,item,false,prev); else loadItem(*it,parent,false,prev);
-  }
-
+ if (isList(line)) { // List of values - a submenu, first is name of submenu, others are items in it
+  QPopupMenu *item=new QPopupMenu();
+  QString menuName=parseName(line,name);
+  loadItemsDef(line,item,prev);
+  if (parent) parent->insertItem(menuName,item);
+  //Add this item to cache
+  mCache[name]=item;
+  mCacheName[name]=menuName;
  } else if (line.startsWith("item ")) { // A single item
-  addItem(line,name,parent);
+  if (parent) addItem(line,parent,name);
  } else { //something invalid
   invalidItem(QObject::tr("menu item"),name,line,"list | item");
  } 
- //TODO: try { .. } catch {delete menu from cache;rethrow() } ... same with other functions
 }
 
 /** Add menu item specified by given data to parent
  @param line Line containing menu item specification
- @param name Name of this item (key in settings)
  @param parent parent menu in which this item will be appended
+ @param name Name of this item (key in settings).
  */
-void Menu::addItem(QString line,QString name,QMenuData *parent) throw (InvalidMenuException) {
+void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString::null*/) throw (InvalidMenuException) {
  line=line.remove(0,5);
  //Format: Caption, Action,[,accelerator, [,menu icon]]
  QStringList qs=explode(',',line);
  if (qs.count()<2) invalidItem(QObject::tr("menu item"),name,line,QObject::tr("2 or more parameters in item definition"));
  int menu_id=addAction(qs[1]);
- qs[0]=Settings::tr(qs[0],name);
+ if (name.isNull()) {
+  qs[0]=Settings::tr(qs[0]);
+ } else {
+  qs[0]=Settings::tr(qs[0],name);
+ }
  parent->insertItem(qs[0],menu_id);
  if (qs.count()>=3 && qs[2].length()>0) { //accelerator specified
   if (reserveAccel(qs[2],qs[1])) parent->setAccel(QKeySequence(qs[2]),menu_id);
  }
  if (qs.count()>=4 && qs[3].length()>0) { //menu icon specified
-  QPixmap *pixmap=getIcon(qs[3]);
-  if (pixmap) {
-   parent->changeItem(menu_id,*pixmap,qs[0]);
+  const QIconSet *icon=cache->getIconSet(qs[3]);
+  if (icon) {
+   parent->changeItem(menu_id,*icon,qs[0]);
   } else {
-   printDbg(debug::DBG_WARN, "Pixmap missing: " << qs[3]);
+   printDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
   }
  }
 }
 
-/** Loads menubar from configuration bar, and return it
- 
+/** Loads menubar from configuration bar, and return it<br>
  If menubar can't be loaded, InvalidMenuException will be thrown
- Missing menu icons are allowed (if it can't be loaded, there will be no pixmap), missing items in configuration are not.
-
+ Missing menu icons are allowed (if it can't be loaded, there will be no pixmap), missing items in configuration are not.<br>
  @param parent QWidget that will contain the menubar
  @return loaded and initialized menubar
- */
+*/
 QMenuBar* Menu::loadMenu(QWidget *parent) throw (InvalidMenuException) {
  //menubar can't be cached and must be separate for each window (otherwise weird things happen)
  QMenuBar *menubar=new QMenuBar(parent);//Make new menubar
- loadItem(QString("MainMenu"),menubar,TRUE);//create root menu
+ loadItems(QString("MainMenu"),menubar);//create root menu
  return menubar;
 }
 
@@ -248,10 +260,11 @@ bool Menu::reserveAccel(const QString &accelDef,const QString &action) {
  return true;
 }
 
-/** Load single toolbar item and add it to toolbar
+/**
+ Load single toolbar item and add it to toolbar
  @param tb Toolbar for addition of item
  @param item Item name in configuration file
- */
+*/
 void Menu::loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException) {
  if (item=="-" || item=="") {
   tb->addSeparator();
@@ -263,17 +276,17 @@ void Menu::loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException
   QStringList qs=explode(',',line);
   if (qs.count()<4) invalidItem(QObject::tr("toolbar item"),item,line,QObject::tr("4 parameters in item definition"));
   line=line.remove(0,5);
-  QPixmap *pixmap=getIcon(qs[3]);
+  const QIconSet *icon=cache->getIconSet(qs[3]);
   int menu_id=addAction(qs[1]);
-  if (!pixmap) {
-   printDbg(debug::DBG_WARN, "Pixmap missing: " << qs[3]);
+  if (!icon) {
+   printDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
   }
   QString tooltip=qs[0];
   tooltip=tooltip.replace("&","");
   if (qs[2].length()>0) { //accelerator specified
    tooltip+=" ("+qs[2]+")";
   }
-  ToolButton *tbutton =new ToolButton(pixmap,tooltip,menu_id,tb);
+  ToolButton *tbutton =new ToolButton(icon,tooltip,menu_id,tb);
   if (qs[2].length()>0) { //accelerator specified
    if (reserveAccel(qs[2],qs[1])) tbutton->setAccel(QKeySequence(qs[2]));
   }
@@ -285,35 +298,42 @@ void Menu::loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException
 }
 
 /**
- Load single toolbar from configuration file
+ Returns icon with given name from cache (loading if necessary)
+ @param name Name of icon to get
+ @return Pixmap containing specified icon
+*/
+const QPixmap* Menu::getIcon(const QString &name) {
+ return cache->getIcon(name);
+}
 
+/**
+ Returns icon set with given name from cache (creating if necessary)
+ @param name Name of icon set to get
+ @return specified Icon set
+*/
+const QIconSet* Menu::getIconSet(const QString &name) {
+ return cache->getIconSet(name);
+}
+
+/**
+ Load single toolbar from configuration file
  @param name Toolbar name in configuration file
  @param parent Parent window
  @param visible Will be toolbar initially visible?
  @return loaded toolbar
- */
-ToolBar* Menu::loadToolbar(const QString name,QMainWindow *parent,bool visible/*=true*/) throw (InvalidMenuException) {
+*/
+ToolBar* Menu::loadToolbar(const QString &name,QMainWindow *parent,bool visible/*=true*/) throw (InvalidMenuException) {
  QString line=readItem(name);
  printDbg(debug::DBG_INFO,"Loading toolbar:" << name);
- if (!line.startsWith("list ")) { // List of values - first is name, others are items in it
+ if (!isList(line)) { // List of values - first is name, others are items in it
   invalidItem(QObject::tr("toolbar definition"),name,line,"list");
   return NULL;
  }
- line=line.remove(0,5);
- QString add=globalSettings->read("gui/items_add/"+name);
- if (!add.isNull()) { //Read user-specified additional items and append them
-  line+=",";
-  line+=add;
- }
+ QString tbName=parseName(line,name);
+ ToolBar *tb=new ToolBar(tbName,parent);
+ tb->setName(name);
  QStringList qs=explode(',',line);
- ToolBar *tb=NULL;
  QStringList::Iterator it=qs.begin();
- if (it!=qs.end()) {
-  tb=new ToolBar(Settings::tr(*it),parent);
-  tb->setName(name);
-  ++it;
- } else invalidItem(QObject::tr("toolbar definition"),name,line);
-
  for (;it!=qs.end();++it) { //load all subitems
   loadToolBarItem(tb,*it);
  }
@@ -322,10 +342,11 @@ ToolBar* Menu::loadToolbar(const QString name,QMainWindow *parent,bool visible/*
  return tb;
 }
 
-/** Load all toolbars from configuration files and add them to parent window
-  If toolbar can't be loaded, InvalidMenuException will be thrown
-  @param parent parent window for toolbars
- */
+/**
+ Load all toolbars from configuration files and add them to parent window
+ If toolbar can't be loaded, InvalidMenuException will be thrown
+ @param parent parent window for toolbars
+*/
 ToolBarList Menu::loadToolBars(QMainWindow *parent) throw (InvalidMenuException) {
  QString line=globalSettings->read("gui/toolbars");
  toolbarNames=explode(',',line);
@@ -337,23 +358,27 @@ ToolBarList Menu::loadToolBars(QMainWindow *parent) throw (InvalidMenuException)
  return toolbarList;
 }
 
-/** return list of toolbars
+/**
+ Return list of toolbar names
  @return Toolbar list
- */
+*/
 QStringList Menu::getToolbarList() {
  return toolbarNames;
 }
 
-/** return toolbar with given name.
- @return Toolbar, or NULL if toolbar not found
- */
+/**
+ return toolbar with given name.
+ @return Toolbar, or NULL if toolbar with given name was not found
+*/
 ToolBar* Menu::getToolbar(const QString &name) {
  if (!toolbarList.contains(name)) return NULL;
  return toolbarList[name];
 }
 
-/** Save toolbar state of given QMainWindow to configuration
- @param main Main application window */
+/**
+ Save toolbar state of given QMainWindow to configuration
+ @param main Main application window
+*/
 void Menu::saveToolbars(QMainWindow *main) {
  QString out;
  QTextStream qs(out,IO_WriteOnly);
@@ -361,8 +386,10 @@ void Menu::saveToolbars(QMainWindow *main) {
  globalSettings->write("gui/toolbarpos",out);
 } 
 
-/** Restore toolbar state of given QMainWindow to configuration
- @param main Main application window */
+/**
+ Restore toolbar state of given QMainWindow from configuration
+ @param main Main application window
+*/
 void Menu::restoreToolbars(QMainWindow *main) {
  QString out=globalSettings->read("gui/toolbarpos");
  if (out.isNull()) return;
