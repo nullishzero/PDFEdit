@@ -191,10 +191,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>parameter (name of list)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>menu item</source>
         <translation type="unfinished"></translation>
     </message>
@@ -231,6 +227,14 @@ Data: %3
     </message>
     <message>
         <source>Cycle in menu detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Menu items list</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -456,6 +460,11 @@ Data: %3
 <context>
     <name>gui::Settings</name>
     <message>
+        <source>Main Toolbar</source>
+        <comment>MainToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&amp;New document</source>
         <comment>fnew</comment>
         <translation type="unfinished"></translation>
@@ -538,11 +547,6 @@ Data: %3
     <message>
         <source>&amp;Help</source>
         <comment>index</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Main Toolbar</source>
-        <comment>MainToolbar</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

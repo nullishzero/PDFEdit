@@ -194,10 +194,6 @@ Data: %3
         <translation>definice menu</translation>
     </message>
     <message>
-        <source>parameter (name of list)</source>
-        <translation>parametr (jméno seznamu)</translation>
-    </message>
-    <message>
         <source>menu item</source>
         <translation>položka menu</translation>
     </message>
@@ -235,6 +231,14 @@ Data: %3
     <message>
         <source>Cycle in menu detected</source>
         <translation>Nalezen cyklus v menu</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalog</translation>
+    </message>
+    <message>
+        <source>Menu items list</source>
+        <translation>Seznam menu položek</translation>
     </message>
 </context>
 <context>
