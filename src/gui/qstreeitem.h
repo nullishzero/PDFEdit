@@ -25,6 +25,14 @@ public slots:
   Childs that are "not yet known" (unopened references) are not returned too.
  */
  QStringList getChildNames();
+ /*- Return parent of this tree item, or NULL if this item have no parent */
+ QSTreeItem* parent();
+ /*- Return name of this tree item */
+ QString id();
+ /*- Return caption of this tree item (sometimes can differ from name) */
+ QString text();
+ /*- Return path of this tree item (sequence of names from root item to this item, separated by slashes: "/" ) */
+ QString path();
  /*- Explicitly reload contents of this item and its subtree from current state of PDF document */
  void reload();
 public:

@@ -11,6 +11,7 @@
 #include "iconcache.h"
 #include "settings.h"
 #include <utils/debug.h>
+#include "util.h"
 
 namespace gui {
 
@@ -38,7 +39,7 @@ QString IconCache::getIconFile(const QString &name) {
   absName=*it+"/"+name;
   if (QFile::exists(absName)) return absName;
  }
- printDbg(debug::DBG_WARN,"Icon file not found: " << name);
+ guiPrintDbg(debug::DBG_WARN,"Icon file not found: " << name);
  return name;
 }
 
@@ -49,7 +50,7 @@ QString IconCache::getIconFile(const QString &name) {
  @return Pixmap containing specified icon
 */
 QPixmap* IconCache::getIcon(const QString &name) {
- // printDbg(debug::DBG_INFO,"Loading icon:" << name);
+ // guiPrintDbg(debug::DBG_INFO,"Loading icon:" << name);
  //Look in cache first
  if (iconCache.contains(name)) return iconCache[name];
  //Not found in cache - try to load
@@ -57,7 +58,7 @@ QPixmap* IconCache::getIcon(const QString &name) {
  QFile f(absName);
  if (!f.open(IO_ReadOnly)) {
   //file not found or unreadable or whatever ...
-  printDbg(debug::DBG_WARN,"File not found:" << absName);
+  guiPrintDbg(debug::DBG_WARN,"File not found:" << absName);
   return NULL;
  }
  QByteArray qb=f.readAll();

@@ -7,6 +7,7 @@
 
 #include "treeitemabstract.h"
 #include <assert.h>
+#include "util.h"
 #include <utils/debug.h>
 
 namespace gui {
@@ -14,20 +15,24 @@ namespace gui {
 
 using namespace std;
 
-/** constructor of TreeItemAbstract - create root item
+/**
+ constructor of TreeItemAbstract - create root item
+ @param itemName Name of this item
  @param parent QListView in which to put item
  @param after Item after which this one will be inserted
  */
-TreeItemAbstract::TreeItemAbstract(QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
- //Empty constructor
+TreeItemAbstract::TreeItemAbstract(const QString &itemName,QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+ nameId=itemName;
 }
 
-/** constructor of TreeItemAbstract - create child item
+/**
+ constructor of TreeItemAbstract - create child item
+ @param itemName Name of this item
  @param parent QListViewItem which is parent of this object
  @param after Item after which this one will be inserted
  */
-TreeItemAbstract::TreeItemAbstract(QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
- //Empty constructor
+TreeItemAbstract::TreeItemAbstract(const QString &itemName,QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+ nameId=itemName;
 }
 
 /** Reload contents of this item's subtree recursively by calling
@@ -73,7 +78,7 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/) {
   newTypes.replace(*it,typ);
  }
 
- printDbg(debug::DBG_DBG,"Reload : 5");
+ guiPrintDbg(debug::DBG_DBG,"Reload : 5");
 
  //Erase unused childs
  eraseItems();
@@ -102,7 +107,7 @@ void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
  eraseItems();
  QListViewItem *otherChild;
  while ((otherChild=src->firstChild())) {	 //For each child
-  printDbg(debug::DBG_DBG,"Relocating child");
+  guiPrintDbg(debug::DBG_DBG,"Relocating child");
   src->takeItem(otherChild);
   insertItem(otherChild);
  }
@@ -114,26 +119,36 @@ void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
  src->types.clear();
 }
 
-/** Delete subitem, given by its name
+/**
+ Delete subitem, given by its name
  @param name Name of subitem to delete
  */
 void TreeItemAbstract::deleteChild(const QString &name) {
  QListViewItem *target=items.take(name);//Remove from list and return 
  if (!target) { //Item not found (should not happen usually)
-  printDbg(debug::DBG_WARN,"Child to delete not found! -> " << name);
+  guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << name);
   return;
  }
  types.remove(name); //Item found - so we remove its type from dictionary too
  deleteChild(target);
 }
 
-/** Delete subitem, given by its pointer
+/**
+ Delete subitem, given by its pointer
  @param target Pointer to subitem to delete
  */
 void TreeItemAbstract::deleteChild(QListViewItem *target) {
  delete target;
 }
 
+/**
+ Return name (id) of this item. Name is unique only for each item's children.
+ Children of different tree items can (and often will) have same name
+ @return name of itself
+*/
+QString TreeItemAbstract::name() {
+ return nameId;
+}
 /** default destructor */
 TreeItemAbstract::~TreeItemAbstract() {
  //Empty desctructor

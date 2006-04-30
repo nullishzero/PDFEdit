@@ -15,6 +15,7 @@
 #include <qfileinfo.h> 
 #include <utils/debug.h>
 #include <qstring.h>
+#include "util.h"
 
 namespace gui {
 
@@ -34,7 +35,7 @@ QString getDir(QFileDialog &fd) {
  @param parent Parent widget - will be disabled during the dialog.
  @return selected Filename*/
 QString openFileDialog(QWidget* parent) {
- printDbg(debug::DBG_DBG,"openFileDialog invoked");
+ guiPrintDbg(debug::DBG_DBG,"openFileDialog invoked");
  QFileDialog fd(parent,"openfiledialog",TRUE);
  fd.setFilter(QObject::tr("PDF files (*.pdf)"));
  fd.setShowHiddenFiles(TRUE);
@@ -65,7 +66,7 @@ QString openFileDialog(QWidget* parent) {
  @param askOverwrite If true and selected file exists, user will be asked to confirm overwriting it
  @return selected Filename*/
 QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/) {
- printDbg(debug::DBG_DBG,"saveFileDialog invoked");
+ guiPrintDbg(debug::DBG_DBG,"saveFileDialog invoked");
  QFileDialog fd(parent,"savefiledialog",TRUE);
  fd.setFilter(QObject::tr("PDF files (*.pdf)"));
  fd.setShowHiddenFiles(TRUE);

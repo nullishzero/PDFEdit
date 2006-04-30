@@ -12,6 +12,7 @@
 #include <qstring.h>
 #include <qfont.h>
 #include <qsinterpreter.h>
+#include <qsutilfactory.h> 
 #include <qpushbutton.h>
 #include <qapplication.h>
 #include "pagespace.h"
@@ -43,7 +44,7 @@ int windowCount;
 
 /** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void PdfEditWindow::exitApp() {
- printDbg(debug::DBG_INFO,"Exiting program");
+ guiPrintDbg(debug::DBG_INFO,"Exiting program");
  qApp->closeAllWindows();
  //Application will exit after last window is closed
  //todo: if invoked from qscript then handle specially
@@ -107,7 +108,7 @@ void PdfEditWindow::options() {
  @return name of selected file.
  */
 QString PdfEditWindow::fileOpenDialog() {
- printDbg(debug::DBG_DBG,"fileOpenDialog");
+ guiPrintDbg(debug::DBG_DBG,"fileOpenDialog");
  return openFileDialog(this);
 }
 
@@ -116,7 +117,7 @@ QString PdfEditWindow::fileOpenDialog() {
  @return name of selected file.
  */
 QString PdfEditWindow::fileSaveDialog(const QString &oldName/*=QString::null*/) {
- printDbg(debug::DBG_DBG,"fileSaveDialog");
+ guiPrintDbg(debug::DBG_DBG,"fileSaveDialog");
  QString ret=saveFileDialog(this,oldName);
  return ret;
 }
@@ -133,12 +134,11 @@ void createNewEditorWindow(const QString &fName) {
 
 /** Close the window itself */
 void PdfEditWindow::closeWindow() {
-/* TODO: Need QSA 1.1.4 for this
  if (qs->isRunning()) {
   qs->stopExecution();
   deleteLater();  //Delete window when returning back to main loop
   return;
- }*/
+ }
  close();
 }
 
@@ -258,7 +258,7 @@ void PdfEditWindow::print(const QString &str) {
  */
 void PdfEditWindow::menuActivated(int id) {
  QString action=menuSystem->getAction(id);
- printDbg(debug::DBG_INFO,"Performing menu action: " << action);
+ guiPrintDbg(debug::DBG_INFO,"Performing menu action: " << action);
  /* quit and closewindow are special - these can't be easily called from script
     as regular function, because invoking them calls window destructor, removing
     script interpreter instance in the process -> after returning from script
@@ -274,7 +274,7 @@ void PdfEditWindow::menuActivated(int id) {
  @param name Function name
 */
 void PdfEditWindow::call(const QString &name) {
- printDbg(debug::DBG_INFO,"Performing callback: " << name);
+ guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
  addDocumentObjects();
  try {
   //Call the function. Do not care about result
@@ -342,7 +342,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
    QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
   }
  } catch (InvalidMenuException &e) {
-  printDbg(debug::DBG_WARN,"Exception in menu loading raised");
+  guiPrintDbg(debug::DBG_WARN,"Exception in menu loading raised");
   fatalError(e.message());
  }
  //Need to name objects, so they will become invisible to scripting
@@ -362,6 +362,10 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Create new interpreter and project
  qp=new QSProject();
  qs=qp->interpreter();
+
+ //Add ability to open files, directories and run processes
+ qs->addObjectFactory(new QSUtilFactory());
+
  assert(globalSettings);
  qp->addObject(globalSettings);
  //Create and add importer to QSProject and related QSInterpreter
@@ -370,7 +374,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  QString initScriptFilename=globalSettings->read("script/init");
  //Any document-related classes are NOT available to the initscript, as no document is currently loaded
  run(initScriptFilename);
- printDbg(debug::DBG_DBG,"after initscript");
+ guiPrintDbg(debug::DBG_DBG,"after initscript");
 
  if (fName.isNull()) { //start with empty editor
   emptyFile();
@@ -397,7 +401,7 @@ void PdfEditWindow::setObject() {
  @param key Key of setting that was updated
  */
 void PdfEditWindow::settingUpdate(QString key) {
- printDbg(debug::DBG_DBG,"Settings observer: " << key);
+ guiPrintDbg(debug::DBG_DBG,"Settings observer: " << key);
  if (key.startsWith("toolbar/")) { //Show/hide toolbar
   ToolBar *tb=menuSystem->getToolbar(key.mid(8));	// 8=strlen("toolbar/")
   if (!tb) return; //Someone put invalid toolbar in settings. Just ignore it
@@ -555,7 +559,9 @@ void PdfEditWindow::message(const QString &msg) {
  QMessageBox::information(this,APP_NAME,msg,QObject::tr("&Ok"),QString::null,QString::null,QMessageBox::Ok | QMessageBox::Default);
 }
 
-/** Asks question with Yes/No answer. "Yes" is default. Return true if user selected "yes", false if user selected "no"
+/**
+ Asks question with Yes/No answer. "Yes" is default.
+ Return true if user selected "yes", false if user selected "no"
  @param msg Question to display
  @return True if yes, false if no
  */
@@ -565,7 +571,8 @@ bool PdfEditWindow::question(const QString &msg) {
  return (answer==0);//QMessageBox::Yes);
 }
 
-/** Asks question with Yes/No/Cancel answer. "Yes" is default. <br>
+/**
+ Asks question with Yes/No/Cancel answer. "Yes" is default. <br>
  Return on of these three according to user selection: <br>
   QMessageBox::Yes     <br>
   QMessageBox::No      <br>
@@ -612,10 +619,10 @@ void PdfEditWindow::treeClicked(int button,QListViewItem *item) {
  //Some unknown tree item?
  if (!it) return;
  selectedTreeItem=it;
- if (button &1) call("onTreeLeftClick");
- if (button &2) call("onTreeRightClick");
- if (button &4) call("onTreeMiddleClick");
- if (button &8) call("onTreeDoubleClick");
+ if (button & 1) call("onTreeLeftClick");
+ if (button & 2) call("onTreeRightClick");
+ if (button & 4) call("onTreeMiddleClick");
+ if (button & 8) call("onTreeDoubleClick");
 }
 
 

@@ -58,7 +58,7 @@ void OptionWindow::optionsDialog(Menu *msystem) {
  @param name name of widget (currently unused)
  */
 OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
- printDbg(debug::DBG_DBG,"Options creating ...");
+ guiPrintDbg(debug::DBG_DBG,"Options creating ...");
  menuSystem=msystem;
  setCaption(QString(APP_NAME)+" - "+tr("options"));
  //create list of properties in this editor;
@@ -105,7 +105,7 @@ void OptionWindow::apply() {
  QDictIterator<Option> it(*items);
  for (;it.current();++it) {
   Option* c=it.current();
-  printDbg(debug::DBG_DBG,"Writing " << c->getName());
+  guiPrintDbg(debug::DBG_DBG,"Writing " << c->getName());
   c->writeValue();
  }
  //Write settings to disk (editor may crash or be killed, right?)
@@ -321,7 +321,7 @@ OptionWindow::~OptionWindow() {
  delete items;
  delete list;
  opt=NULL;//No instance active now
- printDbg(debug::DBG_DBG,"Options closing ...");
+ guiPrintDbg(debug::DBG_DBG,"Options closing ...");
 }
 
 /** applies look and feel settings from options

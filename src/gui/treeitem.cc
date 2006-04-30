@@ -1,5 +1,5 @@
 /** @file
- TreeItem - class holding one PDF object in tree, descendant of TreeItemAbstract
+ TreeItem - class holding one PDF object (IProperty) in tree, descendant of TreeItemAbstract
  @author Martin Petricek
 */
 
@@ -10,6 +10,7 @@
 #include "treeitemdict.h"
 #include "treeitemarray.h"
 #include "pdfutil.h"
+#include "util.h"
 #include "qsiproperty.h"
 
 namespace gui {
@@ -22,11 +23,12 @@ using namespace util;
 /** constructor of TreeItem - create root item from given object
  @param parent QListView in which to put item
  @param pdfObj Object contained in this item
- @param name Name of this item - will be shown in treeview
+ @param nameId Internal name of this item
+ @param name Caption of this item - will be shown in treeview
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,parent,after) {
  _parent=NULL; //If not TreeItem, _parent will be NULL
  data=_data;
  init(pdfObj,name);
@@ -35,42 +37,47 @@ TreeItem::TreeItem(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty
 /** constructor of TreeItem - create child item from given object
  @param parent QListViewItem which is parent of this object
  @param pdfObj Object contained in this item
- @param name Name of this item - will be shown in treeview
+ @param nameId Internal name of this item
+ @param name Caption of this item - will be shown in treeview
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
- */
-TreeItem::TreeItem(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+*/
+TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,parent,after) {
  _parent=dynamic_cast<TreeItem*>(parent); //If not TreeItem, _parent will be NULL
  data=_data;
  init(pdfObj,name);
 }
 
 /**
-"Constructor" that will create object of proper class based on type of IProperty <br>
-@copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
+ "Constructor" that will create object of proper class based on type of IProperty <br>
+ @copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
 */
-TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/) {
+TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
  assert(_data);
+ QString useName;
+ if (nameId.isNull()) useName=name; else useName=nameId;
  PropertyType type=pdfObj->getType();
- printDbg(debug::DBG_DBG,"create root:" << getTypeName(type) << "  " << name);
- if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after);
- if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after);
- if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after);
- return new TreeItemSimple(_data,parent,pdfObj,name,after);
+ guiPrintDbg(debug::DBG_DBG,"create root:" << getTypeName(type) << "  " << name);
+ if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after,useName);
+ if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after,useName);
+ if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after,useName);
+ return new TreeItemSimple(_data,parent,pdfObj,name,after,useName);
 }
 
 /**
-"Constructor" that will create object of proper class based on type of IProperty <br>
-@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
+ "Constructor" that will create object of proper class based on type of IProperty <br>
+ @copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
 */
-TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/) {
+TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
  assert(_data);
+ QString useName;
+ if (nameId.isNull()) useName=name; else useName=nameId;
  PropertyType type=pdfObj->getType();
- printDbg(debug::DBG_DBG,"create item:" << getTypeName(type) << "  " << name);
- if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after);
- if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after);
- if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after);
- return new TreeItemSimple(_data,parent,pdfObj,name,after);
+ guiPrintDbg(debug::DBG_DBG,"create item:" << getTypeName(type) << "  " << name);
+ if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after,useName);
+ if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after,useName);
+ if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after,useName);
+ return new TreeItemSimple(_data,parent,pdfObj,name,after,useName);
 }
 
 /** Return parent of this Tree Item, if it is also TreeItem.
@@ -93,7 +100,7 @@ void TreeItem::setParent(TreeItem *parent) {
 void TreeItem::init(boost::shared_ptr<IProperty> pdfObj,const QString &name) {
  obj=pdfObj;
  typ=obj->getType();
- printDbg(debug::DBG_DBG,"init type -> " << getTypeName(typ));
+ guiPrintDbg(debug::DBG_DBG,"init type -> " << getTypeName(typ));
  // object name
  if (name.isNull()) {
   setText(0,QObject::tr("<no name>"));
@@ -116,7 +123,7 @@ boost::shared_ptr<IProperty> TreeItem::getObject() {
  @param newChild child QListViewItem to be inserted
  */
 void TreeItem::insertItem(QListViewItem *newChild) {
- printDbg(debug::DBG_DBG,"Insert existing item");
+ guiPrintDbg(debug::DBG_DBG,"Insert existing item");
  QListViewItem::insertItem(newChild);
  TreeItem *oChild=dynamic_cast<TreeItem*> (newChild);
  if (oChild) oChild->setParent(this);
@@ -139,7 +146,7 @@ public:
  virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw() {
   if (!parent) {
    //Should never happen
-   printDbg(debug::DBG_ERR,"BUG: Kernel is holding observer for item already destroyed");
+   guiPrintDbg(debug::DBG_ERR,"BUG: Kernel is holding observer for item already destroyed");
    assert(parent);
    return;
   }
@@ -160,7 +167,7 @@ private:
 
 /** Sets observer for this item */
 void TreeItem::initObserver() {
- printDbg(debug::DBG_DBG,"Set Observer");
+ guiPrintDbg(debug::DBG_DBG,"Set Observer");
  observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
  obj->registerObserver(observer);
 }
@@ -169,7 +176,7 @@ void TreeItem::initObserver() {
 void TreeItem::uninitObserver() {
  observer->deactivate();
  obj->unregisterObserver(observer);
- printDbg(debug::DBG_DBG,"UnSet Observer");
+ guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }
 
 /** default destructor */
@@ -179,7 +186,7 @@ TreeItem::~TreeItem() {
 //See TreeItemAbstract for description of this virtual method
 void TreeItem::reloadSelf() {
  assert(typ!=pRef);//Must not be called on CRefs
- printDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+ guiPrintDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
 }
 
 //See TreeItemAbstract for description of this virtual method

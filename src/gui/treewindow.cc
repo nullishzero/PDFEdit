@@ -56,7 +56,7 @@ void TreeWindow::reloadFrom(TreeItemAbstract *item) {
 @param column Clicked in which item's column? (if clicked on item)
 */
 void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column) {
- printDbg(debug::DBG_DBG,"Clicked in tree: " << button);
+// guiPrintDbg(debug::DBG_DBG,"Clicked in tree: " << button);
  emit treeClicked(button,item);
 }
 
@@ -66,7 +66,7 @@ void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord
 @param column Clicked in which item's column? (if clicked on item)
 */
 void TreeWindow::mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column) {
- printDbg(debug::DBG_DBG,"DoubleClicked in tree:");
+// guiPrintDbg(debug::DBG_DBG,"DoubleClicked in tree:");
  emit treeClicked(8,item);
 }
 
@@ -74,7 +74,7 @@ void TreeWindow::mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int 
 void TreeWindow::updateTreeSettings() {
  data->update();
  if (data->isDirty()) {
-  printDbg(debug::DBG_DBG,"update tree settings: is dirty");
+//  guiPrintDbg(debug::DBG_DBG,"update tree settings: is dirty");
   data->resetDirty();
   update();//Update treeview itself
  }
@@ -88,7 +88,7 @@ void TreeWindow::reinit() {
 /** Paint event handler -> if settings have been changed, reload tree */
 void TreeWindow::paintEvent(QPaintEvent *e) {
  if (data->needReload()) {
-  printDbg(debug::DBG_DBG,"update tree settings: need reload");
+  guiPrintDbg(debug::DBG_DBG,"update tree settings: need reload");
   reinit(); //update object if necessary
   data->resetReload();
  }
@@ -99,7 +99,7 @@ void TreeWindow::paintEvent(QPaintEvent *e) {
 /** Called when any settings are updated (in script, option editor, etc ...) */
 void TreeWindow::settingUpdate(QString key) {
  //TODO: only once per bunch of tree/show... signals ... setting blocks
- printDbg(debug::DBG_DBG,"Settings observer: " << key);
+ guiPrintDbg(debug::DBG_DBG,"Settings observer: " << key);
  if (key.startsWith("tree/show")) { //Updated settings of what to show and what not
   updateTreeSettings();
  }
@@ -109,18 +109,18 @@ void TreeWindow::settingUpdate(QString key) {
  @param item The item that was selected
  */
 void TreeWindow::treeSelectionChanged(QListViewItem *item) {
- printDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
+// guiPrintDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
  TreeItem* it=dynamic_cast<TreeItem*>(item);
  selected=dynamic_cast<TreeItemAbstract*>(item);
  emit itemSelected();
  if (!it) { //Not holding IProperty
   //TODO: TreeItemAbstract & add "return QSObject" to TreeItemAbstract
-  printDbg(debug::DBG_WARN,"Not a TreeItem: " << item->text(0));
+  guiPrintDbg(debug::DBG_WARN,"Not a TreeItem: " << item->text(0));
   //todo: handle this type properly
   return;
  }
  //holding IProperty
- printDbg(debug::DBG_DBG,"Is a TreeItem: " << item->text(0));
+// guiPrintDbg(debug::DBG_DBG,"Is a TreeItem: " << item->text(0));
  //We have a TreeItem -> emit signal with selected object
  emit objectSelected(item->text(0),it->getObject());
 }
@@ -159,7 +159,7 @@ void TreeWindow::clear() {
  @param fileName Name of PDF document (will be shown in treeview as name of root element)
  */
 void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
- printDbg(debug::DBG_DBG,"Loading PDF into tree");
+ guiPrintDbg(debug::DBG_DBG,"Loading PDF into tree");
  assert(pdfDoc);
  clear();
  rootName=fileName;
@@ -173,7 +173,7 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  @param doc IProperty used to initialize treeview
  */
 void TreeWindow::init(boost::shared_ptr<IProperty> doc) {
- printDbg(debug::DBG_DBG,"Loading Iproperty into tree");
+ guiPrintDbg(debug::DBG_DBG,"Loading Iproperty into tree");
  clear();
  if (doc.get()) {
   setUpdatesEnabled( FALSE );

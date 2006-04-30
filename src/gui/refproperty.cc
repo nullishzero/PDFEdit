@@ -15,6 +15,7 @@
 #include <qpushbutton.h>
 #include <cobject.h>
 #include "pdfutil.h"
+#include "util.h"
 
 namespace gui {
 
@@ -42,7 +43,7 @@ RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFl
 
 /** Invoked when someone pushes the ".." button */
 void RefProperty::selectRef() {
- printDbg(debug::DBG_WARN,"Select REference : not implemented (TODO)")
+ guiPrintDbg(debug::DBG_WARN,"Select REference : not implemented (TODO)")
  //TODO: implement
 }
 

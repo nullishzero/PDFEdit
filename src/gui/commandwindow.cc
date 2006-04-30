@@ -49,12 +49,12 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 }
 
 void CommandWindow::setHistorySize( int historySize ){
-	printDbg(debug::DBG_DBG,"Write historySize");
+	guiPrintDbg(debug::DBG_DBG,"Write historySize");
 	globalSettings->write( CMD + HISTORYSIZE, historySize );
 	history->setMaxCount( historySize + 1 );
 }
 void CommandWindow::setHistoryFile( const QString & historyFile ){
-	printDbg(debug::DBG_DBG,"Write historyFile");
+	guiPrintDbg(debug::DBG_DBG,"Write historyFile");
 	globalSettings->write( CMD + HISTORYFILE, historyFile );
 }
 
@@ -75,7 +75,7 @@ void CommandWindow::loadHistory() {
 		return ;
 	}
 	history->insertItem("");
-	printDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
+	guiPrintDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
 }
 /** Save current command history */
 void CommandWindow::saveHistory() {
@@ -89,7 +89,7 @@ void CommandWindow::saveHistory() {
 		file.close();
 		return ;
 	}
-	printDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
+	guiPrintDbg(debug::DBG_DBG,"Cannot open pdfedit-history to read!!!");
 }
 /** Execute and clear current command */
 void CommandWindow::execute() {

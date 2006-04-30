@@ -7,6 +7,7 @@
 #include "treeitemref.h"
 #include "treedata.h"
 #include "pdfutil.h"
+#include "util.h"
 
 namespace gui {
 
@@ -14,9 +15,9 @@ using namespace std;
 using namespace util;
 
 /**
- @copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
+ @copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
-TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  complete=false;
  addData();
  reload(false);
@@ -24,9 +25,9 @@ TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IPr
 }
 
 /**
-@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
+@copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
-TreeItemRef::TreeItemRef(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemRef::TreeItemRef(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  complete=false;
  addData();
  reload(false);
@@ -78,10 +79,10 @@ void TreeItemRef::setOpen(bool open) {
  assert(typ==pRef); //paranoid check
  if (!complete) { //not expanded
   if (open) {
-   printDbg(debug::DBG_DBG," Opening referenced property pREF : " << selfRef);
+   guiPrintDbg(debug::DBG_DBG," Opening referenced property pREF : " << selfRef);
    TreeItem *up=parentCheck();
    if (up) { //some parent of this object is referencing the same object
-    printDbg(debug::DBG_DBG,"Found ref in parent - not expanding item (-> infinite recursion)");
+    guiPrintDbg(debug::DBG_DBG,"Found ref in parent - not expanding item (-> infinite recursion)");
     data->tree()->setCurrentItem(up);
     data->tree()->ensureItemVisible(up);
     //TODO: nefunguje pri otevreni pomoci sipky.
@@ -89,16 +90,16 @@ void TreeItemRef::setOpen(bool open) {
    }
    TreeItemRef *other=data->find(selfRef);
    if (other && other!=this) { //subtree already found elsewhere -> reparent
-    printDbg(debug::DBG_DBG,"Will relocate child, counts: "<< this->childCount() << " , " << other->childCount());
+    guiPrintDbg(debug::DBG_DBG,"Will relocate child, counts: "<< this->childCount() << " , " << other->childCount());
     moveAllChildsFrom(other);
-    printDbg(debug::DBG_DBG,"Done relocate child, counts: "<< this->childCount() << " , " << other->childCount());
+    guiPrintDbg(debug::DBG_DBG,"Done relocate child, counts: "<< this->childCount() << " , " << other->childCount());
     other->unOpen();
     data->add(this);//re-add itself
     complete=true;
     QListViewItem::setOpen(open);
     return;//Do not expand references
    } else { // subtree not found -> add to list
-    printDbg(debug::DBG_DBG,"Subtree not found");
+    guiPrintDbg(debug::DBG_DBG,"Subtree not found");
     data->add(this);
    }
    //Reload as "complete and opened item"
@@ -126,14 +127,14 @@ TreeItemRef::~TreeItemRef() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemRef::reloadSelf() {
- printDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+ guiPrintDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
  QString old=selfRef;
  //Update reference target
  addData();
  if (old!=selfRef) {
   //Remove old reference from list of opened and available items
   if (complete) data->remove(old);//Was complete -> remove data
-  printDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
+  guiPrintDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
   //Close itself
   this->setOpen(false);
   //Set as incomplete
@@ -153,9 +154,9 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,ChildType typ,QLi
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
  cref->getPropertyValue(ref);
- printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
+ guiPrintDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
- return TreeItem::create(data,this, rp,s.sprintf("<%d,%d>",ref.num,ref.gen),after);
+ return TreeItem::create(data,this, rp,s.sprintf("<%d,%d>",ref.num,ref.gen),after,"Target");
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -167,7 +168,7 @@ ChildType TreeItemRef::getChildType(const QString &name) {
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
  cref->getPropertyValue(ref);
- printDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
+ guiPrintDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  return rp->getType();
 }

@@ -17,9 +17,9 @@ using namespace pdfobjects;
 
 class TreeItemPdf : public TreeItemAbstract {
 public:
- TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString name,QListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name=QString::null,QListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString &name=QString::null,QListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,QListViewItem *after=NULL);
  virtual ~TreeItemPdf();
  CPdf* getObject();
  //From TreeItemAbstract interface

@@ -112,7 +112,7 @@ int main(int argc, char *argv[]){
     //look in current directory for testing version
     if (!translator.load(lang,"./lang")) { 
     #endif
-     printDbg(debug::DBG_WARN,"Translation file " << lang << "not found");
+     guiPrintDbg(debug::DBG_WARN,"Translation file " << lang << "not found");
     #ifdef TESTING
     }
     #endif
@@ -155,7 +155,7 @@ int main(int argc, char *argv[]){
  int nFiles=params.size();
  if (nFiles) { //open files from cmdline
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {
-   printDbg(debug::DBG_INFO,"Opening parameter: " << *it)
+   guiPrintDbg(debug::DBG_INFO,"Opening parameter: " << *it)
    createNewEditorWindow(*it);
   }
  } else { //no parameters

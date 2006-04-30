@@ -8,6 +8,7 @@
 #include <utils/debug.h>
 #include "qscobject.h"
 #include <qstring.h>
+#include "util.h"
 
 namespace gui {
 
@@ -16,7 +17,7 @@ namespace gui {
 /** Construct wrapper with given CObject */
 QSCObject::QSCObject(QString _typeName) {
  typeName=_typeName;
- printDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
+ guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
 //todo: add to garbage collector. Garbage collector is one for each editor window.
 // addGC(this);
 }
@@ -24,23 +25,23 @@ QSCObject::QSCObject(QString _typeName) {
 /** Copy constructor */
 QSCObject::QSCObject(QSCObject &source) {
  typeName=source.typeName;
- printDbg(debug::DBG_DBG,"adding QSCObject (copy) "<< typeName);
+ guiPrintDbg(debug::DBG_DBG,"adding QSCObject (copy) "<< typeName);
 // addGC(this);
 }
 
 /** destructor */
 QSCObject::~QSCObject() {
- printDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
+ guiPrintDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
 //todo: remove from  garbage collector. After returning from scripting, GC should be run ...
 // removeGC(this);
 }
 
 void QSCObject::disconnectNotify(const char* signal) {
- printDbg(debug::DBG_DBG,"Disconnect notify" <<typeName << " - " << signal);
+ guiPrintDbg(debug::DBG_DBG,"Disconnect notify" <<typeName << " - " << signal);
 }
 
 void QSCObject::connectNotify(const char* signal) {
- printDbg(debug::DBG_DBG,"connect notify" <<typeName << " - " << signal);
+ guiPrintDbg(debug::DBG_DBG,"connect notify" <<typeName << " - " << signal);
 }
 
 /** Return name of this object's type

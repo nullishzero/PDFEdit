@@ -119,7 +119,7 @@ void PropertyEditor::clear() {
  */
 void PropertyEditor::update(Property *p) {
  QString pname=p->getName();
- printDbg(debug::DBG_DBG,"Updating property" << pname);
+ guiPrintDbg(debug::DBG_DBG,"Updating property" << pname);
  assert(props->contains(pname));
  boost::shared_ptr<IProperty> obj=(*props)[pname];
  p->writeValue(obj.get());
@@ -201,7 +201,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   vector<string>::iterator it;
   for( it=list.begin();it!=list.end();++it) { // for each property
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
-   printDbg(debug::DBG_DBG,"HAVE: " << *it);
+   guiPrintDbg(debug::DBG_DBG,"HAVE: " << *it);
    addProperty(*it,property);
   }
   if (!nObjects) { //No subproperties

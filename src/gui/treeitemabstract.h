@@ -2,9 +2,9 @@
 #define __TREEITEMABSTRACT_H__
 
 #include <qlistview.h>
+#include <qstring.h>
 #include <qdict.h>
 
-class QString;
 class QStringList;
 
 namespace gui {
@@ -22,8 +22,9 @@ typedef int ChildType;
 
 class TreeItemAbstract : public QListViewItem {
 public:
- TreeItemAbstract(QListView *parent,QListViewItem *after=NULL);
- TreeItemAbstract(QListViewItem *parent,QListViewItem *after=NULL);
+ TreeItemAbstract(const QString &itemName,QListView *parent,QListViewItem *after=NULL);
+ TreeItemAbstract(const QString &itemName,QListViewItem *parent,QListViewItem *after=NULL);
+ QString name();
  virtual ~TreeItemAbstract();
  void reload(bool reloadThis=true);
  virtual void deleteChild(const QString &name);
@@ -57,6 +58,8 @@ public:
  */
  virtual ChildType getChildType(const QString &name)=0;
 protected:
+ /** Name of this item */
+ QString nameId;
  /** Mapping of all child names to child items for this tree item */
  QDict<QListViewItem> items;
  /** Mapping of all child names to types of child items for this tree item */

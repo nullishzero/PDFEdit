@@ -50,13 +50,54 @@ QStringList QSTreeItem::getChildNames() {
  return obj->getChildNames();
 }
 
-/** destructor */
-QSTreeItem::~QSTreeItem() {
+/**
+ Return parent of this Tree Item, or NULL if this item have not parent,
+ or parent is not subclass of TreeItemAbstract
+ @return parent of this TreeItem
+*/
+QSTreeItem* QSTreeItem::parent() {
+ TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
+ if (!parent) return NULL;
+ return new QSTreeItem(parent);
 }
 
-/** get CGraphics held inside this class. Not exposed to scripting */
+/**
+ Return name of this item.
+ @return name of this item
+*/
+QString QSTreeItem::id() {
+ return obj->name();
+}
+
+/**
+ Return caption of this item in tree window. Most times it is identical to name, or at least similar.
+ @return caption of this item
+*/
+QString QSTreeItem::text() {
+ return obj->text(0);
+}
+
+/**
+ Return path of this item (sequence of names from root to this item, separated by slash "/").
+ @return path of this item
+*/
+QString QSTreeItem::path() {
+ QString path=obj->name();
+ TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
+ while (parent) { //Traverse to root, prepending path elements
+  path=parent->name()+"/"+path;
+  parent=dynamic_cast<TreeItemAbstract*>(parent->parent());
+ }
+ return path;
+}
+
+/** get TreeItemAbstract held inside this class. Not exposed to scripting */
 TreeItemAbstract* QSTreeItem::get() {
  return obj;
+}
+
+/** destructor */
+QSTreeItem::~QSTreeItem() {
 }
 
 } // namespace gui

@@ -173,7 +173,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
 /*
  if (mCache.contains(name)) {
   //This item is already in cache, insert it in parent and return
-  printDbg(debug::DBG_DBG,"MENU - Fetching from cache :" << name);
+  guiPrintDbg(debug::DBG_DBG,"MENU - Fetching from cache :" << name);
   if (parent) parent->insertItem(mCacheName[name],mCache[name]);
   return;
  }
@@ -225,7 +225,7 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
   if (icon) {
    parent->changeItem(menu_id,*icon,qs[0]);
   } else {
-   printDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
+   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
   }
  }
 }
@@ -252,7 +252,7 @@ QMenuBar* Menu::loadMenu(QWidget *parent) throw (InvalidMenuException) {
 bool Menu::reserveAccel(const QString &accelDef,const QString &action) {
  if (accels.contains(accelDef)) {
   if (accels[accelDef]!=action) {
-   printDbg(debug::DBG_WARN,"Attempt to redefine accel " << accelDef << " from '" << accels[accelDef] << "' to '" << action << "'");
+   guiPrintDbg(debug::DBG_WARN,"Attempt to redefine accel " << accelDef << " from '" << accels[accelDef] << "' to '" << action << "'");
   }
   return false;
  }
@@ -279,7 +279,7 @@ void Menu::loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException
   const QIconSet *icon=cache->getIconSet(qs[3]);
   int menu_id=addAction(qs[1]);
   if (!icon) {
-   printDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
+   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
   }
   QString tooltip=qs[0];
   tooltip=tooltip.replace("&","");
@@ -324,7 +324,7 @@ const QIconSet* Menu::getIconSet(const QString &name) {
 */
 ToolBar* Menu::loadToolbar(const QString &name,QMainWindow *parent,bool visible/*=true*/) throw (InvalidMenuException) {
  QString line=readItem(name);
- printDbg(debug::DBG_INFO,"Loading toolbar:" << name);
+ guiPrintDbg(debug::DBG_INFO,"Loading toolbar:" << name);
  if (!isList(line)) { // List of values - first is name, others are items in it
   invalidItem(QObject::tr("toolbar definition"),name,line,"list");
   return NULL;

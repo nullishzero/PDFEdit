@@ -19,13 +19,14 @@
 #include "qscobject.h"
 #include "qspdf.h"
 #include "qstreeitem.h"
+#include "util.h"
 
 namespace gui {
 
 /** Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated */
 QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
  setName("importer");
- printDbg(debug::DBG_DBG,"Creating QSImporter");
+ guiPrintDbg(debug::DBG_DBG,"Creating QSImporter");
  qp=_qp;
  context=_context;
  //add itself to Project
@@ -92,16 +93,16 @@ void QSImporter::addQSObj(QObject *obj,const QString &name) {
  if (obj) obj->setName(name);//NULL can be imported too
  qobj=obj;
  if (obj) {
-  printDbg(debug::DBG_DBG,"Importing " <<name);
+  guiPrintDbg(debug::DBG_DBG,"Importing " <<name);
  } else {
-  printDbg(debug::DBG_DBG,"Importing NULL " <<name);
+  guiPrintDbg(debug::DBG_DBG,"Importing NULL " <<name);
  }
  QString code=QString("var ")+name+"=importer.getQSObj();";
-// printDbg(debug::DBG_DBG,"Importing with code:" <<code);
+// guiPrintDbg(debug::DBG_DBG,"Importing with code:" <<code);
  qs->evaluate(code,context,"<qsimporter>");
  QString err=qs->errorMessage();
  if (!err.isNull()) {
-  printDbg(debug::DBG_ERR,"Failed import: " <<err);
+  guiPrintDbg(debug::DBG_ERR,"Failed import: " <<err);
  }
  qobj=NULL;
 }
@@ -116,7 +117,7 @@ QObject* QSImporter::getQSObj() {
 QSImporter::~QSImporter() {
  //remove itself from project
  if (qp) qp->removeObject(this);
- printDbg(debug::DBG_DBG,"Destroying QSImporter");
+ guiPrintDbg(debug::DBG_DBG,"Destroying QSImporter");
 }
 
 } // namespace gui

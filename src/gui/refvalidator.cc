@@ -8,6 +8,7 @@
 #include "refvalidator.h"
 #include <qstring.h> 
 #include <utils/debug.h> 
+#include "util.h"
 
 namespace gui {
 
@@ -39,14 +40,14 @@ void RefValidator::fixup(QString &input) const {
 */
 QValidator::State RefValidator::validate(QString &input,int &pos) const {
  if (valid.exactMatch(input)) {
-  printDbg(debug::DBG_DBG,"Validate: " << input << " Acceptable");
+  guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Acceptable");
   return Acceptable;
  }
  if (ivalid.exactMatch(input)) {
-  printDbg(debug::DBG_DBG,"Validate: " << input << " Intermediate");
+  guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Intermediate");
   return Intermediate;
  }
- printDbg(debug::DBG_DBG,"Validate: " << input << " Invalid");
+ guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Invalid");
  return Invalid;
 }
 

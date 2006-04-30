@@ -45,10 +45,10 @@ QSMenu::QSMenu(Menu *_msys,const QString &name/*=QString::null*/) : QSCObject ("
   }
  } catch (InvalidMenuException &e) {
   //Ignore any exception when adding item - the item was just not added
-  printDbg(debug::DBG_WARN, "Menu Exception:  " << e.message());
+  guiPrintDbg(debug::DBG_WARN, "Menu Exception:  " << e.message());
  } catch (...) {
   //Ignore any exception when adding item - the item was just not added
-  printDbg(debug::DBG_WARN, "Unknown Exception");
+  guiPrintDbg(debug::DBG_WARN, "Unknown Exception");
  }
 }
 
@@ -58,11 +58,11 @@ QSMenu::QSMenu(Menu *_msys,const QString &name/*=QString::null*/) : QSCObject ("
 */
 
 QString QSMenu::popup() {
- printDbg(debug::DBG_DBG, "Menu-popup");
+ guiPrintDbg(debug::DBG_DBG, "Menu-popup");
  int id=menu->exec(QCursor::pos());
- printDbg(debug::DBG_DBG, "Menu-popup i " << id);
+ guiPrintDbg(debug::DBG_DBG, "Menu-popup i " << id);
  QString action=getAction(id);
- printDbg(debug::DBG_DBG, "Menu-popup a " << action);
+ guiPrintDbg(debug::DBG_DBG, "Menu-popup a " << action);
  return action;
 }
 
@@ -74,10 +74,10 @@ QString QSMenu::popup() {
 QString QSMenu::getAction(int id) {
  if (id<0) return QString::null;//Menu cancelled
  if (id>=TMP_OFFSET) { //From temporary item
-  printDbg(debug::DBG_DBG, "qs action " << (id-TMP_OFFSET));
+//  guiPrintDbg(debug::DBG_DBG, "qs action " << (id-TMP_OFFSET));
   return actions[id-TMP_OFFSET-1];
  } else {
-  printDbg(debug::DBG_DBG, "m  action " << id);
+//  guiPrintDbg(debug::DBG_DBG, "m  action " << id);
   return msys->getAction(id);
  }
 }
@@ -89,16 +89,16 @@ QString QSMenu::getAction(int id) {
  @param def Definition of menu item (same format as used in application menus)
 */
 void QSMenu::addItemDef(QString def) {
- printDbg(debug::DBG_DBG, "++" << def);
+// guiPrintDbg(debug::DBG_DBG, "++" << def);
  try {
   if (!def.startsWith("item ")) {
-   printDbg(debug::DBG_WARN, "NOT item: " << def);
+   guiPrintDbg(debug::DBG_WARN, "NOT item: " << def);
    return;//Can add only items this way
   }
   actionId++;
-  printDbg(debug::DBG_DBG, "Menudef1: " << def);
+//  guiPrintDbg(debug::DBG_DBG, "Menudef1: " << def);
   QString itemName=Menu::parseName(def);
-  printDbg(debug::DBG_DBG, "Menudef2: " << def << " name " << itemName);
+//  guiPrintDbg(debug::DBG_DBG, "Menudef2: " << def << " name " << itemName);
   QStringList param=explode(',',def);  //param = Action[,accelerator [,menu icon]]
   menu->insertItem(itemName,actionId+TMP_OFFSET);
   if (param.count()>1 && param[1].length()>0) { //accelerator specified
@@ -109,27 +109,27 @@ void QSMenu::addItemDef(QString def) {
    if (icon) {
     menu->changeItem(actionId+TMP_OFFSET,*icon,itemName);
    } else {
-    printDbg(debug::DBG_WARN, "Pixmap missing: " << param[2]);
+    guiPrintDbg(debug::DBG_WARN, "Pixmap missing: " << param[2]);
    }
   }
-  printDbg(debug::DBG_DBG, "Menu append action: " << param[0]);
+  guiPrintDbg(debug::DBG_DBG, "Menu append action: " << param[0]);
   actions.append(param[0]);
  } catch (InvalidMenuException &e) {
   //Ignore any exception when adding item - the item was just not added
-  printDbg(debug::DBG_WARN, "Menu Exception:  " << e.message());
+  guiPrintDbg(debug::DBG_WARN, "Menu Exception:  " << e.message());
  } catch (...) {
   //Ignore any exception when adding item - the item was just not added
-  printDbg(debug::DBG_WARN, "Unknown Exception");
+  guiPrintDbg(debug::DBG_WARN, "Unknown Exception");
  }
 }
 
 /** Append item (or list) to menu using its name (as specified in configuration).<br>
  Special: if the name is "-" or "", separator is added to menu<br>
  Exceptions are ignored and will result only in the item not added to menu
- @param def name of item (item or list)
+ @param name name of item (item or list)
 */
 void QSMenu::addItem(const QString &name) {
- printDbg(debug::DBG_DBG, "+" << name);
+// guiPrintDbg(debug::DBG_DBG, "+" << name);
  try {
   if (name=="-" || name=="") {
    menu->insertSeparator();
@@ -137,7 +137,7 @@ void QSMenu::addItem(const QString &name) {
   }
   QString line=Menu::readItem(name);
   if (line.isNull()) {//Item does not exist
-   printDbg(debug::DBG_WARN, "Menu item " << name << " doed not exist");
+   guiPrintDbg(debug::DBG_WARN, "Menu item " << name << " doed not exist");
   }
   if (Menu::isList(line)) { //add as list
    msys->loadItem(name,menu);
@@ -146,10 +146,10 @@ void QSMenu::addItem(const QString &name) {
   }
  } catch (InvalidMenuException &e) {
   //Ignore any exception when adding item - the item was just not added
-  printDbg(debug::DBG_WARN, "Menu Exception:  " << e.message());
+  guiPrintDbg(debug::DBG_WARN, "Menu Exception:  " << e.message());
  } catch (...) {
   //Ignore any exception when adding item - the item was just not added
-  printDbg(debug::DBG_WARN, "Unknown Exception");
+  guiPrintDbg(debug::DBG_WARN, "Unknown Exception");
  }
 }
 

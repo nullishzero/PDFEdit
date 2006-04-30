@@ -8,6 +8,7 @@
 #include "property.h"
 #include <iproperty.h>
 #include <qstring.h>
+#include "util.h"
 
 namespace gui {
 
@@ -69,7 +70,7 @@ Property::~Property() {
  of property to 'changed'*/
 void Property::emitChanged() {
  emit propertyChanged(this);
- printDbg(debug::DBG_DBG,"Property was edited: " << name);
+ guiPrintDbg(debug::DBG_DBG,"Property was edited: " << name);
  changed=true;
 }
 

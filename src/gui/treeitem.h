@@ -17,8 +17,8 @@ class TreeItemObserver;//internal class (observer)
 
 class TreeItem : public TreeItemAbstract {
 public:
- static TreeItem* create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
- static TreeItem* create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ static TreeItem* create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL,const QString &nameId=QString::null);
+ static TreeItem* create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL,const QString &nameId=QString::null);
  TreeItem* parent();
  virtual ~TreeItem();
  boost::shared_ptr<IProperty> getObject();
@@ -28,8 +28,8 @@ public:
  virtual void reloadSelf();
  QSCObject* getQSObject();
 protected:
- TreeItem(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItem(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);
+ TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);
  void initObserver();
  void uninitObserver();
 protected:

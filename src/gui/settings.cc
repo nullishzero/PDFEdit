@@ -123,10 +123,10 @@ QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {
  QString absName;
  for(QStringList::Iterator it=path.begin();it!=path.end();++it) {
   absName=*it+"/"+fileName;
-//  printDbg(debug::DBG_DBG,"Looking for " <<fileName << " in: " << *it << " as " << absName);
+//  guiPrintDbg(debug::DBG_DBG,"Looking for " <<fileName << " in: " << *it << " as " << absName);
   if (QFile::exists(absName)) return absName;
  }
- printDbg(debug::DBG_WARN,"File not found: " << fileName);
+ guiPrintDbg(debug::DBG_WARN,"File not found: " << fileName);
  return fileName;
 }
 
@@ -152,19 +152,19 @@ QString Settings::expand(QString s) {
    } else { //Found $VARIABLE
     var=r.cap(1);
     if (var[0]=='{') var=var.mid(1,var.length()-2);
-//    printDbg(debug::DBG_DBG,"Expand: " << var << " in " << s);
+//    guiPrintDbg(debug::DBG_DBG,"Expand: " << var << " in " << s);
     /* home() is special - it is equal to regular $HOME on unixes, but might
      expand to "application data" directory on windows if HOME is not set */
     if (var=="HOME") envVar=QDir::home().path();
     else envVar=getenv(var);
     if (envVar==QString::null) { //variable not found in environment
-//     printDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
+//     guiPrintDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
      envVar="";
     }
    }
-//   printDbg(debug::DBG_DBG,"Expand before: " << s);
+//   guiPrintDbg(debug::DBG_DBG,"Expand before: " << s);
    s=s.replace(pos,r.matchedLength(),envVar);
-//   printDbg(debug::DBG_DBG,"Expand after: " << s);
+//   guiPrintDbg(debug::DBG_DBG,"Expand after: " << s);
    pos+=envVar.length();//Move to end of expanded string
   }
  return s;
@@ -225,7 +225,7 @@ Settings::~Settings() {
  @param win Widget that will have it's size and position stored
  @param name Name of key to be used in configuration */  
 void Settings::saveWindow(QWidget *win,const QString name) {
-// printDbg(debug::DBG_DBG,"save window " << name);
+// guiPrintDbg(debug::DBG_DBG,"save window " << name);
  QString line;
  line+=QString::number(win->width());
  line+=",";
@@ -259,7 +259,7 @@ void Settings::write(const QString &key, int value) {
  @param win Widget that will be resized and moved
  @param name Name of key to be used in configuration */
 void Settings::restoreWindow(QWidget *win,const QString name) {
-// printDbg(debug::DBG_DBG,"restore window " << name);
+// guiPrintDbg(debug::DBG_DBG,"restore window " << name);
  QWidget *desk = QApplication::desktop();
  QString line=read("gui/windowstate/"+name);
  QStringList pos=explode(',',line);
@@ -286,7 +286,7 @@ void Settings::restoreWindow(QWidget *win,const QString name) {
  @param spl Splitter to save positions
  @param name Name of key to be used in configuration */  
 void Settings::saveSplitter(QSplitter *spl,const QString name) {
-// printDbg(debug::DBG_DBG,"save splitter " << name);
+// guiPrintDbg(debug::DBG_DBG,"save splitter " << name);
  QValueList<int> siz=spl->sizes();
  QString line;
  int cnt=siz.size();
@@ -301,7 +301,7 @@ void Settings::saveSplitter(QSplitter *spl,const QString name) {
  @param spl Splitter to be resized
  @param name Name of key to be used in configuration */
 void Settings::restoreSplitter(QSplitter *spl,const QString name) {
-// printDbg(debug::DBG_DBG,"restore splitter " << name);
+// guiPrintDbg(debug::DBG_DBG,"restore splitter " << name);
  QString line=read("gui/windowstate/"+name);
  QStringList pos=explode(',',line);
  int cnt=pos.count();

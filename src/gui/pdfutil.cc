@@ -9,6 +9,7 @@
 #include <qobject.h>
 #include <cobject.h>
 #include <cpdf.h>
+#include "util.h"
 
 namespace util {
 
@@ -81,7 +82,7 @@ bool isRefValid(CPdf *pdf,IndiRef ref) {
  _val.num=ref.num;
  _val.gen=ref.gen;
  if (!cxref->knowsRef(_val)) { //ref not valid
-  printDbg(debug::DBG_DBG,"Unknown reference!");
+  guiPrintDbg(debug::DBG_DBG,"Unknown reference!");
   return false;
  }
  return true;

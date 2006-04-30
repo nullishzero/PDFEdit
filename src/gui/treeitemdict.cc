@@ -15,18 +15,18 @@ using namespace std;
 using namespace util;
 
 /**
- @copydoc TreeItem(TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
+ @copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
-TreeItemDict::TreeItemDict(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemDict::TreeItemDict(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 /**
-@copydoc TreeItem(TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString,QListViewItem *)
+@copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
-TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItem(_data,parent,pdfObj,name,after) {
+TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();

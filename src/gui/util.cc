@@ -71,7 +71,7 @@ void printList(const QStringList &l) {
  QStringList::ConstIterator it=l.begin();
  for (;it!=l.end();++it) { //load all subitems
   QString x=*it;
-  printDbg(debug::DBG_DBG,x);
+  guiPrintDbg(debug::DBG_DBG,x);
  }
 }
 

@@ -12,6 +12,7 @@
 #include <cpage.h>
 #include <qobject.h>
 #include "qspdf.h"
+#include "util.h"
 
 namespace gui {
 
@@ -28,7 +29,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",parent,after) {
  data=_data;
  init(_pdf,name);
  reloadSelf();
@@ -41,7 +42,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QStr
  @param name Name of file - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",parent,after) {
  data=_data;
  init(_pdf,name);
  reloadSelf();
@@ -53,7 +54,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const 
  @param name Name (type) of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString name,QListViewItem *after/*=NULL*/):TreeItemAbstract(parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,parent,after) {
  data=_data;
  initSpec(parent->getObject(),name);
 }
@@ -125,7 +126,7 @@ TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QLi
  if (typ==pageItem) { //Pages - get page given its number
   //name = Page number
   unsigned int i=name.toUInt();
-  printDbg(debug::DBG_DBG,"Adding page by reload() - " << i);
+  guiPrintDbg(debug::DBG_DBG,"Adding page by reload() - " << i);
   return new TreeItemPage(data,obj->getPage(i),this,name,after);
  }
  if (typ==outlineItem) { //Outlines - get specific outline
