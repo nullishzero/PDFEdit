@@ -3,22 +3,32 @@ TEMPLATE = app
 TARGET = pdfedit
 
 # installation paths
-DATA_PATH = /usr/share/pdfedit
-DOC_PATH  = /usr/share/doc/pdfedit
-BIN_PATH  = /usr/bin
+USR_PREFIX= /usr/local
+DATA_PATH = $$USR_PREFIX/share/pdfedit
+DOC_PATH  = $$USR_PREFIX/share/doc/pdfedit
+MAN_PATH  = $$USR_PREFIX/share/man/man1
+BIN_PATH  = $$USR_PREFIX/bin
 
 # installation details
 data.path       = $$DATA_PATH
 data.files      = pdfeditrc
 data_icon.path  = $$DATA_PATH/icon
 data_icon.files = icon/*.png
+data_help.path  = $$DATA_PATH/help
+data_help.files = icon/*.html
 data_lang.path  = $$DATA_PATH/lang
 data_lang.files = lang/*.qm
 doc.path        = $$DOC_PATH
-doc.files       = ../../doc/user/*.html ../../doc/user/*.xml
+doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.*
+doc_kernel.path = $$DOC_PATH/kernel
+doc_kernel.files= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.xml
+doc_kernel_images.path = $$DOC_PATH/kernel/images
+doc_kernel_images.files=../../doc/design/kernel/images/*.png
+man.path	= $$MAN_PATH
+man.file	= ../../doc/user/*.1
 pdfedit.path    = $$BIN_PATH
 pdfedit.files   = pdfedit
-INSTALLS = data_icon data_lang data doc pdfedit
+INSTALLS = data_icon data_lang data_help data doc doc_kernel doc_kernel_images pdfedit man
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator
