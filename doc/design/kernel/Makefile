@@ -4,7 +4,7 @@
 
 .PHONY: clean
 
-docs=observers.html pdfoperators.html cobjects.html
+docs=observers.html pdfoperators.html cobjects.html cpdf.html document_changes.html
 
 all: $(docs)
 
