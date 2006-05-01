@@ -17,7 +17,7 @@ LEX      = flex
 YACC     = yacc
 CFLAGS   = -pipe -Wall -W -g -D_REENTRANT  -DDEBUG
 CXXFLAGS = -pipe -Wall -W -g -W -Wall -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function -D_REENTRANT  -DDEBUG
-INCPATH	 = ./
+INCPATH	 = -I./
 
 .SUFFIXES: .c .o .cpp .cc .cxx .C
 
