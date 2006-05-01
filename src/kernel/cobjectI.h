@@ -42,7 +42,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
 {
 	Checker check; check.objectCreated (this);
-	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Set object's value
 	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);
@@ -56,7 +56,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (Object& o) : value(Value())
 {
 	Checker check; check.objectCreated (this);
-	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Set object's value
 	utils::simpleValueFromXpdfObj<Tp,Value&> (o,value);
@@ -70,7 +70,7 @@ template<PropertyType Tp, typename Checker>
 CObjectSimple<Tp,Checker>::CObjectSimple (const Value& val) : IProperty(), value(val)
 {
 	Checker check; check.objectCreated (this);
-	//printDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(val) constructor.");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(val) constructor.");
 }
 
 
@@ -112,7 +112,7 @@ void
 CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 {
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
-	//printDbg (debug::DBG_DBG,"text:" << strO);
+	//kernelPrintDbg (debug::DBG_DBG,"text:" << strO);
 
 	if (isInValidPdf (this))
 	{
@@ -143,7 +143,7 @@ void
 CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
-	//printDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
+	//kernelPrintDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
 
 	if (isInValidPdf (this))
 	{
@@ -178,7 +178,7 @@ template<PropertyType Tp, typename Checker>
 Object*
 CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 {
-	//printDbg (debug::DBG_DBG,"_makeXpdfObject");
+	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
 }
 
@@ -190,7 +190,7 @@ template<PropertyType Tp, typename Checker>
 IProperty*
 CObjectSimple<Tp,Checker>::doClone () const
 {
-	printDbg (debug::DBG_DBG,"CObjectSimple::doClone ()");
+	kernelPrintDbg (debug::DBG_DBG,"CObjectSimple::doClone ()");
 
 	// Make new complex object
 	// NOTE: We do not want to preserve any IProperty variable
@@ -223,7 +223,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
-	//printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
@@ -236,7 +236,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex (Object& o)
 {
 	Checker check; check.objectCreated (this);
-	//printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(o) constructor.");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<Tp,Value&> (*this, o, value);
@@ -250,7 +250,7 @@ template<PropertyType Tp, typename Checker>
 CObjectComplex<Tp,Checker>::CObjectComplex ()
 {
 	Checker check; check.objectCreated (this);
-	//printDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">() constructor.");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectComplex <" << debug::getStringType<Tp>() << ">() constructor.");
 }
 
 
@@ -277,7 +277,7 @@ void
 CObjectComplex<Tp,Checker>::getAllPropertyNames (Container& container) const
 {
 	STATIC_CHECK ((Tp != pArray), INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
-	//printDbg (debug::DBG_DBG, "getAllPropertyNames()");
+	//kernelPrintDbg (debug::DBG_DBG, "getAllPropertyNames()");
 
 	utils::getAllNames (container, value);
 }
@@ -289,7 +289,7 @@ template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 {
-	//printDbg (debug::DBG_DBG,"getProperty() " << id);
+	//kernelPrintDbg (debug::DBG_DBG,"getProperty() " << id);
 	//
 	// BEWARE using std::find_if with stateful functors !!!!!
 	//
@@ -358,7 +358,7 @@ template<PropertyType Tp, typename Checker>
 void
 CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 {
-	printDbg (debug::DBG_DBG,"delProperty(" << id << ")");
+	kernelPrintDbg (debug::DBG_DBG,"delProperty(" << id << ")");
 
 	//
 	// BEWARE using std::find_if with stateful functors !!!!!
@@ -415,7 +415,7 @@ boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::addProperty (const IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
-	printDbg (debug::DBG_DBG,"addProperty(...)");
+	kernelPrintDbg (debug::DBG_DBG,"addProperty(...)");
 
 	return addProperty (value.size(), newIp);
 }
@@ -430,7 +430,7 @@ boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pArray), INCORRECT_USE_OF_addProperty_FUNCTION);
-	printDbg (debug::DBG_DBG,"addProperty(" << position << ")");
+	kernelPrintDbg (debug::DBG_DBG,"addProperty(" << position << ")");
 
 	//
 	// Check if we add to a valid position
@@ -493,7 +493,7 @@ boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const IProperty& newIp)
 {
 	STATIC_CHECK ((Tp == pDict), INCORRECT_USE_OF_addProperty_FUNCTION);
-	printDbg (debug::DBG_DBG,"addProperty( " << propertyName << ",...)");
+	kernelPrintDbg (debug::DBG_DBG,"addProperty( " << propertyName << ",...)");
 
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
@@ -540,7 +540,7 @@ template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 {
-	printDbg (debug::DBG_DBG, "setProperty(" << id << ")");
+	kernelPrintDbg (debug::DBG_DBG, "setProperty(" << id << ")");
 	
 	//
 	// Find the item we want
@@ -612,7 +612,7 @@ template <PropertyType Tp, typename Checker>
 Object*
 CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 {
-	//printDbg (debug::DBG_DBG,"_makeXpdfObject");
+	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
 	
 	std::string rpr;
 	getStringRepresentation (rpr);
@@ -648,7 +648,7 @@ template<PropertyType Tp, typename Checker>
 IProperty*
 CObjectComplex<Tp,Checker>::doClone () const
 {
-	//printDbg (debug::DBG_DBG,"CObjectComplex::doClone");
+	//kernelPrintDbg (debug::DBG_DBG,"CObjectComplex::doClone");
 	
 	// Make new complex object
 	// NOTE: We do not want to inherit any IProperty variable
@@ -676,7 +676,7 @@ template<PropertyType Tp, typename Checker>
 IProperty::ObserverContext* 
 CObjectComplex<Tp,Checker>::_createContext (boost::shared_ptr<IProperty>& changedIp)
 {
-	//printDbg (debug::DBG_DBG, "");
+	//kernelPrintDbg (debug::DBG_DBG, "");
 
 	// Create the context
 	return new BasicObserverContext (changedIp);
@@ -707,7 +707,7 @@ template<typename Checker>
 CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"");
+	kernelPrintDbg (debug::DBG_DBG,"");
 	assert (objStream == o.getType());
 
 	//   debug \TODO remove
@@ -747,7 +747,7 @@ template<typename Checker>
 CObjectStream<Checker>::CObjectStream (::Object& o)
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"");
+	kernelPrintDbg (debug::DBG_DBG,"");
 
 	// Copy the stream
 	o.copy (&xpdfDict);
@@ -776,7 +776,7 @@ template<typename Checker>
 CObjectStream<Checker>::CObjectStream ()
 {
 	Checker check; check.objectCreated (this);
-	printDbg (debug::DBG_DBG,"");
+	kernelPrintDbg (debug::DBG_DBG,"");
 
 }
 
@@ -791,7 +791,7 @@ template<typename Checker>
 IProperty*
 CObjectStream<Checker>::doClone () const
 {
-	printDbg (debug::DBG_DBG,"CObjectStream::doClone");
+	kernelPrintDbg (debug::DBG_DBG,"CObjectStream::doClone");
 	
 	// Make new stream object
 	// NOTE: We do not want to inherit any IProperty variable
@@ -825,7 +825,7 @@ template<typename Checker>
 void
 CObjectStream<Checker>::getStringRepresentation (std::string& str) const 
 {
-	printDbg (debug::DBG_DBG, "");
+	kernelPrintDbg (debug::DBG_DBG, "");
 
 	assert (!"not supported");
 
@@ -834,7 +834,7 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 	//
 	Buffer tmp;
 	encodeBuffer (tmp);
-	printDbg (debug::DBG_DBG, "Stream length: " << tmp.size());
+	kernelPrintDbg (debug::DBG_DBG, "Stream length: " << tmp.size());
 	
 	// Set the length of the stream	
 	utils::setDoubleInDict (dictionary, std::string ("Length"), tmp.size());
@@ -845,7 +845,7 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 	}catch (ElementNotFoundException&)
 	{
 			// No filter found
-			printDbg (debug::DBG_DBG, "No filter found.");
+			kernelPrintDbg (debug::DBG_DBG, "No filter found.");
 	}
 			
 	// Get dictionary string representation
@@ -920,7 +920,7 @@ CObjectStream<Checker>::_makeXpdfObject () const
 
 	std::string tmp;
 	getStringRepresentation (tmp);
-	//printDbg (debug::DBG_DBG, tmp);
+	//kernelPrintDbg (debug::DBG_DBG, tmp);
 
 	assert (isInValidPdf (this));
 	assert (hasValidRef (this));
@@ -981,7 +981,7 @@ template<typename Checker>
 CObjectStream<Checker>::~CObjectStream ()
 {
 	Checker check; check.objectDeleted (this);
-	printDbg (debug::DBG_DBG,"");
+	kernelPrintDbg (debug::DBG_DBG,"");
 
 	// Free xpdf object
 	xpdfDict.free ();

@@ -265,7 +265,7 @@ private:
 	 */
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
-		printDbg (debug::DBG_DBG, "CObjectSimple");
+		kernelPrintDbg (debug::DBG_DBG, "CObjectSimple");
 		// Do not notify anything if we are not in a valid pdf
 		if (!isInValidPdf (this))
 			return;
@@ -447,7 +447,7 @@ public:
 	 */
 	size_t getPropertyCount () const 
 	{
-		//printDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
+		//kernelPrintDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
 		return value.size();
 	};
  
@@ -861,7 +861,7 @@ public:
 		}catch (ElementNotFoundException&)
 		{
 			// No filter found
-			printDbg (debug::DBG_DBG, "No filter found.");
+			kernelPrintDbg (debug::DBG_DBG, "No filter found.");
 			return;
 		}
 	
@@ -877,7 +877,7 @@ public:
 				name->getPropertyValue (fltr);
 				container.push_back (fltr);
 			
-				printDbg (debug::DBG_DBG, "Filter name:" << fltr);
+				kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
 			}else
 				throw CObjInvalidObject ();
 		//
@@ -898,7 +898,7 @@ public:
 						name->getPropertyValue (fltr);
 						container.push_back (fltr);
 					
-						printDbg (debug::DBG_DBG, "Filter name:" << fltr);
+						kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
 					
 					}else // if (name)
 						throw CObjInvalidObject ();
@@ -1090,7 +1090,7 @@ public:
 		}
 		else
 		{
-				printDbg (debug::DBG_CRIT, "!!!!!!!!!! deleting what was not created !!!!!!!!!!");
+				utilsPrintDbg (debug::DBG_CRIT, "!!!!!!!!!! deleting what was not created !!!!!!!!!!");
 		}
 		#if MEM_CHECKER_OUTPUT
 		_printFooter (std::cerr);
@@ -1487,7 +1487,7 @@ getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
 
 	}else
 	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
 		throw ElementBadTypeException ("getValueFromSimple");
 	}
 }
@@ -1529,7 +1529,7 @@ setValueToSimple (const boost::shared_ptr<IProperty>& ip, const Value& val)
 {
 	if (ItemPType != ip->getType ())
 	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
 		throw ElementBadTypeException ("");
 	}
 
@@ -1553,7 +1553,7 @@ template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)
 {
-	printDbg (debug::DBG_DBG, "dict[" << key << "]");
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << key << "]");
 	
 	// Get the item that is associated with specified key 
 	boost::shared_ptr<IProperty> ip = dict->getProperty (key);
@@ -1565,7 +1565,7 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& 
 	// Check the type
 	if (ItemPType != ip->getType ())
 	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType () << " key[" << key << "]");
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType () << " key[" << key << "]");
 		std::string err= "getTypeFromDictionary() [" + key + "]";
 		throw ElementBadTypeException (err);
 	}
@@ -1620,7 +1620,7 @@ template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
 setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& val)
 {
-	printDbg (debug::DBG_DBG, "dict[" << name << "]");
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << name << "]");
 	
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = dict.getProperty (name);
@@ -1687,7 +1687,7 @@ template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)
 {
-	printDbg (debug::DBG_DBG, "array[" << position << "]");
+	utilsPrintDbg (debug::DBG_DBG, "array[" << position << "]");
 	
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = array->getProperty (position);
@@ -1751,7 +1751,7 @@ template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
 setSimpleValueInArray (const CArray& array, size_t position, const Value& val)
 {
-	printDbg (debug::DBG_DBG, "array[" << position << "]");
+	utilsPrintDbg (debug::DBG_DBG, "array[" << position << "]");
 	
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = array.getProperty (position);
@@ -1817,7 +1817,7 @@ template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 {
-	printDbg (debug::DBG_DBG, "array[" << pos << "]");
+	utilsPrintDbg (debug::DBG_DBG, "array[" << pos << "]");
 	
 	// Get the item that is associated with specified key 
 	boost::shared_ptr<IProperty> ip = array->getProperty (pos);
@@ -1829,7 +1829,7 @@ getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 	// Check the type
 	if (ItemPType != ip->getType ())
 	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
 		throw ElementBadTypeException ("getTypeFromArray()");
 	}
 

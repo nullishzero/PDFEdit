@@ -54,7 +54,7 @@ SimpleGenericOperator::getStringRepresentation (std::string& str) const
 UnknownPdfOperator::UnknownPdfOperator (Operands& opers, const string& opTxt)
 	: opText (opTxt)
 {
-	printDbg (DBG_DBG, opTxt);
+	utilsPrintDbg (DBG_DBG, opTxt);
 
 	//
 	// Store the operands and remove it from opers
@@ -165,7 +165,7 @@ CompositePdfOperator::getStringRepresentation (std::string& str) const
 UnknownCompositePdfOperator::UnknownCompositePdfOperator 
 	(const char* opBegin_, const char* opEnd_) : CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_)
 {
-	printDbg (DBG_DBG, "Unknown composite operator: " << opBegin_ << " " << opEnd_);
+	utilsPrintDbg (DBG_DBG, "Unknown composite operator: " << opBegin_ << " " << opEnd_);
 
 }
 
@@ -193,7 +193,7 @@ InlineImageCompositePdfOperator::InlineImageCompositePdfOperator
 	(const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_) 
 		: CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_), inlineimage (im_)
 {
-	printDbg (DBG_DBG, opBegin_ << " " << opEnd_);
+	utilsPrintDbg (DBG_DBG, opBegin_ << " " << opEnd_);
 }
 
 //

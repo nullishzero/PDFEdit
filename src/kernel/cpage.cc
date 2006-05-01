@@ -32,7 +32,7 @@ using namespace utils;
 //
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 {
-	printDbg (debug::DBG_DBG, "");
+	kernelPrintDbg (debug::DBG_DBG, "");
 
 	// Parse the content stream if found
 	//parseContentStream ();	
@@ -48,7 +48,7 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 Rectangle
 CPage::getMediabox () const
 {
-	printDbg (debug::DBG_DBG, "");
+	kernelPrintDbg (debug::DBG_DBG, "");
 	
 	// Get the array representing media box
 	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
@@ -96,7 +96,7 @@ CPage::getContentStream ()
 void
 CPage::setMediabox (const Rectangle& rc)
 {
-	printDbg (debug::DBG_DBG, " [" << rc << "]");
+	kernelPrintDbg (debug::DBG_DBG, " [" << rc << "]");
 
 	// Get the array representing media box
 	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
@@ -201,7 +201,7 @@ bool CPage::parseContentStream ()
 
 	}catch (ElementNotFoundException&)
 	{
-		printDbg (debug::DBG_DBG, "No content stream found.");
+		kernelPrintDbg (debug::DBG_DBG, "No content stream found.");
 		// No content stream return
 		return false;
 	}
@@ -234,7 +234,7 @@ bool CPage::parseContentStream ()
 			
 		}else // Neither stream nor array
 		{
-			printDbg (debug::DBG_DBG, "Content stream type: " << contents->getType());
+			kernelPrintDbg (debug::DBG_DBG, "Content stream type: " << contents->getType());
 			throw ElementBadTypeException ("Bad content stream type.");
 		}
 	

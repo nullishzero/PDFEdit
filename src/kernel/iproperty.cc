@@ -24,14 +24,14 @@ namespace pdfobjects {
 //
 IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf)
 {
-	//printDbg (debug::DBG_DBG, "IProperty () constructor.");
+	//kernelPrintDbg (debug::DBG_DBG, "IProperty () constructor.");
 	
 	ref.num = ref.gen = 0;
 }
 
 IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf)
 {
-	//printDbg (debug::DBG_DBG, "IProperty () constructor.");
+	//kernelPrintDbg (debug::DBG_DBG, "IProperty () constructor.");
 }
 
 //
@@ -129,7 +129,7 @@ IProperty::unregisterObserver (boost::shared_ptr<const Observer> o)
 			observers.erase (it);
 		else
 		{
-			printDbg (debug::DBG_DBG, "unregisterObserver did not find the element to erase.");
+			kernelPrintDbg (debug::DBG_DBG, "unregisterObserver did not find the element to erase.");
 			ElementNotFoundException ("","");
 		}
 	

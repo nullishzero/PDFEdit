@@ -182,14 +182,14 @@ namespace
 	//
 	void 
 	unknownUpdate (GfxState&, const PdfOperator::Operands&)
-		{ printDbg (debug::DBG_DBG, "Unknown updater."); }
+		{ utilsPrintDbg (debug::DBG_DBG, "Unknown updater."); }
 
 	// "m"
 	void
 	opmUpdate (GfxState& state, const PdfOperator::Operands& args)
 	{
 		assert (2 <= args.size());
-		printDbg (debug::DBG_DBG, "");
+		utilsPrintDbg (debug::DBG_DBG, "");
 		state.moveTo (getDoubleFromIProperty (args[0]), getDoubleFromIProperty (args[1]));
 	}
 	// "Td"
@@ -206,7 +206,7 @@ namespace
 	opTmUpdate (GfxState& state, const PdfOperator::Operands& args)
 	{
 		assert (6 <= args.size ());
-		printDbg (debug::DBG_DBG, "");
+		utilsPrintDbg (debug::DBG_DBG, "");
 		state.setTextMat (	getDoubleFromIProperty (args[0]), 
 							getDoubleFromIProperty (args[1]),
 							getDoubleFromIProperty (args[2]), 
@@ -220,7 +220,7 @@ namespace
 	void
 	opBTUpdate (GfxState& state, const PdfOperator::Operands&)
 	{
-		printDbg (debug::DBG_DBG, "");
+		utilsPrintDbg (debug::DBG_DBG, "");
 		state.setTextMat (1, 0, 0, 1, 0, 0);
 		state.textMoveTo (0, 0);
 	}
@@ -297,7 +297,7 @@ namespace
 	opTfUpdate (GfxState& state, const PdfOperator::Operands& args)
 	{
 		assert (1 <= args.size ());
-		printDbg (debug::DBG_DBG, "NOT IMPLEMENTED YET");
+		utilsPrintDbg (debug::DBG_DBG, "NOT IMPLEMENTED YET");
 		GfxFont *font = NULL;
 
 		//if (!(font = res->lookupFont(args[0].getName())))
@@ -707,7 +707,7 @@ namespace
 			(*it)->getStringRepresentation (tmp);
 			str += " " + tmp;
 		}
-		printDbg (DBG_DBG, "Operands: " << str);
+		utilsPrintDbg (DBG_DBG, "Operands: " << str);
 		
 		size_t argNum = static_cast<size_t> ((ops.argNum > 0) ? ops.argNum : -ops.argNum);
 			
@@ -718,7 +718,7 @@ namespace
 		if (((ops.argNum >= 0) && (operands.size() != argNum)) 
 			 || ((ops.argNum <  0) && (operands.size() > argNum)) )
 		{
-			printDbg (DBG_ERR, "Number of operands mismatch.. expected " << ops.argNum << " got: " << operands.size());
+			utilsPrintDbg (DBG_ERR, "Number of operands mismatch.. expected " << ops.argNum << " got: " << operands.size());
 			return false;
 		}
 		
@@ -733,7 +733,7 @@ namespace
 		{			
   			if (!isBitSet(ops.types[pos], (*it)->getType()))
 			{
-				printDbg (DBG_ERR, "Bad " << pos << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[pos]);
+				utilsPrintDbg (DBG_ERR, "Bad " << pos << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[pos]);
 				return false;
 			}
 		}
@@ -878,14 +878,14 @@ namespace
 					return shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
 				
 				assert (chcktp);
-				printDbg (DBG_DBG, "Operator found. " << chcktp->name);
+				utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
 
 				//
 				// SPECIAL CASE for inline image (stream within a text stream)
 				//
 				if ( 0 == strncmp (chcktp->name, "BI", 2))
 				{
-					printDbg (debug::DBG_DBG, "");
+					utilsPrintDbg (debug::DBG_DBG, "");
 					
 					shared_ptr<CInlineImage> inimg (getInlineImage (parser));
 					shared_ptr<PdfOperator> composite 
@@ -1062,7 +1062,7 @@ CContentStream::CContentStream (shared_ptr<CStream> stream, Object* obj) : _chan
 {
 	// not implemented yet
 	assert (obj != NULL);
-	printDbg (DBG_DBG, "Creating content stream.");
+	kernelPrintDbg (DBG_DBG, "Creating content stream.");
 
 	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
 	// the problem is with parsed pdfoperators
@@ -1090,7 +1090,7 @@ CContentStream::CContentStream (ContentStreams& streams, Object* obj) : _changed
 		// the problem is with parsed pdfoperators
 		assert (NULL != (*it)->getPdf());
 	}
-	printDbg (DBG_DBG, "Creating content stream.");
+	kernelPrintDbg (DBG_DBG, "Creating content stream.");
 	
 	// If streams are not empty, save and parse them
 	if (!streams.empty())
@@ -1112,7 +1112,7 @@ CContentStream::CContentStream (ContentStreams& streams, Object* obj) : _changed
 void
 CContentStream::getStringRepresentation (string& str) const
 {
-	printDbg (DBG_DBG, " ()");
+	kernelPrintDbg (DBG_DBG, " ()");
 	string frst, tmp;
 
 	str.clear ();

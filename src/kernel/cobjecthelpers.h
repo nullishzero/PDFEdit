@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/05/01 13:53:06  hockm0bm
+ * new style printDbg
+ *
  * Revision 1.22  2006/04/25 22:16:16  misuj1am
  *
  * -- changes to MAKE it compile on my gcc [(GCC) 4.0.2 20051125 (Red Hat 4.0.2-8)]
@@ -314,13 +317,13 @@ public:
 			// simply ignore such values
 			if(comp(searched, entry.second))
 			{
-				printDbg(DBG_DBG, "Element matches at id="<<entry.first);
+				utilsPrintDbg(DBG_DBG, "Element matches at id="<<entry.first);
 				container.push_back(entry.first);
 			}
 		}catch(NotImplementedException & e)
 		{
 			// type of element is not supported
-			printDbg(DBG_WARN, "Element comparing not supported for typ="<<entry.second->getType()<<". Ignoring element.");
+			utilsPrintDbg(DBG_WARN, "Element comparing not supported for typ="<<entry.second->getType()<<". Ignoring element.");
 		}
 	}
 
@@ -367,7 +370,7 @@ using namespace std;
 using namespace boost;
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	utilsPrintDbg(DBG_DBG, "");
 
 	// collects all properties identificators which are same as child
 	// uses forEach with IdCollector functor

@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/05/01 13:53:07  hockm0bm
+ * new style printDbg
+ *
  * Revision 1.13  2006/04/28 17:16:51  hockm0bm
  * * reserveRef bug fixes
  * 	- reusing didn't check whether reference is in newStorage
@@ -60,13 +63,13 @@ void CXref::cleanUp()
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	// deallocates changed storage
 	// goes through all elemenents, erases all of them and deallocates value
 	// returned from remove object (iterators are not invalidated by remove
 	// method)
-	printDbg(DBG_DBG, "Deallocating changedStorage");
+	kernelPrintDbg(DBG_DBG, "Deallocating changedStorage");
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
 	for(i=changedStorage.begin(); i!= changedStorage.end(); i++)
 	{
@@ -77,7 +80,7 @@ using namespace debug;
 		if(!entry)
 		{
 			// this shouldn't happen
-			printDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] doesn't have entry.");
+			kernelPrintDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] doesn't have entry.");
 			continue;
 		}
 
@@ -85,38 +88,38 @@ using namespace debug;
 		if(!entry->object)
 		{
 			// this shouldn't happen
-			printDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] entry doesn't have an object");
+			kernelPrintDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] entry doesn't have an object");
 			delete entry;
 			continue;
 		}
 
-		printDbg(DBG_DBG, "Deallocating entry for ref=["<<ref.num<<", "<<ref.gen<<"]");
+		kernelPrintDbg(DBG_DBG, "Deallocating entry for ref=["<<ref.num<<", "<<ref.gen<<"]");
 		entry->object->free();
 		gfree(entry->object);
 		delete entry;
 	}
-	printDbg(DBG_DBG, "changedStorage cleaned up");
+	kernelPrintDbg(DBG_DBG, "changedStorage cleaned up");
 
-	printDbg(DBG_DBG, "Cleaning newStorage");
+	kernelPrintDbg(DBG_DBG, "Cleaning newStorage");
 	// newStorage doesn't need special entries deallocation
 	newStorage.clear();
-	printDbg(DBG_DBG, "newStorage cleaned up");
+	kernelPrintDbg(DBG_DBG, "newStorage cleaned up");
 }
 
 CXref::~CXref()
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 	/* FIXME: uncoment when cache is ready.
 	if(cache)
 	{
-		printDbg(DBG_INFO, "Deallocating cache");
+		kernelPrintDbg(DBG_INFO, "Deallocating cache");
 		delete cache;
 	}
 	*/
 	
-	printDbg(DBG_INFO, "Deallocating internal structures");
+	kernelPrintDbg(DBG_INFO, "Deallocating internal structures");
 	cleanUp();
 	
 }
@@ -125,7 +128,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "ref=["<< ref.num<<", "<<ref.gen<< "]");
+	kernelPrintDbg(DBG_DBG, "ref=["<< ref.num<<", "<<ref.gen<< "]");
 
 	// discards from cache
 	/* FIXME uncoment if cache is available
@@ -146,7 +149,7 @@ using namespace debug;
 	if(!changedEntry)
 	{
 		changedEntry=new ObjectEntry();
-		printDbg(DBG_DBG, "object is changed for the first time, creating changedEntry");
+		kernelPrintDbg(DBG_DBG, "object is changed for the first time, creating changedEntry");
 	}
 	changedEntry->object=instance->clone();
 	changedEntry->stored=false;
@@ -158,7 +161,7 @@ using namespace debug;
 	if(newStorage.contains(ref))
 	{
 		newStorage.put(ref, true);
-		printDbg(DBG_DBG, "newStorage updated");
+		kernelPrintDbg(DBG_DBG, "newStorage updated");
 	}
 	
 	// returns old version
@@ -170,7 +173,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "name="<<name<<" value type="<<value->getType());
+	kernelPrintDbg(DBG_DBG, "name="<<name<<" value type="<<value->getType());
 	
 	Dict * trailer = trailerDict.getDict(); 
 
@@ -192,7 +195,7 @@ using namespace debug;
 	int i=1;
 	int num, gen;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 	
 	// goes through entries array in XRef class (xref entries)
 	// and reuses first free entry with its gen number.
@@ -212,7 +215,7 @@ using namespace debug;
 		// according specification
 		if(entries[i].gen>=MAXOBJGEN)
 		{
-			printDbg(DBG_DBG, "Entry ["<<i<<", "<<entries[i].gen<<"] can't be reused.");
+			kernelPrintDbg(DBG_DBG, "Entry ["<<i<<", "<<entries[i].gen<<"] can't be reused.");
 			continue;
 		}
 
@@ -221,20 +224,20 @@ using namespace debug;
 		Ref ref={i, entries[i].gen};
 		if(newStorage.contains(ref))
 		{
-			printDbg(DBG_DBG, "Cannot reuse entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
+			kernelPrintDbg(DBG_DBG, "Cannot reuse entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
 			continue;
 		}
 
 		// Entry is free and not used yet. 
 		if(ref.gen)
 		{
-			printDbg(DBG_DBG, "Reusing entry ["<<ref.num<<", "<<ref.gen<<"]");
+			kernelPrintDbg(DBG_DBG, "Reusing entry ["<<ref.num<<", "<<ref.gen<<"]");
 		}
 		else
 		{
 			// gen is 0, so entry couldn't have been removed - so say that it is
 			// new entry
-			printDbg(DBG_DBG, "Using new entry ["<<ref.num<<", "<<ref.gen<<"]");
+			kernelPrintDbg(DBG_DBG, "Using new entry ["<<ref.num<<", "<<ref.gen<<"]");
 		}
 			
 		num=ref.num;
@@ -252,7 +255,7 @@ using namespace debug;
 			Ref ref={i, 0};
 			if(!newStorage.contains(ref))
 			{
-				printDbg(DBG_DBG, "Cannot use new entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
+				kernelPrintDbg(DBG_DBG, "Cannot use new entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
 				num=i;
 				break;
 			}
@@ -269,7 +272,7 @@ using namespace debug;
 
 		// ok, we have new num and gen is 0, because object is new
 		gen=0;
-		printDbg(DBG_DBG, "Using new entry ["<<num<<", "<<gen<<"]");
+		kernelPrintDbg(DBG_DBG, "Using new entry ["<<num<<", "<<gen<<"]");
 	}
 	
 	// Registers newly created reference to the newStorage.
@@ -277,7 +280,7 @@ using namespace debug;
 	// initialized value is overwritten by change method.
 	::Ref objRef={num, gen};
 	newStorage.put(objRef, false);
-	printDbg(DBG_INFO, "ref=["<<num<<", "<<gen<<"]"<<" registered to newStorage");
+	kernelPrintDbg(DBG_INFO, "ref=["<<num<<", "<<gen<<"]"<<" registered to newStorage");
 
 	return objRef;
 }
@@ -286,7 +289,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "type="<<type);
+	kernelPrintDbg(DBG_DBG, "type="<<type);
 	// reserves new reference for object 
 	::Ref objRef=reserveRef();
 	
@@ -344,7 +347,7 @@ using namespace debug;
 	if(ref)
 		*ref=objRef;
 
-	printDbg(DBG_INFO, "new object created and initialized");
+	kernelPrintDbg(DBG_INFO, "new object created and initialized");
 	return obj;
 }
 
@@ -373,10 +376,10 @@ using namespace debug;
 	if(!obj1 || !obj2)
 	{
 		if(!obj1)
-			printDbg(DBG_ERR, "obj1 is null");
+			kernelPrintDbg(DBG_ERR, "obj1 is null");
 		
 		if(!obj2)
-			printDbg(DBG_ERR, "obj2 is null");
+			kernelPrintDbg(DBG_ERR, "obj2 is null");
 		return false;
 	}
 	 
@@ -388,19 +391,19 @@ using namespace debug;
 	// checks indirect
 	if(type1==objRef)
 	{
-		printDbg(DBG_DBG, "obj1 is reference - need to dereference");
+		kernelPrintDbg(DBG_DBG, "obj1 is reference - need to dereference");
 		fetch(dObj1.getRef().num, dObj1.getRef().gen, &dObj1);
 		type1=dObj1.getType();
-		printDbg(DBG_DBG, "obj1 target type="<< type1);
+		kernelPrintDbg(DBG_DBG, "obj1 target type="<< type1);
 		// has to free object
 		dObj1.free();
 	}
 	if(type2==objRef)
 	{
-		printDbg(DBG_DBG, "obj2 is reference - need to dereference");
+		kernelPrintDbg(DBG_DBG, "obj2 is reference - need to dereference");
 		fetch(dObj2.getRef().num, dObj2.getRef().gen, &dObj2);
 		type2=dObj2.getType();
-		printDbg(DBG_DBG, "obj2 target type="<< type2);
+		kernelPrintDbg(DBG_DBG, "obj2 target type="<< type2);
 		// has to free object
 		dObj2.free();
 	}
@@ -416,7 +419,7 @@ using namespace debug;
 	if(!ret && (obj1->getType() == objRef && type1 == objNull))
 	{
 		::Ref ref=obj1->getRef();
-		printDbg(DBG_WARN, "obj1 ref=["<<ref.num<<", "<<ref.gen<<"] is not present in pdf. type2="<<type2<<" is safe");
+		kernelPrintDbg(DBG_WARN, "obj1 ref=["<<ref.num<<", "<<ref.gen<<"] is not present in pdf. type2="<<type2<<" is safe");
 		return true;
 	}
 
@@ -427,7 +430,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "name="<<name);
+	kernelPrintDbg(DBG_DBG, "name="<<name);
 	Dict * trailer = trailerDict.getDict();
 
 	// lookupNF doesn't create deep copy, so 
@@ -447,7 +450,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 	// gets object
 	::Object docObj;
 	XRef::getDocInfo(&docObj);
@@ -465,7 +468,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 	// gets object
 	::Object docObj;
 	XRef::getDocInfoNF(&docObj);
@@ -485,7 +488,7 @@ using namespace debug;
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "num="<<num<<" gen="<<gen);
+	kernelPrintDbg(DBG_DBG, "num="<<num<<" gen="<<gen);
 	
 	::Ref ref={num, gen};
 	
@@ -494,7 +497,7 @@ using namespace debug;
 	/*
 	if(cache)
 	{
-		printDbg(DBG_INFO, "[num="<<num<<" gen"<<gen<<"] is cached");
+		kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen"<<gen<<"] is cached");
 	}
 	*/
 	
@@ -502,7 +505,7 @@ using namespace debug;
 	ObjectEntry * entry=changedStorage.get(ref);
 	if(entry)
 	{
-		printDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is changed - using changedStorage");
+		kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is changed - using changedStorage");
 		
 		// object has been changed
 		::Object * deepCopy=entry->object->clone();
@@ -518,7 +521,7 @@ using namespace debug;
 		return obj;
 	}
 
-	printDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is not changed - using Xref");
+	kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is not changed - using Xref");
 	// delegates to original implementation
 	obj=XRef::fetch(num, gen, obj);
 
@@ -526,7 +529,7 @@ using namespace debug;
 	/* FIXME uncoment, when cache is ready
 	if(cache && obj->getType()!=objNull)
 	{
-		printDbg(DBG_DBG, "Caching object "[num="<<num<<" gen="<<gen<<"]");
+		kernelPrintDbg(DBG_DBG, "Caching object "[num="<<num<<" gen="<<gen<<"]");
 		cache->put(ref, obj->clone());
 	}
 	*/   
@@ -537,7 +540,7 @@ int CXref::getNumObjects()
 { 
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	size_t newSize=0;
 	ObjectStorage< ::Ref, bool, RefComparator>::Iterator begin, i;
@@ -546,7 +549,7 @@ using namespace debug;
 		if(i->second)
 			newSize++;
 
-	printDbg(DBG_INFO, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);
+	kernelPrintDbg(DBG_INFO, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);
 	return XRef::getNumObjects() + newSize;
 }
 
@@ -555,19 +558,19 @@ void CXref::reopen(size_t xrefOff)
 {
 using namespace debug;
 
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	// clears all object storages
-	printDbg(DBG_INFO, "Destroying CXref internals");
+	kernelPrintDbg(DBG_INFO, "Destroying CXref internals");
 	cleanUp();
 
 	// clears XRef internals and forces to fill them again
-	printDbg(DBG_INFO, "Destroing XRef internals");
+	kernelPrintDbg(DBG_INFO, "Destroing XRef internals");
 	XRef::destroyInternals();
-	printDbg(DBG_INFO, "Initializes XRef internals");
+	kernelPrintDbg(DBG_INFO, "Initializes XRef internals");
 	XRef::initInternals(xrefOff);
 
 	// sets lastXRefPos to xrefOff, because initRevisionSpecific doesn't do it
 	lastXRefPos=xrefOff;
-	printDbg(DBG_DBG, "New lastXRefPos value="<<lastXRefPos);
+	kernelPrintDbg(DBG_DBG, "New lastXRefPos value="<<lastXRefPos);
 }

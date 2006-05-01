@@ -256,7 +256,7 @@ namespace {
 				if (objArray != array.getType())
 					throw ElementBadTypeException ("Array reader got xpdf object that is not array.");
 				assert (0 <= array.arrayGetLength ());
-				printDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
+				utilsPrintDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 				
 				CPdf* pdf = ip.getPdf ();
 				Object obj;
@@ -302,7 +302,7 @@ namespace {
 				if (objDict != dict.getType())
 					throw ElementBadTypeException ("Dict reader got xpdf object that is not dict.");
 				assert (0 <= dict.dictGetLength ());
-				printDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
+				utilsPrintDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 				
 				CPdf* pdf = ip.getPdf ();
 				Object obj;
@@ -366,7 +366,7 @@ namespace {
 		void
 		simpleXpdfObjToString (Object& obj,string& str)
 		{
-			printDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
+			utilsPrintDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
 
 			ostringstream oss;
 
@@ -420,7 +420,7 @@ namespace {
 		complexXpdfObjToString (Object& obj, string& str)
 		{
 			
-			printDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
+			utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 			ostringstream oss;
 			Object o;
@@ -579,7 +579,7 @@ createObjFromXpdfObj (Object& obj)
 				return new CStream (obj);
 
 			default:
-				printDbg (debug::DBG_PANIC, "Bad type: " << obj.getTypeName () );
+				utilsPrintDbg (debug::DBG_PANIC, "Bad type: " << obj.getTypeName () );
 				assert (!"Bad type.");
 				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
@@ -726,8 +726,8 @@ simpleValueFromString (const std::string& str, IndiRef& val)
 Object*
 xpdfObjFromString (const std::string& str, XRef* xref)
 {
-	//printDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
-	printDbg (debug::DBG_DBG,"xpdfObjFromString size " << str.size());
+	//utilsPrintDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
+	utilsPrintDbg (debug::DBG_DBG,"xpdfObjFromString size " << str.size());
 	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.
@@ -896,7 +896,7 @@ template<>
 void
 complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
 {
-		printDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
+		utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
 		
 		ostringstream oss;
 
@@ -926,7 +926,7 @@ template<>
 void
 complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
 {
-	printDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
+	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
 
 	// start tag
 	str = CDICT_PREFIX;

@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/05/01 13:53:08  hockm0bm
+ * new style printDbg
+ *
  * Revision 1.13  2006/04/27 18:21:09  hockm0bm
  * * deallocation of Object corrected
  * * changeRevision
@@ -104,11 +107,11 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 {
 	bool reinicialization=false;
 
-	printDbg(DBG_DBG, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType());
+	kernelPrintDbg(DBG_DBG, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType());
 
 	if(mode==paranoid)
 	{
-		printDbg(DBG_DBG, "we are in paranoid mode");
+		kernelPrintDbg(DBG_DBG, "we are in paranoid mode");
 		// reference known test
 		if(!knowsRef(ref))
 		{
@@ -116,7 +119,7 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 			// which is not changed after initialization
 			if(!(reinicialization=newStorage.contains(ref)))
 			{
-				printDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<"] is unknown");
+				kernelPrintDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<"] is unknown");
 				return false;
 			}
 		}
@@ -134,7 +137,7 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 			original.free();
 			if(!safe)
 			{
-				printDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType()
+				kernelPrintDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType()
 						<<" is not compatible with original type="<<originalType);
 				return false;
 			}
@@ -146,19 +149,19 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 
 void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 {
-	printDbg(DBG_DBG, "ref=["<< num<<", "<<gen<<"]");
+	kernelPrintDbg(DBG_DBG, "ref=["<< num<<", "<<gen<<"]");
 
 	if(revision)
 	{
 		// we are in later revision, so no changes can be
 		// done
-		printDbg(DBG_ERR, "no changes available. revision="<<revision);
+		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
 	if(pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
-		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
@@ -167,7 +170,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	// paranoid checking
 	if(!paranoidCheck(ref, obj))
 	{
-		printDbg(DBG_ERR, "paranoid check for ref=["<< num<<", "<<gen<<"] not successful");
+		kernelPrintDbg(DBG_ERR, "paranoid check for ref=["<< num<<", "<<gen<<"] not successful");
 		throw ElementBadTypeException("" /* FIXME "[" << num << ", " <<gen <<"]" */);
 	}
 
@@ -177,18 +180,18 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 
 ::Object * XRefWriter::changeTrailer(const char * name, ::Object * value)
 {
-	printDbg(DBG_DBG, "name="<<name);
+	kernelPrintDbg(DBG_DBG, "name="<<name);
 	if(revision)
 	{
 		// we are in later revision, so no changes can be
 		// done
-		printDbg(DBG_ERR, "no changes available. revision="<<revision);
+		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
 	if(pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
-		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 		
@@ -198,7 +201,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	{
 		::Object original;
 		
-		printDbg(DBG_DBG, "mode=paranoid type safety is checked");
+		kernelPrintDbg(DBG_DBG, "mode=paranoid type safety is checked");
 		// gets original value of value
 		Dict * dict=trailerDict.getDict();
 		dict->lookupNF(name, &original);
@@ -206,7 +209,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		original.free();
 		if(!safe)
 		{
-			printDbg(DBG_ERR, "type safety error");
+			kernelPrintDbg(DBG_ERR, "type safety error");
 			throw ElementBadTypeException(name);
 		}
 	}
@@ -217,7 +220,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 
 ::Ref XRefWriter::reserveRef()
 {
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	// checks read-only mode
 	
@@ -225,13 +228,13 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	{
 		// we are in later revision, so no changes can be
 		// done
-		printDbg(DBG_ERR, "no changes available. revision="<<revision);
+		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
 	if(pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
-		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
@@ -243,7 +246,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 
 ::Object * XRefWriter::createObject(::ObjType type, ::Ref * ref)
 {
-	printDbg(DBG_DBG, "type="<<type);
+	kernelPrintDbg(DBG_DBG, "type="<<type);
 
 	// checks read-only mode
 	
@@ -251,13 +254,13 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	{
 		// we are in later revision, so no changes can be
 		// done
-		printDbg(DBG_ERR, "no changes available. revision="<<revision);
+		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
 	if(pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
-		printDbg(DBG_ERR, "pdf is in read-only mode.");
+		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
@@ -288,7 +291,7 @@ void buildXref(OffsetTab & table, StreamWriter & stream)
 {
 using namespace std;
 
-	printDbg(DBG_DBG, "");
+	utilsPrintDbg(DBG_DBG, "");
 	
 	// subsection table type
 	// 	- key is object number of subsection leader
@@ -306,7 +309,7 @@ using namespace std;
 	SubSectionTab subSectionTable;
 	SubSectionTab::iterator sub=subSectionTable.begin();
 	
-	printDbg(DBG_DBG, "Creating subsection table");
+	utilsPrintDbg(DBG_DBG, "Creating subsection table");
 	
 	// goes through rest entries of offset table
 	for(OffsetTab::iterator i=table.begin(); i!=table.end(); i++)
@@ -324,7 +327,7 @@ using namespace std;
 			// condition after addition
 			if(num == sub->first + (sub->second).size())
 			{
-				printDbg(DBG_DBG, "Appending num="<<num<<" to section starting with num="<<sub->first);
+				utilsPrintDbg(DBG_DBG, "Appending num="<<num<<" to section starting with num="<<sub->first);
 				(sub->second).push_back(EntryType(off, gen));
 				continue;
 			}
@@ -335,7 +338,7 @@ using namespace std;
 		EntriesType entries;
 		entries.push_back(EntryType(off, gen));
 		pair<SubSectionTab::iterator, bool> ret=subSectionTable.insert(pair<int, EntriesType>(num, entries));
-		printDbg(DBG_DBG, "New subsection created with starting num="<<num);
+		utilsPrintDbg(DBG_DBG, "New subsection created with starting num="<<num);
 		sub=ret.first;
 	}
 
@@ -347,14 +350,14 @@ using namespace std;
 	// lenght
 	char xrefRow[XREFROWLENGHT];
 	memset(xrefRow, '\0', sizeof(xrefRow));
-	printDbg(DBG_DBG, "Writing "<<subSectionTable.size()<<" subsections");
+	utilsPrintDbg(DBG_DBG, "Writing "<<subSectionTable.size()<<" subsections");
 	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++)
 	{
 		// at first writes head object number and number of elements in the
 		// subsection
 		EntriesType & entries=i->second;
 		int startNum=i->first;
-		printDbg(DBG_DBG, "Starting subsection with startPos="<<startNum<<" and size="<<entries.size());
+		utilsPrintDbg(DBG_DBG, "Starting subsection with startPos="<<startNum<<" and size="<<entries.size());
 
 		snprintf(xrefRow, sizeof(xrefRow)-1, "%d %d", startNum, (int)entries.size());
 		stream.putLine(xrefRow);
@@ -378,12 +381,12 @@ using namespace std;
 
 void XRefWriter::saveChanges(bool newRevision)
 {
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	// if changedStorage is empty, there is nothing to do
 	if(changedStorage.size()==0)
 	{
-		printDbg(DBG_INFO, "Nothing to be saved - changedStorage is empty");
+		kernelPrintDbg(DBG_INFO, "Nothing to be saved - changedStorage is empty");
 		return;
 	}
 	
@@ -408,7 +411,7 @@ void XRefWriter::saveChanges(bool newRevision)
 		::Ref ref=i->first;
 		// associate given reference with actual position.
 		offTable.insert(OffsetTab::value_type(ref, streamWriter->getPos()));		
-		printDbg(DBG_DBG, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] stored at offset="<<streamWriter->getPos());
+		kernelPrintDbg(DBG_DBG, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] stored at offset="<<streamWriter->getPos());
 		
 		// stores PDF representation of object to current position which is
 		// after moved behind written object
@@ -449,7 +452,7 @@ void XRefWriter::saveChanges(bool newRevision)
 	xpdfObjToString(trailerDict, objPdfFormat);
 	streamWriter->putLine(TRAILER_KEYWORD);
 	streamWriter->putLine(objPdfFormat.c_str());
-	printDbg(DBG_DBG, "Trailer saved");
+	kernelPrintDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table
 	// TODO adds also comment with time and date of creation
@@ -461,14 +464,14 @@ void XRefWriter::saveChanges(bool newRevision)
 	// Finaly puts %%EOF behind but keeps position of marker start
 	size_t pos=streamWriter->getPos();
 	streamWriter->putLine(EOFMARKER);
-	printDbg(DBG_DBG, "PDF end of file marker saved");
+	kernelPrintDbg(DBG_DBG, "PDF end of file marker saved");
 	
 	// if new revision should be created, moves storePos at PDF end of file
 	// marker position and forces CXref reopen to handle new revision - all
 	// chnaged objects are stored in file now.
 	if(newRevision)
 	{
-		printDbg(DBG_INFO, "Saving changes as new revision.");
+		kernelPrintDbg(DBG_INFO, "Saving changes as new revision.");
 		storePos=pos;
 
 		// forces reinitialization of XRef and CXref internal structures from
@@ -480,17 +483,17 @@ void XRefWriter::saveChanges(bool newRevision)
 		revisions.insert(revisions.begin(), xrefPos);
 	}
 
-	printDbg(DBG_DBG, "finished");
+	kernelPrintDbg(DBG_DBG, "finished");
 }
 
 void XRefWriter::collectRevisions()
 {
-	printDbg(DBG_DBG, "");
+	kernelPrintDbg(DBG_DBG, "");
 
 	// clears revisions if non empty
 	if(revisions.size())
 	{
-		printDbg(DBG_DBG, "Clearing revisions container.");
+		kernelPrintDbg(DBG_DBG, "Clearing revisions container.");
 		revisions.clear();
 	}
 
@@ -502,7 +505,7 @@ void XRefWriter::collectRevisions()
 
 	do
 	{
-		printDbg(DBG_DBG, "XRef offset for "<<revisions.size()<<" revision is"<<off);
+		kernelPrintDbg(DBG_DBG, "XRef offset for "<<revisions.size()<<" revision is"<<off);
 		// pushes current offset as last revision
 		revisions.push_back(off);
 
@@ -513,12 +516,12 @@ void XRefWriter::collectRevisions()
 		if(prev.getType()==objNull)
 		{
 			// objNull doesn't need free
-			printDbg(DBG_DBG, "No previous revision.");
+			kernelPrintDbg(DBG_DBG, "No previous revision.");
 			break;
 		}
 		if(prev.getType()!=objInt)
 		{
-			printDbg(DBG_DBG, "Prev doesn't have int value. type="<<prev.getType()<<". Assuming no more revisions.");
+			kernelPrintDbg(DBG_DBG, "Prev doesn't have int value. type="<<prev.getType()<<". Assuming no more revisions.");
 			prev.free();
 			break;
 		}
@@ -539,7 +542,7 @@ void XRefWriter::collectRevisions()
 			if(strstr(buffer, STARTXREF_KEYWORD))
 			{
 				// we have reached startxref keyword and haven't found trailer
-				printDbg(DBG_WARN, STARTXREF_KEYWORD<<" found but no trailer.");
+				kernelPrintDbg(DBG_WARN, STARTXREF_KEYWORD<<" found but no trailer.");
 				cont=false;
 				break;
 			}
@@ -564,7 +567,7 @@ void XRefWriter::collectRevisions()
 		{
 			// stream returned NULL, which means that no more data in stream is
 			// available
-			printDbg(DBG_DBG, "end of stream but no trailer found");
+			kernelPrintDbg(DBG_DBG, "end of stream but no trailer found");
 			cont=false;
 		}
 		
@@ -576,25 +579,25 @@ void XRefWriter::collectRevisions()
 	trailer->free();
 	gfree(trailer);
 
-	printDbg(DBG_INFO, "This document contains "<<revisions.size()<<" revisions.");
+	kernelPrintDbg(DBG_INFO, "This document contains "<<revisions.size()<<" revisions.");
 }
 
 void XRefWriter::changeRevision(unsigned revNumber)
 {
-	printDbg(DBG_DBG, "revNumber="<<revNumber);
+	kernelPrintDbg(DBG_DBG, "revNumber="<<revNumber);
 	
 	// change to same revision
 	if(revNumber==revision)
 	{
 		// nothing to do, we are already here
-		printDbg(DBG_INFO, "Revision changed to "<<revNumber);
+		kernelPrintDbg(DBG_INFO, "Revision changed to "<<revNumber);
 		return;
 	}
 	
 	// constrains check
 	if(revNumber>revisions.size()-1)
 	{
-		printDbg(DBG_ERR, "unkown revision with number="<<revNumber);
+		kernelPrintDbg(DBG_ERR, "unkown revision with number="<<revNumber);
 		// TODO throw an exception
 		return;
 	}
@@ -606,7 +609,7 @@ void XRefWriter::changeRevision(unsigned revNumber)
 
 	// everything ok, so current revision can be set
 	revision=revNumber;
-	printDbg(DBG_INFO, "Revision changed to "<<revision);
+	kernelPrintDbg(DBG_INFO, "Revision changed to "<<revision);
 }
 
 size_t XRefWriter::getRevisionEnd()const
@@ -642,11 +645,11 @@ void XRefWriter::cloneRevision(FILE * file)const
 {
 using namespace debug;
 
-	printDbg(DBG_ERR, "");
+	kernelPrintDbg(DBG_ERR, "");
 
 	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(str);
 	size_t revisionEOF=getRevisionEnd();
 
-	printDbg(DBG_DBG, "Copies until "<<revisionEOF<<" offset");
+	kernelPrintDbg(DBG_DBG, "Copies until "<<revisionEOF<<" offset");
 	streamWriter->clone(file, 0, revisionEOF);
 }

@@ -68,7 +68,7 @@ public:
 				 const PdfOpPosComparator& cmp, 
 				 GfxState& state)
 	{
-		printDbg (debug::DBG_DBG, "");
+		utilsPrintDbg (debug::DBG_DBG, "");
 		
 		while (!it.isEnd ())
 		{
@@ -85,7 +85,7 @@ public:
 			std::string strop;
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
-			printDbg (debug::DBG_DBG, rc << " " << frst << " " << strop);
+			utilsPrintDbg (debug::DBG_DBG, rc << " " << frst << " " << strop);
 			*//////////////////
 
 			if (cmp(rc))
@@ -106,7 +106,7 @@ public:
 			std::string strop;
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
-			printDbg (debug::DBG_DBG, frst << " " << strop);
+			utilsPrintDbg (debug::DBG_DBG, frst << " " << strop);
 		}
 		/////////////////
 
@@ -196,7 +196,7 @@ public:
 	template<typename OpContainer, typename PdfOpPosComparator>
 	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state) const
 	{
-		printDbg (debug::DBG_DBG, "");
+		kernelPrintDbg (debug::DBG_DBG, "");
 		if (operators.empty())
 			return;
 		
@@ -238,7 +238,7 @@ public:
 	/** Destructor. */
 	~CContentStream ()
 	{
-		printDbg (debug::DBG_DBG, "destructing..");
+		kernelPrintDbg (debug::DBG_DBG, "destructing..");
 	};
 };
 

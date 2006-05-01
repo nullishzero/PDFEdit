@@ -217,14 +217,14 @@ private:
 	void setNext (ListItem nxt) 
 	{ 
 		if (!next.expired ())
-			printDbg (debug::DBG_DBG, "Changing valid next variable.");
+			utilsPrintDbg (debug::DBG_DBG, "Changing valid next variable.");
 
 		next = nxt;
 	};
 	void setPrev (ListItem prv) 
 	{ 
 		if (!prev.expired ()) 
-			printDbg (debug::DBG_DBG, "Changing valid prev variable.");
+			utilsPrintDbg (debug::DBG_DBG, "Changing valid prev variable.");
 		
 		prev = prv; 
 	};
@@ -351,7 +351,7 @@ public:
 	 */
 	SimpleGenericOperator (const char* opTxt, const size_t numOper, Operands& opers) : opText (opTxt)
 	{
-		//printDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
+		//utilsPrintDbg (debug::DBG_DBG, "Operator [" << opTxt << "] Operand size: " << numOper << " got " << opers.size());
 		assert (numOper >= opers.size());
 		if (numOper < opers.size())
 			throw MalformedFormatExeption ("Operator operand size mismatch.");

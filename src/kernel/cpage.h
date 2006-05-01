@@ -126,7 +126,7 @@ public:
 public:
 	
 	/** Destructor. */
-	~CPage () { printDbg (debug::DBG_INFO, "Page destroyed."); };
+	~CPage () { kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); };
 
 public:
 	/** Compares if the objects are identical. */
@@ -160,7 +160,7 @@ public:
 								const Rectangle& rc,
 								const DisplayParams params = DisplayParams())
 	{	
-		printDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
+		kernelPrintDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
 		// Get the objects with specific comparator
 		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc), params);
 	}
@@ -178,7 +178,7 @@ public:
 								const Point& pt,
 								const DisplayParams params = DisplayParams())
 	{	
-		printDbg (debug::DBG_DBG, " at point (" << pt << ")");
+		kernelPrintDbg (debug::DBG_DBG, " at point (" << pt << ")");
 		// Get the objects with specific comparator
 		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt), params);
 	}
@@ -208,7 +208,7 @@ public:
 		if (NULL == contentstream.get() || contentstream->invalid ())
 			parseContentStream ();
 
-		printDbg (debug::DBG_DBG, " ...");
+		kernelPrintDbg (debug::DBG_DBG, " ...");
 		
 		// Get the objects with specific comparator
 		contentstream->getOperatorsAtPosition (opContainer, cmp, state);

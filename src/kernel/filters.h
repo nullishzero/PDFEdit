@@ -1,11 +1,12 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
- * =====================================================================================
- *        Filename:  filters.h
- *     Description:   class 
- *         Created:  03/19/2006 14:26:44  CET
- *          Author:  jmisutka ()
- * =====================================================================================
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.8  2006/05/01 13:53:07  hockm0bm
+ * new style printDbg
+ *
+ *
  */
 
 #ifndef _FILTERS_H_
@@ -85,7 +86,7 @@ struct NoFilter : public boost::iostreams::input_filter
 	typedef boost::iostreams::input_filter_tag  category;
 	
 	/** Default constructor. */
-	NoFilter () {printDbg (debug::DBG_DBG, "NoFilter created."); };
+	NoFilter () {utilsPrintDbg (debug::DBG_DBG, "NoFilter created."); };
 
 	/** Single char output function. */
 	template<typename Source>
@@ -95,7 +96,7 @@ struct NoFilter : public boost::iostreams::input_filter
 	}
 
 	/** Destructor. */
-	~NoFilter () { printDbg (debug::DBG_DBG, "NoFilter destroyed."); };
+	~NoFilter () { utilsPrintDbg (debug::DBG_DBG, "NoFilter destroyed."); };
 
 };
 
@@ -115,7 +116,7 @@ public:
 	typedef struct boost::iostreams::source_tag category;
 
 	/** Constructor. */
-	buffer_source (const T& _b) : buffer (_b), pos(0) {printDbg (debug::DBG_DBG, "");};
+	buffer_source (const T& _b) : buffer (_b), pos(0) {utilsPrintDbg (debug::DBG_DBG, "");};
 
 	/** Read function.*/
     std::streamsize 
@@ -126,7 +127,7 @@ public:
         streamsize result = min (n, amt);
         if (0 != result) 
 		{
-			printDbg (debug::DBG_DBG, "Position: " << pos << "Size: " << n);
+			utilsPrintDbg (debug::DBG_DBG, "Position: " << pos << "Size: " << n);
             std::copy (buffer.begin() + pos, buffer.begin() + pos + result, s);
             pos += result;
             return result;
