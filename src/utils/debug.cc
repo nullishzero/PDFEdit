@@ -6,4 +6,10 @@
 #define DEFAULT_DEBUG_LEVEL debug::DBG_PANIC
 #endif
 
-unsigned int debugLevel = DEFAULT_DEBUG_LEVEL;
+namespace debug
+{
+
+extern unsigned int debugLevel = DEFAULT_DEBUG_LEVEL;
+
+
+}
