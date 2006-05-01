@@ -64,9 +64,9 @@ public:
 	 */
 	void
 	getOpAtSpecificPosition (PdfOperator::Iterator it, 
-							PdfOpStorage& container, 
-							const PdfOpPosComparator& cmp, 
-							GfxState& state)
+				 PdfOpStorage& container, 
+				 const PdfOpPosComparator& cmp, 
+				 GfxState& state)
 	{
 		printDbg (debug::DBG_DBG, "");
 		
@@ -77,7 +77,7 @@ public:
 			// Create rectangle from actual position
 			Rectangle rc (state.getCurX (), state.getPageHeight () - state.getCurY(), 0, 0);
 			
-			// DEBUG OUTPUT //
+			/*// DEBUG OUTPUT //
 			std::string frst;
 			it.getCurrent().lock()->getOperatorName(frst);
 			PdfOperator::Operands ops;
@@ -86,13 +86,32 @@ public:
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
 			printDbg (debug::DBG_DBG, rc << " " << frst << " " << strop);
-			/////////////////
+			*//////////////////
 
 			if (cmp(rc))
 				container.push_back (boost::shared_ptr<PdfOperator> (it.getCurrent()));
 
 			it = it.next ();
 		}
+		
+		
+		// DEBUG OUTPUT //
+		typename PdfOpStorage::const_iterator itt = container.begin();
+		for (; itt != container.end(); ++itt)
+		{
+			std::string frst;
+			(*itt)->getOperatorName(frst);
+			PdfOperator::Operands ops;
+			(*itt)->getParameters (ops);
+			std::string strop;
+			if (0 < ops.size())
+				ops[0]->getStringRepresentation (strop);
+			printDbg (debug::DBG_DBG, frst << " " << strop);
+		}
+		/////////////////
+
+
+		
 	};
 };
 
@@ -204,6 +223,13 @@ public:
 	 * @return True if the contentstream was changed, false otherwise.
 	 */
 	bool empty () const {return operators.empty ();};
+
+	/**
+	 * Need reparsing.
+	 * 
+	 * @return True if the contentstream needs to be repardes.
+	 */
+	bool invalid () const {return (operators.empty () || _changed);};
 
 	//
 	// Destructor

@@ -285,7 +285,10 @@ private:
 			// Notify everybody about this change
 			IProperty::notifyObservers (newValue, context);
 		}else
+		{
+			assert (!"Invalid context");
 			throw CObjInvalidOperation ();
+		}
 	}
 
 };
@@ -640,7 +643,10 @@ private:
 			IProperty::notifyObservers (newValue, context);
 
 		}else
+		{
+			assert (!"Ip is not an array.");
 			throw CObjInvalidOperation ();
+		}
 	}
 
 
@@ -1369,7 +1375,10 @@ template <typename Container>
 void parseStreamToContainer (Container& container, Object& obj)
 {
 	if (!obj.isStream())
+	{
+		assert (!"Object is not stream.");
 		throw XpdfInvalidObject ();
+	}
 
 	obj.streamReset ();
 	typename Container::value_type c;
@@ -1556,8 +1565,9 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& 
 	// Check the type
 	if (ItemPType != ip->getType ())
 	{
-		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
-		throw ElementBadTypeException ("getValueFromDictionary()");
+		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType () << " key[" << key << "]");
+		std::string err= "getTypeFromDictionary() [" + key + "]";
+		throw ElementBadTypeException (err);
 	}
 
 	// Cast it to the correct type and return it
@@ -1572,7 +1582,10 @@ getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string
 {
 	assert (isDict (ip));
 	if (!isDict(ip))
+	{
+		assert (!"Ip is not a dictionary.");
 		throw ElementBadTypeException ("getTypeFromDictionary()");
+	}
 
 	// Cast it to dict
 	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
@@ -1625,7 +1638,10 @@ setSimpleValueInDict (const IProperty& ip, const std::string& name, const Value&
 {
 	assert (isDict (ip));
 	if (!isDict (ip))
+	{
+		assert (!"Ip is not a dictionary.");
 		throw ElementBadTypeException ("");
+	}
 
 	// Cast it to dict
 	CDict* dict = dynamic_cast<const CDict*> (&ip);
@@ -1685,7 +1701,10 @@ getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position
 {
 	assert (isArray (ip));
 	if (!isArray (ip))
+	{
+		assert (!"Ip is not an array.");
 		throw ElementBadTypeException ("getSimpleValueFromArray()");
+	}
 
 	// Cast it to array
 	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
@@ -1750,7 +1769,10 @@ setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)
 {
 	assert (isArray (ip));
 	if (!isArray (ip))
+	{
+		assert (!"Ip is not an array.");
 		throw ElementBadTypeException ("");
+	}
 
 	// Cast it to array
 	const CArray* array = dynamic_cast<const CArray*> (&ip);
@@ -1788,7 +1810,7 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 /**
  * Get iproperty casted to specific type from array.
  *
- * @param dict Dictionary.
+ * @param array Array.
  * @param id   Position in the array.
  */
 template<typename ItemType, PropertyType ItemPType>
@@ -1808,7 +1830,7 @@ getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 	if (ItemPType != ip->getType ())
 	{
 		printDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType ());
-		throw ElementBadTypeException ("getValueFromArray()");
+		throw ElementBadTypeException ("getTypeFromArray()");
 	}
 
 	// Cast it to the correct type and return it
@@ -1823,12 +1845,15 @@ getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
 {
 	assert (isArray (ip));
 	if (!isArray (ip))
+	{
+		assert (!"Ip is not an array.");
 		throw ElementBadTypeException ("getTypeFromArray()");
+	}
 
-	// Cast it to dict
-	boost::shared_ptr<CArray> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+	// Cast it to array
+	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
 
-	return getTypeFromArray<ItemType, ItemPType> (dict, pos);
+	return getTypeFromArray<ItemType, ItemPType> (array, pos);
 }
 
 /** 

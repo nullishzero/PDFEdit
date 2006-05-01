@@ -72,9 +72,9 @@ public:
 	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {};
 	
 	/** Is in in a range. */
-	bool operator() (const Rectangle&) const
+	bool operator() (const Rectangle& rc) const
 	{
-		return true;
+		return (rc_.contains (rc.xleft, rc.yleft));
 	}
 };
 
@@ -205,9 +205,11 @@ public:
 		GfxState state (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown);
 		
 		// If changed or empty try to parse it
-		if (contentstream->empty () || contentstream->changed ())
+		if (NULL == contentstream.get() || contentstream->invalid ())
 			parseContentStream ();
 
+		printDbg (debug::DBG_DBG, " ...");
+		
 		// Get the objects with specific comparator
 		contentstream->getOperatorsAtPosition (opContainer, cmp, state);
 	}

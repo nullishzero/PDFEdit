@@ -15,6 +15,7 @@
 #include "pdfoperators.h"
 #include "cobjecthelpers.h"
 #include "cobject.h"
+#include "cinlineimage.h"
 
 //fabs
 #include <math.h>
@@ -655,6 +656,10 @@ namespace
 					opyUpdate, "" },	
 
 		};
+	
+	/** Is it a simple or complex operator. */
+	bool isSimpleOperator (const CheckTypes& chck)
+		{ return ('\0' == chck.endTag[0]); }
 
 	/**
 	 * Set pdf to operands.
@@ -710,8 +715,8 @@ namespace
 		// Check operator size if > 0 than it is the exact size, maximum
 		// otherwise
 		//
-		if (   ((ops.argNum >= 0) && (operands.size() != argNum)) 
-			|| ((ops.argNum <  0) && (operands.size() > argNum)) )
+		if (((ops.argNum >= 0) && (operands.size() != argNum)) 
+			 || ((ops.argNum <  0) && (operands.size() > argNum)) )
 		{
 			printDbg (DBG_ERR, "Number of operands mismatch.. expected " << ops.argNum << " got: " << operands.size());
 			return false;
@@ -772,7 +777,72 @@ namespace
 		else
 			return NULL;
 	}
+	
+	/**
+	 * Parse inline image. Inline image is a stream withing e.g. a text stream.
+	 * Binary data can make text parser to behave incorrectly.
+	 *
+	 * @param parser Actual parser.
+	 *
+	 * @return CStream representing inline image
+	 */
+	CInlineImage*
+	getInlineImage (::Parser& parser) 
+	{
+		Object o;
+		Object dict;
+		dict.initDict ((XRef*)NULL); // BE careful, we do not have (need) valid xref
+
+		//
+		// Get the inline image dictionary
+		// 
+		parser.getObj(&o);
+		while (!o.isCmd("ID") && !o.isEOF()) 
+		{
+			if (o.isName())
+			{
+				char* key = ::copyString (o.getName());
+				o.free();
+				parser.getObj (&o);
+				if (o.isEOF() || o.isError()) 
+				{
+					gfree (key);
+					assert (!"Bad inline image.");
+					throw CObjInvalidObject ();
+				}
+				dict.dictAdd (key, &o);
+			}
+			parser.getObj(&o);
+		}
 		
+		// 
+		// Make stream
+		// 
+		Stream* str = new ::EmbedStream (parser.getStream(), &dict, gFalse, 0);
+		if (str)
+		{
+			str = str->addFilters(&dict);
+			int c1, c2;
+			c1 = str->getBaseStream()->getChar();
+			c2 = str->getBaseStream()->getChar();
+			while (!(c1 == 'E' && c2 == 'I') && c2 != EOF) 
+			{
+				c1 = c2;
+				c2 = str->getBaseStream()->getChar();
+			}
+			delete str;
+
+			// \TODO !!!
+			return new CInlineImage ();
+				
+		}else
+		{
+			assert (!"Bad embedded stream.");
+			throw CObjInvalidObject ();
+		}
+	}
+
+	
 	/**
 	 * Find the operator and create it. 
 	 *
@@ -803,42 +873,39 @@ namespace
 				// Try to find the op by its name
 				// 
 				const CheckTypes* chcktp = findOp (o.getCmd());
+				// Operator not found, create unknown operator
 				if (NULL == chcktp)
-				{// operator not found, create unknown operator
-					
 					return shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
-
-				}
+				
+				assert (chcktp);
 				printDbg (DBG_DBG, "Operator found. " << chcktp->name);
 
-
 				//
-				// SPECIAL CASE for inline image
+				// SPECIAL CASE for inline image (stream within a text stream)
 				//
-				if ( last && 0 == strncmp (chcktp->name, "ID", 2))
+				if ( 0 == strncmp (chcktp->name, "BI", 2))
 				{
-					string name;
-					last->getOperatorName (name);
-					// Is it really an image
-					if ("BI" == name)
-					{// Add all operands to the composite in an UnknownPdfOperator
-						assert (0 == last->getChildrenCount());
-
-						last->push_back (shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, NAME_INLINE_IMAGE_PROPS)));
-					}
+					printDbg (debug::DBG_DBG, "");
+					
+					shared_ptr<CInlineImage> inimg (getInlineImage (parser));
+					shared_ptr<PdfOperator> composite 
+						(new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
+					return composite;
 				}
 				
-				// Check the types against specification
+				//
+				// Check the type against specification
+				// 
 				if (!check (*chcktp, operands))
 					throw MalformedFormatExeption ("Content stream bad operator type.");
-			
+				
 				// Get operands count
 				size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
 
 				//
-				// If endTag is "" it is a simple operator, complex otherwise
+				// If endTag is "" it is a simple operator, composite otherwise
 				// 
-				if ('\0' == chcktp->endTag[0])
+				if (isSimpleOperator(*chcktp))
 				{// Simple operator
 					
 					shared_ptr<PdfOperator> op (new SimpleGenericOperator (chcktp->name, argNum, operands));
@@ -846,31 +913,23 @@ namespace
 					return op;
 					
 				}else
-				{// Complex operator either beginning or ending
+				{// Composite operator
 					
 					shared_ptr<PdfOperator> composite (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
 					// The same as in parseContentStream
 					shared_ptr<PdfOperator> _last = composite;
 					shared_ptr<PdfOperator> _prevLast = composite;
-					while (!o.isEOF())
+					// While not the end
+					while (last = createOp (parser, operands, _last))
 					{
-						// Output parameter set to last created op
-						last = createOp (parser, operands, _last);
-						if (last)
-						{
-							PdfOperator::putBehind (_prevLast, last);
-							composite->push_back (last);
+						PdfOperator::putBehind (_prevLast, last);
+						composite->push_back (last);
 							
-							// Is it the end tag?
-							string tag;
-							last->getOperatorName (tag);
-							if (tag == chcktp->endTag)
-								break;
-
-						}else
-						{// Indicate the end of stream
+						// Is it the end tag?
+						string tag;
+						last->getOperatorName (tag);
+						if (tag == chcktp->endTag)
 							break;
-						}
 						
 						// Save last as previous
 						_prevLast = _last;
@@ -881,7 +940,8 @@ namespace
 				}
 
 			}else // if (o.isCmd ())
-			{
+			{// We have an OPERAND
+				
 				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
 				operands.push_back (pIp);
 			}

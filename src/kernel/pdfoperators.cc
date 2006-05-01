@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  pdfopertors.cc
@@ -12,6 +13,8 @@
 #include "pdfoperators.h"
 //
 #include "iproperty.h"
+//
+#include "cinlineimage.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -156,7 +159,9 @@ CompositePdfOperator::getStringRepresentation (std::string& str) const
 // Concrete implementations of CompositePdfOperator
 //==========================================================
 
-
+//
+//
+//
 UnknownCompositePdfOperator::UnknownCompositePdfOperator 
 	(const char* opBegin_, const char* opEnd_) : CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_)
 {
@@ -180,9 +185,41 @@ UnknownCompositePdfOperator::getStringRepresentation (string& str) const
 	str += opEnd;
 }
 
+
 //
 //
 //
+InlineImageCompositePdfOperator::InlineImageCompositePdfOperator 
+	(const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_) 
+		: CompositePdfOperator (), opBegin (opBegin_), opEnd (opEnd_), inlineimage (im_)
+{
+	printDbg (DBG_DBG, opBegin_ << " " << opEnd_);
+}
+
+//
+//
+//
+void
+InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
+{
+	// Header
+	str += opBegin; str += "\n";
+	// 
+	if (inlineimage)
+	{
+		std::string tmp;
+		inlineimage->getStringRepresentation (tmp);	
+		str += tmp;
+	}else
+	{
+		assert (!"Bad inline image.");
+		throw CObjInvalidObject ();
+	}
+	// Footer
+	str += "\n";
+	str += opEnd;
+}
+
 
 //==========================================================
 } // namespace pdfobjects

@@ -73,7 +73,7 @@ boost::shared_ptr<CContentStream>
 CPage::getContentStream ()
 { 
 	// If contentstrea exists && is not empty and not changed return it
-	if (contentstream && !contentstream->empty() && !contentstream->changed())
+	if (contentstream && !contentstream->invalid())
 	{
 		return contentstream; 
 	
@@ -125,7 +125,8 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
 	GlobalParams* oldGlobPar = globalParams;
 	globalParams = aGlobPar.get();
-
+	globalParams->setupBaseFonts (NULL);
+	
 	// Are we in valid pdf
 	assert (isInValidPdf (dictionary));
 	assert (hasValidRef (dictionary));
@@ -136,7 +137,6 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	XRef* xref = dictionary->getPdf()->getCXref ();
 	assert (NULL != xref);
 	
-	//
 	// Create xpdf object representing CPage
 	//
 	boost::scoped_ptr<Object> xpdfPage (dictionary->_makeXpdfObject());
@@ -200,7 +200,8 @@ bool CPage::parseContentStream ()
 		contents = dictionary->getProperty ("Contents");
 
 	}catch (ElementNotFoundException&)
-	{ 
+	{
+		printDbg (debug::DBG_DBG, "No content stream found.");
 		// No content stream return
 		return false;
 	}

@@ -26,28 +26,36 @@ using namespace std;
 
 bool createStream (std::ostream& oss, const char* fileName)
 {
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-	int pagesNum = 1;
-	
-	//
-	// Our stuff here
-	//
-	Object obj;
-	XRef* xref = doc->getXRef();
-	assert (xref);
-	Catalog cat (xref);
-	if (1 > cat.getNumPages())
-		return true;
-
-	cat.getPage(pagesNum)->getContents(&obj);
-
 	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	IndiRef rf = {6,0};
-	CStream stream (*pdf, obj, rf);
-	Object* o = stream._makeXpdfObject ();
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getPage (1);
+
+	shared_ptr<CDict> dict = page->getDictionary ();
+
+	boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
+	boost::shared_ptr<CStream> stream;
+	if (contents)
+	{
+		if (isArray (contents))
+			stream = utils::getCStreamFromArray (contents, 0);
+		else if (isStream (contents))
+			stream = IProperty::getSmartCObjectPtr<CStream> (contents);
+		else
+		{
+			string tmp;
+			contents->getStringRepresentation (tmp);
+			printDbg (debug::DBG_PANIC, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
+			assert (!"Bac contents entry type.");
+		}
+	}else
+	{
+		assert (!"No content stream");
+		throw CObjInvalidObject ();
+	}
 
 	vector<string> names;
-	stream.getAllPropertyNames (names);
+	stream->getAllPropertyNames (names);
 
 	oss << "CStream dictionary: " << endl;
 	for (vector<string>::iterator it = names.begin(); it != names.end(); ++it)
@@ -67,12 +75,34 @@ bool getString (std::ostream& oss, const char* fileName)
 
 	shared_ptr<CDict> dict = page->getDictionary ();
 
-	boost::shared_ptr<CStream> stream = utils::getCStreamFromDict (dict, "Contents");
+	boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
+	boost::shared_ptr<CStream> stream;
+	if (contents)
+	{
+		if (isArray (contents))
+			stream = utils::getCStreamFromArray (contents, 0);
+		else if (isStream (contents))
+			stream = IProperty::getSmartCObjectPtr<CStream> (contents);
+		else
+		{
+			string tmp;
+			contents->getStringRepresentation (tmp);
+			printDbg (debug::DBG_PANIC, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
+			assert (!"Bac contents entry type.");
+		}
+	}else
+	{
+		assert (!"No content stream");
+		throw CObjInvalidObject ();
+	}
 
-	Object* obj = stream->_makeXpdfObject ();
+	assert (isStream (stream));
+	boost::scoped_ptr<Object> obj (stream->_makeXpdfObject ());
+	obj->free ();
+	
 
 	string tmp;
-	stream->getStringRepresentation (tmp);
+	//stream->getStringRepresentation (tmp);
 
 	//oss << tmp << endl;
 
@@ -90,26 +120,38 @@ bool getString (std::ostream& oss, const char* fileName)
 
 bool getFilter (std::ostream& oss, const char* fileName)
 {
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
-	int pagesNum = 1;
-	
-	//
-	// Our stuff here
-	//
-	Object obj;
-	XRef* xref = doc->getXRef();
-	assert (xref);
-	Catalog cat (xref);
-	if (1 > cat.getNumPages())
+	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	if (1 > pdf->getPageCount())
 		return true;
+	boost::shared_ptr<CPage> page = pdf->getPage (1);
 
-	cat.getPage(pagesNum)->getContents(&obj);
+	shared_ptr<CDict> dict = page->getDictionary ();
+	boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
+	boost::shared_ptr<CStream> stream;
+	if (contents)
+	{
+		if (isArray (contents))
+			stream = utils::getCStreamFromArray (contents, 0);
+		else if (isStream (contents))
+			stream = IProperty::getSmartCObjectPtr<CStream> (contents);
+		else
+		{
+			string tmp;
+			contents->getStringRepresentation (tmp);
+			printDbg (debug::DBG_PANIC, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
+			assert (!"Bac contents entry type.");
+		}
+	}else
+	{
+		assert (!"No content stream");
+		throw CObjInvalidObject ();
+	}
 
-	CStream stream (obj);
+	assert (isStream (stream));
 
 	string tmp;
 	vector<string> filters;
-	stream.getFilters (filters);
+	stream->getFilters (filters);
 
 	oss << " Filters: ";
 	for (vector<string>::iterator it = filters.begin(); it != filters.end(); ++it)
@@ -139,7 +181,7 @@ class TestCStream : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCStream);
 		CPPUNIT_TEST(Test);
-		//CPPUNIT_TEST(TestString);
+		CPPUNIT_TEST(TestString);
 	CPPUNIT_TEST_SUITE_END();
 
 public:

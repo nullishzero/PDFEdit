@@ -446,9 +446,6 @@ public:
 	 *
 	 * @param opBegin_ Start operator name text representation.
 	 * @param opEnd_ End operator name text representation.
-	 * @param numOper (Maximum) Number of operands.
-	 * @param opers This is a stack of operands from which we take number specified
-	 * 				by numOper or while any operand left.
 	 */
 	UnknownCompositePdfOperator (const char* opBegin_, const char* opEnd_);
 
@@ -458,6 +455,43 @@ public:
 
 };
 
+
+//
+// Forward declaration
+//
+class CInlineImage;
+
+/**
+ * Inline image pdf operator.
+ *
+ */
+class InlineImageCompositePdfOperator : public CompositePdfOperator
+{
+private:
+		
+	/** Text representing the beginning operator. */
+	const char* opBegin;
+	/** Text representing the ending operator. */
+	const char* opEnd;
+	/** Stream representing inline image. */
+	boost::shared_ptr<CInlineImage> inlineimage;
+
+public:
+	
+	/** 
+	 * Constructor. 
+	 * Create it as a standalone object. Prev and Next are not valid.
+	 *
+	 * @param opBegin_ Start operator name text representation.
+	 * @param opEnd_ End operator name text representation.
+	 */
+	InlineImageCompositePdfOperator (const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_);
+
+public:
+	virtual void getStringRepresentation (std::string& str) const;
+	virtual void getOperatorName (std::string& first) const {first = opBegin;};
+
+};
 
 //==========================================================
 }

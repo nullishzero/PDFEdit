@@ -60,8 +60,14 @@ mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const ch
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getPage (1);
 
+	try {
 	/* oss << */ page->getMediabox ();
-	
+	}catch (...)
+	{
+		std::cout << "NO MEDIA BOX FOUND.";
+		return true;
+	}
+
 	Rectangle rc;
 	rc.xleft = 42;
 	rc.xright = 12;

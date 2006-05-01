@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/05/01 12:29:34  misuj1am
+ *
+ * -- CStream update, CContentStream update, CInlineImage added - test version
+ *
  * Revision 1.14  2006/04/23 23:01:28  misuj1am
  *
  * -- tests improved
@@ -114,10 +118,10 @@ extern FileList fileList;
 #define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
 													<< " ALLOCATED: " << check.getMaxCount () << endl;}
-#define TEST(a)		OUTPUT << "\t//== " << (a);
+#define TEST(a)		OUTPUT << "\t//== " << (a) << flush;
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST	OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
-#define OK_TEST		OUTPUT << "\t...TEST PASSED..."; MEM_CHECK;
+#define OK_TEST		OUTPUT << "\t...TEST PASSED..." << flush; MEM_CHECK;
 //==========================
 
 // if set validation functions will output

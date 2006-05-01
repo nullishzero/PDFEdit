@@ -26,7 +26,7 @@ using namespace boost;
 //=====================================================================================
 
 bool
-position (ostream& oss, const char* fileName)
+position (ostream& oss, const char* fileName, const Rectangle rc)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
 	if (1 > pdf->getPageCount())
@@ -34,12 +34,12 @@ position (ostream& oss, const char* fileName)
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
 	// parse the content stream
-	page->parseContentStream ();
+	//page->parseContentStream ();
 	
 	std::vector<shared_ptr<PdfOperator> > ops;
-	page->getObjectsAtPosition (ops, Rectangle (1,1,10,10));
+	page->getObjectsAtPosition (ops, rc);
 
-	oss << "Found objects #" << ops.size();
+	oss << " Found objects #" << ops.size();
 
 	std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
 	for (; it != ops.end(); ++it)
@@ -54,6 +54,73 @@ position (ostream& oss, const char* fileName)
 }
 
 //=====================================================================================
+
+namespace  {
+	
+	bool img (Parser* parser, Object& o, XRef* xref)
+	{
+		  std::cout << "Inline image data (BI)" << flush;
+		  
+		  //
+		  // Read from BI to ID
+		  //
+		  Object dict;
+		  dict.initDict (xref);
+		  o.free ();
+		  
+		  parser->getObj(&o);
+		  while (!o.isCmd("ID") && !o.isEOF()) 
+		  {
+			if (!o.isName()) 
+			{
+			  std::cout << "No name" << flush;
+			  o.free ();
+			  
+			}else if (o.isName())
+			{
+			  char* key = copyString(o.getName());
+			  o.free();
+			  parser->getObj(&o);
+			  if (o.isEOF() || o.isError()) 
+			  {
+				gfree (key);
+				return false;
+			  }
+			  dict.dictAdd(key, &o);
+			}
+			
+			parser->getObj(&o);
+		  }
+		 
+		  
+		  //
+		  // Read the image itself until EI
+		  //
+		  o.free();
+		  Stream *str;	
+		  // make stream
+		  str = new EmbedStream(parser->getStream(), &dict, gFalse, 0);
+		  str = str->addFilters(&dict);
+		  int c1, c2;
+		  if (str) 
+		  {
+			c1 = str->getBaseStream()->getChar();
+			c2 = str->getBaseStream()->getChar();
+			while (!(c1 == 'E' && c2 == 'I') && c2 != EOF) 
+			{
+			  c1 = c2;
+			  c2 = str->getBaseStream()->getChar();
+			}
+			delete str;
+			return true;
+
+		  }else // if (str)
+		  {
+			  std::cout << "Bad str." << flush;
+			  return false;
+		  }
+	}
+} // namespace
 
 bool
 opcount (ostream& oss, const char* fileName)
@@ -73,7 +140,7 @@ opcount (ostream& oss, const char* fileName)
 
 	cat.getPage(pagesNum)->getContents(&obj);
 
-	scoped_ptr<Parser> parser (new Parser (NULL, new Lexer(NULL, &obj)));
+	scoped_ptr<Parser> parser (new Parser (xref, new Lexer(xref, &obj)));
 	
 	Object o;
 	parser->getObj (&o);
@@ -81,18 +148,34 @@ opcount (ostream& oss, const char* fileName)
 	
 	while (!o.isEOF()) 
 	{
+		if (o.isCmd ("BI"))
+		{
+			if (!img (parser.get(),o,xref))
+				return false;
+	    	parser->getObj(&o);
+		}
+		
 		if (o.isCmd ())
+		{
 			i++;
+			//oss << o.getCmd() << flush;
+		}
+		else
+		{
+			//oss << "(" << o.getType() << ")" << flush;
+			//std::string tmp;
+			//utils::xpdfObjToString (o, tmp);
+			//oss << tmp << " " << flush;
+		}
 
 		// grab the next object
+		o.free ();
 		parser->getObj(&o);
 	}
 
-	
+	oss << "Operands count: " << i << flush;
+
 	obj.free ();
-
-	oss << "Operands count: " << i;
-
 	return true;
 }
 
@@ -150,11 +233,13 @@ public:
 			OK_TEST;
 
 			TEST(" getPosition");
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str()));
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300)));
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (10,10,50,50)));
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (400,400,450,450)));
 			OK_TEST;
 
 			TEST(" print contentstream");
-			CPPUNIT_ASSERT (printContentStream (OUTPUT, (*it).c_str()));
+			//CPPUNIT_ASSERT (printContentStream (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}

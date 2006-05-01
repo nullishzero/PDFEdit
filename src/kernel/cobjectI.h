@@ -827,6 +827,8 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 {
 	printDbg (debug::DBG_DBG, "");
 
+	assert (!"not supported");
+
 	//
 	// Try filters if any
 	//
@@ -913,7 +915,8 @@ template<typename Checker>
 ::Object*
 CObjectStream<Checker>::_makeXpdfObject () const
 {
-	//return &xpdfDict;
+	Object* o = new Object ();
+	return xpdfDict.copy (o);
 
 	std::string tmp;
 	getStringRepresentation (tmp);

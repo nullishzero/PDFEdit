@@ -42,11 +42,11 @@
 // Filters
 #include <boost/iostreams/categories.hpp> // output_filter_tag
 #include <boost/iostreams/operations.hpp> // put
-#include <boost/iostreams/concepts.hpp> // multichar_output_filter
-#include <boost/iostreams/device/array.hpp>
+//#include <boost/iostreams/concepts.hpp> // multichar_output_filter
+//#include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
-#include <boost/iostreams/filtering_streambuf.hpp>
+//#include <boost/iostreams/filtering_streambuf.hpp>
 
 //
 // our stuff
@@ -105,18 +105,27 @@ typedef struct Point
 /**
  * Rectangle structure. Defined as in pdf specification v1.5 (p. 133)
  */
-typedef struct Rect
+template <typename Coord>
+struct GenRect
 {
-	Coordinate xleft;
-	Coordinate yleft;
-	Coordinate xright;
-	Coordinate yright;
+	Coord xleft;
+	Coord yleft;
+	Coord xright;
+	Coord yright;
 
 	// Constructor
-	Rect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
-	Rect (double x1, double y1, double x2, double y2) : xleft(x1), yleft(y1), xright(x2), yright(y2) {}
+	GenRect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
+	GenRect (Coord x1, Coord y1, Coord x2, Coord y2) : xleft(x1), yleft(y1), xright(x2), yright(y2) {}
 
-} Rectangle;
+	// Helper functions
+	bool contains (Coord x, Coord y) const
+		{return (xleft <= x && x <= xright && yleft <= y && y <= yright);
+	
+	}
+};
+
+/** Our specialization of rect. */
+typedef struct GenRect<Coordinate> Rectangle;
 
 /**
  * Output rectangle.

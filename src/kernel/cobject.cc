@@ -579,6 +579,7 @@ createObjFromXpdfObj (Object& obj)
 				return new CStream (obj);
 
 			default:
+				printDbg (debug::DBG_PANIC, "Bad type: " << obj.getTypeName () );
 				assert (!"Bad type.");
 				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
