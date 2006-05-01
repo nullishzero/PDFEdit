@@ -1,11 +1,21 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
- * =====================================================================================
- *	  Filename:  debug.h
- *     Description:  debugging macros & stuff
- *	   Created:  01/19/2006 11:00:08 PM CET
- *	    Author:  jmisutka ()
- * =====================================================================================
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.11  2006/05/01 12:31:23  hockm0bm
+ * Implementation of printDbg changed
+ *         - debugLevel changed from macro to external variable defined in debug.cc
+ *         - printDbg has new prefix parameter - for easy transition, it is not
+ *           used now
+ *         - _prinDbg helper has new prefix parameter - it is used and all printDbg
+ *           macros should use this macro
+ *         - new macros (aliases) kernelPrintDbg, guiPrintDbg, utilsPrintDbg
+ *
+ * TODO - when all old style printDbg are replaced by new one, printDbg should have
+ * prefix parameter
+ *
+ *
  */
 
 #ifndef DEBUG_H
@@ -16,9 +26,9 @@
 #include <iomanip>
 
 
-// =====================================================================================
+// =============================================================================
 namespace debug {
-// =====================================================================================
+// =============================================================================
 
 /** Memory checker output. Comment out (or set to 0) if no output is desired. */
 #define MEM_CHECKER_OUTPUT	0
@@ -50,11 +60,6 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
 	}
 
 
-
-/** Debug priority macros.
- *
- * TODO make available for group of debug priority.
- */
 
 /** Panic situation priority.
  * After this kind of message, program usually ends without any resonable 
@@ -89,28 +94,25 @@ const unsigned int  DBG_INFO 	= 4;
  */
 const unsigned int  DBG_DBG 	= 5;
 
-
-// may be defined from compilator 
-#ifndef __DEBUG_LEVEL
-
 /** Filter for message logging.
  *
- * Only messages with priority higher (lower number) then this filter are 
+ * Only messages with priority higher (lower number) than this filter are 
  * printed when printDbg (TODO link) macro is used.
  * <br>
- * DEBUG_<PRIORITY> macro should be used for value
+ * DEBUG_<PRIORITY> macro should be used for value. Value can be changed also
+ * in runtime.
  */
-#define __DEBUG_LEVEL	debug::DBG_DBG
-#endif
+extern unsigned int debugLevel;
 
 /** Prints message with given priority.
+ * @param prefix Prefix for message.
  * @param dbgLevel Priority of message.
  * @param msg Message to dump.
  *
  * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
  * massage is printed out to the standard error output with following format:
  * @code 
- * priority:fileName:line: message
+ * priority:prefix:fileName:line: message
  * @endcode
  * <br>
  * <b>REMARKs</b><br>
@@ -121,39 +123,67 @@ const unsigned int  DBG_DBG 	= 5;
  * <br>
  * Can be used in many ways.
  * \code
- * printDbg(DBG_DBG,"getExistingProperty();");
+ * printDbg("", DBG_DBG,"getExistingProperty();");
  *
- * printDbg(DBG_INFO, "Page moved to this location");
+ * printDbg("", DBG_INFO, "Page moved to this location");
  * 
- * printDbg(DBG_WARN, "This should be done this way");
+ * printDbg("", DBG_WARN, "This should be done this way");
  *
- * printDbg(DBG_ERR, "Value of indirect object can't be reference");
+ * printDbg("", DBG_ERR, "Value of indirect object can't be reference");
  *
- * printDbg(DBG_CRIT, "Internal structures problem - program is about to exit");
+ * printDbg("KERNEL", DBG_CRIT, "Internal structures problem - program is about to exit");
  * 
- * printDbg(DBG_PANIC, "Memmory allocation problem");
+ * printDbg("UTILS", DBG_PANIC, "Memmory allocation problem");
  * \endcode
  *
  * REMARK: This is a macro, because we want to output line number and file name.
  * We can't force GCC to do inlining, we can just give a hint.
  */
-#define printDbg(dbgLevel,msg)	_printDbg((dbgLevel),std::cerr,msg);
+//#define printDbg(prefix, dbgLevel,msg)	_printDbg((prefix),(dbgLevel),std::cerr,(msg));
+// FIXME remove and use one with prefix parameter
+#define printDbg(dbgLevel,msg)	_printDbg("",(dbgLevel),std::cerr,msg);
+
+/** Alias to printDbg for kernel messages.
+ * @param dbgLevel Priority of message.
+ * @param msg Message to dump.
+ * 
+ * Use this macro for all message important for kernel.
+ */
+#define kernelPrintDbg(dbgLevel, msg) _printDbg("KERNEL", (dbgLevel),std::cerr, (msg))
+
+/** Alias to printDbg for gui messages.
+ * @param dbgLevel Priority of message.
+ * @param msg Message to dump.
+ * 
+ * Use this macro for all message important for gui.
+ */
+#define guiPrintDbg(dbgLevel, msg) _printDbg("GUI", (dbgLevel),std::cerr, (msg))
+
+/** Alias to printDbg for util messages.
+ * @param dbgLevel Priority of message.
+ * @param msg Message to dump.
+ * 
+ * Use this macro for all message important for utils.
+ */
+#define utilsPrintDbg(dbgLevel, msg) _printDbg("UTILS", (dbgLevel),std::cerr, (msg))
 
 /** Helper macro used by printDbg.
- * @param dbgLevel Priority of message.
- * @param a Stream where to dump message.
- * @param b Message to dump.
+ * @param prefix Prefix string for message.
+ * @param level Priority of message.
+ * @param stream Stream where to dump message.
+ * @param msg Message to dump.
  *
  * This macro should be used if different stream is about to be used than one
  * used in printDbg macro.
  */
-#define _printDbg(dbgLevel,a,b)										\
+#define _printDbg(prefix, level, stream, msg)						\
 {																	\
-	if ( __DEBUG_LEVEL >= dbgLevel) 								\
+	if ( debug::debugLevel >= level) 								\
 	{																\
-		(a) << dbgLevel <<":"<< __FILE__ << ":" << __FUNCTION__ <<":" \
-		    << __LINE__ << ": "										\
-			<<  b 													\
+		(stream) << level <<":"<<prefix<<":"						\
+		    << __FILE__ << ":" << __FUNCTION__ <<":"<< __LINE__ 	\
+			<< ": "													\
+			<<  msg 												\
 			<< std::endl;											\
 	}																\
 }
@@ -168,21 +198,6 @@ __print (std::ostream& out,const std::string& str)
 {
 	out << str;
 }
-
-
-
-
-//
-// TODO: find out how to force gcc to make a function inline
-// gcc -- can't be done?
-//
-/*__inline__ void
-printDbg (std::ostream& out, const std::string& msg)
-{
-		out << __FILE__ << ":" << __LINE__ << ": " << msg << std::endl;
-}
-*/
-
 
 //
 // Returns name of objects type
@@ -212,10 +227,11 @@ std::string getStringType<8> () {return "pStream";}
 
 
 
-// =====================================================================================
+// =============================================================================
 } // namespace debug
-// =====================================================================================
+// =============================================================================
 
 
 
 #endif	// DEBUG_H
+
