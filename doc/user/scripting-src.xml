@@ -4,7 +4,6 @@
  <bookinfo>
   <title>Documentation for PDF Editor - Scripting</title>
  </bookinfo>
-
  <chapter>
   <title>Scripting in PDFEditor</title>
   <para>
@@ -31,6 +30,12 @@
    all functions and objects that are exported from the application to the
    scripting engine so they may be used in scripts and menus.
   </para>
+  <para>
+   <note>Scripts are not "secure" by design, as the API contain functions to read or write
+   arbitrary files and directories and to execute external processes.
+   See http://doc.trolltech.com/qsa-1.1.4/extensions-2.html for description
+   of File, Dir and Process classes, which are available to script.</note>
+  </para>
  </chapter>
  <chapter>
   <title>Static functions</title>
@@ -49,6 +54,13 @@
   <sect1 id="options">
    <title><funcsynopsis>void options()</funcsynopsis></title>
    Invokes options dialog. Does not wait for dialog to finish.
+  </sect1>
+  <sect1 id="addObjectDialog">
+   <title><funcsynopsis>void addObjectDialog(IProperty container)</funcsynopsis></title>
+   Invokes dialog for adding additional objects to specified container (which must be Dictionary or Array).
+   After invoking dialog, this function returns immediately and the dialog is left for the user to use.
+   If given object is not specified, curently selected object in property editor is used.
+   If the object is not Dictionary or Array, no dialog is shown.
   </sect1>
   <sect1 id="createNewWindow">
    <title><funcsynopsis>void createNewWindow()</funcsynopsis></title>
@@ -308,13 +320,7 @@
   <title>Object types (common and PDF objects)</title>
 <!--TYPE: qscobject.h -->
 <!--TYPE: qsdict.h -->
-  <sect1 id="type_array">
-   <title>Array</title>
-   <para>
-   This type represents an array in PDF document. It holds zero or more values, each is indexed by integer (starting from zero).
-   Values can be of any type, either simple types (int, bool, float, string) or complex types (Dict, Array)
-   </para>
-  </sect1>
+<!--TYPE: qsarray.h -->
 <!--TYPE: qspage.h -->
 <!--TYPE: qscontentstream.h -->
 <!--TYPE: qsiproperty.h -->
