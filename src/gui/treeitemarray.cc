@@ -7,6 +7,7 @@
 #include "treeitemarray.h"
 #include "treedata.h"
 #include "pdfutil.h"
+#include "qsarray.h"
 
 namespace gui {
 
@@ -67,6 +68,12 @@ QStringList TreeItemArray::getChildNames() {
 /** default destructor */
 TreeItemArray::~TreeItemArray() {
  uninitObserver();
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemArray::getQSObject() {
+ assert(boost::dynamic_pointer_cast<CArray>(obj).get());
+ return new QSArray(boost::dynamic_pointer_cast<CArray>(obj));
 }
 
 } // namespace gui

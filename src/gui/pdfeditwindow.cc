@@ -30,9 +30,12 @@
 #include "treewindow.h"
 #include "menu.h"
 #include "qsmenu.h"
+#include "qsiproperty.h"
+#include "qsdict.h"
+#include "qsarray.h"
 #include "commandwindow.h"
 #include "treeitemabstract.h"
-
+#include "additemdialog.h"
 #include "GlobalParams.h"
 
 namespace gui {
@@ -199,6 +202,72 @@ void PdfEditWindow::run(QString scriptName) {
 QSMenu* PdfEditWindow::popupMenu(const QString &menuName/*=QString::null*/) {
  return new QSMenu(menuSystem,menuName);
 }
+
+/** 
+ Show dialog for adding objects into given container.<br>
+ Container must be Dict or Array, otherwise the dialog is not created.
+ If Container is NULL, currently selected object ihn property editor will be attempted to use as container..<br>
+ After creating, dialog is shown and usable and this function immediately returns.<br>
+ @param container Dict or Array into which objects will be added
+*/
+void PdfEditWindow::addObjectDialog(QSIProperty *container/*=NULL*/) {
+ if (container) {
+  addObjectDialogI(container->get());
+ } else {
+  addObjectDialogI(selectedProperty);
+ }
+}
+
+//TODO: overloaded versions of addObjectDialog with non-empty parameters does not work in script. Why?
+
+/** @copydoc addObjectDialog(QSIProperty *) */
+void PdfEditWindow::addObjectDialog(QSDict *container) {
+ if (container) {
+  addObjectDialogI(container->get());
+ } else {
+  addObjectDialogI(selectedProperty);
+ }
+}
+
+/** @copydoc addObjectDialog(QSIProperty *) */
+void PdfEditWindow::addObjectDialog(QSArray *container) {
+ if (container) {
+  addObjectDialogI(container->get());
+ } else {
+  addObjectDialogI(selectedProperty);
+ }
+}
+
+/** @copydoc addObjectDialog(QSIProperty *) */
+void PdfEditWindow::addObjectDialog(QSDict &container) {
+ addObjectDialogI(container.get());
+}
+
+/** @copydoc addObjectDialog(QSIProperty *) */
+void PdfEditWindow::addObjectDialog(QSArray &container) {
+ addObjectDialogI(container.get());
+}
+
+/** 
+ Show dialog for adding objects into given container.<br>
+ Container must be Dict or Array, otherwise the dialog is not created.
+ After creating, dialog is shown and usable and this function immediately returns.<br>
+ @param ip Dict or Array into which objects will be added
+*/
+void PdfEditWindow::addObjectDialogI(boost::shared_ptr<IProperty> ip) {
+ boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(ip);
+ if (dict.get()) {
+  AddItemDialog::create(this,dict);
+  return;
+ }
+ boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(ip);
+ if (array.get()) {
+  AddItemDialog::create(this,array);
+  return;
+ }
+ guiPrintDbg(debug::DBG_WARN,"Trying to add objects into non-Dict/Array");
+}
+
 /** Runs given script code
  @param script QT Script code to run
  */

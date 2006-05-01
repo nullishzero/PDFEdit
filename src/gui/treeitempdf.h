@@ -27,7 +27,7 @@ public:
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual void reloadSelf();
- QSCObject* getQSObject();
+ virtual QSCObject* getQSObject();
 private:
  void init(CPdf *pdf,const QString &name);
  void initSpec(CPdf *pdf,const QString &name);

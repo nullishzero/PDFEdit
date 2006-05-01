@@ -55,8 +55,8 @@ QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -D TESTING
 
 #Dialogs
-HEADERS += aboutwindow.h  option.h  optionwindow.h  stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h  dialog.h
-SOURCES += aboutwindow.cc option.cc optionwindow.cc stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc dialog.cc
+HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h  dialog.h
+SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc dialog.cc
 
 #Help
 HEADERS += helpwindow.h
@@ -65,8 +65,8 @@ SOURCES += helpwindow.cc
 #Tree window
 HEADERS += treeitemabstract.h  treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h
 SOURCES += treeitemabstract.cc treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
-HEADERS += treeitempdf.h  treeitem.h  treewindow.h  treedata.h
-SOURCES += treeitempdf.cc treeitem.cc treewindow.cc treedata.cc 
+HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.h
+SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc 
 
 #Property editor
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  refproperty.h
@@ -76,9 +76,9 @@ SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc
 
 #CObject Wrapper classes
 HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h
-HEADERS += qstreeitem.h  qsmenu.h
+HEADERS += qstreeitem.h  qsmenu.h  qsarray.h
 SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
-SOURCES += qstreeitem.cc qsmenu.cc
+SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc
 
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h

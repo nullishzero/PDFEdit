@@ -27,7 +27,7 @@ public:
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual void reloadSelf();
- QSCObject* getQSObject();
+ virtual QSCObject* getQSObject();
 private:
  void init(boost::shared_ptr<CPage> page,const QString &name);
  /** CPage stored in this TreeItem */

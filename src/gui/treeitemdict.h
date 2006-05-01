@@ -21,7 +21,7 @@ public:
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
- QSCObject* getQSObject();
+ virtual QSCObject* getQSObject();
 };
 
 } // namespace gui

@@ -1,5 +1,5 @@
 /** @file
- TreeItemDict - class holding one CDict object in tree, descendant of TreeItem
+ TreeItemDict - class holding one simple object in tree (not ref, dict or array), descendant of TreeItem
  @author Martin Petricek
 */
 

@@ -25,6 +25,9 @@ class TreeItemAbstract;
 class PropertyEditor;
 class Menu;
 class QSMenu;
+class QSDict;
+class QSArray;
+class QSIProperty;
 
 using namespace pdfobjects;
 
@@ -37,6 +40,11 @@ public:
  int question_ync(const QString &msg);
  void call(const QString &name);
 public slots: //These will be exported to scripting
+ void addObjectDialog(QSDict &container);
+ void addObjectDialog(QSArray &container);
+ void addObjectDialog(QSArray *container);
+ void addObjectDialog(QSDict *container);
+ void addObjectDialog(QSIProperty *container=NULL);
  QSMenu* popupMenu(const QString &menuName=QString::null);
  void run(QString scriptName);
  bool save();
@@ -75,6 +83,7 @@ protected slots:
 private slots:
  void settingUpdate(QString key);
 private:
+ void addObjectDialogI(boost::shared_ptr<IProperty> ip);
  void setFileName(const QString &name);
  void destroyFile();
  void emptyFile();

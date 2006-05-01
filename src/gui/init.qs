@@ -65,6 +65,10 @@ function onTreeRightClick() {
 // print('Right click, type of item = '+treeitem.itemtype());
  menu=popupMenu("popup_generic");
  menu.addSeparator();
+ type=treeitem.itemtype();
+ if (type=='Dict' || type=='Array') {
+  menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog()");
+ }
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  eval(menu.popup());
 }

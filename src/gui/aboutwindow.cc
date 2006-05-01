@@ -1,8 +1,9 @@
 /** @file
- AboutWindow - class representing about window. Display authors, application name and version
+ AboutWindow - class representing about window.
+ Display authors, application name and version.
+ @author Martin Petricek
 */
 #include "aboutwindow.h"
-#include <iostream>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -12,10 +13,14 @@ namespace gui {
 
 using namespace std;
 
-/** Version of program*/
+/** Version of program */
 QString app=APP_NAME " " VERSION;
 
-/** constructor of AboutWindow, creates window and fills it with elements, parameters are ignored */
+/**
+ constructor of AboutWindow, creates window and fills it with elements, parameters are ignored
+ @param parent Parent window of this dialog
+ @param name Name of thisd window (used only for debugging
+ */
 AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
  QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big><br><br>"+tr("Homepage")+" : http://pdfedit.petricek.net/";
  QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"
@@ -34,7 +39,9 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  lb->show();
 }
 
-/** This is called on attempt to close window. */
+/** This is called on attempt to close window.
+ @param e Event parameters (ignored)
+*/
 void AboutWindow::closeEvent(QCloseEvent *e) {
  delete this;
 }
