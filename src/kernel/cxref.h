@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/05/01 10:03:01  hockm0bm
+ * MAXOBJNUM value corrected to MAX_INT
+ *
  * Revision 1.19  2006/04/28 17:16:51  hockm0bm
  * * reserveRef bug fixes
  * 	- reusing didn't check whether reference is in newStorage
@@ -84,13 +87,19 @@
 #include "xpdf.h"
 
 #include"iproperty.h"
+#include<limits.h>
 
 namespace pdfobjects
 {
 
 /** Maximal object number.
  */
-const int MAXOBJNUM = 32768;
+const int MAXOBJNUM = INT_MAX;
+
+/** Maximal object generation number.
+ *
+ * Cross reference entry with this generation number can't be reused.
+ */
 const int MAXOBJGEN = 65535;
 
 /** Adapter for xpdf XRef class.
