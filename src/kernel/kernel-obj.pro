@@ -1,18 +1,27 @@
 #
 # Path to xpdf object files
 #
+XPDFPATH = ../xpdf
 
-_PATH = ../xpdf
+#
+# Path to utils
+#
+UTILSPATH = ../utils
 
 #
 # One specific lib, that must exist
 #
-_ONELIB = libxpdf.a
+XPDFLIB = libxpdf.a
 
-exists( $${_PATH}/xpdf/$${_ONELIB} ) {
-	LIBS += -lxpdf -L$$_PATH/xpdf
-	LIBS += -lfofi -lGoo -L$$_PATH/fofi -L$$_PATH/goo
-	LIBS += -lsplash -L$$_PATH/splash
+#
+# Utils library
+#
+UTILSLIB = libutils.a
+
+exists( $${XPDFPATH}/xpdf/$${XPDFLIB} ) {
+	LIBS += -lxpdf -L$$XPDFPATH/xpdf
+	LIBS += -lfofi -lGoo -L$$XPDFPATH/fofi -L$$XPDFPATH/goo
+	LIBS += -lsplash -L$$XPDFPATH/splash
 
 	exists( ../config_xpdf_variables ) {
 		include( ../config_xpdf_variables )
@@ -23,4 +32,10 @@ exists( $${_PATH}/xpdf/$${_ONELIB} ) {
 	}
 }else{
 	error( "You do not have xpdf compiled. [../xpdf/xpdf/Object.o, ../xpdf/xpdf/Stream.o, ....]" )
+}
+
+exists( $${UTILSPATH}/$${UTILSLIB} ) {
+        LIBS += -lutils -L$$UTILSPATH
+}else{
+        error( "You do not have utils library")
 }
