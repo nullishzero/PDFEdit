@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/05/01 13:16:11  hockm0bm
+ * minor changes
+ *         - debugLevel is not marked as extern in cc file
+ *         - *PrintDbg doesn't use braces for msg parameter
+ *
  * Revision 1.11  2006/05/01 12:31:23  hockm0bm
  * Implementation of printDbg changed
  *         - debugLevel changed from macro to external variable defined in debug.cc
@@ -149,7 +154,7 @@ extern unsigned int debugLevel;
  * 
  * Use this macro for all message important for kernel.
  */
-#define kernelPrintDbg(dbgLevel, msg) _printDbg("KERNEL", (dbgLevel),std::cerr, (msg))
+#define kernelPrintDbg(dbgLevel, msg) _printDbg("KERNEL", (dbgLevel),std::cerr, msg)
 
 /** Alias to printDbg for gui messages.
  * @param dbgLevel Priority of message.
@@ -157,7 +162,7 @@ extern unsigned int debugLevel;
  * 
  * Use this macro for all message important for gui.
  */
-#define guiPrintDbg(dbgLevel, msg) _printDbg("GUI", (dbgLevel),std::cerr, (msg))
+#define guiPrintDbg(dbgLevel, msg) _printDbg("GUI", (dbgLevel),std::cerr, msg)
 
 /** Alias to printDbg for util messages.
  * @param dbgLevel Priority of message.
@@ -165,7 +170,7 @@ extern unsigned int debugLevel;
  * 
  * Use this macro for all message important for utils.
  */
-#define utilsPrintDbg(dbgLevel, msg) _printDbg("UTILS", (dbgLevel),std::cerr, (msg))
+#define utilsPrintDbg(dbgLevel, msg) _printDbg("UTILS", (dbgLevel),std::cerr, msg)
 
 /** Helper macro used by printDbg.
  * @param prefix Prefix string for message.

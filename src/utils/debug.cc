@@ -9,7 +9,7 @@
 namespace debug
 {
 
-extern unsigned int debugLevel = DEFAULT_DEBUG_LEVEL;
+unsigned int debugLevel = DEFAULT_DEBUG_LEVEL;
 
 
 }
