@@ -5,12 +5,16 @@
 all: pdfedit
 
 # PDF editor
-pdfedit: kernel xpdf qoutputdevices
+pdfedit: utils kernel xpdf qoutputdevices
 	cd gui && qmake && make
 
 # QOutputDevices
 qoutputdevices: xpdf config_xpdf_variables
 	cd kpdf-kde-3.3.2 && qmake && make staticlib
+
+# Utils
+utils: 
+	cd utils && make
 
 # Kernel
 kernel: xpdf config_xpdf_variables
@@ -34,6 +38,7 @@ config_xpdf_variables: xpdf/config.status
 # Cleanup
 clean:
 	cd gui && make clean
+	cd utils && make clean
 	cd kernel && make clean
 	cd xpdf && make clean
 	cd kpdf-kde-3.3.2 && make clean
