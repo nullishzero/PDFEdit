@@ -17,7 +17,7 @@ utils:
 	cd utils && make
 
 # Kernel
-kernel: xpdf config_xpdf_variables
+kernel: xpdf config_xpdf_variables utils
 	cd kernel && qmake && make
 
 # XPdf
