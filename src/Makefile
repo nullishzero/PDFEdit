@@ -38,8 +38,8 @@ config_xpdf_variables: xpdf/config.status
 # Cleanup
 clean:
 	cd gui && make clean
-	cd utils && make clean
 	cd kernel && make clean
+	cd utils && make clean
 	cd xpdf && make clean
 	cd kpdf-kde-3.3.2 && make clean
 
