@@ -1,5 +1,5 @@
 #makefile for PDF editor
-.PHONY: clean pdfedit kernel xpdf kpdf-kde-3.3.2
+.PHONY: clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices xpdf_configure install
 
 #make PDF editor - source and documentation
 all: pdfedit
