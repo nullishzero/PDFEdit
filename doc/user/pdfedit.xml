@@ -17,6 +17,11 @@
    Invalid option on commandline will cause editor to abort with error message.
    Names of options are case sensitive.
   </para>
+  <para>
+   Options which require a parameter can be specified in "short form", like <parameter>-d1</parameter>
+   or "long form", like <parameter>-d 1</parameter>. Both of these mean option <option>-d</option> with
+   parameter <parameter>1</parameter>
+  </para>
   <sect1>
    <title>Option <option>--help</option></title>
    <para>
@@ -27,6 +32,28 @@
    <title>Option <option>--version</option></title>
    <para>
     Print version of editor to STDOUT and exit
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>-d (n)</option></title>
+   <para>
+    Set verbosity of debugging messages reported by editor.
+    Only messages below or equal level specified in parameter will be shown, default is debugging level 0.
+    Also, any of symbolic constants defined below (case insensitive), or starting part of them may be given instead of
+    corresponding number.
+   <table frame="none">
+    <title>Explanation of debugging levels</title>
+    <tgroup cols="3"><tbody>
+     <row><entry>0</entry><entry>PANIC</entry><entry>Critical errors</entry></row>
+     <row><entry>1</entry><entry>CRITICAL</entry><entry>Critical errors, but at least the program can exit somewhat gracefully</entry></row>
+     <row><entry>2</entry><entry>ERROR</entry><entry>Usual errors</entry></row>
+     <row><entry>3</entry><entry>WARNING</entry><entry>Comments about some unusual behavior</entry></row>
+     <row><entry>4</entry><entry>INFO</entry><entry>Information about some internal behavior</entry></row>
+     <row><entry>5</entry><entry>DEBUG</entry><entry>Debugging messages</entry></row>
+    </tbody></tgroup>
+   </table>
+    Setting this to -1 mean no debug messages will be shown at all, not even the most critical ones.
+    Debugging messages are sent to STDERR.
    </para>
   </sect1>
   <sect1>

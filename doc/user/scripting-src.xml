@@ -116,9 +116,14 @@
    If the file is not saved, user is asked to save changes to current file.
   </sect1>
   <sect1 id="print">
-   <title><funcsynopsis>void print(String)</funcsynopsis></title>
+   <title><funcsynopsis>void print(string)</funcsynopsis></title>
    Outputs given string to command window, followed by newline.
    Useful to output various debugging or status messages
+  </sect1>
+  <sect1 id="warn">
+   <title><funcsynopsis>void warn(string)</funcsynopsis></title>
+   Outputs given warning string to command window, followed by newline,
+   and show this string in a messagebox to alert user.
   </sect1>
   <sect1 id="objects">
    <title><funcsynopsis>void objects()</funcsynopsis></title>
