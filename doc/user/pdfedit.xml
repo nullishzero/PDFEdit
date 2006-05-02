@@ -13,10 +13,22 @@
    If no file is specified on commandline, editor will be loaded initially empty.
   </para>
   <para>
-   Name of files will can be mixed with options (parameter that begin with a dash).
+   Name of files can be mixed with options (parameter that begin with a dash).
    Invalid option on commandline will cause editor to abort with error message.
    Names of options are case sensitive.
   </para>
+  <sect1>
+   <title>Option <option>--help</option></title>
+   <para>
+    Print brief help about commandline options to STDOUT and exit
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>--version</option></title>
+   <para>
+    Print version of editor to STDOUT and exit
+   </para>
+  </sect1>
   <sect1>
    <title>Option <option>--</option></title>
    <para>
@@ -24,25 +36,13 @@
     This can be useful if you want to open file, that have name beginning with a dash.
    </para>
   </sect1>
-  <sect1>
-   <title>Option <option>--help</option></title>
-   <para>
-    Print brief help about commandline options on STDOUT and exit
-   </para>
-  </sect1>
-  <sect1>
-   <title>Option <option>--version</option></title>
-   <para>
-    Print editor version on STDOUT and exit
-   </para>
-  </sect1>
  </chapter>
  <chapter id="localization">
   <title>Localization</title>
   <para>
-   PDF Editor is in english by default, but by setting environment variable <variable>LANG</variable> before launching
+   PDF Editor is run in english language by default, but by setting environment variable <envar>LANG</envar> before launching
    the program, you can tell PDF Editor to look for specific language file. If the localization you requested is
-   not available, english will be used.
+   not available, english will be used instead.
   </para>
   <para>
    Aside default english, these localizations are available:
