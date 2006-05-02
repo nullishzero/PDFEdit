@@ -18,8 +18,4 @@ void printList(const QStringList &l);
 void consoleLog(const QString &message,const QString &fileName);
 QString getUntil(char separator,QString &line);
 
-//Temporary fix until "namespace" wiull be added to printDbg
-#define guiPrintDbg printDbg
-//TODO: remove
-
 #endif

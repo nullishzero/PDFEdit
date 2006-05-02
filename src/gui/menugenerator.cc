@@ -8,7 +8,6 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include <iostream>
 #include <string.h>
 #include <qfile.h>

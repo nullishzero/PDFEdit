@@ -2,7 +2,6 @@
  Various utility functions
 */
 #include "util.h"
-#include <utils/debug.h>
 #include <iostream>
 #include <qfile.h>
 #include <qstring.h>
@@ -71,7 +70,7 @@ void printList(const QStringList &l) {
  QStringList::ConstIterator it=l.begin();
  for (;it!=l.end();++it) { //load all subitems
   QString x=*it;
-  guiPrintDbg(debug::DBG_DBG,x);
+  cout << x <<endl;
  }
 }
 
