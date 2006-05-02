@@ -67,6 +67,7 @@ public slots: //These will be exported to scripting
  void exitApp();
  void closeWindow();
  void print(const QString &str);
+ void warn(const QString &str);
  void objects();
  void functions();
  void variables();

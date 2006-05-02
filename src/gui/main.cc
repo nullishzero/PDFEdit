@@ -4,6 +4,8 @@
  - unless commandline parameters specify something different
  @author Martin Petricek
 */
+
+#include "args.h"
 #include <stdlib.h>
 #include <qtranslator.h>
 #include <qapplication.h>
@@ -12,34 +14,13 @@
 #include "pdfeditwindow.h"
 #include "config.h"
 #include "util.h"
+#include <utils/debug.h>
 #include "version.h"
 #include "settings.h"
 #include "optionwindow.h"
 
 using namespace std;
 using namespace gui;
-
-/** Option handler function*/
-typedef void optHandlerFn(void);
-
-/** Option handler function pointer*/
-typedef optHandlerFn *optHandler;
-
-/** Option handler map*/
-typedef QMap<QString, optHandler> OptionMap;
-
-/** Option help map*/
-typedef QMap<QString, QString> OptionHelp;
-
-/** Stop processing options from comandline? */
-bool stopOpt=false;
-
-/** Name of the program (argv[0]) */
-QString binName;
-/** Option help texts */
-OptionHelp optHelp;
-/** Option handlers */
-OptionMap optMap;
 
 /** delete settings object (and save settings)
  This function is called at application exit
@@ -48,51 +29,43 @@ void saveSettings(void) {
  delete globalSettings;//this causes settings to be saved to disk
 }
 
-/** handle --version parameter */
-void handleVersion(){
-  cout << VERSION << endl;
-  exit(0);
-}
-
-
-/** handle -- parameter (stop processing option) */
-void handleStopOpt(){
- stopOpt=true;
-}
-
-/** handle --help parameter */
+/**
+ handle --help parameter<br>
+ Prtin help to STDOUT and exit
+*/
 void handleHelp(){
-  cout << APP_NAME << " " << VERSION << endl;
-  cout << QObject::tr("Usage: ") << binName << QObject::tr(" [option(s)] [files(s)]") << endl;
-  cout << QObject::tr("Options: ") << endl;
-  QValueList<QString> opt=optHelp.keys();
-  for (QValueList<QString>::Iterator it=opt.begin();it!=opt.end();++it) {
-   cout << " ";
-   cout.width(16);		//width of option name
-   cout.flags(ios::left);
-   cout << *it << optHelp[*it] << endl;
-  }
-  exit(0);
+ cout << APP_NAME << " " << VERSION << endl;
+ cout << QObject::tr("Usage: ") << binName << QObject::tr(" [option(s)] [files(s)]") << endl;
+ handleHelpOptions();
 }
 
-/** Register function to handle options
- @param param Name of option (case sensitive)
- @param h Function to handle this option
- @param help Brief one-line help about this option
+/**
+ handle --version parameter<br>
+ Print version to STDOUT and exit
  */
-void optionHandler(const QString &param, optHandler h,const QString &help="") {
- optMap[param]=h;
- optHelp[param]=help;
+void handleVersion(){
+ cout << VERSION << endl;
+ exit(0);
 }
 
-/** Adds option to option list. Some options (help) are processed immediately
- @param param Commandline option to check
- @return true if option is valid, false otherwise
- */
-bool handleOption(const QString &param) {
- if (!optMap.contains(param)) return false;
- optMap[param]();
- return true;
+/**
+ handle -d [n] parameter<br>
+ Change debugging level
+ @param param Parameter passed
+*/
+void handleDebug(const QString &param){
+ QString cns=param.upper();
+ if (cns.length()) { //Check for symbolic constants
+  if (QString("PANIC").startsWith(cns))		{ debug::debugLevel=debug::DBG_PANIC;	return; }
+  if (QString("CRITICAL").startsWith(cns))	{ debug::debugLevel=debug::DBG_CRIT;	return; }
+  if (QString("ERROR").startsWith(cns))		{ debug::debugLevel=debug::DBG_ERR;	return; }
+  if (QString("WARNING").startsWith(cns))	{ debug::debugLevel=debug::DBG_WARN;	return; }
+  if (QString("INFO").startsWith(cns))		{ debug::debugLevel=debug::DBG_INFO;	return; }
+  if (QString("DEBUG").startsWith(cns))		{ debug::debugLevel=debug::DBG_DBG;	return; }
+ }
+ //If debuglevel is set outside of limits - no problem, nearest "in ilmits" value is defacto used
+ debug::debugLevel=atoi(param);
+ //If non-number is given, default 0 is silently used ... :)
 }
 
 /** main - load settings and launches a main window */
@@ -122,25 +95,25 @@ int main(int argc, char *argv[]){
  app.installTranslator(&translator);
 
  //parse commandline parameters
- QStringList params;
- QString param;
+ /*
+  Whole name of one parameter should not be prefix of another parameter, as unpredictable behaviour can occur,
+  for example -d and -def, in this case there is no way to recognize between -def option and -d option
+  with 'ef' as parameter and it is undefined what case of these two will be recognized
+ */
  optionHandler("--help",handleHelp,QObject::tr("Print help and exit"));
  optionHandler("--version",handleVersion,QObject::tr("Print version and exit"));
+ optionHandlerParam("-d","n",handleDebug,QObject::tr("Set debug messages verbosity")+" "+QObject::tr("(n = -1 .. 5, default 0)"));
  optionHandler("--",handleStopOpt,QObject::tr("Stop processing options"));
- binName=app.argv()[0];
- for (int i=1;i<app.argc();i++) {
-  param=app.argv()[i];
-  if (param.startsWith("-") && !stopOpt) { //option
-   if (!handleOption(param)) fatalError(QObject::tr("Invalid commandline option : ")+param);
-  } else {
-   params+=param;
-  }
- }
+ QStringList params=handleParams(app.argc(),app.argv());
+
+ guiPrintDbg(debug::DBG_DBG,"Commandline parameters processed");
 
  //load settings
  globalSettings=Settings::getInstance();
  globalSettings->setName("settings");
  atexit(saveSettings);
+
+ guiPrintDbg(debug::DBG_DBG,"Settings loaded");
 
  //style
  QString style=globalSettings->read("gui/style","");
@@ -148,17 +121,23 @@ int main(int argc, char *argv[]){
   if (!app.setStyle(style)) globalSettings->write("gui/style",""); //No such style -> reset
  }
 
+ guiPrintDbg(debug::DBG_DBG,"Style loaded");
+
  //font
  applyLookAndFeel(false);
+
+ guiPrintDbg(debug::DBG_DBG,"Font and style applied");
 
  //open editor windows(s)
  int nFiles=params.size();
  if (nFiles) { //open files from cmdline
+  guiPrintDbg(debug::DBG_DBG,"Opening files from commandline");
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {
    guiPrintDbg(debug::DBG_INFO,"Opening parameter: " << *it)
    createNewEditorWindow(*it);
   }
  } else { //no parameters
+  guiPrintDbg(debug::DBG_DBG,"Opening empty editor window");
   createNewEditorWindow();
  }
  QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));

@@ -322,6 +322,15 @@ void PdfEditWindow::print(const QString &str) {
 }
 
 /**
+ Show this string as a warning in a messagebox and also print it to console, followed by newline
+ @param str String to use as warning
+ */
+void PdfEditWindow::warn(const QString &str) {
+ print(str);
+ QMessageBox::warning(this,tr("Warning"),str);
+}
+
+/**
  Signal handler invoked on menu activation
  @param id Menu ID of clicked item
  */
@@ -447,7 +456,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  if (fName.isNull()) { //start with empty editor
   emptyFile();
-  print(tr("New document created"));
+//  print(tr("New document created"));
  } else { //open file
   openFile(fName);
  }
@@ -576,7 +585,21 @@ void PdfEditWindow::openFile(const QString &name) {
  destroyFile();
  if (name.isNull()) return;
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
- document=CPdf::getInstance(name,mode);
+ try {
+  document=CPdf::getInstance(name,mode);
+ } catch (PdfOpenException &ex) {
+  string err;
+  ex.getMessage(err);
+  warn(tr("Error while loading document ")+name+"\n"+err);
+  //File failed to open, keep window opened with empty file.
+  emptyFile();
+  return;
+ } catch (...) {
+  warn(tr("Unknown error while loading document ")+name);
+  //File failed to open, keep window opened with empty file.
+  emptyFile();
+  return;
+ }
  qpdf=import->createQSObject(document);
  import->addQSObj(qpdf,"document");
  setFileName(name);
