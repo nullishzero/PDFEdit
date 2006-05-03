@@ -166,7 +166,7 @@ opcount (ostream& oss, const char* fileName)
 		CStream& str = *(*it);
 		
 		str.open ();
-		printDbg (debug::DBG_DBG, "");
+		testPrintDbg (debug::DBG_DBG, "");
 
 		while (!str.eof())
 		{
@@ -178,7 +178,7 @@ opcount (ostream& oss, const char* fileName)
 			{
 				if (!img (str))
 					return false;
-				printDbg (debug::DBG_DBG, "end image...");
+				testPrintDbg (debug::DBG_DBG, "end image...");
 			}
 			
 			if (o.isCmd ())
@@ -195,7 +195,7 @@ opcount (ostream& oss, const char* fileName)
 
 		}
 
-		printDbg (debug::DBG_DBG, "close stream");
+		testPrintDbg (debug::DBG_DBG, "close stream");
 		str.close ();
 	}
 	
@@ -248,6 +248,9 @@ public:
 	void tearDown() {}
 
 public:
+	//
+	//
+	//
 	void TestOpcount ()
 	{
 		OUTPUT << "CContentStream..." << endl;
@@ -261,6 +264,9 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
 	void TestPosition ()
 	{
 		OUTPUT << "CContentStream..." << endl;
@@ -271,11 +277,16 @@ public:
 			
 			TEST(" getPosition");
 			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300)));
+			MEM_CHECK;
 			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (10,10,50,50)));
+			MEM_CHECK;
 			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (400,400,450,450)));
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
 	void TestPrint ()
 	{
 		OUTPUT << "CContentStream..." << endl;

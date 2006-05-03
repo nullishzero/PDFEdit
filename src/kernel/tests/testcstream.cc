@@ -13,6 +13,7 @@
 #include "testcpdf.h"
 
 #include "factories.h"
+#include "filters.h"
 
 #include <PDFDoc.h>
 #include "../cpage.h"
@@ -24,42 +25,71 @@ namespace {
 using namespace boost;
 using namespace std;
 
+namespace {
+
+	boost::shared_ptr<CStream>
+	getTestCStream (boost::shared_ptr<CPdf> pdf)
+	{
+		if (1 > pdf->getPageCount())
+		{
+			assert (!"Too many pages (less than 1)");
+			throw;
+		}
+		boost::shared_ptr<CPage> page = pdf->getPage (1);
+		shared_ptr<CDict> dict = page->getDictionary ();
+
+		boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
+		boost::shared_ptr<CStream> stream;
+		if (contents)
+		{
+			if (isArray (contents))
+				stream = utils::getCStreamFromArray (contents, 0);
+			else if (isStream (contents))
+				stream = IProperty::getSmartCObjectPtr<CStream> (contents);
+			else
+				assert (!"Bad contents entry type.");
+			
+		}else
+			assert (!"No content stream");
+	
+		assert (isStream (stream));
+		return stream;
+	}
+}
+
+
+//=====================================================================================
+bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+
+	CStream::Buffer& buf = stream->buffer;
+	oss << "Buffer start: "<< std::flush;
+	filters::Printable<CStream::Buffer::value_type> print;
+	for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
+		std::cout << print(*it) << std::flush;
+	oss << "\nBuffer end.."<< std::flush;
+	
+	std::string tmp;
+	stream->getStringRepresentation (tmp);
+	oss << tmp << std::flush;
+	
+	return true;
+}
+
+//=====================================================================================
 bool createStream (std::ostream& oss, const char* fileName)
 {
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getPage (1);
-
-	shared_ptr<CDict> dict = page->getDictionary ();
-
-	boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
-	boost::shared_ptr<CStream> stream;
-	if (contents)
-	{
-		if (isArray (contents))
-			stream = utils::getCStreamFromArray (contents, 0);
-		else if (isStream (contents))
-			stream = IProperty::getSmartCObjectPtr<CStream> (contents);
-		else
-		{
-			string tmp;
-			contents->getStringRepresentation (tmp);
-			testPrintDbg (debug::DBG_CRIT, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
-			assert (!"Bac contents entry type.");
-		}
-	}else
-	{
-		assert (!"No content stream");
-		throw CObjInvalidObject ();
-	}
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
 	vector<string> names;
 	stream->getAllPropertyNames (names);
 
-	oss << "CStream dictionary: " << endl;
+	oss << " CStream dictionary: " << flush;
 	for (vector<string>::iterator it = names.begin(); it != names.end(); ++it)
-		oss << (*it) << endl;
+		oss << (*it) << " " << flush;
 
 	return true;
 }
@@ -68,35 +98,9 @@ bool createStream (std::ostream& oss, const char* fileName)
 
 bool getString (std::ostream& oss, const char* fileName)
 {
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getPage (1);
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	shared_ptr<CDict> dict = page->getDictionary ();
-
-	boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
-	boost::shared_ptr<CStream> stream;
-	if (contents)
-	{
-		if (isArray (contents))
-			stream = utils::getCStreamFromArray (contents, 0);
-		else if (isStream (contents))
-			stream = IProperty::getSmartCObjectPtr<CStream> (contents);
-		else
-		{
-			string tmp;
-			contents->getStringRepresentation (tmp);
-			testPrintDbg (debug::DBG_CRIT, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
-			assert (!"Bac contents entry type.");
-		}
-	}else
-	{
-		assert (!"No content stream");
-		throw CObjInvalidObject ();
-	}
-
-	assert (isStream (stream));
 	boost::scoped_ptr<Object> obj (stream->_makeXpdfObject ());
 	obj->free ();
 	
@@ -111,7 +115,7 @@ bool getString (std::ostream& oss, const char* fileName)
 
 	tmp.clear ();
 	ip->getStringRepresentation (tmp);
-	oss << "Length: " << tmp << endl;
+	oss << " Length: [" << tmp << "]" << flush;
 
 	return true;
 }
@@ -120,35 +124,9 @@ bool getString (std::ostream& oss, const char* fileName)
 
 bool getFilter (std::ostream& oss, const char* fileName)
 {
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getPage (1);
-
-	shared_ptr<CDict> dict = page->getDictionary ();
-	boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
-	boost::shared_ptr<CStream> stream;
-	if (contents)
-	{
-		if (isArray (contents))
-			stream = utils::getCStreamFromArray (contents, 0);
-		else if (isStream (contents))
-			stream = IProperty::getSmartCObjectPtr<CStream> (contents);
-		else
-		{
-			string tmp;
-			contents->getStringRepresentation (tmp);
-			testPrintDbg (debug::DBG_CRIT, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
-			assert (!"Bac contents entry type.");
-		}
-	}else
-	{
-		assert (!"No content stream");
-		throw CObjInvalidObject ();
-	}
-
-	assert (isStream (stream));
-
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+	
 	string tmp;
 	vector<string> filters;
 	stream->getFilters (filters);
@@ -159,6 +137,20 @@ bool getFilter (std::ostream& oss, const char* fileName)
 
 	return true;
 }
+
+
+//=========================================================================
+bool testdict (__attribute__((unused)) std::ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+
+	oss << " Dict item #: [" << stream->getPropertyCount () << "]" << flush;
+
+	return true;
+}
+
+
 //=========================================================================
 
 bool getSupportedF (std::ostream& oss)
@@ -173,6 +165,8 @@ bool getSupportedF (std::ostream& oss)
 	return true;
 }
 
+
+
 //=========================================================================
 // class TestCStream
 //=========================================================================
@@ -180,9 +174,12 @@ bool getSupportedF (std::ostream& oss)
 class TestCStream : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCStream);
+		CPPUNIT_TEST(TestBuf);
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestString);
 		CPPUNIT_TEST(TestFilter);
+		CPPUNIT_TEST(TestSupFilter);
+		CPPUNIT_TEST(TestDict);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -190,6 +187,23 @@ public:
 	void tearDown() {}
 
 public:
+	//
+	//
+	//
+	void TestBuf ()
+	{
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" buffer");
+			CPPUNIT_ASSERT (buffer (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
 	void Test ()
 	{
 		OUTPUT << "CStream methods..." << endl;
@@ -203,6 +217,9 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
 	void TestString ()
 	{
 		OUTPUT << "CStream string methods..." << endl;
@@ -220,6 +237,9 @@ public:
 		CPPUNIT_ASSERT (getSupportedF (OUTPUT));
 		OK_TEST;
 	}
+	//
+	//
+	//
 	void TestFilter ()
 	{
 		OUTPUT << "CStream string methods..." << endl;
@@ -232,10 +252,31 @@ public:
 			CPPUNIT_ASSERT (getFilter (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
-			
+	}
+	//
+	//
+	//
+	void TestSupFilter ()
+	{
 		TEST(" get supported filters");
 		CPPUNIT_ASSERT (getSupportedF (OUTPUT));
 		OK_TEST;
+	}
+	//
+	//
+	//
+	void TestDict ()
+	{
+		OUTPUT << "CStream dict methods..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" dict");
+			CPPUNIT_ASSERT (testdict (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
 	}
 
 };
