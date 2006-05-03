@@ -57,10 +57,10 @@
   </sect1>
   <sect1 id="addObjectDialog">
    <title><funcsynopsis>void addObjectDialog(IProperty container)</funcsynopsis></title>
-   Invokes dialog for adding additional objects to specified container (which must be Dictionary or Array).
+   Invokes dialog for adding additional objects to specified container (which must be <link linkend="type_Dict">Dictionary</link> or <link linkend="type_Array">Array</link>).
    After invoking dialog, this function returns immediately and the dialog is left for the user to use.
    If given object is not specified, curently selected object in property editor is used.
-   If the object is not Dictionary or Array, no dialog is shown.
+   If the object is not <link linkend="type_Dict">Dictionary</link> or <link linkend="type_Array">Array</link>, no dialog is shown.
   </sect1>
   <sect1 id="createNewWindow">
    <title><funcsynopsis>void createNewWindow()</funcsynopsis></title>
@@ -295,7 +295,7 @@
    </para>
    <para>
     Types for this object can be <link linkend="type_IProperty">IProperty</link> or any of its descendants
-    (<link linkend="type_Dict">Dict</link>, <link linkend="type_array">Array</link>)
+    (<link linkend="type_Dict">Dict</link>, <link linkend="type_Array">Array</link>)
     You can use type() function to return name of the object's type (as string).
    </para>
   </sect1>

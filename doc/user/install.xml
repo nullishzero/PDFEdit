@@ -45,6 +45,7 @@
      <row><entry>Gentoo Linux x86</entry><entry> - ok</entry></row>
      <row><entry>FreeBSD 6.0 x86</entry><entry> - ok</entry></row>
      <row><entry>Ubuntu Linux 5.10 x86</entry><entry> - ok</entry></row>
+     <row><entry>Debian unstable amd64</entry><entry> - ok</entry></row>
     </tbody></tgroup>
    </informaltable>
  </chapter>
