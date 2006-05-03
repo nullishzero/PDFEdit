@@ -209,7 +209,6 @@ public:
 	 */
 	void writeValue (WriteType val);
 
-
 	//
 	// Destructor
 	//
@@ -695,16 +694,21 @@ public:
 	//typedef std::vector<char> Buffer;
 	typedef std::vector<filters::StreamChar> Buffer;
 
-private:
+protected:
 	
 	/** Object dictionary. */
 	mutable CDict dictionary;
 	
 	/** Xpdf object. */
-	mutable Object xpdfDict;
+	mutable ::Object xpdfDict;
 
 	/** Buffer. */
 	Buffer buffer;
+
+	/** Parser. */
+	Parser* parser;
+	/** Next object in opened stream. */
+	mutable ::Object curObj;
 		
 
 	//
@@ -923,6 +927,43 @@ public:
 	 */
 	void setBuffer (const Buffer& buf);
 
+	//
+	// Parsing
+	//
+public:
+	
+	/**
+	 * Initialize parsing mechanism.
+	 *
+	 * REMARK: if CObject is not in a pdf, we MUST be sure that it does not
+	 * use indirect objects.
+	 */
+	void open ();
+
+	/**
+	 * Close parsing.
+	 */
+	void close ();
+	
+	/**
+	 * Get xpdf object. It also frees obj passes as argument.
+	 *
+	 * @param obj Next xpdf object.
+	 */
+	void getXpdfObject (::Object& obj);
+	
+	/**
+	 * Get xpdf stream. Be carefull this is not a copy.
+	 * 
+	 * @return Stream.
+	 */
+	 ::Stream* getXpdfStream ();
+
+	/**
+	 * Is end of stream.
+	 */
+	bool eof () const;
+	
 
 	//
 	// Destructor

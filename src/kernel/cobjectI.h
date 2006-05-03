@@ -704,7 +704,7 @@ CObjectComplex<Tp,Checker>::~CObjectComplex ()
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf) 
+CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf), parser (NULL)
 {
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
@@ -744,7 +744,7 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream (::Object& o)
+CObjectStream<Checker>::CObjectStream (::Object& o) : parser (NULL)
 {
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
@@ -773,7 +773,7 @@ CObjectStream<Checker>::CObjectStream (::Object& o)
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream ()
+CObjectStream<Checker>::CObjectStream () : parser (NULL)
 {
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
@@ -826,6 +826,9 @@ void
 CObjectStream<Checker>::getStringRepresentation (std::string& str) const 
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+
+	str = "<<<stream>>>";
+	return;
 
 	assert (!"not supported");
 
@@ -975,6 +978,122 @@ CObjectStream<Checker>::encodeBuffer (Buffer& container) const
 
 
 //
+// Parsing
+//
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::open ()
+{
+	kernelPrintDbg (debug::DBG_DBG,"");
+
+	if (NULL != parser || !curObj.isNone ())
+	{
+		assert (!"Open an opened stream.");
+		delete parser;
+		parser = NULL;
+		throw CObjInvalidOperation ();
+	}
+	
+	::XRef* xref = (NULL != IProperty::getPdf ()) ? IProperty::getPdf ()->getCXref() : NULL;
+	// \TODO remove xpdfDict
+	parser = new ::Parser (xref, new ::Lexer(xref, &xpdfDict));
+}
+
+//
+// 
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::close ()
+{
+	kernelPrintDbg (debug::DBG_DBG,"");
+
+	if (NULL != parser && !curObj.isNone ())
+	{
+		curObj.free ();
+		delete parser;
+		parser = NULL;		
+
+	}else
+	{
+		assert (!"Close a closed stream.");
+		throw CObjInvalidOperation ();
+	}
+}
+
+
+//
+//
+//
+template<typename Checker>
+bool
+CObjectStream<Checker>::eof () const
+{
+	//kernelPrintDbg (debug::DBG_DBG,"");
+
+	if (NULL != parser)
+	{
+		return (curObj.isEOF());
+
+	}else
+	{
+		assert (!"Operation on closed stream.");
+		throw CObjInvalidOperation ();
+	}
+}
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::getXpdfObject (::Object& obj)
+{
+	//kernelPrintDbg (debug::DBG_DBG,"");
+
+	if (NULL != parser)
+	{
+		curObj.free ();
+
+		parser->getObj (&curObj);
+		assert (!curObj.isNone ());
+		assert (!curObj.isNull ());
+		assert (!curObj.isError ());
+		
+		curObj.copy (&obj);
+
+	}else
+	{
+		assert (!"Operation on closed stream.");
+		throw CObjInvalidOperation ();
+	}
+}
+
+//
+//
+//
+template<typename Checker>
+::Stream*
+CObjectStream<Checker>::getXpdfStream ()
+{
+	kernelPrintDbg (debug::DBG_DBG,"");
+
+	if (NULL != parser)
+	{
+		return parser->getStream ();
+
+	}else
+	{
+		assert (!"Operation on closed stream.");
+		throw CObjInvalidOperation ();
+	}
+}
+
+//
 // Destructor
 //
 template<typename Checker>
@@ -983,6 +1102,14 @@ CObjectStream<Checker>::~CObjectStream ()
 	Checker check; check.objectDeleted (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
 
+	if (NULL != parser)
+	{
+		assert (!"Stream not closed.");
+		curObj.free ();
+		delete parser;
+		parser = NULL;
+	}
+	
 	// Free xpdf object
 	xpdfDict.free ();
 }
