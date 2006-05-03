@@ -51,6 +51,11 @@
    <title><funcsynopsis>void run(string filename)</funcsynopsis></title>
    Loads and runs script from given filename.
   </sect1>
+  <sect1 id="setDebugLevel">
+   <title><funcsynopsis>void setDebugLevel(string level)</funcsynopsis></title>
+   Set new debugging verbosity level. Accept same parameter as -d option on commandline
+  (either number or symbolic constant)
+  </sect1>
   <sect1 id="options">
    <title><funcsynopsis>void options()</funcsynopsis></title>
    Invokes options dialog. Does not wait for dialog to finish.
