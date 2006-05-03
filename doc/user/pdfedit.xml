@@ -38,7 +38,7 @@
    <title>Option <option>-d (n)</option></title>
    <para>
     Set verbosity of debugging messages reported by editor.
-    Only messages below or equal level specified in parameter will be shown, default is debugging level 0.
+    Only messages below or equal level specified in parameter will be shown, default is debugging level 1.
     Also, any of symbolic constants defined below (case insensitive), or starting part of them may be given instead of
     corresponding number.
    <table frame="none">
