@@ -35,15 +35,19 @@
 namespace xpdf {
 //=====================================================================================
 
+	
 /** \TODO
  * Wrapper around really really fucked up class with free method (e.g. Xpdf Object).
  */
-/*
 template<typename T>
-class MassiveIdiocyWrapper : noncopyable 
+class MassiveIdiocyWrapper // : noncopyable 
 {
 private:
 	T obj;
+	
+	// Disallow copy ctor
+	MassiveIdiocyWrapper (const MassiveIdiocyWrapper&);
+	const MassiveIdiocyWrapper& operator= (const MassiveIdiocyWrapper&);
 	
 public:	
 	typedef T element_type;
@@ -58,27 +62,17 @@ public:
 	//
 	// Dereference
 	//
-	T& operator*() const { return obj; };
-	T* operator->() const { return &obj; };
+	T& operator*() /*const*/ { return obj; };
+	T* operator->() /*const*/ { return &obj; };
 
-	//
-	// Copy constructor
-	//
-	MassiveIdiocyWrapper (const MassiveIdiocyWrapper& m)
-	{
-		obj.free ();
-		obj = m;
-	}
-	
 	//
 	// Delete
 	//
 	~MassiveIdiocyWrapper () { obj.free (); };
 };
-*/
 
 /** Xpdf object wrapper. */
-//typedef MassiveIdiocyWrapper<Object> XpdfObject;
+typedef MassiveIdiocyWrapper<Object> XpdfObject;
 
 
 //=====================================================================================

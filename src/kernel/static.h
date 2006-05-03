@@ -125,7 +125,7 @@ struct GenRect
 	// Helper functions
 	bool contains (Coord x, Coord y) const
 	{
-		kernelPrintDbg (debug::DBG_DBG, "x: " << x << " y: " << y << " Rect:" << *this);
+		//kernelPrintDbg (debug::DBG_DBG, "x: " << x << " y: " << y << " Rect:" << *this);
 		return ( std::min(xleft,xright) <= x && x <= std::max(xleft,xright) 
 				&& std::min (yleft,yright) <= y && y <= std::max(yleft,yright) );
 	}
@@ -159,7 +159,6 @@ operator << (std::ostream& os, const Point& pt)
 
 //=====================================================================================
 
-/*\TODO
 //
 // From boost
 //
@@ -172,7 +171,7 @@ private:  // emphasize the following members are private
 	noncopyable( const noncopyable& );
 	const noncopyable& operator=( const noncopyable& );
 };
-*/
+
 
 
 #endif // _STATIC_H_
