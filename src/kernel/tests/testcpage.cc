@@ -115,7 +115,7 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 
 	//oss << "Output from textoutputdevice." << endl;
 	//oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
-	textOut.getText(0, 0, 1000, 1000)->getCString();
+	delete textOut.getText(0, 0, 1000, 1000);
 
 	globalParams = oldGlobPar;
 

@@ -45,7 +45,7 @@ bool createStream (std::ostream& oss, const char* fileName)
 		{
 			string tmp;
 			contents->getStringRepresentation (tmp);
-			printDbg (debug::DBG_PANIC, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
+			testPrintDbg (debug::DBG_CRIT, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
 			assert (!"Bac contents entry type.");
 		}
 	}else
@@ -87,7 +87,7 @@ bool getString (std::ostream& oss, const char* fileName)
 		{
 			string tmp;
 			contents->getStringRepresentation (tmp);
-			printDbg (debug::DBG_PANIC, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
+			testPrintDbg (debug::DBG_CRIT, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
 			assert (!"Bac contents entry type.");
 		}
 	}else
@@ -102,9 +102,9 @@ bool getString (std::ostream& oss, const char* fileName)
 	
 
 	string tmp;
-	//stream->getStringRepresentation (tmp);
+	stream->getStringRepresentation (tmp);
 
-	//oss << tmp << endl;
+	oss << tmp << endl;
 
 	boost::shared_ptr<IProperty> ip = stream->getProperty ("Length");
 	ip = utils::getReferencedObject (ip);
@@ -138,7 +138,7 @@ bool getFilter (std::ostream& oss, const char* fileName)
 		{
 			string tmp;
 			contents->getStringRepresentation (tmp);
-			printDbg (debug::DBG_PANIC, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
+			testPrintDbg (debug::DBG_CRIT, "Bad contents entry type: " << contents->getType() << " repre: " << tmp);
 			assert (!"Bac contents entry type.");
 		}
 	}else
@@ -182,6 +182,7 @@ class TestCStream : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE(TestCStream);
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestString);
+		CPPUNIT_TEST(TestFilter);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -213,7 +214,20 @@ public:
 			TEST(" create");
 			CPPUNIT_ASSERT (getString (OUTPUT, (*it).c_str()));
 			OK_TEST;
-
+		}
+			
+		TEST(" get supported filters");
+		CPPUNIT_ASSERT (getSupportedF (OUTPUT));
+		OK_TEST;
+	}
+	void TestFilter ()
+	{
+		OUTPUT << "CStream string methods..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
 			TEST(" filters");
 			CPPUNIT_ASSERT (getFilter (OUTPUT, (*it).c_str()));
 			OK_TEST;

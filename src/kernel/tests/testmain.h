@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/05/03 01:06:18  misuj1am
+ *
+ * -- tests improvments
+ *
  * Revision 1.15  2006/05/01 12:29:34  misuj1am
  *
  * -- CStream update, CContentStream update, CInlineImage added - test version
@@ -90,7 +94,6 @@
 #include <cppunit/CompilerOutputter.h>
 
 
-
 // TFUJJ
 using namespace std;
 using namespace pdfobjects;
@@ -126,6 +129,11 @@ extern FileList fileList;
 
 // if set validation functions will output
 #define REALLY_ALL_OUTPUT	0
+
+//
+// PrintDbg from tests
+//
+#define testPrintDbg(level, msg) _printDbg("TEST", level,  OUTPUT, msg);
 
 //
 //
@@ -186,7 +194,7 @@ operator << (ostream& os, Object* o)
 //
 //
 inline void
-print (ostream& os, Object* o, XRef* xref)
+print (__attribute__((unused)) ostream& os, Object* o, XRef* xref)
 {
 	if (!o->isStream())
 		throw;

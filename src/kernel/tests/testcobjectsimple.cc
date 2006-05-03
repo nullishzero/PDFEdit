@@ -432,7 +432,15 @@ public:
 		e.ref.value	= "32 10";
 		e.ref.expected	= "32 10 R";
 	}
-	void tearDown() {}
+	void tearDown() 
+	{
+		delete[] e.n.xn;
+		delete e.n.n;
+		delete e.s.xs;
+		delete e.s.s;
+		delete e.ref.ref;
+	
+	}
 
 public:
 	void TestGet()
