@@ -1,8 +1,14 @@
 #!/bin/sh
+#This file should be run on exported directory, not directly in CVS tree
+#It is expected that the directory in which the sources are exported is named 'pdfedit'
+
 #Make documentation before making tarball
 (cd doc && make)
 #Get version number from src/gui/version.h
 VERSION=`grep "#define VERSION" <src/gui/version.h |sed 's/.*"\(.*\)".*/\1/'`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
-tar -czf pdfedit-$VERSION.tar.gz * --exclude-from=dist-exclude
-tar -cjf pdfedit-$VERSION.tar.bz2 * --exclude-from=dist-exclude
+rm ../pdfedit-$VERSION
+ln -s ../pdfedit ../pdfedit-$VERSION
+cd ..
+tar -czvhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
+tar -cjvhf pdfedit-$VERSION.tar.bz2 pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude

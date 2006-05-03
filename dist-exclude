@@ -17,13 +17,16 @@ src/gui/menugenerator
 src/gui/pdfedit
 src/gui/run-pdfedit-nd
 src/gui/ulab-fix
+src/gui/Makefile
 src/kpdf-kde-3.3.2/*.a
 src/kpdf-kde-3.3.2/*.o
+src/kpdf-kde-3.3.2/Makefile
 src/kernel/*.a
 src/kernel/*.o
 src/kernel/.obj
 src/kernel/kernel
 src/kernel/kernel.gch
+src/kernel/Makefile
 src/utils/.keepme
 src/xpdf/Makefile
 src/xpdf/aconf.h
