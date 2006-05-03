@@ -92,7 +92,7 @@ template<> struct PropertyTraitSimple<pRef>
  *
  */
 template <PropertyType Tp, typename Checker = BasicMemChecker>
-class CObjectSimple : public IProperty
+class CObjectSimple : noncopyable, public IProperty
 {
 public:
 	typedef typename PropertyTraitSimple<Tp>::writeType	 WriteType;
@@ -106,11 +106,6 @@ private:
 	//
 	// Constructors
 	//
-private:
-	
-	/** Copy constructor. */
-	CObjectSimple (const CObjectSimple&);
-	
 public/*protected*/:
 	
 	/**
@@ -351,7 +346,7 @@ template <typename Checker> class CObjectStream;
  * addProperty (IProperty& ,string&) method.
  */
 template <PropertyType Tp, typename Checker = BasicMemChecker>
-class CObjectComplex : public IProperty
+class CObjectComplex : noncopyable, public IProperty
 {
 	template<typename T> friend class CObjectStream;
 	
@@ -370,13 +365,6 @@ private:
 	//
 	// Constructors
 	//
-private:
-
-	/** Copy constructor */
-	CObjectComplex (const CObjectComplex&) {};
-	
-protected:
-
 /*debug*/public:
 	/**
 	 * Constructor. Only kernel can call this constructor
@@ -681,7 +669,7 @@ public:
  * 			ako ukladat stream
  */
 template <typename Checker = BasicMemChecker>
-class CObjectStream : public IProperty
+class CObjectStream : noncopyable, public IProperty
 {
 	typedef CObjectSimple<pName> 	CName;
 	typedef CObjectSimple<pInt> 	CInt;
@@ -691,16 +679,15 @@ class CObjectStream : public IProperty
 	typedef std::string PropertyId;
 
 public:
-	//typedef std::vector<char> Buffer;
 	typedef std::vector<filters::StreamChar> Buffer;
 
-protected:
+//\debug \TODO remove protected:
 	
 	/** Object dictionary. */
 	mutable CDict dictionary;
 	
 	/** Xpdf object. */
-	mutable ::Object xpdfDict;
+	mutable ::Object xpdfStream;
 
 	/** Buffer. */
 	Buffer buffer;
@@ -714,11 +701,6 @@ protected:
 	//
 	// Constructors
 	//
-private:
-
-	/** Copy constructor */
-	CObjectStream (const CObjectStream&) {};
-	
 /*debug*/public:
 	/**
 	 * Constructor. Only kernel can call this constructor
@@ -746,7 +728,7 @@ public:
 
 
 	//
-	// Dictionary handling from CObjectComplex
+	// Dictionary methods, delegated to CDict
 	//
 public:
 	//
@@ -810,8 +792,8 @@ public:
 protected:
 
 	/**
-     * Implementation of clone method
-     *
+     * Implementation of clone method. 
+	 *
      * @param Deep copy of this object.
 	 */
 	virtual IProperty* doClone () const;
@@ -831,16 +813,14 @@ public:
 
 	
 	/**
-	 * Returns string representation of actual object.
-	 *
-	 * REMARK: String can contain also NOT printable characters.
+	 * Returns printable string representation of actual object.
 	 *
 	 * @param str String representation.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
-	 * Get buffer.
+	 * Get encoded buffer. Can contain non printable characters.
 	 *
 	 * @return Buffer.
 	 */
@@ -920,12 +900,19 @@ public:
 	//
 public:
 	/**
-	 * Convert string to an object value.
-	 * <exception cref="ObjBadValueE" /> Thrown when we can't parse the string correctly.
+	 * Set encoded buffer.
 	 *
-	 * @param str0 Object in a text form.
+	 * @param buf New buffer.
 	 */
-	void setBuffer (const Buffer& buf);
+	void setRawBuffer (const Buffer& buf);
+
+	/**
+	 * Set decoded buffer. 
+	 * Use avaliable filters. If a filter is not avaliable an exception is thrown.
+	 *
+	 * @param buf New buffer.
+	 */
+	//void setBuffer (const Buffer& buf) {};
 
 	//
 	// Parsing
@@ -964,6 +951,12 @@ public:
 	 */
 	bool eof () const;
 	
+	/**
+	 * Is stream opened.
+	 *
+	 * @return True if the stream has been opened, false otherwise.
+	 */
+	bool is_open () const {return (NULL != parser);};
 
 	//
 	// Destructor
@@ -1023,7 +1016,7 @@ private:
 	 *
 	 * @param container Output container.
 	 */
-	void encodeBuffer (Buffer& container) const;
+	//void encodeBuffer (Buffer& container) const;
 
 
 	//
@@ -1409,24 +1402,10 @@ void xpdfObjToString (Object& obj, std::string& str);
 /**
  * Parse stream object to a container
  *
- * @param container Container of characters (ints).
+ * @param container Container of characters (e.g. ints).
  * @param obj Stream object.
  */
-template <typename Container>
-void parseStreamToContainer (Container& container, Object& obj)
-{
-	if (!obj.isStream())
-	{
-		assert (!"Object is not stream.");
-		throw XpdfInvalidObject ();
-	}
-
-	obj.streamReset ();
-	typename Container::value_type c;
-	while (EOF != (c = obj.streamGetChar())) 
-		container.push_back (c);
-	obj.streamClose ();
-}
+void parseStreamToContainer (CStream::Buffer& container, ::Object& obj);
 
 
 //

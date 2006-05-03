@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/05/03 23:56:16  misuj1am
+ *
+ * -- cstream improvement
+ * 	-- ADD: buffer of raw chars
+ * 	-- ADD: getStringRepresentation returns the same object as in pdf file, except that it outputs only printable characters
+ * 	-- and more
+ *
  * Revision 1.8  2006/05/01 13:53:07  hockm0bm
  * new style printDbg
  *
@@ -160,6 +167,24 @@ public:
     }
     
 	T& getBuffer() {return buffer;}
+};
+
+
+
+
+//=======================================
+template<typename T>
+struct Printable
+{
+	typedef char Char;
+	Char operator () (T _c) const
+	{
+		Char c = _c;
+		if ('!' < c && c < '~')
+			return c;
+		else
+			return '+';
+	}
 };
 
 

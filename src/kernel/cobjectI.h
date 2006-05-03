@@ -710,18 +710,11 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 	kernelPrintDbg (debug::DBG_DBG,"");
 	assert (objStream == o.getType());
 
-	//   debug \TODO remove
-	//std::ofstream out ("_got.obj");
-	//std::string str;
-	//utils::xpdfObjToString (o, str);
-	//out << str << std::endl;
-	//
-	
 	// Copy the stream
-	o.copy (&xpdfDict);
+	o.copy (&xpdfStream);
 	
 	// Make sure it is a stream
-	assert (objStream == xpdfDict.getType());
+	assert (objStream == xpdfStream.getType());
 	if (objStream != o.getType())
 		throw XpdfInvalidObject ();
 	
@@ -731,6 +724,7 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 	assert (NULL != dict);
 	objDict.initDict (dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
+	objDict.free ();
 	// Set pdf and ref
 	dictionary.setPdf (&p);
 	dictionary.setIndiRef (rf);
@@ -750,7 +744,7 @@ CObjectStream<Checker>::CObjectStream (::Object& o) : parser (NULL)
 	kernelPrintDbg (debug::DBG_DBG,"");
 
 	// Copy the stream
-	o.copy (&xpdfDict);
+	o.copy (&xpdfStream);
 
 	// Make sure it is a stream
 	assert (objStream == o.getType());
@@ -763,7 +757,7 @@ CObjectStream<Checker>::CObjectStream (::Object& o) : parser (NULL)
 	assert (NULL != dict);
 	objDict.initDict (dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
-
+	objDict.free ();
 	// Save the contents of the container
 	utils::parseStreamToContainer (buffer, o);
 }
@@ -792,6 +786,7 @@ IProperty*
 CObjectStream<Checker>::doClone () const
 {
 	kernelPrintDbg (debug::DBG_DBG,"CObjectStream::doClone");
+	assert (NULL == parser  || !"Want to clone opened stream.. Should the stream state be also copied?");
 	
 	// Make new stream object
 	// NOTE: We do not want to inherit any IProperty variable
@@ -827,37 +822,14 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 
-	str = "<<<stream>>>";
-	return;
-
-	assert (!"not supported");
-
-	//
-	// Try filters if any
-	//
-	Buffer tmp;
-	encodeBuffer (tmp);
-	kernelPrintDbg (debug::DBG_DBG, "Stream length: " << tmp.size());
-	
-	// Set the length of the stream	
-	utils::setDoubleInDict (dictionary, std::string ("Length"), tmp.size());
-	try 
-	{
-		dictionary.delProperty ("Filter");
-	
-	}catch (ElementNotFoundException&)
-	{
-			// No filter found
-			kernelPrintDbg (debug::DBG_DBG, "No filter found.");
-	}
-			
 	// Get dictionary string representation
 	std::string strDict, strBuf;
 	dictionary.getStringRepresentation (strDict);
 
-	// Get tmp string representation
-	for (Buffer::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
-		strBuf += static_cast<char> (*it);
+	// Get printable string representation
+	filters::Printable<Buffer::value_type> print;
+	for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
+		strBuf +=  print (*it);
 
 	// Put them together
 	utils::streamToString (strDict, strBuf, str);
@@ -897,12 +869,37 @@ CObjectStream<Checker>::setIndiRef (const IndiRef& rf)
 //
 template<typename Checker>
 void 
-CObjectStream<Checker>::setBuffer (const Buffer& buf)
+CObjectStream<Checker>::setRawBuffer (const Buffer& buf)
 {
-
+	assert (NULL == parser || !"Set buffer to an opened stream.");
+	if (NULL != parser)
+		throw CObjInvalidOperation ();
+	
+	// If size mismatches, change it in the stream dictionary
+	if (buf.size() != buffer.size())
+	{
+		try
+		{
+			boost::shared_ptr<IProperty> len = dictionary.getProperty ("Length");
+			if (isInt (len))
+			{
+				IProperty::getSmartCObjectPtr<CInt>(len)->writeValue (buf.size());
+			
+			}else
+			{
+				assert (!"Bad Length type in stream.");
+				throw CObjInvalidObject ();
+			}
+			
+		}catch (ElementNotFoundException&)
+		{
+			dictionary.addProperty ("Length", CInt (buf.size()));
+		}
+	}
+	
 	buffer.clear ();
 	std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
-			
+
 	//save it
 	_objectChanged ();
 }
@@ -919,7 +916,7 @@ template<typename Checker>
 CObjectStream<Checker>::_makeXpdfObject () const
 {
 	Object* o = new Object ();
-	return xpdfDict.copy (o);
+	return xpdfStream.copy (o);
 
 	std::string tmp;
 	getStringRepresentation (tmp);
@@ -934,19 +931,13 @@ CObjectStream<Checker>::_makeXpdfObject () const
 	if (objStream != obj->getType())
 		throw XpdfInvalidObject ();
 
-	// \TODO remove
-	//std::ofstream out ("_made.obj");
-	//std::string str;
-	//utils::xpdfObjToString (*obj, str);
-	//out << str << std::endl;
-
 	return obj;
 }
 
 //
 //
 //
-template<typename Checker>
+/*template<typename Checker>
 void 
 CObjectStream<Checker>::encodeBuffer (Buffer& container) const
 {
@@ -975,7 +966,7 @@ CObjectStream<Checker>::encodeBuffer (Buffer& container) const
 	// Close the stream
 	in.reset ();
 }
-
+*/
 
 //
 // Parsing
@@ -999,8 +990,8 @@ CObjectStream<Checker>::open ()
 	}
 	
 	::XRef* xref = (NULL != IProperty::getPdf ()) ? IProperty::getPdf ()->getCXref() : NULL;
-	// \TODO remove xpdfDict
-	parser = new ::Parser (xref, new ::Lexer(xref, &xpdfDict));
+	// \TODO remove xpdfStream
+	parser = new ::Parser (xref, new ::Lexer(xref, &xpdfStream));
 }
 
 //
@@ -1111,7 +1102,7 @@ CObjectStream<Checker>::~CObjectStream ()
 	}
 	
 	// Free xpdf object
-	xpdfDict.free ();
+	xpdfStream.free ();
 }
 
 

@@ -255,7 +255,7 @@ namespace {
 			utilsPrintDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 			
 			CPdf* pdf = ip.getPdf ();
-			Object obj;
+			::Object obj;
 
 			int len = array.arrayGetLength ();
 			for (int i = 0; i < len; ++i)
@@ -301,7 +301,7 @@ namespace {
 			utilsPrintDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 			
 			CPdf* pdf = ip.getPdf ();
-			Object obj;
+			::Object obj;
 
 			int len = dict.dictGetLength ();
 			for (int i = 0; i < len; ++i)
@@ -419,7 +419,7 @@ namespace {
 		utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 		ostringstream oss;
-		Object o;
+		::Object o;
 		int i;
 
 		switch (obj.getType()) 
@@ -1084,6 +1084,49 @@ bool
 objHasParent (const IProperty& ip)
 {boost::shared_ptr<IProperty> indi;return objHasParent (ip,indi);}
 
+//
+//
+//
+void 
+parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
+{
+	assert (container.empty());
+	if (!obj.isStream())
+	{
+		assert (!"Object is not stream.");
+		throw XpdfInvalidObject ();
+	}
+
+	// Get stream length
+	xpdf::XpdfObject xpdfDict; xpdfDict->initDict (obj.streamGetDict());
+	::Object xpdfLen; xpdfDict->dictLookup ("Length", &xpdfLen);
+	assert (xpdfLen.isInt ());
+	assert (0 <= xpdfLen.getInt());
+	size_t len = static_cast<size_t> (xpdfLen.getInt());
+	utilsPrintDbg (debug::DBG_DBG, "Stream length: " << len);
+	// Get stream
+	::Stream* xpdfStream = obj.getStream ();
+	assert (xpdfStream);
+	// Get base stream without filters
+	xpdfStream->getBaseStream()->moveStart (0);
+	Stream* rawstr = xpdfStream->getBaseStream();//->makeSubStream (0, gTrue, len, &xpdfDict);
+	assert (rawstr);
+	// \TODO THIS IS MAGIC (try-fault practise)
+	rawstr->reset ();
+
+	// Save chars
+	CStream::Buffer::value_type c;
+	while (EOF != (c = rawstr->getChar())) 
+		container.push_back (c);
+	
+	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());
+	assert (len == container.size());
+	// Cleanup
+	xpdfLen.free ();
+	obj.streamClose ();
+	//\TODO is it really ok?
+	rawstr->close ();
+}
 
 
 // =====================================================================================
