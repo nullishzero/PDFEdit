@@ -144,7 +144,7 @@ public:
   parent=0;
  }
  /** Notification function called by changing property */
- virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw() {
+ virtual void notify (__attribute__((unused)) boost::shared_ptr<IProperty> newValue, __attribute__((unused)) boost::shared_ptr<const IProperty::ObserverContext> context) const throw() {
   if (!parent) {
    //Should never happen
    guiPrintDbg(debug::DBG_ERR,"BUG: Kernel is holding observer for item already destroyed");

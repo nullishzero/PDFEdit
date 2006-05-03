@@ -33,7 +33,7 @@ TreeItemSimple::~TreeItemSimple() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemSimple::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemSimple::createChild(__attribute__((unused)) const QString &name,ChildType typ,__attribute__((unused)) QListViewItem *after/*=NULL*/) {
  assert(typ!=pRef);//Must not be called on complex childs
  assert(typ!=pDict);
  assert(typ!=pArray);
@@ -42,7 +42,7 @@ TreeItemAbstract* TreeItemSimple::createChild(const QString &name,ChildType typ,
 }
 
 //See TreeItemAbstract for description of this virtual method
-ChildType TreeItemSimple::getChildType(const QString &name) {
+ChildType TreeItemSimple::getChildType(__attribute__((unused)) const QString &name) {
  assert(typ!=pRef);//Must not be called on complex childs
  assert(typ!=pDict);
  assert(typ!=pArray);

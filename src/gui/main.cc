@@ -54,18 +54,7 @@ void handleVersion(){
  @param param Parameter passed
 */
 void handleDebug(const QString &param){
- QString cns=param.upper();
- if (cns.length()) { //Check for symbolic constants
-  if (QString("PANIC").startsWith(cns))		{ debug::debugLevel=debug::DBG_PANIC;	return; }
-  if (QString("CRITICAL").startsWith(cns))	{ debug::debugLevel=debug::DBG_CRIT;	return; }
-  if (QString("ERROR").startsWith(cns))		{ debug::debugLevel=debug::DBG_ERR;	return; }
-  if (QString("WARNING").startsWith(cns))	{ debug::debugLevel=debug::DBG_WARN;	return; }
-  if (QString("INFO").startsWith(cns))		{ debug::debugLevel=debug::DBG_INFO;	return; }
-  if (QString("DEBUG").startsWith(cns))		{ debug::debugLevel=debug::DBG_DBG;	return; }
- }
- //If debuglevel is set outside of limits - no problem, nearest "in ilmits" value is defacto used
- debug::debugLevel=atoi(param);
- //If non-number is given, default 0 is silently used ... :)
+ util::setDebugLevel(param);
 }
 
 /** main - load settings and launches a main window */

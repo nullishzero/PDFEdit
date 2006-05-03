@@ -17,6 +17,7 @@
 namespace gui {
 
 using namespace std;
+using namespace util;
 
 QString CMD = "gui/CommandLine/";
 QString HISTORYSIZE = "HistorySize";

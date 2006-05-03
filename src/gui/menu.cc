@@ -25,6 +25,8 @@
 
 namespace gui {
 
+using namespace util;
+
 /** root key for system menu items */
 const QString ROOT="gui/items/";
 /** root key for user menu items appended to system menu items (lists) */

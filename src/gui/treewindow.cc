@@ -55,7 +55,7 @@ void TreeWindow::reloadFrom(TreeItemAbstract *item) {
 @param coord Coordinates of mouseclick
 @param column Clicked in which item's column? (if clicked on item)
 */
-void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column) {
+void TreeWindow::mouseClicked(int button,QListViewItem* item,__attribute__((unused)) const QPoint &coord,__attribute__((unused)) int column) {
 // guiPrintDbg(debug::DBG_DBG,"Clicked in tree: " << button);
  emit treeClicked(button,item);
 }
@@ -65,7 +65,7 @@ void TreeWindow::mouseClicked(int button,QListViewItem* item,const QPoint &coord
 @param coord Coordinates of mouseclick
 @param column Clicked in which item's column? (if clicked on item)
 */
-void TreeWindow::mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column) {
+void TreeWindow::mouseDoubleClicked(QListViewItem* item,__attribute__((unused)) const QPoint &coord,__attribute__((unused)) int column) {
 // guiPrintDbg(debug::DBG_DBG,"DoubleClicked in tree:");
  emit treeClicked(8,item);
 }

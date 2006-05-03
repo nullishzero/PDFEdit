@@ -23,6 +23,7 @@
 namespace gui {
 
 using namespace std;
+using namespace util;
 
 const QString APP_KEY = "/PDFedit/";
 

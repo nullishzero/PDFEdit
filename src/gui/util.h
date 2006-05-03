@@ -10,6 +10,12 @@ class QStringList;
 /** macro returning lesser of two values */
 #define MIN(x,y) ((x)<=(y)?(x):(y))
 
+#ifndef __GNUC__
+#define  __attribute__(x)  /* Turn off __attribute__ for non-gcc compilers */
+#endif
+
+namespace util {
+
 void fatalError(const QString &message);
 QStringList explode(char separator,const QString &line);
 QString htmlEnt(const QString &str);
@@ -17,5 +23,9 @@ QString loadFromFile(const QString &name);
 void printList(const QStringList &l);
 void consoleLog(const QString &message,const QString &fileName);
 QString getUntil(char separator,QString &line);
+void setDebugLevel(const QString &param);
+
+} //namespace util
+
 
 #endif

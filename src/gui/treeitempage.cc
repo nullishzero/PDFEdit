@@ -69,7 +69,7 @@ TreeItemPage::~TreeItemPage() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemPage::createChild(__attribute__((unused)) const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
  if (typ==0) { //Return page dictionary
   return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"),after);
  }

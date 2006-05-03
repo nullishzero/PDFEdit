@@ -62,13 +62,13 @@ TreeItemCStream::~TreeItemCStream() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemCStream::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemCStream::createChild(__attribute__((unused)) const QString &name,__attribute__((unused)) ChildType typ,__attribute__((unused)) QListViewItem *after/*=NULL*/) {
  assert(0);//no childs
  return NULL;
 }
 
 //See TreeItemAbstract for description of this virtual method
-ChildType TreeItemCStream::getChildType(const QString &name) {
+ChildType TreeItemCStream::getChildType(__attribute__((unused)) const QString &name) {
  assert(0);//no childs
  return 0;
 }

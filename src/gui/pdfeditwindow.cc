@@ -41,6 +41,7 @@
 namespace gui {
 
 using namespace std;
+using namespace util;
 
 /** number of active editor windows -> when last is closed, application terminates */
 int windowCount;
@@ -153,6 +154,15 @@ void PdfEditWindow::saveWindowState() {
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
  menuSystem->saveToolbars(this);
+}
+
+/**
+ Set new debug verbosity level
+ @param param New debug verbosity level
+ \see util::setDebugLevel
+*/
+void PdfEditWindow::setDebugLevel(const QString &param) {
+ util::setDebugLevel(param);
 }
 
 /** Restores window state from application settings */
@@ -468,7 +478,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  @param name Name of the object that was selected
  @param obj Object that was selected
 */
-void PdfEditWindow::setObject(const QString &name,boost::shared_ptr<IProperty> obj) {
+void PdfEditWindow::setObject(__attribute__((unused)) const QString &name,boost::shared_ptr<IProperty> obj) {
+ //Name is not important here, name is used only in property editor
  selectedProperty=obj;
 }
 

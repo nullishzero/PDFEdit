@@ -34,7 +34,7 @@ protected slots:
 protected:
  AddItemDialog(QWidget *parent=0,const char *name=0);
  void setItem(boost::shared_ptr<IProperty> it);
- void closeEvent(QCloseEvent *e);
+ void closeEvent(QCloseEvent* e);
 private:
  /** Object (Dict or Array) into which any subitems will be added */
  boost::shared_ptr<IProperty> item;

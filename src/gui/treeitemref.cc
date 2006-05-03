@@ -145,7 +145,7 @@ void TreeItemRef::reloadSelf() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemRef::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  assert(name=="Target");
  QString s;
  CPdf* pdf=obj->getPdf();

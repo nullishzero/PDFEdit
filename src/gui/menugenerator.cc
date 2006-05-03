@@ -19,6 +19,7 @@
 #include "menugenerator.h"
 
 using namespace std;
+using namespace util;
 
 //todo: read from settings.cc/.h
 const QString APP_KEY = "/PDFedit/";

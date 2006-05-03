@@ -20,6 +20,7 @@
 #include "stringproperty.h"
 #include "nameproperty.h"
 #include "settings.h"
+#include "util.h"
 
 namespace gui {
 
@@ -82,7 +83,7 @@ void AddItemDialog::buttonSelected(int id) {
 }
 
 /** This is called on attempt to close window. */
-void AddItemDialog::closeEvent(QCloseEvent *e) {
+void AddItemDialog::closeEvent(__attribute__((unused)) QCloseEvent* e) {
  delete this;
 }
 

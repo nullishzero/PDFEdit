@@ -37,7 +37,7 @@ void StringProperty::emitChange() {
 /** Called when text changes
  @param newText value of new text
  */
-void StringProperty::enableChange(const QString &newText) {
+void StringProperty::enableChange(__attribute__((unused)) const QString &newText) {
  changed=true;
 }
 

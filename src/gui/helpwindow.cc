@@ -1,5 +1,7 @@
 /** @file
- HelpWindow - class representing help window.
+ HelpWindow - class representing help window.<br>
+ Help windows is basically just a limited HTML browser
+ @author Martin Petricek
 */
 
 #include "helpwindow.h"
@@ -82,7 +84,7 @@ void HelpWindow::index() {
 }
 
 /** This is called on attempt to close window. */
-void HelpWindow::closeEvent(QCloseEvent *e) {
+void HelpWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
  delete this;
 }
 

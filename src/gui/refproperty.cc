@@ -54,7 +54,7 @@ void RefProperty::emitChange() {
 }
 
 /** @copydoc StringProperty::enableChange */
-void RefProperty::enableChange(const QString &newText) {
+void RefProperty::enableChange(__attribute__((unused)) const QString &newText) {
  changed=true;
 }
 

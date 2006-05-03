@@ -310,7 +310,7 @@ void OptionWindow::init() {
 
 
 /** This is called on attempt to close window. */
-void OptionWindow::closeEvent(QCloseEvent *e) {
+void OptionWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
  delete this;
 }
 

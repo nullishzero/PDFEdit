@@ -33,7 +33,7 @@ TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_p
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemDict::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemDict::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  boost::shared_ptr<IProperty> property=dict->getProperty(name);
  return TreeItem::create(data,this,property,name,after);

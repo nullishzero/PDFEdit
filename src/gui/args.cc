@@ -12,6 +12,7 @@
 #include "util.h"
 
 using namespace std;
+using namespace util;
 
 /** Stop processing options from comandline? */
 bool stopOpt=false;
@@ -79,7 +80,7 @@ void optionHandler(const QString &param, optHandler h,const QString &help) {
  Register function to handle option with parameter
  Parameters can be accepted as: -opt[n], -opt [n]
  @param param Name of option (case sensitive)
- @param param Name of parameter (only shown in help)
+ @param paramName Name of parameter (only shown in help)
  @param h Function to handle this option
  @param help Brief one-line help about this option
 */
@@ -90,7 +91,7 @@ void optionHandlerParam(const QString &param, const QString &paramName, optHandl
 }
 
 /**
- Calls option habdler on given option
+ Calls option handler on given option
  @param param Commandline option to check
  @return 0 if option is valid, but without parameters, 1 if option 'consumed' parameter after it, -1 if option is invalid
 */

@@ -8,6 +8,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include "version.h"
+#include "util.h"
 
 namespace gui {
 
@@ -19,7 +20,7 @@ QString app=APP_NAME " " VERSION;
 /**
  constructor of AboutWindow, creates window and fills it with elements, parameters are ignored
  @param parent Parent window of this dialog
- @param name Name of thisd window (used only for debugging
+ @param name Name of this window (used only for debugging
  */
 AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
  QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big><br><br>"+tr("Homepage")+" : http://pdfedit.petricek.net/";
@@ -39,10 +40,11 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  lb->show();
 }
 
-/** This is called on attempt to close window.
+/**
+ This is called on attempt to close window.
  @param e Event parameters (ignored)
 */
-void AboutWindow::closeEvent(QCloseEvent *e) {
+void AboutWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
  delete this;
 }
 

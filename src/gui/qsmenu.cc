@@ -17,6 +17,8 @@ class QIconSet;
 
 namespace gui {
 
+using namespace util;
+
 /** Menu ID offset for temporary items */
 const int TMP_OFFSET=0x3fffffff;
 

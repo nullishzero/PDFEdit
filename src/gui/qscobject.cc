@@ -23,7 +23,7 @@ QSCObject::QSCObject(QString _typeName) {
 }
 
 /** Copy constructor */
-QSCObject::QSCObject(QSCObject &source) {
+QSCObject::QSCObject(QSCObject &source) : QObject() {
  typeName=source.typeName;
  guiPrintDbg(debug::DBG_DBG,"adding QSCObject (copy) "<< typeName);
 // addGC(this);

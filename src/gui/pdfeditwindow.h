@@ -33,6 +33,8 @@ using namespace pdfobjects;
 
 /** PdfEditWindow - class handling main application window */
 class PdfEditWindow : public QMainWindow {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public:
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
@@ -40,6 +42,7 @@ public:
  int question_ync(const QString &msg);
  void call(const QString &name);
 public slots: //These will be exported to scripting
+ void setDebugLevel(const QString &param);
  void addObjectDialog(QSDict &container);
  void addObjectDialog(QSArray &container);
  void addObjectDialog(QSArray *container);

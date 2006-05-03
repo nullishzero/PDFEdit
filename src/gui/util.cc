@@ -1,5 +1,6 @@
 /** @file
- Various utility functions
+ Various utility functions (string processing, file loading, debugging, etc ...)
+ @author Martin Petricek
 */
 #include "util.h"
 #include <iostream>
@@ -7,6 +8,9 @@
 #include <qstring.h>
 #include <qobject.h>
 #include <qstringlist.h>
+#include <utils/debug.h>
+
+namespace util {
 
 using namespace std;
 
@@ -108,3 +112,28 @@ QString getUntil(char separator,QString &line) {
   return first;
  }
 }
+
+/**
+ Set debugging verbosity level. Accept debugging level either as number, or as one of symbolic constants:<br>
+ PANIC, CRITICAL, ERROR, WARNING, INFO, DEBUG, DBG (=DEBUG)<br>
+ Constants are case insensitive, starting part of constant is sufficient<br>
+ Only messages with priority equal or higher to specified level are shown
+ @param param new debugging level
+*/
+void setDebugLevel(const QString &param){
+ QString cns=param.upper();
+ if (cns.length()) { //Check for symbolic constants
+  if (QString("PANIC").startsWith(cns))		{ debug::debugLevel=debug::DBG_PANIC;	return; }
+  if (QString("CRITICAL").startsWith(cns))	{ debug::debugLevel=debug::DBG_CRIT;	return; }
+  if (QString("ERROR").startsWith(cns))		{ debug::debugLevel=debug::DBG_ERR;	return; }
+  if (QString("WARNING").startsWith(cns))	{ debug::debugLevel=debug::DBG_WARN;	return; }
+  if (QString("INFO").startsWith(cns))		{ debug::debugLevel=debug::DBG_INFO;	return; }
+  if (QString("DEBUG").startsWith(cns))		{ debug::debugLevel=debug::DBG_DBG;	return; }
+  if (QString("DBG").startsWith(cns))		{ debug::debugLevel=debug::DBG_DBG;	return; }
+ }
+ //If debuglevel is set outside of limits - no problem, nearest "in limits" value is defacto used
+ debug::debugLevel=atoi(param);
+ //If non-number is given, default 0 is silently used ... :)
+}
+
+} //namespace util

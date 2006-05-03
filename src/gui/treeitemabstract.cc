@@ -184,7 +184,7 @@ QString TreeItemAbstract::name() {
  Set name (id) of this item. Name is unique only for each item's children.
  Children of different tree items can (and often will) have same name
  Can be used if changing array elements (moving, etc ...)
- @param name New name for this element
+ @param newNameId New name for this element
 */
 void TreeItemAbstract::setName(const QString &newNameId) {
  nameId=newNameId;
