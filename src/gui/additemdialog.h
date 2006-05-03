@@ -11,6 +11,7 @@ class QRadioButton;
 class QButtonGroup;
 class QLineEdit;
 class QHBox;
+class QLabel;
 
 namespace gui {
 
@@ -32,6 +33,8 @@ protected slots:
  bool commit();
  void commitClose();
 protected:
+ void message(const QString &message);
+ void error(const QString &message);
  AddItemDialog(QWidget *parent=0,const char *name=0);
  void setItem(boost::shared_ptr<IProperty> it);
  void closeEvent(QCloseEvent* e);
@@ -56,6 +59,8 @@ private:
  QHBox *qb;
  /** Group with content items */
  QButtonGroup *items;
+ /** Label used to show message */
+ QLabel *msg;
 };
 
 } // namespace gui

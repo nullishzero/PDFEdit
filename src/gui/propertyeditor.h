@@ -27,6 +27,7 @@ public:
  virtual ~PropertyEditor();
  void resizeEvent (QResizeEvent *e);
  void clear();
+ void commitProperty();
 public slots:
  void setObject(const QString &message);
  void setObject(boost::shared_ptr<IProperty> pdfObject);

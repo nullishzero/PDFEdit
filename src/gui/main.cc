@@ -57,10 +57,13 @@ void handleDebug(const QString &param){
  util::setDebugLevel(param);
 }
 
+/** QApplication */
+QApplication *qApp;
+
 /** main - load settings and launches a main window */
 int main(int argc, char *argv[]){
  QApplication app(argc, argv);
-
+ qApp=&app;
  //Translation support
  QTranslator translator;
  char *lang=getenv("LANG");
@@ -91,7 +94,7 @@ int main(int argc, char *argv[]){
  */
  optionHandler("--help",handleHelp,QObject::tr("Print help and exit"));
  optionHandler("--version",handleVersion,QObject::tr("Print version and exit"));
- optionHandlerParam("-d","n",handleDebug,QObject::tr("Set debug messages verbosity")+" "+QObject::tr("(n = -1 .. 5, default 0)"));
+ optionHandlerParam("-d","n",handleDebug,QObject::tr("Set debug messages verbosity")+" "+QObject::tr("(n = -1 .. 5)"));
  optionHandler("--",handleStopOpt,QObject::tr("Stop processing options"));
  QStringList params=handleParams(app.argc(),app.argv());
 

@@ -41,8 +41,8 @@ AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/):QWidg
  //Subpanel to select name or how to add to array - will be initialized later
  target=new QFrame(this,"additem_targetframe");
  //Subpanel to edit content to be added
- items=new QButtonGroup(2,Qt::Horizontal,tr("Type and value of new item"),this,"additem_itemframe");
- QPushButton *ok=new QPushButton(QObject::tr("&Add item"), qb);
+ items=new QButtonGroup(2,Qt::Horizontal,tr("Type and value of new object"),this,"additem_itemframe");
+ QPushButton *ok=new QPushButton(QObject::tr("&Add object"), qb);
  QPushButton *okclo=new QPushButton(QObject::tr("Add and c&lose"), qb);
  QPushButton *cancel=new QPushButton(QObject::tr("&Cancel"), qb);
  QObject::connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
@@ -66,6 +66,8 @@ AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/):QWidg
   items->insert(labels[i],i);
  }
  QObject::connect(items,SIGNAL(clicked(int)),this,SLOT(buttonSelected(int)));
+ //message label
+ msg=new QLabel(" ",this);
 }
 
 /**
@@ -110,7 +112,7 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
   //Just the string should not be empty
  } else if (arr) {	//initialize items for adding to Array
   usingArray=true;
-  lu->addWidget(new QLabel(tr("Item will be appended at end of array"),target));
+  lu->addWidget(new QLabel(tr("Object will be appended at end of array"),target));
   //TODO: insert at arbitrary place in array
  } else {
   //Should never happen
@@ -119,6 +121,7 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  l->addWidget(target);
  l->addWidget(items);
  l->addWidget(qb);
+ l->addWidget(msg);
 }
 
 /**
@@ -149,18 +152,48 @@ AddItemDialog* AddItemDialog::create(QWidget *parent,boost::shared_ptr<CArray> c
  return ret;
 }
 
+/** 
+ Show informational message for this window
+ @param message message to show
+*/
+void AddItemDialog::message(const QString &message) {
+ msg->setPaletteForegroundColor(QColor(0,0,0));//Set black color
+ msg->setText(message);
+}
+
+/** 
+ Show error message for this window
+ @param message message to show
+*/
+void AddItemDialog::error(const QString &message) {
+ msg->setPaletteForegroundColor(QColor(255,0,0));//Set red color
+ msg->setText(message);
+}
+
+
 /**
  Adds the item, but keep the window open,
  so user can easily modify value and add another similar item.
  @return true if successfull, false if cannot commit because of some errors in user-entered data 
 */
 bool AddItemDialog::commit() {
- if (selectedItem<0) return false;	//No type selected
+ if (selectedItem<0) {
+  error(tr("No object type selected"));
+  return false;
+ }
  if (props[selectedItem]) {	//Editable item type selected
-  if (!props[selectedItem]->isValid()) return false;//Not valid input
+  if (!props[selectedItem]->isValid()) {  
+   error(tr("Entered property is not valid"));
+   props[selectedItem]->setFocus();
+   return false;
+  }
  }
  if (!usingArray ) { //Adding to dict
-  if (propertyName->text().length()==0) return false;//No name entered for adding to Dict
+  if (propertyName->text().length()==0) {
+   error(tr("Name of new property must be specified"));
+   propertyName->setFocus();
+   return false;//No name entered for adding to Dict
+  }
  }
  boost::shared_ptr<IProperty> property;
  switch (selectedItem) {
@@ -203,19 +236,20 @@ bool AddItemDialog::commit() {
  if (props[selectedItem]) props[selectedItem]->writeValue(property.get());
  //TODO: check names
  //TODO: validate refproperty, if selected
- //TODO: create new property and fill it.
  CDict* dict=dynamic_cast<CDict*>(item.get());
  if (dict) { //Add to dict
+  message(tr("Property '%1' added to dictionary").arg(propertyName->text()));
   string tex=propertyName->text();
   dict->addProperty(tex,*(property.get()));
   return true;
  }
  CArray* arr=dynamic_cast<CArray*>(item.get());
  if (arr) { //Add to array
+  message(tr("Property added to end of array"));
   arr->addProperty(*(property.get()));
   return true;
  }
- 
+ assert(0);//Should never happen 
  return false;
 }
 

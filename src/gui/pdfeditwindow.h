@@ -33,8 +33,6 @@ using namespace pdfobjects;
 
 /** PdfEditWindow - class handling main application window */
 class PdfEditWindow : public QMainWindow {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);

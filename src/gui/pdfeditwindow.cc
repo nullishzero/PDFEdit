@@ -286,7 +286,8 @@ void PdfEditWindow::addObjectDialogI(boost::shared_ptr<IProperty> ip) {
 void PdfEditWindow::runScript(QString script) {
  qs->setErrorMode(QSInterpreter::Nothing);
  cmdLine->addCommand(script);
-
+ //Commit currently edited property in property editor
+ prop->commitProperty();
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addDocumentObjects();
  QSArgument ret;
@@ -532,7 +533,10 @@ If the document have no name (newly opened/generated document), it is solicited 
 @return true if saved succesfully, false if failed to save because of any reason
  */
 bool PdfEditWindow::save() {
- assert(document);
+ if (!document) {
+  print(tr("No document to save"));
+  return false;
+ }
  if (fileName.isNull()) { //We need a name
   QString name=fileSaveDialog(filename());
   if (name.isNull()) return false; //Still no name? Not saving ...
@@ -542,7 +546,7 @@ bool PdfEditWindow::save() {
   return true;
  }
  //TODO: handle failure and nummfileName
- document->save(fileName);
+ document->save();
  //TODO: if failure saving return false;
  return true;
 }
@@ -554,7 +558,13 @@ Save currently edited document to disk, using provided filename
 @return true if saved succesfully, false if failed to save because of any reason
  */
 bool PdfEditWindow::saveAs(const QString &name) {
- assert(document);
+ if (!document) {
+  print(tr("No document to save"));
+  return false;
+ }
+ //TODO: fix
+ print("Feature temporarily disabled due to a bug");
+ return false;
  document->save(name);
  //TODO: if failure saving return false;
  setFileName(name);

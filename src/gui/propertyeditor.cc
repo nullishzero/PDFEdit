@@ -9,12 +9,15 @@
 #include <utils/debug.h>
 #include "util.h"
 #include <cobject.h>
+#include <qapplication.h>
+#include "main.h"
 #include "propertyfactory.h"
 #include "property.h"
 #include <qscrollview.h>
 #include <qstringlist.h>
 #include <qlabel.h>
 #include "pdfutil.h"
+#include "main.h"
 
 namespace gui {
 
@@ -248,6 +251,31 @@ void PropertyEditor::setObject(const QString &name,boost::shared_ptr<IProperty> 
   }
   grid->update();
   setUpdatesEnabled( TRUE );
+ }
+}
+
+/**
+ Commit currently edited property in property editor,
+ if that property is edited in current property editor
+*/
+void PropertyEditor::commitProperty() {
+ guiPrintDbg(debug::DBG_DBG,"commitProperty classname=" << qApp->focusWidget()->className() << " name=" << qApp->focusWidget()->name());
+ //Find active widget
+ QWidget* propNow=qApp->focusWidget();//This is probably a Linedit if edited control is Property
+ while(propNow && !dynamic_cast<Property*>(propNow)) { //Look for parent until Property is found
+  propNow=propNow->parentWidget();
+  if (!propNow) return;//No property is active
+  guiPrintDbg(debug::DBG_DBG,"commitProperty traverse classname=" << propNow->className() << " name=" << propNow->name());
+ }
+ Property* propCurrent=dynamic_cast<Property*>(propNow);
+ //Check if it is Property
+ if (!propCurrent) return;//No property is active
+ guiPrintDbg(debug::DBG_DBG,"property is current");
+ //Check if it is property from this property editor
+ if (propCurrent->parentWidget()==grid) {
+  guiPrintDbg(debug::DBG_DBG,"property is our");
+  //Property from this property editor -> update it
+  update(propCurrent);
  }
 }
 
