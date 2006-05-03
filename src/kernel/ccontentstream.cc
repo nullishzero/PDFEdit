@@ -182,7 +182,7 @@ namespace
 	//
 	void 
 	unknownUpdate (GfxState&, const PdfOperator::Operands&)
-		{ utilsPrintDbg (debug::DBG_DBG, "Unknown updater."); }
+		{/* utilsPrintDbg (debug::DBG_DBG, "Unknown updater.");*/ }
 
 	// "m"
 	void

@@ -97,6 +97,7 @@ public:
 		
 		
 		// DEBUG OUTPUT //
+		utilsPrintDbg (debug::DBG_DBG, "");
 		typename PdfOpStorage::const_iterator itt = container.begin();
 		for (; itt != container.end(); ++itt)
 		{
@@ -107,8 +108,9 @@ public:
 			std::string strop;
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
-			std::cout << frst << " " << strop << flush;
+			utilsPrintDbg (debug::DBG_DBG, frst << " " << strop);
 		}
+		utilsPrintDbg (debug::DBG_DBG, "");
 		/////////////////
 
 
