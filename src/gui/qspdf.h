@@ -24,9 +24,10 @@ public slots:
  /*-
   Save this document under different name.
   Does not modify name of file in editor.
+  Does not check for file existence - it will overwrite the file without warning if it already exists
   Return true if document was saved, false if it failed to save for any reason
  */
- void saveAs(QString name);
+ bool saveAs(QString name);
  /*- Get document dictionary */
  QSDict* getDictionary();
  /*- Remove page with given number from document */

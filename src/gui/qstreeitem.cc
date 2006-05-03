@@ -40,6 +40,11 @@ void QSTreeItem::reload() {
  obj->reload();
 }
 
+/** Remove itself from Dict/Array where this property is held (and from document) */
+void QSTreeItem::remove() {
+ obj->remove();
+}
+
 /**
  Return list of all possibly visible childs names of this treeitem.
  Childs that are not shown in treeview (because of treeview settings, etc ...) are not returned.

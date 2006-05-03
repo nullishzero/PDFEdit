@@ -166,6 +166,7 @@ void PdfEditWindow::restoreWindowState() {
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
 void PdfEditWindow::addDocumentObjects() {
+ qs->setErrorMode(QSInterpreter::Nothing);
  //Import page and item (Currently selected page and currently selected object)
  QSCObject *page=import->createQSObject(selectedPage);
  QSCObject *trit=import->createQSObject(selectedTreeItem);
@@ -177,6 +178,7 @@ void PdfEditWindow::addDocumentObjects() {
 
 /** Removes objects added with addDocumentObject */
 void PdfEditWindow::removeDocumentObjects() {
+ qs->setErrorMode(QSInterpreter::Nothing);
  //delete page and item variables from script -> they may change while script is not executing
  qs->evaluate("item.deleteSelf();",this,"<delete_item>");
  qs->evaluate("treeitem.deleteSelf();",this,"<delete_item>");

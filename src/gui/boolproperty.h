@@ -14,12 +14,14 @@ using namespace pdfobjects;
 class BoolProperty : public Property {
 Q_OBJECT
 public:
- QSize sizeHint() const;
- void resizeEvent (QResizeEvent *e);
+ virtual QSize sizeHint() const;
+ virtual void resizeEvent (QResizeEvent *e);
  BoolProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
  virtual ~BoolProperty();
- void writeValue(IProperty *pdfObject);
- void readValue(IProperty *pdfObject);
+ virtual void setReadOnly(bool _readonly);
+ virtual void writeValue(IProperty *pdfObject);
+ virtual void readValue(IProperty *pdfObject);
+ virtual bool isValid();
 protected slots:
  void emitChange();
 protected:

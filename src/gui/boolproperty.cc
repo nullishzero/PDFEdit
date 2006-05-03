@@ -62,4 +62,16 @@ void BoolProperty::readValue(IProperty *pdfObject) {
  changed=false;
 }
 
+/* @copydoc Property:setReadOnly */
+void BoolProperty::setReadOnly(bool _readonly) {
+ //Widget is enabled if it is not read-only
+ ed->setEnabled(!_readonly);
+ Property::setReadOnly(_readonly);
+}
+
+/** @copydoc Property::isValid() */
+bool BoolProperty::isValid() {
+ return true; //Checkbox is always valid :)
+}
+
 } // namespace gui

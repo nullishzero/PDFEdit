@@ -24,11 +24,22 @@ public:
  PropertyFlags getFlags();
  void setFlags(PropertyFlags flag);
  bool getReadOnly();
- void setReadOnly(bool _readonly);
- /** write internal value to given PDF object */
+ virtual void setReadOnly(bool _readonly);
+ /**
+  write internal value to given PDF object
+  @param pdfObject Objet to write to
+ */
  virtual void writeValue(IProperty *pdfObject) = 0; //virtual
- /** read internal value from given PDF object */
+ /**
+  read internal value from given PDF object
+  @param pdfObject Objet to read from
+ */
  virtual void readValue(IProperty *pdfObject) = 0; //virtual
+ /** 
+  Check if edited property is currently valid.
+  @return true if valid, false if not
+ */
+ virtual bool isValid()=0;
 signals:
  /** Signal emitted when property is edited.
   Send property pointer with the signal */

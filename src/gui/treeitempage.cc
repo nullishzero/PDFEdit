@@ -102,4 +102,10 @@ QSCObject* TreeItemPage::getQSObject() {
  return new QSPage(obj);
 }
 
+//See TreeItemAbstract for description of this virtual method
+void TreeItemPage::remove() {
+ //TODO: implement
+ return;
+}
+
 } // namespace gui

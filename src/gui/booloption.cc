@@ -1,5 +1,6 @@
 /** @file
-BoolOption - class for widget containing one editable setting of type bool
+ BoolOption - class for widget containing one editable setting of type bool
+ @author Martin Petricek
 */
 
 #include "booloption.h"
@@ -9,7 +10,8 @@ BoolOption - class for widget containing one editable setting of type bool
 
 namespace gui {
 
-/** Default constructor of BoolOption item
+/**
+ Default constructor of BoolOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
  @param _defValue Default value if property not found
@@ -25,12 +27,18 @@ BoolOption::~BoolOption() {
  delete ed;
 }
 
-/** return size hint of this control */
+/**
+ return size hint of this control
+ @return preferred size of this control
+*/
 QSize BoolOption::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of this option editing control */
+/**
+ Called on resizing of this option editing control
+ @param e resize event parameters
+*/
 void BoolOption::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }

@@ -82,4 +82,16 @@ void StringProperty::readValue(IProperty *pdfObject) {
  changed=false;
 }
 
+/** @copydoc Property::isValid() */
+bool StringProperty::isValid() {
+ return ed->hasAcceptableInput();
+}
+
+/* @copydoc Property:setReadOnly */
+void StringProperty::setReadOnly(bool _readonly) {
+ //Widget is enabled if it is not read-only
+ ed->setEnabled(!_readonly);
+ Property::setReadOnly(_readonly);
+}
+
 } // namespace gui

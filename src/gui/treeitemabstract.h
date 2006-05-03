@@ -22,9 +22,11 @@ typedef int ChildType;
 
 class TreeItemAbstract : public QListViewItem {
 public:
+ void unSelect(QListView *tree);
  TreeItemAbstract(const QString &itemName,QListView *parent,QListViewItem *after=NULL);
  TreeItemAbstract(const QString &itemName,QListViewItem *parent,QListViewItem *after=NULL);
  QString name();
+ void setName(const QString &newNameId);
  virtual ~TreeItemAbstract();
  void reload(bool reloadThis=true);
  virtual void deleteChild(const QString &name);
@@ -53,6 +55,8 @@ public:
  virtual QStringList getChildNames()=0;
  /** Reload contents of itself and only itself (excluding any children) */
  virtual void reloadSelf()=0;
+ /** Remove itself from document (including any children) */
+ virtual void remove()=0;
  /** Get type of this items child.
  @return type of specified child
  */

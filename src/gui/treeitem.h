@@ -24,9 +24,11 @@ public:
  boost::shared_ptr<IProperty> getObject();
  void setParent(TreeItem *parent);
  virtual void insertItem(QListViewItem *newChild);
+ void unSelect();
  //From TreeItemAbstract interface
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();
+ virtual void remove();
 protected:
  TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);
  TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);

@@ -28,6 +28,7 @@ public:
  virtual QStringList getChildNames();
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();
+ virtual void remove();
 private:
  void init(CPdf *pdf,const QString &name);
  void initSpec(CPdf *pdf,const QString &name);

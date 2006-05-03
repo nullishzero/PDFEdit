@@ -178,6 +178,12 @@ QStringList TreeItemPdf::getChildNames() {
 }
 
 //See TreeItemAbstract for description of this virtual method
+void TreeItemPdf::remove() {
+ //Cannot remove entire document, just return
+ return;
+}
+
+//See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemPdf::getQSObject() {
  return new QSPdf(obj);
 }

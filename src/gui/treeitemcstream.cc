@@ -84,4 +84,10 @@ QSCObject* TreeItemCStream::getQSObject() {
  return new QSContentStream(obj);
 }
 
+//See TreeItemAbstract for description of this virtual method
+void TreeItemCStream::remove() {
+ //TODO: implement
+ return;
+}
+
 } // namespace gui

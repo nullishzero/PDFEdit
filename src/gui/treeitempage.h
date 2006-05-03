@@ -28,6 +28,7 @@ public:
  virtual QStringList getChildNames();
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();
+ virtual void remove();
 private:
  void init(boost::shared_ptr<CPage> page,const QString &name);
  /** CPage stored in this TreeItem */

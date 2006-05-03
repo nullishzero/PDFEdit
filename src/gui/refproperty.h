@@ -16,11 +16,13 @@ class RefProperty : public Property {
 Q_OBJECT
 public:
  RefProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
- QSize sizeHint() const;
- void resizeEvent (QResizeEvent *e);
- ~RefProperty();
- void writeValue(IProperty *pdfObject);
- void readValue(IProperty *pdfObject);
+ virtual QSize sizeHint() const;
+ virtual void resizeEvent (QResizeEvent *e);
+ virtual ~RefProperty();
+ virtual void writeValue(IProperty *pdfObject);
+ virtual void readValue(IProperty *pdfObject);
+ virtual void setReadOnly(bool _readonly);
+ virtual bool isValid();
 protected slots:
  void selectRef();
  void emitChange();

@@ -76,4 +76,37 @@ QSCObject* TreeItemArray::getQSObject() {
  return new QSArray(boost::dynamic_pointer_cast<CArray>(obj));
 }
 
+/**
+ Remove property with given index from array
+ @param idx Index of property to remove
+*/
+void TreeItemArray::remove(unsigned int idx) {
+ //This is tricky, as the items shift and de-facto they change key
+ // and just reloading them does not work as expected
+ boost::shared_ptr<CArray> oArray=boost::dynamic_pointer_cast<CArray>(obj);
+ assert(oArray.get());
+ guiPrintDbg(debug::DBG_DBG,"Removing from array: " << idx);
+ //Trick to avoid/improve reloading
+ //Now push childs with index above one index lower and set 'deleted' child as invalid
+ // (it will then go away at 'not in array')
+ int cnt=items.count();  //Assume cnt = number of elements if array
+ TreeItemAbstract* tx=dynamic_cast<TreeItemAbstract*>(items[QString::number(idx)]);
+ assert(tx);//Not a treeitem? What is that?
+ items.replace("--",tx);//Copy "current" so we don't lose it;
+ tx->unSelect(data->tree());
+ QDictIterator<QListViewItem> it(items);
+ for(int i=idx;i<cnt-1;i++) {
+  //TODO: this is a bit ugly (but still working)
+  TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[QString::number(i+1)]);
+  assert(t);//Not a treeitem? What is that?
+  items.replace(QString::number(i),t);
+  t->setName(QString::number(i));//Move one down
+  QString oname;//And now set text too
+  oname.sprintf("[%d]",i);
+  t->setText(0,oname);
+ }
+ items.remove(QString::number(cnt-1));
+ oArray->delProperty(idx);
+}
+
 } // namespace gui

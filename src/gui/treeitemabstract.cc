@@ -9,6 +9,7 @@
 #include <assert.h>
 #include "util.h"
 #include <utils/debug.h>
+#include <qlistview.h>
 
 namespace gui {
 
@@ -98,6 +99,35 @@ void TreeItemAbstract::eraseItems() {
  types.clear();
 }
 
+/**
+ Move selection away from this item to nearest sensible item<br>
+ If this item is not selected, task is done, does nothing<br>
+ If it is selected, firt attempt is to move selection on next sibling, then on item above, then on item below.
+ @param tree QLIstView in which this item resides
+*/
+void TreeItemAbstract::unSelect(QListView *tree) {
+ if (!tree->isSelected(this)) return;
+ //It is selected
+ QListViewItem* it=nextSibling();
+ if (it) { //Next in same level
+  tree->setSelected(it,true);
+  return;
+ }
+ it=itemAbove();
+ if (it) { //Previous in same level or parent
+  tree->setSelected(it,true);
+  return;
+ }
+ //Next in other level
+ it=itemBelow();
+ if (it) { //Previous in same level or parent
+  tree->setSelected(it,true);
+  return;
+ }
+ guiPrintDbg(debug::DBG_INFO,"Removed last item from tree");
+ //This was last item. Can't select anything else
+}
+
 /** Move all child items from other item to this item.
  If current item does have any childs, they will be deleted
  @param src TreeItemAbstract containing childs I want to move to this item
@@ -149,6 +179,17 @@ void TreeItemAbstract::deleteChild(QListViewItem *target) {
 QString TreeItemAbstract::name() {
  return nameId;
 }
+
+/**
+ Set name (id) of this item. Name is unique only for each item's children.
+ Children of different tree items can (and often will) have same name
+ Can be used if changing array elements (moving, etc ...)
+ @param name New name for this element
+*/
+void TreeItemAbstract::setName(const QString &newNameId) {
+ nameId=newNameId;
+}
+
 /** default destructor */
 TreeItemAbstract::~TreeItemAbstract() {
  //Empty desctructor

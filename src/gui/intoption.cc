@@ -1,5 +1,6 @@
 /** @file
-IntOption - class for widget containing one editable setting of type integer
+ IntOption - class for widget containing one editable setting of type integer
+ @author Martin Petricek
 */
 
 #include "intoption.h"
@@ -9,7 +10,8 @@ IntOption - class for widget containing one editable setting of type integer
 
 namespace gui {
 
-/** Default constructor of IntOption item
+/**
+ Default constructor of IntOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
  @param defValue Default value if option not found in configuration

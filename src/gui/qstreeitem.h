@@ -35,6 +35,8 @@ public slots:
  QString path();
  /*- Explicitly reload contents of this item and its subtree from current state of PDF document */
  void reload();
+ /*- Remove object in this tree item (and also any possible subitems) from document */
+ void remove();
 public:
  QSTreeItem(TreeItemAbstract *item);
  virtual ~QSTreeItem();

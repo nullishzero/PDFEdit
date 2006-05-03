@@ -68,6 +68,19 @@ QSCObject* TreeItemDict::getQSObject() {
  return new QSDict(dict);
 }
 
+/**
+ Remove property with given name from dictionary
+ @param name Name of property to remove
+*/
+void TreeItemDict::remove(const QString &name) {
+ boost::shared_ptr<CDict> oDict=boost::dynamic_pointer_cast<CDict>(obj);
+ assert(oDict.get());
+ guiPrintDbg(debug::DBG_DBG,"Removing from dict: " << name);
+ TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[name]);
+ if (t) t->unSelect(data->tree());
+ oDict->delProperty(name);
+}
+
 /** default destructor */
 TreeItemDict::~TreeItemDict() {
  uninitObserver();

@@ -15,8 +15,8 @@ Q_OBJECT
 public:
  IntProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
  virtual ~IntProperty();
- void writeValue(IProperty *pdfObject);
- void readValue(IProperty *pdfObject);
+ virtual void writeValue(IProperty *pdfObject);
+ virtual void readValue(IProperty *pdfObject);
 };
 
 } // namespace gui

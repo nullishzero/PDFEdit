@@ -22,6 +22,7 @@ public:
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual QSCObject* getQSObject();
+ virtual void remove();
 private:
  void init(const QString &name);
  /**  ContentStream object held in this item */

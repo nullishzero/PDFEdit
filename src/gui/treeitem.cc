@@ -4,6 +4,7 @@
 */
 
 #include <cobject.h>
+#include "treedata.h"
 #include "treeitem.h"
 #include "treeitemref.h"
 #include "treeitemsimple.h"
@@ -14,8 +15,6 @@
 #include "qsiproperty.h"
 
 namespace gui {
-
-class TreeData;
 
 using namespace std;
 using namespace util;
@@ -184,6 +183,39 @@ void TreeItem::uninitObserver() {
 /** default destructor */
 TreeItem::~TreeItem() {
 }
+
+//See TreeItemAbstract for description of this virtual method
+void TreeItem::remove() {
+ guiPrintDbg(debug::DBG_DBG,"Removing property");
+ if (!_parent) {
+  //Someone is trying to do something stupid, like removing whole document catalog.
+  //We can't do that anyway
+  return;
+ }
+ //Parent should be Array or Dict;
+ // Is parent a Dict?
+ TreeItemDict* dict=dynamic_cast<TreeItemDict*>(_parent);
+ if (dict) { //removing from dict
+  dict->remove(name());
+  return;
+ }
+ // Is parent an Array?
+ TreeItemArray* array=dynamic_cast<TreeItemArray*>(_parent);
+ if (array) { //removing from array
+  array->remove(name().toUInt());
+  return;
+ }
+ guiPrintDbg(debug::DBG_DBG,"Removing property - from what?");
+}
+
+/**
+ Overloaded version of TreeItemAbstract::unSelect
+ \see TreeItemAbstract::unSelect
+ */
+void TreeItem::unSelect() {
+ TreeItemAbstract::unSelect(data->tree());
+}
+
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItem::reloadSelf() {

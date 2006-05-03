@@ -14,6 +14,7 @@ class TreeData;
 
 class TreeItemDict : public TreeItem {
 public:
+ void remove(const QString &name);
  TreeItemDict(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemDict();

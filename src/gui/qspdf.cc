@@ -6,6 +6,7 @@
 */
 
 #include "qspdf.h"
+#include <stdio.h>
 
 namespace gui {
 
@@ -18,12 +19,20 @@ QSPdf::QSPdf(CPdf *_pdf) : QSCObject ("Pdf") {
 QSPdf::~QSPdf() {
 }
 
-/** Call CPdf::save(name) */
-void QSPdf::saveAs(QString name) {
- if (name.isNull()) return;//No empty names!
- assert(0);
- //TODO: obj->clone(name);????
- // obj->save(name);
+/** Save copy under different name. Does not check if the file exists, overwrite anything without warning
+ @return true if saved successfully, falsi if any error occured
+*/
+bool QSPdf::saveAs(QString name) {
+ if (name.isNull()) return false;//No empty names!
+ FILE *f=fopen(name,"wb");
+ if (!f) return false; ///failed to open file
+ try {
+  obj->clone(f);
+ } catch (...) {
+  fclose(f);
+  return false;
+ }
+ return true;
 }
 
 /** Call CPdf::getDictionary */
