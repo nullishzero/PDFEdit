@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  ccontentstream.h
@@ -106,7 +107,7 @@ public:
 			std::string strop;
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
-			utilsPrintDbg (debug::DBG_DBG, frst << " " << strop);
+			std::cout << frst << " " << strop << flush;
 		}
 		/////////////////
 
@@ -134,6 +135,9 @@ public:
  * 
  * The stream is processed sequentially and we can process it this way
  * using Iterator designe pattern implemented in these operators.
+ *
+ * Content stream does not derive from CStream because content stream can
+ * consist of many streams.
  */
 class CContentStream
 {
@@ -160,22 +164,16 @@ public:
 	/**
 	 * Constructor. 
 	 *
-	 * Object is not freed.
-	 *
 	 * @param stream CStream representing content stream or dictionary of more content streams.
-	 * @param obj Object representing content stream.
 	 */
-	CContentStream (ContentStreams& streams, Object* obj = NULL);
+	CContentStream (ContentStreams& streams);
 
 	/**
 	 * Constructor. 
 	 *
-	 * Object is not freed.
-	 *
 	 * @param stream CStream representing content stream or dictionary of more content streams.
-	 * @param obj Object representing content stream.
 	 */
-	CContentStream (boost::shared_ptr<CStream> stream, Object* obj = NULL);
+	CContentStream (boost::shared_ptr<CStream> stream);
 
 	//
 	// Get methods

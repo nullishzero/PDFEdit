@@ -23,14 +23,36 @@ using namespace std;
 using namespace boost;
 using namespace utils;
 
+// =====================================================================================
+namespace {
+// =====================================================================================
 
+const string CINLINEIMAGE_MIDDLE = "ID";
+	
+// =====================================================================================
+} // namespace
+// =====================================================================================
+	
 //
 //
 //
 void
 CInlineImage::getStringRepresentation (std::string& str) const
 {
-	assert (!"Not implemented yet.");
+	//assert (!"Not implemented yet.");
+	typedef std::vector<std::string> Names;
+	Names names;
+	CStream::dictionary.getAllPropertyNames (names);
+	for (Names::const_iterator it = names.begin(); it != names.end(); ++it)
+	{
+		std::string tmp;
+		CStream::dictionary.getProperty (*it)->getStringRepresentation (tmp);
+		str += string ("/") + *it + string (" ") + tmp + string ("\n");
+	}
+	
+	str += CINLINEIMAGE_MIDDLE;
+	str += "<<< IMAGE >>>";
+	
 }
 
 //

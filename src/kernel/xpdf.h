@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  xpdf.h
@@ -25,6 +26,64 @@
 #include <xpdf/SplashOutputDev.h>
 #include <xpdf/GlobalParams.h>
 #include <xpdf/Catalog.h>
+
+
+
+//=====================================================================================
+
+//=====================================================================================
+namespace xpdf {
+//=====================================================================================
+
+/** \TODO
+ * Wrapper around really really fucked up class with free method (e.g. Xpdf Object).
+ */
+/*
+template<typename T>
+class MassiveIdiocyWrapper : noncopyable 
+{
+private:
+	T obj;
+	
+public:	
+	typedef T element_type;
+
+	explicit MassiveIdiocyWrapper () {};
+
+	//
+	// Explicit delete
+	//
+	void reset () { obj.free (); };
+	
+	//
+	// Dereference
+	//
+	T& operator*() const { return obj; };
+	T* operator->() const { return &obj; };
+
+	//
+	// Copy constructor
+	//
+	MassiveIdiocyWrapper (const MassiveIdiocyWrapper& m)
+	{
+		obj.free ();
+		obj = m;
+	}
+	
+	//
+	// Delete
+	//
+	~MassiveIdiocyWrapper () { obj.free (); };
+};
+*/
+
+/** Xpdf object wrapper. */
+//typedef MassiveIdiocyWrapper<Object> XpdfObject;
+
+
+//=====================================================================================
+} // namespace xpdf
+//=====================================================================================
 
 #endif // _XPDF_H_
 

@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
  *        Filename:  xpdf.h
@@ -83,6 +84,10 @@ private:
 
 } nullPtr = {};
 
+
+
+//=====================================================================================
+
 /** Coordinate. */
 typedef double Coordinate;
 /** Invalid coordinate. */
@@ -119,8 +124,10 @@ struct GenRect
 
 	// Helper functions
 	bool contains (Coord x, Coord y) const
-		{return (xleft <= x && x <= xright && yleft <= y && y <= yright);
-	
+	{
+		kernelPrintDbg (debug::DBG_DBG, "x: " << x << " y: " << y << " Rect:" << *this);
+		return ( std::min(xleft,xright) <= x && x <= std::max(xleft,xright) 
+				&& std::min (yleft,yright) <= y && y <= std::max(yleft,yright) );
 	}
 };
 
@@ -148,6 +155,25 @@ operator << (std::ostream& os, const Point& pt)
 	os 	<< "x: " << pt.x << " y: " << pt.y;
 	return os;
 }
+
+
+//=====================================================================================
+
+/*\TODO
+//
+// From boost
+//
+class noncopyable
+{
+protected:
+	noncopyable() {}
+	~noncopyable() {}
+private:  // emphasize the following members are private
+	noncopyable( const noncopyable& );
+	const noncopyable& operator=( const noncopyable& );
+};
+*/
+
 
 #endif // _STATIC_H_
 

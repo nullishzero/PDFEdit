@@ -208,8 +208,6 @@ public:
 		if (NULL == contentstream.get() || contentstream->invalid ())
 			parseContentStream ();
 
-		kernelPrintDbg (debug::DBG_DBG, " ...");
-		
 		// Get the objects with specific comparator
 		contentstream->getOperatorsAtPosition (opContainer, cmp, state);
 	}
@@ -220,7 +218,7 @@ public:
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
-	void displayPage (	::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
+	void displayPage (::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
 	
 	/** 
 	 * Get contents stream.

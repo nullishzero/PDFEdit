@@ -673,6 +673,7 @@ namespace
 	void
 	operandsSetPdf (shared_ptr<PdfOperator> first, CPdf& pdf, IndiRef rf)
 	{
+		utilsPrintDbg (DBG_DBG, "");
 		PdfOperator::Iterator it = PdfOperator::getIterator (first);
 		while (!it.isEnd())
 		{
@@ -700,6 +701,7 @@ namespace
 	 */
 	bool check (const CheckTypes& ops, PdfOperator::Operands& operands)
 	{
+		// \TODO DEBUG
 		string str;
 		for (PdfOperator::Operands::iterator it = operands.begin(); it != operands.end(); ++it)
 		{
@@ -708,6 +710,7 @@ namespace
 			str += " " + tmp;
 		}
 		utilsPrintDbg (DBG_DBG, "Operands: " << str);
+		/////
 		
 		size_t argNum = static_cast<size_t> ((ops.argNum > 0) ? ops.argNum : -ops.argNum);
 			
@@ -782,28 +785,28 @@ namespace
 	 * Parse inline image. Inline image is a stream withing e.g. a text stream.
 	 * Binary data can make text parser to behave incorrectly.
 	 *
-	 * @param parser Actual parser.
+	 * @param stream Actual parser.
 	 *
 	 * @return CStream representing inline image
 	 */
 	CInlineImage*
-	getInlineImage (::Parser& parser) 
+	getInlineImage (CStream& stream) 
 	{
-		Object o;
+		kernelPrintDbg (DBG_DBG, "");
 		Object dict;
 		dict.initDict ((XRef*)NULL); // BE careful, we do not have (need) valid xref
 
 		//
 		// Get the inline image dictionary
 		// 
-		parser.getObj(&o);
-		while (!o.isCmd("ID") && !o.isEOF()) 
+		Object o;
+		stream.getXpdfObject (o);
+		while (!o.isCmd("ID") && !stream.eof()) 
 		{
 			if (o.isName())
 			{
 				char* key = ::copyString (o.getName());
-				o.free();
-				parser.getObj (&o);
+				stream.getXpdfObject (o);
 				if (o.isEOF() || o.isError()) 
 				{
 					gfree (key);
@@ -812,16 +815,18 @@ namespace
 				}
 				dict.dictAdd (key, &o);
 			}
-			parser.getObj(&o);
+			stream.getXpdfObject (o);
 		}
+		// Free ID
+		o.free ();
 		
 		// 
 		// Make stream
 		// 
-		Stream* str = new ::EmbedStream (parser.getStream(), &dict, gFalse, 0);
+		Stream* str = new ::EmbedStream (stream.getXpdfStream (), &dict, gFalse, 0);
 		if (str)
 		{
-			str = str->addFilters(&dict);
+			str->addFilters(&dict);
 			int c1, c2;
 			c1 = str->getBaseStream()->getChar();
 			c2 = str->getBaseStream()->getChar();
@@ -830,6 +835,7 @@ namespace
 				c1 = c2;
 				c2 = str->getBaseStream()->getChar();
 			}
+			dict.free ();
 			delete str;
 
 			// \TODO !!!
@@ -848,23 +854,26 @@ namespace
 	 *
 	 * Here is decided which implementation of a pdf operator is used.
 	 *
-	 * @param parser Parser.
+	 * @param stream Parser.
 	 * @param operands Operands.
 	 * @param last Last.
 	 *
 	 * @return Created pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (::Parser& parser, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
+	createOp (CStream& stream, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
 	{
+		// This is ugly but needed because of memory leaks
+		shared_ptr<PdfOperator> result;
+		
 		// Get first object
 		Object o;
-		parser.getObj (&o);
+		stream.getXpdfObject (o);
 
 		//
 		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
 		//
-		while (!o.isEOF()) 
+		while (!stream.eof()) 
 		{
 			if (o.isCmd ())
 			{// We have an OPERATOR
@@ -875,7 +884,10 @@ namespace
 				const CheckTypes* chcktp = findOp (o.getCmd());
 				// Operator not found, create unknown operator
 				if (NULL == chcktp)
-					return shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
+				{
+					result = shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
+					break;
+				}
 				
 				assert (chcktp);
 				utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
@@ -887,17 +899,19 @@ namespace
 				{
 					utilsPrintDbg (debug::DBG_DBG, "");
 					
-					shared_ptr<CInlineImage> inimg (getInlineImage (parser));
-					shared_ptr<PdfOperator> composite 
-						(new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
-					return composite;
+					shared_ptr<CInlineImage> inimg (getInlineImage (stream));
+					result = shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
+					break;
 				}
 				
 				//
 				// Check the type against specification
 				// 
 				if (!check (*chcktp, operands))
+				{
+					o.free ();
 					throw MalformedFormatExeption ("Content stream bad operator type.");
+				}
 				
 				// Get operands count
 				size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
@@ -908,22 +922,21 @@ namespace
 				if (isSimpleOperator(*chcktp))
 				{// Simple operator
 					
-					shared_ptr<PdfOperator> op (new SimpleGenericOperator (chcktp->name, argNum, operands));
-					last = op;
-					return op;
+					last = result = shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
+					break;
 					
 				}else
 				{// Composite operator
 					
-					shared_ptr<PdfOperator> composite (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
+					result = shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
 					// The same as in parseContentStream
-					shared_ptr<PdfOperator> _last = composite;
-					shared_ptr<PdfOperator> _prevLast = composite;
+					shared_ptr<PdfOperator> _last = result;
+					shared_ptr<PdfOperator> _prevLast =result;
 					// While not the end
-					while (last = createOp (parser, operands, _last))
+					while (last = createOp (stream, operands, _last))
 					{
 						PdfOperator::putBehind (_prevLast, last);
-						composite->push_back (last);
+						result->push_back (last);
 							
 						// Is it the end tag?
 						string tag;
@@ -935,8 +948,8 @@ namespace
 						_prevLast = _last;
 					}
 					
-					// End composite
-					return composite;
+					// Return composite in result
+					break;
 				}
 
 			}else // if (o.isCmd ())
@@ -946,61 +959,65 @@ namespace
 				operands.push_back (pIp);
 			}
 
-			// Free it, memory leak otherwise
 			o.free ();
 			// Grab the next object
-			parser.getObj (&o);
+			stream.getXpdfObject (o);
 			
 		} // while (!obj.isEOF())
 		
-		// Indicate nothing to read
-		return shared_ptr<PdfOperator> ();
+		o.free ();
+		return result;
 	}	
 
 	/**
 	 * Parse the stream into small objects.
 	 *
 	 * @param operators Operator stack.
-	 * @param obj 	Xpdf content stream.
-	 * @param pdf 	Pdf where this content stream belongs (parent object)
-	 * @param rf 	Id of parent object.
+	 * @param stream 	Stream.
 	 */
 	void
-	parseContentStream (CContentStream::Operators& operators, 
-						Object& obj, 		
-						CPdf& pdf, 
-						IndiRef rf)
+	parseContentStream (CContentStream::Operators& operators, CContentStream::ContentStreams& streams)
 	{
-		assert (obj.isStream() || obj.isArray());
-		
-		//
-		// Create the parser and lexer and get objects from it
-		//
-		scoped_ptr<Parser> parser (new ::Parser (NULL, new ::Lexer(NULL, &obj)));
+		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> last, previousLast;
 		shared_ptr<PdfOperator> actual;
-		PdfOperator::Operands operands;
-		
-		//
-		// actual is the top most last one, e.g. a composite
-		// last is the last operator, e.g. the last item of an composite
-		// we want to add new (actual) after the last one of LAST call to
-		// 	createOp
-		//
-		while (actual=createOp (*parser, operands, last))
-		{
-			if (previousLast)
-			{
-				// Insert it in to the pdfoperator chain
-				PdfOperator::putBehind (previousLast, actual);
-			}
-			// Save it into our "top level" container
-			operators.push_back (actual);
-			previousLast = last;
-		}
 	
+		for (CContentStream::ContentStreams::iterator it = streams.begin (); it != streams.end (); ++it)
+		{
+			assert (isInValidPdf (*it));
+			assert (hasValidRef (*it));
+		
+			// Open stream
+			(*it)->open ();
+			
+			//
+			// actual is the top most last one, e.g. a composite
+			// last is the last operator, e.g. the last item of an composite
+			// we want to add new (actual) after the last one of LAST call to
+			// 	createOp
+			//
+			while (actual=createOp (*(*it), operands, last))
+			{
+				if (previousLast)
+				{
+					// Insert it in to the pdfoperator chain
+					PdfOperator::putBehind (previousLast, actual);
+				}
+				// Save it into our "top level" container
+				operators.push_back (actual);
+				previousLast = last;
+			}
+
+			// Close stream
+			(*it)->close ();
+		}
+
+		assert (operands.empty());
+	
+		// Set pdf and ref
 		if (!operators.empty())
-			operandsSetPdf (operators.front(), pdf, rf);
+			operandsSetPdf (operators.front(), *(streams.front()->getPdf()), streams.front()->getIndiRef());
+
 	}
 	
 
@@ -1058,48 +1075,35 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 //
 // Constructors
 //
-CContentStream::CContentStream (shared_ptr<CStream> stream, Object* obj) : _changed (false)
+CContentStream::CContentStream (shared_ptr<CStream> stream) : _changed (false)
 {
-	// not implemented yet
-	assert (obj != NULL);
-	kernelPrintDbg (DBG_DBG, "Creating content stream.");
+	kernelPrintDbg (DBG_DBG, "");
 
 	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
 	// the problem is with parsed pdfoperators
-	assert (NULL != stream->getPdf ());
+	assert (isInValidPdf (stream) && hasValidRef (stream));
+	if (!isInValidPdf (stream) || !hasValidRef (stream))
+		throw CObjInvalidObject ();
 	
 	// Save stream
 	contentstreams.push_back (stream);
 
 	// Parse it into small objects
-	parseContentStream (operators, *obj, *(stream->getPdf ()), stream->getIndiRef());
+	parseContentStream (operators, contentstreams);
 }
 
 //
 // Parse the xpdf object, representing the content stream
 //
-CContentStream::CContentStream (ContentStreams& streams, Object* obj) : _changed (false)
+CContentStream::CContentStream (ContentStreams& streams) : _changed (false)
 {
-	// not implemented yet
-	assert (obj != NULL);
-	if (NULL == obj)
-		throw CObjInvalidObject (); 
-	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
-	{
-		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
-		// the problem is with parsed pdfoperators
-		assert (NULL != (*it)->getPdf());
-	}
-	kernelPrintDbg (DBG_DBG, "Creating content stream.");
+	kernelPrintDbg (DBG_DBG, "");
 	
 	// If streams are not empty, save and parse them
 	if (!streams.empty())
-	{
-		// Save content streams
 		copy (streams.begin(), streams.end(), back_inserter (contentstreams));
-		// Parse it into small objects
-		parseContentStream (operators, *obj, *(streams.front()->getPdf ()), streams.front()->getIndiRef ());
-	}
+
+	parseContentStream (operators, contentstreams);
 }
 
 //

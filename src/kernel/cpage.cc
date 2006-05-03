@@ -218,7 +218,7 @@ bool CPage::parseContentStream ()
 		{
 			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
 			// Create contentstream from a stream
-			contentstream = shared_ptr<CContentStream> (new CContentStream (stream, stream->_makeXpdfObject()));
+			contentstream = shared_ptr<CContentStream> (new CContentStream (stream));
 		
 		}else if (isArray (contents))
 		{
@@ -229,8 +229,7 @@ bool CPage::parseContentStream ()
 				streams.push_back (getCStreamFromArray (array, i));
 			
 			// Create contentstream from array of streams
-			contentstream = shared_ptr<CContentStream> 
-				(new CContentStream (streams, array->_makeXpdfObject()));
+			contentstream = shared_ptr<CContentStream> (new CContentStream (streams));
 			
 		}else // Neither stream nor array
 		{

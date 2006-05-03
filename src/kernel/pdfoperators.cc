@@ -160,6 +160,10 @@ CompositePdfOperator::getStringRepresentation (std::string& str) const
 //==========================================================
 
 //
+// UnknownCompositePdfOperator
+//
+
+//
 //
 //
 UnknownCompositePdfOperator::UnknownCompositePdfOperator 
@@ -185,6 +189,10 @@ UnknownCompositePdfOperator::getStringRepresentation (string& str) const
 	str += opEnd;
 }
 
+
+//
+// InlineImageCompositePdfOperator
+//
 
 //
 //
