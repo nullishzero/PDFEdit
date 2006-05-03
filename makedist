@@ -8,7 +8,7 @@
 VERSION=`grep "#define VERSION" <src/gui/version.h |sed 's/.*"\(.*\)".*/\1/'`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
 rm ../pdfedit-$VERSION
-ln -s ../pdfedit ../pdfedit-$VERSION
+ln -s pdfedit ../pdfedit-$VERSION
 cd ..
 tar -czvhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
 tar -cjvhf pdfedit-$VERSION.tar.bz2 pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
