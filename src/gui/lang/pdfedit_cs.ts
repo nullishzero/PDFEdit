@@ -240,6 +240,30 @@ Data: %3
         <source>Menu items list</source>
         <translation>Seznam menu položek</translation>
     </message>
+    <message>
+        <source>&amp;Add object</source>
+        <translation>Přidat objekt</translation>
+    </message>
+    <message>
+        <source>Add and c&amp;lose</source>
+        <translation>Přidat a zavřít</translation>
+    </message>
+    <message>
+        <source>Stream</source>
+        <translation>Stream</translation>
+    </message>
+    <message>
+        <source>Parameter missing for option : </source>
+        <translation>Chybí parametr pro přepínač : </translation>
+    </message>
+    <message>
+        <source>Set debug messages verbosity</source>
+        <translation>Nastaví podrobnost výpisu ladících zpráv</translation>
+    </message>
+    <message>
+        <source>(n = -1 .. 5)</source>
+        <translation>(n = -1 .. 5)</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -270,6 +294,53 @@ Data: %3
     <message>
         <source>Homepage</source>
         <translation>Stránka</translation>
+    </message>
+</context>
+<context>
+    <name>gui::AddItemDialog</name>
+    <message>
+        <source>Add object</source>
+        <translation>Přidat objekt</translation>
+    </message>
+    <message>
+        <source>Type and value of new object</source>
+        <translation>Typ a hodnota nového objektu</translation>
+    </message>
+    <message>
+        <source>New empty Dictionary</source>
+        <translation>Nový prázndný slovník</translation>
+    </message>
+    <message>
+        <source>New empty Array</source>
+        <translation>Nové prázdné pole</translation>
+    </message>
+    <message>
+        <source>Property name</source>
+        <translation>Jméno položky</translation>
+    </message>
+    <message>
+        <source>Object will be appended at end of array</source>
+        <translation>Objekt bude přidán na konec pole</translation>
+    </message>
+    <message>
+        <source>No object type selected</source>
+        <translation>Není zvolen typ objektu</translation>
+    </message>
+    <message>
+        <source>Entered property is not valid</source>
+        <translation>Zadaná položka není platná</translation>
+    </message>
+    <message>
+        <source>Name of new property must be specified</source>
+        <translation>Musí být zadané jméno položky</translation>
+    </message>
+    <message>
+        <source>Property &apos;%1&apos; added to dictionary</source>
+        <translation>Položka &apos;%1&apos; přidána do slovníku</translation>
+    </message>
+    <message>
+        <source>Property added to end of array</source>
+        <translation>Položka přidána na konec pole</translation>
     </message>
 </context>
 <context>
@@ -433,16 +504,28 @@ Data: %3
         <translation>Nahrán soubor</translation>
     </message>
     <message>
-        <source>New document created</source>
-        <translation>Vytvořen nový dokument</translation>
-    </message>
-    <message>
         <source>Current file is not saved. Do you want to save it?</source>
         <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
     </message>
     <message>
         <source>Unknown exception in script occured</source>
         <translation>Ve skriptu dolo k neznámé výjimce</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Upozornění</translation>
+    </message>
+    <message>
+        <source>Error while loading document </source>
+        <translation>Chyba při nahrávání dokumentu </translation>
+    </message>
+    <message>
+        <source>Unknown error while loading document </source>
+        <translation>Neznámá chyba při nahrávání dokumentu </translation>
+    </message>
+    <message>
+        <source>No document to save</source>
+        <translation>Není žádný dokument k uložení</translation>
     </message>
 </context>
 <context>
@@ -473,16 +556,6 @@ Data: %3
         <translation>Nastavení</translation>
     </message>
     <message>
-        <source>&amp;About</source>
-        <comment>about</comment>
-        <translation>O Programu</translation>
-    </message>
-    <message>
-        <source>Other Toolbar</source>
-        <comment>OtherToolbar</comment>
-        <translation>Další toolbar</translation>
-    </message>
-    <message>
         <source>Main menu</source>
         <comment>MainMenu</comment>
         <translation>Hlavní menu</translation>
@@ -496,11 +569,6 @@ Data: %3
         <source>&amp;Quit</source>
         <comment>quit</comment>
         <translation>Konec</translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <comment>index</comment>
-        <translation>Nápověda</translation>
     </message>
     <message>
         <source>&amp;New document</source>
@@ -543,14 +611,39 @@ Data: %3
         <translation>Nápověda</translation>
     </message>
     <message>
-        <source>Testing items</source>
-        <comment>test</comment>
-        <translation>Testovací menu</translation>
+        <source>Page Toolbar</source>
+        <comment>PageToolbar</comment>
+        <translation>Toolbar stránky</translation>
+    </message>
+    <message>
+        <source>Reload Page</source>
+        <comment>reloadpage</comment>
+        <translation>Obnovit stránku</translation>
+    </message>
+    <message>
+        <source>Object Toolbar</source>
+        <comment>ObjectToolbar</comment>
+        <translation>Toolbar objektů</translation>
+    </message>
+    <message>
+        <source>Add object</source>
+        <comment>treeAdditem</comment>
+        <translation>Přidat objekt</translation>
+    </message>
+    <message>
+        <source>Delete object</source>
+        <comment>treeDelitem</comment>
+        <translation>Smazat objekt</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <comment>helpindex</comment>
+        <comment>help_index</comment>
         <translation>Nápověda</translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <comment>help_about</comment>
+        <translation>O Programu</translation>
     </message>
 </context>
 <context>

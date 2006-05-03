@@ -237,6 +237,30 @@ Data: %3
         <source>Menu items list</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Add and c&amp;lose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream</source>
+        <translation type="unfinished">Stream</translation>
+    </message>
+    <message>
+        <source>Parameter missing for option : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set debug messages verbosity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(n = -1 .. 5)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Add object</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -266,6 +290,53 @@ Data: %3
     </message>
     <message>
         <source>This program is distributed under terms of GNU GPL</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::AddItemDialog</name>
+    <message>
+        <source>Add object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New empty Dictionary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New empty Array</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Property name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Entered property is not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name of new property must be specified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Property &apos;%1&apos; added to dictionary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Property added to end of array</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type and value of new object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object will be appended at end of array</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No object type selected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -426,10 +497,6 @@ Data: %3
 <context>
     <name>gui::PdfEditWindow</name>
     <message>
-        <source>New document created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Current file is not saved. Do you want to save it?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -439,6 +506,22 @@ Data: %3
     </message>
     <message>
         <source>Unknown exception in script occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error while loading document </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error while loading document </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No document to save</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -485,23 +568,8 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;About</source>
-        <comment>about</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Other Toolbar</source>
-        <comment>OtherToolbar</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Close Window</source>
         <comment>closew</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <comment>helpindex</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -540,13 +608,38 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Testing items</source>
-        <comment>test</comment>
+        <source>Page Toolbar</source>
+        <comment>PageToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload Page</source>
+        <comment>reloadpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object Toolbar</source>
+        <comment>ObjectToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add object</source>
+        <comment>treeAdditem</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete object</source>
+        <comment>treeDelitem</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;About</source>
+        <comment>help_about</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <comment>index</comment>
+        <comment>help_index</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
