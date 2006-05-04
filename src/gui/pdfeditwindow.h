@@ -74,6 +74,11 @@ public slots: //These will be exported to scripting
  void variables();
  QString filename();
  QString version();
+signals:
+ /** Signal emitted when closing a file or editor window. All helper editor widgets opened from
+   this window that are subclasses of SelfDestructiveWidget will close themselves
+ */
+ void selfDestruct();
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:

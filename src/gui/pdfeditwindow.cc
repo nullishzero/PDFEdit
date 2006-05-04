@@ -140,8 +140,9 @@ void createNewEditorWindow(const QString &fName) {
 void PdfEditWindow::closeWindow() {
  if (qs->isRunning()) {
   qs->stopExecution();
-  deleteLater();  //Delete window when returning back to main loop
-  return;
+//TODO: solve after scripting is separated from main window to separate class
+//  deleteLater();  //Delete window when returning back to main loop
+//  return;
  }
  close();
 }
@@ -506,11 +507,13 @@ void PdfEditWindow::settingUpdate(QString key) {
  }
 }
 
-/** Closes file currently opened in editor.
-@param askSave Ask about saving changes?
-@param onlyAsk Only ask about closing/saving work, do not actually close file
-@return true if user accepted the close or saved the document before,
- false if user refuses the close */
+/**
+ Closes file currently opened in editor.
+ @param askSave Ask about saving changes?
+ @param onlyAsk Only ask about closing/saving work, do not actually close file
+ @return true if user accepted the close or saved the document before,
+ false if user refuses the close
+*/
 bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
  if (modified() && askSave) {
   int answer=question_ync(fileName+"\n"+tr("Current file is not saved. Do you want to save it?"));
@@ -590,6 +593,8 @@ void PdfEditWindow::setFileName(const QString &name) {
 
 /** Closes file currently opened in editor, without opening new empty one */
 void PdfEditWindow::destroyFile() {
+ //Now it is good time to kill all those widgets
+ emit selfDestruct();
  if (!document) return;
  selectedProperty.reset();//no item selected
  tree->uninit();//clear treeview

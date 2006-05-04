@@ -20,7 +20,7 @@ QSPdf::~QSPdf() {
 }
 
 /** Save copy under different name. Does not check if the file exists, overwrite anything without warning
- @return true if saved successfully, falsi if any error occured
+ @return true if saved successfully, false if any error occured
 */
 bool QSPdf::saveAs(QString name) {
  if (name.isNull()) return false;//No empty names!
@@ -28,11 +28,12 @@ bool QSPdf::saveAs(QString name) {
  if (!f) return false; ///failed to open file
  try {
   obj->clone(f);
+  fclose(f);
+  return true;
  } catch (...) {
   fclose(f);
   return false;
  }
- return true;
 }
 
 /** Call CPdf::getDictionary */

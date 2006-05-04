@@ -23,7 +23,7 @@ public:
 public slots:
  /*-
   Save this document under different name.
-  Does not modify name of file in editor.
+  Does not modify name of file in editor, original file is still edited, not this one.
   Does not check for file existence - it will overwrite the file without warning if it already exists
   Return true if document was saved, false if it failed to save for any reason
  */

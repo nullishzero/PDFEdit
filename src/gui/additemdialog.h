@@ -1,7 +1,7 @@
 #ifndef __ADDITEMDIALOG_H__
 #define __ADDITEMDIALOG_H__
 
-#include <qwidget.h>
+#include "selfdestructivewidget.h"
 #include <iproperty.h>
 #include <cobject.h>
 
@@ -22,7 +22,7 @@ class Property;
 /** Number of property types that can be added in AddItemDialog */
 const int addDialogPropertyTypes=8;
 
-class AddItemDialog : public QWidget {
+class AddItemDialog : public SelfDestructiveWidget {
 Q_OBJECT
 public:
  ~AddItemDialog();

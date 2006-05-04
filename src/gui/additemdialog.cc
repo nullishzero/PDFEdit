@@ -33,7 +33,9 @@ using namespace util;
  @param parent Parent window of this dialog
  @param name Name of this window (used only for debugging
  */
-AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
+AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
+ : SelfDestructiveWidget(parent,parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
+ //Parent is also killer -> this is always toplevel widget
  globalSettings->restoreWindow(this,"add_item_dialog"); 
  setCaption(tr("Add object"));
  l=new QVBoxLayout(this,4,4);
@@ -91,7 +93,6 @@ void AddItemDialog::closeEvent(__attribute__((unused)) QCloseEvent* e) {
 
 //TODO: detect if dict no longer exists in document and close/disable dialog
 //TODO: cont.unique()==true -> this is last copy
-//TODO: close on main window close or document destroy -> modify pdfeditwindow, add "close on close" widget dictionary
 
 /**
  Set item into which newly created objects will be added and also initialize items in this control<br>
