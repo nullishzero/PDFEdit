@@ -49,6 +49,7 @@ function go(x) {
 /** Callback called after document is loaded */
 function onLoad() {
  //show first page
+// go(1);
  PageSpace.refresh(document.getFirstPage(),document);
 }
 

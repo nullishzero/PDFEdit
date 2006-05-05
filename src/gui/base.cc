@@ -25,6 +25,7 @@
 #include <qsinterpreter.h>
 #include <qsutilfactory.h> 
 #include <utils/debug.h>
+#include "pagespace.h"
 
 namespace gui {
 
@@ -48,6 +49,7 @@ Base::Base(PdfEditWindow *parent) {
  qp->addObject(globalSettings);
  //Create and add importer to QSProject and related QSInterpreter
  import=new QSImporter(qp,this);
+ import->addQSObj(w->pagespc,"PageSpace");
  qpdf=NULL;
 }
 
@@ -80,8 +82,18 @@ void Base::call(const QString &name) {
  try {
   //Call the function. Do not care about result
   qs->evaluate(name+"();",this,"<GUI>");
+  if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
+   QString error=qs->errorMessage();
+   if (error!=QString::null) { /// some error occured
+    w->cmdLine->addError(tr("Error in callback handler: ")+name);
+    w->cmdLine->addError(error);
+   }
+  }
  } catch (...) {
   //Do not care about exception in callbacks either ... 
+  if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
+   w->cmdLine->addError(tr("Exception in callback handler: ")+name);
+  }
  }
  removeDocumentObjects();
 }
@@ -133,6 +145,7 @@ void Base::runScript(QString script) {
  } catch (...) {
   print(tr("Unknown exception in script occured"));
  }
+
  if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
   switch (ret.type()) {
    case QSArgument::QObjectPtr: { //QObject -> print type
@@ -186,13 +199,13 @@ void Base::addObjectDialog(QSIProperty *container/*=NULL*/) {
 }
 
 /** @copydoc addObjectDialog(QSIProperty *) */
-void Base::addObjectDialog(QObject *_container) {
+void Base::addObjectDialog(QObject *container) {
  //This method is fix for QSA Bug: QSA sometimes degrade QObject descendants to bare QObjects
- QSIProperty *container=dynamic_cast<QSIProperty*>(_container);
- if (container) {
-  w->addObjectDialogI(container->get());
+ QSIProperty *_container=dynamic_cast<QSIProperty*>(container);
+ if (_container) {
+  w->addObjectDialogI(_container->get());
  } else {
-  guiPrintDbg(debug::DBG_ERR,"type Error: " << _container->className());
+  guiPrintDbg(debug::DBG_ERR,"type Error: " << container->className());
   w->addObjectDialogI(w->selectedProperty);
  }
 }

@@ -1,93 +1,90 @@
 /** @file
- TreeItemDict - class holding CContentStream object in tree, descendant of TreeItem
+ TreeItemCStream - class holding one CStream object in tree, descendant of TreeItem
  @author Martin Petricek
 */
 
 #include <cobject.h>
-#include <ccontentstream.h>
 #include "treeitemcstream.h"
-#include "qscontentstream.h"
+#include "treedata.h"
+#include "pdfutil.h"
+#include "qsstream.h"
+#include "util.h"
 
 namespace gui {
 
-class TreeData;
-
 using namespace std;
+using namespace util;
 
 /**
- constructor of TreeItemCStream - create root item from given object
- @param parent QListView in which to put item
- @param pdfObj ContentStream contained in this item
- @param nameId Internal name of this item
- @param name Caption of this item - will be shown in treeview
- @param after Item after which this one will be inserted
+ @copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
-TreeItemCStream::TreeItemCStream(QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,parent,after) {
- obj=pdfObj;
- init(name);
+TreeItemCStream::TreeItemCStream(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+ assert(data);
  reload(false);
+ initObserver();
 }
 
 /**
- constructor of TreeItemCStream - create child item from given object
- @param parent QListView in which to put item
- @param pdfObj ContentStream contained in this item
- @param nameId Internal name of this item
- @param name Caption of this item - will be shown in treeview
- @param after Item after which this one will be inserted
+@copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
-TreeItemCStream::TreeItemCStream(QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,parent,after) {
- obj=pdfObj;
- init(name);
+TreeItemCStream::TreeItemCStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+ assert(data);
  reload(false);
-}
-
-/**
- initialize captions of this item from name
- @param name Caption of item
- */
-void TreeItemCStream::init(const QString &name) {
- if (name.isNull()) {
-  setText(0,QObject::tr("<no name>"));
- } else {
-  setText(0,name);
- }
- // object type
- setText(1,QObject::tr("Stream"));
- setText(2,"");
-}
-
-/** default destructor */
-TreeItemCStream::~TreeItemCStream() {
+ initObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemCStream::createChild(__attribute__((unused)) const QString &name,__attribute__((unused)) ChildType typ,__attribute__((unused)) QListViewItem *after/*=NULL*/) {
- assert(0);//no childs
- return NULL;
+TreeItemAbstract* TreeItemCStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+ CStream *dict=dynamic_cast<CStream*>(obj.get());
+ boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ return TreeItem::create(data,this,property,name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
-ChildType TreeItemCStream::getChildType(__attribute__((unused)) const QString &name) {
- assert(0);//no childs
- return 0;
+ChildType TreeItemCStream::getChildType(const QString &name) {
+ CStream *dict=dynamic_cast<CStream*>(obj.get());
+ boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ return property->getType();
 }
 
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemCStream::getChildNames() {
- //TODO: pStream children
- return QStringList(); 
+ QStringList itemList;
+ CStream *dict=dynamic_cast<CStream*>(obj.get());
+ vector<string> list;
+ dict->getAllPropertyNames(list);
+ vector<string>::iterator it;
+ for( it=list.begin();it!=list.end();++it) { // for each property
+  boost::shared_ptr<IProperty> property=dict->getProperty(*it);
+  if (!data->showSimple() && isSimple(property)) continue; //simple item -> skip it
+  itemList += *it;
+ }
+ return itemList;
 }
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemCStream::getQSObject() {
- return new QSContentStream(obj);
+ boost::shared_ptr<CStream> stream=boost::dynamic_pointer_cast<CStream>(obj);
+ assert(stream.get());
+ return new QSStream(stream);
 }
 
-//See TreeItemAbstract for description of this virtual method
-void TreeItemCStream::remove() {
- //TODO: implement
- return;
+/**
+ Remove property with given name from stream
+ @param name Name of property to remove
+*/
+void TreeItemCStream::remove(const QString &name) {
+ boost::shared_ptr<CStream> oDict=boost::dynamic_pointer_cast<CStream>(obj);
+ assert(oDict.get());
+ guiPrintDbg(debug::DBG_DBG,"Removing from CStream: " << name);
+ TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[name]);
+ if (t) t->unSelect(data->tree());
+ oDict->delProperty(name);
+}
+
+/** default destructor */
+TreeItemCStream::~TreeItemCStream() {
+ uninitObserver();
 }
 
 } // namespace gui

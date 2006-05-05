@@ -12,21 +12,17 @@ using namespace pdfobjects;
 
 class TreeData;
 
-class TreeItemCStream : public TreeItemAbstract {
+class TreeItemCStream : public TreeItem {
 public:
- TreeItemCStream(QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemCStream(QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ void remove(const QString &name);
+ TreeItemCStream(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemCStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemCStream();
  //From TreeItemAbstract interface
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual QSCObject* getQSObject();
- virtual void remove();
-private:
- void init(const QString &name);
- /**  ContentStream object held in this item */
- boost::shared_ptr<CContentStream> obj;
 };
 
 } // namespace gui

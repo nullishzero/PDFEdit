@@ -10,6 +10,7 @@
 #include "treeitemsimple.h"
 #include "treeitemdict.h"
 #include "treeitemarray.h"
+#include "treeitemcstream.h"
 #include "pdfutil.h"
 #include "util.h"
 #include "qsiproperty.h"
@@ -60,7 +61,7 @@ TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<I
  if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after,useName);
  if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after,useName);
  if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after,useName);
-// if (type==pStream) return new TreeItemCStream(_data,parent,pdfObj,name,after,useName);
+ if (type==pStream) return new TreeItemCStream(_data,parent,pdfObj,name,after,useName);
  return new TreeItemSimple(_data,parent,pdfObj,name,after,useName);
 }
 
@@ -77,7 +78,7 @@ TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_p
  if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after,useName);
  if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after,useName);
  if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after,useName);
-// if (type==pStream) return new TreeItemCStream(_data,parent,pdfObj,name,after,useName);
+ if (type==pStream) return new TreeItemCStream(_data,parent,pdfObj,name,after,useName);
  return new TreeItemSimple(_data,parent,pdfObj,name,after,useName);
 }
 

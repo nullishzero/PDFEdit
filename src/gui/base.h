@@ -40,7 +40,7 @@ public slots: //This will be all exported to scripting
   If the object is not <link linkend="type_Dict">Dictionary</link> or <link linkend="type_Array">Array</link>, no dialog is shown.
  */
  void addObjectDialog(QSIProperty *container=NULL);
- void addObjectDialog(QObject *_container);
+ void addObjectDialog(QObject *container);
  /*-
   Closes file opened in this editor window.
   if askSave is true, user is asked to save the file if it is modified.

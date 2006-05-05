@@ -5,6 +5,7 @@
 
 #include <cobject.h>
 #include "treeitemsimple.h"
+#include "util.h"
 
 namespace gui {
 

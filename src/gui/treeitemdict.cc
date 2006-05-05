@@ -8,6 +8,7 @@
 #include "treedata.h"
 #include "pdfutil.h"
 #include "qsdict.h"
+#include "util.h"
 
 namespace gui {
 

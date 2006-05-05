@@ -4,13 +4,13 @@
 */
 
 #include <cobject.h>
-//#include <cpdf.h>
 #include <cpage.h>
 #include "treeitem.h"
 #include "treeitempage.h"
 #include "treedata.h"
 #include <qobject.h>
 #include "qspage.h"
+#include "util.h"
 
 namespace gui {
 

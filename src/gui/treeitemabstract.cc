@@ -10,6 +10,7 @@
 #include "util.h"
 #include <utils/debug.h>
 #include <qlistview.h>
+#include "util.h"
 
 namespace gui {
 

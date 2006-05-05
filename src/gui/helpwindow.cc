@@ -13,6 +13,7 @@
 #include <qtextbrowser.h> 
 #include "settings.h"
 #include "version.h"
+#include "util.h"
 
 namespace gui {
 
