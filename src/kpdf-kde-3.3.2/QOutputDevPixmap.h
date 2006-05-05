@@ -41,6 +41,7 @@ public:
 
 private:
 	QImage m_image;
+	SplashColorPtr raw_image;
 };
 
 #endif // QOUTPUTDEVPIXMAP

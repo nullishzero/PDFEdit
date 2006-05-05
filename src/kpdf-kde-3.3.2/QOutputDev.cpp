@@ -28,7 +28,8 @@
 //------------------------------------------------------------------------
 
 QOutputDev::QOutputDev(SplashColor paperColor)
-	: SplashOutputDev(splashModeBGRA8, 1, false, paperColor)
+// -- because uncomplet Splash.cc --	: SplashOutputDev(splashModeBGRA8, 1, false, paperColor)
+	: SplashOutputDev(splashModeBGR8, 1, false, paperColor)
 {
 	// create text object
 	m_text = new TextPage ( gFalse );
