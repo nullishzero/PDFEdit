@@ -10,24 +10,11 @@
 namespace gui {
 
 /** Construct wrapper with given CStream */
-QSStream::QSStream(boost::shared_ptr<CStream> _cs) : QSCObject ("Stream") {
- obj=_cs;
+QSStream::QSStream(boost::shared_ptr<CStream> _cs) : QSIProperty (_cs,"Stream") {
 }
 
 /** destructor */
 QSStream::~QSStream() {
-}
-
-/** Call CStream::getStringRepresentation(ret); return ret */
-QString QSStream::getText() {
- std::string text;
- obj->getStringRepresentation(text);
- return text;
-}
-
-/** get CStream held inside this class. Not exposed to scripting */
-boost::shared_ptr<CStream> QSStream::get() {
- return obj;
 }
 
 } // namespace gui

@@ -17,7 +17,8 @@
 #include "qsiproperty.h"
 #include "qspage.h"
 #include "qscobject.h"
-#include "qscontentstream.h"
+#include "qsstream.h"
+#include "qsarray.h"
 #include "qspdf.h"
 #include "qstreeitem.h"
 #include "util.h"
@@ -63,10 +64,16 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
  if (!ip.get()) return NULL;
- //Try if it is content stream
- boost::shared_ptr<CContentStream> cs=boost::dynamic_pointer_cast<CContentStream>(ip);
- if (cs.get()) return new QSContentStream(cs);
- //Nothing - just IProperty
+ //Try if it is stream
+ boost::shared_ptr<CStream> cs=boost::dynamic_pointer_cast<CStream>(ip);
+ if (cs.get()) return new QSStream(cs);
+ //Try if it is dict
+ boost::shared_ptr<CDict> cd=boost::dynamic_pointer_cast<CDict>(ip);
+ if (cd.get()) return new QSDict(cd);
+ //Try if it is array
+ boost::shared_ptr<CArray> ca=boost::dynamic_pointer_cast<CArray>(ip);
+ if (ca.get()) return new QSArray(ca);
+ //Nothing - just plain IProperty
  return new QSIProperty(ip);
 }
 
