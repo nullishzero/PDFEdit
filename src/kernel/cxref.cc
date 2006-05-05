@@ -3,6 +3,21 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/05/05 11:55:55  petrm1am
+ *
+ * Commiting changes sent by Michal:
+ *
+ * cpdf.cc:
+ * * consolidatePageList bug fixed
+ *     - difference += pageCount not -=
+ * * debug messages improved
+ *
+ * cxref.cc:
+ * * reserveRef bug fix
+ *     - totalCount replaced by xrefCount from XRef::getNumObjects
+ *     - num is initialized to -1
+ *     - kernelPrintDbg message wrong position (cannot use new entry)
+ *
  * Revision 1.14  2006/05/01 13:53:07  hockm0bm
  * new style printDbg
  *
@@ -193,17 +208,17 @@ using namespace debug;
 using namespace debug;
 
 	int i=1;
-	int num, gen;
+	int num=-1, gen;
 
 	kernelPrintDbg(DBG_DBG, "");
 	
 	// goes through entries array in XRef class (xref entries)
 	// and reuses first free entry with its gen number.
-	// Considers just first getNumObjects because entries array
-	// is allocated by blocks and so many entries are marked as
-	// free but they are not realy removed objects.
-	int objectCount=0, totalCount=getNumObjects();
-	for(; i<size && i<MAXOBJNUM && objectCount<totalCount; i++)
+	// Considers just first XRef::getNumObjects because entries array
+	// is allocated by blocks and so there are entries which are marked 
+	// as free but they are not realy removed objects.
+	int objectCount=0, xrefCount=XRef::getNumObjects();
+	for(; i<size && i<MAXOBJNUM && objectCount<xrefCount; i++)
 	{
 		if(entries[i].type!=xrefEntryFree)
 		{
@@ -255,10 +270,10 @@ using namespace debug;
 			Ref ref={i, 0};
 			if(!newStorage.contains(ref))
 			{
-				kernelPrintDbg(DBG_DBG, "Cannot use new entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
 				num=i;
 				break;
 			}
+			kernelPrintDbg(DBG_DBG, "Cannot use new entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
 		}
 
 		if(num==-1)

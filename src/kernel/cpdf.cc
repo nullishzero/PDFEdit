@@ -3,6 +3,21 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.43  2006/05/05 11:55:55  petrm1am
+ *
+ * Commiting changes sent by Michal:
+ *
+ * cpdf.cc:
+ * * consolidatePageList bug fixed
+ *     - difference += pageCount not -=
+ * * debug messages improved
+ *
+ * cxref.cc:
+ * * reserveRef bug fix
+ *     - totalCount replaced by xrefCount from XRef::getNumObjects
+ *     - num is initialized to -1
+ *     - kernelPrintDbg message wrong position (cannot use new entry)
+ *
  * Revision 1.42  2006/05/01 13:53:07  hockm0bm
  * new style printDbg
  *
@@ -179,7 +194,6 @@
 using namespace boost;
 using namespace std;
 using namespace debug;
-
 
 // TODO exceptions unification
 
@@ -671,7 +685,7 @@ using namespace pdfobjects::utils;
  */ 
 IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 {
-	printDbg(debug::DBG_DBG,"");
+	utilsPrintDbg(debug::DBG_DBG,"");
 
 	PropertyType type=ip->getType();
 	ChildrenStorage childrenStorage;
@@ -680,7 +694,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 	{
 		case pRef:
 		{
-			printDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
+			utilsPrintDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
 			// this may fail because of ReadOnlyDocumentException
 			IndiRef indiRef=pdf->addIndirectProperty(ip);
 			return new IndiRef(indiRef);
@@ -711,7 +725,7 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 			// new reference for this child
 			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(*i);
 			ref_ptr->writeValue(*ref);
-			printDbg(debug::DBG_DBG,"Reference changed to [" << ref->num << ", " <<ref->gen << "]");
+			utilsPrintDbg(debug::DBG_DBG,"Reference changed to [" << ref->num << ", " <<ref->gen << "]");
 			delete ref;
 			continue;
 		}
@@ -731,6 +745,8 @@ using namespace boost;
 using namespace debug;
 using namespace utils;
 
+	kernelPrintDbg(DBG_DBG, "");
+	
 	// if not basic context type, does notnig
 	if(context->getType()!=IChangeContext<IProperty>::BasicChangeContextType)
 		return;
@@ -814,6 +830,8 @@ using namespace utils;
 	{
 		kernelPrintDbg(DBG_ERR, "consolidatePageList failed with cause="<<e.what());
 	}
+	
+	kernelPrintDbg(DBG_DBG, "observer handler finished");
 }
 
 void CPdf::initRevisionSpecific()
@@ -1069,6 +1087,7 @@ using namespace boost;
 	// and returns
 	IndiRef reference={xpdfRef.num, xpdfRef.gen};
 	kernelPrintDbg(DBG_INFO, "New indirect object inserted with reference ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
+	change=true;
 	return reference;
 }
 
@@ -1099,7 +1118,7 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	}
 
 	// gets xpdf Object instance and calls xref->change
-	// changeObject meay throw if we are in read only mode or if xrefwriter is
+	// changeObject may throw if we are in read only mode or if xrefwriter is
 	// in paranoid mode and type check fails
 	Object * propObject=prop->_makeXpdfObject();
 	kernelPrintDbg(DBG_DBG, "Registering change to the XRefWriter");
@@ -1119,6 +1138,9 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 		indMap.erase(indiRef);
 		kernelPrintDbg(DBG_INFO, "Indirect mapping removed for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
 	}
+
+	// sets change flag
+	change=true;
 }
 
 CPdf * CPdf::getInstance(const char * filename, OpenMode mode)
@@ -1336,6 +1358,9 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "oldValue type="<<oldValue->getType());
 	if(oldValue->getType()!=pNull)
 	{
+		// FIXME remove
+		IndiRef oldValueRef=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+		
 		// gets dictionary type - it has to be page or pages node
 		shared_ptr<CDict> oldDict_ptr=getDictFromRef(oldValue);
 		string oldDictType=getNameFromDict("Type", oldDict_ptr);
@@ -1437,11 +1462,11 @@ using namespace utils;
 			// no special handling is needed, minPos keeps its value
 		}
 
-		kernelPrintDbg(DBG_DBG, "newValue has "<<pagesCount<<" page dictionaries");
+		kernelPrintDbg(DBG_DBG, "newValue sub tree has "<<pagesCount<<" page dictionaries");
 	}
 
 	// corrects difference with added pages
-	difference -= pagesCount;
+	difference += pagesCount;
 
 	// no difference means no speacial handling for other pages
 	// we have replaced old sub tree with new subtree with same number of pages
@@ -1455,11 +1480,14 @@ using namespace utils;
 	PageList readdContainer;
 	for(i=pageList.begin(); i!=pageList.end(); i++)
 	{
+		size_t pos=i->first;
+		shared_ptr<CPage> page=i->second;
+
 		// all pages > minPos are removed and readded with correct position
-		if(i->first > minPos)
+		if(pos > minPos)
 		{
 			// collects all removed
-			readdContainer.insert(PageList::value_type(i->first, i->second));	
+			readdContainer.insert(PageList::value_type(pos, page));	
 			pageList.erase(i);
 		}
 	}
@@ -1470,7 +1498,7 @@ using namespace utils;
 	// page tree and actual position is used.
 	if(!minPos)
 	{
-		kernelPrintDbg(DBG_INFO, "minPos==0 page position has to be retrieved from page tree.");
+		kernelPrintDbg(DBG_DBG,"Reassigning all pages positition.");
 		for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
 		{
 			// uses getNodePosition for each page's dictionary to find out
@@ -1479,9 +1507,11 @@ using namespace utils;
 			try
 			{
 				size_t pos=getNodePosition(*this, i->second->getDictionary());
+				kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<pos);
 				pageList.insert(PageList::value_type(pos, i->second));	
 			}catch(exception & e)
 			{
+				kernelPrintDbg(DBG_WARN, "page with original position="<<i->first<<" is ambiguous. Invalidating.");
 				// page position is ambiguous and so it has to be invalidate
 				//TODO uncoment when method is ready
 				//i->second->invalidate();
@@ -1490,12 +1520,16 @@ using namespace utils;
 		return;
 	}
 	
-	kernelPrintDbg(DBG_INFO, "Moving pages position with difference="<<difference);
+	kernelPrintDbg(DBG_DBG, "Moving pages position with difference="<<difference<<" from page pos="<<minPos);
 	// Information about page numbers which should be consolidated is available
 	// so just adds difference for each in readdContainer
 	// readds all removed with changed position (according difference)
 	for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
+	{
+		kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<i->first+difference);
 		pageList.insert(PageList::value_type(i->first+difference, i->second));	
+	}
+	kernelPrintDbg(DBG_INFO, "pageList consolidation done.")
 }
 
 
@@ -1503,7 +1537,8 @@ bool CPdf::consolidatePageTree(boost::shared_ptr<CDict> interNode)
 {
 using namespace utils;
 
-	kernelPrintDbg(DBG_DBG, "");
+	IndiRef interNodeRef=interNode->getIndiRef();
+	kernelPrintDbg(DBG_DBG, "interNode ref=["<<interNodeRef.num<<", "<<interNodeRef.gen<<"]");
 
 	// gets pdf of the node
 	CPdf * pdf=interNode->getPdf();
@@ -1674,6 +1709,7 @@ using namespace utils;
 	}
 
 	// consolidation had to be done
+	kernelPrintDbg(DBG_INFO, "pageTree consolidation done for inter node ref=["<<interNodeRef.num<<", "<<interNodeRef.gen<<"]");
 	return false;
 }
 
@@ -1864,6 +1900,7 @@ void CPdf::save(bool newRevision)
 	// delegates all work to the XRefWriter and set change to 
 	// mark, that no changes were stored
 	xref->saveChanges(newRevision);
+	change=false;
 }
 
 void CPdf::clone(FILE * file)const
