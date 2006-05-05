@@ -6,6 +6,7 @@
 */
 
 #include "qsmenu.h"
+#include <assert.h>
 #include <qpopupmenu.h>
 #include <qcursor.h>
 #include "menu.h"
@@ -60,10 +61,13 @@ QSMenu::QSMenu(Menu *_msys,const QString &name/*=QString::null*/) : QSCObject ("
 */
 
 QString QSMenu::popup() {
- guiPrintDbg(debug::DBG_DBG, "Menu-popup");
  int id=menu->exec(QCursor::pos());
- guiPrintDbg(debug::DBG_DBG, "Menu-popup i " << id);
+ guiPrintDbg(debug::DBG_DBG, "Menu-popup id " << id);
  QString action=getAction(id);
+ if (action.isNull()) {  //NOOP sent
+ guiPrintDbg(debug::DBG_DBG, "Menu-popup a NOOP");
+  return "";
+ }
  guiPrintDbg(debug::DBG_DBG, "Menu-popup a " << action);
  return action;
 }
@@ -91,16 +95,15 @@ QString QSMenu::getAction(int id) {
  @param def Definition of menu item (same format as used in application menus)
 */
 void QSMenu::addItemDef(QString def) {
-// guiPrintDbg(debug::DBG_DBG, "++" << def);
+ if (def.isNull()) return;//Empty definition? 
+ guiPrintDbg(debug::DBG_DBG, "++" << def);
  try {
   if (!def.startsWith("item ")) {
    guiPrintDbg(debug::DBG_WARN, "NOT item: " << def);
    return;//Can add only items this way
   }
   actionId++;
-//  guiPrintDbg(debug::DBG_DBG, "Menudef1: " << def);
   QString itemName=Menu::parseName(def);
-//  guiPrintDbg(debug::DBG_DBG, "Menudef2: " << def << " name " << itemName);
   QStringList param=explode(',',def);  //param = Action[,accelerator [,menu icon]]
   menu->insertItem(itemName,actionId+TMP_OFFSET);
   if (param.count()>1 && param[1].length()>0) { //accelerator specified
@@ -114,7 +117,11 @@ void QSMenu::addItemDef(QString def) {
     guiPrintDbg(debug::DBG_WARN, "Pixmap missing: " << param[2]);
    }
   }
-  guiPrintDbg(debug::DBG_DBG, "Menu append action: " << param[0]);
+  if (param[0].isNull()) { //PrintDbg can't handle null string sent to it.
+   guiPrintDbg(debug::DBG_WARN, "Menu append action: (NULL)");
+  } else {
+   guiPrintDbg(debug::DBG_DBG, "Menu append action: " << param[0]);
+  }
   actions.append(param[0]);
  } catch (InvalidMenuException &e) {
   //Ignore any exception when adding item - the item was just not added
@@ -144,6 +151,7 @@ void QSMenu::addItem(const QString &name) {
   if (Menu::isList(line)) { //add as list
    msys->loadItem(name,menu);
   } else {//Add as item definition
+   guiPrintDbg(debug::DBG_DBG, "Menu add as def: " << name);
    addItemDef(line);
   }
  } catch (InvalidMenuException &e) {

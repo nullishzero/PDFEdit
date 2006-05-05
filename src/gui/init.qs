@@ -1,4 +1,4 @@
-//This script will be run at start, or on creaition of new window
+//This script will be run at start, or on creation of new window
 //Each window have its own scripting context
 
 /** Create new empty editor window */
@@ -64,14 +64,10 @@ function holdContainer(ti) {
 
 /** Callback for click with right mouse button in tree window */
 function onTreeRightClick() {
-// print('Right click, type of item = '+treeitem.itemtype());
  menu=popupMenu("popup_generic");
  menu.addSeparator();
-// type=treeitem.itemtype();
-// if (type=='Dict' || type=='Array') {
  if (holdContainer(treeitem))
    menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog()");
-// }
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  eval(menu.popup());
 }
@@ -83,7 +79,6 @@ function onTreeLeftClick() {
 
 /** Callback for click with middle mouse button in tree window */
 function onTreeMiddleClick() {
-// print('Middle click, type of item = '+treeitem.itemtype());
  treeitem.reload();
 }
 
