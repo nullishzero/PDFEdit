@@ -283,10 +283,6 @@ void PageSpace::newSelection ( const QRect & r) {
 void PageSpace::requirementPopupMenu ( const QPoint & globalPos, const QRect & r) {
 	// TODO
 	printf("requirementPopupMenu\n");
-	if (r.isEmpty())
-		printf("empty\n");
-	else
-		printf("non empty\n");
 }
 void PageSpace::moveSelection ( const QPoint & relativeMove ) {
 	// TODO
@@ -302,7 +298,8 @@ void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
 		return ;
 	}
 	pdfPos.x = pos.x();
-	pdfPos.y = actualPagePixmap->height() - pos.y();
+//	pdfPos.y = actualPagePixmap->height() - pos.y();
+	pdfPos.y = pos.y();
 }
 
 //  ------------------------------------------------------  //
