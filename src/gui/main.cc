@@ -126,11 +126,11 @@ int main(int argc, char *argv[]){
   guiPrintDbg(debug::DBG_DBG,"Opening files from commandline");
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {
    guiPrintDbg(debug::DBG_INFO,"Opening parameter: " << *it)
-   createNewEditorWindow(*it);
+   PdfEditWindow::create(*it);
   }
  } else { //no parameters
   guiPrintDbg(debug::DBG_DBG,"Opening empty editor window");
-  createNewEditorWindow();
+  PdfEditWindow::create();
  }
  QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
  return app.exec();

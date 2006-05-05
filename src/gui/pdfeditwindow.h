@@ -15,6 +15,7 @@ class QString;
 
 namespace gui {
 
+class Base;
 class PageSpace;
 class CommandWindow;
 class QSImporter;
@@ -35,45 +36,19 @@ using namespace pdfobjects;
 class PdfEditWindow : public QMainWindow {
  Q_OBJECT
 public:
+ static void create(const QString &fName=QString::null);
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
- int question_ync(const QString &msg);
- void call(const QString &name);
-public slots: //These will be exported to scripting
- void setDebugLevel(const QString &param);
- void addObjectDialog(QSDict &container);
- void addObjectDialog(QSArray &container);
- void addObjectDialog(QSArray *container);
- void addObjectDialog(QSDict *container);
- void addObjectDialog(QSIProperty *container=NULL);
- QSMenu* popupMenu(const QString &menuName=QString::null);
- void run(QString scriptName);
- bool save();
- bool saveAs(const QString &name);
- QString fileOpenDialog();
- QString fileSaveDialog(const QString &oldName=QString::null);
  bool modified();
- bool exists(const QString &chkFileName);
- void options();
- void message(const QString &msg);
- bool question(const QString &msg);
- bool closeFile(bool askSave,bool onlyAsk=false);
- void openFileNew(const QString &name);
- void openFile(const QString &name);
+ QString filename();
  void saveWindowState();
  void restoreWindowState();
- void about();
- void help(const QString &topic=QString::null);
- void createNewWindow(); 
+ bool save();
+ bool saveAs(const QString &name);
+ bool closeFile(bool askSave,bool onlyAsk=false);
+ void openFile(const QString &name);
  void exitApp();
  void closeWindow();
- void print(const QString &str);
- void warn(const QString &str);
- void objects();
- void functions();
- void variables();
- QString filename();
- QString version();
 signals:
  /** Signal emitted when closing a file or editor window. All helper editor widgets opened from
    this window that are subclasses of SelfDestructiveWidget will close themselves
@@ -84,11 +59,11 @@ protected:
 protected slots:
  void treeClicked(int button,QListViewItem *item);
  void setObject(const QString &name,boost::shared_ptr<IProperty> obj);
- void runScript(QString script);
  void menuActivated(int id);
  void setObject();
 private slots:
  void settingUpdate(QString key);
+ void runScript(QString script);
 private:
  void addObjectDialogI(boost::shared_ptr<IProperty> ip);
  void setFileName(const QString &name);
@@ -102,10 +77,6 @@ private:
  TreeWindow *tree;
  /** Property editor */
  PropertyEditor *prop;
- /** QSA Scripting Project */
- QSProject *qp;
- /** QSA Interpreter - taken from project */
- QSInterpreter *qs;
  /** Edited PDF document */
  CPdf *document;
  /** Currently selected page (for scripting) */
@@ -115,10 +86,6 @@ private:
  /** Currently selected tree item (for scripting) */
  TreeItemAbstract *selectedTreeItem;
  //TODO: highlevel objects (Page, Anotation...) can be selected too
- /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
- QSPdf *qpdf;
- /** QSObject Importer */
- QSImporter *import;
  /** Horizontal splitter between (Preview + Commandline) and (Treeview + Property editor) */
  QSplitter *spl;
  /** Vertical splitter between command line and preview window */
@@ -133,9 +100,11 @@ private:
  Menu *menuSystem;
  /** Page space - page view Widget*/
  PageSpace *pagespc;
+ /** Base used to host scripts */
+ Base *base;
+ /** Base should be access everything in PdfEditWidget */
+ friend class Base;
 };
-
-void createNewEditorWindow(const QString &fName=QString::null);
 
 } // namespace gui
 
