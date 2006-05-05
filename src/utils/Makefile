@@ -16,7 +16,7 @@ CXX      = g++
 LEX      = flex
 YACC     = yacc
 CFLAGS   = -pipe -Wall -W -g -D_REENTRANT  -DDEBUG
-CXXFLAGS = -pipe -Wall -W -g -W -Wall -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function -D_REENTRANT  -DDEBUG
+CXXFLAGS = -pipe -Wall -W -g -W -Wall -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function -D_REENTRANT  -DDEBUG -D DEFAULT_DEBUG_LEVEL=DBG_DBG
 INCPATH	 = -I./
 
 .SUFFIXES: .c .o .cpp .cc .cxx .C

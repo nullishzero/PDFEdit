@@ -3,6 +3,17 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/05/05 12:02:04  petrm1am
+ *
+ * Committing changes from Michal:
+ *
+ * * printDbg changed to final state (prefix parameter added)
+ * * changeDebugLevel function added
+ * * *PrintDbg functions uses printDbg instead of _printDbg macro to keep
+ * default output stream
+ * * default debug level set to DBG_CRIT if macro DEFAULT_DEBUG_LEVEL not
+ * specified
+ *
  * Revision 1.12  2006/05/01 13:16:11  hockm0bm
  * minor changes
  *         - debugLevel is not marked as extern in cc file
@@ -105,20 +116,29 @@ const unsigned int  DBG_DBG 	= 5;
  * printed when printDbg (TODO link) macro is used.
  * <br>
  * DEBUG_<PRIORITY> macro should be used for value. Value can be changed also
- * in runtime.
+ * in runtime by changeDebugLevel function (or directly changing variable value
+ * - first way is prefered one).
  */
 extern unsigned int debugLevel;
+
+/** Changes value of debugLevel.
+ * @param level New value for debugLevel.
+ *
+ * Use DBG_* constants for parameter value.
+ * <br>
+ * Logs information about change.
+ * 
+ * @return Old value of debugLevel.
+ */
+unsigned int changeDebugLevel(unsigned int level);
 
 /** Prints message with given priority.
  * @param prefix Prefix for message.
  * @param dbgLevel Priority of message.
  * @param msg Message to dump.
  *
- * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
- * massage is printed out to the standard error output with following format:
- * @code 
- * priority:prefix:fileName:line: message
- * @endcode
+ * Wrapper to _printDbg macro with default stream where to put data. Don't use
+ * _printDbg directly unless you want to print different than default stream.
  * <br>
  * <b>REMARKs</b><br>
  * Don't use variables for dbgLevel.<br>
@@ -144,9 +164,7 @@ extern unsigned int debugLevel;
  * REMARK: This is a macro, because we want to output line number and file name.
  * We can't force GCC to do inlining, we can just give a hint.
  */
-//#define printDbg(prefix, dbgLevel,msg)	_printDbg((prefix),(dbgLevel),std::cerr,(msg));
-// FIXME remove and use one with prefix parameter
-#define printDbg(dbgLevel,msg)	_printDbg("",(dbgLevel),std::cerr,msg);
+#define printDbg(prefix, dbgLevel,msg)	_printDbg((prefix),(dbgLevel),std::cerr,msg);
 
 /** Alias to printDbg for kernel messages.
  * @param dbgLevel Priority of message.
@@ -172,14 +190,17 @@ extern unsigned int debugLevel;
  */
 #define utilsPrintDbg(dbgLevel, msg) _printDbg("UTILS", (dbgLevel),std::cerr, msg)
 
-/** Helper macro used by printDbg.
+/** Low level macro for debugging.
  * @param prefix Prefix string for message.
  * @param level Priority of message.
  * @param stream Stream where to dump message.
  * @param msg Message to dump.
  *
- * This macro should be used if different stream is about to be used than one
- * used in printDbg macro.
+ * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
+ * massage is printed out to the standard error output with following format:
+ * @code 
+ * priority:prefix:fileName:line: message
+ * @endcode
  */
 #define _printDbg(prefix, level, stream, msg)						\
 {																	\
