@@ -9,12 +9,13 @@ my $srcdir="../../src/gui";
 sub convert_definition {
  my $def=shift;
  #convert some C++ types to QSA types
- $def=~s/(virtual|const)\s+//;	# keywords - have nmo meaning in QSA
- $def=~s/&//;			# references - the same
- $def=~s/size_t\s+/int /;	# size_t -> int
- $def=~s/QString\s+/string /;
- $def=~s/QStringList\s+/string[] /;
- $def=~s/QS(Page|ContentStream|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
+ $def=~s/(virtual|const)\s+//g;		# keywords - have nmo meaning in QSA
+ $def=~s/&//g;				# references - the same
+ $def=~s/size_t\s+/int /g;		# size_t -> int
+ $def=~s/=(QString::null|NULL|false)//g;# default null/false - remove
+ $def=~s/QString\s+/string /g;		# QString -> string
+ $def=~s/QStringList\s+/string[] /g;	# QStringList -> string[]
+ $def=~s/QS(Menu|Page|ContentStream|IProperty|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
  #trim unnecessary blank characters
  $def=~s/^\s+//;
  $def=~s/;\s*[\r\n]+$//;
@@ -23,21 +24,26 @@ sub convert_definition {
 
 sub get_doc {
  my $name=shift;
+ my $typ=shift;
  open X,"<$srcdir/$name";
  my $classname='';
  my $ancestor='';
  my $classdesc='';
  my $out='';
+ my $dot='';
  while(my $l=<X>) {
   $l=~s/^\s+//;
   $l=~s/[\r\n]+$//;
-  if ($l=~/class\s+QS(\w+)\s+:\s+public\s+QS(\w+)/) {
+  if ($typ eq 'base') {
+   $classname='';$dot='';
+   $ancestor='';
+  } elsif ($l=~/class\s+QS(\w+)\s+:\s+public\s+QS(\w+)/) {
    # found class name
-   $classname=$1;
+   $classname=$1;$dot=".";
    $ancestor=$2;
   } elsif ($l=~/class\s+QS(\w+)\s+:\s+public\s+QObject/) {
    # found class name
-   $classname=$1;
+   $classname=$1;$dot=".";
    $ancestor='';
   }
   # Start of multiline comment -read more lines
@@ -65,7 +71,7 @@ sub get_doc {
    my $func=$1;
    #add function definition and description
    $out.=<<EOF;
-   <sect2 id=\"${classname}.${func}\">
+   <sect2 id=\"${classname}${dot}${func}\">
     <title><funcsynopsis>$def</funcsynopsis></title>
     $cmt
    </sect2>
@@ -83,6 +89,10 @@ $anc=<<EOF;
 EOF
 }
 
+ if ($typ eq 'base') {
+  $out=~s/<sect2/<sect1/gm;
+  $out=~s/<\/sect2/<\/sect1/gm;
+ } else {
  $out=<<EOF;
   <sect1 id="type_${classname}">
    <title>$classname</title>
@@ -91,6 +101,7 @@ $anc   <para>
    </para>
 $out  </sect1>
 EOF
+}
  return $out;
 }
 
@@ -98,7 +109,10 @@ while (<>) {
  # parse xml file, all comments in form <!--TYPE: filename.h ...] --> are replaced
  # by documentation generated from that header
  if (/<!--TYPE:\s*([a-zA-Z0-9_\.\-]+)\s*-->/) {
-  $_=get_doc($1);
+  $_=get_doc($1,'type');
+ }
+ if (/<!--BASETYPE:\s*([a-zA-Z0-9_\.\-]+)\s*-->/) {
+  $_=get_doc($1,'base');
  }
  #slightly disformat the result to discourage accidental editing or generated XML
  s/ +/ /mg;
