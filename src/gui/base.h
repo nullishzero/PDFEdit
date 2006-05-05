@@ -148,6 +148,11 @@ public slots: //This will be all exported to scripting
  */
  void setDebugLevel(const QString &param);
  /*-
+  Translate given text to current locale. Optional parameter context can specify context
+  of localized text. Return translated text
+ */
+ QString tr(const QString &text,const QString &context=QString::null);
+ /*-
   Debugging function usable by script developers.
   Print all variables that are in current script interpreter to command window
  */

@@ -212,6 +212,22 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
    //TODO: diplay object type
   }
   grid->update();
+ } else if (pdfObject->getType()==pStream) {	//Object is CCtream -> edit its properties.
+  //Basically the same as CDict  .... 
+  CStream *cstream=dynamic_cast<CStream*>(pdfObject.get());
+  vector<string> list;
+  cstream->getAllPropertyNames(list);
+  vector<string>::iterator it;
+  for( it=list.begin();it!=list.end();++it) { // for each property
+   boost::shared_ptr<IProperty> property=cstream->getProperty(*it);
+   guiPrintDbg(debug::DBG_DBG,"HAVE: " << *it);
+   addProperty(*it,property);
+  }
+  if (!nObjects) { //No subproperties
+   setObject(tr("This object does not have any directly editable properties"));
+   //TODO: diplay object type
+  }
+  grid->update();
  } else if (pdfObject->getType()==pArray) {	//Object is CArray
   CArray *ar=dynamic_cast<CArray*>(pdfObject.get());
   size_t n=ar->getPropertyCount();
@@ -238,7 +254,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
 void PropertyEditor::setObject(const QString &name,boost::shared_ptr<IProperty> pdfObject) {
  if (!pdfObject.get()) {
   setObject(pdfObject);//NULL object? Pass along
- } else if (pdfObject->getType()==pDict || pdfObject->getType()==pArray) {
+ } else if (pdfObject->getType()==pDict || pdfObject->getType()==pArray || pdfObject->getType()==pStream) {
   //Object is CDict or CArray -> call original function
   setObject(pdfObject);
  } else { //Simple or unknown type -> we try to edit it as single item

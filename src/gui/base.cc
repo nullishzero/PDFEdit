@@ -412,6 +412,17 @@ void Base::setDebugLevel(const QString &param) {
  util::setDebugLevel(param);
 }
 
+/** call QObject::tr to translate specific string
+ @param text text to translate to current locale
+ @param context Optional context identifier for localized text
+ @return translated text
+*/
+QString Base::tr(const QString &text,const QString &context/*=QString::null*/) {
+ if (context.isNull()) return QObject::tr(text);
+ return QObject::tr(text,context);
+}
+
+
 /** Print all variables that are in current script interpreter to console window*/
 void Base::variables() {
  QStringList objs=qs->variables(this);
