@@ -181,13 +181,14 @@
  </chapter>
  <chapter>
   <title>Object types (common and PDF objects)</title>
-<!--TYPE: qscobject.h -->
-<!--TYPE: qsdict.h -->
 <!--TYPE: qsarray.h -->
-<!--TYPE: qspage.h -->
+<!--TYPE: qscobject.h -->
 <!--TYPE: qscontentstream.h -->
+<!--TYPE: qsdict.h -->
 <!--TYPE: qsiproperty.h -->
 <!--TYPE: qspdf.h -->
+<!--TYPE: qspage.h -->
+<!--TYPE: qsstream.h -->
  </chapter>
  <chapter>
   <title>Object types (GUI objects)</title>
