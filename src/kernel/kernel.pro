@@ -49,6 +49,7 @@ SOURCES += cpage.cc cpdf.cc
 #
 HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcstream.cc
+SOURCES += tests/teststream.cc
 SOURCES += tests/testcobjecthelpers.cc
 SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
 SOURCES += main.cc 
