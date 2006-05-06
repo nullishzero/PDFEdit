@@ -327,7 +327,7 @@ protected:
 class MemStream: virtual public BaseStream {
 public:
 
-  MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA);
+  MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA, GBool needFreeA=false);
   virtual ~MemStream();
   virtual Stream *makeSubStream(Guint start, GBool limited,
 				Guint lengthA, Object *dictA);

@@ -624,7 +624,7 @@ Stream * FileStream::clone()
    }
 
    // copies file content to buffer
-   char * buffer=(char *)malloc(sizeof(char)*(length+1));
+   char * buffer=(char *)malloc(sizeof(char)*(l+1));
    if(!buffer)
       return NULL;
 
@@ -644,10 +644,9 @@ Stream * FileStream::clone()
    fseek(f, currPos, SEEK_SET);
 
    // clones stream dictionary and Memory stream from read buffer
-   // read buffer is just shallow copied by MemStream and so it is not
-   // deallocated here
+   // which is forced to be deallocated by clonedStream
    Object * cloneDict=dict.clone();
-   Stream * cloneStream=new MemStream(buffer, 0, l, cloneDict);
+   Stream * cloneStream=new MemStream(buffer, 0, l, cloneDict, true);
 
    // object has to be deallocated, but its content kept, because BaseStream 
    // does only shallow copy
@@ -772,14 +771,14 @@ void FileStream::moveStart(int delta) {
 // MemStream
 //------------------------------------------------------------------------
 
-MemStream::MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA):
+MemStream::MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA, GBool needFreeA):
     BaseStream(dictA) {
   buf = bufA;
   start = startA;
   length = lengthA;
   bufEnd = buf + start + length;
   bufPtr = buf + start;
-  needFree = gFalse;
+  needFree = needFreeA;
 }
 
 // creates MemStream with same buffer content, start position and lenght
@@ -797,8 +796,9 @@ Stream * MemStream::clone()
   // clones stream dictionary
   Object * cloneDict=dict.clone();
 
-  // creates MemStream from buffer
-  Stream * cloneStream=new MemStream(buffer, 0, length, cloneDict);
+  // creates MemStream from buffer (sets needFree flag to true to deallocate 
+  // given buffer when cloneStream is destroyed)
+  MemStream * cloneStream=new MemStream(buffer, 0, length, cloneDict, true);
 
   // MemStream uses shallow copy of stream dictionary, so cloneDict has 
   // to be deallocated and its content kept
