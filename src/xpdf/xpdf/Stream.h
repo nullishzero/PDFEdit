@@ -695,6 +695,10 @@ public:
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
+  int predNumber;               // predictor parameter from constructor
+  int colmn;                    // columns parameter from constructor
+  int clrs;                     // colors parameter from constructor
+  int bts;                      // bits parameter from constructor
 
   StreamPredictor *pred;	// predictor
   Guchar buf[flateWindow];	// output data buffer

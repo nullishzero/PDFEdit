@@ -17,7 +17,7 @@
 //                  with cloned stream holder. If stream holder cloning fails,
 //                  also fails.
 //
-//                  TODO implement FlateStream, LZWStream, CCITTFaxStream clone
+//                  TODO implement LZWStream, CCITTFaxStream clone
 //                  implementation
 //                
 //
@@ -4016,12 +4016,28 @@ FlateStream::FlateStream(Stream *strA, int predictor, int columns,
   }
   litCodeTab.codes = NULL;
   distCodeTab.codes = NULL;
+
+  // workaround for cloning
+  // it is really hard to get information for constructor, so parameters
+  // used for Predictor creation are stored as fields to enable reproduction
+  predNumber=predictor;
+  colmn=columns;
+  clrs=colors;
+  bts=bits;
 }
 
+// creates new FlateStream with same properties and cloned stream holder
+// If stream holder cloning fails, also fail and return NULL
 Stream * FlateStream::clone()
 {
-  // TODO implement FlateStream::clone
-  return 0;
+  // clones stream holder. If fails, fails too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  // creates new FlateStream with cloned stream holder and parameters stored in 
+  // constructor
+  return new FlateStream(cloneStream, predNumber, colmn, clrs, bts);
 }
 
 FlateStream::~FlateStream() {
