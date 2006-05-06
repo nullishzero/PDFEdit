@@ -17,7 +17,7 @@
 //                  with cloned stream holder. If stream holder cloning fails,
 //                  also fails.
 //
-//                  TODO implement LZWStream, CCITTFaxStream clone
+//                  TODO implement CCITTFaxStream clone
 //                  implementation
 //                
 //
@@ -416,9 +416,10 @@ void ImageStream::skipLine() {
 // StreamPredictor
 //------------------------------------------------------------------------
 
-StreamPredictor::StreamPredictor(Stream *strA, int predictorA,
-				 int widthA, int nCompsA, int nBitsA) {
-  str = strA;
+// helper to set all necessary from context values
+void StreamPredictor::initContext(int predictorA,
+				 int widthA, int nCompsA, int nBitsA)
+{
   predictor = predictorA;
   width = widthA;
   nComps = nCompsA;
@@ -430,6 +431,18 @@ StreamPredictor::StreamPredictor(Stream *strA, int predictorA,
   predLine = (Guchar *)gmalloc(rowBytes);
   memset(predLine, 0, rowBytes);
   predIdx = rowBytes;
+}
+
+StreamPredictor::StreamPredictor(Stream *strA, int predictorA,
+				 int widthA, int nCompsA, int nBitsA) {
+  str = strA;
+  initContext(predictorA, widthA, nCompsA, nBitsA);
+}
+
+StreamPredictor::StreamPredictor(Stream * strA, PredictorContext & context)
+{
+  str = strA;
+  initContext(context.predictor, context.width, context.comps, context.bits);
 }
 
 StreamPredictor::~StreamPredictor() {
@@ -1144,8 +1157,17 @@ GBool ASCII85Stream::isBinary(GBool last) {
 LZWStream::LZWStream(Stream *strA, int predictor, int columns, int colors,
 		     int bits, int earlyA):
     FilterStream(strA) {
+
+  // workaround for cloning
+  // store StreamPredictor context to be able to create FlateStream with same
+  // properties - it is not possible to get to predictor's properties directly
+  predContext.predictor=predictor;
+  predContext.width=columns;
+  predContext.comps=colors;
+  predContext.bits=bits;
+  
   if (predictor != 1) {
-    pred = new StreamPredictor(this, predictor, columns, colors, bits);
+    pred = new StreamPredictor(this, predContext);
   } else {
     pred = NULL;
   }
@@ -1165,8 +1187,12 @@ Stream * LZWStream::clone()
   if(!cloneStream)
     return NULL;
 
-  // TODO LZWStream::clone
-  return NULL;
+  return new LZWStream(cloneStream, 
+                  predContext.predictor, 
+                  predContext.width, 
+                  predContext.comps, 
+                  predContext.bits,\
+                  early);
 }
 
 LZWStream::~LZWStream() {
@@ -4009,21 +4035,23 @@ FlateHuffmanTab FlateStream::fixedDistCodeTab = {
 FlateStream::FlateStream(Stream *strA, int predictor, int columns,
 			 int colors, int bits):
     FilterStream(strA) {
+            
+  // workaround for cloning
+  // store StreamPredictor context to be able to create FlateStream with same
+  // properties - it is not possible to get to predictor's properties directly
+  predContext.predictor=predictor;
+  predContext.width=columns;
+  predContext.comps=colors;
+  predContext.bits=bits;
+  
   if (predictor != 1) {
-    pred = new StreamPredictor(this, predictor, columns, colors, bits);
+    pred = new StreamPredictor(this, predContext);
   } else {
     pred = NULL;
   }
   litCodeTab.codes = NULL;
   distCodeTab.codes = NULL;
 
-  // workaround for cloning
-  // it is really hard to get information for constructor, so parameters
-  // used for Predictor creation are stored as fields to enable reproduction
-  predNumber=predictor;
-  colmn=columns;
-  clrs=colors;
-  bts=bits;
 }
 
 // creates new FlateStream with same properties and cloned stream holder
@@ -4035,9 +4063,13 @@ Stream * FlateStream::clone()
   if(!cloneStream)
     return NULL;
 
-  // creates new FlateStream with cloned stream holder and parameters stored in 
+  // creates new FlateStream with cloned stream holder and context stored in
   // constructor
-  return new FlateStream(cloneStream, predNumber, colmn, clrs, bts);
+  return new FlateStream(cloneStream, 
+                  predContext.predictor, 
+                  predContext.width, 
+                  predContext.comps, 
+                  predContext.bits);
 }
 
 FlateStream::~FlateStream() {

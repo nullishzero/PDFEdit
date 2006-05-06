@@ -233,6 +233,15 @@ private:
 // StreamPredictor
 //------------------------------------------------------------------------
 
+// initial context for StreamPredictor creation
+struct PredictorContext
+{
+  int predictor;
+  int width;
+  int comps;
+  int bits;
+};
+
 class StreamPredictor {
 public:
 
@@ -240,6 +249,9 @@ public:
   // predictor, and may not match the actual image parameters.
   StreamPredictor(Stream *strA, int predictorA,
 		  int widthA, int nCompsA, int nBitsA);
+
+  // same as pervious except uses structure for initialization
+  StreamPredictor(Stream * str, PredictorContext & context);
 
   ~StreamPredictor();
 
@@ -260,6 +272,9 @@ private:
   int rowBytes;			// bytes per line
   Guchar *predLine;		// line buffer
   int predIdx;			// current index in predLine
+
+  // initialize internal structures from context variables
+  void initContext(int predictorA, int widthA, int nCompsA, int nBitsA);             
 };
 
 //------------------------------------------------------------------------
@@ -445,6 +460,7 @@ public:
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
+  PredictorContext predContext; // context for predictor creation
 
   StreamPredictor *pred;	// predictor
   int early;			// early parameter
@@ -695,10 +711,7 @@ public:
   virtual GBool isBinary(GBool last = gTrue);
 
 private:
-  int predNumber;               // predictor parameter from constructor
-  int colmn;                    // columns parameter from constructor
-  int clrs;                     // colors parameter from constructor
-  int bts;                      // bits parameter from constructor
+  PredictorContext predContext; // creation context for predictor
 
   StreamPredictor *pred;	// predictor
   Guchar buf[flateWindow];	// output data buffer
