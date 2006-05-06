@@ -173,7 +173,7 @@ protected:
 // This is the base class for all streams that filter another stream.
 //------------------------------------------------------------------------
 
-class FilterStream: virtual public Stream {
+class FilterStream: public Stream {
 public:
 
   FilterStream(Stream *strA);
@@ -695,7 +695,7 @@ struct FlateDecode {
   int first;			// first length/distance
 };
 
-class FlateStream: virtual public FilterStream {
+class FlateStream: public FilterStream {
 public:
 
   FlateStream(Stream *strA, int predictor, int columns,

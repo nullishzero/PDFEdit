@@ -622,6 +622,8 @@ Stream * FileStream::clone()
       fseek(f, 0, SEEK_END); 
       l=ftell(f)-startPos;
    }
+   // sets position to the beging of data which are copied
+   fseek(f, start, SEEK_SET);
 
    // copies file content to buffer
    char * buffer=(char *)malloc(sizeof(char)*(l+1));
