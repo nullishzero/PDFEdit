@@ -104,7 +104,7 @@ Object * Object::clone()const
          result->dict=dict->clone();
          break;
       case objStream:
-         // TODO implement
+         result->stream=stream->clone();
          break;
       case objRef:
          result->ref=ref;
