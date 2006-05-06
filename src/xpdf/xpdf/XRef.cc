@@ -280,6 +280,7 @@ void XRef::destroyInternals()
 
 XRef::~XRef() {
   destroyInternals();
+  delete str;
 }
 
 // Read the 'startxref' position.

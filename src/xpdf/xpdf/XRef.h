@@ -22,6 +22,7 @@
 //                safe to put new data
 //              - getNumObjects rewriten to return just number of real objects
 //                not size of entries array
+//              - new knowsRef method
 //
 //========================================================================
 
@@ -106,6 +107,38 @@ public:
            count++;
 
      return count; 
+  }
+
+  /** Ckecks if given reference is known.
+   * @param ref Reference to examine.
+   *
+   */
+  virtual bool knowsRef(Ref ref)
+  {
+     // boundary checking
+     if(ref.num<0 || ref.num>size)
+        return false;
+
+     switch(entries[ref.num].type)
+     {
+        // must not be free entry
+        case xrefEntryFree:
+           return false;
+
+        // if uncompressed entry, also gen number must fit
+        case xrefEntryUncompressed:
+           return ref.gen==entries[ref.num].gen;
+
+        // if compressed entry, gen number must be 0
+        // NOTE: XRef internaly uses this number for indexing of object in 
+        // object stream
+        case xrefEntryCompressed:
+           return ref.gen==0;
+           
+     }
+
+     // unknown entry type
+     return false;
   }
 
   // Return the offset of the last xref table.
