@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/05/06 08:56:57  hockm0bm
+ * tests improved - all of them are successfull - everything tested seems to work
+ *
  * Revision 1.13  2006/04/28 17:18:17  hockm0bm
  * * instancingTC
  *         - just skeleton
@@ -249,15 +252,18 @@ public:
 		shared_ptr<CPage> page=pdf->getPage(1);
 		// remove page implies pageCount decrementation test
 		pdf->removePage(1);
-
 		CPPUNIT_ASSERT(pageCount-1==pdf->getPageCount());
-		// insert page implies pageCount incrementation test
-		// and newPage must be defferent instance than original one
+
+		// insert page implies pageCount incrementation
+		// and newPage must be different instance than original one
 		shared_ptr<CPage> newPage=pdf->insertPage(page, 1);
 		CPPUNIT_ASSERT(pageCount==pdf->getPageCount());
 
 		printf("TC02:\tinsertPage returns different instance than parameter\n");
 		CPPUNIT_ASSERT(page!=newPage);
+		CPPUNIT_ASSERT(page->getDictionary()!=newPage->getDictionary());
+
+		// page count is same as in original file now
 
 		printf("TC03:\tremovePage out of range test\n");
 		// remove from 0 page should fail
@@ -284,26 +290,35 @@ public:
 		shared_ptr<CPage> addedPage=pdf->insertPage(pdf->getFirstPage(), 1);
 		size_t pos=getNodePosition(*pdf, addedPage->getDictionary());
 		CPPUNIT_ASSERT(pos==1);
+		// removes added page
+		pdf->removePage(pos);
 
 		printf("TC05:\tremoved page is no longer available test\n");
 		// try to remove last page
 		shared_ptr<CPage> removedPage=pdf->getLastPage();
+		IndiRef removedPageRef=removedPage->getDictionary()->getIndiRef();
+		pos=pdf->getPagePosition(removedPage);
+		CPPUNIT_ASSERT(pos==pdf->getPageCount());
 		pdf->removePage(pdf->getPageCount());
 		// FIXME uncoment when ready
 		//CPPUNIT_ASSERT(! removePage->isValid());
 		try
 		{
-			pdf->getPagePosition(removedPage);
+			pos=pdf->getPagePosition(removedPage);
 			CPPUNIT_FAIL("getPagePosition on removed page should have failed.");
 		}catch(PageNotFoundException & e)
 		{
 			/* ok, it should fail */
 		}
 		// restore to previous state and returns back last page
-		pdf->insertPage(removedPage, pdf->getPageCount()+1);
+		pdf->insertPage(removedPage, pos);
 		
 		printf("TC06:\tremoving page's dictionary invalidates page\n");
-		page=pdf->getPage(1);
+		pos=pdf->getPageCount()/2;
+		// if we have just one page, use it
+		if(!pos)
+			pos=1;
+		page=pdf->getPage(pos);
 		shared_ptr<CDict> pageDict=page->getDictionary();
 		shared_ptr<CRef> pageRef(CRefFactory::getInstance(pageDict->getIndiRef()));
 		// gets parent of page dictionary and removes reference of this page
@@ -316,6 +331,7 @@ public:
 		vector<CArray::PropertyId> positions;
 		getPropertyId<CArray, vector<CArray::PropertyId> >(kidsArray, pageRef, positions);
 		CPPUNIT_ASSERT(positions.size()>0);
+		// we knows that position is not ambiguous so use 1st in positions array
 		kidsArray->delProperty(positions[0]);
 		// FIXME uncoment when ready
 		//CPPUNIT_ASSERT(! page->isValid());
@@ -327,19 +343,62 @@ public:
 		{
 			/* ok, it should fail */
 		}
+		// inserts back removed page
+		pdf->insertPage(page, pos);
 		
-		printf("TC06:\tremovig inter node removes all pages under\n");
-		// Uses 1st page parent from previous test case
-		// paretDict has to be different from root of page tree
-		PropertyEquals pe;
-		if(pe(pdf->getDictionary()->getProperty("Pages"), parentDict))
-			printf("\t\tnot suitable test input data\n");
+		printf("TC07:\tremovig inter node removes all pages under\n");
+		// uses 1st internode kid from page tree root dictionary
+		shared_ptr<CRef> rootRef=IProperty::getSmartCObjectPtr<CRef>(pdf->getDictionary()->getProperty("Pages"));
+		shared_ptr<CDict> rootDict=getDictFromRef(rootRef);
+		shared_ptr<CArray> rootKids=IProperty::getSmartCObjectPtr<CArray>(rootDict->getProperty("Kids"));
+		shared_ptr<CDict> interNode;
+		size_t interPos;
+		for(size_t i=0; i<rootKids->getPropertyCount(); i++)
+		{
+			shared_ptr<CRef> kidRef=IProperty::getSmartCObjectPtr<CRef>(rootKids->getProperty(i));
+			shared_ptr<CDict> kidDict=getDictFromRef(kidRef);
+			if(getNameFromDict("Type", kidDict)=="Pages")
+			{
+				interNode=kidDict;
+				interPos=i;
+				break;
+			}
+		}
+		if(!interNode)
+			printf("\t\tThis file is not suitable for this test\n");
 		else
 		{
-			// collects all pages under this node
-			// gets parent's parent and removes parent from kids array
-			// all collected pages should be invalidated
-			// TODO
+			// collects all descendants from interNode
+			// TODO test case for isDescendant
+			vector<shared_ptr<CPage> > descendants;
+			size_t pageCount=pdf->getPageCount();
+			for(size_t i=1; i<pageCount; i++)
+			{
+				shared_ptr<CPage> page=pdf->getPage(i);	
+				if(isDescendant(*pdf, interNode->getIndiRef(), page->getDictionary()))
+					descendants.push_back(page);
+			}
+
+			// all descendants are collected, we can remove interNode reference
+			// from interPos from rootKids
+			rootKids->delProperty(interPos);
+
+			// page count has to be decreased by descendants.size()
+			CPPUNIT_ASSERT(pdf->getPageCount()+descendants.size()==pageCount);
+
+			// all pages from descendants are not available
+			for(vector<shared_ptr<CPage> >::iterator i=descendants.begin();i!=descendants.end(); i++)
+			{
+				try
+				{
+					pos=pdf->getPagePosition(*i);
+					CPPUNIT_FAIL("getPagePosition on removed page should have failed");
+				}catch(PageNotFoundException &e)
+				{
+					/* ok */
+				}
+			}
+			// test passed
 		}
 	}
 
@@ -475,6 +534,7 @@ public:
 		printf("%s\n", __FUNCTION__);
 
 		// checks whether getInstance works correctly
+		// TODO figure out
 		
 	}
 
@@ -494,10 +554,9 @@ public:
 		shared_ptr<IProperty> added=pdf->getIndirectProperty(addedRef);
 		// type must be same
 		CPPUNIT_ASSERT(added->getType()==prop->getType());
-		// value must be same (we know that prop is CInt
-		int addedValue=getValueFromSimple<CInt, pInt, int>(added);
-		int propValue=getValueFromSimple<CInt, pInt, int>(prop);
-		CPPUNIT_ASSERT(addedValue==propValue);
+		// value must be same (we know that prop is CInt)
+		PropertyEquals pe;
+		CPPUNIT_ASSERT(pe(added, prop));
 		CPPUNIT_ASSERT(added->getPdf()==pdf);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
 		
@@ -516,10 +575,82 @@ public:
 			CPPUNIT_ASSERT(addedRef==rootRef);
 		}
 		
-		printf("TC05:\t\n");
-		printf("TC06:\t\n");
-		printf("TC07:\t\n");
-		printf("TC08:\t\n");
+		printf("TC05:\taddIndirectProperty with not CRef from same pdf makes new property\n");
+		// uses document catalog as indirect object
+		shared_ptr<CDict> indirectProp=pdf->getDictionary();
+		IndiRef newIndirectProp=pdf->addIndirectProperty(indirectProp);
+		// referencies must be different
+		CPPUNIT_ASSERT(!(newIndirectProp==indirectProp->getIndiRef()));
+		
+		printf("TC06:\taddIndirectProperty with CRef from different CPdf test\n");
+		// uses multiversion pdf
+		// TODO
+
+		printf("TC07:\tgetIndirectProperty with uknown reference returns CNull\n");
+		// creates unknown reference from existing by adding 1 to generation
+		// number
+		IndiRef unknownRef=pdf->getDictionary()->getIndiRef();
+		unknownRef.gen++;
+		CPPUNIT_ASSERT(isNull(*pdf->getIndirectProperty(unknownRef)));
+
+		printf("TC08:\tchangeIndirectProperty with invalid parameter should fail\n");
+		// creates fake and try to use changeIndirectProperty with unknownRef
+		Object obj;
+		obj.initInt(1);
+		shared_ptr<CInt> fakeInt(CIntFactory::getInstance(*pdf, unknownRef, obj));
+		try
+		{
+			pdf->changeIndirectProperty(fakeInt);
+			CPPUNIT_FAIL("changeIndirectProperty should have failed with faked object");
+		}catch(CObjInvalidObject & e)
+		{
+			/* ok */
+		}
+
+		printf("TC09:\tchangeIndirectProperty with bad typed parameter should fail in\n");
+		// creates integer and tries to change value of Pages field which is
+		// reference
+		fakeInt=shared_ptr<CInt>(CIntFactory::getInstance(*pdf, pdf->getDictionary()->getProperty("Pages")->getIndiRef(), obj));
+		try
+		{
+			pdf->changeIndirectProperty(fakeInt);
+			CPPUNIT_FAIL("changeIndirectProperty with bad typed value should have failed");
+		}catch(ElementBadTypeException & e)
+		{
+			/* ok */
+		}
+
+		// TODO REMOVE
+		IndiRef contentStream=getValueFromSimple<CRef, pRef, IndiRef>(pdf->getPage(1)->getDictionary()->getProperty("Contents"));
+		{
+			Object obj;
+			pdf->getCXref()->fetch(contentStream.num, contentStream.gen, &obj);
+			int ch;
+			printf("Original stream:\n");
+			while((ch=obj.getStream()->getChar())!=EOF)
+				printf("%d",ch);
+			printf("\nend of stream\n");
+			
+			// simulation without stream writer
+			FILE * f=fopen("../../doc/zadani.pdf", "r+");
+			Object streamObj;
+			FileStream * stream=new FileStream(f, 0, gFalse, 0, &streamObj);
+			stream->reset();
+			XRef xref(stream);
+			Object obj1;
+			xref.fetch(contentStream.num, contentStream.gen, &obj1);
+			printf("Original stream:\n");
+			while((ch=obj1.getStream()->getChar())!=EOF)
+				printf("%d",ch);
+			printf("\nend of stream\n");
+
+			/*
+			printf("Cloned stream:\n");
+			while((ch=clone->getChar())!=EOF)
+				printf("%d",ch);
+			printf("\nend of stream\n");
+			*/
+		}
 	}
 
 	void tearDown()
@@ -541,6 +672,7 @@ public:
 			pageManipulationTC(*i);
 		}
 		revisionsTC();
+		printf("TEST_CPDF testig finished\n");
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
@@ -548,5 +680,5 @@ CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPdf, "TEST_CPDF");
 
 pdfobjects::CPdf * getTestCPdf(const char* filename)
 {
-	return CPdf::getInstance(filename, CPdf::Advanced);
+	return CPdf::getInstance(filename, CPdf::ReadWrite);
 }
