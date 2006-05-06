@@ -9,6 +9,8 @@
 //                FileStreamWriter descendant to access them.
 //              - All direct Stream and BaseStream subclasses have virtual 
 //                inheritance
+//              - Stream, BaseStream and FilterStream define abstract clone
+//                All descendants implement this method
 //
 //========================================================================
 
@@ -71,6 +73,9 @@ public:
   // Get kind of stream.
   virtual StreamKind getKind() = 0;
 
+  // support for cloning
+  virtual Stream * clone()=0;
+  
   // Reset stream to beginning.
   virtual void reset() = 0;
 
@@ -146,6 +151,8 @@ public:
   virtual BaseStream *getBaseStream() { return this; }
   virtual Dict *getDict() { return dict.getDict(); }
 
+  virtual Stream * clone()=0;
+
   // Get/set position of first byte of stream within the file.
   virtual Guint getStart() = 0;
   virtual void moveStart(int delta) = 0;
@@ -157,9 +164,6 @@ public:
 protected:
 
   Decrypt *decrypt;
-
-private:
-
   Object dict;
 };
 
@@ -175,6 +179,7 @@ public:
   FilterStream(Stream *strA);
   virtual ~FilterStream();
   virtual void close();
+  virtual Stream * clone()=0;
   virtual int getPos() { return str->getPos(); }
   virtual void setPos(Guint pos, int dir = 0);
   virtual BaseStream *getBaseStream() { return str->getBaseStream(); }
@@ -274,6 +279,7 @@ public:
   virtual StreamKind getKind() { return strFile; }
   virtual void reset();
   virtual void close();
+  virtual Stream * clone();
   virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
@@ -313,6 +319,7 @@ public:
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
   virtual void close();
+  virtual Stream * clone();
   virtual int getChar()
     { return (bufPtr < bufEnd) ? (*bufPtr++ & 0xff) : EOF; }
   virtual int lookChar()
@@ -354,6 +361,7 @@ public:
   virtual StreamKind getKind() { return str->getKind(); }
   virtual void reset() {}
   virtual int getChar();
+  virtual Stream * clone();
   virtual int lookChar();
   virtual int getPos() { return str->getPos(); }
   virtual void setPos(Guint pos, int dir = 0);
@@ -377,6 +385,7 @@ public:
   ASCIIHexStream(Stream *strA);
   virtual ~ASCIIHexStream();
   virtual StreamKind getKind() { return strASCIIHex; }
+  virtual Stream * clone();
   virtual void reset();
   virtual int getChar()
     { int c = lookChar(); buf = EOF; return c; }
@@ -401,6 +410,7 @@ public:
   virtual ~ASCII85Stream();
   virtual StreamKind getKind() { return strASCII85; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar()
     { int ch = lookChar(); ++index; return ch; }
   virtual int lookChar();
@@ -428,6 +438,7 @@ public:
   virtual StreamKind getKind() { return strLZW; }
   virtual void reset();
   virtual int getChar();
+  virtual Stream * clone();
   virtual int lookChar();
   virtual int getRawChar();
   virtual GString *getPSFilter(int psLevel, char *indent);
@@ -468,6 +479,7 @@ public:
 
   RunLengthStream(Stream *strA);
   virtual ~RunLengthStream();
+  virtual Stream * clone();
   virtual StreamKind getKind() { return strRunLength; }
   virtual void reset();
   virtual int getChar()
@@ -502,6 +514,7 @@ public:
   virtual ~CCITTFaxStream();
   virtual StreamKind getKind() { return strCCITTFax; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar()
     { int c = lookChar(); buf = EOF; return c; }
   virtual int lookChar();
@@ -573,6 +586,7 @@ public:
   virtual ~DCTStream();
   virtual StreamKind getKind() { return strDCT; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar();
   virtual int lookChar();
   virtual GString *getPSFilter(int psLevel, char *indent);
@@ -665,7 +679,7 @@ struct FlateDecode {
   int first;			// first length/distance
 };
 
-class FlateStream: public FilterStream {
+class FlateStream: virtual public FilterStream {
 public:
 
   FlateStream(Stream *strA, int predictor, int columns,
@@ -673,6 +687,7 @@ public:
   virtual ~FlateStream();
   virtual StreamKind getKind() { return strFlate; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar();
   virtual int lookChar();
   virtual int getRawChar();
@@ -727,6 +742,7 @@ public:
   virtual ~EOFStream();
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset() {}
+  virtual Stream * clone();
   virtual int getChar() { return EOF; }
   virtual int lookChar() { return EOF; }
   virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent)  { return NULL; }
@@ -745,6 +761,7 @@ public:
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
   virtual int getChar();
+  virtual Stream * clone();
   virtual int lookChar();
   virtual GString *getPSFilter(__attribute__((unused))	int psLevel, __attribute__((unused))	char *indent) { return NULL; }
   virtual GBool isBinary(GBool last = gTrue);
@@ -767,6 +784,7 @@ public:
   virtual ~ASCIIHexEncoder();
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
@@ -797,6 +815,7 @@ public:
   virtual ~ASCII85Encoder();
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()
@@ -827,6 +846,7 @@ public:
   virtual ~RunLengthEncoder();
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
   virtual int lookChar()

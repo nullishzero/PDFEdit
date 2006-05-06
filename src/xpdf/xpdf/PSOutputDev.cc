@@ -799,6 +799,7 @@ public:
   virtual ~DeviceNRecoder();
   virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
+  virtual Stream * clone();
   virtual int getChar()
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx++]; }
   virtual int lookChar()
@@ -834,6 +835,20 @@ DeviceNRecoder::DeviceNRecoder(Stream *strA, int widthA, int heightA,
               getAlt()->getNComps();
   func = ((GfxDeviceNColorSpace *)colorMap->getColorSpace())->
            getTintTransformFunc();
+}
+
+
+// creates new DeviceNRecoder with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * DeviceNRecoder::clone()
+{
+  // clones stream and if clone returns NULL, return NULL too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  // TODO DeviceNRecoder::clone
+  return 0;
 }
 
 DeviceNRecoder::~DeviceNRecoder() {

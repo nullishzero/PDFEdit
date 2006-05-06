@@ -1162,6 +1162,19 @@ JBIG2Stream::~JBIG2Stream() {
   delete str;
 }
 
+// creates new JBIG2Segment with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * JBIG2Stream::clone()
+{
+  // clones stream and if clone returns NULL, return NULL too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  // TODO JBIG2Stream::clone
+  return 0;
+}
+
 void JBIG2Stream::reset() {
   if (pageBitmap) {
     delete pageBitmap;

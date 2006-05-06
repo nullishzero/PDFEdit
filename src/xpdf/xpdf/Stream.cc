@@ -4,6 +4,23 @@
 //
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
+// Changes:
+// Michal Hocko - All concret BaseStream and FilterStream descendants 
+//                implements clone method:
+//                Notes:
+//                * FileStream creates MemStream as clone. Fails if data can't
+//                  be read
+//                * MemStream creates MemStream
+//                * EmbedStream creates new EmbedStream with cloned stream 
+//                  holder
+//                * All FilterStream descendants creates same stream type
+//                  with cloned stream holder. If stream holder cloning fails,
+//                  also fails.
+//
+//                  TODO implement FlateStream, LZWStream, CCITTFaxStream clone
+//                  implementation
+//                
+//
 //========================================================================
 
 #include <aconf.h>
@@ -494,75 +511,75 @@ GBool StreamPredictor::getNextLine() {
 	pb = -pb;
       if ((pc = p - upLeft) < 0)
 	pc = -pc;
-      if (pa <= pb && pa <= pc)
-	predLine[i] = left + (Guchar)c;
-      else if (pb <= pc)
-	predLine[i] = up + (Guchar)c;
-      else
-	predLine[i] = upLeft + (Guchar)c;
-      break;
-    case 10:			// PNG none
-    default:			// no predictor or TIFF predictor
-      predLine[i] = (Guchar)c;
-      break;
-    }
-  }
+              if (pa <= pb && pa <= pc)
+                predLine[i] = left + (Guchar)c;
+              else if (pb <= pc)
+                predLine[i] = up + (Guchar)c;
+              else
+                predLine[i] = upLeft + (Guchar)c;
+              break;
+            case 10:			// PNG none
+            default:			// no predictor or TIFF predictor
+              predLine[i] = (Guchar)c;
+              break;
+            }
+          }
 
-  // apply TIFF (component) predictor
-  if (predictor == 2) {
-    if (nBits == 1) {
-      inBuf = predLine[pixBytes - 1];
-      for (i = pixBytes; i < rowBytes; i += 8) {
-	// 1-bit add is just xor
-	inBuf = (inBuf << 8) | predLine[i];
-	predLine[i] ^= inBuf >> nComps;
-      }
-    } else if (nBits == 8) {
-      for (i = pixBytes; i < rowBytes; ++i) {
-	predLine[i] += predLine[i - nComps];
-      }
-    } else {
-      memset(upLeftBuf, 0, nComps + 1);
-      bitMask = (1 << nBits) - 1;
-      inBuf = outBuf = 0;
-      inBits = outBits = 0;
-      j = k = pixBytes;
-      for (i = 0; i < width; ++i) {
-	for (kk = 0; kk < nComps; ++kk) {
-	  if (inBits < nBits) {
-	    inBuf = (inBuf << 8) | (predLine[j++] & 0xff);
-	    inBits += 8;
-	  }
-	  upLeftBuf[kk] = (upLeftBuf[kk] +
-			   (inBuf >> (inBits - nBits))) & bitMask;
-	  inBits -= nBits;
-	  outBuf = (outBuf << nBits) | upLeftBuf[kk];
-	  outBits += nBits;
-	  if (outBits >= 8) {
-	    predLine[k++] = (Guchar)(outBuf >> (outBits - 8));
-	    outBits -= 8;
-	  }
-	}
-      }
-      if (outBits > 0) {
-	predLine[k++] = (Guchar)((outBuf << (8 - outBits)) +
-				 (inBuf & ((1 << (8 - outBits)) - 1)));
-      }
-    }
-  }
+          // apply TIFF (component) predictor
+          if (predictor == 2) {
+            if (nBits == 1) {
+              inBuf = predLine[pixBytes - 1];
+              for (i = pixBytes; i < rowBytes; i += 8) {
+                // 1-bit add is just xor
+                inBuf = (inBuf << 8) | predLine[i];
+                predLine[i] ^= inBuf >> nComps;
+              }
+            } else if (nBits == 8) {
+              for (i = pixBytes; i < rowBytes; ++i) {
+                predLine[i] += predLine[i - nComps];
+              }
+            } else {
+              memset(upLeftBuf, 0, nComps + 1);
+              bitMask = (1 << nBits) - 1;
+              inBuf = outBuf = 0;
+              inBits = outBits = 0;
+              j = k = pixBytes;
+              for (i = 0; i < width; ++i) {
+                for (kk = 0; kk < nComps; ++kk) {
+                  if (inBits < nBits) {
+                    inBuf = (inBuf << 8) | (predLine[j++] & 0xff);
+                    inBits += 8;
+                  }
+                  upLeftBuf[kk] = (upLeftBuf[kk] +
+                                   (inBuf >> (inBits - nBits))) & bitMask;
+                  inBits -= nBits;
+                  outBuf = (outBuf << nBits) | upLeftBuf[kk];
+                  outBits += nBits;
+                  if (outBits >= 8) {
+                    predLine[k++] = (Guchar)(outBuf >> (outBits - 8));
+                    outBits -= 8;
+                  }
+                }
+              }
+              if (outBits > 0) {
+                predLine[k++] = (Guchar)((outBuf << (8 - outBits)) +
+                                         (inBuf & ((1 << (8 - outBits)) - 1)));
+              }
+            }
+          }
 
-  // reset to start of line
-  predIdx = pixBytes;
+          // reset to start of line
+          predIdx = pixBytes;
 
-  return gTrue;
-}
+          return gTrue;
+        }
 
 //------------------------------------------------------------------------
 // FileStream
 //------------------------------------------------------------------------
 
 FileStream::FileStream(FILE *fA, Guint startA, GBool limitedA,
-		       Guint lengthA, Object *dictA):
+                       Guint lengthA, Object *dictA):
     BaseStream(dictA) {
   f = fA;
   start = startA;
@@ -578,8 +595,61 @@ FileStream::~FileStream() {
   close();
 }
 
+// creates memory stream from start with length bytes or until
+// end of file if length is 0
+// Returns NULL if not able to read all data for buffer
+Stream * FileStream::clone()
+{
+   size_t l=length, s=start;
+   // stores current position
+   long currPos=ftell(f);
+
+   // gets stream start position
+   fseek(f, start, SEEK_SET);
+   long startPos=ftell(f);
+
+   // if length is 0, calculates it until end of file
+   if(!l)
+   {
+      fseek(f, 0, SEEK_END); 
+      l=ftell(f)-startPos;
+   }
+
+   // copies file content to buffer
+   char * buffer=(char *)malloc(sizeof(char)*(length+1));
+   if(!buffer)
+      return NULL;
+
+   int readCount, totalRead=0;
+   while((readCount=fread(buffer+totalRead, sizeof(char), l-totalRead, f))>0)
+     totalRead+=readCount; 
+   
+   if(totalRead!=l)
+   {
+      // unable to get all data
+      free(buffer);
+      return NULL;
+   }
+   buffer[l]='\0';
+
+   // restores this stream to state before reading
+   fseek(f, currPos, SEEK_SET);
+
+   // clones stream dictionary and Memory stream from read buffer
+   // read buffer is just shallow copied by MemStream and so it is not
+   // deallocated here
+   Object * cloneDict=dict.clone();
+   Stream * cloneStream=new MemStream(buffer, 0, l, cloneDict);
+
+   // object has to be deallocated, but its content kept, because BaseStream 
+   // does only shallow copy
+   gfree(cloneDict);
+
+   return cloneStream;
+}
+
 Stream *FileStream::makeSubStream(Guint startA, GBool limitedA,
-				  Guint lengthA, Object *dictA) {
+                                  Guint lengthA, Object *dictA) {
   return new FileStream(f, startA, limitedA, lengthA, dictA);
 }
 
@@ -704,6 +774,31 @@ MemStream::MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA):
   needFree = gFalse;
 }
 
+// creates MemStream with same buffer content, start position and lenght
+// Fails if buffer can't be allocated
+Stream * MemStream::clone()
+{
+  // creates deep copy of memstream buffer from start with length
+  char * buffer=(char *)malloc(sizeof(char)*(length +1));
+  if(!buffer)
+    return NULL;
+
+  memcpy(buffer, buffer+start, length);
+  buffer[length]='\0';
+
+  // clones stream dictionary
+  Object * cloneDict=dict.clone();
+
+  // creates MemStream from buffer
+  Stream * cloneStream=new MemStream(buffer, 0, length, cloneDict);
+
+  // MemStream uses shallow copy of stream dictionary, so cloneDict has 
+  // to be deallocated and its content kept
+  gfree(cloneDict);
+  
+  return cloneStream;
+}
+
 MemStream::~MemStream() {
   if (needFree) {
     gfree(buf);
@@ -711,7 +806,7 @@ MemStream::~MemStream() {
 }
 
 Stream *MemStream::makeSubStream(Guint startA, GBool limited,
-				 Guint lengthA, Object *dictA) {
+                                 Guint lengthA, Object *dictA) {
   MemStream *subStr;
   Guint newLength;
 
@@ -757,7 +852,7 @@ void MemStream::moveStart(int delta) {
 }
 
 void MemStream::doDecryption(Guchar *fileKey, int keyLength,
-			     int objNum, int objGen) {
+                             int objNum, int objGen) {
   char *newBuf;
   char *p, *q;
 
@@ -780,11 +875,34 @@ void MemStream::doDecryption(Guchar *fileKey, int keyLength,
 //------------------------------------------------------------------------
 
 EmbedStream::EmbedStream(Stream *strA, Object *dictA,
-			 GBool limitedA, Guint lengthA):
+                         GBool limitedA, Guint lengthA):
     BaseStream(dictA) {
   str = strA;
   limited = limitedA;
   length = lengthA;
+}
+
+// creates new EmbedStream with cloned stream holder and same limited and length
+// values
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * EmbedStream::clone()
+{
+   // clones underlying stream holder
+   Stream * cloneStreamHolder=str->clone();
+   if(!cloneStreamHolder)
+     return NULL;
+           
+   // clones stream dictionary 
+   Object * cloneDict=dict.clone();
+
+   // creates new EmbedStream with cloned real stream
+   Stream * cloneStream=new EmbedStream(cloneStreamHolder, cloneDict, limited, length);
+
+   // object has to be deallocated, but its content kept, because BaseStream 
+   // does only shallow copy
+   gfree(cloneDict);
+
+   return cloneStream;
 }
 
 EmbedStream::~EmbedStream() {
@@ -832,6 +950,18 @@ ASCIIHexStream::ASCIIHexStream(Stream *strA):
     FilterStream(strA) {
   buf = EOF;
   eof = gFalse;
+}
+
+// creates new ASCIIHexStream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * ASCIIHexStream::clone()
+{
+  // clones stream and if clone returns NULL, return NULL too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  return new ASCIIHexStream(cloneStream);
 }
 
 ASCIIHexStream::~ASCIIHexStream() {
@@ -924,6 +1054,18 @@ ASCII85Stream::ASCII85Stream(Stream *strA):
   eof = gFalse;
 }
 
+// creates new ASCII85Stream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * ASCII85Stream::clone()
+{
+  // clones stream and if clone returns NULL, return NULL too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  return new ASCII85Stream(cloneStream);
+}
+
 ASCII85Stream::~ASCII85Stream() {
   delete str;
 }
@@ -1011,6 +1153,20 @@ LZWStream::LZWStream(Stream *strA, int predictor, int columns, int colors,
   eof = gFalse;
   inputBits = 0;
   clearTable();
+}
+
+
+// creates new LZWStream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * LZWStream::clone()
+{
+  // clones stream and if clone returns NULL, return NULL too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  // TODO LZWStream::clone
+  return NULL;
 }
 
 LZWStream::~LZWStream() {
@@ -1191,6 +1347,17 @@ RunLengthStream::RunLengthStream(Stream *strA):
   eof = gFalse;
 }
 
+// creates new RunLengthStream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * RunLengthStream::clone()
+{
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+     return NULL;
+
+  return new RunLengthStream(cloneStream);
+}
+
 RunLengthStream::~RunLengthStream() {
   delete str;
 }
@@ -1274,6 +1441,12 @@ CCITTFaxStream::CCITTFaxStream(Stream *strA, int encodingA, GBool endOfLineA,
   a0 = 1;
 
   buf = EOF;
+}
+
+Stream * CCITTFaxStream::clone()
+{
+  // TODO CCITTFaxStream::clone
+  return 0;
 }
 
 CCITTFaxStream::~CCITTFaxStream() {
@@ -1861,6 +2034,17 @@ DCTStream::DCTStream(Stream *strA):
       dctClip[dctClipOffset + i] = 255;
     dctClipInit = 1;
   }
+}
+
+// creates new DCTStream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * DCTStream::clone()
+{
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  return new DCTStream(cloneStream);
 }
 
 DCTStream::~DCTStream() {
@@ -3834,6 +4018,12 @@ FlateStream::FlateStream(Stream *strA, int predictor, int columns,
   distCodeTab.codes = NULL;
 }
 
+Stream * FlateStream::clone()
+{
+  // TODO implement FlateStream::clone
+  return 0;
+}
+
 FlateStream::~FlateStream() {
   if (litCodeTab.codes != fixedLitCodeTab.codes) {
     gfree(litCodeTab.codes);
@@ -4278,6 +4468,16 @@ EOFStream::EOFStream(Stream *strA):
     FilterStream(strA) {
 }
 
+// creates EOFStream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * EOFStream::clone()
+{
+    Stream * streamClone=str->clone();
+    if(!streamClone)
+      return 0;
+    return new EOFStream(streamClone);
+}
+
 EOFStream::~EOFStream() {
   delete str;
 }
@@ -4291,6 +4491,17 @@ FixedLengthEncoder::FixedLengthEncoder(Stream *strA, int lengthA):
   length = lengthA;
   count = 0;
 }
+
+// creates FixedLengthEncoder with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * FixedLengthEncoder::clone()
+{
+    Stream * streamClone=str->clone();
+    if(!streamClone)
+      return 0;
+    return new FixedLengthEncoder(streamClone, length);
+}
+
 
 FixedLengthEncoder::~FixedLengthEncoder() {
   if (str->isEncoder())
@@ -4328,6 +4539,16 @@ ASCIIHexEncoder::ASCIIHexEncoder(Stream *strA):
   bufPtr = bufEnd = buf;
   lineLen = 0;
   eof = gFalse;
+}
+
+// creates ASCIIHexEncoder with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * ASCIIHexEncoder::clone()
+{
+    Stream * streamClone=str->clone();
+    if(!streamClone)
+      return 0;
+    return new ASCIIHexEncoder(streamClone);
 }
 
 ASCIIHexEncoder::~ASCIIHexEncoder() {
@@ -4375,6 +4596,16 @@ ASCII85Encoder::ASCII85Encoder(Stream *strA):
   bufPtr = bufEnd = buf;
   lineLen = 0;
   eof = gFalse;
+}
+
+// creates ASCII85Encoder with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * ASCII85Encoder::clone()
+{
+    Stream * streamClone=str->clone();
+    if(!streamClone)
+      return 0;
+    return new ASCII85Encoder(streamClone);
 }
 
 ASCII85Encoder::~ASCII85Encoder() {
@@ -4443,6 +4674,16 @@ RunLengthEncoder::RunLengthEncoder(Stream *strA):
     FilterStream(strA) {
   bufPtr = bufEnd = nextEnd = buf;
   eof = gFalse;
+}
+
+// creates RunLengthEncoder with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * RunLengthEncoder::clone()
+{
+    Stream * streamClone=str->clone();
+    if(!streamClone)
+      return 0;
+    return new RunLengthEncoder(streamClone);
 }
 
 RunLengthEncoder::~RunLengthEncoder() {

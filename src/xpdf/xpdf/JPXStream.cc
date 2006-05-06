@@ -194,6 +194,18 @@ JPXStream::JPXStream(Stream *strA):
   byteCount = 0;
 }
 
+// creates new JPXStream with cloned stream holder
+// If stream holder cloning fails (returns NULL), also fails and returns NULL
+Stream * JPXStream::clone()
+{
+  // clones stream and if clone returns NULL, return NULL too
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  return new JPXStream(cloneStream);
+} 
+
 JPXStream::~JPXStream() {
   JPXTile *tile;
   JPXTileComp *tileComp;

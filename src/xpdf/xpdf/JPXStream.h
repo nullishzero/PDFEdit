@@ -278,6 +278,7 @@ public:
   virtual StreamKind getKind() { return strJPX; }
   virtual void reset();
   virtual int getChar();
+  virtual Stream * clone();
   virtual int lookChar();
   virtual GString *getPSFilter(int psLevel, char *indent);
   virtual GBool isBinary(GBool last = gTrue);
