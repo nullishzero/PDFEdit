@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.44  2006/05/06 08:38:19  hockm0bm
+ * * CPdf constructor sets mode of xref according its mode
+ * * CPdf::consolidatePageList bug fixed
+ * 	- readdContainer has to contain all pages with pos >= minPos (not only >)
+ *
  * Revision 1.43  2006/05/05 11:55:55  petrm1am
  *
  * Commiting changes sent by Michal:
@@ -177,7 +182,6 @@
  *
  *
  */
-
 
 #include <errno.h>
 #include "static.h"
@@ -917,12 +921,18 @@ using namespace utils;
 CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this))
 {
 	// gets xref writer - if error occures, exception is thrown 
-	// TODO start to use mode !!!
 	xref=new XRefWriter(stream, this);
 	mode=openMode;
 
 	// initializes revision specific data for the newest revision
 	initRevisionSpecific();
+
+	// sets mode accoring openMode
+	// ReadOnly and ReadWrite implies xref paranoid mode (default one) 
+	// whereas Advanced mode sets easy mode because we want to have full 
+	// control over document
+	if(mode==Advanced)
+		xref->setMode(XRefWriter::easy);
 }
 
 CPdf::~CPdf()
@@ -1483,8 +1493,8 @@ using namespace utils;
 		size_t pos=i->first;
 		shared_ptr<CPage> page=i->second;
 
-		// all pages > minPos are removed and readded with correct position
-		if(pos > minPos)
+		// all pages >= minPos are removed and readded with correct position
+		if(pos >= minPos)
 		{
 			// collects all removed
 			readdContainer.insert(PageList::value_type(pos, page));	
