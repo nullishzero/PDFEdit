@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/05/06 08:39:28  hockm0bm
+ * knowsRef delegates to XRef::knowsRef if reference not available in newStorage
+ *
  * Revision 1.15  2006/05/05 11:55:55  petrm1am
  *
  * Commiting changes sent by Michal:
@@ -373,15 +376,8 @@ bool CXref::knowsRef(::Ref ref)
 	if(newStorage.get(ref))
 		return true;
 
-	// checks object num
-	if(ref.num<=0 || ref.num>XRef::size)
-		return false;
-
-	// has to be found in entries
-	if(entries[ref.num].type==xrefEntryFree)
-		return false;
-	// object number is ok, so also gen must fit
-	return entries[ref.num].gen==ref.gen;
+	// object has to be in in XRef
+	return XRef::knowsRef(ref);
 }
 
 bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
