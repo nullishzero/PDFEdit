@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/05/06 08:43:14  hockm0bm
+ * clone method bug fix assignment instead of comparision
+ *
  * Revision 1.6  2006/04/23 13:11:38  hockm0bm
  * clone method added to StreamWriter
  *
@@ -67,7 +70,7 @@ size_t FileStreamWriter::clone(FILE * file, size_t start, size_t length)
 
 	// if length is negative value, content until file end is duplicated
 	bool wholeContent=false;
-	if(length=0)
+	if(length==0)
 		wholeContent=true;
 		
 	
