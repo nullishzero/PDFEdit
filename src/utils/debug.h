@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/05/06 08:48:50  hockm0bm
+ * *PrintDbg macros really uses printDbg rather than _printDbg to dump information
+ *   to default stream
+ *
  * Revision 1.13  2006/05/05 12:02:04  petrm1am
  *
  * Committing changes from Michal:
@@ -172,7 +176,7 @@ unsigned int changeDebugLevel(unsigned int level);
  * 
  * Use this macro for all message important for kernel.
  */
-#define kernelPrintDbg(dbgLevel, msg) _printDbg("KERNEL", (dbgLevel),std::cerr, msg)
+#define kernelPrintDbg(dbgLevel, msg) printDbg("KERNEL", (dbgLevel), msg)
 
 /** Alias to printDbg for gui messages.
  * @param dbgLevel Priority of message.
@@ -180,7 +184,7 @@ unsigned int changeDebugLevel(unsigned int level);
  * 
  * Use this macro for all message important for gui.
  */
-#define guiPrintDbg(dbgLevel, msg) _printDbg("GUI", (dbgLevel),std::cerr, msg)
+#define guiPrintDbg(dbgLevel, msg) printDbg("GUI", (dbgLevel), msg)
 
 /** Alias to printDbg for util messages.
  * @param dbgLevel Priority of message.
@@ -188,7 +192,7 @@ unsigned int changeDebugLevel(unsigned int level);
  * 
  * Use this macro for all message important for utils.
  */
-#define utilsPrintDbg(dbgLevel, msg) _printDbg("UTILS", (dbgLevel),std::cerr, msg)
+#define utilsPrintDbg(dbgLevel, msg) printDbg("UTILS", (dbgLevel), msg)
 
 /** Low level macro for debugging.
  * @param prefix Prefix string for message.

@@ -1,3 +1,14 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
+/*
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.6  2006/05/06 08:48:50  hockm0bm
+ * *PrintDbg macros really uses printDbg rather than _printDbg to dump information
+ *   to default stream
+ *
+ *
+ */
 #include "debug.h"
 
 // if default debug level doesn't come from gcc command line, we use
