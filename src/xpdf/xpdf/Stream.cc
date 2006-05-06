@@ -16,11 +16,6 @@
 //                * All FilterStream descendants creates same stream type
 //                  with cloned stream holder. If stream holder cloning fails,
 //                  also fails.
-//
-//                  TODO implement CCITTFaxStream clone
-//                  implementation
-//                
-//
 //========================================================================
 
 #include <aconf.h>
@@ -1187,6 +1182,7 @@ Stream * LZWStream::clone()
   if(!cloneStream)
     return NULL;
 
+  // NOTE early doesn't change during instance lifecycle
   return new LZWStream(cloneStream, 
                   predContext.predictor, 
                   predContext.width, 
@@ -1471,8 +1467,21 @@ CCITTFaxStream::CCITTFaxStream(Stream *strA, int encodingA, GBool endOfLineA,
 
 Stream * CCITTFaxStream::clone()
 {
-  // TODO CCITTFaxStream::clone
-  return 0;
+  // clones stream holder. If fails, also fails.
+  Stream * cloneStream=str->clone();
+  if(!cloneStream)
+    return NULL;
+
+  // NOTE all fields are initialized just in constructor and never change during
+  // instance life cycle
+  return new CCITTFaxStream(cloneStream, 
+                  encoding, 
+                  endOfLine, 
+                  byteAlign, 
+                  columns, 
+                  rows, 
+                  endOfBlock, 
+                  black);
 }
 
 CCITTFaxStream::~CCITTFaxStream() {
