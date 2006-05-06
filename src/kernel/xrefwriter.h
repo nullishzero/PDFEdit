@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/06 08:40:20  hockm0bm
+ * knowsRef delegates to XRef::knowsRef if not in the newest revision
+ *
  * Revision 1.16  2006/04/27 18:21:09  hockm0bm
  * * deallocation of Object corrected
  * * changeRevision
@@ -457,11 +460,8 @@ public:
 		if(!revision)
 			return CXref::knowsRef(ref);
 				
-		// has to be found in entries
-		if(entries[ref.num].type==xrefEntryFree)
-		   return false;
-		// object number is ok, so also gen must fit
-		return entries[ref.num].gen==ref.gen;
+		// otherwise use XRef directly
+		return XRef::knowsRef(ref);
 	}
 
 	/** Registers new reference.

@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/05/06 08:40:20  hockm0bm
+ * knowsRef delegates to XRef::knowsRef if not in the newest revision
+ *
  * Revision 1.14  2006/05/01 13:53:08  hockm0bm
  * new style printDbg
  *
@@ -111,7 +114,6 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 
 	if(mode==paranoid)
 	{
-		kernelPrintDbg(DBG_DBG, "we are in paranoid mode");
 		// reference known test
 		if(!knowsRef(ref))
 		{
@@ -144,6 +146,7 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 		}
 	}
 
+	kernelPrintDbg(DBG_INFO, "paranoidCheck successfull");
 	return true;
 }
 
@@ -323,9 +326,9 @@ using namespace std;
 		{
 			// if num can be added to current sub, appends entries array
 			// NOTE: num can be added if sub's key+entries size == num, which 
-			// means that entries array won't destry sequence without holes 
+			// means that entries array won't destroy sequence without holes 
 			// condition after addition
-			if(num == sub->first + (sub->second).size())
+			if((size_t)num == sub->first + (sub->second).size())
 			{
 				utilsPrintDbg(DBG_DBG, "Appending num="<<num<<" to section starting with num="<<sub->first);
 				(sub->second).push_back(EntryType(off, gen));
