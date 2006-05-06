@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/05/06 21:17:38  hockm0bm
+ * removed additional code
+ *
  * Revision 1.14  2006/05/06 08:56:57  hockm0bm
  * tests improved - all of them are successfull - everything tested seems to work
  *
@@ -620,37 +623,6 @@ public:
 			/* ok */
 		}
 
-		// TODO REMOVE
-		IndiRef contentStream=getValueFromSimple<CRef, pRef, IndiRef>(pdf->getPage(1)->getDictionary()->getProperty("Contents"));
-		{
-			Object obj;
-			pdf->getCXref()->fetch(contentStream.num, contentStream.gen, &obj);
-			int ch;
-			printf("Original stream:\n");
-			while((ch=obj.getStream()->getChar())!=EOF)
-				printf("%d",ch);
-			printf("\nend of stream\n");
-			
-			// simulation without stream writer
-			FILE * f=fopen("../../doc/zadani.pdf", "r+");
-			Object streamObj;
-			FileStream * stream=new FileStream(f, 0, gFalse, 0, &streamObj);
-			stream->reset();
-			XRef xref(stream);
-			Object obj1;
-			xref.fetch(contentStream.num, contentStream.gen, &obj1);
-			printf("Original stream:\n");
-			while((ch=obj1.getStream()->getChar())!=EOF)
-				printf("%d",ch);
-			printf("\nend of stream\n");
-
-			/*
-			printf("Cloned stream:\n");
-			while((ch=clone->getChar())!=EOF)
-				printf("%d",ch);
-			printf("\nend of stream\n");
-			*/
-		}
 	}
 
 	void tearDown()
