@@ -175,7 +175,7 @@ CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 //
 //
 template<PropertyType Tp, typename Checker>
-Object*
+::Object*
 CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
@@ -609,7 +609,7 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 //
 //
 template <PropertyType Tp, typename Checker>
-Object*
+::Object*
 CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
@@ -813,27 +813,6 @@ CObjectStream<Checker>::doClone () const
 // Get methods
 //
 
-//
-//
-//
-template<typename Checker>
-void
-CObjectStream<Checker>::getStringRepresentation (std::string& str) const 
-{
-	kernelPrintDbg (debug::DBG_DBG, "");
-
-	// Get dictionary string representation
-	std::string strDict, strBuf;
-	dictionary.getStringRepresentation (strDict);
-
-	// Get printable string representation
-	filters::Printable<Buffer::value_type> print;
-	for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
-		strBuf +=  print (*it);
-
-	// Put them together
-	utils::streamToString (strDict, strBuf, str);
-}
 	
 //
 // Set methods
@@ -871,76 +850,125 @@ template<typename Checker>
 void 
 CObjectStream<Checker>::setRawBuffer (const Buffer& buf)
 {
-	assert (NULL == parser || !"Set buffer to an opened stream.");
+	assert (NULL == parser || !"Stream is open.");
 	if (NULL != parser)
 		throw CObjInvalidOperation ();
 	
 	// If size mismatches, change it in the stream dictionary
 	if (buf.size() != buffer.size())
-	{
-		try
-		{
-			boost::shared_ptr<IProperty> len = dictionary.getProperty ("Length");
-			if (isInt (len))
-			{
-				IProperty::getSmartCObjectPtr<CInt>(len)->writeValue (buf.size());
-			
-			}else
-			{
-				assert (!"Bad Length type in stream.");
-				throw CObjInvalidObject ();
-			}
-			
-		}catch (ElementNotFoundException&)
-		{
-			dictionary.addProperty ("Length", CInt (buf.size()));
-		}
-	}
+		setLength (buf.size());
 	
 	buffer.clear ();
 	std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
 
 	//save it
-	_objectChanged ();
+	//_objectChanged ();
 }
+
+//
+//
+//
+template<typename Checker>
+void 
+CObjectStream<Checker>::setBuffer (const Buffer& buf)
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (NULL == parser || !"Stream is open.");
+	if (NULL != parser)
+		throw CObjInvalidOperation ();
+
+	kernelPrintDbg (debug::DBG_DBG, "Before");
+	// Encode buf and save it to buffer
+	encodeBuffer (buf);
+	kernelPrintDbg (debug::DBG_DBG, "After decoding");
+	
+	// Change length
+	setLength (buffer.size());
+	
+	//save it
+	//_objectChanged ();
+}
+
+
+//
+//\TODO call objectChange on dictionary??
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::setLength (size_t len) 
+{
+	try
+	{
+		boost::shared_ptr<IProperty> clen = utils::getReferencedObject (dictionary.getProperty("Length"));
+		if (isInt (clen))
+		{
+			IProperty::getSmartCObjectPtr<CInt>(clen)->writeValue (len);
+		
+		}else
+		{
+			assert (!"Bad Length type in stream.");
+			throw CObjInvalidObject ();
+		}
+	
+	}catch (ElementNotFoundException&)
+	{
+		dictionary.addProperty ("Length", CInt (len));
+	}
+
+	//save it
+	//_objectChanged ();
+}
+
 
 //
 // Helper methods
 //
 
 //
+// \TODO  what if sizes mismatch?
+//
+//
+// 1) Dictionary of a BaseStream is always freed in ~BaseStream
+// 2) In mem stream if needBuf variable is set, buf is freed
+// 	needBuf is set in doDecryption
 //
 //
 template<typename Checker>
 ::Object*
 CObjectStream<Checker>::_makeXpdfObject () const
 {
-	Object* o = new Object ();
-	return xpdfStream.copy (o);
-
-	std::string tmp;
-	getStringRepresentation (tmp);
-	//kernelPrintDbg (debug::DBG_DBG, tmp);
-
+	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (isInValidPdf (this));
 	assert (hasValidRef (this));
-			
-	Object* obj = utils::xpdfObjFromString (tmp, IProperty::getPdf()->getCXref());
+
+	// If size mismatches indicate error
+	if (buffer.size() != getLength ())
+	{
+		assert (!"Sizes mismatch.");
+		throw CObjInvalidOperation ();
+	}
+
+	// Get xref
+	XRef* xref = IProperty::getPdf()->getCXref ();
+	assert (xref);
+
+	// Dictionary will be deallocated in ~BaseStream
+	::Object* obj = utils::xpdfStreamObjFromBuffer (buffer, dictionary._makeXpdfObject());
 	assert (NULL != obj);
 	assert (objStream == obj->getType());
-	if (objStream != obj->getType())
-		throw XpdfInvalidObject ();
-
 	return obj;
 }
 
+
 //
 //
 //
-/*template<typename Checker>
+template<typename Checker>
 void 
-CObjectStream<Checker>::encodeBuffer (Buffer& container) const
+CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 {
+	kernelPrintDbg (debug::DBG_DBG, "");
+	buffer.clear ();
 
 	//
 	// Create input filtes and add filters according to Filter item in
@@ -949,24 +977,90 @@ CObjectStream<Checker>::encodeBuffer (Buffer& container) const
 	boost::iostreams::filtering_wistream in;
 	std::vector<std::string> filters;
 	getFilters (filters);
-	filters::CFilterFactory::addFilters (in, filters);
+	
+	// Try adding filters if one is not supported use none
+	try {
+		
+		filters::CFilterFactory::addFilters (in, filters);
+	
+	}catch(FilterNotSupported&)
+	{
+		kernelPrintDbg (debug::DBG_DBG, "One of the filters is not supported, using none..");
+		setLength (buf.size());
+		dictionary.delProperty ("Filter");
+		std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
+		assert (getLength() == buf.size());
+		return;
+	}
 	
 	// Create input source from buffer
-	boost::iostreams::stream<filters::buffer_source<Buffer> > input (buffer);
+	boost::iostreams::stream<filters::buffer_source<Buffer> > input (buf);
 	in.push (input);
-	// Create output sink from container
-	//boost::iostreams::stream<filters::buffer_sink<Buffer> > output (container);
 	// Copy it to container
 	Buffer::value_type c;
 	while (!in.eof())
 	{//\TODO Improve this !!!!
 		in.get (c);
-		container.push_back (c);
+		buffer.push_back (c);
 	}
 	// Close the stream
 	in.reset ();
 }
-*/
+
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::getStringRepresentation (std::string& str, bool wantraw) const 
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+
+	// Get dictionary string representation
+	std::string strDict, strBuf;
+	dictionary.getStringRepresentation (strDict);
+
+	// Raw content or printable content
+	if (wantraw)
+	{
+		for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
+			strBuf +=  static_cast<std::string::value_type> (*it);
+		
+	}else
+	{
+		// Get printable string representation
+		filters::Printable<Buffer::value_type> print;
+		for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
+			strBuf +=  print (*it);
+	}
+
+	// Put them together
+	utils::streamToString (strDict, strBuf, str);
+}
+
+//
+//
+//
+template<typename Checker>
+size_t
+CObjectStream<Checker>::getLength () const 
+{
+	boost::shared_ptr<IProperty> len = utils::getReferencedObject (dictionary.getProperty("Length"));
+	if (isInt (len))
+	{
+		int length;
+		IProperty::getSmartCObjectPtr<CInt>(len)->getPropertyValue (length);
+		assert (0 <= length);
+		return length;
+	
+	}else
+	{
+		assert (!"Bad Length type in stream.");
+		throw CObjInvalidObject ();
+	}
+}
+
 
 //
 // Parsing

@@ -226,7 +226,7 @@ public:
 	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
 	 * 
-	 * @return Xpdf object representing actual value of this simple object.
+	 * @return Xpdf object representing value of this simple object.
 	 */
 	virtual ::Object*	_makeXpdfObject () const;
 	
@@ -590,7 +590,7 @@ public:
 	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
 
-	 * @return Xpdf object representing actual value of this simple object.
+	 * @return Xpdf object representing value of this simple object.
 	 */
 	virtual Object*	_makeXpdfObject () const;
 
@@ -813,11 +813,12 @@ public:
 
 	
 	/**
-	 * Returns printable string representation of actual object.
+	 * Returns printable string representation of this object.
 	 *
 	 * @param str String representation.
 	 */
-	virtual void getStringRepresentation (std::string& str) const;
+	virtual void getStringRepresentation (std::string& str) const
+		{ getStringRepresentation (str, false); }
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
@@ -912,7 +913,7 @@ public:
 	 *
 	 * @param buf New buffer.
 	 */
-	//void setBuffer (const Buffer& buf) {};
+	void setBuffer (const Buffer& buf);
 
 	//
 	// Parsing
@@ -985,7 +986,6 @@ public:
 
 
 private:
-	
 	/**
 	 * Indicate that the object has changed.
 	 * Notifies all observers associated with this property about the change.
@@ -1016,9 +1016,31 @@ private:
 	 *
 	 * @param container Output container.
 	 */
-	//void encodeBuffer (Buffer& container) const;
+	void encodeBuffer (const Buffer& container);
 
+	/**
+	 * Returns representation of this object.
+	 *
+	 * @param str String representation.
+	 * @param wantraw True if we want raw content, false if we want only
+	 * printable characters.
+	 */
+	virtual void getStringRepresentation (std::string& str, bool wantraw) const;
 
+	/**
+	 * Get length.
+	 *
+	 * @return Stream length.
+	 */
+	size_t getLength () const;
+
+	/**
+	 * Set length.
+	 *
+	 * @param len Stream Length.
+	 */
+	void setLength (size_t len);
+	
 	//
 	// Special functions
 	//
@@ -1263,7 +1285,7 @@ namespace utils {
  *
  * @return Pointer to newly created object.
  */
-IProperty* createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref);
+IProperty* createObjFromXpdfObj (CPdf& pdf, ::Object& obj,const IndiRef& ref);
 
 /**
  * Creates CObject* from xpdf object.
@@ -1272,7 +1294,7 @@ IProperty* createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref);
  *
  * @return Pointer to newly created object.
  */
-IProperty* createObjFromXpdfObj (Object& obj);
+IProperty* createObjFromXpdfObj (::Object& obj);
 
 /**
  * Save real xpdf object value to val.
@@ -1280,8 +1302,8 @@ IProperty* createObjFromXpdfObj (Object& obj);
  * @param obj	Xpdf object which holds the value.
  * @param val	Variable where the value will be stored.
  */
-template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (Object& obj, T val);
-template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, Object& obj, T val);
+template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (::Object& obj, T val);
+template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, ::Object& obj, T val);
 
 /**
  * Create xpdf Object which represents value.
@@ -1299,7 +1321,20 @@ template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
  *
  * @return Xpdf object whose string representation is in str.
  */
-Object* xpdfObjFromString (const std::string& str, XRef* xref = NULL);
+::Object* xpdfObjFromString (const std::string& str, ::XRef* xref = NULL);
+
+
+/**
+ * Create xpdf object from string.
+ *
+ * @param buffer Stream buffer.
+ * @param dict Stream dictionary.
+ * @param xref Xref of actual pdf if any.
+ *
+ * @return Xpdf object.
+ */
+::Object* xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict);
+
 
 /**
  * Parses string to get simple values like int, name, bool etc.

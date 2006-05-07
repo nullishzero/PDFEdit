@@ -42,6 +42,7 @@ namespace utils {
 // =====================================================================================
 
 using namespace std;
+using namespace xpdf;
 using namespace boost;
 
 //
@@ -255,24 +256,24 @@ namespace {
 			utilsPrintDbg (debug::DBG_DBG, "xpdfArrayReader\tobjType = " << array.getTypeName() );
 			
 			CPdf* pdf = ip.getPdf ();
-			::Object obj;
+			XpdfObject obj;
 
 			int len = array.arrayGetLength ();
 			for (int i = 0; i < len; ++i)
 			{
 					// Get Object at i-th position
-					array.arrayGetNF (i, &obj);
+					array.arrayGetNF (i, obj.get());
 					
 					shared_ptr<IProperty> cobj;
 					// Create CObject from it
 					if (isInValidPdf(pdf))
 					{
 						hasValidRef (ip);
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
+						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
 
 					}else
 					{
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (obj));
+						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
 					}
 
 					if (cobj)
@@ -280,7 +281,7 @@ namespace {
 						// Store it in the storage
 						resultArray.push_back (cobj);
 						// Free resources allocated by the object
-						obj.free ();
+						obj.reset ();
 						
 					}else
 						throw CObjInvalidObject ();
@@ -301,28 +302,26 @@ namespace {
 			utilsPrintDbg (debug::DBG_DBG, "xpdfDictReader\tobjType = " << dict.getTypeName() );
 			
 			CPdf* pdf = ip.getPdf ();
-			::Object obj;
+			xpdf::XpdfObject obj;
 
 			int len = dict.dictGetLength ();
 			for (int i = 0; i < len; ++i)
 			{
 					// Get Object at i-th position
 					string key = dict.dictGetKey (i);
-					dict.dictGetValNF (i,&obj);
+					dict.dictGetValNF (i,obj.get());
 
 					shared_ptr<IProperty> cobj;
 					// Create CObject from it
 					if (isInValidPdf (pdf))
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, obj, ip.getIndiRef()));
+						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
 					else
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (obj));
+						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
 
 					if (cobj)
 					{
 						// Store it in the storage
 						resultDict.push_back (make_pair(key,cobj));
-						// Free resources allocated by the object
-						obj.free ();
 
 					}else
 						throw CObjInvalidObject ();
@@ -419,7 +418,7 @@ namespace {
 		utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
 
 		ostringstream oss;
-		::Object o;
+		xpdf::XpdfObject o;
 		int i;
 
 		switch (obj.getType()) 
@@ -430,11 +429,11 @@ namespace {
 			for (i = 0; i < obj.arrayGetLength(); ++i) 
 			{
 				oss << CARRAY_MIDDLE;
-				obj.arrayGetNF (i,&o);
+				obj.arrayGetNF (i,o.get());
 				string tmp;
-				xpdfObjToString (o,tmp);
+				xpdfObjToString (*o,tmp);
 				oss << tmp;
-				o.free();
+				o.reset ();
 			}
 			oss << CARRAY_SUFFIX;
 			break;
@@ -444,11 +443,11 @@ namespace {
 			for (i = 0; i <obj.dictGetLength(); ++i) 
 			{
 				oss << CDICT_MIDDLE << obj.dictGetKey(i) << CDICT_BETWEEN_NAMES;
-				obj.dictGetValNF(i, &o);
+				obj.dictGetValNF(i, o.get());
 				string tmp;
-				xpdfObjToString (o,tmp);
+				xpdfObjToString (*o,tmp);
 				oss << tmp;
-				o.free();
+				o.reset ();
 			}
 			oss << CDICT_SUFFIX;
 			break;
@@ -459,9 +458,9 @@ namespace {
 			{
 				Dict* dict = obj.streamGetDict ();
 				assert (NULL != dict);
-				o.initDict (dict);
+				o->initDict (dict);
 				std::string str;
-				complexXpdfObjToString (o, str);
+				complexXpdfObjToString (*o, str);
 				oss << str;
 			}
 			
@@ -590,7 +589,7 @@ template <PropertyType Tp,typename T>
 Object* 
 simpleValueToXpdfObj (T val)
 {
-	Object* obj = new Object ();
+	Object* obj = XPdfObjectFactory::getInstance ();
 	
 	typename ProcessorTraitSimple<Object*, T, Tp>::xpdfWriteProcessor wp;
 	return wp (obj,val);
@@ -729,7 +728,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	// Create parser. It can create complex types. Lexer knows just simple types.
 	// Lexer SHOULD delete MemStream.
 	//
-	scoped_ptr<Object> dct (new Object());
+	XpdfObject dct;
 	//
 	// xpdf MemStream DOES NOT free buf unless doDecrypt is called, but IT IS NOT
 	// here, so we have to deallocate it !!
@@ -750,31 +749,57 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	Object* obj = XPdfObjectFactory::getInstance();
 	parser->getObj (obj);
 
-	//\TODO remove it
-	//{
-	//std::string str;
-	//utils::xpdfObjToString (*obj,str);
-	//std::cout << "!!!!!!!!!!!!!!!!!!!!!!!" << str << std::endl;
-	//}
-	
 	// delete string we don't need it anymore
 	delete[] pStr;
 	
-	const string null ("null");
-
 	//
 	// If xpdf returned objNull and we did not give him null, an error occured
 	//
+	const string null ("null");
 	if ( (obj->isNull()) && !equal(str.begin(), str.end(), null.begin(), nocase_compare) )
 	{
 		obj->free ();
-		gfree(obj);
+		utils::freeXpdfObject (obj);
 		throw CObjBadValue ();
 	}
 
 	return obj;
 }
 
+//
+//
+//
+::Object* 
+xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
+{
+	std::ofstream os;
+	os.open ("11");
+	for (CStream::Buffer::const_iterator it = buffer.begin(); it != buffer.end (); ++it)
+		os << (char)(*it);
+	os.close ();
+	
+	//
+	// Copy buffer and use parser to make stream object
+	//
+	std::string end ("\nendstream");
+	char* tmpbuf = new char [buffer.size() + end.length()];
+	size_t i = 0;
+	for (CStream::Buffer::const_iterator it = buffer.begin(); it != buffer.end (); ++it)
+		tmpbuf [i++] = static_cast<char> (*it);
+	std::copy (tmpbuf, tmpbuf + end.length(), std::back_inserter (end));
+	assert (i == buffer.size());
+	utilsPrintDbg (debug::DBG_DBG, tmpbuf);
+	
+	// Create stream
+	::Stream* stream = new MemStream (tmpbuf, 0, buffer.size(), dict);
+	// Set filters
+	stream = stream->addFilters (dict);
+	stream->reset ();
+	::Object* obj = XPdfObjectFactory::getInstance ();
+	obj->initStream (stream);
+	return obj;
+
+}
 
 // =====================================================================================
 //  To/From string functions
@@ -1099,10 +1124,10 @@ parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
 
 	// Get stream length
 	xpdf::XpdfObject xpdfDict; xpdfDict->initDict (obj.streamGetDict());
-	::Object xpdfLen; xpdfDict->dictLookup ("Length", &xpdfLen);
-	assert (xpdfLen.isInt ());
-	assert (0 <= xpdfLen.getInt());
-	size_t len = static_cast<size_t> (xpdfLen.getInt());
+	xpdf::XpdfObject xpdfLen; xpdfDict->dictLookup ("Length", xpdfLen.get());
+	assert (xpdfLen->isInt ());
+	assert (0 <= xpdfLen->getInt());
+	size_t len = static_cast<size_t> (xpdfLen->getInt());
 	utilsPrintDbg (debug::DBG_DBG, "Stream length: " << len);
 	// Get stream
 	::Stream* xpdfStream = obj.getStream ();
@@ -1122,7 +1147,6 @@ parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
 	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());
 	assert (len == container.size());
 	// Cleanup
-	xpdfLen.free ();
 	obj.streamClose ();
 	//\TODO is it really ok?
 	rawstr->close ();

@@ -66,6 +66,11 @@ public:
 	T* operator->() /*const*/ { return &obj; };
 
 	//
+	// Raw pointer
+	//
+	T* get () /*const*/ { return &obj; };
+	
+	//
 	// Delete
 	//
 	~MassiveIdiocyWrapper () { obj.free (); };
