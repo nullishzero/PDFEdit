@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/05/07 10:03:12  misuj1am
+ *
+ * -- ADD: filter exception
+ * -- filter handling improved
+ *
  * Revision 1.9  2006/05/03 23:56:16  misuj1am
  *
  * -- cstream improvement
@@ -62,9 +67,21 @@ struct CFilterFactory
 	 * @return Filter, if not found, NoFilter is created.
 	 */
 	template<typename OUTPUT, typename FILTERS>
-	static void addFilters (OUTPUT& out, const FILTERS& /*filterNames*/)
+	static void addFilters (OUTPUT& out, const FILTERS& filterNames)
 	{
-		out.push (NoFilter ());
+		typename FILTERS::const_iterator it = filterNames.begin ();
+		for (; it != filterNames.end(); ++it)
+		{
+			if ("" == *it)
+			{
+				out.push (NoFilter ());
+
+			}else if ("" == *it)
+			{
+			
+			}else // Not supported filter occured
+				throw FilterNotSupported ();
+		}
 	}
 
 	/**

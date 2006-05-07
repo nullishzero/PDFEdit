@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/07 10:03:12  misuj1am
+ *
+ * -- ADD: filter exception
+ * -- filter handling improved
+ *
  * Revision 1.16  2006/04/20 18:05:36  hockm0bm
  * AmbiguousPageTreeException spelling corrected
  *
@@ -64,6 +69,7 @@ struct CObjInvalidObject;
 struct CObjInvalidOperation;
 struct OutOfRange;
 
+struct FilterNotSupported;
 
 /** XPDF exception base class.
  */
@@ -448,6 +454,16 @@ struct CObjInvalidObject : public CObjectException
 struct CObjInvalidOperation : public CObjectException
 {
 	char const* what() const throw() {return "Invalid operation on CObject.";}
+};
+
+
+//==================================
+// Filter expcetions
+//==================================
+
+struct FilterNotSupported : public std::exception
+{
+	const char* what() const throw() {return "One of filters is not supported.";}
 };
 
 
