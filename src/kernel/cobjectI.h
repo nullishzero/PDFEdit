@@ -904,7 +904,8 @@ CObjectStream<Checker>::setLength (size_t len)
 	
 	}catch (ElementNotFoundException&)
 	{
-		dictionary.addProperty ("Length", CInt (len));
+		CInt _len (len);
+		dictionary.addProperty ("Length", _len);
 	}
 }
 
