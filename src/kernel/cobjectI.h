@@ -708,13 +708,8 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 {
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
-	assert (objStream == o.getType());
-
-	// Copy the stream
-	o.copy (&xpdfStream);
-	
 	// Make sure it is a stream
-	assert (objStream == xpdfStream.getType());
+	assert (objStream == o.getType());
 	if (objStream != o.getType())
 		throw XpdfInvalidObject ();
 	
@@ -725,6 +720,7 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 	objDict.initDict (dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
 	objDict.free ();
+
 	// Set pdf and ref
 	dictionary.setPdf (&p);
 	dictionary.setIndiRef (rf);
@@ -742,10 +738,6 @@ CObjectStream<Checker>::CObjectStream (::Object& o) : parser (NULL)
 {
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
-
-	// Copy the stream
-	o.copy (&xpdfStream);
-
 	// Make sure it is a stream
 	assert (objStream == o.getType());
 	if (objStream != o.getType())
@@ -758,6 +750,7 @@ CObjectStream<Checker>::CObjectStream (::Object& o) : parser (NULL)
 	objDict.initDict (dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
 	objDict.free ();
+
 	// Save the contents of the container
 	utils::parseStreamToContainer (buffer, o);
 }
@@ -804,14 +797,10 @@ CObjectStream<Checker>::doClone () const
 		clone_->dictionary.value.push_back (item);
 	}
 
-	std::copy (buffer.begin(), buffer.end(), clone_->buffer.begin());
+	std::copy (buffer.begin(), buffer.end(), std::back_inserter (clone_->buffer));
 	
 	return clone_;
 }
-
-//
-// Get methods
-//
 
 	
 //
@@ -854,15 +843,17 @@ CObjectStream<Checker>::setRawBuffer (const Buffer& buf)
 	if (NULL != parser)
 		throw CObjInvalidOperation ();
 	
-	// If size mismatches, change it in the stream dictionary
-	if (buf.size() != buffer.size())
-		setLength (buf.size());
-	
+	// Create context
+	boost::shared_ptr<ObserverContext> context (this->_createContext());
+
+	// Copy buf to buffer
 	buffer.clear ();
 	std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
-
-	//save it
-	//_objectChanged ();
+	// Change length
+	setLength (buffer.size());
+	
+	//Dispatch change can be called also in setLength
+	_objectChanged (context);
 }
 
 //
@@ -877,21 +868,21 @@ CObjectStream<Checker>::setBuffer (const Buffer& buf)
 	if (NULL != parser)
 		throw CObjInvalidOperation ();
 
-	kernelPrintDbg (debug::DBG_DBG, "Before");
+	// Create context
+	boost::shared_ptr<ObserverContext> context (this->_createContext());
+	
 	// Encode buf and save it to buffer
 	encodeBuffer (buf);
-	kernelPrintDbg (debug::DBG_DBG, "After decoding");
-	
 	// Change length
 	setLength (buffer.size());
 	
-	//save it
-	//_objectChanged ();
+	//Dispatch change can be called also in setLength
+	_objectChanged (context);
 }
 
 
 //
-//\TODO call objectChange on dictionary??
+//
 //
 template<typename Checker>
 void
@@ -902,6 +893,7 @@ CObjectStream<Checker>::setLength (size_t len)
 		boost::shared_ptr<IProperty> clen = utils::getReferencedObject (dictionary.getProperty("Length"));
 		if (isInt (clen))
 		{
+			// Change is dispatched here 
 			IProperty::getSmartCObjectPtr<CInt>(clen)->writeValue (len);
 		
 		}else
@@ -914,9 +906,6 @@ CObjectStream<Checker>::setLength (size_t len)
 	{
 		dictionary.addProperty ("Length", CInt (len));
 	}
-
-	//save it
-	//_objectChanged ();
 }
 
 
@@ -944,6 +933,7 @@ CObjectStream<Checker>::_makeXpdfObject () const
 	// If size mismatches indicate error
 	if (buffer.size() != getLength ())
 	{
+		kernelPrintDbg (debug::DBG_DBG, buffer.size() << " mismatch " << getLength());
 		assert (!"Sizes mismatch.");
 		throw CObjInvalidOperation ();
 	}
@@ -968,7 +958,6 @@ void
 CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-	buffer.clear ();
 
 	//
 	// Create input filtes and add filters according to Filter item in
@@ -986,10 +975,10 @@ CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 	}catch(FilterNotSupported&)
 	{
 		kernelPrintDbg (debug::DBG_DBG, "One of the filters is not supported, using none..");
-		setLength (buf.size());
+		
 		dictionary.delProperty ("Filter");
+		buffer.clear ();
 		std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
-		assert (getLength() == buf.size());
 		return;
 	}
 	
@@ -1061,6 +1050,16 @@ CObjectStream<Checker>::getLength () const
 	}
 }
 
+//
+//
+//
+template<typename Checker>
+IProperty::ObserverContext* 
+CObjectStream<Checker>::_createContext () const
+{
+	return new BasicObserverContext (boost::shared_ptr<IProperty> (new CNull ()));
+}
+
 
 //
 // Parsing
@@ -1084,8 +1083,8 @@ CObjectStream<Checker>::open ()
 	}
 	
 	::XRef* xref = (NULL != IProperty::getPdf ()) ? IProperty::getPdf ()->getCXref() : NULL;
-	// \TODO remove xpdfStream
-	parser = new ::Parser (xref, new ::Lexer(xref, &xpdfStream));
+	// Create xpdf object from current stream and parse it
+	parser = new ::Parser (xref, new ::Lexer(xref, _makeXpdfObject()));
 }
 
 //
@@ -1194,9 +1193,6 @@ CObjectStream<Checker>::~CObjectStream ()
 		delete parser;
 		parser = NULL;
 	}
-	
-	// Free xpdf object
-	xpdfStream.free ();
 }
 
 

@@ -127,7 +127,7 @@ opcount (ostream& oss, const char* fileName)
 		return true;
 
 	/// Intermezzo
-	boost::scoped_ptr<PDFDoc> doc (new PDFDoc (new GString(fileName), NULL, NULL));
+	boost::scoped_ptr<PDFDoc> doc  (new PDFDoc (new GString(fileName), NULL, NULL));
 	int pagesNum = 1;
 	Object obj;
 	XRef* xref = doc->getXRef();
@@ -136,6 +136,9 @@ opcount (ostream& oss, const char* fileName)
 	if (1 > cat.getNumPages())
 		return true;
 	cat.getPage(pagesNum)->getContents(&obj);
+	IndiRef rf;
+	rf.num = cat.getPageRef(pagesNum)->num;
+	rf.gen = cat.getPageRef(pagesNum)->gen;
 	////
 
 	
@@ -144,18 +147,13 @@ opcount (ostream& oss, const char* fileName)
 	
 	if (obj.isStream ())
 	{
-		streams.push_back ( shared_ptr<CStream> (new CStream (*pdf, obj, IndiRef()) ));
+		streams.push_back ( shared_ptr<CStream> (new CStream (*pdf, obj, rf)));
 		
 	}else if (obj.isArray())
 	{
 		Object o;
 		for (int i = 0; i < obj.arrayGetLength(); ++i)
-			streams.push_back ( shared_ptr<CStream> (new CStream (*pdf, 
-																  *(obj.arrayGet (i, &o)),
-																  IndiRef() 
-																  ) 
-													)
-								);
+			streams.push_back ( shared_ptr<CStream> (new CStream (*pdf,  *(obj.arrayGet (i, &o)), rf)));
 	}
 	obj.free ();
 

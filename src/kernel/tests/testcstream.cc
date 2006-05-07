@@ -72,16 +72,31 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 	buf.push_back ('o');
 	
 	string tmp;
-	stream->setRawBuffer (buf);
+	
+	shared_ptr<IProperty> ilen = utils::getReferencedObject (stream->getProperty ("Length"));
+	assert (isInt(ilen));
+	shared_ptr<CInt> clen = IProperty::getSmartCObjectPtr<CInt> (ilen);
+	assert (isInt(ilen));
+	int len = 0;
+	clen->getPropertyValue (len);
+	//oss << "Length: " << len << " " << flush;
+	
+	//stream->setRawBuffer (buf);
 	stream->getStringRepresentation (tmp);
 	oss << tmp << flush;
-	
+	clen->getPropertyValue (len);
+	//oss << "Length: " << len << " " << flush;
+
 	buf[2] = 'p';
 	buf[3] = 'p';
-	
+
+	clen->getPropertyValue (len);
+	//oss << "Length: " << len << " " << flush;
 	stream->setBuffer (buf);
 	stream->getStringRepresentation (tmp);
 	oss << tmp << flush;
+	clen->getPropertyValue (len);
+	//oss << "Length: " << len << " " << flush;
 
 	return true;
 }

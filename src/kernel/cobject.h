@@ -239,8 +239,7 @@ private:
 	 * 
 	 * @return Context in which a change occured.
 	 */
-	ObserverContext* 
-	_createContext () const
+	ObserverContext* _createContext () const
 	{
 		// Save original value for the context
 		boost::shared_ptr<IProperty> oldValue (this->clone());
@@ -263,7 +262,6 @@ private:
 		// Do not notify anything if we are not in a valid pdf
 		if (!isInValidPdf (this))
 			return;
-
 		assert (hasValidRef(this));
 		
 		// Dispatch the change
@@ -617,8 +615,6 @@ private:
 		// Do not notify anything if we are not in a valid pdf
 		if (!isInValidPdf (this))
 			return;
-
-		assert (isInValidPdf (this));
 		assert (hasValidRef (this));
 
 		// Dispatch the change
@@ -631,7 +627,7 @@ private:
 
 		}else
 		{
-			assert (!"Ip is not an array.");
+			assert (!"Invalid context");
 			throw CObjInvalidOperation ();
 		}
 	}
@@ -684,11 +680,8 @@ public:
 //\debug \TODO remove protected:
 	
 	/** Object dictionary. */
-	mutable CDict dictionary;
+	CDict dictionary;
 	
-	/** Xpdf object. */
-	mutable ::Object xpdfStream;
-
 	/** Buffer. */
 	Buffer buffer;
 
@@ -736,12 +729,25 @@ public:
 	//
 	size_t getPropertyCount () const
 		{return dictionary.getPropertyCount ();}
-	//
-	//
-	//
+	
+	/**
+	 * Returns all names in stream dictionary EXCEPT length.
+	 * This is due to the importance of this property. Xpdf objects
+	 * use this properpty and because of their stability, it is not
+	 * in human power to manage it correctly if the value is incorrect.
+	 *
+	 * You can get to the value when explicitely calling getProperty ("Length")
+	 * but the behaviour would be undefined.
+	 * 
+	 * \TODO make this comment sane
+	 */
 	template<typename Container> 
 	void getAllPropertyNames (Container& container) const
-		{dictionary.getAllPropertyNames (container);}
+	{
+		dictionary.getAllPropertyNames (container);
+		typename Container::iterator it = std::remove (container.begin(), container.end(), "Length");
+		container.erase (it, container.end());
+	}
 	//
 	//
 	//
@@ -997,18 +1003,26 @@ private:
 		// Do not notify anything if we are not in a valid pdf
 		if (!isInValidPdf (this))
 			return;
+		assert (hasValidRef (this));
 
 		// Dispatch the change
 		IProperty::dispatchChange ();
-			
+		
 		if (context)
 		{
-			assert (!"Not implemented yet");
+			// Clone this new value
+			boost::shared_ptr<IProperty> newValue (this->clone());
+			// Fill them with correct values
+			newValue->setPdf (IProperty::getPdf());
+			newValue->setIndiRef (IProperty::getIndiRef());
 			// Notify everybody about this change
-			IProperty::notifyObservers (*this, context);
+			IProperty::notifyObservers (newValue, context);
 
 		}else
+		{
+			assert (!"Invalid context");
 			throw CObjInvalidOperation ();
+		}
 	}
 
 	/**
@@ -1027,6 +1041,7 @@ private:
 	 */
 	virtual void getStringRepresentation (std::string& str, bool wantraw) const;
 
+private:
 	/**
 	 * Get length.
 	 *
@@ -1040,6 +1055,17 @@ private:
 	 * @param len Stream Length.
 	 */
 	void setLength (size_t len);
+
+private:
+	/**
+	 * Create context of a change.
+	 *
+	 * REMARK: Be carefull. Deallocate this object.
+	 * 
+	 * @return Context in which a change occured.
+	 */
+	ObserverContext* _createContext () const;
+
 	
 	//
 	// Special functions
