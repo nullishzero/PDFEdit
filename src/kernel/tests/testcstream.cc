@@ -59,21 +59,50 @@ namespace {
 
 
 //=====================================================================================
+bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
+{
+	typedef CStream::Buffer Buffer;
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+
+	Buffer buf;
+	buf.push_back ('h');
+	buf.push_back ('a');
+	buf.push_back ('l');
+	buf.push_back ('o');
+	
+	string tmp;
+	stream->setRawBuffer (buf);
+	stream->getStringRepresentation (tmp);
+	oss << tmp << flush;
+	
+	buf[2] = 'p';
+	buf[3] = 'p';
+	
+	stream->setBuffer (buf);
+	stream->getStringRepresentation (tmp);
+	oss << tmp << flush;
+
+	return true;
+}
+
+
+//=====================================================================================
 bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
 	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
 	CStream::Buffer& buf = stream->buffer;
-	oss << "Buffer start: "<< std::flush;
+	//oss << "Buffer start: "<< std::flush;
 	filters::Printable<CStream::Buffer::value_type> print;
-	for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
-		std::cout << print(*it) << std::flush;
-	oss << "\nBuffer end.."<< std::flush;
+	//for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
+	//	oss << print(*it) << std::flush;
+	//oss << "\nBuffer end.."<< std::flush;
 	
 	std::string tmp;
 	stream->getStringRepresentation (tmp);
-	oss << tmp << std::flush;
+	//oss << tmp << std::flush;
 	
 	return true;
 }
@@ -107,8 +136,7 @@ bool getString (std::ostream& oss, const char* fileName)
 
 	string tmp;
 	stream->getStringRepresentation (tmp);
-
-	oss << tmp << endl;
+	//oss << tmp << endl;
 
 	boost::shared_ptr<IProperty> ip = stream->getProperty ("Length");
 	ip = utils::getReferencedObject (ip);
@@ -150,6 +178,24 @@ bool testdict (__attribute__((unused)) std::ostream& oss, const char* fileName)
 	return true;
 }
 
+//=========================================================================
+bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+
+	::Object* str = stream->_makeXpdfObject ();
+	assert (NULL != str);
+	oss << "object type " << str->getTypeName() << flush;
+	assert (objStream == str->getType ());
+
+	//int c;
+	//while (EOF != (c = str->getStream()->getChar())) 
+	//	oss << (char)c << flush;
+	
+	return true;
+}
+
 
 //=========================================================================
 
@@ -174,6 +220,7 @@ bool getSupportedF (std::ostream& oss)
 class TestCStream : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCStream);
+		CPPUNIT_TEST(TestMakeXpdf);
 		CPPUNIT_TEST(TestBuf);
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestString);
@@ -198,6 +245,10 @@ public:
 			
 			TEST(" buffer");
 			CPPUNIT_ASSERT (buffer (OUTPUT, (*it).c_str()));
+			OK_TEST;
+			
+			TEST(" set buffers");
+			CPPUNIT_ASSERT (setbuffer (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
@@ -275,6 +326,22 @@ public:
 			
 			TEST(" dict");
 			CPPUNIT_ASSERT (testdict (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestMakeXpdf ()
+	{
+		OUTPUT << "CStream dict methods..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" dict");
+			CPPUNIT_ASSERT (testmakexpdf (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
