@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/05/08 10:31:29  hockm0bm
+ * quick fix
+ *         - copy & paste error
+ *
  * Revision 1.18  2006/05/08 10:27:55  hockm0bm
  * IndirectObjectsExhausted exception added
  *
@@ -131,9 +135,9 @@ class IndirectObjectsExhausted: public PdfException
 public:
 	/** Exception constructor.
 	 */
-	PdfOpenException(){};
+	IndirectObjectsExhausted(){};
 
-	virtual ~PdfOpenException()throw()
+	virtual ~IndirectObjectsExhausted()throw()
 	{
 	}
 
