@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/05/08 14:23:02  hockm0bm
+ * * StreamWriter new flush method added
+ * * clone method corrected
+ *         - checking for whole content copy
+ *
  * Revision 1.4  2006/04/23 13:11:38  hockm0bm
  * clone method added to StreamWriter
  *
@@ -64,6 +69,12 @@ public:
 	 * Given string is appended by newline character. 
 	 */
 	virtual void putLine(const char * line)=0;
+
+	/** Forces stream flush.
+	 *
+	 * Cached data in stream are forced to be writen to the target.
+	 */
+	virtual void flush()const =0;
 	
 	/** Duplicates content to given file.
 	 * @param file File where to put duplicated content.
@@ -107,6 +118,15 @@ public:
 	 * @see BaseStreamWriter::putLine
 	 */
 	virtual void putLine(const char * line);
+
+	/** Forces file flush.
+	 *
+	 * Calls fflush on the file handle.
+	 */
+	virtual void flush()const
+	{
+		fflush(f);
+	}
 
 	/** Duplicates content ro given file.
 	 * @param file File where to put duplicated content.

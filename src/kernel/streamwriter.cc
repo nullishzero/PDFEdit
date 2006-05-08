@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/05/08 14:23:02  hockm0bm
+ * * StreamWriter new flush method added
+ * * clone method corrected
+ *         - checking for whole content copy
+ *
  * Revision 1.7  2006/05/06 08:43:14  hockm0bm
  * clone method bug fix assignment instead of comparision
  *
@@ -31,15 +36,9 @@
 
 #include <stdio.h>
 #include <errno.h>
-#include"streamwriter.h"
-
-/** Returns minimum of given values.
- * @param a Value to compare.
- * @param b Value to compare.
- *
- */
-#define min(a, b)\
-	((a)<(b))?(a):(b)
+#include "static.h"
+#include "utils/debug.h"
+#include "streamwriter.h"
 
 //TODO use stream encoding
 
@@ -65,33 +64,37 @@ void FileStreamWriter::putLine(const char * line)
 
 size_t FileStreamWriter::clone(FILE * file, size_t start, size_t length)
 {
+using namespace debug;
+
 	if(!file)
 		return 0;
+
+	kernelPrintDbg(DBG_DBG, "start="<<start<<" length="<<length);
 
 	// if length is negative value, content until file end is duplicated
 	bool wholeContent=false;
 	if(length==0)
 		wholeContent=true;
 		
-	
 	setPos(start);
 	char buffer[BUFSIZ];
 	size_t read=0;
-	size_t writen=0, totalWriten=0;
+	size_t totalWriten=0;
 
 	// copies content until there is something to read or length is fulfilled.
-	while((read=fread(buffer, sizeof(char), min(BUFSIZ, length), f))>0)
+	while((read=fread(buffer, sizeof(char), std::min((size_t)BUFSIZ, length-totalWriten), f))>0)
 	{
-		// TODO be sure all bytes were writen
-		if((writen=fwrite(buffer, sizeof(char), read, file))<=0)
-			break;
-		totalWriten+=writen;
+		size_t chunkWriten=0, writen;
+		// writes whole read chunk
+		while((writen=fwrite(buffer+chunkWriten, sizeof(char), read-chunkWriten, file))>0)
+			chunkWriten+=writen;
 
-		// if we don't copy whole content, we will decreases total length to be
-		// written
-		if(!wholeContent)
-			length-=writen;
+		totalWriten+=chunkWriten;
 	}
+	if(int err=ferror(f))
+		kernelPrintDbg(DBG_ERR, "error occured while stream file reading. Error code="<<err);
+
+	kernelPrintDbg(DBG_INFO, totalWriten<<" bytes written to output file");
 
 	return totalWriten;
 }
