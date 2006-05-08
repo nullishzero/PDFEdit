@@ -1,6 +1,6 @@
 #Makefile for documentation
 
-.PHONY: clean
+.PHONY: clean all 
 
 #html docs get built here as XHTML and also in "online help" as HTML
 html_docs=scripting.html pdfedit.html

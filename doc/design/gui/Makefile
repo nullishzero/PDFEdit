@@ -1,6 +1,6 @@
 #Makefile for documentation
 
-.PHONY: clean
+.PHONY: clean all
 
 docs=menu.html
 
