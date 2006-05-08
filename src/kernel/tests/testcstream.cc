@@ -131,9 +131,10 @@ bool createStream (std::ostream& oss, const char* fileName)
 	vector<string> names;
 	stream->getAllPropertyNames (names);
 
-	oss << " CStream dictionary: " << flush;
+	oss << " CStream dictionary: [" << flush;
 	for (vector<string>::iterator it = names.begin(); it != names.end(); ++it)
 		oss << (*it) << " " << flush;
+	oss << "]" << flush;
 
 	return true;
 }
@@ -204,9 +205,9 @@ bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileNa
 	oss << "object type " << str->getTypeName() << flush;
 	assert (objStream == str->getType ());
 
-	//int c;
-	//while (EOF != (c = str->getStream()->getChar())) 
-	//	oss << (char)c << flush;
+	int c;
+	while (EOF != (c = str->getStream()->getChar())) 
+		oss << (char)c << flush;
 	
 	return true;
 }

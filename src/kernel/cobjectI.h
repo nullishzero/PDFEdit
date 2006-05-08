@@ -964,7 +964,7 @@ CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 	// Create input filtes and add filters according to Filter item in
 	// stream dictionary
 	// 
-	boost::iostreams::filtering_wistream in;
+	filters::InputStream in;
 	std::vector<std::string> filters;
 	getFilters (filters);
 	
@@ -978,11 +978,15 @@ CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 		kernelPrintDbg (debug::DBG_DBG, "One of the filters is not supported, using none..");
 		
 		dictionary.delProperty ("Filter");
+		// Clear buffer
 		buffer.clear ();
 		std::copy (buf.begin(), buf.end(), std::back_inserter (buffer));
 		return;
 	}
 	
+	// Clear buffer
+	buffer.clear ();
+
 	// Create input source from buffer
 	boost::iostreams::stream<filters::buffer_source<Buffer> > input (buf);
 	in.push (input);

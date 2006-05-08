@@ -453,7 +453,7 @@ namespace {
 			break;
 
 		case objStream:
-			obj.streamReset ();
+			/*obj.streamReset ();
 			assert (0 == obj.streamGetPos());
 			{
 				Dict* dict = obj.streamGetDict ();
@@ -466,13 +466,13 @@ namespace {
 			
 			oss << CSTREAM_HEADER;
 			obj.streamReset ();
-			char c;
+			int c = 0;
 			while (EOF != (c = obj.streamGetChar())) 
-				oss << c;
+				oss << static_cast<string::value_type> (c);
 			obj.streamClose ();
 			oss << CSTREAM_FOOTER;
 			break;
-
+			*/
 		default:
 			assert (false);	
 			break;
@@ -772,12 +772,6 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 ::Object* 
 xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
 {
-	std::ofstream os;
-	os.open ("11");
-	for (CStream::Buffer::const_iterator it = buffer.begin(); it != buffer.end (); ++it)
-		os << (char)(*it);
-	os.close ();
-	
 	//
 	// Copy buffer and use parser to make stream object
 	//
@@ -788,7 +782,7 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
 		tmpbuf [i++] = static_cast<char> (*it);
 	std::copy (tmpbuf, tmpbuf + end.length(), std::back_inserter (end));
 	assert (i == buffer.size());
-	utilsPrintDbg (debug::DBG_DBG, tmpbuf);
+	//utilsPrintDbg (debug::DBG_DBG, tmpbuf);
 	
 	// Create stream
 	::Stream* stream = new MemStream (tmpbuf, 0, buffer.size(), dict);
@@ -1140,9 +1134,9 @@ parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
 	rawstr->reset ();
 
 	// Save chars
-	CStream::Buffer::value_type c;
+	int c;
 	while (EOF != (c = rawstr->getChar())) 
-		container.push_back (c);
+		container.push_back (static_cast<CStream::Buffer::value_type> (c));
 	
 	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());
 	assert (len == container.size());

@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/05/08 10:57:47  misuj1am
+ *
+ * -- small changes
+ * 	-- CStream::Buffer wchar_t changed to char
+ * 	-- commented some debugging output out
+ * 	-- buggie: changed setRawBuffer to replace characters instead of appending
+ *
  * Revision 1.10  2006/05/07 10:03:12  misuj1am
  *
  * -- ADD: filter exception
@@ -32,7 +39,8 @@ namespace filters {
 //=======================================
 
 /** I/O Character type. */
-typedef wchar_t	StreamChar;
+typedef char StreamChar;
+typedef boost::iostreams::filtering_istream InputStream;
 	
 //
 // Forward declarations

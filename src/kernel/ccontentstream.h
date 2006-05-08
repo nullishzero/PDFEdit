@@ -78,7 +78,7 @@ public:
 			// Create rectangle from actual position
 			Rectangle rc (state.getCurX (), state.getPageHeight () - state.getCurY(), 0, 0);
 			
-			/*// DEBUG OUTPUT //
+			// DEBUG OUTPUT //
 			std::string frst;
 			it.getCurrent().lock()->getOperatorName(frst);
 			PdfOperator::Operands ops;
@@ -87,7 +87,7 @@ public:
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
 			utilsPrintDbg (debug::DBG_DBG, rc << " " << frst << " " << strop);
-			*//////////////////
+			/////////////////
 
 			if (cmp(rc))
 				container.push_back (boost::shared_ptr<PdfOperator> (it.getCurrent()));
