@@ -164,7 +164,6 @@ opcount (ostream& oss, const char* fileName)
 		CStream& str = *(*it);
 		
 		str.open ();
-		testPrintDbg (debug::DBG_DBG, "");
 
 		while (!str.eof())
 		{
@@ -193,7 +192,6 @@ opcount (ostream& oss, const char* fileName)
 
 		}
 
-		testPrintDbg (debug::DBG_DBG, "close stream");
 		str.close ();
 	}
 	

@@ -1160,6 +1160,7 @@ public:
 	//
 	void objectDeleted (IProperty* ip)
 	{
+		return;
 		#if MEM_CHECKER_OUTPUT
 		_printHeader (std::cerr);
 		std::cerr << "IProperty deleted.";
