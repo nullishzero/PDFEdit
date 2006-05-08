@@ -4,6 +4,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/05/08 22:21:56  hockm0bm
+ * * isLinearized method added
+ *         - linearized field added
+ * * checkLinearized is called in constructor
+ * * saveChages prints WARNING if file is linearized
+ * * changeRevision throws an exception if file is linearized
+ * * collectRevisions doesn't collect if file is linearized
+ *
  * Revision 1.17  2006/05/08 21:24:33  hockm0bm
  * checkLinearized function added
  *
@@ -86,8 +94,6 @@
 #include "xrefwriter.h"
 #include "cobject.h"
 
-using namespace pdfobjects;
-using namespace utils;
 using namespace debug;
 
 #ifndef FIRST_LINEARIZED_BLOCK
@@ -99,6 +105,8 @@ using namespace debug;
  */
 #define FIRST_LINEARIZED_BLOCK 1024
 #endif
+
+namespace pdfobjects {
 
 namespace utils {
 
@@ -135,8 +143,8 @@ bool checkLinearized(StreamWriter & stream, Ref * ref)
 				// indirect object is dictionary, so it can be Linearized
 				// dictionary
 				Object version;
-				obj.getDict()->lookupNF("/Linearized", &version);
-				if(version.isInt())
+				obj.getDict()->lookupNF("Linearized", &version);
+				if(!version.isNull())
 				{
 					// this is realy Linearized dictionary, so stream contains
 					// lienarized pdf content.
@@ -172,18 +180,27 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 	mode(paranoid), 
 	pdf(_pdf), 
 	revision(0), 
-	pdfWriter(new OldStylePdfWriter())
+	pdfWriter(new utils::OldStylePdfWriter())
 {
 	// gets storePos
 	// searches %%EOF element from startxref position.
 	storePos=XRef::eofPos;
 
+	// checks whether file is linearized
+	Ref linearizedRef;
+	linearized=utils::checkLinearized(*stream, &linearizedRef);
+	if(linearized)
+		kernelPrintDbg(DBG_DBG, "Pdf content is linearized. Linearized dictionary"<<
+				" ref=["<<linearizedRef.num<<", "<<linearizedRef.gen<<"]");
+	
 	// collects all available revisions
 	collectRevisions();
 }
 
-IPdfWriter * XRefWriter::setPdfWriter(IPdfWriter * writer)
+utils::IPdfWriter * XRefWriter::setPdfWriter(utils::IPdfWriter * writer)
 {
+using namespace utils;
+
 	IPdfWriter * current=pdfWriter;
 
 	// if given writer is non NULL, sets pdfWriter
@@ -361,7 +378,12 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 
 void XRefWriter::saveChanges(bool newRevision)
 {
+using namespace utils;
+
 	kernelPrintDbg(DBG_DBG, "");
+
+	if(linearized)
+		kernelPrintDbg(DBG_WARN, "Pdf is linearized and changes may brake rules for linearization.");
 
 	// if changedStorage is empty, there is nothing to do
 	if(changedStorage.size()==0)
@@ -422,6 +444,12 @@ void XRefWriter::saveChanges(bool newRevision)
 void XRefWriter::collectRevisions()
 {
 	kernelPrintDbg(DBG_DBG, "");
+
+	if(isLinearized())
+	{
+		kernelPrintDbg(DBG_WARN, "collectRevisions not implemented for linearized pdf");
+		return;
+	}
 
 	// clears revisions if non empty
 	if(revisions.size())
@@ -526,13 +554,18 @@ void XRefWriter::changeRevision(unsigned revNumber)
 		kernelPrintDbg(DBG_INFO, "Revision changed to "<<revNumber);
 		return;
 	}
+
+	if(isLinearized())
+	{
+		kernelPrintDbg(DBG_WARN, "Document is lenearized and changeRevision is not implemented.");
+		throw NotImplementedException("changeRevision is not implemented fro linearizes pdf.");
+	}
 	
 	// constrains check
 	if(revNumber>revisions.size()-1)
 	{
 		kernelPrintDbg(DBG_ERR, "unkown revision with number="<<revNumber);
-		// TODO throw an exception
-		return;
+		throw OutOfRange();
 	}
 	
 	// forces CXRef to reopen from revisions[revNumber] offset
@@ -586,3 +619,5 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "Copies until "<<revisionEOF<<" offset");
 	streamWriter->clone(file, 0, revisionEOF);
 }
+
+} // end of pdfobjects namespace

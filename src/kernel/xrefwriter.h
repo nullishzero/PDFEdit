@@ -6,6 +6,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/05/08 22:21:56  hockm0bm
+ * * isLinearized method added
+ *         - linearized field added
+ * * checkLinearized is called in constructor
+ * * saveChages prints WARNING if file is linearized
+ * * changeRevision throws an exception if file is linearized
+ * * collectRevisions doesn't collect if file is linearized
+ *
  * Revision 1.19  2006/05/08 21:24:33  hockm0bm
  * checkLinearized function added
  *
@@ -234,12 +242,19 @@ private:
 	 */
 	utils::IPdfWriter * pdfWriter;
 	
+	/** Flag for linearized pdf content.
+	 * This value is set in constructor and it tells whether file is linearized.
+	 * Some operations are not implemented for those files (e. g. revision
+	 * handling, ... - it is always described in method if it is problem)
+	 */
+	bool linearized;
+	
 	/* Empty constructor.
 	 *
 	 * It's not available to prevent uninitialized instances.
 	 * Sets mode to paranoid.
 	 */
-	XRefWriter():CXref(), mode(paranoid), pdf(NULL), revision(0)
+	XRefWriter():CXref(), mode(paranoid), pdf(NULL), revision(0), linearized(false)
 	{
 	}
 protected:
@@ -260,6 +275,11 @@ protected:
 
 	/** Collects all revisions information.
 	 *
+	 * If linearized is set to true, immediately returns with warning message.
+	 * Otherwise stores position of xref section start to the revisions storage.
+	 * Parses Trailer dictionary and gets Prev field value. If not present,
+	 * assumes no more revisions are available. Otherwise stores that position
+	 * to revisions storage as later revision and continues same way.
 	 */
 	void collectRevisions();
 public:
@@ -290,6 +310,15 @@ public:
 	 * @return Previous pdf writer implemetator.
 	 */
 	utils::IPdfWriter * setPdfWriter(utils::IPdfWriter * writer);
+
+	/** Returns linearized flag value.
+	 * 
+	 * @return true if file is linearized, false otherwise.
+	 */
+	bool isLinearized()const
+	{
+		return linearized;
+	}
 	
 	/** Initialize constructor with cache.
 	 * @param stream Stream with file data.
@@ -392,6 +421,14 @@ public:
 	 * Use default behaviour if you want to be sure that you don't lose your
 	 * changes and create new revision if you want to have certain set of
 	 * changes grouped together (e. g. when changes have some significancy).
+	 * <br>
+	 * NOE: if document is linearized prints warning but continue with saving
+	 * even if output may brake linearization rules and content is still marked
+	 * as linearized (Linearized dictionary is kept because we never change
+	 * original content and all changes are strictly appended). Method should be
+	 * called with linearized documents very carefully (especially when braking
+	 * linearization can confuse pdf reader - e. g. xpdf doesn't care for
+	 * linearized pdfs special handling and reads file allways from the end). 
 	 *
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one.
@@ -411,7 +448,8 @@ public:
 	 * <br>
 	 * This is because branching is not implementable in PDF structure.
 	 * 
-	 * @throw TODO if revNumber doesn't stand for any known revisions.
+	 * @throw OutOfRange if revNumber doesn't stand for any known revisions.
+	 * @throw NotImplementedException if pdf content is linearized.
 	 */ 
 	void changeRevision(unsigned revNumber);
 
