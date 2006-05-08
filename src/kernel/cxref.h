@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/05/08 10:34:04  hockm0bm
+ * * reserveRef throws exception if no indirect object is available
+ * * fetch always returns cloned value (because of streams)
+ *
  * Revision 1.20  2006/05/01 10:03:01  hockm0bm
  * MAXOBJNUM value corrected to MAX_INT
  *
@@ -250,7 +254,7 @@ protected:
 	 * method has to be called. This is mainly because we want to prevent 
 	 * unintialized object inside.
 	 *
-	 * @throw TODO if all object numbers has been used.
+	 * @throw IndirectObjectsExhausted if all object numbers has been used.
 	 * @return Reference which can be used to add new indirect object.
 	 */
 	virtual ::Ref reserveRef();
@@ -347,7 +351,7 @@ public:
 	
 	/** Destructor.
 	 *
-	 * Destroys cache.
+	 * Calls cleanUp for all internals deallocation and deletes stream.
 	 */
 	virtual ~CXref();
 	

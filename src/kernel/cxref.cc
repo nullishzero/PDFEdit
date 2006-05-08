@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/08 10:34:04  hockm0bm
+ * * reserveRef throws exception if no indirect object is available
+ * * fetch always returns cloned value (because of streams)
+ *
  * Revision 1.16  2006/05/06 08:39:28  hockm0bm
  * knowsRef delegates to XRef::knowsRef if reference not available in newStorage
  *
@@ -140,6 +144,8 @@ using namespace debug;
 	kernelPrintDbg(DBG_INFO, "Deallocating internal structures");
 	cleanUp();
 	
+	// XRef doesn't deallocate stream, so it has to be deallocated here
+	delete str;
 }
 
 ::Object * CXref::changeObject(::Ref ref, ::Object * instance)
@@ -283,9 +289,7 @@ using namespace debug;
 		{
 			// all object numbers are used, no more indirect objects
 			// can be created
-			// TODO throw exception
-			Ref ref={0,0};
-			return ref;
+			throw IndirectObjectsExhausted();
 		}
 
 		// ok, we have new num and gen is 0, because object is new
@@ -313,11 +317,9 @@ using namespace debug;
 	
 	// it's not possible to create indirect reference value or
 	// any other internaly (by xpdf) used object types
-	// FIXME: why is this not compileable
-	/*
-	if(type==objRef || type==objError || type==objEOF || type==objNone)
-		return 0;
-	*/
+	// FIXME
+	//if(type==objRef || type==objError || type==objEOF || type==objNone)
+	//	return 0;
 
 	::Object * obj=XPdfObjectFactory::getInstance();
 	
@@ -512,7 +514,6 @@ using namespace debug;
 	}
 	*/
 	
-
 	ObjectEntry * entry=changedStorage.get(ref);
 	if(entry)
 	{
@@ -526,15 +527,26 @@ using namespace debug;
 		// this doesn't affect our ::Object in changedStorage
 		*obj=*deepCopy;
 		
-		// dellocate deepCopy - content is kept if it is pointer
-		// because Object has no destructor
+		// dellocate deepCopy - content is kep
 		gfree(deepCopy); 
 		return obj;
 	}
 
-	kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is not changed - using Xref");
 	// delegates to original implementation
-	obj=XRef::fetch(num, gen, obj);
+	kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is not changed - using Xref");
+	Object tmpObj;
+	XRef::fetch(num, gen, &tmpObj);
+
+	// clones fetched object
+	// this has to be done because return value may be stream and we want to
+	// prevent direct changing of the stream
+	// TODO may be optimized - clones just streams
+	Object * cloneObj=tmpObj.clone();
+
+	// shallow copy of cloned value and
+	// deallocates coned value, but keeps content
+	*obj=*cloneObj;
+	gfree(cloneObj);
 
 	// if object is not null, caches object's deep copy
 	/* FIXME uncoment, when cache is ready
@@ -544,6 +556,8 @@ using namespace debug;
 		cache->put(ref, obj->clone());
 	}
 	*/   
+
+	// FIXME has to return cloned value because of streams
 	return obj;
 }
 
