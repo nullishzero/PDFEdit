@@ -2,9 +2,9 @@
 #Makefile for documentation
 #
 
-.PHONY: clean
+.PHONY: clean all
 
-docs=observers.html pdfoperators.html cobjects.html cpdf.html document_changes.html
+docs=observers.html pdfoperators.html cobjects.html cpdf.html document_changes.html xpdf_modifications.html
 
 all: $(docs)
 
