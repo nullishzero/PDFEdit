@@ -32,6 +32,7 @@ HEADERS += ../utils/debug.h ../utils/iterator.h ../utils/observer.h
 # Special utils
 #
 HEADERS += exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
+HEADERS += pdfwriter.h
 SOURCES += modecontroller.cc filters.cc 
 
 #
@@ -41,6 +42,7 @@ HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pd
 HEADERS += streamwriter.h cinlineimage.h
 SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
 SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
+SOURCES += pdfwriter.cc
 SOURCES += cinlineimage.cc
 SOURCES += cpage.cc cpdf.cc 
 
