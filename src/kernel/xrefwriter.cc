@@ -4,6 +4,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/05/08 20:17:42  hockm0bm
+ * * key words removed from here
+ * * new model of data writing
+ *         - uses IPdfWriter interface for implementation specific writer
+ *         - uses OldStylePdfWriter by default
+ *         - new implementator can be set by setPdfWriter method
+ *         - saveChanges collects object from changedStorage and uses IPdfWriter
+ *           to write them to the stream so it is independed on implementation
+ *
  * Revision 1.15  2006/05/06 08:40:20  hockm0bm
  * knowsRef delegates to XRef::knowsRef if not in the newest revision
  *
@@ -78,25 +87,12 @@ using namespace pdfobjects;
 using namespace utils;
 using namespace debug;
 
-/** Marker of trailer dictionary.
- *
- * Each trailer dictionary begins immediately after line containing this string.
- */
-const char * TRAILER_KEYWORD="trailer";
-
-/** Marker of cross reference table.
- * Each xref section begins immediately after line containing this string.
- */
-const char * XREF_KEYWORD="xref";
-
-
-/** Marker of last cross reference starting offset.
- * This key word marks file offset where xref starts. The number is on following
- * line.
- */
-const char * STARTXREF_KEYWORD="startxref";
-
-XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf):CXref(stream), mode(paranoid), pdf(_pdf), revision(0)
+XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
+	:CXref(stream), 
+	mode(paranoid), 
+	pdf(_pdf), 
+	revision(0), 
+	pdfWriter(new OldStylePdfWriter())
 {
 	// gets storePos
 	// searches %%EOF element from startxref position.
@@ -104,6 +100,17 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf):CXref(stream), mode(p
 
 	// collects all available revisions
 	collectRevisions();
+}
+
+IPdfWriter * XRefWriter::setPdfWriter(IPdfWriter * writer)
+{
+	IPdfWriter * current=pdfWriter;
+
+	// if given writer is non NULL, sets pdfWriter
+	if(writer)
+		pdfWriter=writer;
+
+	return current;
 }
 
 bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
@@ -272,116 +279,6 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 	return CXref::createObject(type, ref);
 }
 
-typedef std::map< ::Ref, size_t, RefComparator> OffsetTab;
-
-/** Builds Xref table from offset table.
- * @param table Offset table containing reference to file offset mapping.
- * @param stream StreamWriter which is used to write data.
- *
- * Constructs (old style) cross reference table from given reference to file
- * offset mapping to the given stream accordinf PDF specification.
- * <br>
- * In first step table is used for cross reference table subsection creation.
- * Then xref keyword is written to the stream.
- * Finally so called SubSectionTab is dumpt to the file. Each subsection is
- * preceeded by start object number and subsection size.
- * <p>
- * <b>PDF specification notes:</b>
- * <br>
- * TODO sections and subsections describtion
- */
-void buildXref(OffsetTab & table, StreamWriter & stream)
-{
-using namespace std;
-
-	utilsPrintDbg(DBG_DBG, "");
-	
-	// subsection table type
-	// 	- key is object number of subsection leader
-	// 	- value is an array of entries (file offset and generation number
-	// 	  pairs). This array contains sequence of entries each for one object
-	// 	  number. This sequence is without holes (n-th element has key+n object
-	// 	  number - n starts from 0)
-	typedef pair<size_t, int> EntryType;
-	typedef vector<EntryType> EntriesType;
-	typedef map< int , EntriesType> SubSectionTab;
-
-	// creates subsection table from offset table:
-	// Starts with first element from offset table - inserts num as key and gen
-	// and offset as entry pair.
-	SubSectionTab subSectionTable;
-	SubSectionTab::iterator sub=subSectionTable.begin();
-	
-	utilsPrintDbg(DBG_DBG, "Creating subsection table");
-	
-	// goes through rest entries of offset table
-	for(OffsetTab::iterator i=table.begin(); i!=table.end(); i++)
-	{
-		int num=(i->first).num;
-		int gen=(i->first).gen;
-		size_t off=i->second;
-		
-		// skips not assigned subsection
-		if(sub!=subSectionTable.end())
-		{
-			// if num can be added to current sub, appends entries array
-			// NOTE: num can be added if sub's key+entries size == num, which 
-			// means that entries array won't destroy sequence without holes 
-			// condition after addition
-			if((size_t)num == sub->first + (sub->second).size())
-			{
-				utilsPrintDbg(DBG_DBG, "Appending num="<<num<<" to section starting with num="<<sub->first);
-				(sub->second).push_back(EntryType(off, gen));
-				continue;
-			}
-		}
-
-		// num can't be added, so new subsection has to be created and this is
-		// used for next offset table elements
-		EntriesType entries;
-		entries.push_back(EntryType(off, gen));
-		pair<SubSectionTab::iterator, bool> ret=subSectionTable.insert(pair<int, EntriesType>(num, entries));
-		utilsPrintDbg(DBG_DBG, "New subsection created with starting num="<<num);
-		sub=ret.first;
-	}
-
-	// cross reference table starts with xref row
-	stream.putLine(XREF_KEYWORD);
-
-	// subsection table is created, we can dump it to the file
-	// xrefRow represents one line of xref table which is exactly XREFROWLENGHT
-	// lenght
-	char xrefRow[XREFROWLENGHT];
-	memset(xrefRow, '\0', sizeof(xrefRow));
-	utilsPrintDbg(DBG_DBG, "Writing "<<subSectionTable.size()<<" subsections");
-	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++)
-	{
-		// at first writes head object number and number of elements in the
-		// subsection
-		EntriesType & entries=i->second;
-		int startNum=i->first;
-		utilsPrintDbg(DBG_DBG, "Starting subsection with startPos="<<startNum<<" and size="<<entries.size());
-
-		snprintf(xrefRow, sizeof(xrefRow)-1, "%d %d", startNum, (int)entries.size());
-		stream.putLine(xrefRow);
-
-		// now prints all entries for this subsection
-		// one entry on one line
-		// according specificat, line has following format:
-		// nnnnnnnnnn ggggg n \n
-		// 	where 
-		// 		n* stands for file offset of object (padded by leading 0)
-		// 		g* is generation number (padded by leading 0)
-		// 		n is literal keyword identifying in-use object
-		// We don't provide information about free objects
-		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
-		{
-			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", entry->first, entry->second);
-			stream.putLine(xrefRow);
-		}
-	}
-}
-
 void XRefWriter::saveChanges(bool newRevision)
 {
 	kernelPrintDbg(DBG_DBG, "");
@@ -398,84 +295,37 @@ void XRefWriter::saveChanges(bool newRevision)
 	// in constructor
 	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(XRef::str);
 
-	// sets position to the storePos, where new data can be placed
-	streamWriter->setPos(storePos);
-
-	// goes over all objects in changedStorage and stores them to the
-	// file and builds table which contains reference to file position mapping.
-	OffsetTab offTable;
-	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
-	//streamWriter->putLine();
+	// gets vector of all changed objects
+	IPdfWriter::ObjectList changed;
+	ObjectStorage< ::Ref, ObjectEntry *, RefComparator>::Iterator i;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
 	{
-		// TODO objNull should be market for marking as free - e.g. position set
-		// to 0 and buildXref should those entries handled as free.
-		
 		::Ref ref=i->first;
-		// associate given reference with actual position.
-		offTable.insert(OffsetTab::value_type(ref, streamWriter->getPos()));		
-		kernelPrintDbg(DBG_DBG, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] stored at offset="<<streamWriter->getPos());
-		
-		// stores PDF representation of object to current position which is
-		// after moved behind written object
 		Object * obj=i->second->object;
-		std::string objPdfFormat;
-		xpdfObjToString(*obj, objPdfFormat);
-
-		// we have to add some more information to write indirect object (this
-		// includes header and footer
-		std::string indirectFormat;
-		IndiRef indiRef={ref.num, ref.gen};
-		createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
-		streamWriter->putLine(indirectFormat.c_str());
+		changed.push_back(IPdfWriter::ObjectElement(ref, obj));
 	}
 
-	// all objects are saved xref table is constructed from offTable
-	// New xref section starts is stored to have information for startxref
-	// element which is behind trailer
-	size_t xrefPos=streamWriter->getPos();
-	buildXref(offTable, *streamWriter);
-	
-	// adds Prev field - to say where starts previous xref table 
-	// changeTrailer method is called on CXref because it despite of XRefWriter
-	// it doesn't do any checking (we know what we are doing)
-	Object prevObj;
-	prevObj.initInt(XRef::lastXRefPos);
-
-	Object * oldPrev=CXref::changeTrailer("Prev", &prevObj);
-	if(oldPrev)
+	// delegates writing to pdfWriter using streamWriter stream from storePos
+	// position.
+	// Stores position of the cross reference section to xrefPos
+	if(!pdfWriter)
 	{
-		// if oldPrev was not 0, deallocates it
-		oldPrev->free();
-		gfree(oldPrev);
+		kernelPrintDbg(DBG_ERR, "No pdfWriter defined");
+		return;
 	}
+	pdfWriter->writeContent(changed, *streamWriter, storePos);
+	size_t xrefPos=streamWriter->getPos();
+	pdfWriter->writeTrailer(trailerDict, lastXRefPos, *streamWriter);
 
-	// stores changed trialer to the file
-	std::string objPdfFormat;
-	xpdfObjToString(trailerDict, objPdfFormat);
-	streamWriter->putLine(TRAILER_KEYWORD);
-	streamWriter->putLine(objPdfFormat.c_str());
-	kernelPrintDbg(DBG_DBG, "Trailer saved");
-
-	// stores offset of last (created one) xref table
-	// TODO adds also comment with time and date of creation
-	streamWriter->putLine(STARTXREF_KEYWORD);
-	char xrefPosStr[128];
-	sprintf(xrefPosStr, "%u", xrefPos);
-	streamWriter->putLine(xrefPosStr);
 	
-	// Finaly puts %%EOF behind but keeps position of marker start
-	size_t pos=streamWriter->getPos();
-	streamWriter->putLine(EOFMARKER);
-	kernelPrintDbg(DBG_DBG, "PDF end of file marker saved");
-	
-	// if new revision should be created, moves storePos at PDF end of file
-	// marker position and forces CXref reopen to handle new revision - all
-	// chnaged objects are stored in file now.
+	// if new revision should be created, moves storePos behind PDF end of file
+	// marker and forces CXref reopen to handle new revision - all
+	// changed objects are stored in file now.
 	if(newRevision)
 	{
 		kernelPrintDbg(DBG_INFO, "Saving changes as new revision.");
-		storePos=pos;
+		storePos=streamWriter->getPos();
+		kernelPrintDbg(DBG_DBG, "New storePos="<<storePos);
 
 		// forces reinitialization of XRef and CXref internal structures from
 		// last xref position

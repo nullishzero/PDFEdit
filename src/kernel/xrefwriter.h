@@ -6,6 +6,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/05/08 20:17:42  hockm0bm
+ * * key words removed from here
+ * * new model of data writing
+ *         - uses IPdfWriter interface for implementation specific writer
+ *         - uses OldStylePdfWriter by default
+ *         - new implementator can be set by setPdfWriter method
+ *         - saveChanges collects object from changedStorage and uses IPdfWriter
+ *           to write them to the stream so it is independed on implementation
+ *
  * Revision 1.17  2006/05/06 08:40:20  hockm0bm
  * knowsRef delegates to XRef::knowsRef if not in the newest revision
  *
@@ -109,17 +118,12 @@
 #include "static.h"
 #include "cxref.h"
 #include "streamwriter.h"
+#include "pdfwriter.h"
 
-/** Size of buffer for xref table row.
- * This includes also 1 byte for trailing '\0' (end of string marker).
- */
-#define XREFROWLENGHT 21
-#define EOFMARKER "%%EOF"
 
 namespace pdfobjects
 {
 	
-
 /** CXref writer class.
  *
  * This wrapper of the CXref class enables:
@@ -199,6 +203,13 @@ private:
 	 * marker %%EOF. This invariant is allways kept.
 	 */
 	size_t storePos;
+
+	/** Pdf writer implementator.
+	 *
+	 * Uses OldStylePdfWriter by default. This can be changed by setPdfWriter
+	 * method.
+	 */
+	utils::IPdfWriter * pdfWriter;
 	
 	/* Empty constructor.
 	 *
@@ -237,6 +248,8 @@ public:
 	 * all revisions (uses collectRevisions method) and sets storePos to the 
 	 * %%EOF position.
 	 * <br>
+	 * Allocates OldStylePdfWriter for pdfWriter field.
+	 * <br>
 	 * Stream is supplied to CXref constructor.
 	 *
 	 * @throw MalformedFormatExeption if XRef creation fails (instance is
@@ -245,6 +258,16 @@ public:
 	 */
 	XRefWriter(StreamWriter * stream, CPdf * _pdf);
 
+	/** Sets new pdf writer implementator.
+	 * @param writer Implementation of IPdfWriter (must be non NULL).
+	 *
+	 * Sets writer (if parameter is non NULL) and returns current
+	 * implementation. If parameter is NULL, just returns current implementator.
+	 *
+	 * @return Previous pdf writer implemetator.
+	 */
+	utils::IPdfWriter * setPdfWriter(utils::IPdfWriter * writer);
+	
 	/** Initialize constructor with cache.
 	 * @param stream Stream with file data.
 	 * @param c Cache instance.
