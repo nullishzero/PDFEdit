@@ -83,7 +83,7 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 	
 	//stream->setRawBuffer (buf);
 	stream->getStringRepresentation (tmp);
-	oss << tmp << flush;
+	//oss << tmp << flush;
 	clen->getPropertyValue (len);
 	//oss << "Length: " << len << " " << flush;
 
@@ -94,7 +94,7 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 	//oss << "Length: " << len << " " << flush;
 	stream->setBuffer (buf);
 	stream->getStringRepresentation (tmp);
-	oss << tmp << flush;
+	//oss << tmp << flush;
 	clen->getPropertyValue (len);
 	//oss << "Length: " << len << " " << flush;
 
@@ -206,8 +206,8 @@ bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileNa
 	assert (objStream == str->getType ());
 
 	int c;
-	while (EOF != (c = str->getStream()->getChar())) 
-		oss << (char)c << flush;
+	//while (EOF != (c = str->getStream()->getChar())) 
+	//	oss << (char)c << flush;
 	
 	return true;
 }
