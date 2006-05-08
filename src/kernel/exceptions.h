@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/05/08 10:27:55  hockm0bm
+ * IndirectObjectsExhausted exception added
+ *
  * Revision 1.17  2006/05/07 10:03:12  misuj1am
  *
  * -- ADD: filter exception
@@ -117,6 +120,26 @@ public:
 	void getMessage(std::string & msg)const
 	{
 		msg=message;
+	}
+};
+
+/** No more new indirect object available exception.
+ * This exception is thrown if there is no more free indirect object available.
+ */
+class IndirectObjectsExhausted: public PdfException
+{
+public:
+	/** Exception constructor.
+	 */
+	PdfOpenException(){};
+
+	virtual ~PdfOpenException()throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		return "No more indirect reference available";
 	}
 };
 
