@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/05/08 21:24:33  hockm0bm
+ * checkLinearized function added
+ *
  * Revision 1.18  2006/05/08 20:17:42  hockm0bm
  * * key words removed from here
  * * new model of data writing
@@ -123,6 +126,26 @@
 
 namespace pdfobjects
 {
+
+namespace utils
+{
+
+/** Checks whether given stream is linearized.
+ * @param stream Pdf stream to read (from the file begin).
+ * @param ref Pointer to reference where to set object and generation number.
+ *
+ * Searches first indirect object in the stream from the begining and if it is
+ * dictionary, checks whether it contains Linearized version entry. If so
+ * returns true and if given ref is not NULL, sets object and generation number.
+ * Otherwise just returns false and doesn't care for ref parameter.
+ *
+ * @return true if first indirect object is Linearized dictionary, false
+ * otherwise.
+ */
+bool checkLinearized(StreamWriter & stream, Ref * ref);
+
+} // end of namespace utils
+
 	
 /** CXref writer class.
  *

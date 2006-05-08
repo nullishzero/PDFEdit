@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/08 21:24:33  hockm0bm
+ * checkLinearized function added
+ *
  * Revision 1.16  2006/05/08 20:17:42  hockm0bm
  * * key words removed from here
  * * new model of data writing
@@ -86,6 +89,83 @@
 using namespace pdfobjects;
 using namespace utils;
 using namespace debug;
+
+#ifndef FIRST_LINEARIZED_BLOCK
+/** Size of first block of linearized pdf where Linearized dictionary must
+ * occure. 
+ * 
+ * If it value is not defined yet, uses 1024 default value. So it may be
+ * specified as compile time define for this module.
+ */
+#define FIRST_LINEARIZED_BLOCK 1024
+#endif
+
+namespace utils {
+
+bool checkLinearized(StreamWriter & stream, Ref * ref)
+{
+	// searches num gen obj entry. Starts from stream begining
+	stream.reset();
+	Object obj;
+	Parser parser=Parser(
+			NULL, new Lexer(
+				NULL, stream.makeSubStream(stream.getPos(), false, 0, &obj)
+				)
+			);
+
+	while(stream.getPos() < FIRST_LINEARIZED_BLOCK)
+	{
+		Object obj1, obj2, obj3;
+		parser.getObj(&obj1);
+		parser.getObj(&obj2);
+		parser.getObj(&obj3);
+
+		// indirect object must start with 
+		// num gen obj line
+		if(obj1.isInt() && obj2.isInt() && obj3.isCmd())
+		{
+			Object obj;
+			parser.getObj(&obj);
+
+			//  result is false by default - it MUST BE linearized dictionary
+			bool result=false;
+			
+			if(obj.isDict())
+			{
+				// indirect object is dictionary, so it can be Linearized
+				// dictionary
+				Object version;
+				obj.getDict()->lookupNF("/Linearized", &version);
+				if(version.isInt())
+				{
+					// this is realy Linearized dictionary, so stream contains
+					// lienarized pdf content.
+					// if ref is not NULL, sets reference of this dictionary
+					if(ref)
+					{
+						ref->num=obj1.getInt();
+						ref->gen=obj2.getInt();
+					}
+					result=true;
+				}
+			}
+
+			obj1.free();
+			obj2.free();
+			obj3.free();
+			return result;
+		}
+
+		obj1.free();
+		obj2.free();
+		obj3.free();
+	}
+
+	// no indirect object in the document
+	return false;
+}
+
+} // end of utils namespace
 
 XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 	:CXref(stream), 
