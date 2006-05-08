@@ -67,6 +67,18 @@ QSTreeItem* QSTreeItem::parent() {
 }
 
 /**
+ Return child of this Tree Item with given name, or NULL if such child does not exist,
+ or is not subclass of TreeItemAbstract
+ @param name Name of child to get
+ @return child of this TreeItem
+*/
+QSTreeItem* QSTreeItem::child(const QString &name) {
+ TreeItemAbstract* child=dynamic_cast<TreeItemAbstract*>(obj->child(name));
+ if (!child) return NULL;
+ return new QSTreeItem(child);
+}
+
+/**
  Return name of this item.
  @return name of this item
 */

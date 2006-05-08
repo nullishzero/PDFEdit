@@ -1,6 +1,15 @@
 //This script will be run at start, or on creation of new window
 //Each window have its own scripting context
 
+//Include testing/debugging items in menus?
+var tests=settings.readBool("tests");
+
+/** Turn on/off testing/debugging. */
+function setTests(x) {
+ settings.write("tests",x);
+ tests=x;
+}
+
 /** Create new empty editor window */
 function newwindow() {
  createNewWindow();
@@ -70,6 +79,11 @@ function onTreeRightClick() {
  if (holdContainer(treeitem))
    menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog()");
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
+ menu.addSeparator();
+ if (tests) {
+  if (treeitem.itemtype()=="Stream")
+    menu.addItemDef("item Stream integrity test,buftest(treeitem.item())");
+ }
  eval(menu.popup());
 }
 
@@ -107,5 +121,26 @@ function add_obj_dlg() {
  if (holdContainer(treeitem.parent())) addObjectDialog(treeitem.parent().item());
 }
 
+/** Get dictionary from page number X */
+function pageDict(x) {
+ page=document.getPage(x);
+ return page.getDictionary();
+}
+
 //Print welcome message
 print("PDF Editor "+version());
+
+/** TEST: buffer integrity */
+function buftest(x) {
+ s1=x.getBuffer();
+ x.setBuffer(s1);
+ s2=x.getBuffer();
+ if (s1.length!=s2.length) {
+  print ("Different length of strings: "+s1.length+" vs "+s2.length);
+ } else if (s1!=s2) {
+  print("Different strings: s1="+s1.length);
+  print(s1)
+  print("Different strings: s2="+s2.length);
+  print(s2);
+ }
+}

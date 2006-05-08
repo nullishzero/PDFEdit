@@ -33,7 +33,7 @@ public:
  virtual void deleteChild(QListViewItem *target);
  void eraseItems();
  void moveAllChildsFrom(TreeItemAbstract* src);
-
+ QListViewItem* child(const QString &name);
  //Abstract functions
 
  /** 

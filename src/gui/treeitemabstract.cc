@@ -101,6 +101,16 @@ void TreeItemAbstract::eraseItems() {
 }
 
 /**
+ Look for child with given name and return it.
+ Return NULL if child not found
+ @param name Name of child to look for
+ @return Specified child of this tree item
+*/
+QListViewItem* TreeItemAbstract::child(const QString &name) {
+ //TODO: what if tree not fully expanded?
+ return items[name];//QDict will return NULL if item is not there
+}
+/**
  Move selection away from this item to nearest sensible item<br>
  If this item is not selected, task is done, does nothing<br>
  If it is selected, firt attempt is to move selection on next sibling, then on item above, then on item below.

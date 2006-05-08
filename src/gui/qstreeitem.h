@@ -19,6 +19,8 @@ public slots:
  QSCObject* item();
  /*- Get type of object contained in this tree item (shortcut for .item().type()) */
  QString itemtype();
+ /*- Return child of this tree item with given name, or NULL if this item have no child with such name */
+ QSTreeItem* child(const QString &name);
  /*-
   Get names of all visible childs items of this treeitem 
   Childs that are not shown in tree (because of treeview settings, etc ...) are not returned.
