@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/05/09 20:03:46  hockm0bm
+ * * getNameFromDict bug fix
+ *         - Type used instead of /Type
+ *
  * Revision 1.13  2006/04/25 02:26:17  misuj1am
  *
  * -- ADD: set*ToDict, set*ToArray improved to automaticly fetch object if ref
@@ -155,7 +159,7 @@ std::string getDictType(boost::shared_ptr<CDict> dict)
 {
 	try
 	{
-		return getNameFromDict("/Type", dict);
+		return getNameFromDict("Type", dict);
 	// FIXME change to proper exception
 	}catch(std::exception & e)
 	{

@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/05/09 20:03:47  hockm0bm
+ * * getNameFromDict bug fix
+ *         - Type used instead of /Type
+ *
  * Revision 1.23  2006/05/01 13:53:06  hockm0bm
  * new style printDbg
  *
@@ -123,7 +127,7 @@ namespace utils
 /** Gets type of the dictionary.
  * @param dict Dictionary wrapped in smart pointer.
  *
- * Tries to get /Type field from dictionary and returns its string value. If not
+ * Tries to get Type field from dictionary and returns its string value. If not
  * present, returns an empty string.
  *
  * @return string name of the dictionary type or empty string if not able to
@@ -218,7 +222,7 @@ boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref);
  * @param out Output stream, where to print (implicit value is std::cout).
  *
  * Gets string representation of given property and dumps it to standard output.
- * TODO output stream as parameter.
+ * Checks whether this functionality is duplicated.
  */
 void printProperty(boost::shared_ptr<IProperty> ip, std::ostream &out);
 
