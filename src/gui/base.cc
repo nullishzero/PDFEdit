@@ -1,5 +1,6 @@
 /** @file
  Base - class that host scripts and contain static script functions
+ This class is also responsible for garbage collection of scripting objects
  @author Martin Petricek
 */
 
@@ -50,7 +51,14 @@ Base::Base(PdfEditWindow *parent) {
  //Create and add importer to QSProject and related QSInterpreter
  import=new QSImporter(qp,this,this);
  import->addQSObj(w->pagespc,"PageSpace");
+ import->addQSObj(w->cmdLine,"CommandWindow");
  qpdf=NULL;
+}
+
+/** Get interpreter */
+QSInterpreter* Base::interpreter() {
+//TODO: doc
+ return qs;
 }
 
 /** Import currently edited document (QSPDF wrapper) into scripting */

@@ -21,15 +21,16 @@ using namespace pdfobjects;
 class QSImporter : public QObject {
  Q_OBJECT
 public:
- QSImporter(QSProject *_qp,QObject *_context,Base *_base);
  virtual ~QSImporter();
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
+ static QSCObject* createQSObject(boost::shared_ptr<IProperty> ip,Base *_base);
  QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
  QSCObject* createQSObject(TreeItemAbstract *item);
  QSPdf* createQSObject(CPdf* pdf);
+ QSImporter(QSProject *_qp,QObject *_context,Base *_base);
 public slots:
  QObject* getQSObj();
 private:

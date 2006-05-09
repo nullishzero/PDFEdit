@@ -82,7 +82,7 @@ QByteArray QSStream::arrayFromBuffer(const CStream::Buffer &b) {
 
 /**
  Convert QByteArray to CStream::Buffer (basically vector of chars)
- @param s QByteArray used as input
+ @param a QByteArray used as input
  @return Buffer with characters from array
 */
 const CStream::Buffer QSStream::arrayToBuffer(const QByteArray &a) {
@@ -170,6 +170,15 @@ void QSStream::setBuffer(const QString &s) {
  st->setBuffer(stringToBuffer(s));
 }
 
+/**
+ Set buffer from given byte array
+ @param a Data to set into buffer
+*/
+void QSStream::setBuffer(const QByteArray &a) {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ assert(st);
+ st->setBuffer(arrayToBuffer(a));
+}
 
 /**
  Set raw buffer from given string
@@ -182,14 +191,34 @@ void QSStream::setRawBuffer(const QString &s) {
  st->setRawBuffer(stringToBuffer(s));
 }
 
+/**
+ Set raw buffer from given byte array
+ @param a Data to set into buffer
+*/
+void QSStream::setRawBuffer(const QByteArray &a) {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ assert(st);
+ st->setRawBuffer(arrayToBuffer(a));
+}
+
 /** 
  Return data from buffer
  @return buffer as QString
 */
-QString QSStream::getBuffer() {
+QString QSStream::getBufferString() {
  CStream *st=dynamic_cast<CStream*>(obj.get());
  assert(st);
  return stringFromBuffer(st->getBuffer());
+}
+
+/** 
+ Return data from buffer
+ @return buffer as QByteArray
+*/
+QByteArray QSStream::getBuffer() {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ assert(st);
+ return arrayFromBuffer(st->getBuffer());
 }
 
 } // namespace gui

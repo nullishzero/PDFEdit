@@ -163,6 +163,9 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Base for scripting
  base=new Base(this);
 
+ //Init command window (interpreter, context)
+ cmdLine->setInterpreter(base->interpreter(),base);
+
  //object treeview
  tree=new TreeWindow(base,splProp);
 

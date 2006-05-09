@@ -22,16 +22,22 @@ public:
  QSStream(boost::shared_ptr<CStream> _cs,Base *_base);
  virtual ~QSStream();
 public slots:
- /*- Sets buffer of this stream from given string */
+ /*- Sets buffer of this stream from given byte array */
+ void setBuffer(const QByteArray &a);
+ /*- Sets buffer of this stream from given string (overloaded method) */
  void setBuffer(const QString &s);
+ /*- Sets raw buffer of this stream from given byte array */
+ void setRawBuffer(const QByteArray &a);
+ /*- Sets raw buffer of this stream from given string (overloaded method) */
+ void setRawBuffer(const QString &s);
  /*- Loads buffer of this stream from given file. Return true on success, false on failure while loading */
  bool loadBuffer(const QString &fileName);
- /*- Sets raw buffer of this stream from given string */
- void setRawBuffer(const QString &s);
  /*- Loads raw buffer of this stream from given file. Return true on success, false on failure while loading */
  bool loadRawBuffer(const QString &fileName);
+ /*- Gets buffer of this stream as string */
+ QString getBufferString();
  /*- Gets buffer of this stream */
- QString getBuffer();
+ QByteArray getBuffer();
  /*- Saves buffer of this stream to given file. Return true on success, false on failure while saving */
  bool saveBuffer(const QString &fileName);
 };

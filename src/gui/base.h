@@ -34,6 +34,7 @@ public:
  void addGC(QSCObject *o);
  void removeGC(QSCObject *o);
  void cleanup();
+ QSInterpreter* interpreter();
  ~Base();
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */

@@ -27,7 +27,7 @@ namespace gui {
 
 /**
  Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated<br>
- @param qp QProject i wchich
+ @param _qp QSProject in which this importer is installed
  @param _context Context in which all objects will be imported
  @param _base scripting base under which all objects will be created
  */
@@ -69,18 +69,28 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
  @return QSIProperty(ip)
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
+ return createQSObject(ip,base);
+}
+
+/** Static version of factory function to create QSCObjects from various C... classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param ip IProperty to wrap into to QSIProperty
+ @param _base Scripting base 
+ @return QSIProperty(ip)
+ */
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip,Base *_base) {
  if (!ip.get()) return NULL;
  //Try if it is stream
  boost::shared_ptr<CStream> cs=boost::dynamic_pointer_cast<CStream>(ip);
- if (cs.get()) return new QSStream(cs,base);
+ if (cs.get()) return new QSStream(cs,_base);
  //Try if it is dict
  boost::shared_ptr<CDict> cd=boost::dynamic_pointer_cast<CDict>(ip);
- if (cd.get()) return new QSDict(cd,base);
+ if (cd.get()) return new QSDict(cd,_base);
  //Try if it is array
  boost::shared_ptr<CArray> ca=boost::dynamic_pointer_cast<CArray>(ip);
- if (ca.get()) return new QSArray(ca,base);
+ if (ca.get()) return new QSArray(ca,_base);
  //Nothing - just plain IProperty
- return new QSIProperty(ip,base);
+ return new QSIProperty(ip,_base);
 }
 
 /** Overloaded factory function to create QSCObjects from various C... classes

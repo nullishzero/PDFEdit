@@ -14,6 +14,8 @@ Keys are strings, values can be of any type, either simple types (int, bool, flo
 or complex types (Dict, Array)
 */
 class QSDict : public QSIProperty {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public:
  QSDict(QSDict &source);
@@ -21,8 +23,19 @@ public:
  virtual ~QSDict();
  boost::shared_ptr<CDict> get();
 public slots:
+ /*- Add property with given name to this dictionary */
+ void add(const QString &name,QSIProperty *ip);
+ void add(const QString &name,QObject *ip);
+ /*- Add string property with given name to this dictionary */
+ void add(const QString &name,const QString &ip);
+ /*- Return number of properties held in this dictionary */
+ size_t count();
+ /*- Delete property with given name from this dictionary */
+ void delProperty(const QString &name);
  /*- Return string representation of this dictionary */
  QString getText();
+ /*- Get property with given name from this dictionary */
+ QSCObject* property(const QString &name);
 };
 
 } // namespace gui 

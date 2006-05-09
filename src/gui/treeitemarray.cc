@@ -7,6 +7,7 @@
 #include "treeitemarray.h"
 #include "treedata.h"
 #include "pdfutil.h"
+#include "util.h"
 #include "qsarray.h"
 
 namespace gui {
