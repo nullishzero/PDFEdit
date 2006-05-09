@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/09 20:10:55  hockm0bm
+ * * doc update
+ * * writeContent some checking added
+ *         - duplicated entries are ignored
+ *         - NULL entries are ignored
+ *
  * Revision 1.1  2006/05/08 20:12:18  hockm0bm
  * * abstract IPdfWriter class for pdf content writers
  * * OldStylePdfWriter implementation of IPdfWriter
@@ -49,18 +55,30 @@ using namespace debug;
 	ObjectList::iterator i;
 	for(i=objectList.begin(); i!=objectList.end(); i++)
 	{
-		// TODO objNull should be marked for marking as free - e.g. position set
-		// to 0 and writeTrailer should use those entries handled as free.
-		
 		::Ref ref=i->first;
-		// associate given reference with actual position.
-		// TODO check if ref already is in mapping and if so, prints an warning
+		Object * obj=i->second;
+
+		// object must be valid
+		if(!obj)
+		{
+			utilsPrintDbg(DBG_WARN, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] is not valid. Skipping.");
+			continue;
+		}
+		
+		// no duplicities are allowed, because previous object wouldn't be
+		// available
+		if(offTable.find(ref)!=offTable.end())
+		{
+			utilsPrintDbg(DBG_WARN, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] is already stored. Skipping.");
+			continue;
+		}
+
+		// associate given reference with current position.
 		offTable.insert(OffsetTab::value_type(ref, stream.getPos()));		
 		utilsPrintDbg(DBG_DBG, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] stored at offset="<<stream.getPos());
 		
 		// stores PDF representation of object to current position which is
 		// after moved behind written object
-		Object * obj=i->second;
 		std::string objPdfFormat;
 		xpdfObjToString(*obj, objPdfFormat);
 

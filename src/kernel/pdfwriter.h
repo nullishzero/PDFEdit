@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/09 20:10:55  hockm0bm
+ * * doc update
+ * * writeContent some checking added
+ *         - duplicated entries are ignored
+ *         - NULL entries are ignored
+ *
  * Revision 1.1  2006/05/08 20:12:19  hockm0bm
  * * abstract IPdfWriter class for pdf content writers
  * * OldStylePdfWriter implementation of IPdfWriter
@@ -76,8 +82,10 @@ public:
 	 * @param off Stream offset where to start writing (if 0, uses current
 	 * position).
 	 * 
-	 * Stores just objects and collect all information needed for writeTrailer
-	 * method.
+	 * Stores objects from the list and collects all information needed for 
+	 * writeTrailer method. Objects which should be marked as free should have
+	 * objNull type. It is up to implementator how it handles free objects, but
+	 * writing them as null object is also correct.
 	 * <br>
 	 * Doesn't write xref and trailer.
 	 */
