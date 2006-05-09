@@ -27,6 +27,8 @@ public slots:
  void setInterpreter( QSInterpreter * ainterpreter, QObject * context );
  void setCmdWindowMode( int mode = CmdHistory | CmdLine );
  int getCmdWindowMode();
+private slots:
+ void selectedHistoryItem( int );
 signals:
  /** Signal emitted when command is executed from this command window */
  void commandExecuted(QString);

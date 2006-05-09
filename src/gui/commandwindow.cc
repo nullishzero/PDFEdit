@@ -58,6 +58,8 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  interpreter = NULL;
  l->addWidget( in );
 
+ connect( history, SIGNAL( activated(int) ), this, SLOT( selectedHistoryItem(int) ));
+
  setCmdWindowMode( globalSettings->readNum( CMD + CMDMODE, DEFAULT__CMDMODE ) );
 }
 
@@ -177,6 +179,10 @@ void CommandWindow::execute( enum cmd  from ) {
  history->setCurrentItem(0);
 
  emit commandExecuted(command);		//execute command via signal
+}
+
+void CommandWindow::selectedHistoryItem( int ) {
+	in->textEdit()->setText( history->currentText() );
 }
 
 int CommandWindow::getCmdWindowMode() {
