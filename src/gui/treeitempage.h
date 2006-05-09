@@ -33,8 +33,6 @@ private:
  void init(boost::shared_ptr<CPage> page,const QString &name);
  /** CPage stored in this TreeItem */
  boost::shared_ptr<CPage> obj;
- /** Data from treewindow containing reference to it and other needed data */
- TreeData *data;
 };
 
 } // namespace gui

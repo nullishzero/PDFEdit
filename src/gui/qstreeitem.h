@@ -6,6 +6,8 @@
 
 namespace gui {
 
+class Base;
+
 class TreeItemAbstract;
 
 /*=
@@ -40,7 +42,7 @@ public slots:
  /*- Remove object in this tree item (and also any possible subitems) from document */
  void remove();
 public:
- QSTreeItem(TreeItemAbstract *item);
+ QSTreeItem(TreeItemAbstract *item,Base *_base);
  virtual ~QSTreeItem();
  TreeItemAbstract* get();
 private:

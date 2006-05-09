@@ -28,9 +28,8 @@ using namespace util;
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,parent,after) {
+TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  _parent=NULL; //If not TreeItem, _parent will be NULL
- data=_data;
  init(pdfObj,name);
 }
 
@@ -42,9 +41,8 @@ TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
 */
-TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,parent,after) {
+TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  _parent=dynamic_cast<TreeItem*>(parent); //If not TreeItem, _parent will be NULL
- data=_data;
  init(pdfObj,name);
 }
 
@@ -226,7 +224,7 @@ void TreeItem::reloadSelf() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItem::getQSObject() {
- return new QSIProperty(obj);
+ return new QSIProperty(obj,data->base());
 }
 
 } // namespace gui

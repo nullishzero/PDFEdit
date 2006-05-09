@@ -11,7 +11,7 @@
 namespace gui {
 
 /** Construct wrapper with given PDF document */
-QSPdf::QSPdf(CPdf *_pdf) : QSCObject ("Pdf") {
+QSPdf::QSPdf(CPdf *_pdf,Base *_base) : QSCObject ("Pdf",_base) {
  obj=_pdf;
 }
 
@@ -38,12 +38,12 @@ bool QSPdf::saveAs(QString name) {
 
 /** Call CPdf::getDictionary */
 QSDict* QSPdf::getDictionary() {
- return new QSDict(obj->getDictionary());
+ return new QSDict(obj->getDictionary(),base);
 }
 
 /** Call CPdf::insertPage(page,position) */
 QSPage* QSPdf::insertPage(QSPage* page, int position) {
- return new QSPage(obj->insertPage(page->get(),position));
+ return new QSPage(obj->insertPage(page->get(),position),base);
 }
 /** Call CPdf::removePage(page,position) */
 void QSPdf::removePage(int position) {
@@ -62,22 +62,22 @@ unsigned int QSPdf::getPageCount() {
 
 /** Call CPdf::getPage(position) */
 QSPage* QSPdf::getPage(int position) {
- return new QSPage(obj->getPage(position));
+ return new QSPage(obj->getPage(position),base);
 }
 
 /** Call CPdf::getFirstPage() */
 QSPage* QSPdf::getFirstPage() {
- return new QSPage(obj->getFirstPage());
+ return new QSPage(obj->getFirstPage(),base);
 }
 
 /** Call CPdf::getNextPage(page) */
 QSPage* QSPdf::getNextPage(QSPage* page) {
- return new QSPage(obj->getNextPage(page->get()));
+ return new QSPage(obj->getNextPage(page->get()),base);
 }
 
 /** Call CPdf::getPrevPage(page) */
 QSPage* QSPdf::getPrevPage(QSPage* page) {
- return new QSPage(obj->getPrevPage(page->get()));
+ return new QSPage(obj->getPrevPage(page->get()),base);
 }
 
 /** Call CPdf::hasNextPage(page) */
@@ -97,7 +97,7 @@ size_t QSPdf::getRevisionsCount() {
 
 /** Call CPdf::getLastPage() */
 QSPage* QSPdf::getLastPage() {
- return new QSPage(obj->getLastPage());
+ return new QSPage(obj->getLastPage(),base);
 }
 
 /** get CPdf held inside this class. Not exposed to scripting */

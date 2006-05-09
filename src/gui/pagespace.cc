@@ -197,7 +197,7 @@ void PageSpace::refresh ( int pageToView, QSPdf * pdf ) {			// if pdf is NULL re
 	if (pageToView > pageCount)
 			pageToView = pageCount;
 		
-	QSPage p( pdf->get()->getPage( pageToView ) );
+	QSPage p( pdf->get()->getPage( pageToView ) , NULL );
 	refresh( &p, pdf );
 }
 
@@ -209,13 +209,13 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	if ((pageToView != NULL) && ( (actualPage == NULL) || (actualPage->get() != pageToView->get()) ) && ( (pdf != NULL) || (actualPdf != NULL) ) ) {
 		if ((actualPdf == NULL) || (pdf->get() != actualPdf->get())) {
 			delete actualPdf;
-			actualPdf = new QSPdf( pdf->get() );
+			actualPdf = new QSPdf( pdf->get() , NULL );
 
 			zoomFactor = 1;
 			displayParams = DisplayParams();
 		}
 		delete actualPage;
-		actualPage = new QSPage( pageToView->get() );
+		actualPage = new QSPage( pageToView->get() , NULL );
 
 		actualSelectedObjects = NULL; // TODO
 
@@ -353,7 +353,7 @@ void PageSpace::showMousePosition ( const QPoint & pos ) {
 void PageSpace::firstPage ( ) {
 	if (!actualPdf)
 		return;
-	QSPage p (actualPdf->get()->getFirstPage());
+	QSPage p (actualPdf->get()->getFirstPage(),NULL);
 	refresh( &p, actualPdf );
 }
 void PageSpace::prevPage ( ) {
@@ -365,7 +365,7 @@ void PageSpace::prevPage ( ) {
 	}
 
 	if ( (actualPdf->get()->hasPrevPage( actualPage->get() )) == true) {
-		QSPage p (actualPdf->get()->getPrevPage( actualPage->get() ));
+		QSPage p (actualPdf->get()->getPrevPage( actualPage->get() ) , NULL);
 		refresh( &p, actualPdf );
 	}
 }
@@ -378,14 +378,14 @@ void PageSpace::nextPage ( ) {
 	}
 
 	if ( (actualPdf->get()->hasNextPage( actualPage->get() )) == true) {
-		QSPage p (actualPdf->get()->getNextPage( actualPage->get() ));
+		QSPage p (actualPdf->get()->getNextPage( actualPage->get() ) , NULL);
 		refresh( &p, actualPdf );
 	}
 }
 void PageSpace::lastPage ( ) {
 	if (!actualPdf)
 		return;
-	QSPage p (actualPdf->get()->getLastPage());
+	QSPage p (actualPdf->get()->getLastPage() , NULL);
 	refresh( &p, actualPdf );
 }
 } // namespace gui

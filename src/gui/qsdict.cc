@@ -13,11 +13,11 @@ namespace gui {
 using namespace pdfobjects;
 
 /** Construct wrapper with given CDict */
-QSDict::QSDict(boost::shared_ptr<CDict> _dict) : QSIProperty (_dict,"Dict") {
+QSDict::QSDict(boost::shared_ptr<CDict> _dict,Base *_base) : QSIProperty (_dict,"Dict",_base) {
 }
 
 /** Copy constructor */
-QSDict::QSDict(QSDict &source) : QSIProperty (source.obj,"Dict") {
+QSDict::QSDict(QSDict &source) : QSIProperty (source.obj,"Dict",source.base) {
 }
 
 /** destructor */

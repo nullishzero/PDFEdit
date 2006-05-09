@@ -17,7 +17,7 @@ class QSDict : public QSIProperty {
  Q_OBJECT
 public:
  QSDict(QSDict &source);
- QSDict(boost::shared_ptr<CDict> _dict);
+ QSDict(boost::shared_ptr<CDict> _dict,Base *_base);
  virtual ~QSDict();
  boost::shared_ptr<CDict> get();
 public slots:

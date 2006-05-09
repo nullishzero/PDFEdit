@@ -11,11 +11,13 @@ namespace gui {
 
 using namespace pdfobjects;
 
+class Base;
+
 /*= This object represent one property in dictionary or array */
 class QSIProperty : public QSCObject {
  Q_OBJECT
 public:
- QSIProperty(boost::shared_ptr<IProperty> _ip);
+ QSIProperty(boost::shared_ptr<IProperty> _ip,Base *_base);
  QSIProperty(QSIProperty &source);
  virtual ~QSIProperty();
  boost::shared_ptr<IProperty> get();
@@ -23,7 +25,7 @@ public slots:
  /*- Return text representation of this property */
  QString getText();
 protected:
- QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className);
+ QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className,Base *_base);
 protected:
  /** Object held in class*/
  boost::shared_ptr<IProperty> obj;

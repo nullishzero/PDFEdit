@@ -80,6 +80,8 @@ function onTreeRightClick() {
    menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog()");
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
+ if (treeitem.itemtype()=="Page")
+   menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
  if (tests) {
   if (treeitem.itemtype()=="Stream")
     menu.addItemDef("item Stream integrity test,buftest(treeitem.item())");
@@ -99,7 +101,9 @@ function onTreeMiddleClick() {
 
 /** Callback for doubleclick with left mouse button in tree window */
 function onTreeDoubleClick() {
-// print("Doubleclick, type of item = "+treeitem.itemtype());
+ // print("Doubleclick, type of item = "+treeitem.itemtype());
+ //If page, goto page
+ if (treeitem.itemtype()=="Page") go(treeitem.id());
 }
 
 /** Print names of childs of currently selected tree item to console */

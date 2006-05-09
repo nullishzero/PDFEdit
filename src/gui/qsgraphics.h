@@ -13,7 +13,7 @@ using namespace pdfobjects;
 class QSGraphics : public QSCObject {
  Q_OBJECT
 public:
- QSGraphics(CGraphic *gfx);
+ QSGraphics(CGraphic *gfx,Base *_base);
  QSGraphics(QSGraphics &source);
  virtual ~QSGraphics();
  CGraphic* get();

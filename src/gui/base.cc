@@ -48,7 +48,7 @@ Base::Base(PdfEditWindow *parent) {
  assert(globalSettings);
  qp->addObject(globalSettings);
  //Create and add importer to QSProject and related QSInterpreter
- import=new QSImporter(qp,this);
+ import=new QSImporter(qp,this,this);
  import->addQSObj(w->pagespc,"PageSpace");
  qpdf=NULL;
 }
@@ -116,6 +116,32 @@ void Base::addDocumentObjects() {
  import->addQSObj(page,"page");
  import->addQSObj(trit,"treeitem");
  import->addQSObj(item,"item");
+}
+
+/**
+ Add QSCObject to list of object to delete when file in editor window is closed
+ @param o Object to add to cleanup-list
+*/
+void Base::addGC(QSCObject *o) {
+ baseObjects.replace(o,0);
+}
+
+/**
+ Remove QSCObject from list of object to delete when file in editor window is closed
+ @param o Object to remove from cleanup-list
+*/
+void Base::removeGC(QSCObject *o) {
+ baseObjects.remove(o);
+}
+
+/** Delete all objects in cleanup list */
+void Base::cleanup() {
+ guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << baseObjects.count() << " objects");
+ //Set autodelete and clear the list
+ baseObjects.setAutoDelete(true);
+ baseObjects.clear();
+ baseObjects.setAutoDelete(false);
+ guiPrintDbg(debug::DBG_DBG,"Garbage collection done");
 }
 
 /** Removes objects added with addDocumentObject */
@@ -330,7 +356,7 @@ void Base::options() {
  @return initialized QSMenu Object
 */
 QSMenu* Base::popupMenu(const QString &menuName/*=QString::null*/) {
- return new QSMenu(w->menuSystem,menuName);
+ return new QSMenu(w->menuSystem,this,menuName);
 }
 
 /**

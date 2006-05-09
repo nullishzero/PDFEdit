@@ -16,10 +16,12 @@ using namespace std;
 /** Constructor of TreeData
  @param parent TreeWindow holding these data
  @param tree Tree holding list items
+ @param base Scripting base
 */
-TreeData::TreeData(TreeWindow *parent,QListView *tree) {
+TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base) {
  _parent=parent;
  _tree=tree;
+ _base=base;
  //ShowData
  show_outline=show_page=show_odict=show_dict=show_simple=false;
  update();
@@ -154,14 +156,26 @@ void TreeData::clear() {
  refs.clear();
 }
 
-/** Return parent of this TreeData
- @return parent TreeWindow */
+/**
+ Return parent treewindow associated with this TreeData
+ @return parent TreeWindow
+*/
 TreeWindow* TreeData::parent() {
  return _parent;
 }
 
-/** Return tree from this TreeData
- @return QlistViewparent Tree */
+/**
+ Return scripting base associated with this window
+ @return Base
+*/
+Base* TreeData::base() {
+ return _base;
+}
+
+/**
+ Return parent tree (QListView) associated with this TreeData
+ @return paent QListView
+*/
 QListView* TreeData::tree() {
  return _tree;
 }

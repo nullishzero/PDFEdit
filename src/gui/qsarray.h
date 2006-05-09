@@ -17,7 +17,7 @@ class QSArray : public QSIProperty {
  Q_OBJECT
 public:
  QSArray(QSArray &source);
- QSArray(boost::shared_ptr<CArray> _array);
+ QSArray(boost::shared_ptr<CArray> _array,Base *_base);
  virtual ~QSArray();
  boost::shared_ptr<CArray> get();
 public slots:

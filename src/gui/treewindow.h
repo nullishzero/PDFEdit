@@ -14,6 +14,7 @@ using namespace pdfobjects;
 class TreeData;
 class TreeItemAbstract;
 class QSCObject;
+class Base;
 
 class TreeWindow : public QWidget {
  Q_OBJECT
@@ -21,7 +22,7 @@ public:
  void uninit();
  void init(CPdf *pdfDoc,const QString &fileName);
  void init(boost::shared_ptr<IProperty> doc);
- TreeWindow(QWidget *parent=0,const char *name=0);
+ TreeWindow(Base *base,QWidget *parent=0,const char *name=0);
  ~TreeWindow();
  void reloadFrom(TreeItemAbstract *item);
  void reinit();

@@ -11,7 +11,7 @@
 namespace gui {
 
 /** Construct wrapper with given CGraphic */
-QSTreeItem::QSTreeItem(TreeItemAbstract *item) : QSCObject ("TreeItem") {
+QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeItem",_base) {
  obj=item;
 }
 
@@ -63,7 +63,7 @@ QStringList QSTreeItem::getChildNames() {
 QSTreeItem* QSTreeItem::parent() {
  TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
  if (!parent) return NULL;
- return new QSTreeItem(parent);
+ return new QSTreeItem(parent,base);
 }
 
 /**
@@ -75,7 +75,7 @@ QSTreeItem* QSTreeItem::parent() {
 QSTreeItem* QSTreeItem::child(const QString &name) {
  TreeItemAbstract* child=dynamic_cast<TreeItemAbstract*>(obj->child(name));
  if (!child) return NULL;
- return new QSTreeItem(child);
+ return new QSTreeItem(child,base);
 }
 
 /**

@@ -66,7 +66,7 @@ QStringList TreeItemDict::getChildNames() {
 QSCObject* TreeItemDict::getQSObject() {
  boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
  assert(dict.get());
- return new QSDict(dict);
+ return new QSDict(dict,data->base());
 }
 
 /**

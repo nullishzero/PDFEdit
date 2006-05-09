@@ -24,8 +24,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,parent,after) {
- data=_data;
+TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  init(_page,name);
 }
 
@@ -36,8 +35,7 @@ TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListV
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,parent,after) {
- data=_data;
+TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  init(_page,name);
 }
 
@@ -99,7 +97,7 @@ void TreeItemPage::reloadSelf() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemPage::getQSObject() {
- return new QSPage(obj);
+ return new QSPage(obj,data->base());
 }
 
 //See TreeItemAbstract for description of this virtual method

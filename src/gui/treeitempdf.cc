@@ -29,8 +29,7 @@ using namespace pdfobjects;
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",parent,after) {
- data=_data;
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  init(_pdf,name);
  reloadSelf();
 }
@@ -42,8 +41,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QStr
  @param name Name of file - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",parent,after) {
- data=_data;
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  init(_pdf,name);
  reloadSelf();
 }
@@ -54,8 +52,7 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const 
  @param name Name (type) of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,parent,after) {
- data=_data;
+TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  initSpec(parent->getObject(),name);
 }
 
@@ -185,7 +182,7 @@ void TreeItemPdf::remove() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemPdf::getQSObject() {
- return new QSPdf(obj);
+ return new QSPdf(obj,data->base());
 }
 
 } // namespace gui

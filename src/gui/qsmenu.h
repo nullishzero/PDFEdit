@@ -13,6 +13,7 @@ class QString;
 namespace gui {
 
 class Menu;
+class Base;
 
 /*=
  This type of object represent one popup menu.
@@ -23,7 +24,7 @@ class Menu;
 class QSMenu : public QSCObject {
  Q_OBJECT
 public:
- QSMenu(Menu *_msys,const QString &name=QString::null);
+ QSMenu(Menu *_msys,Base *_base,const QString &name=QString::null);
  QString getAction(int id);
  virtual ~QSMenu();
 public slots:

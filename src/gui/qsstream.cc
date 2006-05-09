@@ -12,7 +12,7 @@
 namespace gui {
 
 /** Construct wrapper with given CStream */
-QSStream::QSStream(boost::shared_ptr<CStream> _cs) : QSIProperty (_cs,"Stream") {
+QSStream::QSStream(boost::shared_ptr<CStream> _cs,Base *_base) : QSIProperty (_cs,"Stream",_base) {
 }
 
 /** destructor */

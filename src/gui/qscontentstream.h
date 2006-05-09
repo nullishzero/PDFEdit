@@ -8,13 +8,15 @@
 
 namespace gui {
 
+class Base;
+
 using namespace pdfobjects;
 
 /*= This type of object represents content stream in document (in page) */
 class QSContentStream : public QSCObject {
  Q_OBJECT
 public:
- QSContentStream(boost::shared_ptr<CContentStream> _cs);
+ QSContentStream(boost::shared_ptr<CContentStream> _cs,Base *_base);
  virtual ~QSContentStream();
  boost::shared_ptr<CContentStream> get();
 public slots:

@@ -19,11 +19,13 @@ namespace gui {
 using namespace std;
 using namespace util;
 
-/** constructor of TreeWindow, creates window and fills it with elements, parameters are ignored
+/**
+ constructor of TreeWindow, creates window and fills it with elements, parameters are ignored
+ @param base Scripting base
  @param parent Parent widget
  @param name Name of this widget (not used, just passed to QWidget)
- */
-TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
+*/
+TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
  tree=new QListView(this);
  tree->setSorting(-1);
@@ -36,7 +38,7 @@ TreeWindow::TreeWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(par
  tree->setSelectionMode(QListView::Single/*Extended*/);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
- data=new TreeData(this,tree);
+ data=new TreeData(this,tree,base);
  QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
  QObject::connect(tree,SIGNAL(doubleClicked(QListViewItem*,const QPoint &,int)),this,SLOT(mouseDoubleClicked(QListViewItem*,const QPoint &,int)));
 }

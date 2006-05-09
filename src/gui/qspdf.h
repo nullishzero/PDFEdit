@@ -11,13 +11,15 @@
 
 namespace gui {
 
+class Base;
+
 using namespace pdfobjects;
 
 /*= This type of object represents entire document. */
 class QSPdf : public QSCObject {
  Q_OBJECT
 public:
- QSPdf(CPdf *_pdf);
+ QSPdf(CPdf *_pdf,Base *_base);
  virtual ~QSPdf();
  CPdf* get();
 public slots:

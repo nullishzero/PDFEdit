@@ -20,21 +20,27 @@ using namespace std;
 /**
  constructor of TreeItemAbstract - create root item
  @param itemName Name of this item
+ @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListView in which to put item
  @param after Item after which this one will be inserted
  */
-TreeItemAbstract::TreeItemAbstract(const QString &itemName,QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  nameId=itemName;
+ data=_data;
+ assert(data);
 }
 
 /**
  constructor of TreeItemAbstract - create child item
  @param itemName Name of this item
+ @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListViewItem which is parent of this object
  @param after Item after which this one will be inserted
  */
-TreeItemAbstract::TreeItemAbstract(const QString &itemName,QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  nameId=itemName;
+ data=_data;
+ assert(data);
 }
 
 /** Reload contents of this item's subtree recursively by calling

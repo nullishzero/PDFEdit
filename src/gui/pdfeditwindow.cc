@@ -160,8 +160,11 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  splProp=new QSplitter(spl);
  splProp->setOrientation(Vertical);
 
+ //Base for scripting
+ base=new Base(this);
+
  //object treeview
- tree=new TreeWindow(splProp);
+ tree=new TreeWindow(base,splProp);
 
  //Property editor
  prop=new PropertyEditor(splProp);
@@ -193,8 +196,6 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  }
  //Script must be run AFTER creating all widgets
  //Script may need them, especially the command window
-
- base=new Base(this);
  //Run initscript
  //Any document-related classes are NOT available to the initscript, as no document is currently loaded
  //initscript may use onLoad() to perform some code after document is loaded
@@ -359,6 +360,7 @@ void PdfEditWindow::destroyFile() {
  selectedPage.reset();//no page selected
  document->close(false);
  base->destroyDocument();
+ base->cleanup();//Garbage collection on scripting objects
  document=NULL;
  setFileName(QString::null);
 }

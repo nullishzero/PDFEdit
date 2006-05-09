@@ -13,11 +13,11 @@ namespace gui {
 using namespace pdfobjects;
 
 /** Construct wrapper with given CArray */
-QSArray::QSArray(boost::shared_ptr<CArray> _array) : QSIProperty (_array,"Array") {
+QSArray::QSArray(boost::shared_ptr<CArray> _array,Base *_base) : QSIProperty (_array,"Array",_base) {
 }
 
 /** Copy constructor */
-QSArray::QSArray(QSArray &source) : QSIProperty (source.obj,"Array") {
+QSArray::QSArray(QSArray &source) : QSIProperty (source.obj,"Array",source.base) {
 }
 
 /** destructor */

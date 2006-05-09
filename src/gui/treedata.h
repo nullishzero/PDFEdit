@@ -10,13 +10,15 @@ namespace gui {
 class TreeItem;
 class TreeItemRef;
 class TreeWindow;
+class Base;
 
 class TreeData {
 public:
- TreeData(TreeWindow *parent,QListView *tree);
+ TreeData(TreeWindow *parent,QListView *tree,Base *base);
  ~TreeData();
  TreeWindow* parent();
  QListView* tree();
+ Base* base();
  void add(TreeItemRef *it);
  void remove(TreeItemRef *it);
  void remove(const QString &ref);
@@ -39,6 +41,8 @@ private:
  TreeWindow *_parent;
  /** List view from inside the tree window */
  QListView *_tree;
+ /** Scripting base */
+ Base *_base;
  /** Dictionary holding tree items that are references */
  QDict<TreeItemRef> refs;
  //ShowData

@@ -10,18 +10,27 @@
 
 namespace gui {
 
-/** Construct wrapper with given IProperty */
-QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip) : QSCObject ("IProperty") {
+/**
+ Construct wrapper with given IProperty
+ @param _ip IProperty wrapped in this object
+ @param _base Scripting base
+*/
+QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip,Base *_base) : QSCObject ("IProperty",_base) {
  obj=_ip;
 }
 
 /** Copy constructor */
-QSIProperty::QSIProperty(QSIProperty &source) : QSCObject ("IProperty") {
+QSIProperty::QSIProperty(QSIProperty &source) : QSCObject ("IProperty",source.base) {
  obj=source.obj;
 }
 
-/** Construct wrapper with given IProperty and given type name*/
-QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className) : QSCObject (_className) {
+/**
+ Construct wrapper with given IProperty and given type name
+ @param _ip IProperty wrapped in this object
+ @param _className type name of this object
+ @param _base Scripting base
+*/
+QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className,Base *_base) : QSCObject (_className,_base) {
  obj=_ip;
 }
 

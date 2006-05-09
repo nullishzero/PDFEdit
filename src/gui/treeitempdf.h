@@ -36,8 +36,6 @@ private:
  CPdf *obj;
  /** Node type (Null, Pages,Outlines) */
  QString nType;
- /** Data from treewindow containing reference to it and other needed data */
- TreeData *data;
 };
 
 } // namespace gui

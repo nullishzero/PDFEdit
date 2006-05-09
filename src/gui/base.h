@@ -3,6 +3,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
+#include <qptrdict.h>
 
 class QSProject;
 class QSInterpreter;
@@ -16,6 +17,7 @@ class QSPdf;
 class QSDict;
 class QSArray;
 class QSIProperty;
+class QSCObject;
 
 class Base : public QObject {
  Q_OBJECT
@@ -29,6 +31,9 @@ public:
  void removeDocumentObjects();
  void runInitScript();
  void runScript(QString script);
+ void addGC(QSCObject *o);
+ void removeGC(QSCObject *o);
+ void cleanup();
  ~Base();
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */
@@ -175,6 +180,8 @@ private:
  QSInterpreter *qs;
  /** QSObject Importer */
  QSImporter *import;
+ /** All Scripting objects created under this base. Will be used for purpose of garbage collection */
+ QPtrDict<QSCObject> baseObjects;
 };
 
 } // namespace gui

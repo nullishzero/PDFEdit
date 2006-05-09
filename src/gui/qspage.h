@@ -10,6 +10,7 @@ namespace gui {
 
 class QSContentStream;
 class QSDict;
+class Base;
 
 using namespace pdfobjects;
 
@@ -18,7 +19,8 @@ class QSPage : public QSCObject {
  Q_OBJECT
 public:
  virtual ~QSPage();
- QSPage(boost::shared_ptr<CPage> _page);
+ QSPage(const QSPage &source);
+ QSPage(boost::shared_ptr<CPage> _page,Base *_base);
  boost::shared_ptr<CPage> get();
 public slots:
  /*- Returns content stream of this page */

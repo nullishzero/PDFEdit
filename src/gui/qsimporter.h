@@ -14,13 +14,14 @@ namespace gui {
 class QSCObject;
 class QSPdf;
 class TreeItemAbstract;
+class Base;
 
 using namespace pdfobjects;
 
 class QSImporter : public QObject {
  Q_OBJECT
 public:
- QSImporter(QSProject *_qp,QObject *_context);
+ QSImporter(QSProject *_qp,QObject *_context,Base *_base);
  virtual ~QSImporter();
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
@@ -40,6 +41,8 @@ private:
  QSInterpreter *qs;
  /** QSProject in which this importer is installed. */
  QSProject *qp;
+ /** Scripting base for created objects */
+ Base *base;
 };
 
 } // namespace gui

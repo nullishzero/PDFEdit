@@ -66,7 +66,7 @@ QStringList TreeItemCStream::getChildNames() {
 QSCObject* TreeItemCStream::getQSObject() {
  boost::shared_ptr<CStream> stream=boost::dynamic_pointer_cast<CStream>(obj);
  assert(stream.get());
- return new QSStream(stream);
+ return new QSStream(stream,data->base());
 }
 
 /**

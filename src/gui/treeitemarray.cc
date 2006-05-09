@@ -33,7 +33,7 @@ TreeItemArray::TreeItemArray(TreeData *_data,QListViewItem *parent,boost::shared
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemArray::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemArray::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  CArray *ar=dynamic_cast<CArray*>(obj.get());
  unsigned int i=name.toUInt();
  boost::shared_ptr<IProperty> property=ar->getProperty(i);
@@ -73,7 +73,7 @@ TreeItemArray::~TreeItemArray() {
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemArray::getQSObject() {
  assert(boost::dynamic_pointer_cast<CArray>(obj).get());
- return new QSArray(boost::dynamic_pointer_cast<CArray>(obj));
+ return new QSArray(boost::dynamic_pointer_cast<CArray>(obj),data->base());
 }
 
 /**

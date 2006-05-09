@@ -25,12 +25,18 @@
 
 namespace gui {
 
-/** Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated */
-QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
+/**
+ Construct importer object for current QSProject to given context. Must be contructed before any scripts are evaluated<br>
+ @param qp QProject i wchich
+ @param _context Context in which all objects will be imported
+ @param _base scripting base under which all objects will be created
+ */
+QSImporter::QSImporter(QSProject *_qp,QObject *_context,Base *_base) {
  setName("importer");
  guiPrintDbg(debug::DBG_DBG,"Creating QSImporter");
  qp=_qp;
  context=_context;
+ base=_base;
  //add itself to Project
  qp->addObject(this);
  qs=qp->interpreter();
@@ -43,7 +49,7 @@ QSImporter::QSImporter(QSProject *_qp,QObject *_context) {
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<CDict> dict) {
  if (!dict.get()) return NULL;
- return new QSDict(dict);
+ return new QSDict(dict,base);
 }
 
 
@@ -54,7 +60,7 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<CDict> dict) {
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
  if (!page.get()) return NULL;
- return new QSPage(page);
+ return new QSPage(page,base);
 }
 
 /** Overloaded factory function to create QSCObjects from various C... classes
@@ -66,15 +72,15 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
  if (!ip.get()) return NULL;
  //Try if it is stream
  boost::shared_ptr<CStream> cs=boost::dynamic_pointer_cast<CStream>(ip);
- if (cs.get()) return new QSStream(cs);
+ if (cs.get()) return new QSStream(cs,base);
  //Try if it is dict
  boost::shared_ptr<CDict> cd=boost::dynamic_pointer_cast<CDict>(ip);
- if (cd.get()) return new QSDict(cd);
+ if (cd.get()) return new QSDict(cd,base);
  //Try if it is array
  boost::shared_ptr<CArray> ca=boost::dynamic_pointer_cast<CArray>(ip);
- if (ca.get()) return new QSArray(ca);
+ if (ca.get()) return new QSArray(ca,base);
  //Nothing - just plain IProperty
- return new QSIProperty(ip);
+ return new QSIProperty(ip,base);
 }
 
 /** Overloaded factory function to create QSCObjects from various C... classes
@@ -84,7 +90,7 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
  */
 QSPdf* QSImporter::createQSObject(CPdf* pdf) {
  if (!pdf) return NULL;
- return new QSPdf(pdf);
+ return new QSPdf(pdf,base);
 }
 
 /** Overloaded factory function to create QSCObjects from various C... classes
@@ -94,7 +100,7 @@ QSPdf* QSImporter::createQSObject(CPdf* pdf) {
  */
 QSCObject* QSImporter::createQSObject(TreeItemAbstract *item) {
  if (!item) return NULL;
- return new QSTreeItem(item);
+ return new QSTreeItem(item,base);
 }
 
 /** Import object into interpreter under specified name

@@ -10,6 +10,7 @@ class QStringList;
 namespace gui {
 
 class QSCObject;
+class TreeData;
 
 /** Type of TreeItemAbstract's child.
  The type is arbitrary integer and must be unique only across single type
@@ -23,8 +24,8 @@ typedef int ChildType;
 class TreeItemAbstract : public QListViewItem {
 public:
  void unSelect(QListView *tree);
- TreeItemAbstract(const QString &itemName,QListView *parent,QListViewItem *after=NULL);
- TreeItemAbstract(const QString &itemName,QListViewItem *parent,QListViewItem *after=NULL);
+ TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after=NULL);
+ TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after=NULL);
  QString name();
  void setName(const QString &newNameId);
  virtual ~TreeItemAbstract();
@@ -68,6 +69,8 @@ protected:
  QDict<QListViewItem> items;
  /** Mapping of all child names to types of child items for this tree item */
  QMap<QString,ChildType> types;
+ /** Data from treewindow containing reference to it and other needed data */
+ TreeData *data;
 };
 
 } // namespace gui

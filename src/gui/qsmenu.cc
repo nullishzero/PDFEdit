@@ -26,9 +26,10 @@ const int TMP_OFFSET=0x3fffffff;
 /**
  Construct popup menu containing the same items as some other already specified menu (which is used as template)
  @param _msys Menu system of window in which this popup menu will be shown
+ @param _base Scripting base
  @param name Name of the menu as it is stored in settings. If null or not specified, menu will be initially empty
 */
-QSMenu::QSMenu(Menu *_msys,const QString &name/*=QString::null*/) : QSCObject ("Menu") {
+QSMenu::QSMenu(Menu *_msys,Base *_base,const QString &name/*=QString::null*/) : QSCObject ("Menu",_base) {
  msys=_msys;
  actionId=0;
  menu=new QPopupMenu();

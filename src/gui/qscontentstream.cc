@@ -10,7 +10,7 @@
 namespace gui {
 
 /** Construct wrapper with given CContentStream */
-QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs) : QSCObject ("ContentStream") {
+QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,Base *_base) : QSCObject ("ContentStream",_base) {
  obj=_cs;
 }
 

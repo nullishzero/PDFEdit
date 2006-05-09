@@ -6,11 +6,13 @@ class QString;
 
 namespace gui {
 
+class Base;
+
 /*= Base class for all PDF objects used in scripts */
 class QSCObject : public QObject {
 Q_OBJECT
 public:
- QSCObject(QString _typeName);
+ QSCObject(QString _typeName, Base* _base);
  QSCObject(QSCObject &source);
  virtual ~QSCObject();
 public slots:
@@ -18,8 +20,8 @@ public slots:
  /*- return name of this object's type */
  virtual QString type();
 protected:
- virtual void disconnectNotify(const char* signal);
- virtual void connectNotify(const char* signal);
+ /** Scripting base for this object */
+ Base *base;
 private:
  /** Name of this objects's type */
  QString typeName;
