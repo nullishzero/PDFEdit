@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.45  2006/05/09 20:05:19  hockm0bm
+ * minor changes
+ *
  * Revision 1.44  2006/05/06 08:38:19  hockm0bm
  * * CPdf constructor sets mode of xref according its mode
  * * CPdf::consolidatePageList bug fixed
@@ -1844,8 +1847,6 @@ using namespace utils;
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
-
-	// TODO question: Is it possible to have document with no pages?
 
 	// checks position
 	if(1>pos || pos>getPageCount())

@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.43  2006/05/09 20:05:19  hockm0bm
+ * minor changes
+ *
  * Revision 1.42  2006/04/28 17:15:51  hockm0bm
  * * helper functions exported by header file now
  *
@@ -695,12 +698,6 @@ private:
 	 */
 	IModeController* modeController;
 
-#ifdef DEBUG
-// debuging workaround to enable testing
-// TODO remove
-public:
-#endif
-	
 	/** Empty constructor.
 	 *
 	 * This constructor is disabled, because we want to prevent uninitialized
@@ -907,8 +904,8 @@ public:
 	 * Next call of this function will overwrite older one.
 	 * </ul>
 	 *
-	 * @throw TODO 
-	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly.
+	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we aren't
+	 * in the newest revision (where changes are enabled).
 	 */
 	void save(bool newRevision=false);
 
