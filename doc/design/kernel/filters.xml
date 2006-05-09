@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Decoding and encoding filters</title>
+ </bookinfo>
+
+ <chapter>
+
+  <sect1><title>Decoding and encoding according to pdf specification</title>
+  <para>
+  Pdf stream can be encoded using one of several filters specified by pdf specification.
+  The encoding algorthm is called a filter. There are two types of filters, ASCII filters and 
+  decompression filters. It is up to the viewer how it handles unknown filter. 
+  </para>
+ </sect1>
+
+ <sect1><title>Xpdf filters</title>
+  <para>Xpdf viewer implements all decoding filters from pdf v1.5 specification. However it
+  does not need encoding filters so it does not implement them. We can use xpdf filters to 
+  decode data.
+  </para>
+ 
+  <sect2><title>Filters</title>
+  <para>Decoding filters are used from xpdf. It is dangerous, because of the very poor fault tolerance, 
+  but as it is very toilsome, it has not been reimplemented. However, encoding filters are implemented using
+  boost filtering iostreams, which give us very nice filtering input/output concept. 
+  A filtesing stream consists of filters and devices. For our purpose we use only one device. A device can be 
+  either a sink a or a source. It depends whether it is an input or output stream. We implement only one device and that is
+  a simple source. We can connect arbitrary number of filters to this source. When we read from a source, it is read from the 
+  underlying buffer and then gets decoded through all the filters and finally an encoded character(s) falls from the other 
+  side of the filter chain. Filters are appended to the chain according to pdf stream dictionary item describing which filters
+  should be used. 
+  This design is easily extensible as we have to only implement the new filter and add it if the filter name matches the desired
+  filter name.  
+  </para>
+  </sect2>
+
+  
+  
+  <para>
+ 	<mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/iproperty.png" format="PNG"/>
+	  </imageobject>
+	  <textobject><phrase>Pdfoperator class overview</phrase></textobject>
+	  <caption><para>Pdfoperator class overview</para></caption>
+	</mediaobject>
+ </para>
+ </sect1>
+
+ </chapter>
+</book>
