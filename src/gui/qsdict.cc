@@ -70,7 +70,8 @@ void QSDict::add(const QString &name,QObject *ip) {
 void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  std::string pName=name;
- dict->addProperty(pName,CString(ip));
+ CString property(ip);
+ dict->addProperty(pName,property);
 }
 
 /** call CDict::getStringRepresentation(ret); return ret */
