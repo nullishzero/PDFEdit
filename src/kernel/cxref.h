@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/05/09 20:06:43  hockm0bm
+ * * stored field removed from ChangedEntry
+ * * doc update
+ *
  * Revision 1.21  2006/05/08 10:34:04  hockm0bm
  * * reserveRef throws exception if no indirect object is available
  * * fetch always returns cloned value (because of streams)
@@ -168,16 +172,12 @@ protected:
 
 	/** Entry for ObjectStorage.
 	 *
-	 * Each entry contains pointer to changed object and flag which
-	 * says whether this object has been stored to the file from last
-	 * change.
-	 * <br>
-	 * TODO stored flag is not used anymore - remove it
+	 * Each entry contains pointer to changed object. It may be extended in
+	 * future, so structure is used.
 	 */
 	typedef struct
 	{
 		::Object * object;
-		bool stored;
 	} ObjectEntry;
 	
 	/** Object storage for changed objects.
@@ -199,12 +199,14 @@ protected:
 	 * @param instance Instance of object value (must be direct value,
 	 * not indirect reference).
 	 *
-	 * Discards object from cache and stores it to the changedStorage.
+	 * Discards object from cache and stores given to the changedStorage.
 	 * Method should be called each time when object has changed its value.
-	 * Object value is copied not use as it is (creates deep copy).
+	 * Object value is copied not use as it is (creates deep copy by clone
+	 * method).
+	 * <br>
 	 * If object with same reference already was in changedStorage, this
 	 * is returned to enable history handling (and also to deallocate it). 
-	 * 0 return value means first revision of object.
+	 * 0 return value means first change of object.
 	 * <br>
 	 * If given reference is in newStorage, value is set to true to 
 	 * signalize that value has been changed after object has been created.
@@ -253,6 +255,8 @@ protected:
 	 * This means that returned object has to be changed and after change
 	 * method has to be called. This is mainly because we want to prevent 
 	 * unintialized object inside.
+	 * <br>
+	 * TODO reuse strathegy - REUSE_FIRST, REUSE_AFTER, NOREUSE
 	 *
 	 * @throw IndirectObjectsExhausted if all object numbers has been used.
 	 * @return Reference which can be used to add new indirect object.

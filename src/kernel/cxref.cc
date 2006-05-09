@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/05/09 20:06:43  hockm0bm
+ * * stored field removed from ChangedEntry
+ * * doc update
+ *
  * Revision 1.17  2006/05/08 10:34:04  hockm0bm
  * * reserveRef throws exception if no indirect object is available
  * * fetch always returns cloned value (because of streams)
@@ -176,7 +180,6 @@ using namespace debug;
 		kernelPrintDbg(DBG_DBG, "object is changed for the first time, creating changedEntry");
 	}
 	changedEntry->object=instance->clone();
-	changedEntry->stored=false;
 	changedStorage.put(ref, changedEntry);
 
 	// object has been newly created, so we will set value in
