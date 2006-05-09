@@ -13,26 +13,29 @@
 #include <qtextedit.h> 
 #include <qlineedit.h>
 #include <qcombobox.h>
-
-namespace gui {
+#include <qseditor.h>
+#include <qsinterpreter.h>
 
 using namespace std;
 using namespace util;
 
+namespace gui {
+
 QString CMD = "gui/CommandLine/";
+QString CMDMODE = "CmdMode";
 QString HISTORYSIZE = "HistorySize";
 QString HISTORYFILE = "HistoryFile";
 QString DEFAULT__HISTORYFILE = ".pdfedit-history";
 int DEFAULT__HISTORYSIZE = 10;
+int DEFAULT__CMDMODE = CommandWindow::CmdHistory | CommandWindow::CmdLine;
 
 /** constructor of CommandWindow, creates window and fills it with elements, parameters are ignored */
 CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):QWidget(parent,name) {
  QBoxLayout * l = new QVBoxLayout( this );
- QPushButton * p = new QPushButton( this );
  out = new QTextEdit( this );
- cmd = new QLineEdit( this );
+ cmd = new QLineEdit( this , "CmdLine" );
  // init history
- history = new QComboBox( this );
+ history = new QComboBox( this, "CmdHistory" );
  history->setLineEdit( cmd );
  history->setEditable( true );
  history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
@@ -47,6 +50,70 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  l->addWidget(history);
  out->setTextFormat(LogText);
  out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
+
+ in = new QSEditor( this , "CmdEditor" );
+ in->textEdit()->installEventFilter( this );
+ in->textEdit()->viewport()->installEventFilter( this );
+ in->setFocus();
+ interpreter = NULL;
+ l->addWidget( in );
+
+ setCmdWindowMode( globalSettings->readNum( CMD + CMDMODE, DEFAULT__CMDMODE ) );
+}
+
+void CommandWindow::setInterpreter( QSInterpreter * ainterpreter, QObject * context ) {
+	in->setInterpreter( ainterpreter, context );
+	interpreter = ainterpreter;
+}
+
+bool CommandWindow::eventFilter( QObject *o, QEvent *e )
+{
+	if ( o != in->textEdit() && o != in->textEdit()->viewport() )
+		return FALSE;
+	if ( e->type() == QEvent::KeyPress ) {
+		QKeyEvent *ke = (QKeyEvent*)e;
+		switch ( ke->key() ) {
+			case Key_Return:
+			case Key_Enter:
+				if ( ke->state() & ControlButton ) {
+					in->textEdit()->doKeyboardAction( QTextEdit::ActionReturn );
+				} else {
+					QString code = in->textEdit()->text();
+					if ( code[ 0 ] == '?' )
+						code = "debug(" + code.mid( 1 ) + ");";
+					if ( !interpreter->checkSyntax( code ) ) {
+						in->textEdit()->doKeyboardAction( QTextEdit::ActionReturn );
+						return TRUE;
+					}
+					execute( CmdEditor );
+				}
+				return TRUE;
+			case Key_Up:
+				if ( ke->state() & ControlButton ) {
+					if ( history->currentItem() > 0 ) {
+						history->setCurrentItem( history->currentItem() - 1);
+						in->textEdit()->setText( history->currentText() );
+					}
+					return TRUE;
+				}
+				break;
+			case Key_Down:
+				if ( ke->state() & ControlButton ) {
+					if ( history->currentItem() < history->count() - 1 ) {
+						history->setCurrentItem( history->currentItem() + 1);
+						in->textEdit()->setText( history->currentText() );
+					} else {
+						in->textEdit()->clear();
+					}
+					return TRUE;
+				}
+				break;
+			case Key_Escape:
+				ke->ignore();
+				return TRUE;
+		}  // end of switch
+	}
+	return FALSE;
 }
 
 void CommandWindow::setHistorySize( int historySize ){
@@ -64,13 +131,18 @@ void CommandWindow::loadHistory() {
 	QFile file( globalSettings->readExpand( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
-		QString line;
+		QString h_line, line;
 		while ( !stream.atEnd() ) {
-			line = stream.readLine();	// line of text excluding '\n'
+			line = h_line = stream.readLine();	// line of text excluding '\n'
+			while ((!stream.atEnd()) && (h_line.length() > 0) && (! h_line.at( h_line.length() -1 ).isNull())) {
+				h_line = stream.readLine();
+				line += "\n"; line += h_line;
+			}
+			line.remove( '\0' );
 			history->insertItem( line );
 		}
 		file.close();
-		if (history->text( 0 ) != "") {
+		if ((history->count() == 0) || (history->text( 0 ) != "")) {
 			history->insertItem("",0);
 		}
 		return ;
@@ -85,7 +157,7 @@ void CommandWindow::saveHistory() {
 		if (history->listBox()->firstItem() != NULL) {
 			QTextStream stream( &file );
 			for ( QListBoxItem * it = history->listBox()->firstItem(); it != NULL; it = it->next() )
-				stream << it->text() << "\n";
+				stream << it->text() << '\0' << "\n" ;
 		}
 		file.close();
 		return ;
@@ -93,15 +165,47 @@ void CommandWindow::saveHistory() {
 	guiPrintDbg(debug::DBG_INFO,"Cannot open pdfedit-history to read!!!");
 }
 /** Execute and clear current command */
-void CommandWindow::execute() {
- QString command = cmd->text();
-// addCommand(command);			//add to console
+void CommandWindow::execute( enum cmd  from ) {
+ QString command;
+ if (from != CmdEditor)
+	command = cmd->text();
+ else
+	command = in->textEdit()->text();
  cmd->setText("");			//clear commandline
+ in->textEdit()->clear();
  history->insertItem( command, 1 );
  history->setCurrentItem(0);
+
  emit commandExecuted(command);		//execute command via signal
 }
 
+int CommandWindow::getCmdWindowMode() {
+	int h = CmdNone;
+	if (history->isShown())
+		h |= CmdHistory;
+	if (cmd->isShown())
+		h |= CmdLine;
+	if (in->isShown())
+		h |= CmdEditor;
+	return h;
+}
+
+void CommandWindow::setCmdWindowMode( int mode ) {
+	if (mode & CmdHistory)
+		history->show();
+	else
+		history->hide();
+
+	if (mode & CmdLine)
+		cmd->show();
+	else
+		cmd->hide();
+
+	if (mode & CmdEditor)
+		in->show();
+	else
+		in->hide();
+}
 /** Add command executed from menu or any source to be echoed to command window */
 void CommandWindow::addCommand(const QString &command) {
  out->append("<b>&gt; </b>"+htmlEnt(command));
@@ -122,6 +226,7 @@ void CommandWindow::addError(const QString &message) {
 /** default destructor */
 CommandWindow::~CommandWindow() {
 	saveHistory();
+	globalSettings->write( CMD + CMDMODE, getCmdWindowMode() );
 }
 
 } // namespace gui

@@ -7,6 +7,7 @@
 #include "cpage.h"
 #include "static.h"
 #include "QOutputDevPixmap.h"
+#include <qdockarea.h>
 
 // using namespace std;
 
@@ -34,6 +35,10 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	
 	scrollPageSpace = new QScrollView(this);
 	vBox->addWidget(scrollPageSpace);
+//QObject *pomObj = this;
+//while (pomObj->parent() !=NULL) pomObj = pomObj->parent();
+QDockArea * da = new QDockArea( Qt::Horizontal, QDockArea::Normal, this /*dynamic_cast<QWidget *>(pomObj)*/ );
+vBox->addWidget( da );
 	
 	hBox = new QHBoxLayout(vBox);
 

@@ -1,10 +1,11 @@
 [gui]
 CommandLine/HistoryFile=$HOME/.pdfedit/history
 CommandLine/HistorySize=20
+CommandLine/CmdMode=3
 PageSpace/ResizingZone=2
 items/MainMenu=list Main menu,file,tools,help
 items/MainToolbar=list Main Toolbar,fnew,fload,fsave,opts,closew
-items/PageToolbar=list Page Toolbar,reloadpage
+items/PageToolbar=list Page Toolbar,firstpage,prevpage,reloadpage,nextpage,lastpage
 items/ObjectToolbar=list Object Toolbar,treeAdditem,treeDelitem
 items/treeAdditem=item Add object,add_obj_dlg(),Ins,item_add.png
 items/treeDelitem=item Delete object,treeitem.remove(),Del,item_delete.png
@@ -21,6 +22,10 @@ items/fload=item &Open..., func_load(),F3,load.png
 items/fsave=item &Save,func_save(),F2,save.png
 items/fsaveas=item Save &as...,func_saveas(),,save.png
 items/reloadpage=item Reload Page,go(),F5,reload.png
+items/firstpage=item First Page,PageSpace.firstPage(),,first.png
+items/prevpage=item Prev Page,PageSpace.prevPage(),,prev.png
+items/nextpage=item Next Page,PageSpace.nextPage(),,next.png
+items/lastpage=item Last Page,PageSpace.lastPage(),,last.png
 items/quit=item &Quit,quit
 items/popup_generic=list Popup menu,tree_string,tree_type,tree_childs
 items/tree_string=item Show String representation,print(treeitem.item().getText())
