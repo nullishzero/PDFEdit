@@ -40,7 +40,8 @@
         To enable this reusability in C++ language we had to make some minor 
         changes to xpdf code, basicaly prepare them for transparent dynamic 
         inheritance, so all neccessary methods were virtualized and also data 
-        fields turned to protected (from private).
+        fields turned to protected (from private). (TODO link to xpdf_changes
+        document).
     </para>
     <para>
         Second layer model layer is formed by CXref - extension of XRef class. 
@@ -67,11 +68,13 @@
         inconsistency. XRefWriter defines mode in which it works to control
         checking mechanism. Second responsibility is to enable writing changes
         to the file to make them visible after all required changes are 
-        finished. To be able to do so, uses all collected information from
-        CXref superclass and just adds logic how to store objects. Finaly adds
-        revision handling which means that enables to access to objects 
-        specific for selected revision (each revision is specific by its cross 
-        reference table and so document have so many revision as cross tables).
+        finished. To separate from concrete implementation of storing, XRefWriter
+        uses IPdfWriter abstract interface for object writing. Concrete 
+        implementation can be set in runtime and OldStylePdfWriter is used
+        by default. XRefWriter is just responsible to provide with all changed
+        objects which are retrieved from lower (CXref) layer.     
+    </para>
+    <para>
         PDF format is prepared for such revision and multi version documents 
         very well, but doesn't support any kind of branching which means that
         changes can be done only for newest revision. XRefWriter take in mind
@@ -93,19 +96,21 @@
    <title>Document saving</title>
    <para>
         As it was mantioned above, PDF format supports changes in document in so 
-        called incremental update (all changed objects are stored from document 
-        end and adds new cross reference table with new trailer - just to repete
-        in short). This means that each set of changes forms new revision. This
-        brings little task to think about. What should be stored in one revision
-        and which changes are not worth of new revision?
-   </para>
-   <para>
-        Application using XRefWriter (directly or wrapped by other object) should
-        provide Save functionality. User usually wants to save everything because
+        called incremental update (all changed objects are appened to document 
+        end and new cross reference table for changed objects with new trailer 
+        - just to repete in short). This means that each set of changes forms new 
+        revision. This brings little task to think about. What should be stored in 
+        one revision and which changes are not worth of new revision?
+        User usually wants to save everything because
         of fear of data lost and doesn't thing about some revisions. If each save
         created it would lead to mess with horible number of referencies without
-        any meaning. To enable usable save functionality, XRefWriter defines two
-        types of saving:
+        any meaning.
+   </para>
+   <sect2>
+   <title>Revision saving</title>
+   <para>
+        XRefWriter provides save functionality with flag. This flag sais how data
+        should be stored with respect to revisions:
         <listitem>temporal saving, which dumps all changes with correct cross 
                 reference table and trailer at the end of document but doesn't
                 care for it (no internal structures are touch and they are kept
@@ -124,6 +129,38 @@
         temporal changes are default and new revision saving is done only if
         it is explicitly said.
    </para>
+   </sect2>
+   <sect2>
+   <title>Content writing and IPdfWriter</title>
+   <para>
+        XRefWriter uses abstract IPdfWriter class to write changed content when
+        save method is called. This enables separation of implementation from 
+        design. All saving is delegated to pdfWriter implementation holder and 
+        it depends on it how content is writen.
+   </para>
+   <para>
+        IPdfWriter writes pdf content in two phases:
+        <listitem>Real data writing and information collecting. This is done 
+                during writeContent method. Implementator is responsible to 
+                collect all data needed for cross reference section generation.
+        </listitem>
+        <listitem>Cross reference section writing. This is done in writeTrailer
+                method, which gets all collected data and writes cross reference
+                table (or stream - depends on implementation), writes trailer 
+                dictionary and finaly information about last xref position.
+        </listitem>
+        Different implementator of IPdfWriter interface can be set by 
+        XRefWriter::setPdfWriter method.
+   </para>
+   <para>
+        Each sequence of writeContent, [writeContent, ]* writeTrailer forms new
+        revision of document in incremental update sense. In this moment 
+        OldStylePdfWriter implementation is used which forms old style cross 
+        reference table (see pdf specification 2.4.3 Cross reference table chapter
+        TODO link).
+   </para>
+   </sect2>
+
    <sect2>
     <title>Document cloning</title>
     <para>
