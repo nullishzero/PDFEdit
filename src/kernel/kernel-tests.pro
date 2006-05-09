@@ -1,7 +1,7 @@
 #
-# Project file for kernel
+# Project file for kernel tests
 #
-TEMPLATE = lib
+TEMPLATE = app
 LANGUAGE = C++
 TARGET = kernel
 
@@ -13,28 +13,24 @@ DEFINES += DEBUG
 
 #PRECOMPILED_HEADER = static.h
 
+LIBS += -lkernel
+
 #
 # Common utils
 #
 HEADERS += ../utils/debug.h ../utils/iterator.h ../utils/observer.h
 
 #
-# Special utils
+# Tests
 #
-HEADERS += exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
-HEADERS += pdfwriter.h
-SOURCES += modecontroller.cc filters.cc 
+HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
+SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcstream.cc
+SOURCES += tests/teststream.cc tests/teststreamwriter.cc
+SOURCES += tests/testcobjecthelpers.cc
+SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
+SOURCES += main.cc 
 
-#
-# CObjects
-#
-HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
-HEADERS += streamwriter.h cinlineimage.h
-SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
-SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
-SOURCES += pdfwriter.cc
-SOURCES += cinlineimage.cc
-SOURCES += cpage.cc cpdf.cc 
+LIBS += -ldl -lcppunit 
 
 #
 # Kernel special settings

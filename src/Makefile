@@ -4,6 +4,13 @@
 #make PDF editor - source and documentation
 all: pdfedit
 
+#make PDF editor + tests
+tests: all kernel-tests
+
+# kernel tests
+kernel-tests: kernel
+	cd kernel && qmake -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
+
 # PDF editor
 pdfedit: utils kernel xpdf qoutputdevices
 	cd gui && qmake && make
@@ -18,7 +25,7 @@ utils:
 
 # Kernel
 kernel: xpdf config_xpdf_variables utils
-	cd kernel && qmake && make
+	cd kernel && qmake && make staticlib
 
 # XPdf
 xpdf: xpdf_configure
