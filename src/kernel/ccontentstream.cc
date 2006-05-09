@@ -839,7 +839,7 @@ namespace
 			delete str;
 
 			// \TODO !!!
-			return new CInlineImage ();
+			return new CInlineImage;
 				
 		}else
 		{
