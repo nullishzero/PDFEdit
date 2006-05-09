@@ -6,6 +6,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/05/09 20:08:31  hockm0bm
+ * * collectRevisions
+ * 	- considers also xref streams
+ * 	- checks for endless loop caused by wrong Trailer::Prev values (cycle)
+ * * checkLinearized new parameter xref needed for proper parsing
+ *
  * Revision 1.20  2006/05/08 22:21:56  hockm0bm
  * * isLinearized method added
  *         - linearized field added
@@ -140,6 +146,7 @@ namespace utils
 
 /** Checks whether given stream is linearized.
  * @param stream Pdf stream to read (from the file begin).
+ * @param xref XRef instance.
  * @param ref Pointer to reference where to set object and generation number.
  *
  * Searches first indirect object in the stream from the begining and if it is
@@ -150,7 +157,7 @@ namespace utils
  * @return true if first indirect object is Linearized dictionary, false
  * otherwise.
  */
-bool checkLinearized(StreamWriter & stream, Ref * ref);
+bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref);
 
 } // end of namespace utils
 
@@ -169,12 +176,13 @@ bool checkLinearized(StreamWriter & stream, Ref * ref);
  *	read-only. (getRevisionCount, getActualRevision, changeRevision 
  *	methods).
  * <li> enables writing content to the stream and duplication of current revision
- * to other file.
+ * to other file. Uses implemetation independant way for content storing which
+ * may be changed by runtime (implementator of IPdfWriter abstract class).
  * </ul>
  * <br>
  * Each public method which produces content changes checks whether associated 
  * pdf instance is not in ReadOnly mode and if it is, throws an exception to 
- * prevent from change.
+ * prevent from changes.
  */
 class XRefWriter:public CXref
 {
@@ -297,7 +305,6 @@ public:
 	 *
 	 * @throw MalformedFormatExeption if XRef creation fails (instance is
 	 * unusable in such situation).
-	 * TODO collectRevisions error handling
 	 */
 	XRefWriter(StreamWriter * stream, CPdf * _pdf);
 
@@ -330,7 +337,6 @@ public:
 	 *
 	 * @throw MalformedFormatExeption if XRef creation fails (instance is
 	 * unusable in such situation).
-	 * TODO collectRevisions error handling
 	 */
 	/* FIXME uncoment when cache is available
 	XRefWriter(FileStreamWriter * stream, ObjectCache * c):CXRef(stream, c){};
@@ -366,8 +372,6 @@ public:
 	 * If mode is set to paranoid, checks the reference existence and after
 	 * type safety. If tests are ok, operation is permitted otherwise 
 	 * operation fails.
-	 * <br>
-	 * TODO provide undo information
 	 *
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
@@ -387,8 +391,6 @@ public:
 	 * If mode is set to paranoid, checks the reference existence and after
 	 * type safety. If tests are ok, operation is permitted otherwise 
 	 * operation fails.
-	 * <br>
-	 * TODO provide undo information
 	 * 
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
@@ -503,7 +505,7 @@ public:
 	/**********************************************************************
 	 *
 	 * Reimplementation of CXref methods, which may depend on changed
-	 * object, which shouldn't be available in an later revision.
+	 * objects, which shouldn't be available in an later revision.
 	 *
 	 *********************************************************************/
 

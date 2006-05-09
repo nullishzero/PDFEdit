@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/05/09 20:08:31  hockm0bm
+ * * collectRevisions
+ * 	- considers also xref streams
+ * 	- checks for endless loop caused by wrong Trailer::Prev values (cycle)
+ * * checkLinearized new parameter xref needed for proper parsing
+ *
  * Revision 1.18  2006/05/08 22:21:56  hockm0bm
  * * isLinearized method added
  *         - linearized field added
@@ -110,13 +116,13 @@ namespace pdfobjects {
 
 namespace utils {
 
-bool checkLinearized(StreamWriter & stream, Ref * ref)
+bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
 {
 	// searches num gen obj entry. Starts from stream begining
 	stream.reset();
 	Object obj;
 	Parser parser=Parser(
-			NULL, new Lexer(
+			xref, new Lexer(
 				NULL, stream.makeSubStream(stream.getPos(), false, 0, &obj)
 				)
 			);
@@ -188,7 +194,7 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 
 	// checks whether file is linearized
 	Ref linearizedRef;
-	linearized=utils::checkLinearized(*stream, &linearizedRef);
+	linearized=utils::checkLinearized(*stream, this, &linearizedRef);
 	if(linearized)
 		kernelPrintDbg(DBG_DBG, "Pdf content is linearized. Linearized dictionary"<<
 				" ref=["<<linearizedRef.num<<", "<<linearizedRef.gen<<"]");
@@ -464,9 +470,10 @@ void XRefWriter::collectRevisions()
 	Object * trailer=XRef::trailerDict.clone();
 	bool cont=true;
 
+	// TODO code clean up
 	do
 	{
-		kernelPrintDbg(DBG_DBG, "XRef offset for "<<revisions.size()<<" revision is"<<off);
+		kernelPrintDbg(DBG_DBG, "XRef offset for "<<revisions.size()<<" revision is "<<off);
 		// pushes current offset as last revision
 		revisions.push_back(off);
 
@@ -488,50 +495,130 @@ void XRefWriter::collectRevisions()
 		}
 
 		// sets new value for off
+		if(std::find(revisions.begin(), revisions.end(), (size_t)prev.getInt())!=revisions.end())
+		{
+			kernelPrintDbg(DBG_ERR, "Trailer Prev points to already processed revision (endless loop). Assuming no more revisions.");
+			break;
+		}
+
 		off=prev.getInt();
 		prev.free();
 
-		// searches for TRAILER_KEYWORD to be able to parse older trailer (one
-		// for xref on off position) - this works only for oldstyle XRef tables
-		// not XRef streams
+		// off is first byte of cross reference section. It can be either xref
+		// key word or begining of xref stream object
 		str->setPos(off);
-		char buffer[1024];
-		memset(buffer, '\0', sizeof(buffer));
-		char * ret; 
-		while((ret=str->getLine(buffer, sizeof(buffer)-1)))
+		Object parseObj, obj;
+		::Parser parser = Parser(this,
+			new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj))
+			);
+		parser.getObj(&obj);
+		if(obj.isCmd(XREF_KEYWORD))
 		{
-			if(strstr(buffer, STARTXREF_KEYWORD))
+			// old style cross reference table, we have to skip whole table and
+			// then we will get to trailer
+			obj.free();
+			kernelPrintDbg(DBG_INFO, "New old style cross reference section found. off="<<off);
+			
+			// searches for TRAILER_KEYWORD to be able to parse older trailer (one
+			// for xref on off position) - this works only for oldstyle XRef tables
+			// not XRef streams
+			char * ret; 
+			char buffer[1024];
+			memset(buffer, '\0', sizeof(buffer));
+			// resets position in the stream
+			str->setPos(off);
+			while((ret=str->getLine(buffer, sizeof(buffer)-1)))
 			{
-				// we have reached startxref keyword and haven't found trailer
-				kernelPrintDbg(DBG_WARN, STARTXREF_KEYWORD<<" found but no trailer.");
+				if(strstr(buffer, STARTXREF_KEYWORD))
+				{
+					// we have reached startxref keyword and haven't found trailer
+					kernelPrintDbg(DBG_ERR, STARTXREF_KEYWORD<<" found but no trailer.");
+					goto xreferror;
+				}
+				
+				if(strstr(buffer, TRAILER_KEYWORD))
+				{
+					// trailer found, parse it and set trailer to parsed one
+					kernelPrintDbg(DBG_DBG, "Trailer dictionary found");
+					Object obj;
+					
+					// we have to create new parser because we can't set
+					// position in parser to current in the stream
+					::Parser parser = Parser(this,
+						new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj))
+						);
+
+					// deallocates previous one before it is used
+					trailer->free();
+					parser.getObj(trailer);
+					if(!trailer->isDict())
+					{
+						kernelPrintDbg(DBG_ERR, "Trailer is not dictionary.");
+						goto xreferror;
+					}
+
+					// everything ok, trailer is read and parsed and can be used
+					break;
+				}
+			}
+			if(!ret)
+			{
+				// stream returned NULL, which means that no more data in stream is
+				// available
+				kernelPrintDbg(DBG_DBG, "end of stream but no trailer found");
 				cont=false;
-				break;
+			}
+			continue;
+		}
+
+		// xref key work no found, it may be xref stream object
+		if(obj.isInt())
+		{
+			// gen number should follow
+			obj.free();
+			parser.getObj(&obj);
+			if(!obj.isInt())
+			{
+				obj.free();
+				goto xreferror;
 			}
 			
-			if(strstr(buffer, TRAILER_KEYWORD))
+			// end of indirect object header is obj key word
+			parser.getObj(&obj);
+			if(!obj.isCmd("obj"))
 			{
-				// trailer found, parse it and set trailer to parsed one
-				Object obj;
-				::Parser * parser = new Parser(NULL,
-					new Lexer(NULL,
-						str->makeSubStream(str->getPos(), gFalse, 0, &obj)));
-				// deallocates current trailer and parses one for previous
-				// revision
-				trailer->free();
-				parser->getObj(trailer);
-				
-				delete parser;
-				break;
+				obj.free();
+				goto xreferror;
 			}
+
+			// header of indirect object is ok, so parser object itself
+			Object trailerStream;
+			parser.getObj(&trailerStream);
+			if(!trailerStream.isStream())
+			{
+				trailerStream.free();
+				goto xreferror;
+			}
+			trailerStream.getDict()->lookupNF("Type", &obj);
+			if(!obj.dictIs("XRef"))
+			{
+				obj.free();
+				trailerStream.free();
+				goto xreferror;
+			}
+			
+			// xref stream object contains also trailer information, so parses
+			// stream object and uses just dictionary part
+			kernelPrintDbg(DBG_INFO, "New xref stream section. off="<<off);
+			trailer->free();
+			trailer->initDict(trailerStream.getDict());
+			continue;
 		}
-		if(!ret)
-		{
-			// stream returned NULL, which means that no more data in stream is
-			// available
-			kernelPrintDbg(DBG_DBG, "end of stream but no trailer found");
-			cont=false;
-		}
-		
+
+xreferror:
+		kernelPrintDbg(DBG_ERR, "Xref section offset doesn't point to xref start");
+		cont=false;
+
 	// continues only if no problem with trailer occures
 	}while(cont); 
 
