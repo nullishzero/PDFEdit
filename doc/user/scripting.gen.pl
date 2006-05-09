@@ -5,6 +5,8 @@ use strict;
 # Directory where source files are located
 my $srcdir="../../src/gui";
 
+my %used_func=();
+
 #convert function definition C++ -> QSA
 sub convert_definition {
  my $def=shift;
@@ -70,8 +72,15 @@ sub get_doc {
    $def=~/^\S+\s+([a-zA-Z0-9_]+)/;
    my $func=$1;
    #add function definition and description
+   my $funcid=$classname.$dot.$func;
+   if ($used_func{$funcid}) {
+    $used_func{$funcid}++;
+    $funcid.="__".$used_func{$funcid};
+   } else {
+    $used_func{$funcid}=1;
+   }
    $out.=<<EOF;
-   <sect2 id=\"${classname}${dot}${func}\">
+   <sect2 id=\"$funcid\">
     <title><funcsynopsis>$def</funcsynopsis></title>
     $cmt
    </sect2>
