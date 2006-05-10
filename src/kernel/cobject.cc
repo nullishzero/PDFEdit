@@ -453,7 +453,7 @@ namespace {
 			break;
 
 		case objStream:
-			/*obj.streamReset ();
+			obj.streamReset ();
 			assert (0 == obj.streamGetPos());
 			{
 				Dict* dict = obj.streamGetDict ();
@@ -466,13 +466,15 @@ namespace {
 			
 			oss << CSTREAM_HEADER;
 			obj.streamReset ();
+			{
 			int c = 0;
 			while (EOF != (c = obj.streamGetChar())) 
 				oss << static_cast<string::value_type> (c);
+			}
 			obj.streamClose ();
 			oss << CSTREAM_FOOTER;
 			break;
-			*/
+		
 		default:
 			assert (false);	
 			break;

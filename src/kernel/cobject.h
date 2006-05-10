@@ -8,7 +8,6 @@
  *          Author:  jmisutka (06/01/19), 
  *			\TODO:
  *					better public/protected dividing
- *					StreamReader
  *
  * =====================================================================================
  */
@@ -819,12 +818,20 @@ public:
 
 	
 	/**
-	 * Returns printable string representation of this object.
+	 * Returns string representation of this object.
 	 *
 	 * @param str String representation.
 	 */
 	virtual void getStringRepresentation (std::string& str) const
 		{ getStringRepresentation (str, false); }
+
+	/**
+	 * Returns printable string representation of this object.
+	 *
+	 * @param str String representation.
+	 */
+	virtual void getPritnableStringRepresentation (std::string& str) const
+		{ getStringRepresentation (str, true); }
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
