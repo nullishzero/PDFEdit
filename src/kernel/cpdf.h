@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.44  2006/05/10 20:42:13  hockm0bm
+ * * new Cpdf::getTrailer method
+ * * new utils::isEncrypted
+ *
  * Revision 1.43  2006/05/09 20:05:19  hockm0bm
  * minor changes
  *
@@ -949,6 +953,18 @@ public:
 	{
 		return docCatalog;
 	}
+
+	/** Returns trailer dictionary.
+	 *
+	 * Returns const Dictionary pointer to prevent doing changes to it.
+	 * 
+	 * @return Trailer dictionary wrapped by smart pointer (using shared_ptr
+	 * from boost library).
+	 */
+	boost::shared_ptr<const CDict> getTrailer()const
+	{
+		return trailer;
+	}
 		
 	/** Inserts exisitng page.
 	 * @param page Page used for new page creation.
@@ -1327,6 +1343,19 @@ size_t getNodePosition(CPdf & pdf, boost::shared_ptr<IProperty> node);
  * @return true If given child belongs to parent subtree, false otherwise.
  */
 bool isDescendant(CPdf & pdf, IndiRef parent, boost::shared_ptr<CDict> child);
+
+/** Checks whether file content is encrypted.
+ * @param pdf Pdf instance to check.
+ * @param filterName Name of the filter used for encryption (set only if
+ * content is encrypted).
+ *
+ * Checks for Encrypt entry in documents trailer. If it is present, it means
+ * that content is enctypted and so tries to get FilterName entry from Encrypt
+ * dictionary (if filterName is non NULL).
+ * 
+ * @return true if file content is encrypted, false otherwise.
+ */
+bool isDecrypted(const CPdf & pdf, std::string * filterName);
 
 } // namespace utils
 
