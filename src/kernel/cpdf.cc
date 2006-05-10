@@ -3,6 +3,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.46  2006/05/10 20:23:50  hockm0bm
+ * * isChange bug fixed
+ * 	- change class field is initialized in constructor now
+ * * new CPdf::getTrailer
+ * * new utils::isEncrypted method
+ *
  * Revision 1.45  2006/05/09 20:05:19  hockm0bm
  * minor changes
  *
@@ -204,10 +210,10 @@ using namespace debug;
 
 // TODO exceptions unification
 
+typedef std::vector<boost::shared_ptr<pdfobjects::IProperty> > ChildrenStorage;
+
 namespace pdfobjects
 {
-
-typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
 
 namespace utils 
 {
@@ -743,6 +749,35 @@ IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
 	return NULL;
 }
 
+bool isEncrypted(const CPdf & pdf, string * filterName)
+{
+	utilsPrintDbg(DBG_DBG, "");
+
+	// gets trailer dictionary and Encrypt entry
+	shared_ptr<const CDict> trailer=pdf.getTrailer();
+	try
+	{
+		shared_ptr<IProperty> encryptProp=trailer->getProperty("Encrypt");
+		if(isDict(*encryptProp))
+		{
+			shared_ptr<CDict> encryptDict=IProperty::getSmartCObjectPtr<CDict>(encryptProp);
+			// if filterName parameter is non NULL, set its value to encryption
+			// algorithm 
+			if(filterName)
+			{
+				shared_ptr<IProperty> filter=encryptDict->getProperty("Filter");
+				filter->getStringRepresentation(*filterName);
+			}
+			return true;
+		}else
+			utilsPrintDbg(DBG_WARN, "Encrypt entry found in trailer but it is not a dictionary.");
+	}catch(ElementNotFoundException & e)
+	{
+		// no Encrypt entry
+	}
+	return false;
+}
+
 } // end of utils namespace
 
 void CPdf::PageTreeWatchDog::notify(boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw()
@@ -921,7 +956,7 @@ using namespace utils;
 	}
 }
 
-CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this))
+CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this)),change(false)
 {
 	// gets xref writer - if error occures, exception is thrown 
 	xref=new XRefWriter(stream, this);
