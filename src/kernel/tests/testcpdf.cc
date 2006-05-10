@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/05/10 20:38:02  hockm0bm
+ * isChanged checked
+ *
  * Revision 1.15  2006/05/06 21:17:38  hockm0bm
  * removed additional code
  *
@@ -239,6 +242,9 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+
+		// no change made to document
+		CPPUNIT_ASSERT(!pdf->isChanged());
 	}
 
 	void pageManipulationTC(CPdf * pdf)
@@ -372,7 +378,6 @@ public:
 		else
 		{
 			// collects all descendants from interNode
-			// TODO test case for isDescendant
 			vector<shared_ptr<CPage> > descendants;
 			size_t pageCount=pdf->getPageCount();
 			for(size_t i=1; i<pageCount; i++)
@@ -403,6 +408,8 @@ public:
 			}
 			// test passed
 		}
+		// change made to document
+		CPPUNIT_ASSERT(pdf->isChanged());
 	}
 
 /** Multiversion file name. */
@@ -508,8 +515,11 @@ public:
 			printf("\t\tremovePage\n");
 			TRY_READONLY_OP(pdf->removePage(1), "removePage should have failed");
 			
-			// removeOutline TODO
 		}
+
+		// isModified returns always false
+		printf("TC08:\tisChanged is allways false on unchanged document\n");
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		
 		pdf->close();
 	}
@@ -639,8 +649,11 @@ public:
 		instancingTC();
 		for(PdfList::iterator i=pdfs.begin(); i!=pdfs.end(); i++)
 		{
-			indirectPropertyTC(*i);
+			// pageIterationTC is before indirectPropertyTC because it needs to
+			// have no changes made before (checks isChanged on non change
+			// producing operations)
 			pageIterationTC(*i);
+			indirectPropertyTC(*i);
 			pageManipulationTC(*i);
 		}
 		revisionsTC();
