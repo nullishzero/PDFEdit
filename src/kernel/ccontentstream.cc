@@ -415,12 +415,27 @@ namespace
 		assert (1 <= args.size ());
  		//printTextUpdate (state, getStringFromIProperty (args[0]));
 	}
+	// "cm"
+	void
+	opcmUpdate (GfxState& state, const PdfOperator::Operands& args)
+	{
+		assert (6 <= args.size());
+		state.concatCTM (
+				getDoubleFromIProperty(args[0]),
+				getDoubleFromIProperty(args[1]),
+				getDoubleFromIProperty(args[2]),
+				getDoubleFromIProperty(args[3]),
+				getDoubleFromIProperty(args[4]),
+				getDoubleFromIProperty(args[5]));
+	}
+
 	/*// ""
 	void
 	op (GfxState& state, const PdfOperator::Operands& args)
 	{
 	}
 */
+
 
 	//==========================================================
 	
@@ -593,7 +608,7 @@ namespace
 					opcUpdate, "" },	
   			{"cm",  6, 	{setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),    
 						 setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal),setNthBitsShort (pInt, pReal)}, 
-					unknownUpdate, "" },	
+					opcmUpdate, "" },	
 			{"cs",  1, {setNthBitsShort (pName)}, 
 					unknownUpdate, "" },	
 			{"d",   2, 	{setNthBitsShort (pArray),setNthBitsShort (pInt, pReal)}, 
