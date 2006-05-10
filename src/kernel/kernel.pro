@@ -5,6 +5,7 @@ TEMPLATE = lib
 LANGUAGE = C++
 TARGET = kernel
 
+CONFIG += staticlib
 CONFIG += complete 
 CONFIG += console precompile_header
 CONFIG += debug
@@ -19,6 +20,13 @@ DEFINES += DEBUG
 tests.commands	= qmake -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
 tests.depends	= libkernel.a
 QMAKE_EXTRA_UNIX_TARGETS += tests
+
+#
+# Cleaning tests
+#
+cleanall.commands	= make clean && make -f Makefile-tests clean
+QMAKE_EXTRA_UNIX_TARGETS += cleanall
+
 
 #
 # Common utils
@@ -48,6 +56,11 @@ SOURCES += cpage.cc cpdf.cc
 #
 #QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
 QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings  -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function
+
+#
+# Static lib
+#
+QMAKE_CXXFLAGS_DEBUG += -static
 
 #
 # xpdf and utils
