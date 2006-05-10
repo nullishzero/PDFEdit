@@ -13,7 +13,7 @@ DEFINES += DEBUG
 
 #PRECOMPILED_HEADER = static.h
 
-LIBS += -lkernel
+LIBS += -lkernel -L./
 
 #
 # Common utils
