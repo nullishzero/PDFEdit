@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.47  2006/05/10 21:09:26  hockm0bm
+ * isChanged meaning changed
+ *         - returns true if there are any chnages after last save (or pdf creation)
+ *         - doesn't check current revision
+ *
  * Revision 1.46  2006/05/10 20:23:50  hockm0bm
  * * isChange bug fixed
  * 	- change class field is initialized in constructor now
@@ -1925,7 +1930,7 @@ using namespace utils;
 	// pageList at this moment
 }
 
-void CPdf::save(bool newRevision)
+void CPdf::save(bool newRevision)const
 {
 	kernelPrintDbg(DBG_DBG, "");
 

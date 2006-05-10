@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.45  2006/05/10 21:09:26  hockm0bm
+ * isChanged meaning changed
+ *         - returns true if there are any chnages after last save (or pdf creation)
+ *         - doesn't check current revision
+ *
  * Revision 1.44  2006/05/10 20:42:13  hockm0bm
  * * new Cpdf::getTrailer method
  * * new utils::isEncrypted
@@ -573,12 +578,15 @@ private:
 	 *************************************************************************/
 	
 	/** Change flag.
-	 * Value is set to true anytime some change happens. We don't expose
-	 * XRefWriter to public so, changes can be done only by CPdf interface.
+	 *
+	 * Value is true if and only if current changes have not been saved by save
+	 * method.
+	 * <br>
+	 * Value is mutable because
 	 *
 	 * @see isChanged
 	 */
-	bool change;
+	mutable bool change;
 	
 	/** Mapping between IndiRef and indirect properties. 
 	 *
@@ -780,19 +788,12 @@ public:
 		return modeController;
 	}
 
-	/** Checks whether there is something to save.
-	 *
-	 * If actual revision is 0, checks change field, otherwise returns false,
-	 * because it is not possible to have changes in older revision.
+	/** Gets change field value.
 	 *
 	 * @return true if there are some new changes, false otherwise.
 	 */
 	bool isChanged()const
 	{
-		if(xref->getActualRevision())
-			return false;
-
-		// the newest revision may be changed - asks XRefWriter
 		return change;
 	}
 	
@@ -911,7 +912,7 @@ public:
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we aren't
 	 * in the newest revision (where changes are enabled).
 	 */
-	void save(bool newRevision=false);
+	void save(bool newRevision=false)const;
 
 	/** Makes clone to file.
 	 * @param fname File handle, where to store content.
