@@ -28,7 +28,7 @@ using namespace boost;
 bool
 position (ostream& oss, const char* fileName, const Rectangle rc)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
@@ -122,7 +122,7 @@ namespace  {
 bool
 opcount (ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
 
@@ -206,7 +206,7 @@ opcount (ostream& oss, const char* fileName)
 bool
 printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 {
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();

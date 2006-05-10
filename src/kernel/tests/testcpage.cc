@@ -55,7 +55,7 @@ using namespace boost;
 bool
 mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char* fileName)
 {
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getPage (1);
@@ -91,7 +91,7 @@ bool
 display (__attribute__((unused)) ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
-	boost::scoped_ptr<CPdf> pdf (getTestCPdf (fileName));
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
 	boost::shared_ptr<CPage> page = pdf->getFirstPage ();

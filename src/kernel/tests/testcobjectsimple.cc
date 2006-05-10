@@ -91,7 +91,7 @@ bool
 s_ctors (const char* filename, const example& e)
 {
 	Object obj;
-	boost::scoped_ptr<CPdf> _pdf (getTestCPdf (filename));
+	boost::shared_ptr<CPdf> _pdf (getTestCPdf (filename), pdf_deleter());
 	CPdf& pdf = *_pdf;
 	IndiRef ref;
 	

@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/10 21:36:59  misuj1am
+ *
+ * -- adapted to ~CPdf beeing made private
+ *
  * Revision 1.16  2006/05/03 01:06:18  misuj1am
  *
  * -- tests improvments
@@ -470,5 +474,15 @@ ip_validate (vector<string>& n, vector<string>& m)
 		return false;
 	}
 }
+
+
+//=====================================================================================
+
+struct pdf_deleter
+{
+	void operator() (CPdf* p)
+	{assert (p); p->close();}
+};
+
 
 #endif // _TESTMAIN_H_
