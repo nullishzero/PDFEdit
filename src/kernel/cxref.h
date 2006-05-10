@@ -6,6 +6,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/05/10 16:59:05  hockm0bm
+ * * changeObject throws if instance->clone fails
+ * * changeTrailer throws if value->clone fails
+ * 	- plus cloning is done
+ * * getTrailerEntry throws if value can't be cloned
+ * * getDocInfo throws if value can't be cloned
+ * * getDocInfoNF throws if value can't be cloned
+ * * fetch throws if value can't be cloned
+ *
  * Revision 1.22  2006/05/09 20:06:43  hockm0bm
  * * stored field removed from ChangedEntry
  * * doc update
@@ -213,6 +222,8 @@ protected:
 	 * <br>
 	 * Note that this function doesn't perform any value ckecking.
 	 *
+	 * @throw NotImplementedException if object cloning fails.
+	 *
 	 * @return Old value of object from changedStorage or NULL if it's first
 	 * revision of object.
 	 */
@@ -227,6 +238,7 @@ protected:
 	 * <br>
 	 * NOTE: doesn't perform any value checking.
 	 *
+	 * @throw NotImplementedException if object cloning fails.
 	 * @return Previous value of object or 0 if previous revision not
 	 * available (new name value pair in trailer).
 	 */
@@ -407,10 +419,12 @@ public:
 	virtual ::Object * getTrailerEntry(char * name);
 
 	// Returns the document's Info dictionary (if any).
+	// @throw NotImplementedException if object cloning fails.
 	virtual ::Object *getDocInfo(::Object *obj);
 	
 	// Returns the document's Info dictionary (dereferenced
 	// if indirect value
+	// @throw NotImplementedException if object cloning fails.
 	virtual ::Object *getDocInfoNF(::Object *obj);
 
 	/** Returns number of indirect objects.
@@ -432,13 +446,14 @@ public:
 	 * <br>
 	 * NOTE:
 	 * Returned value is deepCopy of object and changes made to object 
-	 * don't affect internally maintained values (e.g. it can be 
-	 * deallocated). 
+	 * don't affect internally maintained values (e.g. it can and should be 
+	 * deallocated by caller). 
 	 * To register a change use change method.
 	 * <br>
 	 * This method provide transparent access to changed objects throught
 	 * XRef (xpdf class) interface.
 	 *
+	 * @throw NotImplementedException if object cloning fails.
 	 * @return Pointer with initialized object given as parameter, if not
 	 * found obj is set to objNull.
 	 */

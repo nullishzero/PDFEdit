@@ -3,6 +3,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/05/10 16:59:05  hockm0bm
+ * * changeObject throws if instance->clone fails
+ * * changeTrailer throws if value->clone fails
+ * 	- plus cloning is done
+ * * getTrailerEntry throws if value can't be cloned
+ * * getDocInfo throws if value can't be cloned
+ * * getDocInfoNF throws if value can't be cloned
+ * * fetch throws if value can't be cloned
+ *
  * Revision 1.18  2006/05/09 20:06:43  hockm0bm
  * * stored field removed from ChangedEntry
  * * doc update
@@ -164,6 +173,15 @@ using namespace debug;
 		cache->discard(ref);
 	*/
 
+	// clones given object
+	Object * clonedObject=instance->clone();
+	if(!clonedObject)
+	{
+		// cloning has failed
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		throw NotImplementedException("clone failure.");
+	}
+
 	// searches in changedStorage
 	// this is returned so it can be used for some
 	// history information - value keeper is responsible for
@@ -179,7 +197,7 @@ using namespace debug;
 		changedEntry=new ObjectEntry();
 		kernelPrintDbg(DBG_DBG, "object is changed for the first time, creating changedEntry");
 	}
-	changedEntry->object=instance->clone();
+	changedEntry->object=clonedObject;
 	changedStorage.put(ref, changedEntry);
 
 	// object has been newly created, so we will set value in
@@ -204,8 +222,15 @@ using namespace debug;
 	
 	Dict * trailer = trailerDict.getDict(); 
 
+	Object * clonedObject=value->clone();
+	if(!clonedObject)
+	{
+		// cloning has failed
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		throw NotImplementedException("clone failure.");
+	}
 	char * key=strdup(name);
-	::Object * prev = trailer->update(key, value);
+	::Object * prev = trailer->update(key, clonedObject);
 
 	// update doesn't store key if key, value has been already in the 
 	// dictionary
@@ -458,6 +483,12 @@ using namespace debug;
 
 	::Object * retValue=obj.clone();
 	obj.free();
+	if(!retValue)
+	{
+		// cloning has failed
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		throw NotImplementedException("clone failure.");
+	}
 
 	return retValue;
 }
@@ -475,6 +506,12 @@ using namespace debug;
 	// and initialize parameter from cloned value
 	::Object * retObj=docObj.clone();
 	docObj.free();
+	if(!retObj)
+	{
+		// cloning has failed
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		throw NotImplementedException("clone failure.");
+	}
 	*obj=*retObj;
 
 	return retObj;
@@ -494,6 +531,12 @@ using namespace debug;
 	// and initialize parameter from cloned value
 	::Object * retObj=docObj.clone();
 	docObj.free();
+	if(!retObj)
+	{
+		// cloning has failed
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		throw NotImplementedException("clone failure.");
+	}
 	// shallow copy of the content (deep copied)
 	*obj=*retObj;
 
@@ -523,6 +566,8 @@ using namespace debug;
 		kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is changed - using changedStorage");
 		
 		// object has been changed
+		// this clone never fails, because it had to be cloned before storing to
+		// changedStorage
 		::Object * deepCopy=entry->object->clone();
 
 		// shallow copy of content
@@ -545,6 +590,12 @@ using namespace debug;
 	// prevent direct changing of the stream
 	// TODO may be optimized - clones just streams
 	Object * cloneObj=tmpObj.clone();
+	if(!cloneObj)
+	{
+		// cloning has failed
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		throw NotImplementedException("clone failure.");
+	}
 
 	// shallow copy of cloned value and
 	// deallocates coned value, but keeps content
@@ -560,7 +611,6 @@ using namespace debug;
 	}
 	*/   
 
-	// FIXME has to return cloned value because of streams
 	return obj;
 }
 
