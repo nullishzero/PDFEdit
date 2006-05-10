@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/05/10 17:00:06  hockm0bm
+ * collectRevisions
+ *         - trailer clone success tested
+ *
  * Revision 1.19  2006/05/09 20:08:31  hockm0bm
  * * collectRevisions
  * 	- considers also xref streams
@@ -468,6 +472,11 @@ void XRefWriter::collectRevisions()
 	size_t off=XRef::lastXRefPos;
 	// uses deep copy to prevent problems with original data
 	Object * trailer=XRef::trailerDict.clone();
+	if(!trailer)
+	{
+		kernelPrintDbg(DBG_ERR, "Unable to clone trailer. Ignoring revision collecting.");
+		return;
+	}
 	bool cont=true;
 
 	// TODO code clean up
