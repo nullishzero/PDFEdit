@@ -13,6 +13,8 @@ DEFINES += DEBUG
 
 #PRECOMPILED_HEADER = static.h
 
+POST_TARGETDEPENDS = libkernel.a
+
 LIBS += -lkernel -L./
 
 #
@@ -47,7 +49,7 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash ../
 # Directories to creating files
 #
 unix {
-  OBJECTS_DIR = $$OBJDIR
+  OBJECTS_DIR = .obj
 }
 
 include(kernel-obj.pro)

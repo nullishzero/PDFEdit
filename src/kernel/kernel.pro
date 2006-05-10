@@ -14,6 +14,13 @@ DEFINES += DEBUG
 #PRECOMPILED_HEADER = static.h
 
 #
+# Building tests
+#
+tests.commands	= qmake -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
+tests.depends	= libkernel.a
+QMAKE_EXTRA_UNIX_TARGETS += tests
+
+#
 # Common utils
 #
 HEADERS += ../utils/debug.h ../utils/iterator.h ../utils/observer.h
@@ -51,7 +58,7 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash ../
 # Directories to creating files
 #
 unix {
-  OBJECTS_DIR = $$OBJDIR
+  OBJECTS_DIR = .obj
 }
 
 include(kernel-obj.pro)
