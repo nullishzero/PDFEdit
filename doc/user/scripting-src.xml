@@ -48,6 +48,12 @@
    are called without any parameters and return value (if any) is ignored.
    If the callback function does not exist, it is skipped
   </para>
+  <sect1 id="onChangeRevision">
+   <title>onChangeRevision()</title>
+   <para>
+    This function is called after actve revision of document is changed
+   </para>
+  </sect1>
   <sect1 id="onLoad">
    <title>onLoad()</title>
    <para>
