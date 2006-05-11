@@ -780,7 +780,7 @@ CObjectStream<Checker>::doClone () const
 {
 	kernelPrintDbg (debug::DBG_DBG,"CObjectStream::doClone");
 	assert (NULL == parser  || !"Want to clone opened stream.. Should the stream state be also copied?");
-	assert (getLength() == buffer.size());
+	//assert (getLength() == buffer.size());
 	
 	// Make new stream object
 	// NOTE: We do not want to inherit any IProperty variable

@@ -803,7 +803,7 @@ public:
 	 * @param str String representation.
 	 */
 	virtual void getStringRepresentation (std::string& str) const
-		{ getStringRepresentation (str, false); }
+		{ getStringRepresentation (str, true); }
 
 	/**
 	 * Returns printable string representation of this object.
@@ -811,7 +811,7 @@ public:
 	 * @param str String representation.
 	 */
 	virtual void getPritnableStringRepresentation (std::string& str) const
-		{ getStringRepresentation (str, true); }
+		{ getStringRepresentation (str, false); }
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
@@ -994,7 +994,10 @@ private:
 
 		// Set correct length
 		if (getLength() != buffer.size())
+		{
+			kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
 			setLength (buffer.size());
+		}
 		
 		// Dispatch the change
 		this->dispatchChange ();
