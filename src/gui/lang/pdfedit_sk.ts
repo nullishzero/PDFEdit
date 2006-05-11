@@ -261,6 +261,10 @@ Data: %3
         <source>&amp;Add object</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>label item</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -337,6 +341,25 @@ Data: %3
     </message>
     <message>
         <source>No object type selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::Base</name>
+    <message>
+        <source>Error in callback handler: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exception in callback handler: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown exception in script occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -493,6 +516,10 @@ Data: %3
         <source>These toolbars will be shown:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show errors from event handlers</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -502,14 +529,6 @@ Data: %3
     </message>
     <message>
         <source>Loaded file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown exception in script occured</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -537,6 +556,17 @@ Data: %3
     </message>
     <message>
         <source>This type of object does not have any properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::RevisionTool</name>
+    <message>
+        <source>No revisions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Revision: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -640,6 +670,36 @@ Data: %3
     <message>
         <source>&amp;Help</source>
         <comment>help_index</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Page</source>
+        <comment>firstpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prev Page</source>
+        <comment>prevpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Page</source>
+        <comment>nextpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Page</source>
+        <comment>lastpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Revision Toolbar</source>
+        <comment>RevisionToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Revisions</source>
+        <comment>revlabel</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

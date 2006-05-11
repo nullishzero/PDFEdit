@@ -264,6 +264,10 @@ Data: %3
         <source>(n = -1 .. 5)</source>
         <translation>(n = -1 .. 5)</translation>
     </message>
+    <message>
+        <source>label item</source>
+        <translation>položka &apos;label&apos;</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -341,6 +345,25 @@ Data: %3
     <message>
         <source>Property added to end of array</source>
         <translation>Položka přidána na konec pole</translation>
+    </message>
+</context>
+<context>
+    <name>gui::Base</name>
+    <message>
+        <source>Error in callback handler: </source>
+        <translation>Chyba v obsluze volání: </translation>
+    </message>
+    <message>
+        <source>Exception in callback handler: </source>
+        <translation>Výjimka v obsluze volání: </translation>
+    </message>
+    <message>
+        <source>Unknown exception in script occured</source>
+        <translation>Ve skriptu došlo k neznámé výjimce</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Upozornění</translation>
     </message>
 </context>
 <context>
@@ -496,6 +519,10 @@ Data: %3
         <source>These toolbars will be shown:</source>
         <translation>Tyto toolbary budou zobrazeny:</translation>
     </message>
+    <message>
+        <source>Show errors from event handlers</source>
+        <translation>Zobrazovat chyby z funkcí obsluhy událostí</translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -506,14 +533,6 @@ Data: %3
     <message>
         <source>Current file is not saved. Do you want to save it?</source>
         <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
-    </message>
-    <message>
-        <source>Unknown exception in script occured</source>
-        <translation>Ve skriptu dolo k neznámé výjimce</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation>Upozornění</translation>
     </message>
     <message>
         <source>Error while loading document </source>
@@ -541,6 +560,17 @@ Data: %3
     <message>
         <source>This type of object does not have any properties</source>
         <translation>Tento typ objektu nemá žádné položky</translation>
+    </message>
+</context>
+<context>
+    <name>gui::RevisionTool</name>
+    <message>
+        <source>No revisions</source>
+        <translation>Bez revizí</translation>
+    </message>
+    <message>
+        <source>Revision: </source>
+        <translation>Revize: </translation>
     </message>
 </context>
 <context>
@@ -644,6 +674,36 @@ Data: %3
         <source>&amp;About</source>
         <comment>help_about</comment>
         <translation>O Programu</translation>
+    </message>
+    <message>
+        <source>First Page</source>
+        <comment>firstpage</comment>
+        <translation>První strana</translation>
+    </message>
+    <message>
+        <source>Prev Page</source>
+        <comment>prevpage</comment>
+        <translation>Předchozí strana</translation>
+    </message>
+    <message>
+        <source>Next Page</source>
+        <comment>nextpage</comment>
+        <translation>Další strana</translation>
+    </message>
+    <message>
+        <source>Last Page</source>
+        <comment>lastpage</comment>
+        <translation>Poslední strana</translation>
+    </message>
+    <message>
+        <source>Revision Toolbar</source>
+        <comment>RevisionToolbar</comment>
+        <translation>Toolbar revizí</translation>
+    </message>
+    <message>
+        <source>Revisions</source>
+        <comment>revlabel</comment>
+        <translation>Revize</translation>
     </message>
 </context>
 <context>
