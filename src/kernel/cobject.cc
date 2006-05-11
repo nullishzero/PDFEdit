@@ -1065,6 +1065,24 @@ template void streamToString<std::string::const_iterator, std::back_insert_itera
 //
 //
 //
+size_t 
+streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf)
+{
+	utilsPrintDbg (debug::DBG_DBG, "");
+	
+	// Calculate overall length and allocate buffer
+	size_t len = strDict.length() + CSTREAM_HEADER.length() + streambuf.size() + CSTREAM_FOOTER.length();
+	char* buf = char_buffer_new (len);
+	outbuf = CharBuffer (buf, char_buffer_delete()); 
+	// Make pdf representation
+	streamToString (strDict, streambuf.begin(), streambuf.end(), buf);
+	return len;
+}
+
+
+//
+//
+//
 void 
 createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& val, std::string& output)
 {

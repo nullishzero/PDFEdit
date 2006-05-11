@@ -41,9 +41,9 @@ namespace
 {
 
 	
-	//==========================================================
-	// Actual state (position) updaters
-	//==========================================================
+//==========================================================
+// Actual state (position) updaters
+//==========================================================
 	
 	//
 	void
@@ -435,6 +435,9 @@ namespace
 	{
 	}
 */
+//==========================================================
+// End of actual state (position) updaters
+//==========================================================
 
 
 	//==========================================================
@@ -1002,6 +1005,9 @@ namespace
 		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> last, previousLast;
 		shared_ptr<PdfOperator> actual;
+
+		// Clear operators
+		operators.clear ();
 	
 		for (CContentStream::ContentStreams::iterator it = streams.begin (); it != streams.end (); ++it)
 		{
@@ -1040,8 +1046,9 @@ namespace
 			operandsSetPdf (operators.front(), *(streams.front()->getPdf()), streams.front()->getIndiRef());
 
 	}
-	
 
+
+	
 //==========================================================
 } // namespace
 //==========================================================
@@ -1088,6 +1095,24 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 } // namespace operatorparser
 //==========================================================
 
+//==========================================================
+// CContentStream observer
+//==========================================================
+
+//
+// Observer interface
+//
+void 
+CContentStreamObserver::notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext>) const 
+throw ()
+{
+	utilsPrintDbg (debug::DBG_DBG, "");
+	assert (isInValidPdf (newValue));
+	assert (hasValidRef (newValue));
+
+	// Stream is changed, reparse it
+	contentstream->reparse ();
+}
 
 //==========================================================
 // CContentStream
@@ -1100,17 +1125,29 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : _changed (false)
 {
 	kernelPrintDbg (DBG_DBG, "");
 
-	// Check if stream is in a pdf, if not is NOT IMPLEMENTED
-	// the problem is with parsed pdfoperators
-	assert (isInValidPdf (stream) && hasValidRef (stream));
-	if (!isInValidPdf (stream) || !hasValidRef (stream))
-		throw CObjInvalidObject ();
-	
-	// Save stream
-	contentstreams.push_back (stream);
+	if (stream)
+	{
+		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
+		// the problem is with parsed pdfoperators
+		assert (isInValidPdf (stream) && hasValidRef (stream));
+		if (!isInValidPdf (stream) || !hasValidRef (stream))
+			throw CObjInvalidObject ();
+		
+		// Save stream
+		contentstreams.push_back (stream);
 
-	// Parse it into small objects
-	parseContentStream (operators, contentstreams);
+		// Register observer
+		observer = boost::shared_ptr<CContentStreamObserver> (new CContentStreamObserver (this));
+		stream->registerObserver (observer);
+
+		// Parse it into small objects
+		reparse ();
+
+	}else
+	{
+		assert (!"Bad stream.");
+		throw CObjInvalidObject ();
+	}
 }
 
 //
@@ -1120,11 +1157,17 @@ CContentStream::CContentStream (ContentStreams& streams) : _changed (false)
 {
 	kernelPrintDbg (DBG_DBG, "");
 	
-	// If streams are not empty, save and parse them
+	// If streams are not empty save them
 	if (!streams.empty())
 		copy (streams.begin(), streams.end(), back_inserter (contentstreams));
 
-	parseContentStream (operators, contentstreams);
+	// Register observers
+	observer = boost::shared_ptr<CContentStreamObserver> (new CContentStreamObserver (this));
+	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
+		(*it)->registerObserver (observer);
+
+	// Parse them
+	reparse ();
 }
 
 //
@@ -1150,6 +1193,18 @@ CContentStream::getStringRepresentation (string& str) const
 	}
 }
 
+//
+// Helper methods
+//
+
+//
+//
+//
+void
+CContentStream::reparse ()
+{
+	parseContentStream (operators, contentstreams);
+}
 
 
 //==========================================================

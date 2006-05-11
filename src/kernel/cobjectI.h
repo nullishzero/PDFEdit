@@ -811,8 +811,8 @@ CObjectStream<Checker>::doClone () const
 //
 //
 template<typename Checker>
-CharBuffer
-CObjectStream<Checker>::getPdfRepresentation () const
+size_t
+CObjectStream<Checker>::getPdfRepresentation (CharBuffer& chrbuf) const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	
@@ -820,14 +820,8 @@ CObjectStream<Checker>::getPdfRepresentation () const
 	std::string strDict;
 	dictionary.getStringRepresentation (strDict);
 
-	// CSTREAM_FOOTER + CSTREAM_HEADER == approx. 25
-	char* buf = char_buffer_new (strDict.length() + buffer.size() + 25);
-	
 	// Put them together
-	utils::streamToString (strDict, buffer.begin(), buffer.end(), buf);
-
-	//return 
-	return CharBuffer (buf, char_buffer_delete()); 
+	return utils::streamToCharBuffer (strDict, buffer, chrbuf);
 }
 
 

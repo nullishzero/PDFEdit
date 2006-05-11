@@ -310,7 +310,11 @@ protected:
 // Helper functions
 //
 
-/** Does property belong to a valid pdf. */
+/** 
+ * Indicates whether a property is in a valid pdf. 
+ *
+ * @return True if the pdf is valid, false otherwise.
+ */
 inline bool isInValidPdf (CPdf* pdf) {return (NULL != pdf);}
 inline bool isInValidPdf (const IProperty& ip) {return (NULL != ip.getPdf());}
 template<typename T> inline bool isInValidPdf (T ip) {return (NULL != ip->getPdf());}

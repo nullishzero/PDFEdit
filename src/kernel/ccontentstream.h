@@ -122,6 +122,56 @@ public:
 } // namespace operatorparser
 //==========================================================
 
+
+//
+// Forward declaration
+//
+class CContentStream;	
+
+
+//==========================================================
+// CContentStream Observer
+//==========================================================
+
+/**
+ * Content stream observer.
+ *
+ * If a stream is changed, reparse whole contentstream.
+ */
+struct CContentStreamObserver : public IProperty::Observer
+{
+	//
+	// Constructor
+	//
+	CContentStreamObserver (CContentStream* cc) : contentstream (cc)
+		{assert (cc);}
+			
+	//
+	// Observer interface
+	//
+	virtual void 
+	notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
+
+	//
+	//
+	//
+	virtual priority_t getPriority() const throw ()
+		{return 0;};
+	//
+	// Destructor
+	//
+	virtual ~CContentStreamObserver () throw () {};
+
+private:
+	CContentStream* contentstream;
+};
+
+
+
+//==========================================================
+// CContentStream
+//==========================================================
+
 /**
  * Content stream of a pdf content stream.
  *
@@ -157,6 +207,9 @@ private:
 
 	/** Change indicator. */
 	bool _changed;
+
+	/** CStream observer. */
+	boost::shared_ptr<CContentStreamObserver> observer;
 
 	//
 	// Constructors
@@ -231,6 +284,11 @@ public:
 	 */
 	bool invalid () const {return (operators.empty () || _changed);};
 
+	/**
+	 * Parse.
+	 */
+	void reparse ();
+	
 	//
 	// Destructor
 	//

@@ -817,9 +817,10 @@ public:
 	/**
 	 * Returns printable string representation of this object.
 	 *
-	 * @param str String representation.
+	 * @param chrbuf Output char buffer.
+	 * @return Size of char buffer.
 	 */
-	virtual CharBuffer getPdfRepresentation () const;
+	virtual size_t getPdfRepresentation (CharBuffer& chrbuf) const;
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
@@ -1457,7 +1458,17 @@ template <PropertyType Tp> void complexValueToString (const typename PropertyTra
  */
 template<typename ITERATOR, typename OUTITERATOR>
 void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out);
-					 
+
+/**
+ * Makes a valid pdf representation of a stream using streamToString function.
+ * 
+ * @param strDict Dictionary string representation.
+ * @param streambuf Raw stream buffer.
+ * @param outbuf Output buffer.
+ *
+ * @param Length of data.
+ */
+size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf);
 
 /**
  * Convert xpdf object to string
