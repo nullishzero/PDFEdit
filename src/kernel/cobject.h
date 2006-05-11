@@ -803,7 +803,7 @@ public:
 	 * @param str String representation.
 	 */
 	virtual void getStringRepresentation (std::string& str) const
-		{ getStringRepresentation (str, true); }
+		{ getStringRepresentation (str, false); }
 
 	/**
 	 * Returns printable string representation of this object.
@@ -811,7 +811,7 @@ public:
 	 * @param str String representation.
 	 */
 	virtual void getPritnableStringRepresentation (std::string& str) const
-		{ getStringRepresentation (str, false); }
+		{ getStringRepresentation (str, true); }
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
@@ -850,14 +850,11 @@ public:
 		{
 			std::string fltr;
 			boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
-			if (name)
-			{
-				name->getPropertyValue (fltr);
-				container.push_back (fltr);
+				
+			name->getPropertyValue (fltr);
+			container.push_back (fltr);
 			
-				kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
-			}else
-				throw CObjInvalidObject ();
+			kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
 		//
 		// If it is an array, iterate through its properties
 		//
@@ -869,17 +866,20 @@ public:
 				CArray::Value::iterator it = array->value.begin ();
 				for (; it != array->value.end(); ++it)
 				{
-					std::string fltr;
-					boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
-					if (name)
+					if (isName (*it))
 					{
+						boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
+						std::string fltr;
 						name->getPropertyValue (fltr);
 						container.push_back (fltr);
 					
 						kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
-					
-					}else // if (name)
+
+					}else
+					{
+						assert (!"One of the filters is not a name.");
 						throw CObjInvalidObject ();
+					}
 				
 				} // for (; it != array->value.end(); ++it)
 				
@@ -994,10 +994,7 @@ private:
 
 		// Set correct length
 		if (getLength() != buffer.size())
-		{
-			kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
 			setLength (buffer.size());
-		}
 		
 		// Dispatch the change
 		this->dispatchChange ();
@@ -1083,6 +1080,7 @@ protected:
 	{ 
 		kernelPrintDbg (debug::DBG_DBG, ""); 
 		dictionary.setPdf (NULL); 
+		dictionary.setIndiRef (IndiRef());
 	}
 
 	/**
@@ -1093,6 +1091,7 @@ protected:
 		assert (!isInValidPdf(&dictionary));
 		kernelPrintDbg (debug::DBG_DBG, ""); 
 		dictionary.setPdf (this->getPdf()); 
+		dictionary.setIndiRef (this->getIndiRef());
 	}
 
 };
@@ -1174,6 +1173,7 @@ public:
 	//
 	void objectDeleted (IProperty* ip)
 	{
+		getList().pop_back ();
 		return;
 		#if MEM_CHECKER_OUTPUT
 		_printHeader (std::cerr);
