@@ -175,7 +175,7 @@ opcount (ostream& oss, const char* fileName)
 			{
 				if (!img (str))
 					return false;
-				testPrintDbg (debug::DBG_DBG, "end image...");
+				//testPrintDbg (debug::DBG_DBG, "end image...");
 			}
 			
 			if (o.isCmd ())

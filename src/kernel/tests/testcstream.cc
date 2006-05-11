@@ -108,7 +108,7 @@ bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	CStream::Buffer& buf = stream->buffer;
+	//CStream::Buffer& buf = stream->buffer;
 	//oss << "Buffer start: "<< std::flush;
 	filters::Printable<CStream::Buffer::value_type> print;
 	//for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
