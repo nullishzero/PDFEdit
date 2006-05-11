@@ -158,6 +158,17 @@ operator << (std::ostream& os, const Point& pt)
 
 
 //=====================================================================================
+//	Char buffer that can contain null characters
+//=====================================================================================
+
+typedef boost::shared_ptr<char> CharBuffer;
+struct char_buffer_delete
+	{void operator() (char* p) {assert (p); delete [] p;};};
+inline char* char_buffer_new (size_t l) {return new char [l];};
+
+
+
+//=====================================================================================
 
 //
 // From boost
