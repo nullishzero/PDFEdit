@@ -387,6 +387,7 @@ public:
 	 */
 	CObjectComplex ();
 
+
 	//
 	// Cloning
 	//
@@ -401,6 +402,9 @@ protected:
 	 */
 	virtual IProperty* doClone () const;
 
+	/** Return new instance. */
+	virtual CObjectComplex<Tp,Checker>* _newInstance () const
+		{ return new CObjectComplex<Tp,Checker>; }
 	
 	//
 	// Get methods
@@ -669,8 +673,8 @@ class CObjectStream : noncopyable, public IProperty
 public:
 	typedef std::vector<filters::StreamChar> Buffer;
 
-//\debug \TODO remove protected:
-	
+protected:
+
 	/** Object dictionary. */
 	CDict dictionary;
 	
@@ -710,6 +714,23 @@ public:
 	 * Public constructor. This object will not be associated with a pdf.
 	 */
 	CObjectStream ();
+
+	
+	//
+	// Cloning
+	//
+protected:
+
+	/**
+     * Implementation of clone method. 
+	 *
+     * @param Deep copy of this object.
+	 */
+	virtual IProperty* doClone () const;
+
+	/** Return new instance. */
+	virtual CObjectStream<Checker>* _newInstance () const
+		{ return new CObjectStream<Checker>; }
 
 
 	//
@@ -771,19 +792,7 @@ public:
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
-	//
-	// Cloning
-	//
-protected:
 
-	/**
-     * Implementation of clone method. 
-	 *
-     * @param Deep copy of this object.
-	 */
-	virtual IProperty* doClone () const;
-
-	
 	//
 	// Get methods
 	//
@@ -810,8 +819,7 @@ public:
 	 *
 	 * @param str String representation.
 	 */
-	virtual void getPritnableStringRepresentation (std::string& str) const
-		{ getStringRepresentation (str, true); }
+	virtual CharBuffer getPdfRepresentation () const;
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
@@ -850,7 +858,6 @@ public:
 		{
 			std::string fltr;
 			boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
-				
 			name->getPropertyValue (fltr);
 			container.push_back (fltr);
 			
@@ -861,30 +868,18 @@ public:
 		}else if (isArray (ip))
 		{
 			boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(ip);
-			if (array)
+			// Loop throug all children
+			CArray::Value::iterator it = array->value.begin ();
+			for (; it != array->value.end(); ++it)
 			{
-				CArray::Value::iterator it = array->value.begin ();
-				for (; it != array->value.end(); ++it)
-				{
-					if (isName (*it))
-					{
-						boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
-						std::string fltr;
-						name->getPropertyValue (fltr);
-						container.push_back (fltr);
-					
-						kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
+				std::string fltr;
+				boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
+				name->getPropertyValue (fltr);
+				container.push_back (fltr);
+				
+				kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
 
-					}else
-					{
-						assert (!"One of the filters is not a name.");
-						throw CObjInvalidObject ();
-					}
-				
-				} // for (; it != array->value.end(); ++it)
-				
-			}else // if (array)
-				throw CObjInvalidObject ();
+			} // for (; it != array->value.end(); ++it)
 		}
 	}
 
@@ -994,7 +989,10 @@ private:
 
 		// Set correct length
 		if (getLength() != buffer.size())
+		{
+			kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
 			setLength (buffer.size());
+		}
 		
 		// Dispatch the change
 		this->dispatchChange ();
@@ -1080,7 +1078,7 @@ protected:
 	{ 
 		kernelPrintDbg (debug::DBG_DBG, ""); 
 		dictionary.setPdf (NULL); 
-		dictionary.setIndiRef (IndiRef());
+		dictionary.setIndiRef (IndiRef()); 
 	}
 
 	/**
@@ -1091,7 +1089,7 @@ protected:
 		assert (!isInValidPdf(&dictionary));
 		kernelPrintDbg (debug::DBG_DBG, ""); 
 		dictionary.setPdf (this->getPdf()); 
-		dictionary.setIndiRef (this->getIndiRef());
+		dictionary.setIndiRef (this->getIndiRef()); 
 	}
 
 };
@@ -1453,10 +1451,13 @@ template <PropertyType Tp> void complexValueToString (const typename PropertyTra
  * CStream object to string
  *
  * @param strDict Dictionary string representation.
- * @param buf Buffer string representation
- * @param str Output string.
+ * @param begin Buffer begin
+ * @param end Buffer end
+ * @param out Output string.
  */
-void streamToString (const std::string& strDict, const std::string& buf, std::string& str);
+template<typename ITERATOR, typename OUTITERATOR>
+void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out);
+					 
 
 /**
  * Convert xpdf object to string

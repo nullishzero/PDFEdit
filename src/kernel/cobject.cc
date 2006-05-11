@@ -89,7 +89,6 @@ namespace {
 	const string CDICT_SUFFIX	= "\n>>";
 
 	/** Object Stream string representation. */
-	//const string CSTREAM_STREAM = "<<stream>>";
 	const string CSTREAM_HEADER = "\nstream\n";
 	const string CSTREAM_FOOTER = "endstream";
 
@@ -1036,15 +1035,32 @@ template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::va
 //
 //
 //
-void 
-streamToString (const std::string& strDict, const std::string& buf, std::string& str)
+template<typename ITERATOR, typename OUTITERATOR>
+void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out)
 {
-	str = strDict;
-	str += CSTREAM_HEADER;
-	str += buf;
-	str += CSTREAM_FOOTER;
-}
+	// Insert dictionary
+	std::copy (strDict.begin(), strDict.end(), out);
+	
+	// Insert header
+	std::copy (CSTREAM_HEADER.begin(), CSTREAM_HEADER.end(), out);
+	
+	//Insert buffer
+	std::copy (begin, end, out);
 
+	// Insert footer
+	std::copy (CSTREAM_FOOTER.begin(), CSTREAM_FOOTER.end(), out);
+}
+// Explicit initialization
+template void streamToString<CStream::Buffer::const_iterator, char*> 
+	(const std::string& strDict, 
+	 CStream::Buffer::const_iterator begin, 
+	 CStream::Buffer::const_iterator end,
+	char* out);
+template void streamToString<std::string::const_iterator, std::back_insert_iterator<std::string> > 
+	(const std::string& strDict, 
+	 std::string::const_iterator begin, 
+	 std::string::const_iterator end,
+	 std::back_insert_iterator<std::string> out);
 
 //
 //

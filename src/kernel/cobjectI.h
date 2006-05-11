@@ -648,11 +648,11 @@ template<PropertyType Tp, typename Checker>
 IProperty*
 CObjectComplex<Tp,Checker>::doClone () const
 {
-	//kernelPrintDbg (debug::DBG_DBG,"CObjectComplex::doClone");
+	//kernelPrintDbg (debug::DBG_DBG,"");
 	
 	// Make new complex object
 	// NOTE: We do not want to inherit any IProperty variable
-	CObjectComplex<Tp,Checker>* clone_ = new CObjectComplex<Tp,Checker> ();
+	CObjectComplex<Tp,Checker>* clone_ = _newInstance ();
 	
 	//
 	// Loop through all items and clone them as well and finally add them to the new object
@@ -784,7 +784,7 @@ CObjectStream<Checker>::doClone () const
 	
 	// Make new stream object
 	// NOTE: We do not want to inherit any IProperty variable
-	CObjectStream<Checker>* clone_ = new CObjectStream<Checker> ();
+	CObjectStream<Checker>* clone_ = _newInstance ();
 	
 	//
 	// Loop through all items and clone them as well and finally add them to the new object
@@ -802,6 +802,34 @@ CObjectStream<Checker>::doClone () const
 	
 	return clone_;
 }
+
+//
+// Get methods
+//
+
+//
+//
+//
+template<typename Checker>
+CharBuffer
+CObjectStream<Checker>::getPdfRepresentation () const
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+	
+	// Get dictionary string representation
+	std::string strDict;
+	dictionary.getStringRepresentation (strDict);
+
+	// CSTREAM_FOOTER + CSTREAM_HEADER == approx. 25
+	char* buf = char_buffer_new (strDict.length() + buffer.size() + 25);
+	
+	// Put them together
+	utils::streamToString (strDict, buffer.begin(), buffer.end(), buf);
+
+	//return 
+	return CharBuffer (buf, char_buffer_delete()); 
+}
+
 
 	
 //
@@ -1024,6 +1052,9 @@ void
 CObjectStream<Checker>::getStringRepresentation (std::string& str, bool wantraw) const 
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+	
+	// Empty the string
+	str.clear ();
 
 	// Get dictionary string representation
 	std::string strDict, strBuf;
@@ -1044,7 +1075,7 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str, bool wantraw)
 	}
 
 	// Put them together
-	utils::streamToString (strDict, strBuf, str);
+	utils::streamToString (strDict, strBuf.begin(), strBuf.end(), std::back_inserter(str));
 }
 
 //
