@@ -834,27 +834,33 @@ namespace
 		}
 		// Free ID
 		o.free ();
-		
+	
 		// 
 		// Make stream
 		// 
 		Stream* str = new ::EmbedStream (stream.getXpdfStream (), &dict, gFalse, 0);
 		if (str)
 		{
-			str->addFilters(&dict);
+			// Copy chars to buf and with this buffer initialize CInlineImage
+			CStream::Buffer buf;
+			
 			int c1, c2;
 			c1 = str->getBaseStream()->getChar();
 			c2 = str->getBaseStream()->getChar();
-			while (!(c1 == 'E' && c2 == 'I') && c2 != EOF) 
+			buf.push_back (c1);
+			buf.push_back (c2);
+			while (!('E' == c1 && 'I' == c2) && EOF != c2) 
 			{
 				c1 = c2;
 				c2 = str->getBaseStream()->getChar();
+				buf.push_back (c2);
 			}
 			dict.free ();
 			delete str;
-
-			// \TODO !!!
-			return new CInlineImage;
+			
+			assert (isInValidPdf(&stream));
+			assert (hasValidRef (&stream));
+			return new CInlineImage (*(stream.getPdf()), buf, stream.getIndiRef());
 				
 		}else
 		{
