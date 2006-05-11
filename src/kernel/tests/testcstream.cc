@@ -166,6 +166,23 @@ bool getString (std::ostream& oss, const char* fileName)
 
 //=========================================================================
 
+bool getPdfString (std::ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+
+	CharBuffer buf;
+	size_t len = stream->getPdfRepresentation (buf);
+	oss << " Length: [" << len << "]" << flush;
+	oss << std::endl << buf.get () << endl;
+	filters::Printable<char> p;
+	for (int i = 0; i < len; ++i)
+		p (buf.get()[i]);
+	return true;
+}
+
+//=========================================================================
+
 bool getFilter (std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -297,6 +314,7 @@ public:
 			
 			TEST(" create");
 			CPPUNIT_ASSERT (getString (OUTPUT, (*it).c_str()));
+			CPPUNIT_ASSERT (getPdfString (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 			
