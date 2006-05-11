@@ -51,7 +51,7 @@ CPage::getMediabox () const
 	kernelPrintDbg (debug::DBG_DBG, "");
 	
 	// Get the array representing media box
-	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
+	shared_ptr<IProperty> mbox = utils::getReferencedObject (dictionary->getProperty ("MediaBox"));
 	assert (isArray (mbox));
 	if (!isArray (mbox))
 		throw MalformedFormatExeption ("Page::MediaBox is not array.");
@@ -59,8 +59,8 @@ CPage::getMediabox () const
 	Rectangle rc;
 
   	rc.xleft  =	getDoubleFromArray (mbox, 0);
-	rc.xright = getDoubleFromArray (mbox, 1);
-	rc.yleft  =	getDoubleFromArray (mbox, 2);
+	rc.yleft  =	getDoubleFromArray (mbox, 1);
+	rc.xright = getDoubleFromArray (mbox, 2);
 	rc.yright = getDoubleFromArray (mbox, 3);
 
 	return rc;

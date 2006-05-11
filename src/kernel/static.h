@@ -164,7 +164,7 @@ operator << (std::ostream& os, const Point& pt)
 typedef boost::shared_ptr<char> CharBuffer;
 struct char_buffer_delete
 	{void operator() (char* p) {assert (p); delete [] p;};};
-inline char* char_buffer_new (size_t l) {return new char [l];};
+inline char* char_buffer_new (size_t l) {return new char [l];}
 
 
 
