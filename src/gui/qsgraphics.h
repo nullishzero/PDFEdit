@@ -16,7 +16,7 @@ public:
  QSGraphics(CGraphic *gfx,Base *_base);
  QSGraphics(QSGraphics &source);
  virtual ~QSGraphics();
- CGraphic* get();
+ CGraphic* get() const;
 private:
  /** Object held in class*/
  CGraphic *obj;

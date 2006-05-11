@@ -129,13 +129,18 @@ int QSPdf::getRevisionsCount() {
  return obj->getRevisionsCount();
 }
 
+/** Call CPdf::getActualRevision() */
+int QSPdf::getActualRevision() {
+ return obj->getActualRevision();
+}
+
 /** Call CPdf::getLastPage() */
 QSPage* QSPdf::getLastPage() {
  return new QSPage(obj->getLastPage(),base);
 }
 
 /** get CPdf held inside this class. Not exposed to scripting */
-CPdf* QSPdf::get() {
+CPdf* QSPdf::get() const {
  return obj;
 }
 

@@ -21,7 +21,7 @@ public:
  virtual ~QSPage();
  QSPage(const QSPage &source);
  QSPage(boost::shared_ptr<CPage> _page,Base *_base);
- boost::shared_ptr<CPage> get();
+ boost::shared_ptr<CPage> get() const;
 public slots:
  /*- Returns content stream of this page */
  QSContentStream* getContentStream();

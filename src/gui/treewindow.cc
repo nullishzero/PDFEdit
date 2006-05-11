@@ -19,6 +19,13 @@ namespace gui {
 using namespace std;
 using namespace util;
 
+/*
+TODO:
+ [ ]value-based reloading - check if value of children in reality match stored value, sometimes
+    (especially if changing revision, but also on many array-related changes) keys do not change
+    but values does
+ [ ]array: keys are worthless ... compare only by values
+*/
 /**
  constructor of TreeWindow, creates window and fills it with elements, parameters are ignored
  @param base Scripting base
@@ -29,7 +36,7 @@ TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):
  QBoxLayout *l=new QVBoxLayout(this);
  tree=new QListView(this);
  tree->setSorting(-1);
- selected=root=NULL;
+ selected=rootItem=NULL;
  QObject::connect(tree, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(treeSelectionChanged(QListViewItem *)));
  l->addWidget(tree);
  tree->addColumn(tr("Object"));
@@ -49,6 +56,19 @@ TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):
  */
 void TreeWindow::reloadFrom(TreeItemAbstract *item) {
  item->reload();
+}
+
+/** reinitialize/reload entire tree after some major change */
+void TreeWindow::reload() {
+ rootItem->reload();
+}
+
+/**
+ Return root item of the tree.
+ @return root item
+ */
+TreeItemAbstract* TreeWindow::root() {
+ return rootItem;
 }
 
 /** Slot called when someone click with mouse button anywhere in the tree
@@ -82,16 +102,12 @@ void TreeWindow::updateTreeSettings() {
  }
 }
 
-/** reinitialize tree after some major change */
-void TreeWindow::reinit() {
- root->reload();
-}
 
 /** Paint event handler -> if settings have been changed, reload tree */
 void TreeWindow::paintEvent(QPaintEvent *e) {
  if (data->needReload()) {
   guiPrintDbg(debug::DBG_DBG,"update tree settings: need reload");
-  reinit(); //update object if necessary
+  reload(); //update object if necessary
   data->resetReload();
  }
  //Pass along
@@ -153,7 +169,7 @@ void TreeWindow::clear() {
   delete li;
  }
  data->clear();
- root=NULL;
+ rootItem=NULL;
 }
 
 /** Init contents of treeview from given PDF document
@@ -166,8 +182,8 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  clear();
  rootName=fileName;
  setUpdatesEnabled( FALSE );
- root=new TreeItemPdf(data,pdfDoc,tree,fileName); 
- root->setOpen(TRUE);
+ rootItem=new TreeItemPdf(data,pdfDoc,tree,fileName); 
+ rootItem->setOpen(TRUE);
  setUpdatesEnabled( TRUE );
 }
 
@@ -179,8 +195,8 @@ void TreeWindow::init(boost::shared_ptr<IProperty> doc) {
  clear();
  if (doc.get()) {
   setUpdatesEnabled( FALSE );
-  root=TreeItem::create(data,tree,doc); 
-  root->setOpen(TRUE);
+  rootItem=TreeItem::create(data,tree,doc); 
+  rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
 }

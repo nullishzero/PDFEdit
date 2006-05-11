@@ -80,6 +80,14 @@ void Base::stopScript() {
  }
 }
 
+/**
+ Return QSA wrapper of current PDF document
+ @return Current document (scripting wrapper)
+ */
+QSPdf* Base::getQSPdf() const {
+ return qpdf;
+}
+
 /** 
  Call a callback function (no arguments, no return value) in a script
  @param name Function name
@@ -217,6 +225,15 @@ void Base::runScript(QString script) {
 void Base::about() {
  AboutWindow *aboutWin= new AboutWindow(w);
  aboutWin->show();
+}
+
+/**
+ Return active revision in current PDF document
+ @return number of currently active revision
+ */
+int Base::activeRevision() {
+ if (!w->document) return -1;
+ return w->document->getActualRevision();
 }
 
 /** 
@@ -360,6 +377,15 @@ void Base::options() {
 }
 
 /**
+ Return number of currently shown page
+ @return page number
+*/
+int Base::pageNumber() {
+ return w->selectedPageNumber;
+}
+
+
+/**
  Create and return new popup menu, build from menu list/item  identified by this name.
  If no item specified, menu is initially empty
  @param menuName Name of menu inconfiguration to use as template
@@ -416,6 +442,15 @@ void Base::restoreWindowState() {
 }
 
 /**
+ Return number of revisions in current PDF document
+ @return count of revisions
+ */
+int Base::revisions() {
+ if (!w->document) return -1;
+ return w->document->getRevisionsCount();
+}
+
+/**
  Runs script from given file
  @param scriptName name of file with QT Script to run
  */
@@ -446,6 +481,14 @@ void Base::saveWindowState() {
 */
 void Base::setDebugLevel(const QString &param) {
  util::setDebugLevel(param);
+}
+
+/**
+ Change active revision in current PDF document
+ @param revision number of revision to activate
+ */
+void Base::setRevision(int revision) {
+ w->changeRevision(revision);
 }
 
 /** call QObject::tr to translate specific string

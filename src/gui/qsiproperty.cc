@@ -46,7 +46,7 @@ QSIProperty::~QSIProperty() {
 }
 
 /** get IProperty held inside this class. Not exposed to scripting */
-boost::shared_ptr<IProperty> QSIProperty::get() {
+boost::shared_ptr<IProperty> QSIProperty::get() const {
  return obj;
 }
 

@@ -180,6 +180,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  QObject::connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
+ QObject::connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
 
  this->setCentralWidget(spl);
 
@@ -224,6 +225,31 @@ void PdfEditWindow::setObject(__attribute__((unused)) const QString &name,boost:
 /** Called upon selecting item in treeview */
 void PdfEditWindow::setObject() {
  selectedTreeItem=tree->getSelectedItem();
+}
+
+/**
+ Slot called on chaning the page in preview window
+ @param pg New page that was just changed to
+ @param numberOfPage Number of page
+*/
+void PdfEditWindow::pageChange(const QSPage &pg, int numberOfPage) {
+ selectedPage=pg.get();
+ selectedPageNumber=numberOfPage;
+}
+
+/**
+ Change currently active revision in document
+ @param revision New revision
+*/
+void PdfEditWindow::changeRevision(int revision) {
+ if (revision<0) return;	//Revision is positive number
+ if (!document) return;		//No document loaded
+ document->changeRevision(revision);
+ prop->clear();
+ pagespc->refresh(selectedPageNumber,base->getQSPdf());//Try to keep on the same page in the new revision
+ tree->reload();
+ emit revisionChanged(revision);
+ base->call("onChangeRevision");
 }
 
 /**
@@ -357,10 +383,11 @@ void PdfEditWindow::destroyFile() {
  //Now it is good time to kill all those widgets
  emit selfDestruct();
  if (!document) return;
- selectedProperty.reset();//no item selected
  tree->uninit();//clear treeview
  prop->clear();//clear property editor
+ selectedProperty.reset();//no item selected
  selectedPage.reset();//no page selected
+ selectedPageNumber=0;//no page selected
  document->close(false);
  base->destroyDocument();
  base->cleanup();//Garbage collection on scripting objects
@@ -408,6 +435,7 @@ void PdfEditWindow::emptyFile() {
  tree->uninit();
  emit documentChanged(document);
  setFileName(QString::null);
+ selectedPageNumber=0;
 }
 
 /**

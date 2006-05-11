@@ -43,7 +43,7 @@ QSContentStream* QSPage::getContentStream() {
 }
 
 /** get CPage held inside this class. Not exposed to scripting */
-boost::shared_ptr<CPage> QSPage::get() {
+boost::shared_ptr<CPage> QSPage::get() const {
  return obj;
 }
 

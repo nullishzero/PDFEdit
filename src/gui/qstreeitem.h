@@ -44,7 +44,7 @@ public slots:
 public:
  QSTreeItem(TreeItemAbstract *item,Base *_base);
  virtual ~QSTreeItem();
- TreeItemAbstract* get();
+ TreeItemAbstract* get() const;
 private:
  /** Object held in class*/
  TreeItemAbstract *obj;

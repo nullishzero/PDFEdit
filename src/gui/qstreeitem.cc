@@ -109,7 +109,7 @@ QString QSTreeItem::path() {
 }
 
 /** get TreeItemAbstract held inside this class. Not exposed to scripting */
-TreeItemAbstract* QSTreeItem::get() {
+TreeItemAbstract* QSTreeItem::get() const {
  return obj;
 }
 

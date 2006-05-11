@@ -25,7 +25,8 @@ public:
  TreeWindow(Base *base,QWidget *parent=0,const char *name=0);
  ~TreeWindow();
  void reloadFrom(TreeItemAbstract *item);
- void reinit();
+ TreeItemAbstract* root();
+ void reload();
  QSCObject* getSelected();
  TreeItemAbstract* getSelectedItem();
 public slots:
@@ -63,7 +64,7 @@ private:
  /** Name of root object - if applicable */
  QString rootName;
  /** Root treeitem */
- TreeItemAbstract *root;
+ TreeItemAbstract *rootItem;
  /** Selected treeitem */
  TreeItemAbstract *selected;
 };

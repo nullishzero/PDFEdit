@@ -28,7 +28,7 @@ QSGraphics::~QSGraphics() {
 }
 
 /** get CGraphics held inside this class. Not exposed to scripting */
-CGraphic* QSGraphics::get() {
+CGraphic* QSGraphics::get() const {
  return obj;
 }
 

@@ -48,13 +48,23 @@ void RevisionTool::resizeEvent (QResizeEvent *e) {
  revList->setFixedSize(e->size());
 }
 
-/** Called on selecting a new revision from menu */
+/**
+ Called on selecting a new revision from menu
+ @param revision selected revision
+ */
 void RevisionTool::selectRevision(int revision) {
  if (!document) return;
-  guiPrintDbg(debug::DBG_DBG,"Document revision setting to : " << revision);
- document->changeRevision(revision);
- //TODO: inform rest of editor about change
- //TODO: change text of item
+ guiPrintDbg(debug::DBG_DBG,"Document revision setting to : " << revision);
+ emit revisionChanged(revision);
+}
+
+/**
+ Called to update control after selecting a new revision outside of this control
+ @param revision selected revision
+ */
+void RevisionTool::updateRevision(int revision) {
+ if (!document) return;
+ revList->setCurrentItem(revision);
 }
 
 /**

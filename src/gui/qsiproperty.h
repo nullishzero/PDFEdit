@@ -20,7 +20,7 @@ public:
  QSIProperty(boost::shared_ptr<IProperty> _ip,Base *_base);
  QSIProperty(QSIProperty &source);
  virtual ~QSIProperty();
- boost::shared_ptr<IProperty> get();
+ boost::shared_ptr<IProperty> get() const;
 public slots:
  /*- Return text representation of this property */
  QString getText();

@@ -17,11 +17,14 @@ using namespace pdfobjects;
 
 /*= This type of object represents entire document. */
 class QSPdf : public QSCObject {
+//ADDED functions begin
+ int getActualRevision();
+//ADDED functions end
  Q_OBJECT
 public:
  QSPdf(CPdf *_pdf,Base *_base);
  virtual ~QSPdf();
- CPdf* get();
+ CPdf* get() const;
 public slots:
  /*-
   Save this document under different name.

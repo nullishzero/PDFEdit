@@ -23,6 +23,7 @@ class Base : public QObject {
  Q_OBJECT
 public:
  Base(PdfEditWindow *parent);
+ QSPdf* getQSPdf() const;
  void stopScript();
  void importDocument();
  void destroyDocument();
@@ -39,6 +40,8 @@ public:
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */
  void about();
+ /*- Return revision number of active revision in current PDF document */
+ int activeRevision();
  /*-
   Invokes dialog for adding additional objects to specified container (which must be <link linkend="type_Dict">Dictionary</link> or <link linkend="type_Array">Array</link>).
   After invoking dialog, this function returns immediately and the dialog is left for the user to use.
@@ -102,6 +105,8 @@ public slots: //This will be all exported to scripting
  void openFileNew(const QString &name);
  /*- Invokes options dialog. Does not wait for dialog to be closed by user and return immediately. */
  void options();
+ /*- Return page number of currently shown page */
+ int pageNumber();
  /*-
   Create and return a <link linkend="type_Menu">Menu</link> object. The menuName parameter specifies
   name of item or list from configuration, that will be used to initially fill the menu with items.
@@ -127,6 +132,8 @@ public slots: //This will be all exported to scripting
   State is restored from state saved in editor's configuration file.   
  */
  void restoreWindowState();
+ /*- Return number of revisions in current PDF document */
+ int revisions();
  /*- Loads and runs script from given filename. */
  void run(QString scriptName);
  /*-
@@ -153,6 +160,8 @@ public slots: //This will be all exported to scripting
   (either number or symbolic constant)
  */
  void setDebugLevel(const QString &param);
+ /*- Change active revision in current PDF document */
+ void setRevision(int revision);
  /*-
   Translate given text to current locale. Optional parameter context can specify context
   of localized text. Return translated text

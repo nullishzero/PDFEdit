@@ -21,6 +21,7 @@ class CommandWindow;
 class QSImporter;
 class QSCObject;
 class QSPdf;
+class QSPage;
 class TreeWindow;
 class TreeItemAbstract;
 class PropertyEditor;
@@ -49,6 +50,8 @@ public:
  void openFile(const QString &name);
  void exitApp();
  void closeWindow();
+public slots:
+ void changeRevision(int revision);
 signals:
  /**
   Signal emitted when closing a file or editor window. All helper editor widgets opened from
@@ -61,9 +64,15 @@ signals:
   If document is closed without opening a new file, NULL is sent instead.
  */
  void documentChanged(CPdf *newDocument);
+ /**
+  Signal emitted when user changes the current revision in any way (script, revision tool ...)
+  @param revision number of selected revision
+ */
+ void revisionChanged(int revision);
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:
+ void pageChange(const QSPage &pg, int numberOfPage);
  void treeClicked(int button,QListViewItem *item);
  void setObject(const QString &name,boost::shared_ptr<IProperty> obj);
  void menuActivated(int id);
@@ -88,6 +97,8 @@ private:
  CPdf *document;
  /** Currently selected page (for scripting) */
  boost::shared_ptr<CPage> selectedPage;
+ /** Currently selected page number */
+ int selectedPageNumber;
  /** Currently selected IProperty (in editor) */
  boost::shared_ptr<IProperty> selectedProperty;
  /** Currently selected tree item (for scripting) */

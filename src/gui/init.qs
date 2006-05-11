@@ -152,3 +152,8 @@ function buftest(x) {
 function onLoadUser() {
  //Dummy, will be overidden by whatever user specify
 }
+
+/** Called when active revision was changed */
+function onChangeRevision() {
+ print(tr("Changed revision to:")+activeRevision());
+}

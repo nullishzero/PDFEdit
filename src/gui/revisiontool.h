@@ -20,8 +20,15 @@ public:
  ~RevisionTool();
  QSize sizeHint() const;
 public slots:
+ void updateRevision(int revision);
  void selectRevision(int revision);
  void setDocument(CPdf *newDocument);
+signals:
+ /**
+  Signal emitted when user changes the revision in this control
+  @param revision number of selected revision
+ */
+ void revisionChanged(int revision);
 protected:
  void resizeEvent (QResizeEvent *e);
 protected:
