@@ -27,19 +27,50 @@ using namespace utils;
 namespace {
 // =====================================================================================
 
+using namespace boost;
+	
+//
+// Begin tag and end tag are added by composite pdfoperator
+//
+const string CINLINEIMAGE_BEGIN = "";
 const string CINLINEIMAGE_MIDDLE = "ID";
+const string CINLINEIMAGE_END = "";
 	
 // =====================================================================================
 } // namespace
 // =====================================================================================
-	
+
+//
+// Constructors
+//
+
+//
+//
+//
+CInlineImage::CInlineImage (CPdf& p, const CStream::Buffer& buf, const IndiRef& rf) : CStream ()
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+	//
+	// Init Stream
+	//
+	this->setPdf (&p);
+	this->setIndiRef (rf);
+	// Set buffer
+	this->setRawBuffer (buf);
+}
+
+
+//
+// Get methods
+//
+
 //
 //
 //
 void
 CInlineImage::getStringRepresentation (std::string& str) const
 {
-	//assert (!"Not implemented yet.");
+	str += CINLINEIMAGE_BEGIN;
 	typedef std::vector<std::string> Names;
 	Names names;
 	CStream::dictionary.getAllPropertyNames (names);
@@ -51,18 +82,9 @@ CInlineImage::getStringRepresentation (std::string& str) const
 	}
 	
 	str += CINLINEIMAGE_MIDDLE;
-	str += "<<< IMAGE >>>";
-	
-}
-
-//
-// 
-//
-::Object*
-CInlineImage::_makeXpdfObject () const
-{
-	assert (!"Not implemented yet.");	
-	return NULL;
+	for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
+		str +=  static_cast<std::string::value_type> (*it);
+	str += CINLINEIMAGE_END;
 }
 
 // =====================================================================================

@@ -26,14 +26,44 @@ namespace pdfobjects {
 //=====================================================================================
 
 /**
- * CPage represents pdf page object. 
+ * Inline image is a special XObject. It can not be referenced from outside the
+ * content stream. It is a direct object. And therefore it can inherit from
+ * CStream.
  *
- * Content stream is parsed on demand because it can be horribly slow.
+ * It has several advantegas. One of them is, that it transparently handles
+ * different string representation than normal stream, simply by overloading
+ * getStringRepresentation method.
  */
 class CInlineImage : public CStream
 {
-
+	//
+	// Constructors
+	//
 public:
+	/**
+	 *
+	 */
+	CInlineImage (CPdf& p, const CStream::Buffer& buffer, const IndiRef& rf);
+
+	/**
+	 * Default constructor. CStream default constructor is called.
+	 */
+	CInlineImage () {};
+
+	
+	//
+	// Cloning
+	//
+protected:
+	virtual CStream* _newInstance () const
+		{ return new CInlineImage; };
+
+	
+	//
+	// Get methods
+	//
+public:
+	
 	/**
 	 * Returns string representation of actual object.
 	 *
@@ -46,12 +76,17 @@ public:
 	/**
      * Create xpdf object.
 	 *
-	 * REMARK: Caller is responsible for deallocating the xpdf object.
-     *
+	 * This function does not make any sense with only direct object.
+	 *
      * @return Xpdf object(s).
      */
-	virtual ::Object* _makeXpdfObject () const; 
+	virtual ::Object* _makeXpdfObject () const
+	{ 
+		assert (!"Failure. This operation is not permitted.");
+		throw CObjInvalidOperation ();
+	}; 
 
+	
 	
 };
 
