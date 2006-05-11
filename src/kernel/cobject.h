@@ -243,8 +243,8 @@ private:
 		// Save original value for the context
 		boost::shared_ptr<IProperty> oldValue (this->clone());
 		// Set original values
-		oldValue->setPdf (IProperty::getPdf());
-		oldValue->setIndiRef (IProperty::getIndiRef());
+		oldValue->setPdf (this->getPdf());
+		oldValue->setIndiRef (this->getIndiRef());
 		// Create the context
 		return new BasicObserverContext (oldValue);
 	}
@@ -264,17 +264,17 @@ private:
 		assert (hasValidRef(this));
 		
 		// Dispatch the change
-		IProperty::dispatchChange ();
+		this->dispatchChange ();
 		
 		if (context)
 		{
 			// Clone this new value
 			boost::shared_ptr<IProperty> newValue (this->clone());
 			// Fill them with correct values
-			newValue->setPdf (IProperty::getPdf());
-			newValue->setIndiRef (IProperty::getIndiRef());
+			newValue->setPdf (this->getPdf());
+			newValue->setIndiRef (this->getIndiRef());
 			// Notify everybody about this change
-			IProperty::notifyObservers (newValue, context);
+			this->notifyObservers (newValue, context);
 		}else
 		{
 			assert (!"Invalid context");
@@ -617,12 +617,12 @@ private:
 		assert (hasValidRef (this));
 
 		// Dispatch the change
-		IProperty::dispatchChange ();
+		this->dispatchChange ();
 		
 		if (context)
 		{
 			// Notify everybody about this change
-			IProperty::notifyObservers (newValue, context);
+			this->notifyObservers (newValue, context);
 
 		}else
 		{
@@ -655,13 +655,6 @@ public:
  * contain just simple value, nor a complex object, because it can not be simple represented
  * in that generic class. It contains a dictionary and a stream. It does not have methods common
  * to complex objects.
- *
- * \TODO:
- * 			buf & showing buf
- * 				probably just STream::getChar() and try it
- * 			podla typu sa bude vyberat dynamicky
- * 				ked niekto zmeni typ, a potom ulozi dany stream, tak sa to prekoduje danym streamom
- * 			ako ukladat stream
  */
 template <typename Checker = BasicMemChecker>
 class CObjectStream : noncopyable, public IProperty
@@ -728,25 +721,12 @@ public:
 	//
 	size_t getPropertyCount () const
 		{return dictionary.getPropertyCount ();}
-	
-	/**
-	 * Returns all names in stream dictionary EXCEPT length.
-	 * This is due to the importance of this property. Xpdf objects
-	 * use this properpty and because of their stability, it is not
-	 * in human power to manage it correctly if the value is incorrect.
-	 *
-	 * You can get to the value when explicitely calling getProperty ("Length")
-	 * but the behaviour would be undefined.
-	 * 
-	 * \TODO make this comment sane
-	 */
+	//
+	//
+	//
 	template<typename Container> 
 	void getAllPropertyNames (Container& container) const
-	{
-		dictionary.getAllPropertyNames (container);
-		typename Container::iterator it = std::remove (container.begin(), container.end(), "Length");
-		container.erase (it, container.end());
-	}
+		{ dictionary.getAllPropertyNames (container); }
 	//
 	//
 	//
@@ -1012,18 +992,22 @@ private:
 			return;
 		assert (hasValidRef (this));
 
+		// Set correct length
+		if (getLength() != buffer.size())
+			setLength (buffer.size());
+		
 		// Dispatch the change
-		IProperty::dispatchChange ();
+		this->dispatchChange ();
 		
 		if (context)
 		{
 			// Clone this new value
 			boost::shared_ptr<IProperty> newValue (this->clone());
 			// Fill them with correct values
-			newValue->setPdf (IProperty::getPdf());
-			newValue->setIndiRef (IProperty::getIndiRef());
+			newValue->setPdf (this->getPdf());
+			newValue->setIndiRef (this->getIndiRef());
 			// Notify everybody about this change
-			IProperty::notifyObservers (newValue, context);
+			this->notifyObservers (newValue, context);
 
 		}else
 		{
@@ -1087,6 +1071,26 @@ public:
 	template<typename Container>
 	static void getSupportedStreams (Container& supported) 
 		{ filters::CFilterFactory::getSupportedStreams (supported); }
+
+protected:
+	/**
+	 * Lock dictionary. It will not dispatch any changes.
+	 */
+	void lockDictionary ()
+	{ 
+		kernelPrintDbg (debug::DBG_DBG, ""); 
+		dictionary.setPdf (NULL); 
+	}
+
+	/**
+	 * Unlock dictionary. It will dispatch all changes.
+	 */
+	void unlockDictionary ()
+	{ 
+		assert (!isInValidPdf(&dictionary));
+		kernelPrintDbg (debug::DBG_DBG, ""); 
+		dictionary.setPdf (this->getPdf()); 
+	}
 
 };
 

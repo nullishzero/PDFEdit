@@ -456,8 +456,8 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 		}
 
 		// Inherit id, gen number and pdf
-		newIpClone->setPdf (IProperty::getPdf());
-		newIpClone->setIndiRef (IProperty::getIndiRef());
+		newIpClone->setPdf (this->getPdf());
+		newIpClone->setIndiRef (this->getIndiRef());
 		// Insert it
 		value.insert (it,newIpClone);
 		
@@ -500,8 +500,8 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	if (newIpClone)
 	{
 		// Inherit id, gen number and pdf
-		newIpClone->setIndiRef (IProperty::getIndiRef());
-		newIpClone->setPdf (IProperty::getPdf());
+		newIpClone->setIndiRef (this->getIndiRef());
+		newIpClone->setPdf (this->getPdf());
 	
 		// Store it
 		value.push_back (std::make_pair (propertyName,newIpClone));
@@ -566,8 +566,8 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	if (newIpClone)
 	{
 		// Inherit id, gen number and pdf
-		newIpClone->setIndiRef (IProperty::getIndiRef());
-		newIpClone->setPdf (IProperty::getPdf());
+		newIpClone->setIndiRef (this->getIndiRef());
+		newIpClone->setPdf (this->getPdf());
 
 		// Construct item, and replace it with this one
 		typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
@@ -618,7 +618,7 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 	getStringRepresentation (rpr);
 
 	if (isInValidPdf (this))
-		return utils::xpdfObjFromString (rpr, IProperty::getPdf()->getCXref());
+		return utils::xpdfObjFromString (rpr, this->getPdf()->getCXref());
 	else
 		return utils::xpdfObjFromString (rpr);
 }
@@ -780,6 +780,7 @@ CObjectStream<Checker>::doClone () const
 {
 	kernelPrintDbg (debug::DBG_DBG,"CObjectStream::doClone");
 	assert (NULL == parser  || !"Want to clone opened stream.. Should the stream state be also copied?");
+	assert (getLength() == buffer.size());
 	
 	// Make new stream object
 	// NOTE: We do not want to inherit any IProperty variable
@@ -852,7 +853,7 @@ CObjectStream<Checker>::setRawBuffer (const Buffer& buf)
 	// Change length
 	setLength (buffer.size());
 	
-	//Dispatch change can be called also in setLength
+	//Dispatch change 
 	_objectChanged (context);
 }
 
@@ -876,7 +877,7 @@ CObjectStream<Checker>::setBuffer (const Buffer& buf)
 	// Change length
 	setLength (buffer.size());
 	
-	//Dispatch change can be called also in setLength
+	//Dispatch change 
 	_objectChanged (context);
 }
 
@@ -893,9 +894,15 @@ CObjectStream<Checker>::setLength (size_t len)
 		boost::shared_ptr<IProperty> clen = utils::getReferencedObject (dictionary.getProperty("Length"));
 		if (isInt (clen))
 		{
+			//Lock
+			lockDictionary ();
+			
 			// Change is dispatched here 
 			IProperty::getSmartCObjectPtr<CInt>(clen)->writeValue (len);
-		
+			
+			// Unlock
+			unlockDictionary ();
+	
 		}else
 		{
 			assert (!"Bad Length type in stream.");
@@ -904,8 +911,15 @@ CObjectStream<Checker>::setLength (size_t len)
 	
 	}catch (ElementNotFoundException&)
 	{
+		//Lock
+		lockDictionary ();
+		
 		CInt _len (len);
 		dictionary.addProperty ("Length", _len);
+		
+		// Unlock
+		unlockDictionary ();
+
 	}
 }
 
@@ -940,7 +954,7 @@ CObjectStream<Checker>::_makeXpdfObject () const
 	}
 
 	// Get xref
-	XRef* xref = IProperty::getPdf()->getCXref ();
+	XRef* xref = this->getPdf()->getCXref ();
 	assert (xref);
 
 	// Dictionary will be deallocated in ~BaseStream
@@ -1087,7 +1101,7 @@ CObjectStream<Checker>::open ()
 		throw CObjInvalidOperation ();
 	}
 	
-	::XRef* xref = (NULL != IProperty::getPdf ()) ? IProperty::getPdf ()->getCXref() : NULL;
+	::XRef* xref = (NULL != this->getPdf ()) ? this->getPdf ()->getCXref() : NULL;
 	// Create xpdf object from current stream and parse it
 	parser = new ::Parser (xref, new ::Lexer(xref, _makeXpdfObject()));
 }
