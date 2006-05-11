@@ -27,8 +27,9 @@
    <sect2>
     <title>Lists and items</title>
     <para>
-     Each item is either a "list" or "item".
-     These are menus and menu items in context of menu, or toolbars and toolbar items in context of toolbar.
+     Each item is either a "list", "label" or "item".
+     These are menus and menu items in context of menu, or toolbars, labels and toolbar items in context of toolbar.
+     Toolbar can also contain special items.
     </para>
     <para>
     Usage is basically the same for menus and toolbars, but there are some differences:
@@ -36,7 +37,7 @@
     <itemizedlist>
      <listitem>Lists in menu can contain items (menu items) or lists (submenus).
       Submenus can be nested to any level, but you cannot create a loop. Program will tell you about the loop and will not start if you do so.
-      List used as toolbar can contain only items</listitem>
+      List used as toolbar can contain only items and labels</listitem>
      <listitem>Menu item does not need icon, toolbar item needs icon</listitem>
      <listitem>Caption in menu items will be used as text of the menu items, caption in toolbar items will be used as tooltip</listitem>
     </itemizedlist>
@@ -84,6 +85,34 @@
      Can be omitted (if icon is also omitted) or just left blank (no keyboard shortcut).
      Format is modifiers+key, for example: <keycombo>Ctrl+A</keycombo>, <keycombo>Shift+X</keycombo>, <keycombo>Ctrl+Alt+Z</keycombo>
     </formalpara>
+    <formalpara>
+     <title>Format of one label</title>
+     <programlisting>items/<varname>name_of_item</varname>=label <varname>Caption of label</varname></programlisting>
+     Label with short description text, usually places before or after other items.
+     Label is valid only in toolbar, menu can not contain a label.
+    </formalpara>
+   </sect2>
+   <sect2>
+    <title>Special toolbar items</title>
+    <para>
+     Toolbar can also contain some special items,
+     that provide more functionality than just a button.
+     Such items have always name starting with underscore character
+     and therefore it is advised not to use such names for naming your own items to avoid
+     possible collision.
+     You can insert them into any toolbar just by referencing their name in a list.
+     <table frame="none">
+      <title>List of special toolbar items</title>
+      <tgroup cols="2">
+       <thead>
+        <row><entry>Name</entry><entry>Description</entry></row>
+       </thead>
+       <tbody>
+        <row><entry>_revision_tool</entry><entry>Tool to list revisions and change them</entry></row>
+       </tbody>
+      </tgroup>
+     </table>
+    </para>
    </sect2>
   </sect1>
   <sect1>
