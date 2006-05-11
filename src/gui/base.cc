@@ -131,7 +131,8 @@ void Base::addDocumentObjects() {
  @param o Object to add to cleanup-list
 */
 void Base::addGC(QSCObject *o) {
- baseObjects.replace(o,0);
+ assert(o);
+ baseObjects.replace(o,o);
 }
 
 /**
@@ -139,6 +140,7 @@ void Base::addGC(QSCObject *o) {
  @param o Object to remove from cleanup-list
 */
 void Base::removeGC(QSCObject *o) {
+ assert(o);
  baseObjects.remove(o);
 }
 

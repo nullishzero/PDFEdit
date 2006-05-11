@@ -33,7 +33,7 @@ public slots:
  /*- Append string element at end of array */
  void add(const QString &ip);
  /*- Return size of this array (number of elements) */
- size_t count();
+ int count();
  /*- Delete element with given index from this array. Elements with higher index (if any) are shifted to occupy the space */
  void delProperty(int index);
  /*- Return string representation of this array */

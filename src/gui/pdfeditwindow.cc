@@ -81,7 +81,7 @@ void PdfEditWindow::saveWindowState() {
  globalSettings->saveSplitter(spl,"spl_main"); 
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
- menuSystem->saveToolbars(this);
+ menuSystem->saveToolbars();
 }
 
 
@@ -91,7 +91,7 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreSplitter(spl,"spl_main"); 
  globalSettings->restoreSplitter(splProp,"spl_right"); 
  globalSettings->restoreSplitter(splCmd,"spl_left"); 
- menuSystem->restoreToolbars(this);
+ menuSystem->restoreToolbars();
 }
 
 /** 
@@ -141,7 +141,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  setFileName(QString::null);
  document=NULL;
  selectedTreeItem=NULL;
- menuSystem=new Menu();
+ menuSystem=new Menu(this);
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
 
@@ -189,7 +189,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
   QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
 
   //ToolBars
-  ToolBarList tblist=menuSystem->loadToolBars(this);
+  ToolBarList tblist=menuSystem->loadToolBars();
   for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
    QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
   }
@@ -394,6 +394,7 @@ void PdfEditWindow::openFile(const QString &name) {
  base->importDocument();
  setFileName(name);
  tree->init(document,baseName);
+ emit documentChanged(document);
  base->print(tr("Loaded file")+" : "+name);
  base->call("onLoad");
  base->call("onLoadUser");
@@ -405,6 +406,7 @@ void PdfEditWindow::emptyFile() {
  document=NULL;
  base->importDocument();
  tree->uninit();
+ emit documentChanged(document);
  setFileName(QString::null);
 }
 

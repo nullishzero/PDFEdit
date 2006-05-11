@@ -37,7 +37,7 @@ public slots:
  /*- Get position of given page in document */
  int getPagePosition(QSPage *page);
  /*- Get number of pages in document */
- unsigned int getPageCount();
+ int getPageCount();
  /*- Insert given page in document, at given position. Return inserted page. */
  QSPage* insertPage(QSPage* page, int position);
  /*- Get Page, given its page number. */
@@ -55,7 +55,15 @@ public slots:
  /*- Return true, if there is previous page in document for given page. */
  bool hasPrevPage(QSPage* page);
  /*- Return number of available revisions */
- size_t getRevisionsCount();
+ int getRevisionsCount();
+ //QObject versions of these methods to workaround QSA bug
+ QSPage* insertPage(QObject* page, int position);
+ int getPagePosition(QObject *page);
+ QSPage* getNextPage(QObject* page);
+ QSPage* getPrevPage(QObject* page);
+ bool hasNextPage(QObject* page);
+ bool hasPrevPage(QObject* page);
+
 private:
  /** Object held in class*/
  CPdf *obj;

@@ -29,7 +29,7 @@ public slots:
  /*- Add string property with given name to this dictionary */
  void add(const QString &name,const QString &ip);
  /*- Return number of properties held in this dictionary */
- size_t count();
+ int count();
  /*- Delete property with given name from this dictionary */
  void delProperty(const QString &name);
  /*- Return string representation of this dictionary */

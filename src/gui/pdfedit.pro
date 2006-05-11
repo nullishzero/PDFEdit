@@ -89,8 +89,8 @@ HEADERS += invalidmenuexception.h
 SOURCES += invalidmenuexception.cc
 
 #Main Window
-HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h
-SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc
+HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h  revisiontool.h
+SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc revisiontool.cc
 
 #Dummy header file for menu translation
 HEADERS += .menu-trans.h 

@@ -32,21 +32,22 @@ typedef QMap<QString, QString> MenuNames;
 
 class Menu {
 public:
- Menu();
+ Menu(QMainWindow *_main);
  ~Menu();
  QString getAction(int index);
  QMenuBar* loadMenu(QWidget *parent) throw (InvalidMenuException);
- ToolBarList loadToolBars(QMainWindow *parent) throw (InvalidMenuException);
+ ToolBarList loadToolBars() throw (InvalidMenuException);
  ToolBar* getToolbar(const QString &name);
  QStringList getToolbarList();
- void saveToolbars(QMainWindow *main);
- void restoreToolbars(QMainWindow *main);
+ void saveToolbars();
+ void restoreToolbars();
  static QString readItem(const QString &name) throw (InvalidMenuException);
  static bool isList(const QString &line);
  static QString parseName(QString &line, const QString &name=QString::null);
  const QPixmap* getIcon(const QString &name);
  const QIconSet* getIconSet(const QString &name);
  void loadItem(const QString &name,QMenuData *parent=NULL,QStringList prev=QStringList()) throw (InvalidMenuException);
+ static bool chopCommand(QString &line, const QString &command);
 private:
  void addItem(QString line,QMenuData *parent,const QString &name=QString::null) throw (InvalidMenuException);
  void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
@@ -56,8 +57,8 @@ private:
  int addAction(const QString &action);
  void loadItemsDef(QString line,QMenuData *menu,QStringList prev=QStringList()) throw (InvalidMenuException);
  void loadItems(const QString &name,QMenuData *menu,QStringList prev=QStringList()) throw (InvalidMenuException);
- void loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException);
- ToolBar* loadToolbar(const QString &name,QMainWindow *parent,bool visible=true) throw (InvalidMenuException);
+ void loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuException);
+ ToolBar* loadToolbar(const QString &name,bool visible=true) throw (InvalidMenuException);
 private:
  /** Mapping between menu IDs and actions */
  ActionMap action_map;
@@ -77,6 +78,8 @@ private:
  MenuNames mCacheName;
  /** Cache for icons */
  IconCache *cache;
+ /** Main application window */
+ QMainWindow *main;
 };
 
 } // namespace gui

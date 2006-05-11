@@ -18,10 +18,12 @@
 #include <qmainwindow.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
+#include <qlabel.h>
 #include <qpixmap.h>
 #include "toolbar.h"
 #include <qstring.h>
 #include "iconcache.h"
+#include "revisiontool.h"
 
 namespace gui {
 
@@ -46,8 +48,12 @@ void Menu::invalidItem(const QString &type,const QString &name,const QString &li
  throw InvalidMenuException(err);
 }
 
-/** Default constructor */
-Menu::Menu() {
+/**
+ Contructor of menu system for one specific window
+ @param main Main application window
+ */
+Menu::Menu(QMainWindow *_main) {
+ main=_main;
  action_index=1;
  cache=new IconCache();
 }
@@ -263,27 +269,48 @@ bool Menu::reserveAccel(const QString &accelDef,const QString &action) {
 }
 
 /**
+ Try to remove command string from line.
+ Return true, if command was found and removed from line,
+ false if command was not found (and line is unchanged)
+ @param line input line
+ @param command Command to look for
+ @return presence of command in line
+*/
+bool Menu::chopCommand(QString &line, const QString &command) {
+ if (!line.startsWith(command+" ")) return false;
+ line=line.remove(0,command.length()+1);
+ return true;
+}
+
+/**
  Load single toolbar item and add it to toolbar
  @param tb Toolbar for addition of item
  @param item Item name in configuration file
 */
-void Menu::loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException) {
+void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuException) {
  if (item=="-" || item=="") {
   tb->addSeparator();
   return;
  }
+ //TODO: special toolbar items move to special function  in new class
+ if (item=="_revision_tool") {
+  //Add RevisionTool to toolbar and return
+  RevisionTool *tool =new RevisionTool(tb,"revision");
+  QObject::connect(main,SIGNAL(documentChanged(CPdf*)),tool,SLOT(setDocument(CPdf*)));
+  tool->show();
+  return;
+ }
  QString line=readItem(item);
- if (line.startsWith("item ")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
-  line=line.remove(0,5);  
+ if (chopCommand(line,"item")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   QStringList qs=explode(',',line);
   if (qs.count()<4) invalidItem(QObject::tr("toolbar item"),item,line,QObject::tr("4 parameters in item definition"));
-  line=line.remove(0,5);
+//  line=line.remove(0,5);
   const QIconSet *icon=cache->getIconSet(qs[3]);
   int menu_id=addAction(qs[1]);
   if (!icon) {
    guiPrintDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
   }
-  QString tooltip=qs[0];
+  QString tooltip=Settings::tr(qs[0],item);
   tooltip=tooltip.replace("&","");
   if (qs[2].length()>0) { //accelerator specified
    tooltip+=" ("+qs[2]+")";
@@ -294,6 +321,9 @@ void Menu::loadToolBarItem(ToolBar *tb,QString item) throw (InvalidMenuException
   }
   tb->addButton(tbutton);
   tbutton->show();
+ } else if (chopCommand(line,"label")) { //Format: Text
+  if (!line.length()) invalidItem(QObject::tr("label item"),item,line);
+  new QLabel(Settings::tr(line,item),tb);
  } else {
   invalidItem(QObject::tr("toolbar item"),item,line);
  }
@@ -320,11 +350,10 @@ const QIconSet* Menu::getIconSet(const QString &name) {
 /**
  Load single toolbar from configuration file
  @param name Toolbar name in configuration file
- @param parent Parent window
  @param visible Will be toolbar initially visible?
  @return loaded toolbar
 */
-ToolBar* Menu::loadToolbar(const QString &name,QMainWindow *parent,bool visible/*=true*/) throw (InvalidMenuException) {
+ToolBar* Menu::loadToolbar(const QString &name,bool visible/*=true*/) throw (InvalidMenuException) {
  QString line=readItem(name);
  guiPrintDbg(debug::DBG_INFO,"Loading toolbar:" << name);
  if (!isList(line)) { // List of values - first is name, others are items in it
@@ -332,7 +361,7 @@ ToolBar* Menu::loadToolbar(const QString &name,QMainWindow *parent,bool visible/
   return NULL;
  }
  QString tbName=parseName(line,name);
- ToolBar *tb=new ToolBar(tbName,parent);
+ ToolBar *tb=new ToolBar(tbName,main);
  tb->setName(name);
  QStringList qs=explode(',',line);
  QStringList::Iterator it=qs.begin();
@@ -347,15 +376,14 @@ ToolBar* Menu::loadToolbar(const QString &name,QMainWindow *parent,bool visible/
 /**
  Load all toolbars from configuration files and add them to parent window
  If toolbar can't be loaded, InvalidMenuException will be thrown
- @param parent parent window for toolbars
 */
-ToolBarList Menu::loadToolBars(QMainWindow *parent) throw (InvalidMenuException) {
+ToolBarList Menu::loadToolBars() throw (InvalidMenuException) {
  QString line=globalSettings->read("gui/toolbars");
  toolbarNames=explode(',',line);
  bool visible;
  for (unsigned int i=0;i<toolbarNames.count();i++) {
   visible=globalSettings->readBool(QString("toolbar/")+toolbarNames[i],true);
-  toolbarList[toolbarNames[i]]=loadToolbar(toolbarNames[i],parent,visible);
+  toolbarList[toolbarNames[i]]=loadToolbar(toolbarNames[i],visible);
  }
  return toolbarList;
 }
@@ -381,7 +409,7 @@ ToolBar* Menu::getToolbar(const QString &name) {
  Save toolbar state of given QMainWindow to configuration
  @param main Main application window
 */
-void Menu::saveToolbars(QMainWindow *main) {
+void Menu::saveToolbars() {
  QString out;
  QTextStream qs(out,IO_WriteOnly);
  qs << *main;
@@ -390,9 +418,8 @@ void Menu::saveToolbars(QMainWindow *main) {
 
 /**
  Restore toolbar state of given QMainWindow from configuration
- @param main Main application window
 */
-void Menu::restoreToolbars(QMainWindow *main) {
+void Menu::restoreToolbars() {
  QString out=globalSettings->read("gui/toolbarpos");
  if (out.isNull()) return;
  QTextStream qs(out,IO_ReadOnly);

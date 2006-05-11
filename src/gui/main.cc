@@ -66,9 +66,10 @@ int main(int argc, char *argv[]){
  qApp=&app;
  //Translation support
  QTranslator translator;
- char *lang=getenv("LANG");
- if (lang) {//LANG variable is present in environment -> attempt to load localization
-  QString lang=QString("pdfedit_")+lang;
+ const char *env_lang=getenv("LANG");
+ if (env_lang) {//LANG variable is present in environment -> attempt to load localization
+  guiPrintDbg(debug::DBG_WARN,"LANG= " << env_lang);
+  QString lang=QString("pdfedit_")+env_lang;
   //look for translation file in DATA_PATH
   if (!translator.load(lang,QString(DATA_PATH)+"/lang")) {
    //Look for translation file in config directory in $HOME
@@ -77,7 +78,7 @@ int main(int argc, char *argv[]){
     //look in current directory for testing version
     if (!translator.load(lang,"./lang")) { 
     #endif
-     guiPrintDbg(debug::DBG_WARN,"Translation file " << lang << "not found");
+     guiPrintDbg(debug::DBG_WARN,"Translation file " << lang << " not found");
     #ifdef TESTING
     }
     #endif

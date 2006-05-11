@@ -94,13 +94,24 @@ void MenuGenerator::generate() {
  set->endGroup();
 }
 
+/** 
+ Check if given name is a "special item" (or separator)
+ @param itemName Name of the item
+ @return true if the item is special, false if not.
+*/
+bool MenuGenerator::special(const QString &itemName) {
+ if (itemName=="-") return true;
+ if (itemName=="_revision_tool") return true;
+ return false;
+}
+
 /**
  Set menu item as "reachable" (increases its reference count) and add translation on it.
  Recursively run on subitems if item is list
  @param name Id of menu item
 */
 void MenuGenerator::setAvail(const QString &name) {
- if (name=="-") return; //return if separator
+ if (special(name)) return; //return if separator
  avail[name]+=1;
  if (avail[name]>=2) return; //already seen this one
  QString line=set->readEntry("gui/items/"+name);
@@ -109,7 +120,7 @@ void MenuGenerator::setAvail(const QString &name) {
   QStringList qs=explode(',',line);  
   QStringList::Iterator it=qs.begin();
   if (it!=qs.end()) {
-   if (*it!="-") { //not a separator 
+   if (!special(*it)) { //not a separator or special item
     addLocString(name,*it);
    }
    ++it;
@@ -117,6 +128,9 @@ void MenuGenerator::setAvail(const QString &name) {
   for (;it!=qs.end();++it) { //load all subitems
    setAvail(*it);
   }
+ } else if (line.startsWith("label ")) { // A single item
+  line=line.remove(0,6);
+  addLocString(name,line);
  } else if (line.startsWith("item ")) { // A single item
   line=line.remove(0,5);
   QStringList qs=explode(',',line);

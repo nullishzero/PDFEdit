@@ -31,7 +31,7 @@ boost::shared_ptr<CDict> QSDict::get() {
 }
 
 /** call CDict::getPropertyCount() */
-size_t QSDict::count() {
+int QSDict::count() {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  return dict->getPropertyCount();
 }

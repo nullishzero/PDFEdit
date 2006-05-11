@@ -50,10 +50,17 @@ public:
  void exitApp();
  void closeWindow();
 signals:
- /** Signal emitted when closing a file or editor window. All helper editor widgets opened from
-   this window that are subclasses of SelfDestructiveWidget will close themselves
+ /**
+  Signal emitted when closing a file or editor window. All helper editor widgets opened from
+  this window that are subclasses of SelfDestructiveWidget will close themselves
  */
  void selfDestruct();
+ /** 
+  Signal emitted when active document is changed 
+  Reference to newly opened document is sent.
+  If document is closed without opening a new file, NULL is sent instead.
+ */
+ void documentChanged(CPdf *newDocument);
 protected:
  void closeEvent(QCloseEvent *e);
 protected slots:

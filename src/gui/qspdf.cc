@@ -43,8 +43,16 @@ QSDict* QSPdf::getDictionary() {
 
 /** Call CPdf::insertPage(page,position) */
 QSPage* QSPdf::insertPage(QSPage* page, int position) {
+ if (!page) return NULL;//Something invalid passed
  return new QSPage(obj->insertPage(page->get(),position),base);
 }
+
+/** Call CPdf::getPagePosition(page) - QSA bugfix version */
+QSPage* QSPdf::insertPage(QObject* page, int position) {
+ return insertPage(dynamic_cast<QSPage*>(page),position);
+}
+
+
 /** Call CPdf::removePage(page,position) */
 void QSPdf::removePage(int position) {
  obj->removePage(position);
@@ -52,11 +60,17 @@ void QSPdf::removePage(int position) {
 
 /** Call CPdf::getPagePosition(page) */
 int QSPdf::getPagePosition(QSPage *page) {
+ if (!page) return -1;//Something invalid passed
  return obj->getPagePosition(page->get());
 }
 
+/** Call CPdf::getPagePosition(page) - QSA bugfix version */
+int QSPdf::getPagePosition(QObject *page) {
+ return getPagePosition(dynamic_cast<QSPage*>(page));
+}
+
 /** Call CPdf::getPageCount() */
-unsigned int QSPdf::getPageCount() {
+int QSPdf::getPageCount() {
  return obj->getPageCount();
 }
 
@@ -90,8 +104,28 @@ bool QSPdf::hasPrevPage(QSPage* page) {
  return obj->hasPrevPage(page->get());
 }
 
+/** Call CPdf::getNextPage(page) - qsa bugfix version */
+QSPage* QSPdf::getNextPage(QObject* page) {
+ return getNextPage(dynamic_cast<QSPage*>(page));
+}
+
+/** Call CPdf::getPrevPage(page) - qsa bugfix version */
+QSPage* QSPdf::getPrevPage(QObject* page) {
+ return getPrevPage(dynamic_cast<QSPage*>(page));
+}
+
+/** Call CPdf::hasNextPage(page) - qsa bugfix version */
+bool QSPdf::hasNextPage(QObject* page) {
+ return hasNextPage(dynamic_cast<QSPage*>(page));
+}
+
+/** Call CPdf::hasPrevPage(page) - qsa bugfix version */
+bool QSPdf::hasPrevPage(QObject* page) {
+ return hasPrevPage(dynamic_cast<QSPage*>(page));
+}
+
 /** Call CPdf::getRevisionsCount() */
-size_t QSPdf::getRevisionsCount() {
+int QSPdf::getRevisionsCount() {
  return obj->getRevisionsCount();
 }
 

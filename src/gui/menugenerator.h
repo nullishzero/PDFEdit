@@ -14,6 +14,7 @@ public:
  void generate();
  void check();
  void translate();
+ static bool special(const QString &itemName);
 private:
  void addLocString(const QString &id,const QString &name);
  void setAvail(const QString &name);

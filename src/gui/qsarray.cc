@@ -31,7 +31,7 @@ boost::shared_ptr<CArray> QSArray::get() {
 }
 
 /** call CArray::getPropertyCount() */
-size_t QSArray::count() {
+int QSArray::count() {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  return array->getPropertyCount();
 }
@@ -74,7 +74,8 @@ void QSArray::add(int index,QObject *ip) {
 /** call CArray::addProperty(index,ip) */
 void QSArray::add(int index,const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- array->addProperty(index,CString(ip));
+ CString property(ip);
+ array->addProperty(index,property);
 }
 
 /** call CArray::addProperty(ip) */

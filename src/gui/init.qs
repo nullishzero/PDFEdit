@@ -148,3 +148,7 @@ function buftest(x) {
   print(s2);
  }
 }
+
+function onLoadUser() {
+ //Dummy, will be overidden by whatever user specify
+}
