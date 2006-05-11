@@ -93,24 +93,36 @@ Object * Object::clone()const
          break;
       case objString:
          result->string=new GString(string);
+         if(!result->string)
+           goto cloneerror;
          break;
       case objName:
          result->name=strdup(name);
+         if(!result->name)
+           goto cloneerror;
          break;
       case objArray:
          result->array=array->clone();
+         if(!result->array)
+           goto cloneerror;
          break;
       case objDict:
          result->dict=dict->clone();
+         if(!result->dict)
+           goto cloneerror;
          break;
       case objStream:
          result->stream=stream->clone();
+         if(!result->stream)
+           goto cloneerror;
          break;
       case objRef:
          result->ref=ref;
          break;
       case objCmd:
          result->cmd=strdup(cmd);
+         if(!result->cmd)
+           goto cloneerror;
          break;
 
       // special object types with no value to initialize
@@ -122,6 +134,12 @@ Object * Object::clone()const
    }
 
    return result;
+
+cloneerror:
+   // unable to clone value holder, so returns with NULL and
+   // deallocates result
+   gfree(result);
+   return NULL;
 }
 
 Object *Object::initArray(XRef *xref) {
