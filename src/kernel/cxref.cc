@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/05/11 21:04:33  hockm0bm
+ * doc update
+ *
  * Revision 1.19  2006/05/10 16:59:05  hockm0bm
  * * changeObject throws if instance->clone fails
  * * changeTrailer throws if value->clone fails
@@ -453,8 +456,8 @@ using namespace debug;
 	bool ret=type1==type2;
 	
 	// if these types are not same, one additional situation may occure:
-	// dereferenced obj1 is objRef (it is indirect) and dereferenced
-	// object is objNull (it is not present in pdf). In such situation, type2
+	// obj1 is objRef (it is indirect) and dereferenced object is objNull 
+	// (it is not present in pdf). In such situation, type2
 	// can be everything - other direction (obj1 is whatever and obj2 is objNull
 	// is not allowed)
 	if(!ret && (obj1->getType() == objRef && type1 == objNull))
