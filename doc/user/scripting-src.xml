@@ -51,7 +51,7 @@
   <sect1 id="onChangeRevision">
    <title>onChangeRevision()</title>
    <para>
-    This function is called after actve revision of document is changed
+    This function is called after active revision of document is changed
    </para>
   </sect1>
   <sect1 id="onLoad">
@@ -181,7 +181,7 @@
   <sect1 id="page">
    <title>page</title>
    <para>
-   This object represents currently selected page. Type of this object is <link linkend="type_Page">Page</link>
+   This object represents currently shown page. Type of this object is <link linkend="type_Page">Page</link>
    </para>
   </sect1>
  </chapter>
