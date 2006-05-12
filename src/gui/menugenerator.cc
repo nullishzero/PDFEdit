@@ -16,6 +16,7 @@
 #include <qdir.h>
 #include "config.h"
 #include "util.h"
+#include "menu.h"
 #include "menugenerator.h"
 
 using namespace std;
@@ -117,7 +118,7 @@ void MenuGenerator::setAvail(const QString &name) {
  QString line=set->readEntry("gui/items/"+name);
  if (line.startsWith("list ")) { // List of values - a submenu, first is name of submenu, others are items in it
   line=line.remove(0,5);
-  QStringList qs=explode(',',line);  
+  QStringList qs=explode(gui::MENULIST_SEPARATOR,line);
   QStringList::Iterator it=qs.begin();
   if (it!=qs.end()) {
    if (!special(*it)) { //not a separator or special item
@@ -133,7 +134,7 @@ void MenuGenerator::setAvail(const QString &name) {
   addLocString(name,line);
  } else if (line.startsWith("item ")) { // A single item
   line=line.remove(0,5);
-  QStringList qs=explode(',',line);
+  QStringList qs=explode(gui::MENUDEF_SEPARATOR,line,true);
   addLocString(name,qs[0]);
   if (qs.count()<2) fatalError("Invalid menu item in config:\n"+line);
  } else { //something invalid

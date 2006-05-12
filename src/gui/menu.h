@@ -17,6 +17,13 @@ namespace gui {
 class ToolBar;
 class IconCache;
 
+/** Separator of fields in menu definition */
+const char MENUDEF_SEPARATOR=',';
+/** Separator of items in menu list */
+const char MENULIST_SEPARATOR=',';
+/** Separator of items in list of existing toolbars */
+const char TOOLBARLIST_SEPARATOR=',';
+
 /** Action map type: mapping from to */
 typedef QMap<QString, int> ActionMap;
 /** Inverse action map: mapping from to  */
@@ -43,14 +50,14 @@ public:
  void restoreToolbars();
  static QString readItem(const QString &name) throw (InvalidMenuException);
  static bool isList(const QString &line);
- static QString parseName(QString &line, const QString &name=QString::null);
+ static QString parseName(QString &line, const QString &name=QString::null) throw (InvalidMenuException);
  const QPixmap* getIcon(const QString &name);
  const QIconSet* getIconSet(const QString &name);
  void loadItem(const QString &name,QMenuData *parent=NULL,QStringList prev=QStringList()) throw (InvalidMenuException);
  static bool chopCommand(QString &line, const QString &command);
+ static void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
 private:
  void addItem(QString line,QMenuData *parent,const QString &name=QString::null) throw (InvalidMenuException);
- void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
  bool reserveAccel(const QString &accelDef,const QString &action);
  void initPaths();
  QString getIconFile(const QString &name);

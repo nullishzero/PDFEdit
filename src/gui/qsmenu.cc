@@ -38,7 +38,7 @@ QSMenu::QSMenu(Menu *_msys,Base *_base,const QString &name/*=QString::null*/) : 
    QString line=Menu::readItem(name);
    if (Menu::isList(line)) { //list given
     Menu::parseName(line);//Strip off the name
-    QStringList qs=explode(',',line);  
+    QStringList qs=explode(MENUDEF_SEPARATOR,line,true);
     QStringList::Iterator it=qs.begin();
     for (;it!=qs.end();++it) { //load all subitems
      addItem(*it);
@@ -105,7 +105,7 @@ void QSMenu::addItemDef(QString def) {
   }
   actionId++;
   QString itemName=Menu::parseName(def);
-  QStringList param=explode(',',def);  //param = Action[,accelerator [,menu icon]]
+  QStringList param=explode(MENUDEF_SEPARATOR,def,true);  //param = Action[,accelerator [,menu icon]]
   menu->insertItem(itemName,actionId+TMP_OFFSET);
   if (param.count()>1 && param[1].length()>0) { //accelerator specified
    menu->setAccel(QKeySequence(param[1]),actionId+TMP_OFFSET);

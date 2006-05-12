@@ -122,7 +122,7 @@ bool Menu::isList(const QString &line) {
  @param prev String list containing names of all parents of this menu item (used for loop detection)
 */
 void Menu::loadItemsDef(QString line,QMenuData *menu,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
- QStringList qs=explode(',',line);  
+ QStringList qs=explode(MENULIST_SEPARATOR,line);
  QStringList::Iterator it=qs.begin();
  for (;it!=qs.end();++it) { //load all subitems
   loadItem(*it,menu,prev);
@@ -136,9 +136,17 @@ void Menu::loadItemsDef(QString line,QMenuData *menu,QStringList prev/*=QStringL
  @param name Name (key) of this menu item (for locatization)
  @return localized caption of the menu item
 */
-QString Menu::parseName(QString &line, const QString &name/*=QString::null*/) {
- line=line.remove(0,5);//"item " or "list "
- QString caption=getUntil(',',line);
+QString Menu::parseName(QString &line, const QString &name/*=QString::null*/) throw (InvalidMenuException) {
+ QString caption;
+ if (line.startsWith("item ")) {
+  line=line.remove(0,5);	//String "item "
+  caption=getUntil(MENUDEF_SEPARATOR,line,true);
+ } else if (line.startsWith("list ")) {
+  line=line.remove(0,5);	//String "list "
+  caption=getUntil(MENULIST_SEPARATOR,line);
+ } else {
+  invalidItem(QObject::tr("menu definition"),name,line);
+ }
  QString menuName;
  if (name.isNull()) {
   menuName=Settings::tr(caption);
@@ -216,7 +224,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
 void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString::null*/) throw (InvalidMenuException) {
  line=line.remove(0,5);
  //Format: Caption, Action,[,accelerator, [,menu icon]]
- QStringList qs=explode(',',line);
+ QStringList qs=explode(MENUDEF_SEPARATOR,line,true);
  if (qs.count()<2) invalidItem(QObject::tr("menu item"),name,line,QObject::tr("2 or more parameters in item definition"));
  int menu_id=addAction(qs[1]);
  if (name.isNull()) {
@@ -306,7 +314,7 @@ void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuEx
  }
  QString line=readItem(item);
  if (chopCommand(line,"item")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
-  QStringList qs=explode(',',line);
+  QStringList qs=explode(MENUDEF_SEPARATOR,line,true);
   if (qs.count()<4) invalidItem(QObject::tr("toolbar item"),item,line,QObject::tr("4 parameters in item definition"));
 //  line=line.remove(0,5);
   const QIconSet *icon=cache->getIconSet(qs[3]);
@@ -367,7 +375,7 @@ ToolBar* Menu::loadToolbar(const QString &name,bool visible/*=true*/) throw (Inv
  QString tbName=parseName(line,name);
  ToolBar *tb=new ToolBar(tbName,main);
  tb->setName(name);
- QStringList qs=explode(',',line);
+ QStringList qs=explode(MENULIST_SEPARATOR,line);
  QStringList::Iterator it=qs.begin();
  for (;it!=qs.end();++it) { //load all subitems
   loadToolBarItem(tb,*it);
@@ -383,7 +391,7 @@ ToolBar* Menu::loadToolbar(const QString &name,bool visible/*=true*/) throw (Inv
 */
 ToolBarList Menu::loadToolBars() throw (InvalidMenuException) {
  QString line=globalSettings->read("gui/toolbars");
- toolbarNames=explode(',',line);
+ toolbarNames=explode(TOOLBARLIST_SEPARATOR,line);
  bool visible;
  for (unsigned int i=0;i<toolbarNames.count();i++) {
   visible=globalSettings->readBool(QString("toolbar/")+toolbarNames[i],true);
