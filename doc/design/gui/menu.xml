@@ -66,6 +66,11 @@
     <formalpara>
      <title>Format of one item</title>
      <programlisting>items/<varname>name_of_item</varname>=item <varname>Caption of item</varname>,<varname>Command</varname>,<varname>Keyboard_shortcut</varname>,<varname>Icon</varname></programlisting>
+     <note>
+      Elements in this definition are comma separated.
+      If any element should include comma in its content, you must escape the comma by backslash, otherwise the comma would be treated as separator of elements.
+      Also, backslash must be escaped by extra backslash.
+     </note>
      <synopsis>Icon</synopsis> is name of file with icon image.
      The icon should may be in PNG, BMP, XBM, XPM or PNM format, although PNG is recommended.
      Also supported may be JPEG, MNG and GIF - depend on how QT library used to compile the
