@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/05/13 21:41:02  hockm0bm
+ * * log messages update
+ * * cleanUp reimplemented
+ *         - doesn't use remove message on changedStorage
+ * * reserveRef and newStorage
+ *         - uses RefState
+ *
  * Revision 1.20  2006/05/11 21:04:33  hockm0bm
  * doc update
  *
@@ -107,18 +114,19 @@ using namespace debug;
 	// goes through all elemenents, erases all of them and deallocates value
 	// returned from remove object (iterators are not invalidated by remove
 	// method)
-	kernelPrintDbg(DBG_DBG, "Deallocating changedStorage");
+	kernelPrintDbg(DBG_DBG, "Deallocating changedStorage (size="<<changedStorage.size()<<")");
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
-	for(i=changedStorage.begin(); i!= changedStorage.end(); i++)
+	int index=0;
+	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
 	{
 		::Ref ref=i->first;
-		ObjectEntry * entry=changedStorage.remove(ref);
+		ObjectEntry * entry=i->second;
 
 		// check for entry
 		if(!entry)
 		{
 			// this shouldn't happen
-			kernelPrintDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] doesn't have entry.");
+			kernelPrintDbg(DBG_ERR, ref<<" doesn't have entry. (index="<<index<<")");
 			continue;
 		}
 
@@ -126,16 +134,18 @@ using namespace debug;
 		if(!entry->object)
 		{
 			// this shouldn't happen
-			kernelPrintDbg(DBG_ERR, "ref=["<<ref.num<<", "<<ref.gen<<"] entry doesn't have an object");
+			kernelPrintDbg(DBG_ERR, ref<<" entry doesn't have an object (index="<<index<<")");
 			delete entry;
+			i->second=NULL;
 			continue;
 		}
 
-		kernelPrintDbg(DBG_DBG, "Deallocating entry for ref=["<<ref.num<<", "<<ref.gen<<"]");
-		entry->object->free();
-		gfree(entry->object);
+		kernelPrintDbg(DBG_DBG, "Deallocating entry for "<<ref<<" index="<<index<<")");
+		utils::freeXpdfObject(entry->object);
 		delete entry;
+		i->second=NULL;
 	}
+	changedStorage.clear();
 	kernelPrintDbg(DBG_DBG, "changedStorage cleaned up");
 
 	kernelPrintDbg(DBG_DBG, "Cleaning newStorage");
@@ -168,7 +178,8 @@ using namespace debug;
 {
 using namespace debug;
 
-	kernelPrintDbg(DBG_DBG, "ref=["<< ref.num<<", "<<ref.gen<< "]");
+	kernelPrintDbg(DBG_DBG, ref);
+	assert(ref.num!=0);
 
 	// discards from cache
 	/* FIXME uncoment if cache is available
@@ -201,6 +212,7 @@ using namespace debug;
 		kernelPrintDbg(DBG_DBG, "object is changed for the first time, creating changedEntry");
 	}
 	changedEntry->object=clonedObject;
+	assert(ref.num!=0);
 	changedStorage.put(ref, changedEntry);
 
 	// object has been newly created, so we will set value in
@@ -208,8 +220,8 @@ using namespace debug;
 	// been set after initialization)
 	if(newStorage.contains(ref))
 	{
-		newStorage.put(ref, true);
-		kernelPrintDbg(DBG_DBG, "newStorage updated");
+		newStorage.put(ref, INITIALIZED_REF);
+		kernelPrintDbg(DBG_DBG, "newStorage entry changed to INITIALIZED_REF for "<<ref);
 	}
 	
 	// returns old version
@@ -270,7 +282,7 @@ using namespace debug;
 		// according specification
 		if(entries[i].gen>=MAXOBJGEN)
 		{
-			kernelPrintDbg(DBG_DBG, "Entry ["<<i<<", "<<entries[i].gen<<"] can't be reused.");
+			kernelPrintDbg(DBG_DBG, "Entry ["<<i<<", "<<entries[i].gen<<"] can't be reused. MAXOBJGEN reached.");
 			continue;
 		}
 
@@ -279,20 +291,19 @@ using namespace debug;
 		Ref ref={i, entries[i].gen};
 		if(newStorage.contains(ref))
 		{
-			kernelPrintDbg(DBG_DBG, "Cannot reuse entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
 			continue;
 		}
 
 		// Entry is free and not used yet. 
 		if(ref.gen)
 		{
-			kernelPrintDbg(DBG_DBG, "Reusing entry ["<<ref.num<<", "<<ref.gen<<"]");
+			kernelPrintDbg(DBG_DBG, "Reusing entry "<<ref);
 		}
 		else
 		{
 			// gen is 0, so entry couldn't have been removed - so say that it is
 			// new entry
-			kernelPrintDbg(DBG_DBG, "Using new entry ["<<ref.num<<", "<<ref.gen<<"]");
+			kernelPrintDbg(DBG_DBG, "Using new entry "<<ref);
 		}
 			
 		num=ref.num;
@@ -313,7 +324,6 @@ using namespace debug;
 				num=i;
 				break;
 			}
-			kernelPrintDbg(DBG_DBG, "Cannot use new entry ["<<ref.num<<", "<<ref.gen<<"]. It is in newStorage");
 		}
 
 		if(num==-1)
@@ -332,105 +342,116 @@ using namespace debug;
 	// Flag is set to false now and this is changed only if
 	// initialized value is overwritten by change method.
 	::Ref objRef={num, gen};
-	newStorage.put(objRef, false);
-	kernelPrintDbg(DBG_INFO, "ref=["<<num<<", "<<gen<<"]"<<" registered to newStorage");
+	newStorage.put(objRef, RESERVED_REF);
+	kernelPrintDbg(DBG_INFO, objRef<<" registered to newStorage");
 
 	return objRef;
 }
 
-::Object * CXref::createObject(ObjType type, ::Ref * ref)
-{
-using namespace debug;
-
-	kernelPrintDbg(DBG_DBG, "type="<<type);
-	// reserves new reference for object 
-	::Ref objRef=reserveRef();
-	
-	// it's not possible to create indirect reference value or
-	// any other internaly (by xpdf) used object types
-	// FIXME
-	//if(type==objRef || type==objError || type==objEOF || type==objNone)
-	//	return 0;
-
-	::Object * obj=XPdfObjectFactory::getInstance();
-	
-	// initialize according type
-	switch(type)
+	::Object * CXref::createObject(ObjType type, ::Ref * ref)
 	{
-		case objBool:
-			obj->initBool(false);
-			break;
-		case objInt:
-			obj->initInt(0);
-			break;
-		case objReal:
-			obj->initReal(0);
-			break;
-		case objString:
-			obj->initString(NULL);
-			break;
-		case objName:
-			obj->initName(NULL);
-			break;
-		case objArray:
-			obj->initArray(this);
-			break;
-		case objDict:
-			obj->initDict(this);
-			break;
-		case objStream:
-			obj->initStream(NULL);
-			break;
-		case objCmd:
-			obj->initCmd(NULL);
-			break;
-		case objNull:
-			obj->initNull();
-			break;
-		default:
-			// TODO assert
+	using namespace debug;
 
-		break;
-	}
-	
-
-	// sets reference parameter if not null
-	if(ref)
-		*ref=objRef;
-
-	kernelPrintDbg(DBG_INFO, "new object created and initialized");
-	return obj;
-}
-
-bool CXref::knowsRef(::Ref ref)
-{
-	// checks newly created object only with true flag
-	// not found returns 0, so it's ok
-	if(newStorage.get(ref))
-		return true;
-
-	// object has to be in in XRef
-	return XRef::knowsRef(ref);
-}
-
-bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
-{
-using namespace debug;
-
-	if(!obj1 || !obj2)
-	{
-		if(!obj1)
-			kernelPrintDbg(DBG_ERR, "obj1 is null");
+		kernelPrintDbg(DBG_DBG, "type="<<type);
+		// reserves new reference for object 
+		::Ref objRef=reserveRef();
 		
-		if(!obj2)
-			kernelPrintDbg(DBG_ERR, "obj2 is null");
-		return false;
+		// it's not possible to create indirect reference value or
+		// any other internaly (by xpdf) used object types
+		// FIXME
+		//if(type==objRef || type==objError || type==objEOF || type==objNone)
+		//	return 0;
+
+		::Object * obj=XPdfObjectFactory::getInstance();
+		
+		// initialize according type
+		switch(type)
+		{
+			case objBool:
+				obj->initBool(false);
+				break;
+			case objInt:
+				obj->initInt(0);
+				break;
+			case objReal:
+				obj->initReal(0);
+				break;
+			case objString:
+				obj->initString(NULL);
+				break;
+			case objName:
+				obj->initName(NULL);
+				break;
+			case objArray:
+				obj->initArray(this);
+				break;
+			case objDict:
+				obj->initDict(this);
+				break;
+			case objStream:
+				obj->initStream(NULL);
+				break;
+			case objCmd:
+				obj->initCmd(NULL);
+				break;
+			case objNull:
+				obj->initNull();
+				break;
+			default:
+				// TODO assert
+
+			break;
+		}
+		
+
+		// sets reference parameter if not null
+		if(ref)
+			*ref=objRef;
+
+		kernelPrintDbg(DBG_INFO, "new object created and initialized");
+		return obj;
 	}
-	 
-	// object for dereferenced  values - we assume, it's not indirect
-	::Object dObj1=*obj1, dObj2=*obj2;	
-	// types for direct values.
-	::ObjType type1=obj1->getType(), type2=obj2->getType();
+
+	RefState CXref::knowsRef(::Ref ref)
+	{
+	using namespace debug;
+
+		kernelPrintDbg(DBG_DBG, "");
+
+		// checks newly created object only with true flag
+		// not found returns 0, so it's ok
+		::RefState state;
+		if((state=newStorage.get(ref))>UNUSED_REF)
+		{
+			kernelPrintDbg(DBG_DBG, "Reference is in newStorage. state="<<state);
+			return state;
+		}
+
+		kernelPrintDbg(DBG_DBG, "Reference is not in newStorage. Trying XRef.");
+		// object has to be in in XRef
+		state=XRef::knowsRef(ref);
+		kernelPrintDbg(DBG_DBG, "Reference state in XRef is "<<state);
+		return state;
+	}
+
+	bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
+	{
+	using namespace debug;
+
+		if(!obj1 || !obj2)
+		{
+			if(!obj1)
+				kernelPrintDbg(DBG_ERR, "obj1 is null");
+			
+			if(!obj2)
+				kernelPrintDbg(DBG_ERR, "obj2 is null");
+			return false;
+		}
+		 
+		// object for dereferenced  values - we assume, it's not indirect
+		::Object dObj1=*obj1, dObj2=*obj2;	
+		// types for direct values.
+		::ObjType type1=obj1->getType(), type2=obj2->getType();
 	
 	// checks indirect
 	if(type1==objRef)
@@ -452,7 +473,7 @@ using namespace debug;
 		dObj2.free();
 	}
 
-	// no we have direct values' types
+	// now we have direct values' types
 	bool ret=type1==type2;
 	
 	// if these types are not same, one additional situation may occure:
@@ -461,12 +482,9 @@ using namespace debug;
 	// can be everything - other direction (obj1 is whatever and obj2 is objNull
 	// is not allowed)
 	if(!ret && (obj1->getType() == objRef && type1 == objNull))
-	{
-		::Ref ref=obj1->getRef();
-		kernelPrintDbg(DBG_WARN, "obj1 ref=["<<ref.num<<", "<<ref.gen<<"] is not present in pdf. type2="<<type2<<" is safe");
-		return true;
-	}
+		ret=true;
 
+	kernelPrintDbg(DBG_DBG, "typeSafe result="<<ret);
 	return ret;
 }
 
@@ -566,11 +584,19 @@ using namespace debug;
 	ObjectEntry * entry=changedStorage.get(ref);
 	if(entry)
 	{
-		kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is changed - using changedStorage");
+		kernelPrintDbg(DBG_INFO, ref<<" is changed - using changedStorage");
 		
 		// object has been changed
 		// this clone never fails, because it had to be cloned before storing to
 		// changedStorage
+		::Object * object=entry->object;
+		if(!object)
+		{
+			// this shouldn't not happen
+			// TODO handle - exception should be called
+			kernelPrintDbg(DBG_CRIT, "Changed object is NULL!");
+			return obj;
+		}
 		::Object * deepCopy=entry->object->clone();
 
 		// shallow copy of content
@@ -578,21 +604,22 @@ using namespace debug;
 		// this doesn't affect our ::Object in changedStorage
 		*obj=*deepCopy;
 		
-		// dellocate deepCopy - content is kep
+		// dellocate deepCopy - content is kept
 		gfree(deepCopy); 
 		return obj;
 	}
 
 	// delegates to original implementation
-	kernelPrintDbg(DBG_INFO, "[num="<<num<<" gen="<<gen<<"] is not changed - using Xref");
+	kernelPrintDbg(DBG_INFO, ref<<" is not changed - using Xref");
 	Object tmpObj;
 	XRef::fetch(num, gen, &tmpObj);
 
 	// clones fetched object
 	// this has to be done because return value may be stream and we want to
 	// prevent direct changing of the stream
-	// TODO may be optimized - clones just streams
 	Object * cloneObj=tmpObj.clone();
+	// deallocates XRef returned object content
+	tmpObj.free();
 	if(!cloneObj)
 	{
 		// cloning has failed
@@ -624,10 +651,10 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "");
 
 	size_t newSize=0;
-	ObjectStorage< ::Ref, bool, RefComparator>::Iterator begin, i;
+	ObjectStorage< ::Ref, RefState, RefComparator>::Iterator begin, i;
 
 	for(i=newStorage.begin(); i!=newStorage.end(); i++)
-		if(i->second)
+		if(i->second==INITIALIZED_REF)
 			newSize++;
 
 	kernelPrintDbg(DBG_INFO, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);

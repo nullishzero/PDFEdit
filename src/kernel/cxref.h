@@ -6,6 +6,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/05/13 21:41:02  hockm0bm
+ * * log messages update
+ * * cleanUp reimplemented
+ *         - doesn't use remove message on changedStorage
+ * * reserveRef and newStorage
+ *         - uses RefState
+ *
  * Revision 1.23  2006/05/10 16:59:05  hockm0bm
  * * changeObject throws if instance->clone fails
  * * changeTrailer throws if value->clone fails
@@ -170,7 +177,6 @@ class CXref: public XRef
 {
 private:
 	//ObjectCache * cache=NULL;		/**< Cache for objects. */
-
 protected:
 	/** Empty constructor.
 	 *
@@ -197,10 +203,12 @@ protected:
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator> changedStorage;   
 
 	/** Object storage for newly created objects.
-	 * Value is the flag, whether value has been changed after createObject
-	 * method has been called. Uninitialized values can be skipped.
+	 * Value is the flag of newly created reference. When new entry is added, it
+	 * should have Reserved state and when changed for the first time
+	 * Initialized. Unused is default value for not found, so unknown
+	 * (ObjectStorage returns 0 if entry is not found). 
 	 */
-	ObjectStorage< ::Ref, bool, RefComparator> newStorage;
+	ObjectStorage< ::Ref, RefState, RefComparator> newStorage;
 
 	/** Registers change in given object addressable through given 
 	 * reference.
@@ -260,8 +268,8 @@ protected:
 	 *
 	 * Searches for free object number and generation number and uses
 	 * it to register reference for new indirect object. Reference is stored
-	 * to the newStorage with false flag. This is changed to true if real
-	 * object is stored to the CXref (using change method). 
+	 * to the newStorage with Reserved flag. This is changed to Initialized if 
+	 * real object is stored to the CXref (using change method). 
 	 * <br>
 	 * Created object is accesible only if default value has been changed.
 	 * This means that returned object has to be changed and after change
@@ -327,6 +335,8 @@ protected:
 	 */
 	void cleanUp();
 public:
+
+	
 	/** Initialize constructor.
 	 * @param stream Stream with file data.
 	 *
@@ -374,14 +384,31 @@ public:
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.
 	 *
-	 * First examine if reference is in newStorage and if not found
-	 * tries to check entries array.
-	 * <br>
-	 * If returns true, object can be accessed by fetch method.
-	 *
-	 * @return true if reference is known, false otherwise.
+	 * Checks if reference is present in newStorage. If found, returns status
+	 * stored in newStorage. If not found, searches XRef::entries array.
+	 * 
+	 * @see UNUSED_REF
+	 * @see RESERVED_REF
+	 * @see INITIALIZED_REF
+	 * @return Current state of given reference.
 	 */
-	bool knowsRef(::Ref ref);
+	virtual RefState knowsRef(::Ref ref);
+
+	/** Checks if given reference is known.
+	 * @param ref Reference to check.
+	 *
+	 * Calls knowsRef(::Ref) method. This is just for easy to use wrapper for 
+	 * non xpdf code.
+	 *
+	 * @see knowsRef(::Ref)
+	 *
+	 * @return reference current state.
+	 */
+	virtual RefState knowsRef(IndiRef ref)
+	{
+		::Ref xpdfRef={ref.num, ref.gen};
+		return knowsRef(xpdfRef);
+	}
 
 	/** Checks whether obj1 can replace obj2.
 	 * @param obj1 Original object.
