@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/13 22:12:26  hockm0bm
+ * tests updated
+ *         - addIndirectProperty tested quite well now and seems that new
+ *           implementation is correct finally
+ *
  * Revision 1.16  2006/05/10 20:38:02  hockm0bm
  * isChanged checked
  *
@@ -68,8 +73,6 @@ class TestCPdf: public CppUnit::TestFixture
 		CPPUNIT_TEST(Test);
 	CPPUNIT_TEST_SUITE_END();
 
-	typedef std::vector<CPdf *> PdfList;
-	PdfList	pdfs;
 public:
 
 	virtual ~TestCPdf()
@@ -185,7 +188,7 @@ public:
 		Object fakeXpdfDict;
 		XRef * fakeXref=pdf->getCXref();
 		fakeXpdfDict.initDict(fakeXref);
-		IndiRef fakeIndiRef={10, 0};
+		IndiRef fakeIndiRef(10, 0);
 		shared_ptr<CDict> fakeDict2(CDictFactory::getInstance(*pdf, fakeIndiRef, fakeXpdfDict));
 		shared_ptr<CPage> fake2(new CPage(fakeDict2));
 
@@ -527,19 +530,6 @@ public:
 	
 	void setUp()
 	{
-		// creates pdf instances for all files
-		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
-		{
-			try
-			{
-				CPdf * pdf=getTestCPdf(i->c_str());
-				pdfs.push_back(pdf);
-			}catch(PdfOpenException &e)
-			{
-				printf("file \"%s\" open failed. msg=", e.what());
-			}
-		}
-
 	}
 
 	void instancingTC()
@@ -551,6 +541,8 @@ public:
 		
 	}
 
+#define TEST_FILE "../../doc/zadani.pdf"
+
 	void indirectPropertyTC(CPdf * pdf)
 	{
 	using namespace boost;
@@ -558,12 +550,12 @@ public:
 	
 		printf("%s\n", __FUNCTION__);
 
-		printf("TC01:\taddIndirectProperty with property with no pdf test\n");
+		printf("TC01:\taddIndirectProperty with simple property with no pdf\n");
 		// creates new property and adds it
 		shared_ptr<IProperty> prop(CIntFactory::getInstance(1));
-		IndiRef addedRef=pdf->addIndirectProperty(prop);
-		
-		printf("TC02:\tgetIndirectProperty knows newly added property with correct type, value, pdf and indiref\n");
+		IndiRef addedRef,intPropRef;
+		addedRef=intPropRef=pdf->addIndirectProperty(prop);
+		CPPUNIT_ASSERT(addedRef.num!=0);
 		shared_ptr<IProperty> added=pdf->getIndirectProperty(addedRef);
 		// type must be same
 		CPPUNIT_ASSERT(added->getType()==prop->getType());
@@ -572,32 +564,129 @@ public:
 		CPPUNIT_ASSERT(pe(added, prop));
 		CPPUNIT_ASSERT(added->getPdf()==pdf);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
-		
-		printf("TC03:\taddIndirectProperty makes deep copy and returns new reference\n");
-		CPPUNIT_ASSERT(! (addedRef==prop->getIndiRef()));
-		CPPUNIT_ASSERT(added!=prop);
+		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
+		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
 
-		printf("TC04:\taddIndirectProperty with CRef from same pdf makes no change\n");
+		printf("TC02:\taddIndirectProperty with reference with no pdf\n");
+		IndiRef ref(1,0);
+		shared_ptr<IProperty> refProp(CRefFactory::getInstance(ref));
+		try
+		{
+			addedRef=pdf->addIndirectProperty(refProp);
+			CPPUNIT_FAIL("addIndirectProperty with reference should have failed");
+		}catch(ElementBadTypeException & e)
+		{
+			/* ok, should have failed */
+		}
+		
+		printf("TC03:\taddIndirectProperty dictionary with no pdf\n");
+		// prepares dictionary with 3 entries
+		// Elem1 Real
+		// Elem2 Ref
+		// Elem3 [Bool]
+		shared_ptr<CDict> dictProp(CDictFactory::getInstance());
+		shared_ptr<IProperty> dictElem1(CRealFactory::getInstance(1.5));
+		dictProp->addProperty("Elem1", *dictElem1);
+		shared_ptr<IProperty> dictElem2(CRefFactory::getInstance(ref));
+		dictProp->addProperty("Elem2", *dictElem2);
+		shared_ptr<CArray> dictElem3(new CArray());
+		shared_ptr<IProperty> arrayElem1(CBoolFactory::getInstance(true));
+		dictElem3->addProperty(*arrayElem1);
+		dictProp->addProperty("Elem3", *dictElem3);
+		// adds dictionary
+		addedRef=pdf->addIndirectProperty(dictProp);
+		added=pdf->getIndirectProperty(addedRef);
+		CPPUNIT_ASSERT(isDict(*added));
+		shared_ptr<CDict> addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
+		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
+		CPPUNIT_ASSERT(addedDict->getPropertyCount()==3);
+		CPPUNIT_ASSERT(isReal(*(addedDict->getProperty("Elem1"))));
+		CPPUNIT_ASSERT(isRef(*(addedDict->getProperty("Elem2"))));
+		// target of Elem2 has to be CNull
+		CPPUNIT_ASSERT(
+				isNull(
+					* pdf->getIndirectProperty(
+										  getValueFromSimple<CRef, pRef, IndiRef>(addedDict->getProperty("Elem2"))
+										  )
+				 )
+				);
+		CPPUNIT_ASSERT(isArray(*(addedDict->getProperty("Elem3"))));
+
+		printf("TC04:\taddIndirectProperty with CRef from same pdf\n");
 		// uses root of page tree, which has to be reference
 		shared_ptr<IProperty> rootProp=pdf->getDictionary()->getProperty("Pages");
 		if(isRef(rootProp))
 		{
 			shared_ptr<CRef> rootCRef=IProperty::getSmartCObjectPtr<CRef>(rootProp);
-			addedRef=pdf->addIndirectProperty(rootCRef);
-			IndiRef rootRef=getValueFromSimple<CRef, pRef, IndiRef>(rootCRef);
-			CPPUNIT_ASSERT(addedRef==rootRef);
+			try
+			{
+				addedRef=pdf->addIndirectProperty(rootCRef);
+				CPPUNIT_FAIL("addIndirectProperty with reference should have failed");
+			}catch(ElementBadTypeException & e)
+			{
+				/* ok should have failed */
+			}
 		}
-		
-		printf("TC05:\taddIndirectProperty with not CRef from same pdf makes new property\n");
-		// uses document catalog as indirect object
-		shared_ptr<CDict> indirectProp=pdf->getDictionary();
-		IndiRef newIndirectProp=pdf->addIndirectProperty(indirectProp);
-		// referencies must be different
-		CPPUNIT_ASSERT(!(newIndirectProp==indirectProp->getIndiRef()));
-		
-		printf("TC06:\taddIndirectProperty with CRef from different CPdf test\n");
-		// uses multiversion pdf
-		// TODO
+
+		printf("TC05:\taddIndirectProperty from different pdf (followRefs==false)\n");
+		// opens TEST_FILE
+		CPdf * differentPdf=getTestCPdf(TEST_FILE);
+		// gets page dictionary which contains at least one reference (to its
+		// parent). addIndirectProperty with followRefs==false
+		shared_ptr<CDict> differentPageDict=differentPdf->getFirstPage()->getDictionary();
+		addedRef=pdf->addIndirectProperty(differentPageDict, false);
+		added=pdf->getIndirectProperty(addedRef);
+		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
+		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(isDict(*added));
+		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
+		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
+		addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
+		CPPUNIT_ASSERT(addedDict->getPropertyCount()==differentPageDict->getPropertyCount());
+		// gets parent dictionary and checks if its reference is known and value
+		// is CNull (because deep copy was not done)
+		shared_ptr<IProperty> parentProp=addedDict->getProperty("Parent");
+		if(isRef(*parentProp))
+		{
+			ref=getValueFromSimple<CRef, pRef, IndiRef>(parentProp);
+			shared_ptr<IProperty> parentPropValue=pdf->getIndirectProperty(ref);
+			CPPUNIT_ASSERT(isNull(*parentPropValue));
+			::Ref xpdfRef={ref.num, ref.gen};
+			// has to know reference as RESERVED_REF
+			printf("\t\tReference state of parentProp is RESERVED_REF (according CXref::knowsRef)\n");
+			CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(xpdfRef)==RESERVED_REF);
+		}
+
+		printf("TC06:\taddIndirectProperty from different pdf (followRefs==true)\n");
+		// does the same as for tc05 with followRefs set to true
+		addedRef=pdf->addIndirectProperty(differentPageDict, true);
+		added=pdf->getIndirectProperty(addedRef);
+		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
+		CPPUNIT_ASSERT(added->getPdf()==pdf);
+		CPPUNIT_ASSERT(isDict(*added));
+		printf("\t\tReference state is INITIALIZED_REF (according CXref::knowsRef)\n");
+		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
+		addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
+		CPPUNIT_ASSERT(addedDict->getPropertyCount()==differentPageDict->getPropertyCount());
+		// gets parent dictionary and checks if its reference is known and value
+		// has same type as in pageDict - deep copy has been done
+		parentProp=addedDict->getProperty("Parent");
+		if(isRef(*parentProp))
+		{
+			ref=getValueFromSimple<CRef, pRef, IndiRef>(parentProp);
+			// has to know reference as INITIALIZED_REF
+			CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(ref)==INITIALIZED_REF);
+			printf("\t\tReference state of parentProp is INITIALIZED_REF (according CXref::knowsRef)\n");
+			shared_ptr<IProperty> parentDict=pdf->getIndirectProperty(ref);
+			shared_ptr<IProperty> differentParentDict=
+				differentPdf->getIndirectProperty(getValueFromSimple<CRef, pRef, IndiRef>(differentPageDict->getProperty("Parent")));
+			PropertyType p1=parentDict->getType();
+			PropertyType p2=differentPageDict->getType();
+			CPPUNIT_ASSERT(parentDict->getType()==differentParentDict->getType());
+			// TODO compare also content 
+		}
+		differentPdf->close();
 
 		printf("TC07:\tgetIndirectProperty with uknown reference returns CNull\n");
 		// creates unknown reference from existing by adding 1 to generation
@@ -605,6 +694,8 @@ public:
 		IndiRef unknownRef=pdf->getDictionary()->getIndiRef();
 		unknownRef.gen++;
 		CPPUNIT_ASSERT(isNull(*pdf->getIndirectProperty(unknownRef)));
+		printf("\t\tReference state is UNUSED_REF (according CXref::knowsRef)\n");
+		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(unknownRef)==UNUSED_REF);
 
 		printf("TC08:\tchangeIndirectProperty with invalid parameter should fail\n");
 		// creates fake and try to use changeIndirectProperty with unknownRef
@@ -620,7 +711,7 @@ public:
 			/* ok */
 		}
 
-		printf("TC09:\tchangeIndirectProperty with bad typed parameter should fail in\n");
+		printf("TC09:\tchangeIndirectProperty with bad typed parameter should fail\n");
 		// creates integer and tries to change value of Pages field which is
 		// reference
 		fakeInt=shared_ptr<CInt>(CIntFactory::getInstance(*pdf, pdf->getDictionary()->getProperty("Pages")->getIndiRef(), obj));
@@ -633,28 +724,58 @@ public:
 			/* ok */
 		}
 
+		printf("TC08:\tChanging indirect property causes CPdf::changeIndirectProperty\n");
+		// changes intPropRef added at the method beginning
+		shared_ptr<CInt> originalIntProp=IProperty::getSmartCObjectPtr<CInt>(pdf->getIndirectProperty(intPropRef));
+		// in first case change value directly in originalIntProp
+		int originalIntValue=getIntFromIProperty(originalIntProp);
+		// this should automatically call pdf->changeIndirectProperty
+		originalIntProp->writeValue(originalIntValue+1);
+		shared_ptr<CInt> changedIntProp=IProperty::getSmartCObjectPtr<CInt>(pdf->getIndirectProperty(intPropRef));
+		// we have changed just value, so instance must be same
+		CPPUNIT_ASSERT(changedIntProp==originalIntProp);
+		CPPUNIT_ASSERT(getIntFromIProperty(changedIntProp)-1==originalIntValue);
+
+		printf("TC09:\tchangeIndirectProperty with proper (different) value\n");
+		// sets changed property as original now and resets changedIntProp with
+		// new value - so we have different instance of property with same type,
+		// so type check doesn't fail
+		originalIntProp=changedIntProp;
+		changedIntProp.reset();
+		Object intXpdfObj;
+		intXpdfObj.initInt(0);
+		changedIntProp=shared_ptr<CInt>(CIntFactory::getInstance(*pdf, intPropRef, intXpdfObj));
+		pdf->changeIndirectProperty(changedIntProp);
+		// resets value and gets it again
+		changedIntProp.reset();
+		changedIntProp=IProperty::getSmartCObjectPtr<CInt>(pdf->getIndirectProperty(intPropRef));
+		// instances must be different
+		CPPUNIT_ASSERT(changedIntProp!=originalIntProp);
+		CPPUNIT_ASSERT(getIntFromIProperty(changedIntProp)==0);
+		// reference is kept
+		CPPUNIT_ASSERT(changedIntProp->getIndiRef()==originalIntProp->getIndiRef());
 	}
 
 	void tearDown()
 	{
-		// closes all opened pdfs and removes them all from pdfs list
-		// to prepare this test for reuse
-		for(PdfList::iterator i=pdfs.begin(); i!=pdfs.end(); i++)
-			(*i)->close();
-		pdfs.clear();
 	}
 
 	void Test()
 	{
 		instancingTC();
-		for(PdfList::iterator i=pdfs.begin(); i!=pdfs.end(); i++)
+		// creates pdf instances for all files
+		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
 		{
+			string fileName=*i;
+			printf("\nTests for file:%s\n", fileName.c_str());
+			CPdf * pdf=getTestCPdf(fileName.c_str());
 			// pageIterationTC is before indirectPropertyTC because it needs to
 			// have no changes made before (checks isChanged on non change
 			// producing operations)
-			pageIterationTC(*i);
-			indirectPropertyTC(*i);
-			pageManipulationTC(*i);
+			pageIterationTC(pdf);
+			indirectPropertyTC(pdf);
+			pageManipulationTC(pdf);
+			pdf->close();
 		}
 		revisionsTC();
 		printf("TEST_CPDF testig finished\n");
