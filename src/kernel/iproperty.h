@@ -52,6 +52,42 @@ enum PropertyType
 		pOther3 = objNone
 };
 
+//
+// Returns name of objects type
+//
+template<int i> inline
+std::string getStringType () {return "Unknown";}
+template<> inline
+std::string getStringType<0> () {return "pBool";}
+template<> inline
+std::string getStringType<1> () {return "pInt";}
+template<> inline
+std::string getStringType<2> () {return "pReal";}
+template<> inline
+std::string getStringType<3> () {return "pString";}
+template<> inline
+std::string getStringType<4> () {return "pName";}
+template<> inline
+std::string getStringType<5> () {return "pNull";}
+template<> inline
+std::string getStringType<9> () {return "pRef";}
+template<> inline
+std::string getStringType<6> () {return "pArray";}
+template<> inline
+std::string getStringType<7> () {return "pDict";}
+template<> inline
+std::string getStringType<8> () {return "pStream";}
+
+/** Prints property type.
+ * @param out String where to print.
+ * @param type Type to print.
+ *
+ * Prints given type in human readable from instead of just number.
+ * Uses getStringType method to get string representation.
+ *
+ * @return Reference to given string.
+ */
+std::string & operator << (std::string & out, PropertyType type);
 
 /** Object id number. */
 typedef unsigned int ObjNum;
@@ -63,10 +99,68 @@ typedef struct IndiRef
 {
 	ObjNum	num; /**< Object's pdf identification number */
 	GenNum	gen; /**< Object's pdf generation number */
+
+	/** Empty constructor.
+	 *
+	 * Initializes num and gen to invalid reference.
+	 */
+	IndiRef():num(0), gen(0)
+	{
+	}
+	
+	/** Initialize constructor.
+	 * @param ref Indirect Reference.
+	 *
+	 * Sets num and gen according given reference.
+	 */
+	IndiRef(const IndiRef & ref):num(ref.num), gen(ref.gen)
+	{
+	}
+
+	/** Initialize constructor.
+	 * @param ref Xpdf reference.
+	 *
+	 * Sets num and gen according given reference.
+	 */
+	IndiRef(const ::Ref & ref):num(ref.num), gen(ref.gen)
+	{
+	}
+
+	/** Initialize constructor.
+	 * @param _num Object number.
+	 * @param _gen Generation number.
+	 *
+	 * Sets num and gen according given parameters.
+	 */
+	IndiRef(int _num, int _gen):num(_num), gen(_gen)
+	{
+	}
+
 	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;};
 	bool operator== (const IndiRef& _r) const { return (num == _r.num && gen == _r.gen) ? true : false;};
 			
 } IndiRef;
+
+
+/** Prints reference.
+ * @param out String where to print.
+ * @param ref Reference to print.
+ *
+ * Prints given reference in ref[num, gen] format.
+ *
+ * @return reference to given string.
+ */
+std::ostream & operator << (std::ostream & out, const IndiRef & ref);
+
+/** Prints reference.
+ * @param out String where to print.
+ * @param ref Reference to print.
+ *
+ * Prints given xpdf reference in ref[num, gen] format.
+ *
+ * @return reference to given string.
+ */
+std::ostream & operator << (std::ostream & out, const ::Ref & ref);
 
 
 /** 
@@ -310,27 +404,56 @@ protected:
 // Helper functions
 //
 
-/** 
- * Indicates whether a property is in a valid pdf. 
+/** Checks whether pdf is valid instance.
+ * @param pdf Pdf isntance to check.
  *
- * @return True if the pdf is valid, false otherwise.
+ * @return true if pdf is not NULL, false otherwise.
  */
-inline bool isInValidPdf (CPdf* pdf) {return (NULL != pdf);}
-inline bool isInValidPdf (const IProperty& ip) {return (NULL != ip.getPdf());}
-template<typename T> inline bool isInValidPdf (T ip) {return (NULL != ip->getPdf());}
+inline bool isPdfValid(CPdf * pdf)
+{
+	return (NULL !=pdf);
+}
+
+/** Checks whether ip's pdf is valid.
+ * @param ip Property to check.
+ *
+ * @return isPdfValid(ip-&getPdf()).
+ */
+inline bool hasValidPdf(const IProperty & ip)
+{
+	return isPdfValid(ip.getPdf());
+}
+template<typename T> inline bool hasValidPdf(T ip)
+{
+	return isPdfValid(ip->getPdf());
+}
+
+//inline bool isInValidPdf (const IProperty& ip) {return (NULL != ip.getPdf());}
+//template<typename T> inline bool isInValidPdf (T ip) {return (NULL != ip->getPdf());}
+//:w
 //
+
+/** Checks whether given reference is valid.
+ * @param ref Reference to check.
+ *
+ * Reference is valid, if it is non NULL and object number is greater than 0.
+ * @return true if reference is valid, false otherwise.
+ */
+inline bool isRefValid(const IndiRef * ref)
+{
+	return (ref) && (ref->num>0);
+}
+
 template<typename T> inline bool hasValidRef (T ip) 
 {
-	IndiRef rf;
-	rf.gen = rf.num = 0;
-	return !(rf == ip->getIndiRef());
+	return isRefValid(&ip->getIndiRef());
 }
+
 inline bool hasValidRef (IProperty& ip) 
 {
-	IndiRef rf;
-	rf.gen = rf.num = 0;
-	return !(rf == ip.getIndiRef());
+	return isRefValid(& ip.getIndiRef());
 }
+
 
 //
 template<PropertyType Type>

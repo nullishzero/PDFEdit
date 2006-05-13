@@ -68,9 +68,9 @@ IProperty::setPdf (CPdf* p)
 void 
 IProperty::dispatchChange () const
 {
-	assert (isInValidPdf (this));
+	assert (hasValidPdf (this));
 	assert (hasValidRef (this));
-	if (!isInValidPdf (this))
+	if (!hasValidPdf (this))
 		throw CObjInvalidObject ();
 
 	//
@@ -146,6 +146,75 @@ IProperty::notifyObservers (boost::shared_ptr<IProperty> newValue, boost::shared
 	ObserverList::iterator it = IProperty::observers.begin ();
 	for (; it != IProperty::observers.end(); ++it)
 		(*it)->notify (newValue, context);
+}
+
+std::string & operator << (std::string & out, PropertyType type)
+{
+	using namespace std;
+
+	string stringType;
+	switch(type)
+	{
+		case pNull:
+			stringType=getStringType<pNull>();
+			break;
+		case pBool:
+			stringType=getStringType<pBool>();
+			break;
+		case pInt:
+			stringType=getStringType<pInt>();
+			break;
+		case pReal:
+			stringType=getStringType<pReal>();
+			break;
+		case pString:
+			stringType=getStringType<pString>();
+			break;
+		case pName:
+			stringType=getStringType<pName>();
+			break;
+		case pRef:
+			stringType=getStringType<pRef>();
+			break;
+		case pArray:
+			stringType=getStringType<pArray>();
+			break;
+		case pDict:
+			stringType=getStringType<pDict>();
+			break;
+		case pStream:
+			stringType=getStringType<pStream>();
+			break;
+		case pOther:
+			stringType=getStringType<pOther>();
+			break;
+		case pOther1:
+			stringType=getStringType<pOther1>();
+			break;
+		case pOther2:
+			stringType=getStringType<pOther2>();
+			break;
+		case pOther3:
+			stringType=getStringType<pOther3>();
+			break;
+	}
+	return out;
+}
+
+std::ostream & operator << (std::ostream & out, const IndiRef & ref)
+{
+	out<< "ref=[";
+	out<<ref.num;
+	out<<", ";
+	out<<ref.gen;
+	out<<"]";
+	return out;
+}
+
+std::ostream & operator << (std::ostream & out, const ::Ref & ref)
+{
+	IndiRef indiRef(ref.num, ref.gen);
+	return out<<indiRef;
 }
 
 //=====================================================================================
