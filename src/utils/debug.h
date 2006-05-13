@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/05/13 22:22:11  hockm0bm
+ * * getStringType removed (to iproperty.h)
+ *
  * Revision 1.14  2006/05/06 08:48:50  hockm0bm
  * *PrintDbg macros really uses printDbg rather than _printDbg to dump information
  *   to default stream
@@ -229,31 +232,7 @@ __print (std::ostream& out,const std::string& str)
 	out << str;
 }
 
-//
-// Returns name of objects type
-//
-template<int i> inline
-std::string getStringType () {return "Unknown";}
-template<> inline
-std::string getStringType<0> () {return "pBool";}
-template<> inline
-std::string getStringType<1> () {return "pInt";}
-template<> inline
-std::string getStringType<2> () {return "pReal";}
-template<> inline
-std::string getStringType<3> () {return "pString";}
-template<> inline
-std::string getStringType<4> () {return "pName";}
-template<> inline
-std::string getStringType<5> () {return "pNull";}
-template<> inline
-std::string getStringType<9> () {return "pRef";}
-template<> inline
-std::string getStringType<6> () {return "pArray";}
-template<> inline
-std::string getStringType<7> () {return "pDict";}
-template<> inline
-std::string getStringType<8> () {return "pStream";}
+
 
 
 
