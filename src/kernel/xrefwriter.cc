@@ -4,6 +4,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/05/13 22:16:31  hockm0bm
+ * * memory leak removed
+ *         - changeObject didn't deallocate object returned from CXRef (previously changed value)
+ *         - pdfWriter is deallocated in destructor
+ * * ~XRefWriter destructor added
+ * * log messages improved
+ * * uses RefState
+ *
  * Revision 1.20  2006/05/10 17:00:06  hockm0bm
  * collectRevisions
  *         - trailer clone success tested
@@ -200,8 +208,7 @@ XRefWriter::XRefWriter(StreamWriter * stream, CPdf * _pdf)
 	Ref linearizedRef;
 	linearized=utils::checkLinearized(*stream, this, &linearizedRef);
 	if(linearized)
-		kernelPrintDbg(DBG_DBG, "Pdf content is linearized. Linearized dictionary"<<
-				" ref=["<<linearizedRef.num<<", "<<linearizedRef.gen<<"]");
+		kernelPrintDbg(DBG_DBG, "Pdf content is linearized. Linearized dictionary "<<linearizedRef);
 	
 	// collects all available revisions
 	collectRevisions();
@@ -224,25 +231,21 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 {
 	bool reinicialization=false;
 
-	kernelPrintDbg(DBG_DBG, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType());
+	kernelPrintDbg(DBG_DBG, ref<<" type="<<obj->getType());
 
 	if(mode==paranoid)
 	{
 		// reference known test
-		if(!knowsRef(ref))
+		RefState refState=knowsRef(ref);
+		if(refState==UNUSED_REF)
 		{
-			// if reference is not known, it may be new 
-			// which is not changed after initialization
-			if(!(reinicialization=newStorage.contains(ref)))
-			{
-				kernelPrintDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<"] is unknown");
-				return false;
-			}
+			kernelPrintDbg(DBG_WARN, ref<<" is UNUSED_REF");
+			return false;
 		}
 		
 		// type safety test only if object has initialized 
-		// value already (so new and not changed are not test
-		if(!reinicialization)
+		// value already (so new and not changed are not tested)
+		if(refState==INITIALIZED_REF)
 		{
 			// gets original value and uses typeSafe to 
 			// compare with given value type
@@ -253,11 +256,12 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 			original.free();
 			if(!safe)
 			{
-				kernelPrintDbg(DBG_WARN, "ref=["<<ref.num<<", "<<ref.gen<<"] type="<<obj->getType()
+				kernelPrintDbg(DBG_WARN, ref<<" type="<<obj->getType()
 						<<" is not compatible with original type="<<originalType);
 				return false;
 			}
-		}
+		}else
+			kernelPrintDbg(DBG_DBG, "Reference is not initialized yet. No checking done.");
 	}
 
 	kernelPrintDbg(DBG_INFO, "paranoidCheck successfull");
@@ -266,7 +270,8 @@ bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 
 void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 {
-	kernelPrintDbg(DBG_DBG, "ref=["<< num<<", "<<gen<<"]");
+	::Ref ref={num, gen};
+	kernelPrintDbg(DBG_DBG, ref);
 
 	if(revision)
 	{
@@ -282,17 +287,19 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 	}
 
-	::Ref ref={num, gen};
 	
 	// paranoid checking
 	if(!paranoidCheck(ref, obj))
 	{
-		kernelPrintDbg(DBG_ERR, "paranoid check for ref=["<< num<<", "<<gen<<"] not successful");
+		kernelPrintDbg(DBG_ERR, "paranoid check for "<<ref<<" not successful");
 		throw ElementBadTypeException("" /* FIXME "[" << num << ", " <<gen <<"]" */);
 	}
 
 	// everything ok
-	CXref::changeObject(ref, obj);
+	Object * oldValue=CXref::changeObject(ref, obj);
+	// deallocates previous changed value (if any)
+	if(oldValue)
+		utils::freeXpdfObject(oldValue);
 }
 
 ::Object * XRefWriter::changeTrailer(const char * name, ::Object * value)
@@ -401,6 +408,12 @@ using namespace utils;
 		kernelPrintDbg(DBG_INFO, "Nothing to be saved - changedStorage is empty");
 		return;
 	}
+	// checks if we have pdf content writer
+	if(!pdfWriter)
+	{
+		kernelPrintDbg(DBG_ERR, "No pdfWriter defined");
+		return;
+	}
 	
 	// casts stream (from XRef super type) and casts it to the FileStreamWriter
 	// instance - it is ok, because it is initialized with this type of stream
@@ -420,16 +433,10 @@ using namespace utils;
 	// delegates writing to pdfWriter using streamWriter stream from storePos
 	// position.
 	// Stores position of the cross reference section to xrefPos
-	if(!pdfWriter)
-	{
-		kernelPrintDbg(DBG_ERR, "No pdfWriter defined");
-		return;
-	}
 	pdfWriter->writeContent(changed, *streamWriter, storePos);
 	size_t xrefPos=streamWriter->getPos();
 	pdfWriter->writeTrailer(trailerDict, lastXRefPos, *streamWriter);
 
-	
 	// if new revision should be created, moves storePos behind PDF end of file
 	// marker and forces CXref reopen to handle new revision - all
 	// changed objects are stored in file now.
@@ -503,18 +510,20 @@ void XRefWriter::collectRevisions()
 			break;
 		}
 
-		// sets new value for off
+		// checks whether given offeset already is in revisions, which would
+		// mean corrupted referencies (because of cycle in trailers)
 		if(std::find(revisions.begin(), revisions.end(), (size_t)prev.getInt())!=revisions.end())
 		{
 			kernelPrintDbg(DBG_ERR, "Trailer Prev points to already processed revision (endless loop). Assuming no more revisions.");
 			break;
 		}
 
+		// sets new value for off
 		off=prev.getInt();
 		prev.free();
 
 		// off is first byte of cross reference section. It can be either xref
-		// key word or begining of xref stream object
+		// key word or beginning of xref stream object
 		str->setPos(off);
 		Object parseObj, obj;
 		::Parser parser = Parser(this,
@@ -534,7 +543,7 @@ void XRefWriter::collectRevisions()
 			char * ret; 
 			char buffer[1024];
 			memset(buffer, '\0', sizeof(buffer));
-			// resets position in the stream
+			// resets position in the stream because parser moves with position
 			str->setPos(off);
 			while((ret=str->getLine(buffer, sizeof(buffer)-1)))
 			{
@@ -549,7 +558,6 @@ void XRefWriter::collectRevisions()
 				{
 					// trailer found, parse it and set trailer to parsed one
 					kernelPrintDbg(DBG_DBG, "Trailer dictionary found");
-					Object obj;
 					
 					// we have to create new parser because we can't set
 					// position in parser to current in the stream
@@ -557,7 +565,7 @@ void XRefWriter::collectRevisions()
 						new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj))
 						);
 
-					// deallocates previous one before it is used
+					// deallocates previous one before it is filled by new one
 					trailer->free();
 					parser.getObj(trailer);
 					if(!trailer->isDict())

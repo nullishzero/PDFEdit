@@ -6,6 +6,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/05/13 22:16:31  hockm0bm
+ * * memory leak removed
+ *         - changeObject didn't deallocate object returned from CXRef (previously changed value)
+ *         - pdfWriter is deallocated in destructor
+ * * ~XRefWriter destructor added
+ * * log messages improved
+ * * uses RefState
+ *
  * Revision 1.21  2006/05/09 20:08:31  hockm0bm
  * * collectRevisions
  * 	- considers also xref streams
@@ -308,13 +316,30 @@ public:
 	 */
 	XRefWriter(StreamWriter * stream, CPdf * _pdf);
 
+	/** Destrucrtor.
+	 *
+	 * Deallocates pdfWriter field if it is non NULL.
+	 */
+	~XRefWriter()
+	{
+	using namespace debug;
+	
+		kernelPrintDbg(DBG_DBG, "");
+		if(pdfWriter)
+			delete pdfWriter;
+	}
+	
 	/** Sets new pdf writer implementator.
 	 * @param writer Implementation of IPdfWriter (must be non NULL).
 	 *
 	 * Sets writer (if parameter is non NULL) and returns current
 	 * implementation. If parameter is NULL, just returns current implementator.
+	 * <br>
+	 * Given parameter has to be allocated by new operator, because it is
+	 * deallocated in destructor by delete operator.
 	 *
-	 * @return Previous pdf writer implemetator.
+	 * @return Previous pdf writer implemetator (if not NULL, caller is
+	 * responsible for deallocation).
 	 */
 	utils::IPdfWriter * setPdfWriter(utils::IPdfWriter * writer);
 
@@ -394,6 +419,8 @@ public:
 	 * 
 	 * @throw ReadOnlyDocumentException if no changes can be done because actual
 	 * revision is not the newest one or if pdf is in read-only mode.
+	 * @return Previous value of object or 0 if previous revision not
+	 * available (new name value pair in trailer).
 	 */
 	::Object * changeTrailer(const char * name, ::Object * value);
 	
@@ -538,9 +565,10 @@ public:
 	 * Otherwise searches only in XRef::entries (only referencies
 	 * from document).
 	 *
-	 * @return true if reference is known, false otherwise.
+	 * @see RefState
+	 * @return Reference state.
 	 */
-	virtual bool knowsRef(::Ref ref)
+	virtual RefState knowsRef(::Ref ref)
 	{
 		// if we are in newest revision, delegates to CXref
 		if(!revision)
@@ -548,6 +576,21 @@ public:
 				
 		// otherwise use XRef directly
 		return XRef::knowsRef(ref);
+	}
+	
+	/** Checks if given reference is known.
+	 * @param ref Indirect reference to check.
+	 *
+	 * Gets xpdf Ref value and delegates to knowsRef(Ref).
+	 *
+	 * @see RefState
+	 * @return Reference state.
+	 */
+	virtual RefState knowsRef(IndiRef ref)
+	{
+		::Ref xpdfRef={ref.num, ref.gen};
+		// otherwise use XRef directly
+		return knowsRef(xpdfRef);
 	}
 
 	/** Registers new reference.
