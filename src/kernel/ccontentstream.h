@@ -189,7 +189,7 @@ private:
  * using Iterator designe pattern implemented in these operators.
  *
  * Content stream does not derive from CStream because content stream can
- * consist of many streams.
+ * consist of several streams.
  */
 class CContentStream
 {
@@ -265,7 +265,7 @@ public:
 	/**
 	 * Change indicator.
 	 * 
-	 * @return True if the contentstream was changed, false otherwise.
+	 * @return True if the contentstream has changed, false otherwise.
 	 */
 	bool changed () const {return _changed;};
 
@@ -280,7 +280,7 @@ public:
 	/**
 	 * Need reparsing.
 	 * 
-	 * @return True if the contentstream needs to be repardes.
+	 * @return True if the contentstream needs to be reparsed.
 	 */
 	bool invalid () const {return (operators.empty () || _changed);};
 
