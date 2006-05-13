@@ -596,7 +596,7 @@ namespace{
 		void operator() (std::pair<std::string, boost::shared_ptr<IProperty> > pair) 
 		{
 			assert (hasValidRef (pair.second));
-			assert (isInValidPdf (pair.second));
+			assert (hasValidPdf (pair.second));
 			//*oss << "Valid pdf: " << endl;
 			//*oss << (pair.second)->getIndiRef ();
 		};
