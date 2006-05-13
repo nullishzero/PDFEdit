@@ -114,7 +114,7 @@ CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
 	//kernelPrintDbg (debug::DBG_DBG,"text:" << strO);
 
-	if (isInValidPdf (this))
+	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
@@ -145,7 +145,7 @@ CObjectSimple<Tp,Checker>::writeValue (WriteType val)
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	//kernelPrintDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
 
-	if (isInValidPdf (this))
+	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
@@ -378,7 +378,7 @@ CObjectComplex<Tp,Checker>::delProperty (PropertyId id)
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
 	if (ip)
 	{
-		if (isInValidPdf (this))
+		if (hasValidPdf (this))
 		{
 			assert (hasValidRef (this));
 			
@@ -464,7 +464,7 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 	}else
 		throw CObjInvalidObject ();
 	
-	if (isInValidPdf (this))
+	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
@@ -512,7 +512,7 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 	//
 	// Dispatch change if we are in valid pdf
 	// 
-	if (isInValidPdf (this))
+	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
@@ -579,7 +579,7 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	//
 	// Dispatch change if we are in valid pdf
 	// 
-	if (isInValidPdf (this))
+	if (hasValidPdf (this))
 	{	
 		assert (hasValidRef (this));
 		
@@ -617,7 +617,7 @@ CObjectComplex<Tp,Checker>::_makeXpdfObject () const
 	std::string rpr;
 	getStringRepresentation (rpr);
 
-	if (isInValidPdf (this))
+	if (hasValidPdf (this))
 		return utils::xpdfObjFromString (rpr, this->getPdf()->getCXref());
 	else
 		return utils::xpdfObjFromString (rpr);
@@ -964,7 +964,7 @@ template<typename Checker>
 CObjectStream<Checker>::_makeXpdfObject () const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-	assert (isInValidPdf (this));
+	assert (hasValidPdf (this));
 	assert (hasValidRef (this));
 
 	// If size mismatches indicate error

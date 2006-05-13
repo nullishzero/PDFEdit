@@ -155,7 +155,7 @@ namespace
 		arTest1.addProperty (i2);
 		arTest1.addProperty (i3);
 		arTest1.addProperty (i4);
-		IndiRef ref = {3,4};
+		IndiRef ref (3,4);
 		CRef rf (ref);
 		arTest1.addProperty (rf);
 		CBool bl (false);
@@ -183,7 +183,7 @@ namespace
 		dcTest1.addProperty ("item5", i2);
 		dcTest1.addProperty ("item6", i3);
 		dcTest1.addProperty ("item7", i4);
-		IndiRef ref = {3,4};
+		IndiRef ref(3,4);
 		CRef rf (ref);
 		dcTest1.addProperty ("item8", rf);
 		CBool bl (false);
@@ -499,7 +499,7 @@ c_xpdfctor (const char* filename)
 		
 		boost::shared_ptr<CPdf> _pdf (getTestCPdf (filename), pdf_deleter());
 		CPdf& pdf = *_pdf;
-		IndiRef ref = {12,11};
+		IndiRef ref (12,11);
 		CArray ar (pdf,obj,ref);
 
 		ip_validate (obj,ar);
@@ -530,7 +530,7 @@ c_xpdfctor (const char* filename)
 		boost::shared_ptr<CPdf> _pdf (getTestCPdf (filename), pdf_deleter());
 		CPdf& pdf = *_pdf;
 
-		IndiRef ref = {12,11};
+		IndiRef ref (12,11);
 		// CArray ar (pdf,obj,ref); // GOOOOOD -- assertation failed
 		CDict dc (pdf,obj,ref); 
 		

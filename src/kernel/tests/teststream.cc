@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/05/13 22:19:29  hockm0bm
+ * isInValidPdf refactored to hasValidPdf or isPdfValid functions
+ *
  * Revision 1.2  2006/05/08 14:47:46  hockm0bm
  * * clone for FileStream test
  *         - seems to work
@@ -26,7 +29,6 @@ class TestStream: public CppUnit::TestFixture
 		CPPUNIT_TEST(Test);
 	CPPUNIT_TEST_SUITE_END();
 
-	vector<string> files;
 public:
 
 	bool compareStreams(Stream * str1, Stream * str2, size_t pos=0, int count=-1)
@@ -97,6 +99,51 @@ public:
 		delete unlimitedStream;
 		fclose(f1);
 	}
+
+	void contentStreamTC(CPdf & pdf)
+	{
+	using namespace boost;
+	using namespace std;
+	using namespace pdfobjects;
+	using namespace pdfobjects::utils;
+
+		printf("%s\n", __FUNCTION__);
+
+		printf("TC01:\tPage content stream can be read without any error\n");
+		printf("\t\t%u pages found\n", pdf.getPageCount());
+		for(size_t i=1; i<=pdf.getPageCount(); i++)
+		{
+			// gets page dictionary at position and gets Contents 
+			// property from it
+			shared_ptr<CDict> pageDict=pdf.getPage(i)->getDictionary();
+			try
+			{
+				shared_ptr<IProperty> contentProp=pageDict->getProperty("Contents");
+				if(! isRef(*contentProp))
+				{
+					printf("\t\tPage %u has uncorect Contents entry\n", i);
+					continue;
+				}
+				IndiRef contentRef=getValueFromSimple<CRef, pRef, IndiRef>(contentProp);
+				shared_ptr<CStream> contentStr=IProperty::getSmartCObjectPtr<CStream>(pdf.getIndirectProperty(contentRef));
+				string str;
+				contentStr->getStringRepresentation(str);
+				printf("Content stream for %u page:\n%s\n\n", i, str.c_str());
+
+				Object * xpdfContentStr=contentStr->_makeXpdfObject();
+				int ch;
+				printf("Decoded content stream:\n");
+				xpdfContentStr->getStream()->reset();
+				while((ch=xpdfContentStr->getStream()->getChar())!=EOF)
+					printf("%c", ch);
+				printf("\nEnd of decoded content stream\n");
+				
+			}catch(ElementNotFoundException & e)
+			{
+				printf("\t\tPage %u has no content stream\n", i);
+			}
+		}
+	}
 	
 	virtual ~TestStream()
 	{
@@ -104,7 +151,6 @@ public:
 
 	void setUp()
 	{
-		files.push_back("file1");
 	}
 
 
@@ -114,9 +160,12 @@ public:
 
 	void Test()
 	{
-		for(vector<string>::iterator i=files.begin(); i!=files.end(); i++)
+		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
 		{
 			fileStreamTC(*i);
+			CPdf * pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);
+			contentStreamTC(*pdf);
+			pdf->close();
 		}
 	}
 };

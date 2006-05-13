@@ -259,7 +259,7 @@ private:
 	{
 		kernelPrintDbg (debug::DBG_DBG, "CObjectSimple");
 		// Do not notify anything if we are not in a valid pdf
-		if (!isInValidPdf (this))
+		if (!hasValidPdf (this))
 			return;
 		assert (hasValidRef(this));
 		
@@ -616,7 +616,7 @@ private:
 						 boost::shared_ptr<const ObserverContext> context)
 	{
 		// Do not notify anything if we are not in a valid pdf
-		if (!isInValidPdf (this))
+		if (!hasValidPdf (this))
 			return;
 		assert (hasValidRef (this));
 
@@ -984,7 +984,7 @@ private:
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
 	{
 		// Do not notify anything if we are not in a valid pdf
-		if (!isInValidPdf (this))
+		if (!hasValidPdf (this))
 			return;
 		assert (hasValidRef (this));
 
@@ -1087,7 +1087,7 @@ protected:
 	 */
 	void unlockDictionary ()
 	{ 
-		assert (!isInValidPdf(&dictionary));
+		assert (!hasValidPdf(&dictionary));
 		kernelPrintDbg (debug::DBG_DBG, ""); 
 		dictionary.setPdf (this->getPdf()); 
 		dictionary.setIndiRef (this->getIndiRef()); 

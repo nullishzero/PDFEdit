@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/05/13 22:19:29  hockm0bm
+ * isInValidPdf refactored to hasValidPdf or isPdfValid functions
+ *
  * Revision 1.2  2006/05/09 20:10:55  hockm0bm
  * * doc update
  * * writeContent some checking added
@@ -85,7 +88,7 @@ using namespace debug;
 		// we have to add some more information to write indirect object (this
 		// includes header and footer
 		std::string indirectFormat;
-		IndiRef indiRef={ref.num, ref.gen};
+		IndiRef indiRef(ref);
 		createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
 		stream.putLine(indirectFormat.c_str());
 	}

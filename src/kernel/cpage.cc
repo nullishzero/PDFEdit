@@ -128,9 +128,9 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	globalParams->setupBaseFonts (NULL);
 	
 	// Are we in valid pdf
-	assert (isInValidPdf (dictionary));
+	assert (hasValidPdf (dictionary));
 	assert (hasValidRef (dictionary));
-	if (!isInValidPdf (dictionary) || !hasValidRef (dictionary))
+	if (!hasValidPdf (dictionary) || !hasValidRef (dictionary))
 		throw XpdfInvalidObject ();
 
 	// Get xref

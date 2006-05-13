@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.49  2006/05/13 22:19:29  hockm0bm
+ * isInValidPdf refactored to hasValidPdf or isPdfValid functions
+ *
  * Revision 1.48  2006/05/13 21:36:52  hockm0bm
  * * addIndirectProperty reworked (problem with cyclic reference dependencies)
  *         - new followsRef flag
@@ -1032,7 +1035,7 @@ IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, Reso
 	// toSubstitute is deep copy of ip to prevent changes in original data.
 	// Also sets same pdf as orignal to cloned to enable dereferencing
 	shared_ptr<IProperty> toSubstitute=ip->clone();
-	if(isInValidPdf(ip->getPdf()))
+	if(hasValidPdf(ip))
 	{
 		toSubstitute->setPdf(ip->getPdf());
 		toSubstitute->setIndiRef(ip->getIndiRef());
@@ -1133,7 +1136,7 @@ using namespace utils;
 				kernelPrintDbg(DBG_DBG, "Following reference.");	
 				// ip may be stand alone and in such case uses CNull
 				shared_ptr<IProperty> followedIp;
-				if(!isInValidPdf(ip))
+				if(!hasValidPdf(ip))
 					followedIp=shared_ptr<IProperty>(CNullFactory::getInstance());
 				else
 					// ip is from read pdf and so dereferences target value 					

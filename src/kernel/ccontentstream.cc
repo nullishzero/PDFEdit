@@ -861,7 +861,7 @@ namespace
 			dict.free ();
 			delete str;
 			
-			assert (isInValidPdf(&stream));
+			assert (hasValidPdf(&stream));
 			assert (hasValidRef (&stream));
 			return new CInlineImage (*(stream.getPdf()), buf, stream.getIndiRef());
 				
@@ -1011,7 +1011,7 @@ namespace
 	
 		for (CContentStream::ContentStreams::iterator it = streams.begin (); it != streams.end (); ++it)
 		{
-			assert (isInValidPdf (*it));
+			assert (hasValidPdf(*it));
 			assert (hasValidRef (*it));
 		
 			// Open stream
@@ -1107,7 +1107,7 @@ CContentStreamObserver::notify (boost::shared_ptr<IProperty> newValue, boost::sh
 throw ()
 {
 	utilsPrintDbg (debug::DBG_DBG, "");
-	assert (isInValidPdf (newValue));
+	assert (hasValidPdf (newValue));
 	assert (hasValidRef (newValue));
 
 	// Stream is changed, reparse it
@@ -1129,8 +1129,8 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : _changed (false)
 	{
 		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
 		// the problem is with parsed pdfoperators
-		assert (isInValidPdf (stream) && hasValidRef (stream));
-		if (!isInValidPdf (stream) || !hasValidRef (stream))
+		assert (hasValidPdf (stream) && hasValidRef (stream));
+		if (!hasValidPdf (stream) || !hasValidRef (stream))
 			throw CObjInvalidObject ();
 		
 		// Save stream

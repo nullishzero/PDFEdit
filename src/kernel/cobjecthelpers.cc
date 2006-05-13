@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/05/13 22:19:29  hockm0bm
+ * isInValidPdf refactored to hasValidPdf or isPdfValid functions
+ *
  * Revision 1.14  2006/05/09 20:03:46  hockm0bm
  * * getNameFromDict bug fix
  *         - Type used instead of /Type
@@ -282,9 +285,9 @@ getReferencedObject (boost::shared_ptr<IProperty> ip)
 	{
 		if (isRef (ip))
 		{// Fetch the right object
-			assert (isInValidPdf (ip));
+			assert (hasValidPdf(ip));
 			assert (hasValidRef (ip));
-			if (!isInValidPdf (ip) || !hasValidRef (ip))
+			if (!hasValidPdf(ip) || !hasValidRef(ip))
 				throw CObjInvalidObject ();
 
 			IndiRef ref;
