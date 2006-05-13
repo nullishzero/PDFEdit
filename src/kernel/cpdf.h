@@ -6,6 +6,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.46  2006/05/13 21:36:52  hockm0bm
+ * * addIndirectProperty reworked (problem with cyclic reference dependencies)
+ *         - new followsRef flag
+ *         - throws if given ip is reference
+ * * addProperty, subsReferencies, createMapping methods added
+ * * addReferencies replaced by subsReferencies
+ * * doc update
+ *
  * Revision 1.45  2006/05/10 21:09:26  hockm0bm
  * isChanged meaning changed
  *         - returns true if there are any chnages after last save (or pdf creation)
@@ -256,6 +264,13 @@ public:
 class CPage;
 class COutline;
 
+/** Type for resolv mapping.
+ * Element::first stands for reference in original property and
+ * Element::second stands for reserved reference which should replace
+ * original one.
+ */
+typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
+	
 /** CPdf special object.
  *
  * This class is responsible for pdf document maintainance. It provides wrapper
@@ -460,6 +475,12 @@ protected:
 			}
 	};
 	
+	/** Page tree watch dog observer.
+	 *
+	 * This instance is used to handle changes in page tree.
+	 */
+	boost::shared_ptr<PageTreeWatchDog> pageTreeWatchDog;
+
 	/**
 	 * Indirect properties mapping type.
 	 */
@@ -565,12 +586,95 @@ protected:
 	 */
 	void consolidatePageList(boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
 
-	/** Page tree watch dog observer.
+	/** Registers definitive value of property to the xref.
+	 * @param ip Property to be used.
+	 * @param ref Reference for property
 	 *
-	 * This instance is used to handle changes in page tree.
+	 * Converts given property to xpdf Object and calls XRefWriter::changeObject
+	 * method to register it. Reference should be in RESERVED_REF.
+	 * <br>
+	 * As a side effect sets change field to true;
+	 * 
+	 * @return Reserved reference to changed object.
 	 */
-	boost::shared_ptr<PageTreeWatchDog> pageTreeWatchDog;
+	IndiRef registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef ref);
 	
+	/** Helper method for property adding.
+	 * @param ip Property to add.
+	 * @param indiRef New reference for object.
+	 * @param storage Resolved storage which contains mapping from old indirect
+	 * referencies to newly reserved ones.
+	 * @param followRefs Flag for reference handling.
+	 *
+	 * If given property is from same pdf, just calls registerIndirectProperty.
+	 * Otherwise makes deep copy of given ip (to prevent changes in original ip
+	 * - and also different pdf where it belongs to) and calls subsReferencies
+	 * to replace all referencies in property with valid in this pdf. Finally
+	 * calls registerIndirectProperty with corrected property.
+	 * <br>
+	 * storage parameter is not changed or used in this method directly, but it
+	 * is used for subsReferencies method (see for more details). Also
+	 * followRefs is not used here directly. subsReferencies may call this
+	 * method, so both of parameters has to be used also here.
+	 * <br>
+	 * Caller has to reserve new reference for object, he wants to add and give
+	 * it as indiRef parameter. Also mapping for this new reference should be
+	 * done by caller. We assume, that indiRef can be used for new property and
+	 * if given property is indirect, also mapping from original to newly
+	 * created reference is in given storage.
+	 *
+	 * @see registerIndirectProperty
+	 * @see subsReferencies
+	 * @return reference of added property.
+	 */
+	IndiRef addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, ResolvedRefStorage & storage, bool followRefs);
+
+	/** Substitues reference(s) with valid in this pdf.
+	 * @param ip Property to examine.
+	 * @param container Resolved storage which contains mapping from old indirect
+	 * referencies to newly reserved ones.
+	 * @param followRefs Flag for reference handling.
+	 *
+	 * This method should be called on property from different pdf to prevent
+	 * reference mismatching (reference in different pdf may have different
+	 * meaning in this pdf).
+	 * <br>
+	 * Checks if given ip is reference and if it is, checks if there is existing
+	 * mapping in container (searches for container element with first same as
+	 * ip's reference). If there is such element, returns element::second. This
+	 * guaranties two things:
+	 * <ul>
+	 * <li> All same referencies in original ip are mapped to same reference in
+	 * result.
+	 * <li> No endless loop can occure in cyclic structured property. This could
+	 * happen if followRefs (see later) is true and property contains reference
+	 * to another property, which contains reference back to property.
+	 * </ul>
+	 * If no mapping exists yet, checks followRefs parameter which controls
+	 * whether referencies should be also added to the pdf. If its value is
+	 * true, target property is dereferenced and addProperty method is called
+	 * to add it. Given property may also be stand alone (with no pdf) and in
+	 * such situation CNull property is used (because we can't get its target
+	 * value and followRefs should add all indirect properties). Returned value
+	 * from addProperty (reference) is used to create new mapping in container
+	 * ([original, returned] mapping) and for return value.
+	 * <br>
+	 * followRefs with false value just reserves new reference and doesn't care
+	 * for target property. Returned value from XRefWriter::reserveRef is also
+	 * used for mapping creation and for return value.
+	 * <p>
+	 * For complex properties collects all children and calls this method
+	 * recursively. If it returns with non NULL, changes child to contain new
+	 * reference otherwise keeps an old one and finally returns with NULL
+	 * because complex type itself didn't need reference change.
+	 * <p>
+	 * All other simple properties are ignored and returns with NULL.
+	 * 
+	 * @see addProperty
+	 * @return invalid reference if no substitution has to be done or reference
+	 * which should be used instead (use isRefValid for checking).
+	 */
+	IndiRef subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs);
 private:
 	
 	/**************************************************************************
@@ -822,41 +926,46 @@ public:
 
 	/** Adds new indirect object.
 	 * @param prop Original property.
+	 * @param followRefs Flag for reference properties in complex type
+	 * handling (default value is false).
 	 *
 	 * This method is responsible for clear indirect object creation and
-	 * also safe indirect object copying between different documents.
+	 * also safe indirect object copying between different documents (properties
+	 * from different CPdf instances).
 	 * <p>
 	 * Implementation details:
-	 * <br>
-	 * If given property is reference, than two things may happen. It 
-	 * depends on from where property is. If it is from same pdf, than
-	 * nothing is created and just reference is returned. Otherwise
-	 * dereference to get indirect object and process with following
-	 * <br>
-	 * If property comes from different pdf and it is complex type,
-	 * all children are checked if they are reference. If yes, this
-	 * method is called recursively on them. Normal values are untouched.
-	 * This is because referencies from different pdf may point on 
-	 * something in this pdf and so mass could be produced.
-	 * <br>
-	 * When property value is prepared, xpdf Object is created from
-	 * its content and new reference is reserved. After this is done
-	 * object can be be fully registered using xref::change method.
-	 * Reference is now definitive and so it is returned.
-	 * <p>
-	 * <b>REMARKS</b>: 
 	 * <ul>
-	 * <li>When object from different cpdf is given as parameter, 
-	 * allways copies whole property subtree.
-	 * <li>CNull properties are also registered.
+	 * <li> Value has to be proper for indirect property. This means that it
+	 * can't be reference and should be indirect object (if it belongs to pdf).
+	 * <li> Property from same pdf is added immediately using
+	 * registerIndirectProperty method.
+	 * <li> Property from different pdf instance is added using addProperty
+	 * method.
+	 * <li> followRefs flag controls how referencies in property from different
+	 * file should be handled. If value is true, also all referenced properties
+	 * are added, otherwise just reserves referencies in this pdf for them and
+	 * doesn't care for their values (they may be initialized later). Note that
+	 * followRefs may produce rather big bunch of copying (e. g. copying page
+	 * dictionary will probably cause copy of all page tree object hierarchy,
+	 * because each page contains also reference to its parent and parent
+	 * contains all its kids and so on). 
+	 * <li> If followRefs is false, doesn't dereference reference values at all,
+	 * so just for those directly accessbile are reserved new referencies.
+	 * <li> Initializes ResolvedRefStorage storage for addProperty to prevent
+	 * endless loops for cyclyc property structures (such as mentioned above in
+	 * page dictionary case) and to guarantee that same referencies are mapped
+	 * to same in this pdf (@see subsReferencies). 
+	 * <li> Method will fail with exception if pdf is in read only mode.
 	 * </ul>
 	 *
+	 * @see registerIndirectProperty
+	 * @see addProperty
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
 	 * older revision (where no changes are allowed).
 	 * @return Reference of new property (see restriction when given
 	 * property is reference itself).
 	 */ 
-	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop);
+	IndiRef addIndirectProperty(boost::shared_ptr<IProperty> prop, bool followRefs=false);
 
 	/** Registers change of indirect property to the xref.
 	 * @param prop Indirect property.
@@ -866,11 +975,13 @@ public:
 	 * also throws an exception.
 	 * <br>
 	 * After all checking is done, creates xpdf Object from prop and calls
-	 * xref::change method. 
+	 * XRefWriter::change method. 
 	 * If prop is same instance as one in mapping, keeps mapping, because this
 	 * means that indirect property has changed its contnet (value). Otherwise
 	 * removes mapping because original property has been replaced by new
 	 * property.
+	 * <br>
+	 * As a side effect sets change field to true
 	 *
 	 * @throw CObjInvalidObject if prop is not from same pdf or indirect mapping
 	 * doesn't exist yet.
@@ -908,6 +1019,8 @@ public:
 	 * don't lose information if some problem happens (e. g. application crashes).
 	 * Next call of this function will overwrite older one.
 	 * </ul>
+	 * <br>
+	 * As a side effect sets change field to false
 	 *
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we aren't
 	 * in the newest revision (where changes are enabled).

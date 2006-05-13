@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.48  2006/05/13 21:36:52  hockm0bm
+ * * addIndirectProperty reworked (problem with cyclic reference dependencies)
+ *         - new followsRef flag
+ *         - throws if given ip is reference
+ * * addProperty, subsReferencies, createMapping methods added
+ * * addReferencies replaced by subsReferencies
+ * * doc update
+ *
  * Revision 1.47  2006/05/10 21:09:26  hockm0bm
  * isChanged meaning changed
  *         - returns true if there are any chnages after last save (or pdf creation)
@@ -680,79 +688,7 @@ using namespace pdfobjects::utils;
 	utilsPrintDbg(DBG_DBG, "All subnodes done for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
 }
 
-/** Adds all indirect objects from given property.
- * @param pdf Pdf file where to put indirect objects.
- * @param ip Property to examine.
- *
- * Ckecks given property for type and if it is reference, uses 
- * CPdf::addIndirectProperty to add indirect object to the given pdf file.
- * Otherwise checks if ip is complex type and if so, checks all children 
- * recursively (calls this method on each). If called method returns with
- * non NULL reference, changes child to contain new reference pointing to
- * newly created object. All other simple values are just ignored.
- * <br>
- * Given ip may change its child value (if contains reference).
- * <br>
- * After this method returns, all subproperties of given one are known to given
- * pdf instance.
- * <br>
- * Returned reference has to be deallocated by caller.
- * 
- * @return Pointer to new reference, if new indirect property was created
- * for reference (caller must deallocate result).
- */ 
-IndiRef * addReferencies(CPdf * pdf, boost::shared_ptr<IProperty> ip)
-{
-	utilsPrintDbg(debug::DBG_DBG,"");
 
-	PropertyType type=ip->getType();
-	ChildrenStorage childrenStorage;
-
-	switch(type)
-	{
-		case pRef:
-		{
-			utilsPrintDbg(debug::DBG_DBG,"Property is reference - adding new indirect object");
-			// this may fail because of ReadOnlyDocumentException
-			IndiRef indiRef=pdf->addIndirectProperty(ip);
-			return new IndiRef(indiRef);
-		}	
-		// complex types (pArray and pDict) collects their children to the 
-		// container
-		case pArray:
-			IProperty::getSmartCObjectPtr<CArray>(ip)->_getAllChildObjects(childrenStorage);
-			break;
-		case pDict:
-			IProperty::getSmartCObjectPtr<CDict>(ip)->_getAllChildObjects(childrenStorage);
-			break;
-
-		// all other simple values are ok, nothing should return
-		default:
-			return NULL;
-	}
-
-	// go throught all collected children and recursively calls this
-	// method on each. If return value is not NULL, new object has been
-	// created and sets new reference for child
-	ChildrenStorage::iterator i;
-	for(i=childrenStorage.begin(); i!=childrenStorage.end(); i++)
-	{
-		IndiRef * ref=addReferencies(pdf, *i);
-		if(ref)
-		{
-			// new reference for this child
-			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(*i);
-			ref_ptr->writeValue(*ref);
-			utilsPrintDbg(debug::DBG_DBG,"Reference changed to [" << ref->num << ", " <<ref->gen << "]");
-			delete ref;
-			continue;
-		}
-	}
-
-	// also complex object is same - all referencies in this subtree are added
-	// in this moment
-	return NULL;
-}
 
 bool isEncrypted(const CPdf & pdf, string * filterName)
 {
@@ -1049,10 +985,216 @@ using namespace debug;
 }
 
 
-//
-//
-//
-IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip)
+IndiRef CPdf::registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef ref)
+{
+using namespace debug;
+using namespace utils;
+
+	kernelPrintDbg(DBG_DBG, "");
+
+	int state;
+	if((state=xref->knowsRef(ref))!=RESERVED_REF)
+		kernelPrintDbg(DBG_WARN, "Given reference is not in RESERVED_REF state. State is "<<state);
+	
+	// gets xpdf Object from given ip (which contain definitive value to
+	// be stored), and registers change to XRefWriter (changeObject never 
+	// throws in this context because this is first change of object - 
+	// so no type check fails)
+	::Object * obj=ip->_makeXpdfObject();
+	kernelPrintDbg(DBG_DBG, "New reference reseved "<<ref);
+	xref->changeObject(ref.num, ref.gen, obj);
+
+	// xpdf object has to be deallocated
+	freeXpdfObject(obj);
+
+	// creates return value from xpdf reference structure
+	// and returns
+	IndiRef reference(ref);
+	kernelPrintDbg(DBG_INFO, "New indirect object inserted with reference ["<<ref.num<<", "<<ref.gen<<"]");
+	change=true;
+	return reference;
+}
+
+IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, ResolvedRefStorage & storage, bool followRefs )
+{
+	kernelPrintDbg(DBG_DBG, "");
+	
+	// checks whether given ip is from same pdf
+	if(ip->getPdf()==this)
+	{
+		// ip is from same pdf and so all possible referencies are already in 
+		// pdf too. We can clearly register with gien indiRef
+		kernelPrintDbg(DBG_DBG, "Property from same pdf");
+		return registerIndirectProperty(ip, indiRef);
+	}
+
+	// ip is not from same pdf - may be in different one or stand alone object
+	// toSubstitute is deep copy of ip to prevent changes in original data.
+	// Also sets same pdf as orignal to cloned to enable dereferencing
+	shared_ptr<IProperty> toSubstitute=ip->clone();
+	if(isInValidPdf(ip->getPdf()))
+	{
+		toSubstitute->setPdf(ip->getPdf());
+		toSubstitute->setIndiRef(ip->getIndiRef());
+	}
+
+	// toSubstitute may contain referencies deeper in hierarchy, so all
+	// referencies have to be added or reserved to this pdf too before 
+	// toSubstitute can be added itself
+	subsReferencies(toSubstitute, storage, followRefs);
+
+	// all possible referencies in toSubstitute are now added to this pdf and so
+	// we can add toSubstitute. Reference is in storage mapping
+	return registerIndirectProperty(toSubstitute, indiRef);
+}
+
+/** Reserves new referenece and creates mapping.
+ * @param container Resolved mapping container.
+ * @param xref XRefWriter for new reference reservation.
+ * @param oldRef Original reference.
+ *
+ * Reserves new reference with XRefWriter::reserveRef method and if oldRef is
+ * valid reference (checks with isValidRef method) also creates mapping [oldRef,
+ * newRef to given container.
+ *
+ * @return newly reseved reference.
+ */
+IndiRef createMapping(ResolvedRefStorage & container, XRefWriter & xref, IndiRef oldRef)
+{
+using namespace debug;
+
+	// this reference is processed for the first time. Reserves new
+	// reference for indirect object and stores mapping from original
+	// value to container.
+	kernelPrintDbg(DBG_DBG, "processing ["<<oldRef.num<<","<<oldRef.gen<<"] for the first time");
+	IndiRef indiRef(xref.reserveRef());
+	
+	// creates entry in container to enable reusing old reference to new
+	// mapping is created only if oldRef is valid reference, which means that
+	// object is indirect and if mapping is not in container yet
+	if(isRefValid(&oldRef))
+	{
+		ResolvedRefStorage::iterator i;
+		ResolvedRefStorage::value_type mapping(oldRef, indiRef);
+		if(find(container.begin(), container.end(), mapping)==container.end())
+		{
+			container.push_back(mapping);
+			kernelPrintDbg(DBG_DBG, "Created mapping from "<<oldRef<<" to "<<indiRef);
+		}
+	}
+
+	// returns new reference.
+	return indiRef;
+}
+
+IndiRef CPdf::subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs)
+{
+using namespace utils;
+
+	// TODO create constant
+	IndiRef invalidRef;
+	
+	// this method makes sense only for properties from different pdf	
+	assert(this!=ip->getPdf());
+	
+	kernelPrintDbg(debug::DBG_DBG,"property type="<<ip->getType()<<" container size="<<container.size());
+
+	PropertyType type=ip->getType();
+	ChildrenStorage childrenStorage;
+
+	switch(type)
+	{
+		case pRef:
+		{
+			// checks if this reference has already been considered to prevent
+			// endless loops for cyclic structures
+			ResolvedRefStorage::iterator i;
+			IndiRef ipRef=getValueFromSimple<CRef, pRef, IndiRef>(ip);
+			for(i=container.begin(); i!=container.end(); i++)
+			{
+				IndiRef elem=i->first;
+				if(elem==ipRef)
+				{
+					kernelPrintDbg(DBG_DBG, "["<<ipRef.num<<","<<ipRef.gen<<"] already mapped to ["<<elem.num<<","<<elem.gen<<"]");
+					// this reference has already been processed, so reuses
+					// reference which already has been created/reserved
+					return elem;
+				}
+			}
+
+			// reserves new reference and creates mapping
+			IndiRef indiRef=createMapping(container, *xref, ipRef);
+
+			// if followRefs is true, adds also target property too. Reference
+			// is already registered yet and so registerIndirectProperty will
+			// use it correctly
+			if(followRefs)
+			{
+				kernelPrintDbg(DBG_DBG, "Following reference.");	
+				// ip may be stand alone and in such case uses CNull
+				shared_ptr<IProperty> followedIp;
+				if(!isInValidPdf(ip))
+					followedIp=shared_ptr<IProperty>(CNullFactory::getInstance());
+				else
+					// ip is from read pdf and so dereferences target value 					
+					followedIp=ip->getPdf()->getIndirectProperty(ipRef);
+
+				// adds dereferenced value using addProperty with collected
+				// container. returned reference must be same as registered one 
+				IndiRef addIndiRef=addProperty(followedIp, indiRef, container, followedIp);
+				assert(addIndiRef==indiRef);
+			}			
+			return indiRef;
+		}	
+		// complex types (pArray, pDict and pStream) collects their children to the 
+		// container
+		case pArray:
+			IProperty::getSmartCObjectPtr<CArray>(ip)->_getAllChildObjects(childrenStorage);
+			break;
+		case pDict:
+			IProperty::getSmartCObjectPtr<CDict>(ip)->_getAllChildObjects(childrenStorage);
+			break;
+		case pStream:
+			// TODO
+			//IProperty::getSmartCObjectPtr<CStream>(ip)->_getAllChildObjects(childrenStorage);
+			break;
+
+		// all other simple values are ok, nothing should return
+		default:
+			return invalidRef;
+	}
+
+	// goes throught all collected children and recursively calls this
+	// method on each. If return value is non NULL, sets new child value to
+	// returned reference.
+	ChildrenStorage::iterator i;
+	for(i=childrenStorage.begin(); i!=childrenStorage.end(); i++)
+	{
+		shared_ptr<IProperty> child=*i;
+		if(!isRef(*child) && !isDict(*child) && !isArray(*child) && !isStream(*child))
+		{
+			// child is none of interesting type which may hold reference
+			// inside, so skips such children
+			continue;
+		}
+		
+		IndiRef ref=subsReferencies(child, container, followRefs);
+		if(isRefValid(&ref))
+		{
+			// new reference for this child
+			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(child);
+			ref_ptr->writeValue(ref);
+			kernelPrintDbg(debug::DBG_DBG,"Reference changed to [" << ref.num << ", " <<ref.gen << "]");
+			continue;
+		}
+	}
+
+	// also complex object is same - all referencies in this subtree are added
+	// in this moment
+	return invalidRef;
+}
+
+IndiRef CPdf::addIndirectProperty(boost::shared_ptr<IProperty> ip, bool followRefs)
 {
 using namespace utils;
 using namespace debug;
@@ -1065,83 +1207,30 @@ using namespace boost;
 		kernelPrintDbg(DBG_ERR, "Document is in read-only mode now");
 		throw ReadOnlyDocumentException("Document is in read-only mode.");
 	}
-	
-	// place for propertyValue
-	// it is ip by default
-	shared_ptr<IProperty> propValue=ip;
-	
-	// if given ip is reference, we have to distinguish whether
-	// it comes from same file (and then nothing is to do and we
-	// just simply return ip reference) 
-	// or from different file, when we need to dereference and after 
-	// something else can be done
-	PropertyType type=ip->getType();
-	if(type==pRef)
-	{
-		IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(ip);
-		
-		// just returns reference
-		if(ip->getPdf()==this)
-		{
-			kernelPrintDbg(DBG_WARN, "Reference is from this file, nothing is added.");
-			return ref;
-		}
 
-		// dereference real value
-		propValue=ip->getPdf()->getIndirectProperty(ref); 
+	// reference can't be value of indirect property
+	if(isRef(*ip))
+	{
+		kernelPrintDbg(DBG_ERR, "Reference can't be value of indirect property.");
+		throw ElementBadTypeException("ip");
 	}
 
-	// All complex property values from different pdfs (not only referencies 
-	// handled above) have to be searched for referencies inside, those are
-	// added too
-	if(propValue->getPdf() != this)
-	{
-		kernelPrintDbg(DBG_DBG, "Adding property from different file.");
-		shared_ptr<IProperty> clone;
-		switch(propValue->getType())
-		{
-			// creates local clone for complex types - to keep 
-			// original value untouched - and adds all referencies
-			// in subtree
-			// clone will contain correct referencies after
-			// addReferencies function returns so changes value of
-			// propValue
-			case pDict:
-			case pArray:
-				clone=propValue->clone();
-				addReferencies(this, clone);
-				propValue=clone;
-				break;
-			default:
-				// just to be gcc happy and prints no warning for
-				// unhandled members from enum
-				// we don't have to do anything here because
-				// simple values can't contain referencies
-				break;
-			
-		}
+	// creates empty resolvedStorage
+	ResolvedRefStorage resolvedStorage;
 
-		// propValue contans real object that we want to add now
-	}
+	// resereves reference for new indirect object and if given ip is indirect
+	// object too, creates also resolved mapping
+	IndiRef indiRef=createMapping(resolvedStorage, *xref, ip->getIndiRef());
 
+	// everything is checked now and all the work is delegated to recursive
+	// addProperty method
+	kernelPrintDbg(DBG_DBG, "Adding new indirect object.");
+	IndiRef addRef=addProperty(ip, indiRef, resolvedStorage, followRefs);
+	assert(addRef==indiRef);
 
-	// gets xpdf Object from propValue (which contain definitive value to
-	// be stored), registers new reference on xref
-	// reserveRef may throw if we are in older revision
-	::Object * obj=propValue->_makeXpdfObject();
-	::Ref xpdfRef=xref->reserveRef();
-	kernelPrintDbg(DBG_DBG, "New reference reseved ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
-	xref->changeObject(xpdfRef.num, xpdfRef.gen, obj);
+	kernelPrintDbg(DBG_INFO, "New indirect object added with "<<indiRef<<" with type="<<ip->getType());
 
-	// xpdf object has to be deallocated
-	freeXpdfObject(obj);
-
-	// creates return value from xpdf reference structure
-	// and returns
-	IndiRef reference={xpdfRef.num, xpdfRef.gen};
-	kernelPrintDbg(DBG_INFO, "New indirect object inserted with reference ["<<xpdfRef.num<<", "<<xpdfRef.gen<<"]");
-	change=true;
-	return reference;
+	return indiRef;
 }
 
 void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
@@ -1854,11 +1943,12 @@ using namespace utils;
 	// Now it is safe to add indirect object, because there is nothing that can
 	// fail
 	
-	// gets page's dictionary and adds it as new indirect property.
+	// gets page's dictionary and adds it as new indirect property (also with
+	// properties referenced by this dictionary.
 	// All page dictionaries must be indirect objects and addIndirectProperty
 	// method also solves problems with deep copy and page from different file
 	// transition
-	IndiRef pageRef=addIndirectProperty(page->getDictionary());
+	IndiRef pageRef=addIndirectProperty(page->getDictionary(), true);
 
 	// adds newly created page dictionary to the kids array at kidsIndex
 	// position. This triggers pageTreeWatchDog for consolidation and observer
