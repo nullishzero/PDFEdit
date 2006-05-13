@@ -59,6 +59,21 @@ struct XRefEntry {
   XRefEntryType type;
 };
 
+/** State of reference type.
+ *
+ * Describes state of reference. Use *_REF defined values.
+ */
+typedef int RefState;
+
+/** Reference is unknown. */
+#define UNUSED_REF          0
+
+/** Reference is reserved, but not initialized yet. */
+#define RESERVED_REF        1
+
+/** Reference is known. */
+#define INITIALIZED_REF     2
+
 class XRef {
 public:
 
@@ -113,32 +128,32 @@ public:
    * @param ref Reference to examine.
    *
    */
-  virtual bool knowsRef(Ref ref)
+  virtual RefState knowsRef(Ref ref)
   {
      // boundary checking
      if(ref.num<0 || ref.num>size)
-        return false;
+        return UNUSED_REF;
 
      switch(entries[ref.num].type)
      {
         // must not be free entry
         case xrefEntryFree:
-           return false;
+           return UNUSED_REF;
 
         // if uncompressed entry, also gen number must fit
         case xrefEntryUncompressed:
-           return ref.gen==entries[ref.num].gen;
+           return (ref.gen==entries[ref.num].gen)?INITIALIZED_REF:UNUSED_REF;
 
         // if compressed entry, gen number must be 0
         // NOTE: XRef internaly uses this number for indexing of object in 
         // object stream
         case xrefEntryCompressed:
-           return ref.gen==0;
+           return (ref.gen==0)?INITIALIZED_REF:UNUSED_REF;
            
      }
 
      // unknown entry type
-     return false;
+     return UNUSED_REF;
   }
 
   // Return the offset of the last xref table.
