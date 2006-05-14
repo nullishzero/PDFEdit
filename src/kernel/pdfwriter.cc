@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/05/14 12:34:01  hockm0bm
+ * support for special writing of stream objects
+ *
  * Revision 1.3  2006/05/13 22:19:29  hockm0bm
  * isInValidPdf refactored to hasValidPdf or isPdfValid functions
  *
@@ -77,20 +80,32 @@ using namespace debug;
 		}
 
 		// associate given reference with current position.
-		offTable.insert(OffsetTab::value_type(ref, stream.getPos()));		
-		utilsPrintDbg(DBG_DBG, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] stored at offset="<<stream.getPos());
+		size_t objPos=stream.getPos();
+		offTable.insert(OffsetTab::value_type(ref, objPos));		
 		
-		// stores PDF representation of object to current position which is
-		// after moved behind written object
 		std::string objPdfFormat;
-		xpdfObjToString(*obj, objPdfFormat);
+		if(!obj->isStream())
+		{
+			// object is not a stream and so normal string can be used for text
+			// representation.
+			xpdfObjToString(*obj, objPdfFormat);
 
-		// we have to add some more information to write indirect object (this
-		// includes header and footer
-		std::string indirectFormat;
-		IndiRef indiRef(ref);
-		createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
-		stream.putLine(indirectFormat.c_str());
+			// we have to add some more information to write indirect object (this
+			// includes header and footer
+			std::string indirectFormat;
+			IndiRef indiRef(ref);
+			createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
+			stream.putLine(indirectFormat.c_str());
+		}else
+		{
+			// stream requires special handling, because contains binary data in
+			// the buffer part and so possibly \0. So we are using ByteB
+			CharBuffer charBuffer;
+			size_t size=streamToCharBuffer(*obj, ref, charBuffer, true);
+			stream.putLine((char *)(*charBuffer), size);
+		}
+		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
+		
 	}
 	
 	utilsPrintDbg(DBG_DBG, "All objects (number="<<objectList.size()<<") stored.");
