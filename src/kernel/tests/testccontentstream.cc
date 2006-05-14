@@ -26,6 +26,40 @@ using namespace boost;
 //=====================================================================================
 
 bool
+setCS (ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+	vector<boost::shared_ptr<CContentStream> > ccs;
+	page->getContentStreams (ccs);
+	shared_ptr<CContentStream> cs = ccs.front();
+	
+
+	// parse the content stream
+	string tmp;
+	cs->getStringRepresentation (tmp);
+	oss << tmp << std::endl;
+	
+	// parse the content stream after change
+	shared_ptr<CDict> dict = page->getDictionary ();
+	shared_ptr<CStream> stream = utils::getCStreamFromDict (dict, "Contents");
+	assert (isStream(stream));
+	CStream::Buffer buf;
+	std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
+	stream->setBuffer (buf);
+	cs->getStringRepresentation (tmp);
+	oss << tmp << std::endl;
+	
+	//pdf->save (true);
+	return true;
+}
+
+
+//=====================================================================================
+
+bool
 position (ostream& oss, const char* fileName, const Rectangle rc)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -215,7 +249,10 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 	string str;
 	if (page)
 	{
-		page->getContentStream()->getStringRepresentation (str);
+		vector<boost::shared_ptr<CContentStream> > ccs;
+		page->getContentStreams (ccs);
+		shared_ptr<CContentStream> cs = ccs.front();
+		cs->getStringRepresentation (str);
 	}
 	else 
 		return false;
@@ -234,9 +271,10 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 class TestCContentStream : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCContentStream);
-		CPPUNIT_TEST(TestOpcount);
-		CPPUNIT_TEST(TestPosition);
-		CPPUNIT_TEST(TestPrint);
+		//CPPUNIT_TEST(TestOpcount);
+		//CPPUNIT_TEST(TestPosition);
+		//CPPUNIT_TEST(TestPrint);
+		CPPUNIT_TEST(TestSetCS);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -293,6 +331,22 @@ public:
 
 			TEST(" print contentstream");
 			CPPUNIT_ASSERT (printContentStream (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestSetCS ()
+	{
+		OUTPUT << "CContentStream..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			TEST(" print contentstream");
+			CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}

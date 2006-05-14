@@ -176,7 +176,7 @@ bool getPdfString (std::ostream& oss, const char* fileName)
 	oss << " Length: [" << len << "]" << flush;
 	oss << std::endl << buf.get () << endl;
 	filters::Printable<char> p;
-	for (int i = 0; i < len; ++i)
+	for (size_t i = 0; i < len; ++i)
 		p (buf.get()[i]);
 	return true;
 }

@@ -70,8 +70,8 @@ mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const ch
 
 	Rectangle rc;
 	rc.xleft = 42;
-	rc.xright = 12;
 	rc.yleft = 62;
+	rc.xright = 12;
 	rc.yright = 2342;
 	page->setMediabox (rc);
 	
