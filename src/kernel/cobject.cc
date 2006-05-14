@@ -1138,6 +1138,8 @@ using namespace debug;
 	size_t copied=0;
 	strcpy(buf, header.c_str());
 	copied+=header.length();
+	strcat(buf, dict.c_str());
+	copied+=dict.length();
 	strcat(buf, CSTREAM_HEADER.c_str());
 	copied+=CSTREAM_HEADER.length();
 	// streamBuffer may contain '\0' so rest has to be copied by memcpy
