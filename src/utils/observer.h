@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/05/14 12:51:46  misuj1am
+ *
+ * -- implementation moved from iproperty.cc here
+ *
  * Revision 1.8  2006/04/18 17:25:29  hockm0bm
  * IObserverHandler returned back
  *
@@ -39,12 +43,23 @@
 #ifndef _OBSERVER_H
 #define _OBSERVER_H
 
+#include <vector>
+#include <algorithm>
 #include <boost/shared_ptr.hpp>
 
 //=============================================================================
 namespace observer
 {
 
+
+/**
+ * Observer exception.
+ */
+struct ObserverException : public std::exception
+{
+};
+
+	
 /** Interface (pure abstract class) for change context.
  *
  * This is base class for all change contexts. It contains just information
@@ -199,6 +214,16 @@ public:
 template<typename T> class IObserverHandler
 {
 public:
+	typedef IObserver<T> 						Observer; 
+	typedef std::vector<boost::shared_ptr<const Observer> >	ObserverList;
+	typedef IChangeContext<T> 					ObserverContext;
+	typedef BasicChangeContext<T>				BasicObserverContext;
+
+protected:
+	/** List of observers. */
+	ObserverList observers;
+	
+public:
 	/** Registers new observer.
 	 * @param observer Observer to register (if NULL, nothing is registered).
 	 *
@@ -212,14 +237,54 @@ public:
 	 * <br>
 	 * Multiple calling with same observer should be ignored.
 	 */
-	virtual void registerObserver(const IObserver<T> * observer) =0;
+	void registerObserver(boost::shared_ptr<const Observer> observer)
+	{
+		if (observer)
+			observers.push_back (observer);
+		else
+		{
+			assert (!"IProperty::registerObserver got invalid observer.");
+			throw ObserverException ();
+		}
+
+	}
 
 	/** Unregisters given observer.
 	 * @param observer Observer to unregister.
 	 *
 	 * Given one is not used in next change.
 	 */
-	virtual void unregisterObserver(const IObserver<T> * observer) =0;
+	//void unregisterObserver(boost::shared_ptr<const Observer> observer)
+	void unregisterObserver(boost::shared_ptr<const Observer> observer)
+	{
+		if (observer)
+		{
+			typename ObserverList::iterator it = std::find (observers.begin(), observers.end(), observer);
+			if (it != observers.end ())
+				observers.erase (it);
+			else
+			{
+				assert (!"unregisterObserver did not find the element to erase.");
+				throw ObserverException ();
+			}
+		
+		}else
+			throw ObserverException ();
+	}
+
+	/**
+	 * Notify all observers about a change.
+	 *
+	 * @param newValue Object with new value.
+	 * @param context Context in which the change has been made.
+	 */
+	void notifyObservers (boost::shared_ptr<T> newValue, boost::shared_ptr<const ObserverContext> context)
+	{
+		typename ObserverList::iterator it = observers.begin ();
+		for (; it != observers.end(); ++it)
+			(*it)->notify (newValue, context);
+	}
+	
 };
 
 
