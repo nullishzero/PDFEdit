@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/05/14 13:51:40  hockm0bm
+ * quick fix
+ *         - virtual destructor for IObserverHandler
+ *
  * Revision 1.10  2006/05/14 13:29:00  hockm0bm
  * IObserverHandler has virtual methods
  *
@@ -229,6 +233,10 @@ protected:
 	ObserverList observers;
 	
 public:
+	/** Empty destructor.
+	 */
+	virtual ~IObserverHandler(){}
+	
 	/** Registers new observer.
 	 * @param observer Observer to register (if NULL, nothing is registered).
 	 *
