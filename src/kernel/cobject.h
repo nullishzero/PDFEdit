@@ -1470,6 +1470,26 @@ void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, O
  */
 size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf);
 
+/** Makes a valid pdf indirect object representation of stream object.
+ * @param streamObject Xpdf object representing stream.
+ * @param ref Reference for this indirect object.
+ * @param outputBuf Output byte buffer containing complete representation.
+ * @param asIndirect Flag for indirect output.
+ *
+ * Allocates and fill buffer in given outputBuf with pdf object format
+ * representation of given stream object. Moreover adds indirect header and
+ * footer if asIndirect parameter is true. 
+ * <br>
+ * Given buffer may contain '\0' bytes inside. Caller should consume number of
+ * returned bytes from outputBuf.
+ * <br>
+ * Reference parameter is ignored if asIndirect is false, because it is used
+ * only for indirect object header.
+ * 
+ * @return number of bytes used in outputBuf.
+ */
+size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect=true);
+	
 /**
  * Convert xpdf object to string
  *

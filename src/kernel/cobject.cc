@@ -575,7 +575,6 @@ createObjFromXpdfObj (Object& obj)
 				return new CStream (obj);
 
 			default:
-				utilsPrintDbg (debug::DBG_PANIC, "Bad type: " << obj.getTypeName () );
 				assert (!"Bad type.");
 				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
@@ -1064,7 +1063,7 @@ template void streamToString<std::string::const_iterator, std::back_insert_itera
 
 //
 //
-//
+// TODO asIndirect parameter
 size_t 
 streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf)
 {
@@ -1079,6 +1078,86 @@ streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf
 	return len;
 }
 
+size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect)
+{
+using namespace std;
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "");
+	
+	// gets stream dictionary string at first
+	string dict;
+	Object streamDict;
+	streamDict.initDict(streamObject.streamGetDict());
+	xpdfObjToString(streamDict, dict);
+
+	// indirect header is filled only if asIndirect flag is set
+	// same way footer
+	ostringstream indirectHeader;
+	indirectHeader << ref.num << " " << ref.gen << " " << INDIRECT_HEADER << "\n";
+	string header=(asIndirect)
+		?indirectHeader.str()
+		:"";
+	string footer=(asIndirect)
+		?INDIRECT_FOOTER
+		:"";
+
+	// gets buffer len from stream dictionary Length field
+	Object lenghtObj;
+	streamDict.getDict()->lookup("Length", &lenghtObj);
+	if(!lenghtObj.isInt())
+	{
+		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
+		lenghtObj.free();
+		return 0;
+	}
+	if(!lenghtObj.getInt()<0)
+	{
+		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
+		lenghtObj.free();
+		return 0;
+	}
+	size_t bufferLen=(size_t)lenghtObj.getInt();
+	lenghtObj.free();
+
+	// gets stream buffer from given stream's base stream
+	//char streamBuffer[bufferLen];
+	
+	// gets total length and allocates CharBuffer for output	
+	size_t len = 
+		header.length() 
+		+ dict.length()
+		+ CSTREAM_HEADER.length() + bufferLen + CSTREAM_FOOTER.length() 
+		+ footer.size(); 
+	char* buf = char_buffer_new (len);
+	outputBuf = CharBuffer (buf, char_buffer_delete()); 
+	
+	
+	// get everything together into created buf
+	memset(buf, '\0', len);
+	size_t copied=0;
+	strcpy(buf, header.c_str());
+	copied+=header.length();
+	strcat(buf, CSTREAM_HEADER.c_str());
+	copied+=CSTREAM_HEADER.length();
+	// streamBuffer may contain '\0' so rest has to be copied by memcpy
+	BaseStream * base=streamObject.getStream()->getBaseStream();
+	base->reset();
+	for(size_t i=0; i<bufferLen; i++)
+	{
+		int ch=base->getChar();
+		buf[copied+i]=ch;
+	}
+	streamObject.getStream()->reset();
+	copied+=bufferLen;
+	memcpy(buf + copied, CSTREAM_FOOTER.c_str(), CSTREAM_FOOTER.length());
+	copied+=CSTREAM_FOOTER.length();
+	memcpy(buf + copied, footer.c_str(), footer.length());
+	copied+=footer.length();
+	
+	assert(copied==len);
+	return len;
+}
 
 //
 //
