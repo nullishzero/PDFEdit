@@ -4,9 +4,11 @@
 #include <qlistview.h>
 #include "treeitemabstract.h"
 #include <boost/shared_ptr.hpp>
+
 class QString;
 namespace pdfobjects {
-class CPage;
+ class CPage;
+ class CContentStream;
 }
 
 namespace gui {
@@ -33,6 +35,8 @@ private:
  void init(boost::shared_ptr<CPage> page,const QString &name);
  /** CPage stored in this TreeItem */
  boost::shared_ptr<CPage> obj;
+ /** Vector with content streams */
+ std::vector<boost::shared_ptr<CContentStream> > streams;
 };
 
 } // namespace gui

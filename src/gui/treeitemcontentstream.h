@@ -23,6 +23,7 @@ public:
  virtual QStringList getChildNames();
  virtual QSCObject* getQSObject();
  virtual void remove();
+ void reloadSelf();
 private:
  void init(const QString &name);
  /**  ContentStream object held in this item */

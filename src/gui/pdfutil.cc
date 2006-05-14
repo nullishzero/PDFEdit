@@ -43,6 +43,33 @@ QString getTypeName(PropertyType typ) {
  return "?";
 }
 
+/** Return string identifier of given type
+ @param typ Type of PDF Object
+ @return Identifier of type name
+ */
+QString getTypeId(PropertyType typ) {
+ switch (typ) {
+  case pNull:   return "Null"; 
+  case pBool:   return "Bool"; 
+  case pInt:    return "Int";
+  case pReal:   return "Real";
+  case pString: return "String";
+  case pName:   return "Name";
+  case pRef:    return "Ref";
+  case pArray:  return "Array"; 
+  case pDict:   return "Dict"; 
+  case pStream: return "Stream"; 
+// Debug types
+  case pOther:    return "DebugCmd";
+  case pOther1:  return "DebugError";
+  case pOther2:    return "DebugEOF";
+  case pOther3:   return "DebugNone";
+ }
+ //Unknown type. Should not happen
+ assert(0);
+ return "?";
+}
+
 /** Return human-readable (and possibly localized) name of given object's type
  @param obj Object to get type from (IProperty)
  @return Human readable type name
@@ -54,6 +81,19 @@ QString getTypeName(IProperty *obj) {
 /** @copydoc getTypeName(IProperty *) */
 QString getTypeName(boost::shared_ptr<IProperty> obj) {
  return getTypeName(obj.get());
+}
+
+/** Return string identifier of given type
+ @param obj Object to get type from (IProperty)
+ @return Identifier of type name
+ */
+QString getTypeId(IProperty *obj) {
+ return getTypeId(obj->getType());
+}
+
+/** @copydoc getTypeId(IProperty *) */
+QString getTypeId(boost::shared_ptr<IProperty> obj) {
+ return getTypeId(obj.get());
 }
 
 /** Get value (reference target) of CRef

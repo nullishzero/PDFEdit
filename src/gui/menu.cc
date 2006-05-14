@@ -50,7 +50,7 @@ void Menu::invalidItem(const QString &type,const QString &name,const QString &li
 
 /**
  Contructor of menu system for one specific window
- @param main Main application window
+ @param _main Main application window
  */
 Menu::Menu(QMainWindow *_main) {
  main=_main;
@@ -418,8 +418,7 @@ ToolBar* Menu::getToolbar(const QString &name) {
 }
 
 /**
- Save toolbar state of given QMainWindow to configuration
- @param main Main application window
+ Save toolbar state of QMainWindow to configuration
 */
 void Menu::saveToolbars() {
  QString out;
@@ -429,7 +428,7 @@ void Menu::saveToolbars() {
 } 
 
 /**
- Restore toolbar state of given QMainWindow from configuration
+ Restore toolbar state of QMainWindow from configuration
 */
 void Menu::restoreToolbars() {
  QString out=globalSettings->read("gui/toolbarpos");

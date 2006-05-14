@@ -38,9 +38,14 @@ int QSDict::count() {
 
 /** call CDict::getProperty(name) */
 QSCObject* QSDict::property(const QString &name) {
- CDict *dict=dynamic_cast<CDict*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
- return QSImporter::createQSObject(property,base);
+ try {
+  CDict *dict=dynamic_cast<CDict*>(obj.get());
+  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  return QSImporter::createQSObject(property,base);
+ } catch (...) { 
+  //Some error, probably the property does not exist
+  return NULL;
+ }
 }
 
 /** call CDict::delProperty(name) */
@@ -60,10 +65,8 @@ void QSDict::add(const QString &name,QSIProperty *ip) {
 /** call CDict::addProperty(name,ip) */
 void QSDict::add(const QString &name,QObject *ip) {
  //QSA-bugfix variant of this method
- CDict *dict=dynamic_cast<CDict*>(obj.get());
  QSIProperty *ipr=dynamic_cast<QSIProperty*>(ip);
- std::string pName=name;
- if (ipr) dict->addProperty(pName,*(ipr->get().get()));
+ if (ipr) add(name,ipr);
 }
 
 /** call CDict::addProperty(name,ip) */
@@ -71,6 +74,14 @@ void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  std::string pName=name;
  CString property(ip);
+ dict->addProperty(pName,property);
+}
+
+/** call CDict::addProperty(name,ip) */
+void QSDict::add(const QString &name,int ip) {
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
+ std::string pName=name;
+ CInt property(ip);
  dict->addProperty(pName,property);
 }
 

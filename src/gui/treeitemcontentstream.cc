@@ -57,7 +57,7 @@ void TreeItemContentStream::init(const QString &name) {
   setText(0,name);
  }
  // object type
- setText(1,QObject::tr("Stream"));
+ setText(1,QObject::tr("Content Stream"));
  setText(2,"");
 }
 
@@ -67,13 +67,15 @@ TreeItemContentStream::~TreeItemContentStream() {
 
 //See TreeItemAbstract for description of this virtual method
 TreeItemAbstract* TreeItemContentStream::createChild(__attribute__((unused)) const QString &name,__attribute__((unused)) ChildType typ,__attribute__((unused)) QListViewItem *after/*=NULL*/) {
- assert(0);//no childs
+ //TODO
+ assert(0);//no childs yet
  return NULL;
 }
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemContentStream::getChildType(__attribute__((unused)) const QString &name) {
- assert(0);//no childs
+ //TODO
+ assert(0);//no childs yet
  return 0;
 }
 
@@ -90,6 +92,12 @@ QSCObject* TreeItemContentStream::getQSObject() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemContentStream::remove() {
+ //TODO: implement
+ return;
+}
+
+//See TreeItemAbstract for description of this virtual method
+void TreeItemContentStream::reloadSelf() {
  //TODO: implement
  return;
 }

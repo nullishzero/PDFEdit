@@ -20,7 +20,7 @@ using namespace std;
  @param message Error message to show
 */
 void fatalError(const QString &message){
- cout << endl << QObject::tr("Fatal Error") << "!" << endl << message << endl;
+ cerr << endl << QObject::tr("Fatal Error") << "!" << endl << message << endl;
  exit(-1);
 }
 

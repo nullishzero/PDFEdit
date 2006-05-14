@@ -14,11 +14,13 @@ namespace gui {
 /** Construct wrapper with given CPage */
 QSPage::QSPage(boost::shared_ptr<CPage> _page,Base *_base) : QSCObject ("Page",_base) {
  obj=_page;
+ numStreams=-1;
 }
 
 /** Copy constructor */
 QSPage::QSPage(const QSPage &source) : QSCObject ("Page",source.base) {
  obj=source.obj;
+ numStreams=-1;
 }
 
 /** destructor */
@@ -37,9 +39,34 @@ QString QSPage::getText() {
  return text;
 }
 
-/** Call CPage::getContentStream() */
-QSContentStream* QSPage::getContentStream() {
- return new QSContentStream(obj->getContentStream(),base);
+/**
+ Return stream with given number from page.
+ Get the streams from CPage and store for later use if necessary
+ @param streamNumber number of stream to get
+ @return ContentStream with given number, or NULL if number is outside range
+*/
+QSContentStream* QSPage::getContentStream(int streamNumber) {
+ if (numStreams<0) getContentStreams();
+ if (streamNumber<0) return NULL;		//Stream number outside range
+ if (streamNumber>=numStreams) return NULL;	//Stream number outside range
+ return new QSContentStream(streams[streamNumber],base);
+}
+
+/**
+ Return number of content streams in page
+ Get the streams from CPage and store for later use if necessary
+ @return number of streams in this Page
+*/
+int QSPage::getContentStreamCount() {
+ if (numStreams<0) getContentStreams();
+ return numStreams;
+}
+
+/** Call CPage::getContentStreams(), store result */
+void QSPage::getContentStreams() {
+ obj->getContentStreams(streams);
+ //Store number of streams
+ numStreams=streams.size(); 
 }
 
 /** get CPage held inside this class. Not exposed to scripting */

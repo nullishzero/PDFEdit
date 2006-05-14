@@ -271,6 +271,7 @@ void OptionWindow::init() {
  addOptionBool(tree_tab,tr("Graphic objects"),"tree/show_graphic");
  addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot");
  addOptionBool(tree_tab,tr("Pages"),"tree/show_page");
+ addOptionBool(tree_tab,tr("Content Streams"),"tree/show_stream");
  addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple");
  finishTab    (tree_tab);
 

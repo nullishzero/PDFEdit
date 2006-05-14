@@ -32,6 +32,7 @@ public:
  bool showOutline();
  bool showPage();
  bool showSimple();
+ bool showStream();
  bool isDirty();
  void resetDirty();
  bool needReload();
@@ -56,6 +57,8 @@ private:
  bool show_outline;
  /** Show Pages under PDF document? */
  bool show_page;
+ /** Show ContentStreams in Pages */
+ bool show_stream;
  /** True, if any change since last time this was reset to false. Initial value is true */
  bool dirty;
  /** True if the tree needs reloading */

@@ -5,8 +5,10 @@
 
 #include <cobject.h>
 #include <cpage.h>
+#include <ccontentstream.h>
 #include "treeitem.h"
 #include "treeitempage.h"
+#include "treeitemcontentstream.h"
 #include "treedata.h"
 #include <qobject.h>
 #include "qspage.h"
@@ -71,6 +73,15 @@ TreeItemAbstract* TreeItemPage::createChild(__attribute__((unused)) const QStrin
  if (typ==0) { //Return page dictionary
   return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"),after);
  }
+ if (typ==1) {
+  size_t streamNumber=name.toUInt();
+  if (streamNumber>=streams.size()) {
+   //Invalid or old data -> try to re-get list of streams from CPage
+   obj->getContentStreams(streams);
+  }
+  assert(streamNumber<streams.size());  //Still Invalid data ?
+  return new TreeItemContentStream(data,this,streams[streamNumber],QObject::tr("Stream")+" "+QString::number(streamNumber),after,QString("Stream")+QString::number(streamNumber));
+ }
  assert(0);
  return NULL;
 }
@@ -79,15 +90,22 @@ TreeItemAbstract* TreeItemPage::createChild(__attribute__((unused)) const QStrin
 ChildType TreeItemPage::getChildType(const QString &name) {
  if (name=="Dict") { //Return page dictionary
   return 0;
+ } else { //It's a stream
+  return 1;
  }
- assert(0);//Error
- return -1;
 }
 
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemPage::getChildNames() {
- if (data->showODict()) return QStringList("Dict");
- else return QStringList();
+ QStringList childs;
+ if (data->showODict()) childs+="Dict";
+ if (data->showStream()) {
+  obj->getContentStreams(streams);
+  for (size_t i=0;i<streams.size();i++) {
+   childs+=QString::number(i);
+  }
+ }
+ return childs;
 }
 
 //See TreeItemAbstract for description of this virtual method

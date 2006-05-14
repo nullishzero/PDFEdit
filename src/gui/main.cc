@@ -62,7 +62,13 @@ QApplication *qApp;
 
 /** main - load settings and launches a main window */
 int main(int argc, char *argv[]){
- QApplication app(argc, argv);
+ //We need this so we can use things like --version and --help even without X11 connection
+#ifdef Q_WS_X11
+ bool useGUI=getenv("DISPLAY")!=0;
+#else
+ bool useGUI=true;
+#endif
+ QApplication app(argc,argv,useGUI);
  qApp=&app;
  //Translation support
  QTranslator translator;
@@ -107,6 +113,11 @@ int main(int argc, char *argv[]){
  atexit(saveSettings);
 
  guiPrintDbg(debug::DBG_DBG,"Settings loaded");
+
+ if (!useGUI) {
+  // Up until now DISPLAY was optional. For running GUI, it is mandatory
+  util::fatalError(QObject::tr("Environment variable DISPLAY is not set - cannot run GUI of " APP_NAME));
+ }
 
  //style
  QString style=globalSettings->read("gui/style","");

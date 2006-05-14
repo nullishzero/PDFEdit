@@ -17,9 +17,6 @@ using namespace pdfobjects;
 
 /*= This type of object represents entire document. */
 class QSPdf : public QSCObject {
-//ADDED functions begin
- int getActualRevision();
-//ADDED functions end
  Q_OBJECT
 public:
  QSPdf(CPdf *_pdf,Base *_base);
@@ -59,6 +56,8 @@ public slots:
  bool hasPrevPage(QSPage* page);
  /*- Return number of available revisions */
  int getRevisionsCount();
+ /*- Return number of currently active revisions */
+ int getActualRevision();
  //QObject versions of these methods to workaround QSA bug
  QSPage* insertPage(QObject* page, int position);
  int getPagePosition(QObject *page);

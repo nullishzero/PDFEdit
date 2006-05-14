@@ -23,7 +23,7 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base) {
  _tree=tree;
  _base=base;
  //ShowData
- show_outline=show_page=show_odict=show_dict=show_simple=false;
+ show_stream=show_outline=show_page=show_odict=show_dict=show_simple=false;
  update();
  dirty=false;
  needreload=false;
@@ -49,7 +49,7 @@ void TreeData::update() {
  checkSetting(show_odict,"tree/show_objdict");	//Objects dictionaries
  checkSetting(show_outline,"tree/show_outline");//Show Outlines
  checkSetting(show_page,"tree/show_page");	//Show Pages
-
+ checkSetting(show_stream,"tree/show_stream");	//Show Streams
 }
 
 /** Return value of show_simple setting
@@ -85,6 +85,13 @@ bool TreeData::showOutline() {
  */
 bool TreeData::showPage() {
  return show_page;
+}
+
+/** Return value of show_stream setting
+ @return True if show_stream is set, false if not
+ */
+bool TreeData::showStream() {
+ return show_stream;
 }
 
 /** Return true, if the tree should be reloaded because the settings changed

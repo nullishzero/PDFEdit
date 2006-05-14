@@ -11,6 +11,9 @@ namespace util {
 
 using namespace pdfobjects;
 
+QString getTypeId(PropertyType typ);
+QString getTypeId(IProperty *obj);
+QString getTypeId(boost::shared_ptr<IProperty> obj);
 QString getTypeName(PropertyType typ);
 QString getTypeName(IProperty *obj);
 QString getTypeName(boost::shared_ptr<IProperty> obj);

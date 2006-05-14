@@ -15,7 +15,7 @@ namespace gui {
 /**
  Default constructor of RevisionTool
  @param parent Toolbar containing this control
- @param defValue Default value if option not found in configuration
+ @param name Name of this widget (passed to QWidget constructor)
 */
 RevisionTool::RevisionTool(QWidget *parent/*=0*/,const char *name/*=NULL*/) : QWidget (parent,name) {
  revList=new QComboBox(this,"revision_select");

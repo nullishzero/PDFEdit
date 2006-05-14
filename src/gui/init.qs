@@ -77,7 +77,7 @@ function onTreeRightClick() {
  menu=popupMenu("popup_generic");
  menu.addSeparator();
  if (holdContainer(treeitem))
-   menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog()");
+   menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
  if (treeitem.itemtype()=="Page")
@@ -176,4 +176,24 @@ function onLoadUser() {
 /** Called when active revision was changed */
 function onChangeRevision() {
  print(tr("Changed revision to:")+activeRevision());
+}
+
+/** Return property from dictionary of current page */
+function pageProperty(x) {
+ return page.getDictionary().property(x);
+}
+
+/** rotate current page N degrees clockwise */
+function rotatePage(n) {
+ //Get page rotation
+ rotate=pageProperty("Rotate");
+ //Add rotation
+ n0=rotate.getInt()+n;
+ //Normalize
+ if (n0<0) n0+=360;
+ if (n0>=360) n0-=360;
+ //Set
+ rotate.set(n0);
+ //Reload page after rotating
+ go();
 }

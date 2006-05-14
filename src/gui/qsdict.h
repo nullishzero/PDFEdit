@@ -14,8 +14,6 @@ Keys are strings, values can be of any type, either simple types (int, bool, flo
 or complex types (Dict, Array)
 */
 class QSDict : public QSIProperty {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
  QSDict(QSDict &source);
@@ -28,6 +26,8 @@ public slots:
  void add(const QString &name,QObject *ip);
  /*- Add string property with given name to this dictionary */
  void add(const QString &name,const QString &ip);
+ /*- Add integer property with given name to this dictionary */
+ void add(const QString &name,int ip);
  /*- Return number of properties held in this dictionary */
  int count();
  /*- Delete property with given name from this dictionary */
