@@ -265,6 +265,10 @@ Data: %3
         <source>label item</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Content Stream</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -520,6 +524,10 @@ Data: %3
         <source>Show errors from event handlers</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Content Streams</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -700,6 +708,16 @@ Data: %3
     <message>
         <source>Revisions</source>
         <comment>revlabel</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate page 270 degrees</source>
+        <comment>rot-90</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate page 90 degrees</source>
+        <comment>rot90</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

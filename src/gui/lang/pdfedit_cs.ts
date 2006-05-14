@@ -268,6 +268,10 @@ Data: %3
         <source>label item</source>
         <translation>položka &apos;label&apos;</translation>
     </message>
+    <message>
+        <source>Content Stream</source>
+        <translation>Content Stream</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -523,6 +527,10 @@ Data: %3
         <source>Show errors from event handlers</source>
         <translation>Zobrazovat chyby z funkcí obsluhy událostí</translation>
     </message>
+    <message>
+        <source>Content Streams</source>
+        <translation>Content Stream</translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -704,6 +712,16 @@ Data: %3
         <source>Revisions</source>
         <comment>revlabel</comment>
         <translation>Revize</translation>
+    </message>
+    <message>
+        <source>Rotate page 270 degrees</source>
+        <comment>rot-90</comment>
+        <translation>Otočit stránku o 270 stupňů</translation>
+    </message>
+    <message>
+        <source>Rotate page 90 degrees</source>
+        <comment>rot90</comment>
+        <translation>Otočit stránku o 90 stupňů</translation>
     </message>
 </context>
 <context>
