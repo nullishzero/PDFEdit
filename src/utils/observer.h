@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/05/14 13:29:00  hockm0bm
+ * IObserverHandler has virtual methods
+ *
  * Revision 1.9  2006/05/14 12:51:46  misuj1am
  *
  * -- implementation moved from iproperty.cc here
@@ -209,6 +212,8 @@ public:
  *
  * Each value keeper which wants to manage observers should implement this
  * interface. 
+ * <br>
+ * Also provides basic implementation.
  * 
  */
 template<typename T> class IObserverHandler
@@ -237,7 +242,7 @@ public:
 	 * <br>
 	 * Multiple calling with same observer should be ignored.
 	 */
-	void registerObserver(boost::shared_ptr<const Observer> observer)
+	virtual void registerObserver(boost::shared_ptr<const Observer> observer)
 	{
 		if (observer)
 			observers.push_back (observer);
@@ -254,8 +259,7 @@ public:
 	 *
 	 * Given one is not used in next change.
 	 */
-	//void unregisterObserver(boost::shared_ptr<const Observer> observer)
-	void unregisterObserver(boost::shared_ptr<const Observer> observer)
+	virtual void unregisterObserver(boost::shared_ptr<const Observer> observer)
 	{
 		if (observer)
 		{
@@ -278,9 +282,10 @@ public:
 	 * @param newValue Object with new value.
 	 * @param context Context in which the change has been made.
 	 */
-	void notifyObservers (boost::shared_ptr<T> newValue, boost::shared_ptr<const ObserverContext> context)
+	virtual void notifyObservers (boost::shared_ptr<T> newValue, boost::shared_ptr<const ObserverContext> context)
 	{
 		typename ObserverList::iterator it = observers.begin ();
+		// TODO be aware of priorities
 		for (; it != observers.end(); ++it)
 			(*it)->notify (newValue, context);
 	}
