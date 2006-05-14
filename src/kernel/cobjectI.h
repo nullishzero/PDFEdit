@@ -182,6 +182,38 @@ CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
 }
 
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+void 
+CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverContext> context)
+{
+	kernelPrintDbg (debug::DBG_DBG, "CObjectSimple");
+	// Do not notify anything if we are not in a valid pdf
+	if (!hasValidPdf (this))
+		return;
+
+	assert (hasValidRef(this));
+	
+	// Dispatch the change
+	IProperty::dispatchChange ();
+	
+	if (context)
+	{
+		// Clone this new value
+		boost::shared_ptr<IProperty> newValue (this->clone());
+		// Fill them with correct values
+		newValue->setPdf (IProperty::getPdf());
+		newValue->setIndiRef (IProperty::getIndiRef());
+		// Notify everybody about this change
+		IProperty::notifyObservers (newValue, context);
+	}else
+	{
+		assert (!"Invalid context");
+		throw CObjInvalidOperation ();
+	}
+}
 
 //
 // Clone method
@@ -640,6 +672,33 @@ CObjectComplex<Tp,Checker>::_getAllChildObjects (Storage& store) const
 	}
 }
 
+//
+//
+//
+template<PropertyType Tp, typename Checker>
+void 
+CObjectComplex<Tp,Checker>::_objectChanged 
+	(boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const ObserverContext> context)
+{
+	// Do not notify anything if we are not in a valid pdf
+	if (!hasValidPdf (this))
+		return;
+	assert (hasValidRef (this));
+
+	// Dispatch the change
+	this->dispatchChange ();
+	
+	if (context)
+	{
+		// Notify everybody about this change
+		this->notifyObservers (newValue, context);
+
+	}else
+	{
+		assert (!"Invalid context");
+		throw CObjInvalidOperation ();
+	}
+}
 
 //
 // Clone method
@@ -951,9 +1010,6 @@ CObjectStream<Checker>::setLength (size_t len)
 //
 
 //
-// \TODO  what if sizes mismatch?
-//
-//
 // 1) Dictionary of a BaseStream is always freed in ~BaseStream
 // 2) In mem stream if needBuf variable is set, buf is freed
 // 	needBuf is set in doDecryption
@@ -1102,6 +1158,116 @@ IProperty::ObserverContext*
 CObjectStream<Checker>::_createContext () const
 {
 	return new BasicObserverContext (boost::shared_ptr<IProperty> (new CNull ()));
+}
+
+//
+//
+//
+template<typename Checker>
+template<typename Container>
+void
+CObjectStream<Checker>::getFilters (Container& container) const
+{
+	boost::shared_ptr<IProperty> ip;
+	//
+	// Get optional value Filter
+	//
+	try	
+	{
+		ip = dictionary.getProperty ("Filter");
+		
+	}catch (ElementNotFoundException&)
+	{
+		// No filter found
+		kernelPrintDbg (debug::DBG_DBG, "No filter found.");
+		return;
+	}
+
+	//
+	// If it is a name just store it
+	// 
+	if (isName (ip))
+	{
+		std::string fltr;
+		boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
+		name->getPropertyValue (fltr);
+		container.push_back (fltr);
+		
+		kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
+	//
+	// If it is an array, iterate through its properties
+	//
+	}else if (isArray (ip))
+	{
+		boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(ip);
+		// Loop throug all children
+		CArray::Value::iterator it = array->value.begin ();
+		for (; it != array->value.end(); ++it)
+		{
+			std::string fltr;
+			boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
+			name->getPropertyValue (fltr);
+			container.push_back (fltr);
+			
+			kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
+
+		} // for (; it != array->value.end(); ++it)
+	}
+}
+
+//
+//
+//
+template<typename Checker>
+template<typename Storage>
+void 
+CObjectStream<Checker>::_getAllChildObjects (Storage& store) const
+{
+	typename CDict::Value::const_iterator it = dictionary.value.begin ();
+	for	(; it != dictionary.value.end (); ++it)
+	{
+		boost::shared_ptr<IProperty> ip = utils::getIPropertyFromItem (*it);
+		store.push_back (ip);
+	}
+}
+
+//
+//
+//
+template<typename Checker>
+void 
+CObjectStream<Checker>::_objectChanged (boost::shared_ptr<const ObserverContext> context)
+{
+	// Do not notify anything if we are not in a valid pdf
+	if (!hasValidPdf (this))
+		return;
+	assert (hasValidRef (this));
+
+	// Set correct length
+	if (getLength() != buffer.size())
+	{
+		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
+		setLength (buffer.size());
+	}
+	
+	// Dispatch the change
+	this->dispatchChange ();
+	
+	if (context)
+	{
+		// Clone this new value
+		boost::shared_ptr<IProperty> newValue (this->clone());
+		// Fill them with correct values
+		newValue->setPdf (this->getPdf());
+		newValue->setIndiRef (this->getIndiRef());
+		// Notify everybody about this change
+		this->notifyObservers (newValue, context);
+
+	}else
+	{
+		assert (!"Invalid context");
+		throw CObjInvalidOperation ();
+	}
 }
 
 

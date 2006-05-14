@@ -26,6 +26,8 @@ namespace pdfobjects {
 // Forward declarations
 // 
 class CPdf;
+class IProperty;
+typedef observer::IObserverHandler<IProperty> IPropertyObserver;
 
 
 /** Enum describing the type of a property. */
@@ -53,7 +55,7 @@ enum PropertyType
 };
 
 //
-// Returns name of objects type
+// String representation of object type
 //
 template<int i> inline
 std::string getStringType () {return "Unknown";}
@@ -78,16 +80,17 @@ std::string getStringType<7> () {return "pDict";}
 template<> inline
 std::string getStringType<8> () {return "pStream";}
 
-/** Prints property type.
- * @param out String where to print.
- * @param type Type to print.
- *
+/** 
+ * Prints property type.
+ *  
  * Prints given type in human readable from instead of just number.
  * Uses getStringType method to get string representation.
  *
+ * @param out String where to print.
+ * @param type Type to print.
  * @return Reference to given string.
  */
-std::string & operator << (std::string & out, PropertyType type);
+std::string& operator<< (std::string& out, PropertyType type);
 
 /** Object id number. */
 typedef unsigned int ObjNum;
@@ -100,41 +103,36 @@ typedef struct IndiRef
 	ObjNum	num; /**< Object's pdf identification number */
 	GenNum	gen; /**< Object's pdf generation number */
 
-	/** Empty constructor.
-	 *
+	/** 
+	 * Empty constructor.
 	 * Initializes num and gen to invalid reference.
 	 */
-	IndiRef():num(0), gen(0)
-	{
-	}
+	IndiRef() : num(0), gen(0) {}
 	
-	/** Initialize constructor.
+	/** 
+	 * Initialize constructor.
+	 * Sets num and gen according given reference.
+	 * 
 	 * @param ref Indirect Reference.
-	 *
-	 * Sets num and gen according given reference.
 	 */
-	IndiRef(const IndiRef & ref):num(ref.num), gen(ref.gen)
-	{
-	}
+	IndiRef(const IndiRef& ref) : num(ref.num), gen(ref.gen)	{}
 
-	/** Initialize constructor.
+	/** 
+	 * Initialize constructor.
+	 * Sets num and gen according given reference.
+	 * 
 	 * @param ref Xpdf reference.
-	 *
-	 * Sets num and gen according given reference.
 	 */
-	IndiRef(const ::Ref & ref):num(ref.num), gen(ref.gen)
-	{
-	}
+	IndiRef(const ::Ref& ref) : num(ref.num), gen(ref.gen) {}
 
-	/** Initialize constructor.
+	/** 
+	 * Initialize constructor.
+	 * Sets num and gen according given parameters.
+	 * 
 	 * @param _num Object number.
 	 * @param _gen Generation number.
-	 *
-	 * Sets num and gen according given parameters.
 	 */
-	IndiRef(int _num, int _gen):num(_num), gen(_gen)
-	{
-	}
+	IndiRef(int _num, int _gen) : num(_num), gen(_gen) {}
 
 	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;};
 	bool operator== (const IndiRef& _r) const { return (num == _r.num && gen == _r.gen) ? true : false;};
@@ -142,22 +140,22 @@ typedef struct IndiRef
 } IndiRef;
 
 
-/** Prints reference.
+/** 
+ * Prints reference.
+ * Prints given reference in ref[num, gen] format.
+ * 
  * @param out String where to print.
  * @param ref Reference to print.
- *
- * Prints given reference in ref[num, gen] format.
- *
  * @return reference to given string.
  */
 std::ostream & operator << (std::ostream & out, const IndiRef & ref);
 
-/** Prints reference.
+/** 
+ * Prints reference.
+ * Prints given xpdf reference in ref[num, gen] format.
+ * 
  * @param out String where to print.
  * @param ref Reference to print.
- *
- * Prints given xpdf reference in ref[num, gen] format.
- *
  * @return reference to given string.
  */
 std::ostream & operator << (std::ostream & out, const ::Ref & ref);
@@ -178,19 +176,11 @@ std::ostream & operator << (std::ostream & out, const ::Ref & ref);
  * REMARK: The connection to CPdf is stored in CPdf* and not smart pointer. This has a good reason
  * namely cyclic references of smart pointers.
  */
-class IProperty
+class IProperty : public IPropertyObserver
 {
-public:
-	/** Observers. */
-	typedef observer::IObserver<IProperty> 					Observer; 
-	typedef std::vector<boost::shared_ptr<const Observer> > ObserverList;
-	typedef observer::IChangeContext<IProperty> 			ObserverContext;
-	typedef observer::BasicChangeContext<IProperty>		 	BasicObserverContext;
-
 private:
 	IndiRef 		ref;		/**< Object's pdf id and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
-	ObserverList 	observers;	/**< List of observers. */
 	CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 
 
@@ -199,7 +189,7 @@ private:
 	//
 private:
 	/** Copy constructor. */
-	IProperty (const IProperty&) {};
+	IProperty (const IProperty&) : IPropertyObserver() {};
 
 protected:	
 
@@ -362,41 +352,6 @@ public:
 	 */
 	virtual ~IProperty () {};
 
-	//
-	// Observer interface
-	//
-public:
-	
-	/**
-	 * Attaches an observers.
-	 *
-	 * @param observer Observer being attached.
-	 */
-	void registerObserver (boost::shared_ptr<const Observer> o);
-  
-	/**
-	 * Detaches an observer.
-	 * 
-	 * @param observer Observer beeing detached.
-	 */
-	 void unregisterObserver (boost::shared_ptr<const Observer> o);
-
-protected:
-
-	/**
-	 * Notify all observers that a property has changed.
-	 *
-	 * REMARK: Pointer to new value is NOT a shared pointer so
-	 * observers SHOULD NOT store its value. It can happen that the
-	 * pointer will get deallocated.
-	 * 
-	 * @param newValue Object with new value.
-	 * @param context Context in which the change has been made.
-	 */
-	void notifyObservers (boost::shared_ptr<IProperty> newValue, 
-					  	  boost::shared_ptr<const ObserverContext> context);
-
-	
 }; /* class IProperty */
 
 
@@ -404,55 +359,42 @@ protected:
 // Helper functions
 //
 
-/** Checks whether pdf is valid instance.
+/** 
+ * Checks whether pdf is valid instance.
+ * 
  * @param pdf Pdf isntance to check.
- *
  * @return true if pdf is not NULL, false otherwise.
  */
-inline bool isPdfValid(CPdf * pdf)
-{
-	return (NULL !=pdf);
-}
+inline bool isPdfValid(CPdf* pdf)
+	{ return (NULL !=pdf); }
 
-/** Checks whether ip's pdf is valid.
+/** 
+ * Checks whether ip's pdf is valid.
+ * 
  * @param ip Property to check.
- *
  * @return isPdfValid(ip-&getPdf()).
  */
-inline bool hasValidPdf(const IProperty & ip)
-{
-	return isPdfValid(ip.getPdf());
-}
+inline bool hasValidPdf(const IProperty& ip)
+	{ return isPdfValid(ip.getPdf()); }
 template<typename T> inline bool hasValidPdf(T ip)
-{
-	return isPdfValid(ip->getPdf());
-}
+	{ return isPdfValid(ip->getPdf()); }
 
-//inline bool isInValidPdf (const IProperty& ip) {return (NULL != ip.getPdf());}
-//template<typename T> inline bool isInValidPdf (T ip) {return (NULL != ip->getPdf());}
-//:w
-//
 
-/** Checks whether given reference is valid.
- * @param ref Reference to check.
- *
+/** 
+ * Checks whether given reference is valid.
  * Reference is valid, if it is non NULL and object number is greater than 0.
+ * 
+ * @param ref Reference to check.
  * @return true if reference is valid, false otherwise.
  */
-inline bool isRefValid(const IndiRef * ref)
-{
-	return (ref) && (ref->num>0);
-}
+inline bool isRefValid(const IndiRef* ref)
+	{ return (ref) && (ref->num>0); }
 
 template<typename T> inline bool hasValidRef (T ip) 
-{
-	return isRefValid(&ip->getIndiRef());
-}
+	{ return isRefValid(&ip->getIndiRef()); }
 
 inline bool hasValidRef (IProperty& ip) 
-{
-	return isRefValid(& ip.getIndiRef());
-}
+	{ return isRefValid(& ip.getIndiRef()); }
 
 
 //

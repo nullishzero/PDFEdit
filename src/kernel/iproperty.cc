@@ -82,7 +82,7 @@ IProperty::dispatchChange () const
 	{
 		if (indiObj)
 		{
-			assert (IProperty::getIndiRef() == indiObj->getIndiRef());
+			assert (getIndiRef() == indiObj->getIndiRef());
 
 			indiObj->dispatchChange ();
 			
@@ -100,54 +100,10 @@ IProperty::dispatchChange () const
 	}
 }
 
-//
-// Observer interface
-//
 
 //
 //
 //
-void 
-IProperty::registerObserver (boost::shared_ptr<const Observer> o) 
-{
-	if (o)
-		observers.push_back (o);
-	else
-		throw ElementBadTypeException ("IProperty::registerObserver got invalid observer.");
-}
-
-//
-//
-//
-void 
-IProperty::unregisterObserver (boost::shared_ptr<const Observer> o)
-{
-	if (o)
-	{
-		ObserverList::iterator it = find (observers.begin (), observers.end(), o);
-		if (it != observers.end ())
-			observers.erase (it);
-		else
-		{
-			kernelPrintDbg (debug::DBG_DBG, "unregisterObserver did not find the element to erase.");
-			ElementNotFoundException ("","");
-		}
-	
-	}else
-		throw ElementBadTypeException ("IProperty::unregisterObserver got invalid observer.");
-}
-
-//
-//
-//
-void
-IProperty::notifyObservers (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const ObserverContext> context)
-{
-	ObserverList::iterator it = IProperty::observers.begin ();
-	for (; it != IProperty::observers.end(); ++it)
-		(*it)->notify (newValue, context);
-}
-
 std::string & operator << (std::string & out, PropertyType type)
 {
 	using namespace std;

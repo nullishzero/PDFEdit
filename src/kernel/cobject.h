@@ -255,32 +255,7 @@ private:
 	 *
 	 * @param context Context in which a change occured.
 	 */
-	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
-	{
-		kernelPrintDbg (debug::DBG_DBG, "CObjectSimple");
-		// Do not notify anything if we are not in a valid pdf
-		if (!hasValidPdf (this))
-			return;
-		assert (hasValidRef(this));
-		
-		// Dispatch the change
-		this->dispatchChange ();
-		
-		if (context)
-		{
-			// Clone this new value
-			boost::shared_ptr<IProperty> newValue (this->clone());
-			// Fill them with correct values
-			newValue->setPdf (this->getPdf());
-			newValue->setIndiRef (this->getIndiRef());
-			// Notify everybody about this change
-			this->notifyObservers (newValue, context);
-		}else
-		{
-			assert (!"Invalid context");
-			throw CObjInvalidOperation ();
-		}
-	}
+	void _objectChanged (boost::shared_ptr<const ObserverContext> context);
 
 };
 
@@ -613,28 +588,7 @@ private:
 	 * @param context Context in which a change occured.
 	 */
 	void _objectChanged (boost::shared_ptr<IProperty> newValue, 
-						 boost::shared_ptr<const ObserverContext> context)
-	{
-		// Do not notify anything if we are not in a valid pdf
-		if (!hasValidPdf (this))
-			return;
-		assert (hasValidRef (this));
-
-		// Dispatch the change
-		this->dispatchChange ();
-		
-		if (context)
-		{
-			// Notify everybody about this change
-			this->notifyObservers (newValue, context);
-
-		}else
-		{
-			assert (!"Invalid context");
-			throw CObjInvalidOperation ();
-		}
-	}
-
+						 boost::shared_ptr<const ObserverContext> context);
 
 public:
 	/**
@@ -835,54 +789,7 @@ public:
 	 * @param container Container of filter names.
 	 */
 	template<typename Container>
-	void getFilters (Container& container) const
-	{
-		boost::shared_ptr<IProperty> ip;
-		//
-		// Get optional value Filter
-		//
-		try	
-		{
-			ip = dictionary.getProperty ("Filter");
-			
-		}catch (ElementNotFoundException&)
-		{
-			// No filter found
-			kernelPrintDbg (debug::DBG_DBG, "No filter found.");
-			return;
-		}
-	
-		//
-		// If it is a name just store it
-		// 
-		if (isName (ip))
-		{
-			std::string fltr;
-			boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
-			name->getPropertyValue (fltr);
-			container.push_back (fltr);
-			
-			kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
-		//
-		// If it is an array, iterate through its properties
-		//
-		}else if (isArray (ip))
-		{
-			boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray>(ip);
-			// Loop throug all children
-			CArray::Value::iterator it = array->value.begin ();
-			for (; it != array->value.end(); ++it)
-			{
-				std::string fltr;
-				boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
-				name->getPropertyValue (fltr);
-				container.push_back (fltr);
-				
-				kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
-
-			} // for (; it != array->value.end(); ++it)
-		}
-	}
+	void getFilters (Container& container) const;
 
 
 	//
@@ -981,39 +888,7 @@ private:
 	 *
 	 * @param context Context in which a change occured.
 	 */
-	void _objectChanged (boost::shared_ptr<const ObserverContext> context)
-	{
-		// Do not notify anything if we are not in a valid pdf
-		if (!hasValidPdf (this))
-			return;
-		assert (hasValidRef (this));
-
-		// Set correct length
-		if (getLength() != buffer.size())
-		{
-			kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
-			setLength (buffer.size());
-		}
-		
-		// Dispatch the change
-		this->dispatchChange ();
-		
-		if (context)
-		{
-			// Clone this new value
-			boost::shared_ptr<IProperty> newValue (this->clone());
-			// Fill them with correct values
-			newValue->setPdf (this->getPdf());
-			newValue->setIndiRef (this->getIndiRef());
-			// Notify everybody about this change
-			this->notifyObservers (newValue, context);
-
-		}else
-		{
-			assert (!"Invalid context");
-			throw CObjInvalidOperation ();
-		}
-	}
+	void _objectChanged (boost::shared_ptr<const ObserverContext> context);
 
 	/**
 	 * Get encoded string representation.
@@ -1055,6 +930,15 @@ private:
 	 * @return Context in which a change occured.
 	 */
 	ObserverContext* _createContext () const;
+
+public:
+	/**
+	 * Return all object we have access to.
+	 *
+	 * @param store Container of objects.
+	 */
+	template <typename Storage>
+	void _getAllChildObjects (Storage& store) const;
 
 	
 	//
