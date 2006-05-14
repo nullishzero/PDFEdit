@@ -127,46 +127,7 @@ public:
 // Forward declaration
 //
 class CContentStream;	
-
-
-//==========================================================
-// CContentStream Observer
-//==========================================================
-
-/**
- * Content stream observer.
- *
- * If a stream is changed, reparse whole contentstream.
- */
-struct CContentStreamObserver : public IProperty::Observer
-{
-	//
-	// Constructor
-	//
-	CContentStreamObserver (CContentStream* cc) : contentstream (cc)
-		{assert (cc);}
-			
-	//
-	// Observer interface
-	//
-	virtual void 
-	notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
-
-	//
-	//
-	//
-	virtual priority_t getPriority() const throw ()
-		{return 0;};
-	//
-	// Destructor
-	//
-	virtual ~CContentStreamObserver () throw () {};
-
-private:
-	CContentStream* contentstream;
-};
-
-
+typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
 
 //==========================================================
 // CContentStream
@@ -191,16 +152,15 @@ private:
  * Content stream does not derive from CStream because content stream can
  * consist of several streams.
  */
-class CContentStream
+class CContentStream : public noncopyable, public CContentStreamObserver 
 {
 public:
 	typedef std::vector<boost::shared_ptr<PdfOperator> > Operators;
-	typedef std::vector<boost::shared_ptr<CStream> > ContentStreams;
 
 private:
 
 	/** Content stream cobject. */
-	ContentStreams contentstreams;
+	boost::shared_ptr<CStream> contentstream;
 
 	/** Parsed content stream operators. */
 	Operators operators;
@@ -208,9 +168,46 @@ private:
 	/** Change indicator. */
 	bool _changed;
 
+	
+	//
+	// Observer observing underlying stream
+	//
+private:	
+	/**
+	 * Content stream observer.
+	 *
+	 * If a stream is changed, reparse whole contentstream.
+	 */
+	struct CContentStreamObserver : public IProperty::Observer
+	{
+		//
+		// Constructor
+		//
+		CContentStreamObserver (CContentStream* cc) : contentstream (cc)
+			{assert (cc);}
+		//
+		// Observer interface
+		//
+		virtual void 
+		notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
+		//
+		//
+		//
+		virtual priority_t getPriority() const throw ()
+			{return 0;};
+		//
+		// Destructor
+		//
+		virtual ~CContentStreamObserver () throw () {};
+
+	private:
+		CContentStream* contentstream;
+	};
+
 	/** CStream observer. */
 	boost::shared_ptr<CContentStreamObserver> observer;
 
+	
 	//
 	// Constructors
 	//
@@ -221,14 +218,8 @@ public:
 	 *
 	 * @param stream CStream representing content stream or dictionary of more content streams.
 	 */
-	CContentStream (ContentStreams& streams);
+	CContentStream (boost::shared_ptr<CStream> streams);
 
-	/**
-	 * Constructor. 
-	 *
-	 * @param stream CStream representing content stream or dictionary of more content streams.
-	 */
-	CContentStream (boost::shared_ptr<CStream> stream);
 
 	//
 	// Get methods
@@ -244,7 +235,7 @@ public:
 	/**
 	 * Get objects at specified position.
 	 *
-	 * @param operators Container that will hold all objects at position.
+	 * @param operators Objects will be added to the back of the container.
 	 */
 	template<typename OpContainer, typename PdfOpPosComparator>
 	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state) const

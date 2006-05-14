@@ -33,9 +33,6 @@ using namespace utils;
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-
-	// Parse the content stream if found
-	//parseContentStream ();	
 }
 
 //
@@ -67,26 +64,6 @@ CPage::getMediabox () const
 }
 
 //
-// Get contents stream.
-//
-boost::shared_ptr<CContentStream> 
-CPage::getContentStream ()
-{ 
-	// If contentstrea exists && is not empty and not changed return it
-	if (contentstream && !contentstream->invalid())
-	{
-		return contentstream; 
-	
-	}else
-	{
-		contentstream.reset ();
-		parseContentStream ();
-		return contentstream; 
-	}
-}
-
-
-//
 // Set methods
 //
 
@@ -105,8 +82,8 @@ CPage::setMediabox (const Rectangle& rc)
 		throw MalformedFormatExeption ("Page::MediaBox is not array.");
 
   	setDoubleInArray (*mbox, 0, rc.xleft);
-	setDoubleInArray (*mbox, 1, rc.xright);
-	setDoubleInArray (*mbox, 2, rc.yleft);
+	setDoubleInArray (*mbox, 1, rc.yleft);
+	setDoubleInArray (*mbox, 2, rc.xright);
 	setDoubleInArray (*mbox, 3, rc.yright);
 }
 
@@ -218,18 +195,15 @@ bool CPage::parseContentStream ()
 		{
 			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
 			// Create contentstream from a stream
-			contentstream = shared_ptr<CContentStream> (new CContentStream (stream));
+			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream (stream)));
 		
 		}else if (isArray (contents))
 		{
-			// Save all streams from array to a vector
-			CContentStream::ContentStreams streams;
+			// We can be sure that streams are indirect objects (pdf spec)
 			shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
 			for (size_t i = 0; i < array->getPropertyCount(); ++i)
-				streams.push_back (getCStreamFromArray (array, i));
-			
-			// Create contentstream from array of streams
-			contentstream = shared_ptr<CContentStream> (new CContentStream (streams));
+				contentstreams.push_back 
+					(shared_ptr<CContentStream> (new CContentStream(getCStreamFromArray(array,i))) );
 			
 		}else // Neither stream nor array
 		{

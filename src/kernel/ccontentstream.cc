@@ -1000,7 +1000,7 @@ namespace
 	 * @param stream 	Stream.
 	 */
 	void
-	parseContentStream (CContentStream::Operators& operators, CContentStream::ContentStreams& streams)
+	parseContentStream (CContentStream::Operators& operators, shared_ptr<CStream> stream)
 	{
 		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> last, previousLast;
@@ -1009,41 +1009,37 @@ namespace
 		// Clear operators
 		operators.clear ();
 	
-		for (CContentStream::ContentStreams::iterator it = streams.begin (); it != streams.end (); ++it)
-		{
-			assert (hasValidPdf(*it));
-			assert (hasValidRef (*it));
+		assert (hasValidPdf (stream));
+		assert (hasValidRef (stream));
+	
+		// Open stream
+		stream->open ();
 		
-			// Open stream
-			(*it)->open ();
-			
-			//
-			// actual is the top most last one, e.g. a composite
-			// last is the last operator, e.g. the last item of an composite
-			// we want to add new (actual) after the last one of LAST call to
-			// 	createOp
-			//
-			while (actual=createOp (*(*it), operands, last))
+		//
+		// actual is the top most last one, e.g. a composite
+		// last is the last operator, e.g. the last item of an composite
+		// we want to add new (actual) after the last one of LAST call to
+		// 	createOp
+		//
+		while (actual=createOp (*stream, operands, last))
+		{
+			if (previousLast)
 			{
-				if (previousLast)
-				{
-					// Insert it in to the pdfoperator chain
-					PdfOperator::putBehind (previousLast, actual);
-				}
-				// Save it into our "top level" container
-				operators.push_back (actual);
-				previousLast = last;
+				// Insert it in to the pdfoperator chain
+				PdfOperator::putBehind (previousLast, actual);
 			}
-
-			// Close stream
-			(*it)->close ();
+			// Save it into our "top level" container
+			operators.push_back (actual);
+			previousLast = last;
 		}
 
+		// Close stream
+		stream->close ();
+
 		assert (operands.empty());
-	
 		// Set pdf and ref
 		if (!operators.empty())
-			operandsSetPdf (operators.front(), *(streams.front()->getPdf()), streams.front()->getIndiRef());
+			operandsSetPdf (operators.front(), *(stream->getPdf()), stream->getIndiRef());
 
 	}
 
@@ -1102,8 +1098,13 @@ adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state)
 //
 // Observer interface
 //
+
+//
+//
+//
 void 
-CContentStreamObserver::notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext>) const 
+CContentStream::CContentStreamObserver::notify (boost::shared_ptr<IProperty> newValue, 
+												boost::shared_ptr<const IProperty::ObserverContext>) const 
 throw ()
 {
 	utilsPrintDbg (debug::DBG_DBG, "");
@@ -1121,11 +1122,11 @@ throw ()
 //
 // Constructors
 //
-CContentStream::CContentStream (shared_ptr<CStream> stream) : _changed (false)
+CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (stream), _changed (false)
 {
 	kernelPrintDbg (DBG_DBG, "");
 
-	if (stream)
+	if (contentstream)
 	{
 		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
 		// the problem is with parsed pdfoperators
@@ -1133,12 +1134,9 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : _changed (false)
 		if (!hasValidPdf (stream) || !hasValidRef (stream))
 			throw CObjInvalidObject ();
 		
-		// Save stream
-		contentstreams.push_back (stream);
-
 		// Register observer
 		observer = boost::shared_ptr<CContentStreamObserver> (new CContentStreamObserver (this));
-		stream->registerObserver (observer);
+		contentstream->registerObserver (observer);
 
 		// Parse it into small objects
 		reparse ();
@@ -1148,26 +1146,6 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : _changed (false)
 		assert (!"Bad stream.");
 		throw CObjInvalidObject ();
 	}
-}
-
-//
-// Parse the xpdf object, representing the content stream
-//
-CContentStream::CContentStream (ContentStreams& streams) : _changed (false)
-{
-	kernelPrintDbg (DBG_DBG, "");
-	
-	// If streams are not empty save them
-	if (!streams.empty())
-		copy (streams.begin(), streams.end(), back_inserter (contentstreams));
-
-	// Register observers
-	observer = boost::shared_ptr<CContentStreamObserver> (new CContentStreamObserver (this));
-	for (ContentStreams::iterator it = streams.begin(); it != streams.end (); ++it)
-		(*it)->registerObserver (observer);
-
-	// Parse them
-	reparse ();
 }
 
 //
@@ -1203,7 +1181,7 @@ CContentStream::getStringRepresentation (string& str) const
 void
 CContentStream::reparse ()
 {
-	parseContentStream (operators, contentstreams);
+	parseContentStream (operators, contentstream);
 }
 
 

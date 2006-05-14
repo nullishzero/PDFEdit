@@ -102,14 +102,21 @@ public:
  */
 class CPage
 {
+public:
+	typedef std::vector<boost::shared_ptr<CContentStream> > ContentStreams;
+	
 private:
 
 	/** Pdf dictionary representing a page. */
 	boost::shared_ptr<CDict> dictionary;
 
 	/** Class representing content stream. */
-	boost::shared_ptr<CContentStream> contentstream;
+	ContentStreams contentstreams;
 
+	
+	//
+	// Constructors
+	//
 public:
 		
 	/** Constructor. */
@@ -136,6 +143,9 @@ public:
 	};
 	
 
+	//
+	// Get methods
+	//	
 public:
 	
 	/**
@@ -204,14 +214,23 @@ public:
 		// Create state
 		GfxState state (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown);
 		
-		// If changed or empty try to parse it
-		if (NULL == contentstream.get() || contentstream->invalid ())
-			parseContentStream ();
-
-		// Get the objects with specific comparator
-		contentstream->getOperatorsAtPosition (opContainer, cmp, state);
+		// If not parsed
+		if (contentstreams.empty())
+			parseContentStream ();		
+	
+		// Get objects
+		for (ContentStreams::iterator it = contentstreams.begin (); it != contentstreams.end(); ++it)
+		{
+			// Get the objects with specific comparator
+			(*it)->getOperatorsAtPosition (opContainer, cmp, state);
+		}
 	}
 
+	
+	//
+	// Helper methods
+	//
+public:	
 	/**
 	 * Draw page on an output device.
 	 *
@@ -221,11 +240,23 @@ public:
 	void displayPage (::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
 	
 	/** 
-	 * Get contents stream.
+	 * Get contents streams.
 	 *
 	 * @return Content stream.
 	 */
-	boost::shared_ptr<CContentStream> getContentStream ();
+	template<typename Container>
+	void
+	getContentStreams (Container& container)
+	{
+		kernelPrintDbg (debug::DBG_DBG, "");
+
+		// If not parsed
+		if (contentstreams.empty())
+			parseContentStream ();		
+
+		container.clear();
+		std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(container));
+	};
 
 
 	/**
