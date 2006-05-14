@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/05/14 16:15:07  hockm0bm
+ * quick fix
+ *         - putLine appends new line character
+ *
  * Revision 1.9  2006/05/14 12:35:24  hockm0bm
  * * StreamWriter
  *         - putLine() with size parameter method added
@@ -83,6 +87,8 @@ void FileStreamWriter::putLine(const char * line, size_t length)
 		size_t writen=fwrite(line+totalWriten, sizeof(char), length-totalWriten, f);
 		totalWriten+=writen;
 	}
+	fputc('\n', f);
+	totalWriten++;
 	fflush(f);
 	setPos(pos+totalWriten);
 }
