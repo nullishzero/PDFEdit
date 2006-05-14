@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/05/14 21:10:19  hockm0bm
+ * content stream to xpdf Object test
+ *         - doesn't work properly
+ *
  * Revision 1.3  2006/05/13 22:19:29  hockm0bm
  * isInValidPdf refactored to hasValidPdf or isPdfValid functions
  *
@@ -132,11 +136,17 @@ public:
 
 				Object * xpdfContentStr=contentStr->_makeXpdfObject();
 				int ch;
-				printf("Decoded content stream:\n");
 				xpdfContentStr->getStream()->reset();
-				while((ch=xpdfContentStr->getStream()->getChar())!=EOF)
-					printf("%c", ch);
-				printf("\nEnd of decoded content stream\n");
+				const CStream::Buffer & buffer=contentStr->getBuffer();
+				size_t bytes=0;
+				// xpdf content must be same as in CStream object
+				printf("\t\tCStream::_makeXpdfObject provides correct Object instance\n");
+				BaseStream * baseStream=xpdfContentStr->getStream()->getBaseStream();
+				while((ch=baseStream->getChar())!=EOF)
+				{
+					CPPUNIT_ASSERT(ch==buffer[bytes]);
+					bytes++;
+				}
 				
 			}catch(ElementNotFoundException & e)
 			{
