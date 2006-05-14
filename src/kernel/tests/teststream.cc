@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/05/14 23:53:54  misuj1am
+ *
+ * -- test fixed
+ *
  * Revision 1.4  2006/05/14 21:10:19  hockm0bm
  * content stream to xpdf Object test
  *         - doesn't work properly
@@ -142,9 +146,11 @@ public:
 				// xpdf content must be same as in CStream object
 				printf("\t\tCStream::_makeXpdfObject provides correct Object instance\n");
 				BaseStream * baseStream=xpdfContentStr->getStream()->getBaseStream();
+				baseStream->reset ();
 				while((ch=baseStream->getChar())!=EOF)
 				{
-					CPPUNIT_ASSERT(ch==buffer[bytes]);
+					char c = ch;
+					CPPUNIT_ASSERT(c==buffer[bytes]);
 					bytes++;
 				}
 				
