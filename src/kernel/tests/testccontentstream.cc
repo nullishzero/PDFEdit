@@ -271,9 +271,9 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 class TestCContentStream : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCContentStream);
-		//CPPUNIT_TEST(TestOpcount);
-		//CPPUNIT_TEST(TestPosition);
-		//CPPUNIT_TEST(TestPrint);
+		CPPUNIT_TEST(TestOpcount);
+		CPPUNIT_TEST(TestPosition);
+		CPPUNIT_TEST(TestPrint);
 		CPPUNIT_TEST(TestSetCS);
 	CPPUNIT_TEST_SUITE_END();
 
