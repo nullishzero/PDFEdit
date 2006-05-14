@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/05/14 14:02:00  hockm0bm
+ * quick fix
+ *         - CharBuffer handling changed (uses CharBuffer.get rather than * operator and casting)
+ *
  * Revision 1.4  2006/05/14 12:34:01  hockm0bm
  * support for special writing of stream objects
  *
@@ -102,7 +106,7 @@ using namespace debug;
 			// the buffer part and so possibly \0. So we are using ByteB
 			CharBuffer charBuffer;
 			size_t size=streamToCharBuffer(*obj, ref, charBuffer, true);
-			stream.putLine((char *)(*charBuffer), size);
+			stream.putLine(charBuffer.get(), size);
 		}
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		
