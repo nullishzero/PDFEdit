@@ -4,6 +4,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/05/14 12:35:24  hockm0bm
+ * * StreamWriter
+ *         - putLine() with size parameter method added
+ * * FileStreamWriter
+ *         - putLine(char *, size_t) implemented
+ *         - putLine(char *) uses one with size
+ *
  * Revision 1.8  2006/05/08 14:23:02  hockm0bm
  * * StreamWriter new flush method added
  * * clone method corrected
@@ -55,11 +62,29 @@ void FileStreamWriter::putLine(const char * line)
 	// NULL line is ignored
 	if(!line)
 		return;
+
+	// uses putLine with number of bytes same as string length
+	putLine(line, strlen(line));
 	
+}
+
+void FileStreamWriter::putLine(const char * line, size_t length)
+{
+	if(!line)
+		return;
+
 	size_t pos=getPos();
-	int writen=fprintf(f, "%s\n", line);
+	size_t totalWriten=0;
+	
+	// writes all data
+	// FIXME what if not enough place for writing...
+	while(totalWriten<length)
+	{
+		size_t writen=fwrite(line+totalWriten, sizeof(char), length-totalWriten, f);
+		totalWriten+=writen;
+	}
 	fflush(f);
-	setPos(pos+writen);
+	setPos(pos+totalWriten);
 }
 
 size_t FileStreamWriter::clone(FILE * file, size_t start, size_t length)

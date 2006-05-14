@@ -4,6 +4,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/05/14 12:35:25  hockm0bm
+ * * StreamWriter
+ *         - putLine() with size parameter method added
+ * * FileStreamWriter
+ *         - putLine(char *, size_t) implemented
+ *         - putLine(char *) uses one with size
+ *
  * Revision 1.5  2006/05/08 14:23:02  hockm0bm
  * * StreamWriter new flush method added
  * * clone method corrected
@@ -70,6 +77,19 @@ public:
 	 */
 	virtual void putLine(const char * line)=0;
 
+	/** Puts exactly length number of byte to one line.
+	 * @param line Line buffer pointer.
+	 * @param length Number of bytes to be printed.
+	 *
+	 * Doesn't check end of the string '\0' and prints exactly given number of
+	 * bytes. This should be used when binary data are stored in line and so
+	 * they may contain '\0' bytes.
+	 * <br>
+	 * Caller should guarantee that line is allocated at least for length size.
+	 * Otherwise result is unpredictable.
+	 */
+	virtual void putLine(const char * line, size_t length)=0;
+	
 	/** Forces stream flush.
 	 *
 	 * Cached data in stream are forced to be writen to the target.
@@ -119,6 +139,18 @@ public:
 	 */
 	virtual void putLine(const char * line);
 
+	/** Puts exactly length number of byte to one line.
+	 * @param line Line buffer pointer.
+	 * @param length Number of bytes to be printed.
+	 *
+	 * Prints exactly length number of bytes starting from given line.
+	 * Additionally flushes all changes to the file and position is moved after
+	 * inserted buffer.
+	 *
+	 * @see StreamWriter::putLine(const char *, size_t)
+	 */
+	virtual void putLine(const char * line, size_t length);
+	
 	/** Forces file flush.
 	 *
 	 * Calls fflush on the file handle.
