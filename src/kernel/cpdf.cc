@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.50  2006/05/14 12:37:24  hockm0bm
+ * debug messages improved
+ *
  * Revision 1.49  2006/05/13 22:19:29  hockm0bm
  * isInValidPdf refactored to hasValidPdf or isPdfValid functions
  *
@@ -651,7 +654,7 @@ using namespace std;
 using namespace pdfobjects::utils;
 
 	IndiRef indiRef=getValueFromSimple<CRef, pRef, IndiRef>(ref);
-	utilsPrintDbg(DBG_DBG, "ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+	utilsPrintDbg(DBG_DBG, indiRef);
 
 	// registers observer for page tree handling
 	ref->registerObserver(observer);
@@ -688,7 +691,7 @@ using namespace pdfobjects::utils;
 			registerPageTreeObserver(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr), observer);
 	}
 
-	utilsPrintDbg(DBG_DBG, "All subnodes done for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<indiRef);
 }
 
 
@@ -947,7 +950,7 @@ boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
 {
 using namespace debug;
 
-	kernelPrintDbg (DBG_DBG,"ref=["<<ref.num << "," << ref.gen <<"]");
+	kernelPrintDbg (DBG_DBG, ref);
 
 	// find the key, if it exists
 	IndirectMapping::iterator i = indMap.find(ref);
@@ -976,10 +979,10 @@ using namespace debug;
 		IProperty * prop=utils::createObjFromXpdfObj(*this, obj, ref);
 		prop_ptr=shared_ptr<IProperty>(prop);
 		indMap.insert(IndirectMapping::value_type(ref, prop_ptr));
-		kernelPrintDbg(DBG_INFO, "Mapping created for ref=["<<ref.num<<", "<<ref.gen<<"]");
+		kernelPrintDbg(DBG_INFO, "Mapping created for "<<ref);
 	}else
 	{
-		kernelPrintDbg(DBG_INFO, "ref["<<ref.num<<", "<<ref.gen<<"] not available or points to objNull");
+		kernelPrintDbg(DBG_INFO, ref<<" not available or points to objNull");
 		prop_ptr=shared_ptr<CNull>(CNullFactory::getInstance());
 	}
 
@@ -1013,7 +1016,7 @@ using namespace utils;
 	// creates return value from xpdf reference structure
 	// and returns
 	IndiRef reference(ref);
-	kernelPrintDbg(DBG_INFO, "New indirect object inserted with reference ["<<ref.num<<", "<<ref.gen<<"]");
+	kernelPrintDbg(DBG_INFO, "New indirect object inserted with reference "<<ref);
 	change=true;
 	return reference;
 }
@@ -1069,7 +1072,7 @@ using namespace debug;
 	// this reference is processed for the first time. Reserves new
 	// reference for indirect object and stores mapping from original
 	// value to container.
-	kernelPrintDbg(DBG_DBG, "processing ["<<oldRef.num<<","<<oldRef.gen<<"] for the first time");
+	kernelPrintDbg(DBG_DBG, "processing "<<oldRef<<" for the first time");
 	IndiRef indiRef(xref.reserveRef());
 	
 	// creates entry in container to enable reusing old reference to new
@@ -1118,7 +1121,7 @@ using namespace utils;
 				IndiRef elem=i->first;
 				if(elem==ipRef)
 				{
-					kernelPrintDbg(DBG_DBG, "["<<ipRef.num<<","<<ipRef.gen<<"] already mapped to ["<<elem.num<<","<<elem.gen<<"]");
+					kernelPrintDbg(DBG_DBG, ipRef<<" already mapped to "<<elem);
 					// this reference has already been processed, so reuses
 					// reference which already has been created/reserved
 					return elem;
@@ -1187,7 +1190,7 @@ using namespace utils;
 			// new reference for this child
 			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(child);
 			ref_ptr->writeValue(ref);
-			kernelPrintDbg(debug::DBG_DBG,"Reference changed to [" << ref.num << ", " <<ref.gen << "]");
+			kernelPrintDbg(debug::DBG_DBG,"Reference changed to " << ref);
 			continue;
 		}
 	}
@@ -1276,12 +1279,12 @@ void CPdf::changeIndirectProperty(boost::shared_ptr<IProperty> prop)
 	// Mapping will be created in next getIndirectProperty call.
 	if(prop==getIndirectProperty(indiRef))
 	{
-		kernelPrintDbg(DBG_INFO,  "Indirect mapping kept for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+		kernelPrintDbg(DBG_INFO,  "Indirect mapping kept for "<<indiRef);
 	}
 	else
 	{
 		indMap.erase(indiRef);
-		kernelPrintDbg(DBG_INFO, "Indirect mapping removed for ref=["<<indiRef.num<<", "<<indiRef.gen<<"]");
+		kernelPrintDbg(DBG_INFO, "Indirect mapping removed for "<<indiRef);
 	}
 
 	// sets change flag
@@ -1683,7 +1686,7 @@ bool CPdf::consolidatePageTree(boost::shared_ptr<CDict> interNode)
 using namespace utils;
 
 	IndiRef interNodeRef=interNode->getIndiRef();
-	kernelPrintDbg(DBG_DBG, "interNode ref=["<<interNodeRef.num<<", "<<interNodeRef.gen<<"]");
+	kernelPrintDbg(DBG_DBG, "interNode "<<interNodeRef);
 
 	// gets pdf of the node
 	CPdf * pdf=interNode->getPdf();
@@ -1779,7 +1782,7 @@ using namespace utils;
 			parentRef=getRefFromDict("Parent", kidDict_ptr);
 			if(! (parentRef==interNode->getIndiRef()))
 			{
-				kernelPrintDbg(DBG_WARN, "Kids["<<index<<"] element dictionary doesn't have Parent with proper reference. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
+				kernelPrintDbg(DBG_WARN, "Kids["<<index<<"] element dictionary doesn't have Parent with proper reference. Correcting to "<<parentRef);
 				CRef cref(interNode->getIndiRef());
 				kidDict_ptr->setProperty("Parent", cref);
 			}
@@ -1789,7 +1792,7 @@ using namespace utils;
 			// Parent not found at all
 			// field is added
 			IndiRef parentRef=interNode->getIndiRef();
-			kernelPrintDbg(DBG_WARN, "No Parent field found. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
+			kernelPrintDbg(DBG_WARN, "No Parent field found. Correcting to "<<parentRef);
 			CRef cref(parentRef);
 			kidDict_ptr->addProperty("Parent", cref);
 		}catch(ElementBadTypeException & e)
@@ -1800,7 +1803,7 @@ using namespace utils;
 			// to exception if types are checked (in paranoid mode of
 			// XRefWriter)
 			IndiRef parentRef=interNode->getIndiRef();
-			kernelPrintDbg(DBG_WARN, "Parent field found but with bad type. Correcting to ref=["<<parentRef.num<<", "<<parentRef.gen<<"]");
+			kernelPrintDbg(DBG_WARN, "Parent field found but with bad type. Correcting to "<<parentRef);
 			kidDict_ptr->delProperty("Parent");
 			CRef cref(parentRef);
 			kidDict_ptr->addProperty("Parent", cref);
@@ -1854,7 +1857,7 @@ using namespace utils;
 	}
 
 	// consolidation had to be done
-	kernelPrintDbg(DBG_INFO, "pageTree consolidation done for inter node ref=["<<interNodeRef.num<<", "<<interNodeRef.gen<<"]");
+	kernelPrintDbg(DBG_INFO, "pageTree consolidation done for inter node "<<interNodeRef);
 	return false;
 }
 
