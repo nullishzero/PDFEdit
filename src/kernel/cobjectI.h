@@ -207,7 +207,7 @@ CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverConte
 		newValue->setPdf (IProperty::getPdf());
 		newValue->setIndiRef (IProperty::getIndiRef());
 		// Notify everybody about this change
-		IProperty::notifyObservers (newValue, context);
+		this->notifyObservers (newValue, context);
 	}else
 	{
 		assert (!"Invalid context");
