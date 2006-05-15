@@ -626,7 +626,7 @@ Stream * FileStream::clone()
    fseek(f, start, SEEK_SET);
 
    // copies file content to buffer
-   char * buffer=(char *)malloc(sizeof(char)*(l+1));
+   char * buffer=(char *)gmalloc(sizeof(char)*(l+1));
    if(!buffer)
       return NULL;
 
@@ -788,11 +788,11 @@ MemStream::MemStream(char *bufA, Guint startA, Guint lengthA, Object *dictA, GBo
 Stream * MemStream::clone()
 {
   // creates deep copy of memstream buffer from start with length
-  char * buffer=(char *)malloc(sizeof(char)*(length +1));
+  char * buffer=(char *)gmalloc(sizeof(char)*(length +1));
   if(!buffer)
     return NULL;
 
-  memcpy(buffer, buffer+start, length);
+  memcpy(buffer, buf+start, length);
   buffer[length]='\0';
 
   // clones stream dictionary
@@ -874,6 +874,7 @@ void MemStream::doDecryption(Guchar *fileKey, int keyLength,
     }
     bufEnd = newBuf + length;
     bufPtr = newBuf + (bufPtr - (buf + start));
+    // TODO why it is set to 0 not startA????
     start = 0;
     buf = newBuf;
     needFree = gTrue;
