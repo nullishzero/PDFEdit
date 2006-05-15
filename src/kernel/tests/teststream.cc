@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/05/15 18:33:03  hockm0bm
+ * test improvements
+ *
  * Revision 1.5  2006/05/14 23:53:54  misuj1am
  *
  * -- test fixed
@@ -39,12 +42,11 @@ class TestStream: public CppUnit::TestFixture
 
 public:
 
-	bool compareStreams(Stream * str1, Stream * str2, size_t pos=0, int count=-1)
+	bool compareStreams(Stream * str1, Stream * str2, int count=-1)
 	{
 		int ch1, ch2;
-		// starts from givem position
-		str1->setPos(pos);
-		str2->setPos(pos);
+		str1->reset();
+		str2->reset();
 		do
 		{
 			// decrement only if count parameter is used
@@ -94,13 +96,12 @@ public:
 
 		printf("TC02:\tcloned stream's content is same as original\n");
 		Stream * clonedStream=unlimitedStream->clone();
-		unlimitedStream->reset();
 		CPPUNIT_ASSERT(compareStreams(unlimitedStream, clonedStream));
 
-		printf("TC03:\tsubstream clone test");
+		printf("TC03:\tsubstream clone test\n");
 		Stream * subStream=unlimitedStream->makeSubStream(0, true, 1, &dict);
 		Stream * cloneSubStream=subStream->clone();
-		CPPUNIT_ASSERT(compareStreams(subStream, cloneSubStream, 0 ,1));
+		CPPUNIT_ASSERT(compareStreams(subStream, cloneSubStream, 1));
 		
 		delete cloneSubStream;
 		delete subStream;
@@ -117,43 +118,101 @@ public:
 
 		printf("%s\n", __FUNCTION__);
 
-		printf("TC01:\tPage content stream can be read without any error\n");
-		printf("\t\t%u pages found\n", pdf.getPageCount());
+		printf("%u pages found\n", pdf.getPageCount());
 		for(size_t i=1; i<=pdf.getPageCount(); i++)
 		{
 			// gets page dictionary at position and gets Contents 
 			// property from it
 			shared_ptr<CDict> pageDict=pdf.getPage(i)->getDictionary();
+			printf("Page #%d\n", i);
 			try
 			{
 				shared_ptr<IProperty> contentProp=pageDict->getProperty("Contents");
-				if(! isRef(*contentProp))
+				vector<IndiRef> streamRefs;
+				if(! isRef(*contentProp) && !isArray(*contentProp))
 				{
-					printf("\t\tPage %u has uncorect Contents entry\n", i);
+					printf("\tPage %u has uncorect Contents entry type=%d\n", i, contentProp->getType());
 					continue;
-				}
-				IndiRef contentRef=getValueFromSimple<CRef, pRef, IndiRef>(contentProp);
-				shared_ptr<CStream> contentStr=IProperty::getSmartCObjectPtr<CStream>(pdf.getIndirectProperty(contentRef));
-				string str;
-				contentStr->getStringRepresentation(str);
-				printf("Content stream for %u page:\n%s\n\n", i, str.c_str());
-
-				Object * xpdfContentStr=contentStr->_makeXpdfObject();
-				int ch;
-				xpdfContentStr->getStream()->reset();
-				const CStream::Buffer & buffer=contentStr->getBuffer();
-				size_t bytes=0;
-				// xpdf content must be same as in CStream object
-				printf("\t\tCStream::_makeXpdfObject provides correct Object instance\n");
-				BaseStream * baseStream=xpdfContentStr->getStream()->getBaseStream();
-				baseStream->reset ();
-				while((ch=baseStream->getChar())!=EOF)
+				}else
 				{
-					char c = ch;
-					CPPUNIT_ASSERT(c==buffer[bytes]);
-					bytes++;
+					if(isRef(*contentProp))
+						streamRefs.push_back(getValueFromSimple<CRef, pRef, IndiRef>(contentProp));
+					else
+					{
+						// gets CArray
+						shared_ptr<CArray> contentArray=IProperty::getSmartCObjectPtr<CArray>(contentProp);
+						// collects all referencies
+						for(size_t i=0; i<contentArray->getPropertyCount(); i++)
+						{
+							shared_ptr<IProperty> element=contentArray->getProperty(i);
+							if(!isRef(element))
+								// just silently ignores non valid members
+								continue;
+							streamRefs.push_back(getValueFromSimple<CRef, pRef, IndiRef>(element));
+						}
+					}
 				}
 				
+				// checks all content streams
+				int index=1;
+				for(vector<IndiRef>::iterator i=streamRefs.begin(); i!=streamRefs.end(); i++, index++)
+				{
+					printf("\tStream number %d\n", index);
+					IndiRef contentRef=*i;
+					shared_ptr<CStream> contentStr=IProperty::getSmartCObjectPtr<CStream>(pdf.getIndirectProperty(contentRef));
+
+					int ch1, ch2;
+					size_t bytes=0;
+
+					// creates xpdf Object represenation and checks it
+					Object * xpdfContentStr=contentStr->_makeXpdfObject();
+					xpdfContentStr->getStream()->reset();
+					const CStream::Buffer & buffer=contentStr->getBuffer();
+					// xpdf content must be same as in CStream object
+					BaseStream * baseStream=xpdfContentStr->getStream()->getBaseStream();
+					baseStream->reset();
+
+					printf("TC01:\tCStream::_makeXpdfObject object is same as original\n");
+					while((ch1=baseStream->getChar())!=EOF)
+					{
+						CPPUNIT_ASSERT((unsigned char)ch1==(unsigned char)buffer[bytes]);
+						bytes++;
+					}
+
+					// total number of bytes must be correct
+					printf("TC02:\tall bytes read test\n");
+					Object streamLen;
+					// FIXME
+					//CPPUNIT_ASSERT(bytes==contentStr->getLength());
+
+					// checks cloning of content stream
+					Object * xpdfContentClone=xpdfContentStr->clone();
+					if(xpdfContentClone)
+					{
+						printf("TC03:\tcloned content stream is same as original test\n");
+						CPPUNIT_ASSERT(compareStreams(xpdfContentClone->getStream(), xpdfContentStr->getStream()));
+
+						printf("TC04:\tcloned content base stream is same as original test\n");
+						BaseStream * cloneBaseStream=xpdfContentClone->getStream()->getBaseStream();
+						CPPUNIT_ASSERT(compareStreams(cloneBaseStream, baseStream));
+
+						freeXpdfObject(xpdfContentClone);
+					}else
+						printf("\t\tstream cloning failed. Stream kind is %d\n", xpdfContentClone->getStream()->getKind());
+						
+					// directly fetched stream must be same as created
+					Object fetchedContentStr;
+					pdf.getCXref()->fetch(contentRef.num, contentRef.gen, &fetchedContentStr);
+					printf("TC05:\tfetched content stream stream is same as original\n");
+					CPPUNIT_ASSERT(compareStreams(fetchedContentStr.getStream(), xpdfContentStr->getStream()));
+					BaseStream * baseStreamFetched=fetchedContentStr.getStream()->getBaseStream();
+					printf("TC06:\tfetched content base stream stream is same as original\n");
+					CPPUNIT_ASSERT(compareStreams(baseStream, baseStreamFetched));
+					
+					// deallocates all objects
+					freeXpdfObject(xpdfContentStr);
+					fetchedContentStr.free();
+				}
 			}catch(ElementNotFoundException & e)
 			{
 				printf("\t\tPage %u has no content stream\n", i);
