@@ -1344,13 +1344,13 @@ size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& st
  * representation of given stream object. Moreover adds indirect header and
  * footer if asIndirect parameter is true. 
  * <br>
- * Given buffer may contain '\0' bytes inside. Caller should consume number of
+ * Given buffer may contain NUL bytes inside. Caller should consume number of
  * returned bytes from outputBuf.
  * <br>
  * Reference parameter is ignored if asIndirect is false, because it is used
  * only for indirect object header.
  * 
- * @return number of bytes used in outputBuf.
+ * @return number of bytes used in outputBuf or 0 if problem occures.
  */
 size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect=true);
 	
