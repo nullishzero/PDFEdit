@@ -775,17 +775,16 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
 	//
 	// Copy buffer and use parser to make stream object
 	//
-	std::string end ("\nendstream");
-	char* tmpbuf = new char [buffer.size() + end.length()];
+	char* tmpbuf = static_cast<char*> (gmalloc (buffer.size() + CSTREAM_FOOTER.length()));
 	size_t i = 0;
 	for (CStream::Buffer::const_iterator it = buffer.begin(); it != buffer.end (); ++it)
-		tmpbuf [i++] = static_cast<char> (*it);
-	std::copy (tmpbuf, tmpbuf + end.length(), std::back_inserter (end));
+		tmpbuf [i++] = static_cast<char> ((unsigned char)(*it));
+	std::copy (CSTREAM_FOOTER.begin(), CSTREAM_FOOTER.end(), &(tmpbuf[i]));
 	assert (i == buffer.size());
 	//utilsPrintDbg (debug::DBG_DBG, tmpbuf);
 	
 	// Create stream
-	::Stream* stream = new MemStream (tmpbuf, 0, buffer.size(), dict);
+	::Stream* stream = new MemStream (tmpbuf, 0, buffer.size(), dict, true);
 	// Set filters
 	stream = stream->addFilters (dict);
 	stream->reset ();

@@ -976,13 +976,13 @@ CObjectStream<Checker>::setLength (size_t len)
 		if (isInt (clen))
 		{
 			//Lock
-			lockDictionary ();
+			dictionary.lockChange ();
 			
 			// Change is dispatched here 
 			IProperty::getSmartCObjectPtr<CInt>(clen)->writeValue (len);
 			
 			// Unlock
-			unlockDictionary ();
+			dictionary.unlockChange ();
 	
 		}else
 		{
@@ -993,13 +993,13 @@ CObjectStream<Checker>::setLength (size_t len)
 	}catch (ElementNotFoundException&)
 	{
 		//Lock
-		lockDictionary ();
+		dictionary.lockChange ();
 		
 		CInt _len (len);
 		dictionary.addProperty ("Length", _len);
 		
 		// Unlock
-		unlockDictionary ();
+		dictionary.unlockChange ();
 
 	}
 }
@@ -1255,9 +1255,9 @@ CObjectStream<Checker>::_objectChanged (boost::shared_ptr<const ObserverContext>
 	
 	if (context)
 	{
-		// Clone this new value
+		// Clone new value
 		boost::shared_ptr<IProperty> newValue (this->clone());
-		// Fill them with correct values
+		// Fill it with correct values
 		newValue->setPdf (this->getPdf());
 		newValue->setIndiRef (this->getIndiRef());
 		// Notify everybody about this change

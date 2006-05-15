@@ -182,7 +182,7 @@ private:
 	IndiRef 		ref;		/**< Object's pdf id and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
 	CPdf* 			pdf;		/**< This object belongs to this pdf. */	
-
+	bool			wantDispatch;/**< If true, changes are dispatched. */
 
 	//
 	// Constructors
@@ -331,6 +331,10 @@ public:
 	 */
 	virtual void getStringRepresentation (std::string& str) const = 0;
 
+	//
+	// Dispatch change
+	//
+public:
 	/**
  	 * Notify Writer object that this object has changed. 
 	 *
@@ -339,6 +343,16 @@ public:
 	 * REMARK: This is an example of Template method design pattern.
 	 */
 	void dispatchChange () const;
+
+	/**
+	 * Lock changes. Do not dispatch changes.
+	 */
+	void lockChange () {assert (true == wantDispatch); wantDispatch = false;}
+
+	/**
+	 * Unlock changes. Do dispatch changes.
+	 */
+	void unlockChange () {assert (false == wantDispatch); wantDispatch = true;}
 
 	/**
 	 * Create xpdf object.

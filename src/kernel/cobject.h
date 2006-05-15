@@ -497,11 +497,13 @@ public:
 	boost::shared_ptr<IProperty> setProperty (PropertyId id, IProperty& ip);
 	
 	/**
-	 * Adds property to array/dict/stream. 
+	 * Adds property to array/dict. 
 	 *
 	 * Firstly, the property that is passed as argument is cloned, the argument itself is not added. 
 	 * The cloned object is added, automaticly associated with the pdf where the object is beeing added.
 	 * Indicate that this object has changed and return the pointer to the cloned object.
+	 *
+	 * <exception cxref="OutOfRange"> Thrown when position is out of range.
 	 *
 	 * @param newIp 		New property.
 	 * @param propertyName 	Name of the created property.
@@ -519,7 +521,7 @@ public:
 	 * occupied by the xpdf object. Properties start with index 0.
 	 * Finally indicate that this object has changed.
 	 *
-	 * <exception cref="ObjInvalidPositionInComplex "/> When the id does not correctly identify an item.
+	 * <exception cref="ElementNotFoundException"/> Thrown when object is not found.
 	 * 
 	 * @param id Name/Index of property
 	 */
@@ -955,29 +957,7 @@ public:
 	static void getSupportedStreams (Container& supported) 
 		{ filters::CFilterFactory::getSupportedStreams (supported); }
 
-protected:
-	/**
-	 * Lock dictionary. It will not dispatch any changes.
-	 */
-	void lockDictionary ()
-	{ 
-		kernelPrintDbg (debug::DBG_DBG, ""); 
-		dictionary.setPdf (NULL); 
-		dictionary.setIndiRef (IndiRef()); 
-	}
-
-	/**
-	 * Unlock dictionary. It will dispatch all changes.
-	 */
-	void unlockDictionary ()
-	{ 
-		assert (!hasValidPdf(&dictionary));
-		kernelPrintDbg (debug::DBG_DBG, ""); 
-		dictionary.setPdf (this->getPdf()); 
-		dictionary.setIndiRef (this->getIndiRef()); 
-	}
-
-};
+}; /* CObjectStream */
 
 
 

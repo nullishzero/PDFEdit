@@ -137,8 +137,10 @@ typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
  * Content stream of a pdf content stream.
  *
  * It will hold parsed objects of the content stream. Change to the stream 
- * object representing the content stream will not affect this object only changes
- * made by this object's methods.
+ * object representing the content stream will transparently update this object.
+ *
+ * This object represents only one of page content streams. Typically a page
+ * consist of just one content stream.
  *
  * We know 2 types of pdf operators. Simple and complex. Content stream is a sequence of 
  * operators. Each complex operator can  have children. It is a tree structure, but in most cases
@@ -151,6 +153,10 @@ typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
  *
  * Content stream does not derive from CStream because content stream can
  * consist of several streams.
+ * The problem with this object not deriving from IProperty is that, it does not 
+ * have an observer. Pdf operators are special objects, that just represent a
+ * special type of CStream in a human form. 
+ * \TODO make this comment sane
  */
 class CContentStream : public noncopyable, public CContentStreamObserver 
 {

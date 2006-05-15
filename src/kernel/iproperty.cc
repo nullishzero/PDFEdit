@@ -22,14 +22,14 @@ namespace pdfobjects {
 //
 // Constructor
 //
-IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf)
+IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf), wantDispatch (true)
 {
 	//kernelPrintDbg (debug::DBG_DBG, "IProperty () constructor.");
 	
 	ref.num = ref.gen = 0;
 }
 
-IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf)
+IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf), wantDispatch (true)
 {
 	//kernelPrintDbg (debug::DBG_DBG, "IProperty () constructor.");
 }
@@ -73,6 +73,10 @@ IProperty::dispatchChange () const
 	if (!hasValidPdf (this))
 		throw CObjInvalidObject ();
 
+	// If we do not want to dispatch methods return
+	if (!wantDispatch)
+		return;
+	
 	//
 	// If this is an indirect object inform xref about the change
 	// else find the closest indirect object and call dispatchChange on that object

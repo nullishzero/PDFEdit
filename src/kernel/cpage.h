@@ -256,7 +256,7 @@ public:
 
 		container.clear();
 		std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(container));
-	};
+	}
 
 
 	/**
