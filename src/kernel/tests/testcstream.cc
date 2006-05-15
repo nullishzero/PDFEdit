@@ -65,13 +65,14 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
+	//
+	// Make a buffer
+	//
 	Buffer buf;
 	buf.push_back ('h');
 	buf.push_back ('a');
 	buf.push_back ('l');
 	buf.push_back ('o');
-	
-	string tmp;
 	
 	shared_ptr<IProperty> ilen = utils::getReferencedObject (stream->getProperty ("Length"));
 	assert (isInt(ilen));
@@ -81,22 +82,50 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 	clen->getPropertyValue (len);
 	//oss << "Length: " << len << " " << flush;
 	
-	//stream->setRawBuffer (buf);
+	//
+	// Set raw
+	//
+	stream->setRawBuffer (buf);
+	oss << " If an xpdf ERROR occured, that is CORRECT!!!" << flush;
+	string tmp;
 	stream->getStringRepresentation (tmp);
 	//oss << tmp << flush;
 	clen->getPropertyValue (len);
 	//oss << "Length: " << len << " " << flush;
 
+	// Change buffer
 	buf[2] = 'p';
 	buf[3] = 'p';
 
 	clen->getPropertyValue (len);
 	//oss << "Length: " << len << " " << flush;
+	
+	//
+	// Set buf
+	//
 	stream->setBuffer (buf);
 	stream->getStringRepresentation (tmp);
 	//oss << tmp << flush;
 	clen->getPropertyValue (len);
 	//oss << "Length: " << len << " " << flush;
+
+	//
+	// Test setBuffer
+	// 
+	for (int i = 0; i< 10; ++i)
+	{
+		stream->setBuffer (buf);
+		CPPUNIT_ASSERT (buf.size() == stream->getBuffer().size());
+	}
+	
+	//
+	// Test setRawBuffer
+	// 
+	for (int i = 0; i< 10; ++i)
+	{
+		stream->setRawBuffer (buf);
+		CPPUNIT_ASSERT (buf.size() == stream->getBuffer().size());
+	}
 
 	return true;
 }
@@ -280,7 +309,7 @@ public:
 			CPPUNIT_ASSERT (buffer (OUTPUT, (*it).c_str()));
 			OK_TEST;
 			
-			TEST(" set buffers");
+			TEST(" set buffer");
 			CPPUNIT_ASSERT (setbuffer (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
