@@ -734,12 +734,12 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	// here, so we have to deallocate it !!
 	// 
 	size_t len = str.length ();
-	char* pStr = new char [len + 1];
+	char* pStr = (char *)gmalloc(len + 1);
 	strncpy (pStr, str.c_str(), len + 1);
 					
 	scoped_ptr<Parser> parser	(new Parser (xref, 
 										  new Lexer (xref, 
-													 new MemStream (pStr, 0, len, dct.get())
+													 new MemStream (pStr, 0, len, dct.get(), true)
 													 )
 											) 
 								);
@@ -749,9 +749,6 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	Object* obj = XPdfObjectFactory::getInstance();
 	parser->getObj (obj);
 
-	// delete string we don't need it anymore
-	delete[] pStr;
-	
 	//
 	// If xpdf returned objNull and we did not give him null, an error occured
 	//
@@ -1119,9 +1116,6 @@ using namespace debug;
 	size_t bufferLen=(size_t)lenghtObj.getInt();
 	lenghtObj.free();
 
-	// gets stream buffer from given stream's base stream
-	//char streamBuffer[bufferLen];
-	
 	// gets total length and allocates CharBuffer for output	
 	size_t len = 
 		header.length() 
@@ -1130,7 +1124,6 @@ using namespace debug;
 		+ footer.size(); 
 	char* buf = char_buffer_new (len);
 	outputBuf = CharBuffer (buf, char_buffer_delete()); 
-	
 	
 	// get everything together into created buf
 	memset(buf, '\0', len);
@@ -1144,19 +1137,42 @@ using namespace debug;
 	// streamBuffer may contain '\0' so rest has to be copied by memcpy
 	BaseStream * base=streamObject.getStream()->getBaseStream();
 	base->reset();
-	for(size_t i=0; i<bufferLen; i++)
+	size_t i=0;
+	for(; i<bufferLen; i++)
 	{
 		int ch=base->getChar();
+		if(ch==EOF)
+			break;
 		buf[copied+i]=ch;
 	}
-	streamObject.getStream()->reset();
+	// checks number of written bytes and if any problem (more or less data),
+	// clears buffer and returns with 0
+	if(i!=bufferLen)
+	{
+		utilsPrintDbg(DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read.");
+		memset(buf, '\0', len);
+		streamObject.getStream()->reset();
+		return 0;
+	}
+	if(base->getChar()!=EOF)
+	{
+		utilsPrintDbg(DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
+		memset(buf, '\0', len);
+		streamObject.getStream()->reset();
+		return 0;
+	}
 	copied+=bufferLen;
 	memcpy(buf + copied, CSTREAM_FOOTER.c_str(), CSTREAM_FOOTER.length());
+
 	copied+=CSTREAM_FOOTER.length();
 	memcpy(buf + copied, footer.c_str(), footer.length());
 	copied+=footer.length();
 	
+	// just to be sure
 	assert(copied==len);
+	
+	// restore stream object to the begining
+	streamObject.getStream()->reset();
 	return len;
 }
 
