@@ -174,7 +174,7 @@ bool getPdfString (std::ostream& oss, const char* fileName)
 	CharBuffer buf;
 	size_t len = stream->getPdfRepresentation (buf);
 	oss << " Length: [" << len << "]" << flush;
-	oss << std::endl << buf.get () << endl;
+	//oss << std::endl << buf.get () << endl;
 	filters::Printable<char> p;
 	for (size_t i = 0; i < len; ++i)
 		p (buf.get()[i]);
@@ -312,7 +312,7 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
-			TEST(" create");
+			TEST(" test string");
 			CPPUNIT_ASSERT (getString (OUTPUT, (*it).c_str()));
 			CPPUNIT_ASSERT (getPdfString (OUTPUT, (*it).c_str()));
 			OK_TEST;

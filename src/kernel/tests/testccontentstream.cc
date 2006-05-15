@@ -26,7 +26,7 @@ using namespace boost;
 //=====================================================================================
 
 bool
-setCS (ostream& oss, const char* fileName)
+setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
@@ -40,7 +40,7 @@ setCS (ostream& oss, const char* fileName)
 	// parse the content stream
 	string tmp;
 	cs->getStringRepresentation (tmp);
-	oss << tmp << std::endl;
+	//oss << tmp << std::endl;
 	
 	// parse the content stream after change
 	shared_ptr<CDict> dict = page->getDictionary ();
@@ -50,7 +50,7 @@ setCS (ostream& oss, const char* fileName)
 	std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
 	stream->setBuffer (buf);
 	cs->getStringRepresentation (tmp);
-	oss << tmp << std::endl;
+	//oss << tmp << std::endl;
 	
 	//pdf->save (true);
 	return true;
@@ -60,7 +60,7 @@ setCS (ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-position (ostream& oss, const char* fileName, const Rectangle rc)
+position (__attribute__((unused))	ostream& oss, const char* fileName, const Rectangle rc)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
@@ -154,7 +154,7 @@ namespace  {
 } // namespace
 
 bool
-opcount (ostream& oss, const char* fileName)
+opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
