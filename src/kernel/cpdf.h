@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.47  2006/05/15 18:30:23  hockm0bm
+ * * isEncrypted bug fixed
+ *         - Encrypt can be also reference to dictionary
+ * * isDecrypted declaration removed from header file
+ *
  * Revision 1.46  2006/05/13 21:36:52  hockm0bm
  * * addIndirectProperty reworked (problem with cyclic reference dependencies)
  *         - new followsRef flag
@@ -619,9 +624,7 @@ protected:
 	 * <br>
 	 * Caller has to reserve new reference for object, he wants to add and give
 	 * it as indiRef parameter. Also mapping for this new reference should be
-	 * done by caller. We assume, that indiRef can be used for new property and
-	 * if given property is indirect, also mapping from original to newly
-	 * created reference is in given storage.
+	 * done by caller. 
 	 *
 	 * @see registerIndirectProperty
 	 * @see subsReferencies
@@ -1469,7 +1472,7 @@ bool isDescendant(CPdf & pdf, IndiRef parent, boost::shared_ptr<CDict> child);
  * 
  * @return true if file content is encrypted, false otherwise.
  */
-bool isDecrypted(const CPdf & pdf, std::string * filterName);
+bool isEncrypted(CPdf & pdf, std::string * filterName);
 
 } // namespace utils
 

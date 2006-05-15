@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.51  2006/05/15 18:30:23  hockm0bm
+ * * isEncrypted bug fixed
+ *         - Encrypt can be also reference to dictionary
+ * * isDecrypted declaration removed from header file
+ *
  * Revision 1.50  2006/05/14 12:37:24  hockm0bm
  * debug messages improved
  *
@@ -696,7 +701,7 @@ using namespace pdfobjects::utils;
 
 
 
-bool isEncrypted(const CPdf & pdf, string * filterName)
+bool isEncrypted(CPdf & pdf, string * filterName)
 {
 	utilsPrintDbg(DBG_DBG, "");
 
@@ -705,15 +710,24 @@ bool isEncrypted(const CPdf & pdf, string * filterName)
 	try
 	{
 		shared_ptr<IProperty> encryptProp=trailer->getProperty("Encrypt");
+		if(isRef(*encryptProp))
+		{
+			IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(encryptProp);
+			utilsPrintDbg(DBG_DBG, "Encrypt is reference. "<<ref);
+			encryptProp.reset();
+			encryptProp=pdf.getIndirectProperty(ref);
+		}
 		if(isDict(*encryptProp))
 		{
 			shared_ptr<CDict> encryptDict=IProperty::getSmartCObjectPtr<CDict>(encryptProp);
+			utilsPrintDbg(DBG_INFO, "Document content contains Encrypt dictionary.");
 			// if filterName parameter is non NULL, set its value to encryption
 			// algorithm 
 			if(filterName)
 			{
 				shared_ptr<IProperty> filter=encryptDict->getProperty("Filter");
 				filter->getStringRepresentation(*filterName);
+				utilsPrintDbg(DBG_DBG, "Encrypt uses "<<filterName<<" filter method.");
 			}
 			return true;
 		}else
@@ -722,6 +736,8 @@ bool isEncrypted(const CPdf & pdf, string * filterName)
 	{
 		// no Encrypt entry
 	}
+
+	utilsPrintDbg(DBG_DBG, "Document content is not encrypted.");
 	return false;
 }
 
