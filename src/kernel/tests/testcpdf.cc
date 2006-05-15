@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/05/15 18:31:46  hockm0bm
+ * isEncrypted testing
+ *
  * Revision 1.17  2006/05/13 22:12:26  hockm0bm
  * tests updated
  *         - addIndirectProperty tested quite well now and seems that new
@@ -762,6 +765,8 @@ public:
 
 	void Test()
 	{
+		MEM_CHECK;
+		
 		instancingTC();
 		// creates pdf instances for all files
 		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
@@ -769,6 +774,13 @@ public:
 			string fileName=*i;
 			printf("\nTests for file:%s\n", fileName.c_str());
 			CPdf * pdf=getTestCPdf(fileName.c_str());
+			string filterName;
+			if(pdfobjects::utils::isEncrypted(*pdf, &filterName))
+			{
+				printf("Test file is encrypted and so not supported.\n");
+				printf("File is encrypted by %s method\n", filterName.c_str());
+				continue;
+			}
 			// pageIterationTC is before indirectPropertyTC because it needs to
 			// have no changes made before (checks isChanged on non change
 			// producing operations)
@@ -779,6 +791,8 @@ public:
 		}
 		revisionsTC();
 		printf("TEST_CPDF testig finished\n");
+
+		MEM_CHECK;
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
