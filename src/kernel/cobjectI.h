@@ -774,7 +774,7 @@ CObjectStream<Checker>::CObjectStream (CPdf& p, ::Object& o, const IndiRef& rf) 
 	
 	// Get the dictionary and init CDict with it
 	::Object objDict;
-	::Dict* dict = o.streamGetDict();
+	::Dict* dict = o.streamGetDict ();
 	assert (NULL != dict);
 	objDict.initDict (dict);
 	utils::complexValueFromXpdfObj<pDict,CDict::Value&> (dictionary, objDict, dictionary.value);
@@ -1023,12 +1023,32 @@ CObjectStream<Checker>::_makeXpdfObject () const
 	assert (hasValidPdf (this));
 	assert (hasValidRef (this));
 
-	// If size mismatches indicate error
-	if (buffer.size() != getLength ())
+	//
+	// Set correct length. This can ONLY happen e.g. when length is an indirect
+	// object
+	// 
+	if (getLength() != buffer.size())
 	{
-		kernelPrintDbg (debug::DBG_DBG, buffer.size() << " mismatch " << getLength());
-		assert (!"Sizes mismatch.");
-		throw CObjInvalidOperation ();
+		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
+
+		// Get the reference
+		boost::shared_ptr<IProperty> refLen = dictionary.getProperty ("Length");
+		assert (isRef (refLen));
+		if (!isRef(refLen))
+			throw CObjInvalidObject ();
+		
+		// Get the length object
+		boost::shared_ptr<IProperty> len = utils::getReferencedObject (refLen);
+		if (isInt (len))
+		{
+			// Change is dispatched here 
+			IProperty::getSmartCObjectPtr<CInt>(len)->writeValue (buffer.size());
+			
+		}else
+		{
+			assert (!"Length is not int object.");
+			throw CObjInvalidOperation ();
+		}
 	}
 
 	// Get xref
@@ -1084,10 +1104,11 @@ CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 	in.push (input);
 	// Copy it to container
 	Buffer::value_type c;
+	in.get (c);
 	while (!in.eof())
 	{//\TODO Improve this !!!!
-		in.get (c);
 		buffer.push_back (c);
+		in.get (c);
 	}
 	// Close the stream
 	in.reset ();
@@ -1099,33 +1120,24 @@ CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 //
 template<typename Checker>
 void
-CObjectStream<Checker>::getStringRepresentation (std::string& str, bool wantraw) const 
+CObjectStream<Checker>::getStringRepresentation (std::string& str) const 
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	
 	// Empty the string
 	str.clear ();
 
-	// Get dictionary string representation
-	std::string strDict, strBuf;
-	dictionary.getStringRepresentation (strDict);
+	//
+	// Make xpdf object and use its filters to get sane characters
+	// 
+	::Object* obj = _makeXpdfObject ();
+	assert (NULL != obj);
+	
+	// Get the contents
+	utils::getStringFromXpdfStream (str, *obj);
 
-	// Raw content or printable content
-	if (wantraw)
-	{
-		for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
-			strBuf +=  static_cast<std::string::value_type> (*it);
-		
-	}else
-	{
-		// Get printable string representation
-		filters::Printable<Buffer::value_type> print;
-		for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
-			strBuf +=  print (*it);
-	}
-
-	// Put them together
-	utils::streamToString (strDict, strBuf.begin(), strBuf.end(), std::back_inserter(str));
+	// Clean-up
+	utils::freeXpdfObject (obj);
 }
 
 //

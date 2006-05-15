@@ -767,8 +767,7 @@ public:
 	 *
 	 * @param str String representation.
 	 */
-	virtual void getStringRepresentation (std::string& str) const
-		{ getStringRepresentation (str, false); }
+	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
 	 * Returns printable string representation of this object.
@@ -898,15 +897,6 @@ private:
 	 * @param container Output container.
 	 */
 	void encodeBuffer (const Buffer& container);
-
-	/**
-	 * Returns representation of this object.
-	 *
-	 * @param str String representation.
-	 * @param wantraw True if we want raw content, false if we want only
-	 * printable characters.
-	 */
-	virtual void getStringRepresentation (std::string& str, bool wantraw) const;
 
 private:
 	/**
@@ -1362,6 +1352,21 @@ size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBu
  */
 void xpdfObjToString (Object& obj, std::string& str);
 
+
+/**
+ * Get string from xpdf stream object.
+ *
+ * @param str Output string.
+ * @param obj Xpdf stream object.
+ */
+void
+getStringFromXpdfStream (std::string& str, ::Object& obj);
+
+
+//
+// From string functions
+//
+
 /**
  * Create text representation of an indirect object from string and IndiRef.
  *
@@ -1377,7 +1382,8 @@ void xpdfObjToString (Object& obj, std::string& str);
  * @param container Container of characters (e.g. ints).
  * @param obj Stream object.
  */
-void parseStreamToContainer (CStream::Buffer& container, ::Object& obj);
+template<typename T>
+void parseStreamToContainer (T& container, ::Object& obj);
 
 
 //

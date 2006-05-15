@@ -863,6 +863,10 @@ makeStringPdfValid (Iter it, Iter end)
 // =====================================================================================
 
 //
+// To string functions
+// 
+
+//
 //
 //
 void 
@@ -1176,6 +1180,33 @@ using namespace debug;
 	return len;
 }
 
+
+//
+//
+//
+void
+getStringFromXpdfStream (std::string& str, ::Object& obj)
+{
+	if (!obj.isStream())
+	{
+		assert (!"Object is not stream.");
+		throw XpdfInvalidObject ();
+	}
+
+	// Clear string
+	str.clear ();
+
+	// Reset stream
+	obj.streamReset ();
+	// Save chars
+	int c;
+	while (EOF != (c = obj.streamGetChar())) 
+		str += static_cast<std::string::value_type> (c);
+	// Cleanup
+	obj.streamClose ();
+}
+
+
 //
 //
 //
@@ -1235,11 +1266,14 @@ bool
 objHasParent (const IProperty& ip)
 {boost::shared_ptr<IProperty> indi;return objHasParent (ip,indi);}
 
+
+	
 //
 //
 //
+template<typename T>
 void 
-parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
+parseStreamToContainer (T& container, ::Object& obj)
 {
 	assert (container.empty());
 	if (!obj.isStream())
@@ -1260,7 +1294,7 @@ parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
 	assert (xpdfStream);
 	// Get base stream without filters
 	xpdfStream->getBaseStream()->moveStart (0);
-	Stream* rawstr = xpdfStream->getBaseStream();//->makeSubStream (0, gTrue, len, &xpdfDict);
+	Stream* rawstr = xpdfStream->getBaseStream();
 	assert (rawstr);
 	// \TODO THIS IS MAGIC (try-fault practise)
 	rawstr->reset ();
@@ -1268,7 +1302,7 @@ parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
 	// Save chars
 	int c;
 	while (EOF != (c = rawstr->getChar())) 
-		container.push_back (static_cast<CStream::Buffer::value_type> (c));
+		container.push_back (static_cast<typename T::value_type> (c));
 	
 	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());
 	assert (len == container.size());
@@ -1277,6 +1311,10 @@ parseStreamToContainer (CStream::Buffer& container, ::Object& obj)
 	//\TODO is it really ok?
 	rawstr->close ();
 }
+template void parseStreamToContainer<CStream::Buffer> (CStream::Buffer& container, ::Object& obj);
+
+	
+
 
 
 // =====================================================================================
