@@ -114,6 +114,8 @@
        </thead>
        <tbody>
         <row><entry>_revision_tool</entry><entry>Tool to list revisions and change them</entry></row>
+        <row><entry>_zoom_tool</entry><entry>Tool to change zoom level of currently shown page</entry></row>
+        <row><entry>_page_tool</entry><entry>Tool to show and change which page is currently shown</entry></row>
        </tbody>
       </tgroup>
      </table>
