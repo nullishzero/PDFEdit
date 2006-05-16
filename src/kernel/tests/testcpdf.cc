@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/05/16 18:56:42  hockm0bm
+ * test for Delinearizator with observer (ProgressBar)
+ *
  * Revision 1.18  2006/05/15 18:31:46  hockm0bm
  * isEncrypted testing
  *
@@ -69,6 +72,58 @@
 #include "../factories.h"
 #include "../cobjecthelpers.h"
 #include "../cpdf.h"
+#include "../pdfwriter.h"
+#include "utils/delinearizator.h"
+
+using namespace pdfobjects;
+using namespace utils;
+using namespace observer;
+using namespace boost;
+
+class ProgressBar:public PdfWriterObserver
+{
+	mutable float per;
+	int perStep;
+	mutable std::string task;
+public:
+	ProgressBar(int step=20):per(0), perStep(step), task(""){}
+
+	~ProgressBar()throw()
+	{
+	}
+
+	void notify(shared_ptr<OperationStep> newValue, shared_ptr<const IChangeContext<OperationStep> > context)const throw()
+	{
+	using namespace boost;
+
+		size_t curr=newValue->currStep;
+		if(context->getType()!=IChangeContext<OperationStep>::ScopedChangeContextType)
+		{
+			printf("Unsupported context.\n");
+			return;
+		}
+
+		shared_ptr<const PdfWriterObserverContext> writerContext=dynamic_pointer_cast<const PdfWriterObserverContext>(context);
+		size_t total=writerContext->getScope()->total;
+		float currPer=100*((float)curr/(float)total);
+		if(task!=writerContext->getScope()->task.c_str())
+		{
+			// task has changed, so resets
+			task=writerContext->getScope()->task.c_str();
+			per=0;
+		}
+		if( currPer >= per + perStep)	
+		{
+			per=currPer;
+			printf("Processed %.2f task=%s\n", currPer, task.c_str());
+		}
+	}
+
+	observer::IObserver<IProperty>::priority_t getPriority()const throw()
+	{
+		return 0;
+	}
+};
 
 class TestCPdf: public CppUnit::TestFixture
 {
@@ -531,10 +586,6 @@ public:
 	}
 #undef TRY_READONLY_OP
 	
-	void setUp()
-	{
-	}
-
 	void instancingTC()
 	{
 		printf("%s\n", __FUNCTION__);
@@ -759,6 +810,32 @@ public:
 		CPPUNIT_ASSERT(changedIntProp->getIndiRef()==originalIntProp->getIndiRef());
 	}
 
+	void delinearizatorTC(string fileName)
+	{
+	using namespace pdfobjects::utils;
+
+		printf("%s\n", __FUNCTION__);
+
+		// creates delinearizator and delinearize file to the file
+		// fileName-delinearized.pdf
+		IPdfWriter * writer=new OldStylePdfWriter();
+		writer->registerObserver(shared_ptr<PdfWriterObserver>(new ProgressBar()));
+		Delinearizator *delinearizator=Delinearizator::getInstance(fileName.c_str(), writer);
+		if(!delinearizator)
+		{
+			printf("\t%s is not suitable because it is not linearized.\n", fileName.c_str());
+			return;
+		}
+		string outputFile=fileName+"-delinearizator.pdf";
+		printf("\tDelinearized output is in %s file\n", outputFile.c_str());
+		delinearizator->delinearize(outputFile.c_str());
+		delete delinearizator;
+	}
+
+	void setUp()
+	{
+	}
+
 	void tearDown()
 	{
 	}
@@ -788,6 +865,8 @@ public:
 			indirectPropertyTC(pdf);
 			pageManipulationTC(pdf);
 			pdf->close();
+
+			delinearizatorTC(fileName);
 		}
 		revisionsTC();
 		printf("TEST_CPDF testig finished\n");
