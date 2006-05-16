@@ -73,16 +73,16 @@ public:
 		
 		while (!it.isEnd ())
 		{
-			adjustActualPosition (it.getCurrent().lock(), state);
+			adjustActualPosition (it.getCurrent(), state);
 		
 			// Create rectangle from actual position
 			Rectangle rc (state.getCurX (), state.getPageHeight () - state.getCurY(), 0, 0);
 			
 			// DEBUG OUTPUT //
 			std::string frst;
-			it.getCurrent().lock()->getOperatorName(frst);
+			it.getCurrent()->getOperatorName(frst);
 			PdfOperator::Operands ops;
-			it.getCurrent().lock()->getParameters (ops);
+			it.getCurrent()->getParameters (ops);
 			std::string strop;
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
@@ -90,7 +90,7 @@ public:
 			/////////////////
 
 			if (cmp(rc))
-				container.push_back (boost::shared_ptr<PdfOperator> (it.getCurrent()));
+				container.push_back (it.getCurrent());
 
 			it = it.next ();
 		}
@@ -252,9 +252,39 @@ public:
 				(PdfOperator::getIterator (operators.front()), opContainer, cmp, state);
 	}
 
+	/**
+	 * Get pdf operators.
+	 * 
+	 * @param container Container that will hold all first level operators.
+	 */
+	template<typename T>
+	void getPdfOperators (T& container) const
+	{ 
+		container.clear ();
+		std::copy (operators.begin(), operators.end(), std::back_inserter (container));
+	}
+	
+	//
+	// Change methods
+	//
+public:
+	/**
+	 * Delete an operator.
+	 *
+	 * We have to remove it from iterator list and from composite if it is in any.
+	 * We also have to be carefull when removing it from iterator list, because
+	 * if the operator itself is a composite, we can not easily set its
+	 * successor because we do not know it.
+	 * 
+	 * @param it PdfOperator iterator to delete.
+	 */
+	void deleteOperator (PdfOperator::Iterator it);
+	
+
 	//
 	// Helper methods
 	//
+public:
 	/**
 	 * Change indicator.
 	 * 

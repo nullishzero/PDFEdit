@@ -697,11 +697,11 @@ namespace
 		while (!it.isEnd())
 		{
 			// Set cs
-			it.getCurrent().lock()->setContentStream (&cs);
+			it.getCurrent()->setContentStream (&cs);
 			
 			// Get operands
 			PdfOperator::Operands operands;
-			it.getCurrent().lock()->getParameters (operands);
+			it.getCurrent()->getParameters (operands);
 			
 			// Set pdf and ref
 			PdfOperator::Operands::iterator oper = operands.begin ();
@@ -1115,12 +1115,19 @@ CContentStream::CContentStreamObserver::notify (boost::shared_ptr<IProperty> new
 												boost::shared_ptr<const IProperty::ObserverContext>) const 
 throw ()
 {
+	try {
+
 	utilsPrintDbg (debug::DBG_DBG, "");
 	assert (hasValidPdf (newValue));
 	assert (hasValidRef (newValue));
 
-	// Stream is changed, reparse it
+	// Stream has changed, reparse it
 	contentstream->reparse ();
+	
+	}catch (...)
+	{
+		assert (!"This is very very bad because this function can't throw according to the interface.");
+	}
 }
 
 //==========================================================
@@ -1167,15 +1174,22 @@ void
 CContentStream::getStringRepresentation (string& str) const
 {
 	kernelPrintDbg (DBG_DBG, " ()");
-	string frst, tmp;
 
+	if (operators.empty ())
+		return;
+
+	// Clear string
 	str.clear ();
 
-	for (Operators::const_iterator it = operators.begin (); it != operators.end (); ++it)
+	// Loop through every operator
+	PdfOperator::Iterator it = PdfOperator::getIterator (operators.front());
+	string tmp;
+	while (!it.isEnd())
 	{
-		(*it)->getStringRepresentation (tmp);
-		str += tmp + "\n";
+		it.getCurrent()->getStringRepresentation (tmp);
+		str += tmp + " ";
 		tmp.clear ();
+		it.next();
 	}
 }
 
@@ -1189,7 +1203,85 @@ CContentStream::getStringRepresentation (string& str) const
 void
 CContentStream::reparse ()
 {
+	operators.clear ();
 	parseContentStream (operators, contentstream, *this);
+}
+
+
+//
+// Change methods
+//
+
+
+//
+// If an operator is in CContentStream::operators it is
+// 	* not in a composite
+// if it is not there it is
+//  * in a composite, so we have to remove it from the composite
+//  
+// It an operator is a composite
+//  * we have to carefully adjust iterator
+// 
+void
+CContentStream::deleteOperator (PdfOperator::Iterator it)
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (!empty());
+
+	// Be sure that the operator won't get deallocated along the way
+	boost::shared_ptr<PdfOperator> toDel = it.getCurrent ();
+	
+
+
+	// Find the operator in operators, if not found it is in a composite
+	Operators::iterator operIt = find (operators.begin(), operators.end(), toDel);
+	if (operIt == operators.end())
+	{
+		// Find the composite in which the operator resides
+		PdfOperator::Iterator itNxt;
+		PdfOperator::Iterator begin = PdfOperator::getIterator (operators.front());
+		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, it, itNxt);
+		assert (composite);
+
+		//
+		// Remove it from iterator
+		//
+		// Get the prev of operator that should be deleted
+		PdfOperator::Iterator itPrv = it; itPrv.prev ();
+		// Set iterators, in other words remove operIt from iterator list
+		if (!itNxt.isEnd())
+			itNxt.getCurrent()->setPrev (itPrv.getCurrent());
+		if (!itPrv.isEnd())
+			itPrv.getCurrent()->setNext (itNxt.getCurrent());
+
+		//
+		// Remove it from composite
+		//
+		if (composite)
+			composite->remove (toDel);
+		else
+			throw CObjInvalidObject ();
+	
+	}else
+	{
+		//
+		// Remove it from Iterator list
+		//
+		// Get the prev and next of operator that should be deleted
+		PdfOperator::Iterator itPrv = it; itPrv.prev ();
+		Operators::iterator itNxt = operIt; ++itNxt;
+		// Set iterators, in other words remove operIt from iterator list
+		if (itNxt != operators.end())
+			(*itNxt)->setPrev (itPrv.getCurrent());
+		if (!itPrv.isEnd())
+			itPrv.getCurrent()->setNext (*itNxt);
+		
+		//
+		// Remove it from operators
+		// 
+		operators.erase (operIt);
+	}
+
 }
 
 
