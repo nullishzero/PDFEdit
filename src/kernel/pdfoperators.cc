@@ -282,6 +282,21 @@ findCompositeOfPdfOperator (PdfOperator::Iterator it,
 	throw CObjInvalidOperation ();
 }
 
+
+
+
+
+//==========================================================
+// Iterators
+//==========================================================
+
+/** Text iterator accepted operators. */
+const std::string TextOperatorIterator::accepted_opers[TextOperatorIterator::NAME_COUNT] = {"Tj", "TJ", "'", "\""};
+/** Inline image iterators. */
+const std::string InlineImageOperatorIterator::accepted_opers = "BI";
+
+
+
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

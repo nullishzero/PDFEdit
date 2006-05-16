@@ -233,8 +233,32 @@ public:
 	 *
 	 * @param str String that will hold the output.
 	 */
-	void getStringRepresentation (std::string& str) const;
-			
+	template<typename Iter>
+	void getStringRepresentation (std::string& str) const
+	{
+		kernelPrintDbg (debug::DBG_DBG, "");
+
+		if (operators.empty ())
+			return;
+
+		// Clear string
+		str.clear ();
+
+		// Loop through every operator
+		Iter it = PdfOperator::getIterator<Iter> (operators.front());
+		while (!it.isEnd())
+		{
+			std::string tmp;
+			it.getCurrent()->getStringRepresentation (tmp);
+			str += tmp + " ";
+			it.next();
+		}
+	}
+	// Default function
+	void getStringRepresentation (std::string& str) const
+		{ getStringRepresentation<PdfOperator::Iterator> (str); }
+
+		
 	/**
 	 * Get objects at specified position.
 	 *

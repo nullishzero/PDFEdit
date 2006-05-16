@@ -26,7 +26,9 @@ namespace pdfobjects {
 //
 class IProperty;
 class CContentStream;
-		
+struct TextOperatorIterator;
+struct InlineImageOperatorIterator;
+							 
 //==========================================================
 // PdfOperator
 //==========================================================
@@ -179,6 +181,9 @@ public:
 	 * 
 	 * @return Iterator.
 	 */
+	template<typename ITER>
+	static ITER getIterator (boost::shared_ptr<PdfOperator> op) 
+		{ return ITER (ListItem (op)); };
 	static Iterator getIterator (boost::shared_ptr<PdfOperator> op) 
 		{ return Iterator (ListItem (op)); };
 
@@ -604,22 +609,76 @@ findCompositeOfPdfOperator (PdfOperator::Iterator begin, PdfOperator::Iterator i
  * Text operator iterator.
  *
  * Constructed from an arbitrary operator, but it will always start from a valid
- * text operator. This is done in constructor.
+ * text operator. This is done in the constructor.
  */
 struct TextOperatorIterator: public PdfOperator::Iterator
 {
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 4;
+
+	//
+	// Constructor
+	//
+	TextOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!_cur.expired() && !validItem ())
+			this->next();
+	}
 	//
 	// Template method interface
 	//
 	virtual bool 
 	validItem () const
 	{
-		assert (!_cur.expired());
+		std::string name;
+		_cur.lock()->getOperatorName (name);
 
-
-
-		return true;
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == accepted_opers[i])
+				return true;
+		
+		return false;
 	}
+
+private:
+	static const std::string accepted_opers [NAME_COUNT];
+};
+
+/**
+ * Inline image iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * inline image operator. This is done in the constructor.
+ */
+struct InlineImageOperatorIterator: public PdfOperator::Iterator
+{
+	//
+	// Constructor
+	//
+	InlineImageOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!_cur.expired() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		if (name == accepted_opers)
+			return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers;
 };
 
 //==========================================================

@@ -1168,32 +1168,6 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (str
 //
 
 //
-// 
-//
-void
-CContentStream::getStringRepresentation (string& str) const
-{
-	kernelPrintDbg (DBG_DBG, " ()");
-
-	if (operators.empty ())
-		return;
-
-	// Clear string
-	str.clear ();
-
-	// Loop through every operator
-	PdfOperator::Iterator it = PdfOperator::getIterator (operators.front());
-	string tmp;
-	while (!it.isEnd())
-	{
-		it.getCurrent()->getStringRepresentation (tmp);
-		str += tmp + " ";
-		tmp.clear ();
-		it.next();
-	}
-}
-
-//
 // Helper methods
 //
 
