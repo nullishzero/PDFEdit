@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/05/16 17:50:58  hockm0bm
+ * minor changes
+ *
  * Revision 1.19  2006/05/08 10:31:29  hockm0bm
  * quick fix
  *         - copy & paste error
@@ -29,6 +32,7 @@
 
 // stl
 #include <exception>
+#include <string>
 
 
 /**

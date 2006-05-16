@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.48  2006/05/16 17:50:58  hockm0bm
+ * minor changes
+ *
  * Revision 1.47  2006/05/15 18:30:23  hockm0bm
  * * isEncrypted bug fixed
  *         - Encrypt can be also reference to dictionary
@@ -1406,7 +1409,7 @@ namespace utils
  * <p>
  * <b>Implementation notes</b>:<br>
  * When starting to search from root of all pages, pagesDict should be supplied
- * from pdf->getProperty("Pages"). This is indirect reference (according
+ * from pdf-&gtgetProperty("Pages"). This is indirect reference (according
  * standard), but can be used in this method. startPos should be 1 (first page
  * is 1).
  * <br>
