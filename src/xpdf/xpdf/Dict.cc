@@ -86,14 +86,6 @@ void Dict::add(char *key, Object *val)
 {
   int pos = length;
   
-  // tries to use any unavailable entry (produced when entry has been removed)
-  for(int i=0; i < length; i++)
-     if(!entries[i].key)
-     {
-        pos = i;
-        break;
-     }
-  
   if (length == size) {
     if (length == 0) {
       size = 8;
@@ -114,6 +106,34 @@ void Dict::add(char *key, Object *val)
   *(entries[pos].val) = *val;
 
 }
+
+Object * Dict::del(const char * key)
+{
+   if(!key)
+      return NULL;
+
+   for(int i=0; i < length; i++)
+   {
+       if(!strcmp(key, entries[i].key))
+       {
+           // key found
+           // deallocates key, moves everything from behind and returns value
+           Object * val=entries[i].val;
+           gfree(entries[i].key);
+           for(;i<length-1; i++)
+           {
+              entries[i].key=entries[i+1].key;
+              entries[i].val=entries[i+1].val;
+           }
+           length--;
+           return val;
+       }
+   }
+
+   // nothing deleted
+   return NULL;
+}
+
 
 inline DictEntry *Dict::find(const char *key) {
   int i;

@@ -18,6 +18,7 @@
 //                - DictEntry changed, value is pointer
 //                - all methods which doesn't store key are const char *
 //                  instead of char *
+//                - public del method for removig of entries
 //
 //========================================================================
 
@@ -70,6 +71,11 @@ public:
   // Add an entry.  NB: does not copy key.
   // uses shallow copy on val (Object doesn't have explicit copy constructore)
   void add(char *key, Object *val);
+
+  // removes entry with given key and returns its value
+  // if not found, returns NULL
+  // All entries stored on higher position (in entries array) are moved
+  Object * del(const char * key);
 
   // Check if dictionary is of specified type.
   GBool is(const char *type);
