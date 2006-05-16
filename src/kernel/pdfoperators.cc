@@ -125,7 +125,15 @@ CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> op)
 //
 void
 CompositePdfOperator::remove (boost::shared_ptr<PdfOperator> op)
-	{ children.erase (find (children.begin(), children.end(), op)); }
+{ 
+	PdfOperators::iterator it =  find (children.begin(), children.end(), op);
+	assert (it != children.end());
+	if (it == children.end())
+		throw CObjInvalidOperation ();
+	
+	// Erase it
+	children.erase (it); 
+}
 
 //
 //
@@ -184,9 +192,6 @@ UnknownCompositePdfOperator::getStringRepresentation (string& str) const
 	
 	// Delegate
 	CompositePdfOperator::getStringRepresentation (str);	
-
-	// Footer
-	str += opEnd;
 }
 
 
@@ -228,6 +233,54 @@ InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 	str += opEnd;
 }
 
+//
+//
+//
+boost::shared_ptr<PdfOperator>
+findCompositeOfPdfOperator (PdfOperator::Iterator it, 
+							PdfOperator::Iterator expected, 
+							PdfOperator::Iterator& next)
+{
+	boost::shared_ptr<PdfOperator> composite;
+	while (!it.isEnd())
+	{
+		if (it == expected)
+		{
+			assert (composite);
+			assert (isComposite (composite));
+			
+			PdfOperator::PdfOperators opers;
+			composite->getChildren (opers);
+			for (PdfOperator::PdfOperators::iterator itt = opers.begin(); itt != opers.end(); ++itt)
+			{
+				if (*itt == expected.getCurrent())
+				{
+					// Get the next element, if it is the end of composite,
+					// simply use the next iterator
+					++itt;
+					if (itt != opers.end())
+						next = PdfOperator::ListItem (*itt);
+					else
+						next = expected.next ();
+					
+					break;
+				}
+			}
+			
+			return composite;
+		}
+
+		// Store it if it is a composite
+		if (isComposite (it))
+			composite = it.getCurrent();
+
+		it.next ();
+	}
+
+	// Weh should have found the operator
+	assert (!"Operator not found...");
+	throw CObjInvalidOperation ();
+}
 
 //==========================================================
 } // namespace pdfobjects

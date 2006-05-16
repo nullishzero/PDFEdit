@@ -48,13 +48,13 @@ class PdfOperator
 {	
 		
 public:
-	typedef std::deque<boost::shared_ptr<IProperty> > 	 Operands;
-	typedef boost::weak_ptr<PdfOperator>				 ListItem;
-	typedef iterator::LinkedListIterator<ListItem> 		 Iterator;
-	typedef std::vector<boost::shared_ptr<PdfOperator> > PdfOperators;
+	typedef std::deque<boost::shared_ptr<IProperty> > 	 			Operands;
+	typedef iterator::SharedDoubleLinkedListIterator<PdfOperator>	Iterator;
+	typedef Iterator::ListItem										ListItem;
+	typedef std::vector<boost::shared_ptr<PdfOperator> > 			PdfOperators;
 
 	// iterator has to be a friend
-	friend class iterator::LinkedListIterator<ListItem>;
+	friend class iterator::SharedDoubleLinkedListIterator<PdfOperator>;
 
 	//
 	// CContentStream pointer
@@ -133,7 +133,9 @@ public:
 		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
 
 	/**
-	 * Remove an operator.
+	 * Remove an operator from the composite interface.
+	 *
+	 * REMARK: This won't delete it from the Iterator list
 	 *
 	 * @param Operator to be erased.
 	 */
@@ -222,7 +224,7 @@ public:
 		{ setNext (ListItem (nxt));	};
 	void setPrev (boost::shared_ptr<PdfOperator> prv) 
 		{ setPrev (ListItem (prv)); };
-	
+
 private:
 
 	/**
@@ -351,6 +353,9 @@ public:
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const = 0;
 
+	//
+	// Destructor
+	//
 public:
 	
 	/**
@@ -493,6 +498,7 @@ public:
 	UnknownCompositePdfOperator (const char* opBegin_, const char* opEnd_);
 
 public:
+	// End operator is added to composite as normal operator so just prepand start operator
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const {first = opBegin;};
 
@@ -536,8 +542,88 @@ public:
 
 };
 
+
+
 //==========================================================
+// Helper funcions
+//==========================================================
+
+/** Is composite. */
+inline bool 
+isComposite (const PdfOperator* oper)
+{
+	const CompositePdfOperator* compo = dynamic_cast<const CompositePdfOperator*> (oper);
+	return (NULL == compo) ? false : true;
 }
+
+inline bool 
+isComposite (PdfOperator::Iterator it)
+	{ return isComposite (it.getCurrent().get()); }
+
+inline bool 
+isComposite (boost::shared_ptr<PdfOperator> oper)
+	{ return isComposite (oper.get()); }
+
+
+
+/**
+ * Find composite operator into which an operator belongs.
+ *
+ * @param it Start iterator.
+ * @param expected Object we want to find the composite in which it resides.
+ * @param next Next object in the composite to the specified one.
+ *
+ * @return Composite object.
+ */
+boost::shared_ptr<PdfOperator>
+findCompositeOfPdfOperator (PdfOperator::Iterator it, 
+							PdfOperator::Iterator expected, 
+							PdfOperator::Iterator& next);
+
+
+/**
+ * Find composite operator into which an operator belongs.
+ *
+ * @param begin Start iterator.
+ * @param it Object we want to find the composite in which it resides.
+ *
+ * @return Composite object.
+ */
+inline boost::shared_ptr<PdfOperator>
+findCompositeOfPdfOperator (PdfOperator::Iterator begin, PdfOperator::Iterator it)
+{
+	PdfOperator::Iterator next;
+	return findCompositeOfPdfOperator (begin, it, next);
+}
+
+//==========================================================
+// PdfOperator iterators
+//==========================================================
+
+/**
+ * Text operator iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * text operator. This is done in constructor.
+ */
+struct TextOperatorIterator: public PdfOperator::Iterator
+{
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		assert (!_cur.expired());
+
+
+
+		return true;
+	}
+};
+
+//==========================================================
+} // namespace pdfobjects
 //==========================================================
 
 
