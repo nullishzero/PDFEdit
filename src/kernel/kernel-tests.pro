@@ -28,7 +28,7 @@ HEADERS += ../utils/debug.h ../utils/iterator.h ../utils/observer.h
 HEADERS += tests/testmain.h tests/testcobject.h tests/testcpdf.h
 SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcstream.cc
 SOURCES += tests/teststream.cc tests/teststreamwriter.cc
-SOURCES += tests/testcobjecthelpers.cc
+SOURCES += tests/testcobjecthelpers.cc tests/testpdfoperators.cc
 SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
 SOURCES += main.cc 
 
