@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/05/16 18:01:00  hockm0bm
+ * pdf field value may be NULL - makes sense for stand alone XRefWriter instances
+ *
  * Revision 1.21  2006/05/13 22:16:31  hockm0bm
  * * memory leak removed
  *         - changeObject didn't deallocate object returned from CXRef (previously changed value)
@@ -280,7 +283,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(pdf->getMode()==CPdf::ReadOnly)
+	if(pdf && pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
 		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
@@ -312,7 +315,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(pdf->getMode()==CPdf::ReadOnly)
+	if(pdf && pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
 		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
@@ -355,7 +358,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(pdf->getMode()==CPdf::ReadOnly)
+	if(pdf && pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
 		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
@@ -381,7 +384,7 @@ void XRefWriter::changeObject(int num, int gen, ::Object * obj)
 		kernelPrintDbg(DBG_ERR, "no changes available. revision="<<revision);
 		throw ReadOnlyDocumentException("Document is not in latest revision.");
 	}
-	if(pdf->getMode()==CPdf::ReadOnly)
+	if(pdf && pdf->getMode()==CPdf::ReadOnly)
 	{
 		// document is in read-only mode
 		kernelPrintDbg(DBG_ERR, "pdf is in read-only mode.");
@@ -435,7 +438,8 @@ using namespace utils;
 	// Stores position of the cross reference section to xrefPos
 	pdfWriter->writeContent(changed, *streamWriter, storePos);
 	size_t xrefPos=streamWriter->getPos();
-	pdfWriter->writeTrailer(trailerDict, lastXRefPos, *streamWriter);
+	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::getNumObjects()};
+	pdfWriter->writeTrailer(trailerDict, secInfo, *streamWriter);
 
 	// if new revision should be created, moves storePos behind PDF end of file
 	// marker and forces CXref reopen to handle new revision - all

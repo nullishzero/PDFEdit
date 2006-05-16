@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/05/16 18:01:00  hockm0bm
+ * pdf field value may be NULL - makes sense for stand alone XRefWriter instances
+ *
  * Revision 1.22  2006/05/13 22:16:31  hockm0bm
  * * memory leak removed
  *         - changeObject didn't deallocate object returned from CXRef (previously changed value)
@@ -301,7 +304,8 @@ protected:
 public:
 	/** Initialize constructor with file stream writer.
 	 * @param stream File stream with pdf content.
-	 * @param _pdf Pdf instance which maintains this instance.
+	 * @param _pdf Pdf instance which maintains this instance (may be also NULL,
+	 * which means that instance is standalone).
 	 *
 	 * Sets mode to paranoid. Sets file to FILE handle from stream. Collects 
 	 * all revisions (uses collectRevisions method) and sets storePos to the 
