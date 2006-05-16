@@ -251,6 +251,7 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 	{
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
+		assert (!ccs.empty());
 		shared_ptr<CContentStream> cs = ccs.front();
 		cs->getStringRepresentation (str);
 	}
@@ -345,7 +346,7 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" print contentstream");
+			TEST(" setCS");
 			CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}

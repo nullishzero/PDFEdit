@@ -22,6 +22,40 @@ namespace {
 using namespace pdfobjects;
 using namespace boost;
 
+//=====================================================================================
+
+bool
+textIter (__attribute__((unused))	ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+	vector<boost::shared_ptr<CContentStream> > ccs;
+	page->getContentStreams (ccs);
+	shared_ptr<CContentStream> cs = ccs.front();
+	
+	//typedef vector<boost::shared_ptr<PdfOperator> > Opers;
+	//Opers opers;
+	//cs->getPdfOperators (opers);
+	//assert (!opers.empty());
+	
+	string str;
+	//oss << "---- iterator ----" << flush;
+	cs->getStringRepresentation<PdfOperator::Iterator> (str);
+	//oss << str << flush;
+
+	oss << "---- Text iterator ----" << flush;
+	cs->getStringRepresentation<TextOperatorIterator> (str);
+	oss << str << flush;
+	
+	oss << "---- Inline image iterator ----" << flush;
+	cs->getStringRepresentation<InlineImageOperatorIterator> (str);
+	oss << str << flush;
+	oss << "-----------" << flush;
+
+	return true;
+}
 
 //=====================================================================================
 
@@ -46,13 +80,12 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 	shared_ptr<CDict> dict = page->getDictionary ();
 	shared_ptr<CStream> stream = utils::getCStreamFromDict (dict, "Contents");
 	assert (isStream(stream));
-	CStream::Buffer buf;
-	std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
-	stream->setBuffer (buf);
-	cs->getStringRepresentation (tmp);
+	//CStream::Buffer buf;
+	//std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
+	//stream->setBuffer (buf);
+	//cs->getStringRepresentation (tmp);
 	//oss << tmp << std::endl;
-	
-	pdf->save (true);
+	//pdf->save (true);
 	return true;
 }
 
@@ -77,10 +110,10 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	for (Opers::iterator it = opers.begin(); it != opers.end(); ++it)
 	{
 		string str;
-		(*it)->getStringRepresentation (str);
-		tmp += str;
-		//(*it)->getOperatorName (str);
-		//oss << "---" << str << flush;
+		//(*it)->getStringRepresentation (str);
+		//tmp += str;
+		(*it)->getOperatorName (str);
+		oss << "---" << str << flush;
 	}
 	
 /*	ofstream of;
@@ -113,13 +146,6 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	}
 */
 	
-	//CStream::Buffer buf;
-	//std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
-	//stream->setBuffer (buf);
-	//cs->getStringRepresentation (tmp);
-	//oss << tmp << std::endl;
-	
-	//pdf->save (true);
 	return true;
 }
 
@@ -130,8 +156,9 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 class TestPdfOperators : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestPdfOperators);
-		//CPPUNIT_TEST(TestSetCS);
+		CPPUNIT_TEST(TestSetCS);
 		CPPUNIT_TEST(TestDeleteOper);
+		CPPUNIT_TEST(TestTextIterator);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -150,7 +177,7 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" test cs");
+			TEST(" set cs");
 			CPPUNIT_ASSERT (setCS (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
@@ -166,8 +193,24 @@ public:
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
-			TEST(" test cs");
+			TEST(" del oper");
 			CPPUNIT_ASSERT (delOper (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestTextIterator ()
+	{
+		OUTPUT << "Text iterator..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			TEST(" text iterator");
+			CPPUNIT_ASSERT (textIter (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
