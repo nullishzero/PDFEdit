@@ -9,6 +9,7 @@
 #include "pdfutil.h"
 #include <qstring.h>
 #include <cobject.h>
+#include <qsimporter.h>
 
 namespace gui {
 
@@ -187,6 +188,16 @@ void QSIProperty::set(bool value) {
   }
   default:;//Do nothing
  }
+}
+
+/**
+ Return reference to this property, but if the property is a reference, return the reference target.
+ This way you will always get dereferenced property for correct manipulation
+ @return Dereferenced property
+ */
+QSCObject* QSIProperty::ref() {
+ if (obj->getType()==pRef) return QSImporter::createQSObject(util::dereference(obj),base);
+ return this;
 }
 
 /** destructor */

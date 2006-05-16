@@ -22,6 +22,7 @@ IndiRef getRef(boost::shared_ptr<IProperty> ref);
 bool isRefValid(CPdf *pdf,IndiRef ref);
 bool isSimple(IProperty* prop);
 bool isSimple(boost::shared_ptr<IProperty> prop);
+boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj);
 
 } // namespace util
 

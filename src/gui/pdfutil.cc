@@ -147,6 +147,23 @@ bool isSimple(IProperty* prop) {
  } 
 }
 
+/**
+ Return referenced IProperty for given reference, or the property itself in case property is not a reference
+ Return NULL (empty shared_ptr) on error
+ @param obj Reference to dereference
+ @return Referenced IProperty
+*/
+boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
+ if (obj->getType()!=pRef) return obj;  //Not a reference
+ CPdf* pdf=obj->getPdf();
+ if (!pdf) return boost::shared_ptr<IProperty>(); //Property does not belong to document -> cannot dereference
+ CRef* cref=dynamic_cast<CRef*>(obj.get());
+ IndiRef ref;
+ cref->getPropertyValue(ref);
+ boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
+ return rp;
+}
+
 /** Return true, if this is simple property (editable as item in property editor and have no children), false otherwise
  @param prop IProperty to check
  @return true if simple property, false otherwise

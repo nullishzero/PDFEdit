@@ -24,6 +24,11 @@ public:
 public slots:
  /*- Return text representation of this property */
  QString getText();
+ /*-
+  Return reference to this property, but if the property is a reference, return the reference target.
+  This way you will always get dereferenced property for correct manipulation
+ */
+ QSCObject* ref();
  /*- Get integer representation of this property, return 0 if it cannot be represented as integer */
  int getInt();
  /*-

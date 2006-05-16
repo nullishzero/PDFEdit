@@ -162,14 +162,8 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((un
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemRef::getChildType(const QString &name) {
  assert(name=="Target");
- CPdf* pdf=obj->getPdf();
- if (!pdf) return -1; //No document opened -> cannot parse references
-                      //Should happen only while testing
- CRef* cref=dynamic_cast<CRef*>(obj.get());
- IndiRef ref;
- cref->getPropertyValue(ref);
- guiPrintDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
- boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
+ boost::shared_ptr<IProperty> rp=dereference(obj);
+ if (!rp.get()) return -1; //No document opened -> cannot parse references (Should happen only while testing)
  return rp->getType();
 }
 
