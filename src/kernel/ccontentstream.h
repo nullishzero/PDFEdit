@@ -171,9 +171,6 @@ private:
 	/** Parsed content stream operators. */
 	Operators operators;
 
-	/** Change indicator. */
-	bool _changed;
-
 	
 	//
 	// Observer observing underlying stream
@@ -258,28 +255,12 @@ public:
 	//
 	// Helper methods
 	//
-public:
-	/**
-	 * Change indicator.
-	 * 
-	 * @return True if the contentstream has changed, false otherwise.
-	 */
-	bool changed () const {return _changed;};
-
-	
 	/**
 	 * Change indicator.
 	 * 
 	 * @return True if the contentstream was changed, false otherwise.
 	 */
 	bool empty () const {return operators.empty ();};
-
-	/**
-	 * Need reparsing.
-	 * 
-	 * @return True if the contentstream needs to be reparsed.
-	 */
-	bool invalid () const {return (operators.empty () || _changed);};
 
 	/**
 	 * Parse.

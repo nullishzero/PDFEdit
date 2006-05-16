@@ -25,6 +25,7 @@ namespace pdfobjects {
 // Forward declaration
 //
 class IProperty;
+class CContentStream;
 		
 //==========================================================
 // PdfOperator
@@ -55,14 +56,27 @@ public:
 	// iterator has to be a friend
 	friend class iterator::LinkedListIterator<ListItem>;
 
+	//
+	// CContentStream pointer
+	//
+private:
+	/** This enables mapping between pdfoperator and contentstream. */
+	CContentStream* contentstream;
+	
+	//
+	// Constructor
+	// 
 protected:
 	
 	/**
 	 * Constructor.
 	 */
-	PdfOperator (ListItem prv = ListItem(), ListItem nxt = ListItem()) : next(nxt), prev(prv) {};
+	PdfOperator (ListItem prv = ListItem(), ListItem nxt = ListItem()) : contentstream (NULL), next(nxt), prev(prv) {};
 
 
+	//
+	// Destructor
+	//
 public:
 
 	/**
@@ -245,6 +259,35 @@ private:
 	 */
 	ListItem _prev () const {return prev;};
 
+	//
+	// CContentStream interface
+	//
+public:
+	/**
+	 * Set content stream.
+	 *
+	 * Every pdf operator needs to know into which content stream it belongs.
+	 * This is due to the fact, that some functions just return container of 
+	 * pdfoperators, and if we want to work with them, we have to know the
+	 * contentstream.
+	 *
+	 * We can find out the CStream but there is no mapping between CStream and
+	 * content stream.
+	 *
+	 * @param cs Content stream.
+	 */
+	void setContentStream (CContentStream* cs)
+		{assert (NULL == contentstream); contentstream = cs;}
+	
+	
+	/**
+	 * Get content stream.
+	 *
+	 * @return Content stream that this pdfoperator belongs to.
+	 */
+	CContentStream* getContentStream () const
+		{assert (NULL != contentstream); return contentstream;}
+	
 };
 
 

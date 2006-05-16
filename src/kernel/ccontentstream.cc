@@ -687,17 +687,23 @@ namespace
 	 * @param first First operator to set pdf to.
 	 * @param pdf Pdf where operand will belong.
 	 * @param rf  Indiref of content's stream parent.
+	 * @param cs Content stream.
 	 */
 	void
-	operandsSetPdf (shared_ptr<PdfOperator> first, CPdf& pdf, IndiRef rf)
+	opsSetPdfRefCs (shared_ptr<PdfOperator> first, CPdf& pdf, IndiRef rf, CContentStream& cs)
 	{
 		utilsPrintDbg (DBG_DBG, "");
 		PdfOperator::Iterator it = PdfOperator::getIterator (first);
 		while (!it.isEnd())
 		{
+			// Set cs
+			it.getCurrent().lock()->setContentStream (&cs);
+			
+			// Get operands
 			PdfOperator::Operands operands;
-			it.getCurrent ().lock()->getParameters (operands);
-				
+			it.getCurrent().lock()->getParameters (operands);
+			
+			// Set pdf and ref
 			PdfOperator::Operands::iterator oper = operands.begin ();
 			for (; oper != operands.end (); ++oper)
 			{
@@ -998,9 +1004,10 @@ namespace
 	 *
 	 * @param operators Operator stack.
 	 * @param stream 	Stream.
+	 * @param cs Content stream in which operators belong
 	 */
 	void
-	parseContentStream (CContentStream::Operators& operators, shared_ptr<CStream> stream)
+	parseContentStream (CContentStream::Operators& operators, shared_ptr<CStream> stream, CContentStream& cs)
 	{
 		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> last, previousLast;
@@ -1037,9 +1044,10 @@ namespace
 		stream->close ();
 
 		assert (operands.empty());
-		// Set pdf and ref
+		// Set pdf ref and cs
 		if (!operators.empty())
-			operandsSetPdf (operators.front(), *(stream->getPdf()), stream->getIndiRef());
+			opsSetPdfRefCs (operators.front(), *(stream->getPdf()), stream->getIndiRef(), cs);
+		
 
 	}
 
@@ -1122,7 +1130,7 @@ throw ()
 //
 // Constructors
 //
-CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (stream), _changed (false)
+CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (stream)
 {
 	kernelPrintDbg (DBG_DBG, "");
 
@@ -1181,7 +1189,7 @@ CContentStream::getStringRepresentation (string& str) const
 void
 CContentStream::reparse ()
 {
-	parseContentStream (operators, contentstream);
+	parseContentStream (operators, contentstream, *this);
 }
 
 
