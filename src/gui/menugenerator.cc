@@ -101,8 +101,9 @@ void MenuGenerator::generate() {
  @return true if the item is special, false if not.
 */
 bool MenuGenerator::special(const QString &itemName) {
+ if (itemName=="") return true;
  if (itemName=="-") return true;
- if (itemName=="_revision_tool") return true;
+ if (itemName.startsWith("_")) return true;
  return false;
 }
 

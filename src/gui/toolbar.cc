@@ -9,6 +9,7 @@
 #include "toolbutton.h"
 #include "revisiontool.h"
 #include "zoomtool.h"
+#include "pagetool.h"
 #include <qstring.h>
 #include "pdfeditwindow.h"
 #include "pagespace.h"
@@ -72,8 +73,6 @@ bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
  }
  //All special items start with underscore character
  if (!item.startsWith("_")) return false;
- //TODO: current zoomlevel tool (w/ edit)
- //TODO: current page tool (w/ edit)
  if (item=="_revision_tool") {
   //Add RevisionTool to toolbar and return
   RevisionTool *tool =new RevisionTool(tb,"revision");
@@ -85,7 +84,6 @@ bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
  }
  if (item=="_zoom_tool") {
   //Add ZoomTool to toolbar and return
-
   ZoomTool *tool =new ZoomTool(tb,"zoom");
   PdfEditWindow *pdfw=dynamic_cast<PdfEditWindow*>(main);
   assert(pdfw);
@@ -94,6 +92,19 @@ bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
   tool->updateZoom(pSpace->getZoomFactor());
   QObject::connect(pSpace,SIGNAL(changedZoomFactorTo(float)),tool,SLOT(updateZoom(float)));
   QObject::connect(tool,SIGNAL(zoomSet(float)),pSpace,SLOT(setZoomFactor(float)));
+  tool->show();
+  return true;
+ }
+ if (item=="_page_tool") {
+  //Add PageTool to toolbar and return
+  PageTool *tool =new PageTool(tb,"page");
+  PdfEditWindow *pdfw=dynamic_cast<PdfEditWindow*>(main);
+  assert(pdfw);
+  PageSpace *pSpace=pdfw->getPageSpace();
+  assert(pSpace);
+  tool->updatePage(pdfw->pageNumber());
+  QObject::connect(pSpace,SIGNAL(changedPageTo(const QSPage&,int)),tool,SLOT(updatePage(const QSPage&,int)));
+  QObject::connect(tool,SIGNAL(pageSet(int)),pSpace,SLOT(refresh(int)));
   tool->show();
   return true;
  }

@@ -240,6 +240,14 @@ void PdfEditWindow::pageChange(const QSPage &pg, int numberOfPage) {
 }
 
 /**
+ Return currently selected page number
+ @return current page number
+ */
+int PdfEditWindow::pageNumber() {
+ return selectedPageNumber;
+}
+
+/**
  Change currently active revision in document
  @param revision New revision
 */

@@ -55,10 +55,12 @@ QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -D TESTING
 
 #Dialogs
-HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h  dialog.h
-SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc dialog.cc
+HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h
+SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc dialog.cc
+HEADERS += stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h
+SOURCES += stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc
 
-#Help
+#Help window
 HEADERS += helpwindow.h
 SOURCES += helpwindow.cc
 
@@ -69,28 +71,33 @@ HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.
 SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc treeitemcontentstream.cc
 
 #Property editor
-HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h  refproperty.h
-SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc refproperty.cc
-HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h
-SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc
+HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h
+SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc
+HEADERS += refvalidator.h  refproperty.h  propertyeditor.h  propertyfactory.h
+SOURCES += refvalidator.cc refproperty.cc propertyeditor.cc propertyfactory.cc
 
-#CObject Wrapper classes
-HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h  qsiproperty.h
-HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h
-SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc qsiproperty.cc
-SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc
+#QSA Wrapper classes
+HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h
+SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc
+HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h
+SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc
 
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h  selfdestructivewidget.h  base.h
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc selfdestructivewidget.cc base.cc
 
-#exceptions
+#Exceptions
 HEADERS += invalidmenuexception.h
 SOURCES += invalidmenuexception.cc
 
+#Toolbar
+HEADERS += revisiontool.h  zoomtool.h  pagetool.h  toolbutton.h  toolbar.h  
+SOURCES += revisiontool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc 
+
 #Main Window
-HEADERS += pdfeditwindow.h  toolbutton.h  toolbar.h  commandwindow.h  pagespace.h  pageview.h  revisiontool.h  zoomtool.h
-SOURCES += pdfeditwindow.cc toolbutton.cc toolbar.cc commandwindow.cc pagespace.cc pageview.cc revisiontool.cc zoomtool.cc
+HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h
+SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc
+
 
 #Dummy header file for menu translation
 HEADERS += .menu-trans.h 

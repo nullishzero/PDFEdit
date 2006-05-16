@@ -63,7 +63,7 @@ void ZoomTool::resizeEvent (QResizeEvent *e) {
 */
 void ZoomTool::selectZoom(const QString &newZoom) {
  QString theZoom=newZoom;
- if (theZoom.endsWith("%")) theZoom.setLength(theZoom.length()-1);
+ if (theZoom.endsWith("%")) theZoom.truncate(theZoom.length()-1);
  float zoom=theZoom.toFloat()/100.0;
  guiPrintDbg(debug::DBG_DBG,"Zoom level set: " << zoom);
  //Maintain some reasonable limits
