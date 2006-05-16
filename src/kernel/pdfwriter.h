@@ -4,6 +4,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/05/16 17:57:28  hockm0bm
+ * * infrastructure for obserevers usable for IPdfWriter
+ *         - OperationStep, OperationScope structures
+ *         - PdfWriterObserver and PdfWriterObserverContext types
+ * * OldStylePdfWriter uses observers to provide progress information
+ * * writeTrailer method changed
+ *         - lastXref parameter replaced by PrevSecInfo structure
+ *         - Trailer Prev field removed if PrevSecInfo::xrefPos==0
+ *         - Trailer Size field is set to proper value
+ *
  * Revision 1.2  2006/05/09 20:10:55  hockm0bm
  * * doc update
  * * writeContent some checking added
@@ -20,7 +30,16 @@
 #ifndef _PDF_WRITER_H_
 #define _PDF_WRITER_H_
 
+#include<vector>
+#include<map>
 #include "streamwriter.h"
+#include "utils/objectstorage.h"
+#include "utils/observer.h"
+
+/** Header of pdf file.
+ * This string should be appended by pdf version number.
+ */
+extern const char * PDFHEADER;
 
 /** Marker of trailer dictionary.
  *
@@ -43,6 +62,48 @@ namespace pdfobjects {
 
 namespace utils {
 
+/** Type for pdf writer observer value.
+ *
+ * This structure contains all information about current step. Step may be
+ * interpreted as order of currently written object.
+ */
+struct OperationStep
+{
+	/** Last accomplished step.
+	 */
+	size_t currStep;
+};
+
+/** Type for pdf writer observers.
+ *
+ * Uses OperationStep as value keeper.
+ */
+typedef observer::IObserver<OperationStep> PdfWriterObserver;
+
+/** Type for operation scope.
+ * This sctructure contains information about total number of operation which 
+ * has to be done for task named in task field.
+ */
+struct OperationScope
+{
+	/** Total number of steps for whole task.
+	 */
+	size_t total;
+
+	/** Name of the task.
+	 */
+	std::string task;
+};
+
+/** Type for pdf writer observer contenxt.
+ *
+ * This context hold OperationScope structure for change scope information. User
+ * of this context should get scope information by getScope method and its total
+ * field holds total number of operations that has to be perfomed. Observer gets
+ * also current operation number which is enough for progress information.
+ */
+typedef observer::ScopedChangeContext<OperationStep, OperationScope> PdfWriterObserverContext;
+
 /** Interface for pdf content writer.
  *
  * Implementator knows how to put data to the file to create correct pdf
@@ -60,10 +121,18 @@ namespace utils {
  * document revision. writeTrailer resets internal data and so it can be
  * repeated. 
  * <br>
- * Offset parameter can  change default stream position. Default parameter value
+ * Offset parameter can change default stream position. Default parameter value
  * is 0, current position is used.
+ * <p>
+ * Class implements IObserverHandler with OperationStep value keeper and so
+ * Observers can be registered on each instance. Observer notification is in
+ * full control of implementator.
+ *
+ * @see PdfWriterObserverContext
+ * @see OperationScope
+ * @see OperationStep
  */
-class IPdfWriter
+class IPdfWriter:public observer::IObserverHandler<OperationStep>
 {
 public:
 	/** Type for ObjectList element. */
@@ -71,8 +140,30 @@ public:
 
 	/** Type for object list.
 	 * Each element is pair of object reference and its value.
+	 * <br>
+	 * In any case (or future changes) this type supports push_back method for
+	 * storing and iterators which points to ObjectElement typed value.
 	 */
 	typedef std::vector<ObjectElement> ObjectList;
+
+	/** Context for previous section.
+	 * Contains information for proper linking with previous xref/trailer
+	 * section.
+	 */
+	struct PrevSecInfo
+	{
+		/** Position of previous xref section.
+		 *
+		 * If no previous section is available value should be 0.
+		 */
+		size_t xrefPos;
+
+		/** Number of objects in previous section.
+		 *
+		 * If no previous section is available value should be 0.
+		 */
+		size_t objNum;
+	};
 
 	virtual ~IPdfWriter(){};
 
@@ -93,7 +184,7 @@ public:
 
 	/** Writes xref and trailer section.
 	 * @param trailer Trailer object.xrefPos.
-	 * @param lastXref Position of previous xref section start.
+	 * @param prevSection Context for previous section.
 	 * @param stream Stream writer where to write.
 	 * @param off Stream offset where to start writing (if 0, uses current
 	 * position).
@@ -102,7 +193,7 @@ public:
 	 * dictionary. Uses internal data collected by writeContent method.
 	 * reset method is called immediately after all data are written.
 	 */
-	virtual void writeTrailer(Object & trailer, size_t lastXref, StreamWriter & stream, size_t off=0)=0;
+	virtual void writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0)=0;
 
 	/** Resets internal data collected in writeContent method.
 	 *
@@ -132,7 +223,47 @@ class OldStylePdfWriter: public IPdfWriter
 	 *
 	 */
 	OffsetTab offTable;
+
+	/** Maximum object number written.
+	 *
+	 * This value is set in writeContent method, used in writeTrailer and
+	 * cleared by reset.
+	 * <p>
+	 * <b>Motivation</b>:
+	 * <br>
+	 * Each trailer contains Size field which contains total number of objects
+	 * in document. This implies that also objects from previous sections are
+	 * involved. Total count can't be determined from written objects, because
+	 * we don't have any kind of guarantee, that all objects or even new objects
+	 * were written.
+	 * <br>
+	 * This implementation handles this situation following way:<br>
+	 * writeContent sets this field as maximum object number ever written from
+	 * last reset (so for current section) and writeTrailer consumes parameter
+	 * with previous trailer Size value. Result size is max{given, maxObjNum+1}.
+	 * This is perfectly clean according PDF specification (see 3.4.4 Trailer
+	 * chapter for more information).
+	 */
+	int maxObjNum;
 public:
+	/** String for context task in writeContent.
+	 * This value is used in ScopedChangeContext's task field in writeContent
+	 * method. User of the instance can change this value directly.
+	 */
+	std::string CONTENT;
+
+	/** String for context task in writeTrailer.
+	 * This value is used in ScopedChangeContext's task field in writeTrailer
+	 * method. User of the instance can change this value directly.
+	 */
+	std::string TRAILER;
+		
+	/** Initialize constructor.
+	 *
+	 * Initializes CONTENT and TRAILER fields to default values.
+	 */
+	OldStylePdfWriter():CONTENT("Content phase"), TRAILER("XREF/TRAILER phase"){};
+
 	/** Writes given objects.
 	 * @param objectList List of objects to write.
 	 * @param stream Stream writer where to write.
@@ -146,12 +277,18 @@ public:
 	 * <br>
 	 * First object is stored at specified position and all others are placed
 	 * immediately after.
+	 * <br>
+	 * Notifies all observers immediatelly after object has been written to the
+	 * stream. newValue parameter is number of written objects until now and
+	 * context (typed as ScopedChangeContext with OperationScope typed scope)
+	 * contains total number of object which should be written by this call.
+	 * Context task field contains CONTENT string.
 	 */
 	virtual void writeContent(ObjectList & objectList, StreamWriter & stream, size_t off=0);
 
 	/** Writes cross reference table and trailer.
 	 * @param trailer Trailer object.
-	 * @param lastXref Position of previous xref section start.
+	 * @param prevSection Context for previous section.
 	 * @param off Stream offset where to start writing (if 0, uses current
 	 * position).
 	 * @param stream Stream writer where to write.
@@ -163,10 +300,15 @@ public:
 	 * contain set of cross reference subsections.
 	 * Then xref keyword is written to the stream followed be cross reference
 	 * table constructed from subsections.
-	 * Finaly sets trailer's Prev field value according lastXref parameter and
-	 * writes it also to the stream followed by lastxref key word with position 
-	 * of this cross reference section start.
-	 * STARTXREF_KEYWORD is written immediately after.
+	 * Then checks given prevSection (context for previous section) structures
+	 * and if xrefPos is not zero sets Prev trailer field to given value. Finaly
+	 * calculates trailer's Size field as result of
+	 * <pre>
+	 * Size = max { prevSection.objNum, (maxObjNum + 1)}
+	 * </pre>
+	 * When all trailer information is ready, writes it also to the stream 
+	 * followed by lastxref key word with position of this cross reference 
+	 * section start. EOFMARKER is written immediately after.
 	 * <p>
 	 * <b>PDF specification notes:</b>
 	 * <br>
@@ -187,8 +329,13 @@ public:
 	 * Cross reference subsections should also mark deleted objects, those which
 	 * are not accessible anymore and so can be reused with higher generation
 	 * number. This implementation doesn't write such entries.
+	 * <p>
+	 * Notifies observers immediately after one subsection is written. newValue
+	 * parameter contains number of already written subsections and context
+	 * (same asin writeContent method) contains total number of subsections and
+	 * task field contains TRAILER string.
 	 */
-	virtual void writeTrailer(Object & trailer, size_t lastXref, StreamWriter & stream, size_t off=0);
+	virtual void writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0);
 
 	/** Resets all collected data.
 	 *

@@ -4,6 +4,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/05/16 17:57:27  hockm0bm
+ * * infrastructure for obserevers usable for IPdfWriter
+ *         - OperationStep, OperationScope structures
+ *         - PdfWriterObserver and PdfWriterObserverContext types
+ * * OldStylePdfWriter uses observers to provide progress information
+ * * writeTrailer method changed
+ *         - lastXref parameter replaced by PrevSecInfo structure
+ *         - Trailer Prev field removed if PrevSecInfo::xrefPos==0
+ *         - Trailer Size field is set to proper value
+ *
  * Revision 1.5  2006/05/14 14:02:00  hockm0bm
  * quick fix
  *         - CharBuffer handling changed (uses CharBuffer.get rather than * operator and casting)
@@ -37,13 +47,16 @@
  * This includes also 1 byte for trailing '\0' (end of string marker).
  */
 #define XREFROWLENGHT 21
-#define EOFMARKER "%%EOF"
+
+const char * PDFHEADER="%PDF-";
 
 const char * TRAILER_KEYWORD="trailer";
 
 const char * XREF_KEYWORD="xref";
 
 const char * STARTXREF_KEYWORD="startxref";
+
+const char * EOFMARKER="%%EOF";
 
 namespace pdfobjects
 {
@@ -54,6 +67,7 @@ namespace utils
 void OldStylePdfWriter::writeContent(ObjectList & objectList, StreamWriter & stream, size_t off)
 {
 using namespace debug;
+using namespace boost;
 
 	utilsPrintDbg(DBG_DBG, "pos="<<off);
 	
@@ -63,7 +77,16 @@ using namespace debug;
 		stream.setPos(off);
 
 	ObjectList::iterator i;
-	for(i=objectList.begin(); i!=objectList.end(); i++)
+	size_t index=0;
+	
+	// creates context for observers
+	shared_ptr<OperationScope> scope(new OperationScope());
+	scope->total=objectList.size();
+	scope->task=CONTENT;
+	shared_ptr<PdfWriterObserverContext> context(new PdfWriterObserverContext(scope));
+
+	// prepares offTable
+	for(i=objectList.begin(); i!=objectList.end(); i++, index++)
 	{
 		::Ref ref=i->first;
 		Object * obj=i->second;
@@ -71,7 +94,7 @@ using namespace debug;
 		// object must be valid
 		if(!obj)
 		{
-			utilsPrintDbg(DBG_WARN, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] is not valid. Skipping.");
+			utilsPrintDbg(DBG_WARN, "Object with "<<ref<<" is not valid. Skipping.");
 			continue;
 		}
 		
@@ -79,9 +102,13 @@ using namespace debug;
 		// available
 		if(offTable.find(ref)!=offTable.end())
 		{
-			utilsPrintDbg(DBG_WARN, "Object with ref=["<<ref.num<<", "<<ref.gen<<"] is already stored. Skipping.");
+			utilsPrintDbg(DBG_WARN, "Object with "<<ref<<" is already stored. Skipping.");
 			continue;
 		}
+
+		// updates maximum Object number if ref is the one
+		if(ref.num>maxObjNum)
+			maxObjNum=ref.num;
 
 		// associate given reference with current position.
 		size_t objPos=stream.getPos();
@@ -110,15 +137,20 @@ using namespace debug;
 		}
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		
+		// calls observers
+		shared_ptr<OperationStep> newValue(new OperationStep());
+		newValue->currStep=index;
+		notifyObservers(newValue, context);
 	}
 	
 	utilsPrintDbg(DBG_DBG, "All objects (number="<<objectList.size()<<") stored.");
 }
 
-void OldStylePdfWriter::writeTrailer(Object & trailer, size_t lastXref, StreamWriter & stream, size_t off)
+void OldStylePdfWriter::writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off)
 {
 using namespace std;
 using namespace debug;
+using namespace boost;
 
 	utilsPrintDbg(DBG_DBG, "");
 	
@@ -199,7 +231,16 @@ using namespace debug;
 	char xrefRow[XREFROWLENGHT];
 	memset(xrefRow, '\0', sizeof(xrefRow));
 	utilsPrintDbg(DBG_DBG, "Writing "<<subSectionTable.size()<<" subsections");
-	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++)
+	
+	// creates context for observers
+	shared_ptr<OperationScope> scope(new OperationScope());
+	scope->total=subSectionTable.size();
+	scope->task=TRAILER;
+	shared_ptr<PdfWriterObserverContext> context(new PdfWriterObserverContext(scope));
+
+	// writes all subsection
+	size_t index=1;
+	for(SubSectionTab::iterator i=subSectionTable.begin(); i!=subSectionTable.end(); i++, index++)
 	{
 		// at first writes head object number and number of elements in the
 		// subsection
@@ -224,23 +265,54 @@ using namespace debug;
 			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", entry->first, entry->second);
 			stream.putLine(xrefRow);
 		}
+		
+		// notifies observers
+		shared_ptr<OperationStep> newValue(new OperationStep());
+		newValue->currStep=index;
+		notifyObservers(newValue, context);
 	}
 
 	// updates Prev field - to say where previous xref table starts 
-	Object newPrev;
-	newPrev.initInt(lastXref);
-	char * key=strdup("Prev");
-	Object * originalPrev=trailer.getDict()->update(key, &newPrev);
-	if(originalPrev)
+	// if 0, removes Prev entry if present
+	if(!prevSection.xrefPos)
+	{
+		Object * prev=trailer.getDict()->del("Prev");
+		if(prev)
+			freeXpdfObject(prev);
+		utilsPrintDbg(DBG_DBG, "No previous xref section. Removing Trailer::Prev.");
+	}else
+	{
+		Object newPrev;
+		newPrev.initInt(prevSection.xrefPos);
+		char * key=strdup("Prev");
+		Object * originalPrev=trailer.getDict()->update(key, &newPrev);
+		if(originalPrev)
+		{
+			// value has been set to something different, we have to deallocate it
+			// and to free key, because it is not stored in update
+			utilsPrintDbg(DBG_DBG, "Removing old Trailer::Prev="<<originalPrev->getInt());
+			free(key);
+			freeXpdfObject(originalPrev);
+		}
+		utilsPrintDbg(DBG_DBG, "Linking to previous xref section. Trailer::Prev="<<newPrev.getInt());
+	}
+
+	// sets Size entry with object maximum object number written to the file
+	Object newSize;
+	newSize.initInt(std::max(prevSection.objNum, (size_t)(maxObjNum + 1)));
+	char * key=strdup("Size");
+	Object * originalSize=trailer.getDict()->update(key, &newSize);
+	if(originalSize)
 	{
 		// value has been set to something different, we have to deallocate it
 		// and to free key, because it is not stored in update
+		utilsPrintDbg(DBG_DBG, "Removing old Trailer::Size="<<originalSize->getInt());
 		free(key);
-		originalPrev->free();
-		gfree(originalPrev);
+		freeXpdfObject(originalSize);
 	}
+	utilsPrintDbg(DBG_DBG, "Setting Trailer::Size="<<newSize.getInt());
 
-	// stores changed trialer to the file
+	// stores changed trailer to the file
 	std::string objPdfFormat;
 	xpdfObjToString(trailer, objPdfFormat);
 	stream.putLine(TRAILER_KEYWORD);
@@ -248,7 +320,6 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table
-	// TODO adds also comment with time and date of creation
 	stream.putLine(STARTXREF_KEYWORD);
 	char xrefPosStr[128];
 	sprintf(xrefPosStr, "%u", xrefPos);
@@ -266,6 +337,7 @@ using namespace debug;
 void OldStylePdfWriter::reset()
 {
 	offTable.clear();
+	maxObjNum=0;
 }
 
 } // utils namespace 
