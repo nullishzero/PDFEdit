@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/05/16 18:02:06  hockm0bm
+ * destructor documentation for FileStreamWriter
+ *
  * Revision 1.6  2006/05/14 12:35:25  hockm0bm
  * * StreamWriter
  *         - putLine() with size parameter method added
@@ -123,6 +126,11 @@ public:
 		  FileStream(fA, startA, limitedA, lengthA, dictA) 
 		  {};
 
+	/** Destructor for FileStreamWriter.
+	 *
+	 * NOTE: doesn't close given file handle. Instance creator is responsible to
+	 * that.
+	 */
 	virtual ~FileStreamWriter(){};
 	
 	/** Puts character to the file.
