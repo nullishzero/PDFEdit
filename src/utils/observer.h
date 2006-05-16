@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/05/16 17:43:58  hockm0bm
+ * * ScopedChangeContext added
+ *         - new change context
+ *
  * Revision 1.11  2006/05/14 13:51:40  hockm0bm
  * quick fix
  *         - virtual destructor for IObserverHandler
@@ -80,7 +84,7 @@ template<typename T> class IChangeContext
 public:
 	/** Supported context types.
 	 */
-	enum ChangeContextType {BasicChangeContextType};
+	enum ChangeContextType {BasicChangeContextType, ScopedChangeContextType};
 	
 	/** Returns context type.
 	 *
@@ -134,6 +138,49 @@ public:
 	{
 		return originalValue;
 	}
+};
+
+/** Change context with scope information.
+ *
+ * Scope information are specified as template parameter and describes scope of
+ * the change. Template T parameter specifies value holder.
+ * <br>
+ * Scope can be rather complex information but principally it should contain
+ * information which can be used to cathegorize value given in notify method as
+ * newValue parameter (e. g. Maximum number of value for progress calculation
+ * and newValue contains current state).
+ * 
+ */
+template<typename T, typename S> class ScopedChangeContext:public IChangeContext<T>
+{
+	/** Scope holder.
+	 */
+	boost::shared_ptr<S> scope; 
+public:
+	/** Initialize constructor.
+	 * @param s Scope used for initialization.
+	 *
+	 * Initializes scope field.
+	 */
+	ScopedChangeContext(boost::shared_ptr<S> s):scope(s){};
+
+	/** Returns scope.
+	 * @return Scope value wrapped by shared_ptr smart pointer.
+	 */
+	boost::shared_ptr<S> getScope()const
+	{
+		return scope;
+	}
+
+	/** Returns context type.
+	 *
+	 * @return Returns ScopedChangeContextType.
+	 */
+	typename IChangeContext<T>::ChangeContextType getType() const throw()
+	{
+		return IChangeContext<T>::ScopedChangeContextType;
+	}
+
 };
 
 
