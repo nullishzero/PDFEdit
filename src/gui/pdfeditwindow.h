@@ -50,6 +50,7 @@ public:
  void openFile(const QString &name);
  void exitApp();
  void closeWindow();
+ PageSpace* getPageSpace() const;
 public slots:
  void changeRevision(int revision);
 signals:

@@ -217,6 +217,7 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 			actualPdf = new QSPdf( pdf->get() , NULL );
 
 			zoomFactor = 1;
+			emit changedZoomFactorTo(zoomFactor);
 			displayParams = DisplayParams();
 		}
 		delete actualPage;
@@ -314,6 +315,8 @@ void PageSpace::setZoomFactor ( float set_zoomFactor ) {
 	if (zoomFactor == set_zoomFactor)
 		return;
 
+	emit changedZoomFactorTo(set_zoomFactor);
+
 	if (displayParams.useMediaBox == gFalse) {
 		float pom = set_zoomFactor / zoomFactor;
 		zoomFactor = set_zoomFactor;
@@ -326,6 +329,11 @@ void PageSpace::setZoomFactor ( float set_zoomFactor ) {
 	displayParams.vDpi = basePpP * zoomFactor * 72;
 	refresh ();
 }
+
+float PageSpace::getZoomFactor ( ) {
+	return zoomFactor;
+}
+
 void PageSpace::zoomTo ( int percentage ) {
 	if (percentage < 1)
 		percentage = 1;

@@ -1,11 +1,17 @@
 /** @file
  ToolBar class, ancestor of QToolBar.
- This toolbar can contain only buttons from ToolButton class
+ This toolbar can handle only buttons from ToolButton class
+ (but any generic QWidget can be inserted)
  @author Martin Petricek
 */
 
 #include "toolbar.h"
 #include "toolbutton.h"
+#include "revisiontool.h"
+#include "zoomtool.h"
+#include <qstring.h>
+#include "pdfeditwindow.h"
+#include "pagespace.h"
 
 namespace gui {
 
@@ -51,6 +57,47 @@ void ToolBar::addButton(ToolButton *qb) {
 /** slot that will emit clicked with ID of whis button */
 void ToolBar::slotClicked(int id) {
  emit itemClicked(id);
+}
+
+/**
+ Check if given item name is a special item and load it if it is special item
+ @param tb Toolbar for addition of item
+ @param item Item name
+ @return True, if special item was loaded, false if item is not a special item
+*/
+bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
+ if (item=="-" || item=="") {
+  tb->addSeparator();
+  return true;
+ }
+ //All special items start with underscore character
+ if (!item.startsWith("_")) return false;
+ //TODO: current zoomlevel tool (w/ edit)
+ //TODO: current page tool (w/ edit)
+ if (item=="_revision_tool") {
+  //Add RevisionTool to toolbar and return
+  RevisionTool *tool =new RevisionTool(tb,"revision");
+  QObject::connect(main,SIGNAL(documentChanged(CPdf*)),tool,SLOT(setDocument(CPdf*)));
+  QObject::connect(main,SIGNAL(revisionChanged(int)),tool,SLOT(updateRevision(int)));
+  QObject::connect(tool,SIGNAL(revisionChanged(int)),main,SLOT(changeRevision(int)));
+  tool->show();
+  return true;
+ }
+ if (item=="_zoom_tool") {
+  //Add ZoomTool to toolbar and return
+
+  ZoomTool *tool =new ZoomTool(tb,"zoom");
+  PdfEditWindow *pdfw=dynamic_cast<PdfEditWindow*>(main);
+  assert(pdfw);
+  PageSpace *pSpace=pdfw->getPageSpace();
+  assert(pSpace);
+  tool->updateZoom(pSpace->getZoomFactor());
+  QObject::connect(pSpace,SIGNAL(changedZoomFactorTo(float)),tool,SLOT(updateZoom(float)));
+  QObject::connect(tool,SIGNAL(zoomSet(float)),pSpace,SLOT(setZoomFactor(float)));
+  tool->show();
+  return true;
+ }
+ return false;
 }
 
 } // namespace gui

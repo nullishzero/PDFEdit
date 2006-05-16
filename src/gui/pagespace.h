@@ -33,6 +33,7 @@ class PageSpace : public QWidget {
 //		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );
 //		/*TODO*/void unselectObjectOnPage ( );
 
+		float getZoomFactor ( );
 		void setZoomFactor ( float set_zoomFactor );
 		void zoomTo ( int percentage );
 		void zoomIn ( float step = 0.1 );
@@ -44,6 +45,7 @@ class PageSpace : public QWidget {
 		void lastPage ( );
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
+		void changedZoomFactorTo ( float zoom );
 
 		/*TODO*/ void popupMenu ( const QPoint & globalPos /*, Cobject & */ );
 	protected:

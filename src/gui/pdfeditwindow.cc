@@ -141,7 +141,6 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  setFileName(QString::null);
  document=NULL;
  selectedTreeItem=NULL;
- menuSystem=new Menu(this);
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
 
@@ -152,6 +151,9 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  //PageSpace
  pagespc = new PageSpace(splCmd,"PageSpace");
+
+ //Some items from menu need to connect to PageSpace
+ menuSystem=new Menu(this);
 
  //Commandline
  cmdLine=new CommandWindow(splCmd);
@@ -454,6 +456,14 @@ void PdfEditWindow::treeClicked(int button,QListViewItem *item) {
  if (button & 2) base->call("onTreeRightClick");
  if (button & 4) base->call("onTreeMiddleClick");
  if (button & 8) base->call("onTreeDoubleClick");
+}
+
+/**
+ Return reference to pagespace (needed for example by ZoomTool)
+ @return PageSpace inside this window
+ */
+PageSpace* PdfEditWindow::getPageSpace() const {
+ return pagespc;
 }
 
 /** default destructor */

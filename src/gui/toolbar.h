@@ -3,6 +3,8 @@
 
 #include <qtoolbar.h>
 
+class QMainWindow;
+
 namespace gui {
 
 class ToolButton;
@@ -17,6 +19,7 @@ class ToolBar : public QToolBar {
   ToolBar(const QString & label,QMainWindow * mainWindow,QWidget * parent,bool newLine=FALSE,const char * name=0,WFlags f=0);
   ToolBar(QMainWindow * parent,const char * name=0);
   void addButton(ToolButton *qb);
+  static bool specialItem(ToolBar *tb,const QString &item,QMainWindow *main);
  signals:
   /** signal emitted when clicked on one of toolbar items. Send ID number associated with that item */
   void itemClicked(int);

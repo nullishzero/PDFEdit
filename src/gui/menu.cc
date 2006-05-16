@@ -23,7 +23,6 @@
 #include "toolbar.h"
 #include <qstring.h>
 #include "iconcache.h"
-#include "revisiontool.h"
 
 namespace gui {
 
@@ -296,22 +295,8 @@ bool Menu::chopCommand(QString &line, const QString &command) {
  @param item Item name in configuration file
 */
 void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuException) {
- if (item=="-" || item=="") {
-  tb->addSeparator();
-  return;
- }
- //TODO: special toolbar items move to special function  in new class
- //TODO: current zoomlevel tool (w/ edit)
- //TODO: current page tool (w/ edit)
- if (item=="_revision_tool") {
-  //Add RevisionTool to toolbar and return
-  RevisionTool *tool =new RevisionTool(tb,"revision");
-  QObject::connect(main,SIGNAL(documentChanged(CPdf*)),tool,SLOT(setDocument(CPdf*)));
-  QObject::connect(main,SIGNAL(revisionChanged(int)),tool,SLOT(updateRevision(int)));
-  QObject::connect(tool,SIGNAL(revisionChanged(int)),main,SLOT(changeRevision(int)));
-  tool->show();
-  return;
- }
+ //Check for special item
+ if (ToolBar::specialItem(tb,item,main)) return;
  QString line=readItem(item);
  if (chopCommand(line,"item")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   QStringList qs=explode(MENUDEF_SEPARATOR,line,true);

@@ -95,7 +95,8 @@ void QSArray::add(QObject *ip) {
 /** call CArray::addProperty(ip) */
 void QSArray::add(const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- array->addProperty(CString(ip));
+ CString property(ip);
+ array->addProperty(property);
 }
 
 } // namespace gui
