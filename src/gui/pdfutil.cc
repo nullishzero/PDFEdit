@@ -172,4 +172,23 @@ bool isSimple(boost::shared_ptr<IProperty> prop) {
  return isSimple(prop.get());
 }
 
+/**
+ Save currently active revision in document under different filename
+ @param obj Pdf document
+ @param name New name
+ @return true if success, false if failure
+*/
+bool saveCopy(CPdf *obj,const QString &name) {
+ FILE *f=fopen(name,"wb");
+ if (!f) return false; ///failed to open file
+ try {
+  obj->clone(f);
+  fclose(f);
+  return true;
+ } catch (...) {
+  fclose(f);
+  return false;
+ }
+}
+
 } // namespace util

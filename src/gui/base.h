@@ -18,6 +18,8 @@ class QSDict;
 class QSArray;
 class QSIProperty;
 class QSCObject;
+class TreeItemAbstract;
+class BaseData;
 
 class Base : public QObject {
  Q_OBJECT
@@ -145,11 +147,10 @@ public slots: //This will be all exported to scripting
  */
  bool save();
  /*-
-  Save currently edited document under different name.
-  Also updates the name of file in editor to the one specified.
+  Save currently edited document (with currently active revision) under different name.
   Return true if document was saved, false if it failed to save for any reason
  */
- bool saveAs(const QString &name);
+ bool saveCopy(const QString &name);
  /*-
   Save state of current editor window (size and position of window and elements inside it)
   State is saved to editor's configuration file.
@@ -179,6 +180,11 @@ public slots: //This will be all exported to scripting
   and show this string in a messagebox to alert user.
  */
  void warn(const QString &str);
+
+ // These are internal slots, should not available to scripting,
+ // but it is not possible to do that. But at least they are uncallable
+ void _dragDrop(TreeItemAbstract *source,TreeItemAbstract *target);
+ void _dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target);
 private:
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;

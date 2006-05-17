@@ -55,6 +55,7 @@ void TreeItemPage::init(boost::shared_ptr<CPage> page,const QString &name) {
  }
  // object type
  setText(1,QObject::tr("Page"));
+ setDragEnabled(true);//Drag drop enabled for this item
  reload(false);//get childs
 }
 
@@ -116,6 +117,12 @@ void TreeItemPage::reloadSelf() {
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemPage::getQSObject() {
  return new QSPage(obj,data->base());
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemPage::getQSObject(Base *_base) {
+ //CPage uses shared pointer, so it can be copied safely into another document
+ return new QSPage(obj,_base);
 }
 
 //See TreeItemAbstract for description of this virtual method

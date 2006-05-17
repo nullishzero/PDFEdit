@@ -110,7 +110,9 @@ void TreeItem::init(boost::shared_ptr<IProperty> pdfObj,const QString &name) {
  // object type
  setText(1,getTypeName(obj));
  setText(2,"");
+ setDragEnabled(true);//Drag drop enabled for this item
 }
+
 
 /** return CObject stored inside this item
  @return stored object (IProperty) */
@@ -225,6 +227,12 @@ void TreeItem::reloadSelf() {
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItem::getQSObject() {
  return new QSIProperty(obj,data->base());
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItem::getQSObject(Base *_base) {
+ //IProperty uses shared pointer, so it can be copied safely into another document
+ return new QSIProperty(obj,_base);
 }
 
 } // namespace gui

@@ -43,6 +43,16 @@ TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QList
  assert(data);
 }
 
+/** 
+ Create and return object for scripting representing this tree item, relocated in different base
+ If the object cannot be copied into new base, return NULL
+ @param _base Base for the new object.
+ @return object for scripting
+*/
+QSCObject* TreeItemAbstract::getQSObject(__attribute__((unused)) Base *_base) {
+ return NULL;
+}
+
 /** Reload contents of this item's subtree recursively by calling
  reloadSelf, createChild, getChildNames and deleteChild
  \see reloadSelf

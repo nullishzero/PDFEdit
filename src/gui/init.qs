@@ -26,12 +26,12 @@ function func_save() {
  save();
 }
 
-/** Save as (action from menu/toolbar). Asks for name, then saves under new name */
-function func_saveas() {
+/** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
+function func_savecopy() {
  var name=fileSaveDialog(filename());
  if (!name) return;
  print("Saving as "+name);
- saveAs(name);
+ saveCopy(name);
 }
 
 /** Open new file (action from menu/toolbar) */
@@ -196,4 +196,14 @@ function rotatePage(n) {
  rotate.set(n0);
  //Reload page after rotating
  go();
+}
+
+/** Same-treeview dragdrop handler */
+function dragDrop() {
+ print("Drag drop: "+source.type()+" -> "+target.type());
+}
+
+/** Different-treeview dragdrop handler */
+function dragDropOther() {
+ print("Drag drop: "+source.type()+" -> "+target.type());
 }

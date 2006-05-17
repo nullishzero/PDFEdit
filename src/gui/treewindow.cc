@@ -8,11 +8,12 @@
 #include "util.h"
 #include <iostream>
 #include <qlayout.h>
-#include <qlistview.h>
+#include "draglistview.h"
 #include "treedata.h"
 #include "pdfutil.h"
 #include "treeitempdf.h"
 #include "treeitem.h"
+#include "base.h"
 
 namespace gui {
 
@@ -34,10 +35,12 @@ TODO:
 */
 TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
- tree=new QListView(this);
+ tree=new DragListView(this);
  tree->setSorting(-1);
  selected=rootItem=NULL;
- QObject::connect(tree, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(treeSelectionChanged(QListViewItem *)));
+ QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
+ QObject::connect(tree,SIGNAL(dragDrop(TreeItemAbstract*,TreeItemAbstract*)),base,SLOT(_dragDrop(TreeItemAbstract*,TreeItemAbstract*)));
+ QObject::connect(tree,SIGNAL(dragDropOther(TreeItemAbstract*,TreeItemAbstract*)),base,SLOT(_dragDropOther(TreeItemAbstract*,TreeItemAbstract*)));
  l->addWidget(tree);
  tree->addColumn(tr("Object"));
  tree->addColumn(tr("Type"));

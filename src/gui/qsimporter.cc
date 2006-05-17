@@ -21,6 +21,7 @@
 #include "qsarray.h"
 #include "qspdf.h"
 #include "qstreeitem.h"
+#include "qstreeitem.h"
 #include "util.h"
 
 namespace gui {

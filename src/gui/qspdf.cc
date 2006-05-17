@@ -6,6 +6,7 @@
 */
 
 #include "qspdf.h"
+#include "pdfutil.h"
 #include <stdio.h>
 
 namespace gui {
@@ -24,16 +25,7 @@ QSPdf::~QSPdf() {
 */
 bool QSPdf::saveAs(QString name) {
  if (name.isNull()) return false;//No empty names!
- FILE *f=fopen(name,"wb");
- if (!f) return false; ///failed to open file
- try {
-  obj->clone(f);
-  fclose(f);
-  return true;
- } catch (...) {
-  fclose(f);
-  return false;
- }
+ return util::saveCopy(obj,name);
 }
 
 /** Call CPdf::getDictionary */

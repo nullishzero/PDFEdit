@@ -69,6 +69,14 @@ QSCObject* TreeItemDict::getQSObject() {
  return new QSDict(dict,data->base());
 }
 
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemDict::getQSObject(Base *_base) {
+ boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
+ assert(dict.get());
+ //Using shared pointer, so it can be copied safely into another document
+ return new QSDict(dict,_base);
+}
+
 /**
  Remove property with given name from dictionary
  @param name Name of property to remove

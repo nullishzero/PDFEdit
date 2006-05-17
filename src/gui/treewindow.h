@@ -11,6 +11,7 @@ namespace gui {
 
 using namespace pdfobjects;
 
+class DragListView;
 class TreeData;
 class TreeItemAbstract;
 class QSCObject;
@@ -58,7 +59,7 @@ private:
  void updateTreeSettings();
 private:
  /** Treeview */
- QListView *tree;
+ DragListView *tree;
  /** Tree data shared with tree items */
  TreeData *data;
  /** Name of root object - if applicable */

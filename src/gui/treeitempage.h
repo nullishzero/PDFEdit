@@ -25,6 +25,7 @@ public:
  virtual ~TreeItemPage();
  boost::shared_ptr<CPage> getObject();
  //From TreeItemAbstract interface
+ virtual QSCObject* getQSObject(Base *_base);
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();

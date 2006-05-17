@@ -17,6 +17,7 @@
 #include "toolbar.h"
 #include "settings.h"
 #include "util.h"
+#include "pdfutil.h"
 #include "version.h"
 #include "dialog.h"
 #include "propertyeditor.h"
@@ -357,18 +358,12 @@ QString PdfEditWindow::filename() {
  @param name New filename to save document under
  @return true if saved succesfully, false if failed to save because of any reason
 */
-bool PdfEditWindow::saveAs(const QString &name) {
+bool PdfEditWindow::saveCopy(const QString &name) {
  if (!document) {
   base->print(tr("No document to save"));
   return false;
  }
- //TODO: fix
- base->print("Feature temporarily disabled due to a bug");
- return false;
- document->save(name);
- //TODO: if failure saving return false;
- setFileName(name);
- return true;
+ return util::saveCopy(document,name);
 }
 
 /**

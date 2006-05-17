@@ -73,8 +73,17 @@ TreeItemArray::~TreeItemArray() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemArray::getQSObject() {
- assert(boost::dynamic_pointer_cast<CArray>(obj).get());
- return new QSArray(boost::dynamic_pointer_cast<CArray>(obj),data->base());
+ boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(obj);
+ assert(array.get());
+ return new QSArray(array,data->base());
+}
+
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemArray::getQSObject(Base *_base) {
+ boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(obj);
+ assert(array.get());
+ //Using shared pointer, so it can be copied safely into another document
+ return new QSArray(array,_base);
 }
 
 /**

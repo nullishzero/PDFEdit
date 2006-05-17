@@ -69,6 +69,14 @@ QSCObject* TreeItemCStream::getQSObject() {
  return new QSStream(stream,data->base());
 }
 
+//See TreeItemAbstract for description of this virtual method
+QSCObject* TreeItemCStream::getQSObject(Base *_base) {
+ boost::shared_ptr<CStream> stream=boost::dynamic_pointer_cast<CStream>(obj);
+ assert(stream.get());
+ //Using shared pointer, so it can be copied safely into another document
+ return new QSStream(stream,_base);
+}
+
 /**
  Remove property with given name from stream
  @param name Name of property to remove

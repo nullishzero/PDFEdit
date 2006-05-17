@@ -11,6 +11,7 @@ namespace gui {
 
 class QSCObject;
 class TreeData;
+class Base;
 
 /** Type of TreeItemAbstract's child.
  The type is arbitrary integer and must be unique only across single type
@@ -35,6 +36,7 @@ public:
  void eraseItems();
  void moveAllChildsFrom(TreeItemAbstract* src);
  QListViewItem* child(const QString &name);
+ virtual QSCObject* getQSObject(Base *_base);
  //Abstract functions
 
  /** 

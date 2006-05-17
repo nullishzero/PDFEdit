@@ -45,7 +45,7 @@ public:
  void saveWindowState();
  void restoreWindowState();
  bool save();
- bool saveAs(const QString &name);
+ bool saveCopy(const QString &name);
  bool closeFile(bool askSave,bool onlyAsk=false);
  void openFile(const QString &name);
  void exitApp();
