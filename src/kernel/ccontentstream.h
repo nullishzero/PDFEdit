@@ -255,7 +255,7 @@ public:
 		}
 	}
 	// Default function
-	void getStringRepresentation (std::string& str) const
+	inline void getStringRepresentation (std::string& str) const
 		{ getStringRepresentation<PdfOperator::Iterator> (str); }
 
 		
