@@ -122,6 +122,23 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 	return true;
 }
 
+//=====================================================================================
+
+bool
+_export (__attribute__((unused)) ostream& oss, const char* fileName)
+{
+	// Open pdf and get the first page	
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+
+	string tmp;
+	page->getText (tmp);
+	oss << "Text: " << tmp << endl;
+	
+	return true;
+}
 
 //=====================================================================================
 bool creation (__attribute__((unused)) ostream& oss)
@@ -148,6 +165,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestCreation);
 		CPPUNIT_TEST(TestDisplay);
+		CPPUNIT_TEST(TestExport);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -181,6 +199,9 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
 	void TestCreation ()
 	{
 		OUTPUT << "CPage creation methods..." << endl;
@@ -189,6 +210,23 @@ public:
 		CPPUNIT_ASSERT (creation (OUTPUT));
 		OK_TEST;
 	}
+	//
+	//
+	//
+	void TestExport ()
+	{
+		OUTPUT << "CPage export..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" export");
+			CPPUNIT_ASSERT (_export (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+
 
 };
 
