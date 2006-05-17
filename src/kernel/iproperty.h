@@ -60,25 +60,25 @@ enum PropertyType
 template<int i> inline
 std::string getStringType () {return "Unknown";}
 template<> inline
-std::string getStringType<0> () {return "pBool";}
+std::string getStringType<0> () {return "Bool";}
 template<> inline
-std::string getStringType<1> () {return "pInt";}
+std::string getStringType<1> () {return "Int";}
 template<> inline
-std::string getStringType<2> () {return "pReal";}
+std::string getStringType<2> () {return "Real";}
 template<> inline
-std::string getStringType<3> () {return "pString";}
+std::string getStringType<3> () {return "String";}
 template<> inline
-std::string getStringType<4> () {return "pName";}
+std::string getStringType<4> () {return "Name";}
 template<> inline
-std::string getStringType<5> () {return "pNull";}
+std::string getStringType<5> () {return "Null";}
 template<> inline
-std::string getStringType<9> () {return "pRef";}
+std::string getStringType<9> () {return "Ref";}
 template<> inline
-std::string getStringType<6> () {return "pArray";}
+std::string getStringType<6> () {return "Array";}
 template<> inline
-std::string getStringType<7> () {return "pDict";}
+std::string getStringType<7> () {return "Dict";}
 template<> inline
-std::string getStringType<8> () {return "pStream";}
+std::string getStringType<8> () {return "Stream";}
 
 /** 
  * Prints property type.
@@ -90,7 +90,19 @@ std::string getStringType<8> () {return "pStream";}
  * @param type Type to print.
  * @return Reference to given string.
  */
-std::string& operator<< (std::string& out, PropertyType type);
+std::ostream& operator<< (std::ostream& out, PropertyType type);
+
+/** 
+ * Prints xpdf object type.
+ *  
+ * Prints given type in human readable from instead of just number.
+ * Uses getStringType method to get string representation.
+ *
+ * @param out String where to print.
+ * @param type Xpdf type to print.
+ * @return Reference to given string.
+ */
+std::ostream& operator<< (std::ostream& out, ::ObjType type);
 
 /** Object id number. */
 typedef unsigned int ObjNum;

@@ -108,7 +108,7 @@ IProperty::dispatchChange () const
 //
 //
 //
-std::string & operator << (std::string & out, PropertyType type)
+std::ostream & operator << (std::ostream & out, PropertyType type)
 {
 	using namespace std;
 
@@ -158,6 +158,66 @@ std::string & operator << (std::string & out, PropertyType type)
 			stringType=getStringType<pOther3>();
 			break;
 	}
+	out<<stringType;
+	return out;
+}
+
+std::ostream& operator<< (std::ostream& out, ::ObjType type)
+{
+	using namespace std;
+
+	string stringType;
+	switch(type)
+	{
+		case objBool:			// boolean
+			stringType=getStringType<pBool>();
+			break;
+		case objInt:			// integer
+			stringType=getStringType<pInt>();
+			break;
+		case objReal:			// real
+			stringType=getStringType<pReal>();
+			break;
+		case objString:			// string
+			stringType=getStringType<pString>();
+			break;
+		case objName:			// name
+			stringType=getStringType<pName>();
+			break;
+		case objNull:			// null
+			stringType=getStringType<pNull>();
+			break;
+
+		// complex objects
+		case objArray:			// array
+			stringType=getStringType<pArray>();
+			break;
+		case objDict:			// dictionary
+			stringType=getStringType<pDict>();
+			break;
+		case objStream:			// stream
+			stringType=getStringType<pStream>();
+			break;
+		case objRef:			// indirect reference
+			stringType=getStringType<pRef>();
+			break;
+
+		// special objects
+		case objCmd:			// command name
+			stringType=getStringType<pOther>();
+			break;
+		case objError:			// error return from Lexer
+			stringType=getStringType<pOther1>();
+			break;
+		case objEOF:			// end of file return from Lexer
+			stringType=getStringType<pOther2>();
+			break;
+		case objNone:			// uninitialized object
+			stringType=getStringType<pOther3>();
+			break;
+	}
+
+	out<<stringType;
 	return out;
 }
 
