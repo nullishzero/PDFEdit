@@ -183,9 +183,9 @@ public:
 	 */
 	template<typename ITER>
 	static ITER getIterator (boost::shared_ptr<PdfOperator> op) 
-		{ return ITER (ListItem (op)); };
+		{ return ITER (ListItem (op)); }
 	static Iterator getIterator (boost::shared_ptr<PdfOperator> op) 
-		{ return Iterator (ListItem (op)); };
+		{ return Iterator (ListItem (op)); }
 
 	/**
 	 * Put behind.
@@ -226,9 +226,9 @@ public:
 	 * Set next or prev item.
 	 */
 	void setNext (boost::shared_ptr<PdfOperator> nxt) 
-		{ setNext (ListItem (nxt));	};
+		{ setNext (ListItem (nxt));	}
 	void setPrev (boost::shared_ptr<PdfOperator> prv) 
-		{ setPrev (ListItem (prv)); };
+		{ setPrev (ListItem (prv)); }
 
 private:
 
