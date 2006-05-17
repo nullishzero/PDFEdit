@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/05/17 19:42:00  hockm0bm
+ * EOFMARKER is extern now
+ *
  * Revision 1.3  2006/05/16 17:57:28  hockm0bm
  * * infrastructure for obserevers usable for IPdfWriter
  *         - OperationStep, OperationScope structures
@@ -57,6 +60,11 @@ extern const char * XREF_KEYWORD;
  * line.
  */
 extern const char * STARTXREF_KEYWORD;
+
+/** Marker of pdf content end.
+ * This key word marks end of pdf document in the file. 
+ */
+extern const char * EOFMARKER;
 
 namespace pdfobjects {
 
