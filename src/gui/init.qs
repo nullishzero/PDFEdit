@@ -199,11 +199,11 @@ function rotatePage(n) {
 }
 
 /** Same-treeview dragdrop handler */
-function dragDrop() {
+function onDragDrop() {
  print("Drag drop: "+source.type()+" -> "+target.type());
 }
 
 /** Different-treeview dragdrop handler */
-function dragDropOther() {
+function onDragDropOther() {
  print("Drag drop: "+source.type()+" -> "+target.type());
 }

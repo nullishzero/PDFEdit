@@ -487,7 +487,7 @@ void Base::_dragDrop(TreeItemAbstract *source,TreeItemAbstract *target) {
  QSCObject *tgt=import->createQSObject(target);
  import->addQSObj(src,"source");
  import->addQSObj(tgt,"target");
- call("dragDrop");
+ call("onDragDrop");
  qs->setErrorMode(QSInterpreter::Nothing);
  //delete page and item variables from script -> they may change while script is not executing
  qs->evaluate("source.deleteSelf();",this,"<delete_item>");
@@ -509,7 +509,7 @@ void Base::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) {
  QSCObject *tgt=import->createQSObject(target);
  import->addQSObj(src,"source");
  import->addQSObj(tgt,"target");
- call("dragDropOther");
+ call("onDragDropOther");
  qs->evaluate("source.deleteSelf();",this,"<delete_item>");
  qs->evaluate("target.deleteSelf();",this,"<delete_item>");
 }
