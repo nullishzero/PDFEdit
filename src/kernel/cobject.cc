@@ -90,7 +90,7 @@ namespace {
 
 	/** Object Stream string representation. */
 	const string CSTREAM_HEADER = "\nstream\n";
-	const string CSTREAM_FOOTER = "endstream";
+	const string CSTREAM_FOOTER = "\nendstream";
 
 	/** Indirect Object header and footer. */
 	const string INDIRECT_HEADER = "obj ";
