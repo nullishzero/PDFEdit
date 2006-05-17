@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.49  2006/05/17 19:43:12  hockm0bm
+ * getRevisionSize method added
+ *
  * Revision 1.48  2006/05/16 17:50:58  hockm0bm
  * minor changes
  *
@@ -867,7 +870,7 @@ public:
 	 * @param saveFlag Flag which determine whether to save before close
 	 *	(parameter may be omited and false is used by default).
 	 *
-	 * Destroyes CPdf instance in safe way. Instant MUST NOT be used
+	 * Destroyes CPdf instance in safe way. Instance MAY NOT be used
 	 * after this method is called.
 	 */
 	int close(bool saveFlag=false);
@@ -1346,6 +1349,22 @@ public:
 	revision_t getActualRevision()const
 	{
 		return xref->getActualRevision();
+	}
+
+	/** Gets size of given revision.
+	 * @param rev Revision to examine.
+	 * @param includeXref Flag controling whether also xref section with trailer
+	 * should be also considered.
+	 *
+	 * Delegates to XRefWriter::getRevisionCount.
+	 *
+	 * @see XRefWriter::getRevisionCount
+	 * @return Size of given revision in bytes.
+	 */
+	size_t getRevisionSize(unsigned rev, bool includeXref=false)const
+	{
+		// just delegates to xref
+		return xref->getRevisionSize(rev, includeXref);
 	}
 
 	/** Changes revision to given one.
