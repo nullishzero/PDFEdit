@@ -54,6 +54,22 @@
     This function is called after active revision of document is changed
    </para>
   </sect1>
+  <sect1 id="onDragDropOther">
+   <title>onDragDropOther()</title>
+   <para>
+   Called on drag-drop event across different tree windows.
+   Variable <link linkend="source">source</link> contain contents of source (dragged) tree item,
+   variable <link linkend="target">target</link> contain destination item on which the source was dropped.
+   </para>
+  </sect1>
+  <sect1 id="onDragDrop">
+   <title>onDragDrop()</title>
+   <para>
+   Called on drag-drop event in one tree window.
+   Variable <link linkend="source">source</link> contain source (dragged) tree item,
+   variable <link linkend="target">target</link> contain destination item on which the source was dropped.
+   </para>
+  </sect1>
   <sect1 id="onLoad">
    <title>onLoad()</title>
    <para>
@@ -182,6 +198,22 @@
    <title>page</title>
    <para>
    This object represents currently shown page. Type of this object is <link linkend="type_Page">Page</link>
+   </para>
+  </sect1>
+  <sect1 id="target">
+   <title>target</title>
+   <para>
+   This object represents target item on which another item was dragged.
+   Type of this object is <link linkend="type_TreeItem">TreeItem</link>
+   </para>
+  </sect1>
+  <sect1 id="source">
+   <title>source</title>
+   <para>
+   This object represents source item that was dragged from one tree window to other item in same or different
+   tree window. Type of this object is either <link linkend="type_TreeItem">TreeItem</link> for items from same tree window,
+   from other tree windows it can be <link linkend="type_IProperty">IProperty</link> or  <link linkend="type_Page">Page</link>
+   (the item inside dragged tree item).
    </para>
   </sect1>
  </chapter>
