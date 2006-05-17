@@ -64,6 +64,35 @@ CPage::getMediabox () const
 }
 
 //
+// \TODO magic constants 0,0, 1000, 1000
+//
+void
+CPage::getText (std::string& text) const
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+
+	// Create text output device
+	boost::scoped_ptr<TextOutputDev> textDev (new ::TextOutputDev (NULL, gFalse, gFalse, gFalse));
+	assert (textDev->isOk());
+	if (!textDev->isOk())
+		throw CObjInvalidOperation ();
+
+	// Display page
+	displayPage (*textDev);	
+
+	// Init xpdf mess
+	openXpdfMess ();
+
+	// Get the text
+	boost::scoped_ptr<GString> gtxt (textDev->getText(0, 0, 1000, 1000));
+	text = gtxt->getCString();
+	
+	// Uninit xpdf mess
+	closeXpdfMess ();
+}
+
+
+//
 // Set methods
 //
 
@@ -93,17 +122,9 @@ CPage::setMediabox (const Rectangle& rc)
 void
 CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 {
-	//
-	// Xpdf Global variable TFUJ!!!
-	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
-	// variable builtinFonts which causes that globalParams can NOT be nested
-	// 
-	assert (NULL == globalParams);
-	boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
-	GlobalParams* oldGlobPar = globalParams;
-	globalParams = aGlobPar.get();
-	globalParams->setupBaseFonts (NULL);
-	
+	// Init xpdf
+	openXpdfMess ();
+
 	// Are we in valid pdf
 	assert (hasValidPdf (dictionary));
 	assert (hasValidRef (dictionary));
@@ -151,11 +172,13 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	
 	//
 	// Cleanup
-	//
+	// 
+	
 	// Free object
 	xpdfPage->free ();
-	// Set global variable back to null
-	globalParams = oldGlobPar;
+	// Clean xpdf mess
+	closeXpdfMess ();
+
 }
 
 //
@@ -216,6 +239,38 @@ bool CPage::parseContentStream ()
 
 	// Everything went ok
 	return true;
+}
+
+//
+// Xpdf mess methods
+//
+
+//
+//
+//
+void
+CPage::openXpdfMess () const
+{
+	//
+	// Xpdf Global variable TFUJ!!!
+	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
+	// variable builtinFonts which causes that globalParams can NOT be nested
+	// 
+	assert (NULL == globalParams);
+	globalParams = new GlobalParams (NULL);
+	globalParams->setupBaseFonts (NULL);	
+}
+
+//
+//
+//
+void
+CPage::closeXpdfMess () const
+{
+	// Clean-up
+	assert (NULL != globalParams);
+	delete globalParams;
+	globalParams = NULL;
 }
 
 // =====================================================================================

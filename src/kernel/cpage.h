@@ -226,19 +226,6 @@ public:
 		}
 	}
 
-	
-	//
-	// Helper methods
-	//
-public:	
-	/**
-	 * Draw page on an output device.
-	 *
-	 * @param out Output device.
- 	 * @param params Display parameters.
-	 */
-	void displayPage (::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
-	
 	/** 
 	 * Get contents streams.
 	 *
@@ -258,6 +245,38 @@ public:
 		std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(container));
 	}
 
+	
+	/**  
+	 * Returns plain text extracted from a page.
+	 * This method uses xpdf TextOutputDevice that outputs page to text device.
+	 *
+	 * @param text Container where the text will be saved.
+	 */
+ 	void getText (std::string& text) const;
+
+	
+	/** 
+	 * Returns all objects on a page.
+	 *
+	 * \TODO what here?
+	 */
+	 template<typename Container>
+	 void getAllObjects (Container& container) const {}
+
+
+	
+	//
+	// Helper methods
+	//
+public:	
+	/**
+	 * Draw page on an output device.
+	 *
+	 * @param out Output device.
+ 	 * @param params Display parameters.
+	 */
+	void displayPage (::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
+	
 
 	/**
 	 * Parse content stream. 
@@ -268,25 +287,27 @@ public:
 	 */
 	bool parseContentStream ();
 
-
-//========================= not implemented yet
 	
-	/**  
-	 * Returns plain text extracted from a page.
-	 *
-	 * @param text Container where the text will be saved.
-	 */
- 	void getText (std::string& /*text*/) const {};
-
-
-	/**  
-	 *
-	 * Vlozi na stranku existujuci objekt a vytvori novy  identifikator vlozeneho objektu, ktory vrati.
-	 * 
-	 */
-	// boost::shared_ptr<IProperty> insertObject (CAny,position);
-
+	//
+	// Xpdf global param mess helper methods
+	//
+private:
 	
+	/**
+	 * Init global params.
+	 */
+	void openXpdfMess () const;
+
+	/**
+	 * Close xpdf mess. 
+	 */
+	void closeXpdfMess () const;
+
+
+	//
+	// Media box interface
+	//
+public:
 	/**  
 	 * Return media box of this page. It is a required item in page dictionary (spec p.119).
 	 *
@@ -303,13 +324,15 @@ public:
 	 void setMediabox (const Rectangle& rc);
 
 
-	/** 
-	 * Returns all objects on a page.
+	 
+	 
+	//========================= not implemented yet
+	/**  
 	 *
-	 * \TODO what here?
+	 * Vlozi na stranku existujuci objekt a vytvori novy  identifikator vlozeneho objektu, ktory vrati.
+	 * 
 	 */
-	 template<typename Container>
-	 void getAllObjects (Container& container) const {}
+	// boost::shared_ptr<IProperty> insertObject (CAny,position);
 
 	 
 /**  Vrati pole bbox pre kazde pismeno od ord_pos (v plaintexte)
