@@ -6,6 +6,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/05/17 19:40:07  hockm0bm
+ * * getRevisionEnd
+ *         - signature changed - uses position where to start searching
+ *           not using current revision information
+ *         - position is restored before return
+ *         - method is protected now
+ * * getRevisionSize method added
+ *
  * Revision 1.23  2006/05/16 18:01:00  hockm0bm
  * pdf field value may be NULL - makes sense for stand alone XRefWriter instances
  *
@@ -231,15 +239,17 @@ private:
 	unsigned revision;
 
 	/** Type for revision storage.
-	 * This is array containing file offset for startxref for each 
-	 * revision. First element is newest revision.
+	 *
+	 * Each element stands for revision with number same as index in array.
+	 * The newest revision is first element (with index 0). Value stored in
+	 * array is stream offset where xref section for such revision starts.
 	 */
 	typedef std::vector<size_t> RevisionStorage;
 
 	/** Array of all revisions.
 	 * This array contains everytime at least one element. It is 
 	 * initialized in constructor from parsed information and new 
-	 * elements are appended when saveXref is called.
+	 * elements are appended when saveXref is called with newRevision flag.
 	 */
 	RevisionStorage revisions;
 
@@ -301,6 +311,24 @@ protected:
 	 * to revisions storage as later revision and continues same way.
 	 */
 	void collectRevisions();
+
+	/** Returns end of current revision offset. 
+	 * @param xrefStart Stream offset of xref section start.
+	 *
+	 * Finds startxref from given position and returns offset to the first
+	 * byte after xref offset number line or end of stream position if startxref
+	 * has not been found.
+	 * <p>
+	 * <b>Implementation notes:</b>
+	 * <br>
+	 * This method assumes that revision has been added by incremental update
+	 * and no object from this revision can be behind this position. This
+	 * assumption is not fullfilled specially for linearized pdf documents.
+	 *
+	 * @return Offset immediately after last information for this revision.
+	 */
+	size_t getRevisionEnd(size_t xrefStart)const;
+
 public:
 	/** Initialize constructor with file stream writer.
 	 * @param stream File stream with pdf content.
@@ -505,33 +533,36 @@ public:
 		return revisions.size();
 	}
 
-	/** Returns end of current revision offset. 
-	 *
-	 * Finds startxref from current startXRefPos and returns offset to the first
-	 * byte after xref offset number line or end of stream position if startxref
-	 * has not been found.
-	 * <p>
-	 * <b>Implementation notes:</b>
-	 * <br>
-	 * This method assumes that revision has been added by incremental update
-	 * and no object from this revision can be behind this position.
-	 * <br>
-	 * If revision is 0 (the newest one) eofPos is returned, this is not proper
-	 * for linearized Pdfs!
-	 *
-	 * @return Offset immeediately after last information for this revision.
-	 */
-	size_t getRevisionEnd()const;
-
 	/** Clones content of stream until end of current position.
 	 * @param file File handle where to copy content.
 	 * 
 	 * Clone contains everything from stream starting from 0 position until 
 	 * getRevisionEnd.
-	 * <br>
+	 *
 	 * @see XRefWriter::getRevisionEnd for limitations.
 	 */
 	void cloneRevision(FILE * file)const;
+
+	/** Returns size of given revision.
+	 * @param rev Revision to examine.
+	 * @param includeXref Flag controling whether also xref section with trailer
+	 * should be also considered.
+	 *
+	 * Gets size of data used for given revision. This means number of bytes
+	 * starting from previous revision (or file start if no previous is exists)
+	 * until start of given one's xref section if includeXref is false or end of
+	 * whole given revision (return value from getRevisionEnd) if flag is true.
+	 * <br>
+	 * This implies that getRevisionSize with default behaviour returns number
+	 * of bytes used for data of given revision meanwhile 
+	 * getRevisionSize(true) returns whole size of revision.
+	 * 
+	 * @see XRefWriter::getRevisionEnd for limitations.
+	 *
+	 * @return number of bytes used for current revision (see for includeXref
+	 * paramter specific behaviour).
+	 */
+	size_t getRevisionSize(unsigned rev, bool includeXref=false)const;
 
 	/**********************************************************************
 	 *

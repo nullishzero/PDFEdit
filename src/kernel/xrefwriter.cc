@@ -4,6 +4,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/05/17 19:40:07  hockm0bm
+ * * getRevisionEnd
+ *         - signature changed - uses position where to start searching
+ *           not using current revision information
+ *         - position is restored before return
+ *         - method is protected now
+ * * getRevisionSize method added
+ *
  * Revision 1.22  2006/05/16 18:01:00  hockm0bm
  * pdf field value may be NULL - makes sense for stand alone XRefWriter instances
  *
@@ -686,16 +694,13 @@ void XRefWriter::changeRevision(unsigned revNumber)
 	kernelPrintDbg(DBG_INFO, "Revision changed to "<<revision);
 }
 
-size_t XRefWriter::getRevisionEnd()const
+size_t XRefWriter::getRevisionEnd(size_t xrefStart)const
 {
-	// the newest revision ends at eofPos
-	if(!revision)
-		return eofPos;
-	
 	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(str);
+	size_t pos=streamWriter->getPos();
 
-	// starts from last xref position
-	streamWriter->setPos(lastXRefPos);
+	// starts from given position
+	streamWriter->setPos(xrefStart);
 	char buffer[BUFSIZ];
 	size_t length=0;
 	memset(buffer, '\0', sizeof(buffer));
@@ -712,7 +717,12 @@ size_t XRefWriter::getRevisionEnd()const
 	}
 
 	// returns current position
-	return streamWriter->getPos();
+	size_t endPos=streamWriter->getPos();
+	
+	// restores position in the stream
+	streamWriter->setPos(pos);
+
+	return endPos;
 }
 
 void XRefWriter::cloneRevision(FILE * file)const
@@ -722,10 +732,52 @@ using namespace debug;
 	kernelPrintDbg(DBG_ERR, "");
 
 	StreamWriter * streamWriter=dynamic_cast<StreamWriter *>(str);
-	size_t revisionEOF=getRevisionEnd();
+	size_t pos=streamWriter->getPos();
+
+	// gets current revision end
+	size_t revisionEOF=getRevisionEnd(revisions[revision]);
 
 	kernelPrintDbg(DBG_DBG, "Copies until "<<revisionEOF<<" offset");
 	streamWriter->clone(file, 0, revisionEOF);
+
+	// adds pdf end of line marker to the output file
+	fwrite(EOFMARKER, sizeof(char), strlen(EOFMARKER), file);
+	fflush(file);
+
+	// restore stream position
+	streamWriter->setPos(pos);
+}
+
+size_t XRefWriter::getRevisionSize(unsigned rev, bool includeXref)const
+{
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "rev="<<rev<<" includeXref="<<includeXref);
+
+	// gets starting position of current rev
+	size_t revStart=revisions[rev];
+	size_t prevEnd=0;
+
+	// gets end of previous rev - if no exists keeps default value 0 (from
+	// the stream beginning)
+	if(rev+1<getRevisionCount())
+	{
+		prevEnd=getRevisionEnd(revisions[rev+1]);
+		kernelPrintDbg(DBG_DBG, "Previous revision ends at "<<prevEnd);
+	}else
+		kernelPrintDbg(DBG_DBG, "No previous rev.");
+
+	// if also xref section should be considered, gets end of current rev
+	if(includeXref)
+	{
+		revStart=getRevisionEnd(revisions[rev]);
+		kernelPrintDbg(DBG_DBG, "Considering also xref section. Revision ends at "<<revStart);
+	}
+
+	assert(revStart>prevEnd);
+
+	// returns the difference
+	return revStart-prevEnd;
 }
 
 } // end of pdfobjects namespace
