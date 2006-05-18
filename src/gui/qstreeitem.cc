@@ -6,6 +6,7 @@
 */
 
 #include "qstreeitem.h"
+#include "qsiproperty.h"
 #include "treeitemabstract.h"
 
 namespace gui {
@@ -22,6 +23,23 @@ QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeIte
 */
 QSCObject* QSTreeItem::item() {
  return obj->getQSObject();
+}
+
+/**
+ Return item inside this tree item, as item() does, but with one exception:
+ If the item is reference, return reference target instead of the reference
+ Caller is responsible for freeing the object
+ \see item
+ @return QObject wrapper around data inside treeitem
+*/
+QSCObject* QSTreeItem::itemref() {
+ QSCObject* rItem=obj->getQSObject();
+ QSIProperty* ip=dynamic_cast<QSIProperty*>(rItem);
+ if (!ip) return rItem;//Not IProperty
+ QSCObject* refItem=ip->ref();
+ if (refItem==rItem) return rItem;//Wasn't a reference
+ delete rItem;//Delete original
+ return refItem;//Return reference 
 }
 
 /**

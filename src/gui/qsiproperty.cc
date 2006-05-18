@@ -191,8 +191,9 @@ void QSIProperty::set(bool value) {
 }
 
 /**
- Return reference to this property, but if the property is a reference, return the reference target.
- This way you will always get dereferenced property for correct manipulation
+ Return reference to this property, but if the property is a reference, create and return the reference target.
+ This way you will always get dereferenced property for correct manipulation.
+ If new item was created this way, caller is responsible for freeing the item.
  @return Dereferenced property
  */
 QSCObject* QSIProperty::ref() {

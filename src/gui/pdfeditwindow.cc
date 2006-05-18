@@ -259,6 +259,7 @@ void PdfEditWindow::changeRevision(int revision) {
  prop->clear();
  pagespc->refresh(selectedPageNumber,base->getQSPdf());//Try to keep on the same page in the new revision
  tree->reload();
+ setTitle(revision);
  emit revisionChanged(revision);
  base->call("onChangeRevision");
 }
@@ -380,7 +381,16 @@ void PdfEditWindow::setFileName(const QString &name) {
  //Add name of file without path to window title
  baseName=name;
  baseName.replace(QRegExp("^.*/"),"");
- setCaption(QString(APP_NAME)+" - "+baseName);
+ setTitle();
+}
+
+/** Set window title, according to stored baseName and active revision number
+ @param revision Revision number
+ */
+void PdfEditWindow::setTitle(int revision/*=0*/) {
+ QString revisionInfo="";
+ if (revision) revisionInfo=QString(" - ")+tr("viewing revision")+" "+QString::number(revision);
+ setCaption(QString(APP_NAME)+" - "+baseName+revisionInfo);
 }
 
 /** Closes file currently opened in editor, without opening new empty one */

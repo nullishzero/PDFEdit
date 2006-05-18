@@ -83,6 +83,7 @@ private slots:
  void settingUpdate(QString key);
  void runScript(QString script);
 private:
+ void setTitle(int revision=0);
  void addObjectDialogI(boost::shared_ptr<IProperty> ip);
  void setFileName(const QString &name);
  void destroyFile();

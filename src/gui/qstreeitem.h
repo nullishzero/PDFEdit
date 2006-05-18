@@ -19,6 +19,11 @@ class QSTreeItem : public QSCObject {
 public slots:
  /*- Get object contained in this tree item */
  QSCObject* item();
+ /*-
+  Get object inside this tree item, as item() does, but with one exception:
+  If the object is reference, return reference target instead of the reference
+ */
+ QSCObject* itemref();
  /*- Get type of object contained in this tree item (shortcut for .item().type()) */
  QString itemtype();
  /*- Return child of this tree item with given name, or NULL if this item have no child with such name */

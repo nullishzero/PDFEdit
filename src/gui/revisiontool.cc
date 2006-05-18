@@ -85,7 +85,8 @@ void RevisionTool::setDocument(CPdf *newDocument) {
    return;   
   }
   for(size_t i=0;i<revs;i++) {
-   revList->insertItem(tr("Revision: ")+QString::number(i));  
+   size_t revSize=document->getRevisionSize(i,true);
+   revList->insertItem(tr("Revision: ")+QString::number(i)+" ("+QString::number(revSize)+" "+tr("bytes")+")");  
   }
   revList->setCurrentItem(curr);
   revList->setEnabled(true);
