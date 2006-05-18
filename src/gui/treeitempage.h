@@ -29,6 +29,7 @@ public:
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
+ virtual bool haveChild();
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();
  virtual void remove();

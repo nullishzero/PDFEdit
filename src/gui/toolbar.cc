@@ -65,6 +65,7 @@ void ToolBar::slotClicked(int id) {
  @param tb Toolbar for addition of item
  @param item Item name
  @return True, if special item was loaded, false if item is not a special item
+ @param main Main window associated with this special item
 */
 bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
  if (item=="-" || item=="") {

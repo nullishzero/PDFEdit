@@ -56,10 +56,13 @@ QStringList TreeItemSimple::getChildNames() {
  assert(typ!=pRef);//Must not be called on complex childs
  assert(typ!=pDict);
  assert(typ!=pArray);
- //TODO: pStream -> have children?
-
  //Null, Bool, Int, Real, Name, String -> These are simple types without any children
  return QStringList(); 
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemSimple::haveChild() {
+ return false;
 }
 
 } // namespace gui

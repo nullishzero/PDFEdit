@@ -63,6 +63,12 @@ QStringList TreeItemCStream::getChildNames() {
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemCStream::haveChild() {
+ CStream *dict=dynamic_cast<CStream*>(obj.get());
+ return dict->getPropertyCount()>0;
+}
+
+//See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemCStream::getQSObject() {
  boost::shared_ptr<CStream> stream=boost::dynamic_pointer_cast<CStream>(obj);
  assert(stream.get());

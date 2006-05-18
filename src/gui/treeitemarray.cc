@@ -66,6 +66,12 @@ QStringList TreeItemArray::getChildNames() {
  return itemList;
 }
 
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemArray::haveChild() {
+ CArray *ar=dynamic_cast<CArray*>(obj.get());
+ return ar->getPropertyCount()>0;
+}
+
 /** default destructor */
 TreeItemArray::~TreeItemArray() {
  uninitObserver();

@@ -231,7 +231,7 @@ void PdfEditWindow::setObject() {
 }
 
 /**
- Slot called on chaning the page in preview window
+ Slot called on changing the page in preview window
  @param pg New page that was just changed to
  @param numberOfPage Number of page
 */

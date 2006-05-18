@@ -34,8 +34,12 @@ RevisionTool::~RevisionTool() {
 */
 QSize RevisionTool::sizeHint() const {
  QSize tmp=revList->sizeHint();
- //TODO: better size guess
- tmp.setWidth(tmp.width()*2);
+ QFont font=revList->font();
+ QFontMetrics fm(font);
+ //Enough space for the string, unless too many too big revisions
+ tmp.setWidth(fm.width(tr("Revision: ")+"00 (1222333 "+tr("bytes")+")")+tmp.height());
+ //We add tmp.height() because of the button on right side of the combobox.
+ //It have approximately square shape (in most visual styles)
  return tmp;
 }
 

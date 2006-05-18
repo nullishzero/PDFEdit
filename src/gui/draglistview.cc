@@ -17,7 +17,7 @@ namespace gui {
 const char *TREEITEM_TYPE="pdfedit/treeitem";
 
 /** Dragobject constructor
- @param item Item to store in the object
+ @param _item Item to store in the object
  @param dragSource Widget in which the drag originated
  @param name name of the object
  */
@@ -59,7 +59,7 @@ TreeItemDragObject::~TreeItemDragObject(){
  Same constructor as QListView
  @param parent Parent window
  @param name Widget name
- @param flags Widget flags
+ @param f Widget flags
  */
 DragListView::DragListView(QWidget *parent,const char *name/*=0*/,WFlags f/*=0*/) : QListView(parent,name,f) {
  //Empty constructor

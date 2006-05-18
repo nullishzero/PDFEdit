@@ -10,6 +10,7 @@
 #include <qlineedit.h>
 #include <qvalidator.h>
 #include "settings.h"
+#include "util.h"
 
 namespace gui {
 
@@ -66,7 +67,7 @@ void PageTool::selectPage() {
 
 /**
  Called on setting new page from this control
- @param newPage
+ @param newPage String containing new page number
 */
 void PageTool::selectPage(const QString &newPage) {
  QString thePage=newPage.stripWhiteSpace();
@@ -80,7 +81,7 @@ void PageTool::selectPage(const QString &newPage) {
 
 /**
  Called to update control after selecting a new page outside of this control
- @param Page selected Page
+ @param page selected Page
  @param p unused QSPage reference
  */
 void PageTool::updatePage(__attribute__((unused)) const QSPage &p,int page) {
@@ -89,7 +90,7 @@ void PageTool::updatePage(__attribute__((unused)) const QSPage &p,int page) {
 
 /**
  Called to update control after selecting a new page outside of this control
- @param Page selected Page
+ @param page selected Page
  */
 void PageTool::updatePage(int page) {
  curPage=page;

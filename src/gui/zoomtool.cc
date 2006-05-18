@@ -74,7 +74,7 @@ void ZoomTool::selectZoom(const QString &newZoom) {
 
 /**
  Called to update control after selecting a new Zoom outside of this control
- @param Zoom selected Zoom
+ @param zoom selected Zoom
  */
 void ZoomTool::updateZoom(float zoom) {
  int percent=(int)(zoom*100.0);

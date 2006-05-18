@@ -27,6 +27,7 @@ using namespace std;
 TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  nameId=itemName;
  data=_data;
+ parsed=false;
  assert(data);
 }
 
@@ -40,6 +41,7 @@ TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QList
 TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  nameId=itemName;
  data=_data;
+ parsed=false;
  assert(data);
 }
 
@@ -53,6 +55,18 @@ QSCObject* TreeItemAbstract::getQSObject(__attribute__((unused)) Base *_base) {
  return NULL;
 }
 
+/**
+ Slot that will be called when item is opened/closed
+ @param open True if item is being opened, false if closed
+*/
+void TreeItemAbstract::setOpen(bool open) {
+ if (open && !parsed) { //Trying to open unparsed item
+  parsed=true;
+  reload(false);//And now get the subitems!
+ }
+ QListViewItem::setOpen(open);
+}
+
 /** Reload contents of this item's subtree recursively by calling
  reloadSelf, createChild, getChildNames and deleteChild
  \see reloadSelf
@@ -62,6 +76,10 @@ QSCObject* TreeItemAbstract::getQSObject(__attribute__((unused)) Base *_base) {
  */
 void TreeItemAbstract::reload(bool reloadThis/*=true*/) {
  if (reloadThis) reloadSelf();
+ if (!parsed) { //Not yet parsed, just check for presence of any childs
+  setExpandable(haveChild());
+  return;
+ }
  QDict<QListViewItem> newItems;
  QMap<QString,ChildType> newTypes;
 
@@ -123,7 +141,13 @@ void TreeItemAbstract::eraseItems() {
  @return Specified child of this tree item
 */
 QListViewItem* TreeItemAbstract::child(const QString &name) {
- //TODO: what if tree not fully expanded?
+ if (!parsed) {
+  //Tree not expanded here.
+  //We need to expand it, so we can return the items
+  parsed=true;
+  reload(false);
+  //Now all direct subitems are loaded
+ }
  return items[name];//QDict will return NULL if item is not there
 }
 /**

@@ -102,4 +102,10 @@ void TreeItemContentStream::reloadSelf() {
  return;
 }
 
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemContentStream::haveChild() {
+ //TODO: implement, return true
+ return false;
+}
+
 } // namespace gui

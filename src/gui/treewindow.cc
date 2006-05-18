@@ -135,7 +135,7 @@ void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  selected=dynamic_cast<TreeItemAbstract*>(item);
  emit itemSelected();
  if (!it) { //Not holding IProperty
-  //TODO: TreeItemAbstract & add "return QSObject" to TreeItemAbstract
+  //TODO: Similarly for TreeItemAbstract
   guiPrintDbg(debug::DBG_WARN,"Not a TreeItem: " << item->text(0));
   //todo: handle this type properly
   return;

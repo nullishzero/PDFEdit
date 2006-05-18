@@ -16,6 +16,8 @@
 
 namespace gui {
 
+ //TODO: implement annotations, outlines
+
 /** Child type specific for TreeItemPdf*/
 enum childType {invalidItem=-1, pageList=1, outlineList, pageItem, outlineItem, dictItem};
 
@@ -172,6 +174,26 @@ QStringList TreeItemPdf::getChildNames() {
  }
  assert(0); //Should not happen
  return QStringList();
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemPdf::haveChild() {
+ if (nType.isNull()) {//PDF document
+  if (data->showDict()) return true;
+  if (data->showPage()) return true;
+  if (data->showOutline()) return true;
+  return false;
+ }
+ if (nType=="Pages") {
+  unsigned int count=obj->getPageCount();
+  return count>0;
+ }
+ if (nType=="Outlines") {
+  //TODO : implement outlines
+  return false;
+ }
+ assert(0); //Should not happen
+ return false;
 }
 
 //See TreeItemAbstract for description of this virtual method

@@ -63,6 +63,12 @@ QStringList TreeItemDict::getChildNames() {
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemDict::haveChild() {
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
+ return dict->getPropertyCount()>0;
+}
+
+//See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemDict::getQSObject() {
  boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
  assert(dict.get());

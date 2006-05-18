@@ -52,7 +52,6 @@ void TreeItemRef::addData() {
  IndiRef iref=util::getRef(obj);
  selfRef=s.sprintf("%d,%d",iref.num,iref.gen);
  setText(2,QString("-> ")+selfRef);
- //TODO: better dynamic generation, using reload() and TreeItemAbstract
  setExpandable(true);
 }
 
@@ -69,10 +68,11 @@ void TreeItemRef::unOpen() {
  assert(typ==pRef); //paranoid check
  data->remove(this);
  complete=false;
- QListViewItem::setOpen(false);
+ TreeItem::setOpen(false);
 }
 
-/** Slot that will be called when item si opened/closed
+/**
+ Slot that will be called when item is opened/closed
  @param open True if item is being opened, false if closed
 */
 void TreeItemRef::setOpen(bool open) {
@@ -96,7 +96,7 @@ void TreeItemRef::setOpen(bool open) {
     other->unOpen();
     data->add(this);//re-add itself
     complete=true;
-    QListViewItem::setOpen(open);
+    TreeItem::setOpen(open);
     return;//Do not expand references
    } else { // subtree not found -> add to list
     guiPrintDbg(debug::DBG_DBG,"Subtree not found");
@@ -107,10 +107,8 @@ void TreeItemRef::setOpen(bool open) {
    reload();  
   }
  }
- //TODO: if closing, delete childs?
-
  //Call original method
- QListViewItem::setOpen(open);
+ TreeItem::setOpen(open);
 }
 
 /** Check if childs of this items are yet unknown and to be parsed/added
@@ -171,6 +169,11 @@ ChildType TreeItemRef::getChildType(const QString &name) {
 QStringList TreeItemRef::getChildNames() {
  if (!complete) return QStringList(); //Childs not loaded yet
  return QStringList("Target");
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemRef::haveChild() {
+ return true;
 }
 
 } // namespace gui

@@ -110,6 +110,13 @@ QStringList TreeItemPage::getChildNames() {
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemPage::haveChild() {
+ if (data->showODict()) return true;
+ if (data->showStream()) return true;
+ return false;
+}
+
+//See TreeItemAbstract for description of this virtual method
 void TreeItemPage::reloadSelf() {
  //Basically, nothing to reload (any useful content is in children)
 }

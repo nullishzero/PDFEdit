@@ -28,12 +28,13 @@ public:
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
+ virtual bool haveChild();
  virtual void reloadSelf();
 protected:
  void addData();
 private:
  TreeItem* parentCheck();
- /** If childs of this items are yet unknown and to be parsed/added */
+ /** False, if childs of this items are yet unknown and to be parsed/added, true if child are parsed */
  bool complete;
  /** If this item contains a CRef, this string contain reference target in text form */
  QString selfRef;

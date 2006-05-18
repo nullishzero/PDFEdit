@@ -37,6 +37,7 @@ public:
  void moveAllChildsFrom(TreeItemAbstract* src);
  QListViewItem* child(const QString &name);
  virtual QSCObject* getQSObject(Base *_base);
+ virtual void setOpen(bool open);
  //Abstract functions
 
  /** 
@@ -61,9 +62,14 @@ public:
  /** Remove itself from document (including any children) */
  virtual void remove()=0;
  /** Get type of this items child.
- @return type of specified child
+  @return type of specified child
  */
  virtual ChildType getChildType(const QString &name)=0;
+ /**
+  Return true, if the item have at least one child
+  @return Presence of at least one child
+ */
+ virtual bool haveChild()=0;
 protected:
  /** Name of this item */
  QString nameId;
@@ -73,6 +79,9 @@ protected:
  QMap<QString,ChildType> types;
  /** Data from treewindow containing reference to it and other needed data */
  TreeData *data;
+private:
+ /** False, if childs of this items are yet unknown and to be parsed/added, true if already parsed */
+ bool parsed;
 };
 
 } // namespace gui
