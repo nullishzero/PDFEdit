@@ -551,6 +551,10 @@ Data: %3
         <source>No document to save</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>viewing revision</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>
@@ -575,6 +579,10 @@ Data: %3
     </message>
     <message>
         <source>Revision: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bytes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -618,11 +626,6 @@ Data: %3
     <message>
         <source>&amp;File</source>
         <comment>file</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save &amp;as...</source>
-        <comment>fsaveas</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -718,6 +721,11 @@ Data: %3
     <message>
         <source>Rotate page 90 degrees</source>
         <comment>rot90</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save &amp;copy...</source>
+        <comment>fsavecopy</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

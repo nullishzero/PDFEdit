@@ -554,6 +554,10 @@ Data: %3
         <source>No document to save</source>
         <translation>Není žádný dokument k uložení</translation>
     </message>
+    <message>
+        <source>viewing revision</source>
+        <translation>zobrazuji revizi</translation>
+    </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>
@@ -579,6 +583,10 @@ Data: %3
     <message>
         <source>Revision: </source>
         <translation>Revize: </translation>
+    </message>
+    <message>
+        <source>bytes</source>
+        <translation>bytů</translation>
     </message>
 </context>
 <context>
@@ -627,11 +635,6 @@ Data: %3
         <source>&amp;File</source>
         <comment>file</comment>
         <translation>Soubor</translation>
-    </message>
-    <message>
-        <source>Save &amp;as...</source>
-        <comment>fsaveas</comment>
-        <translation>Uložit j&amp;ako...</translation>
     </message>
     <message>
         <source>New &amp;Window</source>
@@ -722,6 +725,11 @@ Data: %3
         <source>Rotate page 90 degrees</source>
         <comment>rot90</comment>
         <translation>Otočit stránku o 90 stupňů</translation>
+    </message>
+    <message>
+        <source>Save &amp;copy...</source>
+        <comment>fsavecopy</comment>
+        <translation>Uložit kopii...</translation>
     </message>
 </context>
 <context>
