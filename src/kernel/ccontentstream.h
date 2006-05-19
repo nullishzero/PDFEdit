@@ -40,8 +40,10 @@ namespace operatorparser  {
  *
  * @param op Actual operator.
  * @param state Actual state that we should update.
+ * @param res Actual resources for lookup fonts.
+ * @param rc Return rectangle for PdfOperator op.
  */
-void adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state);
+void adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state, boost::shared_ptr<GfxResources> res, Rectangle* rc);
 	
 		
 /**
@@ -67,17 +69,16 @@ public:
 	getOpAtSpecificPosition (PdfOperator::Iterator it, 
 				 PdfOpStorage& container, 
 				 const PdfOpPosComparator& cmp, 
-				 GfxState& state)
+				 GfxState& state,
+				 boost::shared_ptr<GfxResources> res)
 	{
 		utilsPrintDbg (debug::DBG_DBG, "");
 		
 		while (!it.isEnd ())
 		{
-			adjustActualPosition (it.getCurrent(), state);
+			boost::shared_ptr<Rectangle> rc(new Rectangle());
+			adjustActualPosition (it.getCurrent(), state, res, rc.get());
 		
-			// Create rectangle from actual position
-			Rectangle rc (state.getCurX (), state.getPageHeight () - state.getCurY(), 0, 0);
-			
 			// DEBUG OUTPUT //
 			std::string frst;
 			it.getCurrent()->getOperatorName(frst);
@@ -86,10 +87,10 @@ public:
 			std::string strop;
 			if (0 < ops.size())
 				ops[0]->getStringRepresentation (strop);
-			utilsPrintDbg (debug::DBG_DBG, rc << " " << frst << " " << strop);
+			utilsPrintDbg (debug::DBG_DBG, *rc.get() << " " << frst << " " << strop);
 			/////////////////
 
-			if (cmp(rc))
+			if (cmp(*rc.get()))
 				container.push_back (it.getCurrent());
 
 			it = it.next ();
@@ -265,7 +266,7 @@ public:
 	 * @param operators Objects will be added to the back of the container.
 	 */
 	template<typename OpContainer, typename PdfOpPosComparator>
-	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state) const
+	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state, boost::shared_ptr<GfxResources> res) const
 	{
 		kernelPrintDbg (debug::DBG_DBG, "");
 		if (operators.empty())
@@ -273,7 +274,7 @@ public:
 		
 		operatorparser::PdfOperatorPositionParser<OpContainer, PdfOpPosComparator> posParser;
 		posParser.getOpAtSpecificPosition 
-				(PdfOperator::getIterator (operators.front()), opContainer, cmp, state);
+				(PdfOperator::getIterator (operators.front()), opContainer, cmp, state, res);
 	}
 
 	/**

@@ -100,7 +100,7 @@ public:
   Ref *getID() { return &id; }
 
   // Does this font match the tag?
-  GBool matches(char *tagA) { return !tag->cmp(tagA); }
+  GBool matches(const char *tagA) { return !tag->cmp(tagA); }
 
   // Get base font name.
   GString *getName() { return name; }
@@ -300,7 +300,7 @@ public:
   ~GfxFontDict();
 
   // Get the specified font.
-  GfxFont *lookup(char *tag);
+  GfxFont *lookup(const char *tag);
 
   // Iterative access.
   int getNumFonts() { return numFonts; }

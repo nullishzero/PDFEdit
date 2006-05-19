@@ -306,7 +306,7 @@ GfxResources::~GfxResources() {
   gStateDict.free();
 }
 
-GfxFont *GfxResources::lookupFont(char *name) {
+GfxFont *GfxResources::lookupFont(const char *name) {
   GfxFont *font;
   GfxResources *resPtr;
 

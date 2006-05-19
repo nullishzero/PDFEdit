@@ -34,8 +34,8 @@ static const int DEFAULT_ROTATE 	= 0;
 
 static const double DEFAULT_PAGE_LX = 0;
 static const double DEFAULT_PAGE_LY = 0;
-static const double DEFAULT_PAGE_RX = 700;
-static const double DEFAULT_PAGE_RY = 700;
+static const double DEFAULT_PAGE_RX = 612;		// width of A4 on a device with 72 horizontal dpi
+static const double DEFAULT_PAGE_RY = 792;		// height of A4 on a device with 72 vertical dpi
 
 /** Graphical state parameters. */
 typedef struct DisplayParams
@@ -74,7 +74,7 @@ public:
 	/** Is in in a range. */
 	bool operator() (const Rectangle& rc) const
 	{
-		return (rc_.contains (rc.xleft, rc.yleft));
+		return ( (rc_.contains (rc.xleft, rc.yleft)) && (rc_.contains (rc.xright, rc.yright)) );
 	}
 };
 
@@ -87,9 +87,9 @@ public:
 	PdfOpCmpPt (const Point& pt) : pt_(pt) {};
 	
 	/** Is in in a range. */
-	bool operator() (const Rectangle&) const
+	bool operator() (const Rectangle& rc) const
 	{
-		return true;
+		return (rc.contains (pt_.x, pt_.y));
 	}
 };
 
@@ -208,12 +208,63 @@ public:
 								PositionComparator cmp,
 								const DisplayParams params = DisplayParams())
 	{	
+		kernelPrintDbg (debug::DBG_DBG, " params----------------- (" << params.hDpi << "," << params.vDpi << ",(" << params.pageRect << ")," << params.useMediaBox << "," << params.rotate << "," << params.upsideDown << ")");
+		// Get page rectangle
+		Rectangle h_rc;
+		if (params.useMediaBox) {
+			h_rc = getMediabox();
+		} else {
+			h_rc = params.pageRect;
+			// recalculate box for the params
+			assert( params.useMediaBox );  // not implemented
+		}
 		// Create Media (Bounding) box
-		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (params.pageRect.xleft, params.pageRect.yleft,
-															  params.pageRect.xright, params.pageRect.yright));;
+		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (h_rc.xleft, h_rc.yleft,
+															  h_rc.xright, h_rc.yright));;
 		// Create state
 		GfxState state (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown);
+	
+		// --------- koli textu a fontom
+		assert (NULL == globalParams);
+		boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
+		globalParams = aGlobPar.get();
+		globalParams->setupBaseFonts (NULL);
+	
+		// Are we in valid pdf
+		assert (hasValidPdf (dictionary));
+		assert (hasValidRef (dictionary));
+		if (!hasValidPdf (dictionary) || !hasValidRef (dictionary))
+			throw XpdfInvalidObject ();
+
+		// Get xref
+		XRef* xref = dictionary->getPdf()->getCXref ();
+		assert (NULL != xref);
+
+		// Create xpdf object representing CPage
+		//
+		boost::scoped_ptr<Object> xpdfPage (dictionary->_makeXpdfObject());
+		// Check page dictionary
+		assert (objDict == xpdfPage->getType ());
+		if (objDict != xpdfPage->getType ())
+			throw XpdfInvalidObject ();
+	
+		// Get page dictionary
+		Dict* xpdfPageDict = xpdfPage->getDict ();
+		assert (NULL != xpdfPageDict);
 		
+		// resource dictionary
+		Object obj1,obj2;
+		xpdfPageDict->lookup("Resources", &obj1);
+		if (obj1.isDict()) {
+			obj2.free();
+			obj1.copy(&obj2);
+		}
+		obj1.free();
+		// start the resource stack
+		boost::shared_ptr<GfxResources> res (new GfxResources( xref, obj2.getDict(), NULL));
+
+		// -----------------------------------------------------------
+
 		// If not parsed
 		if (contentstreams.empty())
 			parseContentStream ();		
@@ -222,8 +273,11 @@ public:
 		for (ContentStreams::iterator it = contentstreams.begin (); it != contentstreams.end(); ++it)
 		{
 			// Get the objects with specific comparator
-			(*it)->getOperatorsAtPosition (opContainer, cmp, state);
+			(*it)->getOperatorsAtPosition (opContainer, cmp, state, res);
 		}
+
+		// 
+		globalParams = NULL;
 	}
 
 	/** 

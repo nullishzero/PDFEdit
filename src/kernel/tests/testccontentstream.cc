@@ -28,6 +28,7 @@ using namespace boost;
 bool
 setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 {
+		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
@@ -60,8 +61,9 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-position (__attribute__((unused))	ostream& oss, const char* fileName, const Rectangle rc)
+position (ostream& oss, const char* fileName, const Rectangle rc, const DisplayParams params = DisplayParams())
 {
+		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
@@ -71,7 +73,7 @@ position (__attribute__((unused))	ostream& oss, const char* fileName, const Rect
 	page->parseContentStream ();
 	
 	std::vector<shared_ptr<PdfOperator> > ops;
-	page->getObjectsAtPosition (ops, rc);
+	page->getObjectsAtPosition (ops, rc, params);
 
 	oss << " Found objects #" << ops.size();
 
@@ -93,6 +95,7 @@ namespace  {
 	
 	bool img (CStream& str)
 	{
+		OUTPUT << "CContentStream..." << endl;
 		  //
 		  // Read from BI to ID
 		  //
@@ -156,6 +159,7 @@ namespace  {
 bool
 opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 {
+		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
@@ -240,6 +244,7 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 bool
 printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 {
+		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
@@ -251,7 +256,7 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 	{
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
-		assert (!ccs.empty());
+//		assert (!ccs.empty());
 		shared_ptr<CContentStream> cs = ccs.front();
 		cs->getStringRepresentation (str);
 	}
@@ -309,13 +314,42 @@ public:
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
+			DisplayParams params;
 			
 			TEST(" getPosition");
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300)));
+			params.upsideDown = true;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
 			MEM_CHECK;
-			//CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (10,10,50,50)));
+			OUTPUT << "upsideDown = false" << *it << endl;
+			params.upsideDown = false;
+			params.rotate = 90;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
 			MEM_CHECK;
-			//CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (400,400,450,450)));
+			OUTPUT << "90 agree rotation" << *it << endl;
+			params.rotate = 90;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
+			MEM_CHECK;
+			OUTPUT << "180 agree rotation" << *it << endl;
+			params.rotate = 180;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
+			MEM_CHECK;
+			OUTPUT << "270 agree rotation" << *it << endl;
+			params.rotate = 270;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
+			MEM_CHECK;
+			OUTPUT << "changed dpi" << *it << endl;
+			params.hDpi = 36;
+			params.vDpi = 144;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
+			MEM_CHECK;
+/*			OUTPUT << "nonuse mediaBox" << *it << endl;
+			params.useMediaBox = false;
+			params.hDpi = 72;
+			params.vDpi = 72;
+			params.pageRect.xright = 100;
+			params.pageRect.yright = 200;
+			params.rotate = 0;
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));*/
 			OK_TEST;
 		}
 	}

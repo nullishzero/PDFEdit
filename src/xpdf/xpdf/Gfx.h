@@ -78,7 +78,7 @@ public:
   GfxResources(XRef *xref, Dict *resDict, GfxResources *nextA);
   ~GfxResources();
 
-  GfxFont *lookupFont(char *name);
+  GfxFont *lookupFont(const char *name);
   GBool lookupXObject(char *name, Object *obj);
   GBool lookupXObjectNF(char *name, Object *obj);
   void lookupColorSpace(char *name, Object *obj);
