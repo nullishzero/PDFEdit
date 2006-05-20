@@ -80,6 +80,7 @@ protected slots:
  void menuActivated(int id);
  void setObject();
 private slots:
+ void pagePopup(const QPoint &globalPos);
  void settingUpdate(QString key);
  void runScript(QString script);
 private:

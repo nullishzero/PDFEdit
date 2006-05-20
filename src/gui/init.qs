@@ -109,6 +109,11 @@ function onTreeDoubleClick() {
  if (treeitem.itemtype()=="Page") go(treeitem.id());
 }
 
+/** Callback for click with right mouse button in tree window */
+function onTreeRightClick() {
+ print("Right click in page");
+}
+
 /** Print names of childs of currently selected tree item to console */
 function printTreeChilds() {
  names=treeitem.getChildNames();

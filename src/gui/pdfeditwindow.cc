@@ -70,6 +70,14 @@ void PdfEditWindow::create(const QString &fName/*=QString::null*/) {
  windowCount++;
 }
 
+/** 
+ Slot called when right-clicked in current page
+ @param globalPos Position of mouse cursor
+*/
+void PdfEditWindow::pagePopup(__attribute__((unused)) const QPoint &globalPos) {
+ base->call("onPageRightClick");
+}
+
 /** Close the window itself */
 void PdfEditWindow::closeWindow() {
  base->stopScript();
@@ -184,7 +192,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
  QObject::connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
-
+ QObject::connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
  this->setCentralWidget(spl);
 
  //Menu
