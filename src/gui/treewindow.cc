@@ -35,7 +35,7 @@ TODO:
 */
 TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
- tree=new DragListView(this);
+ tree=new DragListView(this,"tree_view");
  tree->setSorting(-1);
  selected=rootItem=NULL;
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
