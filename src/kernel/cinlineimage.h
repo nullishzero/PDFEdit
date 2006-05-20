@@ -43,7 +43,8 @@ public:
 	/**
 	 *
 	 */
-	CInlineImage (CPdf& p, const CStream::Buffer& buffer, const IndiRef& rf);
+	CInlineImage (::Object& objDict, const CStream::Buffer& buffer);
+	CInlineImage (CPdf& p, ::Object& objDict, const CStream::Buffer& buffer, const IndiRef& rf);
 
 	/**
 	 * Default constructor. CStream default constructor is called.

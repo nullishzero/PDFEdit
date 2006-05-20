@@ -162,7 +162,8 @@ typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
 class CContentStream : public noncopyable, public CContentStreamObserver 
 {
 public:
-	typedef std::vector<boost::shared_ptr<PdfOperator> > Operators;
+	typedef std::list<boost::shared_ptr<PdfOperator> > Operators;
+	typedef PdfOperator::Iterator OperatorIterator;
 
 private:
 
@@ -230,9 +231,15 @@ public:
 	//
 public:	
 	/**
-	 * Get string representation.
+	 * Get string representation. We traverse operators using specific
+	 * iterators. 
 	 *
-	 * @param str String that will hold the output.
+	 * REMARK: If an iterator accepts composite objects and also its children, the 
+	 * string representation will be incorrect. It will contain the string
+	 * represenation of the composite including the child and also a separate
+	 * string representation of the child.
+	 *
+	 * @param str String that will contain the output.
 	 */
 	template<typename Iter>
 	void getStringRepresentation (std::string& str) const
@@ -255,9 +262,31 @@ public:
 			it.next();
 		}
 	}
-	// Default function
-	inline void getStringRepresentation (std::string& str) const
-		{ getStringRepresentation<PdfOperator::Iterator> (str); }
+	
+	/**
+	 * Get string representation.
+	 *
+	 * @param str String that will contain the output.
+	 */
+
+	void getStringRepresentation (std::string& str) const
+	{
+		kernelPrintDbg (debug::DBG_DBG, "");
+
+		if (operators.empty ())
+			return;
+
+		// Clear string
+		str.clear ();
+
+		// Loop through every operator
+		for (Operators::const_iterator it = operators.begin(); it != operators.end(); ++it)
+		{
+			std::string tmp;
+			(*it)->getStringRepresentation (tmp);
+			str += tmp + " ";
+		}	
+	}
 
 		
 	/**
@@ -302,9 +331,29 @@ public:
 	 * successor because we do not know it.
 	 * 
 	 * @param it PdfOperator iterator to delete.
+	 * @param indicateChange If true, change will be written to underlying
+	 * stream.
 	 */
-	void deleteOperator (PdfOperator::Iterator it);
+	void deleteOperator (OperatorIterator it, bool indicateChange = true);
+
+	/**
+	 * Insert pdf operator at specified position.
+	 *
+	 * @param it Position after which the operator will be inserted.
+	 * @param newOper Operator that will be inserted.
+	 * @param indicateChange If true, change will be written to underlying
+	 * stream.
+	 */
+	void insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
 	
+	/**
+	 * Replace an operator.
+	 *
+	 * @param it Position of the element that will be replaced.
+	 * @param newOper Operator that will replace operator pointed by it.
+	 * @param indicateChange If true, change will be written to underlying
+	 */
+	void replaceOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
 
 	//
 	// Helper methods
@@ -321,6 +370,18 @@ public:
 	 * Parse.
 	 */
 	void reparse ();
+
+	/**
+	 * Save content stream to underlying cstream.
+	 */
+	void saveChange () 
+		{ _objectChanged(); };
+
+private:
+	/**
+	 * Save changes.
+	 */
+	void _objectChanged ();
 	
 	//
 	// Destructor

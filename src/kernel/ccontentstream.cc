@@ -973,11 +973,11 @@ namespace
 	opsSetPdfRefCs (shared_ptr<PdfOperator> first, CPdf& pdf, IndiRef rf, CContentStream& cs)
 	{
 		utilsPrintDbg (DBG_DBG, "");
-		PdfOperator::Iterator it = PdfOperator::getIterator (first);
+		CContentStream::OperatorIterator it = PdfOperator::getIterator (first);
 		while (!it.isEnd())
 		{
 			// Set cs
-			it.getCurrent()->setContentStream (&cs);
+			it.getCurrent()->setContentStream (cs);
 			
 			// Get operands
 			PdfOperator::Operands operands;
@@ -1097,8 +1097,8 @@ namespace
 	getInlineImage (CStream& stream) 
 	{
 		kernelPrintDbg (DBG_DBG, "");
-		Object dict;
-		dict.initDict ((XRef*)NULL); // BE careful, we do not have (need) valid xref
+		xpdf::XpdfObject dict;
+		dict->initDict ((XRef*)NULL); // BE careful, we do not have (need) valid xref
 
 		//
 		// Get the inline image dictionary
@@ -1117,7 +1117,7 @@ namespace
 					assert (!"Bad inline image.");
 					throw CObjInvalidObject ();
 				}
-				dict.dictAdd (key, &o);
+				dict->dictAdd (key, &o);
 			}
 			stream.getXpdfObject (o);
 		}
@@ -1127,7 +1127,8 @@ namespace
 		// 
 		// Make stream
 		// 
-		Stream* str = new ::EmbedStream (stream.getXpdfStream (), &dict, gFalse, 0);
+		boost::scoped_ptr<Stream> str (new ::EmbedStream (stream.getXpdfStream (), dict.get(), gFalse, 0));
+		str->reset();
 		if (str)
 		{
 			// Copy chars to buf and with this buffer initialize CInlineImage
@@ -1144,12 +1145,13 @@ namespace
 				c2 = str->getBaseStream()->getChar();
 				buf.push_back (c2);
 			}
-			dict.free ();
-			delete str;
-			
+			// Pop EI
+			buf.pop_back ();
+			buf.pop_back ();
+
 			assert (hasValidPdf(&stream));
 			assert (hasValidRef (&stream));
-			return new CInlineImage (*(stream.getPdf()), buf, stream.getIndiRef());
+			return new CInlineImage (*(stream.getPdf()), *dict, buf, stream.getIndiRef());
 				
 		}else
 		{
@@ -1327,8 +1329,6 @@ namespace
 		// Set pdf ref and cs
 		if (!operators.empty())
 			opsSetPdfRefCs (operators.front(), *(stream->getPdf()), stream->getIndiRef(), cs);
-		
-
 	}
 
 
@@ -1461,10 +1461,30 @@ CContentStream::reparse ()
 	parseContentStream (operators, contentstream, *this);
 }
 
+//
+//
+//
+void
+CContentStream::_objectChanged ()
+{
+	// Do not notify anything if we are not in a valid pdf
+	if (!hasValidPdf (contentstream))
+		return;
+	assert (hasValidRef (contentstream));
+
+	// Make the change
+	string tmp;
+	getStringRepresentation (tmp);
+	contentstream->setBuffer (tmp);
+
+	// Notify observers
+	this->notifyObservers ( shared_ptr<CContentStream> (),shared_ptr<const ObserverContext> ());
+}
+
 
 //
 // Change methods
-//
+// \TODO save changes to stream
 
 
 //
@@ -1477,40 +1497,26 @@ CContentStream::reparse ()
 //  * we have to carefully adjust iterator
 // 
 void
-CContentStream::deleteOperator (PdfOperator::Iterator it)
+CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-	assert (!empty());
+	assert (!operators.empty());
 
 	// Be sure that the operator won't get deallocated along the way
 	boost::shared_ptr<PdfOperator> toDel = it.getCurrent ();
 	
-
-
-	// Find the operator in operators, if not found it is in a composite
-	Operators::iterator operIt = find (operators.begin(), operators.end(), toDel);
+	//
+	// Remove it from operators or composite
+	// 
+	
+	Operators::iterator operIt = std::find (operators.begin(), operators.end(), toDel);
 	if (operIt == operators.end())
 	{
 		// Find the composite in which the operator resides
-		PdfOperator::Iterator itNxt;
-		PdfOperator::Iterator begin = PdfOperator::getIterator (operators.front());
-		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, it, itNxt);
+		OperatorIterator begin = PdfOperator::getIterator (operators.front());
+		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, it);
 		assert (composite);
-
-		//
-		// Remove it from iterator
-		//
-		// Get the prev of operator that should be deleted
-		PdfOperator::Iterator itPrv = it; itPrv.prev ();
-		// Set iterators, in other words remove operIt from iterator list
-		if (!itNxt.isEnd())
-			itNxt.getCurrent()->setPrev (itPrv.getCurrent());
-		if (!itPrv.isEnd())
-			itPrv.getCurrent()->setNext (itNxt.getCurrent());
-
-		//
 		// Remove it from composite
-		//
 		if (composite)
 			composite->remove (toDel);
 		else
@@ -1518,24 +1524,118 @@ CContentStream::deleteOperator (PdfOperator::Iterator it)
 	
 	}else
 	{
-		//
-		// Remove it from Iterator list
-		//
-		// Get the prev and next of operator that should be deleted
-		PdfOperator::Iterator itPrv = it; itPrv.prev ();
-		Operators::iterator itNxt = operIt; ++itNxt;
-		// Set iterators, in other words remove operIt from iterator list
-		if (itNxt != operators.end())
-			(*itNxt)->setPrev (itPrv.getCurrent());
-		if (!itPrv.isEnd())
-			itPrv.getCurrent()->setNext (*itNxt);
-		
-		//
 		// Remove it from operators
-		// 
 		operators.erase (operIt);
 	}
 
+	
+	//
+	// Remove it from iterator list
+	//
+	
+	// Get "real" next
+	OperatorIterator itNxt = PdfOperator::getIterator (getLastOperator (toDel)).next();
+	// Get the prev of operator that should be deleted
+	OperatorIterator itPrv = it; itPrv.prev ();
+	// Set iterators, in other words remove operIt from iterator list
+	if (!itNxt.isEnd())
+		itNxt.getCurrent()->setPrev (itPrv.getCurrent());
+	if (!itPrv.isEnd())
+		itPrv.getCurrent()->setNext (itNxt.getCurrent());
+
+	//
+	// To be sure
+	//
+	toDel->setPrev (PdfOperator::ListItem());
+	toDel->setNext (PdfOperator::ListItem());
+	
+	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
+	if (indicateChange)
+		_objectChanged ();
+}
+
+
+//
+//
+//
+void
+CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange)
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+
+	// Insert into empty contentstream
+	if (operators.empty ())
+	{
+		assert (it.isEnd());
+		operators.push_back (newOper);
+		return;
+	}
+	assert (!it.isEnd());
+
+	//
+	// Insert into operators or composite
+	// 
+	
+	Operators::iterator operIt = std::find (operators.begin(), operators.end(), it.getCurrent());
+	if (operIt == operators.end())
+	{
+		// Find the composite in which the operator resides
+		OperatorIterator begin = PdfOperator::getIterator (operators.front());
+		boost::shared_ptr<CompositePdfOperator> composite = findCompositeOfPdfOperator (begin, it);
+		assert (composite);
+		// Insert it into composite
+		if (composite)
+			composite->insert_after (it.getCurrent(), newOper);
+		else
+			throw CObjInvalidObject ();
+	
+	}else
+	{
+		// Insert it into operators
+		++operIt;
+		operators.insert (operIt, newOper);
+	}
+
+	//
+	// Insert it in the iterator list
+	//
+	
+	// Get "real" next
+	assert (!it.isEnd());
+	OperatorIterator itCur = PdfOperator::getIterator(getLastOperator (it));
+	OperatorIterator itNxt = itCur; itNxt.next();
+	assert (!itCur.isEnd());
+	// Set iterators, in other words insert newVal to iterator list
+	itCur.getCurrent()->setNext (newOper);
+	newOper->setPrev (itCur.getCurrent());
+	
+	if (!itNxt.isEnd())
+	{
+		itNxt.getCurrent()->setPrev (newOper);
+		newOper->setNext (itNxt.getCurrent());
+	}
+
+
+	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
+	if (indicateChange)
+		_objectChanged ();
+}
+
+
+//
+//
+//
+void
+CContentStream::replaceOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange)
+{
+	// Add new operator, do not write it to the stream
+	insertOperator (it, newOper, false);
+	// Delete old operator, do not write it to the stream
+	deleteOperator (it, false);
+
+	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
+	if (indicateChange)
+		_objectChanged ();
 }
 
 

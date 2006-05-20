@@ -4,7 +4,7 @@
  *		  Filename:  cobject.cc
  *	   Description: CObject helper functions implementation.
  *		   Created:  08/02/2006 02:08:14 PM CET
- *			Author:  jmisutka (), 
+ *			Author:   
  * =====================================================================================
  */
 
@@ -712,6 +712,40 @@ simpleValueFromString (const std::string& str, IndiRef& val)
 	{
 		throw CObjBadValue ();
 	}
+}
+
+//
+//
+//
+void 
+dictFromXpdfObj (CDict& resultDict, ::Object& dict)
+{
+	assert (objDict == dict.getType());
+	if (objDict != dict.getType())
+			throw ElementBadTypeException ("");
+	assert (0 <= dict.dictGetLength ());
+	utilsPrintDbg (debug::DBG_DBG, "" );
+			
+	xpdf::XpdfObject obj;
+
+	int len = dict.dictGetLength ();
+	for (int i = 0; i < len; ++i)
+	{
+			// Make string from key
+			string key = dict.dictGetKey (i);
+			// Make IProperty from value
+			dict.dictGetValNF (i,obj.get());
+			scoped_ptr<IProperty> cobj (createObjFromXpdfObj (*obj));
+			if (cobj)
+			{
+				// Store it in the dictionary
+				resultDict.addProperty (key, *cobj);
+
+			}else
+				throw CObjInvalidObject ();
+	}
+
+	assert ((size_t)len == resultDict.getPropertyCount());
 }
 
 

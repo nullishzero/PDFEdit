@@ -21,6 +21,7 @@
 namespace pdfobjects {
 //==========================================================
 
+
 //
 // Forward declaration
 //
@@ -53,7 +54,7 @@ public:
 	typedef std::deque<boost::shared_ptr<IProperty> > 	 			Operands;
 	typedef iterator::SharedDoubleLinkedListIterator<PdfOperator>	Iterator;
 	typedef Iterator::ListItem										ListItem;
-	typedef std::vector<boost::shared_ptr<PdfOperator> > 			PdfOperators;
+	typedef std::list<boost::shared_ptr<PdfOperator> > 				PdfOperators;
 
 	// iterator has to be a friend
 	friend class iterator::SharedDoubleLinkedListIterator<PdfOperator>;
@@ -127,12 +128,21 @@ public:
 public:
 	
 	/**
-	 * Add an operator to the composite.
+	 * Add an operator to the end of composite.
 	 * 
 	 * @param oper Operator to be added.
 	 */
 	virtual void push_back (const boost::shared_ptr<PdfOperator>)
 		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
+
+	/**
+	 * Insert an operator after an item.
+	 * 
+	 * @param oper Operator after which an oper will be inserted.
+	 * @param newOper Operator to be inserted.
+	 */
+	virtual void insert_after (const boost::shared_ptr<PdfOperator>, boost::shared_ptr<PdfOperator>)
+		{ throw NotImplementedException ("PdfOperator::insert_after ()"); };
 
 	/**
 	 * Remove an operator from the composite interface.
@@ -159,6 +169,7 @@ public:
 	 */
 	virtual void getChildren (PdfOperators&) const
 		{ throw NotImplementedException ("PdfOperator::getChildrens ()"); };	
+
 	
 	//
 	// Iterator interface
@@ -230,8 +241,6 @@ public:
 	void setPrev (boost::shared_ptr<PdfOperator> prv) 
 		{ setPrev (ListItem (prv)); }
 
-private:
-
 	/**
 	 * Set next or prev item.
 	 */
@@ -250,6 +259,7 @@ private:
 		prev = prv; 
 	};
 
+protected:
 	/**
 	 * Get previous item in a list that is implemented by PdfOperator.
 	 * It is the same as linked list.
@@ -283,8 +293,8 @@ public:
 	 *
 	 * @param cs Content stream.
 	 */
-	void setContentStream (CContentStream* cs)
-		{assert (NULL == contentstream); contentstream = cs;}
+	void setContentStream (CContentStream& cs)
+		{contentstream = &cs;}
 	
 	
 	/**
@@ -348,7 +358,8 @@ public:
 	virtual void push_back (const boost::shared_ptr<PdfOperator> op);
 	virtual void remove (boost::shared_ptr<PdfOperator> op);
 	virtual void getChildren (PdfOperators& container) const;
-
+	virtual void insert_after (const boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> newOper);
+	
 	//
 	// PdfOperator interface
 	//
@@ -574,32 +585,28 @@ isComposite (boost::shared_ptr<PdfOperator> oper)
 /**
  * Find composite operator into which an operator belongs.
  *
- * @param it Start iterator.
- * @param expected Object we want to find the composite in which it resides.
- * @param next Next object in the composite to the specified one.
- *
- * @return Composite object.
- */
-boost::shared_ptr<PdfOperator>
-findCompositeOfPdfOperator (PdfOperator::Iterator it, 
-							PdfOperator::Iterator expected, 
-							PdfOperator::Iterator& next);
-
-
-/**
- * Find composite operator into which an operator belongs.
- *
  * @param begin Start iterator.
  * @param it Object we want to find the composite in which it resides.
  *
- * @return Composite object.
+ * @return Composite operator.
  */
-inline boost::shared_ptr<PdfOperator>
-findCompositeOfPdfOperator (PdfOperator::Iterator begin, PdfOperator::Iterator it)
-{
-	PdfOperator::Iterator next;
-	return findCompositeOfPdfOperator (begin, it, next);
-}
+boost::shared_ptr<CompositePdfOperator> findCompositeOfPdfOperator (PdfOperator::Iterator begin, PdfOperator::Iterator it);
+
+/**
+ * Get last operator if a composite.
+ *
+ * @param oper Operator.
+ */
+boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> oper);
+
+/**
+ * Get last operator if a composite.
+ *
+ * @param it Iterator.
+ */
+inline boost::shared_ptr<PdfOperator> getLastOperator (PdfOperator::Iterator it)
+	{ return getLastOperator (it.getCurrent()); }
+
 
 //==========================================================
 // PdfOperator iterators

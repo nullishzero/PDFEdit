@@ -47,16 +47,37 @@ const string CINLINEIMAGE_END = "";
 //
 //
 //
-CInlineImage::CInlineImage (CPdf& p, const CStream::Buffer& buf, const IndiRef& rf) : CStream ()
+CInlineImage::CInlineImage (::Object& oDict, const CStream::Buffer& buf) : CStream ()
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-	//
-	// Init Stream
-	//
-	this->setPdf (&p);
-	this->setIndiRef (rf);
-	// Set buffer
-	this->setRawBuffer (buf);
+	assert (objDict == oDict.getType());
+
+	// Init dictionary, we do not have access to dictionary container
+	utils::dictFromXpdfObj (this->dictionary, oDict);
+	assert (0 < this->dictionary.getPropertyCount ());
+	
+	// Set buffer, do not use setRawBuffer because CStream would be ... copied
+	std::copy (buf.begin(), buf.end(), std::back_inserter (this->buffer));
+}
+
+//
+//
+//
+CInlineImage::CInlineImage (CPdf& p, ::Object& oDict, const CStream::Buffer& buf, const IndiRef& rf) : CStream ()
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (objDict == oDict.getType());
+
+	// Init dictionary, we do not have access to dictionary container
+	utils::dictFromXpdfObj (this->dictionary, oDict);
+	assert (0 < this->dictionary.getPropertyCount ());
+	
+	// Set pdf and ref
+	setPdf (&p);
+	setIndiRef (rf);
+	
+	// Set buffer, do not use setRawBuffer because CStream would be ... copied
+	std::copy (buf.begin(), buf.end(), std::back_inserter (this->buffer));
 }
 
 

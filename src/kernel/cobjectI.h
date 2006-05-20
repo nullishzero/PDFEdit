@@ -197,15 +197,15 @@ CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverConte
 	assert (hasValidRef(this));
 	
 	// Dispatch the change
-	IProperty::dispatchChange ();
+	this->dispatchChange ();
 	
 	if (context)
 	{
 		// Clone this new value
 		boost::shared_ptr<IProperty> newValue (this->clone());
 		// Fill them with correct values
-		newValue->setPdf (IProperty::getPdf());
-		newValue->setIndiRef (IProperty::getIndiRef());
+		newValue->setPdf (this->getPdf());
+		newValue->setIndiRef (this->getIndiRef());
 		// Notify everybody about this change
 		this->notifyObservers (newValue, context);
 	}else
@@ -942,8 +942,9 @@ CObjectStream<Checker>::setRawBuffer (const Buffer& buf)
 //
 //
 template<typename Checker>
+template<typename Container>
 void 
-CObjectStream<Checker>::setBuffer (const Buffer& buf)
+CObjectStream<Checker>::setBuffer (const Container& buf)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (NULL == parser || !"Stream is open.");
@@ -970,38 +971,23 @@ template<typename Checker>
 void
 CObjectStream<Checker>::setLength (size_t len) 
 {
+	
+	//Lock
+	dictionary.lockChange ();
+
+	CInt _len (len);
 	try
 	{
-		boost::shared_ptr<IProperty> clen = utils::getReferencedObject (dictionary.getProperty("Length"));
-		if (isInt (clen))
-		{
-			//Lock
-			dictionary.lockChange ();
-			
-			// Change is dispatched here 
-			IProperty::getSmartCObjectPtr<CInt>(clen)->writeValue (len);
-			
-			// Unlock
-			dictionary.unlockChange ();
-	
-		}else
-		{
-			assert (!"Bad Length type in stream.");
-			throw CObjInvalidObject ();
-		}
+		dictionary.setProperty ("Length", _len);
 	
 	}catch (ElementNotFoundException&)
 	{
-		//Lock
-		dictionary.lockChange ();
-		
-		CInt _len (len);
 		dictionary.addProperty ("Length", _len);
-		
-		// Unlock
-		dictionary.unlockChange ();
-
 	}
+
+	// Unlock
+	dictionary.unlockChange ();
+
 }
 
 
@@ -1067,8 +1053,9 @@ CObjectStream<Checker>::_makeXpdfObject () const
 //
 //
 template<typename Checker>
+template<typename Container>
 void 
-CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
+CObjectStream<Checker>::encodeBuffer (const Container& buf)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 
@@ -1100,7 +1087,7 @@ CObjectStream<Checker>::encodeBuffer (const Buffer& buf)
 	buffer.clear ();
 
 	// Create input source from buffer
-	boost::iostreams::stream<filters::buffer_source<Buffer> > input (buf);
+	boost::iostreams::stream<filters::buffer_source<Container> > input (buf);
 	in.push (input);
 	// Copy it to container
 	Buffer::value_type c;

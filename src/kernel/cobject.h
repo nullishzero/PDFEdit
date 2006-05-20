@@ -646,7 +646,7 @@ protected:
 	//
 	// Constructors
 	//
-/*debug*/public:
+public:
 	/**
 	 * Constructor. Only kernel can call this constructor
 	 *
@@ -810,7 +810,8 @@ public:
 	 *
 	 * @param buf New buffer.
 	 */
-	void setBuffer (const Buffer& buf);
+	template<typename Container>
+	void setBuffer (const Container& buf);
 
 	//
 	// Parsing
@@ -896,7 +897,8 @@ private:
 	 *
 	 * @param container Output container.
 	 */
-	void encodeBuffer (const Buffer& container);
+	template<typename Container>
+	void encodeBuffer (const Container& container);
 
 private:
 	/**
@@ -1198,6 +1200,16 @@ IProperty* createObjFromXpdfObj (::Object& obj);
  */
 template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (::Object& obj, T val);
 template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& ip, ::Object& obj, T val);
+
+/**
+ * This function is a slower equivalent to complexValueFromXpdfObj. But on the
+ * other hand, complexValueFromXpdfObj needs inner dictionary container that we
+ * do not have always access to.
+ *
+ * @param resultDict Dictionary.
+ * @param dict Xpdf object from which we init dict.
+ */
+void dictFromXpdfObj (CDict& dict, ::Object& objDict);
 
 /**
  * Create xpdf Object which represents value.
