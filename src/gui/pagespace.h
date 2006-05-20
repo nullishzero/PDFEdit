@@ -43,18 +43,23 @@ class PageSpace : public QWidget {
 		void prevPage ( );
 		void nextPage ( );
 		void lastPage ( );
+
+		bool saveImage ( const QString & filename, const char * format, int quality = -1, bool onlySelectedArea = false);
+		bool saveImageWithDialog ( bool onlySelectedArea = false );
+
+		bool isSomeoneSelected ( );
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
 		void changedZoomFactorTo ( float zoom );
 
-		/*TODO*/ void popupMenu ( const QPoint & globalPos /*, Cobject & */ );
+		/*TODO*/ void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
 	protected:
 		virtual void resizeEvent ( QResizeEvent * );
 		virtual void keyPressEvent ( QKeyEvent * e );
 	private slots:
 		// slots for connecting pageImage's signals
 		void newSelection ( const QRect & );
-		void requirementPopupMenu ( const QPoint &, const QRect & );
+		void requirementPopupMenu ( const QPoint &, const QRect * );
 		void moveSelection ( const QPoint & );
 		void resizeSelection ( const QRect &, const QRect & );
 		void showMousePosition ( const QPoint & );

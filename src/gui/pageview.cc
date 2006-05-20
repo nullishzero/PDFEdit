@@ -51,6 +51,23 @@ PageView::~PageView () {
 	delete oldRectSelected;
 }
 
+bool PageView::saveImage ( const QString & file, const char * format, int quality, bool onlySelectedArea) {
+	if (! onlySelectedArea) {
+		return pageImage->save( file, format, quality );
+	} else if (rectSelected) {
+		QRect r = (*rectSelected) & pageImage->rect();
+		QPixmap * pom = new QPixmap( r.size() );
+		
+		copyBlt( pom, 0,0, pageImage, r.x(), r.y(), r.width(), r.height() );
+
+		bool r_pom = pom->save( file, format, quality );
+		delete pom;
+		return r_pom;
+	}
+
+	return false;
+}
+
 void PageView::setResizingZone ( unsigned int width ) {
 	resizingCursorZone = width;
 }
@@ -382,16 +399,13 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 			// emit correct signal
 			if ( isMoving ) {
 				if (*rectSelected != * oldRectSelected) {	// no emit if no change
-					printf("emit moving\n");
 					emit selectionMovedTo( rectSelected->topLeft() );
 				}
 			} else if ( isResizing ) {
 				if (* rectSelected != * oldRectSelected) {	// no emit if no change
-					printf("emit resizing\n");
 					emit selectionResized( * oldRectSelected, * rectSelected );
 				}
 			} else {
-				printf("emit selecting\n");
 				emit leftClicked( * rectSelected );
 			}
 			// clear states
@@ -405,11 +419,9 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 
 			// emit signal with correct parameters
 			if ( (rectSelected != NULL) && rectSelected->contains( e->pos() ) ) {
-				printf("emit popup\n");
-				emit rightClicked( e->globalPos(), * rectSelected );
+				emit rightClicked( e->pos(), rectSelected );
 			} else {
-				printf("emit popup\n");
-				emit rightClicked( e->globalPos(), QRect( e->pos(), e->pos() ) );
+				emit rightClicked( e->pos(), NULL );
 			}
 			break;
 		default:

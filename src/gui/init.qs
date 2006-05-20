@@ -111,7 +111,13 @@ function onTreeDoubleClick() {
 
 /** Callback for click with right mouse button in page */
 function onPageRightClick() {
- print("Right click in page");
+ menu=popupMenu();
+ menu.addSeparator();
+ menu.addItemDef("item Save page as image,if (! PageSpace.saveImageWithDialog(false)) print(\"Image was not save !!!\");,,");
+ if (PageSpace.isSomeoneSelected())
+   menu.addItemDef("item Save selected area as image,if (! PageSpace.saveImageWithDialog(true)) print(\"Image was not save !!!\");,,");
+ menu.addSeparator();
+ eval(menu.popup());
 }
 
 /** Print names of childs of currently selected tree item to console */

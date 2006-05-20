@@ -8,6 +8,7 @@
 #include "static.h"
 #include "QOutputDevPixmap.h"
 #include <qdockarea.h>
+#include <qfiledialog.h>
 
 // using namespace std;
 
@@ -126,8 +127,8 @@ void PageSpace::newPageView() {
 	pageImage->setResizingZone( globalSettings->readNum( PAGESPC + "ResizingZone" ) );
 
 	connect( pageImage, SIGNAL( leftClicked(const QRect &) ), this, SLOT( newSelection(const QRect &) ) );
-	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRect &) ),
-		this, SLOT( requirementPopupMenu(const QPoint &, const QRect &) ) );
+	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRect *) ),
+		this, SLOT( requirementPopupMenu(const QPoint &, const QRect *) ) );
 	connect( pageImage, SIGNAL( selectionMovedTo(const QPoint &) ), this, SLOT( moveSelection(const QPoint &) ) );
 	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &) ),
 		this, SLOT( resizeSelection(const QRect &, const QRect &) ) );
@@ -285,10 +286,41 @@ void PageSpace::newSelection ( const QRect & r) {
 			actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
 		}
 	}
+/*ZMAZAT*/	actualSelectedObjects = &actualSelectedObjects;
 }
-void PageSpace::requirementPopupMenu ( const QPoint & globalPos, const QRect & r) {
-	// TODO
-	printf("requirementPopupMenu\n");
+
+bool PageSpace::isSomeoneSelected ( ) {
+	return ( actualSelectedObjects != NULL );
+}
+
+bool PageSpace::saveImageWithDialog ( bool onlySelectedArea ) {
+	QString filters = "";
+	for (unsigned int i = 0; i < QImageIO::outputFormats().count() ;++i) {
+		filters += QString("\n%1 (*.%2)")
+				.arg(QImageIO::outputFormats().at(i))
+				.arg(QString(QImageIO::outputFormats().at(i)).lower());
+	}
+
+	QString sf;
+	QString filename = QFileDialog::getSaveFileName( "", filters, NULL, NULL, tr("Save as image ..."), & sf );
+	sf = sf.left( sf.find(' ') );
+
+	if (! filename.isNull())
+		return saveImage( filename, sf, -1, onlySelectedArea );
+
+	return false;
+}
+
+bool PageSpace::saveImage ( const QString & filename, const char * format, int quality, bool onlySelectedArea ) {
+	guiPrintDbg( debug::DBG_DBG, "save");
+	return pageImage->saveImage( filename, format, quality, onlySelectedArea );
+}
+
+void PageSpace::requirementPopupMenu ( const QPoint & pagePos, const QRect * /* r */) {
+/*	if (r != NULL) {
+	} else {
+	}*/
+	emit popupMenu( pagePos );
 }
 void PageSpace::moveSelection ( const QPoint & relativeMove ) {
 	// TODO
