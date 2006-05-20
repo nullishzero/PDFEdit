@@ -5,12 +5,15 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 // Changes:
-// Michal Hocko - FileStream private members are protected now to enable
-//                FileStreamWriter descendant to access them.
+// Michal Hocko - FileStream, MemStream and EmbedStream private members are 
+//                protected now to enable StreamWriter descendants to access 
+//                them.
 //              - All direct Stream and BaseStream subclasses have virtual 
 //                inheritance
 //              - Stream, BaseStream and FilterStream define abstract clone
 //                All descendants implement this method
+//              - All filter stream using StremPredictor stores PredictorContext
+//                to enable cloning
 //
 //========================================================================
 
@@ -346,8 +349,7 @@ public:
   virtual void doDecryption(Guchar *fileKey, int keyLength,
 			    int objNum, int objGen);
 
-private:
-
+protected:
   char *buf;
   Guint start;
   Guint length;
@@ -383,7 +385,8 @@ public:
   virtual Guint getStart();
   virtual void moveStart(int delta);
 
-private:
+
+protected:
 
   Stream *str;
   GBool limited;
