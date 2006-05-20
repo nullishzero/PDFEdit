@@ -109,8 +109,8 @@ function onTreeDoubleClick() {
  if (treeitem.itemtype()=="Page") go(treeitem.id());
 }
 
-/** Callback for click with right mouse button in tree window */
-function onTreeRightClick() {
+/** Callback for click with right mouse button in page */
+function onPageRightClick() {
  print("Right click in page");
 }
 
