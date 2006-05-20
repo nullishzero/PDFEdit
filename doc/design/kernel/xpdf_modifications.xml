@@ -1,19 +1,404 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 <book>
-
  <chapter>
-  <title>Modifications to xpdf code</title>
+  <title>Xpdf project code reuse</title>
   <para>
-  </para>
-  <para>
-  </para>
-  <para>
+          Pdfedit project uses Xpdf (TODO link) code for low level pdf content
+          operations, such as pdf object parsing (with quite good mathing the
+          Adobe pdf specification ver. 1.6. ), indirect object resolving, 
+          generation of page and text output devices and so on. We have tried 
+          to reuse most of functionality which is not somehow directly related 
+          to xpdf special logic. Nevertheless pure pdf specific code is reused 
+          as much as possible. To prevent from errors comming from xpdf code
+          this is used just in few places (namely CXref, XRefWriter, CObject
+          classes) and rest of our pdfedit code uses just our wrappers and 
+          special objects. This means that substitution of xpdf code by something 
+          different is possible with reasonable effort. Project currently uses 
+          xpdf in 3.01 version.
   </para>
   <sect1>
-    <title></title>
+    <title>Changes needed for code reuse</title>
     <para>
+          Code of XPDF project couldn't have been reused without modifications,
+          because it is not prepared for making changes very well (code assumes
+          data reading and use them - not to change them and use). Code changes
+          can be divided to 3 cathegories:
+          <listitem>Syntactic - these are changes related to functions/methods 
+                  signature (const modificators, private methods changed to
+                  protected, new parameters, non virtual methods are changed to
+                  virtual in some classes).
+          </listitem>
+          <listitem>New features - these are changes which produce new 
+                  functionality required by our project (e. g. clone support
+                  for Object and all used values inside). 
+          </listitem>
+          <listitem>Design - these are changes in xpdf object hierarchy or 
+                  meaning of some components so they better fit our usage.
+          </listitem>
+          For more information see following detailed describtion.
     </para>
+    <sect2>
+     <title>Object.h and Object.cc</title>
+     <para>
+          Object class is used as value keeper in whole xpdf code. Design is not 
+          very good, because all values are stored in one object (even more in 
+          one union). This behaviour is kept, because change would require whole
+          xpdf code reorganization. We have focused just to Syntactic and new 
+          features changes here.
+     </para>
+     <para>
+          Xpdf code uses kind of optimization for objects copying and so complex
+          values (such as dictionaries or arrays) are not copied by copy method
+          at all and reference counting is used instead. Our Object usage (used 
+          primary in CXref class) requires deep copying and so cloning support
+          is neccessary.
+          We have added new clone method: 
+          <programlisting>
+          Object::clone()const;
+          </programlisting>
+          which creates new Object instance with deep copy of value held by 
+          original. 
+          
+          <footnote>
+          Clone is considered to be same typed object as original with equal
+          value (deep copy). Following contracts has to be fullfiled (if there
+          is not special limitation which is not possible/required to keep -
+          in such situation this must be explicitly described).
+          <programlisting>
+          <code>
+          Object * clone=original->clone();
+          clone!=original;                              // instances must be different
+          clone->getType()==original->getType();        // type must be same
+          equals(clone, original)==true;                // content is same
+          equals(change(clone), original)==false;       // change to clone or orginal doesn't influnce second one
+          equals(clone, change(original))=false;
+          destroy(clone) && exists(original) == true;   // destroying clone or original keeps seconf one existing
+          destroy(original) && exists(clone) == true; 
+          </code>
+          </programlisting>
+          </footnote>
+
+          Returned Object instance is change independant on original 
+          and so they don't influence each other when one is changed. Cloning 
+          of complex value types are delegated directly to specialized clone 
+          method implemented on such type.
+     </para>
+     <para>
+          Syntactic changes simply corrects parameters modificators and all methods
+          with pointer parameters which can have const modificators are changed
+          to have it. This change is just cosmetic and should prevent from bad 
+          xpdf code usage.
+     </para>
+    </sect2>
+    <sect2>
+     <title>XRef.h and XRef.cc</title>
+     <sect3>
+      <title>Design changes</title>
+      <para>
+          XRref class forms the lowest layer in 3 layer model used for document 
+          changing (TODO reference). Therefore some code reorganization had to 
+          be done. In first XRef had to be prepared for transparent wrapper
+          usage, so all public methods were changed to virtual and private 
+          elements to protected (to enable access to and manipulation with them).
+          This enables same usage of class as before, and so the rest of xpdf 
+          code doesn't have to be changed, and also descendants of class can
+          add some logic and functionality (as CXref and XRefWriter does).
+      </para>
+      <para>
+          CXref reopen
+             <footnote> 
+             This method is essential for revision changing, because it forces
+             XRef supertype to do the clean up for current revision and init
+             all internals for revision staring at given position (so all 
+             document content before this position).
+             </footnote>
+          functionality requires correct chaning of XRef internal 
+          state (which includes entries array reinitialization, trailer creation
+          and so on). This everything was done in construtor in original 
+          implementation. Clean up was done in destructor. We have added new 
+          protected
+          <programlisting>
+          void initInternals(Guint pos);
+          void destroyInternals();
+          </programlisting>
+          methods, which use same code as original one but separated to enable 
+          such internal state change anytime during XRef instance's lifecycle.
+      </para>
+     </sect3>
+     <sect3>
+      <title>New features</title>
+      <para>
+          XRefWriter (descendant of CXref class which inherits directly from XRef) 
+          needs to know where it is safe to put data to not destroy original 
+          document data when changes are written to the document (as incremental
+          update). To enable this, XRef has new 
+          <programlisting>
+          Guint eofPos;
+          </programlisting>
+          field which contains position of %%EOF marker or end of document. Value is
+          set in constructor because it has to be found out anyway and XRefWriter
+          doesn't have to this work again.
+      </para>
+      <para>
+          XRef class didn't provide information whether pdf reference (object and
+          generation number pair) is known
+          <footnote>
+                  There is indirect object with this reference. 
+          </footnote>
+          and so it wasn't possible to find out whether object value is null object 
+          or it is not present. To solve this problem, we have added new public
+          <programlisting>
+          virtual RefState knowsRef(Ref ref);
+          </programlisting>
+          method which returns state of given reference. State is integer value 
+          with predefined constants which may hold:
+          <listitem>UNUSED_REF - if there is no indirect object with given reference.
+          </listitem>
+          <listitem>RESERVED_REF - if reference is reserved to be used, but no 
+                  indirect object is registered yet. This state is used by CXref 
+                  class to mark that reference is planned to be used and we are
+                  just waiting for some object to be used for it.
+          </listitem>
+          <listitem>INITIALIZED_REF - if indirect object with given reference 
+                  exists. This objects are considered when number of objects is
+                  required.
+          </listitem>
+          CXref and XRefWriter descendants reimplement this method to reflect 
+          object added/reserved by their interface and additional logic (e. g.
+          current revision and so on).
+      </para>
+     </sect3>
+     <sect3>
+      <title>Implementation changes</title>
+      <para>
+          XRef's getNumObjects returned the size of allocated entries array.
+          This is not very clean, because entries array contains also free
+          and unused entries. Even more array is allocated by blocks and so
+          there are more entries than real objects. This method is not used
+          in xpdf code at all, so it could be reimplemented to return just
+          really used objects (those with state INITIALIZED_REF).
+      </para>
+     </sect3>
+    </sect2>
+    <sect2>
+     <title>Array.h and Array.cc</title>
+     <para>
+          Array class, representing pdf array object, is one of the complex
+          value. It may contain number of Object instances. To enable
+          Object cloning, new 
+          <programlisting>
+          Array * clone()const;
+          </programlisting>
+          is implemented. It returns new Array instance with same number of
+          elements where each one (Object instance) is cloned (by
+          Object::clone() method). 
+     </para>
+    </sect2>
+    <sect2>
+     <title>Dict.h and Dict.cc</title>
+      <title>Design changes</title>
+      <para>
+          DictEntry used as entry (key, value pair association) kept value
+          (Object instance) as normal instance. This was changed to pointer
+          to instance to enable simpler value updating.
+      </para>
+      <para>
+          Original code didn't use const modificator for key (char * typed)
+          parameter and so it wasn't clear whether it uses given value and
+          stores it (and so parameter can't be deallocated after method 
+          returns) or just use it to get information (so it can be 
+          deallocated). This could possibly lead to memory leaks or worse 
+          to duplicate deallocation od same memory. To solve this potential 
+          problems, all methods which don't store key have const char * key 
+          parameter.
+      </para>        
+     </sect3>
+     <sect3>
+      <title>New features</title>
+      <para>
+          Dict class representing pdf dictionary object is one of the complex
+          value. It contains Name (string with spetial meaning), Object pairs
+          (called entries - DictEntry structures). This class also has to 
+          support cloning, so new
+          <programlisting>
+          Dict * clone()const;
+          </programlisting>
+          is implemented. It returns new Dict instance with same number of
+          entries where each entry is deep copied - name string and associated
+          object (Object instance) is cloned (by Object::clone() method). 
+      </para>
+      <para>
+          New method for simpler updating value has been added:
+          <programlisting>
+          Object * update(char * key, Object * val);        
+          </programlisting>
+          This method will add new entry if no such entry is in dictionary or 
+          replaces an old by given value and original is returned.
+      </para>
+      <para>
+          Original implementation didn't contain any method for entry removing
+          and so new
+          <programlisting>
+          Object * del(const char * key);        
+          </programlisting>
+          has been added. This will remove entry with given key and returns 
+          associated value.
+      </para>
+     </sect3>
+    </sect2>
+    <sect2>
+     <title>Stream.h and Stream.cc</title>
+     <sect3>
+      <title>Design changes</title>
+      <para>
+          Xpdf code defines Stream hierarchy to describe pdf stream objects.
+          Stream is base class for both normal streams represented by 
+          BaseStream (Stream descendant) base class and FilterStream (also 
+          direct Stream descendant) base class used for all filered streams.
+          This stream objects hierarchy is strictly specialized to reading and
+          can't be used for making changes stream data. CXref and XRefWriter 
+          however needs to make transparent modifications to stream with pdf 
+          content (so that xpdf code using Streams doesn't have to be changed
+          very much). This is the reason for some changes in Stream hierarchy
+          design. 
+      </para>
+      <para>
+          Problem with stream modification is solved by new abstract class 
+          (base class for all specialized stream modificators) StreamWriter. 
+          This defines interface for such modification. However implementation
+          of concrete writer requires (such as FileStreamWriter) multiple 
+          inheritance, because it needs interface from StreamWriter and also 
+          access to concrete BaseStream (in FileStreamWriter it is FileStream)
+          fields. So original inheritance of all direct descendants of Stream 
+          and BaseStream had to be changed to virtual (to prevent ambiguity).
+          This model enables transparent usage of StreamWriter as Stream typed
+          instances in xpdf code and also higher level classes (like 
+          FileStreamWriter) in pdfedit code.
+      </para> 
+      <para>
+          FilterStream hierarchy is untouched in design way, because our project
+          doesn't change filtered streams directly. It works just with base
+          stream, because FilterStream hierarchy is hard to be reused for 
+          encoding. So just decode functionality is used.
+      </para>
+      <mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/xpdf_streams" format="PNG"/>
+	  </imageobject>
+          <textobject>
+                  <phrase>Modified xpdf Stream hierarchy diagram
+                  </phrase>
+          </textobject>
+	  <caption><para>Stream hierarchy</para></caption>
+      </mediaobject>
+
+     </sect3>
+     <sect3>
+      <title>New features</title>
+      <para>
+          Stream copying is crucial for making changes in pdf page content and 
+          many other objects which are represented by pdf stream objects. As we
+          need to keep changed objects (TODO link to 3 layer model), Stream
+          objects have to provide cloning support. We have added abstract 
+          <programlisting>
+          virtual Stream * clone()=0;        
+          </programlisting>
+          method in Stream base class. Each specific stream implementator has to
+          provide its clone implementation. No default implementation is written
+          in Stream directly to force all specific filters provide one. If any
+          of filters is not able to create clone, this method should return NULL. 
+          This should not happen, however clone implementation has to be aware of
+          it.
+      </para>
+      <para>
+          FileStream reads data directly from FILE stream and so cloning has to
+          copy all data (from stream start to the end - if stream is limited, 
+          then just first length bytes) somewhere else. Creation of new file, 
+          just for temporarily created clone is not very effective and may 
+          produce several problems (not enough free place, creation adn removing 
+          of temporary file, etc.). We have solved this problem by creating 
+          MemStream with buffer containing same data as FileStream. This brakes
+          contract of clone meaning a bit, because cloned stream is not 
+          precisely the same as original, because it is represented by another
+          Stream class, but keeps the most important contract, that user of
+          stream doesn't know the difference and clone and original don't 
+          affect each other.
+      </para>
+      <para>
+          MemStream cloning is straightforward and just buffer is copied for 
+          new MemStream. All other attributes are set according copied buffer.
+          Buffer copying starts from start field position and lenght bytes 
+          are copied. So final MemStream will contain just data used in 
+          original one. Finaly needFree field is always set to true, because
+          we have allocated new buffer for clone and so it has to be 
+          deallocated when it is destroyed.
+          <footnote>
+          Note that MemStream may contain buffer but this buffer is not used
+          whole. This is controled by start field, which says where is the first
+          byte of this concrete stream. This is original behaviour of MemStream's
+          implementation and the reason is that in many situation MemStream
+          is used to manipulate with buffers without need to copy the buffer.
+          So xpdf code just reuses some buffer and says that new MemStream
+          starts from here and its lenght is such value. Such MemStream is
+          marked not to be deallocated in destructor by needFree field.
+          </footnote>
+      </para>
+      <para>
+          EmbedStream clonig is also very simple, because this stream just
+          holds one Stream pointer field and some attributes which doesn't
+          change during instance life cycle. Cloning is then just delegation
+          to cloning to stream field and creating new EmbedStream with
+          cloned value and same parameters which were used for given instance.
+      </para>
+      <para>
+          FilterStream branch is cloned in similar way as EmbedStream. Each 
+          filter implemenetator holds Stream pointer. This may be either 
+          another filter or BaseStream (this means that filters forms chain
+          with BaseStream in the lowest layer). Stream field is cloned by 
+          clone method and all parameters used in specific filter stream 
+          constructor are used to create final clone. If specific filter
+          stream can't reconstruct original parameters (like FlatStream which
+          uses parameters for StreamPredictor initialization and doesn't
+          store them to internal fields), we have added additional data
+          structures to store such parameters. This kind of work around
+          enables to create filter with same attributes. General implementation
+          for all filter streams is as follows:
+          <programlisting>
+          <code>
+          // clones underlying stream
+          Stream * cloneStream=str->clone();
+          if(!cloneStream)
+            // if underlying stream doesn't support cloning, it will fail too
+            return NULL;
+
+          // creates same typed filter stream with same parameters and cloned
+          // stream  
+          return new ...(cloneStream[, specific_parameters]);
+          </code>
+          </programlisting>
+          As mentioned above, some filters are not able to reconstruct 
+          parameters given them as constructor parameters and so it is hard to
+          reconstruct same filter. Specially all filters which holds 
+          StreamPredictor field has additional field with PredictorContext
+          (added by us): 
+          <programlisting>
+          <code>
+          struct PredictorContext
+          {
+              int predictor;
+              int width;
+              int comps;
+              int bits;
+          };
+          </code>
+          </programlisting>
+          where all parameters needed for StreamPredictor creation are storef. 
+          These structure is initialized constructor and never changed. It is 
+          just used for cloning.
+      </para>
+     </sect3>
+    </sect2>
   </sect1>
  </chapter>
 </book>

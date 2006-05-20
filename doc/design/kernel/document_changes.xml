@@ -5,81 +5,179 @@
  <chapter>
   <title>Changes to pdf document</title>
   <para>
-        As mentioned before (TODO link), pdf document is represented by number 
+        As mentioned before (TODO link), pdf document is represented by bunch 
         of objects. Most of these objects (with exception of document trailer) 
-        are so called indirect objects. Those are accessibly by cross reference 
+        are so called indirect objects. Those are accessible by cross reference 
         table which provides with object and generation number mapping to file 
         offset where such object is stored. 
   </para>
   <para>
-        Pdf format enables document changes natively by so called incremental
+        Pdf format enables document changes natively by so called <emphasis>incremental</emphasis>
         update mechanism. This enables to have several cross reference tables 
-        each describing objects specific for that revision. All objects which
-        have to be changed are just writen to the end of file with new cross 
-        reference table which describes this new object. All pdf files viewers
-        should be awared of incremental update and if object is accessible from
-        several cross reference tables, the newest one is always used. 
+        each describing objects specific for that revision overwritting old 
+        values. All objects which have to be changed are just written to the 
+        end of file with new cross reference table which describes this new 
+        object. All pdf files viewers should be aware of incremental update 
+        and if object is accessible from several cross reference tables, the 
+        newest one is always used. 
   </para>
   <para>
-        Previous very short describtion says that making changes requires take
-        over of cross reference table manipulation. This has to be done 
-        transparently that the nobody knows that object is changed actualy.
+        Previous very short describtion says that making changes requires 
+        taking over cross reference table manipulation. This has to be done 
+        transparently that nobody knows that object is changed and he always
+        gets the most accurate objects. We also want to control who can
+        do the changes and who is just consumer of objects and so he is not
+        supposed to do changes. This is handled by 3 layer model described in
+        following section.
   </para>
   <sect1>
     <title>3 layer model</title>
-    <para>
+    <sect2>
+     <title>The lowest layer</title>
+     <para>
         Cross reference table is mantained by XRef class in xpdf code. This 
-        class keeps just table of this information and it is not designed to 
-        be extensible for making changes very well. So we have reused this 
-        class as lowest layer in our 3 layer model designed to enable making 
-        changes to document. This XRef layer keeps logic of pdf file parsing
-        and correct assignment of object referencies (object and generation
-        number) and objects.
-    </para>
-    <para>
+        class is responsible for cross reference sections parsing according
+        pdf specification, keeps table of this information inside and indirect
+        objects fetching. 
+        <footnote>
+        Object fetching means parsing of indirect object according its 
+        reference (object and generation pair).
+        </footnote>
+        XRef class  is not designed to be extensible for making changes very 
+        well. So we have reused this class as lowest layer in our 3 layer 
+        model designed to enable making changes to document. This XRef layer 
+        keeps logic of pdf file parsing and correct assignment of object 
+        accoring referencies. So basic idea and responsibility is kept.
+     </para>
+     <para>
         To enable this reusability in C++ language we had to make some minor 
         changes to xpdf code, basicaly prepare them for transparent dynamic 
         inheritance, so all neccessary methods were virtualized and also data 
         fields turned to protected (from private). (TODO link to xpdf_changes
         document).
-    </para>
-    <para>
-        Second layer model layer is formed by CXref - extension of XRef class. 
-        Prime responsibility is to create methods which can register changes and
-        keeps them available. All methods which enables making changes are not
-        public to hide them from normal usage (see below for reason). It 
-        overwrites public methods from XRef and always use changed objects
-        if they are avialable. Otherwise delegates to lower layer. This aproach
-        enables to use CXref transparently anytime when XRef instance is 
+     </para>
+    </sect2>
+    <sect2>
+     <title>The middle layer</title>
+     <para>
+        Second (middle) layer of model is formed by CXref - descendant of XRef class. 
+        Prime responsibility is to provide methods which can register changes and
+        keeps all changed objects in its internal state. All methods which enables 
+        making changes are not public to hide them from normal usage. They are 
+        protected, so they can be reused by descendants. It overwrites public 
+        methods from XRef and always use changed objects if they are avialable. 
+        Otherwise delegates to lower layer (XRef implementation). 
+        This aproach enables to use CXref transparently anywhere XRef instance is 
         required (e. g. in rest of xpdf code which may be reuseable) with 
-        advantage of access to changed values without any special logic from
-        class user. To prevent inconsistencies and to make usage and 
+        advantage of access to the most accurate values without any special 
+        logic from class user. To prevent inconsistencies and to make usage and 
         implementation easier, all methods providing change functionality are
         protected. They are implemented without any special logic. All changes
         are stored to the mapping where they can be accessible. No special
-        checking is performed. It is also safe to return CXref instance, because
+        checking is performed. It is safe to return CXref instance, because
         it is guarantied that nobody can use this class to make chages.
-    </para>
-    <para>
+     </para>
+     <para>
+        CXref is also responsible for new object handling. This means that it
+        provides methods to reserve new reference and add new objects. All new
+        referencies are stored in newStorage container where each new reference
+        is mapped to its current state. If new reference is reserved by 
+        reserveRef method, it is marked as RESERVED_REF and after changeObject
+        with given reference is called for the first time it is changed to 
+        INITIALIZED_REF state. This state separation enables correct object
+        counting, because just those which are INITIALIZED_REF are counted and
+        also RESERVED_REF reference is not returned twice. This functionality
+        is also protected and so unvisible to instance users and is used by
+        3rd layer.
+     </para>
+     <para>
+        Class also implements simple type checking method
+        <programlisting>
+        virtual bool typeSafe(Object * obj1, Object * obj2);
+        </programlisting>
+        which is public and does the following test to guarantee that obj2 can
+        replace obj1 and it would be syntacticaly correct:
+        <listitem>obj2 has to have same type as obj1 if they are not referencies
+        </listitem>
+        <listitem>if at least one is reference, fetched objects has to have same 
+                types
+        </listitem>
+        <listitem>obj2 may have different type only if obj1 is (pdf) null object. 
+        </listitem>
+        Note that CXref doesn't use this method internaly (as mentioned before it
+        doesn't any checking on values at all), but exports it, so instance user
+        can do the checking for himself (XRefWriter in 3rd layer uses this method
+        in paranoid mode).
+     </para>
+    </sect2> 
+    <sect2>
+     <title>The highest layer</title>
+     <para>
         Highest layer is represented by XRefWriter class - extension of CXref 
-        class. It's responsibility is to keep logic upon changes, to enable
-        writing them to the file and to maintain revisions of the document. 
+        class. Its responsibility is to keep logic upon changes, to enable
+        writting them to the file and to maintain revisions of the document. 
         Logic upon changes means some type checking to prevent object type 
-        inconsistency. XRefWriter defines mode in which it works to control
-        checking mechanism. Second responsibility is to enable writing changes
-        to the file to make them visible after all required changes are 
-        finished. To separate from concrete implementation of storing, XRefWriter
-        uses IPdfWriter abstract interface for object writing. Concrete 
-        implementation can be set in runtime and OldStylePdfWriter is used
-        by default. XRefWriter is just responsible to provide with all changed
-        objects which are retrieved from lower (CXref) layer.     
-    </para>
-    <para>
-        PDF format is prepared for such revision and multi version documents 
+        inconsistency. 
+     </para>   
+     <para>
+        XRefWriter works in two modes, which are set in constructor and can be 
+        changed by setMode method.
+        <listitem><emphasis>paranoid</emphasis> mode forces paranoiCheck method
+                call in changeObject method. This checks whether given reference
+                is known and given object is compared with current one by 
+                CXref::typeSafe method. If checking doesn't fail, object can be
+                changed and delegates the rest of the work to the 
+                CXRef::changeObject implementation.
+        </listitem>
+        <listitem><emphasis>easy</emphasis> mode doesn't do any kind of 
+                checking. This is not very safe, but if class user knows what 
+                he is doing (e. g. to correct destroyed objects). 
+        </listitem>
+     <para>
+        Second responsibility is to enable writing changes to the XRef's stream 
+        to make them visible after all required changes are finished. To separate 
+        from concrete implementation of storing, XRefWriter uses IPdfWriter 
+        abstract interface for object writing. Concrete implementation can be 
+        set in runtime and OldStylePdfWriter is used by default. XRefWriter 
+        is just responsible to provide with all changed objects which are 
+        retrieved from lower (CXref) layer (mapping is protected).     
+     </para>
+     <para>
+        Finally XRefWriter keeps information needed for revision handling.
+        
+        <footnote>
+        Each cross reference section and associated trailer is considered to
+        form revision. This means that each document has at least one revision
+        and all incremental update forms new revisions. The newest revision
+        is one at the end of the file.
+        </footnote>
+        
+        XRefWriter keeps an array of all available revisions. Index stands
+        for revision number (0 is the newest one) and value is stream offset
+        of associated cross reference section start for revision. This is used
+        to get information about revision - for example to get revision size
+        (see XRefWriter::getRevisionSize method) - and to enable revision 
+        changing. CXref implements
+        <programlisting>
+        void CXref::reopen(size_t xrefOff);
+        </programlisting>
+        method which is responsible for clear XRef state change to forget all
+        objects from current revision and to start parsing of cross reference
+        section from given position. This enables to (rather simply) change
+        current revision and so see documents in those state.
+     </para>
+     <para>
+        PDF format is prepared for such revisions and multi version documents 
         very well, but doesn't support any kind of branching which means that
         changes can be done only for newest revision. XRefWriter take in mind
         also this aspect and so all methods take care of current revision.
-    </para>
+        This means that anytime current revision is not the newest one, changed
+        objects are ignored and everything is delegated directly to the lowest
+        layer. Also all methods producing changes throws ReadOnlyDocumentException.
+        Even more all methods reimplemented by CXRef class, which depedns on 
+        changes, are omited and directly XRef implementation is used instead.
+     </para>
+    </sect2>
     <para>
         For more information about responsibility and functionality separation
         see following figure.
@@ -90,30 +188,29 @@
 	  <textobject><phrase>3 layers diagram</phrase></textobject>
 	  <caption><para>3 layers diagram</para></caption>
 	</mediaobject>
-  </para>
+   </para>
   </sect1>
   <sect1>
    <title>Document saving</title>
    <para>
         As it was mantioned above, PDF format supports changes in document in so 
         called incremental update (all changed objects are appened to document 
-        end and new cross reference table for changed objects with new trailer 
-        - just to repete in short). This means that each set of changes forms new 
-        revision. This brings little task to think about. What should be stored in 
-        one revision and which changes are not worth of new revision?
-        User usually wants to save everything because
-        of fear of data lost and doesn't thing about some revisions. If each save
-        created it would lead to mess with horible number of referencies without
-        any meaning.
+        end and new cross reference section for changed objects). This means that 
+        each set of changes forms new revision. This brings little task to think 
+        about. What should be stored in one revision and which changes are not 
+        worth of new revision?
+        User usually wants to save everything because of fear of data lost and 
+        doesn't thing about some revisions. If each save created it would lead to 
+        mess with horrible number of referencies without any meaning.
    </para>
    <sect2>
-   <title>Revision saving</title>
-   <para>
+    <title>Revision saving</title>
+    <para>
         XRefWriter provides save functionality with flag. This flag sais how data
         should be stored with respect to revisions:
         <listitem>temporal saving, which dumps all changes with correct cross 
                 reference table and trailer at the end of document but doesn't
-                care for it (no internal structures are touch and they are kept
+                care for it (no internal structures are touched and they are kept
                 as if no save has been done). If any problem occures changed data
                 are stored, so no data lost happens. Whenever save is done again
                 it will rewrite older temporarily saved changes.
@@ -123,22 +220,25 @@
                 was opend again after saving. This means that we are working on 
                 freshly created revision after saving. This makes sense when 
                 user knows that changes made by him are gathered together in one
-                revision and nothing else messes with it.
+                revision and nothing else messes with it. Implementation is 
+                straightforward because we just need to force CXref to reopen
+                (call CXref::reopen method) and move storePos behind stored 
+                data).
         </listitem>
         It is up to user to use the way how he wants to save changes. However 
         temporal changes are default and new revision saving is done only if
         it is explicitly said.
-   </para>
+    </para>
    </sect2>
    <sect2>
-   <title>Content writing and IPdfWriter</title>
-   <para>
+    <title>Content writing and IPdfWriter</title>
+    <para>
         XRefWriter uses abstract IPdfWriter class to write changed content when
         save method is called. This enables separation of implementation from 
         design. All saving is delegated to pdfWriter implementation holder and 
         it depends on it how content is writen.
-   </para>
-   <para>
+    </para>
+    <para>
         IPdfWriter writes pdf content in two phases:
         <listitem>Real data writing and information collecting. This is done 
                 during writeContent method. Implementator is responsible to 
@@ -151,34 +251,75 @@
         </listitem>
         Different implementator of IPdfWriter interface can be set by 
         XRefWriter::setPdfWriter method.
-   </para>
-   <para>
+    </para>
+    <para>
         Each sequence of writeContent, [writeContent, ]* writeTrailer forms new
         revision of document in incremental update sense. In this moment 
         OldStylePdfWriter implementation is used which forms old style cross 
         reference table (see pdf specification 2.4.3 Cross reference table chapter
         TODO link).
-   </para>
+    </para>
    </sect2>
-
    <sect2>
     <title>Document cloning</title>
     <para>
-        To be able to effectively solve problem with PDF disability to branche 
-        document and so making changes to older revisions XRefWriter brings
-        so called cloning capability. This means copying document content until
-        current revision (including current one). If user wants to change 
+        To be able to effectively solve problem with PDF disability to branch 
+        document and so making changes to older revisions, XRefWriter brings
+        so called cloning capability (this doesn't anything to do with object
+        cloning mention in other chapters). This means copying document content 
+        until current revision (including current one). If user wants to change 
         something in such revision, he can switch to that revision and clone 
-        it to different file. Changes are enabled to this document, because
+        it to different file. Changes are enabled to created document, because
         current revision in original document is the newest one in cloned
         document. Nevertheless document merging is not implemented yet, so 
-        there is no way (using this program) to get those changes back to main
-        document.
+        there is no way to get those changes back to main document (by any of
+        pdfedit component).
     </para>
    </sect2>
   </sect1>
+  <sect1>
+   <title>Linearized pdf documents</title>
+   <para>
+        All previously mentioned functionality depends on <emphasis>incremental
+        update</emphasis> mechanism. However pdf document may have format little
+        bit different. Such documents are called <emphasis>Linearized</emphasis>
+        and are designed for environment where it may be problem (e. g. time 
+        problem) to wait until whole document is read and so parsing from end of
+        file can start (see Pdf specification Appendix F for more information). 
+   </para>
+   <para>
+        Such documents have special requirements and they are not designed for
+        making changes. 3rd layer handles this situation rather strictly and 
+        XRefWriter checks whether given file is linearized during initialization.
+        Some of operations are not implmented in linearized document, such as
+        revision handling and document saving may product not correct document
+        (pdf viewers which strictly relies on linearized information may 
+        display different output).
+   </para>
+   <para>
+        Because many of documents (specialy from internet) are linearized, we have
+        provided Delinearizator class placed in utils. It is able to get rid of
+        linearized structures and create new pdf document which has same objects
+        but normal structure. Usage of the class is very simple, see the following
+        example:
+        <programlisting>
+        <code>
+        IPdfWriter * writer=new OldStylePdfWriter();
+        Delinearizator *delinearizator=Delinearizator::getInstance(fileName.c_str(), writer);
+        if(!delinearizator)
+        {
+            printf("\t%s is not suitable because it is not linearized.\n", 
+                fileName.c_str());
+            return;
+        }
+        string outputFile=fileName+"-delinearizator.pdf";
+        printf("\tDelinearized output is in %s file\n", outputFile.c_str());
+        delinearizator->delinearize(outputFile.c_str());
+        delete delinearizator;
+        </code>
+        </programlisting>
+   </para>
+  </sect1>
  </chapter>
-
-  
 </book>
 

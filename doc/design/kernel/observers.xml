@@ -69,7 +69,7 @@
    </para>
   </sect1>
   <sect1>
-   <subtitle>IObserver</subtitle>
+   <title>IObserver</title>
    <para>
            Observer itself is represented by IObserver abstract template
            class. Template parameter stands for type of value which is
