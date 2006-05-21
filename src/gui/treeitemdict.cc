@@ -83,6 +83,31 @@ QSCObject* TreeItemDict::getQSObject(Base *_base) {
  return new QSDict(dict,_base);
 }
 
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemDict::validChild(const QString &name,QListViewItem *oldChild) {
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
+ boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
+ assert(it);
+ if (!it) return false;//Probably error on unknown child
+ //Same address = same item
+ //Different address = probably different item
+ return property.get()==it->getObject().get();
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemDict::deepReload(const QString &childName,QListViewItem *oldItem) {
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
+ TreeItem *it=dynamic_cast<TreeItem*>(oldItem);
+ if (it) { //Is an IProperty
+  boost::shared_ptr<IProperty> property=dict->getProperty(childName);
+  //If replaced, return success, otherwise failure
+  return it->setObject(property);
+ }
+ //Anything else=not supported
+ return false;
+}
+
 /**
  Remove property with given name from dictionary
  @param name Name of property to remove

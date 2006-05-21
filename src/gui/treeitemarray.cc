@@ -67,6 +67,21 @@ QStringList TreeItemArray::getChildNames() {
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemArray::validChild(const QString &name,QListViewItem *oldChild) {
+ size_t i=name.toUInt();
+ CArray *ar=dynamic_cast<CArray*>(obj.get());
+ boost::shared_ptr<IProperty> property=ar->getProperty(i);
+ TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
+ assert(it);
+ if (!it) return false;//Probably error on unknown child
+ //Same address = same item
+ //Different address = probably different item
+ return property.get()==it->getObject().get();
+}
+
+//TODO: support deepReload too (need value-based treeitem support, not trivial)
+
+//See TreeItemAbstract for description of this virtual method
 bool TreeItemArray::haveChild() {
  CArray *ar=dynamic_cast<CArray*>(obj.get());
  return ar->getPropertyCount()>0;

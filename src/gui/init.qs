@@ -109,13 +109,18 @@ function onTreeDoubleClick() {
  if (treeitem.itemtype()=="Page") go(treeitem.id());
 }
 
+/** Save page/selection as image */
+function savePageImage(onlySelection) {
+ if (!PageSpace.saveImageWithDialog(onlySelection)) print("Image was not saved!");
+}
+
 /** Callback for click with right mouse button in page */
 function onPageRightClick() {
  menu=popupMenu();
  menu.addSeparator();
- menu.addItemDef("item Save page as image,if (! PageSpace.saveImageWithDialog(false)) print(\"Image was not save !!!\");,,");
+ menu.addItemDef("item Save page as image,savePageImage(false)");
  if (PageSpace.isSomeoneSelected())
-   menu.addItemDef("item Save selected area as image,if (! PageSpace.saveImageWithDialog(true)) print(\"Image was not save !!!\");,,");
+   menu.addItemDef("item Save selected area as image,savePageImage(true)");
  menu.addSeparator();
  eval(menu.popup());
 }

@@ -30,14 +30,16 @@ public:
  QString name();
  void setName(const QString &newNameId);
  virtual ~TreeItemAbstract();
- void reload(bool reloadThis=true);
+ void reload(bool reloadThis=true,bool forceReload=false);
  virtual void deleteChild(const QString &name);
  virtual void deleteChild(QListViewItem *target);
  void eraseItems();
  void moveAllChildsFrom(TreeItemAbstract* src);
  QListViewItem* child(const QString &name);
  virtual QSCObject* getQSObject(Base *_base);
+ virtual bool validChild(const QString &name,QListViewItem *oldChild);
  virtual void setOpen(bool open);
+ virtual bool deepReload(const QString &childName,QListViewItem *oldChild);
  //Abstract functions
 
  /** 

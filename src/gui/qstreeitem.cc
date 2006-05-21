@@ -58,6 +58,15 @@ void QSTreeItem::reload() {
  obj->reload();
 }
 
+/**
+ Explicitly force reload contents of this item and its subtree from current state of PDF document
+ Add "force reload" flag, to test for possible tree item reloading-related bugs
+ Should only be used for debugging, reload() should normally work well
+ */
+void QSTreeItem::reload_force() {
+ obj->reload(true,true);
+}
+
 /** Remove itself from Dict/Array where this property is held (and from document) */
 void QSTreeItem::remove() {
  obj->remove();

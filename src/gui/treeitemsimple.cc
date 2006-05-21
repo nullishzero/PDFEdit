@@ -6,6 +6,7 @@
 #include <cobject.h>
 #include "treeitemsimple.h"
 #include "util.h"
+#include "pdfutil.h"
 
 namespace gui {
 
@@ -63,6 +64,21 @@ QStringList TreeItemSimple::getChildNames() {
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemSimple::haveChild() {
  return false;
+}
+
+/** \copydoc TreeItem::setObject */
+bool TreeItemSimple::setObject(boost::shared_ptr<IProperty> newItem) {
+ //Do not check type. Simple type can be replaced safely with different simple type
+ if (haveObserver()) {
+  uninitObserver();
+  obj=newItem;
+  initObserver();
+ } else {
+  obj=newItem;
+ }
+ //Need to update the type, as it may have changed
+ setText(1,util::getTypeName(obj));
+ return true;
 }
 
 } // namespace gui

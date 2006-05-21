@@ -113,11 +113,33 @@ void TreeItem::init(boost::shared_ptr<IProperty> pdfObj,const QString &name) {
  setDragEnabled(true);//Drag drop enabled for this item
 }
 
-
-/** return CObject stored inside this item
- @return stored object (IProperty) */
+/**
+ return CObject stored inside this item
+ @return stored object (IProperty)
+*/
 boost::shared_ptr<IProperty> TreeItem::getObject() {
  return obj;
+}
+
+/** 
+ This method is needed for "deep reload" to work
+ Try to replace object inside this treeitem with a new one.
+ @return true if item replaced, false on error.
+*/
+bool TreeItem::setObject(boost::shared_ptr<IProperty> newItem) {
+ if (obj->getType()==newItem->getType()) { //Check if same type
+  //Same type. Replace and return success
+  if (haveObserver()) {
+   uninitObserver();
+   obj=newItem;
+   initObserver();
+  } else {
+   obj=newItem;
+  }
+  return true;
+ }
+ //forbid replacing with different type for safety reasons
+ return false;
 }
 
 
@@ -129,6 +151,14 @@ void TreeItem::insertItem(QListViewItem *newChild) {
  QListViewItem::insertItem(newChild);
  TreeItem *oChild=dynamic_cast<TreeItem*> (newChild);
  if (oChild) oChild->setParent(this);
+}
+
+/**
+ Return true, if observer is installed on this item
+ @return Presence of observer
+ */
+bool TreeItem::haveObserver() {
+ return (observer.get()!=0);
 }
 
 /** Internal class providing observer */
@@ -178,6 +208,7 @@ void TreeItem::initObserver() {
 void TreeItem::uninitObserver() {
  observer->deactivate();
  obj->unregisterObserver(observer);
+ observer.reset();
  guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }
 

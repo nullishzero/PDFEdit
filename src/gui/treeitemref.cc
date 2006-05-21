@@ -158,6 +158,33 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((un
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemRef::validChild(const QString &name,QListViewItem *oldChild) {
+ CPdf* pdf=obj->getPdf();
+ if (!pdf) return false; //No document opened -> cannot parse references
+ CRef* cref=dynamic_cast<CRef*>(obj.get());
+ IndiRef ref;
+ cref->getPropertyValue(ref);
+ boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
+ TreeItem* it=dynamic_cast<TreeItem*>(oldChild);
+ if (!it) return false;//Should not happen
+ return rp.get()==it->getObject().get();
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemRef::deepReload(const QString &name,QListViewItem *oldChild) {
+ CPdf* pdf=obj->getPdf();
+ if (!pdf) return false; //No document opened -> cannot parse references
+ CRef* cref=dynamic_cast<CRef*>(obj.get());
+ IndiRef ref;
+ cref->getPropertyValue(ref);
+ boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
+ TreeItem* it=dynamic_cast<TreeItem*>(oldChild);
+ if (!it) return false;//Should not happen
+ it->setObject(rp);
+ return true;
+}
+
+//See TreeItemAbstract for description of this virtual method
 ChildType TreeItemRef::getChildType(const QString &name) {
  assert(name=="Target");
  boost::shared_ptr<IProperty> rp=dereference(obj);

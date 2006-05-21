@@ -14,6 +14,7 @@ class TreeData;
 
 class TreeItemContentStream : public TreeItemAbstract {
 public:
+ boost::shared_ptr<CContentStream> getObject();
  TreeItemContentStream(TreeData *_data,QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  TreeItemContentStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemContentStream();

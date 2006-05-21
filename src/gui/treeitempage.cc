@@ -7,6 +7,7 @@
 #include <cpage.h>
 #include <ccontentstream.h>
 #include "treeitem.h"
+#include "treeitemdict.h"
 #include "treeitempage.h"
 #include "treeitemcontentstream.h"
 #include "treedata.h"
@@ -59,10 +60,22 @@ void TreeItemPage::init(boost::shared_ptr<CPage> page,const QString &name) {
  reload(false);//get childs
 }
 
-/** return CPage stored inside this item
- @return stored object (CPage) */
+/**
+ return CPage stored inside this item
+ @return stored object (CPage)
+*/
 boost::shared_ptr<CPage> TreeItemPage::getObject() {
  return obj;
+}
+
+/** 
+ This method is needed for "deep reload" to work
+ Try to replace page inside this treeitem with a new one.
+ @return true if page replaced, false on error.
+*/
+bool TreeItemPage::setObject(boost::shared_ptr<CPage> newPage) {
+ obj=newPage;
+ return true;
 }
 
 /** default destructor */
@@ -70,7 +83,7 @@ TreeItemPage::~TreeItemPage() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemPage::createChild(__attribute__((unused)) const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
  if (typ==0) { //Return page dictionary
   return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"),after);
  }
@@ -86,6 +99,36 @@ TreeItemAbstract* TreeItemPage::createChild(__attribute__((unused)) const QStrin
  assert(0);
  return NULL;
 }
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemPage::deepReload(const QString &childName,QListViewItem *oldItem) {
+ TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldItem);
+ if (itc) { //Is a page dictionary
+  //If replaced, return success, otherwise failure
+  guiPrintDbg(debug::DBG_DBG,"Replacing page dictionary: is_same = " << (obj->getDictionary().get()==itc->getObject().get()));
+  return itc->setObject(obj->getDictionary());
+ }
+ //Anything else=not supported
+ return false;
+}
+
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemPage::validChild(const QString &name,QListViewItem *oldChild) {
+ TreeItemDict *itp=dynamic_cast<TreeItemDict*>(oldChild);
+ if (itp) { //Is a page dictionary
+  return obj->getDictionary().get()==itp->getObject().get();
+ }
+ TreeItemContentStream *its=dynamic_cast<TreeItemContentStream*>(oldChild);
+ if (its) { //Is a content stream
+  size_t streamNumber=name.toUInt();
+  assert(streamNumber<streams.size());  //These should be already weed out ... 
+  return streams[streamNumber].get()==its->getObject().get();
+ }
+ //Something else
+ return true;
+}
+
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemPage::getChildType(const QString &name) {
@@ -118,7 +161,8 @@ bool TreeItemPage::haveChild() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPage::reloadSelf() {
- //Basically, nothing to reload (any useful content is in children)
+ //Reload list of streams. Might be needed later
+ obj->getContentStreams(streams);
 }
 
 //See TreeItemAbstract for description of this virtual method

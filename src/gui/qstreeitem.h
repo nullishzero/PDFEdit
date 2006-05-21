@@ -46,6 +46,8 @@ public slots:
  void reload();
  /*- Remove object in this tree item (and also any possible subitems) from document */
  void remove();
+ // "undocumented" -> not to be used, except for debugging
+ void reload_force();
 public:
  QSTreeItem(TreeItemAbstract *item,Base *_base);
  virtual ~QSTreeItem();

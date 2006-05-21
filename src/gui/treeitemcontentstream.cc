@@ -108,4 +108,12 @@ bool TreeItemContentStream::haveChild() {
  return false;
 }
 
+/**
+ Return content stream inside this tree items
+ @return Content stream in this tree item
+*/
+boost::shared_ptr<CContentStream> TreeItemContentStream::getObject() {
+ return obj;
+}
+
 } // namespace gui

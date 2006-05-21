@@ -6,6 +6,7 @@
 #include "treeitempdf.h"
 #include "treeitem.h"
 #include "treedata.h"
+#include "treeitemdict.h"
 #include "treeitempage.h"
 #include <cobject.h>
 #include <cpdf.h>
@@ -134,6 +135,38 @@ TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QLi
  }
  assert(0);//Unknown
  return NULL;
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemPdf::validChild(const QString &name,QListViewItem *oldChild) {
+ TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldChild);
+ if (itc) { //Is a document catalog
+  return obj->getDictionary().get()==itc->getObject().get();
+ }
+ TreeItemPage *itp=dynamic_cast<TreeItemPage*>(oldChild);
+ if (itp) { //Is a page
+  unsigned int i=name.toUInt();
+  return obj->getPage(i).get()==itp->getObject().get();
+ }
+ //Something else
+ return true;
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemPdf::deepReload(const QString &childName,QListViewItem *oldItem) {
+ TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldItem);
+ if (itc) { //Is a document catalog
+  //If replaced, return success, otherwise failure
+  guiPrintDbg(debug::DBG_DBG,"Replacing document dictionary: is_same = " << (obj->getDictionary().get()==itc->getObject().get()));
+  return itc->setObject(obj->getDictionary());
+ }
+ TreeItemPage *itp=dynamic_cast<TreeItemPage*>(oldItem);
+ if (itp) { //Is a page
+  unsigned int i=childName.toUInt();
+  return itp->setObject(obj->getPage(i));
+ }
+ //Anything else=not supported
+ return false;
 }
 
 //See TreeItemAbstract for description of this virtual method

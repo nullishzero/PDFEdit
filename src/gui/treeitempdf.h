@@ -23,9 +23,11 @@ public:
  virtual ~TreeItemPdf();
  CPdf* getObject();
  //From TreeItemAbstract interface
+ virtual bool validChild(const QString &name,QListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();
+ virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
  virtual bool haveChild();
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();

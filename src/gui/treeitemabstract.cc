@@ -67,14 +67,38 @@ void TreeItemAbstract::setOpen(bool open) {
  QListViewItem::setOpen(open);
 }
 
+/** 
+ Attempt to "deep reload", i.e. exchange the item inside the tree for an actual (different) one,
+ without destroying the object
+ (destroying have unfortunate effect of losing information about which child were opened ...)
+ oldChild should be modified to refrlect the new object
+ If deep reload is supported and was sucessful, return true, otherwise false.
+ <br><br>
+
+  Note: oldItem should not check or reload its children in this method
+        (at it might lead to multiple reloading of same part of tree)
+        Also, it is guaranteed that reloadSelf will be called on that item,
+        so explicitly reloading the item might be unnecessary too
+
+ @param childName name of (old and new) treeitem
+ @param oldChild reference to old child tree item
+ @return true if successful, false otherwise
+*/
+bool TreeItemAbstract::deepReload(__attribute__((unused)) const QString &childName,__attribute__((unused)) QListViewItem *oldChild) {
+ //By default this feature is not supported. Reimplement this method to support it.
+ return false;
+}
+
 /** Reload contents of this item's subtree recursively by calling
  reloadSelf, createChild, getChildNames and deleteChild
  \see reloadSelf
  \see createChild
  \see getChildNames
  \see deleteChild
+ @param reloadThis reload also itself, or only child? Default reload also itself
+ @param forceReload force reload? Just delete all childs and re-create them, effectively bypassing any optimizations
  */
-void TreeItemAbstract::reload(bool reloadThis/*=true*/) {
+void TreeItemAbstract::reload(bool reloadThis/*=true*/,bool forceReload/*=false*/) {
  if (reloadThis) reloadSelf();
  if (!parsed) { //Not yet parsed, just check for presence of any childs
   setExpandable(haveChild());
@@ -88,12 +112,22 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/) {
  for (QStringList::Iterator it=childs.begin();it!=childs.end();++it) {
   QListViewItem *x=items.take(*it);	//Return and remove item from list of current
   ChildType typ=getChildType(*it);
-  if (x) { // Check it type is the same for existing items
+  if (forceReload) { //Just create that child again
+   deleteChild(x);	//Delete the old item
+   x=NULL;		//The item will be treated as nonexistent and created
+  }
+  if (x) { // Check it type is the same for existing items, check if the item is the same
    assert(types.contains(*it));
    ChildType typOld=types[*it];	//Return type of old item from list of current (will be removed when items are cleared
    if (typ!=typOld) { //The type have changed
     deleteChild(x);	//Delete the old item
     x=NULL;		//The item will be treated as nonexistent and created
+   } else if (!validChild(*it,x)) {//Child item is no longer the same item
+    if (!deepReload(*it,x)) { //Try to reload the child "in place"
+     //This have unfortunate effect of closing the children. But should not happen often
+     deleteChild(x);	//Delete the old item
+     x=NULL;		//The item will be treated as nonexistent and created
+    }
    }
   }
   if (x) { //Item is already there -> move it to right place
@@ -114,12 +148,10 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/) {
   newTypes.replace(*it,typ);
  }
 
- guiPrintDbg(debug::DBG_DBG,"Reload : 5");
-
  //Erase unused childs
  eraseItems();
 
- //Erase old list
+ //Erase old list, replace by new list
  items=newItems;
  types=newTypes;
 }
@@ -132,6 +164,26 @@ void TreeItemAbstract::eraseItems() {
  //Clear lists
  items.clear();
  types.clear();
+}
+
+/** 
+ Validate child, given its name and reference to old child
+ Usually it is valid, since item with same name refer to same subitem (key-based items),
+ but for value-based items (array) same keys can correspond to different values after reloading.
+ In such cases, false should be returned.
+ Also, similar problems can happen when switching revisions (with almost all types)
+ <br><br>
+
+ Note: false negative it not a problem (only unnecessary reloading),
+       while false positive mean the tree is invalid/outdated
+
+ @param name name of (old and new) treeitem
+ @param oldChild reference to old child tree item
+ @return True, if the old child is pointing to same item as item "name", false, if the child item "name" no longer point to same item as oldChild.
+*/
+bool TreeItemAbstract::validChild(__attribute__((unused)) const QString &name,__attribute__((unused)) QListViewItem *oldChild) {
+ //True by default
+ return true;
 }
 
 /**
