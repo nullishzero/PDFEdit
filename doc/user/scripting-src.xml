@@ -54,19 +54,19 @@
     This function is called after active revision of document is changed
    </para>
   </sect1>
-  <sect1 id="onDragDropOther">
-   <title>onDragDropOther()</title>
-   <para>
-   Called on drag-drop event across different tree windows.
-   Variable <link linkend="source">source</link> contain contents of source (dragged) tree item,
-   variable <link linkend="target">target</link> contain destination item on which the source was dropped.
-   </para>
-  </sect1>
   <sect1 id="onDragDrop">
    <title>onDragDrop()</title>
    <para>
    Called on drag-drop event in one tree window.
    Variable <link linkend="source">source</link> contain source (dragged) tree item,
+   variable <link linkend="target">target</link> contain destination item on which the source was dropped.
+   </para>
+  </sect1>
+  <sect1 id="onDragDropOther">
+   <title>onDragDropOther()</title>
+   <para>
+   Called on drag-drop event across different tree windows.
+   Variable <link linkend="source">source</link> contain contents of source (dragged) tree item,
    variable <link linkend="target">target</link> contain destination item on which the source was dropped.
    </para>
   </sect1>
@@ -80,6 +80,12 @@
    <title>onLoadUser()</title>
    <para>
     This function is called after document is opened (after <link linkend="onLoad">onLoad()</link> is called)
+   </para>
+  </sect1>
+  <sect1 id="onPageRightClick">
+   <title>onPageRightClick()</title>
+   <para>
+    This function is called after clicking with right mouse button in window with page preview.
    </para>
   </sect1>
   <sect1 id="onTreeLeftClick">
