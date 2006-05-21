@@ -122,11 +122,18 @@ CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> oper, boos
 	assert (oper);
 	kernelPrintDbg (debug::DBG_DBG, "");
 
-	// If no prev specified and children are empty,just simple insert into children
-	if (NULL == prev.get() && children.empty())
+	// If children are empty, we have to provide a prev because there is no
+	// other way we can obtain shared_ptr to *this
+	if (children.empty() && prev)
 	{
 		children.push_back (oper); 
+		PdfOperator::putBehind (prev, oper);
 		return;
+	
+	}else if (children.empty())
+	{
+		assert (!"Children are empty but prev was not specified.");
+		throw CObjInvalidOperation ();
 	}
 	
 	//

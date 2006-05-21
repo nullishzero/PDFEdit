@@ -1716,7 +1716,8 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 
 	// q
 	operands.clear();
-	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("q", 0, operands)));
+	// This is the first operator to be inserted, so we HAVE TO specify the second paramater.
+	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("q", 0, operands)), composite);
 	
 	// r g b rg
 	operands.clear ();

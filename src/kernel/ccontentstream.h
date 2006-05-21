@@ -405,9 +405,29 @@ public:
 };
 
 
+
+
+//==========================================================
+// Operator creating functions
+//==========================================================
+
+// BT oper ET
+boost::shared_ptr<PdfOperator> createTextOperator (boost::shared_ptr<PdfOperator> oper);
+// (text) Td
+boost::shared_ptr<PdfOperator> createText (const std::string text);
+	
+
 //==========================================================
 // Operator changing functions
 //==========================================================
+
+
+boost::shared_ptr<PdfOperator> setPosition (boost::shared_ptr<PdfOperator> oper, const Point pt);
+boost::shared_ptr<PdfOperator> setFontSize (boost::shared_ptr<PdfOperator> oper, size_t fontSize);
+// ?? boost::shared_ptr<PdfOperator> setFont (boost::shared_ptr<PdfOperator> oper);
+// ?? boost::shared_ptr<PdfOperator> setBackground (const Rectangle rc, RGB color);
+ 
+
 
 
 /**
