@@ -88,6 +88,7 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 	//stream->setBuffer (buf);
 	//cs->getStringRepresentation (tmp);
 	//oss << tmp << std::endl;
+	cs->saveChange();
 	#if WANT_PDF_SAVE
 	pdf->save (true);
 	#endif
@@ -253,6 +254,30 @@ delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	cs->getStringRepresentation (strr);
 	//oss << strr << "--" << flush;
 
+/*	operands.clear ();
+	oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("q", 0, operands));
+	cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
+	cs->getPdfOperators (opers);
+	cs->getStringRepresentation (strr);
+	//oss << strr << "--" << flush;
+*/
+	operands.clear ();
+	operands.push_back (shared_ptr<IProperty> (new CReal (1.0)));
+	operands.push_back (shared_ptr<IProperty> (new CReal (0.0)));
+	operands.push_back (shared_ptr<IProperty> (new CReal (0.0)));
+	oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands));
+	cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
+	cs->getPdfOperators (opers);
+	cs->getStringRepresentation (strr);
+	//oss << strr << "--" << flush;
+
+/*	operands.clear ();
+	oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("Q", 0, operands));
+	cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
+	cs->getPdfOperators (opers);
+	cs->getStringRepresentation (strr);
+	//oss << strr << "--" << flush;
+*/
 	operands.clear ();
 	operands.push_back (shared_ptr<IProperty> (new CString ("halooooooooooo")));
 	oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("Tj", 1, operands));
@@ -314,11 +339,57 @@ insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	//cs->getStringRepresentation (str);
 	oss << str << flush;
 
+	cs->saveChange();
 	#if WANT_PDF_SAVE
 	pdf->save (true);
 	#endif
 	return true;
 }
+
+
+//=====================================================================================
+
+bool
+changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+	vector<boost::shared_ptr<CContentStream> > ccs;
+	page->getContentStreams (ccs);
+	shared_ptr<CContentStream> cs = ccs.front();
+	
+	typedef vector<boost::shared_ptr<PdfOperator> > Opers;
+	Opers opers;
+	cs->getPdfOperators (opers);
+
+	//
+	// Change text to red
+	//
+	assert (!opers.empty());
+	TextOperatorIterator it = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
+	while (!it.isEnd())
+	{
+		PdfOperator::Iterator itPrv = it; itPrv.prev();
+		PdfOperator::Iterator itNxt = it; itNxt.next();
+		// This will change iterator list of it.getCurrent() !!!
+		boost::shared_ptr<PdfOperator> op = operatorSetColor (it.getCurrent(), 1, 0, 0);
+		cs->replaceOperator (it, op, itPrv, itNxt, false);
+		//cs->replaceOperator (it, operatorSetColor (it.getCurrent(), 1, 0, 0), itPrv, itNxt, false);
+		
+		it.next();
+	}
+	oss << ".." << flush;
+
+
+	cs->saveChange();
+	#if WANT_PDF_SAVE
+	pdf->save (true);
+	#endif
+	return true;
+}
+
 
 //=========================================================================
 // class TestPdfOperators
@@ -327,6 +398,7 @@ insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
 class TestPdfOperators : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestPdfOperators);
+		CPPUNIT_TEST(TestChangeColor);
 		CPPUNIT_TEST(TestSetCS);
 		CPPUNIT_TEST(TestDeleteOper);
 		CPPUNIT_TEST(TestInsertOper);
@@ -404,7 +476,6 @@ public:
 			OK_TEST;
 		}
 	}
-
 	//
 	//
 	//
@@ -418,6 +489,22 @@ public:
 
 			TEST(" text iterator");
 			CPPUNIT_ASSERT (textIter (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestChangeColor ()
+	{
+		OUTPUT << "Change color..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			TEST(" change color");
+			CPPUNIT_ASSERT (changeColor (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
