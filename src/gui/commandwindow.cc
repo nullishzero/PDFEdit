@@ -39,6 +39,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  history->setLineEdit( cmd );
  history->setEditable( true );
  history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
+ history->setMinimumWidth(1);
  loadHistory();
 // history->setInsertionPolicy( QComboBox::AtTop );
  history->setInsertionPolicy( QComboBox::NoInsertion );
