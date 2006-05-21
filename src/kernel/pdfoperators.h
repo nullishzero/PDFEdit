@@ -131,8 +131,12 @@ public:
 	 * Add an operator to the end of composite.
 	 * 
 	 * @param oper Operator to be added.
+	 * @param prev Operator, after which we should place the added one in
+	 * iterator list. If not specified, it is assumed that children are not
+	 * empty and that the last item is not a composite.
 	 */
-	virtual void push_back (const boost::shared_ptr<PdfOperator>)
+	virtual void push_back (const boost::shared_ptr<PdfOperator>, 
+							boost::shared_ptr<PdfOperator>)
 		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
 
 	/**
@@ -211,13 +215,16 @@ public:
 	static void putBehind (	boost::shared_ptr<PdfOperator> behindWhich, 
 							boost::shared_ptr<PdfOperator> which)
 	{
+		assert (behindWhich);
+		assert (which);
+
 		if (behindWhich && which)
 		{
 			if (!behindWhich->next.expired ())
 			{ // we are not at the end
 			
-				which->setNext (behindWhich->next);
 				assert (behindWhich->next.lock());
+				which->setNext (behindWhich->next);
 				behindWhich->next.lock()->setPrev (ListItem (which));
 				which->setPrev (ListItem (behindWhich));
 				behindWhich->setNext (ListItem (which));
@@ -232,6 +239,7 @@ public:
 		}else
 			throw CObjInvalidOperation ();
 	}
+
 	
 	/**
 	 * Set next or prev item.
@@ -355,7 +363,8 @@ protected:
 	//
 public:
 	virtual size_t getChildrenCount () const {return children.size ();};	
-	virtual void push_back (const boost::shared_ptr<PdfOperator> op);
+	virtual void push_back (const boost::shared_ptr<PdfOperator> oper, 
+							boost::shared_ptr<PdfOperator> prev = boost::shared_ptr<PdfOperator> ());
 	virtual void remove (boost::shared_ptr<PdfOperator> op);
 	virtual void getChildren (PdfOperators& container) const;
 	virtual void insert_after (const boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> newOper);
@@ -586,11 +595,12 @@ isComposite (boost::shared_ptr<PdfOperator> oper)
  * Find composite operator into which an operator belongs.
  *
  * @param begin Start iterator.
- * @param it Object we want to find the composite in which it resides.
+ * @param oper Object we want to find the composite in which it resides.
  *
  * @return Composite operator.
  */
-boost::shared_ptr<CompositePdfOperator> findCompositeOfPdfOperator (PdfOperator::Iterator begin, PdfOperator::Iterator it);
+boost::shared_ptr<CompositePdfOperator> findCompositeOfPdfOperator (PdfOperator::Iterator begin, 
+																	boost::shared_ptr<PdfOperator> oper);
 
 /**
  * Get last operator if a composite.

@@ -1247,8 +1247,7 @@ namespace
 					// While not the end
 					while (last = createOp (stream, operands, _last))
 					{
-						PdfOperator::putBehind (_prevLast, last);
-						result->push_back (last);
+						result->push_back (last, _prevLast);
 							
 						// Is it the end tag?
 						string tag;
@@ -1514,7 +1513,7 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 	{
 		// Find the composite in which the operator resides
 		OperatorIterator begin = PdfOperator::getIterator (operators.front());
-		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, it);
+		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, toDel);
 		assert (composite);
 		// Remove it from composite
 		if (composite)
@@ -1581,7 +1580,7 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 	{
 		// Find the composite in which the operator resides
 		OperatorIterator begin = PdfOperator::getIterator (operators.front());
-		boost::shared_ptr<CompositePdfOperator> composite = findCompositeOfPdfOperator (begin, it);
+		boost::shared_ptr<CompositePdfOperator> composite = findCompositeOfPdfOperator (begin, it.getCurrent());
 		assert (composite);
 		// Insert it into composite
 		if (composite)
@@ -1623,20 +1622,119 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 
 
 //
-//
+// We can not simply use add and delete function because we would mess up
+// iterator list in both cases
 //
 void
-CContentStream::replaceOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange)
+CContentStream::replaceOperator (OperatorIterator it, 
+								 boost::shared_ptr<PdfOperator> newOper, 
+								 OperatorIterator itPrv,
+								 OperatorIterator itNxt,
+								 bool indicateChange)
 {
-	// Add new operator, do not write it to the stream
-	insertOperator (it, newOper, false);
-	// Delete old operator, do not write it to the stream
-	deleteOperator (it, false);
 
+
+	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (!operators.empty());
+
+	// Be sure that the operator won't get deallocated along the way
+	boost::shared_ptr<PdfOperator> toReplace = it.getCurrent ();
+	
+	//
+	// Replace in operators or composite
+	// 
+	
+	Operators::iterator operIt = std::find (operators.begin(), operators.end(), toReplace);
+	if (operIt == operators.end())
+	{
+		// Find the composite in which the operator resides
+		OperatorIterator begin = PdfOperator::getIterator (operators.front());
+		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, toReplace);
+		assert (composite);
+		// Replace it from composite
+		if (composite)
+		{
+			composite->insert_after (toReplace, newOper);
+			composite->remove (toReplace);
+		
+		}else
+			throw CObjInvalidObject ();
+	
+	}else
+	{
+		// Replace it from operators
+		std::replace (operators.begin(), operators.end(), *operIt, newOper);
+	}
+
+	
+	//
+	// Remove it from iterator list
+	//
+	
+	// First and last of new operator
+	OperatorIterator itCur = PdfOperator::getIterator (newOper);
+	assert (!itCur.isEnd());
+	OperatorIterator itCurLast = PdfOperator::getIterator(getLastOperator (itCur));
+	assert (!itCurLast.isEnd());
+
+	if (!itNxt.isEnd())
+	{
+		itNxt.getCurrent()->setPrev (itCurLast.getCurrent());
+		itCurLast.getCurrent()->setNext (itNxt.getCurrent());
+	}
+	if (!itPrv.isEnd())
+	{
+		itPrv.getCurrent()->setNext (itCur.getCurrent());
+		itCur.getCurrent()->setPrev (itPrv.getCurrent());
+	}
+	
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
 		_objectChanged ();
 }
+
+
+
+//==========================================================
+// Operator changing functions
+//==========================================================
+
+//
+// This will be the result:
+// q 		-- save graphical state
+// r g b rg	-- change color
+// operator	-- changed operator
+// Q		-- restore graphical state
+//
+boost::shared_ptr<PdfOperator>
+operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, double b)
+{
+	// Create empty composite
+	boost::shared_ptr<CompositePdfOperator> composite (new UnknownCompositePdfOperator	 ("",""));
+
+	PdfOperator::Operands operands;
+
+	// q
+	operands.clear();
+	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("q", 0, operands)));
+	
+	// r g b rg
+	operands.clear ();
+	operands.push_back (shared_ptr<IProperty> (new CReal (r)));
+	operands.push_back (shared_ptr<IProperty> (new CReal (g)));
+	operands.push_back (shared_ptr<IProperty> (new CReal (b)));
+	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)));
+
+	// operator
+	composite->push_back (oper);
+	
+	// Q
+	operands.clear();
+	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("Q", 0, operands)));
+
+	return composite;
+}
+
 
 
 //==========================================================

@@ -117,8 +117,38 @@ UnknownPdfOperator::getStringRepresentation (std::string& str) const
 //
 //
 void 
-CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> op)
-	{ children.push_back (op); }
+CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> prev)
+{
+	assert (oper);
+	kernelPrintDbg (debug::DBG_DBG, "");
+
+	// If no prev specified and children are empty,just simple insert into children
+	if (NULL == prev.get() && children.empty())
+	{
+		children.push_back (oper); 
+		return;
+	}
+	
+	//
+	// Change iterator
+	//
+	if (NULL == prev.get())
+	{
+		assert (!children.empty());
+		assert (!isComposite(children.back()));
+		if (isComposite(children.back()))
+			throw CObjInvalidOperation ();
+		//
+		prev = children.back ();
+	}
+	assert (prev);
+
+	// Insert into iterator list
+	PdfOperator::putBehind (prev, oper);
+	
+	// Add to children
+	children.push_back (oper); 
+}
 
 //
 //
@@ -246,29 +276,34 @@ InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 }
 
 //
-//
+//\todo improve performance
 //
 boost::shared_ptr<CompositePdfOperator>
-findCompositeOfPdfOperator (PdfOperator::Iterator it, PdfOperator::Iterator expected)
+findCompositeOfPdfOperator (PdfOperator::Iterator it, boost::shared_ptr<PdfOperator> oper)
 {
 	boost::shared_ptr<CompositePdfOperator> composite;
+	typedef PdfOperator::PdfOperators Opers;
+	Opers opers;
+
+
 	while (!it.isEnd())
 	{
 		// Have we found what we were looking for
-		if (it == expected)
+		if (isComposite(it))
 		{
-			assert (composite);
-			
-			PdfOperator::PdfOperators opers;
-			composite->getChildren (opers);
-			return composite;
-		}
-
-		// Store it if it is a composite
-		if (isComposite (it))
+			opers.clear ();
+			it.getCurrent()->getChildren (opers);
+			if (opers.end() != std::find (opers.begin(), opers.end(), oper))
+				return boost::dynamic_pointer_cast<CompositePdfOperator, PdfOperator> (it.getCurrent());
+		}else
 		{
-			composite = boost::dynamic_pointer_cast<CompositePdfOperator, PdfOperator> (it.getCurrent());
-			assert (composite);
+			// This can happen only in the "first level" but that should be
+			// handled in caller
+			if (it.getCurrent() == oper)
+			{
+				assert (!"Found highest level operator, that should be handled in the caller of this function.");
+				throw CObjInvalidObject ();
+			}
 		}
 
 		it.next ();

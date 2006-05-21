@@ -349,11 +349,21 @@ public:
 	/**
 	 * Replace an operator.
 	 *
+	 * This is a problem due to the iterator list. In replace functions like
+	 * changeColor, we put new oper in a new composite so we change its iterator
+	 * previous and next items which means we can not use them in this function.
+	 *
 	 * @param it Position of the element that will be replaced.
 	 * @param newOper Operator that will replace operator pointed by it.
+	 * @param prev Previous iterator of newOper in iterator list
+	 * @param next Next iterator of newOper in iterator list
 	 * @param indicateChange If true, change will be written to underlying
 	 */
-	void replaceOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
+	void replaceOperator (OperatorIterator it, 
+						  boost::shared_ptr<PdfOperator> newOper, 
+						  OperatorIterator itPrv,
+						  OperatorIterator itNxt,
+						  bool indicateChange = true);
 
 	//
 	// Helper methods
@@ -395,6 +405,29 @@ public:
 };
 
 
+//==========================================================
+// Operator changing functions
+//==========================================================
+
+
+/**
+ * Set color of an operator in RGB format.
+ *
+ * Example: 1 0 0 is red
+ *
+ * REMARK: When changing an operator that is in a content stream, we can not use
+ * Iterator list after calling this function. This function puts oper in a new
+ * iterator list. Method replaceOperator has to be called immmediately after
+ * this function.
+ * 
+ * @param r R in RGB
+ * @param g G in RGB
+ * @param b B in RGB
+ *
+ * @return Operator that contains changed original operator.
+ */
+boost::shared_ptr<PdfOperator>
+operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, double b);
 
 //==========================================================
 } // namespace pdfobjects
