@@ -533,6 +533,13 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::PageSpace</name>
+    <message>
+        <source>Save as image ...</source>
+        <translation>Uložit jako obrázek...</translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Loaded file</source>
@@ -730,6 +737,16 @@ Data: %3
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
         <translation>Uložit kopii...</translation>
+    </message>
+    <message>
+        <source>&amp;Page</source>
+        <comment>pagemenu</comment>
+        <translation>Strana</translation>
+    </message>
+    <message>
+        <source>Save page as image...</source>
+        <comment>savepage</comment>
+        <translation>Uložit stranu jako obrázek...</translation>
     </message>
 </context>
 <context>

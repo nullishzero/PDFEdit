@@ -530,6 +530,13 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::PageSpace</name>
+    <message>
+        <source>Save as image ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Current file is not saved. Do you want to save it?</source>
@@ -726,6 +733,16 @@ Data: %3
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Page</source>
+        <comment>pagemenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save page as image...</source>
+        <comment>savepage</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
