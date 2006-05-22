@@ -96,7 +96,7 @@ openXpdfMess ()
 	assert (NULL == globalParams);
 	globalParams = new ::GlobalParams (NULL);
 	globalParams->setupBaseFonts (NULL);	
-};
+}
 
 /** Uninit xpdf. */
 inline void
@@ -106,7 +106,7 @@ closeXpdfMess ()
 	assert (NULL != globalParams);
 	delete globalParams;
 	globalParams = NULL;
-};
+}
 
 /** Use xpdf functions sensitive to global variables.. */
 struct GlobalUseXpdf
