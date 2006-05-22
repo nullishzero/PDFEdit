@@ -10,7 +10,6 @@
 #ifndef _CPAGE_H
 #define _CPAGE_H
 
-
 // all basic includes
 #include "static.h"
 
@@ -30,7 +29,7 @@ namespace pdfobjects {
 //
 static const double DEFAULT_HDPI 	= 72;
 static const double DEFAULT_VDPI 	= 72;
-static const int DEFAULT_ROTATE 	= 0;
+static const int DEFAULT_ROTATE 	= 0;		// no rotate
 
 static const double DEFAULT_PAGE_LX = 0;
 static const double DEFAULT_PAGE_LY = 0;
@@ -61,30 +60,48 @@ typedef struct DisplayParams
 } DisplayParams;
 
 
-/**
- * Comparator that will define area around specified point.
+/** 
+ * Comparator that will define area around specified point. 
  */
 struct PdfOpCmpRc
 {
-private:
-	const Rectangle rc_;
-public:
 	/** Consructor. */
 	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {};
 	
-	/** Is in in a range. */
+	/** 
+	 * Is in in a range. 
+	 *
+	 * Our rectangle does NOT contain another rectangle if
+	 * max (xleft-our, xright-our) < min (xleft, xright)
+	 * min (xleft-our, xright-our) > max (xleft, xright)
+	 * max (yleft-our, yright-our) < min (yleft, yright)
+	 * min (yleft-our, yright-our) < max (yleft, yright)
+	 */
 	bool operator() (const Rectangle& rc) const
 	{
-		return ( (rc_.contains (rc.xleft, rc.yleft)) && (rc_.contains (rc.xright, rc.yright)) );
+		if ( std::max(rc_.xleft,rc_.xright) < std::min(rc.xleft, rc.xright) )
+			return false;
+		if ( std::min(rc_.xleft,rc_.xright) > std::max(rc.xleft, rc.xright) )
+			return false;
+
+		if ( std::max(rc_.yleft,rc_.yright) < std::min(rc.yleft, rc.yright) )
+			return false;
+		if ( std::min(rc_.yleft,rc_.yright) > std::max(rc.yleft, rc.yright) )
+			return false;
+
+		return true;
 	}
+
+private:
+	const Rectangle rc_;
 };
 
 
+/** 
+ * Point comparator.
+ */
 struct PdfOpCmpPt
 {
-private:
-	const Point pt_;
-public:
 	/** Consructor. */
 	PdfOpCmpPt (const Point& pt) : pt_(pt) {};
 	
@@ -93,6 +110,9 @@ public:
 	{
 		return (rc.contains (pt_.x, pt_.y));
 	}
+
+private:
+	const Point pt_;
 };
 
 
@@ -104,7 +124,7 @@ public:
 /**
  * CPage represents pdf page object. 
  *
- * Content stream is parsed on demand because it can be horribly slow.
+ * Content stream is parsed on demand because otherwise it would be very slow.
  */
 class CPage
 {
@@ -125,9 +145,6 @@ private:
 	//
 public:
 		
-	/** Constructor. */
-	//CPage () {};
-
 	/** 
 	 * Constructor. 
 	 * If the dicionary contains not empty content stream, it is parsed.

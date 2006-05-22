@@ -223,8 +223,25 @@ public:
 			it.getCurrent()->getOperatorName (tmp);
 			utilsPrintDbg (debug::DBG_DBG, tmp << " " << it.getCurrent()->getBBox());
 			//
+			assert (!it.isEnd());
 			it.next();
 		}
+
+		// DEBUG OUTPUT
+		utilsPrintDbg (debug::DBG_DBG, "--- SELECTED THESE OPERATORS --- ");
+		for (typename OpContainer::const_iterator it = opContainer.begin (); it != opContainer.end(); ++it)
+		{
+			PdfOperator::Operands ops;
+			(*it)->getParameters (ops);
+			std::string strop;
+			if (0 < ops.size())
+				ops[0]->getStringRepresentation (strop);
+			std::string tmp;
+			(*it)->getOperatorName (tmp);
+			utilsPrintDbg (debug::DBG_DBG, tmp << "(" << strop << "): " << (*it)->getBBox());
+		}
+		utilsPrintDbg (debug::DBG_DBG, "--------------------------------- ");
+		// 
 	}
 
 	/**
