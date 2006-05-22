@@ -312,6 +312,30 @@ public:
 	 */
 	CContentStream* getContentStream () const
 		{assert (NULL != contentstream); return contentstream;}
+
+	//
+	// BBox
+	//
+private:
+	/** Actual bbox of this operator. */
+	Rectangle bbox;
+
+public:
+	/** 
+	 * Set bounding box.
+	 *
+	 * @param bbox Bounding box.
+	 */
+	void setBBox (const Rectangle& rc)
+		{ assert(COORDINATE_INVALID == bbox.xleft); bbox = rc; };
+
+	/**
+	 * Get bounding box.
+	 *
+	 * @return Bounding box.
+	 */
+	Rectangle getBBox () const
+		{ assert (COORDINATE_INVALID != bbox.xleft); return bbox; };
 	
 };
 
@@ -697,6 +721,50 @@ struct InlineImageOperatorIterator: public PdfOperator::Iterator
 private:
 	static const std::string accepted_opers;
 };
+
+/**
+ * Changeable operator iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * common operator. This is done in the constructor.
+ *
+ * This operator excludes operators like q, Q etc.
+ */
+struct ChangeableOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 38;
+
+	//
+	// Constructor
+	//
+	ChangeableOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!_cur.expired() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == rejected_opers[i])
+				return false;
+		
+		return true;
+	}
+
+private:
+	static const std::string rejected_opers [NAME_COUNT];
+};
+
+
 
 //==========================================================
 } // namespace pdfobjects

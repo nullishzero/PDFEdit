@@ -3,7 +3,7 @@
  * =====================================================================================
  *        Filename:  ccontentstream.cc
  *         Created:  03/24/2006 10:33:34 PM CET
- *          Author:  jmisutka (), 
+ *          Author:  jmisutka, mjahoda
  * =====================================================================================
  */
 
@@ -677,7 +677,7 @@ namespace
 	
 	// "BI"
 	void
-	opBIUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, Rectangle* rc)
+	opBIUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
 		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
@@ -691,7 +691,7 @@ namespace
 
 	// "ID"
 	void
-	opIDUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, Rectangle* rc)
+	opIDUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
 		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
@@ -1331,51 +1331,57 @@ namespace
 	}
 
 
-	
+	/**
+	 * Saves bounding box of all operators.
+	 *
+	 * @param it Iterator that will be used to traverse all operators.
+	 * @param res Resources.
+	 * @param state Gfx state.
+	 */
+	void
+	setOperatorBBox (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, GfxState& state)
+	{
+		utilsPrintDbg (debug::DBG_DBG, "");
+		boost::shared_ptr<PdfOperator> op;
+		Rectangle rc;
+
+		// Init global variables
+		xpdf::openXpdfMess ();
+		
+		while (!it.isEnd ())
+		{
+			op = it.getCurrent();
+			// Get operator name
+			string frst;
+			op->getOperatorName(frst);
+			// Get operator specification
+			const CheckTypes* chcktp = findOp (frst);
+			// Get operands
+			PdfOperator::Operands ops;
+			op->getParameters (ops);
+			// If operator found use the function else use default
+			if (NULL != chcktp)
+			{
+				assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
+				assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
+				(chcktp->update) (state, res, op, ops, &rc);
+				
+			}else
+			{
+				unknownUpdate (state, res, op, ops, &rc);
+			}
+
+			op->setBBox (rc);
+			it = it.next ();
+		
+		} // while
+
+		// Close xpdf mess
+		xpdf::closeXpdfMess ();
+	}
+
 //==========================================================
 } // namespace
-//==========================================================
-
-
-//==========================================================
-namespace operatorparser {
-//==========================================================
-
-//
-//
-//
-void 
-adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state, boost::shared_ptr<GfxResources> res, Rectangle* rc)
-{
-	if (op)
-	{
-		// Get operator name
-		string frst;
-		op->getOperatorName(frst);
-		// Get operator specification
-		const CheckTypes* chcktp = findOp (frst);
-		// Get operands
-		PdfOperator::Operands ops;
-		op->getParameters (ops);
-		// If operator found use the function else use default
-		if (NULL != chcktp)
-		{
-			assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
-			assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
-			(chcktp->update) (state, res, op, ops, rc);
-			
-		}else
-		{
-			unknownUpdate (state, res, op, ops, rc);
-		}
-
-	}else
-		throw ElementBadTypeException ("adjustActualPosition()");
-	
-}
-
-//==========================================================
-} // namespace operatorparser
 //==========================================================
 
 //==========================================================
@@ -1416,11 +1422,14 @@ throw ()
 //
 // Constructors
 //
-CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (stream)
+CContentStream::CContentStream (boost::shared_ptr<CStream> stream, 
+								boost::shared_ptr<GfxState> state, 
+								boost::shared_ptr<GfxResources> res) 
+	: cstream (stream), gfxstate (state), gfxres (res)
 {
 	kernelPrintDbg (DBG_DBG, "");
 
-	if (contentstream)
+	if (cstream)
 	{
 		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
 		// the problem is with parsed pdfoperators
@@ -1430,7 +1439,7 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (str
 		
 		// Register observer
 		observer = boost::shared_ptr<CContentStreamObserver> (new CContentStreamObserver (this));
-		contentstream->registerObserver (observer);
+		cstream->registerObserver (observer);
 
 		// Parse it into small objects
 		reparse ();
@@ -1454,10 +1463,26 @@ CContentStream::CContentStream (shared_ptr<CStream> stream) : contentstream (str
 //
 //
 void
-CContentStream::reparse ()
+CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<GfxResources> res)
 {
+	// Save resources if new
+	if (state)
+		gfxstate = state;
+	if (res)
+		gfxres = res;
+	
+	assert (gfxres);
+	assert (gfxstate);
+	
+	// Clear operators	
 	operators.clear ();
-	parseContentStream (operators, contentstream, *this);
+	
+	// Parse it
+	parseContentStream (operators, cstream, *this);
+	
+	// Save bounding boxes
+	if (!operators.empty())
+		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
 }
 
 //
@@ -1467,14 +1492,14 @@ void
 CContentStream::_objectChanged ()
 {
 	// Do not notify anything if we are not in a valid pdf
-	if (!hasValidPdf (contentstream))
+	if (!hasValidPdf (cstream))
 		return;
-	assert (hasValidRef (contentstream));
+	assert (hasValidRef (cstream));
 
 	// Make the change
 	string tmp;
 	getStringRepresentation (tmp);
-	contentstream->setBuffer (tmp);
+	cstream->setBuffer (tmp);
 
 	// Notify observers
 	this->notifyObservers ( shared_ptr<CContentStream> (),shared_ptr<const ObserverContext> ());

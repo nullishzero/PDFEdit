@@ -81,14 +81,14 @@ CPage::getText (std::string& text) const
 	displayPage (*textDev);	
 
 	// Init xpdf mess
-	openXpdfMess ();
+	xpdf::openXpdfMess ();
 
 	// Get the text
 	boost::scoped_ptr<GString> gtxt (textDev->getText(0, 0, 1000, 1000));
 	text = gtxt->getCString();
 	
 	// Uninit xpdf mess
-	closeXpdfMess ();
+	xpdf::closeXpdfMess ();
 }
 
 
@@ -122,8 +122,6 @@ CPage::setMediabox (const Rectangle& rc)
 void
 CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 {
-	// Init xpdf
-	openXpdfMess ();
 
 	// Are we in valid pdf
 	assert (hasValidPdf (dictionary));
@@ -146,6 +144,10 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	// Get page dictionary
 	Dict* xpdfPageDict = xpdfPage->getDict ();
 	assert (NULL != xpdfPageDict);
+
+	
+	// Init xpdf
+	xpdf::openXpdfMess ();
 
 	//
 	// We need to handle special case
@@ -173,11 +175,11 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	//
 	// Cleanup
 	// 
-	
+
+	// Clean xpdf mess
+	xpdf::closeXpdfMess ();
 	// Free object
 	xpdfPage->free ();
-	// Clean xpdf mess
-	closeXpdfMess ();
 
 }
 
@@ -190,6 +192,47 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 //
 bool CPage::parseContentStream ()
 {
+	assert (hasValidRef(dictionary));
+	assert (hasValidPdf (dictionary));
+	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
+		throw CObjInvalidObject ();
+	
+
+	//
+	// Init Gfx resources
+	//
+
+	// Init mess
+	xpdf::openXpdfMess ();
+	
+	// Get resource dictionary
+	boost::shared_ptr<IProperty> resources = 
+		utils::getReferencedObject (dictionary->getProperty("Resources"));
+	assert (isDict(resources));
+	if (!isDict(resources))
+		throw CObjInvalidObject ();
+	
+	// Start the resource stack
+	XRef* xref = dictionary->getPdf()->getCXref();
+	assert (xref);
+	::Object* obj = resources->_makeXpdfObject ();
+	assert (obj); assert (objDict == obj->getType());
+	boost::shared_ptr<GfxResources> res (new GfxResources(xref, obj->getDict(), NULL));
+
+	//
+	// Init Gfx state
+	//
+	
+	// Default values
+	DisplayParams params;
+	// Create Media (Bounding) box
+	boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (params.pageRect.xleft,  params.pageRect.yleft,
+														  params.pageRect.xright, params.pageRect.yright));
+	boost::shared_ptr<GfxState> state (new GfxState (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown));
+
+	// Close the mess
+	xpdf::closeXpdfMess ();
+
 	//
 	// Get the stream representing content stream (if any), make an xpdf object
 	// and finally instantiate CContentStream
@@ -202,7 +245,6 @@ bool CPage::parseContentStream ()
 	}catch (ElementNotFoundException&)
 	{
 		kernelPrintDbg (debug::DBG_DBG, "No content stream found.");
-		// No content stream return
 		return false;
 	}
 	
@@ -218,7 +260,7 @@ bool CPage::parseContentStream ()
 		{
 			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
 			// Create contentstream from a stream
-			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream (stream)));
+			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream (stream,state,res)));
 		
 		}else if (isArray (contents))
 		{
@@ -226,7 +268,7 @@ bool CPage::parseContentStream ()
 			shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
 			for (size_t i = 0; i < array->getPropertyCount(); ++i)
 				contentstreams.push_back 
-					(shared_ptr<CContentStream> (new CContentStream(getCStreamFromArray(array,i))) );
+					(shared_ptr<CContentStream> (new CContentStream(getCStreamFromArray(array,i),state,res)) );
 			
 		}else // Neither stream nor array
 		{
@@ -241,37 +283,6 @@ bool CPage::parseContentStream ()
 	return true;
 }
 
-//
-// Xpdf mess methods
-//
-
-//
-//
-//
-void
-CPage::openXpdfMess () const
-{
-	//
-	// Xpdf Global variable TFUJ!!!
-	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
-	// variable builtinFonts which causes that globalParams can NOT be nested
-	// 
-	assert (NULL == globalParams);
-	globalParams = new GlobalParams (NULL);
-	globalParams->setupBaseFonts (NULL);	
-}
-
-//
-//
-//
-void
-CPage::closeXpdfMess () const
-{
-	// Clean-up
-	assert (NULL != globalParams);
-	delete globalParams;
-	globalParams = NULL;
-}
 
 // =====================================================================================
 } /* namespace pdfobjects */

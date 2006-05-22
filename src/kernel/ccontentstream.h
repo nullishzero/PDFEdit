@@ -30,103 +30,6 @@ namespace pdfobjects {
 // Forward declaration
 //
 class IProperty;
-
-//==========================================================
-namespace operatorparser  {
-//==========================================================
-
-/** 
- * Adjust actual position. 
- *
- * @param op Actual operator.
- * @param state Actual state that we should update.
- * @param res Actual resources for lookup fonts.
- * @param rc Return rectangle for PdfOperator op.
- */
-void adjustActualPosition (boost::shared_ptr<PdfOperator> op, GfxState& state, boost::shared_ptr<GfxResources> res, Rectangle* rc);
-	
-		
-/**
- * PdfOperators parser.
- * 
- */
-template<typename PdfOpStorage, typename PdfOpPosComparator>
-class PdfOperatorPositionParser
-{
-public:
-
-	/**
-	 * Stores all operators at specific position.
-	 *
-	 * @param it Iterator that will be used to traverse all operators in
-	 * 				specific order.
-	 * @param container Container used to store all operators that are in a
-	 * 				specificied area.
-	 * @param comp Comparator that will decide whether an operator is in the
-	 * 				specified area or not.
-	 */
-	void
-	getOpAtSpecificPosition (PdfOperator::Iterator it, 
-				 PdfOpStorage& container, 
-				 const PdfOpPosComparator& cmp, 
-				 GfxState& state,
-				 boost::shared_ptr<GfxResources> res)
-	{
-		utilsPrintDbg (debug::DBG_DBG, "");
-		
-		while (!it.isEnd ())
-		{
-			boost::shared_ptr<Rectangle> rc(new Rectangle());
-			adjustActualPosition (it.getCurrent(), state, res, rc.get());
-		
-			// DEBUG OUTPUT //
-			std::string frst;
-			it.getCurrent()->getOperatorName(frst);
-			PdfOperator::Operands ops;
-			it.getCurrent()->getParameters (ops);
-			std::string strop;
-			if (0 < ops.size())
-				ops[0]->getStringRepresentation (strop);
-			utilsPrintDbg (debug::DBG_DBG, *rc.get() << " " << frst << " " << strop);
-			/////////////////
-
-			if (cmp(*rc.get()))
-				container.push_back (it.getCurrent());
-
-			it = it.next ();
-		}
-		
-		
-		// DEBUG OUTPUT //
-		utilsPrintDbg (debug::DBG_DBG, "");
-		typename PdfOpStorage::const_iterator itt = container.begin();
-		for (; itt != container.end(); ++itt)
-		{
-			std::string frst;
-			(*itt)->getOperatorName(frst);
-			PdfOperator::Operands ops;
-			(*itt)->getParameters (ops);
-			std::string strop;
-			if (0 < ops.size())
-				ops[0]->getStringRepresentation (strop);
-			utilsPrintDbg (debug::DBG_DBG, frst << " " << strop);
-		}
-		utilsPrintDbg (debug::DBG_DBG, "");
-		/////////////////
-
-
-		
-	};
-};
-
-//==========================================================
-} // namespace operatorparser
-//==========================================================
-
-
-//
-// Forward declaration
-//
 class CContentStream;	
 typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
 
@@ -168,12 +71,17 @@ public:
 private:
 
 	/** Content stream cobject. */
-	boost::shared_ptr<CStream> contentstream;
+	boost::shared_ptr<CStream> cstream;
 
 	/** Parsed content stream operators. */
 	Operators operators;
 
-	
+	/** Gfx state needed for bbox. */
+	boost::shared_ptr<GfxState> gfxstate;
+
+	/** Gfx resources needed for bbox. */
+	boost::shared_ptr<GfxResources> gfxres;
+
 	//
 	// Observer observing underlying stream
 	//
@@ -223,7 +131,9 @@ public:
 	 *
 	 * @param stream CStream representing content stream or dictionary of more content streams.
 	 */
-	CContentStream (boost::shared_ptr<CStream> streams);
+	CContentStream (boost::shared_ptr<CStream> streams, 
+					boost::shared_ptr<GfxState> state, 
+					boost::shared_ptr<GfxResources> res);
 
 
 	//
@@ -271,7 +181,7 @@ public:
 
 	void getStringRepresentation (std::string& str) const
 	{
-		kernelPrintDbg (debug::DBG_DBG, "");
+		utilsPrintDbg (debug::DBG_DBG, "");
 
 		if (operators.empty ())
 			return;
@@ -292,18 +202,29 @@ public:
 	/**
 	 * Get objects at specified position.
 	 *
-	 * @param operators Objects will be added to the back of the container.
+	 * @param opContainer Container that we fill with operators that are in an enclosing area.
+	 * @param cmp Comparator that will decide if an operator is close enough.
 	 */
 	template<typename OpContainer, typename PdfOpPosComparator>
-	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp, GfxState& state, boost::shared_ptr<GfxResources> res) const
+	void getOperatorsAtPosition (OpContainer& opContainer, const PdfOpPosComparator& cmp) const
 	{
-		kernelPrintDbg (debug::DBG_DBG, "");
+		utilsPrintDbg (debug::DBG_DBG, "");
 		if (operators.empty())
 			return;
-		
-		operatorparser::PdfOperatorPositionParser<OpContainer, PdfOpPosComparator> posParser;
-		posParser.getOpAtSpecificPosition 
-				(PdfOperator::getIterator (operators.front()), opContainer, cmp, state, res);
+			
+		ChangeableOperatorIterator it = PdfOperator::getIterator<ChangeableOperatorIterator> (operators.front());
+		while (!it.isEnd())
+		{
+			if (cmp(it.getCurrent()->getBBox()))
+				opContainer.push_back (boost::shared_ptr<PdfOperator> (it.getCurrent()));
+
+			// debug
+			std::string tmp;
+			it.getCurrent()->getOperatorName (tmp);
+			utilsPrintDbg (debug::DBG_DBG, tmp << " " << it.getCurrent()->getBBox());
+			//
+			it.next();
+		}
 	}
 
 	/**
@@ -377,9 +298,12 @@ public:
 	bool empty () const {return operators.empty ();};
 
 	/**
-	 * Parse.
+	 * Reparse pdf operators.
+	 *
+	 * @param res GfxResources if they change.
 	 */
-	void reparse ();
+	void reparse (boost::shared_ptr<GfxState> state = boost::shared_ptr<GfxState> (), 
+				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> ());
 
 	/**
 	 * Save content stream to underlying cstream.

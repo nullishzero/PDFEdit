@@ -60,6 +60,7 @@ typedef struct DisplayParams
 					   upsideDown (gFalse) {};
 } DisplayParams;
 
+
 /**
  * Comparator that will define area around specified point.
  */
@@ -78,6 +79,7 @@ public:
 	}
 };
 
+
 struct PdfOpCmpPt
 {
 private:
@@ -93,6 +95,10 @@ public:
 	}
 };
 
+
+
+//=====================================================================================
+// CPage
 //=====================================================================================
 
 /**
@@ -120,7 +126,7 @@ private:
 public:
 		
 	/** Constructor. */
-	CPage () {};
+	//CPage () {};
 
 	/** 
 	 * Constructor. 
@@ -130,11 +136,18 @@ public:
 	 */
 	CPage (boost::shared_ptr<CDict>& pageDict);
 
+
+	//
+	// Destructor
+	//
 public:
 	
 	/** Destructor. */
 	~CPage () { kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); };
 
+	//
+	// Comparable interface
+	//
 public:
 	/** Compares if the objects are identical. */
 	bool operator== (const CPage& page)
@@ -155,7 +168,7 @@ public:
 	 */
 	boost::shared_ptr<CDict> getDictionary () const { return dictionary; };
 	
-
+	
 	/**
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
@@ -163,17 +176,16 @@ public:
 	 * @param opContainer Operator container where operators in specified are
 	 * 						wil be stored.
 	 * @param rc 		Rectangle around which we will be looking.
- 	 * @param params Display parameters.
 	 */
 	template<typename OpContainer>
-	void getObjectsAtPosition  (OpContainer& opContainer, 
-								const Rectangle& rc,
-								const DisplayParams params = DisplayParams())
+	void getObjectsAtPosition  (OpContainer& opContainer, const Rectangle& rc)
 	{	
 		kernelPrintDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
 		// Get the objects with specific comparator
-		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc), params);
+		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc));
 	}
+	
+	
 	/**
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
@@ -181,103 +193,42 @@ public:
 	 * @param opContainer Operator container where operators in specified are
 	 * 						wil be stored.
 	 * @param pt 		Point around which we will be looking.
- 	 * @param params Display parameters.
 	 */
 	template<typename OpContainer>
-	void getObjectsAtPosition  (OpContainer& opContainer, 
-								const Point& pt,
-								const DisplayParams params = DisplayParams())
+	void getObjectsAtPosition  (OpContainer& opContainer, const Point& pt)
 	{	
 		kernelPrintDbg (debug::DBG_DBG, " at point (" << pt << ")");
 		// Get the objects with specific comparator
-		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt), params);
+		getObjectsAtPosition (opContainer, PdfOpCmpPt (pt));
 	}
+
+	
 	/**
 	 * Get objects at specified position. This call will be delegated to
 	 * CContentStream class.
 	 *
-	 * @param opContainer Operator container where operators in specified are
-	 * 						wil be stored.
+	 * @param opContainer Operator container where operators in specified are wil be stored.
 	 * @param cmp 	Null if default kernel area comparator should be used otherwise points 
 	 * 				 to an object which will decide whether an operator is "near" a point.
- 	 * @param params Display parameters.
 	 */
-
 	template<typename OpContainer, typename PositionComparator>
-	void getObjectsAtPosition ( OpContainer& opContainer, 
-								PositionComparator cmp,
-								const DisplayParams params = DisplayParams())
+	void getObjectsAtPosition (OpContainer& opContainer, PositionComparator cmp)
 	{	
-		kernelPrintDbg (debug::DBG_DBG, " params----------------- (" << params.hDpi << "," << params.vDpi << ",(" << params.pageRect << ")," << params.useMediaBox << "," << params.rotate << "," << params.upsideDown << ")");
-		// Get page rectangle
-		Rectangle h_rc;
-		if (params.useMediaBox) {
-			h_rc = getMediabox();
-		} else {
-			h_rc = params.pageRect;
-			// recalculate box for the params
-			assert( params.useMediaBox );  // not implemented
-		}
-		// Create Media (Bounding) box
-		boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (h_rc.xleft, h_rc.yleft,
-															  h_rc.xright, h_rc.yright));;
-		// Create state
-		GfxState state (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown);
-	
-		// --------- koli textu a fontom
-		assert (NULL == globalParams);
-		boost::scoped_ptr<GlobalParams> aGlobPar (new GlobalParams (NULL));
-		globalParams = aGlobPar.get();
-		globalParams->setupBaseFonts (NULL);
-	
+		kernelPrintDbg (debug::DBG_DBG, "");
+		
 		// Are we in valid pdf
 		assert (hasValidPdf (dictionary));
 		assert (hasValidRef (dictionary));
-		if (!hasValidPdf (dictionary) || !hasValidRef (dictionary))
-			throw XpdfInvalidObject ();
-
-		// Get xref
-		XRef* xref = dictionary->getPdf()->getCXref ();
-		assert (NULL != xref);
-
-		// Create xpdf object representing CPage
-		//
-		boost::scoped_ptr<Object> xpdfPage (dictionary->_makeXpdfObject());
-		// Check page dictionary
-		assert (objDict == xpdfPage->getType ());
-		if (objDict != xpdfPage->getType ())
-			throw XpdfInvalidObject ();
-	
-		// Get page dictionary
-		Dict* xpdfPageDict = xpdfPage->getDict ();
-		assert (NULL != xpdfPageDict);
-		
-		// resource dictionary
-		Object obj1,obj2;
-		xpdfPageDict->lookup("Resources", &obj1);
-		if (obj1.isDict()) {
-			obj2.free();
-			obj1.copy(&obj2);
-		}
-		obj1.free();
-		// start the resource stack
-		boost::shared_ptr<GfxResources> res (new GfxResources( xref, obj2.getDict(), NULL));
-
-		// -----------------------------------------------------------
+		if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
+			throw CObjInvalidObject ();
 
 		// If not parsed
 		if (contentstreams.empty())
 			parseContentStream ();		
 	
-		// Get objects
+		// Get the objects with specific comparator
 		for (ContentStreams::iterator it = contentstreams.begin (); it != contentstreams.end(); ++it)
-		{
-			// Get the objects with specific comparator
-			(*it)->getOperatorsAtPosition (opContainer, cmp, state, res);
-		}
-
-		// 
-		globalParams = NULL;
+			(*it)->getOperatorsAtPosition (opContainer, cmp);
 	}
 
 	/** 
@@ -342,22 +293,6 @@ public:
 	bool parseContentStream ();
 
 	
-	//
-	// Xpdf global param mess helper methods
-	//
-private:
-	
-	/**
-	 * Init global params.
-	 */
-	void openXpdfMess () const;
-
-	/**
-	 * Close xpdf mess. 
-	 */
-	void closeXpdfMess () const;
-
-
 	//
 	// Media box interface
 	//

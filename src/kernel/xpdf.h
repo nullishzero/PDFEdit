@@ -27,7 +27,7 @@
 #include <xpdf/GlobalParams.h>
 #include <xpdf/Catalog.h>
 
-
+#include <assert.h>
 
 //=====================================================================================
 
@@ -78,6 +78,44 @@ public:
 
 /** Xpdf object wrapper. */
 typedef MassiveIdiocyWrapper<Object> XpdfObject;
+
+
+//
+// Xpdf global variables
+//
+
+/** Init xpdf. */
+inline void 
+openXpdfMess ()
+{
+	//
+	// Xpdf Global variable TFUJ!!!
+	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
+	// variable builtinFonts which causes that globalParams can NOT be nested
+	// 
+	assert (NULL == globalParams);
+	globalParams = new ::GlobalParams (NULL);
+	globalParams->setupBaseFonts (NULL);	
+};
+
+/** Uninit xpdf. */
+inline void
+closeXpdfMess ()
+{
+	// Clean-up
+	assert (NULL != globalParams);
+	delete globalParams;
+	globalParams = NULL;
+};
+
+/** Use xpdf functions sensitive to global variables.. */
+struct GlobalUseXpdf
+{
+	GlobalUseXpdf () {openXpdfMess ();};
+	~GlobalUseXpdf () {closeXpdfMess ();};
+};
+
+
 
 
 //=====================================================================================

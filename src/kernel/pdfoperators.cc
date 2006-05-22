@@ -353,7 +353,12 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 const std::string TextOperatorIterator::accepted_opers[TextOperatorIterator::NAME_COUNT] = {"Tj", "TJ", "'", "\""};
 /** Inline image iterators. */
 const std::string InlineImageOperatorIterator::accepted_opers = "BI";
-
+/** Changeable operator are all operators except these. */
+const std::string ChangeableOperatorIterator::rejected_opers[ChangeableOperatorIterator::NAME_COUNT] = 
+{
+	"q", "Q", "cm", "w", "J", "j", "M", "d", "ri", "i", "gs", "s", "S", "f", "F", "f*", "B", "B*", "b", "b*"
+	"n", "W", "W*", "BX", "EX", "rg", "CS", "cs", "SC", "SCN", "sc", "scn", "G", "g", "RG", "rg", "K", "k"
+};
 
 
 //==========================================================
