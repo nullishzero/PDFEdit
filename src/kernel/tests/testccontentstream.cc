@@ -61,7 +61,7 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-position (ostream& oss, const char* fileName, const Rectangle rc, const DisplayParams params = DisplayParams())
+position (ostream& oss, const char* fileName, const Rectangle rc)
 {
 		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -73,7 +73,7 @@ position (ostream& oss, const char* fileName, const Rectangle rc, const DisplayP
 	page->parseContentStream ();
 	
 	std::vector<shared_ptr<PdfOperator> > ops;
-	page->getObjectsAtPosition (ops, rc, params);
+	page->getObjectsAtPosition (ops, rc);
 
 	oss << " Found objects #" << ops.size();
 
@@ -314,42 +314,9 @@ public:
 		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
-			DisplayParams params;
 			
 			TEST(" getPosition");
-			params.upsideDown = true;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
-			MEM_CHECK;
-			OUTPUT << "upsideDown = false" << *it << endl;
-			params.upsideDown = false;
-			params.rotate = 90;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
-			MEM_CHECK;
-			OUTPUT << "90 agree rotation" << *it << endl;
-			params.rotate = 90;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
-			MEM_CHECK;
-			OUTPUT << "180 agree rotation" << *it << endl;
-			params.rotate = 180;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
-			MEM_CHECK;
-			OUTPUT << "270 agree rotation" << *it << endl;
-			params.rotate = 270;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
-			MEM_CHECK;
-			OUTPUT << "changed dpi" << *it << endl;
-			params.hDpi = 36;
-			params.vDpi = 144;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));
-			MEM_CHECK;
-/*			OUTPUT << "nonuse mediaBox" << *it << endl;
-			params.useMediaBox = false;
-			params.hDpi = 72;
-			params.vDpi = 72;
-			params.pageRect.xright = 100;
-			params.pageRect.yright = 200;
-			params.rotate = 0;
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300),params));*/
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300)));
 			OK_TEST;
 		}
 	}
