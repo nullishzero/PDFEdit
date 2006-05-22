@@ -80,19 +80,11 @@ public:
 	{
 		// Loop until an item is valid or end is reached
 		do {
-			if (!_cur.expired())
-			{
-				assert (_cur.lock());
-				_cur = _cur.lock()->_next ();
-						
-			}else
-			{// We are at the end
-				break;
-				//assert (!"the end++");
-				//throw IteratorInvalidObject ();
-			}
+		
+			assert (_cur.lock());
+			_cur = _cur.lock()->_next ();
 			
-		}while (!validItem());
+		}while (!_cur.expired() && !validItem());
 
 		return *this;
 	}
@@ -104,19 +96,11 @@ public:
 	{
 		// Loop until an item is valid or end is reached
 		do {
-			if (!_cur.expired())
-			{
-				assert (_cur.lock());
-				_cur = _cur.lock()->_prev ();
-						
-			}else
-			{// We are at the end
-				break;
-				//assert (!"the end++");
-				//throw IteratorInvalidObject ();
-			}
 
-		}while (!validItem());
+			assert (_cur.lock());
+			_cur = _cur.lock()->_prev ();
+
+		}while (!_cur.expired() && !validItem());
 
 		return *this;
 	}
