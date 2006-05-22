@@ -18,7 +18,8 @@ public:
  void addCommand(const QString &command);
  void addError(const QString &message);
  void addString(const QString &str);
- virtual bool eventFilter( QObject * o, QEvent * e );
+ virtual bool	eventFilter( QObject * o, QEvent * e );
+ virtual QSize	minimumSizeHint() const;
  ~CommandWindow();
 public slots:
  void execute( enum cmd  from = CmdLine );
@@ -27,14 +28,14 @@ public slots:
  void setInterpreter( QSInterpreter * ainterpreter, QObject * context );
  void setCmdWindowMode( int mode = CmdHistory | CmdLine );
  int getCmdWindowMode();
+ void loadHistory();
+ void saveHistory();
 private slots:
  void selectedHistoryItem( int );
 signals:
  /** Signal emitted when command is executed from this command window */
  void commandExecuted(QString);
 private:
- void loadHistory();
- void saveHistory();
  /** Console widget */
  QTextEdit *out;
  /** Commandline widget */

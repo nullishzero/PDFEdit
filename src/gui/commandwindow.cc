@@ -25,7 +25,9 @@ QString CMD = "gui/CommandLine/";
 QString CMDMODE = "CmdMode";
 QString HISTORYSIZE = "HistorySize";
 QString HISTORYFILE = "HistoryFile";
+QString HISTORYFILEITEMSEPARATOR = "HistoryFileItemSeparator";
 QString DEFAULT__HISTORYFILE = ".pdfedit-history";
+QString DEFAULT__HISTORYFILEITEMSEPARATOR = "<EndItem>";
 int DEFAULT__HISTORYSIZE = 10;
 int DEFAULT__CMDMODE = CommandWindow::CmdHistory | CommandWindow::CmdLine;
 
@@ -34,15 +36,22 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  QBoxLayout * l = new QVBoxLayout( this );
  out = new QTextEdit( this );
  cmd = new QLineEdit( this , "CmdLine" );
+
  // init history
  history = new QComboBox( this, "CmdHistory" );
  history->setLineEdit( cmd );
  history->setEditable( true );
  history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
- history->setMinimumWidth(1);
+ 
+ // setting sizePolicy for ignoring width hint (some history items are too large)
+ QSizePolicy spol ( QSizePolicy::Ignored, QSizePolicy::Preferred );
+ history->setSizePolicy( spol );
+ history->setMinimumHeight( history->sizeHint().height() );
+
  loadHistory();
 // history->setInsertionPolicy( QComboBox::AtTop );
  history->setInsertionPolicy( QComboBox::NoInsertion );
+
  cmd->setText( "" );			//clear commandline
 // history->setAutoCompletion( true );
 //todo: subclass qlineedit, add history ... 
@@ -62,6 +71,14 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  connect( history, SIGNAL( activated(int) ), this, SLOT( selectedHistoryItem(int) ));
 
  setCmdWindowMode( globalSettings->readNum( CMD + CMDMODE, DEFAULT__CMDMODE ) );
+}
+
+QSize CommandWindow::minimumSizeHint() const {
+	QSize pom = this->QWidget::minimumSizeHint();
+	pom.setWidth (std::max( out->minimumSizeHint().width(), in->minimumSizeHint().width() ));
+	pom.setWidth (std::max( pom.width(), cmd->minimumSizeHint().width() ));
+
+	return pom;
 }
 
 void CommandWindow::setInterpreter( QSInterpreter * ainterpreter, QObject * context ) {
@@ -131,17 +148,33 @@ void CommandWindow::setHistoryFile( const QString & historyFile ){
 
 /** Load command history */
 void CommandWindow::loadHistory() {
+	QString enditem = globalSettings->readExpand( CMD + HISTORYFILEITEMSEPARATOR, DEFAULT__HISTORYFILEITEMSEPARATOR );
 	QFile file( globalSettings->readExpand( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
+	history->clear();
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
+		stream.setEncoding( QTextStream::UnicodeUTF8 );
 		QString h_line, line;
 		while ( !stream.atEnd() ) {
-			line = h_line = stream.readLine();	// line of text excluding '\n'
-			while ((!stream.atEnd()) && (h_line.length() > 0) && (! h_line.at( h_line.length() -1 ).isNull())) {
+			line = "";
+			h_line = stream.readLine();	// line of text excluding '\n'
+			while ((!stream.atEnd()) && (h_line.right( enditem.length() ).compare(enditem) != 0) ) {
+				if (h_line.right(1).compare(" ") == 0)
+						h_line.truncate( h_line.length() -1 );
+				if (!line.isEmpty())
+					line += "\n";
+				line += h_line;
 				h_line = stream.readLine();
-				line += "\n"; line += h_line;
 			}
-			line.remove( '\0' );
+			if (h_line.right( enditem.length() ).compare(enditem) == 0) {
+				h_line.truncate( h_line.length() - enditem.length() );
+			}
+			if (h_line.right(1).compare(" ") == 0)
+					h_line.truncate( h_line.length() -1 );
+			if ((! line.isEmpty()) && (! h_line.isEmpty()))
+				line += "\n";
+			if (! h_line.isEmpty())
+				line += h_line;
 			history->insertItem( line );
 		}
 		file.close();
@@ -155,12 +188,15 @@ void CommandWindow::loadHistory() {
 }
 /** Save current command history */
 void CommandWindow::saveHistory() {
+	QString enditem = globalSettings->readExpand( CMD + HISTORYFILEITEMSEPARATOR, DEFAULT__HISTORYFILEITEMSEPARATOR );
 	QFile file( globalSettings->readExpand( CMD + HISTORYFILE, DEFAULT__HISTORYFILE ) );
 	if ( file.open( IO_WriteOnly ) ) {
 		if (history->listBox()->firstItem() != NULL) {
 			QTextStream stream( &file );
-			for ( QListBoxItem * it = history->listBox()->firstItem(); it != NULL; it = it->next() )
-				stream << it->text() << '\0' << "\n" ;
+			stream.setEncoding( QTextStream::UnicodeUTF8 );
+			for ( QListBoxItem * it = history->listBox()->firstItem(); it != NULL; it = it->next() ) {
+				stream << it->text().replace( '\n', QString(" \n") ) << enditem << "\n" ;
+			}
 		}
 		file.close();
 		return ;
