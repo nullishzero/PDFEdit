@@ -282,6 +282,15 @@ InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 
 }
 
+//
+//
+//
+void
+InlineImageCompositePdfOperator::getParameters (Operands& opers) const
+{
+	boost::shared_ptr<IProperty> ip = inlineimage;
+	opers.push_back (ip);
+}
 
 
 //==========================================================

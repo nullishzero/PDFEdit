@@ -477,7 +477,7 @@ public:
 		{ return operands.size (); };
 
 	virtual void getParameters (Operands& container) const
-		{ copy (operands.begin(), operands.end (), back_inserter(container) ); };
+		{ copy (operands.begin(), operands.end(), back_inserter(container)); };
 
 	virtual void getOperatorName (std::string& first) const
 		{ first = opText;}
@@ -591,7 +591,7 @@ public:
 	//
 public:
 	virtual size_t getParametersCount () const {return 1;};
-	virtual void getParameters (Operands& opers) const {opers.push_back (inlineimage);};
+	virtual void getParameters (Operands& opers) const;
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const {first = opBegin;};
 
