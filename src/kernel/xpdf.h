@@ -35,8 +35,18 @@
 namespace xpdf {
 //=====================================================================================
 
+/**
+ * Xpdf object deleter.
+ */
+struct object_deleter
+{
+	void operator() (::Object* o)
+		{ assert (o); o->free(); ::gfree(o); }
+};
+					
 	
-/** \TODO
+/** 
+ * \TODO
  * Wrapper around really really fucked up class with free method (e.g. Xpdf Object).
  */
 template<typename T>

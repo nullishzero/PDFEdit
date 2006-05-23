@@ -171,8 +171,8 @@ public:
 	 *
 	 * @param p Children container.
 	 */
-	virtual void getChildren (PdfOperators&) const
-		{ throw NotImplementedException ("PdfOperator::getChildrens ()"); };	
+	virtual void getChildren (PdfOperators& opers) const
+		{ opers.clear(); };	
 
 	
 	//

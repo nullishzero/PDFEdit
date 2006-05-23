@@ -308,6 +308,7 @@ namespace {
 			{
 					// Get Object at i-th position
 					string key = dict.dictGetKey (i);
+					obj->free ();
 					dict.dictGetValNF (i,obj.get());
 
 					shared_ptr<IProperty> cobj;
@@ -684,7 +685,7 @@ simpleValueFromString (const std::string& str, int& val)
 void
 simpleValueFromString (const std::string& str, double& val)
 {
-	scoped_ptr<Object> ptrObj (xpdfObjFromString (str));
+	shared_ptr<Object> ptrObj (xpdfObjFromString (str), xpdf::object_deleter());
 	
 	assert (objReal == ptrObj->getType ());
 	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
@@ -763,10 +764,8 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	// Lexer SHOULD delete MemStream.
 	//
 	XpdfObject dct;
-	//
-	// xpdf MemStream DOES NOT free buf unless doDecrypt is called, but IT IS NOT
-	// here, so we have to deallocate it !!
-	// 
+	
+	// xpdf MemStream frees buf 
 	size_t len = str.length ();
 	char* pStr = (char *)gmalloc(len + 1);
 	strncpy (pStr, str.c_str(), len + 1);
