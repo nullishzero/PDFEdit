@@ -231,6 +231,7 @@
 <!--TYPE: qsdict.h -->
 <!--TYPE: qsiproperty.h -->
 <!--TYPE: qspdf.h -->
+<!--TYPE: qspdfoperator.h -->
 <!--TYPE: qspage.h -->
 <!--TYPE: qsstream.h -->
  </chapter>
