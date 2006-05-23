@@ -273,6 +273,8 @@ public:
 	 * stream.
 	 */
 	void deleteOperator (OperatorIterator it, bool indicateChange = true);
+	void deleteOperator (boost::shared_ptr<PdfOperator> oper, bool indicateChange = true)
+		{ deleteOperator (PdfOperator::getIterator<OperatorIterator> (oper), indicateChange); };
 
 	/**
 	 * Insert pdf operator at specified position.
@@ -368,7 +370,28 @@ boost::shared_ptr<PdfOperator> setFontSize (boost::shared_ptr<PdfOperator> oper,
 // ?? boost::shared_ptr<PdfOperator> setFont (boost::shared_ptr<PdfOperator> oper);
 // ?? boost::shared_ptr<PdfOperator> setBackground (const Rectangle rc, RGB color);
  
+//
+// All changing operators have one drawback. They have to know if they change
+// "nonstroking" operations or "stroking" operations.
+//
 
+/**
+ * Finds a non stroking operator if any.
+ *
+ * @param oper Operator.
+ *
+ * @return True if a non stroking operator found, false otherwise.
+ */
+bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper);
+
+/**
+ * Finds stroking operator if any.
+ *
+ * @param oper Operator.
+ *
+ * @return True if a stroking operator found, false otherwise.
+ */
+bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
 
 
 /**

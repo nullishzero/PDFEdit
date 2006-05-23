@@ -1724,16 +1724,54 @@ CContentStream::replaceOperator (OperatorIterator it,
 // Operator changing functions
 //==========================================================
 
+
+//
+//
+//
+bool 
+containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper)
+{
+	NonStrokingOperatorIterator it = PdfOperator::getIterator<NonStrokingOperatorIterator> (oper);
+	if (it.isEnd())
+		return false;
+	else
+		return true;
+}
+
+
+//
+//
+//
+bool 
+containsStrokingOperator (boost::shared_ptr<PdfOperator> oper)
+{
+	StrokingOperatorIterator it = PdfOperator::getIterator<StrokingOperatorIterator> (oper);
+	if (it.isEnd())
+		return false;
+	else
+		return true;
+}
+
+
 //
 // This will be the result:
 // q 		-- save graphical state
-// r g b rg	-- change color
+// r g b rg/RG	-- change color
 // operator	-- changed operator
 // Q		-- restore graphical state
 //
 boost::shared_ptr<PdfOperator>
 operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, double b)
 {
+	//
+	// Change prev and next to NULL of oper,this will be needed in
+	// containsNonStrokingOperator and containsStrokingOperator functions
+	//
+	// Anyway these will change in push_back function
+	//
+	oper->setPrev (PdfOperator::ListItem());
+	getLastOperator(oper)->setNext (PdfOperator::ListItem());
+	
 	// Create empty composite
 	boost::shared_ptr<CompositePdfOperator> composite (new UnknownCompositePdfOperator	 ("",""));
 
@@ -1749,8 +1787,22 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 	operands.push_back (shared_ptr<IProperty> (new CReal (r)));
 	operands.push_back (shared_ptr<IProperty> (new CReal (g)));
 	operands.push_back (shared_ptr<IProperty> (new CReal (b)));
-	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)));
 
+	if (containsNonStrokingOperator(oper))
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)));
+	if (containsStrokingOperator(oper))
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, operands)));
+	// DEBUG
+	if (!containsStrokingOperator(oper) && !containsNonStrokingOperator(oper))
+	{
+		string opstr;
+		oper->getStringRepresentation (opstr);
+		kernelPrintDbg (debug::DBG_CRIT, opstr);
+		assert (!"Function does not have desired effect, because stroking/nonstroking operator was not found...\n"
+				"Please give one of the operators (printed in debug mode)"
+				" to either Stroking or Nonstroking iterator and recompile...");
+	}
+	
 	// operator
 	composite->push_back (oper);
 	
