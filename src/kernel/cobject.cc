@@ -753,7 +753,7 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 //
 //
 //
-Object*
+::Object*
 xpdfObjFromString (const std::string& str, XRef* xref)
 {
 	//utilsPrintDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
@@ -779,7 +779,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	//
 	// Get xpdf obj from the stream
 	//
-	Object* obj = XPdfObjectFactory::getInstance();
+	::Object* obj = XPdfObjectFactory::getInstance();
 	parser->getObj (obj);
 
 	//
