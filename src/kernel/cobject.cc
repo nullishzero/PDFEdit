@@ -814,7 +814,7 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
 	//utilsPrintDbg (debug::DBG_DBG, tmpbuf);
 	
 	// Create stream
-	::Stream* stream = new MemStream (tmpbuf, 0, buffer.size(), dict, true);
+	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), dict, true);
 	// Set filters
 	stream = stream->addFilters (dict);
 	stream->reset ();
