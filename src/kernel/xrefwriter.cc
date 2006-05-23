@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/05/23 19:08:37  hockm0bm
+ * XRefWriter::save uses return value from IPdfWriter::writeTrailer
+ *
  * Revision 1.23  2006/05/17 19:40:07  hockm0bm
  * * getRevisionEnd
  *         - signature changed - uses position where to start searching
@@ -447,15 +450,16 @@ using namespace utils;
 	pdfWriter->writeContent(changed, *streamWriter, storePos);
 	size_t xrefPos=streamWriter->getPos();
 	IPdfWriter::PrevSecInfo secInfo={lastXRefPos, XRef::getNumObjects()};
-	pdfWriter->writeTrailer(trailerDict, secInfo, *streamWriter);
+	size_t newEofPos=pdfWriter->writeTrailer(trailerDict, secInfo, *streamWriter);
 
-	// if new revision should be created, moves storePos behind PDF end of file
-	// marker and forces CXref reopen to handle new revision - all
-	// changed objects are stored in file now.
+	// if new revision should be created, moves storePos behind stored content
+	// (more preciselly before pdf end of file marker %%EOF) and forces CXref 
+	// reopen to handle new revision - all changed objects are stored in file 
+	// now.
 	if(newRevision)
 	{
 		kernelPrintDbg(DBG_INFO, "Saving changes as new revision.");
-		storePos=streamWriter->getPos();
+		storePos=newEofPos;
 		kernelPrintDbg(DBG_DBG, "New storePos="<<storePos);
 
 		// forces reinitialization of XRef and CXref internal structures from
