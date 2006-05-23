@@ -48,6 +48,26 @@ QSCObject* QSDict::property(const QString &name) {
  }
 }
 
+/** call CDict::getProperty(name), if property doeas not exist, return property with defValue in it*/
+QSCObject* QSDict::propertyDef(const QString &name,int defValue) {
+ QSCObject* ret=property(name);
+ if (ret) return ret; //Property exists -> return it
+ //Property does not exist -> add it
+ add(name,defValue);
+ //Now return it
+ return property(name);
+}
+
+/** call CDict::getProperty(name), if property doeas not exist, return property with defValue in it*/
+QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
+ QSCObject* ret=property(name);
+ if (ret) return ret; //Property exists -> return it
+ //Property does not exist -> add it
+ add(name,defValue);
+ //Now return it
+ return property(name);
+}
+
 /** call CDict::delProperty(name) */
 void QSDict::delProperty(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());

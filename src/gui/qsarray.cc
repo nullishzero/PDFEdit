@@ -78,6 +78,13 @@ void QSArray::add(int index,const QString &ip) {
  array->addProperty(index,property);
 }
 
+/** call CArray::addProperty(index,ip) */
+void QSArray::add(int index,int ip) {
+ CArray *array=dynamic_cast<CArray*>(obj.get());
+ CInt property(ip);
+ array->addProperty(index,property);
+}
+
 /** call CArray::addProperty(ip) */
 void QSArray::add(QSIProperty *ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
@@ -96,6 +103,13 @@ void QSArray::add(QObject *ip) {
 void QSArray::add(const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CString property(ip);
+ array->addProperty(property);
+}
+
+/** call CArray::addProperty(ip) */
+void QSArray::add(int ip) {
+ CArray *array=dynamic_cast<CArray*>(obj.get());
+ CInt property(ip);
  array->addProperty(property);
 }
 

@@ -3,6 +3,7 @@
 
 #include <iproperty.h>
 #include <qlistview.h>
+#include <ccontentstream.h>
 #include "treeitem.h"
 class QString;
 
@@ -30,6 +31,8 @@ private:
  void init(const QString &name);
  /**  ContentStream object held in this item */
  boost::shared_ptr<CContentStream> obj;
+ /** Vector with pdf operators */
+ std::vector<boost::shared_ptr<PdfOperator> > op;
 };
 
 } // namespace gui

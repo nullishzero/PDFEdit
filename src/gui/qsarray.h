@@ -21,17 +21,20 @@ public:
  virtual ~QSArray();
  boost::shared_ptr<CArray> get();
 public slots:
- //TODO: is it really insert?
  /*- Insert element at given index in array */
  void add(int index,QSIProperty *ip);
  void add(int index,QObject *ip);
- /*- Insert string element at given index in array */
+ /*- Insert String element at given index in array */
  void add(int index,const QString &ip);
+ /*- Insert Int element at given index in array */
+ void add(int index,int ip);
  /*- Append element at end of array */
  void add(QSIProperty *ip);
  void add(QObject *ip);
- /*- Append string element at end of array */
+ /*- Append String element at end of array */
  void add(const QString &ip);
+ /*- Append Int element at end of array */
+ void add(int ip);
  /*- Return size of this array (number of elements) */
  int count();
  /*- Delete element with given index from this array. Elements with higher index (if any) are shifted to occupy the space */

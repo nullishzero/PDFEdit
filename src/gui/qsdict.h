@@ -36,6 +36,18 @@ public slots:
  QString getText();
  /*- Get property with given name from this dictionary */
  QSCObject* property(const QString &name);
+ /*-
+  Get property with given name from this dictionary.
+  If the property does not exist, add it to the dictionary with given defValue (as Int)
+  and return it
+ */
+ QSCObject* propertyDef(const QString &name,int defValue);
+ /*-
+  Get property with given name from this dictionary.
+  If the property does not exist, add it to the dictionary with given defValue (as String)
+  and return it
+ */
+ QSCObject* propertyDef(const QString &name,QString defValue);
 };
 
 } // namespace gui 

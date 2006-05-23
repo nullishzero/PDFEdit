@@ -196,13 +196,18 @@ function onChangeRevision() {
 
 /** Return property from dictionary of current page */
 function pageProperty(x) {
- return page.getDictionary().property(x);
+ return page.getDictionary().property(x).ref();
+}
+
+/** Return property from dictionary of current page, adding it with default value if property is not found */
+function pageProperty(x,defv) {
+ return page.getDictionary().propertyDef(x,defv).ref();
 }
 
 /** rotate current page N degrees clockwise */
 function rotatePage(n) {
  //Get page rotation
- rotate=pageProperty("Rotate");
+ rotate=pagePropertyDef("Rotate",0);
  //Add rotation
  n0=rotate.getInt()+n;
  //Normalize

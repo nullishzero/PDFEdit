@@ -6,6 +6,7 @@
 #include <cobject.h>
 #include <ccontentstream.h>
 #include "treeitemcontentstream.h"
+#include "treeitempdfoperator.h"
 #include "qscontentstream.h"
 #include "treedata.h"
 #include "util.h"
@@ -28,7 +29,7 @@ using namespace std;
 TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
- reload(false);
+ reload();
 }
 
 /**
@@ -43,7 +44,7 @@ TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,b
 TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
- reload(false);
+ reload();
 }
 
 /**
@@ -66,23 +67,23 @@ TreeItemContentStream::~TreeItemContentStream() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemContentStream::createChild(__attribute__((unused)) const QString &name,__attribute__((unused)) ChildType typ,__attribute__((unused)) QListViewItem *after/*=NULL*/) {
- //TODO
- assert(0);//no childs yet
- return NULL;
+TreeItemAbstract* TreeItemContentStream::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+ size_t position=name.toUInt();
+ return new TreeItemPdfOperator(data,this,op[position],name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemContentStream::getChildType(__attribute__((unused)) const QString &name) {
- //TODO
- assert(0);//no childs yet
- return 0;
+ return 1;//Just one type : PDF Operator
 }
 
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemContentStream::getChildNames() {
- //TODO: Stream children
- return QStringList(); 
+ QStringList childs;
+ for (size_t i=0;i<op.size();i++) {
+  childs+=QString::number(i);
+ }
+ return childs; 
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -92,20 +93,21 @@ QSCObject* TreeItemContentStream::getQSObject() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemContentStream::remove() {
- //TODO: implement
+ // Do nothing
+ // Contentstream can't just delete itself.
  return;
 }
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemContentStream::reloadSelf() {
- //TODO: implement
+ //Reload list of pdf operators
+ obj->getPdfOperators(op);
  return;
 }
 
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemContentStream::haveChild() {
- //TODO: implement, return true
- return false;
+ return op.size()>0;
 }
 
 /**
