@@ -282,6 +282,12 @@ InlineImageCompositePdfOperator::getStringRepresentation (string& str) const
 
 }
 
+
+
+//==========================================================
+// Helper funcions
+//==========================================================
+
 //
 //\todo improve performance
 //

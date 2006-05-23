@@ -585,7 +585,13 @@ public:
 	 */
 	InlineImageCompositePdfOperator (const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_);
 
+	
+	//
+	// PdfOperator interface
+	//
 public:
+	virtual size_t getParametersCount () const {return 1;};
+	virtual void getParameters (Operands& opers) const {opers.push_back (inlineimage);};
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const {first = opBegin;};
 
