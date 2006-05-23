@@ -135,7 +135,7 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	
 	// Create xpdf object representing CPage
 	//
-	boost::scoped_ptr<Object> xpdfPage (dictionary->_makeXpdfObject());
+	boost::shared_ptr<Object> xpdfPage (dictionary->_makeXpdfObject(), xpdf::object_deleter());
 	// Check page dictionary
 	assert (objDict == xpdfPage->getType ());
 	if (objDict != xpdfPage->getType ())
@@ -178,9 +178,6 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 
 	// Clean xpdf mess
 	xpdf::closeXpdfMess ();
-	// Free object
-	xpdfPage->free ();
-
 }
 
 //
