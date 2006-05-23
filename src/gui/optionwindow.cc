@@ -265,14 +265,14 @@ void OptionWindow::init() {
 
  QWidget *tree_tab=addTab(tr("Object tree"));
  addText      (tree_tab,tr("These objects will be shown in the object tree"));
- addOptionBool(tree_tab,tr("Document dictionary"),"tree/show_dict");
- addOptionBool(tree_tab,tr("Object dictionaries"),"tree/show_objdict");
- addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline");
- addOptionBool(tree_tab,tr("Graphic objects"),"tree/show_graphic");
- addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot");
- addOptionBool(tree_tab,tr("Pages"),"tree/show_page");
- addOptionBool(tree_tab,tr("Content Streams"),"tree/show_stream");
- addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple");
+ addOptionBool(tree_tab,tr("Document dictionary"),"tree/show_dict",true);
+ addOptionBool(tree_tab,tr("Object dictionaries"),"tree/show_objdict",true);
+ addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline",true);
+ addOptionBool(tree_tab,tr("Graphic objects"),"tree/show_graphic",true);
+ addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot",true);
+ addOptionBool(tree_tab,tr("Pages"),"tree/show_page",true);
+ addOptionBool(tree_tab,tr("Content Streams"),"tree/show_stream",true);
+ addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple",true);
  finishTab    (tree_tab);
 
  QWidget *misc_tab=addTab(tr("Misc"));

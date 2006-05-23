@@ -61,7 +61,11 @@ public:
  virtual QStringList getChildNames()=0;
  /** Reload contents of itself and only itself (excluding any children) */
  virtual void reloadSelf()=0;
- /** Remove itself from document (including any children) */
+ /**
+  Remove itself from document (including any children)
+  Do not remove the treeitem itself in this method -> this may lead to crash!
+  If desired, you may call reload() on parent to get rid of the item correctly
+ */
  virtual void remove()=0;
  /** Get type of this items child.
   @return type of specified child

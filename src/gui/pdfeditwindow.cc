@@ -150,6 +150,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  setFileName(QString::null);
  document=NULL;
  selectedTreeItem=NULL;
+ selectedPageNumber=0;
  //Horizontal splitter Preview + Commandline | Treeview + Property editor
  spl=new QSplitter(this,"horizontal_splitter");
 

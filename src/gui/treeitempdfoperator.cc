@@ -8,6 +8,7 @@
 #include "treeitem.h"
 #include "treedata.h"
 #include "pdfutil.h"
+#include "qspdfoperator.h"
 #include "util.h"
 
 namespace gui {
@@ -58,6 +59,29 @@ TreeItemAbstract* TreeItemPdfOperator::createChild(const QString &name,__attribu
  }
 }
 
+/**
+ Return PDF operator inside this tree items
+ @return PDF operator inside this tree items
+*/
+boost::shared_ptr<PdfOperator> TreeItemPdfOperator::getObject() {
+ return obj;
+}
+
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemPdfOperator::validChild(const QString &name,QListViewItem *oldChild) {
+ int position=name.toInt();
+ if (position>=0) {//Check Operator
+  TreeItemPdfOperator *it=dynamic_cast<TreeItemPdfOperator*>(oldChild);
+  if (!it) return false;
+  return op[position]==it->getObject();
+ } else { //Check Operand
+  TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
+  position=-position-1;
+  assert(params[position].get());
+  return params[position]==it->getObject();
+ }
+}
+
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemPdfOperator::getChildType(const QString &name) {
  return 1;//Just one type : PDF Operator or Operand
@@ -66,14 +90,10 @@ ChildType TreeItemPdfOperator::getChildType(const QString &name) {
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemPdfOperator::getChildNames() {
  assert(data);
-
  //Operators
  PdfOperator::PdfOperators opList;
- guiPrintDbg(debug::DBG_DBG,"");
-// if (obj->getChildrenCount()) 
  obj->getChildren(opList);
  //We need vector. We get list. We must copy.
- guiPrintDbg(debug::DBG_DBG,"");
  op.clear();
  std::copy(opList.begin(),opList.end(),std::back_inserter(op));
  //Operands
@@ -93,11 +113,6 @@ QStringList TreeItemPdfOperator::getChildNames() {
  return childs;
 }
 
-//See TreeItemAbstract for description of this virtual method
-bool TreeItemPdfOperator::validChild(const QString &name,QListViewItem *oldChild) {
- //TODO: do the validation
- return false;//We're not sure
-}
 
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemPdfOperator::haveChild() {
@@ -110,19 +125,19 @@ TreeItemPdfOperator::~TreeItemPdfOperator() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemPdfOperator::getQSObject() {
- //TODO: need to create the wrapper
- return NULL;
-}
-
-//See TreeItemAbstract for description of this virtual method
-QSCObject* TreeItemPdfOperator::getQSObject(Base *_base) {
- //TODO: need to create the wrapper
- return NULL;
+ return new QSPdfOperator(obj,data->base());
 }
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPdfOperator::remove() {
- //TODO: remove operator?
+ TreeItemPdfOperator *parentOp=dynamic_cast<TreeItemPdfOperator*>(parent());
+ if (parentOp) {
+  parentOp->getObject()->remove(obj);
+  parentOp->reload();
+  return;
+ }
+ //TODO: remove operator from content stream?
+ //Can't delete
  return;
 }
 

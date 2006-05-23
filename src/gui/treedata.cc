@@ -35,7 +35,7 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base) {
  @param target Pointer to setting to check
 */
 void TreeData::checkSetting(bool &target,const QString &key) {
- bool tmp=globalSettings->readBool(key);
+ bool tmp=globalSettings->readBool(key,true);
  if (target==tmp) return;
  target=tmp;
  dirty=true;
