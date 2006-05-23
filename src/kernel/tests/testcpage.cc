@@ -138,6 +138,36 @@ _export (__attribute__((unused)) ostream& oss, const char* fileName)
 }
 
 //=====================================================================================
+
+bool
+findtext (__attribute__((unused)) ostream& oss, const char* fileName)
+{
+	// Open pdf and get the first page	
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
+
+	string tmp;
+	page->getText (tmp);
+	oss << "Text: " << tmp << endl;
+
+
+	typedef std::vector<Rectangle> Recs;
+	Recs recs;
+	// arbitrary word/string??
+	string word = tmp.substr (2,3);
+	page->findText (word, recs); 
+
+	CPPUNIT_ASSERT (!recs.empty());
+//	CPPUNIT_ASSERT (!opcont.empty());
+	
+	oss << "Text: " << word << " at position: " << recs.front() << flush;
+	
+	return true;
+}
+
+//=====================================================================================
 bool creation (__attribute__((unused)) ostream& oss)
 {
 	shared_ptr<CDict> dict (CDictFactory::getInstance());
@@ -164,6 +194,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestCreation);
 		CPPUNIT_TEST(TestDisplay);
 		CPPUNIT_TEST(TestExport);
+		CPPUNIT_TEST(TestFind);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -171,6 +202,9 @@ public:
 	void tearDown() {}
 
 public:
+	//
+	//
+	//
 	void Test ()
 	{
 		OUTPUT << "CPage methods..." << endl;
@@ -184,6 +218,9 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
 	void TestDisplay ()
 	{
 		OUTPUT << "CPage display methods..." << endl;
@@ -224,7 +261,22 @@ public:
 			OK_TEST;
 		}
 	}
-
+	//
+	//
+	//
+	void TestFind ()
+	{
+		OUTPUT << "CPage find..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" find text");
+			CPPUNIT_ASSERT (findtext (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
 
 };
 
