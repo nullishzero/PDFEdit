@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/05/23 19:04:03  hockm0bm
+ * OldStylePdfWriter::writeTrailer
+ *         - signature changed returns position after stored xref section
+ *         - trims averything behind stored data
+ *
  * Revision 1.6  2006/05/16 17:57:27  hockm0bm
  * * infrastructure for obserevers usable for IPdfWriter
  *         - OperationStep, OperationScope structures
@@ -146,7 +151,7 @@ using namespace boost;
 	utilsPrintDbg(DBG_DBG, "All objects (number="<<objectList.size()<<") stored.");
 }
 
-void OldStylePdfWriter::writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off)
+size_t OldStylePdfWriter::writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off)
 {
 using namespace std;
 using namespace debug;
@@ -158,7 +163,7 @@ using namespace boost;
 	if(!offTable.size())
 	{
 		utilsPrintDbg(DBG_WARN, "No data stored. Skipping cross ref and trailer.");
-		return;
+		return stream.getPos();
 	}
 		
 	// stores start position of the cross reference table
@@ -330,8 +335,22 @@ using namespace boost;
 	stream.putLine(EOFMARKER);
 	kernelPrintDbg(DBG_DBG, "PDF end of file marker saved");
 
+	// stream may contain some non sense information behind, so they has to be
+	// cleaned. 
+	size_t currPos=stream.getPos();
+	stream.setPos(0, -1);
+	size_t eofPos=stream.getPos();
+	if(eofPos>currPos)
+	{
+		size_t size=eofPos-currPos;
+		kernelPrintDbg(DBG_DBG, "Cleaning pending ("<<size<<"B) data behind stored revision.");
+		stream.trim(currPos);
+	}
+
 	// resets internal data
 	reset();
+
+	return pos;
 }
 
 void OldStylePdfWriter::reset()

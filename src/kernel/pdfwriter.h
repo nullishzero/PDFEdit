@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/05/23 19:04:03  hockm0bm
+ * OldStylePdfWriter::writeTrailer
+ *         - signature changed returns position after stored xref section
+ *         - trims averything behind stored data
+ *
  * Revision 1.4  2006/05/17 19:42:00  hockm0bm
  * EOFMARKER is extern now
  *
@@ -200,8 +205,10 @@ public:
 	 * Finishes pdf content writing by cross reference table and trailer
 	 * dictionary. Uses internal data collected by writeContent method.
 	 * reset method is called immediately after all data are written.
+	 *
+	 * @return stream position where it is safe to store data for new revision.
 	 */
-	virtual void writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0)=0;
+	virtual size_t writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0)=0;
 
 	/** Resets internal data collected in writeContent method.
 	 *
@@ -342,8 +349,10 @@ public:
 	 * parameter contains number of already written subsections and context
 	 * (same asin writeContent method) contains total number of subsections and
 	 * task field contains TRAILER string.
+	 *
+	 * @return stream position of pdf end of file %%EOF marker.
 	 */
-	virtual void writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0);
+	virtual size_t writeTrailer(Object & trailer, PrevSecInfo prevSection, StreamWriter & stream, size_t off=0);
 
 	/** Resets all collected data.
 	 *
