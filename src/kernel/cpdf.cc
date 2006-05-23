@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.52  2006/05/23 19:07:22  hockm0bm
+ * debug messages improved
+ *
  * Revision 1.51  2006/05/15 18:30:23  hockm0bm
  * * isEncrypted bug fixed
  *         - Encrypt can be also reference to dictionary
@@ -851,6 +854,15 @@ using namespace utils;
 	// cleans up indirect mapping
 	if(indMap.size())
 	{
+		// checks for held values (smart pointer is not unique, so somebody
+		// has to keep shared_ptr to same value)
+		for(IndirectMapping::iterator i=indMap.begin(); i!=indMap.end(); i++)
+		{
+			IndiRef ref=i->first;
+			shared_ptr<IProperty> value=i->second;
+			if(!value.unique())
+				kernelPrintDbg(DBG_WARN, "Somebody still holds property with with "<<ref);
+		}
 		kernelPrintDbg(DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
 		indMap.clear();
 	}
@@ -871,6 +883,16 @@ using namespace utils;
 
 	// invalidates pageCount
 	pageCount=0;
+
+	// invalidates document catalog and trailer
+	// if someone holds reference (in shared_ptr assigned from them), prints
+	// warning
+	if((trailer.get()) && (!trailer.unique()))
+		kernelPrintDbg(DBG_WARN, "Trailer dictionary is held by somebody.");
+	trailer.reset();
+	if((docCatalog.get()) && (!docCatalog.unique()))
+		kernelPrintDbg(DBG_WARN, "Document catalog dictionary is held by somebody.");
+	docCatalog.reset();
 	
 	// cleanup all returned outlines  -------------||----------------- 
 	
