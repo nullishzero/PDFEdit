@@ -175,8 +175,7 @@ bool getString (std::ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	boost::scoped_ptr<Object> obj (stream->_makeXpdfObject ());
-	obj->free ();
+	boost::shared_ptr<Object> obj (stream->_makeXpdfObject (), xpdf::object_deleter());
 	
 
 	string tmp;
@@ -246,7 +245,7 @@ bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileNa
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	::Object* str = stream->_makeXpdfObject ();
+	boost::shared_ptr<Object> str  (stream->_makeXpdfObject (),xpdf::object_deleter());
 	assert (NULL != str);
 	oss << "object type " << str->getTypeName() << flush;
 	assert (objStream == str->getType ());
