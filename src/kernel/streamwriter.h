@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/05/23 19:04:50  hockm0bm
+ * * new StreamWriter::trim method
+ * * FileStreamWriter::trim implemented
+ *
  * Revision 1.7  2006/05/16 18:02:06  hockm0bm
  * destructor documentation for FileStreamWriter
  *
@@ -93,6 +97,15 @@ public:
 	 */
 	virtual void putLine(const char * line, size_t length)=0;
 	
+	/** Removes all data behind given position.
+	 * @param pos Stream offset from where to trim.
+	 *
+	 * Removes all bytes behind (inclusive) given position from the stream.
+	 *
+	 * @return true if stream was trimed, false otherwise.
+	 */
+	virtual bool trim(size_t pos)=0;
+	
 	/** Forces stream flush.
 	 *
 	 * Cached data in stream are forced to be writen to the target.
@@ -110,6 +123,7 @@ public:
 	 * @return number of bytes writen to given file.
 	 */ 
 	virtual size_t clone(FILE * file, size_t start, size_t length) =0;
+
 };
 
 /** FileStream writer.
@@ -159,6 +173,29 @@ public:
 	 */
 	virtual void putLine(const char * line, size_t length);
 	
+	/** Removes all data behind given file offset position.
+	 * @param pos Stream offset where to start removing.
+	 *
+	 * Calls ftruncate function to truncate underlaying FILE stream to the start+pos 
+	 * size (pos is relative position to stream start NOT absolut file start).
+	 * FILE stream is flushed before and after truncation.
+	 * <br>
+	 * This method can be used when there is some pending garbage behind usuful
+	 * data. File size is changed as a side effect. Note that if pos is greater
+	 * than current file size, file will be appended with NUL characters (binary
+	 * 0). If current stream position is in truncated area, it is moved to the 
+	 * stream end.
+	 * <br>
+	 * Note that this operation may fail, if stream is limited and given pos is
+	 * out of border:
+	 * <pre>
+	 * pos>length
+	 * </pre>
+	 *
+	 * @return true if stream was trimed, false otherwise.
+	 */
+	virtual bool trim(size_t pos);
+		
 	/** Forces file flush.
 	 *
 	 * Calls fflush on the file handle.

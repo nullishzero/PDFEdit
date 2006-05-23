@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/05/23 19:04:50  hockm0bm
+ * * new StreamWriter::trim method
+ * * FileStreamWriter::trim implemented
+ *
  * Revision 1.10  2006/05/14 16:15:07  hockm0bm
  * quick fix
  *         - putLine appends new line character
@@ -91,6 +95,43 @@ void FileStreamWriter::putLine(const char * line, size_t length)
 	totalWriten++;
 	fflush(f);
 	setPos(pos+totalWriten);
+}
+
+bool FileStreamWriter::trim(size_t pos)
+{
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "pos="<<pos);
+	
+	// checks whether underlaying stream is limited and pos is in that limited
+	// part
+	if(limited && length<pos)
+	{
+		kernelPrintDbg(DBG_ERR, "Trimed data are behind limited arae.");
+		return false;
+	}
+
+	flush();
+	size_t currPos=getPos();
+	
+	kernelPrintDbg(DBG_DBG, "Triming all data behind absolute file offset="<<start+pos);
+	
+	// truncates to contain first start+pos bytes
+	ftruncate(fileno(f), start+pos);
+	flush();
+
+	// sets position to original one or at the end if original is after file end
+	// (ftruncate doesn't change FILE stream position, but FileStream class does
+	// some buffering and so it may be invalidated)
+	if(currPos>start+pos)
+	{
+		setPos(0, -1);
+		kernelPrintDbg(DBG_DBG, "Original position in removed area. Removing to file end. Offset="<<getPos());
+	}
+	else
+		setPos(currPos);
+
+	return true;
 }
 
 size_t FileStreamWriter::clone(FILE * file, size_t start, size_t length)
