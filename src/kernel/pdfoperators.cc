@@ -374,6 +374,17 @@ const std::string ChangeableOperatorIterator::rejected_opers[ChangeableOperatorI
 	"q", "Q", "cm", "w", "J", "j", "M", "d", "ri", "i", "gs", "s", "S", "f", "F", "f*", "B", "B*", "b", "b*"
 	"n", "W", "W*", "BX", "EX", "rg", "CS", "cs", "SC", "SCN", "sc", "scn", "G", "g", "RG", "rg", "K", "k"
 };
+/** Non stroking iterator accepted operators. */
+const std::string NonStrokingOperatorIterator::accepted_opers[NonStrokingOperatorIterator::NAME_COUNT] = 
+{
+	"Tj", "TJ", "'", "\""
+};
+/** Stroking iterator accepted operators. */
+const std::string StrokingOperatorIterator::accepted_opers[StrokingOperatorIterator::NAME_COUNT] = 
+{
+	"", "", "", ""
+};
+
 
 
 //==========================================================

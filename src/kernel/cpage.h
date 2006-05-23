@@ -23,42 +23,58 @@
 namespace pdfobjects {
 //=====================================================================================
 
-//
-// Constatnts needed by GfxState
-// xpdf doesn't know the keyword CONST....
-//
-static const double DEFAULT_HDPI 	= 72;
-static const double DEFAULT_VDPI 	= 72;
-static const int DEFAULT_ROTATE 	= 0;		// no rotate
 
-static const double DEFAULT_PAGE_LX = 0;
-static const double DEFAULT_PAGE_LY = 0;
-static const double DEFAULT_PAGE_RX = 612;		// width of A4 on a device with 72 horizontal dpi
-static const double DEFAULT_PAGE_RY = 792;		// height of A4 on a device with 72 vertical dpi
+//=====================================================================================
+// Display parameters (loose xpdf paramters put into a simple structure)
+// 	--  default values are in cpage.cc because we do not want to have global variables.
+//=====================================================================================
 
-/** Graphical state parameters. */
+/** 
+ * Graphical state parameters. 
+ *
+ * These parameters are needed by xpdf.
+ */
 typedef struct DisplayParams
 {
 	/** Paramaters */
 	double 		hDpi;		/*< Horizontal DPI. */
-	double 		vDpi; 		/*< Vertical DPI. */
+	double 		vDpi; 		/*< Vertical DPI. 	*/
 	Rectangle 	pageRect;	/*< Page rectangle. */
-	int 		rotate;		/*< Page rotation. */
+	int 		rotate;		/*< Page rotation. 	*/
 	GBool		useMediaBox;/*< Use page media box. */
-	GBool		crop;		/*< Crop the page. */
-	GBool		upsideDown;	/*< Upside down. */
+	GBool		crop;		/*< Crop the page. 	*/
+	GBool		upsideDown;	/*< Upside down. 	*/
 	
 	/** Constructor. */
-	DisplayParams () : hDpi (DEFAULT_HDPI), 
-					   vDpi (DEFAULT_VDPI),
-					   pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, 
-								   			DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
-					   rotate (DEFAULT_ROTATE),
-					   useMediaBox (gTrue),
-					   crop (gFalse),
-					   upsideDown (gFalse) {};
+	DisplayParams ();
+
 } DisplayParams;
 
+
+//=====================================================================================
+// Text search parameters (loose xpdf paramters put into a simple structure)
+// 	--  default values are in cpage.cc because we do not want to have global variables.
+//=====================================================================================
+
+/** Text search parameters. */
+typedef struct TextSearchParams
+{
+	/** Paramaters */
+	GBool startAtTop;		/*< Start searching from the top.    */
+	double xStart; 			/*< Start searching from x position. */
+	double yStart; 			/*< Start searching from y position. */
+	double xEnd; 			/*< Stop searching from x position.  */
+	double yEnd; 			/*< Stop searching from y position.  */
+
+	/** Constructor. */
+	TextSearchParams ();
+
+} TextSearchParams;
+
+
+//=====================================================================================
+// Comparators Point/Rectangle
+//=====================================================================================
 
 /** 
  * Comparator that will define area around specified point. 
@@ -282,8 +298,8 @@ public:
 	 *
 	 * \TODO what here?
 	 */
-	 template<typename Container>
-	 void getAllObjects (Container& container) const {}
+	// template<typename Container>
+	// void getAllObjects (Container& container) const {}
 
 
 	
@@ -329,7 +345,28 @@ public:
 	 */
 	 void setMediabox (const Rectangle& rc);
 
-
+	 //
+	 // Text search/find interface
+	 //
+public:
+	 /**
+	  * Find text on a page.
+	  */
+	// Rectangle findText (std::string text, const TextSearchParams& params = TextSearchParams()) const {};
+	 
+	 /**
+	  * Find all occurences on a page.
+	  *
+	  * @param text Search text.
+	  * @param recs Result rectangles of found text.
+	  * @param param Search params.
+	  *
+	  * @return Number of occurences found.
+	  */
+	 template<typename RectangleContainer>
+	 size_t findText (std::string text, 
+					  RectangleContainer& recs, 
+					  const TextSearchParams& params = TextSearchParams()) const;
 	 
 	 
 	//========================= not implemented yet
@@ -341,18 +378,6 @@ public:
 	// boost::shared_ptr<IProperty> insertObject (CAny,position);
 
 	 
-/**  Vrati pole bbox pre kazde pismeno od ord_pos (v plaintexte)
-  s dlzkou len.*/
-//  array [rectangle] get_textpos (ord_pos,len);
-
-	/** 
-	 * Remove !!object!! from page.
-	 *
-	 * \TODO object?
-	 */
-	//void delete_object (CAny*);
-
-	 
 /**  Vytvori novy graficky objekt so zadanou velkostou a poziciou.
   Graficky objekt je prazdny a pre vkladanie sa pouzivaju metody
   objektu graphic*/
@@ -361,10 +386,6 @@ public:
 /**  Importuje graficky objekt (obrazok) do stranky na
   poziciu.*/
 //  CGraphic& import_graphic (filename,position);
-
-/**  Vytvori a vlozi na stranku novu anotaciu zadaneho typu. Typovo specificke
-  nastavenie je mozne urobit pomocou (get/set)_property.*/
-//  CAnnotation create_annotation (type,rectangle);
 
 	/**  
 	 * Create text !!object!! and put it at specified position.

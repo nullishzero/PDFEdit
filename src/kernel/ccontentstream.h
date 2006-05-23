@@ -273,6 +273,7 @@ public:
 	 * stream.
 	 */
 	void deleteOperator (OperatorIterator it, bool indicateChange = true);
+	
 	void deleteOperator (boost::shared_ptr<PdfOperator> oper, bool indicateChange = true)
 		{ deleteOperator (PdfOperator::getIterator<OperatorIterator> (oper), indicateChange); };
 
@@ -285,6 +286,9 @@ public:
 	 * stream.
 	 */
 	void insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
+	
+	void insertOperator (boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true)
+		{ insertOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); };
 	
 	/**
 	 * Replace an operator.
@@ -304,6 +308,13 @@ public:
 						  OperatorIterator itPrv,
 						  OperatorIterator itNxt,
 						  bool indicateChange = true);
+
+	void replaceOperator (boost::shared_ptr<PdfOperator> oper, 
+						  boost::shared_ptr<PdfOperator> newOper, 
+						  OperatorIterator itPrv,
+						  OperatorIterator itNxt,
+						  bool indicateChange = true)
+		{ replaceOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, itPrv, itNxt, indicateChange); };
 
 	//
 	// Helper methods

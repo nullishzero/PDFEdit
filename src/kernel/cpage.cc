@@ -19,14 +19,72 @@
 #include "cobjecthelpers.h"
 
 // =====================================================================================
-namespace pdfobjects{
+namespace pdfobjects {
 // =====================================================================================
 
 using namespace std;
 using namespace boost;
 using namespace utils;
 
-		
+
+//=====================================================================================
+// Display parameters (loose xpdf paramters put into a simple structure)
+//=====================================================================================
+
+namespace {
+	//
+	// Default values
+	//
+	static const double DEFAULT_HDPI 	= 72;
+	static const double DEFAULT_VDPI 	= 72;
+	static const int DEFAULT_ROTATE 	= 0;		// no rotate
+
+	static const double DEFAULT_PAGE_LX = 0;
+	static const double DEFAULT_PAGE_LY = 0;
+	static const double DEFAULT_PAGE_RX = 612;		// width of A4 on a device with 72 horizontal dpi
+	static const double DEFAULT_PAGE_RY = 792;		// height of A4 on a device with 72 vertical dpi
+}
+
+//
+// Constructor
+//
+DisplayParams::DisplayParams () : 
+	hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
+	pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
+	rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gFalse) 
+{};
+
+
+//=====================================================================================
+// Text searching parameters
+//=====================================================================================
+
+namespace {
+	//
+	// Default values
+	// 
+	static const GBool DEFAULT_START_AT_TOP 	= gTrue;
+	
+	static const double DEFAULT_X_START = 0;
+	static const double DEFAULT_Y_START = 0;
+	static const double DEFAULT_X_END = 0;
+	static const double DEFAULT_Y_END = 0;
+}
+
+//
+// Constructor
+//
+TextSearchParams::TextSearchParams () : 
+	startAtTop (DEFAULT_START_AT_TOP),
+	xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
+{};
+
+
+
+//=====================================================================================
+// CPage
+//=====================================================================================
+
 //
 // Constructor
 //
@@ -279,6 +337,74 @@ bool CPage::parseContentStream ()
 	// Everything went ok
 	return true;
 }
+
+
+//
+// Text search/find
+//
+
+// 
+// Find all occcurences of text
+//
+template<typename RectangleContainer>
+size_t CPage::findText (std::string text, 
+					  RectangleContainer& recs, 
+					  const TextSearchParams&) const
+{
+	// Create text output device
+	boost::scoped_ptr<TextOutputDev> textDev (new ::TextOutputDev (NULL, gFalse, gFalse, gFalse));
+	assert (textDev->isOk());
+	if (!textDev->isOk())
+		throw CObjInvalidOperation ();
+
+	// Get the text
+	displayPage (*textDev);	
+
+	GBool startAtTop, stopAtBottom, startAtLast, stopAtLast, caseSensitive, backward;
+	startAtTop = stopAtBottom = startAtLast = stopAtLast = gTrue;
+	caseSensitive = backward = gFalse;
+	
+	double xMin = 0, yMin = 0, xMax = 0, yMax = 0;
+
+	// Convert text to unicode (slightly modified from from PDFCore.cc)
+	int length = text.length();
+	::Unicode* utext = static_cast<Unicode*> (new Unicode [length]);
+	for (int i = 0; i < length; ++i)
+	    utext[i] = static_cast<Unicode> (text[i] & 0xff);
+	
+	if (textDev->findText  (utext, length, 
+							startAtTop, stopAtBottom, 
+							startAtLast,stopAtLast, 
+							caseSensitive, backward,
+							&xMin, &yMin, &xMax, &yMax))
+	{
+		startAtTop = gFalse;
+		
+		recs.push_back (Rectangle (xMin, yMin, xMax, yMax));
+		// Get all text objects
+		while (textDev->findText (utext, length,
+								  startAtTop, stopAtBottom, 
+								  startAtLast, stopAtLast, 
+								  caseSensitive, backward,
+								  &xMin, &yMin, &xMax, &yMax))
+		{
+			recs.push_back (Rectangle (xMin, yMin, xMax, yMax));
+		}
+	}
+
+	//
+	// Find out the words...
+	//
+
+	delete[] utext;	
+	return recs.size();
+}
+
+// Explicit instantiation
+template size_t CPage::findText<std::vector<Rectangle> >
+	(std::string text, 
+	 std::vector<Rectangle>& recs, 
+	 const TextSearchParams& params) const;
 
 
 // =====================================================================================

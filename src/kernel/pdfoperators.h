@@ -770,6 +770,80 @@ private:
 	static const std::string rejected_opers [NAME_COUNT];
 };
 
+/**
+ * "Non stroking" operator iterator.
+ */
+struct NonStrokingOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 4;
+	
+	//
+	// Constructor
+	//
+	NonStrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!_cur.expired() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == accepted_opers[i])
+				return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers [NAME_COUNT];
+};
+
+
+/**
+ * "Stroking" operator iterator.
+ */
+struct StrokingOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 4;
+
+	//
+	// Constructor
+	//
+	StrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!_cur.expired() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == accepted_opers[i])
+				return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers [NAME_COUNT];
+};
 
 
 //==========================================================
