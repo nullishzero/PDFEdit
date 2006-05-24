@@ -22,14 +22,19 @@ using namespace util;
 namespace gui {
 
 QString CMD = "gui/CommandLine/";
-QString CMDMODE = "CmdMode";
+QString CMDSHOWHISTORY = "CmdShowHistory";
+QString CMDSHOWLINE = "CmdShowLine";
+QString CMDSHOWEDITOR = "CmdShowEditor";
 QString HISTORYSIZE = "HistorySize";
 QString HISTORYFILE = "HistoryFile";
 QString HISTORYFILEITEMSEPARATOR = "HistoryFileItemSeparator";
 QString DEFAULT__HISTORYFILE = ".pdfedit-history";
 QString DEFAULT__HISTORYFILEITEMSEPARATOR = "<EndItem>";
 int DEFAULT__HISTORYSIZE = 10;
-int DEFAULT__CMDMODE = CommandWindow::CmdHistory | CommandWindow::CmdLine;
+bool DEFAULT__CMDSHOWHISTORY = true;
+bool DEFAULT__CMDSHOWLINE = true;
+bool DEFAULT__CMDSHOWEDITOR = false;
+
 
 /** constructor of CommandWindow, creates window and fills it with elements, parameters are ignored */
 CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):QWidget(parent,name) {
@@ -70,15 +75,9 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 
  connect( history, SIGNAL( activated(int) ), this, SLOT( selectedHistoryItem(int) ));
 
- setCmdWindowMode( globalSettings->readNum( CMD + CMDMODE, DEFAULT__CMDMODE ) );
-}
-
-QSize CommandWindow::minimumSizeHint() const {
-	QSize pom = this->QWidget::minimumSizeHint();
-	pom.setWidth (std::max( out->minimumSizeHint().width(), in->minimumSizeHint().width() ));
-	pom.setWidth (std::max( pom.width(), cmd->minimumSizeHint().width() ));
-
-	return pom;
+ showCmdHistory(	globalSettings->readBool( CMD + CMDSHOWHISTORY, DEFAULT__CMDSHOWHISTORY ) );
+ showCmdLine(		globalSettings->readBool( CMD + CMDSHOWLINE, DEFAULT__CMDSHOWLINE ) );
+ showCmdEditor(		globalSettings->readBool( CMD + CMDSHOWEDITOR, DEFAULT__CMDSHOWEDITOR ) );
 }
 
 void CommandWindow::setInterpreter( QSInterpreter * ainterpreter, QObject * context ) {
@@ -222,32 +221,50 @@ void CommandWindow::selectedHistoryItem( int ) {
 	in->textEdit()->setText( history->currentText() );
 }
 
-int CommandWindow::getCmdWindowMode() {
-	int h = CmdNone;
-	if (history->isShown())
-		h |= CmdHistory;
-	if (cmd->isShown())
-		h |= CmdLine;
-	if (in->isShown())
-		h |= CmdEditor;
-	return h;
+void CommandWindow::hideCmdHistory( bool hide ) {
+	 showCmdHistory( ! hide );
 }
-
-void CommandWindow::setCmdWindowMode( int mode ) {
-	if (mode & CmdHistory)
+void CommandWindow::hideCmdLine( bool hide ) {
+	 showCmdLine( ! hide );
+}
+void CommandWindow::hideCmdEditor( bool hide ) {
+	 showCmdEditor( ! hide );
+}
+void CommandWindow::showCmdHistory( bool show ) {
+	if (show)
 		history->show();
 	else
 		history->hide();
-
-	if (mode & CmdLine)
+}
+void CommandWindow::showCmdLine( bool show ) {
+	if (show)
 		cmd->show();
 	else
 		cmd->hide();
-
-	if (mode & CmdEditor)
+}
+void CommandWindow::showCmdEditor( bool show ) {
+	if (show)
 		in->show();
 	else
 		in->hide();
+}
+bool CommandWindow::isShownCmdHistory() {
+	 return history->isShown();
+}
+bool CommandWindow::isShownCmdLine() {
+	 return cmd->isShown();
+}
+bool CommandWindow::isShownCmdEditor() {
+	 return in->isShown();
+}
+
+void CommandWindow::setCmdWindowMode() {
+		setCmdWindowMode( isShownCmdHistory(), isShownCmdLine(), isShownCmdEditor() );
+}
+void CommandWindow::setCmdWindowMode( bool showCmdHistory, bool showCmdLine, bool showCmdEditor ) {
+	globalSettings->write( CMD + CMDSHOWHISTORY, showCmdHistory );
+	globalSettings->write( CMD + CMDSHOWLINE, showCmdLine );
+	globalSettings->write( CMD + CMDSHOWEDITOR, showCmdEditor );
 }
 /** Add command executed from menu or any source to be echoed to command window */
 void CommandWindow::addCommand(const QString &command) {
@@ -269,7 +286,7 @@ void CommandWindow::addError(const QString &message) {
 /** default destructor */
 CommandWindow::~CommandWindow() {
 	saveHistory();
-	globalSettings->write( CMD + CMDMODE, getCmdWindowMode() );
+	setCmdWindowMode();
 }
 
 } // namespace gui

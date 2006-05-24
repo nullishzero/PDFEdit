@@ -2,7 +2,9 @@
 CommandLine/HistoryFileItemSeparator=<EndItem>
 CommandLine/HistoryFile=$HOME/.pdfedit/history
 CommandLine/HistorySize=20
-CommandLine/CmdMode=7
+CommandLine/CmdShowEditor=true
+CommandLine/CmdShowHistory=true
+CommandLine/CmdShowLine=true
 PageSpace/ResizingZone=2
 items/MainMenu=list Main menu,file,tools,pagemenu,help
 items/MainToolbar=list Main Toolbar,fnew,fload,fsave,opts,closew

@@ -19,17 +19,26 @@ public:
  void addError(const QString &message);
  void addString(const QString &str);
  virtual bool	eventFilter( QObject * o, QEvent * e );
- virtual QSize	minimumSizeHint() const;
  ~CommandWindow();
 public slots:
  void execute( enum cmd  from = CmdLine );
  void setHistorySize( int historySize );
  void setHistoryFile( const QString & historyFile );
  void setInterpreter( QSInterpreter * ainterpreter, QObject * context );
- void setCmdWindowMode( int mode = CmdHistory | CmdLine );
- int getCmdWindowMode();
  void loadHistory();
  void saveHistory();
+
+ void setCmdWindowMode();
+ void setCmdWindowMode( bool showCmdHistory, bool showCmdLine, bool showCmdEditor );
+ void hideCmdHistory( bool hide = true );
+ void hideCmdLine( bool hide = true );
+ void hideCmdEditor( bool hide = true );
+ void showCmdHistory( bool show = true );
+ void showCmdLine( bool show = true );
+ void showCmdEditor( bool show = true );
+ bool isShownCmdHistory();
+ bool isShownCmdLine();
+ bool isShownCmdEditor();
 private slots:
  void selectedHistoryItem( int );
 signals:
