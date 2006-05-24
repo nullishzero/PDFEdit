@@ -25,7 +25,6 @@ void Init( initStruct * is, const QString & s ) {
 
 
 QString PAGESPC = "gui/PageSpace/";
-QString ICON = "icon/";
 QString format = "x:%'.2f y:%'.2f";
 
 
@@ -43,43 +42,24 @@ vBox->addWidget( da );
 	
 	hBox = new QHBoxLayout(vBox);
 
+	displayParams = DisplayParams();
 	actualPdf = NULL;
 	actualPage = NULL;
-	actualPagePixmap = NULL;
 	actualSelectedObjects = NULL;
 	pageImage = NULL;
-	newPageView();
+	actualPagePixmap = new QPixmap();
+	newPageView( *actualPagePixmap );
+	delete actualPagePixmap;
+	actualPagePixmap = NULL;
 //	scrollPageSpace->setBackGroundRole(QPalette::Dark); // TODO configurovatelna farba
 	
 	hBox->addStretch();
-	bFirstPage = new QPushButton(this,"bFirstPage");
-	bFirstPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"FirstPage") ) ));
-	hBox->addWidget(bFirstPage);
-	bPrevPage = new QPushButton(this,"bPrevPage");
-	bPrevPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"PrevPage") ) ));
-	hBox->addWidget(bPrevPage);
-	connect( bFirstPage, SIGNAL(clicked()), this, SLOT(firstPage()));
-	connect( bPrevPage, SIGNAL(clicked()), this, SLOT(prevPage()));
-//TODO: pevna minimalna velikost (bez init)
-	Init( &is , "00000" );
-	pageNumber = new QLabel( "0", this, "cisStr" );
+	pageNumber = new QLabel( QString(tr("%1 of %2")).arg(0).arg(0), this, "cisStr" );
 	pageNumber->setMinimumWidth( is.labelWidth );
 	pageNumber->setAlignment( AlignCenter | pageNumber->alignment() );
-	//pageNumber->setNum( 0 );
 	hBox->addWidget( pageNumber );
-
-	bNextPage = new QPushButton(this,"bNextPage");
-	bNextPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"NextPage") ) ));
-	hBox->addWidget(bNextPage);
-	bLastPage = new QPushButton(this,"bLastPage");
-	bLastPage->setPixmap( QPixmap( globalSettings->getFullPathName("icon", globalSettings->read( ICON +"LastPage") ) ));
-	hBox->addWidget(bLastPage);
 	hBox->addStretch();
-	connect( bNextPage, SIGNAL(clicked()), this, SLOT(nextPage()));
-	connect( bLastPage, SIGNAL(clicked()), this, SLOT(lastPage()));
-
-	hBox->setResizeMode(QLayout::Minimum);
-
+        
 	QString pom;
 	Init( &is , format + "0000" );
 	mousePositionOnPage = new QLabel( pom.sprintf( format, 0.0,0.0 ), this );
@@ -87,12 +67,12 @@ vBox->addWidget( da );
 	mousePositionOnPage->setAlignment( AlignRight | mousePositionOnPage->alignment() );
 	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
 
-	hBox->insertSpacing( 0, is.labelWidth );	// for center pageNambuer
+	hBox->insertSpacing( 0, is.labelWidth );	// for center pageNumber
+
+	hBox->setResizeMode(QLayout::Minimum);
 
 	basePpP		= QPaintDevice::x11AppDpiX() / 72.0;
 	zoomFactor	= 1;
-
-	// displayParams is initialized
 }
 
 PageSpace::~PageSpace() {
@@ -102,18 +82,12 @@ PageSpace::~PageSpace() {
 }
 
 void PageSpace::hideButtonsAndPageNumber ( ) {
-	bFirstPage->hide();
-	bPrevPage->hide();
-	bNextPage->hide();
-	bLastPage->hide();
 	pageNumber->hide();
+	mousePositionOnPage->hide();
 }
 void PageSpace::showButtonsAndPageNumber ( ) {
-	bFirstPage->show();
-	bPrevPage->show();
-	bNextPage->show();
-	bLastPage->show();
 	pageNumber->show();
+	mousePositionOnPage->show();
 }
 
 void PageSpace::newPageView() {
@@ -136,6 +110,11 @@ void PageSpace::newPageView() {
 }
 
 void PageSpace::newPageView( QPixmap &qp ) {
+	if (qp.isNull()) {
+		scrollPageSpace->removeChild( pageImage );
+		delete pageImage;
+		return;
+	}
 	newPageView();
 	pageImage->setPixmap( qp );
 	pageImage->show();
@@ -144,6 +123,10 @@ void PageSpace::newPageView( QPixmap &qp ) {
 void PageSpace::centerPageView( ) {
 	bool reposition;
 	int posX, posY;
+
+	// If no page is shown, don't center
+	if (pageImage == NULL)
+		return;
 
 	// When page is refreshing, pageImage->width() is not correct the page's width (same height)
 	if (pageImage->pixmap() == NULL) {
@@ -216,18 +199,16 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		if ((actualPdf == NULL) || (pdf->get() != actualPdf->get())) {
 			delete actualPdf;
 			actualPdf = new QSPdf( pdf->get() , NULL );
-
-			zoomFactor = 1;
-			emit changedZoomFactorTo(zoomFactor);
-			displayParams = DisplayParams();
 		}
 		delete actualPage;
 		actualPage = new QSPage( pageToView->get() , NULL );
 
-		actualSelectedObjects = NULL; // TODO
+		//TODO delete actualSelectedObjects;
+		actualSelectedObjects = NULL;
 
-		pageNumber->setNum( actualPdf->getPagePosition( actualPage ) );
-
+		pageNumber->setText( QString(tr("%1 of %2"))
+					.arg(actualPdf->getPagePosition( actualPage ))
+					.arg(actualPdf->getPageCount()) );
 	} else {
 		if ((actualPage == NULL) || (actualPdf == NULL) || (pageToView != NULL))
 			return ;					// no page to refresh
@@ -273,6 +254,7 @@ void PageSpace::keyPressEvent ( QKeyEvent * e ) {
 void PageSpace::newSelection ( const QRect & r) {
 	// TODO pracovat s vracenymi operatori
 	std::vector<boost::shared_ptr<PdfOperator> > ops;
+	Rectangle boundingbox = Rectangle();
 
 	if (actualPage != NULL) {
 		if ( r.topLeft() == r.bottomRight() ) {
@@ -286,7 +268,39 @@ void PageSpace::newSelection ( const QRect & r) {
 			actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
 		}
 	}
+	guiPrintDbg(debug::DBG_DBG, "" );
+	for (std::vector<boost::shared_ptr<PdfOperator> >::iterator it = ops.begin(); it != ops.end() ; ++it) {
+	guiPrintDbg(debug::DBG_DBG, "" );
+		Rectangle bbox;
+		std::string name;
+		std::string strr;
+		(*it)->getOperatorName( name );
+		(*it)->getStringRepresentation( strr );
+		bbox = (*it)->getBBox( );
+		guiPrintDbg(debug::DBG_DBG, name << " ("<< strr <<") ,    ( " << bbox << " )" );
+
+		if (boundingbox.xleft == COORDINATE_INVALID)
+			boundingbox = bbox;
+		if (std::min( bbox.xleft, bbox.xright ) < boundingbox.xleft)
+			boundingbox.xleft = std::min( bbox.xleft, bbox.xright );
+		if (std::min( bbox.yleft, bbox.yright ) < boundingbox.yleft)
+			boundingbox.yleft = std::min( bbox.yleft, bbox.yright );
+		if (std::max( bbox.xright, bbox.xright ) > boundingbox.xright)
+			boundingbox.xright = std::max( bbox.xright, bbox.xright );
+		if (std::max( bbox.yright, bbox.yright ) > boundingbox.yright)
+			boundingbox.yright = std::max( bbox.yright, bbox.yright );
+	}
+	guiPrintDbg(debug::DBG_DBG, "" );
+	if (boundingbox.xleft != COORDINATE_INVALID) {
 /*ZMAZAT*/	actualSelectedObjects = &actualSelectedObjects;
+		QRect pom_rc( (int)floor(boundingbox.xleft - 1), (int)floor(boundingbox.yleft -1),
+				(int)ceil(boundingbox.xright - boundingbox.xleft + 2),
+				(int)ceil(boundingbox.yright - boundingbox.yleft + 2));
+		pageImage->setSelectedRect( pom_rc );
+	} else {
+/*ZMAZAT*/	actualSelectedObjects = NULL;
+		pageImage->unSelect();
+	}
 }
 
 bool PageSpace::isSomeoneSelected ( ) {
@@ -336,8 +350,10 @@ void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
 		return ;
 	}
 	pdfPos.x = pos.x();
-//	pdfPos.y = actualPagePixmap->height() - pos.y();
-	pdfPos.y = pos.y();
+	if (displayParams.upsideDown)
+		pdfPos.y = actualPagePixmap->height() - pos.y();
+	else
+		pdfPos.y = pos.y();
 }
 
 //  ------------------------------------------------------  //

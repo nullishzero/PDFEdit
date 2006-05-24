@@ -74,10 +74,6 @@ class PageSpace : public QWidget {
 		QVBoxLayout	* vBox;	// mozna nebude potreba
 		QHBoxLayout	* hBox;	// mozna nebude potreba
 		QScrollView	* scrollPageSpace;
-		QPushButton	* bFirstPage,
-				* bPrevPage,
-				* bNextPage,
-				* bLastPage;
 
 		/*TODO CObject */ void		* actualSelectedObjects;
 		QSPdf		* actualPdf;
