@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/05/24 19:30:31  hockm0bm
+ * OldStylePdfWriter::maxObjNum is initialized in constructor (it wasn't)
+ *
  * Revision 1.5  2006/05/23 19:04:03  hockm0bm
  * OldStylePdfWriter::writeTrailer
  *         - signature changed returns position after stored xref section
@@ -277,7 +280,7 @@ public:
 	 *
 	 * Initializes CONTENT and TRAILER fields to default values.
 	 */
-	OldStylePdfWriter():CONTENT("Content phase"), TRAILER("XREF/TRAILER phase"){};
+	OldStylePdfWriter():maxObjNum(0), CONTENT("Content phase"), TRAILER("XREF/TRAILER phase"){};
 
 	/** Writes given objects.
 	 * @param objectList List of objects to write.
