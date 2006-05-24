@@ -1396,8 +1396,8 @@ namespace
 //
 //
 void 
-CContentStream::CContentStreamObserver::notify (boost::shared_ptr<IProperty> newValue, 
-												boost::shared_ptr<const IProperty::ObserverContext>) const 
+CContentStream::CStreamObserver::notify (boost::shared_ptr<IProperty> newValue, 
+									boost::shared_ptr<const IProperty::ObserverContext>) const 
 throw ()
 {
 	try {
@@ -1438,7 +1438,7 @@ CContentStream::CContentStream (boost::shared_ptr<CStream> stream,
 			throw CObjInvalidObject ();
 		
 		// Register observer
-		observer = boost::shared_ptr<CContentStreamObserver> (new CContentStreamObserver (this));
+		observer = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
 		cstream->registerObserver (observer);
 
 		// Parse it into small objects

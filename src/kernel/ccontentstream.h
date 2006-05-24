@@ -66,11 +66,13 @@ class CContentStream : public noncopyable, public CContentStreamObserver
 {
 public:
 	typedef std::list<boost::shared_ptr<PdfOperator> > Operators;
+	//typedef std::vector<boost::shared_ptr<CStream> > CStreams;
 	typedef PdfOperator::Iterator OperatorIterator;
-
+	
 private:
 
 	/** Content stream cobject. */
+	//CStreams cstreams;
 	boost::shared_ptr<CStream> cstream;
 
 	/** Parsed content stream operators. */
@@ -91,12 +93,12 @@ private:
 	 *
 	 * If a stream is changed, reparse whole contentstream.
 	 */
-	struct CContentStreamObserver : public IProperty::Observer
+	struct CStreamObserver : public IProperty::Observer
 	{
 		//
 		// Constructor
 		//
-		CContentStreamObserver (CContentStream* cc) : contentstream (cc)
+		CStreamObserver (CContentStream* cc) : contentstream (cc)
 			{assert (cc);}
 		//
 		// Observer interface
@@ -111,14 +113,14 @@ private:
 		//
 		// Destructor
 		//
-		virtual ~CContentStreamObserver () throw () {};
+		virtual ~CStreamObserver () throw () {};
 
 	private:
 		CContentStream* contentstream;
 	};
 
 	/** CStream observer. */
-	boost::shared_ptr<CContentStreamObserver> observer;
+	boost::shared_ptr<CStreamObserver> observer;
 
 	
 	//

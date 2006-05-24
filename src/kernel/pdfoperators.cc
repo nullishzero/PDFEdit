@@ -331,8 +331,12 @@ findCompositeOfPdfOperator (PdfOperator::Iterator it, boost::shared_ptr<PdfOpera
 		it.next ();
 	}
 
-	// Weh should have found the operator
-	assert (!"Operator not found...");
+	//
+	// We should have found the operator
+	// -- this can happen in an incorrect script
+	// 		that remembers reference to a removed object
+	// 
+	//assert (!"Operator not found...");
 	throw CObjInvalidOperation ();
 }
 
