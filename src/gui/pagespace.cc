@@ -9,6 +9,7 @@
 #include "QOutputDevPixmap.h"
 #include <qdockarea.h>
 #include <qfiledialog.h>
+#include <math.h>
 
 // using namespace std;
 
