@@ -55,7 +55,6 @@ vBox->addWidget( da );
 	
 	hBox->addStretch();
 	pageNumber = new QLabel( QString(tr("%1 of %2")).arg(0).arg(0), this, "cisStr" );
-	pageNumber->setMinimumWidth( is.labelWidth );
 	pageNumber->setAlignment( AlignCenter | pageNumber->alignment() );
 	hBox->addWidget( pageNumber );
 	hBox->addStretch();
