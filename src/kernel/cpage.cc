@@ -52,7 +52,7 @@ DisplayParams::DisplayParams () :
 	hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
 	pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
 	rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gFalse) 
-{};
+{}
 
 
 //=====================================================================================
@@ -77,7 +77,7 @@ namespace {
 TextSearchParams::TextSearchParams () : 
 	startAtTop (DEFAULT_START_AT_TOP),
 	xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
-{};
+{}
 
 
 
@@ -342,7 +342,7 @@ bool CPage::parseContentStream ( )
 //
 
 // 
-// Find all occcurences of text
+// Find all occcurences of a text on a page
 //
 template<typename RectangleContainer>
 size_t CPage::findText (std::string text, 

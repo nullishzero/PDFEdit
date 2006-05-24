@@ -363,6 +363,7 @@ public:
 	 */
 	 void setMediabox (const Rectangle& rc);
 
+
 	 //
 	 // Text search/find interface
 	 //
@@ -374,6 +375,8 @@ public:
 	 
 	 /**
 	  * Find all occurences on a page.
+	  *
+	  * It uses xpdf TextOutputDevice function for finding text.
 	  *
 	  * @param text Search text.
 	  * @param recs Result rectangles of found text.
