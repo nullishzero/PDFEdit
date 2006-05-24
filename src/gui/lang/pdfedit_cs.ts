@@ -214,21 +214,6 @@ Data: %3
         <translation>definice toolbaru</translation>
     </message>
     <message>
-        <source> page</source>
-        <comment>1</comment>
-        <translation> strana</translation>
-    </message>
-    <message>
-        <source> pages</source>
-        <comment>2-4</comment>
-        <translation> strany</translation>
-    </message>
-    <message>
-        <source> pages</source>
-        <comment>5+</comment>
-        <translation> stran</translation>
-    </message>
-    <message>
         <source>Cycle in menu detected</source>
         <translation>Nalezen cyklus v menu</translation>
     </message>
@@ -271,6 +256,59 @@ Data: %3
     <message>
         <source>Content Stream</source>
         <translation>Content Stream</translation>
+    </message>
+    <message>
+        <source>Parameter</source>
+        <translation>Parametr</translation>
+    </message>
+    <message>
+        <source>Operator</source>
+        <translation>Operátor</translation>
+    </message>
+    <message>
+        <source>page</source>
+        <comment>1</comment>
+        <translation>strana</translation>
+    </message>
+    <message>
+        <source>pages</source>
+        <comment>2-4</comment>
+        <translation>strany</translation>
+    </message>
+    <message>
+        <source>pages</source>
+        <comment>5+</comment>
+        <translation>stran</translation>
+    </message>
+    <message>
+        <source>parameter</source>
+        <comment>1</comment>
+        <translation>parametr</translation>
+    </message>
+    <message>
+        <source>parameters</source>
+        <comment>2-4</comment>
+        <translation>parametry</translation>
+    </message>
+    <message>
+        <source>parameters</source>
+        <comment>5+</comment>
+        <translation>parametrů</translation>
+    </message>
+    <message>
+        <source>child</source>
+        <comment>1</comment>
+        <translation>potomek</translation>
+    </message>
+    <message>
+        <source>childs</source>
+        <comment>2-4</comment>
+        <translation>potomci</translation>
+    </message>
+    <message>
+        <source>childs</source>
+        <comment>5+</comment>
+        <translation>potomků</translation>
     </message>
 </context>
 <context>
@@ -531,12 +569,28 @@ Data: %3
         <source>Content Streams</source>
         <translation>Content Stream</translation>
     </message>
+    <message>
+        <source>Show command editor</source>
+        <translation>Zobrazit editor příkazů</translation>
+    </message>
+    <message>
+        <source>Show command line</source>
+        <translation>Zobrazit příkazovou řádku</translation>
+    </message>
+    <message>
+        <source>Editable command line</source>
+        <translation>Editovatelná příkazová řádka</translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
     <message>
         <source>Save as image ...</source>
         <translation>Uložit jako obrázek...</translation>
+    </message>
+    <message>
+        <source>%1 of %2</source>
+        <translation>%1 z %2</translation>
     </message>
 </context>
 <context>

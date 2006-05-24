@@ -211,21 +211,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> page</source>
-        <comment>1</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> pages</source>
-        <comment>2-4</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> pages</source>
-        <comment>5+</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cycle in menu detected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -267,6 +252,59 @@ Data: %3
     </message>
     <message>
         <source>Content Stream</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>page</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pages</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pages</source>
+        <comment>5+</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>parameter</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>parameters</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>parameters</source>
+        <comment>5+</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>child</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>childs</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>childs</source>
+        <comment>5+</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -528,11 +566,27 @@ Data: %3
         <source>Content Streams</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show command editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show command line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editable command line</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
     <message>
         <source>Save as image ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
