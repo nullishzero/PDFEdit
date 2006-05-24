@@ -178,7 +178,7 @@ CPage::setMediabox (const Rectangle& rc)
 // Display a page
 //
 void
-CPage::displayPage (::OutputDev& out, const DisplayParams params) const
+CPage::displayPage (::OutputDev& out) const
 {
 
 	// Are we in valid pdf
@@ -226,10 +226,10 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 	//
 	// Page object display (..., useMediaBox, crop, links, catalog)
 	// 
-	page.display   (&out, params.hDpi, params.vDpi, 
-					params.rotate, params.useMediaBox, 
-					params.crop, NULL, xpdfCatalog.get());
-	
+	page.display   (&out, lastParams.hDpi, lastParams.vDpi, 
+					lastParams.rotate, lastParams.useMediaBox, 
+					lastParams.crop, NULL, xpdfCatalog.get());
+
 	//
 	// Cleanup
 	// 
@@ -245,7 +245,7 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params) const
 //
 //
 //
-bool CPage::parseContentStream ()
+bool CPage::parseContentStream ( )
 {
 	assert (hasValidRef(dictionary));
 	assert (hasValidPdf (dictionary));
@@ -278,12 +278,10 @@ bool CPage::parseContentStream ()
 	// Init Gfx state
 	//
 	
-	// Default values
-	DisplayParams params;
 	// Create Media (Bounding) box
-	boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (params.pageRect.xleft,  params.pageRect.yleft,
-														  params.pageRect.xright, params.pageRect.yright));
-	boost::shared_ptr<GfxState> state (new GfxState (params.hDpi, params.vDpi, rc.get(), params.rotate, params.upsideDown));
+	boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (lastParams.pageRect.xleft,  lastParams.pageRect.yleft,
+														  lastParams.pageRect.xright, lastParams.pageRect.yright));
+	boost::shared_ptr<GfxState> state (new GfxState (lastParams.hDpi, lastParams.vDpi, rc.get(), lastParams.rotate, lastParams.upsideDown));
 
 	// Close the mess
 	xpdf::closeXpdfMess ();

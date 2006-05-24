@@ -155,6 +155,8 @@ private:
 	/** Class representing content stream. */
 	ContentStreams contentstreams;
 
+	/** Last used display parameters. */
+	DisplayParams lastParams;
 	
 	//
 	// Constructors
@@ -313,8 +315,24 @@ public:
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
-	void displayPage (::OutputDev& out, const DisplayParams params = DisplayParams ()) const;
+	void displayPage (::OutputDev& out, const DisplayParams params) {
+		// Sett last used display paameters
+		lastParams = params;
+		if (params.useMediaBox)
+			lastParams.pageRect = getMediabox();
+
+		// display page
+		displayPage (out);
+	}
+
 	
+	/**
+	 * Draw page on an output device with last Display parameters.
+	 *
+	 * @param out Output device.
+ 	 * @param params Display parameters.
+	 */
+	void displayPage (::OutputDev& out) const;
 
 	/**
 	 * Parse content stream. 
