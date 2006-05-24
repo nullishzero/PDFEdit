@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/24 19:28:12  hockm0bm
+ * * Delinearizator::getInstance mem leak
+ *         - if Delinearizator constructor fails deallocates inputStream and
+ *           closes FILE stream
+ * * Delinearizator::delinearize mem leak
+ *         - Object allocated also for free entries (which are skipped) - fixed
+ * * destructor closes FILE stream
+ *
  * Revision 1.1  2006/05/16 17:42:21  hockm0bm
  * * Delinearizator class implementation
  * * NotLinearizedException added
@@ -96,6 +104,7 @@ public:
 	{
 		if(pdfWriter)
 			delete pdfWriter;
+		fclose(FileStream::f);
 	}
 	
 	/** Factory method for isntance creation.

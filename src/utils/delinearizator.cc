@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/24 19:28:12  hockm0bm
+ * * Delinearizator::getInstance mem leak
+ *         - if Delinearizator constructor fails deallocates inputStream and
+ *           closes FILE stream
+ * * Delinearizator::delinearize mem leak
+ *         - Object allocated also for free entries (which are skipped) - fixed
+ * * destructor closes FILE stream
+ *
  * Revision 1.1  2006/05/16 17:42:21  hockm0bm
  * * Delinearizator class implementation
  * * NotLinearizedException added
@@ -58,6 +66,8 @@ using namespace debug;
 	}catch(std::exception & e)
 	{
 		utilsPrintDbg(DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
+		delete inputStream;
+		fclose(file);
 		return NULL;
 	}
 
@@ -132,7 +142,7 @@ using namespace debug;
 	// prints header to the file
 	outputStream->putLine(buffer, strlen(buffer));
 
-	// PDF specification succests that header line should be followed by comment
+	// PDF specification suggests that header line should be followed by comment
 	// line with some binary (with codes bigger than 128) - so application
 	// transfering such files will copy them as binary data not as ASCII files
 	buffer[0]='%';
@@ -143,8 +153,8 @@ using namespace debug;
 	buffer[5]='\0';
 	outputStream->putLine(buffer, strlen(buffer));
 
-	// now collects (fetches) all objects from XRef::entries array which are not free to 
-	// the objectList
+	// collects (fetches) all objects from XRef::entries array, which are not 
+	// free, to the objectList. Skips also Linearized dictionary
 	utilsPrintDbg(DBG_DBG, "Collecting all objects");
 	IPdfWriter::ObjectList objectList;
 	for(size_t i=0; i < (size_t)::XRef::size; i++)
@@ -153,7 +163,7 @@ using namespace debug;
 		if(entry.type==xrefEntryFree)
 			continue;
 
-		::Object * obj=XPdfObjectFactory::getInstance();
+		// gets object and generation number
 		int num=i, 
 			gen=entry.gen;
 		
@@ -162,9 +172,12 @@ using namespace debug;
 		if(entry.type==xrefEntryCompressed)
 			gen=0;
 
-		// fetches object unless it is Linearized dicionary
+		// linearized dictionary is skipped and all other streams used for such
+		// purposes are not in xref table
 		if(num==linearizedRef.num && gen==linearizedRef.gen)
 			continue;
+
+		::Object * obj=XPdfObjectFactory::getInstance();
 		XRef::fetch(num, gen, obj);
 		::Ref ref={num, gen};
 		objectList.push_back(IPdfWriter::ObjectElement(ref, obj));
@@ -179,7 +192,7 @@ using namespace debug;
 	pdfWriter->writeTrailer(*getTrailerDict(), prevInfo, *outputStream);
 
 	// clean up
-	utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects.");
+	utilsPrintDbg(DBG_DBG, "Cleaning up all writen objects("<<objectList.size()<<").");
 	for(IPdfWriter::ObjectList::iterator i=objectList.begin(); i!=objectList.end(); i++)
 	{
 		freeXpdfObject(i->second);
