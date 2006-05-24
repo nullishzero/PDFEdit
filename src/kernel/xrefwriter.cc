@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/05/24 19:32:17  hockm0bm
+ * checkLinearized mem leak fixed
+ *         - deallocates first parsed object
+ *
  * Revision 1.24  2006/05/23 19:08:37  hockm0bm
  * XRefWriter::save uses return value from IPdfWriter::writeTrailer
  *
@@ -189,6 +193,7 @@ bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
 					result=true;
 				}
 			}
+			obj.free();
 
 			obj1.free();
 			obj2.free();
