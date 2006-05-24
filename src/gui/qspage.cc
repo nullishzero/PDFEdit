@@ -46,7 +46,7 @@ QString QSPage::getText() {
  @return ContentStream with given number, or NULL if number is outside range
 */
 QSContentStream* QSPage::getContentStream(int streamNumber) {
- if (numStreams<0) getContentStreams();
+ if (numStreams<0) loadContentStreams();
  if (streamNumber<0) return NULL;		//Stream number outside range
  if (streamNumber>=numStreams) return NULL;	//Stream number outside range
  return new QSContentStream(streams[streamNumber],base);
@@ -58,12 +58,12 @@ QSContentStream* QSPage::getContentStream(int streamNumber) {
  @return number of streams in this Page
 */
 int QSPage::getContentStreamCount() {
- if (numStreams<0) getContentStreams();
+ if (numStreams<0) loadContentStreams();
  return numStreams;
 }
 
 /** Call CPage::getContentStreams(), store result */
-void QSPage::getContentStreams() {
+void QSPage::loadContentStreams() {
  obj->getContentStreams(streams);
  //Store number of streams
  numStreams=streams.size(); 

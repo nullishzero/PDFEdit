@@ -19,6 +19,7 @@ public:
  void addError(const QString &message);
  void addString(const QString &str);
  virtual bool	eventFilter( QObject * o, QEvent * e );
+ void reloadSettings();
  ~CommandWindow();
 public slots:
  void execute( enum cmd  from = CmdLine );

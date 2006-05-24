@@ -20,6 +20,7 @@ public slots:
  /*- return name of this object's type */
  virtual QString type();
 protected:
+ void treeNeedReload();
  /** Scripting base for this object */
  Base *base;
 private:

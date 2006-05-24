@@ -300,9 +300,15 @@ void PdfEditWindow::settingUpdate(QString key) {
   bool vis=globalSettings->readBool(key,true);
   if (vis) tb->show();
    else    tb->hide();
+  return;
  }
  if (key=="history/save_filePath") { //Do not remember path -> remove path
   if (!globalSettings->readBool("history/save_filePath")) globalSettings->remove("history/filePath");
+  return;
+ }
+ if (key.startsWith("gui/CommandLine/")) {
+  cmdLine->reloadSettings();
+  return;
  }
 }
 

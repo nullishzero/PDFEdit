@@ -110,10 +110,7 @@ void TreeItemPdf::reloadSelf() {
   setText(1,QObject::tr("PDF"));
   // Page count
   int count=obj->getPageCount();
-  QString pages=QString::number(count);
-  if (count==1) pages+=QObject::tr(" page","1");
-  else if (count>=2 && count<=4) pages+=QObject::tr(" pages","2-4");
-  else pages+=QObject::tr(" pages","5+");
+  QString pages=util::countString(count,"page","pages");
   setText(2,pages);
  }
 }

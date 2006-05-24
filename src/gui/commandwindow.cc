@@ -74,7 +74,11 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  l->addWidget( in );
 
  connect( history, SIGNAL( activated(int) ), this, SLOT( selectedHistoryItem(int) ));
+ reloadSettings();
+}
 
+/** Load/reload show/hide settings from global settings and apply them to this widget */
+void CommandWindow::reloadSettings() {
  showCmdHistory(	globalSettings->readBool( CMD + CMDSHOWHISTORY, DEFAULT__CMDSHOWHISTORY ) );
  showCmdLine(		globalSettings->readBool( CMD + CMDSHOWLINE, DEFAULT__CMDSHOWLINE ) );
  showCmdEditor(		globalSettings->readBool( CMD + CMDSHOWEDITOR, DEFAULT__CMDSHOWEDITOR ) );

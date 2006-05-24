@@ -29,14 +29,13 @@ public:
  void stopScript();
  void importDocument();
  void destroyDocument();
- void addDocumentObjects();
  void call(const QString &name);
- void removeDocumentObjects();
  void runInitScript();
  void runScript(QString script);
  void addGC(QSCObject *o);
  void removeGC(QSCObject *o);
  void cleanup();
+ void treeNeedReload();
  QSInterpreter* interpreter();
  ~Base();
 public slots: //This will be all exported to scripting
@@ -186,6 +185,10 @@ public slots: //This will be all exported to scripting
  void _dragDrop(TreeItemAbstract *source,TreeItemAbstract *target);
  void _dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target);
 private:
+ void addDocumentObjects();
+ void removeDocumentObjects();
+ void scriptCleanup();
+private:
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;
  /** Editor window in which this class exist */
@@ -198,6 +201,8 @@ private:
  QSImporter *import;
  /** All Scripting objects created under this base. Will be used for purpose of garbage collection */
  QPtrDict<QSCObject> baseObjects;
+ /** Flag specifying if the tree have changed while running script to the degree it need to be reloaded */
+ bool treeReloadFlag;
 };
 
 } // namespace gui

@@ -25,6 +25,7 @@ void escapeSlash(QString &line);
 void consoleLog(const QString &message,const QString &fileName);
 QString getUntil(char separator,QString &line,bool escape=false);
 void setDebugLevel(const QString &param);
+QString countString(int count,QString singular,QString plural);
 
 } //namespace util
 

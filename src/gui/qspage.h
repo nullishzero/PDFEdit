@@ -25,12 +25,12 @@ public:
 public slots:
  /*-
   Returns content stream with given number from this page
-  Use data fetched by getContentStreams method, if it wasn't called, it is called before returning the stream
+  Use data fetched by loadContentStreams method, if it wasn't called, it is called before returning the stream
  */
  QSContentStream* getContentStream(int streamNumber);
  /*-
   Returns number of content streams in this page
-  Use data fetched by getContentStreams method, if it wasn't called, it is called before returning the count
+  Use data fetched by loadContentStreams method, if it wasn't called, it is called before returning the count
  */
  int getContentStreamCount();
  /*-
@@ -40,7 +40,7 @@ public slots:
   it automatically on first need, but you may call it explicitly to reload the
   streams stored in this object from the page
  */
- void getContentStreams();
+ void loadContentStreams();
  /*- Returns page dictionary */
  QSDict* getDictionary();
  /*- Return text representation of this page */

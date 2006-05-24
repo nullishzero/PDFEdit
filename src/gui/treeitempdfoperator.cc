@@ -3,13 +3,14 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
 #include "treeitempdfoperator.h"
 #include "treeitem.h"
 #include "treedata.h"
 #include "pdfutil.h"
 #include "qspdfoperator.h"
 #include "util.h"
+#include <cobject.h>
+#include <ccontentstream.h>
 
 namespace gui {
 
@@ -130,14 +131,9 @@ QSCObject* TreeItemPdfOperator::getQSObject() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPdfOperator::remove() {
- TreeItemPdfOperator *parentOp=dynamic_cast<TreeItemPdfOperator*>(parent());
- if (parentOp) {
-  parentOp->getObject()->remove(obj);
-  parentOp->reload();
-  return;
- }
- //TODO: remove operator from content stream?
- //Can't delete
+ obj->getContentStream()->deleteOperator(obj);
+ TreeItemAbstract *parentItem=dynamic_cast<TreeItemAbstract*>(parent());
+ if (parentItem) parentItem->reload(); ///This will delete the operator treeitem and also the operator itself
  return;
 }
 
@@ -151,10 +147,9 @@ void TreeItemPdfOperator::reloadSelf() {
  int paramCount=obj->getParametersCount();
  int childCount=obj->getChildrenCount();
  QString params="";
- if (paramCount) params=QString::number(paramCount)+QObject::tr(" parameters");
- else if (childCount) params=QString::number(childCount)+QObject::tr(" childs");
+ if (paramCount) params=countString(paramCount,"parameter","parameters");
+ else if (childCount) params=countString(childCount,"child","childs");
  setText(2,params);//params
- return;
 }
 
 } // namespace gui

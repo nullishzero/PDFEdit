@@ -188,7 +188,7 @@ void MenuGenerator::addLocString(const QString &id,const QString &name) {
 */
 void MenuGenerator::translate() {
  check();
- QString trx=trans.join("\n");
+ QString trx=trans.join("\n")+"\n";
  QFile file(".menu-trans.h");
  if ( file.open( IO_WriteOnly ) ) {
   QTextStream stream( &file );

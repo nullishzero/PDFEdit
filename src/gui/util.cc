@@ -213,4 +213,20 @@ void setDebugLevel(const QString &param){
  //If non-number is given, default 0 is silently used ... :)
 }
 
+/**
+ Return correctly localized string telling count of some items.
+ Some languages (for example Czech) have more plural forms (2-4 items / 5 or more items), which is handled here
+ @param count Count of item
+ @param singular English signular form of the noun, without space before the word
+ @param singular English plural form of the noun
+ @return Localized string
+*/
+QString countString(int count,QString singular,QString plural) {
+ QString str=QString::number(count)+" ";
+ if (count==1) str+=QObject::tr(singular,"1");
+ else if (count>=2 && count<=4) str+=QObject::tr(plural,"2-4");
+ else str+=QObject::tr(plural,"5+");
+ return str;
+}
+
 } //namespace util

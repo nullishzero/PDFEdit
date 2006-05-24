@@ -281,6 +281,11 @@ void OptionWindow::init() {
  addText      (misc_tab,tr("<br>History-related options"));
  addOption    (misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
  addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
+
+ addOptionBool(misc_tab,tr("Show command editor"),"gui/CommandLine/CmdShowEditor");
+ addOptionBool(misc_tab,tr("Show command line"),"gui/CommandLine/CmdShowHistory");
+ addOptionBool(misc_tab,tr("Editable command line"),"gui/CommandLine/CmdShowLine");
+
  addOptionBool(misc_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
  finishTab    (misc_tab);
 

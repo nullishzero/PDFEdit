@@ -21,6 +21,7 @@
 #include "qspdf.h"
 #include "settings.h"
 #include "treeitemabstract.h"
+#include "treewindow.h"
 #include "util.h"
 #include "version.h"
 #include <qfile.h>
@@ -35,9 +36,10 @@ using namespace util;
 
 /**
  Create new Base class 
- @param parent Parwent editor window containing this class
+ @param parent Parent editor window containing this class
 */
 Base::Base(PdfEditWindow *parent) {
+ treeReloadFlag=false;
  w=parent;
  //Create new interpreter and project
  qp=new QSProject(this,"qs_project");
@@ -89,6 +91,15 @@ QSPdf* Base::getQSPdf() const {
  return qpdf;
 }
 
+/**
+ Called after some action causes changes in the treeview that cannot be handled by obesrvers.
+ This will cause tree to be reloaded after the script finishes. 
+*/
+void Base::treeNeedReload() {
+ treeReloadFlag=true;
+}
+
+
 /** 
  Call a callback function (no arguments, no return value) in a script
  @param name Function name
@@ -113,6 +124,16 @@ void Base::call(const QString &name) {
   }
  }
  removeDocumentObjects();
+ scriptCleanup();
+}
+
+/** Cleanup run after the script is finished */
+void Base::scriptCleanup() {
+ if (treeReloadFlag) {
+  //Reload the tree
+  w->tree->reload();
+  treeReloadFlag=false;
+ }
 }
 
 /** Run initscript. Gets name of initscript from settings */
@@ -218,6 +239,7 @@ void Base::runScript(QString script) {
   w->cmdLine->addError(error);
  }
  removeDocumentObjects();
+ scriptCleanup();
 }
 
 // === Scripting functions ===
@@ -453,6 +475,7 @@ int Base::revisions() {
 
 /**
  Runs script from given file
+ Should not be called directly, only from script (via slot), as this does not prepare correct script variables before execution
  @param scriptName name of file with QT Script to run
  */
 void Base::run(QString scriptName) {

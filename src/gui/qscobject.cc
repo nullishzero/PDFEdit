@@ -43,6 +43,14 @@ QSCObject::~QSCObject() {
  if (base) base->removeGC(this);
 }
 
+/**
+ \copydoc Base::treeNeedReload
+ This will call Base::treeNeedReload, if base is set for this object.
+*/
+void QSCObject::treeNeedReload() {
+ if (base) base->treeNeedReload();
+}
+
 /** Return name of this object's type
   @return name of this object's type
 */
