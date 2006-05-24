@@ -172,7 +172,7 @@ void PageView::setSelectedRect ( QRect & newRect ) {
 			mouseRectSelected = new QRect( newRect );
 	} else {
 		// undraw 
-		drawRect( rectSelected, true );
+	//	drawRect( rectSelected, true );
 		* rectSelected = newRect;
 	}
 	drawRect( rectSelected );
