@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/05/24 19:34:03  hockm0bm
+ * pageIterationTC mem leak fixed
+ *         - fakeXpdfDict is deallocated now
+ *
  * Revision 1.19  2006/05/16 18:56:42  hockm0bm
  * test for Delinearizator with observer (ProgressBar)
  *
@@ -249,6 +253,7 @@ public:
 		IndiRef fakeIndiRef(10, 0);
 		shared_ptr<CDict> fakeDict2(CDictFactory::getInstance(*pdf, fakeIndiRef, fakeXpdfDict));
 		shared_ptr<CPage> fake2(new CPage(fakeDict2));
+		fakeXpdfDict.free();
 
 		// getPagePosition should fail on both fakes
 		try
@@ -867,6 +872,7 @@ public:
 			pdf->close();
 
 			delinearizatorTC(fileName);
+			MEM_CHECK;
 		}
 		revisionsTC();
 		printf("TEST_CPDF testig finished\n");
