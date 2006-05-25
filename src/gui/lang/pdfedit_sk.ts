@@ -578,6 +578,14 @@ Data: %3
         <source>Editable command line</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Script Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scripts to run on start</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>

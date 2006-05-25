@@ -581,6 +581,14 @@ Data: %3
         <source>Editable command line</source>
         <translation>Editovatelná příkazová řádka</translation>
     </message>
+    <message>
+        <source>Script Path</source>
+        <translation>Cesta ke skriptům</translation>
+    </message>
+    <message>
+        <source>Scripts to run on start</source>
+        <translation>Skripty spouštěné při startu</translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
