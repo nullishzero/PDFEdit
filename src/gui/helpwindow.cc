@@ -17,11 +17,12 @@
 
 namespace gui {
 
-/** constructor of HelpWindow, creates window and fills it with elements, parameters are ignored
-@param pageName Name of page to open in help window initially
-@param parent Parent of this window
-@param name Name of this window (for debugging)
- */
+/**
+ constructor of HelpWindow, creates window and fills it with elements, parameters are ignored
+ @param pageName Name of page to open in help window initially
+ @param parent Parent of this window
+ @param name Name of this window (for debugging)
+*/
 HelpWindow::HelpWindow(const QString &pageName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
  globalSettings->restoreWindow(this,"help"); 
  setCaption(QString(APP_NAME)+" - "+tr("help"));
@@ -50,7 +51,7 @@ HelpWindow::HelpWindow(const QString &pageName/*=QString::null*/,QWidget *parent
  help=new QTextBrowser(this,"help_browser");
  grl->addWidget(help,1,0);
 
- help->mimeSourceFactory()->setFilePath(".");
+ help->mimeSourceFactory()->setFilePath(globalSettings->readPath("help"));
  help->setFrameStyle(QFrame::Panel | QFrame::Sunken);
  connect(help,SIGNAL(sourceChanged(const QString&)),url,SLOT(setText(const QString&)));
  connect(url, SIGNAL(returnPressed()),this,SLOT(goUrl()));
@@ -62,12 +63,13 @@ void HelpWindow::goUrl() {
  setFile(url->text());
 }
 
-/** Navigate to certain page of the help
- @param name Name of page to show in help */
+/**
+ Navigate to certain page of the help
+ @param name Name of page to show in help
+*/
 void HelpWindow::setPage(QString name) {
- //TODO: check help for ../ and / and others...
  if (name.isNull()) name="index";
- setFile(QString("help/")+name+".html");
+ setFile(name+".html");
 }
 
 /** Navigate to certain fileName

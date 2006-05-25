@@ -260,6 +260,8 @@ void OptionWindow::init() {
  addText  (data_tab,tr("You can use environment variables (for example $HOME) in settings on this page"));
  addOption(data_tab,tr("Icon Path"),"path/icon");
  addText  (data_tab,tr("<b>Note</b>: changing Icon Path will take effect on next program start"));//TODO: apply path now
+ addOption(data_tab,tr("Script Path"),"path/script");
+ addOption(data_tab,tr("Scripts to run on start"),"script/init");
  addOption(data_tab,tr("Console log file"),"path/console_log");
  finishTab(data_tab);
 

@@ -51,9 +51,6 @@ QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
 #debug information
 QMAKE_CXXFLAGS += -g
 
-#Testing version : will look in current directory for data files
-QMAKE_CXXFLAGS += -D TESTING
-
 #Dialogs
 HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h
 SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc dialog.cc

@@ -13,6 +13,8 @@ class QString;
 namespace gui {
 
 class Settings : public QObject {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public:
  ~Settings();
@@ -21,8 +23,8 @@ public:
  void restoreWindow(QWidget *win,const QString name);
  void saveSplitter(QSplitter *spl,const QString name);
  void restoreSplitter(QSplitter *spl,const QString name);
- QStringList readPath(const QString &name);
- QStringList readList(const QString &name,const QString separator=",");
+ QStringList readPath(const QString &name,const QString &prefix="path/");
+ QStringList readList(const QString &name,const QString &separator=",");
 public slots:
  void flushSettings();
  QString readExpand(const QString &key,const QString defValue=QString::null);

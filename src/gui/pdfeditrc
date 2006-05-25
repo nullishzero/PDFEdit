@@ -62,7 +62,10 @@ show_page=1
 show_simple=1
 
 [path]
-icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;./icon
+icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;$PDFEDIT_BIN/icon
+script=$HOME/.pdfedit;/usr/share/pdfedit;$PDFEDIT_BIN
+help=/usr/share/pdfedit/help/$LANG;$PDFEDIT_BIN/help/$LANG;/usr/share/pdfedit/help;$PDFEDIT_BIN/help
 
 [script]
-init=init.qs
+init=/usr/share/pdfedit/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/init.qs
+

@@ -32,6 +32,8 @@ public slots:
  int count();
  /*- Delete property with given name from this dictionary */
  void delProperty(const QString &name);
+ /*- Check for existence of property with given name in this dictionary. If it exists, returns true */
+ bool exist(const QString &name);
  /*- Return string representation of this dictionary */
  QString getText();
  /*- Get property with given name from this dictionary */

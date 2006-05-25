@@ -19,6 +19,7 @@
 #include <qsplitter.h>
 #include <qstringlist.h> 
 #include <qstring.h>
+#include "main.h"
 
 namespace gui {
 
@@ -26,6 +27,9 @@ using namespace std;
 using namespace util;
 
 const QString APP_KEY = "/PDFedit/";
+/** Name of variable which will be expanded to full path to the executable */
+const QString APP_PATH_VAR = "PDFEDIT_BIN";
+
 
 /** One object for application, holding all global settings.
  Should be thread-safe. This instance is used from other files */
@@ -86,7 +90,8 @@ int Settings::readNum(const QString &key,int defValue/*=0*/) {
 }
 
 /** Read settings with given key from configuration file and return as QString
- Any environment variable references (in form $VARIABLE) are expanded in the string
+ Any environment variable references (in form $VARIABLE) are expanded in the string.
+ \note Some internal variables (beginning with $PDFEDIT_) can override corresponding environment variables. See documentation for details on them
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
  @return Value of given setting */
@@ -102,12 +107,15 @@ void Settings::initSettings() {
  QDir::home().mkdir(CONFIG_DIR);
  set=new QSettings(QSettings::Ini);
  staticSet=new QSettings(QSettings::Ini);
- #ifdef TESTING
- //Look in current directory in testing versions -> lowest priority
- staticSet->insertSearchPath(QSettings::Unix,QDir::current().path());
- #endif
+ //Look in directory with the binary -> lowest priority
+ staticSet->insertSearchPath(QSettings::Unix,appPath);
+ staticSet->insertSearchPath(QSettings::Windows,appPath);
+ //Look in data directory
  staticSet->insertSearchPath(QSettings::Unix,DATA_PATH);
- set->insertSearchPath(QSettings::Unix,QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR));
+ //Look in $HOME (or something like that, for example QT maps this to "Application Data" in windows)
+ QString homeDir=QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR);
+ set->insertSearchPath(QSettings::Unix,homeDir);
+ set->insertSearchPath(QSettings::Windows,homeDir);
 }
 
 /** Given name of the file, finds and returns full path to the file,
@@ -117,10 +125,10 @@ void Settings::initSettings() {
  @return QString with full path to the file
 */
 QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {
- QStringList path = readPath( nameOfPath );
  if (fileName.startsWith("/")) { //absolute path -> no change
   return fileName;
  }
+ QStringList path=readPath(nameOfPath);
  QString absName;
  for(QStringList::Iterator it=path.begin();it!=path.end();++it) {
   absName=*it+"/"+fileName;
@@ -153,31 +161,32 @@ QString Settings::expand(QString s) {
    } else { //Found $VARIABLE
     var=r.cap(1);
     if (var[0]=='{') var=var.mid(1,var.length()-2);
-//    guiPrintDbg(debug::DBG_DBG,"Expand: " << var << " in " << s);
     /* home() is special - it is equal to regular $HOME on unixes, but might
      expand to "application data" directory on windows if HOME is not set */
     if (var=="HOME") envVar=QDir::home().path();
+    else if (var==APP_PATH_VAR) envVar=appPath;
     else envVar=getenv(var);
     if (envVar==QString::null) { //variable not found in environment
-//     guiPrintDbg(debug::DBG_DBG,"Expand: " << var << " -> not found ");
      envVar="";
     }
    }
-//   guiPrintDbg(debug::DBG_DBG,"Expand before: " << s);
    s=s.replace(pos,r.matchedLength(),envVar);
-//   guiPrintDbg(debug::DBG_DBG,"Expand after: " << s);
    pos+=envVar.length();//Move to end of expanded string
   }
  return s;
 }
 
-/** read path element from config file. Expands variables ($HOME, etc ...) and return as string list 
-    Path elements are expected to be separated by semicolon
+/**
+ Read path list element from config file.
+ Expands variables ($HOME, etc ...) and return as string list 
+ Path elements are expected to be separated by semicolon
+ Trailing slashes are removed from path elements
  @param name Identifier of path in config file
+ @param prefix Path prefix (Can be specified if desired to read from different configuration key than default "path"/)
  @return QStringList containing expanded path directories
  */
-QStringList Settings::readPath(const QString &name) {
- QString path=read(QString("path/")+name,".");
+QStringList Settings::readPath(const QString &name,const QString &prefix/*="path/"*/) {
+ QString path=read(prefix+name,".");
  QStringList s=QStringList::split(";",path);
  QRegExp stripTrail("(.)/+$");
  for(QStringList::Iterator it=s.begin();it!=s.end();++it) {
@@ -198,7 +207,7 @@ QStringList Settings::readPath(const QString &name) {
  @param separator String separating items in the list
  @return QStringList containing items from list
  */
-QStringList Settings::readList(const QString &name,const QString separator/*=","*/) {
+QStringList Settings::readList(const QString &name,const QString &separator/*=","*/) {
  QString lst=read(name,"");
  QStringList s=QStringList::split(separator,lst);
  return s;

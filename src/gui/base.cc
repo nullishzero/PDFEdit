@@ -58,9 +58,11 @@ Base::Base(PdfEditWindow *parent) {
  qpdf=NULL;
 }
 
-/** Get interpreter */
+/**
+ Return interpreter instance used to launch scripts in this context
+ @return current QSInterpreter
+*/
 QSInterpreter* Base::interpreter() {
-//TODO: doc
  return qs;
 }
 
@@ -136,11 +138,19 @@ void Base::scriptCleanup() {
  }
 }
 
-/** Run initscript. Gets name of initscript from settings */
+/** Run initscripts. Gets name of initscripts from settings */
 void Base::runInitScript() {
- QString initScriptFilename=globalSettings->read("script/init");
- //Any document-related classes are NOT available to the initscript, as no document is currently loaded
- run(initScriptFilename);
+ QStringList initScripts=globalSettings->readPath("init","script/");
+ for (unsigned int i=0;i<initScripts.count();i++) {
+  QString initScriptFilename=initScripts[i];
+  guiPrintDbg(debug::DBG_INFO,"Considering init script: " << initScriptFilename);
+  //Check if the script exists. If not, it is silently skipped
+  if (exists(initScriptFilename)) {
+   guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
+   //Any document-related classes are NOT available to the initscript, as no document is currently loaded
+   runFile(initScriptFilename);
+  }
+ }
  guiPrintDbg(debug::DBG_DBG,"Initscript executed");
 }
 
@@ -154,6 +164,15 @@ void Base::addDocumentObjects() {
  import->addQSObj(page,"page");
  import->addQSObj(trit,"treeitem");
  import->addQSObj(item,"item");
+}
+
+/**
+ Runs script from given file in current interpreter
+ @param scriptName name of file with QT Script to run
+ */
+void Base::runFile(QString scriptName) {
+ QString code=loadFromFile(scriptName);
+ qs->evaluate(code,this,scriptName);
 }
 
 /**
@@ -475,12 +494,13 @@ int Base::revisions() {
 
 /**
  Runs script from given file
- Should not be called directly, only from script (via slot), as this does not prepare correct script variables before execution
+ Not to be called directly, only from script (via slot), as this does not prepare correct script variables before execution
+ File is looked for in the script path, unless absolute filename is given.
+ If the file is not found in script path, it is looked for in current directory
  @param scriptName name of file with QT Script to run
- */
+*/
 void Base::run(QString scriptName) {
- QString code=loadFromFile(scriptName);
- qs->evaluate(code,this,scriptName);
+ runFile(globalSettings->getFullPathName("script",scriptName));
 }
 
 /** \copydoc PdfEditWindow::save */

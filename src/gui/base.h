@@ -135,7 +135,11 @@ public slots: //This will be all exported to scripting
  void restoreWindowState();
  /*- Return number of revisions in current PDF document */
  int revisions();
- /*- Loads and runs script from given filename. */
+ /*-
+  Loads and runs script from given filename.
+  File is looked for in the script path, unless absolute filename is given.
+  If the file is not found in script path, it is looked for in current directory.
+ */
  void run(QString scriptName);
  /*-
   Save currently edited document.
@@ -188,6 +192,7 @@ private:
  void addDocumentObjects();
  void removeDocumentObjects();
  void scriptCleanup();
+ void runFile(QString scriptName);
 private:
  /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
  QSPdf *qpdf;

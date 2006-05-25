@@ -48,6 +48,22 @@ QSCObject* QSDict::property(const QString &name) {
  }
 }
 
+/**
+ Check if given property exists in dictionary
+ @param name Name of property
+ @return True, if property exists in dictionary, false if not
+*/
+bool QSDict::exist(const QString &name) {
+ try {
+  CDict *dict=dynamic_cast<CDict*>(obj.get());
+  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  return true;
+ } catch (...) { 
+  //Some error, probably the property does not exist
+  return false;
+ }
+}
+
 /** call CDict::getProperty(name), if property doeas not exist, return property with defValue in it*/
 QSCObject* QSDict::propertyDef(const QString &name,int defValue) {
  QSCObject* ret=property(name);

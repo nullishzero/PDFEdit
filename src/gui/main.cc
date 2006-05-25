@@ -22,6 +22,9 @@
 using namespace std;
 using namespace gui;
 
+/** Path to directory in which the binary resides */
+QString appPath;
+
 /** delete settings object (and save settings)
  This function is called at application exit
  */
@@ -70,6 +73,8 @@ int main(int argc, char *argv[]){
 #endif
  QApplication app(argc,argv,useGUI);
  qApp=&app;
+ //Get application path
+ appPath=app.applicationDirPath();
  //Translation support
  QTranslator translator;
  const char *env_lang=getenv("LANG");
@@ -80,14 +85,10 @@ int main(int argc, char *argv[]){
   if (!translator.load(lang,QString(DATA_PATH)+"/lang")) {
    //Look for translation file in config directory in $HOME
    if (!translator.load(lang,QDir::home().path()+"/"+CONFIG_DIR+"/lang")) {
-    #ifdef TESTING
-    //look in current directory for testing version
-    if (!translator.load(lang,"./lang")) { 
-    #endif
+    //Look in binary path - testing compilations and (possibly) windows builds
+    if (!translator.load(lang,appPath+"/lang")) { 
      guiPrintDbg(debug::DBG_WARN,"Translation file " << lang << " not found");
-    #ifdef TESTING
     }
-    #endif
    }
   }
  }
@@ -106,6 +107,7 @@ int main(int argc, char *argv[]){
  QStringList params=handleParams(app.argc(),app.argv());
 
  guiPrintDbg(debug::DBG_DBG,"Commandline parameters processed");
+ guiPrintDbg(debug::DBG_DBG,"App path: " << appPath);
 
  //load settings
  globalSettings=Settings::getInstance();
