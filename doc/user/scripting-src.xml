@@ -21,8 +21,18 @@
   </para>
   <para>
    When new editor window is launched (but before the document is loaded or created),
-   file <filename>init.qs</filename><footnote>This can be changed to different filename in settings</footnote> is run. This file should contain declaration of all
-   functions used in toolbars or menus and may also contain any startup code to be run
+   file <filename>init.qs</filename> from application directory is run, then
+   file <filename>init.qs</filename> from users's application configuration
+   directory (which is $HOME/.pdfedit) is run, if it exists
+   <footnote>
+    <para>
+     This is in default configuration and it can be changed by user to different
+     filename(s) in settings
+    </para>
+   </footnote>
+   .
+   These files should contain declaration of all functions used in toolbars
+   or menus and may also contain any startup code to be run
    before loading or creating new document.
   </para>
   <para>
@@ -145,7 +155,17 @@
    <sect2 id="settings.expand">
     <title><funcsynopsis>string settings.expand(string)</funcsynopsis></title>
     Return string with environment variable references (in form $VARIABLE and ${VARIABLE}) 
-    Any character preceded as backslash (especially $ character) is not processed in expansion.
+    Any character preceded with backslash (especially $ character) is not processed in expansion.
+    <note>
+     Some internal variables (all of them beginning with $PDFEDIT_) can override corresponding environment variables.
+     This function will use the internal variable in expansion if both internal and environment variables exist.
+    </note>
+    <table frame="none">
+     <title>List of internal variables</title>
+     <tgroup cols="2"><tbody>
+      <row><entry>$PDFEDIT_BIN</entry><entry>Full path to directory in which the binary file resides</entry></row>
+     </tbody></tgroup>
+    </table>
    </sect2>
    <sect2 id="settings.write">
     <title><funcsynopsis>string settings.write(string key,string value)</funcsynopsis></title>
