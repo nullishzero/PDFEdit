@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/05/25 08:13:17  petrm1am
+ * Quick fix: unable to comile
+ *
+ * Note: FILE stream has to be closed - FileStream::close method doesn't do that!
+ *
  * Revision 1.2  2006/05/24 19:28:12  hockm0bm
  * * Delinearizator::getInstance mem leak
  *         - if Delinearizator constructor fails deallocates inputStream and
@@ -104,7 +109,8 @@ public:
 	{
 		if(pdfWriter)
 			delete pdfWriter;
-		fclose(FileStream::f);
+// TODO FILE stream has to be closed - FileStream::close method doesn't do that!
+//		fclose(FileStream::f);
 	}
 	
 	/** Factory method for isntance creation.
