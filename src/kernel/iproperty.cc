@@ -41,7 +41,12 @@ boost::shared_ptr<IProperty>
 IProperty::clone () const
 {
 	boost::shared_ptr<IProperty> ip (doClone ());
-	assert (typeid (*ip) == typeid (*this) && "doClone INCORRECTLY overriden!!" );
+	if (typeid(*ip) != typeid (*this))
+	{
+		assert (!"doClone INCORRECTLY overriden!!" );
+		throw CObjInvalidCast ();
+	}
+	assert (typeid (*ip) == typeid (*this));
 	
 	return ip;
 }
@@ -104,6 +109,10 @@ IProperty::dispatchChange () const
 	}
 }
 
+
+//=====================================================================================
+// Output functions
+//=====================================================================================
 
 //
 //

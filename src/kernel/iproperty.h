@@ -54,55 +54,6 @@ enum PropertyType
 		pOther3 = objNone
 };
 
-//
-// String representation of object type
-//
-template<int i> inline
-std::string getStringType () {return "Unknown";}
-template<> inline
-std::string getStringType<0> () {return "Bool";}
-template<> inline
-std::string getStringType<1> () {return "Int";}
-template<> inline
-std::string getStringType<2> () {return "Real";}
-template<> inline
-std::string getStringType<3> () {return "String";}
-template<> inline
-std::string getStringType<4> () {return "Name";}
-template<> inline
-std::string getStringType<5> () {return "Null";}
-template<> inline
-std::string getStringType<9> () {return "Ref";}
-template<> inline
-std::string getStringType<6> () {return "Array";}
-template<> inline
-std::string getStringType<7> () {return "Dict";}
-template<> inline
-std::string getStringType<8> () {return "Stream";}
-
-/** 
- * Prints property type.
- *  
- * Prints given type in human readable from instead of just number.
- * Uses getStringType method to get string representation.
- *
- * @param out String where to print.
- * @param type Type to print.
- * @return Reference to given string.
- */
-std::ostream& operator<< (std::ostream& out, PropertyType type);
-
-/** 
- * Prints xpdf object type.
- *  
- * Prints given type in human readable from instead of just number.
- * Uses getStringType method to get string representation.
- *
- * @param out String where to print.
- * @param type Xpdf type to print.
- * @return Reference to given string.
- */
-std::ostream& operator<< (std::ostream& out, ::ObjType type);
 
 /** Object id number. */
 typedef unsigned int ObjNum;
@@ -152,26 +103,10 @@ typedef struct IndiRef
 } IndiRef;
 
 
-/** 
- * Prints reference.
- * Prints given reference in ref[num, gen] format.
- * 
- * @param out String where to print.
- * @param ref Reference to print.
- * @return reference to given string.
- */
-std::ostream & operator << (std::ostream & out, const IndiRef & ref);
 
-/** 
- * Prints reference.
- * Prints given xpdf reference in ref[num, gen] format.
- * 
- * @param out String where to print.
- * @param ref Reference to print.
- * @return reference to given string.
- */
-std::ostream & operator << (std::ostream & out, const ::Ref & ref);
-
+//=====================================================================================
+// class IProperty
+//=====================================================================================
 
 /** 
  * Narrow interface describing properties of every pdf object. We use this 
@@ -313,7 +248,7 @@ public:
      * @return Object casted to desired type.
      */
     template<typename T>
-    inline static
+    static
 	boost::shared_ptr<T> getSmartCObjectPtr (const boost::shared_ptr<IProperty>& ptr) 
     {
     	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
@@ -324,7 +259,7 @@ public:
 		}
 		else
 		{
-			assert (!"doClone INCORRECTLY overriden!!" );
+			assert (!"doClone INCORRECTLY overriden!! ");
 			throw CObjInvalidObject (); 
 		}
     }
@@ -381,9 +316,10 @@ public:
 }; /* class IProperty */
 
 
-//
+//=====================================================================================
 // Helper functions
-//
+//=====================================================================================
+
 
 /** 
  * Checks whether pdf is valid instance.
@@ -439,6 +375,82 @@ template<typename T> inline bool isDict  (T& ip) {return isIPType<pDict> (ip);}
 template<typename T> inline bool isArray (T& ip) {return isIPType<pArray> (ip);}
 template<typename T> inline bool isStream(T& ip) {return isIPType<pStream> (ip);}
 	
+
+//=====================================================================================
+// Output functions
+//=====================================================================================
+
+
+//
+// String representation of object type
+//
+template<int i> inline
+std::string getStringType () {return "Unknown";}
+template<> inline
+std::string getStringType<0> () {return "Bool";}
+template<> inline
+std::string getStringType<1> () {return "Int";}
+template<> inline
+std::string getStringType<2> () {return "Real";}
+template<> inline
+std::string getStringType<3> () {return "String";}
+template<> inline
+std::string getStringType<4> () {return "Name";}
+template<> inline
+std::string getStringType<5> () {return "Null";}
+template<> inline
+std::string getStringType<9> () {return "Ref";}
+template<> inline
+std::string getStringType<6> () {return "Array";}
+template<> inline
+std::string getStringType<7> () {return "Dict";}
+template<> inline
+std::string getStringType<8> () {return "Stream";}
+
+/** 
+ * Prints property type.
+ *  
+ * Prints given type in human readable from instead of just number.
+ * Uses getStringType method to get string representation.
+ *
+ * @param out String where to print.
+ * @param type Type to print.
+ * @return Reference to given string.
+ */
+std::ostream& operator<< (std::ostream& out, PropertyType type);
+
+/** 
+ * Prints xpdf object type.
+ *  
+ * Prints given type in human readable from instead of just number.
+ * Uses getStringType method to get string representation.
+ *
+ * @param out String where to print.
+ * @param type Xpdf type to print.
+ * @return Reference to given string.
+ */
+std::ostream& operator<< (std::ostream& out, ::ObjType type);
+
+/** 
+ * Prints reference.
+ * Prints given reference in ref[num, gen] format.
+ * 
+ * @param out String where to print.
+ * @param ref Reference to print.
+ * @return reference to given string.
+ */
+std::ostream & operator << (std::ostream & out, const IndiRef & ref);
+
+/** 
+ * Prints reference.
+ * Prints given xpdf reference in ref[num, gen] format.
+ * 
+ * @param out String where to print.
+ * @param ref Reference to print.
+ * @return reference to given string.
+ */
+std::ostream & operator << (std::ostream & out, const ::Ref & ref);
+
 
 // =====================================================================================
 } // namespace pdfobjects

@@ -954,8 +954,10 @@ CObjectStream<Checker>::setBuffer (const Container& buf)
 	// Create context
 	boost::shared_ptr<ObserverContext> context (this->_createContext());
 	
-	// Encode buf and save it to buffer
-	encodeBuffer (buf);
+	// Make buffer pdf valid, encode buf and save it to buffer
+	std::string strbuf;
+	utils::makeStreamPdfValid (buf.begin(), buf.end(), strbuf);
+	encodeBuffer (strbuf);
 	// Change length
 	setLength (buffer.size());
 	
@@ -1294,6 +1296,9 @@ CObjectStream<Checker>::open ()
 	::XRef* xref = (NULL != this->getPdf ()) ? this->getPdf ()->getCXref() : NULL;
 	// Create xpdf object from current stream and parse it
 	parser = new ::Parser (xref, new ::Lexer(xref, _makeXpdfObject()));
+
+	// Get an object
+	parser->getObj (&curObj);
 }
 
 //
@@ -1305,7 +1310,7 @@ CObjectStream<Checker>::close ()
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 
-	if (NULL != parser && !curObj.isNone ())
+	if (NULL != parser && !curObj.isNone())
 	{
 		curObj.free ();
 		delete parser;
@@ -1346,18 +1351,18 @@ template<typename Checker>
 void
 CObjectStream<Checker>::getXpdfObject (::Object& obj)
 {
+	assert (!eof());
 	//kernelPrintDbg (debug::DBG_DBG,"");
 
 	if (NULL != parser)
 	{
-		curObj.free ();
+		curObj.copy (&obj);
 
+		curObj.free ();
 		parser->getObj (&curObj);
 		assert (!curObj.isNone ());
 		assert (!curObj.isNull ());
 		assert (!curObj.isError ());
-		
-		curObj.copy (&obj);
 
 	}else
 	{

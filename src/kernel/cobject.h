@@ -610,6 +610,11 @@ public:
 // CObjectStream
 //=====================================================================================
 
+//
+// Forward declaration
+//
+template<typename T> class CStreamXpdfReader;
+
 /**
  * Special class representing xpdf streams. It is neither a simple object, because it does not
  * contain just simple value, nor a complex object, because it can not be simple represented
@@ -627,6 +632,9 @@ class CObjectStream : noncopyable, public IProperty
 	typedef std::string PropertyId;
 
 public:
+	// We can access xpdf stream only through CStreamXpdfReader 
+	template<typename T> friend class CStreamXpdfReader;
+
 	typedef std::vector<filters::StreamChar> Buffer;
 
 protected:
@@ -730,24 +738,6 @@ public:
 	void delProperty (PropertyId id)
 		{dictionary.delProperty (id);}
 
-	//
-	// Set methods
-	//
-public:
-	/**
-	 * Set pdf to itself and also tu all children
-	 *
-	 * @param pdf New pdf.
-	 */
-	virtual void setPdf (CPdf* pdf);
-
-	/**
-	 * Set ref to itself and also tu all children
-	 *
-	 * @param pdf New indirect reference numbers.
-	 */
-	virtual void setIndiRef (const IndiRef& rf);
-
 
 	//
 	// Get methods
@@ -798,6 +788,20 @@ public:
 	//
 public:
 	/**
+	 * Set pdf to itself and also tu all children
+	 *
+	 * @param pdf New pdf.
+	 */
+	virtual void setPdf (CPdf* pdf);
+
+	/**
+	 * Set ref to itself and also tu all children
+	 *
+	 * @param pdf New indirect reference numbers.
+	 */
+	virtual void setIndiRef (const IndiRef& rf);
+
+	/**
 	 * Set encoded buffer.
 	 *
 	 * @param buf New buffer.
@@ -814,9 +818,9 @@ public:
 	void setBuffer (const Container& buf);
 
 	//
-	// Parsing
+	// Parsing (use friend CStreamXpdfReader)
 	//
-public:
+private:
 	
 	/**
 	 * Initialize parsing mechanism.
@@ -850,13 +854,7 @@ public:
 	 */
 	bool eof () const;
 	
-	/**
-	 * Is stream opened.
-	 *
-	 * @return True if the stream has been opened, false otherwise.
-	 */
-	bool is_open () const {return (NULL != parser);};
-
+	
 	//
 	// Destructor
 	//
@@ -972,6 +970,102 @@ typedef CObjectComplex<pDict>	CDict;
 typedef CObjectStream<>			CStream;
 
 
+
+/**
+ * Adapter which is able to read sequentially from more CStreams.
+ */
+template<typename Container>
+class CStreamXpdfReader
+{
+public:
+	typedef std::vector<boost::shared_ptr<CStream> > CStreams;
+
+private:
+	CStreams streams;
+	boost::shared_ptr<CStream> actstream;
+	size_t pos;
+
+public:
+
+	/** Constructor. */
+	CStreamXpdfReader (Container& strs) : pos(0) 
+		{ assert (!strs.empty()); std::copy (strs.begin(), strs.end(), std::back_inserter(streams));}
+	CStreamXpdfReader (boost::shared_ptr<CStream> str) : pos(0) 
+		{ assert (str); streams.push_back (str); }
+
+	/** Open. */
+	void open ()
+	{
+		assert (!streams.empty());
+		if (actstream && 0 != pos)
+			{ assert (!"Stream opened before."); }
+
+		actstream = streams.front ();
+		actstream->open ();
+	}
+
+	/** Close. */
+	void close ()
+	{
+		assert (!streams.empty());
+		assert (streams.size() == pos + 1);
+		assert (actstream == streams.back());
+		assert (actstream->eof());
+		
+		
+		actstream->close ();
+	}
+
+	/** 
+	 * Close. 
+	 * Save parsed streams to container.
+	 *
+	 * @param parsedstreams Output buffer that will contain all streams we have
+	 * really parsed.
+	 */
+	template<typename Ctr>
+	void close (Ctr& parsedstreams)
+	{
+		assert (!streams.empty());
+		assert (actstream->eof());
+		
+		for (size_t i = 0; i <= pos; ++i)
+			parsedstreams.push_back (streams[i]);
+		
+		actstream->close ();
+	}
+
+	/** Get xpdf object. */
+	void getXpdfObject (::Object& obj)
+	{
+		assert (!actstream->eof());
+		actstream->getXpdfObject (obj);
+	}
+
+	/** Is end of stream. */
+	bool eof ()
+	{ 
+		while (actstream->eof() && actstream != streams.back())
+		{
+			assert (pos < streams.size());
+			actstream->close();
+			++pos;
+			actstream = streams[pos];
+			actstream->open ();
+		}
+		return  (actstream == streams.back() && actstream->eof()); 
+	}
+
+	/** End of actual stream. */
+	bool eofOfActualStream ()
+		{ return (actstream->eof()); }
+
+	/** Get xpdf stream. */
+	::Stream* getXpdfStream ()
+		{ return actstream->getXpdfStream(); }
+
+	
+};
 
 //=====================================================================================
 //
@@ -1167,6 +1261,106 @@ public:
 //=====================================================================================
 namespace utils {
 //=====================================================================================
+
+//
+// Validation functions
+// \todo improve and correct them
+//
+	
+
+/**
+ * Make name valid.
+ * 
+	Beginning with PDF 1.2, any character except null (character code 0) may be included
+	in a name by writing its 2-digit hexadecimal code, preceded by the number
+	sign character (#); see implementation notes 3 and 4 in Appendix H. This
+	syntax is required to represent any of the delimiter or white-space characters or
+	the number sign character itself; it is recommended but not required for characters
+	whose codes are outside the range 33 (!) to 126 (~). The examples shown in
+	Table 3.3 are valid literal names in PDF 1.2 and later.
+
+ *	@param it Start iterator.
+ *	@param end End iterator.
+ */
+template<typename Iter>
+std::string 
+makeNamePdfValid (Iter it, Iter end)
+{
+	typedef std::string::value_type Item;
+	std::string tmp;
+	for (; it != end; ++it)
+	{
+		if ( '!' > (*it) || '~' < (*it))
+		{ // Convert it to ascii
+		
+			Item a = (Item) (*it) >> sizeof (Item) * 4;
+			Item b = (Item) (*it) & ((unsigned) 1 << sizeof(Item) * 4);
+			tmp += std::string ("#") + a + b;
+			
+		}else
+			tmp += *it;
+	}
+	
+	return tmp;
+}
+
+/**
+ * Make string pdf valid.
+ *
+ Any characters may appear in a string except unbalanced parentheses and
+ the backslash, which must be treated specially./
+
+ *
+ * @param it Start iterator.
+ * @param end End iterator.
+ */
+template<typename Iter>
+std::string 
+makeStringPdfValid (Iter it, Iter end)
+{
+	typedef typename std::string::value_type Item;
+	std::string tmp;
+	for (; it != end; ++it)
+	{
+		if ( '\\' == (*it))
+		{ // Escape every backslash
+			tmp += '\\';
+		}
+		else if ( '(' == (*it) || ')' == (*it))
+		{ // Prepend \ before ( or )
+			if ('\\' != tmp[tmp.length() - 1])
+				tmp += '\\';
+		}
+		
+		tmp += *it;
+	}
+	
+	return tmp;
+}
+	
+/**
+ * Make stream pdf valid.
+ *
+ * Not needed now.
+ * 
+ * @param it Start insert iterator.
+ * @param end End iterator.
+ */
+template<typename Iter>
+void
+makeStreamPdfValid (Iter it, Iter end, std::string& out)
+{
+	for (; it != end; ++it)
+	{
+		//if ( '\\' == (*it))
+		//{ // "Escape" every occurence of '\'
+		//		out += '\\';
+		//}
+
+		out += *it;
+	}
+}
+	
 
 //
 // Creation functions
@@ -1873,7 +2067,6 @@ template<typename IP>
 inline boost::shared_ptr<CStream>
 getCStreamFromArray (IP& ip, size_t pos)
 	{return getTypeFromArray<CStream,pStream> (ip, pos);}
-
 
 
 
