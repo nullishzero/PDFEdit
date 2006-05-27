@@ -306,28 +306,35 @@ bool CPage::parseContentStream ( )
 	
 	if (contents)
 	{
+		CContentStream::CStreams streams;
+		
 		//
 		// Contents can be either stream or an array of streams
 		//
 		if (isStream (contents))	
 		{
 			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
-			// Create contentstream from a stream
-			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream (stream,state,res)));
+			streams.push_back (stream);
 		
 		}else if (isArray (contents))
 		{
 			// We can be sure that streams are indirect objects (pdf spec)
 			shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
 			for (size_t i = 0; i < array->getPropertyCount(); ++i)
-				contentstreams.push_back 
-					(shared_ptr<CContentStream> (new CContentStream(getCStreamFromArray(array,i),state,res)) );
+				streams.push_back (getCStreamFromArray(array,i));
 			
 		}else // Neither stream nor array
 		{
-			kernelPrintDbg (debug::DBG_DBG, "Content stream type: " << contents->getType());
+			kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << contents->getType());
 			throw ElementBadTypeException ("Bad content stream type.");
 		}
+
+		//
+		// Create content streams, each cycle will take one/more content streams from streams variable
+		//
+		assert (!streams.empty());
+		while (!streams.empty())
+			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
 	
 	}else
 		throw ElementBadTypeException ("Bad pointer to content stream.");

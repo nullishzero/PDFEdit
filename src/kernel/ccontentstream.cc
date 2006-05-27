@@ -30,20 +30,15 @@ using namespace debug;
 using namespace utils;
 
 
-/** Name for inline image properties in property editor. */
-const char* NAME_INLINE_IMAGE_PROPS = "Properties";
 
 //==========================================================
-// Specialized classes representing operators
+namespace {
 //==========================================================
-
-namespace
-{
 
 	
-//==========================================================
-// Actual state (position) updaters
-//==========================================================
+	//==========================================================
+	// Actual state (position) updaters
+	//==========================================================
 	
 	//
 	void
@@ -548,9 +543,15 @@ namespace
 		rc->yright = rc->yleft;
 
 		if (!state.getFont()) 
+		{
+			assert (!"Could not get font.");
 			throw ElementBadTypeException ("opTJUpdate: State in bad state.");
+		}
 		if (pArray != args[0]->getType())
+		{
+			assert (!"opTJUpdate: Invalid first argument.");
 			throw ElementBadTypeException ("opTJUpdate: Object in bad state.");
+		}
 
 		int wMode;
 		wMode = state.getFont()->getWMode();
@@ -586,6 +587,7 @@ namespace
 				  break;
 
 				default:
+					assert (!"opTJUpdate: Bad object type.");
 					throw ElementBadTypeException ("opTJUpdate: Bad object type.");
 			}// switch
 			rc->xleft = min( rc->xleft, min( h_rc.xleft, h_rc.xright ) );
@@ -715,18 +717,13 @@ namespace
 		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
 	}
 */
-//==========================================================
-// End of actual state (position) updaters
-//==========================================================
+	//==========================================================
+	// End of actual state (position) updaters
+	//==========================================================
 
 
 	//==========================================================
 	
-	//
-	// Maximum operator arguments
-	//
-	const size_t MAX_OPERANDS = 6;
-			
 	//
 	// Bit helper function
 	//
@@ -759,14 +756,16 @@ namespace
 		{ return setNthBitsShort (mask,mask1,mask2,mask3) | setNthBitsShort (mask4); }
 
 
+	/** Maximum operator arguments. From pdf spec.*/
+	const size_t MAX_OPERANDS = 6;
 
-	/** Maximum operator name length. */
+	/** Maximum operator name length. From pdf spec.*/
 	static const size_t MAX_OPERATOR_NAMELEN = 4;
 
 	/**
 	 * Known operators, it is copied from pdf BECAUSE it is
 	 * a private member variable of a class and we do not have
-	 *  access to it
+	 * access to it
 	 */
 	typedef struct
 	{
@@ -801,7 +800,7 @@ namespace
 					unknownUpdate, "" },	
 			{"BDC", 2, {setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
 					unknownUpdate, "" },	
-			{"BI",  0, {setNoneBitsShort ()}, 
+			{"BI",  -1, {setNoneBitsShort ()}, 
 					opBIUpdate, "" },	
 			{"BMC", 1, {setNthBitsShort (pName)}, 
 					unknownUpdate, "" },	
@@ -1094,7 +1093,7 @@ namespace
 	 * @return CStream representing inline image
 	 */
 	CInlineImage*
-	getInlineImage (CStream& stream) 
+	getInlineImage (CStreamXpdfReader<CContentStream::CStreams>& streamreader) 
 	{
 		kernelPrintDbg (DBG_DBG, "");
 		xpdf::XpdfObject dict;
@@ -1104,13 +1103,13 @@ namespace
 		// Get the inline image dictionary
 		// 
 		Object o;
-		stream.getXpdfObject (o);
-		while (!o.isCmd("ID") && !stream.eof()) 
+		while (!streamreader.eof() && !o.isCmd("ID")) 
 		{
+			streamreader.getXpdfObject (o);
 			if (o.isName())
 			{
 				char* key = ::copyString (o.getName());
-				stream.getXpdfObject (o);
+				streamreader.getXpdfObject (o);
 				if (o.isEOF() || o.isError()) 
 				{
 					gfree (key);
@@ -1119,15 +1118,21 @@ namespace
 				}
 				dict->dictAdd (key, &o);
 			}
-			stream.getXpdfObject (o);
 		}
 		// Free ID
 		o.free ();
+
+		// Bad content stream
+		if (streamreader.eof())
+		{
+			utilsPrintDbg (debug::DBG_CRIT, "Content stream is damaged...");
+			return NULL;
+		}
 	
 		// 
 		// Make stream
 		// 
-		boost::scoped_ptr<Stream> str (new ::EmbedStream (stream.getXpdfStream (), dict.get(), gFalse, 0));
+		boost::scoped_ptr<Stream> str (new ::EmbedStream (streamreader.getXpdfStream (), dict.get(), gFalse, 0));
 		str->reset();
 		if (str)
 		{
@@ -1148,10 +1153,7 @@ namespace
 			// Pop EI
 			buf.pop_back ();
 			buf.pop_back ();
-
-			assert (hasValidPdf(&stream));
-			assert (hasValidRef (&stream));
-			return new CInlineImage (*(stream.getPdf()), *dict, buf, stream.getIndiRef());
+			return new CInlineImage (*dict, buf);
 				
 		}else
 		{
@@ -1173,20 +1175,23 @@ namespace
 	 * @return Created pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (CStream& stream, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
+	createOp (CStreamXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
 	{
 		// This is ugly but needed because of memory leaks
 		shared_ptr<PdfOperator> result;
 		
 		// Get first object
 		Object o;
-		stream.getXpdfObject (o);
 
 		//
 		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
 		//
-		while (!stream.eof()) 
+		while (!streamreader.eof()) 
 		{
+			o.free ();
+			// Grab the next object
+			streamreader.getXpdfObject (o);
+
 			if (o.isCmd ())
 			{// We have an OPERATOR
 
@@ -1211,7 +1216,7 @@ namespace
 				{
 					utilsPrintDbg (debug::DBG_DBG, "");
 					
-					shared_ptr<CInlineImage> inimg (getInlineImage (stream));
+					shared_ptr<CInlineImage> inimg (getInlineImage (streamreader));
 					result = shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
 					break;
 				}
@@ -1222,6 +1227,7 @@ namespace
 				if (!check (*chcktp, operands))
 				{
 					o.free ();
+					assert (!"Content stream bad operator type.");
 					throw MalformedFormatExeption ("Content stream bad operator type.");
 				}
 				
@@ -1240,12 +1246,14 @@ namespace
 				}else
 				{// Composite operator
 					
+					bool foundEndTag = false;
 					result = shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
-					// The same as in parseContentStream
+					// The same as in reparseContentStream
 					shared_ptr<PdfOperator> _last = result;
 					shared_ptr<PdfOperator> _prevLast =result;
+					
 					// While not the end
-					while (last = createOp (stream, operands, _last))
+					while (last = createOp (streamreader, operands, _last))
 					{
 						result->push_back (last, _prevLast);
 							
@@ -1253,10 +1261,19 @@ namespace
 						string tag;
 						last->getOperatorName (tag);
 						if (tag == chcktp->endTag)
+						{
+							foundEndTag = true;
 							break;
+						}
 						
 						// Save last as previous
 						_prevLast = _last;
+					}
+
+					if (!foundEndTag)
+					{
+						assert (!"Bad content stream while reparsing. End tag was not found.");
+						throw CObjInvalidObject ();
 					}
 					
 					// Return composite in result
@@ -1270,25 +1287,28 @@ namespace
 				operands.push_back (pIp);
 			}
 
-			o.free ();
-			// Grab the next object
-			stream.getXpdfObject (o);
-			
 		} // while (!obj.isEOF())
 		
 		o.free ();
 		return result;
-	}	
+	}
 
 	/**
-	 * Parse the stream into small objects.
+	 * Parse the stream into small objects. 
+	 *
+	 * This function must NOT be called during initialization of contentstream.
+	 * Use ** instead.
+	 * 
+	 * It assumes that supplied streams build a valid content stream that is not
+	 * breaked neither in a composite operator nor at any other crazy point that the pdf
+	 * specification allows.
 	 *
 	 * @param operators Operator stack.
-	 * @param stream 	Stream.
-	 * @param cs Content stream in which operators belong
+	 * @param streams 	Streams to be parsed.
+	 * @param cs 		Content stream in which operators belong
 	 */
 	void
-	parseContentStream (CContentStream::Operators& operators, shared_ptr<CStream> stream, CContentStream& cs)
+	reparseContentStream (CContentStream::Operators& operators, CContentStream::CStreams& streams, CContentStream& cs)
 	{
 		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> last, previousLast;
@@ -1297,19 +1317,25 @@ namespace
 		// Clear operators
 		operators.clear ();
 	
-		assert (hasValidPdf (stream));
-		assert (hasValidRef (stream));
+		// Check if streams are in a valid pdf
+		for (CContentStream::CStreams::const_iterator it = streams.begin(); it != streams.end(); ++it)
+		{
+			assert (hasValidPdf (*it) && hasValidRef (*it));
+			if (!hasValidPdf (*it) || !hasValidRef (*it))
+				throw CObjInvalidObject ();
+		}
+
+		assert (!streams.empty());
+		CStreamXpdfReader<CContentStream::CStreams> streamreader (streams);
+		streamreader.open ();
 	
-		// Open stream
-		stream->open ();
-		
 		//
 		// actual is the top most last one, e.g. a composite
 		// last is the last operator, e.g. the last item of an composite
 		// we want to add new (actual) after the last one of LAST call to
 		// 	createOp
 		//
-		while (actual=createOp (*stream, operands, last))
+		while (actual=createOp (streamreader, operands, last))
 		{
 			if (previousLast)
 			{
@@ -1321,13 +1347,93 @@ namespace
 			previousLast = last;
 		}
 
-		// Close stream
-		stream->close ();
+		// Close actual stream
+		streamreader.close ();
 
 		assert (operands.empty());
 		// Set pdf ref and cs
 		if (!operators.empty())
-			opsSetPdfRefCs (operators.front(), *(stream->getPdf()), stream->getIndiRef(), cs);
+			opsSetPdfRefCs (operators.front(), *(streams.front()->getPdf()), streams.front()->getIndiRef(), cs);
+	}
+
+	/**
+	 * Parse the stream for the first time into small objects. 
+	 *
+	 * Problem with content stream is, that it can be splitted in many streams
+	 * and the split points are really insane. And moreover some pdf creators 
+	 * produce even more insane split points.
+	 * 
+	 * @param operators Operator stack.
+	 * @param streams 	Streams to be parsed.
+	 * @param cs 		Content stream in which operators belong
+	 * @param parsedstreams Streams that have been really parsed.
+	 */
+	void
+	parseContentStream (CContentStream::Operators& operators, 
+						CContentStream::CStreams& streams, 
+						CContentStream& cs,
+						CContentStream::CStreams& parsedstreams)
+	{
+		PdfOperator::Operands operands;
+		shared_ptr<PdfOperator> last, previousLast;
+		shared_ptr<PdfOperator> actual;
+
+		// Clear operators
+		operators.clear ();
+	
+		// Check if streams are in a valid pdf
+		for (CContentStream::CStreams::const_iterator it = streams.begin(); it != streams.end(); ++it)
+		{
+			assert (hasValidPdf (*it) && hasValidRef (*it));
+			if (!hasValidPdf (*it) || !hasValidRef (*it))
+				throw CObjInvalidObject ();
+		}
+		CPdf* pdf = streams.front()->getPdf ();
+		assert (pdf);
+		IndiRef rf = streams.front()->getIndiRef ();
+
+		assert (!streams.empty());
+		CStreamXpdfReader<CContentStream::CStreams> streamreader (streams);
+		streamreader.open ();
+	
+		//
+		// actual is the top most last one, e.g. a composite
+		// last is the last operator, e.g. the last item of an composite
+		// we want to add new (actual) after the last one of LAST call to
+		// 	createOp
+		//
+		while (actual=createOp (streamreader, operands, last))
+		{
+			if (previousLast)
+			{
+				// Insert it in to the pdfoperator chain
+				PdfOperator::putBehind (previousLast, actual);
+			}
+			// Save it into our "top level" container
+			operators.push_back (actual);
+			previousLast = last;
+
+			// We have found a correct content stream.
+			if (streamreader.eofOfActualStream())
+				break;				
+		}
+
+		// Save which streams were parsed and close
+		streamreader.close (parsedstreams);
+
+		// Check if they match the input streams and delete them
+		CContentStream::CStreams::iterator itparsed = parsedstreams.begin (); 
+		for (; itparsed != parsedstreams.end(); ++itparsed)
+		{			
+			assert (*(streams.begin()) == *itparsed);
+			//streams.erase (streams.begin());
+			streams.pop_front();
+		}
+
+		assert (operands.empty());
+		// Set pdf ref and cs
+		if (!operators.empty())
+			opsSetPdfRefCs (operators.front(), *pdf, rf, cs);
 	}
 
 
@@ -1362,12 +1468,22 @@ namespace
 			// If operator found use the function else use default
 			if (NULL != chcktp)
 			{
+				// Check arguments
 				assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
 				assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
+				if ( ((chcktp->argNum >= 0) && (ops.size () != (size_t)chcktp->argNum)) ||
+				      ((chcktp->argNum < 0) && (ops.size () > (size_t)-chcktp->argNum)) )
+				{
+					kernelPrintDbg (debug::DBG_CRIT, "Bad content stream. Incorrect parameters.");
+					throw CObjInvalidObject ();
+				}
+
+				// Update the state
 				(chcktp->update) (state, res, op, ops, &rc);
 				
 			}else
 			{
+				// Update the state
 				unknownUpdate (state, res, op, ops, &rc);
 			}
 
@@ -1422,38 +1538,41 @@ throw ()
 //
 // Constructors
 //
-CContentStream::CContentStream (boost::shared_ptr<CStream> stream, 
+CContentStream::CContentStream (CStreams& strs, 
 								boost::shared_ptr<GfxState> state, 
 								boost::shared_ptr<GfxResources> res) 
-	: cstream (stream), gfxstate (state), gfxres (res)
+	: gfxstate (state), gfxres (res)
 {
 	kernelPrintDbg (DBG_DBG, "");
+	
+	// If streams are empty return
+	if (strs.empty())
+		return;
 
-	if (cstream)
+	// Check if streams are in a valid pdf
+	for (CStreams::const_iterator it = strs.begin(); it != strs.end(); ++it)
 	{
-		// Check if stream is in a pdf, if not is NOT IMPLEMENTED
-		// the problem is with parsed pdfoperators
-		assert (hasValidPdf (stream) && hasValidRef (stream));
-		if (!hasValidPdf (stream) || !hasValidRef (stream))
+		assert (hasValidPdf(*it) && hasValidRef(*it));
+		if (!hasValidPdf(*it) || !hasValidRef(*it))
 			throw CObjInvalidObject ();
-		
-		// Register observer
-		observer = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
-		cstream->registerObserver (observer);
-
-		// Parse it into small objects
-		reparse ();
-
-	}else
-	{
-		assert (!"Bad stream.");
-		throw CObjInvalidObject ();
 	}
+	
+	// Parse it into small objects
+	assert (gfxres);
+	assert (gfxstate);
+	
+	// Parse it, move parsed straems from strs to cstreams
+	parseContentStream (operators, strs, *this, cstreams);
+	
+	// Save bounding boxes
+	if (!operators.empty())
+		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
+
+	// Create and register observer
+	observer = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
+	registerObservers ();
 }
 
-//
-// Get methods
-//
 
 //
 // Helper methods
@@ -1478,7 +1597,7 @@ CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<Gf
 	operators.clear ();
 	
 	// Parse it
-	parseContentStream (operators, cstream, *this);
+	reparseContentStream (operators, cstreams, *this);
 	
 	// Save bounding boxes
 	if (!operators.empty())
@@ -1491,24 +1610,48 @@ CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<Gf
 void
 CContentStream::_objectChanged ()
 {
+	assert (!cstreams.empty());
 	// Do not notify anything if we are not in a valid pdf
-	if (!hasValidPdf (cstream))
+	if (!hasValidPdf (cstreams.front()))
 		return;
-	assert (hasValidRef (cstream));
+	assert (hasValidRef (cstreams.front()));
 
+	//
 	// Make the change
+	//  -- unregister OBSERVERS, because when saving to ccs which consists of
+	//  more cstreams, after first save an error occurs, because the stream is
+	//  no a valid content stream (it parses stream in which first stream is the
+	//  complete stream and the next stream contains a part of the previous
+	//  stream and it is an error)
+	//	-- put everything into FIRST content stream
+	//
+	
+	//
+	// Unregister observer
+	// 
+	unregisterObservers ();
+
+	// Save it
 	string tmp;
 	getStringRepresentation (tmp);
-	cstream->setBuffer (tmp);
+	assert (!cstreams.empty());
+	CStreams::iterator it = cstreams.begin();
+	assert (it != cstreams.end());
+	// Put it to the first cstream
+	(*it)->setBuffer (tmp);
+	++it;
+	// Erase all others
+	for (;it != cstreams.end();++it)
+		(*it)->setBuffer (string(""));
 
+	//
+	// Register observers again
+	// 
+	registerObservers ();
+	
 	// Notify observers
 	this->notifyObservers ( shared_ptr<CContentStream> (),shared_ptr<const ObserverContext> ());
 }
-
-
-//
-// Change methods
-// \TODO save changes to stream
 
 
 //
@@ -1544,7 +1687,10 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 		if (composite)
 			composite->remove (toDel);
 		else
+		{
+			//assert ("Want to delete a not existing operator.");
 			throw CObjInvalidObject ();
+		}
 	
 	}else
 	{
@@ -1605,13 +1751,16 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 	{
 		// Find the composite in which the operator resides
 		OperatorIterator begin = PdfOperator::getIterator (operators.front());
-		boost::shared_ptr<CompositePdfOperator> composite = findCompositeOfPdfOperator (begin, it.getCurrent());
+		boost::shared_ptr<PdfOperator> composite = findCompositeOfPdfOperator (begin, it.getCurrent());
 		assert (composite);
 		// Insert it into composite
 		if (composite)
 			composite->insert_after (it.getCurrent(), newOper);
 		else
+		{
+			//assert ("Want to insert after not existing operator.");
 			throw CObjInvalidObject ();
+		}
 	
 	}else
 	{
@@ -1683,7 +1832,10 @@ CContentStream::replaceOperator (OperatorIterator it,
 			composite->remove (toReplace);
 		
 		}else
+		{
+			//assert ("Want to insert after not existing operator.");
 			throw CObjInvalidObject ();
+		}
 	
 	}else
 	{
@@ -1718,6 +1870,45 @@ CContentStream::replaceOperator (OperatorIterator it,
 		_objectChanged ();
 }
 
+//
+// Observer interface
+//
+
+//
+//
+//
+void
+CContentStream::registerObservers () const
+{
+	if (observer)
+	{
+		// Register observer
+		for (CStreams::const_iterator it = cstreams.begin(); it != cstreams.end(); ++it)
+			(*it)->registerObserver (observer);
+	}else
+	{
+		assert (!"Observer is not initialized.");
+		throw CObjInvalidOperation ();
+	}
+}
+
+//
+//
+//
+void
+CContentStream::unregisterObservers () const
+{
+	if (observer)
+	{
+		// Unregister observer
+		for (CStreams::const_iterator it = cstreams.begin(); it != cstreams.end(); ++it)
+			(*it)->unregisterObserver (observer);
+	}else
+	{
+		assert (!"Observer is not initialized.");
+		throw CObjInvalidOperation ();
+	}
+}
 
 
 //==========================================================

@@ -58,6 +58,7 @@ public:
 
 	// iterator has to be a friend
 	friend class iterator::SharedDoubleLinkedListIterator<PdfOperator>;
+	friend class CContentStream;
 
 	//
 	// CContentStream pointer
@@ -139,6 +140,7 @@ public:
 							boost::shared_ptr<PdfOperator>)
 		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
 
+protected:
 	/**
 	 * Insert an operator after an item.
 	 * 
@@ -158,6 +160,7 @@ public:
 	virtual void remove (boost::shared_ptr<PdfOperator>)
 		{ throw NotImplementedException ("PdfOperator::remove ()"); };
 
+public:
 	/**
 	 * Get children count.
 	 *
@@ -389,8 +392,9 @@ public:
 	virtual size_t getChildrenCount () const {return children.size ();};	
 	virtual void push_back (const boost::shared_ptr<PdfOperator> oper, 
 							boost::shared_ptr<PdfOperator> prev = boost::shared_ptr<PdfOperator> ());
-	virtual void remove (boost::shared_ptr<PdfOperator> op);
 	virtual void getChildren (PdfOperators& container) const;
+protected:
+	virtual void remove (boost::shared_ptr<PdfOperator> op);
 	virtual void insert_after (const boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> newOper);
 	
 	//

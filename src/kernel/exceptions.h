@@ -3,6 +3,17 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/05/27 21:05:45  misuj1am
+ *
+ * -- BiG UPGRADE:
+ * 	-- many pdfs could not be parsed correctly because their ccs were located in more streams and
+ * 	the split point was really insane (after an operand etc..) so CContentStream was modified to allow
+ * 	more cstreams.. BUT we kept the advantage of more ccs in one page when a cstream makes a full valid
+ * 	content stream
+ * 		-- First version of CContentStream was doing the same BUT without the advantage
+ * 	-- CContentStream was made a friend of PdfOper and because of this several operations could be made private..
+ * 	this is due to the fact that GUI has used "forbidden" methods like PDfOper::remove...
+ *
  * Revision 1.20  2006/05/16 17:50:58  hockm0bm
  * minor changes
  *
@@ -486,6 +497,16 @@ struct CObjInvalidOperation : public CObjectException
 {
 	char const* what() const throw() {return "Invalid operation on CObject.";}
 };
+
+/**
+ * Exception occurs when we do an invalid cast of IProperty.
+ */
+struct CObjInvalidCast : public CObjectException
+{
+	char const* what() const throw() {return "Invalid cast of IProperty.";}
+};
+
+
 
 
 //==================================

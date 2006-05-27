@@ -66,14 +66,13 @@ class CContentStream : public noncopyable, public CContentStreamObserver
 {
 public:
 	typedef std::list<boost::shared_ptr<PdfOperator> > Operators;
-	//typedef std::vector<boost::shared_ptr<CStream> > CStreams;
+	typedef std::list<boost::shared_ptr<CStream> > CStreams;
 	typedef PdfOperator::Iterator OperatorIterator;
 	
 private:
 
 	/** Content stream cobject. */
-	//CStreams cstreams;
-	boost::shared_ptr<CStream> cstream;
+	CStreams cstreams;
 
 	/** Parsed content stream operators. */
 	Operators operators;
@@ -92,6 +91,9 @@ private:
 	 * Content stream observer.
 	 *
 	 * If a stream is changed, reparse whole contentstream.
+	 *
+	 * It can happen that the stream is parsed also after page's Contents entry
+	 * has been modified in a way that this content stream no longer exists. 
 	 */
 	struct CStreamObserver : public IProperty::Observer
 	{
@@ -133,7 +135,7 @@ public:
 	 *
 	 * @param stream CStream representing content stream or dictionary of more content streams.
 	 */
-	CContentStream (boost::shared_ptr<CStream> streams, 
+	CContentStream (CStreams& strs, 
 					boost::shared_ptr<GfxState> state, 
 					boost::shared_ptr<GfxResources> res);
 
@@ -338,7 +340,7 @@ public:
 				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> ());
 
 	/**
-	 * Save content stream to underlying cstream.
+	 * Save content stream to underlying cstream(s).
 	 */
 	void saveChange () 
 		{ _objectChanged(); };
@@ -348,6 +350,23 @@ private:
 	 * Save changes.
 	 */
 	void _objectChanged ();
+
+	//
+	// Observers
+	//
+protected:
+	/**
+	 * Register observers.
+	 */
+	void registerObservers () const;
+
+	/**
+	 * Unregister observers.
+	 *
+	 * This is an important function when saving consten stream consisting of
+	 * more streams.
+	 */
+	void unregisterObservers () const;
 	
 	//
 	// Destructor
