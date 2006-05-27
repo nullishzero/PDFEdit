@@ -56,32 +56,36 @@ bool
 mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getPage (1);
 
-	try {
-	/* oss << */ page->getMediabox ();
-	}catch (...)
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
-		std::cout << "NO MEDIA BOX FOUND.";
-		return true;
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+		try {
+		/* oss << */ page->getMediabox ();
+		}catch (...)
+		{
+			std::cout << "NO MEDIA BOX FOUND.";
+			return true;
+		}
+
+		Rectangle rc;
+		rc.xleft = 42;
+		rc.yleft = 62;
+		rc.xright = 12;
+		rc.yright = 2342;
+		page->setMediabox (rc);
+		
+		/* oss << */ page->getMediabox ();
+
+		if (42 == page->getMediabox ().xleft &&
+				62 == page->getMediabox ().yleft)
+			continue;
+		else
+			return false;
 	}
 
-	Rectangle rc;
-	rc.xleft = 42;
-	rc.yleft = 62;
-	rc.xright = 12;
-	rc.yright = 2342;
-	page->setMediabox (rc);
-	
-	/* oss << */ page->getMediabox ();
-
-	if (42 == page->getMediabox ().xleft &&
-			62 == page->getMediabox ().yleft)
-		return true;
-	else
-		return false;
+	return true;
 }
 
 
@@ -92,30 +96,33 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
-  	//TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
-	const char* FILE_OUT = "1.txt";
-  	TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
-	if (!textOut.isOk ())
-		throw;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+		//TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
+		const char* FILE_OUT = "1.txt";
+		TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
+		if (!textOut.isOk ())
+			throw;
+		
+		//
+		// Output to file
+		//
+		//oss << "Creating 1.txt which contains text from a pdf." << endl;
+		page->displayPage (textOut);
+		
+		xpdf::openXpdfMess ();
+
+		//oss << "Output from textoutputdevice." << endl;
+		//oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
+		delete textOut.getText(0, 0, 1000, 1000);
+		xpdf::closeXpdfMess ();
+
+		_working (oss);
+	}
 	
-	//
-	// Output to file
-	//
-	//oss << "Creating 1.txt which contains text from a pdf." << endl;
-	page->displayPage (textOut);
-	
-	xpdf::openXpdfMess ();
-
-	//oss << "Output from textoutputdevice." << endl;
-	//oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
-	delete textOut.getText(0, 0, 1000, 1000);
-
-	xpdf::closeXpdfMess ();
-
 	return true;
 }
 
@@ -126,13 +133,16 @@ _export (__attribute__((unused)) ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
-	string tmp;
-	page->getText (tmp);
-	oss << "Text: " << tmp << endl;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+		string tmp;
+		page->getText (tmp);
+		//oss << "Text: " << tmp << endl;
+		_working (oss);
+	}
 	
 	return true;
 }
@@ -144,25 +154,32 @@ findtext (__attribute__((unused)) ostream& oss, const char* fileName)
 {
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
 
-	string tmp;
-	page->getText (tmp);
-	oss << "Text: " << tmp << endl;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+		string tmp;
+		page->getText (tmp);
+		//oss << "Text: " << tmp << endl;
 
 
-	typedef std::vector<Rectangle> Recs;
-	Recs recs;
-	// arbitrary word/string??
-	string word = tmp.substr (2,3);
-	page->findText (word, recs); 
-
-	CPPUNIT_ASSERT (!recs.empty());
-//	CPPUNIT_ASSERT (!opcont.empty());
-	
-	oss << "Text: " << word << " at position: " << recs.front() << flush;
+		typedef std::vector<Rectangle> Recs;
+		Recs recs;
+		string word;
+		if (tmp.length() > 10)
+		{
+			// arbitrary word/string??
+			word = tmp.substr (2,3);
+			page->findText (word, recs); 
+			if (recs.empty())
+			{
+					oss << "RECS ARE EMPTY !!!" << flush;
+					//getchar ();
+			}else
+				oss << "Text: " << word << " at position: " << recs.front() << flush;
+		}
+	}
 	
 	return true;
 }

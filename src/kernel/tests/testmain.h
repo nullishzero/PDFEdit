@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/05/27 21:08:10  misuj1am
+ *
+ * -- tests improved
+ * 	-- tests are testing every page instead of only on the first page
+ *
  * Revision 1.17  2006/05/10 21:36:59  misuj1am
  *
  * -- adapted to ~CPdf beeing made private
@@ -125,7 +130,7 @@ extern FileList fileList;
 #define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
 #define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
 													<< " ALLOCATED: " << check.getMaxCount () << endl;}
-#define TEST(a)		OUTPUT << "\t//== " << (a) << flush;
+#define TEST(a)		OUTPUT << "\t//== " << (a) << "  " << flush;
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
 #define END_TEST	OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
 #define OK_TEST		OUTPUT << "\t...TEST PASSED..." << flush; MEM_CHECK;
@@ -473,6 +478,45 @@ ip_validate (vector<string>& n, vector<string>& m)
 		throw;
 		return false;
 	}
+}
+
+//
+// Get test objects
+//
+inline boost::shared_ptr<CStream>
+getTestStreamContent (boost::shared_ptr<CPage> page)
+{
+	boost::shared_ptr<CDict> dict = page->getDictionary();
+	assert (dict);
+	boost::shared_ptr<IProperty> ccs = utils::getReferencedObject (dict->getProperty("Contents"));
+	if (isStream(ccs))
+		return IProperty::getSmartCObjectPtr<CStream> (ccs);
+	else if (isArray(ccs))
+		return utils::getCStreamFromArray (ccs, 0);
+	else
+	{
+		assert (!"Bad content stream type.");
+		throw;
+	}
+}
+
+
+//
+// Indicate we are working
+//
+template<typename T>
+void _working (T& oss)
+{
+	static int i = 0;
+	static char chars[4] = { 'o', '/', '-', '\\' };
+	
+	if (0 == (i % 4))
+		i = 0;
+	
+	oss << "\b" << flush;
+	assert (4 > i);
+	oss << chars[i] << flush;
+	i++;
 }
 
 

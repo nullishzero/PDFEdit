@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/05/27 21:08:10  misuj1am
+ *
+ * -- tests improved
+ * 	-- tests are testing every page instead of only on the first page
+ *
  * Revision 1.6  2006/05/15 18:33:03  hockm0bm
  * test improvements
  *
@@ -239,7 +244,7 @@ public:
 		{
 			fileStreamTC(*i);
 			CPdf * pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);
-			contentStreamTC(*pdf);
+			//contentStreamTC(*pdf);
 			pdf->close();
 		}
 	}

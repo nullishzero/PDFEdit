@@ -25,45 +25,15 @@ namespace {
 using namespace boost;
 using namespace std;
 
-namespace {
-
-	boost::shared_ptr<CStream>
-	getTestCStream (boost::shared_ptr<CPdf> pdf)
-	{
-		if (1 > pdf->getPageCount())
-		{
-			assert (!"Too many pages (less than 1)");
-			throw;
-		}
-		boost::shared_ptr<CPage> page = pdf->getPage (1);
-		shared_ptr<CDict> dict = page->getDictionary ();
-
-		boost::shared_ptr<IProperty> contents = utils::getReferencedObject (dict->getProperty ("Contents"));
-		boost::shared_ptr<CStream> stream;
-		if (contents)
-		{
-			if (isArray (contents))
-				stream = utils::getCStreamFromArray (contents, 0);
-			else if (isStream (contents))
-				stream = IProperty::getSmartCObjectPtr<CStream> (contents);
-			else
-				assert (!"Bad contents entry type.");
-			
-		}else
-			assert (!"No content stream");
-	
-		assert (isStream (stream));
-		return stream;
-	}
-}
-
-
 //=====================================================================================
 bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
 {
 	typedef CStream::Buffer Buffer;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
+	if (1 > pdf->getPageCount())
+		return true;
+	boost::shared_ptr<CPage> page = pdf->getPage (1);
+	boost::shared_ptr<CStream> stream = getTestStreamContent (page);
 
 	//
 	// Make a buffer
@@ -135,18 +105,23 @@ bool setbuffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused
 bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	//CStream::Buffer& buf = stream->buffer;
-	//oss << "Buffer start: "<< std::flush;
-	filters::Printable<CStream::Buffer::value_type> print;
-	//for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
-	//	oss << print(*it) << std::flush;
-	//oss << "\nBuffer end.."<< std::flush;
-	
-	std::string tmp;
-	stream->getStringRepresentation (tmp);
-	//oss << tmp << std::flush;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
+
+		//CStream::Buffer& buf = stream->buffer;
+		//oss << "Buffer start: "<< std::flush;
+		filters::Printable<CStream::Buffer::value_type> print;
+		//for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
+		//	oss << print(*it) << std::flush;
+		//oss << "\nBuffer end.."<< std::flush;
+		
+		std::string tmp;
+		stream->getStringRepresentation (tmp);
+		//oss << tmp << std::flush;
+	}
 	
 	return true;
 }
@@ -155,16 +130,20 @@ bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	
 bool createStream (std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	vector<string> names;
-	stream->getAllPropertyNames (names);
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
 
-	oss << " CStream dictionary: [" << flush;
-	for (vector<string>::iterator it = names.begin(); it != names.end(); ++it)
-		oss << (*it) << " " << flush;
-	oss << "]" << flush;
+		vector<string> names;
+		stream->getAllPropertyNames (names);
 
+		oss << " CStream dictionary: [" << flush;
+		for (vector<string>::iterator it = names.begin(); it != names.end(); ++it)
+			oss << (*it) << " " << flush;
+		oss << "]" << flush;
+	}
 	return true;
 }
 
@@ -173,21 +152,25 @@ bool createStream (std::ostream& oss, const char* fileName)
 bool getString (std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	boost::shared_ptr<Object> obj (stream->_makeXpdfObject (), xpdf::object_deleter());
-	
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
+		boost::shared_ptr<Object> obj (stream->_makeXpdfObject (), xpdf::object_deleter());
+		
 
-	string tmp;
-	stream->getStringRepresentation (tmp);
-	//oss << tmp << endl;
+		string tmp;
+		stream->getStringRepresentation (tmp);
+		//oss << tmp << endl;
 
-	boost::shared_ptr<IProperty> ip = stream->getProperty ("Length");
-	ip = utils::getReferencedObject (ip);
+		boost::shared_ptr<IProperty> ip = stream->getProperty ("Length");
+		ip = utils::getReferencedObject (ip);
 
-	tmp.clear ();
-	ip->getStringRepresentation (tmp);
-	oss << " Length: [" << tmp << "]" << flush;
+		tmp.clear ();
+		ip->getStringRepresentation (tmp);
+		oss << " Length: [" << tmp << "]" << flush;
+	}
 
 	return true;
 }
@@ -197,15 +180,21 @@ bool getString (std::ostream& oss, const char* fileName)
 bool getPdfString (std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	CharBuffer buf;
-	size_t len = stream->getPdfRepresentation (buf);
-	oss << " Length: [" << len << "]" << flush;
-	//oss << std::endl << buf.get () << endl;
-	filters::Printable<char> p;
-	for (size_t i = 0; i < len; ++i)
-		p (buf.get()[i]);
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
+
+		CharBuffer buf;
+		size_t len = stream->getPdfRepresentation (buf);
+		oss << " Length: [" << len << "]" << flush;
+		//oss << std::endl << buf.get () << endl;
+		filters::Printable<char> p;
+		for (size_t i = 0; i < len; ++i)
+			p (buf.get()[i]);
+	}
+	
 	return true;
 }
 
@@ -214,15 +203,20 @@ bool getPdfString (std::ostream& oss, const char* fileName)
 bool getFilter (std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
-	
-	string tmp;
-	vector<string> filters;
-	stream->getFilters (filters);
 
-	oss << " Filters: ";
-	for (vector<string>::iterator it = filters.begin(); it != filters.end(); ++it)
-		oss << *it << endl;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
+		
+		string tmp;
+		vector<string> filters;
+		stream->getFilters (filters);
+
+		oss << " Filters: ";
+		for (vector<string>::iterator it = filters.begin(); it != filters.end(); ++it)
+			oss << *it << flush;
+	}
 
 	return true;
 }
@@ -232,9 +226,14 @@ bool getFilter (std::ostream& oss, const char* fileName)
 bool testdict (__attribute__((unused)) std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	oss << " Dict item #: [" << stream->getPropertyCount () << "]" << flush;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
+
+		//oss << " Dict item #: [" << stream->getPropertyCount () << "]" << flush;
+	}
 
 	return true;
 }
@@ -243,16 +242,21 @@ bool testdict (__attribute__((unused)) std::ostream& oss, const char* fileName)
 bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	boost::shared_ptr<CStream> stream = getTestCStream (pdf);
 
-	boost::shared_ptr<Object> str  (stream->_makeXpdfObject (),xpdf::object_deleter());
-	assert (NULL != str);
-	oss << "object type " << str->getTypeName() << flush;
-	assert (objStream == str->getType ());
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
 
-	int c;
-	//while (EOF != (c = str->getStream()->getChar())) 
-	//	oss << (char)c << flush;
+		boost::shared_ptr<Object> str  (stream->_makeXpdfObject (),xpdf::object_deleter());
+		assert (NULL != str);
+		oss << "object type " << str->getTypeName() << flush;
+		assert (objStream == str->getType ());
+
+		int c;
+		//while (EOF != (c = str->getStream()->getChar())) 
+		//	oss << (char)c << flush;
+	}
 	
 	return true;
 }

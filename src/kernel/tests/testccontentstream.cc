@@ -28,32 +28,57 @@ using namespace boost;
 bool
 setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 {
-		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
-	vector<boost::shared_ptr<CContentStream> > ccs;
-	page->getContentStreams (ccs);
-	shared_ptr<CContentStream> cs = ccs.front();
-	
 
-	// parse the content stream
-	string tmp;
-	cs->getStringRepresentation (tmp);
-	//oss << tmp << std::endl;
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+		vector<boost::shared_ptr<CContentStream> > ccs;
+		page->getContentStreams (ccs);
+		assert (!ccs.empty());
+		shared_ptr<CContentStream> cs = ccs.front();
+
+		// parse the content stream
+		string tmp1, tmp2;
+		cs->getStringRepresentation (tmp1);
+		//oss << tmp << std::endl;
+		ofstream of1;
+		of1.open ("1.txt");
+		of1 << tmp1 << flush;
+		of1.close();
 	
-	// parse the content stream after change
-	shared_ptr<CDict> dict = page->getDictionary ();
-	shared_ptr<CStream> stream = utils::getCStreamFromDict (dict, "Contents");
-	assert (isStream(stream));
-	CStream::Buffer buf;
-	std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
-	stream->setBuffer (buf);
-	cs->getStringRepresentation (tmp);
-	//oss << tmp << std::endl;
+		// parse the content stream after change
+		CStream::Buffer buf;
+		std::copy (tmp1.begin(), tmp1.end(), back_inserter (buf));
+		assert (tmp1.size() == buf.size());
+		//
+		// We CAN NOT do this directly, because contentcstream can be in more cstreams
+		//
+		boost::shared_ptr<CDict> dict = page->getDictionary();
+		assert (dict);
+		boost::shared_ptr<IProperty> cstream = utils::getReferencedObject (dict->getProperty("Contents"));
+		if (isStream(cstream))
+			IProperty::getSmartCObjectPtr<CStream> (cstream)->setBuffer (buf);
+		cs->getStringRepresentation (tmp2);
+		
+		//
+		// Compare string before and after change
+		//
+		if (tmp1 != tmp2)
+		{
+			ofstream of2;
+			of2.open("2.txt");
+			of2 << tmp2 << flush;
+			of2.close();
+		}
+		CPPUNIT_ASSERT (tmp1 == tmp2);
+		CPPUNIT_ASSERT (tmp1.size() == tmp2.size());
+		//oss << tmp << std::endl;
+		_working (oss);
 	
-	//pdf->save (true);
+		//pdf->save (true);
+	}
+	
 	return true;
 }
 
@@ -63,28 +88,30 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 bool
 position (ostream& oss, const char* fileName, const Rectangle rc)
 {
-		OUTPUT << "CContentStream..." << endl;
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
-
-	// parse the content stream
-	page->parseContentStream ();
 	
-	std::vector<shared_ptr<PdfOperator> > ops;
-	page->getObjectsAtPosition (ops, rc);
-
-	oss << " Found objects #" << ops.size();
-
-	std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
-	for (; it != ops.end(); ++it)
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
 	{
-		std::string tmp;
-		(*it)->getOperatorName (tmp);
-		//oss << tmp;
+	
+		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
+		
+		// parse the content stream
+		page->parseContentStream ();
+		
+		std::vector<shared_ptr<PdfOperator> > ops;
+		page->getObjectsAtPosition (ops, rc);
+
+		oss << " Found objects #" << ops.size() << flush;
+
+		std::vector<shared_ptr<PdfOperator> >::iterator it = ops.begin ();
+		for (; it != ops.end(); ++it)
+		{
+			std::string tmp;
+			(*it)->getOperatorName (tmp);
+			//oss << tmp;
+		}
+		//oss << std::endl;
 	}
-	//oss << std::endl;
 	
 	return true;
 }
@@ -93,14 +120,13 @@ position (ostream& oss, const char* fileName, const Rectangle rc)
 
 namespace  {
 	
-	bool img (CStream& str)
+	template <typename T>
+	bool img (T& str, XRef* xref)
 	{
-		OUTPUT << "CContentStream..." << endl;
 		  //
 		  // Read from BI to ID
 		  //
 		  Object dict;
-		  XRef* xref = (NULL != str.getPdf()) ? str.getPdf()->getCXref() : NULL;
 		  dict.initDict (xref);
 		  Object o;
 		  str.getXpdfObject (o);
@@ -159,7 +185,117 @@ namespace  {
 bool
 opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 {
-		OUTPUT << "CContentStream..." << endl;
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	/// Intermezzo
+	boost::scoped_ptr<PDFDoc> doc  (new PDFDoc (new GString(fileName), NULL, NULL));
+
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		int pagesNum = i + 1;
+		Object obj;
+		XRef* xref = doc->getXRef();
+		assert (xref);
+		Catalog cat (xref);
+		if (1 > cat.getNumPages())
+			return true;
+		cat.getPage(pagesNum)->getContents(&obj);
+		IndiRef rf;
+		rf.num = cat.getPageRef(pagesNum)->num;
+		rf.gen = cat.getPageRef(pagesNum)->gen;
+		////
+		
+		typedef vector<shared_ptr<CStream> > Streams;
+		Streams streams;
+		
+		if (obj.isStream ())
+		{
+			streams.push_back ( shared_ptr<CStream> (new CStream (*pdf, obj, rf)));
+			
+		}else if (obj.isArray())
+		{
+			Object o;
+			for (int i = 0; i < obj.arrayGetLength(); ++i)
+				streams.push_back ( shared_ptr<CStream> (new CStream (*pdf,  *(obj.arrayGet (i, &o)), rf)));
+		}
+		obj.free ();
+
+		CStreamXpdfReader<Streams> reader (streams);
+		::Object o;		
+		reader.open ();
+
+		while (!reader.eof())
+		{
+			// grab the next object
+			o.free ();
+			reader.getXpdfObject (o);
+
+			if (o.isCmd ("BI"))
+			{
+				if (!img (reader,pdf->getCXref()))
+					return false;
+				//testPrintDbg (debug::DBG_DBG, "end image...");
+			}
+			
+			if (o.isCmd ())
+			{
+				i++;
+				//oss << o.getCmd() << flush;
+			}else
+			{
+				//oss << "(" << o.getType() << ")" << flush;
+				//std::string tmp;
+				//utils::xpdfObjToString (o, tmp);
+				//oss << tmp << " " << flush;
+			}
+
+		}
+
+		reader.close ();
+		
+		oss << " Op#: " << i << flush;
+	
+	}
+	
+	return true;
+}
+
+
+//=====================================================================================
+
+bool
+printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
+
+		// Print content stream
+		string str;
+		if (page)
+		{
+			vector<boost::shared_ptr<CContentStream> > ccs;
+			page->getContentStreams (ccs);
+			assert (!ccs.empty());
+			shared_ptr<CContentStream> cs = ccs.front();
+			cs->getStringRepresentation (str);
+		}
+		else 
+			return false;
+		
+		//oss << "Content stream representation: " << str << endl;
+		_working (oss);
+	}
+	
+	return true;
+}
+
+
+//=========================================================================
+
+bool
+primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
+{
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	if (1 > pdf->getPageCount())
 		return true;
@@ -195,77 +331,42 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 	}
 	obj.free ();
 
-	int i = 0;
-	for (Streams::iterator it = streams.begin (); it != streams.end(); ++it )
-	{
-		::Object o;
-		CStream& str = *(*it);
+	CStreamXpdfReader<Streams> reader (streams);
 		
-		str.open ();
+	::Object o;
+		
+	reader.open ();
 
-		while (!str.eof())
+	// grab the next object
+	while (!reader.eof())
+	{
+		// grab the next object
+		o.free ();
+		reader.getXpdfObject (o);
+
+		if (o.isCmd ("BI"))
 		{
-			// grab the next object
-			o.free ();
-			str.getXpdfObject (o);
-
-			if (o.isCmd ("BI"))
-			{
-				if (!img (str))
-					return false;
-				//testPrintDbg (debug::DBG_DBG, "end image...");
-			}
-			
-			if (o.isCmd ())
-			{
-				i++;
-				//oss << o.getCmd() << flush;
-			}else
-			{
-				//oss << "(" << o.getType() << ")" << flush;
-				//std::string tmp;
-				//utils::xpdfObjToString (o, tmp);
-				//oss << tmp << " " << flush;
-			}
-
+			if (!img (reader,xref))
+				return false;
+			//testPrintDbg (debug::DBG_DBG, "end image...");
+		}
+		
+		if (o.isCmd ())
+		{
+			oss << " " << o.getCmd() << std::endl << flush;
+		}else
+		{
+		//	oss << "(" << o.getType() << ")" << flush;
+			std::string tmp;
+			utils::xpdfObjToString (o, tmp);
+			oss << " " << tmp << flush;
 		}
 
-		str.close ();
 	}
+	reader.close ();
 	
-	oss << "Operands count: " << i << flush;
-
 	return true;
-}
 
-
-//=====================================================================================
-
-bool
-printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
-{
-		OUTPUT << "CContentStream..." << endl;
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	if (1 > pdf->getPageCount())
-		return true;
-	boost::shared_ptr<CPage> page = pdf->getFirstPage ();
-
-	// Print content stream
-	string str;
-	if (page)
-	{
-		vector<boost::shared_ptr<CContentStream> > ccs;
-		page->getContentStreams (ccs);
-//		assert (!ccs.empty());
-		shared_ptr<CContentStream> cs = ccs.front();
-		cs->getStringRepresentation (str);
-	}
-	else 
-		return false;
-	
-	//oss << "Content stream representation: " << str << endl;
-
-	return true;
 }
 
 
@@ -277,6 +378,7 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 class TestCContentStream : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCContentStream);
+		CPPUNIT_TEST(TestPrimitivePrint);
 		CPPUNIT_TEST(TestOpcount);
 		CPPUNIT_TEST(TestPosition);
 		CPPUNIT_TEST(TestPrint);
@@ -320,6 +422,26 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
+	void TestPrimitivePrint ()
+	{
+		OUTPUT << "CContentStream..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			std::ofstream o;
+			o.open ("/dev/null");
+			TEST("primitive  print contentstream");
+			CPPUNIT_ASSERT (primitiveprintContentStream (o /*OUTPUT*/, (*it).c_str()));
+			o.close();
+			OK_TEST;
+		}
+	}
+
 	//
 	//
 	//
