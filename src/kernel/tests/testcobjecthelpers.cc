@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/29 00:11:52  misuj1am
+ *
+ * -- tests fixed / improved
+ *
  * Revision 1.1  2006/04/21 20:42:17  hockm0bm
  * start of cobjecthelpers tests
  *
@@ -53,6 +57,7 @@ void idCollectorTC()
 class TestCObjectHelpers: public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(TestCObjectHelpers);
+		CPPUNIT_TEST(Test);
 	CPPUNIT_TEST_SUITE_END();
 public:
 	/*
@@ -68,7 +73,7 @@ public:
 
 	void Test()
 	{
-		idCollectorTC();
+		//idCollectorTC();
 	}
 };
 

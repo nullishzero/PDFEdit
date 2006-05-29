@@ -32,7 +32,7 @@ textIter (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
-	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 		vector<boost::shared_ptr<CContentStream> > ccs;
@@ -71,7 +71,7 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
-	for (size_t i = 0; i < pagecount; ++i)
+	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
@@ -114,7 +114,7 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
-	for (size_t i = 5; i < pagecount; ++i)
+	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
@@ -129,11 +129,14 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 		//
 		// Delete some objects
 		//
+		if (opers.empty())
+			continue;
 		assert (!opers.empty());
+
 		PdfOperator::Iterator it = PdfOperator::getIterator (opers.front());
 		for (int i = 0; !it.isEnd() && i < 2; ++i)
 			it.next();
-		if (!it.isEnd())
+		if (it.isEnd())
 			return true;
 		assert (!it.isEnd());
 		for (int i = 0; i < 10; ++i)
@@ -210,7 +213,7 @@ delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
-	for (size_t i = 5; i < pagecount; ++i)
+	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
@@ -226,7 +229,10 @@ delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
 		//
 		// Delete all objects
 		//
+		if (opers.empty())
+			continue;
 		assert (!opers.empty());
+
 		PdfOperator::Iterator it = PdfOperator::getIterator (opers.front());
 		while (!it.isEnd())
 		{
@@ -334,7 +340,7 @@ insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
-	for (size_t i = 5; i < pagecount; ++i)
+	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
@@ -357,7 +363,10 @@ insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
 		//cs->getStringRepresentation (str);
 		_working (oss);
 		// Insert after 10. element, hopefully around text somewhere
+		if (opers.empty())
+			continue;
 		assert (!opers.empty());
+
 		PdfOperator::Iterator it = PdfOperator::getIterator (opers.front());
 		for (int i = 0; i < 10 && !it.isEnd(); it.next(), ++i)
 			;
@@ -387,7 +396,7 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecount = ppdf->getPageCount ();
 	ppdf.reset();
-	for (size_t i = 5; i < pagecount; ++i)
+	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
@@ -403,6 +412,9 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 		//
 		// Change text to red
 		//
+		if (opers.empty())
+			continue;
+		
 		assert (!opers.empty());
 		TextOperatorIterator it = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
 		while (!it.isEnd())

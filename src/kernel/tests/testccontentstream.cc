@@ -28,10 +28,13 @@ using namespace boost;
 bool
 setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-
-	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	size_t pagecnt = ppdf->getPageCount ();
+	ppdf.reset();
+	
+	for (size_t i = 0; i < pagecnt && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
@@ -88,11 +91,13 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 bool
 position (ostream& oss, const char* fileName, const Rectangle rc)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	size_t pagecnt = ppdf->getPageCount ();
+	ppdf.reset();
 	
-	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	for (size_t i = 0; i < pagecnt && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
-	
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 		
 		// parse the content stream
@@ -189,7 +194,7 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 	/// Intermezzo
 	boost::scoped_ptr<PDFDoc> doc  (new PDFDoc (new GString(fileName), NULL, NULL));
 
-	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		int pagesNum = i + 1;
 		Object obj;
@@ -223,11 +228,9 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 		::Object o;		
 		reader.open ();
 
+		reader.getXpdfObject (o);
 		while (!reader.eof())
 		{
-			// grab the next object
-			o.free ();
-			reader.getXpdfObject (o);
 
 			if (o.isCmd ("BI"))
 			{
@@ -248,6 +251,9 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 				//oss << tmp << " " << flush;
 			}
 
+			// grab the next object
+			o.free ();
+			reader.getXpdfObject (o);
 		}
 
 		reader.close ();
@@ -266,7 +272,7 @@ bool
 printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 
@@ -338,29 +344,43 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 	reader.open ();
 
 	// grab the next object
+	reader.getXpdfObject (o);
+	int i = 0;
 	while (!reader.eof())
 	{
-		// grab the next object
-		o.free ();
-		reader.getXpdfObject (o);
-
+		i++;
+		if (410 == i)
+		{
+			oss << " " << flush;
+			oss << " " << flush;
+		}
 		if (o.isCmd ("BI"))
 		{
 			if (!img (reader,xref))
 				return false;
+			oss << endl << " IMAGE DATA " << endl;
 			//testPrintDbg (debug::DBG_DBG, "end image...");
+	
+			// grab the next object
+			o.free ();
+			reader.getXpdfObject (o);
+			continue;
 		}
 		
 		if (o.isCmd ())
 		{
-			oss << " " << o.getCmd() << std::endl << flush;
+			oss << o.getCmd() << std::endl << flush;
 		}else
 		{
 		//	oss << "(" << o.getType() << ")" << flush;
 			std::string tmp;
 			utils::xpdfObjToString (o, tmp);
-			oss << " " << tmp << flush;
+			oss << tmp << " " << flush;
 		}
+
+		// grab the next object
+		o.free ();
+		reader.getXpdfObject (o);
 
 	}
 	reader.close ();
@@ -436,7 +456,7 @@ public:
 			std::ofstream o;
 			o.open ("/dev/null");
 			TEST("primitive  print contentstream");
-			CPPUNIT_ASSERT (primitiveprintContentStream (o /*OUTPUT*/, (*it).c_str()));
+			CPPUNIT_ASSERT (primitiveprintContentStream (/*o */OUTPUT, (*it).c_str()));
 			o.close();
 			OK_TEST;
 		}

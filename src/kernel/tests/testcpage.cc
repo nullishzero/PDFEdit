@@ -83,6 +83,8 @@ mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const ch
 			continue;
 		else
 			return false;
+
+		_working (oss);
 	}
 
 	return true;
@@ -97,7 +99,7 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 	// Open pdf and get the first page	
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
-	for (size_t i = 0; i < pdf->getPageCount(); ++i)
+	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 

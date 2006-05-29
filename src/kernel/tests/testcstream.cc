@@ -250,7 +250,7 @@ bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileNa
 
 		boost::shared_ptr<Object> str  (stream->_makeXpdfObject (),xpdf::object_deleter());
 		assert (NULL != str);
-		oss << "object type " << str->getTypeName() << flush;
+		//oss << "object type " << str->getTypeName() << flush;
 		assert (objStream == str->getType ());
 
 		int c;

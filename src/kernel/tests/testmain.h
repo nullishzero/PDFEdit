@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/05/29 00:11:53  misuj1am
+ *
+ * -- tests fixed / improved
+ *
  * Revision 1.18  2006/05/27 21:08:10  misuj1am
  *
  * -- tests improved
@@ -138,6 +142,9 @@ extern FileList fileList;
 
 // if set validation functions will output
 #define REALLY_ALL_OUTPUT	0
+
+// MAX. of tested pages on 1 pdf.. if many, could take hours to complete
+static const size_t TEST_MAX_PAGE_COUNT = 10;
 
 //
 // PrintDbg from tests
