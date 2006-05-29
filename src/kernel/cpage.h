@@ -88,22 +88,26 @@ struct PdfOpCmpRc
 	 * Is in in a range. 
 	 *
 	 * Our rectangle does NOT contain another rectangle if
-	 * max (xleft-our, xright-our) < min (xleft, xright)
-	 * min (xleft-our, xright-our) > max (xleft, xright)
-	 * max (yleft-our, yright-our) < min (yleft, yright)
-	 * min (yleft-our, yright-our) < max (yleft, yright)
+	 * min (xleft-our, xright-our) >= min (xleft, xright)
+	 * max (xleft-our, xright-our) <= max (xleft, xright)
+	 * min (yleft-our, yright-our) >= min (yleft, yright)
+	 * max (yleft-our, yright-our) <= max (yleft, yright)
 	 */
 	bool operator() (const Rectangle& rc) const
 	{
-		if ( std::min(rc_.xleft,rc_.xright) < std::min(rc.xleft, rc.xright) )
+		if ( std::min(rc_.xleft,rc_.xright) >= std::min(rc.xleft, rc.xright) ) {
 			return false;
-		if ( std::max(rc_.xleft,rc_.xright) > std::max(rc.xleft, rc.xright) )
+		}
+		if ( std::max(rc_.xleft,rc_.xright) <= std::max(rc.xleft, rc.xright) ) {
 			return false;
+		}
 
-		if ( std::min(rc_.yleft,rc_.yright) < std::min(rc.yleft, rc.yright) )
+		if ( std::min(rc_.yleft,rc_.yright) >= std::min(rc.yleft, rc.yright) ) {
 			return false;
-		if ( std::max(rc_.yleft,rc_.yright) > std::max(rc.yleft, rc.yright) )
+		}
+		if ( std::max(rc_.yleft,rc_.yright) <= std::max(rc.yleft, rc.yright) ) {
 			return false;
+		}
 
 		return true;
 	}
