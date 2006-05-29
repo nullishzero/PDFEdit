@@ -662,16 +662,46 @@ Data: %3
 <context>
     <name>gui::PropertyEditor</name>
     <message>
-        <source>This object does not have any directly editable properties</source>
-        <translation>Tento objekt nemá žádné přímo editovatelné položky</translation>
-    </message>
-    <message>
         <source>No object selected</source>
         <translation>Není zvolen žádný objekt</translation>
     </message>
     <message>
         <source>This type of object does not have any properties</source>
         <translation>Tento typ objektu nemá žádné položky</translation>
+    </message>
+    <message>
+        <source>This operator does not have any parameter</source>
+        <translation>Tento operátor nemá žádné parametry</translation>
+    </message>
+    <message>
+        <source>This operator does not have any directly editable parameters</source>
+        <translation>Tento operátor nemá žádné přímo měnitelné parametry</translation>
+    </message>
+    <message>
+        <source>This %1 is empty</source>
+        <translation>Tento %1 je prázdný</translation>
+    </message>
+    <message>
+        <source>dictionary</source>
+        <comment>property type</comment>
+        <translation>slovník</translation>
+    </message>
+    <message>
+        <source>This %1 does not have any directly editable properties</source>
+        <translation>Tento %1 nemá žádné přímo měnitelné položky</translation>
+    </message>
+    <message>
+        <source>stream</source>
+        <comment>property type</comment>
+        <translation>stream</translation>
+    </message>
+    <message>
+        <source>This array is empty</source>
+        <translation>Toto pole je prázdné</translation>
+    </message>
+    <message>
+        <source>This array does not have any directly editable properties</source>
+        <translation>Toto pole nemá žádné přímo měnitelné položky</translation>
     </message>
 </context>
 <context>

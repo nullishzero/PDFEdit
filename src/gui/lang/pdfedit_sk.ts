@@ -663,11 +663,41 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This object does not have any directly editable properties</source>
+        <source>This type of object does not have any properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This type of object does not have any properties</source>
+        <source>This operator does not have any parameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This operator does not have any directly editable parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dictionary</source>
+        <comment>property type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This %1 does not have any directly editable properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>stream</source>
+        <comment>property type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This array is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This array does not have any directly editable properties</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
