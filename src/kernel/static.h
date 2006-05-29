@@ -122,13 +122,29 @@ struct GenRect
 	GenRect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
 	GenRect (Coord x1, Coord y1, Coord x2, Coord y2) : xleft(x1), yleft(y1), xright(x2), yright(y2) {}
 
-	// Helper functions
+	/** 
+	 * True if the rectangle contains the point.
+	 * 
+	 * @param x x-coordinate of point.
+	 * @param y y-coordinate of point.
+	 *
+	 * @return True if the specified point is in the rectangle, false otherwise.
+	 */
 	bool contains (Coord x, Coord y) const
 	{
 		//kernelPrintDbg (debug::DBG_DBG, "x: " << x << " y: " << y << " Rect:" << *this);
 		return ( std::min(xleft,xright) <= x && x <= std::max(xleft,xright) 
 				&& std::min (yleft,yright) <= y && y <= std::max(yleft,yright) );
 	}
+
+	/** Equality operator. */
+	bool operator== (const GenRect<Coord>& rc) const
+	{
+		return (xleft == rc.xleft && xright == rc.xright &&
+				yleft == rc.yleft && yright == rc.yright);
+	}
+
+	
 };
 
 /** Our specialization of rect. */
