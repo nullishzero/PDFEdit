@@ -268,9 +268,7 @@ void PageSpace::newSelection ( const QRect & r) {
 			actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
 		}
 	}
-	guiPrintDbg(debug::DBG_DBG, "" );
 	for (std::vector<boost::shared_ptr<PdfOperator> >::iterator it = ops.begin(); it != ops.end() ; ++it) {
-	guiPrintDbg(debug::DBG_DBG, "" );
 		Rectangle bbox;
 		std::string name;
 		std::string strr;
@@ -279,8 +277,12 @@ void PageSpace::newSelection ( const QRect & r) {
 		bbox = (*it)->getBBox( );
 		guiPrintDbg(debug::DBG_DBG, name << " ("<< strr <<") ,    ( " << bbox << " )" );
 
-		if (boundingbox.xleft == COORDINATE_INVALID)
-			boundingbox = bbox;
+		if (boundingbox.xleft == COORDINATE_INVALID) {
+			boundingbox.xleft = std::min(bbox.xleft, bbox.xright);
+			boundingbox.yleft = std::min(bbox.yleft, bbox.yright);
+			boundingbox.xright = std::max(bbox.xleft, bbox.xright);
+			boundingbox.yright = std::max(bbox.yleft, bbox.yright);
+		}
 		if (std::min( bbox.xleft, bbox.xright ) < boundingbox.xleft)
 			boundingbox.xleft = std::min( bbox.xleft, bbox.xright );
 		if (std::min( bbox.yleft, bbox.yright ) < boundingbox.yleft)
@@ -290,12 +292,16 @@ void PageSpace::newSelection ( const QRect & r) {
 		if (std::max( bbox.yright, bbox.yright ) > boundingbox.yright)
 			boundingbox.yright = std::max( bbox.yright, bbox.yright );
 	}
-	guiPrintDbg(debug::DBG_DBG, "" );
 	if (boundingbox.xleft != COORDINATE_INVALID) {
+		guiPrintDbg(debug::DBG_DBG, "boundingbox: ("<<boundingbox<<")" );
 /*ZMAZAT*/	actualSelectedObjects = &actualSelectedObjects;
-		QRect pom_rc( (int)floor(boundingbox.xleft - 1), (int)floor(boundingbox.yleft -1),
-				(int)ceil(boundingbox.xright - boundingbox.xleft + 2),
-				(int)ceil(boundingbox.yright - boundingbox.yleft + 2));
+		QPoint leftTop, rightBottom;
+		Point lt( floor(boundingbox.xleft - 1), floor(boundingbox.yleft -1) ),
+			  rb( ceil(boundingbox.xright + 1),
+				  ceil(boundingbox.yright + 1));
+		convertPdfPosToPixmapPos( lt, leftTop );
+		convertPdfPosToPixmapPos( rb, rightBottom );
+		QRect pom_rc( leftTop, rightBottom );
 		pageImage->setSelectedRect( pom_rc );
 	} else {
 /*ZMAZAT*/	actualSelectedObjects = NULL;
@@ -343,6 +349,19 @@ void PageSpace::resizeSelection ( const QRect &, const QRect & ) {
 	// TODO
 }
 
+void PageSpace::convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos ) {
+	if (actualPage == NULL) {
+		pos.setX(0);
+		pos.setY(0);
+		return ;
+	}
+	pos.setX( (int) pdfPos.x );
+	if (! displayParams.upsideDown)
+		pos.setY( (int) (actualPagePixmap->height() - pdfPos.y) );
+	else
+		pos.setY( (int) pdfPos.y );
+}
+
 void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
 	if (actualPage == NULL) {
 		pdfPos.x = 0;
@@ -350,7 +369,7 @@ void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
 		return ;
 	}
 	pdfPos.x = pos.x();
-	if (displayParams.upsideDown)
+	if (! displayParams.upsideDown)
 		pdfPos.y = actualPagePixmap->height() - pos.y();
 	else
 		pdfPos.y = pos.y();

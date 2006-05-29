@@ -21,6 +21,7 @@ class PageSpace : public QWidget {
 		PageSpace (QWidget *parent=0, const char *name=0);
 		virtual ~PageSpace ( );
 		void convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos );
+		void convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos );
 	public slots:
 		void refresh ( QSPage * pageToView = NULL, QSPdf * pdf = NULL );	// if pageToView is NULL, refresh actual page
 		void refresh ( QSPage * pageToView, /*QSPdf * */ QObject * pdf );	// same as above
