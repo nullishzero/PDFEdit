@@ -801,7 +801,7 @@ namespace {
 			{"BDC", 2, {setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
 					unknownUpdate, "" },	
 			{"BI",  -1, {setNoneBitsShort ()}, 
-					opBIUpdate, "" },	
+					opBIUpdate, "EI" },	
 			{"BMC", 1, {setNthBitsShort (pName)}, 
 					unknownUpdate, "" },	
 			{"BT",  0, {setNoneBitsShort ()}, 
@@ -1097,27 +1097,32 @@ namespace {
 	{
 		kernelPrintDbg (DBG_DBG, "");
 		xpdf::XpdfObject dict;
-		dict->initDict ((XRef*)NULL); // BE careful, we do not have (need) valid xref
+		dict->initDict ((XRef*)NULL); // We do not have (need) valid xref, but be CAREFUL
+
+		// Get first object
+		Object o;
+		streamreader.getXpdfObject (o);
 
 		//
 		// Get the inline image dictionary
 		// 
-		Object o;
 		while (!streamreader.eof() && !o.isCmd("ID")) 
 		{
-			streamreader.getXpdfObject (o);
 			if (o.isName())
 			{
 				char* key = ::copyString (o.getName());
 				streamreader.getXpdfObject (o);
-				if (o.isEOF() || o.isError()) 
+				if (streamreader.eof()) 
 				{
 					gfree (key);
 					assert (!"Bad inline image.");
 					throw CObjInvalidObject ();
 				}
 				dict->dictAdd (key, &o);
+			
 			}
+			
+			streamreader.getXpdfObject (o);
 		}
 		// Free ID
 		o.free ();
@@ -1182,16 +1187,13 @@ namespace {
 		
 		// Get first object
 		Object o;
+		streamreader.getXpdfObject (o);
 
 		//
 		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
 		//
 		while (!streamreader.eof()) 
 		{
-			o.free ();
-			// Grab the next object
-			streamreader.getXpdfObject (o);
-
 			if (o.isCmd ())
 			{// We have an OPERATOR
 
@@ -1286,6 +1288,10 @@ namespace {
 				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
 				operands.push_back (pIp);
 			}
+
+			o.free ();
+			// Grab the next object
+			streamreader.getXpdfObject (o);
 
 		} // while (!obj.isEOF())
 		

@@ -1296,9 +1296,6 @@ CObjectStream<Checker>::open ()
 	::XRef* xref = (NULL != this->getPdf ()) ? this->getPdf ()->getCXref() : NULL;
 	// Create xpdf object from current stream and parse it
 	parser = new ::Parser (xref, new ::Lexer(xref, _makeXpdfObject()));
-
-	// Get an object
-	parser->getObj (&curObj);
 }
 
 //
@@ -1356,13 +1353,14 @@ CObjectStream<Checker>::getXpdfObject (::Object& obj)
 
 	if (NULL != parser)
 	{
-		curObj.copy (&obj);
-
 		curObj.free ();
+		
 		parser->getObj (&curObj);
 		assert (!curObj.isNone ());
 		assert (!curObj.isNull ());
 		assert (!curObj.isError ());
+		
+		curObj.copy (&obj);
 
 	}else
 	{

@@ -27,14 +27,32 @@ using namespace utils;
 namespace {
 // =====================================================================================
 
-using namespace boost;
-	
 //
 // Begin tag and end tag are added by composite pdfoperator
 //
 const string CINLINEIMAGE_BEGIN = "";
 const string CINLINEIMAGE_MIDDLE = "ID";
 const string CINLINEIMAGE_END = "";
+/*
+ * Decode or ASCII85Decode as one of its filters, the ID operator should be followed
+ * by a single white-space character; the next character after that is interpreted as
+ * the first byte of image data.
+ *
+ * The problem is, that xpdf does not read this character. (or at least when
+ * it's \0)
+ * 
+ * One pdf used \0 so we use it too.
+ *
+ * REMARK: We have to use char, because
+ * 
+ * string nul = "\0";
+ * char cnul = '\0';
+ *
+ * str = "123";
+ * str += nul; // "123" size: 3 
+ * str += cnul // "123\0" size: 4
+ */	
+const char CINLINEIMAGE_MIDDLE_CHAR_AFTER_ID = '\0';
 	
 // =====================================================================================
 } // namespace
@@ -103,6 +121,8 @@ CInlineImage::getStringRepresentation (std::string& str) const
 	}
 	
 	str += CINLINEIMAGE_MIDDLE;
+	str += CINLINEIMAGE_MIDDLE_CHAR_AFTER_ID;
+	
 	for (Buffer::const_iterator it = buffer.begin(); it != buffer.end(); ++it)
 		str +=  static_cast<std::string::value_type> (*it);
 	str += CINLINEIMAGE_END;

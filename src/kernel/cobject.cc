@@ -395,6 +395,10 @@ namespace {
 			oss << obj.getRefNum() << CREF_MIDDLE << obj.getRefGen() << CREF_SUFFIX;
 			break;
 
+		case objCmd:
+			oss << obj.getCmd ();
+			break;
+			
 		default:
 			assert (!"Bad object passed to simpleXpdfObjToString.");
 			throw XpdfInvalidObject (); 
