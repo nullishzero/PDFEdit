@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/05/29 10:30:04  hockm0bm
+ * writeContent handles string with CharBuffer too
+ *
  * Revision 1.7  2006/05/23 19:04:03  hockm0bm
  * OldStylePdfWriter::writeTrailer
  *         - signature changed returns position after stored xref section
@@ -119,26 +122,47 @@ using namespace boost;
 		size_t objPos=stream.getPos();
 		offTable.insert(OffsetTab::value_type(ref, objPos));		
 		
+		// some object types require special handling
 		std::string objPdfFormat;
+		switch(obj->getType())
+		{
+			// stream and string require special handling, because it may 
+			// contain binary data in the buffer part and so possibly \0. 
+			// So we are using CharBuffer
+			case objStream:
+				{
+				CharBuffer charBuffer;
+				size_t size=streamToCharBuffer(*obj, ref, charBuffer, true);
+				stream.putLine(charBuffer.get(), size);
+				}
+				break;
+			case objString:
+				{
+				CharBuffer charBuffer;
+				size_t size=stringToCharBuffer(*obj, charBuffer);
+				stream.putLine(charBuffer.get(), size);
+				}
+				break;
+
+			// all other types are ok
+			default:
+				{
+				// object is not a stream and so normal string can be used for 
+				// text representation.
+				xpdfObjToString(*obj, objPdfFormat);
+
+				// we have to add some more information to write indirect 
+				// object (this includes header and footer
+				std::string indirectFormat;
+				IndiRef indiRef(ref);
+				createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
+				stream.putLine(indirectFormat.c_str());
+				}
+		}
 		if(!obj->isStream())
 		{
-			// object is not a stream and so normal string can be used for text
-			// representation.
-			xpdfObjToString(*obj, objPdfFormat);
-
-			// we have to add some more information to write indirect object (this
-			// includes header and footer
-			std::string indirectFormat;
-			IndiRef indiRef(ref);
-			createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
-			stream.putLine(indirectFormat.c_str());
 		}else
 		{
-			// stream requires special handling, because contains binary data in
-			// the buffer part and so possibly \0. So we are using ByteB
-			CharBuffer charBuffer;
-			size_t size=streamToCharBuffer(*obj, ref, charBuffer, true);
-			stream.putLine(charBuffer.get(), size);
 		}
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		
