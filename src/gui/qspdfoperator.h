@@ -69,12 +69,6 @@ public slots:
  void pushBack(QSPdfOperator *op,QSPdfOperator *prev);
  void pushBack(QObject *op,QObject *prev);
  /*-
-  Put operator op behind this one
- TODO: what is this function exactly doing?
- */
- void putBehind(QSPdfOperator *op);
- void putBehind(QObject *op);
- /*-
   Remove this PDF operator from its ContentStream.
   After calling this function, this object became invalid and must not be used further,
   doing so may result in an exception

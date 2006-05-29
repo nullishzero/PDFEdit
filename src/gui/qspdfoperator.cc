@@ -176,18 +176,6 @@ void QSPdfOperator::pushBack(QObject *op,QObject *prev) {
  obj->push_back(qop->get(),qprev->get());
 }
 
-/** Call PdfOperator::putBehind() */
-void QSPdfOperator::putBehind(QSPdfOperator *op) {
- pdfobjects::PdfOperator::putBehind(obj,op->get());
-}
-
-/** putBehind: QSA bug workaround */
-void QSPdfOperator::putBehind(QObject *op) {
- QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
- if (!qop) return; //Invalid parameter
- pdfobjects::PdfOperator::putBehind(obj,qop->get());
-}
-
 /** get Pdf Operator shared pointer held inside this class. Not exposed to scripting */
 boost::shared_ptr<PdfOperator> QSPdfOperator::get() {
  return obj;
