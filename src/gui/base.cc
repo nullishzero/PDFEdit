@@ -385,6 +385,25 @@ void Base::help(const QString &topic/*=QString::null*/) {
 }
 
 /**
+ Load some PDF file without replacing currently opened file in GUI
+ script should also take care to close the file after he does not need to use it anymore
+ @param name Name of file to load
+ @param advancedMode Set to true to use Advanced mode whilwe opening the file
+ @return Loaded document, or NULL if error occured while loading it.
+*/
+QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/) {
+ if (name.isNull()) return NULL;
+ //TODO: return pdf wrapper with 'destructive close' behavior
+ CPdf::OpenMode mode=advancedMode?(CPdf::Advanced):(CPdf::ReadWrite);
+ try {
+  CPdf *opened=CPdf::getInstance(name,mode);
+  return new QSPdf(opened,this,true);
+ } catch (...) {
+  return NULL;
+ }
+}
+
+/**
  Brings up informational messagebox with given message
  @param msg Message to display
  */

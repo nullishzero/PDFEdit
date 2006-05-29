@@ -88,6 +88,14 @@ public slots: //This will be all exported to scripting
   Print all functions that are present in current script interpreter to command window
  */
  void functions();
+ /*-
+  Load a PDF file without replacing currently opened file in GUI.
+  Script can manipulate the PDF file as necessary, but should close it with unloadPdf() method
+  after it does not need to use it anymore.
+  If advancedMode is set to true, document is opened in "advanced mode"
+  (more advanced, but also more dangerous changes to it are possible)
+ */
+ QSPdf* loadPdf(const QString &name,bool advancedMode=false);
  /*- Show simple messagebox with specified message and wait until user dismiss it */
  void message(const QString &msg);
  /*- Return true if the document was modified since it was opened or last saved, false otherwise. */

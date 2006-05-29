@@ -19,10 +19,17 @@ using namespace pdfobjects;
 class QSPdf : public QSCObject {
  Q_OBJECT
 public:
- QSPdf(CPdf *_pdf,Base *_base);
+ QSPdf(CPdf *_pdf,Base *_base,bool destructive=false);
  virtual ~QSPdf();
  CPdf* get() const;
 public slots:
+ /*-
+  Close the document.
+  If the document was opened directly in editor window (with openFile function), it won't be closed,
+  you must use closeFile() function for this.
+  However, all documents loaded with loadPdf function should be closed using this function.
+ */
+ void unloadPdf();
  /*-
   Save this document under different name.
   Does not modify name of file in editor, original file is still edited, not this one.
@@ -69,6 +76,8 @@ public slots:
 private:
  /** Object held in class*/
  CPdf *obj;
+ /** Destructive flag - if the PDF file may be closed with the unloadPdf() function */
+ bool destructive;
 };
 
 } // namespace gui

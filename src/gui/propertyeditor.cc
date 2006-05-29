@@ -30,7 +30,6 @@ using namespace util;
  @param name name of widget (currently unused)
  */
 PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
- obj.reset();
  //create list of properties in this editor;
  list=new QStringList();
  //create property dictionary
@@ -66,7 +65,6 @@ void PropertyEditor::createLayout() {
  gridl->setColStretch(0,0);
  gridl->setColStretch(1,1);
 }
-
 
 /** Called on resizing of property editor */
 void PropertyEditor::resizeEvent (QResizeEvent *e) {
@@ -114,7 +112,6 @@ void PropertyEditor::clear() {
  //Needed, grid will never shrink
  deleteLayout();
  createLayout();
-
 }
 
 /** called on update of value from a property
@@ -172,7 +169,6 @@ bool PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
 void PropertyEditor::setObject(const QString &message) {
  setUpdatesEnabled( FALSE );
  clear();
- obj.reset();
 
  QString name="the_label";
  QLabel *label=new QLabel(message,grid);
@@ -187,13 +183,42 @@ void PropertyEditor::setObject(const QString &message) {
  setUpdatesEnabled( TRUE );
 }
 
-/** set IProperty object to be active (edited) in this editor
+/**
+ Set PdfOperator to be active (edited) in this editor.
+ Operands will be edited
+ @param pdfOp Object to set for editing in the widget
+*/
+void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
+ setUpdatesEnabled( FALSE );
+ clear();
+ if (!pdfOp.get()) {
+  setObject(tr("No object selected"));
+ } else {
+  PdfOperator::Operands list;
+  pdfOp->getParameters(list);
+  PdfOperator::Operands::iterator it;
+  int i=0;
+  for(it=list.begin();it!=list.end();++it) { // for each property
+   i++;
+   addProperty(QObject::tr("Parameter")+" "+QString::number(i),*it);
+  }
+  if (!i) { //No subproperties at all
+   setObject(tr("This operator does not have any parameter"));
+  } else if (!nObjects) { //No editable subproperties
+   setObject(tr("This operator does not have any directly editable parameters"));
+  }
+  grid->update();
+ }
+ setUpdatesEnabled( TRUE );
+}
+
+/**
+ Set IProperty object to be active (edited) in this editor
  @param pdfObject Object to set for editing in the widget
- */
+*/
 void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
  setUpdatesEnabled( FALSE );
  clear();
- obj=pdfObject;
  //TODO: need property flags/mode
  if (!pdfObject.get()) {
   setObject(tr("No object selected"));
@@ -202,14 +227,17 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   vector<string> list;
   dict->getAllPropertyNames(list);
   vector<string>::iterator it;
+  int i=0;
   for( it=list.begin();it!=list.end();++it) { // for each property
+   i++;
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    guiPrintDbg(debug::DBG_DBG,"HAVE: " << *it);
    addProperty(*it,property);
   }
-  if (!nObjects) { //No subproperties
-   setObject(tr("This object does not have any directly editable properties"));
-   //TODO: diplay object type
+  if (!i) { //No subproperties at all
+   setObject(tr("This %1 is empty").arg(tr("dictionary","property type")));
+  } else if (!nObjects) { //No editable subproperties
+   setObject(tr("This %1 does not have any directly editable properties").arg(tr("dictionary","property type")));
   }
   grid->update();
  } else if (pdfObject->getType()==pStream) {	//Object is CCtream -> edit its properties.
@@ -218,27 +246,33 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   vector<string> list;
   cstream->getAllPropertyNames(list);
   vector<string>::iterator it;
+  int i=0;
   for( it=list.begin();it!=list.end();++it) { // for each property
+   i++;
    boost::shared_ptr<IProperty> property=cstream->getProperty(*it);
    guiPrintDbg(debug::DBG_DBG,"HAVE: " << *it);
    addProperty(*it,property);
   }
-  if (!nObjects) { //No subproperties
-   setObject(tr("This object does not have any directly editable properties"));
-   //TODO: diplay object type
+  if (!i) { //No subproperties at all
+   setObject(tr("This %1 is empty").arg(tr("stream","property type")));
+  } else if (!nObjects) { //No editable subproperties
+   setObject(tr("This %1 does not have any directly editable properties").arg(tr("stream","property type")));
   }
   grid->update();
  } else if (pdfObject->getType()==pArray) {	//Object is CArray
   CArray *ar=dynamic_cast<CArray*>(pdfObject.get());
   size_t n=ar->getPropertyCount();
   QString name;
-  for(size_t i=0;i<n;i++) { //for each property
+  size_t i=0;
+  for(;i<n;i++) { //for each property
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
    name.sprintf("[ %4d ]",i);
    addProperty(name,property);
   }
-  if (!nObjects) { //No subproperties
-   setObject(tr("This object does not have any directly editable properties"));
+  if (!i) { //No subproperties at all
+   setObject(tr("This array is empty"));
+  } else if (!nObjects) { //No editable subproperties
+   setObject(tr("This array does not have any directly editable properties"));
   }
  } else { //Simple or unknown type
   setObject(tr("This type of object does not have any properties")+" ("+getTypeName(pdfObject)+")");
@@ -261,7 +295,6 @@ void PropertyEditor::setObject(const QString &name,boost::shared_ptr<IProperty> 
   setUpdatesEnabled( FALSE );
   clear();
   //Editing dictionary from parent, but showing only one object
-  obj.reset();//parent;
   if (!addProperty(name,pdfObject)) { //Unknown type
    setObject(tr("This type of object does not have any properties")+" ("+getTypeName(pdfObject)+")");
   }

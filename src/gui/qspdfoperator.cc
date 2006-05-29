@@ -152,7 +152,12 @@ void QSPdfOperator::setPrev(QObject *op) {
  - any attempt to use it will probably end up with an exception
  */
 void QSPdfOperator::remove() {
- obj->getContentStream()->deleteOperator(obj);
+ CContentStream* cStream=obj->getContentStream();
+ if (!cStream) {
+  //This operator is not in any content stream, so technically, it is already removed from it :)
+  return;
+ }
+ cStream->deleteOperator(obj);
  treeNeedReload();
 }
 

@@ -8,6 +8,7 @@
 #include <qgrid.h>
 #include <qlayout.h>
 #include <iproperty.h>
+#include <pdfoperators.h>
 
 class QScrollView;
 class QLabel;
@@ -32,6 +33,7 @@ public slots:
  void setObject(const QString &message);
  void setObject(boost::shared_ptr<IProperty> pdfObject);
  void setObject(const QString &name,boost::shared_ptr<IProperty> pdfObject);
+ void setObject(boost::shared_ptr<PdfOperator> pdfOp);
  void update(Property *p);
 signals:
  /** Signal emitted when any property is modified
@@ -43,9 +45,7 @@ private:
  void deleteLayout();
  void createLayout();
 private:
- /** Object currently edited */
- boost::shared_ptr<IProperty> obj;
- /** Number of objects in proiperty editor */
+ /** Number of objects in property editor */
  int nObjects;
  /** Grid holding all property editing widgets*/
  QFrame *grid;

@@ -26,6 +26,7 @@
 #include "commandwindow.h"
 #include "additemdialog.h"
 #include "treeitemabstract.h"
+#include "treeitempdfoperator.h"
 #include "GlobalParams.h"
 #include "base.h"
 
@@ -237,6 +238,11 @@ void PdfEditWindow::setObject(__attribute__((unused)) const QString &name,boost:
 /** Called upon selecting item in treeview */
 void PdfEditWindow::setObject() {
  selectedTreeItem=tree->getSelectedItem();
+ TreeItemPdfOperator *pdfOp=dynamic_cast<TreeItemPdfOperator*>(selectedTreeItem);
+ if (pdfOp) {
+  // Give operator to property editor to edit its parameters
+  prop->setObject(pdfOp->getObject());
+ }
 }
 
 /**
