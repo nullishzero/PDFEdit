@@ -821,6 +821,7 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
 	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), dict, true);
 	// Set filters
 	stream = stream->addFilters (dict);
+	gfree(dict);
 	stream->reset ();
 	::Object* obj = XPdfObjectFactory::getInstance ();
 	obj->initStream (stream);
@@ -914,6 +915,39 @@ simpleValueToString (const std::string& val, std::string& str)
 				break;
 	}
 }
+
+size_t stringToCharBuffer (Object & stringObject, CharBuffer & outputBuf)
+{
+using namespace std;
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "");
+	if(stringObject.getType()!=objString)
+	{
+		utilsPrintDbg(DBG_ERR, "Given object is not a string. Object type="<<stringObject.getType());
+		return 0;
+	}
+
+	// gets all bytes from xpdf string object, makes string valid (to some
+	// escaping)
+	::GString * s=stringObject.getString(); 
+	string str;
+	for(int i=0; i<s->getLength(); i++)
+		str.append(1, s->getChar(i));
+	string validStr;
+	simpleValueToString<pString>(str, validStr);
+
+	// creates buffer and fills it byte after byte from valid string
+	// representation
+	size_t len=validStr.length();
+	char* buf = char_buffer_new (len);
+	outputBuf = CharBuffer (buf, char_buffer_delete()); 
+	for(size_t i=0; i<len; i++)
+		buf[i]=validStr[i];
+	
+	return len;
+}
+
 template void simpleValueToString<pString> (const string& val, string& str);
 template void simpleValueToString<pName> (const string& val, string& str);
 //
@@ -1049,12 +1083,18 @@ streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf
 	return len;
 }
 
+
 size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect)
 {
 using namespace std;
 using namespace debug;
 
 	utilsPrintDbg(DBG_DBG, "");
+	if(streamObject.getType()!=objStream)
+	{
+		utilsPrintDbg(DBG_ERR, "Given object is not a stream. Object type="<<streamObject.getType());
+		return 0;
+	}
 	
 	// gets stream dictionary string at first
 	string dict;

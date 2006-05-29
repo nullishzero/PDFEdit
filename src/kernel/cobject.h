@@ -1591,6 +1591,18 @@ template <PropertyType Tp> void complexValueToString (const typename PropertyTra
 template<typename ITERATOR, typename OUTITERATOR>
 void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out);
 
+/** Makes a valid pdf representation of xpdf string object.
+ * @param stringObject Xpdf object with objString type.
+ * @param outputBuf Output buffer where final representation is stored.
+ *
+ * This method creates correct pdf representation of given xpdf string object.
+ * It should be used for string objects which may contain NUL characters inside.
+ * Otherwise simpleValueToString method can be used.
+ * 
+ * @return Number of bytes stored in outputBuf.
+ */
+size_t stringToCharBuffer(Object & stringObject, CharBuffer & outputBuf);
+
 /**
  * Makes a valid pdf representation of a stream using streamToString function.
  * 
