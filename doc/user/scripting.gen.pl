@@ -17,6 +17,7 @@ sub convert_definition {
  $def=~s/=(QString::null|NULL|false)//g;# default null/false - remove
  $def=~s/QString\s+/string /g;		# QString -> string
  $def=~s/QStringList\s+/string[] /g;	# QStringList -> string[]
+ $def=~s/Q(Color)\s+/\1 /g;		# QT types
  $def=~s/QS(Menu|Page|ContentStream|IProperty|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
  #trim unnecessary blank characters
  $def=~s/^\s+//;
