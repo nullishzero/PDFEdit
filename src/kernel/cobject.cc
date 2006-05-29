@@ -126,13 +126,35 @@ namespace {
 			 val = obj.getNum ();}
 	};
 
+	/** Reader for xpdf string objects.
+	 * This functor enables conversion  from Storage type (xpdf string object)
+	 * to given Val typed container. Val has to implement clear and append
+	 * methods.
+	 */
 	template<typename Storage, typename Val>
 	struct xpdfStringReader
 	{public:
+			/** Convers given xpdf string object to string stored to given val
+			 * representation.
+			 * @param obj Xpdf object to convert (must by objString).
+			 * @param val Value storage output.
+			 *
+			 * Copies all bytes (including 0 bytes) from given object
+			 * representing string value.
+			 */
 			void operator() (Storage obj, Val val)
-			{if (objString != obj.getType())
-				throw ElementBadTypeException ("Xpdf object is not string.");
-			 val = obj.getString ()->getCString();}
+			{
+				if (objString != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not string.");
+			 
+				// clears val content and add all bytes
+				// getCString is not suitable because string may contain 0
+				// characters
+				val.clear();
+				GString * xpdfString=obj.getString();
+				for(int i=0; i< xpdfString->getLength(); i++)
+					val.append(1, xpdfString->getChar(i));
+			}
 	};
 
 	template<typename Storage, typename Val>
