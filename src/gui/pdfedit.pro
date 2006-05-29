@@ -56,6 +56,8 @@ HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h
 SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc dialog.cc
 HEADERS += stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h
 SOURCES += stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc
+HEADERS += dialogoption.h  fileoption.h  fontoption.h
+SOURCES += dialogoption.cc fileoption.cc fontoption.cc
 
 #Help window
 HEADERS += helpwindow.h
@@ -66,8 +68,8 @@ HEADERS += treeitemabstract.h  treeitemref.h  treeitemarray.h  treeitemsimple.h 
 SOURCES += treeitemabstract.cc treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
 HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.h  treeitemcontentstream.h
 SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc treeitemcontentstream.cc
-HEADERS += treeitempdfoperator.h  draglistview.h
-SOURCES += treeitempdfoperator.cc draglistview.cc
+HEADERS += treeitempdfoperator.h  draglistview.h  multitreewindow.h
+SOURCES += treeitempdfoperator.cc draglistview.cc multitreewindow.cc
 
 #Property editor
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h

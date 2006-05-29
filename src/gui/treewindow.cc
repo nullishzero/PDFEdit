@@ -12,6 +12,7 @@
 #include "treedata.h"
 #include "pdfutil.h"
 #include "treeitempdf.h"
+#include "treeitemcontentstream.h"
 #include "treeitem.h"
 #include "base.h"
 
@@ -32,8 +33,9 @@ TODO:
  @param base Scripting base
  @param parent Parent widget
  @param name Name of this widget (not used, just passed to QWidget)
+ @param multi MultiTreeWindow holding this tree
 */
-TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
+TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
  tree=new DragListView(this,"tree_view");
  tree->setSorting(-1);
@@ -48,13 +50,13 @@ TreeWindow::TreeWindow(Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):
  tree->setSelectionMode(QListView::Single/*Extended*/);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
- data=new TreeData(this,tree,base);
+ data=new TreeData(this,tree,base,multi);
  QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
  QObject::connect(tree,SIGNAL(doubleClicked(QListViewItem*,const QPoint &,int)),this,SLOT(mouseDoubleClicked(QListViewItem*,const QPoint &,int)));
 }
 
 /** Reload part of tree that have given item as root (including that item)
- Reloading will stop at reference targets
+ Reloading will stop at unopened reference targets
  @param item root of subtree to reload
  */
 void TreeWindow::reloadFrom(TreeItemAbstract *item) {
@@ -74,24 +76,24 @@ TreeItemAbstract* TreeWindow::root() {
  return rootItem;
 }
 
-/** Slot called when someone click with mouse button anywhere in the tree
-@param button Which button(s) are clicked (1=left, 2=right, 4=middle)
-@param item Which item is clicked upon (NULL if clicked outside item)
-@param coord Coordinates of mouseclick
-@param column Clicked in which item's column? (if clicked on item)
+/**
+ Slot called when someone click with mouse button anywhere in the tree
+ @param button Which button(s) are clicked (1=left, 2=right, 4=middle)
+ @param item Which item is clicked upon (NULL if clicked outside item)
+ @param coord Coordinates of mouseclick
+ @param column Clicked in which item's column? (if clicked on item)
 */
 void TreeWindow::mouseClicked(int button,QListViewItem* item,__attribute__((unused)) const QPoint &coord,__attribute__((unused)) int column) {
-// guiPrintDbg(debug::DBG_DBG,"Clicked in tree: " << button);
  emit treeClicked(button,item);
 }
 
-/** Slot called when someone doubleclick with left mouse button anywhere in the tree
-@param item Which item is clicked upon (NULL if clicked outside item)
-@param coord Coordinates of mouseclick
-@param column Clicked in which item's column? (if clicked on item)
+/**
+ Slot called when someone doubleclick with left mouse button anywhere in the tree
+ @param item Which item is clicked upon (NULL if clicked outside item)
+ @param coord Coordinates of mouseclick
+ @param column Clicked in which item's column? (if clicked on item)
 */
 void TreeWindow::mouseDoubleClicked(QListViewItem* item,__attribute__((unused)) const QPoint &coord,__attribute__((unused)) int column) {
-// guiPrintDbg(debug::DBG_DBG,"DoubleClicked in tree:");
  emit treeClicked(8,item);
 }
 
@@ -126,7 +128,8 @@ void TreeWindow::settingUpdate(QString key) {
  }
 }
 
-/** Called upon changing selection in the tree window
+/**
+ Called upon changing selection in the tree window
  @param item The item that was selected
  */
 void TreeWindow::treeSelectionChanged(QListViewItem *item) {
@@ -134,15 +137,11 @@ void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  TreeItem* it=dynamic_cast<TreeItem*>(item);
  selected=dynamic_cast<TreeItemAbstract*>(item);
  emit itemSelected();
- if (!it) { //Not holding IProperty
-  //TODO: Similarly for TreeItemAbstract
-  guiPrintDbg(debug::DBG_WARN,"Not a TreeItem: " << item->text(0));
-  //todo: handle this type properly
+ if (!it) {
+  //Not holding IProperty, so special IProperty signal is not emitted
   return;
  }
- //holding IProperty
-// guiPrintDbg(debug::DBG_DBG,"Is a TreeItem: " << item->text(0));
- //We have a TreeItem -> emit signal with selected object
+ //holding IProperty -> emit another signal too
  emit objectSelected(item->text(0),it->getObject());
 }
 
@@ -180,7 +179,6 @@ void TreeWindow::clear() {
  @param fileName Name of PDF document (will be shown in treeview as name of root element)
  */
 void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
- guiPrintDbg(debug::DBG_DBG,"Loading PDF into tree");
  assert(pdfDoc);
  clear();
  rootName=fileName;
@@ -190,21 +188,37 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  setUpdatesEnabled( TRUE );
 }
 
-/** Init contents of treeview from given IProperty (dictionary, etc ...)
+/**
+ Init contents of treeview from given IProperty (dictionary, etc ...)
  @param doc IProperty used to initialize treeview
- */
-void TreeWindow::init(boost::shared_ptr<IProperty> doc) {
- guiPrintDbg(debug::DBG_DBG,"Loading Iproperty into tree");
+ @param pName Name of the property passed
+*/
+void TreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName/*=QString::null*/) {
  clear();
  if (doc.get()) {
   setUpdatesEnabled( FALSE );
-  rootItem=TreeItem::create(data,tree,doc); 
+  rootItem=TreeItem::create(data,tree,doc,pName); 
   rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
 }
 
-/** Resets th tree to be empty and show nothing */
+/**
+ Init contents of treeview from given Content Stream 
+ @param cs Content Stream used to initialize treeview
+ @param pName Name of the content stream passed
+*/
+void TreeWindow::init(boost::shared_ptr<CContentStream> cs,const QString &pName/*=QString::null*/) {
+ clear();
+ if (cs.get()) {
+  setUpdatesEnabled( FALSE );
+  rootItem=new TreeItemContentStream(data,tree,cs,pName); 
+  rootItem->setOpen(TRUE);
+  setUpdatesEnabled( TRUE );
+ }
+}
+
+/** Resets the tree to be empty and show nothing */
 void TreeWindow::uninit() {
  clear();
 }

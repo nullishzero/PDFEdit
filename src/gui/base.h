@@ -160,6 +160,11 @@ public slots: //This will be all exported to scripting
  */
  void saveWindowState();
  /*-
+  Save currently edited document, while creating new revision in the process.
+  Return true if document was saved, false if it was not saved for any reason.
+ */
+ bool saveRevision();
+ /*-
   Set new debugging verbosity level. Accept same parameter as -d option on commandline
   (either number or symbolic constant)
  */

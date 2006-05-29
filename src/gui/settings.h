@@ -13,8 +13,6 @@ class QString;
 namespace gui {
 
 class Settings : public QObject {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
  ~Settings();
@@ -34,6 +32,7 @@ public slots:
  void write(const QString &key,const QString &value);
  void write(const QString &key, int value);
  void remove(const QString &key);
+ void removeAll(const QString &key);
  QString expand(QString s);
  QString getFullPathName( QString nameOfPath , QString fileName );
 signals:

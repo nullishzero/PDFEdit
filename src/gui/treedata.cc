@@ -13,15 +13,18 @@ class TreeWindow;
 
 using namespace std;
 
-/** Constructor of TreeData
+/**
+ Constructor of TreeData
  @param parent TreeWindow holding these data
  @param tree Tree holding list items
  @param base Scripting base
+ @param multi MultiTreeWindow holding given tree
 */
-TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base) {
+TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow *multi) {
  _parent=parent;
  _tree=tree;
  _base=base;
+ _multi=multi;
  //ShowData
  show_stream=show_outline=show_page=show_odict=show_dict=show_simple=false;
  update();
@@ -181,10 +184,18 @@ Base* TreeData::base() {
 
 /**
  Return parent tree (QListView) associated with this TreeData
- @return paent QListView
+ @return parent QListView
 */
 QListView* TreeData::tree() {
  return _tree;
+}
+
+/**
+ Return parent multitree (MultiTreeWindow) associated with this TreeData
+ @return parent MultiTreeWindow
+*/
+MultiTreeWindow* TreeData::multi() {
+ return _multi;
 }
 
 /** default destructor */

@@ -19,7 +19,8 @@
 
 namespace gui {
 
-/** Get current directory from File Dialog
+/**
+ Get current directory from File Dialog
  @param fd File Dialog
  @return current directory
  */
@@ -30,23 +31,53 @@ QString getDir(QFileDialog &fd) {
  return name;
 }
 
-/** Invoke "open file" dialog. Wait for user to select one existing file and return its name.
+/**
+ Generic "Open file" dialog.
+ Wait for user to select one existing file and return its name.
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
- @return selected Filename*/
-QString openFileDialog(QWidget* parent) {
+ @param caption Caption used in dialog title
+ @param settingName Key in settings used to save/load dialog window position
+ @param savePath Key in settings used to identify where to save last used directory in the dialog
+ @param filters Filters available to user to restrict shown filetypes in dialog
+ @return selected Filename (or NULL)
+*/
+QString openFileDialog(QWidget* parent,const QString &caption/*=QString::null*/,const QString &settingName/*=QString::null*/,const QString &filters/*=QString::null*/,const QString &savePath/*=QString::null*/) {
  guiPrintDbg(debug::DBG_DBG,"openFileDialog invoked");
  QFileDialog fd(parent,"openfiledialog",TRUE);
- fd.setFilter(QObject::tr("PDF files (*.pdf)"));
+ if (!filters.isNull()) {
+  //Set filters if filters specified
+  fd.setFilter(filters);
+ }
  fd.setShowHiddenFiles(TRUE);
- fd.setCaption(QObject::tr("Open file ..."));
- fd.setDir(globalSettings->read("history/filePath","."));
+ if (!caption.isNull()) fd.setCaption(caption);
+ if (savePath.isNull()) {
+  //No save path specified -> start in current directory
+  fd.setDir(".");
+ } else {
+  //Try to set last used saved path, if it exists
+  fd.setDir(globalSettings->read("history/path/"+savePath,"."));
+ }
  fd.setMode(QFileDialog::ExistingFile);
+
+ // "Infinite" loop, to restart the dialog if necessary (invalid file selected, etc ... )
  for(;;) {
-  globalSettings->restoreWindow(&fd,"file_dialog");
-  if (fd.exec()==QDialog::Accepted) {
-   globalSettings->saveWindow(&fd,"file_dialog");
-   if (globalSettings->readBool("history/save_filePath",true)) globalSettings->write("history/filePath",getDir(fd));
+  if (!settingName.isNull()) {
+   // Restore window position from settings if applicable
+   globalSettings->restoreWindow(&fd,settingName);
+  }
+  if (fd.exec()==QDialog::Accepted) {	//Dialog accepted
+   if (!settingName.isNull()) {
+    // Save window position to settings if applicable
+    globalSettings->saveWindow(&fd,settingName);
+   }
+   if (!savePath.isNull()) {
+    //Save the path if desired
+    if (globalSettings->readBool("history/save_filePath",true)) {
+     //Note that there is only one central setting "save paths in dialog" for all dialog types
+     globalSettings->write("history/path/"+savePath,getDir(fd));
+    }
+   }
    QString name=fd.selectedFile();
     if (QFileInfo(name).isDir()) { //directory was selected
      //TODO: test this !
@@ -59,53 +90,114 @@ QString openFileDialog(QWidget* parent) {
  }
 }
 
-/** Invoke "save file" dialog. Wait for user to select or type a single file and return its name.
+/**
+ Invoke "open file" dialog for PDF files. Specialization of openFileDialog
+ \see openFileDialog
+ @param parent Parent widget - will be disabled during the dialog.
+ @return selected Filename (or NULL)
+*/
+QString openFileDialogPdf(QWidget* parent) {
+ return openFileDialog(parent,QObject::tr("Open file ..."),"file_dialog",QObject::tr("PDF files (*.pdf)"),"filePath");
+}
+
+/**
+ Invoke generic "save file" dialog. Wait for user to select or type a single file and return its name.
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
  @param oldname Name of file to be saved - if specified, this name will be pre-selected.
  @param askOverwrite If true and selected file exists, user will be asked to confirm overwriting it
- @return selected Filename*/
-QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/) {
+ @param caption Caption used in dialog title
+ @param settingName Key in settings used to save/load dialog window position
+ @param savePath Key in settings used to identify where to save last used directory in the dialog
+ @param filters Filters available to user to restrict shown filetypes in dialog
+ @return selected Filename (or NULL)
+*/
+QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/,const QString &caption/*=QString::null*/,const QString &settingName/*=QString::null*/,const QString &filters/*=QString::null*/,const QString &savePath/*=QString::null*/) {
  guiPrintDbg(debug::DBG_DBG,"saveFileDialog invoked");
  QFileDialog fd(parent,"savefiledialog",TRUE);
- fd.setFilter(QObject::tr("PDF files (*.pdf)"));
+ if (!filters.isNull()) {
+  //Set filters if filters specified
+  fd.setFilter(filters);
+ }
  fd.setShowHiddenFiles(TRUE);
- fd.setCaption(QObject::tr("Save file as ..."));
- fd.setDir(globalSettings->read("history/filePath","."));
+ if (!caption.isNull()) fd.setCaption(caption);
+ if (savePath.isNull()) {
+  //No save path specified -> start in current directory
+  fd.setDir(".");
+ } else {
+  //Try to set last used saved path, if it exists
+  fd.setDir(globalSettings->read("history/path/"+savePath,"."));
+ }
  if (!oldname.isNull()) fd.setSelection(oldname);
  fd.setMode(QFileDialog::AnyFile);
+ //Name that will hold the file (if some is picked)
+ QString name;
+ // "Infinite" loop, to restart the dialog if necessary (invalid file selected, etc ... )
  for(;;) {
-  globalSettings->restoreWindow(&fd,"file_dialog");
+  if (!settingName.isNull()) {
+   // Restore window position from settings if applicable
+   globalSettings->restoreWindow(&fd,settingName);
+  }
   if (fd.exec()==QDialog::Accepted) {
-   globalSettings->saveWindow(&fd,"file_dialog");
-   QString name=fd.selectedFile();
+   if (!settingName.isNull()) {
+    // Save window position to settings if applicable
+    globalSettings->saveWindow(&fd,settingName);
+   }
+   name=fd.selectedFile();
    //TODO: check if not directory
-   if (askOverwrite && QFile::exists(name)) { //File exists : ask if it should be overwritten
+   if (askOverwrite && QFile::exists(name)) {
+    //File exists : ask if it should be overwritten
     int answer=QMessageBox::question(parent,APP_NAME,QObject::tr("File \"")+name+QObject::tr("\" already exists. Overwrite?"),
                                      QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),1,2);
-    if (answer==0) { //Yes, overwrite is ok
-     if (globalSettings->readBool("history/save_filePath",true)) globalSettings->write("history/filePath",getDir(fd));
-     return name;		  
+    if (answer==0) {				 //Yes, overwrite is ok
+     //Break from the cycle mean valid file was selected
+     break;
     }
-    if (answer==1) continue;		  //No, restart dialog
-    if (answer==2) return QString::null;//Cancel, do not overwrite and exit
+    if (answer==1) continue;			//No, restart dialog and ask for another file
+    if (answer==2) return QString::null;	//Cancel, do not overwrite and exit
    }
-   if (globalSettings->readBool("history/save_filePath",true)) globalSettings->write("history/filePath",getDir(fd));
    //Not asking about overwrite
-   return name;
+   //Break from the cycle mean valid file was selected
+   break;
   }
   //Dialog cancelled
-  globalSettings->saveWindow(&fd,"file_dialog");
+  if (!settingName.isNull()) {
+   // Save window position to settings if applicable
+   globalSettings->saveWindow(&fd,settingName);
+  }
   return QString::null;
+ } //End of not-so-infinite for cycle
+
+ if (!savePath.isNull()) {
+  //Save the path if desired
+  if (globalSettings->readBool("history/save_filePath",true)) {
+   //Note that there is only one central setting "save paths in dialog" for all dialog types
+   globalSettings->write("history/path/"+savePath,getDir(fd));
+  }
  }
+ return name;
 }
 
-/** Invoke "read string" dialog. Show message and wait for user to type any string, 
+/**
+ Invoke "save file" dialog for PDF files. Specialization of saveFileDialog
+ \see saveFileDialog
+ @param parent Parent widget - will be disabled during the dialog.
+ @param oldname Name of file to be saved - if specified, this name will be pre-selected.
+ @param askOverwrite If true and selected file exists, user will be asked to confirm overwriting it
+ @return selected Filename (or NULL)
+*/
+QString saveFileDialogPdf(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/) {
+ return saveFileDialog(parent,oldname,askOverwrite,QObject::tr("Save file as ..."),"file_dialog",QObject::tr("PDF files (*.pdf)"),"filePath");
+}
+
+/**
+ Invoke "read string" dialog. Show message and wait for user to type any string, 
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
  @param message Message to show in the dialog
  @param def Default text that will be pre-typed in the dialog
- @return typed text, or NULL if dialog cancelled */
+ @return typed text, or NULL if dialog cancelled
+ */
 QString readStringDialog(QWidget* parent,const QString &message, const QString &def) {
  bool ok=FALSE;
  QString res=QInputDialog::getText(APP_NAME,message,QLineEdit::Normal,def,&ok,parent,"read_string");

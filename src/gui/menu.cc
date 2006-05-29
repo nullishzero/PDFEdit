@@ -376,6 +376,7 @@ ToolBar* Menu::loadToolbar(const QString &name,bool visible/*=true*/) throw (Inv
 */
 ToolBarList Menu::loadToolBars() throw (InvalidMenuException) {
  QString line=globalSettings->read("gui/toolbars");
+ line=line.simplifyWhiteSpace();
  toolbarNames=explode(TOOLBARLIST_SEPARATOR,line);
  bool visible;
  for (unsigned int i=0;i<toolbarNames.count();i++) {

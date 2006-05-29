@@ -171,14 +171,14 @@ bool TreeItemRef::validChild(const QString &name,QListViewItem *oldChild) {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemRef::deepReload(const QString &name,QListViewItem *oldChild) {
+bool TreeItemRef::deepReload(const QString &childName,QListViewItem *oldItem) {
  CPdf* pdf=obj->getPdf();
  if (!pdf) return false; //No document opened -> cannot parse references
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
  cref->getPropertyValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
- TreeItem* it=dynamic_cast<TreeItem*>(oldChild);
+ TreeItem* it=dynamic_cast<TreeItem*>(oldItem);
  if (!it) return false;//Should not happen
  it->setObject(rp);
  return true;

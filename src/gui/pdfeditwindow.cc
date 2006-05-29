@@ -21,7 +21,7 @@
 #include "version.h"
 #include "dialog.h"
 #include "propertyeditor.h"
-#include "treewindow.h"
+#include "multitreewindow.h"
 #include "menu.h"
 #include "commandwindow.h"
 #include "additemdialog.h"
@@ -179,7 +179,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  cmdLine->setInterpreter(base->interpreter(),base);
 
  //object treeview
- tree=new TreeWindow(base,splProp);
+ tree=new MultiTreeWindow(base,splProp);
 
  //Property editor
  prop=new PropertyEditor(splProp);
@@ -267,6 +267,7 @@ void PdfEditWindow::changeRevision(int revision) {
  document->changeRevision(revision);
  prop->clear();
  pagespc->refresh(selectedPageNumber,base->getQSPdf());//Try to keep on the same page in the new revision
+ tree->clearSecondary();//TODO: secondary trees may survive, but we have no observers on stream contents. It is easier to close them for safety
  tree->reload();
  setTitle(revision);
  emit revisionChanged(revision);
@@ -302,8 +303,10 @@ void PdfEditWindow::settingUpdate(QString key) {
    else    tb->hide();
   return;
  }
- if (key=="history/save_filePath") { //Do not remember path -> remove path
-  if (!globalSettings->readBool("history/save_filePath")) globalSettings->remove("history/filePath");
+ if (key=="history/save_filePath") { //Do not remember path -> remove stored path(s)
+  if (!globalSettings->readBool("history/save_filePath")) {
+   globalSettings->removeAll("history/path");
+  }
   return;
  }
  if (key.startsWith("gui/CommandLine/")) {
@@ -338,23 +341,32 @@ bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
 /**
  Save currently edited document to disk
  If the document have no name (newly opened/generated document), it is solicited from used via dialog.
+ @param newRevision If true, create new revision while saving
  @return true if saved succesfully, false if failed to save because of any reason
 */
-bool PdfEditWindow::save() {
+bool PdfEditWindow::save(bool newRevision/*=false*/) {
  if (!document) {
   base->print(tr("No document to save"));
   return false;
  }
  if (fileName.isNull()) { //We need a name
+  //We don't know the filename and there is nothing like "save as",
+  //so we are a bit out of luck here ... 
+  assert(0);//Should never get here anyway
   QString name=base->fileSaveDialog(filename());
   if (name.isNull()) return false; //Still no name? Not saving ...
-  document->save(name);
+  document->save(newRevision);
  //TODO: if failure saving return false;
   setFileName(name);
   return true;
  }
- //TODO: handle failure and nummfileName
- document->save();
+ document->save(newRevision);
+ guiPrintDbg(debug::DBG_DBG,"Saved document");
+ if (newRevision) {
+  guiPrintDbg(debug::DBG_DBG,"Emit new revision signal");
+  //Reload the revision list
+  emit documentChanged(document);
+ }
  //TODO: if failure saving return false;
  return true;
 }

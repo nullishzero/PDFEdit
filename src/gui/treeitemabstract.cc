@@ -81,10 +81,10 @@ void TreeItemAbstract::setOpen(bool open) {
         so explicitly reloading the item might be unnecessary too
 
  @param childName name of (old and new) treeitem
- @param oldChild reference to old child tree item
+ @param oldItem reference to old child tree item
  @return true if successful, false otherwise
 */
-bool TreeItemAbstract::deepReload(__attribute__((unused)) const QString &childName,__attribute__((unused)) QListViewItem *oldChild) {
+bool TreeItemAbstract::deepReload(__attribute__((unused)) const QString &childName,__attribute__((unused)) QListViewItem *oldItem) {
  //By default this feature is not supported. Reimplement this method to support it.
  return false;
 }

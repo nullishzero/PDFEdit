@@ -36,7 +36,8 @@ using namespace util;
 AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
  : SelfDestructiveWidget(parent,parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
  //Parent is also killer -> this is always toplevel widget
- globalSettings->restoreWindow(this,"add_item_dialog"); 
+ settingName="add_item_dialog";
+ globalSettings->restoreWindow(this,settingName); 
  setCaption(tr("Add object"));
  l=new QVBoxLayout(this,4,4);
  qb=new QHBox(this,"additem_buttons");
@@ -105,6 +106,8 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  CArray* arr=dynamic_cast<CArray*>(it.get());
  QHBoxLayout *lu=new QHBoxLayout(target,4,4);
  if (dict) {		//initialize items for adding to Dict
+  settingName="add_item_dialog_dict";
+  globalSettings->restoreWindow(this,settingName);
   usingArray=false;
   lu->addWidget(new QLabel(tr("Property name"),target));
   propertyName=new QLineEdit("",target);
@@ -112,6 +115,8 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
   //No validation for entered name - kernel does validation (and correction), so it is unnecessary
   //Just the string should not be empty
  } else if (arr) {	//initialize items for adding to Array
+  settingName="add_item_dialog_array";
+  globalSettings->restoreWindow(this,settingName);
   usingArray=true;
   lu->addWidget(new QLabel(tr("Object will be appended at end of array"),target));
   //TODO: insert at arbitrary place in array
@@ -261,7 +266,7 @@ void AddItemDialog::commitClose() {
 
 /** default destructor */
 AddItemDialog::~AddItemDialog() {
- globalSettings->saveWindow(this,"add_item_dialog"); 
+ globalSettings->saveWindow(this,settingName); 
 }
 
 } // namespace gui

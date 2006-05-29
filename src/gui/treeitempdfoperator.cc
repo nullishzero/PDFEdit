@@ -84,7 +84,7 @@ bool TreeItemPdfOperator::validChild(const QString &name,QListViewItem *oldChild
 }
 
 //See TreeItemAbstract for description of this virtual method
-ChildType TreeItemPdfOperator::getChildType(const QString &name) {
+ChildType TreeItemPdfOperator::getChildType(__attribute__((unused)) const QString &name) {
  return 1;//Just one type : PDF Operator or Operand
 }
 
@@ -104,10 +104,10 @@ QStringList TreeItemPdfOperator::getChildNames() {
  params.clear();
  std::copy(paramList.begin(),paramList.end(),std::back_inserter(params));
  QStringList childs;
- for (int o=0;o<params.size();o++) {
-  childs+=QString::number(-o-1);
+ for (size_t o=0;o<params.size();o++) {
+  childs+=QString::number(-((int)o)-1);
  }
- for (int i=0;i<op.size();i++) {
+ for (size_t i=0;i<op.size();i++) {
   childs+=QString::number(i);
  }
  //TODO: support property editor on operator

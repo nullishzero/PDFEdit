@@ -21,7 +21,7 @@
 #include "qspdf.h"
 #include "settings.h"
 #include "treeitemabstract.h"
-#include "treewindow.h"
+#include "multitreewindow.h"
 #include "util.h"
 #include "version.h"
 #include <qfile.h>
@@ -345,7 +345,7 @@ QString Base::filename() {
  */
 QString Base::fileOpenDialog() {
  guiPrintDbg(debug::DBG_DBG,"fileOpenDialog");
- return openFileDialog(w);
+ return openFileDialogPdf(w);
 }
 
 /**
@@ -355,7 +355,7 @@ QString Base::fileOpenDialog() {
  */
 QString Base::fileSaveDialog(const QString &oldName/*=QString::null*/) {
  guiPrintDbg(debug::DBG_DBG,"fileSaveDialog");
- QString ret=saveFileDialog(w,oldName);
+ QString ret=saveFileDialogPdf(w,oldName);
  return ret;
 }
 
@@ -506,6 +506,11 @@ void Base::run(QString scriptName) {
 /** \copydoc PdfEditWindow::save */
 bool Base::save() {
  return w->save();
+}
+
+/** \copydoc PdfEditWindow::save */
+bool Base::saveRevision() {
+ return w->save(true);
 }
 
 /** \copydoc PdfEditWindow::saveCopy */

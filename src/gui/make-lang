@@ -2,12 +2,26 @@
 
 # Update language files specified in projectfile according to sources
 ./menugenerator -trans
+
+# process countable items localization
 grep 'countString.*".*".*".*"' *.cc |perl -e '
  while (<>) {
   if (/"(.*)"[^"]+"(.*)"/) {
    print "QT_TRANSLATE_NOOP(\"QObject\",\"$1\",\"1\")\n";
    print "QT_TRANSLATE_NOOP(\"QObject\",\"$2\",\"2-4\")\n";
    print "QT_TRANSLATE_NOOP(\"QObject\",\"$2\",\"5+\")\n";
+  }
+ }
+' >>.menu-trans.h
+
+# process localizable strings in init.qs
+grep "tr(" init.qs | perl -e '
+ while (<>) {
+  while (s/tr\("([^"]+)"\)//) {
+   print "QT_TRANSLATE_NOOP(\"QObject\",\"$1\")\n";
+  }
+  while (s/tr\("([^"]+)","([^"]+)"\)//) {
+   print "QT_TRANSLATE_NOOP(\"QObject\",\"$1\",\"$2\")\n";
   }
  }
 ' >>.menu-trans.h

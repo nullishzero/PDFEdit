@@ -216,9 +216,9 @@ void setDebugLevel(const QString &param){
 /**
  Return correctly localized string telling count of some items.
  Some languages (for example Czech) have more plural forms (2-4 items / 5 or more items), which is handled here
- @param count Count of item
+ @param count Count of items
  @param singular English signular form of the noun, without space before the word
- @param singular English plural form of the noun
+ @param plural English plural form of the noun
  @return Localized string
 */
 QString countString(int count,QString singular,QString plural) {

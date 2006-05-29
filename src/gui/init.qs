@@ -26,11 +26,17 @@ function func_save() {
  save();
 }
 
+/** Save njew revision (action from menu/toolbar) */
+function func_saverev() {
+ saveRevision();
+ print(tr("New revision of document created"));
+}
+
 /** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
 function func_savecopy() {
  var name=fileSaveDialog(filename());
  if (!name) return;
- print("Saving as "+name);
+ print(tr("Saving as")+" "+name);
  saveCopy(name);
 }
 
@@ -41,7 +47,7 @@ function func_load() {
   var name=fileOpenDialog();
   if (name) openFile(name);
  } catch (e) {
-  print("Error occured while loading file");
+  print(tr("Error occured while loading file")+" "+name);
  }
 }
 
@@ -111,7 +117,7 @@ function onTreeDoubleClick() {
 
 /** Save page/selection as image */
 function savePageImage(onlySelection) {
- if (!PageSpace.saveImageWithDialog(onlySelection)) print("Image was not saved!");
+ if (!PageSpace.saveImageWithDialog(onlySelection)) print(tr("Image was not saved!"));
 }
 
 /** Callback for click with right mouse button in page */

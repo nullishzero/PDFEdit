@@ -29,6 +29,8 @@ private:
  QWidget* addTab(const QString name);
  void addOption(QWidget *otab,const QString &caption,Option *opt);
  void addOption(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
+ void addOptionFile(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
+ void addOptionFont(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
  void addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values);
  void addOptionInt(QWidget *otab,const QString &caption,const QString &key,int defValue=0);
  void addOptionBool(QWidget *otab,const QString &caption,const QString &key,bool defValue=false);

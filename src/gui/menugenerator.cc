@@ -117,6 +117,7 @@ void MenuGenerator::setAvail(const QString &name) {
  avail[name]+=1;
  if (avail[name]>=2) return; //already seen this one
  QString line=set->readEntry("gui/items/"+name);
+ line=line.simplifyWhiteSpace();
  if (line.startsWith("list ")) { // List of values - a submenu, first is name of submenu, others are items in it
   line=line.remove(0,5);
   QStringList qs=explode(gui::MENULIST_SEPARATOR,line);
@@ -151,7 +152,9 @@ void MenuGenerator::setAvail(const QString &name) {
 void MenuGenerator::check() {
  set->beginGroup(APP_KEY);
  QStringList items=set->entryList("gui/items");
- QStringList toolb=QStringList::split(",",set->readEntry("gui/toolbars"));
+ QString toolBarList=set->readEntry("gui/toolbars");
+ toolBarList=toolBarList.simplifyWhiteSpace();
+ QStringList toolb=QStringList::split(",",toolBarList);
 
  //Toolbars are root items
  for (QStringList::Iterator it=toolb.begin();it!=toolb.end();++it) {
@@ -184,8 +187,7 @@ void MenuGenerator::addLocString(const QString &id,const QString &name) {
  cout << id << " = " << name << endl;
 }
 
-/** Produce dummy header used for menu items localization
-*/
+/** Produce dummy header used for menu items localization */
 void MenuGenerator::translate() {
  check();
  QString trx=trans.join("\n")+"\n";

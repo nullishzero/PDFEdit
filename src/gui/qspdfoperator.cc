@@ -12,6 +12,8 @@
 
 namespace gui {
 
+using namespace pdfobjects;
+
 /** Construct wrapper with given PdfOperator */
 QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> _cs,Base *_base) : QSCObject ("PdfOperator",_base) {
  obj=_cs;
@@ -103,15 +105,69 @@ void QSPdfOperator::loadChilds() {
  numParams=params.size(); 
 }
 
+/** Call PdfOperator::setNext() */
+void QSPdfOperator::setNext(QSPdfOperator *op) {
+ obj->setNext(op->get());
+}
 
-/** Remove itself from the stream. After this operation, the operator cannot be used - it will delete itself */
+/** Call PdfOperator::setPrev() */
+void QSPdfOperator::setPrev(QSPdfOperator *op) {
+ obj->setPrev(op->get());
+}
+
+/** setNext: QSA bug workaround */
+void QSPdfOperator::setNext(QObject *op) {
+ QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ if (!qop) return; //Invalid parameter
+ obj->setNext(qop->get());
+}
+
+/** setPrev: QSA bug workaround */
+void QSPdfOperator::setPrev(QObject *op) {
+ QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ if (!qop) return; //Invalid parameter
+ obj->setPrev(qop->get());
+}
+
+/**
+ Remove itself from the stream. After this operation, the operator must not be used
+ - any attempt to use it will probably end up with an exception
+ */
 void QSPdfOperator::remove() {
  obj->getContentStream()->deleteOperator(obj);
  treeNeedReload();
- //TODO: Need to figure out two things:
- //TODO: 1. how will QSA survive deletion of this object
- //TODO: 2. what if reference to this operator is elsewhere
- delete this;
+}
+
+/** Call PdfOperator::push_back() */
+void QSPdfOperator::pushBack(QSPdfOperator *op,QSPdfOperator *prev) {
+ obj->push_back(op->get(),prev->get());
+}
+
+/**
+ Call PdfOperator::push_back()
+ QSA bug workaround version
+*/
+void QSPdfOperator::pushBack(QObject *op,QObject *prev) {
+ QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ QSPdfOperator *qprev=dynamic_cast<QSPdfOperator*>(prev);
+ obj->push_back(qop->get(),qprev->get());
+}
+
+/** Call PdfOperator::putBehind() */
+void QSPdfOperator::putBehind(QSPdfOperator *op) {
+ pdfobjects::PdfOperator::putBehind(obj,op->get());
+}
+
+/** putBehind: QSA bug workaround */
+void QSPdfOperator::putBehind(QObject *op) {
+ QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ if (!qop) return; //Invalid parameter
+ pdfobjects::PdfOperator::putBehind(obj,qop->get());
+}
+
+/** get Pdf Operator shared pointer held inside this class. Not exposed to scripting */
+boost::shared_ptr<PdfOperator> QSPdfOperator::get() {
+ return obj;
 }
 
 } // namespace gui

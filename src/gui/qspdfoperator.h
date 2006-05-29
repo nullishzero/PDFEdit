@@ -20,15 +20,6 @@ public:
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
- /*- Return text representation of this pdf operator */
- QString getText();
- /*- Return name of this pdf operator */
- QString getName();
- /*-
-  Remove this PDF operator from its ContentStream.
-  After calling this function, this object became invalid and must not be used further
- */
- void remove();
  /*-
   Returns child operator with given number from this operator
   Use data fetched by loadChilds method, if it wasn't called, it is called before returning the child
@@ -39,6 +30,10 @@ public slots:
   Use data fetched by loadChilds method, if it wasn't called, it is called before returning the count
  */
  int childCount();
+ /*- Return text representation of this pdf operator */
+ QString getText();
+ /*- Return name of this pdf operator */
+ QString getName();
  /*-
   Get all child operators under this operator and store them.
   Get the operators with child and childCount functions.
@@ -47,6 +42,14 @@ public slots:
   list of child operators stored in this object
  */
  void loadChilds();
+ /*-
+  Get all parameters (operands) under this operator and store them.
+  Get the operators with param and paramCount functions.
+  Usually it is not necessary to call this method, as these funtions will call
+  it automatically on first need, but you may call it explicitly to reload the
+  list of parameters stored in this object
+ */
+ void loadParams();
  /*-
   Returns parameter with given number from this operator
   Use data fetched by loadParams method, if it wasn't called, it is called before returning the parameter
@@ -58,13 +61,35 @@ public slots:
  */
  int paramCount();
  /*-
-  Get all parameters (operands) under this operator and store them.
-  Get the operators with param and paramCount functions.
-  Usually it is not necessary to call this method, as these funtions will call
-  it automatically on first need, but you may call it explicitly to reload the
-  list of parameters stored in this object
+ Add an operator oper to the end of composite prev
+ TODO: what is this function exactly doing?
  */
- void loadParams();
+ void pushBack(QSPdfOperator *op,QSPdfOperator *prev);
+ void pushBack(QObject *op,QObject *prev);
+ /*-
+ put operator op behind this one
+ TODO: what is this function exactly doing?
+ */
+ void putBehind(QSPdfOperator *op);
+ void putBehind(QObject *op);
+ /*-
+  Remove this PDF operator from its ContentStream.
+  After calling this function, this object became invalid and must not be used further,
+  doing so may result in an exception
+ */
+ void remove();
+ /*-
+ Set next operator
+ TODO: what is this function exactly doing?
+ */
+ void setNext(QSPdfOperator *op);
+ void setNext(QObject *op);
+ /*-
+ Set previous operator
+ TODO: what is this function exactly doing?
+ */
+ void setPrev(QSPdfOperator *op);
+ void setPrev(QObject *op);
 private:
  /** Object held in class*/
  boost::shared_ptr<PdfOperator> obj;

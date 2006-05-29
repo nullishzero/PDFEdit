@@ -10,14 +10,17 @@ namespace gui {
 class TreeItem;
 class TreeItemRef;
 class TreeWindow;
+class MultiTreeWindow;
 class Base;
 
 class TreeData {
 public:
+ TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow *multi);
  TreeData(TreeWindow *parent,QListView *tree,Base *base);
  ~TreeData();
  TreeWindow* parent();
  QListView* tree();
+ MultiTreeWindow* multi();
  Base* base();
  void add(TreeItemRef *it);
  void remove(TreeItemRef *it);
@@ -40,6 +43,8 @@ public:
 private:
  /** Tree window holding these data */
  TreeWindow *_parent;
+ /** MultiTreeWindow holding specified window */
+ MultiTreeWindow *_multi;
  /** List view from inside the tree window */
  QListView *_tree;
  /** Scripting base */

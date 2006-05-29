@@ -28,7 +28,6 @@ QSStream::~QSStream() {
  @return Buffer with characters from string
 */
 const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
- //TODO: convert to/from unicode more intelligently
  CStream::Buffer b(s.length());
  if (s.isNull()) return b;
  for (unsigned int i=0;i<s.length();i++) {
@@ -36,12 +35,6 @@ const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
   b[i]=(char)(s[i].latin1());
  }
  assert(s.length()==b.size());
- //TODO: debug, remove
- for (unsigned int i=0;i<MIN(2,s.length());i++) {
-  int bb=b[i];
-  int ss=s[i];
-  guiPrintDbg(debug::DBG_DBG,"cmp [" << i << "] " << bb << " <- " << ss);
- }
  return b;
 }
 
@@ -53,7 +46,6 @@ const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
  @return QString with characters from buffer
 */
 QString QSStream::stringFromBuffer(const CStream::Buffer &b) {
- //TODO: convert to/from unicode more intelligently
  QString s;
  s.reserve(b.size());
  for (unsigned int i=0;i<b.size();i++) {
@@ -61,12 +53,6 @@ QString QSStream::stringFromBuffer(const CStream::Buffer &b) {
   s.append((char)(b[i]));
  }
  assert(s.length()==b.size());
- //TODO: debug, remove
- for (unsigned int i=0;i<MIN(2,s.length());i++) {
-  int bb=b[i];
-  int ss=QChar(s[i]);
-  guiPrintDbg(debug::DBG_DBG,"cmp [" << i << "] " << bb << " -> " << ss);
- }
  return s;
 }
 
@@ -81,12 +67,6 @@ QByteArray QSStream::arrayFromBuffer(const CStream::Buffer &b) {
   a[i]=b[i];
  }
  assert(a.count()==b.size());
- //TODO: debug, remove
- for (unsigned int i=0;i<MIN(2,b.size());i++) {
-  int bb=a[i];
-  int ss=b[i];
-  guiPrintDbg(debug::DBG_DBG,"cmp [" << i << "] " << bb << " <- " << ss);
- }
  return a;
 }
 
@@ -101,12 +81,6 @@ const CStream::Buffer QSStream::arrayToBuffer(const QByteArray &a) {
   b[i]=a[i];
  }
  assert(a.count()==b.size());
- //TODO: debug, remove
- for (unsigned int i=0;i<MIN(2,a.count());i++) {
-  int bb=a[i];
-  int ss=b[i];
-  guiPrintDbg(debug::DBG_DBG,"cmp [" << i << "] " << bb << " -> " << ss);
- }
  return b;
 }
 

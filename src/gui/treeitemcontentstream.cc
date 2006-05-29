@@ -5,8 +5,10 @@
 
 #include <cobject.h>
 #include <ccontentstream.h>
+#include "treeitempage.h"
 #include "treeitemcontentstream.h"
 #include "treeitempdfoperator.h"
+#include "multitreewindow.h"
 #include "qscontentstream.h"
 #include "treedata.h"
 #include "util.h"
@@ -67,7 +69,7 @@ TreeItemContentStream::~TreeItemContentStream() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemContentStream::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemContentStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  size_t position=name.toUInt();
  return new TreeItemPdfOperator(data,this,op[position],name,after);
 }
@@ -108,6 +110,26 @@ void TreeItemContentStream::reloadSelf() {
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemContentStream::haveChild() {
  return op.size()>0;
+}
+
+/**
+ Slot that will be called when item is opened/closed
+ @param open True if item is being opened, false if closed
+*/
+void TreeItemContentStream::setOpen(bool open) {
+ if (parent() && open) { //Activate/open new tree
+  //Check for parent if it is a page and try to "invent" some nice text for the tab and the item
+  TreeItemPage* parentPage=dynamic_cast<TreeItemPage*>(parent());
+  QString pName=text(0);
+  if (parentPage) { //Parent tree item is a page
+   pName+=" (";
+   pName+=parentPage->text(0);
+   pName+=")";
+  }
+  data->multi()->activate(obj,pName);
+  return;//Do not open
+ }
+ TreeItemAbstract::setOpen(open);
 }
 
 /**

@@ -61,6 +61,8 @@ private:
  QButtonGroup *items;
  /** Label used to show message */
  QLabel *msg;
+ /** Settings used to save dialog position (dict/array) - this is useful, as these can have different sizes */
+ QString settingName;
 };
 
 } // namespace gui

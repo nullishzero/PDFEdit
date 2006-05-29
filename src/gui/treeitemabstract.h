@@ -39,7 +39,7 @@ public:
  virtual QSCObject* getQSObject(Base *_base);
  virtual bool validChild(const QString &name,QListViewItem *oldChild);
  virtual void setOpen(bool open);
- virtual bool deepReload(const QString &childName,QListViewItem *oldChild);
+ virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
  //Abstract functions
 
  /** 

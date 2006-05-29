@@ -147,6 +147,19 @@ void Settings::remove(const QString &key) {
  set->removeEntry(key);
 }
 
+/** 
+ Remove all keys directly under specified key according to hiararchic structure
+ @param key Key to remove
+*/
+void Settings::removeAll(const QString &key) {
+ QStringList all=set->entryList(key);
+ for(size_t i=0;i<all.count();i++) {
+  set->removeEntry(key+"/"+all[i]); 
+ }
+ //At last, try to remove the key itself
+ set->removeEntry(key);
+}
+
 /** Expand environment variables in given string (like $HOME, etc ..)
  @param s String to expand
  @return QString with variables expanded

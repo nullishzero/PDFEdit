@@ -14,6 +14,8 @@
 #include "util.h"
 #include "stringoption.h"
 #include "realoption.h"
+#include "fileoption.h"
+#include "fontoption.h"
 #include "combooption.h"
 #include "booloption.h"
 #include "intoption.h"
@@ -207,6 +209,28 @@ void OptionWindow::addOption(QWidget *otab,const QString &caption,const QString 
  addOption(otab,caption,new StringOption(key,otab,defValue));
 }
 
+/**
+ add Option to the window (type of option is file)
+ @param otab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ @param defValue Default value if option not found in configuration
+ */
+void OptionWindow::addOptionFile(QWidget *otab,const QString &caption,const QString &key,const QString &defValue/*=QString::null*/) {
+ addOption(otab,caption,new FileOption(key,otab,defValue));
+}
+
+/**
+ add Option to the window (type of option is font)
+ @param otab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ @param defValue Default value if option not found in configuration
+ */
+void OptionWindow::addOptionFont(QWidget *otab,const QString &caption,const QString &key,const QString &defValue/*=QString::null*/) {
+ addOption(otab,caption,new FontOption(key,otab,defValue));
+}
+
 /** add Option to the window (type of option is string, edited by combobox)
  @param otab Tab holding that option
  @param caption Label for this option
@@ -262,7 +286,7 @@ void OptionWindow::init() {
  addText  (data_tab,tr("<b>Note</b>: changing Icon Path will take effect on next program start"));//TODO: apply path now
  addOption(data_tab,tr("Script Path"),"path/script");
  addOption(data_tab,tr("Scripts to run on start"),"script/init");
- addOption(data_tab,tr("Console log file"),"path/console_log");
+ addOptionFile(data_tab,tr("Console log file"),"path/console_log");
  finishTab(data_tab);
 
  QWidget *tree_tab=addTab(tr("Object tree"));
@@ -281,7 +305,7 @@ void OptionWindow::init() {
  addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
  addOptionBool(misc_tab,tr("Show errors from event handlers"),"console/show_handler_errors");
  addText      (misc_tab,tr("<br>History-related options"));
- addOption    (misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
+ addOptionFile(misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
  addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
 
  addOptionBool(misc_tab,tr("Show command editor"),"gui/CommandLine/CmdShowEditor");
@@ -304,11 +328,9 @@ void OptionWindow::init() {
  QWidget *laf_tab=addTab(tr("Look and Feel"));
  QStringList styles=QStyleFactory::keys();
  styles.prepend("");
- addText       (laf_tab,tr("You can set parameters of application font"));
- addOption     (laf_tab,tr("Font family"),"gui/font",QApplication::font().family());
- addOptionInt  (laf_tab,tr("Font size"),"gui/fontsize",QApplication::font().pointSize());
- addOptionBool (laf_tab,tr("Bold"),"gui/fontbold",QApplication::font().weight()>QFont::DemiBold);
- addOptionBool (laf_tab,tr("Italic"),"gui/fontitalic",QApplication::font().italic());
+ addText       (laf_tab,tr("You can set fonts used in application"));
+ addOptionFont (laf_tab,tr("Application font"),"gui/font_main",QApplication::font().toString());
+ addOptionFont (laf_tab,tr("Console font"),"gui/font_con",QApplication::font().toString());
  addText       (laf_tab,tr("You can specify overall visual style"));
  addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
  addText       (laf_tab,tr("<b>Note</b>: changing style will take effect on next program start"));//TODO: apply style now
@@ -337,12 +359,12 @@ OptionWindow::~OptionWindow() {
  @param notify If true, all fonts will be immediately changed in all widgets
  */
 void applyLookAndFeel(bool notify) {
- QString font=globalSettings->read("gui/font",QApplication::font().family());
- int fontsize=globalSettings->readNum("gui/fontsize",QApplication::font().pointSize());
- if (fontsize==-1) fontsize=12;
- bool bold=globalSettings->readBool("gui/fontbold");
- bool italic=globalSettings->readBool("gui/fontitalic");
- QApplication::setFont(QFont(font,fontsize,bold?(QFont::Bold):(QFont::Normal),italic),notify);
+ QFont fontMain=QApplication::font();
+ fontMain.fromString(globalSettings->read("gui/font_main",QApplication::font().toString()));
+ QFont fontConsole=QApplication::font();
+ fontConsole.fromString(globalSettings->read("gui/font_con",QApplication::font().toString()));
+ QApplication::setFont(fontMain,notify);
+ QApplication::setFont(fontConsole,notify,"gui::CommandWindow");
 }
 
 } // namespace gui

@@ -22,7 +22,7 @@ class QSImporter;
 class QSCObject;
 class QSPdf;
 class QSPage;
-class TreeWindow;
+class MultiTreeWindow;
 class TreeItemAbstract;
 class PropertyEditor;
 class Menu;
@@ -44,7 +44,7 @@ public:
  QString filename();
  void saveWindowState();
  void restoreWindowState();
- bool save();
+ bool save(bool newRevision=false);
  bool saveCopy(const QString &name);
  bool closeFile(bool askSave,bool onlyAsk=false);
  void openFile(const QString &name);
@@ -94,7 +94,7 @@ private:
  /** Commandline window */
  CommandWindow *cmdLine;
  /** Object treeview */
- TreeWindow *tree;
+ MultiTreeWindow *tree;
  /** Property editor */
  PropertyEditor *prop;
  /** Edited PDF document */

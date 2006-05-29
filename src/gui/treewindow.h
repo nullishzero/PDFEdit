@@ -3,6 +3,7 @@
 
 #include <qwidget.h>
 #include <cobject.h>
+#include <ccontentstream.h>
 #include <cpdf.h>
 class QListView;
 class QListViewItem;
@@ -13,6 +14,7 @@ using namespace pdfobjects;
 
 class DragListView;
 class TreeData;
+class MultiTreeWindow;
 class TreeItemAbstract;
 class QSCObject;
 class Base;
@@ -22,8 +24,9 @@ class TreeWindow : public QWidget {
 public:
  void uninit();
  void init(CPdf *pdfDoc,const QString &fileName);
- void init(boost::shared_ptr<IProperty> doc);
- TreeWindow(Base *base,QWidget *parent=0,const char *name=0);
+ void init(boost::shared_ptr<IProperty> doc,const QString &pName=QString::null);
+ void init(boost::shared_ptr<CContentStream> cs,const QString &pName=QString::null);
+ TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent=0,const char *name=0);
  ~TreeWindow();
  void reloadFrom(TreeItemAbstract *item);
  TreeItemAbstract* root();
