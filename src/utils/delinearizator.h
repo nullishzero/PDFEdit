@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/05/29 18:19:49  hockm0bm
+ * typo fix
+ *
  * Revision 1.3  2006/05/25 08:13:17  petrm1am
  * Quick fix: unable to comile
  *
@@ -113,7 +116,7 @@ public:
 //		fclose(FileStream::f);
 	}
 	
-	/** Factory method for isntance creation.
+	/** Factory method for instance creation.
 	 * @param fileName Name of the pdf file.
 	 * @param pdfWriter  Pdf content writer.
 	 *
