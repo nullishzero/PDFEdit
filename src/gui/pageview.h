@@ -8,6 +8,8 @@
 
 namespace gui {
 
+class Rect2DArray;
+
 /** QWidget's class for viewing a page.
  *  
  */
@@ -15,14 +17,20 @@ class PageView : public QLabel {
 	Q_OBJECT
 	public:
 		/** Enum type for setting selection mode for select all object.
-		 * RectSelection	 =  the selected area will be bounded thin rectangle
+		 * RectSelection		 =  the selected area will be bounded thin rectangle
 		 * FillRectSelection	 =  the selected area will be filled rectangle
 		 * RectFillRectSelection =  moving or creating selected area -> FillRectSelection
-		 * 			 =  otherwise -> RectSelection
+		 * 						 =  otherwise -> RectSelection
 		 * FillRectRectSelection =  moving or creating selected area -> RectSelection
-		 * 			 =  otherwise -> FillRectSelection
+		 * 						 =  otherwise -> FillRectSelection
 		 */
 		enum SelectionAllMode { RectSelection, FillRectSelection, RectFillRectSelection, FillRectRectSelection };
+
+		/** Enum type for setting selection mode
+		 * SelectAllObjects	= choosing point or rectangle for select objects
+		 * SelectText		= choosing text bboxes
+		 */
+		enum SelectionMode { SelectAllObjects, SelectText };
 
 		/** Default constructor of pageView.
 		 * @param parent widget containing this control
@@ -88,11 +96,24 @@ class PageView : public QLabel {
 		virtual void mouseMoveEvent ( QMouseEvent * e );
 	public slots:
 		/** Method set selection mode.
+		 * @param selection mode (see 'enum SelectionMode')
+		 *
+		 * @return return FALSE if something is bad (e.g. want set SelectText and bboxes of text don't set), otherwise return TRUE
+		 *
+		 * Selection mode is dafault sets to SelectAllObjects .
+		 */
+		bool setSelectionMode ( enum SelectionMode m );				// default SelectAllObjects
+		/** Method set selection mode for select all objects.
 		 * @param selection mode (see 'enum SelectionAllMode')
 		 *
 		 * Selection mode is dafault sets to FillRectRectSelection .
 		 */
-		void setSelectionMode ( enum SelectionAllMode m );		// default FillRectRectSelection
+		void setSelectionAllMode ( enum SelectionAllMode m );		// default FillRectRectSelection
+		/** Method add objects bbox for special selection mode (e.g. SelectText)
+		 * @param ref to rectangle's bbox
+		 * @param pointer to object with this bboxes (this pointer will return at end of selection
+		 */
+		void addObjectsBBox ( const QRect & bbox, const void * ptr_object = NULL );
 		/** Method set selected area.
 		 * @param rectangle to select area on page
 		 */
@@ -176,6 +197,8 @@ class PageView : public QLabel {
 		bool	isResizing;
 		/** is true if is set 'IsSelecting' selection variant */
 		bool	quickSelection;
+		/** selection mode */
+		enum SelectionMode selectionMode;
 		/** selection mode which is set for selecting all objects */
 		enum SelectionAllMode selectionAllMode;
 		/** moving mode - point is relative position mouse cursor from left top selected rectangle which is moving
@@ -193,6 +216,8 @@ class PageView : public QLabel {
 		int cursorIsSetTo;
 		/** width of resizing zone */
 		int resizingCursorZone;
+		/** 2D array of bboxes objects for special selection */
+		Rect2DArray * arrayOfBBoxes;
 };
 
 } // namespace gui

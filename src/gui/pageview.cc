@@ -1,7 +1,9 @@
 #include "pageview.h"
 #include <stdlib.h>
 #include <qpixmap.h>
+#include "rect2Darray.h"
 #include "util.h"
+
 
 namespace gui {
 
@@ -11,10 +13,12 @@ PageView::PageView (QWidget *parent) : QLabel(parent) {
 	mouseRectSelected = NULL;
 	rectSelected = NULL;
 	oldRectSelected = NULL;
+	arrayOfBBoxes = NULL;
 	isPress = false;
 	isMoving = false;
 	isResizing = false;
 	quickSelection = false;
+	selectionMode = SelectAllObjects;
 	selectionAllMode = FillRectRectSelection;
 	resizeCoefficientX = 1;
 	resizeCoefficientY = 1;
@@ -93,7 +97,14 @@ void PageView::setPixmap (const QPixmap & qp) {
 	quickSelection = false;
 }
 
-void PageView::setSelectionMode ( enum SelectionAllMode m ) {
+bool PageView::setSelectionMode ( enum SelectionMode m ) {
+	if ((m != SelectAllObjects) && (arrayOfBBoxes == NULL))
+		return false;
+
+	selectionMode = m;
+	return true;
+}
+void PageView::setSelectionAllMode ( enum SelectionAllMode m ) {
 	selectionAllMode = m;
 }
 
@@ -462,7 +473,13 @@ void PageView::mouseMoveEvent ( QMouseEvent * e ) {
 	}
 }
 
-// drawing selected area
+void PageView::addObjectsBBox ( const QRect & bbox, const void * ptr_object ) {
+	if (arrayOfBBoxes == NULL)
+		arrayOfBBoxes = new Rect2DArray();
+	arrayOfBBoxes->myAppend( new BBoxOfObjectOnPage( bbox, ptr_object ) );
+}
+
+// *************************			drawing selected area			********************
 
 void PageView::drawRect ( QRect * newRect, bool unDraw ) {
 	QPixmap * pm = this->pixmap();
@@ -561,177 +578,3 @@ void PageView::drawRect ( QRect * oldRect, const QPoint & toPoint ) {
 } // namespace gui
 
 
-/* ************************************************************************************************
- *                                 BBoxOfObjectOnPage
- * ************************************************************************************************/
-
-class BBoxOfObjectOnPage : public QRect {
-	Q_OBJECT
-	public:
-		BBoxOfObjectOnPage() :
-			QRect()
-		{
-			up = down = right = left = nextLineFirst = prevLineLast = NULL;
-		}
-
-		BBoxOfObjectOnPage( const QRect &r ) :			// r must be normalized
-			QRect(r.left(),r.top(),r.width(),r.height()) 
-		{
-			up = down = right = left = nextLineFirst = prevLineLast = NULL;
-		}
-
-		void setUpBBox( BBoxOfObjectOnPage * b ) {
-			up = b;
-		}
-
-		void setDownBBox( BBoxOfObjectOnPage * b ) {
-			down = b;
-		}
-
-		void setRightBBox( BBoxOfObjectOnPage * b ) {
-			right = b;
-		}
-
-		void setLeftBBox( BBoxOfObjectOnPage * b ) {
-			left = b;
-		}
-
-		void setNextLineFirstBBox( BBoxOfObjectOnPage * b ) {
-			nextLineFirst = b;
-		}
-
-		void setPrevLineLastBBox( BBoxOfObjectOnPage * b ) {
-			prevLineLast = b;
-		}
-
-		virtual ~BBoxOfObjectOnPage() {}
-
-		bool operator< ( const BBoxOfObjectOnPage & second ) const {
-			return x() < second.x();
-		};
-
-		bool operator== ( const BBoxOfObjectOnPage & second ) const {
-			return x() == second.x();
-		};
-	private:
-		BBoxOfObjectOnPage * up,
-				   * down,
-				   * right,
-				   * left,
-				   * nextLineFirst,
-				   * prevLineLast;
-};
-
-
-/* ************************************************************************************************
- *                                 array of rectangles
- * ************************************************************************************************/
-
-class RectArray : public QPtrList<BBoxOfObjectOnPage> {
-	Q_OBJECT
-	public:
-		RectArray() : QPtrList<BBoxOfObjectOnPage>()  { minY=-1; }
-		~RectArray() {}
-		void myAppend ( const BBoxOfObjectOnPage * item ) {
-			if ((item != NULL) && (! item->isNull()))
-				minY = std::min( minY, item->y() );
-			append( item );
-		}
-		bool operator< ( const RectArray & second ) const {
-			return getMinY() < second.getMinY();
-		}
-		bool operator== ( const RectArray & second ) const {
-			return getMinY() == second.getMinY();
-		}
-		int getMinY() const  { return minY; }
-		void initAllBBoxPtr( RectArray * prev, RectArray * next ) {
-			BBoxOfObjectOnPage * up = NULL,
-					   * down = NULL,
-					   * right = NULL,
-					   * left = NULL,
-					   * cur = NULL,
-					   * nextLineFirst = NULL,
-					   * prevLineLast = NULL,
-					   * curNextLine = NULL,
-					   * curPrevLine = NULL;
-			QPtrListIterator<BBoxOfObjectOnPage>	* prevLineItems,
-								* nextLineItems;
-			if (prev != NULL) {
-				prevLineItems = new QPtrListIterator<BBoxOfObjectOnPage> (*prev);
-				prevLineLast = prevLineItems->toLast();
-				curPrevLine = prevLineItems->toFirst();
-			}
-			if (next != NULL) {
-				prevLineItems = new QPtrListIterator<BBoxOfObjectOnPage> (*next);
-				nextLineFirst = curNextLine = next->current();
-			}
-
-			QPtrListIterator<BBoxOfObjectOnPage>	currentLine (*this);
-			cur = currentLine.current();
-			right = ++currentLine;
-			while (cur != NULL) {
-				cur->setPrevLineLastBBox( prevLineLast );
-				cur->setNextLineFirstBBox( nextLineFirst );
-				cur->setLeftBBox( left );
-				cur->setRightBBox( right );
-
-				if (curPrevLine) {
-					//TODO cur->setUpBBox( ... );
-				}
-				if (curNextLine) {
-					//TODO cur->setDownBBox( ... );
-				}
-
-				left = cur;
-				cur = right;
-				right = ++currentLine;
-			}
-		}
-	private:
-		int minY;
-};
-
-/* ************************************************************************************************
- *                                 2D array of rectangles
- * ************************************************************************************************/
-
-class Rect2DArray : public QPtrList< RectArray > {
-	Q_OBJECT
-	public:
-		Rect2DArray() : QPtrList<RectArray>() {}
-		~Rect2DArray() {}
-	
-		void setAutoDeleteAll( bool ada ) {
-			setAutoDelete( ada );
-			QPtrListIterator<RectArray> it ( *this );
-			RectArray * current;
-			while ((current = it.current()) != NULL) {
-				current->setAutoDelete( ada );
-				++it;
-			}
-		}
-		void sortAll() {
-			sort();
-			QPtrListIterator<RectArray> it ( *this );
-			RectArray * current;
-			while ((current = it.current()) != NULL) {
-				current->sort();
-				++it;
-			}
-		}
-		void initAllBBoxPtr() {
-			RectArray * prev = NULL;
-			RectArray * current = NULL;
-			RectArray * next = NULL;
-
-			QPtrListIterator<RectArray> it ( *this );
-			current = it.current();
-			next = ++it;
-			while (current != NULL) {
-				current->initAllBBoxPtr( prev, next );
-				prev = current;
-				current = next;
-				next = ++it;
-			}
-		}
-};

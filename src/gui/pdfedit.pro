@@ -84,8 +84,8 @@ HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfop
 SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc
 
 #Other source files
-HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h  selfdestructivewidget.h  base.h
-SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc selfdestructivewidget.cc base.cc
+HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h  selfdestructivewidget.h  base.h  rect2Darray.h
+SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc selfdestructivewidget.cc base.cc rect2Darray.cc
 
 #Exceptions
 HEADERS += invalidmenuexception.h
