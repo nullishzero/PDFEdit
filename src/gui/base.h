@@ -66,7 +66,8 @@ public slots: //This will be all exported to scripting
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
  /*-
-  Return last error message (localized) from some operations (load, save, ...)
+  Return last error message (localized) from some operations
+  (openFile, save, saveRevision, saveCopy)
  */
  QString error();
  /*- Return true if given file exists on disk, false otherwise */
@@ -112,8 +113,9 @@ public slots: //This will be all exported to scripting
  /*-
   Opens file with given name in this editor window.
   Opens without any questions, does not ask user to save changes to current file, etc ...
+  Return true on success, false on failure to load file.
  */
- void openFile(const QString &name);
+ bool openFile(const QString &name);
  /*- Opens file with given name in new editor window */
  void openFileNew(const QString &name);
  /*- Invokes options dialog. Does not wait for dialog to be closed by user and return immediately. */

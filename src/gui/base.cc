@@ -437,8 +437,8 @@ void Base::objects() {
 }
 
 /** \copydoc PdfEditWindow::openFile */
-void Base::openFile(const QString &name) {
- w->openFile(name);
+bool Base::openFile(const QString &name) {
+ return w->openFile(name);
 }
 
 /**
