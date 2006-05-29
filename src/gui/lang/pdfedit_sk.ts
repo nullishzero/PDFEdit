@@ -307,6 +307,30 @@ Data: %3
         <comment>5+</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pick a file ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New revision of document created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occured while loading file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image was not saved!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changed revision to:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving as</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -413,6 +437,21 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::MultiTreeWindow</name>
+    <message>
+        <source>Tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stream</source>
+        <translation type="unfinished">Stream</translation>
+    </message>
+    <message>
+        <source>Property</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::OptionWindow</name>
     <message>
         <source>options</source>
@@ -484,26 +523,6 @@ Data: %3
     </message>
     <message>
         <source>Look and Feel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You can set parameters of application font</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Font family</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Font size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -584,6 +603,18 @@ Data: %3
     </message>
     <message>
         <source>Scripts to run on start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can set fonts used in application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Console font</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -805,6 +836,11 @@ Data: %3
     <message>
         <source>Save page as image...</source>
         <comment>savepage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save new revision</source>
+        <comment>fsaverev</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

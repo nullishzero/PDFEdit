@@ -310,6 +310,30 @@ Data: %3
         <comment>5+</comment>
         <translation>potomků</translation>
     </message>
+    <message>
+        <source>Pick a file ...</source>
+        <translation>Vyberte soubor ...</translation>
+    </message>
+    <message>
+        <source>New revision of document created</source>
+        <translation>Vytvořena nová revize dokumentu</translation>
+    </message>
+    <message>
+        <source>Error occured while loading file</source>
+        <translation>Nastala chyba při nahrávání souboru</translation>
+    </message>
+    <message>
+        <source>Image was not saved!</source>
+        <translation>Obrázek nebyl uložen!</translation>
+    </message>
+    <message>
+        <source>Changed revision to:</source>
+        <translation>Změněna revize:</translation>
+    </message>
+    <message>
+        <source>Saving as</source>
+        <translation>Ukládám jako</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -416,6 +440,21 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::MultiTreeWindow</name>
+    <message>
+        <source>Tree</source>
+        <translation>Strom</translation>
+    </message>
+    <message>
+        <source>Stream</source>
+        <translation>Stream</translation>
+    </message>
+    <message>
+        <source>Property</source>
+        <translation>Položka</translation>
+    </message>
+</context>
+<context>
     <name>gui::OptionWindow</name>
     <message>
         <source>options</source>
@@ -490,26 +529,6 @@ Data: %3
         <translation>Vzhled</translation>
     </message>
     <message>
-        <source>You can set parameters of application font</source>
-        <translation>Zde lze nastavit parametry písma v editoru</translation>
-    </message>
-    <message>
-        <source>Font family</source>
-        <translation>Rodina písma</translation>
-    </message>
-    <message>
-        <source>Font size</source>
-        <translation>Velikost písma</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation>Tučný</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Kurzíva</translation>
-    </message>
-    <message>
         <source>You can specify overall visual style</source>
         <translation>Zde lze nastavit celkový vzhled</translation>
     </message>
@@ -547,7 +566,7 @@ Data: %3
     </message>
     <message>
         <source>Console log file</source>
-        <translation>Log soubor pro konzoli</translation>
+        <translation>Log soubor pro příkazový řádek</translation>
     </message>
     <message>
         <source>These objects will be shown in the object tree</source>
@@ -588,6 +607,18 @@ Data: %3
     <message>
         <source>Scripts to run on start</source>
         <translation>Skripty spouštěné při startu</translation>
+    </message>
+    <message>
+        <source>You can set fonts used in application</source>
+        <translation>Zde lze nastavit písma použitá v editoru</translation>
+    </message>
+    <message>
+        <source>Application font</source>
+        <translation>Písmo aplikace</translation>
+    </message>
+    <message>
+        <source>Console font</source>
+        <translation>Písmo v příkazovém řádku</translation>
     </message>
 </context>
 <context>
@@ -809,6 +840,11 @@ Data: %3
         <source>Save page as image...</source>
         <comment>savepage</comment>
         <translation>Uložit stranu jako obrázek...</translation>
+    </message>
+    <message>
+        <source>&amp;Save new revision</source>
+        <comment>fsaverev</comment>
+        <translation>Uložit novou revizi</translation>
     </message>
 </context>
 <context>
