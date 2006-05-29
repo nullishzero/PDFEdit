@@ -14,7 +14,7 @@ namespace gui {
 class PageView : public QLabel {
 	Q_OBJECT
 	public:
-		/** Enum type for setting selection mode.
+		/** Enum type for setting selection mode for select all object.
 		 * RectSelection	 =  the selected area will be bounded thin rectangle
 		 * FillRectSelection	 =  the selected area will be filled rectangle
 		 * RectFillRectSelection =  moving or creating selected area -> FillRectSelection
@@ -22,7 +22,7 @@ class PageView : public QLabel {
 		 * FillRectRectSelection =  moving or creating selected area -> RectSelection
 		 * 			 =  otherwise -> FillRectSelection
 		 */
-		enum SelectionMode { RectSelection, FillRectSelection, RectFillRectSelection, FillRectRectSelection };
+		enum SelectionAllMode { RectSelection, FillRectSelection, RectFillRectSelection, FillRectRectSelection };
 
 		/** Default constructor of pageView.
 		 * @param parent widget containing this control
@@ -88,11 +88,11 @@ class PageView : public QLabel {
 		virtual void mouseMoveEvent ( QMouseEvent * e );
 	public slots:
 		/** Method set selection mode.
-		 * @param selection mode (see 'enum SelectionMode')
+		 * @param selection mode (see 'enum SelectionAllMode')
 		 *
 		 * Selection mode is dafault sets to FillRectRectSelection .
 		 */
-		void setSelectionMode ( enum SelectionMode m );		// default FillRectRectSelection
+		void setSelectionMode ( enum SelectionAllMode m );		// default FillRectRectSelection
 		/** Method set selected area.
 		 * @param rectangle to select area on page
 		 */
@@ -176,8 +176,8 @@ class PageView : public QLabel {
 		bool	isResizing;
 		/** is true if is set 'IsSelecting' selection variant */
 		bool	quickSelection;
-		/** selection mode which is set */
-		enum SelectionMode selectionMode;
+		/** selection mode which is set for selecting all objects */
+		enum SelectionAllMode selectionAllMode;
 		/** moving mode - point is relative position mouse cursor from left top selected rectangle which is moving
 		 *  resizing mode - point is right bottom position of selected area befor the area was resizing
 		 */

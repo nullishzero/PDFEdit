@@ -15,7 +15,7 @@ PageView::PageView (QWidget *parent) : QLabel(parent) {
 	isMoving = false;
 	isResizing = false;
 	quickSelection = false;
-	selectionMode = FillRectRectSelection;
+	selectionAllMode = FillRectRectSelection;
 	resizeCoefficientX = 1;
 	resizeCoefficientY = 1;
 
@@ -93,15 +93,15 @@ void PageView::setPixmap (const QPixmap & qp) {
 	quickSelection = false;
 }
 
-void PageView::setSelectionMode ( enum SelectionMode m ) {
-	selectionMode = m;
+void PageView::setSelectionMode ( enum SelectionAllMode m ) {
+	selectionAllMode = m;
 }
 
 void PageView::changeSelection ( enum SelectionSet s ) {
 	if (s == KeepSelection)
 		return;
 
-	switch (selectionMode) {
+	switch (selectionAllMode) {
 		case RectSelection:
 			quickSelection = true;
 			return ;
@@ -112,10 +112,10 @@ void PageView::changeSelection ( enum SelectionSet s ) {
 		case FillRectRectSelection:
 			switch (s) {
 				case IsSelecting:	// if is changing selection area
-					quickSelection = (selectionMode == FillRectRectSelection);
+					quickSelection = (selectionAllMode == FillRectRectSelection);
 					break;
 				case IsSelected:	// if is selected area
-					quickSelection = (selectionMode != FillRectRectSelection);
+					quickSelection = (selectionAllMode != FillRectRectSelection);
 					break;
 				default:
 					break;
@@ -559,3 +559,179 @@ void PageView::drawRect ( QRect * oldRect, const QPoint & toPoint ) {
 }
 
 } // namespace gui
+
+
+/* ************************************************************************************************
+ *                                 BBoxOfObjectOnPage
+ * ************************************************************************************************/
+
+class BBoxOfObjectOnPage : public QRect {
+	Q_OBJECT
+	public:
+		BBoxOfObjectOnPage() :
+			QRect()
+		{
+			up = down = right = left = nextLineFirst = prevLineLast = NULL;
+		}
+
+		BBoxOfObjectOnPage( const QRect &r ) :			// r must be normalized
+			QRect(r.left(),r.top(),r.width(),r.height()) 
+		{
+			up = down = right = left = nextLineFirst = prevLineLast = NULL;
+		}
+
+		void setUpBBox( BBoxOfObjectOnPage * b ) {
+			up = b;
+		}
+
+		void setDownBBox( BBoxOfObjectOnPage * b ) {
+			down = b;
+		}
+
+		void setRightBBox( BBoxOfObjectOnPage * b ) {
+			right = b;
+		}
+
+		void setLeftBBox( BBoxOfObjectOnPage * b ) {
+			left = b;
+		}
+
+		void setNextLineFirstBBox( BBoxOfObjectOnPage * b ) {
+			nextLineFirst = b;
+		}
+
+		void setPrevLineLastBBox( BBoxOfObjectOnPage * b ) {
+			prevLineLast = b;
+		}
+
+		virtual ~BBoxOfObjectOnPage() {}
+
+		bool operator< ( const BBoxOfObjectOnPage & second ) const {
+			return x() < second.x();
+		};
+
+		bool operator== ( const BBoxOfObjectOnPage & second ) const {
+			return x() == second.x();
+		};
+	private:
+		BBoxOfObjectOnPage * up,
+				   * down,
+				   * right,
+				   * left,
+				   * nextLineFirst,
+				   * prevLineLast;
+};
+
+
+/* ************************************************************************************************
+ *                                 array of rectangles
+ * ************************************************************************************************/
+
+class RectArray : public QPtrList<BBoxOfObjectOnPage> {
+	Q_OBJECT
+	public:
+		RectArray() : QPtrList<BBoxOfObjectOnPage>()  { minY=-1; }
+		~RectArray() {}
+		void myAppend ( const BBoxOfObjectOnPage * item ) {
+			if ((item != NULL) && (! item->isNull()))
+				minY = std::min( minY, item->y() );
+			append( item );
+		}
+		bool operator< ( const RectArray & second ) const {
+			return getMinY() < second.getMinY();
+		}
+		bool operator== ( const RectArray & second ) const {
+			return getMinY() == second.getMinY();
+		}
+		int getMinY() const  { return minY; }
+		void initAllBBoxPtr( RectArray * prev, RectArray * next ) {
+			BBoxOfObjectOnPage * up = NULL,
+					   * down = NULL,
+					   * right = NULL,
+					   * left = NULL,
+					   * cur = NULL,
+					   * nextLineFirst = NULL,
+					   * prevLineLast = NULL,
+					   * curNextLine = NULL,
+					   * curPrevLine = NULL;
+			QPtrListIterator<BBoxOfObjectOnPage>	* prevLineItems,
+								* nextLineItems;
+			if (prev != NULL) {
+				prevLineItems = new QPtrListIterator<BBoxOfObjectOnPage> (*prev);
+				prevLineLast = prevLineItems->toLast();
+				curPrevLine = prevLineItems->toFirst();
+			}
+			if (next != NULL) {
+				prevLineItems = new QPtrListIterator<BBoxOfObjectOnPage> (*next);
+				nextLineFirst = curNextLine = next->current();
+			}
+
+			QPtrListIterator<BBoxOfObjectOnPage>	currentLine (*this);
+			cur = currentLine.current();
+			right = ++currentLine;
+			while (cur != NULL) {
+				cur->setPrevLineLastBBox( prevLineLast );
+				cur->setNextLineFirstBBox( nextLineFirst );
+				cur->setLeftBBox( left );
+				cur->setRightBBox( right );
+
+				if (curPrevLine) {
+					//TODO cur->setUpBBox( ... );
+				}
+				if (curNextLine) {
+					//TODO cur->setDownBBox( ... );
+				}
+
+				left = cur;
+				cur = right;
+				right = ++currentLine;
+			}
+		}
+	private:
+		int minY;
+};
+
+/* ************************************************************************************************
+ *                                 2D array of rectangles
+ * ************************************************************************************************/
+
+class Rect2DArray : public QPtrList< RectArray > {
+	Q_OBJECT
+	public:
+		Rect2DArray() : QPtrList<RectArray>() {}
+		~Rect2DArray() {}
+	
+		void setAutoDeleteAll( bool ada ) {
+			setAutoDelete( ada );
+			QPtrListIterator<RectArray> it ( *this );
+			RectArray * current;
+			while ((current = it.current()) != NULL) {
+				current->setAutoDelete( ada );
+				++it;
+			}
+		}
+		void sortAll() {
+			sort();
+			QPtrListIterator<RectArray> it ( *this );
+			RectArray * current;
+			while ((current = it.current()) != NULL) {
+				current->sort();
+				++it;
+			}
+		}
+		void initAllBBoxPtr() {
+			RectArray * prev = NULL;
+			RectArray * current = NULL;
+			RectArray * next = NULL;
+
+			QPtrListIterator<RectArray> it ( *this );
+			current = it.current();
+			next = ++it;
+			while (current != NULL) {
+				current->initAllBBoxPtr( prev, next );
+				prev = current;
+				current = next;
+				next = ++it;
+			}
+		}
+};
