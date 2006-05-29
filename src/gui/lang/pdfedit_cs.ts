@@ -658,6 +658,22 @@ Data: %3
         <source>viewing revision</source>
         <translation>zobrazuji revizi</translation>
     </message>
+    <message>
+        <source>Name is empty</source>
+        <translation>Jméno je prázdné</translation>
+    </message>
+    <message>
+        <source>Document is in read-only mode</source>
+        <translation>Dokument je v režimu pouze pro čtení</translation>
+    </message>
+    <message>
+        <source>Unknown error occured while saving document</source>
+        <translation>Neznámá chyba při ukládání dokumentu</translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy</source>
+        <translation>Při ukládání kopie došlo k chybě</translation>
+    </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>

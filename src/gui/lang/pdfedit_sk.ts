@@ -655,6 +655,22 @@ Data: %3
         <source>viewing revision</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document is in read-only mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error occured while saving document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occured while saving copy</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>
