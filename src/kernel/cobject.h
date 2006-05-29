@@ -647,7 +647,7 @@ protected:
 
 	/** Parser. */
 	Parser* parser;
-	/** Next object in opened stream. */
+	/** Current object in opened stream. */
 	mutable ::Object curObj;
 		
 
@@ -836,7 +836,11 @@ private:
 	void close ();
 	
 	/**
-	 * Get xpdf object. It also frees obj passes as argument.
+	 * Get xpdf object and copy it to obj.
+	 *
+	 * REMARK: We can not do any buffering (caching) of xpdf objects, because
+	 * xpdf already does caching and it will NOT work correctly with inline
+	 * images. We would buffer WRONG data.
 	 *
 	 * @param obj Next xpdf object.
 	 */
@@ -850,7 +854,14 @@ private:
 	 ::Stream* getXpdfStream ();
 
 	/**
-	 * Is end of stream.
+	 * Is the last object end of stream.
+	 *
+	 * This is not very common behaviour, but we can not use caching 
+	 * \see getXpdfObject
+	 * so we can tell if it is the end after fetching an object which means
+	 * after calling getXpdfObject.
+	 * 
+	 * @return True if we no more data avaliable, false otherwise.
 	 */
 	bool eof () const;
 	
@@ -970,6 +981,10 @@ typedef CObjectComplex<pDict>	CDict;
 typedef CObjectStream<>			CStream;
 
 
+/** debugging \TODO remove. */
+namespace utils{
+void xpdfObjToString (Object& obj, std::string& str);
+}
 
 /**
  * Adapter which is able to read sequentially from more CStreams.
@@ -984,13 +999,16 @@ private:
 	CStreams streams;
 	boost::shared_ptr<CStream> actstream;
 	size_t pos;
+	size_t objread; // helper variable for debugging
+	std::ofstream out;
+	
 
 public:
 
 	/** Constructor. */
-	CStreamXpdfReader (Container& strs) : pos(0) 
+	CStreamXpdfReader (Container& strs) : pos(0), objread (0)
 		{ assert (!strs.empty()); std::copy (strs.begin(), strs.end(), std::back_inserter(streams));}
-	CStreamXpdfReader (boost::shared_ptr<CStream> str) : pos(0) 
+	CStreamXpdfReader (boost::shared_ptr<CStream> str) : pos(0), objread (0)
 		{ assert (str); streams.push_back (str); }
 
 	/** Open. */
@@ -1002,6 +1020,10 @@ public:
 
 		actstream = streams.front ();
 		actstream->open ();
+
+		//debug
+		/** debugging \TODO remove. */
+		out.open ("_streamreader");
 	}
 
 	/** Close. */
@@ -1012,8 +1034,11 @@ public:
 		assert (actstream == streams.back());
 		assert (actstream->eof());
 		
-		
 		actstream->close ();
+
+		//debug
+		/** debugging \TODO remove. */
+		out.close ();
 	}
 
 	/** 
@@ -1033,27 +1058,74 @@ public:
 			parsedstreams.push_back (streams[i]);
 		
 		actstream->close ();
+		
+		// debug
+		/** debugging \TODO remove. */
+		out.close ();
 	}
 
 	/** Get xpdf object. */
 	void getXpdfObject (::Object& obj)
 	{
 		assert (!actstream->eof());
+		
+		// Get an object
 		actstream->getXpdfObject (obj);
+
+		// If we are at the end of this stream but another stream is not empty 
+		// get the object
+		if (actstream->eof() && !eof())
+		{
+			assert (obj.isEOF());
+			actstream->getXpdfObject (obj);
+		}
+		
+		//debug
+		/** debugging \TODO remove. */
+		objread ++;
+		std::string tmp;
+		if (!obj.isEOF())
+		{
+			utils::xpdfObjToString (obj,tmp);
+			out << tmp << std::endl << std::flush;
+		}
 	}
 
-	/** Is end of stream. */
+	/** 
+	 * Is end of stream. 
+	 *
+	 * We can not cache and due to this fact we can not tell if a stream
+	 * is empty without fetching an object. 
+	 */
 	bool eof ()
 	{ 
-		while (actstream->eof() && actstream != streams.back())
+		if (eofOfActualStream())
 		{
-			assert (pos < streams.size());
-			actstream->close();
-			++pos;
-			actstream = streams[pos];
-			actstream->open ();
+			// Do we have another stream
+			while (actstream != streams.back())
+			{
+				assert (pos < streams.size());
+				actstream->close();
+				// Take next stream
+				++pos;
+				actstream = streams[pos];
+				actstream->open ();
+				// Fetch an object and look at it
+				xpdf::XpdfObject obj;
+				actstream->getXpdfObject (*obj);
+				if (!actstream->eof())
+				{
+					actstream->close();
+					actstream->open();
+					break;
+				}
+			}
+			return  (actstream == streams.back() && eofOfActualStream()); 
+		
+		}else
+		{
+			return false;
 		}
-		return  (actstream == streams.back() && actstream->eof()); 
 	}
 
 	/** End of actual stream. */
