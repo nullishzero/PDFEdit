@@ -12,6 +12,7 @@
 #include "qscontentstream.h"
 #include "treedata.h"
 #include "util.h"
+#include "treeitemcontentstreamobserver.h"
 
 namespace gui {
 
@@ -32,6 +33,7 @@ TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,b
  obj=pdfObj;
  init(name);
  reload();
+ initObserver();
 }
 
 /**
@@ -47,6 +49,7 @@ TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListViewItem *pare
  obj=pdfObj;
  init(name);
  reload();
+ initObserver();
 }
 
 /**
@@ -66,12 +69,13 @@ void TreeItemContentStream::init(const QString &name) {
 
 /** default destructor */
 TreeItemContentStream::~TreeItemContentStream() {
+ uninitObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method
 TreeItemAbstract* TreeItemContentStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  size_t position=name.toUInt();
- return new TreeItemPdfOperator(data,this,op[position],name,after);
+ return new TreeItemPdfOperator(data,this,op[position],obj,name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -138,6 +142,21 @@ void TreeItemContentStream::setOpen(bool open) {
 */
 boost::shared_ptr<CContentStream> TreeItemContentStream::getObject() {
  return obj;
+}
+
+/** Sets observer for this item */
+void TreeItemContentStream::initObserver() {
+ guiPrintDbg(debug::DBG_DBG,"Set Observer");
+ observer=boost::shared_ptr<TreeItemContentStreamObserver>(new TreeItemContentStreamObserver(this));
+ obj->registerObserver(observer);
+}
+
+/** Unsets observer for this item */
+void TreeItemContentStream::uninitObserver() {
+ observer->deactivate();
+ obj->unregisterObserver(observer);
+ observer.reset();
+ guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }
 
 } // namespace gui

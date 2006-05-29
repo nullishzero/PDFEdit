@@ -15,8 +15,8 @@ class TreeData;
 
 class TreeItemPdfOperator : public TreeItemAbstract {
 public:
- TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);
  virtual ~TreeItemPdfOperator();
  boost::shared_ptr<PdfOperator> getObject();
  //From TreeItemAbstract interface
@@ -35,6 +35,8 @@ private:
  std::vector<boost::shared_ptr<PdfOperator> > op;
  /** Vector with pdf operands (parameters) */
  std::vector<boost::shared_ptr<IProperty> > params;
+ /** Reference to content stream that is holding this operator. */
+ boost::shared_ptr<CContentStream> csRef;
 };
 
 } // namespace gui

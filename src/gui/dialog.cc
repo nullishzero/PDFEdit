@@ -1,7 +1,9 @@
 /** @file
  Dialog - class with various static dialogs:<br>
- OpenFileDialog - pick a filename for opening it<br>
- SaveFileDialog - pick a filename for saving as<br>
+ openFileDialog - pick a filename for opening it<br>
+ saveFileDialog - pick a filename for saving as<br>
+ openFileDialogPdf, saveFileDialogPdf - specialization of above for PDF files<br>
+ colorDialog - dialog for selecting color<br>
  readStringDialog - Ask user a question end expect him to enter some string as answer<br>
  @author Martin Petricek
 */
@@ -12,6 +14,7 @@
 #include <qinputdialog.h> 
 #include <qmessagebox.h> 
 #include <qfiledialog.h> 
+#include <qcolordialog.h>
 #include <qfileinfo.h> 
 #include <utils/debug.h>
 #include <qstring.h>
@@ -203,6 +206,20 @@ QString readStringDialog(QWidget* parent,const QString &message, const QString &
  QString res=QInputDialog::getText(APP_NAME,message,QLineEdit::Normal,def,&ok,parent,"read_string");
  if (ok) return res;
  return QString::null;
+}
+
+/**
+ Invoke dialog to select color.
+ Last selected color is remembered and offered as default next time.
+ The 'initial default color' is red
+ @param parent Parent widget - will be disabled during the dialog.
+ @return selected color, or last used color if the dialog was cancelled
+*/
+QColor colorDialog(QWidget* parent) {
+ static QColor defaultColor=Qt::red;
+ QColor ret=QColorDialog::getColor(defaultColor,parent,"std_color_dialog");
+ if (ret.isValid()) defaultColor=ret;
+ return defaultColor;
 }
 
 } // namespace gui

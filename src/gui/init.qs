@@ -32,6 +32,16 @@ function func_saverev() {
  print(tr("New revision of document created"));
 }
 
+/** Perform "set color" operation on currently selected operator */
+function setColor() {
+ op=treeitem.item();
+ stream=op.stream();
+ col=pickColor();
+ stream.setColor(op,col);
+ //reload the page
+ go();
+}
+
 /** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
 function func_savecopy() {
  var name=fileSaveDialog(filename());
@@ -86,6 +96,8 @@ function onTreeRightClick() {
    menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
+ if (treeitem.itemtype()=="PdfOperator")
+   menu.addItemDef("item Set color,setColor()");
  if (treeitem.itemtype()=="Page")
    menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
  if (tests) {

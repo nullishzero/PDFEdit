@@ -13,6 +13,8 @@ using namespace pdfobjects;
 
 class TreeData;
 
+class TreeItemContentStreamObserver;
+
 class TreeItemContentStream : public TreeItemAbstract {
 public:
  boost::shared_ptr<CContentStream> getObject();
@@ -29,11 +31,17 @@ public:
  virtual void remove();
  virtual void reloadSelf();
 private:
+ void initObserver();
+ void uninitObserver();
+private:
  void init(const QString &name);
  /**  ContentStream object held in this item */
  boost::shared_ptr<CContentStream> obj;
  /** Vector with pdf operators */
  std::vector<boost::shared_ptr<PdfOperator> > op;
+ /** Observer registered for this item */
+ boost::shared_ptr<TreeItemContentStreamObserver> observer;
+
 };
 
 } // namespace gui

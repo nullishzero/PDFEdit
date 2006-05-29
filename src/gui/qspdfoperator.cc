@@ -7,6 +7,7 @@
 
 #include "qspdfoperator.h"
 #include "qsimporter.h"
+#include "qscontentstream.h"
 #include "qsiproperty.h"
 #include <ccontentstream.h>
 
@@ -14,9 +15,26 @@ namespace gui {
 
 using namespace pdfobjects;
 
-/** Construct wrapper with given PdfOperator */
-QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> _cs,Base *_base) : QSCObject ("PdfOperator",_base) {
- obj=_cs;
+/**
+ Construct wrapper with given PdfOperator
+ @param op PDF Operator
+ @param _base scripting base
+ */
+QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base) : QSCObject ("PdfOperator",_base) {
+ obj=op;
+}
+
+/**
+ Construct wrapper with given PdfOperator and reference to its content stream
+ @param op PDF Operator
+ @param cs CContentstream in which this PdfOperator is contained
+ @param _base scripting base
+*/
+QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperator",_base) {
+ obj=op;
+ csRef=cs;
+ //Paranoid check
+ assert(obj->getContentStream()==csRef.get());
 }
 
 /** destructor */
@@ -168,6 +186,20 @@ void QSPdfOperator::putBehind(QObject *op) {
 /** get Pdf Operator shared pointer held inside this class. Not exposed to scripting */
 boost::shared_ptr<PdfOperator> QSPdfOperator::get() {
  return obj;
+}
+
+/**
+ Return content stream in which this operator is contained.
+ May return NULL
+ (if operator is not contained in any content stream or if content stream is not known)
+ @return QObject wrapper around this operator's content stream
+*/
+QSContentStream* QSPdfOperator::stream() {
+ if (!csRef.get()) {
+  //ContentStream is not known, so we can't return it
+  return NULL;
+ }
+ return new QSContentStream(csRef,base);
 }
 
 } // namespace gui

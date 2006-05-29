@@ -22,10 +22,13 @@ using namespace util;
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListView in which to put this item
  @param pdfObj Operator contained in this item
+ @param cs Content stream in which this pdf operator is contained
  @param name Internal name of this item (order of operator)
  @param after Item after which this one will be inserted
  */
-TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+ csRef=cs;
+ assert(csRef.get());
  assert(data);
  obj=pdfObj;
  reload();
@@ -36,10 +39,13 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListViewItem under which to put this item
  @param pdfObj Operator contained in this item
+ @param cs Content stream in which this pdf operator is contained
  @param name Internal name of this item (order of operator)
  @param after Item after which this one will be inserted
  */
-TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+ csRef=cs;
+ assert(csRef.get());
  assert(data);
  obj=pdfObj;
  reload();
@@ -49,7 +55,7 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,b
 TreeItemAbstract* TreeItemPdfOperator::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  int position=name.toInt();
  if (position>=0) {//Operator
-  return new TreeItemPdfOperator(data,this,op[position],name,after);
+  return new TreeItemPdfOperator(data,this,op[position],csRef,name,after);
  } else { //Operand
   guiPrintDbg(debug::DBG_DBG,"Position " << position);
   position=-position-1;
@@ -126,7 +132,7 @@ TreeItemPdfOperator::~TreeItemPdfOperator() {
 
 //See TreeItemAbstract for description of this virtual method
 QSCObject* TreeItemPdfOperator::getQSObject() {
- return new QSPdfOperator(obj,data->base());
+ return new QSPdfOperator(obj,csRef,data->base());
 }
 
 //See TreeItemAbstract for description of this virtual method

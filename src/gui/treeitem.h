@@ -4,6 +4,7 @@
 #include <iproperty.h>
 #include <qlistview.h>
 #include "treeitemabstract.h"
+
 class QString;
 
 namespace gui {
@@ -11,8 +12,7 @@ namespace gui {
 using namespace pdfobjects;
 
 class TreeWindow;
-
-class TreeItemObserver;//internal class (observer)
+class TreeItemObserver;
 
 class TreeItem : public TreeItemAbstract {
 public:

@@ -67,8 +67,31 @@ void QSContentStream::setColor(QSPdfOperator *op,double r,double g,double b,bool
  //First check for validity
  if (!opValid(op,true)) return;
  //Call the method
+ pre_replace(op->get());
  boost::shared_ptr<PdfOperator> col=operatorSetColor(op->get(),r,g,b);
  replace(op->get(),col,indicateChange);
+}
+
+/**
+ Wrap given operator in "set color" operator and replaced it by the new operator in content stream
+ Overloaded version working with QColor
+ \see setColor(QSPdfOperator*,double,double,double,bool) 
+ @param op Operator that will be wrapped
+ @param c new color
+ @param indicateChange If set to true (default), changes will be written to underlying stream
+*/
+void QSContentStream::setColor(QSPdfOperator *op,QColor c,bool indicateChange/*=true*/) {
+ setColor(op,((double)c.red())/255.0,((double)c.green())/255.0,((double)c.blue())/255.0,indicateChange);
+}
+
+/**
+ \copydoc setColor(QSPdfOperator*,QColor,bool) 
+ QSA bugfixed version
+*/
+void QSContentStream::setColor(QObject *op,QColor c,bool indicateChange/*=true*/) {
+ QSPdfOperator* qop=dynamic_cast<QSPdfOperator*>(op);
+ if (!qop) return;
+ setColor(qop,c,indicateChange);
 }
 
 /**
@@ -83,15 +106,23 @@ void QSContentStream::setColor(QObject *op,double r,double g,double b,bool indic
 
 /**
  Replace old operator oldOp with new operator newOp in this stream
+ pre_replace must be called on old operator before calling replace
+ \see pre_replace
  @param oldOp Old operator
  @param newOp New operator
  @param indicateChange If set to true (default), changes will be written to underlying stream
  */
 void QSContentStream::replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared_ptr<PdfOperator> newOp,bool indicateChange/*=true*/) {
- guiPrintDbg(debug::DBG_CRIT,"Not yet implemented");
- assert(0);
- // What is "previous and next iterator"?
- // obj->replaceOperator(oldOp,newOp,col,??,??,indicateChange);
+ obj->replaceOperator(oldOp,newOp,itPrev,itNext,indicateChange);
+}
+
+/**
+ Prepare for replacing operator with some other - save it's next and prev iterator
+ @param op operator
+ */
+void QSContentStream::pre_replace(boost::shared_ptr<PdfOperator> op) {
+ itPrev=PdfOperator::getIterator(op);itPrev.prev();
+ itNext=PdfOperator::getIterator(op);itNext.prev();
 }
 
 /**
@@ -109,6 +140,7 @@ void QSContentStream::setPosition(QSPdfOperator *op,double x,double y,bool indic
  guiPrintDbg(debug::DBG_CRIT,"Not yet implemented (pdfobjects::setPosition)");
  assert(0);
 //TODO: implementation of pdfobjects::setPosition currently doeas not exist
+// pre_replace(op->get());
 // boost::shared_ptr<PdfOperator> pos=pdfobjects::setPosition(op->get(),pt);
 // replace(op->get(),pos,indicateChange);
 }
@@ -149,7 +181,7 @@ void QSContentStream::insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool
 }
 
 /**
- \copydoc insertOperator(QSPdfOperator*,bool) 
+ \copydoc insertOperator(QSPdfOperator*,QSPdfOperator*,bool) 
  QSA bugfixed version
 */
 void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateChange/*=true*/) {

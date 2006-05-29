@@ -109,6 +109,11 @@ public slots: //This will be all exported to scripting
  /*- Return page number of currently shown page */
  int pageNumber();
  /*-
+  Invoke dialog to select color and return the color that user have picked,
+  or last selected color if user cancelled the dialog.
+ */
+ QColor pickColor();
+ /*-
   Create and return a <link linkend="type_Menu">Menu</link> object. The menuName parameter specifies
   name of item or list from configuration, that will be used to initially fill the menu with items.
   If this parameter is not specified or invalid, the menu will be initially empty.
@@ -194,6 +199,7 @@ public slots: //This will be all exported to scripting
  void _dragDrop(TreeItemAbstract *source,TreeItemAbstract *target);
  void _dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target);
 private:
+ void deleteVariable(const QString &varName);
  void addDocumentObjects();
  void removeDocumentObjects();
  void scriptCleanup();

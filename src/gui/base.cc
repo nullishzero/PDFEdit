@@ -203,14 +203,22 @@ void Base::cleanup() {
  guiPrintDbg(debug::DBG_DBG,"Garbage collection done");
 }
 
+/**
+ "Remove" defined variable from scripting context
+ @param varName name of variable;
+*/
+void Base::deleteVariable(const QString &varName) {
+ qs->setErrorMode(QSInterpreter::Nothing);
+ qs->evaluate(varName+"=undefined;",this,"<delete_item>");
+}
+
 /** Removes objects added with addDocumentObject */
 void Base::removeDocumentObjects() {
- qs->setErrorMode(QSInterpreter::Nothing);
  //delete page and item variables from script -> they may change while script is not executing
- qs->evaluate("item.deleteSelf();",this,"<delete_item>");
- qs->evaluate("treeitem.deleteSelf();",this,"<delete_item>");
- qs->evaluate("page.deleteSelf();",this,"<delete_page>");
- //todo: run garbage collector? Is it needed?
+ deleteVariable("item");
+ deleteVariable("treeitem");
+ deleteVariable("page");
+ //todo: QSA normal garbage collector via wrapperfactory
 }
 
 /**
@@ -426,6 +434,15 @@ int Base::pageNumber() {
  return w->selectedPageNumber;
 }
 
+/**
+ Invoke dialog to select color.
+ Last selected color is remembered and offered as default next time.
+ The 'initial default color' is red
+ @return selected color, or last used color if the dialog was cancelled
+*/
+QColor Base::pickColor() {
+ return colorDialog(w);
+}
 
 /**
  Create and return new popup menu, build from menu list/item  identified by this name.
@@ -503,12 +520,18 @@ void Base::run(QString scriptName) {
  runFile(globalSettings->getFullPathName("script",scriptName));
 }
 
-/** \copydoc PdfEditWindow::save */
+/**
+ Save currently edited document to disk
+ @return true if saved succesfully, false if failed to save because of any reason
+ */
 bool Base::save() {
  return w->save();
 }
 
-/** \copydoc PdfEditWindow::save */
+/**
+ Save currently edited document to disk, while creating a new revisiion
+ @return true if saved succesfully, false if failed to save because of any reason
+ */
 bool Base::saveRevision() {
  return w->save(true);
 }
@@ -538,8 +561,8 @@ void Base::_dragDrop(TreeItemAbstract *source,TreeItemAbstract *target) {
  call("onDragDrop");
  qs->setErrorMode(QSInterpreter::Nothing);
  //delete page and item variables from script -> they may change while script is not executing
- qs->evaluate("source.deleteSelf();",this,"<delete_item>");
- qs->evaluate("target.deleteSelf();",this,"<delete_item>");
+ deleteVariable("source");
+ deleteVariable("target");
 }
 
 /**
@@ -558,8 +581,8 @@ void Base::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) {
  import->addQSObj(src,"source");
  import->addQSObj(tgt,"target");
  call("onDragDropOther");
- qs->evaluate("source.deleteSelf();",this,"<delete_item>");
- qs->evaluate("target.deleteSelf();",this,"<delete_item>");
+ deleteVariable("source");
+ deleteVariable("target");
 }
 
 /**

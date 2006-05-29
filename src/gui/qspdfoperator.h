@@ -9,6 +9,7 @@
 namespace gui {
 
 class Base;
+class QSContentStream;
 
 using namespace pdfobjects;
 
@@ -16,7 +17,8 @@ using namespace pdfobjects;
 class QSPdfOperator : public QSCObject {
  Q_OBJECT
 public:
- QSPdfOperator(boost::shared_ptr<PdfOperator> _cs,Base *_base);
+ QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base);
+ QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base);
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
@@ -61,13 +63,13 @@ public slots:
  */
  int paramCount();
  /*-
- Add an operator oper to the end of composite prev
+  Add an operator oper to the end of composite operator prev
  TODO: what is this function exactly doing?
  */
  void pushBack(QSPdfOperator *op,QSPdfOperator *prev);
  void pushBack(QObject *op,QObject *prev);
  /*-
- put operator op behind this one
+  Put operator op behind this one
  TODO: what is this function exactly doing?
  */
  void putBehind(QSPdfOperator *op);
@@ -79,20 +81,27 @@ public slots:
  */
  void remove();
  /*-
- Set next operator
+  Set next operator
  TODO: what is this function exactly doing?
  */
  void setNext(QSPdfOperator *op);
  void setNext(QObject *op);
  /*-
- Set previous operator
+  Set previous operator
  TODO: what is this function exactly doing?
  */
  void setPrev(QSPdfOperator *op);
  void setPrev(QObject *op);
+ /*-
+  Return content stream in which this operator is contained
+  May return NULL if the stream is not known or if this operator is not contained in any content stream
+ */
+ QSContentStream* stream();
 private:
  /** Object held in class*/
  boost::shared_ptr<PdfOperator> obj;
+ /** Reference to content stream that is holding this operator. It may be NULL (empty shared_ptr) if unknown */
+ boost::shared_ptr<CContentStream> csRef;
  /** Vector with child operators */
  std::vector<boost::shared_ptr<PdfOperator> > childs;
  /** Number of childs in vector. -1 mean no childs yet parsed */

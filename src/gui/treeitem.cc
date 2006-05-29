@@ -11,6 +11,7 @@
 #include "treeitemdict.h"
 #include "treeitemarray.h"
 #include "treeitemcstream.h"
+#include "treeitemobserver.h"
 #include "pdfutil.h"
 #include "util.h"
 #include "qsiproperty.h"
@@ -161,41 +162,6 @@ bool TreeItem::haveObserver() {
  return (observer.get()!=0);
 }
 
-/** Internal class providing observer */
-class TreeItemObserver: public IProperty::Observer {
-public:
- /** Constructor
- @param _parent Object to be reloaded on any change to monitored IProperty
- */
- TreeItemObserver(TreeItem* _parent){
-  parent=_parent;
- };
- /** Deactivate observer */
- void deactivate() {
-  parent=0;
- }
- /** Notification function called by changing property */
- virtual void notify (__attribute__((unused)) boost::shared_ptr<IProperty> newValue, __attribute__((unused)) boost::shared_ptr<const IProperty::ObserverContext> context) const throw() {
-  if (!parent) {
-   //Should never happen
-   guiPrintDbg(debug::DBG_ERR,"BUG: Kernel is holding observer for item already destroyed");
-   assert(parent);
-   return;
-  }
-  //Reload contents of parent
-  parent->reload();
- }
- /** Priority of this observer */
- virtual priority_t getPriority() const throw(){
-  return 0;//TODO: what priority?
- }
- /** Destructor */
- virtual ~TreeItemObserver() throw(){
- };
-private:
- /** Parent object holding observer property*/
- TreeItem *parent;
-};
 
 /** Sets observer for this item */
 void TreeItem::initObserver() {
