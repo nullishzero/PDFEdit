@@ -4,6 +4,19 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/05/29 16:34:16  hockm0bm
+ * * writeContent
+ *         - uses writeIndirectObject method for object storing
+ * * writeTrailer
+ *         - uses writeDirectObject method for trailer storing
+ * * writeIndirectObject
+ *   writeDirectObject methods added
+ *         - writes xpdf objects correctly - strings are escaped and can contain
+ *           0 bytes, stream objects are also ok
+ *         - Streams are used directly
+ *         - other types objects are transformed to IProperty and use
+ *           getStringRepresentation
+ *
  * Revision 1.8  2006/05/29 10:30:04  hockm0bm
  * writeContent handles string with CharBuffer too
  *
@@ -71,7 +84,94 @@ namespace pdfobjects
 
 namespace utils
 {
+	
+/** Helper method for xpdf direct object writing to the stream.
+ * @param obj Xpdf object to write.
+ * @param stream Stream where to write.
+ *
+ * Creates correct pdf string representation of given object and writes 
+ * everything to the given stream. Given xpdf object data (like stream 
+ * or string) can contain unprintable or 0 bytes.
+ */
+void writeDirectObject(::Object & obj, StreamWriter & stream) 
+{
+using namespace boost;
+using namespace std;
 
+	// stream requires special handling, because it may 
+	// contain binary data
+	if(obj.isStream())
+	{
+		CharBuffer charBuffer;
+		::Ref ref={0,0};
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, false);
+		stream.putLine(charBuffer.get(), size);
+	}else
+	{
+		// converts xpdf object to cobject and gets correct string
+		// representation
+		scoped_ptr<IProperty> cobj_ptr(createObjFromXpdfObj(obj));
+		string objPdfFormat;
+		cobj_ptr->getStringRepresentation(objPdfFormat);
+		
+		// objPdfFormat may contain 0 bytes, so we can't use c_str()
+		// method and have to copy all bytes to the CharBuffer (which also
+		// handles correct deallocation)
+		size_t bufSize=objPdfFormat.length();
+		char * buf=char_buffer_new(bufSize);
+		CharBuffer charBuffer(buf, char_buffer_delete());
+		for(size_t i=0; i<bufSize; i++)
+			buf[i]=objPdfFormat[i];
+		stream.putLine(buf, bufSize);
+	}
+}
+/** Helper method for xpdf object writing to the stream.
+ * @param obj Xpdf object to write.
+ * @param ref Object's reference.
+ * @param stream Stream where to write.
+ *
+ * Creates correct pdf string representation of given object, adds indirect
+ * header and footer and writes everything to the given stream. Given xpdf
+ * object data (like stream or string) can contain unprintable or 0 bytes.
+ */
+void writeIndirectObject(::Object & obj, ::Ref ref, StreamWriter & stream) 
+{
+using namespace boost;
+using namespace std;
+
+	// stream requires special handling, because it may 
+	// contain binary data
+	if(obj.isStream())
+	{
+		CharBuffer charBuffer;
+		size_t size=streamToCharBuffer(obj, ref, charBuffer, true);
+		stream.putLine(charBuffer.get(), size);
+	}else
+	{
+		// converts xpdf object to cobject and gets correct string
+		// representation
+		scoped_ptr<IProperty> cobj_ptr(createObjFromXpdfObj(obj));
+		string objPdfFormat;
+		cobj_ptr->getStringRepresentation(objPdfFormat);
+		
+		// we have to add some more information to write indirect 
+		// object (this includes header and footer)
+		std::string indirectFormat;
+		IndiRef indiRef(ref);
+		createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
+
+		// indirectFormat may contain 0 bytes, so we can't use c_str()
+		// method and have to copy all bytes to the CharBuffer (which also
+		// handles correct deallocation)
+		size_t bufSize=indirectFormat.length();
+		char * buf=char_buffer_new(bufSize);
+		CharBuffer charBuffer(buf, char_buffer_delete());
+		for(size_t i=0; i<bufSize; i++)
+			buf[i]=indirectFormat[i];
+		stream.putLine(buf, bufSize);
+	}
+}
+	
 void OldStylePdfWriter::writeContent(ObjectList & objectList, StreamWriter & stream, size_t off)
 {
 using namespace debug;
@@ -122,48 +222,7 @@ using namespace boost;
 		size_t objPos=stream.getPos();
 		offTable.insert(OffsetTab::value_type(ref, objPos));		
 		
-		// some object types require special handling
-		std::string objPdfFormat;
-		switch(obj->getType())
-		{
-			// stream and string require special handling, because it may 
-			// contain binary data in the buffer part and so possibly \0. 
-			// So we are using CharBuffer
-			case objStream:
-				{
-				CharBuffer charBuffer;
-				size_t size=streamToCharBuffer(*obj, ref, charBuffer, true);
-				stream.putLine(charBuffer.get(), size);
-				}
-				break;
-			case objString:
-				{
-				CharBuffer charBuffer;
-				size_t size=stringToCharBuffer(*obj, charBuffer);
-				stream.putLine(charBuffer.get(), size);
-				}
-				break;
-
-			// all other types are ok
-			default:
-				{
-				// object is not a stream and so normal string can be used for 
-				// text representation.
-				xpdfObjToString(*obj, objPdfFormat);
-
-				// we have to add some more information to write indirect 
-				// object (this includes header and footer
-				std::string indirectFormat;
-				IndiRef indiRef(ref);
-				createIndirectObjectStringFromString(indiRef, objPdfFormat, indirectFormat);
-				stream.putLine(indirectFormat.c_str());
-				}
-		}
-		if(!obj->isStream())
-		{
-		}else
-		{
-		}
+		writeIndirectObject(*obj, ref, stream);	
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		
 		// calls observers
@@ -342,10 +401,8 @@ using namespace boost;
 	utilsPrintDbg(DBG_DBG, "Setting Trailer::Size="<<newSize.getInt());
 
 	// stores changed trailer to the file
-	std::string objPdfFormat;
-	xpdfObjToString(trailer, objPdfFormat);
 	stream.putLine(TRAILER_KEYWORD);
-	stream.putLine(objPdfFormat.c_str());
+	writeDirectObject(trailer, stream);
 	kernelPrintDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table
