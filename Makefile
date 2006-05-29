@@ -1,6 +1,6 @@
 #top-level makefile for PDF editor
 
-.PHONY: clean doc src install all regen
+.PHONY: distclean clean doc src install all regen
 
 #make PDF editor - source and documentation
 all: src doc
@@ -23,6 +23,11 @@ src:
 clean:
 	cd doc/user && make clean
 	cd src && make clean
+
+#dist cleanup
+distclean:
+	cd doc/user && make clean
+	cd src && make distclean
 
 #re-generate programmer documentation
 regen:

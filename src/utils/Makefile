@@ -41,6 +41,8 @@ INCPATH	 = -I./ -I../ -I../xpdf/ -I../xpdf/xpdf -I../xpdf/goo -I../xpdf/splash -
 libutils.a: $(BINS)
 	$(AR) libutils.a $(BINS)
 
-.PHONY: clean
+.PHONY: clean distclean
 clean:
 	-$(DEL_FILE)  $(BINS) libutils.a
+
+distclean: clean
