@@ -95,14 +95,14 @@ struct PdfOpCmpRc
 	 */
 	bool operator() (const Rectangle& rc) const
 	{
-		if ( std::max(rc_.xleft,rc_.xright) < std::min(rc.xleft, rc.xright) )
+		if ( std::min(rc_.xleft,rc_.xright) < std::min(rc.xleft, rc.xright) )
 			return false;
-		if ( std::min(rc_.xleft,rc_.xright) > std::max(rc.xleft, rc.xright) )
+		if ( std::max(rc_.xleft,rc_.xright) > std::max(rc.xleft, rc.xright) )
 			return false;
 
-		if ( std::max(rc_.yleft,rc_.yright) < std::min(rc.yleft, rc.yright) )
+		if ( std::min(rc_.yleft,rc_.yright) < std::min(rc.yleft, rc.yright) )
 			return false;
-		if ( std::min(rc_.yleft,rc_.yright) > std::max(rc.yleft, rc.yright) )
+		if ( std::max(rc_.yleft,rc_.yright) > std::max(rc.yleft, rc.yright) )
 			return false;
 
 		return true;
