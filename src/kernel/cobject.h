@@ -1377,11 +1377,27 @@ makeNamePdfValid (Iter it, Iter end)
 }
 
 /**
+ * Make name valid.
+ * 
+	Beginning with PDF 1.2, any character except null (character code 0) may be included
+	in a name by writing its 2-digit hexadecimal code, preceded by the number
+	sign character (#); see implementation notes 3 and 4 in Appendix H. This
+	syntax is required to represent any of the delimiter or white-space characters or
+	the number sign character itself; it is recommended but not required for characters
+	whose codes are outside the range 33 (!) to 126 (~). The examples shown in
+	Table 3.3 are valid literal names in PDF 1.2 and later.
+
+ *	@param str Character string.
+ */
+inline std::string 
+makeNamePdfValid (const char* str)
+	{ return makeNamePdfValid (&str[0], &str[strlen(str)]); }
+
+/**
  * Make string pdf valid.
  *
  Any characters may appear in a string except unbalanced parentheses and
  the backslash, which must be treated specially./
-
  *
  * @param it Start iterator.
  * @param end End iterator.
@@ -1409,7 +1425,20 @@ makeStringPdfValid (Iter it, Iter end)
 	
 	return tmp;
 }
-	
+
+/**
+ * 
+ * Make string pdf valid.
+ *
+ Any characters may appear in a string except unbalanced parentheses and
+ the backslash, which must be treated specially./
+ *
+ * @param str Character string.
+ */
+inline std::string 
+makeStringPdfValid (const char* str)
+	{ return makeStringPdfValid (&str[0], &str[strlen(str)]); }
+
 /**
  * Make stream pdf valid.
  *

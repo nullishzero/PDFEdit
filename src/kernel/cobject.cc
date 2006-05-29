@@ -144,16 +144,18 @@ namespace {
 			 */
 			void operator() (Storage obj, Val val)
 			{
-				if (objString != obj.getType())
-					throw ElementBadTypeException ("Xpdf object is not string.");
-			 
-				// clears val content and add all bytes
+				// clear val content and add all bytes
 				// getCString is not suitable because string may contain 0
 				// characters
 				val.clear();
+				size_t len = obj.getString()->getLength();
 				GString * xpdfString=obj.getString();
-				for(int i=0; i< xpdfString->getLength(); i++)
-					val.append(1, xpdfString->getChar(i));
+				for(size_t i=0; i< len; ++i)
+				{
+					char c = obj.getString()->getChar (i);
+					val += c;
+				}
+				assert (len == val.length());
 			}
 	};
 
@@ -402,11 +404,11 @@ namespace {
 			break;
 
 		case objString:
-			oss << CSTRING_PREFIX  << obj.getString()->getCString() << CSTRING_SUFFIX;
+			oss << CSTRING_PREFIX  << utils::makeStringPdfValid(obj.getString()->getCString()) << CSTRING_SUFFIX;
 			break;
 
 		case objName:
-			oss << CNAME_PREFIX << obj.getName();
+			oss << CNAME_PREFIX << utils::makeNamePdfValid(obj.getName());
 			break;
 
 		case objNull:
@@ -789,7 +791,9 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	// Create parser. It can create complex types. Lexer knows just simple types.
 	// Lexer SHOULD delete MemStream.
 	//
-	XpdfObject dct;
+	// dct is freed in ~BaseStream
+	//
+	::Object dct;
 	
 	// xpdf MemStream frees buf 
 	size_t len = str.length ();
@@ -798,7 +802,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 					
 	scoped_ptr<Parser> parser	(new Parser (xref, 
 										  new Lexer (xref, 
-													 new MemStream (pStr, 0, len, dct.get(), true)
+													 new MemStream (pStr, 0, len, &dct, true)
 													 )
 											) 
 								);

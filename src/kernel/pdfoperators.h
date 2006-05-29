@@ -160,6 +160,48 @@ protected:
 	virtual void remove (boost::shared_ptr<PdfOperator>)
 		{ throw NotImplementedException ("PdfOperator::remove ()"); };
 
+protected:	
+	/**
+	 * Put behind.
+	 * 
+	 * REMARK: We can't simply make putBehind a method, because we have to
+	 * know the smart pointer behind the object. Member variable "this" is not
+	 * sufficient.
+	 *
+	 * @behindWhich Behind which elemnt.
+	 * @which 		Which element.
+	 */
+	static void putBehind (	boost::shared_ptr<PdfOperator> behindWhich, 
+							boost::shared_ptr<PdfOperator> which)
+	{
+		assert (behindWhich);
+		assert (which);
+
+		if (behindWhich && which)
+		{
+			if (!behindWhich->next.expired ())
+			{ // we are not at the end
+			
+				assert (behindWhich->next.lock());
+				which->setNext (behindWhich->next);
+				behindWhich->next.lock()->setPrev (ListItem (which));
+				which->setPrev (ListItem (behindWhich));
+				behindWhich->setNext (ListItem (which));
+				
+			}else
+			{ // we are at the end
+				
+				behindWhich->setNext (ListItem (which));
+				which->setPrev (ListItem (behindWhich));
+			}
+		
+		}else
+			throw CObjInvalidOperation ();
+	}
+
+	//
+	// Composite interface
+	//
 public:
 	/**
 	 * Get children count.
@@ -205,45 +247,7 @@ public:
 	static Iterator getIterator (boost::shared_ptr<PdfOperator> op) 
 		{ return Iterator (ListItem (op)); }
 
-	/**
-	 * Put behind.
-	 * 
-	 * REMARK: We can't simply make putBehind a method, because we have to
-	 * know the smart pointer behind the object. Member variable "this" is not
-	 * sufficient.
-	 *
-	 * @behindWhich Behind which elemnt.
-	 * @which 		Which element.
-	 */
-	static void putBehind (	boost::shared_ptr<PdfOperator> behindWhich, 
-							boost::shared_ptr<PdfOperator> which)
-	{
-		assert (behindWhich);
-		assert (which);
-
-		if (behindWhich && which)
-		{
-			if (!behindWhich->next.expired ())
-			{ // we are not at the end
-			
-				assert (behindWhich->next.lock());
-				which->setNext (behindWhich->next);
-				behindWhich->next.lock()->setPrev (ListItem (which));
-				which->setPrev (ListItem (behindWhich));
-				behindWhich->setNext (ListItem (which));
-				
-			}else
-			{ // we are at the end
-				
-				behindWhich->setNext (ListItem (which));
-				which->setPrev (ListItem (behindWhich));
-			}
-		
-		}else
-			throw CObjInvalidOperation ();
-	}
-
-	
+public:	
 	/**
 	 * Set next or prev item.
 	 */

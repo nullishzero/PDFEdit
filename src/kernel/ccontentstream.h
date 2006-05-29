@@ -334,10 +334,13 @@ public:
 	/**
 	 * Reparse pdf operators.
 	 *
-	 * @param res GfxResources if they change.
+	 * @param state GfxState if changed.
+	 * @param res GfxResources if changed.
+	 * @param bboxOnly If true only bboxes are set.
 	 */
 	void reparse (boost::shared_ptr<GfxState> state = boost::shared_ptr<GfxState> (), 
-				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> ());
+				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> (),
+				  bool bboxOnly = false);
 
 	/**
 	 * Save content stream to underlying cstream(s).

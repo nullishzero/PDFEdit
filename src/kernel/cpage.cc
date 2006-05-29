@@ -51,7 +51,7 @@ namespace {
 DisplayParams::DisplayParams () : 
 	hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
 	pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
-	rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gFalse) 
+	rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gTrue) 
 {}
 
 
@@ -239,27 +239,57 @@ CPage::displayPage (::OutputDev& out) const
 }
 
 //
+//
+//
+void 
+CPage::displayPage (::OutputDev& out, const DisplayParams params) 
+{
+
+	
+	// Reparse content streams if parameters changed
+	if (!(lastParams == params))
+	{
+		lastParams = params;
+		
+		// Use mediabox
+		if (lastParams.useMediaBox)
+		{
+			try {
+				
+				lastParams.pageRect = getMediabox ();
+				
+			}catch (ElementNotFoundException&)
+			{
+				kernelPrintDbg (debug::DBG_CRIT, "Mediabox not found.");
+				lastParams.pageRect = DisplayParams().pageRect;
+			}
+		}
+		
+		reparseContentStream ();
+	}
+
+	// display page
+	displayPage (out);
+}
+
+
+//
 // Helper methods
 //
 
 //
 //
 //
-bool CPage::parseContentStream ( )
+void 
+CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state)
 {
-	assert (hasValidRef(dictionary));
-	assert (hasValidPdf (dictionary));
-	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
-		throw CObjInvalidObject ();
-	
-
 	//
 	// Init Gfx resources
 	//
 
 	// Init mess
 	xpdf::openXpdfMess ();
-	
+
 	// Get resource dictionary
 	boost::shared_ptr<IProperty> resources = 
 		utils::getReferencedObject (dictionary->getProperty("Resources"));
@@ -272,7 +302,7 @@ bool CPage::parseContentStream ( )
 	assert (xref);
 	::Object* obj = resources->_makeXpdfObject ();
 	assert (obj); assert (objDict == obj->getType());
-	boost::shared_ptr<GfxResources> res (new GfxResources(xref, obj->getDict(), NULL));
+	res = boost::shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
 
 	//
 	// Init Gfx state
@@ -281,11 +311,34 @@ bool CPage::parseContentStream ( )
 	// Create Media (Bounding) box
 	boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (lastParams.pageRect.xleft,  lastParams.pageRect.yleft,
 														  lastParams.pageRect.xright, lastParams.pageRect.yright));
-	boost::shared_ptr<GfxState> state (new GfxState (lastParams.hDpi, lastParams.vDpi, rc.get(), lastParams.rotate, lastParams.upsideDown));
+	state = boost::shared_ptr<GfxState> (new GfxState (lastParams.hDpi, lastParams.vDpi, 
+														rc.get(), lastParams.rotate, lastParams.upsideDown));
 
 	// Close the mess
 	xpdf::closeXpdfMess ();
+}
 
+//
+//
+//
+bool CPage::parseContentStream ( )
+{
+	// Clear content streams
+	contentstreams.clear();
+	
+	assert (hasValidRef(dictionary));
+	assert (hasValidPdf (dictionary));
+	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
+		throw CObjInvalidObject ();
+	
+
+	//
+	// Create state and resources
+	//
+	boost::shared_ptr<GfxResources> res;
+	boost::shared_ptr<GfxState> state;
+	createXpdfDisplayParams (res, state);
+	
 	//
 	// Get the stream representing content stream (if any), make an xpdf object
 	// and finally instantiate CContentStream
@@ -332,6 +385,7 @@ bool CPage::parseContentStream ( )
 		//
 		// Create content streams, each cycle will take one/more content streams from streams variable
 		//
+		assert (contentstreams.empty());
 		assert (!streams.empty());
 		while (!streams.empty())
 			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
@@ -341,6 +395,34 @@ bool CPage::parseContentStream ( )
 
 	// Everything went ok
 	return true;
+}
+
+
+//
+//
+//
+void CPage::reparseContentStream ( )
+{
+	// Clear content streams
+	contentstreams.clear();
+	
+	assert (hasValidRef(dictionary));
+	assert (hasValidPdf (dictionary));
+	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
+		throw CObjInvalidObject ();
+	
+
+	//
+	// Create state and resources
+	//
+	boost::shared_ptr<GfxResources> res;
+	boost::shared_ptr<GfxState> state;
+	createXpdfDisplayParams (res, state);
+	
+	// Set only bboxes
+	for (ContentStreams::iterator it = contentstreams.begin();
+			it != contentstreams.end(); ++it)
+		(*it)->reparse (state, res, true);
 }
 
 

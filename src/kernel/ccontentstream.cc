@@ -1175,12 +1175,11 @@ namespace {
 	 *
 	 * @param stream Parser.
 	 * @param operands Operands.
-	 * @param last Last.
 	 *
 	 * @return Created pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (CStreamXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands, shared_ptr<PdfOperator>& last)
+	createOp (CStreamXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
 	{
 		// This is ugly but needed because of memory leaks
 		shared_ptr<PdfOperator> result;
@@ -1242,7 +1241,7 @@ namespace {
 				if (isSimpleOperator(*chcktp))
 				{// Simple operator
 					
-					last = result = shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
+					result = shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
 					break;
 					
 				}else
@@ -1250,18 +1249,17 @@ namespace {
 					
 					bool foundEndTag = false;
 					result = shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
-					// The same as in reparseContentStream
-					shared_ptr<PdfOperator> _last = result;
-					shared_ptr<PdfOperator> _prevLast =result;
 					
-					// While not the end
-					while (last = createOp (streamreader, operands, _last))
+					// The same as in (re)parseContentStream
+					shared_ptr<PdfOperator> newop, previousLast = result;
+		
+					while (newop=createOp (streamreader, operands))
 					{
-						result->push_back (last, _prevLast);
-							
+						result->push_back (newop, previousLast);
+		
 						// Is it the end tag?
 						string tag;
-						last->getOperatorName (tag);
+						newop->getOperatorName (tag);
 						if (tag == chcktp->endTag)
 						{
 							foundEndTag = true;
@@ -1269,7 +1267,7 @@ namespace {
 						}
 						
 						// Save last as previous
-						_prevLast = _last;
+						previousLast = getLastOperator (newop);
 					}
 
 					if (!foundEndTag)
@@ -1314,12 +1312,10 @@ namespace {
 	 * @param cs 		Content stream in which operators belong
 	 */
 	void
-	reparseContentStream (CContentStream::Operators& operators, CContentStream::CStreams& streams, CContentStream& cs)
+	reparseContentStream (CContentStream::Operators& operators, 
+						  CContentStream::CStreams& streams, 
+						  CContentStream& cs)
 	{
-		PdfOperator::Operands operands;
-		shared_ptr<PdfOperator> last, previousLast;
-		shared_ptr<PdfOperator> actual;
-
 		// Clear operators
 		operators.clear ();
 	
@@ -1336,23 +1332,27 @@ namespace {
 		streamreader.open ();
 	
 		//
-		// actual is the top most last one, e.g. a composite
-		// last is the last operator, e.g. the last item of an composite
-		// we want to add new (actual) after the last one of LAST call to
-		// 	createOp
+		// actual is the operator created by createOp, it can be a composite
 		//
-		while (actual=createOp (streamreader, operands, last))
+		PdfOperator::Operands operands;
+		shared_ptr<PdfOperator> topoperator (new UnknownCompositePdfOperator ("",""));	
+		shared_ptr<PdfOperator> newop, previousLast = topoperator;
+		
+		while (newop=createOp (streamreader, operands))
 		{
-			if (previousLast)
-			{
-				// Insert it in to the pdfoperator chain
-				PdfOperator::putBehind (previousLast, actual);
-			}
-			// Save it into our "top level" container
-			operators.push_back (actual);
-			previousLast = last;
+			topoperator->push_back (newop, previousLast);
+			previousLast = getLastOperator (newop);
 		}
 
+		//
+		// Copy operands
+		//
+		topoperator->getChildren (operators);
+		// Set prev of first valid operator to NULL
+		PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+		// Delete topoperator
+		topoperator.reset();
+		
 		// Close actual stream
 		streamreader.close ();
 
@@ -1380,10 +1380,6 @@ namespace {
 						CContentStream& cs,
 						CContentStream::CStreams& parsedstreams)
 	{
-		PdfOperator::Operands operands;
-		shared_ptr<PdfOperator> last, previousLast;
-		shared_ptr<PdfOperator> actual;
-
 		// Clear operators
 		operators.clear ();
 	
@@ -1403,26 +1399,31 @@ namespace {
 		streamreader.open ();
 	
 		//
-		// actual is the top most last one, e.g. a composite
-		// last is the last operator, e.g. the last item of an composite
-		// we want to add new (actual) after the last one of LAST call to
-		// 	createOp
+		// actual is the operator created by createOp, it can be a composite
 		//
-		while (actual=createOp (streamreader, operands, last))
+		PdfOperator::Operands operands;
+		shared_ptr<PdfOperator> topoperator (new UnknownCompositePdfOperator ("",""));	
+		shared_ptr<PdfOperator> newop, previousLast = topoperator;
+		
+		while (newop=createOp (streamreader, operands))
 		{
-			if (previousLast)
-			{
-				// Insert it in to the pdfoperator chain
-				PdfOperator::putBehind (previousLast, actual);
-			}
-			// Save it into our "top level" container
-			operators.push_back (actual);
-			previousLast = last;
+			topoperator->push_back (newop, previousLast);
+			previousLast = getLastOperator (newop);
 
 			// We have found a correct content stream.
 			if (streamreader.eofOfActualStream())
 				break;				
 		}
+
+		//
+		// Copy operands
+		//
+		topoperator->getChildren (operators);
+		// Set prev of first valid operator to NULL
+		PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+		// Delete topoperator
+		topoperator.reset();
+		
 
 		// Save which streams were parsed and close
 		streamreader.close (parsedstreams);
@@ -1588,7 +1589,7 @@ CContentStream::CContentStream (CStreams& strs,
 //
 //
 void
-CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<GfxResources> res)
+CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<GfxResources> res, bool bboxOnly)
 {
 	// Save resources if new
 	if (state)
@@ -1602,8 +1603,9 @@ CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<Gf
 	// Clear operators	
 	operators.clear ();
 	
-	// Parse it
-	reparseContentStream (operators, cstreams, *this);
+	// Reparse it if needed
+	if (!bboxOnly)
+		reparseContentStream (operators, cstreams, *this);
 	
 	// Save bounding boxes
 	if (!operators.empty())
@@ -1970,14 +1972,9 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 	getLastOperator(oper)->setNext (PdfOperator::ListItem());
 	
 	// Create empty composite
-	boost::shared_ptr<CompositePdfOperator> composite (new UnknownCompositePdfOperator	 ("",""));
+	boost::shared_ptr<CompositePdfOperator> composite (new UnknownCompositePdfOperator	 ("q","Q"));
 
 	PdfOperator::Operands operands;
-
-	// q
-	operands.clear();
-	// This is the first operator to be inserted, so we HAVE TO specify the second paramater.
-	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("q", 0, operands)), composite);
 	
 	// r g b rg
 	operands.clear ();
@@ -1985,10 +1982,11 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 	operands.push_back (shared_ptr<IProperty> (new CReal (g)));
 	operands.push_back (shared_ptr<IProperty> (new CReal (b)));
 
+	// This is the first operator to be inserted, so we HAVE TO specify the second paramater.
 	if (containsNonStrokingOperator(oper))
-		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)));
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)), composite);
 	if (containsStrokingOperator(oper))
-		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, operands)));
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, operands)), composite);
 	// DEBUG
 	if (!containsStrokingOperator(oper) && !containsNonStrokingOperator(oper))
 	{

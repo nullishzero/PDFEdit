@@ -48,6 +48,15 @@ typedef struct DisplayParams
 	/** Constructor. */
 	DisplayParams ();
 
+	/** Equality operator. */
+	bool operator== (const DisplayParams& dp) const
+	{
+		return (hDpi == dp.hDpi && vDpi == dp.vDpi &&
+				pageRect == dp.pageRect && rotate == dp.rotate &&
+				useMediaBox == dp.useMediaBox && crop == dp.crop &&
+				upsideDown == dp.upsideDown);
+	}
+	
 } DisplayParams;
 
 
@@ -319,16 +328,7 @@ public:
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
-	void displayPage (::OutputDev& out, const DisplayParams params) {
-		// Sett last used display paameters
-		lastParams = params;
-		if (params.useMediaBox)
-			lastParams.pageRect = getMediabox();
-
-		// display page
-		displayPage (out);
-	}
-
+	void displayPage (::OutputDev& out, const DisplayParams params); 
 	
 	/**
 	 * Draw page on an output device with last Display parameters.
@@ -347,7 +347,11 @@ public:
 	 */
 	bool parseContentStream ();
 
-	
+	/**
+	 * Reparse content stream using actual display paramters. 
+	 */
+	void reparseContentStream ();
+
 	//
 	// Media box interface
 	//
@@ -392,7 +396,16 @@ public:
 	 size_t findText (std::string text, 
 					  RectangleContainer& recs, 
 					  const TextSearchParams& params = TextSearchParams()) const;
-	 
+	
+private:
+	 /**
+	  * Create xpdf's state and res paramters.
+	  *
+	  * @param res Gfx resource paramter.
+	  * @param state Gfx state parameter.
+	  */
+	 void createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state);
+		 
 	 
 	//========================= not implemented yet
 	/**  
