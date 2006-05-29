@@ -47,7 +47,7 @@ public:
  bool save(bool newRevision=false);
  bool saveCopy(const QString &name);
  bool closeFile(bool askSave,bool onlyAsk=false);
- void openFile(const QString &name);
+ bool openFile(const QString &name);
  void exitApp();
  void closeWindow();
  int pageNumber();
@@ -107,7 +107,6 @@ private:
  boost::shared_ptr<IProperty> selectedProperty;
  /** Currently selected tree item (for scripting) */
  TreeItemAbstract *selectedTreeItem;
- //TODO: highlevel objects (Page, Anotation...) can be selected too
  /** Horizontal splitter between (Preview + Commandline) and (Treeview + Property editor) */
  QSplitter *spl;
  /** Vertical splitter between command line and preview window */
@@ -124,6 +123,8 @@ private:
  PageSpace *pagespc;
  /** Base used to host scripts */
  Base *base;
+ /** Last error message from exception in load/save, etc ... */
+ QString lastErrorMessage;
  /** Base should be access everything in PdfEditWidget */
  friend class Base;
 };

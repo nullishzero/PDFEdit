@@ -329,6 +329,15 @@ void Base::closeWindow() {
 }
 
 /**
+ Return last error message from some operations (like load, save, etc ...)
+ If last command was successfull, it is undefined what this function returns
+ @return Last error message 
+ */
+QString Base::error() {
+ return w->lastErrorMessage;
+}
+
+/**
  Check whether given file exists
  @param chkFileName Name of file to check
  @return true if file exists, false otherwise
@@ -393,10 +402,10 @@ void Base::help(const QString &topic/*=QString::null*/) {
 */
 QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/) {
  if (name.isNull()) return NULL;
- //TODO: return pdf wrapper with 'destructive close' behavior
  CPdf::OpenMode mode=advancedMode?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
   CPdf *opened=CPdf::getInstance(name,mode);
+  //Return pdf wrapper with 'destructive close' behavior
   return new QSPdf(opened,this,true);
  } catch (...) {
   return NULL;

@@ -23,13 +23,20 @@ function toggle(key) {
 
 /** Save (action from menu/toolbar) */
 function func_save() {
- save();
+ if (!save()) {
+  err=error();
+  warn(err);
+ }
 }
 
-/** Save njew revision (action from menu/toolbar) */
+/** Save new revision (action from menu/toolbar) */
 function func_saverev() {
- saveRevision();
- print(tr("New revision of document created"));
+ if (!saveRevision()) {
+  err=error();
+  warn(err);
+ } else {
+  print(tr("New revision of document created"));
+ }
 }
 
 /** Perform "set color" operation on currently selected operator */

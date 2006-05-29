@@ -65,6 +65,10 @@ public slots: //This will be all exported to scripting
  void closeWindow();
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
+ /*-
+  Return last error message (localized) from some operations (load, save, ...)
+ */
+ QString error();
  /*- Return true if given file exists on disk, false otherwise */
  bool exists(const QString &chkFileName);
  /*- Terminates application */
