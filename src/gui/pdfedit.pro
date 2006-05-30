@@ -82,8 +82,8 @@ SOURCES += refvalidator.cc refproperty.cc propertyeditor.cc propertyfactory.cc
 #QSA Wrapper classes
 HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h
 SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc
-HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfoperator.h
-SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc
+HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfoperator.h  qspdfoperatoriterator.h
+SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc qspdfoperatoriterator.cc
 
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h  selfdestructivewidget.h  base.h  rect2Darray.h

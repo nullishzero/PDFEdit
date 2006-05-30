@@ -6,6 +6,7 @@
 */
 
 #include "qspdfoperator.h"
+#include "qspdfoperatoriterator.h"
 #include "qsimporter.h"
 #include "qscontentstream.h"
 #include "qsiproperty.h"
@@ -46,6 +47,14 @@ QString QSPdfOperator::getText() {
  std::string text;
  obj->getStringRepresentation(text);
  return text;
+}
+
+/** 
+ Create new operator iterator from this PDF operator.
+ The operator will be initially positioned 
+*/
+QSPdfOperatorIterator* QSPdfOperator::iterator() {
+ return new QSPdfOperatorIterator(obj,csRef,base);
 }
 
 /** Call PdfOperator::getOperatorName(ret); return ret */
@@ -184,7 +193,7 @@ boost::shared_ptr<PdfOperator> QSPdfOperator::get() {
 /**
  Return content stream in which this operator is contained.
  May return NULL
- (if operator is not contained in any content stream or if content stream is not known)
+ (if operator is not contained in any content stream or if content stream is not known at time of creation)
  @return QObject wrapper around this operator's content stream
 */
 QSContentStream* QSPdfOperator::stream() {
