@@ -146,7 +146,7 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 			assert (!it.isEnd());
 			PdfOperator::Iterator itt = it;
 			itt.prev();
-			assert (!itt.isEnd());
+			assert (!itt.isBegin());
 			cs->deleteOperator (it, false);
 			it = itt.next();
 		}
@@ -163,7 +163,7 @@ delOper (__attribute__((unused))	ostream& oss, const char* fileName)
 			TextOperatorIterator itt = tit;
 			itt.prev();
 			cs->deleteOperator (tit, false);
-			if (itt.isEnd())
+			if (itt.isBegin())
 			{
 				cs->getPdfOperators (opers);
 				assert (!opers.empty());
@@ -239,7 +239,7 @@ delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
 			PdfOperator::Iterator itt = it;
 			itt.prev();
 			cs->deleteOperator (it, false);
-			if (itt.isEnd())
+			if (itt.isBegin())
 			{
 				cs->getPdfOperators (opers);
 				if (opers.empty())
@@ -420,7 +420,7 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 		while (!it.isEnd())
 		{
 			PdfOperator::Iterator itPrv = it; itPrv.prev();
-			PdfOperator::Iterator itNxt = it; itNxt.next();
+			PdfOperator::Iterator itNxt = PdfOperator::getIterator(getLastOperator(it)); itNxt.next();
 			// This will change iterator list of it.getCurrent() !!!
 			boost::shared_ptr<PdfOperator> op = operatorSetColor (it.getCurrent(), 1, 0, 0);
 			cs->replaceOperator (it, op, itPrv, itNxt, false);
