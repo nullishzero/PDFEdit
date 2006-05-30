@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.50  2006/05/30 19:10:49  hockm0bm
+ * isLinearized method added
+ *
  * Revision 1.49  2006/05/17 19:43:12  hockm0bm
  * getRevisionSize method added
  *
@@ -358,6 +361,10 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * <br>
  * All internal data structures which may depend on current revision are
  * intialized and cleaned up in initRevisionSpecific method.
+ * <br>
+ * Note that linearized documents brings some restrictions and so no revision
+ * changing is supported by XRefWriter.
+ * @see XRefWriter 
  *
  * <p>
  * <b>Document saving</b><br>
@@ -1331,6 +1338,18 @@ public:
 		// mode is used only if we are in the newest revision, otherwise we are
 		// in ReadOnly
 		return (!xref->getActualRevision())?mode:ReadOnly;
+	}
+
+	/** Checks whether this pdf is linearized.
+	 *
+	 * Delegates to XRefWriter::isLinearized.
+	 *
+	 * @see XRefWriter::isLinearized
+	 * @return true if document is linearized, false otherwise.
+	 */
+	bool isLinearized()const
+	{
+		return xref->isLinearized();
 	}
 
 	/** Revision type.
