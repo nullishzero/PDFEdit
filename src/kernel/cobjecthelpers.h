@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/05/30 17:27:00  hockm0bm
+ * getIPropertyFromRectangle method added
+ *
  * Revision 1.24  2006/05/09 20:03:47  hockm0bm
  * * getNameFromDict bug fix
  *         - Type used instead of /Type
@@ -383,6 +386,16 @@ using namespace debug;
 	parent->forEach(collector);
 	
 }
+
+
+/** Creates property with correct Rectangle representation.
+ *
+ * Created property is an array with four elements (see PDF specification
+ * page 133 for more information).
+ *
+ * @return Property (CArray) wrapped by smart pointer.
+ */
+boost::shared_ptr<IProperty> getIPropertyFromRectangle(const Rectangle & rect);
 
 }// end of utils namespace
 

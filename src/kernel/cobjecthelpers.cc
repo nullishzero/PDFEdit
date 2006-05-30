@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/05/30 17:26:59  hockm0bm
+ * getIPropertyFromRectangle method added
+ *
  * Revision 1.15  2006/05/13 22:19:29  hockm0bm
  * isInValidPdf refactored to hasValidPdf or isPdfValid functions
  *
@@ -75,6 +78,7 @@
  *
  */
 
+#include "factories.h"
 #include "static.h"
 #include "cobjecthelpers.h"
 #include "cpdf.h"
@@ -301,6 +305,24 @@ getReferencedObject (boost::shared_ptr<IProperty> ip)
 }
 
 
+boost::shared_ptr<IProperty> getIPropertyFromRectangle(const Rectangle & rect)
+{
+using namespace boost;
+
+	// pdf specification says that two diagonal corners should be used and
+	// readers has to be prepared to normalize it
+	shared_ptr<CArray> array(CArrayFactory::getInstance());
+	scoped_ptr<IProperty> llx(CRealFactory::getInstance(rect.xleft));
+	scoped_ptr<IProperty> lly(CRealFactory::getInstance(rect.yleft));
+	scoped_ptr<IProperty> urx(CRealFactory::getInstance(rect.xright));
+	scoped_ptr<IProperty> ury(CRealFactory::getInstance(rect.yright));
+	array->addProperty(0, *llx);
+	array->addProperty(1, *lly);
+	array->addProperty(2, *urx);
+	array->addProperty(3, *ury);
+
+	return array;
+}
 
 } // end of utils namespace
 
