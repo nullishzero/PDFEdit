@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/05/30 20:48:05  hockm0bm
+ * getIPropertyFromDate method added
+ *
  * Revision 1.25  2006/05/30 17:27:00  hockm0bm
  * getIPropertyFromRectangle method added
  *
@@ -388,14 +391,23 @@ using namespace debug;
 }
 
 
-/** Creates property with correct Rectangle representation.
+/** Creates property with correct pdf Rectangle representation.
+ * @param rect Rectangle to convert.
  *
  * Created property is an array with four elements (see PDF specification
- * page 133 for more information).
+ * page 134 for more information).
  *
  * @return Property (CArray) wrapped by smart pointer.
  */
 boost::shared_ptr<IProperty> getIPropertyFromRectangle(const Rectangle & rect);
+
+/** Creates property with correct pdf time representation.
+ * @param time Time to convert.
+ * 
+ * Created property is an string with ASN.1 defined in ISO/IEC 8824 format 
+ * used in pdf (see PDF specification page 133 for more information).
+ */
+boost::shared_ptr<IProperty> getIPropertyFromDate(const tm * time);
 
 }// end of utils namespace
 

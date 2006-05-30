@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/05/30 20:48:05  hockm0bm
+ * getIPropertyFromDate method added
+ *
  * Revision 1.16  2006/05/30 17:26:59  hockm0bm
  * getIPropertyFromRectangle method added
  *
@@ -322,6 +325,24 @@ using namespace boost;
 	array->addProperty(3, *ury);
 
 	return array;
+}
+
+boost::shared_ptr<IProperty> getIPropertyFromDate(const tm * time)
+{
+using namespace boost;
+
+	shared_ptr<CString> dateString(CStringFactory::getInstance());
+	char buffer[30];
+	memset(buffer, '\0', sizeof(buffer));
+
+	strftime(buffer, sizeof(buffer)-1, "D:%Y%m%d%H%M%S", time);
+	
+	// FIXME use timezone information
+	
+	// sets value from created buffer
+	dateString->writeValue(buffer);
+
+	return dateString;
 }
 
 } // end of utils namespace
