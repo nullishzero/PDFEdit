@@ -15,7 +15,7 @@ namespace gui {
  Construct wrapper with given PDF document
  @param _pdf Pdf document
  @param _base Scripting base
- @param destructive If true, document will be closed (without saving) when this object is deleted
+ @param _destructive If true, document will be closed (without saving) when this object is deleted
 */
 QSPdf::QSPdf(CPdf *_pdf,Base *_base,bool _destructive/*=false*/) : QSCObject ("Pdf",_base) {
  destructive=_destructive;

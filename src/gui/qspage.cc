@@ -6,7 +6,9 @@
 */
 
 #include "qspage.h"
+#include "qsdict.h"
 #include <qstring.h>
+#include <qrect.h>
 #include "qscontentstream.h"
 
 namespace gui {
@@ -67,6 +69,32 @@ void QSPage::loadContentStreams() {
  obj->getContentStreams(streams);
  //Store number of streams
  numStreams=streams.size(); 
+}
+
+/** Call CPage::getMediabox() */
+QVariant QSPage::mediabox() {
+ //QStringList will be "autoconverted" to Array in QSA
+ Rectangle r=obj->getMediabox();
+ QValueList<QVariant> rect;
+ rect.append(r.xleft);
+ rect.append(r.yleft);
+ rect.append(r.xright);
+ rect.append(r.yright);
+ return QVariant(rect);
+}
+
+/** Call CPage::setMediabox() */
+void QSPage::setMediabox(double x1,double y1,double x2,double y2) {
+ Rectangle r(x1,y1,x2,y2);
+ obj->setMediabox(r);
+}
+
+/** Call CPage::setMediabox() */
+void QSPage::setMediabox(QRect rc) {
+ //Note that Rectangle uses double coordinates, while Qrect use int coordinates.
+ //However, media box is often array of int, so this may not be a problem
+ Rectangle r(rc.left(),rc.top(),rc.right(),rc.bottom());
+ obj->setMediabox(r);
 }
 
 /** get CPage held inside this class. Not exposed to scripting */

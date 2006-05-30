@@ -68,8 +68,10 @@ HEADERS += treeitemabstract.h  treeitemref.h  treeitemarray.h  treeitemsimple.h 
 SOURCES += treeitemabstract.cc treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
 HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.h  treeitemcontentstream.h
 SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc treeitemcontentstream.cc
-HEADERS += treeitempdfoperator.h  draglistview.h  multitreewindow.h  treeitemobserver.h  treeitemcontentstreamobserver.h
-SOURCES += treeitempdfoperator.cc draglistview.cc multitreewindow.cc treeitemobserver.cc treeitemcontentstreamobserver.cc
+HEADERS += treeitempdfoperator.h  draglistview.h  multitreewindow.h  treeitemobserver.h 
+SOURCES += treeitempdfoperator.cc draglistview.cc multitreewindow.cc treeitemobserver.cc
+HEADERS += treeitemoperatorcontainer.h  treeitemcontentstreamobserver.h
+SOURCES += treeitemoperatorcontainer.cc treeitemcontentstreamobserver.cc
 
 #Property editor
 HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h

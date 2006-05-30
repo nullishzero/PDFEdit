@@ -64,7 +64,7 @@ public slots:
  int paramCount();
  /*-
   Add an operator oper to the end of composite operator prev
- TODO: what is this function exactly doing?
+  The operator will be added after operator prev.
  */
  void pushBack(QSPdfOperator *op,QSPdfOperator *prev);
  void pushBack(QObject *op,QObject *prev);

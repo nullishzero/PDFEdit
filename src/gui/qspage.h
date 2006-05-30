@@ -3,8 +3,10 @@
 
 #include <qobject.h>
 #include <cpage.h>
-#include "qsdict.h"
+#include "qscobject.h"
+#include <qvariant.h>
 class QString;
+class QRect;
 
 namespace gui {
 
@@ -45,6 +47,12 @@ public slots:
  QSDict* getDictionary();
  /*- Return text representation of this page */
  QString getText();
+ /*- Return media box of this page as array (x1,y1,x2,y2) */
+ QVariant mediabox();
+ /*- Set media box of this page to given rectangle - from (x1,y1) to (x2,y2) */
+ void setMediabox(double x1,double y1,double x2,double y2);
+ /*- Set media box of this page to given rectangle */
+ void setMediabox(QRect rc);
 private:
  /** Object held in class*/
  boost::shared_ptr<CPage> obj;

@@ -5,6 +5,7 @@
 
 #include "treeitemcontentstreamobserver.h"
 #include "treeitemabstract.h"
+#include "util.h"
 
 namespace gui {
 

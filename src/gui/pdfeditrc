@@ -58,7 +58,7 @@ show_annot=1
 show_dict=1
 show_graphic=1
 show_objdict=1
-show_outline=1
+show_outline=0
 show_page=1
 show_simple=1
 
