@@ -17,14 +17,13 @@ using namespace pdfobjects;
 
 /*= This type of object represents pdf operator in content stream */
 class QSPdfOperatorIterator : public QSCObject {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
+ QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,Base *_base);
  QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,Base *_base);
  QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base);
  virtual ~QSPdfOperatorIterator();
- PdfOperator::Iterator get();
+ PdfOperator::Iterator* get();
  boost::shared_ptr<PdfOperator> getCurrent();
 public slots:
  /*- Returns current operator from this iterator */
@@ -42,9 +41,11 @@ public slots:
  QSContentStream* stream();
  /*- Return true, if we are at the end of the operator list (either beginning or end) */
  bool isEnd();
+protected:
+ PdfOperator::Iterator* copyIterator(PdfOperator::Iterator *src);
 private:
  /** Object held in class*/
- PdfOperator::Iterator obj;
+ PdfOperator::Iterator *obj;
  /** Reference to content stream that is holding the original operator used to construct the iterator. It may be NULL (empty shared_ptr) if unknown or empty */
  boost::shared_ptr<CContentStream> csRef;
 };

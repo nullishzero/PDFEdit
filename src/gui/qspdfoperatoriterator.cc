@@ -11,35 +11,54 @@
 #include "qscontentstream.h"
 #include "qsiproperty.h"
 #include <ccontentstream.h>
+#include <iterator.h>
 
 namespace gui {
 
 using namespace pdfobjects;
 
 /**
- Construct wrapper around new Iteratorwith given PdfOperator
+ Construct wrapper around new Iterator with given Pdf Operator used as initial item
  @param op PDF Operator
  @param _base scripting base
  */
 QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,Base *_base) : QSCObject ("PdfOperator",_base) {
- obj=PdfOperator::getIterator(op);
+ obj=new PdfOperator::Iterator(PdfOperator::getIterator(op));
 }
 
 /**
- Construct wrapper around new Iteratorwith given PdfOperator and reference to conten t stream in which the operator resides
+ Construct wrapper around new Iterator with given Pdf Operator used as initial item
+ and with reference to content stream in which the operator resides
  @param op PDF Operator
  @param cs CContentstream in which this PdfOperator is contained
  @param _base scripting base
 */
 QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperator",_base) {
- obj=PdfOperator::getIterator(op);
+ obj=new PdfOperator::Iterator(PdfOperator::getIterator(op));
  csRef=cs;
  //Paranoid check
  assert(op->getContentStream()==csRef.get());
 }
 
+/**
+ Construct wrapper around new Iterator
+ and with reference to content stream in which the iterator resides
+ This class takes ownership of the iterator
+ @param op PDF Operator iterator
+ @param cs CContentstream in which this PdfOperator is contained
+ @param _base scripting base
+*/
+QSPdfOperatorIterator::QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperator",_base) {
+ assert(op);
+ obj=op;
+ csRef=cs;
+ //Paranoid check
+ assert(op->getCurrent()->getContentStream()==csRef.get());
+}
+
 /** destructor */
 QSPdfOperatorIterator::~QSPdfOperatorIterator() {
+ delete obj;
 }
 
 /**
@@ -48,7 +67,7 @@ QSPdfOperatorIterator::~QSPdfOperatorIterator() {
 */
 QSPdfOperator* QSPdfOperatorIterator::current() {
  //If contentstream is not known, empty reference will be passed this way
- return new QSPdfOperator(obj.getCurrent(),csRef,base);
+ return new QSPdfOperator(obj->getCurrent(),csRef,base);
 }
 
 /**
@@ -56,7 +75,32 @@ QSPdfOperator* QSPdfOperatorIterator::current() {
  Move iterator to next operator
 */
 void QSPdfOperatorIterator::next() {
- obj.next();
+ obj->next();
+}
+
+/**
+ Duplicate the operator, while trying to preserve its type
+*/
+PdfOperator::Iterator* QSPdfOperatorIterator::copyIterator(PdfOperator::Iterator *src) {
+ assert(src);
+ //TODO: this is not the best, but should be suficient
+ //Try to duplicate as TextOperatorIterator
+ TextOperatorIterator *newOpT=dynamic_cast<TextOperatorIterator*>(src);
+ if (newOpT) return new TextOperatorIterator(*newOpT);
+ //Try to duplicate as NonStrokingOperatorIterator
+ NonStrokingOperatorIterator *newOpN=dynamic_cast<NonStrokingOperatorIterator*>(src);
+ if (newOpN) return new NonStrokingOperatorIterator(*newOpN);
+ //Try to duplicate as StrokingOperatorIterator
+ StrokingOperatorIterator *newOpS=dynamic_cast<StrokingOperatorIterator*>(src);
+ if (newOpS) return new StrokingOperatorIterator(*newOpS);
+ //Try to duplicate as InlineImageOperatorIterator
+ InlineImageOperatorIterator *newOpI=dynamic_cast<InlineImageOperatorIterator*>(src);
+ if (newOpI) return new InlineImageOperatorIterator(*newOpI);
+ //Try to duplicate as ChangeableOperatorIterator
+ ChangeableOperatorIterator *newOpC=dynamic_cast<ChangeableOperatorIterator*>(src);
+ if (newOpC) return new ChangeableOperatorIterator(*newOpC);
+ //Fallback to standard iterator
+ return new PdfOperator::Iterator(*src);
 }
 
 /**
@@ -64,8 +108,9 @@ void QSPdfOperatorIterator::next() {
  @return New iterator pointing to same item.
 */
 QSPdfOperatorIterator* QSPdfOperatorIterator::copy() {
+ PdfOperator::Iterator *newOp=copyIterator(obj);
  //If contentstream is not known, empty reference will be passed this way
- return new QSPdfOperatorIterator(obj.getCurrent(),csRef,base);
+ return new QSPdfOperatorIterator(newOp,csRef,base);
 }
 
 /**
@@ -73,7 +118,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::copy() {
  Move iterator to previous operator
 */
 void QSPdfOperatorIterator::prev() {
- obj.prev();
+ obj->prev();
 }
 
 /**
@@ -81,7 +126,7 @@ void QSPdfOperatorIterator::prev() {
  Are we at beginning/end of the list?
 */
 bool QSPdfOperatorIterator::isEnd() {
- return obj.isEnd();
+ return obj->isEnd();
 }
 
 /**
@@ -89,7 +134,7 @@ bool QSPdfOperatorIterator::isEnd() {
  Not exposed to scripting
  @return PDF Operator Iterator
 */
-PdfOperator::Iterator QSPdfOperatorIterator::get() {
+PdfOperator::Iterator* QSPdfOperatorIterator::get() {
  return obj;
 }
 
@@ -99,7 +144,7 @@ PdfOperator::Iterator QSPdfOperatorIterator::get() {
  @return PDF Operator - current item
 */
 boost::shared_ptr<PdfOperator> QSPdfOperatorIterator::getCurrent() {
- return obj.getCurrent();
+ return obj->getCurrent();
 }
 
 /**

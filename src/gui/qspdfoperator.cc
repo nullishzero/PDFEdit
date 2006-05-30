@@ -11,6 +11,7 @@
 #include "qscontentstream.h"
 #include "qsiproperty.h"
 #include <ccontentstream.h>
+#include <iterator.h>
 
 namespace gui {
 
@@ -51,10 +52,19 @@ QString QSPdfOperator::getText() {
 
 /** 
  Create new operator iterator from this PDF operator.
- The operator will be initially positioned 
+ The iterator will be initially positioned at this item
 */
 QSPdfOperatorIterator* QSPdfOperator::iterator() {
  return new QSPdfOperatorIterator(obj,csRef,base);
+}
+
+/** 
+ Create new text operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+*/
+QSPdfOperatorIterator* QSPdfOperator::textIterator() {
+ TextOperatorIterator* opText=new TextOperatorIterator(PdfOperator::getIterator<TextOperatorIterator>(obj));
+ return new QSPdfOperatorIterator(opText,csRef,base);
 }
 
 /** Call PdfOperator::getOperatorName(ret); return ret */

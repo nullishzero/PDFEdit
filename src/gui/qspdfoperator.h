@@ -16,8 +16,6 @@ using namespace pdfobjects;
 
 /*= This type of object represents pdf operator in content stream */
 class QSPdfOperator : public QSCObject {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
  QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base);
@@ -30,10 +28,13 @@ public slots:
   Use data fetched by loadChilds method, if it wasn't called, it is called before returning the child
  */
  QSPdfOperator* child(int childNumber);
- /*-
-  Return PDF Operator iterator, initially pointing at this operator
- */
+ /*- Return PDF Operator iterator, initially pointing at this operator */
  QSPdfOperatorIterator* iterator();
+ /*-
+  Return PDF Text Operator iterator, initialialized from this operator
+  Text iterator iterate only through text operators in content stream
+ */
+ QSPdfOperatorIterator* textIterator();
  /*-
   Returns number of child operators under this pdf operator
   Use data fetched by loadChilds method, if it wasn't called, it is called before returning the count

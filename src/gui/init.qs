@@ -44,6 +44,7 @@ function setColor() {
  op=treeitem.item();
  stream=op.stream();
  col=pickColor();
+// if (!col.isValid()) return;
  stream.setColor(op,col);
  //reload the page
  go();
@@ -114,7 +115,7 @@ function onTreeRightClick() {
    menu.addItemDef("item Stream integrity test\\, both,buftest(treeitem.item()\\,1\\,1)");
   }
  }
- eval(menu.popup());
+ print_eval(menu.popup());
 }
 
 /** Callback for click with left mouse button in tree window */
@@ -147,7 +148,13 @@ function onPageRightClick() {
  if (PageSpace.isSomeoneSelected())
    menu.addItemDef("item Save selected area as image,savePageImage(true)");
  menu.addSeparator();
- eval(menu.popup());
+ print_eval(menu.popup());
+}
+
+/** Print to console and evaluate */
+function print_eval(x) {
+ print("> "+x);
+ eval(x);
 }
 
 /** Print names of childs of currently selected tree item to console */
