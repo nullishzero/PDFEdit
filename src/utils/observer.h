@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/05/30 21:04:12  hockm0bm
+ * doc update
+ *
  * Revision 1.13  2006/05/30 10:51:08  misuj1am
  *
  * -- improved
@@ -230,17 +233,18 @@ public:
 	 * @param context Value change context.
 	 * 
 	 * Each time value keeper, which implements IObserverHandler, changes 
-	 * value (or its part), all registered observers are announced about it
-	 * by this method.
+	 * value (or its part), all registered observers are notified about that
+	 * by this method calling.
 	 * <br>
 	 * newValue stands for new value or its part (if value is complex). 
 	 * <br>
 	 * contex contains additional information about change. It depends on
 	 * value keeper which information is provided (if any). It may be NULL
-	 * which means that no information is provided. Method implementator
-	 * should check context type (using getType() method TODO link).
-	 * Accoring this type cast to correct IChangeContext subclass and use
-	 * information.
+	 * (value stored in shared_ptr may be NULL - more precisely - use 
+	 * contex.get()==NULL condition for checking) which means that no 
+	 * information is provided. Method implementator should check context 
+	 * type (using getType() method). Accoring this type cast to correct 
+	 * IChangeContext subclass and use information.
 	 * <p>
 	 * <b>Example</b>:<br>
 	 * Lets say that T is IProperty. If observer is registered on simple
