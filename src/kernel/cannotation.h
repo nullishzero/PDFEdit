@@ -4,6 +4,28 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.4  2006/05/30 21:00:25  hockm0bm
+ * * annotTypeMapping utils method added
+ * * default static values for TextAnnotInitializer
+ * * TextAnnotInitializer functor
+ *         - almost complete:
+ *           Just some not very offten used fields are not done (but they
+ *           have default value according pdf specification).
+ *           It is not very important to add them
+ * * CAnnotation initialization constructor
+ *         - signature changed - uses CPage instead of page dictionary,
+ *           annotDict parameter removed (one is created in constructor),
+ *           rect parameter added (rectangle for annotation),
+ *           adding to the page Annots array is done by CPage interface
+ *         - initializes Type, Rect, P, M annotation dictionary fields
+ * * CAnnotation class extends IObserverHandler
+ *         - because of invalidation
+ * * CAnnotation::invalidate method added
+ *         - notifies all observers and sets valid flag to false
+ * * CAnnotation::isValid method added
+ * * CAnnotation::AnnotType enmumeration for known types
+ * * CAnnotation::getType method added
+ *
  * Revision 1.3  2006/05/23 19:12:03  hockm0bm
  * * IAnnotInitializator added
  * * UniversalAnnotInitializer implemented
@@ -47,6 +69,8 @@ namespace utils
 class IAnnotInitializator
 {
 public:
+	/** Type for supported initializer names.
+	 */
 	typedef std::vector<std::string> SupportedList;
 
 	virtual ~IAnnotInitializator(){};
@@ -90,8 +114,13 @@ public:
 class UniversalAnnotInitializer: public IAnnotInitializator
 {
 public:
+	/** Type for implementators mapping.
+	 * Maps annotation intializator name to implementation.
+	 */
 	typedef std::map<std::string, boost::shared_ptr<IAnnotInitializator> > AnnotList;
 private:
+	/** Registered initializators.
+	 */
 	AnnotList implList;
 public:
 	/** Empty constructor.
@@ -147,14 +176,41 @@ public:
 
 /** Initializator for Text annotation.
  *
+ * Initializes text annotation. Default values for text specific annotation
+ * dictionary fields are stored in public static class fields and so can be
+ * changed be class user.
  */
 class TextAnnotInitializer: public IAnnotInitializator
 {
 public:
-	/** Default value for Open entry.
+	/** Default value for Open entry in Annotation dictionary.
 	 * Value is true by default.
 	 */
 	static bool OPEN;
+
+	/** Default value for Contents entry in Annotation dictionary.
+	 * Value is empty string by default.
+	 */
+	static std::string CONTENTS;
+
+	/** Default value for Open entry in Annotation dictionary.
+	 * Value is Comment by default.
+	 */
+	static std::string NAME;
+
+	/** Default value for Open entry in Annotation dictionary.
+	 * Value is Unmarked by default.
+	 */
+	static std::string STATE;
+
+	/** Default value for StateModel entry in Annotation dictionary.
+	 * Value is Marked by default.
+	 */
+	static std::string STATEMODEL;
+
+	/** Default value for F entry in Annotation dictionary.
+	 */
+	static int FLAGS;
 	
 	/** Returns supported type.
 	 *
@@ -168,6 +224,8 @@ public:
 	 *
 	 * Checks if given annotType is Text and if yes, initializes given
 	 * dictionary as Text annotation. Otherwise immediately returns with false.
+	 * <br>
+	 * Assumes that following entries are initialized: Type, P, Rect, M.
 	 * <br>
 	 * Initialization doesn't do any checking and so annotation dictioanries
 	 * initialized to different type shouldn't be used here. Result may be
@@ -194,14 +252,17 @@ public:
  * <br>
  * Each CAnnotation instance is valid while it is accessible from some page
  * dictionary. In moment when reference to it is removed from page (more
- * precisely from Annots array in page dictionary), instance is invalidated and
- * so no changes can be done to it anymore. All annotation's properties are
- * available also in invalidated instance.
+ * precisely from Annots array in page dictionary), instance should be
+ * invalidated. This is done by annotation maintainer (CPage instance) using
+ * invalidate method. Note that all methods are available also when instance
+ * is invalidated. Annotation keeper should register observer which handles
+ * situation that instance is not valid anymore. Other possibility is to call
+ * isValid method.
  * <br>
  * Maintained dictionary is returned by getDictionary method. This can be used
  * to perform unsupported or unusual operations.
  */
-class CAnnotation 
+class CAnnotation: public observer::IObserverHandler<CAnnotation>
 {
 	/** Private constructor.
 	 */
@@ -213,22 +274,40 @@ class CAnnotation
 	 */
 	boost::shared_ptr<CDict> annotDictionary;
 
-	/** Validity flag.
-	 */
-	bool valid;
-
 	/** Initializator for annotations.
 	 * This implementator is used when annotation dictionary should be
 	 * initialized.
 	 * Concrete implementation can be set by setAnnotInitializator method.
 	 */
 	static boost::shared_ptr<utils::IAnnotInitializator> annotInit;
+
+	/** Validity flag.
+	 *
+	 * Value is initialized to true in constructor and can be changed by
+	 * invalidate method to false.
+	 */
+	bool valid;
 public:
+	/** Annotation type enumeration.
+	 * List of all known types according pdf specification. See PDF
+	 * specification chapter 8.4.5. Annotation Types.
+	 * <br>
+	 * CAnnotation doesn't have to support initialization of all listed types
+	 * (it depends on annotation initializator).
+	 */
+	enum AnnotType 
+	{
+	Text, Link, FreeText, Line, Square, Circle, Polygon, PolyLine, Highlight, 
+	Underline, Squiggly, StrikeOut, Stamp, Caret, Ink, Popup, Fileattachement, 
+	Sound, Movie, Widget, Screen, Printermark, Trapnet, Watermark, _3D, Unknown
+	};
+	
 	/** Initialization constructor.
 	 * @param annotDict Annotation dictionary.
 	 *
 	 * Initializes annotDictionary from given one and sets valid flag to true.
-	 * Doesn't perform any checking.
+	 * Doesn't perform any checking. Given dictionary has to be in pdf and its
+	 * reference in Annots array.
 	 * <br>
 	 * This should be used when caller is sure that given annotDict is ok (e. g.
 	 * when dictionary is created from template)
@@ -236,10 +315,23 @@ public:
 	CAnnotation(boost::shared_ptr<CDict> annotDict):annotDictionary(annotDict), valid(true){}
 	
 	/** Initialization constructor.
+	 * @param page Page where to add new annotation.
+	 * @param rect Rectangle for annotation (location on the screen in default 
+	 * user space units).
+	 * @param annotType Type of the annotation.
+	 *
+	 * Creates new annotation dictionary, adds it to the page pdf as new
+	 * indirect object and inserts its reference to the page too. Given page 
+	 * must be valid (has to be stored in pdf and to have valid reference).
+	 * <br>
+	 * Then fills maintaining information requiered by pdf specification to the
+	 * dictionary, such as Type, P, M and Rect fields.
+	 * <br>
+	 * Finaly uses annotInit initializator for type specific initialization 
+	 * with given annotType (it depends on annotInit static initializator what
+	 * it is done). 
 	 */
-	CAnnotation(boost::shared_ptr<CDict> annotDict, 
-			boost::shared_ptr<CDict> page, 
-			std::string annotType);
+	CAnnotation(boost::shared_ptr<CPage> page, Rectangle rect, std::string annotType);
 
 	/** Destructor.
 	 *
@@ -271,17 +363,37 @@ public:
 		return old;
 	}
 	
-	/** Returns valid flag value.
+	/** Retuns validity status.
 	 *
-	 * If this method returns false, all methods which would produce changes 
-	 * fails with exception.
-	 *
-	 * @return true if instance is valid, false otherwise.
+	 * @return value of valid flag.
 	 */
 	bool isValid()const
 	{
 		return valid;
 	}
+	
+	/** Invalidates this annotation.
+	 * 
+	 * This method should be called when annotation maintainer (there should be
+	 * only one according pdf specification) releases reference to annotation
+	 * dictionary. All registered observers are notified - newValue parameter
+	 * stands for this annotation instance and context is empty (shared_ptr
+	 * contains NULL).
+	 * <br>
+	 * If valid flag is already false, nothing is done.
+	 */
+	void invalidate();
+
+	/** Returns type of annotation.
+	 *
+	 * Gets Subtype field value from maintained annotation dictionary and maps
+	 * it to enumenration AnnotType value. If this type is not one from pdf
+	 * specification (valid in time of program writting) or Subtype field is 
+	 * not present, Unknown value is returned.
+	 *
+	 * @return AnnotType value of current annotation type.
+	 */
+	AnnotType getType()const;
 };
 
 } // namespace pdfobjects
