@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/05/30 10:51:08  misuj1am
+ *
+ * -- improved
+ *
  * Revision 1.12  2006/05/16 17:43:58  hockm0bm
  * * ScopedChangeContext added
  *         - new change context
@@ -323,7 +327,7 @@ public:
 				observers.erase (it);
 			else
 			{
-				assert (!"unregisterObserver did not find the element to erase.");
+				//assert (!"unregisterObserver did not find the element to erase.");
 				throw ObserverException ();
 			}
 		

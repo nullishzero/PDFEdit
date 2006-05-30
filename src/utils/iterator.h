@@ -132,7 +132,7 @@ public:
 	//
 	// Template method interface
 	//
-public:
+protected:
 	/**
 	 * In this base iterator, loop through all objects.
 	 *
