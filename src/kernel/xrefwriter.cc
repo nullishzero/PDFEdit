@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/05/30 17:29:34  hockm0bm
+ * collectRevisions bug fixed
+ *         - if pdf is linearized adds XRef::lastXRefPos to revisions,
+ *           so linearized documents have 1 reference
+ *
  * Revision 1.25  2006/05/24 19:32:17  hockm0bm
  * checkLinearized mem leak fixed
  *         - deallocates first parsed object
@@ -483,8 +488,15 @@ void XRefWriter::collectRevisions()
 {
 	kernelPrintDbg(DBG_DBG, "");
 
+	// starts with newest revision
+	size_t off=XRef::lastXRefPos;
+
+	// linearized pdf doesn't support multiversion document clearly, so we don't
+	// implement collecting for such documents
 	if(isLinearized())
 	{
+		// creates just one revision information with the newest one
+		revisions.push_back(off);
 		kernelPrintDbg(DBG_WARN, "collectRevisions not implemented for linearized pdf");
 		return;
 	}
@@ -496,8 +508,6 @@ void XRefWriter::collectRevisions()
 		revisions.clear();
 	}
 
-	// starts with newest revision
-	size_t off=XRef::lastXRefPos;
 	// uses deep copy to prevent problems with original data
 	Object * trailer=XRef::trailerDict.clone();
 	if(!trailer)
