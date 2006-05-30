@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/05/30 22:30:48  hockm0bm
+ * cloneTC corrected
+ *         - sets back to the newest revision after testing to get given pdf
+ *           instance to same state as it was given to the function
+ *
  * Revision 1.21  2006/05/30 17:31:18  hockm0bm
  * cloneTC method added
  *         - creates clone of each revision
@@ -175,6 +180,8 @@ public:
 				printf("\t\tData not suitable for this test. Revision changing is not supported.\n");
 			}
 		}
+		// gets back to the newest revision
+		pdf->changeRevision(0);
 
 		printf("TC03:\t cloning doesn't change content test\n");
 		CPPUNIT_ASSERT(!pdf->isChanged());
