@@ -11,13 +11,13 @@ my %used_func=();
 sub convert_definition {
  my $def=shift;
  #convert some C++ types to QSA types
- $def=~s/(virtual|const)\s+//g;		# keywords - have nmo meaning in QSA
+ $def=~s/(virtual|const)\s+//g;		# keywords - have no meaning in QSA
  $def=~s/&//g;				# references - the same
  $def=~s/size_t\s+/int /g;		# size_t -> int
  $def=~s/=(QString::null|NULL|false)//g;# default null/false - remove
  $def=~s/QString\s+/string /g;		# QString -> string
  $def=~s/QStringList\s+/string[] /g;	# QStringList -> string[]
- $def=~s/Q(Color)\s+/\1 /g;		# QT types
+ $def=~s/Q(Color|Rect|Variant)\s+/\1 /g;# QT types
  $def=~s/QS(Menu|Page|ContentStream|IProperty|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
  #trim unnecessary blank characters
  $def=~s/^\s+//;
