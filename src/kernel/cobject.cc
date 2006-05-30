@@ -552,7 +552,7 @@ createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
 				return CRefFactory::getInstance (pdf, ref, obj);
 
 			case objArray:
-				return new CArray (pdf,obj,ref);
+				return CArrayFactory::getInstance (pdf,ref,obj);
 
 			case objDict:
 				return CDictFactory::getInstance (pdf, ref, obj);
@@ -595,7 +595,7 @@ createObjFromXpdfObj (Object& obj)
 				return CRefFactory::getInstance  (obj);
 
 			case objArray:
-				return new CArray (obj);
+				return CArrayFactory::getInstance (obj);
 
 			case objDict:
 				return CDictFactory::getInstance  (obj);
