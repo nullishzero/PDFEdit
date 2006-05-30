@@ -214,6 +214,59 @@ public:
 	}
 };
 
+/** Factory class for CArray creation.
+ *
+ * Use getInstance methods for instants creation.
+ */
+class CArrayFactory
+{
+public:
+	/** Creates default CArray instance.
+	 *
+	 * @return CArray instance with default (empty dictionary) value.
+	 */
+	static CArray * getInstance()
+	{
+		return new CArray();
+	}
+
+	/** Creates CArray for specific pdf from xpdf Object.
+	 * @param pdf Pdf for which to create CArray.
+	 * @param indirefParent Indirect reference to nearest indirect parent.
+	 * @param obj Xpdf object to use for intialization.
+	 *
+	 * This should be used only internaly by kernel. Instance initialized this
+	 * way is not checked in cobjects routines and so nonsense information may
+	 * lead to mass. 
+	 * <br>
+	 * <b>REMARK</b>: <br>
+	 * If you don't know what exactly these parameters mean, DON'T use this
+	 * method.
+	 * @return CArray instance.
+	 */
+	static CArray * getInstance(CPdf & pdf, const IndiRef & indirefParent, Object & obj)
+	{
+		return new CArray(pdf, obj, indirefParent);
+	}
+
+	/** Creates CArray from xpdf Object.
+	 * @param obj Xpdf Object instance (must by objArray).
+	 *
+	 * @throw ElementBadTypeException If given object doesn't represent
+	 * dictionary object.
+	 *
+	 * @return CArray instance.
+	 */
+	static CArray * getInstance(Object & obj)
+	{
+		// checks type
+		if(obj.getType()!=objArray)
+			throw ElementBadTypeException("CArray");
+
+		return new CArray(obj);
+	}
+};
+
 /******************************************************************************
  * High level Cobjects factories
  *****************************************************************************/
