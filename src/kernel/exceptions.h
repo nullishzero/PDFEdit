@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/05/30 14:59:28  misuj1am
+ *
+ * -- iterator change, most(NOT ALL) exceptions handled during stream parsing
+ * -- CStream::getStringRepre returns pdf representation of cstream object
+ *
  * Revision 1.21  2006/05/27 21:05:45  misuj1am
  *
  * -- BiG UPGRADE:
@@ -83,12 +88,13 @@ class NotImplementedException;
 class IndirectObjectNotFoundException;
 class ElementNotFoundException;
 class ElementBadTypeException;
-
-struct XpdfInvalidObject;
-
 struct CObjBadValue;
 struct CObjInvalidObject;
 struct CObjInvalidOperation;
+struct MalformedContentStreamException;
+
+struct XpdfInvalidObject;
+
 struct OutOfRange;
 
 struct FilterNotSupported;
@@ -505,6 +511,16 @@ struct CObjInvalidCast : public CObjectException
 {
 	char const* what() const throw() {return "Invalid cast of IProperty.";}
 };
+
+/**
+ * Exception occurs when we do an invalid cast of IProperty.
+ */
+struct MalformedContentStreamException : public CObjectException
+{
+	char const* what() const throw() {return "Invalid content stream.";}
+};
+
+
 
 
 

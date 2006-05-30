@@ -208,6 +208,7 @@ CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverConte
 		newValue->setIndiRef (this->getIndiRef());
 		// Notify everybody about this change
 		this->notifyObservers (newValue, context);
+
 	}else
 	{
 		assert (!"Invalid context");
@@ -1103,13 +1104,33 @@ CObjectStream<Checker>::encodeBuffer (const Container& buf)
 	in.reset ();
 }
 
-
 //
 //
 //
 template<typename Checker>
 void
 CObjectStream<Checker>::getStringRepresentation (std::string& str) const 
+{
+	kernelPrintDbg (debug::DBG_DBG, "");
+	
+	// Empty the string
+	str.clear ();
+
+	// Get dictionary string representation
+	std::string strDict;
+	dictionary.getStringRepresentation (str);
+
+	// Put them together
+	return utils::streamToString (strDict, buffer.begin(), buffer.end(), std::back_inserter(str));
+}
+
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::getEncodedStringRepresentation (std::string& str) const 
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	

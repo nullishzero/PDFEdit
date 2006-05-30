@@ -751,7 +751,6 @@ public:
      */
     virtual PropertyType getType () const {return pStream;}
 
-	
 	/**
 	 * Returns string representation of this object.
 	 *
@@ -760,12 +759,19 @@ public:
 	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
+	 * Returns encoded string representation of this object.
+	 *
+	 * @param str String representation.
+	 */
+	virtual void getEncodedStringRepresentation (std::string& str) const;
+
+	/**
 	 * Returns printable string representation of this object.
 	 *
 	 * @param chrbuf Output char buffer.
 	 * @return Size of char buffer.
 	 */
-	virtual size_t getPdfRepresentation (CharBuffer& chrbuf) const;
+	virtual size_t getPdfRepresentation (CharBuffer& chrbuf) const __attribute__ ((deprecated));
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.

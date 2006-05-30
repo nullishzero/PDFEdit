@@ -967,9 +967,14 @@ namespace {
 	 * @param pdf Pdf where operand will belong.
 	 * @param rf  Indiref of content's stream parent.
 	 * @param cs Content stream.
+	 * @param observer Operand observer.
 	 */
 	void
-	opsSetPdfRefCs (shared_ptr<PdfOperator> first, CPdf& pdf, IndiRef rf, CContentStream& cs)
+	opsSetPdfRefCs (shared_ptr<PdfOperator> first, 
+					CPdf& pdf, 
+					IndiRef rf, 
+					CContentStream& cs, 
+					boost::shared_ptr<IIPropertyObserver> observer)
 	{
 		utilsPrintDbg (DBG_DBG, "");
 		CContentStream::OperatorIterator it = PdfOperator::getIterator (first);
@@ -982,12 +987,27 @@ namespace {
 			PdfOperator::Operands operands;
 			it.getCurrent()->getParameters (operands);
 			
-			// Set pdf and ref
+			//
+			// Set valid pdf and ref but lock the change 
+			// 	-- cstream won't get notified by its children, not needed
+			// 
 			PdfOperator::Operands::iterator oper = operands.begin ();
 			for (; oper != operands.end (); ++oper)
 			{
-				(*oper)->setPdf (&pdf);
-				(*oper)->setIndiRef (rf);
+				if (hasValidPdf(*oper))
+				{ // We do not support adding operators from another stream so if
+				  // it has valid pdf, it has to be the same
+					if ( ((*oper)->getPdf() != &pdf) || !((*oper)->getIndiRef() == rf) )
+						throw CObjInvalidObject ();
+				
+					
+				}else
+				{
+					(*oper)->setPdf (&pdf);
+					(*oper)->setIndiRef (rf);
+					(*oper)->registerObserver (observer);
+					(*oper)->lockChange ();
+				}
 			}
 			
 			it = it.next ();
@@ -1229,7 +1249,7 @@ namespace {
 				{
 					o.free ();
 					assert (!"Content stream bad operator type.");
-					throw MalformedFormatExeption ("Content stream bad operator type.");
+					throw ElementBadTypeException ("Content stream operator incorrect operand type.");
 				}
 				
 				// Get operands count
@@ -1314,7 +1334,8 @@ namespace {
 	void
 	reparseContentStream (CContentStream::Operators& operators, 
 						  CContentStream::CStreams& streams, 
-						  CContentStream& cs)
+						  CContentStream& cs,
+						  boost::shared_ptr<IIPropertyObserver> observer)
 	{
 		// Clear operators
 		operators.clear ();
@@ -1326,30 +1347,46 @@ namespace {
 			if (!hasValidPdf (*it) || !hasValidRef (*it))
 				throw CObjInvalidObject ();
 		}
+		CPdf* pdf = streams.front()->getPdf();
+		assert (pdf);
+		IndiRef rf = streams.front()->getIndiRef ();
 
 		assert (!streams.empty());
 		CStreamXpdfReader<CContentStream::CStreams> streamreader (streams);
 		streamreader.open ();
-	
-		//
-		// actual is the operator created by createOp, it can be a composite
-		//
+
 		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> topoperator (new UnknownCompositePdfOperator ("",""));	
 		shared_ptr<PdfOperator> newop, previousLast = topoperator;
-		
-		while (newop=createOp (streamreader, operands))
-		{
-			topoperator->push_back (newop, previousLast);
-			previousLast = getLastOperator (newop);
-		}
 
 		//
-		// Copy operands
+		// Parsing can throw, if so the stream is invalid
 		//
-		topoperator->getChildren (operators);
-		// Set prev of first valid operator to NULL
-		PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+		try 
+		{
+			while (newop=createOp (streamreader, operands))
+			{
+				topoperator->push_back (newop, previousLast);
+				previousLast = getLastOperator (newop);
+			}
+
+			//
+			// Copy operands
+			//
+			topoperator->getChildren (operators);
+			// Set prev of first valid operator to NULL
+			PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+
+		}catch (CObjInvalidObject&)
+		{
+			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
+			assert (!"Bad content stream. (remove this assert)");
+			operators.clear ();
+			operands.clear ();
+
+			/** \todo SET INVALID CONTENTSTREAM. */
+		}
+
 		// Delete topoperator
 		topoperator.reset();
 		
@@ -1357,9 +1394,10 @@ namespace {
 		streamreader.close ();
 
 		assert (operands.empty());
+		assert (observer);
 		// Set pdf ref and cs
 		if (!operators.empty())
-			opsSetPdfRefCs (operators.front(), *(streams.front()->getPdf()), streams.front()->getIndiRef(), cs);
+			opsSetPdfRefCs (operators.front(), *pdf, rf, cs, observer);
 	}
 
 	/**
@@ -1378,7 +1416,8 @@ namespace {
 	parseContentStream (CContentStream::Operators& operators, 
 						CContentStream::CStreams& streams, 
 						CContentStream& cs,
-						CContentStream::CStreams& parsedstreams)
+						CContentStream::CStreams& parsedstreams,
+						boost::shared_ptr<IIPropertyObserver> observer)
 	{
 		// Clear operators
 		operators.clear ();
@@ -1398,32 +1437,45 @@ namespace {
 		CStreamXpdfReader<CContentStream::CStreams> streamreader (streams);
 		streamreader.open ();
 	
-		//
-		// actual is the operator created by createOp, it can be a composite
-		//
 		PdfOperator::Operands operands;
 		shared_ptr<PdfOperator> topoperator (new UnknownCompositePdfOperator ("",""));	
 		shared_ptr<PdfOperator> newop, previousLast = topoperator;
-		
-		while (newop=createOp (streamreader, operands))
+
+		//
+		// Parsing can throw, if so the stream is invalid
+		// 	-- copy them to parsed streams any way
+		//
+		try 
 		{
-			topoperator->push_back (newop, previousLast);
-			previousLast = getLastOperator (newop);
+			while (newop=createOp (streamreader, operands))
+			{
+				topoperator->push_back (newop, previousLast);
+				previousLast = getLastOperator (newop);
 
-			// We have found a correct content stream.
-			if (streamreader.eofOfActualStream())
-				break;				
+				// We have found complete and correct content stream.
+				if (streamreader.eofOfActualStream())
+					break;				
+			}
+
+			//
+			// Copy operands
+			//
+			topoperator->getChildren (operators);
+			// Set prev of first valid operator to NULL
+			PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+
+		}catch (CObjInvalidObject&)
+		{
+			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
+			assert (!"Bad content stream. (remove this assert)");
+			operators.clear ();
+			operands.clear ();
+			
+			/** \todo SET INVALID CONTENTSTREAM. */
 		}
-
-		//
-		// Copy operands
-		//
-		topoperator->getChildren (operators);
-		// Set prev of first valid operator to NULL
-		PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+		
 		// Delete topoperator
 		topoperator.reset();
-		
 
 		// Save which streams were parsed and close
 		streamreader.close (parsedstreams);
@@ -1438,9 +1490,10 @@ namespace {
 		}
 
 		assert (operands.empty());
+		assert (observer);
 		// Set pdf ref and cs
 		if (!operators.empty())
-			opsSetPdfRefCs (operators.front(), *pdf, rf, cs);
+			opsSetPdfRefCs (operators.front(), *pdf, rf, cs, observer);
 	}
 
 
@@ -1568,16 +1621,18 @@ CContentStream::CContentStream (CStreams& strs,
 	assert (gfxres);
 	assert (gfxstate);
 	
+	// Create observer and register it on all operands
+	observer = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
+	
 	// Parse it, move parsed straems from strs to cstreams
-	parseContentStream (operators, strs, *this, cstreams);
+	parseContentStream (operators, strs, *this, cstreams, observer);
 	
 	// Save bounding boxes
 	if (!operators.empty())
 		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
 
-	// Create and register observer
-	observer = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
-	registerObservers ();
+	// Register observer on all cstream
+	registerCStreamObservers ();
 }
 
 
@@ -1605,7 +1660,7 @@ CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<Gf
 	
 	// Reparse it if needed
 	if (!bboxOnly)
-		reparseContentStream (operators, cstreams, *this);
+		reparseContentStream (operators, cstreams, *this, observer);
 	
 	// Save bounding boxes
 	if (!operators.empty())
@@ -1637,7 +1692,7 @@ CContentStream::_objectChanged ()
 	//
 	// Unregister observer
 	// 
-	unregisterObservers ();
+	unregisterCStreamObservers ();
 
 	// Save it
 	string tmp;
@@ -1655,7 +1710,7 @@ CContentStream::_objectChanged ()
 	//
 	// Register observers again
 	// 
-	registerObservers ();
+	registerCStreamObservers ();
 	
 	// Notify observers
 	this->notifyObservers ( shared_ptr<CContentStream> (),shared_ptr<const ObserverContext> ());
@@ -1716,10 +1771,16 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 	// Get the prev of operator that should be deleted
 	OperatorIterator itPrv = it; itPrv.prev ();
 	// Set iterators, in other words remove operIt from iterator list
+	boost::shared_ptr<PdfOperator> nxt, prv;
 	if (!itNxt.isEnd())
-		itNxt.getCurrent()->setPrev (itPrv.getCurrent());
-	if (!itPrv.isEnd())
-		itPrv.getCurrent()->setNext (itNxt.getCurrent());
+		nxt = itNxt.getCurrent ();
+	if (!itPrv.isBegin())
+		prv = itPrv.getCurrent ();
+	
+	if (!itNxt.isEnd())
+		itNxt.getCurrent()->setPrev (prv);
+	if (!itPrv.isBegin())
+		itPrv.getCurrent()->setNext (nxt);
 
 	//
 	// To be sure
@@ -1744,11 +1805,20 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 	// Insert into empty contentstream
 	if (operators.empty ())
 	{
-		assert (it.isEnd());
+		assert (!it.valid());
 		operators.push_back (newOper);
 		return;
 	}
 	assert (!it.isEnd());
+	assert (!cstreams.empty());
+
+	// Set correct IndiRef, CPdf and cs to inserted operator
+	assert (hasValidRef (cstreams.front()));
+	assert (hasValidPdf (cstreams.front()));
+	CPdf* pdf = cstreams.front()->getPdf();
+	assert (pdf);
+	IndiRef rf = cstreams.front()->getIndiRef ();
+	opsSetPdfRefCs (newOper, *pdf, rf, *this, observer);
 
 	//
 	// Insert into operators or composite
@@ -1804,8 +1874,8 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 
 
 //
-// We can not simply use add and delete function because we would mess up
-// iterator list in both cases
+// We can not simply use add and delete function because in both cases we would mess up
+// the iterator list
 //
 void
 CContentStream::replaceOperator (OperatorIterator it, 
@@ -1818,10 +1888,19 @@ CContentStream::replaceOperator (OperatorIterator it,
 
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (!operators.empty());
+	assert (!cstreams.empty());
 
 	// Be sure that the operator won't get deallocated along the way
 	boost::shared_ptr<PdfOperator> toReplace = it.getCurrent ();
 	
+	// Set correct IndiRef, CPdf and cs to inserted operator
+	assert (hasValidRef (cstreams.front()));
+	assert (hasValidPdf (cstreams.front()));
+	CPdf* pdf = cstreams.front()->getPdf();
+	assert (pdf);
+	IndiRef rf = cstreams.front()->getIndiRef ();
+	opsSetPdfRefCs (newOper, *pdf, rf, *this, observer);
+
 	//
 	// Replace in operators or composite
 	// 
@@ -1867,7 +1946,7 @@ CContentStream::replaceOperator (OperatorIterator it,
 		itNxt.getCurrent()->setPrev (itCurLast.getCurrent());
 		itCurLast.getCurrent()->setNext (itNxt.getCurrent());
 	}
-	if (!itPrv.isEnd())
+	if (!itPrv.isBegin())
 	{
 		itPrv.getCurrent()->setNext (itCur.getCurrent());
 		itCur.getCurrent()->setPrev (itPrv.getCurrent());
@@ -1886,7 +1965,7 @@ CContentStream::replaceOperator (OperatorIterator it,
 //
 //
 void
-CContentStream::registerObservers () const
+CContentStream::registerCStreamObservers () const
 {
 	if (observer)
 	{
@@ -1904,7 +1983,7 @@ CContentStream::registerObservers () const
 //
 //
 void
-CContentStream::unregisterObservers () const
+CContentStream::unregisterCStreamObservers () const
 {
 	if (observer)
 	{
@@ -1923,33 +2002,6 @@ CContentStream::unregisterObservers () const
 // Operator changing functions
 //==========================================================
 
-
-//
-//
-//
-bool 
-containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper)
-{
-	NonStrokingOperatorIterator it = PdfOperator::getIterator<NonStrokingOperatorIterator> (oper);
-	if (it.isEnd())
-		return false;
-	else
-		return true;
-}
-
-
-//
-//
-//
-bool 
-containsStrokingOperator (boost::shared_ptr<PdfOperator> oper)
-{
-	StrokingOperatorIterator it = PdfOperator::getIterator<StrokingOperatorIterator> (oper);
-	if (it.isEnd())
-		return false;
-	else
-		return true;
-}
 
 
 //

@@ -607,6 +607,212 @@ public:
 
 
 
+
+//==========================================================
+// PdfOperator iterators
+//==========================================================
+
+/**
+ * Text operator iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * text operator. This is done in the constructor.
+ */
+struct TextOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 4;
+
+	//
+	// Constructor
+	//
+	TextOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!isEnd() && !validItem())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == accepted_opers[i])
+				return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers [NAME_COUNT];
+};
+
+/**
+ * Inline image iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * inline image operator. This is done in the constructor.
+ */
+struct InlineImageOperatorIterator: public PdfOperator::Iterator
+{
+	//
+	// Constructor
+	//
+	InlineImageOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!isEnd() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		if (name == accepted_opers)
+			return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers;
+};
+
+/**
+ * Changeable operator iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * common operator. This is done in the constructor.
+ *
+ * This operator excludes operators like q, Q etc.
+ */
+struct ChangeableOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 38;
+
+	//
+	// Constructor
+	//
+	ChangeableOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!this->isEnd() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == rejected_opers[i])
+				return false;
+		
+		return true;
+	}
+
+private:
+	static const std::string rejected_opers [NAME_COUNT];
+};
+
+/**
+ * "Non stroking" operator iterator.
+ *
+ * REMARK: See pdf specification for details.
+ */
+struct NonStrokingOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 4;
+	
+	//
+	// Constructor
+	//
+	NonStrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!this->isEnd() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == accepted_opers[i])
+				return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers [NAME_COUNT];
+};
+
+
+/**
+ * "Stroking" operator iterator. 
+ *
+ * This iterator traverses only operators that are connected with stroking
+ * operations. 
+ *
+ * REMARK: See pdf specification for details.
+ */
+struct StrokingOperatorIterator: public PdfOperator::Iterator
+{
+	/** Number of accepted names. */
+	static const size_t NAME_COUNT = 4;
+
+	//
+	// Constructor
+	//
+	StrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+		// Get to the first valid text operator
+		while (!this->isEnd() && !validItem ())
+			this->next();
+	}
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		for (size_t i = 0; i < NAME_COUNT; ++i)
+			if (name == accepted_opers[i])
+				return true;
+		
+		return false;
+	}
+
+private:
+	static const std::string accepted_opers [NAME_COUNT];
+};
+
+
 //==========================================================
 // Helper funcions
 //==========================================================
@@ -656,202 +862,23 @@ inline boost::shared_ptr<PdfOperator> getLastOperator (PdfOperator::Iterator it)
 	{ return getLastOperator (it.getCurrent()); }
 
 
-//==========================================================
-// PdfOperator iterators
-//==========================================================
-
 /**
- * Text operator iterator.
+ * Tries to find a non stroking operator.
  *
- * Constructed from an arbitrary operator, but it will always start from a valid
- * text operator. This is done in the constructor.
- */
-struct TextOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 4;
-
-	//
-	// Constructor
-	//
-	TextOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!_cur.expired() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == accepted_opers[i])
-				return true;
-		
-		return false;
-	}
-
-private:
-	static const std::string accepted_opers [NAME_COUNT];
-};
-
-/**
- * Inline image iterator.
+ * @param oper Composite operator.
  *
- * Constructed from an arbitrary operator, but it will always start from a valid
- * inline image operator. This is done in the constructor.
+ * @return True if found, false otherwise.
  */
-struct InlineImageOperatorIterator: public PdfOperator::Iterator
-{
-	//
-	// Constructor
-	//
-	InlineImageOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!_cur.expired() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
+bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper);
 
-		if (name == accepted_opers)
-			return true;
-		
-		return false;
-	}
-
-private:
-	static const std::string accepted_opers;
-};
-
-/**
- * Changeable operator iterator.
+/** 
+ * Tries to find a non stroking operator.
  *
- * Constructed from an arbitrary operator, but it will always start from a valid
- * common operator. This is done in the constructor.
+ * @param oper Composite operator.
  *
- * This operator excludes operators like q, Q etc.
+ * @return True if found, false otherwise.
  */
-struct ChangeableOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 38;
-
-	//
-	// Constructor
-	//
-	ChangeableOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!_cur.expired() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == rejected_opers[i])
-				return false;
-		
-		return true;
-	}
-
-private:
-	static const std::string rejected_opers [NAME_COUNT];
-};
-
-/**
- * "Non stroking" operator iterator.
- */
-struct NonStrokingOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 4;
-	
-	//
-	// Constructor
-	//
-	NonStrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!_cur.expired() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == accepted_opers[i])
-				return true;
-		
-		return false;
-	}
-
-private:
-	static const std::string accepted_opers [NAME_COUNT];
-};
-
-
-/**
- * "Stroking" operator iterator.
- */
-struct StrokingOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 4;
-
-	//
-	// Constructor
-	//
-	StrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!_cur.expired() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == accepted_opers[i])
-				return true;
-		
-		return false;
-	}
-
-private:
-	static const std::string accepted_opers [NAME_COUNT];
-};
+bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
 
 
 //==========================================================

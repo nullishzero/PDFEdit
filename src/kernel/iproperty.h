@@ -27,7 +27,7 @@ namespace pdfobjects {
 // 
 class CPdf;
 class IProperty;
-typedef observer::IObserverHandler<IProperty> IPropertyObserver;
+typedef observer::IObserverHandler<IProperty> IPropertyObserverSubject;
 
 
 /** Enum describing the type of a property. */
@@ -123,7 +123,7 @@ typedef struct IndiRef
  * REMARK: The connection to CPdf is stored in CPdf* and not smart pointer. This has a good reason
  * namely cyclic references of smart pointers.
  */
-class IProperty : public IPropertyObserver
+class IProperty : public IPropertyObserverSubject
 {
 private:
 	IndiRef 		ref;		/**< Object's pdf id and generation number. */
@@ -136,7 +136,7 @@ private:
 	//
 private:
 	/** Copy constructor. */
-	IProperty (const IProperty&) : IPropertyObserver() {};
+	IProperty (const IProperty&) : IPropertyObserverSubject() {};
 
 protected:	
 

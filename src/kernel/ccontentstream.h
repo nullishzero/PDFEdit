@@ -31,7 +31,8 @@ namespace pdfobjects {
 //
 class IProperty;
 class CContentStream;	
-typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
+typedef observer::IObserverHandler<CContentStream> CContentStreamObserverSubject;
+typedef observer::IObserver<IProperty> IIPropertyObserver;
 
 //==========================================================
 // CContentStream
@@ -62,7 +63,7 @@ typedef observer::IObserverHandler<CContentStream> CContentStreamObserver;
  * special type of CStream in a human form. 
  * \TODO make this comment sane
  */
-class CContentStream : public noncopyable, public CContentStreamObserver 
+class CContentStream : public noncopyable, public CContentStreamObserverSubject
 {
 public:
 	typedef std::list<boost::shared_ptr<PdfOperator> > Operators;
@@ -90,12 +91,12 @@ private:
 	/**
 	 * Content stream observer.
 	 *
-	 * If a stream is changed, reparse whole contentstream.
+	 * If a stream changes, reparse whole contentstream.
 	 *
 	 * It can happen that the stream is parsed also after page's Contents entry
 	 * has been modified in a way that this content stream no longer exists. 
 	 */
-	struct CStreamObserver : public IProperty::Observer
+	struct CStreamObserver : public IIPropertyObserver
 	{
 		//
 		// Constructor
@@ -361,7 +362,7 @@ protected:
 	/**
 	 * Register observers.
 	 */
-	void registerObservers () const;
+	void registerCStreamObservers () const;
 
 	/**
 	 * Unregister observers.
@@ -369,7 +370,7 @@ protected:
 	 * This is an important function when saving consten stream consisting of
 	 * more streams.
 	 */
-	void unregisterObservers () const;
+	void unregisterCStreamObservers () const;
 	
 	//
 	// Destructor
