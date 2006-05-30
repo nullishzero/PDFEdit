@@ -183,6 +183,18 @@ struct char_buffer_delete
 inline char* char_buffer_new (size_t l) {return new char [l];}
 
 
+/** Empty deallocator functor.
+ * This functor can be used with smart pointers as deallocator when instance
+ * cannot be deallocated by smart pointer.
+ */
+template<typename T> struct EmptyDeallocator
+{
+	/** Deallocation function operator.
+	 * This method is empty and so no deallocation is done.
+	 */
+	void operator()(T * ){};
+};
+
 
 //=====================================================================================
 
