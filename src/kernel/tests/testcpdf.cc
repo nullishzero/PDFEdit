@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/05/30 17:31:18  hockm0bm
+ * cloneTC method added
+ *         - creates clone of each revision
+ *
  * Revision 1.20  2006/05/24 19:34:03  hockm0bm
  * pageIterationTC mem leak fixed
  *         - fakeXpdfDict is deallocated now
@@ -141,6 +145,41 @@ public:
 	{
 	}
 
+	void cloneTC(CPdf * pdf, string & originalFile)
+	{
+		printf("%s\n", __FUNCTION__);
+	
+		char suffix[13];
+		memset(suffix, '\0', sizeof(suffix));
+		snprintf(suffix, sizeof(suffix)-1, "%u_clone.pdf", 0);
+		string file=originalFile+suffix;
+		printf("TC01:\tCloning of first (the newest one) revision. Output file=%s\n", file.c_str());
+		FILE * cloneFile=fopen(file.c_str(), "w");
+		pdf->clone(cloneFile);
+		fclose(cloneFile);
+		
+		printf("TC02:\tCloning of later revisions.\n");
+		for(CPdf::revision_t rev=1; rev<pdf->getRevisionsCount(); rev++)
+		{
+			try
+			{
+				printf("\t\t%d. revision clone. Output file=%s\n", rev, file.c_str());
+				pdf->changeRevision(rev);
+				snprintf(suffix, sizeof(suffix)-1, "%u_clone.pdf", rev);
+				file=originalFile+suffix;
+				cloneFile=fopen(file.c_str(), "w");
+				pdf->clone(cloneFile);
+				fclose(cloneFile);
+			}catch(NotImplementedException & e)
+			{
+				printf("\t\tData not suitable for this test. Revision changing is not supported.\n");
+			}
+		}
+
+		printf("TC03:\t cloning doesn't change content test\n");
+		CPPUNIT_ASSERT(!pdf->isChanged());
+	}
+	
 	void pageIterationTC(CPdf * pdf)
 	{
 	using namespace boost;
@@ -867,6 +906,7 @@ public:
 			// have no changes made before (checks isChanged on non change
 			// producing operations)
 			pageIterationTC(pdf);
+			cloneTC(pdf, fileName);
 			indirectPropertyTC(pdf);
 			pageManipulationTC(pdf);
 			pdf->close();
