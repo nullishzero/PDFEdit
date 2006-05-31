@@ -725,17 +725,33 @@ namespace {
 	//==========================================================
 	
 	//
-	// Bit helper function
+	// Somewhat special bit functions.
 	//
+	
+	/**
+	 * Is n-th bit set.
+	 * 
+	 * @param value Value to be checked.
+	 * @param mask N-th bit.
+	 *
+	 * @return True if set, false otherwise.
+	 */
 	template<class T, class U>
 	inline bool isBitSet(T value, U mask)
 		{ 	// compare number of bits of where we want to store bit with the position 
 			assert ((int)(sizeof(short) * 8) > mask);
 			return (value & ((unsigned short)0x1 << mask)) != 0;}
 
+	/** Reset all bits. */
 	inline unsigned short setNoneBitsShort()
 		{ return 0x0;}
 
+	/**
+	 * Set n-th set.
+	 * 
+	 * @param mask N-th bit.
+	 * @return Value with n-th bit set.
+	 */
 	template<class U>
 	inline unsigned short setNthBitsShort(U mask)
 		{ 	// compare number of bits of where we want to store bit with the position 
@@ -756,38 +772,49 @@ namespace {
 		{ return setNthBitsShort (mask,mask1,mask2,mask3) | setNthBitsShort (mask4); }
 
 
-	/** Maximum operator arguments. From pdf spec.*/
+	/** Maximum argument count of an operator. See pdf specfication of all operators.*/
 	const size_t MAX_OPERANDS = 6;
 
-	/** Maximum operator name length. From pdf spec.*/
-	static const size_t MAX_OPERATOR_NAMELEN = 4;
+	/** Maximum operator name length. See pdf specification of all operators.*/
+	const size_t MAX_OPERATOR_NAMELEN = 4;
 
 	/**
-	 * Known operators, it is copied from pdf BECAUSE it is
-	 * a private member variable of a class and we do not have
-	 * access to it
+	 * Structure representing one operator.
+	 *
+	 * It is used to find an update function, which alters graphical state
+	 * according to the operator and its operands.
+	 *
+	 * It is also used to check whether the operand cound and type match the pdf specifiaction
+	 * of an operator. It the argument number is less than zero, arbitrary
+	 * number of operands is allowed up to the absolute value of argNum.
+	 *
+	 * If the operator is a composite, endTag is the string representation of
+	 * the ending operator of the composite..
 	 */
 	typedef struct
 	{
 		char name[MAX_OPERATOR_NAMELEN];	/**< Operator name. */
-		int argNum;						 	/**< Number of arguments operator should get. */
-		unsigned short types[MAX_OPERANDS];	/**< Bits are representing what it should be. */
+		int argNum;						 	/**< Number of operator arguments. */
+		unsigned short types[MAX_OPERANDS];	/**< Bits represent which types are allowed. */
 		
 		/** Function to execute when updating position. */
-		void (*update) (GfxState&, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc);
+		void (*update) (GfxState&, boost::shared_ptr<GfxResources>, 
+						const boost::shared_ptr<PdfOperator>, 
+						const PdfOperator::Operands&, Rectangle* rc);
 		
 		char endTag[MAX_OPERATOR_NAMELEN]; /**< If it is a complex type, its end tag.*/	
 		
 	} CheckTypes;
 
 	/**
-	 * All known operators.
+	 * All known operators from pdf specification and their update functions. 
+	 *
+	 * If an operator does not have any effect on graphical state, default
+	 * update function is used.
 	 * 
 	 * Operator number can be either >0, zero, <0. Zero means no operands are
 	 * needed. >0 means that exact argNum of operands are needed. <0 means that
 	 * at most argNum operands are needed.
-	 *
-	 * Each item of types indicate which types we accept.
 	 */
 	const CheckTypes KNOWN_OPERATORS[] = {
 			{"\\",    3, {setNthBitsShort (pInt, pReal), setNthBitsShort (pInt, pReal), setNthBitsShort (pString)}, 
@@ -954,19 +981,23 @@ namespace {
 
 		};
 	
-	/** Is it a simple or complex operator. */
+	/** 
+	 * Is it a simple or a composite operator. 
+	 * @param chck Check type structure.
+	 * @return True if the check type is a simple operator, false otherwise.
+	 */
 	bool isSimpleOperator (const CheckTypes& chck)
 		{ return ('\0' == chck.endTag[0]); }
 
 	/**
-	 * Set pdf to operands.
+	 * Set pdf, indiref, contentstream to operands, alse register observers on all operands.
 	 *
-	 * This is vital when changing those operands.
+	 * This is vital when operands are changed.
 	 *
 	 * @param first First operator to set pdf to.
-	 * @param pdf Pdf where operand will belong.
-	 * @param rf  Indiref of content's stream parent.
-	 * @param cs Content stream.
+	 * @param pdf Valid pdf where operands belong.
+	 * @param rf  Valid Indiref of a cstream parent.
+	 * @param cs Content stream where the operator is.
 	 * @param observer Operand observer.
 	 */
 	void
@@ -1015,26 +1046,19 @@ namespace {
 	}
 	
 	/**
-	 * Check if the operands match the specification.
+	 * Check if the operands match the specification and replace operand with
+	 * its stronger equivalent.
+	 *
+	 * (e.g. When xpdf returns an object with integer type, but the operand can be a real, we have to
+	 * convert it to real.)
 	 *
 	 * @param ops Operator specification
 	 * @param operands Operand stack.
 	 *
-	 * @return True if OK, false otherwise.
+	 * @return True if type and count match, false otherwise.
 	 */
-	bool check (const CheckTypes& ops, PdfOperator::Operands& operands)
+	bool checkAndFix (const CheckTypes& ops, PdfOperator::Operands& operands)
 	{
-		// \TODO DEBUG
-		string str;
-		for (PdfOperator::Operands::iterator it = operands.begin(); it != operands.end(); ++it)
-		{
-			string tmp;
-			(*it)->getStringRepresentation (tmp);
-			str += " " + tmp;
-		}
-		utilsPrintDbg (DBG_DBG, "Operands: " << str);
-		/////
-		
 		size_t argNum = static_cast<size_t> ((ops.argNum > 0) ? ops.argNum : -ops.argNum);
 			
 		//
@@ -1051,16 +1075,34 @@ namespace {
 		//
 		// Check arguments
 		//
-		PdfOperator::Operands::reverse_iterator it = operands.rbegin ();
-		// Be carefull of buffer overflow
+		PdfOperator::Operands::reverse_iterator rit = operands.rbegin ();
+		// Be careful -- buffer overflow
 		argNum = std::min (argNum, operands.size());
-		advance (it, argNum);
-		for (int pos = 0; it != operands.rend (); ++it, ++pos)
+		advance (rit, argNum);
+		PdfOperator::Operands::iterator it = rit.base ();
+		// Loop from the first operator to the end
+		for (int pos = 0; it != operands.end (); ++it, ++pos)
 		{			
   			if (!isBitSet(ops.types[pos], (*it)->getType()))
 			{
 				utilsPrintDbg (DBG_ERR, "Bad " << pos << "-th operand type [" << (*it)->getType() << "] " << hex << " 0x" << ops.types[pos]);
 				return false;
+			}
+
+			// 
+			// If xpdf returned an Int, bu the operand can be a real convert it
+			// 
+			if (isInt(*it))
+			{
+  				if (isBitSet(ops.types[pos], pReal))
+				{ // Convert it to real
+					double dval = 0.0;
+					int val;
+					IProperty::getSmartCObjectPtr<CInt>(*it)->getPropertyValue(val);
+					dval = val;
+					shared_ptr<IProperty> pIp (new CReal (dval));
+					std::replace (operands.begin(), operands.end(), *it, pIp);
+				}
 			}
 		}
 
@@ -1068,7 +1110,9 @@ namespace {
 	}
 
 	/**
-	 * Find the operator by its name.
+	 * Find the operator by its name in all known operator list.
+	 *
+	 * \see KNOWN_OPERATORS
 	 *
 	 * @param opName Name of the operator.
 	 *
@@ -1105,12 +1149,16 @@ namespace {
 	}
 	
 	/**
-	 * Parse inline image. Inline image is a stream withing e.g. a text stream.
+	 * Parse inline image. 
+	 *
+	 * Inline image is a stream withing anothers stream. It has to be treated
+	 * separately because it is the only case when another stream is present in
+	 * a content stream.
 	 * Binary data can make text parser to behave incorrectly.
 	 *
-	 * @param stream Actual parser.
+	 * @param streamreader Actual parser.
 	 *
-	 * @return CStream representing inline image
+	 * @return CStream representing inline image.
 	 */
 	CInlineImage*
 	getInlineImage (CStreamXpdfReader<CContentStream::CStreams>& streamreader) 
@@ -1189,14 +1237,18 @@ namespace {
 
 	
 	/**
-	 * Find the operator and create it. 
+	 * Create an opertor from a stream. 
 	 *
-	 * Here is decided which implementation of a pdf operator is used.
+	 * First read its operands, then the operator itself. Inline image is a
+	 * special case.
 	 *
-	 * @param stream Parser.
-	 * @param operands Operands.
+	 * This function is called recursively to create the tree like structure of
+	 * pdf operators
 	 *
-	 * @return Created pdf operator.
+	 * @param streamreader CStreams parser from which we get an xpdf object.
+	 * @param operands Operands of operator. They are shared through subcalls.
+	 *
+	 * @return New pdf operator.
 	 */
 	shared_ptr<PdfOperator>
 	createOp (CStreamXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
@@ -1245,7 +1297,7 @@ namespace {
 				//
 				// Check the type against specification
 				// 
-				if (!check (*chcktp, operands))
+				if (!checkAndFix (*chcktp, operands))
 				{
 					o.free ();
 					assert (!"Content stream bad operator type.");
@@ -1318,18 +1370,19 @@ namespace {
 	}
 
 	/**
-	 * Parse the stream into small objects. 
+	 * Reparse the stream into pdf operators. 
 	 *
 	 * This function must NOT be called during initialization of contentstream.
 	 * Use ** instead.
 	 * 
-	 * It assumes that supplied streams build a valid content stream that is not
-	 * breaked neither in a composite operator nor at any other crazy point that the pdf
+	 * It assumes that supplied streams build a valid content stream that is 
+	 * breaked neither in a composite operator nor at any other crazy point which the pdf
 	 * specification allows.
 	 *
 	 * @param operators Operator stack.
 	 * @param streams 	Streams to be parsed.
 	 * @param cs 		Content stream in which operators belong
+	 * @param observer 	Operand observer.
 	 */
 	void
 	reparseContentStream (CContentStream::Operators& operators, 
@@ -1402,16 +1455,20 @@ namespace {
 	}
 
 	/**
-	 * Parse the stream for the first time into small objects. 
+	 * Parse the stream for the first time into pdf operators. 
 	 *
 	 * Problem with content stream is, that it can be splitted in many streams
 	 * and the split points are really insane. And moreover some pdf creators 
-	 * produce even more insane split points.
+	 * produce even more insane split points. So we try to parse a valid stream
+	 * (all composite objects are ended with their ending tags) and look if we
+	 * are at the end of one of the streams. If positive, we claim this content
+	 * stream to be a valid one.
 	 * 
 	 * @param operators Operator stack.
 	 * @param streams 	Streams to be parsed.
 	 * @param cs 		Content stream in which operators belong
 	 * @param parsedstreams Streams that have been really parsed.
+	 * @param observer 	Operand observer.
 	 */
 	void
 	parseContentStream (CContentStream::Operators& operators, 
@@ -1500,11 +1557,11 @@ namespace {
 
 
 	/**
-	 * Saves bounding box of all operators.
+	 * Set bounding box to all operators.
 	 *
 	 * @param it Iterator that will be used to traverse all operators.
-	 * @param res Resources.
-	 * @param state Gfx state.
+	 * @param res Graphical resources.
+	 * @param state Graphical state.
 	 */
 	void
 	setOperatorBBox (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, GfxState& state)
@@ -1745,7 +1802,8 @@ CContentStream::_objectChanged ()
 	registerCStreamObservers ();
 	
 	// Notify observers
-	this->notifyObservers ( shared_ptr<CContentStream> (),shared_ptr<const ObserverContext> ());
+	boost::shared_ptr<CContentStream> current (this, EmptyDeallocator<CContentStream> ());
+	this->notifyObservers (current, shared_ptr<const ObserverContext> (new BasicObserverContext (current)));
 }
 
 
@@ -2031,8 +2089,33 @@ CContentStream::unregisterCStreamObservers () const
 
 
 //==========================================================
-// Operator changing functions
+// Operator helper functions
 //==========================================================
+
+//
+//
+//
+bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper)
+{
+	NonStrokingOperatorIterator it = PdfOperator::getIterator<NonStrokingOperatorIterator> (oper);
+	if (it.isEnd())
+		return false;
+	else
+		return true;
+}
+
+
+//
+//
+//
+bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper)
+{
+	StrokingOperatorIterator it = PdfOperator::getIterator<StrokingOperatorIterator> (oper);
+	if (it.isEnd())
+		return false;
+	else
+		return true;
+}
 
 
 

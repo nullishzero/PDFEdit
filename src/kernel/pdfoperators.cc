@@ -361,29 +361,6 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 	return opers.back();
 }
 
-//
-//
-//
-bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper)
-{
-	NonStrokingOperatorIterator it = PdfOperator::getIterator<NonStrokingOperatorIterator> (oper);
-	if (it.isEnd())
-		return false;
-	else
-		return true;
-}
-
-//
-//
-//
-bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper)
-{
-	StrokingOperatorIterator it = PdfOperator::getIterator<StrokingOperatorIterator> (oper);
-	if (it.isEnd())
-		return false;
-	else
-		return true;
-}
 
 //==========================================================
 // Iterators

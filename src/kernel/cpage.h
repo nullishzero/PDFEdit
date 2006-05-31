@@ -32,7 +32,9 @@ namespace pdfobjects {
 /** 
  * Graphical state parameters. 
  *
- * These parameters are needed by xpdf.
+ * These parameters are used by xpdf and can be changed. These parameters are
+ * important when updating bounding boxex of content stream operators,
+ * displaying page etc.
  */
 typedef struct DisplayParams
 {
@@ -62,10 +64,14 @@ typedef struct DisplayParams
 
 //=====================================================================================
 // Text search parameters (loose xpdf paramters put into a simple structure)
-// 	--  default values are in cpage.cc because we do not want to have global variables.
+// 	--  default values are in cpage.cc because we do not want to pollute global space.
 //=====================================================================================
 
-/** Text search parameters. */
+/** 
+ * Text search parameters. 
+ *
+ * These parameters are used by xpdf when serching a text string.
+ */
 typedef struct TextSearchParams
 {
 	/** Paramaters */
@@ -86,7 +92,10 @@ typedef struct TextSearchParams
 //=====================================================================================
 
 /** 
- * Comparator that will define area around specified point. 
+ * Comparator that defines an area around specified rectange. 
+ *
+ * We can use this comparator to find out if another rectangle intersects this
+ * one.
  */
 struct PdfOpCmpRc
 {

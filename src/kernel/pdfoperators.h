@@ -862,25 +862,7 @@ inline boost::shared_ptr<PdfOperator> getLastOperator (PdfOperator::Iterator it)
 	{ return getLastOperator (it.getCurrent()); }
 
 
-/**
- * Tries to find a non stroking operator.
- *
- * @param oper Composite operator.
- *
- * @return True if found, false otherwise.
- */
-bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper);
-
-/** 
- * Tries to find a non stroking operator.
- *
- * @param oper Composite operator.
- *
- * @return True if found, false otherwise.
- */
-bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
-
-
+	
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

@@ -39,29 +39,46 @@ typedef observer::IObserver<IProperty> IIPropertyObserver;
 //==========================================================
 
 /**
- * Content stream of a pdf content stream.
+ * Content stream class representing pdf content stream.
  *
- * It will hold parsed objects of the content stream. Change to the stream 
- * object representing the content stream will transparently update this object.
+ * This object represents operators and operands of a content stream. Each content stream consists of
+ * one or more indirect streams. These streams are listed in "Contents" entry of page dictionary. 
  *
- * This object represents only one of page content streams. Typically a page
- * consist of just one content stream.
- *
- * We know 2 types of pdf operators. Simple and complex. Content stream is a sequence of 
- * operators. Each complex operator can  have children. It is a tree structure, but in most cases
- * it will be just a sequence. 
- *
- * The first level sequence is stored in the CContentStream class.
+ * Each operator represents an operation that alters the current graphic state.
+ * These operators are processed sequentially. We cannot parse only one stream
+ * when the content stream consists of more streams, because the split point is
+ * almost arbitrary. Every content stream class represents a valid content which
+ * can consist of one or more streams.
  * 
- * The stream is processed sequentially and we can process it this way
- * using Iterator designe pattern implemented in these operators.
+ * During initialization of this object, observers are registred on all
+ * underlying streams, which means a change to the stream object(s) representing 
+ * the content stream will transparently update this object. This feature could be
+ * tricky. (E.g. Content stream consists of more streams and we need
+ * to save the content stream, which means changing streams one after another.
+ * After a change the content stream becomes invalid.)
+ * 
+ * Operators form a tree-like structure consisting of Simple objecst and Composite objects. 
+ * \todo reference to general documentation [pdfoperators].
+ * Only first level operators are stored.
+ * 
+ * The pdf feature that a content stream can consist of several streams means we
+ * can not derive from CStream object. Due to this limitation we do not have 
+ * Observer interface so we need to implement it.
  *
- * Content stream does not derive from CStream because content stream can
- * consist of several streams.
- * The problem with this object not deriving from IProperty is that, it does not 
- * have an observer. Pdf operators are special objects, that just represent a
- * special type of CStream in a human form. 
- * \TODO make this comment sane
+ * Mainly this object is responsible for all visible objects on a page. If a
+ * content stream is empty, the page is empty. Changing operators can be very
+ * destructive (e.g. text matrix, font type, deleting one operator of a pair,
+ * ...)
+ *
+ * The requirement of processing operators sequentially has lead to the decision
+ * that these operators will be in an iterator queue meainig we can process them
+ * seqeuntially with the advantage of Iterator design pattern.
+ * \todo reference to general documentation [pdfoperators].
+ * Another characteristis of content stream operators is that they build a tree
+ * like structure which has lead to another decision that these operators will
+ * be in a tree like queue. It means operators are designed as a Composite
+ * design pattern. This enables (e.g. gui to represent content stream in a human
+ * readable from)
  */
 class CContentStream : public noncopyable, public CContentStreamObserverSubject
 {
@@ -72,16 +89,16 @@ public:
 	
 private:
 
-	/** Content stream cobject. */
+	/** Underlying cstream objects. */
 	CStreams cstreams;
 
-	/** Parsed content stream operators. */
+	/** Parsed first level content stream operators. */
 	Operators operators;
 
-	/** Gfx state needed for bbox. */
+	/** Graphical state. */
 	boost::shared_ptr<GfxState> gfxstate;
 
-	/** Gfx resources needed for bbox. */
+	/** Graphical resources. */
 	boost::shared_ptr<GfxResources> gfxres;
 
 	//
@@ -91,10 +108,11 @@ private:
 	/**
 	 * Content stream observer.
 	 *
-	 * If a stream changes, reparse whole contentstream.
+	 * After a cstream changes reparse the contentstream.
 	 *
 	 * It can happen that the stream is parsed also after page's Contents entry
-	 * has been modified in a way that this content stream no longer exists. 
+	 * has been modified in a way that this content stream no longer exists. It
+	 * depends on the position of this observer in cstream observer list.
 	 */
 	struct CStreamObserver : public IIPropertyObserver
 	{
@@ -117,10 +135,11 @@ private:
 	private:
 		CContentStream* contentstream;
 	};
+	
 	/**
 	 * Operand stream observer.
 	 *
-	 * If an operand is changed, save the stream.
+	 * If an operand is changed, save the stream notifying all observers.
 	 */
 	struct OperandObserver : public IIPropertyObserver
 	{
@@ -144,9 +163,9 @@ private:
 		CContentStream* contentstream;
 	};
 
-	/** CStream observer. */
+	/** Observer observing underlying cstreams. */
 	boost::shared_ptr<CStreamObserver> cstreamobserver;
-	/** Operand observer. */
+	/** Observer observing operands of all operators. */
 	boost::shared_ptr<OperandObserver> operandobserver;
 
 	
@@ -158,7 +177,9 @@ public:
 	/**
 	 * Constructor. 
 	 *
-	 * @param stream CStream representing content stream or dictionary of more content streams.
+	 * @param strs Array of content streams. Typically only one.
+	 * @param state Graphical state.
+	 * @param res Graphical resources.
 	 */
 	CContentStream (CStreams& strs, 
 					boost::shared_ptr<GfxState> state, 
@@ -170,15 +191,18 @@ public:
 	//
 public:	
 	/**
-	 * Get string representation. We traverse operators using specific
-	 * iterators. 
+	 * Get the string representation of specific operators. 
 	 *
-	 * REMARK: If an iterator accepts composite objects and also its children, the 
+	 * Traverse all operators using specific iterator and save their string
+	 * repersentation. 
+	 *
+	 * REMARK: If an iterator accepts composite objects and also simple objects and a composite
+	 * contains one of such simple objects, the 
 	 * string representation will be incorrect. It will contain the string
 	 * represenation of the composite including the child and also a separate
 	 * string representation of the child.
 	 *
-	 * @param str String that will contain the output.
+	 * @param str Output string.
 	 */
 	template<typename Iter>
 	void getStringRepresentation (std::string& str) const
@@ -203,9 +227,9 @@ public:
 	}
 	
 	/**
-	 * Get string representation.
+	 * Get the string representation of the content stream.
 	 *
-	 * @param str String that will contain the output.
+	 * @param str Output string.
 	 */
 
 	void getStringRepresentation (std::string& str) const
@@ -229,9 +253,12 @@ public:
 
 		
 	/**
-	 * Get objects at specified position.
+	 * Get objects at position.
 	 *
-	 * @param opContainer Container that we fill with operators that are in an enclosing area.
+	 * We can compute a bounding box (rectangle) to every operator specifying its exact position.
+	 * This bounding box is used to select specific operators.
+	 *
+	 * @param opContainer Output container.
 	 * @param cmp Comparator that will decide if an operator is close enough.
 	 */
 	template<typename OpContainer, typename PdfOpPosComparator>
@@ -274,9 +301,12 @@ public:
 	}
 
 	/**
-	 * Get pdf operators.
+	 * Get first level pdf operators.
+	 *
+	 * Operators form a tree-like structure. We save all root operands to
+	 * container.
 	 * 
-	 * @param container Container that will hold all first level operators.
+	 * @param container Output container.
 	 */
 	template<typename T>
 	void getPdfOperators (T& container) const
@@ -290,16 +320,20 @@ public:
 	//
 public:
 	/**
-	 * Delete an operator.
+	 * Delete an operator from a content stream.
 	 *
-	 * We have to remove it from iterator list and from composite if it is in any.
-	 * We also have to be carefull when removing it from iterator list, because
-	 * if the operator itself is a composite, we can not easily set its
-	 * successor because we do not know it.
+	 * We have to remove an operator from the iterator queue and also from the tree queue.
 	 * 
-	 * @param it PdfOperator iterator to delete.
-	 * @param indicateChange If true, change will be written to underlying
-	 * stream.
+	 * When removing from the tree queue an operator we have to find it and remove
+	 * from the composite it is in (if not first level)
+	 *
+	 * Needs to be careful when removing from the iterator queue. If a composite is removed
+	 * we have to update its top level operator and also the last item of the
+	 * iterator queue that is still in the composite.
+	 * 
+	 * @param it Iterator pointing to operator that will be deleted.
+	 * @param indicateChange If true, changed contentstream will be written to its cstreams, 
+	 * otherwise the change will not be visible.
 	 */
 	void deleteOperator (OperatorIterator it, bool indicateChange = true);
 	
@@ -309,10 +343,12 @@ public:
 	/**
 	 * Insert pdf operator at specified position.
 	 *
-	 * @param it Position after which the operator will be inserted.
+	 * We have to insert the operator into the iterator queue and also intto the tree  queue.
+	 *
+	 * @param it Iterator pointing to operator after which the new operator will be inserted.
 	 * @param newOper Operator that will be inserted.
-	 * @param indicateChange If true, change will be written to underlying
-	 * stream.
+	 * @param indicateChange If true, changed contentstream will be written to its cstreams, 
+	 * otherwise the change will not be visible.
 	 */
 	void insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
 	
@@ -320,17 +356,28 @@ public:
 		{ insertOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); };
 	
 	/**
-	 * Replace an operator.
+	 * Replace an operator with another one.
 	 *
-	 * This is a problem due to the iterator list. In replace functions like
-	 * changeColor, we put new oper in a new composite so we change its iterator
-	 * previous and next items which means we can not use them in this function.
+	 * We have to modify both iterator queue and tree queue.
 	 *
-	 * @param it Position of the element that will be replaced.
-	 * @param newOper Operator that will replace operator pointed by it.
-	 * @param prev Previous iterator of newOper in iterator list
-	 * @param next Next iterator of newOper in iterator list
-	 * @param indicateChange If true, change will be written to underlying
+	 * This can be a problem. When replacing an operator with another operator
+	 * which contains the same instance of the original operator (meaning
+	 * the new operator is a composite) we can not use
+	 * iterator queue of the original, because it was altered when inserting it
+	 * into the new operator and points to items in the new operator.
+	 *
+	 * All change functions (e.g. operatorSetColor) behave this way. They insert
+	 * the original operator in a new composite altering the iterator queue and
+	 * making the content stream iterator queue invalid. That is why we need 
+	 * the next and previous items of the original operator as function
+	 * arguments.
+	 *
+	 * @param it Iterator pointing to the element that will be replaced.
+	 * @param newOper New operator.
+	 * @param itPrv Previous iterator of newOper in iterator queue
+	 * @param itNxt Next iterator of newOper in iterator queue
+	 * @param indicateChange If true, changed contentstream will be written to its cstreams, 
+	 * otherwise the change will not be visible.
 	 */
 	void replaceOperator (OperatorIterator it, 
 						  boost::shared_ptr<PdfOperator> newOper, 
@@ -350,32 +397,36 @@ public:
 	//
 public:
 	/**
-	 * Change indicator.
+	 * Is the content stream empty.
 	 * 
-	 * @return True if the contentstream was changed, false otherwise.
+	 * @return True if the contentstream is empty, false otherwise.
 	 */
 	bool empty () const {return operators.empty ();};
 
 	/**
-	 * Reparse pdf operators.
+	 * Reparse pdf operators and set their bounding boxes.
 	 *
-	 * @param state GfxState if changed.
-	 * @param res GfxResources if changed.
-	 * @param bboxOnly If true only bboxes are set.
+	 * @param state Graphical state, if changed.
+	 * @param res Graphical resources, if changed.
+	 * @param bboxOnly If true only bounding boxes are set, if false operators
+	 * are also reparsed.
 	 */
 	void reparse (boost::shared_ptr<GfxState> state = boost::shared_ptr<GfxState> (), 
 				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> (),
 				  bool bboxOnly = false);
 
 	/**
-	 * Save content stream to underlying cstream(s).
+	 * Save content stream to underlying cstream(s) and notify all observers. 
+	 *
+	 * Does not reparse anything. 
 	 */
 	void saveChange () 
 		{ _objectChanged(); };
 
 private:
 	/**
-	 * Save changes.
+	 * Save changes and indicate that the object has changed by calling all
+	 * observers.
 	 */
 	void _objectChanged ();
 
@@ -384,15 +435,20 @@ private:
 	//
 protected:
 	/**
-	 * Register observers.
+	 * Register observers on all cstreams that this object consists of.
+	 *
+	 * This function is called in constructor and also after saving to more
+	 * cstreams.
 	 */
 	void registerCStreamObservers () const;
 
 	/**
-	 * Unregister observers.
+	 * Unregister observers from all cstreams that this object consists of.
 	 *
-	 * This is an important function when saving consten stream consisting of
-	 * more streams.
+	 * This function is called when saving consten stream consisting of
+	 * more streams. If we do not unregister observers, we would be notified
+	 * that a stream has changed after the first save (when the content stream
+	 * is invalid) and our observer would want to reparse an invalid stream.
 	 */
 	void unregisterCStreamObservers () const;
 	
@@ -415,9 +471,9 @@ public:
 //==========================================================
 
 // BT oper ET
-boost::shared_ptr<PdfOperator> createTextOperator (boost::shared_ptr<PdfOperator> oper);
+//boost::shared_ptr<PdfOperator> createTextOperator (boost::shared_ptr<PdfOperator> oper);
 // (text) Td
-boost::shared_ptr<PdfOperator> createText (const std::string text);
+//boost::shared_ptr<PdfOperator> createText (const std::string text);
 	
 
 //==========================================================
@@ -436,20 +492,31 @@ boost::shared_ptr<PdfOperator> createText (const std::string text);
 //
 
 /**
- * Finds a non stroking operator if any.
+ * Tries to find first non stroking operator.
  *
- * @param oper Operator.
+ * Some operators are modified by stroking operators some by nonstroking. 
+ * (e.g. when changing color, we can change color either of a stroking operator using RG
+ * operator or of a nonstroking operator using rg operator. RG operator does not
+ * change color of nonstroking operators.)
  *
- * @return True if a non stroking operator found, false otherwise.
+ * @param oper Pdf operator that will be searched for a non stroking
+ * operator.
+ *
+ * @return True if found, false otherwise.
  */
 bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper);
 
-/**
- * Finds stroking operator if any.
+/** 
+ * Tries to find first stroking operator.
+ *  
+ * Some operators are modified by stroking operators some by nonstroking. 
+ * (e.g. when changing color, we can change color either of a stroking operator using RG
+ * operator or of a nonstroking operator using rg operator. RG operator does not
+ * change color of nonstroking operators.)
  *
- * @param oper Operator.
+ * @param oper Pdf operator that will be searched for a stroking operator.
  *
- * @return True if a stroking operator found, false otherwise.
+ * @return True if found, false otherwise.
  */
 bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
 
@@ -464,6 +531,7 @@ bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
  * iterator list. Method replaceOperator has to be called immmediately after
  * this function.
  * 
+ * @param oper Operator that will be changed.
  * @param r R in RGB
  * @param g G in RGB
  * @param b B in RGB
@@ -472,6 +540,7 @@ bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
  */
 boost::shared_ptr<PdfOperator>
 operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, double b);
+
 
 //==========================================================
 } // namespace pdfobjects

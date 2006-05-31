@@ -35,14 +35,14 @@ namespace {
 	//
 	// Default values
 	//
-	static const double DEFAULT_HDPI 	= 72;
-	static const double DEFAULT_VDPI 	= 72;
-	static const int DEFAULT_ROTATE 	= 0;		// no rotate
+	static const double DEFAULT_HDPI 	= 72;		/**< Default horizontal dpi. */
+	static const double DEFAULT_VDPI 	= 72;		/**< Default vertical dpi. */
+	static const int DEFAULT_ROTATE 	= 0;		/**< No rotatation. */
 
 	static const double DEFAULT_PAGE_LX = 0;
 	static const double DEFAULT_PAGE_LY = 0;
-	static const double DEFAULT_PAGE_RX = 612;		// width of A4 on a device with 72 horizontal dpi
-	static const double DEFAULT_PAGE_RY = 792;		// height of A4 on a device with 72 vertical dpi
+	static const double DEFAULT_PAGE_RX = 612;		/**< Default A4 width on a device with 72 horizontal dpi. */
+	static const double DEFAULT_PAGE_RY = 792;		/**< Default A4 height on a device with 72 vertical dpi. */
 }
 
 //
@@ -63,9 +63,10 @@ namespace {
 	//
 	// Default values
 	// 
-	static const GBool DEFAULT_START_AT_TOP 	= gTrue;
+	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Default start at top. */
 	
-	static const double DEFAULT_X_START = 0;
+	/** Default start positino when start at top is false. */
+	static const double DEFAULT_X_START = 0;				
 	static const double DEFAULT_Y_START = 0;
 	static const double DEFAULT_X_END = 0;
 	static const double DEFAULT_Y_END = 0;
