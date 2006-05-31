@@ -34,11 +34,11 @@ function onTreeRightClick() {
   menu.addItemDef("item Set color,setColor()");
  }
  if (treeitem.itemtype()=="Page") {
-  menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
+  menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
  }
  if (treeitem.itemtype()=="ContentStream") {
-  menu.addItemDef("item All mode,treeitem.setMode('all')");
-  menu.addItemDef("item Text mode,treeitem.setMode('text')");  
+  menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
+  menu.addItemDef("item "+tr("Show only text operators")+",treeitem.setMode('text'),,stream_mode_text.png");
  }
  if (tests) {
   if (treeitem.itemtype()=="Stream") {

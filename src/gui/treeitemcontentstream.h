@@ -37,6 +37,7 @@ public:
  void setMode(TreeItemContentStreamMode newMode);
  void setMode(const QString &newMode);
 private:
+ void showMode();
  void initObserver();
  void uninitObserver();
 private:

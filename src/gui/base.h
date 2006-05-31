@@ -25,6 +25,8 @@ class QSPdfOperator;
 class TreeItemAbstract;
 
 class Base : public QObject {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public:
  Base(PdfEditWindow *parent);
@@ -81,6 +83,8 @@ public slots: //This will be all exported to scripting
  QSPdfOperator* createCompositeOperator(const QString &beginText,const QString &endText);
  /*- Create and return new IProperty of type Dict - empty dictionary */
  QSIProperty* createDict();
+ /*- Create new empty (NULL) PDF Operator*/
+ QSPdfOperator* createEmptyOperator();
  /*- Create and return new IProperty of type Int */
  QSIProperty* createInt(int value);
  /*- Create and return new IProperty of type String */

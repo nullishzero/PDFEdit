@@ -351,6 +351,14 @@ QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QStr
 }
 
 /**
+ Create new empty (NULL) PdfOperator
+ @return new empty PDF operator
+*/
+QSPdfOperator* Base::createEmptyOperator() {
+ return new QSPdfOperator(this); 
+}
+
+/**
  Create new IProperty of type Array - an empty array
  @return created IProperty
 */

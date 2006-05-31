@@ -9,15 +9,19 @@
 
 namespace gui {
 
-/** Default constructor of exception
- @param message Exception message
- */
+/**
+ Default constructor of exception
+ @param message Exception message to pass
+*/
 InvalidMenuException::InvalidMenuException(const QString &message){
  msg=message;
 }
 
-/** Return exception message passed in constructor of this exception
- @return exception message */
+/**
+ Return exception message passed in constructor of this exception
+ The message usually explain what item is invaild and why
+ @return exception message
+*/
 QString InvalidMenuException::message() {
  return msg;
 }

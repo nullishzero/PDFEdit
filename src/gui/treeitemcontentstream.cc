@@ -60,10 +60,21 @@ void TreeItemContentStream::init(const QString &name) {
  }
  // object type
  setText(1,QObject::tr("Content Stream"));
- setText(2,"");
  reload();
  initObserver();
  mode=All;
+ showMode();
+}
+
+/** Update tree item accdording to what mode is selected */
+void TreeItemContentStream::showMode() {
+ setText(2,"");
+ if (mode==All) setText(2,QObject::tr("Showing all","mode"));
+ else if (mode==Text) setText(2,QObject::tr("Showing text. op.","mode"));
+ else {
+  assert(0);
+  setText(2,"?");
+ }
 }
 
 /**
@@ -72,6 +83,7 @@ void TreeItemContentStream::init(const QString &name) {
 */
 void TreeItemContentStream::setMode(TreeItemContentStreamMode newMode) {
  mode=newMode;
+ showMode();
  reload();
 }
 

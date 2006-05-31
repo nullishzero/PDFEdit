@@ -92,8 +92,8 @@ HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h  s
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc selfdestructivewidget.cc base.cc rect2Darray.cc
 
 #Exceptions
-HEADERS += invalidmenuexception.h
-SOURCES += invalidmenuexception.cc
+HEADERS += invalidmenuexception.h  nullpointerexception.h
+SOURCES += invalidmenuexception.cc nullpointerexception.cc
 
 #Toolbar
 HEADERS += revisiontool.h  zoomtool.h  pagetool.h  toolbutton.h  toolbar.h  

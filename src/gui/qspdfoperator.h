@@ -4,8 +4,9 @@
 #include <qstring.h>
 #include <qobject.h>
 #include <pdfoperators.h>
-#include "qscobject.h"
 #include <qobjectlist.h>
+#include "qscobject.h"
+#include "nullpointerexception.h"
 
 namespace gui {
 
@@ -21,11 +22,24 @@ using namespace pdfobjects;
 class QSPdfOperator : public QSCObject {
  Q_OBJECT
 public:
+ QSPdfOperator(Base *_base);
  QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base);
  QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base);
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
+ /*-
+  Tries to find first non stroking operator.
+  (some operators are modified by stroking operators, some by nonestroking)
+  Return true if non stroking operator found, false otherwise.
+ */
+ bool containsNonStrokingOperator();
+ /*-
+  Tries to find first stroking operator.
+  (some operators are modified by stroking operators, some by nonestroking)
+  Return true if stroking operator found, false otherwise.
+ */
+ bool containsStrokingOperator();
  /*- Return PDF Operator iterator, initially pointing at this operator */
  QSPdfOperatorIterator* iterator();
  /*-
@@ -48,9 +62,10 @@ public slots:
  /*-
   Add an operator oper to the end of composite operator prev
   The operator will be added after operator prev.
+  Second parameter is optional and will default to null operator if not specified
  */
- void pushBack(QSPdfOperator *op,QSPdfOperator *prev);
- void pushBack(QObject *op,QObject *prev);
+ void pushBack(QSPdfOperator *op,QSPdfOperator *prev=NULL);
+ void pushBack(QObject *op,QObject *prev=NULL);
  /*-
   Remove this PDF operator from its ContentStream.
   After calling this function, this object became invalid and must not be used further,
