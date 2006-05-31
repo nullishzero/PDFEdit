@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/05/31 21:43:54  hockm0bm
+ * gcc
+ *
  * Revision 1.6  2006/05/31 20:10:22  hockm0bm
  * * PropertyMode enhanced and documented
  * * ModeRule, ModeMatcher, ModeConfigurationParser classes added
@@ -120,4 +123,8 @@ using namespace std;
 	// TODO trim strings
 
 	return true;
+}
+
+int ModeController::loadFromFile(std::string confFile, ConfParser & parser)
+{
 }

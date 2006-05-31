@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/05/31 21:43:55  hockm0bm
+ * gcc
+ *
  * Revision 1.2  2006/05/24 19:28:12  hockm0bm
  * * Delinearizator::getInstance mem leak
  *         - if Delinearizator constructor fails deallocates inputStream and
@@ -146,10 +149,10 @@ using namespace debug;
 	// line with some binary (with codes bigger than 128) - so application
 	// transfering such files will copy them as binary data not as ASCII files
 	buffer[0]='%';
-	buffer[1]=129;
-	buffer[2]=130;
-	buffer[3]=253;
-	buffer[4]=254;
+	buffer[1]=(char )129;
+	buffer[2]=(char )130;
+	buffer[3]=(char )253;
+	buffer[4]=(char )254;
 	buffer[5]='\0';
 	outputStream->putLine(buffer, strlen(buffer));
 

@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/31 21:43:55  hockm0bm
+ * gcc
+ *
  * Revision 1.1  2006/05/31 14:11:19  hockm0bm
  * * IRuleMatcher abstract class
  * * RulesManager generic implementation
@@ -36,6 +39,10 @@ public:
 	 */
 	typedef int priority_t;
 
+	/** Virtual destructor.
+	 */
+	virtual ~IRuleMatcher(){};
+	
 	/** Checks whether prio2 is higher than prio1.
 	 * @param prio1 Priority.
 	 * @param prio2 Priority.
@@ -204,7 +211,8 @@ public:
 	 */
 	virtual bool delRule(RuleType ruleDef, RuleTarget * target)
 	{
-		iterator i=find(ruleDef, mapping.begin(), mapping.end());
+		iterator begin=mapping.begin(), end=mapping.end();
+		iterator i=find(ruleDef, begin, end);
 		if(i==mapping.end())
 			return false;
 
@@ -229,7 +237,7 @@ public:
 	 * If matcher is not specified (it is NULL), returns immediately after
 	 * removed container is cleared.
 	 */
-	virtual void delMatching(RuleType ruleDef, RuleStorage * removed)
+	virtual void delMatching(const RuleType & ruleDef, RuleStorage * removed)
 	{
 		// clears given container if non NULL
 		if(removed)
@@ -241,13 +249,14 @@ public:
 		iterator i=mapping.begin();
 		for(; i!=mapping.end(); )
 		{
-			RuleType original=i->first;
-			if((*matcher)(original, ruleDef))
+			const RuleType original=i->first;
+			RuleMatcherType & matcher=matcher;
+			if(matcher(original, ruleDef, NULL))
 			{
 				// this element matches
 				if(removed)
 					// stores current mapping
-					removed->push_back(RuleStorage::value_type(i->first, i->second));
+					removed->push_back(MappingType(i->first, i->second));
 				// removes element and sets iterator to one immediately after
 				// member
 				i=mapping.erase(i);
@@ -270,8 +279,8 @@ public:
 		if(removed)
 		{
 			// cleares and copies
-			removed.clear();
-			removed.insert(mapping.begin(), mapping.end());
+			removed->clear();
+			removed->insert(removed->begin(), mapping.begin(), mapping.end());
 		}
 
 		mapping.clear();
