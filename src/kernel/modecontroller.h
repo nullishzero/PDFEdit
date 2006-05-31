@@ -5,6 +5,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/05/31 22:36:58  hockm0bm
+ * ModeConfigurationParser
+ *         - setStream method implemented
+ *         - first scratch of loadFromFile
+ *
  * Revision 1.7  2006/05/31 20:10:22  hockm0bm
  * * PropertyMode enhanced and documented
  * * ModeRule, ModeMatcher, ModeConfigurationParser classes added
@@ -177,6 +182,18 @@ public:
 	ModeConfigurationParser(StringParser & parser):baseParser(parser)
 	{}
 
+	/** Sets new data stream.
+	 * @param str Stream to set.
+	 *
+	 * Delegates to baseStream (sets stream to low level string parser).
+	 *
+	 * @return Current stream reference.
+	 */
+	std::istream * setStream(std::istream * str)
+	{
+		return baseParser.setStream(str);
+	}
+	
 	/** Skips current key, value pair.
 	 * Delegates to baseParser.skip()
 	 */

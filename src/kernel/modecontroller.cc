@@ -5,6 +5,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/05/31 22:36:58  hockm0bm
+ * ModeConfigurationParser
+ *         - setStream method implemented
+ *         - first scratch of loadFromFile
+ *
  * Revision 1.7  2006/05/31 21:43:54  hockm0bm
  * gcc
  *
@@ -127,4 +132,14 @@ using namespace std;
 
 int ModeController::loadFromFile(std::string confFile, ConfParser & parser)
 {
+using namespace std;
+
+	// opens input stream
+	ifstream stream(confFile.c_str());
+	
+	// uses opened input file stream
+	istream * original=parser.setStream(&stream);
+
+	// returns back original stream to given parser
+	parser.setStream(original);
 }
