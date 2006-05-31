@@ -1,11 +1,14 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
+
 /*
- * =====================================================================================
- *        Filename:  modecontroller.cc
- *     Description: .
- *         Created:  12/03/2006 22:35:14 PM CET
- *          Author:  jmisutka (), 
- *         Changes: 
- * =====================================================================================
+ *
+ * $RCSfile$
+ *
+ * $Log$
+ * Revision 1.5  2006/05/31 07:06:24  hockm0bm
+ * doc update and prepared to be implemented
+ *         - just for sync
+ *
  */
 
 // static
