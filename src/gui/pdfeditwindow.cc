@@ -209,6 +209,13 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
   guiPrintDbg(debug::DBG_WARN,"Exception in menu loading raised");
   fatalError(e.message());
  }
+
+ //Icon
+ const QPixmap *appIcon=menuSystem->getIcon(globalSettings->read("icon/app","pdfedit_icon_32.png"));
+ if (appIcon) {
+  setIcon(*appIcon);
+ }
+
  //Script must be run AFTER creating all widgets
  //Script may need them, especially the command window
  //Run initscript

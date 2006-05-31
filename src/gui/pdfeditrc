@@ -54,6 +54,7 @@ FirstPage=first.png
 LastPage=last.png
 NextPage=next.png
 PrevPage=prev.png
+app=pdfedit_icon_32.png
 
 [tree]
 show_annot=1
