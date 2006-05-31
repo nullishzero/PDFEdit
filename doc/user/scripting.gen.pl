@@ -22,6 +22,10 @@ sub convert_definition {
  #trim unnecessary blank characters
  $def=~s/^\s+//;
  $def=~s/;\s*[\r\n]+$//;
+ if ($def=~s|/\*\s*Variant\s*=\s*([A-Za-z0-9_\[\]]+)\s*\*/||) { #Is there specification "what the variant is"?
+  my $variantReplacement=$1;
+  $def=~s/Variant/$variantReplacement/;
+ }
  return $def;
 }
 

@@ -126,6 +126,13 @@
     Clicked item is stored in variable <link linkend="treeitem">treeitem</link>
    </para>
   </sect1>
+  <sect1 id="onTreeSelectionChange">
+   <title>onTreeSelectionChange()</title>
+   <para>
+    This function is called after selected item in tree changes.
+    Selected item is stored in variable <link linkend="treeitem">treeitem</link>
+   </para>
+  </sect1>
  </chapter>
  <chapter>
   <title>Objects exported to scripting</title>
