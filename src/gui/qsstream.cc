@@ -38,6 +38,15 @@ const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
  return b;
 }
 
+/** Call CStream::getEncodedStringRepresentation(ret); return ret */
+QString QSStream::getEncoded() {
+ CStream *st=dynamic_cast<CStream*>(obj.get());
+ assert(st);
+ std::string text;
+ st->getEncodedStringRepresentation(text);
+ return text;
+}
+
 /**
  Convert CStream::Buffer (basically vector of chars) to QString (unicode string)
  characters 0-255 are mapped to unicode characters with code 0-255

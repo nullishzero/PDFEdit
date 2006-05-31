@@ -5,12 +5,15 @@
 #include <qobject.h>
 #include <pdfoperators.h>
 #include "qscobject.h"
+#include <qobjectlist.h>
 
 namespace gui {
 
 class Base;
 class QSContentStream;
 class QSPdfOperatorIterator;
+class QSPdfOperatorStack;
+class QSIPropertyArray;
 
 using namespace pdfobjects;
 
@@ -23,11 +26,6 @@ public:
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
- /*-
-  Returns child operator with given number from this operator
-  Use data fetched by loadChilds method, if it wasn't called, it is called before returning the child
- */
- QSPdfOperator* child(int childNumber);
  /*- Return PDF Operator iterator, initially pointing at this operator */
  QSPdfOperatorIterator* iterator();
  /*-
@@ -35,40 +33,17 @@ public slots:
   Text iterator iterate only through text operators in content stream
  */
  QSPdfOperatorIterator* textIterator();
- /*-
-  Returns number of child operators under this pdf operator
-  Use data fetched by loadChilds method, if it wasn't called, it is called before returning the count
- */
+ /*- Returns stack with all child operators */
+ QSPdfOperatorStack* childs();
+ /*- Returns number of child operators under this pdf operator */
  int childCount();
  /*- Return text representation of this pdf operator */
  QString getText();
  /*- Return name of this pdf operator */
  QString getName();
- /*-
-  Get all child operators under this operator and store them.
-  Get the operators with child and childCount functions.
-  Usually it is not necessary to call this method, as these funtions will call
-  it automatically on first need, but you may call it explicitly to reload the
-  list of child operators stored in this object
- */
- void loadChilds();
- /*-
-  Get all parameters (operands) under this operator and store them.
-  Get the operators with param and paramCount functions.
-  Usually it is not necessary to call this method, as these funtions will call
-  it automatically on first need, but you may call it explicitly to reload the
-  list of parameters stored in this object
- */
- void loadParams();
- /*-
-  Returns parameter with given number from this operator
-  Use data fetched by loadParams method, if it wasn't called, it is called before returning the parameter
- */
- QSCObject* param(int paramNumber);
- /*-
-  Returns number of parameters for this pdf operator
-  Use data fetched by loadParams method, if it wasn't called, it is called before returning the count
- */
+ /*- Returns parameters of this operator in array */
+ QSIPropertyArray* params();
+ /*- Returns number of parameters in this pdf operator */
  int paramCount();
  /*-
   Add an operator oper to the end of composite operator prev
@@ -104,14 +79,6 @@ private:
  boost::shared_ptr<PdfOperator> obj;
  /** Reference to content stream that is holding this operator. It may be NULL (empty shared_ptr) if unknown */
  boost::shared_ptr<CContentStream> csRef;
- /** Vector with child operators */
- std::vector<boost::shared_ptr<PdfOperator> > childs;
- /** Number of childs in vector. -1 mean no childs yet parsed */
- int numChilds;
- /** Vector with operator parameters */
- std::vector<boost::shared_ptr<IProperty> > params;
- /** Number of parameters in vector. -1 mean no parameters yet parsed */
- int numParams;
 };
 
 } // namespace gui

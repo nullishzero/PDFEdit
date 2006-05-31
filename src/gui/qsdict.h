@@ -28,6 +28,13 @@ public slots:
  void add(const QString &name,const QString &ip);
  /*- Add integer property with given name to this dictionary */
  void add(const QString &name,int ip);
+ /*-
+  Get Dict/Array property recursively
+  Will take the name as slash-separated list of childs to traverse to get to target property,
+  going through Dicts and Arrays.
+  Any references on the way are automatically dereferenced
+ */
+ QSCObject* child(const QString &name);
  /*- Return number of properties held in this dictionary */
  int count();
  /*- Delete property with given name from this dictionary */
@@ -50,6 +57,8 @@ public slots:
   and return it
  */
  QSCObject* propertyDef(const QString &name,QString defValue);
+ /*- Return array containig names of all properties */
+ QStringList propertyNames();
 };
 
 } // namespace gui 

@@ -40,6 +40,8 @@ public slots:
  QByteArray getBuffer();
  /*- Saves buffer of this stream to given file. Return true on success, false on failure while saving */
  bool saveBuffer(const QString &fileName);
+ /*- Return encoded text representation of this property */
+ QString getEncoded();
 };
 
 } // namespace gui

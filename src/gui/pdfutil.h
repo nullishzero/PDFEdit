@@ -2,6 +2,7 @@
 #define __PDFUTIL_H__
 
 #include <iproperty.h>
+#include <cobject.h>
 class QString;
 namespace pdfobjects {
 class CPdf;
@@ -24,6 +25,10 @@ bool isSimple(IProperty* prop);
 bool isSimple(boost::shared_ptr<IProperty> prop);
 boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj);
 bool saveCopy(CPdf *obj,const QString &name);
+boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CDict> obj,const QString &name);
+boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const QString &name);
+boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CDict> obj,const QString &name);
+boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CArray> obj,const QString &name);
 
 } // namespace util
 

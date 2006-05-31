@@ -122,7 +122,7 @@ void QSContentStream::replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared
  */
 void QSContentStream::pre_replace(boost::shared_ptr<PdfOperator> op) {
  itPrev=PdfOperator::getIterator(op);itPrev.prev();
- itNext=PdfOperator::getIterator(op);itNext.prev();
+ itNext=PdfOperator::getIterator(getLastOperator(op));itNext.next();
 }
 
 /**

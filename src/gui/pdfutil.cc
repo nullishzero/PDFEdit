@@ -10,6 +10,7 @@
 #include <cobject.h>
 #include <cpdf.h>
 #include "util.h"
+#include <utils/debug.h>
 
 namespace util {
 
@@ -189,6 +190,78 @@ bool saveCopy(CPdf *obj,const QString &name) {
   fclose(f);
   return false;
  }
+}
+
+/**
+ recursive CDict/CArray getProperty(...)
+ Will take the name as slash-separated list of childs to traverse to get to target property.
+ References on the way are automatically dereferenced
+ Can throw exception if some property is not found on the way
+ @param obj CDict/CArray to start the search
+ @param name Path to property
+ @return specified property
+*/
+template <typename T>
+boost::shared_ptr<IProperty> _recursiveProperty(boost::shared_ptr<T> obj,const QString &name) {
+ QString nameFirst=name.section('/',0,0);
+ QString nameEnd=name.section('/',1);
+ guiPrintDbg(debug::DBG_DBG,"Recurse '" << name << "' -> '" << nameFirst << "' / '" << (nameEnd.isNull()?"(NULL)":nameEnd) << "'");
+ boost::shared_ptr<IProperty> r=getObjProperty(obj,nameFirst);
+ r=dereference(r);
+ if (nameEnd.isNull()) return r;//This is the property we want
+ if (nameEnd=="") return r;//This is the property we want
+
+ //Next is dict, rearch for rest there
+ boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(r);
+ if (dict.get()) return recursiveProperty(dict,nameEnd);
+
+ //Next is array, rearch for rest there
+ boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(r);
+ if (array.get()) return recursiveProperty(array,nameEnd);
+
+ //Next is some simple property, we can't search there.
+ throw ElementNotFoundException("","");
+}
+
+/** \copydoc _recursiveProperty */
+boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CDict> obj,const QString &name) {
+ guiPrintDbg(debug::DBG_DBG,"Recurse Dict " << name);
+ return _recursiveProperty(obj,name);
+}
+
+/** \copydoc _recursiveProperty */
+boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CArray> obj,const QString &name) {
+ guiPrintDbg(debug::DBG_DBG,"Recurse Array " << name);
+ return _recursiveProperty(obj,name);
+}
+
+/**
+ Get property from Dict based in QString key
+ @param obj Dict to get property from
+ @param name name of property
+ @return specified property
+*/
+boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CDict> obj,const QString &name) {
+ std::string theName=name;
+ guiPrintDbg(debug::DBG_DBG,"getObjDict " << name);
+ return obj->getProperty(theName);
+}
+
+/**
+ Get property from Array based in QString key
+ @param obj Array to get property from
+ @param name name of property (must be convertable to number)
+ @return specified property
+*/
+boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const QString &name) {
+ bool ok=false;
+ int index=name.toInt(&ok);
+ guiPrintDbg(debug::DBG_DBG,"getObjArray " << name << " -> " << index);
+ if (!ok) {
+  //Not a number;
+  throw ElementNotFoundException("","");
+ }
+ return obj->getProperty(index);
 }
 
 } // namespace util

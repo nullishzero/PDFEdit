@@ -35,6 +35,13 @@ public slots:
  void add(const QString &ip);
  /*- Append Int element at end of array */
  void add(int ip);
+ /*-
+  Get Dict/Array property recursively
+  Will take the name as slash-separated list of childs to traverse to get to target property,
+  going through Dicts and Arrays.
+  Any references on the way are automatically dereferenced
+ */
+ QSCObject* child(const QString &name);
  /*- Return size of this array (number of elements) */
  int count();
  /*- Delete element with given index from this array. Elements with higher index (if any) are shifted to occupy the space */

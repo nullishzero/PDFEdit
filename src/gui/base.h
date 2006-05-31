@@ -17,7 +17,9 @@ class QSPdf;
 class QSDict;
 class QSArray;
 class QSIProperty;
+class QSIPropertyArray;
 class QSCObject;
+class QSPdfOperator;
 class TreeItemAbstract;
 class BaseData;
 
@@ -65,6 +67,14 @@ public slots: //This will be all exported to scripting
  void closeWindow();
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
+ /*-
+  Create new Array of IProperty items.
+  This array can be used for example as operator parameters
+ */
+ QSIPropertyArray* createArray();
+ /*- Create new PDF Operator with specified parameters and operator text*/
+ QSPdfOperator* createOperator(QSIPropertyArray* parameters,const QString &text);
+ QSPdfOperator* createOperator(QObject* parameters,const QString &text);
  /*-
   Return last error message (localized) from some operations
   (openFile, save, saveRevision, saveCopy)

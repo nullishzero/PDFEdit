@@ -63,7 +63,12 @@ function func_load() {
  try {
   if (!closeFile(true,true)) return;
   var name=fileOpenDialog();
-  if (name) openFile(name);
+  if (name) {
+   openFile(name);
+   if (document.isLinearized()) {
+    print(tr('Warning: This document is linearized PDF!'));
+   }
+  }
  } catch (e) {
   print(tr("Error occured while loading file")+" "+name);
  }

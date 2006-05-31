@@ -8,6 +8,7 @@
 #include "qsarray.h"
 #include "qsimporter.h"
 #include <cobject.h>
+#include "pdfutil.h"
 
 namespace gui {
 
@@ -113,6 +114,22 @@ void QSArray::add(int ip) {
  array->addProperty(property);
 }
 
-} // namespace gui
+/**
+ recursive CDict/CArray getProperty(...)
+ Will take the name as slash-separated list of childs to traverse to get to target property.
+ References on the way are automatically dereferenced
+ @param name Path to property
+ @return specified property
+*/
+QSCObject* QSArray::child(const QString &name) {
+ try {
+  boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(obj);
+  boost::shared_ptr<IProperty> property=util::recursiveProperty(array,name);
+  return QSImporter::createQSObject(property,base);
+ } catch (...) { 
+  //Some error, probably the property does not exist
+  return NULL;
+ }
+}
 
-//todo: incomplete
+} // namespace gui

@@ -17,8 +17,10 @@
 #include "qsdict.h"
 #include "qsimporter.h"
 #include "qsiproperty.h"
+#include "qsipropertyarray.h"
 #include "qsmenu.h"
 #include "qspdf.h"
+#include "qspdfoperator.h"
 #include "settings.h"
 #include "treeitemabstract.h"
 #include "multitreewindow.h"
@@ -311,6 +313,41 @@ void Base::addObjectDialog(QObject *container) {
   guiPrintDbg(debug::DBG_ERR,"type Error: " << container->className());
   w->addObjectDialogI(w->selectedProperty);
  }
+}
+
+/**
+ Create new operator of type UnknownPdfOperator
+ @param parameters Array with operator parameters
+ @param text Operator text
+ @return new PDF operator
+*/
+QSPdfOperator* Base::createOperator(QSIPropertyArray* parameters,const QString &text) {
+ std::string opTxt=text;
+ PdfOperator::Operands param;
+ parameters->copyTo(param);
+ boost::shared_ptr<UnknownPdfOperator> op(new UnknownPdfOperator(param,opTxt));
+ return new QSPdfOperator(op,this); 
+}
+
+/**
+ QSA-Bugfix version
+ \copydoc createOperator(QSIPropertyArray*,const QString &)
+*/
+QSPdfOperator* Base::createOperator(QObject* parameters,const QString &text) {
+ QSIPropertyArray* par=dynamic_cast<QSIPropertyArray*>(parameters);
+ if (!par) return NULL;
+ return createOperator(par,text);
+}
+
+//TODO: create all IProperty items (Simple types + array/dict/ref)
+
+/**
+ Create new Array of IProperty items.
+ This array can be used for example as operator parameters
+ @return new Iproperty array
+*/
+QSIPropertyArray* Base::createArray() {
+ return new QSIPropertyArray(this);
 }
 
 /** create new empty editor window and display it */

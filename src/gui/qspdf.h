@@ -23,6 +23,8 @@ public:
  virtual ~QSPdf();
  CPdf* get() const;
 public slots:
+ /*- Return true, if document is linearized PDF, false otherwise */
+ bool isLinearized();
  /*-
   Close the document.
   If the document was opened directly in editor window (with openFile function), it won't be closed,

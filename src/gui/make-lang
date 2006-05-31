@@ -15,16 +15,7 @@ grep 'countString.*".*".*".*"' *.cc |perl -e '
 ' >>.menu-trans.h
 
 # process localizable strings in init.qs
-grep "tr(" init.qs | perl -e '
- while (<>) {
-  while (s/tr\("([^"]+)"\)//) {
-   print "QT_TRANSLATE_NOOP(\"QObject\",\"$1\")\n";
-  }
-  while (s/tr\("([^"]+)","([^"]+)"\)//) {
-   print "QT_TRANSLATE_NOOP(\"QObject\",\"$1\",\"$2\")\n";
-  }
- }
-' >>.menu-trans.h
+grep "tr(" init.qs | ./trans-qs.pl >>.menu-trans.h
 
 lupdate pdfedit.pro -noobsolete
 lrelease pdfedit.pro

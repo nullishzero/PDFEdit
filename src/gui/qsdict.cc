@@ -8,9 +8,12 @@
 #include "qsdict.h"
 #include "qsimporter.h"
 #include <cobject.h>
+#include "pdfutil.h"
+#include <qstringlist.h>
 
 namespace gui {
 
+using namespace std;
 using namespace pdfobjects;
 
 /** Construct wrapper with given CDict */
@@ -64,7 +67,14 @@ bool QSDict::exist(const QString &name) {
  }
 }
 
-/** call CDict::getProperty(name), if property doeas not exist, return property with defValue in it*/
+/**
+ call CDict::getProperty(name),
+ if property does not exist,
+ property with defValue in it is added to dict and returned
+ @param name Name of property
+ @param defValue default value for property
+ @return Properry from dictionary
+*/
 QSCObject* QSDict::propertyDef(const QString &name,int defValue) {
  QSCObject* ret=property(name);
  if (ret) return ret; //Property exists -> return it
@@ -74,7 +84,14 @@ QSCObject* QSDict::propertyDef(const QString &name,int defValue) {
  return property(name);
 }
 
-/** call CDict::getProperty(name), if property doeas not exist, return property with defValue in it*/
+/**
+ call CDict::getProperty(name),
+ if property does not exist,
+ property with defValue in it is added to dict and returned
+ @param name Name of property
+ @param defValue default value for property
+ @return Properry from dictionary
+*/
 QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
  QSCObject* ret=property(name);
  if (ret) return ret; //Property exists -> return it
@@ -87,14 +104,14 @@ QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
 /** call CDict::delProperty(name) */
 void QSDict::delProperty(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- std::string pName=name;
+ string pName=name;
  dict->delProperty(pName);
 }
 
 /** call CDict::addProperty(name,ip) */
 void QSDict::add(const QString &name,QSIProperty *ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- std::string pName=name;
+ string pName=name;
  dict->addProperty(pName,*(ip->get().get()));
 }
 
@@ -108,7 +125,7 @@ void QSDict::add(const QString &name,QObject *ip) {
 /** call CDict::addProperty(name,ip) */
 void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- std::string pName=name;
+ string pName=name;
  CString property(ip);
  dict->addProperty(pName,property);
 }
@@ -116,7 +133,7 @@ void QSDict::add(const QString &name,const QString &ip) {
 /** call CDict::addProperty(name,ip) */
 void QSDict::add(const QString &name,int ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- std::string pName=name;
+ string pName=name;
  CInt property(ip);
  dict->addProperty(pName,property);
 }
@@ -124,11 +141,43 @@ void QSDict::add(const QString &name,int ip) {
 /** call CDict::getStringRepresentation(ret); return ret */
 QString QSDict::getText() {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- std::string text;
+ string text;
  dict->getStringRepresentation(text);
  return text;
 }
 
-} // namespace gui
+/**
+ call CDict::getAllPropertyNames(list); return list
+ Return list of all property names in this dictionary
+ */
+QStringList QSDict::propertyNames() {
+ CDict *dict=dynamic_cast<CDict*>(obj.get());
+ QStringList names;
+ vector<string> list;
+ dict->getAllPropertyNames(list);
+ vector<string>::iterator it;
+ for( it=list.begin();it!=list.end();++it) { // for each property
+  names+=*it;
+ }
+ return names;
+}
 
-//todo: incomplete
+/**
+ recursive CDict/CArray getProperty(...)
+ Will take the name as slash-separated list of childs to traverse to get to target property.
+ References on the way are automatically dereferenced
+ @param name Path to property
+ @return specified property
+*/
+QSCObject* QSDict::child(const QString &name) {
+ try {
+  boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
+  boost::shared_ptr<IProperty> property=util::recursiveProperty(dict,name);
+  return QSImporter::createQSObject(property,base);
+ } catch (...) { 
+  //Some error, probably the property does not exist
+  return NULL;
+ }
+}
+
+} // namespace gui

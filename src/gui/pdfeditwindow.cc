@@ -448,13 +448,17 @@ void PdfEditWindow::setFileName(const QString &name) {
  setTitle();
 }
 
-/** Set window title, according to stored baseName and active revision number
+/**
+ Set window title, according to stored baseName and active revision number,
+ and also some other facts (if document is linearized, etc ...)
  @param revision Revision number
  */
 void PdfEditWindow::setTitle(int revision/*=0*/) {
  QString revisionInfo="";
  if (revision) revisionInfo=QString(" - ")+tr("viewing revision")+" "+QString::number(revision);
- setCaption(QString(APP_NAME)+" - "+baseName+revisionInfo);
+ QString linInfo="";
+ if (document->isLinearized()) linInfo=QString(" (")+tr("Linearized PDF")+")";
+ setCaption(QString(APP_NAME)+" - "+baseName+revisionInfo+linInfo);
 }
 
 /** Closes file currently opened in editor, without opening new empty one */

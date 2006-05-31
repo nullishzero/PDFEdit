@@ -55,6 +55,11 @@ QSDict* QSPdf::getDictionary() {
  return new QSDict(obj->getDictionary(),base);
 }
 
+/** Call CPdf::isLinearized() */
+bool QSPdf::isLinearized() {
+ return obj->isLinearized();
+}
+
 /** Call CPdf::insertPage(page,position) */
 QSPage* QSPdf::insertPage(QSPage* page, int position) {
  if (!obj) return NULL;

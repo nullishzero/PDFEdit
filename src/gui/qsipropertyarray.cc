@@ -1,0 +1,87 @@
+/** @file
+ QObject wrapper around array of IProperties<br>
+ See doc/user/scripting.xml for more informations about these functions
+ @author Martin Petricek
+*/
+
+#include "qsipropertyarray.h"
+#include "qsimporter.h"
+#include <cobject.h>
+#include "qsiproperty.h"
+
+namespace gui {
+
+using namespace pdfobjects;
+
+/** Construct wrapper with empty array */
+QSIPropertyArray::QSIPropertyArray(Base *_base) : QSCObject ("IPropertyArray",_base) {
+}
+
+/** destructor */
+QSIPropertyArray::~QSIPropertyArray() {
+}
+
+/**
+ get one IProperty item held inside this class.
+ @param index Zero-based index of item to get
+ @return specified IProperty
+*/
+boost::shared_ptr<IProperty> QSIPropertyArray::get(int index) {
+ return obj[index];
+}
+
+/**
+ append one IProperty to end of array.
+ @param prop IProperty to append
+*/
+void QSIPropertyArray::append(boost::shared_ptr<IProperty> prop) {
+ obj.push_back(prop);
+}
+
+/**
+ append one IProperty to end of array.
+ @param prop IProperty to append
+*/
+void QSIPropertyArray::append(QSIProperty *prop) {
+ obj.push_back(prop->get());
+}
+
+/**
+ append one IProperty to end of array.
+ QSA-bugfix version
+ @param obj IProperty to append
+*/
+void QSIPropertyArray::append(QObject *obj) {
+ QSIProperty *prop=dynamic_cast<QSIProperty*>(obj);
+ if (prop) {
+  append(prop);
+ }
+}
+
+/** Return number of items inside this array */
+int QSIPropertyArray::count() {
+ return obj.size();
+}
+
+/**
+ Copy all items to Operands that can be used in PDF Operators
+ @param oper Operands container that will be cleared and filled with operands from this array
+ */
+void QSIPropertyArray::copyTo(PdfOperator::Operands &oper) {
+ oper.clear();
+ std::copy(obj.begin(),obj.end(),std::back_inserter(oper)); 
+}
+
+/**
+ get one IProperty item held inside this class.
+ @param index Zero-based index of item to get
+ @return specified IProperty
+*/
+QSCObject* QSIPropertyArray::property(int index) {
+ //Check if we are in bounds
+ if (index<0) return NULL;
+ if (index>=(int)obj.size()) return NULL;
+ return QSImporter::createQSObject(obj[index],base);
+}
+
+} // namespace gui
