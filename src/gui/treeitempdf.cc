@@ -82,14 +82,17 @@ void TreeItemPdf::init(CPdf *pdf,const QString &name) {
 void TreeItemPdf::observePageDict() {
  //Add observer to pagecount
  try {
+//  guiPrintDbg(debug::DBG_DBG,"Observe!");
   pageDictionary=util::dereference(obj->getDictionary()->getProperty("Pages"));
   assert(pageDictionary.get());
   if (pageDictionary.get()) {
+//   guiPrintDbg(debug::DBG_DBG,"I see!");
    //Register observer on page dictionary (because of page count)
    observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
    pageDictionary->registerObserver(observer);
   }
  } catch (...) {
+  guiPrintDbg(debug::DBG_DBG,"Some exception");
   //Some problem, so we have to live without observer
  }
 }

@@ -20,9 +20,10 @@ using namespace std;
  @param _name name of this property
  @param _flags flags of this property items (default 0)
  */
-StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
+StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"stringproperty_edit");
+ ed->setReadOnly(!readonly);
  setFocusProxy(ed);
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
  connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));

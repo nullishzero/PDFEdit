@@ -31,6 +31,8 @@ public slots:
  /*- append one IProperty element to end of array. */
  void append(QSIProperty *prop);
  void append(QObject *obj);
+ /*- Delete all elements in the array */
+ void clear();
  /*- Return size of this array (number of elements) */
  int count();
  /*- Get IProperty element with given index from this array */

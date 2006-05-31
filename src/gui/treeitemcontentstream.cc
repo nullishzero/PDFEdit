@@ -188,4 +188,15 @@ void TreeItemContentStream::uninitObserver() {
  guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }
 
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemContentStream::validChild(const QString &name,QListViewItem *oldChild) {
+ size_t i=name.toUInt();
+ TreeItemPdfOperator *it=dynamic_cast<TreeItemPdfOperator*>(oldChild);
+ assert(it);
+ //Same address = same item
+ //Different address = probably different item
+ return op[i]==it->getObject();
+}
+
+
 } // namespace gui

@@ -15,7 +15,7 @@ using namespace pdfobjects;
 class RefProperty : public Property {
 Q_OBJECT
 public:
- RefProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
+ RefProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual QSize sizeHint() const;
  virtual void resizeEvent (QResizeEvent *e);
  virtual ~RefProperty();

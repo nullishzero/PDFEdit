@@ -26,7 +26,7 @@ namespace gui {
  @param _flags Flags of this property items (default 0)
  @return subclass of Property widget (or NULL)
  */
-Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/) {
+Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/) {
  PropertyType typ=prop->getType();
  switch (typ) {
   case pNull:   return NULL;

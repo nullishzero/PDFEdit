@@ -259,16 +259,16 @@ function buftest(x,at,st) {
 }
 
 /** Return property from dictionary of current page */
-function pageProperty(x) {
- return page.getDictionary().property(x).ref();
+function pageProperty(propName) {
+ return page.getDictionary().property(propName).ref();
 }
 
 /**
  Return property from dictionary of current page,
  adding it with default value if property is not found
 */
-function pageProperty(x,defv) {
- return page.getDictionary().propertyDef(x,defv).ref();
+function pageProperty(propName,defValue) {
+ return page.getDictionary().propertyDef(propName,defValue).ref();
 }
 
 /** rotate current page N degrees clockwise */
@@ -284,6 +284,24 @@ function rotatePage(n) {
  rotate.set(n0);
  //Reload page after rotating
  go();
+}
+
+/** Return root item from current tree.*/
+function treeroot() {
+// TODO: add as Base::treeroot() directly, as items from other tree might still be selected, so this does not work always
+ x=treeitem;
+ while(y=x.parent()) {
+  x=y;
+ }
+ return x;
+}
+
+/** Set stream to certain mode */
+function streamMode(newMode) {
+ x=treeroot();
+ if (x.itemtype()!="ContentStream") return;
+ //TODO: icons for this
+ treeroot().setMode(newMode);
 }
 
 /* ==== Code to run on start ==== */

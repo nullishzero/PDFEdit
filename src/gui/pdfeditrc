@@ -34,9 +34,11 @@ items/nextpage=		item Next Page,PageSpace.nextPage(),Ctrl+PgDown,next.png
 items/lastpage=		item Last Page,PageSpace.lastPage(),Ctrl+End,last.png
 items/RevisionToolbar=list Revision Toolbar,revlabel,_revision_tool
 items/revlabel=		label Revisions
-items/ObjectToolbar=list Object Toolbar,treeAdditem,treeDelitem
+items/ObjectToolbar=list Object Toolbar,treeAdditem,treeDelitem,streamAll,streamText
 items/treeAdditem=	item Add object,add_obj_dlg(),Ins,item_add.png
 items/treeDelitem=	item Delete object,treeitem.remove(),Del,item_delete.png
+items/streamAll=	item Show all operators in stream,streamMode('all'),,prev.png
+items/streamText=	item Show only text operators in stream,streamMode('text'),,prev.png
 items/popup_generic=list Popup menu,tree_string,tree_type,tree_childs
 items/tree_string=	item Show String representation,print(treeitem.item().getText())
 items/tree_type=	item Show Item type,print(treeitem.itemtype())
@@ -68,4 +70,4 @@ script=$HOME/.pdfedit;/usr/share/pdfedit;$PDFEDIT_BIN
 help=/usr/share/pdfedit/help/$LANG;$PDFEDIT_BIN/help/$LANG;/usr/share/pdfedit/help;$PDFEDIT_BIN/help
 
 [script]
-init=/usr/share/pdfedit/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/init.qs
+init=/usr/share/pdfedit/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs

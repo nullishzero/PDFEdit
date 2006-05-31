@@ -2,6 +2,8 @@
 #define __PROPERTY_H__
 
 #include <qwidget.h>
+#include <modecontroller.h>
+
 class QString;
 namespace pdfobjects {
  class IProperty;
@@ -11,14 +13,17 @@ namespace gui {
 
 using namespace pdfobjects;
 
-/** Property flags (hidden, readonly, unset ...) */
-typedef int PropertyFlags;
+/** Property flags (property mode - hidden, advanced ...) */
+typedef PropertyMode PropertyFlags;
+
+/** Default mode to be chosen if omitted in constructor */
+const PropertyMode defaultPropertyMode=mdNormal;
 
 /** ancestor of all property items */
 class Property : public QWidget {
 Q_OBJECT
 public:
- Property(const QString &_name=0,QWidget *parent=0, PropertyFlags _flags=0);
+ Property(const QString &_name=0,QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~Property();
  QString getName();
  PropertyFlags getFlags();

@@ -10,7 +10,7 @@ using namespace pdfobjects;
 class NameProperty : public StringProperty {
 Q_OBJECT
 public:
- NameProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
+ NameProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~NameProperty();
 };
 

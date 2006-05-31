@@ -27,11 +27,12 @@ using namespace util;
  @param _name name of this property
  @param _flags flags of this property items (default 0)
  */
-RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
+RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"RefProperty_edit");
  setFocusProxy(ed);
  pb=new QPushButton("..",this,"refproperty_pickbutton");
+ ed->setReadOnly(!readonly);
  ed->setValidator(new RefValidator(ed));
  //light yellow background color
  ed->setPaletteBackgroundColor(QColor(255,255,224));

@@ -46,6 +46,11 @@ void QSIPropertyArray::append(QSIProperty *prop) {
  obj.push_back(prop->get());
 }
 
+/** Delete all elements in the array */
+void QSIPropertyArray::clear() {
+ obj.clear();
+}
+
 /**
  append one IProperty to end of array.
  QSA-bugfix version

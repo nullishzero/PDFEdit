@@ -16,7 +16,7 @@ Q_OBJECT
 public:
  virtual QSize sizeHint() const;
  virtual void resizeEvent (QResizeEvent *e);
- StringProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
+ StringProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~StringProperty();
  virtual void writeValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);

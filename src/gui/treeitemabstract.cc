@@ -182,6 +182,7 @@ void TreeItemAbstract::eraseItems() {
  @return True, if the old child is pointing to same item as item "name", false, if the child item "name" no longer point to same item as oldChild.
 */
 bool TreeItemAbstract::validChild(__attribute__((unused)) const QString &name,__attribute__((unused)) QListViewItem *oldChild) {
+ //TODO: make it abstract!
  //True by default
  return true;
 }

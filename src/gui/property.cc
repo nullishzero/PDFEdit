@@ -17,13 +17,14 @@ namespace gui {
  @param _name name of this property
  @param _flags flags of this property items (default 0)
  */
-Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
- : QWidget (parent, "property",_flags){
+Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
+ : QWidget (parent, "property"){
  name=_name;
  flags=_flags;
  changed=false;
  //Default flags
  hidden=readonly=false; 
+ if (flags==mdReadOnly) readonly=true;
 }
 
 /** return name of this property

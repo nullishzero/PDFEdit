@@ -17,7 +17,7 @@ namespace gui {
  @param _name name of this property
  @param _flags flags of this property items (default 0)
  */
-RealProperty::RealProperty (const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
+RealProperty::RealProperty (const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : StringProperty(_name,parent,_flags) {
  ed->setText("0");
  ed->setValidator(new QDoubleValidator(ed));

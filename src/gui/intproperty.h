@@ -13,7 +13,7 @@ using namespace pdfobjects;
 class IntProperty : public StringProperty {
 Q_OBJECT
 public:
- IntProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=0);
+ IntProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~IntProperty();
  virtual void writeValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);

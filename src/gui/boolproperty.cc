@@ -18,9 +18,10 @@ using namespace std;
  @param _name name of this property
  @param _flags flags of this property items (default 0)
  */
-BoolProperty::BoolProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=0*/)
+BoolProperty::BoolProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
  ed=new QCheckBox(this,"boolproperty_checkbox");
+ ed->setEnabled(!readonly);
  connect(ed,SIGNAL(clicked()),this,SLOT(emitChange()));
 }
 
