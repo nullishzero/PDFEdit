@@ -417,6 +417,14 @@ Data: %3
         <source>No object type selected</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Property &apos;%1&apos; already exist as %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::Base</name>
@@ -899,6 +907,16 @@ Data: %3
     <message>
         <source>&amp;Save new revision</source>
         <comment>fsaverev</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show all operators in stream</source>
+        <comment>streamAll</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only text operators in stream</source>
+        <comment>streamText</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

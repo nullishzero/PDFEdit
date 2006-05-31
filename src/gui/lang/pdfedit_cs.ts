@@ -420,6 +420,14 @@ Data: %3
         <source>Property added to end of array</source>
         <translation>Položka přidána na konec pole</translation>
     </message>
+    <message>
+        <source>Property &apos;%1&apos; already exist as %2</source>
+        <translation>Položka &apos;%1&apos; již existuje jako %2</translation>
+    </message>
+    <message>
+        <source>Overwrite?</source>
+        <translation>Přepsat?</translation>
+    </message>
 </context>
 <context>
     <name>gui::Base</name>
@@ -903,6 +911,16 @@ Data: %3
         <source>&amp;Save new revision</source>
         <comment>fsaverev</comment>
         <translation>Uložit novou revizi</translation>
+    </message>
+    <message>
+        <source>Show all operators in stream</source>
+        <comment>streamAll</comment>
+        <translation>Zobrazit všechny operátory ve streamu</translation>
+    </message>
+    <message>
+        <source>Show only text operators in stream</source>
+        <comment>streamText</comment>
+        <translation>Zobrazit pouze textové operátory ve streamu</translation>
     </message>
 </context>
 <context>
