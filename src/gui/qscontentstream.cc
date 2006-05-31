@@ -7,6 +7,7 @@
 
 #include "qscontentstream.h"
 #include "qspdfoperator.h"
+#include "qspdfoperatoriterator.h"
 #include <pdfoperators.h>
 
 namespace gui {
@@ -117,6 +118,19 @@ void QSContentStream::replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared
 }
 
 /**
+ Replace old operator oldOp with new operator newOp in this stream
+ @param oldOp Old operator that will be replaced
+ @param newOp New operator (replacement)
+ @param itPrev Previous iterator of new operator in iterator list
+ @param itNext Next iterator of new operator in iterator list
+ @param indicateChange If set to true (default), changes will be written to underlying stream
+ */
+void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOperatorIterator* itPrev,QSPdfOperatorIterator* itNext,bool indicateChange/*=true*/) {
+ if (!(oldOp && newOp && itPrev && itNext)) return;
+ obj->replaceOperator(oldOp->get(),newOp->get(),*(itPrev->get()),*(itNext->get()),indicateChange);
+}
+
+/**
  Prepare for replacing operator with some other - save it's next and prev iterator
  @param op operator
  */
@@ -143,6 +157,7 @@ void QSContentStream::setPosition(QSPdfOperator *op,double x,double y,bool indic
 // pre_replace(op->get());
 // boost::shared_ptr<PdfOperator> pos=pdfobjects::setPosition(op->get(),pt);
 // replace(op->get(),pos,indicateChange);
+//TODO: trhis will be done in scripting and will go away sooner or later
 }
 
 /**
@@ -198,5 +213,3 @@ void QSContentStream::saveChange() {
 }
 
 } // namespace gui
-
-//todo: incomplete

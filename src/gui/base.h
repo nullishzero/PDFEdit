@@ -11,18 +11,18 @@ class QSInterpreter;
 
 namespace gui {
 
+class BaseData;
 class PdfEditWindow;
-class QSMenu;
-class QSImporter;
-class QSPdf;
-class QSDict;
 class QSArray;
+class QSCObject;
+class QSDict;
 class QSIProperty;
 class QSIPropertyArray;
-class QSCObject;
+class QSImporter;
+class QSMenu;
+class QSPdf;
 class QSPdfOperator;
 class TreeItemAbstract;
-class BaseData;
 
 class Base : public QObject {
  Q_OBJECT

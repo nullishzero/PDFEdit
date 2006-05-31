@@ -26,6 +26,7 @@ public:
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
  static QSCObject* createQSObject(boost::shared_ptr<IProperty> ip,Base *_base);
+ static QSCObject* createQSObject(TreeItemAbstract *item,Base *_base);
  QSCObject* createQSObject(boost::shared_ptr<pdfobjects::PdfOperator> op);
  QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);

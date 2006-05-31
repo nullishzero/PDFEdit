@@ -9,6 +9,7 @@
 #include "commandwindow.h"
 #include "dialog.h"
 #include "helpwindow.h"
+#include "multitreewindow.h"
 #include "optionwindow.h"
 #include "pagespace.h"
 #include "pdfeditwindow.h"
@@ -23,15 +24,14 @@
 #include "qspdfoperator.h"
 #include "settings.h"
 #include "treeitemabstract.h"
-#include "multitreewindow.h"
 #include "util.h"
 #include "version.h"
+#include <factories.h> 
 #include <qfile.h>
 #include <qmessagebox.h>
 #include <qsinterpreter.h>
 #include <qsutilfactory.h> 
 #include <utils/debug.h>
-#include <factories.h> 
 
 namespace gui {
 

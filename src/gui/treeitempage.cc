@@ -101,7 +101,7 @@ TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QL
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemPage::deepReload(const QString &childName,QListViewItem *oldItem) {
+bool TreeItemPage::deepReload(__attribute__((unused)) const QString &childName,QListViewItem *oldItem) {
  TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldItem);
  if (itc) { //Is a page dictionary
   //If replaced, return success, otherwise failure
@@ -178,8 +178,19 @@ QSCObject* TreeItemPage::getQSObject(Base *_base) {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPage::remove() {
- //TODO: implement
- return;
+ CPdf * pdf=obj->getDictionary()->getPdf();
+ if (!pdf) {
+  //The page is obviously not in any pdf, so it can't be removed
+  return;
+ }
+ try {
+  //Remove the page from document
+  size_t pPos=pdf->getPagePosition(obj);
+  pdf->removePage(pPos);
+  //Page is now removed
+ } catch (...) {
+  //Some exception, like page was not found in PDF
+ }
 }
 
 } // namespace gui

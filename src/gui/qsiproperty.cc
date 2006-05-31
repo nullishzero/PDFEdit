@@ -212,5 +212,3 @@ boost::shared_ptr<IProperty> QSIProperty::get() const {
 }
 
 } // namespace gui
-
-//todo: incomplete

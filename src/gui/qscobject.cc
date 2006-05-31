@@ -13,8 +13,6 @@
 
 namespace gui {
 
-//todo: add garbage collection if needed
-
 /**
  Construct wrapper with given CObject
  @param _typeName Name of this objects type
@@ -24,7 +22,7 @@ QSCObject::QSCObject(QString _typeName, Base* _base) {
  typeName=_typeName;
  base=_base;
  guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
-//todo: add to garbage collector. Garbage collector is one for each editor window.
+//TODO: add to garbage collector. Garbage collector is one for each editor window.
  if (base) base->addGC(this);
 }
 
@@ -39,7 +37,9 @@ QSCObject::QSCObject(QSCObject &source) : QObject() {
 /** destructor */
 QSCObject::~QSCObject() {
  guiPrintDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
-//todo: remove from  garbage collector. After returning from scripting, GC should be run ...
+//TODO: remove from  garbage collector.
+//TODO: implement QSWrapperFacrory for scripting
+//TODO: After returning from scripting, GC should be run ...
  if (base) base->removeGC(this);
 }
 

@@ -25,14 +25,21 @@ function onDragDropOther() {
 function onTreeRightClick() {
  menu=popupMenu("popup_generic");
  menu.addSeparator();
- if (holdContainer(treeitem))
-   menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
+ if (holdContainer(treeitem)) { // Dict, Array
+  menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
+ }
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
- if (treeitem.itemtype()=="PdfOperator")
-   menu.addItemDef("item Set color,setColor()");
- if (treeitem.itemtype()=="Page")
-   menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
+ if (treeitem.itemtype()=="PdfOperator") {
+  menu.addItemDef("item Set color,setColor()");
+ }
+ if (treeitem.itemtype()=="Page") {
+  menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
+ }
+ if (treeitem.itemtype()=="ContentStream") {
+  menu.addItemDef("item All mode,treeitem.setMode('all')");
+  menu.addItemDef("item Text mode,treeitem.setMode('text')");  
+ }
  if (tests) {
   if (treeitem.itemtype()=="Stream") {
    menu.addItemDef("item Decoded representation,print(treeitem.item().getDecoded())");

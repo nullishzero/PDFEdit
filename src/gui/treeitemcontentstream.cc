@@ -32,8 +32,6 @@ using namespace std;
 TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
- reload();
- initObserver();
 }
 
 /**
@@ -48,8 +46,6 @@ TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,b
 TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
- reload();
- initObserver();
 }
 
 /**
@@ -65,6 +61,25 @@ void TreeItemContentStream::init(const QString &name) {
  // object type
  setText(1,QObject::tr("Content Stream"));
  setText(2,"");
+ reload();
+ initObserver();
+ mode=All;
+}
+
+/**
+ Set mode of this tree item, i.e. what to show as children
+ @param newMode new Mode
+*/
+void TreeItemContentStream::setMode(TreeItemContentStreamMode newMode) {
+ mode=newMode;
+ reload();
+}
+
+/** \copydoc setMode(TreeItemContentStreamMode) */
+void TreeItemContentStream::setMode(const QString &newMode) {
+ QString lMode=newMode.lower();
+ if (lMode=="all") setMode(All);
+ else if (lMode=="text") setMode(Text);
 }
 
 /** default destructor */
@@ -107,7 +122,21 @@ void TreeItemContentStream::remove() {
 //See TreeItemAbstract for description of this virtual method
 void TreeItemContentStream::reloadSelf() {
  //Reload list of pdf operators
- obj->getPdfOperators(op);
+ if (mode==Text) {
+  // "Show only text operators" mode
+  obj->getPdfOperators(op);
+  if (!op.size()) return;//Nothing in here. So no text either
+  TextOperatorIterator it(op[0]);
+  //We have the iterator, now clear the vector and populate it with ... something else
+  op.clear();
+  while (!it.isEnd()) {
+   op.push_back(it.getCurrent());
+   it.next();
+  } 
+ } else {
+  // "Show everything we got" mode
+  obj->getPdfOperators(op);
+ }
  return;
 }
 

@@ -7,23 +7,23 @@
  QSCObjects from some common types (dict, page ..)
  @author Martin Petricek
 */
-
-#include <utils/debug.h>
-#include <qstring.h>
-#include <qsproject.h>
-#include <qsinterpreter.h>
-#include "qsimporter.h"
-#include "qsdict.h"
-#include "qsiproperty.h"
-#include "qspdfoperator.h"
-#include "qspage.h"
-#include "qscobject.h"
-#include "qsstream.h"
 #include "qsarray.h"
+#include "qscobject.h"
+#include "qsdict.h"
+#include "qsimporter.h"
+#include "qsiproperty.h"
+#include "qspage.h"
 #include "qspdf.h"
+#include "qspdfoperator.h"
+#include "qsstream.h"
 #include "qstreeitem.h"
-#include "qstreeitem.h"
+#include "qstreeitemcontentstream.h"
+#include "treeitemcontentstream.h"
 #include "util.h"
+#include <qsinterpreter.h>
+#include <qsproject.h>
+#include <qstring.h>
+#include <utils/debug.h>
 
 namespace gui {
 
@@ -114,14 +114,30 @@ QSPdf* QSImporter::createQSObject(CPdf* pdf) {
  return new QSPdf(pdf,base);
 }
 
-/** Overloaded factory function to create QSCObjects from various C... classes
-    Returns QSCObject that can be added directly with addQSObj()
+/**
+ Static version of factory function to create QSCObjects from various C... classes
+ Returns QSCObject that can be added directly with addQSObj()
+ @param item TreeItemAbstract to wrap into to QSTreeItem
+ @param _base Scripting base 
+ @return QSTreeItem(item)
+*/
+QSCObject* QSImporter::createQSObject(TreeItemAbstract *item,Base *_base) {
+ if (!item) return NULL;
+ TreeItemContentStream* tiCS=dynamic_cast<TreeItemContentStream*>(item);
+ if (tiCS) {
+  return new QSTreeItemContentStream(tiCS,_base);
+ }
+ return new QSTreeItem(item,_base);
+}
+
+/**
+ Overloaded factory function to create QSCObjects from various C... classes
+ Returns QSCObject that can be added directly with addQSObj()
  @param item TreeItemAbstract to wrap into to QSTreeItem
  @return QSTreeItem(item)
- */
+*/
 QSCObject* QSImporter::createQSObject(TreeItemAbstract *item) {
- if (!item) return NULL;
- return new QSTreeItem(item,base);
+ return createQSObject(item,base);
 }
 
 /** Import object into interpreter under specified name

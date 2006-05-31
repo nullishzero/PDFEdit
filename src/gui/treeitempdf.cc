@@ -3,21 +3,23 @@
  @author Martin Petricek
 */
 
-#include "treeitempdf.h"
-#include "treeitem.h"
-#include "treedata.h"
-#include "treeitemdict.h"
-#include "treeitempage.h"
-#include <cobject.h>
-#include <cpdf.h>
-#include <cpage.h>
-#include <qobject.h>
 #include "qspdf.h"
+#include "treedata.h"
+#include "treeitem.h"
+#include "treeitemdict.h"
+#include "treeitemobserver.h"
+#include "treeitempage.h"
+#include "treeitempdf.h"
 #include "util.h"
+#include "pdfutil.h"
+#include <cobject.h>
+#include <cpage.h>
+#include <cpdf.h>
+#include <qobject.h>
 
 namespace gui {
 
- //TODO: implement annotations, outlines
+//TODO: implement anotations, outlines
 
 /** Child type specific for TreeItemPdf*/
 enum childType {invalidItem=-1, pageList=1, outlineList, pageItem, outlineItem, dictItem};
@@ -35,6 +37,7 @@ using namespace pdfobjects;
 TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  init(_pdf,name);
  reloadSelf();
+ observePageDict();
 }
 
 /** constructor of TreeItemPdf - create child item from given object
@@ -49,7 +52,8 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const 
  reloadSelf();
 }
 
-/** constructor of TreeItemPdf - create special child item of TreeItemPdf
+/**
+ constructor of TreeItemPdf - create special child item of TreeItemPdf
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListViewItem which is parent of this object
  @param name Name (type) of this item - will be shown in treeview
@@ -74,8 +78,36 @@ void TreeItemPdf::init(CPdf *pdf,const QString &name) {
  reload(false); //Add all subchilds, etc ...
 }
 
+/** Try to install observer on page dictionary - so we will know about any change */
+void TreeItemPdf::observePageDict() {
+ //Add observer to pagecount
+ try {
+  pageDictionary=util::dereference(obj->getDictionary()->getProperty("Pages"));
+  assert(pageDictionary.get());
+  if (pageDictionary.get()) {
+   //Register observer on page dictionary (because of page count)
+   observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
+   pageDictionary->registerObserver(observer);
+  }
+ } catch (...) {
+  //Some problem, so we have to live without observer
+ }
+}
 
-/** Initialize special PDF subitem from given CPdf object and its name (which defines also type of this item)
+/** Uninstall obbserver from page dictionary - if it is installed */
+void TreeItemPdf::removeObserver() {
+ if (observer.get()) {
+  assert(pageDictionary.get());
+  //If we have installed observer, we need to deactivate it
+  observer->deactivate();
+  pageDictionary->unregisterObserver(observer);
+  observer.reset();
+ }
+}
+
+
+/**
+ Initialize special PDF subitem from given CPdf object and its name (which defines also type of this item)
  @param pdf CPdf used to initialize this item
  @param name Name of this item - will be shown in treeview
  */
@@ -101,6 +133,7 @@ CPdf* TreeItemPdf::getObject() {
 
 /** default destructor */
 TreeItemPdf::~TreeItemPdf() {
+ removeObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method

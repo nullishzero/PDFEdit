@@ -116,7 +116,6 @@ QStringList TreeItemPdfOperator::getChildNames() {
  for (size_t i=0;i<op.size();i++) {
   childs+=QString::number(i);
  }
- //TODO: support property editor on operator
  return childs;
 }
 

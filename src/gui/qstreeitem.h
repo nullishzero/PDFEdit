@@ -52,7 +52,9 @@ public:
  QSTreeItem(TreeItemAbstract *item,Base *_base);
  virtual ~QSTreeItem();
  TreeItemAbstract* get() const;
-private:
+protected:
+ QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base);
+protected:
  /** Object held in class*/
  TreeItemAbstract *obj;
 };

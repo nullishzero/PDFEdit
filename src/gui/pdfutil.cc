@@ -155,6 +155,7 @@ bool isSimple(IProperty* prop) {
  @return Referenced IProperty
 */
 boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
+ if (!obj.get()) return obj;  //Empty pointer
  if (obj->getType()!=pRef) return obj;  //Not a reference
  CPdf* pdf=obj->getPdf();
  if (!pdf) return boost::shared_ptr<IProperty>(); //Property does not belong to document -> cannot dereference

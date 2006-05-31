@@ -8,10 +8,16 @@
 #include "qstreeitem.h"
 #include "qsiproperty.h"
 #include "treeitemabstract.h"
+#include "qsimporter.h"
 
 namespace gui {
 
-/** Construct wrapper with given CGraphic */
+/** Construct wrapper with given TreeItemAbstract */
+QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base) : QSCObject (className,_base) {
+ obj=item;
+}
+
+/** Construct wrapper with given TreeItemAbstract */
 QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeItem",_base) {
  obj=item;
 }
@@ -90,7 +96,7 @@ QStringList QSTreeItem::getChildNames() {
 QSTreeItem* QSTreeItem::parent() {
  TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
  if (!parent) return NULL;
- return new QSTreeItem(parent,base);
+ return dynamic_cast<QSTreeItem*>(QSImporter::createQSObject(parent,base));
 }
 
 /**
@@ -102,7 +108,7 @@ QSTreeItem* QSTreeItem::parent() {
 QSTreeItem* QSTreeItem::child(const QString &name) {
  TreeItemAbstract* child=dynamic_cast<TreeItemAbstract*>(obj->child(name));
  if (!child) return NULL;
- return new QSTreeItem(child,base);
+ return dynamic_cast<QSTreeItem*>(QSImporter::createQSObject(child,base));
 }
 
 /**

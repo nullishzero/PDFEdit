@@ -15,6 +15,9 @@ class TreeData;
 
 class TreeItemContentStreamObserver;
 
+/** What should be shown as children under this tree item */
+typedef enum { All, Text } TreeItemContentStreamMode;
+
 class TreeItemContentStream : public TreeItemAbstract {
 public:
  boost::shared_ptr<CContentStream> getObject();
@@ -30,6 +33,8 @@ public:
  virtual QSCObject* getQSObject();
  virtual void remove();
  virtual void reloadSelf();
+ void setMode(TreeItemContentStreamMode newMode);
+ void setMode(const QString &newMode);
 private:
  void initObserver();
  void uninitObserver();
@@ -41,7 +46,8 @@ private:
  std::vector<boost::shared_ptr<PdfOperator> > op;
  /** Observer registered for this item */
  boost::shared_ptr<TreeItemContentStreamObserver> observer;
-
+ /** Mode - what should be shown? */
+ TreeItemContentStreamMode mode;
 };
 
 } // namespace gui

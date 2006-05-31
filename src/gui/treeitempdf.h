@@ -3,15 +3,19 @@
 
 #include <qlistview.h>
 #include "treeitemabstract.h"
+
 class QString;
+
 namespace pdfobjects {
 class CPdf;
+class IProperty;
 }
 
 namespace gui {
 
 class TreeData;
 class QSCObject;
+class TreeItemObserver;
 
 using namespace pdfobjects;
 
@@ -33,12 +37,18 @@ public:
  virtual QSCObject* getQSObject();
  virtual void remove();
 private:
+ void observePageDict();
+ void removeObserver();
  void init(CPdf *pdf,const QString &name);
  void initSpec(CPdf *pdf,const QString &name);
  /** CPdf stored in this TreeItem */
  CPdf *obj;
  /** Node type (Null, Pages,Outlines) */
  QString nType;
+ /** Observer registered for this item */
+ boost::shared_ptr<TreeItemObserver> observer;
+ /** Reference to page dictionary */
+ boost::shared_ptr<IProperty> pageDictionary;
 };
 
 } // namespace gui

@@ -11,6 +11,7 @@ namespace gui {
 
 class Base;
 class QSPdfOperator;
+class QSPdfOperatorIterator;
 
 using namespace pdfobjects;
 
@@ -36,6 +37,12 @@ public slots:
  */
  void insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool indicateChange=true);
  void insertOperator(QObject *op,QObject *newOp,bool indicateChange=true);
+ /*-
+  Replace old operator oldOp with new operator newOp in this stream.
+  Parameters itPrev and itNext are previous and next iterators of new operator in iterator list
+  If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
+ */
+ void replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOperatorIterator* itPrev,QSPdfOperatorIterator* itNext,bool indicateChange=true);
  /*- Write any unwritten changes to operators to underlying stream. */
  void saveChange();
  /*-
