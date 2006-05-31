@@ -2071,7 +2071,11 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)), composite);
 	if (containsStrokingOperator(oper))
 		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, operands)), composite);
+	//
 	// DEBUG
+	// BUT we have to insert something using composite (because it is the first
+	// operator to be insterted into q)
+	// 
 	if (!containsStrokingOperator(oper) && !containsNonStrokingOperator(oper))
 	{
 		string opstr;
@@ -2080,6 +2084,11 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 		 << "Function does not have desired effect, because stroking/nonstroking operator was not found...\n"
 		 <<	"Please give one of the operators (printed in debug mode)"
 		 <<	" to either Stroking or Nonstroking iterator and recompile...");
+		
+		PdfOperator::Operands tmpoperands;
+		tmpoperands = operands;
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)), composite);
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, tmpoperands)));
 	}
 	
 	// operator
@@ -2087,7 +2096,7 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 	
 	// Q
 	operands.clear();
-	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("Q", 0, operands)));
+	composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("Q", 0, operands)), getLastOperator (oper));
 
 	return composite;
 }
