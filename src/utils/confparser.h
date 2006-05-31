@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/05/31 22:35:03  hockm0bm
+ * * IConfigurationParser
+ *         - stream is stored in the the class
+ *         - it can be changed in runtime by setStream method
+ * * StringConfigurationParser
+ *         - stream removed from class (it is in super class)
+ *         - handles no stream present
+ *
  * Revision 1.1  2006/05/31 20:44:10  hockm0bm
  * * IConfigurationParser interface added
  * * StringConfigurationParser basic implemetation
@@ -20,7 +28,7 @@ namespace configuration
 /** Interface for configuration parsers.
  * Defines methods needed for parsing configuration file. Template paramters
  * specifies concrete types for configuration entities which allways consist of
- * two parst key and value, where key determines meaning of value. Implementator
+ * two parts key and value, where key determines meaning of value. Implementator
  * gives meaning to both of them.
  * <br>
  * Current unparsed key, value pair may be skipped by skip method.
@@ -29,11 +37,30 @@ namespace configuration
  * are read by lines or what so ever. One parse method call fills key and value
  * and moves to following one or returns with false if no more data are
  * available.
+ * <br>
+ * Data are read from input stream which is set in constructor and stored in 
+ * this class as protected field. Stream may be changed by setStream method.
  */
 template<typename KeyType=std::string, typename ValueType=std::string>
 class IConfigurationParser
 {
+protected:
+	/** Stream with data.
+	 */
+	std::istream * stream;
 public:
+	/** Empty constructor.
+	 * Initializes stream to NULL.
+	 */
+	IConfigurationParser():stream(NULL){}
+	
+	/** Initialization constructor.
+	 * @param str Stream with data.
+	 *
+	 * Sets stream field.
+	 */
+	IConfigurationParser(std::istream * str):stream(str){}
+	
 	/** Empty virtual destructor.
 	 */
 	virtual ~IConfigurationParser(){}
@@ -42,6 +69,22 @@ public:
 	 */
 	virtual void skip()=0;
 
+	/** Sets new data stream.
+	 * @param str Stream to set.
+	 *
+	 * Sets new value of stream.
+	 *
+	 * @return Current stream.
+	 */
+	virtual std::istream * setStream(std::istream * str)
+	{
+		std::istream * old=stream;
+
+		stream=str;
+
+		return old;
+	}
+	
 	/** Parse current key, value pair.
 	 * @param key Reference where to put parsed key.
 	 * @param value Reference where to put parsed value.
@@ -54,6 +97,7 @@ public:
 
 	/** Checks whether we are on end of data.
 	 *
+	 * Allways returns true if no stream is specified (it is NULL).
 	 * @return true if there is nothing more to read, false otherwise.
 	 */
 	virtual bool eod()=0;
@@ -84,10 +128,6 @@ class StringConfigurationParser: public IConfigurationParser<std::string, std::s
 	 */
 	std::string blankSet;
 
-	/** Input stream with data.
-	 */
-	std::istream & stream;
-	
 	/** Maximum line length constant.
 	 */
 	static const size_t LINELENGTH=1024;
@@ -98,7 +138,7 @@ public:
 	 * Initializes stream field with str and initializes *Set fields with
 	 * default values.
 	 */
-	StringConfigurationParser(std::istream & str):stream(str)
+	StringConfigurationParser(std::istream * str):IConfigurationParser<std::string, std::string>(str)
 	{
 		deliminerSet=":";
 		commentsSet="%#";
@@ -148,12 +188,17 @@ public:
 	}
 
 	/** Reads one line and throw it away.
+	 *
+	 * If no stream is specified, immediately returns.
 	 */
 	void skip()
 	{
+		if(!stream)
+			return;
+
 		// reads one line and forget it
 		char buffer[LINELENGTH];
-		stream.getline(buffer, LINELENGTH);
+		stream->getline(buffer, LINELENGTH);
 	}
 
 	/** Parses valid line.
@@ -171,12 +216,17 @@ public:
 	 * If any error occures while reading or end of file occured, returns with
 	 * false and key, value parameters are not filled.
 	 * <br>
+	 * If no stream is set, immediately returns with false.
+	 * <br>
 	 * Note that input stream can't contain 0 characters.
 	 *
 	 * @return true if line was parsed or false otherwise.
 	 */
 	bool parse(std::string & key, std::string & value)
 	{
+		if(!stream)
+			return false;
+
 		char buffer[LINELENGTH];
 		char *bufferStart=buffer;
 		memset(buffer, '\0', sizeof(buffer));
@@ -185,11 +235,11 @@ public:
 		{
 			// proccess one line
 			
-			if(stream.eof())
+			if(stream->eof())
 				return false;
 			
-			stream.getline(buffer, LINELENGTH);
-			if(stream.bad())
+			stream->getline(buffer, LINELENGTH);
+			if(stream->bad())
 				// error during reading occured
 				return false;
 
@@ -230,10 +280,14 @@ public:
 	}
 
 	/** Returns istream::eof().
+	 * If no stream is specified, returns with true.
 	 */
 	bool eod()
 	{
-		return stream.eof();
+		if(!stream)
+			return true;
+		
+		return stream->eof();
 	}
 };
 
