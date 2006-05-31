@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.51  2006/05/31 20:10:55  hockm0bm
+ * IModeController renamed to ModeController
+ *
  * Revision 1.50  2006/05/30 19:10:49  hockm0bm
  * isLinearized method added
  *
@@ -828,7 +831,7 @@ private:
 	 * Use setModeController to set one and getModeController to get
 	 * actually used one.
 	 */
-	IModeController* modeController;
+	ModeController* modeController;
 
 	/** Empty constructor.
 	 *
@@ -903,7 +906,7 @@ public:
 	 * @return IModeController implementator or NULL, if no mode 
 	 * controller is used.
 	 */
-	IModeController* getModeController()const
+	ModeController* getModeController()const
 	{
 		return modeController;
 	}
@@ -922,7 +925,7 @@ public:
 	 * will be disabled).
 	 *
 	 */
-	void setModeController(IModeController* ctrl)
+	void setModeController(ModeController* ctrl)
 	{
 		modeController = ctrl;
 	}
