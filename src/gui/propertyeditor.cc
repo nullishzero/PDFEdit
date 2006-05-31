@@ -192,7 +192,7 @@ void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
  setUpdatesEnabled( FALSE );
  clear();
  if (!pdfOp.get()) {
-  setObject(tr("No object selected"));
+  unsetObject();
  } else {
   PdfOperator::Operands list;
   pdfOp->getParameters(list);
@@ -213,6 +213,13 @@ void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
 }
 
 /**
+ Unset object from property editor
+*/
+void PropertyEditor::unsetObject() {
+ setObject(tr("No object selected"));
+}
+
+/**
  Set IProperty object to be active (edited) in this editor
  @param pdfObject Object to set for editing in the widget
 */
@@ -221,7 +228,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
  clear();
  //TODO: need property flags/mode
  if (!pdfObject.get()) {
-  setObject(tr("No object selected"));
+  unsetObject();
  } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
   CDict *dict=dynamic_cast<CDict*>(pdfObject.get());
   vector<string> list;

@@ -134,15 +134,8 @@ void TreeWindow::settingUpdate(QString key) {
  */
 void TreeWindow::treeSelectionChanged(QListViewItem *item) {
 // guiPrintDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
- TreeItem* it=dynamic_cast<TreeItem*>(item);
  selected=dynamic_cast<TreeItemAbstract*>(item);
  emit itemSelected();
- if (!it) {
-  //Not holding IProperty, so special IProperty signal is not emitted
-  return;
- }
- //holding IProperty -> emit another signal too
- emit objectSelected(item->text(0),it->getObject());
 }
 
 /** 

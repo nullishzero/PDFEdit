@@ -31,6 +31,7 @@
 #include <qsinterpreter.h>
 #include <qsutilfactory.h> 
 #include <utils/debug.h>
+#include <factories.h> 
 
 namespace gui {
 
@@ -162,7 +163,16 @@ void Base::addDocumentObjects() {
  //Import page and item (Currently selected page and currently selected object)
  QSCObject *page=import->createQSObject(w->selectedPage);
  QSCObject *trit=import->createQSObject(w->selectedTreeItem);
- QSCObject *item=import->createQSObject(w->selectedProperty);
+ QSCObject *item=NULL;
+ if (w->selectedProperty.get()) {
+  //IProperty is selected and will be imported
+  item=import->createQSObject(w->selectedProperty);
+ }
+ if (w->selectedOperator.get()) {
+  assert(!item);//Which would mean both iproperty and pdfoperator is selected-> bug
+  //PdfOperator is selected and will be imported
+  item=import->createQSObject(w->selectedOperator);
+ }
  import->addQSObj(page,"page");
  import->addQSObj(trit,"treeitem");
  import->addQSObj(item,"item");
@@ -330,6 +340,90 @@ QSPdfOperator* Base::createOperator(QSIPropertyArray* parameters,const QString &
 }
 
 /**
+ Create new operator of type UnknownCompositePdfOperator
+ @param beginText Start operator name text representation. 
+ @param endText End operator name text representation.
+ @return new PDF operator
+*/
+QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QString &endText) {
+ boost::shared_ptr<UnknownCompositePdfOperator> op(new UnknownCompositePdfOperator(beginText,endText));
+ return new QSPdfOperator(op,this); 
+}
+
+/**
+ Create new IProperty of type Array - an empty array
+ @return created IProperty
+*/
+QSIProperty* Base::createArray() {
+ return new QSArray(boost::shared_ptr<CArray>(CArrayFactory::getInstance()),this);
+}
+
+/**
+ Create new IProperty of type Bool
+ @return created IProperty
+*/
+QSIProperty* Base::createBool(bool value) {
+ return new QSIProperty(boost::shared_ptr<IProperty>(CBoolFactory::getInstance(value)),this);
+}
+
+/**
+ Create new IProperty of type Dict - an empty dictionary
+ @return created IProperty
+*/
+QSIProperty* Base::createDict() {
+ return new QSDict(boost::shared_ptr<CDict>(CDictFactory::getInstance()),this);
+}
+
+/**
+ Create new IProperty of type Int
+ @param value Value assigned to this property
+ @return created IProperty
+*/
+QSIProperty* Base::createInt(int value) {
+ return new QSIProperty(boost::shared_ptr<IProperty>(CIntFactory::getInstance(value)),this);
+}
+
+/**
+ Create new IProperty of type Real
+ @param value Value assigned to this property
+ @return created IProperty
+*/
+QSIProperty* Base::createReal(double value) {
+ return new QSIProperty(boost::shared_ptr<IProperty>(CRealFactory::getInstance(value)),this);
+}
+
+/**
+ Create new IProperty of type Ref
+ Does not check for validity of reference
+ \see QSPdf::referenceValid
+ @param valueNum Number assigned to this reference
+ @param valueGen Generation assigned to this reference
+ @return created IProperty
+*/
+QSIProperty* Base::createRef(int valueNum,int valueGen) {
+ IndiRef ref;
+ ref.num=valueNum;
+ ref.gen=valueGen;
+ return new QSIProperty(boost::shared_ptr<IProperty>(CRefFactory::getInstance(ref)),this);
+}
+
+/**
+ Create new IProperty of type String
+ @return created IProperty
+*/
+QSIProperty* Base::createString(const QString &value) {
+ return new QSIProperty(boost::shared_ptr<IProperty>(CStringFactory::getInstance(value)),this);
+}
+
+/**
+ Create new IProperty of type Name
+ @return created IProperty
+*/
+QSIProperty* Base::createName(const QString &value) {
+ return new QSIProperty(boost::shared_ptr<IProperty>(CNameFactory::getInstance(value)),this);
+}
+
+/**
  QSA-Bugfix version
  \copydoc createOperator(QSIPropertyArray*,const QString &)
 */
@@ -342,11 +436,11 @@ QSPdfOperator* Base::createOperator(QObject* parameters,const QString &text) {
 //TODO: create all IProperty items (Simple types + array/dict/ref)
 
 /**
- Create new Array of IProperty items.
+ Create new array of IProperty items.
  This array can be used for example as operator parameters
  @return new Iproperty array
 */
-QSIPropertyArray* Base::createArray() {
+QSIPropertyArray* Base::createIPropertyArray() {
  return new QSIPropertyArray(this);
 }
 
@@ -503,10 +597,15 @@ int Base::pageNumber() {
  Invoke dialog to select color.
  Last selected color is remembered and offered as default next time.
  The 'initial default color' is red
- @return selected color, or last used color if the dialog was cancelled
+ @return selected color, or invalid color if the dialog was cancelled
 */
-QColor Base::pickColor() {
- return colorDialog(w);
+QVariant Base::pickColor() {
+ QColor ret=colorDialog(w);
+ if (!ret.isValid()) {
+  return QVariant();
+  guiPrintDbg(debug::DBG_DBG,"Color is not valid");
+ }
+ return QVariant(ret);
 }
 
 /**
@@ -533,11 +632,9 @@ void Base::print(const QString &str) {
  Return true if user selected "yes", false if user selected "no"
  @param msg Question to display
  @return True if yes, false if no
- */
+*/
 bool Base::question(const QString &msg) {
- int answer=QMessageBox::question(w,APP_NAME,msg,QObject::tr("&Yes"),QObject::tr("&No"),QString::null,0,1);
-//                                  QMessageBox::Yes | QMessageBox::Default,QMessageBox::No | QMessageBox::Escape);
- return (answer==0);//QMessageBox::Yes);
+ return questionDialog(w,msg);
 }
 
 /**

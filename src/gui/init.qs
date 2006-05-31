@@ -1,25 +1,96 @@
+//PDF Editor init script
 //This script will be run at start, or on creation of new window
 //Each window have its own scripting context
 
-//Include testing/debugging items in menus?
-var tests=settings.readBool("tests");
+/* ==== Callback functions ==== */
 
-/** Turn on/off testing/debugging. */
-function setTests(x) {
- settings.write("tests",x);
- tests=x;
+/** Callback called after document is loaded */
+function onLoad() {
+ //show first page
+// go(1);
+ PageSpace.refresh(document.getFirstPage(),document);
 }
 
-/** Create new empty editor window */
-function newwindow() {
- createNewWindow();
+/** Same-treeview dragdrop handler */
+function onDragDrop() {
+ print("Drag drop: "+source.type()+" -> "+target.type());
 }
 
-/** Toggle on/off boolean setting with specified key */
-function toggle(key) {
- val=settings.readBool(key);
- settings.write(key,!val);
+/** Different-treeview dragdrop handler */
+function onDragDropOther() {
+ print("Drag drop: "+source.type()+" -> "+target.type());
 }
+
+/** Callback for click with right mouse button in tree window */
+function onTreeRightClick() {
+ menu=popupMenu("popup_generic");
+ menu.addSeparator();
+ if (holdContainer(treeitem))
+   menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
+ menu.addItemDef("item ("+treeitem.itemtype()+"),");
+ menu.addSeparator();
+ if (treeitem.itemtype()=="PdfOperator")
+   menu.addItemDef("item Set color,setColor()");
+ if (treeitem.itemtype()=="Page")
+   menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
+ if (tests) {
+  if (treeitem.itemtype()=="Stream") {
+   menu.addItemDef("item Decoded representation,print(treeitem.item().getDecoded())");
+   menu.addItemDef("item Stream integrity test\\, array,buftest(treeitem.item()\\,1\\,0)");
+   menu.addItemDef("item Stream integrity test\\, string,buftest(treeitem.item()\\,0\\,1)");
+   menu.addItemDef("item Stream integrity test\\, both,buftest(treeitem.item()\\,1\\,1)");
+  }
+ }
+ print_eval(menu.popup());
+}
+
+/** Callback for click with left mouse button in tree window */
+function onTreeLeftClick() {
+// print('Left click, type of item = '+treeitem.itemtype());
+}
+
+/** Callback for click with middle mouse button in tree window */
+function onTreeMiddleClick() {
+ treeitem.reload();
+}
+
+/** Callback for doubleclick with left mouse button in tree window */
+function onTreeDoubleClick() {
+ // print("Doubleclick, type of item = "+treeitem.itemtype());
+ //If page, goto page
+ if (treeitem.itemtype()=="Page") go(treeitem.id());
+}
+
+/** Callback for click with right mouse button in page */
+function onPageRightClick() {
+ menu=popupMenu();
+ menu.addSeparator();
+ menu.addItemDef("item Save page as image,savePageImage(false)");
+ if (PageSpace.isSomeoneSelected())
+   menu.addItemDef("item Save selected area as image,savePageImage(true)");
+ menu.addSeparator();
+ print_eval(menu.popup());
+}
+
+/**
+ Callback called after document is loaded and after onLoad.
+ This function is empty and to be re-defined by user if necessary
+*/
+function onLoadUser() {
+ //Dummy, will be overridden by whatever user specify
+}
+
+/** Called when active revision was changed */
+function onChangeRevision() {
+ print(tr("Changed revision to:")+activeRevision());
+}
+
+/** Callback when selection in tree (which item is selected) changes */
+function onTreeSelectionChange() {
+ //print('SelectionChange, type of item = '+treeitem.itemtype());
+}
+
+/* ==== Functions called directly from menu ==== */
 
 /** Save (action from menu/toolbar) */
 function func_save() {
@@ -44,7 +115,7 @@ function setColor() {
  op=treeitem.item();
  stream=op.stream();
  col=pickColor();
-// if (!col.isValid()) return;
+ if (!col) return;//Dialog aborted
  stream.setColor(op,col);
  //reload the page
  go();
@@ -79,87 +150,9 @@ function func_new() {
  closeFile(true);
 }
 
-/** Go to page with number x in document. If parameter is empty, current page is reloaded */
-function go(x) {
- PageSpace.refresh(x,document);
-}
-
-/** Callback called after document is loaded */
-function onLoad() {
- //show first page
-// go(1);
- PageSpace.refresh(document.getFirstPage(),document);
-}
-
-/** Check if treeitem holds a container (Array, Dict)
-*/
-function holdContainer(ti) {
- type=ti.itemtype();
- if (type=='Dict' || type=='Array') {
-  return true;
- }
- return false;
-}
-
-/** Callback for click with right mouse button in tree window */
-function onTreeRightClick() {
- menu=popupMenu("popup_generic");
- menu.addSeparator();
- if (holdContainer(treeitem))
-   menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
- menu.addItemDef("item ("+treeitem.itemtype()+"),");
- menu.addSeparator();
- if (treeitem.itemtype()=="PdfOperator")
-   menu.addItemDef("item Set color,setColor()");
- if (treeitem.itemtype()=="Page")
-   menu.addItemDef("item Go to page "+treeitem.id()+",go("+treeitem.id()+")");
- if (tests) {
-  if (treeitem.itemtype()=="Stream") {
-   menu.addItemDef("item Stream integrity test\\, array,buftest(treeitem.item()\\,1\\,0)");
-   menu.addItemDef("item Stream integrity test\\, string,buftest(treeitem.item()\\,0\\,1)");
-   menu.addItemDef("item Stream integrity test\\, both,buftest(treeitem.item()\\,1\\,1)");
-  }
- }
- print_eval(menu.popup());
-}
-
-/** Callback for click with left mouse button in tree window */
-function onTreeLeftClick() {
-// print('Left click, type of item = '+treeitem.itemtype());
-}
-
-/** Callback for click with middle mouse button in tree window */
-function onTreeMiddleClick() {
- treeitem.reload();
-}
-
-/** Callback for doubleclick with left mouse button in tree window */
-function onTreeDoubleClick() {
- // print("Doubleclick, type of item = "+treeitem.itemtype());
- //If page, goto page
- if (treeitem.itemtype()=="Page") go(treeitem.id());
-}
-
-/** Save page/selection as image */
-function savePageImage(onlySelection) {
- if (!PageSpace.saveImageWithDialog(onlySelection)) print(tr("Image was not saved!"));
-}
-
-/** Callback for click with right mouse button in page */
-function onPageRightClick() {
- menu=popupMenu();
- menu.addSeparator();
- menu.addItemDef("item Save page as image,savePageImage(false)");
- if (PageSpace.isSomeoneSelected())
-   menu.addItemDef("item Save selected area as image,savePageImage(true)");
- menu.addSeparator();
- print_eval(menu.popup());
-}
-
-/** Print to console and evaluate */
-function print_eval(x) {
- print("> "+x);
- eval(x);
+/** Create new empty editor window */
+function newwindow() {
+ createNewWindow();
 }
 
 /** Print names of childs of currently selected tree item to console */
@@ -170,15 +163,54 @@ function printTreeChilds() {
  }
 }
 
-/** Set zoom level to x percent */
-function zoom(x) {
- PageSpace.zoomTo(x);
-}
-
 /** invoke "add object dialog" on current tree item, or if not possible, try its parent */
 function add_obj_dlg() {
  if (holdContainer(treeitem)) addObjectDialog();
  if (holdContainer(treeitem.parent())) addObjectDialog(treeitem.parent().item());
+}
+
+/* ==== Other helper functions ==== */
+
+/** Turn on/off testing/debugging. */
+function setTests(x) {
+ settings.write("tests",x);
+ tests=x;
+}
+
+/** Toggle on/off boolean setting with specified key */
+function toggle(key) {
+ val=settings.readBool(key);
+ settings.write(key,!val);
+}
+
+/** Go to page with number x in document. If parameter is empty, current page is reloaded */
+function go(x) {
+ PageSpace.refresh(x,document);
+}
+
+/** Check if treeitem holds a container (Array, Dict) */
+function holdContainer(ti) {
+ type=ti.itemtype();
+ if (type=='Dict' || type=='Array') {
+  return true;
+ }
+ return false;
+}
+
+/** Save page/selection as image */
+function savePageImage(onlySelection) {
+ if (!PageSpace.saveImageWithDialog(onlySelection)) print(tr("Image was not saved!"));
+}
+
+/** Print to console and evaluate */
+function print_eval(x) {
+ print("> "+x);
+ eval(x);
+}
+
+/** Set zoom level to x percent */
+function zoom(x) {
+ PageSpace.zoomTo(x);
 }
 
 /** Get dictionary from page number X */
@@ -186,9 +218,6 @@ function pageDict(x) {
  page=document.getPage(x);
  return page.getDictionary();
 }
-
-//Print welcome message
-print("PDF Editor "+version());
 
 /** TEST: buffer integrity */
 function buftest(x,at,st) {
@@ -222,21 +251,15 @@ function buftest(x,at,st) {
  }
 }
 
-function onLoadUser() {
- //Dummy, will be overidden by whatever user specify
-}
-
-/** Called when active revision was changed */
-function onChangeRevision() {
- print(tr("Changed revision to:")+activeRevision());
-}
-
 /** Return property from dictionary of current page */
 function pageProperty(x) {
  return page.getDictionary().property(x).ref();
 }
 
-/** Return property from dictionary of current page, adding it with default value if property is not found */
+/**
+ Return property from dictionary of current page,
+ adding it with default value if property is not found
+*/
 function pageProperty(x,defv) {
  return page.getDictionary().propertyDef(x,defv).ref();
 }
@@ -256,12 +279,10 @@ function rotatePage(n) {
  go();
 }
 
-/** Same-treeview dragdrop handler */
-function onDragDrop() {
- print("Drag drop: "+source.type()+" -> "+target.type());
-}
+/* ==== Code to run on start ==== */
 
-/** Different-treeview dragdrop handler */
-function onDragDropOther() {
- print("Drag drop: "+source.type()+" -> "+target.type());
-}
+//Include testing/debugging items in menus?
+var tests=settings.readBool("tests");
+
+//Print welcome message
+print("PDF Editor "+version());

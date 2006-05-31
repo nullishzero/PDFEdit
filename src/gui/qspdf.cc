@@ -40,6 +40,20 @@ void QSPdf::unloadPdf() {
  }
 }
 
+/**
+ Check validity of specified reference
+ @param valueNum Object number
+ @param valueGen Generation number
+ @return True if valid and is contained in this document
+*/
+bool QSPdf::referenceValid(int valueNum,int valueGen) {
+ IndiRef ref;
+ ref.num=valueNum;
+ ref.gen=valueGen;
+ //Check reference validity
+ return util::isRefValid(obj,ref);
+}
+
 /** Save copy under different name. Does not check if the file exists, overwrite anything without warning
  @return true if saved successfully, false if any error occured
 */

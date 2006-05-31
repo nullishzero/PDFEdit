@@ -3,6 +3,7 @@
 
 #include <cobject.h>
 #include <cpdf.h>
+#include <pdfoperators.h>
 #include <qmainwindow.h>
 
 class QListViewItem;
@@ -76,7 +77,6 @@ protected:
 protected slots:
  void pageChange(const QSPage &pg, int numberOfPage);
  void treeClicked(int button,QListViewItem *item);
- void setObject(const QString &name,boost::shared_ptr<IProperty> obj);
  void menuActivated(int id);
  void setObject();
 private slots:
@@ -105,6 +105,8 @@ private:
  int selectedPageNumber;
  /** Currently selected IProperty (in editor) */
  boost::shared_ptr<IProperty> selectedProperty;
+ /** Currently selected PdfOperator (in editor) */
+ boost::shared_ptr<PdfOperator> selectedOperator;
  /** Currently selected tree item (for scripting) */
  TreeItemAbstract *selectedTreeItem;
  /** Horizontal splitter between (Preview + Commandline) and (Treeview + Property editor) */

@@ -45,10 +45,12 @@ public slots:
  void removePage(int position);
  /*- Get position of given page in document */
  int getPagePosition(QSPage *page);
+ int getPagePosition(QObject *page);
  /*- Get number of pages in document */
  int getPageCount();
  /*- Insert given page in document, at given position. Return inserted page. */
  QSPage* insertPage(QSPage* page, int position);
+ QSPage* insertPage(QObject* page, int position);
  /*- Get Page, given its page number. */
  QSPage* getPage(int position);
  /*- Get first page in document. */
@@ -57,24 +59,22 @@ public slots:
  QSPage* getLastPage();
  /*- Get next page in document, relative to given page. */
  QSPage* getNextPage(QSPage* page);
+ QSPage* getNextPage(QObject* page);
  /*- Get previous page in document, relative to given page. */
  QSPage* getPrevPage(QSPage* page);
+ QSPage* getPrevPage(QObject* page);
  /*- Return true, if there is next page in document for given page. */
  bool hasNextPage(QSPage* page);
+ bool hasNextPage(QObject* page);
  /*- Return true, if there is previous page in document for given page. */
  bool hasPrevPage(QSPage* page);
+ bool hasPrevPage(QObject* page);
  /*- Return number of available revisions */
  int getRevisionsCount();
  /*- Return number of currently active revisions */
  int getActualRevision();
- //QObject versions of these methods to workaround QSA bug
- QSPage* insertPage(QObject* page, int position);
- int getPagePosition(QObject *page);
- QSPage* getNextPage(QObject* page);
- QSPage* getPrevPage(QObject* page);
- bool hasNextPage(QObject* page);
- bool hasPrevPage(QObject* page);
-
+ /* Check validity of specified reference. Return true if it is valid */
+ bool referenceValid(int valueNum,int valueGen);
 private:
  /** Object held in class*/
  CPdf *obj;

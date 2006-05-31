@@ -20,6 +20,7 @@
 #include "stringproperty.h"
 #include "nameproperty.h"
 #include "settings.h"
+#include "dialog.h"
 #include "util.h"
 
 namespace gui {
@@ -93,7 +94,7 @@ void AddItemDialog::closeEvent(__attribute__((unused)) QCloseEvent* e) {
 }
 
 //TODO: detect if dict no longer exists in document and close/disable dialog
-//TODO: cont.unique()==true -> this is last copy
+//TODO: cont.unique()==true -> this is last copy, BUT what if two dialogs are opened for same dict/array?
 
 /**
  Set item into which newly created objects will be added and also initialize items in this control<br>
@@ -240,12 +241,23 @@ bool AddItemDialog::commit() {
  }
  //Write value of new property
  if (props[selectedItem]) props[selectedItem]->writeValue(property.get());
- //TODO: check names
  //TODO: validate refproperty, if selected
  CDict* dict=dynamic_cast<CDict*>(item.get());
  if (dict) { //Add to dict
-  message(tr("Property '%1' added to dictionary").arg(propertyName->text()));
   string tex=propertyName->text();
+  try {
+   PropertyType pt=dict->getPropertyType(tex);
+   QString msg=tr("Property '%1' already exist as %2").arg(propertyName->text(),getTypeName(pt));
+   if (questionDialog(this,msg+"\n"+tr("Overwrite?"))) {
+    dict->delProperty(tex);
+   } else {
+    error(msg);
+    return false;
+   }
+  } catch (...) {
+   //The property does not exist, so it is ok to add it
+  }
+  message(tr("Property '%1' added to dictionary").arg(propertyName->text()));
   dict->addProperty(tex,*(property.get()));
   return true;
  }

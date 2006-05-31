@@ -36,17 +36,15 @@ public:
 public slots:
  void settingUpdate(QString key);
 signals:
- /** Signal emitted when selecting one of the IProperty objects in the tree window.
-  Not emitted on other object types
-  Name of object and a pointer to CObject is sent in signal
- */
- void objectSelected(const QString&,boost::shared_ptr<IProperty>);
- /** Signal emitted when selecting any of objects in the tree window.
-  You can call getSelected to obtain QSCObject from currentyl selected item
+ /**
+  Signal emitted when selection in the tree window is changes
+  (and another object(s) is now selected).
+  You can call getSelected to obtain QSCObject from currently selected item
   \see getSelected
  */
  void itemSelected();
- /** Signal emitted when clicked anywhere in tree windows
+ /**
+  Signal emitted when clicks anywhere in tree windows
   Button used to click is sent as first parameter (1=left, 2=right, 4=middle, 8=doubleclick with left)
   If clicked on tree item, it is sent in second parameter (otherwise NULL is sent)
  */

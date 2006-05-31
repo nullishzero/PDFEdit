@@ -75,19 +75,8 @@ void MultiTreeWindow::pageChange(QWidget *newPage) {
 
 /** Connect signals from underlying tree window to the MultiTreeWindow*/
 void MultiTreeWindow::connectSig(TreeWindow *tr) {
- QObject::connect(tr,SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)),this,SLOT(treeObjectSelect(const QString&,boost::shared_ptr<IProperty>)));
  QObject::connect(tr,SIGNAL(treeClicked(int,QListViewItem*)),this,SLOT(treeMouseClicked(int,QListViewItem*)));
  QObject::connect(tr,SIGNAL(itemSelected()),this,SLOT(treeItemSelected()));
-}
-
-/**
- Signal handler for objectSelected from some of the TreeWindows.
- Basically, just re-emit the signal.
- \copydoc TreeWindow::objectSelected
-*/
-void MultiTreeWindow::treeObjectSelect(const QString &name,boost::shared_ptr<IProperty> ip) {
- //Re-emit the signal
- emit objectSelected(name,ip);
 }
 
 /**

@@ -213,13 +213,25 @@ QString readStringDialog(QWidget* parent,const QString &message, const QString &
  Last selected color is remembered and offered as default next time.
  The 'initial default color' is red
  @param parent Parent widget - will be disabled during the dialog.
- @return selected color, or last used color if the dialog was cancelled
+ @return selected color. If dialog is cancelled, 'invalid' color is returned
 */
 QColor colorDialog(QWidget* parent) {
  static QColor defaultColor=Qt::red;
  QColor ret=QColorDialog::getColor(defaultColor,parent,"std_color_dialog");
  if (ret.isValid()) defaultColor=ret;
- return defaultColor;
+ return ret;
+}
+
+/**
+ Asks question with Yes/No answer. "Yes" is default.
+ Return true if user selected "yes", false if user selected "no"
+ @param msg Question to display
+ @param parent Parent widget - will be disabled during the dialog.
+ @return True if yes, false if no
+*/
+bool questionDialog(QWidget* parent,const QString &msg) {
+ int answer=QMessageBox::question(parent,APP_NAME,msg,QObject::tr("&Yes"),QObject::tr("&No"),QString::null,0,1);
+ return (answer==0);
 }
 
 } // namespace gui

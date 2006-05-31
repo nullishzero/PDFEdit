@@ -50,8 +50,6 @@ public slots:
  void deleteCurrent();
  void settingUpdate(QString key);
 signals:
- /** \copydoc TreeWindow::objectSelected */
- void objectSelected(const QString&,boost::shared_ptr<IProperty>);
  /** \copydoc TreeWindow::itemSelected */
  void itemSelected();
  /** \copydoc TreeWindow::treeClicked */
@@ -59,7 +57,6 @@ signals:
 protected slots:
  void treeItemSelected();
  void treeMouseClicked(int button,QListViewItem* item);
- void treeObjectSelect(const QString &name,boost::shared_ptr<IProperty> ip);
  void pageChange(QWidget *newPage);
 private:
  void connectSig(TreeWindow *tr);

@@ -4,6 +4,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qptrdict.h>
+#include <qvariant.h>
 
 class QSProject;
 class QSInterpreter;
@@ -68,13 +69,35 @@ public slots: //This will be all exported to scripting
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
  /*-
-  Create new Array of IProperty items.
+  Create new array of IProperty items.
   This array can be used for example as operator parameters
  */
- QSIPropertyArray* createArray();
+ QSIPropertyArray* createIPropertyArray();
+ /*- Create and return new IProperty of type Dict - empty array */
+ QSIProperty* createArray();
+ /*- Create and return new IProperty of type Bool */
+ QSIProperty* createBool(bool value);
+ /*- Create new composite PDF Operator with specified starting and ending operator text*/
+ QSPdfOperator* createCompositeOperator(const QString &beginText,const QString &endText);
+ /*- Create and return new IProperty of type Dict - empty dictionary */
+ QSIProperty* createDict();
+ /*- Create and return new IProperty of type Int */
+ QSIProperty* createInt(int value);
+ /*- Create and return new IProperty of type String */
+ QSIProperty* createName(const QString &value);
  /*- Create new PDF Operator with specified parameters and operator text*/
  QSPdfOperator* createOperator(QSIPropertyArray* parameters,const QString &text);
  QSPdfOperator* createOperator(QObject* parameters,const QString &text);
+ /*- Create and return new IProperty of type Real */
+ QSIProperty* createReal(double value);
+ /*-
+  Create and return new IProperty of type Ref.
+  Does not check fo validity of the values
+  (if the reference target exists, etc ...)
+ */
+ QSIProperty* createRef(int valueNum,int valueGen);
+ /*- Create and return new IProperty of type String */
+ QSIProperty* createString(const QString &value);
  /*-
   Return last error message (localized) from some operations
   (openFile, save, saveRevision, saveCopy)
@@ -134,9 +157,9 @@ public slots: //This will be all exported to scripting
  int pageNumber();
  /*-
   Invoke dialog to select color and return the color that user have picked,
-  or last selected color if user cancelled the dialog.
+  or false if user cancelled the dialog.
  */
- QColor pickColor();
+ QVariant pickColor();/*Variant=Color*/
  /*-
   Create and return a <link linkend="type_Menu">Menu</link> object. The menuName parameter specifies
   name of item or list from configuration, that will be used to initially fill the menu with items.

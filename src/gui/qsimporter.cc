@@ -15,6 +15,7 @@
 #include "qsimporter.h"
 #include "qsdict.h"
 #include "qsiproperty.h"
+#include "qspdfoperator.h"
 #include "qspage.h"
 #include "qscobject.h"
 #include "qsstream.h"
@@ -71,6 +72,15 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<CPage> page) {
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
  return createQSObject(ip,base);
+}
+
+/** Overloaded factory function to create QSCObjects from various classes
+    Returns QSCObject that can be added directly with addQSObj()
+ @param op PdfOperator to wrap into to QSPdfOperator
+ @return QSPdfOperator(op)
+ */
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<pdfobjects::PdfOperator> op) {
+ return new QSPdfOperator(op,base);
 }
 
 /** Static version of factory function to create QSCObjects from various C... classes

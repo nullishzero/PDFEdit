@@ -188,8 +188,6 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Connections
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
- QObject::connect(tree, SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)), prop, SLOT(setObject(const QString&,boost::shared_ptr<IProperty>)));
- QObject::connect(tree, SIGNAL(objectSelected(const QString&,boost::shared_ptr<IProperty>)), this, SLOT(setObject(const QString&,boost::shared_ptr<IProperty>)));
  QObject::connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
@@ -226,23 +224,30 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  }
 }
 
-/** Called upon selecting object in treeview (if it is IProperty)
- @param name Name of the object that was selected
- @param obj Object that was selected
-*/
-void PdfEditWindow::setObject(__attribute__((unused)) const QString &name,boost::shared_ptr<IProperty> obj) {
- //Name is not important here, name is used only in property editor
- selectedProperty=obj;
-}
-
-/** Called upon selecting item in treeview */
+/** Called upon selecting some item in treeview */
 void PdfEditWindow::setObject() {
  selectedTreeItem=tree->getSelectedItem();
  TreeItemPdfOperator *pdfOp=dynamic_cast<TreeItemPdfOperator*>(selectedTreeItem);
+ selectedProperty.reset();
+ selectedOperator.reset();
  if (pdfOp) {
   // Give operator to property editor to edit its parameters
-  prop->setObject(pdfOp->getObject());
+  selectedOperator=pdfOp->getObject();
+  prop->setObject(selectedOperator);
+  base->call("onTreeSelectionChange");
+  return;
  }
+ TreeItem *iProp=dynamic_cast<TreeItem*>(selectedTreeItem);
+ if (iProp) {
+  // Give iproperty to property editor to edit it
+  selectedProperty=iProp->getObject();
+  prop->setObject(selectedTreeItem->text(0),selectedProperty);
+  base->call("onTreeSelectionChange");
+  return;
+ }
+ //Some unknown type
+ prop->unsetObject();
+ base->call("onTreeSelectionChange");
 }
 
 /**
@@ -469,6 +474,7 @@ void PdfEditWindow::destroyFile() {
  tree->uninit();//clear treeview
  prop->clear();//clear property editor
  selectedProperty.reset();//no item selected
+ selectedOperator.reset();//no operator selected
  selectedPage.reset();//no page selected
  selectedPageNumber=0;//no page selected
  document->close(false);

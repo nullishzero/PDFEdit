@@ -14,6 +14,7 @@ QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite=
 QString saveFileDialogPdf(QWidget* parent=NULL,const QString &oldname=QString::null,bool askOverwrite=true);
 QString readStringDialog(QWidget* parent,const QString &message, const QString &def="");
 QColor colorDialog(QWidget* parent);
+bool questionDialog(QWidget* parent,const QString &msg);
 
 } // namespace gui
 

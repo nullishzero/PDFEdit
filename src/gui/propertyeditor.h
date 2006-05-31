@@ -30,6 +30,7 @@ public:
  void clear();
  void commitProperty();
 public slots:
+ void unsetObject();
  void setObject(const QString &message);
  void setObject(boost::shared_ptr<IProperty> pdfObject);
  void setObject(const QString &name,boost::shared_ptr<IProperty> pdfObject);

@@ -21,6 +21,7 @@ using namespace pdfobjects;
  @param _base Scripting base
 */
 QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip,Base *_base) : QSCObject ("IProperty",_base) {
+ assert(_ip.get());
  obj=_ip;
 }
 

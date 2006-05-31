@@ -5,6 +5,7 @@
 #include <cobject.h>
 #include <cpage.h>
 #include <cpdf.h>
+#include <pdfoperators.h>
 class QSProject;
 class QSInterpreter;
 class QString;
@@ -25,6 +26,7 @@ public:
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
  static QSCObject* createQSObject(boost::shared_ptr<IProperty> ip,Base *_base);
+ QSCObject* createQSObject(boost::shared_ptr<pdfobjects::PdfOperator> op);
  QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
