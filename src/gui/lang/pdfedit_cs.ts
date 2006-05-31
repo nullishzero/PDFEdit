@@ -342,6 +342,32 @@ Data: %3
         <source>Warning: This document is linearized PDF!</source>
         <translation>Upozornění: Tento dokument je linearizované PDF!</translation>
     </message>
+    <message>
+        <source>Go to page</source>
+        <translation>Jít na stranu</translation>
+    </message>
+    <message>
+        <source>Show all operators</source>
+        <translation>Zobrazit všechny operátory</translation>
+    </message>
+    <message>
+        <source>Show only text operators</source>
+        <translation>Zobrazit jen textové operátory</translation>
+    </message>
+    <message>
+        <source>Showing all</source>
+        <comment>mode</comment>
+        <translation>Zobrazuji vše</translation>
+    </message>
+    <message>
+        <source>Showing text. op.</source>
+        <comment>mode</comment>
+        <translation>Zobrazuji text. op.</translation>
+    </message>
+    <message>
+        <source>Null pointer access in </source>
+        <translation>Přístup na null ukazatel v </translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>

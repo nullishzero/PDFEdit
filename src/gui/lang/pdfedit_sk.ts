@@ -339,6 +339,32 @@ Data: %3
         <source>Warning: This document is linearized PDF!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Go to page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show all operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only text operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing all</source>
+        <comment>mode</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing text. op.</source>
+        <comment>mode</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Null pointer access in </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
