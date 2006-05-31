@@ -331,6 +331,14 @@ Data: %3
         <source>Saving as</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: This document is linearized PDF!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -669,6 +677,10 @@ Data: %3
     </message>
     <message>
         <source>Error occured while saving copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linearized PDF</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

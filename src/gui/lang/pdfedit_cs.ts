@@ -334,6 +334,14 @@ Data: %3
         <source>Saving as</source>
         <translation>Ukládám jako</translation>
     </message>
+    <message>
+        <source>Operators</source>
+        <translation>Operátory</translation>
+    </message>
+    <message>
+        <source>Warning: This document is linearized PDF!</source>
+        <translation>Upozornění: Tento dokument je linearizované PDF!</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -673,6 +681,10 @@ Data: %3
     <message>
         <source>Error occured while saving copy</source>
         <translation>Při ukládání kopie došlo k chybě</translation>
+    </message>
+    <message>
+        <source>Linearized PDF</source>
+        <translation>Linearizované PDF</translation>
     </message>
 </context>
 <context>
