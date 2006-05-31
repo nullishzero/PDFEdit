@@ -38,12 +38,12 @@ const CStream::Buffer QSStream::stringToBuffer(const QString &s) {
  return b;
 }
 
-/** Call CStream::getEncodedStringRepresentation(ret); return ret */
-QString QSStream::getEncoded() {
+/** Call CStream::getDecodedStringRepresentation(ret); return ret */
+QString QSStream::getDecoded() {
  CStream *st=dynamic_cast<CStream*>(obj.get());
  assert(st);
  std::string text;
- st->getEncodedStringRepresentation(text);
+ st->getDecodedStringRepresentation(text);
  return text;
 }
 
