@@ -28,6 +28,18 @@ public:
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
+ /*- Return last operator if a this operator is a composite */
+ QSPdfOperator* getLastOperator();
+ /**
+  Return true, if operator inside this wrapper is empty (NULL) operator.
+  In that case, most operations of this operator will fail, throwing
+  an exception.
+
+  The only methods that are guaranteed to succeed in that case are
+  isEmpty(), textIterator() and iterator() and also you can pass this empty operator
+  as parameter to some functions.
+ */
+ bool isEmpty();
  /*-
   Tries to find first non stroking operator.
   (some operators are modified by stroking operators, some by nonestroking)

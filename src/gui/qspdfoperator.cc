@@ -163,12 +163,25 @@ void QSPdfOperator::setPrev(QObject *op) {
 
 /** Call containsNonStrokingOperator() on this operator */
 bool QSPdfOperator::containsNonStrokingOperator() {
+ if (!obj) throw NullPointerException("PdfOperator","containsNonStrokingOperator");
  return pdfobjects::containsNonStrokingOperator(obj);
 }
 
 /** Call containsStrokingOperator() on this operator */
 bool QSPdfOperator::containsStrokingOperator() {
+ if (!obj) throw NullPointerException("PdfOperator","containsStrokingOperator");
  return pdfobjects::containsStrokingOperator(obj);
+}
+
+/** Call getLastOperator() on this operator */
+QSPdfOperator* QSPdfOperator::getLastOperator() {
+ if (!obj) throw NullPointerException("PdfOperator","getLastOperator");
+ return new QSPdfOperator(pdfobjects::getLastOperator(obj),base);
+}
+
+/** Return true, if operator inside this wrapper is NULL */
+bool QSPdfOperator::isEmpty() {
+ return (obj.get()==NULL);
 }
 
 /**
