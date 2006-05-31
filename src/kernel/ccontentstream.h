@@ -85,7 +85,7 @@ private:
 	boost::shared_ptr<GfxResources> gfxres;
 
 	//
-	// Observer observing underlying stream
+	// Observer observing underlying cstreams and operands
 	//
 private:	
 	/**
@@ -106,13 +106,9 @@ private:
 		//
 		// Observer interface
 		//
-		virtual void 
-		notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
-		//
-		//
-		//
-		virtual priority_t getPriority() const throw ()
-			{return 0;};
+		virtual void notify (boost::shared_ptr<IProperty> newValue, 
+							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
+		virtual priority_t getPriority() const throw ()	{return 0;};
 		//
 		// Destructor
 		//
@@ -121,9 +117,37 @@ private:
 	private:
 		CContentStream* contentstream;
 	};
+	/**
+	 * Operand stream observer.
+	 *
+	 * If an operand is changed, save the stream.
+	 */
+	struct OperandObserver : public IIPropertyObserver
+	{
+		//
+		// Constructor
+		//
+		OperandObserver (CContentStream* cc) : contentstream (cc)
+			{assert (cc);}
+		//
+		// Observer interface
+		//
+		virtual void notify (boost::shared_ptr<IProperty> newValue, 
+							 boost::shared_ptr<const IProperty::ObserverContext>) const throw();
+		virtual priority_t getPriority() const throw ()	{return 0;};
+		//
+		// Destructor
+		//
+		virtual ~OperandObserver () throw () {};
+
+	private:
+		CContentStream* contentstream;
+	};
 
 	/** CStream observer. */
-	boost::shared_ptr<CStreamObserver> observer;
+	boost::shared_ptr<CStreamObserver> cstreamobserver;
+	/** Operand observer. */
+	boost::shared_ptr<OperandObserver> operandobserver;
 
 	
 	//

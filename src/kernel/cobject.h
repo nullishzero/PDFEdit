@@ -759,11 +759,11 @@ public:
 	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
-	 * Returns encoded string representation of this object.
+	 * Returns decoded string representation of this object.
 	 *
 	 * @param str String representation.
 	 */
-	virtual void getEncodedStringRepresentation (std::string& str) const;
+	virtual void getDecodedStringRepresentation (std::string& str) const;
 
 	/**
 	 * Returns printable string representation of this object.

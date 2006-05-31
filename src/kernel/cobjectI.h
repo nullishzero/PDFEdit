@@ -1130,7 +1130,7 @@ CObjectStream<Checker>::getStringRepresentation (std::string& str) const
 //
 template<typename Checker>
 void
-CObjectStream<Checker>::getEncodedStringRepresentation (std::string& str) const 
+CObjectStream<Checker>::getDecodedStringRepresentation (std::string& str) const 
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	

@@ -1375,7 +1375,8 @@ namespace {
 			//
 			topoperator->getChildren (operators);
 			// Set prev of first valid operator to NULL
-			PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+			if (!operators.empty())
+				PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
 
 		}catch (CObjInvalidObject&)
 		{
@@ -1462,7 +1463,8 @@ namespace {
 			//
 			topoperator->getChildren (operators);
 			// Set prev of first valid operator to NULL
-			PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+			if (!operators.empty())
+				PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
 
 		}catch (CObjInvalidObject&)
 		{
@@ -1561,11 +1563,11 @@ namespace {
 //==========================================================
 
 //==========================================================
-// CContentStream observer
+// Observer interface
 //==========================================================
 
 //
-// Observer interface
+// CContentStream observer
 //
 
 //
@@ -1590,6 +1592,34 @@ throw ()
 		assert (!"This is very very bad because this function can't throw according to the interface.");
 	}
 }
+
+//
+// Operand observer
+//
+
+//
+//
+//
+void 
+CContentStream::OperandObserver::notify (boost::shared_ptr<IProperty> newValue, 
+										  boost::shared_ptr<const IProperty::ObserverContext>) const 
+throw ()
+{
+	try {
+
+	utilsPrintDbg (debug::DBG_DBG, "");
+	assert (hasValidPdf (newValue));
+	assert (hasValidRef (newValue));
+
+	// Stream has changed, reparse it
+	contentstream->saveChange ();
+	
+	}catch (...)
+	{
+		assert (!"This is very very bad because this function can't throw according to the interface.");
+	}
+}
+
 
 //==========================================================
 // CContentStream
@@ -1621,11 +1651,13 @@ CContentStream::CContentStream (CStreams& strs,
 	assert (gfxres);
 	assert (gfxstate);
 	
-	// Create observer and register it on all operands
-	observer = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
+	// Create cstream observer and register it on all operands
+	cstreamobserver = boost::shared_ptr<CStreamObserver> (new CStreamObserver (this));
+	// Create operand observer
+	operandobserver = boost::shared_ptr<OperandObserver> (new OperandObserver (this));
 	
 	// Parse it, move parsed straems from strs to cstreams
-	parseContentStream (operators, strs, *this, cstreams, observer);
+	parseContentStream (operators, strs, *this, cstreams, operandobserver);
 	
 	// Save bounding boxes
 	if (!operators.empty())
@@ -1660,7 +1692,7 @@ CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<Gf
 	
 	// Reparse it if needed
 	if (!bboxOnly)
-		reparseContentStream (operators, cstreams, *this, observer);
+		reparseContentStream (operators, cstreams, *this, operandobserver);
 	
 	// Save bounding boxes
 	if (!operators.empty())
@@ -1818,7 +1850,7 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 	CPdf* pdf = cstreams.front()->getPdf();
 	assert (pdf);
 	IndiRef rf = cstreams.front()->getIndiRef ();
-	opsSetPdfRefCs (newOper, *pdf, rf, *this, observer);
+	opsSetPdfRefCs (newOper, *pdf, rf, *this, operandobserver);
 
 	//
 	// Insert into operators or composite
@@ -1899,7 +1931,7 @@ CContentStream::replaceOperator (OperatorIterator it,
 	CPdf* pdf = cstreams.front()->getPdf();
 	assert (pdf);
 	IndiRef rf = cstreams.front()->getIndiRef ();
-	opsSetPdfRefCs (newOper, *pdf, rf, *this, observer);
+	opsSetPdfRefCs (newOper, *pdf, rf, *this, operandobserver);
 
 	//
 	// Replace in operators or composite
@@ -1967,11 +1999,11 @@ CContentStream::replaceOperator (OperatorIterator it,
 void
 CContentStream::registerCStreamObservers () const
 {
-	if (observer)
+	if (cstreamobserver)
 	{
-		// Register observer
+		// Register cstream observer
 		for (CStreams::const_iterator it = cstreams.begin(); it != cstreams.end(); ++it)
-			(*it)->registerObserver (observer);
+			(*it)->registerObserver (cstreamobserver);
 	}else
 	{
 		assert (!"Observer is not initialized.");
@@ -1985,11 +2017,11 @@ CContentStream::registerCStreamObservers () const
 void
 CContentStream::unregisterCStreamObservers () const
 {
-	if (observer)
+	if (cstreamobserver)
 	{
-		// Unregister observer
+		// Unregister cstream observer
 		for (CStreams::const_iterator it = cstreams.begin(); it != cstreams.end(); ++it)
-			(*it)->unregisterObserver (observer);
+			(*it)->unregisterObserver (cstreamobserver);
 	}else
 	{
 		assert (!"Observer is not initialized.");
@@ -2044,10 +2076,10 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 	{
 		string opstr;
 		oper->getStringRepresentation (opstr);
-		kernelPrintDbg (debug::DBG_CRIT, opstr);
-		assert (!"Function does not have desired effect, because stroking/nonstroking operator was not found...\n"
-				"Please give one of the operators (printed in debug mode)"
-				" to either Stroking or Nonstroking iterator and recompile...");
+		kernelPrintDbg (debug::DBG_CRIT, opstr
+		 << "Function does not have desired effect, because stroking/nonstroking operator was not found...\n"
+		 <<	"Please give one of the operators (printed in debug mode)"
+		 <<	" to either Stroking or Nonstroking iterator and recompile...");
 	}
 	
 	// operator
