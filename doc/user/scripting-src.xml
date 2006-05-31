@@ -250,8 +250,11 @@
 <!--TYPE: qscontentstream.h -->
 <!--TYPE: qsdict.h -->
 <!--TYPE: qsiproperty.h -->
+<!--TYPE: qsipropertyarray.h -->
 <!--TYPE: qspdf.h -->
 <!--TYPE: qspdfoperator.h -->
+<!--TYPE: qspdfoperatoriterator.h -->
+<!--TYPE: qspdfoperatorstack.h -->
 <!--TYPE: qspage.h -->
 <!--TYPE: qsstream.h -->
  </chapter>
