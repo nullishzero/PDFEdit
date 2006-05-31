@@ -267,7 +267,7 @@ function pageProperty(propName) {
  Return property from dictionary of current page,
  adding it with default value if property is not found
 */
-function pageProperty(propName,defValue) {
+function pagePropertyDef(propName,defValue) {
  return page.getDictionary().propertyDef(propName,defValue).ref();
 }
 

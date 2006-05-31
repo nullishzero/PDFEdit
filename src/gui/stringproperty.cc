@@ -23,7 +23,7 @@ using namespace std;
 StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"stringproperty_edit");
- ed->setReadOnly(!readonly);
+ ed->setReadOnly(readonly);
  setFocusProxy(ed);
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
  connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));
