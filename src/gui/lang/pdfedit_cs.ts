@@ -579,10 +579,6 @@ Data: %3
         <translation>Styl</translation>
     </message>
     <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: changing style will take effect on next program start</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna stylu bude mít efekt až při přístím startu programu</translation>
-    </message>
-    <message>
         <source>Remember path of last opened/saved file</source>
         <translation>Pamatovat si cestu k poslednímu otevřenému/uloženému souboru</translation>
     </message>
@@ -661,6 +657,18 @@ Data: %3
     <message>
         <source>Console font</source>
         <translation>Písmo v příkazovém řádku</translation>
+    </message>
+    <message>
+        <source>Icon theme</source>
+        <translation>Téma ikon</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing style or icon theme will take effect on next program start</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna stylu nebo tématu ikon bude mít efekt až při přístím startu programu</translation>
+    </message>
+    <message>
+        <source>Use big icons</source>
+        <translation>Použít velké ikony</translation>
     </message>
 </context>
 <context>

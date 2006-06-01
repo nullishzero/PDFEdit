@@ -576,10 +576,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: changing style will take effect on next program start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remember path of last opened/saved file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -657,6 +653,18 @@ Data: %3
     </message>
     <message>
         <source>Console font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing style or icon theme will take effect on next program start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use big icons</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
