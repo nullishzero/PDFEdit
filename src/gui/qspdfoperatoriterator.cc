@@ -113,6 +113,8 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::copy() {
 QSPdfOperatorIterator* QSPdfOperatorIterator::next() {
  try {
   obj->next();
+  //if we are after last valid, return NULL
+  if (obj->isEnd()) return NULL;
   return new QSPdfOperatorIterator(obj,csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
@@ -128,6 +130,8 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::next() {
 QSPdfOperatorIterator* QSPdfOperatorIterator::prev() {
  try {
   obj->prev();
+  //if we are before first valid, return NULL
+  if (obj->isBegin()) return NULL;
   return new QSPdfOperatorIterator(obj,csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position

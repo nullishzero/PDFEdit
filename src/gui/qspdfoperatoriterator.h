@@ -32,12 +32,12 @@ public slots:
  QSPdfOperatorIterator* copy();
  /*-
   Move the iterator to next operator.
-  Return reference to itself
+  Return reference to itself, or NULL, if we are after last valid item
  */
  QSPdfOperatorIterator* next();
  /*-
   Move the iterator to previous operator
-  Return reference to itself
+  Return reference to itself, or NULL, if we are before first valid item
  */
  QSPdfOperatorIterator* prev();
  /*-
