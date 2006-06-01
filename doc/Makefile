@@ -1,12 +1,14 @@
 #Top-level Makefile for documentation
 
-.PHONY: clean all
+.PHONY: clean all doc_nodoxygen
 
-all:
+all:	doc_nodoxygen
+	doxygen
+
+doc_nodoxygen:
 	cd user && ( gmake || make )
 	cd design/kernel && ( gmake || make )
 	cd design/gui && ( gmake || make )
-	doxygen
 
 clean:
 	cd user && ( gmake clean || make clean )
