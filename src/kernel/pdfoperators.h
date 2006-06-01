@@ -332,7 +332,7 @@ public:
 	 * @param bbox Bounding box.
 	 */
 	void setBBox (const Rectangle& rc)
-		{ assert(COORDINATE_INVALID == bbox.xleft); bbox = rc; };
+		{ bbox = rc; };
 
 	/**
 	 * Get bounding box.

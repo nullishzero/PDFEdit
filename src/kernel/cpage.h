@@ -348,17 +348,59 @@ public:
 	 */
  	void getText (std::string& text) const;
 
-	
-	/** 
-	 * Returns all objects on a page.
+
+	//
+	// Font interface
+	//
+public:
+	/**
+	 * Get all font ids and base names that are in the resource dictionary of a page.
 	 *
-	 * \TODO what here?
+	 * Base names should be human readable. At least standard system fonts. We
+	 * must choose from these items to make a font change valid. Otherwise, we
+	 * have to add a standard system font or manually a font object.
+	 *
+	 * @param cont Output container of font id and font basename pairs.
 	 */
-	// template<typename Container>
-	// void getAllObjects (Container& container) const {}
+	template<typename Container>
+	void getFontIdsAndNames (Container& cont) const
+	{
+		// Clear container
+		cont.clear ();
+		
+		try {
+			
+			// \todo Resources is an inheritable property
+			boost::shared_ptr<CDict> res = utils::getCDictFromDict (dictionary, "Resources");
+			boost::shared_ptr<CDict> fonts = utils::getCDictFromDict (res, "Font");
+			typedef std::vector<std::string> FontNames;
+			FontNames fontnames;
+			// Get all font names (e.g. R14, R15, F19...)
+			fonts->getAllPropertyNames (fontnames);
+			// Get all base names (Symbol, csr12, ...)
+			for (FontNames::iterator it = fontnames.begin(); it != fontnames.end(); ++it)
+			{
+				boost::shared_ptr<CDict> font = utils::getCDictFromDict (fonts, *it);
+				std::string fontbasename = utils::getNameFromDict (font, "BaseFont");
+				cont.push_back (std::make_pair (*it, fontbasename));
+			}
 
-
+		}catch (ElementNotFoundException&)
+		{
+			kernelPrintDbg (debug::DBG_ERR, "No resource dictionary.");
+		}
+	}
 	
+	/**
+	 * Add new simple font item to the page resource dictionary. 
+	 *
+	 * We supposed that the font name is a standard system font avaliable to all viewers.
+	 *
+	 * @param fontname Output container of pairs of (Id,Name).
+	 */
+	void addSystemFont (const std::string& fontname);
+
+
 	//
 	// Helper methods
 	//

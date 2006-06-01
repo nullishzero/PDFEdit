@@ -406,14 +406,14 @@ public:
 	/**
 	 * Reparse pdf operators and set their bounding boxes.
 	 *
-	 * @param state Graphical state, if changed.
-	 * @param res Graphical resources, if changed.
 	 * @param bboxOnly If true only bounding boxes are set, if false operators
 	 * are also reparsed.
+	 * @param state Graphical state, if changed.
+	 * @param res Graphical resources, if changed.
 	 */
-	void reparse (boost::shared_ptr<GfxState> state = boost::shared_ptr<GfxState> (), 
-				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> (),
-				  bool bboxOnly = false);
+	void reparse (bool bboxOnly = false,
+				  boost::shared_ptr<GfxState> state = boost::shared_ptr<GfxState> (), 
+				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> ());
 
 	/**
 	 * Save content stream to underlying cstream(s) and notify all observers. 

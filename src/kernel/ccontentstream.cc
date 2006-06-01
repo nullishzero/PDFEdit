@@ -1671,6 +1671,9 @@ throw ()
 	// Stream has changed, reparse it
 	contentstream->saveChange ();
 	
+	// Reparse bounding box
+	contentstream->reparse (true);
+	
 	}catch (...)
 	{
 		assert (!"This is very very bad because this function can't throw according to the interface.");
@@ -1733,7 +1736,7 @@ CContentStream::CContentStream (CStreams& strs,
 //
 //
 void
-CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<GfxResources> res, bool bboxOnly)
+CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost::shared_ptr<GfxResources> res)
 {
 	// Save resources if new
 	if (state)
@@ -1744,12 +1747,13 @@ CContentStream::reparse (boost::shared_ptr<GfxState> state, boost::shared_ptr<Gf
 	assert (gfxres);
 	assert (gfxstate);
 	
-	// Clear operators	
-	operators.clear ();
-	
 	// Reparse it if needed
 	if (!bboxOnly)
+	{
+		// Clear operators	
+		operators.clear ();
 		reparseContentStream (operators, cstreams, *this, operandobserver);
+	}
 	
 	// Save bounding boxes
 	if (!operators.empty())

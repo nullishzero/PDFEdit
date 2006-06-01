@@ -423,7 +423,7 @@ void CPage::reparseContentStream ( )
 	// Set only bboxes
 	for (ContentStreams::iterator it = contentstreams.begin();
 			it != contentstreams.end(); ++it)
-		(*it)->reparse (state, res, true);
+		(*it)->reparse (true, state, res);
 }
 
 
@@ -493,6 +493,79 @@ template size_t CPage::findText<std::vector<Rectangle> >
 	(std::string text, 
 	 std::vector<Rectangle>& recs, 
 	 const TextSearchParams& params) const;
+
+
+//
+// Font interface
+//
+
+//
+//
+//
+void
+CPage::addSystemFont (const std::string& fontname)
+{
+	// << 
+	//    /Type /Font
+	//    /SubType /Type1
+	//    /BaseFont / ...
+	// >>
+	boost::shared_ptr<CDict> font (new CDict ());
+	
+	boost::shared_ptr<CName> name (new CName ("Font"));
+	font->addProperty (string("Type"), *name);
+	
+	name->writeValue ("Type1");
+	font->addProperty (string ("SubType"), *name);
+	
+	name->writeValue (fontname);
+	font->addProperty (string ("BaseFont"), *name);
+	
+	// Resources is an inheritable property, must be present
+	boost::shared_ptr<CDict> res = utils::getCDictFromDict (dictionary, "Resources");
+	boost::shared_ptr<CDict> fonts;
+	
+	try {
+		
+		fonts = utils::getCDictFromDict (res, "Font");
+	
+	}catch (ElementNotFoundException&)
+	{
+		boost::shared_ptr<CDict> fontdict (new CDict ());
+		res->addProperty ("Font", *fontdict);
+		
+		fonts = utils::getCDictFromDict (res, "Font");
+	}
+
+	typedef vector<pair<string,string> > Fonts;
+	Fonts fs;
+	getFontIdsAndNames (fs);
+
+	size_t len = 0;
+	bool our = false;
+	static const string ourfontname ("PdfEditor");
+	for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+	{
+		// Compare basenames and look for longest string and for PdfEdit string
+		if (ourfontname == (*it).first)
+			our = true;
+		len = std::max ((*it).first.length(), len);
+	}
+
+	if (!our)
+		fonts->addProperty (ourfontname, *font);
+	else
+	{/**\todo make sane */
+		len -= ourfontname.length();
+		len++;
+		string tmpname = ourfontname;
+		for (size_t i = 0; i < len; i++)
+			tmpname.push_back ('r');
+		fonts->addProperty (tmpname, *font);
+	}
+		
+}
+
 
 
 // =====================================================================================

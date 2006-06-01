@@ -1863,69 +1863,79 @@ setValueToSimple (const boost::shared_ptr<IProperty>& ip, const Value& val)
 
 
 //=========================================================
-//	CDict "get type" helper methods
+//	CDict "get value" helper methods
 //=========================================================
 
 /**
- * Get iproperty casted to specific type from dictionary.
+ * Get simple value from dict.
  *
- * @param dict Dictionary.
- * @param id   Position in the array.
+ * \todo Use MPL because ItemType and ItemPType depend on each other.!!
+ *
+ * @param dict	Dictionary.
+ * @param id 	Position in the dictionary.
  */
-template<typename ItemType, PropertyType ItemPType>
-inline boost::shared_ptr<ItemType>
-getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
+getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)
 {
-	utilsPrintDbg (debug::DBG_DBG, "dict[" << key << "]");
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
 	
-	// Get the item that is associated with specified key 
-	boost::shared_ptr<IProperty> ip = dict->getProperty (key);
-	//
-	// If it is a Ref forward it to the real object
-	// 
-	ip = getReferencedObject (ip);
-
-	// Check the type
-	if (ItemPType != ip->getType ())
-	{
-		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType () << " key[" << key << "]");
-		std::string err= "getTypeFromDictionary() [" + key + "]";
-		throw ElementBadTypeException (err);
-	}
-
-	// Cast it to the correct type and return it
-	return IProperty::getSmartCObjectPtr<ItemType> (ip);
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = dict->getProperty (id);
+	// Check the type and get the value
+	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
 }
-//
-// If we got iproperty, cast it to Dict
-//
-template<typename ItemType, PropertyType ItemPType>
-inline boost::shared_ptr<ItemType>
-getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
+
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
+getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::string& id)
 {
-	assert (isDict (ip));
-	if (!isDict(ip))
+	assert (isDict(ip));
+	if (!isDict (ip))
 	{
-		assert (!"Ip is not a dictionary.");
-		throw ElementBadTypeException ("getTypeFromDictionary()");
+		assert (!"Ip is not an dict.");
+		throw ElementBadTypeException ("getSimpleValueFromDict()");
 	}
 
 	// Cast it to dict
 	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
-
-	return getTypeFromDictionary<ItemType, ItemPType> (dict, key);
+	// Get value from dict
+	return getSimpleValueFromDict<SimpleValueType, ItemType, ItemPType> (dict, id);
 }
 
-/** 
- * Get stream from dictionary. If it is CRef fetch the object pointed at.
- */
+/** Get int from dict. */
 template<typename IP>
-inline boost::shared_ptr<CStream>
-getCStreamFromDict (IP& ip, const std::string& key)
-	{return getTypeFromDictionary<CStream,pStream> (ip, key);}
+inline int
+getIntFromDict (const IP& ip, const std::string& id)
+	{ return getSimpleValueFromDict<int, CInt, pInt> (ip, id);}
 
+/** Get	double from dict. */
+template<typename IP>
+inline double
+getDoubleFromDict (const IP& ip, const std::string& id)
+{ 
+	// Try getting int, if not successful try double
+	try {
+		
+		return getIntFromDict (ip, id);
+		
+	}catch (ElementBadTypeException&) {}
 
-	
+	return getSimpleValueFromDict<double, CReal, pReal> (ip, id);
+}
+
+/** Get string from dict. */
+template<typename IP>
+inline std::string
+getStringFromDict (const IP& ip, const std::string& id)
+	{ return getSimpleValueFromDict<std::string, CString, pString> (ip, id);}
+
+/** Get name from dict. */
+template<typename IP>
+inline std::string
+getNameFromDict (const IP& ip, const std::string& id)
+	{ return getSimpleValueFromDict<std::string, CName, pName> (ip, id);}
+
 //=========================================================
 //	CDict "set value" helper methods
 //=========================================================
@@ -1993,6 +2003,76 @@ setDoubleInDict (const IP& ip, const std::string& name, double val)
 	setIntInDict (ip, name, static_cast<int>(val));
 }
 
+//=========================================================
+//	CDict "get type" helper methods
+//=========================================================
+
+/**
+ * Get iproperty casted to specific type from dictionary.
+ *
+ * @param dict Dictionary.
+ * @param id   Position in the array.
+ */
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)
+{
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << key << "]");
+	
+	// Get the item that is associated with specified key 
+	boost::shared_ptr<IProperty> ip = dict->getProperty (key);
+	//
+	// If it is a Ref forward it to the real object
+	// 
+	ip = getReferencedObject (ip);
+
+	// Check the type
+	if (ItemPType != ip->getType ())
+	{
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemPType << " got " << ip->getType () << " key[" << key << "]");
+		std::string err= "getTypeFromDictionary() [" + key + "]";
+		throw ElementBadTypeException (err);
+	}
+
+	// Cast it to the correct type and return it
+	return IProperty::getSmartCObjectPtr<ItemType> (ip);
+}
+//
+// If we got iproperty, cast it to Dict
+//
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
+{
+	assert (isDict (ip));
+	if (!isDict(ip))
+	{
+		assert (!"Ip is not a dictionary.");
+		throw ElementBadTypeException ("getTypeFromDictionary()");
+	}
+
+	// Cast it to dict
+	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+
+	return getTypeFromDictionary<ItemType, ItemPType> (dict, key);
+}
+
+/** 
+ * Get stream from dictionary. If it is CRef fetch the object pointed at.
+ */
+template<typename IP>
+inline boost::shared_ptr<CStream>
+getCStreamFromDict (IP& ip, const std::string& key)
+	{return getTypeFromDictionary<CStream,pStream> (ip, key);}
+
+/** 
+ * Get dictionary from dictionary. If it is an indirect object, fetch the object.
+ */
+template<typename IP>
+inline boost::shared_ptr<CDict>
+getCDictFromDict (IP& ip, const std::string& key)
+	{return getTypeFromDictionary<CDict,pDict> (ip, key);}
+
 
 //=========================================================
 //	CArray "get value" helper methods
@@ -2001,7 +2081,7 @@ setDoubleInDict (const IP& ip, const std::string& name, double val)
 /**
  * Get simple value from array.
  *
- * \TODO Use MPL because ItemType and ItemPType depend on each other.!!
+ * \todo Use MPL because ItemType and ItemPType depend on each other.!!
  *
  * @param array	Array.
  * @param id 	Position in the array.

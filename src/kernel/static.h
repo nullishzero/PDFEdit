@@ -41,8 +41,8 @@
 //#include <boost/mpl/insert.hpp>
 //#include <boost/mpl/at.hpp>
 // Filters
-#include <boost/iostreams/categories.hpp> // output_filter_tag
-#include <boost/iostreams/operations.hpp> // put
+//#include <boost/iostreams/categories.hpp> // output_filter_tag
+//#include <boost/iostreams/operations.hpp> // put
 //#include <boost/iostreams/concepts.hpp> // multichar_output_filter
 //#include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>
