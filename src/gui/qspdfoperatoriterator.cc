@@ -52,8 +52,6 @@ QSPdfOperatorIterator::QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::sh
  assert(op);
  obj=op;
  csRef=cs;
- //Paranoid check
- assert(op->getCurrent()->getContentStream()==csRef.get());
 }
 
 /** destructor */
