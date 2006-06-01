@@ -153,6 +153,38 @@ private:
 	const Point pt_;
 };
 
+/** Page attributes structure which may be inherited from parent hierarchy.
+ *
+ * Memebers of page dictionary which should keep value of the nearest parent
+ * with defined value if not present directly in page dictionary.
+ */
+struct InheritedPageAttr
+{
+	boost::shared_ptr<CDict> resources;
+	boost::shared_ptr<CArray> mediaBox;
+	boost::shared_ptr<CArray> cropBox;
+	boost::shared_ptr<CInt> rotate;
+};
+
+/** Fills InheritedPageAttr structure for given page dictionary.
+ * @param pageDict Page dictionary.
+ * @param attrs Structure where to place correct values.
+ *
+ * Recursive function which checks given pageDict whether it contains
+ * uninitialized (NULL values) from given attribute structure. If yes, sets
+ * value from dictionary. If at least one structure member is not initialized,
+ * calls method to parent dictionary (dereferenced Parent field). If no Parent
+ * is present (in root of page tree), returns.
+ * <br>
+ * After recursion ends, checks all fields again and if any is missing, uses
+ * default value.
+ *
+ * @throw NotImplementedException at this moment.
+ */
+void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
+{
+	throw NotImplementedException("fillInheritedPageAttr");
+}
 
 
 //=====================================================================================
