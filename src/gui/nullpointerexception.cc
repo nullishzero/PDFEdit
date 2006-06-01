@@ -27,7 +27,7 @@ NullPointerException::NullPointerException(const QString &className,const QStrin
  Return human-readable exception message
  @return exception message
 */
-QString NullPointerException::message() {
+QString NullPointerException::message() const {
  return QObject::tr("Null pointer access in ")+_class+"."+_method;
 }
 
@@ -35,7 +35,7 @@ QString NullPointerException::message() {
  Return class in which this exception was thrown
  @return class name
 */
-QString NullPointerException::exceptionClassName() {
+QString NullPointerException::exceptionClassName() const {
  return _class;
 }
 
@@ -43,7 +43,7 @@ QString NullPointerException::exceptionClassName() {
  Return method in which this exception was thrown
  @return method name
 */
-QString NullPointerException::exceptionMethod() {
+QString NullPointerException::exceptionMethod() const {
  return _method;
 }
 

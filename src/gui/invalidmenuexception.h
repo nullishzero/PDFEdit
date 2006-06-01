@@ -9,7 +9,7 @@ class InvalidMenuException {
 public:
  InvalidMenuException(const QString &message);
  ~InvalidMenuException();
- QString message();
+ QString message() const;
 protected:
  /** exception message*/
  QString msg;

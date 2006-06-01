@@ -17,6 +17,8 @@ using namespace pdfobjects;
 
 /*= This type of object represents pdf operator in content stream */
 class QSPdfOperatorIterator : public QSCObject {
+//ADDED functions begin
+//ADDED functions end
  Q_OBJECT
 public:
  QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,Base *_base);
@@ -30,10 +32,18 @@ public slots:
  QSPdfOperator* current();
  /*- Create and return copy of this iterator, initially pointing to the same item */
  QSPdfOperatorIterator* copy();
- /*- Move the iterator to next operator */
- void next();
- /*- Move the iterator to previous operator */
- void prev();
+ /*-
+  Move the iterator to next operator.
+  Return operator at the new position, or NULL if the operator have just moved to invalid position
+  (after end of list)
+ */
+ QSPdfOperator* next();
+ /*-
+  Move the iterator to previous operator
+  Return operator at the new position, or NULL if the operator have just moved to invalid position
+  (before start of list)
+ */
+ QSPdfOperator* prev();
  /*-
   Return content stream in which the initial operator used to construct the iterator was contained.
   May return NULL, if operator is not contained in any content stream or if content stream is not known at time of creation

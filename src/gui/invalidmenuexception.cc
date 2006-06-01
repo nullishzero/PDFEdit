@@ -22,7 +22,7 @@ InvalidMenuException::InvalidMenuException(const QString &message){
  The message usually explain what item is invaild and why
  @return exception message
 */
-QString InvalidMenuException::message() {
+QString InvalidMenuException::message() const {
  return msg;
 }
 

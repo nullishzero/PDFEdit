@@ -8,10 +8,10 @@ namespace gui {
 class NullPointerException {
 public:
  NullPointerException(const QString &className,const QString &methodName);
- QString exceptionClassName();
- QString exceptionMethod();
+ QString exceptionClassName() const;
+ QString exceptionMethod() const;
+ QString message() const;
  ~NullPointerException();
- QString message();
 protected:
  /** source of exception - class */
  QString _class;

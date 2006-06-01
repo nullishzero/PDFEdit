@@ -3,29 +3,54 @@
  @author Martin Petricek
 */
 
-#include <qpixmap.h>
-#include <qfile.h>
-#include <qiconset.h> 
-#include <qstring.h>
-#include <qstringlist.h>
 #include "iconcache.h"
 #include "settings.h"
-#include <utils/debug.h>
 #include "util.h"
+#include <qfile.h>
+#include <qiconset.h> 
+#include <qmap.h>
+#include <qpixmap.h>
+#include <qstring.h>
+#include <qstringlist.h>
+#include <utils/debug.h>
 
 namespace gui {
 
 using namespace std;
 
 /**
+ Number of concurrently existing icon cache instances.
+ When last instance is deleted, cached data is deleted too
+*/
+int iconCacheInstances=0;
+
+//Internal types
+ /** Icon Cache type: mapping from icon name to pixmap */
+ typedef QMap<QString, QPixmap*> IconCacheData;
+ /** Icon Sets Cache type: mapping from icon name to icon set */
+ typedef QMap<QString, QIconSet*> IconSetsData;
+
+//Internal icon cache data shared by all icon cache instance
+ /** List with paths to application icons */
+ QStringList iconPath;
+ /** Name of current icon style */
+ QString iconStyleName;
+ /** Cache storing loaded icons */
+ IconCacheData iconCache;
+ /** Cache storing created icons sets*/
+ IconSetsData setCache;
+
+/**
  Default constructor of IconCache
 */
 IconCache::IconCache() {
+ if (iconCacheInstances) return;//Initialization already done
  iconPath=globalSettings->readPath("icon");
  //Read icon style
  iconStyleName=globalSettings->read("icon/theme/current");
  if (iconStyleName=="default") iconStyleName=QString::null;
  if (iconStyleName=="") iconStyleName=QString::null;
+ iconCacheInstances++;
 }
 
 /**
@@ -105,20 +130,27 @@ QIconSet* IconCache::getIconSet(const QString &name) {
 
 /** default destructor */
 IconCache::~IconCache() {
- QValueList<QString> pixmaps=iconCache.keys();
- //Delete all pixmaps from cache
- for (QValueList<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
-  QPixmap *rm=iconCache[*it];
-  delete rm;
+ assert(iconCacheInstances>=1);
+ if (iconCacheInstances<=1) {
+  //This is last instance -> free the internal data
+  QValueList<QString> pixmaps=iconCache.keys();
+  //Delete all pixmaps from cache
+  for (QValueList<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
+   QPixmap *rm=iconCache[*it];
+   delete rm;
+  }
+  iconCache.clear();
+  QValueList<QString> iconSets=setCache.keys();
+  //Delete all icon sets from cache
+  for (QValueList<QString>::Iterator it=iconSets.begin();it!=iconSets.end();++it) {
+   QIconSet *rm=setCache[*it];
+   delete rm;
+  }
+  setCache.clear();
+ } else {
+  //More than one instance - do not free the data now
+  iconCacheInstances--;
  }
- iconCache.clear();
- QValueList<QString> iconSets=setCache.keys();
- //Delete all icon sets from cache
- for (QValueList<QString>::Iterator it=iconSets.begin();it!=iconSets.end();++it) {
-  QIconSet *rm=setCache[*it];
-  delete rm;
- }
- setCache.clear();
 }
 
 } // namespace gui

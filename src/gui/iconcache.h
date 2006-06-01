@@ -1,19 +1,11 @@
 #ifndef __ICONCACHE_H__
 #define __ICONCACHE_H__
 
-#include <qmap.h>
-
-class QStringList;
 class QString;
 class QPixmap;
 class QIconSet;
 
 namespace gui {
-
-/** Icon Cache type: mapping from icon name to pixmap */
-typedef QMap<QString, QPixmap*> IconCacheData;
-/** Icon Sets Cache type: mapping from icon name to icon set */
-typedef QMap<QString, QIconSet*> IconSetsData;
 
 class IconCache {
 public:
@@ -23,15 +15,6 @@ public:
  QIconSet* getIconSet(const QString &name);
 private:
  QString getIconFile(const QString &name);
-private:
- /** List with paths to application icons */
- QStringList iconPath;
- /** Name of current icon style */
- QString iconStyleName;
- /** Cache storing loaded icons */
- IconCacheData iconCache;
- /** Cache storing created icons sets*/
- IconSetsData setCache;
 };
 
 } // namespace gui
