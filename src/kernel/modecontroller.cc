@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/06/01 18:49:06  hockm0bm
+ * typo fix
+ *
  * Revision 1.9  2006/06/01 14:12:47  hockm0bm
  * * ModeConfigurationParser
  *         - parse method corrected: mdReadOnly was missing, handling of
@@ -128,7 +131,7 @@ using namespace configuration::utils;
 						return false;
 	
 	// converts ruleString to ModeRule structure - uses tokenizer with `.'
-	// deliminer
+	// separator
 	vector<string> tokens;
 	if(tokenizer(ruleString, ".", tokens)>2)
 	{

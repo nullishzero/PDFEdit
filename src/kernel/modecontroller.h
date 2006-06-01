@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/06/01 18:49:06  hockm0bm
+ * typo fix
+ *
  * Revision 1.10  2006/06/01 14:46:24  hockm0bm
  * doc update - doxygen warnings removed (if possible)
  *
@@ -196,8 +199,7 @@ private:
 	StringParser & baseParser;
 public:
 	/** Initialization constructor.
-	 * Initializes baseParser field and configure it to have correct blanksSet,
-	 * commentsSet and deliminerSet.
+	 * Initializes baseParser field.
 	 */
 	ModeConfigurationParser(StringParser & parser):baseParser(parser)
 	{}
