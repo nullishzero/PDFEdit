@@ -27,8 +27,6 @@ namespace pdfobjects {
 //
 class IProperty;
 class CContentStream;
-struct TextOperatorIterator;
-struct InlineImageOperatorIterator;
 							 
 //==========================================================
 // PdfOperator
@@ -612,21 +610,30 @@ public:
 // PdfOperator iterators
 //==========================================================
 
-/**
- * Text operator iterator.
+/** 
+ * Iterator types. 
  *
- * Constructed from an arbitrary operator, but it will always start from a valid
- * text operator. This is done in the constructor.
  */
-struct TextOperatorIterator: public PdfOperator::Iterator
+typedef enum
+{
+	itTextIterator, itFontIterator, itInlineImageIterator, itNonStrokingIterator, itStrokingIterator, itChangeableIterator
+
+} IteratorType;
+
+
+/**
+ * Generic iterator that accepts set of operators.
+ */
+template<int _NAME_COUNT, IteratorType T>
+struct AcceptingPdfOperatorIterator: public PdfOperator::Iterator
 {
 	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 4;
+	static const size_t namecount = _NAME_COUNT;
 
 	//
 	// Constructor
 	//
-	TextOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	AcceptingPdfOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
 	{
 		// Get to the first valid text operator
 		while (!isEnd() && !validItem())
@@ -641,7 +648,7 @@ struct TextOperatorIterator: public PdfOperator::Iterator
 		std::string name;
 		_cur.lock()->getOperatorName (name);
 
-		for (size_t i = 0; i < NAME_COUNT; ++i)
+		for (size_t i = 0; i < namecount; ++i)
 			if (name == accepted_opers[i])
 				return true;
 		
@@ -649,24 +656,26 @@ struct TextOperatorIterator: public PdfOperator::Iterator
 	}
 
 private:
-	static const std::string accepted_opers [NAME_COUNT];
+	static const std::string accepted_opers [namecount];
 };
 
+
 /**
- * Inline image iterator.
- *
- * Constructed from an arbitrary operator, but it will always start from a valid
- * inline image operator. This is done in the constructor.
+ * Generic iterator that rejects set of operators.
  */
-struct InlineImageOperatorIterator: public PdfOperator::Iterator
+template<int _NAME_COUNT, IteratorType T>
+struct RejectingPdfOperatorIterator: public PdfOperator::Iterator
 {
+	/** Number of accepted names. */
+	static const size_t namecount = _NAME_COUNT;
+
 	//
 	// Constructor
 	//
-	InlineImageOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	RejectingPdfOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
 	{
 		// Get to the first valid text operator
-		while (!isEnd() && !validItem ())
+		while (!isEnd() && !validItem())
 			this->next();
 	}
 	//
@@ -678,15 +687,43 @@ struct InlineImageOperatorIterator: public PdfOperator::Iterator
 		std::string name;
 		_cur.lock()->getOperatorName (name);
 
-		if (name == accepted_opers)
-			return true;
+		for (size_t i = 0; i < namecount; ++i)
+			if (name == rejected_opers[i])
+				return false;
 		
-		return false;
+		return true;
 	}
 
 private:
-	static const std::string accepted_opers;
+	static const std::string rejected_opers [namecount];
 };
+
+
+/**
+ * Text operator iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * text operator. This is done in the constructor.
+ */
+typedef AcceptingPdfOperatorIterator<4, itTextIterator> TextOperatorIterator;
+
+
+/**
+ * Font operator iterator.
+ *
+ * This iterator traverses only through operators that alter graphical font state.
+ */
+typedef struct AcceptingPdfOperatorIterator<4, itFontIterator> FontOperatorIterator;
+
+
+/**
+ * Inline image iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * inline image operator. This is done in the constructor.
+ */
+typedef struct AcceptingPdfOperatorIterator<1, itInlineImageIterator> InlineImageOperatorIterator;
+
 
 /**
  * Changeable operator iterator.
@@ -696,78 +733,14 @@ private:
  *
  * This operator excludes operators like q, Q etc.
  */
-struct ChangeableOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 38;
-
-	//
-	// Constructor
-	//
-	ChangeableOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!this->isEnd() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == rejected_opers[i])
-				return false;
-		
-		return true;
-	}
-
-private:
-	static const std::string rejected_opers [NAME_COUNT];
-};
+typedef struct RejectingPdfOperatorIterator<38, itChangeableIterator> ChangeableOperatorIterator;
 
 /**
  * "Non stroking" operator iterator.
  *
  * REMARK: See pdf specification for details.
  */
-struct NonStrokingOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 4;
-	
-	//
-	// Constructor
-	//
-	NonStrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!this->isEnd() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == accepted_opers[i])
-				return true;
-		
-		return false;
-	}
-
-private:
-	static const std::string accepted_opers [NAME_COUNT];
-};
+typedef struct AcceptingPdfOperatorIterator<4, itNonStrokingIterator> NonStrokingOperatorIterator;
 
 
 /**
@@ -778,39 +751,7 @@ private:
  *
  * REMARK: See pdf specification for details.
  */
-struct StrokingOperatorIterator: public PdfOperator::Iterator
-{
-	/** Number of accepted names. */
-	static const size_t NAME_COUNT = 4;
-
-	//
-	// Constructor
-	//
-	StrokingOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
-	{
-		// Get to the first valid text operator
-		while (!this->isEnd() && !validItem ())
-			this->next();
-	}
-	//
-	// Template method interface
-	//
-	virtual bool 
-	validItem () const
-	{
-		std::string name;
-		_cur.lock()->getOperatorName (name);
-
-		for (size_t i = 0; i < NAME_COUNT; ++i)
-			if (name == accepted_opers[i])
-				return true;
-		
-		return false;
-	}
-
-private:
-	static const std::string accepted_opers [NAME_COUNT];
-};
+typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOperatorIterator;
 
 
 //==========================================================

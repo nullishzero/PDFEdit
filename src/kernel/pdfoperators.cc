@@ -367,24 +367,36 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 //==========================================================
 
 /** Text iterator accepted operators. */
-const std::string TextOperatorIterator::accepted_opers[TextOperatorIterator::NAME_COUNT] = {"Tj", "TJ", "'", "\""};
+template<>
+const std::string TextOperatorIterator::accepted_opers[TextOperatorIterator::namecount] = {"Tj", "TJ", "'", "\""};
 /** Inline image iterators. */
-const std::string InlineImageOperatorIterator::accepted_opers = "BI";
+template<>
+const std::string InlineImageOperatorIterator::accepted_opers[InlineImageOperatorIterator::namecount] = {"BI"};
 /** Changeable operator are all operators except these. */
-const std::string ChangeableOperatorIterator::rejected_opers[ChangeableOperatorIterator::NAME_COUNT] = 
+template<>
+const std::string ChangeableOperatorIterator::rejected_opers[ChangeableOperatorIterator::namecount] = 
 {
 	"q", "Q", "cm", "w", "J", "j", "M", "d", "ri", "i", "gs", "s", "S", "f", "F", "f*", "B", "B*", "b", "b*"
 	"n", "W", "W*", "BX", "EX", "rg", "CS", "cs", "SC", "SCN", "sc", "scn", "G", "g", "RG", "rg", "K", "k"
 };
 /** Non stroking iterator accepted operators. */
-const std::string NonStrokingOperatorIterator::accepted_opers[NonStrokingOperatorIterator::NAME_COUNT] = 
+template<>
+const std::string NonStrokingOperatorIterator::accepted_opers[NonStrokingOperatorIterator::namecount] = 
 {
 	"Tj", "TJ", "'", "\""
 };
 /** Stroking iterator accepted operators. */
-const std::string StrokingOperatorIterator::accepted_opers[StrokingOperatorIterator::NAME_COUNT] = 
+template<>
+const std::string StrokingOperatorIterator::accepted_opers[StrokingOperatorIterator::namecount] = 
 {
 	"", "", "", ""
+};
+
+/** Operators accepted by font iterator. */
+template<>
+const std::string FontOperatorIterator::accepted_opers[FontOperatorIterator::namecount] = 
+{
+	"Tf", "", "", ""
 };
 
 
