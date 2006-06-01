@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.52  2006/06/01 14:39:49  hockm0bm
+ * Outline methods removed
+ *
  * Revision 1.51  2006/05/31 20:10:55  hockm0bm
  * IModeController renamed to ModeController
  *
@@ -1218,7 +1221,7 @@ public:
 	boost::shared_ptr<CPage> getNextPage(boost::shared_ptr<CPage> page)const;
 
 	/** Returns previous page.
-	 * @param Pointer to the page.
+	 * @param page Pointer to the page.
 	 *
 	 * Returns page which is before given one. Uses getPagePosition to get actual
 	 * position.
@@ -1282,50 +1285,6 @@ public:
 	boost::shared_ptr<CPage> getLastPage()const
 	{
 		return getPage(getPageCount());
-	}
-
-	// Outlines methods
-	// =================
-
-	/** Returns all top-level outlines.
-	 * @param container Template type parameter which will contain outline
-	 * pointers (must be allocated and support push_back and clear methods).
-	 *
-	 * To get whole outline hierarchy, use COutline instances (contains 
-	 * information about children).
-	 * <br>
-	 * NOTE: In first step clears container (calls clear method) and then
-	 * fills it with top-level outline instances (uses push_back method).
-	 *
-	 */
-	template<typename T> void getOutlines(T * container)
-	{
-		if(!container)
-		{
-			// TODO handle
-		}
-
-		// clears actual content
-		container->clear();
-		
-		// get outlines from Outlines field
-		// TODO figure out
-	}
-
-	/** Removes top-level outline.
-	 * @param outline Outlines to remove.
-	 *
-	 * Removes also all children.
-	 *
-	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
-	 * older revision (where no changes are allowed).
-	 */
-	void removeOutline(COutline * /*outline*/)
-	{
-		// actualize outlines
-		// remove from Outlines dictionary (in document catalog)
-		// change Outline object
-		// destroy outline object
 	}
 
 	// Version handling and work around
