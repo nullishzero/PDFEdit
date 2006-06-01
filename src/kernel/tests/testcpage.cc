@@ -186,6 +186,95 @@ findtext (__attribute__((unused)) ostream& oss, const char* fileName)
 	return true;
 }
 
+
+//=====================================================================================
+
+bool
+getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
+{
+	{
+		// Open pdf and get the first page	
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+
+		for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
+		{
+			boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+			typedef vector<pair<string,string> > Fonts;
+			Fonts fs;
+			
+			page->getFontIdsAndNames (fs);
+
+			if (fs.empty())		
+				oss << "FONTS ARE EMPTY !!!" << flush;
+			else
+			{
+				oss << "Fonts on " << (i + 1) << "-th page: " << flush;
+				for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+					oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+			}
+			
+		}
+	}
+
+	{
+		// Open pdf and get the first page	
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+
+		for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
+		{
+			boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+			typedef vector<pair<string,string> > Fonts;
+			Fonts fs;
+			
+			const string fn ("Jozov-font");
+			page->addSystemFont (fn);
+			page->getFontIdsAndNames (fs);
+
+			CPPUNIT_ASSERT (!fs.empty());
+
+			bool found = false;
+			for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+			{
+				if (fn == (*it).second)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			CPPUNIT_ASSERT (found);
+			
+			page->getFontIdsAndNames (fs);
+			CPPUNIT_ASSERT (!fs.empty());
+			//oss << "After change: " << (i + 1) << "-th page: " << flush;
+			for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+			{
+			//	oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+			}
+			
+			{
+				page->addSystemFont (fn);
+				page->addSystemFont (fn);
+				page->addSystemFont (fn);
+
+				page->getFontIdsAndNames (fs);
+				CPPUNIT_ASSERT (!fs.empty());
+				oss << "After change: " << (i + 1) << "-th page: " << flush;
+				for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+					oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+			}
+
+		}
+
+	}
+
+	
+	return true;
+}
+
+
 //=====================================================================================
 bool creation (__attribute__((unused)) ostream& oss)
 {
@@ -209,6 +298,7 @@ bool creation (__attribute__((unused)) ostream& oss)
 class TestCPage : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCPage);
+		CPPUNIT_TEST(TestFonts);
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestCreation);
 		CPPUNIT_TEST(TestDisplay);
@@ -293,6 +383,22 @@ public:
 			
 			TEST(" find text");
 			CPPUNIT_ASSERT (findtext (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestFonts ()
+	{
+		OUTPUT << "CPage fonts..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" get font names");
+			CPPUNIT_ASSERT (getSetFonts (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
