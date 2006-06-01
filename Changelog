@@ -1,2 +1,15 @@
+2006-06-02 PDF Editor 0.1.1
+	* Added PDF operator editing and content stream manipulation
+	* Added tabbed tree view
+	* Added many function to scripting layer
+	* Fixed many other bugs and crashes
+	* Added switchable icon themes
+	* Many user interface improvements
+	* Added ability to work with multiple PDF files simultaneously in script in one window
+	* Added context menu in tree
+	* Added revision support
+	* Added script editor
+	* Added stream manipulation support
+
 2006-05-03 PDF Editor 0.1.0
 	* First version released (0.1.0)
