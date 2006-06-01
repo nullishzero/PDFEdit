@@ -5,6 +5,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/06/01 14:12:47  hockm0bm
+ * * ModeConfigurationParser
+ *         - parse method corrected: mdReadOnly was missing, handling of
+ *           baseParser.parse return value, trims modeString and output type
+ *           and name, uses tokenizer function for ruleString parsing
+ *         - loadFromFile implemented
+ *         - documentation update
+ * * ModeController
+ *         - doc update
+ *
  * Revision 1.8  2006/05/31 22:36:58  hockm0bm
  * ModeConfigurationParser
  *         - setStream method implemented
@@ -87,12 +97,17 @@ bool ModeMatcher::operator()(const ModeRule & original, const ModeRule & rule,  
 bool ModeConfigurationParser::parse(ModeRule & rule, PropertyMode & mode)
 {
 using namespace std;
+using namespace configuration::utils;
 	
 	string ruleString;
 	string modeString;
 
-	baseParser.parse(ruleString, modeString);
+	if(!baseParser.parse(ruleString, modeString))
+		return false;
 
+	// get rid of mess around mode string
+	trim(modeString);
+	
 	// sets mode - string must be same as enum name
 	if(modeString=="mdUnknown")
 		mode=mdUnknown;
@@ -103,29 +118,33 @@ using namespace std;
 			if(modeString=="mdHidden")
 				mode=mdHidden;
 			else
-				if(modeString=="mdAdvanced")
-					mode=mdAdvanced;
+				if(modeString=="mdReadOnly")
+					mode=mdReadOnly;
 				else
-					// unknown type of mode
-					return false;
+					if(modeString=="mdAdvanced")
+						mode=mdAdvanced;
+					else
+						// unknown type of mode
+						return false;
 	
-	// converts ruleString to ModeRule structure
-	// type is the first part of string until `.' character and everything
-	// behind is name - if deliminer is not found name is empty
-	size_t dotPos=ruleString.find_first_of('.');
-	if(dotPos!=string::npos)
+	// converts ruleString to ModeRule structure - uses tokenizer with `.'
+	// deliminer
+	vector<string> tokens;
+	if(tokenizer(ruleString, ".", tokens)>2)
 	{
-		// separates
-		rule.type.assign(ruleString, 0, dotPos);
-		rule.name.assign(ruleString, dotPos, ruleString.length()-dotPos);
-	}else
-	{
-		// no deliminer
-		rule.type=ruleString;
-		rule.name="";
+		// TODO warning that line is bad
+		return false;
 	}
 
-	// TODO trim strings
+	// initializes to empty state and set only if parsed
+	rule.type="";
+	rule.name="";
+	if(tokens.size()>0)
+	{
+		rule.type=trim(tokens[0]);
+		if(tokens.size()>1)
+			rule.name=trim(tokens[1]);
+	}
 
 	return true;
 }
@@ -134,12 +153,35 @@ int ModeController::loadFromFile(std::string confFile, ConfParser & parser)
 {
 using namespace std;
 
+	int added=0;
+
 	// opens input stream
 	ifstream stream(confFile.c_str());
+	if(!stream.is_open())
+		return -1;
 	
 	// uses opened input file stream
 	istream * original=parser.setStream(&stream);
 
+	// parses all rules and register them by super type interface
+	while(!parser.eod())
+	{
+		ModeRule rule;
+		PropertyMode mode;
+		if(!parser.parse(rule, mode)) 
+		{
+			if(!parser.eod())
+				// parser error, because we are not at the end of data
+				return -1;
+			
+			// no more data to read
+			continue;
+		}
+		addRule(rule, mode);
+		added++;
+	}
+
 	// returns back original stream to given parser
 	parser.setStream(original);
+	return added;
 }

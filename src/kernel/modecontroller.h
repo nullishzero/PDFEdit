@@ -5,6 +5,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/06/01 14:12:47  hockm0bm
+ * * ModeConfigurationParser
+ *         - parse method corrected: mdReadOnly was missing, handling of
+ *           baseParser.parse return value, trims modeString and output type
+ *           and name, uses tokenizer function for ruleString parsing
+ *         - loadFromFile implemented
+ *         - documentation update
+ * * ModeController
+ *         - doc update
+ *
  * Revision 1.8  2006/05/31 22:36:58  hockm0bm
  * ModeConfigurationParser
  *         - setStream method implemented
@@ -157,12 +167,19 @@ public:
  */
 typedef rulesmanager::RulesManager<ModeRule, PropertyMode> ModeRulesManager;
 
-/** Simple decorator to IConfigurationParser which is able to provide key value
- * strings.
+/** Decorator for IConfigurationParser with ModeRule and PropertyMode
+ * specialization.
  *
- * This basic implementation is initialized in constructor and all parsing work
- * from input data is delagated to it. Returned result is just converted to
- * ModeRule and PropertyMode.
+ * This class doesn't provide any stream reading. Instead it delegates all
+ * reading work to low-level baseParser (provided in constructor) which provides
+ * string representation of Rule and mode. Responisbility of this class is to
+ * parse those values to correct ModeRule and PropertyMode types.
+ * <br>
+ * ModeRule is supposed to have format:
+ * <pre>
+ * Type[.Value] : stringmode
+ * </pre>
+ * All other IConfigurationParser operations are delegated to the baseParser.
  */
 class ModeConfigurationParser: public configuration::IConfigurationParser<ModeRule, PropertyMode>
 {
@@ -217,7 +234,7 @@ public:
 	 * @param rule Reference where to put parsed rule.
 	 * @param mode Reference where to put parsed mode.
 	 *
-	 * Delegates to baseParser.parse and transforms returned strings to  rule
+	 * Delegates to baseParser.parse and transforms returned strings to rule
 	 * and mode.
 	 * <p>
 	 * Rule string has format:
@@ -230,6 +247,10 @@ public:
 	 * <br>
 	 * Name string should be same as PropertyMode names. If not recognized,
 	 * returns with an error.
+	 * <br>
+	 * Note that !parse() && eod() means no error but nothing more to parse.
+	 *
+	 * @return true if parsing was successful, false otherwise.
 	 */
 	bool parse(ModeRule & rule, PropertyMode & mode);
 };
@@ -301,19 +322,65 @@ public:
  * getDefaultMode).
  * <li>type, name are case sensitive.
  * </ul>
+ * 
+ * <p>
+ * <b>Usage</b><br>
+ * Instance with empty constructor is created with mdUnknown default mode. If
+ * you need to specify different one, use setDefaultMode method or constructor
+ * with parameter. 
+ * <br>
+ * Rules for modes can be add either manualy by addRule (inherited from 
+ * RulesManager class) method or from file using loadFromFile method.
+ * loadFromFile method requires file name and parser parameters. Second one is
+ * implementator which implements parsing functionality for given configuration
+ * file format.
+ * <pre>
+ * Example:
  *
+ * // Initializes mode controller
+ * //============================
+ * 
+ * // creates ModeController instance
+ * ModeController modeControler;
+ *
+ * // Creates low-level parser for simple configuration files (one line one
+ * // setting). This base parser is used by ConfParser which is used by
+ * // ModeController in loadFromFile 
+ * StringConfigurationParser baseParser(StringConfigurationParser(NULL));
+ * ModeController::ConfParser parser(baseParser);
+ * 
+ * // parser is ready, we can load rules 
+ * int result=modeControler.loadFromFile(fileName, parser);
+ * if(result==-1)
+ *   cerr << "File \""<<fileName<<"\" parsing failed"<<endl;
+ * else
+ *   cout << result << "new rules added"<<endl;
+ * 
+ * // use mode controller
+ * //====================
+ * PropertyMode mode=modeControler.getMode(ParentType, ChildName);
+ * 
+ * </pre>
  */
-class ModeController: protected ModeRulesManager
+class ModeController: public ModeRulesManager
 {
 	/** Default mode.
+	 *
+	 * Value is set in constructor.
 	 */
 	PropertyMode defaultMode;
 
 	/** Matcher for rules.
+	 *
+	 * This matched for supertype matcher intialization in constructor.
 	 */
 	ModeMatcher matcher;
 public:
 
+	/** Type for configuration parser for loadFromFile method.
+	 *
+	 * @see ModeConfigurationParser
+	 */
 	typedef ModeConfigurationParser ConfParser;
 	
 	/** Constructor.
@@ -348,8 +415,12 @@ public:
 	 * @param confFile Configuration file name.
 	 * @param parser Parser to be used for file parsing.
 	 *
-	 * Uses given parser to get key (ModeRule) and value (PropertyMode).
-	 * Those are registered using addRule inherited method.
+	 * Uses given parser to get key (ModeRule) and value (PropertyMode) from
+	 * given file. Given parser has to support given file format.
+	 * Parsed rules are registered using addRule inherited method.
+	 *
+	 * @return number of successfully added rules or -1 if error occured during
+	 * parsing.
 	 */
 	int loadFromFile(std::string confFile, ConfParser & parser);
 
@@ -387,6 +458,7 @@ public:
 	 * <br>
 	 * If no rule matches given pair, getDefaultMode is returned.
 	 * 
+	 * @see RulesManager::findMatching
 	 * @return Mode which is most specific for given type, name pair.
 	 */
 	virtual PropertyMode getMode (const std::string& type, const std::string& name) const
