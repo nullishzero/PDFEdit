@@ -125,12 +125,33 @@
   <sect1>
    <title>Icons</title>
    Path where to look for icons is defined in <varname>path</varname> section of configuration file.
-   Key <varname>icon</varname> specifies semiciolon separated list of path, which will be searched from first to last intil the icon is found.
-   Path elements may contain variable references in shell style (<userinput>$VARIABLE</userinput> and <userinput>${VARIABLE}</userinput>),
-   which will be expanded automatically.
+   Key <varname>icon</varname> specifies semiciolon separated list of path, which will be searched
+   from first to last intil the icon is found.
+   Path elements may contain variable references in shell style (<userinput>$VARIABLE</userinput>
+   and <userinput>${VARIABLE}</userinput>), which will be expanded automatically.
    Default icon path is <filename>$HOME/.pdfedit/icon</filename>;<filename>/usr/share/pdfedit/icon</filename>.
    Recommended way for user to install his own icons is doing it in by copying them to <filename>.pdfedit/icon</filename>
    subdirectory in his home directory.
+  </sect1>  
+  <sect1>
+   <title>Icon themes</title>
+   <para>
+    PDF Editor support icon themes.
+    Themes can be created by creating subdirectory in any directory from icon path
+    and putting some custom icons there. Theme then can be activated by modifying
+    the <varname>theme/current</varname> key in the <varname>icon</varname> section
+    in configuration - set the key to name of the directory with theme.
+    Or it can be simply specified in 'Icon theme' field in editor's configuration dialog.
+   </para>
+   <para>
+    Editor look first for icon from theme across all directories in icon path, by
+    appending a theme name to the path - so for example if theme is
+    <varname>hicolor</varname> and one icon directory is
+    <filename>$HOME/.pdfedit/icon</filename>, editor looks in
+    <filename>$HOME/.pdfedit/icon/hicolor</filename> for that directory.
+    If a themed icon is not found, editor looks for a default icon in the icon directory
+    itself (which also correspond to a <varname>default</varname> theme).
+   </para>
   </sect1>  
  </chapter>
 </book>
