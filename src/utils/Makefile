@@ -5,11 +5,13 @@
 
 # Source files for library
 SOURCES=debug.cc \
-     	delinearizator.cc
+     	delinearizator.cc \
+	confparser.cc
 
 # Binary files to be included to the library
 BINS=debug.o \
-     delinearizator.o
+     delinearizator.o \
+     confparser.o
 
 AR=ar cqs
 DEL_FILE=rm

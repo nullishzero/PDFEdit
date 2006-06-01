@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/06/01 08:49:12  hockm0bm
+ * * confparser.cc module added
+ * * tokenizer function added
+ *
  * Revision 1.2  2006/05/31 22:35:03  hockm0bm
  * * IConfigurationParser
  *         - stream is stored in the the class
@@ -21,9 +25,23 @@
 #define _CONFPARSER_H_
 
 #include<iostream>
+#include<string>
+#include<vector>
 
 namespace configuration
 {
+
+/** Parses given text to tokens.
+ * @param text String to parse.
+ * @param deliminer Set of deliminers.
+ * @param tokens Output array of tokens.
+ *
+ * One token is considered to be everything between two deliminers (or text
+ * start, end respectively). Deliminers are not included.
+ *
+ * @return number of output tokens.
+ */
+size_t tokenizer(std::string text, std::string deliminers, std::vector<std::string> & tokens);
 
 /** Interface for configuration parsers.
  * Defines methods needed for parsing configuration file. Template paramters
@@ -254,7 +272,7 @@ public:
 			
 			// skips comments
 			if(char * commentStart=strpbrk(bufferStart, commentsSet.c_str()))
-				*bufferStart='\0';
+				*commentStart='\0';
 
 			// skips trailing blanks
 			for(char * end=bufferStart+strlen(bufferStart)-1; end>=bufferStart; end--)
