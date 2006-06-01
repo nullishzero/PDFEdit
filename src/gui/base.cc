@@ -28,6 +28,7 @@
 #include "version.h"
 #include <factories.h> 
 #include <qfile.h>
+#include <qsplitter.h>
 #include <qmessagebox.h>
 #include <qsinterpreter.h>
 #include <qsutilfactory.h> 
@@ -111,7 +112,12 @@ void Base::treeNeedReload() {
 */
 void Base::call(const QString &name) {
  guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
- addDocumentObjects();
+ //Chekc if this call handler is called from a script
+ bool running=qs->isRunning();
+ if (!running) {
+  //Do not tamper with the variables while the script is running
+  addDocumentObjects();
+ }
  try {
   //Call the function. Do not care about result
   qs->evaluate(name+"();",this,"<GUI>");
@@ -128,8 +134,12 @@ void Base::call(const QString &name) {
    w->cmdLine->addError(tr("Exception in callback handler: ")+name);
   }
  }
- removeDocumentObjects();
- scriptCleanup();
+ if (!running) {
+  //Do not tamper with the variables while the script is running
+  //It may be undesirable to remove the objects while in script
+  removeDocumentObjects();
+  scriptCleanup();
+ }
 }
 
 /** Cleanup run after the script is finished */
@@ -140,6 +150,22 @@ void Base::scriptCleanup() {
   treeReloadFlag=false;
  }
 }
+
+/**
+ For given name return widget represented by that name
+ @param widgetName Widget name
+ @return Pointer to widget, or NULL if no widget matches the name
+*/
+QWidget* Base::getWidgetByName(const QString &widgetName) {
+ QString widget=widgetName.lower();
+ if (widget=="commandline") return w->cmdLine;
+ if (widget=="propertyeditor") return w->prop;
+ if (widget=="rightside") return w->splProp;
+ if (widget=="tree") return w->tree;
+ //Widget not found ...
+ return NULL;
+}
+
 
 /** Run initscripts. Gets name of initscripts from settings */
 void Base::runInitScript() {
@@ -533,6 +559,18 @@ void Base::help(const QString &topic/*=QString::null*/) {
 }
 
 /**
+ Check if a widget is visible
+ \see getWidgetByName
+ @param widgetName name of widget
+ @return True if widget is visible, false if not
+*/
+bool Base::isVisible(const QString &widgetName) {
+ QWidget *w=getWidgetByName(widgetName);
+ if (!w) return false;
+ return w->isVisible();
+}
+
+/**
  Load some PDF file without replacing currently opened file in GUI
  script should also take care to close the file after he does not need to use it anymore
  @param name Name of file to load
@@ -715,6 +753,19 @@ bool Base::saveCopy(const QString &name) {
 void Base::saveWindowState() {
  w->saveWindowState();
 }
+
+/**
+ Set widget to be either visible or invisible
+ \see getWidgetByName
+ @param widgetName name of widget
+ @param visible action to be performed (true = show, false = hide)
+*/
+void Base::setVisible(const QString &widgetName, bool visible) {
+ QWidget *w=getWidgetByName(widgetName);
+ if (!w) return;
+ if (visible) w->show(); else w-> hide();
+}
+
 
 /**
  Invoked when dragging one item to another within the same tree window

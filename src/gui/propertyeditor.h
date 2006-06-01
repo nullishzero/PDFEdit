@@ -17,6 +17,7 @@ class QStringList;
 namespace gui {
 
 class Property;
+class PropertyModeController;
 
 using namespace pdfobjects;
 
@@ -62,6 +63,8 @@ private:
  QMap<QString,boost::shared_ptr<IProperty> > *props;
  /** Dictionary with property labels */
  QDict<QLabel> *labels;
+ /** PropertyModeController - modecontroller wrapper instance */
+ PropertyModeController *mode;
 };
 
 } // namespace gui

@@ -18,6 +18,7 @@
 #include <qlabel.h>
 #include "pdfutil.h"
 #include "main.h"
+#include "propertymodecontroller.h"
 
 namespace gui {
 
@@ -30,6 +31,8 @@ using namespace util;
  @param name name of widget (currently unused)
  */
 PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
+ //Mode Controller
+ mode=PropertyModeController::getInstance();
  //create list of properties in this editor;
  list=new QStringList();
  //create property dictionary

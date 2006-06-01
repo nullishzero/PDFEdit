@@ -70,32 +70,38 @@ HEADERS += helpwindow.h
 SOURCES += helpwindow.cc
 
 #Tree window
-HEADERS += treeitemabstract.h  treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h
-SOURCES += treeitemabstract.cc treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
-HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treewindow.h  treedata.h  treeitemcontentstream.h
-SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treewindow.cc treedata.cc treeitemcontentstream.cc
-HEADERS += treeitempdfoperator.h  draglistview.h  multitreewindow.h  treeitemobserver.h 
-SOURCES += treeitempdfoperator.cc draglistview.cc multitreewindow.cc treeitemobserver.cc
-HEADERS += treeitemoperatorcontainer.h  treeitemcontentstreamobserver.h
-SOURCES += treeitemoperatorcontainer.cc treeitemcontentstreamobserver.cc
+HEADERS += treeitemabstract.h  treewindow.h  treedata.h  draglistview.h  multitreewindow.h
+SOURCES += treeitemabstract.cc treewindow.cc treedata.cc draglistview.cc multitreewindow.cc
+#Tree item observers
+HEADERS += treeitemcontentstreamobserver.h  treeitemobserver.h
+SOURCES += treeitemcontentstreamobserver.cc treeitemobserver.cc
+#Tree item types
+HEADERS += treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h
+SOURCES += treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
+HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treeitemcontentstream.h
+SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treeitemcontentstream.cc
+HEADERS += treeitempdfoperator.h  treeitemoperatorcontainer.h
+SOURCES += treeitempdfoperator.cc treeitemoperatorcontainer.cc
 
 #Property editor
-HEADERS += property.h  stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h
-SOURCES += property.cc stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc
-HEADERS += refvalidator.h  refproperty.h  propertyeditor.h  propertyfactory.h
-SOURCES += refvalidator.cc refproperty.cc propertyeditor.cc propertyfactory.cc
+HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h  property.h  propertymodecontroller.h
+SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc property.cc propertymodecontroller.cc
+#Property types
+HEADERS += stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h
+SOURCES += stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc
+HEADERS += refproperty.h
+SOURCES += refproperty.cc
 
 #QSA Wrapper classes
-HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h  qsgraphics.h
-SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc qsgraphics.cc
-HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfoperator.h  qspdfoperatoriterator.h
-SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc qspdfoperatoriterator.cc
-HEADERS += qsipropertyarray.h  qspdfoperatorstack.h  qstreeitemcontentstream.h
-SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc
+HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h
+SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc
+HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfoperator.h
+SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc
+HEADERS += qsipropertyarray.h  qspdfoperatorstack.h  qstreeitemcontentstream.h  qsgraphics.h
+SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc qsgraphics.cc
+HEADERS += qspdfoperatoriterator.h
+SOURCES += qspdfoperatoriterator.cc
 
-#Other source files
-HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h  selfdestructivewidget.h  base.h  rect2Darray.h
-SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc selfdestructivewidget.cc base.cc rect2Darray.cc
 
 #Exceptions
 HEADERS += invalidmenuexception.h  nullpointerexception.h
@@ -109,9 +115,16 @@ SOURCES += revisiontool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc
 HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h
 SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc
 
+#Other source files
+HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 
+SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
+HEADERS += selfdestructivewidget.h  base.h  rect2Darray.h
+SOURCES += selfdestructivewidget.cc base.cc rect2Darray.cc
 
-#Dummy header file for menu translation
-HEADERS += .menu-trans.h 
+#Dummy header file for menu translation, needed by lupdate
+exists( .menu-trans.h  ) {
+ HEADERS += .menu-trans.h 
+}
 
 #Kernel objects - now using library
 LIBS += -lkernel -L../kernel

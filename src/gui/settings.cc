@@ -35,11 +35,12 @@ const QString APP_PATH_VAR = "PDFEDIT_BIN";
  Should be thread-safe. This instance is used from other files */
 Settings *globalSettings=NULL;
 
- /** return Instance of Settings.
-  Ensures only one instance of Settings exists at any time (singleton)
-  If no instance exists, it is created.
-  @return existing Settings object
- */
+/**
+ Return Instance of Settings.
+ Ensures only one instance of Settings exists at any time (singleton)
+ If no instance exists, it is created.
+ @return existing Settings object
+*/
 Settings* Settings::getInstance() {
 //  static Settings* globalSettings=NULL;
  if (!globalSettings) globalSettings=new Settings();

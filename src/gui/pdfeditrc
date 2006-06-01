@@ -26,7 +26,8 @@ items/rot90=		item Rotate page 90 degrees,rotatePage(90),,page_rotate_90.png
 items/help=	list &Help,help_about,help_index
 items/help_about=	item &About,about(),,about.png
 items/help_index=	item &Help,help(),F1,help.png
-items/MainToolbar=list Main Toolbar,fnew,fload,fsave,opts,closew
+items/MainToolbar=list Main Toolbar,fnew,fload,fsave,opts,closew,hideCmd
+items/hideCmd=		item Show/Hide commandline,showHide('commandline'),F8,hide_cmdline.png
 items/PageToolbar=list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,-,zoom_out,_zoom_tool,zoom_in
 items/firstpage=	item First Page,PageSpace.firstPage(),Ctrl+Home,first.png
 items/prevpage=		item Prev Page,PageSpace.prevPage(),Ctrl+PgUp,prev.png
@@ -37,13 +38,13 @@ items/zoom_out=		item Zoom out,PageSpace.zoomOut(),,zoom_out.png
 items/RevisionToolbar=list Revision Toolbar,revlabel,_revision_tool
 items/revlabel=		label Revisions
 items/ObjectToolbar=list Object Toolbar,treeAdditem,treeDelitem
-items/OperatorToolbar=list Operator Toolbar,streamAll,streamText,streamFont,-,operatorSetColor
 items/treeAdditem=	item Add object,add_obj_dlg(),Ins,item_add.png
 items/treeDelitem=	item Delete object,treeitem.remove(),Del,item_delete.png
+items/OperatorToolbar=list Operator Toolbar,streamAll,streamText,streamFont,-,operatorSetColor
 items/streamAll=	item Show all operators in stream,streamMode('all'),,stream_mode_all.png
 items/streamText=	item Show only text operators in stream,streamMode('text'),,stream_mode_text.png
 items/streamFont=	item Show only font operators in stream,streamMode('font'),,stream_mode_font.png
-items/operatorSetColor=item Change color of operator,setColor(),,operator_setcolor.png
+items/operatorSetColor=	item Change color of operator,setColor(),,operator_setcolor.png
 items/popup_generic=list Popup menu,tree_string,tree_type,tree_childs
 items/tree_string=	item Show String representation,print(treeitem.item().getText())
 items/tree_type=	item Show Item type,print(treeitem.itemtype())
@@ -74,3 +75,6 @@ help=/usr/share/pdfedit/help/$LANG;$PDFEDIT_BIN/help/$LANG;/usr/share/pdfedit/he
 
 [script]
 init=/usr/share/pdfedit/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs
+
+[modecontroller]
+config=$HOME/.pdfedit/mode.conf;/usr/share/pdfedit/mode.conf;$PDFEDIT_BIN/mode.conf

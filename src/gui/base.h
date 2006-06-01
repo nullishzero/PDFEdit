@@ -129,6 +129,19 @@ public slots: //This will be all exported to scripting
  */
  void functions();
  /*-
+  Check if part of the window is visible (returns true) or hidden (returns false)
+  widgetName specifies which part:
+  <informaltable frame="none">
+   <tgroup cols="2"><tbody>
+    <row><entry>commandline	</entry><entry>Command line</entry></row>
+    <row><entry>rightside	</entry><entry>Right side tools (Tree Window and property editor)</entry></row>
+    <row><entry>propertyeditor	</entry><entry>Property editor</entry></row>
+    <row><entry>tree		</entry><entry>Tree window</entry></row>
+   </tbody></tgroup>
+  </informaltable>
+ */
+ bool isVisible(const QString &widgetName);
+ /*-
   Load a PDF file without replacing currently opened file in GUI.
   Script can manipulate the PDF file as necessary, but should close it with unloadPdf() method
   after it does not need to use it anymore.
@@ -226,6 +239,12 @@ public slots: //This will be all exported to scripting
  /*- Change active revision in current PDF document */
  void setRevision(int revision);
  /*-
+  Set part of the window to be either visible or invisible,
+  widgetName specifies which part, see isVisible for list
+  of possible names.
+ */
+ void setVisible(const QString &widgetName, bool visible);
+ /*-
   Translate given text to current locale. Optional parameter context can specify context
   of localized text. Return translated text
  */
@@ -248,6 +267,7 @@ public slots: //This will be all exported to scripting
  void _dragDrop(TreeItemAbstract *source,TreeItemAbstract *target);
  void _dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target);
 private:
+ QWidget* getWidgetByName(const QString &widgetName);
  void deleteVariable(const QString &varName);
  void addDocumentObjects();
  void removeDocumentObjects();

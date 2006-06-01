@@ -24,7 +24,7 @@ Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFla
  changed=false;
  //Default flags
  hidden=readonly=false; 
- if (flags==mdReadOnly) readonly=true;
+ if (flags==mdReadOnly || flags==mdAdvanced) readonly=true;
 }
 
 /** return name of this property

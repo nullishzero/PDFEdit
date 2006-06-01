@@ -126,6 +126,12 @@ function func_saverev() {
  }
 }
 
+/** Show/hide certain window (toggle) */
+function showHide(win) {
+ vis=isVisible(win);
+ setVisible(win,!vis);
+}
+
 /** Perform "set color" operation on currently selected operator */
 function setColor() {
  op=treeitem.item();
