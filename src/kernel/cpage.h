@@ -181,10 +181,7 @@ struct InheritedPageAttr
  *
  * @throw NotImplementedException at this moment.
  */
-void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
-{
-	throw NotImplementedException("fillInheritedPageAttr");
-}
+void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs);
 
 
 //=====================================================================================

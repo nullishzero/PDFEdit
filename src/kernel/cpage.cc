@@ -80,6 +80,50 @@ TextSearchParams::TextSearchParams () :
 	xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
 {}
 
+void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
+{
+using namespace std;
+	
+	// resource field
+	shared_ptr<CDict> resources=attrs.resources;
+	if(!resources.get())
+	{
+		// resources field is not specified yet, so tries this dictionary
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
+			if(isRef(prop))
+				resources=getDictFromRef(prop);
+			else
+				if(isDict(prop))
+					resources=IProperty::getSmartCObjectPtr<CDict>(prop);
+		}catch(CObjectException & e)
+		{
+			// not found
+		}
+	}
+
+	// mediabox field
+	shared_ptr<CArray> mediaBox=attrs.mediaBox;
+	if(!mediaBox.get())
+	{
+		// mediaBox field is not specified yet, so tries this array
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
+			if(isRef(prop))
+			{
+			}else
+				if(isArray(prop))
+					prop=IProperty::getSmartCObjectPtr<CArray>(prop);
+		}catch(CObjectException & e)
+		{
+			// not found or bad type
+		}
+	}
+
+
+}
 
 
 //=====================================================================================
