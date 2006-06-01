@@ -22,7 +22,7 @@
   <para>
    When new editor window is launched (but before the document is loaded or created),
    file <filename>init.qs</filename> from application directory is run, then
-   file <filename>init.qs</filename> from users's application configuration
+   file <filename>userinit.qs</filename> from users's application configuration
    directory (which is $HOME/.pdfedit) is run, if it exists
    <footnote>
     <para>
@@ -90,6 +90,12 @@
    <title>onLoadUser()</title>
    <para>
     This function is called after document is opened (after <link linkend="onLoad">onLoad()</link> is called)
+   </para>
+  </sect1>
+  <sect1 id="onLoadError">
+   <title>onLoadError()</title>
+   <para>
+    This function is called after an error occured while trying to load a document
    </para>
   </sect1>
   <sect1 id="onPageRightClick">
