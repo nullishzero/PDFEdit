@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/06/01 14:46:24  hockm0bm
+ * doc update - doxygen warnings removed (if possible)
+ *
  * Revision 1.24  2006/05/13 21:41:02  hockm0bm
  * * log messages update
  * * cleanUp reimplemented
@@ -306,8 +309,9 @@ protected:
 	 * <li>objStream - NULL
 	 * <li>objNull - no special value is used, Object is just pdf NULL 
 	 *	object
-	 * <ul>Following values are not supported (it doesn't make sense to
+	 * <li>Following values are not supported (it doesn't make sense to
 	 *	do so - because they can't be value of indirect object)
+	 * <ul>
 	 *	<li>objRef
 	 *	<li>objError
 	 *	<li>objEOF

@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/06/01 14:46:24  hockm0bm
+ * doc update - doxygen warnings removed (if possible)
+ *
  * Revision 1.5  2006/06/01 14:05:05  hockm0bm
  * * trim method added
  * * tokenizer method signature changed
@@ -49,7 +52,7 @@ namespace utils
 	
 /** Parses given text to tokens.
  * @param text String to parse.
- * @param deliminer Set of deliminers.
+ * @param deliminers Set of deliminers.
  * @param tokens Output array of tokens.
  *
  * One token is considered to be everything between two deliminers (or text
@@ -62,6 +65,7 @@ size_t tokenizer(const std::string & text, const std::string & deliminers, std::
 
 /** Trims given string.
  * @param str String to trim.
+ * @param blankSet Set of blank characters (default value " \t\n").
  *
  * Removes leading and trailing characters which are in blankSet.
  *

@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/06/01 14:46:24  hockm0bm
+ * doc update - doxygen warnings removed (if possible)
+ *
  * Revision 1.24  2006/05/17 19:40:07  hockm0bm
  * * getRevisionEnd
  *         - signature changed - uses position where to start searching
@@ -409,7 +412,7 @@ public:
 	}
 
 	/** Sets mode.
-	 * @param mode Mode to set.
+	 * @param _mode Mode to set.
 	 *
 	 */
 	void setMode(writerMode _mode)
@@ -439,7 +442,7 @@ public:
 
 	/** Changes trailer entry.
 	 * @param name Name of the entry.
-	 * @param obj New value.
+	 * @param value New value.
 	 *
 	 * If revision is 0 (most recent), delegates to the 
 	 * CXref::changeTrailer method. Otherwise deny to make chage, because

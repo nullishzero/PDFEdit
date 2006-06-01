@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/06/01 14:46:24  hockm0bm
+ * doc update - doxygen warnings removed (if possible)
+ *
  * Revision 1.9  2006/06/01 14:12:47  hockm0bm
  * * ModeConfigurationParser
  *         - parse method corrected: mdReadOnly was missing, handling of
@@ -290,6 +293,7 @@ public:
  * Page : mdAdvanced
  *
  * All fields from Page complex value is mdAdvanced
+ * </pre>
  *
  * <li>unspecified type and specified name stands for all fields with given name
  * with no respect to complex type. It has higher priority than pure type 

@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.53  2006/06/01 14:46:24  hockm0bm
+ * doc update - doxygen warnings removed (if possible)
+ *
  * Revision 1.52  2006/06/01 14:39:49  hockm0bm
  * Outline methods removed
  *
@@ -1378,7 +1381,7 @@ namespace utils
 {
 	
 /** Helper method to find page at certain position.
- * @param CPdf Pdf instance where to search.
+ * @param pdf Pdf instance where to search.
  * @param pagesDict Reference to or Page or Pages dictionary representing 
  * page node (see Pdf standard notes).
  * @param startPos Starting position for searching (see note below).
