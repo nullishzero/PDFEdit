@@ -2,6 +2,9 @@
 //This script will be run at start, or on creation of new window
 //Each window have its own scripting context
 
+/* ==== load utilities ==== */
+run( "pdfoperator_utilities.qs" );
+
 /* ==== Callback functions ==== */
 
 /** Callback called after document is loaded */
