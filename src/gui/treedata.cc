@@ -26,7 +26,7 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow
  _base=base;
  _multi=multi;
  //ShowData
- show_stream=show_outline=show_page=show_odict=show_dict=show_simple=false;
+ show_annot=show_graphic=show_stream=show_outline=show_page=show_odict=show_dict=show_simple=false;
  update();
  dirty=false;
  needreload=false;
@@ -53,6 +53,8 @@ void TreeData::update() {
  checkSetting(show_outline,"tree/show_outline");//Show Outlines
  checkSetting(show_page,"tree/show_page");	//Show Pages
  checkSetting(show_stream,"tree/show_stream");	//Show Streams
+ checkSetting(show_annot,"tree/show_annot");	//Show Annotations
+ checkSetting(show_graphic,"tree/show_graphic");	//Show Graphic objects
 }
 
 /** Return value of show_simple setting
@@ -90,9 +92,26 @@ bool TreeData::showPage() {
  return show_page;
 }
 
-/** Return value of show_stream setting
+/**
+ Return value of show_annot setting
+ @return True if show_annot is set, false if not
+*/
+bool TreeData::showAnnot() {
+ return show_annot;
+}
+
+/**
+ Return value of show_graphic setting
+ @return True if show_graphic is set, false if not
+*/
+bool TreeData::showGraphic() {
+ return show_graphic;
+}
+
+/**
+ Return value of show_stream setting
  @return True if show_stream is set, false if not
- */
+*/
 bool TreeData::showStream() {
  return show_stream;
 }

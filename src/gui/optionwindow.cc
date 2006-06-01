@@ -293,7 +293,6 @@ void OptionWindow::init() {
  addText      (tree_tab,tr("These objects will be shown in the object tree"));
  addOptionBool(tree_tab,tr("Document dictionary"),"tree/show_dict",true);
  addOptionBool(tree_tab,tr("Object dictionaries"),"tree/show_objdict",true);
- addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline",true);
  addOptionBool(tree_tab,tr("Graphic objects"),"tree/show_graphic",true);
  addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot",true);
  addOptionBool(tree_tab,tr("Pages"),"tree/show_page",true);

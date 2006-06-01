@@ -15,6 +15,7 @@ class BaseData;
 class PdfEditWindow;
 class QSArray;
 class QSCObject;
+class QSTreeItem;
 class QSDict;
 class QSIProperty;
 class QSIPropertyArray;
@@ -249,6 +250,10 @@ public slots: //This will be all exported to scripting
   of localized text. Return translated text
  */
  QString tr(const QString &text,const QString &context=QString::null);
+ /*- Return root item of currently selected tree */
+ QSTreeItem* treeRoot();
+ /*- Return root item of main tree */
+ QSTreeItem* treeRootMain();
  /*-
   Debugging function usable by script developers.
   Print all variables that are in current script interpreter to command window

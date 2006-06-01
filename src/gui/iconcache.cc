@@ -6,6 +6,7 @@
 #include "iconcache.h"
 #include "settings.h"
 #include "util.h"
+#include <assert.h>
 #include <qfile.h>
 #include <qiconset.h> 
 #include <qmap.h>

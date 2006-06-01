@@ -4,8 +4,8 @@
  @author Martin Petricek
 */
 
-#include "aboutwindow.h"
 #include "base.h"
+#include "aboutwindow.h"
 #include "commandwindow.h"
 #include "dialog.h"
 #include "helpwindow.h"
@@ -22,15 +22,16 @@
 #include "qsmenu.h"
 #include "qspdf.h"
 #include "qspdfoperator.h"
+#include "qstreeitem.h"
 #include "settings.h"
 #include "treeitemabstract.h"
 #include "util.h"
 #include "version.h"
 #include <factories.h> 
 #include <qfile.h>
-#include <qsplitter.h>
 #include <qmessagebox.h>
 #include <qsinterpreter.h>
+#include <qsplitter.h>
 #include <qsutilfactory.h> 
 #include <utils/debug.h>
 
@@ -105,7 +106,6 @@ void Base::treeNeedReload() {
  treeReloadFlag=true;
 }
 
-
 /** 
  Call a callback function (no arguments, no return value) in a script
  @param name Function name
@@ -165,7 +165,6 @@ QWidget* Base::getWidgetByName(const QString &widgetName) {
  //Widget not found ...
  return NULL;
 }
-
 
 /** Run initscripts. Gets name of initscripts from settings */
 void Base::runInitScript() {
@@ -823,7 +822,8 @@ void Base::setRevision(int revision) {
  w->changeRevision(revision);
 }
 
-/** call QObject::tr to translate specific string
+/**
+ call QObject::tr to translate specific string
  @param text text to translate to current locale
  @param context Optional context identifier for localized text
  @return translated text
@@ -833,6 +833,21 @@ QString Base::tr(const QString &text,const QString &context/*=QString::null*/) {
  return QObject::tr(text,context);
 }
 
+/**
+ Return root item of currently selected tree
+ @param Current tree root item
+*/
+QSTreeItem* Base::treeRoot() {
+ return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->root()));
+}
+
+/**
+ Return root item of main tree
+ @param Main tree root item
+*/
+QSTreeItem* Base::treeRootMain() {
+ return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->rootMain()));
+}
 
 /** Print all variables that are in current script interpreter to console window*/
 void Base::variables() {

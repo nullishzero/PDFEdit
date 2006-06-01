@@ -33,6 +33,8 @@ public:
  bool showDict();
  bool showODict();
  bool showOutline();
+ bool showAnnot();
+ bool showGraphic();
  bool showPage();
  bool showSimple();
  bool showStream();
@@ -56,6 +58,10 @@ private:
  bool show_simple;
  /** Show document dictionary? */
  bool show_dict;
+ /** Show graphic objects? */
+ bool show_graphic;
+ /** Show annotations? */
+ bool show_annot;
  /** Show dictionary of separate CObjects? */
  bool show_odict;
  /** Show Outlines under PDF document? */

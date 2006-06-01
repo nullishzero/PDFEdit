@@ -47,7 +47,7 @@ PropertyModeController::PropertyModeController(){
  //Register to be destroyed at exit
  atexit(removePropertyModeController);
  QString confFile=globalSettings->read("modecontroller/config");
-
+//TODO
 };
 
 /**

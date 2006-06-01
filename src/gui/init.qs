@@ -301,21 +301,10 @@ function rotatePage(n) {
  go();
 }
 
-/** Return root item from current tree.*/
-function treeroot() {
-// TODO: add as Base::treeroot() directly, as items from other tree might still be selected, so this does not work always
- x=treeitem;
- while(y=x.parent()) {
-  x=y;
- }
- return x;
-}
-
 /** Set stream to certain mode */
 function streamMode(newMode) {
  x=treeroot();
  if (x.itemtype()!="ContentStream") return;
- //TODO: icons for this
  treeroot().setMode(newMode);
 }
 

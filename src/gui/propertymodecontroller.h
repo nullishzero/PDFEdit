@@ -1,5 +1,5 @@
-#ifndef __PropertyModeController_H__
-#define __PropertyModeController_H__
+#ifndef __PROPERTYMODECONTROLLER_H__
+#define __PROPERTYMODECONTROLLER_H__
 
 namespace gui {
 
