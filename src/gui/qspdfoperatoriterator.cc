@@ -112,10 +112,10 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::copy() {
  Move iterator to next operator
  @return Operator at new position, or NULL if the new position is already invalid
 */
-QSPdfOperator* QSPdfOperatorIterator::next() {
+QSPdfOperatorIterator* QSPdfOperatorIterator::next() {
  try {
   obj->next();
-  return new QSPdfOperator(obj->getCurrent(),base);
+  return new QSPdfOperatorIterator(obj,csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
   return NULL; ///a.k.a. false ... 
@@ -127,10 +127,10 @@ QSPdfOperator* QSPdfOperatorIterator::next() {
  Move iterator to previous operator
  @return Operator at new position, or NULL if the new position is already invalid
 */
-QSPdfOperator* QSPdfOperatorIterator::prev() {
+QSPdfOperatorIterator* QSPdfOperatorIterator::prev() {
  try {
   obj->prev();
-  return new QSPdfOperator(obj->getCurrent(),base);
+  return new QSPdfOperatorIterator(obj,csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
   return NULL; ///a.k.a. false ... 
