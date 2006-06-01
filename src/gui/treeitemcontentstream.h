@@ -16,7 +16,7 @@ class TreeData;
 class TreeItemContentStreamObserver;
 
 /** What should be shown as children under this tree item */
-typedef enum { All, Text } TreeItemContentStreamMode;
+typedef enum { All, Text, Font } TreeItemContentStreamMode;
 
 class TreeItemContentStream : public TreeItemAbstract {
 public:

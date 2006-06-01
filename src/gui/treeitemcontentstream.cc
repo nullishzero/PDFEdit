@@ -71,6 +71,7 @@ void TreeItemContentStream::showMode() {
  setText(2,"");
  if (mode==All) setText(2,QObject::tr("Showing all","mode"));
  else if (mode==Text) setText(2,QObject::tr("Showing text. op.","mode"));
+ else if (mode==Font) setText(2,QObject::tr("Showing font. op.","mode"));
  else {
   assert(0);
   setText(2,"?");
@@ -92,6 +93,7 @@ void TreeItemContentStream::setMode(const QString &newMode) {
  QString lMode=newMode.lower();
  if (lMode=="all") setMode(All);
  else if (lMode=="text") setMode(Text);
+ else if (lMode=="font") setMode(Font);
 }
 
 /** default destructor */
@@ -145,6 +147,19 @@ void TreeItemContentStream::reloadSelf() {
    op.push_back(it.getCurrent());
    it.next();
   } 
+ 
+ } else if (Font==mode){
+  // "Show only font operators" mode
+  obj->getPdfOperators(op);
+  if (!op.size()) return;//Nothing in here. So no text either
+  FontOperatorIterator it(op[0]);
+  //We have the iterator, now clear the vector and populate it with ... something else
+  op.clear();
+  while (!it.isEnd()) {
+   op.push_back(it.getCurrent());
+   it.next();
+  } 
+ 
  } else {
   // "Show everything we got" mode
   obj->getPdfOperators(op);

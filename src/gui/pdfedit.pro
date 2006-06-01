@@ -2,12 +2,16 @@
 TEMPLATE = app
 TARGET = pdfedit
 
+# turns off optimalizations
+CONFIG += debug
+
 # installation paths
 USR_PREFIX= /usr/local
 DATA_PATH = $$USR_PREFIX/share/pdfedit
 DOC_PATH  = $$USR_PREFIX/share/doc/pdfedit
 MAN_PATH  = $$USR_PREFIX/share/man/man1
 BIN_PATH  = $$USR_PREFIX/bin
+
 
 # installation details
 data.path       = $$DATA_PATH
@@ -47,6 +51,8 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-
 
 #must be specified, otherwise namespace debug will clash with debug() in QT
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
+
+QMAKE_CXXFLAGS_DEBUG += -O0 
 
 #debug information
 QMAKE_CXXFLAGS += -g
