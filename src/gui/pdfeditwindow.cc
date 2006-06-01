@@ -195,6 +195,9 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  QObject::connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
  this->setCentralWidget(spl);
 
+ //load and apply "uses big icon" settings
+ bigPixmap();
+
  //Menu
  try {
   QMenuBar *qb=menuSystem->loadMenu(this);
@@ -229,6 +232,11 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  } else { //open file
   openFile(fName);
  }
+}
+
+/** Load and apply current value of "Use big pixmap" setting */
+void PdfEditWindow::bigPixmap() {
+ setUsesBigPixmaps(globalSettings->readBool("icon/theme/big"));
 }
 
 /** Called upon selecting some item in treeview */
@@ -321,7 +329,8 @@ void PdfEditWindow::settingUpdate(QString key) {
    else    tb->hide();
   return;
  }
- if (key=="history/save_filePath") { //Do not remember path -> remove stored path(s)
+ if (key=="history/save_filePath") {
+  //Do not remember path -> remove stored path(s)
   if (!globalSettings->readBool("history/save_filePath")) {
    globalSettings->removeAll("history/path");
   }
@@ -330,6 +339,10 @@ void PdfEditWindow::settingUpdate(QString key) {
  if (key.startsWith("gui/CommandLine/")) {
   cmdLine->reloadSettings();
   return;
+ }
+ if (key=="icon/theme/big") {
+  //Size of icons changed
+  bigPixmap();
  }
 }
 

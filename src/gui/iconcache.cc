@@ -22,6 +22,10 @@ using namespace std;
 */
 IconCache::IconCache() {
  iconPath=globalSettings->readPath("icon");
+ //Read icon style
+ iconStyleName=globalSettings->read("icon/theme/current");
+ if (iconStyleName=="default") iconStyleName=QString::null;
+ if (iconStyleName=="") iconStyleName=QString::null;
 }
 
 /**
@@ -35,7 +39,17 @@ QString IconCache::getIconFile(const QString &name) {
   return name;
  }
  QString absName;
+ if (!iconStyleName.isNull()) {
+  //Check icons from style first
+  for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
+   //Check each path in icon path
+   absName=*it+"/"+iconStyleName+"/"+name;
+   if (QFile::exists(absName)) return absName;
+  }
+ }
+ //Icon from style not found (or no icon style used) - check default icons
  for(QStringList::Iterator it=iconPath.begin();it!=iconPath.end();++it) {
+  //Check each path in icon path
   absName=*it+"/"+name;
   if (QFile::exists(absName)) return absName;
  }

@@ -333,7 +333,10 @@ void OptionWindow::init() {
  addOptionFont (laf_tab,tr("Console font"),"gui/font_con",QApplication::font().toString());
  addText       (laf_tab,tr("You can specify overall visual style"));
  addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
- addText       (laf_tab,tr("<b>Note</b>: changing style will take effect on next program start"));//TODO: apply style now
+ addOption     (laf_tab,tr("Icon theme"),"icon/theme/current");
+//TODO: scan icon directories and pick the theme from a combobox
+ addText       (laf_tab,tr("<b>Note</b>: changing style or icon theme will take effect on next program start"));//TODO: apply style & icon theme now
+ addOptionBool (laf_tab,tr("Use big icons"),"icon/theme/big");
  finishTab     (laf_tab);
 
  setUpdatesEnabled( TRUE );

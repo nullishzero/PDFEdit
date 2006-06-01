@@ -52,6 +52,7 @@ public:
  void exitApp();
  void closeWindow();
  int pageNumber();
+ void bigPixmap();
  PageSpace* getPageSpace() const;
 public slots:
  void changeRevision(int revision);

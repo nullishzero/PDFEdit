@@ -50,10 +50,7 @@ windowstate/spl_main=517,269
 windowstate/spl_right=367,174
 
 [icon]
-FirstPage=first.png
-LastPage=last.png
-NextPage=next.png
-PrevPage=prev.png
+theme/current=default
 app=pdfedit_icon_32.png
 
 [tree]

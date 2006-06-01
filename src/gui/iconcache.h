@@ -23,8 +23,11 @@ public:
  QIconSet* getIconSet(const QString &name);
 private:
  QString getIconFile(const QString &name);
+private:
  /** List with paths to application icons */
  QStringList iconPath;
+ /** Name of current icon style */
+ QString iconStyleName;
  /** Cache storing loaded icons */
  IconCacheData iconCache;
  /** Cache storing created icons sets*/
