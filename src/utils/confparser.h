@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/06/01 14:05:05  hockm0bm
+ * * trim method added
+ * * tokenizer method signature changed
+ *         - text and deliminers parameters are const & now
+ *
  * Revision 1.4  2006/06/01 09:12:30  hockm0bm
  * tokenizer function
  *         - moved to configuration::utils namespace
@@ -38,6 +43,7 @@
 namespace configuration
 {
 
+// defines helper functions for parsing
 namespace utils
 {
 	
@@ -52,7 +58,16 @@ namespace utils
  *
  * @return number of output tokens.
  */
-size_t tokenizer(std::string text, std::string deliminers, std::vector<std::string> & tokens);
+size_t tokenizer(const std::string & text, const std::string & deliminers, std::vector<std::string> & tokens);
+
+/** Trims given string.
+ * @param str String to trim.
+ *
+ * Removes leading and trailing characters which are in blankSet.
+ *
+ * @return reference to trimed str.
+ */
+std::string & trim(std::string & str, const std::string & blankSet=" \t\n");
 
 } // namespace configuration::utils
 
@@ -255,21 +270,23 @@ public:
 	 */
 	bool parse(std::string & key, std::string & value)
 	{
+	using namespace std;
+
 		if(!stream)
 			return false;
 
 		char buffer[LINELENGTH];
-		char *bufferStart=buffer;
+		char *bufferStart;
 		memset(buffer, '\0', sizeof(buffer));
 
+		// proccess one line until it is non empty
 		do
 		{
-			// proccess one line
-			
 			if(stream->eof())
 				return false;
 			
 			stream->getline(buffer, LINELENGTH);
+			bufferStart=buffer;
 			if(stream->bad())
 				// error during reading occured
 				return false;
@@ -277,7 +294,7 @@ public:
 			// removes leading blanks
 			for(size_t pos=0; pos<LINELENGTH; pos++)
 			{
-				if(blankSet.find(bufferStart))
+				if(blankSet.find(*bufferStart)!=string::npos)
 					bufferStart++;
 				else
 					break;
@@ -287,15 +304,15 @@ public:
 			if(char * commentStart=strpbrk(bufferStart, commentsSet.c_str()))
 				*commentStart='\0';
 
-			// skips trailing blanks
-			for(char * end=bufferStart+strlen(bufferStart)-1; end>=bufferStart; end--)
+			// skips trailing blanks (no leading are present)
+			for(char * end=bufferStart+strlen(bufferStart)-1; end>bufferStart; end--)
 			{
-				if(blankSet.find(*end))
+				if(blankSet.find(*end)!=string::npos)
 					*end='\0';
 				else
 					break;
 			}
-		}while(*bufferStart);
+		}while(!(*bufferStart));
 
 		// we have read one non empty line we can parse it to get key and value
 		if(char * delim=strpbrk(bufferStart, deliminerSet.c_str()))
