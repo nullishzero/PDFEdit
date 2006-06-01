@@ -15,7 +15,7 @@ DEFINES += DEBUG
 
 POST_TARGETDEPENDS = libkernel.a
 
-LIBS += -lkernel -L./
+LIBS += -lkernel -L./ -lutils -L../utils/
 
 #
 # Common utils
@@ -30,6 +30,7 @@ SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcstr
 SOURCES += tests/teststream.cc tests/teststreamwriter.cc
 SOURCES += tests/testcobjecthelpers.cc tests/testpdfoperators.cc
 SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
+SOURCES += tests/testutils.cc
 SOURCES += main.cc 
 
 LIBS += -ldl -lcppunit 
