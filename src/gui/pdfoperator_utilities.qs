@@ -43,8 +43,8 @@ function setColorMy(operator,r,g,b) {
 	var next = operator.iterator();
 	next.next();
 
-//   oper.setPrev( createEmptyOperator() );
-//   oper.getLastOperator().setNext ( createEmptyOperator() );
+	oper.setPrev( createEmptyOperator() );
+	oper.getLastOperator().setNext ( createEmptyOperator() );
 
 	var composite = createCompositeOperator("q","Q");
 
