@@ -365,6 +365,15 @@ Data: %3
         <source>Null pointer access in </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show only font operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing font. op.</source>
+        <comment>mode</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -490,6 +499,10 @@ Data: %3
     </message>
     <message>
         <source>Property</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close current tab</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -951,6 +964,36 @@ Data: %3
     <message>
         <source>Show only text operators in stream</source>
         <comment>streamText</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <comment>zoom_out</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <comment>zoom_in</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only font operators in stream</source>
+        <comment>streamFont</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator Toolbar</source>
+        <comment>OperatorToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change color of operator</source>
+        <comment>operatorSetColor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide commandline</source>
+        <comment>hideCmd</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

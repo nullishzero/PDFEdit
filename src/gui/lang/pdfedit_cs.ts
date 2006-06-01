@@ -368,6 +368,15 @@ Data: %3
         <source>Null pointer access in </source>
         <translation>Přístup na null ukazatel v </translation>
     </message>
+    <message>
+        <source>Show only font operators</source>
+        <translation>Zobrazit jen font operátory</translation>
+    </message>
+    <message>
+        <source>Showing font. op.</source>
+        <comment>mode</comment>
+        <translation>Zobrazuji font. op.</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -494,6 +503,10 @@ Data: %3
     <message>
         <source>Property</source>
         <translation>Položka</translation>
+    </message>
+    <message>
+        <source>Close current tab</source>
+        <translation>Zavřít aktuální záložku</translation>
     </message>
 </context>
 <context>
@@ -955,6 +968,36 @@ Data: %3
         <source>Show only text operators in stream</source>
         <comment>streamText</comment>
         <translation>Zobrazit pouze textové operátory ve streamu</translation>
+    </message>
+    <message>
+        <source>Show only font operators in stream</source>
+        <comment>streamFont</comment>
+        <translation>Zobrazit pouze font operátory ve streamu</translation>
+    </message>
+    <message>
+        <source>Zoom out</source>
+        <comment>zoom_out</comment>
+        <translation>Oddálit měřítko</translation>
+    </message>
+    <message>
+        <source>Zoom in</source>
+        <comment>zoom_in</comment>
+        <translation>Přiblížit měřítko</translation>
+    </message>
+    <message>
+        <source>Operator Toolbar</source>
+        <comment>OperatorToolbar</comment>
+        <translation>Toolbar operátorů</translation>
+    </message>
+    <message>
+        <source>Change color of operator</source>
+        <comment>operatorSetColor</comment>
+        <translation>Změnit barvu operátoru</translation>
+    </message>
+    <message>
+        <source>Show/Hide commandline</source>
+        <comment>hideCmd</comment>
+        <translation>Zobrazit/skrýt příkazový řádek</translation>
     </message>
 </context>
 <context>
