@@ -131,6 +131,19 @@ void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOpe
 }
 
 /**
+ QSA bugfix version
+ \copydoc replace(QSPdfOperator*,QSPdfOperator*,QSPdfOperatorIterator*,QSPdfOperatorIterator*,bool)
+*/
+void QSContentStream::replace(QObject* oldOp,QObject* newOp,QObject* itPrev,QObject* itNext,bool indicateChange/*=true*/) {
+ QSPdfOperator* _oldOp=dynamic_cast<QSPdfOperator*>(oldOp);
+ QSPdfOperator* _newOp=dynamic_cast<QSPdfOperator*>(newOp);
+ QSPdfOperatorIterator* _itPrev=dynamic_cast<QSPdfOperatorIterator*>(itPrev);
+ QSPdfOperatorIterator* _itNext=dynamic_cast<QSPdfOperatorIterator*>(itNext);
+ if (!(_oldOp && _newOp && _itPrev && _itNext)) return;
+ obj->replaceOperator(_oldOp->get(),_newOp->get(),*(_itPrev->get()),*(_itNext->get()),indicateChange);
+}
+
+/**
  Prepare for replacing operator with some other - save it's next and prev iterator
  @param op operator
  */

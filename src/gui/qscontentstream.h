@@ -43,6 +43,7 @@ public slots:
   If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
  */
  void replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOperatorIterator* itPrev,QSPdfOperatorIterator* itNext,bool indicateChange=true);
+ void replace(QObject* oldOp,QObject* newOp,QObject* itPrev,QObject* itNext,bool indicateChange=true);
  /*- Write any unwritten changes to operators to underlying stream. */
  void saveChange();
  /*-
