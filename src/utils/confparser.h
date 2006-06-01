@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/06/01 09:12:30  hockm0bm
+ * tokenizer function
+ *         - moved to configuration::utils namespace
+ *         - empty strings are not parsed
+ *         - bug fix last token is also considered (when text is not
+ *           finished by deliminer)
+ *
  * Revision 1.3  2006/06/01 08:49:12  hockm0bm
  * * confparser.cc module added
  * * tokenizer function added
@@ -31,17 +38,23 @@
 namespace configuration
 {
 
+namespace utils
+{
+	
 /** Parses given text to tokens.
  * @param text String to parse.
  * @param deliminer Set of deliminers.
  * @param tokens Output array of tokens.
  *
  * One token is considered to be everything between two deliminers (or text
- * start, end respectively). Deliminers are not included.
+ * start, end respectively). Deliminers are not included. Note that empty string
+ * is ignored and not parsed.
  *
  * @return number of output tokens.
  */
 size_t tokenizer(std::string text, std::string deliminers, std::vector<std::string> & tokens);
+
+} // namespace configuration::utils
 
 /** Interface for configuration parsers.
  * Defines methods needed for parsing configuration file. Template paramters

@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/06/01 09:12:30  hockm0bm
+ * tokenizer function
+ *         - moved to configuration::utils namespace
+ *         - empty strings are not parsed
+ *         - bug fix last token is also considered (when text is not
+ *           finished by deliminer)
+ *
  * Revision 1.1  2006/06/01 08:49:12  hockm0bm
  * * confparser.cc module added
  * * tokenizer function added
@@ -12,8 +19,12 @@
 
 #include "confparser.h"
 
-using namespace configuration;
+namespace configuration
+{
 
+namespace utils
+{
+	
 size_t tokenizer(const std::string & text, const std::string & deliminers, std::vector<std::string> & tokens)
 {
 using namespace std;
@@ -33,13 +44,17 @@ using namespace std;
 		tokenStart=tokenEnd+1;
 	}
 
-	// if no token found - no deliminer in text - we will return only one token
-	// containing whole text
-	if(!tokenCount)
+	// inserts last token - if tokenStart is not at the end (or behind)
+	if(tokenStart<text.length())
 	{
 		tokenCount++;
-		tokens.push_back(text);
+		string token;
+		token.assign(text, tokenStart, text.length()-tokenStart);
+		tokens.push_back(token);
 	}
 
 	return tokenCount;
 }
+
+} // namespace configuration::utils
+} // namespace configuration
