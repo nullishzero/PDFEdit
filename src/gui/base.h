@@ -25,8 +25,6 @@ class QSPdfOperator;
 class TreeItemAbstract;
 
 class Base : public QObject {
-//ADDED functions begin
-//ADDED functions end
  Q_OBJECT
 public:
  Base(PdfEditWindow *parent);

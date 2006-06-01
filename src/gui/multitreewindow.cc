@@ -5,6 +5,7 @@
  @author Martin Petricek
 */
 
+#include "iconcache.h"
 #include "multitreewindow.h"
 #include "util.h"
 #include "treewindow.h"
@@ -45,8 +46,12 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  //Add main tree to Tab widget
  tab->addTab(mainTree,tr("Tree"));
 
+ IconCache ic;
+
+ QPixmap *closeIcon=ic.getIcon("close_widget.png");
+
  //Corner button to close current tree
- corner=new QPushButton(" x ",tab,"close_tree");
+ corner=new QPushButton(*closeIcon,"",tab,"close_tree");
  tab->setCornerWidget(corner,Qt::TopRight);
  QObject::connect(corner,SIGNAL(pressed()),this,SLOT(deleteCurrent()));
  QObject::connect(tab,SIGNAL(currentChanged(QWidget*)),this,SLOT(pageChange(QWidget*)));
