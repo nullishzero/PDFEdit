@@ -11,7 +11,7 @@
 #include "treewindow.h"
 #include "treeitemabstract.h"
 #include <qlayout.h>
-#include <qpushbutton.h>
+#include <qtoolbutton.h>
 #include <qtabwidget.h>
 #include <utils/debug.h>
 
@@ -51,7 +51,11 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  QPixmap *closeIcon=ic.getIcon("close_widget.png");
 
  //Corner button to close current tree
- corner=new QPushButton(*closeIcon,"",tab,"close_tree");
+ QToolButton *theCorner=new QToolButton(tab,"close_tree");
+ theCorner->setIconSet(*closeIcon);
+ theCorner->setTextLabel(tr("Close current tab"));
+ corner=theCorner;
+
  tab->setCornerWidget(corner,Qt::TopRight);
  QObject::connect(corner,SIGNAL(pressed()),this,SLOT(deleteCurrent()));
  QObject::connect(tab,SIGNAL(currentChanged(QWidget*)),this,SLOT(pageChange(QWidget*)));
