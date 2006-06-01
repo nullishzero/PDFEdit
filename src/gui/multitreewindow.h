@@ -46,6 +46,7 @@ public:
  TreeItemAbstract* getSelectedItem();
  void clear();
  void clearSecondary();
+ void notifyDelete(TreeItemAbstract *dest);
 public slots:
  void deleteCurrent();
  void settingUpdate(QString key);
@@ -54,6 +55,11 @@ signals:
  void itemSelected();
  /** \copydoc TreeWindow::treeClicked */
  void treeClicked(int,QListViewItem*);
+ /**
+  Signal emitted when tree item is about to be deleted
+  @param dest item to be deleted
+ */
+ void itemDeleted(TreeItemAbstract *dest);
 protected slots:
  void treeItemSelected();
  void treeMouseClicked(int button,QListViewItem* item);

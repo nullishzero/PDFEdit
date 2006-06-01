@@ -188,6 +188,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Connections
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
+ QObject::connect(tree, SIGNAL(itemDeleted(TreeItemAbstract*)), this, SLOT(unsetObjectIf(TreeItemAbstract*)));
  QObject::connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
@@ -237,6 +238,19 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 /** Load and apply current value of "Use big pixmap" setting */
 void PdfEditWindow::bigPixmap() {
  setUsesBigPixmaps(globalSettings->readBool("icon/theme/big"));
+}
+
+/**
+ Unset selected object if it is the one given in parameter
+ (because it is about to be deleted)
+*/
+void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
+ if (theItem==selectedTreeItem) {
+  guiPrintDbg(debug::DBG_DBG,"Removed reference to deleted tree item");
+  selectedTreeItem=NULL;
+ }
+ //TODO: look for wrappers using this tree item and somehow disable them
+ // (but scripts must not do that anyway...)
 }
 
 /** Called upon selecting some item in treeview */
@@ -522,15 +536,15 @@ bool PdfEditWindow::openFile(const QString &name) {
   string err;
   ex.getMessage(err);
   lastErrorMessage=tr("Error while loading document ")+name+"\n"+err;
-  base->warn(lastErrorMessage);
   //File failed to open, keep window opened with empty file.
   emptyFile();
+  base->call("onLoadError");
   return false;
  } catch (...) {
   lastErrorMessage=tr("Unknown error while loading document ")+name;
-  base->warn(lastErrorMessage);
   //File failed to open, keep window opened with empty file.
   emptyFile();
+  base->call("onLoadError");
   return false;
  }
  base->importDocument();

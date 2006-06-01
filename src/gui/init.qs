@@ -14,6 +14,11 @@ function onLoad() {
  PageSpace.refresh(document.getFirstPage(),document);
 }
 
+/** Callback called after error occured while trying to load document */
+function onLoadError() {
+ warn(error());
+}
+
 /** Same-treeview dragdrop handler */
 function onDragDrop() {
  print("Drag drop: "+source.type()+" -> "+target.type());

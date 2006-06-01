@@ -6,14 +6,14 @@
 */
 
 #include "treeitemabstract.h"
+#include "multitreewindow.h"
+#include "treedata.h"
+#include "util.h"
 #include <assert.h>
-#include "util.h"
-#include <utils/debug.h>
 #include <qlistview.h>
-#include "util.h"
+#include <utils/debug.h>
 
 namespace gui {
-
 
 using namespace std;
 
@@ -296,7 +296,9 @@ void TreeItemAbstract::setName(const QString &newNameId) {
 
 /** default destructor */
 TreeItemAbstract::~TreeItemAbstract() {
- //Empty desctructor
+ //Notify about deletion of itself
+ guiPrintDbg(debug::DBG_DBG,"Item deleting" << intptr_t(this));
+ data->multi()->notifyDelete(this);
 }
 
 } // namespace gui

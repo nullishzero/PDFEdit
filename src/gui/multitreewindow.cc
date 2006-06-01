@@ -215,6 +215,14 @@ TreeWindow* MultiTreeWindow::createPage(const QString &caption) {
 }
 
 /**
+ Notification function, that will be called when tree item is deleting itself
+ @param dest Treeitem about to be deleted
+*/
+void MultiTreeWindow::notifyDelete(TreeItemAbstract *dest) {
+ emit itemDeleted(dest);
+}
+
+/**
  Try to activate secondary tree that is identified by key (void *ptr).
  @param ptr pointer used to identify tree to activate
  @return true if the tree exists and was activated, false if the tree does not exist.

@@ -81,6 +81,7 @@ protected slots:
  void menuActivated(int id);
  void setObject();
 private slots:
+ void unsetObjectIf(TreeItemAbstract *theItem);
  void pagePopup(const QPoint &globalPos);
  void settingUpdate(QString key);
  void runScript(QString script);

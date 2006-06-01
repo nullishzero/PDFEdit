@@ -17,12 +17,15 @@ using namespace std;
 /** Version of program */
 QString app=APP_NAME " " VERSION;
 
+/** About Dialog flags */
+const Qt::WFlags aboutDialogFlags=Qt::WDestructiveClose | Qt::WType_Dialog;
+
 /**
  constructor of AboutWindow, creates window and fills it with elements, parameters are ignored
  @param parent Parent window of this dialog
  @param name Name of this window (used only for debugging
  */
-AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
+AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,aboutDialogFlags) {
  QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big><br><br>"+tr("Homepage")+" : http://pdfedit.petricek.net/";
  QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"
                                +tr("Authors")+":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Misutka<br>&nbsp; Martin Petricek<br>";

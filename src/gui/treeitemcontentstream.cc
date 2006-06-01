@@ -135,36 +135,28 @@ void TreeItemContentStream::remove() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemContentStream::reloadSelf() {
+ //Iterator to filter items
+ PdfOperator::Iterator *it=NULL;
  //Reload list of pdf operators
+ obj->getPdfOperators(op);
+ if (!op.size()) return;//Nothing in here
  if (mode==Text) {
   // "Show only text operators" mode
-  obj->getPdfOperators(op);
-  if (!op.size()) return;//Nothing in here. So no text either
-  TextOperatorIterator it(op[0]);
-  //We have the iterator, now clear the vector and populate it with ... something else
-  op.clear();
-  while (!it.isEnd()) {
-   op.push_back(it.getCurrent());
-   it.next();
-  } 
- 
- } else if (Font==mode){
+  it=new TextOperatorIterator(op[0]);
+ } else if (mode==Font){
   // "Show only font operators" mode
-  obj->getPdfOperators(op);
-  if (!op.size()) return;//Nothing in here. So no text either
-  FontOperatorIterator it(op[0]);
-  //We have the iterator, now clear the vector and populate it with ... something else
-  op.clear();
-  while (!it.isEnd()) {
-   op.push_back(it.getCurrent());
-   it.next();
-  } 
- 
+  it=new FontOperatorIterator(op[0]);
  } else {
-  // "Show everything we got" mode
-  obj->getPdfOperators(op);
+  // "Show everything we got" mode -> no filtering is done
+  return;
  }
- return;
+ //We have the iterator, now clear the vector and populate it with ... something else
+ op.clear();
+ while (!it->isEnd()) {
+  op.push_back(it->getCurrent());
+  it->next();
+ }
+ delete it; 
 }
 
 //See TreeItemAbstract for description of this virtual method
