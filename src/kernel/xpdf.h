@@ -2,7 +2,9 @@
 /*
  * =====================================================================================
  *        Filename:  xpdf.h
- *     Description:  Header file containing all includes to xpdf
+ *     Description:  Header file containing all includes to xpdf, can be used
+ *				     as the base include file when precompiled header technique
+ *				     is used
  *         Created:  03/07/2006 18:41:44 PM CET
  *          Author:  jmisutka ()
  * =====================================================================================
@@ -46,8 +48,11 @@ struct object_deleter
 					
 	
 /** 
- * \TODO
- * Wrapper around really really fucked up class with free method (e.g. Xpdf Object).
+ * Wrapper around a class which uses free method.
+ *
+ * This class uses a special free method to deallocate objects. 
+ * In xpdf Object class the free method is necessary because Object implements reference 
+ * counting.
  */
 template<typename T>
 class MassiveIdiocyWrapper // : noncopyable 
@@ -94,13 +99,15 @@ typedef MassiveIdiocyWrapper<Object> XpdfObject;
 // Xpdf global variables
 //
 
-/** Init xpdf. */
+/**
+ * Initialize xpdf global parameters and setup fonts.
+ */
 inline void 
 openXpdfMess ()
 {
 	//
 	// Xpdf Global variable TFUJ!!!
-	// REMARK: FUCKING xpdf uses global variable globalParams that uses another global
+	// REMARK: xpdf uses global variable globalParams that uses another global
 	// variable builtinFonts which causes that globalParams can NOT be nested
 	// 
 	assert (NULL == globalParams);
@@ -108,7 +115,10 @@ openXpdfMess ()
 	globalParams->setupBaseFonts (NULL);	
 }
 
-/** Uninit xpdf. */
+/**
+ * Uninitialize xpdf global parameters. 
+ *
+ */
 inline void
 closeXpdfMess ()
 {
@@ -118,7 +128,7 @@ closeXpdfMess ()
 	globalParams = NULL;
 }
 
-/** Use xpdf functions sensitive to global variables.. */
+/** Create this class in a function using xpdf code sensitive to global variables. */
 struct GlobalUseXpdf
 {
 	GlobalUseXpdf () {openXpdfMess ();};

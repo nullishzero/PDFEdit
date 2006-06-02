@@ -67,13 +67,16 @@
 //
 // Null and empty types.
 // 
+//
+/** Null type. */
 class NullType {};
+/** Null type. */
 struct EmptyType {};
 
 
-//
-// from CUJ 5/22, Herb Sutter ...
-// 
+/**
+ * Correct null pointer (NULL) implementation (from CUJ 5/22 by Herb Sutter)
+ */
 const class 
 {
 public:
@@ -108,7 +111,7 @@ typedef struct Point
 
 
 /**
- * Rectangle structure. Defined as in pdf specification v1.5 (p. 133)
+ * Rectangle structure. Defined in compliance with the pdf specification v1.5 (p. 133).
  */
 template <typename Coord>
 struct GenRect
@@ -147,11 +150,17 @@ struct GenRect
 	
 };
 
-/** Our specialization of rect. */
+/** Our specialization of general rectangle. */
 typedef struct GenRect<Coordinate> Rectangle;
 
+
 /**
- * Output rectangle.
+ * Print Rectangle to output stream.
+ *
+ * @param os Output stream.
+ * @param rc Rectangle to be printed.
+ *
+ * @return Output stream.
  */
 inline std::ostream& 
 operator << (std::ostream& os, const Rectangle& rc)
@@ -163,7 +172,12 @@ operator << (std::ostream& os, const Rectangle& rc)
 }
 
 /**
- * Output point.
+ * Print Point to output stream.
+ * 
+ * @param os Output stream.
+ * @param rc Point to be printed.
+ *
+ * @return Output stream.
  */
 inline std::ostream& 
 operator << (std::ostream& os, const Point& pt)
@@ -177,9 +191,27 @@ operator << (std::ostream& os, const Point& pt)
 //	Char buffer that can contain null characters
 //=====================================================================================
 
+/** 
+ * Special char buffer that can contain null characters. 
+ *
+ * Standard string class can also contain null characters but consider the
+ * following pitfall:
+ *	 
+ * \code
+ * string nul = "\0";
+ * char cnul = '\0';
+ *
+ * str = "123";
+ * str += nul; // "123" size: 3 
+ * str += cnul // "123\0" size: 4
+ * \endcode
+ */
 typedef boost::shared_ptr<char> CharBuffer;
+
+/** Char buffer deleter. */
 struct char_buffer_delete
 	{void operator() (char* p) {assert (p); delete [] p;};};
+/** Char buffer alocator. */
 inline char* char_buffer_new (size_t l) {return new char [l];}
 
 
@@ -198,9 +230,12 @@ template<typename T> struct EmptyDeallocator
 
 //=====================================================================================
 
-//
-// From boost
-//
+/**
+ * This empty class ensures that the derived object can not use copy
+ * constructor.
+ *
+ * Idea from from boost library.
+ */
 class noncopyable
 {
 protected:
