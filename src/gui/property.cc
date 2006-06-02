@@ -40,13 +40,17 @@ QString Property::getName() {
 */
 void Property::modifyColor(QWidget* widget) {
  QColor newColor=widget->paletteBackgroundColor();
- if (readonly) {
+ if (readonly) {	//Readonly (or advanced)
   //Shift to red
   newColor=util::mixColor(newColor,0.1,QColor(255,0,0));
  }
- if (flags==mdHidden || flags==mdAdvanced) {
+ if (flags==mdHidden || flags==mdAdvanced) {	//Some property that is hidden
   //Shift to blue
   newColor=util::mixColor(newColor,0.1,QColor(0,0,255));
+ }
+ if (flags==mdUnknown) {	//Unknown
+  //Shift to light green
+  newColor=util::mixColor(newColor,0.1,QColor(128,255,128));
  }
  widget->setPaletteBackgroundColor(newColor);
 }

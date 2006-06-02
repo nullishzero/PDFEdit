@@ -6,6 +6,12 @@ class QString;
 
 namespace gui {
 
+/**
+ FontOption - class for widget containing one editable string setting,
+ while allowing to either type (allowing things like copy/paste) the font
+ description (name), or use dialog to pick it. User's choice<br>
+ Used as one item type in option window<br>
+*/
 class FontOption : public DialogOption {
  Q_OBJECT
 public:

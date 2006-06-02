@@ -26,7 +26,7 @@ namespace gui {
  Get current directory from File Dialog
  @param fd File Dialog
  @return current directory
- */
+*/
 QString getDir(QFileDialog &fd) {
  const QDir *d=fd.dir();
  QString name=d->absPath();

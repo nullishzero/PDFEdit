@@ -6,6 +6,10 @@ class QString;
 
 namespace gui {
 
+/**
+ Class for widget containing one editable setting<br>
+ Abstract class, must be subclassed for editing specific option types (integer, string ...)
+*/
 class Option : public QWidget{
  Q_OBJECT
 public:

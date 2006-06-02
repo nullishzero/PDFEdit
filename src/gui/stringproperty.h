@@ -11,6 +11,10 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/**
+ Class for widget containing one editable property of type "String"<br>
+ Used as one item type in property editor
+*/
 class StringProperty : public Property {
 Q_OBJECT
 public:

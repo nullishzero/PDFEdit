@@ -12,6 +12,7 @@
 #include <qstringlist.h>
 #include <utils/debug.h>
 
+/** Utility namespace */
 namespace util {
 
 using namespace std;

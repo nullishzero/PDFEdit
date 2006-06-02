@@ -153,13 +153,18 @@ function func_savecopy() {
 
 /** Open new file (action from menu/toolbar) */
 function func_load() {
+ if (!closeFile(true,true)) return;
+ var name=fileOpenDialog();
  try {
-  if (!closeFile(true,true)) return;
-  var name=fileOpenDialog();
   if (name) {
    openFile(name);
    if (document.isLinearized()) {
     print(tr('Warning: This document is linearized PDF!'));
+   }
+   enc=document.encryption();
+   if (enc) {
+    print(tr('Warning: This document is encrypted!'));
+    print(tr('Encryption filter:')+enc);
    }
   }
  } catch (e) {

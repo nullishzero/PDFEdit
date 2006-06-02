@@ -23,6 +23,8 @@ public:
  virtual ~QSPdf();
  CPdf* get() const;
 public slots:
+ /*- Return name of filter used to encrypt the document, or NULL if document is not encrypted */
+ QString encryption();
  /*- Return true, if document is linearized PDF, false otherwise */
  bool isLinearized();
  /*-

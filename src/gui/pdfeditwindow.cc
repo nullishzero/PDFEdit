@@ -21,6 +21,7 @@
 #include "version.h"
 #include "dialog.h"
 #include "propertyeditor.h"
+#include "propertymodecontroller.h"
 #include "multitreewindow.h"
 #include "menu.h"
 #include "commandwindow.h"
@@ -516,8 +517,7 @@ void PdfEditWindow::setTitle(int revision/*=0*/) {
  if (revision) revisionInfo=QString(" - ")+tr("viewing revision")+" "+QString::number(revision);
  QStringList docFlags;
  if (document->isLinearized()) docFlags+=tr("Linearized PDF");
-//TODO: MISO
-// if (document->isEncrypted()) docFlags+=tr("Encrypted");
+ if (pdfobjects::utils::isEncrypted(*document,NULL)) docFlags+=tr("Encrypted");
  QString docInfo="";
  if (docFlags.count()) {
   docInfo=" ( "+docFlags.join(", ")+" )";
@@ -557,6 +557,8 @@ bool PdfEditWindow::openFile(const QString &name) {
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
   document=CPdf::getInstance(name,mode);
+  PropertyModeController *modeCtrl=PropertyModeController::getInstance();
+  document->setModeController(modeCtrl->get());
  } catch (PdfOpenException &ex) {
   string err;
   ex.getMessage(err);

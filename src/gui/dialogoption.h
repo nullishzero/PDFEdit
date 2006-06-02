@@ -8,6 +8,12 @@ class QPushButton;
 
 namespace gui {
 
+/**
+ Abstract class for widget containing one editable string setting,
+ with nearby "..." button allowing to invoke dialog to change the setting
+ in some possibly  more user-friently way<br>
+ Subclasses should reimplement the dialog function to invoke some dialog and change the string value accordingly
+*/
 class DialogOption : public Option {
  Q_OBJECT
 public:

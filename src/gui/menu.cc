@@ -24,6 +24,7 @@
 #include <qstring.h>
 #include "iconcache.h"
 
+/** GUI namespace */
 namespace gui {
 
 using namespace util;

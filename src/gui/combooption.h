@@ -8,6 +8,12 @@ class QStringList;
 
 namespace gui {
 
+/**
+ Class for widget containing one editable setting of type string, selectable from combobox<br>
+ If current setting specify item not in the list, the first item in list is shown instead<br>
+ User is unable to specify string not in the list<br>
+ Used as one item type in option window<br>
+*/
 class ComboOption : public Option {
  Q_OBJECT
 public:

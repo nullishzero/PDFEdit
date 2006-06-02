@@ -7,6 +7,10 @@ class QCheckBox;
 
 namespace gui {
 
+/**
+ Class for widget containing one editable setting of type bool<br>
+ Used as one item type in option window<br>
+*/
 class BoolOption : public Option {
  Q_OBJECT
 public:

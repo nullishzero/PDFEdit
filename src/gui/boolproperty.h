@@ -11,6 +11,11 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/**
+ BoolProperty - class for widget containing one editable property of type "Bool"
+ (represented by checkbox)<br>
+ Used as one item type in property editor
+*/
 class BoolProperty : public Property {
 Q_OBJECT
 public:

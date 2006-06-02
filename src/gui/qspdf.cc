@@ -194,4 +194,14 @@ CPdf* QSPdf::get() const {
  return obj;
 }
 
+/**
+ Return name of filter used to encrypt the document, or NULL if document is not encrypted
+ @return Encryption filter
+ */
+QString QSPdf::encryption() {
+ std::string filter;
+ if (!pdfobjects::utils::isEncrypted(*obj,&filter)) return QString::null;
+ return filter;
+}
+
 } // namespace gui 

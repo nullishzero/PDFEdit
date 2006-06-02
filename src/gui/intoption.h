@@ -6,6 +6,10 @@ class QString;
 
 namespace gui {
 
+/**
+ class for widget containing one editable setting of type integer<br>
+ Used as one item type in option window<br>
+*/
 class IntOption : public StringOption {
  Q_OBJECT
 public:

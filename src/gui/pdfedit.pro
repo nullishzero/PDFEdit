@@ -15,9 +15,11 @@ BIN_PATH  = $$USR_PREFIX/bin
 
 # installation details
 data.path       = $$DATA_PATH
-data.files      = pdfeditrc
+data.files      = pdfeditrc mode.conf *.qs
 data_icon.path  = $$DATA_PATH/icon
-data_icon.files = icon/*.png
+data_icon.files = icon/*.png 
+data_icon_hicolor.path  = $$DATA_PATH/icon/hicolor
+data_icon_hicolor.files = icon/hicolor/*.png 
 data_help.path  = $$DATA_PATH/help
 data_help.files = icon/*.html
 data_lang.path  = $$DATA_PATH/lang
@@ -32,7 +34,7 @@ man.path	= $$MAN_PATH
 man.file	= ../../doc/user/*.1
 pdfedit.path    = $$BIN_PATH
 pdfedit.files   = pdfedit
-INSTALLS = data_icon data_lang data_help data doc doc_kernel doc_kernel_images pdfedit man
+INSTALLS = data_icon data_icon_hicolor data_lang data_help data doc doc_kernel doc_kernel_images pdfedit man
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator

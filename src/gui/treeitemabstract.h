@@ -22,6 +22,11 @@ class Base;
 */
 typedef int ChildType;
 
+/**
+ Common ancestor of all tree Items,
+ with functions to support automatic loading and reloading of tree,
+ or its parts (subtrees)
+*/
 class TreeItemAbstract : public QListViewItem {
 public:
  void unSelect(QListView *tree);

@@ -1,6 +1,6 @@
 /** @file
- BoolProperty - class for widget containing one editable property of type "Bool"<br>
- (represented by checkbox)
+ BoolProperty - class for widget containing one editable property of type "Bool"
+ (represented by checkbox)<br>
  Used as one item in property editor
  @author Martin Petricek
 */

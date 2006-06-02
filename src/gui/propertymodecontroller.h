@@ -9,6 +9,7 @@ namespace gui {
 
 class PropertyModeController {
 public:
+ ModeController* get();
  static PropertyModeController* getInstance();
  PropertyMode mode(const QString &type,const QString &name);
  ~PropertyModeController();

@@ -18,16 +18,17 @@
 
 namespace gui {
 
-/** Return one of the subclasses of Property widget for editing given property.
-    If property is of unknown or uneditable type, NULL is returned
+/**
+ Return one of the subclasses of Property widget for editing given property.
+ If property is of unknown or uneditable type, NULL is returned
  @param prop IProperty to create property from
  @param parent Parent widget
  @param _name Name of this property
- @param _flags Flags of this property items (default 0)
  @return subclass of Property widget (or NULL)
  */
-Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/) {
+Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/) {
  PropertyType typ=prop->getType();
+ PropertyFlags _flags=prop->getMode();
  switch (typ) {
   case pNull:   return NULL;
   case pBool:   return new BoolProperty(_name,parent,_flags); 
@@ -38,8 +39,8 @@ Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *pa
   case pRef:    return new RefProperty(_name,parent,_flags);
   case pArray:  return NULL;//Not editable in property editor, editable in tree window
   case pDict:   return NULL;//Not editable in property editor, editable in tree window
-  case pStream: return NULL;//TODO: editable in property editor or in tree window?
-  // Debug types - All of them uneditable, not shown
+  case pStream: return NULL;//Not editable in property editor, editable in tree window
+  // Debug types - All of them uneditable and not shown
   case pOther:
   case pOther1:
   case pOther2:

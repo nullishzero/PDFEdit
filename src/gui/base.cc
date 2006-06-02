@@ -33,6 +33,7 @@
 #include <qsinterpreter.h>
 #include <qsplitter.h>
 #include <qsutilfactory.h> 
+#include <qsinputdialogfactory.h>
 #include <utils/debug.h>
 
 namespace gui {
@@ -52,6 +53,8 @@ Base::Base(PdfEditWindow *parent) {
 
  //Add ability to open files, directories and run processes
  qs->addObjectFactory(new QSUtilFactory());
+ //Add ability to create dialogs
+ qs->addObjectFactory(new QSInputDialogFactory());
 
  //Add settings object
  assert(globalSettings);
@@ -308,6 +311,47 @@ void Base::runScript(QString script) {
  }
  removeDocumentObjects();
  scriptCleanup();
+}
+
+// === Non-scripting slots ===
+
+/**
+ Invoked when dragging one item to another within the same tree window
+ @param source Source (dragged) item
+ @param target Target item
+*/
+void Base::_dragDrop(TreeItemAbstract *source,TreeItemAbstract *target) {
+ qs->setErrorMode(QSInterpreter::Nothing);
+ //Import items
+ QSCObject *src=import->createQSObject(source);
+ QSCObject *tgt=import->createQSObject(target);
+ import->addQSObj(src,"source");
+ import->addQSObj(tgt,"target");
+ call("onDragDrop");
+ qs->setErrorMode(QSInterpreter::Nothing);
+ //delete page and item variables from script -> they may change while script is not executing
+ deleteVariable("source");
+ deleteVariable("target");
+}
+
+/**
+ Invoked when dragging one item to another in different tree window (possibly in different document)
+ @param source Source (dragged) item
+ @param target Target item
+*/
+void Base::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) {
+ /*
+  More complicated, if the script keeps something from second tree
+  and the second document is closed, the editor may crash.
+  We need to make local copy of source's content
+ */
+ QSCObject *src=source->getQSObject(this);//Rebased object. May be NULL if rebase not possible
+ QSCObject *tgt=import->createQSObject(target);
+ import->addQSObj(src,"source");
+ import->addQSObj(tgt,"target");
+ call("onDragDropOther");
+ deleteVariable("source");
+ deleteVariable("target");
 }
 
 // === Scripting functions ===
@@ -770,44 +814,6 @@ void Base::setVisible(const QString &widgetName, bool visible) {
 }
 
 
-/**
- Invoked when dragging one item to another within the same tree window
- @param source Source (dragged) item
- @param target Target item
-*/
-void Base::_dragDrop(TreeItemAbstract *source,TreeItemAbstract *target) {
- qs->setErrorMode(QSInterpreter::Nothing);
- //Import items
- QSCObject *src=import->createQSObject(source);
- QSCObject *tgt=import->createQSObject(target);
- import->addQSObj(src,"source");
- import->addQSObj(tgt,"target");
- call("onDragDrop");
- qs->setErrorMode(QSInterpreter::Nothing);
- //delete page and item variables from script -> they may change while script is not executing
- deleteVariable("source");
- deleteVariable("target");
-}
-
-/**
- Invoked when dragging one item to another in different tree window (possibly in different document)
- @param source Source (dragged) item
- @param target Target item
-*/
-void Base::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) {
- /*
-  More complicated, if the script keeps something from second tree
-  and the second document is closed, the editor may crash.
-  We need to make local copy of source's content
- */
- QSCObject *src=source->getQSObject(this);//Rebased object. May be NULL if rebase not possible
- QSCObject *tgt=import->createQSObject(target);
- import->addQSObj(src,"source");
- import->addQSObj(tgt,"target");
- call("onDragDropOther");
- deleteVariable("source");
- deleteVariable("target");
-}
 
 /**
  Set new debug verbosity level
