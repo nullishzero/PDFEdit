@@ -308,9 +308,9 @@ function rotatePage(n) {
 
 /** Set stream to certain mode */
 function streamMode(newMode) {
- x=treeroot();
+ x=treeRoot();
  if (x.itemtype()!="ContentStream") return;
- treeroot().setMode(newMode);
+ x.setMode(newMode);
 }
 
 /* ==== Code to run on start ==== */

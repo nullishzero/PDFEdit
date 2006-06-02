@@ -13,6 +13,12 @@ namespace gui {
 class Menu;
 class Option;
 
+/**
+ Widget for editing program options<br>
+ Options are arranged to tabs and it is ensured, that only one dialog at once is active
+ (via Private constructor and static method to invoke the dialog, which will focus on
+ existing dialog if it exists, instead of creating second one) 
+*/
 class OptionWindow : public QWidget {
  Q_OBJECT
 public slots:

@@ -12,12 +12,12 @@
 #include <qdir.h>
 #include <iostream>
 #include "pdfeditwindow.h"
-#include "config.h"
 #include "util.h"
 #include <utils/debug.h>
 #include "version.h"
 #include "settings.h"
 #include "optionwindow.h"
+#include "config.h"
 
 using namespace std;
 using namespace gui;

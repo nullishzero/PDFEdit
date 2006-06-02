@@ -1,7 +1,6 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
-#include "config.h"
 #include <qobject.h>
 class QSettings;
 class QSplitter;

@@ -2,7 +2,7 @@
  OptionWindow - widget for editing program options
  Options are arranged to tabs and it is ensured, that only one dialog at once is active
  (via Private constructor and static method to invoke the dialog, which will focus on
- existing dialog if it exists, insetad of creating second one) 
+ existing dialog if it exists, instead of creating second one) 
  @author Martin Petricek
 */
 
@@ -32,18 +32,21 @@
 #include "option.h"
 #include "menu.h"
 #include "toolbar.h"
+#include "config.h"
 
 namespace gui {
 
 using namespace std;
 
-/** The only Option window - 
+/**
+ The only Option window<br>
  Pointer to running OptionWindow instance or NULL if none active.
- */
+*/
 OptionWindow *opt=NULL;
 
-/** invoke option dialog. Ensure only one copy is running at time
-@param msystem Menu system to 
+/**
+ Invoke option dialog. Ensure only one copy is running at time
+ @param msystem Menu system reference for given option window (needed to get toolbar list)
 */
 void OptionWindow::optionsDialog(Menu *msystem) {
  if (opt) { //the dialog is already active
@@ -88,7 +91,7 @@ OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *nam
  grl->setColStretch(3,1);
  grl->setSpacing(16);
  grl->setMargin(8);
- grl->addWidget(new QLabel(CONFIG_DIR,low),0,0);
+ grl->addWidget(new QLabel(CONFIG_DIR "/pdfeditrc",low),0,0);
  QPushButton* btOk=    new QPushButton(QObject::tr("&Ok"),low,"opt_ok");
  QPushButton* btApply= new QPushButton(QObject::tr("&Apply"),low,"opt_apply");
  QPushButton* btCancel=new QPushButton(QObject::tr("&Cancel"),low,"opt_cancel");
