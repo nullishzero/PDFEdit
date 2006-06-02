@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/06/02 17:01:28  misuj1am
+ *
+ * -- documentation updated
+ *
  * Revision 1.12  2006/06/02 13:23:15  misuj1am
  *
  * -- documementation update
@@ -71,7 +75,10 @@ struct CFilterFactory
 	/**
 	 * Create filter class.
 	 *
-	 * @param filterName Name of the filter.
+	 * @param out Container of input filters. We instatiate a filter if it
+	 * matches supplied filter name and we have implemetation avaliable.
+	 * and they match supplied filter names.
+	 * @param filterNames Set of the filter names.
 	 *
 	 * @return Filter if found, NoFilter otherwise.
 	 */

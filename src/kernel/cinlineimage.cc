@@ -27,8 +27,11 @@ namespace {
 	//
 	// Begin tag and end tag are added by composite pdfoperator
 	//
+	/** Prefix of string representation of this object. */
 	const string CINLINEIMAGE_BEGIN = "";
+	/** Middle string of string representation of this object. */
 	const string CINLINEIMAGE_MIDDLE = "ID";
+	/** Suffix of string representation of this object. */
 	const string CINLINEIMAGE_END = "";
 
 	/**

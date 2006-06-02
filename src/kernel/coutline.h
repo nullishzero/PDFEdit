@@ -12,6 +12,8 @@ namespace pdfobjects {
 
 /**
  * Checks whether the object is an ouline according to pdf specification.
+ *
+ * @param ip This iproperty is checked whether it is an outline.
  */
 bool isOutline (boost::shared_ptr<IProperty> ip);
 

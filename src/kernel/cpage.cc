@@ -26,60 +26,6 @@ using namespace std;
 using namespace boost;
 using namespace utils;
 
-
-//=====================================================================================
-// Display parameters (loose xpdf paramters put into a simple structure)
-//=====================================================================================
-
-namespace {
-	//
-	// Default values
-	//
-	static const double DEFAULT_HDPI 	= 72;		/**< Default horizontal dpi. */
-	static const double DEFAULT_VDPI 	= 72;		/**< Default vertical dpi. */
-	static const int DEFAULT_ROTATE 	= 0;		/**< No rotatation. */
-
-	static const double DEFAULT_PAGE_LX = 0;
-	static const double DEFAULT_PAGE_LY = 0;
-	static const double DEFAULT_PAGE_RX = 612;		/**< Default A4 width on a device with 72 horizontal dpi. */
-	static const double DEFAULT_PAGE_RY = 792;		/**< Default A4 height on a device with 72 vertical dpi. */
-}
-
-//
-// Constructor
-//
-DisplayParams::DisplayParams () : 
-	hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
-	pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
-	rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gTrue) 
-{}
-
-
-//=====================================================================================
-// Text searching parameters
-//=====================================================================================
-
-namespace {
-	//
-	// Default values
-	// 
-	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Start at top. */
-	
-	/** Default start positino when start at top is false. */
-	static const double DEFAULT_X_START = 0;				
-	static const double DEFAULT_Y_START = 0;
-	static const double DEFAULT_X_END = 0;
-	static const double DEFAULT_Y_END = 0;
-}
-
-//
-// Constructor
-//
-TextSearchParams::TextSearchParams () : 
-	startAtTop (DEFAULT_START_AT_TOP),
-	xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
-{}
-
 //
 //
 //

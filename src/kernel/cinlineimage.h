@@ -92,7 +92,8 @@ public:
 	/**
 	 * Returns string representation of this object.
 	 *
-	 * REMARK: String can contain also NOT printable characters like \0.
+	 * REMARK: String can contain also NOT printable characters like null
+	 * character.
 	 *
 	 * @param str Output string.
 	 */
@@ -112,8 +113,6 @@ public:
 		throw CObjInvalidOperation ();
 	}; 
 
-	
-	
 };
 
 

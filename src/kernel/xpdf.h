@@ -60,34 +60,29 @@ class MassiveIdiocyWrapper // : noncopyable
 private:
 	T obj;
 	
-	// Disallow copy ctor
+	/** Disallow copy ctor. */
 	MassiveIdiocyWrapper (const MassiveIdiocyWrapper&);
+	/** Disallow copy ctor. */
 	const MassiveIdiocyWrapper& operator= (const MassiveIdiocyWrapper&);
 	
 public:	
 	typedef T element_type;
 
-	explicit MassiveIdiocyWrapper () {};
+	/** Constructor. */
+	MassiveIdiocyWrapper () {};
 
-	//
-	// Explicit delete
-	//
+	/** Explicit delete.	*/
 	void reset () { obj.free (); };
 	
-	//
-	// Dereference
-	//
+	/** Dereference. */
 	T& operator*() /*const*/ { return obj; };
+	/** Dereference. */
 	T* operator->() /*const*/ { return &obj; };
 
-	//
-	// Raw pointer
-	//
+	/** Get raw pointer. */
 	T* get () /*const*/ { return &obj; };
 	
-	//
-	// Delete
-	//
+	/** Destructor. */
 	~MassiveIdiocyWrapper () { obj.free (); };
 };
 
@@ -143,4 +138,3 @@ struct GlobalUseXpdf
 //=====================================================================================
 
 #endif // _XPDF_H_
-

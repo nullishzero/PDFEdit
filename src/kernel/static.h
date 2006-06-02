@@ -101,10 +101,11 @@ const double COORDINATE_INVALID = std::numeric_limits<Coordinate>::max();
  */
 typedef struct Point
 {
-	Coordinate x;
-	Coordinate y;
-	// Constructor
+	Coordinate x; /**< X coordinate. */
+	Coordinate y; /**< Y coordinate. */
+	/** Constructor. */
 	Point () {x = y = COORDINATE_INVALID;}
+	/** Constructor. */
 	Point (Coordinate _x, Coordinate _y) : x(_x), y(_y) {}
 
 } Point;
@@ -116,10 +117,10 @@ typedef struct Point
 template <typename Coord>
 struct GenRect
 {
-	Coord xleft;
-	Coord yleft;
-	Coord xright;
-	Coord yright;
+	Coord xleft; /**< Left x coordinate. */
+	Coord yleft; /**< Left y coordinate. */
+	Coord xright;/**< Right x coordinate. */
+	Coord yright;/**< Right y coordinate. */
 
 	// Constructor
 	GenRect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
@@ -175,7 +176,7 @@ operator << (std::ostream& os, const Rectangle& rc)
  * Print Point to output stream.
  * 
  * @param os Output stream.
- * @param rc Point to be printed.
+ * @param pt Point to be printed.
  *
  * @return Output stream.
  */

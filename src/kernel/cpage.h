@@ -39,16 +39,22 @@ namespace pdfobjects {
 typedef struct DisplayParams
 {
 	/** Paramaters */
-	double 		hDpi;		/*< Horizontal DPI. */
-	double 		vDpi; 		/*< Vertical DPI. 	*/
-	Rectangle 	pageRect;	/*< Page rectangle. */
-	int 		rotate;		/*< Page rotation. 	*/
-	GBool		useMediaBox;/*< Use page media box. */
-	GBool		crop;		/*< Crop the page. 	*/
-	GBool		upsideDown;	/*< Upside down. 	*/
+	double 		hDpi;		/**< Horizontal DPI. */
+	double 		vDpi; 		/**< Vertical DPI. 	*/
+	Rectangle 	pageRect;	/**< Page rectangle. */
+	int 		rotate;		/**< Page rotation. 	*/
+	GBool		useMediaBox;/**< Use page media box. */
+	GBool		crop;		/**< Crop the page. 	*/
+	GBool		upsideDown;	/**< Upside down. 	*/
 	
-	/** Constructor. */
-	DisplayParams ();
+	/** Constructor. Default values are set. */
+	DisplayParams () : 
+		hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
+		pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
+		rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gTrue) 
+		{}
+
+
 
 	/** Equality operator. */
 	bool operator== (const DisplayParams& dp) const
@@ -58,7 +64,23 @@ typedef struct DisplayParams
 				useMediaBox == dp.useMediaBox && crop == dp.crop &&
 				upsideDown == dp.upsideDown);
 	}
-	
+
+	//
+	// Default values
+	// -- small hack to declare them as ints, to be able to init
+	// them here (if double, we could not init them here because of the non
+	// integral type compilator error))
+	// 
+private:
+	static const int DEFAULT_HDPI 	= 72;		/**< Default horizontal dpi. */
+	static const int DEFAULT_VDPI 	= 72;		/**< Default vertical dpi. */
+	static const int DEFAULT_ROTATE	= 0;		/**< No rotatation. */
+
+	static const int DEFAULT_PAGE_LX = 0;
+	static const int DEFAULT_PAGE_LY = 0;
+	static const int DEFAULT_PAGE_RX = 612;		/**< Default A4 width on a device with 72 horizontal dpi. */
+	static const int DEFAULT_PAGE_RY = 792;		/**< Default A4 height on a device with 72 vertical dpi. */
+
 } DisplayParams;
 
 
@@ -81,8 +103,26 @@ typedef struct TextSearchParams
 	double xEnd; 			/*< Stop searching from x position.  */
 	double yEnd; 			/*< Stop searching from y position.  */
 
-	/** Constructor. */
-	TextSearchParams ();
+	/** Constructor. Default values are set. */
+	TextSearchParams () : 
+		startAtTop (DEFAULT_START_AT_TOP),
+		xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
+	{}
+
+	//
+	// Default values  
+	// -- small hack to declare them as ints, to be able to init
+	// them here (if double, we could not init them here because of the non
+	// integral type compilator error))
+	//
+private:
+	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Start at top. */
+
+	/** Default start positino when start at top is false. */
+	static const int DEFAULT_X_START = 0;				
+	static const int DEFAULT_Y_START = 0;
+	static const int DEFAULT_X_END = 0;
+	static const int DEFAULT_Y_END = 0;
 
 } TextSearchParams;
 
