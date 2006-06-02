@@ -313,6 +313,58 @@ function streamMode(newMode) {
  x.setMode(newMode);
 }
 
+
+/** Create LineEdit dialog with label and text filled. */
+function createLineEdit(label,text) {
+ var e = new LineEdit;
+ e.label = label;
+ e.text = text;
+ return e;
+}
+
+/** 
+ * Show page rectangle and allow changing page metrics. 
+ * It displayes MediaBox entry from a page dictionary and then sets new values if desired. 
+ */
+function editPageMediaBox() {
+
+ var mediabox = page.mediabox();
+ var xleft = mediabox[0];
+ var yleft = mediabox[1];
+ var xright = mediabox[2];
+ var yright = mediabox[3];
+
+ 
+ var dialog = new Dialog;
+ dialog.caption = "Page rectangle dialog";
+ dialog.okButtonText = "Change";
+ dialog.cancelButtonText = "Discard changes";
+ dialog.tooltip = "Page metrics";
+		  
+ var gb = new GroupBox;
+ gb.title = "Page metrics";
+ gb.tooltip = "Page metrics";
+ gb.cancelButtonText = "Page rectangle parameters";
+ dialog.add(gb);
+
+ var exl = createLineEdit("Left upper corner x position: ", xleft);
+ gb.add (exl);
+ var eyl = createLineEdit("Left upper corner y position: ", yleft);
+ gb.add (eyl);
+ var exr = createLineEdit("Left bottom corner x position: ", xright);
+ gb.add (exr);
+ var eyr = createLineEdit("Right bottom corner y position: ", yright);
+ gb.add (eyr);
+
+ if (dialog.exec()) {
+ 	page.setMediabox (exl.text, eyl.text, exr.text, eyr.text);
+	print ('MediaBox changed..');
+	go ();
+ }
+
+}
+
+
 /* ==== Code to run on start ==== */
 
 //Include testing/debugging items in menus?
