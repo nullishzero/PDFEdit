@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2006/06/02 11:54:44  hockm0bm
+ * getCObjectFromRef(CPdf &, IndiRef) removed because it can't use CPdf and
+ * implementation has to be in header file
+ *
  * Revision 1.28  2006/06/02 10:48:46  hockm0bm
  * getCObjectFromRef template methods added
  *
@@ -226,26 +230,6 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getPropertyValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
-	if(indirect_ptr->getType() != pType)
-		throw ElementBadTypeException("");
-	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
-}
-
-/** Gets cobject from reference and pdf instance.
- * @param pdf Pdf istance.
- * @param ref Indirect reference.
- *
- * Uses CPdf::getIndirectProperty to get dereferenced object from given
- * reference on given pdf instance. Checks object type, if it is given pType and
- * if matches cast to given template CType and returns.
- *
- * @throw ElementBadTypeException if indirect object is not CType instance.
- * @return CType instance wrapped by shared_ptr smart pointer.
- */
-template<typename CType, PropertyType pType>
-boost::shared_ptr<CType> getCObjectFromRef(CPdf & pdf, IndiRef ref)
-{
-	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pType)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
