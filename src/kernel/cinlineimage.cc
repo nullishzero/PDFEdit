@@ -2,7 +2,6 @@
 /*
  * =====================================================================================
  *        Filename:  cinlineimage.cc
- *     Description:  
  *         Created:  05/01/2006 11:41:43 AM CET
  *          Author:  jmisutka (), 
  * =====================================================================================
@@ -12,11 +11,9 @@
 #include "static.h"
 //
 #include "cinlineimage.h"
-// 
-//#include "cobject.h"
 
 // =====================================================================================
-namespace pdfobjects{
+namespace pdfobjects {
 // =====================================================================================
 
 using namespace std;
@@ -27,32 +24,35 @@ using namespace utils;
 namespace {
 // =====================================================================================
 
-//
-// Begin tag and end tag are added by composite pdfoperator
-//
-const string CINLINEIMAGE_BEGIN = "";
-const string CINLINEIMAGE_MIDDLE = "ID";
-const string CINLINEIMAGE_END = "";
-/*
- * Decode or ASCII85Decode as one of its filters, the ID operator should be followed
- * by a single white-space character; the next character after that is interpreted as
- * the first byte of image data.
- *
- * The problem is, that xpdf does not read this character. (or at least when
- * it's \0)
- * 
- * One pdf used \0 so we use it too.
- *
- * REMARK: We have to use char, because
- * 
- * string nul = "\0";
- * char cnul = '\0';
- *
- * str = "123";
- * str += nul; // "123" size: 3 
- * str += cnul // "123\0" size: 4
- */	
-const char CINLINEIMAGE_MIDDLE_CHAR_AFTER_ID = '\0';
+	//
+	// Begin tag and end tag are added by composite pdfoperator
+	//
+	const string CINLINEIMAGE_BEGIN = "";
+	const string CINLINEIMAGE_MIDDLE = "ID";
+	const string CINLINEIMAGE_END = "";
+
+	/**
+	 * Decode or ASCII85Decode as one of its filters, the ID operator should be followed
+	 * by a single white-space character; the next character after that is interpreted as
+	 * the first byte of image data.
+	 *
+	 * The problem is, that xpdf does not read this character so we do not get it (or at least when
+	 * the character is '\0').
+	 * 
+	 * Some pdf uses '\0' so we use it too.
+	 *
+	 * REMARK: We have to use char, because
+	 * 
+	 * \code
+	 * string nul = "\0";
+	 * char cnul = '\0';
+	 *
+	 * str = "123";
+	 * str += nul; // "123" size: 3 
+	 * str += cnul // "123\0" size: 4
+	 * \endcode
+	 */	
+	const char CINLINEIMAGE_MIDDLE_CHAR_AFTER_ID = '\0';
 	
 // =====================================================================================
 } // namespace
@@ -129,5 +129,5 @@ CInlineImage::getStringRepresentation (std::string& str) const
 }
 
 // =====================================================================================
-} /* namespace pdfobjects */
+} // namespace pdfobjects
 // =====================================================================================
