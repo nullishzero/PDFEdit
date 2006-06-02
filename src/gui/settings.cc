@@ -20,6 +20,7 @@
 #include <qstringlist.h> 
 #include <qstring.h>
 #include "main.h"
+#include "config.h"
 
 namespace gui {
 
@@ -29,7 +30,8 @@ using namespace util;
 const QString APP_KEY = "/PDFedit/";
 /** Name of variable which will be expanded to full path to the executable */
 const QString APP_PATH_VAR = "PDFEDIT_BIN";
-
+/** Name of variable which will be expanded to data directory */
+const QString DATA_PATH_VAR = "PDFEDIT_DATA";
 
 /** One object for application, holding all global settings.
  Should be thread-safe. This instance is used from other files */
@@ -193,6 +195,7 @@ QString Settings::expand(QString s) {
      expand to "application data" directory on windows if HOME is not set */
     if (var=="HOME") envVar=QDir::home().path();
     else if (var==APP_PATH_VAR) envVar=appPath;
+    else if (var==DATA_PATH_VAR) envVar=DATA_PATH;
     else envVar=getenv(var);
     if (envVar==QString::null) { //variable not found in environment
      envVar="";

@@ -6,11 +6,15 @@ TARGET = pdfedit
 CONFIG += debug
 
 # installation paths
-USR_PREFIX= /usr/local
-DATA_PATH = $$USR_PREFIX/share/pdfedit
-DOC_PATH  = $$USR_PREFIX/share/doc/pdfedit
-MAN_PATH  = $$USR_PREFIX/share/man/man1
-BIN_PATH  = $$USR_PREFIX/bin
+isEmpty( PREFIX ) {
+ PREFIX= /usr/local
+}
+system(touch config.h.in)
+#TODO: ask for prefix if not defined
+DATA_PATH = $$PREFIX/share/pdfedit
+DOC_PATH  = $$PREFIX/share/doc/pdfedit
+MAN_PATH  = $$PREFIX/share/man/man1
+BIN_PATH  = $$PREFIX/bin
 
 
 # installation details
@@ -45,6 +49,16 @@ menugenerator_o.commands = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o .obj/menugenerato
 menugenerator_o.depends  = menugenerator.cc menugenerator.h
 QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
 POST_TARGETDEPS = menugenerator
+QMAKE_CLEAN += .obj/menugenerator.o
+
+#build config.h
+config_h.target     = config.h
+config_h.depends    = config.h.in
+config_h.commands   = sed s^%%DATA_PATH%%^$$DATA_PATH^ <config.h.in >config.h
+QMAKE_EXTRA_UNIX_TARGETS += config_h
+PRE_TARGETDEPS = config.h
+HEADERS += config.h
+QMAKE_CLEAN += config.h
 
 LIBS       += -lqsa
 
@@ -53,6 +67,7 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-
 
 #must be specified, otherwise namespace debug will clash with debug() in QT
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
+
 
 QMAKE_CXXFLAGS_DEBUG += -O0 
 

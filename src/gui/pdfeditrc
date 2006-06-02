@@ -71,12 +71,12 @@ show_page=1
 show_simple=1
 
 [path]
-icon=$HOME/.pdfedit/icon;/usr/share/pdfedit/icon;$PDFEDIT_BIN/icon
-script=$HOME/.pdfedit;/usr/share/pdfedit;$PDFEDIT_BIN
-help=/usr/share/pdfedit/help/$LANG;$PDFEDIT_BIN/help/$LANG;/usr/share/pdfedit/help;$PDFEDIT_BIN/help
+icon=$HOME/.pdfedit/icon;$PDFEDIT_DATA/icon;$PDFEDIT_BIN/icon
+script=$HOME/.pdfedit;$PDFEDIT_DATA;$PDFEDIT_BIN
+help=$PDFEDIT_DATA/help/$LANG;$PDFEDIT_BIN/help/$LANG;$PDFEDIT_DATA/help;$PDFEDIT_BIN/help
 
 [script]
-init=/usr/share/pdfedit/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs
+init=$PDFEDIT_DATA/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs
 
 [modecontroller]
-config=$HOME/.pdfedit/mode.conf;/usr/share/pdfedit/mode.conf;$PDFEDIT_BIN/mode.conf
+config=$HOME/.pdfedit/mode.conf;$PDFEDIT_DATA/mode.conf;$PDFEDIT_BIN/mode.conf
