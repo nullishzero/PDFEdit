@@ -17,6 +17,7 @@
 #include "ccontentstream.h"
 // Helper functions
 #include "cobjecthelpers.h"
+#include "factories.h"
 
 // =====================================================================================
 namespace pdfobjects {
@@ -29,8 +30,43 @@ using namespace utils;
 //
 //
 //
+namespace {
+/** 
+ * Page attributes structure of dictionary properties which can be inherited from a parent 
+ * in the page tree.
+ *
+ * If an inheritable property is not present in a page it is defined in one of
+ * its parents in the page tree.
+ */
+struct InheritedPageAttr
+{
+	boost::shared_ptr<CDict> resources;
+	boost::shared_ptr<CArray> mediaBox;
+	boost::shared_ptr<CArray> cropBox;
+	boost::shared_ptr<CInt> rotate;
+};
+
+/** 
+ * Fills InheritedPageAttr structure for a given page dictionary.
+ *
+ * Recursive function which checks given pageDict whether it contains
+ * uninitialized (NULL values) from a given attribute structure. If true, sets
+ * the value from the dictionary. If at least one property is still not 
+ * initialized, repeats the process for the parent dictionary (dereferenced 
+ * "Parent" property). End if the "Parent" property is not present (in root 
+ * of a page tree).
+ * <br>
+ * Use default value when a property was not initialized.
+ *
+ * @param pageDict Page dictionary.
+ * @param attrs Output attribute structure where correct values are put.
+ *
+ * @throw NotImplementedException at this moment.
+ */
 void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
 {
+	int initialized=0;
+	
 	// resource field
 	shared_ptr<CDict> resources=attrs.resources;
 	if(!resources.get())
@@ -40,15 +76,22 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 		{
 			shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
 			if(isRef(prop))
+			{
 				resources=getDictFromRef(prop);
+				initialized++;
+			}
 			else
 				if(isDict(prop))
+				{
 					resources=IProperty::getSmartCObjectPtr<CDict>(prop);
+					initialized++;
+				}
 		}catch(CObjectException & e)
 		{
 			// not found
 		}
-	}
+	}else
+		initialized++;
 
 	// mediabox field
 	shared_ptr<CArray> mediaBox=attrs.mediaBox;
@@ -60,18 +103,120 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 			shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
 			if(isRef(prop))
 			{
+				mediaBox=getCObjectFromRef<CArray, pArray>(prop);
+				initialized++;
 			}else
 				if(isArray(prop))
-					prop=IProperty::getSmartCObjectPtr<CArray>(prop);
+				{
+					mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+					initialized++;
+				}
 		}catch(CObjectException & e)
 		{
 			// not found or bad type
 		}
+	}else
+		initialized++;
+
+	// cropbox field
+	shared_ptr<CArray> cropBox=attrs.cropBox;
+	if(!cropBox.get())
+	{
+		// cropBox field is not specified yet, so tries this array
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("CropBox");
+			if(isRef(prop))
+			{
+				cropBox=getCObjectFromRef<CArray, pArray>(prop);
+				initialized++;
+			}else
+				if(isArray(prop))
+				{
+					cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+					initialized++;
+				}
+		}catch(CObjectException & e)
+		{
+			// not found or bad type
+		}
+	}else
+		initialized++;
+
+	// rotate field
+	shared_ptr<CInt> rotate=attrs.rotate;
+	if(!rotate.get())
+	{
+		// rotate field is not specified yet, so tries this array
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("Rotate");
+			if(isRef(prop))
+			{
+				rotate=getCObjectFromRef<CInt, pInt>(prop);
+				initialized++;
+			}else
+				if(isInt(prop))
+				{
+					rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
+					initialized++;
+				}
+		}catch(CObjectException & e)
+		{
+			// not found or bad type
+		}
+	}else
+		initialized++;
+
+	// all values available from this dictionary are set now
+	if(initialized<4)
+	{
+		// not everything from InheritedPageAttr is initialized now
+		// tries to initialize from parent.
+		// If parent is not present, uses dafault value
+		try
+		{
+			shared_ptr<IProperty> parentRef=pageDict->getProperty("Parent");
+			if(!isRef(parentRef))
+				// this should not happen - malformed page tree structure
+				return;
+
+			shared_ptr<CDict> parentDict=getDictFromRef(parentRef);
+				
+		}catch(ElementNotFoundException & e)
+		{
+			// parent not found - uses default values
+			
+			// Resources is required and at least empty dictionary should be
+			// specified 
+			if(!attrs.resources.get())
+				attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
+
+			// default A4 sized box
+			// FIXME change to constants
+			Rectangle defaultRect(0, 0, 612, 792);
+			//Rectangle defaultRect(DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY);
+
+			// MediaBox is required and specification doesn't say anything about
+			// default value - we are using standard A4 format
+			if(!attrs.mediaBox.get())
+				attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+
+			// CropBox is optional and specification doesn't say anything about
+			// default value - we are using standard A4 format
+			if(!attrs.cropBox.get())
+				attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+			
+			// Rotate is optional and specification defines default value to 0
+			if(!attrs.rotate.get())
+				// FIXME
+				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(0));
+				//attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(DEFAULT_ROTATE));
+		}
 	}
-
-
 }
 
+} // anonnymous namespace for inherited attributes
 
 //=====================================================================================
 // CPage
@@ -119,6 +264,84 @@ CPage::getMediabox () const
 }
 
 //
+//
+//
+void
+CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
+{
+using namespace boost;
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "");
+	
+	// checks whether this page is valid (has pdf and valid reference.
+	if(!hasValidPdf(dictionary) || !hasValidPdf(dictionary))
+	{
+		kernelPrintDbg(DBG_ERR, "This page doesn't belong to pdf or doesn't "
+				<< "have correct indiRef. It is not suitable for annotation.");
+		throw CObjInvalidObject();
+	}
+
+	// gets pdf of this annotation - it is valid
+	CPdf * pdf=dictionary->getPdf();
+		
+	// gets Annots array from page dictionary. If no found, creates it. If bad
+	// typed, throws an exception
+	shared_ptr<CArray> annotsArray;
+	try
+	{
+		shared_ptr<IProperty> arrayProp=dictionary->getProperty("Annots");
+		if(isRef(arrayProp))
+			// this will throw if target is not an array
+			annotsArray=getCObjectFromRef<CArray, pArray>(arrayProp);
+	}catch(ElementBadTypeException & e)
+	{
+		// TODO provide also bad type information
+		kernelPrintDbg(DBG_ERR, "Page's Annots field is malformed. Array property expected.");
+		throw;
+	}
+	catch(ElementNotFoundException & e)
+	{
+		kernelPrintDbg(DBG_INFO, "Page's Annots field missing. Creating one.");
+		
+		// Annots array doesn't exist - so creates one and registers observer to
+		// it.
+		// annotsArray must be set from getProperty method because addProperty
+		// creates deep copy of given
+		scoped_ptr<IProperty> tmpArray(CArrayFactory::getInstance());
+		dictionary->addProperty("Annots", *tmpArray);
+		annotsArray=IProperty::getSmartCObjectPtr<CArray>(
+				dictionary->getProperty("Annots")
+				);
+		
+		// TODO registers observer
+	}
+
+	kernelPrintDbg(DBG_DBG, "Creating new indirect dictionary for annotation.");
+	
+	// addes annotation dictionary to the pdf - this will add deep copy if given
+	// dictionary and also solves problems with annotation from different pdf
+	IndiRef annotRef=pdf->addIndirectProperty(annot->getDictionary());
+	
+	// gets added annotation dictionary
+	shared_ptr<CDict> annotDict=IProperty::getSmartCObjectPtr<CDict>(
+			pdf->getIndirectProperty(annotRef)
+			);
+
+	kernelPrintDbg(DBG_DBG, "Setting annotation dictionary field P="<<dictionary->getIndiRef());
+	// updates P field with reference to this page
+	// This is not explictly required by specification for all annotation types,
+	// but is not an error to supply this information
+	shared_ptr<CRef> pageRef(CRefFactory::getInstance(dictionary->getIndiRef()));
+	utils::checkAndReplace(annotDict, "P", *pageRef);
+
+	kernelPrintDbg(DBG_INFO, "Adding reference "<<annotRef<<" to annotation dictionary to Annots array");
+	// annotation dictionary is prepared and so its reference can be stored	
+	// to Annots array from page dictionary - this will start observer which
+	// will update annotStorage
+	scoped_ptr<CRef> annotCRef(CRefFactory::getInstance(annotRef));
+	annotsArray->addProperty(*annotCRef);
+}
 // \TODO magic constants 0,0, 1000, 1000
 //
 void

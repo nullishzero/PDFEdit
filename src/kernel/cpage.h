@@ -17,6 +17,8 @@
 #include "cobject.h"
 // CContentstream
 #include "ccontentstream.h"
+// CAnnotation
+#include "cannotation.h"
 
 
 //=====================================================================================
@@ -204,46 +206,13 @@ private:
 	const Point pt_;
 };
 
-/** 
- * Page attributes structure of dictionary properties which can be inherited from a parent 
- * in the page tree.
- *
- * If an inheritable property is not present in a page it is defined in one of
- * its parents in the page tree.
- */
-struct InheritedPageAttr
-{
-	boost::shared_ptr<CDict> resources;
-	boost::shared_ptr<CArray> mediaBox;
-	boost::shared_ptr<CArray> cropBox;
-	boost::shared_ptr<CInt> rotate;
-};
-
-/** 
- * Fills InheritedPageAttr structure for a given page dictionary.
- *
- * Recursive function which checks given pageDict whether it contains
- * uninitialized (NULL values) from a given attribute structure. If true, sets
- * the value from the dictionary. If at least one property is still not initialized,
- * repeats the process for the parent dictionary (dereferenced "Parent" property). End if the "Parent"
- * property is not present (in root of a page tree).
- * <br>
- * Use default value when a property was not initialized.
- *
- * @param pageDict Page dictionary.
- * @param attrs Output attribute structure where correct values are put.
- *
- * @throw NotImplementedException at this moment.
- */
-void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr& attrs);
-
 
 //=====================================================================================
 // CPage
 //=====================================================================================
 
 /**
- * This objecte represents one pdf page object. PDF page object is a dictionary
+ * This object represents one pdf page object. PDF page object is a dictionary
  * reachable from page tree structure with several required properties. 
  * It is responsible just for one single page.
  *
@@ -289,7 +258,10 @@ class CPage
 {
 public:
 	typedef std::vector<boost::shared_ptr<CContentStream> > ContentStreams;
-	
+
+	/** type for annotation storage. */
+	typedef std::vector<boost::shared_ptr<CAnnotation> > AnnotStorage;
+
 private:
 
 	/** Pdf dictionary representing a page. */
@@ -301,6 +273,13 @@ private:
 	/** Actual display parameters. */
 	DisplayParams lastParams;
 	
+	/** Keeps all annotations from this page.
+	 *
+	 * This structure is synchronized with page dictionary Annots field with
+	 * observer (TODO).
+	 */
+	AnnotStorage annotStorage;
+
 	//
 	// Constructors
 	//
@@ -445,6 +424,51 @@ public:
 	 */
  	void getText (std::string& text) const;
 
+
+	/** 
+	 * Fills given container with all page's annotations.
+	 * 
+	 * Copies annotStorage content to given container (which is cleared at
+	 * first).
+	 * <br>
+	 * Given container must support clear and insert operations and store
+	 * shared_ptr&lt;CAnnotation$gt; elements. 
+	 * 
+	 * @param container Container which is filled in.
+	 */
+	template<typename T>
+	void getAllAnnotations(T  & container)const
+	{
+		container.clear();	
+		container.insert(container.begin(), annotStorage.begin(), annotStorage.end());
+	}
+
+	/** 
+	 * Adds new annotation to this page.
+	 * 
+	 * Inserts deep copy of given annotation and stores its reference to Annots
+	 * array in page dictionary (if this doesn't exist, it is created). 
+	 * User has to call getAllAnnotations to get new annotations state (we don't 
+	 * have identifier for annotations - there are some mechanisms how to do it 
+	 * according pdf specification, but there is no explicit identifier).
+	 * <br>
+	 * Given annotation may come from different CPdf or may belong to nowhere.
+	 * <br>
+	 * As a result annotStorage is updated. New indirect object representing
+	 * annotation dictionary is added to same pdf (dictionary is same as given
+	 * one except P field is updated to contain correct reference to this page).
+	 * <br>
+	 * Note that this page must belong to pdf and has to have valid indirect
+	 * reference. This is neccessary, because annotation is indirect object page
+	 * keeps reference to it. Reference without pdf doesn't make sense.
+	 *
+	 * @param annot Annotation to add.
+	 * @throw CObjInvalidObject if this page doesn't have valid pdf or indirect
+	 * reference.
+	 * @throw ElementBadTypeException if Annots field from page dictionary is
+	 * not an array (or reference with array indirect target).
+	 */ 
+	void addAnnotation(boost::shared_ptr<CAnnotation> annot);
 
 	//
 	// Font interface
