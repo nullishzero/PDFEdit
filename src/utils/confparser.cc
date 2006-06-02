@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/06/02 05:44:41  hockm0bm
+ * typo fix
+ *
  * Revision 1.3  2006/06/01 14:05:05  hockm0bm
  * * trim method added
  * * tokenizer method signature changed
@@ -30,7 +33,7 @@ namespace configuration
 namespace utils
 {
 	
-size_t tokenizer(const std::string & text, const std::string & deliminers, std::vector<std::string> & tokens)
+size_t tokenizer(const std::string & text, const std::string & delimiters, std::vector<std::string> & tokens)
 {
 using namespace std;
 
@@ -38,10 +41,10 @@ using namespace std;
 	size_t tokenEnd=0;
 	size_t tokenCount=0;
 
-	while((tokenEnd=text.find_first_of(deliminers, tokenStart))!=string::npos)
+	while((tokenEnd=text.find_first_of(delimiters, tokenStart))!=string::npos)
 	{
 		// token found, makes copy of [tokenStart, tokenEnd) range from text and
-		// moves tokenStart behind deliminer position (tokenEnd)
+		// moves tokenStart behind delimiter position (tokenEnd)
 		tokenCount++;
 		string token;
 		token.assign(text, tokenStart, tokenEnd-tokenStart);

@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/06/02 05:44:41  hockm0bm
+ * typo fix
+ *
  * Revision 1.6  2006/06/01 14:46:24  hockm0bm
  * doc update - doxygen warnings removed (if possible)
  *
@@ -52,16 +55,16 @@ namespace utils
 	
 /** Parses given text to tokens.
  * @param text String to parse.
- * @param deliminers Set of deliminers.
+ * @param delimiters Set of delimiters.
  * @param tokens Output array of tokens.
  *
- * One token is considered to be everything between two deliminers (or text
+ * One token is considered to be everything between two delimiters (or text
  * start, end respectively). Deliminers are not included. Note that empty string
  * is ignored and not parsed.
  *
  * @return number of output tokens.
  */
-size_t tokenizer(const std::string & text, const std::string & deliminers, std::vector<std::string> & tokens);
+size_t tokenizer(const std::string & text, const std::string & delimiters, std::vector<std::string> & tokens);
 
 /** Trims given string.
  * @param str String to trim.
@@ -154,19 +157,19 @@ public:
 };
 
 /** Simple string parser.
- * Reads input stream by lines and split line according deliminer. Everything
- * before deliminers member is marked as key and everything after as value. 
+ * Reads input stream by lines and split line according delimiter. Everything
+ * before delimiters member is marked as key and everything after as value. 
  * <br>
  * Deliminers are specified as set of characters where each stands for
  * separator. 
  */
 class StringConfigurationParser: public IConfigurationParser<std::string, std::string>
 {
-	/** Set of deliminers.
-	 * Each character is one deliminer.
+	/** Set of delimiters.
+	 * Each character is one delimiter.
 	 * Default value contains `:' character.
 	 */
-	std::string deliminerSet;
+	std::string delimiterSet;
 
 	/** Set of characters for comments.
 	 * Default value contains `%', `#' characters.
@@ -190,7 +193,7 @@ public:
 	 */
 	StringConfigurationParser(std::istream * str):IConfigurationParser<std::string, std::string>(str)
 	{
-		deliminerSet=":";
+		delimiterSet=":";
 		commentsSet="%#";
 		blankSet=" \t";
 	};
@@ -223,16 +226,16 @@ public:
 		return old;
 	}
 
-	/** Sets new deliminerSet.
+	/** Sets new delimiterSet.
 	 * @param set Set of characters.
 	 *
 	 * @return Current set value.
 	 */
 	std::string setDeliminersSet(std::string set)
 	{
-		std::string old=deliminerSet;
+		std::string old=delimiterSet;
 
-		deliminerSet=set;
+		delimiterSet=set;
 
 		return old;
 	}
@@ -258,9 +261,9 @@ public:
 	 * following line. Otherwise starts parsing.
 	 * <br>
 	 * Parsing process is very simple and just searches first occurence of
-	 * character from deliminerSet. Everything before separator is used to
+	 * character from delimiterSet. Everything before separator is used to
 	 * initialize key parameter and everything behind to value parameter. If
-	 * none from deliminerSet is found assumes that value is empty and key is
+	 * none from delimiterSet is found assumes that value is empty and key is
 	 * whole parsed string.
 	 * <br>
 	 * If any error occures while reading or end of file occured, returns with
@@ -319,13 +322,13 @@ public:
 		}while(!(*bufferStart));
 
 		// we have read one non empty line we can parse it to get key and value
-		if(char * delim=strpbrk(bufferStart, deliminerSet.c_str()))
+		if(char * delim=strpbrk(bufferStart, delimiterSet.c_str()))
 		{
 			*delim='\0';
 			key=bufferStart;
 			value=delim+1;
 		}else
-			// no deliminer found so we initialize value as empty
+			// no delimiter found so we initialize value as empty
 			value="";
 
 		return true;
