@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.56  2006/06/02 16:38:15  hockm0bm
+ * modecontroller field has not been initialized in constructors
+ *         - thx to Jozo
+ *
  * Revision 1.55  2006/06/02 11:31:46  misuj1am
  *
  * -- ADD: outline get text function
@@ -859,7 +863,7 @@ private:
 	 * If you want to create instance, please use static factory method 
 	 * getInstance.
 	 */
-	CPdf ():mode(ReadOnly){};
+	CPdf ():mode(ReadOnly), modeController(NULL){};
 
 	/** Initializating constructor.
 	 * @param stream Stream with data.
@@ -1126,8 +1130,8 @@ public:
 	 * position is same as if pos parameter was 1. All pages behind pos
 	 * are renumbered.
 	 * <br>
-	 * Method may fail if page at given position is ambigues. This means that it
-	 * is not possible to get position of page reference in its parent Kids
+	 * Method may fail if page at given position is ambiguous. This means that 
+	 * it is not possible to get position of page reference in its parent Kids
 	 * array due to multiple occurance in Kids array. @see getNodePosition
 	 * 
 	 * <br>
