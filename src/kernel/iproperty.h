@@ -30,7 +30,7 @@ class IProperty;
 typedef observer::IObserverHandler<IProperty> IPropertyObserverSubject;
 
 
-/** Enum describing the type of a property. */
+/** Enum describing property type. */
 enum PropertyType 
 {
 		// Simple
@@ -55,7 +55,7 @@ enum PropertyType
 };
 
 
-/** Object id number. */
+/** Object identification number. */
 typedef unsigned int ObjNum;
 /** Object generation number. */
 typedef unsigned int GenNum;
@@ -63,41 +63,46 @@ typedef unsigned int GenNum;
 /** Values specifying indirect reference to an (x)pdf object. */
 typedef struct IndiRef
 {
-	ObjNum	num; /**< Object's pdf identification number */
-	GenNum	gen; /**< Object's pdf generation number */
+	ObjNum	num; /**< Object's pdf identification number. */
+	GenNum	gen; /**< Object's pdf generation number. */
+
+	static const ObjNum invalidnum = 0;	/**< Invalid object identification number. */
+	static const GenNum invalidgen = 0; /**< Invalid object generation number. */
 
 	/** 
 	 * Empty constructor.
-	 * Initializes num and gen to invalid reference.
+	 * Initialize identification and generation number to invalid reference.
 	 */
-	IndiRef() : num(0), gen(0) {}
+	IndiRef() : num(invalidnum), gen(invalidgen) {}
 	
 	/** 
-	 * Initialize constructor.
-	 * Sets num and gen according given reference.
+	 * Constructor.
+	 * Stores supplied identification and generation numbers.
 	 * 
 	 * @param ref Indirect Reference.
 	 */
 	IndiRef(const IndiRef& ref) : num(ref.num), gen(ref.gen)	{}
 
 	/** 
-	 * Initialize constructor.
-	 * Sets num and gen according given reference.
+	 * Constructor.
+	 * Stores supplied identification and generation numbers.
 	 * 
 	 * @param ref Xpdf reference.
 	 */
 	IndiRef(const ::Ref& ref) : num(ref.num), gen(ref.gen) {}
 
 	/** 
-	 * Initialize constructor.
-	 * Sets num and gen according given parameters.
+	 * Constructor.
+	 * Stores supplied identification and generation numbers.
 	 * 
 	 * @param _num Object number.
 	 * @param _gen Generation number.
 	 */
 	IndiRef(int _num, int _gen) : num(_num), gen(_gen) {}
 
+	/** Copy constructor. */
 	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;};
+	/** Equality operator. */
 	bool operator== (const IndiRef& _r) const { return (num == _r.num && gen == _r.gen) ? true : false;};
 			
 } IndiRef;
@@ -110,26 +115,29 @@ typedef struct IndiRef
 
 /** 
  * Narrow interface describing properties of every pdf object. We use this 
- * interface when we want to access properties of pdf object.
+ * interface when we access properties of pdf object.
  *
- * Each IProperty is associated with one pdf object. The object represents current state.
- * However, these changes are not visible by the (x)pdf till they are registered
- * in CXref with dispatchChange() method.
+ * Each IProperty is associated with one pdf object.
+ * Changes made to this object are visible by xpdf only after registered
+ * dispatchChange() method.
  *
- * When accessing complex properties, we have to know the type with which type we
- * are working. According to the type, we can cast this object to CObjectComplex<type> 
+ * When accessing complex properties, we have to know their type.
+ * According to the type, we can cast this object to CObjectComplex<type> 
  * to get more functionality.
  *
- * REMARK: The connection to CPdf is stored in CPdf* and not smart pointer. This has a good reason
+ * REMARK: The connection to CPdf is stored in CPdf* and not a smart pointer. This has a good reason
  * namely cyclic references of smart pointers.
+ *
+ * This object implements Observer interface which means we can observe changes
+ * made to all CObjects.
  */
 class IProperty : public IPropertyObserverSubject
 {
 private:
-	IndiRef 		ref;		/**< Object's pdf id and generation number. */
+	IndiRef 		ref;		/**< Object's pdf identification and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
 	CPdf* 			pdf;		/**< This object belongs to this pdf. */	
-	bool			wantDispatch;/**< If true, changes are dispatched. */
+	bool			wantDispatch;/**< If true changes are dispatched. */
 
 	//
 	// Constructors
@@ -155,7 +163,8 @@ public:
 	/**
 	 * Copy constructor. Returns deep copy.
 	 *
-	 * REMARK: This is an example of Template method design pattern.
+	 * REMARK: This is an example of Factory  method design pattern where we do
+	 * not know the real type of the instance of this object.
 	 * 
 	 * @return Deep copy of this object.
 	 */
@@ -164,7 +173,9 @@ public:
 protected:
 
 	/**
-	 * Implementation of clone method
+	 * Implementation of clone method.
+	 *
+	 * REMARK: This is an example of Template method design pattern.
  	 *
  	 * @return Deep copy of this object.
 	 */
@@ -176,7 +187,7 @@ protected:
 public:
   
 	/**
-	 * Set member variable pdf.
+	 * Set pdf.
 	 * <exception cref="ObjInvalidOperation"> Thrown when we want to set pdf association to 
 	 * already associated object.
 	 *
@@ -185,7 +196,7 @@ public:
 	virtual void setPdf (CPdf* p);
 
 	/**
-	 * Returns pdf in which this object lives.
+	 * Returns pdf in which this object resides.
 	 *
 	 * @return Pdf that this object is associated with.
 	 */
@@ -196,10 +207,10 @@ public:
 	//
 public:
 	/**
-	 * Returns object's identification number. If it is an inline object
-	 * returns id of parent object.
+	 * Returns object's identification number. If it is a direct object
+	 * returns identification and generation number of parent object.
 	 *
-	 * @return Indirect identification number and generation number.
+	 * @return Identification and generation number.
 	 */
 	const IndiRef& getIndiRef () const {return ref;};
 
@@ -207,7 +218,7 @@ public:
 	/**
 	 * Set object identification number and generation number.
 	 *
-	 * @param _r Indirect reference id and generation number.
+	 * @param rf Indirect reference identification and generation number.
 	 */
 	virtual void setIndiRef (const IndiRef& rf) {ref = rf;};
 
@@ -215,7 +226,7 @@ public:
 	/**
 	 * Set object identification number and generation number.
 	 *
-	 * @param n Object's id.
+	 * @param n Object's identification number.
 	 * @param g Object's generation number.
 	 */
 	void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
@@ -233,7 +244,7 @@ public:
 	PropertyMode getMode () const {return mode;};
 
 	/**
-	 * Set mode of a property.
+	 * Set mode of this property.
 	 *
 	 * @param md Mode.
 	 */
@@ -265,16 +276,15 @@ public:
     }
 
 	/** 
-     * Returns type of object. 
+     * Returns type of instance of this object. 
      *
-     * @return Type of this class.
+     * @return Type of this instance.
      */
     virtual PropertyType getType () const = 0;
 
 	/**
-	 * Returns string representation of actual object.
-	 * 
-	 * If it is an indirect object, we have to notify CXref.
+	 * Returns string representation according to pdf specification
+	 * of this object.
 	 */
 	virtual void getStringRepresentation (std::string& str) const = 0;
 
@@ -302,7 +312,8 @@ public:
 	void unlockChange () {assert (false == wantDispatch); wantDispatch = true;}
 
 	/**
-	 * Create xpdf object.
+	 * Create xpdf object from this object. This is a factory method because we
+	 * do not know the type of instance of this object.
 	 *
 	 * @return Xpdf object(s).
 	 */
@@ -322,7 +333,7 @@ public:
 
 
 /** 
- * Checks whether pdf is valid instance.
+ * Checks whether pdf is valid.
  * 
  * @param pdf Pdf isntance to check.
  * @return true if pdf is not NULL, false otherwise.
@@ -331,7 +342,7 @@ inline bool isPdfValid(CPdf* pdf)
 	{ return (NULL !=pdf); }
 
 /** 
- * Checks whether ip's pdf is valid.
+ * Checks whether iproprety belongs to a valid pdf.
  * 
  * @param ip Property to check.
  * @return isPdfValid(ip-&getPdf()).
@@ -343,14 +354,15 @@ template<typename T> inline bool hasValidPdf(T ip)
 
 
 /** 
- * Checks whether given reference is valid.
- * Reference is valid, if it is non NULL and object number is greater than 0.
+ * Checks whether given indirect reference is valid.
+ * Reference is valid, if it is non NULL and object number is greater than 0 and 
+ * object number is not invalid.
  * 
  * @param ref Reference to check.
  * @return true if reference is valid, false otherwise.
  */
 inline bool isRefValid(const IndiRef* ref)
-	{ return (ref) && (ref->num>0); }
+	{ return (ref) && (ref->num>0) && (IndiRef::invalidnum != ref->num); }
 
 template<typename T> inline bool hasValidRef (T ip) 
 	{ return isRefValid(&ip->getIndiRef()); }
@@ -359,20 +371,29 @@ inline bool hasValidRef (IProperty& ip)
 	{ return isRefValid(& ip.getIndiRef()); }
 
 
-//
+/** Is iproperty of a specified type. */
 template<PropertyType Type>
 inline bool isIPType (const IProperty& ip) {return (Type == ip.getType());}
+/** Is iproperty of a specified type. */
 template<PropertyType Type>
 inline bool isIPType (boost::shared_ptr<IProperty> ip) {return (Type == ip->getType());}
 /** Is IProperty of specified type. */
 template<typename T> inline bool isNull	 (T& ip) {return isIPType<pNull> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isInt 	 (T& ip) {return isIPType<pInt> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isReal  (T& ip) {return isIPType<pReal> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isString(T& ip) {return isIPType<pString> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isName  (T& ip) {return isIPType<pName> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isRef 	 (T& ip) {return isIPType<pRef> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isDict  (T& ip) {return isIPType<pDict> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isArray (T& ip) {return isIPType<pArray> (ip);}
+/** \copydoc isNull*/
 template<typename T> inline bool isStream(T& ip) {return isIPType<pStream> (ip);}
 	
 
@@ -384,26 +405,37 @@ template<typename T> inline bool isStream(T& ip) {return isIPType<pStream> (ip);
 //
 // String representation of object type
 //
+/** Get string representation of specified type. */
 template<int i> inline
 std::string getStringType () {return "Unknown";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<0> () {return "Bool";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<1> () {return "Int";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<2> () {return "Real";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<3> () {return "String";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<4> () {return "Name";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<5> () {return "Null";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<9> () {return "Ref";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<6> () {return "Array";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<7> () {return "Dict";}
+/** Get string representation of specified type. */
 template<> inline
 std::string getStringType<8> () {return "Stream";}
 
