@@ -249,4 +249,17 @@ QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor) {
  return retCol;
 }
 
+/**
+ Return string list containing 'count' items, numbered from 'start' to 'start+count-1'
+ @param count number of items in list
+ @param start 
+*/
+QStringList countList(unsigned int count,unsigned int start/*=0*/) {
+ QStringList items;
+ for(unsigned int i=0;i<count;i++) {
+  items+=QString::number(i+start);
+ }
+ return items;
+}
+
 } //namespace util

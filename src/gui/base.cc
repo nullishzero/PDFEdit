@@ -839,7 +839,7 @@ QString Base::tr(const QString &text,const QString &context/*=QString::null*/) {
 
 /**
  Return root item of currently selected tree
- @param Current tree root item
+ @return Current tree root item
 */
 QSTreeItem* Base::treeRoot() {
  return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->root()));
@@ -847,7 +847,7 @@ QSTreeItem* Base::treeRoot() {
 
 /**
  Return root item of main tree
- @param Main tree root item
+ @return Main tree root item
 */
 QSTreeItem* Base::treeRootMain() {
  return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->rootMain()));

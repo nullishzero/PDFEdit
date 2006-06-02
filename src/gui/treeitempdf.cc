@@ -7,6 +7,7 @@
 #include "treedata.h"
 #include "treeitem.h"
 #include "treeitemdict.h"
+#include "treeitemoutline.h"
 #include "treeitemobserver.h"
 #include "treeitempage.h"
 #include "treeitempdf.h"
@@ -19,7 +20,7 @@
 
 namespace gui {
 
-//TODO: implement anotations, outlines
+//TODO: implement anotations
 
 /** Child type specific for TreeItemPdf*/
 enum childType {invalidItem=-1, pageList=1, outlineList, pageItem, outlineItem, dictItem};
@@ -125,6 +126,9 @@ void TreeItemPdf::initSpec(CPdf *pdf,const QString &name) {
  // object type
  setText(1,QObject::tr("List"));
  nType=name;//Set node type
+ if (nType=="Outlines") {
+  obj->getOutlines(outlines);
+ }
  reload(false);//Add all childs
 }
 
@@ -149,6 +153,9 @@ void TreeItemPdf::reloadSelf() {
   QString pages=util::countString(count,"page","pages");
   setText(2,pages);
  }
+ if (nType=="Outlines") {
+  obj->getOutlines(outlines);
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -163,8 +170,9 @@ TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QLi
   return new TreeItemPage(data,obj->getPage(i),this,name,after);
  }
  if (typ==outlineItem) { //Outlines - get specific outline
-  //TODO: implement
-  return NULL;
+  unsigned int i=name.toUInt();
+  guiPrintDbg(debug::DBG_DBG,"Adding outline by reload() - " << i);
+  return new TreeItemOutline(data,this,outlines[i],name,after);
  }
  assert(0);//Unknown
  return NULL;
@@ -181,12 +189,21 @@ bool TreeItemPdf::validChild(const QString &name,QListViewItem *oldChild) {
   unsigned int i=name.toUInt();
   return obj->getPage(i).get()==itp->getObject().get();
  }
+ TreeItemOutline *ito=dynamic_cast<TreeItemOutline*>(oldChild);
+ if (ito) { //Is an outline
+  unsigned int i=name.toUInt();
+  return outlines[i].get()==itc->getObject().get();
+ }
  //Something else
  return true;
 }
 
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemPdf::deepReload(const QString &childName,QListViewItem *oldItem) {
+ TreeItemOutline *ito=dynamic_cast<TreeItemOutline*>(oldItem);
+ if (ito) { //Outline
+  return false;
+ }
  TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldItem);
  if (itc) { //Is a document catalog
   //If replaced, return success, otherwise failure
@@ -226,17 +243,16 @@ QStringList TreeItemPdf::getChildNames() {
   if (data->showOutline()) items += "Outlines";
   return items;
  }
- if (nType=="Pages") {
-  unsigned int count=obj->getPageCount();
-  QStringList items;
-  for(unsigned int i=1;i<=count;i++) { //Add all pages
-   items += QString::number(i);
-  }
-  return items;
+ if (nType=="Pages") {//Page list
+  return util::countList(obj->getPageCount(),1);
  }
- if (nType=="Outlines") {
-  //TODO : implement outlines
-  return QStringList();
+ if (nType=="Outlines") {//Outline list
+  try {
+   return util::countList(outlines.size());
+  } catch(...) {
+   //TODO : some exception, inform
+   return QStringList();
+  }
  }
  assert(0); //Should not happen
  return QStringList();
@@ -255,8 +271,7 @@ bool TreeItemPdf::haveChild() {
   return count>0;
  }
  if (nType=="Outlines") {
-  //TODO : implement outlines
-  return false;
+  return outlines.size()>0;
  }
  assert(0); //Should not happen
  return false;

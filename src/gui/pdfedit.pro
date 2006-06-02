@@ -80,8 +80,8 @@ HEADERS += treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  tre
 SOURCES += treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
 HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treeitemcontentstream.h
 SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treeitemcontentstream.cc
-HEADERS += treeitempdfoperator.h  treeitemoperatorcontainer.h
-SOURCES += treeitempdfoperator.cc treeitemoperatorcontainer.cc
+HEADERS += treeitempdfoperator.h  treeitemoperatorcontainer.h  treeitemoutline.h
+SOURCES += treeitempdfoperator.cc treeitemoperatorcontainer.cc treeitemoutline.cc
 
 #Property editor
 HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h  property.h  propertymodecontroller.h

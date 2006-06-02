@@ -43,6 +43,8 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  labels=new QDict<QLabel>();
  //number of objects - empty
  nObjects=0;
+ //Set some minimum height to be at least somewhat visible
+ setMinimumHeight(40);
  // create scrollview
  scroll=new QScrollView(this,"propertyeditor_scroll",0);
  scroll->setHScrollBarMode(QScrollView::AlwaysOff);

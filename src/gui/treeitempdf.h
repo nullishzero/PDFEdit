@@ -3,6 +3,7 @@
 
 #include <qlistview.h>
 #include "treeitemabstract.h"
+#include "treeitemoutline.h"
 
 class QString;
 
@@ -49,6 +50,8 @@ private:
  boost::shared_ptr<TreeItemObserver> observer;
  /** Reference to page dictionary */
  boost::shared_ptr<IProperty> pageDictionary;
+ /** Outline list */
+ std::vector<OutlineItem> outlines;
 };
 
 } // namespace gui

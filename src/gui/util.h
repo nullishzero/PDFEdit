@@ -28,6 +28,7 @@ QString getUntil(char separator,QString &line,bool escape=false);
 void setDebugLevel(const QString &param);
 QString countString(int count,QString singular,QString plural);
 QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor);
+QStringList countList(unsigned int count,unsigned int start=0);
 
 } //namespace util
 

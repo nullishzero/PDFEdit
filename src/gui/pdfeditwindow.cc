@@ -85,12 +85,27 @@ void PdfEditWindow::closeWindow() {
  close();
 }
 
+/** Saves window visibility state to application settings */
+void PdfEditWindow::saveVisibility(QWidget *w,const QString &name) {
+ globalSettings->write(QString("windowstate/vis_")+name,w->isVisible());
+}
+
+/** Restore window visibility state from application settings */
+void PdfEditWindow::loadVisibility(QWidget *w,const QString &name) {
+ bool vis=globalSettings->readBool(QString("windowstate/vis_")+name,true);
+ if (vis) w->show(); else w->hide();
+}
+
 /** Saves window state to application settings*/
 void PdfEditWindow::saveWindowState() {
  globalSettings->saveWindow(this,"main"); 
  globalSettings->saveSplitter(spl,"spl_main"); 
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
+ saveVisibility(cmdLine,"cmd"); 
+ saveVisibility(prop,"prop"); 
+ saveVisibility(splProp,"right"); 
+ saveVisibility(tree,"tre"); 
  menuSystem->saveToolbars();
 }
 
@@ -101,6 +116,10 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreSplitter(spl,"spl_main"); 
  globalSettings->restoreSplitter(splProp,"spl_right"); 
  globalSettings->restoreSplitter(splCmd,"spl_left"); 
+ loadVisibility(cmdLine,"cmd"); 
+ loadVisibility(prop,"prop"); 
+ loadVisibility(splProp,"right"); 
+ loadVisibility(tree,"tre"); 
  menuSystem->restoreToolbars();
 }
 
@@ -495,9 +514,15 @@ void PdfEditWindow::setFileName(const QString &name) {
 void PdfEditWindow::setTitle(int revision/*=0*/) {
  QString revisionInfo="";
  if (revision) revisionInfo=QString(" - ")+tr("viewing revision")+" "+QString::number(revision);
- QString linInfo="";
- if (document->isLinearized()) linInfo=QString(" (")+tr("Linearized PDF")+")";
- setCaption(QString(APP_NAME)+" - "+baseName+revisionInfo+linInfo);
+ QStringList docFlags;
+ if (document->isLinearized()) docFlags+=tr("Linearized PDF");
+//TODO: MISO
+// if (document->isEncrypted()) docFlags+=tr("Encrypted");
+ QString docInfo="";
+ if (docFlags.count()) {
+  docInfo=" ( "+docFlags.join(", ")+" )";
+ }
+ setCaption(QString(APP_NAME)+" - "+baseName+revisionInfo+docInfo);
 }
 
 /** Closes file currently opened in editor, without opening new empty one */

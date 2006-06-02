@@ -43,6 +43,8 @@ public:
  ~PdfEditWindow();
  bool modified();
  QString filename();
+ void saveVisibility(QWidget *w,const QString &name);
+ void loadVisibility(QWidget *w,const QString &name);
  void saveWindowState();
  void restoreWindowState();
  bool save(bool newRevision=false);

@@ -114,11 +114,7 @@ ChildType TreeItemContentStream::getChildType(__attribute__((unused)) const QStr
 
 //See TreeItemAbstract for description of this virtual method
 QStringList TreeItemContentStream::getChildNames() {
- QStringList childs;
- for (size_t i=0;i<op.size();i++) {
-  childs+=QString::number(i);
- }
- return childs; 
+ return util::countList(op.size());
 }
 
 //See TreeItemAbstract for description of this virtual method

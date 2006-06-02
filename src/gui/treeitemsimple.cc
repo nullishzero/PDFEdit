@@ -1,5 +1,5 @@
 /** @file
- TreeItemDict - class holding one simple object in tree (not ref, dict or array), descendant of TreeItem
+ TreeItemSimple - class holding one simple object in tree (not ref, dict or array), descendant of TreeItem
  @author Martin Petricek
 */
 
