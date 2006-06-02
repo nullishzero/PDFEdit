@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/06/02 01:34:56  misuj1am
+ *
+ * -- ADD: outline test
+ *
  * Revision 1.19  2006/05/29 00:11:53  misuj1am
  *
  * -- tests fixed / improved
@@ -95,6 +99,7 @@
 #include "../cobject.h"
 #include "../cpage.h"
 #include "../pdfoperators.h"
+#include "../cobjecthelpers.h"
 
 //CPPUNITTEST
 #include <cppunit/TestRunner.h>
