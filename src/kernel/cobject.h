@@ -592,6 +592,16 @@ private:
 	void _objectChanged (boost::shared_ptr<IProperty> newValue, 
 						 boost::shared_ptr<const ObserverContext> context);
 
+protected:
+	/**
+	 * Set mode of a property.
+	 *
+	 * @param ip IProperty which mode will be set.
+	 * @param name Identification of the property. String for dicts, number for
+	 * arrays.
+	 */
+	void _setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const;
+
 public:
 	/**
 	 * Return all object we have access to.
@@ -1878,14 +1888,27 @@ template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)
 {
-	utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
+	//utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
 	
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = dict->getProperty (id);
 	// Check the type and get the value
 	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
 }
+/** \copydoc getSimpleValueFromDict */
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
+getSimpleValueFromDict (const CDict& dict, const std::string& id)
+{
+	//utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = dict.getProperty (id);
+	// Check the type and get the value
+	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
+}
 
+/** \copydoc getSimpleValueFromDict */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::string& id)
@@ -2227,7 +2250,7 @@ template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 {
-	utilsPrintDbg (debug::DBG_DBG, "array[" << pos << "]");
+	//utilsPrintDbg (debug::DBG_DBG, "array[" << pos << "]");
 	
 	// Get the item that is associated with specified key 
 	boost::shared_ptr<IProperty> ip = array->getProperty (pos);
@@ -2274,6 +2297,73 @@ inline boost::shared_ptr<CStream>
 getCStreamFromArray (IP& ip, size_t pos)
 	{return getTypeFromArray<CStream,pStream> (ip, pos);}
 
+//
+// Mode helper functions
+//
+	
+/**
+ * Find the mode of a property.
+ *
+ * @param
+ * @param id Property number.
+ * @param modecontroller Mode controller
+ * 
+ * @return Property mode.
+ */
+inline PropertyMode 
+getModeForComplexObjects (const CArray::Value&, size_t id, const ModeController& modecontroller)
+{ 
+	std::ostringstream oss;
+	oss << id;
+	return modecontroller.getMode ("", oss.str());
+}
+	
+/**
+ * Find the mode of a property.
+ *
+ * @param dict CDict dictionary.
+ * @param name Property name.
+ * @param modecontroller Mode controller
+ * 
+ * @return Property mode.
+ */
+inline PropertyMode 
+getModeForComplexObjects (const CDict::Value& dict, const std::string& name, const ModeController& modecontroller)
+{ 
+	DictIdxComparator cmp ("Type");
+	CDict::Value::const_iterator it = dict.begin();
+	for (; it != dict.end(); ++it)
+	{
+			if (cmp (*it))
+					break;
+	}
+	if (it == dict.end())
+	{ // No type found
+		return modecontroller.getMode ("", name);
+		
+	}else	
+	{ // We have found a type
+		boost::shared_ptr<IProperty> ip = getReferencedObject (cmp.getIProperty());
+		std::string tmp;
+		ip->getStringRepresentation (tmp);
+		return modecontroller.getMode (tmp, name);
+	}
+}
+
+/**
+ * Convert complex id string/size_t to string.
+ *
+ * Return string representation of position.
+ *
+ * @param id Position.
+ */
+inline std::string 
+convertComplexIdToString (size_t id)
+{ 
+	std::ostringstream oss;
+	oss << id;
+	return oss.str ();
+}
 
 
 //=====================================================================================

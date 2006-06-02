@@ -339,10 +339,9 @@ CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 	
 	boost::shared_ptr<IProperty> ip = cmp.getIProperty ();
 
-	//
-	// \TODO Find out the mode
-	//
-	
+	// Set mode only if pdf is valid
+	_setMode (ip,id);
+
 	return ip;
 }
 
@@ -510,10 +509,9 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 				   );
 	}
 	
-	//
-	// \TODO: Find out the mode
-	//
-
+	// Set mode only if pdf is valid
+	_setMode (newIpClone, position);
+	
 	return newIpClone;
 }
 
@@ -558,10 +556,9 @@ CObjectComplex<Tp,Checker>::addProperty (const std::string& propertyName, const 
 					);
 	}
 
-	//
-	// \TODO: Find out the mode
-	//
-
+	// Set mode only if pdf is valid
+	_setMode (newIpClone, propertyName);
+	
 	return newIpClone;
 }
 
@@ -626,10 +623,9 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 		oldIp->setIndiRef (IndiRef());
 	}
 
-	//
-	// \TODO: Find out the mode
-	//
-
+	// Set mode only if pdf is valid
+	_setMode (newIpClone, id);
+	
 	return newIpClone;
 }
 
@@ -700,6 +696,27 @@ CObjectComplex<Tp,Checker>::_objectChanged
 		throw CObjInvalidOperation ();
 	}
 }
+
+//
+// Set mode
+//
+template <PropertyType Tp, typename Checker>
+void
+CObjectComplex<Tp,Checker>::_setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const
+{
+	ModeController* modecontroller = NULL;
+	if (hasValidPdf (this) && (NULL != (modecontroller=this->getPdf()->getModeController())))
+	{
+		assert (modecontroller);		
+		PropertyMode mode = utils::getModeForComplexObjects (value, id, *modecontroller);
+		if (mdUnknown == mode)
+			ip->setMode (this->getMode());
+		else
+			ip->setMode (mode);
+	}
+}
+
+
 
 //
 // Clone method
