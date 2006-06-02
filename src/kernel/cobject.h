@@ -2073,6 +2073,13 @@ inline boost::shared_ptr<CDict>
 getCDictFromDict (IP& ip, const std::string& key)
 	{return getTypeFromDictionary<CDict,pDict> (ip, key);}
 
+/** 
+ * Get dictionary from dictionary. If it is an indirect object, fetch the object.
+ */
+inline boost::shared_ptr<CDict>
+getCDictFromDict (boost::shared_ptr<CDict> dict, const std::string& key)
+	{return getTypeFromDictionary<CDict,pDict> (dict, key);}
+
 
 //=========================================================
 //	CArray "get value" helper methods

@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/06/02 01:34:15  misuj1am
+ *
+ * -- ADD: support for getting all outlines dictionaries
+ *
  * Revision 1.26  2006/05/30 20:48:05  hockm0bm
  * getIPropertyFromDate method added
  *
@@ -408,6 +412,57 @@ boost::shared_ptr<IProperty> getIPropertyFromRectangle(const Rectangle & rect);
  * used in pdf (see PDF specification page 133 for more information).
  */
 boost::shared_ptr<IProperty> getIPropertyFromDate(const tm * time);
+
+
+/**
+ * Get all children of a tree like structre of pdf objects with, "Prev", Next", "First"
+ * dictionary entries. This function can be used e.g. for getting all outlines.
+ *
+ * @param topdict Top level dictionary.
+ * @param cont Output container of all children.
+ */
+template<typename Container>
+void
+getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
+{
+
+	assert (topdict);
+
+	//
+	// Try to find any descandands
+	//
+	boost::shared_ptr<CDict> dict; 
+	try {
+
+		dict = getCDictFromDict (topdict, "First");
+
+	}catch (ElementNotFoundException&) // No child
+		{ return; }
+
+	// Get the last child
+	boost::shared_ptr<CDict> last = getCDictFromDict (topdict, "Last");
+	
+	//
+	// Children found
+	// 
+	while (true)
+	{
+		assert (dict);
+
+		// Add object to container
+		cont.push_back (dict);
+		// Add all its children
+		getAllChildrenOfPdfObject (dict, cont);
+		
+		// We are at the end
+		if (dict == last)
+			return;
+		
+		dict = getCDictFromDict (dict, "Next");
+	}
+}
+
+
 
 }// end of utils namespace
 
