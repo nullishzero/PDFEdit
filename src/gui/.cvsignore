@@ -7,3 +7,4 @@ menugenerator
 .ui
 .obj
 .menu-trans.h
+config.h
