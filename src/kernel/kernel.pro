@@ -44,13 +44,14 @@ SOURCES += modecontroller.cc filters.cc
 # CObjects
 #
 HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
-HEADERS += streamwriter.h cinlineimage.h
+HEADERS += streamwriter.h cinlineimage.h coutline.h
 HEADERS += cannotation.h
+
 SOURCES += cannotation.cc
 SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
 SOURCES += iproperty.cc cobject.cc cobjecthelpers.cc ccontentstream.cc pdfoperators.cc 
 SOURCES += pdfwriter.cc
-SOURCES += cinlineimage.cc
+SOURCES += cinlineimage.cc coutline.cc
 SOURCES += cpage.cc cpdf.cc 
 
 #

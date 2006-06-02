@@ -6,6 +6,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.55  2006/06/02 11:31:46  misuj1am
+ *
+ * -- ADD: outline get text function
+ * -- CHANGE: getOutlines returns just iproperites
+ * --tests changed
+ *
  * Revision 1.54  2006/06/02 09:21:45  misuj1am
  *
  * -- ADD: CPdf::getOutlines function
@@ -1405,17 +1411,7 @@ public:
 		}
 		assert (toplevel);
 
-		typedef std::vector<boost::shared_ptr<IProperty> > Outs;
-		Outs outs;
-		utils::getAllChildrenOfPdfObject (toplevel, outs);
-		
-		for (Outs::iterator it = outs.begin(); it != outs.end(); ++it)
-		{
-			// Get the string from the outline
-			std::string title = utils::getStringFromDict (*it, "Title");
-			// Add the pair to the container
-			cont.push_back (std::make_pair(*it, title));
-		}
+		utils::getAllChildrenOfPdfObject (toplevel, cont);
 	}
 };
 

@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/06/02 11:31:46  misuj1am
+ *
+ * -- ADD: outline get text function
+ * -- CHANGE: getOutlines returns just iproperites
+ * --tests changed
+ *
  * Revision 1.20  2006/06/02 01:34:56  misuj1am
  *
  * -- ADD: outline test
@@ -100,6 +106,7 @@
 #include "../cpage.h"
 #include "../pdfoperators.h"
 #include "../cobjecthelpers.h"
+#include "../coutline.h"
 
 //CPPUNITTEST
 #include <cppunit/TestRunner.h>

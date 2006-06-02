@@ -229,7 +229,7 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 			Fonts fs;
 			
 			const string fn ("Jozov-font");
-			page->addSystemFont (fn);
+			page->addSystemType1Font (fn);
 			page->getFontIdsAndNames (fs);
 
 			CPPUNIT_ASSERT (!fs.empty());
@@ -255,9 +255,9 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 			}
 			
 			{
-				page->addSystemFont (fn);
-				page->addSystemFont (fn);
-				page->addSystemFont (fn);
+				page->addSystemType1Font (fn);
+				page->addSystemType1Font (fn);
+				page->addSystemType1Font (fn);
 
 				page->getFontIdsAndNames (fs);
 				CPPUNIT_ASSERT (!fs.empty());

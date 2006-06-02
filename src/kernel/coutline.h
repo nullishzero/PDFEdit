@@ -1,26 +1,36 @@
 #ifndef __COUTLINE_H__
 #define __COUTLINE_H__
 
-#include "cobject.h"
 
-using namespace pdfobjects;
+// all basic includes
+#include "static.h"
 
-class COutline : public CDict {
 
-  //
-  // Konstruktor
-  //
-  COutline ();
+//=====================================================================================
+namespace pdfobjects {
+//=====================================================================================
 
-  //
-  // Destruktor
-  //
-  ~COutline ();
+/**
+ * Checks whether the object is an ouline according to pdf specification.
+ */
+bool isOutline (boost::shared_ptr<IProperty> ip);
 
-/**  Vrati pole potomkov zadanej outline.*/
-//  array [COutline*] get_children ();
+		
+/**
+ * Get text from an outline.
+ *
+ * @param ip Outline dictionary.
+ */
+std::string getOutlineText (boost::shared_ptr<IProperty> ip);
+		
 
-}
+// not needed yet
+class COutline {};
+
+
+//=====================================================================================
+} /* namespace pdfobjects */
+//=====================================================================================
 
 
 #endif // __COUTLINE_H__

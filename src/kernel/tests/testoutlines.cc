@@ -29,7 +29,7 @@ getout (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
-	typedef vector<pair<shared_ptr<IProperty>,string> > Outs;
+	typedef vector<shared_ptr<IProperty> > Outs;
 	Outs outs;
 	pdf->getOutlines (outs);
 
@@ -37,7 +37,7 @@ getout (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char
 		oss << " No outlines..." << flush;
 	else
 		for (Outs::iterator it = outs.begin(); it != outs.end(); ++it)
-			oss << "-" << (*it).second << flush;
+			oss << "-" << getOutlineText (*it) << flush;
 			
 
 	return true;
