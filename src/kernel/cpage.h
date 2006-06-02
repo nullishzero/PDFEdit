@@ -92,14 +92,16 @@ typedef struct TextSearchParams
 //=====================================================================================
 
 /** 
- * Comparator that defines an area around specified rectange. 
- *
- * We can use this comparator to find out if another rectangle intersects this
- * one.
+ * Comparator that we can use to find out if another rectangle intersects
+ * rectangle specified by this comparator.
  */
 struct PdfOpCmpRc
 {
-	/** Consructor. */
+	/** 
+	 * Consructor. 
+	 *
+	 * @param rc Rectangle used when comparing.
+	 */
 	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {};
 	
 	/** 
@@ -136,14 +138,23 @@ private:
 
 
 /** 
- * Point comparator.
+ * Comparator that we can use to find out if a rectange contains point specified
+ * by this comparator.
  */
 struct PdfOpCmpPt
 {
-	/** Consructor. */
+	/** 
+	 * Consructor. 
+	 * 
+	 * @param pt Point that we use when comparing.
+	 */
 	PdfOpCmpPt (const Point& pt) : pt_(pt) {};
 	
-	/** Is in in a range. */
+	/** 
+	 * Is point in a rectangle. 
+	 * 
+	 * @param rc Rectangle.
+	 */
 	bool operator() (const Rectangle& rc) const
 	{
 		return (rc.contains (pt_.x, pt_.y));
@@ -153,10 +164,12 @@ private:
 	const Point pt_;
 };
 
-/** Page attributes structure which may be inherited from parent hierarchy.
+/** 
+ * Page attributes structure of dictionary properties which can be inherited from a parent 
+ * in the page tree.
  *
- * Memebers of page dictionary which should keep value of the nearest parent
- * with defined value if not present directly in page dictionary.
+ * If an inheritable property is not present in a page it is defined in one of
+ * its parents in the page tree.
  */
 struct InheritedPageAttr
 {
@@ -166,22 +179,23 @@ struct InheritedPageAttr
 	boost::shared_ptr<CInt> rotate;
 };
 
-/** Fills InheritedPageAttr structure for given page dictionary.
- * @param pageDict Page dictionary.
- * @param attrs Structure where to place correct values.
+/** 
+ * Fills InheritedPageAttr structure for a given page dictionary.
  *
  * Recursive function which checks given pageDict whether it contains
- * uninitialized (NULL values) from given attribute structure. If yes, sets
- * value from dictionary. If at least one structure member is not initialized,
- * calls method to parent dictionary (dereferenced Parent field). If no Parent
- * is present (in root of page tree), returns.
+ * uninitialized (NULL values) from a given attribute structure. If true, sets
+ * the value from the dictionary. If at least one property is still not initialized,
+ * repeats the process for the parent dictionary (dereferenced "Parent" property). End if the "Parent"
+ * property is not present (in root of a page tree).
  * <br>
- * After recursion ends, checks all fields again and if any is missing, uses
- * default value.
+ * Use default value when a property was not initialized.
+ *
+ * @param pageDict Page dictionary.
+ * @param attrs Output attribute structure where correct values are put.
  *
  * @throw NotImplementedException at this moment.
  */
-void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs);
+void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr& attrs);
 
 
 //=====================================================================================
@@ -189,9 +203,47 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 //=====================================================================================
 
 /**
- * CPage represents pdf page object. 
+ * This objecte represents one pdf page object. PDF page object is a dictionary
+ * reachable from page tree structure with several required properties. 
+ * It is responsible just for one single page.
  *
- * Content stream is parsed on demand because otherwise it would be very slow.
+ * Every pdf page contains all information required for displaying the page
+ * (e.g. page metrics, page contents etc.) Page properties can be inherited from
+ * its parent in the page tree. Only the most specific is used. This feature can
+ * cause problems because it is no well defined what does it mean to change a
+ * property that is inherited (it is not present in the page dictionary but in a
+ * parent)
+ *
+ * We display a page using xpdf code. The argument to this function is an output
+ * device which can draw graphical objects. The contents of a page is specified
+ * by a "Contents" entry in the page dictionary. If empty the page is blank.
+ *
+ * Content stream consists of a sequence of operators which should be processed
+ * sequentially. The operators define what is really on a page. The pdf
+ * specification is too general about pdf operators and that is why working with
+ * operators is difficult. According to pdf specification text is split
+ * neither to sentences nor words. ALso the letters can occur in the content stream
+ * at random because the position is specified absolutely. (e.g. it is very likely
+ * that a word "humor" will be split into "hu" "m" "or" because of the "m"
+ * beeing wider than other letters.) That makes searching and exporting the text a problem. 
+ * We use xpdf code to perform both actions. Xpdf parses a page to lines and
+ * words with a rough approuch when a more letters are claimed as one word when
+ * they are close enough. This algorithm is working ok for normal pdf files, but
+ * if the pdf creator would like to disable text exporting it could produce such
+ * set of pdfoperators, that nobody could tell if they form a word or not.
+ *
+ * Pdf operators are in one or more streams. Problem with this
+ * approach is that these operators can be split
+ * into streams at almost arbitrary place.
+ *
+ * Processing pdf operators can be very expensive so they are parsed only on demand. Each operator 
+ * can be placed in a bounding box. These bounding boxes are used when searching
+ * the page for a text, selecting objects, drawing the page. 
+ *
+ * Each page content stream is a selfcontained entity that can not
+ * use resources defined in another page. It can only use inherited resources
+ * from a parent in the page tree. Which means we can not simply change fonts
+ * on a page to match another page, use images from another page etc.
  */
 class CPage
 {
@@ -206,7 +258,7 @@ private:
 	/** Class representing content stream. */
 	ContentStreams contentstreams;
 
-	/** Last used display parameters. */
+	/** Actual display parameters. */
 	DisplayParams lastParams;
 	
 	//
@@ -216,7 +268,6 @@ public:
 		
 	/** 
 	 * Constructor. 
-	 * If the dicionary contains not empty content stream, it is parsed.
 	 * 
 	 * @param pageDict Dictionary representing pdf page.
 	 */
@@ -231,11 +282,16 @@ public:
 	/** Destructor. */
 	~CPage () { kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); };
 
+	
 	//
 	// Comparable interface
 	//
 public:
-	/** Compares if the objects are identical. */
+	/** 
+	 * Equality operator. 
+	 *
+	 * @param page Another page object.
+	 */
 	bool operator== (const CPage& page)
 	{
 		return (this == &page) ? true : false;
@@ -248,7 +304,7 @@ public:
 public:
 	
 	/**
-	 * Get dictionary representing this CPage.
+	 * Get the dictionary representing this object.
 	 *
 	 * @return Dictionary.
 	 */
@@ -256,8 +312,8 @@ public:
 	
 	
 	/**
-	 * Get objects at specified position. This call will be delegated to
-	 * CContentStream class.
+	 * Get pdf operators at specified position.
+	 * This call will be delegated to content stream object.
 	 *
 	 * @param opContainer Operator container where operators in specified are
 	 * 						wil be stored.
@@ -273,8 +329,8 @@ public:
 	
 	
 	/**
-	 * Get objects at specified position. This call will be delegated to
-	 * CContentStream class.
+	 * Get pdf operators at specified position. 
+	 * This call will be delegated to content stream object.
 	 * 
 	 * @param opContainer Operator container where operators in specified are
 	 * 						wil be stored.
@@ -290,8 +346,8 @@ public:
 
 	
 	/**
-	 * Get objects at specified position. This call will be delegated to
-	 * CContentStream class.
+	 * Get pdf operators at specified position. 
+	 * This call will be delegated to content stream object.
 	 *
 	 * @param opContainer Operator container where operators in specified are wil be stored.
 	 * @param cmp 	Null if default kernel area comparator should be used otherwise points 
@@ -338,10 +394,14 @@ public:
 
 	
 	/**  
-	 * Returns plain text extracted from a page.
-	 * This method uses xpdf TextOutputDevice that outputs page to text device.
+	 * Returns plain text extracted from a page using xpdf code.
+	 * 
+	 * This method uses xpdf TextOutputDevice that outputs a page to a text device.
+	 * Text in a pdf is stored neither word by word nor letter by letter. It is not
+	 * easy not decide whether two letters form a word. Xpdf uses insane
+	 * algorithm that works most of the time.
 	 *
-	 * @param text Container where the text will be saved.
+	 * @param text Output string  where the text will be saved.
 	 */
  	void getText (std::string& text) const;
 
@@ -353,11 +413,13 @@ public:
 	/**
 	 * Get all font ids and base names that are in the resource dictionary of a page.
 	 *
-	 * Base names should be human readable. At least standard system fonts. We
+	 * The resource can be inherited from a parent in the page tree dictionary.
+	 * Base names should be human readable or at least standard system fonts
+	 * defined in the pdf specification. We
 	 * must choose from these items to make a font change valid. Otherwise, we
 	 * have to add a standard system font or manually a font object.
 	 *
-	 * @param cont Output container of font id and font basename pairs.
+	 * @param cont Output container of font id and basename pairs.
 	 */
 	template<typename Container>
 	void getFontIdsAndNames (Container& cont) const
@@ -389,13 +451,17 @@ public:
 	}
 	
 	/**
-	 * Add new simple font item to the page resource dictionary. 
+	 * Add new simple type 1 font item to the page resource dictionary. 
+	 *
+	 * The id of this font is arbitrary but it has to be unique. Itwill be generated as folows: 
+	 * PdfEditor for the first item, PdfEditorr for the second, PdfEditorrr for
+	 * the third etc.
 	 *
 	 * We supposed that the font name is a standard system font avaliable to all viewers.
 	 *
 	 * @param fontname Output container of pairs of (Id,Name).
 	 */
-	void addSystemFont (const std::string& fontname);
+	void addSystemType1Font (const std::string& fontname);
 
 
 	//
@@ -405,16 +471,18 @@ public:
 	/**
 	 * Draw page on an output device.
 	 *
+	 * We use xpdf code to draw a page. It uses insane global parameters and
+	 * many local paramters.
+	 *
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
 	void displayPage (::OutputDev& out, const DisplayParams params); 
 	
 	/**
-	 * Draw page on an output device with last Display parameters.
+	 * Draw page on an output device with last used display parameters.
 	 *
 	 * @param out Output device.
- 	 * @param params Display parameters.
 	 */
 	void displayPage (::OutputDev& out) const;
 
@@ -437,7 +505,10 @@ public:
 	//
 public:
 	/**  
-	 * Return media box of this page. It is a required item in page dictionary (spec p.119).
+	 * Return media box of this page. 
+	 *
+	 * It is a required item in page dictionary (spec p.119) but can be
+	 * inherited from a parent in the page tree.
 	 *
 	 * @return Rectangle specifying the box.
 	 */
@@ -447,7 +518,7 @@ public:
 	/**  
 	 * Set media box of this page. 
 	 * 
-	 * @param rc Rectangle specifying the box.
+	 * @param rc Rectangle specifying the page metrics.
 	 */
 	 void setMediabox (const Rectangle& rc);
 
@@ -457,18 +528,14 @@ public:
 	 //
 public:
 	 /**
-	  * Find text on a page.
-	  */
-	// Rectangle findText (std::string text, const TextSearchParams& params = TextSearchParams()) const {};
-	 
-	 /**
-	  * Find all occurences on a page.
+	  * Find all occurences of a text on this page.
 	  *
-	  * It uses xpdf TextOutputDevice function for finding text.
+	  * It uses xpdf TextOutputDevice function to get the bounding box of a
+	  * found text.
 	  *
-	  * @param text Search text.
-	  * @param recs Result rectangles of found text.
-	  * @param param Search params.
+	  * @param text Text to find.
+	  * @param recs Output container of rectangles of all occurences of the text.
+	  * @param params Search parameters.
 	  *
 	  * @return Number of occurences found.
 	  */
@@ -517,7 +584,7 @@ private:
 
 
 //=====================================================================================
-} /* namespace pdfobjects */
+} // namespace pdfobjects
 //=====================================================================================
 
 

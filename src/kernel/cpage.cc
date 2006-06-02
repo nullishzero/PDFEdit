@@ -63,7 +63,7 @@ namespace {
 	//
 	// Default values
 	// 
-	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Default start at top. */
+	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Start at top. */
 	
 	/** Default start positino when start at top is false. */
 	static const double DEFAULT_X_START = 0;				
@@ -80,10 +80,11 @@ TextSearchParams::TextSearchParams () :
 	xStart (DEFAULT_X_START), yStart (DEFAULT_Y_START), xEnd (DEFAULT_X_END), yEnd (DEFAULT_Y_END)
 {}
 
+//
+//
+//
 void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
 {
-using namespace std;
-	
 	// resource field
 	shared_ptr<CDict> resources=attrs.resources;
 	if(!resources.get())
@@ -136,6 +137,10 @@ using namespace std;
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+
+// Better not throw in a constructor
+//	if ("Page" != utils::getStringFromDict (pageDict, "Type"))
+//		throw CObjInvalidObject ();		
 }
 
 //
@@ -547,7 +552,7 @@ template size_t CPage::findText<std::vector<Rectangle> >
 //
 //
 void
-CPage::addSystemFont (const std::string& fontname)
+CPage::addSystemType1Font (const std::string& fontname)
 {
 	// << 
 	//    /Type /Font
@@ -613,5 +618,5 @@ CPage::addSystemFont (const std::string& fontname)
 
 
 // =====================================================================================
-} /* namespace pdfobjects */
+} // namespace pdfobjects
 // =====================================================================================
