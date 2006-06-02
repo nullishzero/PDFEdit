@@ -35,15 +35,33 @@ class CContentStream;
 /**
  * This class is the base class for COMPOSITE design pattern and also DECORATOR design pattern.
  * 
- * They are very similar in a way (COMPOSITE is a very special case of DECORATOR. This is a 
- * special implementation, somewhat a hybrid between stl and GoF example.
+ * This is a special implementation, a hybrid between implementation of stl containers and GoF
+ * example).
  *
- * We have content stream consisting of operators and operands and also objects. 
- * These objects are composits. 
+ * Content stream consists of operators and their operands. Operators can be
+ * composites. Each operator alters graphical state in a predefined way.
+ * Operators have to be processed sequentially.
+ * 
+ * This is the building  block of almost all visible objects on a page. Every
+ * operation on a text, graphics etc.. means adding/deleting/changing operators. 
  *
- * Perhaps we would like to construct something like CBoldText and 
- * we would like the text to be also a superscript so we use DECORATOR pattern.
+ * Operators themselves build a double linked list queue. We use iterators to
+ * iterate over them sequentially.
  *
+ * They also form a tree like structure and that is the reason why Composite
+ * design pattern is used here. Decorator and composite together form a very
+ * easy to use way how to change these operators. (e.g. changing font means 
+ * wrapping the text operator to a composite, which includes also the font
+ * change operator.) 
+ *
+ * This approach allows us to represent operators in a human readible way
+ * (tree like structure) and to have the power of double linked list with
+ * iterators.
+ *
+ * Another advatage of the composite designe pattern is the single unified interface.
+ * In most cases we do not need to distinguish between a composite and a leaf.
+ *
+ * Iterators are crucial when selecting operators. 
  */
 class PdfOperator
 {	
@@ -127,7 +145,9 @@ public:
 public:
 	
 	/**
-	 * Add an operator to the end of composite.
+	 * Add an operator to the end of composite. One problem is when the
+	 * composite is empty, we have to specify prev variable because we can not
+	 * get shared pointer from this.
 	 * 
 	 * @param oper Operator to be added.
 	 * @param prev Operator, after which we should place the added one in
@@ -151,7 +171,7 @@ protected:
 	/**
 	 * Remove an operator from the composite interface.
 	 *
-	 * REMARK: This won't delete it from the Iterator list
+	 * REMARK: This will not remove it from the Iterator list.
 	 *
 	 * @param Operator to be erased.
 	 */
@@ -166,8 +186,8 @@ protected:
 	 * know the smart pointer behind the object. Member variable "this" is not
 	 * sufficient.
 	 *
-	 * @behindWhich Behind which elemnt.
-	 * @which 		Which element.
+	 * @param behindWhich Behind which elemnt.
+	 * @param which 		Which element.
 	 */
 	static void putBehind (	boost::shared_ptr<PdfOperator> behindWhich, 
 							boost::shared_ptr<PdfOperator> which)
@@ -223,8 +243,8 @@ public:
 	//
 
 private:
-	ListItem next;
-	ListItem prev;
+	ListItem next;	/**< Reference to previous operator in iterator list. */
+	ListItem prev;	/**< Reference to next operator in iterator list. */
 
 public:
 
@@ -247,16 +267,21 @@ public:
 
 public:	
 	/**
-	 * Set next or prev item.
+	 * Set next item.
+	 *
+	 * @param nxt Next item in iterator list.
 	 */
 	void setNext (boost::shared_ptr<PdfOperator> nxt) 
 		{ setNext (ListItem (nxt));	}
+	/**
+	 * Set previous item.
+	 *
+	 * @param prv Previous item in iterator list.
+	 */
 	void setPrev (boost::shared_ptr<PdfOperator> prv) 
 		{ setPrev (ListItem (prv)); }
 
-	/**
-	 * Set next or prev item.
-	 */
+	/** \copydoc setNext */
 	void setNext (ListItem nxt) 
 	{ 
 		if (!next.expired ())
@@ -264,6 +289,8 @@ public:
 
 		next = nxt;
 	};
+	
+	/** \copydoc setPrev */
 	void setPrev (ListItem prv) 
 	{ 
 		if (!prev.expired ()) 
@@ -274,16 +301,14 @@ public:
 
 protected:
 	/**
-	 * Get previous item in a list that is implemented by PdfOperator.
-	 * It is the same as linked list.
+	 * Get previous item in the iterator list that is implemented by PdfOperator.
 	 *
 	 * @return Previous item.
 	 */
 	ListItem _next () const {return next;};
 	
 	/**
-	 * Get next item in a list that is implemented by PdfOperator.
-	 * It is the same as linked list.
+	 * Get next item in the iterator list that is implemented by PdfOperator.
 	 *
 	 * @return Next item.
 	 */
@@ -322,7 +347,7 @@ public:
 	// BBox
 	//
 private:
-	/** Actual bbox of this operator. */
+	/** Bounding box of this operator. */
 	Rectangle bbox;
 
 public:
@@ -335,7 +360,7 @@ public:
 		{ bbox = rc; };
 
 	/**
-	 * Get bounding box.
+	 * Get bounding box of this operator.
 	 *
 	 * @return Bounding box.
 	 */
@@ -351,9 +376,12 @@ public:
 //==========================================================
 
 /**
- * Composite object. It is just an interface.
+ * Composite object.
  *
+ * This is an implementation of Composite design pattern where leaves and
+ * composites share the same interface.
  *
+ * \see PdfOperator
  */
 class CompositePdfOperator : public PdfOperator
 {
@@ -426,11 +454,14 @@ public:
 //==========================================================
 
 /**
- * Almost all simple operators will be constructed by specifying types of operands and the
- * text representation of the operator. 
+ * Almost all simple (non composite) operators will be constructed by specifying number of operands, operands and the
+ * text representation of the operator.
  *
- * <cref exception="MalformedFormatExeption"> Thrown when the operands do not match the specification.
- * 
+ * This is an implementation of Composite design pattern where leaves and
+ * composites share the same interface.
+ *
+ * \see PdfOperator
+
  */
 class SimpleGenericOperator : public PdfOperator
 {
@@ -495,7 +526,14 @@ public:
 
 
 /**
- * This class consumes all operands from "stack", it should be safe.
+ * Pdf specification does not know this operator. 
+ *
+ * This class consumes all operands from "operand stack".
+ *
+ * This is an implementation of Composite design pattern where leaves and
+ * composites share the same interface.
+ * 
+ * \see PdfOperator
  */
 class UnknownPdfOperator : public PdfOperator
 {
@@ -529,8 +567,12 @@ public:
 
 
 /**
+ * Unknown composite operator which is constructed from a begin and end tag.
  *
- *
+ * This is an implementation of Composite design pattern where leaves and
+ * composites share the same interface.
+ * 
+ * \see PdfOperator, CompositePdfOperator
  */
 class UnknownCompositePdfOperator : public CompositePdfOperator
 {
@@ -566,8 +608,14 @@ public:
 class CInlineImage;
 
 /**
- * Inline image pdf operator.
+ * Inline image pdf operator. This is not a real composite but we can represent
+ * it as one. This object is special it is other than
+ * every other operator according to the pdf specification.
  *
+ * This is an implementation of Composite design pattern where leaves and
+ * composites share the same interface.
+ * 
+ * \see PdfOperator, CompositePdfOperator
  */
 class InlineImageCompositePdfOperator : public CompositePdfOperator
 {
@@ -588,6 +636,7 @@ public:
 	 *
 	 * @param opBegin_ Start operator name text representation.
 	 * @param opEnd_ End operator name text representation.
+	 * @param im_ Stream representing inline image.
 	 */
 	InlineImageCompositePdfOperator (const char* opBegin_, const char* opEnd_, boost::shared_ptr<CInlineImage> im_);
 
@@ -611,8 +660,7 @@ public:
 //==========================================================
 
 /** 
- * Iterator types. 
- *
+ * Iterator types. Needed when constructing specific iterators using templates.
  */
 typedef enum
 {
@@ -623,6 +671,11 @@ typedef enum
 
 /**
  * Generic iterator that accepts set of operators.
+ *
+ * This is a very generic class iterates only over specified operators. Use this
+ * class when a special iterator is desired.
+ *
+ * \see Iterator, RejectingPdfOperatorIterator
  */
 template<int _NAME_COUNT, IteratorType T>
 struct AcceptingPdfOperatorIterator: public PdfOperator::Iterator
@@ -662,6 +715,11 @@ private:
 
 /**
  * Generic iterator that rejects set of operators.
+ * 
+ * This is a very generic class iterates over all but specified operators. Use this
+ * class when a special iterator is desired.
+ *
+ * \see Iterator, AcceptingPdfOperatorIterator
  */
 template<int _NAME_COUNT, IteratorType T>
 struct RejectingPdfOperatorIterator: public PdfOperator::Iterator
@@ -737,8 +795,13 @@ typedef struct RejectingPdfOperatorIterator<38, itChangeableIterator> Changeable
 
 /**
  * "Non stroking" operator iterator.
+ * 
+ * This iterator traverses only operators that are connected with non stroking
+ * operations. 
  *
  * REMARK: See pdf specification for details.
+ *
+ * \see StrokingOperatorIterator
  */
 typedef struct AcceptingPdfOperatorIterator<4, itNonStrokingIterator> NonStrokingOperatorIterator;
 
@@ -750,6 +813,8 @@ typedef struct AcceptingPdfOperatorIterator<4, itNonStrokingIterator> NonStrokin
  * operations. 
  *
  * REMARK: See pdf specification for details.
+ *
+ * \see NonStrokingOperatorIterator
  */
 typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOperatorIterator;
 
@@ -758,7 +823,7 @@ typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOpera
 // Helper funcions
 //==========================================================
 
-/** Is composite. */
+/** Is an operator a composite. */
 inline bool 
 isComposite (const PdfOperator* oper)
 {
@@ -766,10 +831,12 @@ isComposite (const PdfOperator* oper)
 	return (NULL == compo) ? false : true;
 }
 
+/** Is an operator a composite. */
 inline bool 
 isComposite (PdfOperator::Iterator it)
 	{ return isComposite (it.getCurrent().get()); }
 
+/** Is an operator a composite. */
 inline bool 
 isComposite (boost::shared_ptr<PdfOperator> oper)
 	{ return isComposite (oper.get()); }
@@ -791,6 +858,8 @@ boost::shared_ptr<CompositePdfOperator> findCompositeOfPdfOperator (PdfOperator:
  * Get last operator if a composite.
  *
  * @param oper Operator.
+ *
+ * @return Last operator of a composite.
  */
 boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> oper);
 
@@ -798,6 +867,8 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
  * Get last operator if a composite.
  *
  * @param it Iterator.
+ * 
+ * @return Iterator over last operator of a composite.
  */
 inline boost::shared_ptr<PdfOperator> getLastOperator (PdfOperator::Iterator it)
 	{ return getLastOperator (it.getCurrent()); }

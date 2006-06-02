@@ -40,7 +40,6 @@ namespace {
 	// Actual state (position) updaters
 	//==========================================================
 	
-	//
 	void
 	printTextUpdate (GfxState& state, const std::string& txt, Rectangle* rc)
 	{

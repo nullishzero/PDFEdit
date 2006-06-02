@@ -22,15 +22,16 @@
 namespace pdfobjects{
 // =====================================================================================
 
-/**
- * Case insensitive comparator.
- */
 namespace
 {
-		bool nocase_compare (char c1, char c2)
-		{
-			return toupper(c1) == toupper(c2);
-		}
+
+	/**
+	 * Case insensitive comparator.
+	 */
+	bool nocase_compare (char c1, char c2)
+	{
+		return toupper(c1) == toupper(c2);
+	}
 }
 
 
@@ -61,39 +62,49 @@ namespace {
 	/** Object Null string representation. */
 	const string CNULL_NULL = "null";
 		
-	/** Object Bool string repersentation. */
+	/** Object Bool false repersentation. */
 	const string CBOOL_TRUE  =	"true";
+	/** Object Bool true representation. */
 	const string CBOOL_FALSE =	"false";
 
 	/** Object Name string representation. */
 	const string CNAME_PREFIX	= "/";
 
-	/** Object String string representation. */
+	/** Object String representation prefix string. */
 	const string CSTRING_PREFIX = "(";
+	/** Object String representation suffix string. */
 	const string CSTRING_SUFFIX = ")";
 
-	/** Object Ref string representation. */
+	/** Object Ref representation middle string. */
 	const string CREF_MIDDLE	= " ";
+	/** Object Ref representation string suffix. */
 	const string CREF_SUFFIX	= " R";
 
 	// CObjectComplex
-	/** Object Arraystring representation. */
+	/** Object Array representation prefix string. */
 	const string CARRAY_PREFIX	= "[";
+	/** Object Array representation middle string. */
 	const string CARRAY_MIDDLE	= " ";
+	/** Object Array representation suffix string. */
 	const string CARRAY_SUFFIX	= " ]";
 
-	/** Object Dictionary string representation. */
+	/** Object Dictionary representation specifics. */
 	const string CDICT_PREFIX	= "<<";
+	/** Object Dictionary representation specifics. */
 	const string CDICT_MIDDLE	= "\n/";
+	/** Object Dictionary representation specifics. */
 	const string CDICT_BETWEEN_NAMES = " ";
+	/** Object Dictionary representation specifics. */
 	const string CDICT_SUFFIX	= "\n>>";
 
-	/** Object Stream string representation. */
+	/** Object Stream string representation specifics. */
 	const string CSTREAM_HEADER = "\nstream\n";
+	/** Object Stream string representation specifics. */
 	const string CSTREAM_FOOTER = "\nendstream";
 
-	/** Indirect Object header and footer. */
+	/** Indirect Object heaser. */
 	const string INDIRECT_HEADER = "obj ";
+	/** Indirect Object footer. */
 	const string INDIRECT_FOOTER = "\nendobj";
 
 	/**
@@ -108,6 +119,7 @@ namespace {
 			 val = (0 != obj.getBool());}
 	};
 
+	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfIntReader
 	{public:
@@ -117,6 +129,7 @@ namespace {
 			 val = obj.getInt ();}
 	};
 
+	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfRealReader
 	{public:
@@ -126,7 +139,8 @@ namespace {
 			 val = obj.getNum ();}
 	};
 
-	/** Reader for xpdf string objects.
+	/** 
+	 * Reader for xpdf string objects.
 	 * This functor enables conversion  from Storage type (xpdf string object)
 	 * to given Val typed container. Val has to implement clear and append
 	 * methods.
@@ -159,6 +173,7 @@ namespace {
 			}
 	};
 
+	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfNameReader
 	{public:
@@ -168,7 +183,7 @@ namespace {
 			 val = obj.getName ();}
 	};
 
-
+	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfRefReader
 	{public:
@@ -180,7 +195,7 @@ namespace {
 	};
 	
 	/**
-	 * WriteProcessors
+	 * WriteProcessors.
 	 *
 	 * We know that Storage is xpdf Object and value type depends on each writer type
 	 */
@@ -191,6 +206,7 @@ namespace {
 				{return obj->initBool (GBool(val));}
 	};
 
+	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfIntWriter
 	{public:
@@ -198,6 +214,7 @@ namespace {
 				{return obj->initInt (val);}
 	};
 
+	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfRealWriter
 	{public:
@@ -205,6 +222,7 @@ namespace {
 				{return obj->initReal (val);}
 	};
 
+	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfStringWriter
 	{public:
@@ -212,6 +230,7 @@ namespace {
 				{return obj->initString (new GString(val.c_str()));}
 	};
 
+	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfNameWriter
 	{public:
@@ -219,6 +238,7 @@ namespace {
 				{return obj->initName (const_cast<char*>(val.c_str()));}
 	};
 
+	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfNullWriter
 	{public:
@@ -226,6 +246,7 @@ namespace {
 				{return obj->initNull ();}
 	};
 
+	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfRefWriter
 	{public:
@@ -313,6 +334,9 @@ namespace {
 		}	// void operator
 	};
 
+	/**
+	 * This object parses xpdf object to CDict.
+	 */
 	template<typename ObjectToParse, typename CObject>
 	struct xpdfDictReader
 	{public:
@@ -353,15 +377,6 @@ namespace {
 		}
 	};
 
-	template<typename ObjectToParse, typename CObject>
-	struct xpdfStreamReader
-	{public:
-			void operator() (IProperty&, ObjectToParse /*obj*/, CObject /*val*/)
-			{
-					assert (!"not implemented yet.");
-			}
-	};
-			
 	/*
 	 * This type trait holds information which writer class to use with specific CObject class.
 	 * REMARK: If we want to abandon using Object as information holder, you need to rewrite

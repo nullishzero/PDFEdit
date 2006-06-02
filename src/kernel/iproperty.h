@@ -256,6 +256,8 @@ public:
     /** 
      * Returns pointer to derived object. 
      *
+	 * @param ptr Pointer to an IProperty.
+	 * 
      * @return Object casted to desired type.
      */
     template<typename T>
@@ -284,7 +286,9 @@ public:
 
 	/**
 	 * Returns string representation according to pdf specification
-	 * of this object.
+	 * of this object or its children.
+	 *
+	 * @param str Output string.
 	 */
 	virtual void getStringRepresentation (std::string& str) const = 0;
 
@@ -349,6 +353,8 @@ inline bool isPdfValid(CPdf* pdf)
  */
 inline bool hasValidPdf(const IProperty& ip)
 	{ return isPdfValid(ip.getPdf()); }
+
+/** \copydoc hasValidPdf */
 template<typename T> inline bool hasValidPdf(T ip)
 	{ return isPdfValid(ip->getPdf()); }
 

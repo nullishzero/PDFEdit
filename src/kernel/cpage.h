@@ -73,13 +73,12 @@ typedef struct DisplayParams
 	// them here (if double, we could not init them here because of the non
 	// integral type compilator error))
 	// 
-private:
 	static const int DEFAULT_HDPI 	= 72;		/**< Default horizontal dpi. */
 	static const int DEFAULT_VDPI 	= 72;		/**< Default vertical dpi. */
 	static const int DEFAULT_ROTATE	= 0;		/**< No rotatation. */
 
-	static const int DEFAULT_PAGE_LX = 0;
-	static const int DEFAULT_PAGE_LY = 0;
+	static const int DEFAULT_PAGE_LX = 0;		/**< Default x position of left upper corner. */
+	static const int DEFAULT_PAGE_LY = 0;		/**< Default y position of right upper corner. */
 	static const int DEFAULT_PAGE_RX = 612;		/**< Default A4 width on a device with 72 horizontal dpi. */
 	static const int DEFAULT_PAGE_RY = 792;		/**< Default A4 height on a device with 72 vertical dpi. */
 
@@ -99,11 +98,11 @@ private:
 typedef struct TextSearchParams
 {
 	/** Paramaters */
-	GBool startAtTop;		/*< Start searching from the top.    */
-	double xStart; 			/*< Start searching from x position. */
-	double yStart; 			/*< Start searching from y position. */
-	double xEnd; 			/*< Stop searching from x position.  */
-	double yEnd; 			/*< Stop searching from y position.  */
+	GBool startAtTop;		/**< Start searching from the top.    */
+	double xStart; 			/**< Start searching from x position. */
+	double yStart; 			/**< Start searching from y position. */
+	double xEnd; 			/**< Stop searching from x position.  */
+	double yEnd; 			/**< Stop searching from y position.  */
 
 	/** Constructor. Default values are set. */
 	TextSearchParams () : 
@@ -117,14 +116,13 @@ typedef struct TextSearchParams
 	// them here (if double, we could not init them here because of the non
 	// integral type compilator error))
 	//
-private:
 	static const GBool DEFAULT_START_AT_TOP 	= gTrue;	/**< Start at top. */
 
-	/** Default start positino when start at top is false. */
-	static const int DEFAULT_X_START = 0;				
-	static const int DEFAULT_Y_START = 0;
-	static const int DEFAULT_X_END = 0;
-	static const int DEFAULT_Y_END = 0;
+	static const int DEFAULT_X_START = 0;	/**< Default x position of left upper corner. */
+	static const int DEFAULT_Y_START = 0;	/**< Default y position of left upper corner. */
+	static const int DEFAULT_X_END = 0;		/**< Default x position of right upper corner. */
+	static const int DEFAULT_Y_END = 0;		/**< Default y position of right upper corner. */
+
 
 } TextSearchParams;
 
@@ -175,7 +173,7 @@ struct PdfOpCmpRc
 	}
 
 private:
-	const Rectangle rc_;
+	const Rectangle rc_;	/**< Rectangle to be compared. */
 };
 
 
@@ -203,7 +201,7 @@ struct PdfOpCmpPt
 	}
 
 private:
-	const Point pt_;
+	const Point pt_;	/**< Point to be compared. */
 };
 
 
@@ -394,6 +392,8 @@ public:
 
 	/** 
 	 * Get contents streams.
+	 *
+	 * @param container Output container of all contentstreams.
 	 *
 	 * @return Content stream.
 	 */

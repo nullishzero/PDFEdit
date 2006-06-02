@@ -40,9 +40,9 @@ namespace {
 	 * the first byte of image data.
 	 *
 	 * The problem is, that xpdf does not read this character so we do not get it (or at least when
-	 * the character is \0).
+	 * the character is a null character).
 	 * 
-	 * Some pdf uses \0 so we use it too.
+	 * Some pdf uses null character so we use it too.
 	 *
 	 * REMARK: We have to use char, because
 	 * 
