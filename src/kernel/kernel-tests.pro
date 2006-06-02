@@ -30,7 +30,7 @@ SOURCES += tests/testcobjectsimple.cc tests/testcobjectcomplex.cc tests/testcstr
 SOURCES += tests/teststream.cc tests/teststreamwriter.cc
 SOURCES += tests/testcobjecthelpers.cc tests/testpdfoperators.cc
 SOURCES += tests/testcpage.cc tests/testccontentstream.cc tests/testcpdf.cc
-SOURCES += tests/testutils.cc
+SOURCES += tests/testutils.cc tests/testoutlines.cc
 SOURCES += main.cc 
 
 LIBS += -ldl -lcppunit 
