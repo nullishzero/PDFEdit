@@ -4,6 +4,12 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.5  2006/06/02 16:54:06  hockm0bm
+ * * checkAndReplace removed (and placed to cobjecthelpers.h)
+ * * CAnnotation constructor with page, rect, annotType parameters removed
+ * * createAnnotation static added
+ * * getDictionary method added
+ *
  * Revision 1.4  2006/05/30 21:00:25  hockm0bm
  * * annotTypeMapping utils method added
  * * default static values for TextAnnotInitializer
@@ -245,10 +251,7 @@ public:
  * proper annotation handling.
  * <br>
  * Instance can be created only from existing annotation dictionary or using
- * some of factory methods (each for specific annotation style). If any of
- * required entries is not specified in given dictionary, adds them with default
- * values. This means that empty dictionary is initialized with all required
- * entries with default values.
+ * factory method createAnnotation.
  * <br>
  * Each CAnnotation instance is valid while it is accessible from some page
  * dictionary. In moment when reference to it is removed from page (more
@@ -310,28 +313,30 @@ public:
 	 * reference in Annots array.
 	 * <br>
 	 * This should be used when caller is sure that given annotDict is ok (e. g.
-	 * when dictionary is created from template)
+	 * one returned from createAnnotation method). 
 	 */
 	CAnnotation(boost::shared_ptr<CDict> annotDict):annotDictionary(annotDict), valid(true){}
 	
-	/** Initialization constructor.
-	 * @param page Page where to add new annotation.
+	/** Static factory method for annotation creation.
 	 * @param rect Rectangle for annotation (location on the screen in default 
 	 * user space units).
 	 * @param annotType Type of the annotation.
 	 *
-	 * Creates new annotation dictionary, adds it to the page pdf as new
-	 * indirect object and inserts its reference to the page too. Given page 
-	 * must be valid (has to be stored in pdf and to have valid reference).
+	 * Creates new annotation dictionary and do some initialization according
+	 * given parameters.
 	 * <br>
-	 * Then fills maintaining information requiered by pdf specification to the
-	 * dictionary, such as Type, P, M and Rect fields.
+	 * At first fills maintaining information requiered by pdf specification to 
+	 * the dictionary, such as Type, M and Rect fields.
+	 * Then uses annotInit initializator for type specific initialization with 
+	 * given annotType (it depends on annotInit static initializator what it is 
+	 * done). 
 	 * <br>
-	 * Finaly uses annotInit initializator for type specific initialization 
-	 * with given annotType (it depends on annotInit static initializator what
-	 * it is done). 
+	 * Created annotation can be used in CPage::addAnnotation method.
+	 *
+	 * @return CAnnotation instance wrapped by shared pointer.
 	 */
-	CAnnotation(boost::shared_ptr<CPage> page, Rectangle rect, std::string annotType);
+	static boost::shared_ptr<CAnnotation> 
+		createAnnotation(Rectangle rect, std::string annotType);
 
 	/** Destructor.
 	 *
@@ -394,6 +399,18 @@ public:
 	 * @return AnnotType value of current annotation type.
 	 */
 	AnnotType getType()const;
+
+	/** Returns maintained annotation dictionary.
+	 *
+	 * This can be used if CAnnotation interface doesn't provide required
+	 * functionality. User can perform changes directly on annotation
+	 * dictionary. Nevertheless this can be rather dangerous becuse nonsese
+	 * information may be provided.
+	 */
+	boost::shared_ptr<CDict> getDictionary()const
+	{
+		return annotDictionary;
+	}
 };
 
 } // namespace pdfobjects

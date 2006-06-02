@@ -4,6 +4,12 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.4  2006/06/02 16:54:06  hockm0bm
+ * * checkAndReplace removed (and placed to cobjecthelpers.h)
+ * * CAnnotation constructor with page, rect, annotType parameters removed
+ * * createAnnotation static added
+ * * getDictionary method added
+ *
  * Revision 1.3  2006/05/30 21:00:25  hockm0bm
  * * annotTypeMapping utils method added
  * * default static values for TextAnnotInitializer
@@ -157,31 +163,6 @@ bool UniversalAnnotInitializer::registerInitializer(std::string annotType, share
 	return true;
 }
 
-/** Checks and replaces mapping in given dictionary.
- * @param annotDict Dictionary to check.
- * @param fieldName Field name to search.
- * @param fieldValue New value for this fieldName.
- *
- * Sets new value of given fieldName field and returns true if this property was
- * replaced, false if it was added.
- *
- * @return true if given fieldName's value has been overwirten, false otherwise.
- */
-bool checkAndReplace(shared_ptr<CDict> annotDict, string fieldName, IProperty & fieldValue)
-{
-	shared_ptr<IProperty> value;
-	try
-	{
-		value=annotDict->getProperty(fieldName);
-		annotDict->setProperty(fieldName, fieldValue);
-		return true;
-	}catch(ElementNotFoundException &e)
-	{
-		// annotDict doesn't contain fieldName so one has to be added
-		annotDict->addProperty(fieldName, fieldValue);
-		return false;
-	}
-}
 
 IAnnotInitializator::SupportedList TextAnnotInitializer::getSupportedList()const
 {
@@ -238,32 +219,16 @@ bool TextAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std:
 shared_ptr<utils::IAnnotInitializator> 
 CAnnotation::annotInit=shared_ptr<utils::IAnnotInitializator>(new utils::UniversalAnnotInitializer());
 
-CAnnotation::CAnnotation(shared_ptr<CPage> page, Rectangle rect, string annotType): valid(true)
+shared_ptr<CAnnotation> CAnnotation::createAnnotation(Rectangle rect, string annotType)
 {
 using namespace debug;
 using namespace utils;
 
 	kernelPrintDbg(DBG_DBG, "");
 	
-	// page dictionary has to have valid pdf and reference, because 
-	// annotations are indirect objects available by reference in 
-	// Annots page dictionart
-	if(!hasValidRef(page->getDictionary()) || !hasValidPdf(page->getDictionary()))
-	{
-		kernelPrintDbg(DBG_ERR, "Page dictionary is not in pdf. ");
-		valid=false;
-		// TODO handle	
-	}
-	CPdf * pdf=page->getDictionary()->getPdf();
-	
-	// creates dictionary for annotation and adds it to the Annots array
-	shared_ptr<CDict> annotDict(CDictFactory::getInstance());
-	IndiRef annotRef=pdf->addIndirectProperty(annotDict);
-	annotDictionary=IProperty::getSmartCObjectPtr<CDict>(pdf->getIndirectProperty(annotRef));
-	shared_ptr<CRef> annotCRef(CRefFactory::getInstance(annotRef));
-	//FIXME uncomment when ready
-	//page->addAnnotation(annotCRef);
-	
+	// creates new empty dictionary for annotation
+	shared_ptr<CDict> annotDictionary(CDictFactory::getInstance());
+
 	// initializes annotation dictionary maintaining information:
 	// Type of annotation dictionary has to be Annot (this is not strongly
 	// required by specification, but it is cleaner to do initialize it)
@@ -273,12 +238,6 @@ using namespace utils;
 	// Rectangle of annotation is constructed from given parameter
 	shared_ptr<IProperty> rectField(getIPropertyFromRectangle(rect));
 	checkAndReplace(annotDictionary, "Rect", *rectField);
-
-	// P field (reference to page where this annotation belongs) is not required
-	// for all annotation types, but we doesn't corrupt anything if it is
-	// present
-	shared_ptr<IProperty> pField(CRefFactory::getInstance(page->getDictionary()->getIndiRef()));
-	checkAndReplace(annotDictionary, "P", *pField);
 
 	// last modified date field (M) is initialized to current local time
 	time_t currTime;
@@ -297,6 +256,8 @@ using namespace utils;
 
 	if(!initialized)
 		kernelPrintDbg(DBG_WARN, "Unable to initialize annotation dictionary with type="<<annotType);
+	
+	return shared_ptr<CAnnotation>(new CAnnotation(annotDictionary));
 }
 
 void CAnnotation::invalidate()
