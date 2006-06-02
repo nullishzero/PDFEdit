@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.54  2006/06/02 09:21:45  misuj1am
+ *
+ * -- ADD: CPdf::getOutlines function
+ * -- test changed to test that function
+ *
  * Revision 1.53  2006/06/01 14:46:24  hockm0bm
  * doc update - doxygen warnings removed (if possible)
  *
@@ -247,6 +252,7 @@
 #include "iproperty.h"
 #include "cobject.h"
 #include "xrefwriter.h"
+#include "cobjecthelpers.h"
 
 // =============================================================================
 namespace pdfobjects {
@@ -1372,6 +1378,44 @@ public:
 	size_t getRevisionsCount()
 	{
 		return xref->getRevisionCount();
+	}
+
+	/** Returns container of outlines and the string they represent.
+	 * @param cont Output container.
+	 *
+	 * Traverses tree like structure of outlines and stores them in the order they
+	 * are visited.
+	 */
+	template<typename Container>
+	void getOutlines (Container& cont)
+	{
+		// Clear outline container
+		cont.clear ();
+		
+		// topleve outline if any
+		boost::shared_ptr<CDict> toplevel;
+		try {
+			
+			toplevel = utils::getCDictFromDict (docCatalog, "Outlines");
+			
+		}catch (ElementNotFoundException&)
+		{
+			kernelPrintDbg (debug::DBG_DBG, "No outlines");
+			return;
+		}
+		assert (toplevel);
+
+		typedef std::vector<boost::shared_ptr<IProperty> > Outs;
+		Outs outs;
+		utils::getAllChildrenOfPdfObject (toplevel, outs);
+		
+		for (Outs::iterator it = outs.begin(); it != outs.end(); ++it)
+		{
+			// Get the string from the outline
+			std::string title = utils::getStringFromDict (*it, "Title");
+			// Add the pair to the container
+			cont.push_back (std::make_pair(*it, title));
+		}
 	}
 };
 

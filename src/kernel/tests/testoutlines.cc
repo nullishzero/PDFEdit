@@ -21,34 +21,23 @@
 //=====================================================================================
 namespace {
 //=====================================================================================
-
+using namespace std;
+using namespace boost;
+	
 bool
 getout (__attribute__((unused)) ostream& __attribute__((unused)) oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
-		boost::shared_ptr<CDict> toplevel;
-		try {
-			toplevel = utils::getCDictFromDict (pdf->getDictionary(), "Outlines");
-		}catch (ElementNotFoundException&)
-			{oss << "No outlines" << flush; return true; }
+	typedef vector<pair<shared_ptr<IProperty>,string> > Outs;
+	Outs outs;
+	pdf->getOutlines (outs);
 
-		oss << "Outlines entry exists. " << flush;
-		
-		typedef vector<boost::shared_ptr<IProperty> > Outs;
-		Outs outs;
-		assert (toplevel);
-		utils::getAllChildrenOfPdfObject (toplevel, outs);
-		
-		oss << "Outlines found: " << flush;
-
-		assert (!outs.empty());
-		// skip top level entry
-		for (size_t i = 1; i < outs.size(); ++i)
-		{
-			std::string title = utils::getStringFromDict (outs[i], "Title");
-			oss << "-" << title << flush;
-		}
+	if (outs.empty())
+		oss << " No outlines..." << flush;
+	else
+		for (Outs::iterator it = outs.begin(); it != outs.end(); ++it)
+			oss << "-" << (*it).second << flush;
 			
 
 	return true;
