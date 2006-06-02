@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/06/02 10:48:46  hockm0bm
+ * getCObjectFromRef template methods added
+ *
  * Revision 1.27  2006/06/02 01:34:15  misuj1am
  *
  * -- ADD: support for getting all outlines dictionaries
@@ -201,8 +204,57 @@ std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict);
  */
 std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict);
 
+/** Returns cobjects from given reference property.
+ * @param refProp Reference property (must be pRef typed).
+ *
+ * Gets reference value from property and dereferences indirect object from it.
+ * Uses refProp's pdf for dereference.
+ * Checks target object for given template pType and if it matches casts to
+ * given CType and returns.
+ *
+ * @throw ElementBadTypeException if refProp is not CRef instance or indirect
+ * object is not CType instance.
+ * @return CType instance wrapped by shared_ptr smart pointer.
+ */
+template<typename CType, PropertyType pType>
+boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
+{
+	if(!isRef(refProp))
+		throw ElementBadTypeException("");
+	
+	// gets reference value and dereferences indirect object
+	IndiRef ref;
+	IProperty::getSmartCObjectPtr<CRef>(refProp)->getPropertyValue(ref);
+	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	if(indirect_ptr->getType() != pType)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
+}
+
+/** Gets cobject from reference and pdf instance.
+ * @param pdf Pdf istance.
+ * @param ref Indirect reference.
+ *
+ * Uses CPdf::getIndirectProperty to get dereferenced object from given
+ * reference on given pdf instance. Checks object type, if it is given pType and
+ * if matches cast to given template CType and returns.
+ *
+ * @throw ElementBadTypeException if indirect object is not CType instance.
+ * @return CType instance wrapped by shared_ptr smart pointer.
+ */
+template<typename CType, PropertyType pType>
+boost::shared_ptr<CType> getCObjectFromRef(CPdf & pdf, IndiRef ref)
+{
+	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
+	if(indirect_ptr->getType() != pType)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
+}
+
+// FIXME change to typedef
+
 /** Gets dictionary from reference property.
- * @param refProp Reference property (myst be pRef typed).
+ * @param refProp Reference property (must be pRef typed).
  *
  * Gets reference value from property and dereferences indirect object from it.
  * Uses refProp's pdf for dereference.
