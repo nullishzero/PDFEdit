@@ -582,6 +582,18 @@ private:
 };
 
 
+//
+// Helper functions
+//
+
+/**
+ * Check whether iproperty claimed to be a page is conforming to the pdf specification.
+ * (p.118)
+ *
+ * @param ip IProperty.
+ */
+bool isPage (boost::shared_ptr<IProperty> ip);
+
 
 //=====================================================================================
 } // namespace pdfobjects

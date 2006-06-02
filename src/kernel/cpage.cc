@@ -137,9 +137,10 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (pageDict);
 
 // Better not throw in a constructor
-//	if ("Page" != utils::getStringFromDict (pageDict, "Type"))
+//  if (!isPage (pageDict))
 //		throw CObjInvalidObject ();		
 }
 
@@ -613,6 +614,27 @@ CPage::addSystemType1Font (const std::string& fontname)
 		fonts->addProperty (tmpname, *font);
 	}
 		
+}
+
+
+//
+// Helper functions
+//
+bool 
+isPage (boost::shared_ptr<IProperty> ip)
+{
+	assert (ip);
+	assert (isDict (ip));
+
+	if (!isDict(ip))
+		throw CObjInvalidObject ();
+
+	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+
+	if ("Page" != utils::getStringFromDict (dict, "Type"))
+		throw CObjInvalidObject ();
+
+	return true;
 }
 
 
