@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/06/02 16:54:53  hockm0bm
+ * checkAndReplace method added
+ *
  * Revision 1.17  2006/05/30 20:48:05  hockm0bm
  * getIPropertyFromDate method added
  *
@@ -345,6 +348,23 @@ using namespace boost;
 	return dateString;
 }
 
+bool checkAndReplace(boost::shared_ptr<CDict> annotDict, std::string fieldName, IProperty & fieldValue)
+{
+using namespace boost;
+
+	shared_ptr<IProperty> value;
+	try
+	{
+		value=annotDict->getProperty(fieldName);
+		annotDict->setProperty(fieldName, fieldValue);
+		return true;
+	}catch(ElementNotFoundException &e)
+	{
+		// annotDict doesn't contain fieldName so one has to be added
+		annotDict->addProperty(fieldName, fieldValue);
+		return false;
+	}
+}
 } // end of utils namespace
 
 } // end of pdfobjects namespace

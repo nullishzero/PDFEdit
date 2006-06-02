@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.30  2006/06/02 16:54:53  hockm0bm
+ * checkAndReplace method added
+ *
  * Revision 1.29  2006/06/02 11:54:44  hockm0bm
  * getCObjectFromRef(CPdf &, IndiRef) removed because it can't use CPdf and
  * implementation has to be in header file
@@ -234,8 +237,6 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
 }
-
-// FIXME change to typedef
 
 /** Gets dictionary from reference property.
  * @param refProp Reference property (must be pRef typed).
@@ -498,6 +499,17 @@ getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
 	}
 }
 
+/** Checks and replaces mapping in given dictionary.
+ * @param annotDict Dictionary to check.
+ * @param fieldName Field name to search.
+ * @param fieldValue New value for this fieldName.
+ *
+ * Sets new value of given fieldName field and returns true if this property was
+ * replaced, false if it was added.
+ *
+ * @return true if given fieldName's value has been overwirten, false otherwise.
+ */
+bool checkAndReplace(boost::shared_ptr<CDict> annotDict, std::string fieldName, IProperty & fieldValue);
 
 
 }// end of utils namespace
