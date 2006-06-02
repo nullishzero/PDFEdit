@@ -4,6 +4,7 @@
 */
 #include "util.h"
 #include <iostream>
+#include <qcolor.h>
 #include <qfile.h>
 #include <qstring.h>
 #include <qobject.h>
@@ -227,6 +228,25 @@ QString countString(int count,QString singular,QString plural) {
  else if (count>=2 && count<=4) str+=QObject::tr(plural,"2-4");
  else str+=QObject::tr(plural,"5+");
  return str;
+}
+
+/**
+ Mix colors from oldColor and newColor according to weight
+ Weight should be between 0 and 1,
+ 1 meaning the color will be "new",
+ 0 meaning the color will be "old",
+ everything else mean linear interpolation between new color (with given weight) and old color (with weight of (1-weight))
+ @param weight Weight of new color.
+ @param oldColor Old color
+ @param newColor New color
+*/
+QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor) {
+ QColor retCol(
+  (int)(oldColor.red()*(1-weight)+newColor.red()*weight),
+  (int)(oldColor.green()*(1-weight)+newColor.green()*weight),
+  (int)(oldColor.blue()*(1-weight)+newColor.blue()*weight)
+ );
+ return retCol;
 }
 
 } //namespace util

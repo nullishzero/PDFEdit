@@ -48,11 +48,16 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
 
  IconCache ic;
 
- QPixmap *closeIcon=ic.getIcon("close_widget.png");
+ QString closeIconName="close_widget.png";
+ QPixmap *closeIcon=ic.getIcon(closeIconName);
 
  //Corner button to close current tree
  QToolButton *theCorner=new QToolButton(tab,"close_tree");
- theCorner->setIconSet(*closeIcon);
+ if (closeIcon) {
+  theCorner->setIconSet(*closeIcon);
+ } else {
+  guiPrintDbg(debug::DBG_WARN,"Icon not found: " << closeIconName);
+ }
  theCorner->setTextLabel(tr("Close current tab"));
  corner=theCorner;
 

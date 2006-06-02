@@ -46,8 +46,16 @@ void removePropertyModeController() {
 PropertyModeController::PropertyModeController(){
  //Register to be destroyed at exit
  atexit(removePropertyModeController);
- QString confFile=globalSettings->read("modecontroller/config");
-//TODO
+ QString confFile=globalSettings->getFullPathName("config",QString::null,"modecontroller/");
+ if (confFile.isNull()) {
+  guiPrintDbg(debug::DBG_WARN,"Mode controller config not found");
+ }
+ guiPrintDbg(debug::DBG_DBG,"Mode controller config file: " << confFile);
+ int result=modeControler.loadFromFile(confFile,parser);
+ if(result==-1) {
+  guiPrintDbg(debug::DBG_WARN,"Mode controller failed to parse file: " << confFile);
+  //TODO alert user
+ }
 };
 
 /**
@@ -61,6 +69,14 @@ PropertyModeController* PropertyModeController::getInstance() {
  return propertyModeControllerInstance;
 }
 
+/**
+ For given type and name return mode of the property
+ @param type Type field value of complex type
+ @param name Name of property
+*/
+PropertyMode PropertyModeController::mode(const QString &type,const QString &name) {
+ return modeControler.getMode(type,name);
+}
 
 /** Destructor */
 PropertyModeController::~PropertyModeController(){

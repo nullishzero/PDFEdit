@@ -1,6 +1,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+class QColor;
 class QString;
 class QStringList;
 
@@ -26,6 +27,7 @@ void consoleLog(const QString &message,const QString &fileName);
 QString getUntil(char separator,QString &line,bool escape=false);
 void setDebugLevel(const QString &param);
 QString countString(int count,QString singular,QString plural);
+QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor);
 
 } //namespace util
 

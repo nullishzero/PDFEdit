@@ -8,9 +8,9 @@ class QSplitter;
 class QStringList;
 class QString;
 
-/** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
-
 namespace gui {
+
+/** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
 
 class Settings : public QObject {
  Q_OBJECT
@@ -34,7 +34,7 @@ public slots:
  void remove(const QString &key);
  void removeAll(const QString &key);
  QString expand(QString s);
- QString getFullPathName( QString nameOfPath , QString fileName );
+ QString getFullPathName(QString nameOfPath,QString fileName=QString::null,const QString &prefix=QString::null);
 signals:
  /** Signal emitted when any setting is changed. Key of changed settings is sent.
      Can be used to monitor settings changes */

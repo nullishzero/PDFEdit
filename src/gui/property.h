@@ -29,6 +29,7 @@ public:
  PropertyFlags getFlags();
  void setFlags(PropertyFlags flag);
  bool getReadOnly();
+ void modifyColor(QWidget* widget);
  virtual void setReadOnly(bool _readonly);
  /**
   write internal value to given PDF object

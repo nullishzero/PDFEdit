@@ -36,6 +36,7 @@ RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFl
  ed->setValidator(new RefValidator(ed));
  //light yellow background color
  ed->setPaletteBackgroundColor(QColor(255,255,224));
+ modifyColor(ed);
  connect(pb,SIGNAL(clicked())		,this,SLOT(selectRef()));
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
  connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));

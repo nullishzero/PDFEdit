@@ -25,6 +25,7 @@ StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, Prop
  ed=new QLineEdit(this,"stringproperty_edit");
  ed->setReadOnly(readonly);
  setFocusProxy(ed);
+ modifyColor(ed);
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
  connect(ed,SIGNAL(lostFocus())		,this,SLOT(emitChange()));
  connect(ed,SIGNAL(textChanged(const QString&)),this,SLOT(enableChange(const QString&)));

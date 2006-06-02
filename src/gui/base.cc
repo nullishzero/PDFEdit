@@ -265,7 +265,11 @@ void Base::removeDocumentObjects() {
 void Base::runScript(QString script) {
  qs->setErrorMode(QSInterpreter::Nothing);
  w->cmdLine->addCommand(script);
- //Commit currently edited property in property editor
+ /*
+  Commit currently edited property in property editor
+  This must be done this way, because by clicking on some button in toolbar to perform some action,
+  for example reloading a page, does not cause the property to lose focus and update automatically
+ */
  w->prop->commitProperty();
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addDocumentObjects();

@@ -119,21 +119,35 @@ void Settings::initSettings() {
  set->insertSearchPath(QSettings::Windows,homeDir);
 }
 
-/** Given name of the file, finds and returns full path to the file,
-     considering all relevant settings
+/**
+ Given name of the file, finds and returns full path to the file,
+ considering all relevant settings
+ \see readPath
  @param nameOfPath Name of paths in settings for this file (e.g. "icon")
- @param fileName Name of file
+ @param fileName Name of file. If not specified, the path itself is the filename we want to find
+ @param prefix Path prefix (Can be specified if desired to read from different configuration key than default)
  @return QString with full path to the file
 */
-QString Settings::getFullPathName( QString nameOfPath , QString fileName ) {
+QString Settings::getFullPathName(QString nameOfPath,QString fileName/*=QString::null*/,const QString &prefix/*=QString::null*/) {
+ if (fileName.isNull()) {
+  fileName="";
+ }
  if (fileName.startsWith("/")) { //absolute path -> no change
   return fileName;
  }
- QStringList path=readPath(nameOfPath);
+ QStringList path;
+ if (prefix.isNull()) {
+  path=readPath(nameOfPath);
+ } else {
+  path=readPath(nameOfPath,prefix);
+ }
  QString absName;
  for(QStringList::Iterator it=path.begin();it!=path.end();++it) {
-  absName=*it+"/"+fileName;
-//  guiPrintDbg(debug::DBG_DBG,"Looking for " <<fileName << " in: " << *it << " as " << absName);
+  if (fileName=="") {
+   absName=*it;
+  } else {
+   absName=*it+"/"+fileName;
+  }
   if (QFile::exists(absName)) return absName;
  }
  guiPrintDbg(debug::DBG_WARN,"File not found: " << fileName);
@@ -211,6 +225,7 @@ QStringList Settings::readPath(const QString &name,const QString &prefix/*="path
   //Trim trailing slashes
   *it=(*it).replace(stripTrail,"\\1");
   *it=QDir::convertSeparators(*it);
+//  guiPrintDbg(debug::DBG_DBG,"Path " << (prefix+name) << " -> " << *it);
  }
  return s;
 }

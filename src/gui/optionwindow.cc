@@ -7,6 +7,7 @@
 */
 
 #include "optionwindow.h"
+#include <qdir.h>
 #include <qlabel.h>
 #include <qtabwidget.h> 
 #include <qlayout.h>
@@ -296,6 +297,7 @@ void OptionWindow::init() {
  addOptionBool(tree_tab,tr("Graphic objects"),"tree/show_graphic",true);
  addOptionBool(tree_tab,tr("Annotations"),"tree/show_annot",true);
  addOptionBool(tree_tab,tr("Pages"),"tree/show_page",true);
+ addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline",true);
  addOptionBool(tree_tab,tr("Content Streams"),"tree/show_stream",true);
  addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple",true);
  finishTab    (tree_tab);
@@ -325,14 +327,42 @@ void OptionWindow::init() {
  finishTab(tool_tab);
 
  QWidget *laf_tab=addTab(tr("Look and Feel"));
+ //Get list of styles
  QStringList styles=QStyleFactory::keys();
  styles.prepend("");
+ //Get list of icon themes
+ QStringList iconPath=globalSettings->readPath("icon");
+ QStringList iconThemes;
+ for (unsigned int pth=0;pth<iconPath.count();pth++) {
+  QDir dir(iconPath[pth]);
+  if (dir.isReadable()) {
+   iconThemes+=dir.entryList(QDir::Dirs);
+  }
+ }
+ //Remove . and .. directories
+ iconThemes.remove(".");
+ iconThemes.remove("..");
+ //theme cannot be named 'default'
+ iconThemes.remove("default");
+ //Sort list
+ qHeapSort(iconThemes);
+ //Remove duplicates
+ QString lastTheme;
+ QStringList iconThemesUnique;
+ for (QStringList::Iterator it=iconThemes.begin();it!=iconThemes.end();++it) {
+  if (*it!=lastTheme) {
+   lastTheme=*it;
+   iconThemesUnique+=lastTheme;
+  }
+ }
+ //prepend 'default' to list
+ iconThemesUnique.prepend("default");
  addText       (laf_tab,tr("You can set fonts used in application"));
  addOptionFont (laf_tab,tr("Application font"),"gui/font_main",QApplication::font().toString());
  addOptionFont (laf_tab,tr("Console font"),"gui/font_con",QApplication::font().toString());
  addText       (laf_tab,tr("You can specify overall visual style"));
  addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
- addOption     (laf_tab,tr("Icon theme"),"icon/theme/current");
+ addOptionCombo(laf_tab,tr("Icon theme"),"icon/theme/current",iconThemesUnique);
 //TODO: scan icon directories and pick the theme from a combobox
  addText       (laf_tab,tr("<b>Note</b>: changing style or icon theme will take effect on next program start"));//TODO: apply style & icon theme now
  addOptionBool (laf_tab,tr("Use big icons"),"icon/theme/big");

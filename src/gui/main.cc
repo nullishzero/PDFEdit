@@ -75,6 +75,7 @@ int main(int argc, char *argv[]){
  qApp=&app;
  //Get application path
  appPath=app.applicationDirPath();
+ appPath=QDir(appPath).absPath();
  //Translation support
  QTranslator translator;
  const char *env_lang=getenv("LANG");
