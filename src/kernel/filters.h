@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/06/02 13:23:15  misuj1am
+ *
+ * -- documementation update
+ *
  * Revision 1.11  2006/05/08 10:57:47  misuj1am
  *
  * -- small changes
@@ -53,17 +57,14 @@ struct NoFilter;
 
 	
 /**
- * Filter creator class. Factory design pattern implemented here.
+ * Filter creator class. 
  *
- * This is an implementation of STRATEGY design pattern. We need a set of filters, which
- * behave differently but on the same data with the same information avaliable. We make
+ * This is an implementation of STRATEGY design pattern. We need a set of filters which
+ * behave differently but process the same data with the same information avaliable. We make
  * them interchangeable. [GoF/Strategy]
  *
- * If we would like to expose this interface outside, we would have to create a Mediator between Filter class
- * and CStream. Nothing more, nothing less.
- * 
- * REMARK: We do not use template implementation because we do not know at compile time, which implementation will be used.
- * REMARK2: Change getSupportedStreams & setStringRepresentation in order to expose newly created filters.
+ * REMARK: We do not use templates because we do not know which implementation will be used at compile time.
+ * REMARK: Change getSupportedStreams & setStringRepresentation in order to expose newly created filters.
  */
 struct CFilterFactory
 {
@@ -72,7 +73,7 @@ struct CFilterFactory
 	 *
 	 * @param filterName Name of the filter.
 	 *
-	 * @return Filter, if not found, NoFilter is created.
+	 * @return Filter if found, NoFilter otherwise.
 	 */
 	template<typename OUTPUT, typename FILTERS>
 	static void addFilters (OUTPUT& out, const FILTERS& filterNames)
@@ -105,12 +106,15 @@ struct CFilterFactory
 
 };
 
+
 //=======================================
 // Concrete Filters
 //=======================================
 
 /**
- * Specific filter.
+ * Default filter.
+ *
+ * This filter does not do anything with the input stream.
  */
 struct NoFilter : public boost::iostreams::input_filter
 {
@@ -133,7 +137,9 @@ struct NoFilter : public boost::iostreams::input_filter
 };
 
 /**
+ * Implementation of source (from boost iostreams). 
  *
+ * We can read from an underlying stream/another source using read method.
  */
 template<typename T>
 class buffer_source 
@@ -171,7 +177,9 @@ public:
 };
 
 /**
- * Container sink.
+ * Implementatino of sink (from boost iostreams).
+ *
+ * We can write characters to a sink using write method.
  */
 template<typename T>
 class buffer_sink 
@@ -198,6 +206,8 @@ public:
 
 
 //=======================================
+
+/** Functor changing characters to printable characters. */
 template<typename T>
 struct Printable
 {
