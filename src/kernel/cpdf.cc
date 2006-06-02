@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.54  2006/06/02 16:51:21  hockm0bm
+ * typo fix
+ *
  * Revision 1.53  2006/06/02 16:38:15  hockm0bm
  * modecontroller field has not been initialized in constructors
  *         - thx to Jozo
@@ -945,7 +948,7 @@ using namespace utils;
 	}
 }
 
-CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this)),change(false), modecontroller(NULL)
+CPdf::CPdf(StreamWriter * stream, OpenMode openMode):pageTreeWatchDog(new PageTreeWatchDog(this)),change(false), modeController(NULL)
 {
 	// gets xref writer - if error occures, exception is thrown 
 	xref=new XRefWriter(stream, this);
