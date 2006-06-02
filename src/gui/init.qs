@@ -39,7 +39,7 @@ function onTreeRightClick() {
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
  if (treeitem.itemtype()=="PdfOperator") {
-  menu.addItemDef("item Set color,setColor()");
+  menu.addItemDef("item Set color,setColor(),,operator_setcolor.png");
  }
  if (treeitem.itemtype()=="Page") {
   menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
