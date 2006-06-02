@@ -176,7 +176,18 @@
     <table frame="none">
      <title>List of internal variables</title>
      <tgroup cols="2"><tbody>
-      <row><entry>$PDFEDIT_BIN</entry><entry>Full path to directory in which the binary file resides</entry></row>
+      <row>
+       <entry>$PDFEDIT_BIN</entry>
+       <entry>Full path to directory in which the binary file resides</entry>
+      </row>
+      <row>
+       <entry>$PDFEDIT_DATA</entry>
+       <entry>
+        Full path to directory with editor data files - usually something like
+        <filename>/usr/share/pdfedit</filename> or <filename>/usr/local/share/pdfedit</filename>
+        unless configured diferently when building editor.
+       </entry>
+      </row>
      </tbody></tgroup>
     </table>
    </sect2>
