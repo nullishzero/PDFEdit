@@ -31,6 +31,8 @@ class PageSpace : public QWidget {
 		void hideButtonsAndPageNumber ( );
 		void showButtonsAndPageNumber ( );
 
+		bool setSelectionMode( int mode );
+
 //		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );
 //		/*TODO*/void unselectObjectOnPage ( );
 
@@ -52,22 +54,24 @@ class PageSpace : public QWidget {
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
 		void changedZoomFactorTo ( float zoom );
+		void changeSelection ( const std::vector<boost::shared_ptr<PdfOperator> > );
 
-		/*TODO*/ void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
+		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
 	protected:
 		virtual void resizeEvent ( QResizeEvent * );
 		virtual void keyPressEvent ( QKeyEvent * e );
 	private slots:
 		// slots for connecting pageImage's signals
 		void newSelection ( const QRect & );
-		void requirementPopupMenu ( const QPoint &, const QRect * );
-		void moveSelection ( const QPoint & );
-		void resizeSelection ( const QRect &, const QRect & );
+		void requirementPopupMenu ( const QPoint &, const QRegion * );
+		void moveSelection ( const QPoint &, const QPtrList<BBoxOfObjectOnPage> & );
+		void resizeSelection ( const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> & );
 		void showMousePosition ( const QPoint & );
 	private:
 		void newPageView();
 		void newPageView( QPixmap &qp );
 		void centerPageView( );
+		bool refreshObjectsInPageImage();
 	private:
 		QLabel		* pageNumber;
 		QLabel		* mousePositionOnPage;
@@ -76,7 +80,8 @@ class PageSpace : public QWidget {
 		QHBoxLayout	* hBox;	// mozna nebude potreba
 		QScrollView	* scrollPageSpace;
 
-		/*TODO CObject */ void		* actualSelectedObjects;
+		QPtrList<boost::shared_ptr<PdfOperator> >	actualSelectedObjects,
+													objectForSelecting;
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;
 		QPixmap		* actualPagePixmap;
@@ -88,6 +93,8 @@ class PageSpace : public QWidget {
 
 		/** Display parameters ( hDpi, vDpi, rotate, ... ) */
 		DisplayParams	displayParams;
+
+		int			selectionMode;
 };
 
 } // namespace gui

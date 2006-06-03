@@ -10,6 +10,7 @@
 #include <qdockarea.h>
 #include <qfiledialog.h>
 #include <math.h>
+#include "rect2Darray.h"
 
 // using namespace std;
 
@@ -46,7 +47,10 @@ vBox->addWidget( da );
 	displayParams = DisplayParams();
 	actualPdf = NULL;
 	actualPage = NULL;
-	actualSelectedObjects = NULL;
+	actualSelectedObjects.clear();
+	actualSelectedObjects.setAutoDelete( true );
+	objectForSelecting.clear();
+	objectForSelecting.setAutoDelete( true );
 	pageImage = NULL;
 	actualPagePixmap = new QPixmap();
 	newPageView( *actualPagePixmap );
@@ -73,6 +77,8 @@ vBox->addWidget( da );
 
 	basePpP		= QPaintDevice::x11AppDpiX() / 72.0;
 	zoomFactor	= 1;
+
+	selectionMode = PageView::SelectAllObjects;
 }
 
 PageSpace::~PageSpace() {
@@ -101,11 +107,12 @@ void PageSpace::newPageView() {
 	pageImage->setResizingZone( globalSettings->readNum( PAGESPC + "ResizingZone" ) );
 
 	connect( pageImage, SIGNAL( leftClicked(const QRect &) ), this, SLOT( newSelection(const QRect &) ) );
-	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRect *) ),
-		this, SLOT( requirementPopupMenu(const QPoint &, const QRect *) ) );
-	connect( pageImage, SIGNAL( selectionMovedTo(const QPoint &) ), this, SLOT( moveSelection(const QPoint &) ) );
-	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &) ),
-		this, SLOT( resizeSelection(const QRect &, const QRect &) ) );
+	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRegion *) ),
+			this, SLOT( requirementPopupMenu(const QPoint &, const QRegion *) ) );
+	connect( pageImage, SIGNAL( selectionMovedTo(const QPoint &, const QPtrList<BBoxOfObjectOnPage> &) ),
+			this, SLOT( moveSelection(const QPoint &, const QPtrList<BBoxOfObjectOnPage> &) ) );
+	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> &) ),
+			this, SLOT( resizeSelection(const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> &) ) );
 	connect( pageImage, SIGNAL( changeMousePosition(const QPoint &) ), this, SLOT( showMousePosition(const QPoint &) ) );
 }
 
@@ -119,6 +126,8 @@ void PageSpace::newPageView( QPixmap &qp ) {
 	pageImage->setPixmap( qp );
 	pageImage->show();
 	centerPageView();
+
+	setSelectionMode( selectionMode );
 }
 void PageSpace::centerPageView( ) {
 	bool reposition;
@@ -203,8 +212,7 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		delete actualPage;
 		actualPage = new QSPage( pageToView->get() , NULL );
 
-		//TODO delete actualSelectedObjects;
-		actualSelectedObjects = NULL;
+		actualSelectedObjects.clear();
 
 		pageNumber->setText( QString(tr("%1 of %2"))
 					.arg(actualPdf->getPagePosition( actualPage ))
@@ -213,7 +221,6 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		if ((actualPage == NULL) || (actualPdf == NULL) || (pageToView != NULL))
 			return ;					// no page to refresh
 		// else  need reload page ( changed zoom, ... )
-		//TODO actualSelectedObjects ?
 	}
 
 	// initialize create pixmap for page
@@ -235,8 +242,15 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 
 	// show new pixmap
 	newPageView( * actualPagePixmap );
+	objectForSelecting.clear();
 
 	emit changedPageTo( * actualPage, actualPdf->getPagePosition( actualPage ) );
+
+	// reset selection mode
+	int h = selectionMode;
+	selectionMode = -1;
+	setSelectionMode( h );
+	//TODO actualSelectedObjects ?
 }
 #undef splashMakeRGB8
 
@@ -251,10 +265,97 @@ void PageSpace::keyPressEvent ( QKeyEvent * e ) {
 	}
 }
 
+bool PageSpace::refreshObjectsInPageImage() {
+	pageImage->clearObjectsBBox();
+	pageImage->unSelect();
+
+	if (! objectForSelecting.isEmpty()) {
+		boost::shared_ptr<PdfOperator> * it = objectForSelecting.first();
+		for ( ; it ; it = objectForSelecting.next() ) {
+			Rectangle bbox = it->get()->getBBox();
+			QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
+						std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
+
+			pageImage->addObjectsBBox( box, it->get() );
+		}
+	}
+
+	bool returnValue = pageImage->setSelectionMode( PageView::SelectText );
+
+	if (! actualSelectedObjects.isEmpty()) {
+		boost::shared_ptr<PdfOperator> * it = actualSelectedObjects.first();
+		for ( ; it ; it = actualSelectedObjects.next() ) {
+			Rectangle bbox = it->get()->getBBox();
+			QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
+						std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
+
+			pageImage->addSelectedRegion( box, it->get() );
+		}
+	}
+
+	return returnValue;
+}
+
+bool PageSpace::setSelectionMode( int mode ) {
+	if (pageImage == NULL)
+		return false;
+
+	pageImage->clearObjectsBBox();
+	pageImage->unSelect();
+
+	bool returnValue = false;
+	switch (mode) {
+		case PageView::SelectAllObjects :
+				objectForSelecting.clear();
+				actualSelectedObjects.clear();
+				returnValue = pageImage->setSelectionMode( PageView::SelectAllObjects );
+				break;
+		case PageView::SelectText : {
+				if (mode == selectionMode) {
+					returnValue = refreshObjectsInPageImage();
+				} else {
+					// init objectForSelecting
+					std::vector<boost::shared_ptr<PdfOperator> > ops;
+					std::vector<boost::shared_ptr<CContentStream> > ccs;
+					actualPage->get()->getContentStreams(ccs);
+					for ( std::vector<boost::shared_ptr<CContentStream> >::iterator ccsIt = ccs.begin(); ccsIt != ccs.end() ; ++ccsIt ) {
+						(*ccsIt)->getPdfOperators( ops );
+
+						PdfOperator::Iterator *it=NULL;
+						it = new TextOperatorIterator(ops[0]);
+						for ( ; !it->isEnd() ; it->next() ) {
+							boost::shared_ptr<PdfOperator> * h_textOp = new boost::shared_ptr<PdfOperator> (it->getCurrent());
+
+							Rectangle bbox = (* h_textOp)->getBBox();
+							QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
+										std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
+
+							objectForSelecting.append( h_textOp );
+							pageImage->addObjectsBBox( box, (*h_textOp).get() );
+						}
+						delete it;
+					}
+				}
+				returnValue = pageImage->setSelectionMode( PageView::SelectText );
+				break;
+			}
+		default:
+				guiPrintDbg( debug::DBG_DBG, "not set selection mode to "<<mode);
+				guiPrintDbg( debug::DBG_DBG, "All  = "<<(int)PageView::SelectAllObjects);
+				guiPrintDbg( debug::DBG_DBG, "Text = "<<(int)PageView::SelectText);
+				break;
+	}
+
+	selectionMode = mode;
+
+	return returnValue;
+}
+
 void PageSpace::newSelection ( const QRect & r) {
 	// TODO pracovat s vracenymi operatori
 	std::vector<boost::shared_ptr<PdfOperator> > ops;
-	Rectangle boundingbox = Rectangle();
+
+	pageImage->unSelect();
 
 	if (actualPage != NULL) {
 		if ( r.topLeft() == r.bottomRight() ) {
@@ -275,42 +376,17 @@ void PageSpace::newSelection ( const QRect & r) {
 		(*it)->getOperatorName( name );
 		(*it)->getStringRepresentation( strr );
 		bbox = (*it)->getBBox( );
-		guiPrintDbg(debug::DBG_DBG, name << " ("<< strr <<") ,    ( " << bbox << " )" );
+//		guiPrintDbg(debug::DBG_DBG, name << " ("<< strr <<") ,    ( " << bbox << " )" );
 
-		if (boundingbox.xleft == COORDINATE_INVALID) {
-			boundingbox.xleft = std::min(bbox.xleft, bbox.xright);
-			boundingbox.yleft = std::min(bbox.yleft, bbox.yright);
-			boundingbox.xright = std::max(bbox.xleft, bbox.xright);
-			boundingbox.yright = std::max(bbox.yleft, bbox.yright);
-		}
-		if (std::min( bbox.xleft, bbox.xright ) < boundingbox.xleft)
-			boundingbox.xleft = std::min( bbox.xleft, bbox.xright );
-		if (std::min( bbox.yleft, bbox.yright ) < boundingbox.yleft)
-			boundingbox.yleft = std::min( bbox.yleft, bbox.yright );
-		if (std::max( bbox.xright, bbox.xright ) > boundingbox.xright)
-			boundingbox.xright = std::max( bbox.xright, bbox.xright );
-		if (std::max( bbox.yright, bbox.yright ) > boundingbox.yright)
-			boundingbox.yright = std::max( bbox.yright, bbox.yright );
-	}
-	if (boundingbox.xleft != COORDINATE_INVALID) {
-		guiPrintDbg(debug::DBG_DBG, "boundingbox: ("<<boundingbox<<")" );
-/*ZMAZAT*/	actualSelectedObjects = &actualSelectedObjects;
-		QPoint leftTop, rightBottom;
-		Point lt( floor(boundingbox.xleft - 1), floor(boundingbox.yleft -1) ),
-			  rb( ceil(boundingbox.xright + 1),
-				  ceil(boundingbox.yright + 1));
-		convertPdfPosToPixmapPos( lt, leftTop );
-		convertPdfPosToPixmapPos( rb, rightBottom );
-		QRect pom_rc( leftTop, rightBottom );
-		pageImage->setSelectedRect( pom_rc );
-	} else {
-/*ZMAZAT*/	actualSelectedObjects = NULL;
-		pageImage->unSelect();
+		QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
+					std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
+			
+		pageImage->addSelectedRegion( box, (*it).get() );
 	}
 }
 
 bool PageSpace::isSomeoneSelected ( ) {
-	return ( actualSelectedObjects != NULL );
+	return ( ! actualSelectedObjects.isEmpty() );
 }
 
 bool PageSpace::saveImageWithDialog ( bool onlySelectedArea ) {
@@ -336,16 +412,16 @@ bool PageSpace::saveImage ( const QString & filename, const char * format, int q
 	return pageImage->saveImage( filename, format, quality, onlySelectedArea );
 }
 
-void PageSpace::requirementPopupMenu ( const QPoint & pagePos, const QRect * /* r */) {
+void PageSpace::requirementPopupMenu ( const QPoint & pagePos, const QRegion * /* r */) {
 /*	if (r != NULL) {
 	} else {
 	}*/
 	emit popupMenu( pagePos );
 }
-void PageSpace::moveSelection ( const QPoint & relativeMove ) {
+void PageSpace::moveSelection ( const QPoint & relativeMove, const QPtrList<BBoxOfObjectOnPage> & objects ) {
 	// TODO
 }
-void PageSpace::resizeSelection ( const QRect &, const QRect & ) {
+void PageSpace::resizeSelection ( const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> & ) {
 	// TODO
 }
 
