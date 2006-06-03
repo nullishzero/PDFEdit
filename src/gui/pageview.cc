@@ -715,9 +715,12 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 					emit selectionResized( selectedRegion->boundingRect().normalize(), mouseRectSelected->normalize(), selectedObjects );
 				}
 			} else {
-				if (selectionMode != SelectText)
-					emit leftClicked( selectedRegion->boundingRect().normalize() );
-				else if ((firstSelectedObject != NULL) && (lastSelectedObject != NULL)) {
+				if (selectionMode != SelectText) {
+					if (selectionMode == SelectRect)
+						emit leftClicked( * selectedObjects.at(0) );
+					else
+						emit leftClicked( selectedRegion->boundingRect().normalize() );
+				} else if ((firstSelectedObject != NULL) && (lastSelectedObject != NULL)) {
 					//  ------------   upddate list of selected objects   ------------
 					selectedObjects.clear();
 
