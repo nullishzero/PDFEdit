@@ -64,6 +64,21 @@ public slots:
  */
  QSPdfOperatorIterator* textIterator(bool forwardDir=true);
  /*-
+  Return PDF Changeable Operator iterator, initialialized from this operator
+  Font iterator iterate only through changeable operators in content stream
+ */
+ QSPdfOperatorIterator* changeableIterator(bool forwardDir=true);
+ /*-
+  Return PDF Stroking Operator iterator, initialialized from this operator
+  Font iterator iterate only through stroking operators in content stream
+ */
+ QSPdfOperatorIterator* strokingIterator(bool forwardDir=true);
+ /*-
+  Return PDF Non stroking Operator iterator, initialialized from this operator
+  Font iterator iterate only through non-stroking operators in content stream
+ */
+ QSPdfOperatorIterator* nonStrokingIterator(bool forwardDir=true);
+ /*-
   Return PDF Font Operator iterator, initialialized from this operator
   Font iterator iterate only through font operators in content stream
  */

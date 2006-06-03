@@ -122,6 +122,44 @@ QSPdfOperatorIterator* QSPdfOperator::fontIterator(bool forwardDir/*=true*/) {
  return new QSPdfOperatorIterator(opFont,csRef,base);
 }
 
+/** 
+ Create new changeable operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+ @param forwardDir Direction of traversing the operators for first valid item.
+ @return new changeable iterator
+*/
+QSPdfOperatorIterator* QSPdfOperator::changeableIterator(bool forwardDir/*=true*/) {
+ ChangeableOperatorIterator* opChangeable=new ChangeableOperatorIterator(PdfOperator::getIterator<ChangeableOperatorIterator>(obj,forwardDir));
+ csCheck();
+ return new QSPdfOperatorIterator(opChangeable,csRef,base);
+}
+
+/** 
+ Create new stroking operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+ @param forwardDir Direction of traversing the operators for first valid item.
+ @return new stroking iterator
+*/
+QSPdfOperatorIterator* QSPdfOperator::strokingIterator(bool forwardDir/*=true*/) {
+ StrokingOperatorIterator* opStroking=new StrokingOperatorIterator(PdfOperator::getIterator<StrokingOperatorIterator>(obj,forwardDir));
+ csCheck();
+ return new QSPdfOperatorIterator(opStroking,csRef,base);
+}
+
+/** 
+ Create new non stroking operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+ @param forwardDir Direction of traversing the operators for first valid item.
+ @return new non stroking iterator
+*/
+QSPdfOperatorIterator* QSPdfOperator::nonStrokingIterator(bool forwardDir/*=true*/) {
+ NonStrokingOperatorIterator* opNonStroking=new NonStrokingOperatorIterator(PdfOperator::getIterator<NonStrokingOperatorIterator>(obj,forwardDir));
+ csCheck();
+ return new QSPdfOperatorIterator(opNonStroking,csRef,base);
+}
+
+
+
 /**
  Get operator name
  \see PdfOperator::getOperatorName
