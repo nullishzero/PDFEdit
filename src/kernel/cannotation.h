@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.6  2006/06/03 20:08:18  hockm0bm
+ * == operator added
+ *
  * Revision 1.5  2006/06/02 16:54:06  hockm0bm
  * * checkAndReplace removed (and placed to cobjecthelpers.h)
  * * CAnnotation constructor with page, rect, annotType parameters removed
@@ -410,6 +413,16 @@ public:
 	boost::shared_ptr<CDict> getDictionary()const
 	{
 		return annotDictionary;
+	}
+
+	/** Equality operator.
+	 * @param annot Annotation to compare with this.
+	 *
+	 * Two annotations are same if they maintain same annotation dictionaries.
+	 */
+	bool operator ==(const CAnnotation & annot)
+	{
+		return getDictionary()==annot.getDictionary();
 	}
 };
 
