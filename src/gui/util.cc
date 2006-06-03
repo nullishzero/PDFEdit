@@ -7,6 +7,7 @@
 #include <qcolor.h>
 #include <qfile.h>
 #include <qstring.h>
+#include <qwidget.h>
 #include <qobject.h>
 #include <qregexp.h>
 #include <qstringlist.h>
@@ -251,6 +252,29 @@ QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor) {
   (int)(oldColor.blue()*(1-weight)+newColor.blue()*weight)
  );
  return retCol;
+}
+
+/**
+ Modify widget foreground and background color by blending
+ with new colors using given weight
+ @param widget Widget to modify
+ @param fg new foreground color
+ @param weight_fg weight of new foreground color
+ @param bg new background color
+ @param weight_bg weight of new background color
+*/
+void colorMod(QWidget* widget,QColor fg,double weight_fg,QColor bg,double weight_bg) {
+ if (weight_bg>0) {
+  QColor oldColorBack=widget->paletteBackgroundColor();
+  QColor newColorBack=mixColor(oldColorBack,weight_bg,bg);
+  widget->setPaletteBackgroundColor(newColorBack);
+ }
+ if (weight_fg>0) {
+  QColor oldColorFore=widget->paletteForegroundColor();
+  QColor newColorFore=mixColor(oldColorFore,weight_fg,fg);
+  widget->setPaletteForegroundColor(newColorFore);
+ }
+ //TODO: check contrast of new color and modify them if necessary
 }
 
 /**

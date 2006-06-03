@@ -154,6 +154,7 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  props->insert(name,value);
  labels->insert(name,label);
  connect(prop,SIGNAL(propertyChanged(Property*)),this,SLOT(update(Property*)));
+ prop->initLabel(label);
  prop->show();
  label->show();
 }

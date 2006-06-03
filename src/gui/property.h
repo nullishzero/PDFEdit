@@ -5,6 +5,7 @@
 #include <modecontroller.h>
 
 class QString;
+class QLabel;
 namespace pdfobjects {
  class IProperty;
 }
@@ -24,6 +25,7 @@ class Property : public QWidget {
 Q_OBJECT
 public:
  Property(const QString &_name=0,QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
+ void initLabel(QLabel *widget);
  virtual ~Property();
  QString getName();
  PropertyFlags getFlags();
