@@ -10,6 +10,7 @@
 #include "qsimporter.h"
 #include "qscontentstream.h"
 #include "qsiproperty.h"
+#include "nullpointerexception.h"
 #include <ccontentstream.h>
 #include <utils/iterator.h>
 
@@ -36,8 +37,7 @@ QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,B
 QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperatorIterator",_base) {
  obj=new PdfOperator::Iterator(PdfOperator::getIterator(op));
  csRef=cs;
- //Paranoid check
- assert(op->getContentStream()==csRef.get());
+ csCheck();
 }
 
 /**
@@ -54,6 +54,24 @@ QSPdfOperatorIterator::QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::sh
  csRef=cs;
 }
 
+/**
+ Check if the csRef point to the same contentstream,
+ as the content stream operator thinks it is in<br>
+ Reset the csRef if these two do not match
+*/
+void QSPdfOperatorIterator::csCheck() {
+ if (!obj->valid()) {
+  //We are at invalid positon, so we do not know the contentstream anyway
+  csRef.reset();
+  return;
+ }
+ assert(obj->getCurrent());
+ if(obj->getCurrent()->getContentStream()!=csRef.get()) {
+  //The stream is invalid, set it to NULL rather than to invalid stream
+  csRef.reset();
+ }
+}
+
 /** destructor */
 QSPdfOperatorIterator::~QSPdfOperatorIterator() {
  delete obj;
@@ -64,6 +82,8 @@ QSPdfOperatorIterator::~QSPdfOperatorIterator() {
  @return Current operator
 */
 QSPdfOperator* QSPdfOperatorIterator::current() {
+ if (!obj->valid()) return NULL; //We are at invalid positon
+ csCheck();
  //If contentstream is not known, empty reference will be passed this way
  return new QSPdfOperator(obj->getCurrent(),csRef,base);
 }
@@ -101,6 +121,7 @@ PdfOperator::Iterator* QSPdfOperatorIterator::copyIterator(PdfOperator::Iterator
 */
 QSPdfOperatorIterator* QSPdfOperatorIterator::copy() {
  PdfOperator::Iterator *newOp=copyIterator(obj);
+ csCheck();
  //If contentstream is not known, empty reference will be passed this way
  return new QSPdfOperatorIterator(newOp,csRef,base);
 }
@@ -115,6 +136,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::next() {
   obj->next();
   //if we are after last valid, return NULL
   if (obj->isEnd()) return NULL;
+  csCheck();
   return new QSPdfOperatorIterator(obj,csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
@@ -132,6 +154,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::prev() {
   obj->prev();
   //if we are before first valid, return NULL
   if (obj->isBegin()) return NULL;
+  csCheck();
   return new QSPdfOperatorIterator(obj,csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
@@ -162,6 +185,11 @@ PdfOperator::Iterator* QSPdfOperatorIterator::get() {
  @return PDF Operator - current item
 */
 boost::shared_ptr<PdfOperator> QSPdfOperatorIterator::getCurrent() {
+ if (!obj->valid()) {
+  //We are at invalid position
+  guiPrintDbg(debug::DBG_ERR,"obj->valid() == false! -> exception");
+  throw NullPointerException("QSPdfOperatorIterator","getCurrent");
+ }
  return obj->getCurrent();
 }
 
@@ -172,6 +200,7 @@ boost::shared_ptr<PdfOperator> QSPdfOperatorIterator::getCurrent() {
  @return QObject wrapper around this operator's content stream
 */
 QSContentStream* QSPdfOperatorIterator::stream() {
+ csCheck();
  if (!csRef.get()) {
   //ContentStream is not known, so we can't return it
   return NULL;

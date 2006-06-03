@@ -27,7 +27,7 @@ public:
  PdfOperator::Iterator* get();
  boost::shared_ptr<PdfOperator> getCurrent();
 public slots:
- /*- Returns current operator from this iterator */
+ /*- Returns current operator from this iterator, or NULL if the iterator is at invalid position (after end, before beginning) */
  QSPdfOperator* current();
  /*- Create and return copy of this iterator, initially pointing to the same item */
  QSPdfOperatorIterator* copy();
@@ -50,6 +50,7 @@ public slots:
  bool isEnd();
 protected:
  PdfOperator::Iterator* copyIterator(PdfOperator::Iterator *src);
+ void csCheck();
 private:
  /** Object held in class*/
  PdfOperator::Iterator *obj;
