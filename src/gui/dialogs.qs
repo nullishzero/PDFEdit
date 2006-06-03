@@ -1,12 +1,5 @@
 /* === Dialog helper functions === */
 
-/**
- * Create warning dialog.
- */
-function displayDialogWarning(text) {
-	MessageBox.warning( text, MessageBox.Ok );
-}
-
 /** 
  * Create LineEdit dialog with label and text filled. 
  */

@@ -284,7 +284,7 @@ function buftest(x,at,st) {
 /** Validate page */
 function isValidPage(page) {
  if (!page) {
- 	displayDialogWarning ("No page specified.");
+ 	warn(tr("No page selected!"));
 	return false;
  }else
  	return true;
@@ -349,30 +349,30 @@ function editPageMediaBox() {
  var yright = mediabox[3];
 
  var dialog = new Dialog;
- dialog.caption = "Page rectangle dialog";
- dialog.okButtonText = "Change";
- dialog.cancelButtonText = "Discard changes";
- dialog.tooltip = "Page metrics";
+ dialog.caption = tr("Page rectangle dialog");
+ dialog.okButtonText = tr("Change");
+ dialog.cancelButtonText = tr("Discard changes");
+ dialog.tooltip = tr("Page metrics");
 		  
  var gb = new GroupBox;
- gb.title = "Page metrics";
- gb.tooltip = "Page metrics";
- gb.cancelButtonText = "Page rectangle parameters";
+ gb.title = tr("Page metrics");
+ gb.tooltip = tr("Page metrics");
+ gb.cancelButtonText = tr("Page rectangle parameters");
  dialog.add(gb);
 
- var exl = createLineEdit("Left upper corner x position: ", xleft);
+ var exl = createLineEdit(tr("Left upper corner x position")+": ", xleft);
  gb.add (exl);
- var eyl = createLineEdit("Left upper corner y position: ", yleft);
+ var eyl = createLineEdit(tr("Left upper corner y position")+": ", yleft);
  gb.add (eyl);
- var exr = createLineEdit("Left bottom corner x position: ", xright);
+ var exr = createLineEdit(tr("Left bottom corner x position")+": ", xright);
  gb.add (exr);
- var eyr = createLineEdit("Right bottom corner y position: ", yright);
+ var eyr = createLineEdit(tr("Right bottom corner y position")+": ", yright);
  gb.add (eyr);
 
  if (dialog.exec()) {
  	// Save media box
 	page.setMediabox (exl.text, eyl.text, exr.text, eyr.text);
-	print ('MediaBox changed..');
+	print (tr('MediaBox changed..'));
 	go ();
  }
 }
