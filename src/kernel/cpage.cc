@@ -193,9 +193,7 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 				attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
 
 			// default A4 sized box
-			// FIXME change to constants
-			Rectangle defaultRect(0, 0, 612, 792);
-			//Rectangle defaultRect(DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY);
+			Rectangle defaultRect(DisplayParams::DEFAULT_PAGE_LX, DisplayParams::DEFAULT_PAGE_LY, DisplayParams::DEFAULT_PAGE_RX, DisplayParams::DEFAULT_PAGE_RY);
 
 			// MediaBox is required and specification doesn't say anything about
 			// default value - we are using standard A4 format
@@ -209,9 +207,7 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 			
 			// Rotate is optional and specification defines default value to 0
 			if(!attrs.rotate.get())
-				// FIXME
-				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(0));
-				//attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(DEFAULT_ROTATE));
+				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(DisplayParams::DEFAULT_ROTATE));
 		}
 	}
 }
