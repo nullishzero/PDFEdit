@@ -349,9 +349,9 @@ function editPageMediaBox() {
  var yright = mediabox[3];
 
  var dialog = new Dialog;
- dialog.caption = tr("Page rectangle dialog");
+ dialog.caption = tr("Change page rectangle");
  dialog.okButtonText = tr("Change");
- dialog.cancelButtonText = tr("Discard changes");
+ dialog.cancelButtonText = tr("Cancel");
  dialog.tooltip = tr("Page metrics");
 		  
  var gb = new GroupBox;
@@ -360,13 +360,13 @@ function editPageMediaBox() {
  gb.cancelButtonText = tr("Page rectangle parameters");
  dialog.add(gb);
 
- var exl = createLineEdit(tr("Left upper corner x position")+": ", xleft);
+ var exl = createLineEdit(tr("Left upper corner")+", "+tr("x position")+": ", xleft);
  gb.add (exl);
- var eyl = createLineEdit(tr("Left upper corner y position")+": ", yleft);
+ var eyl = createLineEdit(tr("Left upper corner")+", "+tr("y position")+": ", yleft);
  gb.add (eyl);
- var exr = createLineEdit(tr("Right bottom corner x position")+": ", xright);
+ var exr = createLineEdit(tr("Right bottom corner")+", "+tr("x position")+": ", xright);
  gb.add (exr);
- var eyr = createLineEdit(tr("Right bottom corner y position")+": ", yright);
+ var eyr = createLineEdit(tr("Right bottom corner")+", "+tr("y position")+": ", yright);
  gb.add (eyr);
 
  if (dialog.exec()) {
