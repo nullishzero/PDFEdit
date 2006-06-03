@@ -186,13 +186,11 @@ bool getPdfString (std::ostream& oss, const char* fileName)
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 		boost::shared_ptr<CStream> stream = getTestStreamContent (page);
 
-		CharBuffer buf;
-		size_t len = stream->getPdfRepresentation (buf);
-		oss << " Length: [" << len << "]" << flush;
-		//oss << std::endl << buf.get () << endl;
+		string tmp;
+		stream->getDecodedStringRepresentation (tmp);
 		filters::Printable<char> p;
-		for (size_t i = 0; i < len; ++i)
-			p (buf.get()[i]);
+		for (size_t i = 0; i < tmp.length(); ++i)
+			p (tmp[i]);
 	}
 	
 	return true;
