@@ -1029,8 +1029,8 @@ namespace {
 				  // it has valid pdf, it has to be the same
 					if ( ((*oper)->getPdf() != &pdf) || !((*oper)->getIndiRef() == rf) )
 					{
-						kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << rf << 
-														 " op has" <<(*oper)->getIndiRef);
+						//kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << rf << 
+						//								 " op has" <<(*oper)->getIndiRef);
 						throw CObjInvalidObject ();
 					}
 				
