@@ -80,6 +80,16 @@ void PageView::setMappingCursor() {
 			mappingResizingModeToCursor [ left | right | top | bottom ] = Qt::SizeAllCursor;
 			break;
 		}
+		case SelectRect: {
+			for (int i = 0; i<17 ; i++)
+				mappingResizingModeToCursor [i] = Qt::CrossCursor;
+			mappingResizingModeToCursor [ left  ] = Qt::SizeHorCursor;
+			mappingResizingModeToCursor [ top   ] = Qt::SizeVerCursor;
+			mappingResizingModeToCursor [ left | top  ] = Qt::SizeFDiagCursor;
+			mappingResizingModeToCursor [ right | top ] = Qt::SizeBDiagCursor;
+			mappingResizingModeToCursor [ left | right | top | bottom ] = Qt::SizeAllCursor;
+			break;
+		}
 		default:
 			break;
 	}
@@ -103,6 +113,7 @@ bool PageView::saveImage ( const QString & file, const char * format, int qualit
 	switch (selectionMode) {
 		case SelectAllObjects:
 		case SelectText:
+		case SelectRect:
 			if (selectedRegion == NULL) {
 				guiPrintDbg ( debug::DBG_INFO, tr("Selected area is not set!") );
 				return false;
@@ -157,17 +168,20 @@ void PageView::setPixmap (const QPixmap & qp) {
 }
 
 bool PageView::setSelectionMode ( enum SelectionMode m ) {
-	if ((m != SelectAllObjects) && (arrayOfBBoxes == NULL))
+	if ((m == SelectText) && (arrayOfBBoxes == NULL))
 		return false;
 
 	if (m == SelectAllObjects)
 		selectionAllMode = oldSelectionAllMode;
 	else {
-		arrayOfBBoxes->initAllBBoxPtr();
 		if (selectionMode == SelectAllObjects) {
 			oldSelectionAllMode = selectionAllMode;
 		}
-		setSelectionAllMode( FillRectSelection );
+		if (m == SelectText) {
+			arrayOfBBoxes->initAllBBoxPtr();
+			setSelectionAllMode( FillRectSelection );
+		} else
+			setSelectionAllMode( RectSelection );
 	}
 
 	selectionMode = m;
@@ -522,6 +536,7 @@ void PageView::mousePressEvent ( QMouseEvent * e ) {
 				// create new selected area
 				drawRect( selectedRegion, true );		// undraw old selected area
 				switch (selectionMode) {
+					case SelectRect:
 					case SelectAllObjects: {
 						if (mouseRectSelected == NULL)
 							mouseRectSelected = new QRect();
@@ -677,6 +692,13 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 					* selectedRegion |= h_reg;
 				}
 			}
+			if (selectionMode == SelectRect) {
+				selectedObjects.clear();
+				if (mouseRectSelected)
+					selectedObjects.append( new BBoxOfObjectOnPage( * mouseRectSelected, NULL ) );
+				else
+					selectedObjects.append( new BBoxOfObjectOnPage( selectedRegion->boundingRect().normalize(), NULL ) );
+			}
 
 			// draw new selection
 			drawRect( selectedRegion );
@@ -684,7 +706,9 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 			// emit correct signal
 			if ( isMoving ) {
 				if (*selectedRegion != *oldSelectedRegion) {	// no emit if no change
-					emit selectionMovedTo( selectedRegion->boundingRect().normalize().topLeft(), selectedObjects );
+					emit selectionMoved( selectedRegion->boundingRect().normalize().topLeft() -
+											oldSelectedRegion->boundingRect().normalize().topLeft(),
+										selectedObjects );
 				}
 			} else if ( isResizing ) {
 				if (*selectedRegion != *oldSelectedRegion) {	// no emit if no change

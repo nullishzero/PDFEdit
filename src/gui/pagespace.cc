@@ -47,10 +47,14 @@ vBox->addWidget( da );
 	displayParams = DisplayParams();
 	actualPdf = NULL;
 	actualPage = NULL;
+
+	lastSelectedRect = QRect();
+	requestsForSelecting.clear();
 	actualSelectedObjects.clear();
 	actualSelectedObjects.setAutoDelete( true );
 	objectForSelecting.clear();
 	objectForSelecting.setAutoDelete( true );
+
 	pageImage = NULL;
 	actualPagePixmap = new QPixmap();
 	newPageView( *actualPagePixmap );
@@ -79,6 +83,7 @@ vBox->addWidget( da );
 	zoomFactor	= 1;
 
 	selectionMode = PageView::SelectAllObjects;
+	oldSelectionMode = selectionMode;
 }
 
 PageSpace::~PageSpace() {
@@ -109,7 +114,7 @@ void PageSpace::newPageView() {
 	connect( pageImage, SIGNAL( leftClicked(const QRect &) ), this, SLOT( newSelection(const QRect &) ) );
 	connect( pageImage, SIGNAL( rightClicked(const QPoint &, const QRegion *) ),
 			this, SLOT( requirementPopupMenu(const QPoint &, const QRegion *) ) );
-	connect( pageImage, SIGNAL( selectionMovedTo(const QPoint &, const QPtrList<BBoxOfObjectOnPage> &) ),
+	connect( pageImage, SIGNAL( selectionMoved(const QPoint &, const QPtrList<BBoxOfObjectOnPage> &) ),
 			this, SLOT( moveSelection(const QPoint &, const QPtrList<BBoxOfObjectOnPage> &) ) );
 	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> &) ),
 			this, SLOT( resizeSelection(const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> &) ) );
@@ -298,6 +303,47 @@ bool PageSpace::refreshObjectsInPageImage() {
 	return returnValue;
 }
 
+bool PageSpace::requestSelectArea ( int id ) {
+	//TODO
+	requestsForSelecting.push_back( id );
+	if (selectionMode != PageView::SelectRect) {
+		oldSelectionMode = selectionMode;
+		if (! setSelectionMode( PageView::SelectRect ) ) {
+			requestsForSelecting.pop_back();
+			return false;
+		}
+	}
+	return true;
+}
+
+void PageSpace::selectObjectOnPage ( std::vector<boost::shared_ptr<PdfOperator> > ops ) {
+	lastSelectedRect = QRect();
+
+	actualSelectedObjects.clear();
+	for (std::vector<boost::shared_ptr<PdfOperator> >::iterator it = ops.begin(); it != ops.end() ; ++it) {
+		Rectangle bbox;
+		std::string name;
+		std::string strr;
+		(*it)->getOperatorName( name );
+		(*it)->getStringRepresentation( strr );
+		bbox = (*it)->getBBox( );
+
+		QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
+					std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
+		lastSelectedRect |= box;
+
+		pageImage->addSelectedRegion( box, (*it).get() );
+		actualSelectedObjects.append( new boost::shared_ptr<PdfOperator> (*it) );
+	}
+
+	newSelection();
+}
+
+void PageSpace::unselectObjectOnPage ( ) {
+	pageImage->unSelect();
+	actualSelectedObjects.clear();
+}
+
 bool PageSpace::setSelectionMode( int mode ) {
 	if (pageImage == NULL)
 		return false;
@@ -307,11 +353,18 @@ bool PageSpace::setSelectionMode( int mode ) {
 
 	bool returnValue = false;
 	switch (mode) {
-		case PageView::SelectAllObjects :
+		case PageView::SelectRect : {
+				returnValue = pageImage->setSelectionMode( PageView::SelectRect );
+				if (mode == selectionMode)
+					pageImage->setSelectedRegion( lastSelectedRect, NULL );
+				break;
+		}
+		case PageView::SelectAllObjects : {
 				objectForSelecting.clear();
 				actualSelectedObjects.clear();
 				returnValue = pageImage->setSelectionMode( PageView::SelectAllObjects );
 				break;
+		}
 		case PageView::SelectText : {
 				if (mode == selectionMode) {
 					returnValue = refreshObjectsInPageImage();
@@ -343,8 +396,9 @@ bool PageSpace::setSelectionMode( int mode ) {
 			}
 		default:
 				guiPrintDbg( debug::DBG_DBG, "not set selection mode to "<<mode);
-				guiPrintDbg( debug::DBG_DBG, "All  = "<<(int)PageView::SelectAllObjects);
-				guiPrintDbg( debug::DBG_DBG, "Text = "<<(int)PageView::SelectText);
+				guiPrintDbg( debug::DBG_DBG, "All objects = "<<(int)PageView::SelectAllObjects);
+				guiPrintDbg( debug::DBG_DBG, "Text	  = "<<(int)PageView::SelectText);
+				guiPrintDbg( debug::DBG_DBG, "Rect        = "<<(int)PageView::SelectRect);
 				break;
 	}
 
@@ -383,41 +437,41 @@ void PageSpace::newSelection ( const QPtrList<BBoxOfObjectOnPage> & objects ) {
 }
 
 void PageSpace::newSelection ( const QRect & r) {
-	// TODO pracovat s vracenymi operatori
-	std::vector<boost::shared_ptr<PdfOperator> > ops;
+	lastSelectedRect = r;
 
-	pageImage->unSelect();
+	if (selectionMode == PageView::SelectAllObjects) {
+		std::vector<boost::shared_ptr<PdfOperator> > ops;
 
-	if (actualPage != NULL) {
-		if ( r.topLeft() == r.bottomRight() ) {
-			Point p;
-			convertPixmapPosToPdfPos( r.topLeft(), p );
-			actualPage->get()->getObjectsAtPosition( ops, Point( p.x, p.y ) );
-		} else {
-			Point p1, p2;
-			convertPixmapPosToPdfPos( r.topLeft(), p1 );
-			convertPixmapPosToPdfPos( r.bottomRight(), p2 );
-			actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
+		pageImage->unSelect();
+
+		if (actualPage != NULL) {
+			if ( r.topLeft() == r.bottomRight() ) {
+				Point p;
+				convertPixmapPosToPdfPos( r.topLeft(), p );
+				actualPage->get()->getObjectsAtPosition( ops, Point( p.x, p.y ) );
+			} else {
+				Point p1, p2;
+				convertPixmapPosToPdfPos( r.topLeft(), p1 );
+				convertPixmapPosToPdfPos( r.bottomRight(), p2 );
+				actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
+			}
 		}
-	}
-	actualSelectedObjects.clear();
-	for (std::vector<boost::shared_ptr<PdfOperator> >::iterator it = ops.begin(); it != ops.end() ; ++it) {
-		Rectangle bbox;
-		std::string name;
-		std::string strr;
-		(*it)->getOperatorName( name );
-		(*it)->getStringRepresentation( strr );
-		bbox = (*it)->getBBox( );
-//		guiPrintDbg(debug::DBG_DBG, name << " ("<< strr <<") ,    ( " << bbox << " )" );
 
-		QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
-					std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
+		selectObjectOnPage( ops );
+	} else
+		if (! requestsForSelecting.empty()) {		// someone send request for selection
+			int cur = requestsForSelecting.back();
+			requestsForSelecting.pop_back();
+			emit responseSelectArea ( cur, true, r.left(), r.top(), r.right(), r.bottom() );
 
-		pageImage->addSelectedRegion( box, (*it).get() );
-		actualSelectedObjects.append( new boost::shared_ptr<PdfOperator> (*it) );
-	}
+			while (! requestsForSelecting.empty()) {
+				cur = requestsForSelecting.back();
+				requestsForSelecting.pop_back();
+				emit responseSelectArea ( cur, false, r.left(), r.top(), r.right(), r.bottom() );
+			}
 
-	newSelection();
+			setSelectionMode( oldSelectionMode );
+		}
 }
 
 bool PageSpace::isSomeoneSelected ( ) {
@@ -454,6 +508,7 @@ void PageSpace::requirementPopupMenu ( const QPoint & pagePos, const QRegion * /
 	emit popupMenu( pagePos );
 }
 void PageSpace::moveSelection ( const QPoint & relativeMove, const QPtrList<BBoxOfObjectOnPage> & objects ) {
+	lastSelectedRect.moveBy( relativeMove.x(), relativeMove.y() );
 	// TODO
 }
 void PageSpace::resizeSelection ( const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> & ) {

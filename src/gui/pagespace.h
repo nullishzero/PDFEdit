@@ -33,8 +33,10 @@ class PageSpace : public QWidget {
 
 		bool setSelectionMode( int mode );
 
-//		/*TODO*/void selectObjectOnPage ( /* CObject &*/ );
-//		/*TODO*/void unselectObjectOnPage ( );
+		void selectObjectOnPage ( std::vector<boost::shared_ptr<PdfOperator> > );
+		void unselectObjectOnPage ( );
+		bool isSomeoneSelected ( );
+		bool requestSelectArea ( int id );
 
 		float getZoomFactor ( );
 		void setZoomFactor ( float set_zoomFactor );
@@ -49,12 +51,11 @@ class PageSpace : public QWidget {
 
 		bool saveImage ( const QString & filename, const char * format, int quality = -1, bool onlySelectedArea = false);
 		bool saveImageWithDialog ( bool onlySelectedArea = false );
-
-		bool isSomeoneSelected ( );
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
 		void changedZoomFactorTo ( float zoom );
 		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > );
+		void responseSelectArea ( int id, bool isItOnLastRequest, int xleft, int ytop, int xright, int ybottom );
 
 		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
 	protected:
@@ -84,6 +85,9 @@ class PageSpace : public QWidget {
 
 		QPtrList<boost::shared_ptr<PdfOperator> >	actualSelectedObjects,
 													objectForSelecting;
+		QRect				lastSelectedRect;
+		std::vector<int>	requestsForSelecting;
+
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;
 		QPixmap		* actualPagePixmap;
@@ -97,6 +101,7 @@ class PageSpace : public QWidget {
 		DisplayParams	displayParams;
 
 		int			selectionMode;
+		int			oldSelectionMode;
 };
 
 } // namespace gui
