@@ -57,6 +57,7 @@ public:
  void bigPixmap();
  PageSpace* getPageSpace() const;
 public slots:
+ void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void changeRevision(int revision);
 signals:
  /**

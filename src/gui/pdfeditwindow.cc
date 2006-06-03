@@ -225,6 +225,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
  QObject::connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
  QObject::connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
+ QObject::connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
+
  this->setCentralWidget(spl);
 
  //load and apply "uses big icon" settings
@@ -309,6 +311,20 @@ void PdfEditWindow::setObject() {
  //Some unknown type
  prop->unsetObject();
  base->call("onTreeSelectionChange");
+}
+
+/**
+ Slot called on selecting something from page -> display it in the tree
+ @param vec Vector with operators
+*/
+void PdfEditWindow::setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec) {
+ if (vec.size()) {
+  //Selected objects
+  tree->activate(vec,tr("Selection"));
+ } else {
+  //Selection is empty
+  tree->deactivate(vec);
+ }
 }
 
 /**

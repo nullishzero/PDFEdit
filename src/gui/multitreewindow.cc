@@ -334,6 +334,15 @@ void MultiTreeWindow::deactivate(boost::shared_ptr<IProperty> doc) {
 }
 
 /**
+ Delete specified secondary tree that contains Operator Vector
+ @param vec  Operator vector, but in fact it is ignored
+*/
+void MultiTreeWindow::deactivate(__attribute__((unused)) const OperatorVector &vec) {
+ TreeKey tk(Tree_OperatorVector,NULL);
+ deactivate(tk);
+}
+
+/**
  Try to delete secondary tree that is identified by key
  @param ptr pointer used to identify tree to activate
  */

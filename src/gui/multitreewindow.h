@@ -32,7 +32,6 @@ typedef enum {
 
 /** Key type used to identify the tree in map*/
 typedef std::pair<TreeType,void*> TreeKey;
-//typedef void* TreeKey;
 
 /** Mapping from TreeKey to associated Tree Window */
 typedef QMap<TreeKey,TreeWindow*> TreeWindowList;
@@ -57,6 +56,7 @@ public:
  void activate(const OperatorVector &vec,QString pName=QString::null);
  void activate(boost::shared_ptr<CContentStream> cs,QString pName=QString::null);
  void activate(boost::shared_ptr<IProperty> doc,QString pName=QString::null);
+ void deactivate(const OperatorVector &vec);
  void deactivate(boost::shared_ptr<IProperty> doc);
  void deactivate(boost::shared_ptr<CContentStream> cs);
  MultiTreeWindow(Base *_base,QWidget *parent=0,const char *name=0);

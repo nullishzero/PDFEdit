@@ -90,11 +90,11 @@ QSPdfOperatorIterator* QSPdfOperator::iterator() {
 /** 
  Create new text operator iterator from this PDF operator.
  The iterator will be initialized from this item 
- @param forwarddir Direction of traversing the operators for first valid item.
+ @param forwardDir Direction of traversing the operators for first valid item.
  @return new text iterator
 */
-QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwarddir) {
- TextOperatorIterator* opText=new TextOperatorIterator(PdfOperator::getIterator<TextOperatorIterator>(obj,forwarddir));
+QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwardDir/*=true*/) {
+ TextOperatorIterator* opText=new TextOperatorIterator(PdfOperator::getIterator<TextOperatorIterator>(obj,forwardDir));
  csCheck();
  return new QSPdfOperatorIterator(opText,csRef,base);
 }
@@ -102,11 +102,11 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwarddir) {
 /** 
  Create new font operator iterator from this PDF operator.
  The iterator will be initialized from this item 
- @param forwarddir Direction of traversing the operators for first valid item.
+ @param forwardDir Direction of traversing the operators for first valid item.
  @return new font iterator
 */
-QSPdfOperatorIterator* QSPdfOperator::fontIterator(bool forwarddir) {
- FontOperatorIterator* opFont=new FontOperatorIterator(PdfOperator::getIterator<FontOperatorIterator>(obj,forwarddir));
+QSPdfOperatorIterator* QSPdfOperator::fontIterator(bool forwardDir/*=true*/) {
+ FontOperatorIterator* opFont=new FontOperatorIterator(PdfOperator::getIterator<FontOperatorIterator>(obj,forwardDir));
  csCheck();
  return new QSPdfOperatorIterator(opFont,csRef,base);
 }

@@ -4,7 +4,6 @@
 #include <qstring.h>
 #include <qobject.h>
 #include <ccontentstream.h>
-#include <qcolor.h>
 #include "qscobject.h"
 
 namespace gui {
@@ -47,27 +46,6 @@ public slots:
  void replace(QObject* oldOp,QObject* newOp,QObject* itPrev,QObject* itNext,bool indicateChange=true);
  /*- Write any unwritten changes to operators to underlying stream. */
  void saveChange();
- /*-
-  Wrap given operator in "set color" operator and replaced it by the new operator in content stream.
-  Parameters r,g,b specify red, green and blue components of new color.
-  If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
- */
- void setColor(QSPdfOperator *op,double r,double g,double b,bool indicateChange=true);
- void setColor(QObject *op,double r,double g,double b,bool indicateChange=true);
- /*-
-  Wrap given operator in "set color" operator and replaced it by the new operator in content stream.
-  Parameter c specifies new color.
-  If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
- */
- void setColor(QSPdfOperator *op,QColor c,bool indicateChange=true);
- void setColor(QObject *op,QColor c,bool indicateChange=true);
- /*-
-  Wrap given operator in "set position" operator and replaced it by the new operator in content stream.
-  Parameters x,y specify a and y coordinate of new position.
-  If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
- */
- void setPosition(QSPdfOperator *op,double x,double y,bool indicateChange=true);
- void setPosition(QObject *op,double x,double y,bool indicateChange=true);
 private:
  void pre_replace(boost::shared_ptr<PdfOperator> op);
  void replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared_ptr<PdfOperator> newOp,bool indicateChange=true);
