@@ -40,10 +40,12 @@ function onTreeRightClick() {
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
  if (treeitem.itemtype()=="PdfOperator") {
-  menu.addItemDef("item Set color,setColor(),,operator_setcolor.png");
+  menu.addItemDef("item "+tr("Set color")+",setColor(),,operator_setcolor.png");
+  menu.addItemDef("item "+tr("Set font properties")+",editFontProps(),,operator_editfont.png");
  }
  if (treeitem.itemtype()=="Page") {
   menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
+  menu.addItemDef("item "+tr("Add system font")+",addSystemFont()");
  }
  if (treeitem.itemtype()=="ContentStream") {
   menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
@@ -139,7 +141,7 @@ function setColor() {
  stream=op.stream();
  col=pickColor();
  if (!col) return;//Dialog aborted
- stream.setColor(op,col);
+ operatorSetColor(op,col.red, col.green, col.blue);
  //reload the page
  go();
 }
@@ -348,26 +350,13 @@ function editPageMediaBox() {
  var xright = mediabox[2];
  var yright = mediabox[3];
 
- var dialog = new Dialog;
- dialog.caption = tr("Change page rectangle");
- dialog.okButtonText = tr("Change");
- dialog.cancelButtonText = tr("Cancel");
- dialog.tooltip = tr("Page metrics");
-		  
- var gb = new GroupBox;
- gb.title = tr("Page metrics");
- gb.tooltip = tr("Page metrics");
- gb.cancelButtonText = tr("Page rectangle parameters");
- dialog.add(gb);
-
- var exl = createLineEdit(tr("Left upper corner")+", "+tr("x position")+": ", xleft);
- gb.add (exl);
- var eyl = createLineEdit(tr("Left upper corner")+", "+tr("y position")+": ", yleft);
- gb.add (eyl);
- var exr = createLineEdit(tr("Right bottom corner")+", "+tr("x position")+": ", xright);
- gb.add (exr);
- var eyr = createLineEdit(tr("Right bottom corner")+", "+tr("y position")+": ", yright);
- gb.add (eyr);
+ var dialog = createDialog ("Change page rectangle", "Change", "Cancel", "Page metrics");
+ 
+ var gb = createGroupBoxAndDisplay ("Page metrics", dialog);
+ var exl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+": ", xleft, gb);
+ var eyl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("y position")+": ", yleft, gb);
+ var exr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+": ", xright, gb);
+ var eyr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+": ", yright, gb);
 
  if (dialog.exec()) {
  	// Save media box
@@ -375,6 +364,94 @@ function editPageMediaBox() {
 	print (tr('MediaBox changed..'));
 	go ();
  }
+}
+
+
+/**
+ * Display and allow to change font atributes of a text operator.
+ */
+function editFontProps() {
+
+	if (!isValidPage (page))
+ 		return;
+
+	// Get selected item
+ 	op=treeitem.item();
+	var fontspecs = operatorGetFont(op);
+	var fontsize = fontspecs[1];
+	var fontname = fontspecs[0];
+	
+	var dg = createDialog (tr("Change font properties"), tr("Change font"), tr("Discard changes"), tr("Change font"));
+	var gb = createGroupBoxAndDisplay (tr("Avaliable fonts"),dg);
+	var cb = new ComboBox;
+	cb.label = tr("Select from all avaliable fonts");
+	
+	// Put all avaliable fonts here and select the operator font 
+	var fonts = page.getFontIdsAndNames();
+	var fontnames = new Array(fonts.length/2);
+	
+	// Fill fontnames with symbolic font names
+	for(i = 1,j=0; i < fonts.length; ++i) {
+		//print(fonts[i]+" "+fonts[i-1]+"=="+fontname);
+        fontnames[j] = fonts[i];
+		// Save symbolic name of operator font
+		if (fonts[i-1] == fontname)
+			fontname = fonts[i-1];
+		// Skip id
+		++i;++j;
+    }
+	cb.itemList = fontnames;
+	cb.currentItem = fontname;
+	gb.add (cb);
+	
+	var gb1 = createGroupBoxAndDisplay (tr("Font size according to the pdf document"),dg);
+	var sb = createNumbereditAndDisplay (tr("Font size (not in px)"), 0, 100, gb1);
+	print(fontsize);
+	sb.value = fontsize;
+
+	if (dg.exec()) {
+	 // Get font metrics and change the operator
+	 var newfontsize = sb.value;
+	 var newfontname = cb.currentItem;// get Idx according to a name
+
+	 for(i = 1; i < fonts.length; ++i) {
+		// Save symbolic name of operator font
+		if (fonts[i] == newfontname) {
+			newfontid = fonts[i-1];
+			break;
+		}
+		// Skip id
+		++i;
+     }
+	 // Set the font
+	 operatorSetFont(op,newfontid,newfontsize);
+	}
+
+ // operatorSetFont (op, newfontsize, newfont)
+}
+
+/**
+ * Add system font to a page.
+ */
+function addSystemFont() {
+
+	if (!isValidPage (page))
+		return;
+
+	var dg = createDialog (tr("Add system font"), tr("Add font"), tr("Discard changes"), tr("Add system fonts"));
+	var gb = createGroupBoxAndDisplay (tr("Avaliable system fonts"),dg);
+	var cb = new ComboBox;
+	// Put values from pdf specification here
+	cb.label= tr("Select system Type1 font");
+	cb.itemList = getSystemFonts ();
+	cb.editable = true;
+	gb.add (cb);
+	
+	if (dg.exec()) {
+		// add system font
+		page.addSystemType1Font (cb.currentItem);
+	}
+
 }
 
 
