@@ -83,6 +83,11 @@ void RevisionTool::setDocument(CPdf *newDocument) {
   size_t revs=document->getRevisionsCount();
   CPdf::revision_t curr=document->getActualRevision();
   guiPrintDbg(debug::DBG_DBG,"Document revisions: " << revs);
+  if (document->isLinearized()) {
+   revList->insertItem(tr("Linearized PDF"));
+   revList->setEnabled(false);
+   return;   
+  }
   if (revs==0) {
    revList->insertItem(tr("No revisions"));
    revList->setEnabled(false);

@@ -13,6 +13,11 @@
 
 namespace gui {
 
+using namespace std;
+
+/** List of fonts returned ftom CPage::getFontIdsAndNames */
+typedef vector<pair<string,string> > FontList;
+
 /**
  Construct wrapper with given CPage
  @param _page CPage shared pointer
@@ -102,6 +107,33 @@ void QSPage::setMediabox(QRect rc) {
  //However, media box is often array of int, so this may not be a problem
  Rectangle r(rc.left(),rc.top(),rc.right(),rc.bottom());
  obj->setMediabox(r);
+}
+
+/**
+ Return list of font id's and names,
+ for each font id and name return two elements in output array (id followed by name)
+ @return list of font id's and names
+*/
+QStringList QSPage::getFontIdsAndNames() {
+ FontList fonts;
+ //Format is like "pair<R13, Helvetica>"
+ obj->getFontIdsAndNames(fonts);
+ QStringList ret;
+ FontList::iterator it;
+ for( it=fonts.begin();it!=fonts.end();++it) { // for each font
+  ret+=it->first;
+  ret+=it->second;
+ }
+ return ret;
+}
+
+/**
+ Add new Type 1 font to this page resource dictionary
+ \see CPage::addSystemType1Font
+ @param fontName name of font
+*/
+void QSPage::addSystemType1Font(const QString &fontName) {
+ obj->addSystemType1Font(fontName);
 }
 
 /** get CPage held inside this class. Not exposed to scripting */

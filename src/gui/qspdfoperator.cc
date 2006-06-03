@@ -83,6 +83,16 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator() {
  return new QSPdfOperatorIterator(opText,csRef,base);
 }
 
+/** 
+ Create new font operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+ @return new font iterator
+*/
+QSPdfOperatorIterator* QSPdfOperator::fontIterator() {
+ FontOperatorIterator* opFont=new FontOperatorIterator(PdfOperator::getIterator<FontOperatorIterator>(obj));
+ return new QSPdfOperatorIterator(opFont,csRef,base);
+}
+
 /**
  Get operator name
  \see PdfOperator::getOperatorName

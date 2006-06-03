@@ -27,6 +27,18 @@ public:
  boost::shared_ptr<CPage> get() const;
 public slots:
  /*-
+  Return list of all font id's and base names from resource dictionary of a page.
+  For each font id and name pair there are two consecutive elements in returned array,
+  first one containing font id and second one containing the name,
+  so number of elements in output array is always even.
+ */
+ QStringList getFontIdsAndNames();
+ /*-
+  Add new Type 1 font to this page resource dictionary with specified font name
+  It is supposed that you insert standard system font name that should be avaiable to all PDF viewers.
+ */
+ void addSystemType1Font(const QString &fontName);
+ /*-
   Returns content stream with given number from this page
   Use data fetched by loadContentStreams method, if it wasn't called, it is called before returning the stream
  */
