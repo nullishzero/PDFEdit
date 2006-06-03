@@ -21,7 +21,6 @@ using namespace std;
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListView in which to put this item
  @param _op Vector with operators
- @param pdfObj ContentStream containing the operators
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
@@ -37,7 +36,6 @@ TreeItemOperatorContainer::TreeItemOperatorContainer(TreeData *_data,QListView *
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param parent QListViewItem under which to put this item
  @param _op Vector with operators
- @param pdfObj ContentStream containing the operators
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted

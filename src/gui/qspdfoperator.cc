@@ -100,6 +100,17 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwardDir/*=true*/) {
 }
 
 /** 
+ Return true, if this operator is equal to given object (i.e. if objects inside the wrapper are the same)
+ @param otherObject object to compare with this one
+ @return True if the both objects hold the same item, false otherwise
+*/
+bool QSPdfOperator::equals(QObject* otherObject) {
+ QSPdfOperator* other=dynamic_cast<QSPdfOperator*>(otherObject);
+ if (!other) return false;	//It's not even IProperty ... 
+ return obj==other->get();
+}
+
+/** 
  Create new font operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.

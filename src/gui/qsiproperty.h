@@ -22,6 +22,11 @@ public:
  virtual ~QSIProperty();
  boost::shared_ptr<IProperty> get() const;
 public slots:
+ /*-
+  Return true, if this object is equal to specified object (i.e. if they internally point to the same item)
+  Reference is compared, not the value of objects
+ */
+ bool equals(QObject* otherObject);
  /*- Return value store inside the property, if it is a simple type. For complex types (Array, Dict, Stream), NULL is returned */
  QVariant value();
  /*- Return text representation of this property */

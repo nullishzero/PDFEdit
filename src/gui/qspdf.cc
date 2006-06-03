@@ -61,6 +61,7 @@ bool QSPdf::referenceValid(int valueNum,int valueGen) {
 
 /**
  Save copy under different name. Does not check if the file exists, overwrite anything without warning
+ @param name Name of file
  @return true if saved successfully, false if any error occured
 */
 bool QSPdf::saveAs(QString name) {
@@ -110,7 +111,8 @@ QSPage* QSPdf::insertPage(QObject* page, int position) {
 /**
  Remove page at given position
  (numbering starts from 1)
- \see CPdf::removePage(position)
+ \see CPdf::removePage()
+ @param position Page number to remove
 */
 void QSPdf::removePage(int position) {
  if (!obj) return;
@@ -130,7 +132,8 @@ int QSPdf::getPagePosition(QSPage *page) {
 }
 
 /**
- \see CPdf::getPagePosition(page) - QSA bugfix version
+ \copydoc getPagePosition(QSPage *)
+ QSA bugfix version
 */
 int QSPdf::getPagePosition(QObject *page) {
  if (!obj) return -1;
@@ -150,7 +153,8 @@ int QSPdf::getPageCount() {
 /**
  Return page at given position
  (numbering starts from 1)
- \see CPdf::getPage(position)
+ \see CPdf::getPage()
+ @param position Page number
  @return page at positoin
 */
 QSPage* QSPdf::getPage(int position) {

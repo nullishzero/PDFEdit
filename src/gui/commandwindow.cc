@@ -49,7 +49,11 @@ bool DEFAULT__CMDSHOWLINE = true;
 bool DEFAULT__CMDSHOWEDITOR = false;
 
 
-/** constructor of CommandWindow, creates window and fills it with elements, parameters are ignored */
+/**
+ constructor of CommandWindow, creates window and fills it with elements
+ @param parent Parent widget
+ @param name Name of the widget (used for debugging)
+*/
 CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):QWidget(parent,name) {
  QBoxLayout * l = new QVBoxLayout( this );
  out = new QTextEdit( this );
@@ -283,18 +287,27 @@ void CommandWindow::setCmdWindowMode( bool showCmdHistory, bool showCmdLine, boo
 	globalSettings->write( CMD + CMDSHOWLINE, showCmdLine );
 	globalSettings->write( CMD + CMDSHOWEDITOR, showCmdEditor );
 }
-/** Add command executed from menu or any source to be echoed to command window */
+/**
+ Add command executed from menu or any source to be echoed to command window
+ @param command Command to add
+*/
 void CommandWindow::addCommand(const QString &command) {
  out->append("<b>&gt; </b>"+htmlEnt(command));
  consoleLog("> "+command,globalSettings->readExpand("path/console_log"));
 }
 
-/** Add string to be echoed to command window */
+/**
+ Add string to be echoed to command window
+ @param str String to add
+*/
 void CommandWindow::addString(const QString &str) {
  out->append(htmlEnt(str));
 }
 
-/** Add error message to be echoed to command window */
+/**
+ Add error message to be echoed to command window
+ @param message Error message to add
+*/
 void CommandWindow::addError(const QString &message) {
  out->append("<font color=red>! </font>"+htmlEnt(message));
  consoleLog("! "+message,globalSettings->readExpand("path/console_log"));

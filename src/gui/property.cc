@@ -70,9 +70,10 @@ void Property::modifyColor(QWidget* widget) {
  Initialize label belonging to this property.
  Called after setting text to the label.
  Property may change the label test, style or colors
- @param label Property's label
+ @param widget Property's label
 */
 void Property::initLabel(QLabel *widget) {
+ guiPrintDbg(debug::DBG_DBG,"Property " << widget->text() << " " << modeName(flags));
  switch (flags) {
   case mdNormal:
    //No color modification
@@ -116,6 +117,21 @@ void Property::setFlags(PropertyFlags flag) {
 */
 bool Property::getReadOnly() {
  return readonly;
+}
+
+/**
+ For given properyy mode return its localized description
+ @param flag Mode
+ @return description
+*/
+QString Property::modeName(PropertyFlags flag) {
+ if (flag==mdReadOnly) return tr("Read only");
+ if (flag==mdAdvanced) return tr("Advanced");
+ if (flag==mdHidden) return tr("Hidden");
+ if (flag==mdUnknown) return tr("Unknown");
+ if (flag==mdNormal) return tr("Normal");
+ assert(0);
+ return "?";
 }
 
 /**

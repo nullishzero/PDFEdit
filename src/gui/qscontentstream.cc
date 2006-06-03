@@ -74,7 +74,7 @@ bool QSContentStream::opValid(QSPdfOperator *op,bool checkThis/*=false*/) {
  @param oldOp Old operator
  @param newOp New operator
  @param indicateChange If set to true (default), changes will be written to underlying stream
- */
+*/
 void QSContentStream::replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared_ptr<PdfOperator> newOp,bool indicateChange/*=true*/) {
  obj->replaceOperator(oldOp,newOp,itPrev,itNext,indicateChange);
 }
@@ -86,7 +86,7 @@ void QSContentStream::replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared
  @param itPrev Previous iterator of new operator in iterator list
  @param itNext Next iterator of new operator in iterator list
  @param indicateChange If set to true (default), changes will be written to underlying stream
- */
+*/
 void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOperatorIterator* itPrev,QSPdfOperatorIterator* itNext,bool indicateChange/*=true*/) {
  if (!(oldOp && newOp && itPrev && itNext)) return;
  obj->replaceOperator(oldOp->get(),newOp->get(),*(itPrev->get()),*(itNext->get()),indicateChange);
@@ -114,7 +114,12 @@ void QSContentStream::pre_replace(boost::shared_ptr<PdfOperator> op) {
  itNext=PdfOperator::getIterator(getLastOperator(op));itNext.next();
 }
 
-/** Call CContentStream::deleteOperator() */
+/**
+ Delete operator from content stream
+ \see CContentStream::deleteOperator 
+ @param op Operator to delete
+ @param indicateChange If set to true (default), changes will be written to underlying stream
+*/
 void QSContentStream::deleteOperator(QSPdfOperator *op,bool indicateChange/*=true*/) {
  //First check for validity
  if (!opValid(op,true)) return;

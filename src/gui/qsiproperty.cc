@@ -26,7 +26,10 @@ QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip,Base *_base) : QSCObje
  obj=_ip;
 }
 
-/** Copy constructor */
+/**
+ Copy constructor
+ @param source Source object to copy from
+ */
 QSIProperty::QSIProperty(QSIProperty &source) : QSCObject ("IProperty",source.base) {
  obj=source.obj;
 }
@@ -40,6 +43,17 @@ QSIProperty::QSIProperty(QSIProperty &source) : QSCObject ("IProperty",source.ba
 */
 QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className,Base *_base) : QSCObject (_className,_base) {
  obj=_ip;
+}
+
+/** 
+ Return true, if this property is equal to given object (i.e. if objects inside the wrapper are the same)
+ @param otherObject object to compare with this one
+ @return True if the both objects hold the same item, false otherwise
+*/
+bool QSIProperty::equals(QObject* otherObject) {
+ QSIProperty* other=dynamic_cast<QSIProperty*>(otherObject);
+ if (!other) return false;	//It's not even IProperty ... 
+ return obj==other->get();
 }
 
 /**

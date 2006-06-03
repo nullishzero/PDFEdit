@@ -29,6 +29,7 @@ public:
  virtual ~Property();
  QString getName();
  PropertyFlags getFlags();
+ static QString modeName(PropertyFlags flag);
  void setFlags(PropertyFlags flag);
  bool getReadOnly();
  void modifyColor(QWidget* widget);

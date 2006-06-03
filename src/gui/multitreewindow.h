@@ -2,10 +2,12 @@
 #define __MULTITREEWINDOW_H__
 
 #include <qwidget.h>
-#include <cobject.h>
-#include <ccontentstream.h>
-#include <cpdf.h>
 #include "types.h"
+namespace pdfobjects {
+ class IProperty;
+ class CContentStream;
+ class CPdf;
+}
 
 class QListViewItem;
 class QTabWidget;

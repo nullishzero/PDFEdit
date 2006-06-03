@@ -27,6 +27,11 @@ public:
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
+ /*-
+  Return true, if this object is equal to specified object (i.e. if they internally point to the same item)
+  Reference is compared, not the value of objects
+ */
+ bool equals(QObject* otherObject);
  /*- Return last operator if a this operator is a composite */
  QSPdfOperator* getLastOperator();
  /**

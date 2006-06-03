@@ -20,7 +20,6 @@ class Base;
 class TreeData {
 public:
  TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow *multi);
- TreeData(TreeWindow *parent,QListView *tree,Base *base);
  ~TreeData();
  TreeWindow* parent();
  QListView* tree();

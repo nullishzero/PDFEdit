@@ -101,28 +101,42 @@ QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
  return property(name);
 }
 
-/** call CDict::delProperty(name) */
+/**
+ Delete property from dictionary
+ \see CDict::delProperty
+ @param name Property name
+*/
 void QSDict::delProperty(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
  dict->delProperty(pName);
 }
 
-/** call CDict::addProperty(name,ip) */
+/**
+ Add property to dictionary
+ \see CDict::addProperty
+ @param name Property name
+ @param ip Property to add
+*/
 void QSDict::add(const QString &name,QSIProperty *ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
  dict->addProperty(pName,*(ip->get().get()));
 }
 
-/** call CDict::addProperty(name,ip) */
+/** \copydoc add(const QString&,QSIProperty*) */
 void QSDict::add(const QString &name,QObject *ip) {
  //QSA-bugfix variant of this method
  QSIProperty *ipr=dynamic_cast<QSIProperty*>(ip);
  if (ipr) add(name,ipr);
 }
 
-/** call CDict::addProperty(name,ip) */
+/**
+ Add string to dictionary as property
+ \see CDict::addProperty
+ @param name Property name
+ @param ip string to add
+*/
 void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
@@ -130,7 +144,12 @@ void QSDict::add(const QString &name,const QString &ip) {
  dict->addProperty(pName,property);
 }
 
-/** call CDict::addProperty(name,ip) */
+/**
+ Add integer to dictionary as property
+ \see CDict::addProperty
+ @param name Property name
+ @param ip integer to add
+*/
 void QSDict::add(const QString &name,int ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
@@ -151,9 +170,10 @@ QString QSDict::getText() {
 }
 
 /**
- call CDict::getAllPropertyNames(list); return list
  Return list of all property names in this dictionary
- */
+ \see CDict::getAllPropertyNames
+ @return List of all property names
+*/
 QStringList QSDict::propertyNames() {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  QStringList names;
