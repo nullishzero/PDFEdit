@@ -57,12 +57,12 @@ public slots:
   Return PDF Text Operator iterator, initialialized from this operator
   Text iterator iterate only through text operators in content stream
  */
- QSPdfOperatorIterator* textIterator();
+ QSPdfOperatorIterator* textIterator(bool forwarddir = true);
  /*-
   Return PDF Font Operator iterator, initialialized from this operator
   Font iterator iterate only through font operators in content stream
  */
- QSPdfOperatorIterator* fontIterator();
+ QSPdfOperatorIterator* fontIterator(bool forwarddir = true);
  /*- Returns stack with all child operators */
  QSPdfOperatorStack* childs();
  /*- Returns number of child operators under this pdf operator */

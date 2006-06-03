@@ -74,6 +74,8 @@ bool QSContentStream::opValid(QSPdfOperator *op,bool checkThis/*=false*/) {
  @param g Green component of new color
  @param b Blue component of new color
  @param indicateChange If set to true (default), changes will be written to underlying stream
+
+ \todo DEPRECATED.. REMOVE IT, THIS IS AN EQUIVALENT TO A SCRIPT FUNCTION.
 */
 void QSContentStream::setColor(QSPdfOperator *op,double r,double g,double b,bool indicateChange/*=true*/) {
  //First check for validity

@@ -90,10 +90,11 @@ QSPdfOperatorIterator* QSPdfOperator::iterator() {
 /** 
  Create new text operator iterator from this PDF operator.
  The iterator will be initialized from this item 
+ @param forwarddir Direction of traversing the operators for first valid item.
  @return new text iterator
 */
-QSPdfOperatorIterator* QSPdfOperator::textIterator() {
- TextOperatorIterator* opText=new TextOperatorIterator(PdfOperator::getIterator<TextOperatorIterator>(obj));
+QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwarddir) {
+ TextOperatorIterator* opText=new TextOperatorIterator(PdfOperator::getIterator<TextOperatorIterator>(obj,forwarddir));
  csCheck();
  return new QSPdfOperatorIterator(opText,csRef,base);
 }
@@ -101,10 +102,11 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator() {
 /** 
  Create new font operator iterator from this PDF operator.
  The iterator will be initialized from this item 
+ @param forwarddir Direction of traversing the operators for first valid item.
  @return new font iterator
 */
-QSPdfOperatorIterator* QSPdfOperator::fontIterator() {
- FontOperatorIterator* opFont=new FontOperatorIterator(PdfOperator::getIterator<FontOperatorIterator>(obj));
+QSPdfOperatorIterator* QSPdfOperator::fontIterator(bool forwarddir) {
+ FontOperatorIterator* opFont=new FontOperatorIterator(PdfOperator::getIterator<FontOperatorIterator>(obj,forwarddir));
  csCheck();
  return new QSPdfOperatorIterator(opFont,csRef,base);
 }
@@ -270,8 +272,7 @@ void QSPdfOperator::remove() {
 void QSPdfOperator::pushBack(QSPdfOperator *op,QSPdfOperator *prev/*=NULL*/) {
  if (!obj) throw NullPointerException("PdfOperator","pushBack");
  if (!prev) {
-  boost::shared_ptr<PdfOperator> emptyOperator;
-  obj->push_back(op->get(),emptyOperator);
+  obj->push_back(op->get());
   return;
  }
  obj->push_back(op->get(),prev->get());
@@ -286,8 +287,7 @@ void QSPdfOperator::pushBack(QObject *op,QObject *prev/*=NULL*/) {
  QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
  QSPdfOperator *qprev=dynamic_cast<QSPdfOperator*>(prev);
  if (!prev) {
-  boost::shared_ptr<PdfOperator> emptyOperator;
-  obj->push_back(qop->get(),emptyOperator);
+  obj->push_back(qop->get());
   return;
  }
  obj->push_back(qop->get(),qprev->get());
