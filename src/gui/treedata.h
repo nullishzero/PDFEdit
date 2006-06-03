@@ -13,6 +13,10 @@ class TreeWindow;
 class MultiTreeWindow;
 class Base;
 
+/**
+ Storage class holding Tree Data that need to be shared between tree window and its items
+ and also holding setting related to what items to show in tree
+*/
 class TreeData {
 public:
  TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow *multi);

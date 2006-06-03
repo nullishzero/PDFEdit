@@ -37,6 +37,13 @@ typedef QMap<QString, QPopupMenu*> MenuCache;
 /** Cache of already defined menu items (names) */
 typedef QMap<QString, QString> MenuNames;
 
+/**
+ This class manages Menu, Toolbars and Shortcuts.<br>
+ Menus, menu items, toolbars and toolbar items share the same namespace and often
+ menu and toolbar items are interchangable (only difference is that toolbar item
+ must have icon, while menu item can be without an icon)<br>
+ For more information about menus and toolbars, check doc/design/gui/menu.xml
+*/
 class Menu {
 public:
  Menu(QMainWindow *_main);
@@ -59,8 +66,6 @@ public:
 private:
  void addItem(QString line,QMenuData *parent,const QString &name=QString::null) throw (InvalidMenuException);
  bool reserveAccel(const QString &accelDef,const QString &action);
- void initPaths();
- QString getIconFile(const QString &name);
  int addAction(const QString &action);
  void loadItemsDef(QString line,QMenuData *menu,QStringList prev=QStringList()) throw (InvalidMenuException);
  void loadItems(const QString &name,QMenuData *menu,QStringList prev=QStringList()) throw (InvalidMenuException);

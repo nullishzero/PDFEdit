@@ -12,11 +12,12 @@
 
 namespace gui {
 
-/** Default constructor of property item
+/**
+ Default constructor of property item
  @param parent parent Property Editor containing this control
  @param _name name of this property
  @param _flags flags of this property items (default 0)
- */
+*/
 RealProperty::RealProperty (const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : StringProperty(_name,parent,_flags) {
  ed->setText("0");
@@ -27,7 +28,7 @@ RealProperty::RealProperty (const QString &_name, QWidget *parent/*=0*/, Propert
 RealProperty::~RealProperty() {
 }
 
-/** @copydoc StringProperty::writeValue */
+/** \copydoc StringProperty::writeValue */
 void RealProperty::writeValue(IProperty *pdfObject) {
  if (readonly) return;//Honor readonly setting
  CReal* obj=(CReal*)pdfObject;
@@ -36,7 +37,7 @@ void RealProperty::writeValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/** @copydoc StringProperty::readValue */
+/** \copydoc StringProperty::readValue */
 void RealProperty::readValue(IProperty *pdfObject) {
  CReal* obj=(CReal*)pdfObject;
  double val;

@@ -10,6 +10,10 @@ namespace gui {
 
 class QSPage;
 
+/**
+ Toolbutton showing current page number and allowing to change it<br>
+ Can be placed in toolbar in place of ordinary button
+*/
 class PageTool : public QWidget {
 Q_OBJECT
 public:

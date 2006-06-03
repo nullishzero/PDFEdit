@@ -68,6 +68,7 @@ signals:
   Signal emitted when active document is changed 
   Reference to newly opened document is sent.
   If document is closed without opening a new file, NULL is sent instead.
+  @param newDocument Pointer to new document
  */
  void documentChanged(CPdf *newDocument);
  /**
@@ -93,8 +94,6 @@ private:
  void setFileName(const QString &name);
  void destroyFile();
  void emptyFile();
- void addDocumentObjects();
- void removeDocumentObjects();
  /** Commandline window */
  CommandWindow *cmdLine;
  /** Object treeview */

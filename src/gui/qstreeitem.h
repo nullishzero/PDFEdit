@@ -14,6 +14,7 @@ class TreeItemAbstract;
  This type of object represents one item in treeview.
  One item in tree usually corespond to one object in PDF document
 */
+/** QObject wrapper around TreeItemAbstract (or its subclasses) */
 class QSTreeItem : public QSCObject {
  Q_OBJECT
 public slots:

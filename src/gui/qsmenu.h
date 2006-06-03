@@ -21,6 +21,7 @@ class Base;
  which will then return the action picked by user (if any)
  To create new popup menu object, use the <link linkend="popupMenu">popupMenu</link> function
 */
+/** Class providing Popup menu functionality to script with functions to create and show these menus */
 class QSMenu : public QSCObject {
  Q_OBJECT
 public:

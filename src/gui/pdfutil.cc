@@ -79,7 +79,7 @@ QString getTypeName(IProperty *obj) {
  return getTypeName(obj->getType());
 }
 
-/** @copydoc getTypeName(IProperty *) */
+/** \copydoc getTypeName(IProperty *) */
 QString getTypeName(boost::shared_ptr<IProperty> obj) {
  return getTypeName(obj.get());
 }
@@ -92,7 +92,7 @@ QString getTypeId(IProperty *obj) {
  return getTypeId(obj->getType());
 }
 
-/** @copydoc getTypeId(IProperty *) */
+/** \copydoc getTypeId(IProperty *) */
 QString getTypeId(boost::shared_ptr<IProperty> obj) {
  return getTypeId(obj.get());
 }
@@ -107,7 +107,7 @@ IndiRef getRef(IProperty *ref) {
  return iref;
 }
 
-/** @copydoc getRef(IProperty *) */
+/** \copydoc getRef(IProperty *) */
 IndiRef getRef(boost::shared_ptr<IProperty> ref) {
  return getRef(ref.get());
 }

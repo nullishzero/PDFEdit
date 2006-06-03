@@ -386,7 +386,7 @@ void Base::addObjectDialog(QSIProperty *container/*=NULL*/) {
  }
 }
 
-/** @copydoc addObjectDialog(QSIProperty *) */
+/** \copydoc addObjectDialog(QSIProperty *) */
 void Base::addObjectDialog(QObject *container) {
  //This method is fix for QSA Bug: QSA sometimes degrade QObject descendants to bare QObjects
  QSIProperty *_container=dynamic_cast<QSIProperty*>(container);
@@ -441,6 +441,7 @@ QSIProperty* Base::createArray() {
 
 /**
  Create new IProperty of type Bool
+ @param value Value assigned to this property
  @return created IProperty
 */
 QSIProperty* Base::createBool(bool value) {
@@ -490,6 +491,7 @@ QSIProperty* Base::createRef(int valueNum,int valueGen) {
 
 /**
  Create new IProperty of type String
+ @param value Value assigned to this property
  @return created IProperty
 */
 QSIProperty* Base::createString(const QString &value) {
@@ -498,6 +500,7 @@ QSIProperty* Base::createString(const QString &value) {
 
 /**
  Create new IProperty of type Name
+ @param value Value assigned to this property
  @return created IProperty
 */
 QSIProperty* Base::createName(const QString &value) {

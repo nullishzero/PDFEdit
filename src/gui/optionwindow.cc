@@ -375,7 +375,11 @@ void OptionWindow::init() {
 }
 
 
-/** This is called on attempt to close window. */
+/**
+ This is called on attempt to close window.
+ The window will delete itself
+ @param e Close event (unused)
+*/
 void OptionWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
  delete this;
 }

@@ -13,13 +13,20 @@
 
 namespace gui {
 
-/** Construct wrapper with given CPage */
+/**
+ Construct wrapper with given CPage
+ @param _page CPage shared pointer
+ @param _base scripting base
+*/
 QSPage::QSPage(boost::shared_ptr<CPage> _page,Base *_base) : QSCObject ("Page",_base) {
  obj=_page;
  numStreams=-1;
 }
 
-/** Copy constructor */
+/**
+ Copy constructor
+ @param source Source page to copy
+*/
 QSPage::QSPage(const QSPage &source) : QSCObject ("Page",source.base) {
  obj=source.obj;
  numStreams=-1;

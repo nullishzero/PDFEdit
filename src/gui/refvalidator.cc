@@ -3,7 +3,7 @@
  Does validate only format, not if the reference exists (that would be too slow)
  Reference existence is validated on attempt to write it to the property
  @author Martin Petricek
- */
+*/
 
 #include "refvalidator.h"
 #include <qstring.h> 

@@ -21,18 +21,31 @@ using namespace util;
 
 namespace gui {
 
+/** Root settings key prefixing all settings defined in this class */
 QString CMD = "gui/CommandLine/";
+/** Settings key specifying if to show the commandline */
 QString CMDSHOWHISTORY = "CmdShowHistory";
+/** Settings key specifying if the commandline is enables for editing or just as history drop-down */
 QString CMDSHOWLINE = "CmdShowLine";
+/** Settings key specifying if to show the script editor */
 QString CMDSHOWEDITOR = "CmdShowEditor";
+/** Settings key identifying maximal size of history (in lines) */
 QString HISTORYSIZE = "HistorySize";
+/** Settings key identifying history file */
 QString HISTORYFILE = "HistoryFile";
+/** Settings key identifying history items separator */
 QString HISTORYFILEITEMSEPARATOR = "HistoryFileItemSeparator";
+/** Default history file */
 QString DEFAULT__HISTORYFILE = ".pdfedit-history";
+/** Default history items separator */
 QString DEFAULT__HISTORYFILEITEMSEPARATOR = "<EndItem>";
+/** Default maximal size of history (in lines) */
 int DEFAULT__HISTORYSIZE = 10;
+/** Default value of setting identified by key CMDSHOWHISTORY */
 bool DEFAULT__CMDSHOWHISTORY = true;
+/** Default value of setting identified by key CMDSHOWLINE */
 bool DEFAULT__CMDSHOWLINE = true;
+/** Default value of setting identified by key CMDSHOWEDITOR */
 bool DEFAULT__CMDSHOWEDITOR = false;
 
 

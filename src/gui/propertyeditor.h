@@ -21,7 +21,7 @@ class PropertyModeController;
 
 using namespace pdfobjects;
 
-/** property editor widget */
+/** Property editor widget */
 class PropertyEditor : public QWidget {
  Q_OBJECT
 public:
@@ -38,8 +38,11 @@ public slots:
  void setObject(boost::shared_ptr<PdfOperator> pdfOp);
  void update(Property *p);
 signals:
- /** Signal emitted when any property is modified
-  Send property pointer with the signal */
+ /**
+  Signal emitted when any property is modified
+  Send property pointer with the signal
+  @param prop Pointer to changed property item
+ */
  void propertyChanged(IProperty *prop); 
 private:
  bool addProperty(const QString &name,boost::shared_ptr<IProperty> value);

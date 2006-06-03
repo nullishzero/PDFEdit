@@ -8,6 +8,10 @@ class QValidator;
 
 namespace gui {
 
+/**
+ Toolbutton allowing to change zoom level of current page<br>
+ Can be placed in toolbar in place of ordinary button
+*/
 class ZoomTool : public QWidget {
 Q_OBJECT
 public:

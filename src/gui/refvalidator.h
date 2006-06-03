@@ -6,6 +6,11 @@ class QString;
 
 namespace gui {
 
+/**
+ Reference validator - checks if given String is valid Reference in given document
+ Does validate only format, not if the reference exists (that would be too slow)
+ Reference existence is validated on attempt to write it to the property
+*/
 class RefValidator : public QValidator {
 public:
  RefValidator(QObject *parent,const char *name=0);

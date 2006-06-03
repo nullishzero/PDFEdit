@@ -25,7 +25,8 @@ namespace gui {
 using namespace std;
 using namespace util;
 
-/** Default constructor of property editor.
+/**
+ Default constructor of property editor.
  On creation, no object is assigned to editor
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
@@ -71,7 +72,10 @@ void PropertyEditor::createLayout() {
  gridl->setColStretch(1,1);
 }
 
-/** Called on resizing of property editor */
+/**
+ Called on resizing of property editor
+ @param e resize event data (new size)
+ */
 void PropertyEditor::resizeEvent (QResizeEvent *e) {
  scroll->setFixedSize(e->size());
  //TODO: may not be correct

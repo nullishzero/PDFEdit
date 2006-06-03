@@ -16,7 +16,10 @@ public:
  Option(const QString &_key=0,QWidget *parent=0);
  virtual QString getName();
  virtual ~Option();
+ //Abstract functions
+ /** write edited value to settings (using key specified in contructor) */
  virtual void writeValue()=0;
+ /** read value from settings for editing (using key specified in contructor) */
  virtual void readValue()=0;
 protected:
  /** Name of this option */

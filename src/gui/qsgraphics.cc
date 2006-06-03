@@ -13,13 +13,19 @@ namespace gui {
 
 using namespace pdfobjects;
 
-/** Construct wrapper with given CGraphic */
-QSGraphics::QSGraphics(CGraphic *gfx,Base *_base) : QSCObject ("CGraphic",_base) {
+/** Construct wrapper with given CGraphic
+ @param gfx CGraphic object
+ @param _base scripting base
+ */
+QSGraphics::QSGraphics(CGraphic *gfx,Base *_base) : QSCObject ("Graphic",_base) {
  obj=gfx;
 }
 
-/** Copy constructor */
-QSGraphics::QSGraphics(QSGraphics &source) : QSCObject ("CGraphic",source.base) {
+/**
+ Copy constructor
+ @param source Source object to copy
+ */
+QSGraphics::QSGraphics(QSGraphics &source) : QSCObject ("Graphic",source.base) {
  obj=source.obj;
 }
 

@@ -25,6 +25,11 @@ class QSPdf;
 class QSPdfOperator;
 class TreeItemAbstract;
 
+/**
+ Class that host scripts and contain static script functions<br>
+ This class is also responsible for garbage collection of scripting
+ objects and interaction of editor and scripts
+*/
 class Base : public QObject {
  Q_OBJECT
 public:

@@ -15,6 +15,7 @@ class TreeWindow;
 
 class TreeItemObserver;//internal class (observer)
 
+/** class holding one CRef object (indirect reference) in tree */
 class TreeItemRef : public TreeItem {
 public:
  TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);

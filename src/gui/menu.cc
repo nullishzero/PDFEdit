@@ -24,7 +24,6 @@
 #include <qstring.h>
 #include "iconcache.h"
 
-/** GUI namespace */
 namespace gui {
 
 using namespace util;
@@ -396,7 +395,8 @@ QStringList Menu::getToolbarList() {
 }
 
 /**
- return toolbar with given name.
+ Return toolbar with given name.
+ @param name Name of toolbar
  @return Toolbar, or NULL if toolbar with given name was not found
 */
 ToolBar* Menu::getToolbar(const QString &name) {

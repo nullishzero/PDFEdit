@@ -7,6 +7,11 @@ class QIconSet;
 
 namespace gui {
 
+/**
+ Class responsible for loading and caching icons<br>
+ There can be multiple instances of this class at once,
+ but all of them share common cache
+*/
 class IconCache {
 public:
  IconCache();

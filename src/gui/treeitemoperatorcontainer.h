@@ -16,6 +16,11 @@ class TreeData;
 /** Vector with operators */
 typedef std::vector<boost::shared_ptr<PdfOperator> > OperatorVector;
 
+/**
+ Class holding vector with pdf operators
+ The vector is specified in constructor and comes from arbitrary source
+ (usually selected objects from page)
+*/
 class TreeItemOperatorContainer : public TreeItemAbstract {
 public:
  TreeItemOperatorContainer(TreeData *_data,QListView *parent,OperatorVector _op,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);

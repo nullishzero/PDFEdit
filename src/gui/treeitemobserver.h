@@ -11,7 +11,10 @@ class TreeItemAbstract;
 
 using namespace pdfobjects;
 
-/** Observer for IProperty items */
+/**
+ This class provides observer monitoring IProperty item.<br>
+ The observer will reload associated tree item when the observed item changes.
+*/
 class TreeItemObserver : public IProperty::Observer {
 public:
  TreeItemObserver(TreeItemAbstract* _parent);

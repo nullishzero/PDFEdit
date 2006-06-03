@@ -20,6 +20,17 @@ class TreeItemObserver;
 
 using namespace pdfobjects;
 
+/**
+ Class holding CPDF object (document) in tree<br>
+ This class can actually be in the tree multiple times, in root of the tree
+ it represents the document, but the document have some special children,
+ which are of this class too (for simplicity they "map" to PDF too)<br>
+
+ These are:<br>
+
+  List of outlines<br>
+  List of pages<br>
+*/
 class TreeItemPdf : public TreeItemAbstract {
 public:
  TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name=QString::null,QListViewItem *after=NULL);

@@ -12,6 +12,11 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/**
+ RefProperty - class for widget containing one editable property of type "Ref"<br>
+ Represented by editable line and button allowing to pick reference target from the list<br>
+ Used as one item in property editor
+*/
 class RefProperty : public Property {
 Q_OBJECT
 public:

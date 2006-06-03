@@ -27,6 +27,7 @@ namespace gui {
 using namespace std;
 using namespace util;
 
+/** "Root" item of all configuration settings, which are relative to this item */
 const QString APP_KEY = "/PDFedit/";
 /** Name of variable which will be expanded to full path to the executable */
 const QString APP_PATH_VAR = "PDFEDIT_BIN";

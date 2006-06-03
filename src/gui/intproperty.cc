@@ -26,7 +26,7 @@ IntProperty::IntProperty (const QString &_name, QWidget *parent/*=0*/, PropertyF
 IntProperty::~IntProperty() {
 }
 
-/** @copydoc StringProperty::writeValue */
+/** \copydoc StringProperty::writeValue */
 void IntProperty::writeValue(IProperty *pdfObject) {
  if (readonly) return;//Honor readonly setting
  CInt* obj=(CInt*)pdfObject;
@@ -35,7 +35,7 @@ void IntProperty::writeValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/** @copydoc StringProperty::readValue */
+/** \copydoc StringProperty::readValue */
 void IntProperty::readValue(IProperty *pdfObject) {
  CInt* obj=(CInt*)pdfObject;
  int val;

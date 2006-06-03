@@ -14,6 +14,7 @@ using namespace pdfobjects;
 class TreeWindow;
 class TreeItemObserver;
 
+/** Class holding one PDF object (IProperty) in tree */
 class TreeItem : public TreeItemAbstract {
 public:
  static TreeItem* create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL,const QString &nameId=QString::null);

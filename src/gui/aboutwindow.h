@@ -5,6 +5,10 @@
 
 namespace gui {
 
+/**
+ Class representing about window.<br>
+ Display authors, application name and version.
+*/
 class AboutWindow : public QWidget {
 Q_OBJECT
 public:

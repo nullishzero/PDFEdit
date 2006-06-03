@@ -10,6 +10,7 @@ class Base;
 class TreeItemContentStream;
 
 /*= This type of object represents one item in treeview representing content stream.*/
+/** QObject wrapper around TreeItemContentStream */
 class QSTreeItemContentStream : public QSTreeItem {
  Q_OBJECT
 public slots:

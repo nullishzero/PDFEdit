@@ -16,6 +16,7 @@ class QSPdfOperator;
 using namespace pdfobjects;
 
 /*= This type of object represents pdf operator in content stream */
+/** QObject wrapper around PdfOperator::Iterator */
 class QSPdfOperatorIterator : public QSCObject {
  Q_OBJECT
 public:

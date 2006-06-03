@@ -22,8 +22,9 @@
 using namespace std;
 using namespace util;
 
-//todo: read from settings.cc/.h
+/** "Root" item of all configuration settings, which are relative to this item */
 const QString APP_KEY = "/PDFedit/";
+//todo: read from settings.cc/.h
 
 /** Constructor */
 MenuGenerator::MenuGenerator() {
@@ -178,7 +179,8 @@ void MenuGenerator::check() {
  set->endGroup();
 }
 
-/** Add menu to localization list
+/**
+ Add menu to localization list
  @param id Id of menu item
  @param name Caption of menu item
 */
@@ -203,7 +205,12 @@ void MenuGenerator::translate() {
  }
 }
 
-/** Main of menugenerator */
+/**
+ Main function of menugenerator utility
+ @param argc Argument count
+ @param argv Commandline arguments
+ @return Executable return code
+*/
 int main(int argc, char *argv[]){
  MenuGenerator m;
  cout << "Usage: \"menugenerator -generate\" to generate default menus" << endl

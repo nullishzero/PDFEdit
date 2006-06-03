@@ -18,6 +18,9 @@ class QSCObject;
 
 using namespace pdfobjects;
 
+/**
+ Class holding CPage (one page) in tree
+*/
 class TreeItemPage : public TreeItemAbstract {
 public:
  TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListView *parent,const QString name=QString::null,QListViewItem *after=NULL);

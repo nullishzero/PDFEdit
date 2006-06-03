@@ -13,6 +13,7 @@ using namespace pdfobjects;
 
 class TreeData;
 
+/** class holding one PDF Operator in tree */
 class TreeItemPdfOperator : public TreeItemAbstract {
 public:
  TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);

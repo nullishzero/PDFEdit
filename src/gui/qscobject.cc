@@ -26,7 +26,10 @@ QSCObject::QSCObject(QString _typeName, Base* _base) {
  if (base) base->addGC(this);
 }
 
-/** Copy constructor */
+/**
+ Copy constructor
+ @param source source object
+*/
 QSCObject::QSCObject(QSCObject &source) : QObject() {
  typeName=source.typeName;
  base=source.base;
@@ -37,9 +40,8 @@ QSCObject::QSCObject(QSCObject &source) : QObject() {
 /** destructor */
 QSCObject::~QSCObject() {
  guiPrintDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
-//TODO: remove from  garbage collector.
-//TODO: implement QSWrapperFacrory for scripting
-//TODO: After returning from scripting, GC should be run ...
+//TODO: keep the garbage collector only as failsafe (closing window)
+//TODO: implement QSWrapperFacrory for scripting as "garbage collector"
  if (base) base->removeGC(this);
 }
 
@@ -51,12 +53,14 @@ void QSCObject::treeNeedReload() {
  if (base) base->treeNeedReload();
 }
 
-/** Return name of this object's type
-  @return name of this object's type
+/**
+ Return name of this object's type
+ @return name of this object's type
 */
 QString QSCObject::type() {
  return typeName;
 }
+
 /** Deletes itself */
 void QSCObject::deleteSelf() {
  delete this;

@@ -15,7 +15,12 @@ class Base;
 
 using namespace pdfobjects;
 
-/*= This type of object represents entire document. */
+/*=
+ This type of object represents entire document.
+ Note to page manipulation - page number start from number 1,
+ number of last page is equal to count of pages
+ */
+/** QObject wrapper around CPdf */
 class QSPdf : public QSCObject {
  Q_OBJECT
 public:

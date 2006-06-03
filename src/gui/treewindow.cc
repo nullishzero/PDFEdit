@@ -108,7 +108,10 @@ void TreeWindow::updateTreeSettings() {
 }
 
 
-/** Paint event handler -> if settings have been changed, reload tree */
+/**
+ Paint event handler -> if settings have been changed, reload tree
+ @param e Paint event data (passed to widget)
+*/
 void TreeWindow::paintEvent(QPaintEvent *e) {
  if (data->needReload()) {
   guiPrintDbg(debug::DBG_DBG,"update tree settings: need reload");
@@ -119,7 +122,10 @@ void TreeWindow::paintEvent(QPaintEvent *e) {
  QWidget::paintEvent(e);
 }
 
-/** Called when any settings are updated (in script, option editor, etc ...) */
+/**
+ Called when any settings are updated (in script, option editor, etc ...) 
+ @param key Key of setting which have changed
+*/
 void TreeWindow::settingUpdate(QString key) {
  //TODO: only once per bunch of tree/show... signals ... setting blocks
  guiPrintDbg(debug::DBG_DBG,"Settings observer: " << key);

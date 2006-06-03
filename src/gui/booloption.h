@@ -24,7 +24,7 @@ protected:
 protected:
  /** checkbox used for editing the value */
  QCheckBox *ed;
- /* Default value if option not found */
+ /** Default value if option not found */
  bool defValue;
 };
 

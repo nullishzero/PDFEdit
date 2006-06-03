@@ -71,6 +71,7 @@ boost::shared_ptr<CPage> TreeItemPage::getObject() {
 /** 
  This method is needed for "deep reload" to work
  Try to replace page inside this treeitem with a new one.
+ @param newPage new page to replace the old one
  @return true if page replaced, false on error.
 */
 bool TreeItemPage::setObject(boost::shared_ptr<CPage> newPage) {

@@ -13,6 +13,10 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/** 
+ Toolbutton listing revisions of current PDF document, with ability to switch revisions<br>
+ Can be placed in toolbar in place of ordinary button
+*/
 class RevisionTool : public QWidget {
 Q_OBJECT
 public:

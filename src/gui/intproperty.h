@@ -10,6 +10,10 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/**
+ IntProperty - class for widget containing one editable property of type "Int"<br>
+ Used as one item in property editor
+*/
 class IntProperty : public StringProperty {
 Q_OBJECT
 public:

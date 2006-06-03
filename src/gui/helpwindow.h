@@ -8,6 +8,10 @@ class QLineEdit;
 
 namespace gui {
 
+/**
+ class representing help window.<br>
+ Help window is basically just a limited HTML browser
+*/
 class HelpWindow : public QWidget {
 Q_OBJECT
 public:

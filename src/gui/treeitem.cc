@@ -49,7 +49,7 @@ TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,b
 
 /**
  "Constructor" that will create object of proper class based on type of IProperty <br>
- @copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
 */
 TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
  assert(_data);
@@ -66,7 +66,7 @@ TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<I
 
 /**
  "Constructor" that will create object of proper class based on type of IProperty <br>
- @copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
 */
 TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
  assert(_data);
@@ -125,6 +125,7 @@ boost::shared_ptr<IProperty> TreeItem::getObject() {
 /** 
  This method is needed for "deep reload" to work
  Try to replace object inside this treeitem with a new one.
+ @param newItem new object to replace the old one
  @return true if item replaced, false on error.
 */
 bool TreeItem::setObject(boost::shared_ptr<IProperty> newItem) {

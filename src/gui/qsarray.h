@@ -13,6 +13,7 @@ It hold zero or more values indexed by positive integer, starting from zero.
 Values can be of any type, either simple types (int, bool, float, string)
 or complex types (Dict, Array)
 */
+/** QObject wrapper around CArray */
 class QSArray : public QSIProperty {
  Q_OBJECT
 public:

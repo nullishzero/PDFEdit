@@ -88,7 +88,11 @@ void AddItemDialog::buttonSelected(int id) {
  if (props[selectedItem]) props[selectedItem]->setReadOnly(false);
 }
 
-/** This is called on attempt to close window. */
+/**
+ This is called on attempt to close window.
+ The window will delete itself
+ @param e Close event (unused)
+*/
 void AddItemDialog::closeEvent(__attribute__((unused)) QCloseEvent* e) {
  delete this;
 }

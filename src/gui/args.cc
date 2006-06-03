@@ -1,5 +1,5 @@
 /** @file
- Utility classes to work with commandline arguments
+ Utility functions to work with commandline arguments
  @author Martin Petricek
 */
 
@@ -35,7 +35,7 @@ int argc;
 /** Standard argv */
 char **argv;
 
-//Forward declarations that sould not be visible in header file
+//Forward declarations that should not be visible in header file
 int handleOption(const QString &param);
 const QString nextParam(const QString &param);
 

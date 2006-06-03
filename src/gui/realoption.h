@@ -6,6 +6,11 @@ class QString;
 
 namespace gui {
 
+/**
+ RealOption - class for widget containing one editable setting of type float
+ (internally represented as a double)<br>
+ Used as one item in option window
+*/
 class RealOption : public StringOption {
  Q_OBJECT
 public:

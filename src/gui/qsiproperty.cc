@@ -31,7 +31,8 @@ QSIProperty::QSIProperty(QSIProperty &source) : QSCObject ("IProperty",source.ba
 }
 
 /**
- Construct wrapper with given IProperty and given type name
+ Construct wrapper with given IProperty and given type name<br>
+ This constructor is available only to subclasses - they can set their own class name here
  @param _ip IProperty wrapped in this object
  @param _className type name of this object
  @param _base Scripting base
@@ -40,7 +41,11 @@ QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className,Ba
  obj=_ip;
 }
 
-/** Call IProperty::getStringRepresentation(ret); return ret */
+/**
+ Return text representation of property
+ \see IProeprty::getStringRepresentation
+ @return string representation
+*/
 QString QSIProperty::getText() {
  std::string text;
  obj->getStringRepresentation(text);

@@ -47,8 +47,11 @@ void PdfEditWindow::exitApp() {
  //todo: if invoked from qscript then handle specially
 }
 
-/** This is called on attempt to close window. If there is unsaved work,
- dialog asking to save it would appear, otherwise the windows is closed. */
+/**
+ This is called on attempt to close window. If there is unsaved work,
+ dialog asking to save it would appear, otherwise the windows is closed. 
+ @param e Close event
+*/
 void PdfEditWindow::closeEvent(QCloseEvent *e) {
  if (!closeFile(true)) { //user does not want to close and lose unsaved work
   e->ignore();
@@ -86,12 +89,20 @@ void PdfEditWindow::closeWindow() {
  close();
 }
 
-/** Saves window visibility state to application settings */
+/**
+ Saves window visibility state to application settings
+ @param w Widget to save
+ @param name Name of key in settings
+*/
 void PdfEditWindow::saveVisibility(QWidget *w,const QString &name) {
  globalSettings->write(QString("windowstate/vis_")+name,w->isVisible());
 }
 
-/** Restore window visibility state from application settings */
+/**
+ Restore window visibility state from application settings
+ @param w Widget to restore
+ @param name Name of key in settings
+*/
 void PdfEditWindow::loadVisibility(QWidget *w,const QString &name) {
  bool vis=globalSettings->readBool(QString("windowstate/vis_")+name,true);
  if (vis) w->show(); else w->hide();
@@ -263,6 +274,7 @@ void PdfEditWindow::bigPixmap() {
 /**
  Unset selected object if it is the one given in parameter
  (because it is about to be deleted)
+ @param theItem object to check (and possibly unselect)
 */
 void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
  if (theItem==selectedTreeItem) {
@@ -344,7 +356,7 @@ bool PdfEditWindow::modified() {
  return document->isChanged();
 }
 
-/* \copydoc Base::runScript */
+/** \copydoc Base::runScript */
 void PdfEditWindow::runScript(QString script) {
  base->runScript(script);
 }

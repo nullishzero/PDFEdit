@@ -13,6 +13,7 @@ It hold keys (String) and values. Each key is corresponding to one value.
 Keys are strings, values can be of any type, either simple types (int, bool, float, string)
 or complex types (Dict, Array)
 */
+/** QObject wrapper around CDict */
 class QSDict : public QSIProperty {
  Q_OBJECT
 public:

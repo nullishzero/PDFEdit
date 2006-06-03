@@ -1,6 +1,6 @@
 /** @file
  HelpWindow - class representing help window.<br>
- Help windows is basically just a limited HTML browser
+ Help window is basically just a limited HTML browser
  @author Martin Petricek
 */
 
@@ -86,7 +86,11 @@ void HelpWindow::index() {
  setPage(QString::null);
 }
 
-/** This is called on attempt to close window. */
+/**
+ This is called on attempt to close window.
+ The window will delete itself
+ @param e Close event (unused)
+*/
 void HelpWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
  delete this;
 }

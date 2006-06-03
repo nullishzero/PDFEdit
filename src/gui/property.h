@@ -19,7 +19,7 @@ typedef PropertyMode PropertyFlags;
 /** Default mode to be chosen if omitted in constructor */
 const PropertyMode defaultPropertyMode=mdNormal;
 
-/** ancestor of all property items */
+/** Ancestor of all property items */
 class Property : public QWidget {
 Q_OBJECT
 public:
@@ -47,8 +47,11 @@ public:
  */
  virtual bool isValid()=0;
 signals:
- /** Signal emitted when property is edited.
-  Send property pointer with the signal */
+ /**
+  Signal emitted when property is edited.
+  Send property pointer with the signal
+  @param prop Pointer to changed property item
+ */
  void propertyChanged(Property *prop);
 protected:
  void emitChanged();

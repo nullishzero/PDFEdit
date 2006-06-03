@@ -11,7 +11,11 @@
 
 namespace gui {
 
-/** Construct wrapper with given CStream */
+/**
+ Construct wrapper with given CStream 
+ @param _cs CStream shared pointer
+ @param _base scripting base
+*/
 QSStream::QSStream(boost::shared_ptr<CStream> _cs,Base *_base) : QSIProperty (_cs,"Stream",_base) {
 }
 

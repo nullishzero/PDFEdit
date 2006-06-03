@@ -17,7 +17,7 @@ namespace gui {
  @param parent parent Property Editor containing this control
  @param _name name of this property
  @param _flags flags of this property items (default 0)
- */
+*/
 Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : QWidget (parent, "property"){
  name=_name;
@@ -37,6 +37,7 @@ QString Property::getName() {
 /**
  Modify the widget color according to widget flags
  Best results are with themes in which the widget is "white or at least light color"
+ @param widget Widget to modify its color
 */
 void Property::modifyColor(QWidget* widget) {
  QColor newColor=widget->paletteBackgroundColor();
@@ -66,7 +67,7 @@ PropertyFlags Property::getFlags() {
 /**
  Set flags of this property
  @param flag New value for property flags
- */
+*/
 void Property::setFlags(PropertyFlags flag) {
  flags=flag;
  if (flags==mdReadOnly || flags==mdAdvanced) readonly=true; else readonly=false;
@@ -94,8 +95,10 @@ Property::~Property() {
 
 }
 
-/** Emit signal indicating change of the property and set state
- of property to 'changed'*/
+/**
+ Emit signal indicating change of the property and set state
+ of property to 'changed'
+*/
 void Property::emitChanged() {
  emit propertyChanged(this);
  guiPrintDbg(debug::DBG_DBG,"Property was edited: " << name);

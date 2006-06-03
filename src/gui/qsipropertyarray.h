@@ -19,6 +19,7 @@ using namespace pdfobjects;
  Values can be of any type, either simple types (int, bool, float, string)
  or complex types (Dict, Array)
 */
+/** QObject wrapper around array of arbitrary IProperty items */
 class QSIPropertyArray : public QSCObject {
  Q_OBJECT
 public:

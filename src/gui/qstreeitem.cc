@@ -12,12 +12,22 @@
 
 namespace gui {
 
-/** Construct wrapper with given TreeItemAbstract */
+/**
+ Construct wrapper with given TreeItemAbstract<br>
+ This constructor is available only to subclasses - they can set their own class name here
+ @param className Item type to use.
+ @param item Tree item
+ @param _base scripting base
+*/
 QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base) : QSCObject (className,_base) {
  obj=item;
 }
 
-/** Construct wrapper with given TreeItemAbstract */
+/**
+ Construct wrapper with given TreeItemAbstract
+ @param item Tree item
+ @param _base scripting base
+*/
 QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeItem",_base) {
  obj=item;
 }

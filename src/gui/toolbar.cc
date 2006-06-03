@@ -48,14 +48,18 @@ ToolBar::ToolBar(QMainWindow * parent,const char * name/*=0*/) : QToolBar(parent
  //Empty constructor
 }
 
-/** Add button to toolbar and link slots, so clicks from buttons are passed along with button ID to the application
+/**
+ Add button to toolbar and link slots, so clicks from buttons are passed along with button ID to the application
  @param qb Button to add to this toolbar 
  */
 void ToolBar::addButton(ToolButton *qb) {
  QObject::connect(qb, SIGNAL(clicked(int)), this, SLOT(slotClicked(int)));
 }
 
-/** slot that will emit clicked with ID of whis button */
+/**
+ slot that will emit clicked with ID of button
+ @param id Id of button
+*/
 void ToolBar::slotClicked(int id) {
  emit itemClicked(id);
 }

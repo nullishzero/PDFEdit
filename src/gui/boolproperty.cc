@@ -25,12 +25,12 @@ BoolProperty::BoolProperty(const QString &_name, QWidget *parent/*=0*/, Property
  connect(ed,SIGNAL(clicked()),this,SLOT(emitChange()));
 }
 
-/** @copydoc StringProperty::sizeHint */
+/** \copydoc StringProperty::sizeHint */
 QSize BoolProperty::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** @copydoc StringProperty::resizeEvent */
+/** \copydoc StringProperty::resizeEvent */
 void BoolProperty::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }
@@ -45,7 +45,7 @@ BoolProperty::~BoolProperty() {
  delete ed;
 }
 
-/** @copydoc StringProperty::writeValue */
+/** \copydoc StringProperty::writeValue */
 void BoolProperty::writeValue(IProperty *pdfObject) {
  if (readonly) return;//Honor readonly setting
  CBool* obj=(CBool*)pdfObject;
@@ -54,7 +54,7 @@ void BoolProperty::writeValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/** @copydoc StringProperty::readValue */
+/** \copydoc StringProperty::readValue */
 void BoolProperty::readValue(IProperty *pdfObject) {
  CBool* obj=(CBool*)pdfObject;
  bool val;
@@ -63,14 +63,14 @@ void BoolProperty::readValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/* @copydoc Property:setReadOnly */
+/* \copydoc Property:setReadOnly */
 void BoolProperty::setReadOnly(bool _readonly) {
  //Widget is enabled if it is not read-only
  ed->setEnabled(!_readonly);
  Property::setReadOnly(_readonly);
 }
 
-/** @copydoc Property::isValid() */
+/** \copydoc Property::isValid() */
 bool BoolProperty::isValid() {
  return true; //Checkbox is always valid :)
 }

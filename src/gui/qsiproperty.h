@@ -14,6 +14,7 @@ using namespace pdfobjects;
 class Base;
 
 /*= This object represent one property in dictionary or array */
+/** QObject wrapper around IProperty */
 class QSIProperty : public QSCObject {
  Q_OBJECT
 public:

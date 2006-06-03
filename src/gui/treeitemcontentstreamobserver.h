@@ -10,7 +10,10 @@ class TreeItemAbstract;
 
 using namespace pdfobjects;
 
-/** Observer for CContentstream items */
+/**
+ This class provides observer monitoring CContentstream item.<br>
+ The observer will reload associated tree item when the observed item changes.
+*/
 class TreeItemContentStreamObserver : public CContentStream::Observer {
 public:
  TreeItemContentStreamObserver(TreeItemAbstract* _parent);

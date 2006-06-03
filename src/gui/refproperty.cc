@@ -55,17 +55,17 @@ void RefProperty::emitChange() {
  emit propertyChanged(this);
 }
 
-/** @copydoc StringProperty::enableChange */
+/** \copydoc StringProperty::enableChange */
 void RefProperty::enableChange(__attribute__((unused)) const QString &newText) {
  changed=true;
 }
 
-/** @copydoc StringProperty::sizeHint */
+/** \copydoc StringProperty::sizeHint */
 QSize RefProperty::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** @copydoc StringProperty::resizeEvent */
+/** \copydoc StringProperty::resizeEvent */
 void RefProperty::resizeEvent (QResizeEvent *e) {
  int w=e->size().width();
  int h=e->size().height();
@@ -81,7 +81,7 @@ RefProperty::~RefProperty() {
  delete pb;
 }
 
-/** @copydoc StringProperty::writeValue */
+/** \copydoc StringProperty::writeValue */
 void RefProperty::writeValue(IProperty *pdfObject) {
  if (readonly) return;//Honor readonly setting
  CRef *obj=(CRef*)pdfObject;
@@ -101,7 +101,7 @@ void RefProperty::writeValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/** @copydoc StringProperty::readValue */
+/** \copydoc StringProperty::readValue */
 void RefProperty::readValue(IProperty *pdfObject) {
  CRef* obj=(CRef*)pdfObject;
  IndiRef val;
@@ -112,12 +112,12 @@ void RefProperty::readValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/** @copydoc Property::isValid() */
+/** \copydoc Property::isValid() */
 bool RefProperty::isValid() {
  return ed->hasAcceptableInput();
 }
 
-/* @copydoc Property:setReadOnly */
+/* \copydoc Property:setReadOnly */
 void RefProperty::setReadOnly(bool _readonly) {
  //Widget is enabled if it is not read-only
  ed->setEnabled(!_readonly);

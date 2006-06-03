@@ -19,6 +19,14 @@ class Base;
 
 using namespace pdfobjects;
 
+/**
+ QSImporter -> import QObjects from application without re-evaluating project<br>
+ Adding objects via addObject have disadvantage of clearing interpreter state
+ (thus removing all functions loaded from initscript)
+ Adding via addTransientObject disallow removing the object later.
+ Can import any QObject into scripting layer under specified name and also can create
+ QSCObjects from some common types (dict, page ..)
+*/
 class QSImporter : public QObject {
  Q_OBJECT
 public:

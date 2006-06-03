@@ -15,7 +15,8 @@
 
 namespace gui {
 
-/** Default constructor of StringOption item
+/**
+ Default constructor of ComboOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
  @param _values List of accepted values
@@ -58,12 +59,18 @@ void ComboOption::setCaseSensitive(bool value) {
  caseSensitive=value;
 }
 
-/** return size hint of this property editing control */
+/**
+ return size hint of this property editing control
+ @return Optimal property size
+ */
 QSize ComboOption::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of property editing control */
+/**
+ Called on resizing of property editing control
+ @param e Resize event data (new size)
+*/
 void ComboOption::resizeEvent (QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }

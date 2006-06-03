@@ -87,7 +87,10 @@ void MultiTreeWindow::pageChange(QWidget *newPage) {
  assert(tree);
 }
 
-/** Connect signals from underlying tree window to the MultiTreeWindow*/
+/**
+ Connect signals from underlying tree window to this MultiTreeWindow
+ @param tr TreeWindow to connect
+*/
 void MultiTreeWindow::connectSig(TreeWindow *tr) {
  QObject::connect(tr,SIGNAL(treeClicked(int,QListViewItem*)),this,SLOT(treeMouseClicked(int,QListViewItem*)));
  QObject::connect(tr,SIGNAL(itemSelected()),this,SLOT(treeItemSelected()));
@@ -143,7 +146,10 @@ TreeItemAbstract* MultiTreeWindow::rootMain() {
  return mainTree->root();
 }
 
-/** Called when any settings are updated (in script, option editor, etc ...) */
+/**
+ Called when any settings are updated (in script, option editor, etc ...) 
+ @param key Key of setting which have changed
+*/
 void MultiTreeWindow::settingUpdate(QString key) {
  mainTree->settingUpdate(key);
  //Pass to all trees

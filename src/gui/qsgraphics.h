@@ -10,6 +10,7 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/** QObject wrapper around CGraphic object */
 class QSGraphics : public QSCObject {
  Q_OBJECT
 public:

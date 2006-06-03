@@ -10,6 +10,11 @@ namespace gui {
 
 using namespace pdfobjects;
 
+/**
+ RealProperty - class for widget containing one editable property of type "Real"<br>
+ (internally represented as a double)<br>
+ Used as one item in property editor
+*/
 class RealProperty : public StringProperty {
 Q_OBJECT
 public:

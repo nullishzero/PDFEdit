@@ -14,11 +14,18 @@ namespace gui {
 
 using namespace pdfobjects;
 
-/** Construct wrapper with given CArray */
+/**
+ Construct wrapper with given CArray
+ @param _array Array
+ @param _base scripting base
+*/
 QSArray::QSArray(boost::shared_ptr<CArray> _array,Base *_base) : QSIProperty (_array,"Array",_base) {
 }
 
-/** Copy constructor */
+/**
+ Copy constructor
+ @param source Source item
+*/
 QSArray::QSArray(QSArray &source) : QSIProperty (source.obj,"Array",source.base) {
 }
 
@@ -26,31 +33,51 @@ QSArray::QSArray(QSArray &source) : QSIProperty (source.obj,"Array",source.base)
 QSArray::~QSArray() {
 }
 
-/** get CArray held inside this class. Not exposed to scripting */
+/**
+ get CArray held inside this class. Not exposed to scripting
+ @return CArray shared pointer
+*/
 boost::shared_ptr<CArray> QSArray::get() {
  return boost::dynamic_pointer_cast<CArray>(obj);
 }
 
-/** call CArray::getPropertyCount() */
+/**
+ Return number of array elements
+ \see CArray::getPropertyCount
+ @return number of elements
+*/
 int QSArray::count() {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  return array->getPropertyCount();
 }
 
-/** call CArray::getProperty(index) */
+/**
+ Return property at specified index
+ \see CArray::getProperty(int)
+ @param index Index of element in array
+ @return property at given index
+*/
 QSCObject* QSArray::property(int index) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  boost::shared_ptr<IProperty> property=array->getProperty(index);
  return QSImporter::createQSObject(property,base);
 }
 
-/** call CArray::delProperty(name) */
+/**
+ Delete property at specified index
+ \see CArray::delProperty(int)
+ @param index Index of element in array
+*/
 void QSArray::delProperty(int index) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  array->delProperty(index);
 }
 
-/** call CArray::getStringRepresentation(ret); return ret */
+/**
+ Return text representation of array
+ \see CArray::getStringRepresentation
+ @return string representation
+*/
 QString QSArray::getText() {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  std::string text;
@@ -58,13 +85,18 @@ QString QSArray::getText() {
  return text;
 }
 
-/** call CArray::addProperty(index,ip) */
+/**
+ Add given property to array at specified index
+ @param index Index of element in array
+ @param ip property to add 
+ \see CArray::addProperty
+*/
 void QSArray::add(int index,QSIProperty *ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  array->addProperty(index,*(ip->get().get()));
 }
 
-/** call CArray::addProperty(index,ip) */
+/** \copydoc add(int,QSIProperty *) */
 void QSArray::add(int index,QObject *ip) {
  //QSA-bugfix variant of this method
  CArray *array=dynamic_cast<CArray*>(obj.get());
@@ -72,27 +104,41 @@ void QSArray::add(int index,QObject *ip) {
  if (ipx) array->addProperty(index,*(ipx->get().get()));
 }
 
-/** call CArray::addProperty(index,ip) */
+/**
+ Add String property to array at specified index
+ @param index Index of element in array
+ @param ip string to add 
+ \see CArray::addProperty
+*/
 void QSArray::add(int index,const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CString property(ip);
  array->addProperty(index,property);
 }
 
-/** call CArray::addProperty(index,ip) */
+/**
+ Add Int property to array at specified index
+ @param index Index of element in array
+ @param ip integer to add 
+ \see CArray::addProperty
+*/
 void QSArray::add(int index,int ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CInt property(ip);
  array->addProperty(index,property);
 }
 
-/** call CArray::addProperty(ip) */
+/**
+ Append given property to array
+ @param ip property to add 
+ \see CArray::addProperty
+*/
 void QSArray::add(QSIProperty *ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  array->addProperty(*(ip->get().get()));
 }
 
-/** call CArray::addProperty(ip) */
+/** \copydoc add(QSIProperty *) */
 void QSArray::add(QObject *ip) {
  //QSA-bugfix variant of this method
  CArray *array=dynamic_cast<CArray*>(obj.get());
@@ -100,14 +146,22 @@ void QSArray::add(QObject *ip) {
  if (ipx) array->addProperty(*(ipx->get().get()));
 }
 
-/** call CArray::addProperty(ip) */
+/**
+ Append given String property to array
+ @param ip string to add 
+ \see CArray::addProperty
+*/
 void QSArray::add(const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CString property(ip);
  array->addProperty(property);
 }
 
-/** call CArray::addProperty(ip) */
+/**
+ Append given Int property to array
+ @param ip integer to add 
+ \see CArray::addProperty
+*/
 void QSArray::add(int ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CInt property(ip);

@@ -16,8 +16,17 @@ class TreeData;
 class TreeItemContentStreamObserver;
 
 /** What should be shown as children under this tree item */
-typedef enum { All, Text, Font } TreeItemContentStreamMode;
+typedef enum {
+/** Show all operators */	All,
+/** Show only text operators */	Text,
+/** Show only font operators */	Font
+ } TreeItemContentStreamMode;
 
+/**
+ Class holding one Content Stream object in tree<br>
+ On attempting to open the item in main window, the item opens itself automatically in secondary tree window.<br>
+ This is to avoid cluttering the main window with too many items, making navigation in main tree difficult for user.
+*/
 class TreeItemContentStream : public TreeItemAbstract {
 public:
  boost::shared_ptr<CContentStream> getObject();

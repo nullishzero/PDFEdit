@@ -60,10 +60,16 @@ void handleDebug(const QString &param){
  util::setDebugLevel(param);
 }
 
-/** QApplication */
+/** QApplication - main application */
 QApplication *qApp;
 
-/** main - load settings and launches a main window */
+/**
+ Main - load settings, load translation and launch
+ main window(s) according to settings and commandline parameters
+ @param argc Argument count
+ @param argv Commandline arguments
+ @return Executable return code
+*/
 int main(int argc, char *argv[]){
  //We need this so we can use things like --version and --help even without X11 connection
 #ifdef Q_WS_X11

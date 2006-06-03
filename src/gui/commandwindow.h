@@ -10,6 +10,11 @@ class QSEditor;
 
 namespace gui {
 
+/**
+ Class representing command window<br>
+ The window allow editation of command and
+ show output of previously executed commands
+*/
 class CommandWindow : public QWidget {
  Q_OBJECT
 public:

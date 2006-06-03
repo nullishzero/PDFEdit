@@ -138,7 +138,11 @@ void QSDict::add(const QString &name,int ip) {
  dict->addProperty(pName,property);
 }
 
-/** call CDict::getStringRepresentation(ret); return ret */
+/**
+ Return text representation of dictionary
+ \see CDict::getStringRepresentation
+ @return string representation
+*/
 QString QSDict::getText() {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string text;

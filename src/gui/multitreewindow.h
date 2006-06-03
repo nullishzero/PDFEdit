@@ -26,6 +26,13 @@ typedef QMap<void*,TreeWindow*> TreeWindowList;
 /** Mapping from Tree Window to void* associated with them (reverse mapping) */
 typedef QMap<TreeWindow*,void*> TreeWindowListReverse;
 
+/**
+ Class providing multiple treeviews, switchable by tabs
+ It always have at least one (main) tree tabs, and 0 or more "secondary" tree tabs,
+ that can be opened/closed as necessary. Main tree cannot be closed<br>
+ The multi tree view contain widgets of TreeWindow class inside the tabs
+ \see TreeWindow
+*/
 class MultiTreeWindow : public QWidget {
  Q_OBJECT
 public:

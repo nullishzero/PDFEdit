@@ -16,7 +16,7 @@ class TreeData;
 using namespace std;
 
 /**
- @copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
 TreeItemOutline::TreeItemOutline(TreeData *_data,QListView *parent,OutlineItem pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemDict(_data,parent,pdfObj,name,after,nameId) {
@@ -26,7 +26,7 @@ TreeItemOutline::TreeItemOutline(TreeData *_data,QListView *parent,OutlineItem p
 }
 
 /**
-@copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
  */
 TreeItemOutline::TreeItemOutline(TreeData *_data,QListViewItem *parent,OutlineItem pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemDict(_data,parent,pdfObj,name,after,nameId) {

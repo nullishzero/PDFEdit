@@ -13,7 +13,10 @@ namespace gui {
 
 using namespace pdfobjects;
 
-/** Construct wrapper with empty array */
+/**
+ Construct wrapper with empty array
+ @param _base Scripting base
+ */
 QSIPropertyArray::QSIPropertyArray(Base *_base) : QSCObject ("IPropertyArray",_base) {
 }
 

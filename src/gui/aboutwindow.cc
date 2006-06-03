@@ -45,7 +45,8 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
 
 /**
  This is called on attempt to close window.
- @param e Event parameters (ignored)
+ The window will delete itself
+ @param e Event parameters (unused)
 */
 void AboutWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
  delete this;

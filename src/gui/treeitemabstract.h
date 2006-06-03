@@ -52,7 +52,8 @@ public:
   @return object for scripting
  */
  virtual QSCObject* getQSObject()=0;
- /** Create one subchild
+ /**
+  Create one subchild
   @param name Name of child (the same as in list returned from getChildNames)
   @param typ Type of TreeItemAbstract's child. (see ChildType)
   @param after QListViewItem after which will be this item added. If unspecified (or  NULL), it is added before any other items
@@ -60,7 +61,8 @@ public:
   \see getChildNames
  */
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL)=0;
- /** Get list of all item's childs names
+ /**
+  Get list of all item's childs names
   @return list of child names. Names in the list must be unique and the list may be empty.
  */
  virtual QStringList getChildNames()=0;
@@ -72,7 +74,9 @@ public:
   If desired, you may call reload() on parent to get rid of the item correctly
  */
  virtual void remove()=0;
- /** Get type of this items child.
+ /**
+  Get type of this items child, given its name.
+  @param name Name of child item
   @return type of specified child
  */
  virtual ChildType getChildType(const QString &name)=0;

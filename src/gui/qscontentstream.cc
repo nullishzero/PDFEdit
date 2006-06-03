@@ -12,7 +12,11 @@
 
 namespace gui {
 
-/** Construct wrapper with given CContentStream */
+/**
+ Construct wrapper with given CContentStream
+ @param _cs Content Stream
+ @param _base scripting base
+ */
 QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,Base *_base) : QSCObject ("ContentStream",_base) {
  obj=_cs;
 }
@@ -21,14 +25,21 @@ QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,Base *_ba
 QSContentStream::~QSContentStream() {
 }
 
-/** Call CContentStream::getStringRepresentation(ret); return ret */
+/**
+ Return text representation of Content Stream
+ \see CContentStream::getStringRepresentation
+ @return string representation
+*/
 QString QSContentStream::getText() {
  std::string text;
  obj->getStringRepresentation(text);
  return text;
 }
 
-/** get CContentStream held inside this class. Not exposed to scripting */
+/**
+ get CContentStream held inside this class. Not exposed to scripting
+ @return stored CContentStream shared pointer
+*/
 boost::shared_ptr<CContentStream> QSContentStream::get() {
  return obj;
 }
@@ -200,7 +211,13 @@ void QSContentStream::deleteOperator(QObject *op,bool indicateChange/*=true*/) {
  deleteOperator((QSPdfOperator*)qop,indicateChange);
 }
 
-/** Call CContentStream::insertOperator() */
+/**
+ Insert operator in content stream
+ \see CContentStream::insertOperator
+ @param op after which one to insert
+ @param newOp operator to insert
+ @param indicateChange write changes to underlying stream?
+*/
 void QSContentStream::insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool indicateChange/*=true*/) {
  //First check for validity
  if (!opValid(op,this)) return;
@@ -220,7 +237,10 @@ void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateCha
  insertOperator((QSPdfOperator*)qop,(QSPdfOperator*)qopNew,indicateChange);
 }
 
-/** Call CContentStream::saveChange() */
+/**
+ Save changes to underlying content stream
+ \see CContentStream::saveChange
+*/
 void QSContentStream::saveChange() {
  obj->saveChange();
 }

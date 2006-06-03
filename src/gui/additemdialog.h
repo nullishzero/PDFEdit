@@ -22,6 +22,12 @@ class Property;
 /** Number of property types that can be added in AddItemDialog */
 const int addDialogPropertyTypes=8;
 
+/**
+ Class representing dialog for adding new item to Dictionary/array<br>
+ Dialog does not block focus of main window and you can have multiple of them opened simultaneously
+ (even for same Dict / Array)<br>
+ Dialog closes itself, when the relevant document is closed
+*/
 class AddItemDialog : public SelfDestructiveWidget {
 Q_OBJECT
 public:

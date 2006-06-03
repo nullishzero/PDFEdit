@@ -4,6 +4,14 @@
 #include <qsettings.h>
 #include <qmap.h>
 
+/**
+ Generator, checker and translation generator of menu configuration<br>
+ This is helper utility used to:<br>
+  - check menus for translatable strings and write them to .menu-trans.h,
+    so they will be found by lupdate utility<br>
+  - check menus for unreferenced items<br>
+  - generate initial menu (now obsolete)<br>
+*/
 class MenuGenerator {
 public:
  MenuGenerator();
