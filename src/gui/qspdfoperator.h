@@ -108,6 +108,8 @@ public slots:
  */
  QSContentStream* stream();
 private:
+ void csCheck();
+private:
  /** Object held in class*/
  boost::shared_ptr<PdfOperator> obj;
  /** Reference to content stream that is holding this operator. It may be NULL (empty shared_ptr) if unknown */

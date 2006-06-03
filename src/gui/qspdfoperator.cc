@@ -44,8 +44,19 @@ QSPdfOperator::QSPdfOperator(Base *_base) : QSCObject ("PdfOperator",_base) {
 QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperator",_base) {
  obj=op;
  csRef=cs;
- //Paranoid check
- assert(obj->getContentStream()==csRef.get());
+ csCheck();
+}
+
+/**
+ Check if the csRef point to the same contentstream,
+ as the content stream operator thinks it is in<br>
+ Reset the csRef if these two do not match
+*/
+void QSPdfOperator::csCheck() {
+ if(obj->getContentStream()!=csRef.get()) {
+  //The stream is invalid, set it to NULL rather than to invalid stream
+  csRef.reset();
+ }
 }
 
 /** destructor */
@@ -70,6 +81,7 @@ QString QSPdfOperator::getText() {
  @return new iterator
 */
 QSPdfOperatorIterator* QSPdfOperator::iterator() {
+ csCheck();
  return new QSPdfOperatorIterator(obj,csRef,base);
 }
 
@@ -80,6 +92,7 @@ QSPdfOperatorIterator* QSPdfOperator::iterator() {
 */
 QSPdfOperatorIterator* QSPdfOperator::textIterator() {
  TextOperatorIterator* opText=new TextOperatorIterator(PdfOperator::getIterator<TextOperatorIterator>(obj));
+ csCheck();
  return new QSPdfOperatorIterator(opText,csRef,base);
 }
 
@@ -90,6 +103,7 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator() {
 */
 QSPdfOperatorIterator* QSPdfOperator::fontIterator() {
  FontOperatorIterator* opFont=new FontOperatorIterator(PdfOperator::getIterator<FontOperatorIterator>(obj));
+ csCheck();
  return new QSPdfOperatorIterator(opFont,csRef,base);
 }
 
@@ -292,6 +306,7 @@ boost::shared_ptr<PdfOperator> QSPdfOperator::get() {
  @return QObject wrapper around this operator's content stream
 */
 QSContentStream* QSPdfOperator::stream() {
+ csCheck();
  if (!csRef.get()) {
   //ContentStream is not known, so we can't return it
   return NULL;
