@@ -18,6 +18,7 @@
 // Helper functions
 #include "cobjecthelpers.h"
 #include "factories.h"
+#include "observer.h"
 
 // =====================================================================================
 namespace pdfobjects {
@@ -206,9 +207,14 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 				attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
 			
 			// Rotate is optional and specification defines default value to 0
-			int dr = DisplayParams::DEFAULT_ROTATE;
 			if(!attrs.rotate.get())
-				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(dr));
+			{
+				// gcc workaround
+				// direct usage of static DEFAULT_ROTATE value caused linkage
+				// error
+				int defRot=DisplayParams::DEFAULT_ROTATE;
+				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(defRot));
+			}
 		}
 	}
 }
@@ -218,6 +224,97 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 //=====================================================================================
 // CPage
 //=====================================================================================
+
+void CPage::AnnotsWatchDog::notify(
+		boost::shared_ptr<IProperty> newValue, 
+		boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw()
+{
+using namespace observer;
+using namespace boost;
+using namespace debug;
+using namespace utils;
+
+	kernelPrintDbg(DBG_DBG, "");
+	
+	// if not basic context type, does notnig
+	if(context->getType()!=IChangeContext<IProperty>::BasicChangeContextType)
+		return;
+	
+	// gets basic context shared_ptr
+	shared_ptr<const BasicChangeContext<IProperty> > basicContext=
+		dynamic_pointer_cast<const BasicChangeContext<IProperty>, const IChangeContext<IProperty> >(context); 
+
+	// gets original value
+	const shared_ptr<IProperty> oldValue=basicContext->getOriginalValue();
+
+	PropertyType oldType=oldValue->getType(),
+				 newType=newValue->getType();
+
+	kernelPrintDbg(DBG_DBG, "oldType="<<oldType<<" newType="<<newType);
+
+	// one of values can be CNull, but not both. If this happens, there is
+	// nothing to do
+	if(oldType==pNull && newType==pNull)
+	{
+		kernelPrintDbg(DBG_WARN, "Both newValue and oldValue are CNull");
+		return;
+	}
+
+	// handle original value - one which is removed or replaced 
+	// this has to be invalidated and removed from annotStorage
+	// TODO handle situation when whole array is removed or replaced
+	if(isRef(oldValue))
+	{
+		// member of Annots array is changed - associated annotation has to be
+		// invalidated
+		try
+		{
+			shared_ptr<CDict> annotDict=getDictFromRef(oldValue);
+			CPage::AnnotStorage::iterator i;
+			for(i=page->annotStorage.begin(); i!=page->annotStorage.end(); i++)
+			{
+				shared_ptr<CAnnotation> annot=*i;
+				if(annot->getDictionary()!=annotDict)
+				{
+					kernelPrintDbg(DBG_DBG, "Annotation maintaining oldValue found and removed.");	
+					annot->invalidate();
+					page->annotStorage.erase(i);
+					break;
+				}
+			}
+			if(i==page->annotStorage.end())
+				kernelPrintDbg(DBG_WARN, "Removed value is not in annotStorage.")
+		}catch(ElementBadTypeException & e)
+		{
+			kernelPrintDbg(DBG_WARN, "oldValue dereferenced value is not dictionary.");
+		}
+	}
+
+	// handle new value - one which is added or replaces an old value
+	// this has to be added to annotStorage
+	if(isRef(newValue))
+	{
+		// registers itself (as observer) to newValue
+		newValue->registerObserver(page->annotsWatchDog);
+		
+		// checks whether dereferenced property is dictionary. If not it means
+		// that some mass is provided and so it is ignored
+		try
+		{
+			shared_ptr<CDict> annotDict=getDictFromRef(newValue);		
+
+			// creates CAnnotation instance from dereferenced dictionary and 
+			// adds it to annotStorage
+			shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
+			page->annotStorage.push_back(annot);
+		}catch(ElementBadTypeException & e)
+		{
+			kernelPrintDbg(DBG_WARN, "Dereferenced newValue is not dictionary.");
+		}
+	}
+
+	kernelPrintDbg(DBG_INFO, "Annotation consolidation done.");
+}
 
 //
 // Constructor

@@ -290,6 +290,54 @@ public:
 	 */
 	CPage (boost::shared_ptr<CDict>& pageDict);
 
+	/** Observer implementation for annotation synchronization.
+	 */
+	class AnnotsWatchDog: public observer::IObserver<IProperty>
+	{
+		/** Page owner of this observer.
+		 */
+		CPage * page;
+
+	public:
+		/** Initialization constructor.
+		 * @param _page CPage instance.
+		 *
+		 * Sets page field according parameter.
+		 */
+		AnnotsWatchDog(CPage * _page):page(_page)
+		{
+			// given parameter must be non NULL
+			// this is used only internaly by CPage, so assert is enough for
+			// checking
+			assert(_page);
+		}
+
+		/** Empty destructor.
+		 */
+		virtual ~AnnotsWatchDog() throw(){}; 
+		
+		/** Observer handler.
+		 * @param newValue New value of changed property.
+		 * @param context Context of the change.
+		 *
+		 *
+		 */
+		virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
+
+		/** Reurns observer priority.
+		 */
+		virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
+		{
+			// TODO some constant
+			return 0;
+		}
+	};
+
+	/** Annotations watch dog observer.
+	 *
+	 * This instance is used to handle changes in Annots array of the page.
+	 */
+	boost::shared_ptr<AnnotsWatchDog> annotsWatchDog;
 
 	//
 	// Destructor
