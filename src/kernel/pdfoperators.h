@@ -256,12 +256,21 @@ public:
 	 * sufficient.
 	 *
 	 * @param op Operator from which we want the iterator.
+	 * @param forward Direction of traversing when looking for the first valid
+	 * item.
 	 * 
 	 * @return Iterator.
 	 */
 	template<typename ITER>
+	static ITER getIterator (boost::shared_ptr<PdfOperator> op, bool forward) 
+		{ return ITER (ListItem (op),forward); }
+
+	/** \copydoc getIterator. */
+	template<typename ITER>
 	static ITER getIterator (boost::shared_ptr<PdfOperator> op) 
 		{ return ITER (ListItem (op)); }
+
+	/** Create simple iterator. */
 	static Iterator getIterator (boost::shared_ptr<PdfOperator> op) 
 		{ return Iterator (ListItem (op)); }
 

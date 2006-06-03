@@ -1028,7 +1028,11 @@ namespace {
 				{ // We do not support adding operators from another stream so if
 				  // it has valid pdf, it has to be the same
 					if ( ((*oper)->getPdf() != &pdf) || !((*oper)->getIndiRef() == rf) )
+					{
+						kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << rf << 
+														 " op has" <<(*oper)->getIndiRef);
 						throw CObjInvalidObject ();
+					}
 				
 					
 				}else
