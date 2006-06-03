@@ -206,8 +206,9 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 				attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
 			
 			// Rotate is optional and specification defines default value to 0
+			int dr = DisplayParams::DEFAULT_ROTATE;
 			if(!attrs.rotate.get())
-				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(DisplayParams::DEFAULT_ROTATE));
+				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(dr));
 		}
 	}
 }
