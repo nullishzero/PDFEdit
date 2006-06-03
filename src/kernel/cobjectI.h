@@ -4,7 +4,6 @@
  *        Filename:  cobjectI.h
  *     Description:  Header file containing implementation of CObject class.
  *         Created:  02/02/2006 
- *        Revision:  none
  *          Author:  jmisutka (06/01/19), 
  * 			
  * =====================================================================================

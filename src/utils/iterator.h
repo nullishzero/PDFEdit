@@ -16,7 +16,7 @@
 namespace iterator {
 //==========================================================
 
-/** Iterator is in invalid state. */
+/** Invalid iterator exception. */
 struct IteratorInvalidObjectException : public std::exception
 {
 	char const* what() const throw() {return "Iterator function over invalid object.";}
@@ -24,21 +24,27 @@ struct IteratorInvalidObjectException : public std::exception
 
 
 /**
- * Iterator interface from Gof book. We do NOT want it to 
- * be like stl iterators, because we do NOT need all the functionality and also
- * prev and next are stored in the Item itself, not in a special container.
+ * Iterator. The interface is similar to the Iterator designe pattern from Gof book. It is not supposed to 
+ * be like stl iterators, because we do NOT need all the functionality stl provides.
  *
+ * It is a general iterator over items that form a double linked list.
  * The item type over which to iterate has to implement 2 methods:
  * <ul>
  * 	<li> _next () </li>
  * 	<li> _prev () </li>
  * </ul>
  * 
- * Also an assumption is made, that we use something like weak smart pointers so we 
- * must use lock method.
+ * The main diffrence between stl iterators and this iterator is that the information about previous 
+ * and next items is stored in the item itself, not in a special container.
+ * 
+ * We use something like weak smart pointers so we instead of references. So we have to use
+ * lock method to be able to access an item. We can not simply use pointers because we are relying on the 
+ * fact that we can produce smart pointer from an iterator.
  *
- * This class has two template methods (Design pattern). It can be easily extended to specific
- * iterators overloading isValidItem method.
+ * This class has two template methods. It can be easily extended to specific
+ * iterators overloading isValidItem method. *
+ * This is very powerful feature that gives us enormous flexibilty over a list queue. We easily iterate 
+ * only over specific items.
  */
 template<typename ITEM>
 class SharedDoubleLinkedListIterator
@@ -48,19 +54,20 @@ class SharedDoubleLinkedListIterator
 		// Position
 		//
 private:
+		/** Position state of the iteratorm. */
 		enum _Position { _end, _begin, _valid, _invalid };
-		static const _Position pend 		= _end;
-		static const _Position pbegin		= _begin;
-		static const _Position pvalid		= _valid;
-		static const _Position pinvalid 	= _invalid;
+		static const _Position pend 		= _end; 	/**< The end. Not a valid item. */
+		static const _Position pbegin		= _begin;	/**< The beggining. Not a valid item. */
+		static const _Position pvalid		= _valid;	/**< Valid position in the list. */
+		static const _Position pinvalid 	= _invalid;	/**< Invalid position. E.g. no item specified. */
 		
 		
 public:
 	typedef boost::weak_ptr<ITEM> ListItem;
 
 protected:
-	ListItem _cur;
-	_Position _curpos;
+	ListItem _cur;		/**< Current item. */
+	_Position _curpos;	/**< Current position state. */
 
 	//
 	// Constructor
@@ -88,7 +95,16 @@ public:
 	//
 public:
 	/** 
-	 * Next. 
+	 * Go to the next item. The same as 
+	 * \code
+	 * ++iterator;
+	 * \endcode
+	 * in the stl.
+	 * We can iterate only over specific items that are selected by the validItem function
+	 *
+	 * \see validItem
+	 *
+	 * @return Iterator pointing at the next item.
 	 */
 	SharedDoubleLinkedListIterator<ITEM>& next ()
 	{
@@ -124,7 +140,16 @@ public:
 	}
 	
 	/** 
-	 * Previous. 
+	 * Go to the previous item. The same as 
+	 * \code
+	 * ++reverse_iterator;
+	 * \endcode
+	 * in the stl.
+	 * We can iterate only over specific items that are selected by the validItem function
+	 *
+	 * \see validItem
+
+	 * @return Iterator pointing at the previous item.
 	 */
 	SharedDoubleLinkedListIterator<ITEM>& prev ()
 	{
@@ -164,6 +189,7 @@ public:
 	// Comparable interface
 	//
 public:	
+	/** Equality operator. */
 	bool operator== (const SharedDoubleLinkedListIterator<ITEM>& it) const
 		{ return (it.getCurrent() == getCurrent());	}
 	
@@ -173,23 +199,29 @@ public:
 	//
 public:
 	/** 
-	 * Get current. It returns locked current pointer. 
+	 * Get item pointed at. It returns locked current pointer (e.g. boost::shared_ptr) 
 	 */
 	boost::shared_ptr<ITEM> getCurrent () const 
 		{ assert (pvalid == _curpos); return _cur.lock(); }
 
 	/** 
-	 * Are we at the end. Doesn't matter whether in the front or at the back 
+	 * Are we at a valid item. 
+	 *
+	 * @return True if the position is valid, false otherwise.
 	 */
 	bool valid () const { return (pvalid == _curpos); }
 
 	/**
 	 * Are we before the first valid item.
+	 *
+	 * @return True if we are at the beginning. (We are at an invalid position) 
 	 */
 	bool isBegin () const { return (pbegin == _curpos); }
 	
 	/**
-	 * Are we after the last valid item.
+	 * Are we after the last valid.
+	 * 
+	 * @return True if we are at the end. (We are at an invalid position) 
 	 */
 	bool isEnd () const { return (pend == _curpos); }
 
@@ -197,7 +229,8 @@ public:
 	// Helper
 	//
 protected:
-	inline bool _invalidItem (ListItem it) { return it.expired() ? true: false; }
+	/** Is this item ivalid. */
+	bool _invalidItem (ListItem it) { return it.expired() ? true: false; }
 	
 	//
 	// Template method interface
@@ -205,6 +238,10 @@ protected:
 protected:
 	/**
 	 * In this base iterator, loop through all objects.
+	 *
+	 * This is an implementation of a method which is used by the template method next and prev
+	 * \see next, prev
+	 * We can overload this function to be able to iterate only over specific items.
 	 *
 	 * @return True if the item is supported by this type of iterator, false otherwise.
 	 */
