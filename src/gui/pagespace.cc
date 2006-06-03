@@ -113,6 +113,8 @@ void PageSpace::newPageView() {
 			this, SLOT( moveSelection(const QPoint &, const QPtrList<BBoxOfObjectOnPage> &) ) );
 	connect( pageImage, SIGNAL( selectionResized(const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> &) ),
 			this, SLOT( resizeSelection(const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> &) ) );
+	connect( pageImage, SIGNAL( newSelectedObjects(const QPtrList<BBoxOfObjectOnPage> &) ),
+			this, SLOT( newSelection(const QPtrList<BBoxOfObjectOnPage> &) ) );
 	connect( pageImage, SIGNAL( changeMousePosition(const QPoint &) ), this, SLOT( showMousePosition(const QPoint &) ) );
 }
 
@@ -351,6 +353,35 @@ bool PageSpace::setSelectionMode( int mode ) {
 	return returnValue;
 }
 
+void PageSpace::newSelection () {
+	std::vector<boost::shared_ptr<PdfOperator> >	sops;
+	
+	boost::shared_ptr<PdfOperator> * it = actualSelectedObjects.first();
+	for ( ; it ; it = actualSelectedObjects.next() ) {
+		sops.push_back(*it);
+	}
+
+	emit changeSelection ( sops );
+}
+
+void PageSpace::newSelection ( const QPtrList<BBoxOfObjectOnPage> & objects ) {
+	actualSelectedObjects.clear();
+
+	QPtrListIterator<BBoxOfObjectOnPage> it_objs (objects);
+	for ( ; *it_objs ; ++it_objs ) {
+		const void * h = (*it_objs)->getPtrToObject();
+		QPtrListIterator<boost::shared_ptr<PdfOperator> > it (objectForSelecting);
+		for ( ; *it ; ++it ) {
+			if ((*it)->get() == h) {
+				actualSelectedObjects.append( new boost::shared_ptr<PdfOperator> (*(*it)) );
+				break;
+			}
+		}
+	}
+
+	newSelection();
+}
+
 void PageSpace::newSelection ( const QRect & r) {
 	// TODO pracovat s vracenymi operatori
 	std::vector<boost::shared_ptr<PdfOperator> > ops;
@@ -369,6 +400,7 @@ void PageSpace::newSelection ( const QRect & r) {
 			actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
 		}
 	}
+	actualSelectedObjects.clear();
 	for (std::vector<boost::shared_ptr<PdfOperator> >::iterator it = ops.begin(); it != ops.end() ; ++it) {
 		Rectangle bbox;
 		std::string name;
@@ -380,9 +412,12 @@ void PageSpace::newSelection ( const QRect & r) {
 
 		QRect box ( (int) std::min(bbox.xleft,bbox.xright), (int) std::min(bbox.yleft, bbox.yright),
 					std::abs((int)(bbox.xright - bbox.xleft))+1, std::abs((int)(bbox.yleft - bbox.yright))+1);
-			
+
 		pageImage->addSelectedRegion( box, (*it).get() );
+		actualSelectedObjects.append( new boost::shared_ptr<PdfOperator> (*it) );
 	}
+
+	newSelection();
 }
 
 bool PageSpace::isSomeoneSelected ( ) {

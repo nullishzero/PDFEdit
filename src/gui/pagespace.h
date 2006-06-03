@@ -54,7 +54,7 @@ class PageSpace : public QWidget {
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
 		void changedZoomFactorTo ( float zoom );
-		void changeSelection ( const std::vector<boost::shared_ptr<PdfOperator> > );
+		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > );
 
 		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
 	protected:
@@ -63,11 +63,13 @@ class PageSpace : public QWidget {
 	private slots:
 		// slots for connecting pageImage's signals
 		void newSelection ( const QRect & );
+		void newSelection ( const QPtrList<BBoxOfObjectOnPage> & );
 		void requirementPopupMenu ( const QPoint &, const QRegion * );
 		void moveSelection ( const QPoint &, const QPtrList<BBoxOfObjectOnPage> & );
 		void resizeSelection ( const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> & );
 		void showMousePosition ( const QPoint & );
 	private:
+		void newSelection ();
 		void newPageView();
 		void newPageView( QPixmap &qp );
 		void centerPageView( );
