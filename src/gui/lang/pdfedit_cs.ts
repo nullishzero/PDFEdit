@@ -377,6 +377,74 @@ Data: %3
         <comment>mode</comment>
         <translation>Zobrazuji font. op.</translation>
     </message>
+    <message>
+        <source>Warning: This document is encrypted!</source>
+        <translation>Upozornění: Tento dokument je zašifrovaný!</translation>
+    </message>
+    <message>
+        <source>Encryption filter:</source>
+        <translation>Šifrovací filtr:</translation>
+    </message>
+    <message>
+        <source>No page selected!</source>
+        <translation>Není zvolena žádná stránka</translation>
+    </message>
+    <message>
+        <source>Change page rectangle</source>
+        <translation>Změna rámečku stránky</translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation>Změnit</translation>
+    </message>
+    <message>
+        <source>Page metrics</source>
+        <translation>Metrika stránky</translation>
+    </message>
+    <message>
+        <source>Page rectangle parameters</source>
+        <translation>Parametry rámečku stránky</translation>
+    </message>
+    <message>
+        <source>MediaBox changed..</source>
+        <translation>MediaBox změněn..</translation>
+    </message>
+    <message>
+        <source>Operator must be QSPdfOperator !!!</source>
+        <translation>Operátor musí být QSPdfOperator !!!</translation>
+    </message>
+    <message>
+        <source>Must define color !!!</source>
+        <translation>Je nutno definovat barvu !!!</translation>
+    </message>
+    <message>
+        <source>r,g,b must be number !!!</source>
+        <translation>r,g,b musí být číslo !!!</translation>
+    </message>
+    <message>
+        <source>r,g,b must be from 0 to 255 !!!</source>
+        <translation>r,g,b musí být z 0 až 255 !!!</translation>
+    </message>
+    <message>
+        <source>Left upper corner</source>
+        <translation>Levý horní roh</translation>
+    </message>
+    <message>
+        <source>x position</source>
+        <translation>x souřadnice</translation>
+    </message>
+    <message>
+        <source>y position</source>
+        <translation>y souřadnice</translation>
+    </message>
+    <message>
+        <source>Right bottom corner</source>
+        <translation>Pravý dolní roh</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Storno</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -741,6 +809,10 @@ Data: %3
         <source>Linearized PDF</source>
         <translation>Linearizované PDF</translation>
     </message>
+    <message>
+        <source>Encrypted</source>
+        <translation>Zašifrované</translation>
+    </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>
@@ -998,6 +1070,26 @@ Data: %3
         <source>Show/Hide commandline</source>
         <comment>hideCmd</comment>
         <translation>Zobrazit/skrýt příkazový řádek</translation>
+    </message>
+    <message>
+        <source>Edit page metrics</source>
+        <comment>editPageMediaBox</comment>
+        <translation>Změnit metriky stránky</translation>
+    </message>
+    <message>
+        <source>&amp;View</source>
+        <comment>show</comment>
+        <translation>Zobrazit</translation>
+    </message>
+    <message>
+        <source>Show/Hide property editor</source>
+        <comment>hideProp</comment>
+        <translation>Zobrazit/skrýt editor položek</translation>
+    </message>
+    <message>
+        <source>Show/Hide object tree</source>
+        <comment>hideTree</comment>
+        <translation>Zobrazit/skrýt strom</translation>
     </message>
 </context>
 <context>

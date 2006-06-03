@@ -374,6 +374,74 @@ Data: %3
         <comment>mode</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Warning: This document is encrypted!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encryption filter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No page selected!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page metrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page rectangle parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MediaBox changed..</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator must be QSPdfOperator !!!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Must define color !!!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>r,g,b must be number !!!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>r,g,b must be from 0 to 255 !!!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left upper corner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>y position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right bottom corner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change page rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
@@ -738,6 +806,10 @@ Data: %3
         <source>Linearized PDF</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Encrypted</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>
@@ -994,6 +1066,26 @@ Data: %3
     <message>
         <source>Show/Hide commandline</source>
         <comment>hideCmd</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit page metrics</source>
+        <comment>editPageMediaBox</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;View</source>
+        <comment>show</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide property editor</source>
+        <comment>hideProp</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide object tree</source>
+        <comment>hideTree</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
