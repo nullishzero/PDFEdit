@@ -4,6 +4,7 @@
 
 /* ==== load utilities ==== */
 run( "pdfoperator_utilities.qs" );
+run( "dialogs.qs" );
 
 /* ==== Callback functions ==== */
 
@@ -278,9 +279,21 @@ function buftest(x,at,st) {
  }
 }
 
+/** === Validate functions === */
+
+/** Validate page */
+function isValidPage(page) {
+ if (!page) {
+ 	displayDialogWarning ("No page specified.");
+	return false;
+ }else
+ 	return true;
+}
+
 /** Return property from dictionary of current page */
 function pageProperty(propName) {
- return page.getDictionary().property(propName).ref();
+ if (isValidPage(page))
+	 return page.getDictionary().property(propName).ref();
 }
 
 /**
@@ -288,12 +301,25 @@ function pageProperty(propName) {
  adding it with default value if property is not found
 */
 function pagePropertyDef(propName,defValue) {
- return page.getDictionary().propertyDef(propName,defValue).ref();
+ if (isValidPage(page))
+	return page.getDictionary().propertyDef(propName,defValue).ref();
 }
+
+/** Set stream to certain mode */
+function streamMode(newMode) {
+ x=treeRoot();
+ if (x.itemtype()!="ContentStream") return;
+ x.setMode(newMode);
+}
+
+
+/* === Page changing functions === */
 
 /** rotate current page N degrees clockwise */
 function rotatePage(n) {
- //Get page rotation
+ if (!isValidPage (page))
+ 	return;
+//Get page rotation
  rotate=pagePropertyDef("Rotate",0);
  //Add rotation
  n0=rotate.getInt()+n;
@@ -306,35 +332,22 @@ function rotatePage(n) {
  go();
 }
 
-/** Set stream to certain mode */
-function streamMode(newMode) {
- x=treeRoot();
- if (x.itemtype()!="ContentStream") return;
- x.setMode(newMode);
-}
-
-
-/** Create LineEdit dialog with label and text filled. */
-function createLineEdit(label,text) {
- var e = new LineEdit;
- e.label = label;
- e.text = text;
- return e;
-}
-
 /** 
  * Show page rectangle and allow changing page metrics. 
  * It displayes MediaBox entry from a page dictionary and then sets new values if desired. 
  */
 function editPageMediaBox() {
 
+ if (!isValidPage (page))
+ 	return;
+	
+ // Get media box
  var mediabox = page.mediabox();
  var xleft = mediabox[0];
  var yleft = mediabox[1];
  var xright = mediabox[2];
  var yright = mediabox[3];
 
- 
  var dialog = new Dialog;
  dialog.caption = "Page rectangle dialog";
  dialog.okButtonText = "Change";
@@ -357,11 +370,11 @@ function editPageMediaBox() {
  gb.add (eyr);
 
  if (dialog.exec()) {
- 	page.setMediabox (exl.text, eyl.text, exr.text, eyr.text);
+ 	// Save media box
+	page.setMediabox (exl.text, eyl.text, exr.text, eyr.text);
 	print ('MediaBox changed..');
 	go ();
  }
-
 }
 
 
