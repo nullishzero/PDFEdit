@@ -1,8 +1,6 @@
 #ifndef __TREEITEMCSTREAM_H__
 #define __TREEITEMCSTREAM_H__
 
-#include <iproperty.h>
-#include <qlistview.h>
 #include "treeitem.h"
 class QString;
 

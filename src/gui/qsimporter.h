@@ -3,12 +3,14 @@
 
 #include <qobject.h>
 #include <cobject.h>
-#include <cpage.h>
-#include <cpdf.h>
-#include <pdfoperators.h>
 class QSProject;
 class QSInterpreter;
 class QString;
+namespace pdfobjects {
+ class CPage;
+ class PdfOperator;
+ class CPdf;
+}
 
 namespace gui {
 
@@ -35,7 +37,7 @@ public:
  //factory-style functions
  static QSCObject* createQSObject(boost::shared_ptr<IProperty> ip,Base *_base);
  static QSCObject* createQSObject(TreeItemAbstract *item,Base *_base);
- QSCObject* createQSObject(boost::shared_ptr<pdfobjects::PdfOperator> op);
+ QSCObject* createQSObject(boost::shared_ptr<PdfOperator> op);
  QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);

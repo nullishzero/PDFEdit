@@ -14,6 +14,8 @@
 #include "qsipropertyarray.h"
 #include <ccontentstream.h>
 #include <iterator.h>
+#include "nullpointerexception.h"
+#include <qstring.h>
 
 namespace gui {
 

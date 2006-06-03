@@ -5,9 +5,14 @@
  @author Martin Petricek
 */
 
+#include <qstring.h>
 #include "qspdf.h"
 #include "pdfutil.h"
 #include <stdio.h>
+#include "qspage.h"
+#include "qsdict.h"
+#include <cobject.h>
+#include <cpdf.h>
 
 namespace gui {
 

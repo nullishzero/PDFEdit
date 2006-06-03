@@ -5,6 +5,7 @@
 #include <cobject.h>
 #include <ccontentstream.h>
 #include <cpdf.h>
+#include "types.h"
 
 class QListViewItem;
 class QTabWidget;
@@ -20,11 +21,24 @@ class TreeItemAbstract;
 class QSCObject;
 class Base;
 
-/** Mapping from void* to associated Tree Window */
-typedef QMap<void*,TreeWindow*> TreeWindowList;
+/** Possible types of tree - which item is in root */
+typedef enum {
+ /** Invalid type*/ Tree_Invalid=0,
+ /** Main - the document */ Tree_Main,
+ /** Vector with operators */ Tree_OperatorVector,
+ /** IPproperty */ Tree_IProperty,
+ /** Content stream */ Tree_ContentStream
+} TreeType;
 
-/** Mapping from Tree Window to void* associated with them (reverse mapping) */
-typedef QMap<TreeWindow*,void*> TreeWindowListReverse;
+/** Key type used to identify the tree in map*/
+typedef std::pair<TreeType,void*> TreeKey;
+//typedef void* TreeKey;
+
+/** Mapping from TreeKey to associated Tree Window */
+typedef QMap<TreeKey,TreeWindow*> TreeWindowList;
+
+/** Mapping from Tree Window to TreeKey associated with them (reverse mapping) */
+typedef QMap<TreeWindow*,TreeKey> TreeWindowListReverse;
 
 /**
  Class providing multiple treeviews, switchable by tabs
@@ -39,6 +53,8 @@ public:
  void uninit();
  void init(CPdf *pdfDoc,const QString &fileName);
  void init(boost::shared_ptr<IProperty> doc,const QString &pName=QString::null);
+ void activateMain();
+ void activate(const OperatorVector &vec,QString pName=QString::null);
  void activate(boost::shared_ptr<CContentStream> cs,QString pName=QString::null);
  void activate(boost::shared_ptr<IProperty> doc,QString pName=QString::null);
  void deactivate(boost::shared_ptr<IProperty> doc);
@@ -74,8 +90,8 @@ protected slots:
 private:
  void connectSig(TreeWindow *tr);
  TreeWindow* createPage(const QString &caption);
- bool activate(void *ptr);
- void deactivate(void *ptr);
+ bool activate(TreeKey ptr);
+ void deactivate(TreeKey ptr);
  void deleteWindow(TreeWindow *tr);
 private:
  /** Current TreeWindow */

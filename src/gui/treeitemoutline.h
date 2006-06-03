@@ -1,8 +1,6 @@
 #ifndef __TREEITEMOUTLINE_H__
 #define __TREEITEMOUTLINE_H__
 
-#include <iproperty.h>
-#include <qlistview.h>
 #include "treeitemdict.h"
 
 class QString;

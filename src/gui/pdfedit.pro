@@ -119,7 +119,6 @@ SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc 
 HEADERS += qspdfoperatoriterator.h
 SOURCES += qspdfoperatoriterator.cc
 
-
 #Exceptions
 HEADERS += invalidmenuexception.h  nullpointerexception.h
 SOURCES += invalidmenuexception.cc nullpointerexception.cc
@@ -137,6 +136,9 @@ HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
 HEADERS += selfdestructivewidget.h  base.h  rect2Darray.h
 SOURCES += selfdestructivewidget.cc base.cc rect2Darray.cc
+
+#Misc. headers
+HEADERS += types.h version.h
 
 #Dummy header file for menu translation, needed by lupdate
 exists( .menu-trans.h  ) {

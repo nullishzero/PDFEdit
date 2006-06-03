@@ -1,21 +1,25 @@
 #ifndef __TREEITEMCONTENTSTREAM_H__
 #define __TREEITEMCONTENTSTREAM_H__
 
-#include <iproperty.h>
-#include <qlistview.h>
-#include <ccontentstream.h>
-#include "treeitem.h"
+#include "treeitemabstract.h"
+#include <boost/shared_ptr.hpp>
+#include <vector>
+
 class QString;
+namespace pdfobjects {
+ class IProperty;
+ class PdfOperator;
+ class CContentStream;
+}
 
 namespace gui {
 
 using namespace pdfobjects;
 
 class TreeData;
-
 class TreeItemContentStreamObserver;
 
-/** What should be shown as children under this tree item */
+/** What should be shown as children under tree item wit Content stream */
 typedef enum {
 /** Show all operators */	All,
 /** Show only text operators */	Text,

@@ -1,11 +1,15 @@
 #ifndef __TREEITEMPDFOPERATOR_H__
 #define __TREEITEMPDFOPERATOR_H__
 
-#include <iproperty.h>
-#include <qlistview.h>
-#include "treeitem.h"
-#include <pdfoperators.h>
+#include "treeitemabstract.h"
+#include <boost/shared_ptr.hpp>
+#include <vector>
 class QString;
+namespace pdfobjects {
+ class IProperty;
+ class PdfOperator;
+ class CContentStream;
+}
 
 namespace gui {
 
@@ -18,6 +22,7 @@ class TreeItemPdfOperator : public TreeItemAbstract {
 public:
  TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);
  TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
  virtual ~TreeItemPdfOperator();
  boost::shared_ptr<PdfOperator> getObject();
  //From TreeItemAbstract interface

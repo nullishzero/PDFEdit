@@ -26,7 +26,7 @@
 #include "menu.h"
 #include "commandwindow.h"
 #include "additemdialog.h"
-#include "treeitemabstract.h"
+#include "treeitem.h"
 #include "treeitempdfoperator.h"
 #include "GlobalParams.h"
 #include "base.h"

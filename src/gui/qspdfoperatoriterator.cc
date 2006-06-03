@@ -99,6 +99,9 @@ PdfOperator::Iterator* QSPdfOperatorIterator::copyIterator(PdfOperator::Iterator
  //Try to duplicate as TextOperatorIterator
  TextOperatorIterator *newOpT=dynamic_cast<TextOperatorIterator*>(src);
  if (newOpT) return new TextOperatorIterator(*newOpT);
+ //Try to duplicate as FontOperatorIterator
+ FontOperatorIterator *newOpF=dynamic_cast<FontOperatorIterator*>(src);
+ if (newOpF) return new FontOperatorIterator(*newOpF);
  //Try to duplicate as NonStrokingOperatorIterator
  NonStrokingOperatorIterator *newOpN=dynamic_cast<NonStrokingOperatorIterator*>(src);
  if (newOpN) return new NonStrokingOperatorIterator(*newOpN);

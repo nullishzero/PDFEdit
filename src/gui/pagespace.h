@@ -10,6 +10,7 @@
 #include "pageview.h"
 #include "qspage.h"
 #include "qspdf.h"
+#include <cpage.h>
 
 namespace gui {
 

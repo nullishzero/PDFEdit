@@ -3,6 +3,7 @@
  @author Martin Petricek
 */
 
+#include "treeitempdf.h"
 #include "qspdf.h"
 #include "treedata.h"
 #include "treeitem.h"
@@ -10,7 +11,6 @@
 #include "treeitemoutline.h"
 #include "treeitemobserver.h"
 #include "treeitempage.h"
-#include "treeitempdf.h"
 #include "util.h"
 #include "pdfutil.h"
 #include <cobject.h>

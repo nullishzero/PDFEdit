@@ -8,6 +8,8 @@
 #include "qsstream.h"
 #include "util.h"
 #include <qfile.h>
+#include <cobject.h>
+#include <qstring.h>
 
 namespace gui {
 

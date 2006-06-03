@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <qlistview.h>
 #include <utils/debug.h>
+#include <qstring.h>
 
 namespace gui {
 

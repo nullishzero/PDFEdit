@@ -1,10 +1,9 @@
 #ifndef __TREEITEMPAGE_H__
 #define __TREEITEMPAGE_H__
 
-#include <qlistview.h>
 #include "treeitemabstract.h"
 #include <boost/shared_ptr.hpp>
-
+#include <vector>
 class QString;
 namespace pdfobjects {
  class CPage;

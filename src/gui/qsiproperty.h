@@ -1,10 +1,9 @@
 #ifndef __QSIPROPERTY_H__
 #define __QSIPROPERTY_H__
 
-#include <qobject.h>
 #include <iproperty.h>
 #include "qscobject.h"
-
+#include <qvariant.h>
 class QString;
 
 namespace gui {
@@ -23,6 +22,8 @@ public:
  virtual ~QSIProperty();
  boost::shared_ptr<IProperty> get() const;
 public slots:
+ /*- Return value store inside the property, if it is a simple type. For complex types (Array, Dict, Stream), NULL is returned */
+ QVariant value();
  /*- Return text representation of this property */
  QString getText();
  /*-
@@ -30,7 +31,7 @@ public slots:
   This way you will always get dereferenced property for correct manipulation
  */
  QSCObject* ref();
- /*- Get integer representation of this property, return 0 if it cannot be represented as integer */
+ /*- Get integer representation of this property's value, return 0 if it cannot be represented as integer */
  int getInt();
  /*-
   Get type identifier of this Property.

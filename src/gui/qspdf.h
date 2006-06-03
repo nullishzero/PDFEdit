@@ -1,17 +1,18 @@
 #ifndef __QSPDF_H__
 #define __QSPDF_H__
 
-#include <qstring.h>
 #include <qobject.h>
-#include <cobject.h>
-#include <cpdf.h>
-#include "qspage.h"
-#include "qsdict.h"
 #include "qscobject.h"
+class QString;
+namespace pdfobjects {
+ class CPdf;
+}
 
 namespace gui {
 
 class Base;
+class QSPage;
+class QSDict;
 
 using namespace pdfobjects;
 

@@ -79,7 +79,7 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip) {
  @param op PdfOperator to wrap into to QSPdfOperator
  @return QSPdfOperator(op)
  */
-QSCObject* QSImporter::createQSObject(boost::shared_ptr<pdfobjects::PdfOperator> op) {
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<PdfOperator> op) {
  return new QSPdfOperator(op,base);
 }
 

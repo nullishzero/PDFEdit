@@ -13,8 +13,11 @@
 #include "pdfutil.h"
 #include "treeitempdf.h"
 #include "treeitemcontentstream.h"
+#include "treeitemoperatorcontainer.h"
 #include "treeitem.h"
 #include "base.h"
+#include <ccontentstream.h>
+#include <cpdf.h>
 
 namespace gui {
 
@@ -58,7 +61,7 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
 /** Reload part of tree that have given item as root (including that item)
  Reloading will stop at unopened reference targets
  @param item root of subtree to reload
- */
+Ow */
 void TreeWindow::reloadFrom(TreeItemAbstract *item) {
  item->reload();
 }
@@ -215,6 +218,19 @@ void TreeWindow::init(boost::shared_ptr<CContentStream> cs,const QString &pName/
   rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
+}
+
+/**
+ Init contents of treeview from given vector with operators
+ @param vec Vector used to initialize treeview
+ @param pName Name of the root item
+*/
+void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::null*/) {
+ clear();
+ setUpdatesEnabled( FALSE );
+ rootItem=new TreeItemOperatorContainer(data,tree,vec,pName); 
+ rootItem->setOpen(TRUE);
+ setUpdatesEnabled( TRUE );
 }
 
 /** Resets the tree to be empty and show nothing */

@@ -5,7 +5,6 @@
  @author Martin Petricek
 */
 
-#include "iconcache.h"
 #include "multitreewindow.h"
 #include "util.h"
 #include "treewindow.h"
@@ -14,6 +13,7 @@
 #include <qtoolbutton.h>
 #include <qtabwidget.h>
 #include <utils/debug.h>
+#include "iconcache.h"
 
 namespace gui {
 
@@ -234,14 +234,14 @@ void MultiTreeWindow::notifyDelete(TreeItemAbstract *dest) {
 }
 
 /**
- Try to activate secondary tree that is identified by key (void *ptr).
+ Try to activate secondary tree that is identified by it key
  @param ptr pointer used to identify tree to activate
  @return true if the tree exists and was activated, false if the tree does not exist.
  */
-bool MultiTreeWindow::activate(void *ptr) {
- if (!ptr) { //Activate main tree view
-  tab->setCurrentPage(0);//Main tree is always the first
-  tree=mainTree;
+bool MultiTreeWindow::activate(TreeKey ptr) {
+ if (ptr.first==Tree_Main) { //Activate main tree view
+  //todo: remove, handle tree_main (almost) normally
+  activateMain();
   return true;
  }
  if (trees.contains(ptr)) { //Try to activate secondary tree view
@@ -259,8 +259,9 @@ bool MultiTreeWindow::activate(void *ptr) {
  @param pName Optional name used for this content stream
  */
 void MultiTreeWindow::activate(boost::shared_ptr<CContentStream> cs,QString pName/*=QString::null*/) {
+ TreeKey tk(Tree_ContentStream,cs.get());
  //If the page already exist, just switch to it
- if (activate(cs.get())) return;
+ if (activate(tk)) return;
 
  //Invent some default name if none specified
  if (pName.isNull()) pName=tr("Stream");
@@ -268,10 +269,18 @@ void MultiTreeWindow::activate(boost::shared_ptr<CContentStream> cs,QString pNam
  //Create the page
  TreeWindow* t=createPage(pName);
  t->init(cs,pName);
- trees.insert(cs.get(),t);
- treesReverse.insert(t,cs.get());
+ trees.insert(tk,t);
+ treesReverse.insert(t,tk);
  //Switch to new page
- activate(cs.get());
+ activate(tk);
+}
+
+/**
+ Activate the Main tree
+*/
+void MultiTreeWindow::activateMain() {
+ tab->setCurrentPage(0);//Main tree is always the first
+ tree=mainTree;
 }
 
 /**
@@ -280,8 +289,9 @@ void MultiTreeWindow::activate(boost::shared_ptr<CContentStream> cs,QString pNam
  @param pName Optional name used for this property
  */
 void MultiTreeWindow::activate(boost::shared_ptr<IProperty> doc,QString pName/*=QString::null*/) {
+ TreeKey tk(Tree_IProperty,doc.get());
  //If the page already exist, just switch to it
- if (activate(doc.get())) return;
+ if (activate(tk)) return;
 
  //Invent some default name if none specified
  if (pName.isNull()) pName=tr("Property");	//Default name
@@ -289,10 +299,29 @@ void MultiTreeWindow::activate(boost::shared_ptr<IProperty> doc,QString pName/*=
  //Create the page
  TreeWindow* t=createPage(pName);
  t->init(doc,pName);
- trees.insert(doc.get(),t);
- treesReverse.insert(t,doc.get());
+ trees.insert(tk,t);
+ treesReverse.insert(t,tk);
  //Switch to new page
- activate(doc.get());
+ activate(tk);
+}
+
+/**
+ Create if not exist and then activate secondary tree that contains given vector of PDF operators as root item
+ This type of item is special, as if the tree already exist, its contents is replaced
+ @param vec Operator vector
+ @param pName Optional name used for this property
+ */
+void MultiTreeWindow::activate(const OperatorVector &vec,QString pName/*=QString::null*/) {
+ TreeKey tk(Tree_OperatorVector,NULL);
+ if (!activate(tk)) {
+  //Create the page if it does not exist
+  TreeWindow* t=createPage(pName);
+  t->init(vec,pName);
+  trees.insert(tk,t);
+  treesReverse.insert(t,tk);
+ }
+ trees[tk]->init(vec,pName);
+ activate(tk);
 }
 
 /**
@@ -300,15 +329,16 @@ void MultiTreeWindow::activate(boost::shared_ptr<IProperty> doc,QString pName/*=
  @param doc IProperty used to identify secondary treeview
 */
 void MultiTreeWindow::deactivate(boost::shared_ptr<IProperty> doc) {
- deactivate(doc.get());
+ TreeKey tk(Tree_IProperty,doc.get());
+ deactivate(tk);
 }
 
 /**
- Try to delete secondary tree that is identified by key (void *ptr).
+ Try to delete secondary tree that is identified by key
  @param ptr pointer used to identify tree to activate
  */
-void MultiTreeWindow::deactivate(void *ptr) {
- if (!ptr) return; //Deactivate main tree view? Not possible
+void MultiTreeWindow::deactivate(TreeKey ptr) {
+ if (ptr.first==Tree_Main) return; //Deactivate main tree view? Not possible
  if (trees.contains(ptr)) { //Try to deactivate secondary tree view
   deleteWindow(trees[ptr]);
  }
@@ -321,8 +351,8 @@ void MultiTreeWindow::deactivate(void *ptr) {
 void MultiTreeWindow::deleteWindow(TreeWindow *tr) {
  guiPrintDbg(debug::DBG_DBG,"deleteWindow");
  assert(tr);
- void *ptr=treesReverse[tr];
- assert(ptr);
+ TreeKey ptr=treesReverse[tr];
+ assert(ptr.first!=Tree_Invalid);
  //Remove from both mappings
  trees.remove(ptr);
  treesReverse.remove(tr);
@@ -332,7 +362,9 @@ void MultiTreeWindow::deleteWindow(TreeWindow *tr) {
  //Current page is likely the one that was deleted, request the new page that is now active
  tree=dynamic_cast<TreeWindow*>(tab->currentPage());
  assert(tree);
- if (!tree) activate(NULL); // <- If this happen, it is probably a QT bug ...
+ if (!tree) { // <- If this happen, it is probably a QT bug ...
+  activateMain();
+ }
 }
 
 /**
@@ -340,7 +372,8 @@ void MultiTreeWindow::deleteWindow(TreeWindow *tr) {
  @param cs CContentStream used to identify secondary treeview
  */
 void MultiTreeWindow::deactivate(boost::shared_ptr<CContentStream> cs) {
- deactivate(cs.get());
+ TreeKey tk(Tree_ContentStream,cs.get());
+ deactivate(tk);
 }
 
 /** Resets the tree to be empty and show nothing */

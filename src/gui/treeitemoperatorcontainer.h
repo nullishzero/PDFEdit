@@ -3,8 +3,8 @@
 
 #include <iproperty.h>
 #include <qlistview.h>
-#include <ccontentstream.h>
-#include "treeitem.h"
+#include "treeitemabstract.h"
+#include "types.h"
 class QString;
 
 namespace gui {
@@ -13,9 +13,6 @@ using namespace pdfobjects;
 
 class TreeData;
 
-/** Vector with operators */
-typedef std::vector<boost::shared_ptr<PdfOperator> > OperatorVector;
-
 /**
  Class holding vector with pdf operators
  The vector is specified in constructor and comes from arbitrary source
@@ -23,10 +20,8 @@ typedef std::vector<boost::shared_ptr<PdfOperator> > OperatorVector;
 */
 class TreeItemOperatorContainer : public TreeItemAbstract {
 public:
- TreeItemOperatorContainer(TreeData *_data,QListView *parent,OperatorVector _op,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemOperatorContainer(TreeData *_data,QListViewItem *parent,OperatorVector _op,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemOperatorContainer(TreeData *_data,QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemOperatorContainer(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemOperatorContainer(TreeData *_data,QListView *parent,const OperatorVector &_op,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemOperatorContainer(TreeData *_data,QListViewItem *parent,const OperatorVector &_op,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemOperatorContainer();
  //From TreeItemAbstract interface
  virtual ChildType getChildType(const QString &name);
@@ -39,8 +34,6 @@ public:
 private:
  void init(const QString &name);
 private:
- /**  ContentStream object holding the operator */
- boost::shared_ptr<CContentStream> obj;
  /** Vector with pdf operators */
  OperatorVector op;
 

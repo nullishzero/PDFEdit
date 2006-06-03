@@ -5,14 +5,14 @@
 #include <qdict.h>
 #include <qmap.h>
 #include <qwidget.h>
-#include <qgrid.h>
-#include <qlayout.h>
 #include <iproperty.h>
 #include <pdfoperators.h>
 
 class QScrollView;
 class QLabel;
 class QStringList;
+class QGridLayout;
+class QFrame;
 
 namespace gui {
 

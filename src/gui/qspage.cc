@@ -9,7 +9,9 @@
 #include "qsdict.h"
 #include <qstring.h>
 #include <qrect.h>
+#include <qvariant.h>
 #include "qscontentstream.h"
+#include <cpage.h>
 
 namespace gui {
 

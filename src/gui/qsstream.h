@@ -1,10 +1,9 @@
 #ifndef __QSSTREAM_H__
 #define __QSSTREAM_H__
 
-#include <qstring.h>
-#include <qobject.h>
 #include <cobject.h>
 #include "qsiproperty.h"
+class QString;
 
 namespace gui {
 

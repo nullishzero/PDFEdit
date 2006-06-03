@@ -3,10 +3,13 @@
 
 #include <qwidget.h>
 #include <cobject.h>
-#include <ccontentstream.h>
-#include <cpdf.h>
+#include "types.h"
 class QListView;
 class QListViewItem;
+namespace pdfobjects {
+ class CPdf;
+ class CContentStream;
+}
 
 namespace gui {
 
@@ -29,6 +32,7 @@ class TreeWindow : public QWidget {
 public:
  void uninit();
  void init(CPdf *pdfDoc,const QString &fileName);
+ void init(const OperatorVector &vec,const QString &pName=QString::null);
  void init(boost::shared_ptr<IProperty> doc,const QString &pName=QString::null);
  void init(boost::shared_ptr<CContentStream> cs,const QString &pName=QString::null);
  TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent=0,const char *name=0);

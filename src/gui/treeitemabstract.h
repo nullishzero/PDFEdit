@@ -2,10 +2,10 @@
 #define __TREEITEMABSTRACT_H__
 
 #include <qlistview.h>
-#include <qstring.h>
 #include <qdict.h>
 
 class QStringList;
+class QString;
 
 namespace gui {
 

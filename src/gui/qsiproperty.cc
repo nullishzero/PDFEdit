@@ -10,6 +10,7 @@
 #include <qstring.h>
 #include <cobject.h>
 #include <qsimporter.h>
+#include <qvaluelist.h>
 
 namespace gui {
 
@@ -43,7 +44,7 @@ QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className,Ba
 
 /**
  Return text representation of property
- \see IProeprty::getStringRepresentation
+ \see IProperty::getStringRepresentation
  @return string representation
 */
 QString QSIProperty::getText() {
@@ -53,12 +54,60 @@ QString QSIProperty::getText() {
 }
 
 /**
- Try to convert textual representation to a number.
+ Return Value of property
+ @return property value
+*/
+QVariant QSIProperty::value() {
+ CString* str=dynamic_cast<CString*>(obj.get());
+ if (str) {
+  std::string value;
+  str->getPropertyValue(value);
+  return QString(value);
+ }
+ CName* name=dynamic_cast<CName*>(obj.get());
+ if (name) {
+  std::string value;
+  name->getPropertyValue(value);
+  return QString(value);
+ }
+ CInt* tInt=dynamic_cast<CInt*>(obj.get());
+ if (tInt) {
+  int value;
+  tInt->getPropertyValue(value);
+  return value;
+ }
+ CBool* ibool=dynamic_cast<CBool*>(obj.get());
+ if (ibool) {
+  bool value;
+  ibool->getPropertyValue(value);
+  return value;
+ }
+ CReal* real=dynamic_cast<CReal*>(obj.get());
+ if (real) {
+  double value;
+  real->getPropertyValue(value);
+  return value;
+ }
+ CRef* ref=dynamic_cast<CRef*>(obj.get());
+ if (ref) {
+  IndiRef value;
+  ref->getPropertyValue(value);
+  QValueList<QVariant> val;
+  val+=value.num;
+  val+=value.gen;
+  return val;
+ }
+ // Dict/Array/Null/Stream ... 
+ return QVariant();
+}
+
+/**
+ Try to convert value to a number.
  Return 0 if it cannot be represented as number
- @return Integer representaion of this property
+ @return Integer representation of this property
  */
 int QSIProperty::getInt() {
- return getText().toInt();
+ return value().toInt();
 }
 
 /**

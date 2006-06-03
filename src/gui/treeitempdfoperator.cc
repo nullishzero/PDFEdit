@@ -11,6 +11,7 @@
 #include "util.h"
 #include <cobject.h>
 #include <ccontentstream.h>
+#include <pdfoperators.h>
 
 namespace gui {
 
@@ -46,6 +47,20 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost
 TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  csRef=cs;
  assert(csRef.get());
+ assert(data);
+ obj=pdfObj;
+ reload();
+}
+
+/**
+ constructor of TreeItemPdfOperator - create child item from given object (without any content stream information)
+ @param _data TreeData containing necessary information about tree in which this item will be inserted
+ @param parent QListViewItem under which to put this item
+ @param pdfObj Operator contained in this item
+ @param name Internal name of this item (order of operator)
+ @param after Item after which this one will be inserted
+ */
+TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  assert(data);
  obj=pdfObj;
  reload();

@@ -2,7 +2,6 @@
 #define __TREEITEM_H__
 
 #include <iproperty.h>
-#include <qlistview.h>
 #include "treeitemabstract.h"
 
 class QString;

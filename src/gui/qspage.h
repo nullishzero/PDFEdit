@@ -1,12 +1,17 @@
 #ifndef __QSPAGE_H__
 #define __QSPAGE_H__
 
-#include <qobject.h>
-#include <cpage.h>
 #include "qscobject.h"
-#include <qvariant.h>
+#include <qobject.h>
+#include <boost/shared_ptr.hpp>
+#include <vector>
+namespace pdfobjects {
+ class CPage;
+ class CContentStream;
+}
 class QString;
 class QRect;
+class QVariant;
 
 namespace gui {
 

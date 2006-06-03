@@ -3,11 +3,10 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
-#include <coutline.h>
 #include "treeitemoutline.h"
+#include <iproperty.h>
+#include <coutline.h>
 #include "util.h"
-#include "pdfutil.h"
 
 namespace gui {
 

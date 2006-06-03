@@ -1,12 +1,10 @@
 #ifndef __QSPDFOPERATOR_H__
 #define __QSPDFOPERATOR_H__
 
-#include <qstring.h>
 #include <qobject.h>
 #include <pdfoperators.h>
-#include <qobjectlist.h>
 #include "qscobject.h"
-#include "nullpointerexception.h"
+class QString;
 
 namespace gui {
 

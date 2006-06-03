@@ -4,12 +4,12 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include "property.h"
 #include <iproperty.h>
 #include <qstring.h>
 #include <qlabel.h>
 #include "util.h"
+#include <utils/debug.h>
 
 namespace gui {
 

@@ -69,6 +69,7 @@ void TreeItemContentStream::init(const QString &name) {
 /** Update tree item accdording to what mode is selected */
 void TreeItemContentStream::showMode() {
  setText(2,"");
+ if (parent()) return;	//Not in separate tree, which mean no modes
  if (mode==All) setText(2,QObject::tr("Showing all","mode"));
  else if (mode==Text) setText(2,QObject::tr("Showing text. op.","mode"));
  else if (mode==Font) setText(2,QObject::tr("Showing font. op.","mode"));

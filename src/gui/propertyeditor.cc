@@ -16,6 +16,8 @@
 #include <qscrollview.h>
 #include <qstringlist.h>
 #include <qlabel.h>
+#include <qgrid.h>
+#include <qlayout.h>
 #include "pdfutil.h"
 #include "main.h"
 #include "propertymodecontroller.h"
@@ -143,6 +145,7 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  QString name=prop->getName();
  QLabel *label;
  label=new QLabel(QString(" ")+name+" ",grid);
+ label->setTextFormat(PlainText);
  int labelHeight=label->sizeHint().height();
  int propHeight=prop->sizeHint().height();
  gridl->setRowSpacing(nObjects,MAX(labelHeight,propHeight));
