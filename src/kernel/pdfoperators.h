@@ -154,8 +154,8 @@ public:
 	 * iterator list. If not specified, it is assumed that children are not
 	 * empty and that the last item is not a composite.
 	 */
-	virtual void push_back (const boost::shared_ptr<PdfOperator>, 
-							boost::shared_ptr<PdfOperator>)
+	virtual void push_back ( __attribute__((unused)) const boost::shared_ptr<PdfOperator> oper, 
+							__attribute__((unused)) boost::shared_ptr<PdfOperator> prev = boost::shared_ptr<PdfOperator> ())
 		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
 
 protected:
@@ -686,12 +686,21 @@ struct AcceptingPdfOperatorIterator: public PdfOperator::Iterator
 	//
 	// Constructor
 	//
-	AcceptingPdfOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	AcceptingPdfOperatorIterator (ListItem oper, bool forwarddir = true) : PdfOperator::Iterator (oper)
 	{
-		// Get to the first valid text operator
-		while (!isEnd() && !validItem())
-			this->next();
+		if (forwarddir)
+		{
+			// Get to the first valid text operator
+			while (!isEnd() && !validItem())
+				this->next();
+		}else
+		{
+			// Get to the first valid text operator in the backward direction
+			while (!isBegin() && !validItem())
+				this->prev();
+		}
 	}
+
 	//
 	// Template method interface
 	//
@@ -730,12 +739,21 @@ struct RejectingPdfOperatorIterator: public PdfOperator::Iterator
 	//
 	// Constructor
 	//
-	RejectingPdfOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	RejectingPdfOperatorIterator (ListItem oper, bool forwarddir = true) : PdfOperator::Iterator (oper)
 	{
-		// Get to the first valid text operator
-		while (!isEnd() && !validItem())
-			this->next();
+		if (forwarddir)
+		{
+			// Get to the first valid text operator
+			while (!isEnd() && !validItem())
+				this->next();
+		}else
+		{
+			// Get to the first valid text operator in the backward direction
+			while (!isBegin() && !validItem())
+				this->prev();
+		}
 	}
+
 	//
 	// Template method interface
 	//

@@ -1637,8 +1637,13 @@ throw ()
 	try {
 
 	utilsPrintDbg (debug::DBG_DBG, "");
-	assert (hasValidPdf (newValue));
-	assert (hasValidRef (newValue));
+	// Check if the property has correct values if it exists (it could be
+	// deleted and newValue is NULL
+	if (newValue)
+	{
+		assert (hasValidPdf (newValue));
+		assert (hasValidRef (newValue));
+	}
 
 	// Stream has changed, reparse it
 	contentstream->reparse ();
@@ -2156,7 +2161,7 @@ operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, doubl
 	if (containsNonStrokingOperator(oper))
 		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("rg", 3, operands)), composite);
 	if (containsStrokingOperator(oper))
-		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, operands)), composite);
+		composite->push_back (shared_ptr<PdfOperator> (new SimpleGenericOperator ("RG", 3, operands)), getLastOperator(composite));
 	//
 	// DEBUG
 	// BUT we have to insert something using composite (because it is the first
