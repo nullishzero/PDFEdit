@@ -4,10 +4,7 @@
  *        Filename:  cobject.h
  *     Description:  Header file containing definition of IProperty and CObject classes.
  *         Created:  01/18/2006 
- *        Revision:  none
  *          Author:  jmisutka (06/01/19), 
- *			\TODO:
- *					better public/protected dividing
  *
  * =====================================================================================
  */
@@ -35,12 +32,23 @@ class CXRef;
 
 /**
  * CObjectSimple type trait.
- * Additional information that identifies variable type, e.g. for writeValue function.
  *
- * If someone tries to use unsupported type (pCmd,....), she should get compile error
+ * This is an advance c++ template technique which allows us to store
+ * additional information that identify variable type (e.g. specification of function types of a function template --
+ * function in a template class).
+ *
+ * If someone tries to use unsupported type (e.g pCmd, etc.), she should get compile error
  * because PropertyTraitSimple<> has no body.
  *
- * REMARK: BE CAREFUL when manipulating these ones.
+ * REMARK: BE CAREFUL when manipulating these ones. Because a small change could
+ * be hard to find.
+ *
+ * This class does not provide default copy constructor because copying a
+ * property could be understood either as deep copy or shallow copy. 
+ * Copying complex types could be very expensive so we have made this decision to
+ * avoid it.
+ *
+ * \see CObjectComplex, CObjectStream
  */
 template<PropertyType T> struct PropertyTraitSimple; 
 template<> struct PropertyTraitSimple<pNull>
@@ -80,14 +88,18 @@ template<> struct PropertyTraitSimple<pRef>
 /** 
  * Template class representing simple PDF objects from specification v1.5.
  *
- * This class represents simple objects like null, string, number etc.
+ * This is a very generic class representing simple objects like null, string, number etc.
  * It does not have so many special functions as CObjectComplex.
  *
- * Other xpdf objects like objCmd can't be instantiated although the PropertyType 
- * exists. It is because PropertyTraitSimple is not specified for these types.
+ * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
+ * exists. It is because PropertyTraitSimple is not specialized for these types.
  *
- * We can use memory checking with this class which save information about living IProperties.
- * Can be used to detect memory leaks etc.
+ * We use memory checking with this class which save information about existing IProperties.
+ * This technique can be used to detect memory leaks etc. 
+ *
+ * Xpdf object is real mess so we just instantiate this object with xpdf object and
+ * use this object. They were definitely not meant for changing, actually there
+ * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
  *
  */
 template <PropertyType Tp, typename Checker = BasicMemChecker>
@@ -98,18 +110,18 @@ public:
 	typedef typename PropertyTraitSimple<Tp>::value 	 Value;
 
 private:
-	/** Object's value. */
+	/** Object's valuei holder. */
 	Value value;
 	
 
 	//
 	// Constructors
 	//
-public/*protected*/:
+public:
 	
 	/**
-	 * Constructor. Only kernel can call this constructor. It depends on the object, that we have
-	 * parsed. The object will read value from o and store it. We do NOT save any reference to o.
+	 * Constructor. 
+	 * The object will read value from o and store it. We do NOT save any reference to o.
 	 *
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
@@ -119,8 +131,8 @@ public/*protected*/:
 
 	
 	/**
-	 * Constructor. Only kernel can call this constructor. It depends on the object, that we have
-	 * parsed. The object will read value from o and store it. We do NOT save any reference to o.
+	 * Constructor.
+	 * The object will read value from o and store it. We do NOT save any reference to o.
 	 *
 	 * @param o		Xpdf object. 
 	 */
@@ -145,8 +157,10 @@ public:
 protected:
 
 	/**
-	 * Clone. Performs deep copy.
-	 * REMARK: pRef DOES NOT copy the referenced object.
+	 * Clone. 
+	 *
+	 * Performs deep copy.
+	 * REMARK: CRef does NOT copy the referenced object just itself.
 	 *
 	 * @return Deep copy of this object.
 	 */
@@ -166,9 +180,10 @@ public:
 			
 
 	/**
-	 * Returns string representation of (x)pdf object. 
+	 * Returns string representation of this object according to pdf
+	 * specification. 
 	 * 
-	 * @param str 	After successful call, it will hold the string representation 
+	 * @param str 	Output string that will hold the string representation 
 	 * 				of current object.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
@@ -188,7 +203,7 @@ public:
 	 * Convert string to an object value.
 	 * <exception cref="ObjBadValueE" /> Thrown when we can't parse the string correctly.
 	 *
-	 * @param str0 Object in a text form.
+	 * @param str0 String object that will be parsed and saved to this object's value.
 	 */
 	void setStringRepresentation (const std::string& strO);
 
@@ -197,7 +212,10 @@ public:
 	 * Change the value of an object. The variable type depends
 	 * on CObject type.
 	 * 
-	 * We can define the best to represent an pdf object.
+	 * We can define the best type to represent an pdf object in
+	 * PropertyTraitSimple.
+	 *
+	 * \see PropertyTraitSimple
 	 *
 	 * @param val	Value that will be set.
 	 */
@@ -219,15 +237,16 @@ public:
 public:	
 
 	/**
-	 * Make xpdf Object from this object. This function allocates xpdf object, caller has to free it.
-	 * You have to call free() function on the Object to deallocate its resources.
+	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
+	 * Caller has to free the xpdf Object (call Object::free and then
+	 * deallocating)
 	 *
 	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
 	 * 
 	 * @return Xpdf object representing value of this simple object.
 	 */
-	virtual ::Object*	_makeXpdfObject () const;
+	virtual ::Object* _makeXpdfObject () const;
 	
 private:
 
@@ -274,11 +293,18 @@ class DictIdxComparator;
 
 
 /**
- * CObjectComplex type trait.
- * Additional information that identifies variable type, e.g. for writeValue function.
  *
- * If someone tries to use unsupported type (pCmd,....), she should get compile error
- * because PropertyTrait<> has no body.
+ * CObjectComplex type trait.
+ *
+ * This is an advance c++ template technique which allows us to store
+ * additional information that identify variable type (e.g. specification of function types of a function template --
+ * function in a template class).
+ *
+ * If someone tries to use unsupported type (e.g pCmd, etc.), she should get compile error
+ * because PropertyTraitSimple<> has no body.
+ *
+ * REMARK: BE CAREFUL when manipulating these ones. Because a small change could
+ * be hard to find.
  */
 template<PropertyType T> struct PropertyTraitComplex; 
 template<> struct PropertyTraitComplex<pArray>	
@@ -313,9 +339,29 @@ template <typename Checker> class CObjectStream;
 /** 
  * Template class representing complex PDF objects from specification v1.5.
  *
- * The specific features are implemented using c++ feature called Incomplete Instantiation.
- * It means that, when it is not used, it is not instatiated, so e.g. CArray won't have
- * addProperty (IProperty& ,string&) method.
+ * This is a generic class joining implementation of dictionary and array together in in one place.
+ *
+ * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
+ * exists. It is because PropertyTraitSimple is not specialized for these types.
+ *
+ * We use memory checking with this class which save information about existing IProperties.
+ * This technique can be used to detect memory leaks etc. 
+ *
+ * Xpdf object is real mess so we just instantiate this object with xpdf object and
+ * use this object. They were definitely not meant for changing, actually there
+ * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
+ * 
+ * This class uses another advance c++ technique called Incomplete
+ * Instantiation. The specific features are implemented using this feature.
+ * It simply means that when a function in a template class is not used, it is not instatiated
+ * (e.g. CArray won't have addProperty (IProperty& ,string&) method.)
+ *
+ * This class does not provide default copy constructor because copying a
+ * property could be understood either as deep copy or shallow copy. 
+ * Copying complex types could be very expensive so we have made this decision to
+ * avoid it.
+ *
+ * \see CObjectSimple, CObjectStream
  */
 template <PropertyType Tp, typename Checker = BasicMemChecker>
 class CObjectComplex : noncopyable, public IProperty
@@ -337,9 +383,9 @@ private:
 	//
 	// Constructors
 	//
-/*debug*/public:
+public:
 	/**
-	 * Constructor. Only kernel can call this constructor
+	 * Constructor.
 	 *
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
@@ -348,7 +394,7 @@ private:
 	CObjectComplex (CPdf& p, Object& o, const IndiRef& rf);
 
 	/**
-	 * Constructor. Only kernel can call this constructor
+	 * Constructor.
 	 *
 	 * @param o		Xpdf object. 
 	 */
@@ -377,7 +423,13 @@ protected:
 	 */
 	virtual IProperty* doClone () const;
 
-	/** Return new instance. */
+	/** 
+	 * Return new instance. 
+	 *
+	 * This function is a factory method design pattern for creating complex instances.
+	 *
+	 * @return New complex object.
+	 */
 	virtual CObjectComplex<Tp,Checker>* _newInstance () const
 		{ return new CObjectComplex<Tp,Checker>; }
 	
@@ -395,9 +447,10 @@ public:
 	
 
 	/**
-	 * Returns string representation of (x)pdf object. 
+	 * Returns string representation of this object according to pdf
+	 * specification. 
 	 * 
-	 * @param str 	After successful call, it will hold string representation 
+	 * @param str 	Output string that will hold the string representation 
 	 * 				of current object.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
@@ -416,20 +469,20 @@ public:
  
 
 	/**
-	 * Inserts all property names to container supplied by caller. 
+	 * Inserts all property names of this complex type to the container supplied by caller. 
 	 * 
 	 * REMARK: Specific for pDict.
    	 *
-	 * @param container Container of string objects. STL vector,list,deque.
+	 * @param container Output container of string objects. Could be vector,list,deque etc.
 	 */
 	template<typename Container>
 	void getAllPropertyNames (Container& container) const;
 
 	/**
-	 * Returns value of property identified by its name/position depending on type of this object.
+	 * Returns value of property identified by its name/position depending on the type of this object.
    	 *
    	 * @param 	id 	Variable identifying position of the property.
-	 * @return	Variable where the value will be stored.
+	 * @return	Output variable where the value will be stored.
    	 */
 	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
 
@@ -439,7 +492,7 @@ public:
 	 * <exception cref="ObjInvalidPositionInComplex "/> When the id does not correctly identify an item.
 	 *
 	 * @param	name	Name of the property.
-	 * @return		Property type.	
+	 * @return Property type.	
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
 		{return getProperty(id)->getType();};
@@ -450,43 +503,23 @@ public:
 	//
 public:
 	/**
-	 * Set pdf to itself and also tu all children
+	 * Set pdf to this object and also to all its children.
 	 *
 	 * @param pdf New pdf.
 	 */
 	virtual void setPdf (CPdf* pdf);
 
 	/**
-	 * Set ref to itself and also tu all children
+	 * Set ref to this object and also to all its children.
 	 *
 	 * @param pdf New indirect reference numbers.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
 	/**
-	 * Try to make an (x)pdf object from string.
-	 * <exception cref="..." />
-	 *
-	 * @param str0 Object in a text form.
-	 */
-	void setStringRepresentation (const std::string& strO) {assert (!"is this function really needed???");}
-
-	
-	/**
-	 * Change the value of an object. The variable type depends
-	 * on CObject type. 
-	 * For complex types, it is equal to setStringRepresentation().
-	 * 
-	 * <exception cref="ObjBadValueE "/> Thrown When a value cannot be set due to bad value e.g. in complex types.
-	 *
-	 * @param val	Value that will be set.
-	 */
-	void writeValue (WriteType val) {assert (!"is this function really needed???");}
- 
-	/**
 	 * Sets property type of an item.
 	 * 
-	 * Firstly, the property that is passed as argument is cloned, the argument itself is not set.
+	 * Firstly, the property that is passed as argument is cloned, the argument itself is not used.
 	 * The cloned object replaces object specified by id.
 	 * 
 	 * @param	id		Name/Index of property
@@ -500,7 +533,7 @@ public:
 	 * Adds property to array/dict. 
 	 *
 	 * Firstly, the property that is passed as argument is cloned, the argument itself is not added. 
-	 * The cloned object is added, automaticly associated with the pdf where the object is beeing added.
+	 * The cloned object is added, automatically associated with the pdf where the object is beeing added.
 	 * Indicate that this object has changed and return the pointer to the cloned object.
 	 *
 	 * <exception cxref="OutOfRange"> Thrown when position is out of range.
@@ -511,15 +544,16 @@ public:
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
+
+	/** \copydoc addProperty */
 	boost::shared_ptr<IProperty> addProperty (size_t position, const IProperty& newIp);
+	
+	/** \copydoc addProperty */
 	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, const IProperty& newIp);
 
 	
 	/**
-	 * Remove property from array/dict/stream. If the xpdf Object to be removed is 
-	 * associated with an IProperty call release(). Otherwise just free the memory
-	 * occupied by the xpdf object. Properties start with index 0.
-	 * Finally indicate that this object has changed.
+	 * Remove property from array/dict. 
 	 *
 	 * <exception cref="ElementNotFoundException"/> Thrown when object is not found.
 	 * 
@@ -562,22 +596,24 @@ public:
 	}
 
 	/**
-	 * Make xpdf Object from this object.
-	 * You have to call free() function on the Object to deallocate its resources.
+	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
+	 * Caller has to free the xpdf Object (call Object::free and then
+	 * deallocating)
 	 *
 	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
-
+	 * 
 	 * @return Xpdf object representing value of this simple object.
 	 */
-	virtual Object*	_makeXpdfObject () const;
+	virtual ::Object* _makeXpdfObject () const;
 
 private:
-	
 	/**
 	 * Create context of a change.
 	 *
 	 * REMARK: Be carefull. Deallocate this object.
+	 * 
+	 * @param changedIp Pointer to old value.
 	 * 
 	 * @return Context in which a change occured.
 	 */
@@ -587,11 +623,15 @@ private:
 	 * Indicate that the object has changed.
 	 * Notifies all observers associated with this property about the change.
 	 *
+	 * @param newValue Pointer to new value of an object.
 	 * @param context Context in which a change occured.
 	 */
 	void _objectChanged (boost::shared_ptr<IProperty> newValue, 
 						 boost::shared_ptr<const ObserverContext> context);
 
+	//
+	// Mode interface
+	//
 protected:
 	/**
 	 * Set mode of a property.
@@ -606,7 +646,7 @@ public:
 	/**
 	 * Return all object we have access to.
 	 *
-	 * @param store Container of objects.
+	 * @param store Output container of all child objects.
 	 */
 	template <typename Storage>
 	void _getAllChildObjects (Storage& store) const;
@@ -626,10 +666,28 @@ public:
 template<typename T> class CStreamXpdfReader;
 
 /**
- * Special class representing xpdf streams. It is neither a simple object, because it does not
+ * Template class representing stream PDF objects from specification v1.5.
+ *
+ * It is neither a simple object, because it does not
  * contain just simple value, nor a complex object, because it can not be simple represented
  * in that generic class. It contains a dictionary and a stream. It does not have methods common
  * to complex objects.
+ *
+ * This is a generic class joining implementation of dictionary and array together in in one place.
+ *
+ * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
+ * exists. It is because PropertyTraitSimple is not specialized for these types.
+ *
+ * We use memory checking with this class which save information about existing IProperties.
+ * This technique can be used to detect memory leaks etc. 
+ *
+ * Xpdf stream objects are the worst from all xpdf objects because of their deallocation politics.
+ * It is really not easy to say when, where and who should deallocate an xpdf stream, its buffer etc...
+ * 
+ * This class does not provide default copy constructor because copying a
+ * property could be understood either as deep copy or shallow copy. 
+ * Copying complex types could be very expensive so we have made this decision to
+ * avoid it.
  */
 template <typename Checker = BasicMemChecker>
 class CObjectStream : noncopyable, public IProperty
@@ -655,9 +713,9 @@ protected:
 	/** Buffer. */
 	Buffer buffer;
 
-	/** Parser. */
-	Parser* parser;
-	/** Current object in opened stream. */
+	/** XpdfParser. */
+	::Parser* parser;
+	/** Current object in an opened stream. */
 	mutable ::Object curObj;
 		
 
@@ -711,40 +769,32 @@ protected:
 	// Dictionary methods, delegated to CDict
 	//
 public:
-	//
-	//
-	//
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	size_t getPropertyCount () const
 		{return dictionary.getPropertyCount ();}
-	//
-	//
-	//
+	
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	template<typename Container> 
 	void getAllPropertyNames (Container& container) const
 		{ dictionary.getAllPropertyNames (container); }
-	//
-	//
-	//
+	
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	boost::shared_ptr<IProperty> getProperty (PropertyId id) const
 		{return dictionary.getProperty (id);}
-	//
-	//
-	//
+	
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	PropertyType getPropertyType (PropertyId id) const
 		{return dictionary.getPropertyType (id);}
-	//
-	//
-	//
+	
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	boost::shared_ptr<IProperty> setProperty (PropertyId id, IProperty& ip)
 		{return dictionary.setProperty (id, ip);}
-	//
-	//
-	//
+	
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	boost::shared_ptr<IProperty> addProperty (PropertyId id, const IProperty& newIp)
 		{return dictionary.addProperty (id, newIp);}
-	//
-	//
-	//
+	
+	/** Delagate this operation to underlying dictionary. \see CObjectComplex */
 	void delProperty (PropertyId id)
 		{dictionary.delProperty (id);}
 
@@ -764,24 +814,16 @@ public:
 	/**
 	 * Returns string representation of this object.
 	 *
-	 * @param str String representation.
+	 * @param str Output string representation.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
 	 * Returns decoded string representation of this object.
 	 *
-	 * @param str String representation.
+	 * @param str Output string representation.
 	 */
 	virtual void getDecodedStringRepresentation (std::string& str) const;
-
-	/**
-	 * Returns printable string representation of this object.
-	 *
-	 * @param chrbuf Output char buffer.
-	 * @return Size of char buffer.
-	 */
-	virtual size_t getPdfRepresentation (CharBuffer& chrbuf) const __attribute__ ((deprecated));
 
 	/**
 	 * Get encoded buffer. Can contain non printable characters.
@@ -847,7 +889,7 @@ private:
 	void open ();
 
 	/**
-	 * Close parsing.
+	 * Close parser.
 	 */
 	void close ();
 	
@@ -899,13 +941,16 @@ public:
 	//
 public:
 	/**
-     * Create xpdf object.
+	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
+	 * Caller has to free the xpdf Object (call Object::free and then
+	 * deallocating)
 	 *
-	 * REMARK: Caller is responsible for deallocating the xpdf object.
-     *
-     * @return Xpdf object(s).
-     */
-    virtual Object* _makeXpdfObject () const; 
+	 * <exception cref="ObjBadValueE" /> Thrown when xpdf can't parse the string representation of this
+	 * object correctly.
+	 * 
+	 * @return Xpdf object representing value of this simple object.
+	 */
+	virtual Object* _makeXpdfObject () const; 
 
 
 private:
@@ -918,7 +963,7 @@ private:
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context);
 
 	/**
-	 * Get encoded string representation.
+	 * Get encoded buffer.
 	 *
 	 * @param container Output container.
 	 */
@@ -980,9 +1025,8 @@ public:
 
 
 //=====================================================================================
-//
-// CObject types
-//
+// CObject typedefs
+//=====================================================================================
 
 typedef CObjectSimple<pNull>	CNull;
 typedef CObjectSimple<pBool>	CBool;
@@ -997,13 +1041,22 @@ typedef CObjectComplex<pDict>	CDict;
 typedef CObjectStream<>			CStream;
 
 
-/** debugging \TODO remove. */
+//
+// Forward declaration
+//
 namespace utils{
 void xpdfObjToString (Object& obj, std::string& str);
 }
 
 /**
  * Adapter which is able to read sequentially from more CStreams.
+ *
+ * It stores a container of streams and when the actual stream does not
+ * contain more objects, tries to read the next one if any.
+ *
+ * This class is an example of Adapter design pattern. We have to be able to
+ * read from more streams sequentially and this class provides us with the
+ * interface.
  */
 template<typename Container>
 class CStreamXpdfReader
@@ -1012,11 +1065,10 @@ public:
 	typedef std::vector<boost::shared_ptr<CStream> > CStreams;
 
 private:
-	CStreams streams;
-	boost::shared_ptr<CStream> actstream;
-	size_t pos;
-	size_t objread; // helper variable for debugging
-	std::ofstream out;
+	CStreams streams;	/**< All streams. */
+	boost::shared_ptr<CStream> actstream;	/**< Actual stream that is beeing parsed. */
+	size_t pos;			/**< Position of actual parsed stream in the stream container. */
+	size_t objread; 	/**< Helper variable for debugging. Number of read objects. */
 	
 
 public:
@@ -1036,10 +1088,6 @@ public:
 
 		actstream = streams.front ();
 		actstream->open ();
-
-		//debug
-		/** debugging \TODO remove. */
-		out.open ("_streamreader");
 	}
 
 	/** Close. */
@@ -1051,10 +1099,6 @@ public:
 		assert (actstream->eof());
 		
 		actstream->close ();
-
-		//debug
-		/** debugging \TODO remove. */
-		out.close ();
 	}
 
 	/** 
@@ -1074,10 +1118,6 @@ public:
 			parsedstreams.push_back (streams[i]);
 		
 		actstream->close ();
-		
-		// debug
-		/** debugging \TODO remove. */
-		out.close ();
 	}
 
 	/** Get xpdf object. */
@@ -1096,15 +1136,8 @@ public:
 			actstream->getXpdfObject (obj);
 		}
 		
-		//debug
 		/** debugging \TODO remove. */
 		objread ++;
-		std::string tmp;
-		if (!obj.isEOF())
-		{
-			utils::xpdfObjToString (obj,tmp);
-			out << tmp << std::endl << std::flush;
-		}
 	}
 
 	/** 
@@ -1156,9 +1189,8 @@ public:
 };
 
 //=====================================================================================
-//
-//	Memory checker classes
-//
+//	Memory checker classes -- DEBUGGING PURPOSES
+//=====================================================================================
 
 /**
  * No memory checks done.
@@ -1174,8 +1206,8 @@ class NoMemChecker
  * This class stores pointer to every created class in a container. When a class is destroyed, it is removed
  * from the container.
  *
- * After the end of a program, we can count how many objects have not been released.
- * 
+ * After the end of a program, we can count how many objects have not been released. If zero left, we know 
+ * that we do not have a memory leak.
  */
 class BasicMemChecker
 {
@@ -1255,20 +1287,19 @@ private:
 
 
 //=====================================================================================
-//
 //	Find element functors
-//
+//=====================================================================================
 
 
 /**
- * This class is used as functor to an equal algorithm to std::find_if algorithm.
+ * This class is used as functor to analgorithm similar to std::find_if.
+ *
  * Finds out an item specified by its position. find_if CANNOT be used, because it 
  * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor and
  * this functor RELIES on these requirements.
- * 
  *
  * More effective algorithms could be used but this approach is 
- * used to get more generic.
+ * used to be more generic.
  */
 class ArrayIdxComparator
 {
@@ -1302,12 +1333,13 @@ public:
 
 /**
  * This class is used as functor to an equal algorithm to std::find_if algorithm.
+ * 
  * Finds out an item specified by its position. find_if CANNOT be used, because it 
  * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor and
  * this functor RELIES on these requirements.
  *
  * Perhaps more effective algorithms could be used but this approach is 
- * used to get more generic.
+ * used to be more generic.
  */
 class DictIdxComparator
 {

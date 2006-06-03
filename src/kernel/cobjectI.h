@@ -881,29 +881,6 @@ CObjectStream<Checker>::doClone () const
 }
 
 //
-// Get methods
-//
-
-//
-//
-//
-template<typename Checker>
-size_t
-CObjectStream<Checker>::getPdfRepresentation (CharBuffer& chrbuf) const
-{
-	kernelPrintDbg (debug::DBG_DBG, "");
-	
-	// Get dictionary string representation
-	std::string strDict;
-	dictionary.getStringRepresentation (strDict);
-
-	// Put them together
-	return utils::streamToCharBuffer (strDict, buffer, chrbuf);
-}
-
-
-	
-//
 // Set methods
 //
 
