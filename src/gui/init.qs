@@ -364,7 +364,7 @@ function editPageMediaBox() {
  gb.add (exl);
  var eyl = createLineEdit(tr("Left upper corner y position")+": ", yleft);
  gb.add (eyl);
- var exr = createLineEdit(tr("Left bottom corner x position")+": ", xright);
+ var exr = createLineEdit(tr("Right bottom corner x position")+": ", xright);
  gb.add (exr);
  var eyr = createLineEdit(tr("Right bottom corner y position")+": ", yright);
  gb.add (eyr);
