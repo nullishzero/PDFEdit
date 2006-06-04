@@ -18,6 +18,7 @@ namespace gui {
 class QSContentStream;
 class QSDict;
 class Base;
+class QSPdfOperatorStack;
 
 using namespace pdfobjects;
 
@@ -31,6 +32,17 @@ public:
  QSPage(boost::shared_ptr<CPage> _page,Base *_base);
  boost::shared_ptr<CPage> get() const;
 public slots:
+ /**
+  Set transform matrix of this page.
+  Expects array with 6 real numbers as the matrix.
+ */
+ void setTransformMatrix(QVariant tMatrix);
+ /*-
+  Add new content stream to page, created from provided stack of PDF operators.
+  They must form a valid content stream
+ */
+ void addContentStream(QSPdfOperatorStack* opStack);
+ void addContentStream(QObject* opStack);
  /*-
   Return list of all font id's and base names from resource dictionary of a page.
   For each font id and name pair there are two consecutive elements in returned array,

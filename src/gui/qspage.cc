@@ -10,7 +10,9 @@
 #include <qstring.h>
 #include <qrect.h>
 #include <qvariant.h>
+#include <qvaluelist.h>
 #include "qscontentstream.h"
+#include "qspdfoperatorstack.h"
 #include <cpage.h>
 
 namespace gui {
@@ -46,6 +48,43 @@ QSPage::~QSPage() {
 /** Call CPage::getDictionary */
 QSDict* QSPage::getDictionary() {
  return new QSDict(obj->getDictionary(),base);
+}
+
+
+/**
+ Set transform matrix of this page
+ \see CPage::setTransformMatrix
+ @param tMatrix Array with 6 integers
+ */
+void QSPage::setTransformMatrix(QVariant tMatrix) {
+ double tm[6]={0};
+ QValueList<QVariant> list=tMatrix.toList();
+ QValueList<QVariant>::Iterator it = list.begin();
+ int i=0;
+ while(it!=list.end()) {
+  if (i>=6) break;//We filled all 6 values
+  tm[i]=(*it).toDouble();
+  ++it;
+  ++i;
+ }
+ obj->setTransformMatrix(tm);
+}
+
+/** 
+ Add content stream to page, created from new operator stack
+ \see CPage::addContentStream
+ @param opStack PDF Operator stack
+*/
+void QSPage::addContentStream(QSPdfOperatorStack* opStack) {
+ assert(opStack);
+ obj->addContentStream(opStack->get());
+}
+
+/** \copydoc addContentStream(QSPdfOperatorStack*) */
+void QSPage::addContentStream(QObject* opStack) {
+ QSPdfOperatorStack* in=dynamic_cast<QSPdfOperatorStack*>(opStack);
+ if (!in) return;
+ addContentStream(in);
 }
 
 /** Call CPage::getText(ret); return ret */

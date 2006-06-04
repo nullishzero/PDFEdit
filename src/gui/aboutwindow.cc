@@ -28,26 +28,47 @@ const Qt::WFlags aboutDialogFlags=Qt::WDestructiveClose | Qt::WType_Dialog;
  @param name Name of this window (used only for debugging
  */
 AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,aboutDialogFlags) {
+ IconCache ic;
+ //Window title
+ setCaption(app+" - "+tr("About program"));
+
+ QGridLayout *l=new QGridLayout(this,2,2);
+
+ //Text in about window
  QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big><br><br>"+tr("Homepage")+" : http://pdfedit.petricek.net/";
  QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"
                                +tr("Authors")+":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Misutka<br>&nbsp; Martin Petricek<br>";
- setCaption(app+" - "+tr("About program"));
- QGridLayout *l=new QGridLayout(this,2,2);
  QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1><br>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
   info+"</td><td valign=\"bottom\">"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
- lb->setPaletteBackgroundColor(white);
- lb->setBackgroundMode(FixedColor);
+// lb->setPaletteBackgroundColor(white);
+// lb->setBackgroundMode(FixedColor);
  lb->setTextFormat(Qt::RichText);
- QPushButton *ok=new QPushButton(QObject::tr("&Ok"), this);
+
+ //Lower frame with Ok button
+ QFrame *okFrame=new QFrame(this);
+ QGridLayout *lFrame=new QGridLayout(okFrame,1,2);
+ QPushButton *ok=new QPushButton(QObject::tr("&Ok"), okFrame);
+ lFrame->addWidget(ok,0,1);
  QObject::connect(ok, SIGNAL(clicked()), this, SLOT(close()));
- IconCache ic;
+
+ //Logo on right
  QWidget* logo=new QWidget(this);
  QPixmap* logoImage=ic.getIcon("pdfedit_logo.png");
  logo->setErasePixmap(*logoImage);
- logo->setFixedSize(logoImage->size());
+ QSize imageSize=logoImage->size();
+ logo->setFixedSize(imageSize);
+
+ //Background of text
+ QPixmap* bgImage=ic.getIcon("pdfedit_bg.png");
+ lb->setErasePixmap(*bgImage);
+ QSize bgSize=bgImage->size();
+ lb->setMaximumSize(bgSize);
+
+ setMinimumSize(imageSize);
+ setMaximumSize(bgSize);
  l->addWidget(lb,0,0);
  l->addWidget(logo,0,1);
- l->addMultiCellWidget(ok,1,1,0,1);
+ l->addMultiCellWidget(okFrame,1,1,0,1);
  ok->show();
  lb->show();
 }

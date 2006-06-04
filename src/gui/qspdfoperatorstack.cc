@@ -95,6 +95,11 @@ int QSPdfOperatorStack::count() {
  return obj.size();
 }
 
+/** Rrturn const reference to object inside this wrapper */
+const pdfOpDeque& QSPdfOperatorStack::get() {
+ return obj;
+}
+
 /**
  get one PdfOperator item held inside this class.
  @param index Zero-based index of item to get

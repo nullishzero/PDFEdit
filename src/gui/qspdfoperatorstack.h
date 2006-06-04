@@ -12,6 +12,9 @@ class Base;
 
 using namespace pdfobjects;
 
+ /** Double ended queue with operators */
+typedef std::deque<boost::shared_ptr<PdfOperator> > pdfOpDeque;
+
 /*=
  This type represents arbitrary array of PDFOperator items
  It hold zero or more values indexed by positive integer, starting from zero.
@@ -45,9 +48,10 @@ public slots:
  void removeLast();
  /*- Get PdfOperator element with given index from stack */
  QSCObject* element(int index);
+ const pdfOpDeque& get();
 private:
  /** Double ended queue holding operators */
- std::deque<boost::shared_ptr<PdfOperator> > obj;
+ pdfOpDeque obj;
 };
 
 } // namespace gui 

@@ -9,6 +9,7 @@
 #include <qstring.h>
 #include <qlineedit.h>
 #include "settings.h"
+#include "util.h"
 
 namespace gui {
 
