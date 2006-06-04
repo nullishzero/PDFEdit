@@ -42,6 +42,8 @@ function onTreeRightClick() {
  if (treeitem.itemtype()=="PdfOperator") {
   menu.addItemDef("item "+tr("Set color")+",setColor(),,operator_setcolor.png");
   menu.addItemDef("item "+tr("Set font properties")+",editFontProps(),,operator_editfont.png");
+  menu.addItemDef("item "+tr("Set relative position of a single operator")+",moveOperPos(),,operator_setrelposop.png");
+  menu.addItemDef("item "+tr("Set relative position")+",moveTextPos(),,operator_setrelpostext.png");
   menu.addSeparator();
   menu.addItemDef("item "+tr("Set line dash style")+",setDashPattern(),,operator_dashpattern.png");
   menu.addItemDef("item "+tr("Set line width")+",setLineWidth(),,operator_linewidth.png");
@@ -279,6 +281,14 @@ function buftest(x,at,st) {
 
 /** === Validate functions === */
 
+/** Is argument a number */
+function isNumber(x) {
+	if (undefined == parseFloat(x))
+		return false;
+	else
+		return true;
+}
+
 /** Validate current page */
 function isPageAvaliable() {
  if (page()) {
@@ -362,9 +372,9 @@ function editPageMediaBox() {
  var xright = mediabox[2];
  var yright = mediabox[3];
 
- var dialog = createDialog ("Change page rectangle", "Change", "Cancel", "Page metrics");
+ var dialog = createDialog (tr("Change page rectangle"), tr("Change"), tr("Cancel"), tr("Page metrics"));
  
- var gb = createGroupBoxAndDisplay ("Page metrics", dialog);
+ var gb = createGroupBoxAndDisplay (tr("Page metrics"), dialog);
  var exl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+": ", xleft, gb);
  var eyl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("y position")+": ", yleft, gb);
  var exr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+": ", xright, gb);
@@ -416,7 +426,7 @@ function setLineWidth() {
 		return;
 	}
 	
-	var dialog = createDialog ("Change line width", "Change", "Cancel", "Change line width");
+	var dialog = createDialog (tr("Change line width"), tr("Change"), tr("Cancel"), tr("Change line width"));
 	
 	var gb = createGroupBoxAndDisplay ("Line width", dialog);
 	var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
@@ -444,13 +454,13 @@ function setDashPattern() {
 		return;
 	}
 	
-	var dialog = createDialog ("Change line dash pattern", "Change", "Cancel", "Change line dash pattern");
+	var dialog = createDialog (tr("Change line dash pattern"), tr("Change"), tr("Cancel"), tr("Change line dash pattern"));
 	 
-	var gb = createGroupBoxAndDisplay ("Line dashing patterns", dialog);
+	var gb = createGroupBoxAndDisplay (tr("Line dashing patterns"), dialog);
 	var rb = [];
-	rb[0] = createRadioButtonAndDisplay ("Solid line",gb);
-	rb[1] = createRadioButtonAndDisplay ("Slightly dashed",gb);
-	rb[2] = createRadioButtonAndDisplay ("Dot and dashed",gb);
+	rb[0] = createRadioButtonAndDisplay (tr("Solid line"),gb);
+	rb[1] = createRadioButtonAndDisplay (tr("Slightly dashed"),gb);
+	rb[2] = createRadioButtonAndDisplay (tr("Dot and dashed"),gb);
 	 
 	if (!dialog.exec()) return;
 	 
@@ -480,7 +490,7 @@ function editFontProps() {
  	op=treeitem.item();
 
 	if (!isTextOp(op)) {
- 		warn(tr("Operator")+tr("is not")+tr("text operator")+tr("Only text operator allowed!"));
+ 		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
 		return;
 	}
 	
@@ -701,6 +711,90 @@ function setPageTm() {
 	
 	print (tr("Page transformation matrix changed to "+tm));
 	go();
+}
+
+/**
+ * Set one operator position.
+ */
+function moveOperPos() {
+
+	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+		warn(tr("No page or operator selected!"));
+		return;
+	}
+	
+	op=treeitem.item();
+	if (!isTextOp(op)) {
+ 		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+		return;
+	}
+
+	var posop = getPosInfoOfOperator (op);
+	var x = parseFloat (posop.params().property(0).value());
+	var y = parseFloat (posop.params().property(1).value());
+
+	if (undefined == posop) {
+		warn(tr("Could not find text positioning."));
+	}
+
+	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change realtive text position"));
+	 
+	var gb = createGroupBoxAndDisplay ("Relative operator position (this is not absolute position)", dialog);
+	x = createLineEditAndDisplay ("x position:", x, gb);
+	y = createLineEditAndDisplay ("y position", y, gb);
+	 
+	dialog.width = 100;
+	if (!dialog.exec()) return;
+
+	if (!isNumber(x.text) || !isNumber(y.text)) {
+		warn(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
+		return;
+	}
+	
+	// op, change, change
+	operatorSetPosition(op, parseFloat(x.text), parseFloat(y.text));
+
+	print (tr("Operator position changed."));
+	// Reload page
+	go ();
+}
+
+/**
+ * Change values of a positioning operator.
+ */
+function moveTextPos() {
+
+	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+		warn(tr("No page or operator selected!"));
+		return;
+	}
+	
+	op=treeitem.item();
+	if (!isTextOp(op)) {
+ 		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+		return;
+	}
+
+	var posop = getPosInfoOfOperator (op);
+
+	if (undefined == posop) {
+		warn(tr("Could not find text positioning."));
+	}
+
+	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change realtive text position"));
+	 
+	var gb = createGroupBoxAndDisplay ("Relative operator position", dialog);
+	x = createLineEditAndDisplay ("x position:", "0", gb);
+	y = createLineEditAndDisplay ("y position", "0", gb);
+	 
+	if (!dialog.exec()) return;
+	 
+	// op, change, change
+	operatorMovePosition(posop, parseFloat(x.text), parseFloat(y.text));
+
+	print (tr("Operator position changed."));
+	// Reload page
+	go ();
 }
 
 

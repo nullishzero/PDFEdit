@@ -318,3 +318,69 @@ function getSystemFonts() {
 		 "Times-BoldItalic", "Helvetica-BoldOblique", 
 		 "Courier-BoldOblique"];
 }
+
+/**
+ * Edit position of a text positioning operator.
+ */
+function operatorMovePosition(operator, dx, dy) {
+
+	var pars = operator.params();
+	var x = parseFloat (pars.property(0).value());
+	var y = parseFloat (pars.property(1).value());
+	pars.property(0).set(x + dx);
+	pars.property(1).set(y + dy);
+}
+
+/**
+ * Edit position of a text positioning operator.
+ */
+function operatorSetPosition(operator, dx, dy) {
+
+	// == Set new operator position
+
+	var posit = operatorInitChange(operator);
+	
+	//
+	// q
+	// array phase d
+	// oper
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
+
+	var operands = createIPropertyArray ();
+	operands.append (createReal(dx));
+	operands.append (createReal(dy));
+	composite.pushBack (createOperator(operands, "Td"), composite);
+
+    /* Put the changed operator also in the queue */
+	composite.pushBack (operator);
+
+	operands.clear();
+	operands.append (createReal(-dx));
+	operands.append (createReal(-dy));
+	composite.pushBack (createOperator(operands, "Td"));
+
+	operands.clear();
+	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+
+	operator.stream().replace (operator, composite, posit[0], posit[1]);
+
+}
+
+
+/**
+ * Get nearest text position operator and its x, y values
+ */
+function getPosInfoOfOperator (operator) {
+	
+	var txtit = operator.iterator();
+	while (!txtit.isEnd()) {
+		if ("TD" == txtit.current().getName() || 
+				"Td" == txtit.current().getName())
+			return txtit.current();
+		txtit.prev();
+	}
+
+	return undefined;
+}
