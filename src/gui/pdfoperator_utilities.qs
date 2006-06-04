@@ -198,8 +198,9 @@ function operatorSetFont(operator, fontid, fontsize) {
  *
  * @param operator Pdf operator.
  * @param Width of a line. 0 means tiniest.
+ * @param globchange If true change is global.
  */
-function operatorSetLineWidth(operator, linewidth) {
+function operatorSetLineWidth(operator, linewidth, globchange) {
 
 	// == Check type
 
@@ -218,7 +219,11 @@ function operatorSetLineWidth(operator, linewidth) {
 	// oper
 	// Q
 	//
-	var composite = createCompositeOperator ("q","Q");
+	if (globchange) {
+		composite = createCompositeOperator ("","");
+	}else {
+		composite = createCompositeOperator ("q","Q");
+	}
 
 	var operands = createIPropertyArray ();
 	operands.append (createInt(linewidth));
@@ -228,16 +233,20 @@ function operatorSetLineWidth(operator, linewidth) {
 	composite.pushBack (operator);
 
 	operands.clear();
-	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+	if (!globchange)
+		composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
 
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }
 
-/**
+/** 
  * Set simple dash pattern from provided alternatives.
+ *
+ * @param alt Dash style.
+ * @param operator Operator.
+ * @param globchange If true changes will be global, if false only selected operator will be changed.
  */
- function operatorSetSimpleDashPattern(alt,operator) {
-print(alt); 
+function operatorSetSimpleDashPattern(alt,operator,globchange) {
 	var array = [];
 	var step = 0;
  	switch(alt) {
@@ -253,18 +262,19 @@ print(alt);
 		warn (tr("This option is not supported."));
 		return false;
 	}
-	operatorSetDashPattern(operator,array,0);
+	operatorSetDashPattern(operator,array,0,globchange);
 	return true;
  }
 
 /** 
  * Set dash pattern of an operator.
  *
- * @param oper Pdf operator.
+ * @param operator Pdf operator.
  * @param array The dash array's elements are numbers that specify the lengths of alternating dashes and gaps.
  * @param phase The dash phase specifies the distance into the dash pattern at which to start the dash.
+ * @param globchange If true changes will be global, if false only selected operator will be changed.
  */
-function operatorSetDashPattern(operator, array, phase) {
+function operatorSetDashPattern(operator, array, phase, globchange) {
 
 	// == Check type
 
@@ -283,7 +293,11 @@ function operatorSetDashPattern(operator, array, phase) {
 	// oper
 	// Q
 	//
-	var composite = createCompositeOperator("q","Q");
+	if (globchange) {
+		composite = createCompositeOperator("","");
+	}else {
+		composite = createCompositeOperator("q","Q");
+	}
 
 	var operands = createIPropertyArray ();
 	var iparray = createArray();
@@ -297,7 +311,8 @@ function operatorSetDashPattern(operator, array, phase) {
 	composite.pushBack (operator);
 
 	operands.clear();
-	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+	if (!globchange)
+		composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
 
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }

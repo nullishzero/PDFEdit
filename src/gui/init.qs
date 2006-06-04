@@ -431,9 +431,13 @@ function setLineWidth() {
 	var gb = createGroupBoxAndDisplay ("Line width", dialog);
 	var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
 	 
+	gb = createGroupBoxAndDisplay (tr("Change effect"), dialog);
+	var glob = createRadioButtonAndDisplay (tr("Global change"),gb);
+	glob.checked = true;
+
 	if (!dialog.exec()) return;
 	 
-	operatorSetLineWidth(op,sb.value);
+	operatorSetLineWidth(op,sb.value,glob.checked);
 	print (tr("Line width changed."));
 	// Reload page
 	go ();
@@ -461,6 +465,10 @@ function setDashPattern() {
 	rb[0] = createRadioButtonAndDisplay (tr("Solid line"),gb);
 	rb[1] = createRadioButtonAndDisplay (tr("Slightly dashed"),gb);
 	rb[2] = createRadioButtonAndDisplay (tr("Dot and dashed"),gb);
+	
+	gb = createGroupBoxAndDisplay (tr("Change effect"), dialog);
+	var glob = createRadioButtonAndDisplay (tr("Global change"),gb);
+	glob.checked = true;
 	 
 	if (!dialog.exec()) return;
 	 
@@ -469,7 +477,9 @@ function setDashPattern() {
 		if (rb[i].checked)
 			break;
 	
-	if (!operatorSetSimpleDashPattern(i,op)) return;
+	if (!operatorSetSimpleDashPattern(i,op,glob.checked)) {
+		return;
+	}
 
 	print (tr("Dash pattern changed."));
 	// Reload page
