@@ -346,19 +346,19 @@ void PropertyEditor::commitProperty() {
  //Find active widget
  QWidget* propNow=qApp->focusWidget();//This is probably a Linedit if edited control is Property
  if (!propNow) return;
- guiPrintDbg(debug::DBG_DBG,"commitProperty classname=" << propNow->className() << " name=" << propNow->name());
+// guiPrintDbg(debug::DBG_DBG,"commitProperty classname=" << propNow->className() << " name=" << propNow->name());
  while(propNow && !dynamic_cast<Property*>(propNow)) { //Look for parent until Property is found
   propNow=propNow->parentWidget();
   if (!propNow) return;//No property is active
-  guiPrintDbg(debug::DBG_DBG,"commitProperty traverse classname=" << propNow->className() << " name=" << propNow->name());
+//  guiPrintDbg(debug::DBG_DBG,"commitProperty traverse classname=" << propNow->className() << " name=" << propNow->name());
  }
  Property* propCurrent=dynamic_cast<Property*>(propNow);
  //Check if it is Property
  if (!propCurrent) return;//No property is active
- guiPrintDbg(debug::DBG_DBG,"property is current");
+// guiPrintDbg(debug::DBG_DBG,"property is current");
  //Check if it is property from this property editor
  if (propCurrent->parentWidget()==grid) {
-  guiPrintDbg(debug::DBG_DBG,"property is our");
+//  guiPrintDbg(debug::DBG_DBG,"property is our");
   //Property from this property editor -> update it
   update(propCurrent);
  }

@@ -84,6 +84,65 @@ QString getTypeName(boost::shared_ptr<IProperty> obj) {
  return getTypeName(obj.get());
 }
 
+/**
+ Return short textual preview of what's in the property
+ @param obj property for preview
+ @return short string
+*/
+QString propertyPreview(boost::shared_ptr<IProperty> obj) {
+ PropertyType typ=obj->getType();
+ switch (typ) {
+  case pBool: {
+   bool value;
+   dynamic_cast<CBool*>(obj.get())->getPropertyValue(value);
+   return value?"true":"false";
+  }
+  case pInt: {
+   int value;
+   dynamic_cast<CInt*>(obj.get())->getPropertyValue(value);
+   return QString::number(value);
+  }
+  case pReal: {
+   double value;
+   dynamic_cast<CReal*>(obj.get())->getPropertyValue(value);
+   return QString::number(value);
+  }
+  case pName: {
+   std::string value;
+   dynamic_cast<CName*>(obj.get())->getPropertyValue(value);
+   QString ret=value;
+   if (ret.length()>22) {
+    ret.truncate(20);
+    ret+="...";
+   }
+   return ret;
+  }
+  case pString: {
+   std::string value;
+   dynamic_cast<CString*>(obj.get())->getPropertyValue(value);
+   QString ret=value;
+   if (ret.length()>22) {
+    ret.truncate(20);
+    ret+="...";
+   }
+   return ret;
+  }
+  case pArray: {
+   CArray* a=dynamic_cast<CArray*>(obj.get());
+   return QString::number(a->getPropertyCount())+" "+QObject::tr("elements");
+  }
+  case pDict: {
+   CDict* a=dynamic_cast<CDict*>(obj.get());
+   return QString::number(a->getPropertyCount())+" "+QObject::tr("items");
+  }
+//  case pRef:    ??
+//  case pStream: ??
+  default:;
+ }
+ //Not suitable for preview
+ return "";
+}
+
 /** Return string identifier of given type
  @param obj Object to get type from (IProperty)
  @return Identifier of type name

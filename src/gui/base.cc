@@ -23,6 +23,7 @@
 #include "qspage.h"
 #include "qspdf.h"
 #include "qspdfoperator.h"
+#include "qspdfoperatorstack.h"
 #include "qstreeitem.h"
 #include "settings.h"
 #include "treeitemabstract.h"
@@ -523,6 +524,14 @@ QSPdfOperator* Base::createOperator(QObject* parameters,const QString &text) {
 */
 QSIPropertyArray* Base::createIPropertyArray() {
  return new QSIPropertyArray(this);
+}
+
+/**
+ Create new empty PDF Operator stack
+ @return new operator stack
+*/
+QSPdfOperatorStack* Base::createPdfOperatorStack() {
+ return new QSPdfOperatorStack(this);
 }
 
 /** create new empty editor window and display it */

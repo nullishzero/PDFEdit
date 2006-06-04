@@ -2,10 +2,11 @@
 #define __REFPROPERTY_H__
 
 #include "property.h"
+#include <iproperty.h>
 class QLineEdit;
 class QPushButton;
-namespace pdfobjects {
- class IProperty;
+namespace pdfopbjects {
+ class CPdf;
 }
 
 namespace gui {
@@ -18,17 +19,21 @@ using namespace pdfobjects;
  Used as one item in property editor
 */
 class RefProperty : public Property {
+//ADDED functions begin
+//ADDED functions end
 Q_OBJECT
 public:
  RefProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual QSize sizeHint() const;
- virtual void resizeEvent (QResizeEvent *e);
+ void resizeEvent(QResizeEvent *e);
  virtual ~RefProperty();
  virtual void writeValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
  virtual void setDisabled(bool disabled);
  virtual void applyReadOnly(bool _readonly);
  virtual bool isValid();
+ IndiRef getValue();
+ void setPdf(CPdf *_pdf);
 protected slots:
  void selectRef();
  void emitChange();
@@ -38,6 +43,8 @@ private:
  QLineEdit *ed;
  /** Push button for GUI selection */
  QPushButton *pb;
+ /** PDF stored for validating references */
+ CPdf *pdf;
 };
 
 } // namespace gui

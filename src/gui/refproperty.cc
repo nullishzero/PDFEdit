@@ -5,17 +5,18 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include "refproperty.h"
-#include "refvalidator.h"
-#include <string>
-#include <stdlib.h>
-#include <qlineedit.h>
-#include <qcolor.h>
-#include <qpushbutton.h>
-#include <cobject.h>
 #include "pdfutil.h"
+#include "refpropertydialog.h"
+#include "refvalidator.h"
 #include "util.h"
+#include <cobject.h>
+#include <qcolor.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <stdlib.h>
+#include <string>
+#include <utils/debug.h>
 
 namespace gui {
 
@@ -29,6 +30,7 @@ using namespace util;
  */
 RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
+ pdf=NULL;
  ed=new QLineEdit(this,"RefProperty_edit");
  setFocusProxy(ed);
  pb=new QPushButton("..",this,"refproperty_pickbutton");
@@ -44,8 +46,14 @@ RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFl
 
 /** Invoked when someone pushes the ".." button */
 void RefProperty::selectRef() {
- guiPrintDbg(debug::DBG_WARN,"Select REference : not implemented (TODO)")
- //TODO: implement
+ guiPrintDbg(debug::DBG_WARN,"Select Reference via dialog");
+ RefPropertyDialog ref(pdf,getValue(),this);
+ if (ref.exec()) {
+  //Something valid was supposedly selected
+  ed->setText(ref.getResult());
+  changed=true;
+  emitChange();
+ }
 }
 
 /** Called when text is accepted -> will emit signal informing about change */
@@ -64,8 +72,17 @@ QSize RefProperty::sizeHint() const {
  return ed->sizeHint();
 }
 
+/**
+ Set PDF explicitly for this property for purpose of validating references<br>
+ This is usable if the property is new and does not have the pdf document from the edited CRef
+ @param pdf CPdf to set
+*/
+void RefProperty::setPdf(CPdf *_pdf) {
+ pdf=_pdf;
+}
+
 /** \copydoc StringProperty::resizeEvent */
-void RefProperty::resizeEvent (QResizeEvent *e) {
+void RefProperty::resizeEvent(QResizeEvent *e) {
  int w=e->size().width();
  int h=e->size().height();
  pb->move(w-h,0);
@@ -80,21 +97,41 @@ RefProperty::~RefProperty() {
  delete pb;
 }
 
+/**
+ Read the string in this property and return indirect reference parsed from it
+ If the string is invalid, both num and gen are set to -1
+ @return Indirect reference
+*/
+IndiRef RefProperty::getValue() {
+ IndiRef val;
+ val.num=0;
+ val.gen=0;
+ QStringList ref=QStringList::split(",",ed->text());
+ assert(ref.count()==2);	 //Should never happen
+ if (ref.count()!=2) return val;//Invalid reference
+ val.num=ref[0].toInt();
+ val.gen=ref[1].toInt();
+ return val;
+}
+
 /** \copydoc StringProperty::writeValue */
 void RefProperty::writeValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
- CRef *obj=(CRef*)pdfObject;
- QStringList ref=QStringList::split(",",ed->text());
- assert(ref.count()==2); //Should never happen
- if (ref.count()!=2) return;
- IndiRef val;
- val.num=ref[0].toInt();
- val.gen=ref[1].toInt();
-
+ CRef *obj=dynamic_cast<CRef*>(pdfObject);
+ IndiRef val=getValue();
+ if (val.num==0 && val.gen==0) return;//Invalid reference
  //Check reference validity
- if (!isRefValid(obj->getPdf(),val)) { 
-  ed->setFocus();
-  return; //not valid
+ CPdf* objPdf=obj->getPdf();
+ if (objPdf) {
+  //Get PDF from property if it have one. If not, keep the old PDF
+  pdf=objPdf;
+ }
+ if (pdf) {
+  //We can check for validity
+  if (!isRefValid(pdf,val)) { 
+   ed->setFocus();
+   return; //not valid
+  }
  }
  obj->writeValue(val);
  changed=false;
@@ -102,8 +139,13 @@ void RefProperty::writeValue(IProperty *pdfObject) {
 
 /** \copydoc StringProperty::readValue */
 void RefProperty::readValue(IProperty *pdfObject) {
- CRef* obj=(CRef*)pdfObject;
+ CRef* obj=dynamic_cast<CRef*>(pdfObject);
  IndiRef val;
+ CPdf* objPdf=obj->getPdf();
+ if (objPdf) {
+  //Get PDF from property if it have one. If not, keep the old PDF
+  pdf=objPdf;
+ }
  obj->getPropertyValue(val);
  QString objString;
  objString.sprintf("%d,%d",val.num,val.gen);
@@ -118,8 +160,8 @@ bool RefProperty::isValid() {
 
 //See Property::setDisabled
 void RefProperty::setDisabled(bool disabled) {
- ed->setEnabled(disabled);
- pb->setEnabled(disabled);
+ ed->setEnabled(!disabled);
+ pb->setEnabled(!disabled);
 }
 
 //See Property::applyReadOnly

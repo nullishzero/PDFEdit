@@ -107,6 +107,13 @@ void AddItemDialog::closeEvent(__attribute__((unused)) QCloseEvent* e) {
 */
 void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  item=it;
+ pdf=it->getPdf();
+
+ //We mnust set PDF to property
+ RefProperty* refProp=dynamic_cast<RefProperty*>(props[5]);
+ assert(refProp);
+ refProp->setPdf(pdf);
+
  CDict* dict=dynamic_cast<CDict*>(it.get());
  CArray* arr=dynamic_cast<CArray*>(it.get());
  QHBoxLayout *lu=new QHBoxLayout(target,4,4);
@@ -181,7 +188,6 @@ void AddItemDialog::error(const QString &message) {
  msg->setText(message);
 }
 
-
 /**
  Adds the item, but keep the window open,
  so user can easily modify value and add another similar item.
@@ -229,6 +235,15 @@ bool AddItemDialog::commit() {
    break;
   }
   case 5: {//pRef   
+   IndiRef refValue;
+   RefProperty* refProp=dynamic_cast<RefProperty*>(props[selectedItem]);
+   refProp->setPdf(pdf);
+   assert(refProp);
+   refValue=refProp->getValue();
+   if (!isRefValid(pdf,refValue)) {
+    error(tr("Reference target does not exist!"));
+    return false;
+   }
    property=boost::shared_ptr<IProperty>(new CRef());
    break;
   }

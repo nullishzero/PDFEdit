@@ -4,6 +4,9 @@
 #include "selfdestructivewidget.h"
 #include <iproperty.h>
 #include <cobject.h>
+namespace pdfopbjects {
+ class CPdf;
+}
 
 class QBoxLayout;
 class QFrame;
@@ -69,6 +72,8 @@ private:
  QLabel *msg;
  /** Settings used to save dialog position (dict/array) - this is useful, as these can have different sizes */
  QString settingName;
+ /** Pdf document (for validating reference) */
+ CPdf* pdf;
 };
 
 } // namespace gui

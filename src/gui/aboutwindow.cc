@@ -40,13 +40,13 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
                                +tr("Authors")+":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Misutka<br>&nbsp; Martin Petricek<br>";
  QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1><br>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
   info+"</td><td valign=\"bottom\">"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
-// lb->setPaletteBackgroundColor(white);
-// lb->setBackgroundMode(FixedColor);
  lb->setTextFormat(Qt::RichText);
 
  //Lower frame with Ok button
  QFrame *okFrame=new QFrame(this);
- QGridLayout *lFrame=new QGridLayout(okFrame,1,2);
+ QGridLayout *lFrame=new QGridLayout(okFrame,1,2,5);
+// okFrame->setPaletteBackgroundColor(white);
+// okFrame->setBackgroundMode(FixedColor);
  QPushButton *ok=new QPushButton(QObject::tr("&Ok"), okFrame);
  lFrame->addWidget(ok,0,1);
  QObject::connect(ok, SIGNAL(clicked()), this, SLOT(close()));

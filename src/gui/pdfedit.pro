@@ -103,6 +103,8 @@ SOURCES += treeitempdfoperator.cc treeitemoperatorcontainer.cc treeitemoutline.c
 #Property editor
 HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h  property.h  propertymodecontroller.h
 SOURCES += refvalidator.cc propertyeditor.cc propertyfactory.cc property.cc propertymodecontroller.cc
+HEADERS += refpropertydialog.h
+SOURCES += refpropertydialog.cc
 #Property types
 HEADERS += stringproperty.h  intproperty.h  boolproperty.h  nameproperty.h  realproperty.h
 SOURCES += stringproperty.cc intproperty.cc boolproperty.cc nameproperty.cc realproperty.cc

@@ -29,6 +29,7 @@ boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CDict> obj,const Q
 boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const QString &name);
 boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CDict> obj,const QString &name);
 boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CArray> obj,const QString &name);
+QString propertyPreview(boost::shared_ptr<IProperty> obj);
 
 } // namespace util
 

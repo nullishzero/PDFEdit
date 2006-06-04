@@ -24,6 +24,7 @@ class QSMenu;
 class QSPage;
 class QSPdf;
 class QSPdfOperator;
+class QSPdfOperatorStack;
 class TreeItemAbstract;
 
 /**
@@ -75,12 +76,7 @@ public slots: //This will be all exported to scripting
  void closeWindow();
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
- /*-
-  Create new array of IProperty items.
-  This array can be used for example as operator parameters
- */
- QSIPropertyArray* createIPropertyArray();
- /*- Create and return new IProperty of type Dict - empty array */
+ /*- Create and return new IProperty of type Array - empty array */
  QSIProperty* createArray();
  /*- Create and return new IProperty of type Bool */
  QSIProperty* createBool(bool value);
@@ -92,11 +88,18 @@ public slots: //This will be all exported to scripting
  QSPdfOperator* createEmptyOperator();
  /*- Create and return new IProperty of type Int */
  QSIProperty* createInt(int value);
+ /*-
+  Create new array of IProperty items.
+  This array can be used for example as operator parameters
+ */
+ QSIPropertyArray* createIPropertyArray();
  /*- Create and return new IProperty of type String */
  QSIProperty* createName(const QString &value);
  /*- Create new PDF Operator with specified parameters and operator text*/
  QSPdfOperator* createOperator(QSIPropertyArray* parameters,const QString &text);
  QSPdfOperator* createOperator(QObject* parameters,const QString &text);
+ /*- Create new empty PDF Operator stack */
+ QSPdfOperatorStack* createPdfOperatorStack();
  /*- Create and return new IProperty of type Real */
  QSIProperty* createReal(double value);
  /*-
