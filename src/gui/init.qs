@@ -43,7 +43,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Set color")+",setColor(),,operator_setcolor.png");
   menu.addItemDef("item "+tr("Set font properties")+",editFontProps(),,operator_editfont.png");
   menu.addItemDef("item "+tr("Set relative position of a single operator")+",moveOperPos(),,operator_setrelposop.png");
-  menu.addItemDef("item "+tr("Set relative position")+",moveTextPos(),,operator_setrelpostext.png");
+  menu.addItemDef("item "+tr("Set relative position")+",moveTextPos(),,operator_setrelpos.png");
   menu.addSeparator();
   menu.addItemDef("item "+tr("Set line dash style")+",setDashPattern(),,operator_dashpattern.png");
   menu.addItemDef("item "+tr("Set line width")+",setLineWidth(),,operator_linewidth.png");
