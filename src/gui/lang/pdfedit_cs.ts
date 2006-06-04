@@ -390,26 +390,6 @@ Data: %3
         <translation>Není zvolena žádná stránka</translation>
     </message>
     <message>
-        <source>Change page rectangle</source>
-        <translation>Změna rámečku stránky</translation>
-    </message>
-    <message>
-        <source>Change</source>
-        <translation>Změnit</translation>
-    </message>
-    <message>
-        <source>Page metrics</source>
-        <translation>Metrika stránky</translation>
-    </message>
-    <message>
-        <source>Page rectangle parameters</source>
-        <translation>Parametry rámečku stránky</translation>
-    </message>
-    <message>
-        <source>MediaBox changed..</source>
-        <translation>MediaBox změněn..</translation>
-    </message>
-    <message>
         <source>Operator must be QSPdfOperator !!!</source>
         <translation>Operátor musí být QSPdfOperator !!!</translation>
     </message>
@@ -444,6 +424,170 @@ Data: %3
     <message>
         <source>Cancel</source>
         <translation>Storno</translation>
+    </message>
+    <message>
+        <source>Set color</source>
+        <translation>Nastavit barvu</translation>
+    </message>
+    <message>
+        <source>Set font properties</source>
+        <translation>Nastavit vlastnosti fontu</translation>
+    </message>
+    <message>
+        <source>Set line dash style</source>
+        <translation>Nastavit styl čáry</translation>
+    </message>
+    <message>
+        <source>Set line width</source>
+        <translation>Nastavit šířku čáry</translation>
+    </message>
+    <message>
+        <source>Add system font</source>
+        <translation>Přidat systémový font</translation>
+    </message>
+    <message>
+        <source>Extract text from page</source>
+        <translation>Extrahovat text ze stránky</translation>
+    </message>
+    <message>
+        <source>Page rotated.</source>
+        <translation>Stránka otočena</translation>
+    </message>
+    <message>
+        <source>MediaBox changed.</source>
+        <translation>MediaBox změněn</translation>
+    </message>
+    <message>
+        <source>No page or operator selected!</source>
+        <translation>Není zvolena stránka nebo operátor!</translation>
+    </message>
+    <message>
+        <source>Selected operator</source>
+        <translation>Zvolený operátor</translation>
+    </message>
+    <message>
+        <source>is not</source>
+        <translation>není</translation>
+    </message>
+    <message>
+        <source>suitable for colour setting.</source>
+        <translation>vhodný pro nastavení barvy</translation>
+    </message>
+    <message>
+        <source> Please see the pdf specification for details.</source>
+        <translation> Podívejte se do pdf specifikace pro detaily.</translation>
+    </message>
+    <message>
+        <source>Colour changed.</source>
+        <translation>Barva změněna.</translation>
+    </message>
+    <message>
+        <source>suitable for line width change.</source>
+        <translation>vhodný pro nastavení šířky čáry</translation>
+    </message>
+    <message>
+        <source>Line width changed.</source>
+        <translation>Šířka čáry změněna.</translation>
+    </message>
+    <message>
+        <source>suitable for dash style change.</source>
+        <translation>vhodný pro nastavení stylu čáry.</translation>
+    </message>
+    <message>
+        <source>Dash pattern changed.</source>
+        <translation>Styl čáry změněn.</translation>
+    </message>
+    <message>
+        <source>text operator</source>
+        <translation>textový operátor</translation>
+    </message>
+    <message>
+        <source>Only text operator allowed!</source>
+        <translation>Povolen pouze textový operátor!</translation>
+    </message>
+    <message>
+        <source>Change font properties</source>
+        <translation>Změnit vlastnosti písma</translation>
+    </message>
+    <message>
+        <source>Change font</source>
+        <translation>Změnit písmo</translation>
+    </message>
+    <message>
+        <source>Avaliable fonts</source>
+        <translation>Dostupná písma</translation>
+    </message>
+    <message>
+        <source>Select from all avaliable fonts</source>
+        <translation>Vyberte ze všech dostupných písem</translation>
+    </message>
+    <message>
+        <source>Font size according to the pdf document</source>
+        <translation>Velikost písma dle pdf documentu</translation>
+    </message>
+    <message>
+        <source>Font size (not in px)</source>
+        <translation>Velikost písma (ne v px)</translation>
+    </message>
+    <message>
+        <source>Font changed.</source>
+        <translation>Písmo změněno.</translation>
+    </message>
+    <message>
+        <source>Add font</source>
+        <translation>Přidat písmo</translation>
+    </message>
+    <message>
+        <source>Add system fonts</source>
+        <translation>Přidat systémové písmo</translation>
+    </message>
+    <message>
+        <source>Avaliable system fonts</source>
+        <translation>Dostupná systémová písma</translation>
+    </message>
+    <message>
+        <source>Select system Type1 font</source>
+        <translation>Vyberte systémové Type1 písmo</translation>
+    </message>
+    <message>
+        <source>System font added.</source>
+        <translation>Systémové písmo přidáno.</translation>
+    </message>
+    <message>
+        <source>Text on page</source>
+        <translation>Text na stránce</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation>Ok</translation>
+    </message>
+    <message>
+        <source>Text extracted from page</source>
+        <translation>Text získaný ze stránky</translation>
+    </message>
+    <message>
+        <source>Page text displayed</source>
+        <translation>Text stránky zobrazen.</translation>
+    </message>
+    <message>
+        <source>Operator must be</source>
+        <translation>Operátor musí být</translation>
+    </message>
+    <message>
+        <source>No preceding font operator found...</source>
+        <translation>Nenalezen žádný předcházející operátor písma.</translation>
+    </message>
+    <message>
+        <source>Invalid operand type</source>
+        <translation>Neplatný typ operandu</translation>
+    </message>
+    <message>
+        <source>This option is not supported.</source>
+        <translation>Tato volba není podporována</translation>
+    </message>
+    <message>
+        <source>Show only graphical operators</source>
+        <translation>Zobrazovat pouze grafické operátory</translation>
     </message>
 </context>
 <context>
@@ -628,10 +772,6 @@ Data: %3
         <translation>Jednoduché objekty</translation>
     </message>
     <message>
-        <source>Misc</source>
-        <translation>Různé</translation>
-    </message>
-    <message>
         <source>Show return value of executed scripts in console</source>
         <translation>Zobrazovat návratovou hodnotu skriptů v příkazovém řádku</translation>
     </message>
@@ -692,10 +832,6 @@ Data: %3
         <translation>Tyto objekty budou zobrazeny ve stromu objektů</translation>
     </message>
     <message>
-        <source>&lt;br&gt;History-related options</source>
-        <translation>&lt;br&gt;Nastavení historie</translation>
-    </message>
-    <message>
         <source>These toolbars will be shown:</source>
         <translation>Tyto toolbary budou zobrazeny:</translation>
     </message>
@@ -751,6 +887,26 @@ Data: %3
         <source>Use big icons</source>
         <translation>Použít velké ikony</translation>
     </message>
+    <message>
+        <source>Show hidden properties</source>
+        <translation>Zobrazovat zkryté položky</translation>
+    </message>
+    <message>
+        <source>Allow editing read-only properties</source>
+        <translation>Povolit měnit položky pouze pro čtení</translation>
+    </message>
+    <message>
+        <source>Commandline</source>
+        <translation>Příkazová řádka</translation>
+    </message>
+    <message>
+        <source>Commandline options</source>
+        <translation>Nastavení příkazové řádky</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;History options</source>
+        <translation>&lt;br&gt;Nastavení historie</translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
@@ -761,6 +917,17 @@ Data: %3
     <message>
         <source>%1 of %2</source>
         <translation>%1 z %2</translation>
+    </message>
+</context>
+<context>
+    <name>gui::PageView</name>
+    <message>
+        <source>Selected area is not set!</source>
+        <translation>Vybraný výsek není nastaven!</translation>
+    </message>
+    <message>
+        <source>Selection mode is set to nonsense!</source>
+        <translation>Mód výběru je nastaven na nesmysl!</translation>
     </message>
 </context>
 <context>
@@ -812,6 +979,33 @@ Data: %3
     <message>
         <source>Encrypted</source>
         <translation>Zašifrované</translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation>Výběr</translation>
+    </message>
+</context>
+<context>
+    <name>gui::Property</name>
+    <message>
+        <source>Read only</source>
+        <translation>Pouze pro čtení</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation>Pokročilá</translation>
+    </message>
+    <message>
+        <source>Hidden</source>
+        <translation>Skrytá</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Neznámá</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Normální</translation>
     </message>
 </context>
 <context>
@@ -873,6 +1067,10 @@ Data: %3
         <source>bytes</source>
         <translation>bytů</translation>
     </message>
+    <message>
+        <source>Linearized PDF</source>
+        <translation>Linearizované PDF</translation>
+    </message>
 </context>
 <context>
     <name>gui::Settings</name>
@@ -890,11 +1088,6 @@ Data: %3
         <source>Main menu</source>
         <comment>MainMenu</comment>
         <translation>Hlavní menu</translation>
-    </message>
-    <message>
-        <source>&amp;Close Window</source>
-        <comment>closew</comment>
-        <translation>Zavřít okno</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -917,24 +1110,9 @@ Data: %3
         <translation>&amp;Uložit</translation>
     </message>
     <message>
-        <source>&amp;File</source>
-        <comment>file</comment>
-        <translation>Soubor</translation>
-    </message>
-    <message>
         <source>New &amp;Window</source>
         <comment>neww</comment>
         <translation>Nové okno</translation>
-    </message>
-    <message>
-        <source>&amp;Tools</source>
-        <comment>tools</comment>
-        <translation>Nástroje</translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <comment>help</comment>
-        <translation>Nápověda</translation>
     </message>
     <message>
         <source>Page Toolbar</source>
@@ -1027,11 +1205,6 @@ Data: %3
         <translation>Uložit stranu jako obrázek...</translation>
     </message>
     <message>
-        <source>&amp;Save new revision</source>
-        <comment>fsaverev</comment>
-        <translation>Uložit novou revizi</translation>
-    </message>
-    <message>
         <source>Show all operators in stream</source>
         <comment>streamAll</comment>
         <translation>Zobrazit všechny operátory ve streamu</translation>
@@ -1047,16 +1220,6 @@ Data: %3
         <translation>Zobrazit pouze font operátory ve streamu</translation>
     </message>
     <message>
-        <source>Zoom out</source>
-        <comment>zoom_out</comment>
-        <translation>Oddálit měřítko</translation>
-    </message>
-    <message>
-        <source>Zoom in</source>
-        <comment>zoom_in</comment>
-        <translation>Přiblížit měřítko</translation>
-    </message>
-    <message>
         <source>Operator Toolbar</source>
         <comment>OperatorToolbar</comment>
         <translation>Toolbar operátorů</translation>
@@ -1067,29 +1230,129 @@ Data: %3
         <translation>Změnit barvu operátoru</translation>
     </message>
     <message>
-        <source>Show/Hide commandline</source>
-        <comment>hideCmd</comment>
-        <translation>Zobrazit/skrýt příkazový řádek</translation>
-    </message>
-    <message>
         <source>Edit page metrics</source>
         <comment>editPageMediaBox</comment>
         <translation>Změnit metriky stránky</translation>
     </message>
     <message>
+        <source>Close Window</source>
+        <comment>closew</comment>
+        <translation>Zavřít okno</translation>
+    </message>
+    <message>
+        <source>Show/Hide &amp;commandline</source>
+        <comment>hideCmd</comment>
+        <translation>Zobrazit/skrýt příkazový řádek</translation>
+    </message>
+    <message>
+        <source>Add system font to page</source>
+        <comment>addSystemFont</comment>
+        <translation>Přidat systémové písmo na stránku</translation>
+    </message>
+    <message>
+        <source>Extract text from page</source>
+        <comment>pagetext</comment>
+        <translation>Extrahovat text ze stránky</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;out</source>
+        <comment>zoom_out</comment>
+        <translation>Oddálit měřítko</translation>
+    </message>
+    <message>
+        <source>Zoom &amp;in</source>
+        <comment>zoom_in</comment>
+        <translation>Přiblížit měřítko</translation>
+    </message>
+    <message>
+        <source>Show only graphical operators in stream</source>
+        <comment>streamGfx</comment>
+        <translation>Zobrazit jen grafické operátory ve streamu</translation>
+    </message>
+    <message>
+        <source>Change font properties of operator</source>
+        <comment>operatorSetFont</comment>
+        <translation>Změnit vlastnosti písma operátoru</translation>
+    </message>
+    <message>
+        <source>Selection mode Toolbar</source>
+        <comment>SelectionModeToolbar</comment>
+        <translation>Toolbar režimů výběru</translation>
+    </message>
+    <message>
+        <source>Select all objects</source>
+        <comment>selectAllObjects</comment>
+        <translation>Vybírat všechny objekty</translation>
+    </message>
+    <message>
+        <source>Select text</source>
+        <comment>selectText</comment>
+        <translation>Vybírat text</translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <comment>selectAll</comment>
+        <translation>Vybírat vše</translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <comment>filemenu</comment>
+        <translation>Soubor</translation>
+    </message>
+    <message>
+        <source>Save new &amp;revision</source>
+        <comment>fsaverev</comment>
+        <translation>Uložit novou &amp;revizi</translation>
+    </message>
+    <message>
         <source>&amp;View</source>
-        <comment>show</comment>
+        <comment>showmenu</comment>
         <translation>Zobrazit</translation>
     </message>
     <message>
-        <source>Show/Hide property editor</source>
+        <source>Show/Hide &amp;property editor</source>
         <comment>hideProp</comment>
         <translation>Zobrazit/skrýt editor položek</translation>
     </message>
     <message>
-        <source>Show/Hide object tree</source>
+        <source>Show/Hide object &amp;tree</source>
         <comment>hideTree</comment>
-        <translation>Zobrazit/skrýt strom</translation>
+        <translation>Zobrazit/skrýt strom objektů</translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <comment>toolsmenu</comment>
+        <translation>Nástroje</translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <comment>editopersmenu</comment>
+        <translation>Úpravy</translation>
+    </message>
+    <message>
+        <source>Set color</source>
+        <comment>opsetcolor</comment>
+        <translation>Nastavit barvu</translation>
+    </message>
+    <message>
+        <source>Set font</source>
+        <comment>opsetfont</comment>
+        <translation>Nastavit písmo</translation>
+    </message>
+    <message>
+        <source>Set line dash style</source>
+        <comment>opsetdash</comment>
+        <translation>Nastavit styl čáry</translation>
+    </message>
+    <message>
+        <source>Set line width</source>
+        <comment>opsetlinewidth</comment>
+        <translation>Nastavit šířku čáry</translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <comment>helpmenu</comment>
+        <translation>Nápověda</translation>
     </message>
 </context>
 <context>

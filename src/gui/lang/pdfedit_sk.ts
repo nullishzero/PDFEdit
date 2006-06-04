@@ -387,22 +387,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page metrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page rectangle parameters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MediaBox changed..</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Operator must be QSPdfOperator !!!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -435,11 +419,171 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change page rectangle</source>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
+        <source>Set color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set font properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set line dash style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set line width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add system font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract text from page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page rotated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MediaBox changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No page or operator selected!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>is not</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>suitable for colour setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Please see the pdf specification for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colour changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>suitable for line width change.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line width changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>suitable for dash style change.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dash pattern changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>text operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only text operator allowed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change font properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avaliable fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select from all avaliable fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size according to the pdf document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size (not in px)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add system fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Avaliable system fonts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select system Type1 font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System font added.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text on page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text extracted from page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page text displayed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator must be</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No preceding font operator found...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid operand type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This option is not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only graphical operators</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -625,10 +769,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Misc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show return value of executed scripts in console</source>
         <translation type="unfinished"></translation>
     </message>
@@ -689,10 +829,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;br&gt;History-related options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>These toolbars will be shown:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -748,6 +884,26 @@ Data: %3
         <source>Use big icons</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show hidden properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow editing read-only properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Commandline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Commandline options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;History options</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
@@ -757,6 +913,17 @@ Data: %3
     </message>
     <message>
         <source>%1 of %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::PageView</name>
+    <message>
+        <source>Selected area is not set!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selection mode is set to nonsense!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -808,6 +975,33 @@ Data: %3
     </message>
     <message>
         <source>Encrypted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::Property</name>
+    <message>
+        <source>Read only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -870,6 +1064,10 @@ Data: %3
         <source>bytes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Linearized PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::Settings</name>
@@ -899,18 +1097,8 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Close Window</source>
-        <comment>closew</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Main menu</source>
         <comment>MainMenu</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <comment>file</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -921,16 +1109,6 @@ Data: %3
     <message>
         <source>&amp;Quit</source>
         <comment>quit</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Tools</source>
-        <comment>tools</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <comment>help</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1024,11 +1202,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Save new revision</source>
-        <comment>fsaverev</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show all operators in stream</source>
         <comment>streamAll</comment>
         <translation type="unfinished"></translation>
@@ -1036,16 +1209,6 @@ Data: %3
     <message>
         <source>Show only text operators in stream</source>
         <comment>streamText</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom out</source>
-        <comment>zoom_out</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom in</source>
-        <comment>zoom_in</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1064,28 +1227,128 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/Hide commandline</source>
-        <comment>hideCmd</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit page metrics</source>
         <comment>editPageMediaBox</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;View</source>
-        <comment>show</comment>
+        <source>Close Window</source>
+        <comment>closew</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/Hide property editor</source>
+        <source>Show/Hide &amp;commandline</source>
+        <comment>hideCmd</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add system font to page</source>
+        <comment>addSystemFont</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extract text from page</source>
+        <comment>pagetext</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom &amp;out</source>
+        <comment>zoom_out</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom &amp;in</source>
+        <comment>zoom_in</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show only graphical operators in stream</source>
+        <comment>streamGfx</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change font properties of operator</source>
+        <comment>operatorSetFont</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selection mode Toolbar</source>
+        <comment>SelectionModeToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all objects</source>
+        <comment>selectAllObjects</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select text</source>
+        <comment>selectText</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <comment>selectAll</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <comment>filemenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save new &amp;revision</source>
+        <comment>fsaverev</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;View</source>
+        <comment>showmenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide &amp;property editor</source>
         <comment>hideProp</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show/Hide object tree</source>
+        <source>Show/Hide object &amp;tree</source>
         <comment>hideTree</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <comment>toolsmenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <comment>editopersmenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set color</source>
+        <comment>opsetcolor</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set font</source>
+        <comment>opsetfont</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set line dash style</source>
+        <comment>opsetdash</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set line width</source>
+        <comment>opsetlinewidth</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <comment>helpmenu</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
