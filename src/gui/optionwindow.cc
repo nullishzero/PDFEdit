@@ -33,6 +33,7 @@
 #include "menu.h"
 #include "toolbar.h"
 #include "config.h"
+#include <assert.h>
 
 namespace gui {
 
