@@ -21,6 +21,7 @@ class QSIProperty;
 class QSIPropertyArray;
 class QSImporter;
 class QSMenu;
+class QSPage;
 class QSPdf;
 class QSPdfOperator;
 class TreeItemAbstract;
@@ -174,6 +175,8 @@ public slots: //This will be all exported to scripting
  void openFileNew(const QString &name);
  /*- Invokes options dialog. Does not wait for dialog to be closed by user and return immediately. */
  void options();
+ /*- Return currently shown page */
+ QSPage* page();
  /*- Return page number of currently shown page */
  int pageNumber();
  /*-

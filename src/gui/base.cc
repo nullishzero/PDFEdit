@@ -20,6 +20,7 @@
 #include "qsiproperty.h"
 #include "qsipropertyarray.h"
 #include "qsmenu.h"
+#include "qspage.h"
 #include "qspdf.h"
 #include "qspdfoperator.h"
 #include "qstreeitem.h"
@@ -189,7 +190,6 @@ void Base::runInitScript() {
 void Base::addDocumentObjects() {
  qs->setErrorMode(QSInterpreter::Nothing);
  //Import page and item (Currently selected page and currently selected object)
- QSCObject *page=import->createQSObject(w->selectedPage);
  QSCObject *trit=import->createQSObject(w->selectedTreeItem);
  QSCObject *item=NULL;
  if (w->selectedProperty.get()) {
@@ -201,7 +201,6 @@ void Base::addDocumentObjects() {
   //PdfOperator is selected and will be imported
   item=import->createQSObject(w->selectedOperator);
  }
- import->addQSObj(page,"page");
  import->addQSObj(trit,"treeitem");
  import->addQSObj(item,"item");
 }
@@ -257,8 +256,6 @@ void Base::removeDocumentObjects() {
  //delete page and item variables from script -> they may change while script is not executing
  deleteVariable("item");
  deleteVariable("treeitem");
- deleteVariable("page");
- //todo: QSA normal garbage collector via wrapperfactory
 }
 
 /**
@@ -687,6 +684,14 @@ void Base::options() {
 */
 int Base::pageNumber() {
  return w->selectedPageNumber;
+}
+
+/**
+ Return currently shown page
+ @return page
+*/
+QSPage* Base::page() {
+ return new QSPage(w->selectedPage,this);
 }
 
 /**
