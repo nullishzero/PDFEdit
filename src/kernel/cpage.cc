@@ -882,7 +882,7 @@ CPage::addSystemType1Font (const std::string& fontname)
 
 //
 // Transform matrix
-//
+// 
 
 //
 //
@@ -890,7 +890,26 @@ CPage::addSystemType1Font (const std::string& fontname)
 void
 CPage::setTransformMatrix (int tm[6])
 {
-	
+	if (contentstreams.empty())
+		return;
+
+	shared_ptr<CContentStream> str = contentstreams.front();
+	assert(str);
+
+	//
+	// Create new cm operator
+	//
+	PdfOperator::Operands operands;
+	operands.push_back (shared_ptr<IProperty> (new CReal (tm[0])));
+	operands.push_back (shared_ptr<IProperty> (new CReal (tm[1])));
+	operands.push_back (shared_ptr<IProperty> (new CReal (tm[2])));
+	operands.push_back (shared_ptr<IProperty> (new CReal (tm[3])));
+	operands.push_back (shared_ptr<IProperty> (new CReal (tm[4])));
+	operands.push_back (shared_ptr<IProperty> (new CReal (tm[5])));
+	shared_ptr<PdfOperator> cmop (new SimpleGenericOperator ("cm", 6, operands));
+
+	// Insert at the beginning
+	str->frontInsertOperator (cmop);
 }
 
 

@@ -673,9 +673,9 @@ public:
  */
 typedef enum
 {
-	itTextIterator, itFontIterator, itInlineImageIterator, itNonStrokingIterator, itStrokingIterator, itChangeableIterator,
-	itGraphicalIterator
-
+	// General iterators
+		itTextIterator, itFontIterator, itInlineImageIterator, itNonStrokingIterator, itStrokingIterator, 
+		itChangeableIterator, itGraphicalIterator
 } IteratorType;
 
 

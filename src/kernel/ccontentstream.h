@@ -341,7 +341,9 @@ public:
 		{ deleteOperator (PdfOperator::getIterator<OperatorIterator> (oper), indicateChange); };
 
 	/**
-	 * Insert pdf operator at specified position.
+	 * Insert pdf operator after specified position. If it is not valid it is
+	 * assumend that the content stream is empty and operator will be inserted
+	 * at the beginning. 
 	 *
 	 * We have to insert the operator into the iterator queue and also intto the tree  queue.
 	 *
@@ -351,10 +353,21 @@ public:
 	 * otherwise the change will not be visible.
 	 */
 	void insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
-	
+
+	/** \see insertOperator */
 	void insertOperator (boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true)
 		{ insertOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); };
 	
+	/**
+	 * Insert pdf operator in the front. 
+	 *
+	 * @param newOper Operator that will be inserted.
+	 * @param indicateChange If true, changed contentstream will be written to its cstreams, 
+	 * otherwise the change will not be visible.
+	 */
+	void frontInsertOperator (boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true);
+
+
 	/**
 	 * Replace an operator with another one.
 	 *

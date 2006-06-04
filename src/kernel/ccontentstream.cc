@@ -1979,6 +1979,33 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 		_objectChanged ();
 }
 
+//
+//
+//
+void 
+CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper, 
+									 bool indicateChange)
+{
+	if (operators.empty ())
+	{ // Insert into empty contentstream
+		
+		operators.push_back (newoper);
+	
+	}else
+	{ // Insert into
+
+		shared_ptr<PdfOperator> secondoper = operators.front();
+		operators.push_front (newoper);
+		shared_ptr<PdfOperator> lastofnew = getLastOperator (newoper);
+		secondoper->setPrev (lastofnew);
+		lastofnew->setNext (secondoper);
+	}
+
+	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
+	if (indicateChange)
+		_objectChanged ();
+
+}
 
 //
 // We can not simply use add and delete function because in both cases we would mess up
