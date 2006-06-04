@@ -12,6 +12,7 @@ class QScrollView;
 class QLabel;
 class QStringList;
 class QGridLayout;
+class QLabel;
 class QFrame;
 
 namespace gui {
@@ -51,6 +52,7 @@ private:
  void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
  void deleteLayout();
  void createLayout();
+ void fixPropertyHeight(Property *pr);
 private:
  /** Number of objects in property editor */
  int nObjects;
@@ -66,6 +68,10 @@ private:
  QDict<Property> *items;
  /** Dictionary with IProperty items */
  QMap<QString,boost::shared_ptr<IProperty> > *props;
+ /** Dictionary with Row numbers for proerties */
+ QMap<QWidget*,int> rowNum;
+ /** Dictionary with labes for properties*/
+ QMap<QWidget*,QLabel*> propLabel;
  /** Dictionary with property labels */
  QDict<QLabel> *labels;
  /** PropertyModeController - modecontroller wrapper instance */

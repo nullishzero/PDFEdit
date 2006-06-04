@@ -89,6 +89,8 @@ void PropertyEditor::resizeEvent (QResizeEvent *e) {
 
 /** remove and delete all properties from the editor, unset current object */
 void PropertyEditor::clear() {
+ rowNum.clear();
+ propLabel.clear();
  //clear properties in property dictionary
  QDictIterator<Property> itp(*items);
  for (;itp.current();++itp) {
@@ -153,6 +155,8 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  gridl->setRowSpacing(nObjects,MAX(labelHeight,propHeight));
  gridl->addWidget(label,nObjects,0);
  gridl->addWidget(prop,nObjects,1);
+ rowNum.insert(prop,nObjects);
+ propLabel.insert(prop,label);
  nObjects++;
  list->append(name);
  items->insert(name,prop);
@@ -160,11 +164,21 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  labels->insert(name,label);
  connect(prop,SIGNAL(propertyChanged(Property*)),this,SLOT(update(Property*)));
  prop->initLabel(label);
- prop->override(showHidden,editReadOnly);
- prop->show();
- label->show();
+ prop->override(showHidden,editReadOnly);//Will show or hide
+ fixPropertyHeight(prop);
 }
 
+void PropertyEditor::fixPropertyHeight(Property *pr) {
+ int row=rowNum[pr];
+ QLabel *label=propLabel[pr];
+ if (pr->isHidden()) {
+  gridl->setRowSpacing(row,1);
+ } else {
+  int labelHeight=label->sizeHint().height();
+  int propHeight=pr->sizeHint().height();
+  gridl->setRowSpacing(row,MAX(labelHeight,propHeight));
+ }
+}
 /** Add single property to the widget
  @param name Name of property to be added
  @param value Value of property to be added
@@ -254,7 +268,6 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   for( it=list.begin();it!=list.end();++it) { // for each property
    i++;
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
-   guiPrintDbg(debug::DBG_DBG,"HAVE: " << *it);
    addProperty(*it,property);
   }
   if (!i) { //No subproperties at all
@@ -273,7 +286,6 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   for( it=list.begin();it!=list.end();++it) { // for each property
    i++;
    boost::shared_ptr<IProperty> property=cstream->getProperty(*it);
-   guiPrintDbg(debug::DBG_DBG,"HAVE: " << *it);
    addProperty(*it,property);
   }
   if (!i) { //No subproperties at all
@@ -370,6 +382,7 @@ void PropertyEditor::override(bool _showHidden,bool _editReadOnly) {
  QDictIterator<Property> itp(*items);
  for (;itp.current();++itp) {
   itp.current()->override(_showHidden,_editReadOnly);
+  fixPropertyHeight(itp.current());
  }
 }
 

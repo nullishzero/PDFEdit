@@ -47,21 +47,20 @@ void Property::modifyColor(QWidget* widget) {
   case mdNormal:
    //No color modification
    return;
-  case mdReadOnly:
-   //Shift to gray
-   colorMod(widget,QColor(128,128,128),0.3,QColor(128,128,128),0.3);
-   return;
   case mdHidden:
-   //Shift to blue
-   colorMod(widget,QColor(0,0,255),0.2,QColor(0,0,0),0.0);
+   //Shift to blue fg
+   colorMod(widget,QColor(0,0,255),0.4,QColor(0,0,0),0.0);
    return;
   case mdAdvanced:
-   //Shift to gray + red
-   colorMod(widget,QColor(255,128,128),0.3,QColor(255,128,128),0.3);
+   //Shift to reddish fg/bg
+   colorMod(widget,QColor(255,64,64),0.3,QColor(255,64,64),0.3);
+   return;
+  case mdReadOnly:
+   //Shift to gray fg/bg
+   colorMod(widget,QColor(128,128,128),0.3,QColor(128,128,128),0.3);
    return;
   case mdUnknown:
-   //Shift to heavy green
-   colorMod(widget,QColor(128,255,128),0.3,QColor(0,0,0),0.0);
+   //No color modification
    return;
  }
 }
@@ -81,17 +80,20 @@ void Property::initLabel(QLabel *widget) {
    //No color modification
    return;
   case mdReadOnly:
+   //Shift to gray foreground
+   colorMod(widget,QColor(128,128,128),0.4,QColor(0,0,0),0);
+   return;
   case mdAdvanced:
-   //Shift to gray
-   colorMod(widget,QColor(128,128,128),0.3,QColor(128,128,128),0.3);
+   //Shift to gray foreground, blue background
+   colorMod(widget,QColor(128,128,128),0.4,QColor(0,0,255),0.14);
    return;
   case mdHidden:
-   //Shift to blue
-   colorMod(widget,QColor(0,0,255),0.5,QColor(0,0,255),0.5);
+   //Shift to blue background
+   colorMod(widget,QColor(0,0,0),0,QColor(0,0,255),0.14);
    return;
   case mdUnknown:
-   //Shift to light green
-   colorMod(widget,QColor(128,255,128),0.5,QColor(0,0,0),0.0);
+   //Shift to light green foreground
+   colorMod(widget,QColor(128,255,128),0.4,QColor(0,0,0),0.0);
    return;
  }
 }
@@ -102,7 +104,8 @@ void Property::initLabel(QLabel *widget) {
  @param editReadOnly Edit read-only properties
 */
 void Property::override(bool showHidden,bool editReadOnly) {
- applyHidden(hidden && !showHidden);
+ bool effectiveHidden=hidden && !showHidden;
+ applyHidden(effectiveHidden);
  effectiveReadonly=readonly && !editReadOnly;
  applyReadOnly(effectiveReadonly);
 }
@@ -112,6 +115,8 @@ void Property::override(bool showHidden,bool editReadOnly) {
  @param hideThis New hidden flag value
 */
 void Property::applyHidden(bool hideThis) {
+ assert(propertyLabel);
+ guiPrintDbg(debug::DBG_DBG,"Hide/show >> " << hideThis << " ?? " << dynamic_cast<QLabel*>(propertyLabel)->text());
  if (hideThis) {
   propertyLabel->hide();
   this->hide();
@@ -143,11 +148,8 @@ PropertyFlags Property::getFlags() {
 */
 void Property::setFlags(PropertyFlags flag) {
  flags=flag;
- if (flags==mdReadOnly || flags==mdAdvanced) {
-  readonly=true;
- } else {
-  readonly=false;
- }
+ readonly=(flags==mdReadOnly || flags==mdAdvanced);
+ hidden=  (flags==mdHidden   || flags==mdAdvanced);
 }
 
 /**
