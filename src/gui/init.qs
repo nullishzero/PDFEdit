@@ -486,7 +486,7 @@ function editFontProps() {
 	var fontsize = fontspecs[1];
 	var fontname = fontspecs[0];
 	
-	var dg = createDialog (tr("Change font properties"), tr("Change font"), tr("Discard changes"), tr("Change font"));
+	var dg = createDialog (tr("Change font properties"), tr("Change font"), tr("Cancel"), tr("Change font"));
 	var gb = createGroupBoxAndDisplay (tr("Avaliable fonts"),dg);
 	var cb = new ComboBox;
 	cb.label = tr("Select from all avaliable fonts");
@@ -544,7 +544,7 @@ function addSystemFont() {
 		return;
 	}
 
-	var dg = createDialog (tr("Add system font"), tr("Add font"), tr("Discard changes"), tr("Add system fonts"));
+	var dg = createDialog (tr("Add system font"), tr("Add font"), tr("Cancel"), tr("Add system fonts"));
 	var gb = createGroupBoxAndDisplay (tr("Avaliable system fonts"),dg);
 	var cb = new ComboBox;
 	// Put values from pdf specification here
