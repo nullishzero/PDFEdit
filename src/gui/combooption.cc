@@ -12,6 +12,7 @@
 #include <qstringlist.h>
 #include <qcombobox.h>
 #include "settings.h"
+#include "util.h"
 
 namespace gui {
 
@@ -28,6 +29,7 @@ ComboOption::ComboOption(const QStringList &_values,const QString &_key/*=0*/,QW
  caseSensitive=false;
  ed->insertStringList(values);
  ed->setInsertionPolicy(QComboBox::NoInsertion);
+ connect(ed,SIGNAL(activated(int)),this,SLOT(itemActivated(int)));
 }
 
 /** default destructor */
@@ -37,7 +39,16 @@ ComboOption::~ComboOption() {
 
 /** write edited value to settings */
 void ComboOption::writeValue() {
+ if (!changed) return;
  globalSettings->write(key,ed->currentText());
+}
+
+/**
+ Slot called when changing the item in combobox
+ @param index Index of newly selected item
+*/
+void ComboOption::itemActivated(__attribute__((unused)) int index) {
+ changed=true;
 }
 
 /** read value from settings for editing */
@@ -50,6 +61,7 @@ void ComboOption::readValue() {
  if (matches.count()==0) ed->setCurrentText(values[0]);
  //Use first match (Will "normalize" case in case of case-insensitive matching)
  ed->setCurrentText(matches[0]);
+ changed=false; //Since we've just read the actual setting
 }
 
 /** Set case sensitivity of list items. Default is case insensitive

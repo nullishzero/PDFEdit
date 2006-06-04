@@ -19,6 +19,8 @@ public:
  virtual void writeValue();
  virtual void readValue();
  virtual QSize sizeHint() const;
+protected slots:
+ void enableChange(const QString &newText);
 protected:
  virtual void resizeEvent (QResizeEvent *e);
 protected:

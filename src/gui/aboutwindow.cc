@@ -35,6 +35,8 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  QGridLayout *l=new QGridLayout(this,2,2);
  QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1><br>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
   info+"</td><td valign=\"bottom\">"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
+ lb->setPaletteBackgroundColor(white);
+ lb->setBackgroundMode(FixedColor);
  lb->setTextFormat(Qt::RichText);
  QPushButton *ok=new QPushButton(QObject::tr("&Ok"), this);
  QObject::connect(ok, SIGNAL(clicked()), this, SLOT(close()));

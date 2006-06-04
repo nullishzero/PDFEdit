@@ -19,12 +19,18 @@ namespace gui {
 BoolOption::BoolOption(const QString &_key,QWidget *parent/*=0*/,bool _defValue/*=false*/)
  : Option (_key,parent) {
  ed=new QCheckBox(this,"booloption_checkbox");
+ connect(ed,SIGNAL(clicked()),this,SLOT(boolChange()));
  defValue=_defValue;
 }
 
 /** default destructor */
 BoolOption::~BoolOption() {
  delete ed;
+}
+
+/** Called when clicked on the checkbox */
+void BoolOption::boolChange() {
+ changed=true;
 }
 
 /**
@@ -45,6 +51,7 @@ void BoolOption::resizeEvent (QResizeEvent *e) {
 
 /** write edited value to settings */
 void BoolOption::writeValue() {
+ if (!changed) return;
  bool val=ed->isChecked();
  globalSettings->write(key,val?"1":"0");
 }

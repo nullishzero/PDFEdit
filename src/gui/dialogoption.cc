@@ -28,6 +28,16 @@ DialogOption::DialogOption(const QString &_key/*=0*/,QWidget *parent/*=0*/,const
  pb=new QPushButton("..",this,"option_pickbutton");
  if (!defValue.isNull()) ed->setText(defValue);
  connect(pb,SIGNAL(clicked()),this,SLOT(invokeDialog()));
+ connect(ed,SIGNAL(textChanged(const QString&)),this,SLOT(enableChange(const QString&)));
+
+}
+
+/**
+ Called when text changes
+ @param newText value of new text
+ */
+void DialogOption::enableChange(__attribute__((unused)) const QString &newText) {
+ changed=true;
 }
 
 /**
@@ -38,6 +48,7 @@ void DialogOption::invokeDialog() {
  QString value=ed->text();
  dialog(value);
  ed->setText(value);
+ changed=true;
 }
 
 /** default destructor */
@@ -55,6 +66,7 @@ void DialogOption::readValue() {
  QString value=globalSettings->read(key);
  if (value.isNull()) return;
  ed->setText(value);
+ changed=false; //Since we've just read the actual setting
 }
 
 /** return size hint of this property editing control

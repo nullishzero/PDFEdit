@@ -24,6 +24,8 @@ public:
 protected:
  /** Name of this option */
  QString key;
+ /** Was the value changed? */
+ bool changed;
 };
 
 } // namespace gui 

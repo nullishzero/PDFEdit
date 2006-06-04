@@ -25,6 +25,8 @@ public:
  void setCaseSensitive(bool value);
 protected:
  virtual void resizeEvent (QResizeEvent *e);
+protected slots:
+ void itemActivated(int index);
 protected:
  /** edit control used for editing the value (combo box) */
  QComboBox *ed;

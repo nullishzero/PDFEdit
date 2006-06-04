@@ -33,10 +33,11 @@ public:
  */
  virtual void dialog(QString &value)=0;
 protected slots:
+ void enableChange(const QString &newText);
  void invokeDialog();
 protected:
  virtual void resizeEvent (QResizeEvent *e);
-protected:
+private:
  /** one line edit control used for editing the value */
  QLineEdit *ed;
  /** Push button for invoking the dialog */

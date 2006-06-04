@@ -16,6 +16,7 @@ namespace gui {
  */
 Option::Option(const QString &_key/*=0*/,QWidget *parent/*=0*/) : QWidget (parent, "option"){
  key=_key;
+ changed=false;
 }
 
 /**

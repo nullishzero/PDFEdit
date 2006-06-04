@@ -21,6 +21,7 @@ StringOption::StringOption(const QString &_key/*=0*/,QWidget *parent/*=0*/,const
  : Option (_key,parent) {
  ed=new QLineEdit(this,"option_edit");
  if (!defValue.isNull()) ed->setText(defValue);
+ connect(ed,SIGNAL(textChanged(const QString&)),this,SLOT(enableChange(const QString&)));
 }
 
 /** default destructor */
@@ -28,8 +29,17 @@ StringOption::~StringOption() {
  delete ed;
 }
 
+/**
+ Called when text changes
+ @param newText value of new text
+ */
+void StringOption::enableChange(__attribute__((unused)) const QString &newText) {
+ changed=true;
+}
+
 /** write edited value to settings (using key specified in contructor) */
 void StringOption::writeValue() {
+ if (!changed) return; //Avoid writing unchanged values and cluttering user config
  globalSettings->write(key,ed->text());
 }
 
@@ -38,6 +48,7 @@ void StringOption::readValue() {
  QString value=globalSettings->read(key);
  if (value.isNull()) return;
  ed->setText(value);
+ changed=false; //Since we've just read the actual setting
 }
 
 /** return size hint of this property editing control

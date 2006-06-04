@@ -21,6 +21,8 @@ public:
  virtual void readValue();
 protected:
  virtual void resizeEvent (QResizeEvent *e);
+protected slots:
+ void boolChange();
 protected:
  /** checkbox used for editing the value */
  QCheckBox *ed;
