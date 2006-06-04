@@ -50,6 +50,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
   menu.addItemDef("item "+tr("Add system font")+",addSystemFont(),,page_add_font.png");
   menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
+  menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
  }
  if (treeitem.itemtype()=="ContentStream") {
   menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
@@ -592,6 +593,116 @@ function viewPageText() {
 	dg.exec();
 	print (tr("Page text displayed"));
 }
+
+/**
+ * Change page transform matrix.
+ */
+function setPageTm() {
+
+	if (!isPageAvaliable()) {	
+ 		warn(tr("No page selected!"));
+		return;
+	}
+	
+	var dg = createDialog (tr("Add page transformation matrix"), tr("Ok"), tr("Cancel"), tr("Change page transformation matrix"));
+	
+	/* == First tab */
+	dg.newTab(tr("Page transformation matrix description"));
+	var gb = createGroupBoxAndDisplay (tr("Page transformation description"),dg);
+	var te = new TextEdit;
+	te.text = "Translations are specified as [1 0 0 1 tx ty], where tx and ty are the distances "+
+			  "to translate the origin of the coordinate system in the horizontal and vertical "+
+			  "dimensions, respectively.\n\n"+
+			  "Scaling is obtained by [sx 0 0 sy 0 0]. This scales the coordinates so that 1 "+
+			  "unit in the horizontal and vertical dimensions of the new coordinate system is "+
+			  "the same size as sx and sy units, respectively, in the previous coordinate system.\n\n"+
+			  "Rotations are produced by [cos(a)  sin(a)  -sin(a)  cos(a) 0  0], which has the effect "+
+			  " of rotating the coordinate system axes by an angle ?? counterclockwise.\n\n"+
+			  "Skew is specified by [1 tan(a) tan(b) 1 0 0], which skews the x axis by an angle "+
+			  "and the y axis by an angle.";
+	gb.add(te);
+	dg.newColumn();
+	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
+	rbtran = createRadioButtonAndDisplay (tr("Translate (shift) page"),gb);
+	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
+	rbscal = createRadioButtonAndDisplay (tr("Scale page"),gb);
+	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
+	rbskew = createRadioButtonAndDisplay (tr("Skew page"),gb);
+	     
+
+	/* == Second tab */
+	dg.newTab("Page translation");
+	gb = createGroupBoxAndDisplay (tr("Page translation"),dg);
+	te = new TextEdit;
+	te.text = "Translations are specified as [1 0 0 1 tx ty], where tx and ty are the distances "+
+			  "to translate the origin of the coordinate system in the horizontal and vertical "+
+			  "dimensions, respectively.\n\n";
+	gb.add(te);
+	dg.newColumn();
+	gb = createGroupBoxAndDisplay (tr("Set values           [* * * * tx ty]"),dg);
+	e = createLineEditAndDisplay (tr("tx"), "0", gb);
+	f = createLineEditAndDisplay (tr("ty"), "0",  gb);
+
+
+	/* == Third tab */
+	dg.newTab("Page scaling");
+	gb = createGroupBoxAndDisplay (tr("Page scaling"),dg);
+	te = new TextEdit;
+	te.text = "Scaling is obtained by [sx 0 0 sy 0 0]. This scales the coordinates so that 1 "+
+			  "unit in the horizontal and vertical dimensions of the new coordinate system is "+
+			  "the same size as sx and sy units, respectively, in the previous coordinate system.";
+	gb.add(te);
+	dg.newColumn();
+	gb = createGroupBoxAndDisplay (tr("Set values           [sx * * sy * *]"),dg);
+	a = createLineEditAndDisplay (tr("sx"), "0", gb);
+	d = createLineEditAndDisplay (tr("sy"), "0", gb);
+
+	/* == Fourth tab */
+	dg.newTab("Page skewing");
+	gb = createGroupBoxAndDisplay (tr("Page skewing"),dg);
+	te = new TextEdit;
+	te.text = "Skew is specified by [1 tan(a) tan(b) 1 0 0], which skews the x axis by an angle "+
+			  "and the y axis by an angle.";
+	gb.add(te);
+	dg.newColumn();
+	gb = createGroupBoxAndDisplay (tr("Set values           [* tan(a) tan(b) * * *]"),dg);
+	b = createLineEditAndDisplay (tr("tan(a)"), "0", gb);
+	c = createLineEditAndDisplay (tr("tan(b)"), "0", gb);
+
+	// Set width
+	dg.width = 700;
+	if (!dg.exec()) return;
+
+	// Default matrix
+	tm = [1,0,0,1,0,0];
+	if (rbtran.checked) {
+		tm[4] = parseFloat(e.text);
+		tm[5] = parseFloat(f.text);
+	}
+	if (rbscal.checked) {
+		tm[0] = parseFloat(a.value);
+		tm[3] = parseFloat(d.value);
+	}
+	if (rbskew.checked) {
+		tm[1] = parseFloat(b.value);
+		tm[2] = parseFloat(c.value);
+	}
+
+	if (!rbtran.checked && !rbscal.checked && !rbskew.checked)
+		return;
+	for(i = 0; i < tm.length; ++i) {
+		if (undefined == tm[i]) {
+			warn (tr("Invalid number supplied."));
+			return;
+		}
+	}
+
+	page().setTransformMatrix(tm);
+	
+	print (tr("Page transformation matrix changed to "+tm));
+	go();
+}
+
 
 /* ==== Code to run on start ==== */
 
