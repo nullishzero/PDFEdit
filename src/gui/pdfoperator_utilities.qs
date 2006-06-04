@@ -1,3 +1,38 @@
+/* === Validation functions === */
+
+
+/** Is this operator text operator. */
+function isTextOp(operator) {
+	var txtit = operator.textIterator();
+	if (!txtit.isEnd() && operator.equals(txtit.current()))
+		return true;
+	else
+		return false;
+}
+
+/** Is this operator text operator. */
+function isChangeableOp(operator) {
+	var txtit = operator.changeableIterator();
+	if (!txtit.isEnd() && operator.equals(txtit.current()))
+		return true;
+	else
+		return false;
+}
+
+/* === Helper functions === */
+function operatorInitChange(operator) {
+	var prev = operator.iterator();
+	prev.prev();
+	var next = operator.getLastOperator().iterator();
+	next.next();
+
+	operator.setPrev( createEmptyOperator() );
+	operator.getLastOperator().setNext( createEmptyOperator() );
+
+	return [prev,next];
+}
+
+
 /** set color of operator
  * @param operator change color of this operator
  * @param r red component of color for set
@@ -38,14 +73,15 @@ function operatorSetColor(operator,r,g,b) {
 
 	// --------  set color of operator  ---------
 
-	var prev = operator.iterator();
-	prev.prev();
-	var next = operator.getLastOperator().iterator();
-	next.next();
+	var posit = operatorInitChange(operator);
 
-	operator.setPrev( createEmptyOperator() );
-	operator.getLastOperator().setNext( createEmptyOperator() );
-
+	//
+	// Create 
+	//  q
+	//  r g b rg/RG
+	//  oper
+	//  Q
+	//
 	var composite = createCompositeOperator("q","Q");
 
 	var operands = createIPropertyArray();
@@ -74,7 +110,7 @@ function operatorSetColor(operator,r,g,b) {
 	operands.clear();
 	composite.pushBack( createOperator(operands, "Q"), operator.getLastOperator() );
 
-	operator.stream().replace(operator, composite, prev, next);
+	operator.stream().replace(operator, composite, posit[0], posit[1]);
 }
 
 /** 
@@ -89,7 +125,7 @@ function operatorGetFont(operator) {
 
 	if ("PdfOperator" != operator.type()) {
 		warn (tr("Operator must be")+" QSPdfOperator !!!");
-		return ;
+		return;
 	}
 
 	// ===  Get the preceding font operator ===  
@@ -108,7 +144,7 @@ function operatorGetFont(operator) {
 		warn (tr("Invalid operand type"));
 		return;
 	}
-	var fonttype = firstoper.getText();
+	var fonttype = firstoper.value();
 	var fontsize = secondoper.getText();
 	return [fonttype, fontsize];
 }
@@ -132,14 +168,14 @@ function operatorSetFont(operator, fontid, fontsize) {
 
 	// == Set new font around this operator
 
-	var prev = operator.iterator ();
-	prev.prev ();
-	var next = operator.getLastOperator().iterator();
-	next.next ();
+	var posit = operatorInitChange (operator);
 
-	operator.setPrev (createEmptyOperator());
-	operator.getLastOperator().setNext (createEmptyOperator());
-
+	//
+	// q 
+	// fontid fontsize Tf
+	// oper
+	// Q
+	//
 	var composite = createCompositeOperator ("q","Q");
 
 	var operands = createIPropertyArray ();
@@ -154,7 +190,7 @@ function operatorSetFont(operator, fontid, fontsize) {
 	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
 
 	// replace it
-	operator.stream().replace (operator, composite, prev, next);
+	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }
 
 /** 
@@ -174,18 +210,18 @@ function operatorSetLineWidth(operator, linewidth) {
 
 	// == Set new font around this operator
 
-	var prev = operator.iterator ();
-	prev.prev ();
-	var next = operator.iterator().getLastOperator ();
-	next.next ();
-
-	operator.setPrev (createEmptyOperator());
-	operator.getLastOperator().setNext (createEmptyOperator());
-
+	var posit = operatorInitChange (operator);
+	
+	//
+	// q
+	// linewidth w
+	// oper
+	// Q
+	//
 	var composite = createCompositeOperator ("q","Q");
 
 	var operands = createIPropertyArray ();
-	operands.append (linewidth);
+	operands.append (createInt(linewidth));
 	composite.pushBack (createOperator(operands, "w"), composite);
 
     /* Put the changed operator also in the queue */
@@ -194,17 +230,41 @@ function operatorSetLineWidth(operator, linewidth) {
 	operands.clear();
 	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
 
-	operator.stream().replace (operator, composite, prev, next);
+	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }
 
+/**
+ * Set simple dash pattern from provided alternatives.
+ */
+ function operatorSetSimpleDashPattern(alt,operator) {
+print(alt); 
+	var array = [];
+	var step = 0;
+ 	switch(alt) {
+	case 0 :
+		break;
+	case 1 :
+		array = [3];
+		break;
+	case 2 :
+		array = [2,1];
+		break;
+	default:
+		warn (tr("This option is not supported."));
+		return false;
+	}
+	operatorSetDashPattern(operator,array,0);
+	return true;
+ }
+
 /** 
- * Set linewidth of an operator.
+ * Set dash pattern of an operator.
  *
  * @param oper Pdf operator.
  * @param array The dash array's elements are numbers that specify the lengths of alternating dashes and gaps.
  * @param phase The dash phase specifies the distance into the dash pattern at which to start the dash.
  */
-function operatorSetLineWidth(operator, array, phase) {
+function operatorSetDashPattern(operator, array, phase) {
 
 	// == Check type
 
@@ -215,19 +275,22 @@ function operatorSetLineWidth(operator, array, phase) {
 
 	// == Set new font around this operator
 
-	var prev = operator.iterator ();
-	prev.prev ();
-	var next = operator.iterator().getLastOperator ();
-	next.next ();
-
-	oper.setPrev (createEmptyOperator());
-	oper.getLastOperator().setNext (createEmptyOperator());
-
-	var composite = createCompositeOperator ("q","Q");
+	var posit = operatorInitChange(operator);
+	
+	//
+	// q
+	// array phase d
+	// oper
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
 
 	var operands = createIPropertyArray ();
-	operands.append (array);
-	operands.append (phase);
+	var iparray = createArray();
+	for (i=0; i<array.length; ++i)
+		iparray.add(i,createInt(array[i]));
+	operands.append (iparray);
+	operands.append (createInt(phase));
 	composite.pushBack (createOperator(operands, "d"), composite);
 
     /* Put the changed operator also in the queue */
@@ -236,7 +299,7 @@ function operatorSetLineWidth(operator, array, phase) {
 	operands.clear();
 	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
 
-	operator.stream().replace (operator, composite, prev, next);
+	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }
 
 

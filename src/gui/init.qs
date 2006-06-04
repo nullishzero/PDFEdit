@@ -42,6 +42,9 @@ function onTreeRightClick() {
  if (treeitem.itemtype()=="PdfOperator") {
   menu.addItemDef("item "+tr("Set color")+",setColor(),,operator_setcolor.png");
   menu.addItemDef("item "+tr("Set font properties")+",editFontProps(),,operator_editfont.png");
+  menu.addSeparator();
+  menu.addItemDef("item "+tr("Set line dash style")+",setDashPattern(),,operator_dashpattern.png");
+  menu.addItemDef("item "+tr("Set line width")+",setLineWidth(),,operator_linewidth.png");
  }
  if (treeitem.itemtype()=="Page") {
   menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
@@ -135,16 +138,6 @@ function showHide(win) {
  setVisible(win,!vis);
 }
 
-/** Perform "set color" operation on currently selected operator */
-function setColor() {
- op=treeitem.item();
- stream=op.stream();
- col=pickColor();
- if (!col) return;//Dialog aborted
- operatorSetColor(op,col.red, col.green, col.blue);
- //reload the page
- go();
-}
 
 /** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
 function func_savecopy() {
@@ -246,7 +239,7 @@ function zoom(x) {
 /** Get dictionary from page number X */
 function pageDict(x) {
  page=document.getPage(x);
- return page.getDictionary();
+ return page().getDictionary();
 }
 
 /** TEST: buffer integrity */
@@ -283,10 +276,17 @@ function buftest(x,at,st) {
 
 /** === Validate functions === */
 
-/** Validate page */
-function isValidPage(page) {
- if (!page) {
- 	warn(tr("No page selected!"));
+/** Validate current page */
+function isPageAvaliable() {
+ if (page()) {
+	return true;
+ }else
+ 	return false;
+}
+
+/** Validate item selection */
+function isTreeItemSelected() {
+ if (undefined == treeitem) {
 	return false;
  }else
  	return true;
@@ -294,8 +294,10 @@ function isValidPage(page) {
 
 /** Return property from dictionary of current page */
 function pageProperty(propName) {
- if (isValidPage(page))
-	 return page.getDictionary().property(propName).ref();
+ if (isPageAvaliable())
+	return page().getDictionary().property(propName).ref();
+ else
+ 	warn(tr("No page selected!"));
 }
 
 /**
@@ -303,8 +305,10 @@ function pageProperty(propName) {
  adding it with default value if property is not found
 */
 function pagePropertyDef(propName,defValue) {
- if (isValidPage(page))
-	return page.getDictionary().propertyDef(propName,defValue).ref();
+ if (isPageAvaliable())
+	return page().getDictionary().propertyDef(propName,defValue).ref();
+ else
+ 	warn(tr("No page selected!"));
 }
 
 /** Set stream to certain mode */
@@ -319,8 +323,10 @@ function streamMode(newMode) {
 
 /** rotate current page N degrees clockwise */
 function rotatePage(n) {
- if (!isValidPage (page))
+ if (!isPageAvaliable()) {
+ 	warn(tr("No page selected!"));
  	return;
+ }
 //Get page rotation
  rotate=pagePropertyDef("Rotate",0);
  //Add rotation
@@ -330,6 +336,7 @@ function rotatePage(n) {
  if (n0>=360) n0-=360;
  //Set
  rotate.set(n0);
+ print (tr("Page rotated."));
  //Reload page after rotating
  go();
 }
@@ -340,11 +347,13 @@ function rotatePage(n) {
  */
 function editPageMediaBox() {
 
- if (!isValidPage (page))
+ if (!isPageAvaliable()) {
+ 	warn(tr("No page selected!"));
  	return;
+ }
 	
  // Get media box
- var mediabox = page.mediabox();
+ var mediabox = page().mediabox();
  var xleft = mediabox[0];
  var yleft = mediabox[1];
  var xright = mediabox[2];
@@ -358,25 +367,120 @@ function editPageMediaBox() {
  var exr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+": ", xright, gb);
  var eyr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+": ", yright, gb);
 
- if (dialog.exec()) {
- 	// Save media box
-	page.setMediabox (exl.text, eyl.text, exr.text, eyr.text);
-	print (tr('MediaBox changed..'));
-	go ();
- }
+ if (!dialog.exec()) return;
+
+ // Save media box
+ page().setMediabox (exl.text, eyl.text, exr.text, eyr.text);
+ print (tr("MediaBox changed."));
+ go ();
 }
 
+/** Perform "set color" operation on currently selected operator */
+function setColor() {
+	
+	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+		warn(tr("No page or operator selected!"));
+		return;
+	}
+	
+	op=treeitem.item();
+	if (!isChangeableOp(op)) {
+		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+tr(" Please see the pdf specification for details."));
+		return;
+	}
+
+	stream=op.stream();
+	col=pickColor();
+	if (!col) return;//Dialog aborted
+	operatorSetColor(op,col.red, col.green, col.blue);
+	print (tr("Colour changed."));
+	//reload the page
+	go();
+}
+
+
+/** Change dash style of an operator. */
+function setLineWidth() {
+	
+	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+		warn(tr("No page or operator selected!"));
+		return;
+	}
+	
+	op=treeitem.item();
+	if (!isChangeableOp(op)) {
+		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for line width change.")+tr(" Please see the pdf specification for details."));
+		return;
+	}
+	
+	var dialog = createDialog ("Change line width", "Change", "Cancel", "Change line width");
+	
+	var gb = createGroupBoxAndDisplay ("Line width", dialog);
+	var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
+	 
+	if (!dialog.exec()) return;
+	 
+	operatorSetLineWidth(op,sb.value);
+	print (tr("Line width changed."));
+	// Reload page
+	go ();
+}
+
+
+/** Change dash style of an operator. */
+function setDashPattern() {
+	
+	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+		warn(tr("No page or operator selected!"));
+		return;
+	}
+	
+	op=treeitem.item();
+	if (!isChangeableOp(op)) {
+		warn(tr("Operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+tr(" Please see the pdf specification for details."));
+		return;
+	}
+	
+	var dialog = createDialog ("Change line dash pattern", "Change", "Cancel", "Change line dash pattern");
+	 
+	var gb = createGroupBoxAndDisplay ("Line dashing patterns", dialog);
+	var rb = [];
+	rb[0] = createRadioButtonAndDisplay ("Solid line",gb);
+	rb[1] = createRadioButtonAndDisplay ("Slightly dashed",gb);
+	rb[2] = createRadioButtonAndDisplay ("Dot and dashed",gb);
+	 
+	if (!dialog.exec()) return;
+	 
+	var i = 0;
+	for(; i<rb.length; ++i)
+		if (rb[i].checked)
+			break;
+	
+	if (!operatorSetSimpleDashPattern(i,op)) return;
+
+	print (tr("Dash pattern changed."));
+	// Reload page
+	go ();
+}
 
 /**
  * Display and allow to change font atributes of a text operator.
  */
 function editFontProps() {
 
-	if (!isValidPage (page))
- 		return;
+	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+		warn(tr("No page or operator selected!"));
+		return;
+	}
 
 	// Get selected item
  	op=treeitem.item();
+
+	if (!isTextOp(op)) {
+ 		warn(tr("Operator")+tr("is not")+tr("text operator")+tr("Only text operator allowed!"));
+		return;
+	}
+	
 	var fontspecs = operatorGetFont(op);
 	var fontsize = fontspecs[1];
 	var fontname = fontspecs[0];
@@ -387,16 +491,15 @@ function editFontProps() {
 	cb.label = tr("Select from all avaliable fonts");
 	
 	// Put all avaliable fonts here and select the operator font 
-	var fonts = page.getFontIdsAndNames();
+	var fonts = page().getFontIdsAndNames();
 	var fontnames = new Array(fonts.length/2);
 	
 	// Fill fontnames with symbolic font names
 	for(i = 1,j=0; i < fonts.length; ++i) {
-		//print(fonts[i]+" "+fonts[i-1]+"=="+fontname);
         fontnames[j] = fonts[i];
 		// Save symbolic name of operator font
 		if (fonts[i-1] == fontname)
-			fontname = fonts[i-1];
+			fontname = fonts[i];
 		// Skip id
 		++i;++j;
     }
@@ -409,12 +512,13 @@ function editFontProps() {
 	print(fontsize);
 	sb.value = fontsize;
 
-	if (dg.exec()) {
-	 // Get font metrics and change the operator
-	 var newfontsize = sb.value;
-	 var newfontname = cb.currentItem;// get Idx according to a name
+	if (!dg.exec()) return;
+	
+	// Get font metrics and change the operator
+	var newfontsize = sb.value;
+	var newfontname = cb.currentItem;// get Idx according to a name
 
-	 for(i = 1; i < fonts.length; ++i) {
+	for(i = 1; i < fonts.length; ++i) {
 		// Save symbolic name of operator font
 		if (fonts[i] == newfontname) {
 			newfontid = fonts[i-1];
@@ -423,11 +527,10 @@ function editFontProps() {
 		// Skip id
 		++i;
      }
-	 // Set the font
-	 operatorSetFont(op,newfontid,newfontsize);
-	}
-
- // operatorSetFont (op, newfontsize, newfont)
+	// Set the font
+	operatorSetFont(op,newfontid,newfontsize);
+	print (tr("Font changed."));
+	go();
 }
 
 /**
@@ -435,8 +538,10 @@ function editFontProps() {
  */
 function addSystemFont() {
 
-	if (!isValidPage (page))
+	if (!isPageAvaliable()) {
+ 		warn(tr("No page selected!"));
 		return;
+	}
 
 	var dg = createDialog (tr("Add system font"), tr("Add font"), tr("Discard changes"), tr("Add system fonts"));
 	var gb = createGroupBoxAndDisplay (tr("Avaliable system fonts"),dg);
@@ -447,11 +552,11 @@ function addSystemFont() {
 	cb.editable = true;
 	gb.add (cb);
 	
-	if (dg.exec()) {
-		// add system font
-		page.addSystemType1Font (cb.currentItem);
-	}
+	if (!dg.exec()) return;
 
+	// add system font
+	page().addSystemType1Font (cb.currentItem);
+	print (tr("System font added."));
 }
 
 

@@ -83,3 +83,14 @@ function createDialog(caption, okButtonText, cancelButtonText, tooltip) {
   return sb;
  }
 
+/**
+ * Create radio button and display it
+ */
+function createRadioButtonAndDisplay (text,widget) {
+ var rb = new RadioButton;
+ rb.text = text;
+ rb.checked = false;
+ rb.tooltip = text;
+ widget.add (rb);
+ return rb;
+}
