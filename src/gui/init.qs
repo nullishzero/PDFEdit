@@ -432,7 +432,7 @@ function setLineWidth() {
 	var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
 	 
 	gb = createGroupBoxAndDisplay (tr("Change effect"), dialog);
-	var glob = createRadioButtonAndDisplay (tr("Global change"),gb);
+	var glob = createCheckBoxAndDisplay (tr("Global change"),gb);
 	glob.checked = true;
 
 	if (!dialog.exec()) return;
@@ -467,7 +467,7 @@ function setDashPattern() {
 	rb[2] = createRadioButtonAndDisplay (tr("Dot and dashed"),gb);
 	
 	gb = createGroupBoxAndDisplay (tr("Change effect"), dialog);
-	var glob = createRadioButtonAndDisplay (tr("Global change"),gb);
+	var glob = createCheckBoxAndDisplay (tr("Global change"),gb);
 	glob.checked = true;
 	 
 	if (!dialog.exec()) return;
@@ -643,11 +643,9 @@ function setPageTm() {
 	gb.add(te);
 	dg.newColumn();
 	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
-	rbtran = createRadioButtonAndDisplay (tr("Translate (shift) page"),gb);
-	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
-	rbscal = createRadioButtonAndDisplay (tr("Scale page"),gb);
-	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
-	rbskew = createRadioButtonAndDisplay (tr("Skew page"),gb);
+	rbtran = createCheckBoxAndDisplay (tr("Translate (shift) page"),gb);
+	rbscal = createCheckBoxAndDisplay (tr("Scale page"),gb);
+	rbskew = createCheckBoxAndDisplay (tr("Skew page"),gb);
 	     
 
 	/* == Second tab */
@@ -700,12 +698,12 @@ function setPageTm() {
 		tm[5] = parseFloat(f.text);
 	}
 	if (rbscal.checked) {
-		tm[0] = parseFloat(a.value);
-		tm[3] = parseFloat(d.value);
+		tm[0] = parseFloat(a.text);
+		tm[3] = parseFloat(d.text);
 	}
 	if (rbskew.checked) {
-		tm[1] = parseFloat(b.value);
-		tm[2] = parseFloat(c.value);
+		tm[1] = parseFloat(b.text);
+		tm[2] = parseFloat(c.text);
 	}
 
 	if (!rbtran.checked && !rbscal.checked && !rbskew.checked)
@@ -719,7 +717,7 @@ function setPageTm() {
 
 	page().setTransformMatrix(tm);
 	
-	print (tr("Page transformation matrix changed to "+tm));
+	print (tr("Page transformation matrix changed to ")+tm);
 	go();
 }
 

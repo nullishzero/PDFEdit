@@ -94,3 +94,17 @@ function createRadioButtonAndDisplay (text,widget) {
  widget.add (rb);
  return rb;
 }
+
+/**
+ * Create check box and display it
+ */
+function createCheckBoxAndDisplay (text,widget) {
+ var cb = new CheckBox;
+ cb.text = text;
+ cb.checked = false;
+ cb.tooltip = text;
+ widget.add (cb);
+ return cb;
+}
+
+
