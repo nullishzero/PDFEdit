@@ -49,6 +49,7 @@ function onTreeRightClick() {
  if (treeitem.itemtype()=="Page") {
   menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
   menu.addItemDef("item "+tr("Add system font")+",addSystemFont()");
+  menu.addItemDef("item "+tr("Extract text from page")+",viewPageText()");
  }
  if (treeitem.itemtype()=="ContentStream") {
   menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
@@ -559,6 +560,37 @@ function addSystemFont() {
 	print (tr("System font added."));
 }
 
+/**
+ * Display text on a page.
+ */
+function viewPageText() {
+	
+	if (!isPageAvaliable()) {	
+ 		warn(tr("No page selected!"));
+		return;
+	}
+
+	
+	dg = createDialog (tr("Text on page"), tr("Ok"), tr("Cancel"), tr("Add system fonts"));
+	var gb = createGroupBoxAndDisplay (tr("Text extracted from page"),dg);
+	te = new TextEdit;
+	te.text = page().getText();
+
+	max = 0;
+	lines = te.text.split("\n");
+	for (i=0; i<lines.length; ++i) {
+		if (lines[i].length > max)
+			max = lines[i].length		
+	}
+	// Set width according to line length (we mutliply it with a magic constane somthing like character width)
+	dg.width = max * 7;
+	
+	te.tooltip = "Text on a page.";
+	gb.add (te);
+
+	dg.exec();
+	print (tr("Page text displayed"));
+}
 
 /* ==== Code to run on start ==== */
 
