@@ -18,6 +18,7 @@
 #include <qmainwindow.h>
 #include <qmenubar.h>
 #include <qpopupmenu.h>
+#include <qregexp.h>
 #include <qlabel.h>
 #include <qpixmap.h>
 #include "toolbar.h"
@@ -126,6 +127,48 @@ void Menu::loadItemsDef(QString line,QMenuData *menu,QStringList prev/*=QStringL
  for (;it!=qs.end();++it) { //load all subitems
   loadItem(*it,menu,prev);
  }
+ //All items loaded, now check items and their accelerators and maybe fill accels for items that don't have one
+ optimizeItems(menu);
+}
+
+/**
+ Add accelerator to items that do not have one
+ @param menu Menu to process
+*/
+void Menu::optimizeItems(QMenuData *menu) {
+ assert(menu);
+ QString used=mAccel[menu];
+ if (used.isNull()) used="";
+ QRegExp filter("[^a-z]",false);
+ for (unsigned int i=0;i<menu->count();i++) {
+  int id=menu->idAt(i);
+  //Get item text
+  QString itemText=menu->text(id);
+  if (itemText.isNull()) continue;//Some separator or alike ...
+  if (getAccel(itemText)) continue; //This one already have accelerator
+//  guiPrintDbg(debug::DBG_DBG,"Used chars: " << used << " Item " << itemText);
+  //Filter out all non-letter characters and get filterText
+  QString filterText=itemText;
+  filterText.replace(filter,"");
+  //Look for first usable letter
+  int idx=filterText.find(QRegExp("[^"+used+"0]",false));
+  if (idx<0) {
+   guiPrintDbg(debug::DBG_INFO,"No accel for Item "  << itemText << " Used chars: " << used);
+   //No usable letter for accelerator found. How unfortunate ... 
+   continue;
+  }
+  char pAccel=filterText[idx].lower();
+  //Find positoon of accel in original string
+  idx=itemText.find(pAccel,0,false);
+  assert(idx>=0);
+//  guiPrintDbg(debug::DBG_DBG,"Replace from: " << itemText << " using " << pAccel << " index " << idx);
+  //Add accel to string
+  itemText.insert(idx,'&');
+//  guiPrintDbg(debug::DBG_DBG,"Replace to: " << itemText);
+  //Update item
+  menu->changeItem(id,itemText);
+  used+=pAccel;
+ }
 }
 
 /**
@@ -215,6 +258,17 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
  } 
 }
 
+/**
+ Get accelerator for given description
+ @param name Name of menu item
+ @return accelerator (the character after '&')
+ */
+char Menu::getAccel(const QString &name) {
+ int pos=name.find('&');
+ if (pos==-1) return 0;
+ return name[pos+1].lower();
+}
+
 /** Add menu item specified by given data to parent
  @param line Line containing menu item specification
  @param parent parent menu in which this item will be appended
@@ -230,6 +284,20 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
   qs[0]=Settings::tr(qs[0]);
  } else {
   qs[0]=Settings::tr(qs[0],name);
+ }
+ char accelChar=getAccel(qs[0]);
+ if (accelChar) {
+  //Some accelerator specified for item
+  QString s=mAccel[parent];
+  if (s.isNull()) s="";
+  if (s.find(accelChar)>=0) {
+   //Already used
+   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << qs[0] << " is already used elsewhere!")
+  } else {
+   //Not yet used
+   s=s+accelChar;
+   mAccel[parent]=s;
+  }
  }
  parent->insertItem(qs[0],menu_id);
  if (qs.count()>=3 && qs[2].length()>0) { //accelerator specified

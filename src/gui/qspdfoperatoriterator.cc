@@ -114,6 +114,9 @@ PdfOperator::Iterator* QSPdfOperatorIterator::copyIterator(PdfOperator::Iterator
  //Try to duplicate as ChangeableOperatorIterator
  ChangeableOperatorIterator *newOpC=dynamic_cast<ChangeableOperatorIterator*>(src);
  if (newOpC) return new ChangeableOperatorIterator(*newOpC);
+ //Try to duplicate as GraphicalOperatorIterator
+ GraphicalOperatorIterator *newOpG=dynamic_cast<GraphicalOperatorIterator*>(src);
+ if (newOpG) return new GraphicalOperatorIterator(*newOpG);
  //Fallback to standard iterator
  return new PdfOperator::Iterator(*src);
 }

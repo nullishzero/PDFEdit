@@ -59,6 +59,16 @@ public slots:
  /*- Return PDF Operator iterator, initially pointing at this operator */
  QSPdfOperatorIterator* iterator();
  /*-
+  Return PDF Graphical Operator iterator, initialialized from this operator
+  Graphical iterator iterate only through Graphical operators in content stream
+ */
+ QSPdfOperatorIterator* graphicalIterator(bool forwardDir=true);
+ /*-
+  Return PDF Inline Image Operator iterator, initialialized from this operator
+  Inline Image iterator iterate only through inline image operators in content stream
+ */
+ QSPdfOperatorIterator* inlineImageIterator(bool forwardDir=true);
+ /*-
   Return PDF Text Operator iterator, initialialized from this operator
   Text iterator iterate only through text operators in content stream
  */

@@ -158,7 +158,29 @@ QSPdfOperatorIterator* QSPdfOperator::nonStrokingIterator(bool forwardDir/*=true
  return new QSPdfOperatorIterator(opNonStroking,csRef,base);
 }
 
+/** 
+ Create new graphical operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+ @param forwardDir Direction of traversing the operators for first valid item.
+ @return new graphical iterator
+*/
+QSPdfOperatorIterator* QSPdfOperator::graphicalIterator(bool forwardDir/*=true*/) {
+ GraphicalOperatorIterator* opGraphical=new GraphicalOperatorIterator(PdfOperator::getIterator<GraphicalOperatorIterator>(obj,forwardDir));
+ csCheck();
+ return new QSPdfOperatorIterator(opGraphical,csRef,base);
+}
 
+/** 
+ Create new inline image operator iterator from this PDF operator.
+ The iterator will be initialized from this item 
+ @param forwardDir Direction of traversing the operators for first valid item.
+ @return new inline image iterator
+*/
+QSPdfOperatorIterator* QSPdfOperator::inlineImageIterator(bool forwardDir/*=true*/) {
+ InlineImageOperatorIterator* opInlineImage=new InlineImageOperatorIterator(PdfOperator::getIterator<InlineImageOperatorIterator>(obj,forwardDir));
+ csCheck();
+ return new QSPdfOperatorIterator(opInlineImage,csRef,base);
+}
 
 /**
  Get operator name

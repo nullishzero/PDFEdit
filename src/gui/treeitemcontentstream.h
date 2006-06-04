@@ -21,9 +21,10 @@ class TreeItemContentStreamObserver;
 
 /** What should be shown as children under tree item wit Content stream */
 typedef enum {
-/** Show all operators */	All,
-/** Show only text operators */	Text,
-/** Show only font operators */	Font
+/** Show all operators */		All,
+/** Show only text operators */		Text,
+/** Show only font operators */		Font,
+/** Show only graphical operators */	Graphic,
  } TreeItemContentStreamMode;
 
 /**

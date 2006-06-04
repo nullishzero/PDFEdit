@@ -95,6 +95,7 @@ void TreeItemContentStream::setMode(const QString &newMode) {
  if (lMode=="all") setMode(All);
  else if (lMode=="text") setMode(Text);
  else if (lMode=="font") setMode(Font);
+ else if (lMode=="graphic") setMode(Graphic);
 }
 
 /** default destructor */
@@ -145,6 +146,9 @@ void TreeItemContentStream::reloadSelf() {
  } else if (mode==Font){
   // "Show only font operators" mode
   it=new FontOperatorIterator(op[0]);
+ } else if (mode==Graphic){
+  // "Show only graphical operators" mode
+  it=new GraphicalOperatorIterator(op[0]);
  } else {
   // "Show everything we got" mode -> no filtering is done
   return;

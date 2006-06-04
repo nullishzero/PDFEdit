@@ -34,6 +34,8 @@ typedef QMap<QString, ToolBar*> ToolBarList;
 typedef QMap<QString, QString> AccelList;
 /** Cache of already defined menu items (some menus may be used on more than one place) */
 typedef QMap<QString, QPopupMenu*> MenuCache;
+/** List of already used accelerators for specific popup menu */
+typedef QMap<QMenuData*, QString> MenuAccels;
 /** Cache of already defined menu items (names) */
 typedef QMap<QString, QString> MenuNames;
 
@@ -55,6 +57,7 @@ public:
  QStringList getToolbarList();
  void saveToolbars();
  void restoreToolbars();
+ static char getAccel(const QString &name);
  static QString readItem(const QString &name) throw (InvalidMenuException);
  static bool isList(const QString &line);
  static QString parseName(QString &line, const QString &name=QString::null) throw (InvalidMenuException);
@@ -71,6 +74,7 @@ private:
  void loadItems(const QString &name,QMenuData *menu,QStringList prev=QStringList()) throw (InvalidMenuException);
  void loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuException);
  ToolBar* loadToolbar(const QString &name,bool visible=true) throw (InvalidMenuException);
+ void optimizeItems(QMenuData *menu);
 private:
  /** Mapping between menu IDs and actions */
  ActionMap action_map;
@@ -88,6 +92,8 @@ private:
  MenuCache mCache;
  /** Cache for menu items - names */
  MenuNames mCacheName;
+ /** List of used menu accels */
+ MenuAccels mAccel;
  /** Cache for icons */
  IconCache *cache;
  /** Main application window */
