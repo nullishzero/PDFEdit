@@ -350,7 +350,7 @@ public:
 	 * @return Content stream that this pdfoperator belongs to.
 	 */
 	CContentStream* getContentStream () const
-		{assert (NULL != contentstream); return contentstream;}
+		{return contentstream;}
 
 	//
 	// BBox

@@ -1673,8 +1673,13 @@ throw ()
 	try {
 
 	utilsPrintDbg (debug::DBG_DBG, "");
-	assert (hasValidPdf (newValue));
-	assert (hasValidRef (newValue));
+	
+	assert (newValue);
+	if (!isNull(newValue)) 
+	{ // We could have deleted a property
+		assert (hasValidPdf (newValue));
+		assert (hasValidRef (newValue));
+	}
 
 	// Stream has changed, reparse it
 	contentstream->saveChange ();
