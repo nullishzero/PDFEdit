@@ -881,7 +881,27 @@ CPage::addSystemType1Font (const std::string& fontname)
 
 
 //
+// Transform matrix
+//
+
+//
+//
+//
+void
+CPage::setTransformMatrix (int tm[6])
+{
+	
+}
+
+
+
+// =====================================================================================
 // Helper functions
+// =====================================================================================
+
+
+//
+//
 //
 bool 
 isPage (boost::shared_ptr<IProperty> ip)

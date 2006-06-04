@@ -290,6 +290,11 @@ public:
 	 */
 	CPage (boost::shared_ptr<CDict>& pageDict);
 
+	
+	//
+	// Annotation observer
+	//
+private:
 	/** Observer implementation for annotation synchronization.
 	 */
 	class AnnotsWatchDog: public observer::IObserver<IProperty>
@@ -322,7 +327,8 @@ public:
 		 *
 		 *
 		 */
-		virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
+		virtual void notify (boost::shared_ptr<IProperty> newValue, 
+							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
 
 		/** Reurns observer priority.
 		 */
@@ -338,6 +344,7 @@ public:
 	 * This instance is used to handle changes in Annots array of the page.
 	 */
 	boost::shared_ptr<AnnotsWatchDog> annotsWatchDog;
+
 
 	//
 	// Destructor
@@ -472,7 +479,11 @@ public:
 	 */
  	void getText (std::string& text) const;
 
-
+	
+	//
+	// Annotations
+	//
+public:
 	/** 
 	 * Fills given container with all page's annotations.
 	 * 
@@ -519,7 +530,7 @@ public:
 	void addAnnotation(boost::shared_ptr<CAnnotation> annot);
 
 	//
-	// Font interface
+	// Font 
 	//
 public:
 	/**
@@ -612,8 +623,40 @@ public:
 	 */
 	void reparseContentStream ();
 
+
+	/**
+	 * Add new content stream. This function adds new entry in the "Contents"
+	 * property of a page. The container of provided operators must form a valid
+	 * contentstream.
+	 *
+	 * This function can be used to separate our complex objects from other
+	 * content streams co a set of objects can be easily recognized.
+	 *
+	 * @param container Container of operators to add.
+	 * @param changeVisible False if the changes should not be delegated to
+	 * observers, true otherwise.
+	 */
+	template<typename Container>
+	void addContentStream (const Container& cont)
+	{
+	}
+
+	
 	//
-	// Media box interface
+	// Page translation 
+	//
+public:
+	/**
+	 * Set tranform matrix of a page. This operator will be preceding first cm
+	 * operator, if not found it will be the first operator.
+	 *
+	 * @param tm Six number representing transform matrix.
+	 */
+	void setTransformMatrix (int tm[6]);
+	
+	
+	//
+	// Media box 
 	//
 public:
 	/**  
@@ -636,7 +679,7 @@ public:
 
 
 	 //
-	 // Text search/find interface
+	 // Text search/find 
 	 //
 public:
 	 /**
@@ -664,33 +707,7 @@ private:
 	  * @param state Gfx state parameter.
 	  */
 	 void createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state);
-		 
 	 
-	//========================= not implemented yet
-	/**  
-	 *
-	 * Vlozi na stranku existujuci objekt a vytvori novy  identifikator vlozeneho objektu, ktory vrati.
-	 * 
-	 */
-	// boost::shared_ptr<IProperty> insertObject (CAny,position);
-
-	 
-/**  Vytvori novy graficky objekt so zadanou velkostou a poziciou.
-  Graficky objekt je prazdny a pre vkladanie sa pouzivaju metody
-  objektu graphic*/
-//  CGraphic& create_graphic (bbox, position);
-
-/**  Importuje graficky objekt (obrazok) do stranky na
-  poziciu.*/
-//  CGraphic& import_graphic (filename,position);
-
-	/**  
-	 * Create text !!object!! and put it at specified position.
-	 *
-	 * \TODO
-	 */
-//  CText create_text (string,position);
-
 };
 
 
