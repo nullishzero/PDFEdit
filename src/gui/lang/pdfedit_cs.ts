@@ -227,7 +227,7 @@ Data: %3
     </message>
     <message>
         <source>&amp;Add object</source>
-        <translation>Přidat objekt</translation>
+        <translation>Přid&amp;at objekt</translation>
     </message>
     <message>
         <source>Add and c&amp;lose</source>
@@ -1147,7 +1147,7 @@ Data: %3
     <message>
         <source>&amp;About</source>
         <comment>help_about</comment>
-        <translation>O Programu</translation>
+        <translation>O Progr&amp;amu</translation>
     </message>
     <message>
         <source>First Page</source>
@@ -1257,12 +1257,12 @@ Data: %3
     <message>
         <source>Zoom &amp;out</source>
         <comment>zoom_out</comment>
-        <translation>Oddálit měřítko</translation>
+        <translation>&amp;Oddálit měřítko</translation>
     </message>
     <message>
         <source>Zoom &amp;in</source>
         <comment>zoom_in</comment>
-        <translation>Přiblížit měřítko</translation>
+        <translation>Př&amp;iblížit měřítko</translation>
     </message>
     <message>
         <source>Show only graphical operators in stream</source>
@@ -1312,17 +1312,17 @@ Data: %3
     <message>
         <source>Show/Hide &amp;property editor</source>
         <comment>hideProp</comment>
-        <translation>Zobrazit/skrýt editor položek</translation>
+        <translation>Zobrazit/skrýt editor &amp;položek</translation>
     </message>
     <message>
         <source>Show/Hide object &amp;tree</source>
         <comment>hideTree</comment>
-        <translation>Zobrazit/skrýt strom objektů</translation>
+        <translation>Zobrazit/skrýt s&amp;trom objektů</translation>
     </message>
     <message>
         <source>&amp;Tools</source>
         <comment>toolsmenu</comment>
-        <translation>Nástroje</translation>
+        <translation>Nás&amp;troje</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
