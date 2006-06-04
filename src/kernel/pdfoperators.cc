@@ -399,6 +399,13 @@ const std::string FontOperatorIterator::accepted_opers[FontOperatorIterator::nam
 	"Tf", "", "", ""
 };
 
+/** Operators accepted by font iterator. */
+template<>
+const std::string GraphicalOperatorIterator::accepted_opers[GraphicalOperatorIterator::namecount] = 
+{
+	"f", "F", "f*", "B", "S", "s", "b", "B", "B*", "n", "m", "l", "c", "v", "y", "h", "re", "w", "J", "j",
+	"M", "d", "ri", "gs"
+};
 
 
 //==========================================================

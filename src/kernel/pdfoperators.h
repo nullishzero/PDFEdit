@@ -673,7 +673,8 @@ public:
  */
 typedef enum
 {
-	itTextIterator, itFontIterator, itInlineImageIterator, itNonStrokingIterator, itStrokingIterator, itChangeableIterator
+	itTextIterator, itFontIterator, itInlineImageIterator, itNonStrokingIterator, itStrokingIterator, itChangeableIterator,
+	itGraphicalIterator
 
 } IteratorType;
 
@@ -816,9 +817,10 @@ typedef struct AcceptingPdfOperatorIterator<1, itInlineImageIterator> InlineImag
  * Constructed from an arbitrary operator, but it will always start from a valid
  * common operator. This is done in the constructor.
  *
- * This operator excludes operators like q, Q etc.
+ * This iterator excludes operators like q, Q etc.
  */
 typedef struct RejectingPdfOperatorIterator<38, itChangeableIterator> ChangeableOperatorIterator;
+
 
 /**
  * "Non stroking" operator iterator.
@@ -845,6 +847,16 @@ typedef struct AcceptingPdfOperatorIterator<4, itNonStrokingIterator> NonStrokin
  */
 typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOperatorIterator;
 
+/**
+ * Graphical operator iterator.
+ *
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * common operator. This is done in the constructor.
+ *
+ * This iterator iterates over all graphical operators on a page this includes
+ * lines, rectangles, paths.
+ */
+typedef struct AcceptingPdfOperatorIterator<24, itGraphicalIterator> GraphicalOperatorIterator;
 
 //==========================================================
 // Helper funcions
