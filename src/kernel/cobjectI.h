@@ -841,6 +841,10 @@ CObjectStream<Checker>::CObjectStream () : parser (NULL)
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
 
+	// Add one required entry in the stream dictionary (according to pdf specification)
+	boost::shared_ptr<CInt> len (new CInt (0));
+	assert (len);
+	dictionary.addProperty ("Length", *len);
 }
 
 //

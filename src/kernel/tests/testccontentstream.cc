@@ -296,6 +296,55 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 	return true;
 }
 
+//=========================================================================
+
+bool
+addcc (__attribute__((unused))	ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
+
+		// Print content stream
+		string str;
+		if (page)
+		{
+			vector<boost::shared_ptr<CContentStream> > ccs;
+			page->getContentStreams (ccs);
+
+			typedef vector<boost::shared_ptr<PdfOperator> > Opers;
+			PdfOperator::Operands operands;
+				
+			Opers ops;
+			ops.push_back (boost::shared_ptr<PdfOperator> (new SimpleGenericOperator("lala",0,operands)));
+			page->addContentStream (ops);
+
+			vector<boost::shared_ptr<CContentStream> > cccs;
+			boost::shared_ptr<CContentStream> newcc;
+			page->getContentStreams (cccs);
+			CPPUNIT_ASSERT (cccs.size() == (ccs.size() + 1));
+			
+			for (size_t i = 0; i < ccs.size(); ++i)
+			{
+				CPPUNIT_ASSERT(ccs[i] = cccs[i]);
+				
+			}
+			
+			std::string str;
+			cccs[ccs.size()]->getStringRepresentation (str);
+			oss << str << flush;
+		}
+		else 
+			return false;
+		
+		//oss << "Content stream representation: " << str << endl;
+		_working (oss);
+	}
+	
+	return true;
+}
+
 
 //=========================================================================
 
@@ -492,6 +541,10 @@ public:
 			
 			TEST(" insert at front");
 			CPPUNIT_ASSERT (front (OUTPUT, (*it).c_str()));
+			OK_TEST;
+
+			TEST(" add content stream");
+			CPPUNIT_ASSERT (addcc (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}

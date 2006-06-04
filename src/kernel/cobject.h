@@ -744,6 +744,8 @@ public:
 	
 	/** 
 	 * Public constructor. This object will not be associated with a pdf.
+	 * It adds one required property to objects dictionary namely "Length". This
+	 * is according to the pdf specification.
 	 */
 	CObjectStream ();
 

@@ -642,13 +642,43 @@ public:
 	 * content streams co a set of objects can be easily recognized.
 	 *
 	 * @param container Container of operators to add.
-	 * @param changeVisible False if the changes should not be delegated to
-	 * observers, true otherwise.
 	 */
 	template<typename Container>
 	void addContentStream (const Container& cont)
 	{
+		assert (hasValidPdf(dictionary));
+		assert (hasValidRef(dictionary));
+		if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
+		{
+			throw CObjInvalidObject ();
+		}
+		
+		// Create stream with one default property Length
+		boost::shared_ptr<CStream> newstr (new CStream());
+		
+		typename Container::const_iterator it = cont.begin();
+		std::string tmp;
+		for (; it != cont.end(); ++it)
+		{
+			std::string tmpop;
+			(*it)->getStringRepresentation (tmpop);
+			tmp += tmpop;
+		}
+		kernelPrintDbg (debug::DBG_DBG, tmp);
+		
+		newstr->setBuffer (tmp);
 
+		// Set ref and indiref
+		newstr->setPdf (dictionary->getPdf());
+		newstr->setIndiRef (dictionary->getIndiRef());
+
+		// Parse new stream to content stream and add it to the streams
+		CContentStream::CStreams streams;
+		streams.push_back (newstr);
+		boost::shared_ptr<GfxResources> res;
+		boost::shared_ptr<GfxState> state;
+		createXpdfDisplayParams (res, state);
+		contentstreams.push_back (boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
 	}
 
 	
