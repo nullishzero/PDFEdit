@@ -691,7 +691,13 @@ int Base::pageNumber() {
  @return page
 */
 QSPage* Base::page() {
- return new QSPage(w->selectedPage,this);
+ if (w->selectedPage.get()) {
+  //REturn selected page
+  return new QSPage(w->selectedPage,this);
+ } else {
+  //No page selected currently
+  return NULL;
+ }
 }
 
 /**
