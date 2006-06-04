@@ -34,6 +34,7 @@ class PageSpace : public QWidget {
 
 		bool setSelectionMode( int mode );
 
+		void setSelectArea ( int left, int top, int right, int bottom );
 		void selectObjectOnPage ( std::vector<boost::shared_ptr<PdfOperator> > );
 		void unselectObjectOnPage ( );
 		bool isSomeoneSelected ( );
@@ -52,6 +53,11 @@ class PageSpace : public QWidget {
 
 		bool saveImage ( const QString & filename, const char * format, int quality = -1, bool onlySelectedArea = false);
 		bool saveImageWithDialog ( bool onlySelectedArea = false );
+
+		double convertPixmapPosToPdfPos_x ( double fromX, double fromY );
+		double convertPixmapPosToPdfPos_y ( double fromX, double fromY );
+		double convertPdfPosToPixmapPos_x ( double fromX, double fromY );
+		double convertPdfPosToPixmapPos_y ( double fromX, double fromY );
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
 		void changedZoomFactorTo ( float zoom );

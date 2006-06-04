@@ -235,6 +235,10 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	splashMakeRGB8(paperColor, 0xff, 0xff, 0xff);
 	QOutputDevPixmap output ( paperColor );
 
+	// update display parameters
+	displayParams.upsideDown = output.upsideDown();
+	// TODO  rotation, cropbox, ...
+
 	// create pixmap for page
 	actualPage->get()->displayPage( output, displayParams );
 
@@ -407,6 +411,22 @@ bool PageSpace::setSelectionMode( int mode ) {
 	return returnValue;
 }
 
+void PageSpace::setSelectArea ( int left, int top, int right, int bottom ) {
+	lastSelectedRect = QRect( left, top, right-left+1, bottom-top+1 );
+
+	switch (selectionMode) {
+		case PageView::SelectText :
+			pageImage->unSelect();
+			pageImage->setSelectedRegion( lastSelectedRect, NULL );
+			break;
+		case PageView::SelectAllObjects :
+			newSelection( lastSelectedRect );
+			break;
+		default :
+			break;
+	}
+}
+
 void PageSpace::newSelection () {
 	std::vector<boost::shared_ptr<PdfOperator> >	sops;
 	
@@ -515,30 +535,43 @@ void PageSpace::resizeSelection ( const QRect &, const QRect &, const QPtrList<B
 	// TODO
 }
 
-void PageSpace::convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos ) {
-	if (actualPage == NULL) {
-		pos.setX(0);
-		pos.setY(0);
-		return ;
-	}
-	pos.setX( (int) pdfPos.x );
+double PageSpace::convertPixmapPosToPdfPos_x( double fromX, double fromY ) {
+	if (actualPage == NULL)
+		return 0;
+
+	return fromX;
+}
+double PageSpace::convertPixmapPosToPdfPos_y( double fromX, double fromY ) {
+	if (actualPage == NULL)
+		return 0;
 	if (! displayParams.upsideDown)
-		pos.setY( (int) (actualPagePixmap->height() - pdfPos.y) );
+		return actualPagePixmap->height() - fromY;
 	else
-		pos.setY( (int) pdfPos.y );
+		return fromY;
 }
 
-void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
-	if (actualPage == NULL) {
-		pdfPos.x = 0;
-		pdfPos.y = 0;
-		return ;
-	}
-	pdfPos.x = pos.x();
+void PageSpace::convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos ) {
+	pos.setX( (int) convertPdfPosToPixmapPos_x( pdfPos.x, pdfPos.y) );
+	pos.setY( (int) convertPdfPosToPixmapPos_y( pdfPos.x, pdfPos.y) );
+}
+
+double PageSpace::convertPdfPosToPixmapPos_x( double fromX, double fromY ) {
+	if (actualPage == NULL)
+		return 0;
+
+	return fromX;
+}
+double PageSpace::convertPdfPosToPixmapPos_y( double fromX, double fromY ) {
+	if (actualPage == NULL)
+		return 0;
 	if (! displayParams.upsideDown)
-		pdfPos.y = actualPagePixmap->height() - pos.y();
+		return actualPagePixmap->height() - fromY;
 	else
-		pdfPos.y = pos.y();
+		return fromY;
+}
+void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
+	pdfPos.x = convertPixmapPosToPdfPos_x( pos.x(), pos.y());
+	pdfPos.y = convertPixmapPosToPdfPos_y( pos.x(), pos.y());
 }
 
 //  ------------------------------------------------------  //
