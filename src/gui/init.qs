@@ -55,6 +55,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
   menu.addItemDef("item "+tr("Show only text operators")+",treeitem.setMode('text'),,stream_mode_text.png");
   menu.addItemDef("item "+tr("Show only font operators")+",treeitem.setMode('font'),,stream_mode_font.png");
+  menu.addItemDef("item "+tr("Show only graphical operators")+",treeitem.setMode('graphic'),,stream_mode_gfx.png");
  }
  if (tests) {
   if (treeitem.itemtype()=="Stream") {
