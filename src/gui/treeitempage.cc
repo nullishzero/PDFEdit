@@ -9,6 +9,7 @@
 #include "treeitem.h"
 #include "treeitemdict.h"
 #include "treeitemcontentstream.h"
+#include "treeitempageobserver.h"
 #include "treedata.h"
 #include <qobject.h>
 #include "qspage.h"
@@ -57,6 +58,22 @@ void TreeItemPage::init(boost::shared_ptr<CPage> page,const QString &name) {
  setText(1,QObject::tr("Page"));
  setDragEnabled(true);//Drag drop enabled for this item
  reload(false);//get childs
+ initObserver();
+}
+
+/** Sets observer for this item */
+void TreeItemPage::initObserver() {
+ guiPrintDbg(debug::DBG_DBG,"Set Observer");
+ observer=boost::shared_ptr<TreeItemPageObserver>(new TreeItemPageObserver(this));
+ obj->registerObserver(observer);
+}
+
+/** Unsets observer for this item */
+void TreeItemPage::uninitObserver() {
+ observer->deactivate();
+ obj->unregisterObserver(observer);
+ observer.reset();
+ guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }
 
 /**
@@ -80,6 +97,7 @@ bool TreeItemPage::setObject(boost::shared_ptr<CPage> newPage) {
 
 /** default destructor */
 TreeItemPage::~TreeItemPage() {
+ uninitObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method

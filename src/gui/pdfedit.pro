@@ -90,8 +90,8 @@ SOURCES += helpwindow.cc
 HEADERS += treeitemabstract.h  treewindow.h  treedata.h  draglistview.h  multitreewindow.h
 SOURCES += treeitemabstract.cc treewindow.cc treedata.cc draglistview.cc multitreewindow.cc
 #Tree item observers
-HEADERS += treeitemcontentstreamobserver.h  treeitemobserver.h
-SOURCES += treeitemcontentstreamobserver.cc treeitemobserver.cc
+HEADERS += treeitemcontentstreamobserver.h  treeitemobserver.h  treeitempageobserver.h
+SOURCES += treeitemcontentstreamobserver.cc treeitemobserver.cc treeitempageobserver.cc
 #Tree item types
 HEADERS += treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h
 SOURCES += treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc

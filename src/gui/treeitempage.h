@@ -14,6 +14,7 @@ namespace gui {
 
 class TreeData;
 class QSCObject;
+class TreeItemPageObserver;
 
 using namespace pdfobjects;
 
@@ -38,8 +39,13 @@ public:
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();
  virtual void remove();
+ void initObserver();
+ void uninitObserver();
 private:
  void init(boost::shared_ptr<CPage> page,const QString &name);
+private:
+ /** Observer registered for this item */
+ boost::shared_ptr<TreeItemPageObserver> observer;
  /** CPage stored in this TreeItem */
  boost::shared_ptr<CPage> obj;
  /** Vector with content streams */

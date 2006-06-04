@@ -100,6 +100,8 @@ void TreeItemContentStream::setMode(const QString &newMode) {
 /** default destructor */
 TreeItemContentStream::~TreeItemContentStream() {
  uninitObserver();
+ //Deactivate the tab with this contentstream, if it is opened
+ data->multi()->deactivate(obj);
 }
 
 //See TreeItemAbstract for description of this virtual method
