@@ -32,7 +32,6 @@ RefProperty::RefProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFl
  ed=new QLineEdit(this,"RefProperty_edit");
  setFocusProxy(ed);
  pb=new QPushButton("..",this,"refproperty_pickbutton");
- ed->setReadOnly(readonly);
  ed->setValidator(new RefValidator(ed));
  //light yellow background color
  ed->setPaletteBackgroundColor(QColor(255,255,224));
@@ -83,7 +82,7 @@ RefProperty::~RefProperty() {
 
 /** \copydoc StringProperty::writeValue */
 void RefProperty::writeValue(IProperty *pdfObject) {
- if (readonly) return;//Honor readonly setting
+ if (effectiveReadonly) return;//Honor readonly setting
  CRef *obj=(CRef*)pdfObject;
  QStringList ref=QStringList::split(",",ed->text());
  assert(ref.count()==2); //Should never happen
@@ -117,12 +116,17 @@ bool RefProperty::isValid() {
  return ed->hasAcceptableInput();
 }
 
-/* \copydoc Property:setReadOnly */
-void RefProperty::setReadOnly(bool _readonly) {
- //Widget is enabled if it is not read-only
- ed->setEnabled(!_readonly);
- pb->setEnabled(!_readonly);
- Property::setReadOnly(_readonly);
+//See Property::setDisabled
+void RefProperty::setDisabled(bool disabled) {
+ ed->setEnabled(disabled);
+ pb->setEnabled(disabled);
 }
+
+//See Property::applyReadOnly
+void RefProperty::applyReadOnly(bool _readonly) {
+ ed->setReadOnly(_readonly);
+ pb->setEnabled(!_readonly);
+}
+
 
 } // namespace gui

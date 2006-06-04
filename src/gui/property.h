@@ -29,21 +29,33 @@ public:
  virtual ~Property();
  QString getName();
  PropertyFlags getFlags();
+ bool isHidden();
  static QString modeName(PropertyFlags flag);
  void setFlags(PropertyFlags flag);
- bool getReadOnly();
+ void override(bool showHidden,bool editReadOnly);
  void modifyColor(QWidget* widget);
- virtual void setReadOnly(bool _readonly);
+ virtual void applyHidden(bool hideThis);
+ //Abstract functions
+ /**
+  Disable this control
+  @param disabled True to disable, false to enable
+ */
+ virtual void setDisabled(bool disabled) = 0;
+ /** 
+  Apply this value of "read only" to the property
+  @param _readonly True for read-only, false for read-write
+ */
+ virtual void applyReadOnly(bool _readonly) = 0;
  /**
   write internal value to given PDF object
   @param pdfObject Objet to write to
  */
- virtual void writeValue(IProperty *pdfObject) = 0; //virtual
+ virtual void writeValue(IProperty *pdfObject) = 0;
  /**
   read internal value from given PDF object
   @param pdfObject Objet to read from
  */
- virtual void readValue(IProperty *pdfObject) = 0; //virtual
+ virtual void readValue(IProperty *pdfObject) = 0;
  /** 
   Check if edited property is currently valid.
   @return true if valid, false if not
@@ -63,12 +75,17 @@ protected:
  QString name;
  /** flags of the property (from PDF object) */
  PropertyFlags flags;
- /** is this property readonly? Independent from flags */
- bool readonly;
- /** is this property hidden? Independent from flags */
- bool hidden;
  /** was the property edited since last readValue or writeValue? */
  bool changed;
+ /** Label of property */
+ QWidget* propertyLabel;
+ /** is this property really readonly? result after applying overrides */
+ bool effectiveReadonly;
+private:
+ /** is this property readonly? Set from flags */
+ bool readonly;
+ /** is this property hidden? Set from flags */
+ bool hidden;
 };
 
 } // namespace gui

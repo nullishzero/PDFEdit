@@ -28,7 +28,7 @@ IntProperty::~IntProperty() {
 
 /** \copydoc StringProperty::writeValue */
 void IntProperty::writeValue(IProperty *pdfObject) {
- if (readonly) return;//Honor readonly setting
+ if (effectiveReadonly) return;//Honor readonly setting
  CInt* obj=(CInt*)pdfObject;
  int val=ed->text().toInt();
  obj->writeValue(val);

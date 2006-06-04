@@ -23,7 +23,8 @@ public:
  virtual void resizeEvent (QResizeEvent *e);
  BoolProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~BoolProperty();
- virtual void setReadOnly(bool _readonly);
+ virtual void setDisabled(bool disabled);
+ virtual void applyReadOnly(bool _readonly);
  virtual void writeValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
  virtual bool isValid();

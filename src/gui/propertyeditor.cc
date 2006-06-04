@@ -19,6 +19,7 @@
 #include <qgrid.h>
 #include <qlayout.h>
 #include "pdfutil.h"
+#include "settings.h"
 #include "main.h"
 #include "propertymodecontroller.h"
 
@@ -56,6 +57,7 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  grid=new QFrame(scroll,"propertyeditor_grid");
 
  createLayout();
+ checkOverrides();
 }
 
 /** Delete internal layout */
@@ -158,6 +160,7 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  labels->insert(name,label);
  connect(prop,SIGNAL(propertyChanged(Property*)),this,SLOT(update(Property*)));
  prop->initLabel(label);
+ prop->override(showHidden,editReadOnly);
  prop->show();
  label->show();
 }
@@ -356,6 +359,27 @@ PropertyEditor::~PropertyEditor() {
  delete items;
  delete list;
  delete props;
+}
+
+/**
+ Apply overrides bypassing limitation set by modecontroller
+ @param _showHidden Show hidden properties
+ @param _editReadOnly Edit read-only properties
+*/
+void PropertyEditor::override(bool _showHidden,bool _editReadOnly) {
+ QDictIterator<Property> itp(*items);
+ for (;itp.current();++itp) {
+  itp.current()->override(_showHidden,_editReadOnly);
+ }
+}
+
+/**
+ Look in settings for overrides bypassing limitation set by modecontroller.
+*/
+void PropertyEditor::checkOverrides() {
+ showHidden=globalSettings->readBool("editor/show_hidden");
+ editReadOnly=globalSettings->readBool("editor/edit_readonly");
+ override(showHidden,editReadOnly);
 }
 
 } // namespace gui

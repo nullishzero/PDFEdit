@@ -30,6 +30,7 @@ public:
  void resizeEvent (QResizeEvent *e);
  void clear();
  void commitProperty();
+ void checkOverrides();
 public slots:
  void unsetObject();
  void setObject(const QString &message);
@@ -45,6 +46,7 @@ signals:
  */
  void propertyChanged(IProperty *prop); 
 private:
+ void override(bool _showHidden,bool _editReadOnly);
  bool addProperty(const QString &name,boost::shared_ptr<IProperty> value);
  void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
  void deleteLayout();
@@ -68,6 +70,10 @@ private:
  QDict<QLabel> *labels;
  /** PropertyModeController - modecontroller wrapper instance */
  PropertyModeController *mode;
+ /** Show hidden properties */
+ bool showHidden;
+ /** Edit read-only properties */
+ bool editReadOnly;
 };
 
 } // namespace gui

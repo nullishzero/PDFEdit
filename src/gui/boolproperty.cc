@@ -21,7 +21,6 @@ using namespace std;
 BoolProperty::BoolProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
  ed=new QCheckBox(this,"boolproperty_checkbox");
- ed->setEnabled(!readonly);
  connect(ed,SIGNAL(clicked()),this,SLOT(emitChange()));
 }
 
@@ -47,7 +46,7 @@ BoolProperty::~BoolProperty() {
 
 /** \copydoc StringProperty::writeValue */
 void BoolProperty::writeValue(IProperty *pdfObject) {
- if (readonly) return;//Honor readonly setting
+ if (effectiveReadonly) return;//Honor readonly setting
  CBool* obj=(CBool*)pdfObject;
  bool val=ed->isChecked();
  obj->writeValue(val);
@@ -63,11 +62,14 @@ void BoolProperty::readValue(IProperty *pdfObject) {
  changed=false;
 }
 
-/* \copydoc Property:setReadOnly */
-void BoolProperty::setReadOnly(bool _readonly) {
- //Widget is enabled if it is not read-only
+//See Property::setDisabled
+void BoolProperty::setDisabled(bool disabled) {
+ ed->setEnabled(!disabled);
+}
+
+//See Property::applyReadOnly
+void BoolProperty::applyReadOnly(bool _readonly) {
  ed->setEnabled(!_readonly);
- Property::setReadOnly(_readonly);
 }
 
 /** \copydoc Property::isValid() */

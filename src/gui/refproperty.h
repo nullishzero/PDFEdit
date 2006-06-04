@@ -26,7 +26,8 @@ public:
  virtual ~RefProperty();
  virtual void writeValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
- virtual void setReadOnly(bool _readonly);
+ virtual void setDisabled(bool disabled);
+ virtual void applyReadOnly(bool _readonly);
  virtual bool isValid();
 protected slots:
  void selectRef();

@@ -6,6 +6,7 @@
 #include <qmap.h>
 class QLabel;
 class QTabWidget;
+class QFrame;
 class QGridLayout;
 
 namespace gui {
@@ -32,7 +33,8 @@ protected:
 private:
  OptionWindow(Menu *msystem,QWidget *parent=0, const char *name=0);
  void init();
- QWidget* addTab(const QString name);
+ QWidget* addTab(const QString name,bool makeSegments=false);
+ void initGridFrame(QWidget *grid);
  void addOption(QWidget *otab,const QString &caption,Option *opt);
  void addOption(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
  void addOptionFile(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
@@ -43,6 +45,7 @@ private:
  void addOptionFloat(QWidget *otab,const QString &caption,const QString &key);
  void addWidget(QWidget *otab,QWidget *elem);
  void addText(QWidget *otab,const QString &text);
+ QWidget* addBreak(QWidget *otab);
  void finishTab(QWidget *otab);
 private:
  /** List of property names */
@@ -55,6 +58,8 @@ private:
  QTabWidget *tab;
  /** Grid layout for the tab */
  QMap<QWidget*,QGridLayout*> gridl;
+ /** Master Grid for the tab */
+ QMap<QWidget*,QFrame*> masterGrid;
  /** Number of objects in the tab */
  QMap<QWidget*,int> nObjects;
  /** Menu system (for toolbar list ... ) */

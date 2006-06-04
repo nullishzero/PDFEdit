@@ -61,9 +61,4 @@ QString QSCObject::type() {
  return typeName;
 }
 
-/** Deletes itself */
-void QSCObject::deleteSelf() {
- delete this;
-}
-
 } // namespace gui

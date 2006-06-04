@@ -23,7 +23,6 @@ using namespace std;
 StringProperty::StringProperty(const QString &_name, QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
  : Property(_name,parent,_flags) {
  ed=new QLineEdit(this,"stringproperty_edit");
- ed->setReadOnly(readonly);
  setFocusProxy(ed);
  modifyColor(ed);
  connect(ed,SIGNAL(returnPressed())	,this,SLOT(emitChange()));
@@ -67,7 +66,7 @@ StringProperty::~StringProperty() {
  @param pdfObject Object to write to
  */
 void StringProperty::writeValue(IProperty *pdfObject) {
- if (readonly) return;//Honor readonly setting
+ if (effectiveReadonly) return;//Honor readonly setting
  CString* obj=(CString*)pdfObject;
  string val=ed->text();
  obj->writeValue(val);
@@ -90,11 +89,14 @@ bool StringProperty::isValid() {
  return ed->hasAcceptableInput();
 }
 
-/* \copydoc Property:setReadOnly */
-void StringProperty::setReadOnly(bool _readonly) {
- //Widget is enabled if it is not read-only
- ed->setEnabled(!_readonly);
- Property::setReadOnly(_readonly);
+//See Property::setDisabled
+void StringProperty::setDisabled(bool disabled) {
+ ed->setEnabled(!disabled);
+}
+
+//See Property::applyReadOnly
+void StringProperty::applyReadOnly(bool _readonly) {
+ ed->setReadOnly(_readonly);
 }
 
 } // namespace gui

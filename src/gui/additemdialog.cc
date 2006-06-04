@@ -66,7 +66,7 @@ AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
  //Check if array dimensions are correct
  assert(i==addDialogPropertyTypes);
  for (i=0;i<addDialogPropertyTypes;i++) {
-  if (props[i]) props[i]->setReadOnly(true);
+  if (props[i]) props[i]->setDisabled(true);
   items->insert(labels[i],i);
  }
  QObject::connect(items,SIGNAL(clicked(int)),this,SLOT(buttonSelected(int)));
@@ -81,11 +81,11 @@ AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
 void AddItemDialog::buttonSelected(int id) {
  guiPrintDbg(debug::DBG_DBG,"Selected button: " << id);
  if (selectedItem>=0) { //Something is selected -> deselect
-  if (props[selectedItem]) props[selectedItem]->setReadOnly(true);
+  if (props[selectedItem]) props[selectedItem]->setDisabled(true);
  }
  selectedItem=id;
  //Select new item;
- if (props[selectedItem]) props[selectedItem]->setReadOnly(false);
+ if (props[selectedItem]) props[selectedItem]->setDisabled(false);
 }
 
 /**

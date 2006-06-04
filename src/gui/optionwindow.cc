@@ -119,20 +119,41 @@ void OptionWindow::apply() {
  applyLookAndFeel(true);
 }
 
-
 /** Called on pushing 'OK' button */
 void OptionWindow::ok() {
  apply();	//apply settings
  close();	//and close window
 }
 
-/** Add empty tab to option dialog
+/**
+ Add empty tab to option dialog
  @param name Label of the new tab
+ @param makeSegments Make it possible to split tab in parts, at cost of using an extra widget
  @return Inner widget of the new tab
  */
-QWidget* OptionWindow::addTab(const QString name) {
- QFrame* grid=new QFrame(tab);
- tab->addTab(grid,name);
+QWidget* OptionWindow::addTab(const QString name,bool makeSegments/*=false*/) {
+ QFrame* grid;
+ if (makeSegments) {
+  QFrame* mGrid=new QFrame(tab);
+  tab->addTab(mGrid,name);
+  QGridLayout* mGridLayout=gridl[mGrid]=new QGridLayout(mGrid,1,1);
+  grid=new QFrame(mGrid);
+  masterGrid[grid]=mGrid;
+  mGridLayout->addWidget(grid,0,0);
+  nObjects[mGrid]=1;
+ } else {
+  grid=new QFrame(tab);
+  tab->addTab(grid,name);
+ }
+ initGridFrame(grid);
+ return grid;
+}
+
+/**
+ Initialize grid for tab widget, so controls can be added there.
+ @param grid Widget to initialize with grid layout
+*/
+void OptionWindow::initGridFrame(QWidget *grid) {
  QGridLayout* grl=gridl[grid]=new QGridLayout(grid,1,2);
  nObjects[grid]=0;
  grl->setSpacing(5);
@@ -140,6 +161,25 @@ QWidget* OptionWindow::addTab(const QString name) {
  //set key column to be fixed and value column to be expandable
  grl->setColStretch(0,0);
  grl->setColStretch(1,1);
+}
+
+/*
+ Add break to the option tab, breaking the column alignment at this point.<br>
+ In fact, break the tab into two separate parts (but only second part can be splitted again).<br>
+ Can be only applied to tabs that were created with makeSegments=true
+ \see addTab
+ @param otab Tab to break
+ @return new value for tab - the lower half
+*/
+QWidget* OptionWindow::addBreak(QWidget *otab) {
+ QFrame* mGrid=masterGrid[otab];
+ assert(mGrid);
+ QFrame* grid=new QFrame(mGrid);
+ gridl[mGrid]->addWidget(grid,nObjects[mGrid],0);
+ nObjects[mGrid]++;
+ initGridFrame(grid);
+ masterGrid.remove(otab);
+ masterGrid[grid]=mGrid;
  return grid;
 }
 
@@ -282,6 +322,9 @@ void OptionWindow::init() {
  addOptionBool(edit_tab,tr("Advanced mode"),"mode/advanced");
  addText      (edit_tab,tr("Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document."));
  addText      (edit_tab,tr("<b>Note</b>: changing Advanced mode will affect only newly opened files"));
+ addOptionBool(edit_tab,tr("Show hidden properties"),"editor/show_hidden");
+ addOptionBool(edit_tab,tr("Allow editing read-only properties"),"editor/edit_readonly");
+ addOptionBool(edit_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
  finishTab    (edit_tab);
 
  QWidget *data_tab=addTab(tr("Paths"));
@@ -305,18 +348,18 @@ void OptionWindow::init() {
  addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple",true);
  finishTab    (tree_tab);
 
- QWidget *misc_tab=addTab(tr("Misc"));
+ QWidget *misc_tab=addTab(tr("Commandline"),true);
+ addText      (misc_tab,tr("Commandline options"));
  addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
  addOptionBool(misc_tab,tr("Show errors from event handlers"),"console/show_handler_errors");
- addText      (misc_tab,tr("<br>History-related options"));
- addOptionFile(misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
- addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
-
  addOptionBool(misc_tab,tr("Show command editor"),"gui/CommandLine/CmdShowEditor");
  addOptionBool(misc_tab,tr("Show command line"),"gui/CommandLine/CmdShowHistory");
  addOptionBool(misc_tab,tr("Editable command line"),"gui/CommandLine/CmdShowLine");
+ misc_tab=addBreak(misc_tab);
+ addText      (misc_tab,tr("<br>History options"));
+ addOptionFile(misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
+ addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
 
- addOptionBool(misc_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
  finishTab    (misc_tab);
 
  QWidget *tool_tab=addTab(tr("Toolbars"));

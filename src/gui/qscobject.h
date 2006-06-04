@@ -17,7 +17,6 @@ public:
  QSCObject(QSCObject &source);
  virtual ~QSCObject();
 public slots:
- virtual void deleteSelf();
  /*- return name of this object's type */
  virtual QString type();
 protected:

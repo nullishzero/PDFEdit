@@ -30,7 +30,7 @@ RealProperty::~RealProperty() {
 
 /** \copydoc StringProperty::writeValue */
 void RealProperty::writeValue(IProperty *pdfObject) {
- if (readonly) return;//Honor readonly setting
+ if (effectiveReadonly) return;//Honor readonly setting
  CReal* obj=(CReal*)pdfObject;
  double val=ed->text().toDouble();
  obj->writeValue(val);

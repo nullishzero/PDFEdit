@@ -25,7 +25,7 @@ Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFla
  : QWidget (parent, "property"){
  name=_name;
  changed=false;
- hidden=readonly=false; 
+ effectiveReadonly=hidden=readonly=false; 
  setFlags(_flags);
 }
 
@@ -67,13 +67,15 @@ void Property::modifyColor(QWidget* widget) {
 }
 
 /** 
- Initialize label belonging to this property.
- Called after setting text to the label.
- Property may change the label test, style or colors
+ Initialize label belonging to this property.<br>
+ Called after setting text to the label.<br>
+ Guaranteed to be called before override.<br>
+ Property may change the label test, style or colors.
  @param widget Property's label
 */
 void Property::initLabel(QLabel *widget) {
  guiPrintDbg(debug::DBG_DBG,"Property " << widget->text() << " " << modeName(flags));
+ propertyLabel=widget;
  switch (flags) {
   case mdNormal:
    //No color modification
@@ -95,6 +97,39 @@ void Property::initLabel(QLabel *widget) {
 }
 
 /**
+ Apply overrides bypassing limitation set by modecontroller.
+ @param showHidden Show hidden properties
+ @param editReadOnly Edit read-only properties
+*/
+void Property::override(bool showHidden,bool editReadOnly) {
+ applyHidden(hidden && !showHidden);
+ effectiveReadonly=readonly && !editReadOnly;
+ applyReadOnly(effectiveReadonly);
+}
+
+/**
+ Apply "hidden" flag to property, thus showing or hiding it
+ @param hideThis New hidden flag value
+*/
+void Property::applyHidden(bool hideThis) {
+ if (hideThis) {
+  propertyLabel->hide();
+  this->hide();
+ } else {
+  propertyLabel->show();
+  this->show();
+ }
+}
+
+/**
+ Check if this property is hidden
+ @return true if hidden
+*/
+bool Property::isHidden() {
+ return hidden;
+}
+
+/**
  Return flags of this property
  @return Property flags
 */
@@ -108,15 +143,11 @@ PropertyFlags Property::getFlags() {
 */
 void Property::setFlags(PropertyFlags flag) {
  flags=flag;
- if (flags==mdReadOnly || flags==mdAdvanced) readonly=true; else readonly=false;
-}
-
-/**
- Returns readonly flag of this property
- @return readonly flag
-*/
-bool Property::getReadOnly() {
- return readonly;
+ if (flags==mdReadOnly || flags==mdAdvanced) {
+  readonly=true;
+ } else {
+  readonly=false;
+ }
 }
 
 /**
@@ -134,18 +165,9 @@ QString Property::modeName(PropertyFlags flag) {
  return "?";
 }
 
-/**
- Explicitly set readonly flag of this property and thus enable/disable the control,
- bypassing all other flags
- @param _readonly New value for readonly flag
-*/
-void Property::setReadOnly(bool _readonly) {
- readonly=_readonly;
-}
-
 /** default destructor */
 Property::~Property() {
-
+ //Nothing to do here
 }
 
 /**

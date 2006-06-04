@@ -391,6 +391,9 @@ void PdfEditWindow::settingUpdate(QString key) {
    else    tb->hide();
   return;
  }
+ if (key.startsWith("editor/")) { //Something from property editor
+  prop->checkOverrides();
+ }
  if (key=="history/save_filePath") {
   //Do not remember path -> remove stored path(s)
   if (!globalSettings->readBool("history/save_filePath")) {
