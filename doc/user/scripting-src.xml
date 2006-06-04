@@ -244,16 +244,11 @@
     You will probably want to use the <link linkend="TreeItem.item">item()</link> method to retrieve the actual object within.
    </para>
   </sect1>
-  <sect1 id="page">
-   <title>page</title>
-   <para>
-   This object represents currently shown page. Type of this object is <link linkend="type_Page">Page</link>
-   </para>
-  </sect1>
   <sect1 id="target">
    <title>target</title>
    <para>
    This object represents target item on which another item was dragged.
+   This variable is present only in drag and drop handlers and once the handler returns, it will become invalid.
    Type of this object is <link linkend="type_TreeItem">TreeItem</link>
    </para>
   </sect1>
@@ -261,7 +256,9 @@
    <title>source</title>
    <para>
    This object represents source item that was dragged from one tree window to other item in same or different
-   tree window. Type of this object is either <link linkend="type_TreeItem">TreeItem</link> for items from same tree window,
+   tree window.
+   This variable is present only in drag and drop handlers and once the handler returns, it will become invalid.
+   Type of this object is either <link linkend="type_TreeItem">TreeItem</link> for items from same tree window,
    from other tree windows it can be <link linkend="type_IProperty">IProperty</link> or  <link linkend="type_Page">Page</link>
    (the item inside dragged tree item).
    </para>
