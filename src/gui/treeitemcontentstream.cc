@@ -73,6 +73,7 @@ void TreeItemContentStream::showMode() {
  if (mode==All) setText(2,QObject::tr("Showing all","mode"));
  else if (mode==Text) setText(2,QObject::tr("Showing text. op.","mode"));
  else if (mode==Font) setText(2,QObject::tr("Showing font. op.","mode"));
+ else if (mode==Graphic) setText(2,QObject::tr("Showing graphic. op.","mode"));
  else {
   assert(0);
   setText(2,"?");
