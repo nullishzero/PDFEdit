@@ -209,6 +209,11 @@ private:
 // CPage
 //=====================================================================================
 
+//
+//
+//
+typedef observer::IObserverHandler<CPage> CPageObserverSubject;
+
 /**
  * This object represents one pdf page object. PDF page object is a dictionary
  * reachable from page tree structure with several required properties. 
@@ -224,6 +229,10 @@ private:
  * We display a page using xpdf code. The argument to this function is an output
  * device which can draw graphical objects. The contents of a page is specified
  * by a "Contents" entry in the page dictionary. If empty the page is blank.
+ * 
+ * CPage is a subject that can be observed. This is important when a change
+ * leads to content stream reparsing (e.g. deleting an entry from "Contents"
+ * property in the page dictionary)
  *
  * Content stream consists of a sequence of operators which should be processed
  * sequentially. The operators define what is really on a page. The pdf
@@ -252,7 +261,7 @@ private:
  * from a parent in the page tree. Which means we can not simply change fonts
  * on a page to match another page, use images from another page etc.
  */
-class CPage
+class CPage : public noncopyable, public CPageObserverSubject
 {
 public:
 	typedef std::vector<boost::shared_ptr<CContentStream> > ContentStreams;
@@ -639,6 +648,7 @@ public:
 	template<typename Container>
 	void addContentStream (const Container& cont)
 	{
+
 	}
 
 	
@@ -652,7 +662,7 @@ public:
 	 *
 	 * @param tm Six number representing transform matrix.
 	 */
-	void setTransformMatrix (int tm[6]);
+	void setTransformMatrix (double tm[6]);
 	
 	
 	//
@@ -707,7 +717,15 @@ private:
 	  * @param state Gfx state parameter.
 	  */
 	 void createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state);
-	 
+
+	
+private:
+	/**
+	 * Save changes and indicate that the object has changed by calling all
+	 * observers.
+	 */
+	void _objectChanged ();
+
 };
 
 

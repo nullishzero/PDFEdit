@@ -300,6 +300,42 @@ printContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 //=========================================================================
 
 bool
+front (__attribute__((unused))	ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
+	{
+		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
+
+		// Print content stream
+		string str;
+		if (page)
+		{
+			double tm[6] = {1,2,3,4,5,6};
+			vector<boost::shared_ptr<CContentStream> > ccs;
+			page->getContentStreams (ccs);
+			page->setTransformMatrix (tm);
+			
+			assert (!ccs.empty());
+			shared_ptr<CContentStream> cs = ccs.front();
+			cs->getStringRepresentation (str);
+			oss << str << flush;
+		}
+		else 
+			return false;
+		
+		//oss << "Content stream representation: " << str << endl;
+		_working (oss);
+	}
+	
+	return true;
+}
+
+
+//=========================================================================
+
+
+bool
 primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
@@ -403,6 +439,7 @@ class TestCContentStream : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestPosition);
 		CPPUNIT_TEST(TestPrint);
 		CPPUNIT_TEST(TestSetCS);
+		CPPUNIT_TEST(TestFront);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -442,6 +479,23 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
+	void TestFront ()
+	{
+		OUTPUT << "CContentStream ..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" insert at front");
+			CPPUNIT_ASSERT (front (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+
 	//
 	//
 	//

@@ -888,7 +888,7 @@ CPage::addSystemType1Font (const std::string& fontname)
 //
 //
 void
-CPage::setTransformMatrix (int tm[6])
+CPage::setTransformMatrix (double tm[6])
 {
 	if (contentstreams.empty())
 		return;
@@ -912,6 +912,21 @@ CPage::setTransformMatrix (int tm[6])
 	str->frontInsertOperator (cmop);
 }
 
+//
+//
+//
+void
+CPage::_objectChanged ()
+{
+	// Do not notify anything if we are not in a valid pdf
+	if (!hasValidPdf (dictionary))
+		return;
+	assert (hasValidRef (dictionary));
+
+	// Notify observers
+	boost::shared_ptr<CPage> current (this, EmptyDeallocator<CPage> ());
+	this->notifyObservers (current, shared_ptr<const ObserverContext> (new BasicObserverContext (current)));
+}
 
 
 // =====================================================================================
