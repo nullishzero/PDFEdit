@@ -101,6 +101,11 @@ void CommandWindow::reloadSettings() {
  showCmdEditor(		globalSettings->readBool( CMD + CMDSHOWEDITOR, DEFAULT__CMDSHOWEDITOR ) );
 }
 
+/**
+ Set interpreter and context for script editor
+ @param ainterpreter QSInterpreter instance
+ @param context Context in which scripts are executed
+*/
 void CommandWindow::setInterpreter( QSInterpreter * ainterpreter, QObject * context ) {
 	in->setInterpreter( ainterpreter, context );
 	interpreter = ainterpreter;
@@ -156,11 +161,20 @@ bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 	return FALSE;
 }
 
+/**
+ Set maximal history size and write it to settings
+ @param historySize maximal history size (in lines)
+*/
 void CommandWindow::setHistorySize( int historySize ){
 	guiPrintDbg(debug::DBG_INFO,"Write historySize");
 	globalSettings->write( CMD + HISTORYSIZE, historySize );
 	history->setMaxCount( historySize + 1 );
 }
+
+/**
+ Set file to store history and write it to settings
+ @param historyFile file fopr storing history
+*/
 void CommandWindow::setHistoryFile( const QString & historyFile ){
 	guiPrintDbg(debug::DBG_INFO,"Write historyFile");
 	globalSettings->write( CMD + HISTORYFILE, historyFile );
@@ -223,7 +237,10 @@ void CommandWindow::saveHistory() {
 	}
 	guiPrintDbg(debug::DBG_INFO,"Cannot open pdfedit-history to read!!!");
 }
-/** Execute and clear current command */
+/**
+ Execute and clear current command
+ @param from Source of the command
+ */
 void CommandWindow::execute( enum cmd  from ) {
  QString command;
  if (from != CmdEditor)

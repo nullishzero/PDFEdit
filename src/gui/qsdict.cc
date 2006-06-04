@@ -16,11 +16,18 @@ namespace gui {
 using namespace std;
 using namespace pdfobjects;
 
-/** Construct wrapper with given CDict */
+/**
+ Construct wrapper with given CDict
+ @param _dict CDict
+ @param _base scripting base
+ */
 QSDict::QSDict(boost::shared_ptr<CDict> _dict,Base *_base) : QSIProperty (_dict,"Dict",_base) {
 }
 
-/** Copy constructor */
+/**
+ Copy constructor
+ @param source Source object to copy
+*/
 QSDict::QSDict(QSDict &source) : QSIProperty (source.obj,"Dict",source.base) {
 }
 
@@ -39,7 +46,12 @@ int QSDict::count() {
  return dict->getPropertyCount();
 }
 
-/** call CDict::getProperty(name) */
+/**
+ Get property by its name
+ \see CDict::getProperty
+ @param name Name of property
+ @return the property, or NULL if not found
+*/
 QSCObject* QSDict::property(const QString &name) {
  try {
   CDict *dict=dynamic_cast<CDict*>(obj.get());

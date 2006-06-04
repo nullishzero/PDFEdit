@@ -18,6 +18,7 @@ namespace gui {
 class CommandWindow : public QWidget {
  Q_OBJECT
 public:
+ /** Source of command */
  enum cmd { CmdNone = 0, CmdHistory = 1, CmdLine = 2, CmdEditor = 4 };
  CommandWindow(QWidget *parent=0,const char *name=0);
  void addCommand(const QString &command);

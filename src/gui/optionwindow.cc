@@ -163,7 +163,7 @@ void OptionWindow::initGridFrame(QWidget *grid) {
  grl->setColStretch(1,1);
 }
 
-/*
+/**
  Add break to the option tab, breaking the column alignment at this point.<br>
  In fact, break the tab into two separate parts (but only second part can be splitted again).<br>
  Can be only applied to tabs that were created with makeSegments=true

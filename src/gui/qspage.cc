@@ -55,7 +55,7 @@ QSDict* QSPage::getDictionary() {
  Set transform matrix of this page
  \see CPage::setTransformMatrix
  @param tMatrix Array with 6 integers
- */
+*/
 void QSPage::setTransformMatrix(QVariant tMatrix) {
  double tm[6]={0};
  QValueList<QVariant> list=tMatrix.toList();
