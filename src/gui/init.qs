@@ -48,8 +48,8 @@ function onTreeRightClick() {
  }
  if (treeitem.itemtype()=="Page") {
   menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
-  menu.addItemDef("item "+tr("Add system font")+",addSystemFont()");
-  menu.addItemDef("item "+tr("Extract text from page")+",viewPageText()");
+  menu.addItemDef("item "+tr("Add system font")+",addSystemFont(),,page_add_font.png");
+  menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
  }
  if (treeitem.itemtype()=="ContentStream") {
   menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
