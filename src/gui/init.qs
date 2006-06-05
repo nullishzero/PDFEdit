@@ -630,16 +630,20 @@ function setPageTm() {
 	dg.newTab(tr("Page transformation matrix description"));
 	var gb = createGroupBoxAndDisplay (tr("Page transformation description"),dg);
 	var te = new TextEdit;
-	te.text = "Translations are specified as [1 0 0 1 tx ty], where tx and ty are the distances "+
+        translation_txt =  "Translations are specified as [1 0 0 1 tx ty], where tx and ty are the distances "+
 			  "to translate the origin of the coordinate system in the horizontal and vertical "+
-			  "dimensions, respectively.\n\n"+
-			  "Scaling is obtained by [sx 0 0 sy 0 0]. This scales the coordinates so that 1 "+
+			  "dimensions, respectively.\n\n"
+	scaling_txt =	  "Scaling is obtained by [sx 0 0 sy 0 0]. This scales the coordinates so that 1 "+
 			  "unit in the horizontal and vertical dimensions of the new coordinate system is "+
 			  "the same size as sx and sy units, respectively, in the previous coordinate system.\n\n"+
-			  "Rotations are produced by [cos(a)  sin(a)  -sin(a)  cos(a) 0  0], which has the effect "+
-			  " of rotating the coordinate system axes by an angle ?? counterclockwise.\n\n"+
-			  "Skew is specified by [1 tan(a) tan(b) 1 0 0], which skews the x axis by an angle "+
+	rotation_txt =	  "Rotations are produced by [cos(a)  sin(a)  -sin(a)  cos(a) 0  0], which has the effect "+
+			  " of rotating the coordinate system axes by an angle ?? counterclockwise.\n\n";
+	skew_txt =	  "Skew is specified by [1 tan(a) tan(b) 1 0 0], which skews the x axis by an angle "+
 			  "and the y axis by an angle.";
+	te.text =	  translation_txt +
+			  scaling_txt +
+			  rotation_txt +
+			  skew_txt;
 	gb.add(te);
 	dg.newColumn();
 	gb = createGroupBoxAndDisplay (tr("Select which transformations to use"),dg);
@@ -652,40 +656,35 @@ function setPageTm() {
 	dg.newTab("Page translation");
 	gb = createGroupBoxAndDisplay (tr("Page translation"),dg);
 	te = new TextEdit;
-	te.text = "Translations are specified as [1 0 0 1 tx ty], where tx and ty are the distances "+
-			  "to translate the origin of the coordinate system in the horizontal and vertical "+
-			  "dimensions, respectively.\n\n";
+	te.text = translation_txt;
 	gb.add(te);
 	dg.newColumn();
-	gb = createGroupBoxAndDisplay (tr("Set values           [* * * * tx ty]"),dg);
-	e = createLineEditAndDisplay (tr("tx"), "0", gb);
-	f = createLineEditAndDisplay (tr("ty"), "0",  gb);
+	gb = createGroupBoxAndDisplay (tr("Set values           ")+"[* * * * tx ty]",dg);
+	e = createLineEditAndDisplay ("tx", "0", gb);
+	f = createLineEditAndDisplay ("ty", "0",  gb);
 
 
 	/* == Third tab */
 	dg.newTab("Page scaling");
 	gb = createGroupBoxAndDisplay (tr("Page scaling"),dg);
 	te = new TextEdit;
-	te.text = "Scaling is obtained by [sx 0 0 sy 0 0]. This scales the coordinates so that 1 "+
-			  "unit in the horizontal and vertical dimensions of the new coordinate system is "+
-			  "the same size as sx and sy units, respectively, in the previous coordinate system.";
+	te.text = scaling_txt;
 	gb.add(te);
 	dg.newColumn();
-	gb = createGroupBoxAndDisplay (tr("Set values           [sx * * sy * *]"),dg);
-	a = createLineEditAndDisplay (tr("sx"), "0", gb);
-	d = createLineEditAndDisplay (tr("sy"), "0", gb);
+	gb = createGroupBoxAndDisplay (tr("Set values           ")+"[sx * * sy * *]",dg);
+	a = createLineEditAndDisplay ("sx", "0", gb);
+	d = createLineEditAndDisplay ("sy", "0", gb);
 
 	/* == Fourth tab */
 	dg.newTab("Page skewing");
 	gb = createGroupBoxAndDisplay (tr("Page skewing"),dg);
 	te = new TextEdit;
-	te.text = "Skew is specified by [1 tan(a) tan(b) 1 0 0], which skews the x axis by an angle "+
-			  "and the y axis by an angle.";
+	te.text = skew_txt;
 	gb.add(te);
 	dg.newColumn();
-	gb = createGroupBoxAndDisplay (tr("Set values           [* tan(a) tan(b) * * *]"),dg);
-	b = createLineEditAndDisplay (tr("tan(a)"), "0", gb);
-	c = createLineEditAndDisplay (tr("tan(b)"), "0", gb);
+	gb = createGroupBoxAndDisplay (tr("Set values           ")+"[* tan(a) tan(b) * * *]",dg);
+	b = createLineEditAndDisplay ("tan(a)", "0", gb);
+	c = createLineEditAndDisplay ("tan(b)", "0", gb);
 
 	// Set width
 	dg.width = 700;
@@ -745,7 +744,7 @@ function moveOperPos() {
 		warn(tr("Could not find text positioning."));
 	}
 
-	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change realtive text position"));
+	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
 	 
 	var gb = createGroupBoxAndDisplay ("Relative operator position (this is not absolute position)", dialog);
 	x = createLineEditAndDisplay ("x position:", x, gb);
