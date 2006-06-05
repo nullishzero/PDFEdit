@@ -3,7 +3,7 @@
 .PHONY: clean all 
 
 #html docs get built here as XHTML and also in "online help" as HTML
-html_docs=scripting.html pdfedit.html
+html_docs=scripting.html pdfedit.html keyboard.html cs/keyboard.html
 
 #directory in which to place generated html help files
 html_help_dir=../../src/gui/help
@@ -14,7 +14,7 @@ docs=$(html_docs) $(addprefix $(html_help_dir)/,$(html_docs)) install.html pdfed
 all: $(docs)
 
 clean:
-	rm -f $(docs) scripting.xml
+	rm -f $(docs) scripting.xml keyboard.xml cs/keyboard.xml
 
 #rule for procesing docbook documentation
 #prefer using xsltproc and docbook.xsl (nicer XHTML output and is also faster)
@@ -33,3 +33,9 @@ $(html_help_dir)/%.html: %.xml
 #generate by parsing header files and adding scripting API documentation
 scripting.xml: scripting-src.xml scripting.gen.pl
 	./scripting.gen.pl $< >$@
+
+keyboard.xml: kbd_gen.pl ../../src/gui/pdfeditrc keyboard-src.xml
+	./kbd_gen.pl <../../src/gui/pdfeditrc keyboard-src.xml >keyboard.xml
+
+cs/keyboard.xml: kbd_gen.pl ../../src/gui/pdfeditrc cs/keyboard-src.xml
+	./kbd_gen.pl <../../src/gui/pdfeditrc cs/keyboard-src.xml ../../src/gui/lang/pdfedit_cs.ts >cs/keyboard.xml
