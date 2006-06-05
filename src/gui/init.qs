@@ -3,7 +3,7 @@
 //Each window have its own scripting context
 
 /* ==== load various needed functions ==== */
-run( "pdfoperator_utilities.qs" );	//Functionf for manipulation with pdf operators
+run( "pdfoperator.qs" );	//Functions for manipulation with pdf operators
 run( "callback.qs" );			//Callback handlers
 run( "dialog_lib.qs" );			//Dialog helper functions
 run( "dialogs.qs" );			//Dialogs

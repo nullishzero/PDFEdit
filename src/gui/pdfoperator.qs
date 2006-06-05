@@ -374,10 +374,10 @@ function operatorSetPosition(operator, dx, dy) {
 	operands.clear();
 	operands.append (createReal(-dx));
 	operands.append (createReal(-dy));
-	composite.pushBack (createOperator(operands, "Td"));
+	composite.pushBack (createOperator(operands, "Td"),operator.getLastOperator());
 
 	operands.clear();
-	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+	composite.pushBack (createOperator(operands, "Q"));
 
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
 
@@ -399,3 +399,37 @@ function getPosInfoOfOperator (operator) {
 
 	return undefined;
 }
+
+/**
+ * Draw line from start position to end position.
+ */
+function operatorDrawLine (lx,ly,rx,ry) {
+	
+	//
+	// q
+	// array phase d
+	// oper
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
+
+	var operands = createIPropertyArray ();
+	operands.append (createReal(lx));
+	operands.append (createReal(ly));
+	composite.pushBack (createOperator(operands, "m"), composite);
+
+	operands.clear();
+	operands.append (createReal(rx));
+	operands.append (createReal(ry));
+	composite.pushBack (createOperator(operands, "l"));
+
+	operands.clear();
+	composite.pushBack (createOperator(operands, "S"));
+
+	composite.pushBack (createOperator(operands, "Q"));
+
+	var ops = createPdfOperatorStack();
+	ops.append (composite);
+	page().addContentStream(ops);
+}
+
