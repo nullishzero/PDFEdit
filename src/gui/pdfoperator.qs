@@ -248,7 +248,7 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
  */
 function operatorSetSimpleDashPattern(alt,operator,globchange) {
 	var array = [];
-	var step = 500;
+	var step = 600;
  	switch(alt) {
 	case 0 :
 		break;
@@ -430,6 +430,78 @@ function operatorDrawLine (lx,ly,rx,ry) {
 
 	var ops = createPdfOperatorStack();
 	ops.append (composite);
+	page().addContentStream(ops);
+}
+
+/**
+ * Draw rectangle specyfing left upper corner, width and height.
+ */
+function operatorDrawRect (lx,ly,width,height) {
+	
+	//
+	// q
+	// array phase d
+	// oper
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
+
+	var operands = createIPropertyArray ();
+	operands.append (createReal(lx));
+	operands.append (createReal(ly));
+	operands.append (createReal(width));
+	operands.append (createReal(height));
+	composite.pushBack (createOperator(operands, "re"),composite);
+
+	operands.clear();
+	composite.pushBack (createOperator(operands, "S"));
+
+	composite.pushBack (createOperator(operands, "Q"));
+
+	var ops = createPdfOperatorStack();
+	ops.append (composite);
+	page().addContentStream(ops);
+}
+
+/**
+ * Add text line.
+ */
+function operatorAddTextLine (text,x,y,fname,fsize) {
+	//
+	// q
+	// BT
+	// fname fsize Tf
+	// x y Td
+	// text Tj
+	// ET
+	// Q
+	//
+	var q = createCompositeOperator("q","Q");
+	var BT = createCompositeOperator("BT","ET");
+	
+	q.pushBack (BT,q);
+	
+	var operands = createIPropertyArray ();
+	operands.append (createName(fname));
+	operands.append (createReal(fsize));
+	BT.pushBack (createOperator(operands, "Tf"),BT);
+
+	operands.clear();
+	operands.append (createReal(x));
+	operands.append (createReal(y));
+	BT.pushBack (createOperator(operands, "Td"));
+
+	operands.clear();
+	operands.append (createString(text));
+	BT.pushBack (createOperator(operands, "Tj"));
+
+	operands.clear();
+	BT.pushBack (createOperator(operands, "ET"));
+	
+	q.pushBack (createOperator(operands, "Q"),BT.getLastOperator());
+
+	var ops = createPdfOperatorStack();
+	ops.append (q);
 	page().addContentStream(ops);
 }
 

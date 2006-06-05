@@ -36,11 +36,27 @@ function isNumber(x) {
 }
 
 /** Are all numbers */
+function isNumber2(x,y) {
+	if (isNumber(x) && isNumber(y))
+		return true;
+	else
+		return false;
+}
+
+/** Are all numbers */
 function isNumber4(x,y,z,w) {
 	if (isNumber(x) && isNumber(y) && isNumber(z) && isNumber(w))
 		return true;
 	else
 		return false;
+}
+
+/** Get absolute value */
+function abs (i) {
+	if (i >= 0)
+		return i;
+	else
+		return -i;
 }
 
 /** Validate current page */

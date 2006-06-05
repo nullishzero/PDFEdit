@@ -159,32 +159,40 @@ function onTreeSelectionChange() {
 }
 
 /** Init connections. (callbacks) */
-function initconnection (fnc) {
+function initconnection (id) {
+
 	// disconnect old requests
-	disconnect( PageSpace, "responseSelectArea(int,bool,int,int,int,int)","",0);
+	disconnect( PageSpace,"responseSelectArea(int,bool,int,int,int,int)",selectFnc);
 	// connect new request
-	connect( PageSpace, "responseSelectArea(int,bool,int,int,int,int)", fnc);
+	connect( PageSpace,"responseSelectArea(int,bool,int,int,int,int)",selectFnc);
 	// send request
-	PageSpace.requestSelectArea (0);
+	PageSpace.requestSelectArea (id);
 }
 
-/** Draw line mode. */
-function drawLineMode(id, isItOnLastRequest, x1, y1, x2, y2) {
+/** 
+ * Select right function. 
+ *
+ * This is not a very nice solution but function as function argument was not working correctly.
+ */
+function selectFnc(id,isItOnLastRequest,x1,y1,x2,y2) {
+
 	if (!isItOnLastRequest)
 		return;
+		
+	switch (id) {
+			
+		case 0:
+			drawLine (x1,y1,x2,y2);
+			break;
+			
+		case 1:
+			drawRect (x1,y1,x2,y2);
+			break;
 
-	print (x1+", "+y1+", "+x2+", "+y2);
-	drawLine (x1,y1,x2,y2);
+		default:
+			warn (tr("Mode not supported."));
+			break;
+	}
+
 }
-
-/** Draw line mode. */
-function drawRectMode(id, isItOnLastRequest, x1, y1, x2, y2) {
-	if (!isItOnLastRequest)
-		return;
-
-	print (x1+", "+y1+", "+x2+", "+y2);
-	drawRect (x1,y1,x2,y2);
-}
-
-
 

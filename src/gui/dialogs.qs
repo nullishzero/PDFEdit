@@ -473,25 +473,25 @@ function moveTextPos() {
 /**
  * Draw line.
  */
-function drawLine(lx,ly,rx,ry) {
+function drawLine(_lx,_ly,_rx,_ry) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
 		return;
 	}
 	
-	if (undefined == lx || undefined == ly || undefined == rx || undefined == ry)
+	if (undefined == _lx || undefined == _ly || undefined == _rx || undefined == _ry)
 	{ // Ask user if not defined
 		var dialog = createDialog (tr("Draw line"), tr("Draw"), tr("Cancel"), tr("Draw line"));
 		 
 		var gb = createGroupBoxAndDisplay ("Start position", dialog);
-		elx = createLineEditAndDisplay ("x position:", "0", gb);
-		ely = createLineEditAndDisplay ("y position", "0", gb);
+		elx = createLineEditAndDisplay (tr("x position:"), "0", gb);
+		ely = createLineEditAndDisplay (tr("y position:"), "0", gb);
 
 		dialog.newColumn();
-		gb = createGroupBoxAndDisplay ("End position", dialog);
-		erx = createLineEditAndDisplay ("x position:", "0", gb);
-		ery = createLineEditAndDisplay ("y position", "0", gb);
+		gb = createGroupBoxAndDisplay (tr("End position"), dialog);
+		erx = createLineEditAndDisplay (tr("x position:"), "0", gb);
+		ery = createLineEditAndDisplay (tr("y position:"), "0", gb);
 	 
 		if (!dialog.exec()) return;
 
@@ -504,18 +504,114 @@ function drawLine(lx,ly,rx,ry) {
 		_ly = parseFloat(ely.text);
 		_rx = parseFloat(erx.text);
 		_ry = parseFloat(ery.text);
-		
-		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
-		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
-		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
 	}
+	
+	lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
+	ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
+	rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
+	ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
 	
 	operatorDrawLine(lx,ly,rx,ry);
 
 	print (tr("Line was drawn."));
 	// Reload page
 	go ();
+}
+
+/**
+ * Draw rect.
+ */
+function drawRect(_lx,_ly,_rx,_ry) {
+
+	if (!isPageAvaliable()) {
+		warn(tr("No page selected!"));
+		return;
+	}
+	
+	if (undefined == _lx || undefined == _ly || undefined == _rx || undefined == _ry)
+	{ // Ask user if not defined
+		var dialog = createDialog (tr("Draw rectangle"), tr("Draw"), tr("Cancel"), tr("Draw rectangle"));
+		 
+		var gb = createGroupBoxAndDisplay (tr("Upper left corner"), dialog);
+		elx = createLineEditAndDisplay (tr("x position"), "0", gb);
+		ely = createLineEditAndDisplay (tr("y position"), "0", gb);
+
+		dialog.newColumn();
+		gb = createGroupBoxAndDisplay (tr("Metrics"), dialog);
+		ew = createLineEditAndDisplay (tr("Width"), "0", gb);
+		eh = createLineEditAndDisplay (tr("Height"), "0", gb);
+	 
+		if (!dialog.exec()) return;
+
+		if (!isNumber4(elx.text,ely.text,ew.text,eh.text)) {
+			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
+			return;
+		}
+		// op
+		_lx = parseFloat(elx.text);
+		_ly = parseFloat(ely.text);
+		
+		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
+		width = parseFloat(ew.text);
+		height = parseFloat(eh.text);
+
+	}else {
+		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
+		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
+		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
+		width = rx - lx;
+		height = ry - ly;
+	}
+	
+	print (lx+", "+ly+", "+width+", "+height);
+	operatorDrawRect(lx,ly,width,height);
+
+	print (tr("Rect was drawn."));
+	// Reload page
+	go ();
+}
+
+/**
+ * Add text
+ */
+function addText (x,y) {
+
+	if (!isPageAvaliable()) {
+		warn(tr("No page selected!"));
+		return;
+	}
+	
+	if (undefined == x || undefined == y) { 
+		x = 0;
+		y = 0;
+	}
+		
+		
+	// Ask user if not defined
+	var dialog = createDialog (tr("Add text line"), tr("Add"), tr("Cancel"), tr("Add text line"));
+	 
+	var gb = createGroupBoxAndDisplay (tr("Text"), dialog);
+	etxt = createLineEditAndDisplay (tr("Text to add"), "", gb);
+	ex = createLineEditAndDisplay (tr("x position"), "0", gb);
+	ey = createLineEditAndDisplay (tr("y position"), "0", gb);
+
+	if (!dialog.exec()) return;
+
+	if (!isNumber2(ex.text,ey.text)) {
+		warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
+		return;
+	}
+	// op
+	_x = parseFloat(ex.text);
+	_y = parseFloat(ey.text);
+	
+	x = PageSpace.convertPixmapPosToPdfPos_x(_x,_y);
+	y = PageSpace.convertPixmapPosToPdfPos_y(_x,_y);
+
+	operatorAddTextLine (etxt.text,x,y);
+	
 }
 
 
