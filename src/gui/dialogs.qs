@@ -1,5 +1,24 @@
 /* === Dialogs === */
 
+/** rotate current page N degrees clockwise */
+function rotatePage(n) {
+ if (!isPageAvaliable()) {
+ 	warn(tr("No page selected!"));
+ 	return;
+ }
+//Get page rotation
+ rotate=pagePropertyDef("Rotate",0);
+ //Add rotation
+ n0=rotate.getInt()+n;
+ //Normalize
+ if (n0<0) n0+=360;
+ if (n0>=360) n0-=360;
+ //Set
+ rotate.set(n0);
+ print (tr("Page rotated."));
+ //Reload page after rotating
+ go();
+}
 /** 
  * Show page rectangle and allow changing page metrics. 
  * It displayes MediaBox entry from a page dictionary and then sets new values if desired. 
