@@ -582,6 +582,30 @@ CPage::getMediabox () const
 //
 //
 //
+int
+CPage::getRotation () const
+{
+	try {
+		return utils::getIntFromDict(dictionary,"Rotate");
+	}catch (CObjectException&)
+		{ return 0; }
+}
+
+
+//
+//
+//
+void
+CPage::setRotation (int rot)
+{
+	CInt crot (rot);
+	dictionary->setProperty ("Rotate", crot);
+}
+
+
+//
+//
+//
 void
 CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
 {
@@ -798,9 +822,10 @@ CPage::displayPage (::OutputDev& out) const
 	
 	//
 	// Page object display (..., useMediaBox, crop, links, catalog)
-	// 
+	//
+	int rotation = lastParams.rotate - getRotation ();
 	page.display   (&out, lastParams.hDpi, lastParams.vDpi, 
-					lastParams.rotate, lastParams.useMediaBox, 
+					rotation, lastParams.useMediaBox, 
 					lastParams.crop, NULL, xpdfCatalog.get());
 
 	//

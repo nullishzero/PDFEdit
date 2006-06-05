@@ -816,7 +816,24 @@ public:
 	 */
 	 void setMediabox (const Rectangle& rc);
 
-
+	 //
+	 // Rotation
+	 //
+public:
+	 /**
+	  * Get rotation.
+	  *
+	  * @return Rotation degree measurment.
+	  */
+	 int getRotation () const;
+	
+	 /**
+	  * Set rotation.
+	  *
+	  * @param rot Set rotation degree measurment.
+	  */
+	 void setRotation (int rot);
+ 
 	 //
 	 // Text search/find 
 	 //

@@ -613,9 +613,11 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 					break;
 	}
 
-	// Check the bounds, if fails an exception is thrown
+	// Check the bounds, if fails add it
 	if (it == value.end())
-			throw ElementNotFoundException ("", "");
+	{
+		return addProperty (id, newIp);
+	}
 
 	// Save the old one
 	boost::shared_ptr<IProperty> oldIp = cmp.getIProperty ();
@@ -1017,14 +1019,7 @@ CObjectStream<Checker>::setLength (size_t len)
 	dictionary.lockChange ();
 
 	CInt _len (len);
-	try
-	{
-		dictionary.setProperty ("Length", _len);
-	
-	}catch (ElementNotFoundException&)
-	{
-		dictionary.addProperty ("Length", _len);
-	}
+	dictionary.setProperty ("Length", _len);
 
 	// Unlock
 	dictionary.unlockChange ();

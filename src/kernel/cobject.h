@@ -536,7 +536,8 @@ public:
 	 * Sets property type of an item.
 	 * 
 	 * Firstly, the property that is passed as argument is cloned, the argument itself is not used.
-	 * The cloned object replaces object specified by id.
+	 * The cloned object replaces object specified by id. If the item does not
+	 * exist it is added.
 	 * 
 	 * @param	id		Name/Index of property
 	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
