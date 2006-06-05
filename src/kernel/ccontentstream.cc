@@ -1301,8 +1301,8 @@ namespace {
 				if (!checkAndFix (*chcktp, operands))
 				{
 					o.free ();
-					assert (!"Content stream bad operator type.");
-					throw ElementBadTypeException ("Content stream operator incorrect operand type.");
+					//assert (!"Content stream bad operator type.");
+					throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
 				}
 				
 				// Get operands count
@@ -1345,7 +1345,7 @@ namespace {
 
 					if (!foundEndTag)
 					{
-						assert (!"Bad content stream while reparsing. End tag was not found.");
+						//assert (!"Bad content stream while reparsing. End tag was not found.");
 						throw CObjInvalidObject ();
 					}
 					
@@ -1435,7 +1435,7 @@ namespace {
 		}catch (CObjInvalidObject&)
 		{
 			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
-			assert (!"Bad content stream. (remove this assert)");
+			//assert (!"Bad content stream. (remove this assert)");
 			operators.clear ();
 			operands.clear ();
 
@@ -1589,8 +1589,8 @@ namespace {
 			if (NULL != chcktp)
 			{
 				// Check arguments
-				assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
-				assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
+				//assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
+				//assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
 				if ( ((chcktp->argNum >= 0) && (ops.size () != (size_t)chcktp->argNum)) ||
 				      ((chcktp->argNum < 0) && (ops.size () > (size_t)-chcktp->argNum)) )
 				{
