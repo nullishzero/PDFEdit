@@ -92,10 +92,21 @@ CObjectSimple<Tp,Checker>::getStringRepresentation (std::string& str) const
 //
 template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp,Checker>::getPropertyValue (Value& val) const
+CObjectSimple<Tp,Checker>::getValue (Value& val) const
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	val = value;
+}
+
+//
+// Get the value of an property
+//
+template<PropertyType Tp, typename Checker>
+typename PropertyTraitSimple<Tp>::value
+CObjectSimple<Tp,Checker>::getValue () const
+{
+	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
+	return value;
 }
 
 
@@ -139,10 +150,10 @@ CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 // 
 template<PropertyType Tp, typename Checker>
 void
-CObjectSimple<Tp,Checker>::writeValue (WriteType val)
+CObjectSimple<Tp,Checker>::setValue (WriteType val)
 {
-	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
-	//kernelPrintDbg (debug::DBG_DBG, "writeValue() type: " << Tp);
+	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_setValue_FUNCTION_FOR_pNULL_TYPE);
+	//kernelPrintDbg (debug::DBG_DBG, "setValue() type: " << Tp);
 
 	if (hasValidPdf (this))
 	{

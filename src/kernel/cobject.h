@@ -193,7 +193,21 @@ public:
 	 *
 	 * @param val Out parameter where property value will be stored.
 	 */
-	void getPropertyValue (Value& val) const;
+	void getPropertyValue (Value& val) const {getValue(val);}
+	
+	/**
+	 * Return property value. Each property has its own return type.
+	 *
+	 * @param val Out parameter where property value will be stored.
+	 */
+	void getValue (Value& val) const;
+
+	/**
+	 * Return property value. Each property has its own return type.
+	 *
+	 * @return Property value.
+	 */
+	Value getValue () const;
 
 	//
 	// Set methods
@@ -219,7 +233,20 @@ public:
 	 *
 	 * @param val	Value that will be set.
 	 */
-	void writeValue (WriteType val);
+	void writeValue (WriteType val) {setValue (val);}
+
+	/**
+	 * Change the value of an object. The variable type depends
+	 * on CObject type.
+	 * 
+	 * We can define the best type to represent an pdf object in
+	 * PropertyTraitSimple.
+	 *
+	 * \see PropertyTraitSimple
+	 *
+	 * @param val	Value that will be set.
+	 */
+	void setValue (WriteType val);
 
 	//
 	// Destructor
