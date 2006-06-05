@@ -7,12 +7,15 @@
 
 #include "qsannotation.h"
 #include "qsdict.h"
+#include "qspage.h"
 #include <cannotation.h>
 #include <cpage.h>
+#include "pdfutil.h"
 
 namespace gui {
 
 using namespace pdfobjects;
+using namespace util;
 
 /**
  Construct wrapper with given CAnnotation
@@ -22,6 +25,7 @@ using namespace pdfobjects;
  */
 QSAnnotation::QSAnnotation(boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,Base *_base) : QSCObject ("Annotation",_base) {
  obj=pdfObj;
+ assert(obj);
  page=_page;
 }
 
@@ -29,9 +33,36 @@ QSAnnotation::QSAnnotation(boost::shared_ptr<CAnnotation> pdfObj,boost::shared_p
 QSAnnotation::~QSAnnotation() {
 }
 
+/** Get annotation's page */
+QSPage* QSAnnotation::getPage() { 
+ if (!page.get()) return NULL;
+ return new QSPage(page,base);
+}
+
 /** Call CAnnotation::getDictionary */
-QSDict* QSAnnotation::getDictionary() {
+QSDict* QSAnnotation::getDictionary() { 
  return new QSDict(obj->getDictionary(),base);
+}
+
+/** Return type identifier of annotation */
+QString QSAnnotation::getType() {
+ return annotType(obj);
+}
+
+/** Return human-readable, localized type identifier of annotation */
+QString QSAnnotation::getTypeName() {
+ return annotTypeName(obj);
+}
+
+/**
+ Remove this annotation from its page, if it is in a page
+ @return true if removed
+*/
+bool QSAnnotation::remove() {
+ if (!page.get()) return false;//Not in page
+ bool result=page->delAnnotation(obj);
+ page.reset();//It's not in page anymore
+ return result;
 }
 
 /** get CAnnotation held inside this class. Not exposed to scripting */
@@ -41,4 +72,3 @@ boost::shared_ptr<CAnnotation> QSAnnotation::get() const {
 
 } // namespace gui
 
-//todo: incomplete

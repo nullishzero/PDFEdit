@@ -16,6 +16,7 @@ class QVariant;
 namespace gui {
 
 class QSContentStream;
+class QSAnnotation;
 class QSDict;
 class Base;
 class QSPdfOperatorStack;
@@ -32,6 +33,9 @@ public:
  QSPage(boost::shared_ptr<CPage> _page,Base *_base);
  boost::shared_ptr<CPage> get() const;
 public slots:
+ /*- Add copy of given annotation to this page */
+ void addAnnotation(QSAnnotation* an);
+ void addAnnotation(QObject *an);
  /*-
   Set transform matrix of this page.
   Expects array with 6 real numbers as the matrix.

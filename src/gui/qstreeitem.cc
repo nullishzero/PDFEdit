@@ -21,6 +21,7 @@ namespace gui {
 */
 QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base) : QSCObject (className,_base) {
  obj=item;
+ assert(obj);
 }
 
 /**
@@ -63,6 +64,7 @@ QSCObject* QSTreeItem::itemref() {
  @return Type of item
 */
 QString QSTreeItem::itemtype() {
+ assert(obj);
  QSCObject* it=obj->getQSObject();
 
  //Some tree item does not have actually any "item" in them

@@ -15,6 +15,7 @@
 #include "pagespace.h"
 #include "pdfeditwindow.h"
 #include "propertyeditor.h"
+#include "qsannotation.h"
 #include "qsarray.h"
 #include "qsdict.h"
 #include "qsimporter.h"
@@ -428,6 +429,29 @@ QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QStr
 */
 QSPdfOperator* Base::createEmptyOperator() {
  return new QSPdfOperator(this); 
+}
+
+/**
+ Create and initialize new annotation of given type
+ @param rect Annotation redctangle
+ @param type Type of annotation
+ @return created Annotation
+*/
+QSAnnotation* Base::createAnnotation(QVariant rect,const QString &type) {
+ double tm[4]={0};
+ QValueList<QVariant> list=rect.toList();
+ QValueList<QVariant>::Iterator it = list.begin();
+ int i=0;
+ while(it!=list.end()) {
+  if (i>=4) break;//We filled all values
+  tm[i]=(*it).toDouble();
+  ++it;
+  ++i;
+ }
+ Rectangle rc(tm[0],tm[1],tm[2],tm[3]);
+ boost::shared_ptr<CPage> nullPage;
+ boost::shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rc,type);
+ return new QSAnnotation(annot,nullPage,this);
 }
 
 /**

@@ -13,6 +13,7 @@ namespace gui {
 
 class BaseData;
 class PdfEditWindow;
+class QSAnnotation;
 class QSArray;
 class QSCObject;
 class QSTreeItem;
@@ -86,6 +87,11 @@ public slots: //This will be all exported to scripting
  void closeWindow();
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
+ /*-
+  Create and initialize new annotation of given type.
+  Parameter rect specifies annotation rectangle in default user space units.
+ */
+ QSAnnotation* createAnnotation(QVariant rect,const QString &type);/*Variant=double[4]*/
  /*- Create and return new IProperty of type Array - empty array */
  QSIProperty* createArray();
  /*- Create and return new IProperty of type Bool */

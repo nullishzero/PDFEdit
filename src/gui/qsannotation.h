@@ -12,6 +12,7 @@ namespace pdfobjects {
 namespace gui {
 
 class QSDict;
+class QSPage;
 
 using namespace pdfobjects;
 
@@ -23,7 +24,19 @@ public:
  virtual ~QSAnnotation();
  boost::shared_ptr<CAnnotation> get() const;
 public slots:
+ /*- Returns anotation dictionary */
  QSDict* getDictionary();
+ /*- Returns page in which this annotation is, or NULL, if it is not in any page */
+ QSPage* getPage();
+ /*-
+  Remove this annotation from its page, if it is in a page.
+  Returns true if it was removed.
+ */
+ bool remove();
+ /*- Return type identifier of annotation */
+ QString getType();
+ /*- Return human-readable, localized type identifier of annotation */
+ QString getTypeName();
 private:
  /** Object held in class*/
  boost::shared_ptr<CAnnotation> obj;

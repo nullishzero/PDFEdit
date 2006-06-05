@@ -12,6 +12,7 @@
 #include <qvariant.h>
 #include <qvaluelist.h>
 #include "qscontentstream.h"
+#include "qsannotation.h"
 #include "qspdfoperatorstack.h"
 #include <cpage.h>
 
@@ -49,7 +50,6 @@ QSPage::~QSPage() {
 QSDict* QSPage::getDictionary() {
  return new QSDict(obj->getDictionary(),base);
 }
-
 
 /**
  Set transform matrix of this page
@@ -122,6 +122,23 @@ void QSPage::loadContentStreams() {
  obj->getContentStreams(streams);
  //Store number of streams
  numStreams=streams.size(); 
+}
+
+//TODO: get list of annotations
+
+/**
+ Add copy of given annotation to this page
+ @param an Annotation to add
+*/
+void QSPage::addAnnotation(QSAnnotation* an) {
+ obj->addAnnotation(an->get());
+}
+
+/** \copydoc addAnnotation(QSAnnotation*) */
+void QSPage::addAnnotation(QObject *an) {
+ QSAnnotation* annot=dynamic_cast<QSAnnotation*>(an);
+ if (!annot) return;
+ addAnnotation(annot);
 }
 
 /** Call CPage::getMediabox() */

@@ -168,6 +168,7 @@ void MultiTreeWindow::settingUpdate(QString key) {
  @return QSCObject from current item
 */
 QSCObject* MultiTreeWindow::getSelected() {
+ assert(tree);
  return tree->getSelected();
 }
 
@@ -176,6 +177,7 @@ QSCObject* MultiTreeWindow::getSelected() {
  @return current item
 */
 TreeItemAbstract* MultiTreeWindow::getSelectedItem() {
+ assert(tree);
  return tree->getSelectedItem();
 }
 
@@ -376,6 +378,7 @@ void MultiTreeWindow::deleteWindow(TreeWindow *tr) {
 
  //Current page is likely the one that was deleted, request the new page that is now active
  tree=dynamic_cast<TreeWindow*>(tab->currentPage());
+ assert(tree!=tr);
  assert(tree);
  if (!tree) { // <- If this happen, it is probably a QT bug ...
   activateMain();
