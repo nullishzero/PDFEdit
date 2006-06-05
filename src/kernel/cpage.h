@@ -689,6 +689,11 @@ public:
 		{
 			throw CObjInvalidObject ();
 		}
+
+		// If not parsed
+		if (contentstreams.empty())
+			parseContentStream ();		
+		
 		CPdf* pdf = dictionary->getPdf();
 		IndiRef ref = dictionary->getIndiRef();
 		
@@ -774,7 +779,10 @@ public:
 		boost::shared_ptr<GfxResources> res;
 		boost::shared_ptr<GfxState> state;
 		createXpdfDisplayParams (res, state);
-		contentstreams.push_back (boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+		ContentStreams _tmp;
+		_tmp.push_back(boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+		std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(_tmp));
+		contentstreams = _tmp;
 
 		// Indicate change
 		_objectChanged ();

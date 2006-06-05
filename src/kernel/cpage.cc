@@ -1001,9 +1001,6 @@ bool CPage::parseContentStream ( )
 //
 void CPage::reparseContentStream ( )
 {
-	// Clear content streams
-	contentstreams.clear();
-	
 	assert (hasValidRef(dictionary));
 	assert (hasValidPdf (dictionary));
 	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
