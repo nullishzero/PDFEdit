@@ -24,6 +24,7 @@
 #include "toolbar.h"
 #include <qstring.h>
 #include "iconcache.h"
+#include <assert.h>
 
 namespace gui {
 
