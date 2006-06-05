@@ -1970,7 +1970,7 @@ getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string&
 	//utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
 	
 	// Get the item and check if it is the correct type
-	boost::shared_ptr<IProperty> ip = dict->getProperty (id);
+	boost::shared_ptr<IProperty> ip = getReferencedObject (dict->getProperty (id));
 	// Check the type and get the value
 	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
 }
@@ -1982,7 +1982,7 @@ getSimpleValueFromDict (const CDict& dict, const std::string& id)
 	//utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
 	
 	// Get the item and check if it is the correct type
-	boost::shared_ptr<IProperty> ip = dict.getProperty (id);
+	boost::shared_ptr<IProperty> ip = getReferencedObject (dict.getProperty (id));
 	// Check the type and get the value
 	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
 }

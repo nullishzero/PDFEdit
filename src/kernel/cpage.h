@@ -314,11 +314,11 @@ public:
 private:
 	/** Observer implementation for annotation synchronization.
 	 */
-	class AnnotsWatchDog: public observer::IObserver<IProperty>
+	class AnnotsWatchDog: public IIPropertyObserver
 	{
 		/** Page owner of this observer.
 		 */
-		CPage * page;
+		CPage* page;
 
 	public:
 		/** Initialization constructor.
@@ -347,9 +347,9 @@ private:
 		virtual void notify (boost::shared_ptr<IProperty> newValue, 
 							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
 
-		/** Reurns observer priority.
+		/** Returns observer priority.
 		 */
-		virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
+		virtual priority_t getPriority()const throw()
 		{
 			// TODO some constant
 			return 0;
@@ -368,7 +368,69 @@ private:
 	 * (reference) elements. Method is called in constructor.
 	 */
 	void registerAnnotsWatchDog();
+
+
+	//
+	// CStream observer
+	//
+private:
+	/** 
+	 * Observer implementation for content stream synchronization.
+	 */
+	class ContentsWatchDog: public IIPropertyObserver
+	{
+		/** 
+		 * Owner of this observer.
+		 */
+		CPage* page;
+
+	public:
+		/** Initialization constructor.
+		 * Sets page field according parameter.
+		 * 
+		 * @param _page CPage instance.
+		 */
+		ContentsWatchDog (CPage* _page) : page(_page)
+			{ assert(_page); }
+
+		/** Empty destructor.  */
+		virtual ~ContentsWatchDog() throw() {}; 
+		
+		/** 
+		 * Observer handler.
+		 * 
+		 * @param newValue New value of changed property.
+		 * @param context Context of the change.
+		 */
+		virtual void notify (boost::shared_ptr<IProperty>, 
+							 boost::shared_ptr<const IProperty::ObserverContext>) const throw();
+
+		/** Returns observer priority. */
+		virtual priority_t getPriority() const throw()
+			{ return 0;	}
+	};
 	
+	/**
+	 * Contents observer.
+	 */
+	boost::shared_ptr<ContentsWatchDog> contentsWatchDog;
+
+protected:
+	/**
+	 * Register observer on all cstreams that content stream consists of.
+	 */
+	void registerContentsObserver () const;
+
+	/**
+	 * Unregister observer from all cstreams that this object consists of.
+	 *
+	 * This function is called when saving consten stream consisting of
+	 * more streams. If we do not unregister observers, we would be notified
+	 * that a stream has changed after the first save (when the content stream
+	 * is invalid) and our observer would want to reparse an invalid stream.
+	 */
+	void unregisterContentsObserver () const;
+
 	//
 	// Destructor
 	//
@@ -724,6 +786,10 @@ public:
 		newstr = IProperty::getSmartCObjectPtr<CStream> (pdf->getIndirectProperty (newref));
 		assert (newstr);
 
+		// Unregister observer (we would get notification about the change we
+		// know about)
+		unregisterContentsObserver ();
+		
 		//
 		// Make valid array of stream references, add new to the beginning
 		// otherwise we do not know gfx state 
@@ -772,7 +838,9 @@ public:
 			dictionary->addProperty ("Contents", streamrefs);
 		}
 		
-		
+		// Register observer 
+		registerContentsObserver ();
+
 		// Parse new stream to content stream and add it to the streams
 		CContentStream::CStreams streams;
 		streams.push_back (newstr);
