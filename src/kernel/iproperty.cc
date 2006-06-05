@@ -58,11 +58,6 @@ IProperty::clone () const
 void 
 IProperty::setPdf (CPdf* p)
 {
-	// modify existing association with a pdf? or we just want to reset the pdf
-	assert (NULL == pdf || NULL == p);	
-	if (NULL != pdf && NULL != p)
-		throw CObjInvalidOperation ();
-	
 	pdf = p;
 }
 
