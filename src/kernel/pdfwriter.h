@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/06/05 22:28:29  hockm0bm
+ * * IProgressBar interface added
+ * * ProgressObserver implemented
+ *
  * Revision 1.6  2006/05/24 19:30:31  hockm0bm
  * OldStylePdfWriter::maxObjNum is initialized in constructor (it wasn't)
  *
@@ -119,6 +123,123 @@ struct OperationScope
  * also current operation number which is enough for progress information.
  */
 typedef observer::ScopedChangeContext<OperationStep, OperationScope> PdfWriterObserverContext;
+
+/** Interface for progress visualizator.
+ * Implementator should provide visual form of progress.
+ * <br>
+ * Progress is started by start method, changed by update method and finished by
+ * finish method. If progress contains preciselly known number of steps,
+ * setMaxStep method determines this number.
+ */
+class IProgressBar
+{
+public:
+	/** Default virtual destructor.
+	 * Empty destructor.
+	 */
+	virtual ~IProgressBar(){};
+	
+	/** Starts progress visualization.
+	 */
+	virtual void start()=0;
+
+	/** Finishes progress visualization.
+	 * Progress bar instance can be destroyed immediatelly after this method
+	 * finishes.
+	 */
+	virtual void finish()=0;
+
+	/** New progress state.
+	 * @param step Number of current progress step.
+	 */
+	virtual void update(int step)=0;
+
+	/** Sets maximum progress state.
+	 * @param maxStep Maximum step.
+	 *
+	 * This should be called when percentage progress bar should be visualized.
+	 */
+	virtual void setMaxStep(int maxStep)=0;
+};
+
+/** Prograss bar observer.
+ * Simple observer which holds IProgressBar implementator. Observer interface
+ * implementation delegates progress visualization to maintained progressBar
+ * field which is provided in constructor. notify method also recognizes
+ * progress start and end and announces this fact to progressBar by
+ * IProgressBar::start and IProgressBar::finish methods.
+ * <br>
+ * Instance should be created with IProgressBar implementator as constructor
+ * parameter and registered to IObserverHandler which supports OperationStep
+ * typed observers.
+ */
+class ProgressObserver: public PdfWriterObserver
+{
+	/** Implementation of progress bar.
+	 * This instance is responsible for progress visualization. It is set in
+	 * constructor. Instance is deallocated in destructor.
+	 */
+	IProgressBar * progressBar;
+
+	/** Flag for started progress.
+	 * This flag is set to false by default and it is changed when first
+	 * notification comes and it changed back when all operations are performed.
+	 */
+	mutable bool started;
+public:
+	/** Initialization constructor.
+	 * @param pB ProgressBar visualizator.
+	 *
+	 * Sets progressBar field with given parameter. It may be NULL, when no
+	 * progress is displayed. started field is initialized to falser.;
+	 */
+	ProgressObserver(IProgressBar * pB):progressBar(pB), started(false){}
+
+	/** Virtual destructor.
+	 * 
+	 * If started is true and progressBar is non NULL (progress is running now 
+	 * and it is displayed) calls progressBar->finish() and them deallocates 
+	 * progressBar instance.
+	 */
+	virtual ~ProgressObserver()throw()
+	{
+		if(progressBar)
+		{
+			if(started)
+				progressBar->finish();
+			delete progressBar;
+		}
+	}
+
+	/** Observer notification method.
+	 * @param newValue Current step of progress.
+	 * @param context Context of progress.
+	 *
+	 * This methos is called by observed object when progress has changed. If
+	 * progressBar implementation is not provided, skips all further steps.
+	 * <br>
+	 * If no progress has started yet (started is false), calls 
+	 * IProgressBar::start and IProgressBar::setMaxStep (with
+	 * ScopedChangeContext::getScope()::total value).
+	 * <br>
+	 * Then updates progress with given newValue (calls
+	 * IProgressBar::update).
+	 * <br>
+	 * Finally checks whether current step is last one and if so, sets started
+	 * back to false and calls IProgressBar::finish method.
+	 */
+	void notify(boost::shared_ptr<OperationStep> newValue, 
+			boost::shared_ptr<const observer::IChangeContext<OperationStep> > context)const throw();
+
+	/** Returns observer priority.
+	 * @return 0.
+	 */
+	observer::IObserver<OperationStep>::priority_t getPriority()const throw()
+	{
+		// TODO constant
+		return 0;
+	}
+};
 
 /** Interface for pdf content writer.
  *

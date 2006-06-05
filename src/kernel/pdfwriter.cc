@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/06/05 22:28:29  hockm0bm
+ * * IProgressBar interface added
+ * * ProgressObserver implemented
+ *
  * Revision 1.9  2006/05/29 16:34:16  hockm0bm
  * * writeContent
  *         - uses writeIndirectObject method for object storing
@@ -85,6 +89,47 @@ namespace pdfobjects
 namespace utils
 {
 	
+void ProgressObserver::notify(boost::shared_ptr<OperationStep> newValue, 
+		boost::shared_ptr<const observer::IChangeContext<OperationStep> > context)const throw()
+{
+using namespace boost;
+using namespace observer;
+
+	// if no progress visualizator is set, immediatelly returns
+	if(!progressBar)
+		return;
+	
+	// gets current step and context - which has to have
+	// ScopedChangeContextType
+	size_t currStep=newValue->currStep;
+	if(context->getType()!=IChangeContext<OperationStep>::ScopedChangeContextType)
+	{
+		printf("Unsupported context.\n");
+		return;
+	}
+	shared_ptr<const PdfWriterObserverContext> progressContext=
+		dynamic_pointer_cast<const PdfWriterObserverContext>(context);
+	size_t total=progressContext->getScope()->total;
+	if(!started)
+	{
+		// progress has just started
+		// starts progress, sets maximum steps and mark progress as started
+		progressBar->start();
+		progressBar->setMaxStep(total);
+		started=true;
+	}
+
+	// updates progress bar
+	progressBar->update(currStep);
+
+	// handles last step
+	if(currStep==total)
+	{
+		started=false;
+		progressBar->finish();
+	}
+}
+
 /** Helper method for xpdf direct object writing to the stream.
  * @param obj Xpdf object to write.
  * @param stream Stream where to write.
