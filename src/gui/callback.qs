@@ -98,6 +98,8 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
   menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
   menu.addItemDef("item "+tr("Draw line")+",drawLine(),,draw_line.png");
+  menu.addItemDef("item "+tr("Draw rect")+",drawRect(),,draw_rect.png");
+  menu.addItemDef("item "+tr("Add text")+",addText(),,add_text.png");
  }
  if (treeitem.itemtype()=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
   menu.addSeparator();
@@ -187,6 +189,10 @@ function selectFnc(id,isItOnLastRequest,x1,y1,x2,y2) {
 			
 		case 1:
 			drawRect (x1,y1,x2,y2);
+			break;
+
+		case 2:
+			addText (x1,y1);
 			break;
 
 		default:

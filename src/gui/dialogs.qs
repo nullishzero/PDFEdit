@@ -576,42 +576,103 @@ function drawRect(_lx,_ly,_rx,_ry) {
 /**
  * Add text
  */
-function addText (x,y) {
+function addText (_x,_y) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
 		return;
 	}
+
+	// set default values
+	var setpos = false;
 	
-	if (undefined == x || undefined == y) { 
-		x = 0;
-		y = 0;
+	if (undefined == _x || undefined == _y) { 
+		_x = 0;
+		_y = 0;
+		setpos = true;
 	}
-		
-		
-	// Ask user if not defined
-	var dialog = createDialog (tr("Add text line"), tr("Add"), tr("Cancel"), tr("Add text line"));
+	
+	//
+	// Text and position selection if needed
+	// 
+	var dg = createDialog (tr("Add text line"), tr("Add"), tr("Cancel"), tr("Add text line"));
 	 
-	var gb = createGroupBoxAndDisplay (tr("Text"), dialog);
+	var gb = createGroupBoxAndDisplay (tr("Text"), dg);
 	etxt = createLineEditAndDisplay (tr("Text to add"), "", gb);
-	ex = createLineEditAndDisplay (tr("x position"), "0", gb);
-	ey = createLineEditAndDisplay (tr("y position"), "0", gb);
 
-	if (!dialog.exec()) return;
-
-	if (!isNumber2(ex.text,ey.text)) {
-		warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
-		return;
+	if (setpos) {
+		gb = createGroupBoxAndDisplay (tr("Text position"), dg);
+		ex = createLineEditAndDisplay (tr("x position"), "0", gb);
+		ey = createLineEditAndDisplay (tr("y position"), "0", gb);
 	}
-	// op
-	_x = parseFloat(ex.text);
-	_y = parseFloat(ey.text);
-	
+
+	dg.newColumn();
+
+	//
+	// Font selection
+	//
+	gb = createGroupBoxAndDisplay (tr("Set font"),dg);
+	cf = new ComboBox;
+	cf.label = tr("Select from all avaliable fonts");
+	// Put all avaliable fonts here and select the operator font 
+	var fonts = page().getFontIdsAndNames();
+	var fontnames = new Array(fonts.length/2);
+	// Fill fontnames with symbolic font names
+	for(i = 1,j=0; i < fonts.length; ++i) {
+        fontnames[j] = fonts[i];
+		// Skip id
+		++i;++j;
+    }
+	cf.itemList = fontnames;
+	gb.add (cf);
+
+	//
+	// Font size
+	//
+	gb = createGroupBoxAndDisplay (tr("Font size"),dg);
+	var fs = createNumbereditAndDisplay (tr("Size"), 0, 100, gb);
+	// Why not 10?
+	fs.value = 10;
+
+	//
+	// Open dialog
+	//
+	if (!dg.exec()) return;
+
+	//
+	// Convert x,y to real x,y
+	//
+	if (setpos) {
+		if (!isNumber2(ex.text,ey.text)) {
+			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
+			return;
+		}
+		_x = parseFloat(ex.text);
+		_y = parseFloat(ey.text);
+	}
 	x = PageSpace.convertPixmapPosToPdfPos_x(_x,_y);
 	y = PageSpace.convertPixmapPosToPdfPos_y(_x,_y);
 
-	operatorAddTextLine (etxt.text,x,y);
+	//
+	// Get font id
+	//
+	var newfontname = cf.currentItem;// get Idx according to a name
+	newfontid = "";
+	for(i = 1; i < fonts.length; ++i) {
+		// Save symbolic name of operator font
+		if (fonts[i] == newfontname) {
+			fid = fonts[i-1];
+			break;
+		}
+		// Skip id
+		++i;
+    }
 	
+	// Draw the text
+	operatorAddTextLine (etxt.text,x,y,fid,fs.value);
+	
+	// Update
+	go();
 }
 
 
