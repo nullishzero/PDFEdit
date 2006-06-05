@@ -5,7 +5,7 @@
 #include <iproperty.h>
 class QLineEdit;
 class QPushButton;
-namespace pdfopbjects {
+namespace pdfobjects {
  class CPdf;
 }
 
@@ -19,8 +19,6 @@ using namespace pdfobjects;
  Used as one item in property editor
 */
 class RefProperty : public Property {
-//ADDED functions begin
-//ADDED functions end
 Q_OBJECT
 public:
  RefProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);

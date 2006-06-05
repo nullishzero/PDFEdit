@@ -64,6 +64,10 @@ QSCObject* QSTreeItem::itemref() {
 */
 QString QSTreeItem::itemtype() {
  QSCObject* it=obj->getQSObject();
+
+ //Some tree item does not have actually any "item" in them
+ if (!it) return QString::null;
+
  QString type=it->type();
  delete it;
  return type;

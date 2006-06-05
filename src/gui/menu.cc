@@ -541,33 +541,21 @@ void Menu::addToMap(const QString &name,QMenuData* parent,int itemId) {
  @param enableItem True to enable, false to disable 
 */
 void Menu::enableByName(const QString &name,bool enableItem) {
-/* for (ToolbarItems::Iterator it=mapTool.find(name);it!=mapTool.end();++it) {
-  if (it.key()!=name) break;
-  QWidget* el=it.data();
-  el->setEnabled(enableItem);
- }*/
  //TODO: lookup is slow & linear, improve ....
  for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
   if (it.key().first==name) {
    QWidget* el=it.data();
    el->setEnabled(enableItem);
-   guiPrintDbg(debug::DBG_DBG,"en/dis abling toolbar " << name << " " << enableItem);
+//   guiPrintDbg(debug::DBG_DBG,"en/dis abling toolbar " << name << " " << enableItem);
   }
  }
-/* for (MenuItems::Iterator it=mapMenu.find(name);it!=mapMenu.end();++it) {
-  if (it.key()!=name) break;
-  MenuItemsValue el=it.data();
-  QMenuData* md=el.first;
-  int id=el.second;
-  md->setItemEnabled(id,enableItem);
- }*/
  for (MenuItems::Iterator it=mapMenu.begin();it!=mapMenu.end();++it) {
   if (it.key().first==name) {
    MenuItemsValue el=it.data();
    QMenuData* md=el.first;
    int id=el.second;
    md->setItemEnabled(id,enableItem);
-   guiPrintDbg(debug::DBG_DBG,"en/dis abling menu " << name << " " << enableItem);
+//   guiPrintDbg(debug::DBG_DBG,"en/dis abling menu " << name << " " << enableItem);
   }
  }
 }
