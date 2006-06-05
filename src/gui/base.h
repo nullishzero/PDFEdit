@@ -127,6 +127,13 @@ public slots: //This will be all exported to scripting
  /*- Create and return new IProperty of type String */
  QSIProperty* createString(const QString &value);
  /*-
+  Try to delinearize PDF, reading from input file and writing delinearized result to output file.
+  Does not check for overwriting output.
+  Return true if delinearization was successful, false in case of failure.
+  In case of failure the error mesage is available via error() function
+ */
+ bool delinearize(const QString &inFile,const QString &outFile);
+ /*-
   Enable (second parameter is true) or disable (false) item in toolbar and/or menu, given its name
   If you prefix name with slash ("/"), you will enable or disable "class" of items
   - every item that belong to the specified class

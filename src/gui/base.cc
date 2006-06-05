@@ -32,6 +32,8 @@
 #include "treeitemabstract.h"
 #include "util.h"
 #include "version.h"
+#include <string.h>
+#include <delinearizator.h> 
 #include <factories.h> 
 #include <qfile.h>
 #include <qmessagebox.h>
@@ -400,6 +402,11 @@ void Base::addObjectDialog(QObject *container) {
  }
 }
 
+/** \copydoc Menu::checkByName */
+void Base::checkItem(const QString &name,bool check) {
+ w->menuSystem->checkByName(name,check);
+}
+
 /**
  Create new operator of type UnknownPdfOperator
  @param parameters Array with operator parameters
@@ -576,14 +583,36 @@ void Base::closeWindow() {
  w->closeWindow();
 }
 
+/**
+ Try to delinearize PDF, reading from input file and writing delinearized result to output file.
+ Does not check for overwriting output.
+ Return true if delinearization was successful, false in case of failure.<br>
+ In case of failure the error mesage is available via error()
+ \see error
+ @param infile input file
+ @param outFile output file
+*/
+bool Base::delinearize(const QString &inFile,const QString &outFile) {
+ utils::Delinearizator* delin=NULL;
+ try {
+  delin=utils::Delinearizator::getInstance(inFile,NULL);
+  int ret=delin->delinearize(outFile);
+  if (ret) {
+   const char *whatWasWrong=strerror(ret);
+   w->lastErrorMessage=whatWasWrong;
+  } 
+  if (delin) delete delin;  
+  return (ret==0);
+ } catch (...) {
+  //This is the case of failure ..
+  if (delin) delete delin;  
+  return false;
+ }
+}
+
 /** \copydoc Menu::enableByName */
 void Base::enableItem(const QString &name,bool enable) {
  w->menuSystem->enableByName(name,enable);
-}
-
-/** \copydoc Menu::checkByName */
-void Base::checkItem(const QString &name,bool check) {
- w->menuSystem->checkByName(name,check);
 }
 
 /**
