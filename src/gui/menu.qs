@@ -45,8 +45,9 @@ function func_load() {
    }
    enc=document.encryption();
    if (enc) {
-    print(tr('Warning: This document is encrypted!'));
-    print(tr('Encryption filter:')+enc);
+    warn(tr('Warning: This document is encrypted!')+"\n"+
+         tr('Encryption filter:')+" "+enc+"\n"+
+         tr('Encrypted content will show up as garbage and many operations will be impossible'));
    }
   }
  } catch (e) {
