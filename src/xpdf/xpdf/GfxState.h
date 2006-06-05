@@ -999,7 +999,7 @@ public:
   ~GfxState();
 
   // Copy.
-  GfxState *copy() { return new GfxState(this); }
+  GfxState *copy(bool onlyOnePath = true) { return new GfxState(this, onlyOnePath); }
 
   // Accessors.
   double *getCTM() { return ctm; }
@@ -1200,7 +1200,7 @@ private:
 
   GfxState *saved;		// next GfxState on stack
 
-  GfxState(GfxState *state);
+  GfxState(GfxState *state, bool onlyOnePath = true);
 };
 
 #endif

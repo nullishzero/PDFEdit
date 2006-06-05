@@ -3624,7 +3624,7 @@ GfxState::~GfxState() {
 }
 
 // Used for copy();
-GfxState::GfxState(GfxState *state) {
+GfxState::GfxState(GfxState *state, bool onlyOnePath) {
   memcpy(this, state, sizeof(GfxState));
   if (fillColorSpace) {
     fillColorSpace = state->fillColorSpace->copy();
@@ -3643,6 +3643,8 @@ GfxState::GfxState(GfxState *state) {
     memcpy(lineDash, state->lineDash, lineDashLength * sizeof(double));
   }
   saved = NULL;
+  if (! onlyOnePath)
+    path = new GfxPath();
 }
 
 void GfxState::setPath(GfxPath *pathA) {
