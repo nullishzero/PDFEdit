@@ -235,17 +235,34 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	splashMakeRGB8(paperColor, 0xff, 0xff, 0xff);
 	QOutputDevPixmap output ( paperColor );
 
-	// update display parameters
+	// -------------- update display parameters --------------
+
+	// update upsideDown
 	displayParams.upsideDown = output.upsideDown();
-	boost::shared_ptr<IProperty> rotate = utils::getReferencedObject (actualPage->get()->getDictionary()->getProperty ("Rotate"));
-	if (!isNull(rotate)) {
-		guiPrintDbg( debug::DBG_DBG, "Rotate OK");
+
+	// update mediabox
+	try {
+		Rectangle mb = actualPage->get()->getMediabox();
+		displayParams.pageRect = mb;
+	} catch (ElementNotFoundException) {
+		// TODO find mediabox in parent
+		displayParams.pageRect = DisplayParams().pageRect;
+	}
+
+	// update rotate
+	try {
+		boost::shared_ptr<IProperty> rotate = utils::getReferencedObject (actualPage->get()->getDictionary()->getProperty ("Rotate"));
+		assert( isInt(rotate) );
 		displayParams.rotate = utils::getIntFromIProperty( rotate );
-	} else {
+	} catch (ElementNotFoundException) {
+		// TODO find rotate in parent
 		guiPrintDbg( debug::DBG_DBG, "Rotate unfinded");
 		displayParams.rotate = 0;
 	}
 	// TODO  cropbox, ...
+
+	// -----end------ update display parameters --------------
+
 
 	// create pixmap for page
 	actualPage->get()->displayPage( output, displayParams );
