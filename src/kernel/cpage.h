@@ -204,6 +204,14 @@ private:
 	const Point pt_;	/**< Point to be compared. */
 };
 
+/** Sets unitialized inheritable page attributes.
+ * @param pageDict Page dictionary reference where to set values.
+ *
+ * Gets InheritedPageAttr structure for given pageDict (uses
+ * fillInheritedPageAttr helper function) and sets all fields which are not
+ * present in given dictionary to found values.
+ */
+void setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict);
 
 //=====================================================================================
 // CPage
@@ -354,7 +362,13 @@ private:
 	 */
 	boost::shared_ptr<AnnotsWatchDog> annotsWatchDog;
 
-
+	/** Registers AnnotsWatchDog observer.
+	 *
+	 * Obsever is registered to Annots array (if present) and all its 
+	 * (reference) elements. Method is called in constructor.
+	 */
+	void registerAnnotsWatchDog();
+	
 	//
 	// Destructor
 	//
@@ -488,7 +502,6 @@ public:
 	 */
  	void getText (std::string& text) const;
 
-	
 	//
 	// Annotations
 	//
@@ -516,9 +529,9 @@ public:
 	 * 
 	 * Inserts deep copy of given annotation and stores its reference to Annots
 	 * array in page dictionary (if this doesn't exist, it is created). 
-	 * User has to call getAllAnnotations to get new annotations state (we don't 
-	 * have identifier for annotations - there are some mechanisms how to do it 
-	 * according pdf specification, but there is no explicit identifier).
+	 * User has to call getAllAnnotations to get current annotations state (we 
+	 * don't have identifier for annotations - there are some mechanisms how to 
+	 * do it according pdf specification, but there is no explicit identifier).
 	 * <br>
 	 * Given annotation may come from different CPdf or may belong to nowhere.
 	 * <br>
@@ -537,6 +550,21 @@ public:
 	 * not an array (or reference with array indirect target).
 	 */ 
 	void addAnnotation(boost::shared_ptr<CAnnotation> annot);
+
+	/** Removes given annotation from page.
+	 * @param annot Annotation to remove.
+	 *
+	 * Tries to find given annotation in annotStorage and if found, removes
+	 * reference from Annots array.
+	 * <br>
+	 * As a result, removed annotation is invalidated and not accessible. User 
+	 * has to call getAllAnnotations method to get current state (same way as 
+	 * in addAnnotation case).
+	 *
+	 * @return true if annotation was removed.
+	 */
+	bool delAnnotation(boost::shared_ptr<CAnnotation> annot);
+
 
 	//
 	// Font 

@@ -194,7 +194,12 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 				attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
 
 			// default A4 sized box
-			Rectangle defaultRect(DisplayParams::DEFAULT_PAGE_LX, DisplayParams::DEFAULT_PAGE_LY, DisplayParams::DEFAULT_PAGE_RX, DisplayParams::DEFAULT_PAGE_RY);
+			Rectangle defaultRect(
+					DisplayParams::DEFAULT_PAGE_LX, 
+					DisplayParams::DEFAULT_PAGE_LY, 
+					DisplayParams::DEFAULT_PAGE_RX, 
+					DisplayParams::DEFAULT_PAGE_RY
+					);
 
 			// MediaBox is required and specification doesn't say anything about
 			// default value - we are using standard A4 format
@@ -219,7 +224,151 @@ void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPag
 	}
 }
 
+
 } // anonnymous namespace for inherited attributes
+
+//
+//
+//
+void 
+setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict)
+{
+using namespace boost;
+
+	InheritedPageAttr attrs;
+	fillInheritedPageAttr(pageDict, attrs);
+
+	// checks Resources
+	try
+	{
+		pageDict->getProperty("Resources");
+	}catch(ElementNotFoundException & e)
+	{
+		pageDict->addProperty("Resources", *(attrs.resources));
+	}
+	
+	// checks MediaBox
+	try
+	{
+		pageDict->getProperty("MediaBox");
+	}catch(ElementNotFoundException & e)
+	{
+		pageDict->addProperty("MediaBox", *(attrs.mediaBox));
+	}
+	
+	// checks CropBox
+	try
+	{
+		pageDict->getProperty("CropBox");
+	}catch(ElementNotFoundException & e)
+	{
+		pageDict->addProperty("CropBox", *(attrs.cropBox));
+	}
+	
+	// checks Rotate
+	try
+	{
+		pageDict->getProperty("Rotate");
+	}catch(ElementNotFoundException & e)
+	{
+		pageDict->addProperty("Rotate", *(attrs.rotate));
+	}
+}
+
+namespace {
+	
+/** Helper method to extract annotations array from page dictionary.
+ * @param pageDict Page dictionary.
+ *
+ * If Annots property is reference, dereferece it and checks whether target
+ * property is array.  
+ *
+ * @throw ElementNotFoundException if given page dictionary doesn't contain
+ * Annots property.
+ * @throw ElementBadTypeException if Annots property exists but it is not an
+ * array or reference to array.
+ *
+ * @return Annotation array.
+ */
+shared_ptr<CArray> getAnnotsArray(shared_ptr<CDict> pageDict)
+{
+using namespace boost;
+
+	shared_ptr<CArray> annotsArray;
+
+	shared_ptr<IProperty> arrayProp=pageDict->getProperty("Annots");
+	if(isRef(arrayProp))
+		// this will throw if target is not an array
+		annotsArray=getCObjectFromRef<CArray, pArray>(arrayProp);
+	else 
+		annotsArray=IProperty::getSmartCObjectPtr<CArray>(arrayProp);
+
+	assert(annotsArray.get());
+	return annotsArray;
+}
+
+/** Collects all annotations from given page dictionary.
+ * @param pageDict Page dictionary.
+ * @param container Container where to place annotations.
+ *
+ * Checks Annots property from given dictionary and if it is an array (or
+ * reference to array) then continue, otherwise immediatelly returns.
+ * All members which are referencies and points to dictionaries are used to
+ * create new CAnnotation instance which is placed to given container.
+ * <br>
+ * Note that given container is cleared in any case.
+ */
+template<typename Container>
+void
+collectAnnotations(boost::shared_ptr<CDict> pageDict, Container & container)
+{
+using namespace boost;
+using namespace debug;
+
+	// clears given container
+	container.clear();
+
+	try
+	{
+		// gets annotation array from page dictionary
+		shared_ptr<CArray> annotsArray=getAnnotsArray(pageDict);
+
+		// gets all Annots elements - these has to be referencies to
+		// dictionaries
+		for(size_t i=0; i<annotsArray->getPropertyCount(); i++)
+		{
+			// gets elements and ignores those which are not referencies
+			shared_ptr<IProperty> elem=annotsArray->getProperty(i);
+			if(!isRef(elem))
+			{
+				kernelPrintDbg(DBG_WARN, "Annots["<<i<<"] is not reference. Ignoring.");
+				continue;
+			}
+
+			// gets target property which has to be dictionary - if not skips
+			// element
+			try
+			{
+				shared_ptr<CDict> annotDict=getCObjectFromRef<CDict, pDict>(elem);
+
+				// creates CAnnotation instance and inserts it to the container
+				shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
+				container.push_back(annot);
+			}catch(ElementBadTypeException & e)
+			{
+				kernelPrintDbg(DBG_WARN, "Annots["<<i<<"] target object is not dictionary. Ignoring.");
+			}
+		}
+		
+	}catch(CObjectException & e)
+	{
+		kernelPrintDbg(DBG_WARN, "Unable to get Annots array - message="<<e.what());
+	}
+}
+
+} // annonymous namespace for page helper functions
+
+
 
 //=====================================================================================
 // CPage
@@ -262,7 +411,6 @@ using namespace utils;
 
 	// handle original value - one which is removed or replaced 
 	// this has to be invalidated and removed from annotStorage
-	// TODO handle situation when whole array is removed or replaced
 	if(isRef(oldValue))
 	{
 		// member of Annots array is changed - associated annotation has to be
@@ -276,7 +424,7 @@ using namespace utils;
 				shared_ptr<CAnnotation> annot=*i;
 				if(annot->getDictionary()!=annotDict)
 				{
-					kernelPrintDbg(DBG_DBG, "Annotation maintaining oldValue found and removed.");	
+					kernelPrintDbg(DBG_DBG, "Annotation maintaining oldValue found and removed. Invalidating annotation");	
 					annot->invalidate();
 					page->annotStorage.erase(i);
 					break;
@@ -288,28 +436,65 @@ using namespace utils;
 		{
 			kernelPrintDbg(DBG_WARN, "oldValue dereferenced value is not dictionary.");
 		}
-	}
+	}else
+		if(isArray(oldValue))
+		{
+			// whole array has been removed or replaced - we have to remove all
+			// array members and this observer will handle each separately - this
+			// is not the most effective but the simplest way how to handle
+			// situation
+			kernelPrintDbg(DBG_DBG, "oldValue is an array.");
+			shared_ptr<CArray> annotsArray=IProperty::getSmartCObjectPtr<CArray>(oldValue);
+			while(annotsArray->getPropertyCount())
+				// this will trigger observer
+				annotsArray->delProperty(0);
+		}
+
+	kernelPrintDbg(DBG_DBG, "oldValue is handled now.");
 
 	// handle new value - one which is added or replaces an old value
 	// this has to be added to annotStorage
+	vector<shared_ptr<IProperty> > valuesToAdd;
 	if(isRef(newValue))
-	{
-		// registers itself (as observer) to newValue
-		newValue->registerObserver(page->annotsWatchDog);
-		
-		// checks whether dereferenced property is dictionary. If not it means
-		// that some mass is provided and so it is ignored
-		try
+		valuesToAdd.push_back(newValue);
+	else
+		if(isArray(newValue))
 		{
-			shared_ptr<CDict> annotDict=getDictFromRef(newValue);		
+			// whole array has raplaced an old one, so all elements have to be
+			// handled
+			kernelPrintDbg(DBG_DBG, "newValue is an array.");
+			shared_ptr<CArray> newValueArray=IProperty::getSmartCObjectPtr<CArray>(newValue);
+			for(size_t i=0; i<newValueArray->getPropertyCount(); i++)
+				valuesToAdd.push_back(newValueArray->getProperty(i));
+		}
 
-			// creates CAnnotation instance from dereferenced dictionary and 
-			// adds it to annotStorage
-			shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
-			page->annotStorage.push_back(annot);
-		}catch(ElementBadTypeException & e)
+	// adds all referencies from newValueArray
+	kernelPrintDbg(DBG_DBG, "Inserting "<<valuesToAdd.size()<<" elements.");
+	for(vector<shared_ptr<IProperty> >::iterator i=valuesToAdd.begin(); i!=valuesToAdd.end(); i++)
+	{
+		// considers just referencies
+		if(isRef(newValue))
 		{
-			kernelPrintDbg(DBG_WARN, "Dereferenced newValue is not dictionary.");
+			// registers itself (as observer) to newValue
+			newValue->registerObserver(page->annotsWatchDog);
+			
+			// checks whether dereferenced property is dictionary. If not it 
+			// means that some mass is provided and so it is ignored
+			try
+			{
+				shared_ptr<CDict> annotDict=getDictFromRef(newValue);		
+
+				// creates CAnnotation instance from dereferenced dictionary 
+				// and adds it to annotStorage
+				shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
+				page->annotStorage.push_back(annot);
+			}catch(ElementBadTypeException & e)
+			{
+				kernelPrintDbg(DBG_WARN, "Dereferenced newValue is not dictionary.");
+			}
+		}else
+		{
+			kernelPrintDbg(DBG_WARN, "Element is not reference. Skiping.");
 		}
 	}
 
@@ -319,7 +504,7 @@ using namespace utils;
 //
 // Constructor
 //
-CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
+CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict), annotsWatchDog(new AnnotsWatchDog(this))
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (pageDict);
@@ -327,6 +512,49 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) : dictionary(pageDict)
 // Better not throw in a constructor
 //  if (!isPage (pageDict))
 //		throw CObjInvalidObject ();		
+
+	// collects all annotations from this page and registers observer to Annots
+	// array and all its members
+	collectAnnotations(dictionary, annotStorage);
+	registerAnnotsWatchDog();
+}
+
+void
+CPage::registerAnnotsWatchDog()
+{
+using namespace boost;
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "");
+
+	try
+	{
+		shared_ptr<IProperty> annotsProp=dictionary->getProperty("Annots");
+		if(!isArray(annotsProp))
+		{
+			kernelPrintDbg(DBG_ERR, "Annots field is not an array.");
+			return;
+		}
+
+		kernelPrintDbg(DBG_DBG, "Registering annotsWatchDog observer.");
+		
+		// registers annotsWatchDog observer to array and all array's element
+		shared_ptr<CArray> annotsArray=IProperty::getSmartCObjectPtr<CArray>(annotsProp);
+		annotsArray->registerObserver(annotsWatchDog);
+		for(size_t i=0; i<annotsArray->getPropertyCount(); i++)
+		{
+			shared_ptr<IProperty> element=annotsArray->getProperty(i);
+			if(isRef(element))
+			{
+				element->registerObserver(annotsWatchDog);
+				continue;
+			}
+			kernelPrintDbg(DBG_WARN, "Annots array contains non reference element.")
+		}
+	}catch(ElementNotFoundException & e)
+	{
+		kernelPrintDbg(DBG_INFO, "Annots property is not page dictionary member.");
+	}
 }
 
 //
@@ -384,10 +612,7 @@ using namespace debug;
 	shared_ptr<CArray> annotsArray;
 	try
 	{
-		shared_ptr<IProperty> arrayProp=dictionary->getProperty("Annots");
-		if(isRef(arrayProp))
-			// this will throw if target is not an array
-			annotsArray=getCObjectFromRef<CArray, pArray>(arrayProp);
+		annotsArray=getAnnotsArray(dictionary);
 	}catch(ElementBadTypeException & e)
 	{
 		// TODO provide also bad type information
@@ -407,8 +632,7 @@ using namespace debug;
 		annotsArray=IProperty::getSmartCObjectPtr<CArray>(
 				dictionary->getProperty("Annots")
 				);
-		
-		// TODO registers observer
+		annotsArray->registerObserver(annotsWatchDog);	
 	}
 
 	kernelPrintDbg(DBG_DBG, "Creating new indirect dictionary for annotation.");
@@ -436,6 +660,47 @@ using namespace debug;
 	scoped_ptr<CRef> annotCRef(CRefFactory::getInstance(annotRef));
 	annotsArray->addProperty(*annotCRef);
 }
+
+bool
+CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
+{
+using namespace boost;
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "");
+
+	// searches annotation in annotStorage - which is synchronized with current
+	// state of Annots array
+	size_t pos=0;
+	for(AnnotStorage::iterator i=annotStorage.begin(); i!=annotStorage.end(); i++,pos++)
+	{
+		shared_ptr<CAnnotation> element=*i;	
+		if(annot!=element)
+			continue;
+		
+		// annotation found, removes dictionary reference from Annots array
+		IndiRef annotRef=element->getDictionary()->getIndiRef();
+		kernelPrintDbg(DBG_DBG, "Annotation found. Indiref="<<annotRef);
+		try
+		{
+			shared_ptr<CArray> annotArray=getAnnotsArray(dictionary);
+			// deleting of this reference triggers annotsWatchDog observer which
+			// will synchronize annotStorage with current state
+			annotArray->delProperty(pos);
+			kernelPrintDbg(DBG_INFO, "Annotation referece "<<annotRef<<" removed from Annots array. "
+					<<"Invalidating annotation instance.");
+			annot->invalidate();
+			return true;
+		}catch(CObjectException & e)
+		{
+			kernelPrintDbg(DBG_CRIT, "Unexpected Annots array missing.");
+			return false;
+		}
+	}
+	kernelPrintDbg(DBG_ERR, "Given annotation couldn't have been found.");
+	return false;
+}
+
 // \TODO magic constants 0,0, 1000, 1000
 //
 void
