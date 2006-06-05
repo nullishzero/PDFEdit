@@ -157,3 +157,34 @@ function onChangeRevision() {
 function onTreeSelectionChange() {
  checkMenus();
 }
+
+/** Init connections. (callbacks) */
+function initconnection (fnc) {
+	// disconnect old requests
+	disconnect( PageSpace, "responseSelectArea(int,bool,int,int,int,int)","",0);
+	// connect new request
+	connect( PageSpace, "responseSelectArea(int,bool,int,int,int,int)", fnc);
+	// send request
+	PageSpace.requestSelectArea (0);
+}
+
+/** Draw line mode. */
+function drawLineMode(id, isItOnLastRequest, x1, y1, x2, y2) {
+	if (!isItOnLastRequest)
+		return;
+
+	print (x1+", "+y1+", "+x2+", "+y2);
+	drawLine (x1,y1,x2,y2);
+}
+
+/** Draw line mode. */
+function drawRectMode(id, isItOnLastRequest, x1, y1, x2, y2) {
+	if (!isItOnLastRequest)
+		return;
+
+	print (x1+", "+y1+", "+x2+", "+y2);
+	drawRect (x1,y1,x2,y2);
+}
+
+
+
