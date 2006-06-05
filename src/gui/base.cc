@@ -28,6 +28,7 @@
 #include "qspdfoperatorstack.h"
 #include "qstreeitem.h"
 #include "settings.h"
+#include "statusbar.h"
 #include "treeitemabstract.h"
 #include "util.h"
 #include "version.h"
@@ -166,6 +167,7 @@ void Base::scriptCleanup() {
 QWidget* Base::getWidgetByName(const QString &widgetName) {
  QString widget=widgetName.lower();
  if (widget=="commandline") return w->cmdLine;
+ if (widget=="statusbar") return w->status;
  if (widget=="propertyeditor") return w->prop;
  if (widget=="rightside") return w->splProp;
  if (widget=="tree") return w->tree;

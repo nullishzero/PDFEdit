@@ -16,6 +16,7 @@ class QString;
 
 namespace gui {
 
+class StatusBar;
 class Base;
 class PageSpace;
 class CommandWindow;
@@ -59,6 +60,7 @@ public:
 public slots:
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void changeRevision(int revision);
+ void receiveHelpText(const QString &message);
 signals:
  /**
   Signal emitted when closing a file or editor window. All helper editor widgets opened from
@@ -131,6 +133,8 @@ private:
  Base *base;
  /** Last error message from exception in load/save, etc ... */
  QString lastErrorMessage;
+ /** Status bar on bottmo of application */
+ StatusBar * status;
  /** Base should be access everything in PdfEditWidget */
  friend class Base;
 };

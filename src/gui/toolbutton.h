@@ -20,12 +20,25 @@ public:
  ToolButton(const QPixmap *icon, const QString tooltip, int id, QWidget *parent=0, const char *name="");
 protected slots:
  void slotClicked();
+protected:
+ virtual void enterEvent(QEvent *e);
+ virtual void leaveEvent(QEvent *e);
 private:
  /** ID number of this button */
  int b_id;   
 signals:
- /** signal emitted when clicked on this button. The button sends ID of itself. */
- void clicked(int);
+ /**
+  Signal emitted when clicked on this button.
+  The button sends ID of itself.
+  @param id ID of button
+ */
+ void clicked(int id);
+ /** 
+  Send help message when mouse cursor enters/leaves the button.
+  Help message is sent on enter and QString::null on leave.
+  @param message Help message
+ */
+ void helpText(const QString &message);
 };
 
 } // namespace gui

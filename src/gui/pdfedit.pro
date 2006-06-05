@@ -132,8 +132,8 @@ HEADERS += revisiontool.h  zoomtool.h  pagetool.h  toolbutton.h  toolbar.h
 SOURCES += revisiontool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc 
 
 #Main Window
-HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h
-SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc
+HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h  statusbar.h
+SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc statusbar.cc
 
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 

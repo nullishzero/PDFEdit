@@ -30,6 +30,7 @@
 #include "treeitempdfoperator.h"
 #include "GlobalParams.h"
 #include "base.h"
+#include "statusbar.h"
 
 namespace gui {
 
@@ -216,6 +217,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Property editor
  prop=new PropertyEditor(splProp);
 
+ status=new StatusBar(this,"statusbar");
+
  //Connections
  QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
@@ -240,7 +243,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
   //ToolBars
   ToolBarList tblist=menuSystem->loadToolBars();
   for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
-   QObject::connect(*toolbar, SIGNAL(itemClicked(int)), this, SLOT(menuActivated(int))); 
+   QObject::connect(*toolbar,SIGNAL(itemClicked(int)),this,SLOT(menuActivated(int))); 
+   QObject::connect(*toolbar,SIGNAL(helpText(const QString&)),this,SLOT(receiveHelpText(const QString&)));
   }
  } catch (InvalidMenuException &e) {
   guiPrintDbg(debug::DBG_WARN,"Exception in menu loading raised");
@@ -266,6 +270,15 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  } else { //open file
   openFile(fName);
  }
+}
+
+/** 
+ Signal called when receiving help message.
+ Show it in statusbar
+ @param message Help message
+*/
+void PdfEditWindow::receiveHelpText(const QString &message) {
+ status->message(message);
 }
 
 /** Load and apply current value of "Use big pixmap" setting */

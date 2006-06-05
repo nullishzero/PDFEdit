@@ -21,7 +21,7 @@ namespace gui {
  @param label Caption of toolbar
  @param mainWindow Main window in which toolbar will be managed
  */
-ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow) : QToolBar(label,mainWindow) {
+ToolBar::ToolBar(const QString &label,QMainWindow *mainWindow) : QToolBar(label,mainWindow) {
  //Empty constructor
 }
 
@@ -34,7 +34,7 @@ ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow) : QToolBar(labe
  @param name Parameter passed to QDockWindow
  @param f Parameter passed to QDockWindow
  */
-ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow,QWidget * parent,bool newLine/*=FALSE*/,const char * name/*=0*/,WFlags f/*=0*/)
+ToolBar::ToolBar(const QString &label,QMainWindow *mainWindow,QWidget *parent,bool newLine/*=FALSE*/,const char * name/*=0*/,WFlags f/*=0*/)
  : QToolBar(label,mainWindow,parent,newLine,name,f) {
  //Empty constructor
 } 
@@ -44,7 +44,7 @@ ToolBar::ToolBar(const QString & label,QMainWindow * mainWindow,QWidget * parent
  @param parent Main window in which toolbar will be managed
  @param name Name of toolbar (for debugging)
  */
-ToolBar::ToolBar(QMainWindow * parent,const char * name/*=0*/) : QToolBar(parent,name) {
+ToolBar::ToolBar(QMainWindow *parent,const char *name/*=0*/) : QToolBar(parent,name) {
  //Empty constructor
 }
 
@@ -53,7 +53,8 @@ ToolBar::ToolBar(QMainWindow * parent,const char * name/*=0*/) : QToolBar(parent
  @param qb Button to add to this toolbar 
  */
 void ToolBar::addButton(ToolButton *qb) {
- QObject::connect(qb, SIGNAL(clicked(int)), this, SLOT(slotClicked(int)));
+ QObject::connect(qb,SIGNAL(clicked(int)),this,SLOT(slotClicked(int)));
+ QObject::connect(qb,SIGNAL(helpText(const QString&)),this,SLOT(receiveHelpText(const QString&)));
 }
 
 /**
@@ -114,6 +115,16 @@ bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
   return true;
  }
  return false;
+
+}
+
+/** 
+ Signal called when receiving help message.
+ Forward the message via helpText
+ @param message Help message
+*/
+void ToolBar::receiveHelpText(const QString &message) {
+ emit helpText(message);
 }
 
 } // namespace gui

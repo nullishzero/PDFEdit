@@ -169,6 +169,7 @@ public slots: //This will be all exported to scripting
     <row><entry>rightside	</entry><entry>Right side tools (Tree Window and property editor)</entry></row>
     <row><entry>propertyeditor	</entry><entry>Property editor</entry></row>
     <row><entry>tree		</entry><entry>Tree window</entry></row>
+    <row><entry>statusbar	</entry><entry>Statusbar</entry></row>
    </tbody></tgroup>
   </informaltable>
  */

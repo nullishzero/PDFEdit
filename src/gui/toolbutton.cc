@@ -7,6 +7,7 @@
 #include <qiconset.h>
 #include <qpixmap.h>
 #include <qstring.h>
+#include "util.h"
 
 namespace gui {
 
@@ -44,6 +45,26 @@ ToolButton::ToolButton(const QIconSet *iconSet, const QString tooltip, int id, Q
   setIconSet(*iconSet);
  }
 } 
+
+/**
+ Event handler for mouse cursor entering button.
+ Sends its tooltip as help text.
+ @param e Event
+*/
+void ToolButton::enterEvent(QEvent *e) {
+ emit helpText(textLabel());
+ QToolButton::enterEvent(e);
+}
+
+/**
+ Event handler for mouse cursor leaving button.
+ Sends empty helptext, thus disabling it
+ @param e Event
+*/
+void ToolButton::leaveEvent(QEvent *e) {
+ emit helpText(QString::null);
+ QToolButton::leaveEvent(e);
+}
 
 /** slot that will emit clicked with ID of whis button */
 void ToolButton::slotClicked() {

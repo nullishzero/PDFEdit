@@ -36,8 +36,8 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
 
  //Text in about window
  QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big><br><br>"+tr("Homepage")+" : http://pdfedit.petricek.net/";
- QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"
-                               +tr("Authors")+":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Misutka<br>&nbsp; Martin Petricek<br>";
+ QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"+tr("Authors")
+  +QString::fromUtf8(":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Mišutka<br>&nbsp; Martin Petříček<br>");
  QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1><br>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
   info+"</td><td valign=\"bottom\">"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
  lb->setTextFormat(Qt::RichText);
@@ -63,9 +63,12 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  lb->setErasePixmap(*bgImage);
  QSize bgSize=bgImage->size();
  lb->setMaximumSize(bgSize);
+ lb->setMaximumHeight(imageSize.height());
+ okFrame->setFixedHeight(10+ok->sizeHint().height());
 
  setMinimumSize(imageSize);
  setMaximumSize(bgSize);
+ setFixedHeight(10+ok->sizeHint().height()+imageSize.height());
  l->addWidget(lb,0,0);
  l->addWidget(logo,0,1);
  l->addMultiCellWidget(okFrame,1,1,0,1);

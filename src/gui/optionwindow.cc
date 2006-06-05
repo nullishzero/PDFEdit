@@ -406,9 +406,12 @@ void OptionWindow::init() {
  }
  //prepend 'default' to list
  iconThemesUnique.prepend("default");
+ //Default font
+ QString defFont=QApplication::font().toString();
  addText       (laf_tab,tr("You can set fonts used in application"));
- addOptionFont (laf_tab,tr("Application font"),"gui/font_main",QApplication::font().toString());
- addOptionFont (laf_tab,tr("Console font"),"gui/font_con",QApplication::font().toString());
+ addOptionFont (laf_tab,tr("Application font"),"gui/font_main",defFont);
+ addOptionFont (laf_tab,tr("Console font"),"gui/font_con",defFont);
+ addOptionFont (laf_tab,tr("Statusbar font"),"gui/font_status",defFont);
  addText       (laf_tab,tr("You can specify overall visual style"));
  addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
  addOptionCombo(laf_tab,tr("Icon theme"),"icon/theme/current",iconThemesUnique);
@@ -444,12 +447,20 @@ OptionWindow::~OptionWindow() {
  @param notify If true, all fonts will be immediately changed in all widgets
  */
 void applyLookAndFeel(bool notify) {
+ QString defFont=QApplication::font().toString();
+ //Main font
  QFont fontMain=QApplication::font();
- fontMain.fromString(globalSettings->read("gui/font_main",QApplication::font().toString()));
+ fontMain.fromString(globalSettings->read("gui/font_main",defFont));
+ //Console font
  QFont fontConsole=QApplication::font();
- fontConsole.fromString(globalSettings->read("gui/font_con",QApplication::font().toString()));
+ fontConsole.fromString(globalSettings->read("gui/font_con",defFont));
+ //Status bar font
+ QFont fontStatus=QApplication::font();
+ fontStatus.fromString(globalSettings->read("gui/font_status",defFont));
+ //Set them all
  QApplication::setFont(fontMain,notify);
  QApplication::setFont(fontConsole,notify,"gui::CommandWindow");
+ QApplication::setFont(fontStatus,notify,"gui::StatusBar");
 }
 
 } // namespace gui
