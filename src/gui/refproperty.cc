@@ -107,7 +107,7 @@ IndiRef RefProperty::getValue() {
  val.num=0;
  val.gen=0;
  QStringList ref=QStringList::split(",",ed->text());
- assert(ref.count()==2);	 //Should never happen
+ assert(ref.count()<=2);	 //Should never happen
  if (ref.count()!=2) return val;//Invalid reference
  val.num=ref[0].toInt();
  val.gen=ref[1].toInt();
