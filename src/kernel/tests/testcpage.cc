@@ -290,6 +290,26 @@ bool creation (__attribute__((unused)) ostream& oss)
 	return true;
 }
 
+bool annotsTests(ostream & oss, const char * fname)
+{
+	CPdf * pdf=getTestCPdf(fname);
+
+	size_t pageCount=pdf->getPageCount();
+	for(size_t pos=1; pos<=pageCount; pos++)
+	{
+		shared_ptr<CPage> page=pdf->getPage(pos);
+		CPage::AnnotStorage annots;
+		page->getAllAnnotations(annots);
+		if(annots.empty())
+			continue;
+
+		oss << "Page #"<<pos<<" has "<<annots.size()<<" annotations"<<endl;
+
+	}
+	pdf->close();
+	return true;
+}
+
 
 //=========================================================================
 // class TestCPage
@@ -304,6 +324,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestDisplay);
 		CPPUNIT_TEST(TestExport);
 		CPPUNIT_TEST(TestFind);
+		CPPUNIT_TEST(TestAnnotations);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -399,6 +420,22 @@ public:
 			
 			TEST(" get font names");
 			CPPUNIT_ASSERT (getSetFonts (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestAnnotations()
+	{
+		OUTPUT << "CPage annotations..."<<endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" annotations tests");
+			CPPUNIT_ASSERT (annotsTests(OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
