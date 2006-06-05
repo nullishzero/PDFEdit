@@ -502,10 +502,6 @@ Data: %3
         <translation>textový operátor</translation>
     </message>
     <message>
-        <source>Only text operator allowed!</source>
-        <translation>Povolen pouze textový operátor!</translation>
-    </message>
-    <message>
         <source>Change font properties</source>
         <translation>Změnit vlastnosti písma</translation>
     </message>
@@ -588,6 +584,201 @@ Data: %3
     <message>
         <source>Show only graphical operators</source>
         <translation>Zobrazovat pouze grafické operátory</translation>
+    </message>
+    <message>
+        <source>Set relative position of a single operator</source>
+        <translation>Nastavit relativní pozici jednoho operátoru</translation>
+    </message>
+    <message>
+        <source>Set relative position</source>
+        <translation>Nastavit relativní pozici</translation>
+    </message>
+    <message>
+        <source>Set page tranformation matrix</source>
+        <translation>Nastavit transformační matici stránky</translation>
+    </message>
+    <message>
+        <source>Change page rectangle</source>
+        <translation>Změnit rámeček stránky</translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation>Změnit</translation>
+    </message>
+    <message>
+        <source>Page metrics</source>
+        <translation>Metrika stránky</translation>
+    </message>
+    <message>
+        <source>Change line width</source>
+        <translation>Změnit šířku čáry</translation>
+    </message>
+    <message>
+        <source>Change effect</source>
+        <translation>Efekt změny</translation>
+    </message>
+    <message>
+        <source>Global change</source>
+        <translation>Globální změna</translation>
+    </message>
+    <message>
+        <source>Change line dash pattern</source>
+        <translation>Změnit styl čáry</translation>
+    </message>
+    <message>
+        <source>Line dashing patterns</source>
+        <translation>Styl čáry</translation>
+    </message>
+    <message>
+        <source>Solid line</source>
+        <translation>Plná čára</translation>
+    </message>
+    <message>
+        <source>Slightly dashed</source>
+        <translation>Přerušovaná čára</translation>
+    </message>
+    <message>
+        <source>Dot and dashed</source>
+        <translation>Čerchovaná čára</translation>
+    </message>
+    <message>
+        <source>Not valid</source>
+        <translation>Neplatný</translation>
+    </message>
+    <message>
+        <source>Only text operators allowed!</source>
+        <translation>Povoleny pouze textové operátory!</translation>
+    </message>
+    <message>
+        <source>Add page transformation matrix</source>
+        <translation>Přidat transformační matici stránky</translation>
+    </message>
+    <message>
+        <source>Change page transformation matrix</source>
+        <translation>Změnit transformační matici stránky</translation>
+    </message>
+    <message>
+        <source>Page transformation matrix description</source>
+        <translation>Popis transformační matice stránky</translation>
+    </message>
+    <message>
+        <source>Page transformation description</source>
+        <translation>Popis transformací stránky</translation>
+    </message>
+    <message>
+        <source>Select which transformations to use</source>
+        <translation>Vyberte, které transformace použít</translation>
+    </message>
+    <message>
+        <source>Translate (shift) page</source>
+        <translation>Posunutí stránky</translation>
+    </message>
+    <message>
+        <source>Scale page</source>
+        <translation>Změna měřítka stránky</translation>
+    </message>
+    <message>
+        <source>Skew page</source>
+        <translation>Zkosení stránky</translation>
+    </message>
+    <message>
+        <source>Page translation</source>
+        <translation>Posun stránky</translation>
+    </message>
+    <message>
+        <source>Page scaling</source>
+        <translation>Změna měřítka stránky</translation>
+    </message>
+    <message>
+        <source>Page skewing</source>
+        <translation>Zkosení stránky</translation>
+    </message>
+    <message>
+        <source>Invalid number supplied.</source>
+        <translation>Zadáno neplatné číslo</translation>
+    </message>
+    <message>
+        <source>Page transformation matrix changed to </source>
+        <translation>Transformační matice stránky změněna na </translation>
+    </message>
+    <message>
+        <source>Could not find text positioning.</source>
+        <translation>Nemohu najít pozicování textu</translation>
+    </message>
+    <message>
+        <source>Change relative text operator position</source>
+        <translation>Změnit relativní pozici textového operátoru</translation>
+    </message>
+    <message>
+        <source>Change relative text position</source>
+        <translation>Změnit relativní pozici textu</translation>
+    </message>
+    <message>
+        <source>Invalid x or y</source>
+        <translation>Neplatné x nebo y</translation>
+    </message>
+    <message>
+        <source>Only real numbers allowed</source>
+        <translation>Povolena jsou pouze reálná čísla</translation>
+    </message>
+    <message>
+        <source>Operator position changed.</source>
+        <translation>Pozice operátoru změněna</translation>
+    </message>
+    <message>
+        <source>Showing graphic. op.</source>
+        <comment>mode</comment>
+        <translation>Zobrazuji graf. op.</translation>
+    </message>
+    <message>
+        <source>Set values           </source>
+        <translation>Nastavuje hodnoty    </translation>
+    </message>
+    <message>
+        <source>element</source>
+        <comment>1</comment>
+        <translation>prvek</translation>
+    </message>
+    <message>
+        <source>elements</source>
+        <comment>2-4</comment>
+        <translation>prvky</translation>
+    </message>
+    <message>
+        <source>elements</source>
+        <comment>5+</comment>
+        <translation>prvků</translation>
+    </message>
+    <message>
+        <source>item</source>
+        <comment>1</comment>
+        <translation>položka</translation>
+    </message>
+    <message>
+        <source>items</source>
+        <comment>2-4</comment>
+        <translation>položky</translation>
+    </message>
+    <message>
+        <source>items</source>
+        <comment>5+</comment>
+        <translation>položek</translation>
+    </message>
+    <message>
+        <source>Add item to dictionary</source>
+        <translation>Přidat položku do slovníku</translation>
+    </message>
+    <message>
+        <source>Add element to array</source>
+        <translation>Přidat prvek do pole</translation>
+    </message>
+    <message>
+        <source>Save page as image</source>
+        <translation>Uložit stránku jako obrázek</translation>
+    </message>
+    <message>
+        <source>Save selected area as image</source>
+        <translation>Uložit zvolený výřez jako obrázek</translation>
     </message>
 </context>
 <context>
@@ -674,6 +865,10 @@ Data: %3
     <message>
         <source>Overwrite?</source>
         <translation>Přepsat?</translation>
+    </message>
+    <message>
+        <source>Reference target does not exist!</source>
+        <translation>Cíl reference neexistuje!</translation>
     </message>
 </context>
 <context>
@@ -1054,6 +1249,29 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::RefPropertyDialog</name>
+    <message>
+        <source>Reference target</source>
+        <translation>Cíl reference</translation>
+    </message>
+    <message>
+        <source>Choose target for indirect reference</source>
+        <translation>Vyberte cíl pro nepřímou referenci</translation>
+    </message>
+    <message>
+        <source>Object number</source>
+        <translation>Číslo objektu</translation>
+    </message>
+    <message>
+        <source>Generation number</source>
+        <translation>Číslo generace</translation>
+    </message>
+    <message>
+        <source>Reference target is not valid</source>
+        <translation>Cíl reference je neplatný</translation>
+    </message>
+</context>
+<context>
     <name>gui::RevisionTool</name>
     <message>
         <source>No revisions</source>
@@ -1225,11 +1443,6 @@ Data: %3
         <translation>Toolbar operátorů</translation>
     </message>
     <message>
-        <source>Change color of operator</source>
-        <comment>operatorSetColor</comment>
-        <translation>Změnit barvu operátoru</translation>
-    </message>
-    <message>
         <source>Edit page metrics</source>
         <comment>editPageMediaBox</comment>
         <translation>Změnit metriky stránky</translation>
@@ -1268,11 +1481,6 @@ Data: %3
         <source>Show only graphical operators in stream</source>
         <comment>streamGfx</comment>
         <translation>Zobrazit jen grafické operátory ve streamu</translation>
-    </message>
-    <message>
-        <source>Change font properties of operator</source>
-        <comment>operatorSetFont</comment>
-        <translation>Změnit vlastnosti písma operátoru</translation>
     </message>
     <message>
         <source>Selection mode Toolbar</source>
@@ -1353,6 +1561,21 @@ Data: %3
         <source>&amp;Help</source>
         <comment>helpmenu</comment>
         <translation>Nápověda</translation>
+    </message>
+    <message>
+        <source>Set page transformation matrix</source>
+        <comment>setpagetm</comment>
+        <translation>Nastavit transformační matici stránky</translation>
+    </message>
+    <message>
+        <source>Set relative position of operator</source>
+        <comment>opsetposop</comment>
+        <translation>Nastavit relativní pozici operátoru</translation>
+    </message>
+    <message>
+        <source>Change relative position</source>
+        <comment>opsetpos</comment>
+        <translation>Nastavit relativní pozici</translation>
     </message>
 </context>
 <context>

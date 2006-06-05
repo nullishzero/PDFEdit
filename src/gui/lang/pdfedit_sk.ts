@@ -499,10 +499,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Only text operator allowed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Change font properties</source>
         <translation type="unfinished"></translation>
     </message>
@@ -584,6 +580,201 @@ Data: %3
     </message>
     <message>
         <source>Show only graphical operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set relative position of a single operator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set relative position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set page tranformation matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change page rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page metrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change line width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change effect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Global change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change line dash pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line dashing patterns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Solid line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slightly dashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dot and dashed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only text operators allowed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add page transformation matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change page transformation matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page transformation matrix description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page transformation description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select which transformations to use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Translate (shift) page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scale page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skew page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page translation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page scaling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page skewing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid number supplied.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page transformation matrix changed to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find text positioning.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change relative text operator position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid x or y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only real numbers allowed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator position changed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Showing graphic. op.</source>
+        <comment>mode</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set values           </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>element</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>elements</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>elements</source>
+        <comment>5+</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>item</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>items</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>items</source>
+        <comment>5+</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change relative text position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save page as image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save selected area as image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add item to dictionary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add element to array</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -670,6 +861,10 @@ Data: %3
     </message>
     <message>
         <source>Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference target does not exist!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1051,6 +1246,29 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::RefPropertyDialog</name>
+    <message>
+        <source>Reference target</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose target for indirect reference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Object number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Generation number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference target is not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::RevisionTool</name>
     <message>
         <source>No revisions</source>
@@ -1222,11 +1440,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change color of operator</source>
-        <comment>operatorSetColor</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit page metrics</source>
         <comment>editPageMediaBox</comment>
         <translation type="unfinished"></translation>
@@ -1264,11 +1477,6 @@ Data: %3
     <message>
         <source>Show only graphical operators in stream</source>
         <comment>streamGfx</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change font properties of operator</source>
-        <comment>operatorSetFont</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1349,6 +1557,21 @@ Data: %3
     <message>
         <source>&amp;Help</source>
         <comment>helpmenu</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set page transformation matrix</source>
+        <comment>setpagetm</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set relative position of operator</source>
+        <comment>opsetposop</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change relative position</source>
+        <comment>opsetpos</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
