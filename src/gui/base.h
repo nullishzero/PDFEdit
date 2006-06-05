@@ -63,6 +63,16 @@ public slots: //This will be all exported to scripting
  void addObjectDialog(QSIProperty *container=NULL);
  void addObjectDialog(QObject *container);
  /*-
+  Check (second parameter is true) or uncheck (false) item in toolbar and/or menu, given its name
+  If you prefix name with slash ("/"), you will affect "class" of items
+  - every item that belong to the specified class
+  <note>
+   Toolbuttons will automatically convert to Togglable toolbuttons this way
+   and will start togling itself automatically on each succesive click
+  </note>
+ */
+ void checkItem(const QString &name,bool enableItem);
+ /*-
   Closes file opened in this editor window.
   if askSave is true, user is asked to save the file if it is modified.
   if onlyAsk is true, file is not actually closed, only user is asked if he want to save work (if not specified, defaults to false).

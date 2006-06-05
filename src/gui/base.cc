@@ -555,6 +555,11 @@ void Base::enableItem(const QString &name,bool enableItem) {
  w->menuSystem->enableByName(name,enableItem);
 }
 
+/** \copydoc Menu::checkByName */
+void Base::checkItem(const QString &name,bool enableItem) {
+ w->menuSystem->checkByName(name,enableItem);
+}
+
 /**
  Return last error message from some operations (like load, save, etc ...)
  If last command was successfull, it is undefined what this function returns

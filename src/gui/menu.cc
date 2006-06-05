@@ -572,4 +572,31 @@ void Menu::enableByName(const QString &name,bool enableItem) {
  }
 }
 
+/**
+ Check or uncheck item in toolbar and/or menu, given its name<br>
+ Note: Toolbuttons will automatically convert to Togglable toolbuttons this way
+       and will start togling itself automatically on each succesive click
+ @param name Name of item
+ @param checkItem True to check, false to uncheck
+*/
+void Menu::checkByName(const QString &name,bool checkItem) {
+ for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
+  if (it.key().first==name) {
+   ToolButton* el=dynamic_cast<ToolButton*>(it.data());
+   if (el) {
+    el->setToggleButton(true);
+    el->setOn(checkItem);
+   }
+  }
+ }
+ for (MenuItems::Iterator it=mapMenu.begin();it!=mapMenu.end();++it) {
+  if (it.key().first==name) {
+   MenuItemsValue el=it.data();
+   QMenuData* md=el.first;
+   int id=el.second;
+   md->setItemChecked(id,checkItem);
+  }
+ }
+}
+
 } // namespace gui
