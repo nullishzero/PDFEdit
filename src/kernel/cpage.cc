@@ -32,199 +32,204 @@ using namespace utils;
 namespace {
 // =====================================================================================
 
-	/** 
-	 * Page attributes structure of dictionary properties which can be inherited from a parent 
-	 * in the page tree.
-	 *
-	 * If an inheritable property is not present in a page it is defined in one of
-	 * its parents in the page tree.
-	 */
-	struct InheritedPageAttr
-	{
-		boost::shared_ptr<CDict> resources;
-		boost::shared_ptr<CArray> mediaBox;
-		boost::shared_ptr<CArray> cropBox;
-		boost::shared_ptr<CInt> rotate;
-	};
+/** 
+ * Page attributes structure of dictionary properties which can be inherited from a parent 
+ * in the page tree.
+ *
+ * If an inheritable property is not present in a page it is defined in one of
+ * its parents in the page tree.
+ */
+struct InheritedPageAttr
+{
+	boost::shared_ptr<CDict> resources;
+	boost::shared_ptr<CArray> mediaBox;
+	boost::shared_ptr<CArray> cropBox;
+	boost::shared_ptr<CInt> rotate;
+};
 
-	/** 
-	 * Fills InheritedPageAttr structure for a given page dictionary.
-	 *
-	 * Recursive function which checks given pageDict whether it contains
-	 * uninitialized (NULL values) from a given attribute structure. If true, sets
-	 * the value from the dictionary. If at least one property is still not 
-	 * initialized, repeats the process for the parent dictionary (dereferenced 
-	 * "Parent" property). End if the "Parent" property is not present (in root 
-	 * of a page tree).
-	 * <br>
-	 * Use default value when a property was not initialized.
-	 *
-	 * @param pageDict Page dictionary.
-	 * @param attrs Output attribute structure where correct values are put.
-	 *
-	 * @throw NotImplementedException at this moment.
-	 */
-	void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
-	{
-		int initialized=0;
+/** 
+ * Fills InheritedPageAttr structure for a given page dictionary.
+ *
+ * Recursive function which checks given pageDict whether it contains
+ * uninitialized (NULL values) from a given attribute structure. If true, sets
+ * the value from the dictionary. If at least one property is still not 
+ * initialized, repeats the process for the parent dictionary (dereferenced 
+ * "Parent" property). End if the "Parent" property is not present (in root 
+ * of a page tree).
+ * <br>
+ * Use default value when a property was not initialized.
+ * <br>
+ * Note that attrs structure comes out allways initialized when recursion is
+ * finished.
+ *
+ * @param pageDict Page dictionary.
+ * @param attrs Output attribute structure where correct values are put.
+ *
+ * @throw NotImplementedException at this moment.
+ */
+void 
+fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
+{
+	int initialized=0;
 
-		// TODO consolidate code - get rid of copy & paste
-		
-		// resource field
-		shared_ptr<CDict> resources=attrs.resources;
-		if(!resources.get())
+	// TODO consolidate code - get rid of copy & paste
+	
+	// resource field
+	shared_ptr<CDict> resources=attrs.resources;
+	if(!resources.get())
+	{
+		// resources field is not specified yet, so tries this dictionary
+		try
 		{
-			// resources field is not specified yet, so tries this dictionary
-			try
+			shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
+			if(isRef(prop))
 			{
-				shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
-				if(isRef(prop))
+				resources=getDictFromRef(prop);
+				initialized++;
+			}
+			else
+				if(isDict(prop))
 				{
-					resources=getDictFromRef(prop);
+					resources=IProperty::getSmartCObjectPtr<CDict>(prop);
 					initialized++;
 				}
-				else
-					if(isDict(prop))
-					{
-						resources=IProperty::getSmartCObjectPtr<CDict>(prop);
-						initialized++;
-					}
-			}catch(CObjectException & e)
-			{
-				// not found
-			}
-		}else
-			initialized++;
-
-		// mediabox field
-		shared_ptr<CArray> mediaBox=attrs.mediaBox;
-		if(!mediaBox.get())
+		}catch(CObjectException & e)
 		{
-			// mediaBox field is not specified yet, so tries this array
-			try
+			// not found
+		}
+	}else
+		initialized++;
+
+	// mediabox field
+	shared_ptr<CArray> mediaBox=attrs.mediaBox;
+	if(!mediaBox.get())
+	{
+		// mediaBox field is not specified yet, so tries this array
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
+			if(isRef(prop))
 			{
-				shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
-				if(isRef(prop))
+				mediaBox=getCObjectFromRef<CArray, pArray>(prop);
+				initialized++;
+			}else
+				if(isArray(prop))
 				{
-					mediaBox=getCObjectFromRef<CArray, pArray>(prop);
+					mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
 					initialized++;
-				}else
-					if(isArray(prop))
-					{
-						mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-						initialized++;
-					}
-			}catch(CObjectException & e)
-			{
-				// not found or bad type
-			}
-		}else
-			initialized++;
-
-		// cropbox field
-		shared_ptr<CArray> cropBox=attrs.cropBox;
-		if(!cropBox.get())
-		{
-			// cropBox field is not specified yet, so tries this array
-			try
-			{
-				shared_ptr<IProperty> prop=pageDict->getProperty("CropBox");
-				if(isRef(prop))
-				{
-					cropBox=getCObjectFromRef<CArray, pArray>(prop);
-					initialized++;
-				}else
-					if(isArray(prop))
-					{
-						cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-						initialized++;
-					}
-			}catch(CObjectException & e)
-			{
-				// not found or bad type
-			}
-		}else
-			initialized++;
-
-		// rotate field
-		shared_ptr<CInt> rotate=attrs.rotate;
-		if(!rotate.get())
-		{
-			// rotate field is not specified yet, so tries this array
-			try
-			{
-				shared_ptr<IProperty> prop=pageDict->getProperty("Rotate");
-				if(isRef(prop))
-				{
-					rotate=getCObjectFromRef<CInt, pInt>(prop);
-					initialized++;
-				}else
-					if(isInt(prop))
-					{
-						rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
-						initialized++;
-					}
-			}catch(CObjectException & e)
-			{
-				// not found or bad type
-			}
-		}else
-			initialized++;
-
-		// all values available from this dictionary are set now
-		if(initialized<4)
-		{
-			// not everything from InheritedPageAttr is initialized now
-			// tries to initialize from parent.
-			// If parent is not present, uses dafault value
-			try
-			{
-				shared_ptr<IProperty> parentRef=pageDict->getProperty("Parent");
-				if(!isRef(parentRef))
-					// this should not happen - malformed page tree structure
-					return;
-
-				shared_ptr<CDict> parentDict=getDictFromRef(parentRef);
-					
-			}catch(ElementNotFoundException & e)
-			{
-				// parent not found - uses default values
-				
-				// Resources is required and at least empty dictionary should be
-				// specified 
-				if(!attrs.resources.get())
-					attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
-
-				// default A4 sized box
-				Rectangle defaultRect(
-						DisplayParams::DEFAULT_PAGE_LX, 
-						DisplayParams::DEFAULT_PAGE_LY, 
-						DisplayParams::DEFAULT_PAGE_RX, 
-						DisplayParams::DEFAULT_PAGE_RY
-						);
-
-				// MediaBox is required and specification doesn't say anything about
-				// default value - we are using standard A4 format
-				if(!attrs.mediaBox.get())
-					attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
-
-				// CropBox is optional and specification doesn't say anything about
-				// default value - we are using standard A4 format
-				if(!attrs.cropBox.get())
-					attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
-				
-				// Rotate is optional and specification defines default value to 0
-				if(!attrs.rotate.get())
-				{
-					// gcc workaround
-					// direct usage of static DEFAULT_ROTATE value caused linkage
-					// error
-					int defRot=DisplayParams::DEFAULT_ROTATE;
-					attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(defRot));
 				}
+		}catch(CObjectException & e)
+		{
+			// not found or bad type
+		}
+	}else
+		initialized++;
+
+	// cropbox field
+	shared_ptr<CArray> cropBox=attrs.cropBox;
+	if(!cropBox.get())
+	{
+		// cropBox field is not specified yet, so tries this array
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("CropBox");
+			if(isRef(prop))
+			{
+				cropBox=getCObjectFromRef<CArray, pArray>(prop);
+				initialized++;
+			}else
+				if(isArray(prop))
+				{
+					cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+					initialized++;
+				}
+		}catch(CObjectException & e)
+		{
+			// not found or bad type
+		}
+	}else
+		initialized++;
+
+	// rotate field
+	shared_ptr<CInt> rotate=attrs.rotate;
+	if(!rotate.get())
+	{
+		// rotate field is not specified yet, so tries this array
+		try
+		{
+			shared_ptr<IProperty> prop=pageDict->getProperty("Rotate");
+			if(isRef(prop))
+			{
+				rotate=getCObjectFromRef<CInt, pInt>(prop);
+				initialized++;
+			}else
+				if(isInt(prop))
+				{
+					rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
+					initialized++;
+				}
+		}catch(CObjectException & e)
+		{
+			// not found or bad type
+		}
+	}else
+		initialized++;
+
+	// all values available from this dictionary are set now
+	if(initialized<4)
+	{
+		// not everything from InheritedPageAttr is initialized now
+		// tries to initialize from parent.
+		// If parent is not present, uses dafault value
+		try
+		{
+			shared_ptr<IProperty> parentRef=pageDict->getProperty("Parent");
+			if(!isRef(parentRef))
+				// this should not happen - malformed page tree structure
+				return;
+
+			shared_ptr<CDict> parentDict=getDictFromRef(parentRef);
+			fillInheritedPageAttr(parentDict, attrs);
+				
+		}catch(ElementNotFoundException & e)
+		{
+			// parent not found - uses default values
+			
+			// Resources is required and at least empty dictionary should be
+			// specified 
+			if(!attrs.resources.get())
+				attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
+
+			// default A4 sized box
+			Rectangle defaultRect(
+					DisplayParams::DEFAULT_PAGE_LX, 
+					DisplayParams::DEFAULT_PAGE_LY, 
+					DisplayParams::DEFAULT_PAGE_RX, 
+					DisplayParams::DEFAULT_PAGE_RY
+					);
+
+			// MediaBox is required and specification doesn't say anything about
+			// default value - we are using standard A4 format
+			if(!attrs.mediaBox.get())
+				attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+
+			// CropBox is optional and specification doesn't say anything about
+			// default value - we are using standard A4 format
+			if(!attrs.cropBox.get())
+				attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(getIPropertyFromRectangle(defaultRect));
+			
+			// Rotate is optional and specification defines default value to 0
+			if(!attrs.rotate.get())
+			{
+				// gcc workaround
+				// direct usage of static DEFAULT_ROTATE value caused linkage
+				// error
+				int defRot=DisplayParams::DEFAULT_ROTATE;
+				attrs.rotate=shared_ptr<CInt>(CIntFactory::getInstance(defRot));
 			}
 		}
 	}
+}
 
 
 // =====================================================================================
