@@ -10,6 +10,7 @@
 #include "dialog.h"
 #include "helpwindow.h"
 #include "multitreewindow.h"
+#include "menu.h"
 #include "optionwindow.h"
 #include "pagespace.h"
 #include "pdfeditwindow.h"
@@ -547,6 +548,11 @@ bool Base::closeFile(bool askSave,bool onlyAsk/*=false*/) {
 /** \copydoc PdfEditWindow::closeWindow */
 void Base::closeWindow() {
  w->closeWindow();
+}
+
+/** \copydoc Menu::enableByName */
+void Base::enableItem(const QString &name,bool enableItem) {
+ w->menuSystem->enableByName(name,enableItem);
 }
 
 /**

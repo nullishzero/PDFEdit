@@ -34,8 +34,14 @@ function onDragDropOther() {
 function onTreeRightClick() {
  menu=popupMenu("popup_generic");
  menu.addSeparator();
+ treeitemtype=treeitem.itemtype();
  if (holdContainer(treeitem)) { // Dict, Array
-  menu.addItemDef("item Add object to "+treeitem.itemtype()+",addObjectDialog(),,item_add.png");
+  if (treeitemtype=="Dict") {
+   str_tr=tr("Add item to dictionary");
+  } else {
+   str_tr=tr("Add element to array");
+  }
+  menu.addItemDef("item "+str_tr+",addObjectDialog(),,item_add.png");
  }
  menu.addItemDef("item ("+treeitem.itemtype()+"),");
  menu.addSeparator();
@@ -92,9 +98,9 @@ function onTreeDoubleClick() {
 function onPageRightClick() {
  menu=popupMenu();
  menu.addSeparator();
- menu.addItemDef("item Save page as image,savePageImage(false)");
+ menu.addItemDef("item "+tr("Save page as image")+",savePageImage(false)");
  if (PageSpace.isSomeoneSelected())
-   menu.addItemDef("item Save selected area as image,savePageImage(true)");
+   menu.addItemDef("item "+tr("Save selected area as image")+",savePageImage(true)");
  menu.addSeparator();
  print_eval(menu.popup());
 }
@@ -788,7 +794,7 @@ function moveTextPos() {
 		warn(tr("Could not find text positioning."));
 	}
 
-	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change realtive text position"));
+	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
 	 
 	var gb = createGroupBoxAndDisplay ("Relative operator position", dialog);
 	x = createLineEditAndDisplay ("x position:", "0", gb);

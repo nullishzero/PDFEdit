@@ -129,11 +129,11 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   }
   case pArray: {
    CArray* a=dynamic_cast<CArray*>(obj.get());
-   return QString::number(a->getPropertyCount())+" "+QObject::tr("elements");
+   return countString(a->getPropertyCount(),"element","elements");
   }
   case pDict: {
    CDict* a=dynamic_cast<CDict*>(obj.get());
-   return QString::number(a->getPropertyCount())+" "+QObject::tr("items");
+   return countString(a->getPropertyCount(),"item","items");
   }
 //  case pRef:    ??
 //  case pStream: ??

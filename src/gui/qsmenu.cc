@@ -13,6 +13,8 @@
 #include "util.h"
 #include <utils/debug.h>
 
+#include "base.h"
+
 class QPixMap;
 class QIconSet;
 

@@ -29,6 +29,7 @@
 namespace gui {
 
 using namespace util;
+using namespace std;
 
 /** root key for system menu items */
 const QString ROOT="gui/items/";
@@ -57,6 +58,7 @@ Menu::Menu(QMainWindow *_main) {
  main=_main;
  action_index=1;
  cache=new IconCache();
+ seqId=0;
 }
 
 /** Destructor */
@@ -192,9 +194,9 @@ QString Menu::parseName(QString &line, const QString &name/*=QString::null*/) th
  }
  QString menuName;
  if (name.isNull()) {
-  menuName=Settings::tr(caption);
+  menuName=Settings::trUtf8(caption.utf8());
  } else {
-  menuName=Settings::tr(caption,name);
+  menuName=Settings::trUtf8(caption.utf8(),name);
  }
  return menuName;
 }
@@ -248,7 +250,10 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
   QPopupMenu *item=new QPopupMenu();
   QString menuName=parseName(line,name);
   loadItemsDef(line,item,prev);
-  if (parent) parent->insertItem(menuName,item);
+  if (parent) {
+   int itemId=parent->insertItem(menuName,item);
+   addToMap(name,parent,itemId);
+  }
   //Add this item to cache
   mCache[name]=item;
   mCacheName[name]=menuName;
@@ -270,7 +275,8 @@ char Menu::getAccel(const QString &name) {
  return name[pos+1].lower();
 }
 
-/** Add menu item specified by given data to parent
+/**
+ Add menu item specified by given data to parent
  @param line Line containing menu item specification
  @param parent parent menu in which this item will be appended
  @param name Name of this item (key in settings).
@@ -300,7 +306,8 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
    mAccel[parent]=s;
   }
  }
- parent->insertItem(qs[0],menu_id);
+ int itemId=parent->insertItem(qs[0],menu_id);
+ addToMap(name,parent,itemId);  
  if (qs.count()>=3 && qs[2].length()>0) { //accelerator specified
   if (reserveAccel(qs[2],qs[1])) parent->setAccel(QKeySequence(qs[2]),menu_id);
  }
@@ -310,6 +317,11 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
    parent->changeItem(menu_id,*icon,qs[0]);
   } else {
    guiPrintDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
+  }
+ }
+ if (qs.count()>=5) { //Extra data - Item classes
+  for (unsigned int i=4;i<qs.count();i++) {
+   addToMap("/"+qs[i],parent,itemId);  
   }
  }
 }
@@ -382,11 +394,17 @@ void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuEx
    tooltip+=" ("+qs[2]+")";
   }
   ToolButton *tbutton =new ToolButton(icon,tooltip,menu_id,tb);
+  addToMap(item,tbutton);
   if (qs[2].length()>0) { //accelerator specified
    if (reserveAccel(qs[2],qs[1])) tbutton->setAccel(QKeySequence(qs[2]));
   }
   tb->addButton(tbutton);
   tbutton->show();
+  if (qs.count()>=5) { //Extra data - Item classes
+   for (unsigned int i=4;i<qs.count();i++) {
+    addToMap("/"+qs[i],tbutton);  
+   }
+ }
  } else if (chopCommand(line,"label")) { //Format: Text
   if (!line.length()) invalidItem(QObject::tr("label item"),item,line);
   new QLabel(Settings::tr(line,item),tb);
@@ -492,5 +510,66 @@ void Menu::restoreToolbars() {
  QTextStream qs(out,IO_ReadOnly);
  qs >> *main;
 } 
+
+/**
+ Add specified toolbar item to "all items" map
+ @param name Name of item
+ @param item The toolbutton or widget
+ */
+void Menu::addToMap(const QString &name,QWidget* item) {
+ MapKey mk(name,seqId);
+ seqId++;
+ mapTool.insert(mk,item,false);
+}
+
+/**
+ Add specified menu item to "all items" map
+ @param name Name of item
+ @param parent Parent menu
+ @param itemId Id of item in parent menu
+*/
+void Menu::addToMap(const QString &name,QMenuData* parent,int itemId) {
+ MapKey mk(name,seqId);
+ seqId++;
+ MenuItemsValue v(parent,itemId);
+ mapMenu.insert(mk,v,false);
+}
+
+/**
+ Enable or disable item in toolbar and/or menu, given its name
+ @param name Name of item
+ @param enableItem True to enable, false to disable 
+*/
+void Menu::enableByName(const QString &name,bool enableItem) {
+/* for (ToolbarItems::Iterator it=mapTool.find(name);it!=mapTool.end();++it) {
+  if (it.key()!=name) break;
+  QWidget* el=it.data();
+  el->setEnabled(enableItem);
+ }*/
+ //TODO: lookup is slow & linear, improve ....
+ for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
+  if (it.key().first==name) {
+   QWidget* el=it.data();
+   el->setEnabled(enableItem);
+   guiPrintDbg(debug::DBG_DBG,"en/dis abling toolbar " << name << " " << enableItem);
+  }
+ }
+/* for (MenuItems::Iterator it=mapMenu.find(name);it!=mapMenu.end();++it) {
+  if (it.key()!=name) break;
+  MenuItemsValue el=it.data();
+  QMenuData* md=el.first;
+  int id=el.second;
+  md->setItemEnabled(id,enableItem);
+ }*/
+ for (MenuItems::Iterator it=mapMenu.begin();it!=mapMenu.end();++it) {
+  if (it.key().first==name) {
+   MenuItemsValue el=it.data();
+   QMenuData* md=el.first;
+   int id=el.second;
+   md->setItemEnabled(id,enableItem);
+   guiPrintDbg(debug::DBG_DBG,"en/dis abling menu " << name << " " << enableItem);
+  }
+ }
+}
 
 } // namespace gui

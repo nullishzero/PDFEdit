@@ -11,6 +11,7 @@ class QPopupMenu;
 class QPixmap;
 class QWidget;
 class QIconSet;
+class QWidget;
 
 namespace gui {
 
@@ -38,6 +39,14 @@ typedef QMap<QString, QPopupMenu*> MenuCache;
 typedef QMap<QMenuData*, QString> MenuAccels;
 /** Cache of already defined menu items (names) */
 typedef QMap<QString, QString> MenuNames;
+/** Value type for MenuItems type*/
+typedef std::pair<QMenuData*,int> MenuItemsValue;
+/** Key type for MenuItems and ToolbarItems */
+typedef std::pair<QString,int> MapKey;
+/** Pointer to of all items by item or "item class" name - menu items */
+typedef QMap<MapKey,MenuItemsValue> MenuItems;
+/** Pointer to of all items by item or "item class" name - toolbar items */
+typedef QMap<MapKey,QWidget*> ToolbarItems;
 
 /**
  This class manages Menu, Toolbars and Shortcuts.<br>
@@ -66,7 +75,10 @@ public:
  void loadItem(const QString &name,QMenuData *parent=NULL,QStringList prev=QStringList()) throw (InvalidMenuException);
  static bool chopCommand(QString &line, const QString &command);
  static void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
+ void enableByName(const QString &name,bool enableItem);
 private:
+ void addToMap(const QString &name,QWidget* item);
+ void addToMap(const QString &name,QMenuData* parent,int itemId);
  void addItem(QString line,QMenuData *parent,const QString &name=QString::null) throw (InvalidMenuException);
  bool reserveAccel(const QString &accelDef,const QString &action);
  int addAction(const QString &action);
@@ -98,6 +110,12 @@ private:
  IconCache *cache;
  /** Main application window */
  QMainWindow *main;
+ /** Pointer to of all items by item or "item class" name - menu items */
+ MenuItems mapMenu;
+ /** Pointer to of all items by item or "item class" name - toolbar items */
+ ToolbarItems mapTool; 
+ /** Sequenc id for map key*/
+ int seqId;
 };
 
 } // namespace gui

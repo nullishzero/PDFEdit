@@ -282,6 +282,8 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
  if (theItem==selectedTreeItem) {
   guiPrintDbg(debug::DBG_DBG,"Removed reference to deleted tree item");
   selectedTreeItem=NULL;
+  //Unset from property editor
+  prop->setObject(NULL);
  }
  //TODO: look for wrappers using this tree item and somehow disable them
  // (but scripts must not do that anyway...)

@@ -111,6 +111,12 @@ public slots: //This will be all exported to scripting
  /*- Create and return new IProperty of type String */
  QSIProperty* createString(const QString &value);
  /*-
+  Enable (second parameter is true) or disable (false) item in toolbar and/or menu, given its name
+  If you prefix name with slash ("/"), you will enable or disable "class" of items
+  - every item that belong to the specified class
+ */
+ void enableItem(const QString &name,bool enableItem);
+ /*-
   Return last error message (localized) from some operations
   (openFile, save, saveRevision, saveCopy)
  */
