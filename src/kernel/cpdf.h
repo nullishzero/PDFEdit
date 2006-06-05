@@ -6,6 +6,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.58  2006/06/05 06:27:02  hockm0bm
+ * * CPdf::subsReferencies
+ *         - substitues also referencie also for streams
+ * * CPage::insertPage
+ *         - handles page from different file correctly
+ *
  * Revision 1.57  2006/06/03 09:15:02  hockm0bm
  * getCObjectFromRef removed from cobjecthelpers.h to cpdf.h because gcc >=4.0
  * didn't like CPdf usage
@@ -1146,8 +1152,16 @@ public:
 	 * page is added as new indirect property and so it has different indirect
 	 * reference as original one.
 	 * <br>
-	 * This method triggers pageList and page tree consolidation same as if the
-	 * change has been done manulualy.
+	 * If given page comes from different valid (non NULL) pdf, some more tasks
+	 * are done comparing to normal property adding to page tree. At first
+	 * deep copy of page dictionary is done before adding to this pdf (all other
+	 * oparations are done on cloned value). Then Parent field is removed,
+	 * because we want to follow referencies in given dictionary and copying of
+	 * father would lead to whole page tree structure copying (Parent contains
+	 * all its Kids and also its own Parent and so on recursively). In further
+	 * step all inheritable page attributes are set (because original page may
+	 * not have contained them directly). Finally dictionary is added with
+	 * followRefs set to true (in addIndirectProperty method).
 	 *
 	 * @throw ReadOnlyDocumentException if mode is set to ReadOnly or we are in
 	 * older revision (where no changes are allowed).

@@ -3,6 +3,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.55  2006/06/05 06:27:01  hockm0bm
+ * * CPdf::subsReferencies
+ *         - substitues also referencie also for streams
+ * * CPage::insertPage
+ *         - handles page from different file correctly
+ *
  * Revision 1.54  2006/06/02 16:51:21  hockm0bm
  * typo fix
  *
@@ -786,6 +792,7 @@ using namespace utils;
 	
 	// if both of values are not CRef, there is also nothing to consolidate,
 	// because old mess has been replaced by new mess
+	// FIXME what if whole array is deleted or replaced
 	if(oldType!=pRef && newType!=pRef)
 	{
 		kernelPrintDbg(DBG_INFO, "Nothing to consolidate because newValue and oldValue are not CRef");
@@ -1206,8 +1213,7 @@ using namespace utils;
 			IProperty::getSmartCObjectPtr<CDict>(ip)->_getAllChildObjects(childrenStorage);
 			break;
 		case pStream:
-			// TODO
-			//IProperty::getSmartCObjectPtr<CStream>(ip)->_getAllChildObjects(childrenStorage);
+			IProperty::getSmartCObjectPtr<CStream>(ip)->_getAllChildObjects(childrenStorage);
 			break;
 
 		// all other simple values are ok, nothing should return
@@ -1993,13 +1999,30 @@ using namespace utils;
 
 	// Now it is safe to add indirect object, because there is nothing that can
 	// fail
+	shared_ptr<CDict> pageDict=page->getDictionary();
+	if(pageDict->getPdf() && pageDict->getPdf()!=this)
+	{
+		// page comes from different valid pdf - we have to create clone and
+		// remove Parent field from it. Also inheritable properties have to be
+		// handled
+		CPdf * pageDictPdf=pageDict->getPdf();
+		IndiRef pageDictIndiRef=pageDict->getIndiRef();
+		pageDict=IProperty::getSmartCObjectPtr<CDict>(pageDict->clone());
+		pageDict->delProperty("Parent");
+
+		// clone needs to set pdf and indirect, because these values are not
+		// cloned
+		pageDict->setPdf(pageDictPdf);
+		pageDict->setIndiRef(pageDictIndiRef);
+		setInheritablePageAttr(pageDict);
+	}
 	
-	// gets page's dictionary and adds it as new indirect property (also with
-	// properties referenced by this dictionary.
+	// adds pageDict as new indirect property (also with properties referenced 
+	// by this dictionary.
 	// All page dictionaries must be indirect objects and addIndirectProperty
 	// method also solves problems with deep copy and page from different file
 	// transition
-	IndiRef pageRef=addIndirectProperty(page->getDictionary(), true);
+	IndiRef pageRef=addIndirectProperty(pageDict, true);
 
 	// adds newly created page dictionary to the kids array at kidsIndex
 	// position. This triggers pageTreeWatchDog for consolidation and observer
