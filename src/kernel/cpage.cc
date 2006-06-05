@@ -891,8 +891,13 @@ void
 CPage::setTransformMatrix (double tm[6])
 {
 	if (contentstreams.empty())
-		return;
+	{ // Try parsing streams
+		parseContentStream ();
+		if (contentstreams.empty())
+			return;
+	}
 
+	assert (!contentstreams.empty());
 	shared_ptr<CContentStream> str = contentstreams.front();
 	assert(str);
 

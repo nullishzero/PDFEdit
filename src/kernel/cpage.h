@@ -656,6 +656,9 @@ public:
 		// Create stream with one default property Length
 		boost::shared_ptr<CStream> newstr (new CStream());
 		
+		//
+		// Get string representation of new content stream
+		//
 		typename Container::const_iterator it = cont.begin();
 		std::string tmp;
 		for (; it != cont.end(); ++it)
@@ -665,13 +668,64 @@ public:
 			tmp += tmpop;
 		}
 		kernelPrintDbg (debug::DBG_DBG, tmp);
-		
+	
+		// Set the stream
 		newstr->setBuffer (tmp);
 
+		//
+		// Change the "Contents" entry 
+		//
 		// Set ref and indiref
 		newstr->setPdf (dictionary->getPdf());
-		newstr->setIndiRef (dictionary->getIndiRef());
+		// New Value \todo 
+		newstr->setIndiRef (IndiRef(1000,100));
 
+		//
+		// Make valid array of stream references
+		// 
+		if (dictionary->containsProperty ("Contents"))
+		{
+			boost::shared_ptr<IProperty> contents = utils::getReferencedObject(dictionary->getProperty("Contents"));
+			if (isStream(contents))
+			{ // exactly one stream
+				
+				CArray streamrefs;
+				// Add current one
+				CRef tmp (contents->getIndiRef());
+				streamrefs.addProperty (tmp);
+	
+				// Add new one
+				CRef newref (newstr->getIndiRef());
+				streamrefs.addProperty (newref);
+	
+				// Add the new array
+				dictionary->setProperty ("Contents", streamrefs);
+		
+			}else
+			{
+				assert (isArray(contents));
+				if (!isArray(contents))
+					throw CObjInvalidObject ();
+
+				// Add new one to current ones
+				CRef newref (newstr->getIndiRef());
+				IProperty::getSmartCObjectPtr<CArray> (contents)->addProperty (newref);
+			}
+
+		}else
+		{
+			// Make valid array of stream references
+			CArray streamrefs;
+	
+			// Add new one
+			CRef newref (newstr->getIndiRef());
+			streamrefs.addProperty (newref);
+				
+			// Add the new array
+			dictionary->addProperty ("Contents", streamrefs);
+		}
+		
+		
 		// Parse new stream to content stream and add it to the streams
 		CContentStream::CStreams streams;
 		streams.push_back (newstr);
@@ -679,6 +733,9 @@ public:
 		boost::shared_ptr<GfxState> state;
 		createXpdfDisplayParams (res, state);
 		contentstreams.push_back (boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+
+		// Indicate change
+		_objectChanged ();
 	}
 
 	

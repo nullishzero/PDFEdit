@@ -1994,6 +1994,15 @@ CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper,
 	}else
 	{ // Insert into
 
+		assert (!cstreams.empty());
+		// Set correct IndiRef, CPdf and cs to inserted operator
+		assert (hasValidRef (cstreams.front()));
+		assert (hasValidPdf (cstreams.front()));
+		CPdf* pdf = cstreams.front()->getPdf();
+		assert (pdf);
+		IndiRef rf = cstreams.front()->getIndiRef ();
+		opsSetPdfRefCs (newoper, *pdf, rf, *this, operandobserver);
+
 		shared_ptr<PdfOperator> secondoper = operators.front();
 		operators.push_front (newoper);
 		shared_ptr<PdfOperator> lastofnew = getLastOperator (newoper);

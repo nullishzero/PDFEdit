@@ -318,6 +318,25 @@ CObjectComplex<Tp,Checker>::getAllPropertyNames (Container& container) const
 //
 //
 template<PropertyType Tp, typename Checker>
+bool
+CObjectComplex<Tp,Checker>::containsProperty (const std::string& name) const
+{
+	STATIC_CHECK ((Tp != pArray), INCORRECT_USE_OF_getAllPropertyNames_FUNCTION);
+	//kernelPrintDbg (debug::DBG_DBG, "getAllPropertyNames()");
+
+	for (typename Value::const_iterator it = value.begin(); it != value.end(); ++it)
+	{
+		if ((*it).first == name)
+			return true;
+	}
+
+	return false;
+}
+
+//
+//
+//
+template<PropertyType Tp, typename Checker>
 boost::shared_ptr<IProperty>
 CObjectComplex<Tp,Checker>::getProperty (PropertyId id) const
 {

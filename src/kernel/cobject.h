@@ -479,6 +479,15 @@ public:
 	void getAllPropertyNames (Container& container) const;
 
 	/**
+	 * Returns true if the property name is present in the dictionary.
+	 *
+	 * @param name Property name
+	 *
+	 * @return True if the property exists, false otherwise.
+	 */
+	bool containsProperty (const std::string& name) const;
+	
+	/**
 	 * Returns value of property identified by its name/position depending on the type of this object.
    	 *
    	 * @param 	id 	Variable identifying position of the property.
@@ -2153,6 +2162,15 @@ template<typename IP>
 inline boost::shared_ptr<CDict>
 getCDictFromDict (IP& ip, const std::string& key)
 	{return getTypeFromDictionary<CDict,pDict> (ip, key);}
+
+/** 
+ * Get array from dictionary. If it is an indirect object, fetch the object.
+ */
+template<typename IP>
+inline boost::shared_ptr<CArray>
+getCArrayFromDict (IP& ip, const std::string& key)
+	{return getTypeFromDictionary<CArray,pArray> (ip, key);}
+
 
 /** 
  * Get dictionary from dictionary. If it is an indirect object, fetch the object.
