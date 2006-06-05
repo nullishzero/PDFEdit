@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.57  2006/06/05 09:12:28  hockm0bm
+ * locChange is used on cloned values which require indiref
+ *
  * Revision 1.56  2006/06/05 08:57:32  hockm0bm
  * refactoring CObjectSimple
  *         - getPropertyValue -> getValue
@@ -1097,6 +1100,11 @@ IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, Reso
 	shared_ptr<IProperty> toSubstitute=ip->clone();
 	if(hasValidPdf(ip))
 	{
+		// locks cloned object to prevent making changes (kind of workaround)
+		// we need indiref here because of mapping to new referencies and object
+		// with valid pdf and indiref calls dispatchChange when something
+		// changes
+		toSubstitute->lockChange();
 		toSubstitute->setPdf(ip->getPdf());
 		toSubstitute->setIndiRef(ip->getIndiRef());
 	}
@@ -2016,7 +2024,11 @@ using namespace utils;
 		pageDict->delProperty("Parent");
 
 		// clone needs to set pdf and indirect, because these values are not
-		// cloned
+		// cloned and they are needed for indirect properties dereferencing
+		// (pdf) and for internal referencies (some of pageDict members may
+		// refer to page). This implies that pageDict has to be locked for
+		// dispatchChange.
+		pageDict->lockChange();
 		pageDict->setPdf(pageDictPdf);
 		pageDict->setIndiRef(pageDictIndiRef);
 		setInheritablePageAttr(pageDict);
