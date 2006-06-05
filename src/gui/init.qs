@@ -632,17 +632,17 @@ function setPageTm() {
 	var te = new TextEdit;
         translation_txt =  "Translations are specified as [1 0 0 1 tx ty], where tx and ty are the distances "+
 			  "to translate the origin of the coordinate system in the horizontal and vertical "+
-			  "dimensions, respectively.\n\n"
+			  "dimensions, respectively."
 	scaling_txt =	  "Scaling is obtained by [sx 0 0 sy 0 0]. This scales the coordinates so that 1 "+
 			  "unit in the horizontal and vertical dimensions of the new coordinate system is "+
-			  "the same size as sx and sy units, respectively, in the previous coordinate system.\n\n"+
+			  "the same size as sx and sy units, respectively, in the previous coordinate system.";
 	rotation_txt =	  "Rotations are produced by [cos(a)  sin(a)  -sin(a)  cos(a) 0  0], which has the effect "+
-			  " of rotating the coordinate system axes by an angle ?? counterclockwise.\n\n";
+			  " of rotating the coordinate system axes by an angle ?? counterclockwise.";
 	skew_txt =	  "Skew is specified by [1 tan(a) tan(b) 1 0 0], which skews the x axis by an angle "+
 			  "and the y axis by an angle.";
-	te.text =	  translation_txt +
-			  scaling_txt +
-			  rotation_txt +
+	te.text =	  translation_txt + "\n\n" +
+			  scaling_txt + "\n\n" +
+			  rotation_txt + "\n\n" +
 			  skew_txt;
 	gb.add(te);
 	dg.newColumn();
