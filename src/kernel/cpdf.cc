@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.58  2006/06/05 15:19:36  hockm0bm
+ * CPdf::registerIndirectProperty
+ *         - sets this pdf before _makeXpdfObject and restores original after
+ *           (so xref in created object is set correctly)
+ *
  * Revision 1.57  2006/06/05 09:12:28  hockm0bm
  * locChange is used on cloned values which require indiref
  *
@@ -1065,9 +1070,14 @@ using namespace utils;
 	// gets xpdf Object from given ip (which contain definitive value to
 	// be stored), and registers change to XRefWriter (changeObject never 
 	// throws in this context because this is first change of object - 
-	// so no type check fails)
+	// so no type check fails). We have to set this pdf temporarily, because
+	// _makeXpdfObject function sets xref to created Object from ip->getPdf().
+	// Finally restores original pdf value
+	CPdf * original=ip->getPdf();
+	ip->setPdf(this);
 	::Object * obj=ip->_makeXpdfObject();
-	kernelPrintDbg(DBG_DBG, "New reference reseved "<<ref);
+	ip->setPdf(original);
+	kernelPrintDbg(DBG_DBG, "Initializating object with type="<<obj->getType()<<" to reserved reference "<<ref);
 	xref->changeObject(ref.num, ref.gen, obj);
 
 	// xpdf object has to be deallocated
