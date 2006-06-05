@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/06/05 22:41:34  hockm0bm
+ * * example implementation of IProgressBar
+ * * DelinearizatorTC uses
+ * * ProgressBar and ProgressObserver test
+ *
  * Revision 1.23  2006/06/05 08:57:33  hockm0bm
  * refactoring CObjectSimple
  *         - getPropertyValue -> getValue
@@ -98,48 +103,43 @@ using namespace utils;
 using namespace observer;
 using namespace boost;
 
-class ProgressBar:public PdfWriterObserver
+class ProgressBar:public IProgressBar
 {
-	mutable float per;
-	int perStep;
-	mutable std::string task;
+	int maxStep;
+	ostream & out;
+	int displayStep;
+	float lastPerc;
 public:
-	ProgressBar(int step=20):per(0), perStep(step), task(""){}
-
-	~ProgressBar()throw()
+	ProgressBar(ostream & str, int step=10):out(str), displayStep(step)
 	{
 	}
+	
+	virtual ~ProgressBar(){}
 
-	void notify(shared_ptr<OperationStep> newValue, shared_ptr<const IChangeContext<OperationStep> > context)const throw()
+	virtual void start()
 	{
-	using namespace boost;
+		out << "Starting progress" << endl;
+		lastPerc=0;
+	}
 
-		size_t curr=newValue->currStep;
-		if(context->getType()!=IChangeContext<OperationStep>::ScopedChangeContextType)
-		{
-			printf("Unsupported context.\n");
-			return;
-		}
+	virtual void finish()
+	{
+		out << "Progress ended" << endl;
+	}
 
-		shared_ptr<const PdfWriterObserverContext> writerContext=dynamic_pointer_cast<const PdfWriterObserverContext>(context);
-		size_t total=writerContext->getScope()->total;
-		float currPer=100*((float)curr/(float)total);
-		if(task!=writerContext->getScope()->task.c_str())
+	virtual void update(int step)
+	{
+		float perc=(float)(100*step)/(float)maxStep;
+		if(perc>=lastPerc+displayStep)
 		{
-			// task has changed, so resets
-			task=writerContext->getScope()->task.c_str();
-			per=0;
-		}
-		if( currPer >= per + perStep)	
-		{
-			per=currPer;
-			printf("Processed %.2f task=%s\n", currPer, task.c_str());
+			out << perc << "% done" <<endl;
+			lastPerc=perc;
 		}
 	}
 
-	observer::IObserver<IProperty>::priority_t getPriority()const throw()
+	virtual void setMaxStep(int step)
 	{
-		return 0;
+		maxStep=step;
 	}
 };
 
@@ -875,7 +875,8 @@ public:
 		// creates delinearizator and delinearize file to the file
 		// fileName-delinearized.pdf
 		IPdfWriter * writer=new OldStylePdfWriter();
-		writer->registerObserver(shared_ptr<PdfWriterObserver>(new ProgressBar()));
+		ProgressBar * progressBar=new ProgressBar(cout);
+		writer->registerObserver(shared_ptr<PdfWriterObserver>(new ProgressObserver(progressBar)));
 		Delinearizator *delinearizator=Delinearizator::getInstance(fileName.c_str(), writer);
 		if(!delinearizator)
 		{
