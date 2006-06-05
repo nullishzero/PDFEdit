@@ -94,22 +94,22 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
  switch (typ) {
   case pBool: {
    bool value;
-   dynamic_cast<CBool*>(obj.get())->getPropertyValue(value);
+   dynamic_cast<CBool*>(obj.get())->getValue(value);
    return value?"true":"false";
   }
   case pInt: {
    int value;
-   dynamic_cast<CInt*>(obj.get())->getPropertyValue(value);
+   dynamic_cast<CInt*>(obj.get())->getValue(value);
    return QString::number(value);
   }
   case pReal: {
    double value;
-   dynamic_cast<CReal*>(obj.get())->getPropertyValue(value);
+   dynamic_cast<CReal*>(obj.get())->getValue(value);
    return QString::number(value);
   }
   case pName: {
    std::string value;
-   dynamic_cast<CName*>(obj.get())->getPropertyValue(value);
+   dynamic_cast<CName*>(obj.get())->getValue(value);
    QString ret=value;
    if (ret.length()>22) {
     ret.truncate(20);
@@ -119,7 +119,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   }
   case pString: {
    std::string value;
-   dynamic_cast<CString*>(obj.get())->getPropertyValue(value);
+   dynamic_cast<CString*>(obj.get())->getValue(value);
    QString ret=value;
    if (ret.length()>22) {
     ret.truncate(20);
@@ -156,13 +156,14 @@ QString getTypeId(boost::shared_ptr<IProperty> obj) {
  return getTypeId(obj.get());
 }
 
-/** Get value (reference target) of CRef
+/**
+ Get value (reference target) of CRef
  @param ref CRef reference object
 */
 IndiRef getRef(IProperty *ref) {
  assert(ref->getType()==pRef);
  IndiRef iref;
- ((CRef*)ref)->getPropertyValue(iref);
+ ((CRef*)ref)->getValue(iref);
  return iref;
 }
 
@@ -220,7 +221,7 @@ boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
  if (!pdf) return boost::shared_ptr<IProperty>(); //Property does not belong to document -> cannot dereference
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
- cref->getPropertyValue(ref);
+ cref->getValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  return rp;
 }

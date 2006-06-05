@@ -65,11 +65,11 @@ StringProperty::~StringProperty() {
 /** write internal value to given PDF object
  @param pdfObject Object to write to
  */
-void StringProperty::writeValue(IProperty *pdfObject) {
+void StringProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CString* obj=(CString*)pdfObject;
  string val=ed->text();
- obj->writeValue(val);
+ obj->setValue(val);
  changed=false;
 }
 
@@ -79,7 +79,7 @@ void StringProperty::writeValue(IProperty *pdfObject) {
 void StringProperty::readValue(IProperty *pdfObject) {
  CString* obj=(CString*)pdfObject;
  string val;
- obj->getPropertyValue(val);
+ obj->getValue(val);
  ed->setText(val);
  changed=false;
 }

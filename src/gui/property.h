@@ -50,7 +50,7 @@ public:
   write internal value to given PDF object
   @param pdfObject Objet to write to
  */
- virtual void writeValue(IProperty *pdfObject) = 0;
+ virtual void setValue(IProperty *pdfObject) = 0;
  /**
   read internal value from given PDF object
   @param pdfObject Objet to read from
@@ -75,7 +75,7 @@ protected:
  QString name;
  /** flags of the property (from PDF object) */
  PropertyFlags flags;
- /** was the property edited since last readValue or writeValue? */
+ /** was the property edited since last readValue or setValue? */
  bool changed;
  /** Label of property */
  QWidget* propertyLabel;

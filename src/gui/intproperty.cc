@@ -26,12 +26,12 @@ IntProperty::IntProperty (const QString &_name, QWidget *parent/*=0*/, PropertyF
 IntProperty::~IntProperty() {
 }
 
-/** \copydoc StringProperty::writeValue */
-void IntProperty::writeValue(IProperty *pdfObject) {
+/** \copydoc StringProperty::setValue */
+void IntProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CInt* obj=(CInt*)pdfObject;
  int val=ed->text().toInt();
- obj->writeValue(val);
+ obj->setValue(val);
  changed=false;
 }
 
@@ -39,7 +39,7 @@ void IntProperty::writeValue(IProperty *pdfObject) {
 void IntProperty::readValue(IProperty *pdfObject) {
  CInt* obj=(CInt*)pdfObject;
  int val;
- obj->getPropertyValue(val);
+ obj->getValue(val);
  ed->setText(QString::number(val));
  changed=false;
 }

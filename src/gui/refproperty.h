@@ -27,7 +27,7 @@ public:
  virtual QSize sizeHint() const;
  void resizeEvent(QResizeEvent *e);
  virtual ~RefProperty();
- virtual void writeValue(IProperty *pdfObject);
+ virtual void setValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
  virtual void setDisabled(bool disabled);
  virtual void applyReadOnly(bool _readonly);

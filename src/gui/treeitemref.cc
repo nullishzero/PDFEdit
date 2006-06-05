@@ -151,7 +151,7 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((un
                    //Should happen only while testing
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
- cref->getPropertyValue(ref);
+ cref->getValue(ref);
  guiPrintDbg(debug::DBG_DBG," LOADING referenced property: " << ref.num << "," << ref.gen);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  return TreeItem::create(data,this, rp,s.sprintf("<%d,%d>",ref.num,ref.gen),after,"Target");
@@ -163,7 +163,7 @@ bool TreeItemRef::validChild(const QString &name,QListViewItem *oldChild) {
  if (!pdf) return false; //No document opened -> cannot parse references
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
- cref->getPropertyValue(ref);
+ cref->getValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  TreeItem* it=dynamic_cast<TreeItem*>(oldChild);
  if (!it) return false;//Should not happen
@@ -176,7 +176,7 @@ bool TreeItemRef::deepReload(const QString &childName,QListViewItem *oldItem) {
  if (!pdf) return false; //No document opened -> cannot parse references
  CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
- cref->getPropertyValue(ref);
+ cref->getValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  TreeItem* it=dynamic_cast<TreeItem*>(oldItem);
  if (!it) return false;//Should not happen

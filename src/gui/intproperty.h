@@ -19,7 +19,7 @@ Q_OBJECT
 public:
  IntProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~IntProperty();
- virtual void writeValue(IProperty *pdfObject);
+ virtual void setValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
 };
 

@@ -28,12 +28,12 @@ RealProperty::RealProperty (const QString &_name, QWidget *parent/*=0*/, Propert
 RealProperty::~RealProperty() {
 }
 
-/** \copydoc StringProperty::writeValue */
-void RealProperty::writeValue(IProperty *pdfObject) {
+/** \copydoc StringProperty::setValue */
+void RealProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CReal* obj=(CReal*)pdfObject;
  double val=ed->text().toDouble();
- obj->writeValue(val);
+ obj->setValue(val);
  changed=false;
 }
 
@@ -41,7 +41,7 @@ void RealProperty::writeValue(IProperty *pdfObject) {
 void RealProperty::readValue(IProperty *pdfObject) {
  CReal* obj=(CReal*)pdfObject;
  double val;
- obj->getPropertyValue(val);
+ obj->getValue(val);
  ed->setText(QString::number(val));
  changed=false;
 }

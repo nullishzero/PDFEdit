@@ -114,8 +114,8 @@ IndiRef RefProperty::getValue() {
  return val;
 }
 
-/** \copydoc StringProperty::writeValue */
-void RefProperty::writeValue(IProperty *pdfObject) {
+/** \copydoc StringProperty::setValue */
+void RefProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CRef *obj=dynamic_cast<CRef*>(pdfObject);
  IndiRef val=getValue();
@@ -133,7 +133,7 @@ void RefProperty::writeValue(IProperty *pdfObject) {
    return; //not valid
   }
  }
- obj->writeValue(val);
+ obj->setValue(val);
  changed=false;
 }
 
@@ -146,7 +146,7 @@ void RefProperty::readValue(IProperty *pdfObject) {
   //Get PDF from property if it have one. If not, keep the old PDF
   pdf=objPdf;
  }
- obj->getPropertyValue(val);
+ obj->getValue(val);
  QString objString;
  objString.sprintf("%d,%d",val.num,val.gen);
  ed->setText(objString);

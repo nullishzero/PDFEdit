@@ -75,37 +75,37 @@ QVariant QSIProperty::value() {
  CString* str=dynamic_cast<CString*>(obj.get());
  if (str) {
   std::string value;
-  str->getPropertyValue(value);
+  str->getValue(value);
   return QString(value);
  }
  CName* name=dynamic_cast<CName*>(obj.get());
  if (name) {
   std::string value;
-  name->getPropertyValue(value);
+  name->getValue(value);
   return QString(value);
  }
  CInt* tInt=dynamic_cast<CInt*>(obj.get());
  if (tInt) {
   int value;
-  tInt->getPropertyValue(value);
+  tInt->getValue(value);
   return value;
  }
  CBool* ibool=dynamic_cast<CBool*>(obj.get());
  if (ibool) {
   bool value;
-  ibool->getPropertyValue(value);
+  ibool->getValue(value);
   return value;
  }
  CReal* real=dynamic_cast<CReal*>(obj.get());
  if (real) {
   double value;
-  real->getPropertyValue(value);
+  real->getValue(value);
   return value;
  }
  CRef* ref=dynamic_cast<CRef*>(obj.get());
  if (ref) {
   IndiRef value;
-  ref->getPropertyValue(value);
+  ref->getValue(value);
   QValueList<QVariant> val;
   val+=value.num;
   val+=value.gen;
@@ -171,13 +171,13 @@ void QSIProperty::set(const QString &value) {
   case pName: {
    CName *ip=dynamic_cast<CName*>(obj.get());
    std::string str=value;
-   ip->writeValue(str);
+   ip->setValue(str);
    return;
   }
   case pString: {
    CString *ip=dynamic_cast<CString*>(obj.get());
    std::string str=value;
-   ip->writeValue(str);
+   ip->setValue(str);
    return;
   }
   default:;//Do nothing
@@ -193,7 +193,7 @@ void QSIProperty::set(int value) {
   }
   case pInt: {
    CInt *ip=dynamic_cast<CInt*>(obj.get());
-   ip->writeValue(value);
+   ip->setValue(value);
    return;
   }
   case pReal: { //Convert to double, call set()
@@ -222,7 +222,7 @@ void QSIProperty::set(double value) {
   }
   case pReal: {
    CReal *ip=dynamic_cast<CReal*>(obj.get());
-   ip->writeValue(value);
+   ip->setValue(value);
    return;
   }
   case pName: 
@@ -239,7 +239,7 @@ void QSIProperty::set(bool value) {
  switch(obj->getType()) {
   case pBool: {
    CBool *ip=dynamic_cast<CBool*>(obj.get());
-   ip->writeValue(value);
+   ip->setValue(value);
    return;
   }
   case pInt: { //Convert to int, call set()

@@ -20,7 +20,7 @@ Q_OBJECT
 public:
  RealProperty (const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~RealProperty();
- virtual void writeValue(IProperty *pdfObject);
+ virtual void setValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
 };
 

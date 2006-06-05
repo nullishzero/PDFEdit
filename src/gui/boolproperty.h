@@ -25,7 +25,7 @@ public:
  virtual ~BoolProperty();
  virtual void setDisabled(bool disabled);
  virtual void applyReadOnly(bool _readonly);
- virtual void writeValue(IProperty *pdfObject);
+ virtual void setValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
  virtual bool isValid();
 protected slots:

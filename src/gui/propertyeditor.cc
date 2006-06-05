@@ -137,7 +137,7 @@ void PropertyEditor::update(Property *p) {
  guiPrintDbg(debug::DBG_DBG,"Updating property" << pname);
  assert(props->contains(pname));
  boost::shared_ptr<IProperty> obj=(*props)[pname];
- p->writeValue(obj.get());
+ p->setValue(obj.get());
  emit propertyChanged(obj.get());
 }
 

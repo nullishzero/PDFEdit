@@ -44,12 +44,12 @@ BoolProperty::~BoolProperty() {
  delete ed;
 }
 
-/** \copydoc StringProperty::writeValue */
-void BoolProperty::writeValue(IProperty *pdfObject) {
+/** \copydoc StringProperty::setValue */
+void BoolProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CBool* obj=(CBool*)pdfObject;
  bool val=ed->isChecked();
- obj->writeValue(val);
+ obj->setValue(val);
  changed=false;
 }
 
@@ -57,7 +57,7 @@ void BoolProperty::writeValue(IProperty *pdfObject) {
 void BoolProperty::readValue(IProperty *pdfObject) {
  CBool* obj=(CBool*)pdfObject;
  bool val;
- obj->getPropertyValue(val);
+ obj->getValue(val);
  ed->setChecked(val);
  changed=false;
 }

@@ -259,7 +259,7 @@ bool AddItemDialog::commit() {
    assert(0);//Should not get here
  }
  //Write value of new property
- if (props[selectedItem]) props[selectedItem]->writeValue(property.get());
+ if (props[selectedItem]) props[selectedItem]->setValue(property.get());
  //TODO: validate refproperty, if selected
  CDict* dict=dynamic_cast<CDict*>(item.get());
  if (dict) { //Add to dict

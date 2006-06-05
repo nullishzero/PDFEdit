@@ -22,7 +22,7 @@ public:
  virtual void resizeEvent (QResizeEvent *e);
  StringProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~StringProperty();
- virtual void writeValue(IProperty *pdfObject);
+ virtual void setValue(IProperty *pdfObject);
  virtual void readValue(IProperty *pdfObject);
  virtual void setDisabled(bool disabled);
  virtual void applyReadOnly(bool _readonly);
