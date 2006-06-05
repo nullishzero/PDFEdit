@@ -18,7 +18,7 @@ sub convert_definition {
  $def=~s/QString\s+/string /g;		# QString -> string
  $def=~s/QStringList\s+/string[] /g;	# QStringList -> string[]
  $def=~s/Q(ByteArray|Color|Rect|Variant)\s+/\1 /g;# QT types
- $def=~s/QS(Pdf|PdfOperator|TreeItem|PdfOperatorIterator|PdfOperatorStack|IPropertyArray|Menu|Page|ContentStream|IProperty|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
+ $def=~s/QS(Pdf|PdfOperator|TreeItem|PdfOperatorIterator|Annotation|PdfOperatorStack|IPropertyArray|Menu|Page|ContentStream|IProperty|Dict|CObject)\s*\*\s*/\1 /g;	# QSCObjects ....
  #trim unnecessary blank characters
  $def=~s/^\s+//;
  $def=~s/;\s*[\r\n]+$//;

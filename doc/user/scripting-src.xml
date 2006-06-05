@@ -266,17 +266,18 @@
  </chapter>
  <chapter>
   <title>Object types (common and PDF objects)</title>
+<!--TYPE: qsannotation.h -->
 <!--TYPE: qsarray.h -->
 <!--TYPE: qscobject.h -->
 <!--TYPE: qscontentstream.h -->
 <!--TYPE: qsdict.h -->
 <!--TYPE: qsiproperty.h -->
 <!--TYPE: qsipropertyarray.h -->
+<!--TYPE: qspage.h -->
 <!--TYPE: qspdf.h -->
 <!--TYPE: qspdfoperator.h -->
 <!--TYPE: qspdfoperatoriterator.h -->
 <!--TYPE: qspdfoperatorstack.h -->
-<!--TYPE: qspage.h -->
 <!--TYPE: qsstream.h -->
  </chapter>
  <chapter>
@@ -286,7 +287,8 @@
    but some of them may allow you to manipulate them indirectly.
    Main focus of these types is to interact with user.
   </para>
-<!--TYPE: qstreeitem.h -->
 <!--TYPE: qsmenu.h -->
+<!--TYPE: qstreeitem.h -->
+<!--TYPE: qstreeitemcontentstream.h -->
  </chapter>
 </book>
