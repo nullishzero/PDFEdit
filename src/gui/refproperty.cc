@@ -75,7 +75,7 @@ QSize RefProperty::sizeHint() const {
 /**
  Set PDF explicitly for this property for purpose of validating references<br>
  This is usable if the property is new and does not have the pdf document from the edited CRef
- @param pdf CPdf to set
+ @param _pdf CPdf to set
 */
 void RefProperty::setPdf(CPdf *_pdf) {
  pdf=_pdf;

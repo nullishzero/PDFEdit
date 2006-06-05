@@ -3,15 +3,18 @@
 /** Function to enable/disable certain items when currently selected object changes */
 function checkMenus() {
  try {
-  if (treeitem) {
    //Check current tree item
-   theType=treeitem.itemtype();
-  } else {
-   theType="";
-  }
+  theType=treeitem.itemtype();
  } catch (e) {
   //This is mainly because treeitem is not defined on start
   theType="";
+ }
+ try {
+  //Check parent tree item
+  parentType=treeitem.parent().itemtype();
+ } catch (e) {
+  //This is mainly because treeitem is not defined on start
+  parentType="";
  }
  try {
   //Check for document being opened
@@ -20,15 +23,24 @@ function checkMenus() {
   have_document=false;
  }
  try {
+  //Check for page being opened
+  if (page()) have_page=true;  else have_page=false;
+ } catch (e) {
+  have_page=false;
+ }
+ try {
   //Check tree root
   rootType=treeRoot().itemtype();
  } catch (e) {
   rootType="";
  }
- enableItem("/need_operator_or_page",	(theType=="PDFOperator" || theType=="Page"));
- enableItem("/need_dict_or_array",	(theType=="Dict" || theType=="Array"));
+ enableItem("/need_operator_page",	(theType=="PDFOperator" || have_page));
+// enableItem("/need_dict_or_array",	(theType=="Dict" || theType=="Array"));
+ enableItem("/need_dict_or_array_p",	(theType=="Dict" || theType=="Array" || parentType=="Dict" || parentType=="Array"));
  enableItem("/need_contentstream_root",	(rootType=="ContentStream"));
- enableItem("/need_document",	(have_document));
+ enableItem("/need_removable",		(theType!="Pdf" && theType!=""));
+ enableItem("/need_page",		(have_page));
+ enableItem("/need_document",		(have_document));
 }
 
 /** Callback called after document is loaded */

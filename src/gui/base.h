@@ -71,7 +71,7 @@ public slots: //This will be all exported to scripting
    and will start togling itself automatically on each succesive click
   </note>
  */
- void checkItem(const QString &name,bool enableItem);
+ void checkItem(const QString &name,bool check);
  /*-
   Closes file opened in this editor window.
   if askSave is true, user is asked to save the file if it is modified.
@@ -125,7 +125,7 @@ public slots: //This will be all exported to scripting
   If you prefix name with slash ("/"), you will enable or disable "class" of items
   - every item that belong to the specified class
  */
- void enableItem(const QString &name,bool enableItem);
+ void enableItem(const QString &name,bool enable);
  /*-
   Return last error message (localized) from some operations
   (openFile, save, saveRevision, saveCopy)

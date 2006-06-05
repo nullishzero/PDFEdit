@@ -75,8 +75,8 @@ public:
  void loadItem(const QString &name,QMenuData *parent=NULL,QStringList prev=QStringList()) throw (InvalidMenuException);
  static bool chopCommand(QString &line, const QString &command);
  static void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
- void enableByName(const QString &name,bool enableItem);
- void checkByName(const QString &name,bool checkItem);
+ void enableByName(const QString &name,bool enable);
+ void checkByName(const QString &name,bool check);
 private:
  void addToMap(const QString &name,QWidget* item);
  void addToMap(const QString &name,QMenuData* parent,int itemId);

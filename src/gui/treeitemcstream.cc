@@ -41,6 +41,15 @@ TreeItemAbstract* TreeItemCStream::createChild(const QString &name,__attribute__
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemCStream::validChild(const QString &name,QListViewItem *oldChild) {
+ TreeItem* old=dynamic_cast<TreeItem*>(oldChild);
+ if (!old) return false;
+ CStream *dict=dynamic_cast<CStream*>(obj.get());
+ boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ return (old->getObject()==property);
+}
+
+//See TreeItemAbstract for description of this virtual method
 ChildType TreeItemCStream::getChildType(const QString &name) {
  CStream *dict=dynamic_cast<CStream*>(obj.get());
  boost::shared_ptr<IProperty> property=dict->getProperty(name);
@@ -100,5 +109,6 @@ void TreeItemCStream::remove(const QString &name) {
 TreeItemCStream::~TreeItemCStream() {
  uninitObserver();
 }
+
 
 } // namespace gui

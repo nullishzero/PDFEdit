@@ -21,6 +21,7 @@ public:
  virtual ~TreeItemSimple();
  virtual bool setObject(boost::shared_ptr<IProperty> newItem);
  //From TreeItemAbstract interface
+ virtual bool validChild(const QString &name,QListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();

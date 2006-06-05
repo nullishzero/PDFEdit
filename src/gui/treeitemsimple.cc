@@ -66,6 +66,12 @@ bool TreeItemSimple::haveChild() {
  return false;
 }
 
+//See TreeItemAbstract for description of this virtual method
+bool TreeItemSimple::validChild(__attribute__((unused)) const QString &name,__attribute__((unused)) QListViewItem *oldChild) {
+ //no childs
+ return false;
+}
+
 /** \copydoc TreeItem::setObject */
 bool TreeItemSimple::setObject(boost::shared_ptr<IProperty> newItem) {
  //Do not check type. Simple type can be replaced safely with different simple type

@@ -8,6 +8,7 @@ class QString;
 namespace pdfobjects {
  class CPage;
  class CContentStream;
+ class CAnnotation;
 }
 
 namespace gui {
@@ -50,6 +51,8 @@ private:
  boost::shared_ptr<CPage> obj;
  /** Vector with content streams */
  std::vector<boost::shared_ptr<CContentStream> > streams;
+ /** Vector with anotations */
+ std::vector<boost::shared_ptr<CAnnotation> > anots;
 };
 
 } // namespace gui

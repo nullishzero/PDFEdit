@@ -325,4 +325,56 @@ boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const 
  return obj->getProperty(index);
 }
 
+/** 
+ Return type identifier of annotation type
+ @param at Annotation type
+*/
+QString annotType(CAnnotation::AnnotType at) {
+ switch(at) {
+  case CAnnotation::Text:            return QT_TRANSLATE_NOOP("annotation_type","Text"           );
+  case CAnnotation::Link:            return QT_TRANSLATE_NOOP("annotation_type","Link"           );
+  case CAnnotation::FreeText:        return QT_TRANSLATE_NOOP("annotation_type","FreeText"       );
+  case CAnnotation::Line:            return QT_TRANSLATE_NOOP("annotation_type","Line"           );
+  case CAnnotation::Square:          return QT_TRANSLATE_NOOP("annotation_type","Square"         );
+  case CAnnotation::Circle:          return QT_TRANSLATE_NOOP("annotation_type","Circle"         );
+  case CAnnotation::Polygon:         return QT_TRANSLATE_NOOP("annotation_type","Polygon"        );
+  case CAnnotation::PolyLine:        return QT_TRANSLATE_NOOP("annotation_type","PolyLine"       );
+  case CAnnotation::Highlight:       return QT_TRANSLATE_NOOP("annotation_type","Highlight"      );
+  case CAnnotation::Underline:       return QT_TRANSLATE_NOOP("annotation_type","Underline"      );
+  case CAnnotation::Squiggly:        return QT_TRANSLATE_NOOP("annotation_type","Squiggly"       );
+  case CAnnotation::StrikeOut:       return QT_TRANSLATE_NOOP("annotation_type","StrikeOut"      );
+  case CAnnotation::Stamp:           return QT_TRANSLATE_NOOP("annotation_type","Stamp"          );
+  case CAnnotation::Caret:           return QT_TRANSLATE_NOOP("annotation_type","Caret"          );
+  case CAnnotation::Ink:             return QT_TRANSLATE_NOOP("annotation_type","Ink"            );
+  case CAnnotation::Popup:           return QT_TRANSLATE_NOOP("annotation_type","Popup"          );
+  case CAnnotation::Fileattachement: return QT_TRANSLATE_NOOP("annotation_type","Fileattachement");
+  case CAnnotation::Sound:           return QT_TRANSLATE_NOOP("annotation_type","Sound"          );
+  case CAnnotation::Movie:           return QT_TRANSLATE_NOOP("annotation_type","Movie"          );
+  case CAnnotation::Widget:          return QT_TRANSLATE_NOOP("annotation_type","Widget"         );
+  case CAnnotation::Screen:          return QT_TRANSLATE_NOOP("annotation_type","Screen"         );
+  case CAnnotation::Printermark:     return QT_TRANSLATE_NOOP("annotation_type","Printermark"    );
+  case CAnnotation::Trapnet:         return QT_TRANSLATE_NOOP("annotation_type","Trapnet"        );
+  case CAnnotation::Watermark:       return QT_TRANSLATE_NOOP("annotation_type","Watermark"      );
+  case CAnnotation::_3D:             return QT_TRANSLATE_NOOP("annotation_type","3D"             );
+  case CAnnotation::Unknown:         return QT_TRANSLATE_NOOP("annotation_type","Unknown"        );
+ }
+ return "?";
+}
+
+/** 
+ Return type identifier of annotation
+ @param anot Annotation
+*/
+QString annotType(boost::shared_ptr<CAnnotation> anot) {
+ return annotType(anot->getType());
+}
+
+/** 
+ Return human readable, localized type identifier of annotation
+ @param anot Annotation
+*/
+QString annotTypeName(boost::shared_ptr<CAnnotation> anot) {
+ return QObject::tr(annotType(anot->getType()),"annotation_type");
+}
+
 } // namespace util

@@ -24,6 +24,7 @@ public:
  TreeItemOperatorContainer(TreeData *_data,QListViewItem *parent,const OperatorVector &_op,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemOperatorContainer();
  //From TreeItemAbstract interface
+ virtual bool validChild(const QString &name,QListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();

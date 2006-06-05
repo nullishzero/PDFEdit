@@ -72,6 +72,14 @@ TreeItemAbstract* TreeItemOperatorContainer::createChild(const QString &name,__a
 }
 
 //See TreeItemAbstract for description of this virtual method
+bool TreeItemOperatorContainer::validChild(const QString &name,QListViewItem *oldChild) {
+ TreeItemPdfOperator* oper=dynamic_cast<TreeItemPdfOperator*>(oldChild);
+ if (!oper) return false;
+ size_t position=name.toUInt();
+ return (oper->getObject()==op[position]);
+}
+
+//See TreeItemAbstract for description of this virtual method
 ChildType TreeItemOperatorContainer::getChildType(__attribute__((unused)) const QString &name) {
  return 1;//Just one type : PDF Operator
 }
@@ -102,5 +110,6 @@ void TreeItemOperatorContainer::reloadSelf() {
 bool TreeItemOperatorContainer::haveChild() {
  return op.size()>0;
 }
+
 
 } // namespace gui

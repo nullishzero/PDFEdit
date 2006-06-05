@@ -538,14 +538,14 @@ void Menu::addToMap(const QString &name,QMenuData* parent,int itemId) {
 /**
  Enable or disable item in toolbar and/or menu, given its name
  @param name Name of item
- @param enableItem True to enable, false to disable 
+ @param enable True to enable, false to disable 
 */
-void Menu::enableByName(const QString &name,bool enableItem) {
+void Menu::enableByName(const QString &name,bool enable) {
  //TODO: lookup is slow & linear, improve ....
  for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
   if (it.key().first==name) {
    QWidget* el=it.data();
-   el->setEnabled(enableItem);
+   el->setEnabled(enable);
 //   guiPrintDbg(debug::DBG_DBG,"en/dis abling toolbar " << name << " " << enableItem);
   }
  }
@@ -554,7 +554,7 @@ void Menu::enableByName(const QString &name,bool enableItem) {
    MenuItemsValue el=it.data();
    QMenuData* md=el.first;
    int id=el.second;
-   md->setItemEnabled(id,enableItem);
+   md->setItemEnabled(id,enable);
 //   guiPrintDbg(debug::DBG_DBG,"en/dis abling menu " << name << " " << enableItem);
   }
  }
@@ -565,15 +565,15 @@ void Menu::enableByName(const QString &name,bool enableItem) {
  Note: Toolbuttons will automatically convert to Togglable toolbuttons this way
        and will start togling itself automatically on each succesive click
  @param name Name of item
- @param checkItem True to check, false to uncheck
+ @param check True to check, false to uncheck
 */
-void Menu::checkByName(const QString &name,bool checkItem) {
+void Menu::checkByName(const QString &name,bool check) {
  for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
   if (it.key().first==name) {
    ToolButton* el=dynamic_cast<ToolButton*>(it.data());
    if (el) {
     el->setToggleButton(true);
-    el->setOn(checkItem);
+    el->setOn(check);
    }
   }
  }
@@ -582,7 +582,7 @@ void Menu::checkByName(const QString &name,bool checkItem) {
    MenuItemsValue el=it.data();
    QMenuData* md=el.first;
    int id=el.second;
-   md->setItemChecked(id,checkItem);
+   md->setItemChecked(id,check);
   }
  }
 }

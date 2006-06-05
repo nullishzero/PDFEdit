@@ -141,7 +141,8 @@ void PropertyEditor::update(Property *p) {
  emit propertyChanged(obj.get());
 }
 
-/** add single property
+/**
+ Add single property
  @param prop property to be added to this widget
  @param value Value of property to be added
  */
@@ -168,6 +169,10 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  fixPropertyHeight(prop);
 }
 
+/**
+ Fix height of row containing specified property, after it was shown or hidden
+ @param pr Affected property
+*/
 void PropertyEditor::fixPropertyHeight(Property *pr) {
  int row=rowNum[pr];
  QLabel *label=propLabel[pr];

@@ -3,6 +3,7 @@
 
 #include <iproperty.h>
 #include <cobject.h>
+#include <cannotation.h>
 class QString;
 namespace pdfobjects {
 class CPdf;
@@ -30,6 +31,9 @@ boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const 
 boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CDict> obj,const QString &name);
 boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CArray> obj,const QString &name);
 QString propertyPreview(boost::shared_ptr<IProperty> obj);
+QString annotType(CAnnotation::AnnotType at);
+QString annotType(boost::shared_ptr<CAnnotation> anot);
+QString annotTypeName(boost::shared_ptr<CAnnotation> anot);
 
 } // namespace util
 

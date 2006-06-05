@@ -551,13 +551,13 @@ void Base::closeWindow() {
 }
 
 /** \copydoc Menu::enableByName */
-void Base::enableItem(const QString &name,bool enableItem) {
- w->menuSystem->enableByName(name,enableItem);
+void Base::enableItem(const QString &name,bool enable) {
+ w->menuSystem->enableByName(name,enable);
 }
 
 /** \copydoc Menu::checkByName */
-void Base::checkItem(const QString &name,bool enableItem) {
- w->menuSystem->checkByName(name,enableItem);
+void Base::checkItem(const QString &name,bool check) {
+ w->menuSystem->checkByName(name,check);
 }
 
 /**

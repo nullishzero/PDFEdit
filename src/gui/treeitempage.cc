@@ -4,16 +4,18 @@
 */
 
 #include "treeitempage.h"
+#include "qspage.h"
+#include "treedata.h"
+#include "treeitem.h"
+#include "treeitemannotation.h"
+#include "treeitemcontentstream.h"
+#include "treeitemdict.h"
+#include "treeitempageobserver.h"
+#include "util.h"
+#include <cannotation.h>
 #include <cobject.h>
 #include <cpage.h>
-#include "treeitem.h"
-#include "treeitemdict.h"
-#include "treeitemcontentstream.h"
-#include "treeitempageobserver.h"
-#include "treedata.h"
 #include <qobject.h>
-#include "qspage.h"
-#include "util.h"
 
 namespace gui {
 
@@ -106,13 +108,24 @@ TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QL
   return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"),after);
  }
  if (typ==1) {
-  size_t streamNumber=name.toUInt();
+  size_t streamNumber=name.mid(1).toUInt();
   if (streamNumber>=streams.size()) {
    //Invalid or old data -> try to re-get list of streams from CPage
    obj->getContentStreams(streams);
   }
   assert(streamNumber<streams.size());  //Still Invalid data ?
-  return new TreeItemContentStream(data,this,streams[streamNumber],QObject::tr("Stream")+" "+QString::number(streamNumber),after,QString("Stream")+QString::number(streamNumber));
+  QString num=QString::number(streamNumber);
+  return new TreeItemContentStream(data,this,streams[streamNumber],QObject::tr("Stream")+" "+num,after,QString("Stream")+num);
+ }
+ if (typ==2) {
+  size_t annotNumber=name.mid(1).toUInt();
+  if (annotNumber>=anots.size()) {
+   //Invalid or old data -> try to re-get list of s from CPage
+   obj->getAllAnnotations(anots);
+  }
+  assert(annotNumber<anots.size());  //Still Invalid data ?
+  QString num=QString::number(annotNumber);
+  return new TreeItemAnnotation(data,this,anots[annotNumber],obj,QObject::tr("Annotation")+" "+num,after,QString("Annotation")+num);
  }
  assert(0);
  return NULL;
@@ -126,6 +139,7 @@ bool TreeItemPage::deepReload(__attribute__((unused)) const QString &childName,Q
   guiPrintDbg(debug::DBG_DBG,"Replacing page dictionary: is_same = " << (obj->getDictionary().get()==itc->getObject().get()));
   return itc->setObject(obj->getDictionary());
  }
+ //TODO: support stream, annotation ?
  //Anything else=not supported
  return false;
 }
@@ -138,13 +152,19 @@ bool TreeItemPage::validChild(const QString &name,QListViewItem *oldChild) {
   return obj->getDictionary().get()==itp->getObject().get();
  }
  TreeItemContentStream *its=dynamic_cast<TreeItemContentStream*>(oldChild);
- if (its) { //Is a content stream
-  size_t streamNumber=name.toUInt();
+ if (its && name[0]=='s') { //Is a content stream
+  size_t streamNumber=name.mid(1).toUInt();
   assert(streamNumber<streams.size());  //These should be already weed out ... 
   return streams[streamNumber].get()==its->getObject().get();
  }
+ TreeItemAnnotation *ita=dynamic_cast<TreeItemAnnotation*>(oldChild);
+ if (ita && name[0]=='a') { //Is a content stream
+  size_t annotNumber=name.mid(1).toUInt();
+  assert(annotNumber<anots.size());  //These should be already weed out ... 
+  return anots[annotNumber].get()==ita->getObject().get();
+ }
  //Something else
- return true;
+ return false;
 }
 
 
@@ -153,7 +173,11 @@ ChildType TreeItemPage::getChildType(const QString &name) {
  if (name=="Dict") { //Return page dictionary
   return 0;
  } else { //It's a stream
-  return 1;
+  char c=name[0];
+  if (c=='s') return 1;//Stream
+  if (c=='a') return 2;//Annot
+  assert(0);
+  return -1;
  }
 }
 
@@ -164,7 +188,13 @@ QStringList TreeItemPage::getChildNames() {
  if (data->showStream()) {
   obj->getContentStreams(streams);
   for (size_t i=0;i<streams.size();i++) {
-   childs+=QString::number(i);
+   childs+=QString("s")+QString::number(i);
+  }
+ }
+ if (data->showAnnot()) {
+  obj->getAllAnnotations(anots);
+  for (size_t i=0;i<anots.size();i++) {
+   childs+=QString("a")+QString::number(i);
   }
  }
  return childs;
@@ -174,6 +204,7 @@ QStringList TreeItemPage::getChildNames() {
 bool TreeItemPage::haveChild() {
  if (data->showODict()) return true;
  if (data->showStream()) return true;
+ if (data->showAnnot()) return true;
  return false;
 }
 
@@ -181,6 +212,7 @@ bool TreeItemPage::haveChild() {
 void TreeItemPage::reloadSelf() {
  //Reload list of streams. Might be needed later
  obj->getContentStreams(streams);
+ obj->getAllAnnotations(anots);
 }
 
 //See TreeItemAbstract for description of this virtual method

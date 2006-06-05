@@ -99,6 +99,8 @@ HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treeitemcontentstream.h
 SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treeitemcontentstream.cc
 HEADERS += treeitempdfoperator.h  treeitemoperatorcontainer.h  treeitemoutline.h
 SOURCES += treeitempdfoperator.cc treeitemoperatorcontainer.cc treeitemoutline.cc
+HEADERS += treeitemannotation.h
+SOURCES += treeitemannotation.cc
 
 #Property editor
 HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h  property.h  propertymodecontroller.h
@@ -118,8 +120,8 @@ HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfop
 SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc
 HEADERS += qsipropertyarray.h  qspdfoperatorstack.h  qstreeitemcontentstream.h  qsgraphics.h
 SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc qsgraphics.cc
-HEADERS += qspdfoperatoriterator.h
-SOURCES += qspdfoperatoriterator.cc
+HEADERS += qspdfoperatoriterator.h  qsannotation.h
+SOURCES += qspdfoperatoriterator.cc qsannotation.cc
 
 #Exceptions
 HEADERS += invalidmenuexception.h  nullpointerexception.h

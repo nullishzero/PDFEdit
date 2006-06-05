@@ -167,27 +167,6 @@ void TreeItemAbstract::eraseItems() {
  types.clear();
 }
 
-/** 
- Validate child, given its name and reference to old child
- Usually it is valid, since item with same name refer to same subitem (key-based items),
- but for value-based items (array) same keys can correspond to different values after reloading.
- In such cases, false should be returned.
- Also, similar problems can happen when switching revisions (with almost all types)
- <br><br>
-
- Note: false negative it not a problem (only unnecessary reloading),
-       while false positive mean the tree is invalid/outdated
-
- @param name name of (old and new) treeitem
- @param oldChild reference to old child tree item
- @return True, if the old child is pointing to same item as item "name", false, if the child item "name" no longer point to same item as oldChild.
-*/
-bool TreeItemAbstract::validChild(__attribute__((unused)) const QString &name,__attribute__((unused)) QListViewItem *oldChild) {
- //TODO: make it abstract!
- //True by default
- return true;
-}
-
 /**
  Look for child with given name and return it.
  Return NULL if child not found

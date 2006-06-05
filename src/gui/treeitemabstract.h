@@ -42,11 +42,26 @@ public:
  void moveAllChildsFrom(TreeItemAbstract* src);
  QListViewItem* child(const QString &name);
  virtual QSCObject* getQSObject(Base *_base);
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
  virtual void setOpen(bool open);
  virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
- //Abstract functions
 
+ //Abstract functions
+ /** 
+  Validate child, given its name and reference to old child
+  Usually it is valid, since item with same name refer to same subitem (key-based items),
+  but for value-based items (array) same keys can correspond to different values after reloading.
+  In such cases, false should be returned.
+  Also, similar problems can happen when switching revisions (with almost all types)
+  <br><br>
+
+  Note: false negative it not a problem (only unnecessary reloading),
+        while false positive mean the tree is invalid/outdated
+
+  @param name name of (old and new) treeitem
+  @param oldChild reference to old child tree item
+  @return True, if the old child is pointing to same item as item "name", false, if the child item "name" no longer point to same item as oldChild.
+ */
+ virtual bool validChild(const QString &name,QListViewItem *oldChild)=0;
  /** 
   Create and return object for scripting representing this tree  item
   @return object for scripting
