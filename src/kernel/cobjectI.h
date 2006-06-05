@@ -866,11 +866,22 @@ CObjectStream<Checker>::CObjectStream (::Object& o) : parser (NULL)
 //
 //
 template<typename Checker>
-CObjectStream<Checker>::CObjectStream () : parser (NULL)
+CObjectStream<Checker>::CObjectStream (bool makeReqEntries) : parser (NULL)
 {
 	Checker check; check.objectCreated (this);
 	kernelPrintDbg (debug::DBG_DBG,"");
 
+	if (makeReqEntries)
+		createReqEntries ();
+}
+
+//
+//
+//
+template<typename Checker>
+void
+CObjectStream<Checker>::createReqEntries ()
+{
 	// Add one required entry in the stream dictionary (according to pdf specification)
 	boost::shared_ptr<CInt> len (new CInt (0));
 	assert (len);
@@ -1036,8 +1047,6 @@ template<typename Checker>
 CObjectStream<Checker>::_makeXpdfObject () const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
-	assert (hasValidPdf (this));
-	assert (hasValidRef (this));
 
 	//
 	// Set correct length. This can ONLY happen e.g. when length is an indirect
@@ -1045,10 +1054,6 @@ CObjectStream<Checker>::_makeXpdfObject () const
 	// 
 	if (getLength() != buffer.size())
 		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
-
-	// Get xref
-	XRef* xref = this->getPdf()->getCXref ();
-	assert (xref);
 
 	// Dictionary will be deallocated in ~BaseStream
 	::Object* obj = utils::xpdfStreamObjFromBuffer (buffer, dictionary._makeXpdfObject());

@@ -762,8 +762,11 @@ public:
 	 * Public constructor. This object will not be associated with a pdf.
 	 * It adds one required property to objects dictionary namely "Length". This
 	 * is according to the pdf specification.
+	 *
+	 * @param makeReqEntries If true required entries are added to stream
+	 * dictionary.
 	 */
-	CObjectStream ();
+	CObjectStream (bool makeReqEntries = true);
 
 	
 	//
@@ -780,8 +783,10 @@ protected:
 
 	/** Return new instance. */
 	virtual CObjectStream<Checker>* _newInstance () const
-		{ return new CObjectStream<Checker>; }
+		{ return new CObjectStream<Checker> (false); }
 
+	/** Create required entries. */
+	void createReqEntries ();
 
 	//
 	// Dictionary methods, delegated to CDict

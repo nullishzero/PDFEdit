@@ -680,6 +680,8 @@ public:
 		{
 			throw CObjInvalidObject ();
 		}
+		CPdf* pdf = dictionary->getPdf();
+		IndiRef ref = dictionary->getIndiRef();
 		
 		// Create stream with one default property Length
 		boost::shared_ptr<CStream> newstr (new CStream());
@@ -688,56 +690,59 @@ public:
 		// Get string representation of new content stream
 		//
 		typename Container::const_iterator it = cont.begin();
-		std::string tmp;
+		std::string str;
 		for (; it != cont.end(); ++it)
 		{
 			std::string tmpop;
 			(*it)->getStringRepresentation (tmpop);
-			tmp += tmpop;
+			str += tmpop;
 		}
-		kernelPrintDbg (debug::DBG_DBG, tmp);
+		kernelPrintDbg (debug::DBG_DBG, str);
 	
 		// Set the stream
-		newstr->setBuffer (tmp);
+		newstr->setBuffer (str);
 
 		//
 		// Change the "Contents" entry 
 		//
-		// Set ref and indiref
-		newstr->setPdf (dictionary->getPdf());
-		// New Value \todo add to pdf
-		newstr->setIndiRef (IndiRef(1000,100));
+		// Set ref and indiref reserve free indiref for the new object
+		IndiRef newref = pdf->addIndirectProperty (newstr);
+		newstr = IProperty::getSmartCObjectPtr<CStream> (pdf->getIndirectProperty (newref));
+		assert (newstr);
 
 		//
-		// Make valid array of stream references
+		// Make valid array of stream references, add new to the beginning
+		// otherwise we do not know gfx state 
 		// 
 		if (dictionary->containsProperty ("Contents"))
 		{
 			boost::shared_ptr<IProperty> contents = utils::getReferencedObject(dictionary->getProperty("Contents"));
 			if (isStream(contents))
-			{ // exactly one stream
+			{ // Exactly one stream
 				
 				CArray streamrefs;
+				
+				// Add new one
+				CRef newref (newstr->getIndiRef());
+				streamrefs.addProperty (newref);
+
 				// Add current one
 				CRef tmp (contents->getIndiRef());
 				streamrefs.addProperty (tmp);
 	
-				// Add new one
-				CRef newref (newstr->getIndiRef());
-				streamrefs.addProperty (newref);
-	
-				// Add the new array
+				// Set new array to the "Contents" entry
 				dictionary->setProperty ("Contents", streamrefs);
 		
 			}else
-			{
+			{ // Array
+				
 				assert (isArray(contents));
 				if (!isArray(contents))
 					throw CObjInvalidObject ();
 
-				// Add new one to current ones
+				// Insert new one before current ones
 				CRef newref (newstr->getIndiRef());
-				IProperty::getSmartCObjectPtr<CArray> (contents)->addProperty (newref);
+				IProperty::getSmartCObjectPtr<CArray> (contents)->addProperty (0,newref);
 			}
 
 		}else
