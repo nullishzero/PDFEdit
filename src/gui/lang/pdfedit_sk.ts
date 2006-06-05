@@ -777,6 +777,117 @@ Data: %3
         <source>Add element to array</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Annotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>annotation_type</name>
+    <message>
+        <source>Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FreeText</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PolyLine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Squiggly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>StrikeOut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stamp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caret</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ink</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fileattachement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Movie</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Widget</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Printermark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Trapnet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Watermark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>

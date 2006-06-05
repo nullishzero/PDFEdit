@@ -780,6 +780,117 @@ Data: %3
         <source>Save selected area as image</source>
         <translation>Uložit zvolený výřez jako obrázek</translation>
     </message>
+    <message>
+        <source>Annotation</source>
+        <translation>Anotace</translation>
+    </message>
+</context>
+<context>
+    <name>annotation_type</name>
+    <message>
+        <source>Text</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>Link</source>
+        <translation>Odkaz</translation>
+    </message>
+    <message>
+        <source>FreeText</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation>Čára</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>Čtverec</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Kružnice</translation>
+    </message>
+    <message>
+        <source>Polygon</source>
+        <translation>Mnohoúhelník</translation>
+    </message>
+    <message>
+        <source>PolyLine</source>
+        <translation>Lomená čára</translation>
+    </message>
+    <message>
+        <source>Highlight</source>
+        <translation>Zvýraznění</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Podtržení</translation>
+    </message>
+    <message>
+        <source>Squiggly</source>
+        <translation>Zvlněné podtržení</translation>
+    </message>
+    <message>
+        <source>StrikeOut</source>
+        <translation>Přeškrtnutí</translation>
+    </message>
+    <message>
+        <source>Stamp</source>
+        <translation>Razítko</translation>
+    </message>
+    <message>
+        <source>Caret</source>
+        <translation>Kurzor</translation>
+    </message>
+    <message>
+        <source>Ink</source>
+        <translation>Kresba</translation>
+    </message>
+    <message>
+        <source>Popup</source>
+        <translation>Popup</translation>
+    </message>
+    <message>
+        <source>Fileattachement</source>
+        <translation>Příloha (soubor)</translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation>Zvuk</translation>
+    </message>
+    <message>
+        <source>Movie</source>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <source>Widget</source>
+        <translation>Widget</translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation>Obrazovka</translation>
+    </message>
+    <message>
+        <source>Printermark</source>
+        <translation>Tisková značka</translation>
+    </message>
+    <message>
+        <source>Trapnet</source>
+        <translation>Trapnet</translation>
+    </message>
+    <message>
+        <source>Watermark</source>
+        <translation>Vodoznak</translation>
+    </message>
+    <message>
+        <source>3D</source>
+        <translation>3D</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Neznámá</translation>
+    </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
