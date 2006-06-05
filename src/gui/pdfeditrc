@@ -16,7 +16,7 @@ items/fsavecopy=	item Save &copy...,func_savecopy(),,save.png,need_document
 items/neww=		item New &Window,newwindow(),Ctrl+N,new_window.png
 items/closew=		item Close Window,closewindow,,close.png
 items/quit=		item &Quit,quit
-items/showmenu=	list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,-,streamAll,streamText,streamFont,streamGfx
+items/showmenu=	list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,hideStatus,-,streamAll,streamText,streamFont,streamGfx
 items/firstpage=	item First Page,PageSpace.firstPage(),Ctrl+Home,first.png
 items/prevpage=		item Prev Page,PageSpace.prevPage(),Ctrl+PgUp,prev.png
 items/nextpage=		item Next Page,PageSpace.nextPage(),Ctrl+PgDown,next.png
@@ -26,6 +26,7 @@ items/zoom_out=		item Zoom &out,PageSpace.zoomOut(),,zoom_out.png
 items/hideCmd=		item Show/Hide &commandline,showHide('commandline'),F8,hide_cmdline.png
 items/hideProp=		item Show/Hide &property editor,showHide('propertyeditor'),,hide_propedit.png
 items/hideTree=		item Show/Hide object &tree,showHide('tree'),,hide_tree.png
+items/hideStatus=	item Show/Hide &status bar,showHide('statusbar'),,hide_statusbar.png
 items/streamAll=	item Show all operators in stream,streamMode('all'),,stream_mode_all.png,need_contentstream_root
 items/streamText=	item Show only text operators in stream,streamMode('text'),,stream_mode_text.png,need_contentstream_root
 items/streamFont=	item Show only font operators in stream,streamMode('font'),,stream_mode_font.png,need_contentstream_root
@@ -93,6 +94,7 @@ help=$PDFEDIT_DATA/help/$LANG;$PDFEDIT_BIN/help/$LANG;$PDFEDIT_DATA/help;$PDFEDI
 
 [script]
 init=$PDFEDIT_DATA/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs
+init_path=$PDFEDIT_DATA/scripts;$PDFEDIT_BIN/scripts;$HOME/.pdfedit/scripts
 
 [modecontroller]
 config=$HOME/.pdfedit/mode.conf;$PDFEDIT_DATA/mode.conf;$PDFEDIT_BIN/mode.conf

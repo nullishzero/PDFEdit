@@ -307,9 +307,10 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
 /** Called upon selecting some item in treeview */
 void PdfEditWindow::setObject() {
  selectedTreeItem=tree->getSelectedItem();
- TreeItemPdfOperator *pdfOp=dynamic_cast<TreeItemPdfOperator*>(selectedTreeItem);
+ guiPrintDbg(debug::DBG_DBG,"selectedTreeItem" << (intptr_t)selectedTreeItem );
  selectedProperty.reset();
  selectedOperator.reset();
+ TreeItemPdfOperator *pdfOp=dynamic_cast<TreeItemPdfOperator*>(selectedTreeItem);
  if (pdfOp) {
   // Give operator to property editor to edit its parameters
   selectedOperator=pdfOp->getObject();

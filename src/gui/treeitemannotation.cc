@@ -18,6 +18,16 @@ namespace gui {
 using namespace std;
 using namespace util;
 
+/**
+ constructor of TreeItemAnnotation - root item
+ @param _data TreeData containing necessary information about tree in which this item will be inserted
+ @param parent QListView which holds this object
+ @param pdfObj Annotation contained in this item
+ @param _page Page holding this annotation
+ @param nameId Internal name of this item
+ @param name Caption of this item - will be shown in treeview
+ @param after Item after which this one will be inserted
+*/
 TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,QListView *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemAbstract(nameId,_data,parent,after) {
  assert(data);
@@ -28,6 +38,16 @@ TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,QListView *parent,boost::
  reload(false);
 }
 
+/**
+ constructor of TreeItemAnnotation - child item
+ @param _data TreeData containing necessary information about tree in which this item will be inserted
+ @param parent QListViewItem which is parent of this object
+ @param pdfObj Annotation contained in this item
+ @param _page Page holding this annotation
+ @param nameId Internal name of this item
+ @param name Caption of this item - will be shown in treeview
+ @param after Item after which this one will be inserted
+*/
 TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemAbstract(nameId,_data,parent,after) {
  assert(data);

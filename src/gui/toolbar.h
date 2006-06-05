@@ -26,7 +26,7 @@ signals:
   Send ID  number associated with it.
   @param id ID of button
  */
- void itemClicked(int);
+ void itemClicked(int id);
  /** 
   Send help message when mouse cursor enters/leaves on of toolbar buttons.
   Help message is sent on entering and QString::null on leaving.

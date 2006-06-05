@@ -21,7 +21,8 @@ namespace gui {
 using namespace std;
 using namespace util;
 
-/** constructor of TreeItem - create root item from given object
+/**
+ constructor of TreeItem - create root item from given object
  @param parent QListView in which to put item
  @param pdfObj Object contained in this item
  @param nameId Internal name of this item
@@ -34,7 +35,8 @@ TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost
  init(pdfObj,name);
 }
 
-/** constructor of TreeItem - create child item from given object
+/**
+ constructor of TreeItem - create child item from given object
  @param parent QListViewItem which is parent of this object
  @param pdfObj Object contained in this item
  @param nameId Internal name of this item

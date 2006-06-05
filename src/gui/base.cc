@@ -35,6 +35,7 @@
 #include <string.h>
 #include <delinearizator.h> 
 #include <factories.h> 
+#include <qdir.h>
 #include <qfile.h>
 #include <qmessagebox.h>
 #include <qsinterpreter.h>
@@ -177,20 +178,45 @@ QWidget* Base::getWidgetByName(const QString &widgetName) {
  return NULL;
 }
 
-/** Run initscripts. Gets name of initscripts from settings */
+/**
+ Run all initscripts.
+ Gets name of initscripts from settings
+*/
 void Base::runInitScript() {
+ //Run list of initscripts from settings
  QStringList initScripts=globalSettings->readPath("init","script/");
  for (unsigned int i=0;i<initScripts.count();i++) {
   QString initScriptFilename=initScripts[i];
   guiPrintDbg(debug::DBG_INFO,"Considering init script: " << initScriptFilename);
   //Check if the script exists. If not, it is silently skipped
-  if (exists(initScriptFilename)) {
+  if (exists(initScriptFilename)) {   
    guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
    runFile(initScriptFilename);
   }
  }
- guiPrintDbg(debug::DBG_DBG,"Initscript executed");
+ guiPrintDbg(debug::DBG_DBG,"Initscripts executed");
+ //Run initscripts from paths listed in settings
+ QStringList initScriptPaths=globalSettings->readPath("init_path","script/");
+ for (unsigned int ip=0;ip<initScriptPaths.count();ip++) {
+  QString initPath=initScriptPaths[ip];
+  if (!exists(initPath)) {
+   guiPrintDbg(debug::DBG_WARN,"Init path does not exist: " << initPath);
+   continue;
+  }
+  QDir dir(initPath);
+  if (dir.isReadable()) {
+   initScripts=dir.entryList("*.qs",QDir::Files | QDir::Readable,QDir::IgnoreCase | QDir::Name);
+   for (unsigned int i=0;i<initScripts.count();i++) {
+    QString initScriptFilename=initPath+"/"+initScripts[i];
+    guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
+    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
+    runFile(initScriptFilename);    
+   }
+  }
+  //Path is ok, check for scripts there
+ }
+ guiPrintDbg(debug::DBG_DBG,"Initscripts from dirs executed");
 }
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
