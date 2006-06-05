@@ -284,6 +284,8 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
   selectedTreeItem=NULL;
   //Unset from property editor
   prop->setObject(NULL);
+  //Selection have probably just changed
+  //base->call("onTreeSelectionChange");
  }
  //TODO: look for wrappers using this tree item and somehow disable them
  // (but scripts must not do that anyway...)

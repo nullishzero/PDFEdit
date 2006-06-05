@@ -85,6 +85,8 @@ void MultiTreeWindow::pageChange(QWidget *newPage) {
  guiPrintDbg(debug::DBG_DBG,"PageChange");
  tree=dynamic_cast<TreeWindow*>(newPage);
  assert(tree);
+ //The selected item changed on selecting an other page
+ treeItemSelected();
 }
 
 /**
@@ -202,6 +204,8 @@ void MultiTreeWindow::clearSecondary() {
  */
 void MultiTreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  mainTree->init(pdfDoc,fileName);
+ //Emit "selection have changed", as the old tree structure is gone
+ treeItemSelected();
 }
 
 /**
@@ -211,6 +215,8 @@ void MultiTreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  */
 void MultiTreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName/*=QString::null*/) {
  mainTree->init(doc,pName);
+ //Emit "selection have changed", as the old tree structure is gone
+ treeItemSelected();
 }
 
 /**
