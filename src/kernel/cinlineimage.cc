@@ -68,7 +68,7 @@ namespace {
 //
 //
 //
-CInlineImage::CInlineImage (::Object& oDict, const CStream::Buffer& buf) : CStream ()
+CInlineImage::CInlineImage (::Object& oDict, const CStream::Buffer& buf) : CStream (false)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (objDict == oDict.getType());

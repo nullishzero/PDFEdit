@@ -68,7 +68,7 @@ public:
 	CInlineImage (CPdf& p, ::Object& objDict, const CStream::Buffer& buffer, const IndiRef& rf);
 
 	/** Default constructor. */
-	CInlineImage () {};
+	CInlineImage () : CStream(false) {};
 
 	
 	//

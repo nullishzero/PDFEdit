@@ -600,8 +600,17 @@ public:
 			for (FontNames::iterator it = fontnames.begin(); it != fontnames.end(); ++it)
 			{
 				boost::shared_ptr<CDict> font = utils::getCDictFromDict (fonts, *it);
-				std::string fontbasename = utils::getNameFromDict (font, "BaseFont");
-				cont.push_back (std::make_pair (*it, fontbasename));
+				try {
+					std::string fontbasename;
+					
+					if (font->containsProperty ("BaseFont")) // Type{1,2} font
+						fontbasename = utils::getNameFromDict (font, "BaseFont");
+					else									// TrueType font
+						fontbasename = utils::getNameFromDict (font, "SubType");
+					cont.push_back (std::make_pair (*it, fontbasename));
+
+				}catch (ElementNotFoundException&)
+				{}
 			}
 
 		}catch (ElementNotFoundException&)
