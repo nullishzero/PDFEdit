@@ -40,12 +40,9 @@ namespace {
 	// Actual state (position) updaters
 	//==========================================================
 	
-	void
-	printTextUpdate (GfxState& state, const std::string& txt, Rectangle* rc)
+	GfxState *
+	printTextUpdate (GfxState* state, const std::string& txt, Rectangle* rc)
 	{
-		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
-
 		GfxFont *font;
 		int wMode;
 		double riseX, riseY;
@@ -60,19 +57,22 @@ namespace {
 		int len = 0, n = 0, uLen = 0, nChars = 0, nSpaces = 0, i = 0;
 		GString s (txt.c_str());
 
-		font = state.getFont();
+		font = state->getFont();
 		wMode = font->getWMode();
 		
+		// Set edge of rectangle from actual position on output devices
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
+
 		// handle a Type 3 char
 		if (font->getType() == fontType3 /* && out->interpretType3Chars() */) 
 		{
 			Rectangle h_rc();
 
-			mat = state.getCTM();
+			mat = state->getCTM();
 			for (i = 0; i < 6; ++i) {
 			  oldCTM[i] = mat[i];
 			}
-			mat = state.getTextMat();
+			mat = state->getTextMat();
 			newCTM[0] = mat[0] * oldCTM[0] + mat[1] * oldCTM[2];
 			newCTM[1] = mat[0] * oldCTM[1] + mat[1] * oldCTM[3];
 			newCTM[2] = mat[2] * oldCTM[0] + mat[3] * oldCTM[2];
@@ -82,17 +82,17 @@ namespace {
 			newCTM[1] = mat[0] * newCTM[1] + mat[1] * newCTM[3];
 			newCTM[2] = mat[2] * newCTM[0] + mat[3] * newCTM[2];
 			newCTM[3] = mat[2] * newCTM[1] + mat[3] * newCTM[3];
-			newCTM[0] *= state.getFontSize();
-			newCTM[1] *= state.getFontSize();
-			newCTM[2] *= state.getFontSize();
-			newCTM[3] *= state.getFontSize();
-			newCTM[0] *= state.getHorizScaling();
-			newCTM[2] *= state.getHorizScaling();
-			state.textTransformDelta(0, state.getRise(), &riseX, &riseY);
-			curX = state.getCurX();
-			curY = state.getCurY();
-			lineX = state.getLineX();
-			lineY = state.getLineY();
+			newCTM[0] *= state->getFontSize();
+			newCTM[1] *= state->getFontSize();
+			newCTM[2] *= state->getFontSize();
+			newCTM[3] *= state->getFontSize();
+			newCTM[0] *= state->getHorizScaling();
+			newCTM[2] *= state->getHorizScaling();
+			state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
+			curX = state->getCurX();
+			curY = state->getCurY();
+			lineX = state->getLineX();
+			lineY = state->getLineY();
 			p = s.getCString();
 			len = s.getLength();
 			while (len > 0) 
@@ -101,27 +101,27 @@ namespace {
 									u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
 									&dx, &dy, &originX, &originY);
 			  
-			  dx = dx * state.getFontSize() + state.getCharSpace();
+			  dx = dx * state->getFontSize() + state->getCharSpace();
 			  if (n == 1 && *p == ' ') 
 			  {
-				  dx += state.getWordSpace();
+				  dx += state->getWordSpace();
 			  }
-			  dx *= state.getHorizScaling();
-			  dy *= state.getFontSize();
-			  state.textTransformDelta(dx, dy, &tdx, &tdy);
-			  state.transform(curX + riseX, curY + riseY, &x, &y);
+			  dx *= state->getHorizScaling();
+			  dy *= state->getFontSize();
+			  state->textTransformDelta(dx, dy, &tdx, &tdy);
+			  state->transform(curX + riseX, curY + riseY, &x, &y);
 			  
-			  state.setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
+			  state->setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
 			  
 			  curX += tdx;
 			  curY += tdy;
-			  state.moveTo(curX, curY);
-			  state.textSetPos(lineX, lineY);
+			  state->moveTo(curX, curY);
+			  state->textSetPos(lineX, lineY);
 			  p += n;
 			  len -= n;
 			}
 		} else /* if (out->useDrawChar()) */ {
-			state.textTransformDelta(0, state.getRise(), &riseX, &riseY);
+			state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
 			p = s.getCString();
 			len = s.getLength();
 			while (len > 0) {
@@ -129,158 +129,186 @@ namespace {
 									  u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
 									  &dx, &dy, &originX, &originY);
 				if (wMode) {
-					dx *= state.getFontSize();
-					dy = dy * state.getFontSize() + state.getCharSpace();
+					dx *= state->getFontSize();
+					dy = dy * state->getFontSize() + state->getCharSpace();
 					if (n == 1 && *p == ' ') {
-						dy += state.getWordSpace();
+						dy += state->getWordSpace();
 					}
 				} else {
-					dx = dx * state.getFontSize() + state.getCharSpace();
+					dx = dx * state->getFontSize() + state->getCharSpace();
 					if (n == 1 && *p == ' ') {
-						dx += state.getWordSpace();
+						dx += state->getWordSpace();
 					}
-					dx *= state.getHorizScaling();
-					dy *= state.getFontSize();
+					dx *= state->getHorizScaling();
+					dy *= state->getFontSize();
 				}
-				state.textTransformDelta(dx, dy, &tdx, &tdy);
-				originX *= state.getFontSize();
-				originY *= state.getFontSize();
-				state.textTransformDelta(originX, originY, &tOriginX, &tOriginY);
-				state.shift(tdx, tdy);
+				state->textTransformDelta(dx, dy, &tdx, &tdy);
+				originX *= state->getFontSize();
+				originY *= state->getFontSize();
+				state->textTransformDelta(originX, originY, &tOriginX, &tOriginY);
+				state->shift(tdx, tdy);
 				p += n;
 				len -= n;
 			}
 		}
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY() +state.getFontSize(), & rc->xright, & rc->yright);
+		state->textTransformDelta(0, state->getFontSize(), & x, & y);
+		utilsPrintDbg( debug::DBG_DBG, "textTransDelta (" << x<<","<<y<<")");
+		state->transformDelta(x, y, & dx, & dy);
+		utilsPrintDbg( debug::DBG_DBG, "transDelta     (" << dx<<","<<dy<<")");
+		state->transform(state->getCurX() + x, state->getCurY() + y, & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
 	}	
 	//
-	void 
-	unknownUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	unknownUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 		/* utilsPrintDbg (debug::DBG_DBG, "Unknown updater.");*/
+
+		// return changed state
+		return state;
 	}
 
 	// "m"
-	void
-	opmUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opmUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (2 <= args.size());
 		utilsPrintDbg (debug::DBG_DBG, "");
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.moveTo (getDoubleFromIProperty (args[0]), getDoubleFromIProperty (args[1]));
+		state->moveTo (getDoubleFromIProperty (args[0]), getDoubleFromIProperty (args[1]));
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
 	}
 	// "Td"
-	void
-	opTdUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTdUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (2 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		double tx = state.getLineX() + getDoubleFromIProperty (args[0]);
-		double ty = state.getLineY() + getDoubleFromIProperty (args[1]);
-		state.textMoveTo(tx, ty);
+		double tx = state->getLineX() + getDoubleFromIProperty (args[0]);
+		double ty = state->getLineY() + getDoubleFromIProperty (args[1]);
+		state->textMoveTo(tx, ty);
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
 	}
 	// "Tm"
-	void
-	opTmUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTmUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (6 <= args.size ());
 		utilsPrintDbg (debug::DBG_DBG, "");
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.setTextMat (	getDoubleFromIProperty (args[0]), 
+		state->setTextMat (	getDoubleFromIProperty (args[0]), 
 							getDoubleFromIProperty (args[1]),
 							getDoubleFromIProperty (args[2]), 
 							getDoubleFromIProperty (args[3]),
 							getDoubleFromIProperty (args[4]), 
 							getDoubleFromIProperty (args[5])
 						  );
-		state.textMoveTo(0, 0);
+		state->textMoveTo(0, 0);
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
 	}
 	// "BT"
-	void
-	opBTUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	opBTUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		utilsPrintDbg (debug::DBG_DBG, "");
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.setTextMat (1, 0, 0, 1, 0, 0);
-		state.textMoveTo (0, 0);
+		state->setTextMat (1, 0, 0, 1, 0, 0);
+		state->textMoveTo (0, 0);
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
 	}
 	// "l"
-	void
-	oplUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	oplUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (2 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		
-		state.lineTo (getDoubleFromIProperty(args[0]), getDoubleFromIProperty (args[1]));
+		state->lineTo (getDoubleFromIProperty(args[0]), getDoubleFromIProperty (args[1]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
 	}
 	// "c"
-	void
-	opcUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opcUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (6 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		state.curveTo ( getDoubleFromIProperty(args[0]), getDoubleFromIProperty(args[1]),
+		state->curveTo ( getDoubleFromIProperty(args[0]), getDoubleFromIProperty(args[1]),
 						getDoubleFromIProperty(args[2]), getDoubleFromIProperty(args[3]),
 						getDoubleFromIProperty(args[4]), getDoubleFromIProperty(args[5]));
 
 		// simple calculate boundingbox of curve (inexact)
 		Point h_width;
-		state.transformDelta( state.getLineWidth()/2, state.getLineWidth()/2, & h_width.x, & h_width.y );
+		state->transformDelta( state->getLineWidth()/2, state->getLineWidth()/2, & h_width.x, & h_width.y );
 		rc->xleft -= h_width.x;
 		rc->yleft -= h_width.y;
 		rc->xright += h_width.x;
 		rc->yright += h_width.y;
 		Point h_pt;
 		for (int i=0; i<6 ;i+=2) {
-			state.transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
+			state->transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
 			rc->xleft = min( rc->xleft, h_pt.x - h_width.x );
 			rc->xright = max( rc->xright, h_pt.x + h_width.x );
 			rc->yleft = min( rc->yleft, h_pt.y - h_width.y );
 			rc->yright = max( rc->yright, h_pt.y + h_width.y );
 		}
+
+		// return changed state
+		return state;
 	}
 	// "v"
-	void
-	opvUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opvUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (4 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		state.curveTo ( state.getCurX(), state.getCurY(), 
+		state->curveTo ( state->getCurX(), state->getCurY(), 
 						getDoubleFromIProperty(args[0]),
 						getDoubleFromIProperty(args[1]),
 						getDoubleFromIProperty(args[2]),
@@ -289,31 +317,34 @@ namespace {
 
 		// simple calculate boundingbox of curve (inexact)
 		Point h_width;
-		state.transformDelta( state.getLineWidth()/2, state.getLineWidth()/2, & h_width.x, & h_width.y );
+		state->transformDelta( state->getLineWidth()/2, state->getLineWidth()/2, & h_width.x, & h_width.y );
 		rc->xleft -= h_width.x;
 		rc->yleft -= h_width.y;
 		rc->xright += h_width.x;
 		rc->yright += h_width.y;
 		Point h_pt;
 		for (int i=0; i<4 ;i+=2) {
-			state.transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
+			state->transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
 			rc->xleft = min( rc->xleft, h_pt.x - h_width.x );
 			rc->xright = max( rc->xright, h_pt.x + h_width.x );
 			rc->yleft = min( rc->yleft, h_pt.y - h_width.y );
 			rc->yright = max( rc->yright, h_pt.y + h_width.y );
 		}
+
+		// return changed state
+		return state;
 	}
 	// "y"
-	void
-	opyUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opyUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (4 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		state.curveTo ( getDoubleFromIProperty(args[0]),
+		state->curveTo ( getDoubleFromIProperty(args[0]),
 						getDoubleFromIProperty(args[1]),
 						getDoubleFromIProperty(args[2]),
 						getDoubleFromIProperty(args[3]),
@@ -323,83 +354,94 @@ namespace {
 
 		// simple calculate boundingbox of curve (inexact)
 		Point h_width;
-		state.transformDelta( state.getLineWidth()/2, state.getLineWidth()/2, & h_width.x, & h_width.y );
+		state->transformDelta( state->getLineWidth()/2, state->getLineWidth()/2, & h_width.x, & h_width.y );
 		rc->xleft -= h_width.x;
 		rc->yleft -= h_width.y;
 		rc->xright += h_width.x;
 		rc->yright += h_width.y;
 		Point h_pt;
 		for (int i=0; i<6 ;i+=2) {
-			state.transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
+			state->transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
 			rc->xleft = min( rc->xleft, h_pt.x - h_width.x );
 			rc->xright = max( rc->xright, h_pt.x + h_width.x );
 			rc->yleft = min( rc->yleft, h_pt.y - h_width.y );
 			rc->yright = max( rc->yright, h_pt.y + h_width.y );
 		}
+
+		// return changed state
+		return state;
 	}
 	// "re"
-	void
-	opreUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opreUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (4 <= args.size ());
 		double x = getDoubleFromIProperty(args[0]);
 		double y = getDoubleFromIProperty(args[1]);
 		double w = getDoubleFromIProperty(args[2]);
 		double h = getDoubleFromIProperty(args[3]);
-		state.moveTo(x, y);
-		state.lineTo(x + w, y);
-		state.lineTo(x + w, y + h);
-		state.lineTo(x, y + h);
-		state.closePath();
+		state->moveTo(x, y);
+		state->lineTo(x + w, y);
+		state->lineTo(x + w, y + h);
+		state->lineTo(x, y + h);
+		state->closePath();
 
 		// Set rectangle from operands position on output devices
-		state.transform(x - state.getLineWidth()/2, y - state.getLineWidth()/2, & rc->xleft, & rc->yleft);
-		state.transform(x+w+ state.getLineWidth()/2, y+h+ state.getLineWidth()/2, & rc->xright, & rc->yright);
+		state->transform(x - state->getLineWidth()/2, y - state->getLineWidth()/2, & rc->xleft, & rc->yleft);
+		state->transform(x+w+ state->getLineWidth()/2, y+h+ state->getLineWidth()/2, & rc->xright, & rc->yright);
 		Point h_pt;
-		state.transform(x - state.getLineWidth()/2, y+h+ state.getLineWidth()/2, & h_pt.x, & h_pt.y);
+		state->transform(x - state->getLineWidth()/2, y+h+ state->getLineWidth()/2, & h_pt.x, & h_pt.y);
 			rc->xleft = min( rc->xleft, h_pt.x );
 			rc->xright = max( rc->xright, h_pt.x );
 			rc->yleft = min( rc->yleft, h_pt.y );
 			rc->yright = max( rc->yright, h_pt.y );
-		state.transform(x+w+ state.getLineWidth()/2, y - state.getLineWidth()/2, & h_pt.x, & h_pt.y);
+		state->transform(x+w+ state->getLineWidth()/2, y - state->getLineWidth()/2, & h_pt.x, & h_pt.y);
 			rc->xleft = min( rc->xleft, h_pt.x );
 			rc->xright = max( rc->xright, h_pt.x );
 			rc->yleft = min( rc->yleft, h_pt.y );
 			rc->yright = max( rc->yright, h_pt.y );
 		
+		// return changed state
+		return state;
 	}
 	// "h"
-	void
-	ophUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	ophUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.closePath ();
+		state->closePath ();
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "Tc"
-	void
-	opTcUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTcUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-  		state.setCharSpace (getDoubleFromIProperty(args[0]));
+  		state->setCharSpace (getDoubleFromIProperty(args[0]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "Tf"
-	void
-	opTfUpdate (GfxState& state, boost::shared_ptr<GfxResources> res, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTfUpdate (GfxState* state, boost::shared_ptr<GfxResources> res, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (2 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
@@ -410,150 +452,190 @@ namespace {
 		GfxFont *font = NULL;
 
 		if (!(font = res.get()->lookupFont (val.c_str())))
-			return;		// same as displaing with xpdf/Gfx
+			return state;		// same as displaing with xpdf/Gfx
 		
-		state.setFont (font, getDoubleFromIProperty (args[1]));
+		state->setFont (font, getDoubleFromIProperty (args[1]));
+		
+		// return changed state
+		return state;
 	}
 	// "Ts"
-	void
-	opTsUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTsUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.setRise (getDoubleFromIProperty (args[0])); 
+		state->setRise (getDoubleFromIProperty (args[0])); 
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "Tw"
-	void
-	opTwUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTwUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-  		state.setWordSpace (getDoubleFromIProperty (args[0]));
+  		state->setWordSpace (getDoubleFromIProperty (args[0]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "Tz"
-	void
-	opTzUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTzUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.setHorizScaling (getDoubleFromIProperty (args[0]));
+		state->setHorizScaling (getDoubleFromIProperty (args[0]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "TD"
-	void
-	opTDUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTDUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (2 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		double tx = state.getLineX() + getDoubleFromIProperty (args[0]);
+		double tx = state->getLineX() + getDoubleFromIProperty (args[0]);
 		double ty = getDoubleFromIProperty (args[1]);
-		state.setLeading(-ty);
-		ty += state.getLineY();
-		state.textMoveTo(tx, ty);
+		state->setLeading(-ty);
+		ty += state->getLineY();
+		state->textMoveTo(tx, ty);
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "T*"
-	void
-	opTstarUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	opTstarUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		double tx = state.getLineX();
-		double ty = state.getLineY() - state.getLeading();
-		state.textMoveTo (tx, ty);
+		double tx = state->getLineX();
+		double ty = state->getLineY() - state->getLeading();
+		state->textMoveTo (tx, ty);
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
+	}
+	// "Tj"
+	GfxState *
+	opTjUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	{
+		assert (1 <= args.size ());
+		assert( state->getFont() != NULL );	// No font for text
+
+ 		printTextUpdate (state, getStringFromIProperty (args[0]), rc);
+		
+		// return changed state
+		return state;
 	}
 	// "'"
-	void
-	opApoUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opApoUpdate (GfxState* state, boost::shared_ptr<GfxResources> res, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size ());
-		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
-
-		double tx = state.getLineX();
-		double ty = state.getLineY() - state.getLeading();
-		state.textMoveTo(tx, ty);
-		//printTextUpdate (state, getStringFromIProperty (args[0]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		//state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
+
+		state = opTstarUpdate( state, res, op, args, rc );
+		state = opTjUpdate( state, res, op, args, rc );		// to 'rc' has saved only text bbox
+
+		// Set edge of rectangle from actual position on output devices
+		//state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "TL"
-	void
-	opTLUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTLUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-  		state.setLeading ( getDoubleFromIProperty (args[0]));
+  		state->setLeading ( getDoubleFromIProperty (args[0]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "\"
-	void
-	opSlashUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opSlashUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (3 <= args.size ());
+		assert( state->getFont() != NULL );	// No font for text
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		//state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.setWordSpace (getDoubleFromIProperty (args[0]));
-		state.setCharSpace (getDoubleFromIProperty (args[1]));
-		double tx = state.getLineX();
-		double ty = state.getLineY() - state.getLeading();
-		state.textMoveTo(tx, ty);
-		//printTextUpdate (state, getStringFromIProperty (args[2]));
+		state->setWordSpace (getDoubleFromIProperty (args[0]));
+		state->setCharSpace (getDoubleFromIProperty (args[1]));
+		double tx = state->getLineX();
+		double ty = state->getLineY() - state->getLeading();
+		state->textMoveTo(tx, ty);
+
+ 		printTextUpdate (state, getStringFromIProperty (args[2]), rc);	// to 'rc' save only text bbox
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		//state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 	// "TJ"
-	void
-	opTJUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTJUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size ());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		if (!state.getFont()) 
+		if (!state->getFont()) 
 		{
 			assert (!"Could not get font.");
-			throw ElementBadTypeException ("opTJUpdate: State in bad state.");
+			throw ElementBadTypeException ("opTJUpdate: State in bad state->");
 		}
 		if (pArray != args[0]->getType())
 		{
 			assert (!"opTJUpdate: Invalid first argument.");
-			throw ElementBadTypeException ("opTJUpdate: Object in bad state.");
+			throw ElementBadTypeException ("opTJUpdate: Object in bad state->");
 		}
 
 		int wMode;
-		wMode = state.getFont()->getWMode();
+		wMode = state->getFont()->getWMode();
 
 		Rectangle h_rc;
   		boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (args[0]);
@@ -567,17 +649,17 @@ namespace {
 				case pReal:
 					{
 					// Set edge of rectangle from actual position on output devices
-					state.transform(state.getCurX (), state.getCurY(), & h_rc.xleft, & h_rc.yleft);
+					state->transform(state->getCurX (), state->getCurY(), & h_rc.xleft, & h_rc.yleft);
 
 					double dd = -getDoubleFromIProperty (item);
 					if (wMode) {
-						state.textShift(dd * 0.001 * fabs(state.getFontSize()), 0);
+						state->textShift(dd * 0.001 * fabs(state->getFontSize()), 0);
 					} else {
-						state.textShift(0, dd * 0.001 * fabs(state.getFontSize()));
+						state->textShift(0, dd * 0.001 * fabs(state->getFontSize()));
 					}
 
 					// Set edge of rectangle from actual position on output devices
-					state.transform(state.getCurX (), state.getCurY(), & h_rc.xright, & h_rc.yright);
+					state->transform(state->getCurX (), state->getCurY(), & h_rc.xright, & h_rc.yright);
 					}
 
 					break;
@@ -594,25 +676,19 @@ namespace {
 			rc->yleft = min( rc->yleft, min( h_rc.yleft, h_rc.yright ) );
 			rc->yright = max( rc->yright, max( h_rc.yleft, h_rc.yright ) );
 		}// for
-	}
-	// "Tj"
-	void
-	opTjUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
-	{
-		assert (1 <= args.size ());
-		assert( state.getFont() != NULL );	// No font for text
-
- 		printTextUpdate (state, getStringFromIProperty (args[0]), rc);
+		
+		// return changed state
+		return state;
 	}
 	// "cm"
-	void
-	opcmUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opcmUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (6 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.concatCTM (
+		state->concatCTM (
 				getDoubleFromIProperty(args[0]),
 				getDoubleFromIProperty(args[1]),
 				getDoubleFromIProperty(args[2]),
@@ -621,99 +697,123 @@ namespace {
 				getDoubleFromIProperty(args[5]));
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 
 	// "Q"
-	void
-	opQUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	opQUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.restore();
+		state = state->restore();
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 
 	// "q"
-	void
-	opqUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	opqUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.save();
+		state = state->save();
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 
 	// "Tr"
-	void
-	opTrUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opTrUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size());
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
-		state.setRender( getIntFromIProperty(args[0]) );
+		state->setRender( getIntFromIProperty(args[0]) );
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 
 	// "w"
-	void
-	opwUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	opwUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		state.setLineWidth( getDoubleFromIProperty(args[0]) );
+		state->setLineWidth( getDoubleFromIProperty(args[0]) );
+		
+		// return changed state
+		return state;
 	}
 	
 	// "BI"
-	void
-	opBIUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	opBIUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
 		utilsPrintDbg (DBG_DBG, "NOT IMPLEMENTED");
 		utilsPrintDbg (DBG_DBG, " " << op->getParametersCount() << " , " << op->getChildrenCount());
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 
 	// "ID"
-	void
-	opIDUpdate (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands&, Rectangle* rc)
+	GfxState *
+	opIDUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator> op, const PdfOperator::Operands&, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
 		utilsPrintDbg (DBG_DBG, "NOT IMPLEMENTED");
 		utilsPrintDbg (DBG_DBG, " " << op->getParametersCount() << " , " << op->getChildrenCount());
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 
 /*	// ""
-	void
-	op (GfxState& state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
+	GfxState *
+	op (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xleft, & rc->yleft);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
 
 		// Set edge of rectangle from actual position on output devices
-		state.transform(state.getCurX (), state.getCurY(), & rc->xright, & rc->yright);
+		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+		
+		// return changed state
+		return state;
 	}
 */
 	//==========================================================
@@ -797,7 +897,7 @@ namespace {
 		unsigned short types[MAX_OPERANDS];	/**< Bits represent which types are allowed. */
 		
 		/** Function to execute when updating position. */
-		void (*update) (GfxState&, boost::shared_ptr<GfxResources>, 
+		GfxState* (*update) (GfxState* , boost::shared_ptr<GfxResources>, 
 						const boost::shared_ptr<PdfOperator>, 
 						const PdfOperator::Operands&, Rectangle* rc);
 		
@@ -1564,8 +1664,8 @@ namespace {
 	 * @param res Graphical resources.
 	 * @param state Graphical state.
 	 */
-	void
-	setOperatorBBox (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, GfxState& state)
+	GfxState *
+	setOperatorBBox (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, GfxState* state)
 	{
 		utilsPrintDbg (debug::DBG_DBG, "");
 		boost::shared_ptr<PdfOperator> op;
@@ -1598,13 +1698,13 @@ namespace {
 					throw CObjInvalidObject ();
 				}
 
-				// Update the state
-				(chcktp->update) (state, res, op, ops, &rc);
+				// Update the state and 
+				state = (chcktp->update) (state, res, op, ops, &rc);
 				
 			}else
 			{
 				// Update the state
-				unknownUpdate (state, res, op, ops, &rc);
+				state = unknownUpdate (state, res, op, ops, &rc);
 			}
 
 			op->setBBox (rc);
@@ -1614,6 +1714,8 @@ namespace {
 
 		// Close xpdf mess
 		xpdf::closeXpdfMess ();
+
+		return state;
 	}
 
 //==========================================================
@@ -1731,8 +1833,12 @@ CContentStream::CContentStream (CStreams& strs,
 	parseContentStream (operators, strs, *this, cstreams, operandobserver);
 	
 	// Save bounding boxes
-	if (!operators.empty())
-		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
+	if (!operators.empty()) {
+		assert( ! gfxstate->isPath() );		// if isPath, state is from other ccontentstream or is bad
+		GfxState * tmpstate = gfxstate->copy( false );
+		tmpstate = setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, tmpstate);
+		delete tmpstate;
+	}
 
 	// Register observer on all cstream
 	registerCStreamObservers ();
@@ -1767,8 +1873,12 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 	}
 	
 	// Save bounding boxes
-	if (!operators.empty())
-		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
+	if (!operators.empty()) {
+		assert( ! gfxstate->isPath() );		// if isPath, state is from other ccontentstream or is bad
+		GfxState * tmpstate = gfxstate->copy( false );
+		tmpstate = setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, tmpstate);
+		delete tmpstate;
+	}
 }
 
 //
