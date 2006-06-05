@@ -784,6 +784,26 @@ Data: %3
         <source>Annotation</source>
         <translation>Anotace</translation>
     </message>
+    <message>
+        <source>Draw line</source>
+        <translation>Nakreslit čáru</translation>
+    </message>
+    <message>
+        <source>Draw</source>
+        <translation>Nakreslit</translation>
+    </message>
+    <message>
+        <source>Invalid position</source>
+        <translation>Neplatná pozice</translation>
+    </message>
+    <message>
+        <source>Line was drawn.</source>
+        <translation>Čára nakreslena</translation>
+    </message>
+    <message>
+        <source>Encrypted content will show up as garbage and many operations will be impossible</source>
+        <translation>Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1195,7 +1215,7 @@ Data: %3
     </message>
     <message>
         <source>Show hidden properties</source>
-        <translation>Zobrazovat zkryté položky</translation>
+        <translation>Zobrazovat skryté položky</translation>
     </message>
     <message>
         <source>Allow editing read-only properties</source>
@@ -1210,8 +1230,16 @@ Data: %3
         <translation>Nastavení příkazové řádky</translation>
     </message>
     <message>
-        <source>&lt;br&gt;History options</source>
-        <translation>&lt;br&gt;Nastavení historie</translation>
+        <source>Options affecting object tree and property editor</source>
+        <translation>Nastavení ovlivňující strom objektů a editor položek</translation>
+    </message>
+    <message>
+        <source>Sort dictionary items alphabetically</source>
+        <translation>Řadit položky slovníku abecedně</translation>
+    </message>
+    <message>
+        <source>History options</source>
+        <translation>Nastavení historie</translation>
     </message>
 </context>
 <context>
@@ -1687,6 +1715,11 @@ Data: %3
         <source>Change relative position</source>
         <comment>opsetpos</comment>
         <translation>Nastavit relativní pozici</translation>
+    </message>
+    <message>
+        <source>Draw line</source>
+        <comment>drawline</comment>
+        <translation>Nakreslit čáru</translation>
     </message>
 </context>
 <context>

@@ -781,6 +781,26 @@ Data: %3
         <source>Annotation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Draw line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line was drawn.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted content will show up as garbage and many operations will be impossible</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1207,7 +1227,15 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;br&gt;History options</source>
+        <source>Options affecting object tree and property editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort dictionary items alphabetically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>History options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1683,6 +1711,11 @@ Data: %3
     <message>
         <source>Change relative position</source>
         <comment>opsetpos</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw line</source>
+        <comment>drawline</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
