@@ -67,6 +67,8 @@ struct InheritedPageAttr
 void fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr & attrs)
 {
 	int initialized=0;
+
+	// TODO consolidate code - get rid of copy & paste
 	
 	// resource field
 	shared_ptr<CDict> resources=attrs.resources;
@@ -239,40 +241,20 @@ using namespace boost;
 	fillInheritedPageAttr(pageDict, attrs);
 
 	// checks Resources
-	try
-	{
-		pageDict->getProperty("Resources");
-	}catch(ElementNotFoundException & e)
-	{
+	if(!pageDict->containsProperty("Resources"))
 		pageDict->addProperty("Resources", *(attrs.resources));
-	}
 	
 	// checks MediaBox
-	try
-	{
-		pageDict->getProperty("MediaBox");
-	}catch(ElementNotFoundException & e)
-	{
+	if(!pageDict->containsProperty("MediaBox"))
 		pageDict->addProperty("MediaBox", *(attrs.mediaBox));
-	}
 	
 	// checks CropBox
-	try
-	{
-		pageDict->getProperty("CropBox");
-	}catch(ElementNotFoundException & e)
-	{
+	if(!pageDict->containsProperty("CropBox"))
 		pageDict->addProperty("CropBox", *(attrs.cropBox));
-	}
 	
 	// checks Rotate
-	try
-	{
-		pageDict->getProperty("Rotate");
-	}catch(ElementNotFoundException & e)
-	{
+	if(!pageDict->containsProperty("Rotate"))
 		pageDict->addProperty("Rotate", *(attrs.rotate));
-	}
 }
 
 namespace {
@@ -288,6 +270,8 @@ namespace {
  * @throw ElementBadTypeException if Annots property exists but it is not an
  * array or reference to array.
  *
+ * @throw ElementNotFoundException if Annots array is not present in given
+ * dictionary.
  * @return Annotation array.
  */
 shared_ptr<CArray> getAnnotsArray(shared_ptr<CDict> pageDict)
@@ -303,6 +287,7 @@ using namespace boost;
 	else 
 		annotsArray=IProperty::getSmartCObjectPtr<CArray>(arrayProp);
 
+	// just to be sure that return value is initialized
 	assert(annotsArray.get());
 	return annotsArray;
 }
