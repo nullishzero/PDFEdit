@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Klávesové zkratky</title>
+ </bookinfo>
+
+ <chapter id="Keyboard_shortcuts">
+  <title>Klávesové zkratky PDF Editoru</title>
+  <para>
+   <informaltable frame="none">
+    <tgroup cols="2"><tbody>
+     <KBDTABLE/>
+    </tbody></tgroup>
+   </informaltable>
+  </para>
+ </chapter>
+</book>
