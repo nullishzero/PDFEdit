@@ -237,7 +237,15 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 
 	// update display parameters
 	displayParams.upsideDown = output.upsideDown();
-	// TODO  rotation, cropbox, ...
+	boost::shared_ptr<IProperty> rotate = utils::getReferencedObject (actualPage->get()->getDictionary()->getProperty ("Rotate"));
+	if (!isNull(rotate)) {
+		guiPrintDbg( debug::DBG_DBG, "Rotate OK");
+		displayParams.rotate = utils::getIntFromIProperty( rotate );
+	} else {
+		guiPrintDbg( debug::DBG_DBG, "Rotate unfinded");
+		displayParams.rotate = 0;
+	}
+	// TODO  cropbox, ...
 
 	// create pixmap for page
 	actualPage->get()->displayPage( output, displayParams );
@@ -466,14 +474,14 @@ void PageSpace::newSelection ( const QRect & r) {
 
 		if (actualPage != NULL) {
 			if ( r.topLeft() == r.bottomRight() ) {
-				Point p;
-				convertPixmapPosToPdfPos( r.topLeft(), p );
-				actualPage->get()->getObjectsAtPosition( ops, Point( p.x, p.y ) );
+				Point p = Point (r.topLeft().x(), r.topLeft().y());
+				actualPage->get()->getObjectsAtPosition( ops, p );
+				guiPrintDbg( debug::DBG_DBG, "Clicked on ("<<p<<")");
 			} else {
-				Point p1, p2;
-				convertPixmapPosToPdfPos( r.topLeft(), p1 );
-				convertPixmapPosToPdfPos( r.bottomRight(), p2 );
+				Point p1 = Point (r.topLeft().x(), r.topLeft().y()),
+					  p2 = Point (r.bottomRight().x(), r.bottomRight().y());
 				actualPage->get()->getObjectsAtPosition( ops, Rectangle( p1.x, p1.y, p2.x, p2.y ) );
+				guiPrintDbg( debug::DBG_DBG, "Selected ("<<p1<<" , "<<p2<<")");
 			}
 		}
 
@@ -539,15 +547,35 @@ double PageSpace::convertPixmapPosToPdfPos_x( double fromX, double fromY ) {
 	if (actualPage == NULL)
 		return 0;
 
-	return fromX;
+	double * ctm /*[6]*/;
+	double h;
+	PDFRectangle pdfRect ( displayParams.pageRect.xleft, displayParams.pageRect.yleft,
+							displayParams.pageRect.xright, displayParams.pageRect.yright );
+	GfxState state (displayParams.hDpi, displayParams.vDpi, &pdfRect, displayParams.rotate, displayParams.upsideDown );
+	ctm = state.getCTM();
+
+	h = (ctm[0]*ctm[3] - ctm[1]*ctm[2]);
+
+	assert( h != 0 );
+
+	return  (fromX*ctm[3] - ctm[2]*fromY + ctm[2]*ctm[5] - ctm[4]*ctm[3]) / h;
 }
 double PageSpace::convertPixmapPosToPdfPos_y( double fromX, double fromY ) {
 	if (actualPage == NULL)
 		return 0;
-	if (! displayParams.upsideDown)
-		return actualPagePixmap->height() - fromY;
-	else
-		return fromY;
+
+	double * ctm /*[6]*/;
+	double h;
+	PDFRectangle pdfRect ( displayParams.pageRect.xleft, displayParams.pageRect.yleft,
+							displayParams.pageRect.xright, displayParams.pageRect.yright );
+	GfxState state (displayParams.hDpi, displayParams.vDpi, &pdfRect, displayParams.rotate, displayParams.upsideDown );
+	ctm = state.getCTM();
+
+	h = (ctm[0]*ctm[3] - ctm[1]*ctm[2]);
+
+	assert( h != 0 );
+
+	return  (ctm[0]*fromY + ctm[1]*ctm[4] - ctm[0]*ctm[5] - ctm[1]*fromX) / h;
 }
 
 void PageSpace::convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos ) {
@@ -559,15 +587,25 @@ double PageSpace::convertPdfPosToPixmapPos_x( double fromX, double fromY ) {
 	if (actualPage == NULL)
 		return 0;
 
-	return fromX;
+	double hx, hy;
+	PDFRectangle pdfRect ( displayParams.pageRect.xleft, displayParams.pageRect.yleft,
+							displayParams.pageRect.xright, displayParams.pageRect.yright );
+	GfxState state (displayParams.hDpi, displayParams.vDpi, &pdfRect, displayParams.rotate, displayParams.upsideDown );
+
+	state.transform( fromX, fromY, &hx, &hy );
+	return hx;
 }
 double PageSpace::convertPdfPosToPixmapPos_y( double fromX, double fromY ) {
 	if (actualPage == NULL)
 		return 0;
-	if (! displayParams.upsideDown)
-		return actualPagePixmap->height() - fromY;
-	else
-		return fromY;
+
+	double hx, hy;
+	PDFRectangle pdfRect ( displayParams.pageRect.xleft, displayParams.pageRect.yleft,
+							displayParams.pageRect.xright, displayParams.pageRect.yright );
+	GfxState state (displayParams.hDpi, displayParams.vDpi, &pdfRect, displayParams.rotate, displayParams.upsideDown );
+
+	state.transform( fromX, fromY, &hx, &hy );
+	return hy;
 }
 void PageSpace::convertPixmapPosToPdfPos( const QPoint & pos, Point & pdfPos ) {
 	pdfPos.x = convertPixmapPosToPdfPos_x( pos.x(), pos.y());
@@ -623,9 +661,7 @@ void PageSpace::zoomOut ( float step ) {
 
 void PageSpace::showMousePosition ( const QPoint & pos ) {
 	QString pom;
-	Point pdfPagePos;
-	convertPixmapPosToPdfPos( pos, pdfPagePos );
-	pom = pom.sprintf( format, pdfPagePos.x, pdfPagePos.y );
+	pom = pom.sprintf( format, (double)pos.x(), (double)pos.y() );
 	mousePositionOnPage->setText( pom );
 }
 
