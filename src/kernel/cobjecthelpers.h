@@ -7,6 +7,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.32  2006/06/05 08:57:32  hockm0bm
+ * refactoring CObjectSimple
+ *         - getPropertyValue -> getValue
+ *         - writeValue -> setValue
+ *
  * Revision 1.31  2006/06/03 09:15:02  hockm0bm
  * getCObjectFromRef removed from cobjecthelpers.h to cpdf.h because gcc >=4.0
  * didn't like CPdf usage
@@ -271,7 +276,7 @@ public:
 	 * <ul>
 	 * <li> have same types (getType returns same value)
 	 * <ul> They have same values
-	 * 	<li> if value is simple - direct values are same (getPropertyValue is used)
+	 * 	<li> if value is simple - direct values are same (getValue is used)
 	 * 	<li> if value is complex - same number of elements and elements with same
 	 * 	identifier are equal
 	 * </ul>

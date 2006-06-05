@@ -1910,7 +1910,7 @@ getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
 		// Cast it to the correct type and return it
 		boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
 		Value val = Value ();
-		item->getPropertyValue (val);
+		item->getValue (val);
 		return val;
 
 	}else
@@ -1963,7 +1963,7 @@ setValueToSimple (const boost::shared_ptr<IProperty>& ip, const Value& val)
 
 	// Cast it to the correct type and set value
 	boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
-	item->writeValue (val);
+	item->setValue (val);
 }
 
 

@@ -4,6 +4,11 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.5  2006/06/05 08:57:32  hockm0bm
+ * refactoring CObjectSimple
+ *         - getPropertyValue -> getValue
+ *         - writeValue -> setValue
+ *
  * Revision 1.4  2006/06/02 16:54:06  hockm0bm
  * * checkAndReplace removed (and placed to cobjecthelpers.h)
  * * CAnnotation constructor with page, rect, annotType parameters removed
@@ -291,7 +296,7 @@ using namespace debug;
 		}
 		shared_ptr<CName> subTypeName=IProperty::getSmartCObjectPtr<CName>(subTypeProp);
 		string typeName;
-		subTypeName->getPropertyValue(typeName);
+		subTypeName->getValue(typeName);
 		return utils::annotTypeMapping(typeName);
 	}catch(ElementNotFoundException & e)
 	{

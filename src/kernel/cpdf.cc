@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.56  2006/06/05 08:57:32  hockm0bm
+ * refactoring CObjectSimple
+ *         - getPropertyValue -> getValue
+ *         - writeValue -> setValue
+ *
  * Revision 1.55  2006/06/05 06:27:01  hockm0bm
  * * CPdf::subsReferencies
  *         - substitues also referencie also for streams
@@ -1240,7 +1245,7 @@ using namespace utils;
 		{
 			// new reference for this child
 			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(child);
-			ref_ptr->writeValue(ref);
+			ref_ptr->setValue(ref);
 			kernelPrintDbg(debug::DBG_DBG,"Reference changed to " << ref);
 			continue;
 		}

@@ -258,7 +258,7 @@ namespace
 	void _s_writeVal (const U var, const string& expected)
 	{
 			T cl;
-			cl.writeValue (var);
+			cl.setValue (var);
 			ip_validate (cl,expected);
 	}
 
@@ -285,7 +285,7 @@ s_writeVal (const example& e)
 
 	// should get compile error
 	// CNull null;
-	// null.writeValue ("");
+	// null.setValue ("");
 	 
 	return true;
 }
@@ -298,9 +298,9 @@ namespace
 	void _s_getVal (const U expected)
 	{
 			T cl;
-			cl.writeValue (expected);
+			cl.setValue (expected);
 			U val;
-			cl.getPropertyValue (val);
+			cl.getValue (val);
 			ip_validate (val,expected);
 	}
 }
@@ -323,7 +323,7 @@ s_getVal (const example& e)
 
 	// should get compile error
 	// CNull null;
-	// null.getPropertyValue ();
+	// null.getValue ();
 
 	return true;
 }
@@ -337,7 +337,7 @@ namespace
 	{
 			Object* obj;
 			T cl;
-			cl.writeValue (var);
+			cl.setValue (var);
 			obj = cl._makeXpdfObject ();
 			ip_validate (obj,expected);
 			utils::freeXpdfObject (obj);
@@ -366,7 +366,7 @@ s_makeXpdf (const example& e)
 
 	// should get compile error
 	// CNull null;
-	// null.getPropertyValue ();
+	// null.getValue ();
 
 	return true;
 }
@@ -467,7 +467,7 @@ public:
 			CPPUNIT_ASSERT (s_ctors2 (e));
 			OK_TEST;
 			
-			TEST(" getPropertyValue");
+			TEST(" getValue");
 			CPPUNIT_ASSERT (s_getVal (e));
 			OK_TEST;
 		}
@@ -484,7 +484,7 @@ public:
 			CPPUNIT_ASSERT (s_setString (e));
 			OK_TEST;
 
-			TEST(" writeValue");
+			TEST(" setValue");
 			CPPUNIT_ASSERT (s_writeVal (e));
 			OK_TEST;
 

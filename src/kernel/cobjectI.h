@@ -1058,7 +1058,7 @@ CObjectStream<Checker>::_makeXpdfObject () const
 		if (isInt (len))
 		{
 			// Change is dispatched here 
-			IProperty::getSmartCObjectPtr<CInt>(len)->writeValue (buffer.size());
+			IProperty::getSmartCObjectPtr<CInt>(len)->setValue (buffer.size());
 			
 		}else
 		{
@@ -1188,7 +1188,7 @@ CObjectStream<Checker>::getLength () const
 	if (isInt (len))
 	{
 		int length;
-		IProperty::getSmartCObjectPtr<CInt>(len)->getPropertyValue (length);
+		IProperty::getSmartCObjectPtr<CInt>(len)->getValue (length);
 		assert (0 <= length);
 		return length;
 	
@@ -1239,7 +1239,7 @@ CObjectStream<Checker>::getFilters (Container& container) const
 	{
 		std::string fltr;
 		boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
-		name->getPropertyValue (fltr);
+		name->getValue (fltr);
 		container.push_back (fltr);
 		
 		kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
@@ -1255,7 +1255,7 @@ CObjectStream<Checker>::getFilters (Container& container) const
 		{
 			std::string fltr;
 			boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
-			name->getPropertyValue (fltr);
+			name->getValue (fltr);
 			container.push_back (fltr);
 			
 			kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);

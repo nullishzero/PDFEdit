@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/06/05 08:57:32  hockm0bm
+ * refactoring CObjectSimple
+ *         - getPropertyValue -> getValue
+ *         - writeValue -> setValue
+ *
  * Revision 1.18  2006/06/02 16:54:53  hockm0bm
  * checkAndReplace method added
  *
@@ -109,7 +114,7 @@ int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
 
 	shared_ptr<CInt> int_ptr=IProperty::getSmartCObjectPtr<CInt>(prop_ptr);
 	int value;
-	int_ptr->getPropertyValue(value);
+	int_ptr->getValue(value);
 
 	return value;
 }
@@ -127,7 +132,7 @@ IndiRef getRefFromDict(std::string name, boost::shared_ptr<CDict> dict)
 
 	shared_ptr<CRef> int_ptr=IProperty::getSmartCObjectPtr<CRef>(prop_ptr);
 	IndiRef value;
-	int_ptr->getPropertyValue(value);
+	int_ptr->getValue(value);
 
 	return value;
 }
@@ -145,7 +150,7 @@ std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
 
 	shared_ptr<CString> str_ptr=IProperty::getSmartCObjectPtr<CString>(prop_ptr);
 	std::string value;
-	str_ptr->getPropertyValue(value);
+	str_ptr->getValue(value);
 
 	return value;
 }
@@ -163,7 +168,7 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)
 
 	shared_ptr<CName> name_ptr=IProperty::getSmartCObjectPtr<CName>(prop_ptr);
 	std::string value;
-	name_ptr->getPropertyValue(value);
+	name_ptr->getValue(value);
 
 	return value;
 }
@@ -191,7 +196,7 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)
 	
 	// gets reference value and dereferences indirect object
 	IndiRef ref;
-	IProperty::getSmartCObjectPtr<CRef>(refProp)->getPropertyValue(ref);
+	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pDict)
 		throw ElementBadTypeException("");
@@ -238,8 +243,8 @@ bool simpleEquals(const boost::shared_ptr<IProperty> & val1, const boost::shared
 
 	// gets values
 	Value value1, value2;
-	IProperty::getSmartCObjectPtr<SimpleClass>(val1)->getPropertyValue(value1);
-	IProperty::getSmartCObjectPtr<SimpleClass>(val2)->getPropertyValue(value2);
+	IProperty::getSmartCObjectPtr<SimpleClass>(val1)->getValue(value1);
+	IProperty::getSmartCObjectPtr<SimpleClass>(val2)->getValue(value2);
 
 	return value1==value2;
 }
@@ -301,7 +306,7 @@ getReferencedObject (boost::shared_ptr<IProperty> ip)
 				throw CObjInvalidObject ();
 
 			IndiRef ref;
-			IProperty::getSmartCObjectPtr<CRef>(ip)->getPropertyValue(ref);
+			IProperty::getSmartCObjectPtr<CRef>(ip)->getValue(ref);
 			return ip->getPdf()->getIndirectProperty (ref);
 
 		}else
@@ -343,7 +348,7 @@ using namespace boost;
 	// FIXME use timezone information
 	
 	// sets value from created buffer
-	dateString->writeValue(buffer);
+	dateString->setValue(buffer);
 
 	return dateString;
 }

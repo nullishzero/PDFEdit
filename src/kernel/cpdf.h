@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.59  2006/06/05 08:57:32  hockm0bm
+ * refactoring CObjectSimple
+ *         - getPropertyValue -> getValue
+ *         - writeValue -> setValue
+ *
  * Revision 1.58  2006/06/05 06:27:02  hockm0bm
  * * CPdf::subsReferencies
  *         - substitues also referencie also for streams
@@ -1569,7 +1574,7 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 	
 	// gets reference value and dereferences indirect object
 	IndiRef ref;
-	IProperty::getSmartCObjectPtr<CRef>(refProp)->getPropertyValue(ref);
+	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pType)
 		throw ElementBadTypeException("");

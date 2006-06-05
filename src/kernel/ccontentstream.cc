@@ -405,7 +405,7 @@ namespace {
 
 		assert( isName( args[0] ) );
 		std::string val;
-		IProperty::getSmartCObjectPtr<CName> (args[0]) ->getPropertyValue (val);
+		IProperty::getSmartCObjectPtr<CName> (args[0]) ->getValue (val);
 
 		GfxFont *font = NULL;
 
@@ -1101,7 +1101,7 @@ namespace {
 				{ // Convert it to real
 					double dval = 0.0;
 					int val;
-					IProperty::getSmartCObjectPtr<CInt>(*it)->getPropertyValue(val);
+					IProperty::getSmartCObjectPtr<CInt>(*it)->getValue(val);
 					dval = val;
 					shared_ptr<IProperty> pIp (new CReal (dval));
 					std::replace (operands.begin(), operands.end(), *it, pIp);

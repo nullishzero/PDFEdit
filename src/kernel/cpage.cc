@@ -1093,10 +1093,10 @@ CPage::addSystemType1Font (const std::string& fontname)
 	boost::shared_ptr<CName> name (new CName ("Font"));
 	font->addProperty (string("Type"), *name);
 	
-	name->writeValue ("Type1");
+	name->setValue ("Type1");
 	font->addProperty (string ("SubType"), *name);
 	
-	name->writeValue (fontname);
+	name->setValue (fontname);
 	font->addProperty (string ("BaseFont"), *name);
 	
 	// Resources is an inheritable property, must be present

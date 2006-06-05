@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/06/05 08:57:33  hockm0bm
+ * refactoring CObjectSimple
+ *         - getPropertyValue -> getValue
+ *         - writeValue -> setValue
+ *
  * Revision 1.22  2006/05/30 22:30:48  hockm0bm
  * cloneTC corrected
  *         - sets back to the newest revision after testing to get given pdf
@@ -835,7 +840,7 @@ public:
 		// in first case change value directly in originalIntProp
 		int originalIntValue=getIntFromIProperty(originalIntProp);
 		// this should automatically call pdf->changeIndirectProperty
-		originalIntProp->writeValue(originalIntValue+1);
+		originalIntProp->setValue(originalIntValue+1);
 		shared_ptr<CInt> changedIntProp=IProperty::getSmartCObjectPtr<CInt>(pdf->getIndirectProperty(intPropRef));
 		// we have changed just value, so instance must be same
 		CPPUNIT_ASSERT(changedIntProp==originalIntProp);
