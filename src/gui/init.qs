@@ -35,6 +35,14 @@ function isNumber(x) {
 		return true;
 }
 
+/** Are all numbers */
+function isNumber4(x,y,z,w) {
+	if (isNumber(x) && isNumber(y) && isNumber(z) && isNumber(w))
+		return true;
+	else
+		return false;
+}
+
 /** Validate current page */
 function isPageAvaliable() {
  if (page()) {

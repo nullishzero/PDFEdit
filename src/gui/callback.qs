@@ -97,6 +97,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Add system font")+",addSystemFont(),,page_add_font.png");
   menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
   menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
+  menu.addItemDef("item "+tr("Draw line")+",drawLine(),,draw_line.png");
  }
  if (treeitem.itemtype()=="ContentStream") {
   menu.addSeparator();

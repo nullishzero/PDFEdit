@@ -248,7 +248,7 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
  */
 function operatorSetSimpleDashPattern(alt,operator,globchange) {
 	var array = [];
-	var step = 0;
+	var step = 500;
  	switch(alt) {
 	case 0 :
 		break;
