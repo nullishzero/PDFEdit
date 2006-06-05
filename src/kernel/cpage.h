@@ -705,7 +705,7 @@ public:
 		//
 		// Set ref and indiref
 		newstr->setPdf (dictionary->getPdf());
-		// New Value \todo 
+		// New Value \todo add to pdf
 		newstr->setIndiRef (IndiRef(1000,100));
 
 		//

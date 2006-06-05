@@ -1044,28 +1044,7 @@ CObjectStream<Checker>::_makeXpdfObject () const
 	// object
 	// 
 	if (getLength() != buffer.size())
-	{
 		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
-
-		// Get the reference
-		boost::shared_ptr<IProperty> refLen = dictionary.getProperty ("Length");
-		assert (isRef (refLen));
-		if (!isRef(refLen))
-			throw CObjInvalidObject ();
-		
-		// Get the length object
-		boost::shared_ptr<IProperty> len = utils::getReferencedObject (refLen);
-		if (isInt (len))
-		{
-			// Change is dispatched here 
-			IProperty::getSmartCObjectPtr<CInt>(len)->setValue (buffer.size());
-			
-		}else
-		{
-			assert (!"Length is not int object.");
-			throw CObjInvalidOperation ();
-		}
-	}
 
 	// Get xref
 	XRef* xref = this->getPdf()->getCXref ();
