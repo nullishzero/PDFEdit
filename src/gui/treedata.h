@@ -31,8 +31,9 @@ public:
  TreeItemRef* find(const QString &ref);
  void clear();
  //ShowData
- void checkSetting(bool &target,const QString &key);
+ void checkSetting(bool &target,const QString &key,bool defaultValue=true);
  void update();
+ bool sortDict();
  bool showDict();
  bool showODict();
  bool showOutline();
@@ -61,6 +62,8 @@ private:
  bool show_simple;
  /** Show document dictionary? */
  bool show_dict;
+ /** Sort dictionaries? */
+ bool show_dict_sort;
  /** Show graphic objects? */
  bool show_graphic;
  /** Show annotations? */

@@ -39,6 +39,7 @@ public slots:
  void setObject(const QString &name,boost::shared_ptr<IProperty> pdfObject);
  void setObject(boost::shared_ptr<PdfOperator> pdfOp);
  void update(Property *p);
+ void reloadItem();
 signals:
  /**
   Signal emitted when any property is modified
@@ -47,6 +48,7 @@ signals:
  */
  void propertyChanged(IProperty *prop); 
 private:
+ void sortList(std::vector<std::string> &list);
  void override(bool _showHidden,bool _editReadOnly);
  bool addProperty(const QString &name,boost::shared_ptr<IProperty> value);
  void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
@@ -80,6 +82,11 @@ private:
  bool showHidden;
  /** Edit read-only properties */
  bool editReadOnly;
+ /** If Dict/Array/IProeprty is being edited, this contain reference to it */
+ boost::shared_ptr<IProperty> currentObj;
+ /** If PdfOperator is being edited, this contain reference to it */
+ boost::shared_ptr<PdfOperator> currentOp;
+
 };
 
 } // namespace gui

@@ -26,19 +26,29 @@ TreeData::TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow
  _base=base;
  _multi=multi;
  //ShowData
- show_annot=show_graphic=show_stream=show_outline=show_page=show_odict=show_dict=show_simple=false;
+ show_annot=
+ show_graphic=
+ show_stream=
+ show_outline=
+ show_page=
+ show_odict=
+ show_dict=
+ show_dict_sort=
+ show_simple=false;
  update();
  dirty=false;
  needreload=false;
 }
 
-/** Check if setting have changed, updating if necessary.
+/**
+ Check if setting have changed, updating if necessary.
  If setting is changed, set dirty to true.
  @param key Setting to check
  @param target Pointer to setting to check
+ @param defaultValue Default value
 */
-void TreeData::checkSetting(bool &target,const QString &key) {
- bool tmp=globalSettings->readBool(key,true);
+void TreeData::checkSetting(bool &target,const QString &key,bool defaultValue/*=true*/) {
+ bool tmp=globalSettings->readBool(key,defaultValue);
  if (target==tmp) return;
  target=tmp;
  dirty=true;
@@ -49,6 +59,7 @@ void TreeData::checkSetting(bool &target,const QString &key) {
 void TreeData::update() {
  checkSetting(show_simple,"tree/show_simple");	//Simple objects
  checkSetting(show_dict,"tree/show_dict");	//Document dictionary
+ checkSetting(show_dict_sort,"tree/show_dict_sort",false);	//Dictionary sorting
  checkSetting(show_odict,"tree/show_objdict");	//Objects dictionaries
  checkSetting(show_outline,"tree/show_outline");//Show Outlines
  checkSetting(show_page,"tree/show_page");	//Show Pages
@@ -57,35 +68,48 @@ void TreeData::update() {
  checkSetting(show_graphic,"tree/show_graphic");	//Show Graphic objects
 }
 
-/** Return value of show_simple setting
+/**
+ Return value of show_simple setting
  @return True if show_simple is set, false if not
  */
 bool TreeData::showSimple() {
  return show_simple;
 }
 
-/** Return value of show_dict setting
+/**
+ Return value of show_dict setting
  @return True if show_dict is set, false if not
  */
 bool TreeData::showDict() {
  return show_dict;
 }
 
-/** Return value of show_odict setting
+/**
+ Return value of show_dict_sort setting
+ @return True if show_dict_sort is set, false if not
+ */
+bool TreeData::sortDict() {
+ return show_dict_sort;
+}
+
+/**
+ Return value of show_odict setting
  @return True if show_odict is set, false if not
  */
 bool TreeData::showODict() {
  return show_odict;
 }
 
-/** Return value of show_outline setting
+/**
+ Return value of show_outline setting
  @return True if show_outline is set, false if not
  */
 bool TreeData::showOutline() {
  return show_outline;
 }
 
-/** Return value of show_page setting
+/**
+ Return value of show_page setting
  @return True if show_page is set, false if not
  */
 bool TreeData::showPage() {
@@ -116,7 +140,8 @@ bool TreeData::showStream() {
  return show_stream;
 }
 
-/** Return true, if the tree should be reloaded because the settings changed
+/**
+ Return true, if the tree should be reloaded because the settings changed
  since last time the tree was reloaded, false if the tree does not need reloading
  @return True if tree is to be reloaded
  */
@@ -129,7 +154,8 @@ void TreeData::resetReload() {
  needreload=false;
 }
 
-/** Return state of 'dirty' flag
+/**
+ Return state of 'dirty' flag
  @return variable 'dirty'
  */
 bool TreeData::isDirty() {
@@ -172,7 +198,8 @@ void TreeData::remove(const QString &ref) {
 }
 
 
-/** Look in list for a treeItem with given reference and return it.
+/**
+ Look in list for a treeItem with given reference and return it.
  @param ref Reference in string format
  @return TreeItem with given reference, or NULL if nothing found
 */

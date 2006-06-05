@@ -59,6 +59,10 @@ QStringList TreeItemDict::getChildNames() {
   if (!data->showSimple() && isSimple(property)) continue; //simple item -> skip it
   itemList += *it;
  }
+ if (data->sortDict()) {
+  //Sort the keys
+  itemList.sort();
+ }
  return itemList;
 }
 

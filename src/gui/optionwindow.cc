@@ -347,6 +347,8 @@ void OptionWindow::init() {
  addOptionBool(tree_tab,tr("Outlines"),"tree/show_outline",true);
  addOptionBool(tree_tab,tr("Content Streams"),"tree/show_stream",true);
  addOptionBool(tree_tab,tr("Simple Objects"),"tree/show_simple",true);
+ addText      (tree_tab,"<br>"+tr("Options affecting object tree and property editor"));
+ addOptionBool(tree_tab,tr("Sort dictionary items alphabetically"),"tree/show_dict_sort");
  finishTab    (tree_tab);
 
  QWidget *misc_tab=addTab(tr("Commandline"),true);
@@ -357,7 +359,7 @@ void OptionWindow::init() {
  addOptionBool(misc_tab,tr("Show command line"),"gui/CommandLine/CmdShowHistory");
  addOptionBool(misc_tab,tr("Editable command line"),"gui/CommandLine/CmdShowLine");
  misc_tab=addBreak(misc_tab);
- addText      (misc_tab,tr("<br>History options"));
+ addText      (misc_tab,"<br>"+tr("History options"));
  addOptionFile(misc_tab,tr("History file"),"gui/CommandLine/HistoryFile");
  addOptionInt (misc_tab,tr("Max. lines in history"),"gui/CommandLine/HistorySize");
 

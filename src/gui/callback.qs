@@ -99,7 +99,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
   menu.addItemDef("item "+tr("Draw line")+",drawLine(),,draw_line.png");
  }
- if (treeitem.itemtype()=="ContentStream") {
+ if (treeitem.itemtype()=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
   menu.addSeparator();
   menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
   menu.addItemDef("item "+tr("Show only text operators")+",treeitem.setMode('text'),,stream_mode_text.png");

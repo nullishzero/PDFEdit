@@ -89,6 +89,8 @@ void PropertyEditor::resizeEvent (QResizeEvent *e) {
 
 /** remove and delete all properties from the editor, unset current object */
 void PropertyEditor::clear() {
+ currentOp.reset();
+ currentObj.reset();
  rowNum.clear();
  propLabel.clear();
  //clear properties in property dictionary
@@ -226,6 +228,7 @@ void PropertyEditor::setObject(const QString &message) {
 void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
  setUpdatesEnabled( FALSE );
  clear();
+ currentOp=pdfOp;
  if (!pdfOp.get()) {
   unsetObject();
  } else {
@@ -255,12 +258,23 @@ void PropertyEditor::unsetObject() {
 }
 
 /**
+ Sort the list, if settings are set to sort it
+ @param list list to conditionally sort
+*/
+void PropertyEditor::sortList(std::vector<std::string> &list) {
+ if (globalSettings->readBool("tree/show_dict_sort",false)) {
+  sort(list.begin(),list.end());
+ }
+}
+
+/**
  Set IProperty object to be active (edited) in this editor
  @param pdfObject Object to set for editing in the widget
 */
 void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
  setUpdatesEnabled( FALSE );
  clear();
+ currentObj=pdfObject;
  //TODO: need property flags/mode
  if (!pdfObject.get()) {
   unsetObject();
@@ -268,6 +282,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   CDict *dict=dynamic_cast<CDict*>(pdfObject.get());
   vector<string> list;
   dict->getAllPropertyNames(list);
+  sortList(list);
   vector<string>::iterator it;
   int i=0;
   for( it=list.begin();it!=list.end();++it) { // for each property
@@ -286,6 +301,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   CStream *cstream=dynamic_cast<CStream*>(pdfObject.get());
   vector<string> list;
   cstream->getAllPropertyNames(list);
+  sortList(list);
   vector<string>::iterator it;
   int i=0;
   for( it=list.begin();it!=list.end();++it) { // for each property
@@ -398,6 +414,18 @@ void PropertyEditor::checkOverrides() {
  showHidden=globalSettings->readBool("editor/show_hidden");
  editReadOnly=globalSettings->readBool("editor/edit_readonly");
  override(showHidden,editReadOnly);
+}
+
+/**
+ Reload item, if it is appropriate for the item currently shown in editor
+*/
+void PropertyEditor::reloadItem() {
+ if (currentObj) {
+  setObject(currentObj);
+ }
+ if (currentOp) {
+  setObject(currentOp);
+ }
 }
 
 } // namespace gui
