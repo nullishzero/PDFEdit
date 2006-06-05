@@ -1216,12 +1216,10 @@ CObjectStream<Checker>::getFilters (Container& container) const
 	// 
 	if (isName (ip))
 	{
-		std::string fltr;
 		boost::shared_ptr<const CName> name = IProperty::getSmartCObjectPtr<CName>(ip);
-		name->getValue (fltr);
-		container.push_back (fltr);
+		container.push_back (name->getValue());
 		
-		kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
+		kernelPrintDbg (debug::DBG_DBG, "Filter name:" << name->getValue());
 	//
 	// If it is an array, iterate through its properties
 	//
@@ -1232,12 +1230,10 @@ CObjectStream<Checker>::getFilters (Container& container) const
 		CArray::Value::iterator it = array->value.begin ();
 		for (; it != array->value.end(); ++it)
 		{
-			std::string fltr;
 			boost::shared_ptr<CName> name = IProperty::getSmartCObjectPtr<CName>(*it);
-			name->getValue (fltr);
-			container.push_back (fltr);
+			container.push_back (name->getValue());
 			
-			kernelPrintDbg (debug::DBG_DBG, "Filter name:" << fltr);
+			kernelPrintDbg (debug::DBG_DBG, "Filter name:" << name->getValue());
 
 		} // for (; it != array->value.end(); ++it)
 	}

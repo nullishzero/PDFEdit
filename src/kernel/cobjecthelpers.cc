@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/06/05 11:36:52  misuj1am
+ *
+ * -- ADD:  getValue(), changed several occurencies
+ *
  * Revision 1.19  2006/06/05 08:57:32  hockm0bm
  * refactoring CObjectSimple
  *         - getPropertyValue -> getValue
@@ -113,10 +117,7 @@ int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	}
 
 	shared_ptr<CInt> int_ptr=IProperty::getSmartCObjectPtr<CInt>(prop_ptr);
-	int value;
-	int_ptr->getValue(value);
-
-	return value;
+	return int_ptr->getValue();
 }
 
 IndiRef getRefFromDict(std::string name, boost::shared_ptr<CDict> dict)
@@ -131,10 +132,7 @@ IndiRef getRefFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	}
 
 	shared_ptr<CRef> int_ptr=IProperty::getSmartCObjectPtr<CRef>(prop_ptr);
-	IndiRef value;
-	int_ptr->getValue(value);
-
-	return value;
+	return int_ptr->getValue();
 }
 
 std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
@@ -149,10 +147,7 @@ std::string getStringFromDict(std::string name, boost::shared_ptr<CDict> dict)
 	}
 
 	shared_ptr<CString> str_ptr=IProperty::getSmartCObjectPtr<CString>(prop_ptr);
-	std::string value;
-	str_ptr->getValue(value);
-
-	return value;
+	return str_ptr->getValue();
 }
 	
 std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict)

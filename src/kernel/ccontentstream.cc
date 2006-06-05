@@ -1100,9 +1100,7 @@ namespace {
   				if (isBitSet(ops.types[pos], pReal))
 				{ // Convert it to real
 					double dval = 0.0;
-					int val;
-					IProperty::getSmartCObjectPtr<CInt>(*it)->getValue(val);
-					dval = val;
+					dval = IProperty::getSmartCObjectPtr<CInt>(*it)->getValue();
 					shared_ptr<IProperty> pIp (new CReal (dval));
 					std::replace (operands.begin(), operands.end(), *it, pIp);
 				}

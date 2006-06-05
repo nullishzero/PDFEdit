@@ -1895,9 +1895,7 @@ getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
 	{
 		// Cast it to the correct type and return it
 		boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
-		Value val = Value ();
-		item->getValue (val);
-		return val;
+		return item->getValue ();
 
 	}else
 	{
