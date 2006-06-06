@@ -5,6 +5,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/06/06 11:46:03  hockm0bm
+ * Refactoring changes
+ *
+ * * ModeMatcher
+ *         - uses == instead of equals (sync with RulesManager change)
+ * * ModeRule
+ *         - operator == replaces equals method (implementation same)
+ *
  * Revision 1.12  2006/06/06 10:15:12  hockm0bm
  * loadFromFile method removed
  *         - uses default implementation from RulesManager
@@ -97,7 +105,7 @@ bool ModeMatcher::operator()(const ModeRule & original, const ModeRule & rule,  
 	}
 
 	// type, name specific rule
-	if(original.equals(rule))
+	if(original==rule)
 	{
 		if(priority)
 			*priority=PRIO3;

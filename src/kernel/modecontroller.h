@@ -5,6 +5,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/06/06 11:46:03  hockm0bm
+ * Refactoring changes
+ *
+ * * ModeMatcher
+ *         - uses == instead of equals (sync with RulesManager change)
+ * * ModeRule
+ *         - operator == replaces equals method (implementation same)
+ *
  * Revision 1.13  2006/06/06 10:15:12  hockm0bm
  * loadFromFile method removed
  *         - uses default implementation from RulesManager
@@ -122,7 +130,7 @@ struct ModeRule
 	 *
 	 * @return true if given rule is same, false otherwise.
 	 */
-	bool equals(const ModeRule & rule)const
+	bool operator==(const ModeRule & rule)const
 	{
 		return type==rule.type && name==rule.name;
 	}
@@ -171,7 +179,7 @@ public:
 	 * PRIO1 priority.
 	 * <li>original={"", name} - rule matches if rule.name==original.name with
 	 * PRIO2 priority.
-	 * <li>original={type, name} - rule matches if original.equals(rule) with
+	 * <li>original={type, name} - rule matches if original==rule with
 	 * PRIO3 priority.
 	 * <li> PRIO0 &lt PRIO1 &lt PRIO2 &lt PRIO3
 	 * </ul>
