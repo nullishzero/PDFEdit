@@ -30,4 +30,13 @@ QString InvalidMenuException::message() const {
 InvalidMenuException::~InvalidMenuException() throw() {
 }
 
+/**
+ Overloaded what() from std::exception<br>
+ For getting usable error message if the exception is not handled
+ */
+const char* InvalidMenuException::what() const throw(){
+ return msg.ascii();
+}
+
+
 } // namespace gui

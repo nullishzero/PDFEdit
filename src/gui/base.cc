@@ -213,8 +213,11 @@ void Base::runInitScript() {
   //No init scripts found - print a warning
   warn(tr("No init script found - check your configuration")+"!\n"+tr("Looked for","scripts")+":\n"+initScripts.join("\n"));
  }
- //Run initscripts from paths listed in settings
+ // Run initscripts from paths listed in settings,
+ // initscript with same name is executed only once,
+ // initscripts in later paths take priority
  QStringList initScriptPaths=globalSettings->readPath("init_path","script/");
+ QMap<QString,QString> initScriptAbsPaths;
  for (unsigned int ip=0;ip<initScriptPaths.count();ip++) {
   QString initPath=initScriptPaths[ip];
   if (!exists(initPath)) {
@@ -226,12 +229,18 @@ void Base::runInitScript() {
    initScripts=dir.entryList("*.qs",QDir::Files | QDir::Readable,QDir::IgnoreCase | QDir::Name);
    for (unsigned int i=0;i<initScripts.count();i++) {
     QString initScriptFilename=initPath+"/"+initScripts[i];
-    guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
-    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
-    runFile(initScriptFilename);    
+    initScriptAbsPaths.insert(initScripts[i],initScriptFilename);
+    guiPrintDbg(debug::DBG_INFO,"Adding init script: " << initScriptFilename);
    }
   }
   //Path is ok, check for scripts there
+ }
+ QMap<QString,QString>::Iterator it;
+ for (it=initScriptAbsPaths.begin();it!=initScriptAbsPaths.end();++it) {
+  QString initScriptFilename=it.data();
+  guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
+  //Any document-related classes are NOT available to the initscript, as no document is currently loaded
+  runFile(initScriptFilename);    
  }
  guiPrintDbg(debug::DBG_DBG,"Initscripts from dirs executed");
 }

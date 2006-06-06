@@ -15,6 +15,7 @@ public:
  InvalidMenuException(const QString &message);
  ~InvalidMenuException() throw();
  QString message() const;
+ const char* what() const throw();
 protected:
  /** exception message*/
  QString msg;
