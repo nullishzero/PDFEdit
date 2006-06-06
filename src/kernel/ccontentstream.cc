@@ -61,7 +61,8 @@ namespace {
 		wMode = font->getWMode();
 		
 		// Set edge of rectangle from actual position on output devices
-		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
+		state->textTransformDelta(0, font->getDescent() * state->getFontSize(), & x, & y);
+                state->transform(state->getCurX() + x, state->getCurY() + y, & rc->xleft, & rc->yleft);
 
 		// handle a Type 3 char
 		if (font->getType() == fontType3 /* && out->interpretType3Chars() */) 
@@ -152,10 +153,7 @@ namespace {
 			}
 		}
 		// Set edge of rectangle from actual position on output devices
-		state->textTransformDelta(0, state->getFontSize(), & x, & y);
-		utilsPrintDbg( debug::DBG_DBG, "textTransDelta (" << x<<","<<y<<")");
-		state->transformDelta(x, y, & dx, & dy);
-		utilsPrintDbg( debug::DBG_DBG, "transDelta     (" << dx<<","<<dy<<")");
+		state->textTransformDelta(0, state->getFontSize() * font->getAscent(), & x, & y);
 		state->transform(state->getCurX() + x, state->getCurY() + y, & rc->xright, & rc->yright);
 
 		// return changed state
@@ -645,17 +643,17 @@ namespace {
 			PropertyType tp = item->getType ();
 			switch (tp) 
 			{
-		     	case pInt:
-				case pReal:
+			case pInt:
+			case pReal:
 					{
 					// Set edge of rectangle from actual position on output devices
 					state->transform(state->getCurX (), state->getCurY(), & h_rc.xleft, & h_rc.yleft);
 
 					double dd = -getDoubleFromIProperty (item);
 					if (wMode) {
-						state->textShift(dd * 0.001 * fabs(state->getFontSize()), 0);
-					} else {
 						state->textShift(0, dd * 0.001 * fabs(state->getFontSize()));
+					} else {
+						state->textShift(dd * 0.001 * fabs(state->getFontSize()), 0);
 					}
 
 					// Set edge of rectangle from actual position on output devices
@@ -663,11 +661,11 @@ namespace {
 					}
 
 					break;
-		    	case pString:
+			case pString:
 		      		printTextUpdate (state, getStringFromIProperty (item), & h_rc);
-				  break;
+					break;
 
-				default:
+			default:
 					assert (!"opTJUpdate: Bad object type.");
 					throw ElementBadTypeException ("opTJUpdate: Bad object type.");
 			}// switch
