@@ -724,10 +724,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Set values           </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>element</source>
         <comment>1</comment>
         <translation type="unfinished"></translation>
@@ -799,6 +795,172 @@ Data: %3
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode not supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>End position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Upper left corner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metrics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rect was drawn.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add text line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text to add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw rect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set values</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative operator position (this is not absolute position)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative operator position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script updater</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update process information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can update from project site or any other site containin QSA scripts for PdfEditor.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First you will be asked for the script directory. Downloaded scripts will be placed into this directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For automatic script loading select the default script directory (see user documentation).
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Then, you will be asked for executable utility (e.g. wget) which can automatically download files from http server using</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>syntax: executable -P directory files.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Finally you will be asked to open the script, which will be executed. (Be carefull, QSA can execute processes)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select directory where scripts should be downloaded.jano.script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select script location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select downloading utility.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you really want to execute </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select script to execute.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script launcher</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1015,6 +1177,15 @@ Data: %3
     </message>
     <message>
         <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No init script found - check your configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Looked for</source>
+        <comment>scripts</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1236,6 +1407,10 @@ Data: %3
     </message>
     <message>
         <source>History options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Statusbar font</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1716,6 +1891,36 @@ Data: %3
     <message>
         <source>Draw line</source>
         <comment>drawline</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show/Hide &amp;status bar</source>
+        <comment>hideStatus</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <comment>drawrect</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add text</source>
+        <comment>addtext</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw line</source>
+        <comment>drawlinem</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <comment>drawrectm</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add text</source>
+        <comment>addtextm</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

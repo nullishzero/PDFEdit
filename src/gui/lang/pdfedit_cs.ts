@@ -732,7 +732,7 @@ Data: %3
     </message>
     <message>
         <source>Set values           </source>
-        <translation>Nastavuje hodnoty    </translation>
+        <translation type="obsolete">Nastavuje hodnoty    </translation>
     </message>
     <message>
         <source>element</source>
@@ -804,6 +804,98 @@ Data: %3
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
         <translation>Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
     </message>
+    <message>
+        <source>Mode not supported.</source>
+        <translation>Režim není podporován.</translation>
+    </message>
+    <message>
+        <source>End position</source>
+        <translation>Koncový bod</translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <translation>Nakreslit obdélník</translation>
+    </message>
+    <message>
+        <source>Upper left corner</source>
+        <translation>Levý horní roh</translation>
+    </message>
+    <message>
+        <source>Metrics</source>
+        <translation>Rozměry</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation>Šířka</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation>Výška</translation>
+    </message>
+    <message>
+        <source>Rect was drawn.</source>
+        <translation>Obdélník byl nakreslen</translation>
+    </message>
+    <message>
+        <source>Add text line</source>
+        <translation>Přidat řádek textu</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Přidat</translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation>Text</translation>
+    </message>
+    <message>
+        <source>Text to add</source>
+        <translation>Text k přidání</translation>
+    </message>
+    <message>
+        <source>Draw rect</source>
+        <translation>Nakreslit obdélník</translation>
+    </message>
+    <message>
+        <source>Add text</source>
+        <translation>Přidat text</translation>
+    </message>
+    <message>
+        <source>position</source>
+        <translation>pozice</translation>
+    </message>
+    <message>
+        <source>Set values</source>
+        <translation>Nastavit hodnoty</translation>
+    </message>
+    <message>
+        <source>Relative operator position (this is not absolute position)</source>
+        <translation>Relativní pozice operátoru (toto není absolutní pozice)</translation>
+    </message>
+    <message>
+        <source>Relative operator position</source>
+        <translation>Relativní pozice operátoru</translation>
+    </message>
+    <message>
+        <source>Start position</source>
+        <translation>Počáteční bod</translation>
+    </message>
+    <message>
+        <source>Text position</source>
+        <translation>Pozice textu</translation>
+    </message>
+    <message>
+        <source>Set font</source>
+        <translation>Nastavit písmo</translation>
+    </message>
+    <message>
+        <source>Font size</source>
+        <translation>Velikost písma</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Velikost</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -817,7 +909,7 @@ Data: %3
     </message>
     <message>
         <source>FreeText</source>
-        <translation></translation>
+        <translation>FreeText</translation>
     </message>
     <message>
         <source>Line</source>
@@ -1019,6 +1111,15 @@ Data: %3
     <message>
         <source>Warning</source>
         <translation>Upozornění</translation>
+    </message>
+    <message>
+        <source>No init script found - check your configuration</source>
+        <translation>Nenalezen žádný init skript - zkontrolujte svoji konfiguraci</translation>
+    </message>
+    <message>
+        <source>Looked for</source>
+        <comment>scripts</comment>
+        <translation>Zkoušel jsem</translation>
     </message>
 </context>
 <context>
@@ -1240,6 +1341,10 @@ Data: %3
     <message>
         <source>History options</source>
         <translation>Nastavení historie</translation>
+    </message>
+    <message>
+        <source>Statusbar font</source>
+        <translation>Písmo stavového řádku</translation>
     </message>
 </context>
 <context>
@@ -1720,6 +1825,36 @@ Data: %3
         <source>Draw line</source>
         <comment>drawline</comment>
         <translation>Nakreslit čáru</translation>
+    </message>
+    <message>
+        <source>Show/Hide &amp;status bar</source>
+        <comment>hideStatus</comment>
+        <translation>Zobrazit/skrýt stavový řádek</translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <comment>drawrect</comment>
+        <translation>Nakreslit obdélník</translation>
+    </message>
+    <message>
+        <source>Add text</source>
+        <comment>addtext</comment>
+        <translation>Přidat text</translation>
+    </message>
+    <message>
+        <source>Draw line</source>
+        <comment>drawlinem</comment>
+        <translation>Nakreslit čáru</translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <comment>drawrectm</comment>
+        <translation>Nakreslit obdélník</translation>
+    </message>
+    <message>
+        <source>Add text</source>
+        <comment>addtextm</comment>
+        <translation>Přidat text</translation>
     </message>
 </context>
 <context>
