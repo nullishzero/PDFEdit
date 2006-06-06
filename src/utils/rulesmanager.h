@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/06/06 10:14:05  hockm0bm
+ * loadFromFile method added
+ *         - generic implementation
+ *
  * Revision 1.2  2006/05/31 21:43:55  hockm0bm
  * gcc
  *
@@ -16,6 +20,7 @@
 #define _RULESMANAGER_H_
 
 #include<vector>
+#include"utils/confparser.h"
 
 namespace rulesmanager
 {
@@ -196,6 +201,58 @@ public:
 	virtual void addRule(RuleType ruleDef, RuleTarget target)
 	{
 		mapping.push_back(MappingType(ruleDef, target));
+	}
+
+	/** Reads given configuration file.
+	 * @param confFile Configuration file name.
+	 * @param parser Parser to be used for file parsing.
+	 *
+	 * Uses given parser to get key (RuleType) and value (RuleTarget) from
+	 * given file. Given parser has to support given file format.
+	 * Parsed rules are registered using addRule method.
+	 * <br>
+	 * Note that Parser template type has to provide correct types for key and
+	 * value. IConfigurationParser descendant should be used.
+	 *
+	 * @return number of successfully added rules or -1 if error occured during
+	 * parsing.
+	 */
+	template<typename Parser>
+	int loadFromFile(const std::string & confFile, Parser & parser)
+	{
+	using namespace std;
+
+		int added=0;
+
+		// opens input stream
+		ifstream stream(confFile.c_str());
+		if(!stream.is_open())
+			return -1;
+		
+		// uses opened input file stream
+		istream * original=parser.setStream(&stream);
+
+		// parses all rules and register them by super type interface
+		while(!parser.eod())
+		{
+			RuleType rule;
+			RuleTarget mode;
+			if(!parser.parse(rule, mode)) 
+			{
+				if(!parser.eod())
+					// parser error, because we are not at the end of data
+					return -1;
+				
+				// no more data to read
+				continue;
+			}
+			addRule(rule, mode);
+			added++;
+		}
+
+		// returns back original stream to given parser
+		parser.setStream(original);
+		return added;
 	}
 
 	/** Removes mapping for given ruleDef.
