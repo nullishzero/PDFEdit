@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.60  2006/06/06 09:19:45  hockm0bm
+ * * ModeController moved to configuration namespace
+ * * ModeController::loadFromFile
+ *         - fileName is const string & now
+ *
  * Revision 1.59  2006/06/05 08:57:32  hockm0bm
  * refactoring CObjectSimple
  *         - getPropertyValue -> getValue
@@ -871,7 +876,7 @@ private:
 	 * Use setModeController to set one and getModeController to get
 	 * actually used one.
 	 */
-	ModeController* modeController;
+	configuration::ModeController* modeController;
 
 	/** Empty constructor.
 	 *
@@ -946,7 +951,7 @@ public:
 	 * @return IModeController implementator or NULL, if no mode 
 	 * controller is used.
 	 */
-	ModeController* getModeController()const
+	configuration::ModeController* getModeController()const
 	{
 		return modeController;
 	}
@@ -965,7 +970,7 @@ public:
 	 * will be disabled).
 	 *
 	 */
-	void setModeController(ModeController* ctrl)
+	void setModeController(configuration::ModeController* ctrl)
 	{
 		modeController = ctrl;
 	}

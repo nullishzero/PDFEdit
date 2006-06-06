@@ -5,6 +5,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/06/06 09:19:45  hockm0bm
+ * * ModeController moved to configuration namespace
+ * * ModeController::loadFromFile
+ *         - fileName is const string & now
+ *
  * Revision 1.11  2006/06/01 18:49:06  hockm0bm
  * typo fix
  *
@@ -85,6 +90,9 @@ enum PropertyMode
 	 */
 	mdAdvanced
 };
+
+namespace configuration
+{
 
 /** Rule structure for mode.
  * This type is used for RulesManager RuleType in ModeController.
@@ -187,10 +195,10 @@ typedef rulesmanager::RulesManager<ModeRule, PropertyMode> ModeRulesManager;
  * </pre>
  * All other IConfigurationParser operations are delegated to the baseParser.
  */
-class ModeConfigurationParser: public configuration::IConfigurationParser<ModeRule, PropertyMode>
+class ModeConfigurationParser: public IConfigurationParser<ModeRule, PropertyMode>
 {
 public:
-	typedef configuration::IConfigurationParser<std::string, std::string> StringParser;
+	typedef IConfigurationParser<std::string, std::string> StringParser;
 private:
 	/** Low level string parser.
 	 * This parser is initialized in constructor and it is used for input data
@@ -428,7 +436,7 @@ public:
 	 * @return number of successfully added rules or -1 if error occured during
 	 * parsing.
 	 */
-	int loadFromFile(std::string confFile, ConfParser & parser);
+	int loadFromFile(const std::string & confFile, ConfParser & parser);
 
 	/** 
 	 * Get default mode.
@@ -480,5 +488,7 @@ public:
 		return defaultMode;
 	}
 };
+
+} // namespace configuration
 
 #endif  //_MODECONTROLLER_H_

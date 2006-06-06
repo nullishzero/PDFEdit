@@ -735,7 +735,7 @@ template <PropertyType Tp, typename Checker>
 void
 CObjectComplex<Tp,Checker>::_setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const
 {
-	ModeController* modecontroller = NULL;
+	configuration::ModeController* modecontroller = NULL;
 	if (hasValidPdf (this) && (NULL != (modecontroller=this->getPdf()->getModeController())))
 	{
 		assert (modecontroller);		

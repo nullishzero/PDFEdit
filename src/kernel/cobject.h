@@ -2400,7 +2400,7 @@ getCStreamFromArray (IP& ip, size_t pos)
  * @return Property mode.
  */
 inline PropertyMode 
-getModeForComplexObjects (const CArray::Value&, size_t id, const ModeController& modecontroller)
+getModeForComplexObjects (const CArray::Value&, size_t id, const configuration::ModeController& modecontroller)
 { 
 	std::ostringstream oss;
 	oss << id;
@@ -2417,7 +2417,7 @@ getModeForComplexObjects (const CArray::Value&, size_t id, const ModeController&
  * @return Property mode.
  */
 inline PropertyMode 
-getModeForComplexObjects (const CDict::Value& dict, const std::string& name, const ModeController& modecontroller)
+getModeForComplexObjects (const CDict::Value& dict, const std::string& name, const configuration::ModeController& modecontroller)
 { 
 	DictIdxComparator cmp ("Type");
 	CDict::Value::const_iterator it = dict.begin();

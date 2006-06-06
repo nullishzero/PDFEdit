@@ -5,6 +5,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/06/06 09:19:45  hockm0bm
+ * * ModeController moved to configuration namespace
+ * * ModeController::loadFromFile
+ *         - fileName is const string & now
+ *
  * Revision 1.10  2006/06/01 18:49:06  hockm0bm
  * typo fix
  *
@@ -50,6 +55,9 @@
 
 // =====================================================================================
 using namespace std;
+
+namespace configuration
+{
 
 bool ModeMatcher::operator()(const ModeRule & original, const ModeRule & rule,  priority_t * priority)const
 {
@@ -152,7 +160,7 @@ using namespace configuration::utils;
 	return true;
 }
 
-int ModeController::loadFromFile(std::string confFile, ConfParser & parser)
+int ModeController::loadFromFile(const std::string & confFile, ConfParser & parser)
 {
 using namespace std;
 
@@ -188,3 +196,5 @@ using namespace std;
 	parser.setStream(original);
 	return added;
 }
+
+} // namespace configuration
