@@ -33,6 +33,102 @@ function operatorInitChange(operator) {
 }
 
 
+/* === Content stream helper functions === */
+function putnscolor (op,r,g,b) {
+	var operands = createIPropertyArray();
+	operands.append(createReal(r/255));
+	operands.append(createReal(g/255));
+	operands.append(createReal(b/255));
+	op.pushBack( createOperator(operands, "rg"),op.getLastOperator());
+}
+function putscolor (op,r,g,b) {
+	var operands = createIPropertyArray();
+	operands.append(createReal(r/255));
+	operands.append(createReal(g/255));
+	operands.append(createReal(b/255));
+	op.pushBack( createOperator(operands, "RG"),op.getLastOperator());
+}
+
+function putfont (op,fid,fs) {
+	var operands = createIPropertyArray ();
+	operands.append(createName(fid));
+	operands.append(createReal(fs));
+	op.pushBack(createOperator(operands, "Tf"), op.getLastOperator());
+}
+function putline (op,lx,ly,rx,ry) {
+	var operands = createIPropertyArray ();
+	operands.append (createReal(lx));
+	operands.append (createReal(ly));
+	op.pushBack (createOperator(operands, "m"), op.getLastOperator());
+
+	operands.clear();
+	operands.append (createReal(rx));
+	operands.append (createReal(ry));
+	op.pushBack (createOperator(operands, "l"),op.getLastOperator());
+}
+function putrect (op,x,y,w,h) {
+	var operands = createIPropertyArray ();
+	operands.append (createReal(x));
+	operands.append (createReal(y));
+	operands.append (createReal(w));
+	operands.append (createReal(h));
+	op.pushBack (createOperator(operands, "re"),op.getLastOperator());
+}
+function putlinewidth (op,w) {
+	var operands = createIPropertyArray ();
+	operands.append (createInt(w));
+	op.pushBack (createOperator(operands, "w"), op.getLastOperator());	
+}
+function puttextrelpos (op,dx,dy) {
+	var operands = createIPropertyArray ();
+	operands.append (createReal(dx));
+	operands.append (createReal(dy));
+	op.pushBack (createOperator(operands, "Td"), op.getLastOperator());
+}
+function putenddraw (op) {
+	var operands = createIPropertyArray ();
+	op.pushBack (createOperator(operands, "S"),op.getLastOperator());
+}
+function putendfill (op) {
+	var operands = createIPropertyArray ();
+	op.pushBack (createOperator(operands, "B"),op.getLastOperator());
+}
+function puttext (op,txt) {
+	var operands = createIPropertyArray ();
+	operands.append (createString(txt));
+	op.pushBack (createOperator(operands, "Tj"),op.getLastOperator());
+}
+function putendtext (op) {
+	var operands = createIPropertyArray ();
+	op.pushBack (createOperator(operands, "ET"),op.getLastOperator());
+}
+function putendq (op) {
+	var operands = createIPropertyArray ();
+	op.pushBack( createOperator(operands, "Q"), op.getLastOperator());
+}
+
+/** == debug utilities == */
+function _dbgprintOpersB() {
+	
+	op=treeitem.item();
+	var it = op.iterator();
+	while (it.valid()) {
+		print (it.current().getName());
+		it.prev();
+	}
+}
+
+/** == debug utilities == */
+function _dbgprintOpers() {
+	
+	op=treeitem.item();
+	var it = op.iterator();
+	while (!it.isEnd()) {
+		print (it.current().getName());
+		it.next();
+	}
+}
+
 /** set color of operator
  * @param operator change color of this operator
  * @param r red component of color for set
@@ -84,31 +180,26 @@ function operatorSetColor(operator,r,g,b) {
 	//
 	var composite = createCompositeOperator("q","Q");
 
-	var operands = createIPropertyArray();
-	operands.append(createReal(r/255));
-	operands.append(createReal(g/255));
-	operands.append(createReal(b/255));
 
 	var cntNon = operator.containsNonStrokingOperator();
 	var cntStr = operator.containsStrokingOperator();
 
 	// E.g if text found put rg, if lin put RG, can be both
 	if (cntNon) {
-		composite.pushBack( createOperator(operands, "rg"),composite);
+		putnscolor (composite,r,g,b,composite);
 	}
 	if (cntStr) {
-		composite.pushBack( createOperator(operands, "RG"),composite.getLastOperator());
+		putscolor (composite,r,g,b);
 	} 
 	
 	// It the operator does not contain any known operators put them both
 	if (!cntNon && !cntStr)	{
-		composite.pushBack( createOperator(operands, "rg"),composite);
-		composite.pushBack( createOperator(operands, "RG"),composite.getLastOperator());
+		putnscolor (composite,r,g,b);
+		putscolor (composite,r,g,b);
 	}
 
 	composite.pushBack( operator );
-	operands.clear();
-	composite.pushBack( createOperator(operands, "Q"), operator.getLastOperator() );
+	putendq(composite);
 
 	operator.stream().replace(operator, composite, posit[0], posit[1]);
 }
@@ -178,16 +269,11 @@ function operatorSetFont(operator, fontid, fontsize) {
 	//
 	var composite = createCompositeOperator ("q","Q");
 
-	var operands = createIPropertyArray ();
-	operands.append(createName(fontid));
-	operands.append(createReal(fontsize));
-	composite.pushBack(createOperator(operands, "Tf"), composite);
+	putfont(composite,fontid,fontsize);
 
     /* Put the changed operator also in the queue */
 	composite.pushBack (operator);
-
-	operands.clear();
-	composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+	putendq(composite);
 
 	// replace it
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
@@ -225,16 +311,14 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
 		composite = createCompositeOperator ("q","Q");
 	}
 
-	var operands = createIPropertyArray ();
-	operands.append (createInt(linewidth));
-	composite.pushBack (createOperator(operands, "w"), composite);
+	putlinewidth (composite,linewidth);
 
     /* Put the changed operator also in the queue */
 	composite.pushBack (operator);
 
 	operands.clear();
 	if (!globchange)
-		composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+		putendq(composite);
 
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }
@@ -312,7 +396,7 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 
 	operands.clear();
 	if (!globchange)
-		composite.pushBack (createOperator(operands, "Q"), operator.getLastOperator());
+		putendq (composite);
 
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
 }
@@ -363,21 +447,13 @@ function operatorSetPosition(operator, dx, dy) {
 	//
 	var composite = createCompositeOperator("q","Q");
 
-	var operands = createIPropertyArray ();
-	operands.append (createReal(dx));
-	operands.append (createReal(dy));
-	composite.pushBack (createOperator(operands, "Td"), composite);
+	puttextrelpos(composite,dx,dy);
 
     /* Put the changed operator also in the queue */
 	composite.pushBack (operator);
 
-	operands.clear();
-	operands.append (createReal(-dx));
-	operands.append (createReal(-dy));
-	composite.pushBack (createOperator(operands, "Td"),operator.getLastOperator());
-
-	operands.clear();
-	composite.pushBack (createOperator(operands, "Q"));
+	puttextrelpos (composite,-dx,-dy)
+	putendq(composite);
 
 	operator.stream().replace (operator, composite, posit[0], posit[1]);
 
@@ -390,7 +466,8 @@ function operatorSetPosition(operator, dx, dy) {
 function getPosInfoOfOperator (operator) {
 	
 	var txtit = operator.iterator();
-	while (!txtit.isEnd()) {
+	while (!txtit.isBegin()) {
+		print (txtit.current().getName());
 		if ("TD" == txtit.current().getName() || 
 				"Td" == txtit.current().getName())
 			return txtit.current();
@@ -403,8 +480,7 @@ function getPosInfoOfOperator (operator) {
 /**
  * Draw line from start position to end position.
  */
-function operatorDrawLine (lx,ly,rx,ry) {
-	
+function operatorDrawLine (lx,ly,rx,ry,width,col) {
 	//
 	// q
 	// array phase d
@@ -413,20 +489,18 @@ function operatorDrawLine (lx,ly,rx,ry) {
 	//
 	var composite = createCompositeOperator("q","Q");
 
-	var operands = createIPropertyArray ();
-	operands.append (createReal(lx));
-	operands.append (createReal(ly));
-	composite.pushBack (createOperator(operands, "m"), composite);
+	if (undefined != width) {
+		putlinewidth (composite,width);
+	}
 
-	operands.clear();
-	operands.append (createReal(rx));
-	operands.append (createReal(ry));
-	composite.pushBack (createOperator(operands, "l"));
+	if (undefined != col) {
+		putscolor(composite,col.red,col.green,col.blue);
+	}
+	
+	putline (composite,lx,ly,rx,ry)
+	putenddraw (composite);
 
-	operands.clear();
-	composite.pushBack (createOperator(operands, "S"));
-
-	composite.pushBack (createOperator(operands, "Q"));
+	putendq(composite,composite);
 
 	var ops = createPdfOperatorStack();
 	ops.append (composite);
@@ -436,7 +510,7 @@ function operatorDrawLine (lx,ly,rx,ry) {
 /**
  * Draw rectangle specyfing left upper corner, width and height.
  */
-function operatorDrawRect (lx,ly,width,height) {
+function operatorDrawRect (lx,ly,width,height,col) {
 	
 	//
 	// q
@@ -446,17 +520,15 @@ function operatorDrawRect (lx,ly,width,height) {
 	//
 	var composite = createCompositeOperator("q","Q");
 
-	var operands = createIPropertyArray ();
-	operands.append (createReal(lx));
-	operands.append (createReal(ly));
-	operands.append (createReal(width));
-	operands.append (createReal(height));
-	composite.pushBack (createOperator(operands, "re"),composite);
+	if (undefined != col) {
+		putscolor(composite,col.red,col.green,col.blue);
+		putnscolor(composite,col.red,col.green,col.blue);
+	}
 
-	operands.clear();
-	composite.pushBack (createOperator(operands, "S"));
-
-	composite.pushBack (createOperator(operands, "Q"));
+	putrect (composite,lx,ly,width,height);
+	putendfill (composite);
+	putenddraw (composite);
+	putendq(composite,composite);
 
 	var ops = createPdfOperatorStack();
 	ops.append (composite);
@@ -481,24 +553,11 @@ function operatorAddTextLine (text,x,y,fname,fsize) {
 	
 	q.pushBack (BT,q);
 	
-	var operands = createIPropertyArray ();
-	operands.append (createName(fname));
-	operands.append (createReal(fsize));
-	BT.pushBack (createOperator(operands, "Tf"),BT);
-
-	operands.clear();
-	operands.append (createReal(x));
-	operands.append (createReal(y));
-	BT.pushBack (createOperator(operands, "Td"));
-
-	operands.clear();
-	operands.append (createString(text));
-	BT.pushBack (createOperator(operands, "Tj"));
-
-	operands.clear();
-	BT.pushBack (createOperator(operands, "ET"));
-	
-	q.pushBack (createOperator(operands, "Q"),BT.getLastOperator());
+	putfont(BT,fname,fsize);
+	puttextrelpos (BT,x,y);
+	puttext (BT,text);
+	putendtext (BT);
+	putendq(q);
 
 	var ops = createPdfOperatorStack();
 	ops.append (q);

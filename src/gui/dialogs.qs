@@ -462,41 +462,78 @@ function moveTextPos() {
 /**
  * Draw line.
  */
-function drawLine(_lx,_ly,_rx,_ry) {
+function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
 		return;
 	}
+
+	// State paramters
+	var col;
+	var width;
 	
-	if (undefined == _lx || undefined == _ly || undefined == _rx || undefined == _ry)
-	{ // Ask user if not defined
+	if (undefined != _lx && undefined != _ry) {
+		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
+		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
+		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
+	}else {
+		lx = 0;
+		ly = 0;
+		rx = 0;
+		ry = 0;
+	}
+	print (lx+" "+ly+" "+rx+" "+ry);
+
+	if (undefined == wantedit || wantedit) { // Ask user 
+			
 		var dialog = createDialog (tr("Draw line"), tr("Draw"), tr("Cancel"), tr("Draw line"));
 		 
+		//
+		// x y
+		//
 		var lxy = xydialogs (dialog,tr("Start position"));
-
-		dialog.newColumn();
 		var rxy = xydialogs (dialog,tr("End position"));
+	
+		lxy[0].text = lx;
+		lxy[1].text = ly;
+		rxy[0].text = rx;
+		rxy[1].text = ry;
+		
+		//
+		// Line width
+		//
+		dialog.newColumn();
+		
+		var gb = createGroupBoxAndDisplay ("Line width (0-default)", dialog);
+		var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
+		sb.value = 0;
+		var color = createCheckBoxAndDisplay (tr("Change background color"),gb);
 	 
 		if (!dialog.exec()) return;
+
+		if (color.checked) {
+			col = pickColor ();
+			if (!col) return;
+		}
 
 		if (!isNumber4(lxy[0].text,lxy[1].text,rxy[0].text,rxy[1].text)) {
 			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
 			return;
 		}
 		// op
-		_lx = parseFloat(lxy[0].text);
-		_ly = parseFloat(lxy[1].text);
-		_rx = parseFloat(rxy[0].text);
-		_ry = parseFloat(rxy[1].text);
+		lx = parseFloat(lxy[0].text);
+		ly = parseFloat(lxy[1].text);
+		rx = parseFloat(rxy[0].text);
+		ry = parseFloat(rxy[1].text);
+
+		if (sb.value != 0)
+			width = parseFloat (sb.value);
 	}
 	
-	lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
-	ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-	rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
-	ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
-	
-	operatorDrawLine(lx,ly,rx,ry);
+	print (col);
+	operatorDrawLine(lx,ly,rx,ry,width,col);
 
 	print (tr("Line was drawn."));
 	// Reload page
@@ -506,47 +543,63 @@ function drawLine(_lx,_ly,_rx,_ry) {
 /**
  * Draw rect.
  */
-function drawRect(_lx,_ly,_rx,_ry) {
+function drawRect(_lx,_ly,_rx,_ry,wantedit) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
 		return;
 	}
 	
-	if (undefined == _lx || undefined == _ly || undefined == _rx || undefined == _ry)
-	{ // Ask user if not defined
+	// State paramters
+	var col;
+	
+	if (undefined != _lx && undefined != _ry) {
+		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
+		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
+		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
+		w = rx - lx;
+		h = ry - ly;
+	}else {
+		lx = 0;
+		ly = 0;
+		w = 0;
+		h = 0;
+	}
+
+	if (undefined == wantedit || wantedit) { // Ask user 
 		var dialog = createDialog (tr("Draw rectangle"), tr("Draw"), tr("Cancel"), tr("Draw rectangle"));
 		var lxy = xydialogs (dialog,tr("Upper left corner"));
+		lxy[0].text = lx;
+		lxy[1].text = ly;
 
 		dialog.newColumn();
 		var wh = twonumdialogs (dialog,tr("Metrics"),tr("Width"),tr("Height"));
+		wh[0].text = w;
+		wh[1].text = h;
+		
+		var color = createCheckBoxAndDisplay (tr("Change background color"),gb);
 	 
 		if (!dialog.exec()) return;
+		if (color.checked) {
+			col = pickColor ();
+			if (!col) return;
+		}
 
 		if (!isNumber4(lxy[0].text,lxy[1].text,wh[0].text,wh[1].text)) {
 			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
 			return;
 		}
 		// op
-		_lx = parseFloat(lxy[0].text);
-		_ly = parseFloat(lxy[1].text);
-		
-		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
-		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-		width = parseFloat(wh[0].text);
-		height = parseFloat(wh[1].text);
+		lx = parseFloat(lxy[0].text);
+		ly = parseFloat(lxy[1].text);
+		w = parseFloat(wh[0].text);
+		h = parseFloat(wh[1].text);
 
-	}else {
-		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
-		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
-		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
-		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-		width = rx - lx;
-		height = ry - ly;
 	}
 	
-	print (lx+", "+ly+", "+width+", "+height);
-	operatorDrawRect(lx,ly,width,height);
+	print (lx+", "+ly+", "+w+", "+h);
+	operatorDrawRect(lx,ly,w,h,col);
 
 	print (tr("Rect was drawn."));
 	// Reload page

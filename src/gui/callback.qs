@@ -97,8 +97,8 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Add system font")+",addSystemFont(),,page_add_font.png");
   menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
   menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
-  menu.addItemDef("item "+tr("Draw line")+",drawLine(),,draw_line.png");
-  menu.addItemDef("item "+tr("Draw rect")+",drawRect(),,draw_rect.png");
+  menu.addItemDef("item "+tr("Draw line")+",initconnection(0),,draw_line.png");
+  menu.addItemDef("item "+tr("Draw rect")+",initconnection(10),,draw_rect.png");
   menu.addItemDef("item "+tr("Add text")+",addText(),,add_text.png");
  }
  if (treeitem.itemtype()=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
@@ -184,14 +184,20 @@ function selectFnc(id,isItOnLastRequest,x1,y1,x2,y2) {
 	switch (id) {
 			
 		case 0:
-			drawLine (x1,y1,x2,y2);
+			drawLine (x1,y1,x2,y2,false);
 			break;
-			
 		case 1:
-			drawRect (x1,y1,x2,y2);
+			drawLine (x1,y1,x2,y2,true);
+			break;
+		
+		case 10:
+			drawRect (x1,y1,x2,y2,false);
+			break;
+		case 11:
+			drawRect (x1,y1,x2,y2,true);
 			break;
 
-		case 2:
+		case 20:
 			addText (x1,y1,x2,y2);
 			break;
 
