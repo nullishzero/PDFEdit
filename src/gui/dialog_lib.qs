@@ -4,7 +4,7 @@
  * Create LineEdit dialog with label and text filled. 
  */
 function createLineEdit(label,text) {
- var e = new LineEdit;
+ e = new LineEdit;
  e.label = label;
  e.text = text;
  return e;
@@ -15,7 +15,7 @@ function createLineEdit(label,text) {
  * to another widget.
  */
 function createLineEditAndDisplay(label,text,widget) {
- var e = new LineEdit;
+ e = new LineEdit;
  e.label = label;
  e.text = text;
  widget.add(e);
@@ -26,7 +26,7 @@ function createLineEditAndDisplay(label,text,widget) {
  * Create group box with title and tooltip the same.
  */
 function createGroupBox(title) {
- var gb = new GroupBox;
+ gb = new GroupBox;
  gb.title = title;
  gb.tooltip = title;
  return gb;
@@ -36,7 +36,7 @@ function createGroupBox(title) {
  * Create group box with title and tooltip the same.
  */
 function createGroupBoxAndDisplay(title,widget) {
- var gb = new GroupBox;
+ gb = new GroupBox;
  gb.title = title;
  gb.tooltip = title;
  widget.add(gb);
@@ -47,7 +47,7 @@ function createGroupBoxAndDisplay(title,widget) {
  * Create normal dialog
  */
 function createDialog(caption, okButtonText, cancelButtonText, tooltip) {
- var dialog = new Dialog;
+ dialog = new Dialog;
  dialog.caption = caption;
  dialog.okButtonText = okButtonText;
  dialog.cancelButtonText = cancelButtonText;
@@ -59,7 +59,7 @@ function createDialog(caption, okButtonText, cancelButtonText, tooltip) {
  * Create spin box with max and min values and display it
  */
  function createSpinboxAndDisplay (label,min,max,widget) {
-  var sb = new SpinBox;
+  sb = new SpinBox;
   sb.label = label;
   sb.minimum = min;
   sb.maximum = max;
@@ -73,7 +73,7 @@ function createDialog(caption, okButtonText, cancelButtonText, tooltip) {
  * Create number edit box with max and min values and display it
  */
  function createNumbereditAndDisplay (label,min,max,widget) {
-  var sb = new NumberEdit;
+  sb = new NumberEdit;
   sb.label = label;
   sb.minimum = min;
   sb.maximum = max;
@@ -87,7 +87,7 @@ function createDialog(caption, okButtonText, cancelButtonText, tooltip) {
  * Create radio button and display it
  */
 function createRadioButtonAndDisplay (text,widget) {
- var rb = new RadioButton;
+ rb = new RadioButton;
  rb.text = text;
  rb.checked = false;
  rb.tooltip = text;
@@ -99,7 +99,7 @@ function createRadioButtonAndDisplay (text,widget) {
  * Create check box and display it
  */
 function createCheckBoxAndDisplay (text,widget) {
- var cb = new CheckBox;
+ cb = new CheckBox;
  cb.text = text;
  cb.checked = false;
  cb.tooltip = text;
@@ -111,7 +111,7 @@ function createCheckBoxAndDisplay (text,widget) {
  * Make x,y edit boxes in a group box.
  */
 function xydialogs (dg,text) {
-	var gb = createGroupBoxAndDisplay (text, dg);
+	gb = createGroupBoxAndDisplay (text, dg);
 	ex = createLineEditAndDisplay ("x"+tr("position"), "0", gb);
 	ey = createLineEditAndDisplay ("y"+tr("position"), "0", gb);
 	return [ex,ey];
