@@ -5,6 +5,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/06/06 10:15:12  hockm0bm
+ * loadFromFile method removed
+ *         - uses default implementation from RulesManager
+ *
  * Revision 1.11  2006/06/06 09:19:45  hockm0bm
  * * ModeController moved to configuration namespace
  * * ModeController::loadFromFile
@@ -158,43 +162,6 @@ using namespace configuration::utils;
 	}
 
 	return true;
-}
-
-int ModeController::loadFromFile(const std::string & confFile, ConfParser & parser)
-{
-using namespace std;
-
-	int added=0;
-
-	// opens input stream
-	ifstream stream(confFile.c_str());
-	if(!stream.is_open())
-		return -1;
-	
-	// uses opened input file stream
-	istream * original=parser.setStream(&stream);
-
-	// parses all rules and register them by super type interface
-	while(!parser.eod())
-	{
-		ModeRule rule;
-		PropertyMode mode;
-		if(!parser.parse(rule, mode)) 
-		{
-			if(!parser.eod())
-				// parser error, because we are not at the end of data
-				return -1;
-			
-			// no more data to read
-			continue;
-		}
-		addRule(rule, mode);
-		added++;
-	}
-
-	// returns back original stream to given parser
-	parser.setStream(original);
-	return added;
 }
 
 } // namespace configuration

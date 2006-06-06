@@ -5,6 +5,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/06/06 10:15:12  hockm0bm
+ * loadFromFile method removed
+ *         - uses default implementation from RulesManager
+ *
  * Revision 1.12  2006/06/06 09:19:45  hockm0bm
  * * ModeController moved to configuration namespace
  * * ModeController::loadFromFile
@@ -424,19 +428,6 @@ public:
 	 * This method is empty, because no special treatment is required.
 	 */
 	virtual ~ModeController () {};
-
-	/** Reads given configuration file.
-	 * @param confFile Configuration file name.
-	 * @param parser Parser to be used for file parsing.
-	 *
-	 * Uses given parser to get key (ModeRule) and value (PropertyMode) from
-	 * given file. Given parser has to support given file format.
-	 * Parsed rules are registered using addRule inherited method.
-	 *
-	 * @return number of successfully added rules or -1 if error occured during
-	 * parsing.
-	 */
-	int loadFromFile(const std::string & confFile, ConfParser & parser);
 
 	/** 
 	 * Get default mode.
