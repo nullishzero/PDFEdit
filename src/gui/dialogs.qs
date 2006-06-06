@@ -324,10 +324,7 @@ function setPageTm() {
 	te.text = translation_txt;
 	gb.add(te);
 	dg.newColumn();
-	gb = createGroupBoxAndDisplay (tr("Set values           ")+"[* * * * tx ty]",dg);
-	e = createLineEditAndDisplay ("tx", "0", gb);
-	f = createLineEditAndDisplay ("ty", "0",  gb);
-
+	ef = twonumdialogs (dg,tr("Set values")+"           [* * * * tx ty]","tx","ty");
 
 	/* == Third tab */
 	dg.newTab("Page scaling");
@@ -336,9 +333,7 @@ function setPageTm() {
 	te.text = scaling_txt;
 	gb.add(te);
 	dg.newColumn();
-	gb = createGroupBoxAndDisplay (tr("Set values           ")+"[sx * * sy * *]",dg);
-	a = createLineEditAndDisplay ("sx", "0", gb);
-	d = createLineEditAndDisplay ("sy", "0", gb);
+	ad = twonumdialogs (dg,tr("Set values")+"           [sx * * sy * *]","sx","sy");
 
 	/* == Fourth tab */
 	dg.newTab("Page skewing");
@@ -347,9 +342,7 @@ function setPageTm() {
 	te.text = skew_txt;
 	gb.add(te);
 	dg.newColumn();
-	gb = createGroupBoxAndDisplay (tr("Set values           ")+"[* tan(a) tan(b) * * *]",dg);
-	b = createLineEditAndDisplay ("tan(a)", "0", gb);
-	c = createLineEditAndDisplay ("tan(b)", "0", gb);
+	bc = twonumdialogs (dg,tr("Set values")+"           [* tan(a) tan(b) * * *]","tan(a)","tan(b)");
 
 	// Set width
 	dg.width = 700;
@@ -358,16 +351,16 @@ function setPageTm() {
 	// Default matrix
 	tm = [1,0,0,1,0,0];
 	if (rbtran.checked) {
-		tm[4] = parseFloat(e.text);
-		tm[5] = parseFloat(f.text);
+		tm[4] = parseFloat(ef[0].text);
+		tm[5] = parseFloat(ef[1].text);
 	}
 	if (rbscal.checked) {
-		tm[0] = parseFloat(a.text);
-		tm[3] = parseFloat(d.text);
+		tm[0] = parseFloat(ad[0].text);
+		tm[3] = parseFloat(ad[1].text);
 	}
 	if (rbskew.checked) {
-		tm[1] = parseFloat(b.text);
-		tm[2] = parseFloat(c.text);
+		tm[1] = parseFloat(bc[0].text);
+		tm[2] = parseFloat(bc[1].text);
 	}
 
 	if (!rbtran.checked && !rbscal.checked && !rbskew.checked)
@@ -411,20 +404,18 @@ function moveOperPos() {
 
 	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
 	 
-	var gb = createGroupBoxAndDisplay ("Relative operator position (this is not absolute position)", dialog);
-	x = createLineEditAndDisplay ("x position:", x, gb);
-	y = createLineEditAndDisplay ("y position", y, gb);
+	var xy = xydialogs (dialog,tr("Relative operator position (this is not absolute position)"));
 	 
 	dialog.width = 100;
 	if (!dialog.exec()) return;
 
-	if (!isNumber(x.text) || !isNumber(y.text)) {
+	if (!isNumber(xy[0].text) || !isNumber(xy[1].text)) {
 		warn(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
 		return;
 	}
 	
 	// op, change, change
-	operatorSetPosition(op, parseFloat(x.text), parseFloat(y.text));
+	operatorSetPosition(op, parseFloat(xy[0].text), parseFloat(xy[1].text));
 
 	print (tr("Operator position changed."));
 	// Reload page
@@ -455,14 +446,12 @@ function moveTextPos() {
 
 	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
 	 
-	var gb = createGroupBoxAndDisplay ("Relative operator position", dialog);
-	x = createLineEditAndDisplay ("x position:", "0", gb);
-	y = createLineEditAndDisplay ("y position", "0", gb);
+	var xy = xydialogs (dialog,tr("Relative operator position"));
 	 
 	if (!dialog.exec()) return;
 	 
 	// op, change, change
-	operatorMovePosition(posop, parseFloat(x.text), parseFloat(y.text));
+	operatorMovePosition(posop, parseFloat(xy[0].text), parseFloat(xy[1].text));
 
 	print (tr("Operator position changed."));
 	// Reload page
@@ -484,26 +473,22 @@ function drawLine(_lx,_ly,_rx,_ry) {
 	{ // Ask user if not defined
 		var dialog = createDialog (tr("Draw line"), tr("Draw"), tr("Cancel"), tr("Draw line"));
 		 
-		var gb = createGroupBoxAndDisplay ("Start position", dialog);
-		elx = createLineEditAndDisplay (tr("x position:"), "0", gb);
-		ely = createLineEditAndDisplay (tr("y position:"), "0", gb);
+		var lxy = xydialogs (dialog,tr("Start position"));
 
 		dialog.newColumn();
-		gb = createGroupBoxAndDisplay (tr("End position"), dialog);
-		erx = createLineEditAndDisplay (tr("x position:"), "0", gb);
-		ery = createLineEditAndDisplay (tr("y position:"), "0", gb);
+		var rxy = xydialogs (dialog,tr("End position"));
 	 
 		if (!dialog.exec()) return;
 
-		if (!isNumber4(elx.text,ely.text,erx.text,ery.text)) {
+		if (!isNumber4(lxy[0].text,lxy[1].text,rxy[0].text,rxy[1].text)) {
 			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
 			return;
 		}
 		// op
-		_lx = parseFloat(elx.text);
-		_ly = parseFloat(ely.text);
-		_rx = parseFloat(erx.text);
-		_ry = parseFloat(ery.text);
+		_lx = parseFloat(lxy[0].text);
+		_ly = parseFloat(lxy[1].text);
+		_rx = parseFloat(rxy[0].text);
+		_ry = parseFloat(rxy[1].text);
 	}
 	
 	lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
@@ -531,30 +516,25 @@ function drawRect(_lx,_ly,_rx,_ry) {
 	if (undefined == _lx || undefined == _ly || undefined == _rx || undefined == _ry)
 	{ // Ask user if not defined
 		var dialog = createDialog (tr("Draw rectangle"), tr("Draw"), tr("Cancel"), tr("Draw rectangle"));
-		 
-		var gb = createGroupBoxAndDisplay (tr("Upper left corner"), dialog);
-		elx = createLineEditAndDisplay (tr("x position"), "0", gb);
-		ely = createLineEditAndDisplay (tr("y position"), "0", gb);
+		var lxy = xydialogs (dialog,tr("Upper left corner"));
 
 		dialog.newColumn();
-		gb = createGroupBoxAndDisplay (tr("Metrics"), dialog);
-		ew = createLineEditAndDisplay (tr("Width"), "0", gb);
-		eh = createLineEditAndDisplay (tr("Height"), "0", gb);
+		var wh = twonumdialogs (dialog,tr("Metrics"),tr("Width"),tr("Height"));
 	 
 		if (!dialog.exec()) return;
 
-		if (!isNumber4(elx.text,ely.text,ew.text,eh.text)) {
+		if (!isNumber4(lxy[0].text,lxy[1].text,wh[0].text,wh[1].text)) {
 			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
 			return;
 		}
 		// op
-		_lx = parseFloat(elx.text);
-		_ly = parseFloat(ely.text);
+		_lx = parseFloat(lxy[0].text);
+		_ly = parseFloat(lxy[1].text);
 		
 		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
 		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-		width = parseFloat(ew.text);
-		height = parseFloat(eh.text);
+		width = parseFloat(wh[0].text);
+		height = parseFloat(wh[1].text);
 
 	}else {
 		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
@@ -576,7 +556,7 @@ function drawRect(_lx,_ly,_rx,_ry) {
 /**
  * Add text
  */
-function addText (_x,_y) {
+function addText (_x1,_y1,_x2,_y2) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
@@ -586,9 +566,11 @@ function addText (_x,_y) {
 	// set default values
 	var setpos = false;
 	
-	if (undefined == _x || undefined == _y) { 
-		_x = 0;
-		_y = 0;
+	if (undefined == _x1 || undefined == _y1 || undefined == _x2 || undefined == _y2) { 
+		_x1 = 0;
+		_y1 = 0;
+		_x2 = 0;
+		_y2 = 0;
 		setpos = true;
 	}
 	
@@ -601,9 +583,7 @@ function addText (_x,_y) {
 	etxt = createLineEditAndDisplay (tr("Text to add"), "", gb);
 
 	if (setpos) {
-		gb = createGroupBoxAndDisplay (tr("Text position"), dg);
-		ex = createLineEditAndDisplay (tr("x position"), "0", gb);
-		ey = createLineEditAndDisplay (tr("y position"), "0", gb);
+		xy = xydialogs (dg,tr("Text position"));
 	}
 
 	dg.newColumn();
@@ -643,15 +623,22 @@ function addText (_x,_y) {
 	// Convert x,y to real x,y
 	//
 	if (setpos) {
-		if (!isNumber2(ex.text,ey.text)) {
+		if (!isNumber2(xy[0].text,xy[1].text)) {
 			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
 			return;
 		}
-		_x = parseFloat(ex.text);
-		_y = parseFloat(ey.text);
+		_x = parseFloat(xy[0].text);
+		_y = parseFloat(xy[1].text);
+		x = PageSpace.convertPixmapPosToPdfPos_x(_x,_y);
+		y = PageSpace.convertPixmapPosToPdfPos_y(_x,_y);
+
+	}else {
+		x = Math.min (PageSpace.convertPixmapPosToPdfPos_x(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_x(_x2,_y2));
+		y = Math.min (PageSpace.convertPixmapPosToPdfPos_y(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_y(_x2,_y2));
+		//print (_x1+" "+_y1);
+		//x = PageSpace.convertPixmapPosToPdfPos_x(_x1,_y1);
+		//y = PageSpace.convertPixmapPosToPdfPos_y(_x1,_y1);
 	}
-	x = PageSpace.convertPixmapPosToPdfPos_x(_x,_y);
-	y = PageSpace.convertPixmapPosToPdfPos_y(_x,_y);
 
 	//
 	// Get font id
@@ -669,6 +656,7 @@ function addText (_x,_y) {
     }
 	
 	// Draw the text
+	print (x+" "+y);
 	operatorAddTextLine (etxt.text,x,y,fid,fs.value);
 	
 	// Update

@@ -107,4 +107,22 @@ function createCheckBoxAndDisplay (text,widget) {
  return cb;
 }
 
+/**
+ * Make x,y edit boxes in a group box.
+ */
+function xydialogs (dg,text) {
+	var gb = createGroupBoxAndDisplay (text, dg);
+	ex = createLineEditAndDisplay ("x"+tr("position"), "0", gb);
+	ey = createLineEditAndDisplay ("y"+tr("position"), "0", gb);
+	return [ex,ey];
+}
 
+/**
+ * Make two number edit boxes in a group box.
+ */
+function twonumdialogs (dg,text,t1,t2) {
+	gb = createGroupBoxAndDisplay (text, dg);
+	ex = createLineEditAndDisplay (t1, "0", gb);
+	ey = createLineEditAndDisplay (t2, "0", gb);
+	return [ex,ey];
+}

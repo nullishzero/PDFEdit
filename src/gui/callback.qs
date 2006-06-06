@@ -192,7 +192,7 @@ function selectFnc(id,isItOnLastRequest,x1,y1,x2,y2) {
 			break;
 
 		case 2:
-			addText (x1,y1);
+			addText (x1,y1,x2,y2);
 			break;
 
 		default:
