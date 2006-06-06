@@ -7,6 +7,8 @@ class QString;
 
 namespace gui {
 
+using namespace configuration;
+
 /**
  PropertyModeController - class providing wrapper around single ModeController
  instance and managing its configuration
