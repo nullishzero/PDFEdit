@@ -716,4 +716,48 @@ function addText (_x1,_y1,_x2,_y2) {
 	go();
 }
 
+/** Delete page */
+function delPage (i) {
+
+	if (!isPageAvaliable()) {
+		warn(tr("No page selected!"));
+		return;
+	}
+
+	if (undefined == i) {
+
+		var dg = createDialog (tr("Remove page"), tr("Remove"), tr("Cancel"), tr("Remove page"));
+		gb = createGroupBoxAndDisplay (tr("Remove page"),dg);
+
+		// Dialog
+		var cb = new ComboBox;
+		cb.label = tr("Select page to remove");
+		cb.editable = true;
+		cb.itemList = [1,2];
+		gb.add (cb);
+
+		dg.width = 400;
+		if (!dg.exec()) return;
+
+		if (!isNumber(cb.currentItem)) {
+			warn (tr("Invalid page"));
+			return;
+		}
+
+		i = parseInt (cb.currentItem);
+	}
+
+	print (i);
+	document.removePage (i);
+
+
+	print ("Page removed");
+	
+	// Reload
+	go()
+	
+}
+
+
+
 

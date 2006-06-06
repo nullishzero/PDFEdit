@@ -30,7 +30,7 @@ function pageDict(x) {
 
 /** Is argument a number */
 function isNumber(x) {
-	if (undefined == parseFloat(x))
+	if (undefined == x || isNaN(parseFloat(x)))
 		return false;
 	else
 		return true;

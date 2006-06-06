@@ -34,6 +34,7 @@ function operatorInitChange(operator) {
 
 
 /* === Content stream helper functions === */
+/** Change nonstroking color. */
 function putnscolor (op,r,g,b) {
 	var operands = createIPropertyArray();
 	operands.append(createReal(r/255));
@@ -41,6 +42,7 @@ function putnscolor (op,r,g,b) {
 	operands.append(createReal(b/255));
 	op.pushBack( createOperator(operands, "rg"),op.getLastOperator());
 }
+/** Change stroking color */
 function putscolor (op,r,g,b) {
 	var operands = createIPropertyArray();
 	operands.append(createReal(r/255));
@@ -48,13 +50,14 @@ function putscolor (op,r,g,b) {
 	operands.append(createReal(b/255));
 	op.pushBack( createOperator(operands, "RG"),op.getLastOperator());
 }
-
+/** Change font */
 function putfont (op,fid,fs) {
 	var operands = createIPropertyArray ();
 	operands.append(createName(fid));
 	operands.append(createReal(fs));
 	op.pushBack(createOperator(operands, "Tf"), op.getLastOperator());
 }
+/** Add new line */
 function putline (op,lx,ly,rx,ry) {
 	var operands = createIPropertyArray ();
 	operands.append (createReal(lx));
@@ -66,6 +69,7 @@ function putline (op,lx,ly,rx,ry) {
 	operands.append (createReal(ry));
 	op.pushBack (createOperator(operands, "l"),op.getLastOperator());
 }
+/** Add new rect */
 function putrect (op,x,y,w,h) {
 	var operands = createIPropertyArray ();
 	operands.append (createReal(x));
@@ -74,34 +78,41 @@ function putrect (op,x,y,w,h) {
 	operands.append (createReal(h));
 	op.pushBack (createOperator(operands, "re"),op.getLastOperator());
 }
+/** Set line width */
 function putlinewidth (op,w) {
 	var operands = createIPropertyArray ();
 	operands.append (createInt(w));
 	op.pushBack (createOperator(operands, "w"), op.getLastOperator());	
 }
+/** Change rel.position */
 function puttextrelpos (op,dx,dy) {
 	var operands = createIPropertyArray ();
 	operands.append (createReal(dx));
 	operands.append (createReal(dy));
 	op.pushBack (createOperator(operands, "Td"), op.getLastOperator());
 }
+/** End drawing */
 function putenddraw (op) {
 	var operands = createIPropertyArray ();
 	op.pushBack (createOperator(operands, "S"),op.getLastOperator());
 }
-function putendfill (op) {
+/** Fill */
+function putfill (op) {
 	var operands = createIPropertyArray ();
 	op.pushBack (createOperator(operands, "B"),op.getLastOperator());
 }
+/** Add text line */
 function puttext (op,txt) {
 	var operands = createIPropertyArray ();
 	operands.append (createString(txt));
 	op.pushBack (createOperator(operands, "Tj"),op.getLastOperator());
 }
+/** End text */
 function putendtext (op) {
 	var operands = createIPropertyArray ();
 	op.pushBack (createOperator(operands, "ET"),op.getLastOperator());
 }
+/** Restore graphical state. */
 function putendq (op) {
 	var operands = createIPropertyArray ();
 	op.pushBack( createOperator(operands, "Q"), op.getLastOperator());
@@ -526,7 +537,7 @@ function operatorDrawRect (lx,ly,width,height,col) {
 	}
 
 	putrect (composite,lx,ly,width,height);
-	putendfill (composite);
+	putfill (composite);
 	putenddraw (composite);
 	putendq(composite,composite);
 

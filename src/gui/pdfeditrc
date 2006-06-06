@@ -39,6 +39,7 @@ items/reloadpage=	item Reload Page,go(),F5,reload.png,need_page
 items/pagetext=		item Extract text from page,viewPageText(),,page_text.png,need_page
 items/rot-90=		item Rotate page 270 degrees,rotatePage(-90),Ctrl+[,page_rotate_-90.png,need_page
 items/rot90=		item Rotate page 90 degrees,rotatePage(90),Ctrl+],page_rotate_90.png,need_page
+items/delpage=		item Remove page,delPage(),,page_del.png,need_document
 items/editPageMediaBox=	item Edit page metrics,editPageMediaBox(),,page_edit_metrics.png,need_page
 items/setpagetm=	item Set page transformation matrix,setPageTm(),,page_settm.png,need_page
 items/addSystemFont=	item Add system font to page,addSystemFont(),,page_add_font.png,need_page
