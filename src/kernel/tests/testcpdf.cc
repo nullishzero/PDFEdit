@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/06/06 09:47:56  hockm0bm
+ * pageIterationTC checks all iterator methods for pages with isChanged
+ *         - test DOESN'T PASS - CPage may do changes when it is created (adds
+ *           inherited attributes if not present directly in dictionary)
+ *
  * Revision 1.24  2006/06/05 22:41:34  hockm0bm
  * * example implementation of IProgressBar
  * * DelinearizatorTC uses
@@ -199,15 +204,19 @@ public:
 
 		printf("%s\n", __FUNCTION__);
 		
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		// getPage and getPagePosition must match for all pages
 		printf("TC01:\tPageCount, getPage, getPagePosition\n");
 		size_t pageCount=pdf->getPageCount();
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		if (0 == pageCount)
 			return;
 		for(size_t i=1; i<=pageCount; i++)
 		{
 			shared_ptr<CPage> page=pdf->getPage(i);
+			CPPUNIT_ASSERT(!pdf->isChanged());
 			size_t pos=pdf->getPagePosition(page);
+			CPPUNIT_ASSERT(!pdf->isChanged());
 			CPPUNIT_ASSERT(i==pos);
 		}
 
@@ -226,6 +235,7 @@ public:
 				shared_ptr<CPage> next=pdf->getPage(i+1);
 				CPPUNIT_ASSERT(pdf->getNextPage(pos)==next);
 			}
+			CPPUNIT_ASSERT(!pdf->isChanged());
 		}
 		
 		printf("TC03:\tgetPage, getFirstPage and getLastPage test\n");
@@ -234,6 +244,7 @@ public:
 			CPPUNIT_ASSERT(pdf->getPage(1)==pdf->getFirstPage());
 			CPPUNIT_ASSERT(pdf->getPage(pdf->getPageCount())==pdf->getLastPage());
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 
 		// out of range page positions must throw
 		printf("TC04:\tgetPage, getNextPage, getPrevPage out of range test\n");
@@ -247,6 +258,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		
 		// pageCount + 1 is out of range
 		try
@@ -257,6 +269,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		// getPrevPage(getFirstPage()) is out of range
 		try
 		{
@@ -266,6 +279,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		
 		// getNextPage(getLastPage()) is out of range
 		try
@@ -276,6 +290,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 
 		printf("TC05:\thasNextPage, hasPrevPage test\n");
 
@@ -283,14 +298,18 @@ public:
 		{
 			// first page hasPrevPage should return false
 			CPPUNIT_ASSERT(!pdf->hasPrevPage(pdf->getFirstPage()));
+			CPPUNIT_ASSERT(!pdf->isChanged());
 			// last page hasNextPage should return false
 			CPPUNIT_ASSERT(!pdf->hasNextPage(pdf->getLastPage()));
+			CPPUNIT_ASSERT(!pdf->isChanged());
 			// hasNextPage and hasPrevPage should return true for all other 
 			// pages
 			for(size_t i=2; i<pageCount; i++)
 			{
 				CPPUNIT_ASSERT(pdf->hasPrevPage(pdf->getPage(i)));
+				CPPUNIT_ASSERT(!pdf->isChanged());
 				CPPUNIT_ASSERT(pdf->hasNextPage(pdf->getPage(i)));
+				CPPUNIT_ASSERT(!pdf->isChanged());
 			}
 		}
 
@@ -315,6 +334,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		try
 		{
 			pdf->getPagePosition(fake2);
@@ -323,6 +343,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 
 		// getPrevPage should fail on both fakes
 		try
@@ -333,6 +354,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		try
 		{
 			pdf->getPrevPage(fake2);
@@ -341,6 +363,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 
 		// getNextPage should fail on both fakes
 		try
@@ -351,6 +374,7 @@ public:
 		{
 			// ok, exception has been thrown
 		}
+		CPPUNIT_ASSERT(!pdf->isChanged());
 		try
 		{
 			pdf->getNextPage(fake2);
