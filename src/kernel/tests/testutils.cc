@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.2  2006/06/06 11:48:57  hockm0bm
+ * * test configuration files added
+ * * test case for OperatorHinter
+ * * test files macros changed (placed to tests directory)
+ *
  * Revision 1.1  2006/06/01 14:07:36  hockm0bm
  * * New test module for utils used by kernel
  *         - tokenizer function tested
@@ -15,6 +20,7 @@
 #include "testmain.h"
 #include "../utils/confparser.h"
 #include "../modecontroller.h"
+#include "../operatorhinter.h"
 
 class TestUtils: public CppUnit::TestFixture
 {
@@ -114,16 +120,16 @@ public:
 		return true;
 	}
 
-#ifndef BAD_CONF_FILE
-#define BAD_CONF_FILE "bad_conf"
+#ifndef BAD_MODE_CONF_FILE
+#define BAD_MODE_CONF_FILE "tests/mode_bad.conf"
 #endif
 
-#ifndef EMPTY_CONF_FILE
-#define EMPTY_CONF_FILE "empty_conf"
+#ifndef EMPTY_MODE_CONF_FILE
+#define EMPTY_MODE_CONF_FILE "tests/mode_empty.conf"
 #endif
 
-#ifndef CONF_FILE
-#define CONF_FILE "conf"
+#ifndef MODE_CONF_FILE
+#define MODE_CONF_FILE "tests/mode.conf"
 #endif 
 	bool modeControllerTC()
 	{
@@ -135,13 +141,13 @@ public:
 		ModeController modeControler;
 		StringConfigurationParser baseParser(StringConfigurationParser(NULL));
 		ModeController::ConfParser parser(baseParser);
-		CPPUNIT_ASSERT(modeControler.loadFromFile(EMPTY_CONF_FILE, parser)==0);
+		CPPUNIT_ASSERT(modeControler.loadFromFile(EMPTY_MODE_CONF_FILE, parser)==0);
 		
 		OUTPUT << "TC02:\tBad configuration file\n";
-		CPPUNIT_ASSERT(modeControler.loadFromFile(BAD_CONF_FILE, parser)==-1);
+		CPPUNIT_ASSERT(modeControler.loadFromFile(BAD_MODE_CONF_FILE, parser)==-1);
 
 		OUTPUT << "TC03:\tCorrect configuration file\n";
-		CPPUNIT_ASSERT(modeControler.loadFromFile(CONF_FILE, parser)>0);
+		CPPUNIT_ASSERT(modeControler.loadFromFile(MODE_CONF_FILE, parser)>0);
 		
 		// This is specific for conf file - this fits to following configuration
 		// .		: mdUnknown
@@ -168,11 +174,55 @@ public:
 
 		return true;
 	}
+#ifndef HINTER_CONF_FILE
+#define HINTER_CONF_FILE "tests/operator.conf"
+#endif
+
+	bool operatorHinterTC()
+	{
+	using namespace configuration;
+	using namespace std;
+
+		OperatorHinter opHinter;
+		StringConfigurationParser baseParser(StringConfigurationParser(NULL));
+		StringConfigurationParser parser(baseParser);
+		CPPUNIT_ASSERT(opHinter.loadFromFile(HINTER_CONF_FILE, parser)>0);
+
+		// This is specific for conf file - this fits to following configuration
+		// :Hint for this is not available
+		// Tj:Text visualization operator 
+		// g  : Any idea what it is
+		// q : # empty text
+		string hintText;
+		string defaultHint="Hint for this is not available";
+		string tjHint="Text visualization operator";
+		string gHint="Any idea what it is";
+		string op;
+		
+		op="";
+		CPPUNIT_ASSERT(opHinter.getHint(op, hintText)==defaultHint);
+
+		op="Nonsense";
+		CPPUNIT_ASSERT(opHinter.getHint(op, hintText)==defaultHint);
+
+		op="Tj";
+		CPPUNIT_ASSERT(opHinter.getHint(op, hintText)==tjHint);
+
+		op="g";
+		CPPUNIT_ASSERT(opHinter.getHint(op, hintText)==gHint);
+		
+		op="q";
+		CPPUNIT_ASSERT(opHinter.getHint(op, hintText)=="");
+
+		return true;
+	}
 
 	void Test()
 	{
 		CPPUNIT_ASSERT(tokenizerTC());
 		CPPUNIT_ASSERT(modeControllerTC());
+		CPPUNIT_ASSERT(operatorHinterTC());
+
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(TestUtils);
