@@ -10,6 +10,7 @@ run( "dialogs.qs" );			//Dialogs
 run( "menu.qs" );			//Functons activated from menu/toolbars
 run( "page.qs" );			//Page manipulation functions
 run( "test.qs" );			//Testing functions
+run( "update.qs" );			//Update functions
 
 /* ==== Other helper functions ==== */
 
