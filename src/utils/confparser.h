@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/06/06 11:40:35  hockm0bm
+ * StringConfigurationParser::parse trims output values
+ *
  * Revision 1.7  2006/06/02 05:44:41  hockm0bm
  * typo fix
  *
@@ -266,6 +269,9 @@ public:
 	 * none from delimiterSet is found assumes that value is empty and key is
 	 * whole parsed string.
 	 * <br>
+	 * Both key and value are trimed (leading and trailing blanks - all from
+	 * blankSet are removed).
+	 * <br>
 	 * If any error occures while reading or end of file occured, returns with
 	 * false and key, value parameters are not filled.
 	 * <br>
@@ -326,7 +332,9 @@ public:
 		{
 			*delim='\0';
 			key=bufferStart;
+			key=utils::trim(key, blankSet);
 			value=delim+1;
+			value=utils::trim(value, blankSet);
 		}else
 			// no delimiter found so we initialize value as empty
 			value="";
