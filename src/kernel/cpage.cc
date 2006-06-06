@@ -505,8 +505,12 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 //  if (!isPage (pageDict))
 //		throw CObjInvalidObject ();		
 	
-	// Fill inheritable properties
-	setInheritablePageAttr (dictionary);
+	// Fill inheritable properties but do not dispatch the change
+	// if no change on this document occurs, we do not want to change it (but we
+	// do it in the setInheritablePageAttr function)
+	//dictionary->lockChange();
+	//setInheritablePageAttr (dictionary);
+	//dictionary->unlockChange();
 
 	// collects all annotations from this page and registers observer to Annots
 	// array and all its members
