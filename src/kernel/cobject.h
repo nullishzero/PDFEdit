@@ -2432,9 +2432,10 @@ getModeForComplexObjects (const CDict::Value& dict, const std::string& name, con
 		
 	}else	
 	{ // We have found a type
-		boost::shared_ptr<IProperty> ip = getReferencedObject (cmp.getIProperty());
 		std::string tmp;
-		ip->getStringRepresentation (tmp);
+		boost::shared_ptr<IProperty> type = cmp.getIProperty ();
+		if (isName (type))
+			IProperty::getSmartCObjectPtr<CName>(type)->getValue(tmp);
 		return modecontroller.getMode (tmp, name);
 	}
 }
