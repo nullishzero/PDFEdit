@@ -18,6 +18,13 @@ class TreeItemAbstract;
 class QSTreeItem : public QSCObject {
  Q_OBJECT
 public slots:
+ /*-
+  Check if the tree item wrapper is valid,
+  i.e. if corresponding tree item still exist in the tree view.
+  Using most of invalid wrapper's functions will result in exception
+  Return true if valid, false if not
+ */
+ bool valid();
  /*- Get object contained in this tree item */
  QSCObject* item();
  /*-
@@ -53,6 +60,7 @@ public:
  QSTreeItem(TreeItemAbstract *item,Base *_base);
  virtual ~QSTreeItem();
  TreeItemAbstract* get() const;
+ QString disable();
 protected:
  QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base);
 protected:

@@ -29,7 +29,9 @@ data_help.files = icon/*.html
 data_lang.path  = $$DATA_PATH/lang
 data_lang.files = lang/*.qm
 data_scripts.path  = $$DATA_PATH/scripts
-data_scripts.files = scripts/*.qs
+# do not include script files starting with underscore,
+# as they are only for development/testing and not for production use
+data_scripts.files = scripts/[a-z0-9A-Z]*.qs
 doc.path        = $$DOC_PATH
 doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.*
 doc_kernel.path = $$DOC_PATH/kernel

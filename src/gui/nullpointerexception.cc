@@ -21,6 +21,7 @@ namespace gui {
 NullPointerException::NullPointerException(const QString &className,const QString &methodName){
  _class=className;
  _method=methodName;
+ _message=QObject::tr("Null pointer access in ")+_class+"."+_method;
 }
 
 /**
@@ -28,7 +29,7 @@ NullPointerException::NullPointerException(const QString &className,const QStrin
  @return exception message
 */
 QString NullPointerException::message() const {
- return QObject::tr("Null pointer access in ")+_class+"."+_method;
+ return _message;
 }
 
 /**
@@ -48,7 +49,15 @@ QString NullPointerException::exceptionMethod() const {
 }
 
 /** default destructor */
-NullPointerException::~NullPointerException() {
+NullPointerException::~NullPointerException() throw() {
+}
+
+/**
+ Overloaded what() from std::exception<br>
+ For getting usable error message if the exception is not handled
+ */
+const char* NullPointerException::what() const throw(){
+ return _message.ascii();
 }
 
 } // namespace gui

@@ -5,6 +5,7 @@
 #include <qstring.h>
 #include <qptrdict.h>
 #include <qvariant.h>
+#include <qmap.h>
 
 class QSProject;
 class QSInterpreter;
@@ -29,6 +30,19 @@ class QSPdfOperatorStack;
 class TreeItemAbstract;
 
 /**
+ Type containing binding between treeitem and its QSA wrapper.<br>
+ Mapping is from TreeItemAbstract* to (QSTreeItem*)[]
+*/
+typedef QPtrDict<QPtrDict<void> > TreeBindingMap;
+//typedef QPtrDict<QSTreeItem>  TreeBindingMap;
+
+/**
+ Iterator type for TreeBindingMap dictionary type
+ \see TreeBindingMap
+*/
+typedef QPtrDictIterator<QSTreeItem> TreeBindingMapIterator;
+
+/**
  Class that host scripts and contain static script functions<br>
  This class is also responsible for garbage collection of scripting
  objects and interaction of editor and scripts
@@ -46,8 +60,12 @@ public:
  void runScript(QString script);
  void addGC(QSCObject *o);
  void removeGC(QSCObject *o);
+ void addTreeItemToList(QSTreeItem* theWrap);
+ void removeTreeItemFromList(QSTreeItem* theWrap);
  void cleanup();
  void treeNeedReload();
+ void treeItemDeleted(TreeItemAbstract* theItem);
+ void errorNullPointer(const QString &className,const QString &methodName);
  QSInterpreter* interpreter();
  ~Base();
 public slots: //This will be all exported to scripting
@@ -308,10 +326,14 @@ public slots: //This will be all exported to scripting
  */
  void warn(const QString &str);
 
+#ifndef DRAGDROP
+private://This is workaround because of bug in MOC - it tries to include methods that are ifdef'ed out
+#else
  // These are internal slots, should not available to scripting,
  // but it is not possible to do that. But at least they are uncallable
  void _dragDrop(TreeItemAbstract *source,TreeItemAbstract *target);
  void _dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target);
+#endif
 private:
  QWidget* getWidgetByName(const QString &widgetName);
  void deleteVariable(const QString &varName);
@@ -334,6 +356,8 @@ private:
  QPtrDict<QSCObject> baseObjects;
  /** Flag specifying if the tree have changed while running script to the degree it need to be reloaded */
  bool treeReloadFlag;
+ /** map containing trees to disable if necessary*/
+ TreeBindingMap treeWrap;
 };
 
 } // namespace gui

@@ -84,6 +84,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
 
  in = new QSEditor( this , "CmdEditor" );
+ in->textEdit()->setText("");
  in->textEdit()->installEventFilter( this );
  in->textEdit()->viewport()->installEventFilter( this );
  in->setFocus();

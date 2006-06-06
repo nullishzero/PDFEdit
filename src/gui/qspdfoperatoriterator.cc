@@ -170,10 +170,26 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::prev() {
 
 /**
  Call PdfOperator::Iterator::isEnd()
- Are we at beginning/end of the list?
+ Are we at end of the list?
 */
 bool QSPdfOperatorIterator::isEnd() {
  return obj->isEnd();
+}
+
+/**
+ Call PdfOperator::Iterator::isBegin()
+ Are we at beginning of the list?
+*/
+bool QSPdfOperatorIterator::isBegin() {
+ return obj->isBegin();
+}
+
+/**
+ Call PdfOperator::Iterator::isBegin()
+ Is current position valid?
+*/
+bool QSPdfOperatorIterator::valid() {
+ return obj->valid();
 }
 
 /**

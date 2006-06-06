@@ -42,6 +42,7 @@ public:
  void reload();
  QSCObject* getSelected();
  TreeItemAbstract* getSelectedItem();
+ void deleteNotify(TreeItemAbstract *notifyItem);
 public slots:
  void settingUpdate(QString key);
 signals:

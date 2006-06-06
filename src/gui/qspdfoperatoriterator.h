@@ -46,8 +46,21 @@ public slots:
   May return NULL, if operator is not contained in any content stream or if content stream is not known at time of creation
  */
  QSContentStream* stream();
- /*- Return true, if we are at the end of the operator list (either beginning or end) */
+ /*-
+  Return true, if we are at the end of the operator list
+  (this means after last valid item, so calling current() will return NULL )
+ */
  bool isEnd();
+ /*-
+  Return true, if we are at the beginning of the operator list
+  (this means before first valid item, so calling current() will return NULL )
+ */
+ bool isBegin();
+ /*-
+  Return true, if current position is valid (not before beginning or after end of list)
+  (calling current() will return valid item, not NULL)
+ */
+ bool valid();
 protected:
  PdfOperator::Iterator* copyIterator(PdfOperator::Iterator *src);
  void csCheck();

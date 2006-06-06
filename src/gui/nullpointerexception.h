@@ -1,6 +1,8 @@
 #ifndef __NULLPOINTEREXCEPTION_H__
 #define __NULLPOINTEREXCEPTION_H__
 
+#include <exception>
+
 class QString;
 
 namespace gui {
@@ -11,18 +13,21 @@ namespace gui {
  operation would result in null pointer dereference (and program crash), if
  they would be executed.
 */
-class NullPointerException {
+class NullPointerException : public std::exception {
 public:
  NullPointerException(const QString &className,const QString &methodName);
  QString exceptionClassName() const;
  QString exceptionMethod() const;
  QString message() const;
- ~NullPointerException();
+ virtual const char* what() const throw();
+ ~NullPointerException() throw();
 protected:
  /** source of exception - class */
  QString _class;
  /** source of exception - method */
  QString _method;
+ /** Exception message */
+ QString _message;
 };
 
 } //namespace gui

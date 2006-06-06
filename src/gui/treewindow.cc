@@ -80,6 +80,18 @@ void TreeWindow::reload() {
 }
 
 /**
+ Delete notification from tree items
+ @param notifyItem Item just being deleted
+*/
+void TreeWindow::deleteNotify(TreeItemAbstract *notifyItem) {
+ //TODO: different in mutiselect
+ if (tree->isSelected(notifyItem)) {
+  //Unselect item that is just going to be deleted
+  tree->setSelected(notifyItem,false);
+ }
+}
+
+/**
  Return root item of the tree.
  @return root item
  */

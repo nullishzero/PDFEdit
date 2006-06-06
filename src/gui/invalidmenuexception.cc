@@ -27,7 +27,7 @@ QString InvalidMenuException::message() const {
 }
 
 /** default destructor */
-InvalidMenuException::~InvalidMenuException() {
+InvalidMenuException::~InvalidMenuException() throw() {
 }
 
 } // namespace gui

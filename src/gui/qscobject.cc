@@ -21,8 +21,7 @@ namespace gui {
 QSCObject::QSCObject(QString _typeName, Base* _base) {
  typeName=_typeName;
  base=_base;
- guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
-//TODO: add to garbage collector. Garbage collector is one for each editor window.
+// guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
  if (base) base->addGC(this);
 }
 
@@ -33,13 +32,13 @@ QSCObject::QSCObject(QString _typeName, Base* _base) {
 QSCObject::QSCObject(QSCObject &source) : QObject() {
  typeName=source.typeName;
  base=source.base;
- guiPrintDbg(debug::DBG_DBG,"adding QSCObject (copy) " << typeName);
+// guiPrintDbg(debug::DBG_DBG,"adding QSCObject (copy) " << typeName);
  if (base) base->addGC(this);
 }
 
 /** destructor */
 QSCObject::~QSCObject() {
- guiPrintDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
+// guiPrintDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
 //TODO: keep the garbage collector only as failsafe (closing window)
 //TODO: implement QSWrapperFacrory for scripting as "garbage collector"
  if (base) base->removeGC(this);

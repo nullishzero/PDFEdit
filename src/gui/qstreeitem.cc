@@ -9,6 +9,7 @@
 #include "qsiproperty.h"
 #include "treeitemabstract.h"
 #include "qsimporter.h"
+#include "base.h"
 
 namespace gui {
 
@@ -22,6 +23,9 @@ namespace gui {
 QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base) : QSCObject (className,_base) {
  obj=item;
  assert(obj);
+ //gui object wrapper must have base
+ assert(_base);
+ _base->addTreeItemToList(this);
 }
 
 /**
@@ -31,6 +35,10 @@ QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_ba
 */
 QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeItem",_base) {
  obj=item;
+ assert(obj);
+ //gui object wrapper must have base
+ assert(_base);
+ _base->addTreeItemToList(this);
 }
 
 /**
@@ -39,6 +47,10 @@ QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeIte
  @return QObject wrapper around data inside treeitem
 */
 QSCObject* QSTreeItem::item() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","item");
+  return NULL;
+ }
  return obj->getQSObject();
 }
 
@@ -50,6 +62,10 @@ QSCObject* QSTreeItem::item() {
  @return QObject wrapper around data inside treeitem
 */
 QSCObject* QSTreeItem::itemref() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","itemref");
+  return NULL;
+ }
  QSCObject* rItem=obj->getQSObject();
  QSIProperty* ip=dynamic_cast<QSIProperty*>(rItem);
  if (!ip) return rItem;//Not IProperty
@@ -64,7 +80,10 @@ QSCObject* QSTreeItem::itemref() {
  @return Type of item
 */
 QString QSTreeItem::itemtype() {
- assert(obj);
+ if (!obj) {
+  base->errorNullPointer("TreeItem","itemtype");
+  return QString::null;
+ }
  QSCObject* it=obj->getQSObject();
 
  //Some tree item does not have actually any "item" in them
@@ -75,8 +94,21 @@ QString QSTreeItem::itemtype() {
  return type;
 }
 
+/**
+ Check if the tree item wrapper is valid,
+ i.e. if corresponding tree item still exist in the tree view
+ @return True if valid, false if not
+*/
+bool QSTreeItem::valid() {
+ return (obj!=NULL);
+}
+
 /** Explicitly reload contents of this item and its subtree from current state of PDF document */
 void QSTreeItem::reload() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","reload");
+  return;
+ }
  obj->reload();
 }
 
@@ -86,11 +118,19 @@ void QSTreeItem::reload() {
  Should only be used for debugging, reload() should normally work well
  */
 void QSTreeItem::reload_force() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","reload_force");
+  return;
+ }
  obj->reload(true,true);
 }
 
 /** Remove itself from Dict/Array where this property is held (and from document) */
 void QSTreeItem::remove() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","remove");
+  return;
+ }
  obj->remove();
 }
 
@@ -101,6 +141,10 @@ void QSTreeItem::remove() {
  @return list of childs
 */
 QStringList QSTreeItem::getChildNames() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","getChildNames");
+  return QStringList();
+ }
  return obj->getChildNames();
 }
 
@@ -110,6 +154,10 @@ QStringList QSTreeItem::getChildNames() {
  @return parent of this TreeItem
 */
 QSTreeItem* QSTreeItem::parent() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","parent");
+  return NULL;
+ }
  TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
  if (!parent) return NULL;
  return dynamic_cast<QSTreeItem*>(QSImporter::createQSObject(parent,base));
@@ -122,6 +170,10 @@ QSTreeItem* QSTreeItem::parent() {
  @return child of this TreeItem
 */
 QSTreeItem* QSTreeItem::child(const QString &name) {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","child");
+  return NULL;
+ }
  TreeItemAbstract* child=dynamic_cast<TreeItemAbstract*>(obj->child(name));
  if (!child) return NULL;
  return dynamic_cast<QSTreeItem*>(QSImporter::createQSObject(child,base));
@@ -132,6 +184,10 @@ QSTreeItem* QSTreeItem::child(const QString &name) {
  @return name of this item
 */
 QString QSTreeItem::id() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","id");
+  return QString::null;
+ }
  return obj->name();
 }
 
@@ -140,7 +196,22 @@ QString QSTreeItem::id() {
  @return caption of this item
 */
 QString QSTreeItem::text() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","text");
+  return QString::null;
+ }
  return obj->text(0);
+}
+
+/**
+ Disable this wrapper.
+ Use when the tree item it contains is deleted
+ Further usage of wrapper will result in a null pointer error
+*/
+QString QSTreeItem::disable() {
+ //Plain and simple
+ guiPrintDbg(debug::DBG_DBG,"Disabling tree item " << (intptr_t)this);
+ obj=NULL;
 }
 
 /**
@@ -148,6 +219,10 @@ QString QSTreeItem::text() {
  @return path of this item
 */
 QString QSTreeItem::path() {
+ if (!obj) {
+  base->errorNullPointer("TreeItem","path");
+  return QString::null;
+ }
  QString path=obj->name();
  TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
  while (parent) { //Traverse to root, prepending path elements
@@ -164,6 +239,7 @@ TreeItemAbstract* QSTreeItem::get() const {
 
 /** destructor */
 QSTreeItem::~QSTreeItem() {
+ base->removeTreeItemFromList(this);
 }
 
 } // namespace gui

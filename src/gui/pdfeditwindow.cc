@@ -1,36 +1,36 @@
 /** @file
  PdfEditWindow - class representing main application window
 */
-#include "pdfeditwindow.h"
-#include <iostream>
-#include <utils/debug.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <qmenubar.h>
-#include <qmessagebox.h> 
-#include <qsplitter.h>
-#include <qstring.h>
-#include <qfont.h>
-#include <qpushbutton.h>
-#include <qapplication.h>
-#include "pagespace.h"
-#include "toolbar.h"
-#include "settings.h"
-#include "util.h"
-#include "pdfutil.h"
-#include "version.h"
+#include "GlobalParams.h"
+#include "additemdialog.h"
+#include "base.h"
+#include "commandwindow.h"
 #include "dialog.h"
+#include "menu.h"
+#include "multitreewindow.h"
+#include "pagespace.h"
+#include "pdfeditwindow.h"
+#include "pdfutil.h"
 #include "propertyeditor.h"
 #include "propertymodecontroller.h"
-#include "multitreewindow.h"
-#include "menu.h"
-#include "commandwindow.h"
-#include "additemdialog.h"
+#include "settings.h"
+#include "statusbar.h"
+#include "toolbar.h"
 #include "treeitem.h"
 #include "treeitempdfoperator.h"
-#include "GlobalParams.h"
-#include "base.h"
-#include "statusbar.h"
+#include "util.h"
+#include "version.h"
+#include <iostream>
+#include <qapplication.h>
+#include <qfile.h>
+#include <qfont.h>
+#include <qmenubar.h>
+#include <qmessagebox.h> 
+#include <qpushbutton.h>
+#include <qregexp.h>
+#include <qsplitter.h>
+#include <qstring.h>
+#include <utils/debug.h>
 
 namespace gui {
 
@@ -302,8 +302,8 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
   //Selection have probably just changed
   //base->call("onTreeSelectionChange");
  }
- //TODO: look for wrappers using this tree item and somehow disable them
- // (but scripts must not do that anyway...)
+ // look for wrappers using this tree item and somehow disable them
+ base->treeItemDeleted(theItem);
 }
 
 /** Called upon selecting some item in treeview */
@@ -592,7 +592,8 @@ void PdfEditWindow::destroyFile() {
  selectedPageNumber=0;//no page selected
  document->close(false);
  base->destroyDocument();
- base->cleanup();//Garbage collection on scripting objects
+// Doing GC on closing file may have side effects, so it's better not to do it
+// base->cleanup();//Garbage collection on scripting objects
  document=NULL;
  setFileName(QString::null);
 }

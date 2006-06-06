@@ -8,6 +8,7 @@
 #include "treeitemabstract.h"
 #include "multitreewindow.h"
 #include "treedata.h"
+#include "treewindow.h"
 #include "util.h"
 #include <assert.h>
 #include <qlistview.h>
@@ -28,8 +29,7 @@ using namespace std;
 TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  nameId=itemName;
  data=_data;
- parsed=false;
- assert(data);
+ initAbs();
 }
 
 /**
@@ -42,8 +42,20 @@ TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QList
 TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
  nameId=itemName;
  data=_data;
+ initAbs();
+}
+
+/**
+ Initialize the class - set root window, check data ...
+*/
+void TreeItemAbstract::initAbs() {
  parsed=false;
  assert(data);
+ QListView *lv=listView();
+ assert(lv);
+ assert(lv->parentWidget());
+ rootWindow=dynamic_cast<TreeWindow*>(lv->parentWidget());
+ assert(rootWindow);
 }
 
 /** 
@@ -212,7 +224,8 @@ void TreeItemAbstract::unSelect(QListView *tree) {
  //This was last item. Can't select anything else
 }
 
-/** Move all child items from other item to this item.
+/**
+ Move all child items from other item to this item.
  If current item does have any childs, they will be deleted
  @param src TreeItemAbstract containing childs I want to move to this item
 */
@@ -276,6 +289,7 @@ void TreeItemAbstract::setName(const QString &newNameId) {
 
 /** default destructor */
 TreeItemAbstract::~TreeItemAbstract() {
+ if (rootWindow) rootWindow->deleteNotify(this);
  //Notify about deletion of itself
  guiPrintDbg(debug::DBG_DBG,"Item deleting" << intptr_t(this));
  data->multi()->notifyDelete(this);

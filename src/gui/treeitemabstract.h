@@ -11,6 +11,7 @@ namespace gui {
 
 class QSCObject;
 class TreeData;
+class TreeWindow;
 class Base;
 
 /** Type of TreeItemAbstract's child.
@@ -100,6 +101,8 @@ public:
   @return Presence of at least one child
  */
  virtual bool haveChild()=0;
+private:
+ void initAbs();
 protected:
  /** Name of this item */
  QString nameId;
@@ -112,6 +115,8 @@ protected:
 private:
  /** False, if childs of this items are yet unknown and to be parsed/added, true if already parsed */
  bool parsed;
+ /** root window (for delete notification) */
+ TreeWindow* rootWindow;
 };
 
 } // namespace gui

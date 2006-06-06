@@ -17,6 +17,7 @@
 #include "propertyeditor.h"
 #include "qsannotation.h"
 #include "qsarray.h"
+#include "qscobject.h"
 #include "qsdict.h"
 #include "qsimporter.h"
 #include "qsiproperty.h"
@@ -80,6 +81,16 @@ Base::Base(PdfEditWindow *parent) {
 */
 QSInterpreter* Base::interpreter() {
  return qs;
+}
+
+/**
+ Script error invoked when sxcript tried to access a NULL pointer
+ @param className Name of class, in which this error occured
+ @param methodName Name of method, in which this error occured
+ */
+void Base::errorNullPointer(const QString &className,const QString &methodName) {
+ qs->throwError(QObject::tr("Null pointer access in ")+className+"."+methodName);
+ //TODO: check
 }
 
 /** Import currently edited document (QSPDF wrapper) into scripting */
@@ -271,6 +282,69 @@ void Base::removeGC(QSCObject *o) {
  baseObjects.remove(o);
 }
 
+/**
+ Add tree item wrapper to list of managed wrappers<br>
+ Called from treeitem wrapper contructor
+ @param theWrap Tree item wrapper
+*/
+void Base::addTreeItemToList(QSTreeItem* theWrap) {
+ TreeItemAbstract* theItem=theWrap->get();
+ //Just insert to the list
+ QPtrDict<void>* pDict=treeWrap[theItem];
+ if (!pDict) {
+  //We must dictionary to dictionary for this tree item
+  pDict=new QPtrDict<void>(7);
+  //Smaller dict, typically there will be few wrappers to same item
+  treeWrap.insert(theItem,pDict); 
+ }
+ pDict->insert(theWrap,w);//Insert wrapper in dict
+ guiPrintDbg(debug::DBG_DBG,"Added wrapper cleanly" << (intptr_t)theWrap); 
+}
+
+/**
+ Remove tree item wrapper from list of managed wrappers<br>
+ Called from treeitem wrapper contructor
+ @param theWrap Tree item wrapper
+*/
+void Base::removeTreeItemFromList(QSTreeItem* theWrap) {
+ TreeItemAbstract* theItem=theWrap->get();
+ QPtrDict<void>* pDict=treeWrap[theItem];
+ assert (pDict);//Not in list? WTF?
+ assert (pDict->find(theWrap));//Not in list? WTF?
+ pDict->remove(theWrap);
+ guiPrintDbg(debug::DBG_DBG,"Removed wrapper cleanly" << (intptr_t)theWrap); 
+}
+
+/**
+ Callback from main window when the treeitem got just deleted
+ This will look for script wrappers containing the mentioned item and invalidate them, so they will not cause a crash
+ @param theItem deleted tree item
+*/
+void Base::treeItemDeleted(TreeItemAbstract* theItem) {
+ QPtrDict<void>* pDict=treeWrap[theItem];
+ if (!pDict) {
+  //No wrapper exists. Done.
+  guiPrintDbg(debug::DBG_DBG,"Item deleted that is not in wrapper"); 
+  return;
+ }
+ //Ok, now disable all wrappers pointing to this item
+ guiPrintDbg(debug::DBG_DBG,"Will disable wrapped items"); 
+ QPtrDictIterator<void> it(*pDict);
+ for(;it.current();++it) {
+  QSTreeItem* theWrap=reinterpret_cast<QSTreeItem*>(it.currentKey());
+  guiPrintDbg(debug::DBG_DBG,"Disabling one wrapped item " << (intptr_t)theWrap); 
+  assert(theWrap);
+  guiPrintDbg(debug::DBG_DBG,"Check:" << theWrap->type()); 
+  //Disable the wrapper, so calling it will not result in crash, but some error/exception instead
+  theWrap->disable();
+  guiPrintDbg(debug::DBG_DBG,"Disabled one wrapped item"); 
+ }
+ //Remove reference to subdictionary from dictionary
+ treeWrap.remove(theItem);
+ //Delete subdictionary (all wrappers in it were disabled)
+ delete pDict;
+}
+
 /** Delete all objects in cleanup list */
 void Base::cleanup() {
  guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << baseObjects.count() << " objects");
@@ -278,6 +352,9 @@ void Base::cleanup() {
  baseObjects.setAutoDelete(true);
  baseObjects.clear();
  baseObjects.setAutoDelete(false);
+ //Delete list of tree wrappers, since all 
+ guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << treeWrap.count() << " items in tree wrap");
+ treeWrap.clear();
  guiPrintDbg(debug::DBG_DBG,"Garbage collection done");
 }
 
@@ -314,10 +391,15 @@ void Base::runScript(QString script) {
  addDocumentObjects();
  QSArgument ret;
  try {
+  guiPrintDbg(debug::DBG_DBG,"SCRIPT START"); 
   ret=qs->evaluate(script,this,"<GUI>");
+  guiPrintDbg(debug::DBG_DBG,"SCRIPT STOP"); 
  } catch (...) {
+  guiPrintDbg(debug::DBG_DBG,"CATCH"); 
   print(tr("Unknown exception in script occured"));
+  guiPrintDbg(debug::DBG_DBG,"CATCH2");   
  }
+ guiPrintDbg(debug::DBG_DBG,"CATCH AFTER"); 
 
  if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
   switch (ret.type()) {
@@ -351,6 +433,7 @@ void Base::runScript(QString script) {
 
 // === Non-scripting slots ===
 
+#ifdef DRAGDROP
 /**
  Invoked when dragging one item to another within the same tree window
  @param source Source (dragged) item
@@ -389,6 +472,8 @@ void Base::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) {
  deleteVariable("source");
  deleteVariable("target");
 }
+
+#endif
 
 // === Scripting functions ===
 

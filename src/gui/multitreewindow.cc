@@ -185,6 +185,10 @@ TreeItemAbstract* MultiTreeWindow::getSelectedItem() {
 void MultiTreeWindow::clear() {
  mainTree->uninit();
  clearSecondary();
+ //The "selection" have changed
+ // - nothing is selected as the tree is empty
+ //QT does not emit selectionChanged on clearing the tree
+ emit itemSelected();
 }
 
 /** Close all secondary Trees. Only the main tree remain active */
