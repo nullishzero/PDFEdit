@@ -594,18 +594,14 @@ CPage::getMediabox () const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	
-	// Get the array representing media box
-	shared_ptr<IProperty> mbox = utils::getReferencedObject (dictionary->getProperty ("MediaBox"));
-	assert (isArray (mbox));
-	if (!isArray (mbox))
-		throw MalformedFormatExeption ("Page::MediaBox is not array.");
-
+	InheritedPageAttr atr;
+	fillInheritedPageAttr (dictionary,atr);
 	Rectangle rc;
-
-  	rc.xleft  =	getDoubleFromArray (mbox, 0);
-	rc.yleft  =	getDoubleFromArray (mbox, 1);
-	rc.xright = getDoubleFromArray (mbox, 2);
-	rc.yright = getDoubleFromArray (mbox, 3);
+	
+  	rc.xleft  =	getDoubleFromArray (atr.mediaBox, 0);
+	rc.yleft  =	getDoubleFromArray (atr.mediaBox, 1);
+	rc.xright = getDoubleFromArray (atr.mediaBox, 2);
+	rc.yright = getDoubleFromArray (atr.mediaBox, 3);
 
 	return rc;
 }
@@ -784,16 +780,44 @@ CPage::setMediabox (const Rectangle& rc)
 {
 	kernelPrintDbg (debug::DBG_DBG, " [" << rc << "]");
 
-	// Get the array representing media box
-	shared_ptr<IProperty> mbox = dictionary->getProperty ("MediaBox");
-	assert (isArray(mbox));
-	if (!isArray(mbox))
-		throw MalformedFormatExeption ("Page::MediaBox is not array.");
+	static const string strMBox ("MediaBox");
+	
+	try {
+		
+		// Get the array representing media box
+		shared_ptr<IProperty> mbox = dictionary->getProperty (strMBox);
+		assert (isArray(mbox));
+		if (!isArray(mbox))
+			throw MalformedFormatExeption ("Page::MediaBox is not array.");
 
-  	setDoubleInArray (*mbox, 0, rc.xleft);
-	setDoubleInArray (*mbox, 1, rc.yleft);
-	setDoubleInArray (*mbox, 2, rc.xright);
-	setDoubleInArray (*mbox, 3, rc.yright);
+	  	setDoubleInArray (*mbox, 0, rc.xleft);
+		setDoubleInArray (*mbox, 1, rc.yleft);
+		setDoubleInArray (*mbox, 2, rc.xright);
+		setDoubleInArray (*mbox, 3, rc.yright);
+
+		return;
+
+	}catch (CObjectException&)
+	{
+		if (dictionary->containsProperty (strMBox)) 
+			dictionary->delProperty (strMBox);
+
+		CArray array;
+		
+		CReal item (rc.xleft);
+		array.addProperty (item);
+		
+		item.setValue (rc.yleft);
+		array.addProperty (item);
+		
+		item.setValue (rc.xright);
+		array.addProperty (item);
+		
+		item.setValue (rc.yright);
+		array.addProperty (item);
+		
+		dictionary->addProperty (strMBox,array);
+	}
 }
 
 //
