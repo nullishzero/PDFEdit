@@ -153,6 +153,24 @@ void Property::setFlags(PropertyFlags flag) {
 }
 
 /**
+ Event handler for mouse cursor entering widget.
+ @param e Event
+*/
+void Property::enterEvent(QEvent *e) {
+ emit infoText(modeName(flags));
+ QWidget::enterEvent(e);
+}
+
+/**
+ Event handler for mouse cursor leaving widget.
+ @param e Event
+*/
+void Property::leaveEvent(QEvent *e) {
+ emit infoText(QString::null);
+ QWidget::leaveEvent(e);
+}
+
+/**
  For given properyy mode return its localized description
  @param flag Mode
  @return description

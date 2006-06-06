@@ -40,7 +40,7 @@ TODO:
 */
 TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
- tree=new DragListView(this,"tree_view");
+ tree=new QListView(this,"tree_view");//DragListView for drag and drop
  tree->setSorting(-1);
  selected=rootItem=NULL;
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
@@ -240,8 +240,11 @@ void TreeWindow::uninit() {
 
 /** default destructor */
 TreeWindow::~TreeWindow() {
- delete data;
+ //Delete all items
+ tree->clear();
+ //Tree must be deleted first, since some tree items might be using the data during destructor
  delete tree;
+ delete data;
 }
 
 } // namespace gui

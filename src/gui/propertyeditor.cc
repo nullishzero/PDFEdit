@@ -166,6 +166,8 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  props->insert(name,value);
  labels->insert(name,label);
  connect(prop,SIGNAL(propertyChanged(Property*)),this,SLOT(update(Property*)));
+ connect(prop,SIGNAL(infoText(const QString&)),this,SLOT(receiveInfoText(const QString&)));
+ connect(prop,SIGNAL(warnText(const QString&)),this,SLOT(receiveWarnText(const QString&)));
  prop->initLabel(label);
  prop->override(showHidden,editReadOnly);//Will show or hide
  fixPropertyHeight(prop);
@@ -383,6 +385,22 @@ void PropertyEditor::commitProperty() {
   //Property from this property editor -> update it
   update(propCurrent);
  }
+}
+
+/** 
+ Receive and resend informational text
+ @param message Message
+*/
+void PropertyEditor::receiveInfoText(const QString &message) {
+ emit infoText(message);
+}
+
+/** 
+ Receive and resend warning message
+ @param message Message
+*/
+void PropertyEditor::receiveWarnText(const QString &message){
+ emit warnText(message);
 }
 
 /** default destructor */

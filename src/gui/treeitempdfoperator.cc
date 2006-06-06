@@ -151,8 +151,10 @@ QSCObject* TreeItemPdfOperator::getQSObject() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPdfOperator::remove() {
- obj->getContentStream()->deleteOperator(obj);
+ if (!obj->getContentStream()) return;// Content stream is not known, so deletion is not possible
  TreeItemAbstract *parentItem=dynamic_cast<TreeItemAbstract*>(parent());
+ obj->getContentStream()->deleteOperator(obj);
+ //TODO: monitor parentItem for deletion, or maybe this should not be necessary (observers ..)
  if (parentItem) parentItem->reload(); ///This will delete the operator treeitem and also the operator itself
  return;
 }

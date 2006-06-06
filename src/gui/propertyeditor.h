@@ -40,6 +40,8 @@ public slots:
  void setObject(boost::shared_ptr<PdfOperator> pdfOp);
  void update(Property *p);
  void reloadItem();
+ void receiveInfoText(const QString &message);
+ void receiveWarnText(const QString &message);
 signals:
  /**
   Signal emitted when any property is modified
@@ -47,6 +49,17 @@ signals:
   @param prop Pointer to changed property item
  */
  void propertyChanged(IProperty *prop); 
+ /** 
+  Send informational message when mouse cursor enters/leaves some property
+  The message is sent on enter and QString::null on leave.
+  @param message Message
+ */
+ void infoText(const QString &message);
+ /** 
+  Send warning message on some events (only once when the event occurs)
+  @param message Message
+ */
+ void warnText(const QString &message);
 private:
  void sortList(std::vector<std::string> &list);
  void override(bool _showHidden,bool _editReadOnly);

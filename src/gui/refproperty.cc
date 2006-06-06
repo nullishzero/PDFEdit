@@ -129,6 +129,7 @@ void RefProperty::setValue(IProperty *pdfObject) {
  if (pdf) {
   //We can check for validity
   if (!isRefValid(pdf,val)) { 
+   emit warnText("Reference is not valid!");
    ed->setFocus();
    return; //not valid
   }

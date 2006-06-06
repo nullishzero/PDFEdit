@@ -184,6 +184,7 @@ QWidget* Base::getWidgetByName(const QString &widgetName) {
 */
 void Base::runInitScript() {
  //Run list of initscripts from settings
+ int scriptsRun=0;
  QStringList initScripts=globalSettings->readPath("init","script/");
  for (unsigned int i=0;i<initScripts.count();i++) {
   QString initScriptFilename=initScripts[i];
@@ -193,9 +194,14 @@ void Base::runInitScript() {
    guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
    runFile(initScriptFilename);
+   scriptsRun++;
   }
  }
  guiPrintDbg(debug::DBG_DBG,"Initscripts executed");
+ if (!scriptsRun) {
+  //No init scripts found - print a warning
+  warn(tr("No init script found - check your configuration")+"!\n"+tr("Looked for","scripts")+":\n"+initScripts.join("\n"));
+ }
  //Run initscripts from paths listed in settings
  QStringList initScriptPaths=globalSettings->readPath("init_path","script/");
  for (unsigned int ip=0;ip<initScriptPaths.count();ip++) {

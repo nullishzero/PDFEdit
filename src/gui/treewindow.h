@@ -69,7 +69,7 @@ private:
  void updateTreeSettings();
 private:
  /** Treeview */
- DragListView *tree;
+ QListView *tree;//DragListView for drag and drop
  /** Tree data shared with tree items */
  TreeData *data;
  /** Name of root object - if applicable */

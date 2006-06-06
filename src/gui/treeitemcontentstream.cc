@@ -32,6 +32,7 @@ using namespace std;
 TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
+ mode=All;
 }
 
 /**
@@ -53,6 +54,7 @@ TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListViewItem *pare
  @param name Caption of item
  */
 void TreeItemContentStream::init(const QString &name) {
+ mode=All;
  if (name.isNull()) {
   setText(0,QObject::tr("<no name>"));
  } else {
@@ -62,7 +64,6 @@ void TreeItemContentStream::init(const QString &name) {
  setText(1,QObject::tr("Content Stream"));
  reload();
  initObserver();
- mode=All;
  showMode();
 }
 

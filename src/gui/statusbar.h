@@ -2,6 +2,11 @@
 #define __STATUSBAR_H__
 
 #include <qstatusbar.h>
+#include <qstring.h>
+
+class QLabel;
+class QTimer;
+class QColor;
 
 namespace gui {
 
@@ -11,6 +16,24 @@ class StatusBar : public QStatusBar {
 public:
  StatusBar(QWidget *parent=0,const char *name=0);
  ~StatusBar();
+public slots:
+ void message(const QString &theMessage);
+ void receiveInfoText(const QString &theMessage);
+ void receiveWarnText(const QString &theMessage);
+private slots:
+ void timeOut();
+private:
+ void normCol();
+ void warnCol();
+private:
+ /** Informational label on right */
+ QLabel *info;
+ /** Message label on left */
+ QLabel *msgLabel;
+ /** Store old message in case of replacement by timed warning */
+ QString storedMsg;
+ /** Timer to watch for message timeouts*/
+ QTimer *tm;
 };
 
 } // namespace gui

@@ -220,15 +220,17 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  status=new StatusBar(this,"statusbar");
 
  //Connections
- QObject::connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
- QObject::connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
- QObject::connect(tree, SIGNAL(itemDeleted(TreeItemAbstract*)), this, SLOT(unsetObjectIf(TreeItemAbstract*)));
- QObject::connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
- QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
- QObject::connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
- QObject::connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
- QObject::connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
- QObject::connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
+ connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
+ connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
+ connect(tree, SIGNAL(itemDeleted(TreeItemAbstract*)), this, SLOT(unsetObjectIf(TreeItemAbstract*)));
+ connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
+ connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
+ connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
+ connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
+ connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
+ connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
+ connect(prop,SIGNAL(infoText(const QString&)),status,SLOT(receiveInfoText(const QString&)));
+ connect(prop,SIGNAL(warnText(const QString&)),status,SLOT(receiveWarnText(const QString&)));
 
  this->setCentralWidget(spl);
 
@@ -307,7 +309,7 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
 /** Called upon selecting some item in treeview */
 void PdfEditWindow::setObject() {
  selectedTreeItem=tree->getSelectedItem();
- guiPrintDbg(debug::DBG_DBG,"selectedTreeItem" << (intptr_t)selectedTreeItem );
+ guiPrintDbg(debug::DBG_DBG,"selectedTreeItem " << (intptr_t)selectedTreeItem );
  selectedProperty.reset();
  selectedOperator.reset();
  TreeItemPdfOperator *pdfOp=dynamic_cast<TreeItemPdfOperator*>(selectedTreeItem);
