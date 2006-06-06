@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/06/06 11:42:44  hockm0bm
+ * * RulesManager
+ *         - uses RuleType::operator== rather than RuleType::equals
+ *           (to better fit ready to be used types like string)
+ *
  * Revision 1.3  2006/06/06 10:14:05  hockm0bm
  * loadFromFile method added
  *         - generic implementation
@@ -85,7 +90,7 @@ public:
  * given rules with most specific matching one.
  * <br>
  * RuleType template parameter specifies rule structure. It has to implement at
- * least bool equals(const RuleType & )const method which returns true for two 
+ * least bool operator==(const RuleType &)const which returns true for two 
  * same rules (Note same are allways mathich but oposit implication doesn't 
  * have to be true). 
  * <br>
@@ -133,7 +138,7 @@ private:
 	 * @param end Iterator behind last element to consider.
 	 *
 	 * Checks for all elements in range [start, end) and compares it with given
-	 * rule (using RuleType::equals method). If found, returns iterator.
+	 * rule (using RuleType::== operator). If found, returns iterator.
 	 *
 	 * @return iterator to element which has same rule or end iterator if not
 	 * found.
@@ -144,7 +149,7 @@ private:
 		{
 			RuleType original=i->first;
 			// rule and original must be same
-			if(original.equals(rule))
+			if(original==rule)
 				return i;
 		}
 
@@ -361,6 +366,9 @@ public:
 	 */
 	virtual bool findMatching(const RuleType & rule, RuleTarget * target)const
 	{
+		if(!matcher)
+			return false;
+		
 		typename RuleMatcherType::priority_t topPrio;
 		const_iterator topPos=mapping.end();
 
