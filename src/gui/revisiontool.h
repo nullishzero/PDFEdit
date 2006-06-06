@@ -11,8 +11,6 @@ namespace pdfobjects {
 
 namespace gui {
 
-using namespace pdfobjects;
-
 /** 
  Toolbutton listing revisions of current PDF document, with ability to switch revisions<br>
  Can be placed in toolbar in place of ordinary button
@@ -26,7 +24,7 @@ public:
 public slots:
  void updateRevision(int revision);
  void selectRevision(int revision);
- void setDocument(CPdf *newDocument);
+ void setDocument(pdfobjects::CPdf *newDocument);
 signals:
  /**
   Signal emitted when user changes the revision in this control
@@ -39,7 +37,7 @@ protected:
  /** Revision selection list */
  QComboBox *revList;
  /** Reference to current PDF document */
- CPdf *document;
+ pdfobjects::CPdf *document;
 };
 
 } // namespace gui

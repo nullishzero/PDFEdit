@@ -200,7 +200,7 @@ void TreeWindow::clear() {
  @param pdfDoc Document used to initialize treeview
  @param fileName Name of PDF document (will be shown in treeview as name of root element)
  */
-void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
+void TreeWindow::init(pdfobjects::CPdf *pdfDoc,const QString &fileName) {
  assert(pdfDoc);
  clear();
  rootName=fileName;
@@ -215,7 +215,7 @@ void TreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  @param doc IProperty used to initialize treeview
  @param pName Name of the property passed
 */
-void TreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName/*=QString::null*/) {
+void TreeWindow::init(boost::shared_ptr<pdfobjects::IProperty> doc,const QString &pName/*=QString::null*/) {
  clear();
  if (doc.get()) {
   setUpdatesEnabled( FALSE );
@@ -230,7 +230,7 @@ void TreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName/*=QS
  @param cs Content Stream used to initialize treeview
  @param pName Name of the content stream passed
 */
-void TreeWindow::init(boost::shared_ptr<CContentStream> cs,const QString &pName/*=QString::null*/) {
+void TreeWindow::init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QString &pName/*=QString::null*/) {
  clear();
  if (cs.get()) {
   setUpdatesEnabled( FALSE );

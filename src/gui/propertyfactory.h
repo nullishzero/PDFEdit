@@ -9,8 +9,7 @@ namespace pdfobjects {
 
 namespace gui {
 
-using namespace pdfobjects;
-Property* propertyFactory(IProperty *prop,const QString &_name=0,QWidget *parent=0);
+Property* propertyFactory(pdfobjects::IProperty *prop,const QString &_name=0,QWidget *parent=0);
 
 } // namespace gui
 

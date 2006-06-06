@@ -26,7 +26,7 @@ namespace gui {
  @param _name Name of this property
  @return subclass of Property widget (or NULL)
  */
-Property* propertyFactory(IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/) {
+Property* propertyFactory(pdfobjects::IProperty *prop,const QString &_name/*=0*/,QWidget *parent/*=0*/) {
  PropertyType typ=prop->getType();
  PropertyFlags _flags=prop->getMode();
  switch (typ) {

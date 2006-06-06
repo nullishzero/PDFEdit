@@ -12,6 +12,8 @@
 
 namespace gui {
 
+using namespace pdfobjects;
+
 /**
  Default constructor of RevisionTool
  @param parent Toolbar containing this control
@@ -75,7 +77,7 @@ void RevisionTool::updateRevision(int revision) {
  Called on loading of new document
  @param newDocument Reference to new PDF document
 */
-void RevisionTool::setDocument(CPdf *newDocument) {
+void RevisionTool::setDocument(pdfobjects::CPdf *newDocument) {
  document=newDocument;
  revList->clear();
  if (document) {

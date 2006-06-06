@@ -10,7 +10,6 @@ run( "dialogs.qs" );			//Dialogs
 run( "menu.qs" );			//Functons activated from menu/toolbars
 run( "page.qs" );			//Page manipulation functions
 run( "test.qs" );			//Testing functions
-run( "update.qs" );			//Update functions
 
 /* ==== Other helper functions ==== */
 
@@ -50,14 +49,6 @@ function isNumber4(x,y,z,w) {
 		return true;
 	else
 		return false;
-}
-
-/** Get absolute value */
-function abs (i) {
-	if (i >= 0)
-		return i;
-	else
-		return -i;
 }
 
 /** Validate current page */

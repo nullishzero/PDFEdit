@@ -13,10 +13,8 @@ namespace pdfobjects {
 
 namespace gui {
 
-using namespace pdfobjects;
-
 /** Vector with operators */
-typedef std::vector<boost::shared_ptr<PdfOperator> > OperatorVector;
+typedef std::vector<boost::shared_ptr<pdfobjects::PdfOperator> > OperatorVector;
 
 }
 

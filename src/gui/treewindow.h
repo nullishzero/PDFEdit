@@ -13,8 +13,6 @@ namespace pdfobjects {
 
 namespace gui {
 
-using namespace pdfobjects;
-
 class DragListView;
 class TreeData;
 class MultiTreeWindow;
@@ -31,10 +29,10 @@ class TreeWindow : public QWidget {
  Q_OBJECT
 public:
  void uninit();
- void init(CPdf *pdfDoc,const QString &fileName);
+ void init(pdfobjects::CPdf *pdfDoc,const QString &fileName);
  void init(const OperatorVector &vec,const QString &pName=QString::null);
- void init(boost::shared_ptr<IProperty> doc,const QString &pName=QString::null);
- void init(boost::shared_ptr<CContentStream> cs,const QString &pName=QString::null);
+ void init(boost::shared_ptr<pdfobjects::IProperty> doc,const QString &pName=QString::null);
+ void init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QString &pName=QString::null);
  TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent=0,const char *name=0);
  ~TreeWindow();
  void reloadFrom(TreeItemAbstract *item);
