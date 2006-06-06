@@ -75,102 +75,86 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 	// TODO consolidate code - get rid of copy & paste
 	
 	// resource field
-	shared_ptr<CDict> resources=attrs.resources;
-	if(!resources.get())
+	if(!attrs.resources.get())
 	{
-		// resources field is not specified yet, so tries this dictionary
-		try
+		// attrs.resources field is not specified yet, so tries this dictionary
+		if(pageDict->containsProperty("Resources"))
 		{
 			shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
 			if(isRef(prop))
 			{
-				resources=getDictFromRef(prop);
+				attrs.resources=getDictFromRef(prop);
 				initialized++;
 			}
 			else
 				if(isDict(prop))
 				{
-					resources=IProperty::getSmartCObjectPtr<CDict>(prop);
+					attrs.resources=IProperty::getSmartCObjectPtr<CDict>(prop);
 					initialized++;
 				}
-		}catch(CObjectException & e)
-		{
-			// not found
 		}
 	}else
 		initialized++;
 
 	// mediabox field
-	shared_ptr<CArray> mediaBox=attrs.mediaBox;
-	if(!mediaBox.get())
+	if(!attrs.mediaBox.get())
 	{
-		// mediaBox field is not specified yet, so tries this array
-		try
+		// attrs.mediaBox field is not specified yet, so tries this array
+		if(pageDict->containsProperty("MediaBox"))
 		{
 			shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
 			if(isRef(prop))
 			{
-				mediaBox=getCObjectFromRef<CArray, pArray>(prop);
+				attrs.mediaBox=getCObjectFromRef<CArray, pArray>(prop);
 				initialized++;
 			}else
 				if(isArray(prop))
 				{
-					mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+					attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
 					initialized++;
 				}
-		}catch(CObjectException & e)
-		{
-			// not found or bad type
 		}
 	}else
 		initialized++;
 
 	// cropbox field
-	shared_ptr<CArray> cropBox=attrs.cropBox;
-	if(!cropBox.get())
+	if(!attrs.cropBox.get())
 	{
-		// cropBox field is not specified yet, so tries this array
-		try
+		// attrs.cropBox field is not specified yet, so tries this array
+		if(pageDict->containsProperty("CropBox"))
 		{
 			shared_ptr<IProperty> prop=pageDict->getProperty("CropBox");
 			if(isRef(prop))
 			{
-				cropBox=getCObjectFromRef<CArray, pArray>(prop);
+				attrs.cropBox=getCObjectFromRef<CArray, pArray>(prop);
 				initialized++;
 			}else
 				if(isArray(prop))
 				{
-					cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
+					attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
 					initialized++;
 				}
-		}catch(CObjectException & e)
-		{
-			// not found or bad type
 		}
 	}else
 		initialized++;
 
 	// rotate field
-	shared_ptr<CInt> rotate=attrs.rotate;
-	if(!rotate.get())
+	if(!attrs.rotate.get())
 	{
-		// rotate field is not specified yet, so tries this array
-		try
+		// attrs.rotate field is not specified yet, so tries this array
+		if(pageDict->containsProperty("Rotate"))
 		{
 			shared_ptr<IProperty> prop=pageDict->getProperty("Rotate");
 			if(isRef(prop))
 			{
-				rotate=getCObjectFromRef<CInt, pInt>(prop);
+				attrs.rotate=getCObjectFromRef<CInt, pInt>(prop);
 				initialized++;
 			}else
 				if(isInt(prop))
 				{
-					rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
+					attrs.rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
 					initialized++;
 				}
-		}catch(CObjectException & e)
-		{
-			// not found or bad type
 		}
 	}else
 		initialized++;
@@ -180,8 +164,9 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 	{
 		// not everything from InheritedPageAttr is initialized now
 		// tries to initialize from parent.
-		// If parent is not present, uses dafault value
-		try
+		// If parent is not present (root of page tree hierarchy is reached),
+		// stops recursion and initializes values with default
+		if(pageDict->containsProperty("Parent"))
 		{
 			shared_ptr<IProperty> parentRef=pageDict->getProperty("Parent");
 			if(!isRef(parentRef))
@@ -190,11 +175,8 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 
 			shared_ptr<CDict> parentDict=getDictFromRef(parentRef);
 			fillInheritedPageAttr(parentDict, attrs);
-				
-		}catch(ElementNotFoundException & e)
+		}else
 		{
-			// parent not found - uses default values
-			
 			// Resources is required and at least empty dictionary should be
 			// specified 
 			if(!attrs.resources.get())
