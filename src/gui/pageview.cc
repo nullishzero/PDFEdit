@@ -4,6 +4,7 @@
 #include "rect2Darray.h"
 #include "util.h"
 #include "debug.h"
+#include <assert.h>
 
 
 namespace gui {

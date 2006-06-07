@@ -7,6 +7,7 @@
 #include "commandwindow.h"
 #include "util.h"
 #include <qstring.h>
+#include <assert.h>
 
 namespace gui {
 
