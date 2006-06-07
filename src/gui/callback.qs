@@ -93,7 +93,7 @@ function onTreeRightClick() {
  }
  if (treeitem.itemtype()=="Page") {
   menu.addSeparator();
-  menu.addItemDef("item "+tr("Go to page")+" "+treeitem.id()+",go("+treeitem.id()+")");
+  menu.addItemDef("item "+tr("View page")+" "+treeitem.id()+",go("+treeitem.id()+")");
   menu.addItemDef("item "+tr("Add system font")+",addSystemFont(),,page_add_font.png");
   menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
   menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
