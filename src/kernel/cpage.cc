@@ -508,9 +508,9 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 	// Fill inheritable properties but do not dispatch the change
 	// if no change on this document occurs, we do not want to change it (but we
 	// do it in the setInheritablePageAttr function)
-	//dictionary->lockChange();
-	//setInheritablePageAttr (dictionary);
-	//dictionary->unlockChange();
+	dictionary->lockChange();
+	setInheritablePageAttr (dictionary);
+	dictionary->unlockChange();
 
 	// collects all annotations from this page and registers observer to Annots
 	// array and all its members
@@ -598,10 +598,9 @@ CPage::getMediabox () const
 int
 CPage::getRotation () const
 {
-	try {
-		return utils::getIntFromDict(dictionary,"Rotate");
-	}catch (CObjectException&)
-		{ return 0; }
+	InheritedPageAttr atr;
+	fillInheritedPageAttr (dictionary,atr);
+	return atr.rotate->getValue();
 }
 
 
@@ -765,45 +764,21 @@ void
 CPage::setMediabox (const Rectangle& rc)
 {
 	kernelPrintDbg (debug::DBG_DBG, " [" << rc << "]");
-
-	static const string strMBox ("MediaBox");
 	
-	try {
-		
-		// Get the array representing media box
-		shared_ptr<IProperty> mbox = dictionary->getProperty (strMBox);
-		assert (isArray(mbox));
-		if (!isArray(mbox))
-			throw MalformedFormatExeption ("Page::MediaBox is not array.");
+	CArray mb;
+	CReal r (rc.xleft);
+	mb.addProperty (r);
 
-	  	setDoubleInArray (*mbox, 0, rc.xleft);
-		setDoubleInArray (*mbox, 1, rc.yleft);
-		setDoubleInArray (*mbox, 2, rc.xright);
-		setDoubleInArray (*mbox, 3, rc.yright);
+	r.setValue (rc.yleft);
+	mb.addProperty (r);
 
-		return;
+	r.setValue (rc.xright);
+	mb.addProperty (r);
 
-	}catch (CObjectException&)
-	{
-		if (dictionary->containsProperty (strMBox)) 
-			dictionary->delProperty (strMBox);
-
-		CArray array;
+	r.setValue (rc.yright);
+	mb.addProperty (r);
 		
-		CReal item (rc.xleft);
-		array.addProperty (item);
-		
-		item.setValue (rc.yleft);
-		array.addProperty (item);
-		
-		item.setValue (rc.xright);
-		array.addProperty (item);
-		
-		item.setValue (rc.yright);
-		array.addProperty (item);
-		
-		dictionary->addProperty (strMBox,array);
-	}
+	dictionary->setProperty ("MediaBox",mb);
 }
 
 //
@@ -954,7 +929,7 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 //
 //
 //
-bool CPage::parseContentStream ( )
+bool CPage::parseContentStream ()
 {
 	// Clear content streams
 	contentstreams.clear();
