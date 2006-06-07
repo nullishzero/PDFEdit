@@ -340,10 +340,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Go to page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show all operators</source>
         <translation type="unfinished"></translation>
     </message>
@@ -890,77 +886,27 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Script updater</source>
+        <source>Change background color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Update</source>
+        <source>Remove page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Update process information</source>
+        <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>You can update from project site or any other site containin QSA scripts for PdfEditor.
-
-</source>
+        <source>Select page to remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>First you will be asked for the script directory. Downloaded scripts will be placed into this directory.</source>
+        <source>Invalid page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>For automatic script loading select the default script directory (see user documentation).
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Then, you will be asked for executable utility (e.g. wget) which can automatically download files from http server using</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>syntax: executable -P directory files.
-
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Finally you will be asked to open the script, which will be executed. (Be carefull, QSA can execute processes)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select directory where scripts should be downloaded.jano.script</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select script location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select downloading utility.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Do you really want to execute </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select script to execute.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Script launcher</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Run</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Script</source>
+        <source>View page</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1164,18 +1110,6 @@ Data: %3
 <context>
     <name>gui::Base</name>
     <message>
-        <source>Error in callback handler: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Exception in callback handler: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown exception in script occured</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1186,6 +1120,39 @@ Data: %3
     <message>
         <source>Looked for</source>
         <comment>scripts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::BaseCore</name>
+    <message>
+        <source>Null pointer access in </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid object given for parameter %1 in </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expected</source>
+        <comment>object type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Got</source>
+        <comment>object type</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error in callback handler: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exception in callback handler: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown exception in script occured</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1411,6 +1378,11 @@ Data: %3
     </message>
     <message>
         <source>Statusbar font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show return value also for complex types
+(possibly long output)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1889,18 +1861,8 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Draw line</source>
-        <comment>drawline</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show/Hide &amp;status bar</source>
         <comment>hideStatus</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Draw rectangle</source>
-        <comment>drawrect</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1921,6 +1883,16 @@ Data: %3
     <message>
         <source>Add text</source>
         <comment>addtextm</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw line</source>
+        <comment>drawlinee</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <comment>drawrecte</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

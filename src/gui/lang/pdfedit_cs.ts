@@ -24,7 +24,7 @@
     <message>
         <source>String</source>
         <comment>Type name</comment>
-        <translation>String</translation>
+        <translation>Řetězec</translation>
     </message>
     <message>
         <source>Name</source>
@@ -34,7 +34,7 @@
     <message>
         <source>Ref</source>
         <comment>Type name</comment>
-        <translation>Ref</translation>
+        <translation>Odkaz</translation>
     </message>
     <message>
         <source>Array</source>
@@ -341,10 +341,6 @@ Data: %3
     <message>
         <source>Warning: This document is linearized PDF!</source>
         <translation>Upozornění: Tento dokument je linearizované PDF!</translation>
-    </message>
-    <message>
-        <source>Go to page</source>
-        <translation>Jít na stranu</translation>
     </message>
     <message>
         <source>Show all operators</source>
@@ -731,10 +727,6 @@ Data: %3
         <translation>Zobrazuji graf. op.</translation>
     </message>
     <message>
-        <source>Set values           </source>
-        <translation type="obsolete">Nastavuje hodnoty    </translation>
-    </message>
-    <message>
         <source>element</source>
         <comment>1</comment>
         <translation>prvek</translation>
@@ -895,6 +887,30 @@ Data: %3
     <message>
         <source>Size</source>
         <translation>Velikost</translation>
+    </message>
+    <message>
+        <source>Change background color</source>
+        <translation>Změnit barvu pozadí</translation>
+    </message>
+    <message>
+        <source>Remove page</source>
+        <translation>Odstranit stránku</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Odstranit</translation>
+    </message>
+    <message>
+        <source>Select page to remove</source>
+        <translation>Vyberte stránku k odstranění</translation>
+    </message>
+    <message>
+        <source>Invalid page</source>
+        <translation>Neplatná stránka</translation>
+    </message>
+    <message>
+        <source>View page</source>
+        <translation>Zobrazit stránku</translation>
     </message>
 </context>
 <context>
@@ -1097,6 +1113,22 @@ Data: %3
 <context>
     <name>gui::Base</name>
     <message>
+        <source>Warning</source>
+        <translation>Upozornění</translation>
+    </message>
+    <message>
+        <source>No init script found - check your configuration</source>
+        <translation>Nenalezen žádný init skript - zkontrolujte svoji konfiguraci</translation>
+    </message>
+    <message>
+        <source>Looked for</source>
+        <comment>scripts</comment>
+        <translation>Zkoušel jsem</translation>
+    </message>
+</context>
+<context>
+    <name>gui::BaseCore</name>
+    <message>
         <source>Error in callback handler: </source>
         <translation>Chyba v obsluze volání: </translation>
     </message>
@@ -1109,17 +1141,22 @@ Data: %3
         <translation>Ve skriptu došlo k neznámé výjimce</translation>
     </message>
     <message>
-        <source>Warning</source>
-        <translation>Upozornění</translation>
+        <source>Null pointer access in </source>
+        <translation>Přístup na null ukazatel v </translation>
     </message>
     <message>
-        <source>No init script found - check your configuration</source>
-        <translation>Nenalezen žádný init skript - zkontrolujte svoji konfiguraci</translation>
+        <source>Invalid object given for parameter %1 in </source>
+        <translation>Neplatný objekt předán jako parametr %1 v </translation>
     </message>
     <message>
-        <source>Looked for</source>
-        <comment>scripts</comment>
-        <translation>Zkoušel jsem</translation>
+        <source>Expected</source>
+        <comment>object type</comment>
+        <translation>Očekáváno</translation>
+    </message>
+    <message>
+        <source>Got</source>
+        <comment>object type</comment>
+        <translation>Předáno</translation>
     </message>
 </context>
 <context>
@@ -1345,6 +1382,12 @@ Data: %3
     <message>
         <source>Statusbar font</source>
         <translation>Písmo stavového řádku</translation>
+    </message>
+    <message>
+        <source>Show return value also for complex types
+(possibly long output)</source>
+        <translation>Zobrazovat návratovou hodnotu též pro komplexní typy
+(možný delší výstup)</translation>
     </message>
 </context>
 <context>
@@ -1822,19 +1865,9 @@ Data: %3
         <translation>Nastavit relativní pozici</translation>
     </message>
     <message>
-        <source>Draw line</source>
-        <comment>drawline</comment>
-        <translation>Nakreslit čáru</translation>
-    </message>
-    <message>
         <source>Show/Hide &amp;status bar</source>
         <comment>hideStatus</comment>
         <translation>Zobrazit/skrýt stavový řádek</translation>
-    </message>
-    <message>
-        <source>Draw rectangle</source>
-        <comment>drawrect</comment>
-        <translation>Nakreslit obdélník</translation>
     </message>
     <message>
         <source>Add text</source>
@@ -1855,6 +1888,16 @@ Data: %3
         <source>Add text</source>
         <comment>addtextm</comment>
         <translation>Přidat text</translation>
+    </message>
+    <message>
+        <source>Draw line</source>
+        <comment>drawlinee</comment>
+        <translation>Nakreslit čáru</translation>
+    </message>
+    <message>
+        <source>Draw rectangle</source>
+        <comment>drawrecte</comment>
+        <translation>Nakreslit obdélník</translation>
     </message>
 </context>
 <context>
