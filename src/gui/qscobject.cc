@@ -8,7 +8,6 @@
 #include <utils/debug.h>
 #include "qscobject.h"
 #include <qstring.h>
-#include "base.h"
 #include "util.h"
 
 namespace gui {
@@ -18,7 +17,7 @@ namespace gui {
  @param _typeName Name of this objects type
  @param _base scripting base for this object
  */
-QSCObject::QSCObject(QString _typeName, Base* _base) {
+QSCObject::QSCObject(QString _typeName, BaseCore* _base) {
  typeName=_typeName;
  base=_base;
 // guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
@@ -45,11 +44,15 @@ QSCObject::~QSCObject() {
 }
 
 /**
- \copydoc Base::treeNeedReload
- This will call Base::treeNeedReload, if base is set for this object.
+ Check if given pointer is NULL.<br>
+ If it is, call base error handler for null pointers and return true, otherwise just return false;<br>
+ @param methodName Name of method, to send to error handler if ptr is NULL
 */
-void QSCObject::treeNeedReload() {
- if (base) base->treeNeedReload();
+bool QSCObject::nullPtr(const void* ptr,const QString &methodName) {
+ assert(base);
+ if (ptr) return false;
+ base->errorNullPointer(typeName,methodName);
+ return true; 
 }
 
 /**

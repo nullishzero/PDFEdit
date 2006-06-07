@@ -6,7 +6,6 @@
 
 namespace gui {
 
-class Base;
 class TreeItemContentStream;
 
 /*= This type of object represents one item in treeview representing content stream.*/
@@ -20,7 +19,7 @@ public slots:
  */
  void setMode(const QString &newMode);
 public:
- QSTreeItemContentStream(TreeItemContentStream *item,Base *_base);
+ QSTreeItemContentStream(TreeItemContentStream *item,BaseCore *_base);
  virtual ~QSTreeItemContentStream();
 };
 

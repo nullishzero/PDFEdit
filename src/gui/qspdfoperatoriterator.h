@@ -9,7 +9,6 @@
 
 namespace gui {
 
-class Base;
 class QSContentStream;
 class QSPdfOperator;
 
@@ -20,9 +19,9 @@ using namespace pdfobjects;
 class QSPdfOperatorIterator : public QSCObject {
  Q_OBJECT
 public:
- QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,Base *_base);
- QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,Base *_base);
- QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base);
+ QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,BaseCore *_base);
+ QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,BaseCore *_base);
+ QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,BaseCore *_base);
  virtual ~QSPdfOperatorIterator();
  PdfOperator::Iterator* get();
  boost::shared_ptr<PdfOperator> getCurrent();

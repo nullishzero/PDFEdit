@@ -1,9 +1,9 @@
 #ifndef __BASE_H__
 #define __BASE_H__
 
+#include "basecore.h"
 #include <qobject.h>
 #include <qstring.h>
-#include <qptrdict.h>
 #include <qvariant.h>
 #include <qmap.h>
 
@@ -12,11 +12,9 @@ class QSInterpreter;
 
 namespace gui {
 
-class BaseData;
 class PdfEditWindow;
 class QSAnnotation;
 class QSArray;
-class QSCObject;
 class QSTreeItem;
 class QSDict;
 class QSIProperty;
@@ -30,43 +28,21 @@ class QSPdfOperatorStack;
 class TreeItemAbstract;
 
 /**
- Type containing binding between treeitem and its QSA wrapper.<br>
- Mapping is from TreeItemAbstract* to (QSTreeItem*)[]
-*/
-typedef QPtrDict<QPtrDict<void> > TreeBindingMap;
-//typedef QPtrDict<QSTreeItem>  TreeBindingMap;
-
-/**
- Iterator type for TreeBindingMap dictionary type
- \see TreeBindingMap
-*/
-typedef QPtrDictIterator<QSTreeItem> TreeBindingMapIterator;
-
-/**
  Class that host scripts and contain static script functions<br>
  This class is also responsible for garbage collection of scripting
  objects and interaction of editor and scripts
 */
-class Base : public QObject {
+class Base : public BaseCore {
  Q_OBJECT
 public:
  Base(PdfEditWindow *parent);
  QSPdf* getQSPdf() const;
- void stopScript();
  void importDocument();
  void destroyDocument();
  void call(const QString &name);
  void runInitScript();
  void runScript(QString script);
- void addGC(QSCObject *o);
- void removeGC(QSCObject *o);
- void addTreeItemToList(QSTreeItem* theWrap);
- void removeTreeItemFromList(QSTreeItem* theWrap);
- void cleanup();
- void treeNeedReload();
  void treeItemDeleted(TreeItemAbstract* theItem);
- void errorNullPointer(const QString &className,const QString &methodName);
- QSInterpreter* interpreter();
  ~Base();
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */
@@ -309,6 +285,10 @@ public slots: //This will be all exported to scripting
   of localized text. Return translated text
  */
  QString tr(const QString &text,const QString &context=QString::null);
+ /*-
+  You can call this to explicitly request the tree to reload after the script finishes execution
+ */
+ void treeNeedReload();
  /*- Return root item of currently selected tree */
  QSTreeItem* treeRoot();
  /*- Return root item of main tree */
@@ -336,7 +316,6 @@ private://This is workaround because of bug in MOC - it tries to include methods
 #endif
 private:
  QWidget* getWidgetByName(const QString &widgetName);
- void deleteVariable(const QString &varName);
  void addDocumentObjects();
  void removeDocumentObjects();
  void scriptCleanup();
@@ -346,18 +325,8 @@ private:
  QSPdf *qpdf;
  /** Editor window in which this class exist */
  PdfEditWindow* w;
- /** QSA Scripting Project */
- QSProject *qp;
- /** QSA Interpreter - taken from project */
- QSInterpreter *qs;
- /** QSObject Importer */
- QSImporter *import;
- /** All Scripting objects created under this base. Will be used for purpose of garbage collection */
- QPtrDict<QSCObject> baseObjects;
  /** Flag specifying if the tree have changed while running script to the degree it need to be reloaded */
  bool treeReloadFlag;
- /** map containing trees to disable if necessary*/
- TreeBindingMap treeWrap;
 };
 
 } // namespace gui

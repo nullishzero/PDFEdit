@@ -17,7 +17,7 @@ namespace gui {
  @param _cs Content Stream
  @param _base scripting base
  */
-QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,Base *_base) : QSCObject ("ContentStream",_base) {
+QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,BaseCore *_base) : QSCObject ("ContentStream",_base) {
  obj=_cs;
 }
 

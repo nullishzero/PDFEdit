@@ -15,7 +15,7 @@ namespace gui {
  @param item tree item containing Content stream
  @param _base scripting base
  */
-QSTreeItemContentStream::QSTreeItemContentStream(TreeItemContentStream *item,Base *_base) : QSTreeItem ("TreeItemContentStream",item,_base) {
+QSTreeItemContentStream::QSTreeItemContentStream(TreeItemContentStream *item,BaseCore *_base) : QSTreeItem ("TreeItemContentStream",item,_base) {
 }
 
 /** \copydoc TreeItemContentStream::setMode(TreeItemContentStreamMode) */

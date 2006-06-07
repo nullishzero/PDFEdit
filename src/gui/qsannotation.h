@@ -20,7 +20,7 @@ using namespace pdfobjects;
 class QSAnnotation : public QSCObject {
  Q_OBJECT
 public:
- QSAnnotation(boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,Base *_base);
+ QSAnnotation(boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,BaseCore *_base);
  virtual ~QSAnnotation();
  boost::shared_ptr<CAnnotation> get() const;
 public slots:

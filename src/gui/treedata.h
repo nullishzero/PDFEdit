@@ -11,7 +11,7 @@ class TreeItem;
 class TreeItemRef;
 class TreeWindow;
 class MultiTreeWindow;
-class Base;
+class BaseCore;
 
 /**
  Storage class holding Tree Data that need to be shared between tree window and its items
@@ -19,12 +19,12 @@ class Base;
 */
 class TreeData {
 public:
- TreeData(TreeWindow *parent,QListView *tree,Base *base,MultiTreeWindow *multi);
+ TreeData(TreeWindow *parent,QListView *tree,BaseCore *base,MultiTreeWindow *multi);
  ~TreeData();
  TreeWindow* parent();
  QListView* tree();
  MultiTreeWindow* multi();
- Base* base();
+ BaseCore* base();
  void add(TreeItemRef *it);
  void remove(TreeItemRef *it);
  void remove(const QString &ref);
@@ -54,7 +54,7 @@ private:
  /** List view from inside the tree window */
  QListView *_tree;
  /** Scripting base */
- Base *_base;
+ BaseCore *_base;
  /** Dictionary holding tree items that are references */
  QDict<TreeItemRef> refs;
  //ShowData

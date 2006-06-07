@@ -100,7 +100,7 @@ QSCObject* TreeItemArray::getQSObject() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-QSCObject* TreeItemArray::getQSObject(Base *_base) {
+QSCObject* TreeItemArray::getQSObject(BaseCore *_base) {
  boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(obj);
  assert(array.get());
  //Using shared pointer, so it can be copied safely into another document

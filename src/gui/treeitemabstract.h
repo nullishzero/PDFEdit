@@ -12,7 +12,7 @@ namespace gui {
 class QSCObject;
 class TreeData;
 class TreeWindow;
-class Base;
+class BaseCore;
 
 /** Type of TreeItemAbstract's child.
  The type is arbitrary integer and must be unique only across single type
@@ -42,7 +42,7 @@ public:
  void eraseItems();
  void moveAllChildsFrom(TreeItemAbstract* src);
  QListViewItem* child(const QString &name);
- virtual QSCObject* getQSObject(Base *_base);
+ virtual QSCObject* getQSObject(BaseCore *_base);
  virtual void setOpen(bool open);
  virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
 

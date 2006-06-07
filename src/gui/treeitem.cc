@@ -230,7 +230,7 @@ QSCObject* TreeItem::getQSObject() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-QSCObject* TreeItem::getQSObject(Base *_base) {
+QSCObject* TreeItem::getQSObject(BaseCore *_base) {
  //IProperty uses shared pointer, so it can be copied safely into another document
  return new QSIProperty(obj,_base);
 }

@@ -221,7 +221,7 @@ QSCObject* TreeItemPage::getQSObject() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-QSCObject* TreeItemPage::getQSObject(Base *_base) {
+QSCObject* TreeItemPage::getQSObject(BaseCore *_base) {
  //CPage uses shared pointer, so it can be copied safely into another document
  return new QSPage(obj,_base);
 }

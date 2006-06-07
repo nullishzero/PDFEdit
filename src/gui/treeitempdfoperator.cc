@@ -29,7 +29,7 @@ using namespace util;
  */
 TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  csRef=cs;
- assert(csRef.get());
+// assert(csRef.get());//This assert was not valid, since contentstreamless operator will have contentstreamless suboperators
  assert(data);
  obj=pdfObj;
  reload();
@@ -46,7 +46,7 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost
  */
 TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  csRef=cs;
- assert(csRef.get());
+// assert(csRef.get());//This assert was not valid, since contentstreamless operator will have contentstreamless suboperators
  assert(data);
  obj=pdfObj;
  reload();

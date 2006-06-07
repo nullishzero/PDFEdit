@@ -9,7 +9,6 @@
 namespace gui {
 
 class QSIProperty;
-class Base;
 
 using namespace pdfobjects;
 
@@ -23,7 +22,7 @@ using namespace pdfobjects;
 class QSIPropertyArray : public QSCObject {
  Q_OBJECT
 public:
- QSIPropertyArray(Base *_base);
+ QSIPropertyArray(BaseCore *_base);
  virtual ~QSIPropertyArray();
  boost::shared_ptr<IProperty> get(int index);
  void append(boost::shared_ptr<IProperty> prop);

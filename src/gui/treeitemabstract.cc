@@ -61,10 +61,10 @@ void TreeItemAbstract::initAbs() {
 /** 
  Create and return object for scripting representing this tree item, relocated in different base
  If the object cannot be copied into new base, return NULL
- @param _base Base for the new object.
+ @param _base BaseCore for the new object.
  @return object for scripting
 */
-QSCObject* TreeItemAbstract::getQSObject(__attribute__((unused)) Base *_base) {
+QSCObject* TreeItemAbstract::getQSObject(__attribute__((unused)) BaseCore *_base) {
  return NULL;
 }
 

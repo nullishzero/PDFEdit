@@ -5,20 +5,19 @@
 #include <qobject.h>
 #include <boost/shared_ptr.hpp>
 #include <vector>
+class QRect;
+class QString;
+class QVariant;
 namespace pdfobjects {
  class CPage;
  class CContentStream;
 }
-class QString;
-class QRect;
-class QVariant;
 
 namespace gui {
 
-class QSContentStream;
 class QSAnnotation;
+class QSContentStream;
 class QSDict;
-class Base;
 class QSPdfOperatorStack;
 
 using namespace pdfobjects;
@@ -30,7 +29,7 @@ class QSPage : public QSCObject {
 public:
  virtual ~QSPage();
  QSPage(const QSPage &source);
- QSPage(boost::shared_ptr<CPage> _page,Base *_base);
+ QSPage(boost::shared_ptr<CPage> _page,BaseCore *_base);
  boost::shared_ptr<CPage> get() const;
 public slots:
  /*- Add copy of given annotation to this page */

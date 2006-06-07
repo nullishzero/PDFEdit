@@ -19,7 +19,7 @@ public:
  virtual ~TreeItemCStream();
  //From TreeItemAbstract interface
  virtual bool validChild(const QString &name,QListViewItem *oldChild);
- virtual QSCObject* getQSObject(Base *_base);
+ virtual QSCObject* getQSObject(BaseCore *_base);
  virtual ChildType getChildType(const QString &name);
  virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
  virtual QStringList getChildNames();

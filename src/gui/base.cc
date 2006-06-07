@@ -41,8 +41,6 @@
 #include <qmessagebox.h>
 #include <qsinterpreter.h>
 #include <qsplitter.h>
-#include <qsutilfactory.h> 
-#include <qsinputdialogfactory.h>
 #include <utils/debug.h>
 
 namespace gui {
@@ -53,44 +51,14 @@ using namespace util;
  Create new Base class 
  @param parent Parent editor window containing this class
 */
-Base::Base(PdfEditWindow *parent) {
+Base::Base(PdfEditWindow *parent) : BaseCore() {
+ //Autodelete is on
+ treeWrap.setAutoDelete(true);
  treeReloadFlag=false;
  w=parent;
- //Create new interpreter and project
- qp=new QSProject(this,"qs_project");
- qs=qp->interpreter();
-
- //Add ability to open files, directories and run processes
- qs->addObjectFactory(new QSUtilFactory());
- //Add ability to create dialogs
- qs->addObjectFactory(new QSInputDialogFactory());
-
- //Add settings object
- assert(globalSettings);
- qp->addObject(globalSettings);
- //Create and add importer to QSProject and related QSInterpreter
- import=new QSImporter(qp,this,this);
+ qpdf=NULL;
  import->addQSObj(w->pagespc,"PageSpace");
  import->addQSObj(w->cmdLine,"CommandWindow");
- qpdf=NULL;
-}
-
-/**
- Return interpreter instance used to launch scripts in this context
- @return current QSInterpreter
-*/
-QSInterpreter* Base::interpreter() {
- return qs;
-}
-
-/**
- Script error invoked when sxcript tried to access a NULL pointer
- @param className Name of class, in which this error occured
- @param methodName Name of method, in which this error occured
- */
-void Base::errorNullPointer(const QString &className,const QString &methodName) {
- qs->throwError(QObject::tr("Null pointer access in ")+className+"."+methodName);
- //TODO: check
 }
 
 /** Import currently edited document (QSPDF wrapper) into scripting */
@@ -105,13 +73,6 @@ void Base::destroyDocument() {
  qpdf=NULL;
 }
 
-/** if any script is running, stop it */
-void Base::stopScript() {
- if (qs->isRunning()) {
-  qs->stopExecution();
- }
-}
-
 /**
  Return QSA wrapper of current PDF document
  @return Current document (scripting wrapper)
@@ -120,21 +81,13 @@ QSPdf* Base::getQSPdf() const {
  return qpdf;
 }
 
-/**
- Called after some action causes changes in the treeview that cannot be handled by obesrvers.
- This will cause tree to be reloaded after the script finishes. 
-*/
-void Base::treeNeedReload() {
- treeReloadFlag=true;
-}
-
 /** 
  Call a callback function (no arguments, no return value) in a script
  @param name Function name
 */
 void Base::call(const QString &name) {
  guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
- //Chekc if this call handler is called from a script
+ //Check if this call handler is called from a script
  bool running=qs->isRunning();
  if (!running) {
   //Do not tamper with the variables while the script is running
@@ -199,7 +152,7 @@ void Base::runInitScript() {
  QStringList initScripts=globalSettings->readPath("init","script/");
  for (unsigned int i=0;i<initScripts.count();i++) {
   QString initScriptFilename=initScripts[i];
-  guiPrintDbg(debug::DBG_INFO,"Considering init script: " << initScriptFilename);
+  //guiPrintDbg(debug::DBG_INFO,"Considering init script: " << initScriptFilename);
   //Check if the script exists. If not, it is silently skipped
   if (exists(initScriptFilename)) {   
    guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
@@ -208,7 +161,6 @@ void Base::runInitScript() {
    scriptsRun++;
   }
  }
- guiPrintDbg(debug::DBG_DBG,"Initscripts executed");
  if (!scriptsRun) {
   //No init scripts found - print a warning
   warn(tr("No init script found - check your configuration")+"!\n"+tr("Looked for","scripts")+":\n"+initScripts.join("\n"));
@@ -230,7 +182,7 @@ void Base::runInitScript() {
    for (unsigned int i=0;i<initScripts.count();i++) {
     QString initScriptFilename=initPath+"/"+initScripts[i];
     initScriptAbsPaths.insert(initScripts[i],initScriptFilename);
-    guiPrintDbg(debug::DBG_INFO,"Adding init script: " << initScriptFilename);
+//    guiPrintDbg(debug::DBG_INFO,"Adding init script: " << initScriptFilename);
    }
   }
   //Path is ok, check for scripts there
@@ -242,7 +194,6 @@ void Base::runInitScript() {
   //Any document-related classes are NOT available to the initscript, as no document is currently loaded
   runFile(initScriptFilename);    
  }
- guiPrintDbg(debug::DBG_DBG,"Initscripts from dirs executed");
 }
 
 /** Create objects that should be available to scripting from current CPdf and related objects*/
@@ -274,106 +225,34 @@ void Base::runFile(QString scriptName) {
 }
 
 /**
- Add QSCObject to list of object to delete when file in editor window is closed
- @param o Object to add to cleanup-list
-*/
-void Base::addGC(QSCObject *o) {
- assert(o);
- baseObjects.replace(o,o);
-}
-
-/**
- Remove QSCObject from list of object to delete when file in editor window is closed
- @param o Object to remove from cleanup-list
-*/
-void Base::removeGC(QSCObject *o) {
- assert(o);
- baseObjects.remove(o);
-}
-
-/**
- Add tree item wrapper to list of managed wrappers<br>
- Called from treeitem wrapper contructor
- @param theWrap Tree item wrapper
-*/
-void Base::addTreeItemToList(QSTreeItem* theWrap) {
- TreeItemAbstract* theItem=theWrap->get();
- //Just insert to the list
- QPtrDict<void>* pDict=treeWrap[theItem];
- if (!pDict) {
-  //We must dictionary to dictionary for this tree item
-  pDict=new QPtrDict<void>(7);
-  //Smaller dict, typically there will be few wrappers to same item
-  treeWrap.insert(theItem,pDict); 
- }
- pDict->insert(theWrap,w);//Insert wrapper in dict
- guiPrintDbg(debug::DBG_DBG,"Added wrapper cleanly" << (intptr_t)theWrap); 
-}
-
-/**
- Remove tree item wrapper from list of managed wrappers<br>
- Called from treeitem wrapper contructor
- @param theWrap Tree item wrapper
-*/
-void Base::removeTreeItemFromList(QSTreeItem* theWrap) {
- TreeItemAbstract* theItem=theWrap->get();
- QPtrDict<void>* pDict=treeWrap[theItem];
- assert (pDict);//Not in list? WTF?
- assert (pDict->find(theWrap));//Not in list? WTF?
- pDict->remove(theWrap);
- guiPrintDbg(debug::DBG_DBG,"Removed wrapper cleanly" << (intptr_t)theWrap); 
-}
-
-/**
  Callback from main window when the treeitem got just deleted
  This will look for script wrappers containing the mentioned item and invalidate them, so they will not cause a crash
  @param theItem deleted tree item
 */
 void Base::treeItemDeleted(TreeItemAbstract* theItem) {
+ //Get dictionary with all wrappers for given treeitem
  QPtrDict<void>* pDict=treeWrap[theItem];
  if (!pDict) {
   //No wrapper exists. Done.
-  guiPrintDbg(debug::DBG_DBG,"Item deleted that is not in wrapper"); 
+  //guiPrintDbg(debug::DBG_DBG,"Item deleted that is not in wrapper"); 
   return;
  }
  //Ok, now disable all wrappers pointing to this item
- guiPrintDbg(debug::DBG_DBG,"Will disable wrapped items"); 
+
+ // For each wrapper
  QPtrDictIterator<void> it(*pDict);
  for(;it.current();++it) {
   QSTreeItem* theWrap=reinterpret_cast<QSTreeItem*>(it.currentKey());
-  guiPrintDbg(debug::DBG_DBG,"Disabling one wrapped item " << (intptr_t)theWrap); 
+  guiPrintDbg(debug::DBG_DBG,"Disabling wrapper " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem); 
   assert(theWrap);
-  guiPrintDbg(debug::DBG_DBG,"Check:" << theWrap->type()); 
+  guiPrintDbg(debug::DBG_DBG,"Check type: " << theWrap->type()); 
   //Disable the wrapper, so calling it will not result in crash, but some error/exception instead
   theWrap->disable();
-  guiPrintDbg(debug::DBG_DBG,"Disabled one wrapped item"); 
+  guiPrintDbg(debug::DBG_DBG,"Disabled wrapper"); 
  }
  //Remove reference to subdictionary from dictionary
  treeWrap.remove(theItem);
- //Delete subdictionary (all wrappers in it were disabled)
- delete pDict;
-}
-
-/** Delete all objects in cleanup list */
-void Base::cleanup() {
- guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << baseObjects.count() << " objects");
- //Set autodelete and clear the list
- baseObjects.setAutoDelete(true);
- baseObjects.clear();
- baseObjects.setAutoDelete(false);
- //Delete list of tree wrappers, since all 
- guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << treeWrap.count() << " items in tree wrap");
- treeWrap.clear();
- guiPrintDbg(debug::DBG_DBG,"Garbage collection done");
-}
-
-/**
- "Remove" defined variable from scripting context
- @param varName name of variable;
-*/
-void Base::deleteVariable(const QString &varName) {
- qs->setErrorMode(QSInterpreter::Nothing);
- qs->evaluate(varName+"=undefined;",this,"<delete_item>");
+ //Autodelete is on, so the inner dictionary will be deleted ....
 }
 
 /** Removes objects added with addDocumentObject */
@@ -1059,6 +938,14 @@ QString Base::tr(const QString &text,const QString &context/*=QString::null*/) {
 }
 
 /**
+ Call after some action causes changes in the treeview that cannot be handled by observers.
+ This will cause tree to be reloaded after the script finishes. 
+*/
+void Base::treeNeedReload() {
+ treeReloadFlag=true;
+}
+
+/**
  Return root item of currently selected tree
  @return Current tree root item
 */
@@ -1099,8 +986,6 @@ void Base::warn(const QString &str) {
 
 /** destructor */
 Base::~Base() {
- delete import;
- delete qp;
 }
 
 

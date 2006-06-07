@@ -33,7 +33,7 @@ namespace gui {
  @param _context Context in which all objects will be imported
  @param _base scripting base under which all objects will be created
  */
-QSImporter::QSImporter(QSProject *_qp,QObject *_context,Base *_base) {
+QSImporter::QSImporter(QSProject *_qp,QObject *_context,BaseCore *_base) {
  setName("importer");
  guiPrintDbg(debug::DBG_DBG,"Creating QSImporter");
  qp=_qp;
@@ -89,7 +89,7 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<PdfOperator> op) {
  @param _base Scripting base 
  @return QSIProperty(ip)
  */
-QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip,Base *_base) {
+QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip,BaseCore *_base) {
  if (!ip.get()) return NULL;
  //Try if it is stream
  boost::shared_ptr<CStream> cs=boost::dynamic_pointer_cast<CStream>(ip);
@@ -121,7 +121,7 @@ QSPdf* QSImporter::createQSObject(CPdf* pdf) {
  @param _base Scripting base 
  @return QSTreeItem(item)
 */
-QSCObject* QSImporter::createQSObject(TreeItemAbstract *item,Base *_base) {
+QSCObject* QSImporter::createQSObject(TreeItemAbstract *item,BaseCore *_base) {
  if (!item) return NULL;
  TreeItemContentStream* tiCS=dynamic_cast<TreeItemContentStream*>(item);
  if (tiCS) {

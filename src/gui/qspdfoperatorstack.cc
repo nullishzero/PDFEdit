@@ -18,7 +18,7 @@ using namespace pdfobjects;
  Construct wrapper with empty operator stack
  @param _base scripting base
  */
-QSPdfOperatorStack::QSPdfOperatorStack(Base *_base) : QSCObject ("PdfOperatorStack",_base) {
+QSPdfOperatorStack::QSPdfOperatorStack(BaseCore *_base) : QSCObject ("PdfOperatorStack",_base) {
 }
 
 /** destructor */

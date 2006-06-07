@@ -19,7 +19,7 @@ using namespace pdfobjects;
  @param _array Array
  @param _base scripting base
 */
-QSArray::QSArray(boost::shared_ptr<CArray> _array,Base *_base) : QSIProperty (_array,"Array",_base) {
+QSArray::QSArray(boost::shared_ptr<CArray> _array,BaseCore *_base) : QSIProperty (_array,"Array",_base) {
 }
 
 /**

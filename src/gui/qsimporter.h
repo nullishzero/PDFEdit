@@ -17,7 +17,8 @@ namespace gui {
 class QSCObject;
 class QSPdf;
 class TreeItemAbstract;
-class Base;
+class Base;//TODO:remove
+class BaseCore;
 
 using namespace pdfobjects;
 
@@ -35,15 +36,15 @@ public:
  virtual ~QSImporter();
  void addQSObj(QObject *obj,const QString &name);
  //factory-style functions
- static QSCObject* createQSObject(boost::shared_ptr<IProperty> ip,Base *_base);
- static QSCObject* createQSObject(TreeItemAbstract *item,Base *_base);
+ static QSCObject* createQSObject(boost::shared_ptr<IProperty> ip,BaseCore *_base);
+ static QSCObject* createQSObject(TreeItemAbstract *item,BaseCore *_base);
  QSCObject* createQSObject(boost::shared_ptr<PdfOperator> op);
  QSCObject* createQSObject(boost::shared_ptr<IProperty> ip);
  QSCObject* createQSObject(boost::shared_ptr<CDict> dict);
  QSCObject* createQSObject(boost::shared_ptr<CPage> page);
  QSCObject* createQSObject(TreeItemAbstract *item);
  QSPdf* createQSObject(CPdf* pdf);
- QSImporter(QSProject *_qp,QObject *_context,Base *_base);
+ QSImporter(QSProject *_qp,QObject *_context,BaseCore *_base);
 public slots:
  QObject* getQSObj();
 private:
@@ -56,7 +57,7 @@ private:
  /** QSProject in which this importer is installed. */
  QSProject *qp;
  /** Scripting base for created objects */
- Base *base;
+ BaseCore *base;
 };
 
 } // namespace gui

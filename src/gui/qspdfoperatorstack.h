@@ -8,7 +8,6 @@
 namespace gui {
 
 class QSPdfOperator;
-class Base;
 
 using namespace pdfobjects;
 
@@ -24,7 +23,7 @@ typedef std::deque<boost::shared_ptr<PdfOperator> > pdfOpDeque;
 class QSPdfOperatorStack : public QSCObject {
  Q_OBJECT
 public:
- QSPdfOperatorStack(Base *_base);
+ QSPdfOperatorStack(BaseCore *_base);
  virtual ~QSPdfOperatorStack();
  boost::shared_ptr<PdfOperator> get(int index);
  void append(boost::shared_ptr<PdfOperator> prop);

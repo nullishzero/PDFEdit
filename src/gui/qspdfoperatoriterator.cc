@@ -23,7 +23,7 @@ using namespace pdfobjects;
  @param op PDF Operator
  @param _base scripting base
  */
-QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,Base *_base) : QSCObject ("PdfOperatorIterator",_base) {
+QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,BaseCore *_base) : QSCObject ("PdfOperatorIterator",_base) {
  obj=new PdfOperator::Iterator(PdfOperator::getIterator(op));
 }
 
@@ -34,7 +34,7 @@ QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,B
  @param cs CContentstream in which this PdfOperator is contained
  @param _base scripting base
 */
-QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperatorIterator",_base) {
+QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,BaseCore *_base) : QSCObject ("PdfOperatorIterator",_base) {
  obj=new PdfOperator::Iterator(PdfOperator::getIterator(op));
  csRef=cs;
  csCheck();
@@ -48,7 +48,7 @@ QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,b
  @param cs CContentstream in which this PdfOperator is contained
  @param _base scripting base
 */
-QSPdfOperatorIterator::QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperatorIterator",_base) {
+QSPdfOperatorIterator::QSPdfOperatorIterator(PdfOperator::Iterator *op,boost::shared_ptr<CContentStream> cs,BaseCore *_base) : QSCObject ("PdfOperatorIterator",_base) {
  assert(op);
  obj=op;
  csRef=cs;

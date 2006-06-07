@@ -21,7 +21,7 @@ using namespace pdfobjects;
  @param _dict CDict
  @param _base scripting base
  */
-QSDict::QSDict(boost::shared_ptr<CDict> _dict,Base *_base) : QSIProperty (_dict,"Dict",_base) {
+QSDict::QSDict(boost::shared_ptr<CDict> _dict,BaseCore *_base) : QSIProperty (_dict,"Dict",_base) {
 }
 
 /**

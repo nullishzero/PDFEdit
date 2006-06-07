@@ -85,7 +85,7 @@ QSCObject* TreeItemCStream::getQSObject() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-QSCObject* TreeItemCStream::getQSObject(Base *_base) {
+QSCObject* TreeItemCStream::getQSObject(BaseCore *_base) {
  boost::shared_ptr<CStream> stream=boost::dynamic_pointer_cast<CStream>(obj);
  assert(stream.get());
  //Using shared pointer, so it can be copied safely into another document

@@ -8,7 +8,6 @@
 
 namespace gui {
 
-class Base;
 class QSPdfOperator;
 class QSPdfOperatorIterator;
 
@@ -19,7 +18,7 @@ using namespace pdfobjects;
 class QSContentStream : public QSCObject {
  Q_OBJECT
 public:
- QSContentStream(boost::shared_ptr<CContentStream> _cs,Base *_base);
+ QSContentStream(boost::shared_ptr<CContentStream> _cs,BaseCore *_base);
  virtual ~QSContentStream();
  boost::shared_ptr<CContentStream> get();
 public slots:

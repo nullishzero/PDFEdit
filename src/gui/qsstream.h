@@ -19,7 +19,7 @@ public:
  static const CStream::Buffer arrayToBuffer(const QByteArray &a);
  static const CStream::Buffer stringToBuffer(const QString &s);
  static QString stringFromBuffer(const CStream::Buffer &b);
- QSStream(boost::shared_ptr<CStream> _cs,Base *_base);
+ QSStream(boost::shared_ptr<CStream> _cs,BaseCore *_base);
  virtual ~QSStream();
 public slots:
  /*- Sets buffer of this stream from given byte array */

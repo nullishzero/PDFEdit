@@ -48,7 +48,7 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
  tree=new QListView(this,"tree_view");//DragListView for drag and drop
 #endif
  tree->setSorting(-1);
- selected=rootItem=NULL;
+// selected=rootItem=NULL;
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
 #ifdef DRAGDROP
  QObject::connect(tree,SIGNAL(dragDrop(TreeItemAbstract*,TreeItemAbstract*)),base,SLOT(_dragDrop(TreeItemAbstract*,TreeItemAbstract*)));
@@ -71,11 +71,14 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
  @param item root of subtree to reload
 Ow */
 void TreeWindow::reloadFrom(TreeItemAbstract *item) {
+ assert(item);
  item->reload();
 }
 
 /** reinitialize/reload entire tree after some major change */
 void TreeWindow::reload() {
+ TreeItemAbstract *rootItem=root();
+ if (!rootItem) return;//Tree is empty, nothing to reload
  rootItem->reload();
 }
 
@@ -92,10 +95,11 @@ void TreeWindow::deleteNotify(TreeItemAbstract *notifyItem) {
 }
 
 /**
- Return root item of the tree.
+ Return root item of the tree. (or NULL if tree is empty)
  @return root item
  */
 TreeItemAbstract* TreeWindow::root() {
+ TreeItemAbstract *rootItem=dynamic_cast<TreeItemAbstract *>(tree->firstChild());
  return rootItem;
 }
 
@@ -161,9 +165,9 @@ void TreeWindow::settingUpdate(QString key) {
  Called upon changing selection in the tree window
  @param item The item that was selected
  */
-void TreeWindow::treeSelectionChanged(QListViewItem *item) {
+void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *item) {
 // guiPrintDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
- selected=dynamic_cast<TreeItemAbstract*>(item);
+// selected=dynamic_cast<TreeItemAbstract*>(item);
  emit itemSelected();
 }
 
@@ -173,6 +177,8 @@ void TreeWindow::treeSelectionChanged(QListViewItem *item) {
  @return QSCObject from current item
 */
 QSCObject* TreeWindow::getSelected() {
+ //Ask the tree for selected item
+ TreeItemAbstract *selected=dynamic_cast<TreeItemAbstract*>(tree->selectedItem());
  if (!selected) return NULL; //nothing selected
  return selected->getQSObject();
 }
@@ -182,6 +188,8 @@ QSCObject* TreeWindow::getSelected() {
  @return current item
 */
 TreeItemAbstract* TreeWindow::getSelectedItem() {
+ //Ask the tree for selected item
+ TreeItemAbstract *selected=dynamic_cast<TreeItemAbstract*>(tree->selectedItem());
  if (!selected) return NULL; //nothing selected
  return selected;
 }
@@ -193,7 +201,7 @@ void TreeWindow::clear() {
   delete li;
  }
  data->clear();
- rootItem=NULL;
+// rootItem=NULL;
 }
 
 /** Init contents of treeview from given PDF document
@@ -205,7 +213,7 @@ void TreeWindow::init(pdfobjects::CPdf *pdfDoc,const QString &fileName) {
  clear();
  rootName=fileName;
  setUpdatesEnabled( FALSE );
- rootItem=new TreeItemPdf(data,pdfDoc,tree,fileName); 
+ TreeItemAbstract *rootItem=new TreeItemPdf(data,pdfDoc,tree,fileName); 
  rootItem->setOpen(TRUE);
  setUpdatesEnabled( TRUE );
 }
@@ -219,7 +227,7 @@ void TreeWindow::init(boost::shared_ptr<pdfobjects::IProperty> doc,const QString
  clear();
  if (doc.get()) {
   setUpdatesEnabled( FALSE );
-  rootItem=TreeItem::create(data,tree,doc,pName); 
+  TreeItemAbstract *rootItem=TreeItem::create(data,tree,doc,pName); 
   rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
@@ -234,7 +242,7 @@ void TreeWindow::init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QSt
  clear();
  if (cs.get()) {
   setUpdatesEnabled( FALSE );
-  rootItem=new TreeItemContentStream(data,tree,cs,pName); 
+  TreeItemAbstract *rootItem=new TreeItemContentStream(data,tree,cs,pName); 
   rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
@@ -248,7 +256,7 @@ void TreeWindow::init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QSt
 void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::null*/) {
  clear();
  setUpdatesEnabled( FALSE );
- rootItem=new TreeItemOperatorContainer(data,tree,vec,pName); 
+ TreeItemAbstract *rootItem=new TreeItemOperatorContainer(data,tree,vec,pName); 
  rootItem->setOpen(TRUE);
  setUpdatesEnabled( TRUE );
 }

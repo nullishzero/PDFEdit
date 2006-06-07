@@ -13,7 +13,7 @@
 #include "util.h"
 #include <utils/debug.h>
 
-#include "base.h"
+#include "basecore.h"
 
 class QPixMap;
 class QIconSet;
@@ -31,7 +31,7 @@ const int TMP_OFFSET=0x3fffffff;
  @param _base Scripting base
  @param name Name of the menu as it is stored in settings. If null or not specified, menu will be initially empty
 */
-QSMenu::QSMenu(Menu *_msys,Base *_base,const QString &name/*=QString::null*/) : QSCObject ("Menu",_base) {
+QSMenu::QSMenu(Menu *_msys,BaseCore *_base,const QString &name/*=QString::null*/) : QSCObject ("Menu",_base) {
  msys=_msys;
  actionId=0;
  menu=new QPopupMenu();

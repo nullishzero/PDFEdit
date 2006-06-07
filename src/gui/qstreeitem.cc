@@ -9,7 +9,7 @@
 #include "qsiproperty.h"
 #include "treeitemabstract.h"
 #include "qsimporter.h"
-#include "base.h"
+#include "basecore.h"
 
 namespace gui {
 
@@ -20,7 +20,7 @@ namespace gui {
  @param item Tree item
  @param _base scripting base
 */
-QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base) : QSCObject (className,_base) {
+QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,BaseCore *_base) : QSCObject (className,_base) {
  obj=item;
  assert(obj);
  //gui object wrapper must have base
@@ -33,7 +33,7 @@ QSTreeItem::QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_ba
  @param item Tree item
  @param _base scripting base
 */
-QSTreeItem::QSTreeItem(TreeItemAbstract *item,Base *_base) : QSCObject ("TreeItem",_base) {
+QSTreeItem::QSTreeItem(TreeItemAbstract *item,BaseCore *_base) : QSCObject ("TreeItem",_base) {
  obj=item;
  assert(obj);
  //gui object wrapper must have base
@@ -105,10 +105,7 @@ bool QSTreeItem::valid() {
 
 /** Explicitly reload contents of this item and its subtree from current state of PDF document */
 void QSTreeItem::reload() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","reload");
-  return;
- }
+ if (nullPtr(obj,"reload")) return;
  obj->reload();
 }
 
@@ -208,7 +205,7 @@ QString QSTreeItem::text() {
  Use when the tree item it contains is deleted
  Further usage of wrapper will result in a null pointer error
 */
-QString QSTreeItem::disable() {
+void QSTreeItem::disable() {
  //Plain and simple
  guiPrintDbg(debug::DBG_DBG,"Disabling tree item " << (intptr_t)this);
  obj=NULL;
@@ -239,7 +236,10 @@ TreeItemAbstract* QSTreeItem::get() const {
 
 /** destructor */
 QSTreeItem::~QSTreeItem() {
- base->removeTreeItemFromList(this);
+ if (obj) {
+  //If the wrapper is still valid ... remove it from list
+  base->removeTreeItemFromList(this);
+ }
 }
 
 } // namespace gui

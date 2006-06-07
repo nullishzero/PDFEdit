@@ -28,7 +28,7 @@ typedef vector<pair<string,string> > FontList;
  @param _page CPage shared pointer
  @param _base scripting base
 */
-QSPage::QSPage(boost::shared_ptr<CPage> _page,Base *_base) : QSCObject ("Page",_base) {
+QSPage::QSPage(boost::shared_ptr<CPage> _page,BaseCore *_base) : QSCObject ("Page",_base) {
  obj=_page;
  numStreams=-1;
 }

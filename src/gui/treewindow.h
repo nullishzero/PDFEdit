@@ -78,9 +78,9 @@ private:
  /** Name of root object - if applicable */
  QString rootName;
  /** Root treeitem */
- TreeItemAbstract *rootItem;
+ //TreeItemAbstract *rootItem;
  /** Selected treeitem */
- TreeItemAbstract *selected;
+ //TreeItemAbstract *selected;
 };
 
 } // namespace gui

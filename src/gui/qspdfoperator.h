@@ -8,7 +8,6 @@ class QString;
 
 namespace gui {
 
-class Base;
 class QSContentStream;
 class QSPdfOperatorIterator;
 class QSPdfOperatorStack;
@@ -21,9 +20,9 @@ using namespace pdfobjects;
 class QSPdfOperator : public QSCObject {
  Q_OBJECT
 public:
- QSPdfOperator(Base *_base);
- QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base);
- QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base);
+ QSPdfOperator(BaseCore *_base);
+ QSPdfOperator(boost::shared_ptr<PdfOperator> op,BaseCore *_base);
+ QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,BaseCore *_base);
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:

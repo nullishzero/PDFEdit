@@ -22,7 +22,7 @@ namespace gui {
  @param _base Scripting base
  @param _destructive If true, document will be closed (without saving) when this object is deleted
 */
-QSPdf::QSPdf(CPdf *_pdf,Base *_base,bool _destructive/*=false*/) : QSCObject ("Pdf",_base) {
+QSPdf::QSPdf(CPdf *_pdf,BaseCore *_base,bool _destructive/*=false*/) : QSCObject ("Pdf",_base) {
  destructive=_destructive;
  obj=_pdf;
 }

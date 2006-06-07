@@ -14,7 +14,6 @@
 #include "qsipropertyarray.h"
 #include <ccontentstream.h>
 #include <iterator.h>
-#include "nullpointerexception.h"
 #include <qstring.h>
 
 namespace gui {
@@ -26,7 +25,7 @@ using namespace pdfobjects;
  @param op PDF Operator
  @param _base scripting base
  */
-QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base) : QSCObject ("PdfOperator",_base) {
+QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,BaseCore *_base) : QSCObject ("PdfOperator",_base) {
  obj=op;
 }
 
@@ -34,7 +33,7 @@ QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,Base *_base) : QS
  Construct wrapper with empty PdfOperator (NULL)
  @param _base scripting base
  */
-QSPdfOperator::QSPdfOperator(Base *_base) : QSCObject ("PdfOperator",_base) {
+QSPdfOperator::QSPdfOperator(BaseCore *_base) : QSCObject ("PdfOperator",_base) {
 }
 
 /**
@@ -43,7 +42,7 @@ QSPdfOperator::QSPdfOperator(Base *_base) : QSCObject ("PdfOperator",_base) {
  @param cs CContentstream in which this PdfOperator is contained
  @param _base scripting base
 */
-QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,Base *_base) : QSCObject ("PdfOperator",_base) {
+QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr<CContentStream> cs,BaseCore *_base) : QSCObject ("PdfOperator",_base) {
  obj=op;
  csRef=cs;
  csCheck();
@@ -72,7 +71,7 @@ QSPdfOperator::~QSPdfOperator() {
 */
 QString QSPdfOperator::getText() {
  std::string text;
- if (!obj) throw NullPointerException("PdfOperator","getText");
+ if (nullPtr(obj,"getText")) return QString::null;
  obj->getStringRepresentation(text);
  return text;
 }
@@ -188,7 +187,7 @@ QSPdfOperatorIterator* QSPdfOperator::inlineImageIterator(bool forwardDir/*=true
  @return operator name
 */
 QString QSPdfOperator::getName() {
- if (!obj) throw NullPointerException("PdfOperator","getName");
+ if (nullPtr(obj,"getName")) return QString::null;
  std::string text;
  obj->getOperatorName(text);
  return text;
@@ -199,7 +198,7 @@ QString QSPdfOperator::getName() {
  @return Operator stack
 */
 QSPdfOperatorStack* QSPdfOperator::childs() {
- if (!obj) throw NullPointerException("PdfOperator","childs");
+ if (nullPtr(obj,"childs")) return NULL;
  QSPdfOperatorStack* ret=new QSPdfOperatorStack(base);
  PdfOperator::PdfOperators opList;
  obj->getChildren(opList);
@@ -214,7 +213,7 @@ QSPdfOperatorStack* QSPdfOperator::childs() {
  @return number of child operators
 */
 int QSPdfOperator::childCount() {
- if (!obj) throw NullPointerException("PdfOperator","childCount");
+ if (nullPtr(obj,"childCount")) return 0;
  return obj->getChildrenCount();
 }
 
@@ -223,7 +222,7 @@ int QSPdfOperator::childCount() {
  @return Array with parameters
 */
 QSIPropertyArray* QSPdfOperator::params() {
- if (!obj) throw NullPointerException("PdfOperator","params");
+ if (nullPtr(obj,"params")) return NULL;
  QSIPropertyArray* ret=new QSIPropertyArray(base);
  PdfOperator::Operands paramList;
  obj->getParameters(paramList);
@@ -238,7 +237,7 @@ QSIPropertyArray* QSPdfOperator::params() {
  @return number of parameters
 */
 int QSPdfOperator::paramCount() {
- if (!obj) throw NullPointerException("PdfOperator","paramCount");
+ if (nullPtr(obj,"paramCount")) return 0;
  return obj->getParametersCount();
 }
 
@@ -248,7 +247,7 @@ int QSPdfOperator::paramCount() {
  @param op operator to set as next
 */
 void QSPdfOperator::setNext(QSPdfOperator *op) {
- if (!obj) throw NullPointerException("PdfOperator","setNext");
+ if (nullPtr(obj,"setNext")) return;
  obj->setNext(op->get());
 }
 
@@ -258,7 +257,7 @@ void QSPdfOperator::setNext(QSPdfOperator *op) {
  @param op operator to set as previous
 */
 void QSPdfOperator::setPrev(QSPdfOperator *op) {
- if (!obj) throw NullPointerException("PdfOperator","setPrev");
+ if (nullPtr(obj,"setPrev")) return;
  obj->setPrev(op->get());
 }
 
@@ -267,8 +266,8 @@ void QSPdfOperator::setPrev(QSPdfOperator *op) {
  \copydoc setNext(QSPdfOperator*)
 */
 void QSPdfOperator::setNext(QObject *op) {
- if (!obj) throw NullPointerException("PdfOperator","setNext");
- QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ if (nullPtr(obj,"setNext")) return;
+ QSPdfOperator *qop=qobject_cast<QSPdfOperator*>(op,"setNext",1,"PdfOperator");
  if (!qop) return; //Invalid parameter
  obj->setNext(qop->get());
 }
@@ -278,8 +277,8 @@ void QSPdfOperator::setNext(QObject *op) {
  \copydoc setPrev(QSPdfOperator*)
 */
 void QSPdfOperator::setPrev(QObject *op) {
- if (!obj) throw NullPointerException("PdfOperator","setPrev");
- QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ if (nullPtr(obj,"setPrev")) return;
+ QSPdfOperator *qop=qobject_cast<QSPdfOperator*>(op,"setPrev",1,"PdfOperator");
  if (!qop) return; //Invalid parameter
  obj->setPrev(qop->get());
 }
@@ -289,7 +288,7 @@ void QSPdfOperator::setPrev(QObject *op) {
  @return result
  */
 bool QSPdfOperator::containsNonStrokingOperator() {
- if (!obj) throw NullPointerException("PdfOperator","containsNonStrokingOperator");
+ if (nullPtr(obj,"containsNonStrokingOperator")) return false;
  return pdfobjects::containsNonStrokingOperator(obj);
 }
 
@@ -298,7 +297,7 @@ bool QSPdfOperator::containsNonStrokingOperator() {
  @return result
  */
 bool QSPdfOperator::containsStrokingOperator() {
- if (!obj) throw NullPointerException("PdfOperator","containsStrokingOperator");
+ if (nullPtr(obj,"containsStrokingOperator")) return false;
  return pdfobjects::containsStrokingOperator(obj);
 }
 
@@ -307,7 +306,7 @@ bool QSPdfOperator::containsStrokingOperator() {
  @return last operator
 */
 QSPdfOperator* QSPdfOperator::getLastOperator() {
- if (!obj) throw NullPointerException("PdfOperator","getLastOperator");
+ if (nullPtr(obj,"getLastOperator")) return NULL;
  return new QSPdfOperator(pdfobjects::getLastOperator(obj),base);
 }
 
@@ -324,14 +323,15 @@ bool QSPdfOperator::isEmpty() {
  - any attempt to use it will probably end up with an exception
 */
 void QSPdfOperator::remove() {
- if (!obj) throw NullPointerException("PdfOperator","remove");
+ if (nullPtr(obj,"remove")) return;
  CContentStream* cStream=obj->getContentStream();
  if (!cStream) {
   //This operator is not in any content stream, so technically, it is already removed from it :)
   return;
  }
  cStream->deleteOperator(obj);
- treeNeedReload();
+//This is ugly hack anyway. Add the tree reload to gui if really necessary
+// treeNeedReload();
 }
 
 /**
@@ -341,7 +341,7 @@ void QSPdfOperator::remove() {
  @param prev Operator, after which we should place the added one
 */
 void QSPdfOperator::pushBack(QSPdfOperator *op,QSPdfOperator *prev/*=NULL*/) {
- if (!obj) throw NullPointerException("PdfOperator","pushBack");
+ if (nullPtr(obj,"pushBack")) return;
  if (!prev) {
   obj->push_back(op->get());
   return;
@@ -354,8 +354,9 @@ void QSPdfOperator::pushBack(QSPdfOperator *op,QSPdfOperator *prev/*=NULL*/) {
  \copydoc pushBack(QSPdfOperator *,QSPdfOperator *)
 */
 void QSPdfOperator::pushBack(QObject *op,QObject *prev/*=NULL*/) {
- if (!obj) throw NullPointerException("PdfOperator","pushBack");
- QSPdfOperator *qop=dynamic_cast<QSPdfOperator*>(op);
+ if (nullPtr(obj,"pushBack")) return;
+ QSPdfOperator *qop=qobject_cast<QSPdfOperator*>(op,"pushBack",1,"PdfOperator");
+ if (!qop) return;
  QSPdfOperator *qprev=dynamic_cast<QSPdfOperator*>(prev);
  if (!prev) {
   obj->push_back(qop->get());

@@ -17,7 +17,7 @@ using namespace pdfobjects;
  Construct wrapper with empty array
  @param _base Scripting base
  */
-QSIPropertyArray::QSIPropertyArray(Base *_base) : QSCObject ("IPropertyArray",_base) {
+QSIPropertyArray::QSIPropertyArray(BaseCore *_base) : QSCObject ("IPropertyArray",_base) {
 }
 
 /** destructor */

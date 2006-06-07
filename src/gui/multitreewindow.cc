@@ -185,6 +185,8 @@ TreeItemAbstract* MultiTreeWindow::getSelectedItem() {
 void MultiTreeWindow::clear() {
  mainTree->uninit();
  clearSecondary();
+ assert(tree==mainTree);
+ assert(!getSelectedItem()); //Paranoid assert - check if really nothing is in any tree
  //The "selection" have changed
  // - nothing is selected as the tree is empty
  //QT does not emit selectionChanged on clearing the tree
@@ -197,7 +199,7 @@ void MultiTreeWindow::clearSecondary() {
  TreeWindowList::iterator it=trees.begin();
  while (it!=trees.end()) {
   delete (*it);
-  it++;
+  ++it;
  }
  //No trees exist, clear both lists
  trees.clear();

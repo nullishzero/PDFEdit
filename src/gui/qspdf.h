@@ -10,7 +10,6 @@ namespace pdfobjects {
 
 namespace gui {
 
-class Base;
 class QSPage;
 class QSDict;
 
@@ -25,7 +24,7 @@ using namespace pdfobjects;
 class QSPdf : public QSCObject {
  Q_OBJECT
 public:
- QSPdf(CPdf *_pdf,Base *_base,bool _destructive=false);
+ QSPdf(CPdf *_pdf,BaseCore *_base,bool _destructive=false);
  virtual ~QSPdf();
  CPdf* get() const;
 public slots:

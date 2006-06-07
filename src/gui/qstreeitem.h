@@ -6,8 +6,6 @@
 
 namespace gui {
 
-class Base;
-
 class TreeItemAbstract;
 
 /*=
@@ -57,12 +55,12 @@ public slots:
  // "undocumented" -> not to be used, except for debugging
  void reload_force();
 public:
- QSTreeItem(TreeItemAbstract *item,Base *_base);
+ QSTreeItem(TreeItemAbstract *item,BaseCore *_base);
  virtual ~QSTreeItem();
  TreeItemAbstract* get() const;
- QString disable();
+ void disable();
 protected:
- QSTreeItem(const QString &className,TreeItemAbstract *item,Base *_base);
+ QSTreeItem(const QString &className,TreeItemAbstract *item,BaseCore *_base);
 protected:
  /** Object held in class*/
  TreeItemAbstract *obj;

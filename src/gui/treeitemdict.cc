@@ -80,7 +80,7 @@ QSCObject* TreeItemDict::getQSObject() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-QSCObject* TreeItemDict::getQSObject(Base *_base) {
+QSCObject* TreeItemDict::getQSObject(BaseCore *_base) {
  boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
  assert(dict.get());
  //Using shared pointer, so it can be copied safely into another document

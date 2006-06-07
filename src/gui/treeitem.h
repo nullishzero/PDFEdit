@@ -28,7 +28,7 @@ public:
  //From TreeItemAbstract interface
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();
- virtual QSCObject* getQSObject(Base *_base);
+ virtual QSCObject* getQSObject(BaseCore *_base);
  virtual void remove();
 protected:
  TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);

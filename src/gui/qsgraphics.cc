@@ -17,7 +17,7 @@ using namespace pdfobjects;
  @param gfx CGraphic object
  @param _base scripting base
  */
-QSGraphics::QSGraphics(CGraphic *gfx,Base *_base) : QSCObject ("Graphic",_base) {
+QSGraphics::QSGraphics(CGraphic *gfx,BaseCore *_base) : QSCObject ("Graphic",_base) {
  obj=gfx;
 }
 
