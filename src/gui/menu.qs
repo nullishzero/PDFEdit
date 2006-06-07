@@ -87,6 +87,7 @@ function savePageImage(onlySelection) {
 
 /** Print to console and evaluate */
 function print_eval(x) {
+ if (!x.length) return;
  print("> "+x);
  eval(x);
 }

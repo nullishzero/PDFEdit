@@ -8,9 +8,6 @@
 
 class QListViewItem;
 class QFont;
-class QPushButton;
-class QSInterpreter;
-class QSProject;
 class QSplitter;
 class QString;
 
@@ -20,18 +17,11 @@ class StatusBar;
 class Base;
 class PageSpace;
 class CommandWindow;
-class QSImporter;
-class QSCObject;
-class QSPdf;
 class QSPage;
 class MultiTreeWindow;
 class TreeItemAbstract;
 class PropertyEditor;
 class Menu;
-class QSMenu;
-class QSDict;
-class QSArray;
-class QSIProperty;
 
 using namespace pdfobjects;
 
@@ -73,7 +63,7 @@ signals:
   If document is closed without opening a new file, NULL is sent instead.
   @param newDocument Pointer to new document
  */
- void documentChanged(CPdf *newDocument);
+ void documentChanged(pdfobjects::CPdf *newDocument);
  /**
   Signal emitted when user changes the current revision in any way (script, revision tool ...)
   @param revision number of selected revision
@@ -135,8 +125,9 @@ private:
  QString lastErrorMessage;
  /** Status bar on bottmo of application */
  StatusBar * status;
- /** Base should be access everything in PdfEditWidget */
+ /** Base should be allowed to access everything in PdfEditWindow */
  friend class Base;
+ //TODO: maybe remove this later
 };
 
 } // namespace gui

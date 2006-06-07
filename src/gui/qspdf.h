@@ -27,6 +27,7 @@ public:
  QSPdf(CPdf *_pdf,BaseCore *_base,bool _destructive=false);
  virtual ~QSPdf();
  CPdf* get() const;
+ void set(CPdf* pdf);
 public slots:
  /*- Return name of filter used to encrypt the document, or NULL if document is not encrypted */
  QString encryption();

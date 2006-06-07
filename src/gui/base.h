@@ -5,13 +5,13 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qvariant.h>
-#include <qmap.h>
-
 class QSProject;
 class QSInterpreter;
 
 namespace gui {
 
+class ConsoleWriter;
+class ConsoleWriterGui;
 class PdfEditWindow;
 class QSAnnotation;
 class QSArray;
@@ -36,19 +36,12 @@ class Base : public BaseCore {
  Q_OBJECT
 public:
  Base(PdfEditWindow *parent);
- QSPdf* getQSPdf() const;
- void importDocument();
- void destroyDocument();
- void call(const QString &name);
  void runInitScript();
- void runScript(QString script);
  void treeItemDeleted(TreeItemAbstract* theItem);
  ~Base();
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */
  void about();
- /*- Return revision number of active revision in current PDF document */
- int activeRevision();
  /*-
   Invokes dialog for adding additional objects to specified container (which must be <link linkend="type_Dict">Dictionary</link> or <link linkend="type_Array">Array</link>).
   After invoking dialog, this function returns immediately and the dialog is left for the user to use.
@@ -158,9 +151,10 @@ public slots: //This will be all exported to scripting
  QString fileSaveDialog(const QString &oldName=QString::null);
  /*-
   Debugging function usable by script developers.
-  Print all functions that are present in current script interpreter to command window
+  Return list of all functions that are present in current script interpreter.
+  Functions are sorted alphabetically.
  */
- void functions();
+ QStringList functions();
  /*-
   Check if part of the window is visible (returns true) or hidden (returns false)
   widgetName specifies which part:
@@ -189,9 +183,9 @@ public slots: //This will be all exported to scripting
  bool modified();
  /*-
   Debugging function usable by script developers.
-  Print all objects that are present in current script interpreter to command window
+  Return list of all objects that are in current script interpreter
  */
- void objects();
+ QStringList objects();
  /*-
   Opens file with given name in this editor window.
   Opens without any questions, does not ask user to save changes to current file, etc ...
@@ -236,8 +230,6 @@ public slots: //This will be all exported to scripting
   State is restored from state saved in editor's configuration file.   
  */
  void restoreWindowState();
- /*- Return number of revisions in current PDF document */
- int revisions();
  /*-
   Loads and runs script from given filename.
   File is looked for in the script path, unless absolute filename is given.
@@ -316,17 +308,18 @@ private://This is workaround because of bug in MOC - it tries to include methods
 #endif
 private:
  QWidget* getWidgetByName(const QString &widgetName);
- void addDocumentObjects();
- void removeDocumentObjects();
- void scriptCleanup();
- void runFile(QString scriptName);
+ void runFile(const QString &scriptName);
+protected:
+ //TODO: separate to BaseGuiCore
+ virtual void addScriptingObjects();
+ virtual void removeScriptingObjects();
+ virtual void preRun(const QString &script,bool callback=false);
+ virtual void postRun();
 private:
- /** QObject wrapper around CPdf (document) that is exposed to scripting. Lifetime of this class is the same as lifetime of document */
- QSPdf *qpdf;
+ /** Console writer class writing to command window */
+ ConsoleWriterGui* consoleWriter;
  /** Editor window in which this class exist */
  PdfEditWindow* w;
- /** Flag specifying if the tree have changed while running script to the degree it need to be reloaded */
- bool treeReloadFlag;
 };
 
 } // namespace gui

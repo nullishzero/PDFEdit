@@ -629,7 +629,7 @@ bool PdfEditWindow::openFile(const QString &name) {
   base->call("onLoadError");
   return false;
  }
- base->importDocument();
+ base->importDocument(document);
  setFileName(name);
  tree->init(document,baseName);
  emit documentChanged(document);
@@ -643,7 +643,7 @@ bool PdfEditWindow::openFile(const QString &name) {
 void PdfEditWindow::emptyFile() {
  destroyFile();
  document=NULL;
- base->importDocument();
+ base->importDocument(document);
  tree->uninit();
  emit documentChanged(document);
  setFileName(QString::null);

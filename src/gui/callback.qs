@@ -152,7 +152,7 @@ function onLoadUser() {
 
 /** Called when active revision was changed */
 function onChangeRevision() {
- print(tr("Changed revision to:")+activeRevision());
+ print(tr("Changed revision to:")+document.getActualRevision());
 }
 
 /** Callback when selection in tree (which item is selected) changes */

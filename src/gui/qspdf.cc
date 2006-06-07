@@ -52,6 +52,7 @@ void QSPdf::unloadPdf() {
  @return True if valid and is contained in this document
 */
 bool QSPdf::referenceValid(int valueNum,int valueGen) {
+ if (nullPtr(obj,"referenceValid")) return false;
  IndiRef ref;
  ref.num=valueNum;
  ref.gen=valueGen;
@@ -65,7 +66,7 @@ bool QSPdf::referenceValid(int valueNum,int valueGen) {
  @return true if saved successfully, false if any error occured
 */
 bool QSPdf::saveAs(QString name) {
- if (!obj) return false;
+ if (nullPtr(obj,"saveAs")) return false;
  if (name.isNull()) return false;//No empty names!
  return util::saveCopy(obj,name);
 }
@@ -75,7 +76,7 @@ bool QSPdf::saveAs(QString name) {
  @return document catalog
  */
 QSDict* QSPdf::getDictionary() {
- if (!obj) return NULL;
+ if (nullPtr(obj,"getDictionary")) return NULL;
  return new QSDict(obj->getDictionary(),base);
 }
 
@@ -84,6 +85,7 @@ QSDict* QSPdf::getDictionary() {
  @return True if document is linearized
 */
 bool QSPdf::isLinearized() {
+ if (nullPtr(obj,"isLinearized")) return false;
  return obj->isLinearized();
 }
 
@@ -94,8 +96,7 @@ bool QSPdf::isLinearized() {
  @param position Positin in which to insert
  */
 QSPage* QSPdf::insertPage(QSPage* page, int position) {
- if (!obj) return NULL;
- if (!page) return NULL;//Something invalid passed
+ if (nullPtr(obj,"insertPage")) return NULL;
  return new QSPage(obj->insertPage(page->get(),position),base);
 }
 
@@ -104,8 +105,9 @@ QSPage* QSPdf::insertPage(QSPage* page, int position) {
  \copydoc insertPage(QSPage*,int)
 */
 QSPage* QSPdf::insertPage(QObject* page, int position) {
- if (!obj) return NULL;
- return insertPage(dynamic_cast<QSPage*>(page),position);
+ QSPage *qpage=qobject_cast<QSPage*>(page,"insertPage",1,"Page");
+ if (!qpage) return NULL;//Something invalid passed
+ return insertPage(qpage,position);
 }
 
 /**
@@ -115,19 +117,18 @@ QSPage* QSPdf::insertPage(QObject* page, int position) {
  @param position Page number to remove
 */
 void QSPdf::removePage(int position) {
- if (!obj) return;
+ if (nullPtr(obj,"removePage")) return;
  obj->removePage(position);
 }
 
 /**
- Return positoon of given page
+ Return position of given page
  \see CPdf::getPagePosition
  @param page page to examine
  @return page position
 */
 int QSPdf::getPagePosition(QSPage *page) {
- if (!obj) return -1;
- if (!page) return -1;//Something invalid passed
+ if (nullPtr(obj,"getPagePosition")) return -1;
  return obj->getPagePosition(page->get());
 }
 
@@ -136,8 +137,9 @@ int QSPdf::getPagePosition(QSPage *page) {
  QSA bugfix version
 */
 int QSPdf::getPagePosition(QObject *page) {
- if (!obj) return -1;
- return getPagePosition(dynamic_cast<QSPage*>(page));
+ QSPage *qpage=qobject_cast<QSPage*>(page,"getPagePosition",1,"Page");
+ if (!qpage) return -1;//Something invalid passed
+ return getPagePosition(qpage);
 }
 
 /**
@@ -146,7 +148,7 @@ int QSPdf::getPagePosition(QObject *page) {
  @return count of pages
 */
 int QSPdf::getPageCount() {
- if (!obj) return -1;
+ if (nullPtr(obj,"getPageCount")) return -1;
  return obj->getPageCount();
 }
 
@@ -158,6 +160,7 @@ int QSPdf::getPageCount() {
  @return page at positoin
 */
 QSPage* QSPdf::getPage(int position) {
+ if (nullPtr(obj,"getPage")) return NULL;
  return new QSPage(obj->getPage(position),base);
 }
 
@@ -167,7 +170,7 @@ QSPage* QSPdf::getPage(int position) {
  @return first page in document
 */
 QSPage* QSPdf::getFirstPage() {
- if (!obj) return NULL;
+ if (nullPtr(obj,"getFirstPage")) return NULL;
  return new QSPage(obj->getFirstPage(),base);
 }
 
@@ -178,7 +181,7 @@ QSPage* QSPdf::getFirstPage() {
  @return next page
 */
 QSPage* QSPdf::getNextPage(QSPage* page) {
- if (!obj) return NULL;
+ if (nullPtr(obj,"getNextPage")) return NULL;
  return new QSPage(obj->getNextPage(page->get()),base);
 }
 
@@ -189,7 +192,7 @@ QSPage* QSPdf::getNextPage(QSPage* page) {
  @return previous page
 */
 QSPage* QSPdf::getPrevPage(QSPage* page) {
- if (!obj) return NULL;
+ if (nullPtr(obj,"getPrevPage")) return NULL;
  return new QSPage(obj->getPrevPage(page->get()),base);
 }
 
@@ -200,7 +203,7 @@ QSPage* QSPdf::getPrevPage(QSPage* page) {
  @return presence of next page
 */
 bool QSPdf::hasNextPage(QSPage* page) {
- if (!obj) return false;
+ if (nullPtr(obj,"hasNextPage")) return false;
  return obj->hasNextPage(page->get());
 }
 
@@ -211,7 +214,7 @@ bool QSPdf::hasNextPage(QSPage* page) {
  @return presence of previous page
 */
 bool QSPdf::hasPrevPage(QSPage* page) {
- if (!obj) return false;
+ if (nullPtr(obj,"hasPrevPage")) return false;
  return obj->hasPrevPage(page->get());
 }
 
@@ -220,8 +223,9 @@ bool QSPdf::hasPrevPage(QSPage* page) {
  qsa bugfix version
 */
 QSPage* QSPdf::getNextPage(QObject* page) {
- if (!obj) return NULL;
- return getNextPage(dynamic_cast<QSPage*>(page));
+ QSPage *qpage=qobject_cast<QSPage*>(page,"getNextPage",1,"Page");
+ if (!qpage) return NULL;
+ return getNextPage(qpage);
 }
 
 /**
@@ -229,8 +233,9 @@ QSPage* QSPdf::getNextPage(QObject* page) {
  qsa bugfix version
 */
 QSPage* QSPdf::getPrevPage(QObject* page) {
- if (!obj) return NULL;
- return getPrevPage(dynamic_cast<QSPage*>(page));
+ QSPage *qpage=qobject_cast<QSPage*>(page,"getNextPage",1,"Page");
+ if (!qpage) return NULL;
+ return getPrevPage(qpage);
 }
 
 /**
@@ -238,8 +243,9 @@ QSPage* QSPdf::getPrevPage(QObject* page) {
  qsa bugfix version
 */
 bool QSPdf::hasNextPage(QObject* page) {
- if (!obj) return false;
- return hasNextPage(dynamic_cast<QSPage*>(page));
+ QSPage *qpage=qobject_cast<QSPage*>(page,"hasNextPage",1,"Page");
+ if (!qpage) return false;
+ return hasNextPage(qpage);
 }
 
 /**
@@ -247,8 +253,9 @@ bool QSPdf::hasNextPage(QObject* page) {
  qsa bugfix version
 */
 bool QSPdf::hasPrevPage(QObject* page) {
- if (!obj) return false;
- return hasPrevPage(dynamic_cast<QSPage*>(page));
+ QSPage *qpage=qobject_cast<QSPage*>(page,"hasPrevPage",1,"Page");
+ if (!qpage) return false;
+ return hasPrevPage(qpage);
 }
 
 /**
@@ -257,7 +264,7 @@ bool QSPdf::hasPrevPage(QObject* page) {
  @return count of revisions
 */
 int QSPdf::getRevisionsCount() {
- if (!obj) return 0;
+ if (nullPtr(obj,"getRevisionsCount")) return 0;
  return obj->getRevisionsCount();
 }
 
@@ -267,7 +274,7 @@ int QSPdf::getRevisionsCount() {
  @return actual revison
 */
 int QSPdf::getActualRevision() {
- if (!obj) return 0;
+ if (nullPtr(obj,"getActualRevision")) return 0;
  return obj->getActualRevision();
 }
 
@@ -277,7 +284,7 @@ int QSPdf::getActualRevision() {
  @return last page
 */
 QSPage* QSPdf::getLastPage() {
- if (!obj) return NULL;
+ if (nullPtr(obj,"getLastPage")) return 0;
  return new QSPage(obj->getLastPage(),base);
 }
 
@@ -290,10 +297,19 @@ CPdf* QSPdf::get() const {
 }
 
 /**
+ Set CPdf held inside this class. Not exposed to scripting 
+ @param pdf CPdf object
+*/
+void QSPdf::set(CPdf* pdf) {
+ obj=pdf;
+}
+
+/**
  Return name of filter used to encrypt the document, or NULL if document is not encrypted
  @return Encryption filter
  */
 QString QSPdf::encryption() {
+ if (nullPtr(obj,"encryption")) return 0;
  std::string filter;
  if (!pdfobjects::utils::isEncrypted(*obj,&filter)) return QString::null;
  return filter;

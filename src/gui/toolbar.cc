@@ -13,6 +13,9 @@
 #include <qstring.h>
 #include "pdfeditwindow.h"
 #include "pagespace.h"
+namespace pdfobjects {
+ class CPdf;
+}
 
 namespace gui {
 
@@ -82,7 +85,7 @@ bool ToolBar::specialItem(ToolBar *tb,const QString &item,QMainWindow *main) {
  if (item=="_revision_tool") {
   //Add RevisionTool to toolbar and return
   RevisionTool *tool =new RevisionTool(tb,"revision");
-  QObject::connect(main,SIGNAL(documentChanged(CPdf*)),tool,SLOT(setDocument(CPdf*)));
+  QObject::connect(main,SIGNAL(documentChanged(pdfobjects::CPdf*)),tool,SLOT(setDocument(pdfobjects::CPdf*)));
   QObject::connect(main,SIGNAL(revisionChanged(int)),tool,SLOT(updateRevision(int)));
   QObject::connect(tool,SIGNAL(revisionChanged(int)),main,SLOT(changeRevision(int)));
   tool->show();

@@ -142,8 +142,12 @@ SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc statusbar.
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
-HEADERS += selfdestructivewidget.h  base.h  basecore.h  rect2Darray.h
-SOURCES += selfdestructivewidget.cc base.cc basecore.cc rect2Darray.cc
+HEADERS += selfdestructivewidget.h  rect2Darray.h
+SOURCES += selfdestructivewidget.cc rect2Darray.cc
+
+#Scripting base files
+HEADERS += base.h  basecore.h  consolewriter.h  consolewritergui.h
+SOURCES += base.cc basecore.cc consolewriter.cc consolewritergui.cc
 
 #Misc. headers
 HEADERS += types.h version.h

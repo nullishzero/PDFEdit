@@ -6,6 +6,7 @@
 
 #include "base.h"
 #include "aboutwindow.h"
+#include "consolewritergui.h"
 #include "commandwindow.h"
 #include "dialog.h"
 #include "helpwindow.h"
@@ -56,74 +57,18 @@ Base::Base(PdfEditWindow *parent) : BaseCore() {
  treeWrap.setAutoDelete(true);
  treeReloadFlag=false;
  w=parent;
- qpdf=NULL;
  import->addQSObj(w->pagespc,"PageSpace");
  import->addQSObj(w->cmdLine,"CommandWindow");
+
+ //Console writer;
+ consoleWriter=new ConsoleWriterGui(parent->cmdLine);
+ setConWriter(consoleWriter);
 }
 
-/** Import currently edited document (QSPDF wrapper) into scripting */
-void Base::importDocument() {
- qpdf=import->createQSObject(w->document);
- import->addQSObj(qpdf,"document");
-}
-
-/** destroy document - destrouy it also in scripting */
-void Base::destroyDocument() {
+/** destructor */
+Base::~Base() {
  if (qpdf) delete qpdf;
- qpdf=NULL;
-}
-
-/**
- Return QSA wrapper of current PDF document
- @return Current document (scripting wrapper)
- */
-QSPdf* Base::getQSPdf() const {
- return qpdf;
-}
-
-/** 
- Call a callback function (no arguments, no return value) in a script
- @param name Function name
-*/
-void Base::call(const QString &name) {
- guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
- //Check if this call handler is called from a script
- bool running=qs->isRunning();
- if (!running) {
-  //Do not tamper with the variables while the script is running
-  addDocumentObjects();
- }
- try {
-  //Call the function. Do not care about result
-  qs->evaluate(name+"();",this,"<GUI>");
-  if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
-   QString error=qs->errorMessage();
-   if (error!=QString::null) { /// some error occured
-    w->cmdLine->addError(tr("Error in callback handler: ")+name);
-    w->cmdLine->addError(error);
-   }
-  }
- } catch (...) {
-  //Do not care about exception in callbacks either ... 
-  if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
-   w->cmdLine->addError(tr("Exception in callback handler: ")+name);
-  }
- }
- if (!running) {
-  //Do not tamper with the variables while the script is running
-  //It may be undesirable to remove the objects while in script
-  removeDocumentObjects();
-  scriptCleanup();
- }
-}
-
-/** Cleanup run after the script is finished */
-void Base::scriptCleanup() {
- if (treeReloadFlag) {
-  //Reload the tree
-  w->tree->reload();
-  treeReloadFlag=false;
- }
+ delete consoleWriter;
 }
 
 /**
@@ -140,6 +85,67 @@ QWidget* Base::getWidgetByName(const QString &widgetName) {
  if (widget=="tree") return w->tree;
  //Widget not found ...
  return NULL;
+}
+
+/**
+ Function to be run before the script is executed
+ @param script Script code;
+ @param callback is it callback from script?
+*/
+void Base::preRun(const QString &script,bool callback/*=false*/) {
+ BaseCore::preRun(script,callback);
+ if (callback) return;
+ /*
+  Commit currently edited property in property editor
+  This must be done this way, because by clicking on some button in toolbar to perform some action,
+  for example reloading a page, does not cause the property to lose focus and update automatically
+ */
+ w->prop->commitProperty();
+}
+
+/**
+ Function to be run after the script is executed
+*/
+void Base::postRun() {
+ BaseCore::postRun();
+ if (treeReloadFlag) {
+  //Reload the tree
+  w->tree->reload();
+  treeReloadFlag=false;
+ }
+}
+
+/**
+ Removes objects added with addScriptingObjects
+ \see addScriptingObjects
+ */
+void Base::removeScriptingObjects() {
+ //delete page and item variables from script -> they may change while script is not executing
+ deleteVariable("item");
+ deleteVariable("treeitem");
+ BaseCore::removeScriptingObjects();
+}
+
+/**
+ Create objects that should be available to scripting from current CPdf and related objects
+ \see removeScriptingObjects
+*/
+void Base::addScriptingObjects() {
+ //Import treeitem and item (Currently selected treeitem and currently selected object)
+ QSCObject *trit=import->createQSObject(w->selectedTreeItem);
+ QSCObject *item=NULL;
+ if (w->selectedProperty.get()) {
+  //IProperty is selected and will be imported
+  item=import->createQSObject(w->selectedProperty);
+ }
+ if (w->selectedOperator.get()) {
+  assert(!item);//Which would mean both iproperty and pdfoperator is selected-> bug
+  //PdfOperator is selected and will be imported
+  item=import->createQSObject(w->selectedOperator);
+ }
+ import->addQSObj(trit,"treeitem");
+ import->addQSObj(item,"item");
+ BaseCore::addScriptingObjects();
 }
 
 /**
@@ -196,30 +202,11 @@ void Base::runInitScript() {
  }
 }
 
-/** Create objects that should be available to scripting from current CPdf and related objects*/
-void Base::addDocumentObjects() {
- qs->setErrorMode(QSInterpreter::Nothing);
- //Import page and item (Currently selected page and currently selected object)
- QSCObject *trit=import->createQSObject(w->selectedTreeItem);
- QSCObject *item=NULL;
- if (w->selectedProperty.get()) {
-  //IProperty is selected and will be imported
-  item=import->createQSObject(w->selectedProperty);
- }
- if (w->selectedOperator.get()) {
-  assert(!item);//Which would mean both iproperty and pdfoperator is selected-> bug
-  //PdfOperator is selected and will be imported
-  item=import->createQSObject(w->selectedOperator);
- }
- import->addQSObj(trit,"treeitem");
- import->addQSObj(item,"item");
-}
-
 /**
  Runs script from given file in current interpreter
  @param scriptName name of file with QT Script to run
  */
-void Base::runFile(QString scriptName) {
+void Base::runFile(const QString &scriptName) {
  QString code=loadFromFile(scriptName);
  qs->evaluate(code,this,scriptName);
 }
@@ -255,70 +242,6 @@ void Base::treeItemDeleted(TreeItemAbstract* theItem) {
  //Autodelete is on, so the inner dictionary will be deleted ....
 }
 
-/** Removes objects added with addDocumentObject */
-void Base::removeDocumentObjects() {
- //delete page and item variables from script -> they may change while script is not executing
- deleteVariable("item");
- deleteVariable("treeitem");
-}
-
-/**
- Runs given script code
- @param script QT Script code to run
-*/
-void Base::runScript(QString script) {
- qs->setErrorMode(QSInterpreter::Nothing);
- w->cmdLine->addCommand(script);
- /*
-  Commit currently edited property in property editor
-  This must be done this way, because by clicking on some button in toolbar to perform some action,
-  for example reloading a page, does not cause the property to lose focus and update automatically
- */
- w->prop->commitProperty();
- //Before running script, add document-related objects to scripting engine and remove tham afterwards
- addDocumentObjects();
- QSArgument ret;
- try {
-  guiPrintDbg(debug::DBG_DBG,"SCRIPT START"); 
-  ret=qs->evaluate(script,this,"<GUI>");
-  guiPrintDbg(debug::DBG_DBG,"SCRIPT STOP"); 
- } catch (...) {
-  guiPrintDbg(debug::DBG_DBG,"CATCH"); 
-  print(tr("Unknown exception in script occured"));
-  guiPrintDbg(debug::DBG_DBG,"CATCH2");   
- }
- guiPrintDbg(debug::DBG_DBG,"CATCH AFTER"); 
-
- if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
-  switch (ret.type()) {
-   case QSArgument::QObjectPtr: { //QObject -> print type
-    QObject *ob=ret.qobject();
-    print(QString("(Object:")+ob->className()+")");
-    break;
-   }
-   case QSArgument::VoidPointer: { //void * 
-    print("(Pointer)");
-    break;
-   }
-   case QSArgument::Variant: { //Variant - simple type.
-    QVariant v=ret.variant();
-    QString retVar=v.toString();
-    if (!retVar.isNull()) print(retVar);
-    break;
-   }
-   default: { 
-    //Invalid - print nothing (void, etc ...)
-   }
-  }
- }
- QString error=qs->errorMessage();
- if (error!=QString::null) { /// some error occured
-  w->cmdLine->addError(error);
- }
- removeDocumentObjects();
- scriptCleanup();
-}
-
 // === Non-scripting slots ===
 
 #ifdef DRAGDROP
@@ -328,14 +251,12 @@ void Base::runScript(QString script) {
  @param target Target item
 */
 void Base::_dragDrop(TreeItemAbstract *source,TreeItemAbstract *target) {
- qs->setErrorMode(QSInterpreter::Nothing);
  //Import items
  QSCObject *src=import->createQSObject(source);
  QSCObject *tgt=import->createQSObject(target);
  import->addQSObj(src,"source");
  import->addQSObj(tgt,"target");
  call("onDragDrop");
- qs->setErrorMode(QSInterpreter::Nothing);
  //delete page and item variables from script -> they may change while script is not executing
  deleteVariable("source");
  deleteVariable("target");
@@ -369,15 +290,6 @@ void Base::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) {
 void Base::about() {
  AboutWindow *aboutWin= new AboutWindow(w);
  aboutWin->show();
-}
-
-/**
- Return active revision in current PDF document
- @return number of currently active revision
- */
-int Base::activeRevision() {
- if (!w->document) return -1;
- return w->document->getActualRevision();
 }
 
 /** 
@@ -668,12 +580,14 @@ QString Base::fileSaveDialog(const QString &oldName/*=QString::null*/) {
  return ret;
 }
 
-/** Print all functions that are in current script interpreter to console window*/
-void Base::functions() {
- QStringList objs=qs->functions(this);
- for (QStringList::Iterator it=objs.begin();it!=objs.end();++it) {
-  print(*it);
- }
+/**
+ Return list of all functions that are in current script interpreter.
+ Functions are sorted alphabetically
+ */
+QStringList Base::functions() {
+ QStringList func=qs->functions(this);
+ func.sort();
+ return func;
 }
 
 /**
@@ -729,15 +643,17 @@ bool Base::modified() {
  return w->modified();
 }
 
-/** Print all objects that are in current script interpreter to console window*/
-void Base::objects() {
+/** Return list of all objects that are in current script interpreter */
+QStringList Base::objects() {
  QObjectList objs=qs->presentObjects();
  QObjectListIterator it(objs);
  QObject *obj;
+ QStringList ret;
  while ((obj=it.current())!=0) {
   ++it;
-  print(obj->name());
+  ret+=obj->name();
  }
+ return ret;
 }
 
 /** \copydoc PdfEditWindow::openFile */
@@ -810,8 +726,7 @@ QSMenu* Base::popupMenu(const QString &menuName/*=QString::null*/) {
  @param str String to add
  */
 void Base::print(const QString &str) {
- consoleLog(str,globalSettings->readExpand("path/console_log"));
- w->cmdLine->addString(str);
+ conPrintLine(str);
 }
 
 /**
@@ -847,15 +762,6 @@ int Base::question_ync(const QString &msg) {
 /** \copydoc PdfEditWindow::restoreWindowState */
 void Base::restoreWindowState() {
  w->restoreWindowState();
-}
-
-/**
- Return number of revisions in current PDF document
- @return count of revisions
- */
-int Base::revisions() {
- if (!w->document) return -1;
- return w->document->getRevisionsCount();
 }
 
 /**
@@ -965,7 +871,7 @@ QSTreeItem* Base::treeRootMain() {
 void Base::variables() {
  QStringList objs=qs->variables(this);
  for (QStringList::Iterator it=objs.begin();it!=objs.end();++it) {
-  print(*it);
+  conPrintLine(*it);
  }
 }
 
@@ -980,12 +886,8 @@ QString Base::version() {
  @param str String to use as warning
  */
 void Base::warn(const QString &str) {
- print(str);
+ conPrintLine(str);
  QMessageBox::warning(w,tr("Warning"),str);
-}
-
-/** destructor */
-Base::~Base() {
 }
 
 

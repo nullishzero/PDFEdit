@@ -5,25 +5,32 @@
 */
 
 #include "basecore.h"
+#include "consolewriter.h"
 #include "qscobject.h"
 #include "qsimporter.h"
+#include "qspdf.h"
 #include "qstreeitem.h"
 #include "settings.h"
 #include <qsinterpreter.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qsutilfactory.h> 
 #include <qsinputdialogfactory.h>
 #include <utils/debug.h>
+#include "util.h"
 
 namespace gui {
 
 /**
  Create new BaseCore class 
+ @param _con Console write handler
 */
 BaseCore::BaseCore() {
+ con=NULL;
  //Create new interpreter and project
  qp=new QSProject(this,"qs_project");
  qs=qp->interpreter();
+ qs->setErrorMode(QSInterpreter::Nothing);
 
  //Add ability to open files, directories and run processes
  qs->addObjectFactory(new QSUtilFactory());
@@ -35,6 +42,38 @@ BaseCore::BaseCore() {
  qp->addObject(globalSettings);
  //Create and add importer to QSProject and related QSInterpreter
  import=new QSImporter(qp,this,this);
+ qpdf=new QSPdf(NULL,this);
+}
+
+/**
+ Set new console writer for this class.
+ NULL mean no console writer, effectively turning off console output
+ @param _con Console writer
+*/
+void BaseCore::setConWriter(ConsoleWriter *_con) {
+ //Console writer
+ con=_con;
+}
+
+/** Import currently edited document (QSPDF wrapper) into scripting */
+void BaseCore::importDocument(pdfobjects::CPdf *pdf) {
+ qpdf->set(pdf);
+ import->addQSObj(qpdf,"document");
+}
+
+/** destroy document - destroy it also in scripting */
+void BaseCore::destroyDocument() {
+ qpdf->set(NULL);
+ deleteVariable("document");
+}
+
+/**
+ Return QSA wrapper of current PDF document, or NULL if the wrapper is invalid or not present
+ @return Current document (scripting wrapper)
+ */
+QSPdf* BaseCore::getQSPdf() const {
+ if (qpdf->get()) return qpdf;
+ return NULL;
 }
 
 /**
@@ -46,11 +85,26 @@ QSInterpreter* BaseCore::interpreter() {
 }
 
 /**
+ Removes objects added with addScriptingObjects
+ \see addScriptingObjects
+ */
+void BaseCore::removeScriptingObjects() {
+ //Can be overridden to remove extra objects
+}
+
+/**
+ Create objects that should be available to scripting from current CPdf and related objects
+ \see removeScriptingObjects
+*/
+void BaseCore::addScriptingObjects() {
+ //Can be overridden to add extra objects
+}
+
+/**
  "Remove" defined variable from scripting context
  @param varName name of variable;
 */
 void BaseCore::deleteVariable(const QString &varName) {
- qs->setErrorMode(QSInterpreter::Nothing);
  qs->evaluate(varName+"=undefined;",this,"<delete_item>");
 }
 
@@ -59,6 +113,135 @@ void BaseCore::stopScript() {
  if (qs->isRunning()) {
   qs->stopExecution();
  }
+}
+
+/** 
+ Call a callback function (no arguments, no return value) in a script
+ @param name Function name
+*/
+void BaseCore::call(const QString &name) {
+ QString funct=name+"();";
+ guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
+ //Check if this call handler is called from a script
+ bool running=qs->isRunning();
+ if (!running) {
+  //If called from inside running script, do not perform initialization (it was alreadydone)
+  preRun(funct,true);
+  //Do not tamper with the variables while the script is running
+  addScriptingObjects();
+ }
+ try {
+  //Call the function. Do not care about result
+  qs->evaluate(funct,this,"<GUI>");
+  if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
+   QString error=qs->errorMessage();
+   if (error!=QString::null) { /// some error occured
+    con->printErrorLine(tr("Error in callback handler: ")+name);
+    con->printErrorLine(error);
+   }
+  }
+ } catch (...) {
+  //Do not care about exception in callbacks either ... 
+  if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
+   con->printErrorLine(tr("Exception in callback handler: ")+name);
+  }
+ }
+ if (!running) {
+  //Do not tamper with the variables while the script is running
+  //It may be undesirable to remove the objects while script will continue execution
+  removeScriptingObjects();
+  postRun();
+ }
+}
+
+/**
+ Print one line to console, followed by newline
+ @param line Line to print
+*/
+void BaseCore::conPrintLine(const QString &line) {
+ if (!con) return;
+ con->printLine(line);
+}
+
+/**
+ Runs given script code
+ @param script QT Script code to run
+*/
+void BaseCore::runScript(const QString &script) {
+ preRun(script);
+ //Before running script, add document-related objects to scripting engine and remove tham afterwards
+ addScriptingObjects();
+ QSArgument ret;
+ try {
+  guiPrintDbg(debug::DBG_DBG,"SCRIPT START"); 
+  ret=qs->evaluate(script,this,"<GUI>");
+  guiPrintDbg(debug::DBG_DBG,"SCRIPT STOP"); 
+ } catch (...) {
+  guiPrintDbg(debug::DBG_DBG,"CATCH"); 
+  conPrintLine(tr("Unknown exception in script occured"));
+  guiPrintDbg(debug::DBG_DBG,"CATCH2");   
+ }
+ guiPrintDbg(debug::DBG_DBG,"CATCH AFTER"); 
+
+ if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
+  switch (ret.type()) {
+   case QSArgument::QObjectPtr: { //QObject -> print type
+    QObject *ob=ret.qobject();
+    conPrintLine(QString("(Object:")+ob->className()+")");
+    break;
+   }
+   case QSArgument::VoidPointer: { //void * 
+    conPrintLine("(Pointer)");
+    break;
+   }
+   case QSArgument::Variant: { //Variant - simple type.
+    QVariant v=ret.variant();
+    QString retVar=v.toString();
+    if (!retVar.isNull()) {
+     //Type convertable to string
+     conPrintLine(retVar);
+    } else {
+     //More complex type
+     if (globalSettings->readBool("console/showretvalue_complex")) { //Show return value of complex types
+      //Try to print as string list
+      QString list=v.toStringList().join("\n");   
+      conPrintLine(list);
+      //TODO: some more types in future?
+     }
+    }
+    break;
+   }
+   default: { 
+    //Invalid - print nothing (void, etc ...)
+   }
+  }
+ }
+ QString error=qs->errorMessage();
+ if (error!=QString::null) { /// some error occured
+  con->printErrorLine(error);
+ }
+ removeScriptingObjects();
+ postRun();
+}
+
+/**
+ Function to be run after the script is executed
+ BaseCore::postRun should be called in overrriden function if overiding with own function 
+*/
+void BaseCore::postRun() {
+ //Can be overridden to do some extra cleanup
+}
+
+/**
+ Function to be run before the script is executed
+ BaseCore::preRun should be called in overrriden function if overiding with own function 
+ @param script Script code;
+ @param callback is it callback from script?
+*/
+void BaseCore::preRun(const QString &script,bool callback/*=false*/) {
+ //Can be overridden to do some extra initialization
+ if (callback) return;
+ con->printCommand(script);
 }
 
 /**

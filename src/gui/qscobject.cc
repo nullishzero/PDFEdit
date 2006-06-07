@@ -9,6 +9,7 @@
 #include "qscobject.h"
 #include <qstring.h>
 #include "util.h"
+#include "nullpointerexception.h"
 
 namespace gui {
 
@@ -49,8 +50,8 @@ QSCObject::~QSCObject() {
  @param methodName Name of method, to send to error handler if ptr is NULL
 */
 bool QSCObject::nullPtr(const void* ptr,const QString &methodName) {
- assert(base);
  if (ptr) return false;
+ if (!base) throw NullPointerException(typeName,methodName);
  base->errorNullPointer(typeName,methodName);
  return true; 
 }

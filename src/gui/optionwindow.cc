@@ -354,6 +354,7 @@ void OptionWindow::init() {
  QWidget *misc_tab=addTab(tr("Commandline"),true);
  addText      (misc_tab,tr("Commandline options"));
  addOptionBool(misc_tab,tr("Show return value of executed scripts in console"),"console/showretvalue");
+ addOptionBool(misc_tab,tr("Show return value also for complex types\n(possibly long output)"),"console/showretvalue_complex");
  addOptionBool(misc_tab,tr("Show errors from event handlers"),"console/show_handler_errors");
  addOptionBool(misc_tab,tr("Show command editor"),"gui/CommandLine/CmdShowEditor");
  addOptionBool(misc_tab,tr("Show command line"),"gui/CommandLine/CmdShowHistory");

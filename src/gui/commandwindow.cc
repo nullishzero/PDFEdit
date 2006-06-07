@@ -320,6 +320,7 @@ void CommandWindow::addCommand(const QString &command) {
 */
 void CommandWindow::addString(const QString &str) {
  out->append(htmlEnt(str));
+ consoleLog(str,globalSettings->readExpand("path/console_log"));
 }
 
 /**
