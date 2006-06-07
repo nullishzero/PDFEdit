@@ -49,64 +49,20 @@ SimpleGenericOperator::getStringRepresentation (std::string& str) const
 	
 
 //
-// Constructor
 //
-UnknownPdfOperator::UnknownPdfOperator (Operands& opers, const string& opTxt)
-	: opText (opTxt)
+//
+shared_ptr<PdfOperator> 
+SimpleGenericOperator::clone ()
 {
-	utilsPrintDbg (DBG_DBG, opTxt);
+	// Clone operands
+	Operands ops;
+	for (Operands::iterator it = operands.begin (); it != operands.end(); ++it)
+		ops.push_back ((*it)->clone());
+	assert (ops.size () == operands.size());
 
-	//
-	// Store the operands and remove it from opers
-	//
-	while (!opers.empty())
-	{
-		// Store the last element of input parameter
-		operands.push_front ( opers.back() );
-		// Remove the element from input parameter
-		opers.pop_back ();
-	}
+	// Create clone
+	return shared_ptr<PdfOperator> (new SimpleGenericOperator (ops,opText));
 }
-
-//
-//
-//
-size_t 
-UnknownPdfOperator::getParametersCount () const
-	{ return operands.size (); }
-
-//
-//
-//
-void
-UnknownPdfOperator::getParameters (Operands& container) const
-	{ copy (operands.begin(), operands.end (), back_inserter(container) ); }
-
-//
-//
-//
-void
-UnknownPdfOperator::getOperatorName (std::string& first) const
-	{ first = opText; }
-	
-//
-//
-//
-void 
-UnknownPdfOperator::getStringRepresentation (std::string& str) const
-{	
-	std::string tmp;
-	for (Operands::const_iterator it = operands.begin(); it != operands.end (); ++it)
-	{
-		tmp.clear ();
-		(*it)->getStringRepresentation (tmp);
-		str += tmp + " ";
-	}
-
-	// Add operator string
-	str += opText;
-}
-
 
 
 //==========================================================
@@ -243,6 +199,20 @@ UnknownCompositePdfOperator::getStringRepresentation (string& str) const
 	CompositePdfOperator::getStringRepresentation (str);	
 }
 
+//
+//
+//
+shared_ptr<PdfOperator> 
+UnknownCompositePdfOperator::clone ()
+{
+	shared_ptr<UnknownCompositePdfOperator> clone (new UnknownCompositePdfOperator(opBegin,opEnd));
+
+	for (PdfOperators::iterator it = children.begin(); it != children.end(); ++it)
+		clone->push_back ((*it)->clone(),getLastOperator(clone));
+	
+	// Create clone
+	return clone;
+}
 
 //
 // InlineImageCompositePdfOperator
@@ -290,6 +260,18 @@ InlineImageCompositePdfOperator::getParameters (Operands& opers) const
 {
 	boost::shared_ptr<IProperty> ip = inlineimage;
 	opers.push_back (ip);
+}
+
+//
+//
+//
+shared_ptr<PdfOperator> 
+InlineImageCompositePdfOperator::clone ()
+{
+	// Clone operands
+	shared_ptr<CInlineImage> imgclone = IProperty::getSmartCObjectPtr<CInlineImage> (inlineimage->clone());
+	// Create clone
+	return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (opBegin, opEnd, imgclone));
 }
 
 

@@ -58,7 +58,16 @@ class CContentStream;
  * (tree like structure) and to have the power of double linked list with
  * iterators.
  *
- * Another advatage of the composite designe pattern is the single unified interface.
+ * We can not simply represent these two queues in one. If we want to have all
+ * info only in interator queue items can not be shares pointers because of the
+ * cyclic shared pointer problem (no item would get ever deallocated). If we
+ * want to have all the info in tree like queue, we would have to know the
+ * parents and it would not be easy to write an iterator and it is not a clean
+ * straight forward solution. Another possibility is to have the queue outside
+ * but (e.g. in content stream) but then we would not be able to soimply create
+ * composites.
+ *
+ * Another advantage of the composite designe pattern is the single unified interface.
  * In most cases we do not need to distinguish between a composite and a leaf.
  *
  * Iterators are crucial when selecting operators. 
@@ -91,7 +100,7 @@ protected:
 	/**
 	 * Constructor.
 	 */
-	PdfOperator (ListItem prv = ListItem(), ListItem nxt = ListItem()) : contentstream (NULL), next(nxt), prev(prv) {};
+	PdfOperator () : contentstream (NULL) {};
 
 
 	//
@@ -324,6 +333,17 @@ protected:
 	ListItem _prev () const {return prev;};
 
 	//
+	// Clone interface
+	//
+public:
+	/**
+	 * Clone this object.
+	 *
+	 * @return New clone.
+	 */
+	virtual boost::shared_ptr<PdfOperator> clone () = 0;
+
+	//
 	// CContentStream interface
 	//
 public:
@@ -394,35 +414,16 @@ public:
  */
 class CompositePdfOperator : public PdfOperator
 {
-private:
+protected:
 
 	/** Child operator, where all calls are redirected. */
 	PdfOperators children;
 
 protected:
-		
 	/**
 	 * Constructor.
-	 *
-	 * Implementation of the Decorator design pattern. 
-	 *
-	 * Be carefull, this function does NOT set prev and next, because it does
-	 * not have smart pointer to this object !
-	 * 
-	 * @param op Operator from which we will inherit all its children.
 	 */
-	CompositePdfOperator (boost::shared_ptr<PdfOperator> op)
-		{children.push_back (op);};
-
-	/**
-	 * Constructor.
-	 * @param ops Operators from which we will inherit all its children.
-	 */
-	CompositePdfOperator (PdfOperators* ops = NULL)
-	{
-		if (NULL != ops)
-			copy (ops->begin(), ops->end (), back_inserter (children));
-	};
+	CompositePdfOperator () {};
 
 	//
 	// Composite interface
@@ -444,6 +445,12 @@ public:
 	virtual void getParameters (Operands&) const {};
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const = 0;
+
+	//
+	// Clone interface
+	//
+protected:
+	virtual boost::shared_ptr<PdfOperator> clone () = 0;
 
 	//
 	// Destructor
@@ -479,7 +486,7 @@ private:
 	Operands operands;
 
 	/** Text representing the operator. */
-	const char* opText;
+	const std::string opText;
 	
 public:
 
@@ -514,6 +521,26 @@ public:
 		}
 	};
 
+	/** 
+	 * Constructor. 
+	 */
+	SimpleGenericOperator (Operands& opers, const std::string& opTxt): opText (opTxt)
+	{
+		utilsPrintDbg (debug::DBG_DBG, opTxt);
+		//
+		// Store the operands and remove it from opers
+		//
+		while (!opers.empty())
+		{
+			// Store the last element of input parameter
+			operands.push_front ( opers.back() );
+			// Remove the element from input parameter
+			opers.pop_back ();
+		}
+	}
+
+
+	
 	//
 	// PdfOperator interface
 	//
@@ -529,43 +556,13 @@ public:
 		{ first = opText;}
 	
 	virtual void getStringRepresentation (std::string& str) const;
-};
 
-
-
-
-/**
- * Pdf specification does not know this operator. 
- *
- * This class consumes all operands from "operand stack".
- *
- * This is an implementation of Composite design pattern where leaves and
- * composites share the same interface.
- * 
- * \see PdfOperator
- */
-class UnknownPdfOperator : public PdfOperator
-{
-private:
-	/** Operands. */
-	Operands operands;
-
-	/** Text representing the operator. */
-	std::string opText;
-
-public:
-	
-	/** Constructor. */
-	UnknownPdfOperator (Operands& opers, const std::string& opTxt);
-		
 	//
-	// PdfOperator interface
+	// Clone interface
 	//
-	virtual size_t getParametersCount () const;
-	virtual void getParameters (Operands& container) const;
-	virtual void getStringRepresentation (std::string& str) const;
-	virtual void getOperatorName (std::string& first) const;
-	
+protected:
+	virtual boost::shared_ptr<PdfOperator> clone ();
+
 };
 
 
@@ -607,6 +604,13 @@ public:
 	// End operator is added to composite as normal operator so just prepand start operator
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const {first = opBegin;};
+
+	//
+	// Clone interface
+	//
+protected:
+	virtual boost::shared_ptr<PdfOperator> clone ();
+
 
 };
 
@@ -658,6 +662,12 @@ public:
 	virtual void getParameters (Operands& opers) const;
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const {first = opBegin;};
+
+	//
+	// Clone interface
+	//
+protected:
+	virtual boost::shared_ptr<PdfOperator> clone ();
 
 };
 

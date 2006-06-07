@@ -345,7 +345,9 @@ public:
 	 * assumend that the content stream is empty and operator will be inserted
 	 * at the beginning. 
 	 *
-	 * We have to insert the operator into the iterator queue and also intto the tree  queue.
+	 * We have to insert the operator into the iterator queue and also into the tree queue.
+	 *
+	 * Insertion has to take the depth of the position into account.
 	 *
 	 * @param it Iterator pointing to operator after which the new operator will be inserted.
 	 * @param newOper Operator that will be inserted.
@@ -387,23 +389,17 @@ public:
 	 *
 	 * @param it Iterator pointing to the element that will be replaced.
 	 * @param newOper New operator.
-	 * @param itPrv Previous iterator of newOper in iterator queue
-	 * @param itNxt Next iterator of newOper in iterator queue
 	 * @param indicateChange If true, changed contentstream will be written to its cstreams, 
 	 * otherwise the change will not be visible.
 	 */
 	void replaceOperator (OperatorIterator it, 
 						  boost::shared_ptr<PdfOperator> newOper, 
-						  OperatorIterator itPrv,
-						  OperatorIterator itNxt,
 						  bool indicateChange = true);
 
 	void replaceOperator (boost::shared_ptr<PdfOperator> oper, 
 						  boost::shared_ptr<PdfOperator> newOper, 
-						  OperatorIterator itPrv,
-						  OperatorIterator itNxt,
 						  bool indicateChange = true)
-		{ replaceOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, itPrv, itNxt, indicateChange); };
+		{ replaceOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); };
 
 	//
 	// Helper methods

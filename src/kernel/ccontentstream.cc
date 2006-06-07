@@ -1374,7 +1374,7 @@ namespace {
 				// Operator not found, create unknown operator
 				if (NULL == chcktp)
 				{
-					result = shared_ptr<PdfOperator> (new UnknownPdfOperator (operands, string (o.getCmd())));
+					result = shared_ptr<PdfOperator> (new SimpleGenericOperator (operands, string (o.getCmd())));
 					break;
 				}
 				
@@ -2123,14 +2123,11 @@ CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper,
 }
 
 //
-// We can not simply use add and delete function because in both cases we would mess up
-// the iterator list
+//
 //
 void
 CContentStream::replaceOperator (OperatorIterator it, 
 								 boost::shared_ptr<PdfOperator> newOper, 
-								 OperatorIterator itPrv,
-								 OperatorIterator itNxt,
 								 bool indicateChange)
 {
 
@@ -2189,6 +2186,10 @@ CContentStream::replaceOperator (OperatorIterator it,
 	assert (!itCur.isEnd());
 	OperatorIterator itCurLast = PdfOperator::getIterator(getLastOperator (itCur));
 	assert (!itCurLast.isEnd());
+
+	// Prev and next of old operator
+	OperatorIterator itPrv = it; itPrv.prev();
+	OperatorIterator itNxt = PdfOperator::getIterator(getLastOperator (toReplace)).next();
 
 	if (!itNxt.isEnd())
 	{
