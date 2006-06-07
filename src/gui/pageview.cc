@@ -705,14 +705,24 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 
 			// emit correct signal
 			if ( isMoving ) {
-				if (*selectedRegion != *oldSelectedRegion) {	// no emit if no change
-					emit selectionMoved( selectedRegion->boundingRect().normalize().topLeft() -
-											oldSelectedRegion->boundingRect().normalize().topLeft(),
+				// clear states
+				isPress = false;
+				isMoving = false;
+				// do not check if area was moved or only click and release left button on same position
+				emit selectionMoved( selectedRegion->boundingRect().normalize().topLeft() -
+										oldSelectedRegion->boundingRect().normalize().topLeft(),
+										e->pos(),
 										selectedObjects );
-				}
 			} else if ( isResizing ) {
-				if (*selectedRegion != *oldSelectedRegion) {	// no emit if no change
+				// clear states
+				isPress = false;
+				isResizing = false;
+				if (*selectedRegion != *oldSelectedRegion) {	// no emit resize if no change
 					emit selectionResized( selectedRegion->boundingRect().normalize(), mouseRectSelected->normalize(), selectedObjects );
+				} else {		// emit move with no moved parameters
+					emit selectionMoved( QPoint(0,0),
+											e->pos(),
+											selectedObjects );
 				}
 			} else {
 				if (selectionMode != SelectText) {
@@ -746,6 +756,11 @@ void PageView::mouseReleaseEvent ( QMouseEvent * e ) {
 						}
 					}
 					selectedObjects.append( new BBoxOfObjectOnPage( *lastSelectedObject ) );
+
+					// clear states
+					isPress = false;
+					isMoving = false;
+					isResizing = false;
 
 					emit newSelectedObjects( selectedObjects );
 				}
@@ -808,6 +823,7 @@ void PageView::mouseMoveEvent ( QMouseEvent * e ) {
 					}
 					if (h == NULL) {
 						lastSelectedObject = lastSelectedObject->getFirstBBox();
+						assert( lastSelectedObject );
 					} else {
 						while (h) {
 							if (e->pos().y() > h->top()) {
@@ -823,8 +839,10 @@ void PageView::mouseMoveEvent ( QMouseEvent * e ) {
 							} else
 								break;
 						}
-						if (h == NULL)
+						if (h == NULL) {
 							lastSelectedObject = lastSelectedObject->getLastBBox();
+							assert( lastSelectedObject );
+						}
 					}
 					//  ------------   x   ------------
 					if (h) {
@@ -865,7 +883,11 @@ void PageView::mouseMoveEvent ( QMouseEvent * e ) {
 					if (*firstSelectedObject > *lastSelectedObject) {
 						// selecting back direction
 						BBoxOfObjectOnPage * h = firstSelectedObject;
+						guiPrintDbg( debug::DBG_DBG, "back firstSelectedObject = ("<<firstSelectedObject->left()<<","<<firstSelectedObject->top()<<","<<firstSelectedObject->right()<<","<<firstSelectedObject->bottom()<<")");
+						guiPrintDbg( debug::DBG_DBG, "back lastSelectedObject = ("<<lastSelectedObject->left()<<","<<lastSelectedObject->top()<<","<<lastSelectedObject->right()<<","<<lastSelectedObject->bottom()<<")");
 						while (h != lastSelectedObject) {
+							guiPrintDbg( debug::DBG_DBG, "back h = ("<<h->left()<<","<<h->top()<<","<<h->right()<<","<<h->bottom()<<")");
+							assert( h );
 							* mouseSelectedRegion |= QRegion( *h );
 							if (h->getLeftBBox()) {
 								h = h->getLeftBBox();
@@ -876,7 +898,11 @@ void PageView::mouseMoveEvent ( QMouseEvent * e ) {
 					} else {
 						// selecting normal direction
 						BBoxOfObjectOnPage * h = firstSelectedObject;
+						guiPrintDbg( debug::DBG_DBG, "normal firstSelectedObject = ("<<firstSelectedObject->left()<<","<<firstSelectedObject->top()<<","<<firstSelectedObject->right()<<","<<firstSelectedObject->bottom()<<")");
+						guiPrintDbg( debug::DBG_DBG, "normal lastSelectedObject = ("<<lastSelectedObject->left()<<","<<lastSelectedObject->top()<<","<<lastSelectedObject->right()<<","<<lastSelectedObject->bottom()<<")");
 						while (h != lastSelectedObject) {
+							guiPrintDbg( debug::DBG_DBG, "normal h = ("<<h->left()<<","<<h->top()<<","<<h->right()<<","<<h->bottom()<<")");
+							assert( h );
 							* mouseSelectedRegion |= QRegion( *h );
 							if (h->getRightBBox()) {
 								h = h->getRightBBox();

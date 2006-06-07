@@ -29,13 +29,13 @@ class PageSpace : public QWidget {
 		void refresh ( int pageToView, QSPdf * pdf = NULL );			// if pdf is NULL refresh page from current pdf
 		void refresh ( int pageToView, /*QSPdf * */ QObject * pdf );	// same as above
 
-		void hideButtonsAndPageNumber ( );
-		void showButtonsAndPageNumber ( );
+		void hidePageNumberAndPosition ( );
+		void showPageNumberAndPosition ( );
 
 		bool setSelectionMode( int mode );
 
 		void setSelectArea ( int left, int top, int right, int bottom );
-		void selectObjectOnPage ( std::vector<boost::shared_ptr<PdfOperator> > );
+		void selectObjectOnPage ( std::vector<boost::shared_ptr<PdfOperator> > & );
 		void unselectObjectOnPage ( );
 		bool isSomeoneSelected ( );
 		bool requestSelectArea ( int id );
@@ -58,6 +58,8 @@ class PageSpace : public QWidget {
 		double convertPixmapPosToPdfPos_y ( double fromX, double fromY );
 		double convertPdfPosToPixmapPos_x ( double fromX, double fromY );
 		double convertPdfPosToPixmapPos_y ( double fromX, double fromY );
+
+		int findText ( QString &text, bool startAtTop = true, double xStart = 0, double yStart = 0, double xEnd = -1, double yEnd = -1);
 	signals:
 		void changedPageTo ( const QSPage &, int numberOfPage );
 		void changedZoomFactorTo ( float zoom );
@@ -73,11 +75,13 @@ class PageSpace : public QWidget {
 		void newSelection ( const QRect & );
 		void newSelection ( const QPtrList<BBoxOfObjectOnPage> & );
 		void requirementPopupMenu ( const QPoint &, const QRegion * );
-		void moveSelection ( const QPoint &, const QPtrList<BBoxOfObjectOnPage> & );
+		void moveSelection ( const QPoint & relativeMove, const QPoint & releasePos, const QPtrList<BBoxOfObjectOnPage> & );
 		void resizeSelection ( const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> & );
 		void showMousePosition ( const QPoint & );
 	private:
 		void newSelection ();
+		void actualizeSelection ();
+		void addObjectsOnPage( PdfOperator::Iterator &it, QPtrList<boost::shared_ptr<PdfOperator> > & destination );
 		void newPageView();
 		void newPageView( QPixmap &qp );
 		void centerPageView( );
@@ -94,6 +98,7 @@ class PageSpace : public QWidget {
 													objectForSelecting;
 		QRect				lastSelectedRect;
 		std::vector<int>	requestsForSelecting;
+		bool				onClickedSelectOneObjects;
 
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;

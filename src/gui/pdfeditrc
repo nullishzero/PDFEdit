@@ -6,6 +6,7 @@ CommandLine/CmdShowEditor=true
 CommandLine/CmdShowHistory=true
 CommandLine/CmdShowLine=true
 PageSpace/ResizingZone=2
+PageSpace/onClickedSelectOneObject=true
 items/MainMenu=list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,helpmenu
 items/filemenu=		list &File,fnew,fload,fsave,fsavecopy,fsaverev,-,neww,closew,-,quit
 items/fnew=		item &New document,func_new(),,new.png
