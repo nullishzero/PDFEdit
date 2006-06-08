@@ -3,7 +3,7 @@
 #ifndef _FACTORIES_H_
 #define _FACTORIES_H_
 
-#include "cobjectI.h"
+#include "cobject.h"
 #include "cpage.h"
 
 /** 
