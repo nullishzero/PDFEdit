@@ -43,7 +43,8 @@ SOURCES += modecontroller.cc filters.cc
 #
 # CObjects
 #
-HEADERS += iproperty.h cobject.h cobjectI.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
+HEADERS += iproperty.h cobject.h cobjecthelpers.h ccontentstream.h pdfoperators.h cpage.h cpdf.h 
+HEADERS += cobjectcomplex.h cobjectcomplexI.h cobjecthelpers.h cobjectsimple.h cobjectsimpleI.h cobjectstream.h cobjectstreamI.h
 HEADERS += streamwriter.h cinlineimage.h coutline.h
 HEADERS += cannotation.h
 

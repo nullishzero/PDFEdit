@@ -1406,6 +1406,7 @@ CPage::addContentStream (const Container& cont)
 	_objectChanged ();
 }
 template void CPage::addContentStream<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
+template void CPage::addContentStream<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
 
 
 
