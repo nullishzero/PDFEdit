@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Design documentation fo object tree view</title>
+ </bookinfo>
+
+ <chapter>
+  <title>Object tree view</title>
+  <para>
+   Structure of PDF can be represented as a tree, and as such, it is shown in the treeview.
+   However, there are some problems:
+   <itemizedlist>
+    <listitem><para>
+     Many elements (such as page) are in the tree two or more times, often with different
+     representation (List of pages vs. complicated tree structure in Pages dictionary)
+    </para></listitem>
+    <listitem><para>
+     The tree contain references (analogous to a symbolic link in unix filesystems) and
+     these references can contain cycles
+     (reference in tree A can point to tree B, while some other reference in tree B point to tree A).
+     In fact, the cycles are very common, for example page always have link to its
+     parent page dictionary in which it is contained
+    </para></listitem>
+    <listitem><para>
+     Single item can be referenced multiple times from different parts of tree.
+     Common example are fonts, as one font is usually referenced in Resources dictionary on multiple pages
+    </para></listitem>
+    <listitem><para>
+     The tree is very large. Even tree of very small file with single page contain
+     over 1000 items and huge documents (like the PDF specification for example,
+     which have 1236 pages) will have probably over one million tree items
+    </para></listitem>
+   </itemizedlist>
+  </para>
+  <sect1>
+   <title>MultiTreeWindow</title>
+   <para>
+    Tree window supporting multiple tabs
+   </para>
+  </sect1>  
+ </chapter>
+</book>
