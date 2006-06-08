@@ -2,8 +2,9 @@
 
 .PHONY: clean all doc_core doc_core_nopdf doc_dist
 
-#Build all documentation, including doxygen programmer documentation
+#Build all documentation, including doxygen programmer documentation and doxygen's default stylesheet
 all:	doc_core
+	doxygen -w html /dev/null /dev/null programmer/html/doxygen.css
 	doxygen
 
 #Core documentation, without PDF
