@@ -24,22 +24,23 @@ namespace pdfobjects {
 //
 IProperty::IProperty (CPdf* _pdf) : mode(mdUnknown), pdf(_pdf), wantDispatch (true)
 {
-	//kernelPrintDbg (debug::DBG_DBG, "IProperty () constructor.");
+	ref.num = ref.gen = 0; 
+}
+
+//
+// Constructor
+//
+IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) 
+	: ref(rf), mode(mdUnknown), pdf(_pdf), wantDispatch (true) {}
+
 	
-	ref.num = ref.gen = 0;
-}
-
-IProperty::IProperty (CPdf* _pdf, const IndiRef& rf) : ref(rf), mode(mdUnknown), pdf(_pdf), wantDispatch (true)
-{
-	//kernelPrintDbg (debug::DBG_DBG, "IProperty () constructor.");
-}
-
 //
 // Deep copy
 //
 boost::shared_ptr<IProperty>
 IProperty::clone () const
 {
+	// Call virtual doClone() to get the right clone
 	boost::shared_ptr<IProperty> ip (doClone ());
 	if (typeid(*ip) != typeid (*this))
 	{
@@ -57,9 +58,7 @@ IProperty::clone () const
 //
 void 
 IProperty::setPdf (CPdf* p)
-{
-	pdf = p;
-}
+	{ pdf = p; }
 
 
 //
@@ -84,17 +83,11 @@ IProperty::dispatchChange () const
 	boost::shared_ptr<IProperty> indiObj;
 	if (utils::objHasParent (*this, indiObj))
 	{
-		if (indiObj)
-		{
-			assert (getIndiRef() == indiObj->getIndiRef());
+		assert (indiObj);
+		assert (getIndiRef() == indiObj->getIndiRef());
 
-			indiObj->dispatchChange ();
+		indiObj->dispatchChange ();
 			
-		}else
-		{
-			assert (!"Bad parent.");
-			throw ElementBadTypeException ("Bad pointer type.");
-		}
 	}else
 	{
 		// Indicate to pdf that it should change this object

@@ -644,42 +644,7 @@ public:
 	 * @param cont Output container of font id and basename pairs.
 	 */
 	template<typename Container>
-	void getFontIdsAndNames (Container& cont) const
-	{
-		// Clear container
-		cont.clear ();
-		
-		try {
-			
-			// \todo Resources is an inheritable property
-			boost::shared_ptr<CDict> res = utils::getCDictFromDict (dictionary, "Resources");
-			boost::shared_ptr<CDict> fonts = utils::getCDictFromDict (res, "Font");
-			typedef std::vector<std::string> FontNames;
-			FontNames fontnames;
-			// Get all font names (e.g. R14, R15, F19...)
-			fonts->getAllPropertyNames (fontnames);
-			// Get all base names (Symbol, csr12, ...)
-			for (FontNames::iterator it = fontnames.begin(); it != fontnames.end(); ++it)
-			{
-				boost::shared_ptr<CDict> font = utils::getCDictFromDict (fonts, *it);
-				try {
-					std::string fontbasename;
-					
-					if (font->containsProperty ("BaseFont")) // Type{1,2} font
-						fontbasename = utils::getNameFromDict (font, "BaseFont");
-					else									// TrueType font
-						fontbasename = utils::getNameFromDict (font, "SubType");
-					cont.push_back (std::make_pair (*it, fontbasename));
-
-				}catch (ElementNotFoundException&)
-				{}
-			}
-
-		}catch (ElementNotFoundException&)
-		{
-			kernelPrintDbg (debug::DBG_ERR, "No resource dictionary.");
-		}
-	}
+	void getFontIdsAndNames (Container& cont) const;
 	
 	/**
 	 * Add new simple type 1 font item to the page resource dictionary. 
@@ -748,9 +713,7 @@ public:
 		assert (hasValidPdf(dictionary));
 		assert (hasValidRef(dictionary));
 		if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
-		{
 			throw CObjInvalidObject ();
-		}
 
 		// If not parsed
 		if (contentstreams.empty())
@@ -816,7 +779,6 @@ public:
 			}else
 			{ // Array
 				
-				assert (isArray(contents));
 				if (!isArray(contents))
 					throw CObjInvalidObject ();
 

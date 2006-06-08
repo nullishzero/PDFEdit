@@ -111,7 +111,14 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~PdfOperator () {};
+	virtual ~PdfOperator ()
+	{
+		if (prev.lock())
+		{
+			assert (!"REMOVE THIS WARNING: possible incorrect usage of pdf operators.");
+			kernelPrintDbg (debug::DBG_CRIT, "REMOVE THIS WARNING: possible incorrect usage of pdf operators.");
+		}
+	};
 
 	
 	//

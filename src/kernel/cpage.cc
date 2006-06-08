@@ -678,7 +678,7 @@ CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
 	// This is not explictly required by specification for all annotation types,
 	// but is not an error to supply this information
 	shared_ptr<CRef> pageRef(CRefFactory::getInstance(dictionary->getIndiRef()));
-	utils::checkAndReplace(annotDict, "P", *pageRef);
+	checkAndReplace(annotDict, "P", *pageRef);
 
 	kernelPrintDbg(debug::DBG_INFO, "Adding reference "<<annotRef<<" to annotation dictionary to Annots array");
 	// annotation dictionary is prepared and so its reference can be stored	
@@ -852,8 +852,6 @@ CPage::displayPage (::OutputDev& out) const
 void 
 CPage::displayPage (::OutputDev& out, const DisplayParams params) 
 {
-
-	
 	// Reparse content streams if parameters changed
 	if (!(lastParams == params))
 	{
@@ -861,18 +859,9 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params)
 		
 		// Use mediabox
 		if (lastParams.useMediaBox)
-		{
-			try {
-				
-				lastParams.pageRect = getMediabox ();
-				
-			}catch (ElementNotFoundException&)
-			{
-				kernelPrintDbg (debug::DBG_CRIT, "Mediabox not found.");
-				lastParams.pageRect = DisplayParams().pageRect;
-			}
-		}
-		
+			lastParams.pageRect = getMediabox ();
+	
+		// Update bounding boxes if changed
 		reparseContentStream ();
 	}
 
@@ -899,16 +888,13 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 	xpdf::openXpdfMess ();
 
 	// Get resource dictionary
-	boost::shared_ptr<IProperty> resources = 
-		utils::getReferencedObject (dictionary->getProperty("Resources"));
-	assert (isDict(resources));
-	if (!isDict(resources))
-		throw CObjInvalidObject ();
+	InheritedPageAttr atr;
+	fillInheritedPageAttr (dictionary,atr);
 	
 	// Start the resource stack
 	XRef* xref = dictionary->getPdf()->getCXref();
 	assert (xref);
-	::Object* obj = resources->_makeXpdfObject ();
+	::Object* obj = atr.resources->_makeXpdfObject ();
 	assert (obj); assert (objDict == obj->getType());
 	res = boost::shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
 
@@ -917,10 +903,10 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 	//
 	
 	// Create Media (Bounding) box
-	boost::shared_ptr<PDFRectangle> rc (new PDFRectangle (lastParams.pageRect.xleft,  lastParams.pageRect.yleft,
-														  lastParams.pageRect.xright, lastParams.pageRect.yright));
-	state = boost::shared_ptr<GfxState> (new GfxState (lastParams.hDpi, lastParams.vDpi, 
-														rc.get(), lastParams.rotate, lastParams.upsideDown));
+	shared_ptr<PDFRectangle> rc (new PDFRectangle (lastParams.pageRect.xleft,  lastParams.pageRect.yleft,
+												  lastParams.pageRect.xright, lastParams.pageRect.yright));
+	state = shared_ptr<GfxState> (new GfxState (lastParams.hDpi, lastParams.vDpi, 
+												rc.get(), lastParams.rotate, lastParams.upsideDown));
 
 	// Close the mess
 	xpdf::closeXpdfMess ();
@@ -951,55 +937,42 @@ bool CPage::parseContentStream ()
 	// Get the stream representing content stream (if any), make an xpdf object
 	// and finally instantiate CContentStream
 	//
-	shared_ptr<IProperty> contents;
-	try 
-	{
-		contents = dictionary->getProperty ("Contents");
 
-	}catch (ElementNotFoundException&)
+	if (!dictionary->containsProperty ("Contents"))
+		return true;
+	shared_ptr<IProperty> contents = getReferencedObject(dictionary->getProperty ("Contents"));
+	assert (contents);
+	
+	CContentStream::CStreams streams;
+	
+	//
+	// Contents can be either stream or an array of streams
+	//
+	if (isStream (contents))	
 	{
-		kernelPrintDbg (debug::DBG_DBG, "No content stream found.");
-		return false;
+		shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
+		streams.push_back (stream);
+	
+	}else if (isArray (contents))
+	{
+		// We can be sure that streams are indirect objects (pdf spec)
+		shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
+		for (size_t i = 0; i < array->getPropertyCount(); ++i)
+			streams.push_back (getCStreamFromArray(array,i));
+		
+	}else // Neither stream nor array
+	{
+		kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << contents->getType());
+		throw ElementBadTypeException ("Bad content stream type.");
 	}
-	
-	// If indirect, get the real object
-	contents = utils::getReferencedObject (contents);
-	
-	if (contents)
-	{
-		CContentStream::CStreams streams;
-		
-		//
-		// Contents can be either stream or an array of streams
-		//
-		if (isStream (contents))	
-		{
-			shared_ptr<CStream> stream = IProperty::getSmartCObjectPtr<CStream> (contents); 
-			streams.push_back (stream);
-		
-		}else if (isArray (contents))
-		{
-			// We can be sure that streams are indirect objects (pdf spec)
-			shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
-			for (size_t i = 0; i < array->getPropertyCount(); ++i)
-				streams.push_back (getCStreamFromArray(array,i));
-			
-		}else // Neither stream nor array
-		{
-			kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << contents->getType());
-			throw ElementBadTypeException ("Bad content stream type.");
-		}
 
-		//
-		// Create content streams, each cycle will take one/more content streams from streams variable
-		//
-		assert (contentstreams.empty());
-		assert (!streams.empty());
-		while (!streams.empty())
-			contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
-	
-	}else
-		throw ElementBadTypeException ("Bad pointer to content stream.");
+	//
+	// Create content streams, each cycle will take one/more content streams from streams variable
+	//
+	assert (contentstreams.empty());
+	assert (!streams.empty());
+	while (!streams.empty())
+		contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
 
 	// Everything went ok
 	return true;
@@ -1154,67 +1127,115 @@ template size_t CPage::findText<std::vector<Rectangle> >
 void
 CPage::addSystemType1Font (const std::string& fontname)
 {
+	// Create font dictionary
 	// << 
 	//    /Type /Font
 	//    /SubType /Type1
 	//    /BaseFont / ...
 	// >>
 	boost::shared_ptr<CDict> font (new CDict ());
-	
 	boost::shared_ptr<CName> name (new CName ("Font"));
 	font->addProperty (string("Type"), *name);
-	
 	name->setValue ("Type1");
 	font->addProperty (string ("SubType"), *name);
-	
 	name->setValue (fontname);
 	font->addProperty (string ("BaseFont"), *name);
 	
 	// Resources is an inheritable property, must be present
-	boost::shared_ptr<CDict> res = utils::getCDictFromDict (dictionary, "Resources");
-	boost::shared_ptr<CDict> fonts;
-	
-	try {
-		
-		fonts = utils::getCDictFromDict (res, "Font");
-	
-	}catch (ElementNotFoundException&)
+	if (!dictionary->containsProperty ("Resources"))
 	{
+		InheritedPageAttr atr;
+		fillInheritedPageAttr (dictionary,atr);
+		dictionary->addProperty ("Resources", *(atr.resources));
+	}
+	
+	// Get "Resources"
+	boost::shared_ptr<CDict> res = getCDictFromDict (dictionary, "Resources");
+	
+	if (!res->containsProperty ("Font"))
+	{	
 		boost::shared_ptr<CDict> fontdict (new CDict ());
 		res->addProperty ("Font", *fontdict);
-		
-		fonts = utils::getCDictFromDict (res, "Font");
 	}
+	
+	// Get "Fonts"
+	boost::shared_ptr<CDict> fonts = getCDictFromDict (res, "Font");
 
+	// Get all avaliable fonts
 	typedef vector<pair<string,string> > Fonts;
 	Fonts fs;
 	getFontIdsAndNames (fs);
 
+	//
+	// Find suitable name
+	//
 	size_t len = 0;
 	bool our = false;
-	static const string ourfontname ("PdfEditor");
+	string ourfontname ("PdfEditor");
 	for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
-	{
-		// Compare basenames and look for longest string and for PdfEdit string
+	{// Compare basenames and look for longest string and for PdfEdit string
 		if (ourfontname == (*it).first)
 			our = true;
 		len = std::max ((*it).first.length(), len);
 	}
 
-	if (!our)
-		fonts->addProperty (ourfontname, *font);
-	else
+	// Make name unique
+	if (our)
 	{/**\todo make sane */
 		len -= ourfontname.length();
 		len++;
-		string tmpname = ourfontname;
 		for (size_t i = 0; i < len; i++)
-			tmpname.push_back ('r');
-		fonts->addProperty (tmpname, *font);
+			ourfontname.push_back ('r');
 	}
+
+	// Add it
+	fonts->addProperty (ourfontname, *font);
 		
 }
+//
+//
+//
+template<typename Container>
+void 
+CPage::getFontIdsAndNames (Container& cont) const
+{
+	// Clear container
+	cont.clear ();
+	
+	InheritedPageAttr atr;
+	fillInheritedPageAttr (dictionary, atr);
+	boost::shared_ptr<CDict> res = atr.resources;
+	
+	try 
+	{
+		boost::shared_ptr<CDict> fonts = utils::getCDictFromDict (res, "Font");
+		typedef std::vector<std::string> FontNames;
+		FontNames fontnames;
+		// Get all font names (e.g. R14, R15, F19...)
+		fonts->getAllPropertyNames (fontnames);
+		// Get all base names (Symbol, csr12, ...)
+		for (FontNames::iterator it = fontnames.begin(); it != fontnames.end(); ++it)
+		{
+			boost::shared_ptr<CDict> font = utils::getCDictFromDict (fonts, *it);
+			try {
+				std::string fontbasename;
+				
+				if (font->containsProperty ("BaseFont")) // Type{1,2} font
+					fontbasename = utils::getNameFromDict (font, "BaseFont");
+				else									// TrueType font
+					fontbasename = utils::getNameFromDict (font, "SubType");
+				cont.push_back (std::make_pair (*it, fontbasename));
 
+			}catch (ElementNotFoundException&)
+			{}
+		}
+
+	}catch (ElementNotFoundException&)
+	{
+		kernelPrintDbg (debug::DBG_ERR, "No resource dictionary.");
+	}
+}
+template void CPage::getFontIdsAndNames<vector<pair<string,string> > > (vector<pair<string,string> >& cont) const;
 
 //
 // Transform matrix
@@ -1289,7 +1310,7 @@ isPage (boost::shared_ptr<IProperty> ip)
 
 	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
 
-	if ("Page" != utils::getStringFromDict (dict, "Type"))
+	if ("Page" != getStringFromDict (dict, "Type"))
 		throw CObjInvalidObject ();
 
 	return true;

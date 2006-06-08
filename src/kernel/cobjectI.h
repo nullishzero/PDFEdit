@@ -501,29 +501,21 @@ CObjectComplex<Tp,Checker>::addProperty (size_t position, const IProperty& newIp
 	
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
+	assert (newIpClone);
 	
-	if (newIpClone)
-	{
-		typename Value::iterator it;
-		// Find the correct position
-		if (value.size() == position)
-		{
-			it = value.end ();
-			
-		}else
-		{
-			for (it = value.begin(); 0 != position; ++it, --position)
-				;
-		}
+	typename Value::iterator it;
+	// Find the correct position
+	if (value.size() == position)
+		it = value.end ();
+	else
+		for (it = value.begin(); 0 != position; ++it, --position)
+			;
 
-		// Inherit id, gen number and pdf
-		newIpClone->setPdf (this->getPdf());
-		newIpClone->setIndiRef (this->getIndiRef());
-		// Insert it
-		value.insert (it,newIpClone);
-		
-	}else
-		throw CObjInvalidObject ();
+	// Inherit id, gen number and pdf
+	newIpClone->setPdf (this->getPdf());
+	newIpClone->setIndiRef (this->getIndiRef());
+	// Insert it
+	value.insert (it,newIpClone);
 	
 	if (hasValidPdf (this))
 	{
@@ -609,33 +601,27 @@ CObjectComplex<Tp,Checker>::setProperty (PropertyId id, IProperty& newIp)
 	typename Value::iterator it = value.begin();
 	for (; it != value.end(); ++it)
 	{
-			if (cmp (*it))
-					break;
+		if (cmp (*it))
+				break;
 	}
 
 	// Check the bounds, if fails add it
 	if (it == value.end())
-	{
 		return addProperty (id, newIp);
-	}
 
 	// Save the old one
 	boost::shared_ptr<IProperty> oldIp = cmp.getIProperty ();
 	// Clone the added property
 	boost::shared_ptr<IProperty> newIpClone = newIp.clone ();
+	assert (newIpClone);
 	
-	if (newIpClone)
-	{
-		// Inherit id, gen number and pdf
-		newIpClone->setIndiRef (this->getIndiRef());
-		newIpClone->setPdf (this->getPdf());
+	// Inherit id, gen number and pdf
+	newIpClone->setIndiRef (this->getIndiRef());
+	newIpClone->setPdf (this->getPdf());
 
-		// Construct item, and replace it with this one
-		typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
-		std::fill_n (it, 1, newVal);
-		
-	}else
-		throw CObjInvalidObject ();
+	// Construct item, and replace it with this one
+	typename Value::value_type newVal = utils::constructItemFromIProperty (*it, newIpClone);
+	std::fill_n (it, 1, newVal);
 
 	//
 	// Dispatch change if we are in valid pdf
