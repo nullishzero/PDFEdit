@@ -15,9 +15,12 @@ html_help_dir=../../src/gui/help
 pdf_docs_all=$(html_docs_all:.html=.pdf)
 
 #generated documentation
-docs=$(pdf_docs_all) $(html_docs_all) $(addprefix $(html_help_dir)/,$(html_docs)) pdfedit.1
+docs_no_pdf=$(html_docs_all) $(addprefix $(html_help_dir)/,$(html_docs)) pdfedit.1
+docs=$(pdf_docs_all) $(docs_no_pdf)
 
-all: $(docs)
+all: $(docs) 
+
+all_no_pdf: $(docs_no_pdf)
 
 clean:
 	rm -f $(docs) scripting.xml keyboard.xml cs/keyboard.xml

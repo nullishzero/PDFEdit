@@ -23,8 +23,23 @@
   </para>
   <para>
    For rebuilding documentation from DocBook .xml files, <command>gmake</command> (GNU make) is required
- and you also need either <command>docbook2html</command> or <command>xsltproc</command> from libxslt
- and docbook stylesheets 
+   and you also need:
+   <itemizedlist>
+    <listitem>
+     <para>
+      For generating HTML : either <command>docbook2html</command> or <command>xsltproc</command> from
+       libxslt and docbook stylesheets 
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      For generating PDF : <command>xsltproc</command> from libxslt, docbook stylesheets
+      and Apache FOP from http://xmlgraphics.apache.org/fop/
+     </para>
+    </listitem>
+   </itemizedlist>
+   If some of the required dependencies is missing, documentation in appropriate format will not be generated.
+   In distribution archive, HTML documentation is already generated.
   </para>
  </chapter>
  <chapter>
