@@ -98,9 +98,9 @@ public slots: //This will be all exported to scripting
  QSIPropertyArray* createIPropertyArray();
  /*- Create and return new IProperty of type String */
  QSIProperty* createName(const QString &value);
- /*- Create new PDF Operator with specified parameters and operator text*/
- QSPdfOperator* createOperator(QSIPropertyArray* parameters,const QString &text);
- QSPdfOperator* createOperator(QObject* parameters,const QString &text);
+ /*- Create new PDF Operator with specified operator text and parameters */
+ QSPdfOperator* createOperator(const QString &text,QSIPropertyArray* parameters);
+ QSPdfOperator* createOperator(const QString &text,QObject* parameters);
  /*- Create new empty PDF Operator stack */
  QSPdfOperatorStack* createPdfOperatorStack();
  /*- Create and return new IProperty of type Real */

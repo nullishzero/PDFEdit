@@ -344,12 +344,22 @@ void Base::checkItem(const QString &name,bool check) {
  @param text Operator text
  @return new PDF operator
 */
-QSPdfOperator* Base::createOperator(QSIPropertyArray* parameters,const QString &text) {
+QSPdfOperator* Base::createOperator(const QString &text,QSIPropertyArray* parameters) {
  std::string opTxt=text;
  PdfOperator::Operands param;
  parameters->copyTo(param);
- boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(param,opTxt));
+ boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(opTxt,param));
  return new QSPdfOperator(op,this); 
+}
+
+/**
+ QSA-Bugfix version
+ \copydoc createOperator(const QString &,QSIPropertyArray*)
+*/
+QSPdfOperator* Base::createOperator(const QString &text,QObject* parameters) {
+ QSIPropertyArray* par=dynamic_cast<QSIPropertyArray*>(parameters);
+ if (!par) return NULL;
+ return createOperator(text,par);
 }
 
 /**
@@ -470,17 +480,6 @@ QSIProperty* Base::createName(const QString &value) {
  return new QSIProperty(boost::shared_ptr<IProperty>(CNameFactory::getInstance(value)),this);
 }
 
-/**
- QSA-Bugfix version
- \copydoc createOperator(QSIPropertyArray*,const QString &)
-*/
-QSPdfOperator* Base::createOperator(QObject* parameters,const QString &text) {
- QSIPropertyArray* par=dynamic_cast<QSIPropertyArray*>(parameters);
- if (!par) return NULL;
- return createOperator(par,text);
-}
-
-//TODO: create all IProperty items (Simple types + array/dict/ref)
 
 /**
  Create new array of IProperty items.
