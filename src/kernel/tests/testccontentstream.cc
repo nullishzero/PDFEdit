@@ -85,6 +85,47 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 	return true;
 }
 
+//=====================================================================================
+
+bool
+frontinsert (ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	size_t pagecnt = ppdf->getPageCount ();
+	ppdf.reset();
+	
+	for (size_t i = 0; i < pagecnt && i < TEST_MAX_PAGE_COUNT; ++i)
+	{
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
+		
+		// parse the content stream
+		page->parseContentStream ();
+	
+		vector<boost::shared_ptr<CContentStream> > ccs;
+		page->getContentStreams (ccs);
+		assert (!ccs.empty());
+		shared_ptr<CContentStream> cs = ccs.front();
+
+		string tmp;
+		cs->getStringRepresentation (tmp);
+
+		shared_ptr<PdfOperator> op (new UnknownCompositePdfOperator ("halo","kto tam"));
+		shared_ptr<PdfOperator> opp (new UnknownCompositePdfOperator ("tu","fun, tam?"));
+		op->push_back (opp,op);
+		cs->frontInsertOperator (op);
+		string tmp1;
+		cs->getStringRepresentation (tmp1);
+
+		oss << endl << "[" << tmp1.substr(0,100) << "]" << endl; // Only first name is used
+		oss << string ("[halo tu   ") << tmp.substr(0,90) << endl;
+		CPPUNIT_ASSERT (tmp1 == string ("halo tu   ") + tmp);
+
+		_working (oss);
+	}
+	
+	return true;
+}
 
 //=====================================================================================
 
@@ -333,7 +374,7 @@ addcc (__attribute__((unused))	ostream& oss, const char* fileName)
 			
 			std::string str;
 			cccs[ccs.size()]->getStringRepresentation (str);
-			oss << str << flush;
+			//oss << str << flush;
 		}
 		else 
 			return false;
@@ -349,7 +390,7 @@ addcc (__attribute__((unused))	ostream& oss, const char* fileName)
 //=========================================================================
 
 bool
-front (__attribute__((unused))	ostream& oss, const char* fileName)
+settm (__attribute__((unused))	ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
@@ -368,7 +409,7 @@ front (__attribute__((unused))	ostream& oss, const char* fileName)
 			assert (!ccs.empty());
 			shared_ptr<CContentStream> cs = ccs.front();
 			cs->getStringRepresentation (str);
-			oss << str << flush;
+			//oss << str << flush;
 		}
 		else 
 			return false;
@@ -434,16 +475,11 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 	while (!reader.eof())
 	{
 		i++;
-		if (410 == i)
-		{
-			oss << " " << flush;
-			oss << " " << flush;
-		}
 		if (o.isCmd ("BI"))
 		{
 			if (!img (reader,xref))
 				return false;
-			oss << endl << " IMAGE DATA " << endl;
+			//oss << endl << " IMAGE DATA " << endl;
 			//testPrintDbg (debug::DBG_DBG, "end image...");
 	
 			// grab the next object
@@ -454,13 +490,13 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 		
 		if (o.isCmd ())
 		{
-			oss << o.getCmd() << std::endl << flush;
+			//oss << o.getCmd() << std::endl << flush;
 		}else
 		{
 		//	oss << "(" << o.getType() << ")" << flush;
 			std::string tmp;
 			utils::xpdfObjToString (o, tmp);
-			oss << tmp << " " << flush;
+			//oss << tmp << " " << flush;
 		}
 
 		// grab the next object
@@ -489,6 +525,7 @@ class TestCContentStream : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestPrint);
 		CPPUNIT_TEST(TestSetCS);
 		CPPUNIT_TEST(TestFront);
+		CPPUNIT_TEST(TestTm);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -531,6 +568,26 @@ public:
 	//
 	//
 	//
+	void TestTm ()
+	{
+		OUTPUT << "CContentStream ..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+			
+			TEST(" test matrix");
+			CPPUNIT_ASSERT (settm (OUTPUT, (*it).c_str()));
+			OK_TEST;
+
+			TEST(" add content stream");
+			CPPUNIT_ASSERT (addcc (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
 	void TestFront ()
 	{
 		OUTPUT << "CContentStream ..." << endl;
@@ -540,7 +597,7 @@ public:
 			OUTPUT << "Testing filename: " << *it << endl;
 			
 			TEST(" insert at front");
-			CPPUNIT_ASSERT (front (OUTPUT, (*it).c_str()));
+			CPPUNIT_ASSERT (frontinsert (OUTPUT, (*it).c_str()));
 			OK_TEST;
 
 			TEST(" add content stream");
@@ -548,6 +605,7 @@ public:
 			OK_TEST;
 		}
 	}
+
 
 	//
 	//

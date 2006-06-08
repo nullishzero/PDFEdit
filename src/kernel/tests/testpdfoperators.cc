@@ -89,11 +89,11 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 		// parse the content stream after change
 		shared_ptr<CStream> stream = getTestStreamContent (page);
 		assert (isStream(stream));
-		//CStream::Buffer buf;
-		//std::copy (tmp.begin(), tmp.end(), back_inserter (buf));
-		//stream->setBuffer (buf);
-		//cs->getStringRepresentation (tmp);
-		//oss << tmp << std::endl;
+		CStream::Buffer buf;
+		string tmp1 = "TOTO URCITE NIE JE VALIDNY CONTENTSTREAM";
+		std::copy (tmp1.begin(), tmp1.end(), back_inserter (buf));
+		stream->setBuffer (buf);
+		CPPUNIT_ASSERT (stream->getBuffer().size() == tmp1.size());
 		cs->saveChange();
 		
 		_working (oss);
@@ -387,6 +387,49 @@ insertOper (__attribute__((unused))	ostream& oss, const char* fileName)
 	return true;
 }
 
+//=====================================================================================
+
+bool
+cloneoper (__attribute__((unused))	ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	size_t pagecount = ppdf->getPageCount ();
+	ppdf.reset();
+	for (size_t i = 0; i < pagecount && i < TEST_MAX_PAGE_COUNT; ++i)
+	{
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
+
+		vector<boost::shared_ptr<CContentStream> > ccs;
+		page->getContentStreams (ccs);
+		shared_ptr<CContentStream> cs = ccs.front();
+		
+		typedef vector<boost::shared_ptr<PdfOperator> > Opers;
+		Opers opers;
+		cs->getPdfOperators (opers);
+
+		if (opers.empty())
+			continue;
+		
+		assert (!opers.empty());
+		PdfOperator::Iterator it = PdfOperator::getIterator (opers.front());
+		while (!it.isEnd())
+		{
+			shared_ptr<PdfOperator> clone = it.getCurrent()->clone();
+			std::string olds,news;
+			it.getCurrent()->getStringRepresentation (olds);
+			clone->getStringRepresentation (news);
+			CPPUNIT_ASSERT (olds == news);
+
+			_working (oss);
+			
+			it.next();
+		}
+		
+	}
+
+	return true;
+}
 
 //=====================================================================================
 
@@ -417,16 +460,25 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 		
 		assert (!opers.empty());
 		TextOperatorIterator it = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
+		boost::shared_ptr<PdfOperator> tmpop;
 		while (!it.isEnd())
 		{
-			PdfOperator::Iterator itPrv = it; itPrv.prev();
-			PdfOperator::Iterator itNxt = PdfOperator::getIterator(getLastOperator(it)); itNxt.next();
-			// This will change iterator list of it.getCurrent() !!!
-			boost::shared_ptr<PdfOperator> op = operatorSetColor (it.getCurrent(), 1, 0, 0);
-			cs->replaceOperator (it, op, itPrv, itNxt, false);
-			//cs->replaceOperator (it, operatorSetColor (it.getCurrent(), 1, 0, 0), itPrv, itNxt, false);
+			std::string tmp;
+			it.getCurrent()->getStringRepresentation (tmp);
 			
-			it.next();
+			// This will change iterator list of it.getCurrent() !!!
+			tmpop = operatorSetColor (it.getCurrent()->clone(), 1, 0, 0);
+			cs->replaceOperator (it, tmpop, false);
+			//cs->replaceOperator (it, operatorSetColor (it.getCurrent(), 1, 0, 0), itPrv, itNxt, false);
+			std::string tmp1;
+			tmpop->getStringRepresentation (tmp1);
+
+			//oss << tmp << endl;
+			//oss << "[" << tmp1 << "]" << endl;
+			//oss << string("[q 1 0 0 rg ") + tmp + string(" Q ]") << flush;
+			CPPUNIT_ASSERT (string("q 1 0 0 rg ") + tmp + string(" Q ") == tmp1);
+			
+			it = PdfOperator::getIterator<TextOperatorIterator> (getLastOperator(tmpop));
 		}
 		
 		_working (oss);
@@ -455,6 +507,7 @@ class TestPdfOperators : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestInsertOper);
 		CPPUNIT_TEST(TestDeleteAllInsertOper);
 		CPPUNIT_TEST(TestTextIterator);
+		CPPUNIT_TEST(TestPdfOperClone);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -556,6 +609,22 @@ public:
 
 			TEST(" change color");
 			CPPUNIT_ASSERT (changeColor (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+	//
+	//
+	//
+	void TestPdfOperClone ()
+	{
+		OUTPUT << "Clone PDfOperator..." << endl;
+		
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+
+			TEST(" clone oper");
+			CPPUNIT_ASSERT (cloneoper (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}

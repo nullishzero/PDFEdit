@@ -276,6 +276,30 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 
 
 //=====================================================================================
+bool setattr(__attribute__((unused))	ostream & oss, const char * fname)
+{
+	CPdf * pdf=getTestCPdf(fname);
+
+	size_t pageCount=pdf->getPageCount();
+	for(size_t pos=1; pos<=pageCount; pos++)
+	{
+		shared_ptr<CPage> page=pdf->getPage(pos);
+
+		page->setMediabox (Rectangle (1,1,2,2));
+		Rectangle rc = page->getMediabox ();
+		CPPUNIT_ASSERT (rc.xleft == 1 && rc.yleft == 1);
+		CPPUNIT_ASSERT (rc.xright == 2 && rc.yright == 2);
+		page->setRotation (10);
+		CPPUNIT_ASSERT (10 == page->getRotation());
+
+	}
+	pdf->close();
+	return true;
+}
+
+
+
+//=====================================================================================
 bool creation (__attribute__((unused)) ostream& oss)
 {
 	shared_ptr<CDict> dict (CDictFactory::getInstance());
@@ -324,6 +348,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestDisplay);
 		CPPUNIT_TEST(TestExport);
 		CPPUNIT_TEST(TestFind);
+		CPPUNIT_TEST(TestSet);
 		CPPUNIT_TEST(TestAnnotations);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -348,6 +373,23 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
+	void TestSet ()
+	{
+		OUTPUT << "CPage methods..." << endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+		
+			TEST(" set");
+			CPPUNIT_ASSERT (setattr (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+
 	//
 	//
 	//
