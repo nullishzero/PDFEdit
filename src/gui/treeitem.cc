@@ -3,7 +3,6 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
 #include "treedata.h"
 #include "treeitem.h"
 #include "treeitemref.h"
@@ -15,6 +14,7 @@
 #include "pdfutil.h"
 #include "util.h"
 #include "qsiproperty.h"
+#include <cobject.h>
 
 namespace gui {
 

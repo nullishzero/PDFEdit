@@ -69,49 +69,24 @@ bool QSContentStream::opValid(QSPdfOperator *op,bool checkThis/*=false*/) {
 
 /**
  Replace old operator oldOp with new operator newOp in this stream
- pre_replace must be called on old operator before calling replace
- \see pre_replace
- @param oldOp Old operator
- @param newOp New operator
- @param indicateChange If set to true (default), changes will be written to underlying stream
-*/
-void QSContentStream::replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared_ptr<PdfOperator> newOp,bool indicateChange/*=true*/) {
- obj->replaceOperator(oldOp,newOp,itPrev,itNext,indicateChange);
-}
-
-/**
- Replace old operator oldOp with new operator newOp in this stream
  @param oldOp Old operator that will be replaced
  @param newOp New operator (replacement)
- @param itPrev Previous iterator of new operator in iterator list
- @param itNext Next iterator of new operator in iterator list
  @param indicateChange If set to true (default), changes will be written to underlying stream
 */
-void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOperatorIterator* itPrev,QSPdfOperatorIterator* itNext,bool indicateChange/*=true*/) {
- if (!(oldOp && newOp && itPrev && itNext)) return;
- obj->replaceOperator(oldOp->get(),newOp->get(),*(itPrev->get()),*(itNext->get()),indicateChange);
+void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,bool indicateChange/*=true*/) {
+ if (!(oldOp && newOp)) return;
+ obj->replaceOperator(oldOp->get(),newOp->get(),indicateChange);
 }
 
 /**
  QSA bugfix version
  \copydoc replace(QSPdfOperator*,QSPdfOperator*,QSPdfOperatorIterator*,QSPdfOperatorIterator*,bool)
 */
-void QSContentStream::replace(QObject* oldOp,QObject* newOp,QObject* itPrev,QObject* itNext,bool indicateChange/*=true*/) {
- QSPdfOperator* _oldOp=dynamic_cast<QSPdfOperator*>(oldOp);
- QSPdfOperator* _newOp=dynamic_cast<QSPdfOperator*>(newOp);
- QSPdfOperatorIterator* _itPrev=dynamic_cast<QSPdfOperatorIterator*>(itPrev);
- QSPdfOperatorIterator* _itNext=dynamic_cast<QSPdfOperatorIterator*>(itNext);
- if (!(_oldOp && _newOp && _itPrev && _itNext)) return;
- obj->replaceOperator(_oldOp->get(),_newOp->get(),*(_itPrev->get()),*(_itNext->get()),indicateChange);
-}
-
-/**
- Prepare for replacing operator with some other - save it's next and prev iterator
- @param op operator
- */
-void QSContentStream::pre_replace(boost::shared_ptr<PdfOperator> op) {
- itPrev=PdfOperator::getIterator(op);itPrev.prev();
- itNext=PdfOperator::getIterator(getLastOperator(op));itNext.next();
+void QSContentStream::replace(QObject* oldOp,QObject* newOp,bool indicateChange/*=true*/) {
+ QSPdfOperator* _oldOp=qobject_cast<QSPdfOperator*>(oldOp,"replace",1,"PdfOperator");
+ QSPdfOperator* _newOp=qobject_cast<QSPdfOperator*>(newOp,"replace",2,"PdfOperator");
+ if (!(_oldOp && _newOp)) return;
+ obj->replaceOperator(_oldOp->get(),_newOp->get(),indicateChange);
 }
 
 /**
@@ -131,7 +106,7 @@ void QSContentStream::deleteOperator(QSPdfOperator *op,bool indicateChange/*=tru
  QSA bugfixed version
 */
 void QSContentStream::deleteOperator(QObject *op,bool indicateChange/*=true*/) {
- QSPdfOperator* qop=dynamic_cast<QSPdfOperator*>(op);
+ QSPdfOperator* qop=qobject_cast<QSPdfOperator*>(op,"deleteOperator",1,"PdfOperator");
  if (!qop) return;
  deleteOperator((QSPdfOperator*)qop,indicateChange);
 }
@@ -155,8 +130,8 @@ void QSContentStream::insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool
  QSA bugfixed version
 */
 void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateChange/*=true*/) {
- QSPdfOperator* qop=dynamic_cast<QSPdfOperator*>(op);
- QSPdfOperator* qopNew=dynamic_cast<QSPdfOperator*>(newOp);
+ QSPdfOperator* qop=qobject_cast<QSPdfOperator*>(op,"insertOperator",1,"PdfOperator");
+ QSPdfOperator* qopNew=qobject_cast<QSPdfOperator*>(newOp,"insertOperator",1,"PdfOperator");
  if (!qop) return;
  if (!qopNew) return;
  insertOperator((QSPdfOperator*)qop,(QSPdfOperator*)qopNew,indicateChange);

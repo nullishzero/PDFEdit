@@ -40,6 +40,7 @@ public:
  BaseCore();
  ~BaseCore();
  void setConWriter(ConsoleWriter *_con);
+ void conPrintError(const QString &line);
  void conPrintLine(const QString &line);
  void runScript(const QString &script);
  void call(const QString &name);
@@ -63,6 +64,10 @@ protected:
  virtual void removeScriptingObjects();
  virtual void addScriptingObjects();
  void deleteVariable(const QString &varName);
+ void errorMessage();
+ void clearError();
+private slots:
+ void scriptError(const QString &message,const QString &scriptName,int lineNumber);
 private:
  void cleanup();
 protected:
@@ -83,6 +88,12 @@ private:
  QPtrDict<QSCObject> baseObjects;
  /** Console writer handler */
  ConsoleWriter *con;
+ /** Last-seen error message from script */
+ QString errMessage;
+ /** Script filename for last-seen error message */
+ QString errScript;
+ /** Script line number for last-seen error message */
+ int errLineNumber;
 };
 
 } //namespace gui

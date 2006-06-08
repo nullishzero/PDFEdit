@@ -122,6 +122,7 @@ void Base::postRun() {
 void Base::removeScriptingObjects() {
  //delete page and item variables from script -> they may change while script is not executing
  deleteVariable("item");
+//TODO: treeitem as property of this QObject
  deleteVariable("treeitem");
  BaseCore::removeScriptingObjects();
 }
@@ -154,6 +155,7 @@ void Base::addScriptingObjects() {
 */
 void Base::runInitScript() {
  //Run list of initscripts from settings
+ clearError();
  int scriptsRun=0;
  QStringList initScripts=globalSettings->readPath("init","script/");
  for (unsigned int i=0;i<initScripts.count();i++) {
@@ -163,7 +165,11 @@ void Base::runInitScript() {
   if (exists(initScriptFilename)) {   
    guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
-   runFile(initScriptFilename);
+   if (!runFile(initScriptFilename)) {  
+    errorMessage();
+    guiPrintDbg(debug::DBG_INFO,"Error running file: " << initScriptFilename);
+    conPrintError(tr("Error running")+" "+initScriptFilename);
+   }
    scriptsRun++;
   }
  }
@@ -198,17 +204,25 @@ void Base::runInitScript() {
   QString initScriptFilename=it.data();
   guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
   //Any document-related classes are NOT available to the initscript, as no document is currently loaded
-  runFile(initScriptFilename);    
+  if (!runFile(initScriptFilename)) {  
+   errorMessage();
+   guiPrintDbg(debug::DBG_INFO,"Error running file: " << initScriptFilename);
+   conPrintError(tr("Error running")+" "+initScriptFilename);
+  }
  }
 }
 
 /**
  Runs script from given file in current interpreter
  @param scriptName name of file with QT Script to run
+ @return true if success, false if error (file not exist, etc ...)
  */
-void Base::runFile(const QString &scriptName) {
+bool Base::runFile(const QString &scriptName) {
  QString code=loadFromFile(scriptName);
+ if (code.isNull()) return false;
  qs->evaluate(code,this,scriptName);
+ if (qs->hadError()) return false;
+ return true;
 }
 
 /**
@@ -325,7 +339,7 @@ void Base::checkItem(const QString &name,bool check) {
 }
 
 /**
- Create new operator of type UnknownPdfOperator
+ Create new operator of type SimpleGenericOperator
  @param parameters Array with operator parameters
  @param text Operator text
  @return new PDF operator
@@ -334,7 +348,7 @@ QSPdfOperator* Base::createOperator(QSIPropertyArray* parameters,const QString &
  std::string opTxt=text;
  PdfOperator::Operands param;
  parameters->copyTo(param);
- boost::shared_ptr<UnknownPdfOperator> op(new UnknownPdfOperator(param,opTxt));
+ boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(param,opTxt));
  return new QSPdfOperator(op,this); 
 }
 
@@ -583,9 +597,13 @@ QString Base::fileSaveDialog(const QString &oldName/*=QString::null*/) {
 /**
  Return list of all functions that are in current script interpreter.
  Functions are sorted alphabetically
+ @param includeSignatures if true, function signatures will be returned, otherwise only names
  */
-QStringList Base::functions() {
- QStringList func=qs->functions(this);
+QStringList Base::functions(bool includeSignatures/*=false*/) {
+ QSInterpreter::FunctionFlags flags=QSInterpreter::FunctionNames;
+ if (includeSignatures) flags=QSInterpreter::FunctionSignatures;
+ //QSInterpreter::IncludeMemberFunctions -?
+ QStringList func=qs->functions(this,flags);
  func.sort();
  return func;
 }
@@ -772,7 +790,24 @@ void Base::restoreWindowState() {
  @param scriptName name of file with QT Script to run
 */
 void Base::run(QString scriptName) {
- runFile(globalSettings->getFullPathName("script",scriptName));
+ //Look in path for full filename of script
+ QString scriptFileName=globalSettings->getFullPathName("script",scriptName);
+ if (scriptFileName.isNull()) {
+  //Try looking in current directory for the script
+  if (exists(scriptName)) {
+   //Found ...
+   scriptFileName=scriptName;
+  }
+ }
+ //No script found by that name
+ if (scriptFileName.isNull()) {
+  qs->throwError(tr("Script not found")+" : "+scriptName);
+  return;
+ }
+ //Run the script
+ if (!runFile(scriptFileName)) {
+  qs->throwError(tr("Error running")+" "+scriptName);
+ }
 }
 
 /**
@@ -867,12 +902,11 @@ QSTreeItem* Base::treeRootMain() {
  return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->rootMain()));
 }
 
-/** Print all variables that are in current script interpreter to console window*/
-void Base::variables() {
+/** Return sorted list of all variables that are in current script interpreter */
+QStringList Base::variables() {
  QStringList objs=qs->variables(this);
- for (QStringList::Iterator it=objs.begin();it!=objs.end();++it) {
-  conPrintLine(*it);
- }
+ objs.sort();
+ return objs;
 }
 
 /** Return version of editor
@@ -889,6 +923,5 @@ void Base::warn(const QString &str) {
  conPrintLine(str);
  QMessageBox::warning(w,tr("Warning"),str);
 }
-
 
 } // namespace gui

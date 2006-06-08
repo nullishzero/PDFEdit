@@ -153,8 +153,9 @@ public slots: //This will be all exported to scripting
   Debugging function usable by script developers.
   Return list of all functions that are present in current script interpreter.
   Functions are sorted alphabetically.
+  If includeSignatures is set, function signatures are returned, otherwise only names
  */
- QStringList functions();
+ QStringList functions(bool includeSignatures=false);
  /*-
   Check if part of the window is visible (returns true) or hidden (returns false)
   widgetName specifies which part:
@@ -287,9 +288,9 @@ public slots: //This will be all exported to scripting
  QSTreeItem* treeRootMain();
  /*-
   Debugging function usable by script developers.
-  Print all variables that are in current script interpreter to command window
+  Return sorted list of all variables that are in current script interpreter.
  */
- void variables();
+ QStringList variables();
  /*- Return version of editor (in format 'major.minor.release') */
  QString version();
  /*-
@@ -308,7 +309,7 @@ private://This is workaround because of bug in MOC - it tries to include methods
 #endif
 private:
  QWidget* getWidgetByName(const QString &widgetName);
- void runFile(const QString &scriptName);
+ bool runFile(const QString &scriptName);
 protected:
  //TODO: separate to BaseGuiCore
  virtual void addScriptingObjects();

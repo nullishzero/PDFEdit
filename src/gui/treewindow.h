@@ -77,10 +77,6 @@ private:
  TreeData *data;
  /** Name of root object - if applicable */
  QString rootName;
- /** Root treeitem */
- //TreeItemAbstract *rootItem;
- /** Selected treeitem */
- //TreeItemAbstract *selected;
 };
 
 } // namespace gui

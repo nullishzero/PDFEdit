@@ -32,6 +32,10 @@ BaseCore::BaseCore() {
  qs=qp->interpreter();
  qs->setErrorMode(QSInterpreter::Nothing);
 
+ connect(qs,SIGNAL(error(const QString&,const QString&,int)),this,SLOT(scriptError(const QString&,const QString&,int)));
+
+//TODO: connect QSInterpreter::timeout ( int elapsedTime ) and somehow allow to kill bad script
+
  //Add ability to open files, directories and run processes
  qs->addObjectFactory(new QSUtilFactory());
  //Add ability to create dialogs
@@ -164,6 +168,45 @@ void BaseCore::conPrintLine(const QString &line) {
 }
 
 /**
+ Print one error line to console, followed by newline
+ @param line Error line to print
+*/
+void BaseCore::conPrintError(const QString &line) {
+ if (!con) return;
+ con->printErrorLine(line);
+}
+
+/**
+ Slot called on error in any script
+ @param message Error message
+ @param scriptName Name of script in which the error occured
+ @param lineNumber
+*/
+void BaseCore::scriptError(const QString &message,const QString &scriptName,int lineNumber) {
+ guiPrintDbg(debug::DBG_DBG,"Script error in " << scriptName << " line " << lineNumber);
+ guiPrintDbg(debug::DBG_DBG,"Script error: " << message);
+//It is not a good idea to print the message, at if it
+// happened in the included file it is re-throw again after returing from include
+// conPrintError(tr("In script")+" '"+scriptName+"', "+tr("line")+" "+QString::number(lineNumber)+":");
+// conPrintError(message);
+
+ //Store only first message, as the others will have bad linenumber
+ if (!errMessage.isNull()) return;
+ errMessage=message;
+ errScript=scriptName;
+ errLineNumber=lineNumber;
+}
+
+/**
+ Clear internal error state
+ Usually called after printing the error, so to avoid seeing the same error again
+ */
+void BaseCore::clearError() {
+ errMessage=QString::null;
+ errScript=QString::null;
+}
+
+/**
  Runs given script code
  @param script QT Script code to run
 */
@@ -173,15 +216,10 @@ void BaseCore::runScript(const QString &script) {
  addScriptingObjects();
  QSArgument ret;
  try {
-  guiPrintDbg(debug::DBG_DBG,"SCRIPT START"); 
   ret=qs->evaluate(script,this,"<GUI>");
-  guiPrintDbg(debug::DBG_DBG,"SCRIPT STOP"); 
  } catch (...) {
-  guiPrintDbg(debug::DBG_DBG,"CATCH"); 
   conPrintLine(tr("Unknown exception in script occured"));
-  guiPrintDbg(debug::DBG_DBG,"CATCH2");   
  }
- guiPrintDbg(debug::DBG_DBG,"CATCH AFTER"); 
 
  if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
   switch (ret.type()) {
@@ -196,6 +234,7 @@ void BaseCore::runScript(const QString &script) {
    }
    case QSArgument::Variant: { //Variant - simple type.
     QVariant v=ret.variant();
+    if (v.isNull()) break; //Null -> nothing to show
     QString retVar=v.toString();
     if (!retVar.isNull()) {
      //Type convertable to string
@@ -203,10 +242,17 @@ void BaseCore::runScript(const QString &script) {
     } else {
      //More complex type
      if (globalSettings->readBool("console/showretvalue_complex")) { //Show return value of complex types
-      //Try to print as string list
-      QString list=v.toStringList().join("\n");   
-      conPrintLine(list);
-      //TODO: some more types in future?
+      if (v.canCast(QVariant::StringList)) {
+       //Print as string list
+       QString list=v.toStringList().join("\n");   
+       conPrintLine(list);
+      } else {
+       //TODO: some more types in future?
+       QString tName=v.typeName();
+       assert(!tName.isNull());
+       guiPrintDbg(debug::DBG_WARN,"Cannot display result: " << tName);
+       conPrintLine(QString("[")+tName+"]");
+      }
      }
     }
     break;
@@ -216,12 +262,28 @@ void BaseCore::runScript(const QString &script) {
    }
   }
  }
+/*
+//Error would be printed directly by the handler
  QString error=qs->errorMessage();
  if (error!=QString::null) { /// some error occured
   con->printErrorLine(error);
  }
+*/
  removeScriptingObjects();
  postRun();
+}
+
+/**
+ If there was some error since last call of this function
+ or since last clearing the error message, display it.
+ Clear the error message before returning.
+*/
+void BaseCore::errorMessage() {
+ if (errMessage.isNull()) return;
+ //There was some error -> print it
+ conPrintError(tr("In script")+" '"+errScript+"', "+tr("line")+" "+QString::number(errLineNumber)+":");
+ conPrintError(errMessage);
+ clearError();//Clear error message
 }
 
 /**
@@ -230,6 +292,7 @@ void BaseCore::runScript(const QString &script) {
 */
 void BaseCore::postRun() {
  //Can be overridden to do some extra cleanup
+ errorMessage();
 }
 
 /**
@@ -242,6 +305,7 @@ void BaseCore::preRun(const QString &script,bool callback/*=false*/) {
  //Can be overridden to do some extra initialization
  if (callback) return;
  con->printCommand(script);
+ clearError();//Clear error message
 }
 
 /**

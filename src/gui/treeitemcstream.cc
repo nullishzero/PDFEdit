@@ -3,12 +3,12 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
 #include "treeitemcstream.h"
 #include "treedata.h"
 #include "pdfutil.h"
 #include "qsstream.h"
 #include "util.h"
+#include <cobject.h>
 
 namespace gui {
 

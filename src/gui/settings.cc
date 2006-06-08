@@ -129,7 +129,7 @@ void Settings::initSettings() {
  @param nameOfPath Name of paths in settings for this file (e.g. "icon")
  @param fileName Name of file. If not specified, the path itself is the filename we want to find
  @param prefix Path prefix (Can be specified if desired to read from different configuration key than default)
- @return QString with full path to the file
+ @return QString with full path to the file, or NULL if no file found in path
 */
 QString Settings::getFullPathName(QString nameOfPath,QString fileName/*=QString::null*/,const QString &prefix/*=QString::null*/) {
  if (fileName.isNull()) {
@@ -154,7 +154,7 @@ QString Settings::getFullPathName(QString nameOfPath,QString fileName/*=QString:
   if (QFile::exists(absName)) return absName;
  }
  guiPrintDbg(debug::DBG_WARN,"File not found: " << fileName);
- return fileName;
+ return QString::null;
 }
 
 /** 

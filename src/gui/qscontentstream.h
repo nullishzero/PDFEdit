@@ -38,24 +38,17 @@ public slots:
  void insertOperator(QObject *op,QObject *newOp,bool indicateChange=true);
  /*-
   Replace old operator oldOp with new operator newOp in this stream.
-  Parameters itPrev and itNext are previous and next iterators of new operator in iterator list
   If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
  */
- void replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,QSPdfOperatorIterator* itPrev,QSPdfOperatorIterator* itNext,bool indicateChange=true);
- void replace(QObject* oldOp,QObject* newOp,QObject* itPrev,QObject* itNext,bool indicateChange=true);
+ void replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,bool indicateChange=true);
+ void replace(QObject* oldOp,QObject* newOp,bool indicateChange=true);
  /*- Write any unwritten changes to operators to underlying stream. */
  void saveChange();
 private:
- void pre_replace(boost::shared_ptr<PdfOperator> op);
- void replace(boost::shared_ptr<PdfOperator> oldOp,boost::shared_ptr<PdfOperator> newOp,bool indicateChange=true);
  bool opValid(QSPdfOperator *op,bool checkThis=false);
 private:
  /** Object held in class*/
  boost::shared_ptr<CContentStream> obj;
- /** Link to previous item for operator that is about to be replaced */
- PdfOperator::Iterator itPrev;
- /** Link to next item for operator that is about to be replaced */
- PdfOperator::Iterator itNext;
 };
 
 } // namespace gui

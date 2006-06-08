@@ -48,7 +48,6 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
  tree=new QListView(this,"tree_view");//DragListView for drag and drop
 #endif
  tree->setSorting(-1);
-// selected=rootItem=NULL;
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
 #ifdef DRAGDROP
  QObject::connect(tree,SIGNAL(dragDrop(TreeItemAbstract*,TreeItemAbstract*)),base,SLOT(_dragDrop(TreeItemAbstract*,TreeItemAbstract*)));
@@ -166,8 +165,6 @@ void TreeWindow::settingUpdate(QString key) {
  @param item The item that was selected
  */
 void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *item) {
-// guiPrintDbg(debug::DBG_DBG,"Selected an item: " << item->text(0));
-// selected=dynamic_cast<TreeItemAbstract*>(item);
  emit itemSelected();
 }
 
@@ -201,7 +198,6 @@ void TreeWindow::clear() {
   delete li;
  }
  data->clear();
-// rootItem=NULL;
 }
 
 /** Init contents of treeview from given PDF document

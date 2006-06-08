@@ -110,7 +110,9 @@ QStringList explode(char separator,const QString &line,bool escape/*=false*/) {
  return qs;
 }
 
-/** Load content of file to string. Empty string is returned if file does not exist or is unreadable.
+/**
+ Load content of file to string.
+ NULL string is returned if file does not exist or is unreadable.
  @param name Filename of file to load
  @return file contents in string.
 */
@@ -120,7 +122,7 @@ QString loadFromFile(const QString &name) {
  int size=f->size();
  char* buffer=(char *)malloc(size);
  size=f->readBlock(buffer,size);
- if (size==-1) return "";
+ if (size<0) return QString::null;
  f->close();
  delete f;
  QByteArray qb;
