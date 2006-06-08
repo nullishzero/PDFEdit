@@ -524,7 +524,7 @@ public:
 	/** 
 	 * Constructor. 
 	 */
-	SimpleGenericOperator (Operands& opers, const std::string& opTxt): opText (opTxt)
+	SimpleGenericOperator (const std::string& opTxt, Operands& opers): opText (opTxt)
 	{
 		utilsPrintDbg (debug::DBG_DBG, opTxt);
 		//

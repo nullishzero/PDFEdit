@@ -61,7 +61,7 @@ SimpleGenericOperator::clone ()
 	assert (ops.size () == operands.size());
 
 	// Create clone
-	return shared_ptr<PdfOperator> (new SimpleGenericOperator (ops,opText));
+	return shared_ptr<PdfOperator> (new SimpleGenericOperator (opText,ops));
 }
 
 
@@ -133,7 +133,10 @@ CompositePdfOperator::remove (boost::shared_ptr<PdfOperator> op)
 //
 void 
 CompositePdfOperator::getChildren (PdfOperators& container) const
-	{copy (children.begin(), children.end (), back_inserter (container));}
+{
+	container.clear ();
+	copy (children.begin(), children.end (), back_inserter (container));
+}
 
 //
 //
@@ -333,14 +336,16 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 	PdfOperator::PdfOperators opers;
 	oper->getChildren (opers);
 	assert (!opers.empty());
-	while (isComposite (opers.back()))
+	boost::shared_ptr<PdfOperator> tmpop = opers.back();
+	while (isComposite (tmpop))
 	{
 		opers.back()->getChildren (opers);
 		if (opers.empty())
 			break;
+		tmpop = opers.back();
 	}
 
-	return opers.back();
+	return tmpop;
 }
 
 

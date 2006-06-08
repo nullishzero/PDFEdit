@@ -1374,7 +1374,7 @@ namespace {
 				// Operator not found, create unknown operator
 				if (NULL == chcktp)
 				{
-					result = shared_ptr<PdfOperator> (new SimpleGenericOperator (operands, string (o.getCmd())));
+					result = shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o.getCmd()),operands));
 					break;
 				}
 				
