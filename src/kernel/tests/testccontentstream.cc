@@ -117,8 +117,8 @@ frontinsert (ostream& oss, const char* fileName)
 		string tmp1;
 		cs->getStringRepresentation (tmp1);
 
-		oss << endl << "[" << tmp1.substr(0,100) << "]" << endl; // Only first name is used
-		oss << string ("[halo tu   ") << tmp.substr(0,90) << endl;
+		//oss << endl << "[" << tmp1.substr(0,100) << "]" << endl; // Only first name is used
+		//oss << string ("[halo tu   ") << tmp.substr(0,90) << endl;
 		CPPUNIT_ASSERT (tmp1 == string ("halo tu   ") + tmp);
 
 		_working (oss);

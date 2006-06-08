@@ -788,7 +788,6 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 			}else
 				throw CObjInvalidObject ();
 	}
-
 	assert ((size_t)len == resultDict.getPropertyCount());
 }
 
@@ -830,7 +829,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	//
 	// If xpdf returned objNull and we did not give him null, an error occured
 	//
-	const string null ("null");
+	const static string null ("null");
 	if ( (obj->isNull()) && !equal(str.begin(), str.end(), null.begin(), nocase_compare) )
 	{
 		obj->free ();
@@ -1357,6 +1356,12 @@ parseStreamToContainer (T& container, ::Object& obj)
 		container.push_back (static_cast<typename T::value_type> (c));
 	
 	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());
+	
+	if (len != container.size())
+	{
+		int* i = 0;
+		*i  = 100;
+	}
 	assert (len == container.size());
 	// Cleanup
 	obj.streamClose ();

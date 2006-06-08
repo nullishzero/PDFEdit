@@ -547,9 +547,9 @@ namespace {
 	opTjUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size ());
-		assert( state->getFont() != NULL );	// No font for text
 
- 		printTextUpdate (state, getStringFromIProperty (args[0]), rc);
+ 		if (state->getFont())
+			printTextUpdate (state, getStringFromIProperty (args[0]), rc);
 		
 		// return changed state
 		return state;
@@ -1662,9 +1662,12 @@ namespace {
 	 * @param res Graphical resources.
 	 * @param state Graphical state.
 	 */
-	GfxState *
-	setOperatorBBox (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, GfxState* state)
-	{
+	void
+	setOperatorBBox (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, /*const*/ GfxState& state)
+	{		
+		assert (!state.isPath());		// if isPath, state is from other ccontentstream or is bad
+		GfxState* tmpstate = state.copy (false);
+
 		utilsPrintDbg (debug::DBG_DBG, "");
 		boost::shared_ptr<PdfOperator> op;
 		Rectangle rc;
@@ -1687,22 +1690,24 @@ namespace {
 			if (NULL != chcktp)
 			{
 				// Check arguments
-				//assert ( (chcktp->argNum >= 0) || (ops.size () <= (size_t)-chcktp->argNum));
-				//assert ( (chcktp->argNum < 0) || (ops.size () == (size_t)chcktp->argNum));
 				if ( ((chcktp->argNum >= 0) && (ops.size () != (size_t)chcktp->argNum)) ||
 				      ((chcktp->argNum < 0) && (ops.size () > (size_t)-chcktp->argNum)) )
 				{
 					kernelPrintDbg (debug::DBG_CRIT, "Bad content stream. Incorrect parameters.");
+					
+					// Delete gfx state
+					delete tmpstate;
+					
 					throw CObjInvalidObject ();
 				}
 
 				// Update the state and 
-				state = (chcktp->update) (state, res, op, ops, &rc);
+				tmpstate = (chcktp->update) (tmpstate, res, op, ops, &rc);
 				
 			}else
 			{
 				// Update the state
-				state = unknownUpdate (state, res, op, ops, &rc);
+				tmpstate = unknownUpdate (tmpstate, res, op, ops, &rc);
 			}
 
 			op->setBBox (rc);
@@ -1712,8 +1717,8 @@ namespace {
 
 		// Close xpdf mess
 		xpdf::closeXpdfMess ();
-
-		return state;
+		// Delete gfx state
+		delete tmpstate;
 	}
 
 //==========================================================
@@ -1831,12 +1836,8 @@ CContentStream::CContentStream (CStreams& strs,
 	parseContentStream (operators, strs, *this, cstreams, operandobserver);
 	
 	// Save bounding boxes
-	if (!operators.empty()) {
-		assert( ! gfxstate->isPath() );		// if isPath, state is from other ccontentstream or is bad
-		GfxState * tmpstate = gfxstate->copy( false );
-		tmpstate = setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, tmpstate);
-		delete tmpstate;
-	}
+	if (!operators.empty()) 
+		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
 
 	// Register observer on all cstream
 	registerCStreamObservers ();
@@ -1871,12 +1872,8 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 	}
 	
 	// Save bounding boxes
-	if (!operators.empty()) {
-		assert( ! gfxstate->isPath() );		// if isPath, state is from other ccontentstream or is bad
-		GfxState * tmpstate = gfxstate->copy( false );
-		tmpstate = setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, tmpstate);
-		delete tmpstate;
-	}
+	if (!operators.empty()) 
+		setOperatorBBox (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate);
 }
 
 //
@@ -1999,7 +1996,7 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 	// To be sure
 	//
 	toDel->setPrev (PdfOperator::ListItem());
-	toDel->setNext (PdfOperator::ListItem());
+	getLastOperator(toDel)->setNext (PdfOperator::ListItem());
 	
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
@@ -2202,6 +2199,12 @@ CContentStream::replaceOperator (OperatorIterator it,
 		itCur.getCurrent()->setPrev (itPrv.getCurrent());
 	}
 	
+	//
+	// To be sure
+	//
+	toReplace->setPrev (PdfOperator::ListItem());
+	getLastOperator(toReplace)->setNext (PdfOperator::ListItem());
+
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
 		_objectChanged ();
