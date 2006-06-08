@@ -3,7 +3,7 @@
 #It is expected that the directory in which the sources are exported is named 'pdfedit'
 
 #Make documentation before making tarball
-(cd doc && make doc_nodoxygen)
+(cd doc && make doc_dist)
 (cd src/gui && lrelease pdfedit.pro)
 #Get version number from src/gui/version.h
 VERSION=`grep "#define VERSION" <src/gui/version.h |sed 's/.*"\(.*\)".*/\1/'`
