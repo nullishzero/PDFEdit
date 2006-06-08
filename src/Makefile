@@ -29,7 +29,7 @@ kernel: xpdf config_xpdf_variables utils
 
 # XPdf
 xpdf: xpdf_configure
-	cd xpdf && make
+	cd xpdf && make libxpdf
 
 # XPdf configure
 xpdf_configure: xpdf/config.status
