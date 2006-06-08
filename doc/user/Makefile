@@ -2,14 +2,20 @@
 
 .PHONY: clean all 
 
-#html docs get built here as XHTML and also in "online help" as HTML
+#html docs get built here as PDF, XHTML and also in "online help" as HTML
 html_docs=scripting.html pdfedit.html keyboard.html cs/keyboard.html
+
+#html docs that won't get into online help
+html_docs_all=$(html_docs) install.html
 
 #directory in which to place generated html help files
 html_help_dir=../../src/gui/help
 
+#PDF documents to generate
+pdf_docs_all=$(html_docs_all:.html=.pdf)
+
 #generated documentation
-docs=$(html_docs) $(addprefix $(html_help_dir)/,$(html_docs)) install.html pdfedit.1
+docs=$(pdf_docs_all) $(html_docs_all) $(addprefix $(html_help_dir)/,$(html_docs)) pdfedit.1
 
 all: $(docs)
 
@@ -21,6 +27,10 @@ clean:
 # over docbook2html (which uses jade)
 %.html: %.xml
 	../tools/docbook2html $< || docbook2html -u $< 2>&1 >/dev/null || true
+
+#generate PDF files
+%.pdf: %.xml
+	../tools/docbook2pdf $< $@ || true
 
 #generate similar documentation in HTML format in application help directory too
 $(html_help_dir)/%.html: %.xml
