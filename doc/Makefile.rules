@@ -1,0 +1,23 @@
+#Makefile.rules
+#Rules for generating documentation in various formats
+#and some common definitions
+
+.PHONY: clean all all_no_pdf
+
+#rule for procesing docbook documentation
+#prefer using xsltproc and docbook.xsl (nicer output and is also faster)
+# over docbook2html (which uses jade)
+%.html: %.xml
+	$(TOP_DIR)/tools/docbook2html_any $< $@ || true
+
+#rule for generating PDF files
+%.pdf: %.xml
+	$(TOP_DIR)/tools/docbook2pdf $< $@ || true
+
+#rule for generating manpages
+%.1: %.xml ../tools/docbook2man.pl
+	$(TOP_DIR)/tools/docbook2man.pl $< >$@
+
+#rule for generating HTML documentation to be placed in application help directory
+$(html_help_dir)/%.html: %.xml
+	$(TOP_DIR)/tools/docbook2html $< $@ html || docbook2html -o $(html_help_dir) -u $< 2>&1 >/dev/null || true
