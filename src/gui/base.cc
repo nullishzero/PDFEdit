@@ -519,7 +519,7 @@ void Base::closeWindow() {
  Return true if delinearization was successful, false in case of failure.<br>
  In case of failure the error mesage is available via error()
  \see error
- @param infile input file
+ @param inFile input file
  @param outFile output file
 */
 bool Base::delinearize(const QString &inFile,const QString &outFile) {

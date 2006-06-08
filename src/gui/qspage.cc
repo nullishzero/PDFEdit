@@ -141,7 +141,10 @@ void QSPage::addAnnotation(QObject *an) {
  addAnnotation(annot);
 }
 
-/** Call CPage::getMediabox() */
+/**
+ Return mediabox from Page
+ \see CPage::getMediabox
+*/
 QVariant QSPage::mediabox() {
  //QStringList will be "autoconverted" to Array in QSA
  Rectangle r=obj->getMediabox();
@@ -153,13 +156,24 @@ QVariant QSPage::mediabox() {
  return QVariant(rect);
 }
 
-/** Call CPage::setMediabox() */
+/**
+ Set mediabox for this page
+ \see CPage::getMediabox
+ @param x1 X coordinate of upper left media box corner
+ @param y1 Y coordinate of upper left media box corner
+ @param x2 X coordinate of lower right media box corner
+ @param y2 Y coordinate of lower right media box corner
+*/
 void QSPage::setMediabox(double x1,double y1,double x2,double y2) {
  Rectangle r(x1,y1,x2,y2);
  obj->setMediabox(r);
 }
 
-/** Call CPage::setMediabox() */
+/**
+ Set mediabox for this page
+ \see CPage::getMediabox
+ @param rc rectangle specifying media box
+*/
 void QSPage::setMediabox(QRect rc) {
  //Note that Rectangle uses double coordinates, while Qrect use int coordinates.
  //However, media box is often array of int, so this may not be a problem

@@ -23,7 +23,6 @@ namespace gui {
 
 /**
  Create new BaseCore class 
- @param _con Console write handler
 */
 BaseCore::BaseCore() {
  con=NULL;
@@ -59,9 +58,15 @@ void BaseCore::setConWriter(ConsoleWriter *_con) {
  con=_con;
 }
 
-/** Import currently edited document (QSPDF wrapper) into scripting */
+/**
+ Import currently edited document into scripting
+  QSPDF wrapper will be created around the pdf document
+ @param pdf PDF to import under name "document" into scripting
+*/
 void BaseCore::importDocument(pdfobjects::CPdf *pdf) {
  qpdf->set(pdf);
+ //TODO: document as property
+ //TODO: When QSA wrapper factory will be implemented, this need to change
  import->addQSObj(qpdf,"document");
 }
 
@@ -321,7 +326,7 @@ void BaseCore::errorNullPointer(const QString &className,const QString &methodNa
  Script error invoked when script function was executed with bad parameter
  @param className Name of class, in which this error occured
  @param methodName Name of method, in which this error occured
- @param paramNum(number of bad parameter)
+ @param paramNum number of bad parameter
  @param param Pointer to the QObject that was given as parameter
  @param expected What was expected to see as parameter
  */

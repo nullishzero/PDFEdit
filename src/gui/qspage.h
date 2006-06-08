@@ -80,7 +80,10 @@ public slots:
  QSDict* getDictionary();
  /*- Return text representation of this page */
  QString getText();
- /*- Return media box of this page as array (x1,y1,x2,y2) */
+ /*-
+  Return media box of this page as array (x1,y1,x2,y2).
+  The mediabox is a rectangle from (x1,y1) to (x2,y2)
+ */
  QVariant mediabox();/*Variant=double[]*/
  /*- Set media box of this page to given rectangle - from (x1,y1) to (x2,y2) */
  void setMediabox(double x1,double y1,double x2,double y2);

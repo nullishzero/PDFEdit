@@ -80,7 +80,7 @@ void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,bool ind
 
 /**
  QSA bugfix version
- \copydoc replace(QSPdfOperator*,QSPdfOperator*,QSPdfOperatorIterator*,QSPdfOperatorIterator*,bool)
+ \copydoc replace(QSPdfOperator*,QSPdfOperator*,bool)
 */
 void QSContentStream::replace(QObject* oldOp,QObject* newOp,bool indicateChange/*=true*/) {
  QSPdfOperator* _oldOp=qobject_cast<QSPdfOperator*>(oldOp,"replace",1,"PdfOperator");

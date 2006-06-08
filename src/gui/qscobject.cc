@@ -47,6 +47,7 @@ QSCObject::~QSCObject() {
 /**
  Check if given pointer is NULL.<br>
  If it is, call base error handler for null pointers and return true, otherwise just return false;<br>
+ @param ptr Pointer to check if it is not NULL
  @param methodName Name of method, to send to error handler if ptr is NULL
 */
 bool QSCObject::nullPtr(const void* ptr,const QString &methodName) {

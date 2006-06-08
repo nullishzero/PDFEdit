@@ -20,7 +20,7 @@ public:
  void printErrorLine(const QString &line);
  virtual void printCommand(const QString &cmd);
 private:
- //Command window used for output
+ /** Command window used for output */
  CommandWindow *cmdLine;
 };
 
