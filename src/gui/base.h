@@ -31,6 +31,7 @@ class TreeItemAbstract;
  Class that host scripts and contain static script functions<br>
  This class is also responsible for garbage collection of scripting
  objects and interaction of editor and scripts
+ \brief Script hosting base class
 */
 class Base : public BaseCore {
  Q_OBJECT

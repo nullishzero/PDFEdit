@@ -25,6 +25,13 @@ void QSTreeItemContentStream::setMode(const QString &newMode) {
  treeItem->setMode(newMode);
 }
 
+/** \copydoc TreeItemContentStream::getMode() */
+QString QSTreeItemContentStream::getMode() {
+ TreeItemContentStream *treeItem=dynamic_cast<TreeItemContentStream*>(obj);
+ assert(treeItem);
+ return treeItem->getMode();
+}
+
 /** destructor */
 QSTreeItemContentStream::~QSTreeItemContentStream() {
 }

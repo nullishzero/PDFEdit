@@ -10,7 +10,7 @@ namespace gui {
 using namespace pdfobjects;
 
 /*= This type of object represents stream in document (in page) */
-/** QObject wrapper around CStream */
+/** \brief QObject wrapper around CStream */
 class QSStream : public QSIProperty {
  Q_OBJECT
 public:

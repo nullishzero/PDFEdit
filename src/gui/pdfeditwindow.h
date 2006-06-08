@@ -25,7 +25,10 @@ class Menu;
 
 using namespace pdfobjects;
 
-/** PdfEditWindow - class handling main application window */
+/**
+ PdfEditWindow - class handling main application window
+ \brief Main window of application
+ */
 class PdfEditWindow : public QMainWindow {
  Q_OBJECT
 public:

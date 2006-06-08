@@ -7,7 +7,8 @@ namespace gui {
 
 /**
  Class representing about window.<br>
- Display authors, application name and version.
+ Display authors, application name, version and some info.
+ \brief Window displaying program version and authors 
 */
 class AboutWindow : public QWidget {
 Q_OBJECT

@@ -33,6 +33,7 @@ typedef QPtrDictIterator<QSTreeItem> TreeBindingMapIterator;
 /**
  Core of Class that host scripts and is responsible for garbage collection of scripting objects
  and core scriptiong functionality
+ \brief Core scripting functions
 */
 class BaseCore : public QObject {
  Q_OBJECT

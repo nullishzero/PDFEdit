@@ -7,7 +7,10 @@ class QString;
 
 namespace gui {
 
-/** Console Writer class providing console output */
+/**
+ Console Writer class providing console output
+ \brief Abstract class for console output
+*/
 class ConsoleWriter  {
 public:
  ConsoleWriter();

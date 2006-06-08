@@ -16,7 +16,8 @@ class QSPage;
 
 using namespace pdfobjects;
 
-/** QObject wrapper around CAnnotation object */
+/*= This type represent one annotation in page */
+/** \brief QObject wrapper around CAnnotation object */
 class QSAnnotation : public QSCObject {
  Q_OBJECT
 public:

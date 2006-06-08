@@ -13,6 +13,7 @@ namespace gui {
  with nearby "..." button allowing to invoke dialog to change the setting
  in some possibly  more user-friently way<br>
  Subclasses should reimplement the dialog function to invoke some dialog and change the string value accordingly
+ \brief Abstract class for option editable as string and pickable by dialog
 */
 class DialogOption : public Option {
  Q_OBJECT

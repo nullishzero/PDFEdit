@@ -10,6 +10,7 @@ namespace gui {
 /**
  Class for widget containing one editable setting of type string.<br>
  Also serves as a base class for editing some more specific types that can be represented in a string.
+ \brief Widget to edit string option
 */
 class StringOption : public Option {
  Q_OBJECT

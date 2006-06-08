@@ -50,6 +50,7 @@ public:
  virtual void reloadSelf();
  void setMode(TreeItemContentStreamMode newMode);
  void setMode(const QString &newMode);
+ QString getMode();
 private:
  void showMode();
  void initObserver();

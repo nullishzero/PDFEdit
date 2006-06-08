@@ -10,6 +10,7 @@ namespace gui {
  FileOption - class for widget containing one editable string setting,
  while allowing to either type the name, or use dialog to pick the filename. User's choice<br>
  Used as one item type in option window<br>
+ \brief Widget to edit option by typing or picking a file
 */
 
 class FileOption : public DialogOption {

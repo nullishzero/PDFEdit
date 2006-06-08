@@ -19,6 +19,7 @@ class Option;
  Options are arranged to tabs and it is ensured, that only one dialog at once is active
  (via Private constructor and static method to invoke the dialog, which will focus on
  existing dialog if it exists, instead of creating second one) 
+ \brief Window for showing/editing program settings
 */
 class OptionWindow : public QWidget {
  Q_OBJECT

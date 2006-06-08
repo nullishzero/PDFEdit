@@ -11,7 +11,7 @@ namespace gui {
 //class Base;
 
 /*= Base class for all PDF objects used in scripts */
-/** Common base class of all QObject wrappers used in scripting */
+/** \brief Common base class of all QObject wrappers used in scripting */
 class QSCObject : public QObject {
 Q_OBJECT
 public:

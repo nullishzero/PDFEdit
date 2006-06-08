@@ -100,6 +100,20 @@ void TreeItemContentStream::setMode(const QString &newMode) {
  else if (lMode=="graphic") setMode(Graphic);
 }
 
+/**
+ Get mode of this item as a string
+ (that can be passed to setMode)
+*/
+QString TreeItemContentStream::getMode() {
+ switch(mode) { 
+  case All:	return "all";
+  case Text:	return "text";
+  case Font:	return "font";
+  case Graphic: return "graphic";
+  default:	return "?";
+ }
+}
+
 /** default destructor */
 TreeItemContentStream::~TreeItemContentStream() {
  uninitObserver();

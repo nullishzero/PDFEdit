@@ -30,6 +30,7 @@ const int addDialogPropertyTypes=8;
  Dialog does not block focus of main window and you can have multiple of them opened simultaneously
  (even for same Dict / Array)<br>
  Dialog closes itself, when the relevant document is closed
+ \brief Dialog for adding items to Dictionaries or Arrays
 */
 class AddItemDialog : public SelfDestructiveWidget {
 Q_OBJECT

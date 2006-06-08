@@ -17,6 +17,7 @@ using namespace pdfobjects;
 
 /**
  Dialog allowing to select reference target in some "interactive way"
+ \brief Dialog to pick reference target
 */
 class RefPropertyDialog : public QDialog {
 Q_OBJECT

@@ -16,7 +16,7 @@ class QSIPropertyArray;
 using namespace pdfobjects;
 
 /*= This type of object represents pdf operator in content stream */
-/** QObject wrapper around PdfOperator */
+/** \brief QObject wrapper around PdfOperator */
 class QSPdfOperator : public QSCObject {
  Q_OBJECT
 public:

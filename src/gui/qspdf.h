@@ -20,7 +20,7 @@ using namespace pdfobjects;
  Note to page manipulation - page number start from number 1,
  number of last page is equal to count of pages
  */
-/** QObject wrapper around CPdf */
+/** \brief QObject wrapper around CPdf */
 class QSPdf : public QSCObject {
  Q_OBJECT
 public:

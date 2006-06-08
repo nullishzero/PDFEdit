@@ -9,6 +9,7 @@ namespace gui {
 /**
  class for widget containing one editable setting of type integer<br>
  Used as one item type in option window<br>
+ \brief Widget to edit integer option
 */
 class IntOption : public StringOption {
  Q_OBJECT

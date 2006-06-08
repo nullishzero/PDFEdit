@@ -13,6 +13,7 @@ namespace gui {
  If current setting specify item not in the list, the first item in list is shown instead<br>
  User is unable to specify string not in the list<br>
  Used as one item type in option window<br>
+ \brief Widget to edit option by picking from list of choices
 */
 class ComboOption : public Option {
  Q_OBJECT

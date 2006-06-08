@@ -10,6 +10,7 @@ namespace gui {
  Reference validator - checks if given String is valid Reference in given document
  Does validate only format, not if the reference exists (that would be too slow)
  Reference existence is validated on attempt to write it to the property
+ \brief Reference format validator
 */
 class RefValidator : public QValidator {
 public:

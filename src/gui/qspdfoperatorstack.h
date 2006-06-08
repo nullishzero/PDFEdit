@@ -19,7 +19,7 @@ typedef std::deque<boost::shared_ptr<PdfOperator> > pdfOpDeque;
  It hold zero or more values indexed by positive integer, starting from zero.
  You can add pdf operators to beginning or end of the array, so the array can behave like double-ended stack
 */
-/** QObject wrapper around array (stack) of PDF Operators */
+/** \brief QObject wrapper around array (stack) of PDF Operators */
 class QSPdfOperatorStack : public QSCObject {
  Q_OBJECT
 public:

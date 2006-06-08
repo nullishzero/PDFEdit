@@ -8,7 +8,9 @@ class QString;
 namespace gui {
 
 /**
- Exception raised when program encountered some error while loading in menu definitions
+ Exception raised when program encountered some error while loading
+ menu or toolbar - in menu or toolbar item definitions
+ \brief Exception raised when encountering invalid menu item
 */
 class InvalidMenuException : public std::exception {
 public:

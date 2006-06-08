@@ -13,6 +13,7 @@ class QSPage;
 /**
  Toolbutton showing current page number and allowing to change it<br>
  Can be placed in toolbar in place of ordinary button
+ \brief Toolbar widget for changing page
 */
 class PageTool : public QWidget {
 Q_OBJECT

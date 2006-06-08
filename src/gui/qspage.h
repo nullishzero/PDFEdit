@@ -23,7 +23,7 @@ class QSPdfOperatorStack;
 using namespace pdfobjects;
 
 /*= This type of object represents one page in document. */
-/** QObject wrapper around CPage */
+/** \brief QObject wrapper around CPage */
 class QSPage : public QSCObject {
  Q_OBJECT
 public:

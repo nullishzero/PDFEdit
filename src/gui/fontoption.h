@@ -9,8 +9,9 @@ namespace gui {
 /**
  FontOption - class for widget containing one editable string setting,
  while allowing to either type (allowing things like copy/paste) the font
- description (name), or use dialog to pick it. User's choice<br>
+ description (name and parameters), or use dialog to pick it. User's choice<br>
  Used as one item type in option window<br>
+ \brief Widget to edit option by typing or picking a font
 */
 class FontOption : public DialogOption {
  Q_OBJECT

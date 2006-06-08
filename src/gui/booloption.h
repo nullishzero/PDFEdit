@@ -10,6 +10,7 @@ namespace gui {
 /**
  Class for widget containing one editable setting of type bool<br>
  Used as one item type in option window<br>
+ \brief Widget to edit boolean option
 */
 class BoolOption : public Option {
  Q_OBJECT

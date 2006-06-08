@@ -6,11 +6,6 @@
 
 class QWidget;
 
-/**
- GUI namespace<br>
- This namespace contain all user-interface related classes
- (widgets, tree items, scripting wrappers and others)
-*/
 namespace gui {
 
 QString openFileDialog(QWidget* parent,const QString &caption=QString::null,const QString &settingName=QString::null,const QString &filters=QString::null,const QString &savePath=QString::null);

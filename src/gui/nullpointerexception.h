@@ -12,6 +12,7 @@ namespace gui {
  methods, while the objest wrapped inside is a NULL pointer, meaning that the
  operation would result in null pointer dereference (and program crash), if
  they would be executed.
+ \brief Exception raised when encountering NULL pointer when not expected
 */
 class NullPointerException : public std::exception {
 public:

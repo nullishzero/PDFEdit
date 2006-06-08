@@ -11,6 +11,7 @@ namespace gui {
 /**
  class representing help window.<br>
  Help window is basically just a limited HTML browser
+ \brief Help window
 */
 class HelpWindow : public QWidget {
 Q_OBJECT

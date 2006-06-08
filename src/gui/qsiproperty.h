@@ -11,7 +11,7 @@ namespace gui {
 using namespace pdfobjects;
 
 /*= This object represent one property in dictionary or array */
-/** QObject wrapper around IProperty */
+/** \brief QObject wrapper around IProperty */
 class QSIProperty : public QSCObject {
  Q_OBJECT
 public:

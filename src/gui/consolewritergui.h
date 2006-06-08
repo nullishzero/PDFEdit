@@ -11,6 +11,7 @@ class CommandWindow;
 
 /**
  class handling console output by sending it to command window
+ \brief Console output in GUI
 */
 class ConsoleWriterGui : public ConsoleWriter {
 public:

@@ -9,6 +9,7 @@ namespace gui {
 /**
  Class for widget containing one editable setting<br>
  Abstract class, must be subclassed for editing specific option types (integer, string ...)
+ \brief Abstract class for option editing widget
 */
 class Option : public QWidget{
  Q_OBJECT

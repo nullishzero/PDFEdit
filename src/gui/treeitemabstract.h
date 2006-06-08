@@ -3,6 +3,7 @@
 
 #include <qlistview.h>
 #include <qdict.h>
+#include <qmap.h>
 
 class QStringList;
 class QString;
@@ -14,11 +15,12 @@ class TreeData;
 class TreeWindow;
 class BaseCore;
 
-/** Type of TreeItemAbstract's child.
+/**
+ Type of TreeItemAbstract's child.<br>
  The type is arbitrary integer and must be unique only across single type
- (different types must have different values).
+ (different types must have different values).<br>
  Two distict TreeItemAbstract descendants can have collisions in types
- (same value meaning different type)
+ (same value meaning different type)<br>
  Types of childs from different items are never mixed or compared together
 */
 typedef int ChildType;

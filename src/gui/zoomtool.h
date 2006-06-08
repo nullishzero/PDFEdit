@@ -11,6 +11,7 @@ namespace gui {
 /**
  Toolbutton allowing to change zoom level of current page<br>
  Can be placed in toolbar in place of ordinary button
+ \brief Toolbar widget for changing zoom level
 */
 class ZoomTool : public QWidget {
 Q_OBJECT
