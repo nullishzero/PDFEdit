@@ -218,6 +218,12 @@ void setInheritablePageAttr(boost::shared_ptr<CDict> & pageDict);
 //=====================================================================================
 
 //
+// Forward declaration
+//
+class CPage;
+
+
+//
 //
 //
 typedef observer::IObserverHandler<CPage> CPageObserverSubject;
@@ -707,117 +713,7 @@ public:
 	 *
 	 * @param container Container of operators to add.
 	 */
-	template<typename Container>
-	void addContentStream (const Container& cont)
-	{
-		assert (hasValidPdf(dictionary));
-		assert (hasValidRef(dictionary));
-		if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
-			throw CObjInvalidObject ();
-
-		// If not parsed
-		if (contentstreams.empty())
-			parseContentStream ();		
-		
-		CPdf* pdf = dictionary->getPdf();
-		IndiRef ref = dictionary->getIndiRef();
-		
-		// Create stream with one default property Length
-		boost::shared_ptr<CStream> newstr (new CStream());
-		
-		//
-		// Get string representation of new content stream
-		//
-		typename Container::const_iterator it = cont.begin();
-		std::string str;
-		for (; it != cont.end(); ++it)
-		{
-			std::string tmpop;
-			(*it)->getStringRepresentation (tmpop);
-			str += tmpop;
-		}
-		kernelPrintDbg (debug::DBG_DBG, str);
-	
-		// Set the stream
-		newstr->setBuffer (str);
-
-		//
-		// Change the "Contents" entry 
-		//
-		// Set ref and indiref reserve free indiref for the new object
-		IndiRef newref = pdf->addIndirectProperty (newstr);
-		newstr = IProperty::getSmartCObjectPtr<CStream> (pdf->getIndirectProperty (newref));
-		assert (newstr);
-
-		// Unregister observer (we would get notification about the change we
-		// know about)
-		unregisterContentsObserver ();
-		
-		//
-		// Make valid array of stream references, add new to the beginning
-		// otherwise we do not know gfx state 
-		// 
-		if (dictionary->containsProperty ("Contents"))
-		{
-			boost::shared_ptr<IProperty> contents = utils::getReferencedObject(dictionary->getProperty("Contents"));
-			if (isStream(contents))
-			{ // Exactly one stream
-				
-				CArray streamrefs;
-				
-				// Add new one
-				CRef newref (newstr->getIndiRef());
-				streamrefs.addProperty (newref);
-
-				// Add current one
-				CRef tmp (contents->getIndiRef());
-				streamrefs.addProperty (tmp);
-	
-				// Set new array to the "Contents" entry
-				dictionary->setProperty ("Contents", streamrefs);
-		
-			}else
-			{ // Array
-				
-				if (!isArray(contents))
-					throw CObjInvalidObject ();
-
-				// Insert new one before current ones
-				CRef newref (newstr->getIndiRef());
-				IProperty::getSmartCObjectPtr<CArray> (contents)->addProperty (0,newref);
-			}
-
-		}else
-		{
-			// Make valid array of stream references
-			CArray streamrefs;
-	
-			// Add new one
-			CRef newref (newstr->getIndiRef());
-			streamrefs.addProperty (newref);
-				
-			// Add the new array
-			dictionary->addProperty ("Contents", streamrefs);
-		}
-		
-		// Register observer 
-		registerContentsObserver ();
-
-		// Parse new stream to content stream and add it to the streams
-		CContentStream::CStreams streams;
-		streams.push_back (newstr);
-		boost::shared_ptr<GfxResources> res;
-		boost::shared_ptr<GfxState> state;
-		createXpdfDisplayParams (res, state);
-		ContentStreams _tmp;
-		_tmp.push_back(boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
-		std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(_tmp));
-		contentstreams = _tmp;
-
-		// Indicate change
-		_objectChanged ();
-	}
-
+	template<typename Container> void addContentStream (const Container& cont);
 	
 	//
 	// Page translation 

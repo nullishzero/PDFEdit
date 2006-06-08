@@ -248,6 +248,5 @@ private:  // emphasize the following members are private
 };
 
 
-
 #endif // _STATIC_H_
 
