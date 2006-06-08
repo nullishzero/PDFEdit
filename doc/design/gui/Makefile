@@ -1,16 +1,25 @@
+#
 #Makefile for documentation
+#
 
-.PHONY: clean all
+#HTML documents to generate
+html_docs=menu.html
 
-docs=menu.html
+#PDF documents to generate
+pdf_docs=$(html_docs:.html=.pdf)
+
+#All documents
+docs=$(html_docs) $(pdf_docs)
 
 all: $(docs)
+
+all_no_pdf: $(html_docs)
 
 clean:
 	rm -f $(docs)
 
-#rule for procesing docbook documentation
-#prefer using xsltproc and docbook.xsl (nicer output and is also faster)
-# over docbook2html (which uses jade)
-%.html: %.xml
-	../../tools/docbook2html $< 2>/dev/null || docbook2html -u $< 2>&1 >/dev/null ||  true
+#root of doc/ directory
+TOP_DIR=../..
+
+#include rules to generate various documentation formats
+include $(TOP_DIR)/Makefile.rules
