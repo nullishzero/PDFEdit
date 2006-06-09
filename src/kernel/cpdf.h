@@ -6,6 +6,22 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.61  2006/06/09 17:17:33  hockm0bm
+ * * PageTreeNodeType enum added
+ * * getPageTreeRoot, getNodeType, getKidsCount, getKidsFromInterNode helper
+ *   methods added
+ * * findPageDict and searchTreeNode methods rewritten
+ * 	- not depended on Count field anymore
+ * 	- more error prone
+ * 	- throws only when neccessary (no falback possible)
+ * * CPdf::getDictionary changed to const
+ * * CPdf::getPageCount reimplemented
+ * 	- calculates page count rather than use Pagetree root Count field which
+ *           may be malformed
+ * 	- doesn't throw
+ * * getNodePosition, searchTreeNode, getNodePosition signature changed
+ * 	- pdf is const reference
+ *
  * Revision 1.60  2006/06/06 09:19:45  hockm0bm
  * * ModeController moved to configuration namespace
  * * ModeController::loadFromFile
@@ -1127,7 +1143,7 @@ public:
 	 * @return Document catalog dictionary wrapped by smart pointer (using
 	 * shared_ptr from boost library).
 	 */
-	boost::shared_ptr<CDict> getDictionary()
+	boost::shared_ptr<CDict> getDictionary()const
 	{
 		return docCatalog;
 	}
@@ -1216,14 +1232,11 @@ public:
 	 */
 	size_t getPagePosition(boost::shared_ptr<CPage> page)const;
 
-	/** Returnes page count.
+	/** Returnes total page count.
 	 *
-	 * Try to use pageCount field value (if it is valid) or gets value from Page
-	 * tree root node (sets new value of pageCount field).
-	 * 
+	 * Calculates (uses getKidsCount helper function) all direct pages under
+	 * page tree root node.
 	 *
-	 * @throw MalformedFormatExeption if page count can't be found or it has bad
-	 * type (CPdf instance is almost unusable if this is not correct).
 	 * @return Number of pages which are accessible.
 	 */
 	unsigned int getPageCount()const;
@@ -1485,9 +1498,16 @@ namespace utils
  * arbitrary page in short time (some applications provide balanced tree form
  * to enable very effective access).
  * <p>
+ * <p>
  * <b>Implementation notes</b>:<br>
+ * Function tries to find page also in page tree structure which doesn't follow
+ * pdf specification. All wierd page tree elements are ignored and just those
+ * which may stand for intermediate or leaf nodes are condidered. Also doesn't
+ * use Count and Parent field information during searching.
+ * <p>
+ * <b>Usage notes</b>:<br>
  * When starting to search from root of all pages, pagesDict should be supplied
- * from pdf-&gtgetProperty("Pages"). This is indirect reference (according
+ * from pdf-&gt;getProperty("Pages"). This is indirect reference (according
  * standard), but can be used in this method. startPos should be 1 (first page
  * is 1).
  * <br>
@@ -1496,9 +1516,8 @@ namespace utils
  * caller exactly knows what he is doing, otherwise page position is wrong.
  *
  * @throw PageNotFoundException if given position couldn't be found.
- * @throw ElementBadTypeException if some of required element has bad type.
- * @throw MalformedFormatExeption if page node count number doesn't match the
- * reality (page count number is not reliable).
+ * @throw ElementBadTypeException if some of required element has bad type and
+ * we can't recover from situation automatically.
  * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
  * position.
  */
@@ -1522,7 +1541,7 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
  * of page tree ambiguity (see searchTreeNode for more information).
  * @return Node position.
  */
-size_t getNodePosition(CPdf & pdf, boost::shared_ptr<IProperty> node);
+size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node);
 
 /** Checks if given child is descendant of node with given reference.
  * @param pdf Pdf where to resolv referencies.
