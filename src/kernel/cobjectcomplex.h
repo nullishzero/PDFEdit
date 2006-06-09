@@ -111,7 +111,7 @@ template <typename Checker> class CObjectStream;
  *
  * \see CObjectSimple, CObjectStream
  */
-template <PropertyType Tp, typename Checker = BasicMemChecker>
+template <PropertyType Tp, typename Checker = debug::BasicMemChecker>
 class CObjectComplex : noncopyable, public IProperty
 {
 	template<typename T> friend class CObjectStream;

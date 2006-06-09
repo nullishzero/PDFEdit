@@ -100,7 +100,7 @@ template<> struct PropertyTraitSimple<pRef>
  * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
  *
  */
-template <PropertyType Tp, typename Checker = BasicMemChecker>
+template <PropertyType Tp, typename Checker = debug::BasicMemChecker>
 class CObjectSimple : noncopyable, public IProperty
 {
 public:

@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/06/09 15:48:24  misuj1am
+ *
+ *
+ * -- structure updates
+ *
  * Revision 1.21  2006/06/02 11:31:46  misuj1am
  *
  * -- ADD: outline get text function
@@ -144,7 +149,7 @@ extern FileList fileList;
 							else\
 							{SWAP_BUFS;}
 #define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
-#define MEM_CHECK	{BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
+#define MEM_CHECK	{debug::BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
 													<< " ALLOCATED: " << check.getMaxCount () << endl;}
 #define TEST(a)		OUTPUT << "\t//== " << (a) << "  " << flush;
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;

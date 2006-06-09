@@ -247,6 +247,22 @@ private:  // emphasize the following members are private
 	const noncopyable& operator=( const noncopyable& );
 };
 
+//=====================================================================================
+//	Memory checker classes -- DEBUGGING PURPOSES
+//=====================================================================================
+
+/**
+ * No memory checks done.
+ */
+class NoMemChecker 
+{public: 
+	NoMemChecker () {};
+	void objectCreated (void*) {};
+	void objectCreated () {};
+	void objectDeleted (void*) {};
+	void objectDeleted () {};
+};
+
 
 #endif // _STATIC_H_
 

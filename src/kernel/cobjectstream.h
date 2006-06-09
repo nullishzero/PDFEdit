@@ -64,7 +64,7 @@ template<typename T> class CStreamXpdfReader;
  * Copying complex types could be very expensive so we have made this decision to
  * avoid it.
  */
-template <typename Checker = BasicMemChecker>
+template <typename Checker = debug::BasicMemChecker>
 class CObjectStream : noncopyable, public IProperty
 {
 	typedef CObjectSimple<pName> 	CName;

@@ -1,8 +1,7 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
- *        Filename:  cobjectI.h
- *     Description:  Header file containing implementation of CObject class.
+ *        Filename:  cobjectsimpleI.h
  *         Created:  02/02/2006 
  *          Author:  jmisutka (06/01/19), 
  * 			
