@@ -3,7 +3,7 @@
 #
 
 #HTML documents to generate
-html_docs=menu.html tree.html
+html_docs=menu.html tree.html settings.html
 
 #PDF documents to generate
 pdf_docs=$(html_docs:.html=.pdf)

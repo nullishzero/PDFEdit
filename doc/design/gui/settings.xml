@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<book>
+ <bookinfo>
+  <title>Design documentation for settings system</title>
+ </bookinfo>
+
+ <chapter>
+  <title>Settings system</title>
+  <para>
+   PDF Editor uses QSettings as backend to store its configuration.
+   Internally, two QSettings objects are used, one for static settings
+   (which cannot be modified) and one for dynamic settings.
+   We can see the static settings as system settings
+   and dynamic settings as user settings.
+   Setting uses key/value scheme.
+  </para>
+ </chapter>
+</book>

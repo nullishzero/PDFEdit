@@ -2,7 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 <book>
  <bookinfo>
-  <title>Design documentation fo object tree view</title>
+  <title>Design documentation for object tree view</title>
  </bookinfo>
 
  <chapter>
@@ -63,7 +63,7 @@
    <title>TreeWindow class</title>
    <para>
     Class providing tree view of PDF objects, having one object at root and showing its children.
-   <para>
+   </para>
   </sect1>
  </chapter>
 </book>
