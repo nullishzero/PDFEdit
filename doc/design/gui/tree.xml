@@ -13,31 +13,57 @@
    <itemizedlist>
     <listitem><para>
      Many elements (such as page) are in the tree two or more times, often with different
-     representation (List of pages vs. complicated tree structure in Pages dictionary)
+     representation (List of pages vs. complicated tree structure in Pages dictionary).
+     When you modify one of them, the others usually change in some way too.
     </para></listitem>
     <listitem><para>
      The tree contain references (analogous to a symbolic link in unix filesystems) and
      these references can contain cycles
      (reference in tree A can point to tree B, while some other reference in tree B point to tree A).
      In fact, the cycles are very common, for example page always have link to its
-     parent page dictionary in which it is contained
+     parent page dictionary in which it is contained.
     </para></listitem>
     <listitem><para>
      Single item can be referenced multiple times from different parts of tree.
-     Common example are fonts, as one font is usually referenced in Resources dictionary on multiple pages
+     Common example are fonts, as one font is usually referenced in Resources dictionary on multiple pages.
     </para></listitem>
     <listitem><para>
      The tree is very large. Even tree of very small file with single page contain
      over 1000 items and huge documents (like the PDF specification for example,
-     which have 1236 pages) will have probably over one million tree items
+     which have 1236 pages) will have probably over one million tree items.
+     (as the tree items are branched to very detailed level,
+      basically to level of single words in most documents)
+     This is problem, partially because of memory taken by too many items,
+     and mainly, most users are unable to orient in such a large tree effectively.
     </para></listitem>
    </itemizedlist>
   </para>
   <sect1>
-   <title>MultiTreeWindow</title>
+   <title>MultiTreeWindow class</title>
    <para>
-    Tree window supporting multiple tabs
+    Class providing tree view of PDF objects.
+    It does support multiple tabs, showing individual trees inside them.
+   <para>
+   </para>
+    Splitting the tree to multiple tabs partially solve the user disorientation problem,
+    as all content streams are opened in tabs, thus their operator tree does not clutter
+    the "main" tree view showing pages, annotations, outlines, etc ...
+   </para>
+   <para>
+    This window show list of tabs, with one "main" tab that contain the document as root element
+    and zero or more "secondary" tabs, than show some elements from main tree more in detail.
+    The main tree cannot be closed and is fixed to showing the PDF document as its root item.
+    Secondary trees can be closed any time when the user think they are no longer needed.
+   </para>
+   <para>
+    Single tree in the multi tree window is managed by TreeWindow class
    </para>
   </sect1>  
+  <sect1>
+   <title>TreeWindow class</title>
+   <para>
+    Class providing tree view of PDF objects, having one object at root and showing its children.
+   <para>
+  </sect1>
  </chapter>
 </book>
