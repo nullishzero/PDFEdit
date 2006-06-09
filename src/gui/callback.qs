@@ -34,13 +34,19 @@ function checkMenus() {
  } catch (e) {
   rootType="";
  }
+ cstream_tab=(rootType=="ContentStream");
  enableItem("/need_operator_page",	(theType=="PDFOperator" || have_page));
 // enableItem("/need_dict_or_array",	(theType=="Dict" || theType=="Array"));
  enableItem("/need_dict_or_array_p",	(theType=="Dict" || theType=="Array" || parentType=="Dict" || parentType=="Array"));
- enableItem("/need_contentstream_root",	(rootType=="ContentStream"));
  enableItem("/need_removable",		(theType!="Pdf" && theType!=""));
  enableItem("/need_page",		(have_page));
  enableItem("/need_document",		(have_document));
+ enableItem("/need_contentstream_root",	cstream_tab);
+ if (cstream_tab) {
+  mod=treeRoot().getMode();
+  activateMode(mod);
+  //
+ }
 }
 
 /** Callback called after document is loaded */

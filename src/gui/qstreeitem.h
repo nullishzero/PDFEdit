@@ -23,6 +23,11 @@ public slots:
   Return true if valid, false if not
  */
  bool valid();
+ /*-
+  Set the item to be opened or closed.
+  Specify true if the item is to be opened, false if closed.
+ */
+ void setOpen(bool opened);
  /*- Get object contained in this tree item */
  QSCObject* item();
  /*-

@@ -77,7 +77,7 @@ function printTreeChilds() {
 /** invoke "add object dialog" on current tree item, or if not possible, try its parent */
 function add_obj_dlg() {
  if (holdContainer(treeitem)) addObjectDialog();
- if (holdContainer(treeitem.parent())) addObjectDialog(treeitem.parent().item());
+ else if (holdContainer(treeitem.parent())) addObjectDialog(treeitem.parent().item());
 }
 
 /** Save page/selection as image */
@@ -102,11 +102,20 @@ function go(x) {
  PageSpace.refresh(x,document);
 }
 
+/** Set icons to show that the mode 'newmode' is selected */
+function activateMode(newMode) {
+ checkItem("streamAll",(newMode=='all'));
+ checkItem("streamText",(newMode=='text'));
+ checkItem("streamFont",(newMode=='font'));
+ checkItem("streamGfx",(newMode=='graphic'));
+}
+
 /** Set stream to certain mode */
 function streamMode(newMode) {
  x=treeRoot();
  if (x.itemtype()!="ContentStream") return;
  x.setMode(newMode);
+ activateMode(newMode);
 }
 
 /** Check if treeitem holds a container (Array, Dict) */

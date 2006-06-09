@@ -47,10 +47,7 @@ QSTreeItem::QSTreeItem(TreeItemAbstract *item,BaseCore *_base) : QSCObject ("Tre
  @return QObject wrapper around data inside treeitem
 */
 QSCObject* QSTreeItem::item() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","item");
-  return NULL;
- }
+ if (nullPtr(obj,"item")) return NULL;
  return obj->getQSObject();
 }
 
@@ -62,10 +59,7 @@ QSCObject* QSTreeItem::item() {
  @return QObject wrapper around data inside treeitem
 */
 QSCObject* QSTreeItem::itemref() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","itemref");
-  return NULL;
- }
+ if (nullPtr(obj,"itemref")) return NULL;
  QSCObject* rItem=obj->getQSObject();
  QSIProperty* ip=dynamic_cast<QSIProperty*>(rItem);
  if (!ip) return rItem;//Not IProperty
@@ -80,10 +74,7 @@ QSCObject* QSTreeItem::itemref() {
  @return Type of item
 */
 QString QSTreeItem::itemtype() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","itemtype");
-  return QString::null;
- }
+ if (nullPtr(obj,"itemType")) return QString::null;
  QSCObject* it=obj->getQSObject();
 
  //Some tree item does not have actually any "item" in them
@@ -110,24 +101,27 @@ void QSTreeItem::reload() {
 }
 
 /**
+ Set the item to be opened or closed
+ @param opened True if the item is to be opened, false if closed
+*/
+void QSTreeItem::setOpen(bool opened) {
+ if (nullPtr(obj,"setOpen")) return;
+ obj->setOpen(opened);
+}
+
+/**
  Explicitly force reload contents of this item and its subtree from current state of PDF document
  Add "force reload" flag, to test for possible tree item reloading-related bugs
  Should only be used for debugging, reload() should normally work well
  */
 void QSTreeItem::reload_force() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","reload_force");
-  return;
- }
+ if (nullPtr(obj,"reload_force")) return;
  obj->reload(true,true);
 }
 
 /** Remove itself from Dict/Array where this property is held (and from document) */
 void QSTreeItem::remove() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","remove");
-  return;
- }
+ if (nullPtr(obj,"remove")) return;
  obj->remove();
 }
 
@@ -138,10 +132,7 @@ void QSTreeItem::remove() {
  @return list of childs
 */
 QStringList QSTreeItem::getChildNames() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","getChildNames");
-  return QStringList();
- }
+ if (nullPtr(obj,"getChildNames")) return QStringList();
  return obj->getChildNames();
 }
 
@@ -151,10 +142,7 @@ QStringList QSTreeItem::getChildNames() {
  @return parent of this TreeItem
 */
 QSTreeItem* QSTreeItem::parent() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","parent");
-  return NULL;
- }
+ if (nullPtr(obj,"parent")) return NULL;
  TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
  if (!parent) return NULL;
  return dynamic_cast<QSTreeItem*>(QSImporter::createQSObject(parent,base));
@@ -167,10 +155,7 @@ QSTreeItem* QSTreeItem::parent() {
  @return child of this TreeItem
 */
 QSTreeItem* QSTreeItem::child(const QString &name) {
- if (!obj) {
-  base->errorNullPointer("TreeItem","child");
-  return NULL;
- }
+ if (nullPtr(obj,"child")) return NULL;
  TreeItemAbstract* child=dynamic_cast<TreeItemAbstract*>(obj->child(name));
  if (!child) return NULL;
  return dynamic_cast<QSTreeItem*>(QSImporter::createQSObject(child,base));
@@ -181,10 +166,7 @@ QSTreeItem* QSTreeItem::child(const QString &name) {
  @return name of this item
 */
 QString QSTreeItem::id() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","id");
-  return QString::null;
- }
+ if (nullPtr(obj,"id")) return QString::null;
  return obj->name();
 }
 
@@ -193,10 +175,7 @@ QString QSTreeItem::id() {
  @return caption of this item
 */
 QString QSTreeItem::text() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","text");
-  return QString::null;
- }
+ if (nullPtr(obj,"text")) return QString::null;
  return obj->text(0);
 }
 
@@ -216,10 +195,8 @@ void QSTreeItem::disable() {
  @return path of this item
 */
 QString QSTreeItem::path() {
- if (!obj) {
-  base->errorNullPointer("TreeItem","path");
-  return QString::null;
- }
+ if (nullPtr(obj,"path")) return QString::null;
+ //TODO: move to treeitemabstract && statusbar
  QString path=obj->name();
  TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
  while (parent) { //Traverse to root, prepending path elements
