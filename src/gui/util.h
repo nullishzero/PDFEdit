@@ -1,5 +1,8 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
+/** @file
+ \brief Utility functions header
+*/
 
 class QColor;
 class QString;

@@ -13,6 +13,7 @@ class TreeData;
 /**
  Class holding one simple object in tree (not reference, dict or array)<br>
  Simple types are: int, real, string, name, bool or null
+ \brief Tree item containing simple property
 */
 class TreeItemSimple : public TreeItem {
 public:

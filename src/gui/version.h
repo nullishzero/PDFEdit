@@ -1,6 +1,8 @@
 /** @file
  This file hold constants defining version of application.
- These should be changed before release */
+ These should be changed before release
+ \brief Version information
+ */
 #ifndef __VERSION_H__
 #define __VERSION_H__
 

@@ -1,6 +1,7 @@
 /** @file
  Various utility functions (string processing, file loading, debugging, etc ...)
  @author Martin Petricek
+ \brief Utility functions
 */
 #include "util.h"
 #include <iostream>

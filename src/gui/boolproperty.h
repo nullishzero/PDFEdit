@@ -15,6 +15,7 @@ using namespace pdfobjects;
  BoolProperty - class for widget containing one editable property of type "Bool"
  (represented by checkbox)<br>
  Used as one item type in property editor
+ \brief Property editor widget for editing CBool
 */
 class BoolProperty : public Property {
 Q_OBJECT

@@ -31,6 +31,7 @@ typedef enum {
  Class holding one Content Stream object in tree<br>
  On attempting to open the item in main window, the item opens itself automatically in secondary tree window.<br>
  This is to avoid cluttering the main window with too many items, making navigation in main tree difficult for user.
+ \brief Tree item containing CContentStream
 */
 class TreeItemContentStream : public TreeItemAbstract {
 public:

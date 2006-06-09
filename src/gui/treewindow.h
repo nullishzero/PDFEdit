@@ -24,6 +24,7 @@ class Base;
  Class providing treeview of PDF objects<br>
  It can contain items of TreeItemAbstract class, which represent objects in PDF file
  (actually its subclasses, as that class is abstract)
+ \brief Object tree view widget
 */
 class TreeWindow : public QWidget {
  Q_OBJECT

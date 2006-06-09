@@ -10,7 +10,10 @@ using namespace pdfobjects;
 
 class TreeData;
 
-/** class holding one CStream object in tree */
+/**
+ class holding one CStream object in tree
+ \brief Tree item containing CStream
+*/
 class TreeItemCStream : public TreeItem {
 public:
  void remove(const QString &name);

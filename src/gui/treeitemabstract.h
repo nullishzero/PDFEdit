@@ -22,6 +22,7 @@ class BaseCore;
  Two distict TreeItemAbstract descendants can have collisions in types
  (same value meaning different type)<br>
  Types of childs from different items are never mixed or compared together
+ \brief Abstract tree item class
 */
 typedef int ChildType;
 

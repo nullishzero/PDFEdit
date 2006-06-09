@@ -20,7 +20,10 @@ typedef PropertyMode PropertyFlags;
 /** Default mode to be chosen if omitted in constructor */
 const PropertyMode defaultPropertyMode=mdNormal;
 
-/** Ancestor of all property items */
+/**
+ Ancestor of all property editor items.
+ \brief Abstract class for property editing widget
+*/
 class Property : public QWidget {
 Q_OBJECT
 public:

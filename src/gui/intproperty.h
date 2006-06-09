@@ -13,6 +13,7 @@ using namespace pdfobjects;
 /**
  IntProperty - class for widget containing one editable property of type "Int"<br>
  Used as one item in property editor
+ \brief Property editor widget for editing CInt
 */
 class IntProperty : public StringProperty {
 Q_OBJECT

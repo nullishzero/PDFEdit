@@ -16,7 +16,10 @@ using namespace pdfobjects;
 
 class TreeData;
 
-/** Class holding one Annotation in tree. */
+/**
+ Class holding one Annotation in tree.
+ \brief Tree item containing CAnnotation
+ */
 class TreeItemAnnotation : public TreeItemAbstract {
 public:
  TreeItemAnnotation(TreeData *_data,QListView *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);

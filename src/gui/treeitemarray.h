@@ -11,7 +11,10 @@ using namespace pdfobjects;
 
 class TreeData;
 
-/** class holding one CArray object in tree */
+/**
+ class holding one CArray object in tree
+ \brief Tree item containing CArray
+ */
 class TreeItemArray : public TreeItem {
 public:
  TreeItemArray(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);

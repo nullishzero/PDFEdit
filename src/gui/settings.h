@@ -9,7 +9,10 @@ class QString;
 
 namespace gui {
 
-/** Class managing settings and also loading configurable menus, toolbars and keyboard shortcuts */
+/**
+ Class managing settings, saving and loading single settings or window states
+ \brief Saving and loading settings
+ */
 class Settings : public QObject {
  Q_OBJECT
 public:

@@ -14,6 +14,7 @@ using namespace pdfobjects;
 /**
  Class for widget containing one editable property of type "String"<br>
  Used as one item type in property editor
+ \brief Property editor widget for editing CString
 */
 class StringProperty : public Property {
 Q_OBJECT

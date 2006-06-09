@@ -21,6 +21,7 @@ using namespace pdfobjects;
 
 /**
  Class holding CPage (one page) in tree
+ \brief Tree item containing CPage
 */
 class TreeItemPage : public TreeItemAbstract {
 public:

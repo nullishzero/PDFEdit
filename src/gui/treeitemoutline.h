@@ -18,6 +18,7 @@ class TreeData;
  Class holding one outline in tree.<br>
  As outline is essentially a dictionary, this item behaves almost like a dictionary item<br>
  Most notable difference is showing the outline title in the tree.
+ \brief Tree item containing one outline
 */
 class TreeItemOutline : public TreeItemDict {
 public:

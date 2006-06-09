@@ -10,7 +10,10 @@ using namespace pdfobjects;
 
 class TreeData;
 
-/** class holding one CDict object in tree (dictionary) */
+/**
+ class holding one CDict object in tree (dictionary)
+ \brief Tree item containing CDict
+ */
 class TreeItemDict : public TreeItem {
 public:
  void remove(const QString &name);

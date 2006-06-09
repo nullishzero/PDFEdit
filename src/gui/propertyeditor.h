@@ -22,7 +22,13 @@ class PropertyModeController;
 
 using namespace pdfobjects;
 
-/** Property editor widget */
+/**
+ Widget for editing properties.
+ Can be used to edit CDict or CArray containing multiple properties,
+ or to edit single property (IProperty).
+ Also, it can edit operands (parameters) from one PDF operator
+ \brief Property editor widget
+ */
 class PropertyEditor : public QWidget {
  Q_OBJECT
 public:
