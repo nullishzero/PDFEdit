@@ -9097,7 +9097,7 @@ echo "$as_me: error: argument must be a directory" >&2;}
    { (exit 1); exit 1; }; }
     fi
   else
-    freetype2_CFLAGS=
+	freetype2_CFLAGS="-I/usr/include/freetype2"
   fi
 
         smr_test_CPPFLAGS="${CPPFLAGS+set}"
