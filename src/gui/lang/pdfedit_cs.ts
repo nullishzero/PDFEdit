@@ -1125,6 +1125,14 @@ Data: %3
         <comment>scripts</comment>
         <translation>Zkoušel jsem</translation>
     </message>
+    <message>
+        <source>Error running</source>
+        <translation>Chyba při spouštění</translation>
+    </message>
+    <message>
+        <source>Script not found</source>
+        <translation>Skript nenalezen</translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1157,6 +1165,14 @@ Data: %3
         <source>Got</source>
         <comment>object type</comment>
         <translation>Předáno</translation>
+    </message>
+    <message>
+        <source>In script</source>
+        <translation>Ve skriptu</translation>
+    </message>
+    <message>
+        <source>line</source>
+        <translation>řádka</translation>
     </message>
 </context>
 <context>

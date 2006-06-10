@@ -1122,6 +1122,14 @@ Data: %3
         <comment>scripts</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script not found</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
@@ -1153,6 +1161,14 @@ Data: %3
     </message>
     <message>
         <source>Unknown exception in script occured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>line</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
