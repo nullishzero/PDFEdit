@@ -5,6 +5,7 @@
 
 #include "cobject.h"
 #include "cpage.h"
+#include "stateupdater.h"
 
 /** 
  * @file factories.h
@@ -289,6 +290,19 @@ public:
 };
 
 
+/** State updater factory.
+ */
+struct StateUpdaterFactory
+{
+	/** Create basic UpdaterFactory class. */
+	static StateUpdater* getInstance ()
+	{
+		static StateUpdater up;
+		return &up;
+	}
+};
+
+ 
 //===========================================
 } // namepsace pdfobjects
 //===========================================

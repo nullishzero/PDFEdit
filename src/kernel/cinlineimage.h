@@ -8,8 +8,8 @@
  * =====================================================================================
  */
 
-#ifndef _CPAGE_H
-#define _CPAGE_H
+#ifndef _CINLINEIMAGE_H
+#define _CINLINEIMAGE_H
 
 
 // all basic includes
@@ -122,4 +122,4 @@ public:
 //=====================================================================================
 
 
-#endif // _CPAGE_H
+#endif // _CINLINEIMAGE_H

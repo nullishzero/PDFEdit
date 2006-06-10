@@ -8,8 +8,8 @@
  *
  * =====================================================================================
  */
-#ifndef _CCOBJECTSTREAM_H
-#define _CCOBJECTSTREAM_H
+#ifndef _CSTREAMSXPDFREADER_H
+#define _CSTREAMSXPDFREADER_H
 
 // all basic includes
 #include "static.h"
@@ -169,5 +169,5 @@ public:
 
 
 
-#endif // _COBJECTSTREAM_H
+#endif // _CSTREAMSXPDFREADER_H
 

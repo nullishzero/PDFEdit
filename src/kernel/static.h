@@ -264,5 +264,55 @@ class NoMemChecker
 };
 
 
+//==========================================================
+// Somewhat special bit functions.
+//==========================================================
+
+/**
+ * Is n-th bit set.
+ * 
+ * @param value Value to be checked.
+ * @param mask N-th bit.
+ *
+ * @return True if set, false otherwise.
+ */
+template<class T, class U>
+inline bool isBitSet(T value, U mask)
+	{ 	// compare number of bits of where we want to store bit with the position 
+		assert ((int)(sizeof(short) * 8) > mask);
+		return (value & ((unsigned short)0x1 << mask)) != 0;}
+
+/** Reset all bits. */
+inline unsigned short setNoneBitsShort()
+	{ return 0x0;}
+
+/**
+ * Set n-th set.
+ * 
+ * @param mask N-th bit.
+ * @return Value with n-th bit set.
+ */
+template<class U>
+inline unsigned short setNthBitsShort(U mask)
+	{ 	// compare number of bits of where we want to store bit with the position 
+		assert ((int)(sizeof(short) * 8) > mask);
+		return ((unsigned short) 0x1 << mask);}
+
+template<class U>
+inline unsigned short setNthBitsShort(U mask, U mask1)
+	{ return setNthBitsShort (mask) | setNthBitsShort (mask1); }
+template<class U>
+inline unsigned short setNthBitsShort(U mask, U mask1, U mask2)
+	{ return setNthBitsShort (mask,mask1) | setNthBitsShort (mask2); }
+template<class U>
+inline unsigned short setNthBitsShort(U mask, U mask1, U mask2, U mask3)
+	{ return setNthBitsShort (mask,mask1,mask2) | setNthBitsShort (mask3); }
+template<class U>
+inline unsigned short setNthBitsShort(U mask, U mask1, U mask2, U mask3, U mask4)
+	{ return setNthBitsShort (mask,mask1,mask2,mask3) | setNthBitsShort (mask4); }
+
+
+
+
 #endif // _STATIC_H_
 
