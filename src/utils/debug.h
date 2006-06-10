@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/06/10 14:14:10  misuj1am
+ *
+ * -- ADD: general memor checker
+ *
  * Revision 1.15  2006/05/13 22:22:11  hockm0bm
  * * getStringType removed (to iproperty.h)
  *
@@ -232,6 +236,58 @@ __print (std::ostream& out,const std::string& str)
 	out << str;
 }
 
+
+//=====================================================================================
+//	Memory checker classes -- DEBUGGING PURPOSES
+//=====================================================================================
+
+/**
+ * No memory checks done.
+ */
+class NoMemChecker 
+{public: 
+	NoMemChecker () {};
+	void objectCreated () {};
+	void objectDeleted () {};
+};
+
+/**
+ * After the end of a program, we can count how many objects have not been released. If zero left, we know 
+ * that we do not have a memory leak.
+ */
+class BasicMemChecker
+{
+private:
+	size_t& getMax () {static size_t mx; return mx;};
+	size_t& getAct () {static size_t act; return act;};
+
+public:
+	//
+	BasicMemChecker () {};
+
+	//
+	//
+	//
+	void objectCreated ()
+	{
+		++getMax ();
+		++getAct ();
+	};
+
+	//
+	//
+	//
+	void objectDeleted ()
+	{
+		--getAct();
+	};
+		
+	//
+	// Get living IProperty count
+	//
+	size_t getCount () {return getAct(); };
+	size_t getMaxCount () {return getMax(); };
+};
 
 
 
