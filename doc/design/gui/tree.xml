@@ -63,6 +63,17 @@
    <title>TreeWindow class</title>
    <para>
     Class providing tree view of PDF objects, having one object at root and showing its children.
+    It uses QListView for showing the tree and all items that are inside the QListView are derived
+    from TreeItemAbstract class (which is derived from ordinary QListViewItem class)
+    Also, the TreeWindow bring some limitation to the QListView in it, most notable, you can only
+    put items that are derived from TreeItemAbstract class, not ordinary QListViewItem
+    (if you bypass this limitation, you can expect strange behavior) and the listview must have
+    at most one root item - this is required by GUI logic that tree correspond to something,
+    either the document or some part of it (or the tree is empty).
+    Also, it simplifies some things.
+   </para>
+   <para>
+    TODO : finish the description (TreeItemAbstract, treeitems, getObject() .... )
    </para>
   </sect1>
  </chapter>
