@@ -265,7 +265,7 @@ opcount (__attribute__((unused))	ostream& oss, const char* fileName)
 		}
 		obj.free ();
 
-		CStreamXpdfReader<Streams> reader (streams);
+		CStreamsXpdfReader<Streams> reader (streams);
 		::Object o;		
 		reader.open ();
 
@@ -463,7 +463,7 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 	}
 	obj.free ();
 
-	CStreamXpdfReader<Streams> reader (streams);
+	CStreamsXpdfReader<Streams> reader (streams);
 		
 	::Object o;
 		

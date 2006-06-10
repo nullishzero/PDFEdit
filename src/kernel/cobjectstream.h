@@ -38,7 +38,7 @@ class CXRef;
 //
 // Forward declaration
 //
-template<typename T> class CStreamXpdfReader;
+template<typename T> class CStreamsXpdfReader;
 
 /**
  * Template class representing stream PDF objects from specification v1.5.
@@ -75,8 +75,8 @@ class CObjectStream : noncopyable, public IProperty
 	typedef std::string PropertyId;
 
 public:
-	// We can access xpdf stream only through CStreamXpdfReader 
-	template<typename T> friend class CStreamXpdfReader;
+	// We can access xpdf stream only through CStreamsXpdfReader 
+	template<typename T> friend class CStreamsXpdfReader;
 
 	typedef std::vector<filters::StreamChar> Buffer;
 
@@ -258,7 +258,7 @@ public:
 	void setBuffer (const Container& buf);
 
 	//
-	// Parsing (use friend CStreamXpdfReader)
+	// Parsing (use friend CStreamsXpdfReader)
 	//
 private:
 	
@@ -409,145 +409,6 @@ public:
 //
 typedef CObjectStream<>	CStream;
 
-/**
- * Adapter which is able to read sequentially from more CStreams.
- *
- * It stores a container of streams and when the actual stream does not
- * contain more objects, tries to read the next one if any.
- *
- * This class is an example of Adapter design pattern. We have to be able to
- * read from more streams sequentially and this class provides us with the
- * interface.
- */
-template<typename Container>
-class CStreamXpdfReader
-{
-public:
-	typedef std::vector<boost::shared_ptr<CStream> > CStreams;
-
-private:
-	CStreams streams;	/**< All streams. */
-	boost::shared_ptr<CStream> actstream;	/**< Actual stream that is beeing parsed. */
-	size_t pos;			/**< Position of actual parsed stream in the stream container. */
-	size_t objread; 	/**< Helper variable for debugging. Number of read objects. */
-	
-
-public:
-
-	/** Constructor. */
-	CStreamXpdfReader (Container& strs) : pos(0), objread (0)
-		{ assert (!strs.empty()); std::copy (strs.begin(), strs.end(), std::back_inserter(streams));}
-	CStreamXpdfReader (boost::shared_ptr<CStream> str) : pos(0), objread (0)
-		{ assert (str); streams.push_back (str); }
-
-	/** Open. */
-	void open ()
-	{
-		assert (!streams.empty());
-		if (actstream && 0 != pos)
-			{ assert (!"Stream opened before."); }
-
-		actstream = streams.front ();
-		actstream->open ();
-	}
-
-	/** Close. */
-	void close ()
-	{
-		assert (!streams.empty());
-		assert (streams.size() == pos + 1);
-		assert (actstream == streams.back());
-		assert (actstream->eof());
-		
-		actstream->close ();
-	}
-
-	/** 
-	 * Close. 
-	 * Save parsed streams to container.
-	 *
-	 * @param parsedstreams Output buffer that will contain all streams we have
-	 * really parsed.
-	 */
-	template<typename Ctr>
-	void close (Ctr& parsedstreams)
-	{
-		assert (!streams.empty());
-		assert (actstream->eof());
-		
-		for (size_t i = 0; i <= pos; ++i)
-			parsedstreams.push_back (streams[i]);
-		
-		actstream->close ();
-	}
-
-	/** Get xpdf object. */
-	void getXpdfObject (::Object& obj)
-	{
-		assert (!actstream->eof());
-		
-		// Get an object
-		actstream->getXpdfObject (obj);
-
-		// If we are at the end of this stream but another stream is not empty 
-		// get the object
-		if (actstream->eof() && !eof())
-		{
-			assert (obj.isEOF());
-			actstream->getXpdfObject (obj);
-		}
-		
-		/** debugging \TODO remove. */
-		objread ++;
-	}
-
-	/** 
-	 * Is end of stream. 
-	 *
-	 * We can not cache and due to this fact we can not tell if a stream
-	 * is empty without fetching an object. 
-	 */
-	bool eof ()
-	{ 
-		if (eofOfActualStream())
-		{
-			// Do we have another stream
-			while (actstream != streams.back())
-			{
-				assert (pos < streams.size());
-				actstream->close();
-				// Take next stream
-				++pos;
-				actstream = streams[pos];
-				actstream->open ();
-				// Fetch an object and look at it
-				xpdf::XpdfObject obj;
-				actstream->getXpdfObject (*obj);
-				if (!actstream->eof())
-				{
-					actstream->close();
-					actstream->open();
-					break;
-				}
-			}
-			return  (actstream == streams.back() && eofOfActualStream()); 
-		
-		}else
-		{
-			return false;
-		}
-	}
-
-	/** End of actual stream. */
-	bool eofOfActualStream ()
-		{ return (actstream->eof()); }
-
-	/** Get xpdf stream. */
-	::Stream* getXpdfStream ()
-		{ return actstream->getXpdfStream(); }
-
-	
-};
 
 //=====================================================================================
 namespace utils {

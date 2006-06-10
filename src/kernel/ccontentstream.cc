@@ -1260,7 +1260,7 @@ namespace {
 	 * @return CStream representing inline image.
 	 */
 	CInlineImage*
-	getInlineImage (CStreamXpdfReader<CContentStream::CStreams>& streamreader) 
+	getInlineImage (CStreamsXpdfReader<CContentStream::CStreams>& streamreader) 
 	{
 		kernelPrintDbg (DBG_DBG, "");
 		xpdf::XpdfObject dict;
@@ -1350,7 +1350,7 @@ namespace {
 	 * @return New pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (CStreamXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
+	createOp (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
 	{
 		// This is ugly but needed because of memory leaks
 		shared_ptr<PdfOperator> result;
@@ -1504,7 +1504,7 @@ namespace {
 		IndiRef rf = streams.front()->getIndiRef ();
 
 		assert (!streams.empty());
-		CStreamXpdfReader<CContentStream::CStreams> streamreader (streams);
+		CStreamsXpdfReader<CContentStream::CStreams> streamreader (streams);
 		streamreader.open ();
 
 		PdfOperator::Operands operands;
@@ -1591,7 +1591,7 @@ namespace {
 		IndiRef rf = streams.front()->getIndiRef ();
 
 		assert (!streams.empty());
-		CStreamXpdfReader<CContentStream::CStreams> streamreader (streams);
+		CStreamsXpdfReader<CContentStream::CStreams> streamreader (streams);
 		streamreader.open ();
 	
 		PdfOperator::Operands operands;
