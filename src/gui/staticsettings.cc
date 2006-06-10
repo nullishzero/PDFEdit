@@ -57,6 +57,7 @@ bool StaticSettings::tryLoad(const QString &fileName) {
  QString mainKey="";
  QRegExp nextHead("\\[(.*)(\\]|#|;)");
  nextHead.setMinimal(true);
+ set.clear();
  for(;;) {
   //Read till we get EOF
   line=cfg.readLine();

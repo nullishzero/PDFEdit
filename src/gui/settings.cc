@@ -63,7 +63,7 @@ void Settings::init() {
  @return Value of given setting */
 QString Settings::read(const QString &key,const QString &defValue/*=QString::null*/) {
  QString x=set->readEntry(APP_KEY+key);
- if (x.isNull()) x=staticSet->readEntry(APP_KEY+key,defValue);
+ if (x.isNull()) x=staticSet->readEntry(key,defValue);
  return x;
 }
 
