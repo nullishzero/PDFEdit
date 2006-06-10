@@ -36,6 +36,7 @@ using namespace pdfobjects;
  @param after Item after which this one will be inserted
  */
 TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
+ assert(_pdf);
  init(_pdf,name);
  reloadSelf();
  observePageDict();
@@ -83,11 +84,10 @@ void TreeItemPdf::init(CPdf *pdf,const QString &name) {
 void TreeItemPdf::observePageDict() {
  //Add observer to pagecount
  try {
-//  guiPrintDbg(debug::DBG_DBG,"Observe!");
-  pageDictionary=util::dereference(obj->getDictionary()->getProperty("Pages"));
+  assert(obj);
+  pageDictionary=pdfobjects::utils::getPageTreeRoot(*obj);
   assert(pageDictionary.get());
   if (pageDictionary.get()) {
-//   guiPrintDbg(debug::DBG_DBG,"I see!");
    //Register observer on page dictionary (because of page count)
    observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
    pageDictionary->registerObserver(observer);

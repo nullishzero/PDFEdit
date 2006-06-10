@@ -39,6 +39,8 @@ public:
  Base(PdfEditWindow *parent);
  void runInitScript();
  void treeItemDeleted(TreeItemAbstract* theItem);
+ QSCObject* treeitem();
+ QSCObject* item();
  ~Base();
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */

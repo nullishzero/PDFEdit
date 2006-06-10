@@ -95,6 +95,7 @@ private:
  bool activate(TreeKey ptr);
  void deactivate(TreeKey ptr);
  void deleteWindow(TreeWindow *tr);
+ void updateCorner();
 private:
  /** Current TreeWindow */
  TreeWindow *tree;

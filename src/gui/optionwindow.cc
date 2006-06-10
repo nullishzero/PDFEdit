@@ -116,7 +116,7 @@ void OptionWindow::apply() {
   c->writeValue();
  }
  //Write settings to disk (editor may crash or be killed, right?)
- globalSettings->flushSettings();
+ globalSettings->flush();
  applyLookAndFeel(true);
 }
 

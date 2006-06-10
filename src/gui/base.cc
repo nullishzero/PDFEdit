@@ -133,20 +133,27 @@ void Base::removeScriptingObjects() {
 */
 void Base::addScriptingObjects() {
  //Import treeitem and item (Currently selected treeitem and currently selected object)
- QSCObject *trit=import->createQSObject(w->selectedTreeItem);
- QSCObject *item=NULL;
+ import->addQSObj(treeitem(),"treeitem");
+ import->addQSObj(item(),"item");
+ BaseCore::addScriptingObjects();
+}
+
+/** Return current tree item (treeitem under cursor) */
+QSCObject* Base::treeitem() {
+ return import->createQSObject(w->selectedTreeItem);
+}
+
+/** Return current object (currently selected item in property editor) */
+QSCObject* Base::item() {
  if (w->selectedProperty.get()) {
   //IProperty is selected and will be imported
-  item=import->createQSObject(w->selectedProperty);
+  return import->createQSObject(w->selectedProperty);
  }
  if (w->selectedOperator.get()) {
-  assert(!item);//Which would mean both iproperty and pdfoperator is selected-> bug
   //PdfOperator is selected and will be imported
-  item=import->createQSObject(w->selectedOperator);
+  return import->createQSObject(w->selectedOperator);
  }
- import->addQSObj(trit,"treeitem");
- import->addQSObj(item,"item");
- BaseCore::addScriptingObjects();
+ return NULL;
 }
 
 /**

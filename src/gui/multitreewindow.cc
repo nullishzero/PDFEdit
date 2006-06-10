@@ -62,8 +62,9 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  corner=theCorner;
 
  tab->setCornerWidget(corner,Qt::TopRight);
- QObject::connect(corner,SIGNAL(pressed()),this,SLOT(deleteCurrent()));
+ QObject::connect(corner,SIGNAL(clicked()),this,SLOT(deleteCurrent()));
  QObject::connect(tab,SIGNAL(currentChanged(QWidget*)),this,SLOT(pageChange(QWidget*)));
+ updateCorner();
 }
 
 /**
@@ -78,6 +79,13 @@ void MultiTreeWindow::deleteCurrent() {
 }
 
 /**
+ Check the corner widget and update it's state
+*/
+void MultiTreeWindow::updateCorner() {
+ corner->setEnabled(tree!=mainTree);
+}
+
+/**
  Called when page is changed
  @param newPage New page. Should be TreeWindow
 */
@@ -85,6 +93,7 @@ void MultiTreeWindow::pageChange(QWidget *newPage) {
  guiPrintDbg(debug::DBG_DBG,"PageChange");
  tree=dynamic_cast<TreeWindow*>(newPage);
  assert(tree);
+ updateCorner();
  //The selected item changed on selecting an other page
  treeItemSelected();
 }

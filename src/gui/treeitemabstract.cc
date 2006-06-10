@@ -291,7 +291,7 @@ void TreeItemAbstract::setName(const QString &newNameId) {
 TreeItemAbstract::~TreeItemAbstract() {
  if (rootWindow) rootWindow->deleteNotify(this);
  //Notify about deletion of itself
- guiPrintDbg(debug::DBG_DBG,"Item deleting" << intptr_t(this));
+// guiPrintDbg(debug::DBG_DBG,"Item deleting" << intptr_t(this));
  data->multi()->notifyDelete(this);
 }
 

@@ -113,10 +113,13 @@ void Settings::initSettings() {
  QDir::home().mkdir(CONFIG_DIR);
  set=new QSettings(QSettings::Ini);
  staticSet=new StaticSettings();
- //Look in directory with the binary -> lowest priority
- staticSet->tryLoad(appPath,CONFIG_FILE);
  //Look in data directory
- staticSet->tryLoad(DATA_PATH,CONFIG_FILE);
+ bool haveSettings=staticSet->tryLoad(DATA_PATH,CONFIG_FILE);
+ //Look in directory with the binary -> lowest priority
+ if (!haveSettings) haveSettings=staticSet->tryLoad(appPath,CONFIG_FILE);
+ if (!haveSettings) {
+  guiPrintDbg(debug::DBG_ERR,"No settings found - " << CONFIG_FILE);
+ }
  //Look in $HOME (or something like that, for example QT maps this to "Application Data" in windows)
  QString homeDir=QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR);
  set->insertSearchPath(QSettings::Unix,homeDir);
@@ -253,7 +256,7 @@ Settings::Settings() {
 }
 
 /** flushes settings, saving all changes to disk */
-void Settings::flushSettings() {
+void Settings::flush() {
  delete set;  
  delete staticSet;
  initSettings();

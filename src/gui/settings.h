@@ -27,7 +27,7 @@ public:
  QStringList readPath(const QString &name,const QString &prefix="path/");
  QStringList readList(const QString &name,const QString &separator=",");
 public slots:
- void flushSettings();
+ void flush();
  QString readExpand(const QString &key,const QString &defValue=QString::null);
  QString read(const QString &key,const QString &defValue=QString::null);
  bool readBool(const QString &key,bool defValue=false);
