@@ -46,8 +46,8 @@ INSTALLS = data_icon data_icon_hicolor data_lang data_help data_scripts data doc
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator
-menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o .obj/util.o $(SUBLIBS) -L$(QTDIR)/lib -L../utils -L/usr/X11R6/lib -lqsa -lutils -lqt-mt -lXext -lX11 -lm
-menugenerator.depends    = .obj/menugenerator.o .obj/util.o
+menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o .obj/util.o .obj/staticsettings.o $(SUBLIBS) -L$(QTDIR)/lib -L../utils -L/usr/X11R6/lib -lqsa -lutils -lqt-mt -lXext -lX11 -lm
+menugenerator.depends    = .obj/menugenerator.o .obj/util.o .obj/staticsettings.o
 menugenerator_o.target   = .obj/menugenerator.o
 menugenerator_o.commands = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o .obj/menugenerator.o menugenerator.cc
 menugenerator_o.depends  = menugenerator.cc menugenerator.h
@@ -142,8 +142,8 @@ SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc statusbar.
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
-HEADERS += selfdestructivewidget.h  rect2Darray.h
-SOURCES += selfdestructivewidget.cc rect2Darray.cc
+HEADERS += selfdestructivewidget.h  rect2Darray.h  staticsettings.h
+SOURCES += selfdestructivewidget.cc rect2Darray.cc staticsettings.cc
 
 #Scripting base files
 HEADERS += base.h  basecore.h  consolewriter.h  consolewritergui.h

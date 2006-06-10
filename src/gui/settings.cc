@@ -9,11 +9,11 @@
  @author Martin Petricek
 */
 
+#include "settings.h"
 #include <utils/debug.h>
 #include <qdir.h>
 #include <qapplication.h>
 #include <qregexp.h>
-#include "settings.h"
 #include "util.h"
 #include <qsettings.h>
 #include <qsplitter.h>
@@ -21,6 +21,7 @@
 #include <qstring.h>
 #include "main.h"
 #include "config.h"
+#include "staticsettings.h"
 
 namespace gui {
 
@@ -29,6 +30,8 @@ using namespace util;
 
 /** "Root" item of all configuration settings, which are relative to this item */
 const QString APP_KEY = "/PDFedit/";
+/** Name of configuration file */
+const QString CONFIG_FILE = "pdfeditrc";
 /** Name of variable which will be expanded to full path to the executable */
 const QString APP_PATH_VAR = "PDFEDIT_BIN";
 /** Name of variable which will be expanded to data directory */
@@ -45,7 +48,6 @@ Settings *globalSettings=NULL;
  @return existing Settings object
 */
 Settings* Settings::getInstance() {
-//  static Settings* globalSettings=NULL;
  if (!globalSettings) globalSettings=new Settings();
  return globalSettings;
 }
@@ -59,7 +61,7 @@ void Settings::init() {
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
  @return Value of given setting */
-QString Settings::read(const QString &key,const QString defValue/*=QString::null*/) {
+QString Settings::read(const QString &key,const QString &defValue/*=QString::null*/) {
  QString x=set->readEntry(APP_KEY+key);
  if (x.isNull()) x=staticSet->readEntry(APP_KEY+key,defValue);
  return x;
@@ -99,7 +101,7 @@ int Settings::readNum(const QString &key,int defValue/*=0*/) {
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
  @return Value of given setting */
-QString Settings::readExpand(const QString &key,const QString defValue/*=QString::null*/) {
+QString Settings::readExpand(const QString &key,const QString &defValue/*=QString::null*/) {
  QString x=read(key,defValue);
  x=expand(x);
  return x;
@@ -110,12 +112,11 @@ QString Settings::readExpand(const QString &key,const QString defValue/*=QString
 void Settings::initSettings() {
  QDir::home().mkdir(CONFIG_DIR);
  set=new QSettings(QSettings::Ini);
- staticSet=new QSettings(QSettings::Ini);
+ staticSet=new StaticSettings();
  //Look in directory with the binary -> lowest priority
- staticSet->insertSearchPath(QSettings::Unix,appPath);
- staticSet->insertSearchPath(QSettings::Windows,appPath);
+ staticSet->tryLoad(appPath,CONFIG_FILE);
  //Look in data directory
- staticSet->insertSearchPath(QSettings::Unix,DATA_PATH);
+ staticSet->tryLoad(DATA_PATH,CONFIG_FILE);
  //Look in $HOME (or something like that, for example QT maps this to "Application Data" in windows)
  QString homeDir=QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR);
  set->insertSearchPath(QSettings::Unix,homeDir);
@@ -131,7 +132,7 @@ void Settings::initSettings() {
  @param prefix Path prefix (Can be specified if desired to read from different configuration key than default)
  @return QString with full path to the file, or NULL if no file found in path
 */
-QString Settings::getFullPathName(QString nameOfPath,QString fileName/*=QString::null*/,const QString &prefix/*=QString::null*/) {
+QString Settings::getFullPathName(const QString &nameOfPath,QString fileName/*=QString::null*/,const QString &prefix/*=QString::null*/) {
  if (fileName.isNull()) {
   fileName="";
  }
@@ -267,7 +268,7 @@ Settings::~Settings() {
 /** Save window/widget size and position to settings.
  @param win Widget that will have it's size and position stored
  @param name Name of key to be used in configuration */  
-void Settings::saveWindow(QWidget *win,const QString name) {
+void Settings::saveWindow(QWidget *win,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"save window " << name);
  QString line;
  line+=QString::number(win->width());
@@ -301,7 +302,7 @@ void Settings::write(const QString &key, int value) {
 /** Restore window/widget size and position from setting.
  @param win Widget that will be resized and moved
  @param name Name of key to be used in configuration */
-void Settings::restoreWindow(QWidget *win,const QString name) {
+void Settings::restoreWindow(QWidget *win,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"restore window " << name);
  QWidget *desk = QApplication::desktop();
  QString line=read("gui/windowstate/"+name);
@@ -328,7 +329,7 @@ void Settings::restoreWindow(QWidget *win,const QString name) {
 /** Save splitter positions  to settings.
  @param spl Splitter to save positions
  @param name Name of key to be used in configuration */  
-void Settings::saveSplitter(QSplitter *spl,const QString name) {
+void Settings::saveSplitter(QSplitter *spl,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"save splitter " << name);
  QValueList<int> siz=spl->sizes();
  QString line;
@@ -343,7 +344,7 @@ void Settings::saveSplitter(QSplitter *spl,const QString name) {
 /** Restore splitter positions from setting.
  @param spl Splitter to be resized
  @param name Name of key to be used in configuration */
-void Settings::restoreSplitter(QSplitter *spl,const QString name) {
+void Settings::restoreSplitter(QSplitter *spl,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"restore splitter " << name);
  QString line=read("gui/windowstate/"+name);
  QStringList pos=explode(',',line);

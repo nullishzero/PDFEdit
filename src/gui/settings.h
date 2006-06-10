@@ -9,6 +9,8 @@ class QString;
 
 namespace gui {
 
+class StaticSettings;
+
 /**
  Class managing settings, saving and loading single settings or window states
  \brief Saving and loading settings
@@ -18,16 +20,16 @@ class Settings : public QObject {
 public:
  ~Settings();
  static Settings* getInstance();
- void saveWindow(QWidget *win,const QString name); 
- void restoreWindow(QWidget *win,const QString name);
- void saveSplitter(QSplitter *spl,const QString name);
- void restoreSplitter(QSplitter *spl,const QString name);
+ void saveWindow(QWidget *win,const QString &name); 
+ void restoreWindow(QWidget *win,const QString &name);
+ void saveSplitter(QSplitter *spl,const QString &name);
+ void restoreSplitter(QSplitter *spl,const QString &name);
  QStringList readPath(const QString &name,const QString &prefix="path/");
  QStringList readList(const QString &name,const QString &separator=",");
 public slots:
  void flushSettings();
- QString readExpand(const QString &key,const QString defValue=QString::null);
- QString read(const QString &key,const QString defValue=QString::null);
+ QString readExpand(const QString &key,const QString &defValue=QString::null);
+ QString read(const QString &key,const QString &defValue=QString::null);
  bool readBool(const QString &key,bool defValue=false);
  int readNum(const QString &key,int defValue=0);
  void write(const QString &key,const QString &value);
@@ -35,7 +37,7 @@ public slots:
  void remove(const QString &key);
  void removeAll(const QString &key);
  QString expand(QString s);
- QString getFullPathName(QString nameOfPath,QString fileName=QString::null,const QString &prefix=QString::null);
+ QString getFullPathName(const QString &nameOfPath,QString fileName=QString::null,const QString &prefix=QString::null);
 signals:
  /** Signal emitted when any setting is changed. Key of changed settings is sent.
      Can be used to monitor settings changes */
@@ -51,7 +53,7 @@ private:
  QSettings *set;
  /** Settings object used to load static configuration (menu, etc ...)
   These settings are never changed (and never written) */
- QSettings *staticSet;
+ StaticSettings *staticSet;
 };
 
 /** One object for application, holding all global settings. */

@@ -1,10 +1,9 @@
 /** @file
- Generator, checker and translation generator of menu configuration<br>
+ Checker and translation generator of menu configuration<br>
  This is helper utility used to:<br>
   - check menus for translatable strings and write them to .menu-trans.h,
     so they will be found by lupdate utility<br>
   - check menus for unreferenced items<br>
-  - generate initial menu (now obsolete)<br>
  @author Martin Petricek
 */
 
@@ -22,78 +21,16 @@
 using namespace std;
 using namespace util;
 
-/** "Root" item of all configuration settings, which are relative to this item */
-const QString APP_KEY = "/PDFedit/";
-//todo: read from settings.cc/.h
-
 /** Constructor */
 MenuGenerator::MenuGenerator() {
- set=new QSettings(QSettings::Ini);
+ set=new gui::StaticSettings();
  //generate to/from current directory
- set->insertSearchPath(QSettings::Unix,QDir::current().path());
+ set->tryLoad("pdfeditrc");
 }
 
 /** Destructor */
 MenuGenerator::~MenuGenerator() {
  delete set;
-}
-
-/**
- Add Toolbar 
- @param id ID of toolbar
- @param name Caption of toolbar
- @param data Comma separated list of subitems
-*/
-void MenuGenerator::addToolbar(const QString &id,const QString &name,const QString &data) {
- addMenu(id,name,data);
- tbs+=id;
-}
-
-/**
- Add Menu item 
- @param id ID of menu item
- @param name Caption of menu item
- @param data Comma separated list: action, shortcut, icon. Shortcut / icon may be omitted or empty
-*/
-void MenuGenerator::addItem(const QString &id,const QString &name,const QString &data) {
- set->writeEntry("gui/items/"+id,QString("item ")+name+","+data);
-}
-
-/**
- Add Menu or submenu
- @param id ID of menu
- @param name Caption of menu
- @param data Comma separated list of subitems
-*/
-void MenuGenerator::addMenu(const QString &id,const QString &name,const QString &data) {
- set->writeEntry("gui/items/"+id,QString("list ")+name+","+data);
-}
-
-/** generate some initial/testing menu */
-void MenuGenerator::generate() {
- set->beginGroup(APP_KEY);
- set->writeEntry("path/icon", "$HOME/" CONFIG_DIR "/icon;" DATA_PATH "/icon"
-#ifdef TESTING
- ";./icon"
-#endif
-);
- addMenu   ("MainMenu",	"Main menu",	"file,help");
- addMenu   ("file",	"File",		"load,save,neww,closew,quit,help");
- addMenu   ("help",	"Help",		"about,index");
-
- addItem   ("neww",	"&New Window",	"newwindow(),Ctrl+N");
- addItem   ("closew",	"&Close Window","closewindow");
- addItem   ("quit",	"&Quit",	"quit");
- addItem   ("load",	"&Load",	"loadFile(),, load.png");
- addItem   ("save",	"&Save",	"saveFile(),, save.png");
- addItem   ("about",	"&About",	"about(),, about.png");
- addItem   ("index",	"&Help",	"index, showhelp('index')");
-
- addToolbar("MainToolbar",  "Main Toolbar",	"load,save,about");
- addToolbar("OtherToolbar", "Other Toolbar",	"save,load");
-
- set->writeEntry("gui/toolbars",tbs.join(","));/**/
- set->endGroup();
 }
 
 /** 
@@ -151,7 +88,6 @@ void MenuGenerator::setAvail(const QString &name) {
  Warn about unreferenced items 
 */
 void MenuGenerator::check() {
- set->beginGroup(APP_KEY);
  QStringList items=set->entryList("gui/items");
  QString toolBarList=set->readEntry("gui/toolbars");
  toolBarList=toolBarList.simplifyWhiteSpace();
@@ -176,7 +112,6 @@ void MenuGenerator::check() {
   else  cout << " (" << ava << " refs)";
   cout << endl;
  }
- set->endGroup();
 }
 
 /**
@@ -213,16 +148,9 @@ void MenuGenerator::translate() {
 */
 int main(int argc, char *argv[]){
  MenuGenerator m;
- cout << "Usage: \"menugenerator -generate\" to generate default menus" << endl
-      << "       \"menugenerator\" to check menus" <<endl
+ cout << "       \"menugenerator\" to check menus" <<endl
       << "       \"menugenerator -trans\" to generate translation" <<endl;
  if (argc>1) {
-  //Generate something .... (obsolete)
-  if (strcmp(argv[1],"-generate")==0) {
-   cout << "Generating menu" << endl;
-   m.generate();
-   cout << "Done generating menu" << endl;
-  }
   if (strcmp(argv[1],"-trans")==0) {
    cout << "Checking menu" << endl;
    m.translate();
