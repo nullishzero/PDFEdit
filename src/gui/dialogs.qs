@@ -727,24 +727,16 @@ function delPage (i) {
 	if (undefined == i) {
 
 		var dg = createDialog (tr("Remove page"), tr("Remove"), tr("Cancel"), tr("Remove page"));
-		gb = createGroupBoxAndDisplay (tr("Remove page"),dg);
+		sb = createSpinboxAndDisplay (tr("Remove page")+" [1.."+document.getPageCount()+"]",1,document.getPageCount(),dg);
 
-		// Dialog
-		var cb = new ComboBox;
-		cb.label = tr("Select page to remove");
-		cb.editable = true;
-		cb.itemList = [1,2];
-		gb.add (cb);
-
-		dg.width = 400;
 		if (!dg.exec()) return;
 
-		if (!isNumber(cb.currentItem)) {
+		if (!isNumber(sb.value)) {
 			warn (tr("Invalid page"));
 			return;
 		}
 
-		i = parseInt (cb.currentItem);
+		i = parseInt (sb.value);
 	}
 
 	print (i);

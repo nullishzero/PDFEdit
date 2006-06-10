@@ -40,7 +40,7 @@ function putnscolor (op,r,g,b) {
 	operands.append(createReal(r/255));
 	operands.append(createReal(g/255));
 	operands.append(createReal(b/255));
-	op.pushBack( createOperator(operands, "rg"),op.getLastOperator());
+	op.pushBack( createOperator("rg",operands),op.getLastOperator());
 }
 /** Change stroking color */
 function putscolor (op,r,g,b) {
@@ -48,26 +48,26 @@ function putscolor (op,r,g,b) {
 	operands.append(createReal(r/255));
 	operands.append(createReal(g/255));
 	operands.append(createReal(b/255));
-	op.pushBack( createOperator(operands, "RG"),op.getLastOperator());
+	op.pushBack( createOperator("RG", operands),op.getLastOperator());
 }
 /** Change font */
 function putfont (op,fid,fs) {
 	var operands = createIPropertyArray ();
 	operands.append(createName(fid));
 	operands.append(createReal(fs));
-	op.pushBack(createOperator(operands, "Tf"), op.getLastOperator());
+	op.pushBack(createOperator("Tf", operands), op.getLastOperator());
 }
 /** Add new line */
 function putline (op,lx,ly,rx,ry) {
 	var operands = createIPropertyArray ();
 	operands.append (createReal(lx));
 	operands.append (createReal(ly));
-	op.pushBack (createOperator(operands, "m"), op.getLastOperator());
+	op.pushBack (createOperator("m",operands), op.getLastOperator());
 
 	operands.clear();
 	operands.append (createReal(rx));
 	operands.append (createReal(ry));
-	op.pushBack (createOperator(operands, "l"),op.getLastOperator());
+	op.pushBack (createOperator("l",operands),op.getLastOperator());
 }
 /** Add new rect */
 function putrect (op,x,y,w,h) {
@@ -76,46 +76,46 @@ function putrect (op,x,y,w,h) {
 	operands.append (createReal(y));
 	operands.append (createReal(w));
 	operands.append (createReal(h));
-	op.pushBack (createOperator(operands, "re"),op.getLastOperator());
+	op.pushBack (createOperator("re",operands),op.getLastOperator());
 }
 /** Set line width */
 function putlinewidth (op,w) {
 	var operands = createIPropertyArray ();
 	operands.append (createInt(w));
-	op.pushBack (createOperator(operands, "w"), op.getLastOperator());	
+	op.pushBack (createOperator("w",operands), op.getLastOperator());	
 }
 /** Change rel.position */
 function puttextrelpos (op,dx,dy) {
 	var operands = createIPropertyArray ();
 	operands.append (createReal(dx));
 	operands.append (createReal(dy));
-	op.pushBack (createOperator(operands, "Td"), op.getLastOperator());
+	op.pushBack (createOperator("Td",operands), op.getLastOperator());
 }
 /** End drawing */
 function putenddraw (op) {
 	var operands = createIPropertyArray ();
-	op.pushBack (createOperator(operands, "S"),op.getLastOperator());
+	op.pushBack (createOperator("S",operands),op.getLastOperator());
 }
 /** Fill */
 function putfill (op) {
 	var operands = createIPropertyArray ();
-	op.pushBack (createOperator(operands, "B"),op.getLastOperator());
+	op.pushBack (createOperator("B",operands),op.getLastOperator());
 }
 /** Add text line */
 function puttext (op,txt) {
 	var operands = createIPropertyArray ();
 	operands.append (createString(txt));
-	op.pushBack (createOperator(operands, "Tj"),op.getLastOperator());
+	op.pushBack (createOperator("Tj",operands),op.getLastOperator());
 }
 /** End text */
 function putendtext (op) {
 	var operands = createIPropertyArray ();
-	op.pushBack (createOperator(operands, "ET"),op.getLastOperator());
+	op.pushBack (createOperator("ET",operands),op.getLastOperator());
 }
 /** Restore graphical state. */
 function putendq (op) {
 	var operands = createIPropertyArray ();
-	op.pushBack( createOperator(operands, "Q"), op.getLastOperator());
+	op.pushBack( createOperator("Q",operands), op.getLastOperator());
 }
 
 /** == debug utilities == */
@@ -400,7 +400,7 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 		iparray.add(i,createInt(array[i]));
 	operands.append (iparray);
 	operands.append (createInt(phase));
-	composite.pushBack (createOperator(operands, "d"), composite);
+	composite.pushBack (createOperator("d",operands), composite);
 
     /* Put the changed operator also in the queue */
 	composite.pushBack (operator);
