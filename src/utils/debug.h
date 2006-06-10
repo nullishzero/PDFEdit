@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/06/10 16:10:46  misuj1am
+ *
+ * -- typo fixed
+ *
  * Revision 1.16  2006/06/10 14:14:10  misuj1am
  *
  * -- ADD: general memor checker
@@ -268,7 +272,7 @@ public:
 	//
 	//
 	//
-	void objectCreated ()
+	void objectCreated (void*)
 	{
 		++getMax ();
 		++getAct ();
@@ -277,7 +281,7 @@ public:
 	//
 	//
 	//
-	void objectDeleted ()
+	void objectDeleted (void*)
 	{
 		--getAct();
 	};
