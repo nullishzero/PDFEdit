@@ -510,12 +510,6 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 	// do it in the setInheritablePageAttr function)
 	dictionary->lockChange();
 	setInheritablePageAttr (dictionary);
-	dictionary->unlockChange();
-
-	// collects all annotations from this page and registers observer to Annots
-	// array and all its members
-	collectAnnotations(dictionary, annotStorage);
-	registerAnnotsWatchDog();
 
 	// Workaround: pages that miss contents entry
 	//  -- it is not a global solution one can delete and add
@@ -525,7 +519,13 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 		CArray array;
 		dictionary->addProperty ("Contents",array);
 	}	
+	dictionary->unlockChange();
 	
+	// collects all annotations from this page and registers observer to Annots
+	// array and all its members
+	collectAnnotations(dictionary, annotStorage);
+	registerAnnotsWatchDog();
+
 	// Create contents observer
 	registerContentsObserver ();
 }
