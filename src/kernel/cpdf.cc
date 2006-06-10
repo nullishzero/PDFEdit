@@ -3,6 +3,18 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.60  2006/06/10 18:21:24  hockm0bm
+ * * getPageTreeRoot exported in header file
+ * * registerPageTreeObserver
+ * 	- signature changed - ref parameter replaced by prop with IProperty type
+ * 	- registers observer to all given properties
+ * 	- correctly handles Kids array (if reference registers observer also to
+ * 	  reference)
+ * 	- checks node type and just InterNodes are checked for children
+ * * consolidatePageTree method reimplemented
+ * 	- Count value is not collected from direct kids but getKidsCount is used
+ * 	- getNodeType is used rather than Type field
+ *
  * Revision 1.59  2006/06/09 17:17:33  hockm0bm
  * * PageTreeNodeType enum added
  * * getPageTreeRoot, getNodeType, getKidsCount, getKidsFromInterNode helper
@@ -175,8 +187,6 @@ using namespace boost;
 using namespace std;
 using namespace debug;
 
-// TODO exceptions unification
-
 typedef std::vector<boost::shared_ptr<pdfobjects::IProperty> > ChildrenStorage;
 
 namespace pdfobjects
@@ -236,17 +246,6 @@ ostream & operator<<(ostream & stream, PageTreeNodeType nodeType)
 	return stream;
 }
 
-/** Gets page tree root node dictionary.
- * @param pdf Pdf where to search.
- *
- * Gets Pages field from pdf dictionary and dereference it to dictionary. If it
- * is not reference or target object is not a dictionary, returns NULL
- * dictionary.
- * <br>
- * Note that this function never throws.
- *
- * @return Dictionary wrapped by shared_ptr (NULL dictionary if not found).
- */
 shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf)
 {
 	shared_ptr<CDict> result;
@@ -289,7 +288,7 @@ shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf)
  *
  * @return Node type.
  */
-PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)
+PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw()
 {
 	PageTreeNodeType nodeType=UnknownNode;
 
@@ -354,7 +353,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)
 	}
 
 	// TODO how to determine leaf node? (most of required fields can't be used
-	// because of their inheritance)
+	// because of their inheritance => they may be also in intermediate node)
 	
 	return nodeType;
 }
@@ -374,7 +373,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)
  * Note that this function never throws.
  */
 template<typename Container>
-void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Container & container)
+void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Container & container)throw()
 {
 	container.clear();
 
@@ -423,7 +422,7 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
  * Note that this function never throws.
  *
  */
-size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp)
+size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp)throw()
 {	
 	// leaf node adds one direct page in page tree
 	if(getNodeType(interNodeProp)==LeafNode)
@@ -817,55 +816,79 @@ using namespace utils;
  * @param ref Reference to page tree node.
  * @param observer Pointer to observer to register.
  *
- * Registers given observer to given reference. Then gets indirect property from
- * reference and if it is Pages dictionary, Registers observer also on Kids
- * array and recursively to all its elements (which are referencies).
+ * Registers given observer to given property. If it stand for intermediate node
+ * (according getNodeType function), regisers observer also to Kids array and 
+ * all elements of array (recursively). If Kids array is indirect object,
+ * register obsever also to reference pointing to the array.
+ *
  */
-void registerPageTreeObserver(boost::shared_ptr<CRef> ref, shared_ptr<const observer::IObserver<IProperty> > observer)
+void registerPageTreeObserver(boost::shared_ptr<IProperty> prop, shared_ptr<const observer::IObserver<IProperty> > observer)
 {
 using namespace boost;
 using namespace std;
 using namespace pdfobjects::utils;
 
-	IndiRef indiRef=getValueFromSimple<CRef, pRef, IndiRef>(ref);
-	utilsPrintDbg(DBG_DBG, indiRef);
-
 	// registers observer for page tree handling
-	ref->registerObserver(observer);
+	prop->registerObserver(observer);
 	
-	// dereferences and if it is Pages dictionary, calls recursively to all
-	// children
-	shared_ptr<CDict> dict_ptr=getDictFromRef(ref);
-	string dictType=getNameFromDict("Type", dict_ptr);
-
-	// if this is not pages dictionary, immediately returns
-	if(dictType!="Pages")
+	// if not an intermediate node, skipps further steps
+	if(getNodeType(prop)<InterNode)
 		return;
 
-	utilsPrintDbg(DBG_DBG, "Intermediate node. Registers to Kids array and all its elements");
+	// We have intermediate node - getCObjectFromRef can't fail
+	shared_ptr<CDict> dict_ptr=getCObjectFromRef<CDict, pDict>(prop);
+
+	utilsPrintDbg(DBG_DBG, "Intermediate node. Registers observer to Kids array and all its elements");
 
 	// gets Kids field from dictionary and all children from array and 
 	// registers observer to array and to each member reference
-	shared_ptr<IProperty> kidsProp_ptr=dict_ptr->getProperty("Kids");
-	if(kidsProp_ptr->getType()!=pArray)
+	if(!dict_ptr->containsProperty("Kids"))
 	{
-		// Kids is not an array - this is not an hard error at this context
-		utilsPrintDbg(DBG_WARN, "Kids field is not an array. type="<<kidsProp_ptr->getType());
+		utilsPrintDbg(DBG_WARN, "Intermediate node doesn't contain Kids array property.");
 		return;
 	}
-	shared_ptr<CArray> kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
-	kids_ptr->registerObserver(observer);
-	vector<shared_ptr<IProperty> > container;
-	kids_ptr->_getAllChildObjects(container);
-	for(vector<shared_ptr<IProperty> >::iterator i=container.begin(); i!=container.end(); i++)
+	shared_ptr<IProperty> kidsProp_ptr=dict_ptr->getProperty("Kids");
+	shared_ptr<CArray> kids_ptr;
+	if(isRef(kidsProp_ptr))
 	{
-		// all reference kids are used for recursion call
-		shared_ptr<IProperty> elemProp_ptr=*i;
-		if(elemProp_ptr->getType()==pRef)
-			registerPageTreeObserver(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr), observer);
+		// Kids property is reference - this is not offten but may occure and
+		// reference replacement should invalidate whole target array so
+		// observer is needed also to reference
+		utilsPrintDbg(DBG_DBG, "Kids array is reference. Registering obsever.");
+		kidsProp_ptr->registerObserver(observer);
+		
+		// gets target object
+		try
+		{
+			kids_ptr=getCObjectFromRef<CArray, pArray>(kidsProp_ptr);
+		}catch(CObjectException & e)
+		{
+			// target is not an array, keeps kids_ptr uninitialized and do the
+			// handling later
+		}
+	}else
+		if(isArray(kidsProp_ptr))
+			kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
+	if(!kids_ptr.get())
+	{
+		// kids_ptr is not initialized, what means that Kids array is not typed
+		// correctly (it is not array or reference to array).
+		utilsPrintDbg(DBG_WARN, "Inter node Kids property is not an array or reference to array.");
+		return;
 	}
 
-	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<indiRef);
+	// registers observer to array and all its elements
+	utilsPrintDbg(DBG_DBG, "Kids array found. Registering obsever.");
+	kids_ptr->registerObserver(observer);
+	ChildrenStorage container;
+	kids_ptr->_getAllChildObjects(container);
+	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); i++)
+	{
+		shared_ptr<IProperty> elemProp_ptr=*i;
+		registerPageTreeObserver(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr), observer);
+	}
+
+	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<prop->getIndiRef());
 }
 
 bool isEncrypted(CPdf & pdf, string * filterName)
@@ -1869,184 +1892,184 @@ using namespace utils;
 }
 
 
-bool CPdf::consolidatePageTree(boost::shared_ptr<CDict> interNode)
+bool CPdf::consolidatePageTree(boost::shared_ptr<CDict> & interNode, bool propagate)
 {
 using namespace utils;
 
-	IndiRef interNodeRef=interNode->getIndiRef();
-	kernelPrintDbg(DBG_DBG, "interNode "<<interNodeRef);
+	kernelPrintDbg(DBG_DBG, "");
 
-	// gets pdf of the node
+	// gets pdf of the node - must be non null
 	CPdf * pdf=interNode->getPdf();
-	if(!pdf)
+	assert(pdf);
+	
+	// only internode make sense to consolidate
+	PageTreeNodeType nodeType=getNodeType(interNode);
+	if(nodeType<InterNode)
 	{
-		kernelPrintDbg(DBG_ERR, "internode has no pdf");
+		kernelPrintDbg(DBG_DBG, "given node is not intermediate (type="<<nodeType<<"). Ignoring consolidation");
 		return true;
 	}
+		
+	IndiRef interNodeRef=interNode->getIndiRef();
+	kernelPrintDbg(DBG_DBG, "intermediate node "<<interNodeRef<<" consolidation");
+	kernelPrintDbg(DBG_DBG, "consolidating Count field");
+
+	// gets current count of kids and compares it to Count property
+	// if values are different, sets new value and sets countChanged to true and
+	// also node's parent should be consolidated
+	size_t count=getKidsCount(interNode);
+	bool countChanged=false;
+	if(interNode->containsProperty("Count"))
+	{
+		shared_ptr<IProperty> countProp=interNode->getProperty("Count");
+		shared_ptr<CInt> countInt;
+		if(isRef(countProp))
+		{
+			try
+			{
+				countInt=getCObjectFromRef<CInt, pInt>(countProp);
+			}catch(CObjectException & e)
+			{
+				// not int, keeps countInt unintialized
+			}
+		}else
+			if(isInt(countProp))
+				countInt=IProperty::getSmartCObjectPtr<CInt>(countProp);
+		// if countInt is unitialized, Count property has bad type
+		if(!countInt.get())
+		{
+			// removes old with bad type (or bad target type)
+			interNode->delProperty("Count");
+
+			// adds new Count property with correct value
+			countInt=shared_ptr<CInt>(CIntFactory::getInstance((int)count));
+			kernelPrintDbg(DBG_DBG, "replacing old Count property with new property value="<<count);
+			interNode->addProperty("Count", *countInt);
+			countChanged=true;
+		}else
+		{
+			// checks value
+			size_t currCount=getValueFromSimple<CInt, pInt, size_t>(countInt);
+			if(currCount!=count)
+			{
+				kernelPrintDbg(DBG_DBG, "Count value is changed from "<<currCount<<" to "<<count);
+				countInt->setValue(count);
+				countChanged=true;
+			}
+		}
+	}else
+	{
+		// adds new Count property with correct value
+		scoped_ptr<IProperty> countInt(CIntFactory::getInstance((int)count));
+		kernelPrintDbg(DBG_DBG, "adding new Count property value="<<count);
+		interNode->addProperty("Count", *countInt);
+		countChanged=true;
+	}
 	
-	// checks if interNode is real Pages dictionary
-	string dictType=getNameFromDict("Type", interNode);
-	if(dictType!="Pages")
-	{
-		kernelPrintDbg(DBG_ERR, "interNode is not correct intermediate node. type="<<dictType);
-		throw ElementBadTypeException("InterNode");
-	}
+	kernelPrintDbg(DBG_DBG, "consolidating Kids array members");
 
-	shared_ptr<IProperty> kidsArrayProp_ptr=interNode->getProperty("Kids");
-	if(kidsArrayProp_ptr->getType()!=pArray)
-	{
-		kernelPrintDbg(DBG_CRIT, "interNode's Kids field is not an array. type="<<kidsArrayProp_ptr->getType());
-		// Kids field value must be aray
-		throw ElementBadTypeException("Kids");
-	}
-
-	// following code should not throw an exception
-
-	// gets all children from array
-	shared_ptr<CArray> kidsArray_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsArrayProp_ptr);
-	vector<shared_ptr<IProperty> > kidsContainer;
-	kidsArray_ptr->_getAllChildObjects(kidsContainer);
-
-	// iterate through all array elements, dereference all of them and checks
-	// dictionary type. 
-	// Collects leaf page nodes from them (for Pages dict use Count value and
-	// for Page it is obvious)
-	size_t count=0;
-	vector<shared_ptr<IProperty> >::iterator i;
+	// collects all kids from internode for consolidation
+	ChildrenStorage kids;
+	getKidsFromInterNode(interNode, kids);
+	ChildrenStorage::iterator i;
 	size_t index=0;
-	for(i=kidsContainer.begin(); i!=kidsContainer.end(); i++, index++)
+	for(i=kids.begin(); i!=kids.end(); i++, index++)
 	{
-		// each element should be reference
-		if((*i)->getType()!=pRef)
+		shared_ptr<IProperty> child=*i;
+		if(!isRef(child))
 		{
 			// element is not reference, so we print warning and skip it
 			// We are in Observer context so CAN'T remove element
-			kernelPrintDbg(DBG_WARN, "Kids["<<index<<"] element must be reference. type="<<(*i)->getType());
+			kernelPrintDbg(DBG_WARN, "Kids["<<index<<"] element must be reference. type="<<child->getType());
 			continue;
 		}
 
-		// we have reference so get indirect object. Indirect should be
-		// dictionary. If it is not, we will print warning and skip this
-		// element. We are in Observer context so CAN'T remove element
-		IndiRef elementRef=getValueFromSimple<CRef, pRef, IndiRef>(*i);
-		shared_ptr<IProperty> kidProp_ptr=pdf->getIndirectProperty(elementRef);
-		if(kidProp_ptr->getType()!=pDict)
+		// ships all unknown and error nodes (everything below LeafNode)
+		PageTreeNodeType childType=getNodeType(child);
+		if(childType<LeafNode)
 		{
-			kernelPrintDbg(DBG_WARN, "Target of Kids["<<index<<"] is not dictionary. type="<<kidProp_ptr->getType());
+			kernelPrintDbg(DBG_WARN, "Kids["<<index<<"] target is not valid leaf or intermediate node. type="<<childType);
 			continue;
 		}
+		
+		// gets target dictionary to check and consolidate - this doesn't throw
+		// because it is leaf or intermediate node
+		shared_ptr<CDict> childDict=getCObjectFromRef<CDict, pDict>(child);
+		
+		// each leaf and inter node has to have Parent property with refernce to
+		// this node (which is indirect object and so we can use its
+		// NOTE that change in Parent property doesn't require also interNode
+		// parent consolidation
+		shared_ptr<CRef> parentRef;
+		if(childDict->containsProperty("Parent"))
+		{
+			shared_ptr<IProperty> parentProp=childDict->getProperty("Parent");
+			if(isRef(parentProp))
+				parentRef=IProperty::getSmartCObjectPtr<CRef>(parentProp);
 
-		shared_ptr<CDict> kidDict_ptr=IProperty::getSmartCObjectPtr<CDict>(kidProp_ptr);
-			
-		// indirect dictionary should be Page or Pages
-		// page dictionary increments count by 1 and if Pages, adds Count
-		// if some problem occures, skips this element
-		try
-		{
-			string dictType=getNameFromDict("Type", kidDict_ptr);
-			if(dictType=="Page")
-				count++;
-			else
-				if(dictType=="Pages")
-					count+=getIntFromDict("Count", kidDict_ptr);
-				else
-				{
-					kernelPrintDbg(DBG_WARN, " interNode contains reference to dictionary with bad type="<<dictType);
-					// bad dictionaty type is skipped
-					continue;
-				}
-		}catch(CObjectException & e)
-		{
-			kernelPrintDbg(DBG_WARN, "Problem with dictionary. cause="<<e.what());
-			continue;
-		}
-
-		// We have page or pages node at this moment. Checks Parent field
-		// whether it is reference and points to interNode. All errors are
-		// corrected.
-		try
-		{
-			IndiRef parentRef;
-			parentRef=getRefFromDict("Parent", kidDict_ptr);
-			if(! (parentRef==interNode->getIndiRef()))
+			// if parentRef is unitialized, Parent has bad type
+			if(!parentRef.get())
 			{
-				kernelPrintDbg(DBG_WARN, "Kids["<<index<<"] element dictionary doesn't have Parent with proper reference. Correcting to "<<parentRef);
-				CRef cref(interNode->getIndiRef());
-				kidDict_ptr->setProperty("Parent", cref);
+				// removes old with bad type (or bad target type)
+				childDict->delProperty("Parent");
+
+				// adds new Parent property with correct value
+				parentRef=shared_ptr<CRef>(CRefFactory::getInstance(interNodeRef));
+				kernelPrintDbg(DBG_DBG, "replacing old Parent property with new");
+				childDict->addProperty("Parent", *parentRef);
+			}else
+			{
+				// checks value
+				IndiRef currParentRef=getValueFromSimple<CRef, pRef, IndiRef>(parentRef);
+				if(!(currParentRef==interNodeRef))
+				{
+					kernelPrintDbg(DBG_DBG, "Parent value is changed from "<<currParentRef<<" to "<<interNodeRef);
+					parentRef->setValue(interNodeRef);
+				}
 			}
-			
-		}catch(ElementNotFoundException & e)
+		}else
 		{
-			// Parent not found at all
-			// field is added
-			IndiRef parentRef=interNode->getIndiRef();
-			kernelPrintDbg(DBG_WARN, "No Parent field found. Correcting to "<<parentRef);
-			CRef cref(parentRef);
-			kidDict_ptr->addProperty("Parent", cref);
-		}catch(ElementBadTypeException & e)
+			// adds new Count property with correct value
+			scoped_ptr<IProperty> countInt(CRefFactory::getInstance(interNodeRef));
+			kernelPrintDbg(DBG_DBG, "adding new Parent property");
+			childDict->addProperty("Parent", *countInt);
+		}
+	}
+
+	// If Count property has changed and propagate flag is set, then also parent
+	// intermediate node is consolidated
+	if(countChanged && propagate)
+	{
+		if(nodeType==RootNode)
 		{
-			// Parent is found but with bad type
-			// Parent field is removed in first step and than added with correct
-			// this is because of different type of field value which may lead
-			// to exception if types are checked (in paranoid mode of
-			// XRefWriter)
-			IndiRef parentRef=interNode->getIndiRef();
-			kernelPrintDbg(DBG_WARN, "Parent field found but with bad type. Correcting to "<<parentRef);
-			kidDict_ptr->delProperty("Parent");
-			CRef cref(parentRef);
-			kidDict_ptr->addProperty("Parent", cref);
+			// root node has no Parent and so recursion is finished, returns
+			// true if Count field has changed
+			return countChanged;
 		}
 
-	}
-
-	// count is collected for this node, checks if it matches actual value and 
-	// if not sets new value and distribute it to all parents. Parent can throw
-	// but this node and its sub tree is ok now
-	try
-	{
-		size_t currentCount=getIntFromDict("Count", interNode);
-		if(currentCount == count)
+		// gets parent node and consolidate it with true propagate flag
+		// Parent property has to be reference with dictionary target (indirect
+		// object). If there is problem, we can't reconstruct correct value, so
+		// just prints warning messages and stops recursion
+		if(interNode->containsProperty("Parent"))
 		{
-			// count field is ok - no parent consolidation has to be done
-			kernelPrintDbg(DBG_DBG, "No need to for further consolidation Count field is ok");
-			return true;
-		}
-	}catch(CObjectException &e)
-	{
-		// not found or bad type
-		// no special handling - just continues as if no bad Count value was
-		// present - This should never happen
-		kernelPrintDbg(DBG_WARN, "Intermediate node without or with bad typed Count field.");
+			shared_ptr<IProperty> parentProp=interNode->getProperty("Parent");
+			if(isRef(parentProp))
+			{
+				try
+				{
+					shared_ptr<CDict> parentDict=getCObjectFromRef<CDict, pDict>(parentProp);
+					return consolidatePageTree(parentDict, true);
+				}catch(CObjectException & e)
+				{
+					kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has bad Parent ref. Target is not a dictionary.");
+				}
+			}else 
+				kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has bad typed Parent field. type="<<parentProp->getType());
+		}else
+			kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has no Parent field (and it is not root).");
 	}
-
-	// Count field is not correct, sets new value and invalidates pagesCount
-	kernelPrintDbg(DBG_WARN, "Count field is not correct. Reconstructing correct value.");
-	CInt countProp(count);
-	kernelPrintDbg(DBG_INFO, "new interNode Count="<<count);
-	interNode->setProperty("Count", countProp);
-	
-	// distribute value also to fathers - if any
-	try
-	{
-		// TODO be carefull top level parent may be parent of himself
-		shared_ptr<IProperty> parentRef_ptr=interNode->getProperty("Parent");
-		shared_ptr<CDict> parentDict_ptr=getDictFromRef(parentRef_ptr);
-
-		// calls recursively
-		kernelPrintDbg(DBG_DBG, "Distributing count value to parent");
-		consolidatePageTree(parentDict_ptr);
-	}
-	catch(exception &e)
-	{
-		// no parent in intermediate node means root of page tree
-		// also consolidatePageTree can throw, but we don't handle it from here.
-		// It may be serious problem with demaged tree and so reconstruction has
-		// to be done by hand
-	}
-
-	// consolidation had to be done
-	kernelPrintDbg(DBG_INFO, "pageTree consolidation done for inter node "<<interNodeRef);
-	return false;
+	return countChanged;
 }
 
 boost::shared_ptr<CPage> CPdf::insertPage(boost::shared_ptr<CPage> page, size_t pos)

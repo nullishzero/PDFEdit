@@ -6,6 +6,18 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.62  2006/06/10 18:21:25  hockm0bm
+ * * getPageTreeRoot exported in header file
+ * * registerPageTreeObserver
+ * 	- signature changed - ref parameter replaced by prop with IProperty type
+ * 	- registers observer to all given properties
+ * 	- correctly handles Kids array (if reference registers observer also to
+ * 	  reference)
+ * 	- checks node type and just InterNodes are checked for children
+ * * consolidatePageTree method reimplemented
+ * 	- Count value is not collected from direct kids but getKidsCount is used
+ * 	- getNodeType is used rather than Type field
+ *
  * Revision 1.61  2006/06/09 17:17:33  hockm0bm
  * * PageTreeNodeType enum added
  * * getPageTreeRoot, getNodeType, getKidsCount, getKidsFromInterNode helper
@@ -226,64 +238,6 @@
  * * printDbg for more methods
  * * insertPage implemented
  *
- * Revision 1.19  2006/03/29 06:12:34  hockm0bm
- * consolidatePageTree method added
- * starting to use getPageFromRef
- *
- * Revision 1.18  2006/03/27 22:28:42  hockm0bm
- * consolidatePageList method added to CPdf
- *
- * Utils namespace:
- * isDescendant method for subtree information
- * getNodePosition method for CDict -> position
- * searchTreeNode helper method
- *
- * Revision 1.17  2006/03/25 21:23:57  hockm0bm
- * pages handling implemented - pageList created
- *         insertPage, removePage - only in design state
- * page iteration methods implemented
- * initRevisionSpecific handles pageList clean up
- *
- * Revision 1.16  2006/03/25 11:56:39  hockm0bm
- * debuging work around
- *
- * Revision 1.15  2006/03/24 20:06:50  hockm0bm
- * createPage and createOutline removed
- *         - they don't make sense because Pages can be created directly and
- *         then inserted
- *         - same with outlines
- * comments for most of nonimplemented methods
- *
- * Revision 1.14  2006/03/21 23:21:39  hockm0bm
- * minor interface changes
- * compileable but not usabe in this state
- * CPage question not solved yet
- *
- * Revision 1.12  2006/03/13 01:35:10  misuj1am
- *
- *
- * -- modecontroller
- *	get/setModeController, if null OUR modecontroller is used
- *
- * Revision 1.11  2006/03/08 12:13:59  misuj1am
- *
- * -- precompiled headers support
- * -- unused arguments commented out
- *
- * Revision 1.10  2006/03/06 18:18:55  hockm0bm
- * compilable changes - each module is compilable now
- * each object in pdfobjects namespace
- * more comments
- * cpdf - most of methods are just comments how to implement
- *
- * Revision 1.9  2006/02/28 22:57:19  hockm0bm
- * Just few obvious errors - still not compileable (due to errors in cobjectI.h)
- *
- * Revision 1.8  2006/02/28 22:41:41  hockm0bm
- * Scratch of the implementation - not compileable
- * Most of functions described with kind of pseudocode
- * Waiting for CObject clarification (to implement stuff)
- *
  *
  */
 
@@ -348,7 +302,13 @@ class COutline;
  * original one.
  */
 typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
-	
+
+/** Type for page tree node count chache.
+ * It is mapping where key is indirect reference of page tree node and
+ * associated value is current number of direct pages under this node.
+ */
+typedef std::map<IndiRef, size_t> PageTreeNodeCountCache;
+
 /** CPdf special object.
  *
  * This class is responsible for pdf document maintainance. It provides wrapper
@@ -360,7 +320,8 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * <b>Instancing</b><br>
  * Public constructor is not available and instances can be created on by 
  * static factory getInstance method. Also no public destructor is available 
- * and instance can be destroyed only by close method.
+ * and instance can be destroyed only by close method. This implies that
+ * instance can be used only as pointer or reference.
  * 
  * <p>
  * <b>Open mode</b><br>
@@ -374,8 +335,8 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * CPdf instance contains XRefWriter typed field which maintains all changes to
  * document content. It is not accessible outside from class to keep full
  * control upon instance in CPdf. To enable using also xpdf code outside CPdf
- * CXref casted instance of XRefWriter is returned in getCXref. This instance
- * doesn't enable any chnages but enables access to most accurate indirect
+ * CXref casted supertype of XRefWriter is returned in getCXref. This instance
+ * doesn't enable any changes but enables access to most accurate indirect
  * objects. Changes to XRefWriter can be done only by CPdf methods. Note that
  * changes can be be done only in newest revision (@see save).
  * 
@@ -384,7 +345,8 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * Properties from document can be accessible from document catalog which is
  * returned by getDictionary method. New indirect property, which may be used in
  * some other property (by its reference) can be created by addIndirectProperty.
- * Change of indirect property can be registered by changeIndirectProperty.
+ * Change of indirect property can be registered to the XRefWriter by 
+ * changeIndirectProperty method.
  * Finaly each indirect property is accessible by getIndirectProperty. All these
  * methods are just some wrappers to XRefWriter internal field with CObject to
  * xpdf Object conversion logic. Using them guaranties that all changes are
@@ -396,7 +358,7 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * current state of page tree. Page instances (CPage typed) can be obtained by
  * getPage, getFirstPage, getLastPage, getNextPage, getPrevPage methods. All
  * returned instances are kept in pageList to guarantee that request for page at
- * same position returns same page instance (unless page tree is not changed).
+ * same position returns same page instance (unless page tree is changed).
  * CPdf uses PageTreeWatchDog inner class for page tree synchronization. So
  * changes can be done also directly in page tree (not using CPdf methods) and
  * pageList will contain correct (available) CPage instances.
@@ -404,8 +366,10 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * insertPage and removePage enables inserting and removing new pages to the
  * page tree. This way is prefered for making such changes. Other way (as
  * mentioned above) is to change page tree directly using property interface.
- * This way may lead to errors which are not recoverable and so it is strongly
- * discouraged.
+ * This way may lead to errors which are not recoverable (may destroy valid 
+ * pdf page tree format) and so it is strongly discouraged unless you exactly
+ * know what you are doing and CPdf interface doesn't provide right way how 
+ * to do it.
  * <br>
  * Pages are counted from 1 (first page) up to getPageCount return value. Note
  * that this may not represent values used for inner page counting writen on the
@@ -415,13 +379,14 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  *
  * <p>
  * <b>Revision manipulation</b><br>
- * CPdf provides access for working with document revision handled in XRefWriter
- * field. Actual revision number (the newest revision has 0 number and grows to
+ * CPdf provides interface for document revision handling done in XRefWriter
+ * class. Actual revision number (the newest revision has 0 number and grows to
  * older revisions) can be obtained by getActualRevision method. Current
  * revision can be changed by changeRevision method. As a result, just object
  * included until current revisions are available. Also no changes can be done
  * if revision is not the newest one, because PDF document doesn't support
- * revision branching.
+ * revision branching. All these operations are just delegated (after som 
+ * checks) to XRefWriter.
  * <br>
  * All internal data structures which may depend on current revision are
  * intialized and cleaned up in initRevisionSpecific method.
@@ -571,46 +536,44 @@ protected:
 	/** Consolidates page tree.
 	 * @param interNode Intermediate node dictionary under which change has
 	 * occured.
+	 * @param propagate Flag whether to consolidate also patent of given
+	 * internode if it is needed (default is false - not to propagate).
 	 *
-	 * In first step checks the number of page nodes in interNode's subtree.
-	 * Collects number for pages just from direct subnodes - members of Kids
-	 * array (Page dictionary for 1 and Pages for Count).
+	 * Recursively checks and consolidates intermediate nodes. All given nodes
+	 * which are not intermediate (according getNodeType function) are ignored.
+	 * In first step checks the number of page (leaf) nodes in interNode's 
+	 * subtree. If this number is different than Count interNode's property then
+	 * sets correct value and also interNode's parent should be consolidated. 
 	 * <br>
-	 * Second step of consolidation checks whether all children from Kids array
-	 * have Parent set to given interNode. If not, Parent reference is changed to
-	 * contain correct value.
+	 * In second step, checks all childrens' Parent property to refere to this 
+	 * interNode. If property is missing or has wrong value (or type), sets 
+	 * correct value. Also consolidates all child which are intermediate nodes
+	 * with recursive call of this method with false propagate flag (because it
+	 * is enough to propage from this call).
+	 * <br>
+	 * Finally checks propagate flag and if it is true and also parent should be
+	 * consolidated, calls method recursivelly to interNode parent (unless it is
+	 * RootNode) with true propagate flag.
 	 * <p>
 	 * <b>Implementation notes</b>:
 	 * <ul>
 	 * <li>
 	 * This method should be called when some change occures in page tree. Given
 	 * parameter stands for dereferenced dictionary of intermediate node under
-	 * which change occures (it should be indirect parent of changed value - 
-	 * reference or Kids array). If given dictionary has not Pages type, throws 
-	 * exception.
+	 * which change occured (it should be indirect parent of changed value - 
+	 * reference or Kids array).
 	 * Change event may be:
 	 * <ul>
 	 * 		<li>Kids array element has been deleted/added
 	 * 		<li>Kids array element has changed its value
 	 * </ul>
-	 * <li> Doesn't perform any parameter checking. Relay on correct value.
 	 * <li> Changes Count field of each intermediate node if neccessary.
 	 * <li> Sets Parent field of direct children, if not set correctly.
-	 * <li> Doesn't go deeply in to children
-	 * <li> If page tree was consistent before change under this interNode 
-	 * occured, it will be consistent after this consolidation too (NOTE all
-	 * children of given node must be correct too).
-	 * <li> Exception is thrown only if page tree demage and method is not able
-	 * to handle it.
 	 * </ul>
-	 *
-	 * @throw ElementBadTypeException if given dictionary has not Pages type or
-	 * Kids array can't be found or any other required field has bad type.
-	 * @throw ElementNotFoundException if any of required field can't be found.
 	 *
 	 * @return true if tree consolidation kept pages count, false otherwise.
 	 */
-	bool consolidatePageTree(boost::shared_ptr<CDict> interNode);
+	bool consolidatePageTree(boost::shared_ptr<CDict> & interNode, bool propagate=false);
 	
 	/** Consolidates pageList after change in Page tree.
 	 * @param oldValue Old reference (CNull if no previous state).
@@ -1467,6 +1430,19 @@ public:
 // helper methods
 namespace utils 
 {
+	
+/** Gets page tree root node dictionary.
+ * @param pdf Pdf where to search.
+ *
+ * Gets Pages field from pdf dictionary and dereference it to dictionary. If it
+ * is not reference or target object is not a dictionary, returns NULL
+ * dictionary.
+ * <br>
+ * Note that this function never throws.
+ *
+ * @return Dictionary wrapped by shared_ptr (NULL dictionary if not found).
+ */
+boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
 	
 /** Helper method to find page at certain position.
  * @param pdf Pdf instance where to search.
