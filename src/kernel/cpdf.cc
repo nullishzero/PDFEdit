@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.62  2006/06/10 22:35:39  hockm0bm
+ * * consolidatePageTree, consolidatePageList methods don't check values for referencies
+ * * minor bug fixes
+ *         - seems to work now (according tests - needs more extreme test cases
+ *
  * Revision 1.61  2006/06/10 20:08:02  hockm0bm
  * CPdf::consolidatePageList method reimplemented
  *         - uses getNodeType instead of /Type property
@@ -1723,79 +1728,72 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "oldValue type="<<oldValue->getType());
 	if(!isNull(oldValue))
 	{
-		if(!isRef(oldValue))
-		{
-			// if old value is not reference, then it was just mass in Kids
-			// array and can be ignored here
-			kernelPrintDbg(DBG_DBG, "oldValue is not reference.");
-		}else
-		{
+		// oldValue is reference
 		
-			PageTreeNodeType oldNodeType=getNodeType(oldValue);
+		PageTreeNodeType oldNodeType=getNodeType(oldValue);
 
-			switch(oldNodeType)
+		switch(oldNodeType)
+		{
+			// simple page is compared with all from pageList and if found, 
+			// removes it from list and invalidates it.
+			// Difference is set to - 1, because one page is removed 
+			case LeafNode:
 			{
-				// simple page is compared with all from pageList and if found, 
-				// removes it from list and invalidates it.
-				// Difference is set to - 1, because one page is removed 
-				case LeafNode:
+				kernelPrintDbg(DBG_DBG, "oldValue was simple page dictionary");
+				difference = -1;
+				shared_ptr<CDict> oldDict_ptr=getCObjectFromRef<CDict, pDict>(oldValue);
+
+				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
 				{
-					kernelPrintDbg(DBG_DBG, "oldValue was simple page dictionary");
-					difference = -1;
-					shared_ptr<CDict> oldDict_ptr=getCObjectFromRef<CDict, pDict>(oldValue);
-
-					for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
+					// checks page's dictionary with old one
+					shared_ptr<CPage> page=i->second;
+					if(page->getDictionary() == oldDict_ptr)
 					{
-						// checks page's dictionary with old one
-						shared_ptr<CPage> page=i->second;
-						if(page->getDictionary() == oldDict_ptr)
-						{
-							// FIXME: uncoment when method is ready
-							//i->second->invalidate();
-							size_t pos=i->first;
-							minPos=pos;
-							pageList.erase(i);
-							kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
-							break;
-						}
-					}
-					break;
-				}
-				case InterNode:
-				case RootNode:
-				{
-					// all CPages from this sub tree are removed and invalidated
-					// difference is set to -getKidsCount value (total page lost)
-					kernelPrintDbg(DBG_DBG, "oldValue was intermediate node dictionary.")
-					difference = -getKidsCount(oldValue);
-
-					// gets reference of oldValue - which is the root of removed
-					// subtree
-					IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
-					
-					for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
-					{
-						shared_ptr<CPage> page=i->second;
-						// checks page's dictionary whether it is in oldDict_ptr sub
-						// tree and if so removes it from pageList
-						if(isDescendant(*this, ref, page->getDictionary()))
-						{
-							// updates minPos with page position (if greater)
-							size_t pos=i->first;
-							if(pos > minPos)
-								minPos=pos;
-							
-							// FIXME: uncoment when method is ready
-							//page->invalidate();
-							pageList.erase(i);
-							kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
-
-						}
+						// FIXME: uncoment when method is ready
+						//i->second->invalidate();
+						size_t pos=i->first;
+						minPos=pos;
+						pageList.erase(i);
+						kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
+						break;
 					}
 				}
-				default:
-					kernelPrintDbg(DBG_DBG, "oldValue is not leaf or intermediate node.");
+				break;
 			}
+			case InterNode:
+			case RootNode:
+			{
+				// all CPages from this sub tree are removed and invalidated
+				// difference is set to -getKidsCount value (total page lost)
+				kernelPrintDbg(DBG_DBG, "oldValue was intermediate node dictionary.")
+				difference = -getKidsCount(oldValue);
+
+				// gets reference of oldValue - which is the root of removed
+				// subtree
+				IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+				
+				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
+				{
+					shared_ptr<CPage> page=i->second;
+					// checks page's dictionary whether it is in oldDict_ptr sub
+					// tree and if so removes it from pageList
+					if(isDescendant(*this, ref, page->getDictionary()))
+					{
+						// updates minPos with page position (if greater)
+						size_t pos=i->first;
+						if(pos > minPos)
+							minPos=pos;
+						
+						// FIXME: uncoment when method is ready
+						//page->invalidate();
+						pageList.erase(i);
+						kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
+
+					}
+				}
+			}
+			default:
+				kernelPrintDbg(DBG_DBG, "oldValue is not leaf or intermediate node.");
 		}
 	}
 
@@ -1810,29 +1808,22 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "newValue type="<<newValue->getType());
 	if(!isNull(newValue))
 	{
-		if(!isRef(newValue))
-		{
-			// new value is not reference and so just mass added to Kids array
-			// this can be ignored
-			kernelPrintDbg(DBG_DBG, "newValue is not reference");
-		}else
-		{
-			PageTreeNodeType newValueType=getNodeType(newValue);
+		// newValue is reference
+		PageTreeNodeType newValueType=getNodeType(newValue);
 
-			// gets count of pages in newValue node (if intermediate all pages
-			// under this node)
-			switch(newValueType)
-			{
-				case LeafNode:
-					pagesCount=1;
-					break;
-				case InterNode:
-				case RootNode:
-					pagesCount=getKidsCount(newValue);
-					break;
-				default:
-					kernelPrintDbg(DBG_DBG, "newValue is not leaf or intermediate node.");
-			}
+		// gets count of pages in newValue node (if intermediate all pages
+		// under this node)
+		switch(newValueType)
+		{
+			case LeafNode:
+				pagesCount=1;
+				break;
+			case InterNode:
+			case RootNode:
+				pagesCount=getKidsCount(newValue);
+				break;
+			default:
+				kernelPrintDbg(DBG_DBG, "newValue is not leaf or intermediate node.");
 		}
 			
 		// try to get position of newValue node.  No pages from this subtree can
@@ -2071,7 +2062,7 @@ using namespace utils;
 		{
 			// root node has no Parent and so recursion is finished, returns
 			// true if Count field has changed
-			return countChanged;
+			return !countChanged;
 		}
 
 		// gets parent node and consolidate it with true propagate flag
@@ -2096,7 +2087,9 @@ using namespace utils;
 		}else
 			kernelPrintDbg(DBG_WARN, "InterNode "<<interNodeRef<<" has no Parent field (and it is not root).");
 	}
-	return countChanged;
+
+	// returns true if count hasn't changed
+	return !countChanged;
 }
 
 boost::shared_ptr<CPage> CPdf::insertPage(boost::shared_ptr<CPage> page, size_t pos)
