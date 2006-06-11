@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.64  2006/06/11 22:09:51  hockm0bm
+ * * PageTreeNodeType, getKidsCount, getNodeType, getKidsFromInterNode
+ *         - exported to header file
+ *
  * Revision 1.63  2006/06/11 14:22:27  hockm0bm
  * Caching for intermediate nodes leaf node counts for better perfomance of
  * getKidsCount implemented
@@ -1464,6 +1468,25 @@ public:
 namespace utils 
 {
 	
+/** Type enumeration for page tree nodes.
+ * Type of dictionary in page tree. Possible values are:
+ * <ul>
+ * <li>ErrorNode - node has bad type (it is not dictionary or reference to
+ * dictionary).
+ * <li>UnknownNode - node is dictionary but it is not possible to get node type 
+ * <li>LeafNode - leaf tree node (Page dictionary).
+ * <li>InterNode - intermediate node (Pages dictionary).
+ * <li>RootNode - intermediate root node.
+ * </ul>
+ *
+ * <p>
+ * Implementation node:<br>
+ * Note that order is significant, because we assume that everything lower than
+ * LeafNode is kind of error (problem) and also that greater or equal than
+ * InterNode is intermediate node.
+ */
+enum PageTreeNodeType { ErrorNode, UnknownNode, LeafNode, InterNode, RootNode };
+
 /** Gets page tree root node dictionary.
  * @param pdf Pdf where to search.
  *
@@ -1566,6 +1589,53 @@ boost::shared_ptr<CDict> findPageDict(
  */
 size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node, PageTreeNodeCountCache * cache);
 
+/** Calculates number of direct pages under given node property.
+ * @param interNodeProp Page tree node property (must be dictionary or reference
+ * to dictionary).
+ * @param cache Cache with node reference to leaf page count (if NULL. it is not
+ * used).
+ *
+ * Checks whether given node is LeafNode and if so, immediatelly returns with 1
+ * (page contains one direct page node). Otherwise tries to get node dictionary
+ * from given property. If not able to do so, returns 0, because this node is
+ * probably invalid and so it can't contain any direct page node. 
+ * Then checks whether given cache parameter is non NULL and if so checks cached
+ * value for given node (uses getKidsCountCached function). This value is
+ * returned (if it is different than INVALIDPAGECOUNT).
+ * Finally collects all Kids elements from dictionary (uses getKidsFromInterNode
+ * function) and calls this function recursively on each. Collected number is
+ * returned and if cache is non NULL also caches value (uses
+ * updateKidsCountCache function).
+ * <br>
+ * Note that this function never throws.
+ *
+ */
+size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTreeNodeCountCache * cache)throw();
+	
+/** Checks given node property for its page tree node type.
+ * @param nodeProp Node property (must be dictionary or reference to
+ * dictionary).
+ *
+ * Gets node dictionary in first step (either directly from parameter or
+ * dereference). If not able to get it, returns ErrorNode type. Then checks
+ * whether node dictionary is same as Page tree root node and if so, returns
+ * RootNode type. If not able to get root node, returns UnknownNode.
+ * <br>
+ * Checks for Type field in node dictionary and if present, checks its value. It
+ * must be name object. If so and value is Page, returns LeafNode, or if value
+ * is Pages, returns InterNode. Otherwise returns (also if Type field type is
+ * not name), returns UnknownNode.
+ * <br>
+ * Finally tries to determine node type from existing fields. If dictionary
+ * contains Kids array, it is considered to be InterNode. Otherwise returns
+ * UnknownNode.
+ * <br>
+ * Note that this function never throws.
+ *
+ * @return Node type.
+ */
+PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw();
+
 /** Checks if given child is descendant of node with given reference.
  * @param pdf Pdf where to resolv referencies.
  * @param parent Reference of the parent.
@@ -1583,6 +1653,23 @@ size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node, Page
  * @return true If given child belongs to parent subtree, false otherwise.
  */
 bool isDescendant(CPdf & pdf, IndiRef parent, boost::shared_ptr<CDict> child);
+
+/** Collects all kids elements from internode dictionary.
+ * @param interNodeDict Intermediate node dictionary.
+ * @param container Container where to store kids.
+ *
+ * Clears given container at first. Gets Kids array from given dictionary and
+ * adds all its elements to given container. If not able to do so, immediatelly
+ * returns. Given container is empty if no kid is found (or any other problem
+ * occures).
+ * <br>
+ * Container template type must store shared_ptr<IProperty> types and support
+ * clear and push_back methods.
+ * <br>
+ * Note that this function never throws.
+ */
+template<typename Container>
+void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Container & container)throw();
 
 /** Checks whether file content is encrypted.
  * @param pdf Pdf instance to check.
