@@ -3,6 +3,16 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.64  2006/06/11 16:54:53  hockm0bm
+ * BUG fixes
+ * * getKidsCount bug fix
+ * 	- count local variable wasn't initialized before count cumulation
+ * * findPageDict
+ *         - RootNode was filtered out
+ * * PageTreeWatchDog::notify
+ *         - consolidatePageTree has to be called with true propaget flag
+ *         - oldValue nodeCountCache discarding condition was wrong
+ *
  * Revision 1.63  2006/06/11 14:22:27  hockm0bm
  * Caching for intermediate nodes leaf node counts for better perfomance of
  * getKidsCount implemented
@@ -195,7 +205,9 @@
  * 	- code reorganization and simplification
  * * caches page number in field pageCount
  * 	- invalidation is done in consolidatePageTree and initRevisionSpecific
- *
+ * * PageTreeWatchDog::notify
+ * 	- wrong condition for oldValue discarding
+ 
  * Revision 1.32  2006/04/20 22:34:37  hockm0bm
  * freeXpdfObject cloning seems to be problem (for array - TODO solve)
  *         - just to prevent SEGV (this solution means memmory leak)
@@ -451,20 +463,20 @@ void updateKidsCountCache(IndiRef ref, size_t kidsCount, PageTreeNodeCountCache 
 {
 using namespace debug;
 	
-	utilsPrintDbg(DBG_DBG, "ref="<<ref<<" kidsCount="<<kidsCount);
+	utilsPrintDbg(DBG_DBG, ref<<" kidsCount="<<kidsCount);
 	PageTreeNodeCountCache::iterator pos=cache.find(ref);
 	if(pos!=cache.end())
 	{
 		// value is present in mapping
 		// TODO what does it mean - problem????
 		//  NOTE it means that value has not been discarded before update
-		utilsPrintDbg(DBG_WARN, "ref="<<pos->first<<" already cached with kidsCount="<<pos->second<<". Rewriting to kidsCount="<<kidsCount);
+		utilsPrintDbg(DBG_WARN, pos->first<<" already cached with kidsCount="<<pos->second<<". Rewriting to kidsCount="<<kidsCount);
 		pos->second=kidsCount;
 		return;
 	}
 
 	// adds mapping for this reference
-	utilsPrintDbg(DBG_DBG, "new cache entry: ref="<<ref<<" kidsCount="<<kidsCount);
+	utilsPrintDbg(DBG_DBG, "new cache entry: "<<ref<<" kidsCount="<<kidsCount);
 	cache.insert(PageTreeNodeCountCache::value_type(ref, kidsCount));
 }
 
@@ -487,14 +499,14 @@ size_t getKidsCountCached(IndiRef ref, PageTreeNodeCountCache & cache)
 {
 using namespace debug;
 
-	utilsPrintDbg(DBG_DBG, "ref="<<ref);
+	utilsPrintDbg(DBG_DBG, ref);
 	PageTreeNodeCountCache::iterator pos=cache.find(ref);
 	if(pos!=cache.end())
 	{
-		utilsPrintDbg(DBG_DBG, "cache entry found. ref="<<pos->first<<" kidsCount="<<pos->second);
+		utilsPrintDbg(DBG_DBG, "cache entry found. "<<pos->first<<" kidsCount="<<pos->second);
 		return pos->second;
 	}
-	utilsPrintDbg(DBG_DBG, "no cache entry found for ref="<<ref);
+	utilsPrintDbg(DBG_DBG, "no cache entry found for "<<ref);
 
 	return INVALIDPAGECOUNT;
 }
@@ -516,14 +528,14 @@ void discardKidsCountCache(IndiRef & ref, CPdf & pdf, PageTreeNodeCountCache & c
 {
 using namespace debug;
 
-	utilsPrintDbg(DBG_DBG, "ref="<<ref);
+	utilsPrintDbg(DBG_DBG, ref);
 	PageTreeNodeCountCache::iterator pos=cache.find(ref);
 	if(pos!=cache.end())
 	{
-		utilsPrintDbg(DBG_DBG, "cache entry found. ref="<<pos->first<<" kidsCount="<<pos->second<<". Discarding");
+		utilsPrintDbg(DBG_DBG, "cache entry found. "<<pos->first<<" kidsCount="<<pos->second<<". Discarding");
 		cache.erase(pos);
 	}else
-		utilsPrintDbg(DBG_DBG, "no cache entry for ref="<<ref);
+		utilsPrintDbg(DBG_DBG, "no cache entry for "<<ref);
 
 	if(!withSubTree)
 		return;
@@ -617,6 +629,7 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 
 	// we assume inter node, so collects all children and calculates total
 	// direct page count (calls recursively)
+	count=0;
 	ChildrenStorage children;
 	getKidsFromInterNode(interNodeDict, children);
 	for(ChildrenStorage::const_iterator i=children.begin(); i!=children.end(); i++)
@@ -740,7 +753,7 @@ boost::shared_ptr<CDict> findPageDict(
 			// all members of Kids array have to be either intermediate nodes or
 			// leaf nodes - all other are ignored
 			PageTreeNodeType nodeType=getNodeType(child);
-			if(nodeType!=InterNode && nodeType!=LeafNode)
+			if(nodeType!=InterNode && nodeType!=RootNode && nodeType!=LeafNode)
 			{
 				utilsPrintDbg(DBG_WARN, "Kid["<<index<<"] is not valid page tree node. nodeType="<<nodeType<<". Ignoring");
 				continue;
@@ -1202,7 +1215,7 @@ using namespace utils;
 		// if consolidatePageTree hasn't kept page count numbers, total number
 		// of pages must be invalidated
 		kernelPrintDbg(DBG_DBG, "consolidating page tree.");
-		if(!pdf->consolidatePageTree(parentDict_ptr))
+		if(!pdf->consolidatePageTree(parentDict_ptr, true))
 			pdf->pageCount=0;
 	}catch(CObjectException & e)
 	{
@@ -1219,7 +1232,7 @@ using namespace utils;
 		kernelPrintDbg(DBG_ERR, "consolidatePageList failed with cause="<<e.what());
 	}
 
-	if(!isRef(oldValue))
+	if(isRef(oldValue))
 	{
 		IndiRef oldRef=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
 		kernelPrintDbg(DBG_DBG, "discarding leaf count cache for "<<oldRef<<" subtree");
@@ -1281,6 +1294,7 @@ using namespace utils;
 		kernelPrintDbg(DBG_WARN, "Document catalog dictionary is held by somebody.");
 	docCatalog.reset();
 	
+	kernelPrintDbg(DBG_DBG, "Cleaning up nodeCountCache with "<<nodeCountCache.size()<<" entries");
 	clearKidsCountCached(nodeCountCache);
 
 	// cleanup all returned outlines  -------------||----------------- 
