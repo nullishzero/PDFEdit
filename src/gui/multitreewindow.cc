@@ -6,14 +6,16 @@
 */
 
 #include "multitreewindow.h"
-#include "util.h"
-#include "treewindow.h"
-#include "treeitemabstract.h"
-#include <qlayout.h>
-#include <qtoolbutton.h>
-#include <qtabwidget.h>
-#include <utils/debug.h>
 #include "iconcache.h"
+#include "treeitemabstract.h"
+#include "treewindow.h"
+#include "util.h"
+#include <qcursor.h>
+#include <qlayout.h>
+#include <qpopupmenu.h>
+#include <qtabwidget.h>
+#include <qtoolbutton.h>
+#include <utils/debug.h>
 
 namespace gui {
 
@@ -45,6 +47,7 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
 
  //Add main tree to Tab widget
  tab->addTab(mainTree,tr("Tree"));
+ tab->setTabToolTip(mainTree,tr("Document tree"));
 
  IconCache ic;
 
@@ -59,12 +62,49 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
   guiPrintDbg(debug::DBG_WARN,"Icon not found: " << closeIconName);
  }
  theCorner->setTextLabel(tr("Close current tab"));
- corner=theCorner;
+ cornerRight=theCorner;
 
- tab->setCornerWidget(corner,Qt::TopRight);
- QObject::connect(corner,SIGNAL(clicked()),this,SLOT(deleteCurrent()));
+ //Tab switching corner widget
+ QString expandIconName="expand.png";
+ QPixmap *expandIcon=ic.getIcon(expandIconName);
+ //Corner button to switch to tab using popup menu
+ QToolButton *tabExpand=new QToolButton(tab,"switch_tab");
+ if (expandIcon) {
+  tabExpand->setIconSet(*expandIcon);
+ } else {
+  guiPrintDbg(debug::DBG_WARN,"Icon not found: " << expandIconName);
+ }
+ tabExpand->setTextLabel(tr("Switch to ..."));
+ cornerLeft=tabExpand;
+ tab->setCornerWidget(cornerLeft,Qt::TopLeft);
+ QObject::connect(cornerLeft,SIGNAL(pressed()),this,SLOT(tabSwitchPopup()));
+
+ tab->setCornerWidget(cornerRight,Qt::TopRight);
+ QObject::connect(cornerRight,SIGNAL(clicked()),this,SLOT(deleteCurrent()));
  QObject::connect(tab,SIGNAL(currentChanged(QWidget*)),this,SLOT(pageChange(QWidget*)));
  updateCorner();
+}
+
+/**
+ Invoke popup menu to switch tabs.
+ Switch to selected tab.
+*/
+void MultiTreeWindow::tabSwitchPopup() {
+ QPopupMenu m(this,"tab_switch_popup");
+ m.insertItem(tr("Switch to ..."),0x3fffffff);
+ m.setItemEnabled(0x3fffffff,false);
+ int tabCount=tab->count();
+ m.insertSeparator();
+ for (int i=0;i<tabCount;i++) {
+  QWidget* oneTab=tab->page(i);
+  QString tName=tab->tabToolTip(oneTab);
+  m.insertItem(tName,i);
+ }
+ int id= m.exec(QCursor::pos());
+ cornerLeft->setDown(false);
+ if (id==-1) return;//Nothing selected
+ QWidget* targetTab=tab->page(id);
+ tab->showPage(targetTab); 
 }
 
 /**
@@ -82,7 +122,7 @@ void MultiTreeWindow::deleteCurrent() {
  Check the corner widget and update it's state
 */
 void MultiTreeWindow::updateCorner() {
- corner->setEnabled(tree!=mainTree);
+ cornerRight->setEnabled(tree!=mainTree);
 }
 
 /**
@@ -221,6 +261,7 @@ void MultiTreeWindow::clearSecondary() {
  */
 void MultiTreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
  mainTree->init(pdfDoc,fileName);
+ tab->setTabToolTip(mainTree,tr("Document tree")+" - "+fileName);
  //Emit "selection have changed", as the old tree structure is gone
  treeItemSelected();
 }
@@ -228,10 +269,12 @@ void MultiTreeWindow::init(CPdf *pdfDoc,const QString &fileName) {
 /**
  Init first (main) tab of treeview from given IProperty (dictionary, etc ...)
  @param doc IProperty used to initialize treeview
- @param pName Optional name used for this property
+ @param pName Name used for this property
+ @param pToolTip Tooltip used for this property
  */
-void MultiTreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName/*=QString::null*/) {
+void MultiTreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip) {
  mainTree->init(doc,pName);
+ tab->setTabToolTip(mainTree,pToolTip);
  //Emit "selection have changed", as the old tree structure is gone
  treeItemSelected();
 }
@@ -239,12 +282,14 @@ void MultiTreeWindow::init(boost::shared_ptr<IProperty> doc,const QString &pName
 /**
  Create new tab and insert new empty TreeWindow in it
  @param caption Caption of tab containing the new tree
+ @param toolTip Tooltip of tab containing the new tree
  @return Pointer to new treewindow
 */
-TreeWindow* MultiTreeWindow::createPage(const QString &caption) {
+TreeWindow* MultiTreeWindow::createPage(const QString &caption,const QString &toolTip) {
  TreeWindow* t=new TreeWindow(this,base,tab);
  connectSig(t);
  tab->addTab(t,caption);
+ tab->setTabToolTip(t,toolTip);
  return t;
 }
 
@@ -279,18 +324,16 @@ bool MultiTreeWindow::activate(TreeKey ptr) {
 /**
  Create if not exist and then activate secondary tree that contains given CContentStream as root item
  @param cs CContentStream used to identify secondary treeview
- @param pName Optional name used for this content stream
+ @param pName Name used for this content stream
+ @param pToolTip Tooltip used for this content stream
  */
-void MultiTreeWindow::activate(boost::shared_ptr<CContentStream> cs,QString pName/*=QString::null*/) {
+void MultiTreeWindow::activate(boost::shared_ptr<CContentStream> cs,const QString &pName,const QString &pToolTip) {
  TreeKey tk(Tree_ContentStream,cs.get());
  //If the page already exist, just switch to it
  if (activate(tk)) return;
 
- //Invent some default name if none specified
- if (pName.isNull()) pName=tr("Stream");
-
  //Create the page
- TreeWindow* t=createPage(pName);
+ TreeWindow* t=createPage(pName,pToolTip);
  t->init(cs,pName);
  trees.insert(tk,t);
  treesReverse.insert(t,tk);
@@ -309,18 +352,16 @@ void MultiTreeWindow::activateMain() {
 /**
  Create if not exist and then activate secondary tree that contains given IProperty as root item
  @param doc IProperty used to identify secondary treeview
- @param pName Optional name used for this property
+ @param pName Name used for this property
+ @param pToolTip Tooltip used for this property
  */
-void MultiTreeWindow::activate(boost::shared_ptr<IProperty> doc,QString pName/*=QString::null*/) {
+void MultiTreeWindow::activate(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip) {
  TreeKey tk(Tree_IProperty,doc.get());
  //If the page already exist, just switch to it
  if (activate(tk)) return;
 
- //Invent some default name if none specified
- if (pName.isNull()) pName=tr("Property");	//Default name
-
  //Create the page
- TreeWindow* t=createPage(pName);
+ TreeWindow* t=createPage(pName,pToolTip);
  t->init(doc,pName);
  trees.insert(tk,t);
  treesReverse.insert(t,tk);
@@ -332,13 +373,14 @@ void MultiTreeWindow::activate(boost::shared_ptr<IProperty> doc,QString pName/*=
  Create if not exist and then activate secondary tree that contains given vector of PDF operators as root item
  This type of item is special, as if the tree already exist, its contents is replaced
  @param vec Operator vector
- @param pName Optional name used for this property
+ @param pName Name used for this property
+ @param pToolTip Tooltip used for this property
  */
-void MultiTreeWindow::activate(const OperatorVector &vec,QString pName/*=QString::null*/) {
+void MultiTreeWindow::activate(const OperatorVector &vec,const QString &pName,const QString &pToolTip) {
  TreeKey tk(Tree_OperatorVector,NULL);
  if (!activate(tk)) {
   //Create the page if it does not exist
-  TreeWindow* t=createPage(pName);
+  TreeWindow* t=createPage(pName,pToolTip);
   t->init(vec,pName);
   trees.insert(tk,t);
   treesReverse.insert(t,tk);

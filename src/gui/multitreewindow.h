@@ -53,11 +53,11 @@ class MultiTreeWindow : public QWidget {
 public:
  void uninit();
  void init(CPdf *pdfDoc,const QString &fileName);
- void init(boost::shared_ptr<IProperty> doc,const QString &pName=QString::null);
+ void init(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip);
  void activateMain();
- void activate(const OperatorVector &vec,QString pName=QString::null);
- void activate(boost::shared_ptr<CContentStream> cs,QString pName=QString::null);
- void activate(boost::shared_ptr<IProperty> doc,QString pName=QString::null);
+ void activate(const OperatorVector &vec,const QString &pName,const QString &pToolTip);
+ void activate(boost::shared_ptr<CContentStream> cs,const QString &pName,const QString &pToolTip);
+ void activate(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip);
  void deactivate(const OperatorVector &vec);
  void deactivate(boost::shared_ptr<IProperty> doc);
  void deactivate(boost::shared_ptr<CContentStream> cs);
@@ -86,12 +86,13 @@ signals:
  */
  void itemDeleted(TreeItemAbstract *dest);
 protected slots:
+ void tabSwitchPopup();
  void treeItemSelected();
  void treeMouseClicked(int button,QListViewItem* item);
  void pageChange(QWidget *newPage);
 private:
  void connectSig(TreeWindow *tr);
- TreeWindow* createPage(const QString &caption);
+ TreeWindow* createPage(const QString &caption,const QString &toolTip);
  bool activate(TreeKey ptr);
  void deactivate(TreeKey ptr);
  void deleteWindow(TreeWindow *tr);
@@ -107,8 +108,10 @@ private:
  TreeWindowListReverse treesReverse;
  /** Tab Widget */
  QTabWidget *tab;
- /** Corner widget */
- QButton *corner;
+ /** Right Corner widget */
+ QButton *cornerRight;
+ /** Left Corner widget */
+ QButton *cornerLeft;
  /** Scripting base */
  Base *base;
 };

@@ -192,12 +192,14 @@ void TreeItemContentStream::setOpen(bool open) {
   //Check for parent if it is a page and try to "invent" some nice text for the tab and the item
   TreeItemPage* parentPage=dynamic_cast<TreeItemPage*>(parent());
   QString pName=text(0);
+  QString pToolTip=pName;
   if (parentPage) { //Parent tree item is a page
    pName+=" (";
    pName+=parentPage->text(0);
    pName+=")";
+   pToolTip=QObject::tr("Page")+" "+parentPage->text(0)+" - "+pToolTip;
   }
-  data->multi()->activate(obj,pName);
+  data->multi()->activate(obj,pName,pToolTip);
   return;//Do not open
  }
  TreeItemAbstract::setOpen(open);

@@ -340,7 +340,7 @@ void PdfEditWindow::setObject() {
 void PdfEditWindow::setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec) {
  if (vec.size()) {
   //Selected objects
-  tree->activate(vec,tr("Selection"));
+  tree->activate(vec,tr("Selection"),tr("Selected operators"));
  } else {
   //Selection is empty
   tree->deactivate(vec);

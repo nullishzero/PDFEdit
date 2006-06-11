@@ -5,8 +5,6 @@
 
 namespace gui {
 
-using namespace pdfobjects;
-
 /**
  Class for widget containing one editable property of type "Name"<br>
  Basically, CName is CString, but we might want differentiation in case we'll handle names specially in future<br>
@@ -18,6 +16,8 @@ Q_OBJECT
 public:
  NameProperty(const QString &_name, QWidget *parent=0, PropertyFlags _flags=defaultPropertyMode);
  virtual ~NameProperty();
+ virtual void setValue(pdfobjects::IProperty *pdfObject);
+ virtual void readValue(pdfobjects::IProperty *pdfObject);
 };
 
 } // namespace gui 
