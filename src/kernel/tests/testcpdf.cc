@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/06/11 22:17:23  hockm0bm
+ * TODOs
+ *
  * Revision 1.27  2006/06/11 22:11:46  hockm0bm
  * testManipulationTC
  *         - new test cases for intermediate node (insert new internode,
@@ -396,6 +399,11 @@ public:
 		CPPUNIT_ASSERT(!pdf->isChanged());
 	}
 
+	// TODO inter -> page replace
+	// TODO page -> inter
+	// TODO page - > page
+	// TODO ambiguous page tree creation
+	// TODO whole array deleting/replacing
 	void pageManipulationTC(CPdf * pdf)
 	{
 	using namespace boost;
