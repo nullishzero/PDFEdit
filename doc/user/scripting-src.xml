@@ -199,8 +199,8 @@
     <title><funcsynopsis>string settings.remove(string key)</funcsynopsis></title>
     Remove key from user settings, effectively restoring the setting to its default value
    </sect2>
-   <sect2 id="settings.flushSettings">
-    <title><funcsynopsis>void settings.flushSettings()</funcsynopsis></title>
+   <sect2 id="settings.flush">
+    <title><funcsynopsis>void settings.flush()</funcsynopsis></title>
     Write all unsaved settings to disk. Unsaved settings are automatically writen
     to disk on application exit, but this can flush them to disk explicitly.
    </sect2>
