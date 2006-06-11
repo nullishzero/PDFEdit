@@ -459,8 +459,18 @@ public:
 	{
 		return (this == &page) ? true : false;
 	};
-	
 
+	
+	//
+	// Invalidate page
+	//
+public:
+	/**
+	 * Inform all obsevers that this page is not valid.
+	 */
+	void invalidate ()
+		{ _objectChanged (true); };
+	
 	//
 	// Get methods
 	//	
@@ -803,8 +813,10 @@ private:
 	/**
 	 * Save changes and indicate that the object has changed by calling all
 	 * observers.
+	 *
+	 * @param invalid If true indicate that this page has been invalidated.
 	 */
-	void _objectChanged ();
+	void _objectChanged (bool invalid = false);
 
 };
 

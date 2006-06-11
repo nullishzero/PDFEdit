@@ -1278,16 +1278,20 @@ CPage::setTransformMatrix (double tm[6])
 //
 //
 void
-CPage::_objectChanged ()
+CPage::_objectChanged (bool invalid)
 {
 	// Do not notify anything if we are not in a valid pdf
 	if (!hasValidPdf (dictionary))
 		return;
 	assert (hasValidRef (dictionary));
 
-	// Notify observers
 	boost::shared_ptr<CPage> current (this, EmptyDeallocator<CPage> ());
-	this->notifyObservers (current, shared_ptr<const ObserverContext> (new BasicObserverContext (current)));
+
+	// Notify observers
+	if (invalid)
+		this->notifyObservers (current, shared_ptr<const ObserverContext> ());
+	else
+		this->notifyObservers (current, shared_ptr<const ObserverContext> (new BasicObserverContext (current)));
 }
 
 
@@ -1434,8 +1438,6 @@ isPage (boost::shared_ptr<IProperty> ip)
 
 	return true;
 }
-
-
 
 // =====================================================================================
 } // namespace pdfobjects
