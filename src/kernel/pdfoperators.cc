@@ -9,11 +9,10 @@
 
 // static
 #include "static.h"
-//
 #include "pdfoperators.h"
 //
+#include "pdfoperatorsiter.h"
 #include "iproperty.h"
-//
 #include "cinlineimage.h"
 
 //==========================================================

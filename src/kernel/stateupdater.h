@@ -27,10 +27,10 @@ class StateUpdater
 
 private:
 	/** Maximum argument count of an operator. See pdf specfication of all operators.*/
-	const static size_t MAX_OPERANDS = 6;
+	static const size_t MAX_OPERANDS = 6;
 
 	/** Maximum operator name length. See pdf specification of all operators.*/
-	const static size_t MAX_OPERATOR_NAMELEN = 4;
+	static const size_t MAX_OPERATOR_NAMELEN = 4;
 
 public:
 	/**

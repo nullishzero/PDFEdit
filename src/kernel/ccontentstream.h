@@ -19,8 +19,9 @@
 //
 #include "cobject.h"
 
-// PdfOperator
+// PdfOperator and its iterators
 #include "pdfoperators.h"
+#include "pdfoperatorsiter.h"
 
 //==========================================================
 namespace pdfobjects {

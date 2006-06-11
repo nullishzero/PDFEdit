@@ -15,6 +15,7 @@
 
 // iterator
 #include "utils/iterator.h"
+#include "pdfoperators.h"
 
 
 //==========================================================
@@ -25,17 +26,7 @@ namespace pdfobjects {
 // PdfOperator iterators
 //==========================================================
 
-//
-// Forward declarations
-//
-class PdfOperator;
 
-//
-//
-//
-typedef iterator::SharedDoubleLinkedListIterator<PdfOperator> PdfOperatorIterator;
-	
-	
 /** 
  * Iterator types. Needed when constructing specific iterators using templates.
  */
@@ -56,7 +47,7 @@ typedef enum
  * \see Iterator, RejectingPdfOperatorIterator
  */
 template<int _NAME_COUNT, IteratorType T>
-struct AcceptingPdfOperatorIterator: public PdfOperatorIterator
+struct AcceptingPdfOperatorIterator: public PdfOperator::Iterator
 {
 	/** Number of accepted names. */
 	static const size_t namecount = _NAME_COUNT;
@@ -64,7 +55,7 @@ struct AcceptingPdfOperatorIterator: public PdfOperatorIterator
 	//
 	// Constructor
 	//
-	AcceptingPdfOperatorIterator (ListItem oper, bool forwarddir = true) : PdfOperatorIterator (oper)
+	AcceptingPdfOperatorIterator (ListItem oper, bool forwarddir = true) : PdfOperator::Iterator (oper)
 	{
 		if (forwarddir)
 		{
@@ -109,7 +100,7 @@ private:
  * \see Iterator, AcceptingPdfOperatorIterator
  */
 template<int _NAME_COUNT, IteratorType T>
-struct RejectingPdfOperatorIterator: public PdfOperatorIterator
+struct RejectingPdfOperatorIterator: public PdfOperator::Iterator
 {
 	/** Number of accepted names. */
 	static const size_t namecount = _NAME_COUNT;
@@ -117,7 +108,7 @@ struct RejectingPdfOperatorIterator: public PdfOperatorIterator
 	//
 	// Constructor
 	//
-	RejectingPdfOperatorIterator (ListItem oper, bool forwarddir = true) : PdfOperatorIterator (oper)
+	RejectingPdfOperatorIterator (ListItem oper, bool forwarddir = true) : PdfOperator::Iterator (oper)
 	{
 		if (forwarddir)
 		{

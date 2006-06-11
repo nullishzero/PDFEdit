@@ -12,10 +12,7 @@
 
 // static includes
 #include "static.h"
-
-// iterator
-#include "pdfoperatorsiter.h"
-
+#include "utils/iterator.h"
 
 //==========================================================
 namespace pdfobjects {
@@ -77,7 +74,7 @@ class PdfOperator
 		
 public:
 	typedef std::deque<boost::shared_ptr<IProperty> > 	Operands;
-	typedef PdfOperatorIterator 						Iterator;
+	typedef iterator::SharedDoubleLinkedListIterator<PdfOperator> Iterator;
 	typedef Iterator::ListItem							ListItem;
 	typedef std::list<boost::shared_ptr<PdfOperator> > 	PdfOperators;
 
