@@ -163,7 +163,9 @@ QString getTypeId(boost::shared_ptr<IProperty> obj) {
 IndiRef getRef(IProperty *ref) {
  assert(ref->getType()==pRef);
  IndiRef iref;
- ((CRef*)ref)->getValue(iref);
+ CRef* refx=dynamic_cast<CRef*>(ref);
+ assert(refx);
+ refx->getValue(iref);
  return iref;
 }
 

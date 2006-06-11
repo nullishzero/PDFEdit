@@ -31,7 +31,8 @@ RealProperty::~RealProperty() {
 /** \copydoc StringProperty::setValue */
 void RealProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
- CReal* obj=(CReal*)pdfObject;
+ CReal* obj=dynamic_cast<CReal*>(pdfObject);
+ assert(obj);
  double val=ed->text().toDouble();
  obj->setValue(val);
  changed=false;
@@ -39,7 +40,8 @@ void RealProperty::setValue(IProperty *pdfObject) {
 
 /** \copydoc StringProperty::readValue */
 void RealProperty::readValue(IProperty *pdfObject) {
- CReal* obj=(CReal*)pdfObject;
+ CReal* obj=dynamic_cast<CReal*>(pdfObject);
+ assert(obj);
  double val;
  obj->getValue(val);
  ed->setText(QString::number(val));

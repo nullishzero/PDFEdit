@@ -11,6 +11,7 @@
 #include <qwidget.h>
 #include <qobject.h>
 #include <qregexp.h>
+#include <qtextcodec.h>
 #include <qstringlist.h>
 #include <utils/debug.h>
 
@@ -114,21 +115,21 @@ QStringList explode(char separator,const QString &line,bool escape/*=false*/) {
 /**
  Load content of file to string.
  NULL string is returned if file does not exist or is unreadable.
+ It is assumed that the file is in utf8 encoding
  @param name Filename of file to load
  @return file contents in string.
 */
 QString loadFromFile(const QString &name) {
- QFile *f=new QFile(name);
- f->open(IO_ReadOnly);
- int size=f->size();
- char* buffer=(char *)malloc(size);
- size=f->readBlock(buffer,size);
- if (size<0) return QString::null;
- f->close();
- delete f;
- QByteArray qb;
- qb.assign(buffer,size);
- QString res=QString(qb);
+ QFile f(name);
+ if (!f.open(IO_ReadOnly)) {
+  //Failure
+  return QString::null;
+ } 
+ QByteArray qb=f.readAll();;
+ f.close();
+ QTextCodec *codec=QTextCodec::codecForName("utf8");
+ assert(codec);
+ QString res=codec->toUnicode(qb);
  return res;
 }
 

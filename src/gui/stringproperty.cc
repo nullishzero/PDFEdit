@@ -67,7 +67,8 @@ StringProperty::~StringProperty() {
  */
 void StringProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
- CString* obj=(CString*)pdfObject;
+ CString* obj=dynamic_cast<CString*>(pdfObject);
+ assert(obj);
  string val=ed->text();
  obj->setValue(val);
  changed=false;
@@ -77,7 +78,8 @@ void StringProperty::setValue(IProperty *pdfObject) {
  @param pdfObject Object to read from
  */
 void StringProperty::readValue(IProperty *pdfObject) {
- CString* obj=(CString*)pdfObject;
+ CString* obj=dynamic_cast<CString*>(pdfObject);
+ assert(obj);
  string val;
  obj->getValue(val);
  ed->setText(val);

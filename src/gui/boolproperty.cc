@@ -47,7 +47,8 @@ BoolProperty::~BoolProperty() {
 /** \copydoc StringProperty::setValue */
 void BoolProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
- CBool* obj=(CBool*)pdfObject;
+ CBool* obj=dynamic_cast<CBool*>(pdfObject);
+ assert(obj);
  bool val=ed->isChecked();
  obj->setValue(val);
  changed=false;
@@ -55,7 +56,8 @@ void BoolProperty::setValue(IProperty *pdfObject) {
 
 /** \copydoc StringProperty::readValue */
 void BoolProperty::readValue(IProperty *pdfObject) {
- CBool* obj=(CBool*)pdfObject;
+ CBool* obj=dynamic_cast<CBool*>(pdfObject);
+ assert(obj);
  bool val;
  obj->getValue(val);
  ed->setChecked(val);

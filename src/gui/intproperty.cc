@@ -29,7 +29,8 @@ IntProperty::~IntProperty() {
 /** \copydoc StringProperty::setValue */
 void IntProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
- CInt* obj=(CInt*)pdfObject;
+ CInt* obj=dynamic_cast<CInt*>(pdfObject);
+ assert(obj);
  int val=ed->text().toInt();
  obj->setValue(val);
  changed=false;
@@ -37,7 +38,8 @@ void IntProperty::setValue(IProperty *pdfObject) {
 
 /** \copydoc StringProperty::readValue */
 void IntProperty::readValue(IProperty *pdfObject) {
- CInt* obj=(CInt*)pdfObject;
+ CInt* obj=dynamic_cast<CInt*>(pdfObject);
+ assert(obj);
  int val;
  obj->getValue(val);
  ed->setText(QString::number(val));

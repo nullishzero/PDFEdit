@@ -34,67 +34,70 @@
 
 [gui/items]
 
+# Format of menu/toolbar lists: list [name],[child itemss...]
+# Format of menu/toolbar items: item [name],[called script],[keyboard shortcut],[icon],[item classes]
+
 # Main menu structure
 MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,helpmenu
 
   #File submenu
   filemenu		= list &File,fnew,fload,fsave,fsavecopy,fsaverev,-,neww,closew,-,quit
-    fnew		= item &New document,func_new(),,new.png
-    fload		= item &Open...,func_load(),F3,load.png
-    fsave		= item &Save,func_save(),F2,save.png,need_document
-    fsaverev		= item Save new &revision,func_saverev(),,save.png,need_document
-    fsavecopy		= item Save &copy...,func_savecopy(),,save.png,need_document
-    neww		= item New &Window,newwindow(),Ctrl+N,new_window.png
-    closew		= item Close Window,closewindow,,close.png
-    quit		= item &Quit,quit
+    fnew		= item &New document	 , func_new()		,	, new.png
+    fload		= item &Open...		 , func_load()		,F3	, load.png
+    fsave		= item &Save		 , func_save()		,F2	, save.png	 ,need_document
+    fsaverev		= item Save new &revision, func_saverev()	,	, save.png	 ,need_document
+    fsavecopy		= item Save &copy...	 , func_savecopy()	,	, save.png	 ,need_document
+    neww		= item New &Window	 , newwindow()		,Ctrl+N	, new_window.png
+    closew		= item Close Window	 , closewindow		,	, close.png
+    quit		= item &Quit		 , quit
   #View submenu
   showmenu		= list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,hideStatus,-,streamAll,streamText,streamFont,streamGfx
-    firstpage		= item First Page,PageSpace.firstPage(),Ctrl+Home,first.png
-    prevpage		= item Prev Page,PageSpace.prevPage(),Ctrl+PgUp,prev.png
-    nextpage		= item Next Page,PageSpace.nextPage(),Ctrl+PgDown,next.png
-    lastpage		= item Last Page,PageSpace.lastPage(),Ctrl+End,last.png
-    zoom_in		= item Zoom &in,PageSpace.zoomIn(),Ctrl++,zoom_in.png
-    zoom_out		= item Zoom &out,PageSpace.zoomOut(),Ctrl+-,zoom_out.png
-    hideCmd		= item Show/Hide &commandline,showHide('commandline'),F8,hide_cmdline.png
-    hideProp		= item Show/Hide &property editor,showHide('propertyeditor'),Ctrl+Alt+P,hide_propedit.png
-    hideTree		= item Show/Hide object &tree,showHide('tree'),Ctrl+Alt+T,hide_tree.png
-    hideStatus		= item Show/Hide &status bar,showHide('statusbar'),Ctrl+Alt+S,hide_statusbar.png
-    streamAll		= item Show all operators in stream,streamMode('all'),,stream_mode_all.png,need_contentstream_root
-    streamText		= item Show only text operators in stream,streamMode('text'),,stream_mode_text.png,need_contentstream_root
-    streamFont		= item Show only font operators in stream,streamMode('font'),,stream_mode_font.png,need_contentstream_root
-    streamGfx		= item Show only graphical operators in stream,streamMode('graphic'),,stream_mode_gfx.png,need_contentstream_root
+    firstpage		= item First Page			, PageSpace.firstPage()		, Ctrl+Home	, first.png 
+    prevpage		= item Prev Page			, PageSpace.prevPage()		, Ctrl+PgUp	, prev.png 
+    nextpage		= item Next Page			, PageSpace.nextPage()		, Ctrl+PgDown	, next.png 
+    lastpage		= item Last Page			, PageSpace.lastPage()		, Ctrl+End	, last.png 
+    zoom_in		= item Zoom &in				, PageSpace.zoomIn()		, Ctrl++	, zoom_in.png
+    zoom_out		= item Zoom &out			, PageSpace.zoomOut()		, Ctrl+-	, zoom_out.png
+    hideCmd		= item Show/Hide &commandline		, showHide('commandline')	, F8		, hide_cmdline.png
+    hideProp		= item Show/Hide &property editor	, showHide('propertyeditor')	, Ctrl+Alt+P	, hide_propedit.png
+    hideTree		= item Show/Hide object &tree		, showHide('tree')		, Ctrl+Alt+T	, hide_tree.png
+    hideStatus		= item Show/Hide &status bar		, showHide('statusbar')		, Ctrl+Alt+S	, hide_statusbar.png
+    streamAll		= item Show all operators in stream		, streamMode('all')	,		, stream_mode_all.png	,need_contentstream_root
+    streamText		= item Show only text operators in stream	, streamMode('text')	,		, stream_mode_text.png	,need_contentstream_root
+    streamFont		= item Show only font operators in stream	, streamMode('font')	,		, stream_mode_font.png	,need_contentstream_root
+    streamGfx		= item Show only graphical operators in stream	, streamMode('graphic')	,		, stream_mode_gfx.png	,need_contentstream_root
   #Tools submenu
   toolsmenu		= list &Tools,opts
     opts		= item &Options,options(),F9,options.png
   #Page submenu
   pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinem,drawrectm,addtextm
-    savepage		= item Save page as image...,savePageImage(false),,save_page_as_image.png,need_page
-    reloadpage		= item Reload Page,go(),F5,reload.png,need_page
-    pagetext		= item Extract text from page,viewPageText(),,page_text.png,need_page
-    rot-90		= item Rotate page 270 degrees,rotatePage(-90),Ctrl+[,page_rotate_-90.png,need_page
-    rot90		= item Rotate page 90 degrees,rotatePage(90),Ctrl+],page_rotate_90.png,need_page
-    delpage		= item Remove page,delPage(),,page_del.png,need_document
-    editPageMediaBox	= item Edit page metrics,editPageMediaBox(),,page_edit_metrics.png,need_page
-    setpagetm		= item Set page transformation matrix,setPageTm(),,page_settm.png,need_page
-    addSystemFont	= item Add system font to page,addSystemFont(),,page_add_font.png,need_page
-    drawlinem		= item Draw line,drawLine(),,draw_line.png,need_page
-    drawrectm		= item Draw rectangle,drawRect(),,draw_rect.png,need_page
-    addtextm		= item Add text,addText(),,add_text.png,need_page
+    savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
+    reloadpage		= item Reload Page		, go()			, F5	, reload.png		,need_page
+    pagetext		= item Extract text from page	, viewPageText()	,	, page_text.png		,need_page
+    rot-90		= item Rotate page 270 degrees	, rotatePage(-90)	,Ctrl+[	, page_rotate_-90.png	,need_page
+    rot90		= item Rotate page 90 degrees	, rotatePage(90)	,Ctrl+]	, page_rotate_90.png	,need_page
+    delpage		= item Remove page		, delPage()		,	, page_del.png		,need_document
+    editPageMediaBox	= item Edit page metrics	, editPageMediaBox()	,	, page_edit_metrics.png	,need_page
+    setpagetm		= item Set page transformation matrix,setPageTm()	,	, page_settm.png	,need_page
+    addSystemFont	= item Add system font to page	, addSystemFont()	,	, page_add_font.png	,need_page
+    drawlinem		= item Draw line		, drawLine()		,	, draw_line.png		,need_page
+    drawrectm		= item Draw rectangle		, drawRect()		,	, draw_rect.png		,need_page
+    addtextm		= item Add text			, addText()		,	, add_text.png		,need_page
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectText,selectAll,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
-    selectAllObjects	= item Select all objects,PageSpace.setSelectionMode(0),,selectmode_allobjects.png
-    selectText		= item Select text,PageSpace.setSelectionMode(1),,selectmode_text.png
-    selectAll		= item Select all,PageSpace.setSelectionMode(2),,selectmode_all.png
-    opsetcolor		= item Set color,setColor(),,operator_setcolor.png,need_operator_page
-    opsetposop		= item Set relative position of operator,moveOperPos(),,operator_setrelposop.png,need_operator_page
-    opsetpos		= item Change relative position,moveTextPos(),,operator_setrelpos.png,need_operator_page
-    opsetfont		= item Set font,editFontProps(),,operator_editfont.png,need_operator_page
-    opsetdash		= item Set line dash style,setDashPattern(),,operator_dashpattern.png,need_operator_page
-    opsetlinewidth	= item Set line width,setLineWidth(),,operator_linewidth.png,need_operator_page
+    selectAllObjects	= item Select all objects	,PageSpace.setSelectionMode(0), , selectmode_allobjects.png
+    selectText		= item Select text		,PageSpace.setSelectionMode(1), , selectmode_text.png
+    selectAll		= item Select all		,PageSpace.setSelectionMode(2), , selectmode_all.png
+    opsetcolor		= item Set color		,setColor()		,	, operator_setcolor.png		,need_operator_page
+    opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator_page
+    opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator_page
+    opsetfont		= item Set font			,editFontProps()	,	, operator_editfont.png		,need_operator_page
+    opsetdash		= item Set line dash style	,setDashPattern()	,	, operator_dashpattern.png	,need_operator_page
+    opsetlinewidth	= item Set line width		,setLineWidth()		,	, operator_linewidth.png	,need_operator_page
   #Help submenu
   helpmenu		= list &Help,help_about,help_index
-    help_about		= item &About,about(),,about.png
-    help_index		= item &Help,help(),F1,help.png
+    help_about		= item &About	,about()	,	, about.png
+    help_index		= item &Help	,help()		, F1	, help.png
 
 #Toolbars. Most toolbar items are items from menu
 
@@ -106,11 +109,11 @@ MainToolbar		= list Main Toolbar,fnew,fload,fsave,opts,closew,hideCmd
 
 PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in
   # _page_tool is special toolbar item to show/change current page
-  drawline		= item Draw line,initconnection(0),,draw_line.png,need_page
-  drawlinee		= item Draw line,initconnection(1),,draw_line.png,need_page
-  drawrect		= item Draw rectangle,initconnection(10),,draw_rect.png,need_page
-  drawrecte		= item Draw rectangle,initconnection(11),,draw_rect.png,need_page
-  addtext		= item Add text,initconnection(20),,add_text.png,need_page
+  drawline		= item Draw line	, initconnection(0)	, , draw_line.png	,need_page
+  drawlinee		= item Draw line	, initconnection(1)	, , draw_line.png	,need_page
+  drawrect		= item Draw rectangle	, initconnection(10)	, , draw_rect.png	,need_page
+  drawrecte		= item Draw rectangle	, initconnection(11)	, , draw_rect.png	,need_page
+  addtext		= item Add text		, initconnection(20)	, , add_text.png	,need_page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
 
@@ -119,17 +122,17 @@ RevisionToolbar		= list Revision Toolbar,revlabel,_revision_tool
   # _revision_tool is special toolbar item to list/change revisions
 
 ObjectToolbar		= list Object Toolbar,treeAdditem,treeDelitem
-  treeAdditem		= item Add object,add_obj_dlg(),Ins,item_add.png,need_dict_or_array_p
-  treeDelitem		= item Delete object,treeitem.remove(),Del,item_delete.png,need_removable
+  treeAdditem		= item Add object	,add_obj_dlg()		, Ins	, item_add.png		,need_dict_or_array_p
+  treeDelitem		= item Delete object	,treeitem.remove()	, Del	, item_delete.png	,need_removable
 
 OperatorToolbar		= list Operator Toolbar,streamAll,streamText,streamFont,streamGfx,-,opsetcolor,opsetfont,opsetposop,opsetpos
   # look in menu for definition of items
 
 #Generic popup menu
 popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
-  tree_string	= item Show String representation,print(treeitem.item().getText()),,string_representation.png
-  tree_type	= item Show Item type,print(treeitem.itemtype()),,item_type.png
-  tree_childs	= item Show Tree Childs,printTreeChilds(),,tree_childs.png
+  tree_string	= item Show String representation	,print(treeitem.item().getText())	,,string_representation.png
+  tree_type	= item Show Item type			,print(treeitem.itemtype())		,,item_type.png
+  tree_childs	= item Show Tree Childs			,printTreeChilds()			,,tree_childs.png
 
 # Rest of this file is ordinary configuration
 
