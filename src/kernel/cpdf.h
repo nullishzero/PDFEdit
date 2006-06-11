@@ -6,6 +6,26 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.63  2006/06/11 14:22:27  hockm0bm
+ * Caching for intermediate nodes leaf node counts for better perfomance of
+ * getKidsCount implemented
+ *         - needs testing
+ *
+ * * updateKidsCountCache, getKidsCountCached, discardKidsCountCache and
+ * 	 clearKidsCountCached helper functions to manipulate with cache
+ * 	 (PageTreeNodeCountCache data structure)
+ * * CPdf::nodeCountCache added
+ * * PageTreeWatchDog::notify
+ * 	- discards cache for reference typed oldValue
+ * * initRevisionSpecific
+ *  - discards cache for all entries
+ * * consolidatePageTree
+ * 	- discards cache if count field value is changed
+ * * getKidsCount
+ * 	- uses cached value if cache is non NULL and value is valid
+ * 	- caches value after collection if caches is non NULL
+ * * findPageDict, searchTreeNode and getNodePosition new parameter with PageTreeNodeCountCache pointer type
+ *
  * Revision 1.62  2006/06/10 18:21:25  hockm0bm
  * * getPageTreeRoot exported in header file
  * * registerPageTreeObserver
@@ -307,7 +327,7 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  * It is mapping where key is indirect reference of page tree node and
  * associated value is current number of direct pages under this node.
  */
-typedef std::map<IndiRef, size_t> PageTreeNodeCountCache;
+typedef std::map<IndiRef, size_t, utils::IndComparator> PageTreeNodeCountCache;
 
 /** CPdf special object.
  *
@@ -802,6 +822,19 @@ private:
 	 * each time when total number of pages is required.
 	 */
 	mutable size_t pageCount;
+
+	/** Cache for page count information for intermediate nodes.
+	 *
+	 * Each node which queries for its leaf pages count by getKidsCount
+	 * function is cached with found value (more preciselly mapping from
+	 * reference to page count is stored). So getKidsCount can use this cache
+	 * next time when it is called to prevent from searching intermediate and
+	 * calculating total page count.
+	 * <br>
+	 * Cached value has to be discarded each time when page count is changed
+	 * under node. This is handled in consolidatePageTree method.
+	 */
+	mutable PageTreeNodeCountCache nodeCountCache;
 
 	// TODO returned outlines list
 
@@ -1450,6 +1483,7 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * page node (see Pdf standard notes).
  * @param startPos Starting position for searching (see note below).
  * @param pos Page position (starting from 1) to find.
+ * @param cache Cache for reference to page count mapping.
  *
  * Method recursively goes through pages dictionary until given page 
  * position is found or no such position can be found. If position can't be
@@ -1479,7 +1513,11 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * Function tries to find page also in page tree structure which doesn't follow
  * pdf specification. All wierd page tree elements are ignored and just those
  * which may stand for intermediate or leaf nodes are condidered. Also doesn't
- * use Count and Parent field information during searching.
+ * use Count and Parent field information during searching. Uses getKidsCount
+ * function to get intermediate leaf nodes count. This method reqieres also
+ * cache which stores already known nodes to their counts mapping. This function
+ * just delegates given cache parameter to getPageCount and doesn't care for it
+ * much more. If it is NULL, it is not used.
  * <p>
  * <b>Usage notes</b>:<br>
  * When starting to search from root of all pages, pagesDict should be supplied
@@ -1497,15 +1535,24 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
  * position.
  */
-boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos);
+boost::shared_ptr<CDict> findPageDict(
+		const CPdf & pdf, 
+		boost::shared_ptr<IProperty> pagesDict, 
+		size_t startPos, 
+		size_t pos, 
+		PageTreeNodeCountCache * cache);
 
 /** Gets position of given node.
  * @param pdf Pdf where to examine.
  * @param node Node to find (CRef or CDict instances).
+ * @param cache Cache for reference to page count mapping.
  *
  * Start searching of given node from root of the page tree (document catalog
  * Pages field). Uses recursive searchTreeNode function for searching and
- * provides just error handling wrapper to this method.
+ * provides just error handling wrapper to this method. searchTreeNode reqieres 
+ * also cache which stores already known nodes to their counts mapping. This 
+ * function just delegates given cache parameter to getPageCount and doesn't 
+ * care for it much more. If it is NULL, it is not used.
  * <br>
  * Prefer to use this function instead of searchTreeNode if you are not sure you
  * know what you are doing.
@@ -1517,7 +1564,7 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
  * of page tree ambiguity (see searchTreeNode for more information).
  * @return Node position.
  */
-size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node);
+size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node, PageTreeNodeCountCache * cache);
 
 /** Checks if given child is descendant of node with given reference.
  * @param pdf Pdf where to resolv referencies.

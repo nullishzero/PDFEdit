@@ -3,6 +3,26 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.63  2006/06/11 14:22:27  hockm0bm
+ * Caching for intermediate nodes leaf node counts for better perfomance of
+ * getKidsCount implemented
+ *         - needs testing
+ *
+ * * updateKidsCountCache, getKidsCountCached, discardKidsCountCache and
+ * 	 clearKidsCountCached helper functions to manipulate with cache
+ * 	 (PageTreeNodeCountCache data structure)
+ * * CPdf::nodeCountCache added
+ * * PageTreeWatchDog::notify
+ * 	- discards cache for reference typed oldValue
+ * * initRevisionSpecific
+ *  - discards cache for all entries
+ * * consolidatePageTree
+ * 	- discards cache if count field value is changed
+ * * getKidsCount
+ * 	- uses cached value if cache is non NULL and value is valid
+ * 	- caches value after collection if caches is non NULL
+ * * findPageDict, searchTreeNode and getNodePosition new parameter with PageTreeNodeCountCache pointer type
+ *
  * Revision 1.62  2006/06/10 22:35:39  hockm0bm
  * * consolidatePageTree, consolidatePageList methods don't check values for referencies
  * * minor bug fixes
@@ -418,27 +438,157 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
 
 }
 
+namespace {
+	
+/** Updates kids count cache structure.
+ * @param ref Reference of intermediate node for mapping.
+ * @param kidsCount Collected number of leaf nodes for intermediate node.
+ * @param cache Cache mapping structure.
+ *
+ * Updates current mapping or create new with [ref, kidsCount] pair.
+ */
+void updateKidsCountCache(IndiRef ref, size_t kidsCount, PageTreeNodeCountCache & cache)
+{
+using namespace debug;
+	
+	utilsPrintDbg(DBG_DBG, "ref="<<ref<<" kidsCount="<<kidsCount);
+	PageTreeNodeCountCache::iterator pos=cache.find(ref);
+	if(pos!=cache.end())
+	{
+		// value is present in mapping
+		// TODO what does it mean - problem????
+		//  NOTE it means that value has not been discarded before update
+		utilsPrintDbg(DBG_WARN, "ref="<<pos->first<<" already cached with kidsCount="<<pos->second<<". Rewriting to kidsCount="<<kidsCount);
+		pos->second=kidsCount;
+		return;
+	}
+
+	// adds mapping for this reference
+	utilsPrintDbg(DBG_DBG, "new cache entry: ref="<<ref<<" kidsCount="<<kidsCount);
+	cache.insert(PageTreeNodeCountCache::value_type(ref, kidsCount));
+}
+
+/** Invalid page count constant.
+ * We assume that this kind of number is not real.
+ */
+static size_t INVALIDPAGECOUNT = 1 - 0U;
+
+/** Gets kids count cached value for intermediate node.
+ * @param ref Reference of intermediate node for mapping.
+ * @param cache Cache mapping structure.
+ *
+ * Tries to find mapping with given ref key and if found, returns associated
+ * value. Otherwise returns invalid constant value.
+ *
+ * @return INVALIDPAGECOUNT if no cached entry or cached value associated with
+ * given reference.
+ */
+size_t getKidsCountCached(IndiRef ref, PageTreeNodeCountCache & cache)
+{
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "ref="<<ref);
+	PageTreeNodeCountCache::iterator pos=cache.find(ref);
+	if(pos!=cache.end())
+	{
+		utilsPrintDbg(DBG_DBG, "cache entry found. ref="<<pos->first<<" kidsCount="<<pos->second);
+		return pos->second;
+	}
+	utilsPrintDbg(DBG_DBG, "no cache entry found for ref="<<ref);
+
+	return INVALIDPAGECOUNT;
+}
+
+/** Discards cached entries for intermediate node and its subtree.
+ * @param ref Reference of intermediate node for mapping.
+ * @param pdf Pdf for intermediate node.
+ * @param cache Cache mapping structure.
+ * @param withSubTree Flag to control also sub tree discarding (false by
+ * default).
+ *
+ * Removes mapping with ref key (if exists). If given withSubTree flag is set to
+ * true, also dereferences intermediate node dictionary (uses 
+ * pdf.getIndirectProperty) and discards (recursivelly) all intermediate nodes 
+ * under given one. This should be used if intermediate node is removed from
+ * tree (all subnodes are removed too and so should be discarded).
+ */
+void discardKidsCountCache(IndiRef & ref, CPdf & pdf, PageTreeNodeCountCache & cache, bool withSubTree=false)
+{
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "ref="<<ref);
+	PageTreeNodeCountCache::iterator pos=cache.find(ref);
+	if(pos!=cache.end())
+	{
+		utilsPrintDbg(DBG_DBG, "cache entry found. ref="<<pos->first<<" kidsCount="<<pos->second<<". Discarding");
+		cache.erase(pos);
+	}else
+		utilsPrintDbg(DBG_DBG, "no cache entry for ref="<<ref);
+
+	if(!withSubTree)
+		return;
+
+	shared_ptr<IProperty> nodeProp=pdf.getIndirectProperty(ref);	
+	if(getNodeType(nodeProp)>=InterNode)
+	{
+		ChildrenStorage childs;
+		assert(isDict(nodeProp));
+		shared_ptr<CDict> nodeDict=IProperty::getSmartCObjectPtr<CDict>(nodeProp);
+		getKidsFromInterNode(nodeDict, childs);
+		utilsPrintDbg(DBG_DBG, "discarding all nodes in "<<ref<<" subtree");
+		for(ChildrenStorage::iterator i=childs.begin(); i!=childs.end(); i++)
+		{
+			shared_ptr<IProperty> child=*i;
+			if(!isRef(child))
+				// skip array mess
+				continue;
+			IndiRef childRef=getValueFromSimple<CRef, pRef, IndiRef>(child);
+			discardKidsCountCache(childRef, pdf, cache, true);
+		}
+		utilsPrintDbg(DBG_DBG, "all nodes in "<<ref<<" subtree discarded");
+	}
+}
+
+/** Discards whole given cache.
+ * @param cache Cache to clear.
+ *
+ * Discards all entries in cache.
+ *
+ */
+void clearKidsCountCached(PageTreeNodeCountCache & cache)
+{
+	cache.clear();
+}
+
+} // end of anonymous namespace for PageTreeNodeCountCache manipulation
+
 /** Calculates number of direct pages under given node property.
  * @param interNodeProp Page tree node property (must be dictionary or reference
  * to dictionary).
+ * @param cache Cache with node reference to leaf page count (if NULL. it is not
+ * used).
  *
  * Checks whether given node is LeafNode and if so, immediatelly returns with 1
  * (page contains one direct page node). Otherwise tries to get node dictionary
  * from given property. If not able to do so, returns 0, because this node is
- * probably invalid and so it can't contain any direct page node. Finally
- * collects all Kids elements from dictionary (uses getKidsFromInterNode
+ * probably invalid and so it can't contain any direct page node. 
+ * Then checks whether given cache parameter is non NULL and if so checks cached
+ * value for given node (uses getKidsCountCached function). This value is
+ * returned (if it is different than INVALIDPAGECOUNT).
+ * Finally collects all Kids elements from dictionary (uses getKidsFromInterNode
  * function) and calls this function recursively on each. Collected number is
- * returned.
+ * returned and if cache is non NULL also caches value (uses
+ * updateKidsCountCache function).
  * <br>
  * Note that this function never throws.
  *
  */
-size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp)throw()
+size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTreeNodeCountCache * cache)throw()
 {	
 	// leaf node adds one direct page in page tree
 	if(getNodeType(interNodeProp)==LeafNode)
 		return 1;
-
+	
 	// gets dictionary from given property. If reference, gets target object. If
 	// it is not a dictionary, returns with 0
 	shared_ptr<CDict> interNodeDict;
@@ -459,18 +609,34 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp)throw()
 		interNodeDict=IProperty::getSmartCObjectPtr<CDict>(interNodeProp);
 	}
 	
+	// tries cache at first
+	size_t count;
+	if((cache) && (count=getKidsCountCached(interNodeDict->getIndiRef(), *cache))!=INVALIDPAGECOUNT)
+		return count;
+
+
 	// we assume inter node, so collects all children and calculates total
 	// direct page count (calls recursively)
 	ChildrenStorage children;
-	size_t count=0;
 	getKidsFromInterNode(interNodeDict, children);
 	for(ChildrenStorage::const_iterator i=children.begin(); i!=children.end(); i++)
-		count+=getKidsCount(*i);
+	{
+		shared_ptr<IProperty> childProp=*i;
+		count+=getKidsCount(childProp, cache);
+	}
+
+	// creates cache entry for this ref
+	if(cache)
+		updateKidsCountCache(interNodeDict->getIndiRef(), count, *cache);
 
 	return count;
 }
 
-boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IProperty> pagesDict, size_t startPos, size_t pos)
+boost::shared_ptr<CDict> findPageDict(
+		const CPdf & pdf, 
+		boost::shared_ptr<IProperty> pagesDict, 
+		size_t startPos, size_t pos, 
+		PageTreeNodeCountCache * cache)
 {
 	utilsPrintDbg(DBG_DBG, "startPos=" << startPos << " pos=" << pos);
 	if(startPos > pos)
@@ -538,7 +704,7 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
 
 		// calculates direct page count under this inter node rather than use
 		// Count field (which may be malformed)
-		int count=getKidsCount(dict_ptr);
+		int count=getKidsCount(dict_ptr, cache);
 
 		utilsPrintDbg(DBG_DBG, "InterNode has " << count << " pages");
 
@@ -608,11 +774,11 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
 			// Otherwise increment min_pos with its count and continues
 			if(nodeType==InterNode)
 			{
-				int count=getKidsCount(child_ptr);
+				int count=getKidsCount(child_ptr,cache);
 
 				if(min_pos + count > pos )
 					// pos IS in this subtree
-					return findPageDict(pdf, child_ptr, min_pos, pos);
+					return findPageDict(pdf, child_ptr, min_pos, pos, cache);
 
 				// pos is not in this subtree
 				// updates min_pos with its count and continues
@@ -634,12 +800,14 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
  * @param superNode Node which to search.
  * @param node Node to be found.
  * @param startValue Position for first found node in this superNode.
+ * @param cache Cache for reference to page count mapping.
  *
  * At first checks if node and superNode are same nodes (uses == operator to
- * compare). Then tries to get Type of the superNode dictionary. In Page case 
- * returns with startValue if given nodes are same or 0 (page not found).
- * If type is Pages (intermediate node) goes through Kids array and recursively
- * calls this method for each element until recursion returns with non 0 result.
+ * compare). Then tries to get node type (uses getNodeType helper function). 
+ * In Page case (LeafNode) returns with startValue if given nodes are same or 
+ * 0 (page not found).
+ * If it is intermediate node, goes through Kids array and recursively calls 
+ * this method for each element until recursion returns with non 0 result.
  * This means the end of recursion. startValue is actualized for each Kid's
  * element (Page element increases 1, Pages number of direct pages under node -
  * value of getKidsCount for internode).
@@ -652,8 +820,14 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
  * <br>
  * Function tries to find node position also in page tree structure which 
  * doesn't follow pdf specification. All wierd page tree elements are ignored 
- * and just those which may stand for intermediate or leaf nodes are condidered.
+ * and just those which may stand for intermediate or leaf nodes are considered.
  * Also doesn't use Count and Parent fields information during searching.
+ * <br>
+ * Uses getKidsCount function internally to get intermediate leaf nodes count. 
+ * This method reqieres also cache parameter which stores already known nodes 
+ * to their counts mapping. This function just delegates given cache parameter 
+ * to getPageCount and doesn't care for it much more. Note that if parameter is
+ * NULL, cache is not used.
  *
  * @throw AmbiguousPageTreeException if page tree is ambiguous and node position
  * can't be determined.
@@ -661,7 +835,12 @@ boost::shared_ptr<CDict> findPageDict(const CPdf & pdf, boost::shared_ptr<IPrope
  * @return Position of the node or 0 if node couldn't be found under this
  * superNode.
  */
-size_t searchTreeNode(const CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<CDict> node, size_t startValue)
+size_t searchTreeNode(
+		const CPdf & pdf, 
+		shared_ptr<CDict> superNode, 
+		shared_ptr<CDict> node, 
+		size_t startValue, 
+		PageTreeNodeCountCache * cache)
 {
 	size_t position=0;
 
@@ -728,7 +907,7 @@ size_t searchTreeNode(const CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<
 		}
 
 		// recursively checks subnode - if found re-return position
-		if((position=searchTreeNode(pdf, elementDict_ptr, node, startValue)))
+		if((position=searchTreeNode(pdf, elementDict_ptr, node, startValue, cache)))
 			break;
 
 		// node is not under elementDict_ptr node so updates startValue
@@ -743,7 +922,7 @@ size_t searchTreeNode(const CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<
 		}
 		if(childType==InterNode)
 		{
-			startValue+=getKidsCount(elementDict_ptr);
+			startValue+=getKidsCount(elementDict_ptr, cache);
 			continue;
 		}
 		
@@ -754,7 +933,7 @@ size_t searchTreeNode(const CPdf & pdf, shared_ptr<CDict> superNode, shared_ptr<
 	return position;
 }
 
-size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node)
+size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node, PageTreeNodeCountCache * cache)
 {
 	utilsPrintDbg(DBG_DBG, "");
 	// node must by from given pdf
@@ -786,7 +965,7 @@ size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node)
 		nodeDict_ptr=IProperty::getSmartCObjectPtr<CDict>(node);
 		
 	utilsPrintDbg(DBG_DBG, "Starts searching");
-	size_t pos=searchTreeNode(pdf, rootDict_ptr, nodeDict_ptr, 1);
+	size_t pos=searchTreeNode(pdf, rootDict_ptr, nodeDict_ptr, 1, cache);
 	utilsPrintDbg(DBG_DBG, "Searching finished. pos="<<pos);
 	if(pos)
 		return pos;
@@ -842,7 +1021,7 @@ using namespace pdfobjects::utils;
 	// registers observer for page tree handling
 	prop->registerObserver(observer);
 	
-	// if not an intermediate node, skipps further steps
+	// if not an intermediate node, skips further steps
 	if(getNodeType(prop)<InterNode)
 		return;
 
@@ -1003,7 +1182,7 @@ using namespace utils;
 	// consolidates page tree from newValue's indirect parent. If newValue is
 	// CNull, uses oldValue's. This is correct because they both have been in
 	// same intermediate node and both are direct values (change is in Kids
-	// array). 
+	// array - which must be also direct). 
 	IndiRef parentRef=(newType!=pNull)
 		?newValue->getIndiRef()
 		:oldValue->getIndiRef();
@@ -1022,6 +1201,7 @@ using namespace utils;
 	{
 		// if consolidatePageTree hasn't kept page count numbers, total number
 		// of pages must be invalidated
+		kernelPrintDbg(DBG_DBG, "consolidating page tree.");
 		if(!pdf->consolidatePageTree(parentDict_ptr))
 			pdf->pageCount=0;
 	}catch(CObjectException & e)
@@ -1032,10 +1212,18 @@ using namespace utils;
 	// consolidates pageList 
 	try
 	{
+		kernelPrintDbg(DBG_DBG, "consolidating page list.");
 		pdf->consolidatePageList(oldValue, newValue);
 	}catch(CObjectException &e)
 	{
 		kernelPrintDbg(DBG_ERR, "consolidatePageList failed with cause="<<e.what());
+	}
+
+	if(!isRef(oldValue))
+	{
+		IndiRef oldRef=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+		kernelPrintDbg(DBG_DBG, "discarding leaf count cache for "<<oldRef<<" subtree");
+		discardKidsCountCache(oldRef, *pdf, pdf->nodeCountCache, true);
 	}
 	
 	kernelPrintDbg(DBG_DBG, "observer handler finished");
@@ -1093,6 +1281,8 @@ using namespace utils;
 		kernelPrintDbg(DBG_WARN, "Document catalog dictionary is held by somebody.");
 	docCatalog.reset();
 	
+	clearKidsCountCached(nodeCountCache);
+
 	// cleanup all returned outlines  -------------||----------------- 
 	
 	// Initialization part:
@@ -1618,7 +1808,7 @@ using namespace utils;
 	shared_ptr<CDict> rootPages_ptr=getPageTreeRoot(*this);
 	if(!rootPages_ptr.get())
 		throw PageNotFoundException(pos);
-	shared_ptr<CDict> pageDict_ptr=findPageDict(*this, rootPages_ptr, 1, pos);
+	shared_ptr<CDict> pageDict_ptr=findPageDict(*this, rootPages_ptr, 1, pos, &nodeCountCache);
 
 	// creates CPage instance from page dictionary and stores it to the pageList
 	CPage * page=CPageFactory::getInstance(pageDict_ptr);
@@ -1646,7 +1836,7 @@ using namespace utils;
 	shared_ptr<CDict> rootDict=getPageTreeRoot(*this);
 	if(!rootDict.get())
 		return 0;
-	return pageCount=getKidsCount(rootDict);
+	return pageCount=getKidsCount(rootDict, &nodeCountCache);
 }
 
 boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
@@ -1766,7 +1956,7 @@ using namespace utils;
 				// all CPages from this sub tree are removed and invalidated
 				// difference is set to -getKidsCount value (total page lost)
 				kernelPrintDbg(DBG_DBG, "oldValue was intermediate node dictionary.")
-				difference = -getKidsCount(oldValue);
+				difference = -getKidsCount(oldValue, &nodeCountCache);
 
 				// gets reference of oldValue - which is the root of removed
 				// subtree
@@ -1820,7 +2010,7 @@ using namespace utils;
 				break;
 			case InterNode:
 			case RootNode:
-				pagesCount=getKidsCount(newValue);
+				pagesCount=getKidsCount(newValue, &nodeCountCache);
 				break;
 			default:
 				kernelPrintDbg(DBG_DBG, "newValue is not leaf or intermediate node.");
@@ -1832,7 +2022,7 @@ using namespace utils;
 		// no information
 		try
 		{
-			minPos = getNodePosition(*this, newValue);
+			minPos = getNodePosition(*this, newValue, &nodeCountCache);
 		}catch(exception &e)
 		{
 			// position can't be determined
@@ -1883,7 +2073,7 @@ using namespace utils;
 			// means that it can't be determined. Such page is invalidated.
 			try
 			{
-				size_t pos=getNodePosition(*this, i->second->getDictionary());
+				size_t pos=getNodePosition(*this, i->second->getDictionary(), &nodeCountCache);
 				kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<pos);
 				pageList.insert(PageList::value_type(pos, i->second));	
 			}catch(exception & e)
@@ -1935,7 +2125,8 @@ using namespace utils;
 	// gets current count of kids and compares it to Count property
 	// if values are different, sets new value and sets countChanged to true and
 	// also node's parent should be consolidated
-	size_t count=getKidsCount(interNode);
+	// Doesn't use cache to be sure that value is really collected
+	size_t count=getKidsCount(interNode, NULL);
 	bool countChanged=false;
 	if(interNode->containsProperty("Count"))
 	{
@@ -1983,6 +2174,12 @@ using namespace utils;
 		interNode->addProperty("Count", *countInt);
 		countChanged=true;
 	}
+
+	// if page count has changed, discards cache for this node but keeps values
+	// in subtree (they contain correct values because change was just in this
+	// intermediate node)
+	if(countChanged)
+		discardKidsCountCache(interNodeRef, *this, nodeCountCache, false);
 	
 	kernelPrintDbg(DBG_DBG, "consolidating Kids array members");
 
@@ -2142,7 +2339,7 @@ using namespace utils;
 		// searches for page at storePosition and gets its reference
 		// page dictionary has to be an indirect object, so getIndiRef returns
 		// dictionary reference
-		shared_ptr<CDict> currentPage_ptr=findPageDict(*this, interNode_ptr, 1, storePostion);
+		shared_ptr<CDict> currentPage_ptr=findPageDict(*this, interNode_ptr, 1, storePostion, &nodeCountCache);
 		currRef=shared_ptr<CRef>(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 		
 		// gets parent of found dictionary which maintains 
@@ -2245,7 +2442,7 @@ using namespace utils;
 	// getPageTreeRoot doesn't fail, because we are in page range and so it has
 	// to exist
 	shared_ptr<CDict> rootDict=getPageTreeRoot(*this);
-	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, rootDict, 1, pos);
+	shared_ptr<CDict> currentPage_ptr=findPageDict(*this, rootDict, 1, pos, &nodeCountCache);
 	shared_ptr<CRef> currRef(CRefFactory::getInstance(currentPage_ptr->getIndiRef()));
 	
 	// Gets parent field from found page dictionary and gets its Kids array
