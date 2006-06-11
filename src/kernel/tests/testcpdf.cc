@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/06/11 14:36:10  hockm0bm
+ * sync with getNodePosition signature change
+ *
  * Revision 1.25  2006/06/06 09:47:56  hockm0bm
  * pageIterationTC checks all iterator methods for pages with isChanged
  *         - test DOESN'T PASS - CPage may do changes when it is created (adds
@@ -438,7 +441,7 @@ public:
 		printf("TC04:\tinsert page never causes ambiguous page tree\n");
 		// inserts first page again and tries to to call getNodePosition
 		shared_ptr<CPage> addedPage=pdf->insertPage(pdf->getFirstPage(), 1);
-		size_t pos=getNodePosition(*pdf, addedPage->getDictionary());
+		size_t pos=getNodePosition(*pdf, addedPage->getDictionary(), NULL);
 		CPPUNIT_ASSERT(pos==1);
 		// removes added page
 		pdf->removePage(pos);
