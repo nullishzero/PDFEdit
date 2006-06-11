@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/06/11 22:11:46  hockm0bm
+ * testManipulationTC
+ *         - new test cases for intermediate node (insert new internode,
+ *           replace internode by another one)
+ *
  * Revision 1.26  2006/06/11 14:36:10  hockm0bm
  * sync with getNodePosition signature change
  *
@@ -503,21 +508,40 @@ public:
 		// uses 1st internode kid from page tree root dictionary
 		shared_ptr<CRef> rootRef=IProperty::getSmartCObjectPtr<CRef>(pdf->getDictionary()->getProperty("Pages"));
 		shared_ptr<CDict> rootDict=getDictFromRef(rootRef);
-		shared_ptr<CArray> rootKids=IProperty::getSmartCObjectPtr<CArray>(rootDict->getProperty("Kids"));
 		shared_ptr<CDict> interNode;
-		size_t interPos;
-		for(size_t i=0; i<rootKids->getPropertyCount(); i++)
+		shared_ptr<CRef> interNodeCRef;
+		vector<IProperty> children;
+		shared_ptr<IProperty> rootKidsProp=rootDict->getProperty("Kids");
+		shared_ptr<CArray> rootKids;
+		if(isRef(rootKidsProp))
+			rootKids=getCObjectFromRef<CArray, pArray>(rootKidsProp);
+		else
+			if(isArray(rootKidsProp))
+				rootKids=IProperty::getSmartCObjectPtr<CArray>(rootKidsProp);
+
+		size_t interPos=0;
+		if(!rootKids.get())
 		{
-			shared_ptr<CRef> kidRef=IProperty::getSmartCObjectPtr<CRef>(rootKids->getProperty(i));
-			shared_ptr<CDict> kidDict=getDictFromRef(kidRef);
-			if(getNameFromDict("Type", kidDict)=="Pages")
+			printf("\t\tKids array has bad type, ignoring");
+		}else
+		{
+			vector<shared_ptr<IProperty> > children;
+			rootKids->_getAllChildObjects(children);
+			size_t index=0;
+			for(vector<shared_ptr<IProperty> >::iterator i=children.begin(); i!=children.end(); i++, index++)
 			{
-				interNode=kidDict;
-				interPos=i;
-				break;
+				shared_ptr<IProperty> child=*i;
+				if(getNodeType(child)>=InterNode)
+				{
+					interNode=getCObjectFromRef<CDict, pDict>(child);
+					interNodeCRef=IProperty::getSmartCObjectPtr<CRef>(child);
+					interPos=index;
+					break;
+				}
 			}
 		}
 		if(!interNode)
+			// no internode available
 			printf("\t\tThis file is not suitable for this test\n");
 		else
 		{
@@ -552,6 +576,59 @@ public:
 			}
 			// test passed
 		}
+		if(interNode.get())
+		{
+			// inserts back interNode to 1st position in root kids array
+			// currently first page should be at 1+getKidsCount (if there is any
+			// page);
+			printf("TC08:\tinserting removed intermediate node test.\n");
+			shared_ptr<CPage> firstPage, lastPage;
+			size_t currPageCount=pdf->getPageCount();
+			if(currPageCount)
+			{
+				firstPage=pdf->getFirstPage();
+				lastPage=pdf->getLastPage();
+			}
+	
+			size_t interNodeLeafCount=getKidsCount(interNode,NULL);
+			rootKids->addProperty(0, *interNodeCRef);
+			CPPUNIT_ASSERT(currPageCount + interNodeLeafCount == pdf->getPageCount());
+			if(firstPage.get())
+				CPPUNIT_ASSERT(pdf->getPagePosition(firstPage) == interNodeLeafCount + 1);
+			if(lastPage.get())
+				CPPUNIT_ASSERT(pdf->getPagePosition(lastPage) == interNodeLeafCount + currPageCount);
+
+			// creates new intermediate node with no children just for
+			// simulation
+			shared_ptr<CDict> fakeInterNode(CDictFactory::getInstance());
+			shared_ptr<CName> type(CNameFactory::getInstance("Pages"));
+			fakeInterNode->addProperty("Type", *type);
+			IndiRef fakeInterRef=pdf->addIndirectProperty(fakeInterNode);
+			size_t fakeInterLeafCount=0;
+			
+			printf("TC09:\treplacing intermediate node by another intermediate node\n");
+			// gets CRef of firts root's kid (one we have inserted)
+			shared_ptr<CRef> replaceElement=IProperty::getSmartCObjectPtr<CRef>(rootKids->getProperty(0));
+			// change value in replaceElement to contain reference to newly
+			// created fake intermediate node
+			currPageCount=pdf->getPageCount();
+			replaceElement->setValue(fakeInterRef);
+			CPPUNIT_ASSERT(pdf->getPageCount() == currPageCount - interNodeLeafCount + fakeInterLeafCount);
+			if(firstPage.get())
+				CPPUNIT_ASSERT(pdf->getPagePosition(firstPage) == 1 + fakeInterLeafCount);
+			if(lastPage.get())
+				CPPUNIT_ASSERT(pdf->getPagePosition(lastPage) == currPageCount - interNodeLeafCount + fakeInterLeafCount);
+
+			/*
+			printf("TC10:\tambiguous page tree test creation\n");
+			// inserts fakeInterRef again
+			shared_ptr<IProperty> fakeInterCRef(CRefFactory::getInstance(fakeInterRef));
+			currPageCount=pdf->getPageCount();
+			pdf->addProperty(fakeInterCRef);
+			CPPUNIT_ASSERT(currPageCount + fakeInterLeafCount == pdf->getPageCount());
+			*/
+		}
+		
 		// change made to document
 		CPPUNIT_ASSERT(pdf->isChanged());
 	}
