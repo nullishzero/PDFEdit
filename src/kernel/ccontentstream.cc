@@ -406,89 +406,6 @@ namespace {
 	}
 
 	/**
-	 * Reparse the stream into pdf operators. 
-	 *
-	 * This function must NOT be called during initialization of contentstream.
-	 * Use ** instead.
-	 * 
-	 * It assumes that supplied streams build a valid content stream that is 
-	 * breaked neither in a composite operator nor at any other crazy point which the pdf
-	 * specification allows.
-	 *
-	 * @param operators Operator stack.
-	 * @param streams 	Streams to be parsed.
-	 * @param cs 		Content stream in which operators belong
-	 * @param observer 	Operand observer.
-	 */
-	void
-	reparseContentStream (CContentStream::Operators& operators, 
-						  CContentStream::CStreams& streams, 
-						  CContentStream& cs,
-						  boost::shared_ptr<IIPropertyObserver> observer)
-	{
-		// Clear operators
-		operators.clear ();
-	
-		// Check if streams are in a valid pdf
-		for (CContentStream::CStreams::const_iterator it = streams.begin(); it != streams.end(); ++it)
-		{
-			assert (hasValidPdf (*it) && hasValidRef (*it));
-			if (!hasValidPdf (*it) || !hasValidRef (*it))
-				throw CObjInvalidObject ();
-		}
-		CPdf* pdf = streams.front()->getPdf();
-		assert (pdf);
-		IndiRef rf = streams.front()->getIndiRef ();
-
-		assert (!streams.empty());
-		CStreamsXpdfReader<CContentStream::CStreams> streamreader (streams);
-		streamreader.open ();
-
-		PdfOperator::Operands operands;
-		shared_ptr<PdfOperator> topoperator (new UnknownCompositePdfOperator ("",""));	
-		shared_ptr<PdfOperator> newop, previousLast = topoperator;
-
-		//
-		// Parsing can throw, if so the stream is invalid
-		//
-		try 
-		{
-			while (newop=parseOp (streamreader, operands))
-			{
-				topoperator->push_back (newop, previousLast);
-				previousLast = getLastOperator (newop);
-			}
-
-			//
-			// Copy operands
-			//
-			topoperator->getChildren (operators);
-			// Set prev of first valid operator to NULL
-			if (!operators.empty())
-				PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
-
-		}catch (CObjectException&)
-		{
-			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
-			operators.clear ();
-			operands.clear ();
-			/** \todo SET INVALID CONTENTSTREAM. */
-		}
-
-		// Delete topoperator
-		topoperator.reset();
-		
-		// Close actual stream
-		streamreader.close ();
-
-		assert (operands.empty());
-		assert (observer);
-		// Set pdf ref and cs
-		if (!operators.empty())
-			opsSetPdfRefCs (operators.front(), *pdf, rf, cs, observer);
-	}
-
-	/**
 	 * Parse the stream for the first time into pdf operators. 
 	 *
 	 * Problem with content stream is, that it can be splitted in many streams
@@ -501,15 +418,15 @@ namespace {
 	 * @param operators Operator stack.
 	 * @param streams 	Streams to be parsed.
 	 * @param cs 		Content stream in which operators belong
-	 * @param parsedstreams Streams that have been really parsed.
 	 * @param observer 	Operand observer.
+	 * @param parsedstreams Streams that have been really parsed.
 	 */
 	void
 	parseContentStream (CContentStream::Operators& operators, 
 						CContentStream::CStreams& streams, 
 						CContentStream& cs,
-						CContentStream::CStreams& parsedstreams,
-						boost::shared_ptr<IIPropertyObserver> observer)
+						boost::shared_ptr<IIPropertyObserver> observer,
+						CContentStream::CStreams* parsedstreams = NULL)
 	{
 		// Clear operators
 		operators.clear ();
@@ -544,9 +461,13 @@ namespace {
 				topoperator->push_back (newop, previousLast);
 				previousLast = getLastOperator (newop);
 
-				// We have found complete and correct content stream.
-				if (streamreader.eofOfActualStream())
-					break;				
+				if (parsedstreams)
+				{ // FIRST PARSE
+
+					// We have found complete and correct content stream.
+					if (streamreader.eofOfActualStream())
+						break;				
+				}
 			}
 
 			//
@@ -568,16 +489,23 @@ namespace {
 		// Delete topoperator
 		topoperator.reset();
 
-		// Save which streams were parsed and close
-		streamreader.close (parsedstreams);
+		if (parsedstreams)  // Save which streams were parsed and close
+			streamreader.close (*parsedstreams);
+		else
+			streamreader.close ();
 
-		// Check if they match the input streams and delete them
-		CContentStream::CStreams::iterator itparsed = parsedstreams.begin (); 
-		for (; itparsed != parsedstreams.end(); ++itparsed)
-		{			
-			assert (*(streams.begin()) == *itparsed);
-			//streams.erase (streams.begin());
-			streams.pop_front();
+
+		if (parsedstreams)
+		{ // FIRST PARSE
+	
+			// Check if they match the input streams and delete them
+			CContentStream::CStreams::iterator itparsed = parsedstreams->begin (); 
+			for (; itparsed != parsedstreams->end(); ++itparsed)
+			{			
+				assert (*(streams.begin()) == *itparsed);
+				//streams.erase (streams.begin());
+				streams.pop_front();
+			}
 		}
 
 		assert (operands.empty());
@@ -716,7 +644,7 @@ CContentStream::CContentStream (CStreams& strs,
 	operandobserver = boost::shared_ptr<OperandObserver> (new OperandObserver (this));
 	
 	// Parse it, move parsed straems from strs to cstreams
-	parseContentStream (operators, strs, *this, cstreams, operandobserver);
+	parseContentStream (operators, strs, *this, operandobserver, &cstreams);
 	
 	// Save bounding boxes
 	if (!operators.empty()) 
@@ -751,7 +679,7 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 	{
 		// Clear operators	
 		operators.clear ();
-		reparseContentStream (operators, cstreams, *this, operandobserver);
+		parseContentStream (operators, cstreams, *this, operandobserver);
 	}
 	
 	// Save bounding boxes
