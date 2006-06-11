@@ -248,9 +248,105 @@ namespace {
 		}
 	}
 
+	/**
+	 * Create simple operator and its operands.
+	 *
+	 * @return True if everything ok, false if end of stream reached.
+	 */
+	bool
+	createOperands (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
+					PdfOperator::Operands& operands,
+					::Object& o)
+	{
+		// Get first object
+		streamreader.getXpdfObject (o);
+
+		//
+		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
+		//
+		while (!streamreader.eof()) 
+		{
+			if (o.isCmd ())
+			{// We have an OPERATOR
+				return true;
+			
+			}else 
+			{// We have an OPERAND
+				
+				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
+				operands.push_back (pIp);
+			}
+
+			o.free ();
+			// Grab the next object
+			streamreader.getXpdfObject (o);
+
+		} // while
+		
+		o.free ();
+		return false;
+	}
 	
 	/**
-	 * Create an opertor from a stream. 
+	 * Create operator from xpdf object.
+	 *
+	 * @param streamreader CStreams parser from which we get an xpdf object.
+	 * @param operands Operands of operator. They are shared through subcalls.
+	 */
+	shared_ptr<PdfOperator>
+	createOperator (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
+					PdfOperator::Operands& operands)
+	{
+		// Get operands
+		Object o;
+		if (!createOperands (streamreader, operands, o))
+			return shared_ptr<PdfOperator> ();
+		
+		// Try to find the op by its name
+		const StateUpdater::CheckTypes* chcktp = StateUpdaterFactory::getInstance()->findOp (o.getCmd());
+		// Operator not found, create unknown operator
+		if (NULL == chcktp)
+			return shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o.getCmd()),operands));
+		
+		assert (chcktp);
+		utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
+
+		//
+		// Check the type against specification
+		// 
+		if (!checkAndFix (*chcktp, operands))
+		{
+			o.free ();
+			//assert (!"Content stream bad operator type.");
+			throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
+		}
+
+		//
+		// SPECIAL CASE for inline image (stream within a text stream)
+		//
+		if ( 0 == strncmp (chcktp->name, "BI", 2))
+		{
+			utilsPrintDbg (debug::DBG_DBG, "");
+			
+			shared_ptr<CInlineImage> inimg (getInlineImage (streamreader));
+			return shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
+		}
+		
+		// Get operands count
+		size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
+
+		//
+		// If endTag is "" it is a simple operator, composite otherwise
+		// 
+		if (isSimpleOp(*chcktp))
+			return shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
+			
+		else // Composite operator
+			return shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
+	}
+	
+	/**
+	 * Create an operator from a stream. 
 	 *
 	 * First read its operands, then the operator itself. Inline image is a
 	 * special case.
@@ -264,121 +360,48 @@ namespace {
 	 * @return New pdf operator.
 	 */
 	shared_ptr<PdfOperator>
-	createOp (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
+	parseOp (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, PdfOperator::Operands& operands)
 	{
-		// This is ugly but needed because of memory leaks
-		shared_ptr<PdfOperator> result;
-		
-		// Get first object
-		Object o;
-		streamreader.getXpdfObject (o);
-
-		//
-		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
-		//
-		while (!streamreader.eof()) 
+		// Create operator with its operands
+		shared_ptr<PdfOperator> result = createOperator (streamreader, operands);
+	
+		if (result && isCompositeOp (result) && !isInlineImageOp (result))
 		{
-			if (o.isCmd ())
-			{// We have an OPERATOR
+			string opname;
+			result->getOperatorName (opname);
+			string endtag = StateUpdaterFactory::getInstance()->getEndTag (opname);
+			bool foundEndTag = false;
+			
+			// The same as in (re)parseContentStream
+			shared_ptr<PdfOperator> newop, previousLast = result;
 
-				//
-				// Try to find the op by its name
-				// 
-				const StateUpdater::CheckTypes* chcktp = StateUpdaterFactory::getInstance()->findOp (o.getCmd());
-				// Operator not found, create unknown operator
-				if (NULL == chcktp)
+			//
+			// Use recursion to get all operators
+			//
+			while (newop=parseOp (streamreader, operands))
+			{
+				result->push_back (newop, previousLast);
+
+				// Is it the end tag?
+				string tag;
+				newop->getOperatorName (tag);
+				if (tag == endtag)
 				{
-					result = shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o.getCmd()),operands));
+					foundEndTag = true;
 					break;
 				}
 				
-				assert (chcktp);
-				utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
-
-				//
-				// SPECIAL CASE for inline image (stream within a text stream)
-				//
-				if ( 0 == strncmp (chcktp->name, "BI", 2))
-				{
-					utilsPrintDbg (debug::DBG_DBG, "");
-					
-					shared_ptr<CInlineImage> inimg (getInlineImage (streamreader));
-					result = shared_ptr<PdfOperator> (new InlineImageCompositePdfOperator (chcktp->name, chcktp->endTag, inimg));
-					break;
-				}
-				
-				//
-				// Check the type against specification
-				// 
-				if (!checkAndFix (*chcktp, operands))
-				{
-					o.free ();
-					//assert (!"Content stream bad operator type.");
-					throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
-				}
-				
-				// Get operands count
-				size_t argNum = static_cast<size_t> ((chcktp->argNum > 0) ? chcktp->argNum : -chcktp->argNum);
-
-				//
-				// If endTag is "" it is a simple operator, composite otherwise
-				// 
-				if (isSimpleOperator(*chcktp))
-				{// Simple operator
-					
-					result = shared_ptr<PdfOperator> (new SimpleGenericOperator (chcktp->name, argNum, operands));
-					break;
-					
-				}else
-				{// Composite operator
-					
-					bool foundEndTag = false;
-					result = shared_ptr<PdfOperator> (new UnknownCompositePdfOperator (chcktp->name, chcktp->endTag));	
-					
-					// The same as in (re)parseContentStream
-					shared_ptr<PdfOperator> newop, previousLast = result;
-		
-					while (newop=createOp (streamreader, operands))
-					{
-						result->push_back (newop, previousLast);
-		
-						// Is it the end tag?
-						string tag;
-						newop->getOperatorName (tag);
-						if (tag == chcktp->endTag)
-						{
-							foundEndTag = true;
-							break;
-						}
-						
-						// Save last as previous
-						previousLast = getLastOperator (newop);
-					}
-
-					if (!foundEndTag)
-					{
-						//assert (!"Bad content stream while reparsing. End tag was not found.");
-						throw CObjInvalidObject ();
-					}
-					
-					// Return composite in result
-					break;
-				}
-
-			}else // if (o.isCmd ())
-			{// We have an OPERAND
-				
-				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
-				operands.push_back (pIp);
+				// Save last as previous
+				previousLast = getLastOperator (newop);
 			}
 
-			o.free ();
-			// Grab the next object
-			streamreader.getXpdfObject (o);
-
-		} // while (!obj.isEOF())
+			if (!foundEndTag)
+			{
+				//assert (!"Bad content stream while reparsing. End tag was not found.");
+				throw CObjInvalidObject ();
+			}
+		}
 		
-		o.free ();
 		return result;
 	}
 
@@ -430,7 +453,7 @@ namespace {
 		//
 		try 
 		{
-			while (newop=createOp (streamreader, operands))
+			while (newop=parseOp (streamreader, operands))
 			{
 				topoperator->push_back (newop, previousLast);
 				previousLast = getLastOperator (newop);
@@ -444,7 +467,7 @@ namespace {
 			if (!operators.empty())
 				PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
 
-		}catch (CObjInvalidObject&)
+		}catch (CObjectException&)
 		{
 			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
 			operators.clear ();
@@ -516,7 +539,7 @@ namespace {
 		//
 		try 
 		{
-			while (newop=createOp (streamreader, operands))
+			while (newop=parseOp (streamreader, operands))
 			{
 				topoperator->push_back (newop, previousLast);
 				previousLast = getLastOperator (newop);

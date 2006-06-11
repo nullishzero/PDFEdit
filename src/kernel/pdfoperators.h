@@ -687,7 +687,7 @@ protected:
 
 /** Is an operator a composite. */
 inline bool 
-isComposite (const PdfOperator* oper)
+isCompositeOp (const PdfOperator* oper)
 {
 	const CompositePdfOperator* compo = dynamic_cast<const CompositePdfOperator*> (oper);
 	return (NULL == compo) ? false : true;
@@ -695,14 +695,26 @@ isComposite (const PdfOperator* oper)
 
 /** Is an operator a composite. */
 inline bool 
-isComposite (PdfOperator::Iterator it)
-	{ return isComposite (it.getCurrent().get()); }
+isCompositeOp (PdfOperator::Iterator it)
+	{ return isCompositeOp (it.getCurrent().get()); }
 
 /** Is an operator a composite. */
 inline bool 
-isComposite (boost::shared_ptr<PdfOperator> oper)
-	{ return isComposite (oper.get()); }
+isCompositeOp (boost::shared_ptr<PdfOperator> oper)
+	{ return isCompositeOp (oper.get()); }
 
+
+/** Is an operator an inline image. */
+inline bool 
+isInlineImageOp (const PdfOperator* oper)
+{
+	const InlineImageCompositePdfOperator* img = dynamic_cast<const InlineImageCompositePdfOperator*> (oper);
+	return (NULL == img) ? false : true;
+}
+/** Is an operator an inline image. */
+inline bool 
+isInlineImageOp (boost::shared_ptr<PdfOperator> oper)
+	{ return isInlineImageOp (oper.get()); }
 
 
 /**

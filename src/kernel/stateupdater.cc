@@ -1031,6 +1031,15 @@ StateUpdater::findOp (const string& opName) const
 		return NULL;
 }
 
+//
+//
+//
+string
+StateUpdater::getEndTag (const string& name) const
+{
+	const StateUpdater::CheckTypes* chcktp = findOp (name);
+	return string (chcktp->endTag);
+}
 
 //==========================================================
 } // namespace pdfobjects

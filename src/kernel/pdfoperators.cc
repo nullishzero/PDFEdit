@@ -98,8 +98,8 @@ CompositePdfOperator::push_back (const boost::shared_ptr<PdfOperator> oper, boos
 	if (NULL == prev.get())
 	{
 		assert (!children.empty());
-		assert (!isComposite(children.back()));
-		if (isComposite(children.back()))
+		assert (!isCompositeOp(children.back()));
+		if (isCompositeOp(children.back()))
 			throw CObjInvalidOperation ();
 		//
 		prev = children.back ();
@@ -296,7 +296,7 @@ findCompositeOfPdfOperator (PdfOperator::Iterator it, boost::shared_ptr<PdfOpera
 	while (!it.isEnd())
 	{
 		// Have we found what we were looking for
-		if (isComposite(it))
+		if (isCompositeOp(it))
 		{
 			opers.clear ();
 			it.getCurrent()->getChildren (opers);
@@ -330,14 +330,14 @@ findCompositeOfPdfOperator (PdfOperator::Iterator it, boost::shared_ptr<PdfOpera
 //
 boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> oper)
 {
-	if (!isComposite (oper) || 0 == oper->getChildrenCount())
+	if (!isCompositeOp (oper) || 0 == oper->getChildrenCount())
 		return oper;
 
 	PdfOperator::PdfOperators opers;
 	oper->getChildren (opers);
 	assert (!opers.empty());
 	boost::shared_ptr<PdfOperator> tmpop = opers.back();
-	while (isComposite (tmpop))
+	while (isCompositeOp (tmpop))
 	{
 		opers.back()->getChildren (opers);
 		if (opers.empty())

@@ -95,6 +95,15 @@ public:
 	 */
 	const CheckTypes* findOp (const std::string& name) const;
 
+	/**
+	 *  Get end tag of an operator.
+	 *
+	 * @param name Operator name.
+	 * 
+	 * @return Operator end tag. Can be empty.
+	 */
+	std::string getEndTag (const std::string& name) const;
+	
 public:
 	/**
 	 *  Update pdf operators.
@@ -175,7 +184,7 @@ public:
  * @return True if the check type is a simple operator, false otherwise.
  */
 inline bool 
-isSimpleOperator (const StateUpdater::CheckTypes& chck)
+isSimpleOp (const StateUpdater::CheckTypes& chck)
 	{ return ('\0' == chck.endTag[0]); }
 
 
