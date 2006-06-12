@@ -79,7 +79,11 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 		vector<boost::shared_ptr<CContentStream> > ccs;
 		page->getContentStreams (ccs);
 		shared_ptr<CContentStream> cs = ccs.front();
-		
+	
+		// If size > 1, streams could have been very badly damaged
+		// TOTO ... CONTENTSTREAM (fdjalds) TJ <-- font does not exist
+		if (1 < ccs.size())
+			continue;
 
 		// parse the content stream
 		string tmp;

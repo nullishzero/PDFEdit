@@ -534,6 +534,7 @@ namespace {
 	{
 		assert (1 <= args.size ());
 
+		// This can happen in really damaged pdfs
  		if (state->getFont())
 			printTextUpdate (state, getStringFromIProperty (args[0]), rc);
 		
@@ -579,7 +580,11 @@ namespace {
 	opSlashUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (3 <= args.size ());
-		assert( state->getFont() != NULL );	// No font for text
+		
+		// This can happen in really damaged pdfs
+		if (!state->getFont())	// No font for text
+			return state;
+		
 		// Set edge of rectangle from actual position on output devices
 		//state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 
@@ -602,16 +607,16 @@ namespace {
 	opTJUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, Rectangle* rc)
 	{
 		assert (1 <= args.size ());
+
+		// This can happen in really damaged pdfs
+		if (!state->getFont()) 
+			return state;
+
 		// Set edge of rectangle from actual position on output devices
 		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		if (!state->getFont()) 
-		{
-			assert (!"Could not get font.");
-			throw ElementBadTypeException ("opTJUpdate: State in bad state->");
-		}
 		if (!isArray(args[0]))
 		{
 			assert (!"opTJUpdate: Invalid first argument.");
