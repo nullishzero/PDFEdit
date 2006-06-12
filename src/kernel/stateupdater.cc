@@ -612,7 +612,7 @@ namespace {
 			assert (!"Could not get font.");
 			throw ElementBadTypeException ("opTJUpdate: State in bad state->");
 		}
-		if (pArray != args[0]->getType())
+		if (!isArray(args[0]))
 		{
 			assert (!"opTJUpdate: Invalid first argument.");
 			throw ElementBadTypeException ("opTJUpdate: Object in bad state->");

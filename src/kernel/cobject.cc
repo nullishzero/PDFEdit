@@ -619,7 +619,7 @@ createObjFromXpdfObj (Object& obj)
 				return new CStream (obj);
 
 			default:
-				assert (!"Bad type.");
+				//assert (!"Bad type.");
 				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
 				break;
 		}
