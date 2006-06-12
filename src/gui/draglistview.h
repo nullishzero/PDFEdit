@@ -8,7 +8,10 @@ namespace gui {
 
 class TreeItemAbstract;
 
-/** Inner class for DragListView DragObject*/
+/**
+ Inner class for DragListView DragObject
+ \brief Drag and drop object
+*/
 class TreeItemDragObject : public QDragObject {
  Q_OBJECT
 public:
@@ -21,7 +24,10 @@ private:
  TreeItemAbstract *item;
 };
 
-/** Class wrapping QListView, providing drag and drop functionality */
+/**
+ Class wrapping QListView, providing drag and drop functionality
+ \brief Drag and drop enhanced QListView
+ */
 class DragListView : public QListView {
  Q_OBJECT
 public:

@@ -31,6 +31,7 @@
 #include <qsplitter.h>
 #include <qstring.h>
 #include <utils/debug.h>
+#include "optionwindow.h"
 
 namespace gui {
 
@@ -231,6 +232,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
  connect(prop,SIGNAL(infoText(const QString&)),status,SLOT(receiveInfoText(const QString&)));
  connect(prop,SIGNAL(warnText(const QString&)),status,SLOT(receiveWarnText(const QString&)));
+ connect(tree,SIGNAL(itemInfo(const QString&)),status,SLOT(message(const QString&)));
 
  this->setCentralWidget(spl);
 
@@ -413,9 +415,11 @@ void PdfEditWindow::settingUpdate(QString key) {
  }
  if (key.startsWith("editor/")) { //Something from property editor
   prop->checkOverrides();
+  return;
  }
  if (key=="tree/show_dict_sort") { //Sort dict keys
   prop->reloadItem();
+  return;
  }
  if (key=="history/save_filePath") {
   //Do not remember path -> remove stored path(s)
@@ -431,6 +435,10 @@ void PdfEditWindow::settingUpdate(QString key) {
  if (key=="icon/theme/big") {
   //Size of icons changed
   bigPixmap();
+  return;
+ }
+ if (key=="gui/style") {
+  applyStyle();
  }
 }
 

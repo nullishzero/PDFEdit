@@ -295,4 +295,19 @@ TreeItemAbstract::~TreeItemAbstract() {
  data->multi()->notifyDelete(this);
 }
 
+/**
+ Return path of this item
+ (sequence of names from root to this item, separated by slash "/").
+ @return path of this item
+*/
+QString TreeItemAbstract::path() {
+ QString path=name();
+ TreeItemAbstract* theParent=dynamic_cast<TreeItemAbstract*>(parent());
+ while (theParent) { //Traverse to root, prepending path elements
+  path=theParent->name()+"/"+path;
+  theParent=dynamic_cast<TreeItemAbstract*>(theParent->parent());
+ }
+ return path;
+}
+
 } // namespace gui

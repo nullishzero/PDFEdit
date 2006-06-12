@@ -17,7 +17,6 @@ namespace gui {
 class QSCObject;
 class QSPdf;
 class TreeItemAbstract;
-class Base;//TODO:remove
 class BaseCore;
 
 using namespace pdfobjects;
@@ -29,6 +28,7 @@ using namespace pdfobjects;
  Adding via addTransientObject disallow removing the object later.
  Can import any QObject into scripting layer under specified name and also can create
  QSCObjects from some common types (dict, page ..)
+ \brief QObject importer into scripting
 */
 class QSImporter : public QObject {
  Q_OBJECT

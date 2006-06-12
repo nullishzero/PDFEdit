@@ -63,6 +63,28 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
  data=new TreeData(this,tree,base,multi);
  QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
  QObject::connect(tree,SIGNAL(doubleClicked(QListViewItem*,const QPoint &,int)),this,SLOT(mouseDoubleClicked(QListViewItem*,const QPoint &,int)));
+ QObject::connect(tree,SIGNAL(onItem(QListViewItem*)),this,SLOT(moveOnItem(QListViewItem*)));
+ QObject::connect(tree,SIGNAL(onViewport()),this,SLOT(moveOffItem()));
+}
+
+/**
+ Slot called when mouse moves to some item in tree
+ @param item Item over which mouse moved
+*/
+void TreeWindow::moveOnItem(QListViewItem *item) {
+ TreeItemAbstract* abst=dynamic_cast<TreeItemAbstract*>(item);
+ if (!abst) {
+  emit itemInfo("");
+  return;
+ }
+ emit itemInfo(abst->path());
+}
+
+/**
+ Slot called when mouse moves off any items in tree
+*/
+void TreeWindow::moveOffItem() {
+ emit itemInfo("");
 }
 
 /** Reload part of tree that have given item as root (including that item)

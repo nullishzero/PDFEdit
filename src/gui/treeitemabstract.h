@@ -34,6 +34,7 @@ typedef int ChildType;
 class TreeItemAbstract : public QListViewItem {
 public:
  void unSelect(QListView *tree);
+ QString path();
  TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after=NULL);
  TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after=NULL);
  QString name();

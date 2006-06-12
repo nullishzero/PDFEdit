@@ -68,6 +68,7 @@ private:
 };
 
 void applyLookAndFeel(bool notify=false);
+void applyStyle();
 
 } // namespace gui
 

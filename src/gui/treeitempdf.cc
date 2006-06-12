@@ -250,6 +250,7 @@ QStringList TreeItemPdf::getChildNames() {
   try {
    return util::countList(outlines.size());
   } catch(...) {
+   guiPrintDbg(debug::DBG_WARN,"Exception in outlines");
    //TODO : some exception, inform
    return QStringList();
   }

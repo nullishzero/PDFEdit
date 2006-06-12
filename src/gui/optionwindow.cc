@@ -416,8 +416,7 @@ void OptionWindow::init() {
  addText       (laf_tab,tr("You can specify overall visual style"));
  addOptionCombo(laf_tab,tr("Style"),"gui/style",styles);
  addOptionCombo(laf_tab,tr("Icon theme"),"icon/theme/current",iconThemesUnique);
-//TODO: scan icon directories and pick the theme from a combobox
- addText       (laf_tab,tr("<b>Note</b>: changing style or icon theme will take effect on next program start"));//TODO: apply style & icon theme now
+ addText       (laf_tab,tr("<b>Note</b>: changing icon theme will take effect on next program start"));//TODO: apply icon theme now
  addOptionBool (laf_tab,tr("Use big icons"),"icon/theme/big");
  finishTab     (laf_tab);
 
@@ -462,6 +461,20 @@ void applyLookAndFeel(bool notify) {
  QApplication::setFont(fontMain,notify);
  QApplication::setFont(fontConsole,notify,"gui::CommandWindow");
  QApplication::setFont(fontStatus,notify,"gui::StatusBar");
+}
+
+/**
+ Apply current style to GUI (to all windows)
+ */
+void applyStyle() {
+ QString style=globalSettings->read("gui/style","");
+ if (style!="") {
+  QStyle *styl=qApp->setStyle(style);
+  if (!styl) {
+   globalSettings->write("gui/style",""); //No such style -> reset
+   return;
+  }
+ }
 }
 
 } // namespace gui

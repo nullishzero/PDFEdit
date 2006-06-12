@@ -12,6 +12,7 @@ namespace gui {
  "selfDestruct()" for this widget to work<br>
  Used for helper dialogs that should close themselves
  when file/item they are editing is also closed<br>
+ \brief Widget destroying itself on certain signal
 */
 class SelfDestructiveWidget : public QWidget {
 Q_OBJECT

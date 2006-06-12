@@ -194,7 +194,7 @@ void PropertyEditor::fixPropertyHeight(Property *pr) {
  @return true if this property is editable and was added. false if this property is uneditable (unknown type)
 */
 bool PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty> value) {
- Property *p=propertyFactory(value.get(),name,grid);//todo: flags
+ Property *p=propertyFactory(value.get(),name,grid);
  if (!p) return false;	//check if editable
  p->readValue(value.get());
  addProperty(p,value);//Will add and show the property
@@ -277,7 +277,6 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
  setUpdatesEnabled( FALSE );
  clear();
  currentObj=pdfObject;
- //TODO: need property flags/mode
  if (!pdfObject.get()) {
   unsetObject();
  } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties

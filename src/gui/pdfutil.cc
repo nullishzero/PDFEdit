@@ -87,7 +87,7 @@ QString getTypeName(boost::shared_ptr<IProperty> obj) {
 /**
  Return short textual preview of what's in the property
  @param obj property for preview
- @return short string
+ @return short string (cca. 20 chararters max)
 */
 QString propertyPreview(boost::shared_ptr<IProperty> obj) {
  PropertyType typ=obj->getType();
@@ -135,8 +135,20 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
    CDict* a=dynamic_cast<CDict*>(obj.get());
    return countString(a->getPropertyCount(),"item","items");
   }
-//  case pRef:    ??
-//  case pStream: ??
+  case pStream: {
+   try {
+    boost::shared_ptr<IProperty> len=dereference(dynamic_cast<CStream*>(obj.get())->getProperty("Length"));
+    CInt* lenInt=dynamic_cast<CInt*>(len.get());
+    if (!lenInt) return "";
+    int iLen;
+    lenInt->getValue(iLen);
+    return QString::number(iLen)+" "+QObject::tr("bytes");
+   } catch (...) {
+    //Preview failed
+    return "";
+   }
+  }
+//  case pRef: -> Ref can't be target of ref ...
   default:;
  }
  //Not suitable for preview

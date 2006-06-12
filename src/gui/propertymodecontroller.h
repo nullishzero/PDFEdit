@@ -12,6 +12,7 @@ using namespace configuration;
 /**
  PropertyModeController - class providing wrapper around single ModeController
  instance and managing its configuration
+ \brief Mode controller wrapper
 */
 class PropertyModeController {
 public:

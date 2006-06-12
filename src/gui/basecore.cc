@@ -65,7 +65,6 @@ void BaseCore::setConWriter(ConsoleWriter *_con) {
 */
 void BaseCore::importDocument(pdfobjects::CPdf *pdf) {
  qpdf->set(pdf);
- //TODO: document as property
  //TODO: When QSA wrapper factory will be implemented, this need to change
  import->addQSObj(qpdf,"document");
 }

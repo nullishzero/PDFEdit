@@ -145,6 +145,7 @@ void MultiTreeWindow::pageChange(QWidget *newPage) {
 void MultiTreeWindow::connectSig(TreeWindow *tr) {
  QObject::connect(tr,SIGNAL(treeClicked(int,QListViewItem*)),this,SLOT(treeMouseClicked(int,QListViewItem*)));
  QObject::connect(tr,SIGNAL(itemSelected()),this,SLOT(treeItemSelected()));
+ QObject::connect(tr,SIGNAL(itemInfo(const QString&)),this,SLOT(treeItemInfo(const QString&)));
 }
 
 /**
@@ -299,6 +300,16 @@ TreeWindow* MultiTreeWindow::createPage(const QString &caption,const QString &to
 */
 void MultiTreeWindow::notifyDelete(TreeItemAbstract *dest) {
  emit itemDeleted(dest);
+}
+
+/**
+ Signal called whyen received statusbar information from one of the trees
+ (tree items).<br>
+ Re-emit the signal
+ @param info Information from tree item
+*/
+void MultiTreeWindow::treeItemInfo(const QString &info) {
+ emit itemInfo(info);
 }
 
 /**

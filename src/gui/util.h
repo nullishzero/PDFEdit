@@ -16,7 +16,8 @@ class QWidget;
 #define MIN(x,y) ((x)<=(y)?(x):(y))
 
 #ifndef __GNUC__
-#define  __attribute__(x)  /* Turn off __attribute__ for non-gcc compilers */
+/** Turn off __attribute__ for non-gcc compilers */
+#define  __attribute__(x) /* Turn off __attribute__ for non-gcc compilers */ 
 #endif
 
 namespace util {

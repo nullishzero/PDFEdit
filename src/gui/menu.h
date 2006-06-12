@@ -54,6 +54,7 @@ typedef QMap<MapKey,QWidget*> ToolbarItems;
  menu and toolbar items are interchangable (only difference is that toolbar item
  must have icon, while menu item can be without an icon)<br>
  For more information about menus and toolbars, check doc/design/gui/menu.xml
+ \brief Menu and Toolbar management
 */
 class Menu {
 public:

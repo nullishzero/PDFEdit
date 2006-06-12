@@ -121,7 +121,6 @@ bool RefPropertyDialog::check(bool sayIfOk/*=true*/) {
   description=" : "+description;
  }
  message(getTypeName(rp)+" "+description);
- //TODO: some better "preview", at least for simple types
  return true;
 }
 

@@ -214,5 +214,3 @@ boost::shared_ptr<CPage> QSPage::get() const {
 }
 
 } // namespace gui
-
-//todo: incomplete

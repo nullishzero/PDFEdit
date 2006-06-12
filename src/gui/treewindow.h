@@ -58,9 +58,16 @@ signals:
   If clicked on tree item, it is sent in second parameter (otherwise NULL is sent)
  */
  void treeClicked(int,QListViewItem*);
+ /**
+  Signal emitted when mouse moves over items.
+  @param info Info sent to statusbar
+ */
+ void itemInfo(const QString &info);
 protected:
  virtual void paintEvent(QPaintEvent *e);
 private slots:
+ void moveOnItem(QListViewItem *item);
+ void moveOffItem();
  void treeSelectionChanged(QListViewItem *item); 
  void mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column);
  void mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column);

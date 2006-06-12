@@ -39,7 +39,6 @@ QSCObject::QSCObject(QSCObject &source) : QObject() {
 /** destructor */
 QSCObject::~QSCObject() {
 // guiPrintDbg(debug::DBG_DBG,"removing QSCObject" << typeName);
-//TODO: keep the garbage collector only as failsafe (closing window)
 //TODO: implement QSWrapperFacrory for scripting as "garbage collector"
  if (base) base->removeGC(this);
 }

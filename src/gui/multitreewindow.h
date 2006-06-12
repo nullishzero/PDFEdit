@@ -47,6 +47,7 @@ typedef QMap<TreeWindow*,TreeKey> TreeWindowListReverse;
  that can be opened/closed as necessary. Main tree cannot be closed<br>
  The multi tree view contain widgets of TreeWindow class inside the tabs
  \see TreeWindow
+ \brief Treeview with tab support
 */
 class MultiTreeWindow : public QWidget {
  Q_OBJECT
@@ -85,7 +86,13 @@ signals:
   @param dest item to be deleted
  */
  void itemDeleted(TreeItemAbstract *dest);
+ /**
+  Signal emitted when mouse moves over items.
+  @param info Info sent to statusbar
+ */
+ void itemInfo(const QString &info);
 protected slots:
+ void treeItemInfo(const QString &info);
  void tabSwitchPopup();
  void treeItemSelected();
  void treeMouseClicked(int button,QListViewItem* item);

@@ -196,14 +196,7 @@ void QSTreeItem::disable() {
 */
 QString QSTreeItem::path() {
  if (nullPtr(obj,"path")) return QString::null;
- //TODO: move to treeitemabstract && statusbar
- QString path=obj->name();
- TreeItemAbstract* parent=dynamic_cast<TreeItemAbstract*>(obj->parent());
- while (parent) { //Traverse to root, prepending path elements
-  path=parent->name()+"/"+path;
-  parent=dynamic_cast<TreeItemAbstract*>(parent->parent());
- }
- return path;
+ return obj->path();
 }
 
 /** get TreeItemAbstract held inside this class. Not exposed to scripting */

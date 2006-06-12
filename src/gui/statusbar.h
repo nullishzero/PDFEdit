@@ -10,7 +10,12 @@ class QColor;
 
 namespace gui {
 
-/** Class representing statusbar */
+/**
+ Class representing statusbar.<br>
+ The statusbar contain tho areas, large message area on left
+ and smaller informative area on right.
+ \brief Editor statusbar
+ */
 class StatusBar : public QStatusBar {
  Q_OBJECT
 public:

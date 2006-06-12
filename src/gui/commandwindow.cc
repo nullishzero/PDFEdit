@@ -76,7 +76,6 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 
  cmd->setText( "" );			//clear commandline
 // history->setAutoCompletion( true );
-//todo: subclass qlineedit, add history ... 
  QObject::connect(cmd, SIGNAL(returnPressed()), this, SLOT(execute()));
  l->addWidget(out);
  l->addWidget(history);
