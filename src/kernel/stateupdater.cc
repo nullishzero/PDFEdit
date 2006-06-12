@@ -344,7 +344,7 @@ namespace {
 		rc->xright += h_width.x;
 		rc->yright += h_width.y;
 		Point h_pt;
-		for (int i=0; i<6 ;i+=2) {
+		for (int i=0; i<4 ;i+=2) {
 			state->transform(getDoubleFromIProperty(args[i]), getDoubleFromIProperty(args[i+1]), & h_pt.x, & h_pt.y);
 			rc->xleft = min( rc->xleft, h_pt.x - h_width.x );
 			rc->xright = max( rc->xright, h_pt.x + h_width.x );
