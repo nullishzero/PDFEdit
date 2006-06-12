@@ -34,6 +34,12 @@
  \brief Graphical user interface namespace
 */
 namespace gui {}
+/**
+ Utility namespace<br>
+ Contains various static utility functions, used in GUI
+ \brief Utility namespace
+*/
+namespace util {}
 
 /** TODO namespace configuration */
  namespace configuration {}
