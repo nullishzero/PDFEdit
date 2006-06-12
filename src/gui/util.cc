@@ -14,6 +14,7 @@
 #include <qtextcodec.h>
 #include <qstringlist.h>
 #include <utils/debug.h>
+#include <assert.h>
 
 namespace util {
 
