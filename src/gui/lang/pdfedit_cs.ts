@@ -901,16 +901,16 @@ Data: %3
         <translation>Odstranit</translation>
     </message>
     <message>
-        <source>Select page to remove</source>
-        <translation>Vyberte stránku k odstranění</translation>
-    </message>
-    <message>
         <source>Invalid page</source>
         <translation>Neplatná stránka</translation>
     </message>
     <message>
         <source>View page</source>
         <translation>Zobrazit stránku</translation>
+    </message>
+    <message>
+        <source>bytes</source>
+        <translation>bytů</translation>
     </message>
 </context>
 <context>
@@ -1189,16 +1189,16 @@ Data: %3
         <translation>Strom</translation>
     </message>
     <message>
-        <source>Stream</source>
-        <translation>Stream</translation>
-    </message>
-    <message>
-        <source>Property</source>
-        <translation>Položka</translation>
-    </message>
-    <message>
         <source>Close current tab</source>
         <translation>Zavřít aktuální záložku</translation>
+    </message>
+    <message>
+        <source>Document tree</source>
+        <translation>Strom dokumentu</translation>
+    </message>
+    <message>
+        <source>Switch to ...</source>
+        <translation>Přepnout na ...</translation>
     </message>
 </context>
 <context>
@@ -1360,10 +1360,6 @@ Data: %3
         <translation>Téma ikon</translation>
     </message>
     <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: changing style or icon theme will take effect on next program start</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna stylu nebo tématu ikon bude mít efekt až při přístím startu programu</translation>
-    </message>
-    <message>
         <source>Use big icons</source>
         <translation>Použít velké ikony</translation>
     </message>
@@ -1404,6 +1400,10 @@ Data: %3
 (possibly long output)</source>
         <translation>Zobrazovat návratovou hodnotu též pro komplexní typy
 (možný delší výstup)</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing icon theme will take effect on next program start</source>
+        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna tématu ikon bude mít efekt až při přístím startu programu</translation>
     </message>
 </context>
 <context>
@@ -1481,6 +1481,10 @@ Data: %3
     <message>
         <source>Selection</source>
         <translation>Výběr</translation>
+    </message>
+    <message>
+        <source>Selected operators</source>
+        <translation>Vybrané operátory</translation>
     </message>
 </context>
 <context>

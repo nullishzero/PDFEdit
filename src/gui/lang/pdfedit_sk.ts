@@ -898,15 +898,15 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select page to remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>View page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bytes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1187,14 +1187,18 @@ Data: %3
     </message>
     <message>
         <source>Stream</source>
-        <translation type="unfinished">Stream</translation>
-    </message>
-    <message>
-        <source>Property</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Stream</translation>
     </message>
     <message>
         <source>Close current tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch to ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1357,10 +1361,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Note&lt;/b&gt;: changing style or icon theme will take effect on next program start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use big icons</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1399,6 +1399,10 @@ Data: %3
     <message>
         <source>Show return value also for complex types
 (possibly long output)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Note&lt;/b&gt;: changing icon theme will take effect on next program start</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1476,6 +1480,10 @@ Data: %3
     </message>
     <message>
         <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected operators</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
