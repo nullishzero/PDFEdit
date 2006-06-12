@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/06/12 18:28:14  hockm0bm
+ * ComplexChangeContext class added
+ *
  * Revision 1.14  2006/05/30 21:04:12  hockm0bm
  * doc update
  *
@@ -91,7 +94,7 @@ template<typename T> class IChangeContext
 public:
 	/** Supported context types.
 	 */
-	enum ChangeContextType {BasicChangeContextType, ScopedChangeContextType};
+	enum ChangeContextType {BasicChangeContextType, ComplexChangeContextType, ScopedChangeContextType};
 	
 	/** Returns context type.
 	 *
@@ -130,7 +133,7 @@ public:
 
 	/** Returns type of context.
 	 *
-	 * @return BasicChangeContext value.
+	 * @return BasicChangeContextType value.
 	 */
 	typename IChangeContext<T>::ChangeContextType getType() const throw()
 	{
@@ -144,6 +147,53 @@ public:
 	virtual boost::shared_ptr<T> getOriginalValue() const throw()
 	{
 		return originalValue;
+	}
+};
+
+/** Complex change context template class.
+ *
+ * This context should be used when value with given ValueType template type is
+ * changed in context of complex value type (it is its part) and there is unique
+ * identification of this value.
+ * <br>
+ * Observer may use original value which is accessible from
+ * BasicChangeContextType supertype and additional value identificator
+ * information.
+ */
+template<typename ValueType, typename ValueIdType>
+class ComplexChangeContext: public BasicChangeContext<ValueType>
+{
+	ValueIdType valueId;
+public:
+	/** Initialization constructor.
+	 * @param origVal Original value.
+	 * @param id Identificator of changed value.
+	 * 
+	 * Initializes originalValue (uses BasicChangeContext constructor with
+	 * origVal parameter) and valueId from given id.
+	 */
+	ComplexChangeContext(boost::shared_ptr<ValueType> origValue, ValueIdType id):
+		BasicChangeContext<ValueType>(origValue), valueId(id)
+	{}
+
+	virtual ~ComplexChangeContext()throw(){}
+
+	/** Returns identificator of changed value.
+	 *
+	 * @return value identificator value.
+	 */
+	ValueIdType getValueId()const throw()
+	{
+		return valueId;
+	}
+	
+	/** Returns type of context.
+	 *
+	 * @return ComplexChangeContextType value.
+	 */
+	typename IChangeContext<ValueType>::ChangeContextType getType() const throw()
+	{
+		return IChangeContext<ValueType>::ComplexChangeContextType;
 	}
 };
 
