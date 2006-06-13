@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/06/13 20:44:13  hockm0bm
+ * * ChangeContextType enum removed from class IChangeContext to observer namespace
+ * * pdfwriter.cc synced with ChangeContextType change
+ *
  * Revision 1.15  2006/06/12 18:28:14  hockm0bm
  * ComplexChangeContext class added
  *
@@ -80,6 +84,30 @@ struct ObserverException : public std::exception
 {
 };
 
+/** Supported context types.
+ */
+enum ChangeContextType {BasicChangeContextType, ComplexChangeContextType, ScopedChangeContextType};
+
+/** Operator for human readable ChangeContextType printing.
+ * @param str Stream where to print.
+ * @param type Change context type.
+ */
+inline std::ostream & operator<<(std::ostream & str, ChangeContextType type)
+{
+	switch(type)
+	{
+		case BasicChangeContextType:
+			str << "BasicChangeContextType";
+			break;
+		case ComplexChangeContextType:
+			str << "ComplexChangeContextType";
+			break;
+		case ScopedChangeContextType:
+			str << "ScopedChangeContextType";
+			break;
+	}
+	return str;
+}
 	
 /** Interface (pure abstract class) for change context.
  *
@@ -92,9 +120,6 @@ struct ObserverException : public std::exception
 template<typename T> class IChangeContext
 {
 public:
-	/** Supported context types.
-	 */
-	enum ChangeContextType {BasicChangeContextType, ComplexChangeContextType, ScopedChangeContextType};
 	
 	/** Returns context type.
 	 *
@@ -135,9 +160,9 @@ public:
 	 *
 	 * @return BasicChangeContextType value.
 	 */
-	typename IChangeContext<T>::ChangeContextType getType() const throw()
+	ChangeContextType getType() const throw()
 	{
-		return IChangeContext<T>::BasicChangeContextType;
+		return BasicChangeContextType;
 	}
 
 	/** Returns original value.
@@ -191,9 +216,9 @@ public:
 	 *
 	 * @return ComplexChangeContextType value.
 	 */
-	typename IChangeContext<ValueType>::ChangeContextType getType() const throw()
+	ChangeContextType getType() const throw()
 	{
-		return IChangeContext<ValueType>::ComplexChangeContextType;
+		return ComplexChangeContextType;
 	}
 };
 
@@ -233,9 +258,9 @@ public:
 	 *
 	 * @return Returns ScopedChangeContextType.
 	 */
-	typename IChangeContext<T>::ChangeContextType getType() const throw()
+	ChangeContextType getType() const throw()
 	{
-		return IChangeContext<T>::ScopedChangeContextType;
+		return ScopedChangeContextType;
 	}
 
 };

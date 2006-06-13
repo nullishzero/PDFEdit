@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.11  2006/06/13 20:44:14  hockm0bm
+ * * ChangeContextType enum removed from class IChangeContext to observer namespace
+ * * pdfwriter.cc synced with ChangeContextType change
+ *
  * Revision 1.10  2006/06/05 22:28:29  hockm0bm
  * * IProgressBar interface added
  * * ProgressObserver implemented
@@ -102,7 +106,7 @@ using namespace observer;
 	// gets current step and context - which has to have
 	// ScopedChangeContextType
 	size_t currStep=newValue->currStep;
-	if(context->getType()!=IChangeContext<OperationStep>::ScopedChangeContextType)
+	if(context->getType()!=ScopedChangeContextType)
 	{
 		printf("Unsupported context.\n");
 		return;
