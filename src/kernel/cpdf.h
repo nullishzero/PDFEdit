@@ -6,6 +6,18 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.65  2006/06/13 20:45:30  hockm0bm
+ * Another big page tree synchronization implementation
+ * * PageTreeWatchDog removed and replaced by
+ * 	- PageTreeRootObserver - handles page tree root changes
+ * 	- pageTreeNodeObserver - handles page tree intermediate node changes
+ * 	- pageTreeKidsObserver - handles page tree Kids array changes
+ * * registerPageTreeObserver moved to CPdf and renamed to
+ *   registerPageTreeObservers
+ * * CPdf new fields pageTreeRootObserver, pageTreeNodeObserver,
+ *   pageTreeKidsObserver
+ * * CPage invalidate uncomented
+ *
  * Revision 1.64  2006/06/11 22:09:51  hockm0bm
  * * PageTreeNodeType, getKidsCount, getNodeType, getKidsFromInterNode
  *         - exported to header file
@@ -383,6 +395,7 @@ typedef std::map<IndiRef, size_t, utils::IndComparator> PageTreeNodeCountCache;
  * getPage, getFirstPage, getLastPage, getNextPage, getPrevPage methods. All
  * returned instances are kept in pageList to guarantee that request for page at
  * same position returns same page instance (unless page tree is changed).
+ * 
  * CPdf uses PageTreeWatchDog inner class for page tree synchronization. So
  * changes can be done also directly in page tree (not using CPdf methods) and
  * pageList will contain correct (available) CPage instances.
@@ -470,16 +483,17 @@ public:
 	
 protected:
 
-	/** Observer for Page tree synchronization.
+	/** Observer for page tree root synchronization.
+	 * 
+	 * This observer is registered on Pages property from Document catalog and
+	 * if it is (as should do) reference also to this reference property. When
+	 * ever document catalog is changed and this change is done either in Pages
+	 * property or directly in reference value, notify method will handle this
+	 * situation and synchronize pdf internal structures with new state.
 	 *
-	 * This observer should be registered on all intermediate nodes for Kids
-	 * array and its members (referencies). It should be done before any changes
-	 * are done.
-	 * <br>
-	 * See notify method for implementation details.
-	 *
+	 * @see notify
 	 */
-	class PageTreeWatchDog: public observer::IObserver<IProperty>
+	class PageTreeRootObserver: public observer::IObserver<IProperty>
 	{
 		/** Pdf instance.
 		 * This instance is used as page tree holder, so watch dog uses it to
@@ -487,70 +501,227 @@ protected:
 		 */
 		CPdf * pdf;
 
-		public:
-			/** Initialization constructor.
-			 * @param _pdf CPdf instance.
-			 *
-			 * Sets pdf field according parameter.
-			 */
-			PageTreeWatchDog(CPdf * _pdf):pdf(_pdf)
-			{
-				// given parameter must be non NULL
-				// this is used only internaly by CPdf, so assert is enough for
-				// checking
-				assert(_pdf);
-			}
+	public:
+		/** Initialization constructor.
+		 * @param _pdf CPdf instance.
+		 *
+		 * Sets pdf field according parameter.
+		 */
+		PageTreeRootObserver(CPdf * _pdf):pdf(_pdf)
+		{
+			// given parameter must be non NULL
+			// this is used only internaly by CPdf, so assert is enough for
+			// checking
+			assert(_pdf);
+		}
 
-			/** Empty destructor.
-			 */
-			virtual ~PageTreeWatchDog() throw(){}; 
-			
-			/** Observer handler.
-			 * @param newValue New value of changed property.
-			 * @param context Context of the change.
-			 *
-			 * Checks type of the context. If it is not BasicChangeContextType,
-			 * immediately returns, because it is not able to handle situation
-			 * without oldValue.
-			 * <br>
-			 * Checks newValue's type and if its type is CRef, registers 
-			 * observer (this instance) to it using registerPageTreeObserver
-			 * method on value (this will guarantee that if it is intermediate
-			 * node, observer will be register to whole sub tree) and starts 
-			 * consolidation of the page tree on indirect parent of newValue. 
-			 * <br>
-			 * Finaly starts consolidation of pageList where oldValue is used
-			 * from context.
-			 * <p>
-			 * newValue is always element of Kids array or CNull when this
-			 * element has been removed from array. Context contains oldValue
-			 * which is previous value of element on the same position as
-			 * newValue. It also may be CNull when no previous value existed 
-			 * (when new element is added to the array). 
-			 * <br>
-			 * This method guarantees that page tree will contain valid Count
-			 * and Parent fields in all affected nodes and pageList will
-			 * contain correct mapping from page position to CPage instances
-			 * and invalidates all pages which are not accessible anymore,
-			 * because whole subtree has been removed.
-			 *
-			 */
-			virtual void notify (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
+		/** Empty destructor.
+		 */
+		virtual ~PageTreeRootObserver() throw(){}; 
+		
+		/** Observer handler.
+		 * @param newValue New value of changed property.
+		 * @param context Context of the change.
+		 *
+		 * This observer handles change in page tree root which is
+		 * represented by Pages property of Document catalog dictionary.
+		 * <br>
+		 * At first checks context type and if it is BasicChangeContextType 
+		 * then Pages reference value has changed. Otherwise if
+		 * ComplexChangeContextType is given, then checks if valueId is
+		 * Pages which means that Pages property has changed. If none of
+		 * this situation happens, immediatelly returns.
+		 * <br>
+		 * If Pages property has changed, checks newValue type and if it is
+		 * reference, registers this observer to it. In any case (also if
+		 * reference value has changed) gets also original value from
+		 * context (ComplexChangeContext context is descendand of
+		 * BasicChangeContext and so can be used also for getOriginalValue).
+		 * <br>
+		 * In first step clears whole pageList and nodeCountCache. Then
+		 * checks if target object of newValue reference is dictionary and
+		 * if so, calls conslidatePageTree to this new node. This will
+		 * guarantee that at least page tree root will contain correct Count
+		 * value and its children will refer to correct parent. Finally
+		 * registers also PageTreeNodeObserver and PageTreeKidsObserver to
+		 * newValue node dictionary.
+		 */
+		virtual void notify (
+				boost::shared_ptr<IProperty> newValue, 
+				boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
 
-			/** Reurns observer priority.
-			 */
-			virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
-			{
-				// TODO some constant
-				return 0;
-			}
+		/** Reurns observer priority.
+		 */
+		virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
+		{
+			// TODO some constant
+			return 0;
+		}
+	};
+
+	/** Observer for page tree node synchronization.
+	 * 
+	 * This observer is responsible for intermediate page tree node change
+	 * handling. It is registered on each dictioanary accessible in Kids array
+	 * in whole page tree. When Kids property is changed, notify method
+	 * synchronize pdf internal structures accoring current state. If Kids
+	 * property is reference, observer is refistered also directly to this 
+	 * property to enable also reference value notification.
+	 * <br>
+	 * Note that Kids property change means whole subtree, of current
+	 * intermediate node, consolidation.
+	 *
+	 * @see notify
+	 */
+	class PageTreeNodeObserver: public observer::IObserver<IProperty>
+	{
+		/** Pdf instance.
+		 * This instance is used as page tree holder, so watch dog uses it to
+		 * handle changes.
+		 */
+		CPdf * pdf;
+
+	public:
+		/** Initialization constructor.
+		 * @param _pdf CPdf instance.
+		 *
+		 * Sets pdf field according parameter.
+		 */
+		PageTreeNodeObserver(CPdf * _pdf):pdf(_pdf)
+		{
+			// given parameter must be non NULL
+			// this is used only internaly by CPdf, so assert is enough for
+			// checking
+			assert(_pdf);
+		}
+
+		/** Empty destructor.
+		 */
+		virtual ~PageTreeNodeObserver() throw(){}; 
+		
+		/** Observer handler.
+		 * @param newValue New value of changed property.
+		 * @param context Context of the change.
+		 *
+		 * Checks context type. ComplexChangeContextTyped context means that
+		 * change has occured on node's dictionary and so checks valueId. If it
+		 * is not Kids, immediatelly returns. Otherwise checks newValue type and
+		 * if it is reference, registers this obsever to the newValue property.
+		 * In any case registers PageTreeKidsObserver to the new kids array (if
+		 * present).
+		 * <br>
+		 * BasicChangeContextTyped context means that reference to kids array 
+		 * has changed.
+		 * <br>
+		 * Collects all elements from oldValue and newValue arrays (if present). 
+		 * In first step consolidatePageTree with newValue or oldValue indirect 
+		 * parent intermediate node (it depends on which is defined).
+		 * This will correct intermediate node's Count field and also all new
+		 * array members will have correct parent field.
+		 * Then it consolidatePageList for all oldValue collected elements and
+		 * discards nodeCountCache for it. This will invalidate and remove from
+		 * pageList all CPage instances which were in this intermediate node
+		 * before Kids array has changed. Finally consolidatePageList for all
+		 * collected from newValue which will move positions of all all pages
+		 * which are behind this node (rightway in page tree).
+		 * 
+		 */
+		virtual void notify (
+				boost::shared_ptr<IProperty> newValue, 
+				boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
+
+		/** Reurns observer priority.
+		 */
+		virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
+		{
+			// TODO some constant
+			return 0;
+		}
+	};
+
+	/** Observer for page tree node kids array synchronization.
+	 * 
+	 * This observer is registered on Kids array and all referecence elementes
+	 * from this array. Change notified to this observer is allways page tree
+	 * node insertion, delete or replace.
+	 *
+	 * @see notify
+	 */
+	class PageTreeKidsObserver: public observer::IObserver<IProperty>
+	{
+		/** Pdf instance.
+		 * This instance is used as page tree holder, so watch dog uses it to
+		 * handle changes.
+		 */
+		CPdf * pdf;
+
+	public:
+		/** Initialization constructor.
+		 * @param _pdf CPdf instance.
+		 *
+		 * Sets pdf field according parameter.
+		 */
+		PageTreeKidsObserver(CPdf * _pdf):pdf(_pdf)
+		{
+			// given parameter must be non NULL
+			// this is used only internaly by CPdf, so assert is enough for
+			// checking
+			assert(_pdf);
+		}
+
+		/** Empty destructor.
+		 */
+		virtual ~PageTreeKidsObserver() throw(){}; 
+		
+		/** Observer handler.
+		 * @param newValue New value of changed property.
+		 * @param context Context of the change.
+		 *
+		 * Checks given context type and if it is ComplexChangeContextType then
+		 * Kids array has changed ans if newValue is reference registers
+		 * observers to this property (uses registerPageTreeObservers method to
+		 * register them to whole sub tree). Otherwise just uses context to get
+		 * original value.
+		 * <br>
+		 * If both newValue and oldValue are not referencies, there is nothing
+		 * to do here, because both values are just mess in array and so
+		 * immediatelly returns.
+		 * <br>
+		 * After all checking starts cosolidation which is done in two steps.
+		 * First is page tree consolidation (done in consolidatePageTree
+		 * method), second pageList consolidation (done in consolidatePageList).
+		 * Finally discards nodeCountCache for oldValue (if it is reference).
+		 */
+		virtual void notify (
+				boost::shared_ptr<IProperty> newValue, 
+				boost::shared_ptr<const observer::IChangeContext<IProperty> > context) const throw();
+
+		/** Reurns observer priority.
+		 */
+		virtual observer::IObserver<IProperty>::priority_t getPriority()const throw()
+		{
+			// TODO some constant
+			return 0;
+		}
 	};
 	
-	/** Page tree watch dog observer.
+	/** Observer for page tree root.
 	 *
-	 * This instance is used to handle changes in page tree.
+	 * This observer handles changes in page tree root.
 	 */
-	boost::shared_ptr<PageTreeWatchDog> pageTreeWatchDog;
+	boost::shared_ptr<PageTreeRootObserver> pageTreeRootObserver;
+
+	/** Observer for potential intermediate nodes.
+	 *
+	 * This observer handles changes of Kids array in intermediate nodes.
+	 */
+	boost::shared_ptr<PageTreeNodeObserver> pageTreeNodeObserver;
+
+	/** Observer for Kids array in intermeadiate nodes.
+	 *
+	 * This observer handles changes of Kids array members.
+	 */
+	boost::shared_ptr<PageTreeKidsObserver> pageTreeKidsObserver;
 
 	/**
 	 * Indirect properties mapping type.
@@ -668,6 +839,20 @@ protected:
 	 */
 	IndiRef registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef ref);
 	
+	/** Registers page tree observers.
+	 * @param ref Reference to page tree node.
+	 *
+	 * If given prop is not dictionary or reference to dictionary immediatelly 
+	 * returns, otherwise registers PageTreeNodeObserver to the dictionary. 
+	 * Then tries to find Kids property in given dictionary and registers if 
+	 * Kids is reference, registers same obsever also to this property. Finally 
+	 * registers PageTreeKidsObserver to all Kids array (dereferenced if Kids 
+	 * is reference) members and calls this method recursivelly to all which 
+	 * are referencies to dictionary.
+	 * 
+	 */
+	void registerPageTreeObservers(boost::shared_ptr<IProperty> prop);
+
 	/** Helper method for property adding.
 	 * @param ip Property to add.
 	 * @param indiRef New reference for object.
