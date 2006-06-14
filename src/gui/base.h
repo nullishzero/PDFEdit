@@ -43,6 +43,48 @@ public:
  QSCObject* item();
  ~Base();
 public slots: //This will be all exported to scripting
+ /*-
+  Return first selected tree item.
+  Set internal selected item pointer to first selected item
+  For getting other selected tree items (in case more than one is selected, repeat calling nextSelectedItem() until NULL is returned (no more items)
+  <example>
+   <title>Getting through list of selected tree items</title>
+   <programlisting>
+    treeItem=firstSelectedItem();<br/>
+    while (treeItem) {<br/>
+    &nbsp;doSomething(treeItem);<br/>
+    &nbsp;treeItem=nextSelectedItem();<br/>
+    }
+   </programlisting>
+  </example>
+ */
+ QSTreeItem* firstSelectedItem();
+ /*-
+  Return next selected tree item.
+  Move internal selected item pointer to next selected item (or invalidate it if no more selected items is found)
+ */
+ QSTreeItem* nextSelectedItem();
+ /*-
+  Return object held in first selected tree item.
+  Set internal selected item pointer to first selected item
+  For getting other selected tree items (in case more than one is selected, repeat calling nextSelected() until NULL is returned (no more items)
+  <example>
+   <title>Getting through list of selected items</title>
+   <programlisting>
+    treeObject=firstSelected();<br/>
+    while (treeObject) {<br/>
+    &nbsp;doSomething(treeObject);<br/>
+    &nbsp;treeObject=nextSelected();<br/>
+    }
+   </programlisting>
+  </example>
+ */
+ QSCObject* firstSelected();
+ /*-
+  Return object held in next selected tree item.
+  Move internal selected item pointer to next selected item (or invalidate it if no more selected items is found)
+ */
+ QSCObject* nextSelected();
  /*- Invokes "About" dialog, showing information about this program and its authors */
  void about();
  /*-

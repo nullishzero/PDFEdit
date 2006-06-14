@@ -1,11 +1,13 @@
 #ifndef __TREEWINDOW_H__
 #define __TREEWINDOW_H__
 
+#include <qlistview.h>
 #include <qwidget.h>
 #include <cobject.h>
 #include "types.h"
 class QListView;
 class QListViewItem;
+class QListViewItemIterator;
 namespace pdfobjects {
  class CPdf;
  class CContentStream;
@@ -40,7 +42,9 @@ public:
  TreeItemAbstract* root();
  void reload();
  QSCObject* getSelected();
+ QSCObject* nextSelected();
  TreeItemAbstract* getSelectedItem();
+ TreeItemAbstract* nextSelectedItem();
  void deleteNotify(TreeItemAbstract *notifyItem);
 public slots:
  void settingUpdate(QString key);
@@ -69,6 +73,7 @@ private slots:
  void moveOnItem(QListViewItem *item);
  void moveOffItem();
  void treeSelectionChanged(QListViewItem *item); 
+ void treeSelectionChanged();
  void mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column);
  void mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column);
 private:
@@ -85,6 +90,8 @@ private:
  TreeData *data;
  /** Name of root object - if applicable */
  QString rootName;
+ /** Iterator for selected item */
+ QListViewItemIterator selIter;
 };
 
 } // namespace gui

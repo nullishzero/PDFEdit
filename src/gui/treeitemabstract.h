@@ -33,6 +33,7 @@ typedef int ChildType;
 */
 class TreeItemAbstract : public QListViewItem {
 public:
+ void setSelect(bool selected);
  void unSelect(QListView *tree);
  QString path();
  TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after=NULL);

@@ -2,7 +2,6 @@
  TreeWindow - class providing treeview of PDF objects
  @author Martin Petricek
 */
-#include <utils/debug.h>
 #include "treewindow.h"
 #include "settings.h"
 #include "util.h"
@@ -20,6 +19,7 @@
 #include "base.h"
 #include <ccontentstream.h>
 #include <cpdf.h>
+#include <utils/debug.h>
 
 namespace gui {
 
@@ -49,6 +49,7 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
 #endif
  tree->setSorting(-1);
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
+ QObject::connect(tree,SIGNAL(selectionChanged()),this,SLOT(treeSelectionChanged()));
 #ifdef DRAGDROP
  QObject::connect(tree,SIGNAL(dragDrop(TreeItemAbstract*,TreeItemAbstract*)),base,SLOT(_dragDrop(TreeItemAbstract*,TreeItemAbstract*)));
  QObject::connect(tree,SIGNAL(dragDropOther(TreeItemAbstract*,TreeItemAbstract*)),base,SLOT(_dragDropOther(TreeItemAbstract*,TreeItemAbstract*)));
@@ -57,7 +58,7 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
  tree->addColumn(tr("Object"));
  tree->addColumn(tr("Type"));
  tree->addColumn(tr("Data"));
- tree->setSelectionMode(QListView::Single/*Extended*/);
+ tree->setSelectionMode(QListView::Extended);
  tree->setColumnWidthMode(0,QListView::Maximum);
  tree->show();
  data=new TreeData(this,tree,base,multi);
@@ -190,6 +191,13 @@ void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *ite
  emit itemSelected();
 }
 
+/**
+ Called upon changing selection in the tree window (multiselect)
+ */
+void TreeWindow::treeSelectionChanged() {
+ emit itemSelected();
+}
+
 /** 
  Return QSCObject from currently selected item
  Caller is responsible for freeing object
@@ -197,20 +205,62 @@ void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *ite
 */
 QSCObject* TreeWindow::getSelected() {
  //Ask the tree for selected item
- TreeItemAbstract *selected=dynamic_cast<TreeItemAbstract*>(tree->selectedItem());
+ TreeItemAbstract *selected=getSelectedItem();
  if (!selected) return NULL; //nothing selected
  return selected->getQSObject();
 }
 
 /** 
- Return pointer to currently selected tree item
- @return current item
+ Return QSCObject from next selected item
+ Caller is responsible for freeing object
+ @return QSCObject from next item
+*/
+QSCObject* TreeWindow::nextSelected() {
+ //Ask the tree for selected item
+ TreeItemAbstract *selected=nextSelectedItem();
+ if (!selected) return NULL; //nothing selected
+ return selected->getQSObject();
+}
+
+/** 
+ Return pointer to currently selected tree item (single select)
+ or first selected tree item (multiselect)
+ @return currently selected item
 */
 TreeItemAbstract* TreeWindow::getSelectedItem() {
- //Ask the tree for selected item
- TreeItemAbstract *selected=dynamic_cast<TreeItemAbstract*>(tree->selectedItem());
- if (!selected) return NULL; //nothing selected
- return selected;
+ if (tree->selectionMode()==QListView::Single) {
+  //Ask the tree for selected item
+  TreeItemAbstract *selected=dynamic_cast<TreeItemAbstract*>(tree->selectedItem());
+  if (!selected) return NULL; //nothing selected
+  return selected;
+ } else {
+  //Multiselect - find first item and store it
+  selIter=QListViewItemIterator(tree);
+  if (!selIter.current()) return NULL;//No items in tree
+  //Get "next selected item", but as we are on start, we get the first
+  return nextSelectedItem();
+ }
+}
+
+/** 
+ Return pointer to next selected tree item in multiselect mode
+ (next mean next from the last item returned by getSelectedItem or nextSelectedItem)
+ Returns NULL if nor more selected items can be found.
+ @return next selected item or NULL if no more selected items
+*/
+TreeItemAbstract* TreeWindow::nextSelectedItem() {
+ if (tree->selectionMode()==QListView::Single) return NULL;
+ //Iterator points to first item we should check for being selected
+ TreeItemAbstract *selectedPtr=NULL;
+ while (selIter.current()) {
+  selectedPtr=dynamic_cast<TreeItemAbstract*>(selIter.current());
+  //Move after the item
+  ++selIter;
+  //Return the item if it was selected
+  if (selectedPtr->isSelected()) return selectedPtr;
+ }
+ //End of list reached and nothing found
+ return NULL;
 }
 
 /** Clears all items from TreeWindow */

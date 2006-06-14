@@ -296,6 +296,16 @@ TreeItemAbstract::~TreeItemAbstract() {
 }
 
 /**
+ Set this item as selected/unselected and repaint the tree
+ @param selected true to select, false to unselect
+*/
+void TreeItemAbstract::setSelect(bool selected) {
+ QListView *lv=listView();
+ assert(lv);
+ lv->setSelected(this,selected); 
+}
+
+/**
  Return path of this item
  (sequence of names from root to this item, separated by slash "/").
  @return path of this item

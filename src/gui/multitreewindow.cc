@@ -213,9 +213,8 @@ void MultiTreeWindow::settingUpdate(QString key) {
 }
 
 /** 
- Return QSCObject from currently selected item (in current tree)
- Caller is responsible for freeing object
- @return QSCObject from current item
+ In current tree:
+ \copydoc TreeWindow::getSelected()
 */
 QSCObject* MultiTreeWindow::getSelected() {
  assert(tree);
@@ -223,12 +222,30 @@ QSCObject* MultiTreeWindow::getSelected() {
 }
 
 /** 
- Return pointer to currently selected tree item (in current tree)
- @return current item
+ In current tree:
+ \copydoc TreeWindow::getSelectedItem()
 */
 TreeItemAbstract* MultiTreeWindow::getSelectedItem() {
  assert(tree);
  return tree->getSelectedItem();
+}
+
+/** 
+ In current tree:
+ \copydoc TreeWindow::nextSelected()
+*/
+QSCObject* MultiTreeWindow::nextSelected() {
+ assert(tree);
+ return tree->nextSelected();
+}
+
+/** 
+ In current tree:
+ \copydoc TreeWindow::nextSelectedItem()
+*/
+TreeItemAbstract* MultiTreeWindow::nextSelectedItem() {
+ assert(tree);
+ return tree->nextSelectedItem();
 }
 
 /** Clears all items from MultiTreeWindow */

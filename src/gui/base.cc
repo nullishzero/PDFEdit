@@ -901,6 +901,42 @@ QSTreeItem* Base::treeRoot() {
 }
 
 /**
+ Return first selected tree item from currently selected tree
+ Return NULL, if no item is selected
+ @return Selected tree item
+*/
+QSTreeItem* Base::firstSelectedItem() {
+ return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->getSelectedItem()));
+}
+
+/**
+ Return next selected tree item from currently selected tree.
+ Return NULL, if no next item is selected
+ @return Selected tree item
+*/
+QSTreeItem* Base::nextSelectedItem() {
+ return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->nextSelectedItem()));
+}
+
+/**
+ Return object held in first selected tree item from currently selected tree
+ Return NULL, if no item is selected
+ @return Selected tree item's object
+*/
+QSCObject* Base::firstSelected() {
+ return w->tree->getSelected();
+}
+
+/**
+ Return object held in  next selected tree item from currently selected tree.
+ Return NULL, if no next item is selected
+ @return Selected tree item's object
+*/
+QSCObject* Base::nextSelected() {
+ return w->tree->nextSelected();
+}
+
+/**
  Return root item of main tree
  @return Main tree root item
 */

@@ -70,6 +70,24 @@ QSCObject* QSTreeItem::itemref() {
 }
 
 /**
+ Check if the item is selected
+ @return True if the item is selected, false if not
+*/
+bool QSTreeItem::selected() {
+ if (nullPtr(obj,"selected")) return false;
+ return obj->isSelected();
+}
+
+/**
+ Select or unselect given item
+ @param selected Specifies what to do: true to select, false to unselect
+*/
+void QSTreeItem::setSelected(bool selected/*=true*/) {
+ if (nullPtr(obj,"setSelected")) return;
+ obj->setSelect(selected);
+}
+
+/**
  Return type of item inside this tree item
  @return Type of item
 */

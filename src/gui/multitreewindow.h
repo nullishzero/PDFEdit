@@ -69,7 +69,9 @@ public:
  void reload();
  void reloadFrom(TreeItemAbstract *item);
  QSCObject* getSelected();
+ QSCObject* nextSelected();
  TreeItemAbstract* getSelectedItem();
+ TreeItemAbstract* nextSelectedItem();
  void clear();
  void clearSecondary();
  void notifyDelete(TreeItemAbstract *dest);

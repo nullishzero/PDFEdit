@@ -17,6 +17,16 @@ class QSTreeItem : public QSCObject {
  Q_OBJECT
 public slots:
  /*-
+  Select or unselect this item
+  (true to select, false to unselect)
+ */
+ void setSelected(bool selected=true);
+ /*-
+  Check if this item is selected
+  Return true if the item is selected, false if not
+ */
+ bool selected();
+ /*-
   Check if the tree item wrapper is valid,
   i.e. if corresponding tree item still exist in the tree view.
   Using most of invalid wrapper's functions will result in exception
