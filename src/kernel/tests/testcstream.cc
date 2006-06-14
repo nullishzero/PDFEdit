@@ -177,7 +177,7 @@ bool getString (std::ostream& oss, const char* fileName)
 
 //=========================================================================
 
-bool getPdfString (std::ostream& oss, const char* fileName)
+bool getPdfString (__attribute__((unused)) std::ostream& oss, const char* fileName)
 {
 	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 

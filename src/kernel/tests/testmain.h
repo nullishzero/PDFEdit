@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/06/14 23:04:22  misuj1am
+ *
+ * -- minor fixes
+ *
  * Revision 1.23  2006/06/14 22:48:13  misuj1am
  *
  * -- minor updates
@@ -116,6 +120,7 @@
 #include "../pdfoperators.h"
 #include "../cobjecthelpers.h"
 #include "../coutline.h"
+#include "../exceptions.h"
 
 //CPPUNITTEST
 #include <cppunit/TestRunner.h>
@@ -523,8 +528,8 @@ getTestStreamContent (boost::shared_ptr<CPage> page)
 		return utils::getCStreamFromArray (ccs, 0);
 	else
 	{
-		assert (!"Bad content stream type.");
-		throw;
+		//assert (!"Bad content stream type.");
+		throw CObjInvalidObject ();
 	}
 }
 
