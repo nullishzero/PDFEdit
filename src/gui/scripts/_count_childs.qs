@@ -22,3 +22,11 @@ function _count_childs_run(r,s,maxc) {
   _count_childs_run(r.child(ch[i]),s+" ",maxc);
  }
 }
+
+function _count_selection() {
+ treeItem=firstSelected();
+ while (treeItem) {
+  print(treeItem.type());
+  treeItem=nextSelected();
+ }
+}
