@@ -84,6 +84,7 @@ sub get_doc {
    } else {
     $used_func{$funcid}=1;
    }
+   $cmt=~s/<br\/?>/\n/mg;
    $out.=<<EOF;
    <sect2 id=\"$funcid\">
     <title><funcsynopsis>$def</funcsynopsis></title>

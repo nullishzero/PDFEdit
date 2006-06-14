@@ -14,7 +14,7 @@ pdf_docs_all=$(html_docs_all:.html=.pdf)
 
 #generated documentation
 docs_no_pdf=$(html_docs_all) $(addprefix $(html_help_dir)/,$(html_docs)) pdfedit.1
-docs=$(pdf_docs_all) $(docs_no_pdf)
+docs=$(docs_no_pdf) $(pdf_docs_all)
 
 all: $(docs) 
 

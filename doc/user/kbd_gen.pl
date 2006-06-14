@@ -40,10 +40,15 @@ if ($tr) {
 #read input (file with settings, containing all menu items)
 my %out=();
 while (<STDIN>) {
- if (/^items\/[^=]+=\s*item\s+([^,]*)\s*,\s*([^,]*),\s*([^, ]+)/) {
+ if (/^(items\/)?[^=]+=\s*item\s+([^,]*)\s*,\s*([^,]*),\s*([^, ]+)/) {
   #Item with shortcut found
-  my $kbd=$3;
-  my $action=$1;
+  my $kbd=$4;
+  my $action=$2;
+  $kbd=~s/^\s+//;
+  $action=~s/^\s+//;
+  $kbd=~s/\s+$//;
+  $action=~s/\s+$//;
+  next if ($kbd eq '');
   my $actionk=$action;
   $actionk=~s/&/&amp;/g;
   $actionk="gui::Settings/".$actionk;
