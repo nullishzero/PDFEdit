@@ -3,6 +3,27 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.67  2006/06/14 21:29:47  hockm0bm
+ * * updateKidsCountCache, getKidsCountCached, discardKidsCountCache and
+ *   clearKidsCountCached helper functions to manipulate with count cache
+ *   reimplemented to more generic template form to handle any type of
+ *   associative container used as cache
+ *   Names and signatures changed:
+ * 	 - updateKidsCountCache -> updateCache
+ * 	 	key and value are const referencies now
+ * 	 - getKidsCountCached -> getCachedValue with value returned by reference
+ * 	   parameter and return value with boolean result, key parameter is const
+ * 	   reference
+ * 	 - discardKidsCountCache is preserved becacuse of direct logic of page tree
+ * 	   but new generic function added discardCachedEntry which is used by
+ * 	   discardKidsCountCache function internally
+ * 	 - clearKidsCountCached -> clearCache
+ * * CPdf::unregisterPageTreeObservers method added
+ * * obsever notify methods also unregister observers if change happend on
+ *   complex type
+ * * registerPageTreeObserver registers PageTreeKidsObserver also to Kids
+ *   elements (for reference elements)
+ *
  * Revision 1.66  2006/06/13 20:45:30  hockm0bm
  * Another big page tree synchronization implementation
  * * PageTreeWatchDog removed and replaced by
@@ -413,63 +434,103 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
 
 namespace {
 	
-/** Updates kids count cache structure.
- * @param ref Reference of intermediate node for mapping.
- * @param kidsCount Collected number of leaf nodes for intermediate node.
+/** Updates value for given key in cache.
+ * @param key Key value for cache entry.
+ * @param value Value for given key for cache entry.
  * @param cache Cache mapping structure.
  *
- * Updates current mapping or create new with [ref, kidsCount] pair.
+ * Updates current mapping or create new with [key, value] pair.
+ * <br>
+ * Given template parameter must by associateve container compliant. 
  */
-void updateKidsCountCache(IndiRef ref, size_t kidsCount, PageTreeNodeCountCache & cache)
+template <typename CacheType>
+void updateCache(
+		const typename CacheType::key_type & key, 
+		const typename CacheType::mapped_type & value, 
+		CacheType & cache)
 {
 using namespace debug;
 	
-	utilsPrintDbg(DBG_DBG, ref<<" kidsCount="<<kidsCount);
-	PageTreeNodeCountCache::iterator pos=cache.find(ref);
+	utilsPrintDbg(DBG_DBG, "cache key="<<key<<" value="<<value);
+	typename CacheType::iterator pos=cache.find(key);
 	if(pos!=cache.end())
 	{
 		// value is present in mapping
 		// TODO what does it mean - problem????
 		//  NOTE it means that value has not been discarded before update
-		utilsPrintDbg(DBG_WARN, pos->first<<" already cached with kidsCount="<<pos->second<<". Rewriting to kidsCount="<<kidsCount);
-		pos->second=kidsCount;
+		utilsPrintDbg(DBG_WARN, pos->first<<" already cached with value="<<pos->second<<". Rewriting to value="<<value);
+		pos->second=value;
 		return;
 	}
 
 	// adds mapping for this reference
-	utilsPrintDbg(DBG_DBG, "new cache entry: "<<ref<<" kidsCount="<<kidsCount);
-	cache.insert(PageTreeNodeCountCache::value_type(ref, kidsCount));
+	utilsPrintDbg(DBG_DBG, "new cache entry: key="<<key<<" value="<<value);
+	cache.insert(typename CacheType::value_type(key, value));
 }
 
-/** Invalid page count constant.
- * We assume that this kind of number is not real.
- */
-static size_t INVALIDPAGECOUNT = 1 - 0U;
-
-/** Gets kids count cached value for intermediate node.
- * @param ref Reference of intermediate node for mapping.
+/** Gets value associated with given key.
+ * @param key Key value for cache entry.
+ * @param value Reference where to store value associated to given key.
  * @param cache Cache mapping structure.
  *
- * Tries to find mapping with given ref key and if found, returns associated
- * value. Otherwise returns invalid constant value.
+ * Tries to find mapping with given key and if found, sets given value parameter
+ * with found one and returns with true.
+ * <br>
+ * Given template parameter must by associateve container compliant. 
  *
- * @return INVALIDPAGECOUNT if no cached entry or cached value associated with
- * given reference.
+ * @return true if mapping was found, false otherwise.
  */
-size_t getKidsCountCached(IndiRef ref, PageTreeNodeCountCache & cache)
+template<class CacheType>
+bool getCachedValue(const typename CacheType::key_type & key, typename CacheType::mapped_type & value, CacheType & cache)
 {
 using namespace debug;
 
-	utilsPrintDbg(DBG_DBG, ref);
-	PageTreeNodeCountCache::iterator pos=cache.find(ref);
+	utilsPrintDbg(DBG_DBG, "key="<<key);
+	typename CacheType::iterator pos=cache.find(key);
 	if(pos!=cache.end())
 	{
-		utilsPrintDbg(DBG_DBG, "cache entry found. "<<pos->first<<" kidsCount="<<pos->second);
-		return pos->second;
+		utilsPrintDbg(DBG_DBG, "cache entry found. key="<<pos->first<<" value="<<pos->second);
+		value=pos->second;
+		return true;
 	}
-	utilsPrintDbg(DBG_DBG, "no cache entry found for "<<ref);
+	utilsPrintDbg(DBG_DBG, "no cache entry found for "<<key);
 
-	return INVALIDPAGECOUNT;
+	return false;
+}
+
+/** Discards cache entry with given key.
+ * @param key Key value for cache entry.
+ * @param cache Cache mapping structure.
+ *
+ * Tries to find entry with given key and if found, removes it from cache.
+ * <br>
+ * Given template parameter must by associateve container compliant. 
+ */
+template<typename CacheType>
+void discardCachedEntry(const typename CacheType::key_type & key, CacheType & cache)
+{
+	utilsPrintDbg(DBG_DBG, "key="<<key);
+	typename CacheType::iterator pos=cache.find(key);
+	if(pos!=cache.end())
+	{
+		utilsPrintDbg(DBG_DBG, "cache entry found. key="<<pos->first<<" value="<<pos->second<<". Discarding");
+		cache.erase(pos);
+	}else
+		utilsPrintDbg(DBG_DBG, "no cache entry for "<<key);
+}
+
+/** Discards whole given cache.
+ * @param cache Cache to clear.
+ *
+ * Discards all entries in cache.
+ * <br>
+ * Given CacheType must provide clear method.
+ *
+ */
+template<typename CacheType>
+void clearCache(CacheType & cache)
+{
+	cache.clear();
 }
 
 /** Discards cached entries for intermediate node and its subtree.
@@ -489,14 +550,7 @@ void discardKidsCountCache(IndiRef & ref, CPdf & pdf, PageTreeNodeCountCache & c
 {
 using namespace debug;
 
-	utilsPrintDbg(DBG_DBG, ref);
-	PageTreeNodeCountCache::iterator pos=cache.find(ref);
-	if(pos!=cache.end())
-	{
-		utilsPrintDbg(DBG_DBG, "cache entry found. "<<pos->first<<" kidsCount="<<pos->second<<". Discarding");
-		cache.erase(pos);
-	}else
-		utilsPrintDbg(DBG_DBG, "no cache entry for "<<ref);
+	discardCachedEntry(ref, cache);
 
 	if(!withSubTree)
 		return;
@@ -522,16 +576,6 @@ using namespace debug;
 	}
 }
 
-/** Discards whole given cache.
- * @param cache Cache to clear.
- *
- * Discards all entries in cache.
- *
- */
-void clearKidsCountCached(PageTreeNodeCountCache & cache)
-{
-	cache.clear();
-}
 
 } // end of anonymous namespace for PageTreeNodeCountCache manipulation
 
@@ -563,8 +607,12 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 	
 	// tries cache at first
 	size_t count;
-	if((cache) && (count=getKidsCountCached(interNodeDict->getIndiRef(), *cache))!=INVALIDPAGECOUNT)
-		return count;
+	if(cache)
+	{
+		IndiRef ref=interNodeDict->getIndiRef();
+		if(getCachedValue(ref, count, *cache))
+			return count;
+	}
 
 
 	// we assume inter node, so collects all children and calculates total
@@ -580,7 +628,10 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 
 	// creates cache entry for this ref
 	if(cache)
-		updateKidsCountCache(interNodeDict->getIndiRef(), count, *cache);
+	{
+		IndiRef ref=interNodeDict->getIndiRef();
+		updateCache(ref, count, *cache);
+	}
 
 	return count;
 }
@@ -1024,17 +1075,13 @@ using namespace pdfobjects::utils;
 	// registers observer for Kids property change notification
 	dict_ptr->registerObserver(pageTreeNodeObserver);
 	
-	utilsPrintDbg(DBG_DBG, "Intermediate node. Registers observer to Kids array and all its elements");
-
 	// gets Kids field from dictionary and all children from array and 
 	// registers PageTreeKidsObserver observer to array and to each member 
 	// reference. If Kids property is reference, registers PageTreeNodeObserver
 	// to it to enable notification also reference value notification
 	if(!dict_ptr->containsProperty("Kids"))
-	{
-		utilsPrintDbg(DBG_WARN, "Intermediate node doesn't contain Kids array property.");
 		return;
-	}
+
 	shared_ptr<IProperty> kidsProp_ptr=dict_ptr->getProperty("Kids");
 	shared_ptr<CArray> kids_ptr;
 	if(isRef(kidsProp_ptr))
@@ -1049,6 +1096,13 @@ using namespace pdfobjects::utils;
 		try
 		{
 			kids_ptr=getCObjectFromRef<CArray, pArray>(kidsProp_ptr);
+			// creates mapping for this indirect kids array to be able to get
+			// intermediate node later for array members
+			// Uses dereferenced array's indiref to get indirect reference to
+			// array.
+			// kidsProp_ptr is direct internode member, so getIndiRef is ok here
+			// as value.
+			updateCache(kids_ptr->getIndiRef(), kidsProp_ptr->getIndiRef(), pageTreeKidsParentCache);
 		}catch(CObjectException & e)
 		{
 			// target is not an array, keeps kids_ptr uninitialized and do the
@@ -1061,7 +1115,7 @@ using namespace pdfobjects::utils;
 	{
 		// kids_ptr is not initialized, what means that Kids array is not typed
 		// correctly (it is not array or reference to array).
-		utilsPrintDbg(DBG_WARN, "Inter node Kids property is not an array or reference to array.");
+		utilsPrintDbg(DBG_WARN, "Node's Kids property is not an array or reference to array.");
 		return;
 	}
 
@@ -1077,10 +1131,105 @@ using namespace pdfobjects::utils;
 	{
 		shared_ptr<IProperty> elemProp_ptr=*i;
 		if(isRef(elemProp_ptr))
+		{
+			elemProp_ptr->registerObserver(pageTreeKidsObserver);
 			registerPageTreeObservers(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr));
+		}
 	}
 
-	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<prop->getIndiRef());
+	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<dict_ptr->getIndiRef());
+}
+
+void CPdf::unregisterPageTreeObservers(boost::shared_ptr<IProperty> prop)
+{
+using namespace boost;
+using namespace std;
+using namespace pdfobjects::utils;
+
+	if(!isDict(prop)&&!isRef(prop))
+		return;
+
+	// gets dictionary from given property
+	shared_ptr<CDict> dict_ptr;
+	if(isRef(prop))
+	{
+		try
+		{
+			dict_ptr=getCObjectFromRef<CDict, pDict>(prop);
+		}catch(CObjectException & e)
+		{
+			// prop is not dictionary
+			return;
+		}
+	}else
+		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(prop);
+	
+	// registers observer for Kids property change notification
+	dict_ptr->unregisterObserver(pageTreeNodeObserver);
+	
+	// gets Kids field from dictionary and all children from array and 
+	// registers PageTreeKidsObserver observer to array and to each member 
+	// reference. If Kids property is reference, registers PageTreeNodeObserver
+	// to it to enable notification also reference value notification
+	if(!dict_ptr->containsProperty("Kids"))
+		return;
+
+	shared_ptr<IProperty> kidsProp_ptr=dict_ptr->getProperty("Kids");
+	shared_ptr<CArray> kids_ptr;
+	if(isRef(kidsProp_ptr))
+	{
+		// Kids property is reference - this is not offten but may occure and
+		// reference replacement should invalidate whole target array so
+		// observer is needed also to reference
+		utilsPrintDbg(DBG_DBG, "Kids array is reference. Unregistering obsever.");
+		kidsProp_ptr->unregisterObserver(pageTreeNodeObserver);
+		
+		// gets target object
+		try
+		{
+			kids_ptr=getCObjectFromRef<CArray, pArray>(kidsProp_ptr);
+			// creates mapping for this indirect kids array to be able to get
+			// intermediate node later for array members
+			// Uses dereferenced array's indiref to get indirect reference to
+			// array.
+			// kidsProp_ptr is direct internode member, so getIndiRef is ok here
+			// as value.
+			discardCachedEntry(kids_ptr->getIndiRef(), pageTreeKidsParentCache);
+		}catch(CObjectException & e)
+		{
+			// target is not an array, keeps kids_ptr uninitialized and do the
+			// handling later
+		}
+	}else
+		if(isArray(kidsProp_ptr))
+			kids_ptr=IProperty::getSmartCObjectPtr<CArray>(kidsProp_ptr);
+	if(!kids_ptr.get())
+	{
+		// kids_ptr is not initialized, what means that Kids array is not typed
+		// correctly (it is not array or reference to array).
+		utilsPrintDbg(DBG_WARN, "Node's Kids property is not an array or reference to array.");
+		return;
+	}
+
+	// registers PageTreeKidsObserver observer to array and all its reference elements
+	// all other may be ignored because they doesn't follow specification and so
+	// can't point to intermediate node (their value change is not important and
+	// their existence in Kids array is handled by obsever on array)
+	utilsPrintDbg(DBG_DBG, "Kids array found. Unregistering obsever.");
+	kids_ptr->registerObserver(pageTreeKidsObserver);
+	ChildrenStorage container;
+	kids_ptr->_getAllChildObjects(container);
+	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); i++)
+	{
+		shared_ptr<IProperty> elemProp_ptr=*i;
+		if(isRef(elemProp_ptr))
+		{
+			elemProp_ptr->unregisterObserver(pageTreeKidsObserver);
+			unregisterPageTreeObservers(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr));
+		}
+	}
+
+	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<dict_ptr->getIndiRef());
 }
 
 void CPdf::PageTreeRootObserver::notify(
@@ -1098,13 +1247,26 @@ using namespace observer;
 	{
 		case BasicChangeContextType:
 			{
+				// Pages reference value has changed
 				shared_ptr<const BasicChangeContext<IProperty> > basicContext=
 					dynamic_pointer_cast<const BasicChangeContext<IProperty>, const IChangeContext<IProperty> >(context); 
 				oldValue=basicContext->getOriginalValue();
+
+				// both oldValue and newValue has to be referencies
+				assert(isRef(oldValue));
+				assert(isRef(newValue));
+
+				// checks for same values - to prevent useless consolidation and
+				// so on
+				utils::PropertyEquals pe;
+				if(!pe(oldValue, newValue))
+					return;
 			}
 			break;
 		case ComplexChangeContextType:
 			{
+				// document catalog dictionary has changed. Checks valueId and
+				// proceede just if Pages property has changed
 				shared_ptr<const ComplexChangeContext<IProperty, CDict::PropertyId> > complexContex=
 					dynamic_pointer_cast<const ComplexChangeContext<IProperty, CDict::PropertyId>, const IChangeContext<IProperty> >(context); 
 				if(!complexContex)
@@ -1117,6 +1279,18 @@ using namespace observer;
 					return;
 
 				oldValue=complexContex->getOriginalValue();
+
+				// unregister all observers from oldValue and all nodes
+				if(isRef(oldValue))
+				{
+					kernelPrintDbg(DBG_INFO, "unregistering obsever from old Pages property.");
+					oldValue->unregisterObserver(pdf->pageTreeRootObserver);
+					shared_ptr<CDict> rootDict=utils::getPageTreeRoot(*pdf);
+					if(rootDict.get())
+						pdf->unregisterPageTreeObservers(rootDict);
+				}
+
+				// registers 
 				if(isRef(newValue))
 				{
 					kernelPrintDbg(DBG_INFO, "registering observer to new Pages property.");
@@ -1146,7 +1320,7 @@ using namespace observer;
 	pdf->pageList.clear();
 
 	// clears nodeCountCache
-	utils::clearKidsCountCached(pdf->nodeCountCache);
+	utils::clearCache(pdf->nodeCountCache);
 	
 	// registers new page tree root
 	// checks newValue property type and if it is not reference to dictionary it
@@ -1212,6 +1386,10 @@ using namespace observer;
 					return;
 				oldValue=complexContex->getOriginalValue();
 				
+				// unregisters observer from oldValue
+				if(isRef(oldValue))
+					oldValue->unregisterObserver(pdf->pageTreeNodeObserver);
+
 				// newValue as reference means that we have new Kids field as
 				// reference and so this observer has to be registered on it -
 				// this enables notifying when reference value is changed
@@ -1237,7 +1415,12 @@ using namespace observer;
 			if(isArray(oldValue))
 				kidsArray=IProperty::getSmartCObjectPtr<CArray>(oldValue);
 		if(kidsArray.get())
+		{
 			kidsArray->_getAllChildObjects(oldValues);
+
+			// unregisters observer from kids oldValue array
+			kidsArray->unregisterObserver(pdf->pageTreeKidsObserver);
+		}
 		kernelPrintDbg(DBG_DBG, "oldValues collected. size="<<oldValues.size());
 	}catch (CObjectException & e)
 	{
@@ -1284,26 +1467,36 @@ using namespace observer;
 		}
 	}catch(...)
 	{
-		// TODO handle
+		// TODO handle - should not happen
 	}
 
 	// removes all pages from removed array
 	shared_ptr<IProperty> null(CNullFactory::getInstance());
-	kernelPrintDbg(DBG_DBG, "Consolidating page list with removing oldValues.");
+	kernelPrintDbg(DBG_DBG, "Consolidating page list by removing oldValues.");
 	for(ChildrenStorage::iterator i=oldValues.begin(); i!=oldValues.end(); i++)
 	{
 		shared_ptr<IProperty> child=*i;
-		// consolidates just referencies, other elements are just mess in array
+		// consider just referencies, other elements are just mess in array
+		// unregisters observers and consolidates pageList like this node has
+		// been removed 
 		if(isRef(child))
+		{
+			pdf->unregisterPageTreeObservers(child);
 			pdf->consolidatePageList(child, null);
+		}
 	}
-	kernelPrintDbg(DBG_DBG, "Consolidating page list with adding newValues.");
+	kernelPrintDbg(DBG_DBG, "Consolidating page list by adding newValues.");
 	for(ChildrenStorage::iterator i=newValues.begin(); i!=newValues.end(); i++)
 	{
 		shared_ptr<IProperty> child=*i;
-		// consolidates just referencies, other elements are just mess in array
+		// consider just referencies, other elements are just mess in array
+		// registers observers and consolidates pageList like this node has
+		// been added 
 		if(isRef(child))
-			pdf->consolidatePageList(child, null);
+		{
+			pdf->consolidatePageList(null, child);
+			pdf->registerPageTreeObservers(child);
+		}
 	}
 }
 
@@ -1340,7 +1533,7 @@ using namespace utils;
 			break;
 		case ComplexChangeContextType:
 			{
-				// this means that array element has changed
+				// this means that array content has changed
 				shared_ptr<const ComplexChangeContext<IProperty, CArray::PropertyId> > complexContex=
 					dynamic_pointer_cast<const ComplexChangeContext<IProperty, CArray::PropertyId>, const IChangeContext<IProperty> >(context); 
 				if(!complexContex)
@@ -1350,6 +1543,10 @@ using namespace utils;
 				}
 				// change value identificator is not important in this moment
 				oldValue=complexContex->getOriginalValue();
+
+				// unregisters obsevers from removed array element
+				if(isRef(oldValue))
+					pdf->unregisterPageTreeObservers(oldValue);
 				
 				// newValue doesn't have observer registered yet and if it is
 				// reference, registers observers to whole subtree
@@ -1387,12 +1584,19 @@ using namespace utils;
 	}
 		
 	// consolidates page tree from newValue's indirect parent. If newValue is
-	// CNull, uses oldValue's. This is correct because they both have been in
-	// same intermediate node and both are direct values (change is in Kids
-	// array - which must be also direct). 
-	IndiRef parentRef=(newType!=pNull)
+	// CNull, uses oldValue's. Indirect reference can't be used directly,
+	// although reference must be direct value (and so its indirect parent
+	// reference was returned), because it is stored in Kids array which may be
+	// indirect object and so reference to Kids array instead of intermediate
+	// node would be returned. To prevent this problem, tries to use
+	// pageTreeKidsParentCache and if indirect reference is associade with some
+	// node, uses returned value.
+	IndiRef ref=(newType!=pNull)
 		?newValue->getIndiRef()
 		:oldValue->getIndiRef();
+	IndiRef parentRef=ref;
+	if(getCachedValue(ref, parentRef, pdf->pageTreeKidsParentCache))
+		kernelPrintDbg(DBG_DBG, "Uses pageTreeKidsParentCache with mapping from"<<ref<<" to "<<parentRef);
 	shared_ptr<IProperty> parentProp_ptr=pdf->getIndirectProperty(parentRef);
 	if(parentProp_ptr->getType()!=pDict)
 	{
@@ -1426,6 +1630,8 @@ using namespace utils;
 		kernelPrintDbg(DBG_ERR, "consolidatePageList failed with cause="<<e.what());
 	}
 
+	// kidsCount cache couldn't have beem discarded until now because it is used
+	// in consolidatePageList
 	if(isRef(oldValue))
 	{
 		IndiRef oldRef=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
@@ -1488,7 +1694,10 @@ using namespace utils;
 	docCatalog.reset();
 	
 	kernelPrintDbg(DBG_DBG, "Cleaning up nodeCountCache with "<<nodeCountCache.size()<<" entries");
-	clearKidsCountCached(nodeCountCache);
+	clearCache(nodeCountCache);
+	
+	kernelPrintDbg(DBG_DBG, "Cleaning up pageTreeKidsParentCache with "<<pageTreeKidsParentCache.size()<<" entries");
+	clearCache(pageTreeKidsParentCache);
 
 	// cleanup all returned outlines  -------------||----------------- 
 	

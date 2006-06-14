@@ -6,6 +6,27 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.66  2006/06/14 21:29:47  hockm0bm
+ * * updateKidsCountCache, getKidsCountCached, discardKidsCountCache and
+ *   clearKidsCountCached helper functions to manipulate with count cache
+ *   reimplemented to more generic template form to handle any type of
+ *   associative container used as cache
+ *   Names and signatures changed:
+ * 	 - updateKidsCountCache -> updateCache
+ * 	 	key and value are const referencies now
+ * 	 - getKidsCountCached -> getCachedValue with value returned by reference
+ * 	   parameter and return value with boolean result, key parameter is const
+ * 	   reference
+ * 	 - discardKidsCountCache is preserved becacuse of direct logic of page tree
+ * 	   but new generic function added discardCachedEntry which is used by
+ * 	   discardKidsCountCache function internally
+ * 	 - clearKidsCountCached -> clearCache
+ * * CPdf::unregisterPageTreeObservers method added
+ * * obsever notify methods also unregister observers if change happend on
+ *   complex type
+ * * registerPageTreeObserver registers PageTreeKidsObserver also to Kids
+ *   elements (for reference elements)
+ *
  * Revision 1.65  2006/06/13 20:45:30  hockm0bm
  * Another big page tree synchronization implementation
  * * PageTreeWatchDog removed and replaced by
@@ -345,6 +366,11 @@ typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
  */
 typedef std::map<IndiRef, size_t, utils::IndComparator> PageTreeNodeCountCache;
 
+/** Type for page tree kids array to parrent mapping.
+ * @see CPdf::pageTreeKidsParentCache
+ */
+typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache;
+
 /** CPdf special object.
  *
  * This class is responsible for pdf document maintainance. It provides wrapper
@@ -562,14 +588,13 @@ protected:
 	/** Observer for page tree node synchronization.
 	 * 
 	 * This observer is responsible for intermediate page tree node change
-	 * handling. It is registered on each dictioanary accessible in Kids array
-	 * in whole page tree. When Kids property is changed, notify method
-	 * synchronize pdf internal structures accoring current state. If Kids
-	 * property is reference, observer is refistered also directly to this 
-	 * property to enable also reference value notification.
+	 * handling. From all changes in node's dictionary just Kids array property
+	 * is monitored. If this property is replaced, added or removed or if it 
+	 * is reference property and reference value is changed, notify method will
+	 * handle change.
 	 * <br>
-	 * Note that Kids property change means whole subtree, of current
-	 * intermediate node, consolidation.
+	 * Note that this observer handles whole Kids property change. Kids array
+	 * content is not handled here.
 	 *
 	 * @see notify
 	 */
@@ -605,25 +630,30 @@ protected:
 		 *
 		 * Checks context type. ComplexChangeContextTyped context means that
 		 * change has occured on node's dictionary and so checks valueId. If it
-		 * is not Kids, immediatelly returns. Otherwise checks newValue type and
+		 * is not Kids, immediatelly returns (change was done on some other
+		 * property and we doesn't care). Otherwise checks newValue type and
 		 * if it is reference, registers this obsever to the newValue property.
 		 * In any case registers PageTreeKidsObserver to the new kids array (if
-		 * present).
+		 * present) and calls registerPageTreeObservers to all reference members.
 		 * <br>
 		 * BasicChangeContextTyped context means that reference to kids array 
-		 * has changed.
+		 * has changed but situation is handled same way, because old target
+		 * value (Kids array) is no more available.
 		 * <br>
 		 * Collects all elements from oldValue and newValue arrays (if present). 
 		 * In first step consolidatePageTree with newValue or oldValue indirect 
-		 * parent intermediate node (it depends on which is defined).
+		 * parent intermediate node (it depends on which is defined - but prefer
+		 * oldValue).
 		 * This will correct intermediate node's Count field and also all new
 		 * array members will have correct parent field.
-		 * Then it consolidatePageList for all oldValue collected elements and
-		 * discards nodeCountCache for it. This will invalidate and remove from
+		 * Then it unregister observers (using unregisterPageTreeObservers) and 
+		 * consolidatePageList for all oldValue collected elements and
+		 * discards nodeCountCache for them. This will invalidate and remove from
 		 * pageList all CPage instances which were in this intermediate node
 		 * before Kids array has changed. Finally consolidatePageList for all
 		 * collected from newValue which will move positions of all all pages
-		 * which are behind this node (rightway in page tree).
+		 * which are behind this node (rightway in page tree) and also registers
+		 * obsevers to all elements (uses registerPageTreeObservers).
 		 * 
 		 */
 		virtual void notify (
@@ -644,6 +674,10 @@ protected:
 	 * This observer is registered on Kids array and all referecence elementes
 	 * from this array. Change notified to this observer is allways page tree
 	 * node insertion, delete or replace.
+	 * <br>
+	 * Note that this observer is used for Kids array content or memeber value
+	 * change, nor for whole Kids array property change (like @see
+	 * PageTreeNodeObserver).
 	 *
 	 * @see notify
 	 */
@@ -844,14 +878,31 @@ protected:
 	 *
 	 * If given prop is not dictionary or reference to dictionary immediatelly 
 	 * returns, otherwise registers PageTreeNodeObserver to the dictionary. 
-	 * Then tries to find Kids property in given dictionary and registers if 
-	 * Kids is reference, registers same obsever also to this property. Finally 
-	 * registers PageTreeKidsObserver to all Kids array (dereferenced if Kids 
-	 * is reference) members and calls this method recursivelly to all which 
-	 * are referencies to dictionary.
-	 * 
+	 * Then checks Kids property. If it is reference, registers same observer
+	 * also to reference property and creates entry for pageTreeKidsParentCache.
+	 * Finally registers PageTreeKidsObserver to Kids array (dereferenced if 
+	 * Kids is reference), to all its reference members and calls method
+	 * recursively for such elements for whole subtree handling.
+	 * <br>
+	 * Note that this method will register observers to whole page tree if given
+	 * parameter is page tree root dictionary. PageTreeRootObserver has to be
+	 * registered separately.
+	 * <br>
+	 * This method should be called in the initialization and when new node is
+	 * added to the tree (either intermediate node or leaf node).
 	 */
 	void registerPageTreeObservers(boost::shared_ptr<IProperty> prop);
+
+	/** Unregisters page tree observers.
+	 * @param ref Reference to page tree node.
+	 *
+	 * This method is inverse to registerPageTreeObservers (with same observers 
+	 * but, with unregistration rather than registration). Also removes cache
+	 * entry from pageTreeKidsParentCache.
+	 * <br>
+	 * This method should be called when node is removed from the tree.
+	 */
+	void unregisterPageTreeObservers(boost::shared_ptr<IProperty> prop);
 
 	/** Helper method for property adding.
 	 * @param ip Property to add.
@@ -1017,13 +1068,31 @@ private:
 	 * Each node which queries for its leaf pages count by getKidsCount
 	 * function is cached with found value (more preciselly mapping from
 	 * reference to page count is stored). So getKidsCount can use this cache
-	 * next time when it is called to prevent from searching intermediate and
-	 * calculating total page count.
+	 * next time when it is called to prevent from searching intermediate node
+	 * subtree and calculating total page count again because this operation is
+	 * used very often and so it would be serious performance problem.
 	 * <br>
 	 * Cached value has to be discarded each time when page count is changed
-	 * under node. This is handled in consolidatePageTree method.
+	 * under node intermediate node. This is handled in consolidatePageTree 
+	 * method.
 	 */
 	mutable PageTreeNodeCountCache nodeCountCache;
+
+	/** Cache for indirect Kids arrays mapping to their parents.
+	 *
+	 * This cache enables to overcome problem with indirect Kids arrays in
+	 * Intermediate page tree node. The problem is that members of Kids array
+	 * are not able to get reference to parent (if we don't want to rely on
+	 * children Parent property - which is problem, because we need to get this
+	 * information in page tree consolidation when also this information is
+	 * checked and corrected) unless Kids array is direct object. 
+	 * <br>
+	 * Whenever Kids property from intermediate node is reference to array,
+	 * mapping is created with array reference as key and current node's
+	 * reference as value. This is done in registerPageTreeObservers which
+	 * registers obsevers when page tree changes somehow. TODO when to discard?
+	 */
+	PageTreeKidsParentCache pageTreeKidsParentCache;
 
 	// TODO returned outlines list
 
