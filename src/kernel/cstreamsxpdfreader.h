@@ -44,7 +44,8 @@ private:
 	boost::shared_ptr<CStream> actstream;	/**< Actual stream that is beeing parsed. */
 	size_t pos;			/**< Position of actual parsed stream in the stream container. */
 	size_t objread; 	/**< Helper variable for debugging. Number of read objects. */
-	
+	/**\todo debug */
+	std::ofstream oss;
 
 public:
 
@@ -63,17 +64,25 @@ public:
 
 		actstream = streams.front ();
 		actstream->open ();
+
+		/**\todo DEBUG */
+		oss.open ("_stream");
+		
 	}
 
 	/** Close. */
 	void close ()
 	{
 		assert (!streams.empty());
-		assert (streams.size() == pos + 1);
-		assert (actstream == streams.back());
-		assert (actstream->eof());
+		
+		// True if no exception occurs
+		//assert (streams.size() == pos + 1);
+		//assert (actstream == streams.back());
+		//assert (actstream->eof());
 		
 		actstream->close ();
+
+		oss.close();
 	}
 
 	/** 
@@ -87,12 +96,14 @@ public:
 	void close (Ctr& parsedstreams)
 	{
 		assert (!streams.empty());
-		assert (actstream->eof());
+		// True only if no exception occurs
+		//assert (actstream->eof());
 		
 		for (size_t i = 0; i <= pos; ++i)
 			parsedstreams.push_back (streams[i]);
 		
 		actstream->close ();
+		oss.close();
 	}
 
 	/** Get xpdf object. */
@@ -103,16 +114,29 @@ public:
 		// Get an object
 		actstream->getXpdfObject (obj);
 
+		/** debugging \TODO remove. */
+		objread ++;
+		std::string tmp;
+		if (!obj.isEOF())
+		{
+			utils::xpdfObjToString (obj,tmp);
+			oss << objread << " " << tmp << std::endl;
+		}
+
 		// If we are at the end of this stream but another stream is not empty 
 		// get the object
 		if (actstream->eof() && !eof())
 		{
 			assert (obj.isEOF());
 			actstream->getXpdfObject (obj);
+
+			/** debugging \TODO remove. */
+			if (!obj.isEOF())
+			{
+				utils::xpdfObjToString (obj,tmp);
+				oss << objread << " NEW STREAM !!! " << actstream->getIndiRef() << tmp << std::endl;
+			}
 		}
-		
-		/** debugging \TODO remove. */
-		objread ++;
 	}
 
 	/** 

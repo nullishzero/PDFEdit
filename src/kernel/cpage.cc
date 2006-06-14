@@ -970,7 +970,8 @@ bool CPage::parseContentStream ()
 	// Create content streams, each cycle will take one/more content streams from streams variable
 	//
 	assert (contentstreams.empty());
-	assert (!streams.empty());
+	// True if Contents is not [ ]
+	//assert (!streams.empty());
 	while (!streams.empty())
 		contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
 

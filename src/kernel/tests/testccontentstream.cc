@@ -392,9 +392,11 @@ addcc (__attribute__((unused))	ostream& oss, const char* fileName)
 bool
 settm (__attribute__((unused))	ostream& oss, const char* fileName)
 {
-	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
-	for (size_t i = 0; i < pdf->getPageCount() && i < TEST_MAX_PAGE_COUNT; ++i)
+	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
+	size_t num = ppdf->getPageCount ();
+	for (size_t i = 0; i < num && i < TEST_MAX_PAGE_COUNT; ++i)
 	{
+		boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 		boost::shared_ptr<CPage> page = pdf->getPage (i + 1);
 
 		// Print content stream
@@ -479,7 +481,7 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 		{
 			if (!img (reader,xref))
 				return false;
-			//oss << endl << " IMAGE DATA " << endl;
+			oss << endl << " IMAGE DATA " << endl;
 			//testPrintDbg (debug::DBG_DBG, "end image...");
 	
 			// grab the next object
@@ -490,13 +492,13 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 		
 		if (o.isCmd ())
 		{
-			//oss << o.getCmd() << std::endl << flush;
+			oss << o.getCmd() << std::endl << flush;
 		}else
 		{
 		//	oss << "(" << o.getType() << ")" << flush;
 			std::string tmp;
 			utils::xpdfObjToString (o, tmp);
-			//oss << tmp << " " << flush;
+			oss << tmp << " " << flush;
 		}
 
 		// grab the next object
@@ -519,13 +521,13 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 class TestCContentStream : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCContentStream);
+		CPPUNIT_TEST(TestTm);
 		CPPUNIT_TEST(TestPrimitivePrint);
 		CPPUNIT_TEST(TestOpcount);
 		CPPUNIT_TEST(TestPosition);
 		CPPUNIT_TEST(TestPrint);
 		CPPUNIT_TEST(TestSetCS);
 		CPPUNIT_TEST(TestFront);
-		CPPUNIT_TEST(TestTm);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -620,8 +622,9 @@ public:
 
 			std::ofstream o;
 			o.open ("/dev/null");
+			//o.open ("_primitive");
 			TEST("primitive  print contentstream");
-			CPPUNIT_ASSERT (primitiveprintContentStream (/*o */OUTPUT, (*it).c_str()));
+			CPPUNIT_ASSERT (primitiveprintContentStream (o /*OUTPUT*/, (*it).c_str()));
 			o.close();
 			OK_TEST;
 		}

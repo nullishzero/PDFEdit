@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/06/14 22:48:13  misuj1am
+ *
+ * -- minor updates
+ *
  * Revision 1.22  2006/06/09 15:48:24  misuj1am
  *
  *
@@ -161,7 +165,7 @@ extern FileList fileList;
 #define REALLY_ALL_OUTPUT	0
 
 // MAX. of tested pages on 1 pdf.. if many, could take hours to complete
-static const size_t TEST_MAX_PAGE_COUNT = 10;
+static const size_t TEST_MAX_PAGE_COUNT = 10000;
 
 //
 // PrintDbg from tests

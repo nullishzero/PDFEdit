@@ -470,22 +470,22 @@ namespace {
 				}
 			}
 
-			//
-			// Copy operands
-			//
-			topoperator->getChildren (operators);
-			// Set prev of first valid operator to NULL
-			if (!operators.empty())
-				PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
-
-		}catch (CObjInvalidObject&)
+		}catch (CObjectException&)
 		{
 			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
-			operators.clear ();
 			operands.clear ();
+			//operators.clear ();
 			/** \todo SET INVALID CONTENTSTREAM. */
 		}
 		
+		//
+		// Copy operands
+		//
+		topoperator->getChildren (operators);
+		// Set prev of first valid operator to NULL
+		if (!operators.empty())
+			PdfOperator::getIterator (topoperator).next().getCurrent()->setPrev (PdfOperator::ListItem ());
+
 		// Delete topoperator
 		topoperator.reset();
 

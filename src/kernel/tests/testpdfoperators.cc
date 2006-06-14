@@ -80,11 +80,17 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 		page->getContentStreams (ccs);
 		shared_ptr<CContentStream> cs = ccs.front();
 	
-		// If size > 1, streams could have been very badly damaged
+		// If size > 1, streams could have been very badly damaged (but we need
+		// to be able to handle also this situation)
 		// TOTO ... CONTENTSTREAM (fdjalds) TJ <-- font does not exist
-		if (1 < ccs.size())
-			continue;
+	//	boost::shared_ptr<CDict> dict = page->getDictionary();
+	//	assert (dict);
+	//	boost::shared_ptr<IProperty> ccs = utils::getReferencedObject (dict->getProperty("Contents"));
+	//	if (isStream(ccs))
+		//	continue;
 
+
+		
 		// parse the content stream
 		string tmp;
 		cs->getStringRepresentation (tmp);
@@ -505,8 +511,8 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 class TestPdfOperators : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestPdfOperators);
-		CPPUNIT_TEST(TestChangeColor);
 		CPPUNIT_TEST(TestSetCS);
+		CPPUNIT_TEST(TestChangeColor);
 		CPPUNIT_TEST(TestDeleteOper);
 		CPPUNIT_TEST(TestInsertOper);
 		CPPUNIT_TEST(TestDeleteAllInsertOper);
