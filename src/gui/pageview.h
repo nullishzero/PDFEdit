@@ -12,27 +12,25 @@ class Rect2DArray;
 class BBoxOfObjectOnPage;
 
 /** QWidget's class for viewing a page.
- *  
+ *
  */
 class PageView : public QLabel {
 	Q_OBJECT
 	public:
-		/** Enum type for setting selection mode for select all object.
-		 * RectSelection		 =  the selected area will be bounded thin rectangle
-		 * FillRectSelection	 =  the selected area will be filled rectangle
-		 * RectFillRectSelection =  moving or creating selected area -> FillRectSelection
-		 * 						 =  otherwise -> RectSelection
-		 * FillRectRectSelection =  moving or creating selected area -> RectSelection
-		 * 						 =  otherwise -> FillRectSelection
-		 */
-		enum SelectionAllMode { RectSelection, FillRectSelection, RectFillRectSelection, FillRectRectSelection };
+		/** Enum type for setting selection mode for select all object. */
+		enum SelectionAllMode {
+				/** the selected area will be bounded thin rectangle */						RectSelection,
+				/** the selected area will be filled rectangle */							FillRectSelection,
+				/** moving or creating selected area -> FillRectSelection.
+				 *							Otherwise -> RectSelection */					RectFillRectSelection,
+				/** FillRectRectSelection	moving or creating selected area -> RectSelection.
+				 *							Otherwise -> FillRectSelection */				FillRectRectSelection };
 
-		/** Enum type for setting selection mode
-		 * SelectAllObjects	= choosing point or rectangle for select objects
-		 * SelectText		= choosing text bboxes
-		 * SelectRect		= choosing point or rectangle for select
-		 */
-		enum SelectionMode { SelectAllObjects, SelectText, SelectRect };
+		/** Enum type for setting selection mode. */
+		enum SelectionMode {
+				/** choosing point or rectangle for select objects */	SelectAllObjects,
+				/** choosing text bboxes */								SelectText,
+				/** choosing point or rectangle for select */			SelectRect };
 
 		/** Default constructor of pageView.
 		 * @param parent widget containing this control
