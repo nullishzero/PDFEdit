@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.17  2006/06/15 15:56:00  jahom0bm
+ * Fixed include
+ *
  * Revision 1.16  2006/06/13 20:44:13  hockm0bm
  * * ChangeContextType enum removed from class IChangeContext to observer namespace
  * * pdfwriter.cc synced with ChangeContextType change
@@ -71,6 +74,7 @@
 #include <vector>
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
+#include <iostream>
 
 //=============================================================================
 namespace observer
