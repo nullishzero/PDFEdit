@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.67  2006/06/16 18:24:11  hockm0bm
+ * * code cleanup
+ * * doc update
+ *
  * Revision 1.66  2006/06/14 21:29:47  hockm0bm
  * * updateKidsCountCache, getKidsCountCached, discardKidsCountCache and
  *   clearKidsCountCached helper functions to manipulate with count cache
@@ -349,7 +353,6 @@ public:
 
 } // namespace utils
 
-// forward declarations FIXME remove
 class CPage;
 class COutline;
 
@@ -376,7 +379,9 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  * This class is responsible for pdf document maintainance. It provides wrapper
  * on document catalog dictionary with advanced logic concering revision
  * handling, high level object creation and their synchronization with actual
- * properties state and mode depending operations.
+ * properties state and mode depending operations. Provides interface for making
+ * changes to document. In a result it provides fascade for all oparation which
+ * have document scope.
  *
  * <p>
  * <b>Instancing</b><br>
@@ -395,8 +400,8 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  * <p>
  * <b>Document changes</b><br>
  * CPdf instance contains XRefWriter typed field which maintains all changes to
- * document content. It is not accessible outside from class to keep full
- * control upon instance in CPdf. To enable using also xpdf code outside CPdf
+ * document content. It is not accessible outside from the class to keep full
+ * control over instance in CPdf. To enable using also xpdf code outside CPdf
  * CXref casted supertype of XRefWriter is returned in getCXref. This instance
  * doesn't enable any changes but enables access to most accurate indirect
  * objects. Changes to XRefWriter can be done only by CPdf methods. Note that
@@ -421,10 +426,16 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  * getPage, getFirstPage, getLastPage, getNextPage, getPrevPage methods. All
  * returned instances are kept in pageList to guarantee that request for page at
  * same position returns same page instance (unless page tree is changed).
- * 
- * CPdf uses PageTreeWatchDog inner class for page tree synchronization. So
- * changes can be done also directly in page tree (not using CPdf methods) and
- * pageList will contain correct (available) CPage instances.
+ * CPdf uses several observers to keep this synchronization. Observer classes
+ * are inner to this class to have good access to protected and private fields.
+ * Each observer is specialized for one type of change in page tree:
+ * <ul>
+ * <li>PageTreeRootObserver - synchronizes changes which affects page tree root.
+ * <li>PageTreeNodeObserver - synchronizes changes which affects Kids array
+ * property
+ * <li>PageTreeKidsObserver - synchronizes changes which affects Kids array
+ * content
+ * </ul>
  * <br>
  * insertPage and removePage enables inserting and removing new pages to the
  * page tree. This way is prefered for making such changes. Other way (as
@@ -442,7 +453,7 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  *
  * <p>
  * <b>Revision manipulation</b><br>
- * CPdf provides interface for document revision handling done in XRefWriter
+ * CPdf provides interface also for document revision handling done in XRefWriter
  * class. Actual revision number (the newest revision has 0 number and grows to
  * older revisions) can be obtained by getActualRevision method. Current
  * revision can be changed by changeRevision method. As a result, just object
@@ -480,8 +491,6 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  * This version of CPdf and all its components doesn't support linearized pdf
  * files very well. Revision handling and all related, are not prepared for
  * special format and objects deployed for such documents.
- * <br>
- * Newly created revision always uses old style cross reference tables.
  *
  */
 class CPdf
@@ -511,9 +520,9 @@ protected:
 
 	/** Observer for page tree root synchronization.
 	 * 
-	 * This observer is registered on Pages property from Document catalog and
-	 * if it is (as should do) reference also to this reference property. When
-	 * ever document catalog is changed and this change is done either in Pages
+	 * This observer is registered on Document catalog and if Pages property 
+	 * is reference (as should do) also to this reference property. Whenever 
+	 * document catalog is changed and this change is done either in Pages
 	 * property or directly in reference value, notify method will handle this
 	 * situation and synchronize pdf internal structures with new state.
 	 *
@@ -721,10 +730,29 @@ protected:
 		 * to do here, because both values are just mess in array and so
 		 * immediatelly returns.
 		 * <br>
+		 * If newValue is CRef instance, registers obserers to property (uses
+		 * registerPageTreeObservers method).
+		 * <br>
 		 * After all checking starts cosolidation which is done in two steps.
 		 * First is page tree consolidation (done in consolidatePageTree
 		 * method), second pageList consolidation (done in consolidatePageList).
 		 * Finally discards nodeCountCache for oldValue (if it is reference).
+		 * <br>
+		 * if oldValue is CRef, unregisters obsevrers from subtree starting
+		 * with this node (uses unregisterPageTreeObservers).
+		 * <br>
+		 * Note that consolidatePageTree method requires intermediate node under
+		 * which change has occured and this may be problem, becuase changed
+		 * element doesn't have to be direct member of intermediate node
+		 * dictionary and so getIndiRef method can't be used. Parent field of
+		 * changed element reference target dictionary (in valid case) can't 
+		 * be used too, because this is the subject of consolidation. In any 
+		 * case changed element is direct child of Kids array (this may be 
+		 * direct or indirect memeber of intermediate node dictionary). So it 
+		 * uses pageTreeKidsParentCache to get mapping from kids array reference
+		 * to intermediate node reference. If this cache doesn't contain entry 
+		 * for such Kids reference, getIndiRef is used, because in such case 
+		 * Kids array is direct element of internode dictionary.
 		 */
 		virtual void notify (
 				boost::shared_ptr<IProperty> newValue, 
@@ -809,15 +837,16 @@ protected:
 	 * @param newValue New reference (CNull if no future state).
 	 *
 	 * Removes all CPages, which are in old reference sub tree (if oldValue is 
-	 * not CNull) from pageList and invalidates them. Uses isDescendant method 
-	 * for each page from pageList to find out if it is in sub tree.
+	 * not CNull - what means that new element to Kids array has been added) 
+	 * from pageList and invalidates them. Uses isDescendant method for each 
+	 * page from pageList to find out if it is in sub tree.
 	 * <br>
-	 * Also calculates difference between lost pages (if oldValue is not CNull) 
-	 * and newly added pages (if newValue is not CNull - checks type of node 
-	 * and if node is page, only 1 is lost, in case of intermediate node Count 
-	 * field is used).
+	 * Also calculates difference between lost pages and newly added pages (each
+	 * is calculated by number of leaf nodes from oldValue resp. newValue sub
+	 * tree - uses getKidsCount helper function). If oldValue or newValue is
+	 * CNull 0 is used.
 	 * <br>
-	 * Tries to determine which pages has to be consolidated (those which
+	 * Tries to determine which pages have to be consolidated (those which
 	 * position has changed). If newValue is CNull, we have no information about 
 	 * oldValue position so we can either get page information from all pages in 
 	 * the list or if at least one page from oldValue subtree has been removed 
@@ -833,7 +862,8 @@ protected:
 	 * associated with correct position in pageList.
 	 * <p>
 	 * <b>Implementation notes</b><br>
-	 * This method should be called by handler of change event on Page tree.
+	 * This method should be called by obsever monitoring Kids array and Kids
+	 * array elements.
 	 * Some previous checking and consolidation of page tree should be done
 	 * before, because this method relies on proper page tree structure.
 	 * <br>
@@ -1098,7 +1128,8 @@ private:
 
 	/** Intializes revision specific stuff.
 	 * 
-	 * Cleans up all internal structures which may depend on current discourage  revision.
+	 * Cleans up all internal structures which may depend on current discourage 
+	 * revision.
 	 * This includes indirect mapping and pageList (all pages are invalidated).
 	 * After clean up is ready, initializes trailer field from Xref trailer xpdf
 	 * Object. docCatalog field is initialized same way.
@@ -1226,15 +1257,6 @@ public:
 		return modeController;
 	}
 
-	/** Gets change field value.
-	 *
-	 * @return true if there are some new changes, false otherwise.
-	 */
-	bool isChanged()const
-	{
-		return change;
-	}
-	
 	/** Sets mode controller.
 	 * @param ctrl Mode controller implementator (if NULL, controller
 	 * will be disabled).
@@ -1243,6 +1265,15 @@ public:
 	void setModeController(configuration::ModeController* ctrl)
 	{
 		modeController = ctrl;
+	}
+
+	/** Gets change field value.
+	 *
+	 * @return true if there are some new changes, false otherwise.
+	 */
+	bool isChanged()const
+	{
+		return change;
 	}
 
 	/** Returns IProperty associated with given reference.
@@ -1273,24 +1304,24 @@ public:
 	 * can't be reference and should be indirect object (if it belongs to pdf).
 	 * <li> Property from same pdf is added immediately using
 	 * registerIndirectProperty method.
-	 * <li> Property from different pdf instance is added using addProperty
-	 * method.
+	 * <li> Property from different pdf instance is added by recursive 
+	 * addProperty helper method.
 	 * <li> followRefs flag controls how referencies in property from different
 	 * file should be handled. If value is true, also all referenced properties
 	 * are added, otherwise just reserves referencies in this pdf for them and
 	 * doesn't care for their values (they may be initialized later). Note that
 	 * followRefs may produce rather big bunch of copying (e. g. copying page
-	 * dictionary will probably cause copy of all page tree object hierarchy,
+	 * dictionary will probably cause copy of whole page tree object hierarchy,
 	 * because each page contains also reference to its parent and parent
-	 * contains all its kids and so on). 
-	 * <li> If followRefs is false, doesn't dereference reference values at all,
-	 * so just for those directly accessbile are reserved new referencies.
+	 * contains all its kids and also its parent and so on). 
 	 * <li> Initializes ResolvedRefStorage storage for addProperty to prevent
 	 * endless loops for cyclyc property structures (such as mentioned above in
 	 * page dictionary case) and to guarantee that same referencies are mapped
 	 * to same in this pdf (@see subsReferencies). 
 	 * <li> Method will fail with exception if pdf is in read only mode.
 	 * </ul>
+	 * <br>
+	 * As a side effect sets change field to true
 	 *
 	 * @see registerIndirectProperty
 	 * @see addProperty
@@ -1365,7 +1396,7 @@ public:
 	 * @param fname File handle, where to store content.
 	 * 
 	 * Stores actual document state to the given file.
-	 * Actual document state stands for all obejcts from all revistions until 
+	 * Actual document state stands for all objects from all revistions until 
 	 * current one. This means that kind of fork of document is done. Be
 	 * careful, because actual changes are not considered (in revision 0),
 	 * because they are not really part of document (you have to save them as
@@ -1387,7 +1418,7 @@ public:
 	 * <p>
 	 * NOTE: this method doesn't check whether target of FILE handle is same
 	 * file as one used in StreamWriter, so caller must take care about this to
-	 * prevent unexpecting problems (overwriting currently used data in stream).
+	 * prevent unexpected problems (overwriting currently used data in stream).
 	 *
 	 */
 	void clone(FILE * fname)const;
@@ -1423,7 +1454,7 @@ public:
 	 * position is same as if pos parameter was 1. All pages behind pos
 	 * are renumbered.
 	 * <br>
-	 * Method may fail if page at given position is ambiguous. This means that 
+	 * Method may fail if page at position is ambiguous. This means that 
 	 * it is not possible to get position of page reference in its parent Kids
 	 * array due to multiple occurance in Kids array. @see getNodePosition
 	 * 
@@ -1447,6 +1478,7 @@ public:
 	 * older revision (where no changes are allowed).
 	 * @throw AmbiguesPageTreeException if page can't be inserted to given
 	 * position because of ambiguous page tree.
+	 * @throw NoPageRootException if no page tree root can be found.
 	 */
 	boost::shared_ptr<CPage> insertPage(boost::shared_ptr<CPage> page, size_t pos);
 
@@ -1490,6 +1522,9 @@ public:
 	 *
 	 * Calculates (uses getKidsCount helper function) all direct pages under
 	 * page tree root node.
+	 * <br>
+	 * Note that if page tree root doesn't exists, it will return 0 rather than
+	 * error (exception) announcing.
 	 *
 	 * @return Number of pages which are accessible.
 	 */
@@ -1501,11 +1536,10 @@ public:
 	/** Returns page at given position.
 	 * @param pos Position (starting from 0).
 	 *
-	 * Search for page position (uses find method). If page dictionary is found,
-	 * compares it with already returned pages list. If this page was already
-	 * returned and is valid (its position is same as given one), returns this 
-	 * CPage. Otherwise creates new CPage instance, adds it to the list and 
-	 * return.
+	 * At first tries to find page with given position in pageList. If found,
+	 * returns instance from list. Otherwise, searches page tree by findPageDict
+	 * helper function and if page dictionary is found, creates new CPage
+	 * instance and inserts new mapping (postion to CPage instance) to pageList.
 	 *
 	 * @throw PageNotFoundException if pos can't be found or out of range.
 	 * @return CPage instance wrapped by smart pointer.
@@ -1527,7 +1561,7 @@ public:
 	 * @param page Pointer to the page.
 	 *
 	 * Returns page which is after given one. Uses getPagePosition to get actual
-	 * position.
+	 * position of given page.
 	 * <br>
 	 * Uses getPage method.
 	 *
@@ -1541,7 +1575,7 @@ public:
 	 * @param page Pointer to the page.
 	 *
 	 * Returns page which is before given one. Uses getPagePosition to get actual
-	 * position.
+	 * position of given page.
 	 * <br>
 	 * Uses getPage method.
 	 *
@@ -1554,7 +1588,7 @@ public:
 	/** Checks for next page.
 	 * @param page Page to check.
 	 *
-	 * @return true if getNextPage() method returns doesn't throw
+	 * @return true if getNextPage() method returns page and doesn't throw
 	 * PageNotFoundException, false otherwise. 
 	 */
 	bool hasNextPage(boost::shared_ptr<CPage> page)const
@@ -1575,7 +1609,7 @@ public:
 	/** Checks for previous page.
 	 * @param page Page to check.
 	 *
-	 * @return true if getPrevPage() method returns doesn't throw
+	 * @return true if getPrevPage() method returnspage and doesn't throw
 	 * PageNotFoundException. 
 	 */
 	bool hasPrevPage(boost::shared_ptr<CPage> page)const
@@ -1595,7 +1629,7 @@ public:
 
 	/** Returns last page.
 	 * 
-	 * Calls getPage(pages.size()-1).
+	 * Calls getPage(getPageCount()).
 	 *
 	 * @return CPage instance wrapped by smart pointer.
 	 */
@@ -1609,8 +1643,8 @@ public:
 
 	/** Returns mode of this version.
 	 *
-	 * Mode is ReadOnly for all older version than last available and
-	 * last depends on mode set in creation time.
+	 * @return mode field value or ReadOnly if current revision is not the
+	 * newest one.
 	 */
 	OpenMode getMode() const
 	{
@@ -1669,7 +1703,7 @@ public:
 	 * @param revisionNum Revision number (the newest is 0).
 	 *
 	 * Delegates to xref field and reinitializes all internal structures
-	 * which are revision specific.
+	 * which are revision specific (calls initRevisionSpecific method).
 	 * <br>
 	 * NOTE: indirect mapping is cleared so, all indirect properties are lost
 	 * and shouldn't be used anymore.
@@ -1681,7 +1715,7 @@ public:
 
 	/** Returns number of available revisions.
 	 *
-	 * see XRefWriter::getRevisionCount
+	 * @see XRefWriter::getRevisionCount
 	 */
 	size_t getRevisionsCount()
 	{
@@ -1762,12 +1796,19 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * @param pos Page position (starting from 1) to find.
  * @param cache Cache for reference to page count mapping.
  *
- * Method recursively goes through pages dictionary until given page 
- * position is found or no such position can be found. If position can't be
- * found under given page node, exception is thrown.
+ * Method recursively goes through page subtree starting with given page tree 
+ * node until given page position is found or no such position can be found. If 
+ * position can't be found under given page node, exception is thrown.
  * <br>
  * If given pagesDict is reference, uses CPdf::getIndirectProperty to get 
- * dictionary.
+ * target indirect object, which should be a dictionary (otherwise throws
+ * ElementBadTypeException).
+ * <br>
+ * Note that this function is not able to handle cycles in page tree and if any
+ * occures, endless loop will happen.
+ * <br>
+ * startPos stands for position of pagesDict in whole page tree. In fact it is
+ * position of first leaf node in subtree.
  * 
  * <p>
  * <b>Pdf standard notes</b>:
@@ -1779,7 +1820,7 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * It doesn't represent page itself. All children are stored in Kids array.
  * Dictionary also contains Count information which holds number of all
  * Page dictionaries under this node.
- * <li>Page dictionary - which represents direct page.
+ * <li>Page dictionary - leaf node which represents direct page.
  * </ul>
  * This structure is rather complex but enables effective way to access 
  * arbitrary page in short time (some applications provide balanced tree form
@@ -1790,25 +1831,31 @@ boost::shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf);
  * Function tries to find page also in page tree structure which doesn't follow
  * pdf specification. All wierd page tree elements are ignored and just those
  * which may stand for intermediate or leaf nodes are condidered. Also doesn't
- * use Count and Parent field information during searching. Uses getKidsCount
- * function to get intermediate leaf nodes count. This method reqieres also
- * cache which stores already known nodes to their counts mapping. This function
- * just delegates given cache parameter to getPageCount and doesn't care for it
- * much more. If it is NULL, it is not used.
+ * use Count or Parent field information during searching. Uses getKidsCount
+ * function to get intermediate leaf nodes count. getKidsCount method requieres 
+ * also cache which stores already known nodes to their counts mapping. This 
+ * function just delegates given cache parameter to getPageCount and doesn't 
+ * care for it much more. If it is NULL, it is not used.
  * <p>
  * <b>Usage notes</b>:<br>
- * When starting to search from root of all pages, pagesDict should be supplied
- * from pdf-&gt;getProperty("Pages"). This is indirect reference (according
- * standard), but can be used in this method. startPos should be 1 (first page
- * is 1).
+ * If searching from begining, page tree root should be used as pagesDict
+ * parameter and startPos set to 1.
+ * <pre>
+ * Example:
+ * shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(pdf);
+ * if(pageTreeRoot.get())
+ * 	findPageDict(pdf, pageTreeRoot, 1, posToSearch, NULL);
+ * </pre>
  * <br>
- * If we have some intermediate <b>Pages</b> dictionary, startPos should be
- * lowest page number under this tree branch. This usage is recomended only if
- * caller exactly knows what he is doing, otherwise page position is wrong.
+ * Searching can start also from different intermediate node than root, but 
+ * startPos has to be correct position of this node in the tree (same value 
+ * as returned by getNodePosition method applied on such node). This usage can
+ * be used for searching optimization when just part of the tree is searched.
  *
- * @throw PageNotFoundException if given position couldn't be found.
- * @throw ElementBadTypeException if some of required element has bad type and
- * we can't recover from situation automatically.
+ * @throw PageNotFoundException if given position couldn't be found under
+ * subtree defined by pagesDict.
+ * @throw ElementBadTypeException if pagesDict is not dictionary or reference to
+ * dictionary.
  * @return Dereferenced page (wrapped in shared_ptr) dictionary at given 
  * position.
  */
@@ -1824,19 +1871,20 @@ boost::shared_ptr<CDict> findPageDict(
  * @param node Node to find (CRef or CDict instances).
  * @param cache Cache for reference to page count mapping.
  *
- * Start searching of given node from root of the page tree (document catalog
- * Pages field). Uses recursive searchTreeNode function for searching and
- * provides just error handling wrapper to this method. searchTreeNode reqieres 
- * also cache which stores already known nodes to their counts mapping. This 
- * function just delegates given cache parameter to getPageCount and doesn't 
- * care for it much more. If it is NULL, it is not used.
+ * Starts searching for given node from root of the page tree (returned from 
+ * getPageTreeRoot function). Uses recursive searchTreeNode function for 
+ * searching and provides just error handling wrapper to this function. 
+ * searchTreeNode reqieres also cache which stores already known nodes to their 
+ * counts mapping. This function just delegates given cache parameter to 
+ * getPageCount and doesn't care for it much more. If it is NULL, it is not 
+ * used.
  * <br>
  * Prefer to use this function instead of searchTreeNode if you are not sure you
  * know what you are doing.
  *
- * @throw PageNotFoundException
- * @throw ElementBadTypeException
- * @throw MalformedFormatExeption
+ * @throw PageNotFoundException If node can't be found.
+ * @throw ElementBadTypeException If given node is not dictionary or reference
+ * to dictionary.
  * @throw AmbiguousPageTreeException if node position can't be determined bacause
  * of page tree ambiguity (see searchTreeNode for more information).
  * @return Node position.
@@ -1850,23 +1898,22 @@ size_t getNodePosition(const CPdf & pdf, boost::shared_ptr<IProperty> node, Page
  * used).
  *
  * Checks whether given node is LeafNode and if so, immediatelly returns with 1
- * (page contains one direct page node). Otherwise tries to get node dictionary
+ * (leaf contains one direct page). Otherwise tries to get node dictionary
  * from given property. If not able to do so, returns 0, because this node is
  * probably invalid and so it can't contain any direct page node. 
  * Then checks whether given cache parameter is non NULL and if so checks cached
- * value for given node (uses getKidsCountCached function). This value is
- * returned (if it is different than INVALIDPAGECOUNT).
- * Finally collects all Kids elements from dictionary (uses getKidsFromInterNode
- * function) and calls this function recursively on each. Collected number is
- * returned and if cache is non NULL also caches value (uses
- * updateKidsCountCache function).
+ * value for given node (uses getCachedValue function). If cache entry exists
+ * for this node, uses cached value. Otherwise collects all Kids elements from 
+ * dictionary (uses getKidsFromInterNode function) and calls this function 
+ * recursively on each reference element. Collected number is returned and if 
+ * cache is non NULL also caches value (uses updateCache function).
  * <br>
  * Note that this function never throws.
  *
  */
 size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTreeNodeCountCache * cache)throw();
 	
-/** Checks given node property for its page tree node type.
+/** Checks given node for its page tree type.
  * @param nodeProp Node property (must be dictionary or reference to
  * dictionary).
  *
@@ -1875,10 +1922,12 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
  * whether node dictionary is same as Page tree root node and if so, returns
  * RootNode type. If not able to get root node, returns UnknownNode.
  * <br>
- * Checks for Type field in node dictionary and if present, checks its value. It
- * must be name object. If so and value is Page, returns LeafNode, or if value
- * is Pages, returns InterNode. Otherwise returns (also if Type field type is
- * not name), returns UnknownNode.
+ * In first step compares dictionary with pageTreeRoot dictionary. If they are
+ * same (uses == operator), returns RootNode. Otherwise checks for Type field 
+ * in node dictionary and if present, checks its value. It must be name object.
+ * If so and value is Page, returns LeafNode, or if value is Pages, returns 
+ * InterNode. Otherwise returns (also if Type field type is not name), returns
+ * UnknownNode.
  * <br>
  * Finally tries to determine node type from existing fields. If dictionary
  * contains Kids array, it is considered to be InterNode. Otherwise returns
@@ -1898,12 +1947,11 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
  * Checks if child's Parent field has same reference as given one as parent
  * parameter. If yes then child dictionary is descendant of node with parent
  * reference. If not, dereference child's parent and continues in recursion
- * using derefenced direct parent as new child for recursion call.
+ * using dereferenced parent dictionary as new child for recursion call.
  * <br>
- * NOTE: this method doesn't perform any checking of parameters.
+ * NOTE: this method doesn't perform any checking of parameters and doesn't work
+ * if Parent property has not valid value (according page tree state).
  *
- * @throw MalformedFormatExeption if child contains Parent field which doesn't
- * point to the dictionary.
  * @return true If given child belongs to parent subtree, false otherwise.
  */
 bool isDescendant(CPdf & pdf, IndiRef parent, boost::shared_ptr<CDict> child);
@@ -1930,7 +1978,7 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
  * @param filterName Name of the filter used for encryption (set only if
  * content is encrypted).
  *
- * Checks for Encrypt entry in documents trailer. If it is present, it means
+ * Checks for Encrypt entry in document's trailer. If it is present, it means
  * that content is enctypted and so tries to get FilterName entry from Encrypt
  * dictionary (if filterName is non NULL).
  * 
@@ -1942,8 +1990,8 @@ bool isEncrypted(CPdf & pdf, std::string * filterName);
  * @param refProp Reference property (must be pRef typed).
  *
  * Gets reference value from property and dereferences indirect object from it.
- * Uses refProp's pdf for dereference.
- * Checks target object for given template pType and if it matches casts to
+ * Uses refProp's pdf for dereference (so it has to be valid).
+ * Checks target object for given template pType and if it matches casts it to
  * given CType and returns.
  *
  * @throw ElementBadTypeException if refProp is not CRef instance or indirect
@@ -1961,6 +2009,8 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 		throw ElementBadTypeException("");
 	
 	// gets reference value and dereferences indirect object
+	assert(refProp->getPdf());
+	assert(hasValidRef(refProp));
 	IndiRef ref;
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);

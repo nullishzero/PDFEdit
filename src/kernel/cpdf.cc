@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.68  2006/06/16 18:24:10  hockm0bm
+ * * code cleanup
+ * * doc update
+ *
  * Revision 1.67  2006/06/14 21:29:47  hockm0bm
  * * updateKidsCountCache, getKidsCountCached, discardKidsCountCache and
  *   clearKidsCountCached helper functions to manipulate with count cache
@@ -358,7 +362,6 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
 	if(rootDict==nodeDict)
 		// root dictionary found and it is same as internode
 		return RootNode;
-		
 	
 	// given node is not root of page tree, chcecks Type field
 	if(nodeDict->containsProperty("Type"))
@@ -389,11 +392,22 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
 		shared_ptr<IProperty> kidsProp=nodeDict->getProperty("Kids");
 		if(isArray(kidsProp))
 			return InterNode;
+		if(isRef(kidsProp))
+		{
+			// Kids property is reference, so checks whether it refer to array,
+			// if yes, returns InterNode
+			try
+			{
+				getCObjectFromRef<CArray, pArray>(kidsProp);
+				return InterNode;
+			}catch(...)
+			{
+				// target is not an array, so it's not intermediate node or it
+				// is demaged node
+			}
+		}
 	}
 
-	// TODO how to determine leaf node? (most of required fields can't be used
-	// because of their inheritance => they may be also in intermediate node)
-	
 	return nodeType;
 }
 
@@ -425,9 +439,8 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
 			kidsArray=IProperty::getSmartCObjectPtr<CArray>(kidsProp);
 		}
 		
-		// collects all children to given container
-		for(size_t i=0; i<kidsArray->getPropertyCount(); i++)
-			container.push_back(kidsArray->getProperty(i));
+		// fills given container with all children
+		kidsArray->_getAllChildObjects(container);
 	}
 
 }
@@ -456,7 +469,6 @@ using namespace debug;
 	if(pos!=cache.end())
 	{
 		// value is present in mapping
-		// TODO what does it mean - problem????
 		//  NOTE it means that value has not been discarded before update
 		utilsPrintDbg(DBG_WARN, pos->first<<" already cached with value="<<pos->second<<". Rewriting to value="<<value);
 		pos->second=value;
@@ -546,7 +558,11 @@ void clearCache(CacheType & cache)
  * under given one. This should be used if intermediate node is removed from
  * tree (all subnodes are removed too and so should be discarded).
  */
-void discardKidsCountCache(IndiRef & ref, CPdf & pdf, PageTreeNodeCountCache & cache, bool withSubTree=false)
+void discardKidsCountCache(
+		IndiRef & ref, 
+		CPdf & pdf, 
+		PageTreeNodeCountCache & cache, 
+		bool withSubTree=false)
 {
 using namespace debug;
 
@@ -569,7 +585,7 @@ using namespace debug;
 			if(!isRef(child))
 				// skip array mess
 				continue;
-			IndiRef childRef=getValueFromSimple<CRef, pRef, IndiRef>(child);
+			IndiRef childRef=getValueFromSimple<CRef, pRef, CRef::Value>(child);
 			discardKidsCountCache(childRef, pdf, cache, true);
 		}
 		utilsPrintDbg(DBG_DBG, "all nodes in "<<ref<<" subtree discarded");
@@ -616,14 +632,16 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 
 
 	// we assume inter node, so collects all children and calculates total
-	// direct page count (calls recursively)
+	// direct page count (calls recursively - just for referencies because those
+	// should be stored in array, everything different is just mess)
 	count=0;
 	ChildrenStorage children;
 	getKidsFromInterNode(interNodeDict, children);
 	for(ChildrenStorage::const_iterator i=children.begin(); i!=children.end(); i++)
 	{
 		shared_ptr<IProperty> childProp=*i;
-		count+=getKidsCount(childProp, cache);
+		if(isRef(childProp))
+			count+=getKidsCount(childProp, cache);
 	}
 
 	// creates cache entry for this ref
@@ -681,6 +699,9 @@ boost::shared_ptr<CDict> findPageDict(
 		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(pagesDict);
 	}
 
+	// target dictionary must be defined now
+	assert(dict_ptr.get());
+
 	// gets dictionary node type
 	PageTreeNodeType nodeType=getNodeType(dict_ptr);
 	
@@ -728,10 +749,9 @@ boost::shared_ptr<CDict> findPageDict(
 
 		// min_pos holds minimum position for actual child (at the begining
 		// startPos value and incremented by page number in node which can't
-		// contain pos (normal page 1 and Pages their count).
-		ChildrenStorage::iterator i;
+		// contain pos - normal page 1 and Pages their count).
 		size_t min_pos=startPos, index=0;
-		for(i=children.begin(); i!=children.end(); i++, index++)
+		for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); i++, index++)
 		{
 			shared_ptr<IProperty> child=*i;
 
@@ -754,18 +774,19 @@ boost::shared_ptr<CDict> findPageDict(
 			// be thrown here)
 			shared_ptr<CDict> child_ptr=getCObjectFromRef<CDict, pDict>(child); 
 			
-			utilsPrintDbg(DBG_DBG, "kid node type="<<nodeType);
+			utilsPrintDbg(DBG_DBG, "kid["<<index<<"] node type="<<nodeType);
 
 			// Page dictionary (leaf node) is ok if min_pos equals pos, 
 			// otherwise it is skipped - can't use recursion here because it's
 			// not an error that this page is not correct one (recursion would
-			// throw an exception)
+			// throw an exception because it assumes that page must be found in
+			// searched subtree)
 			// min_pos is incremented if this page is not searched one
 			if(nodeType==LeafNode)
 			{
 				if(min_pos == pos)
 				{
-					utilsPrintDbg(DBG_INFO, "page at pos="<<pos<<" found");
+					utilsPrintDbg(DBG_INFO, "page at pos="<<pos<<" found. Node reference "<<child_ptr->getIndiRef());
 					return child_ptr;
 				}
 				min_pos++;
@@ -801,20 +822,21 @@ boost::shared_ptr<CDict> findPageDict(
 
 /** Searches node in page tree structure.
  * @param pdf Pdf where to search.
- * @param superNode Node which to search.
- * @param node Node to be found.
- * @param startValue Position for first found node in this superNode.
+ * @param superNode Page tree node where to search (may be intermediate or leaf).
+ * @param node Node to search for.
+ * @param startValue Position of the superNode.
  * @param cache Cache for reference to page count mapping.
  *
  * At first checks if node and superNode are same nodes (uses == operator to
- * compare). Then tries to get node type (uses getNodeType helper function). 
+ * compare) and if so, returns startPos. Otherwise tries to get node type 
+ * (uses getNodeType helper function). 
  * In Page case (LeafNode) returns with startValue if given nodes are same or 
- * 0 (page not found).
+ * 0 (page not found). This the end of recursion.
  * If it is intermediate node, goes through Kids array and recursively calls 
  * this method for each element until recursion returns with non 0 result.
  * This means the end of recursion. startValue is actualized for each Kid's
- * element (Page element increases 1, Pages number of direct pages under node -
- * value of getKidsCount for internode).
+ * element with 0 recursion return value (Leaf node element increases by 1, 
+ * intermediate node element by getKidsCount value).
  * <br>
  * If node is found as direct Kids member (this means that reference of target 
  * node is direct member of Kids array), then determines if the node position 
@@ -828,10 +850,10 @@ boost::shared_ptr<CDict> findPageDict(
  * Also doesn't use Count and Parent fields information during searching.
  * <br>
  * Uses getKidsCount function internally to get intermediate leaf nodes count. 
- * This method reqieres also cache parameter which stores already known nodes 
- * to their counts mapping. This function just delegates given cache parameter 
- * to getPageCount and doesn't care for it much more. Note that if parameter is
- * NULL, cache is not used.
+ * getKidsCount method requieres also cache parameter which stores already known 
+ * nodes to their counts mapping. This function just delegates given cache 
+ * parameter to getPageCount and doesn't care for it much more. Note that if 
+ * parameter is NULL, cache is not used.
  *
  * @throw AmbiguousPageTreeException if page tree is ambiguous and node position
  * can't be determined.
@@ -877,8 +899,8 @@ size_t searchTreeNode(
 	// until first returns successfully
 	ChildrenStorage children;
 	ChildrenStorage::iterator i;
-	getKidsFromInterNode(superNode, children);
 	size_t index=0;
+	getKidsFromInterNode(superNode, children);
 	for(i=children.begin(); i!=children.end(); i++, index++)
 	{
 		shared_ptr<IProperty> child=*i;
@@ -899,7 +921,8 @@ size_t searchTreeNode(
 			continue;
 		}
 
-		// dereference target dictionary
+		// dereference target dictionary - never throws, because we have checked
+		// node type
 		shared_ptr<CDict> elementDict_ptr=getCObjectFromRef<CDict, pDict>(child);
 	
 		// compares elementDict_ptr (kid) with node, if they are same, returns
@@ -917,23 +940,27 @@ size_t searchTreeNode(
 		// node is not under elementDict_ptr node so updates startValue
 		// according skipped page count (page is 1 and intermediate node the
 		// number of direct pages under it)
-		PageTreeNodeType childType=getNodeType(elementDict_ptr);
-		if(childType==LeafNode)
-		{
-			// this was not correct one startValue is increased
-			startValue++;
-			continue;
-		}
-		if(childType==InterNode)
-		{
-			startValue+=getKidsCount(elementDict_ptr, cache);
-			continue;
-		}
-		
-		assert(!"Never can get here. Possibly bug!!!");
+		startValue+=getKidsCount(elementDict_ptr, cache);
 	}
 
-	// TODO ambiguous check
+	// checks for reference to same node in children from (i, children.end())
+	if(i!=children.end())
+	{
+		// i points to last checked element, so starts checking from next
+		// position
+		i++;index++;
+		IndiRef nodeRef=node->getIndiRef();
+		for(;i!=children.end(); i++, index++)
+		{
+			shared_ptr<IProperty> child=*i;
+			if(child->getIndiRef()==nodeRef)
+			{
+				utilsPrintDbg(DBG_WARN, "Internode "<<superNode->getIndiRef()<<" is ambiguous. Kids["<<index<<"] duplicates reference to node.");
+				throw AmbiguousPageTreeException();
+			}
+		}
+	}
+	
 	return position;
 }
 
@@ -963,7 +990,7 @@ size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node, PageTreeNod
 		throw ElementBadTypeException("node");
 	}
 	shared_ptr<CDict> nodeDict_ptr;
-	if(nodeType==pRef)
+	if(isRef(node))
 		nodeDict_ptr=getCObjectFromRef<CDict, pDict>(node);
 	else
 		nodeDict_ptr=IProperty::getSmartCObjectPtr<CDict>(node);
@@ -988,61 +1015,79 @@ using namespace utils;
 		return false;
 	}
 	
-	// gets reference of parent
-	IndiRef directParent=getRefFromDict("Parent", child);
+	// gets parent property
+	shared_ptr<IProperty> parentProp=child->getProperty("Parent");
+	if(!isRef(parentProp))
+	{
+		// parent is incorect
+		return false;
+	}
 
-	// we have direct parent reference
-	// if it is same as given parent, we are done and return true
-	if(parent==directParent)
+	// compares Parent property value with given parent reference. If they are
+	// same, we are done and node child node is real parent child - same is true
+	// for all nodes in recursion (parent is transitive relation)
+	IndiRef parentRef=getValueFromSimple<CRef, pRef, CRef::Value>(parentProp);
+	if(parent==parentRef)
 		return true;
 
-	// parent may be somewhere higher in the page tree
-	// Gets direct parent indirect object from given pdf and checks its type
-	// if it is NOT dictionary - we have malformed pdf - exception is thrown
-	// otherwise starts recursion with direct parent dictionary
-	shared_ptr<IProperty> directParent_ptr=pdf.getIndirectProperty(directParent);
-	if(!isDict(directParent_ptr))
-		throw MalformedFormatExeption("Page node parent field doesn't point to dictionary");
-	return isDescendant(pdf, parent, IProperty::getSmartCObjectPtr<CDict>(directParent_ptr));
+	// referencies are not same, so gets parent dictionary and checks its parent
+	try
+	{
+		shared_ptr<CDict> parentDict=getCObjectFromRef<CDict, pDict>(parentProp);
+		return isDescendant(pdf, parent, parentDict);
+	}catch(CObjectException & e)
+	{
+		// parent indirect object is not valid
+		return false;
+	}
 }
 
 bool isEncrypted(CPdf & pdf, string * filterName)
 {
 	utilsPrintDbg(DBG_DBG, "");
 
-	// gets trailer dictionary and Encrypt entry
+	// gets trailer dictionary and checks Encrypt entry
 	shared_ptr<const CDict> trailer=pdf.getTrailer();
-	try
+	if(! trailer->containsProperty("Encrypt"))
 	{
-		shared_ptr<IProperty> encryptProp=trailer->getProperty("Encrypt");
-		if(isRef(*encryptProp))
+		utilsPrintDbg(DBG_DBG, "Document content is not encrypted.");
+		return false;
+	}
+	
+	// Encrypt entry found
+	shared_ptr<IProperty> encryptProp=trailer->getProperty("Encrypt");
+	shared_ptr<CDict> encryptDict;
+	if(isRef(*encryptProp))
+	{
+		IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(encryptProp);
+		utilsPrintDbg(DBG_DBG, "Encrypt is reference. "<<ref);
+		try
 		{
-			IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(encryptProp);
-			utilsPrintDbg(DBG_DBG, "Encrypt is reference. "<<ref);
-			encryptProp.reset();
-			encryptProp=pdf.getIndirectProperty(ref);
+			encryptDict=getCObjectFromRef<CDict, pDict>(encryptProp);
+		}catch(CObjectException & e)
+		{
+			utilsPrintDbg(DBG_WARN, ref<<" doesn't refere to dictionary.");
 		}
+	}else
 		if(isDict(*encryptProp))
-		{
-			shared_ptr<CDict> encryptDict=IProperty::getSmartCObjectPtr<CDict>(encryptProp);
-			utilsPrintDbg(DBG_INFO, "Document content contains Encrypt dictionary.");
-			// if filterName parameter is non NULL, set its value to encryption
-			// algorithm 
-			if(filterName)
-			{
-				shared_ptr<IProperty> filter=encryptDict->getProperty("Filter");
-				filter->getStringRepresentation(*filterName);
-				utilsPrintDbg(DBG_DBG, "Encrypt uses "<<filterName<<" filter method.");
-			}
-			return true;
-		}else
-			utilsPrintDbg(DBG_WARN, "Encrypt entry found in trailer but it is not a dictionary.");
-	}catch(ElementNotFoundException & e)
+			encryptDict=IProperty::getSmartCObjectPtr<CDict>(encryptProp);
+
+	// checks whether encryptDict is intialized and if so, document is encrypted
+	if(encryptDict.get())
 	{
-		// no Encrypt entry
+		utilsPrintDbg(DBG_INFO, "Document content contains Encrypt dictionary.");
+		// if filterName parameter is non NULL, set its value to encryption
+		// algorithm 
+		if(filterName && encryptDict->containsProperty("Filter"))
+		{
+			shared_ptr<IProperty> filter=encryptDict->getProperty("Filter");
+			filter->getStringRepresentation(*filterName);
+			utilsPrintDbg(DBG_DBG, "Encrypt uses "<<filterName<<" filter method.");
+		}
+		return true;
 	}
 
-	utilsPrintDbg(DBG_DBG, "Document content is not encrypted.");
+	utilsPrintDbg(DBG_WARN, "Encrypt entry found in trailer but it is not a dictionary.");
 	return false;
 }
 
@@ -1241,6 +1286,11 @@ using namespace debug;
 using namespace observer;
 
 	shared_ptr<IProperty> oldValue;
+	if(!context)
+	{
+		kernelPrintDbg(DBG_WARN, "No context available. Ignoring calling.");
+		return;
+	}
 	kernelPrintDbg(DBG_DBG, "context type="<<context->getType());
 	// initializes oldValue from context
 	switch(context->getType())
@@ -1330,7 +1380,7 @@ using namespace observer;
 		kernelPrintDbg(DBG_WARN, "Pages property is not reference. type="<<newValue->getType());
 		return;
 	}
-	IndiRef newValueRef=utils::getValueFromSimple<CRef, pRef, IndiRef>(newValue);
+	IndiRef newValueRef=utils::getValueFromSimple<CRef, pRef, CRef::Value>(newValue);
 	shared_ptr<IProperty> newValueProp=pdf->getIndirectProperty(newValueRef);
 	if(!isDict(newValueProp))
 	{
@@ -1354,6 +1404,11 @@ using namespace debug;
 using namespace boost;
 using namespace observer;
 
+	if(!context)
+	{
+		kernelPrintDbg(DBG_WARN, "No context available. Ignoring calling.");
+		return;
+	}
 	shared_ptr<IProperty> oldValue;
 	ChildrenStorage oldValues, newValues;
 	kernelPrintDbg(DBG_DBG, "context type="<<context->getType());
@@ -1424,7 +1479,7 @@ using namespace observer;
 		kernelPrintDbg(DBG_DBG, "oldValues collected. size="<<oldValues.size());
 	}catch (CObjectException & e)
 	{
-		IndiRef ref=utils::getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+		IndiRef ref=utils::getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
 		kernelPrintDbg(DBG_WARN, "oldValue "<<ref<<" doesn't refer to array.");
 	}
 
@@ -1449,7 +1504,7 @@ using namespace observer;
 		kernelPrintDbg(DBG_DBG, "newValues collected. size="<<newValues.size());
 	}catch (CObjectException & e)
 	{
-		IndiRef ref=utils::getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+		IndiRef ref=utils::getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
 		kernelPrintDbg(DBG_WARN, "newValue "<<ref<<" doesn't refer to array.");
 	}
 
@@ -1509,6 +1564,11 @@ using namespace boost;
 using namespace debug;
 using namespace utils;
 
+	if(!context)
+	{
+		kernelPrintDbg(DBG_WARN, "No context available. Ignoring calling.");
+		return;
+	}
 	ChangeContextType contextType=context->getType();
 	kernelPrintDbg(DBG_DBG, "contextType="<<contextType);
 	// gets original value from given context. It has to at least
@@ -1634,7 +1694,7 @@ using namespace utils;
 	// in consolidatePageList
 	if(isRef(oldValue))
 	{
-		IndiRef oldRef=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+		IndiRef oldRef=getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
 		kernelPrintDbg(DBG_DBG, "discarding leaf count cache for "<<oldRef<<" subtree");
 		discardKidsCountCache(oldRef, *pdf, pdf->nodeCountCache, true);
 	}
@@ -1651,6 +1711,35 @@ using namespace utils;
 	// Clean up part:
 	// =============
 	
+	// unregisters all page tree observers befor docCatalog invalidation
+	kernelPrintDbg(DBG_DBG, "Unregistering all observers for page tree");
+	docCatalog->unregisterObserver(pageTreeRootObserver);
+	if(docCatalog->containsProperty("Pages"))
+	{
+		shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
+		if(isRef(pagesProp))
+		{
+			pagesProp->unregisterObserver(pageTreeRootObserver);
+			shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*this);
+			if(pageTreeRoot.get())
+				unregisterPageTreeObservers(pageTreeRoot);
+		}
+
+	}
+
+	// cleans up and invalidates all returned pages
+	if(pageList.size())
+	{
+		kernelPrintDbg(DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
+		PageList::iterator i;
+		for(i=pageList.begin(); i!=pageList.end(); i++)
+		{
+			kernelPrintDbg(DBG_DBG, "invalidating page at pos="<<i->first);
+			i->second->invalidate();
+		}
+		pageList.clear();
+	}
+
 	// cleans up indirect mapping
 	if(indMap.size())
 	{
@@ -1665,19 +1754,6 @@ using namespace utils;
 		}
 		kernelPrintDbg(DBG_INFO, "Cleaning up indirect mapping with "<<indMap.size()<<" elements");
 		indMap.clear();
-	}
-
-	// cleans up and invalidates all returned pages
-	if(pageList.size())
-	{
-		kernelPrintDbg(DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
-		PageList::iterator i;
-		for(i=pageList.begin(); i!=pageList.end(); i++)
-		{
-			kernelPrintDbg(DBG_DBG, "invalidating page at pos="<<i->first);
-			i->second->invalidate();
-		}
-		pageList.clear();
 	}
 
 	// invalidates pageCount
@@ -1813,6 +1889,7 @@ using namespace debug;
 	// mapping doesn't exist yet, so tries to create one
 	// fetches object according reference
 	Object obj;
+	assert(xref);
 	xref->fetch(ref.num, ref.gen, &obj);
 	
 	boost::shared_ptr<IProperty> prop_ptr;
@@ -1860,6 +1937,7 @@ using namespace utils;
 	::Object * obj=ip->_makeXpdfObject();
 	ip->setPdf(original);
 	kernelPrintDbg(DBG_DBG, "Initializating object with type="<<obj->getType()<<" to reserved reference "<<ref);
+	assert(xref);
 	xref->changeObject(ref.num, ref.gen, obj);
 
 	// xpdf object has to be deallocated
@@ -1972,7 +2050,7 @@ using namespace utils;
 			// checks if this reference has already been considered to prevent
 			// endless loops for cyclic structures
 			ResolvedRefStorage::iterator i;
-			IndiRef ipRef=getValueFromSimple<CRef, pRef, IndiRef>(ip);
+			IndiRef ipRef=getValueFromSimple<CRef, pRef, CRef::Value>(ip);
 			for(i=container.begin(); i!=container.end(); i++)
 			{
 				IndiRef elem=i->first;
@@ -2185,7 +2263,8 @@ using namespace std;
 	}catch(exception &e)
 	{
 		kernelPrintDbg(DBG_CRIT, "Pdf instance creation failed. cause="<<e.what());
-		throw PdfOpenException("CPdf failed. reason=");
+		string what=string("CPdf open failed. reason=")+e.what();
+		throw PdfOpenException(what);
 	}
 }
 
@@ -2381,7 +2460,7 @@ using namespace utils;
 
 				// gets reference of oldValue - which is the root of removed
 				// subtree
-				IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+				IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
 				
 				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
 				{
@@ -2396,6 +2475,8 @@ using namespace utils;
 							minPos=pos;
 						
 						page->invalidate();
+						// NOTE: std::map keeps iterators following iterators 
+						// valid after removing
 						pageList.erase(i);
 						kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
 
@@ -2408,7 +2489,7 @@ using namespace utils;
 	}
 
 	// oldValue subtree (if any) is consolidated now
-	kernelPrintDbg(DBG_DBG, "All page dictionaries from oldValue subtree removed");
+	kernelPrintDbg(DBG_DBG, "All page dictionaries from oldValue subtree removed. count="<<-difference);
 
 	// number of added pages by newValue tree
 	int pagesCount=0;
@@ -2500,8 +2581,7 @@ using namespace utils;
 			{
 				kernelPrintDbg(DBG_WARN, "page with original position="<<i->first<<" is ambiguous. Invalidating.");
 				// page position is ambiguous and so it has to be invalidate
-				//TODO uncoment when method is ready
-				//i->second->invalidate();
+				i->second->invalidate();
 			}
 		}
 		return;
@@ -2578,7 +2658,7 @@ using namespace utils;
 		}else
 		{
 			// checks value
-			size_t currCount=getValueFromSimple<CInt, pInt, size_t>(countInt);
+			size_t currCount=getValueFromSimple<CInt, pInt, CInt::Value>(countInt);
 			if(currCount!=count)
 			{
 				kernelPrintDbg(DBG_DBG, "Count value is changed from "<<currCount<<" to "<<count);
@@ -2655,7 +2735,7 @@ using namespace utils;
 			}else
 			{
 				// checks value
-				IndiRef currParentRef=getValueFromSimple<CRef, pRef, IndiRef>(parentRef);
+				IndiRef currParentRef=getValueFromSimple<CRef, pRef, CRef::Value>(parentRef);
 				if(!(currParentRef==interNodeRef))
 				{
 					kernelPrintDbg(DBG_DBG, "Parent value is changed from "<<currParentRef<<" to "<<interNodeRef);
@@ -2750,7 +2830,7 @@ using namespace utils;
 	if(!interNode_ptr.get())
 	{
 		// Root of page dictionary doesn't exist
-		// TODO handle
+		throw NoPageRootException();
 	}
 	if(count)
 	{
