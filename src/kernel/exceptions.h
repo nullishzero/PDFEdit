@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/06/16 18:23:25  hockm0bm
+ * NoPageRootException added
+ *
  * Revision 1.22  2006/05/30 14:59:28  misuj1am
  *
  * -- iterator change, most(NOT ALL) exceptions handled during stream parsing
@@ -83,6 +86,7 @@ class PdfOpenException;
 class MalformedFormatExeption;
 class PageNotFoundException;
 class ReadOnlyDocumentException;
+class NoPageRootException;
 
 class NotImplementedException;
 class IndirectObjectNotFoundException;
@@ -165,6 +169,28 @@ public:
 	virtual const char * what()const throw()
 	{
 		return "No more indirect reference available";
+	}
+};
+
+/** No page tree root dictionary exception.
+ *
+ * Exception is thrown if someone is tries to insert new page to document which
+ * doesn't contain any page tree root dictionary.
+ */
+class NoPageRootException: public PdfException
+{
+public:
+	/** Exception constructor.
+	 */
+	NoPageRootException(){};
+
+	virtual ~NoPageRootException()throw()
+	{
+	}
+
+	virtual const char * what()const throw()
+	{
+		return "No page tree root found";
 	}
 };
 
