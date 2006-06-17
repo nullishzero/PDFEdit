@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.69  2006/06/17 15:04:48  misuj1am
+ *
+ * -- include rem/add
+ *
  * Revision 1.68  2006/06/16 18:24:10  hockm0bm
  * * code cleanup
  * * doc update
@@ -260,9 +264,7 @@
 #include <errno.h>
 #include "static.h"
 
-#include "iproperty.h"
 #include "cobject.h"
-#include "cobjecthelpers.h"
 #include "cpdf.h"
 #include "factories.h"
 #include "utils/debug.h"

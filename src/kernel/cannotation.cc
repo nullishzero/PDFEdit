@@ -4,6 +4,10 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.6  2006/06/17 15:04:48  misuj1am
+ *
+ * -- include rem/add
+ *
  * Revision 1.5  2006/06/05 08:57:32  hockm0bm
  * refactoring CObjectSimple
  *         - getPropertyValue -> getValue
@@ -56,7 +60,6 @@
 #include"cannotation.h"
 #include"debug.h"
 #include"factories.h"
-#include"cobjecthelpers.h"
 
 using namespace boost;
 using namespace std;

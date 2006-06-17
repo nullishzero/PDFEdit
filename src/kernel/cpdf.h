@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.68  2006/06/17 15:04:48  misuj1am
+ *
+ * -- include rem/add
+ *
  * Revision 1.67  2006/06/16 18:24:11  hockm0bm
  * * code cleanup
  * * doc update
@@ -313,10 +317,8 @@
 
 // mode controller
 #include "modecontroller.h"
-#include "iproperty.h"
 #include "cobject.h"
 #include "xrefwriter.h"
-#include "cobjecthelpers.h"
 
 // =============================================================================
 namespace pdfobjects {

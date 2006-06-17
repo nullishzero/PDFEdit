@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/06/17 15:04:48  misuj1am
+ *
+ * -- include rem/add
+ *
  * Revision 1.26  2006/05/30 17:29:34  hockm0bm
  * collectRevisions bug fixed
  *         - if pdf is linearized adds XRef::lastXRefPos to revisions,
@@ -133,6 +137,7 @@
  *
  */
 #include "xrefwriter.h"
+#include "cpdf.h"
 #include "cobject.h"
 
 using namespace debug;

@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2006/06/17 15:04:49  misuj1am
+ *
+ * -- include rem/add
+ *
  * Revision 1.28  2006/06/11 22:17:23  hockm0bm
  * TODOs
  *
@@ -1011,8 +1015,6 @@ public:
 
 	void Test()
 	{
-		MEM_CHECK;
-		
 		instancingTC();
 		// creates pdf instances for all files
 		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
@@ -1037,12 +1039,10 @@ public:
 			pdf->close();
 
 			delinearizatorTC(fileName);
-			MEM_CHECK;
 		}
 		revisionsTC();
 		printf("TEST_CPDF testig finished\n");
 
-		MEM_CHECK;
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCPdf);
