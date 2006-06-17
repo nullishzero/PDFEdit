@@ -51,7 +51,7 @@ HEADERS += cannotation.h
 
 SOURCES += cannotation.cc
 SOURCES += cxref.cc xrefwriter.cc streamwriter.cc
-SOURCES += iproperty.cc carray.h cdict.cc cstream.cc cobject.cc
+SOURCES += iproperty.cc carray.cc cdict.cc cstream.cc cobject.cc
 SOURCES += cobjecthelpers.cc ccontentstream.cc pdfoperators.cc pdfoperatorsiter.cc stateupdater.cc
 SOURCES += pdfwriter.cc
 SOURCES += cinlineimage.cc coutline.cc

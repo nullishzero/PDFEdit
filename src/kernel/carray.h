@@ -2,7 +2,6 @@
 /* 
  * =====================================================================================
  *        Filename:  carray.h
- *     Description:  Header file containing definition of IProperty and CArray classes.
  *         Created:  01/18/2006 
  *          Author:  jmisutka (06/01/19), 
  *
