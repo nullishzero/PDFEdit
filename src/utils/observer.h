@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/06/17 16:48:38  hockm0bm
+ * ObserverHandler::registerObserver bug fix
+ *         - obsever is pushed if find returns == end()
+ *
  * Revision 1.20  2006/06/17 15:40:07  misuj1am
  *
  * -- minor changes
@@ -530,7 +534,7 @@ public:
 		if (observer.get())
 		{
 			// ignores if it is already in the list
-			if(observers.find(observer)!=observers.end())
+			if(observers.find(observer)==observers.end())
 				observers.push(observer);
 		}
 		else
