@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/06/17 15:06:20  hockm0bm
+ * quick fix
+ *         - <std_queue.h> include replaced by <queue>
+ *
  * Revision 1.18  2006/06/17 13:15:29  hockm0bm
  * * PriorityList added
  * * PriorityComparator added
@@ -84,7 +88,7 @@
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
-#include <bits/stl_queue.h>
+#include <queue>
 
 //=============================================================================
 namespace observer
@@ -427,7 +431,9 @@ public:
 			T & elem=*i;
 			if(elem==value)
 			{
+				// removes iterator and consolidates underlying container
 				PriorityQueue::c.erase(i);	
+				std::make_heap(PriorityQueue::c.begin(), PriorityQueue::c.end(), PriorityQueue::comp);
 				return;
 			}
 		}
