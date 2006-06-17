@@ -417,7 +417,7 @@ CDict::doClone () const
 //
 //
 IProperty::ObserverContext* 
-CDict::_createContext (shared_ptr<IProperty>& changedIp, PropertyId id)
+CDict::_createContext (shared_ptr<IProperty> changedIp, PropertyId id)
 {
 	// Create the context
 	return new CDictComplexObserverContext (changedIp,id);

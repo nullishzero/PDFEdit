@@ -167,7 +167,7 @@ CArray::addProperty (const IProperty& newIp)
 // REMARK: because of the compiler, we can't put PropertyId here
 //
 shared_ptr<IProperty>
-CArray::addProperty (size_t position, const IProperty& newIp)
+CArray::addProperty (PropertyId position, const IProperty& newIp)
 {
 	//kernelPrintDbg (debug::DBG_DBG,"addProperty(" << position << ")");
 
@@ -358,7 +358,7 @@ CArray::doClone () const
 //
 //
 IProperty::ObserverContext* 
-CArray::_createContext (shared_ptr<IProperty>& changedIp, PropertyId id)
+CArray::_createContext (shared_ptr<IProperty> changedIp, PropertyId id)
 {
 	//kernelPrintDbg (debug::DBG_DBG, "");
 

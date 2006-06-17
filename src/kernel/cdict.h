@@ -317,7 +317,7 @@ private:
 	 * 
 	 * @return Context in which a change occured.
 	 */
-	ObserverContext* _createContext (boost::shared_ptr<IProperty>& changedIp, PropertyId id);
+	ObserverContext* _createContext (boost::shared_ptr<IProperty> changedIp, PropertyId id);
 
 	/**
 	 * Indicate that the object has changed.

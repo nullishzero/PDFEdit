@@ -221,7 +221,7 @@ public:
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
 
 	/** \copydoc addProperty */
-	boost::shared_ptr<IProperty> addProperty (size_t position, const IProperty& newIp);
+	boost::shared_ptr<IProperty> addProperty (PropertyId position, const IProperty& newIp);
 	
 	
 	/**
@@ -286,7 +286,7 @@ private:
 	 * 
 	 * @return Context in which a change occured.
 	 */
-	ObserverContext* _createContext (boost::shared_ptr<IProperty>& changedIp, PropertyId id);
+	ObserverContext* _createContext (boost::shared_ptr<IProperty> changedIp, PropertyId id);
 
 	/**
 	 * Indicate that the object has changed.
