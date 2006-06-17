@@ -222,12 +222,8 @@ CDict::addProperty (const string& propertyName, const IProperty& newIp)
 		assert (hasValidRef (this));
 		
 		// notify observers and dispatch change
-		_objectChanged (newIpClone,
-					shared_ptr<ObserverContext> 
-						(new CDictComplexObserverContext 
-						 	(shared_ptr<IProperty> (new CNull ()), propertyName)
-						)
-					);
+		shared_ptr<ObserverContext> context (_createContext(shared_ptr<IProperty>(new CNull ()), propertyName));
+		_objectChanged (newIpClone, context);
 	}
 
 	// Set mode only if pdf is valid

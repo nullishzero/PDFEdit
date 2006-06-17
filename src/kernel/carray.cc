@@ -200,12 +200,8 @@ CArray::addProperty (size_t position, const IProperty& newIp)
 		assert (hasValidRef (this));
 		
 		// Notify observers and dispatch change
-		_objectChanged (newIpClone, 
-					shared_ptr<ObserverContext>
-						(new CArrayComplexObserverContext 
-						 	(shared_ptr<IProperty> (new CNull ()),position)
-						)
-				   );
+		shared_ptr<ObserverContext> context (_createContext(shared_ptr<IProperty>(new CNull ()), position));
+		_objectChanged (newIpClone, context);
 	}
 	
 	// Set mode only if pdf is valid
