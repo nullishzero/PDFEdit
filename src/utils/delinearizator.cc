@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/06/17 16:02:35  hockm0bm
+ * kernel/xrefwriter.cc added (to be able to find checkLinearized helper function)
+ *
  * Revision 1.3  2006/05/31 21:43:55  hockm0bm
  * gcc
  *
@@ -24,6 +27,7 @@
 #include <errno.h>
 #include "delinearizator.h"
 #include "debug.h"
+#include "kernel/xrefwriter.h"
 #include "kernel/streamwriter.h"
 #include "kernel/factories.h"
 
