@@ -13,9 +13,6 @@
 // static includes
 #include "static.h"
 
-// DEBUG output needs it
-#include "iproperty.h"
-
 //
 #include "cobject.h"
 

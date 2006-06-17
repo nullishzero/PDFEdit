@@ -2,7 +2,6 @@
 /*
  * =====================================================================================
  *        Filename:  cpage.cc
- *     Description:  Pdf page object implemetation.
  *         Created:  03/20/2006 11:41:43 AM CET
  *          Author:  jmisutka (), 
  * =====================================================================================
@@ -15,8 +14,10 @@
 #include "cpage.h"
 // CContenteStream
 #include "ccontentstream.h"
+//Cpdf
+#include "cpdf.h"
 // Helper functions
-#include "cobjecthelpers.h"
+#include "cobject.h"
 #include "factories.h"
 #include "observer.h"
 

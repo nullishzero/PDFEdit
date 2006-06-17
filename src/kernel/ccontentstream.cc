@@ -14,7 +14,6 @@
 //
 #include "pdfoperators.h"
 #include "stateupdater.h"
-#include "cobjecthelpers.h"
 #include "cobject.h"
 #include "factories.h"
 #include "cinlineimage.h"

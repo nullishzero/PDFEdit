@@ -1,7 +1,7 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /* 
  * =====================================================================================
- *        Filename:  cobject.h
+ *        Filename:  cstreamsxpdfreader.h
  *     Description:  Header file containing definition of IProperty and CObject classes.
  *         Created:  01/18/2006 
  *          Author:  jmisutka (06/01/19), 
@@ -15,7 +15,7 @@
 #include "static.h"
 #include "iproperty.h"
 // Filters
-#include "cobjectstream.h"
+#include "cstream.h"
 
 
 //=====================================================================================
