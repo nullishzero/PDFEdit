@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2006/06/17 18:35:24  hockm0bm
+ * observerHandlerTC added
+ *
  * Revision 1.2  2006/06/06 11:48:57  hockm0bm
  * * test configuration files added
  * * test case for OperatorHinter
@@ -21,6 +24,34 @@
 #include "../utils/confparser.h"
 #include "../modecontroller.h"
 #include "../operatorhinter.h"
+
+template<typename T=pdfobjects::IProperty>
+class Observer:public observer::IObserver<T>
+{
+public:
+	typedef typename observer::IObserver<T>::priority_t priority_t;
+
+	Observer(priority_t prio):priority(prio){};
+
+	virtual ~Observer()throw(){};
+
+	void notify(boost::shared_ptr<T> newValue, boost::shared_ptr<const observer::IChangeContext<T> > context)const throw()
+	{
+		counter=10*counter+priority;
+	}
+
+	priority_t getPriority()const throw()
+	{
+		return priority;
+	}
+
+	static int counter;
+
+private:
+	priority_t priority;
+};
+
+template<typename T> int Observer<T>::counter=0;
 
 class TestUtils: public CppUnit::TestFixture
 {
@@ -217,12 +248,82 @@ public:
 		return true;
 	}
 
+	bool observerHandlerTC()
+	{
+	using namespace observer;
+	using namespace std;
+	using namespace boost;
+
+		OUTPUT << __FUNCTION__ << endl;
+		ObserverHandler<int> observerHandler;
+		shared_ptr<IObserver<int> > observer1(new Observer<int>(1));
+		shared_ptr<IObserver<int> > observer2(new Observer<int>(2));
+		shared_ptr<IObserver<int> > observer3(new Observer<int>(3));
+		shared_ptr<IObserver<int> > observer4(new Observer<int>(4));
+		shared_ptr<IObserver<int> > observer5(new Observer<int>(5));
+		shared_ptr<IObserver<int> > observer6(new Observer<int>(6));
+		shared_ptr<IObserver<int> > observer7(new Observer<int>(7));
+		shared_ptr<IObserver<int> > observer8(new Observer<int>(8));
+
+		observerHandler.registerObserver(observer8);
+		observerHandler.registerObserver(observer7);
+		observerHandler.registerObserver(observer6);
+		observerHandler.registerObserver(observer5);
+		observerHandler.registerObserver(observer4);
+		observerHandler.registerObserver(observer3);
+		observerHandler.registerObserver(observer2);
+		observerHandler.registerObserver(observer1);
+
+		shared_ptr<int> newValue(new int(3));
+		shared_ptr<IChangeContext<int> > context;
+
+		observerHandler.notifyObservers(newValue, context);
+		OUTPUT << "TC01:\tnotifyObservers - correct order of notification test" << endl;
+		CPPUNIT_ASSERT(Observer<int>::counter==12345678);
+
+		OUTPUT << "TC02:\tregisterObserver & notifyObservers - correct position of new observer test" << endl;
+		shared_ptr<IObserver<int> > observer9(new Observer<int>(9));
+		observerHandler.registerObserver(observer9);
+		Observer<int>::counter=0;
+		observerHandler.notifyObservers(newValue, context);
+		CPPUNIT_ASSERT(Observer<int>::counter==123456789);
+		
+		OUTPUT << "TC03:\tunregisterObserver doesn't brake correct order of other observer" << endl;
+		// remove from from inside
+		observerHandler.unregisterObserver(observer2);
+		Observer<int>::counter=0;
+		observerHandler.notifyObservers(newValue, context);
+		CPPUNIT_ASSERT(Observer<int>::counter==13456789);
+		// remove from from head
+		observerHandler.unregisterObserver(observer1);
+		Observer<int>::counter=0;
+		observerHandler.notifyObservers(newValue, context);
+		CPPUNIT_ASSERT(Observer<int>::counter==3456789);
+		// remove from from tail
+		observerHandler.unregisterObserver(observer9);
+		Observer<int>::counter=0;
+		observerHandler.notifyObservers(newValue, context);
+		CPPUNIT_ASSERT(Observer<int>::counter==345678);
+
+		OUTPUT << "TC4:\tunregisterObserver fails if observer is not registered."<<endl;
+		try
+		{
+			observerHandler.unregisterObserver(observer1);
+			CPPUNIT_FAIL("unregisterObserver should have failed");
+		}catch(ObserverException & e)
+		{
+			// ok
+		}
+
+		return true;
+	}
+
 	void Test()
 	{
 		CPPUNIT_ASSERT(tokenizerTC());
 		CPPUNIT_ASSERT(modeControllerTC());
 		CPPUNIT_ASSERT(operatorHinterTC());
-
+		CPPUNIT_ASSERT(observerHandlerTC());
 	}
 };
 CPPUNIT_TEST_SUITE_REGISTRATION(TestUtils);
