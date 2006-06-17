@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/06/17 15:11:50  misuj1am
+ *
+ * -- observers updated
+ * -- changes due to cobjectcomplex division
+ *
  * Revision 1.24  2006/06/14 23:04:22  misuj1am
  *
  * -- minor fixes
@@ -114,11 +119,10 @@
 #define _TESTMAIN_H_
 
 #include "../static.h"
-#include "../iproperty.h"
 #include "../cobject.h"
+#include "../cpdf.h"
 #include "../cpage.h"
 #include "../pdfoperators.h"
-#include "../cobjecthelpers.h"
 #include "../coutline.h"
 #include "../exceptions.h"
 
@@ -158,12 +162,10 @@ extern FileList fileList;
 							else\
 							{SWAP_BUFS;}
 #define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
-#define MEM_CHECK	{debug::BasicMemChecker check;OUTPUT	<< "UNALLOCATED: " << check.getCount () \
-													<< " ALLOCATED: " << check.getMaxCount () << endl;}
 #define TEST(a)		OUTPUT << "\t//== " << (a) << "  " << flush;
 #define START_TEST	OUTPUT << endl << "Started testing..." << endl;
-#define END_TEST	OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK; MEM_CHECK;
-#define OK_TEST		OUTPUT << "\t...TEST PASSED..." << flush; MEM_CHECK;
+#define END_TEST	OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
+#define OK_TEST		OUTPUT << "\t...TEST PASSED...\n" << flush;
 //==========================
 
 // if set validation functions will output
@@ -185,13 +187,6 @@ IProperty*
 createSimpleObjFromXpdf (CPdf& pdf, Object& obj, IndiRef ref)
 {
 		return new CObjectSimple<T> (pdf, obj, ref);
-}
-
-template<PropertyType T>
-IProperty*
-createComplexObjFromXpdf (CPdf& pdf, Object& obj, IndiRef ref)
-{
-		return new CObjectComplex<T> (pdf,obj,ref);
 }
 
 inline ostream& 

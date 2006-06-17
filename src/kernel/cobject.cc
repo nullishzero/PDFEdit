@@ -15,6 +15,7 @@
 //
 #include "factories.h"
 #include "cobject.h"
+#include "cpdf.h"
 #include "cxref.h"
 
 
@@ -684,15 +685,15 @@ complexValueFromXpdfObj (IProperty& ip, Object& obj, T val)
 	rp (ip, obj, val);
 }
 
-template void complexValueFromXpdfObj<pArray,PropertyTraitComplex<pArray>::value&> 
+template void complexValueFromXpdfObj<pArray, CArray::Value&> 
 		(IProperty& ip, 
 		 Object& obj, 
-		 PropertyTraitComplex<pArray>::value& val);
+		 CArray::Value& val);
 
-template void complexValueFromXpdfObj<pDict, PropertyTraitComplex<pDict>::value&>
+template void complexValueFromXpdfObj<pDict, CDict::Value&>
 		(IProperty& ip, 
 		 Object& obj, 
-		 PropertyTraitComplex<pDict>::value& val);
+		 CDict::Value& val);
 
 
 //
@@ -1021,7 +1022,7 @@ template void simpleValueToString<pRef> (const IndiRef&, string& str);
 //
 template<>
 void
-complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str)
+complexValueToString<CArray> (const CArray::Value& val, string& str)
 {
 		utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
 		
@@ -1033,7 +1034,7 @@ complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, st
 		//
 		// Loop through all items and get each string and append it to the result
 		//
-		PropertyTraitComplex<pArray>::value::const_iterator it = val.begin();
+		CArray::Value::const_iterator it = val.begin();
 		for (; it != val.end(); ++it) 
 		{
 			str += CARRAY_MIDDLE;
@@ -1045,13 +1046,13 @@ complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, st
 		// end tag
 		str += CARRAY_SUFFIX;
 }
-template void complexValueToString<pArray> (const PropertyTraitComplex<pArray>::value& val, string& str);
+template void complexValueToString<CArray> (const CArray::Value& val, string& str);
 //
 //
 //
 template<>
 void
-complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str)
+complexValueToString<CDict> (const CDict::Value& val, string& str)
 {
 	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
 
@@ -1062,7 +1063,7 @@ complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, stri
 	// Loop through all items and get each items name + string representation
 	// and append it to the result
 	//
-	PropertyTraitComplex<pDict>::value::const_iterator it = val.begin ();
+	CDict::Value::const_iterator it = val.begin ();
 	for (; it != val.end(); ++it) 
 	{
 		str += CDICT_MIDDLE + (*it).first + CDICT_BETWEEN_NAMES;
@@ -1074,7 +1075,7 @@ complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, stri
 	// end tag
 	str += CDICT_SUFFIX;
 }
-template void complexValueToString<pDict> (const PropertyTraitComplex<pDict>::value& val, string& str);
+template void complexValueToString<CDict> (const CDict::Value& val, string& str);
 
 //
 //
@@ -1095,15 +1096,10 @@ void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, O
 	std::copy (CSTREAM_FOOTER.begin(), CSTREAM_FOOTER.end(), out);
 }
 // Explicit initialization
-template void streamToString<CStream::Buffer::const_iterator, char*> 
+template void streamToString<CStream::Buffer::const_iterator, std::back_insert_iterator<std::string> > 
 	(const std::string& strDict, 
 	 CStream::Buffer::const_iterator begin, 
 	 CStream::Buffer::const_iterator end,
-	char* out);
-template void streamToString<std::string::const_iterator, std::back_insert_iterator<std::string> > 
-	(const std::string& strDict, 
-	 std::string::const_iterator begin, 
-	 std::string::const_iterator end,
 	 std::back_insert_iterator<std::string> out);
 
 //

@@ -27,10 +27,9 @@ namespace pdfobjects {
 //
 // Protected constructor, called when we have parsed an object
 //
-template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
+template<PropertyType Tp>
+CObjectSimple<Tp>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf), value(Value())
 {
-	Checker check; check.objectCreated (this);
 	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(p,o,rf) constructor.");
 	
 	// Set object's value
@@ -41,10 +40,9 @@ CObjectSimple<Tp,Checker>::CObjectSimple (CPdf& p, Object& o, const IndiRef& rf)
 //
 // Protected constructor, called when we have parsed an object
 //
-template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::CObjectSimple (Object& o) : value(Value())
+template<PropertyType Tp>
+CObjectSimple<Tp>::CObjectSimple (Object& o) : value(Value())
 {
-	Checker check; check.objectCreated (this);
 	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(o) constructor.");
 	
 	// Set object's value
@@ -55,10 +53,9 @@ CObjectSimple<Tp,Checker>::CObjectSimple (Object& o) : value(Value())
 //
 // Public constructor
 //
-template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::CObjectSimple (const Value& val) : IProperty(), value(val)
+template<PropertyType Tp>
+CObjectSimple<Tp>::CObjectSimple (const Value& val) : IProperty(), value(val)
 {
-	Checker check; check.objectCreated (this);
 	//kernelPrintDbg (debug::DBG_DBG,"CObjectSimple <" << debug::getStringType<Tp>() << ">(val) constructor.");
 }
 
@@ -70,9 +67,9 @@ CObjectSimple<Tp,Checker>::CObjectSimple (const Value& val) : IProperty(), value
 //
 // Turn object to string
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 void 
-CObjectSimple<Tp,Checker>::getStringRepresentation (std::string& str) const
+CObjectSimple<Tp>::getStringRepresentation (std::string& str) const
 {
 	utils::simpleValueToString<Tp> (value, str);
 }
@@ -80,9 +77,9 @@ CObjectSimple<Tp,Checker>::getStringRepresentation (std::string& str) const
 //
 // Get the value of an property
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 void
-CObjectSimple<Tp,Checker>::getValue (Value& val) const
+CObjectSimple<Tp>::getValue (Value& val) const
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	val = value;
@@ -91,9 +88,9 @@ CObjectSimple<Tp,Checker>::getValue (Value& val) const
 //
 // Get the value of an property
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 typename PropertyTraitSimple<Tp>::value
-CObjectSimple<Tp,Checker>::getValue () const
+CObjectSimple<Tp>::getValue () const
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_writeValue_FUNCTION_FOR_pNULL_TYPE);
 	return value;
@@ -107,9 +104,9 @@ CObjectSimple<Tp,Checker>::getValue () const
 //
 // Set string representation
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 void
-CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
+CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
 {
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
 	//kernelPrintDbg (debug::DBG_DBG,"text:" << strO);
@@ -138,9 +135,9 @@ CObjectSimple<Tp,Checker>::setStringRepresentation (const std::string& strO)
 //
 // Write a value.
 // 
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 void
-CObjectSimple<Tp,Checker>::setValue (WriteType val)
+CObjectSimple<Tp>::setValue (WriteType val)
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_setValue_FUNCTION_FOR_pNULL_TYPE);
 	//kernelPrintDbg (debug::DBG_DBG, "setValue() type: " << Tp);
@@ -174,9 +171,9 @@ CObjectSimple<Tp,Checker>::setValue (WriteType val)
 //
 //
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 ::Object*
-CObjectSimple<Tp,Checker>::_makeXpdfObject () const
+CObjectSimple<Tp>::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
 	return utils::simpleValueToXpdfObj<Tp,const Value&> (value);
@@ -185,9 +182,9 @@ CObjectSimple<Tp,Checker>::_makeXpdfObject () const
 //
 //
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 void 
-CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverContext> context)
+CObjectSimple<Tp>::_objectChanged (boost::shared_ptr<const ObserverContext> context)
 {
 	kernelPrintDbg (debug::DBG_DBG, "CObjectSimple");
 	// Do not notify anything if we are not in a valid pdf
@@ -201,8 +198,8 @@ CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverConte
 	
 	if (context)
 	{
-		// Clone this new value
-		boost::shared_ptr<IProperty> newValue (this->clone());
+		// Return new value (mh wanted it this way)
+		boost::shared_ptr<IProperty> newValue (this, EmptyDeallocator<IProperty> ());
 		// Fill them with correct values
 		newValue->setPdf (this->getPdf());
 		newValue->setIndiRef (this->getIndiRef());
@@ -219,25 +216,15 @@ CObjectSimple<Tp,Checker>::_objectChanged (boost::shared_ptr<const ObserverConte
 //
 // Clone method
 //
-template<PropertyType Tp, typename Checker>
+template<PropertyType Tp>
 IProperty*
-CObjectSimple<Tp,Checker>::doClone () const
+CObjectSimple<Tp>::doClone () const
 {
 	kernelPrintDbg (debug::DBG_DBG,"CObjectSimple::doClone ()");
 
 	// Make new complex object
 	// NOTE: We do not want to preserve any IProperty variable
-	return new CObjectSimple<Tp,Checker> (value);
-}
-
-
-//
-// Destructor
-//
-template<PropertyType Tp, typename Checker>
-CObjectSimple<Tp,Checker>::~CObjectSimple ()
-{
-	Checker check; check.objectDeleted (this);
+	return new CObjectSimple<Tp> (value);
 }
 
 

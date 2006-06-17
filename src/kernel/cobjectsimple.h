@@ -21,13 +21,6 @@ namespace pdfobjects {
 //=====================================================================================
 
 		
-//
-// Forward declarations of memory checkers
-//
-class NoMemChecker;
-class BasicMemChecker;
-class CXRef;
-
 /**
  * CObjectSimple type trait.
  *
@@ -46,7 +39,7 @@ class CXRef;
  * Copying complex types could be very expensive so we have made this decision to
  * avoid it.
  *
- * \see CObjectComplex, CObjectStream
+ * \see CDict, CArray, CObjectStream
  */
 template<PropertyType T> struct PropertyTraitSimple; 
 template<> struct PropertyTraitSimple<pNull>
@@ -87,7 +80,6 @@ template<> struct PropertyTraitSimple<pRef>
  * Template class representing simple PDF objects from specification v1.5.
  *
  * This is a very generic class representing simple objects like null, string, number etc.
- * It does not have so many special functions as CObjectComplex.
  *
  * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
  * exists. It is because PropertyTraitSimple is not specialized for these types.
@@ -100,7 +92,7 @@ template<> struct PropertyTraitSimple<pRef>
  * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
  *
  */
-template <PropertyType Tp, typename Checker = debug::BasicMemChecker>
+template <PropertyType Tp>
 class CObjectSimple : noncopyable, public IProperty
 {
 public:
@@ -233,7 +225,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CObjectSimple ();
+	~CObjectSimple () {};
 	
 
 	//
