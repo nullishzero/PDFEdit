@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/06/17 17:40:57  hockm0bm
+ * * PriorityComparator
+ *         - functor behaves like less
+ * * PriorityList reimplemented
+ *         - doesn't inherit from priority_queue - implements sorting directly
+ *         - uses container with given type and sort function when element is
+ *           inserted and removed
+ *
  * Revision 1.21  2006/06/17 16:48:38  hockm0bm
  * ObserverHandler::registerObserver bug fix
  *         - obsever is pushed if find returns == end()
@@ -96,7 +104,7 @@
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
-#include <queue>
+#include <algorithm>
 
 //=============================================================================
 namespace observer
@@ -370,43 +378,61 @@ public:
 
 namespace {
 
-/** Simple wapper for priority_queue with enabled iteration.
+/** Priority comparator functor.
  *
- * Only purpose for this class is to provide us with iterable priority queue.
- * Implementation of STL priority_queue class doesn't enable elements itaration
- * but provide priority sorting functionality. As it has protected underlying
- * container, this class can access it and return iterators. Thi implementation
- * provide just const_iterator to protect from value changing and so discarding
- * priority queueing.
- * <br>
- * Template T parameter stands for stored element type, Storage is type of
- * underlying container type which is used by priority_queue superclass (see
- * priority_queue specification for requirements for underlying storage
- * container). Compare is functor for priority comparing (it is also used by 
- * priority_queue supertype).
+ * T template parameter stands for elements which priority should be compared.
+ * It has to provide getPriority method and has to be pointer compatible type
+ * (pointer or kind of smart pointer).
  */
-template<typename T, typename Storage=std::vector<T>, typename Compare=std::less<T> >
-class PriorityList: public std::priority_queue<T, Storage, Compare>
+template <typename T>
+struct PriorityComparator
 {
+	/** Comparator functor.
+	 * @param value1 Value to compare.
+	 * @param value2 Value to compare.
+	 * 
+	 * @return value1-&gt;getPriority() &lt; value2-&gt;getPriority()
+	 */
+	bool operator ()(const T & value1, const T & value2)const
+	{
+		return value1->getPriority() < value2->getPriority();
+	}
+};
+
+/** Storage with sorted elements according priority.
+ *
+ * Template T parameter stands for stored element type, Storage is type of
+ * underlying container type which is used for element storing - it has to
+ * provide push_back and erase methods, const_iterator and iterator types.
+ * Compare is 
+ * functor for priority comparing (it should conform stric weak ordering
+ * comparision).
+ * <br>
+ * Given T has to provide getPriority method.
+ */
+template<typename T, typename Storage=std::vector<T>, typename Compare=PriorityComparator<T> >
+class PriorityList
+{
+	Storage c;
+	Compare comp;
 public:
 	/** Type for constant iterator.
 	 */
 	typedef typename Storage::const_iterator const_iterator;
-	typedef typename std::priority_queue<T, Storage, Compare> PriorityQueue;
 
 	/** Returns iterator for first element in queue.
 	 * Iterator points to element with highest priority.
 	 */
 	const_iterator begin()const 
 	{
-		return PriorityQueue::c.begin();
+		return c.begin();
 	}
 
 	/** Returns iterator behind last element in queue.
 	 */
 	const_iterator end()const
 	{
-		return PriorityQueue::c.end();
+		return c.end();
 	}
 
 	/** Returns constant itetor to element with same value.
@@ -426,6 +452,17 @@ public:
 		return end();
 	}
 
+	/** Inserts new value to the storage.
+	 * @param value Value to insert.
+	 *
+	 * Inserts new element to the storage and sorts it by std::sort function.
+	 */
+	void insert(const T & value)
+	{
+		c.push_back(value);
+		sort(c.begin(), c.end(), comp);
+	}
+	
 	/** Removes given value from list.
 	 * @param value Value to remove.
 	 *
@@ -434,38 +471,17 @@ public:
 	 */
 	void erase(const T & value)
 	{
-		for(typename Storage::iterator i=PriorityQueue::c.begin(); i!=PriorityQueue::c.end(); i++)
+		for(typename Storage::iterator i=c.begin(); i!=c.end(); i++)
 		{
 			T & elem=*i;
 			if(elem==value)
 			{
-				// removes iterator and consolidates underlying container
-				PriorityQueue::c.erase(i);	
-				std::make_heap(PriorityQueue::c.begin(), PriorityQueue::c.end(), PriorityQueue::comp);
+				// removes iterator - removing from sorted container produces
+				// sorted container
+				c.erase(i);	
 				return;
 			}
 		}
-	}
-};
-
-/** Priority comparator functor.
- *
- * T template parameter stands for elements which priority should be compared.
- * It has to provide getPriority method and has to be pointer compatible type
- * (pointer or kind of smart pointer).
- */
-template <typename T>
-struct PriorityComparator
-{
-	/** Comparator functor.
-	 * @param value1 Value to compare.
-	 * @param value2 Value to compare.
-	 * 
-	 * @return value1-&gt;getPriority() &lt; value2-&gt;getPriority()
-	 */
-	bool operator ()(const T & value1, const T & value2)const
-	{
-		return value1->getPriority() < value2->getPriority();
 	}
 };
 
@@ -499,8 +515,10 @@ public:
 	 * Alias to PriorityList with shared_ptr&lt;Observer&gt; value type,
 	 * vector underlying container and PriorityComparator comparator.
 	 */
-	typedef PriorityList<Observer, std::vector<Observer>, PriorityComparator<Observer> > ObserverList;
+	typedef PriorityList<Observer> ObserverList;
 
+	/** Alias for ObserversContext without template parameter.
+	 */
 	typedef IChangeContext<T>  ObserverContext;
 
 	// FIXME remove - it shouldn't be here
@@ -535,7 +553,7 @@ public:
 		{
 			// ignores if it is already in the list
 			if(observers.find(observer)==observers.end())
-				observers.push(observer);
+				observers.insert(observer);
 		}
 		else
 			throw ObserverException ();
