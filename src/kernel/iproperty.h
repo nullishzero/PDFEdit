@@ -28,7 +28,7 @@ namespace pdfobjects {
 // 
 class CPdf;
 class IProperty;
-typedef observer::IObserverHandler<IProperty> IPropertyObserverSubject;
+typedef observer::ObserverHandler<IProperty> IPropertyObserverSubject;
 
 
 /** Enum describing property type. */

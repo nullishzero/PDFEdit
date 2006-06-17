@@ -29,7 +29,7 @@ namespace pdfobjects {
 //
 class IProperty;
 class CContentStream;	
-typedef observer::IObserverHandler<CContentStream> CContentStreamObserverSubject;
+typedef observer::ObserverHandler<CContentStream> CContentStreamObserverSubject;
 typedef observer::IObserver<IProperty> IIPropertyObserver;
 
 //==========================================================
@@ -84,6 +84,7 @@ public:
 	typedef std::list<boost::shared_ptr<PdfOperator> > Operators;
 	typedef std::list<boost::shared_ptr<CStream> > CStreams;
 	typedef PdfOperator::Iterator OperatorIterator;
+	typedef observer::BasicChangeContext<CContentStream> BasicObserverContext;
 	
 private:
 

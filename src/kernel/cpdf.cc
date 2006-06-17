@@ -3,6 +3,17 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.70  2006/06/17 18:34:52  hockm0bm
+ * Refactoring changes
+ *
+ * * IObserverHandler
+ *         -renamed to ObserverHandler - it is not interface
+ *         - BasicObserverContext, CDictComplexObserverContext,
+ *           CArrayComplexObserverContext removed - it doesn't have to know
+ *           anything about existing context types
+ * * CObjectSimple, CDict, CArray, CStream, CPage, CAnnotation, CContentStream
+ *         - each provides typedef with produced change context
+ *
  * Revision 1.69  2006/06/17 15:04:48  misuj1am
  *
  * -- include rem/add
@@ -1714,19 +1725,24 @@ using namespace utils;
 	// =============
 	
 	// unregisters all page tree observers befor docCatalog invalidation
+	// only if docCatalog is already initialized (not in first call from
+	// constructor
 	kernelPrintDbg(DBG_DBG, "Unregistering all observers for page tree");
-	docCatalog->unregisterObserver(pageTreeRootObserver);
-	if(docCatalog->containsProperty("Pages"))
+	if(docCatalog.get())
 	{
-		shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
-		if(isRef(pagesProp))
+		docCatalog->unregisterObserver(pageTreeRootObserver);
+		if(docCatalog->containsProperty("Pages"))
 		{
-			pagesProp->unregisterObserver(pageTreeRootObserver);
-			shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*this);
-			if(pageTreeRoot.get())
-				unregisterPageTreeObservers(pageTreeRoot);
-		}
+			shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
+			if(isRef(pagesProp))
+			{
+				pagesProp->unregisterObserver(pageTreeRootObserver);
+				shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*this);
+				if(pageTreeRoot.get())
+					unregisterPageTreeObservers(pageTreeRoot);
+			}
 
+		}
 	}
 
 	// cleans up and invalidates all returned pages

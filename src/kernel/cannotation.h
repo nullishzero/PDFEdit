@@ -4,6 +4,17 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.7  2006/06/17 18:34:53  hockm0bm
+ * Refactoring changes
+ *
+ * * IObserverHandler
+ *         -renamed to ObserverHandler - it is not interface
+ *         - BasicObserverContext, CDictComplexObserverContext,
+ *           CArrayComplexObserverContext removed - it doesn't have to know
+ *           anything about existing context types
+ * * CObjectSimple, CDict, CArray, CStream, CPage, CAnnotation, CContentStream
+ *         - each provides typedef with produced change context
+ *
  * Revision 1.6  2006/06/03 20:08:18  hockm0bm
  * == operator added
  *
@@ -268,7 +279,7 @@ public:
  * Maintained dictionary is returned by getDictionary method. This can be used
  * to perform unsupported or unusual operations.
  */
-class CAnnotation: public observer::IObserverHandler<CAnnotation>
+class CAnnotation: public observer::ObserverHandler<CAnnotation>
 {
 	/** Private constructor.
 	 */
@@ -294,6 +305,9 @@ class CAnnotation: public observer::IObserverHandler<CAnnotation>
 	 */
 	bool valid;
 public:
+
+	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
+	
 	/** Annotation type enumeration.
 	 * List of all known types according pdf specification. See PDF
 	 * specification chapter 8.4.5. Annotation Types.

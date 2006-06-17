@@ -98,6 +98,7 @@ class CObjectSimple : noncopyable, public IProperty
 public:
 	typedef typename PropertyTraitSimple<Tp>::writeType	 WriteType;
 	typedef typename PropertyTraitSimple<Tp>::value 	 Value;
+	typedef observer::BasicChangeContext<IProperty>		 BasicObserverContext;
 
 private:
 	/** Object's valuei holder. */

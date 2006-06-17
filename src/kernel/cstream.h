@@ -67,6 +67,7 @@ public:
 	template<typename T> friend class CStreamsXpdfReader;
 
 	typedef std::vector<filters::StreamChar> Buffer;
+	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
 
 protected:
 

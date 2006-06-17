@@ -3,6 +3,17 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/06/17 18:34:51  hockm0bm
+ * Refactoring changes
+ *
+ * * IObserverHandler
+ *         -renamed to ObserverHandler - it is not interface
+ *         - BasicObserverContext, CDictComplexObserverContext,
+ *           CArrayComplexObserverContext removed - it doesn't have to know
+ *           anything about existing context types
+ * * CObjectSimple, CDict, CArray, CStream, CPage, CAnnotation, CContentStream
+ *         - each provides typedef with produced change context
+ *
  * Revision 1.22  2006/06/17 17:40:57  hockm0bm
  * * PriorityComparator
  *         - functor behaves like less
@@ -503,7 +514,7 @@ public:
  *
  */
 // FIXME rename to ObserverHandler
-template<typename T> class IObserverHandler
+template<typename T> class ObserverHandler
 {
 public:
 	/** Type for observer.
@@ -520,12 +531,6 @@ public:
 	/** Alias for ObserversContext without template parameter.
 	 */
 	typedef IChangeContext<T>  ObserverContext;
-
-	// FIXME remove - it shouldn't be here
-	typedef BasicChangeContext<T> 	BasicObserverContext;
-	typedef ComplexChangeContext<T,size_t>		CArrayComplexObserverContext;
-	typedef ComplexChangeContext<T,std::string>	CDictComplexObserverContext;
-
 protected:
 	/** List of registered observers.
 	 * It is iterable priority queue, so observers are ordered according their
@@ -537,7 +542,7 @@ protected:
 public:
 	/** Empty destructor.
 	 */
-	virtual ~IObserverHandler(){}
+	virtual ~ObserverHandler(){}
 	
 	/** Registers new observer.
 	 * @param observer Observer to register (if NULL, nothing is registered).

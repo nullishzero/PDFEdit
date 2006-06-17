@@ -65,6 +65,7 @@ public:
 	typedef std::list<std::pair<std::string, boost::shared_ptr<IProperty> > > Value; 
 	typedef const std::string& 			WriteType; 
 	typedef const std::string& 			PropertyId;
+	typedef observer::ComplexChangeContext<IProperty, PropertyId> CDictComplexObserverContext;
 
 private:
 	

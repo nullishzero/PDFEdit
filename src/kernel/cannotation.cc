@@ -4,6 +4,17 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.7  2006/06/17 18:34:53  hockm0bm
+ * Refactoring changes
+ *
+ * * IObserverHandler
+ *         -renamed to ObserverHandler - it is not interface
+ *         - BasicObserverContext, CDictComplexObserverContext,
+ *           CArrayComplexObserverContext removed - it doesn't have to know
+ *           anything about existing context types
+ * * CObjectSimple, CDict, CArray, CStream, CPage, CAnnotation, CContentStream
+ *         - each provides typedef with produced change context
+ *
  * Revision 1.6  2006/06/17 15:04:48  misuj1am
  *
  * -- include rem/add
@@ -281,7 +292,7 @@ using namespace utils;
 	// instance alive when shared_ptr tries to destroy its content.
 	// context is empty
 	shared_ptr<CAnnotation> current(this, EmptyDeallocator<CAnnotation>());
-	notifyObservers(current, shared_ptr<BasicObserverContext>());
+	notifyObservers(current, shared_ptr<observer::BasicChangeContext<CAnnotation> >());
 }
 
 CAnnotation::AnnotType CAnnotation::getType()const

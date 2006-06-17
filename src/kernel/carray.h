@@ -57,6 +57,7 @@ public:
 	typedef std::vector<boost::shared_ptr<IProperty> > Value; 
 	typedef const std::string&		 				 WriteType; 
 	typedef unsigned int	 						 PropertyId;
+	typedef observer::ComplexChangeContext<IProperty, PropertyId> CArrayComplexObserverContext;
 
 private:
 	

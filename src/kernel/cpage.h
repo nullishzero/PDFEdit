@@ -226,7 +226,7 @@ class CPage;
 //
 //
 //
-typedef observer::IObserverHandler<CPage> CPageObserverSubject;
+typedef observer::ObserverHandler<CPage> CPageObserverSubject;
 
 /**
  * This object represents one pdf page object. PDF page object is a dictionary
@@ -283,6 +283,11 @@ public:
 	/** type for annotation storage. */
 	typedef std::vector<boost::shared_ptr<CAnnotation> > AnnotStorage;
 
+	/** Type for page observer context.
+	 * TODO really this one?.
+	 */
+	typedef observer::BasicChangeContext<CPage> BasicObserverContext;
+
 private:
 
 	/** Pdf dictionary representing a page. */
@@ -327,6 +332,9 @@ private:
 		CPage* page;
 
 	public:
+		typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
+		typedef CDict::CDictComplexObserverContext ComplextObserverContext;
+			
 		/** Initialization constructor.
 		 * @param _page CPage instance.
 		 *

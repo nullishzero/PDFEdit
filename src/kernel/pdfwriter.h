@@ -4,6 +4,17 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/06/17 18:34:52  hockm0bm
+ * Refactoring changes
+ *
+ * * IObserverHandler
+ *         -renamed to ObserverHandler - it is not interface
+ *         - BasicObserverContext, CDictComplexObserverContext,
+ *           CArrayComplexObserverContext removed - it doesn't have to know
+ *           anything about existing context types
+ * * CObjectSimple, CDict, CArray, CStream, CPage, CAnnotation, CContentStream
+ *         - each provides typedef with produced change context
+ *
  * Revision 1.7  2006/06/05 22:28:29  hockm0bm
  * * IProgressBar interface added
  * * ProgressObserver implemented
@@ -170,7 +181,7 @@ public:
  * IProgressBar::start and IProgressBar::finish methods.
  * <br>
  * Instance should be created with IProgressBar implementator as constructor
- * parameter and registered to IObserverHandler which supports OperationStep
+ * parameter and registered to ObserverHandler which supports OperationStep
  * typed observers.
  */
 class ProgressObserver: public PdfWriterObserver
@@ -261,7 +272,7 @@ public:
  * Offset parameter can change default stream position. Default parameter value
  * is 0, current position is used.
  * <p>
- * Class implements IObserverHandler with OperationStep value keeper and so
+ * Class implements ObserverHandler with OperationStep value keeper and so
  * Observers can be registered on each instance. Observer notification is in
  * full control of implementator.
  *
@@ -269,7 +280,7 @@ public:
  * @see OperationScope
  * @see OperationStep
  */
-class IPdfWriter:public observer::IObserverHandler<OperationStep>
+class IPdfWriter:public observer::ObserverHandler<OperationStep>
 {
 public:
 	/** Type for ObjectList element. */

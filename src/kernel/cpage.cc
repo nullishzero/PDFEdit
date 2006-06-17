@@ -356,16 +356,18 @@ void CPage::AnnotsWatchDog::notify(
 		boost::shared_ptr<IProperty> newValue, 
 		boost::shared_ptr<const IProperty::ObserverContext> context) const throw()
 {
+using namespace debug;
 
 	kernelPrintDbg(debug::DBG_DBG, "");
-	
-	// if not basic context type, does notnig
-//	if(context->getType() != IProperty::BasicObserverContextType)
-//		return;
+	if(!context.get())
+	{
+		kernelPrintDbg(DBG_DBG, "No context information.");
+		return;
+	}
 	
 	// gets basic context shared_ptr
-	shared_ptr<const IProperty::BasicObserverContext> basicContext=
-		dynamic_pointer_cast<const IProperty::BasicObserverContext, const IProperty::ObserverContext>(context); 
+	shared_ptr<const BasicObserverContext> basicContext=
+		dynamic_pointer_cast<const BasicObserverContext, const IProperty::ObserverContext>(context); 
 
 	// gets original value
 	const shared_ptr<IProperty> oldValue=basicContext->getOriginalValue();
