@@ -3,6 +3,15 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/06/17 13:15:29  hockm0bm
+ * * PriorityList added
+ * * PriorityComparator added
+ * * IObserverHandler
+ *         - supports priorities - uses PriorityList storage
+ *         - registerObserver wih already registered obsever is ignored
+ *
+ * NEEDS testing
+ *
  * Revision 1.17  2006/06/15 15:56:00  jahom0bm
  * Fixed include
  *
@@ -75,6 +84,7 @@
 #include <algorithm>
 #include <boost/shared_ptr.hpp>
 #include <iostream>
+#include <bits/stl_queue.h>
 
 //=============================================================================
 namespace observer
@@ -346,24 +356,148 @@ public:
 	virtual ~IObserver ()throw() {};
 };
 
-/** Interface for notifiers.
+namespace {
+
+/** Simple wapper for priority_queue with enabled iteration.
  *
- * Each value keeper which wants to manage observers should implement this
- * interface. 
+ * Only purpose for this class is to provide us with iterable priority queue.
+ * Implementation of STL priority_queue class doesn't enable elements itaration
+ * but provide priority sorting functionality. As it has protected underlying
+ * container, this class can access it and return iterators. Thi implementation
+ * provide just const_iterator to protect from value changing and so discarding
+ * priority queueing.
  * <br>
- * Also provides basic implementation.
- * 
+ * Template T parameter stands for stored element type, Storage is type of
+ * underlying container type which is used by priority_queue superclass (see
+ * priority_queue specification for requirements for underlying storage
+ * container). Compare is functor for priority comparing (it is also used by 
+ * priority_queue supertype).
  */
+template<typename T, typename Storage=std::vector<T>, typename Compare=std::less<T> >
+class PriorityList: public std::priority_queue<T, Storage, Compare>
+{
+public:
+	/** Type for constant iterator.
+	 */
+	typedef typename Storage::const_iterator const_iterator;
+	typedef typename std::priority_queue<T, Storage, Compare> PriorityQueue;
+
+	/** Returns iterator for first element in queue.
+	 * Iterator points to element with highest priority.
+	 */
+	const_iterator begin()const 
+	{
+		return PriorityQueue::c.begin();
+	}
+
+	/** Returns iterator behind last element in queue.
+	 */
+	const_iterator end()const
+	{
+		return PriorityQueue::c.end();
+	}
+
+	/** Returns constant itetor to element with same value.
+	 * @param value Value to find.
+	 *
+	 * @return const_iterator for given value.
+	 */
+	const_iterator find(const T & value)const
+	{
+		for(const_iterator i=begin(); i!=end(); i++)
+		{
+			const T & elem=*i;
+			if(elem==value)
+				return i;
+		}
+
+		return end();
+	}
+
+	/** Removes given value from list.
+	 * @param value Value to remove.
+	 *
+	 * Removes element from container and keeps priority ordering for other
+	 * elements.
+	 */
+	void erase(const T & value)
+	{
+		for(typename Storage::iterator i=PriorityQueue::c.begin(); i!=PriorityQueue::c.end(); i++)
+		{
+			T & elem=*i;
+			if(elem==value)
+			{
+				PriorityQueue::c.erase(i);	
+				return;
+			}
+		}
+	}
+};
+
+/** Priority comparator functor.
+ *
+ * T template parameter stands for elements which priority should be compared.
+ * It has to provide getPriority method and has to be pointer compatible type
+ * (pointer or kind of smart pointer).
+ */
+template <typename T>
+struct PriorityComparator
+{
+	/** Comparator functor.
+	 * @param value1 Value to compare.
+	 * @param value2 Value to compare.
+	 * 
+	 * @return value1-&gt;getPriority() &lt; value2-&gt;getPriority()
+	 */
+	bool operator ()(const T & value1, const T & value2)const
+	{
+		return value1->getPriority() < value2->getPriority();
+	}
+};
+
+} // annonymous namespace for priority list and related
+
+/** Base class for all notifiers.
+ *
+ * Each class which want to support observers should inherit from this class. It
+ * provides basic implementation for registering, unregistering and notification
+ * of observers.
+ * Whenever change occures, subclass is responsible to call notifyObservers
+ * method and provide it with correct parameters. Rest is done by superclass.
+ * <br>
+ * T template parameter stands for value type which is observed (same as used
+ * for IObserver template type). Observers are IObserver with T type wrapped 
+ * by shared_ptr smart pointer.
+ * <br>
+ * This implementation supports priority ordering of observers.
+ *
+ */
+// FIXME rename to ObserverHandler
 template<typename T> class IObserverHandler
 {
 public:
-	typedef IObserver<T> 						Observer; 
-	typedef std::vector<boost::shared_ptr<const Observer> >	ObserverList;
-	typedef IChangeContext<T> 					ObserverContext;
-	typedef BasicChangeContext<T>				BasicObserverContext;
+	/** Type for observer.
+	 * Alias to IObserver with T type wrapped by shared_ptr smart pointer.
+	 */
+	typedef boost::shared_ptr<const IObserver<T> > Observer; 
+
+	/** Type for observer list.
+	 * Alias to PriorityList with shared_ptr&lt;Observer&gt; value type,
+	 * vector underlying container and PriorityComparator comparator.
+	 */
+	typedef PriorityList<Observer, std::vector<Observer>, PriorityComparator<Observer> > ObserverList;
+
+	typedef IChangeContext<T>  ObserverContext;
+
+	// FIXME remove - it shouldn't be here
+	typedef BasicChangeContext<T> 	BasicObserverContext;
 
 protected:
-	/** List of observers. */
+	/** List of registered observers.
+	 * It is iterable priority queue, so observers are ordered according their
+	 * priorities (higher priority closer to begin - NOTE that higher priority
+	 * means smaller priority value.
+	 */
 	ObserverList observers;
 	
 public:
@@ -374,45 +508,41 @@ public:
 	/** Registers new observer.
 	 * @param observer Observer to register (if NULL, nothing is registered).
 	 *
-	 * Adds given observer to the observer list which is (one by one) notified
-	 * about change when it occures.
-	 * <br>
-	 * Implementator should guarant that observers with higher priority (lower
-	 * priority numbers) should be noified sooner than lower priority ones.
-	 * Observers with same priotities should be notified in same ordered
-	 * accordind registration order.
-	 * <br>
-	 * Multiple calling with same observer should be ignored.
+	 * Adds given observer to observers list. Ignores if observer is already in
+	 * the list.
+	 *
+	 * @throw ObserverException if given observer is not valid (it is NULL).
 	 */
-	virtual void registerObserver(boost::shared_ptr<const Observer> observer)
+	virtual void registerObserver(const Observer & observer)
 	{
-		if (observer)
-			observers.push_back (observer);
-		else
+		if (observer.get())
 		{
-			assert (!"IProperty::registerObserver got invalid observer.");
-			throw ObserverException ();
+			// ignores if it is already in the list
+			if(observers.find(observer)!=observers.end())
+				observers.push(observer);
 		}
+		else
+			throw ObserverException ();
 
 	}
 
 	/** Unregisters given observer.
 	 * @param observer Observer to unregister.
 	 *
-	 * Given one is not used in next change.
+	 * Removes given observer from observers list. 
+	 *
+	 * @throw ObserverException if observer is not in observers list.
 	 */
-	virtual void unregisterObserver(boost::shared_ptr<const Observer> observer)
+	virtual void unregisterObserver(const Observer & observer)
 	{
-		if (observer)
+		if (observer.get())
 		{
-			typename ObserverList::iterator it = std::find (observers.begin(), observers.end(), observer);
+			typename ObserverList::const_iterator it = observers.find(observer);
+
 			if (it != observers.end ())
-				observers.erase (it);
+				observers.erase (observer);
 			else
-			{
-				//assert (!"unregisterObserver did not find the element to erase.");
 				throw ObserverException ();
-			}
 		
 		}else
 			throw ObserverException ();
@@ -421,13 +551,17 @@ public:
 	/**
 	 * Notify all observers about a change.
 	 *
+	 * Observers are notified in according their priorities. Higher priority
+	 * (smaller priority value) sooner it is called. Observers with same
+	 * priorities are called in unspecified order. 
+	 *
 	 * @param newValue Object with new value.
 	 * @param context Context in which the change has been made.
 	 */
 	virtual void notifyObservers (boost::shared_ptr<T> newValue, boost::shared_ptr<const ObserverContext> context)
 	{
-		typename ObserverList::iterator it = observers.begin ();
-		// TODO be aware of priorities
+		// obsrvers list is ordered by priorities, so iteration works correctly
+		typename ObserverList::const_iterator it = observers.begin ();
 		for (; it != observers.end(); ++it)
 			(*it)->notify (newValue, context);
 	}
