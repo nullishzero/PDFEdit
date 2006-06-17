@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/06/17 15:40:07  misuj1am
+ *
+ * -- minor changes
+ *
  * Revision 1.19  2006/06/17 15:06:20  hockm0bm
  * quick fix
  *         - <std_queue.h> include replaced by <queue>
@@ -497,6 +501,8 @@ public:
 
 	// FIXME remove - it shouldn't be here
 	typedef BasicChangeContext<T> 	BasicObserverContext;
+	typedef ComplexChangeContext<T,size_t>		CArrayComplexObserverContext;
+	typedef ComplexChangeContext<T,std::string>	CDictComplexObserverContext;
 
 protected:
 	/** List of registered observers.

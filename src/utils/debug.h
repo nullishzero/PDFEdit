@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2006/06/17 15:40:07  misuj1am
+ *
+ * -- minor changes
+ *
  * Revision 1.17  2006/06/10 16:10:46  misuj1am
  *
  * -- typo fixed
@@ -239,61 +243,6 @@ __print (std::ostream& out,const std::string& str)
 {
 	out << str;
 }
-
-
-//=====================================================================================
-//	Memory checker classes -- DEBUGGING PURPOSES
-//=====================================================================================
-
-/**
- * No memory checks done.
- */
-class NoMemChecker 
-{public: 
-	NoMemChecker () {};
-	void objectCreated () {};
-	void objectDeleted () {};
-};
-
-/**
- * After the end of a program, we can count how many objects have not been released. If zero left, we know 
- * that we do not have a memory leak.
- */
-class BasicMemChecker
-{
-private:
-	size_t& getMax () {static size_t mx; return mx;};
-	size_t& getAct () {static size_t act; return act;};
-
-public:
-	//
-	BasicMemChecker () {};
-
-	//
-	//
-	//
-	void objectCreated (void*)
-	{
-		++getMax ();
-		++getAct ();
-	};
-
-	//
-	//
-	//
-	void objectDeleted (void*)
-	{
-		--getAct();
-	};
-		
-	//
-	// Get living IProperty count
-	//
-	size_t getCount () {return getAct(); };
-	size_t getMaxCount () {return getMax(); };
-};
-
-
 
 
 // =============================================================================
