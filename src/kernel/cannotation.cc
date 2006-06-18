@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.8  2006/06/18 12:04:42  hockm0bm
+ * obsevers code clean up and consolidation
+ *
  * Revision 1.7  2006/06/17 18:34:53  hockm0bm
  * Refactoring changes
  *
@@ -292,7 +295,7 @@ using namespace utils;
 	// instance alive when shared_ptr tries to destroy its content.
 	// context is empty
 	shared_ptr<CAnnotation> current(this, EmptyDeallocator<CAnnotation>());
-	notifyObservers(current, shared_ptr<observer::BasicChangeContext<CAnnotation> >());
+	notifyObservers(current, shared_ptr<ChangeContext>());
 }
 
 CAnnotation::AnnotType CAnnotation::getType()const

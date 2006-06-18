@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/06/18 12:04:42  hockm0bm
+ * obsevers code clean up and consolidation
+ *
  * Revision 1.11  2006/06/13 20:44:14  hockm0bm
  * * ChangeContextType enum removed from class IChangeContext to observer namespace
  * * pdfwriter.cc synced with ChangeContextType change
@@ -99,8 +102,9 @@ void ProgressObserver::notify(boost::shared_ptr<OperationStep> newValue,
 using namespace boost;
 using namespace observer;
 
-	// if no progress visualizator is set, immediatelly returns
-	if(!progressBar)
+	// if no progress visualizator is set or no context is provided, 
+	// immediatelly returns
+	if(!progressBar || !context.get())
 		return;
 	
 	// gets current step and context - which has to have
@@ -111,8 +115,8 @@ using namespace observer;
 		printf("Unsupported context.\n");
 		return;
 	}
-	shared_ptr<const PdfWriterObserverContext> progressContext=
-		dynamic_pointer_cast<const PdfWriterObserverContext>(context);
+	shared_ptr<const IPdfWriter::ChangeContext> progressContext=
+		dynamic_pointer_cast<const IPdfWriter::ChangeContext>(context);
 	size_t total=progressContext->getScope()->total;
 	if(!started)
 	{
@@ -240,7 +244,7 @@ using namespace boost;
 	shared_ptr<OperationScope> scope(new OperationScope());
 	scope->total=objectList.size();
 	scope->task=CONTENT;
-	shared_ptr<PdfWriterObserverContext> context(new PdfWriterObserverContext(scope));
+	shared_ptr<ChangeContext> context(new ChangeContext(scope));
 
 	// prepares offTable
 	for(i=objectList.begin(); i!=objectList.end(); i++, index++)
@@ -373,7 +377,7 @@ using namespace boost;
 	shared_ptr<OperationScope> scope(new OperationScope());
 	scope->total=subSectionTable.size();
 	scope->task=TRAILER;
-	shared_ptr<PdfWriterObserverContext> context(new PdfWriterObserverContext(scope));
+	shared_ptr<ChangeContext> context(new ChangeContext(scope));
 
 	// writes all subsection
 	size_t index=1;

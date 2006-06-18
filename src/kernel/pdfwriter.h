@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/06/18 12:04:42  hockm0bm
+ * obsevers code clean up and consolidation
+ *
  * Revision 1.8  2006/06/17 18:34:52  hockm0bm
  * Refactoring changes
  *
@@ -125,15 +128,6 @@ struct OperationScope
 	 */
 	std::string task;
 };
-
-/** Type for pdf writer observer contenxt.
- *
- * This context hold OperationScope structure for change scope information. User
- * of this context should get scope information by getScope method and its total
- * field holds total number of operations that has to be perfomed. Observer gets
- * also current operation number which is enough for progress information.
- */
-typedef observer::ScopedChangeContext<OperationStep, OperationScope> PdfWriterObserverContext;
 
 /** Interface for progress visualizator.
  * Implementator should provide visual form of progress.
@@ -294,6 +288,16 @@ public:
 	 */
 	typedef std::vector<ObjectElement> ObjectList;
 
+	/** Type for pdf writer observer contenxt.
+	 *
+	 * This context holds OperationScope structure for change scope information. 
+	 * User of this context should get scope information by getScope method and 
+	 * its total field holds total number of operations that has to be perfomed. 
+	 * Observer gets also current operation number which is enough for progress 
+	 * information.
+	 */
+	typedef observer::ScopedChangeContext<OperationStep, OperationScope> ChangeContext; 
+
 	/** Context for previous section.
 	 * Contains information for proper linking with previous xref/trailer
 	 * section.
@@ -428,10 +432,10 @@ public:
 	 * First object is stored at specified position and all others are placed
 	 * immediately after.
 	 * <br>
-	 * Notifies all observers immediatelly after object has been written to the
+	 * Notifies all observers immediately after object has been written to the
 	 * stream. newValue parameter is number of written objects until now and
-	 * context (typed as ScopedChangeContext with OperationScope typed scope)
-	 * contains total number of object which should be written by this call.
+	 * context (typed as ChangeContext with OperationScope typed scope)
+	 * contains total number of objects which should be written by this call.
 	 * Context task field contains CONTENT string.
 	 */
 	virtual void writeContent(ObjectList & objectList, StreamWriter & stream, size_t off=0);

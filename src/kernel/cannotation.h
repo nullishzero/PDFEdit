@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.8  2006/06/18 12:04:42  hockm0bm
+ * obsevers code clean up and consolidation
+ *
  * Revision 1.7  2006/06/17 18:34:53  hockm0bm
  * Refactoring changes
  *
@@ -305,8 +308,10 @@ class CAnnotation: public observer::ObserverHandler<CAnnotation>
 	 */
 	bool valid;
 public:
-
-	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
+	/** Type for observer change context.
+	 * This class produces BasicChangeContext.
+	 */
+	typedef observer::BasicChangeContext<CAnnotation> ChangeContext;
 	
 	/** Annotation type enumeration.
 	 * List of all known types according pdf specification. See PDF
