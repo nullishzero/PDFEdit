@@ -302,7 +302,7 @@ private:
 	/** Keeps all annotations from this page.
 	 *
 	 * This structure is synchronized with page dictionary Annots field with
-	 * observer (TODO).
+	 * observer.
 	 */
 	AnnotStorage annotStorage;
 
@@ -323,9 +323,29 @@ public:
 	// Annotation observer
 	//
 private:
-	/** Observer implementation for annotation synchronization.
+
+	/** 
+	 * Consolidates annotStorage field according given change.
+	 * Works in two steps. First handles oldValue and second newValue. At first
+	 * checkes oldValue type and if it is reference, dereference indirect
+	 * objects and if it is annotation dictionary, it will invalidate 
+	 * associated CAnnotation and removes it from annotStorage. 
+	 * <br>
+	 * In second step, checks newValue type and if it is reference to
+	 * dictionary, it will create new CAnnotation instance and adds it to
+	 * annotStorage. 
+	 * 
+	 * @param oldValue Removed reference from annotStorage.
+	 * @param newValue Added reference to the annotStorage.
 	 */
-	class AnnotsWatchDog: public IIPropertyObserver
+	void consolidateAnnotsStorage(boost::shared_ptr<IProperty> & oldValue, boost::shared_ptr<IProperty> & newValue);
+	
+	/** Observer for Annots property.
+	 * This observer is registered on page dictionary. Any change which leads to
+	 * Annots property change is catched and handled here. Observer is
+	 * registered also directly on Annots property if it is reference.
+	 */
+	class AnnotsPropWatchDog: public IIPropertyObserver
 	{
 		/** Page owner of this observer.
 		 */
@@ -336,11 +356,11 @@ private:
 		typedef CDict::CDictComplexObserverContext ComplextObserverContext;
 			
 		/** Initialization constructor.
-		 * @param _page CPage instance.
-		 *
 		 * Sets page field according parameter.
+		 *
+		 * @param _page CPage instance.
 		 */
-		AnnotsWatchDog(CPage * _page):page(_page)
+		AnnotsPropWatchDog(CPage * _page):page(_page)
 		{
 			// given parameter must be non NULL
 			// this is used only internaly by CPage, so assert is enough for
@@ -350,13 +370,84 @@ private:
 
 		/** Empty destructor.
 		 */
-		virtual ~AnnotsWatchDog() throw(){}; 
+		virtual ~AnnotsPropWatchDog() throw(){}; 
 		
 		/** Observer handler.
+		 * 
+		 * In first step, checks given context type. BasicChangeContext means
+		 * change of Annots reference value. ComplexChangeContext means change
+		 * in page dictionary. In such case checks property id, which has
+		 * changed and if it is Annots, unregister obsevers from oldValue and
+		 * continues same way as if reference has changed. Otherwise
+		 * immediatelly returns because we need to handle just Annots property
+		 * change.
+		 * <br>
+		 * In second step, clears page's annotStorage and invalidates all
+		 * annotiotions. Finally collects all current annotation (uses
+		 * collectAnnotations CPage method).
+		 * 
 		 * @param newValue New value of changed property.
 		 * @param context Context of the change.
+		 */
+		virtual void notify (boost::shared_ptr<IProperty> newValue, 
+							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
+
+		/** Returns observer priority.
+		 */
+		virtual priority_t getPriority()const throw()
+		{
+			// TODO some constant
+			return 0;
+		}
+	};
+	
+	/** 
+	 * Observer for Annots array synchronization.
+	 * This observer is registered on Annots array property and all its
+	 * reference typed elements. It handles change in Annots array content -
+	 * this means either element is added, removed or replaced, or any of its
+	 * reference elements changes its value.
+	 */
+	class AnnotsArrayWatchDog: public IIPropertyObserver
+	{
+		/** Page owner of this observer.
+		 */
+		CPage* page;
+
+	public:
+		typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
+		typedef CDict::CDictComplexObserverContext ComplextObserverContext;
+			
+		/** Initialization constructor.
+		 * Sets page field according parameter.
 		 *
+		 * @param _page CPage instance.
+		 */
+		AnnotsArrayWatchDog(CPage * _page):page(_page)
+		{
+			// given parameter must be non NULL
+			// this is used only internaly by CPage, so assert is enough for
+			// checking
+			assert(_page);
+		}
+
+		/** Empty destructor.
+		 */
+		virtual ~AnnotsArrayWatchDog() throw(){}; 
+		
+		/** Observer handler.
+		 * 
+		 * Checks given context type. BasicChangeContext means that reference
+		 * of Annots array member has changed its value. ComplexChangeContext
+		 * means that Annots array element has changed. In such case unregisters
+		 * observers from oldValue and if newValue is refernce, registers
+		 * annotsArrayWatchDog to it.
+		 * <br>
+		 * Finally consolidates page's annotStorage (calls
+		 * CPage::consolidateAnnotsStorage).
 		 *
+		 * @param newValue New value of changed property.
+		 * @param context Context of the change.
 		 */
 		virtual void notify (boost::shared_ptr<IProperty> newValue, 
 							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
@@ -370,18 +461,33 @@ private:
 		}
 	};
 
-	/** Annotations watch dog observer.
-	 *
-	 * This instance is used to handle changes in Annots array of the page.
+	/** Watchdog for Annots property.
+	 * @see AnnotsPropWatchDog
 	 */
-	boost::shared_ptr<AnnotsWatchDog> annotsWatchDog;
+	boost::shared_ptr<AnnotsPropWatchDog> annotsPropWatchDog;
 
-	/** Registers AnnotsWatchDog observer.
-	 *
-	 * Obsever is registered to Annots array (if present) and all its 
-	 * (reference) elements. Method is called in constructor.
+	/** Watchdog for Annotation array.
+	 * @see AnnotsArrayWatchDog
 	 */
-	void registerAnnotsWatchDog();
+	boost::shared_ptr<AnnotsArrayWatchDog> annotsArrayWatchDog;
+
+	/** Registers observers for annotations synchronization.
+	 * 
+	 * Checks page's Annots property. If it is reference, registers
+	 * annotsPropWatchDog to it. If it is array, or reference to array,
+	 * registers annotsArrayWatchDog to the array and all its reference
+	 * elements.
+	 */
+	void registerAnnotsObservers();
+
+	/** Unregisters obsevers from given Annots property.
+	 * If given annots is reference, unregisters annotsPropWatchDog from
+	 * property. If annots is array or reference to array, unregisters
+	 * annotsArrayWatchDog observer from it and all its reference elements.
+	 * 
+	 * @param annots Annots property.
+	 */
+	void unregisterAnnotsObservers(boost::shared_ptr<IProperty> & annots);
 
 
 	//

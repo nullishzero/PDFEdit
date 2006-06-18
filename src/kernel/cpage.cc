@@ -343,20 +343,171 @@ namespace {
 } // annonymous namespace for page helper functions
 //=====================================================================================
 
+typedef std::vector<boost::shared_ptr<IProperty> > ChildrenStorage;
 
 
 //=====================================================================================
 // CPage
 //=====================================================================================
+void CPage::unregisterAnnotsObservers(boost::shared_ptr<IProperty> & annots)
+{
+using namespace boost;
+using namespace debug;
+using namespace utils;
+
+	kernelPrintDbg(DBG_DBG, "");
+
+	shared_ptr<CArray> annotsArray;
+	if(isRef(annots))
+	{
+		annots->unregisterObserver(annotsPropWatchDog);
+		try
+		{
+			annotsArray=getCObjectFromRef<CArray, pArray>(annots);
+		}catch(CObjectException & e)
+		{
+			IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(annots);
+			kernelPrintDbg(DBG_WARN, ref<<" doesn't point to array.");
+		}
+	}else
+		annotsArray=IProperty::getSmartCObjectPtr<CArray>(annots);
+
+	// if no array is present, skips further steps
+	if(!annotsArray.get())
+	{
+		kernelPrintDbg(DBG_WARN, "Given annots is not or doesn't refer to array.");
+		return;
+	}
+
+	ChildrenStorage children;
+	annotsArray->unregisterObserver(annotsArrayWatchDog);
+	annotsArray->_getAllChildObjects(children);
+	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); i++)
+	{
+		shared_ptr<IProperty> child=*i;
+		if(isRef(child))
+			child->unregisterObserver(annotsArrayWatchDog);
+	}
+}
+
+void CPage::registerAnnotsObservers()
+{
+using namespace boost;
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "");
+
+	// checks whether Annots property is available
+	if(!dictionary->containsProperty("Annots"))
+	{
+		kernelPrintDbg(DBG_WARN, "No Annots property");
+		return;
+	}
+
+	shared_ptr<IProperty> annotsProp=dictionary->getProperty("Annots");
+	shared_ptr<CArray> annotsArray;
+	if(isRef(annotsProp))
+	{
+		annotsProp->registerObserver(annotsPropWatchDog);
+		try
+		{
+			annotsArray=getCObjectFromRef<CArray, pArray>(annotsProp);
+			annotsArray->registerObserver(annotsArrayWatchDog);
+		}catch(CObjectException & e)
+		{
+			IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(annotsProp);
+			kernelPrintDbg(DBG_DBG, "Annots reference "<<ref<<" target is not an array");
+		}
+	}else
+		if(isArray(annotsProp))
+			annotsArray=IProperty::getSmartCObjectPtr<CArray>(annotsProp);
+
+	// checks whether annotation array is available
+	if(!annotsArray.get())
+	{
+		kernelPrintDbg(DBG_INFO, "No annotation array.");
+		return;
+	}
+
+	ChildrenStorage children;
+	annotsArray->registerObserver(annotsArrayWatchDog);
+	annotsArray->_getAllChildObjects(children);
+	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); i++)
+	{
+		shared_ptr<IProperty> child=*i;
+		if(isRef(child))
+			child->registerObserver(annotsArrayWatchDog);
+	}
+}
+
+void CPage::consolidateAnnotsStorage(boost::shared_ptr<IProperty> & oldValue, boost::shared_ptr<IProperty> & newValue)
+{
+using namespace boost;
+using namespace debug;
+
+	// handle original value - one which is removed or replaced 
+	// this has to be invalidated and removed from annotStorage
+	// this is skipped if oldValue is not reference
+	if(isRef(oldValue))
+	{
+		try
+		{
+			shared_ptr<CDict> annotDict=getDictFromRef(oldValue);
+			CPage::AnnotStorage::iterator i;
+			for(i=annotStorage.begin(); i!=annotStorage.end(); i++)
+			{
+				shared_ptr<CAnnotation> annot=*i;
+				if(annot->getDictionary()!=annotDict)
+				{
+					kernelPrintDbg(debug::DBG_DBG, "Annotation maintaining oldValue found and removed. Invalidating annotation");	
+					annot->invalidate();
+					annotStorage.erase(i);
+					break;
+				}
+			}
+			if(i==annotStorage.end())
+				kernelPrintDbg(debug::DBG_WARN, "Removed value is not in annotStorage.")
+		}catch(ElementBadTypeException & e)
+		{
+			kernelPrintDbg(debug::DBG_WARN, "oldValue dereferenced value is not dictionary.");
+		}
+	}
+
+	kernelPrintDbg(debug::DBG_DBG, "oldValue is handled now.");
+
+	// handle new value - one which is added or replaces an old value
+	// this has to be added to annotStorage
+
+	// checks whether dereferenced property is dictionary. If not it 
+	// means that some mass is provided and so it is ignored
+	// this is skipped if newValue is not reference
+	if(isRef(newValue))
+	{
+		try
+		{
+			shared_ptr<CDict> annotDict=getDictFromRef(newValue);		
+
+			// creates CAnnotation instance from dereferenced dictionary 
+			// and adds it to annotStorage
+			shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
+			annotStorage.push_back(annot);
+		}catch(ElementBadTypeException & e)
+		{
+			kernelPrintDbg(debug::DBG_WARN, "Dereferenced newValue is not dictionary.");
+		}
+	}
+}
 
 //
 //
 //
-void CPage::AnnotsWatchDog::notify(
+void 
+CPage::AnnotsPropWatchDog::notify(
 		boost::shared_ptr<IProperty> newValue, 
 		boost::shared_ptr<const IProperty::ObserverContext> context) const throw()
 {
 using namespace debug;
+using namespace observer;
 
 	kernelPrintDbg(debug::DBG_DBG, "");
 	if(!context.get())
@@ -365,115 +516,129 @@ using namespace debug;
 		return;
 	}
 	
-	// gets basic context shared_ptr
-	shared_ptr<const BasicObserverContext> basicContext=
-		dynamic_pointer_cast<const BasicObserverContext, const IProperty::ObserverContext>(context); 
-
-	// gets original value
-	const shared_ptr<IProperty> oldValue=basicContext->getOriginalValue();
-
-	PropertyType oldType=oldValue->getType(),
-				 newType=newValue->getType();
-
-	kernelPrintDbg(debug::DBG_DBG, "oldType="<<oldType<<" newType="<<newType);
-
-	// one of values can be CNull, but not both. If this happens, there is
-	// nothing to do
-	if(oldType==pNull && newType==pNull)
+	kernelPrintDbg(DBG_DBG, "context type="<<context->getType());
+	switch(context->getType())
 	{
-		kernelPrintDbg(debug::DBG_WARN, "Both newValue and oldValue are CNull");
+		case BasicChangeContextType:
+			{
+				// This means that Annots property is reference and it has
+				// changed its reference value
+				shared_ptr<const observer::BasicChangeContext<IProperty> > basicContext=
+					dynamic_pointer_cast<const observer::BasicChangeContext<IProperty>, const observer::IChangeContext<IProperty> >(context); 
+				shared_ptr<IProperty> oldValue=basicContext->getOriginalValue();
+				assert(!isRef(newValue));
+				assert(!isRef(oldValue));
+			}
+			break;
+		case ComplexChangeContextType:
+			{
+				// page dictionary has changed
+				// checks identificator of changed property and if it is not
+				// Annots, immediately returns
+				shared_ptr<const CDict::CDictComplexObserverContext > context=
+					dynamic_pointer_cast<const CDict::CDictComplexObserverContext, 
+					const IChangeContext<IProperty> >(context); 
+				if(!context)
+				{
+					kernelPrintDbg(DBG_WARN, "Bad property identificator type.");
+					return;
+				}
+				if(context->getValueId()!="Annots")
+					return;
+
+				// annots property has changed
+				shared_ptr<IProperty> oldValue=context->getOriginalValue();
+
+				// unregisters observers from oldValue because it is no more
+				// available
+				page->unregisterAnnotsObservers(oldValue);
+
+				// if new value is reference or array registers observers 
+				// to it
+				if(isRef(newValue)||isArray(newValue))
+					page->registerAnnotsObservers();
+			}
+			break;
+		default:
+			kernelPrintDbg(DBG_WARN, "Unsupported context type");
+	}
+	
+	// clears and invalidates all annotations from annotStorage
+	kernelPrintDbg(DBG_DBG, "Discarding annotStorage.");
+	for(AnnotStorage::iterator i=page->annotStorage.begin(); i!=page->annotStorage.end(); i++)
+		(*i)->invalidate();
+	page->annotStorage.clear();
+
+	// creates new annotStorage with new annotations
+	kernelPrintDbg(DBG_DBG, "Creating new annotStorage.");
+	collectAnnotations(page->dictionary, page->annotStorage);
+	
+	kernelPrintDbg(debug::DBG_INFO, "Annotation consolidation done.");
+}
+
+//
+//
+//
+void 
+CPage::AnnotsArrayWatchDog::notify(
+		boost::shared_ptr<IProperty> newValue, 
+		boost::shared_ptr<const IProperty::ObserverContext> context) const throw()
+{
+using namespace debug;
+using namespace observer;
+
+	kernelPrintDbg(debug::DBG_DBG, "");
+	if(!context.get())
+	{
+		kernelPrintDbg(DBG_DBG, "No context information.");
 		return;
 	}
-
-	// handle original value - one which is removed or replaced 
-	// this has to be invalidated and removed from annotStorage
-	if(isRef(oldValue))
+	
+	kernelPrintDbg(DBG_DBG, "context type="<<context->getType());
+	shared_ptr<IProperty> oldValue;
+	switch(context->getType())
 	{
-		// member of Annots array is changed - associated annotation has to be
-		// invalidated
-		try
-		{
-			shared_ptr<CDict> annotDict=getDictFromRef(oldValue);
-			CPage::AnnotStorage::iterator i;
-			for(i=page->annotStorage.begin(); i!=page->annotStorage.end(); i++)
+		case BasicChangeContextType:
 			{
-				shared_ptr<CAnnotation> annot=*i;
-				if(annot->getDictionary()!=annotDict)
+				// this means that Annots element reference value has changed	
+				shared_ptr<const BasicChangeContext<IProperty> > basicContext=
+					dynamic_pointer_cast<const BasicChangeContext<IProperty>, const IChangeContext<IProperty> >(context); 
+				oldValue=basicContext->getOriginalValue();
+				assert(!isRef(newValue));
+				assert(!isRef(oldValue));
+
+				// nothing with observers has to be done here
+			}
+			break;
+		case ComplexChangeContextType:
+			{
+				// Annots array content has changed - oldValue has to be
+				// reference
+				shared_ptr<const CArray::CArrayComplexObserverContext > basicContext=
+					dynamic_pointer_cast<const CArray::CArrayComplexObserverContext, 
+					const IChangeContext<IProperty> >(context); 
+				if(!context)
 				{
-					kernelPrintDbg(debug::DBG_DBG, "Annotation maintaining oldValue found and removed. Invalidating annotation");	
-					annot->invalidate();
-					page->annotStorage.erase(i);
-					break;
+					kernelPrintDbg(DBG_WARN, "Bad property identificator type.");
+					return;
 				}
+				oldValue=basicContext->getOriginalValue();
+				assert(!isRef(oldValue));
+
+				// unregisters this observer from oldValue because it is no more
+				// available
+				oldValue->unregisterObserver(page->annotsArrayWatchDog);
+
+				// if new value is reference registers this observer to it
+				if(isRef(newValue))
+					newValue->registerObserver(page->annotsArrayWatchDog);
 			}
-			if(i==page->annotStorage.end())
-				kernelPrintDbg(debug::DBG_WARN, "Removed value is not in annotStorage.")
-		}catch(ElementBadTypeException & e)
-		{
-			kernelPrintDbg(debug::DBG_WARN, "oldValue dereferenced value is not dictionary.");
-		}
-	}else
-		if(isArray(oldValue))
-		{
-			// whole array has been removed or replaced - we have to remove all
-			// array members and this observer will handle each separately - this
-			// is not the most effective but the simplest way how to handle
-			// situation
-			kernelPrintDbg(debug::DBG_DBG, "oldValue is an array.");
-			shared_ptr<CArray> annotsArray=IProperty::getSmartCObjectPtr<CArray>(oldValue);
-			while(annotsArray->getPropertyCount())
-				// this will trigger observer
-				annotsArray->delProperty(0);
-		}
-
-	kernelPrintDbg(debug::DBG_DBG, "oldValue is handled now.");
-
-	// handle new value - one which is added or replaces an old value
-	// this has to be added to annotStorage
-	vector<shared_ptr<IProperty> > valuesToAdd;
-	if(isRef(newValue))
-		valuesToAdd.push_back(newValue);
-	else
-		if(isArray(newValue))
-		{
-			// whole array has raplaced an old one, so all elements have to be
-			// handled
-			kernelPrintDbg(debug::DBG_DBG, "newValue is an array.");
-			shared_ptr<CArray> newValueArray=IProperty::getSmartCObjectPtr<CArray>(newValue);
-			for(size_t i=0; i<newValueArray->getPropertyCount(); i++)
-				valuesToAdd.push_back(newValueArray->getProperty(i));
-		}
-
-	// adds all referencies from newValueArray
-	kernelPrintDbg(debug::DBG_DBG, "Inserting "<<valuesToAdd.size()<<" elements.");
-	for(vector<shared_ptr<IProperty> >::iterator i=valuesToAdd.begin(); i!=valuesToAdd.end(); i++)
-	{
-		// considers just referencies
-		if(isRef(newValue))
-		{
-			// registers itself (as observer) to newValue
-			newValue->registerObserver(page->annotsWatchDog);
-			
-			// checks whether dereferenced property is dictionary. If not it 
-			// means that some mass is provided and so it is ignored
-			try
-			{
-				shared_ptr<CDict> annotDict=getDictFromRef(newValue);		
-
-				// creates CAnnotation instance from dereferenced dictionary 
-				// and adds it to annotStorage
-				shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
-				page->annotStorage.push_back(annot);
-			}catch(ElementBadTypeException & e)
-			{
-				kernelPrintDbg(debug::DBG_WARN, "Dereferenced newValue is not dictionary.");
-			}
-		}else
-		{
-			kernelPrintDbg(debug::DBG_WARN, "Element is not reference. Skiping.");
-		}
+			break;
+		default:
+			kernelPrintDbg(DBG_WARN, "Unsupported context type");
 	}
 
+	page->consolidateAnnotsStorage(oldValue, newValue);
 	kernelPrintDbg(debug::DBG_INFO, "Annotation consolidation done.");
 }
 
@@ -498,7 +663,10 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty>,
 // Constructor
 //
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : 
-		dictionary(pageDict), annotsWatchDog(new AnnotsWatchDog(this)),	contentsWatchDog (new ContentsWatchDog(this))
+		dictionary(pageDict), 
+		annotsPropWatchDog(new AnnotsPropWatchDog(this)), 
+		annotsArrayWatchDog(new AnnotsArrayWatchDog(this)), 
+		contentsWatchDog (new ContentsWatchDog(this))
 
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
@@ -524,51 +692,15 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 	}	
 	dictionary->unlockChange();
 	
-	// collects all annotations from this page and registers observer to Annots
-	// array and all its members
+	// collects all annotations from this page and registers observers
+	// annotsPropWatchDog has to be registered to page dictionary and rest is
+	// done by registerAnnotsObservers
 	collectAnnotations(dictionary, annotStorage);
-	registerAnnotsWatchDog();
+	dictionary->registerObserver(annotsPropWatchDog);
+	registerAnnotsObservers();
 
 	// Create contents observer
 	registerContentsObserver ();
-}
-
-//
-//
-//
-void
-CPage::registerAnnotsWatchDog()
-{
-	kernelPrintDbg(debug::DBG_DBG, "");
-
-	try
-	{
-		shared_ptr<IProperty> annotsProp=dictionary->getProperty("Annots");
-		if(!isArray(annotsProp))
-		{
-			kernelPrintDbg(debug::DBG_ERR, "Annots field is not an array.");
-			return;
-		}
-
-		kernelPrintDbg(debug::DBG_DBG, "Registering annotsWatchDog observer.");
-		
-		// registers annotsWatchDog observer to array and all array's element
-		shared_ptr<CArray> annotsArray=IProperty::getSmartCObjectPtr<CArray>(annotsProp);
-		annotsArray->registerObserver(annotsWatchDog);
-		for(size_t i=0; i<annotsArray->getPropertyCount(); i++)
-		{
-			shared_ptr<IProperty> element=annotsArray->getProperty(i);
-			if(isRef(element))
-			{
-				element->registerObserver(annotsWatchDog);
-				continue;
-			}
-			kernelPrintDbg(debug::DBG_WARN, "Annots array contains non reference element.")
-		}
-	}catch(ElementNotFoundException & e)
-	{
-		kernelPrintDbg(debug::DBG_INFO, "Annots property is not page dictionary member.");
-	}
 }
 
 //
@@ -662,7 +794,7 @@ CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
 		annotsArray=IProperty::getSmartCObjectPtr<CArray>(
 				dictionary->getProperty("Annots")
 				);
-		annotsArray->registerObserver(annotsWatchDog);	
+		annotsArray->registerObserver(annotsArrayWatchDog);	
 	}
 
 	kernelPrintDbg(debug::DBG_DBG, "Creating new indirect dictionary for annotation.");
