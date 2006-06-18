@@ -2,6 +2,7 @@
 #define __TREEITEMPAGE_H__
 
 #include "treeitemabstract.h"
+#include "treeitempageobserver.h"
 #include <boost/shared_ptr.hpp>
 #include <vector>
 class QString;
@@ -15,7 +16,7 @@ namespace gui {
 
 class TreeData;
 class QSCObject;
-class TreeItemPageObserver;
+//class TreeItemPageObserver;
 
 using namespace pdfobjects;
 

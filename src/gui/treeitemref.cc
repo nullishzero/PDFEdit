@@ -4,6 +4,7 @@
 */
 
 #include <cobject.h>
+#include <cpdf.h>
 #include "treeitemref.h"
 #include "treedata.h"
 #include "pdfutil.h"
@@ -13,6 +14,7 @@ namespace gui {
 
 using namespace std;
 using namespace util;
+using namespace pdfobjects;
 
 /**
  \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)

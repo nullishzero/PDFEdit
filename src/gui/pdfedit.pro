@@ -5,17 +5,12 @@ TARGET = pdfedit
 # turns off optimalizations
 CONFIG += debug
 
+include(../../config.pro)
+
 # installation paths
 isEmpty( PREFIX ) {
- PREFIX= /usr/local
+ error( "No prefix defined - check config.pro (generated from config.pro.in) in top-level directory")
 }
-system(touch config.h.in)
-#TODO: ask for prefix if not defined
-DATA_PATH = $$PREFIX/share/pdfedit
-DOC_PATH  = $$PREFIX/share/doc/pdfedit
-MAN_PATH  = $$PREFIX/share/man/man1
-BIN_PATH  = $$PREFIX/bin
-
 
 # installation details
 data.path       = $$DATA_PATH
@@ -55,15 +50,6 @@ QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
 POST_TARGETDEPS = menugenerator
 QMAKE_CLEAN += .obj/menugenerator.o
 
-#build config.h
-config_h.target     = config.h
-config_h.depends    = config.h.in
-config_h.commands   = sed s^%%DATA_PATH%%^$$DATA_PATH^ <config.h.in >config.h
-QMAKE_EXTRA_UNIX_TARGETS += config_h
-PRE_TARGETDEPS = config.h
-HEADERS += config.h
-QMAKE_CLEAN += config.h
-
 LIBS       += -lqsa
 
 #include headers from kernel and used by kernel
@@ -94,8 +80,7 @@ SOURCES += helpwindow.cc
 HEADERS += treeitemabstract.h  treewindow.h  treedata.h  draglistview.h  multitreewindow.h
 SOURCES += treeitemabstract.cc treewindow.cc treedata.cc draglistview.cc multitreewindow.cc
 #Tree item observers
-HEADERS += treeitemcontentstreamobserver.h  treeitemobserver.h  treeitempageobserver.h
-SOURCES += treeitemcontentstreamobserver.cc treeitemobserver.cc treeitempageobserver.cc
+HEADERS += treeitemcontentstreamobserver.h  treeitemobserver.h  treeitempageobserver.h treeitemgenericobserver.h
 #Tree item types
 HEADERS += treeitemref.h  treeitemarray.h  treeitemsimple.h  treeitemdict.h  treeitempage.h
 SOURCES += treeitemref.cc treeitemarray.cc treeitemsimple.cc treeitemdict.cc treeitempage.cc
@@ -150,7 +135,7 @@ HEADERS += base.h  basecore.h  consolewriter.h  consolewritergui.h
 SOURCES += base.cc basecore.cc consolewriter.cc consolewritergui.cc
 
 #Misc. headers
-HEADERS += types.h version.h
+HEADERS += types.h version.h config.h
 
 #Dummy header file for menu translation, needed by lupdate
 exists( .menu-trans.h  ) {

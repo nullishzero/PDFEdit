@@ -11,11 +11,7 @@
 #include <qvalidator.h>
 #include <qstring.h>
 #include "pdfutil.h"
-
-//#include <utils/debug.h>
-//#include <stdlib.h>
-//#include <cobject.h>
-//#include "util.h"
+#include <cpdf.h>
 
 namespace gui {
 

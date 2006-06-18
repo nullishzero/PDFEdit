@@ -181,6 +181,7 @@ void PdfEditWindow::menuActivated(int id) {
  @param fName Name of file to open in this window. If empty or null, no file will be opened 
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
+ //Set the initial title
  setFileName(QString::null);
  document=NULL;
  selectedTreeItem=NULL;
@@ -619,7 +620,9 @@ bool PdfEditWindow::openFile(const QString &name) {
  }
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
+  guiPrintDbg(debug::DBG_DBG,"Opening document");
   document=CPdf::getInstance(name,mode);
+  guiPrintDbg(debug::DBG_DBG,"Opened document");
   PropertyModeController *modeCtrl=PropertyModeController::getInstance();
   document->setModeController(modeCtrl->get());
  } catch (PdfOpenException &ex) {

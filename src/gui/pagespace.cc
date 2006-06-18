@@ -10,6 +10,7 @@
 #include <qdockarea.h>
 #include <qfiledialog.h>
 #include <math.h>
+#include <cpdf.h>
 #include "rect2Darray.h"
 
 // using namespace std;

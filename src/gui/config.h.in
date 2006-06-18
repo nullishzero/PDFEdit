@@ -6,7 +6,8 @@
 
 /** Directory where all data files of pdfedit would be stored
  *  (icons, default config, etc ...)*/
-#define DATA_PATH "%%DATA_PATH%%"
+#define DATA_PATH "@DATAPATH@"
+
 /** config directory name (will be used relative to $HOME) */
 #define CONFIG_DIR ".pdfedit"
 

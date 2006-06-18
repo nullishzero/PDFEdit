@@ -15,6 +15,7 @@
 #include <cannotation.h>
 #include <cobject.h>
 #include <cpage.h>
+#include <cpdf.h>
 #include <qobject.h>
 
 namespace gui {
