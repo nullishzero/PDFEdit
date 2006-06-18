@@ -1,3 +1,9 @@
 .project
 pdfedit-*.*.*.tar.gz
 pdfedit-*.*.*.tar.bz2
+config.pro
+config.pro.in
+config.log
+config.status
+Makefile
+autom4te.cache

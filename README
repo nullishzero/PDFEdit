@@ -1,7 +1,27 @@
 PDF Editor readme
 -----------------
-To make the editor, run "make" in this directory.
-To install editor, "make install" can be used.
-For detailed documentation, look into "doc" subdirectory,
-File doc/user/install.xml (or install.html) contain more
-detailed installation instructions
+
+For more detailed documentation, look into "doc" subdirectory.
+File doc/user/install.html contain more detailed installation instructions
+and list of required libraries
+
+Compilation
+-----------
+ Run:
+  ./configure
+
+ Optionally you can specify prefix (default is /usr/local/) or other parameters
+ Run "./configure --help" to see list of possible configuration parameters
+
+ After configure succesfully finishes, run "make" in this directory to start compilation.
+
+Installation
+------------
+ To install editor, run
+  make install
+
+ INSTALL_ROOT environment variable can be used to install into different root directory,
+ which can be useful for example when creating packages or if installing into chroot jail.
+
+ Example:
+  INSTALL_ROOT=/chroot/pdfedit make install

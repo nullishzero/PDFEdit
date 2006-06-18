@@ -1,0 +1,6 @@
+PREFIX    = @prefix@
+EPREFIX   = @exec_prefix@
+DATA_PATH = @datadir@/pdfedit
+DOC_PATH  = @datadir@/doc/pdfedit
+MAN_PATH  = @mandir@/man1
+BIN_PATH  = @bindir@

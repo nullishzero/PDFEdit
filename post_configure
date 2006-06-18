@@ -1,0 +1,27 @@
+#!/bin/sh
+#Fix config.pro to be suitable for QMake
+sed <config.pro.in 's/${prefix}/$$PREFIX/g' | sed 's/${exec_prefix}/$$EPREFIX/g' >config.pro
+
+#Write expanded data path
+prefix=`grep '^PREFIX *=' <config.pro.in |sed 's/^[^=]*= *//'`
+exec_prefix=`grep '^EPREFIX *=' <config.pro.in |sed 's/^[^=]*= *//' |sed "s^\\\${prefix}^$prefix^"`
+data_path=`grep '^DATA_PATH *=' <config.pro.in |sed 's/^[^=]*= *//' |sed "s^\\\${prefix}^$prefix^" |sed "s^\\\${exec_prefix}^$exec_prefix^"`
+sed <src/gui/config.h.in "s^@DATAPATH@^$data_path^" >src/gui/config.h
+
+#check for freetype include parameters for xpdf
+CONFIG_FLAGS=src/Makefile.flags
+if [ -d /usr/include/freetype2/freetype ]
+then
+ #Need extra parameter to find freetype
+ echo >$CONFIG_FLAGS xpdf_configure_flags=--with-freetype2-includes=/usr/include/freetype2
+else
+ #the same can be in /usr/local ...
+ if [ -d /usr/local/include/freetype2/freetype ]
+ then
+  #Need extra parameter to find freetype
+  echo >$CONFIG_FLAGS xpdf_configure_flags=--with-freetype2-includes=/usr/local/include/freetype2
+ else
+  #No extra parameter needed (probably)
+  echo >$CONFIG_FLAGS xpdf_configure_flags=
+ fi
+fi

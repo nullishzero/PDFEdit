@@ -1,0 +1,47 @@
+#                    -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion),[]))
+AC_INIT([PDF Editor], PDFEDIT_VERSION, [BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
+AC_CONFIG_SRCDIR([src/gui/base.cc])
+AC_CONFIG_HEADER([src/utils/aconf.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+# Checks for libraries.
+
+dnl #TODO: incomplete, and checking for QSA is not exactly trivial
+dnl # FIXME: Replace `main' with a function in `-lX11':
+dnl #AC_CHECK_LIB([X11], [main])
+dnl # FIXME: Replace `main' with a function in `-lfreetype':
+dnl #AC_CHECK_LIB([freetype], [main])
+dnl #AC_CHECK_LIB([qsa], [QSInterpreter::defaultInterpreter],[],[
+dnl # echo "Error! You need to have QSA 1.1.4."
+dnl # exit -1
+dnl #])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([limits.h stdlib.h string.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_MALLOC
+AC_FUNC_STAT
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS([atexit floor ftruncate localtime_r memset mkdir strdup strerror strpbrk strstr])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT([config.pro.in],[./post_configure])

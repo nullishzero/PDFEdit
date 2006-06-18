@@ -1,0 +1,4 @@
+#!/bin/sh
+#Get version number from src/gui/version.h
+VERSION=`grep "#define VERSION" <src/gui/version.h |sed 's/.*"\(.*\)".*/\1/'`
+echo -n $VERSION
