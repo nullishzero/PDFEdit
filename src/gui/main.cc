@@ -6,24 +6,32 @@
 */
 
 #include "args.h"
-#include <stdlib.h>
-#include <qtranslator.h>
+#include "config.h"
+#include "consolewindow.h"
+#include "optionwindow.h"
+#include "pdfeditwindow.h"
+#include "settings.h"
+#include "util.h"
+#include "version.h"
+#include <iostream>
 #include <qapplication.h>
 #include <qdir.h>
-#include <iostream>
-#include "pdfeditwindow.h"
-#include "util.h"
+#include <qtranslator.h>
+#include <qstringlist.h>
+#include <stdlib.h>
 #include <utils/debug.h>
-#include "version.h"
-#include "settings.h"
-#include "optionwindow.h"
-#include "config.h"
 
 using namespace std;
 using namespace gui;
 
 /** Path to directory in which the binary resides */
 QString appPath;
+/** run in commandline mode? */
+bool consoleMode=false;
+/** Types of scripts to run (commandline mode) */
+QStringList runScript;
+/** Script parameters (script code/filename) (commandline mode) */
+QStringList runScriptParam;
 
 /** delete settings object (and save settings)
  This function is called at application exit
@@ -60,8 +68,65 @@ void handleDebug(const QString &param){
  util::setDebugLevel(param);
 }
 
+
+/**
+ handle -script [file] parameter<br>
+ Run script file
+ @param param Parameter passed
+*/
+void handleScript(const QString &param){
+ runScript+="script";
+ runScriptParam+=param;
+}
+
+/**
+ handle -run [file] parameter<br>
+ Run script file
+ @param param Parameter passed
+*/
+void handleRun(const QString &param){
+ runScript+="run";
+ runScriptParam+=param;
+}
+
+/**
+ handle -eval [code] parameter<br>
+ Evaluate script code
+ @param param Parameter passed
+*/
+void handleEval(const QString &param){
+ runScript+="eval";
+ runScriptParam+=param;
+}
+
+/**
+ handle -console parameter<br>
+ Run in commandline mode
+*/
+void handleConsole(){
+ consoleMode=true;
+}
+
 /** QApplication - main application */
 QApplication *qApp;
+
+/**
+ Run scripts/code specified on commandline in given editor window
+ @param w Editor window
+*/
+void runCmdScripts(PdfEditWindow *w) {
+ //Run scripts given on commandline in given PDF editor window
+ for (unsigned int i=0;i<runScript.count();i++) {
+  QString typ=runScript[i];
+  guiPrintDbg(debug::DBG_DBG, "Script cmdline " << typ << " " << runScriptParam[i]);
+       if (typ=="run")		w->runFile(runScriptParam[i]);
+  else if (typ=="script")	w->run(runScriptParam[i]);
+  else if (typ=="eval")		w->eval(runScriptParam[i]);
+  else {
+   assert(0);
+  }
+ }
+}
 
 /**
  Main - load settings, load translation and launch
@@ -110,6 +175,13 @@ int main(int argc, char *argv[]){
  optionHandler("--help",handleHelp,QObject::tr("Print help and exit"));
  optionHandler("--version",handleVersion,QObject::tr("Print version and exit"));
  optionHandlerParam("-d","n",handleDebug,QObject::tr("Set debug messages verbosity")+" "+QObject::tr("(n = -1 .. 5)"));
+
+ //TODO: document these options -> doc/user/pdfedit.xml
+ optionHandler("-console",handleConsole,QObject::tr("Run in commandline mode"));
+ optionHandlerParam("-script",QObject::tr("file"),handleScript,QObject::tr("Run script from script path or current directory if not found"));
+ optionHandlerParam("-run",QObject::tr("file"),handleRun,QObject::tr("Run script from current directory"));
+ optionHandlerParam("-eval",QObject::tr("code"),handleEval,QObject::tr("Evaluate script code"));
+
  optionHandler("--",handleStopOpt,QObject::tr("Stop processing options"));
  QStringList params=handleParams(app.argc(),app.argv());
 
@@ -122,6 +194,25 @@ int main(int argc, char *argv[]){
  atexit(saveSettings);
 
  guiPrintDbg(debug::DBG_DBG,"Settings loaded");
+
+ if (consoleMode) {
+  //Running in console mode
+  ConsoleWindow c(params);
+  c.init();
+  //Run scripts given on commandline
+  for (unsigned int i=0;i<runScript.count();i++) {
+   QString typ=runScript[i];
+   guiPrintDbg(debug::DBG_DBG, "Script cmdline " << typ << " " << runScriptParam[i]);
+        if (typ=="run")		c.runFile(runScriptParam[i]);
+   else if (typ=="script")	c.run(runScriptParam[i]);
+   else if (typ=="eval")	c.eval(runScriptParam[i]);
+   else {
+    assert(0);
+   }
+  }
+  //Scripts complete ... exit
+  exit(0);
+ }
 
  if (!useGUI) {
   // Up until now DISPLAY was optional. For running GUI, it is mandatory
@@ -147,11 +238,11 @@ int main(int argc, char *argv[]){
   guiPrintDbg(debug::DBG_DBG,"Opening files from commandline");
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {
    guiPrintDbg(debug::DBG_INFO,"Opening parameter: " << *it)
-   PdfEditWindow::create(*it);
+   runCmdScripts(PdfEditWindow::create(*it));
   }
  } else { //no parameters
   guiPrintDbg(debug::DBG_DBG,"Opening empty editor window");
-  PdfEditWindow::create();
+  runCmdScripts(PdfEditWindow::create());
  }
  QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
  return app.exec();

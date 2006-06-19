@@ -13,7 +13,10 @@ namespace gui {
 */
 class TreeItemContentStreamObserver : public TreeItemGenericObserver<pdfobjects::CContentStream> {
 public:
- /** Constructor */
+ /**
+  Constructor
+  @param _parent Object to be reloaded on any change to monitored item
+ */
  TreeItemContentStreamObserver::TreeItemContentStreamObserver(TreeItemAbstract* _parent) : TreeItemGenericObserver<pdfobjects::CContentStream> (_parent) {
   //No extra initialization
  };

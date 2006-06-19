@@ -423,6 +423,8 @@ void BaseCore::cleanup() {
 
 /** destructor */
 BaseCore::~BaseCore() {
+ //Delete the CPDF wrapper if it is there
+ if (qpdf) delete qpdf;
  //Delete importer
  delete import;
  //Delete the project (and also the interpreter)

@@ -14,7 +14,10 @@ namespace gui {
 
 class TreeItemPageObserver : public TreeItemGenericObserver<pdfobjects::CPage> {
 public:
- /** Constructor */
+ /**
+  Constructor
+  @param _parent Object to be reloaded on any change to monitored item
+ */
  TreeItemPageObserver::TreeItemPageObserver(TreeItemAbstract* _parent) : TreeItemGenericObserver<pdfobjects::CPage> (_parent) {
   //No extra initialization
  };

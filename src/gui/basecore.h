@@ -39,7 +39,7 @@ class BaseCore : public QObject {
  Q_OBJECT
 public:
  BaseCore();
- ~BaseCore();
+ virtual ~BaseCore();
  void setConWriter(ConsoleWriter *_con);
  void conPrintError(const QString &line);
  void conPrintLine(const QString &line);

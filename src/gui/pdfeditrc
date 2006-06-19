@@ -183,10 +183,14 @@ script	= $HOME/.pdfedit;$PDFEDIT_DATA;$PDFEDIT_BIN
 help	= $PDFEDIT_DATA/help/$LANG;$PDFEDIT_BIN/help/$LANG;$PDFEDIT_DATA/help;$PDFEDIT_BIN/help
 
 [script]
-	    # List of scripts which are executed on application start
-init	  = $PDFEDIT_DATA/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs
-	    # List of paths from which scripts are executed (see documentation for details)
-init_path = $PDFEDIT_DATA/scripts;$PDFEDIT_BIN/scripts;$HOME/.pdfedit/scripts
+	  	  # List of scripts which are executed on application start
+init	  	= $PDFEDIT_DATA/init.qs;$PDFEDIT_BIN/init.qs;$HOME/.pdfedit/userinit.qs
+		  # List of scripts which are executed on application start in console mode
+init_console	= $PDFEDIT_DATA/init_console.qs;$PDFEDIT_BIN/init_console.qs;$HOME/.pdfedit/userinit_console.qs
+		  # List of paths from which scripts are executed, GUI (see documentation for details)
+init_path 	= $PDFEDIT_DATA/scripts;$PDFEDIT_BIN/scripts;$HOME/.pdfedit/scripts
+		  # List of paths from which scripts are executed, console (see documentation for details)
+init_path_console = $PDFEDIT_DATA/scripts/console;$PDFEDIT_BIN/scripts/console;$HOME/.pdfedit/scripts/console
 
 [modecontroller]
 	  # Modecontroller confguration files. First file that is found is used and the rest is ignored

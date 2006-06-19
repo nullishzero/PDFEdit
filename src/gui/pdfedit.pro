@@ -124,6 +124,10 @@ SOURCES += revisiontool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc
 HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h  statusbar.h
 SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc statusbar.cc
 
+#Commandline mode
+HEADERS += consolewindow.h
+SOURCES += consolewindow.cc
+
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
@@ -131,8 +135,10 @@ HEADERS += selfdestructivewidget.h  rect2Darray.h  staticsettings.h
 SOURCES += selfdestructivewidget.cc rect2Darray.cc staticsettings.cc
 
 #Scripting base files
-HEADERS += base.h  basecore.h  consolewriter.h  consolewritergui.h
-SOURCES += base.cc basecore.cc consolewriter.cc consolewritergui.cc
+HEADERS += base.h  basecore.h  basegui.h  baseconsole.h
+SOURCES += base.cc basecore.cc basegui.cc baseconsole.cc
+HEADERS += consolewriter.h  consolewritergui.h  consolewriterconsole.h
+SOURCES += consolewriter.cc consolewritergui.cc consolewriterconsole.cc
 
 #Misc. headers
 HEADERS += types.h version.h config.h

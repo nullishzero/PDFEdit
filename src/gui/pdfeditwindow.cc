@@ -3,7 +3,7 @@
 */
 #include "GlobalParams.h"
 #include "additemdialog.h"
-#include "base.h"
+#include "basegui.h"
 #include "commandwindow.h"
 #include "dialog.h"
 #include "menu.h"
@@ -69,12 +69,14 @@ void PdfEditWindow::closeEvent(QCloseEvent *e) {
 /**
  Creates new windows and displays it.
  @param fName Name of file to open in new window. If no file specified, new window is initially empty
+ @return Pointer to new window
  */
-void PdfEditWindow::create(const QString &fName/*=QString::null*/) {
+PdfEditWindow* PdfEditWindow::create(const QString &fName/*=QString::null*/) {
  PdfEditWindow *main=new PdfEditWindow(fName);
  main->restoreWindowState();
  main->show();
  windowCount++;
+ return main;
 }
 
 /** 
@@ -208,7 +210,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  splProp->setOrientation(Vertical);
 
  //Base for scripting
- base=new Base(this);
+ base=new BaseGUI(this);
 
  //Init command window (interpreter, context)
  cmdLine->setInterpreter(base->interpreter(),base);
@@ -455,7 +457,7 @@ bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
   int answer=base->question_ync(fileName+"\n"+tr("Current file is not saved. Do you want to save it?"));
   if (answer==1) { //Yes: save it
    if (!save()) {
-    base->warn(lastErrorMessage);
+    base->warn(base->error());
     //Unable to save document -> not closing;
     return false; 
    }
@@ -471,16 +473,40 @@ bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
 }
 
 /**
+ Runs script from given file, looking in script path first
+ @param scriptName name of file with QT Script to run
+*/
+void PdfEditWindow::run(const QString &scriptName) {
+ base->run(scriptName);
+}
+
+/**
+ Runs script from given file
+ @param scriptName name of file with QT Script to run
+*/
+void PdfEditWindow::runFile(const QString &scriptName) {
+ base->run(scriptName,true);
+}
+
+/**
+ Run given script code
+ @param code Code to evaluate
+ */
+void PdfEditWindow::eval(const QString &code) {
+ base->runScript(code);
+}
+
+/**
  Save currently edited document to disk
  If the document have no name (newly opened/generated document), it is solicited from used via dialog.
  @param newRevision If true, create new revision while saving
  @return true if saved succesfully, false if failed to save because of any reason
 */
 bool PdfEditWindow::save(bool newRevision/*=false*/) {
- lastErrorMessage="";//No error
+ base->setError("");//No error
  if (!document) {
-  lastErrorMessage=tr("No document to save");
-  base->print(lastErrorMessage);
+  base->setError(tr("No document to save"));
+  base->print(base->error());
   return false;
  }
  if (fileName.isNull()) { //We need a name
@@ -489,17 +515,17 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
   assert(0);//Should never get here anyway
   QString name=base->fileSaveDialog(filename());
   if (name.isNull()) {
-   lastErrorMessage=tr("Name is empty");
+   base->setError(tr("Name is empty"));
    return false; //Still no name? Not saving ...
   }
   try {
    //Exception can occur while saving, for example if document is read-only
    document->save(newRevision);
   } catch (ReadOnlyDocumentException &e) {
-   lastErrorMessage=tr("Document is in read-only mode");
+   base->setError(tr("Document is in read-only mode"));
    return false;
   } catch (...) {
-   lastErrorMessage=tr("Unknown error occured while saving document"); 
+   base->setError(tr("Unknown error occured while saving document"));
    return false;
   }
   setFileName(name);
@@ -509,10 +535,10 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
   //Exception can occur while saving, for example if document is read-only
   document->save(newRevision);
  } catch (ReadOnlyDocumentException &e) {
-  lastErrorMessage=tr("Document is in read-only mode"); 
+  base->setError(tr("Document is in read-only mode")); 
   return false;
  } catch (...) {
-  lastErrorMessage=tr("Unknown error occured while saving document"); 
+  base->setError(tr("Unknown error occured while saving document"));
   return false;
  }
  guiPrintDbg(debug::DBG_DBG,"Saved document");
@@ -540,15 +566,15 @@ QString PdfEditWindow::filename() {
  @return true if saved succesfully, false if failed to save because of any reason
 */
 bool PdfEditWindow::saveCopy(const QString &name) {
- lastErrorMessage="";//No error
+ base->setError("");//No error
  if (!document) {
-  lastErrorMessage=tr("No document to save");
-  base->print(lastErrorMessage);
+  base->setError(tr("No document to save"));
+  base->print(base->error());
   return false;
  }
  bool res=util::saveCopy(document,name);
  if (!res) {
-  lastErrorMessage=tr("Error occured while saving copy");
+  base->setError(tr("Error occured while saving copy"));
  }
  return res;
 }
@@ -615,7 +641,7 @@ void PdfEditWindow::destroyFile() {
 bool PdfEditWindow::openFile(const QString &name) {
  destroyFile();
  if (name.isNull()) {
-  lastErrorMessage=tr("Name is empty");
+  base->setError(tr("Name is empty"));
   return false; //Still no name? Not saving ...
  }
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
@@ -628,13 +654,13 @@ bool PdfEditWindow::openFile(const QString &name) {
  } catch (PdfOpenException &ex) {
   string err;
   ex.getMessage(err);
-  lastErrorMessage=tr("Error while loading document ")+name+"\n"+err;
+  base->setError(tr("Error while loading document ")+name+"\n"+err);
   //File failed to open, keep window opened with empty file.
   emptyFile();
   base->call("onLoadError");
   return false;
  } catch (...) {
-  lastErrorMessage=tr("Unknown error while loading document ")+name;
+  base->setError(tr("Unknown error while loading document ")+name);
   //File failed to open, keep window opened with empty file.
   emptyFile();
   base->call("onLoadError");

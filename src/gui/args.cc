@@ -50,7 +50,7 @@ void handleHelpOptions(){
  for (QValueList<QString>::Iterator it=opt.begin();it!=opt.end();++it) {
   QString paramName=*it;
   if (optParamName.contains(paramName)) { //Add name of parameter
-   paramName+="["+optParamName[paramName]+"]";
+   paramName+=" ["+optParamName[paramName]+"]";
   }
   cout << " ";
   cout.width(16);		//width of option name

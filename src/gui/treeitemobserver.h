@@ -13,7 +13,10 @@ namespace gui {
 */
 class TreeItemObserver : public TreeItemGenericObserver<pdfobjects::IProperty>  {
 public:
- /** Constructor */
+ /**
+  Constructor
+  @param _parent Object to be reloaded on any change to monitored item
+ */
  TreeItemObserver::TreeItemObserver(TreeItemAbstract* _parent) : TreeItemGenericObserver<pdfobjects::IProperty> (_parent) {
   //No extra initialization
  };

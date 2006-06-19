@@ -14,7 +14,7 @@ class QString;
 namespace gui {
 
 class StatusBar;
-class Base;
+class BaseGUI;
 class PageSpace;
 class CommandWindow;
 class QSPage;
@@ -32,7 +32,7 @@ using namespace pdfobjects;
 class PdfEditWindow : public QMainWindow {
  Q_OBJECT
 public:
- static void create(const QString &fName=QString::null);
+ static PdfEditWindow* create(const QString &fName=QString::null);
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
  bool modified();
@@ -50,6 +50,9 @@ public:
  int pageNumber();
  void bigPixmap();
  PageSpace* getPageSpace() const;
+ void run(const QString &scriptName);
+ void runFile(const QString &scriptName);
+ void eval(const QString &code);
 public slots:
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void changeRevision(int revision);
@@ -123,13 +126,11 @@ private:
  /** Page space - page view Widget*/
  PageSpace *pagespc;
  /** Base used to host scripts */
- Base *base;
- /** Last error message from exception in load/save, etc ... */
- QString lastErrorMessage;
+ BaseGUI *base;
  /** Status bar on bottmo of application */
  StatusBar * status;
  /** Base should be allowed to access everything in PdfEditWindow */
- friend class Base;
+ friend class BaseGUI;
  //TODO: maybe remove this later
 };
 
