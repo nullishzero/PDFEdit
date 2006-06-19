@@ -4,11 +4,11 @@
  <bookinfo>
   <title>Documentation for PDF Editor - Scripting</title>
  </bookinfo>
- <chapter>
-  <title>Scripting in PDFEditor</title>
+ <chapter id="intro">
+  <title>Introduction</title>
   <para>
    PDFEditor have support for scripting. Evey item in menu (or toolbar) runs a script
-   (mostly just short call of function, but using complex scripts form menu
+   (mostly just short call of function, but using complex scripts from menu
    is possible), and also user can type script commands directly into
    commandline. Every invocation of script from menu will echo the command
    to the commandline, so user can learn how to do things in menu directly
@@ -20,11 +20,26 @@
     syntax as JavaScript)
   </para>
   <para>
+   This documentation will not explain the language syntax, but will document
+   all functions and objects that are exported from the application to the
+   scripting engine so they may be used in scripts and menus.
+   Also how the scripting work in general and how it can be configured will be explained.
+  </para>
+  <para>
+   <note>Scripts are not "secure" by design, as the API contain functions to read or write
+   arbitrary files and directories and to execute external processes.
+   See http://doc.trolltech.com/qsa-1.1.4/extensions-2.html for description
+   of File, Dir and Process classes, which are available to script.</note>
+  </para>
+ </chapter>
+ <chapter id="startup">
+  <title>Startup scripts</title>
+  <para>
    When new editor window is launched (but before the document is loaded or created),
-   file <filename>init.qs</filename> from application directory is run, then
+   file <filename>init.qs</filename> from application's data directory is run, then
    file <filename>userinit.qs</filename> from users's application configuration
-   directory (which is $HOME/.pdfedit) is run, if it exists
-   <footnote>
+   directory (which is <filename>$HOME/.pdfedit</filename>) is run, if it exists
+   <footnote id="note_default_files">
     <para>
      This is in default configuration and it can be changed by user to different
      filename(s) in settings
@@ -36,22 +51,48 @@
    before loading or creating new document.
   </para>
   <para>
-   This documentation will not explain the language syntax, but will document
-   all functions and objects that are exported from the application to the
-   scripting engine so they may be used in scripts and menus.
+   In commandline mode, file <filename>init_console.qs</filename> from application's data
+   directory is run instead, then file <filename>userinit_console.qs</filename> from users's
+   application configuration directory (which is <filename>$HOME/.pdfedit</filename>)
+   is run, if it exists <footnoteref linkend='note_default_files'/>
   </para>
   <para>
-   <note>Scripts are not "secure" by design, as the API contain functions to read or write
-   arbitrary files and directories and to execute external processes.
-   See http://doc.trolltech.com/qsa-1.1.4/extensions-2.html for description
-   of File, Dir and Process classes, which are available to script.</note>
+   After running these init scripts, any "plugin" scripts from directories specified
+   in configuration are run.
+   By default, these directories are:
+   <orderedlist>
+    <listitem><para>Directory <filename>scripts</filename> in application's data directory</para></listitem>
+    <listitem><para>Directory <filename>scripts</filename> in application's binary directory</para></listitem>
+    <listitem><para>Directory <filename>./pdfedit/scripts</filename> in user's home directory</para></listitem>
+   </orderedlist>
+   For "plugin scripts" in commandline mode, scripts are searched in <filename>console</filename>
+   subdirectory of above directories instead.
+  </para>
+  <para>
+   Scripts are run in alphabetical order (by their filename, case sensitive)
+   and if the same script is encountered in more than one directory,
+   only the one in directory later in list is executed.
+   This ensures that if user install newer version of some script in his home directory,
+   only his version will get executed.
+  </para>
+  <para>
+   After that, the document is loaded (if it was not specified on commandline,
+   the window will be initially empty without any document)   
   </para>
  </chapter>
- <chapter>
-  <title>Static functions</title>
+ <chapter id="static_common">
+  <title>Static functions common for GUI and command line</title>
 <!--BASETYPE: base.h -->
  </chapter>
- <chapter>
+ <chapter id="static_gui">
+  <title>Static functions in GUI</title>
+<!--BASETYPE: basegui.h -->
+ </chapter>
+ <chapter id="static_cmdline">
+  <title>Static functions in command line</title>
+<!--BASETYPE: baseconsole.h -->
+ </chapter>
+ <chapter id="callbacks">
   <title>Callback functions</title>
   <para>
    These are functions called from editor on certain events. All callback function

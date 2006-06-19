@@ -19,8 +19,17 @@
   </para>
   <para>
    Options which require a parameter can be specified in "short form", like <parameter>-d1</parameter>
-   or "long form", like <parameter>-d 1</parameter>. Both of these mean option <option>-d</option> with
-   parameter <parameter>1</parameter>
+   or "long form", like <parameter>-d 1</parameter>, both of these mean option <option>-d</option> with
+   parameter <parameter>1</parameter>.
+  </para>
+  <para>
+   Use <option>-script</option>, <option>-eval</option> and <option>-run</option>
+   options to run any script besides the init script.
+   These parameters are run/evaluated in the order they are specified on commandline
+   and may be specified multiple times.
+   If these parameters are specified in GUI mode,
+   they are used in each window opened on program start, in commandline mode (console mode)
+   they are used after commandline init script.
   </para>
   <sect1>
    <title>Option <option>--help</option></title>
@@ -54,6 +63,33 @@
    </table>
     Setting this to -1 mean no debug messages will be shown at all, not even the most critical ones.
     Debugging messages are sent to STDERR.
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>-console</option></title>
+   <para>
+    Run in commandline mode.
+    No editor windows are opened and commandline init script is executed.
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>-script (filename)</option></title>
+   <para>
+    Run script with given filename.
+    Look for the script in script path.
+    If not found, look for the script in current directory.
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>-run (filename)</option></title>
+   <para>
+    Run script with given filename, but unlike <option>-script</option> option, script path is not searched.
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>-eval (code)</option></title>
+   <para>
+    Evaluate given script code
    </para>
   </sect1>
   <sect1>
