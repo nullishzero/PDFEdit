@@ -3,6 +3,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.71  2006/06/19 17:28:55  hockm0bm
+ * * registerPageTreeObsever, unregisterPageTreeObserver, consolidatePageList
+ *         - have reference parameter(s)
+ * * PageTree{Root,Node,Kids}Obsever
+ *         - notify corrected
+ *         - doc update
+ *
  * Revision 1.70  2006/06/17 18:34:52  hockm0bm
  * Refactoring changes
  *
@@ -1106,7 +1113,7 @@ bool isEncrypted(CPdf & pdf, string * filterName)
 
 } // end of utils namespace
 
-void CPdf::registerPageTreeObservers(boost::shared_ptr<IProperty> prop)
+void CPdf::registerPageTreeObservers(boost::shared_ptr<IProperty> & prop)
 {
 using namespace boost;
 using namespace std;
@@ -1191,14 +1198,14 @@ using namespace pdfobjects::utils;
 		if(isRef(elemProp_ptr))
 		{
 			elemProp_ptr->registerObserver(pageTreeKidsObserver);
-			registerPageTreeObservers(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr));
+			registerPageTreeObservers(elemProp_ptr);
 		}
 	}
 
 	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<dict_ptr->getIndiRef());
 }
 
-void CPdf::unregisterPageTreeObservers(boost::shared_ptr<IProperty> prop)
+void CPdf::unregisterPageTreeObservers(boost::shared_ptr<IProperty> & prop)
 {
 using namespace boost;
 using namespace std;
@@ -1283,7 +1290,7 @@ using namespace pdfobjects::utils;
 		if(isRef(elemProp_ptr))
 		{
 			elemProp_ptr->unregisterObserver(pageTreeKidsObserver);
-			unregisterPageTreeObservers(IProperty::getSmartCObjectPtr<CRef>(elemProp_ptr));
+			unregisterPageTreeObservers(elemProp_ptr);
 		}
 	}
 
@@ -1297,6 +1304,7 @@ void CPdf::PageTreeRootObserver::notify(
 using namespace boost;
 using namespace debug;
 using namespace observer;
+using namespace utils;
 
 	shared_ptr<IProperty> oldValue;
 	if(!context)
@@ -1318,20 +1326,14 @@ using namespace observer;
 				// both oldValue and newValue has to be referencies
 				assert(isRef(oldValue));
 				assert(isRef(newValue));
-
-				// checks for same values - to prevent useless consolidation and
-				// so on
-				utils::PropertyEquals pe;
-				if(!pe(oldValue, newValue))
-					return;
 			}
 			break;
 		case ComplexChangeContextType:
 			{
 				// document catalog dictionary has changed. Checks valueId and
 				// proceede just if Pages property has changed
-				shared_ptr<const ComplexChangeContext<IProperty, CDict::PropertyId> > complexContex=
-					dynamic_pointer_cast<const ComplexChangeContext<IProperty, CDict::PropertyId>, const IChangeContext<IProperty> >(context); 
+				shared_ptr<const CDict::CDictComplexObserverContext > complexContex=
+					dynamic_pointer_cast<const CDict::CDictComplexObserverContext, const IChangeContext<IProperty> >(context); 
 				if(!complexContex)
 				{
 					kernelPrintDbg(DBG_WARN, "ComplexChangeContext contains unsupported property id.");
@@ -1343,14 +1345,17 @@ using namespace observer;
 
 				oldValue=complexContex->getOriginalValue();
 
-				// unregister all observers from oldValue and all nodes
+				// unregister observer from reference
 				if(isRef(oldValue))
 				{
 					kernelPrintDbg(DBG_INFO, "unregistering obsever from old Pages property.");
-					oldValue->unregisterObserver(pdf->pageTreeRootObserver);
-					shared_ptr<CDict> rootDict=utils::getPageTreeRoot(*pdf);
-					if(rootDict.get())
-						pdf->unregisterPageTreeObservers(rootDict);
+					try
+					{
+						oldValue->unregisterObserver(pdf->pageTreeRootObserver);
+					}catch(ObserverException & e)
+					{
+						kernelPrintDbg(DBG_ERR, "oldValue observer unregistration failed.");
+					}
 				}
 
 				// registers 
@@ -1368,13 +1373,30 @@ using namespace observer;
 	assert(oldValue.get());
 	assert(newValue.get());
 
-	// optimization - if newValue and oldValue are same properties, does nothing
-	// and immediatelly returns
-	if(oldValue==newValue)
-		return;
+	// oldValue's target needs obsevers unregistration - it is not accessible
+	// anymore
+	if(isRef(oldValue))
+	{
+		try
+		{
+			shared_ptr<IProperty> oldValueDict=getCObjectFromRef<CDict, pDict>(oldValue);
+			kernelPrintDbg(DBG_DBG, "unregistering observers from old page tree.");
+			pdf->unregisterPageTreeObservers(oldValueDict);
+		}catch(CObjectException & e)
+		{
+			IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(oldValue);
+			kernelPrintDbg(DBG_WARN, "oldValue's "<<ref<<" is not dictionary.");
+		}catch(ObserverException & e)
+		{
+			kernelPrintDbg(DBG_ERR, "oldValue's target unregisterPageTreeObservers failed.");
+		}
+	}
 
-	// cleans up oldValue subtree
+	// invalidates pageCount
+	pdf->pageCount=0;
+	
 	// removes and invalidates whole pageList
+	kernelPrintDbg(DBG_DBG, "Invalidating pageList with "<<pdf->pageList.size()<<" elements");
 	for(PageList::iterator i=pdf->pageList.begin(); i!=pdf->pageList.end(); i++)
 	{
 		shared_ptr<CPage> page=i->second;
@@ -1383,6 +1405,7 @@ using namespace observer;
 	pdf->pageList.clear();
 
 	// clears nodeCountCache
+	kernelPrintDbg(DBG_DBG, "Discarding nodeCountCache with "<<pdf->nodeCountCache.size()<<" entries");
 	utils::clearCache(pdf->nodeCountCache);
 	
 	// registers new page tree root
@@ -1401,8 +1424,8 @@ using namespace observer;
 		return;
 	}
 
-	// we have new page tree root dictionary and so will register
-	// PageTreeNodeObserver and PageTreeKidsObserver obserevers to its subtree
+	// we have new page tree root dictionary and so observers have to be
+	// registered
 	kernelPrintDbg(DBG_INFO, "Registering obsevers to new page tree with root "<<newValueRef);
 	pdf->registerPageTreeObservers(newValueProp);
 
@@ -1443,8 +1466,8 @@ using namespace observer;
 			{
 				// this means that inter node dictionary has changed
 				// if changed property is not Kids, immediatelly returns
-				shared_ptr<const ComplexChangeContext<IProperty, string> > complexContex=
-					dynamic_pointer_cast<const ComplexChangeContext<IProperty, string>, const IChangeContext<IProperty> >(context); 
+				shared_ptr<const CDict::CDictComplexObserverContext > complexContex=
+					dynamic_pointer_cast<const CDict::CDictComplexObserverContext, const IChangeContext<IProperty> >(context); 
 				if(!complexContex)
 				{
 					kernelPrintDbg(DBG_WARN, "ComplexChangeContext contains unsupported property id.");
@@ -1456,7 +1479,15 @@ using namespace observer;
 				
 				// unregisters observer from oldValue
 				if(isRef(oldValue))
-					oldValue->unregisterObserver(pdf->pageTreeNodeObserver);
+				{
+					try
+					{
+						oldValue->unregisterObserver(pdf->pageTreeNodeObserver);
+					}catch(ObserverException & e)
+					{
+						kernelPrintDbg(DBG_ERR, "unregisterObserver has failed for oldValue.");
+					}
+				}
 
 				// newValue as reference means that we have new Kids field as
 				// reference and so this observer has to be registered on it -
@@ -1494,6 +1525,9 @@ using namespace observer;
 	{
 		IndiRef ref=utils::getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
 		kernelPrintDbg(DBG_WARN, "oldValue "<<ref<<" doesn't refer to array.");
+	}catch (ObserverException & e)
+	{
+		kernelPrintDbg(DBG_ERR, "oldValue's kidsArray doesn't have registered pageTreeKidsObserver");
 	}
 
 	// collects newValue's array elemenent - if newValue is reference, gets
@@ -1523,7 +1557,7 @@ using namespace observer;
 
 	// consolidates page tree under indirect parent of oldValue or newValue.
 	// This is ok, because at least one of oldValue or newValue must be non
-	// pNull and they must by direct members of node dictionary
+	// pNull and they must be direct members of node dictionary
 	IndiRef interNodeRef=(!isNull(oldValue))?oldValue->getIndiRef():newValue->getIndiRef();
 	try
 	{
@@ -1535,13 +1569,17 @@ using namespace observer;
 		}
 	}catch(...)
 	{
-		// TODO handle - should not happen
+		// This should not happen, but we can live without it.
+		// It is almost for sure, that there is some bug inside
+		// consolidatePageTree if this happens
+		kernelPrintDbg(DBG_CRIT, "consolidatePageTree has failed. Should not happen. Possibly bug.");
 	}
 
 	// removes all pages from removed array
 	shared_ptr<IProperty> null(CNullFactory::getInstance());
 	kernelPrintDbg(DBG_DBG, "Consolidating page list by removing oldValues.");
-	for(ChildrenStorage::iterator i=oldValues.begin(); i!=oldValues.end(); i++)
+	size_t index=0;
+	for(ChildrenStorage::iterator i=oldValues.begin(); i!=oldValues.end(); i++, index++)
 	{
 		shared_ptr<IProperty> child=*i;
 		// consider just referencies, other elements are just mess in array
@@ -1549,7 +1587,13 @@ using namespace observer;
 		// been removed 
 		if(isRef(child))
 		{
-			pdf->unregisterPageTreeObservers(child);
+			try
+			{
+				pdf->unregisterPageTreeObservers(child);
+			}catch(ObserverException & e)
+			{
+				kernelPrintDbg(DBG_ERR, "kids["<<index<<"] unregisterPageTreeObservers has failed");
+			}
 			pdf->consolidatePageList(child, null);
 		}
 	}
@@ -1607,8 +1651,8 @@ using namespace utils;
 		case ComplexChangeContextType:
 			{
 				// this means that array content has changed
-				shared_ptr<const ComplexChangeContext<IProperty, CArray::PropertyId> > complexContex=
-					dynamic_pointer_cast<const ComplexChangeContext<IProperty, CArray::PropertyId>, const IChangeContext<IProperty> >(context); 
+				shared_ptr<const CArray::CArrayComplexObserverContext > complexContex=
+					dynamic_pointer_cast<const CArray::CArrayComplexObserverContext, const IChangeContext<IProperty> >(context); 
 				if(!complexContex)
 				{
 					kernelPrintDbg(DBG_WARN, "ComplexChangeContext contains unsupported property id.");
@@ -1617,16 +1661,23 @@ using namespace utils;
 				// change value identificator is not important in this moment
 				oldValue=complexContex->getOriginalValue();
 
-				// unregisters obsevers from removed array element
+				// unregisters obsever from reference element
 				if(isRef(oldValue))
-					pdf->unregisterPageTreeObservers(oldValue);
+				{
+					try
+					{
+						oldValue->unregisterObserver(pdf->pageTreeKidsObserver);
+					}catch(ObserverException & e)
+					{
+						kernelPrintDbg(DBG_WARN, "oldValue observer unregistration failed");
+					}
+				}
 				
 				// newValue doesn't have observer registered yet and if it is
-				// reference, registers observers to whole subtree
+				// reference, registers observers to it and its whole subtree
 				if(isRef(newValue))
 				{
-					shared_ptr<CRef> newValueCRef=IProperty::getSmartCObjectPtr<CRef>(newValue);
-					pdf->registerPageTreeObservers(newValueCRef);
+					newValue->registerObserver(pdf->pageTreeKidsObserver);
 				}
 			}
 			break;
@@ -1654,6 +1705,24 @@ using namespace utils;
 	{
 		kernelPrintDbg(DBG_INFO, "Nothing to consolidate because newValue and oldValue are not CRef");
 		return;
+	}
+
+	// if oldValue is reference to dictionary (node), this node needs observers
+	// unregistration
+	if(isRef(oldValue))
+	{
+		try
+		{
+			shared_ptr<IProperty> oldValueDict=getCObjectFromRef<CDict, pDict>(oldValue);
+			pdf->unregisterPageTreeObservers(oldValueDict);
+		}catch(CObjectException & e)
+		{
+			IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
+			kernelPrintDbg(DBG_WARN, "oldValue "<<ref<<" doesn't refer to dictionary.");
+		}catch(ObserverException & e)
+		{
+			kernelPrintDbg(DBG_ERR, "oldValue unregisterPageTreeObservers has failed.");
+		}
 	}
 		
 	// consolidates page tree from newValue's indirect parent. If newValue is
@@ -1711,6 +1780,21 @@ using namespace utils;
 		kernelPrintDbg(DBG_DBG, "discarding leaf count cache for "<<oldRef<<" subtree");
 		discardKidsCountCache(oldRef, *pdf, pdf->nodeCountCache, true);
 	}
+
+	// if newValue is reference, registers observers to newValue dereferenced 
+	// dictionary node sub tree
+	if(isRef(newValue))
+	{
+		try
+		{
+			shared_ptr<IProperty> newValueDict=getCObjectFromRef<CDict, pDict>(newValue);
+			pdf->registerPageTreeObservers(newValueDict);
+		}catch(CObjectException & e)
+		{
+			IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(newValue);
+			kernelPrintDbg(DBG_WARN, "newValue "<<ref<<" doesn't refer to dictionary.");
+		}
+	}
 	
 	kernelPrintDbg(DBG_DBG, "observer handler finished");
 }
@@ -1718,6 +1802,7 @@ using namespace utils;
 void CPdf::initRevisionSpecific()
 {
 using namespace utils;
+using namespace observer;
 
 	kernelPrintDbg(DBG_DBG, "");
 
@@ -1727,19 +1812,33 @@ using namespace utils;
 	// unregisters all page tree observers befor docCatalog invalidation
 	// only if docCatalog is already initialized (not in first call from
 	// constructor
-	kernelPrintDbg(DBG_DBG, "Unregistering all observers for page tree");
 	if(docCatalog.get())
 	{
-		docCatalog->unregisterObserver(pageTreeRootObserver);
+		kernelPrintDbg(DBG_DBG, "Unregistering all observers for page tree");
+		try
+		{
+			docCatalog->unregisterObserver(pageTreeRootObserver);
+		}catch(ObserverException &e)
+		{
+			kernelPrintDbg(DBG_WARN, "document catalog observer unregistration failed.");
+		}
 		if(docCatalog->containsProperty("Pages"))
 		{
 			shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
 			if(isRef(pagesProp))
 			{
 				pagesProp->unregisterObserver(pageTreeRootObserver);
-				shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*this);
+				shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(*this);
 				if(pageTreeRoot.get())
-					unregisterPageTreeObservers(pageTreeRoot);
+				{
+					try
+					{
+						unregisterPageTreeObservers(pageTreeRoot);
+					}catch(ObserverException &e)
+					{
+						kernelPrintDbg(DBG_WARN, "page tree root unregisterPageTreeObservers failed.");
+					}
+				}
 			}
 
 		}
@@ -1785,7 +1884,6 @@ using namespace utils;
 	trailer.reset();
 	if((docCatalog.get()) && (!docCatalog.unique()))
 		kernelPrintDbg(DBG_WARN, "Document catalog dictionary is held by somebody.");
-	docCatalog.reset();
 	
 	kernelPrintDbg(DBG_DBG, "Cleaning up nodeCountCache with "<<nodeCountCache.size()<<" entries");
 	clearCache(nodeCountCache);
@@ -1835,7 +1933,7 @@ using namespace utils;
 	
 	// registers pageTreeNodeObserver and pageTreeKidsObserver to page tree root
 	// dictionary which registers these observers to whole page tree structure
-	shared_ptr<CDict> pageTreeRoot=getPageTreeRoot(*this);
+	shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(*this);
 	if(pageTreeRoot.get())
 		registerPageTreeObservers(pageTreeRoot);
 }
@@ -2419,7 +2517,7 @@ size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
 }
 
 
-void CPdf::consolidatePageList(shared_ptr<IProperty> oldValue, shared_ptr<IProperty> newValue)
+void CPdf::consolidatePageList(shared_ptr<IProperty> & oldValue, shared_ptr<IProperty> & newValue)
 {
 using namespace utils;
 
@@ -2500,6 +2598,7 @@ using namespace utils;
 
 					}
 				}
+				break;
 			}
 			default:
 				kernelPrintDbg(DBG_DBG, "oldValue is not leaf or intermediate node.");
@@ -2776,7 +2875,7 @@ using namespace utils;
 		if(nodeType==RootNode)
 		{
 			// root node has no Parent and so recursion is finished, returns
-			// true if Count field has changed
+			// true if Count field has kept its value
 			return !countChanged;
 		}
 

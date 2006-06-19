@@ -6,6 +6,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.69  2006/06/19 17:28:55  hockm0bm
+ * * registerPageTreeObsever, unregisterPageTreeObserver, consolidatePageList
+ *         - have reference parameter(s)
+ * * PageTree{Root,Node,Kids}Obsever
+ *         - notify corrected
+ *         - doc update
+ *
  * Revision 1.68  2006/06/17 15:04:48  misuj1am
  *
  * -- include rem/add
@@ -436,7 +443,7 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  * <li>PageTreeNodeObserver - synchronizes changes which affects Kids array
  * property
  * <li>PageTreeKidsObserver - synchronizes changes which affects Kids array
- * content
+ * content and elements
  * </ul>
  * <br>
  * insertPage and removePage enables inserting and removing new pages to the
@@ -523,7 +530,7 @@ protected:
 	/** Observer for page tree root synchronization.
 	 * 
 	 * This observer is registered on Document catalog and if Pages property 
-	 * is reference (as should do) also to this reference property. Whenever 
+	 * is reference (as it should be) also to this reference property. Whenever 
 	 * document catalog is changed and this change is done either in Pages
 	 * property or directly in reference value, notify method will handle this
 	 * situation and synchronize pdf internal structures with new state.
@@ -563,25 +570,29 @@ protected:
 		 * This observer handles change in page tree root which is
 		 * represented by Pages property of Document catalog dictionary.
 		 * <br>
-		 * At first checks context type and if it is BasicChangeContextType 
-		 * then Pages reference value has changed. Otherwise if
-		 * ComplexChangeContextType is given, then checks if valueId is
-		 * Pages which means that Pages property has changed. If none of
-		 * this situation happens, immediatelly returns.
-		 * <br>
-		 * If Pages property has changed, checks newValue type and if it is
-		 * reference, registers this observer to it. In any case (also if
-		 * reference value has changed) gets also original value from
-		 * context (ComplexChangeContext context is descendand of
-		 * BasicChangeContext and so can be used also for getOriginalValue).
-		 * <br>
-		 * In first step clears whole pageList and nodeCountCache. Then
-		 * checks if target object of newValue reference is dictionary and
-		 * if so, calls conslidatePageTree to this new node. This will
-		 * guarantee that at least page tree root will contain correct Count
-		 * value and its children will refer to correct parent. Finally
-		 * registers also PageTreeNodeObserver and PageTreeKidsObserver to
-		 * newValue node dictionary.
+		 * Handling depends on given context type:
+		 * <ul>
+		 * <li>BasicChangeContext means that Pages reference value has changed.
+		 * Property itself is kept as it is. 
+		 * <li>ComplexChangeContext means that Document catalog dictionary has
+		 * changed (dictionary property was added, removed or replaced). Checks 
+		 * valueId from context and if it is not Pages, immediately returns.
+		 * Otherwise checks oldValue type and if it is reference, unregisters
+		 * this observer from property. If newValue is reference registers this
+		 * observer to property.
+		 * </ul>
+		 * In any case: 
+		 * <ul>
+		 * <li>tries to get dictionary from oldValue (if it is reference) and 
+		 * unregister observers from whole page tree (uses 
+		 * pdf-&gt;unregisterPageTreeObservers method). 
+		 * <li>invalidates pdf-&gt;pageCount
+		 * <li>clears pdf-&gt;pageList and invalidates all pages.
+		 * <li>clears pdf-&gt;nodeCountCache
+		 * <li>tries to get dictionary from newValue (if it is reference) and
+		 * registers observers to whole new page tree (uses
+		 * pdf-&gt;registerPageTreeObservers method).
+		 * </ul>
 		 */
 		virtual void notify (
 				boost::shared_ptr<IProperty> newValue, 
@@ -601,11 +612,11 @@ protected:
 	 * This observer is responsible for intermediate page tree node change
 	 * handling. From all changes in node's dictionary just Kids array property
 	 * is monitored. If this property is replaced, added or removed or if it 
-	 * is reference property and reference value is changed, notify method will
-	 * handle change.
+	 * is reference property and reference its value is changed, notify method 
+	 * will handle change.
 	 * <br>
 	 * Note that this observer handles whole Kids property change. Kids array
-	 * content is not handled here.
+	 * content is not handled here (this is done in PageTreeKidsObserver).
 	 *
 	 * @see notify
 	 */
@@ -639,32 +650,36 @@ protected:
 		 * @param newValue New value of changed property.
 		 * @param context Context of the change.
 		 *
-		 * Checks context type. ComplexChangeContextTyped context means that
-		 * change has occured on node's dictionary and so checks valueId. If it
-		 * is not Kids, immediatelly returns (change was done on some other
-		 * property and we doesn't care). Otherwise checks newValue type and
-		 * if it is reference, registers this obsever to the newValue property.
-		 * In any case registers PageTreeKidsObserver to the new kids array (if
-		 * present) and calls registerPageTreeObservers to all reference members.
+		 * This observer handles change in page tree node.
 		 * <br>
-		 * BasicChangeContextTyped context means that reference to kids array 
-		 * has changed but situation is handled same way, because old target
-		 * value (Kids array) is no more available.
-		 * <br>
-		 * Collects all elements from oldValue and newValue arrays (if present). 
-		 * In first step consolidatePageTree with newValue or oldValue indirect 
-		 * parent intermediate node (it depends on which is defined - but prefer
-		 * oldValue).
-		 * This will correct intermediate node's Count field and also all new
-		 * array members will have correct parent field.
-		 * Then it unregister observers (using unregisterPageTreeObservers) and 
-		 * consolidatePageList for all oldValue collected elements and
-		 * discards nodeCountCache for them. This will invalidate and remove from
-		 * pageList all CPage instances which were in this intermediate node
-		 * before Kids array has changed. Finally consolidatePageList for all
-		 * collected from newValue which will move positions of all all pages
-		 * which are behind this node (rightway in page tree) and also registers
-		 * obsevers to all elements (uses registerPageTreeObservers).
+		 * Handling depends on given context type:
+		 * <ul>
+		 * <li>BasicChangeContext means that intermediate node has Kids property
+		 * with reference type and its value has changed. Property itself is
+		 * same.
+		 * <li>ComplexChangeContext means that node's dictionary has changed, so
+		 * valueId from context is checked. If it is not Kids (some other
+		 * element is changed) immediately returns. Otherwise checks oldValue
+		 * type and if it is reference, unregister this observer from property.
+		 * If newValue is reference, register this observer to the property.
+		 * </ul>
+		 * In any case: 
+		 * <ul>
+		 * <li>tries to get array from oldValue (if it is reference,
+		 * dereferences target object), unregisters
+		 * pdf-&gt;pageTreeKidsObserver from array property and collects all
+		 * reference elements from array.
+		 * <li>similary does with newValue except that register
+		 * pageTreeKidsObserver to the array property.
+		 * <li>consolidates parent of parent node (either newValue or oldValue -
+		 * depends on which is defined, because one of them may be CNull)
+		 * <li>unregisters observers for all collected properties from oldValue
+		 * array (uses pdf-&gt;unregisterPageTreeObservers) and consolidates
+		 * pageList for each element (equivalent to removig this node)
+		 * <li>similary to collected referencies from newValue array property,
+		 * except that observers are registered and pageList is consolidated as
+		 * if elemented has been inserted
+		 * </ul>
 		 * 
 		 */
 		virtual void notify (
@@ -684,10 +699,10 @@ protected:
 	 * 
 	 * This observer is registered on Kids array and all referecence elementes
 	 * from this array. Change notified to this observer is allways page tree
-	 * node insertion, delete or replace.
+	 * node insertion, delete or replacement.
 	 * <br>
-	 * Note that this observer is used for Kids array content or memeber value
-	 * change, nor for whole Kids array property change (like @see
+	 * Note that this observer is used for Kids array content or member value
+	 * change, not for whole Kids array property change (like @see
 	 * PageTreeNodeObserver).
 	 *
 	 * @see notify
@@ -723,38 +738,40 @@ protected:
 		 * @param context Context of the change.
 		 *
 		 * Checks given context type and if it is ComplexChangeContextType then
-		 * Kids array has changed ans if newValue is reference registers
-		 * observers to this property (uses registerPageTreeObservers method to
-		 * register them to whole sub tree). Otherwise just uses context to get
-		 * original value.
+		 * Kids array has changed. If oldValue is reference property,
+		 * unregisters this observer from property and if newValue is reference
+		 * registers this observer property. 
 		 * <br>
-		 * If both newValue and oldValue are not referencies, there is nothing
-		 * to do here, because both values are just mess in array and so
-		 * immediatelly returns.
+		 * If given context is BasicChangeContext, Kids array reference element
+		 * has changed its value.
 		 * <br>
-		 * If newValue is CRef instance, registers obserers to property (uses
-		 * registerPageTreeObservers method).
-		 * <br>
-		 * After all checking starts cosolidation which is done in two steps.
-		 * First is page tree consolidation (done in consolidatePageTree
-		 * method), second pageList consolidation (done in consolidatePageList).
-		 * Finally discards nodeCountCache for oldValue (if it is reference).
-		 * <br>
-		 * if oldValue is CRef, unregisters obsevrers from subtree starting
-		 * with this node (uses unregisterPageTreeObservers).
-		 * <br>
-		 * Note that consolidatePageTree method requires intermediate node under
-		 * which change has occured and this may be problem, becuase changed
-		 * element doesn't have to be direct member of intermediate node
-		 * dictionary and so getIndiRef method can't be used. Parent field of
-		 * changed element reference target dictionary (in valid case) can't 
-		 * be used too, because this is the subject of consolidation. In any 
-		 * case changed element is direct child of Kids array (this may be 
-		 * direct or indirect memeber of intermediate node dictionary). So it 
-		 * uses pageTreeKidsParentCache to get mapping from kids array reference
-		 * to intermediate node reference. If this cache doesn't contain entry 
-		 * for such Kids reference, getIndiRef is used, because in such case 
-		 * Kids array is direct element of internode dictionary.
+		 * In any case:
+		 * <ul>
+		 * <li>If both newValue and oldValue are not referencies, there is 
+		 * nothing to do here, because both values are just mess in array and 
+		 * so immediatelly returns.
+		 * <li>If oldValue is reference, than observers from whole subtree have
+		 * to be unregistered because it is no more accessible from the tree.
+		 * Uses pdf-&gt;unregisterPageTreeObservers method.
+		 * <li>consolidates page tree for intermediate node, where change has
+		 * occured. Uses getIndiRef from oldValue or newValue (depends on which
+		 * is defined, because one can be CNull) and checks
+		 * pdf->pageTreeKidsParentCache. If cache entry exists, uses it. This is
+		 * kind of work around to handle situation when Kids array is indirect
+		 * property (cache entries are done just for such Kids arrays). Uses
+		 * pdf-&gt;consolidatePageTree method. If this method returns with
+		 * false, discards pdf-&gt;pageCount field (sets it to 0). Consolidation
+		 * will change node's Count property and checks all direct childs
+		 * whether they contain correct reference to parent (consolidated node).
+		 * <li>consolidate pdf-&gt;pageList with pdf-&gt;consolidatePageList
+		 * method. Consolidation will remove and invalidate all pages from
+		 * oldValue subtree and moves all which position has changed because of
+		 * this removing.
+		 * <li>If oldValue is reference, discards pdf-&gt;nodeCountCache for it
+		 * and all nodes in its subtree.
+		 * <li>If newValue is reference, registers obserers to new subtree. Uses
+		 * pdf-&gt;registerPageTreeObservers method.
+		 * </ul>
 		 */
 		virtual void notify (
 				boost::shared_ptr<IProperty> newValue, 
@@ -890,7 +907,7 @@ protected:
 	 * but on the same position. It is not possible that these values could be 
 	 * on different positions (this would cause page numbering problem).
 	 */
-	void consolidatePageList(boost::shared_ptr<IProperty> oldValue, boost::shared_ptr<IProperty> newValue);
+	void consolidatePageList(boost::shared_ptr<IProperty> & oldValue, boost::shared_ptr<IProperty> & newValue);
 
 	/** Registers definitive value of property to the xref.
 	 * @param ip Property to be used.
@@ -923,7 +940,7 @@ protected:
 	 * This method should be called in the initialization and when new node is
 	 * added to the tree (either intermediate node or leaf node).
 	 */
-	void registerPageTreeObservers(boost::shared_ptr<IProperty> prop);
+	void registerPageTreeObservers(boost::shared_ptr<IProperty> &prop);
 
 	/** Unregisters page tree observers.
 	 * @param ref Reference to page tree node.
@@ -934,7 +951,7 @@ protected:
 	 * <br>
 	 * This method should be called when node is removed from the tree.
 	 */
-	void unregisterPageTreeObservers(boost::shared_ptr<IProperty> prop);
+	void unregisterPageTreeObservers(boost::shared_ptr<IProperty>& prop);
 
 	/** Helper method for property adding.
 	 * @param ip Property to add.
