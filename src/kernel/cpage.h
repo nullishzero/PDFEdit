@@ -341,9 +341,10 @@ private:
 	void consolidateAnnotsStorage(boost::shared_ptr<IProperty> & oldValue, boost::shared_ptr<IProperty> & newValue);
 	
 	/** Observer for Annots property.
-	 * This observer is registered on page dictionary. Any change which leads to
-	 * Annots property change is catched and handled here. Observer is
-	 * registered also directly on Annots property if it is reference.
+	 * This observer is registered on page dictionary and if Annots property is
+	 * a reference also to this property. Any change which leads to change of 
+	 * Annots array (either add, remove or change) is handled here.  Note that
+	 * it doesn't handle array content change.
 	 */
 	class AnnotsPropWatchDog: public IIPropertyObserver
 	{
@@ -352,9 +353,6 @@ private:
 		CPage* page;
 
 	public:
-		typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
-		typedef CDict::CDictComplexObserverContext ComplextObserverContext;
-			
 		/** Initialization constructor.
 		 * Sets page field according parameter.
 		 *
@@ -374,18 +372,27 @@ private:
 		
 		/** Observer handler.
 		 * 
-		 * In first step, checks given context type. BasicChangeContext means
-		 * change of Annots reference value. ComplexChangeContext means change
-		 * in page dictionary. In such case checks property id, which has
-		 * changed and if it is Annots, unregister obsevers from oldValue and
-		 * continues same way as if reference has changed. Otherwise
-		 * immediatelly returns because we need to handle just Annots property
-		 * change.
-		 * <br>
-		 * In second step, clears page's annotStorage and invalidates all
-		 * annotiotions. Finally collects all current annotation (uses
-		 * collectAnnotations CPage method).
-		 * 
+		 * Checks given context type:
+		 * <ul>
+		 * <li>BasicChangeContext means that Annots property in page dictionary
+		 * is reference and its value has changed.
+		 * <li>ComplexChangeContext means that page dictionary has changed. So
+		 * checks property id and if it not Annots, immediatelly returns,
+		 * because this change doesn't affect annotations. Otherwise checks
+		 * original value type. If it is reference, unregisters this observer
+		 * from it. If newValue is reference, registers observer to it.
+		 * </ul>
+		 * In any case:
+		 * <ul>
+		 * <li>Tries to get array from oldValue and unregister observers from
+		 * it (uses page-&gt;unregisterAnnotsObservers).
+		 * <li>Invalidates and removes all annotations from 
+		 * page-&gt;annotStorage.
+		 * <li>collects all current annotations (uses collectAnnotations).
+		 * <li>Tries to get current Annots array and registers observers to it
+		 * (uses page-&gt;registerAnnotsObservers)
+		 * </ul>
+		 *
 		 * @param newValue New value of changed property.
 		 * @param context Context of the change.
 		 */
@@ -437,14 +444,18 @@ private:
 		
 		/** Observer handler.
 		 * 
-		 * Checks given context type. BasicChangeContext means that reference
-		 * of Annots array member has changed its value. ComplexChangeContext
-		 * means that Annots array element has changed. In such case unregisters
-		 * observers from oldValue and if newValue is refernce, registers
-		 * annotsArrayWatchDog to it.
-		 * <br>
-		 * Finally consolidates page's annotStorage (calls
-		 * CPage::consolidateAnnotsStorage).
+		 * Checks given context type:
+		 * <ul>
+		 * <li>BasicObserverContext means that Annots array reference element 
+		 * has changed its value.
+		 * <li>ComplexChangeContext means that Annots array content has changed.
+		 * If original value is reference, then unregisters this obsever from
+		 * it. If newValue is reference registers this observer to it.
+		 * <li>Different context is not supported and so method immediatelly
+		 * returns.
+		 * </ul>
+		 * In both situations calls consolidateAnnotsStorage with original and
+		 * new value parameters.
 		 *
 		 * @param newValue New value of changed property.
 		 * @param context Context of the change.
@@ -472,18 +483,18 @@ private:
 	boost::shared_ptr<AnnotsArrayWatchDog> annotsArrayWatchDog;
 
 	/** Registers observers for annotations synchronization.
-	 * 
-	 * Checks page's Annots property. If it is reference, registers
-	 * annotsPropWatchDog to it. If it is array, or reference to array,
-	 * registers annotsArrayWatchDog to the array and all its reference
-	 * elements.
+	 * Checks type of given property and if it is reference, registers
+	 * annotsPropWatchDog observer to it and dereferences indirect object. If 
+	 * annots or dereferenced object is array, registers annotsArrayWatchDog 
+	 * observer to it and all its reference type elements.
+	 *
+	 * @param annots Annots property.
 	 */
-	void registerAnnotsObservers();
+	void registerAnnotsObservers(boost::shared_ptr<IProperty> & annots);
 
 	/** Unregisters obsevers from given Annots property.
-	 * If given annots is reference, unregisters annotsPropWatchDog from
-	 * property. If annots is array or reference to array, unregisters
-	 * annotsArrayWatchDog observer from it and all its reference elements.
+	 * This method works reversely to registerAnnotsObservers (observers are
+	 * unregistered but rest is same).
 	 * 
 	 * @param annots Annots property.
 	 */
