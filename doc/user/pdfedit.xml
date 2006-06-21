@@ -30,6 +30,7 @@
    If these parameters are specified in GUI mode,
    they are used in each window opened on program start, in commandline mode (console mode)
    they are used after commandline init script.
+   After these scripts finish execution, the editor terminates.
   </para>
   <sect1>
    <title>Option <option>--help</option></title>
@@ -90,6 +91,12 @@
    <title>Option <option>-eval (code)</option></title>
    <para>
     Evaluate given script code
+   </para>
+  </sect1>
+  <sect1>
+   <title>Option <option>-s (filename)</option></title>
+   <para>
+    This is just shortcut for <option>-console -script (filename)</option>
    </para>
   </sect1>
   <sect1>
