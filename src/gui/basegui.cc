@@ -490,16 +490,17 @@ void BaseGUI::warn(const QString &str) {
 // Tree-selection related slots
 
 /**
- Return first selected tree item from currently selected tree
+ Return first selected tree item from specified tree
  Return NULL, if no item is selected
+ @param name Name of tree to get selection from
  @return Selected tree item
 */
-QSTreeItem* BaseGUI::firstSelectedItem() {
- return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->getSelectedItem()));
+QSTreeItem* BaseGUI::firstSelectedItem(const QString &name/*=QString::null*/) {
+ return dynamic_cast<QSTreeItem*>(import->createQSObject(w->tree->getSelectedItem(name)));
 }
 
 /**
- Return next selected tree item from currently selected tree.
+ Return next selected tree item from specified tree
  Return NULL, if no next item is selected
  @return Selected tree item
 */
@@ -508,16 +509,17 @@ QSTreeItem* BaseGUI::nextSelectedItem() {
 }
 
 /**
- Return object held in first selected tree item from currently selected tree
+ Return object held in first selected tree item from specified tree
  Return NULL, if no item is selected
+ @param name Name of tree to get selection from
  @return Selected tree item's object
 */
-QSCObject* BaseGUI::firstSelected() {
- return w->tree->getSelected();
+QSCObject* BaseGUI::firstSelected(const QString &name/*=QString::null*/) {
+ return w->tree->getSelected(name);
 }
 
 /**
- Return object held in  next selected tree item from currently selected tree.
+ Return object held in  next selected tree item from specified tree
  Return NULL, if no next item is selected
  @return Selected tree item's object
 */

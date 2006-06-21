@@ -14,30 +14,32 @@ isEmpty( PREFIX ) {
 
 # installation details
 data.path       = $$DATA_PATH
-data.files      = pdfeditrc mode.conf *.qs
-data_icon.path  = $$DATA_PATH/icon
-data_icon.files = icon/*.png 
+data.files      = pdfeditrc *.conf *.qs
+data_icon.path  	= $$DATA_PATH/icon
+data_icon.files 	= icon/*.png 
 data_icon_hicolor.path  = $$DATA_PATH/icon/hicolor
 data_icon_hicolor.files = icon/hicolor/*.png 
-data_help.path  = $$DATA_PATH/help
-data_help.files = help/*.html
-data_lang.path  = $$DATA_PATH/lang
-data_lang.files = lang/*.qm
-data_scripts.path  = $$DATA_PATH/scripts
-# do not include script files starting with underscore,
-# as they are only for development/testing and not for production use
-data_scripts.files = scripts/[a-z0-9A-Z]*.qs
+data_help.path  	= $$DATA_PATH/help
+data_help.files 	= help/*.html
+data_help_cs.path 	= $$DATA_PATH/help/cs
+data_help_cs.files	= help/cs/*.html
+data_lang.path  	= $$DATA_PATH/lang
+data_lang.files 	= lang/*.qm
+data_scripts.path	= $$DATA_PATH/scripts
+			# do not include script files starting with underscore,
+			# as they are only for development/testing and not for production use
+data_scripts.files 	= scripts/[a-z0-9A-Z]*.qs
 doc.path        = $$DOC_PATH
 doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.*
-doc_kernel.path = $$DOC_PATH/kernel
-doc_kernel.files= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.xml
-doc_kernel_images.path = $$DOC_PATH/kernel/images
-doc_kernel_images.files=../../doc/design/kernel/images/*.png
+doc_kernel.path 	= $$DOC_PATH/kernel
+doc_kernel.files	= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.xml
+doc_kernel_images.path	= $$DOC_PATH/kernel/images
+doc_kernel_images.files	= ../../doc/design/kernel/images/*.png
 man.path	= $$MAN_PATH
 man.file	= ../../doc/user/*.1
 pdfedit.path    = $$BIN_PATH
 pdfedit.files   = pdfedit
-INSTALLS = data_icon data_icon_hicolor data_lang data_help data_scripts data doc doc_kernel doc_kernel_images pdfedit man
+INSTALLS = data_icon data_icon_hicolor data_lang data_help data_help_cs data_scripts data doc doc_kernel doc_kernel_images pdfedit man
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator

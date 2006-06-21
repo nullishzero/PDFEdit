@@ -68,9 +68,10 @@ public:
  TreeItemAbstract* rootMain();
  void reload();
  void reloadFrom(TreeItemAbstract *item);
- QSCObject* getSelected();
+ TreeWindow* getTree(const QString &name);
+ QSCObject* getSelected(const QString &name);
  QSCObject* nextSelected();
- TreeItemAbstract* getSelectedItem();
+ TreeItemAbstract* getSelectedItem(const QString &name);
  TreeItemAbstract* nextSelectedItem();
  void clear();
  void clearSecondary();
@@ -109,6 +110,8 @@ private:
 private:
  /** Current TreeWindow */
  TreeWindow *tree;
+ /** TreeWindow to get selection from */
+ TreeWindow *treeSelection;
  /** Main TreeWindow */
  TreeWindow *mainTree;
  /** TreeWindow map*/

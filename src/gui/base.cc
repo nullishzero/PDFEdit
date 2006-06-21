@@ -24,6 +24,7 @@
 #include <cpdf.h>
 #include <delinearizator.h> 
 #include <factories.h> 
+#include <pdfwriter.h> 
 #include <qdir.h>
 #include <qfile.h>
 #include <qsinterpreter.h>
@@ -32,6 +33,7 @@
 namespace gui {
 
 using namespace util;
+using namespace pdfobjects;
 
 /**
  Create new Base class 
@@ -307,17 +309,27 @@ QSPdfOperatorStack* Base::createPdfOperatorStack() {
 */
 bool Base::delinearize(const QString &inFile,const QString &outFile) {
  utils::Delinearizator* delin=NULL;
+ utils::OldStylePdfWriter* wr=NULL;
  try {
-  delin=utils::Delinearizator::getInstance(inFile,NULL);
+  guiPrintDbg(debug::DBG_DBG,"Delinearizator started");
+  wr=new utils::OldStylePdfWriter();
+  delin=utils::Delinearizator::getInstance(inFile,wr);
+  guiPrintDbg(debug::DBG_DBG,"Delinearizator created");
   int ret=delin->delinearize(outFile);
+  guiPrintDbg(debug::DBG_DBG,"Delinearizator finished");
   if (ret) {
    const char *whatWasWrong=strerror(ret);
    lastErrorMessage=whatWasWrong;
   } 
+  guiPrintDbg(debug::DBG_DBG,"deleting pdf writer");
+  if (wr) delete wr;
+  guiPrintDbg(debug::DBG_DBG,"deleting delinearizator");
   if (delin) delete delin;  
+  guiPrintDbg(debug::DBG_DBG,"Delinearizator exit");
   return (ret==0);
  } catch (...) {
   //This is the case of failure ..
+  if (wr) delete wr;
   if (delin) delete delin;  
   return false;
  }

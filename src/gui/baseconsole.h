@@ -26,6 +26,7 @@ public slots: //This will be all exported to scripting
  void exitApp(int returnCode=0);
  /*-
   Return list of commandline parameters
+  (excluding any possible switches processed by pdfeditor itself)
  */
  QStringList parameters();
 

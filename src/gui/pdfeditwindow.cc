@@ -313,7 +313,7 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
 
 /** Called upon selecting some item in treeview */
 void PdfEditWindow::setObject() {
- selectedTreeItem=tree->getSelectedItem();
+ selectedTreeItem=tree->getSelectedItem(QString::null);
  guiPrintDbg(debug::DBG_DBG,"selectedTreeItem " << (intptr_t)selectedTreeItem );
  selectedProperty.reset();
  selectedOperator.reset();

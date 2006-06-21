@@ -43,6 +43,7 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  //Main tree
  mainTree=new TreeWindow(this,base,tab,"main_tree_view");
  connectSig(mainTree);
+ treeSelection=NULL;
  tree=mainTree;
 
  //Add main tree to Tab widget
@@ -212,31 +213,76 @@ void MultiTreeWindow::settingUpdate(QString key) {
  }
 }
 
+/**
+ Try to find tree window given its name<br>
+ If the name is NULL, return current<br>
+ If the name is invalid or not found, return NULL<br>
+ Possible names:<br>
+  "main" - main tree<br>
+  "current" - current tree<br>
+  "select" - tree with selected operators<br>
+  Or use a number to select tree by its position<br>
+ @param name Name of tree
+ @return Given tree (or NULL)
+*/
+TreeWindow* MultiTreeWindow::getTree(const QString &name) {
+ if (name.isNull()) return tree;
+ QString aName=name.lower().simplifyWhiteSpace();
+  guiPrintDbg(debug::DBG_DBG,"getTree : " << aName);
+ if (aName=="main") return mainTree;
+ if (aName=="current") return tree;
+ if (aName=="select") {
+  TreeKey tk(Tree_OperatorVector,NULL);
+  if (trees.contains(tk)) {
+   //Selection tree
+   return trees[tk];
+  } else {
+   guiPrintDbg(debug::DBG_DBG,"No selection tree");
+   //No selection tree exist....
+   return NULL;
+  }
+ }
+ bool ok;
+ unsigned int pageNum=aName.toUInt(&ok);
+ if (ok) {
+  //Request for tree with specified number
+  return dynamic_cast<TreeWindow*>(tab->page(pageNum));  //may return NULL if number invalid ...
+ }
+ //Nothing found
+ return NULL;
+}
+
 /** 
  In current tree:
  \copydoc TreeWindow::getSelected()
+ @param name Name of tree to use for getting selection
+ \see getTree
 */
-QSCObject* MultiTreeWindow::getSelected() {
- assert(tree);
- return tree->getSelected();
+QSCObject* MultiTreeWindow::getSelected(const QString &name) {
+ treeSelection=getTree(name);
+ if (!treeSelection) return NULL;
+ return treeSelection->getSelected();
 }
 
 /** 
- In current tree:
+ In specified tree:
  \copydoc TreeWindow::getSelectedItem()
+ @param name Name of tree to use for getting selection
+ \see getTree
 */
-TreeItemAbstract* MultiTreeWindow::getSelectedItem() {
- assert(tree);
- return tree->getSelectedItem();
+TreeItemAbstract* MultiTreeWindow::getSelectedItem(const QString &name) {
+ treeSelection=getTree(name);;
+ if (!treeSelection) return NULL;
+ return treeSelection->getSelectedItem();
 }
 
 /** 
- In current tree:
+ In specified tree:
  \copydoc TreeWindow::nextSelected()
 */
 QSCObject* MultiTreeWindow::nextSelected() {
- assert(tree);
- return tree->nextSelected();
+ if (!treeSelection) return NULL;
+ return treeSelection->nextSelected();
 }
 
 /** 
@@ -244,8 +290,8 @@ QSCObject* MultiTreeWindow::nextSelected() {
  \copydoc TreeWindow::nextSelectedItem()
 */
 TreeItemAbstract* MultiTreeWindow::nextSelectedItem() {
- assert(tree);
- return tree->nextSelectedItem();
+ if (!treeSelection) return NULL;
+ return treeSelection->nextSelectedItem();
 }
 
 /** Clears all items from MultiTreeWindow */
@@ -253,7 +299,7 @@ void MultiTreeWindow::clear() {
  mainTree->uninit();
  clearSecondary();
  assert(tree==mainTree);
- assert(!getSelectedItem()); //Paranoid assert - check if really nothing is in any tree
+ assert(!getSelectedItem(QString::null)); //Paranoid assert - check if really nothing is in any tree
  //The "selection" have changed
  // - nothing is selected as the tree is empty
  //QT does not emit selectionChanged on clearing the tree
@@ -262,6 +308,10 @@ void MultiTreeWindow::clear() {
 
 /** Close all secondary Trees. Only the main tree remain active */
 void MultiTreeWindow::clearSecondary() {
+ if (treeSelection!=mainTree) {
+  //Selection is one of trees to be deleted
+  treeSelection=NULL;
+ }
  //Close all non-primary trees
  TreeWindowList::iterator it=trees.begin();
  while (it!=trees.end()) {
@@ -443,6 +493,8 @@ void MultiTreeWindow::deactivate(TreeKey ptr) {
  if (ptr.first==Tree_Main) return; //Deactivate main tree view? Not possible
  if (trees.contains(ptr)) { //Try to deactivate secondary tree view
   deleteWindow(trees[ptr]);
+ } else {
+  guiPrintDbg(debug::DBG_DBG,"Trying to deactivate nonexistent tree");
  }
 }
 
@@ -451,6 +503,10 @@ void MultiTreeWindow::deactivate(TreeKey ptr) {
  @param tr Secondary tree to delete
 */
 void MultiTreeWindow::deleteWindow(TreeWindow *tr) {
+ if (treeSelection==tr) {
+  //If we are deleting window that is source for selection ...
+  treeSelection=NULL;
+ }
  guiPrintDbg(debug::DBG_DBG,"deleteWindow");
  assert(tr);
  TreeKey ptr=treesReverse[tr];
@@ -463,6 +519,7 @@ void MultiTreeWindow::deleteWindow(TreeWindow *tr) {
 
  //Current page is likely the one that was deleted, request the new page that is now active
  tree=dynamic_cast<TreeWindow*>(tab->currentPage());
+
  assert(tree!=tr);
  assert(tree);
  if (!tree) { // <- If this happen, it is probably a QT bug ...

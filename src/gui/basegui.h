@@ -201,8 +201,12 @@ public slots: //This will be all exported to scripting
     }
    </programlisting>
   </example>
+  You can optionally specify different tree as parameter (by default, selected items from currently shown tree are taken)
+  Specify "main" for main tree, "select" for selected operators or use number to specify number for Nth tree (indexed from zero).
+  Omitting the parameter or specifying "current" will use currently shown tree
+  If specified tree does not exist or its name is invalid, NULL is returned
  */
- QSTreeItem* firstSelectedItem();
+ QSTreeItem* firstSelectedItem(const QString &name=QString::null);
  /*-
   Return next selected tree item.
   Move internal selected item pointer to next selected item (or invalidate it if no more selected items is found)
@@ -222,8 +226,12 @@ public slots: //This will be all exported to scripting
     }
    </programlisting>
   </example>
+  You can optionally specify different tree as parameter (by default, selected items from currently shown tree are taken)
+  Specify "main" for main tree, "select" for selected operators or use number to specify number for Nth tree (indexed from zero).
+  Omitting the parameter or specifying "current" will use currently shown tree
+  If specified tree does not exist or its name is invalid, NULL is returned
  */
- QSCObject* firstSelected();
+ QSCObject* firstSelected(const QString &name=QString::null);
  /*-
   Return object held in next selected tree item.
   Move internal selected item pointer to next selected item (or invalidate it if no more selected items is found)
