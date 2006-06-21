@@ -6,6 +6,17 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.70  2006/06/21 18:48:08  hockm0bm
+ * * getCObjectFromRef with indirect reference and pdf parameters added
+ * * isEncrypted bug fixed
+ * 	- uses getCObjectFromRef with pdf and ref parameter rather than refProp
+ * 	  because trailer doesn't have valid pdf field
+ * * consolidatePageList
+ * 	- optimization - doesn't go through whole pageList when invalidating and
+ * 	  removing pages from oldValue internode (PageList is sorted)
+ * * getValueFromSimple and getCObjectFromRef
+ *         - uses new version of functions
+ *
  * Revision 1.69  2006/06/19 17:28:55  hockm0bm
  * * registerPageTreeObsever, unregisterPageTreeObserver, consolidatePageList
  *         - have reference parameter(s)
@@ -1078,7 +1089,8 @@ private:
 
 	/** Type of returned pages list.
 	 *
-	 * It is association of page position with CPage instance.
+	 * It is association of page position with CPage instance. Elements are
+	 * sorted according their position.
 	 */
 	typedef std::map<size_t, boost::shared_ptr<CPage> > PageList;
 
@@ -2018,6 +2030,10 @@ bool isEncrypted(CPdf & pdf, std::string * filterName);
  * @return CType instance wrapped by shared_ptr smart pointer.
  */
 template<typename CType, PropertyType pType>
+boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
+template<typename CType, PropertyType pType>
 boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 {
 	// REMARK
@@ -2034,6 +2050,89 @@ boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
 	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
 	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
 	if(indirect_ptr->getType() != pType)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
+}
+
+/** Returns cobjects from given reference and pdf.
+ * @param ref Indirect reference.
+ * @param pdf CPdf instance where to fetch.
+ *
+ * Calls getIndirectProperty on given pdf and cast returned indirect object to
+ * given CType.
+ *
+ * @throw ElementBadTypeException if indirect object is not CType instance.
+ * @return CType instance wrapped by shared_ptr smart pointer.
+ */
+template<typename CType, PropertyType pType>
+boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
+template<typename CType, PropertyType pType>
+boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)
+{
+	// REMARK
+	// This helper has to be here because of gcc template manipulation
+	// (cobjecthelpers.h can't include from this header file)
+	
+	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
+	if(indirect_ptr->getType() != pType)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
+}
+
+/** Returns cobjects from given reference property.
+ * @param refProp Reference property (must be pRef typed).
+ *
+ * Gets reference value from property and dereferences indirect object from it.
+ * Uses refProp's pdf for dereference (so it has to be valid).
+ * Checks target object type and if it is correct (CType::type), casts it to
+ * given CType (uses IProperty::getSmartCObjectPtr).
+ *
+ * @throw ElementBadTypeException if refProp is not CRef instance or indirect
+ * object is not CType instance.
+ * @return CType instance wrapped by shared_ptr smart pointer.
+ */
+template<typename CType>
+boost::shared_ptr<CType> getCObjectFromRef(boost::shared_ptr<IProperty> refProp)
+{
+	// REMARK
+	// This helper has to be here because of gcc template manipulation
+	// (cobjecthelpers.h can't include from this header file)
+	
+	if(!isRef(refProp))
+		throw ElementBadTypeException("");
+	
+	// gets reference value and dereferences indirect object
+	assert(refProp->getPdf());
+	assert(hasValidRef(refProp));
+	IndiRef ref;
+	IProperty::getSmartCObjectPtr<CRef>(refProp)->getValue(ref);
+	boost::shared_ptr<IProperty> indirect_ptr=refProp->getPdf()->getIndirectProperty(ref);
+	if(indirect_ptr->getType() != CType::type)
+		throw ElementBadTypeException("");
+	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
+}
+
+/** Returns cobjects from given reference and pdf.
+ * @param ref Indirect reference.
+ * @param pdf CPdf instance where to fetch.
+ *
+ * Calls getIndirectProperty on given pdf and cast returned indirect object to
+ * given CType (if it has correct type CType::type).
+ *
+ * @throw ElementBadTypeException if indirect object is not CType instance.
+ * @return CType instance wrapped by shared_ptr smart pointer.
+ */
+template<typename CType>
+boost::shared_ptr<CType> getCObjectFromRef(IndiRef ref, CPdf & pdf)
+{
+	// REMARK
+	// This helper has to be here because of gcc template manipulation
+	// (cobjecthelpers.h can't include from this header file)
+	
+	boost::shared_ptr<IProperty> indirect_ptr=pdf.getIndirectProperty(ref);
+	if(indirect_ptr->getType() != CType::type)
 		throw ElementBadTypeException("");
 	return IProperty::getSmartCObjectPtr<CType>(indirect_ptr);
 }
