@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/06/21 18:46:47  hockm0bm
+ * typo fix
+ *
  * Revision 1.23  2006/06/16 18:23:25  hockm0bm
  * NoPageRootException added
  *
@@ -285,7 +288,7 @@ public:
 
 	virtual const char * what()const throw()
 	{
-		std::string msg="PageTree is ambigues";
+		std::string msg="PageTree is ambiguous";
 
 		// TODO add information about inter node
 
@@ -499,7 +502,7 @@ public:
 	 */
 	const char * what()const throw()
 	{
-		std::string str=element + "has bad type"; 
+		std::string str=element + " has bad type"; 
 		return str.c_str();
 	}
 };
