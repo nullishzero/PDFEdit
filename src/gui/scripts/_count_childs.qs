@@ -30,3 +30,11 @@ function _count_selection() {
   treeItem=nextSelected();
  }
 }
+
+function _count_selection_other(x) {
+ treeItem=firstSelected(x);
+ while (treeItem) {
+  print(treeItem.type());
+  treeItem=nextSelected();
+ }
+}
