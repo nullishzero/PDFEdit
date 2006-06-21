@@ -7,6 +7,13 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.33  2006/06/21 18:46:00  hockm0bm
+ * * CObject{Simple, Stream}, CDict, CArray
+ *         - contains static const type field
+ * * template helper functions with PropertyType template parameter changed to
+ *   contain just Type parameter - original implementation kept but marked as
+ *   deprecated (they will be removed when no deprecated warning is announced)
+ *
  * Revision 1.32  2006/06/05 08:57:32  hockm0bm
  * refactoring CObjectSimple
  *         - getPropertyValue -> getValue
@@ -234,7 +241,7 @@ std::string getNameFromDict(std::string name, boost::shared_ptr<CDict> dict);
  * object is not CDict instance.
  * @return CDict instance wrapper by shared_ptr smart pointer.
  */
-boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
+boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp)__attribute__((deprecated));
 
 /** Gets dictionary from reference and pdf instance.
  * @param pdf Pdf istance.
@@ -247,7 +254,7 @@ boost::shared_ptr<CDict> getDictFromRef(boost::shared_ptr<IProperty> refProp);
  * @throw ElementBadTypeException if indirect object is not CDict instance.
  * @return CDict instance wrapper by shared_ptr smart pointer.
  */
-boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref);
+boost::shared_ptr<CDict> getDictFromRef(CPdf & pdf, IndiRef ref)__attribute__((deprecated));
 
 /** Helper method for property printing.
  * @param ip Property to print.

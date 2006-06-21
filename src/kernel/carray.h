@@ -59,6 +59,11 @@ public:
 	typedef unsigned int	 						 PropertyId;
 	typedef observer::ComplexChangeContext<IProperty, PropertyId> CArrayComplexObserverContext;
 
+	/** Type of the property.
+	 * This fields holds pArray value. It is used by template functions to get to
+	 * property type from template type.
+	 */
+	static const PropertyType type = pArray;
 private:
 	
 	/** Object's value. */
@@ -128,7 +133,7 @@ public:
 	 *
 	 * @return Type of this property.
 	 */
-	virtual PropertyType getType () const {return pArray;};
+	virtual PropertyType getType () const {return type;};
 	
 
 	/**
@@ -375,6 +380,11 @@ template <typename T> void complexValueToString (const typename T::Value& val, s
  */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
+getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)
 {
 	utilsPrintDbg (debug::DBG_DBG, "array[" << position << "]");
@@ -382,10 +392,36 @@ getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = array->getProperty (position);
 	// Check the type and get the value
-	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
+	return getValueFromSimple<ItemType> (ip);
+}
+
+/** Gets simple value from array.
+ * Gets property from given position and uses getValueFromSimple to get its
+ * simple value.
+ *
+ * @param array Array property.
+ * @param position Index in array of property.
+ *
+ * @return simple value of property.
+ */
+template<typename ItemType>
+inline typename ItemType::Value
+getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position)
+{
+	utilsPrintDbg (debug::DBG_DBG, "array[" << position << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = array->getProperty (position);
+	// Check the type and get the value
+	return getValueFromSimple<ItemType> (ip);
 }
 
 /** \copydoc getSimpleValueFromArray */
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
+getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)__attribute__((deprecated));
+	
+// gcc doesn't like __attribute__ in function definition
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)
@@ -403,15 +439,38 @@ getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position
 	return getSimpleValueFromArray<SimpleValueType, ItemType, ItemPType> (array, position);
 }
 
+/** Gets simple value from array.
+ * Checks type of given ip and if it is array, casts it to CArray and gets value
+ * of property with given position (uses getSimpleValueFromArray with CArray
+ * parameter).
+ *
+ * @param ip Array property.
+ * @param position Array index.
+ * @throw ElementBadTypeException if given property is not CArray or property
+ * with given index is not ItemType.
+ */
+template<typename ItemType>
+inline typename ItemType::Value
+getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)
+{
+	if (!isArray (ip))
+		throw ElementBadTypeException ("getSimpleValueFromArray()");
+
+	// Cast it to array
+	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
+	// Get value from array
+	return getSimpleValueFromArray<ItemType> (array, position);
+}
+
 /** Get int from array. */
 template<typename IP>
-inline int
+inline CInt::Value
 getIntFromArray (const IP& ip, size_t position)
-	{ return getSimpleValueFromArray<int, CInt, pInt> (ip, position);}
+	{ return getSimpleValueFromArray<CInt> (ip, position);}
 
 /** Get	double from array. */
 template<typename IP>
-inline double
+inline CReal::Value
 getDoubleFromArray (const IP& ip, size_t position)
 { 
 	// Try getting int, if not successful try double
@@ -421,7 +480,7 @@ getDoubleFromArray (const IP& ip, size_t position)
 		
 	}catch (ElementBadTypeException&) {}
 
-	return getSimpleValueFromArray<double, CReal, pReal> (ip, position);
+	return getSimpleValueFromArray<CReal> (ip, position);
 }
 
 
@@ -440,6 +499,11 @@ getDoubleFromArray (const IP& ip, size_t position)
  */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
+setSimpleValueInArray (const CArray& array, size_t position, const Value& val)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
+template<typename Value, typename ItemType, PropertyType ItemPType>
+inline void
 setSimpleValueInArray (const CArray& array, size_t position, const Value& val)
 {
 	utilsPrintDbg (debug::DBG_DBG, "array[" << position << "]");
@@ -453,7 +517,34 @@ setSimpleValueInArray (const CArray& array, size_t position, const Value& val)
 	setValueToSimple<ItemType, ItemPType, Value> (ip, val);
 }
 
+/** Sets simple value to array element.
+ * Uses setValueToSimple function to set property value.
+ *
+ * @param array Array property.
+ * @param position Position of element to set.
+ * @param value Simple value to set.
+ */
+template<typename ItemType>
+inline void
+setSimpleValueInArray (const CArray& array, size_t position, const typename ItemType::Value & val)
+{
+	utilsPrintDbg (debug::DBG_DBG, "array[" << position << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = array.getProperty (position);
+	// If it is a ref DELEGATE it
+	ip = getReferencedObject (ip);
+	
+	// Cast it to the correct type and set value
+	setValueToSimple<ItemType> (ip, val);
+}
+
 /** \copydoc setSimpleValueInArray */
+template<typename Value, typename ItemType, PropertyType ItemPType>
+inline void
+setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)__attribute__((deprecated));
+	
+// gcc doesn't like __attribute__ in function definition
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
 setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)
@@ -471,12 +562,33 @@ setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)
 	setSimpleValueInArray<Value, ItemType, ItemPType> (*array, position, val);
 }
 
+/** Sets simple value to array element.
+ * Checks given property type and if it is pArray, casts it to CArray and calls
+ * setSimpleValueInArray with CArray parameter.
+ *
+ * @param array Array property.
+ * @param position Position of element to set.
+ * @param value Simple value to set.
+ * @throw ElementBadTypeException if given property is not CArray instance.
+ */
+template<typename ItemType>
+inline void
+setSimpleValueInArray (const IProperty& ip, size_t position, const typename ItemType::Value& val)
+{
+	if (!isArray (ip))
+		throw ElementBadTypeException ("");
+
+	// Cast it to array
+	const CArray* array = dynamic_cast<const CArray*> (&ip);
+	
+	setSimpleValueInArray<ItemType> (*array, position, val);
+}
 
 /** Set int in array. */
 template<typename IP>
 inline void
 setIntInArray (const IP& ip, size_t position, int val)
-	{ setSimpleValueInArray<int, CInt, pInt> (ip, position, val);}
+	{ setSimpleValueInArray<CInt> (ip, position, val);}
 
 /** Set	double in array. */
 template<typename IP>
@@ -486,7 +598,7 @@ setDoubleInArray (const IP& ip, size_t position, double val)
 	// Try setting double, if not successful try int
 	try {
 		
-		return setSimpleValueInArray<double, CReal, pReal> (ip, position, val);
+		return setSimpleValueInArray<CReal> (ip, position, val);
 		
 	}catch (ElementBadTypeException&) {}
 
@@ -504,6 +616,11 @@ setDoubleInArray (const IP& ip, size_t position, double val)
  * @param array Array.
  * @param id   Position in the array.
  */
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
@@ -528,7 +645,43 @@ getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 	return IProperty::getSmartCObjectPtr<ItemType> (ip);
 }
 
+/**
+ * Get iproperty casted to specific type from array.
+ *
+ * @param array Array.
+ * @param id   Position in the array.
+ * @throw ElementBadTypeException if property doesn't have ItemType type.
+ */
+template<typename ItemType>
+inline boost::shared_ptr<ItemType>
+getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
+{
+	utilsPrintDbg (debug::DBG_DBG, "array[" << pos << "]");
+	
+	// Get the item that is associated with specified key 
+	boost::shared_ptr<IProperty> ip = array->getProperty (pos);
+	//
+	// If it is a Ref forward it to the real object
+	// 
+	ip = getReferencedObject (ip);
+
+	// Check the type
+	if (ItemType::type != ip->getType ())
+	{
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type << " got " << ip->getType ());
+		throw ElementBadTypeException ("getTypeFromArray()");
+	}
+
+	// Cast it to the correct type and return it
+	return IProperty::getSmartCObjectPtr<ItemType> (ip);
+}
+
 /** \copydoc getTypeFromArray */
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
@@ -546,6 +699,29 @@ getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
 	return getTypeFromArray<ItemType, ItemPType> (array, pos);
 }
 
+/**
+ * Get iproperty casted to specific type from array.
+ *
+ * Checks type of given property and if it pArray, casts it to CArray and uses
+ * getTypeFromArray with CArray parameter.
+ *
+ * @param array Array.
+ * @param id   Position in the array.
+ * @throw ElementBadTypeException if given property is not an array or property
+ * at given position doesn't have ItemType type.
+ */
+template<typename ItemType>
+inline boost::shared_ptr<ItemType>
+getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)
+{
+	if (!isArray (ip))
+		throw ElementBadTypeException ("getTypeFromArray()");
+
+	// Cast it to array
+	boost::shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (ip);
+
+	return getTypeFromArray<ItemType> (array, pos);
+}
 
 //=====================================================================================
 } /* namespace utils */

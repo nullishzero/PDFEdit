@@ -67,6 +67,11 @@ public:
 	typedef const std::string& 			PropertyId;
 	typedef observer::ComplexChangeContext<IProperty, PropertyId> CDictComplexObserverContext;
 
+	/** Type of the property.
+	 * This fields holds pDict value. It is used by template functions to get to
+	 * property type from template type.
+	 */
+	static const PropertyType type=pDict;
 private:
 	
 	/** Object's value. */
@@ -136,7 +141,7 @@ public:
 	 *
 	 * @return Type of this property.
 	 */
-	virtual PropertyType getType () const {return pDict;};
+	virtual PropertyType getType () const {return type;};
 	
 
 	/**
@@ -515,6 +520,11 @@ getStringFromXpdfStream (std::string& str, ::Object& obj);
  */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
+getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)__attribute__((deprecated));
+
+// gcc doesn't like __attribute__ in function definition
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
 getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)
 {
 	//utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
@@ -522,9 +532,35 @@ getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string&
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = getReferencedObject (dict->getProperty (id));
 	// Check the type and get the value
-	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
+	return getValueFromSimple<ItemType> (ip);
 }
+
+/**
+ * Get simple value from dict.
+ *
+ * Uses getReferencedObject to property with given id to get target property (if
+ * it is reference) and getValueFromSimple with target property.
+ *
+ * @param dict	Dictionary.
+ * @param id 	Position in the dictionary.
+ */
+template<typename ItemType>
+inline typename ItemType::Value
+getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, CDict::PropertyId id)
+{
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = getReferencedObject (dict->getProperty (id));
+	// Check the type and get the value
+	return getValueFromSimple<ItemType> (ip);
+}
+
 /** \copydoc getSimpleValueFromDict */
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
+getSimpleValueFromDict (const CDict& dict, const std::string& id)__attribute__((deprecated));
+
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromDict (const CDict& dict, const std::string& id)
@@ -534,10 +570,28 @@ getSimpleValueFromDict (const CDict& dict, const std::string& id)
 	// Get the item and check if it is the correct type
 	boost::shared_ptr<IProperty> ip = getReferencedObject (dict.getProperty (id));
 	// Check the type and get the value
-	return getValueFromSimple<ItemType, ItemPType, SimpleValueType> (ip);
+	return getValueFromSimple<ItemType> (ip);
 }
 
 /** \copydoc getSimpleValueFromDict */
+template<typename ItemType>
+inline typename ItemType::Value
+getSimpleValueFromDict (const CDict& dict, const std::string& id)
+{
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << id << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = getReferencedObject (dict.getProperty (id));
+
+	// Check the type and get the value
+	return getValueFromSimple<ItemType> (ip);
+}
+
+/** \copydoc getSimpleValueFromDict */
+template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
+inline SimpleValueType
+getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::string& id)__attribute__((deprecated));
+	
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::string& id)
@@ -552,7 +606,23 @@ getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::strin
 	// Cast it to dict
 	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
 	// Get value from dict
-	return getSimpleValueFromDict<SimpleValueType, ItemType, ItemPType> (dict, id);
+	return getSimpleValueFromDict<ItemType> (dict, id);
+}
+
+/** @copydoc getSimpleValueFromDict 
+ */
+template<typename ItemType>
+inline typename ItemType::Value
+getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::string& id)
+{
+	if (!isDict (ip))
+		throw ElementBadTypeException ("getSimpleValueFromDict()");
+
+	// Cast it to dict
+	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+
+	// Get value from dict
+	return getSimpleValueFromDict<ItemType> (dict, id);
 }
 
 /** Get int from dict. */
@@ -580,13 +650,13 @@ getDoubleFromDict (const IP& ip, const std::string& id)
 template<typename IP>
 inline std::string
 getStringFromDict (const IP& ip, const std::string& id)
-	{ return getSimpleValueFromDict<std::string, CString, pString> (ip, id);}
+	{ return getSimpleValueFromDict<CString> (ip, id);}
 
 /** Get name from dict. */
 template<typename IP>
 inline std::string
 getNameFromDict (const IP& ip, const std::string& id)
-	{ return getSimpleValueFromDict<std::string, CName, pName> (ip, id);}
+	{ return getSimpleValueFromDict<CName> (ip, id);}
 
 //=========================================================
 //	CDict "set value" helper methods
@@ -603,6 +673,10 @@ getNameFromDict (const IP& ip, const std::string& id)
  */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
+setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& val)__attribute__((deprecated));
+
+template<typename Value, typename ItemType, PropertyType ItemPType>
+inline void
 setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& val)
 {
 	utilsPrintDbg (debug::DBG_DBG, "dict[" << name << "]");
@@ -616,7 +690,36 @@ setSimpleValueInDict (const CDict& dict, const std::string& name, const Value& v
 	setValueToSimple<ItemType, ItemPType, Value> (ip, val);
 }
 
+/** Sets value of property with given name.
+ *
+ * Gets property with given name and dereference (uses getReferencedObject) it 
+ * (if it is reference) and sets its value (uses setValueToSimple). 
+ *
+ * @param dict Dictionary.
+ * @param name Property name.
+ * @param val Value for property.
+ */
+template<typename ItemType>
+inline void
+setSimpleValueInDict (const CDict& dict, CDict::PropertyId name, const typename ItemType::Value& val)
+{
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << name << "]");
+	
+	// Get the item and check if it is the correct type
+	boost::shared_ptr<IProperty> ip = dict.getProperty (name);
+
+	// If it is a ref DELEGATE it
+	ip = getReferencedObject (ip);
+	
+	// Cast it to the correct type and set value
+	setValueToSimple<ItemType> (ip, val);
+}
+
 /** \copydoc setSimpleValueInDict */
+template<typename Value, typename ItemType, PropertyType ItemPType>
+inline void
+setSimpleValueInDict (const IProperty& ip, const std::string& name, const Value& val)__attribute__((deprecated));
+	
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
 setSimpleValueInDict (const IProperty& ip, const std::string& name, const Value& val)
@@ -633,6 +736,20 @@ setSimpleValueInDict (const IProperty& ip, const std::string& name, const Value&
 	setSimpleValueInDict<Value, ItemType, ItemPType> (*dict, name, val);
 }
 
+/** @copydoc setSimpleValueInDict
+ */
+template<typename ItemType>
+inline void
+setSimpleValueInDict (const IProperty& ip, CDict::PropertyId name, const typename ItemType::Value& val)
+{
+	if (!isDict (ip))
+		throw ElementBadTypeException ("");
+
+	// Cast it to dict
+	CDict* dict = dynamic_cast<const CDict*> (&ip);
+
+	setSimpleValueInDict<ItemType> (*dict, name, val);
+}
 
 /** Set int in array. */
 template<typename IP>
@@ -667,6 +784,10 @@ setDoubleInDict (const IP& ip, const std::string& name, double val)
  */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)__attribute__((deprecated));
+
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& key)
 {
 	utilsPrintDbg (debug::DBG_DBG, "dict[" << key << "]");
@@ -690,7 +811,47 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, const std::string& 
 	return IProperty::getSmartCObjectPtr<ItemType> (ip);
 }
 
+/** Get property from dictionary.
+ *
+ * If property is reference, dereferences it (uses getReferencedObject
+ * function).
+ * @param dict Dictionary property.
+ * @param key Property name.
+ * @return Property with give type.
+ * @throw ElementBadTypeException if found (dereferenced) property has 
+ * different type than given.
+ */
+template<typename ItemType>
+inline boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, CDict::PropertyId key)
+{
+	utilsPrintDbg (debug::DBG_DBG, "dict[" << key << "]");
+	
+	// Get the item that is associated with specified key 
+	boost::shared_ptr<IProperty> ip = dict->getProperty (key);
+
+	//
+	// If it is a Ref forward it to the real object
+	// 
+	ip = getReferencedObject (ip);
+
+	// Check the type
+	if (ItemType::type != ip->getType ())
+	{
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type << " got " << ip->getType () << " key[" << key << "]");
+		std::string err= "getTypeFromDictionary() [" + key + "]";
+		throw ElementBadTypeException (err);
+	}
+
+	// Cast it to the correct type and return it
+	return IProperty::getSmartCObjectPtr<ItemType> (ip);
+}
+
 /** \copydoc getTypeFromDictionary */
+template<typename ItemType, PropertyType ItemPType>
+inline boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)__attribute__((deprecated));
+
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
 getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string& key)
@@ -707,13 +868,39 @@ getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, const std::string
 
 	return getTypeFromDictionary<ItemType, ItemPType> (dict, key);
 }
+
+/** Gets property from dictionary.
+ *
+ * Checks type of given ip. If it is CDict instance, casts it and calls
+ * getTypeFromDictionary with CDict parameter.
+ *
+ * @param ip Dictionary property.
+ * @param key Property name.
+ * @return Property with given key and ItemType.
+ * @throw ElementBadTypeException if given ip is not CDict instance or target
+ * property has not ItemType.
+ *
+ */
+template<typename ItemType>
+inline boost::shared_ptr<ItemType>
+getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, CDict::PropertyId key)
+{
+	if (!isDict(ip))
+		throw ElementBadTypeException ("getTypeFromDictionary()");
+
+	// Cast it to dict
+	boost::shared_ptr<CDict> dict = IProperty::getSmartCObjectPtr<CDict> (ip);
+
+	return getTypeFromDictionary<ItemType> (dict, key);
+}
+
 /** 
  * Get dictionary from dictionary. If it is an indirect object, fetch the object.
  */
 template<typename IP>
 inline boost::shared_ptr<CDict>
 getCDictFromDict (IP& ip, const std::string& key)
-	{return getTypeFromDictionary<CDict,pDict> (ip, key);}
+	{return getTypeFromDictionary<CDict> (ip, key);}
 
 /** 
  * Get array from dictionary. If it is an indirect object, fetch the object.
@@ -721,7 +908,7 @@ getCDictFromDict (IP& ip, const std::string& key)
 template<typename IP>
 inline boost::shared_ptr<CArray>
 getCArrayFromDict (IP& ip, const std::string& key)
-	{return getTypeFromDictionary<CArray,pArray> (ip, key);}
+	{return getTypeFromDictionary<CArray> (ip, key);}
 
 
 /** 
@@ -729,7 +916,7 @@ getCArrayFromDict (IP& ip, const std::string& key)
  */
 inline boost::shared_ptr<CDict>
 getCDictFromDict (boost::shared_ptr<CDict> dict, const std::string& key)
-	{return getTypeFromDictionary<CDict,pDict> (dict, key);}
+	{return getTypeFromDictionary<CDict> (dict, key);}
 
 
 //=====================================================================================

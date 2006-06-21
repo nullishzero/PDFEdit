@@ -100,6 +100,11 @@ public:
 	typedef typename PropertyTraitSimple<Tp>::value 	 Value;
 	typedef observer::BasicChangeContext<IProperty>		 BasicObserverContext;
 
+	/** Type of the property.
+	 * Static field common to all simple objects with same type.
+	 */
+	static const PropertyType type=Tp;
+
 private:
 	/** Object's valuei holder. */
 	Value value;
@@ -167,7 +172,7 @@ public:
 	 *
 	 * @return Type of this property.
 	 */
-	virtual PropertyType getType () const {return Tp;};
+	virtual PropertyType getType () const {return type;};
 			
 
 	/**
@@ -571,6 +576,11 @@ boost::shared_ptr<IProperty> getReferencedObject (boost::shared_ptr<IProperty> i
  */
 template<typename ItemType, PropertyType ItemPType, typename Value>
 inline Value
+getValueFromSimple (const boost::shared_ptr<IProperty>& ip) __attribute__((deprecated));
+
+// function definition (gcc doesn't like __attribute__ in function definition
+template<typename ItemType, PropertyType ItemPType, typename Value>
+inline Value
 getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
 {
 	if (ItemPType == ip->getType ())
@@ -586,24 +596,49 @@ getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
 	}
 }
 
+/**
+ * Get simple value from simple cobject.
+ *
+ * Given property must have correct type (ItemType::type).
+ *
+ * @param ip IProperty.
+ *
+ * @return Value.
+ */
+template<typename ItemType>
+inline typename ItemType::Value
+getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
+{
+	if (ItemType::type == ip->getType ())
+	{
+		// Cast it to the correct type and return it
+		boost::shared_ptr<ItemType> item = IProperty::getSmartCObjectPtr<ItemType> (ip);
+		return item->getValue ();
+
+	}else
+	{
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type << " got " << ip->getType ());
+		throw ElementBadTypeException ("getValueFromSimple");
+	}
+}
 
 /** Get int from ip. */
 inline int 
 getIntFromIProperty (const boost::shared_ptr<IProperty>& ip)
-	{return getValueFromSimple<CInt, pInt, int> (ip);}
+	{return getValueFromSimple<CInt> (ip);}
 
 /** Get double from ip. */
 inline double 
 getDoubleFromIProperty (const boost::shared_ptr<IProperty>& ip)
 {
-	return (isInt (ip)) ? getValueFromSimple<CInt, pInt, int> (ip) :
-						 getValueFromSimple<CReal, pReal, double> (ip);
+	return (isInt (ip)) ? getValueFromSimple<CInt> (ip) :
+						 getValueFromSimple<CReal> (ip);
 }
 
 /** Get string from ip. */
 inline std::string
 getStringFromIProperty (const boost::shared_ptr<IProperty>& ip)
-		{return getValueFromSimple<CString, pString, std::string> (ip);}
+		{return getValueFromSimple<CString> (ip);}
 	
 
 //=========================================================

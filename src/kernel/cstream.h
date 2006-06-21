@@ -69,6 +69,11 @@ public:
 	typedef std::vector<filters::StreamChar> Buffer;
 	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
 
+	/** Type of the property.
+	 * This fields holds pStream value. It is used by template functions to get to
+	 * property type from template type.
+	 */
+	static const PropertyType type=pStream;
 protected:
 
 	/** Object dictionary. */
@@ -593,7 +598,7 @@ size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& st
 template<typename IP>
 inline boost::shared_ptr<CStream>
 getCStreamFromDict (IP& ip, const std::string& key)
-	{return getTypeFromDictionary<CStream,pStream> (ip, key);}
+	{return getTypeFromDictionary<CStream> (ip, key);}
 
 //=========================================================
 //	CArray "get type" helper methods
@@ -605,7 +610,7 @@ getCStreamFromDict (IP& ip, const std::string& key)
 template<typename IP>
 inline boost::shared_ptr<CStream>
 getCStreamFromArray (IP& ip, size_t pos)
-	{return getTypeFromArray<CStream,pStream> (ip, pos);}
+	{return getTypeFromArray<CStream> (ip, pos);}
 
 
 

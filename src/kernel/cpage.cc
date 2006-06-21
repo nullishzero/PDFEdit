@@ -84,7 +84,7 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			shared_ptr<IProperty> prop=pageDict->getProperty("Resources");
 			if(isRef(prop))
 			{
-				attrs.resources=getDictFromRef(prop);
+				attrs.resources=getCObjectFromRef<CDict>(prop);
 				initialized++;
 			}
 			else
@@ -106,7 +106,7 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			shared_ptr<IProperty> prop=pageDict->getProperty("MediaBox");
 			if(isRef(prop))
 			{
-				attrs.mediaBox=getCObjectFromRef<CArray, pArray>(prop);
+				attrs.mediaBox=getCObjectFromRef<CArray>(prop);
 				initialized++;
 			}else
 				if(isArray(prop))
@@ -127,7 +127,7 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			shared_ptr<IProperty> prop=pageDict->getProperty("CropBox");
 			if(isRef(prop))
 			{
-				attrs.cropBox=getCObjectFromRef<CArray, pArray>(prop);
+				attrs.cropBox=getCObjectFromRef<CArray>(prop);
 				initialized++;
 			}else
 				if(isArray(prop))
@@ -148,7 +148,7 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			shared_ptr<IProperty> prop=pageDict->getProperty("Rotate");
 			if(isRef(prop))
 			{
-				attrs.rotate=getCObjectFromRef<CInt, pInt>(prop);
+				attrs.rotate=getCObjectFromRef<CInt>(prop);
 				initialized++;
 			}else
 				if(isInt(prop))
@@ -174,7 +174,7 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 				// this should not happen - malformed page tree structure
 				return;
 
-			shared_ptr<CDict> parentDict=getDictFromRef(parentRef);
+			shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentRef);
 			fillInheritedPageAttr(parentDict, attrs);
 		}else
 		{
@@ -273,7 +273,7 @@ namespace {
 		shared_ptr<IProperty> arrayProp=pageDict->getProperty("Annots");
 		if(isRef(arrayProp))
 			// this will throw if target is not an array
-			annotsArray=getCObjectFromRef<CArray, pArray>(arrayProp);
+			annotsArray=getCObjectFromRef<CArray>(arrayProp);
 		else 
 			annotsArray=IProperty::getSmartCObjectPtr<CArray>(arrayProp);
 
@@ -322,7 +322,7 @@ namespace {
 				// element
 				try
 				{
-					shared_ptr<CDict> annotDict=getCObjectFromRef<CDict, pDict>(elem);
+					shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(elem);
 
 					// creates CAnnotation instance and inserts it to the container
 					shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
@@ -363,10 +363,10 @@ using namespace utils;
 		annots->unregisterObserver(annotsPropWatchDog);
 		try
 		{
-			annotsArray=getCObjectFromRef<CArray, pArray>(annots);
+			annotsArray=getCObjectFromRef<CArray>(annots);
 		}catch(CObjectException & e)
 		{
-			IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(annots);
+			IndiRef ref=getValueFromSimple<CRef>(annots);
 			kernelPrintDbg(DBG_WARN, ref<<" doesn't point to array.");
 		}
 	}else
@@ -402,10 +402,10 @@ using namespace debug;
 		annots->registerObserver(annotsPropWatchDog);
 		try
 		{
-			annotsArray=getCObjectFromRef<CArray, pArray>(annots);
+			annotsArray=getCObjectFromRef<CArray>(annots);
 		}catch(CObjectException & e)
 		{
-			IndiRef ref=getValueFromSimple<CRef, pRef, IndiRef>(annots);
+			IndiRef ref=getValueFromSimple<CRef>(annots);
 			kernelPrintDbg(DBG_WARN, ref<<" doesn't point to array.");
 		}
 	}else
@@ -442,7 +442,7 @@ using namespace debug;
 	{
 		try
 		{
-			shared_ptr<CDict> annotDict=getDictFromRef(oldValue);
+			shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(oldValue);
 			CPage::AnnotStorage::iterator i;
 			for(i=annotStorage.begin(); i!=annotStorage.end(); i++)
 			{
@@ -475,7 +475,7 @@ using namespace debug;
 	{
 		try
 		{
-			shared_ptr<CDict> annotDict=getDictFromRef(newValue);		
+			shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(newValue);		
 
 			// creates CAnnotation instance from dereferenced dictionary 
 			// and adds it to annotStorage
@@ -560,10 +560,10 @@ using namespace observer;
 	{
 		try
 		{
-			oldArray=getCObjectFromRef<CArray, pArray>(oldValue);
+			oldArray=getCObjectFromRef<CArray>(oldValue);
 		}catch(CObjectException & e)
 		{
-			IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(oldValue);
+			IndiRef ref=getValueFromSimple<CRef>(oldValue);
 			kernelPrintDbg(DBG_WARN, "Target of Annots "<<ref<<" is not an array");
 		}
 	}else
@@ -590,10 +590,10 @@ using namespace observer;
 	{
 		try
 		{
-			newArray=getCObjectFromRef<CArray, pArray>(newValue);
+			newArray=getCObjectFromRef<CArray>(newValue);
 		}catch(CObjectException & e)
 		{
-			IndiRef ref=getValueFromSimple<CRef, pRef, CRef::Value>(newValue);
+			IndiRef ref=getValueFromSimple<CRef>(newValue);
 			kernelPrintDbg(DBG_WARN, "Target of Annots "<<ref<<" is not an array");
 		}
 	}else
