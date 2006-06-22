@@ -1,7 +1,6 @@
 #ifndef __TREEITEMOPERATORCONTAINER_H__
 #define __TREEITEMOPERATORCONTAINER_H__
 
-#include <iproperty.h>
 #include <qlistview.h>
 #include "treeitemabstract.h"
 #include "types.h"
@@ -14,9 +13,10 @@ using namespace pdfobjects;
 class TreeData;
 
 /**
- Class holding vector with pdf operators
+ Tree item holding vector with pdf operators
  The vector is specified in constructor and comes from arbitrary source
  (usually selected objects from page)
+ \brief Tree item containing vector of PDF operators
 */
 class TreeItemOperatorContainer : public TreeItemAbstract {
 public:

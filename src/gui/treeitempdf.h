@@ -30,6 +30,7 @@ using namespace pdfobjects;
 
   List of outlines<br>
   List of pages<br>
+ \brief Tree item containing PDF document or special parts of it
 */
 class TreeItemPdf : public TreeItemAbstract {
 public:

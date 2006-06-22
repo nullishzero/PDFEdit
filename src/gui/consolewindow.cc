@@ -54,6 +54,14 @@ void ConsoleWindow::eval(const QString &code) {
  base->runScript(code);
 }
 
+/**
+ Run given callback function
+ @param func Function to call
+ */
+void ConsoleWindow::call(const QString &func) {
+ base->call(func);
+}
+
 /** default destructor */
 ConsoleWindow::~ConsoleWindow() {
  base->stopScript();

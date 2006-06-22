@@ -10,6 +10,7 @@ namespace gui {
 /**
  This class provides observer monitoring CContentstream item.<br>
  The observer will reload associated tree item when the observed item changes.
+ \brief Observer for TreeItemContentStream
 */
 class TreeItemContentStreamObserver : public TreeItemGenericObserver<pdfobjects::CContentStream> {
 public:

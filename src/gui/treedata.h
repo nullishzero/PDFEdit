@@ -16,6 +16,7 @@ class BaseCore;
 /**
  Storage class holding Tree Data that need to be shared between tree window and its items
  and also holding setting related to what items to show in tree
+ \brief Tree parameters shared between tree and tree items
 */
 class TreeData {
 public:

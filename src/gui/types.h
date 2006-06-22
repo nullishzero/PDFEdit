@@ -1,5 +1,6 @@
 /** @file
  File containing various type definitions, which are used across more than one file
+ \brief Type definitions
 */
 
 #ifndef __TYPES_H__

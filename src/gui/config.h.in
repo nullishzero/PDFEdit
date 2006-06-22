@@ -1,5 +1,6 @@
 /** @file
  File with common configuration for entire program
+ \brief Configuration header
  */
 #ifndef __CONFIG_H__
 #define __CONFIG_H__

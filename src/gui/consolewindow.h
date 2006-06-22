@@ -19,6 +19,7 @@ public:
  void run(const QString &scriptName);
  void runFile(const QString &scriptName);
  void eval(const QString &code);
+ void call(const QString &func);
  ~ConsoleWindow();
 private:
  /** Base used to host scripts */

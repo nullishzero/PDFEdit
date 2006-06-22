@@ -9,8 +9,10 @@ namespace gui {
 
 class ToolButton;
 
-/** Class wrapping QToolBar, providing "click forwarding" from TButtons.
+/**
+ Class wrapping QToolBar, providing "click forwarding" from TButtons.
  Buttons must be added with addButton() for this to work properly
+ \brief Application toolbar
  */
 class ToolBar : public QToolBar {
  Q_OBJECT

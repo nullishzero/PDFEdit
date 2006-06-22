@@ -24,6 +24,7 @@ template <typename T> struct ObserverItemTrait {
  This template class provides observer monitoring some item.<br>
  That item must have ObserverContext and Observer types defined within it
  The observer will reload associated tree item when the observed item changes.
+ \brief Generic observer that will reload tree item on change
 */
 template <typename ObservedItem>
 class TreeItemGenericObserver : public observer::IObserver<ObservedItem> {

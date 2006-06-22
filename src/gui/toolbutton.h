@@ -12,6 +12,7 @@ namespace gui {
  Class wrapping QToolButton, adding button ID and providing also
  a different constructors (with QPixmap or QIconSet)<br>
  Also, emits clicked(id) signal in addition to normal clicked() signal
+ \brief Pushbutton in application toolbar
  */
 class ToolButton : public QToolButton {
  Q_OBJECT

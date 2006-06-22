@@ -53,8 +53,8 @@ void BaseConsole::runInitScript() {
  Terminate the application
  @param returnCode Return code of application
  */
-void BaseConsole::exitApp(int returnCode/*=0*/) {
- exit(returnCode);
+void BaseConsole::exit(int returnCode/*=0*/) {
+ std::exit(returnCode);
 }
 
 /**
@@ -63,6 +63,18 @@ void BaseConsole::exitApp(int returnCode/*=0*/) {
 */
 QStringList BaseConsole::parameters() {
  return params;
+}
+
+/**
+ Return first parameter from list of parameters
+ and remove it from the list. Other parameters are shifted to take the empty space
+ @return First parameter or NULL if no parameters
+*/
+QString BaseConsole::takeParameter() {
+ if (!params.count()) return QString::null;//No parameters
+ QString p0=params[0];
+ params.pop_front();
+ return p0;
 }
 
 } // namespace gui

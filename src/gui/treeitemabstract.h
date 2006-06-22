@@ -22,7 +22,6 @@ class BaseCore;
  Two distict TreeItemAbstract descendants can have collisions in types
  (same value meaning different type)<br>
  Types of childs from different items are never mixed or compared together
- \brief Abstract tree item class
 */
 typedef int ChildType;
 
@@ -30,6 +29,7 @@ typedef int ChildType;
  Common ancestor of all tree Items,
  with functions to support automatic loading and reloading of tree,
  or its parts (subtrees)
+ \brief Abstract tree item class
 */
 class TreeItemAbstract : public QListViewItem {
 public:

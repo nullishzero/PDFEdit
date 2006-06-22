@@ -1,17 +1,19 @@
-/* Delinearizator */
+// Console: Delinearizator
+// Description: Delinearize input file
+// Parameters: [input file] [output file]
 
 /** Print help for delinearizator */
 function delinearize_help() {
  print("Usage:");
- print("Delinearizator [input file] [output file]");
+ print("delinearize [input file] [output file]");
  print(" Input file must exist");
  print(" Output file must not exist");
- exitApp(1);
+ exit(1);
 }
 
 function delinearize_fail(err) {
  print(err);
- exitApp(2);
+ exit(2);
 }
 
 p=parameters();

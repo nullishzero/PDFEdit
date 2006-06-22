@@ -1,6 +1,7 @@
 /** @file
  Various utility functions for examining and manipulating pdf objects,
  related to kernel
+ \brief PDF manipulation utility functions
  @author Martin Petricek
 */
 

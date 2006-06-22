@@ -1,5 +1,6 @@
 /** @file
  Utility functions to work with commandline arguments
+ \brief Commandline arguments utility functions
  @author Martin Petricek
 */
 

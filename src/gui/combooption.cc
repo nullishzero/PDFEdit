@@ -6,13 +6,13 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include "combooption.h"
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qcombobox.h>
 #include "settings.h"
 #include "util.h"
+#include <qcombobox.h>
+#include <qstring.h>
+#include <qstringlist.h>
+#include <utils/debug.h>
 
 namespace gui {
 

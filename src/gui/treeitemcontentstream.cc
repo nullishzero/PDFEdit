@@ -3,16 +3,15 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
-#include <ccontentstream.h>
-#include "treeitempage.h"
 #include "treeitemcontentstream.h"
-#include "treeitempdfoperator.h"
+#include "treeitemcontentstreamobserver.h"
 #include "multitreewindow.h"
 #include "qscontentstream.h"
 #include "treedata.h"
+#include "treeitempage.h"
+#include "treeitempdfoperator.h"
 #include "util.h"
-#include "treeitemcontentstreamobserver.h"
+#include <ccontentstream.h>
 
 namespace gui {
 

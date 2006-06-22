@@ -10,6 +10,7 @@ namespace gui {
 /**
  This class provides observer monitoring IProperty item.<br>
  The observer will reload associated tree item when the observed item changes.
+ \brief Observer for TreeItem
 */
 class TreeItemObserver : public TreeItemGenericObserver<pdfobjects::IProperty>  {
 public:

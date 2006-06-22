@@ -220,6 +220,8 @@ int main(int argc, char *argv[]){
     assert(0);
    }
   }
+  //Call "default console start function"
+  c.call("onConsoleStart");
   //Scripts complete ... exit
   exit(0);
  }

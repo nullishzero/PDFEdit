@@ -10,8 +10,8 @@ namespace gui {
 /**
  This class provides observer monitoring CPage item.<br>
  The observer will reload associated tree item when the observed item changes.
+ \brief Observer for TreeItemPage
 */
-
 class TreeItemPageObserver : public TreeItemGenericObserver<pdfobjects::CPage> {
 public:
  /**

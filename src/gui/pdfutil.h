@@ -1,5 +1,8 @@
 #ifndef __PDFUTIL_H__
 #define __PDFUTIL_H__
+/** @file
+ \brief PDF manipulation utility functions header
+*/
 
 #include <iproperty.h>
 #include <cobject.h>

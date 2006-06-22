@@ -1,5 +1,8 @@
 #ifndef __ARGS_H__
 #define __ARGS_H__
+/** @file
+ \brief Commandline arguments utility functions header
+*/
 
 #include <qmap.h>
 #include <qstring.h>

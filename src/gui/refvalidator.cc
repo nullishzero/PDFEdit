@@ -38,7 +38,7 @@ void RefValidator::fixup(QString &input) const {
  @param pos position of cursor (not changed)
  @return result of validation (Acceptable, Intermediate or Invalid)
 */
-QValidator::State RefValidator::validate(QString &input,int &pos) const {
+QValidator::State RefValidator::validate(QString &input,__attribute__((unused)) int &pos) const {
  if (valid.exactMatch(input)) {
   guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Acceptable");
   return Acceptable;
