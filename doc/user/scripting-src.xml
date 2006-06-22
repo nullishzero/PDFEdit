@@ -105,6 +105,15 @@
     This function is called after active revision of document is changed
    </para>
   </sect1>
+  <sect1 id="onConsoleStart">
+   <title>onConsoleStart()</title>
+   <para>
+    This function is called in commandline mode after calling all scripts specified
+    in commanline parameters -
+    unless some of the scripts exit the application prematurely, for example
+    by calling <link linkend="exit">exit()</link>.
+   </para>
+  </sect1>
   <sect1 id="onDragDrop">
    <title>onDragDrop()</title>
    <para>
