@@ -497,7 +497,7 @@ public:
 					shared_ptr<IProperty> annotsProp=pageDict->getProperty("Annots");
 					shared_ptr<CArray> annotsArray;
 					if(isRef(annotsProp))
-						annotsArray=getCObjectFromRef<CArray, pArray>(annotsProp);
+						annotsArray=getCObjectFromRef<CArray>(annotsProp);
 					else
 						if(isArray(annotsProp))
 							annotsArray=IProperty::getSmartCObjectPtr<CArray>(annotsProp);
@@ -512,7 +512,7 @@ public:
 							{
 								try
 								{
-									shared_ptr<CDict> annotDict=getCObjectFromRef<CDict,pDict>(child);
+									shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(child);
 									storage.push_back(shared_ptr<CAnnotation>(
 												shared_ptr<CAnnotation>(new CAnnotation(annotDict)))
 											);	
@@ -553,7 +553,7 @@ public:
 				CPPUNIT_ASSERT(annotsList.size()==0);
 
 				// adds text annotation to the array
-				annotsArray=getCObjectFromRef<CArray, pArray>(pageDict->getProperty("Annots"));
+				annotsArray=getCObjectFromRef<CArray>(pageDict->getProperty("Annots"));
 				Rectangle rect(0,0,100,100);
 				shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rect, "Text");
 				IndiRef annotRef=pdf->addIndirectProperty(annot->getDictionary());

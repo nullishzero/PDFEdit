@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2006/06/22 18:47:27  hockm0bm
+ * * deprecated functions replaced
+ * * new test cases for ambiguous page tree
+ *
  * Revision 1.7  2006/05/27 21:08:10  misuj1am
  *
  * -- tests improved
@@ -141,7 +145,7 @@ public:
 				}else
 				{
 					if(isRef(*contentProp))
-						streamRefs.push_back(getValueFromSimple<CRef, pRef, IndiRef>(contentProp));
+						streamRefs.push_back(getValueFromSimple<CRef>(contentProp));
 					else
 					{
 						// gets CArray
@@ -153,7 +157,7 @@ public:
 							if(!isRef(element))
 								// just silently ignores non valid members
 								continue;
-							streamRefs.push_back(getValueFromSimple<CRef, pRef, IndiRef>(element));
+							streamRefs.push_back(getValueFromSimple<CRef>(element));
 						}
 					}
 				}
