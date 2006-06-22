@@ -65,14 +65,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Usage: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> [option(s)] [files(s)]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Options: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -383,22 +375,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Operator must be QSPdfOperator !!!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Must define color !!!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>r,g,b must be number !!!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>r,g,b must be from 0 to 255 !!!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Left upper corner</source>
         <translation type="unfinished"></translation>
     </message>
@@ -464,10 +440,6 @@ Data: %3
     </message>
     <message>
         <source>suitable for colour setting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> Please see the pdf specification for details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -909,6 +881,146 @@ Data: %3
         <source>bytes</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Usage:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>input file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>output file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input file must exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output file must not exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>is expecting two parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input file &apos;%1&apos; does not exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output file &apos;%1&apos; already exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available functions:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No function found matching &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many function found matching &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Matching functions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First parameter is name of function to invoke (case insensitive) or its unambiguous part.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rest of parameters are passed to invoked function.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run in commandline mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run script from script path or current directory if not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run script from current directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Evaluate script code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>function name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>function parameter(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>option(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>files(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please see the pdf specification for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text on a page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Shortcut for</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Must define color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>r,g,b must be number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>r,g,b must be from 0 to 255</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1110,7 +1222,11 @@ Data: %3
 <context>
     <name>gui::Base</name>
     <message>
-        <source>Warning</source>
+        <source>Error running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Script not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1123,11 +1239,7 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error running</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Script not found</source>
+        <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

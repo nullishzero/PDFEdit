@@ -80,14 +80,6 @@
         <translation>Kritická chyba</translation>
     </message>
     <message>
-        <source>Usage: </source>
-        <translation>Použití: </translation>
-    </message>
-    <message>
-        <source> [option(s)] [files(s)]</source>
-        <translation> [přepínač(e)] [soubor(y)] </translation>
-    </message>
-    <message>
         <source>Options: </source>
         <translation>Přepínače: </translation>
     </message>
@@ -386,20 +378,16 @@ Data: %3
         <translation>Není zvolena žádná stránka</translation>
     </message>
     <message>
-        <source>Operator must be QSPdfOperator !!!</source>
-        <translation>Operátor musí být QSPdfOperator !!!</translation>
+        <source>Must define color</source>
+        <translation>Je nutno definovat barvu</translation>
     </message>
     <message>
-        <source>Must define color !!!</source>
-        <translation>Je nutno definovat barvu !!!</translation>
+        <source>r,g,b must be number</source>
+        <translation>r,g,b musí být číslo</translation>
     </message>
     <message>
-        <source>r,g,b must be number !!!</source>
-        <translation>r,g,b musí být číslo !!!</translation>
-    </message>
-    <message>
-        <source>r,g,b must be from 0 to 255 !!!</source>
-        <translation>r,g,b musí být z 0 až 255 !!!</translation>
+        <source>r,g,b must be from 0 to 255</source>
+        <translation>r,g,b musí být z 0 až 255</translation>
     </message>
     <message>
         <source>Left upper corner</source>
@@ -468,10 +456,6 @@ Data: %3
     <message>
         <source>suitable for colour setting.</source>
         <translation>vhodný pro nastavení barvy</translation>
-    </message>
-    <message>
-        <source> Please see the pdf specification for details.</source>
-        <translation> Podívejte se do pdf specifikace pro detaily.</translation>
     </message>
     <message>
         <source>Colour changed.</source>
@@ -911,6 +895,134 @@ Data: %3
     <message>
         <source>bytes</source>
         <translation>bytů</translation>
+    </message>
+    <message>
+        <source>Usage:</source>
+        <translation>Použití:</translation>
+    </message>
+    <message>
+        <source>input file</source>
+        <translation>vstupní soubor</translation>
+    </message>
+    <message>
+        <source>output file</source>
+        <translation>výstupní soubor</translation>
+    </message>
+    <message>
+        <source>Input file must exist</source>
+        <translation>Vstupní soubor musí existovat</translation>
+    </message>
+    <message>
+        <source>Output file must not exist</source>
+        <translation>Výstupní soubor nesmí existovat</translation>
+    </message>
+    <message>
+        <source>is expecting two parameters</source>
+        <translation>očekává dva parametry</translation>
+    </message>
+    <message>
+        <source>Input file &apos;%1&apos; does not exist</source>
+        <translation>Vstupní soubor &apos;%1&apos; neexistuje</translation>
+    </message>
+    <message>
+        <source>Output file &apos;%1&apos; already exist</source>
+        <translation>Výstupní soubor &apos;%1&apos; již existuje</translation>
+    </message>
+    <message>
+        <source>Delinearized</source>
+        <translation>Delinearizováno</translation>
+    </message>
+    <message>
+        <source>Available functions:</source>
+        <translation>Dostupné funkce:</translation>
+    </message>
+    <message>
+        <source>Description</source>
+        <translation>Popis</translation>
+    </message>
+    <message>
+        <source>Parameters</source>
+        <translation>Parametry</translation>
+    </message>
+    <message>
+        <source>Filename</source>
+        <translation>Jméno souboru</translation>
+    </message>
+    <message>
+        <source>No function found matching &apos;%1&apos;</source>
+        <translation>Nenalezena funkce odpovídající &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>Too many function found matching &apos;%1&apos;</source>
+        <translation>Nalezeno příliš mnoho funkcí odpovídajících &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <source>Matching functions</source>
+        <translation>Odpovídající funkce</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>Spouštím</translation>
+    </message>
+    <message>
+        <source>First parameter is name of function to invoke (case insensitive) or its unambiguous part.</source>
+        <translation>První parametr je název funkce, která se zavolá (nezáleží na velikosti písmen) nebo jeho jednoznačná část.</translation>
+    </message>
+    <message>
+        <source>Rest of parameters are passed to invoked function.</source>
+        <translation>Zbytek parametrů je předán volané funkci.</translation>
+    </message>
+    <message>
+        <source>Run in commandline mode</source>
+        <translation>Spustit v režimu příkazového řádku</translation>
+    </message>
+    <message>
+        <source>file</source>
+        <translation>soubor</translation>
+    </message>
+    <message>
+        <source>Run script from script path or current directory if not found</source>
+        <translation>Spustí skript z cesty ke skriptům nebo z aktuálního adresáře, pokud není nalezen</translation>
+    </message>
+    <message>
+        <source>Run script from current directory</source>
+        <translation>Spustí skript z aktuálního adresáře</translation>
+    </message>
+    <message>
+        <source>code</source>
+        <translation>kód</translation>
+    </message>
+    <message>
+        <source>Evaluate script code</source>
+        <translation>Spustit skriptový kód</translation>
+    </message>
+    <message>
+        <source>function name</source>
+        <translation>jméno funkce</translation>
+    </message>
+    <message>
+        <source>function parameter(s)</source>
+        <translation>parametr(y) funkce</translation>
+    </message>
+    <message>
+        <source>option(s)</source>
+        <translation>přepínač(e)</translation>
+    </message>
+    <message>
+        <source>files(s)</source>
+        <translation>soubor(y)</translation>
+    </message>
+    <message>
+        <source>Please see the pdf specification for details.</source>
+        <translation>Podívejte se do pdf specifikace pro detaily.</translation>
+    </message>
+    <message>
+        <source>Text on a page.</source>
+        <translation>Text na stránce.</translation>
+    </message>
+    <message>
+        <source>Shortcut for</source>
+        <translation>Zkratka pro</translation>
     </message>
 </context>
 <context>
