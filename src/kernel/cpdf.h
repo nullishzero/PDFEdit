@@ -6,6 +6,23 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.71  2006/06/22 18:56:38  hockm0bm
+ * * searchTreeNode
+ *         - optimization - doesn't go in recursion for LeafNodes
+ *         - bug fix - use correct value in ambiguity checking - uses child
+ *           reference value, not getIndiRef value
+ * * CPdf::unregisterPageTreeObservers
+ *         - doesn't do unregistration if node is still in the tree (may occure
+ *           in ambiguous trees)
+ * * CPdf::getIndirectProperty
+ *         - debug messages removed - it is called to often and produced to much
+ *           output
+ * * CPdf::insertPage
+ *         - bug fixed - append value is considered when new page is stored to
+ *           pageList
+ * * Cpdf::consolidatePageList
+ *         - minor changes - code clean up
+ *
  * Revision 1.70  2006/06/21 18:48:08  hockm0bm
  * * getCObjectFromRef with indirect reference and pdf parameters added
  * * isEncrypted bug fixed
@@ -961,6 +978,9 @@ protected:
 	 * entry from pageTreeKidsParentCache.
 	 * <br>
 	 * This method should be called when node is removed from the tree.
+	 * <br>
+	 * NOTE: If position of given node is ambiguous, unregistration is skipped,
+	 * because node is still in the tree.
 	 */
 	void unregisterPageTreeObservers(boost::shared_ptr<IProperty>& prop);
 

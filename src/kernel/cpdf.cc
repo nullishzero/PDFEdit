@@ -3,6 +3,23 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.73  2006/06/22 18:56:38  hockm0bm
+ * * searchTreeNode
+ *         - optimization - doesn't go in recursion for LeafNodes
+ *         - bug fix - use correct value in ambiguity checking - uses child
+ *           reference value, not getIndiRef value
+ * * CPdf::unregisterPageTreeObservers
+ *         - doesn't do unregistration if node is still in the tree (may occure
+ *           in ambiguous trees)
+ * * CPdf::getIndirectProperty
+ *         - debug messages removed - it is called to often and produced to much
+ *           output
+ * * CPdf::insertPage
+ *         - bug fixed - append value is considered when new page is stored to
+ *           pageList
+ * * Cpdf::consolidatePageList
+ *         - minor changes - code clean up
+ *
  * Revision 1.72  2006/06/21 18:48:08  hockm0bm
  * * getCObjectFromRef with indirect reference and pdf parameters added
  * * isEncrypted bug fixed
@@ -964,8 +981,9 @@ size_t searchTreeNode(
 			break;
 		}
 
-		// recursively checks subnode - if found re-return position
-		if((position=searchTreeNode(pdf, elementDict_ptr, node, startValue, cache)))
+		// recursively checks subnode if it is intermediate - if found 
+		// re-return position
+		if((nodeType!=LeafNode) && (position=searchTreeNode(pdf, elementDict_ptr, node, startValue, cache)))
 			break;
 
 		// node is not under elementDict_ptr node so updates startValue
@@ -984,7 +1002,7 @@ size_t searchTreeNode(
 		for(;i!=children.end(); i++, index++)
 		{
 			shared_ptr<IProperty> child=*i;
-			if(child->getIndiRef()==nodeRef)
+			if(isRef(child) && getValueFromSimple<CRef>(child)==nodeRef)
 			{
 				utilsPrintDbg(DBG_WARN, "Internode "<<superNode->getIndiRef()<<" is ambiguous. Kids["<<index<<"] duplicates reference to node.");
 				throw AmbiguousPageTreeException();
@@ -998,7 +1016,7 @@ size_t searchTreeNode(
 size_t getNodePosition(const CPdf & pdf, shared_ptr<IProperty> node, PageTreeNodeCountCache * cache)
 {
 	utilsPrintDbg(DBG_DBG, "");
-	// node must by from given pdf
+	// node must be from given pdf
 	if(node->getPdf()!=&pdf)
 	{
 		utilsPrintDbg(DBG_ERR, "Node is not from given pdf isntance.");
@@ -1239,6 +1257,28 @@ using namespace pdfobjects::utils;
 		}
 	}else
 		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(prop);
+	
+	// we don't want to unregister observers from node which may be still in the
+	// page tree (this situation may occure if this position of node is 
+	// ambiguous). In such situation, keeps observers
+	bool unregister=true;
+	try
+	{
+		unregister=!getNodePosition(*this, dict_ptr, &nodeCountCache);
+	}catch(AmbiguousPageTreeException &e)
+	{
+		// node is still in the tree and even more it is still ambiguous
+		unregister=false;	
+	}catch(...)
+	{
+		// all other exceptions means that node is not found for some reason
+		unregister=true;
+	}
+	if(!unregister)
+	{
+		kernelPrintDbg(DBG_WARN, "Keeps observers for "<<dict_ptr->getIndiRef()<<" because node is still in the tree.");
+		return;
+	}
 	
 	// registers observer for Kids property change notification
 	dict_ptr->unregisterObserver(pageTreeNodeObserver);
@@ -2000,18 +2040,15 @@ boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
 {
 using namespace debug;
 
-	kernelPrintDbg (DBG_DBG, ref);
-
 	// find the key, if it exists
 	IndirectMapping::iterator i = indMap.find(ref);
 	if(i!=indMap.end())
 	{
 		// mapping exists, so returns value
-		kernelPrintDbg(DBG_DBG, "mapping exists");
 		return i->second;
 	}
 
-	kernelPrintDbg(DBG_DBG, "mapping doesn't exist")
+	kernelPrintDbg(DBG_DBG, "No mapping for "<<ref)
 
 	// mapping doesn't exist yet, so tries to create one
 	// fetches object according reference
@@ -2666,6 +2703,7 @@ using namespace utils;
 		{
 			// position can't be determined
 			// no special handling is needed, minPos keeps its value
+			kernelPrintDbg(DBG_WARN, "Couldn't get newValue position. reason="<<e.what());
 		}
 
 		kernelPrintDbg(DBG_DBG, "newValue sub tree has "<<pagesCount<<" page dictionaries");
@@ -2703,13 +2741,7 @@ using namespace utils;
 	// pageList
 	if(!minPos)
 	{
-		// fills readdContainer with all pageList members and clears pageList
-		// because this wasn't done in previous readdContainer initialization
-		// (no page has 0 position)
-		readdContainer.insert(pageList.begin(), pageList.end());
-		pageList.clear();
-		
-		kernelPrintDbg(DBG_DBG,"Reassingning all pages positition.");
+		kernelPrintDbg(DBG_DBG,"Reassingning all pages posititions.");
 		for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
 		{
 			// uses getNodePosition for each page's dictionary to find out
@@ -2720,11 +2752,15 @@ using namespace utils;
 				size_t pos=getNodePosition(*this, i->second->getDictionary(), &nodeCountCache);
 				kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<pos);
 				pageList.insert(PageList::value_type(pos, i->second));	
-			}catch(exception & e)
+			}catch(AmbiguousPageTreeException & e)
 			{
 				kernelPrintDbg(DBG_WARN, "page with original position="<<i->first<<" is ambiguous. Invalidating.");
 				// page position is ambiguous and so it has to be invalidate
 				i->second->invalidate();
+			}catch(exception & e)
+			{
+				kernelPrintDbg(DBG_CRIT, "Unexpected error. cause="<<e.what());
+				assert(!"Possibly bug.");
 			}
 		}
 		return;
@@ -3060,7 +3096,7 @@ using namespace utils;
 	// CPage can be created and inserted to the pageList
 	shared_ptr<CDict> newPageDict_ptr=IProperty::getSmartCObjectPtr<CDict>(getIndirectProperty(pageRef));
 	shared_ptr<CPage> newPage_ptr(CPageFactory::getInstance(newPageDict_ptr));
-	pageList.insert(PageList::value_type(storePostion, newPage_ptr));
+	pageList.insert(PageList::value_type(storePostion+append, newPage_ptr));
 	kernelPrintDbg(DBG_DBG, "New page added to the pageList size="<<pageList.size())
 	return newPage_ptr;
 }
