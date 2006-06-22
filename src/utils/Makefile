@@ -13,8 +13,8 @@ BINS=debug.o \
      delinearizator.o \
      confparser.o
 
-AR=ar cqs
-DEL_FILE=rm
+AR       = ar cqs
+DEL_FILE = rm -f
 CC       = gcc
 CXX      = g++
 LEX      = flex
@@ -45,6 +45,6 @@ libutils.a: $(BINS)
 
 .PHONY: clean distclean
 clean:
-	-$(DEL_FILE)  $(BINS) libutils.a
+	$(DEL_FILE) $(BINS) libutils.a
 
 distclean: clean
