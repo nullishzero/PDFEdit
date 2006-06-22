@@ -135,8 +135,8 @@ SOURCES += consolewindow.cc
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
-HEADERS += selfdestructivewidget.h  rect2Darray.h  staticsettings.h
-SOURCES += selfdestructivewidget.cc rect2Darray.cc staticsettings.cc
+HEADERS += selfdestructivewidget.h  rect2Darray.h  staticsettings.h  pageviewmode.h
+SOURCES += selfdestructivewidget.cc rect2Darray.cc staticsettings.cc pageviewmode.cc
 
 #Scripting base files
 HEADERS += base.h  basecore.h  basegui.h  baseconsole.h

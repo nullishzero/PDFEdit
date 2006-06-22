@@ -233,6 +233,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
  connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
  connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
+ connect(pagespc, SIGNAL(executeCommand(QString)), this, SLOT(runScript(QString)));
  connect(prop,SIGNAL(infoText(const QString&)),status,SLOT(receiveInfoText(const QString&)));
  connect(prop,SIGNAL(warnText(const QString&)),status,SLOT(receiveWarnText(const QString&)));
  connect(tree,SIGNAL(itemInfo(const QString&)),status,SLOT(message(const QString&)));

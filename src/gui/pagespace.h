@@ -12,10 +12,11 @@
 #include "qspdf.h"
 #include "cpage.h"
 
-namespace gui {
-
 using namespace pdfobjects;
 
+namespace gui {
+
+class PageViewMode;
 
 /** QWidget's class for viewing a page.
  */
@@ -88,11 +89,15 @@ class PageSpace : public QWidget {
 
 		/** Set selection mode.
 		 * @param mode Mode for selection.
-		 * 				\a Mode can be one of PageView::SelectionMode
+		 * @param scriptFncAtMouseRelease Name of function in script, which be call at mouse left button release
+		 * @param drawingObject What be drawing in \a mode
+		 *
 		 * @return Return TRUE, if selection mode was changed. Otherwise return FALSE
-		 * @see PageView::SelectionMode
+		 *
+		 * @see PageViewModeFactory
+		 * @see DrawingObjectFactory
 		 */
-		bool setSelectionMode( int mode );
+		void setSelectionMode( QString mode, QString scriptFncAtMouseRelease, QString drawingObject = QString::null );
 
 		/** Select area on viewed page.
 		 * @param left X position of lefttop edge of new select rectangle
@@ -106,24 +111,29 @@ class PageSpace : public QWidget {
 		/** Select objects (PdfOperators) on page.
 		 * @param ops Vector of PdfOperators for select.
 		 * 
+		 * @see addSelectedObjectOnPage
 		 * @see unselectObjectOnPage
 		 * @see isSomeoneSelected
 		 */
-		void selectObjectOnPage ( std::vector<boost::shared_ptr<PdfOperator> > & ops );
+		void selectObjectOnPage ( const std::vector<boost::shared_ptr<PdfOperator> > & ops );
+		/** Add objects (PdfOperators) to selection on page.
+		 * @param ops Vector of PdfOperators for add.
+		 * 
+		 * @see selectObjectOnPage
+		 * @see unselectObjectOnPage
+		 * @see isSomeoneSelected
+		 */
+		void addSelectedObjectOnPage ( const std::vector<boost::shared_ptr<PdfOperator> > & ops );
 		/** Unselect objects selected on page
 		 * @see selectObjectOnPage
+		 * @see addSelectedObjectOnPage
+		 * @see isSomeoneSelected
 		 */
 		void unselectObjectOnPage ( );
 		/** Function return if some object is selected (not in selection mode PageView::SelectRect)
 		 * @return Return TRUE, if some object is selected. Otherwise return FALSE.
 		 */
 		bool isSomeoneSelected ( );
-		/** Function for request new select rectangle.
-		 * @param id This \a id was returned in signal PageSpace::responseSelectArea.
-		 *
-		 * @return Return TRUE, if request was accepted. Otherwise return FALSE
-		 */
-		bool requestSelectArea ( int id );
 
 		/** Function return actual zoom factor of viewed page.
 		 * @return Return zoom factor (1.0 = 100%)
@@ -294,28 +304,22 @@ class PageSpace : public QWidget {
 		/** Signal is emited, if 
 		 */
 		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > );
-		void responseSelectArea ( int id, bool isItOnLastRequest, int xleft, int ytop, int xright, int ybottom );
 
 		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
+		void executeCommand ( QString cmd );
 	protected:
 		virtual void resizeEvent ( QResizeEvent * );
-		virtual void keyPressEvent ( QKeyEvent * e );
 	private slots:
 		// slots for connecting pageImage's signals
-		void newSelection ( const QRect & );
-		void newSelection ( const QPtrList<BBoxOfObjectOnPage> & );
-		void requirementPopupMenu ( const QPoint &, const QRegion * );
-		void moveSelection ( const QPoint & relativeMove, const QPoint & releasePos, const QPtrList<BBoxOfObjectOnPage> & );
-		void resizeSelection ( const QRect &, const QRect &, const QPtrList<BBoxOfObjectOnPage> & );
+		void newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & );
+		void requestPopupMenu ( const QPoint & );
 		void showMousePosition ( const QPoint & );
 	private:
 		void newSelection ();
 		void actualizeSelection ();
-		void addObjectsOnPage( PdfOperator::Iterator &it, QPtrList<boost::shared_ptr<PdfOperator> > & destination );
 		void newPageView();
 		void newPageView( QPixmap &qp );
 		void centerPageView( );
-		bool refreshObjectsInPageImage();
 	private:
 		QLabel		* pageNumber;
 		QLabel		* mousePositionOnPage;
@@ -323,12 +327,6 @@ class PageSpace : public QWidget {
 		QVBoxLayout	* vBox;	// mozna nebude potreba
 		QHBoxLayout	* hBox;	// mozna nebude potreba
 		QScrollView	* scrollPageSpace;
-
-		QPtrList<boost::shared_ptr<PdfOperator> >	actualSelectedObjects,
-													objectForSelecting;
-		QRect				lastSelectedRect;
-		std::vector<int>	requestsForSelecting;
-		bool				onClickedSelectOneObjects;
 
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;
@@ -342,8 +340,7 @@ class PageSpace : public QWidget {
 		/** Display parameters ( hDpi, vDpi, rotate, ... ) */
 		DisplayParams	displayParams;
 
-		int			selectionMode;
-		int			oldSelectionMode;
+		boost::shared_ptr< PageViewMode >	selectionMode;
 };
 
 } // namespace gui
