@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/06/22 18:45:53  hockm0bm
+ * * doc update
+ * * new file field to enable file closing
+ *
  * Revision 1.4  2006/05/29 18:19:49  hockm0bm
  * typo fix
  *
@@ -59,14 +63,14 @@ namespace utils
 /** Delinearizator class.
  *
  * Provides functionality enabling correct changing linearized pdf documents to
- * their unlinearized form. This may be very usefull specially if chnages has to
+ * their unlinearized form. This may be very usefull especially if chnages has to
  * be done to document, because linearized document has rather strict rules and
  * so can be easily broken by incremental changes.
  * <p>
  * Class reuses XRef class for low level pdf reading and parsing purposes
  * and adds logic related to linearized documents.
  * <p>
- * Output file will contain all objects - except of those needed by linearized
+ * Output file will contain all objects - except those needed by linearized
  * structure - in same format (e. g. filters in content streams), object and
  * generation numbers. 
  * <br>
@@ -77,6 +81,20 @@ namespace utils
  * <p>
  * <b>Usage</b>
  * <br>
+ * Use static factory method for instance creation:
+ * <pre>
+ * // we will use OldStylePdfWriter IPdfWriter implementator
+ * IPdfWriter * contentWriter=new OldStylePdfWriter();
+ * Delinearizator * delinearizator=Delinearizator::getInstance(fileName, contentWriter);
+ *
+ * // delinearize file content to file specified by name
+ * delinearizator->delinearize(outputFile);
+ * 
+ * ...
+ * 
+ * // destroys delinearizator with conentWriter
+ * delete delinearizator;
+ * </pre>
  */
 class Delinearizator: protected ::XRef
 {
@@ -90,30 +108,39 @@ class Delinearizator: protected ::XRef
 	 */
 	::Ref linearizedRef;
 
+	/** File handle for the file stream.
+	 * It is initialized in constructor and closed in destructor. This has to be
+	 * done, because stream used for XRef doesn't allow to access its file
+	 * handle from outside and also doesn't provide proper close functionality.
+	 */
+	FILE * file;
 protected:
 	/** Initialization constructor.
+	 * @param f File handle for stream.
 	 * @param stream FileStreamWriter instance.
 	 * @param writer Pdf content writer.
 	 *
-	 * Uses XRef(BaseStream *) constructor and initializes pdfWriter with given
-	 * one. 
+	 * Uses XRef(BaseStream *) constructor and initializes file handle and 
+	 * pdfWriter with given one (pdfWriter has to be allocated by new operator,
+	 * because it is deallocated by delete in destructor - if NULL is provided,
+	 * delinearize methods do nothing). 
 	 * 
 	 * @throw MalformedFormatExeption if file content is not valid pdf document.
 	 * @throw NotLinearizedException if file content is not linearized.
 	 */
-	Delinearizator(FileStreamWriter * stream, IPdfWriter * writer);
+	Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter * writer);
 public:
 	/** Destructor.
 	 *
 	 * Destroys XRefWriter internal data, deallocates pdfWriter and closes file
-	 * handle opened used for FileStre.
+	 * handle opened used for FileStream.
 	 */
 	~Delinearizator()
 	{
 		if(pdfWriter)
 			delete pdfWriter;
-// TODO FILE stream has to be closed - FileStream::close method doesn't do that!
-//		fclose(FileStream::f);
+		// FILE stream has to be closed - FileStream::close method doesn't do that!
+		fclose(file);
 	}
 	
 	/** Factory method for instance creation.
@@ -175,6 +202,9 @@ public:
 	 * <br>
 	 * NOTE that method doesn't check whether given file is same as one used for
 	 * input data. If it refers to same file, result is unpredictable.
+	 * <br>
+	 * If no pdfWriter is specified (it is NULL), does nothing and immediatelly
+	 * returns.
 	 *
 	 * @return 0 if everything ok, otherwise valie of error of the error.
 	 */

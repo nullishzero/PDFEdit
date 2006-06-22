@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/06/22 18:45:53  hockm0bm
+ * * doc update
+ * * new file field to enable file closing
+ *
  * Revision 1.4  2006/06/17 16:02:35  hockm0bm
  * kernel/xrefwriter.cc added (to be able to find checkLinearized helper function)
  *
@@ -35,9 +39,10 @@
 using namespace pdfobjects;
 using namespace utils;
 
-Delinearizator::Delinearizator(FileStreamWriter * stream, IPdfWriter * writer)
+Delinearizator::Delinearizator(FILE * f, FileStreamWriter * stream, IPdfWriter * writer)
 	:XRef(stream), 
-	pdfWriter(writer)
+	pdfWriter(writer),
+	file(f)
 {
 	if(getErrorCode() !=errNone)
 	{
@@ -69,7 +74,7 @@ using namespace debug;
 	Delinearizator * instance;
 	try
 	{
-		instance=new Delinearizator(inputStream, pdfWriter);
+		instance=new Delinearizator(file, inputStream, pdfWriter);
 	}catch(std::exception & e)
 	{
 		utilsPrintDbg(DBG_ERR, "Unable to create Delinearizator instance. Error message="<<e.what());
