@@ -9,7 +9,9 @@ include(../../config.pro)
 
 # installation paths
 isEmpty( PREFIX ) {
- error( "No prefix defined - check config.pro (generated from config.pro.in) in top-level directory")
+ message("No prefix defined - check config.pro (generated from config.pro.in) in top-level directory")
+ message("Run ./configure there if the file does not exist")
+ error("PREFIX not defined");
 }
 
 # installation details
