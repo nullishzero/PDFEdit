@@ -1,4 +1,5 @@
 Makefile
+Makefile-tests
 kernel.pro
 main.cc
 kernel
