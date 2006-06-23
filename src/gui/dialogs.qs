@@ -63,7 +63,7 @@ function setColor() {
 	
 	op=treeitem.item();
 	if (!isChangeableOp(op)) {
-		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+tr(" Please see the pdf specification for details."));
+		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
 		return;
 	}
 
@@ -87,7 +87,7 @@ function setLineWidth() {
 	
 	op=treeitem.item();
 	if (!isChangeableOp(op)) {
-		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for line width change.")+tr(" Please see the pdf specification for details."));
+		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for line width change.")+" "+tr("Please see the pdf specification for details."));
 		return;
 	}
 	
@@ -119,7 +119,7 @@ function setDashPattern() {
 	
 	op=treeitem.item();
 	if (!isChangeableOp(op)) {
-		warn(tr("Operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+tr(" Please see the pdf specification for details."));
+		warn(tr("Operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+" "+tr("Please see the pdf specification for details."));
 		return;
 	}
 	
@@ -272,7 +272,7 @@ function viewPageText() {
 	// Set width according to line length (we mutliply it with a magic constane somthing like character width)
 	dg.width = max * 7;
 	
-	te.tooltip = "Text on a page.";
+	te.tooltip = tr("Text on a page.");
 	gb.add (te);
 
 	dg.exec();
@@ -318,7 +318,7 @@ function setPageTm() {
 	     
 
 	/* == Second tab */
-	dg.newTab("Page translation");
+	dg.newTab(tr("Page translation"));
 	gb = createGroupBoxAndDisplay (tr("Page translation"),dg);
 	te = new TextEdit;
 	te.text = translation_txt;
@@ -327,7 +327,7 @@ function setPageTm() {
 	ef = twonumdialogs (dg,tr("Set values")+"           [* * * * tx ty]","tx","ty");
 
 	/* == Third tab */
-	dg.newTab("Page scaling");
+	dg.newTab(tr("Page scaling"));
 	gb = createGroupBoxAndDisplay (tr("Page scaling"),dg);
 	te = new TextEdit;
 	te.text = scaling_txt;
@@ -336,7 +336,7 @@ function setPageTm() {
 	ad = twonumdialogs (dg,tr("Set values")+"           [sx * * sy * *]","sx","sy");
 
 	/* == Fourth tab */
-	dg.newTab("Page skewing");
+	dg.newTab(tr("Page skewing"));
 	gb = createGroupBoxAndDisplay (tr("Page skewing"),dg);
 	te = new TextEdit;
 	te.text = skew_txt;
@@ -746,10 +746,6 @@ function delPage (i) {
 	print ("Page removed");
 	
 	// Reload
-	go()
-	
+	go();	
 }
-
-
-
 

@@ -321,8 +321,8 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
    const char *whatWasWrong=strerror(ret);
    lastErrorMessage=whatWasWrong;
   } 
-  guiPrintDbg(debug::DBG_DBG,"deleting pdf writer");
-  if (wr) delete wr;
+//  guiPrintDbg(debug::DBG_DBG,"deleting pdf writer");
+//  if (wr) delete wr;
   guiPrintDbg(debug::DBG_DBG,"deleting delinearizator");
   if (delin) delete delin;  
   guiPrintDbg(debug::DBG_DBG,"Delinearizator exit");

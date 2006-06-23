@@ -67,7 +67,7 @@ void BaseGUI::runInitScript() {
  //Run list of initscripts from settings
  if (!scriptsRun) {
   //No init scripts found - print a warning
-  warn(tr("No init script found - check your configuration")+"!\n"+tr("Looked for","scripts")+":\n"+initScripts.join("\n"));
+  warn(gui::Base::tr("No init script found - check your configuration")+"!\n"+gui::Base::tr("Looked for","scripts")+":\n"+initScripts.join("\n"));
  }
  // Run initscripts from paths listed in settings,
  // initscript with same name is executed only once,
@@ -484,7 +484,7 @@ QSTreeItem* BaseGUI::treeRootMain() {
  */
 void BaseGUI::warn(const QString &str) {
  conPrintLine(str);
- QMessageBox::warning(w,tr("Warning"),str);
+ QMessageBox::warning(w,gui::Base::tr("Warning"),str);
 }
 
 // Tree-selection related slots

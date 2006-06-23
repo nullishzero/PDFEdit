@@ -152,13 +152,13 @@ function operatorSetColor(operator,r,g,b) {
 	// --------  check parameters  ---------
 
 	if (operator.type() != "PdfOperator") {
-		warn( tr("Operator must be QSPdfOperator !!!") );
+		warn (tr("Operator must be")+" QSPdfOperator !!!");
 		return ;
 	}
 	if ((r == undefined) || (g == undefined) || (b == undefined)) {
 		var col = pickColor();
 		if (isNaN(col)) {
-			warn( tr("Must define color !!!") );
+			warn( tr("Must define color")+" !!!" );
 			return operator;
 		}
 		r=col.red;
@@ -168,13 +168,13 @@ function operatorSetColor(operator,r,g,b) {
 	if (((typeof r ) != "number") ||
 		((typeof g ) != "number") ||
 		((typeof b ) != "number")) {
-		warn( tr("r,g,b must be number !!!") );
+		warn( tr("r,g,b must be number")+" !!!" );
 		return operator;
 	}
 	if (((r<0) || (r>255)) ||
 		((g<0) || (g>255)) ||
 		((b<0) || (b>255))) {
-		warn( tr("r,g,b must be from 0 to 255 !!!") );
+		warn( tr("r,g,b must be from 0 to 255")+" !!!" );
 		return operator;
 	}
 

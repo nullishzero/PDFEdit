@@ -133,7 +133,7 @@ class FunctionList {
   Run function, given its full name
  */
  function runFunc(func) {
-  print("Running "+func+" ("+flist[func].filename+")");
+  print(tr("Running")+" "+func+" ("+flist[func].filename+")");
   run(flist[func].filename);
  }
 }
@@ -147,13 +147,12 @@ function onConsoleStart() {
  func=takeParameter();
  if (!func) {
   print(tr("Usage:"));
-  print(tr(" pdfedit -console [function name] [function parameter(s)]"));
+  print(" pdfedit -console ["+tr("function name")+"] ["+tr("function parameter(s)")+"]"));
   print(tr("First parameter is name of function to invoke (case insensitive) or its unambiguous part."));
   print(tr("Rest of parameters are passed to invoked function."));
   functionList.list();
   exit(1);
  }
- 
  func=functionList.getFunc(func);
  functionList.runFunc(func);
 }

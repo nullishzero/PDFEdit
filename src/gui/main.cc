@@ -46,7 +46,7 @@ void saveSettings(void) {
 */
 void handleHelp(){
  cout << APP_NAME << " " << VERSION << endl;
- cout << QObject::tr("Usage: ") << binName << QObject::tr(" [option(s)] [files(s)]") << endl;
+ cout << QObject::tr("Usage:") << " " << binName << " [" << QObject::tr("option(s)") << "] [" << QObject::tr("files(s)") << "]" << endl;
  handleHelpOptions();
 }
 
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]){
  optionHandlerParam("-script",QObject::tr("file"),handleScript,QObject::tr("Run script from script path or current directory if not found"));
  optionHandlerParam("-run",QObject::tr("file"),handleRun,QObject::tr("Run script from current directory"));
  optionHandlerParam("-eval",QObject::tr("code"),handleEval,QObject::tr("Evaluate script code"));
- optionHandlerParam("-s",QObject::tr("file"),handleScriptShort,QObject::tr("Shortcut for '-console -script [file]'"));
+ optionHandlerParam("-s",QObject::tr("file"),handleScriptShort,QObject::tr("Shortcut for")+" '-console -script ["+QObject::tr("file")+"]'");
 
  optionHandler("--",handleStopOpt,QObject::tr("Stop processing options"));
  QStringList params=handleParams(app.argc(),app.argv());
