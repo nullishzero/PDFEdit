@@ -346,8 +346,8 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestDisplay);
 		CPPUNIT_TEST(TestExport);
 		CPPUNIT_TEST(TestFind);
-		CPPUNIT_TEST(TestSet);
 		CPPUNIT_TEST(TestAnnotations);
+		CPPUNIT_TEST(TestSet);
 	CPPUNIT_TEST_SUITE_END();
 
 public:

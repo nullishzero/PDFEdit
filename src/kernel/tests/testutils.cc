@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.4  2006/06/23 18:20:29  misuj1am
+ *
+ * -- g++ warning removed
+ * -- decoration - (CPage::Test can produce huge output, removed the test from the end and placed it in the middle)
+ *
  * Revision 1.3  2006/06/17 18:35:24  hockm0bm
  * observerHandlerTC added
  *
@@ -35,7 +40,7 @@ public:
 
 	virtual ~Observer()throw(){};
 
-	void notify(boost::shared_ptr<T> newValue, boost::shared_ptr<const observer::IChangeContext<T> > context)const throw()
+	void notify(boost::shared_ptr<T> , boost::shared_ptr<const observer::IChangeContext<T> > )const throw()
 	{
 		counter=10*counter+priority;
 	}
