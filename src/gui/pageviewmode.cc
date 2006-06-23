@@ -627,6 +627,15 @@ void PageViewMode_TextSelection::clearWorkOperators ()
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
+			arrayOfBBoxes.clear();
+
+			this->PageViewMode::clearWorkOperators();
+		};
+void PageViewMode_TextSelection::clearSelectedOperators ()
+		{
+			firstSelectedObject = NULL;
+			lastSelectedObject = NULL;
+
 			this->PageViewMode::clearWorkOperators();
 		};
 void PageViewMode_TextSelection::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps )
@@ -699,6 +708,8 @@ const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * PageViewMode_TextSe
 
 void PageViewMode_TextSelection::mousePressLeftButton ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
 		{
+			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* nearestObjectToClick;
+
 			nearestObjectToClick = getNearestObject( e->pos() );
 			firstSelectedObject = nearestObjectToClick;
 			for ( ; firstSelectedObject ; firstSelectedObject = firstSelectedObject->getRightBBox() ) {

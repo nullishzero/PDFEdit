@@ -214,6 +214,9 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		// else  need reload page ( changed zoom, ... )
 	}
 
+	// initialize work operators in mode
+	initializeWorkOperatorsInMode();
+
 	// initialize create pixmap for page
 	SplashColor paperColor;
 	splashMakeRGB8(paperColor, 0xff, 0xff, 0xff);
@@ -261,9 +264,6 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	newPageView( * actualPagePixmap );
 
 	emit changedPageTo( * actualPage, actualPdf->getPagePosition( actualPage ) );
-
-	// initialize work operators in mode
-	initializeWorkOperatorsInMode();
 }
 #undef splashMakeRGB8
 

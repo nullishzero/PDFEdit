@@ -238,6 +238,7 @@ class PageViewMode_TextSelection: public PageViewMode {
 			virtual void setSelectedRegion ( QRegion r );
 
 			virtual void clearWorkOperators ();
+			virtual void clearSelectedOperators ();
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 	public:
@@ -259,10 +260,6 @@ class PageViewMode_TextSelection: public PageViewMode {
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* firstSelectedObject;
 			/** last selected objects */
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* lastSelectedObject;
-			/** The nearest left objects on the line, if exist.
-			 *  If doesn't exist left object on the line, it is the nearest right objects on the line.
-			 */
-			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* nearestObjectToClick;
 };
 
 } // namespace gui
