@@ -640,10 +640,13 @@ void PageViewMode_TextSelection::clearSelectedOperators ()
 		};
 void PageViewMode_TextSelection::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps )
 		{
+			if (wOps.empty())
+				return;
+
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
-			guiPrintDbg( debug::DBG_DBG, "->" );
+			guiPrintDbg( debug::DBG_DBG, "-> "<<wOps.size() );
 			std::vector< boost::shared_ptr< PdfOperator > > hOps;
 			TextOperatorIterator textIter ( wOps[0] );
 			for ( ; ! textIter.isEnd() ; textIter.next() )
@@ -664,6 +667,9 @@ void PageViewMode_TextSelection::addWorkOperators ( const std::vector< boost::sh
 		};
 void PageViewMode_TextSelection::addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps )
 		{
+			if (sOps.empty())
+				return;
+
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
