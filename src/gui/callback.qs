@@ -2,16 +2,17 @@
 
 /** Function to enable/disable certain items when currently selected object changes */
 function checkMenus() {
+ var first=firstSelectedItem();
  try {
    //Check current tree item
-  theType=treeitem.itemtype();
+  theType=first.itemtype();
  } catch (e) {
   //This is mainly because treeitem is not defined on start
   theType="";
  }
  try {
   //Check parent tree item
-  parentType=treeitem.parent().itemtype();
+  parentType=first.parent().itemtype();
  } catch (e) {
   //This is mainly because treeitem is not defined on start
   parentType="";

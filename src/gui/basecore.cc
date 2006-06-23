@@ -139,8 +139,10 @@ void BaseCore::call(const QString &name) {
   addScriptingObjects();
  }
  try {
+  guiPrintDbg(debug::DBG_DBG,"Begin callback: " << name);
   //Call the function. Do not care about result
   qs->evaluate(funct,this,"<GUI>");
+  guiPrintDbg(debug::DBG_DBG,"End callback: " << name);
   if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
    QString error=qs->errorMessage();
    if (error!=QString::null) { /// some error occured
@@ -149,6 +151,7 @@ void BaseCore::call(const QString &name) {
    }
   }
  } catch (...) {
+  guiPrintDbg(debug::DBG_INFO,"Exception in callback: " << name);
   //Do not care about exception in callbacks either ... 
   if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
    con->printErrorLine(tr("Exception in callback handler: ")+name);

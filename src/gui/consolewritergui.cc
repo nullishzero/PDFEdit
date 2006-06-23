@@ -16,8 +16,8 @@ namespace gui {
  @param _cmdLine CommandWindow widget used for output
 */
 ConsoleWriterGui::ConsoleWriterGui(CommandWindow *_cmdLine) : ConsoleWriter() {
- assert(cmdLine);
  cmdLine=_cmdLine;
+ assert(cmdLine);
 }
 
 /** default destructor */
