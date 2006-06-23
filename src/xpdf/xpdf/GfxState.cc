@@ -3446,7 +3446,8 @@ void GfxPath::lineTo(double x, double y) {
     ++n;
     justMoved = gFalse;
   }
-  subpaths[n-1]->lineTo(x, y);
+  if (0 < n)
+  	subpaths[n-1]->lineTo(x, y);
 }
 
 void GfxPath::curveTo(double x1, double y1, double x2, double y2,
@@ -3461,7 +3462,8 @@ void GfxPath::curveTo(double x1, double y1, double x2, double y2,
     ++n;
     justMoved = gFalse;
   }
-  subpaths[n-1]->curveTo(x1, y1, x2, y2, x3, y3);
+  if (0 < n)
+  	subpaths[n-1]->curveTo(x1, y1, x2, y2, x3, y3);
 }
 
 void GfxPath::close() {
@@ -3477,7 +3479,8 @@ void GfxPath::close() {
     ++n;
     justMoved = gFalse;
   }
-  subpaths[n-1]->close();
+  if (0 < n)
+	  subpaths[n-1]->close();
 }
 
 void GfxPath::append(GfxPath *path) {

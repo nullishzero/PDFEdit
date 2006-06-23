@@ -948,8 +948,8 @@ public:
   GfxSubpath *getSubpath(int i) { return subpaths[i]; }
 
   // Get last point on last subpath.
-  double getLastX() { return subpaths[n-1]->getLastX(); }
-  double getLastY() { return subpaths[n-1]->getLastY(); }
+  double getLastX() { return (0 < n) ? subpaths[n-1]->getLastX() : 0; }
+  double getLastY() { return (0 < n) ? subpaths[n-1]->getLastY() : 0; }
 
   // Move the current point.
   void moveTo(double x, double y);
