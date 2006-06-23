@@ -97,7 +97,7 @@ class PageSpace : public QWidget {
 		 * @see PageViewModeFactory
 		 * @see DrawingObjectFactory
 		 */
-		void setSelectionMode( QString mode, QString scriptFncAtMouseRelease, QString drawingObject = QString::null );
+		void setSelectionMode( QString mode, QString scriptFncAtMouseRelease = QString::null, QString drawingObject = QString::null );
 
 		/** Select area on viewed page.
 		 * @param left X position of lefttop edge of new select rectangle
@@ -309,6 +309,7 @@ class PageSpace : public QWidget {
 		void executeCommand ( QString cmd );
 	protected:
 		virtual void resizeEvent ( QResizeEvent * );
+		void initializeWorkOperatorsInMode();
 	private slots:
 		// slots for connecting pageImage's signals
 		void newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & );

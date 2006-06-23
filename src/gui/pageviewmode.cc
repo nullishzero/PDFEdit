@@ -11,16 +11,15 @@ namespace gui {
 DrawingObject * DrawingObjectFactory::create( const QString & nameOfObject )
 		{
 			if (nameOfObject == "line")  return new DrawingLine();
+			if (nameOfObject == "rect")  return new DrawingRect();
+
+			guiPrintDbg( debug::DBG_DBG, "Undefined drawing!!!" );
 			return NULL;
 		}
 void DrawingObject::drawObject ( QPainter & /* painter */, QPoint /* p1 */, QPoint /* p2 */ )
-		{
-			guiPrintDbg( debug::DBG_DBG, "" );
-		};
+		{};
 void DrawingObject::drawObject ( QPainter & painter, QRegion reg )
 		{
-			guiPrintDbg( debug::DBG_DBG, "" );
-
 			QMemArray<QRect> h_mar (reg.rects());
 			QMemArray<QRect>::Iterator it = h_mar.begin();
 			for ( ; it != h_mar.end() ; ++it )
@@ -30,12 +29,10 @@ void DrawingObject::drawObject ( QPainter & painter, QRegion reg )
 		};
 void DrawingObject::drawObject ( QPainter & painter, QRect rect )
 		{
-			guiPrintDbg( debug::DBG_DBG, "" );
 			drawObject ( painter, QRegion( rect.normalize() ) );
 		};
 DrawingLine::DrawingLine ()
 		{
-			guiPrintDbg( debug::DBG_DBG, "" );
 			pen.setWidth( 1 );
 			pen.setColor( Qt::black );
 			pen.setStyle( Qt::SolidLine );
@@ -44,11 +41,27 @@ DrawingLine::~DrawingLine ()
 		{};
 void DrawingLine::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
 		{
-			guiPrintDbg( debug::DBG_DBG, "" );
 			QPen old_pen ( painter.pen() );
 
 			painter.setPen( pen );
 			painter.drawLine( p1, p2 );
+
+			painter.setPen( old_pen );
+		};
+DrawingRect::DrawingRect ()
+		{
+			pen.setWidth( 1 );
+			pen.setColor( Qt::black );
+			pen.setStyle( Qt::SolidLine );
+		};
+DrawingRect::~DrawingRect ()
+		{};
+void DrawingRect::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
+		{
+			QPen old_pen ( painter.pen() );
+
+			painter.setPen( pen );
+			painter.drawRect( QRect(p1, p2).normalize() );
 
 			painter.setPen( old_pen );
 		};
@@ -61,6 +74,8 @@ PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
 			if (nameOfMode == "new_object")			return new PageViewMode_NewObject		( drawingObject, _scriptFncAtMouseRelease );
 			if (nameOfMode == "text_selection")		return new PageViewMode_TextSelection	( drawingObject, _scriptFncAtMouseRelease );
 			if (nameOfMode == "")					return new PageViewMode					( drawingObject, _scriptFncAtMouseRelease );
+
+			guiPrintDbg( debug::DBG_DBG, "Undefined mode!!!" );
 			return NULL;
 		}
 

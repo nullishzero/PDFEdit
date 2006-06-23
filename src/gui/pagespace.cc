@@ -263,7 +263,12 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	emit changedPageTo( * actualPage, actualPdf->getPagePosition( actualPage ) );
 
 	// initialize work operators in mode
-	if (selectionMode) {
+	initializeWorkOperatorsInMode();
+}
+#undef splashMakeRGB8
+
+void PageSpace::initializeWorkOperatorsInMode() {
+	if (selectionMode && actualPage) {
 		selectionMode->clearWorkOperators();
 
 		std::vector< boost::shared_ptr< PdfOperator > > ops;
@@ -281,8 +286,6 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		selectionMode->actualizeSelection();
 	}
 }
-#undef splashMakeRGB8
-
 void PageSpace::selectObjectOnPage ( const std::vector<boost::shared_ptr<PdfOperator> > & ops ) {
 	if (selectionMode)
 		selectionMode->setSelectedOperators ( ops );
@@ -309,6 +312,9 @@ void PageSpace::setSelectionMode( QString mode, QString scriptFncAtMouseRelease,
 		connect( selectionMode.get(), SIGNAL( executeCommand(QString) ),
 				this, SIGNAL( executeCommand(QString) ) );
 	}
+
+	// initialize work operators in mode
+	initializeWorkOperatorsInMode();
 }
 
 void PageSpace::setSelectArea ( int left, int top, int right, int bottom ) {

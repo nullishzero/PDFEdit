@@ -36,6 +36,16 @@ class DrawingLine: public DrawingObject {
 			QPen	pen;
 };
 
+class DrawingRect: public DrawingObject {
+	public:
+			DrawingRect ();
+			virtual ~DrawingRect ();
+
+			virtual void drawObject ( QPainter & painter, QPoint p1, QPoint p2 );
+
+	private:
+			QPen	pen;
+};
 //  ---------------------  selection mode  --------------------- //
 class PageViewMode;
 
