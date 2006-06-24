@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/06/24 09:59:04  hockm0bm
+ * programming errors corrected
+ *         - local variable returned - changed to class field
+ *
  * Revision 1.24  2006/06/21 18:46:47  hockm0bm
  * typo fix
  *
@@ -52,10 +56,9 @@
 #ifndef _EXCEPTIONS_H
 #define _EXCEPTIONS_H
 
-// stl
-#include <exception>
-#include <string>
-
+#include<exception>
+#include<string>
+#include<sstream>
 
 /**
  * @file exceptions.h
@@ -233,12 +236,12 @@ public:
  */
 class PageNotFoundException: public PdfException
 {
-	const size_t position;
-	
+	size_t position;
+	std::string message;
 public:
 	/** Exception constructor without position specified.
 	 */
-	PageNotFoundException():position(0)
+	PageNotFoundException():message("Page not found")
 	{
 	}
 	
@@ -247,6 +250,9 @@ public:
 	 */
 	PageNotFoundException(size_t pos):position(pos)
 	{
+		std::ostringstream str;
+		str<<"Page at "<<pos<<" not found";	
+		message=str.str();
 	}
 
 	virtual ~PageNotFoundException() throw()
@@ -255,9 +261,7 @@ public:
 
 	virtual const char * what()const throw()
 	{
-		std::string msg="Page not found at pos "+position;
-
-		return msg.c_str();
+		return message.c_str();
 	}
 
 	void getPosition(size_t & pos)
@@ -275,10 +279,11 @@ public:
 class AmbiguousPageTreeException: public PdfException
 {
 	// TODO keep intermediate node with such ambigues Kids array
+	const std::string msg;
 public:
 	/** Exception constructor.
 	 */
-	AmbiguousPageTreeException()
+	AmbiguousPageTreeException():msg("Page tree is ambiguous.")
 	{
 	}
 
@@ -288,10 +293,6 @@ public:
 
 	virtual const char * what()const throw()
 	{
-		std::string msg="PageTree is ambiguous";
-
-		// TODO add information about inter node
-
 		return msg.c_str();
 	}
 };
@@ -300,7 +301,7 @@ public:
  */
 class ReadOnlyDocumentException: public PdfException
 {
-	std::string message;
+	const std::string message;
 public:
 	/** Exception constructor.
 	 * @param msg Context message of action.
@@ -338,12 +339,13 @@ class ImplementationException: public std::exception
  */
 class NotImplementedException: public ImplementationException
 {
-	std::string feature;
+	const std::string feature;
+	const std::string message;
 public:
 	/** Exception constructor.
 	 * @param _feature Feature description which is not implemented.
 	 */
-	NotImplementedException(std::string _feature):feature(_feature)
+	NotImplementedException(std::string _feature):feature(_feature), message("feature \""+feature+"\" is not implemented")
 	{
 	}
 
@@ -353,9 +355,7 @@ public:
 
 	const char * what()const throw()
 	{
-		std::string msg="feature=\""+feature+"\" is not implemented";
-
-		return msg.c_str();
+		return message.c_str();
 	}
 
 	void getFeature(std::string _feature)
@@ -385,9 +385,9 @@ struct XpdfInvalidObject : public XpdfException
 
 class IndirectObjectNotFoundException: public CObjectException
 {
-	int num;
-	int gen;
-
+	const int num;
+	const int gen;
+	std::string message;
 public:
 	/** Exception constructor.
 	 * @param _num Object number.
@@ -395,6 +395,9 @@ public:
 	 */
 	IndirectObjectNotFoundException(int _num, int _gen):num(_num),gen(_gen)
 	{
+		std::ostringstream oss;
+		oss<<"Indirect object with ref=["<<num<<", "<<gen<<"] not found";
+		message=oss.str();
 	}
 
 	~IndirectObjectNotFoundException()throw()
@@ -403,11 +406,7 @@ public:
 
 	const char * what()const throw()
 	{
-		// FIXME
-		//std::string msg="Indirect object with ref=[";
-		//msg+=num+", "+gen+"] not found";
-
-		return "FIXME";//msg.c_str();
+		return message.c_str();
 	}
 
 	void getReference(int & _num, int & _gen)
@@ -430,6 +429,7 @@ private:
 	 */
 	const std::string child;
 	
+	std::string message;
 public:
 	/** Exception constructor.
 	 * @param _parent Complex type.
@@ -440,6 +440,7 @@ public:
 	 */
 	ElementNotFoundException(std::string _parent, std::string _child):parent(_parent), child(_child)
 	{
+		message=child+" not found in "+parent;
 	}
 
 	virtual ~ElementNotFoundException() throw()
@@ -452,9 +453,7 @@ public:
 	 */
 	const char * what()const throw()
 	{
-		std::string msg;
-		msg=child + " not found in " + parent;
-		return msg.c_str();
+		return message.c_str();
 	}
 
 	/** Gets parent value.
@@ -484,12 +483,14 @@ class ElementBadTypeException: public CObjectException
 	 */
 	const std::string element;
 
+	std::string message;
 public:
 	/** Exception constructor.
 	 * @param _element Element id with bad type.
 	 */
 	ElementBadTypeException(std::string _element):element(_element)
 	{
+		message=element+" has bad type";
 	}
 
 	virtual ~ElementBadTypeException() throw()
@@ -502,8 +503,7 @@ public:
 	 */
 	const char * what()const throw()
 	{
-		std::string str=element + " has bad type"; 
-		return str.c_str();
+		return message.c_str();
 	}
 };
 
