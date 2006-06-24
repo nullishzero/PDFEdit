@@ -558,11 +558,10 @@ void parseStreamToContainer (T& container, ::Object& obj);
  *
  * @param buffer Stream buffer.
  * @param dict Stream dictionary.
- * @param xref Xref of actual pdf if any.
  *
  * @return Xpdf object.
  */
-::Object* xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict);
+::Object* xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict);
 
 
 /**

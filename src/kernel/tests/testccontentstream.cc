@@ -216,7 +216,6 @@ namespace  {
 			  c1 = c2;
 			  c2 = xstr->getBaseStream()->getChar();
 			}
-			dict.free ();
 			delete xstr;
 			return true;
 

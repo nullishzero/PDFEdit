@@ -113,7 +113,7 @@ public:
 		if (prev.lock())
 		{
 			//assert (!"REMOVE THIS WARNING: possible incorrect usage of pdf operators.");
-			kernelPrintDbg (debug::DBG_CRIT, "Possible incorrect usage of pdf operator.");
+			kernelPrintDbg (debug::DBG_DBG, "Possible incorrect usage of pdf operator.");
 		}
 	};
 

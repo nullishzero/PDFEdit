@@ -176,8 +176,8 @@ namespace {
 	getInlineImage (CStreamsXpdfReader<CContentStream::CStreams>& streamreader) 
 	{
 		kernelPrintDbg (DBG_DBG, "");
-		xpdf::XpdfObject dict;
-		dict->initDict ((XRef*)NULL); // We do not have (need) valid xref, but be CAREFUL
+		::Object dict;
+		dict.initDict ((XRef*)NULL); // We do not have (need) valid xref, but be CAREFUL
 
 		// Get first object
 		Object o;
@@ -198,7 +198,7 @@ namespace {
 					assert (!"Bad inline image.");
 					throw CObjInvalidObject ();
 				}
-				dict->dictAdd (key, &o);
+				dict.dictAdd (key, &o);
 			
 			}
 			
@@ -217,7 +217,7 @@ namespace {
 		// 
 		// Make stream
 		// 
-		boost::scoped_ptr<Stream> str (new ::EmbedStream (streamreader.getXpdfStream (), dict.get(), gFalse, 0));
+		boost::scoped_ptr<Stream> str (new ::EmbedStream (streamreader.getXpdfStream (), &dict, gFalse, 0));
 		str->reset();
 		if (str)
 		{
@@ -238,7 +238,8 @@ namespace {
 			// Pop EI
 			buf.pop_back ();
 			buf.pop_back ();
-			return new CInlineImage (*dict, buf);
+			return new CInlineImage (dict, buf);
+			// dict will get deallocated when str gets deallocated
 				
 		}else
 		{

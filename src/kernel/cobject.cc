@@ -845,8 +845,10 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 //
 //
 ::Object* 
-xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
+xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 {
+	STATIC_CHECK (1 == sizeof(CStream::Buffer::value_type), WANT_TO_READ_ONE_CHAR_BUT_GET_BUFFER_WITH_LARGER_STORAGE_THAN_CHAR);
+	
 	//
 	// Copy buffer and use parser to make stream object
 	//
@@ -859,10 +861,13 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, ::Object* dict)
 	//utilsPrintDbg (debug::DBG_DBG, tmpbuf);
 	
 	// Create stream
-	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), dict, true);
+	scoped_ptr<Object> objDict (dict._makeXpdfObject ());
+	// Only undelying dictionary is used from objDict, so we can free objDict normally (this is 
+	// due to the strange implementation of xpdf streams, no dict reference counting is used there
+	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), objDict.get(), true);
+	
 	// Set filters
-	stream = stream->addFilters (dict);
-	gfree(dict);
+	stream = stream->addFilters (objDict.get());
 	stream->reset ();
 	::Object* obj = XPdfObjectFactory::getInstance ();
 	obj->initStream (stream);

@@ -228,7 +228,7 @@ CStream::_makeXpdfObject () const
 		kernelPrintDbg (debug::DBG_CRIT, "Length attribute of a stream is not valid. Changing it to buffer size.");
 
 	// Dictionary will be deallocated in ~BaseStream
-	::Object* obj = utils::xpdfStreamObjFromBuffer (buffer, dictionary._makeXpdfObject());
+	::Object* obj = utils::xpdfStreamObjFromBuffer (buffer, dictionary);
 	assert (NULL != obj);
 	assert (objStream == obj->getType());
 	return obj;
@@ -361,6 +361,7 @@ CStream::open ()
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 
+	// if parser not null or object is in use we have done something wrong
 	if (NULL != parser || !curObj.isNone ())
 	{
 		assert (!"Open an opened stream.");
@@ -474,6 +475,10 @@ CStream::~CStream ()
 		curObj.free ();
 		delete parser;
 		parser = NULL;
+		
+	}else
+	{
+		assert (curObj.isNone() || curObj.isNull());
 	}
 }
 
