@@ -13,15 +13,15 @@ function _crash() {
 
 function _crash_treeitem() {
  try {
-  parentType=treeitem.parent().itemtype();
+  parentType=firstSelectedItem().parent().itemtype();
   if (parentType!="Dict" && parentType!="Array") throw "Parent of selected tree item must be Dict/Array";
  } catch (e) {
   print("Error"+e);
   return;
  }
- x=treeitem;
+ x=firstSelectedItem();
  if (!x.valid()) throw "!x.valid()";
- treeitem.remove();
+ x.remove();
  if (x.valid()) throw "x.valid()";
  print('SUCCESS');
 }
