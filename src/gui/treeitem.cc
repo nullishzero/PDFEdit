@@ -206,7 +206,7 @@ void TreeItem::remove() {
   array->remove(name().toUInt());
   return;
  }
- guiPrintDbg(debug::DBG_DBG,"Removing property - from what?");
+ guiPrintDbg(debug::DBG_DBG,"Can remove propertry only from dict or array");
 }
 
 /**

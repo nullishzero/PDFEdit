@@ -7,14 +7,14 @@ function checkMenus() {
    //Check current tree item
   theType=first.itemtype();
  } catch (e) {
-  //This is mainly because treeitem is not defined on start
+  //This is mainly because tree item is not defined on start
   theType="";
  }
  try {
   //Check parent tree item
   parentType=first.parent().itemtype();
  } catch (e) {
-  //This is mainly because treeitem is not defined on start
+  //This is mainly because tree item is not defined on start
   parentType="";
  }
  try {
@@ -63,32 +63,20 @@ function onLoadError() {
  warn(error());
 }
 
-/** Same-treeview dragdrop handler */
-function onDragDrop() {
- print("Drag drop: "+source.type()+" -> "+target.type());
-}
-
-/** Different-treeview dragdrop handler */
-function onDragDropOther() {
- print("Drag drop: "+source.type()+" -> "+target.type());
-}
-
 /** Callback for click with right mouse button in tree window */
 function onTreeRightClick() {
  menu=popupMenu("popup_generic");
- treeitemtype=treeitem.itemtype();
-// menu.addSeparator();
-// menu.addItemDef("item ("+treeitem.itemtype()+"),");
- if (holdContainer(treeitem)) { // Dict, Array
+ tree_item_type=firstSelectedItem().itemtype();
+ if (holdContainer(firstSelectedItem())) { // Dict, Array
   menu.addSeparator();
-  if (treeitemtype=="Dict") {
+  if (tree_item_type=="Dict") {
    str_tr=tr("Add item to dictionary");
   } else {
    str_tr=tr("Add element to array");
   }
   menu.addItemDef("item "+str_tr+",addObjectDialog(),,item_add.png");
  }
- if (treeitem.itemtype()=="PdfOperator") {
+ if (tree_item_type=="PdfOperator") {
   menu.addSeparator();
   menu.addItemDef("item "+tr("Set color")+",setColor(),,operator_setcolor.png");
   menu.addItemDef("item "+tr("Set font properties")+",editFontProps(),,operator_editfont.png");
@@ -98,9 +86,10 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Set line dash style")+",setDashPattern(),,operator_dashpattern.png");
   menu.addItemDef("item "+tr("Set line width")+",setLineWidth(),,operator_linewidth.png");
  }
- if (treeitem.itemtype()=="Page") {
+ if (tree_item_type=="Page") {
+  tree_item_id=firstSelectedItem().id();
   menu.addSeparator();
-  menu.addItemDef("item "+tr("View page")+" "+treeitem.id()+",go("+treeitem.id()+")");
+  menu.addItemDef("item "+tr("View page")+" "+tree_item_id+",go("+tree_item_id+")");
   menu.addItemDef("item "+tr("Add system font")+",addSystemFont(),,page_add_font.png");
   menu.addItemDef("item "+tr("Extract text from page")+",viewPageText(),,page_text.png");
   menu.addItemDef("item "+tr("Set page tranformation matrix")+",setPageTm(),,page_settm.png");
@@ -108,34 +97,34 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Draw rect")+",initconnection(10),,draw_rect.png");
   menu.addItemDef("item "+tr("Add text")+",addText(),,add_text.png");
  }
- if (treeitem.itemtype()=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
+ if (tree_item_type=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
   menu.addSeparator();
-  menu.addItemDef("item "+tr("Show all operators")+",treeitem.setMode('all'),,stream_mode_all.png");
-  menu.addItemDef("item "+tr("Show only text operators")+",treeitem.setMode('text'),,stream_mode_text.png");
-  menu.addItemDef("item "+tr("Show only font operators")+",treeitem.setMode('font'),,stream_mode_font.png");
-  menu.addItemDef("item "+tr("Show only graphical operators")+",treeitem.setMode('graphic'),,stream_mode_gfx.png");
+  menu.addItemDef("item "+tr("Show all operators")+",firstSelectedItem().setMode('all'),,stream_mode_all.png");
+  menu.addItemDef("item "+tr("Show only text operators")+",firstSelectedItem().setMode('text'),,stream_mode_text.png");
+  menu.addItemDef("item "+tr("Show only font operators")+",firstSelectedItem().setMode('font'),,stream_mode_font.png");
+  menu.addItemDef("item "+tr("Show only graphical operators")+",firstSelectedItem().setMode('graphic'),,stream_mode_gfx.png");
  }
  if (tests) {
-  if (treeitem.itemtype()=="Stream") test_stream_items(menu);
+  if (tree_item_type=="Stream") test_stream_items(menu);
  }
  print_eval(menu.popup());
 }
 
 /** Callback for click with left mouse button in tree window */
 function onTreeLeftClick() {
-// print('Left click, type of item = '+treeitem.itemtype());
+// print('Left click, type of item = '+firstSelectedItem().itemtype());
 }
 
 /** Callback for click with middle mouse button in tree window */
 function onTreeMiddleClick() {
- treeitem.reload();
+ firstSelectedItem().reload();
 }
 
 /** Callback for doubleclick with left mouse button in tree window */
 function onTreeDoubleClick() {
- // print("Doubleclick, type of item = "+treeitem.itemtype());
+ // print("Doubleclick, type of item = "+firstSelectedItem().itemtype());
  //If page, goto page
- if (treeitem.itemtype()=="Page") go(treeitem.id());
+ if (firstSelectedItem().itemtype()=="Page") go(firstSelectedItem().id());
 }
 
 /** Callback for click with right mouse button in page */

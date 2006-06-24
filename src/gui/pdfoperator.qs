@@ -121,7 +121,7 @@ function putendq (op) {
 /** == debug utilities == */
 function _dbgprintOpersB() {
 	
-	op=treeitem.item();
+	op=firstSelected();
 	var it = op.iterator();
 	while (it.valid()) {
 		print (it.current().getName());
@@ -132,7 +132,7 @@ function _dbgprintOpersB() {
 /** == debug utilities == */
 function _dbgprintOpers() {
 	
-	op=treeitem.item();
+	op=firstSelected();
 	var it = op.iterator();
 	while (!it.isEnd()) {
 		print (it.current().getName());

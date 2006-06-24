@@ -61,7 +61,7 @@ function setColor() {
 		return;
 	}
 	
-	op=treeitem.item();
+	op=firstSelected();
 	if (!isChangeableOp(op)) {
 		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
 		return;
@@ -85,7 +85,7 @@ function setLineWidth() {
 		return;
 	}
 	
-	op=treeitem.item();
+	op=firstSelected();
 	if (!isChangeableOp(op)) {
 		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for line width change.")+" "+tr("Please see the pdf specification for details."));
 		return;
@@ -117,7 +117,7 @@ function setDashPattern() {
 		return;
 	}
 	
-	op=treeitem.item();
+	op=firstSelected();
 	if (!isChangeableOp(op)) {
 		warn(tr("Operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+" "+tr("Please see the pdf specification for details."));
 		return;
@@ -162,7 +162,7 @@ function editFontProps() {
 	}
 
 	// Get selected item
- 	op=treeitem.item();
+ 	op=firstSelected();
 
 	if (!isTextOp(op)) {
  		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
@@ -388,7 +388,7 @@ function moveOperPos() {
 		return;
 	}
 	
-	op=treeitem.item();
+	op=firstSelected();
 	if (!isTextOp(op)) {
  		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
 		return;
@@ -432,7 +432,7 @@ function moveTextPos() {
 		return;
 	}
 	
-	op=treeitem.item();
+	op=firstSelected();
 	if (!isTextOp(op)) {
  		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
 		return;

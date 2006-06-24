@@ -61,7 +61,7 @@ function isPageAvaliable() {
 
 /** Validate item selection */
 function isTreeItemSelected() {
- if (undefined == treeitem) {
+ if (undefined == firstSelectedItem()) {
 	return false;
  }else
  	return true;

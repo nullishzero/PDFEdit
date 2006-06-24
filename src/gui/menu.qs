@@ -68,7 +68,7 @@ function newwindow() {
 
 /** Print names of childs of currently selected tree item to console */
 function printTreeChilds() {
- names=treeitem.getChildNames();
+ names=firstSelectedItem().getChildNames();
  for(var i=0;i<names.length;i++) {
   print(names[i]);
  }
@@ -76,8 +76,8 @@ function printTreeChilds() {
 
 /** invoke "add object dialog" on current tree item, or if not possible, try its parent */
 function add_obj_dlg() {
- if (holdContainer(treeitem)) addObjectDialog();
- else if (holdContainer(treeitem.parent())) addObjectDialog(treeitem.parent().item());
+ if (holdContainer(firstSelectedItem())) addObjectDialog();
+ else if (holdContainer(firstSelectedItem().parent())) addObjectDialog(firstSelectedItem().parent().item());
 }
 
 /** Save page/selection as image */
@@ -118,7 +118,7 @@ function streamMode(newMode) {
  activateMode(newMode);
 }
 
-/** Check if treeitem holds a container (Array, Dict) */
+/** Check if tree item holds a container (Array, Dict) */
 function holdContainer(ti) {
  type=ti.itemtype();
  if (type=='Dict' || type=='Array') {

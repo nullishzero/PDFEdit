@@ -41,10 +41,10 @@ function setTests(x) {
 /** Add stream teswting items to the menu */
 function test_stream_items(menu) {
  menu.addSeparator();
- menu.addItemDef("item Decoded representation,print(treeitem.item().getDecoded())");
- menu.addItemDef("item Stream integrity test\\, array,buftest(treeitem.item()\\,1\\,0)");
- menu.addItemDef("item Stream integrity test\\, string,buftest(treeitem.item()\\,0\\,1)");
- menu.addItemDef("item Stream integrity test\\, both,buftest(treeitem.item()\\,1\\,1)");
+ menu.addItemDef("item Decoded representation,print(firstSelected().getDecoded())");
+ menu.addItemDef("item Stream integrity test\\, array,buftest(firstSelected()\\,1\\,0)");
+ menu.addItemDef("item Stream integrity test\\, string,buftest(firstSelected()\\,0\\,1)");
+ menu.addItemDef("item Stream integrity test\\, both,buftest(firstSelected()\\,1\\,1)");
 }
 
 //Include testing/debugging items in menus?
