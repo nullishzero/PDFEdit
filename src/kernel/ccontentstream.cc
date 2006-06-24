@@ -256,34 +256,33 @@ namespace {
 	bool
 	createOperands (CStreamsXpdfReader<CContentStream::CStreams>& streamreader, 
 					PdfOperator::Operands& operands,
-					::Object& o)
+					xpdf::XpdfObject& o)
 	{
 		// Get first object
-		streamreader.getXpdfObject (o);
+		streamreader.getXpdfObject (*o);
 
 		//
 		// Loop through all object, if it is an operator create pdfoperator else assume it is an operand
 		//
 		while (!streamreader.eof()) 
 		{
-			if (o.isCmd ())
+			if (o->isCmd ())
 			{// We have an OPERATOR
 				return true;
 			
 			}else 
 			{// We have an OPERAND
 				
-				shared_ptr<IProperty> pIp (createObjFromXpdfObj (o));
+				shared_ptr<IProperty> pIp (createObjFromXpdfObj (*o));
 				operands.push_back (pIp);
 			}
 
-			o.free ();
+			o->free ();
 			// Grab the next object
-			streamreader.getXpdfObject (o);
+			streamreader.getXpdfObject (*o);
 
 		} // while
 		
-		o.free ();
 		return false;
 	}
 	
@@ -298,15 +297,15 @@ namespace {
 					PdfOperator::Operands& operands)
 	{
 		// Get operands
-		Object o;
+		xpdf::XpdfObject o;
 		if (!createOperands (streamreader, operands, o))
 			return shared_ptr<PdfOperator> ();
 		
 		// Try to find the op by its name
-		const StateUpdater::CheckTypes* chcktp = StateUpdaterFactory::getInstance()->findOp (o.getCmd());
+		const StateUpdater::CheckTypes* chcktp = StateUpdaterFactory::getInstance()->findOp (o->getCmd());
 		// Operator not found, create unknown operator
 		if (NULL == chcktp)
-			return shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o.getCmd()),operands));
+			return shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o->getCmd()),operands));
 		
 		assert (chcktp);
 		utilsPrintDbg (DBG_DBG, "Operator found. " << chcktp->name);
@@ -316,7 +315,6 @@ namespace {
 		// 
 		if (!checkAndFix (*chcktp, operands))
 		{
-			o.free ();
 			//assert (!"Content stream bad operator type.");
 			throw ElementBadTypeException ("Content stream operator has incorrect operand type.");
 		}

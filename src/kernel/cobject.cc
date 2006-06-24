@@ -861,18 +861,20 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	//utilsPrintDbg (debug::DBG_DBG, tmpbuf);
 	
 	// Create stream
-	scoped_ptr<Object> objDict (dict._makeXpdfObject ());
+	::Object* objDict = dict._makeXpdfObject ();
 	// Only undelying dictionary is used from objDict, so we can free objDict normally (this is 
 	// due to the strange implementation of xpdf streams, no dict reference counting is used there
-	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), objDict.get(), true);
-	
+	::Stream* stream = new ::MemStream (tmpbuf, 0, buffer.size(), objDict, true);
 	// Set filters
-	stream = stream->addFilters (objDict.get());
+	stream = stream->addFilters (objDict);
 	stream->reset ();
 	::Object* obj = XPdfObjectFactory::getInstance ();
 	obj->initStream (stream);
+	
+	// Free xpdf object that holds dictionary (not the dictionary itself)
+	gfree (objDict);
+	
 	return obj;
-
 }
 
 // =====================================================================================

@@ -1062,10 +1062,11 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 	// Start the resource stack
 	XRef* xref = dictionary->getPdf()->getCXref();
 	assert (xref);
-	::Object* obj = atr.resources->_makeXpdfObject ();
+	Object* obj = atr.resources->_makeXpdfObject ();
 	assert (obj); assert (objDict == obj->getType());
 	res = boost::shared_ptr<GfxResources> (new GfxResources(xref, obj->getDict(), NULL));
-
+	freeXpdfObject (obj);
+	
 	//
 	// Init Gfx state
 	//

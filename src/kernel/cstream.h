@@ -63,29 +63,38 @@ class CStream : noncopyable, public IProperty
 	typedef std::string PropertyId;
 
 public:
-	// We can access xpdf stream only through CStreamsXpdfReader 
+	// We should be able to access xpdf stream by CStreamsXpdfReader 
 	template<typename T> friend class CStreamsXpdfReader;
 
-	typedef std::vector<filters::StreamChar> Buffer;
+	typedef std::vector<filters::StreamChar> 		Buffer;
 	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
 
-	/** Type of the property.
-	 * This fields holds pStream value. It is used by template functions to get to
-	 * property type from template type.
+	/** 
+	 * Type of this property object.
+	 * This association allows us to get the PropertyType from object type.
 	 */
-	static const PropertyType type=pStream;
-protected:
+	static const PropertyType type = pStream;
 
+	//
+	// Storage
+	//
+protected:
 	/** Object dictionary. */
 	CDict dictionary;
-	
 	/** Buffer. */
 	Buffer buffer;
 
-	/** XpdfParser. */
+	//
+	// Parsing
+	//
+protected:
+	/** Xpdf parser. */
 	::Parser* parser;
 	/** Current object in an opened stream. */
 	mutable ::Object curObj;
+private:
+	/** Helper object, because xpdf stream does NOT automatically deallocated specified object. */
+	::Object* tmpObj;
 		
 
 	//

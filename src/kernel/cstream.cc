@@ -17,6 +17,7 @@ namespace pdfobjects {
 
 using namespace std;
 using namespace boost;
+using namespace utils;
 
 //=====================================================================================
 // CStream
@@ -29,7 +30,7 @@ using namespace boost;
 //
 //
 //
-CStream::CStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf), parser (NULL)
+CStream::CStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf), parser (NULL), tmpObj (NULL)
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 	// Make sure it is a stream
@@ -57,7 +58,7 @@ CStream::CStream (CPdf& p, ::Object& o, const IndiRef& rf) : IProperty (&p,rf), 
 //
 //
 //
-CStream::CStream (::Object& o) : parser (NULL)
+CStream::CStream (::Object& o) : parser (NULL), tmpObj (NULL)
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 	// Make sure it is a stream
@@ -362,17 +363,19 @@ CStream::open ()
 	kernelPrintDbg (debug::DBG_DBG,"");
 
 	// if parser not null or object is in use we have done something wrong
-	if (NULL != parser || !curObj.isNone ())
+	if (NULL != parser || !curObj.isNone () || tmpObj)
 	{
 		assert (!"Open an opened stream.");
-		delete parser;
-		parser = NULL;
+		curObj.free ();
+		delete parser; parser = NULL;
+		freeXpdfObject (tmpObj); tmpObj = NULL;
 		throw CObjInvalidOperation ();
 	}
 	
 	::XRef* xref = (NULL != this->getPdf ()) ? this->getPdf ()->getCXref() : NULL;
 	// Create xpdf object from current stream and parse it
-	parser = new ::Parser (xref, new ::Lexer(xref, _makeXpdfObject()));
+	tmpObj = _makeXpdfObject ();
+	parser = new ::Parser (xref, new ::Lexer(xref, tmpObj));
 }
 
 //
@@ -383,11 +386,11 @@ CStream::close ()
 {
 	kernelPrintDbg (debug::DBG_DBG,"");
 
-	if (NULL != parser && !curObj.isNone())
+	if (parser && !curObj.isNone() && tmpObj)
 	{
 		curObj.free ();
-		delete parser;
-		parser = NULL;		
+		delete parser; parser = NULL;
+		freeXpdfObject (tmpObj); tmpObj = NULL;
 
 	}else
 	{
@@ -473,8 +476,8 @@ CStream::~CStream ()
 	{
 		assert (!"Stream not closed.");
 		curObj.free ();
-		delete parser;
-		parser = NULL;
+		delete parser; parser = NULL;
+		freeXpdfObject (tmpObj); tmpObj = NULL;
 		
 	}else
 	{
