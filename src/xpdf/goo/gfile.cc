@@ -437,7 +437,7 @@ time_t getModTime(char *fileName) {
 #endif
 }
 
-GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
+GBool openTempFile(GString **name, FILE **f, char *mode, char *) {
 #if defined(WIN32)
   //---------- Win32 ----------
   char *s;
@@ -447,9 +447,6 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
   }
   *name = new GString(s);
   free(s);
-  if (ext) {
-    (*name)->append(ext);
-  }
   if (!(*f = fopen((*name)->getCString(), mode))) {
     delete (*name);
     return gFalse;
@@ -467,9 +464,6 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
     return gFalse;
   }
   *name = new GString(s);
-  if (ext) {
-    (*name)->append(ext);
-  }
   if (!(*f = fopen((*name)->getCString(), mode))) {
     delete (*name);
     return gFalse;
@@ -480,24 +474,6 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
   char *s;
   int fd;
 
-  if (ext) {
-#if HAVE_MKSTEMPS
-    if ((s = getenv("TMPDIR"))) {
-      *name = new GString(s);
-    } else {
-      *name = new GString("/tmp");
-    }
-    (*name)->append("/XXXXXX")->append(ext);
-    fd = mkstemps((*name)->getCString(), strlen(ext));
-#else
-    if (!(s = tmpnam(NULL))) {
-      return gFalse;
-    }
-    *name = new GString(s);
-    (*name)->append(ext);
-    fd = open((*name)->getCString(), O_WRONLY | O_CREAT | O_EXCL, 0600);
-#endif
-  } else {
 #if HAVE_MKSTEMP
     if ((s = getenv("TMPDIR"))) {
       *name = new GString(s);
@@ -513,7 +489,6 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
     *name = new GString(s);
     fd = open((*name)->getCString(), O_WRONLY | O_CREAT | O_EXCL, 0600);
 #endif // HAVE_MKSTEMP
-  }
   if (fd < 0 || !(*f = fdopen(fd, mode))) {
     delete *name;
     return gFalse;
