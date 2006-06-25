@@ -2,12 +2,12 @@ TODO list:
 ----------
 
 GUI
- [ ] Toolbar Widget na vyber aktualni barvy
+ [x] Toolbar Widget na vyber aktualni barvy
  [ ] Toolbar Widget na vyber aktualni sirky/stylu cary
  ??? Toolbar Widget na vyber pisma -> bude potreba na neco? Pridavani noveho textu?
  [ ] PageTool -> zobrazovat pocet stranek ("1 z N") misto jen ("1")
  [ ] zobrazovat souradnice z PageView ve statusbaru
- ??  Toolbar Widget na zobrazovani souradnic
+ ??? Toolbar Widget na zobrazovani souradnic
  [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
  [ ] Zobrazovat "N properties are hidden" pokud jsou nejake skryte v property editoru
  [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
@@ -33,7 +33,7 @@ GUI
  ??? Page Dictionary zobrazit jako indirect object, misto primo "Dictionary" zjistit cislo indirect objectu (IndiRef, getReference() )a dat na nej referenci
      + ve stromu je celkove min items, vim jaky objekt to je
      - mam o uroven vic ve stromu
- [ ] Neprepinat revize pkud zvolim jiz aktivni revizi
+ [ ] Neprepinat revize pokud zvolim jiz aktivni revizi
  [ ] Observer na anotace v CPage
  [ ] Prepinat ikony za behu bez reloadu
  [ ] Vkladani "template items" z PDF (nejake to sablonovani nebo neco na ten zpusob)
@@ -62,11 +62,11 @@ Skripting
  [ ] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
  [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho)
  [ ] Wrapper kolem Const cdict -> pro cteni veci z traileru. Eventuelne pak dat i do stromu
- [ ] Odstranit treeitem, item, source, target (z skriptu, kodu i dokumentace, je to deprecated)
+ [x] Odstranit treeitem, item, source, target (z skriptu, kodu i dokumentace, je to deprecated)
 
 Kernel
  [ ] Unicode v properties, problemy s charsetem ...
- ?? Decryption - asi future wishlist
+ ??? Decryption - asi future wishlist
 
 Dokumentace
  [ ] Nekde sdelit o Outlines, ze potrebuji reloadovani + omezeni pri praci s nimi.
