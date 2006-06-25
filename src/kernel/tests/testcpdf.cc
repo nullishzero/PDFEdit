@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.32  2006/06/25 17:55:43  hockm0bm
+ * * pageManipulationTC
+ *         - TC07 fixed (all pages are considered when collecting isDescendants)
+ *
  * Revision 1.31  2006/06/22 18:47:27  hockm0bm
  * * deprecated functions replaced
  * * new test cases for ambiguous page tree
@@ -576,7 +580,7 @@ public:
 			// collects all descendants from interNode
 			vector<shared_ptr<CPage> > descendants;
 			size_t pageCount=pdf->getPageCount();
-			for(size_t i=1; i<pageCount; i++)
+			for(size_t i=1; i<=pageCount; i++)
 			{
 				shared_ptr<CPage> page=pdf->getPage(i);	
 				if(isDescendant(*pdf, interNode->getIndiRef(), page->getDictionary()))
