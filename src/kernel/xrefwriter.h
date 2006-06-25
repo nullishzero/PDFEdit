@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/06/25 16:25:09  hockm0bm
+ * doc update - doxygen warnings removed (if they are real problem)
+ *
  * Revision 1.25  2006/06/01 14:46:24  hockm0bm
  * doc update - doxygen warnings removed (if possible)
  *
@@ -575,6 +578,10 @@ public:
 	 *********************************************************************/
 
 	/** Fetches indirect object.
+	 * @param num Object number.
+	 * @param gen Generation number.
+	 * @param obj Pointer to allocated object where to store fetched object
+	 * (must be allocated by caller).
 	 *
 	 * This is just wrapper for CXref::fetch implementation
 	 * and only checks wheter we are in the newest revision and if so
@@ -645,6 +652,8 @@ public:
 	virtual ::Ref reserveRef();
 	
 	/** Creates new indirect object.
+	 * @param type New object type.
+	 * @param ref Pointer where to store new object's reference.
 	 *
 	 * This is just wrapper for CXref::createObject method.
 	 * Only thing which is done here is that revision field

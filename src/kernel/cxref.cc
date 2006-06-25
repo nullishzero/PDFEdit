@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.22  2006/06/25 16:25:08  hockm0bm
+ * doc update - doxygen warnings removed (if they are real problem)
+ *
  * Revision 1.21  2006/05/13 21:41:02  hockm0bm
  * * log messages update
  * * cleanUp reimplemented
@@ -348,7 +351,7 @@ using namespace debug;
 	return objRef;
 }
 
-	::Object * CXref::createObject(ObjType type, ::Ref * ref)
+	::Object * CXref::createObject(::ObjType type, ::Ref * ref)
 	{
 	using namespace debug;
 

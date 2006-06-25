@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/06/25 16:25:09  hockm0bm
+ * doc update - doxygen warnings removed (if they are real problem)
+ *
  * Revision 1.8  2006/05/23 19:04:50  hockm0bm
  * * new StreamWriter::trim method
  * * FileStreamWriter::trim implemented
@@ -134,6 +137,19 @@ public:
 class FileStreamWriter:  virtual public StreamWriter, public FileStream
 {
 public:
+	/** Costructor.
+	 * @param fA File handle for stream.
+	 * @param startA Start offset in the file.
+	 * @param limitedA Limited flag for stream (true if stream has limited
+	 * size).
+	 * @param lengthA Length of the stream (ignored if limitedA is false).
+	 * @param dictA Dictionary for the stream (should be initialized as NULL
+	 * object).
+	 *
+	 * Calls BaseStream and StreamWriter constructors with given dictA parameter
+	 * and initializes FileStream super type with fA, startA, limitedA and dictA
+	 * parameters.
+	 */
 	FileStreamWriter(FILE *fA, Guint startA, GBool limitedA, Guint lengthA, Object * dictA)
 		: BaseStream(dictA),
 		  StreamWriter(dictA),
@@ -148,6 +164,8 @@ public:
 	virtual ~FileStreamWriter(){};
 	
 	/** Puts character to the file.
+	 * @param ch Character to write.
+	 *
 	 * Additionally flushes all changes to the file and position is moved after
 	 * inserted character.
 	 * @see BaseStreamWriter::putChar
@@ -155,8 +173,13 @@ public:
 	virtual void putChar(int ch);
 
 	/** Puts line to the file.
+	 * @param line String to write.
+	 *
 	 * Additionally flushes all changes to the file. and position is moved after
-	 * inserted string.
+	 * inserted string. 
+	 * <br>
+	 * Note that given is writen untils first `\0' character.
+	 *
 	 * @see BaseStreamWriter::putLine
 	 */
 	virtual void putLine(const char * line);

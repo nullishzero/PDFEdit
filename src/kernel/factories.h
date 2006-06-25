@@ -23,6 +23,8 @@ namespace pdfobjects {
 //===========================================
 
 	
+/** Generic factory class for cobjects.
+ */
 template<typename Type>
 class CObjectFactory
 {

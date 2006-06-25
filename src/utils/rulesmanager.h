@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.5  2006/06/25 16:25:21  hockm0bm
+ * doc update - doxygen warnings removed (if they are real problem)
+ *
  * Revision 1.4  2006/06/06 11:42:44  hockm0bm
  * * RulesManager
  *         - uses RuleType::operator== rather than RuleType::equals
@@ -114,9 +117,19 @@ template<typename RuleType,
 class RulesManager
 {
 public:
+	/** Alias for Rules matcher. */
 	typedef IRuleMatcher<RuleType> RuleMatcherType;
+
+	/** Alias for Rules storage iterator.
+	 */
 	typedef typename RuleStorage::iterator iterator;
+
+	/** Alias for Rules storage constant iterator.
+	 */
 	typedef typename RuleStorage::const_iterator const_iterator;
+	
+	/** Alias for Rules storage mapping entry.
+	 */
 	typedef typename RuleStorage::value_type MappingType;
 private:
 	

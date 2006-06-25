@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.72  2006/06/25 16:25:08  hockm0bm
+ * doc update - doxygen warnings removed (if they are real problem)
+ *
  * Revision 1.71  2006/06/22 18:56:38  hockm0bm
  * * searchTreeNode
  *         - optimization - doesn't go in recursion for LeafNodes
@@ -951,7 +954,7 @@ protected:
 	IndiRef registerIndirectProperty(boost::shared_ptr<IProperty> ip, IndiRef ref);
 	
 	/** Registers page tree observers.
-	 * @param ref Reference to page tree node.
+	 * @param prop Page tree node reference or dictionary.
 	 *
 	 * If given prop is not dictionary or reference to dictionary immediatelly 
 	 * returns, otherwise registers PageTreeNodeObserver to the dictionary. 
@@ -971,7 +974,7 @@ protected:
 	void registerPageTreeObservers(boost::shared_ptr<IProperty> &prop);
 
 	/** Unregisters page tree observers.
-	 * @param ref Reference to page tree node.
+	 * @param prop Page tree node reference or dictionary.
 	 *
 	 * This method is inverse to registerPageTreeObservers (with same observers 
 	 * but, with unregistration rather than registration). Also removes cache

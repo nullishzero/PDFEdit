@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/06/25 16:25:09  hockm0bm
+ * doc update - doxygen warnings removed (if they are real problem)
+ *
  * Revision 1.25  2006/06/24 09:59:04  hockm0bm
  * programming errors corrected
  *         - local variable returned - changed to class field
@@ -383,10 +386,18 @@ struct XpdfInvalidObject : public XpdfException
 // Concrete CObjectExceptions
 //==================================
 
+/** Exception thrown when indirect object can't be found.
+ */
 class IndirectObjectNotFoundException: public CObjectException
 {
+	/** Object number.
+	 */
 	const int num;
+
+	/** Generation number.
+	 */
 	const int gen;
+
 	std::string message;
 public:
 	/** Exception constructor.
@@ -409,6 +420,12 @@ public:
 		return message.c_str();
 	}
 
+	/** Returns object identifier.
+	 * @param _num Object number value holder.
+	 * @param _gen Generation number value holder.
+	 *
+	 * Sets current num and gen values to given parameters.
+	 */
 	void getReference(int & _num, int & _gen)
 	{
 		_num=num;
