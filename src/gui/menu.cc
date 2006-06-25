@@ -7,23 +7,24 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
-#include <qfile.h>
 #include "menu.h"
-#include "toolbutton.h"
-#include "util.h"
+#include "iconcache.h"
 #include "settings.h"
-#include <qtextstream.h> 
-#include <qmenudata.h>
+#include "toolbar.h"
+#include "toolbutton.h"
+#include "toolfactory.h"
+#include "util.h"
+#include <qfile.h>
+#include <qlabel.h>
 #include <qmainwindow.h>
 #include <qmenubar.h>
+#include <qmenudata.h>
+#include <qpixmap.h>
 #include <qpopupmenu.h>
 #include <qregexp.h>
-#include <qlabel.h>
-#include <qpixmap.h>
-#include "toolbar.h"
 #include <qstring.h>
-#include "iconcache.h"
+#include <qtextstream.h> 
+#include <utils/debug.h>
 #include <assert.h>
 
 namespace gui {
@@ -377,7 +378,7 @@ bool Menu::chopCommand(QString &line, const QString &command) {
 */
 void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuException) {
  //Check for special item
- if (ToolBar::specialItem(tb,item,main)) return;
+ if (ToolFactory::specialItem(tb,item,main)) return;
  QString line=readItem(item);
  if (chopCommand(line,"item")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   QStringList qs=explode(MENUDEF_SEPARATOR,line,true);

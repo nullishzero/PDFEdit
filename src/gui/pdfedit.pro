@@ -121,8 +121,8 @@ HEADERS += invalidmenuexception.h  nullpointerexception.h
 SOURCES += invalidmenuexception.cc nullpointerexception.cc
 
 #Toolbar
-HEADERS += revisiontool.h  zoomtool.h  pagetool.h  toolbutton.h  toolbar.h  
-SOURCES += revisiontool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc 
+HEADERS += revisiontool.h  colortool.h  zoomtool.h  pagetool.h  toolbutton.h  toolbar.h  toolfactory.h  
+SOURCES += revisiontool.cc colortool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc toolfactory.cc
 
 #Main Window
 HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h  statusbar.h

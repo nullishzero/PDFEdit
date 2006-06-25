@@ -21,7 +21,6 @@ public:
  ToolBar(const QString &label,QMainWindow *mainWindow,QWidget *parent,bool newLine=FALSE,const char * name=0,WFlags f=0);
  ToolBar(QMainWindow *parent,const char *name=0);
  void addButton(ToolButton *qb);
- static bool specialItem(ToolBar *tb,const QString &item,QMainWindow *main);
 signals:
  /**
   Signal emitted when clicked on one of toolbar buttons.

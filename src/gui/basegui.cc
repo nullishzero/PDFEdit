@@ -5,6 +5,7 @@
 
 #include "basegui.h"
 #include "aboutwindow.h"
+#include "colortool.h"
 #include "consolewritergui.h"
 #include "commandwindow.h"
 #include "dialog.h"
@@ -74,6 +75,14 @@ void BaseGUI::runInitScript() {
  // initscripts in later paths take priority
  QStringList initScriptPaths=globalSettings->readPath("init_path","script/");
  runScriptsFromPath(initScriptPaths);
+}
+
+/**
+ Add color selection tool to list of "known color selection tools"
+ @param tool Tool to add
+*/
+void BaseGUI::addColorTool(ColorTool *tool) {
+ colorPickers.insert(tool->getName(),tool);
 }
 
 /**
@@ -280,6 +289,18 @@ QString BaseGUI::fileSaveDialog(const QString &oldName/*=QString::null*/) {
  guiPrintDbg(debug::DBG_DBG,"fileSaveDialog");
  QString ret=saveFileDialogPdf(w,oldName);
  return ret;
+}
+
+/**
+ Get color from color picker with given name
+ @param colorName Name of color picker
+*/
+QVariant BaseGUI::getColor(const QString &colorName) {
+ //Check if we have the picker
+ if (!colorPickers.contains(colorName)) return QVariant();
+ ColorTool *pick=colorPickers[colorName];
+ assert(pick);
+ return QVariant(pick->getColor());
 }
 
 /**

@@ -1,3 +1,6 @@
+#ifndef __PAGEVIEWMODE_H__
+#define __PAGEVIEWMODE_H__
+
 #include <qpainter.h>
 #include <qevent.h>
 #include <qwidget.h>
@@ -263,3 +266,5 @@ class PageViewMode_TextSelection: public PageViewMode {
 };
 
 } // namespace gui
+
+#endif

@@ -1,4 +1,5 @@
 pageview.cc
+pageviewmode.cc
 pagespace.cc
 commandwindow.cc
 rect2Darray.cc

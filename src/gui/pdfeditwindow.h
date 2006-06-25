@@ -6,22 +6,23 @@
 #include <pdfoperators.h>
 #include <qmainwindow.h>
 
-class QListViewItem;
 class QFont;
+class QListViewItem;
 class QSplitter;
 class QString;
 
 namespace gui {
 
-class StatusBar;
 class BaseGUI;
-class PageSpace;
+class ColorTool;
 class CommandWindow;
-class QSPage;
-class MultiTreeWindow;
-class TreeItemAbstract;
-class PropertyEditor;
 class Menu;
+class MultiTreeWindow;
+class PageSpace;
+class PropertyEditor;
+class QSPage;
+class StatusBar;
+class TreeItemAbstract;
 
 using namespace pdfobjects;
 
@@ -35,6 +36,7 @@ public:
  static PdfEditWindow* create(const QString &fName=QString::null);
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
+ void addColorTool(ColorTool *tool);
  bool modified();
  QString filename();
  void saveVisibility(QWidget *w,const QString &name);

@@ -160,6 +160,14 @@ void PdfEditWindow::addObjectDialogI(boost::shared_ptr<IProperty> ip) {
 }
 
 /**
+ Add color selection tool to list of "known color selection tools"
+ @param tool Tool to add
+*/
+void PdfEditWindow::addColorTool(ColorTool *tool) {
+ base->addColorTool(tool);
+}
+
+/**
  Signal handler invoked on menu activation
  @param id Menu ID of clicked item
  */

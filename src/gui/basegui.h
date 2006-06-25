@@ -2,12 +2,14 @@
 #define __BASEGUI_H__
 
 #include "base.h"
+#include <qmap.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qvariant.h>
 
 namespace gui {
 
+class ColorTool;
 class ConsoleWriterGui;
 class PdfEditWindow;
 class QSMenu;
@@ -29,6 +31,7 @@ public:
  void runInitScript();
  QSCObject* treeitem();
  QSCObject* item();
+ void addColorTool(ColorTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */
@@ -85,6 +88,12 @@ public slots: //This will be all exported to scripting
   If file selected in dialog already exists, user is asked to confirm overwriting before returing its name.
  */
  QString fileSaveDialog(const QString &oldName=QString::null);
+ /*-
+  Get color from color picker with given name.
+  Returns false if the color picker does not exist.
+ */
+ QVariant getColor(const QString &colorName);/*Variant=Color*/
+
  /*- Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked */
  void help(const QString &topic=QString::null);
  /*-
@@ -259,6 +268,8 @@ private:
  ConsoleWriterGui* consoleWriter;
  /** Editor window in which this class exist */
  PdfEditWindow* w;
+ /** Map with color picker tools */
+ QMap<QString,ColorTool*> colorPickers;
 };
 
 } // namespace gui
