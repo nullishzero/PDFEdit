@@ -134,10 +134,6 @@ void BaseGUI::postRun() {
  \see addScriptingObjects
  */
 void BaseGUI::removeScriptingObjects() {
- //delete page and item variables from script -> they may change while script is not executing
- deleteVariable("item");
-//TODO: treeitem as property of this QObject
- deleteVariable("treeitem");
  Base::removeScriptingObjects();
 }
 
@@ -146,28 +142,7 @@ void BaseGUI::removeScriptingObjects() {
  \see removeScriptingObjects
 */
 void BaseGUI::addScriptingObjects() {
- //Import treeitem and item (Currently selected treeitem and currently selected object)
- import->addQSObj(treeitem(),"treeitem");
- import->addQSObj(item(),"item");
  Base::addScriptingObjects();
-}
-
-/** Return current tree item (treeitem under cursor) */
-QSCObject* BaseGUI::treeitem() {
- return import->createQSObject(w->selectedTreeItem);
-}
-
-/** Return current object (currently selected item in property editor) */
-QSCObject* BaseGUI::item() {
- if (w->selectedProperty.get()) {
-  //IProperty is selected and will be imported
-  return import->createQSObject(w->selectedProperty);
- }
- if (w->selectedOperator.get()) {
-  //PdfOperator is selected and will be imported
-  return import->createQSObject(w->selectedOperator);
- }
- return NULL;
 }
 
 /**
@@ -302,6 +277,7 @@ QVariant BaseGUI::getColor(const QString &colorName) {
  assert(pick);
  return QVariant(pick->getColor());
 }
+
 
 /**
  Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
@@ -461,6 +437,21 @@ bool BaseGUI::saveRevision() {
 /** \copydoc PdfEditWindow::saveWindowState */
 void BaseGUI::saveWindowState() {
  w->saveWindowState();
+}
+
+/**
+ Set color of color picker with given name
+ @param colorName Name of color picker
+ @param newColor New color to set
+*/
+void BaseGUI::setColor(const QString &colorName,const QVariant &newColor) {
+ //Check if we have the picker
+ if (!colorPickers.contains(colorName)) return;
+ ColorTool *pick=colorPickers[colorName];
+ assert(pick);
+ QColor col=newColor.toColor();
+ if (!col.isValid()) return;
+ pick->setColor(col);
 }
 
 /**

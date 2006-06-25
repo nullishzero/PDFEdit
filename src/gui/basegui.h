@@ -29,8 +29,6 @@ public:
  BaseGUI(PdfEditWindow *parent);
  virtual ~BaseGUI();
  void runInitScript();
- QSCObject* treeitem();
- QSCObject* item();
  void addColorTool(ColorTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
@@ -176,6 +174,10 @@ public slots: //This will be all exported to scripting
   State is saved to editor's configuration file.
  */
  void saveWindowState();
+ /*-
+  Set color of color picker with given name
+ */
+ void setColor(const QString &colorName,const QVariant &newColor);
  /*- Change active revision in current PDF document */
  void setRevision(int revision);
  /*-
