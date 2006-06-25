@@ -114,22 +114,6 @@
     by calling <link linkend="exit">exit()</link>.
    </para>
   </sect1>
-  <sect1 id="onDragDrop">
-   <title>onDragDrop()</title>
-   <para>
-   Called on drag-drop event in one tree window.
-   Variable <link linkend="source">source</link> contain source (dragged) tree item,
-   variable <link linkend="target">target</link> contain destination item on which the source was dropped.
-   </para>
-  </sect1>
-  <sect1 id="onDragDropOther">
-   <title>onDragDropOther()</title>
-   <para>
-   Called on drag-drop event across different tree windows.
-   Variable <link linkend="source">source</link> contain contents of source (dragged) tree item,
-   variable <link linkend="target">target</link> contain destination item on which the source was dropped.
-   </para>
-  </sect1>
   <sect1 id="onLoad">
    <title>onLoad()</title>
    <para>
@@ -158,35 +142,30 @@
    <title>onTreeLeftClick()</title>
    <para>
     This function is called after clicking with left mouse button on any item in tree window.
-    Clicked item is stored in variable <link linkend="treeitem">treeitem</link>
    </para>
   </sect1>
   <sect1 id="onTreeRightClick">
    <title>onTreeRightClick()</title>
    <para>
     This function is called after clicking with right mouse button on any item in tree window.
-    Clicked item is stored in variable <link linkend="treeitem">treeitem</link>
    </para>
   </sect1>
   <sect1 id="onTreeMiddleClick">
    <title>onTreeMiddleClick()</title>
    <para>
     This function is called after clicking with middle mouse button on any item in tree window.
-    Clicked item is stored in variable <link linkend="treeitem">treeitem</link>
    </para>
   </sect1>
   <sect1 id="onTreeDoubleClick">
    <title>onTreeDoubleClick()</title>
    <para>
     This function is called after doubleclicking with left mouse button on any item in tree window.
-    Clicked item is stored in variable <link linkend="treeitem">treeitem</link>
    </para>
   </sect1>
   <sect1 id="onTreeSelectionChange">
    <title>onTreeSelectionChange()</title>
    <para>
-    This function is called after selected item in tree changes.
-    Selected item is stored in variable <link linkend="treeitem">treeitem</link>
+    This function is called after selection in tree changes.
    </para>
   </sect1>
  </chapter>
@@ -257,60 +236,15 @@
   </sect1>
  </chapter>
  <chapter>
-  <title>Document-related objects bound to scripting</title>
+  <title>Document-related objects in scripting</title>
   <para>
-  These objects are set to reflect current items from edited document
-  Contents of these objects may (and often will) change or be deleted between returning from script and invoking another script.
-  Script should not store these objects between runs.
+  These objects are set to reflect currently edited document
   </para>
-  <sect1 id="item">
-   <title>item</title>
-   <para>
-    This object represents currently selected object in property editor.
-   </para>
-   <para>
-    Available function of this object depend on type of currently selected object.
-    Script may want to check type of this object before manipulating with it as
-    various object types support different set of operations on them.
-   </para>
-   <para>
-    Types for this object can be <link linkend="type_IProperty">IProperty</link> or any of its descendants
-    (<link linkend="type_Dict">Dict</link>, <link linkend="type_Array">Array</link>)
-    You can use type() function to return name of the object's type (as string).
-   </para>
-  </sect1>
   <sect1 id="document">
    <title>document</title>
    <para>
-   This object represents currently edited PDF document. Type of this object is <link linkend="type_Pdf">Pdf</link>
-   </para>
-  </sect1>
-  <sect1 id="treeitem">
-   <title>treeitem</title>
-   <para>
-   This object represents currently selected/clicked item in tree window. Type of this object is <link linkend="type_TreeItem">TreeItem</link>
-   </para>
-   <para>
-    You will probably want to use the <link linkend="TreeItem.item">item()</link> method to retrieve the actual object within.
-   </para>
-  </sect1>
-  <sect1 id="target">
-   <title>target</title>
-   <para>
-   This object represents target item on which another item was dragged.
-   This variable is present only in drag and drop handlers and once the handler returns, it will become invalid.
-   Type of this object is <link linkend="type_TreeItem">TreeItem</link>
-   </para>
-  </sect1>
-  <sect1 id="source">
-   <title>source</title>
-   <para>
-   This object represents source item that was dragged from one tree window to other item in same or different
-   tree window.
-   This variable is present only in drag and drop handlers and once the handler returns, it will become invalid.
-   Type of this object is either <link linkend="type_TreeItem">TreeItem</link> for items from same tree window,
-   from other tree windows it can be <link linkend="type_IProperty">IProperty</link> or  <link linkend="type_Page">Page</link>
-   (the item inside dragged tree item).
+    This object represents currently edited PDF document.
+    Type of this object is <link linkend="type_Pdf">Pdf</link>
    </para>
   </sect1>
  </chapter>
