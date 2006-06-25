@@ -97,6 +97,7 @@
         </programlisting>
         which is public and does the following test to guarantee that obj2 can
         replace obj1 and it would be syntacticaly correct:
+       <itemizedlist>
         <listitem>obj2 has to have same type as obj1 if they are not referencies
         </listitem>
         <listitem>if at least one is reference, fetched objects has to have same 
@@ -104,6 +105,7 @@
         </listitem>
         <listitem>obj2 may have different type only if obj1 is (pdf) null object. 
         </listitem>
+       </itemizedlist>
         Note that CXref doesn't use this method internaly (as mentioned before it
         doesn't any checking on values at all), but exports it, so instance user
         can do the checking for himself (XRefWriter in 3rd layer uses this method
@@ -122,6 +124,7 @@
      <para>
         XRefWriter works in two modes, which are set in constructor and can be 
         changed by setMode method.
+        <itemizedlist>
         <listitem><emphasis>paranoid</emphasis> mode forces paranoiCheck method
                 call in changeObject method. This checks whether given reference
                 is known and given object is compared with current one by 
@@ -133,6 +136,8 @@
                 checking. This is not very safe, but if class user knows what 
                 he is doing (e. g. to correct destroyed objects). 
         </listitem>
+        </itemizedlist>
+     </para>
      <para>
         Second responsibility is to enable writing changes to the XRef's stream 
         to make them visible after all required changes are finished. To separate 
@@ -208,6 +213,7 @@
     <para>
         XRefWriter provides save functionality with flag. This flag sais how data
         should be stored with respect to revisions:
+       <itemizedlist>
         <listitem>temporal saving, which dumps all changes with correct cross 
                 reference table and trailer at the end of document but doesn't
                 care for it (no internal structures are touched and they are kept
@@ -225,6 +231,7 @@
                 (call CXref::reopen method) and move storePos behind stored 
                 data).
         </listitem>
+       </itemizedlist>
         It is up to user to use the way how he wants to save changes. However 
         temporal changes are default and new revision saving is done only if
         it is explicitly said.
@@ -240,6 +247,7 @@
     </para>
     <para>
         IPdfWriter writes pdf content in two phases:
+       <itemizedlist>
         <listitem>Real data writing and information collecting. This is done 
                 during writeContent method. Implementator is responsible to 
                 collect all data needed for cross reference section generation.
@@ -249,6 +257,7 @@
                 table (or stream - depends on implementation), writes trailer 
                 dictionary and finaly information about last xref position.
         </listitem>
+       </itemizedlist>
         Different implementator of IPdfWriter interface can be set by 
         XRefWriter::setPdfWriter method.
     </para>

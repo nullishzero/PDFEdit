@@ -145,6 +145,7 @@
              observer registered to Kids array field and also to all referencies 
              which are in this array. CPdf uses PageTreeWatchDog inner class.
              In short, this method:
+	    <orderedlist numeration="arabic">
              <listitem>registers itself to new value (if it is reference of 
                      course). If new value reference points to intermediate node
                      registers also to all children (recursively). This will 
@@ -185,6 +186,7 @@
                      position (key in the pages list) is accureted to have correct
                      value.
              </listitem>
+            </orderedlist>
              Observer must be registered on Kids and also its element too because
              change may be done by setProperty on kids array property or directly
              on reference. Changing indirect object pointed by some reference is 

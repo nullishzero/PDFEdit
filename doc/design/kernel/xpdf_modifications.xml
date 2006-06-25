@@ -24,6 +24,7 @@
           because it is not prepared for making changes very well (code assumes
           data reading and use them - not to change them and use). Code changes
           can be divided to 3 cathegories:
+          <itemizedlist>
           <listitem>Syntactic - these are changes related to functions/methods 
                   signature (const modificators, private methods changed to
                   protected, new parameters, non virtual methods are changed to
@@ -36,6 +37,7 @@
           <listitem>Design - these are changes in xpdf object hierarchy or 
                   meaning of some components so they better fit our usage.
           </listitem>
+          </itemizedlist>
           For more information see following detailed describtion.
     </para>
     <sect2>
@@ -67,6 +69,7 @@
           in such situation this must be explicitly described).
           <programlisting>
           <code>
+          <![CDATA[
           Object * clone=original->clone();
           clone!=original;                              // instances must be different
           clone->getType()==original->getType();        // type must be same
@@ -75,6 +78,7 @@
           equals(clone, change(original))=false;
           destroy(clone) && exists(original) == true;   // destroying clone or original keeps seconf one existing
           destroy(original) && exists(clone) == true; 
+          ]]>
           </code>
           </programlisting>
           </footnote>
@@ -153,6 +157,7 @@
           </programlisting>
           method which returns state of given reference. State is integer value 
           with predefined constants which may hold:
+          <itemizedlist>
           <listitem>UNUSED_REF - if there is no indirect object with given reference.
           </listitem>
           <listitem>RESERVED_REF - if reference is reserved to be used, but no 
@@ -164,6 +169,7 @@
                   exists. This objects are considered when number of objects is
                   required.
           </listitem>
+          </itemizedlist>
           CXref and XRefWriter descendants reimplement this method to reflect 
           object added/reserved by their interface and additional logic (e. g.
           current revision and so on).
@@ -197,6 +203,7 @@
     </sect2>
     <sect2>
      <title>Dict.h and Dict.cc</title>
+     <sect3>
       <title>Design changes</title>
       <para>
           DictEntry used as entry (key, value pair association) kept value
