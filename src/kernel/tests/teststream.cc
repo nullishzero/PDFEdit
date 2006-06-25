@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2006/06/25 09:27:19  hockm0bm
+ * mem leak fixed
+ *         - thanks to Jozo
+ *
  * Revision 1.8  2006/06/22 18:47:27  hockm0bm
  * * deprecated functions replaced
  * * new test cases for ambiguous page tree
@@ -115,6 +119,7 @@ public:
 		delete cloneSubStream;
 		delete subStream;
 		delete unlimitedStream;
+		delete clonedStream;
 		fclose(f1);
 	}
 
