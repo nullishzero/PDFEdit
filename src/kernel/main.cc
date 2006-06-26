@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.35  2006/06/26 15:57:04  misuj1am
+ *
+ * -- compiler warning removed
+ *
  * Revision 1.34  2006/04/22 19:33:30  hockm0bm
  * test_cpdf removed - only CPP Unit test style remained
  *
@@ -173,7 +177,7 @@ main (int argc, char** argv)
 	//
 	// Run the tests.
 	// 
-	bool wasSucessful;
+	bool wasSucessful = false;
 	try
 	{
 		std::cout << "Tests started." << std::endl;
