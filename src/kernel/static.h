@@ -11,6 +11,15 @@
 #ifndef _STATIC_H_
 #define _STATIC_H_
 
+//============================================
+// Basic includes
+//============================================
+
+//
+//  POSIX
+//
+#include <time.h>
+
 //
 // stl
 //
@@ -59,15 +68,15 @@
 #include "exceptions.h"
 #include "xpdf.h"
 
+
 //============================================
-// 
 // Types
-//
+//============================================
 
 //
 // Null and empty types.
-// 
 //
+
 /** Null type. */
 class NullType {};
 /** Null type. */
@@ -246,23 +255,6 @@ private:  // emphasize the following members are private
 	noncopyable( const noncopyable& );
 	const noncopyable& operator=( const noncopyable& );
 };
-
-//=====================================================================================
-//	Memory checker classes -- DEBUGGING PURPOSES
-//=====================================================================================
-
-/**
- * No memory checks done.
- */
-class NoMemChecker 
-{public: 
-	NoMemChecker () {};
-	void objectCreated (void*) {};
-	void objectCreated () {};
-	void objectDeleted (void*) {};
-	void objectDeleted () {};
-};
-
 
 //==========================================================
 // Somewhat special bit functions.
