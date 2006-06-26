@@ -390,23 +390,23 @@ void PageViewMode::addSelectedOperators ( const std::vector< boost::shared_ptr< 
 
 void PageViewMode::actualizeSelection ()
 		{
-			std::vector< boost::shared_ptr< PdfOperator > >::iterator	it_selected;
-			std::vector< boost::shared_ptr< PdfOperator > >::iterator	it_work	= workOperators.begin();
+			std::vector< boost::shared_ptr< PdfOperator > >				temp_selectedOperators;
+			std::vector< boost::shared_ptr< PdfOperator > >::iterator	it_selected = selectedOperators.begin();
+			std::vector< boost::shared_ptr< PdfOperator > >::iterator	it_work;
 
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
-			for ( ; it_work != workOperators.end() ; ++it_work ) {
-				it_selected = selectedOperators.begin();
-				for ( ; it_selected != selectedOperators.end() ; ++it_selected ) {
+			for ( ; it_selected != selectedOperators.end() ; ++it_selected ) {
+				it_work = workOperators.begin();
+				for ( ; it_work != workOperators.end() ; ++it_work ) {
 					if ( (*it_work) == (*it_selected) ) {
-						//(*it_selected) = (*it_work);
+						temp_selectedOperators.push_back( *it_work );
 						break ;
 					}
 				}
-				if ( (it_selected != selectedOperators.end()) && ((*it_work) != (*it_selected)) )
-					selectedOperators.erase( it_selected );
 			}
+			selectedOperators.swap( temp_selectedOperators );
 
 			selectedOpRegion = QRegion();
 			addOpsBBoxToRegion ( selectedOpRegion, selectedOperators );
@@ -636,7 +636,7 @@ void PageViewMode_TextSelection::clearSelectedOperators ()
 			firstSelectedObject = NULL;
 			lastSelectedObject = NULL;
 
-			this->PageViewMode::clearWorkOperators();
+			this->PageViewMode::clearSelectedOperators();
 		};
 void PageViewMode_TextSelection::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps )
 		{
@@ -646,7 +646,7 @@ void PageViewMode_TextSelection::addWorkOperators ( const std::vector< boost::sh
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
-			guiPrintDbg( debug::DBG_DBG, "-> "<<wOps.size() );
+			guiPrintDbg( debug::DBG_DBG, "->" );
 			std::vector< boost::shared_ptr< PdfOperator > > hOps;
 			TextOperatorIterator textIter ( wOps[0] );
 			for ( ; ! textIter.isEnd() ; textIter.next() )
