@@ -103,6 +103,9 @@ namespace {
 	/** Object Stream string representation specifics. */
 	const string CSTREAM_FOOTER = "\nendstream";
 
+	/** Xpdf error object string representation specifics. */
+	const string OBJERROR = "\n";
+
 	/** Indirect Object heaser. */
 	const string INDIRECT_HEADER = "obj ";
 	/** Indirect Object footer. */
@@ -437,6 +440,10 @@ namespace {
 
 		case objCmd:
 			oss << obj.getCmd ();
+			break;
+
+		case objError:
+			oss << OBJERROR;
 			break;
 			
 		default:
@@ -894,6 +901,7 @@ xpdfObjToString (Object& obj, string& str)
 {
 	switch (obj.getType())
 	{
+
 		case objArray:
 		case objDict:
 		case objStream:

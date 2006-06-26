@@ -117,7 +117,7 @@ public:
 		/** debugging \TODO remove. */
 		objread ++;
 		std::string tmp;
-		if (!obj.isEOF())
+		if (!obj.isEOF() && !obj.isError())
 		{
 			utils::xpdfObjToString (obj,tmp);
 			oss << objread << " " << tmp << std::endl;
