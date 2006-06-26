@@ -122,16 +122,16 @@ RevisionToolbar		= list Revision Toolbar,revlabel,_revision_tool
   # _revision_tool is special toolbar item to list/change revisions
 
 ObjectToolbar		= list Object Toolbar,treeAdditem,treeDelitem
-  treeAdditem		= item Add object	,add_obj_dlg()		, Ins	, item_add.png		,need_dict_or_array_p
-  treeDelitem		= item Delete object	,treeitem.remove()	, Del	, item_delete.png	,need_removable
+  treeAdditem		= item Add object	,add_obj_dlg()			, Ins	, item_add.png		,need_dict_or_array_p
+  treeDelitem		= item Delete object	,firstSelectedItem().remove()	, Del	, item_delete.png	,need_removable
 
 OperatorToolbar		= list Operator Toolbar,streamAll,streamText,streamFont,streamGfx,-,opsetcolor,opsetfont,opsetposop,opsetpos
   # look in menu for definition of items
 
 #Generic popup menu
 popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
-  tree_string	= item Show String representation	,print(treeitem.item().getText())	,,string_representation.png
-  tree_type	= item Show Item type			,print(treeitem.itemtype())		,,item_type.png
+  tree_string	= item Show String representation	,print(firstSelected().getText()),,string_representation.png
+  tree_type	= item Show Item type			,print(firstSelectedItem().itemtype())	,,item_type.png
   tree_childs	= item Show Tree Childs			,printTreeChilds()			,,tree_childs.png
 
 # Rest of this file is ordinary configuration

@@ -657,6 +657,7 @@ bool PdfEditWindow::openFile(const QString &name) {
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
   document=CPdf::getInstance(name,mode);
+  assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
   PropertyModeController *modeCtrl=PropertyModeController::getInstance();
   document->setModeController(modeCtrl->get());
