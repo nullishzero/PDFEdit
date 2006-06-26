@@ -314,7 +314,7 @@ bool creation (__attribute__((unused)) ostream& oss)
 	return true;
 }
 
-bool annotsTests(ostream & oss, const char * fname)
+bool annotsTests(ostream &, const char * fname)
 {
 	CPdf * pdf=getTestCPdf(fname);
 
