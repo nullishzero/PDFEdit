@@ -55,9 +55,11 @@ GUI
  [ ] TreeItemRef -> cil je nekde v parent stromu. Zjistit co dela zmacknuti sipky na treeitem (ve zdrojacich QT)
      a podle toho pak udelat trochu konzistentnejsi posun kurzoru v tomhle "patologickem pripade"
  [ ] Slovenska lokalizace :)
+ [ ] Zobraz iba poslednu zmenu na stranke
 
 Skripting
  [ ] pridat getAllAnnotations
+ [ ] pridat addAllSystemFonts
  [ ] Upravit skripty na multiselect
  [ ] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
  [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho)
@@ -66,11 +68,17 @@ Skripting
 
 Kernel
  [ ] Unicode v properties, problemy s charsetem ...
- ??? Decryption - asi future wishlist
+  ??? Decryption - asi future wishlist
+ [ ] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
+ [ ] Posunutie contenstreamu o level vyssie / nizsie
+ [ ] Filtre (LZW,FlateDecode,..)
+ [ ] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
+ 
 
 Dokumentace
  [ ] Nekde sdelit o Outlines, ze potrebuji reloadovani + omezeni pri praci s nimi.
  [ ] Design dokumentace GUI (tezce chybi)
+ [ ] Design dokumentacia KERNEL (jozo) (tazko chyba)
  [ ] Popsat veci v *.qs souborech
  [ ] Ve scripting.xml tez podrobneji popsat skripting jako takovy
  [ ] User dokumentace (tezce chybi)
