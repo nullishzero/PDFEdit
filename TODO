@@ -69,7 +69,7 @@ Skripting
 Kernel
  [ ] Unicode v properties, problemy s charsetem ...
   ??? Decryption - asi future wishlist
- [ ] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
+ [x] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
  [ ] Posunutie contenstreamu o level vyssie / nizsie
  [ ] Filtre (LZW,FlateDecode,..)
  [ ] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
