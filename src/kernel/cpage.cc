@@ -1672,6 +1672,96 @@ template void CPage::addContentStreamToBack<vector<shared_ptr<PdfOperator> > > (
 template void CPage::addContentStreamToBack<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
 
 
+//
+// Our changes
+//
+
+// =====================================================================================
+namespace {
+// =====================================================================================
+	
+	/** Sort according to the time of change. 
+	 * Least means the change was the last one.
+	 */
+	struct ccs_change_sorter 
+	{
+		bool operator() (shared_ptr<CContentStream> frst, shared_ptr<CContentStream> scnd)
+		{
+			typedef vector<shared_ptr<PdfOperator> > Ops;
+			static const bool FIRST_IS_OUR_LAST = true;
+			static const bool SECOND_IS_OUR_LAST = false;
+			
+			Ops opFrst, opScnd;
+
+			frst->getPdfOperators (opFrst);
+			scnd->getPdfOperators (opScnd);
+			assert (!opFrst.empty());
+			assert (!opScnd.empty());
+			
+			ChangePdfOperatorIterator itFrst = PdfOperator::getIterator<ChangePdfOperatorIterator> (opFrst.front());
+			ChangePdfOperatorIterator itScnd = PdfOperator::getIterator<ChangePdfOperatorIterator> (opScnd.front());
+			assert (itFrst.valid());
+			assert (itScnd.valid());
+
+			time_t tmfrst = getChangeTagTime (itFrst.getCurrent());
+			time_t tmscnd = getChangeTagTime (itScnd.getCurrent());
+			
+			if (tmfrst > tmscnd)
+				return FIRST_IS_OUR_LAST;
+			else
+				return SECOND_IS_OUR_LAST;
+		}
+	};
+// =====================================================================================
+} // namespace
+// =====================================================================================
+
+//
+//
+//
+template<typename Container>
+void
+CPage::getChanges (Container& cont) const
+{
+	cont.clear();
+	for (ContentStreams::const_iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
+	{
+		typedef vector<shared_ptr<PdfOperator> > Ops;
+		Ops ops;
+		(*it)->getPdfOperators (ops);
+		
+		// Empty contentstream is not our change
+		if (ops.empty())
+			continue;
+		
+		ChangePdfOperatorIterator chng = PdfOperator::getIterator<ChangePdfOperatorIterator> (ops.front());
+		// Not containing our change tag meaning not our change
+		if (!chng.valid()) 
+			continue;
+
+		cont.push_back (*it);
+	}
+	sort (cont.begin(), cont.end(), ccs_change_sorter());
+}
+template void CPage::getChanges<vector<shared_ptr<CContentStream> > > (vector<shared_ptr<CContentStream> >& cont) const;
+
+
+//
+//
+//
+shared_ptr<CContentStream>
+CPage::getChange (size_t nthchange) const
+{
+	typedef vector<shared_ptr<CContentStream> > CCs;
+	
+	CCs ccs;
+	getChanges (ccs);
+
+	if (nthchange >= ccs.size())
+		throw OutOfRange ();
+	
+	return ccs[nthchange];
+}
 
 // =====================================================================================
 // Helper functions

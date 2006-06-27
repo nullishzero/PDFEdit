@@ -217,6 +217,51 @@ typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOpera
  */
 typedef struct AcceptingPdfOperatorIterator<24, itGraphicalIterator> GraphicalOperatorIterator;
 
+
+
+/**
+ *
+ */
+struct ChangePdfOperatorIterator: public PdfOperator::Iterator
+{
+	/** If not found in MAX_OPS_TO_CHECK operators, it is not our change. */
+	static const size_t MAX_OPS_TO_CHECK = 5;
+	//
+	// Constructor
+	//
+	ChangePdfOperatorIterator (ListItem oper) : PdfOperator::Iterator (oper)
+	{
+			// Get to the first valid text operator
+			size_t i = 0;
+			for (; !isEnd() && !validItem() && i < MAX_OPS_TO_CHECK; ++i)
+				this->next();
+			
+			if (MAX_OPS_TO_CHECK == i)
+			{
+				// Go to the last one
+				while (!isEnd())
+					this->next();
+			}
+	}
+
+	//
+	// Template method interface
+	//
+	virtual bool 
+	validItem () const
+	{
+		std::string name;
+		_cur.lock()->getOperatorName (name);
+
+		if (name == getChangeTagName())
+			return true;
+		
+		return false;
+	}
+};
+
+
+
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

@@ -347,6 +347,15 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 	return tmpop;
 }
 
+
+//
+// Our changes
+//
+namespace {
+	/** Change tag. */
+	static const char* CHANGE_TAG_NAME = "DP";
+}
+
 //
 //
 //
@@ -368,10 +377,53 @@ boost::shared_ptr<PdfOperator> createChangeTag ()
 	opers.push_back (dict);
 	
 	// Operator
-	return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator ("DP", opers));
+	return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator (CHANGE_TAG_NAME, opers));
 }
 
+//
+//
+//
+string
+getChangeTagName ()
+	{ return CHANGE_TAG_NAME; }
 
+//
+//
+//
+time_t
+getChangeTagTime (shared_ptr<PdfOperator> op)
+{
+	assert (op);
+
+	// Check operator name
+	string name;
+	op->getOperatorName (name);
+	assert (name == CHANGE_TAG_NAME);
+	if (CHANGE_TAG_NAME != name)
+		throw CObjInvalidObject ();
+
+	time_t time = 0;
+	if (0 < op->getParametersCount())
+	{
+		PdfOperator::Operands ops;
+		op->getParameters (ops);
+		assert (!ops.empty());
+		
+		try {
+			double tmp;
+			if (isDict (ops.front()))
+				utils::simpleValueFromString (utils::getStringFromDict (ops.front(),"Time"),tmp);
+			time = tmp;
+			
+		}catch (CObjectException&) { 
+			utilsPrintDbg (debug::DBG_WARN, "Change tag is CORRUPTED!");
+		}
+	}
+	
+	return time;
+}
+
+	
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

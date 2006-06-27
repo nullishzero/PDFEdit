@@ -752,7 +752,18 @@ inline boost::shared_ptr<PdfOperator> getLastOperator (PdfOperator::Iterator it)
  * @return Operator that identifies our changes
  */
 boost::shared_ptr<PdfOperator> createChangeTag ();
-	
+
+/**
+ * Get change tag name.
+ */
+std::string getChangeTagName ();
+
+/**
+ * Get change tag time.
+ */
+time_t getChangeTagTime (boost::shared_ptr<PdfOperator> op);
+
+
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

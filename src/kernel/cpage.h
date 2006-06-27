@@ -872,7 +872,7 @@ public:
 	 * they will appear "above" other objects.
 	 *
 	 * This function can be used to separate our changes from other
-	 * content streams.
+	 * COntent streams.
 	 *
 	 * @param container Container of operators to add.
 	 */
@@ -951,7 +951,10 @@ public:
 	 size_t findText (std::string text, 
 					  RectangleContainer& recs, 
 					  const TextSearchParams& params = TextSearchParams()) const;
-	
+
+	 //
+	 // Helper functions
+	 //
 private:
 	 /**
 	  * Create xpdf's state and res paramters.
@@ -971,12 +974,30 @@ private:
 	 */
 	void _objectChanged (bool invalid = false);
 
+
+	//
+	// PdfEdit changes 
+	//
+public:
+	/**
+	 * Get n-th change.
+	 * Higher change means older change.
+	 */
+	boost::shared_ptr<CContentStream> getChange (size_t nthchange = 0) const;
+
+	/**
+	 * Get our changes sorted.
+	 * The first change is the last change if any.
+	 */
+	template<typename Container>
+	void getChanges (Container& cont) const;
+
 };
 
 
-//
+//==========================================================
 // Helper functions
-//
+//==========================================================
 
 /**
  * Check whether iproperty claimed to be a page is conforming to the pdf specification.

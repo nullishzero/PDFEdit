@@ -297,6 +297,40 @@ bool setattr(__attribute__((unused))	ostream & oss, const char * fname)
 	return true;
 }
 
+//=====================================================================================
+bool change(__attribute__((unused))	ostream & oss, const char * fname)
+{
+	CPdf * pdf=getTestCPdf(fname);
+
+	size_t pageCount=pdf->getPageCount();
+	for(size_t pos=1; pos<=pageCount; pos++)
+	{
+		shared_ptr<CPage> page=pdf->getPage(pos);
+
+		typedef vector<shared_ptr<CContentStream> > CCs;
+		typedef vector<shared_ptr<PdfOperator> > Ops;
+		CCs ccs;
+		page->getContentStreams (ccs);
+		if (ccs.empty())
+			continue;
+		
+		Ops ops;
+		ccs.front()->getPdfOperators (ops);
+		page->addContentStreamToBack (ops);
+		page->addContentStreamToFront (ops);
+
+		CPPUNIT_ASSERT (page->getChange (0));
+		CPPUNIT_ASSERT (page->getChange (1));
+		
+		CCs ccs1;
+		page->getChanges (ccs1);
+		CPPUNIT_ASSERT (2 == ccs.size());
+
+	}
+	pdf->close();
+	return true;
+}
+
 
 
 //=====================================================================================
@@ -348,6 +382,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestFind);
 		CPPUNIT_TEST(TestAnnotations);
 		CPPUNIT_TEST(TestSet);
+		CPPUNIT_TEST(TestChanges);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -590,6 +625,23 @@ public:
 				}
 			}while(pdf->hasNextPage(page));
 
+		}
+	}
+
+	//
+	//
+	//
+	void TestChanges ()
+	{
+		OUTPUT << "CPage methods..." << endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+		
+			TEST(" changes");
+			CPPUNIT_ASSERT (change (OUTPUT, (*it).c_str()));
+			OK_TEST;
 		}
 	}
 
