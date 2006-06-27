@@ -1763,6 +1763,35 @@ CPage::getChange (size_t nthchange) const
 	return ccs[nthchange];
 }
 
+//
+//
+//
+size_t
+CPage::getChangeCount () const
+{
+	size_t cnt = 0;
+	for (ContentStreams::const_iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
+	{
+		typedef vector<shared_ptr<PdfOperator> > Ops;
+		Ops ops;
+		(*it)->getPdfOperators (ops);
+		
+		// Empty contentstream is not our change
+		if (ops.empty())
+			continue;
+		
+		ChangePdfOperatorIterator chng = PdfOperator::getIterator<ChangePdfOperatorIterator> (ops.front());
+		// Not containing our change tag meaning not our change
+		if (!chng.valid()) 
+			continue;
+
+		// Found another change
+		++cnt;
+	}
+
+	return cnt;
+}
+
 // =====================================================================================
 // Helper functions
 // =====================================================================================

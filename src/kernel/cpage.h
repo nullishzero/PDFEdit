@@ -992,6 +992,18 @@ public:
 	template<typename Container>
 	void getChanges (Container& cont) const;
 
+	/**
+	 * Get number of our changes.
+	 */
+	size_t getChangeCount () const;
+
+	/**
+	 * Draw nth change on an output device with last used display parameters.
+	 *
+	 * @param out Output device.
+	 */
+	//void displayChange (::OutputDev& out, size_t nth) const {};
+
 };
 
 
