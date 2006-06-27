@@ -1569,25 +1569,26 @@ namespace {
 				
 			}else
 			{
-				shared_ptr<IProperty> contents = getReferencedObject(_dict->getProperty ("Contents"));
-				assert (contents);
+				shared_ptr<IProperty> content = _dict->getProperty ("Contents");
+				shared_ptr<IProperty> realcontent = getReferencedObject(content);
+				assert (content);
 				// Contents can be either stream or an array of streams
-				if (isStream (contents))	
+				if (isStream (realcontent))	
 				{
 					CArray arr;
-					arr.addProperty (*contents);
+					arr.addProperty (*content);
 					arr.addProperty (ref);
 					_dict->setProperty ("Contents", arr);
 			
-				}else if (isArray (contents))
+				}else if (isArray (realcontent))
 				{
 					// We can be sure that streams are indirect objects (pdf spec)
-					shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
+					shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent); 
 					array->addProperty (array->getPropertyCount(), ref);
 				
 				}else // Neither stream nor array
 				{
-					kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << contents->getType());
+					kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << realcontent->getType());
 					throw ElementBadTypeException ("Bad content stream type.");
 				}
 			}
