@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.33  2006/06/27 17:26:24  hockm0bm
+ * cloneTC skips linearized pdfs
+ *
  * Revision 1.32  2006/06/25 17:55:43  hockm0bm
  * * pageManipulationTC
  *         - TC07 fixed (all pages are considered when collecting isDescendants)
@@ -191,6 +194,12 @@ public:
 	void cloneTC(CPdf * pdf, string & originalFile)
 	{
 		printf("%s\n", __FUNCTION__);
+
+		if(pdf->isLinearized())
+		{
+			printf("%s is not suitable for this test, because file is linearized\n", originalFile.c_str());
+			return;
+		}
 	
 		char suffix[13];
 		memset(suffix, '\0', sizeof(suffix));
