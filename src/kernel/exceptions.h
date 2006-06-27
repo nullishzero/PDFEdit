@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/06/27 17:10:15  hockm0bm
+ * gcc warnings removed (parameter shadows class member)
+ *
  * Revision 1.26  2006/06/25 16:25:09  hockm0bm
  * doc update - doxygen warnings removed (if they are real problem)
  *
@@ -474,19 +477,19 @@ public:
 	}
 
 	/** Gets parent value.
-	 * @param parent Place where to store parent string.
+	 * @param par Place where to store parent string.
 	 */
-	void getParent(std::string & parent)const
+	void getParent(std::string & par)const
 	{
-		parent=this->parent;
+		par=this->parent;
 	}
 	
 	/** Gets child value.
-	 * @param child Place where to store child string.
+	 * @param ch Place where to store child string.
 	 */
-	void getChild(std::string & child)const
+	void getChild(std::string & ch)const
 	{
-		child=this->child;
+		ch=this->child;
 	}
 };
 
