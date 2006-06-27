@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/06/27 18:19:48  hockm0bm
+ * code formating - no code changed
+ *
  * Revision 1.23  2006/06/27 17:27:49  hockm0bm
  * cosmetic changes
  *         - post-incrementation replaced by pre-incrementation (for performance)
@@ -356,110 +359,110 @@ using namespace debug;
 	return objRef;
 }
 
-	::Object * CXref::createObject(::ObjType type, ::Ref * ref)
+::Object * CXref::createObject(::ObjType type, ::Ref * ref)
+{
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "type="<<type);
+	// reserves new reference for object 
+	::Ref objRef=reserveRef();
+	
+	// it's not possible to create indirect reference value or
+	// any other internaly (by xpdf) used object types
+	// FIXME
+	//if(type==objRef || type==objError || type==objEOF || type==objNone)
+	//	return 0;
+
+	::Object * obj=XPdfObjectFactory::getInstance();
+	
+	// initialize according type
+	switch(type)
 	{
-	using namespace debug;
-
-		kernelPrintDbg(DBG_DBG, "type="<<type);
-		// reserves new reference for object 
-		::Ref objRef=reserveRef();
-		
-		// it's not possible to create indirect reference value or
-		// any other internaly (by xpdf) used object types
-		// FIXME
-		//if(type==objRef || type==objError || type==objEOF || type==objNone)
-		//	return 0;
-
-		::Object * obj=XPdfObjectFactory::getInstance();
-		
-		// initialize according type
-		switch(type)
-		{
-			case objBool:
-				obj->initBool(false);
-				break;
-			case objInt:
-				obj->initInt(0);
-				break;
-			case objReal:
-				obj->initReal(0);
-				break;
-			case objString:
-				obj->initString(NULL);
-				break;
-			case objName:
-				obj->initName(NULL);
-				break;
-			case objArray:
-				obj->initArray(this);
-				break;
-			case objDict:
-				obj->initDict(this);
-				break;
-			case objStream:
-				obj->initStream(NULL);
-				break;
-			case objCmd:
-				obj->initCmd(NULL);
-				break;
-			case objNull:
-				obj->initNull();
-				break;
-			default:
-				// TODO assert
-
+		case objBool:
+			obj->initBool(false);
 			break;
-		}
-		
+		case objInt:
+			obj->initInt(0);
+			break;
+		case objReal:
+			obj->initReal(0);
+			break;
+		case objString:
+			obj->initString(NULL);
+			break;
+		case objName:
+			obj->initName(NULL);
+			break;
+		case objArray:
+			obj->initArray(this);
+			break;
+		case objDict:
+			obj->initDict(this);
+			break;
+		case objStream:
+			obj->initStream(NULL);
+			break;
+		case objCmd:
+			obj->initCmd(NULL);
+			break;
+		case objNull:
+			obj->initNull();
+			break;
+		default:
+			// TODO assert
 
-		// sets reference parameter if not null
-		if(ref)
-			*ref=objRef;
-
-		kernelPrintDbg(DBG_INFO, "new object created and initialized");
-		return obj;
+		break;
 	}
+	
 
-	RefState CXref::knowsRef(::Ref ref)
+	// sets reference parameter if not null
+	if(ref)
+		*ref=objRef;
+
+	kernelPrintDbg(DBG_INFO, "new object created and initialized");
+	return obj;
+}
+
+RefState CXref::knowsRef(::Ref ref)
+{
+using namespace debug;
+
+	kernelPrintDbg(DBG_DBG, "");
+
+	// checks newly created object only with true flag
+	// not found returns 0, so it's ok
+	::RefState state;
+	if((state=newStorage.get(ref))>UNUSED_REF)
 	{
-	using namespace debug;
-
-		kernelPrintDbg(DBG_DBG, "");
-
-		// checks newly created object only with true flag
-		// not found returns 0, so it's ok
-		::RefState state;
-		if((state=newStorage.get(ref))>UNUSED_REF)
-		{
-			kernelPrintDbg(DBG_DBG, "Reference is in newStorage. state="<<state);
-			return state;
-		}
-
-		kernelPrintDbg(DBG_DBG, "Reference is not in newStorage. Trying XRef.");
-		// object has to be in in XRef
-		state=XRef::knowsRef(ref);
-		kernelPrintDbg(DBG_DBG, "Reference state in XRef is "<<state);
+		kernelPrintDbg(DBG_DBG, "Reference is in newStorage. state="<<state);
 		return state;
 	}
 
-	bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
-	{
-	using namespace debug;
+	kernelPrintDbg(DBG_DBG, "Reference is not in newStorage. Trying XRef.");
+	// object has to be in in XRef
+	state=XRef::knowsRef(ref);
+	kernelPrintDbg(DBG_DBG, "Reference state in XRef is "<<state);
+	return state;
+}
 
-		if(!obj1 || !obj2)
-		{
-			if(!obj1)
-				kernelPrintDbg(DBG_ERR, "obj1 is null");
-			
-			if(!obj2)
-				kernelPrintDbg(DBG_ERR, "obj2 is null");
-			return false;
-		}
-		 
-		// object for dereferenced  values - we assume, it's not indirect
-		::Object dObj1=*obj1, dObj2=*obj2;	
-		// types for direct values.
-		::ObjType type1=obj1->getType(), type2=obj2->getType();
+bool CXref::typeSafe(::Object * obj1, ::Object * obj2)
+{
+using namespace debug;
+
+	if(!obj1 || !obj2)
+	{
+		if(!obj1)
+			kernelPrintDbg(DBG_ERR, "obj1 is null");
+		
+		if(!obj2)
+			kernelPrintDbg(DBG_ERR, "obj2 is null");
+		return false;
+	}
+	 
+	// object for dereferenced  values - we assume, it's not indirect
+	::Object dObj1=*obj1, dObj2=*obj2;	
+	// types for direct values.
+	::ObjType type1=obj1->getType(), type2=obj2->getType();
 	
 	// checks indirect
 	if(type1==objRef)
