@@ -44,8 +44,10 @@ private:
 	boost::shared_ptr<CStream> actstream;	/**< Actual stream that is beeing parsed. */
 	size_t pos;			/**< Position of actual parsed stream in the stream container. */
 	size_t objread; 	/**< Helper variable for debugging. Number of read objects. */
+	::Object nxtObj;	/**< Sometimes it is good to know if next object is the end. */
 	/**\todo debug */
 	std::ofstream oss;
+	
 
 public:
 
@@ -102,6 +104,7 @@ public:
 		for (size_t i = 0; i <= pos; ++i)
 			parsedstreams.push_back (streams[i]);
 		
+		nxtObj.free ();
 		actstream->close ();
 		oss.close();
 	}
@@ -109,10 +112,17 @@ public:
 	/** Get xpdf object. */
 	void getXpdfObject (::Object& obj)
 	{
-		assert (!actstream->eof());
+		assert (nxtObj.isEOF() || !eofOfActualStream());
 		
 		// Get an object
-		actstream->getXpdfObject (obj);
+		if (nxtObj.isNone())
+		{
+			actstream->getXpdfObject (obj);
+		}else
+		{
+			nxtObj.copy (&obj);
+			nxtObj.free();
+		}
 
 		/** debugging \TODO remove. */
 		objread ++;
@@ -125,9 +135,8 @@ public:
 
 		// If we are at the end of this stream but another stream is not empty 
 		// get the object
-		if (actstream->eof() && !eof())
+		if (eofOfActualStream() && !eof())
 		{
-			assert (obj.isEOF());
 			actstream->getXpdfObject (obj);
 
 			/** debugging \TODO remove. */
@@ -176,13 +185,30 @@ public:
 		}
 	}
 
-	/** End of actual stream. */
-	bool eofOfActualStream ()
-		{ return (actstream->eof()); }
+	/** 
+	 * Are we at the end of actual stream. 
+	 *
+	 * This function looks at the next object if it is the end. 
+	 * REMARK: This function has to be called very carefully because we can not
+	 * simply cache objects e.g. because of the inline image where all cached
+	 * objects are cleared.
+	 */
+	bool nextEofOfActualStream ()
+	{ 
+		if (nxtObj.isNone())
+			actstream->getXpdfObject (nxtObj);
+		return (nxtObj.isEOF()); 
+	}
 
 	/** Get xpdf stream. */
 	::Stream* getXpdfStream ()
 		{ return actstream->getXpdfStream(); }
+
+	/** 
+	 * Are we at the end of actual stream. 
+	 */
+	bool eofOfActualStream ()
+		{ return (actstream->eof()); }
 
 	
 };

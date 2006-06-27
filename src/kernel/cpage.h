@@ -4,6 +4,7 @@
  *        Filename:  cpage.cc
  *     Description:  CPage.
  *         Created:  20/03/2006 11:46:14 AM CET
+ *          Author:  jmisutka, mhocko (annotation stuff)
  * =====================================================================================
  */
 
@@ -839,17 +840,44 @@ public:
 
 
 	/**
-	 * Add new content stream. This function adds new entry in the "Contents"
+	 * Add new content stream to the front. This function adds new entry in the "Contents"
 	 * property of a page. The container of provided operators must form a valid
 	 * contentstream.
+	 * This function should be used when supplied operators
+	 * should be handled at the beginning end e.g. should be drawn first which means
+	 * they will appear the "below" other object.
 	 *
-	 * This function can be used to separate our complex objects from other
-	 * content streams co a set of objects can be easily recognized.
+	 * This function can be used to separate our changes from other
+	 * content streams.
 	 *
 	 * @param container Container of operators to add.
 	 */
-	template<typename Container> void addContentStream (const Container& cont);
+	template<typename Container> void addContentStreamToFront (const Container& cont);
 	
+	
+	template<typename Container> 
+	inline
+	void addContentStream (const Container& cont)
+	{ 
+		{int THIS_FUNCTION_SHOULD_NOT_BE_USED_USE__addContentStreamToFront_OR_addContentStreamToBack__INSTEAD;}
+		addContentStreamToFront (cont);
+	}
+	
+	/**
+	 * Add new content stream to the back. This function adds new entry in the "Contents"
+	 * property of a page. The container of provided operators must form a valid
+	 * contentstream. 
+	 * This function should be used when supplied operators
+	 * should be handled at the end e.g. should be drawn at the end which means
+	 * they will appear "above" other objects.
+	 *
+	 * This function can be used to separate our changes from other
+	 * content streams.
+	 *
+	 * @param container Container of operators to add.
+	 */
+	template<typename Container> void addContentStreamToBack (const Container& cont);
+
 	//
 	// Page translation 
 	//

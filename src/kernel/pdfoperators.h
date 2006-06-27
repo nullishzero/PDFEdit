@@ -745,6 +745,13 @@ inline boost::shared_ptr<PdfOperator> getLastOperator (PdfOperator::Iterator it)
 	{ return getLastOperator (it.getCurrent()); }
 
 
+/**
+ * Create our own tag indicating time when the change occured. This enables us
+ * to sort our changes according to time.
+ *
+ * @return Operator that identifies our changes
+ */
+boost::shared_ptr<PdfOperator> createChangeTag ();
 	
 //==========================================================
 } // namespace pdfobjects

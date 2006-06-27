@@ -463,7 +463,7 @@ namespace {
 				{ // FIRST PARSE
 
 					// We have found complete and correct content stream.
-					if (streamreader.eofOfActualStream())
+					if (streamreader.eofOfActualStream() || streamreader.nextEofOfActualStream())
 						break;				
 				}
 			}

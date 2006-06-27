@@ -347,6 +347,31 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 	return tmpop;
 }
 
+//
+//
+//
+boost::shared_ptr<PdfOperator> createChangeTag ()
+{
+	PdfOperator::Operands opers;
+	
+	// Name or our application
+	shared_ptr<CName> name (new CName ("PdfEdit"));
+	opers.push_back (name);
+	
+	// Dict with our informatio
+	shared_ptr<CDict> dict (new CDict ());
+	time_t t = time (NULL);
+	ostringstream oss;
+	oss << t;
+	CString tm (oss.str());
+	dict->addProperty ("Time", tm);
+	opers.push_back (dict);
+	
+	// Operator
+	return shared_ptr<SimpleGenericOperator> (new SimpleGenericOperator ("DP", opers));
+}
+
+
 //==========================================================
 } // namespace pdfobjects
 //==========================================================

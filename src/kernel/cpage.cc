@@ -1465,109 +1465,164 @@ CPage::_objectChanged (bool invalid)
 }
 
 
+// =====================================================================================
+namespace {
+// =====================================================================================
+
+	/**
+	 * Create stream from container of objects that implement
+	 * getStringRepresentation function. And inserts this stream into supplied pdf.
+	 */
+	template<typename Container>
+	shared_ptr<CStream> 
+	createStreamFromObjects (const Container& cont, CPdf& pdf)
+	{
+		// Create stream with one default property Length
+		shared_ptr<CStream> newstr (new CStream());
+		
+		// Insert our change tag
+		std::string str;
+		{
+			std::string tmpop;
+			createChangeTag()->getStringRepresentation (tmpop);
+			str += tmpop + " ";
+		}
+		
+		//
+		// Get string representation of new content stream
+		//
+		typename Container::const_iterator it = cont.begin();
+		for (; it != cont.end(); ++it)
+		{
+			std::string tmpop;
+			(*it)->getStringRepresentation (tmpop);
+			str += tmpop;
+		}
+		kernelPrintDbg (debug::DBG_DBG, str);
+
+		// Set the stream
+		newstr->setBuffer (str);
+
+		// Set ref and indiref reserve free indiref for the new object
+		IndiRef newref = pdf.addIndirectProperty (newstr);
+		newstr = IProperty::getSmartCObjectPtr<CStream> (pdf.getIndirectProperty (newref));
+		assert (newstr);
+
+		return newstr;
+	}
+
+	
+	/** 
+	 * Helper class providing convinient access and modify operations on
+	 * "Contents" entry of a page dictionary.
+	 */
+	struct ContentsHandler
+	{
+		shared_ptr<CDict> _dict;
+			
+		ContentsHandler (shared_ptr<CDict> dict) : _dict(dict) {};
+
+		void toFront (CRef& ref)
+		{
+			if (!_dict->containsProperty ("Contents"))
+			{
+				CArray arr;
+				arr.addProperty (ref);
+				_dict->addProperty ("Contents", arr);
+				
+			}else
+			{
+				shared_ptr<IProperty> content = _dict->getProperty ("Contents");
+				shared_ptr<IProperty> realcontent = getReferencedObject(content);
+				assert (content);
+				// Contents can be either stream or an array of streams
+				if (isStream (realcontent))	
+				{
+					CArray arr;
+					arr.addProperty (ref);
+					arr.addProperty (*content);
+					_dict->setProperty ("Contents", arr);
+			
+				}else if (isArray (realcontent))
+				{
+					// We can be sure that streams are indirect objects (pdf spec)
+					shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent);
+					array->addProperty (0, ref);
+				
+				}else // Neither stream nor array
+				{
+					kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << realcontent->getType());
+					throw ElementBadTypeException ("Bad content stream type.");
+				}
+			}
+		}
+	
+		void toBack (CRef& ref)
+		{
+			if (!_dict->containsProperty ("Contents"))
+			{
+				CArray arr;
+				arr.addProperty (ref);
+				_dict->addProperty ("Contents", arr);
+				
+			}else
+			{
+				shared_ptr<IProperty> contents = getReferencedObject(_dict->getProperty ("Contents"));
+				assert (contents);
+				// Contents can be either stream or an array of streams
+				if (isStream (contents))	
+				{
+					CArray arr;
+					arr.addProperty (*contents);
+					arr.addProperty (ref);
+					_dict->setProperty ("Contents", arr);
+			
+				}else if (isArray (contents))
+				{
+					// We can be sure that streams are indirect objects (pdf spec)
+					shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (contents); 
+					array->addProperty (array->getPropertyCount(), ref);
+				
+				}else // Neither stream nor array
+				{
+					kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << contents->getType());
+					throw ElementBadTypeException ("Bad content stream type.");
+				}
+			}
+		}
+	
+	}; // struct ContentsHandler
+
+// =====================================================================================
+} // namespace
+// =====================================================================================
+
+
 //
 //
 //
 template<typename Container>
 void 
-CPage::addContentStream (const Container& cont)
-{
-	assert (hasValidPdf(dictionary));
-	assert (hasValidRef(dictionary));
-	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
+CPage::addContentStreamToFront (const Container& cont)
+{ 
+	// Create cstream from container of pdf operators
+	CPdf* pdf = dictionary->getPdf();
+	assert (pdf);
+	shared_ptr<CStream> stream = createStreamFromObjects (cont, *pdf);
+	assert (hasValidRef (stream)); assert (hasValidPdf (stream));
+	if (!hasValidPdf(stream) || !hasValidPdf(stream))
 		throw CObjInvalidObject ();
 
-	// If not parsed
-	if (contentstreams.empty())
-		parseContentStream ();		
-	
-	CPdf* pdf = dictionary->getPdf();
-	IndiRef ref = dictionary->getIndiRef();
-	
-	// Create stream with one default property Length
-	boost::shared_ptr<CStream> newstr (new CStream());
-	
-	//
-	// Get string representation of new content stream
-	//
-	typename Container::const_iterator it = cont.begin();
-	std::string str;
-	for (; it != cont.end(); ++it)
-	{
-		std::string tmpop;
-		(*it)->getStringRepresentation (tmpop);
-		str += tmpop;
-	}
-	kernelPrintDbg (debug::DBG_DBG, str);
-
-	// Set the stream
-	newstr->setBuffer (str);
-
-	//
-	// Change the "Contents" entry 
-	//
-	// Set ref and indiref reserve free indiref for the new object
-	IndiRef newref = pdf->addIndirectProperty (newstr);
-	newstr = IProperty::getSmartCObjectPtr<CStream> (pdf->getIndirectProperty (newref));
-	assert (newstr);
-
-	// Unregister observer (we would get notification about the change we
-	// know about)
+	// Change the contents entry
 	unregisterContentsObserver ();
-	
-	//
-	// Make valid array of stream references, add new to the beginning
-	// otherwise we do not know gfx state 
-	// 
-	if (dictionary->containsProperty ("Contents"))
-	{
-		boost::shared_ptr<IProperty> contents = utils::getReferencedObject(dictionary->getProperty("Contents"));
-		if (isStream(contents))
-		{ // Exactly one stream
-			
-			CArray streamrefs;
-			
-			// Add new one
-			CRef newref (newstr->getIndiRef());
-			streamrefs.addProperty (newref);
-
-			// Add current one
-			CRef tmp (contents->getIndiRef());
-			streamrefs.addProperty (tmp);
-
-			// Set new array to the "Contents" entry
-			dictionary->setProperty ("Contents", streamrefs);
-	
-		}else
-		{ // Array
-			
-			if (!isArray(contents))
-				throw CObjInvalidObject ();
-
-			// Insert new one before current ones
-			CRef newref (newstr->getIndiRef());
-			IProperty::getSmartCObjectPtr<CArray> (contents)->addProperty (0,newref);
-		}
-
-	}else
-	{
-		// Make valid array of stream references
-		CArray streamrefs;
-
-		// Add new one
-		CRef newref (newstr->getIndiRef());
-		streamrefs.addProperty (newref);
-			
-		// Add the new array
-		dictionary->addProperty ("Contents", streamrefs);
-	}
-	
-	// Register observer 
+	ContentsHandler cnts (dictionary);
+	CRef ref (stream->getIndiRef());
+	cnts.toFront (ref);
 	registerContentsObserver ();
 
 	// Parse new stream to content stream and add it to the streams
 	CContentStream::CStreams streams;
-	streams.push_back (newstr);
+	streams.push_back (stream);
 	boost::shared_ptr<GfxResources> res;
 	boost::shared_ptr<GfxState> state;
 	createXpdfDisplayParams (res, state);
@@ -1578,9 +1633,43 @@ CPage::addContentStream (const Container& cont)
 
 	// Indicate change
 	_objectChanged ();
+
 }
-template void CPage::addContentStream<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
-template void CPage::addContentStream<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
+template void CPage::addContentStreamToFront<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
+template void CPage::addContentStreamToFront<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
+
+//
+//
+//
+template<typename Container>
+void 
+CPage::addContentStreamToBack (const Container& cont)
+{
+	// Create cstream from container of pdf operators
+	CPdf* pdf = dictionary->getPdf();
+	assert (pdf);
+	shared_ptr<CStream> stream = createStreamFromObjects (cont, *pdf);
+	assert (hasValidRef (stream)); assert (hasValidPdf (stream));
+	if (!hasValidPdf(stream) || !hasValidPdf(stream))
+		throw CObjInvalidObject ();
+
+	// Change the contents entry
+	unregisterContentsObserver ();
+	ContentsHandler cnts (dictionary);
+	CRef ref (stream->getIndiRef());
+	cnts.toBack (ref);
+	registerContentsObserver ();
+
+	// Parse new stream to content stream and add it to the streams
+	CContentStream::CStreams streams;
+	streams.push_back (stream);
+	boost::shared_ptr<GfxResources> res;
+	boost::shared_ptr<GfxState> state;
+	createXpdfDisplayParams (res, state);
+	contentstreams.push_back(boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+}
+template void CPage::addContentStreamToBack<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
+template void CPage::addContentStreamToBack<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
 
 
 
