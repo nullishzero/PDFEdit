@@ -4,6 +4,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/06/27 17:27:49  hockm0bm
+ * cosmetic changes
+ *         - post-incrementation replaced by pre-incrementation (for performance)
+ *         - thx to Jozo
+ *
  * Revision 1.27  2006/06/17 15:04:48  misuj1am
  *
  * -- include rem/add
@@ -452,7 +457,7 @@ using namespace utils;
 	// gets vector of all changed objects
 	IPdfWriter::ObjectList changed;
 	ObjectStorage< ::Ref, ObjectEntry *, RefComparator>::Iterator i;
-	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
+	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
 	{
 		::Ref ref=i->first;
 		Object * obj=i->second->object;

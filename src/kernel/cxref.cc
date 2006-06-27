@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2006/06/27 17:27:49  hockm0bm
+ * cosmetic changes
+ *         - post-incrementation replaced by pre-incrementation (for performance)
+ *         - thx to Jozo
+ *
  * Revision 1.22  2006/06/25 16:25:08  hockm0bm
  * doc update - doxygen warnings removed (if they are real problem)
  *
@@ -120,7 +125,7 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "Deallocating changedStorage (size="<<changedStorage.size()<<")");
 	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
 	int index=0;
-	for(i=changedStorage.begin(); i!=changedStorage.end(); i++)
+	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
 	{
 		::Ref ref=i->first;
 		ObjectEntry * entry=i->second;
@@ -273,11 +278,11 @@ using namespace debug;
 	// is allocated by blocks and so there are entries which are marked 
 	// as free but they are not realy removed objects.
 	int objectCount=0, xrefCount=XRef::getNumObjects();
-	for(; i<size && i<MAXOBJNUM && objectCount<xrefCount; i++)
+	for(; i<size && i<MAXOBJNUM && objectCount<xrefCount; ++i)
 	{
 		if(entries[i].type!=xrefEntryFree)
 		{
-			objectCount++;
+			++objectCount;
 			continue;
 		}
 
@@ -319,7 +324,7 @@ using namespace debug;
 	{
 		// checks if num, gen is not in newStorage and if yes,
 		// use num+1
-		for(;i<MAXOBJNUM; i++)
+		for(;i<MAXOBJNUM; ++i)
 		{
 			Ref ref={i, 0};
 			if(!newStorage.contains(ref))
@@ -656,9 +661,9 @@ using namespace debug;
 	size_t newSize=0;
 	ObjectStorage< ::Ref, RefState, RefComparator>::Iterator begin, i;
 
-	for(i=newStorage.begin(); i!=newStorage.end(); i++)
+	for(i=newStorage.begin(); i!=newStorage.end(); ++i)
 		if(i->second==INITIALIZED_REF)
-			newSize++;
+			++newSize;
 
 	kernelPrintDbg(DBG_INFO, "original objects count="<<XRef::getNumObjects()<<" newly created="<<newSize);
 	return XRef::getNumObjects() + newSize;

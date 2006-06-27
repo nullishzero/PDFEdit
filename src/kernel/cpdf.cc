@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.74  2006/06/27 17:27:49  hockm0bm
+ * cosmetic changes
+ *         - post-incrementation replaced by pre-incrementation (for performance)
+ *         - thx to Jozo
+ *
  * Revision 1.73  2006/06/22 18:56:38  hockm0bm
  * * searchTreeNode
  *         - optimization - doesn't go in recursion for LeafNodes
@@ -627,7 +632,7 @@ using namespace debug;
 		shared_ptr<CDict> nodeDict=IProperty::getSmartCObjectPtr<CDict>(nodeProp);
 		getKidsFromInterNode(nodeDict, childs);
 		utilsPrintDbg(DBG_DBG, "discarding all nodes in "<<ref<<" subtree");
-		for(ChildrenStorage::iterator i=childs.begin(); i!=childs.end(); i++)
+		for(ChildrenStorage::iterator i=childs.begin(); i!=childs.end(); ++i)
 		{
 			shared_ptr<IProperty> child=*i;
 			if(!isRef(child))
@@ -685,7 +690,7 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 	count=0;
 	ChildrenStorage children;
 	getKidsFromInterNode(interNodeDict, children);
-	for(ChildrenStorage::const_iterator i=children.begin(); i!=children.end(); i++)
+	for(ChildrenStorage::const_iterator i=children.begin(); i!=children.end(); ++i)
 	{
 		shared_ptr<IProperty> childProp=*i;
 		if(isRef(childProp))
@@ -799,7 +804,7 @@ boost::shared_ptr<CDict> findPageDict(
 		// startPos value and incremented by page number in node which can't
 		// contain pos - normal page 1 and Pages their count).
 		size_t min_pos=startPos, index=0;
-		for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); i++, index++)
+		for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); ++i, ++index)
 		{
 			shared_ptr<IProperty> child=*i;
 
@@ -837,7 +842,7 @@ boost::shared_ptr<CDict> findPageDict(
 					utilsPrintDbg(DBG_INFO, "page at pos="<<pos<<" found. Node reference "<<child_ptr->getIndiRef());
 					return child_ptr;
 				}
-				min_pos++;
+				++min_pos;
 				continue;
 			}
 
@@ -949,7 +954,7 @@ size_t searchTreeNode(
 	ChildrenStorage::iterator i;
 	size_t index=0;
 	getKidsFromInterNode(superNode, children);
-	for(i=children.begin(); i!=children.end(); i++, index++)
+	for(i=children.begin(); i!=children.end(); ++i, ++index)
 	{
 		shared_ptr<IProperty> child=*i;
 		
@@ -997,9 +1002,9 @@ size_t searchTreeNode(
 	{
 		// i points to last checked element, so starts checking from next
 		// position
-		i++;index++;
+		++i;++index;
 		IndiRef nodeRef=node->getIndiRef();
-		for(;i!=children.end(); i++, index++)
+		for(;i!=children.end(); ++i, ++index)
 		{
 			shared_ptr<IProperty> child=*i;
 			if(isRef(child) && getValueFromSimple<CRef>(child)==nodeRef)
@@ -1221,7 +1226,7 @@ using namespace pdfobjects::utils;
 	kids_ptr->registerObserver(pageTreeKidsObserver);
 	ChildrenStorage container;
 	kids_ptr->_getAllChildObjects(container);
-	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); i++)
+	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); ++i)
 	{
 		shared_ptr<IProperty> elemProp_ptr=*i;
 		if(isRef(elemProp_ptr))
@@ -1335,7 +1340,7 @@ using namespace pdfobjects::utils;
 	kids_ptr->registerObserver(pageTreeKidsObserver);
 	ChildrenStorage container;
 	kids_ptr->_getAllChildObjects(container);
-	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); i++)
+	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); ++i)
 	{
 		shared_ptr<IProperty> elemProp_ptr=*i;
 		if(isRef(elemProp_ptr))
@@ -1448,7 +1453,7 @@ using namespace utils;
 	
 	// removes and invalidates whole pageList
 	kernelPrintDbg(DBG_DBG, "Invalidating pageList with "<<pdf->pageList.size()<<" elements");
-	for(PageList::iterator i=pdf->pageList.begin(); i!=pdf->pageList.end(); i++)
+	for(PageList::iterator i=pdf->pageList.begin(); i!=pdf->pageList.end(); ++i)
 	{
 		shared_ptr<CPage> page=i->second;
 		page->invalidate();
@@ -1630,7 +1635,7 @@ using namespace observer;
 	shared_ptr<IProperty> null(CNullFactory::getInstance());
 	kernelPrintDbg(DBG_DBG, "Consolidating page list by removing oldValues.");
 	size_t index=0;
-	for(ChildrenStorage::iterator i=oldValues.begin(); i!=oldValues.end(); i++, index++)
+	for(ChildrenStorage::iterator i=oldValues.begin(); i!=oldValues.end(); ++i, ++index)
 	{
 		shared_ptr<IProperty> child=*i;
 		// consider just referencies, other elements are just mess in array
@@ -1649,7 +1654,7 @@ using namespace observer;
 		}
 	}
 	kernelPrintDbg(DBG_DBG, "Consolidating page list by adding newValues.");
-	for(ChildrenStorage::iterator i=newValues.begin(); i!=newValues.end(); i++)
+	for(ChildrenStorage::iterator i=newValues.begin(); i!=newValues.end(); ++i)
 	{
 		shared_ptr<IProperty> child=*i;
 		// consider just referencies, other elements are just mess in array
@@ -1900,7 +1905,7 @@ using namespace observer;
 	{
 		kernelPrintDbg(DBG_INFO, "Cleaning up pages list with "<<pageList.size()<<" elements");
 		PageList::iterator i;
-		for(i=pageList.begin(); i!=pageList.end(); i++)
+		for(i=pageList.begin(); i!=pageList.end(); ++i)
 		{
 			kernelPrintDbg(DBG_DBG, "invalidating page at pos="<<i->first);
 			i->second->invalidate();
@@ -1913,7 +1918,7 @@ using namespace observer;
 	{
 		// checks for held values (smart pointer is not unique, so somebody
 		// has to keep shared_ptr to same value)
-		for(IndirectMapping::iterator i=indMap.begin(); i!=indMap.end(); i++)
+		for(IndirectMapping::iterator i=indMap.begin(); i!=indMap.end(); ++i)
 		{
 			IndiRef ref=i->first;
 			shared_ptr<IProperty> value=i->second;
@@ -2018,7 +2023,7 @@ CPdf::~CPdf()
 	// indirect mapping is cleaned up automaticaly
 	
 	// discards all returned pages
-	for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
+	for(PageList::iterator i=pageList.begin(); i!=pageList.end(); ++i)
 	{
 		kernelPrintDbg(DBG_DBG, "Invalidating page at pos="<<i->first);
 		i->second->invalidate();
@@ -2179,7 +2184,6 @@ using namespace debug;
 	// object is indirect and if mapping is not in container yet
 	if(isRefValid(&oldRef))
 	{
-		ResolvedRefStorage::iterator i;
 		ResolvedRefStorage::value_type mapping(oldRef, indiRef);
 		if(find(container.begin(), container.end(), mapping)==container.end())
 		{
@@ -2215,7 +2219,7 @@ using namespace utils;
 			// endless loops for cyclic structures
 			ResolvedRefStorage::iterator i;
 			IndiRef ipRef=getValueFromSimple<CRef>(ip);
-			for(i=container.begin(); i!=container.end(); i++)
+			for(i=container.begin(); i!=container.end(); ++i)
 			{
 				IndiRef elem=i->first;
 				if(elem==ipRef)
@@ -2272,7 +2276,7 @@ using namespace utils;
 	// method on each. If return value is non NULL, sets new child value to
 	// returned reference.
 	ChildrenStorage::iterator i;
-	for(i=childrenStorage.begin(); i!=childrenStorage.end(); i++)
+	for(i=childrenStorage.begin(); i!=childrenStorage.end(); ++i)
 	{
 		shared_ptr<IProperty> child=*i;
 		if(!isRef(*child) && !isDict(*child) && !isArray(*child) && !isStream(*child))
@@ -2510,7 +2514,7 @@ boost::shared_ptr<CPage> CPdf::getNextPage(boost::shared_ptr<CPage> page)const
 
 	size_t pos=getPagePosition(page);
 	kernelPrintDbg(DBG_DBG, "Page position is "<<pos);
-	pos++;
+	++pos;
 	
 	// checks if we are in boundary after incrementation
 	if(pos==0 || pos>getPageCount())
@@ -2549,7 +2553,7 @@ size_t CPdf::getPagePosition(boost::shared_ptr<CPage> page)const
 		
 	// search in returned page list
 	PageList::iterator i;
-	for(i=pageList.begin(); i!=pageList.end(); i++)
+	for(i=pageList.begin(); i!=pageList.end(); ++i)
 	{
 		// compares page instances
 		// This is ok even if they manage same page dictionary
@@ -2598,7 +2602,7 @@ using namespace utils;
 				difference = -1;
 				shared_ptr<CDict> oldDict_ptr=getCObjectFromRef<CDict>(oldValue);
 
-				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
+				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); ++i)
 				{
 					// checks page's dictionary with old one
 					shared_ptr<CPage> page=i->second;
@@ -2627,7 +2631,7 @@ using namespace utils;
 				IndiRef ref=getValueFromSimple<CRef>(oldValue);
 				
 				bool found=false;
-				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); i++)
+				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); ++i)
 				{
 					shared_ptr<CPage> page=i->second;
 					// checks page's dictionary whether it is in oldDict_ptr sub
@@ -2722,7 +2726,7 @@ using namespace utils;
 	// all pages with position greater than minPos, has to be consolidated
 	PageList::iterator i;
 	PageList readdContainer;
-	for(i=pageList.begin(); i!=pageList.end(); i++)
+	for(i=pageList.begin(); i!=pageList.end(); ++i)
 	{
 		size_t pos=i->first;
 		shared_ptr<CPage> page=i->second;
@@ -2742,7 +2746,7 @@ using namespace utils;
 	if(!minPos)
 	{
 		kernelPrintDbg(DBG_DBG,"Reassingning all pages posititions.");
-		for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
+		for(i=readdContainer.begin(); i!=readdContainer.end(); ++i)
 		{
 			// uses getNodePosition for each page's dictionary to find out
 			// current position. If getNodePosition throws an exception, it
@@ -2770,7 +2774,7 @@ using namespace utils;
 	// Information about page numbers which should be consolidated is available
 	// so just adds difference for each in readdContainer
 	// readds all removed with changed position (according difference)
-	for(i=readdContainer.begin(); i!=readdContainer.end(); i++)
+	for(i=readdContainer.begin(); i!=readdContainer.end(); ++i)
 	{
 		kernelPrintDbg(DBG_DBG, "Original position="<<i->first<<" new="<<i->first+difference);
 		pageList.insert(PageList::value_type(i->first+difference, i->second));	
@@ -2867,7 +2871,7 @@ using namespace utils;
 	getKidsFromInterNode(interNode, kids);
 	ChildrenStorage::iterator i;
 	size_t index=0;
-	for(i=kids.begin(); i!=kids.end(); i++, index++)
+	for(i=kids.begin(); i!=kids.end(); ++i, ++index)
 	{
 		shared_ptr<IProperty> child=*i;
 		if(!isRef(child))

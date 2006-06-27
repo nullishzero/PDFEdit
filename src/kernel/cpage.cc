@@ -85,17 +85,17 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			if(isRef(prop))
 			{
 				attrs.resources=getCObjectFromRef<CDict>(prop);
-				initialized++;
+				++initialized;
 			}
 			else
 				if(isDict(prop))
 				{
 					attrs.resources=IProperty::getSmartCObjectPtr<CDict>(prop);
-					initialized++;
+					++initialized;
 				}
 		}
 	}else
-		initialized++;
+		++initialized;
 
 	// mediabox field
 	if(!attrs.mediaBox.get())
@@ -107,16 +107,16 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			if(isRef(prop))
 			{
 				attrs.mediaBox=getCObjectFromRef<CArray>(prop);
-				initialized++;
+				++initialized;
 			}else
 				if(isArray(prop))
 				{
 					attrs.mediaBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-					initialized++;
+					++initialized;
 				}
 		}
 	}else
-		initialized++;
+		++initialized;
 
 	// cropbox field
 	if(!attrs.cropBox.get())
@@ -128,16 +128,16 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			if(isRef(prop))
 			{
 				attrs.cropBox=getCObjectFromRef<CArray>(prop);
-				initialized++;
+				++initialized;
 			}else
 				if(isArray(prop))
 				{
 					attrs.cropBox=IProperty::getSmartCObjectPtr<CArray>(prop);
-					initialized++;
+					++initialized;
 				}
 		}
 	}else
-		initialized++;
+		++initialized;
 
 	// rotate field
 	if(!attrs.rotate.get())
@@ -149,16 +149,16 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 			if(isRef(prop))
 			{
 				attrs.rotate=getCObjectFromRef<CInt>(prop);
-				initialized++;
+				++initialized;
 			}else
 				if(isInt(prop))
 				{
 					attrs.rotate=IProperty::getSmartCObjectPtr<CInt>(prop);
-					initialized++;
+					++initialized;
 				}
 		}
 	}else
-		initialized++;
+		++initialized;
 
 	// all values available from this dictionary are set now
 	if(initialized<4)
@@ -308,7 +308,7 @@ namespace {
 
 			// gets all Annots elements - these has to be referencies to
 			// dictionaries
-			for(size_t i=0; i<annotsArray->getPropertyCount(); i++)
+			for(size_t i=0; i<annotsArray->getPropertyCount(); ++i)
 			{
 				// gets elements and ignores those which are not referencies
 				shared_ptr<IProperty> elem=annotsArray->getProperty(i);
@@ -382,7 +382,7 @@ using namespace utils;
 	ChildrenStorage children;
 	annotsArray->unregisterObserver(annotsArrayWatchDog);
 	annotsArray->_getAllChildObjects(children);
-	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); i++)
+	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); ++i)
 	{
 		shared_ptr<IProperty> child=*i;
 		if(isRef(child))
@@ -421,7 +421,7 @@ using namespace debug;
 	ChildrenStorage children;
 	annotsArray->registerObserver(annotsArrayWatchDog);
 	annotsArray->_getAllChildObjects(children);
-	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); i++)
+	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); ++i)
 	{
 		shared_ptr<IProperty> child=*i;
 		if(isRef(child))
@@ -444,7 +444,7 @@ using namespace debug;
 		{
 			shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(oldValue);
 			CPage::AnnotStorage::iterator i;
-			for(i=annotStorage.begin(); i!=annotStorage.end(); i++)
+			for(i=annotStorage.begin(); i!=annotStorage.end(); ++i)
 			{
 				shared_ptr<CAnnotation> annot=*i;
 				if(annot->getDictionary()==annotDict)
@@ -574,7 +574,7 @@ using namespace observer;
 	
 	// clears and invalidates all annotations from annotStorage
 	kernelPrintDbg(DBG_DBG, "Discarding annotStorage.");
-	for(AnnotStorage::iterator i=page->annotStorage.begin(); i!=page->annotStorage.end(); i++)
+	for(AnnotStorage::iterator i=page->annotStorage.begin(); i!=page->annotStorage.end(); ++i)
 		(*i)->invalidate();
 	page->annotStorage.clear();
 
@@ -864,7 +864,7 @@ CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
 	// searches annotation in annotStorage - which is synchronized with current
 	// state of Annots array
 	size_t pos=0;
-	for(AnnotStorage::iterator i=annotStorage.begin(); i!=annotStorage.end(); i++,pos++)
+	for(AnnotStorage::iterator i=annotStorage.begin(); i!=annotStorage.end(); ++i,++pos)
 	{
 		shared_ptr<CAnnotation> element=*i;	
 		if(annot!=element)
@@ -1353,8 +1353,8 @@ CPage::addSystemType1Font (const std::string& fontname)
 	if (our)
 	{/**\todo make sane */
 		len -= ourfontname.length();
-		len++;
-		for (size_t i = 0; i < len; i++)
+		++len;
+		for (size_t i = 0; i < len; ++i)
 			ourfontname.push_back ('r');
 	}
 
