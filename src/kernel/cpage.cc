@@ -953,9 +953,8 @@ CPage::setMediabox (const Rectangle& rc)
 // Display a page
 //
 void
-CPage::displayPage (::OutputDev& out) const
+CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict) const
 {
-
 	// Are we in valid pdf
 	assert (hasValidPdf (dictionary));
 	assert (hasValidRef (dictionary));
@@ -965,10 +964,13 @@ CPage::displayPage (::OutputDev& out) const
 	// Get xref
 	XRef* xref = dictionary->getPdf()->getCXref ();
 	assert (NULL != xref);
-	
+
+	//
 	// Create xpdf object representing CPage
 	//
-	boost::shared_ptr<Object> xpdfPage (dictionary->_makeXpdfObject(), xpdf::object_deleter());
+	if (!(pagedict))
+		pagedict = dictionary;
+	shared_ptr<Object> xpdfPage (pagedict->_makeXpdfObject(), xpdf::object_deleter());
 	// Check page dictionary
 	assert (objDict == xpdfPage->getType ());
 	if (objDict != xpdfPage->getType ())
@@ -1590,6 +1592,36 @@ namespace {
 				}
 			}
 		}
+
+		template<typename Cont>
+		void setContents (const Cont& cont)
+		{
+			if (_dict->containsProperty ("Contents"))
+				_dict->delProperty ("Contents");
+			
+			//
+			// Loop throug all content streams and add all cstreams from each
+			// content streams to "Contents" entry of page dictionary
+			//
+			for (typename Cont::const_iterator it = cont.begin(); it != cont.end(); ++it)
+			{
+				typedef vector<shared_ptr<CStream> > Css;
+				Css css;
+				(*it)->getCStreams (css);
+				assert (!css.empty());
+				// Loop through all cstreams of one content stream
+				for (Css::iterator itt = css.begin(); itt != css.end(); ++itt)
+				{
+					assert (hasValidPdf (*itt));
+					assert (hasValidRef (*itt));
+					if (!hasValidPdf (*itt) || !hasValidRef (*itt))
+						throw XpdfInvalidObject ();
+
+					CRef rf ((*itt)->getIndiRef ());
+					toBack (rf);
+				}
+			}
+		}
 	
 	}; // struct ContentsHandler
 
@@ -1791,6 +1823,25 @@ CPage::getChangeCount () const
 
 	return cnt;
 }
+
+
+//
+//
+//
+template<typename Container>
+void 
+CPage::displayChange (::OutputDev& out, const Container& cont) const
+{
+
+	shared_ptr<CDict> fakeDict (IProperty::getSmartCObjectPtr<CDict>(dictionary->clone()));
+	assert (fakeDict);
+	ContentsHandler hnd (fakeDict);
+	hnd.setContents (cont);
+
+	// Display page using our dictionary
+	displayPage (out, fakeDict);
+}
+template void CPage::displayChange<vector<shared_ptr<CContentStream> > > (::OutputDev& out, const vector<shared_ptr<CContentStream> >& cont) const;
 
 // =====================================================================================
 // Helper functions

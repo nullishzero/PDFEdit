@@ -309,11 +309,19 @@ bool change(__attribute__((unused))	ostream & oss, const char * fname)
 
 		typedef vector<shared_ptr<CContentStream> > CCs;
 		typedef vector<shared_ptr<PdfOperator> > Ops;
+		
 		CCs ccs;
 		page->getContentStreams (ccs);
 		if (ccs.empty())
 			continue;
-		
+	
+		size_t prevCh = 0;
+		{
+			CCs ccs1;
+			page->getChanges (ccs1);
+			prevCh = ccs1.size();
+		}
+	
 		Ops ops;
 		ccs.front()->getPdfOperators (ops);
 		page->addContentStreamToBack (ops);
@@ -324,8 +332,27 @@ bool change(__attribute__((unused))	ostream & oss, const char * fname)
 		
 		CCs ccs1;
 		page->getChanges (ccs1);
-		CPPUNIT_ASSERT (2 == ccs.size());
+		CPPUNIT_ASSERT ( (2 + prevCh) == ccs1.size());
 
+		const char* FILE_OUT = "2.txt";
+		{
+			TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
+			if (!textOut.isOk ())
+				throw;
+
+			// Display our change
+			page->displayChange (textOut, ccs1);
+		}
+
+		string text;
+		page->getText (text);
+
+		ifstream in (FILE_OUT);
+		string text1;
+		while (!in.eof())
+			in >> text1;
+
+		CPPUNIT_ASSERT_EQUAL (text,text1);
 	}
 	pdf->close();
 	return true;

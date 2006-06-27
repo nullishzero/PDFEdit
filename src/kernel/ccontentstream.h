@@ -190,6 +190,14 @@ public:
 	//
 public:	
 	/**
+	 * Get all cstreams from which this content stream is made of.
+	 */
+	template <typename Cont>
+	void getCStreams (Cont& cont) const
+		{ std::copy (cstreams.begin(), cstreams.end(), back_inserter(cont)); }
+		
+	
+	/**
 	 * Get the string representation of specific operators. 
 	 *
 	 * Traverse all operators using specific iterator and save their string

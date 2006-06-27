@@ -821,8 +821,10 @@ public:
 	 * Draw page on an output device with last used display parameters.
 	 *
 	 * @param out Output device.
+	 * @param dict If not null, page is created from dict otherwise
+	 * this page dictionary is used. But still some information is gathered from this page dictionary.
 	 */
-	void displayPage (::OutputDev& out) const;
+	void displayPage (::OutputDev& out, boost::shared_ptr<CDict> dict = boost::shared_ptr<CDict> ()) const;
 
 	/**
 	 * Parse content stream. 
@@ -1001,8 +1003,10 @@ public:
 	 * Draw nth change on an output device with last used display parameters.
 	 *
 	 * @param out Output device.
+	 * @param cont Container of content streams to display
 	 */
-	//void displayChange (::OutputDev& out, size_t nth) const {};
+	template<typename Container>
+	void displayChange (::OutputDev& out, const Container& cont) const;
 
 };
 
