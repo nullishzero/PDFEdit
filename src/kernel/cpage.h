@@ -279,11 +279,13 @@ typedef observer::ObserverHandler<CPage> CPageObserverSubject;
 class CPage : public noncopyable, public CPageObserverSubject
 {
 public:
+	/** Container of content streams. */
 	typedef std::vector<boost::shared_ptr<CContentStream> > ContentStreams;
-
-	/** type for annotation storage. */
+	/** Type for annotation storage. */
 	typedef std::vector<boost::shared_ptr<CAnnotation> > AnnotStorage;
-
+	/** Position in content stream container. */
+	typedef size_t CcPosition;
+	
 	/** Type for page observer context.
 	 * TODO really this one?.
 	 */
@@ -1007,6 +1009,28 @@ public:
 	 */
 	template<typename Container>
 	void displayChange (::OutputDev& out, const Container& cont) const;
+
+	/**
+	 * Move contentstream up one level. Which means it will be repainted by less objects.
+	 */
+	void moveAbove (boost::shared_ptr<const CContentStream> ct);
+	void moveAbove (CcPosition pos)
+	{ 
+		if (pos >= contentstreams.size())
+			throw OutOfRange();
+		moveAbove (contentstreams[pos]); 
+	};
+
+	/**
+	 * Move contentstream below one level. Which means it will be repainted by more objects.
+	 */
+	void moveBelow (boost::shared_ptr<const CContentStream> ct);
+	void moveBelow (CcPosition pos)
+	{ 
+		if (pos >= contentstreams.size())
+			throw OutOfRange();
+		moveBelow (contentstreams[pos]); 
+	};
 
 };
 

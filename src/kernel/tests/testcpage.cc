@@ -358,6 +358,43 @@ bool change(__attribute__((unused))	ostream & oss, const char * fname)
 	return true;
 }
 
+//=====================================================================================
+bool move(__attribute__((unused))	ostream & oss, const char * fname)
+{
+	CPdf * pdf=getTestCPdf(fname);
+
+	size_t pageCount=pdf->getPageCount();
+	for(size_t pos=1; pos<=pageCount; pos++)
+	{
+		shared_ptr<CPage> page=pdf->getPage(pos);
+
+		typedef vector<shared_ptr<CContentStream> > CCs;
+		typedef vector<shared_ptr<PdfOperator> > Ops;
+		
+		CCs ccs;
+		page->getContentStreams (ccs);
+		if (ccs.empty())
+			continue;
+	
+		Ops ops;
+		ccs.front()->getPdfOperators (ops);
+		page->addContentStreamToFront (ops);
+		CPPUNIT_ASSERT (page->getChange (0));
+		
+		page->getContentStreams (ccs);
+		page->moveAbove (ccs[0]);
+		CCs ccs1;
+		page->getContentStreams (ccs1);
+
+		CPPUNIT_ASSERT_EQUAL (ccs[0],ccs1[1]);
+		CPPUNIT_ASSERT_EQUAL (ccs[1],ccs1[0]);
+		
+	}
+	pdf->close();
+	return true;
+}
+
+
 
 
 //=====================================================================================
@@ -409,7 +446,8 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestFind);
 		CPPUNIT_TEST(TestAnnotations);
 		CPPUNIT_TEST(TestSet);
-		CPPUNIT_TEST(TestChanges);
+		//CPPUNIT_TEST(TestChanges);
+		CPPUNIT_TEST(TestMoveUpDown);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -671,6 +709,23 @@ public:
 			OK_TEST;
 		}
 	}
+	//
+	//
+	//
+	void TestMoveUpDown ()
+	{
+		OUTPUT << "CPage methods..." << endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+		
+			TEST(" move up/down");
+			CPPUNIT_ASSERT (move (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+
 
 };
 

@@ -1513,6 +1513,21 @@ namespace {
 		return newstr;
 	}
 
+
+	/**
+	 * Get all cstreams from a container of content streams.
+	 */
+	template<typename In, typename Out>
+	void getAllCStreams (const In& in, Out& out)
+	{
+		for (typename In::const_iterator it = in.begin(); it != in.end(); ++it)
+		{
+			Out tmp;
+			(*it)->getCStreams (tmp);
+			copy (tmp.begin(), tmp.end(), back_inserter (out));
+		}
+	}
+		
 	
 	/** 
 	 * Helper class providing convinient access and modify operations on
@@ -1594,6 +1609,9 @@ namespace {
 			}
 		}
 
+		/**
+		 * Set Contents entry from a container of content streams.
+		 */
 		template<typename Cont>
 		void setContents (const Cont& cont)
 		{
@@ -1604,23 +1622,20 @@ namespace {
 			// Loop throug all content streams and add all cstreams from each
 			// content streams to "Contents" entry of page dictionary
 			//
-			for (typename Cont::const_iterator it = cont.begin(); it != cont.end(); ++it)
+			typedef vector<shared_ptr<CStream> > Css;
+			Css css;
+			getAllCStreams (cont, css);
+			
+			// Loop through all cstreams
+			for (Css::iterator it = css.begin(); it != css.end(); ++it)
 			{
-				typedef vector<shared_ptr<CStream> > Css;
-				Css css;
-				(*it)->getCStreams (css);
-				assert (!css.empty());
-				// Loop through all cstreams of one content stream
-				for (Css::iterator itt = css.begin(); itt != css.end(); ++itt)
-				{
-					assert (hasValidPdf (*itt));
-					assert (hasValidRef (*itt));
-					if (!hasValidPdf (*itt) || !hasValidRef (*itt))
-						throw XpdfInvalidObject ();
+				assert (hasValidPdf (*it));
+				assert (hasValidRef (*it));
+				if (!hasValidPdf (*it) || !hasValidRef (*it))
+					throw XpdfInvalidObject ();
 
-					CRef rf ((*itt)->getIndiRef ());
-					toBack (rf);
-				}
+				CRef rf ((*it)->getIndiRef ());
+				toBack (rf);
 			}
 		}
 	
@@ -1843,6 +1858,62 @@ CPage::displayChange (::OutputDev& out, const Container& cont) const
 	displayPage (out, fakeDict);
 }
 template void CPage::displayChange<vector<shared_ptr<CContentStream> > > (::OutputDev& out, const vector<shared_ptr<CContentStream> >& cont) const;
+
+
+//
+//
+//
+void 
+CPage::moveAbove (shared_ptr<const CContentStream> ct)
+{
+	// Get the next item
+	ContentStreams::iterator itNext = find (contentstreams.begin(), contentstreams.end(), ct);
+	if (itNext == contentstreams.end())
+		throw CObjInvalidOperation ();
+	++itNext;
+	if (itNext == contentstreams.end())
+		throw OutOfRange ();
+
+	// Delete next item but store it
+	shared_ptr<CContentStream> tmp = *itNext;
+	contentstreams.erase (itNext, itNext + 1);
+	// Insert stored item before supplied (simply swap ct with the next item)
+	contentstreams.insert (find (contentstreams.begin(), contentstreams.end(), ct), tmp);
+
+	// Also change Contents entry of page dictionary
+	unregisterContentsObserver ();
+	ContentsHandler cnts (dictionary);
+	cnts.setContents (contentstreams);
+	registerContentsObserver ();
+}
+
+//
+//
+//
+void 
+CPage::moveBelow (shared_ptr<const CContentStream> ct)
+{
+	ContentStreams::iterator itPrev = find (contentstreams.begin(), contentstreams.end(), ct);
+	if (itPrev == contentstreams.end())
+		throw CObjInvalidOperation ();
+	--itPrev;
+	if (itPrev == contentstreams.begin())
+		throw OutOfRange ();
+
+	// Delete prev item but store it
+	shared_ptr<CContentStream> tmp = *itPrev;
+	contentstreams.erase (itPrev, itPrev + 1);
+	// Insert stored item after supplied (simply swap ct with the prev item)
+	contentstreams.insert (find (contentstreams.begin(), contentstreams.end(), ct) + 1, tmp);
+
+	// Also change Contents entry of page dictionary
+	unregisterContentsObserver ();
+	ContentsHandler cnts (dictionary);
+	cnts.setContents (contentstreams);
+	registerContentsObserver ();
+}
+
+
 
 // =====================================================================================
 // Helper functions
