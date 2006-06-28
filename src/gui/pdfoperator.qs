@@ -515,7 +515,7 @@ function operatorDrawLine (lx,ly,rx,ry,width,col) {
 
 	var ops = createPdfOperatorStack();
 	ops.append (composite);
-	page().addContentStream(ops);
+	page().prependContentStream(ops);
 }
 
 /**
@@ -543,7 +543,7 @@ function operatorDrawRect (lx,ly,width,height,col) {
 
 	var ops = createPdfOperatorStack();
 	ops.append (composite);
-	page().addContentStream(ops);
+	page().prependContentStream(ops);
 }
 
 /**
@@ -572,6 +572,6 @@ function operatorAddTextLine (text,x,y,fname,fsize) {
 
 	var ops = createPdfOperatorStack();
 	ops.append (q);
-	page().addContentStream(ops);
+	page().prependContentStream(ops);
 }
 

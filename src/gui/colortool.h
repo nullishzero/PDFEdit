@@ -28,8 +28,8 @@ public:
  void setColor(const QColor &src);
 signals:
  /**
-  Signal emitted when user changes the Color
-  @param nameColor New zoom level
+  Signal emitted when user changes the color
+  @param name Name of the color tool
  */
  void clicked(const QString &name);
 protected:

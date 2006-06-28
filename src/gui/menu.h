@@ -16,6 +16,7 @@ class QWidget;
 namespace gui {
 
 class ToolBar;
+class ToolButton;
 class IconCache;
 
 /** Separator of fields in menu definition */
@@ -65,6 +66,7 @@ public:
  ToolBarList loadToolBars() throw (InvalidMenuException);
  ToolBar* getToolbar(const QString &name);
  QStringList getToolbarList();
+ static QString pop(QStringList::ConstIterator &it,const QStringList::ConstIterator &end);
  void saveToolbars();
  void restoreToolbars();
  static char getAccel(const QString &name);
@@ -78,10 +80,13 @@ public:
  static void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);
  void enableByName(const QString &name,bool enable);
  void checkByName(const QString &name,bool check);
+ void createItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel=QString::null,const QString &icon=QString::null,const QStringList &classes=QStringList()) throw (InvalidMenuException);
 private:
+ ToolButton* createToolBarItem(ToolBar *tb,const QString &name,const QString &text,const QString &action, const QString &accel,const QString &icon, const QStringList &classes=QStringList());
  void addToMap(const QString &name,QWidget* item);
  void addToMap(const QString &name,QMenuData* parent,int itemId);
  void addItem(QString line,QMenuData *parent,const QString &name=QString::null) throw (InvalidMenuException);
+ int addItem(QMenuData *parent,const QString &name,const QString &caption,const QString &action,const QString &accel=QString::null,const QString &icon=QString::null,const QStringList &classes=QStringList()) throw (InvalidMenuException);
  bool reserveAccel(const QString &accelDef,const QString &action);
  int addAction(const QString &action);
  void loadItemsDef(QString line,QMenuData *menu,QStringList prev=QStringList()) throw (InvalidMenuException);
@@ -118,6 +123,8 @@ private:
  ToolbarItems mapTool; 
  /** Sequenc id for map key*/
  int seqId;
+ /** The main menu bar */
+ QMenuBar *menubar;
 };
 
 } // namespace gui

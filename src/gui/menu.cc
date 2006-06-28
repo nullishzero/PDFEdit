@@ -127,7 +127,7 @@ bool Menu::isList(const QString &line) {
 */
 void Menu::loadItemsDef(QString line,QMenuData *menu,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
  QStringList qs=explode(MENULIST_SEPARATOR,line);
- QStringList::Iterator it=qs.begin();
+ QStringList::ConstIterator it=qs.begin();
  for (;it!=qs.end();++it) { //load all subitems
   loadItem(*it,menu,prev);
  }
@@ -256,6 +256,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
    addToMap(name,parent,itemId);
   }
   //Add this item to cache
+  //TODO: need multimap for always-correct behavior -> or warn in documentation about diff. behavior
   mCache[name]=item;
   mCacheName[name]=menuName;
  } else if (line.startsWith("item ")) { // A single item
@@ -277,57 +278,143 @@ char Menu::getAccel(const QString &name) {
 }
 
 /**
+ Load one menu or toolbar item and insert it into parent menu or toolbar.
+ If inserting into toolbar and name refers to special toobar item, that item is inserted and rest of parameters are ignored
+ @param parentName Name of parent menu/toolbar. If NULL/empty, main menubar is the parent
+ @param name Name of the item. Have to be unique. ("" or "-" will insert separator and ignore rest of parameters)
+ @param caption Caption of item
+ @param action Script to execute when the item is selected
+ @param accel Keyboard Accelerator
+ @param icon Name of icon
+ @param classes Item classes
+ */ 
+void Menu::createItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel/*=QString::null*/,const QString &icon/*=QString::null*/,const QStringList &classes/*=QStringList()*/) throw (InvalidMenuException) {
+ //TODO: check for duplicate names (mapTool, mapMenu)
+ QMenuData *parent=NULL;
+ if (parentName.isNull() || parentName=="") {
+  //Check for main menubar
+  parent=menubar;
+  assert(parent);
+ } else if (mCache.contains(parentName)) {
+  //Check for some specific submenu
+  parent=mCache[parentName];
+  assert(parent);
+ }
+ if (parent) {
+  //Insert into menu
+  if (name=="-" || name=="") {
+   parent->insertSeparator();
+  } else {
+   addItem(parent,name,caption,action,accel,icon,classes);
+   //Create accels if not specified for this last item
+   optimizeItems(parent);
+  }
+ } else {
+  ToolBar *tb=getToolbar(parentName);
+  if (tb) {
+   //Try special item (this includes separator too)
+   if (ToolFactory::specialItem(tb,name,main)) return;
+   //Create ordinary item
+   ToolButton *tbutton=createToolBarItem(tb,name,caption,action,accel,icon,classes);
+  } else {
+   guiPrintDbg(debug::DBG_WARN,"Toolbar/menu to install into not found: " << parentName);
+  }
+ }
+}
+
+/**
+ Get first string from QStringList iterator and advance iterator one item further.
+ Return QString::null if at ending position "end"
+ @param it iterator
+ @param end iterator marking ending position
+ @return currrent iterator item or QString::null if after the end
+*/
+QString Menu::pop(QStringList::ConstIterator &it,const QStringList::ConstIterator &end) {
+ if (it==end) return QString::null;
+ QString res=*it;
+ ++it;
+ return res;
+}
+
+/**
  Add menu item specified by given data to parent
  @param line Line containing menu item specification
  @param parent parent menu in which this item will be appended
  @param name Name of this item (key in settings).
- */
+*/
 void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString::null*/) throw (InvalidMenuException) {
  line=line.remove(0,5);
  //Format: Caption, Action,[,accelerator, [,menu icon]]
  QStringList qs=explode(MENUDEF_SEPARATOR,line,true);
  if (qs.count()<2) invalidItem(QObject::tr("menu item"),name,line,QObject::tr("2 or more parameters in item definition"));
- int menu_id=addAction(qs[1]);
- if (name.isNull()) {
-  qs[0]=Settings::tr(qs[0]);
- } else {
-  qs[0]=Settings::tr(qs[0],name);
+ QStringList::ConstIterator it=qs.begin();
+ QStringList::ConstIterator it_end=qs.end();
+ QString caption=pop(it,it_end);
+ QString action=pop(it,it_end);
+ QString accel=pop(it,it_end);
+ QString icon=pop(it,it_end);
+ QStringList classes;
+ for(;it!=it_end;++it) {
+  classes+=*it;
  }
- char accelChar=getAccel(qs[0]);
+ addItem(parent,name,caption,action,accel,icon,classes);
+}
+/**
+ Add menu item specified by given data to parent
+ @param parent parent menu in which this item will be appended
+ @param name Name of the item. Key in settings, or specified from script. Have to be unique
+ @param caption Caption of item (untranslated)
+ @param action Script to execute when the item is selected
+ @param accel Keyboard Accelerator
+ @param icon Name of icon
+ @param classes Item classes
+ @return ID of item just added
+*/
+int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,const QString &action,const QString &accel/*=QString::null*/,const QString &icon/*=QString::null*/,const QStringList &classes/*=QStringList()*/) throw (InvalidMenuException) {
+ int menu_id=addAction(action);
+ QString captionTr;
+ if (name.isNull()) {
+  captionTr=Settings::tr(caption);
+ } else {
+  captionTr=Settings::tr(caption,name);
+ }
+ char accelChar=getAccel(captionTr);
  if (accelChar) {
   //Some accelerator specified for item
   QString s=mAccel[parent];
   if (s.isNull()) s="";
   if (s.find(accelChar)>=0) {
    //Already used
-   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << qs[0] << " is already used elsewhere!")
+   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << caption << " is already used elsewhere!")
   } else {
    //Not yet used
    s=s+accelChar;
    mAccel[parent]=s;
   }
  }
- int itemId=parent->insertItem(qs[0],menu_id);
+ int itemId=parent->insertItem(captionTr,menu_id);
  addToMap(name,parent,itemId);  
- if (qs.count()>=3 && qs[2].length()>0) { //accelerator specified
-  if (reserveAccel(qs[2],qs[1])) parent->setAccel(QKeySequence(qs[2]),menu_id);
+ if (!accel.isNull() && accel.length()>0) { //accelerator specified
+  if (reserveAccel(accel,action)) parent->setAccel(QKeySequence(accel),menu_id);
  }
- if (qs.count()>=4 && qs[3].length()>0) { //menu icon specified
-  const QIconSet *icon=cache->getIconSet(qs[3]);
-  if (icon) {
-   parent->changeItem(menu_id,*icon,qs[0]);
+ if (!icon.isNull() && icon.length()>0) { //menu icon specified
+  const QIconSet *iconSet=cache->getIconSet(icon);
+  if (iconSet) {
+   parent->changeItem(itemId,*iconSet,captionTr);
   } else {
-   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
+   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << icon);
   }
  }
- if (qs.count()>=5) { //Extra data - Item classes
-  for (unsigned int i=4;i<qs.count();i++) {
-   addToMap("/"+qs[i],parent,itemId);  
+ if (classes.count()) { //Extra data - Item classes
+  for (QStringList::ConstIterator it=classes.begin();it!=classes.end();++it) {
+   addToMap("/"+*it,parent,itemId);  
   }
  }
+ return itemId;
 }
 
-/** Loads menubar from configuration bar, and return it<br>
+/**
+ Loads menubar from configuration bar, and return it<br>
  If menubar can't be loaded, InvalidMenuException will be thrown
  Missing menu icons are allowed (if it can't be loaded, there will be no pixmap), missing items in configuration are not.<br>
  @param parent QWidget that will contain the menubar
@@ -335,12 +422,13 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
 */
 QMenuBar* Menu::loadMenu(QWidget *parent) throw (InvalidMenuException) {
  //menubar can't be cached and must be separate for each window (otherwise weird things happen)
- QMenuBar *menubar=new QMenuBar(parent);//Make new menubar
+ menubar=new QMenuBar(parent);//Make new menubar
  loadItems(QString("MainMenu"),menubar);//create root menu
  return menubar;
 }
 
-/** Add accelerator to list of used accelerators and return true, if the accelerator was not taken before.
+/**
+ Add accelerator to list of used accelerators and return true, if the accelerator was not taken before.
  Ensure only one item uses the accelerator at time
  @param accelDef Accelerator in string form
  @param action Action to reserve for this accelerator
@@ -383,35 +471,60 @@ void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuEx
  if (chopCommand(line,"item")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   QStringList qs=explode(MENUDEF_SEPARATOR,line,true);
   if (qs.count()<4) invalidItem(QObject::tr("toolbar item"),item,line,QObject::tr("4 parameters in item definition"));
-//  line=line.remove(0,5);
-  const QIconSet *icon=cache->getIconSet(qs[3]);
-  int menu_id=addAction(qs[1]);
-  if (!icon) {
-   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << qs[3]);
+  QStringList::ConstIterator it=qs.begin();
+  QStringList::ConstIterator it_end=qs.end();
+  QString caption=pop(it,it_end);
+  QString action=pop(it,it_end);
+  QString accel=pop(it,it_end);
+  QString icon=pop(it,it_end);
+  QStringList classes;
+  for(;it!=it_end;++it) {
+   classes+=*it;
   }
-  QString tooltip=Settings::tr(qs[0],item);
-  tooltip=tooltip.replace("&","");
-  if (qs[2].length()>0) { //accelerator specified
-   tooltip+=" ("+qs[2]+")";
-  }
-  ToolButton *tbutton =new ToolButton(icon,tooltip,menu_id,tb);
-  addToMap(item,tbutton);
-  if (qs[2].length()>0) { //accelerator specified
-   if (reserveAccel(qs[2],qs[1])) tbutton->setAccel(QKeySequence(qs[2]));
-  }
-  tb->addButton(tbutton);
-  tbutton->show();
-  if (qs.count()>=5) { //Extra data - Item classes
-   for (unsigned int i=4;i<qs.count();i++) {
-    addToMap("/"+qs[i],tbutton);  
-   }
- }
+  createToolBarItem(tb,item,caption,action,accel,icon,classes);
  } else if (chopCommand(line,"label")) { //Format: Text
   if (!line.length()) invalidItem(QObject::tr("label item"),item,line);
   new QLabel(Settings::tr(line,item),tb);
  } else {
   invalidItem(QObject::tr("toolbar item"),item,line);
  }
+}
+
+/**
+ Create single toolbar button and add it to toolbar
+ @param tb Toolbar for addition of item
+ @param name Name of the item. Key in settings, or specified from script. Have to be unique
+ @param text Tooltip of item (untranslated)
+ @param action Script to execute when the item is selected
+ @param accel Keyboard Accelerator
+ @param icon Name of icon
+ @param classes Item classes
+ @return pointer to toolbutton just added
+*/
+ToolButton* Menu::createToolBarItem(ToolBar *tb,const QString &name,const QString &text,const QString &action, const QString &accel,const QString &icon, const QStringList &classes/*=QStringList()*/) {
+ const QIconSet *iconSet=cache->getIconSet(icon);
+ int menu_id=addAction(action);
+ if (!iconSet) {
+  guiPrintDbg(debug::DBG_WARN, "Icon missing: " << icon);
+ }
+ QString tooltip=Settings::tr(text,name);
+ tooltip=tooltip.replace("&","");
+ if (!accel.isNull() && accel.length()>0) { //accelerator specified
+  tooltip+=" ("+accel+")";
+ }
+ ToolButton *tbutton=new ToolButton(iconSet,tooltip,menu_id,tb);
+ addToMap(name,tbutton);
+ if (!accel.isNull() && accel.length()>0) { //accelerator specified
+  if (reserveAccel(accel,action)) tbutton->setAccel(QKeySequence(accel));
+ }
+ tb->addButton(tbutton);
+ tbutton->show();
+ if (classes.count()) { //Extra data - Item classes
+  for (QStringList::ConstIterator it=classes.begin();it!=classes.end();++it) {
+   addToMap("/"+*it,tbutton);
+  }
+ }
+ return tbutton;
 }
 
 /**
@@ -449,7 +562,7 @@ ToolBar* Menu::loadToolbar(const QString &name,bool visible/*=true*/) throw (Inv
  ToolBar *tb=new ToolBar(tbName,main);
  tb->setName(name);
  QStringList qs=explode(MENULIST_SEPARATOR,line);
- QStringList::Iterator it=qs.begin();
+ QStringList::ConstIterator it=qs.begin();
  for (;it!=qs.end();++it) { //load all subitems
   loadToolBarItem(tb,*it);
  }
@@ -543,14 +656,15 @@ void Menu::addToMap(const QString &name,QMenuData* parent,int itemId) {
 */
 void Menu::enableByName(const QString &name,bool enable) {
  //TODO: lookup is slow & linear, improve ....
- for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
+ //TODO: need multimap
+ for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
   if (it.key().first==name) {
    QWidget* el=it.data();
    el->setEnabled(enable);
 //   guiPrintDbg(debug::DBG_DBG,"en/dis abling toolbar " << name << " " << enableItem);
   }
  }
- for (MenuItems::Iterator it=mapMenu.begin();it!=mapMenu.end();++it) {
+ for (MenuItems::ConstIterator it=mapMenu.begin();it!=mapMenu.end();++it) {
   if (it.key().first==name) {
    MenuItemsValue el=it.data();
    QMenuData* md=el.first;
@@ -569,7 +683,7 @@ void Menu::enableByName(const QString &name,bool enable) {
  @param check True to check, false to uncheck
 */
 void Menu::checkByName(const QString &name,bool check) {
- for (ToolbarItems::Iterator it=mapTool.begin();it!=mapTool.end();++it) {
+ for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
   if (it.key().first==name) {
    ToolButton* el=dynamic_cast<ToolButton*>(it.data());
    if (el) {
@@ -578,7 +692,7 @@ void Menu::checkByName(const QString &name,bool check) {
    }
   }
  }
- for (MenuItems::Iterator it=mapMenu.begin();it!=mapMenu.end();++it) {
+ for (MenuItems::ConstIterator it=mapMenu.begin();it!=mapMenu.end();++it) {
   if (it.key().first==name) {
    MenuItemsValue el=it.data();
    QMenuData* md=el.first;

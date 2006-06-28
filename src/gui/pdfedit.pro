@@ -107,14 +107,18 @@ HEADERS += refproperty.h
 SOURCES += refproperty.cc
 
 #QSA Wrapper classes
-HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h  qsimporter.h
-SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc qsimporter.cc
+HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h
+SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc
 HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfoperator.h
 SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc
 HEADERS += qsipropertyarray.h  qspdfoperatorstack.h  qstreeitemcontentstream.h  qsgraphics.h
 SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc qsgraphics.cc
 HEADERS += qspdfoperatoriterator.h  qsannotation.h
 SOURCES += qspdfoperatoriterator.cc qsannotation.cc
+
+#QSA Helper classes
+HEADERS += qsimporter.h  qswrapper.h
+SOURCES += qsimporter.cc qswrapper.cc
 
 #Exceptions
 HEADERS += invalidmenuexception.h  nullpointerexception.h

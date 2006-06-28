@@ -56,13 +56,13 @@ void ColorTool::resizeEvent (QResizeEvent *e) {
 
 /**
  Called on clicking the color button
- @param newZoom
 */
 void ColorTool::colorClicked() {
  QColor ret=QColorDialog::getColor(color,this,"std_color_dialog");
  if (!ret.isValid()) return;
  color=ret; 
  updateColor();
+ emit clicked(colorName);
 }
 
 /**

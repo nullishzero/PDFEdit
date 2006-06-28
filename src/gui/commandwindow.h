@@ -35,8 +35,6 @@ public slots:
  void loadHistory();
  void saveHistory();
 
- void setCmdWindowMode();
- void setCmdWindowMode( bool showCmdHistory, bool showCmdLine, bool showCmdEditor );
  void hideCmdHistory( bool hide = true );
  void hideCmdLine( bool hide = true );
  void hideCmdEditor( bool hide = true );

@@ -296,14 +296,6 @@ bool CommandWindow::isShownCmdEditor() {
 	 return in->isShown();
 }
 
-void CommandWindow::setCmdWindowMode() {
-		setCmdWindowMode( isShownCmdHistory(), isShownCmdLine(), isShownCmdEditor() );
-}
-void CommandWindow::setCmdWindowMode( bool showCmdHistory, bool showCmdLine, bool showCmdEditor ) {
-	globalSettings->write( CMD + CMDSHOWHISTORY, showCmdHistory );
-	globalSettings->write( CMD + CMDSHOWLINE, showCmdLine );
-	globalSettings->write( CMD + CMDSHOWEDITOR, showCmdEditor );
-}
 /**
  Add command executed from menu or any source to be echoed to command window
  @param command Command to add
@@ -334,7 +326,6 @@ void CommandWindow::addError(const QString &message) {
 /** default destructor */
 CommandWindow::~CommandWindow() {
 	saveHistory();
-	setCmdWindowMode();
 }
 
 } // namespace gui

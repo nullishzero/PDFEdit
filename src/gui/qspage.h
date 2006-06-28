@@ -43,9 +43,17 @@ public slots:
  /*-
   Add new content stream to page, created from provided stack of PDF operators.
   They must form a valid content stream
+  Content stream is prepended before other content streams
  */
- void addContentStream(QSPdfOperatorStack* opStack);
- void addContentStream(QObject* opStack);
+ void prependContentStream(QSPdfOperatorStack* opStack);
+ void prependContentStream(QObject* opStack);
+ /*-
+  Add new content stream to page, created from provided stack of PDF operators.
+  They must form a valid content stream
+  Content stream in appended after other content streams
+ */
+ void appendContentStream(QSPdfOperatorStack* opStack);
+ void appendContentStream(QObject* opStack);
  /*-
   Return list of all font id's and base names from resource dictionary of a page.
   For each font id and name pair there are two consecutive elements in returned array,
@@ -68,6 +76,14 @@ public slots:
   Use data fetched by loadContentStreams method, if it wasn't called, it is called before returning the count
  */
  int getContentStreamCount();
+ /*-
+  Return change with given number as content stream
+ */
+ QSContentStream* getChange(int changeNumber);
+ /*-
+  Return number of changes
+ */
+ int getChangeCount();
  /*-
   Get all content streams from page and store them.
   Get the streams with getContentStreamCount and getContentStream functions.

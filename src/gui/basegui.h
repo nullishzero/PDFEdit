@@ -66,6 +66,21 @@ public slots: //This will be all exported to scripting
   If the file is not saved, user is asked to save changes to current file.
  */
  void closeWindow();
+ /*-
+  Load one menu or toolbar item and insert it into parent menu or toolbar.
+  <informaltable frame="none">
+   <tgroup cols="2"><tbody>
+   <row><entry>parentName</entry><entry>Name of parent menu/toolbar. If NULL/empty, main menubar is the parent</entry></row>
+   <row><entry>name	</entry><entry> Name of the item. Must be unique</entry></row>
+   <row><entry>caption	</entry><entry> Caption of item</entry></row>
+   <row><entry>action	</entry><entry> Script to execute when the item is selected</entry></row>
+   <row><entry>accel	</entry><entry> Keyboard accelerator</entry></row>
+   <row><entry>icon	</entry><entry> Name of icon to use</entry></row>
+   <row><entry>classes	</entry><entry> List of item classes</entry></row>
+   </tbody></tgroup>
+  </informaltable>
+ */
+ void createMenuItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel=QString::null,const QString &icon=QString::null,const QStringList &classes=QStringList());
  /*- Creates new editor window with empty document in it. */
  void createNewWindow();
  /*-

@@ -18,6 +18,7 @@
 #include <qsinputdialogfactory.h>
 #include <utils/debug.h>
 #include "util.h"
+#include "qswrapper.h"
 
 namespace gui {
 
@@ -30,7 +31,7 @@ BaseCore::BaseCore() {
  qp=new QSProject(this,"qs_project");
  qs=qp->interpreter();
  qs->setErrorMode(QSInterpreter::Nothing);
-
+ qs->addWrapperFactory(new QSWrapper());
  connect(qs,SIGNAL(error(const QString&,const QString&,int)),this,SLOT(scriptError(const QString&,const QString&,int)));
 
 //TODO: connect QSInterpreter::timeout ( int elapsedTime ) and somehow allow to kill bad script

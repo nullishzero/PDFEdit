@@ -72,19 +72,38 @@ void QSPage::setTransformMatrix(QVariant tMatrix) {
 
 /** 
  Add content stream to page, created from new operator stack
- \see CPage::addContentStream
+ Content stream is prepended before other content streams
+ \see CPage::addContentStreamToFront
  @param opStack PDF Operator stack
 */
-void QSPage::addContentStream(QSPdfOperatorStack* opStack) {
+void QSPage::prependContentStream(QSPdfOperatorStack* opStack) {
  assert(opStack);
- obj->addContentStream(opStack->get());
+ obj->addContentStreamToFront(opStack->get());
 }
 
-/** \copydoc addContentStream(QSPdfOperatorStack*) */
-void QSPage::addContentStream(QObject* opStack) {
+/** 
+ Add content stream to page, created from new operator stack
+ Content stream in appended after other content streams
+ \see CPage::addContentStreamToBack
+ @param opStack PDF Operator stack
+*/
+void QSPage::appendContentStream(QSPdfOperatorStack* opStack) {
+ assert(opStack);
+ obj->addContentStreamToBack(opStack->get());
+}
+
+/** \copydoc appendContentStream(QSPdfOperatorStack*) */
+void QSPage::prependContentStream(QObject* opStack) {
  QSPdfOperatorStack* in=dynamic_cast<QSPdfOperatorStack*>(opStack);
  if (!in) return;
- addContentStream(in);
+ appendContentStream(in);
+}
+
+/** \copydoc prependContentStream(QSPdfOperatorStack*) */
+void QSPage::appendContentStream(QObject* opStack) {
+ QSPdfOperatorStack* in=dynamic_cast<QSPdfOperatorStack*>(opStack);
+ if (!in) return;
+ prependContentStream(in);
 }
 
 /** Call CPage::getText(ret); return ret */
@@ -115,6 +134,30 @@ QSContentStream* QSPage::getContentStream(int streamNumber) {
 int QSPage::getContentStreamCount() {
  if (numStreams<0) loadContentStreams();
  return numStreams;
+}
+
+/**
+ Return change with given number as content stream
+ @param changeNumber number of change to get
+ @return ContentStream with given change, or NULL if number is outside range
+*/
+QSContentStream* QSPage::getChange(int changeNumber) {
+ if (changeNumber<0) return NULL;		//number outside range
+ try {
+  boost::shared_ptr<CContentStream> c=obj->getChange((size_t)changeNumber);
+  return new QSContentStream(c,base);
+ } catch(...) {
+  //Some error occured
+  return NULL;
+ }
+}
+
+/**
+ Return number of changes
+ @return number of changes in this Page
+*/
+int QSPage::getChangeCount() {
+ return (int)obj->getChangeCount();
 }
 
 /** Call CPage::getContentStreams(), store result */

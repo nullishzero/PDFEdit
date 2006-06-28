@@ -231,6 +231,17 @@ void BaseGUI::closeWindow() {
  w->closeWindow();
 }
 
+/**
+ \copydoc Menu::createItem(const QString &,const QString &,const QString &,const QString &,const QString &,const QString &,const QStringList &)
+*/ 
+void BaseGUI::createMenuItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel/*=QString::null*/,const QString &icon/*=QString::null*/,const QStringList &classes/*=QStringList()*/) {
+ try {
+  w->menuSystem->createItem(parentName,name,caption,action,accel,icon,classes);
+ } catch (...) {
+  //Silently ignore any exception
+ }
+}
+
 /** create new empty editor window and display it */
 void BaseGUI::createNewWindow() {
  PdfEditWindow::create();

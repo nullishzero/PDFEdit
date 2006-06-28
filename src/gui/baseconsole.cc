@@ -15,7 +15,7 @@ using namespace util;
 
 /**
  Create new Base class 
- @param params Commandline Parameters
+ @param _params Commandline Parameters
 */
 BaseConsole::BaseConsole(const QStringList &_params) : Base() {
  params=_params;
