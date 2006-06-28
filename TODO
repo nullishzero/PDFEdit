@@ -10,9 +10,10 @@ GUI
  ??? Toolbar Widget na zobrazovani souradnic
  [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
  [ ] Zobrazovat "N properties are hidden" pokud jsou nejake skryte v property editoru
+ [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden"
  [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
  [ ] QSA wrappery poradne osetrit memory leaky (uvolnovani pameti az pri zavreni okna je pozde :)
- [ ] Odstranit ze skriptingu promenne treeitem a item (deprecated)
+ [x] Odstranit ze skriptingu promenne treeitem a item (deprecated)
  [ ] "Plugin skripty" -> nutno pridat funkce na pridani menu items/menus/toolbars/toolbuttons za behu bez zmeny konfigurace
  [ ] "Plugin skripty" -> nutno funckce na dynamickou registraci vice callbacku
  [ ] "Plugin skripty" -> nejaky autoupdater? (pres QHttp a dialog)
@@ -68,12 +69,11 @@ Skripting
 
 Kernel
  [ ] Unicode v properties, problemy s charsetem ...
-  ??? Decryption - asi future wishlist
+ ??? Decryption - asi future wishlist
  [x] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
  [ ] Posunutie contenstreamu o level vyssie / nizsie
  [ ] Filtre (LZW,FlateDecode,..)
  [ ] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
- 
 
 Dokumentace
  [ ] Nekde sdelit o Outlines, ze potrebuji reloadovani + omezeni pri praci s nimi.
