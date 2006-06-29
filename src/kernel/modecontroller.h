@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2006/06/29 20:44:05  hockm0bm
+ * doc update
+ *
  * Revision 1.14  2006/06/06 11:46:03  hockm0bm
  * Refactoring changes
  *
@@ -267,7 +270,7 @@ public:
 	 * type[.name]
 	 * </pre>
 	 * If `.' is not found name or there are no characters behind, name is
-	 * empty. Everythign before `.' is Type. It can also be empty. Both parts
+	 * empty. Everything before `.' is Type. It can also be empty. Both parts
 	 * are trimed before set (all leading and trailing blanks re skiped).
 	 * <br>
 	 * Name string should be same as PropertyMode names. If not recognized,

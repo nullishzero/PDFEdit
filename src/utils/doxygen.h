@@ -41,17 +41,26 @@ namespace gui {}
 */
 namespace util {}
 
-/** TODO namespace configuration */
+/** Namespace for configuration specific stuff. 
+ */
  namespace configuration {}
-/** TODO namespace debug         */
+
+/** Namespace for debug functions and related stuff. 
+ */
  namespace debug {}
+
 /** TODO namespace filters       */
  namespace filters {}
 /** TODO namespace iterator      */
  namespace iterator {}
-/** TODO namespace observer      */
+ 
+/** Namespace for generic observer stuff.
+ */
  namespace observer {}
-/** TODO namespace rulesmanager  */
+ 
+/** Namespace for rules manager generic classes.
+ */
  namespace rulesmanager {}
+
 /** TODO namespace xpdf          */
  namespace xpdf {}
