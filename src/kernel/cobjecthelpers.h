@@ -7,6 +7,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.34  2006/06/29 20:00:07  hockm0bm
+ * doc updated
+ *
  * Revision 1.33  2006/06/21 18:46:00  hockm0bm
  * * CObject{Simple, Stream}, CDict, CArray
  *         - contains static const type field
@@ -309,9 +312,9 @@ public:
 
 /** Collector of all Id complying given condition.
  *
- * Class instance is constructed from container which should be filled and
- * searched property. This is used compared - using Comparator type - with entry
- * given to functional operator.
+ * Full state class which builds internal container (which may be returned by
+ * getContainer method) from entries given to functional operator and which
+ * matches according given comparator. 
  * <br>
  * Container is type of storage where elements of IdType are stored. Comparator
  * has to implement functional operator with two IProperty types wrapped by

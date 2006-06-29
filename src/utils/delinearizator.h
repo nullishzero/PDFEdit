@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2006/06/29 20:00:09  hockm0bm
+ * doc updated
+ *
  * Revision 1.5  2006/06/22 18:45:53  hockm0bm
  * * doc update
  * * new file field to enable file closing
@@ -63,20 +66,20 @@ namespace utils
 /** Delinearizator class.
  *
  * Provides functionality enabling correct changing linearized pdf documents to
- * their unlinearized form. This may be very usefull especially if chnages has to
+ * their unlinearized form. This may be very usefull especially if changes has to
  * be done to document, because linearized document has rather strict rules and
  * so can be easily broken by incremental changes.
  * <p>
- * Class reuses XRef class for low level pdf reading and parsing purposes
+ * Class reuses XRef class for low level pdf reading and parsing purpouses
  * and adds logic related to linearized documents.
  * <p>
  * Output file will contain all objects - except those needed by linearized
  * structure - in same format (e. g. filters in content streams), object and
  * generation numbers. 
  * <br>
- * Linearize documents are not prepared for multiversion documents very well (as
- * mentioned before) and so output file will contain just one trailer and xref
- * (so one revision). Format of this final section fully depends on given
+ * Linearized documents are not prepared for multiversion documents very well 
+ * (as mentioned before) and so output file will contain just one trailer and 
+ * xref (so one revision). Format of this final section fully depends on given
  * IPdfWriter implementator (set in constructor).
  * <p>
  * <b>Usage</b>
@@ -100,7 +103,7 @@ class Delinearizator: protected ::XRef
 {
 	/** Pdf content writer implementator.
 	 *
-	 * All writing of pdf content is delegated to this field.
+	 * All writing of pdf content is delegated to this object.
 	 */
 	IPdfWriter * pdfWriter;
 
@@ -148,7 +151,7 @@ public:
 	 * @param pdfWriter  Pdf content writer.
 	 *
 	 * Creates FileStream from given fileName (file is open with `r' mode) and 
-	 * creates Delinearizator instance. Finaly checks whether file is 
+	 * creates Delinearizator instance. Finally checks whether file is 
 	 * linearized and if not, prints error message and returns with NULL.
 	 *
 	 * @throw MalformedFormatExeption if file content is not valid pdf document.
@@ -196,7 +199,7 @@ public:
 	 * Sets position to the file beginning and writes same pdf header as in
 	 * original stream. Then starts copying of all objects - except Linearization
 	 * dictionary - which are available in XRef::entries array.
-	 * Finaly stores xref and trailer section.
+	 * Finally stores xref and trailer section.
 	 * <br>
 	 * Caller is responsible for file opening and closing.
 	 * <br>

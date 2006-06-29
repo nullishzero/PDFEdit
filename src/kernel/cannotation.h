@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.9  2006/06/29 20:00:07  hockm0bm
+ * doc updated
+ *
  * Revision 1.8  2006/06/18 12:04:42  hockm0bm
  * obsevers code clean up and consolidation
  *
@@ -153,7 +156,7 @@ public:
 	 */
 	UniversalAnnotInitializer(){}
 	
-	/** Initialization constructor from exiting mapping.
+	/** Initialization constructor from existing mapping.
 	 * @param impls Existing mapping.
 	 *
 	 * Use given mapping for implList initialization.

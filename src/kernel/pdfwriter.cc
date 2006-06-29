@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2006/06/29 20:00:08  hockm0bm
+ * doc updated
+ *
  * Revision 1.12  2006/06/18 12:04:42  hockm0bm
  * obsevers code clean up and consolidation
  *
@@ -245,8 +248,9 @@ using namespace boost;
 	scope->total=objectList.size();
 	scope->task=CONTENT;
 	shared_ptr<ChangeContext> context(new ChangeContext(scope));
+	shared_ptr<OperationStep> newValue(new OperationStep());
 
-	// prepares offTable
+	// prepares offTable and writes objects
 	for(i=objectList.begin(); i!=objectList.end(); i++, index++)
 	{
 		::Ref ref=i->first;
@@ -279,7 +283,6 @@ using namespace boost;
 		utilsPrintDbg(DBG_DBG, "Object with "<<ref<<" stored at offset="<<objPos);
 		
 		// calls observers
-		shared_ptr<OperationStep> newValue(new OperationStep());
 		newValue->currStep=index;
 		notifyObservers(newValue, context);
 	}

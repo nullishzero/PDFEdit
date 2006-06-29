@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.73  2006/06/29 20:00:08  hockm0bm
+ * doc updated
+ *
  * Revision 1.72  2006/06/25 16:25:08  hockm0bm
  * doc update - doxygen warnings removed (if they are real problem)
  *
@@ -380,7 +383,7 @@ public:
 	 * Referencies are compared by their fields. First num is compared (it is
 	 * more significant) and if nums are same, gen number is compared.
 	 *
-	 * @return true if one &lt two or false otherwise.
+	 * @return true if one &lt; two or false otherwise.
 	 */
 	bool operator() (const pdfobjects::IndiRef one, const pdfobjects::IndiRef two) const
 	{

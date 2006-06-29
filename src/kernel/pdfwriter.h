@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/06/29 20:00:08  hockm0bm
+ * doc updated
+ *
  * Revision 1.9  2006/06/18 12:04:42  hockm0bm
  * obsevers code clean up and consolidation
  *
@@ -196,14 +199,14 @@ public:
 	 * @param pB ProgressBar visualizator.
 	 *
 	 * Sets progressBar field with given parameter. It may be NULL, when no
-	 * progress is displayed. started field is initialized to falser.;
+	 * progress is displayed. started field is initialized to false.
 	 */
 	ProgressObserver(IProgressBar * pB):progressBar(pB), started(false){}
 
 	/** Virtual destructor.
 	 * 
 	 * If started is true and progressBar is non NULL (progress is running now 
-	 * and it is displayed) calls progressBar->finish() and them deallocates 
+	 * and it is displayed) calls progressBar-&gt;finish() and then deallocates 
 	 * progressBar instance.
 	 */
 	virtual ~ProgressObserver()throw()
@@ -220,7 +223,7 @@ public:
 	 * @param newValue Current step of progress.
 	 * @param context Context of progress.
 	 *
-	 * This methos is called by observed object when progress has changed. If
+	 * This method is called by observed object when progress has changed. If
 	 * progressBar implementation is not provided, skips all further steps.
 	 * <br>
 	 * If no progress has started yet (started is false), calls 
@@ -424,13 +427,10 @@ public:
 	 * @param off Stream offset where to start writing (if 0, uses current
 	 * position).
 	 *
-	 * Uses xpdfObjToString method to get string representation with
-	 * createIndirectObjectStringFromString decorator function to get proper PDF
-	 * representation of indirect object and writes this string using
-	 * stream::putLine method.
-	 * <br>
-	 * First object is stored at specified position and all others are placed
-	 * immediately after.
+	 * Sets new position in the stream, if off parameter is non 0 and iterate
+	 * through all objects from given list and writes each to the stream (uses 
+	 * helper writeIndirectObject function) and stores stream offset to the
+	 * offTable mapping. 
 	 * <br>
 	 * Notifies all observers immediately after object has been written to the
 	 * stream. newValue parameter is number of written objects until now and
@@ -450,19 +450,19 @@ public:
 	 * Constructs (old style) cross reference table from internal reference to 
 	 * file offset mapping to the given stream according PDF specification.
 	 * <br>
-	 * In first step offTable is used for cross reference table creation. This
-	 * contain set of cross reference subsections.
-	 * Then xref keyword is written to the stream followed be cross reference
-	 * table constructed from subsections.
+	 * In first step offTable is used for cross reference table builing. When
+	 * cross reference table is ready, xref keyword is written to the stream 
+	 * followed by built cross reference table.
 	 * Then checks given prevSection (context for previous section) structures
-	 * and if xrefPos is not zero sets Prev trailer field to given value. Finaly
-	 * calculates trailer's Size field as result of
+	 * and if xrefPos is not zero, sets Prev trailer field to given value. 
+	 * Finally calculates trailer's Size field as result of
 	 * <pre>
 	 * Size = max { prevSection.objNum, (maxObjNum + 1)}
 	 * </pre>
-	 * When all trailer information is ready, writes it also to the stream 
-	 * followed by lastxref key word with position of this cross reference 
-	 * section start. EOFMARKER is written immediately after.
+	 * When all trailer information is ready, writes its dictionary to the 
+	 * stream followed by lastxref key word with position of this cross 
+	 * reference section start (file offset of xref key word). EOFMARKER 
+	 * is written immediately after.
 	 * <p>
 	 * <b>PDF specification notes:</b>
 	 * <br>
@@ -471,7 +471,7 @@ public:
 	 * followed by size number of lines. Each line represents object with
 	 * (number+line#-1) object number. Line format is as follows:
 	 * <pre>
-	 * nnnnnnnnnn ggggg n \n
+	 * nnnnnnnnnn ggggg n \\n
 	 * 
 	 * where 
 	 *		n* stands for file offset of object (padded by leading 0)
@@ -495,7 +495,8 @@ public:
 
 	/** Resets all collected data.
 	 *
-	 * Clears offTable field and so this instance can used for another revision.
+	 * Clears offTable field and so this instance can be used for another 
+	 * revision.
 	 */
 	virtual void reset();
 };
