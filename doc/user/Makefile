@@ -1,7 +1,7 @@
 #Makefile for documentation
 
 #html docs get built here as PDF, XHTML and also in "online help" as HTML
-html_docs=scripting.html pdfedit.html keyboard.html cs/keyboard.html qsa-util.html
+html_docs=scripting.html pdfedit.html keyboard.html cs/keyboard.html qsa-util.html qsa-inputdialog.html
 
 #html docs that won't get into online help
 html_docs_all=$(html_docs) install.html

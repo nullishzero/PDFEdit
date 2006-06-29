@@ -1,0 +1,528 @@
+\chapter QSA Input Dialog Framework
+
+
+The QSA Input Dialog Framework is a set of classes to
+enable the user to create dialogs using Qt Script.
+
+The QSA Input Dialog Framework provides two types of classes. The
+first types are the ones that can be used to build up complex input
+dialogs. These classes include, Dialog, CheckBox, GroupBox, LineEdit,
+TextEdit, etc. These classes each have a set of properties for
+describing how they appear and some of them also provide functions. 
+
+The following is a simple example on how to use the Input Dialog
+Framework to create a dialog that will query the user for their first
+and last name, and echo the values they entered:
+
+\code
+var dialog = new Dialog;
+dialog.caption = "Name reading dialog";
+dialog.okButtonText = "Done"
+dialog.cancelButtonText = "Abort";
+
+var first = new LineEdit;
+first.label = "First name: ";
+dialog.add( first );
+
+var last = new LineEdit;
+last.label = "Last name: ";
+dialog.add( last );
+
+if( dialog.exec() ) {
+    var fullName = last.text + ", " + first.text;
+    print( "Full name is: " + fullName );
+}
+\endcode
+
+Below is a list of the classes available from the Input Dialog
+Framework. Each class has a short description and a list of its
+properties and functions.
+
+For String properties the default is an empty string, and for Number
+properties the default is 0, unless stated otherwise.
+
+\section1 CheckBox
+
+\img qchkbox-w.png
+
+The CheckBox widget provides a checkbox with a text label. CheckBox
+is an option button; it can be switched on (checked) or off
+(unchecked).
+
+\section2 Properties
+
+\list
+\i checked : Boolean;
+   This property holds whether the checkbox is checked.
+   The default is unchecked, i.e. false.
+\i text : String;
+   This property holds the text shown on the button.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 ComboBox
+
+\img qcombo1-w.png
+
+The ComboBox widget is a combined button and drop-down list. A
+combobox is a selection widget which displays the current item and can
+drop down a list of items. A combobox may be editable in which case
+the user can enter arbitrary strings.
+
+\section2 Properties
+
+\list
+\i currentItem : String;    
+   This property is used in two ways: To specify the default selected
+   item in the combobox; and to get the value the user selected in the
+   combobox when the dialog is closed. The default is the first item
+   in the list.
+\i editable : Boolean;
+   This property holds whether the combobox is editable. The default
+   is false.
+\i itemList : Array;
+   The list of items in the combobox. 
+\i label : String;
+   The label for the combobox.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 DateEdit
+
+\img qsdateed.png 
+
+The DateEdit class provides a date editor. DateEdit allows the user to
+edit dates by using the keyboard or the arrow keys to
+increase/decrease date values. The arrow keys can be used to move from
+section to section within the DateEdit box. Dates appear in accordance
+with the local date/time settings or in year, month, day order if the
+system doesn't provide a local date order.
+
+\section2 Properties
+
+\list
+\i date : Date;
+   This property holds the editor's date value. The default is today.
+\i label : String;
+   The label for the date.
+\i maximum : Date;
+   This property holds the editor's maximum value. The default
+   maximum date is 8000-12-31.
+\i minimum : Date;
+   This property holds the editor's minimum value. The default
+   minimum date is 1752-09-14.
+\i order : Order;
+   This property holds the order in which the year, month and day
+   appear. The default order is locale dependent.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 Dialog
+
+The Dialog class is the base class of dialog windows. A dialog window
+is a top-level window mostly used for short-term tasks and brief
+communications with the user. Dialogs may be modal or modeless.
+
+\section2 Properties
+
+\list
+\i caption : String;
+   This property holds the window caption (title). The default is
+   the application's name. 
+\i cancelButtonText : String;
+   This property holds the text shown on the cancel button. The default
+   is "Cancel".
+\i okButtonText: String; 
+   This property holds the text shown on the ok button. The default
+   is "Ok".
+\i width : Number;
+   This property holds the width of the widget excluding any
+   window frame. The default is set by the layout. 
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section2 Functions
+
+\list
+\i add( widget : QSWidget ); 
+   Adds a widget to the dialog. Widgets are placed vertically, from
+   top to bottom.
+\i addSpace( space : Number ); 
+   Adds vertical space, measured in pixels between, the previous
+   and next added widget.
+\i exec() : Boolean;
+   Executes the dialog. This opens the dialog as a modal dialog,
+   blocking the application until the user presses the OK button or
+   the Cancel button to close the dialog. The function returns \c true
+   of the user pressed OK; otherwise it returns \c{false}.
+\i newColumn();
+   Creates a new column in the dialog. All widgets subsequently
+   added to the dialog will be placed (vertically, from top to
+   bottom), in the new column. 
+\i newTab( label : String ); 
+   Creates a new tab in the dialog with the given label. All
+   widgets subsequently added to the dialog will be placed in
+   the newly created tab, (vertically, from top to bottom). 
+\endlist
+
+\section1 GroupBox
+
+\img qgrpbox-w.png
+
+The GroupBox widget provides a group box frame with a title and can
+displays other widgets inside itself.
+
+\section2 Properties
+
+\list
+\i title : String; 
+   This property holds the group box's title text.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section2 Functions
+
+\list
+\i add( widget : QSWidget ); 
+   Adds a widget to this groupbox.
+\i addSpace( space : Number ); 
+   Adds vertical space, measured in pixels, between the previous
+   and the next widget that is added.
+\i newColumn(); 
+   Creates a new column within this groupbox. All widgets
+   that are added subsequently will be placed in the new column.
+\i addSpace()
+\endlist
+
+\section1 LineEdit 
+
+\img qlined-w.png
+
+The QLineEdit widget is a single-line text editor.
+
+\section2 Properties
+
+\list
+\i label : String; 
+   The label text for this line edit.
+\i text : String;
+   This property holds the line edit's text.
+\i tooltip : String; 
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 NumberEdit
+
+The NumberEdit class provides range checking of floating-point
+numbers. NumberEdit provides an upper bound, a lower bound and a limit
+on the number of digits after the decimal point.
+
+\section2 Properties
+
+\list
+\i decimals : Number;
+   This property holds the number edits's maximum number of
+   digits after the decimal point.
+\i label : String;
+   The label text for this number edit.
+\i maximum : Number;
+   This property holds the number edit's maximum acceptable value.
+   The default is 2,147,483,647.
+\i minimum : Number;
+   This property holds the number edit's minimum acceptable value.
+   The default is -2,147,483,647.
+\i value : Number;
+   This property holds the number edit's input value. The default is 0.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String; 
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 RadioButton
+
+\img qradiobt-w.png
+
+The RadioButton widget provides a radio button with a text label.
+RadioButton is an option button; it can be switched on (checked) or
+off (unchecked). Sets of Radio buttons grouped together (for example
+in a GroupBox), are mutually exclusive.
+
+\section2 Properties
+
+\list
+\i checked : Boolean;
+   This property holds whether the radio button is checked. The
+   default is unchecked (false).
+\i text : String;
+  This property holds the text shown on the button.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 SpinBox
+
+\img qspinbox-w.png
+
+The SpinBox class provides a spin box widget (spin button). SpinBox
+allows the user to choose an integer value either by clicking the
+up/down buttons to increase/decrease the value currently displayed or
+by typing the value directly into the spin box. If the value is
+entered directly into the spin box, Enter (or Return) must be pressed
+to apply the new value.
+
+\section2 Properties
+
+\list
+\i label : String;
+   This property holds the spinbox's label text.
+\i maximum : Number;
+   This property holds the maximum value of the spin box. The
+   default maximum value is 2,147,483,647.
+\i minimum : Number;
+   This property holds the minimum value of the spin box. The
+   default minimum value is -2,147,483,648.
+\i value : Number;
+   This property holds the value of the spin box.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 TextEdit
+
+The QTextEdit widget provides a multi-line text editor.
+
+\section2 Properties
+
+\list
+\i text : String; 
+   This property holds the text of the TextEdit.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 TimeEdit
+
+\img qstimeed.png
+
+The TimeEdit class provides a time editor. TimeEdit allows the user to
+edit times by using the keyboard or the arrow keys to
+increase/decrease time values. The arrow keys can be used to move from
+section to section within the TimeEdit box.
+
+\section2 Properties
+
+\list
+\i label : String;
+   This property holds the time edit's label text.
+\i maximum : Time;
+   This property holds the maximum time value.
+\i minimum : Time;
+   This property holds the minimum time value.
+\i showAMPM : Boolean;
+    If this property is false (the default), the time edit uses the 24
+    hour clock; otherwise the time edit uses the 12 hour clock and
+    displays AM or PM as appropriate.
+\i showSeconds : Boolean;
+    If this property is true (the default), the time edit displays
+    seconds; otherwise it does not display seconds.
+\i time : Time; 
+   This property holds the editor's time value.
+\i tooltip : String;
+   This property holds the tool tip (balloon help) for the widget.
+\i whatsThis : String;
+   This property holds a simple description of the widget.
+\endlist
+
+\section1 Convenience Classes
+
+The convenience classes provide static functions to obtain a value
+from the user without using any complex widget hierarchies. Because
+the functions are static they can be called directly without the need
+to create an instance of the class. For example, to get a filename all
+that is necessary is to call \c FileDialog.getOpenFileName().
+
+\section1 The MessageBox class
+
+\img messageb1.png
+
+This class provides a simple way of popping up a message box window
+for the user. The following lines of code present a pop up messagebox
+with a warning and query the user to click Yes or No.
+
+\code
+var ans = MessageBox.warning( "Do you wish to save the data?", MessageBox.Yes, MessageBox.No );
+if (ans == MessageBox.Yes) {
+    save();
+}
+\endcode
+
+\section2 Button types
+
+The button types are used to describe what the text of the buttons
+should be. The following are available.
+
+\list
+\i NoButton; No button is displayed.
+\i Ok; Displays an 'OK' button.
+\i Cancel; Displays a 'Cancel' button.
+\i Yes; Displays a 'Yes' button.
+\i No; Displays a 'No' button.
+\i Abort; Displays an 'Abort' button.
+\i Retry; Displays a 'Retry' button. 
+\i Ignore; Displays an 'Ignore' button.
+\endlist
+
+\section2 Functions
+
+The following is a list of message box functions. The button1, button2
+and button3 parameters can be any of the Button types described above
+and specify which button types will be shown in the message
+box. Each function returns the button type that the user pressed.
+
+\list
+\i information( label : String, 
+		button1 : ButtonType, 
+		button2 : ButtonType, 
+		button3 : ButtonType, 
+		title : String );
+   Displays an information message box with the content specified in \c label.
+\i warning( label : String,
+	    button1 : ButtonType,
+	    button2 : ButtonType,
+	    button3 : ButtonType,
+	    title : String );
+   Displays a warning message box with the content specified in \c label.
+\i critical( label : String,
+             button1 : ButtonType, 
+	     button2 : ButtonType, 
+   	     button3 : ButtonType,
+             title : String )
+   Displays a critical error message box with the content specified in \c label.
+\endlist
+
+\section1 The FileDialog class
+
+\img filedialog.png
+
+This class provides dialogs that allow users to select files or
+directories. The following function call will open a file dialog
+with that will display files with the extension \c .txt.
+
+\code
+var filename = FileDialog.getOpenFileName( "*.txt" );
+if (filename) {
+    processfile(filename);
+}
+\endcode
+
+\section2 Functions
+
+\list
+
+\i getOpenFileName( filter : String, title : String ); 
+   Opens an "Open" dialog. If \c filter is specified (e.g.
+   "textfiles (*.txt)"), only those files which match the filter are
+   shown. The function returns a string with the selected filename, or
+   \c undefined if the user canceled.
+
+\i getSaveFileName( filter : String, title : String ); 
+   Opens an "Save As" dialog. If \c filter is specified (e.g.
+   "textfiles (*.txt)"), only those files which match the filter are
+   shown. The function returns a string with the filename selected or
+   entered, or \c undefined if the user canceled.
+
+\i getExistingDirectory( dir : String, title : String ); 
+   Opens a "Find Directory" dialog for the user to select an existing
+   directory. The parameter \c dir can be used to specify the initial
+   directory. Returns the name of the selected directory or \c
+   undefined if the user canceled.
+
+\i getOpenFileNames( dir : String, filter : String, title : String );   
+   Opens an "Open" dialog for the user to select and open one or more
+   existing files. If \c dir is specified it specifies the initial
+   directory. If \c filter is specified (e.g. "textfiles (*.txt)"),
+   only those files which match the filter are shown. The function
+   returns a list of string string with the selected filenames, or \c
+   undefined if the user canceled.
+
+\endlist
+
+
+\section1 The Input class
+
+\img inputtext.png
+
+\img inputitem.png
+
+This class provides convenience functions for getting simple input from
+the user. The following code can be used to open a dialog that queries
+the user for a text:
+
+\code
+var name = Input.getText( "What is your surname? " );
+if (name) {
+    processname(name);
+}
+\endcode
+
+\section2 Functions
+
+\list
+\i getText( label : String, 
+	    text : String,
+	    title : String );
+   Asks the user for a text. \c label specifies the descriptive
+   label and \c text specifies the default text. The function
+   returns the text entred by the user or \c undefined if the user
+   canceled.
+
+\i getNumber( label : String, 
+              value : Number, 
+              decimals : Number,
+              minValue : Number, 
+              maxValue : Number,
+	      title : String );
+   Asks the user for a number. \c label specifies the descriptive
+   label, \c value specifies the default value, \c decimals specifies
+   the number of decimals allowed, \c minValue specifies the minimum
+   value and \c maxValue specifies the maximum value. The function
+   returns the value entered by the user or \c undefined if the user
+   canceled.
+
+\i getItem( label : String, 
+            itemList : Array, 
+            current : String, 
+            editable : Boolean,
+	    title : String );
+   Asks the user to select an item from a predefined list of values
+   specified by \c itemList.
+   The descriptive label is specified with \c label. \c current
+   specifies the value that is selected when the dialog starts. If \c
+   editable is true, the user is allowed to enter a value that is not
+   in the \c itemList. The function returns the value selected or
+   entered by the user or \c undefined if the user canceled.
+\endlist
