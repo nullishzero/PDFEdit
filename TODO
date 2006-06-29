@@ -1,3 +1,8 @@
+Vysvetlivky
+----------
+	- x Feature je implementovana + otestovana
+	- o Feature je implementovana
+
 TODO list:
 ----------
 
@@ -71,8 +76,9 @@ Kernel
  [ ] Unicode v properties, problemy s charsetem ...
  ??? Decryption - asi future wishlist
  [x] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
- [ ] Posunutie contenstreamu o level vyssie / nizsie
+ [o] Posunutie contenstreamu o level vyssie / nizsie
  [ ] Filtre (LZW,FlateDecode,..)
+ [o] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
  [ ] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
 
 Dokumentace
