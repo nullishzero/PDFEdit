@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.19  2006/06/29 22:23:41  misuj1am
+ *
+ * -- code cleanup + doc updated
+ *
  * Revision 1.18  2006/06/17 15:40:07  misuj1am
  *
  * -- minor changes
@@ -64,9 +68,6 @@
 // =============================================================================
 namespace debug {
 // =============================================================================
-
-/** Memory checker output. Comment out (or set to 0) if no output is desired. */
-#define MEM_CHECKER_OUTPUT	0
 
 	
 /**
@@ -232,18 +233,6 @@ unsigned int changeDebugLevel(unsigned int level);
 			<< std::endl;											\
 	}																\
 }
-
-
-/**
- * If we want to print something more complicated just
- * overload this function
- */
-inline void
-__print (std::ostream& out,const std::string& str)
-{
-	out << str;
-}
-
 
 // =============================================================================
 } // namespace debug

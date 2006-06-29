@@ -19,7 +19,7 @@ namespace iterator {
 /** Invalid iterator exception. */
 struct IteratorInvalidObjectException : public std::exception
 {
-	char const* what() const throw() {return "Iterator function over invalid object.";}
+	char const* what() const throw() {return "Iteratoring over invalid object.";}
 };
 
 
