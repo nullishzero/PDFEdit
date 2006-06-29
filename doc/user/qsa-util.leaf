@@ -1,0 +1,544 @@
+\chapter QSA Utility Framework
+
+The QSA Utility Framework is a set of classes that extends QSA to
+enable the user to read and write files, access directory structures
+and start processes synchronously and asynchronously.
+
+\omit
+********************************************************************************
+				class File
+********************************************************************************
+\endomit
+
+\section1 File Class Reference
+
+The \c File class provides functionallity for reading and writing
+binary and text files. A \c File can be instantiated as an object,
+giving the scripter complete flexibility when reading and writing files.
+In addition, the \c File class provides a set of static convenence
+functions for reading and writing files in one go.
+
+Typical use of a \c File is:
+
+\code
+// Reads an entire file in one go
+var log = File.read('file.log');
+// Writes an entire file in one go
+File.write('copy_of_file.log', log);
+
+// Read and write a file line by line
+var infile = new File('file.log');
+infile.open(File.ReadOnly);
+
+var outfile = new File('copy_of_file.log');
+outfile.open(File.WriteOnly);
+
+while (!infile.eof) {
+    var line = infile.readLine();
+    outfile.write( line );
+}
+
+infile.close();
+outfile.close();
+\endcode
+
+\section2 Enums
+
+\section3 AccessMode
+
+The enum \c AccessMode is used in conjunction with \c File.open to
+specify the mode in which the file is opened.
+
+\list
+
+\i ReadOnly; Opens the file in read-only mode. 
+
+\i WriteOnly; Opens the file in write-only mode. If this flag is
+used with \c Append, the file is not truncated; but if used on its own
+(or with \c Truncate), the file is truncated.
+
+\i ReadWrite; Opens the file in read/write mode. The file is \e not
+truncated.
+
+\i Append; Opens the file in append mode. (You must actually use
+\c{(WriteOnly | Append)} to make the file writable and to go into
+append mode.) This mode is very useful when you want to write
+something to a log file. The file index is set to the end of the file.
+Note that the result is undefined if you position the file index
+manually using at() in append mode.
+
+\i Truncate; Truncates the file. 
+
+\i Translate; Enables carriage returns and linefeed translation
+for text files under Windows.
+
+\endlist
+
+
+\section2 Static Functions
+
+\list
+
+\i exists( fileName : String ) : Boolean; Returns true if \c fileName
+exists; otherwise returns false.
+
+\i remove( fileName : String ); Deletes the file \c fileName if
+possible; otherwise throws an exception.
+
+\i write( fileName : String, content : String ); Writes the string \c
+content to the file \c fileName if possible (completely replacing the
+original contents if the file already exists); otherwise throws an
+exception.
+
+\i read( fileName : String ) : String; Reads and returns the contents of
+the file \c fileName if possible; otherwise throws an exception.
+
+\i isFile( fileName : String ) : Boolean; Returns true if \c fileName
+is a file; otherwise returns false.
+
+\i isDir( fileName : String ) : Boolean; Returns true if \c fileName
+is a directory; otherwise returns false.
+
+\endlist
+
+\section2 Constructor
+
+\list 
+
+\i File( fileName : String ); Creates a file object with the with \c
+fileName. If \c fileName is missing or is not a String, an exception
+is thrown.
+
+\endlist
+
+\section2 Properties
+
+The File object's properties are read-only.
+
+\list 
+
+\i name : String; The name of the file including the extension.
+
+\i path : String; The path of the file.
+
+\i fullName : String; The fullName of the file, including path, name, and
+extension.
+
+\i baseName : String; The name of the file, excluding its path and
+extension.
+
+\i extension : String; The file name's extension.
+
+\i symLink : String; The expansion of the symlink if the file is a
+symlink; otherwise empty;
+
+\i exists : Boolean; True if the file exists; otherwise false.
+
+\i readable : Boolean; True if the file is readable; otherwise false.
+
+\i writable : Boolean; True if the file is writable; otherwise false.
+
+\i executable : Boolean; True if the file is executable; otherwise
+false.
+
+\i hidden : Boolean; True if the file is hidden; otherwise false.
+
+\i eof : Boolean; True if reading has reached the end of the file;
+otherwise false.
+
+\i created : Date; The creation time of the file.
+
+\i lastModified : Date; The last modification time of the file.
+
+\i lastRead : Date; The last time the file was read.
+
+\i size : Number; The size of the file, in bytes.
+
+\endlist
+
+
+\section2 Member Functions
+
+\list 
+
+\i open( accessMode : Number ); Opens the file in the mode \c
+accessMode if possible; otherwise throws an exception.
+
+\i close(); Closes the file.
+
+\i remove((); Deletes the file if possible; otherwise throws an
+exception.
+
+\i readByte() : Number; Reads one byte from the file if possible;
+otherwise throws an exception.
+
+\i read() : String; Returns the entire content of the file as a string
+if it can be read; otherwise throws an exception.
+
+\i readLine() : String; Reads one line from file if possible;
+otherwise throws an exception. Retains any trailing whitespace.
+
+\i readLines() : String[]; Returns the contents of the file as an
+array of Strings, one for each line. Linebreaks are strippped from the
+strings. If the file could not be read, an exception is thrown.
+
+\i writeByte( byte : Number ); Writes a byte to the file is possible;
+otherwise throws an exception.
+
+\i write( data : String, length : Number ); Writes \c length number of
+characters from \c data to the file if possible; otherwise throws an
+exception.
+
+\i writeLine( data : String ); Writes the line \c data to the file and
+adds a linebreak. If the file could not be written \c error is
+returned.
+
+\endlist
+
+
+\omit
+********************************************************************************
+				class Dir
+********************************************************************************
+\endomit
+
+\section1 Dir Class Reference
+
+The \c Dir class provides access to directory structures and their
+contents in a platform-independent way. It provides a means of listing
+directory content, creating filenames with proper path separators,
+etc.
+
+An example use of the Dir class is:
+
+\code
+var dir = new Dir;
+var codeFiles = dir.entryList('*.cpp');
+for (var i = 0; i < codeFiles.length; ++i) 
+    print(codeFiles[i]);
+\endcode
+
+\section2 Enums
+
+\section3 FilterSpec
+
+This enum describes the filtering options available to Dir for
+entryList(). The filter value is specified by OR-ing together values
+from the following list.
+
+\list
+
+\i Dirs; List directories only.
+
+\i Files; List files only.
+
+\i Drives; List disk drives only.
+
+\i NoSymLinks; Do not list symbolic links (ignored by operating
+systems that don't support symbolic links).
+
+\i All; List directories, files, drives and symlinks (this does not
+list broken symlinks unless you specify System).
+
+\i TypeMask; A mask for the the Dirs, Files, Drives and NoSymLinks
+flags.
+
+\i Readable; List files for which the application has read access. 
+
+\i Writable; List files for which the application has write access. 
+
+\i Executable; List files for which the application has execute
+access. Executables must be combined with Dirs or Files.
+
+\i RWEMask; A mask for the Readable, Writable and Executable flags.
+
+\i Modified; Only list files that have been modified (ignored under
+Unix).
+
+\i Hidden; List hidden files (on Unix, files starting with a .). 
+
+\i System; List system files (on Unix, FIFOs, sockets, and device
+files)
+
+\i AccessMask; A mask for the Readable, Writable, Executable Modified,
+Hidden and System flags
+
+\endlist
+
+\section3 SortSpec
+
+This enum describes the sort options available to Dir for
+entryList(). The sort value is specified by OR-ing together values
+from the following list:
+
+\list
+\i Name; Sort by name.
+\i Time; Sort by time (modification time).
+\i Size; Sort by file size.
+\i Unsorted; Do not sort.
+\i SortByMask; A Mask for Name, Time and Size.
+\i DirsFirst; Put the directories first, then the files.
+\i Reversed; Reverse the sort order.
+\i IgnoreCase; Sort case-insensitively.
+\endlist
+
+\section2 Static Properties
+
+\list
+\i current : String; The current directory.
+\i home : String; The home directory.
+\i root : String; The root directory.
+\i drives : String[]; An array of strings containing the drive names
+(c:, d:, etc); empty on Unix.
+\endlist 
+
+\section2 Static Functions
+
+Qt uses "/" as a directory separator throughout (although it
+understands the conventions of the platform it is used on). If you
+are working with paths, use "/" within your code, and use
+convertSeparators() when you want to display a path to the user.
+
+\list
+
+\i cleanDirPath( filePath : String ) : String; Removes all multiple
+directory separators "/" and resolves any "."s or ".."s found in the
+path, \c filePath.
+
+\i convertSeparators( pathName : String ) : String; Returns \c
+pathName with the "/" separators converted to separators that are
+appropriate for the underlying operating system.
+
+\endlist
+
+\section2 Constructor
+
+\list
+
+\i Dir( path : String ); Creates a directory object for path \c
+path. If \c path is empty, the current directory is used.
+
+\endlist
+
+\section2 Properties
+
+\list
+
+\i name : String; Contains the name of the directory; this is not the
+same as the path, e.g. a directory with the name "mail", might have
+the path "/var/spool/mail"
+
+\i path : String; Contains the path, this may contain symbolic links,
+but never contains redundant ".", "..", or multiple separators.
+
+\i absPath : String; Contains the absolute path (a path that starts
+with "/" or with a drive specification), which may contain symbolic
+links, but never contains redundant ".", "..", or multiple separators.
+
+\i canonicalPath : String; Contains the canonical path, i.e. a path
+without symbolic links or redundant "." or ".." elements.
+
+\i readable : Boolean; True if the directory is readable; otherwise
+false.
+
+\i exists : Boolean; True if the directory exists; otherwise false.
+
+\endlist 
+
+\section2 Member Functions
+
+\list
+
+\i filePath( fileName : String ) : String; Returns the path name of
+the file \c fileName in the directory.
+
+\i absFilePath( fileName : String ) : String; Returns the absolute
+path name of the file \c fileName in the directory.
+
+\i cd( dirName : String ); Changes the Dir's directory to \c dirName
+if possible; otherwise throws an exception.
+ 
+\i cdUp(); Changes directory by moving one directory up from the
+Dir's current directory if possible; otherwise throws an exception.
+
+\i entryList( filter : String, filterSpec : Number, sortSpec : Number
+) : String[]; Returns a list of the names of all the files and
+directories in the directory, ordered in accordance with \c sortSpec
+and filtered in accordance with \c filterSpec.
+
+\i mkdir( dirName : String ); Creates the directory \c dirName if
+possible; otherwise throws an exception.
+
+\i mkdir(); Creates this directory if possible possible; otherwise
+throws an exception.
+
+\i mkdirs( dirName : String ); Creates the directory tree \c dirName
+if possible; otherwise throws an exception.
+
+\i mkdirs(); Creates this directory tree if possible; otherwise throws
+an exception.
+
+\i rmdir( dirName : String ); Deletes the directory \c dirName if
+possible; otherwise throws an exception.
+
+\i rmdir(); Deletes this directory if possible; otherwise throws an
+exception.
+
+\i rmdirs( dirName : String ); Deletes the directory structure \c
+dirName if possible; otherwise throws an exception.
+
+\i rmdirs(); Deletes this directory structure if possible; otherwise
+throws an exception.
+
+\i fileExists( fileName : String ) : Boolean; Returns true if the file
+\c fileName exists; otherwise returns false.
+
+\i setCurrent(); Sets the application's current working directory to
+this directory if possible; otherwise throws an exception.
+
+\endlist
+
+\omit
+********************************************************************************
+				class Process
+********************************************************************************
+\endomit
+
+\section1 Process Class Reference
+
+The Process class is used to start external programs and to
+communicate with them. The Process class can start programs
+synchronously using \c Process.execute(), and asynchronously using
+\c {new Process(...).start()}.
+
+\section2 Static Properties
+
+\list
+
+\i stdout : String; Contains the data sent to \c stdout during the
+last call to \c Process.execute(). This property is read-only.
+
+\i stderr : String; Contains the data sent to \c stderr during the
+last call to \c Process.execute(). This property is read-only.
+
+\endlist 
+
+\section2 Static Functions
+
+\list
+
+\i execute( command : String, stdin : String ); Executes \c command
+synchronously and passes \c stdin to its standard input if specified.
+When the program ends its output is accessible through \c
+Process.stdout and \c Process.stderr. \c command can contain both the
+program and command line arguments, e.g. \c{ "ls -la" }. The function
+returns the executed commands return code on exit.
+
+\i execute( command : String[], stdin : String ); Same as above,
+except that \c command is an array of strings, where the first item is
+the name of the program and the following items are command line
+arguments. This version is useful if you have arguments that contain
+spaces or other characters that would need to be quoted if you just
+passed a single string command line, since it takes care of the
+quoting for you.
+
+\endlist
+
+\section2 Constructor
+
+\list
+
+\i Process(); Creates a Process object without specifying the program
+or any arguments. This does \e not start a process.
+
+\i Process( command : String ); Creates a Process object that will
+execute \c command. This does \e not start the process.
+
+\i Process( command : String[] ); Same as above, except that \c
+command is an array of strings, where the first item is the name of
+the program and the following items are command line arguments. This
+version is useful if you have arguments that contain spaces or other
+characters that would need to be quoted if you just passed a single
+string command line, since it takes care of the quoting for you.
+
+\endlist
+
+\section2 Properties
+
+\list
+
+\i arguments : String[]; Contains an array of strings where the first
+item is the program to execute and the following items are the
+command line arguments.
+
+\i workingDirectory : String; Contains the working directory for the process.
+
+\i running : Boolean; True if the process is currently running;
+otherwise false. This property is read-only.
+
+\i exitStatus : Number; Contains the exitStatus of the program when it
+has finished. This property is read-only.
+
+\endlist
+
+\section2 Member Functions
+
+\list
+
+\i start( env : String[] ); Tries to run a process for the command and
+arguments that were specified with the \c argument property or that
+were specified in the constructor. The command is searched for in the
+path for executable programs; you can also use an absolute path in the
+command itself. If \c env is not specified, the process is
+started with the same environment as the starting process. If \c env is
+specified, then the values in the \c env stringlist are interpreted as
+environment setttings of the form \c VARIABLE=VALUE and the process is
+started with these environment settings. If the program could not be
+started, an exception is thrown.
+
+\i launch( stdin : String, env : String[] ); Runs the process and
+writes the data \c stdin to the process's standard input. If all the
+data is written to standard input, standard input is closed. The
+command is searched for in the path for executable programs; you can
+also use an absolute path in the command itself. If \c env is
+unspecified, the process is started with the same environment as
+the starting process. If \c env is specified, then the values in the
+string list are interpreted as environment setttings of the form \c
+VARIABLE=VALUE and the process is started with these environment
+settings. If the program could not be started, an exception is thrown.
+
+\i readStdout() : String; Reads what is currently available on the
+process's standard output.
+
+\i readSterr() : String; Reads what is currently available on the
+process's standard error.
+
+\i canReadLineStdout() : Boolean; Returns true if a line can be read
+from the process's standard output.
+
+\i canReadLineStderr() : Boolean; Returns true if a line can be read
+from the process's standard error.
+
+\i readLineStdout() : String; Reads one line of text from the
+process's standard output if available; otherwise returns an empty
+string.
+
+\i readLineStderr() : String; Reads one line of text from the
+process's standard error if available; otherwise returns an empty
+string.
+
+\i tryTerminate(); Asks the process to terminate. Processes can ignore
+this if they wish. If you want to be certain that the process really
+terminates, you can use \c kill() instead.
+
+\i kill(); Terminates the process. This is not a safe way to end a
+process since the process will not be able to do any
+cleanup. \c tryTerminate() is safer, but processes can ignore
+\c tryTerminate().
+
+\i writeToStdin( buffer : String ); Writes the data \c buffer to the
+process's standard input. The process may or may not read this data.
+
+\i closeStdin(); Closes the process's standard input.
+
+\endlist
