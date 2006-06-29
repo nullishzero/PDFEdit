@@ -1,5 +1,7 @@
 TEMPLATE = lib
 
+CONFIG += staticlib
+
 TARGET = qoutputdevices
 
 #debug information
