@@ -68,10 +68,14 @@ public slots: //This will be all exported to scripting
  void closeWindow();
  /*-
   Load one menu or toolbar item and insert it into parent menu or toolbar.
+  If the name is "" or "-", separator is inserted on place of the item and rest of parameters are ignored.
+  If inserting item into toolbar and the name will match one of the special items, the special item
+  will be inserted in toolbar and rest of the parameters are ignored.
+  Items that are loaded from settings have theyir name equal to the key in setting they are stored under.
   <informaltable frame="none">
    <tgroup cols="2"><tbody>
    <row><entry>parentName</entry><entry>Name of parent menu/toolbar. If NULL/empty, main menubar is the parent</entry></row>
-   <row><entry>name	</entry><entry> Name of the item. Must be unique</entry></row>
+   <row><entry>name	</entry><entry> Name of the item. Must be unique.</entry></row>
    <row><entry>caption	</entry><entry> Caption of item</entry></row>
    <row><entry>action	</entry><entry> Script to execute when the item is selected</entry></row>
    <row><entry>accel	</entry><entry> Keyboard accelerator</entry></row>

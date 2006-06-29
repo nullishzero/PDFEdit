@@ -32,7 +32,7 @@ data_scripts.path	= $$DATA_PATH/scripts
 			# as they are only for development/testing and not for production use
 data_scripts.files 	= scripts/[a-z0-9A-Z]*.qs
 doc.path        = $$DOC_PATH
-doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.*
+doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.* ../../doc/LICENSE.GPL
 doc_kernel.path 	= $$DOC_PATH/kernel
 doc_kernel.files	= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.xml
 doc_kernel_images.path	= $$DOC_PATH/kernel/images
