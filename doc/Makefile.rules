@@ -15,7 +15,7 @@
 	$(TOP_DIR)/tools/docbook2pdf $< $@ || true
 
 #rule for generating manpages
-%.1: %.xml ../tools/docbook2man.pl
+%.1: %.xml $(TOP_DIR)/tools/docbook2man.pl
 	$(TOP_DIR)/tools/docbook2man.pl $< >$@
 
 #rule for generating HTML documentation to be placed in application help directory
@@ -23,5 +23,5 @@ $(html_help_dir)/%.html: %.xml
 	$(TOP_DIR)/tools/docbook2html $< $@ html || docbook2html -o $(html_help_dir) -u $< 2>&1 >/dev/null || true
 
 #rule for generating docbook XML from .leaf files (some tex-like Trolltech format)
-%.xml: %.leaf
+%.xml: %.leaf $(TOP_DIR)/tools/leaf2xml.pl
 	$(TOP_DIR)/tools/leaf2xml.pl $< >$@
