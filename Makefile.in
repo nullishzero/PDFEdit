@@ -15,8 +15,13 @@ install: all
 doc:
 	cd doc && ( gmake || make )
 
+#Minimal documentation needed to proper installation
+#(documentation must be build for it to be instlled & used)
+doc-dist:
+	cd doc && ( gmake doc_dist|| make doc_dist )
+
 #make application
-src:
+src: doc-dist
 	cd src && make
 
 #cleanup

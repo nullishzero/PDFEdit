@@ -74,12 +74,11 @@ Skripting
 
 Kernel
  [ ] Unicode v properties, problemy s charsetem ...
- ??? Decryption - asi future wishlist
+ ??? Decryption/Encryption - asi future wishlist
  [x] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
  [o] Posunutie contenstreamu o level vyssie / nizsie
  [ ] Filtre (LZW,FlateDecode,..)
  [o] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
- [ ] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
 
 Dokumentace
  [ ] Nekde sdelit o Outlines, ze potrebuji reloadovani + omezeni pri praci s nimi.
@@ -88,11 +87,9 @@ Dokumentace
  [ ] Popsat veci v *.qs souborech
  [ ] Ve scripting.xml tez podrobneji popsat skripting jako takovy
  [ ] User dokumentace (tezce chybi)
- [ ] Dokumentace dialog & utility framework
-     (prevezme se z QSA, jen je nutno najit/napsat konvertor z
-     prapodivneho formatu .leaf (pripomina TeX) do docbooku)
- [ ] Popsat metainformace v konetarich konzolovych skriptu
- [ ] Nejakou handbook "jak tvorit skripty, kam je cpat, atd ...
+ [x] Dokumentace dialog & utility framework (prekonvertovano z .leaf v QSA)
+ [ ] Popsat metainformace v komentarich konzolovych skriptu
+ [ ] Nejakou handbook "jak tvorit skripty, kam je cpat", atd ...
  [ ] Zdokumentovat klavesove zkratky (spec. klavesy typu PageDn apod ...)
  [ ] Doxygen: nastavit EXTRACT_ALL=YES (prijdeme o vetsinu warningu, ale mame pak zarucene kompletni dokumentaci - az tesne pred odevzdanim)
 
