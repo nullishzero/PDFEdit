@@ -7,41 +7,66 @@ CONFIG += debug
 
 include(../../config.pro)
 
-# installation paths
+# Check installation prefix
 isEmpty( PREFIX ) {
  message("No prefix defined - check config.pro (generated from config.pro.in) in top-level directory")
  message("Run ./configure there if the file does not exist")
  error("PREFIX not defined");
 }
 
-# installation details
+# Installation details
+
+#Data files installed in application data path (typically /usr/share/pdfedit)
+# Basic data files
 data.path       = $$DATA_PATH
 data.files      = pdfeditrc *.conf *.qs
+# Icons
 data_icon.path  	= $$DATA_PATH/icon
 data_icon.files 	= icon/*.png 
+# Hi-color icon theme
 data_icon_hicolor.path  = $$DATA_PATH/icon/hicolor
 data_icon_hicolor.files = icon/hicolor/*.png 
+# Help files (english)
 data_help.path  	= $$DATA_PATH/help
 data_help.files 	= help/*.html
+# Help files (czech)
 data_help_cs.path 	= $$DATA_PATH/help/cs
 data_help_cs.files	= help/cs/*.html
+# Help images
+data_help_images.path 	= $$DATA_PATH/help/images
+data_help_images.files	= ../../doc/user/images/*.png
+# Language files
 data_lang.path  	= $$DATA_PATH/lang
 data_lang.files 	= lang/*.qm
+# Scripts
 data_scripts.path	= $$DATA_PATH/scripts
 			# do not include script files starting with underscore,
 			# as they are only for development/testing and not for production use
 data_scripts.files 	= scripts/[a-z0-9A-Z]*.qs
+
+# Documentation installed in documentation path (typically /usr/share/doc)
 doc.path        = $$DOC_PATH
 doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.* ../../doc/LICENSE.GPL
+doc_images.path		= $$DOC_PATH/images
+doc_images.files	= ../../doc/user/images/*.png
 doc_kernel.path 	= $$DOC_PATH/kernel
 doc_kernel.files	= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.xml
 doc_kernel_images.path	= $$DOC_PATH/kernel/images
 doc_kernel_images.files	= ../../doc/design/kernel/images/*.png
+
+# Man page installed in man path (typically /usr/share/man/man1)
 man.path	= $$MAN_PATH
 man.file	= ../../doc/user/*.1
+
+#Binary file installed in binary path (typically /usr/bin)
 pdfedit.path    = $$BIN_PATH
 pdfedit.files   = pdfedit
-INSTALLS = data_icon data_icon_hicolor data_lang data_help data_help_cs data_scripts data doc doc_kernel doc_kernel_images pdfedit man
+
+#List of installed targets
+INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
+INSTALLS += doc doc_images doc_kernel doc_kernel_images
+INSTALLS += man
+INSTALLS += pdfedit
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator
