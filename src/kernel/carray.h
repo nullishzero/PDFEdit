@@ -4,7 +4,6 @@
  *        Filename:  carray.h
  *         Created:  01/18/2006 
  *          Author:  jmisutka (06/01/19), 
- *
  * =====================================================================================
  */
 #ifndef _CARRAY_H
@@ -23,33 +22,23 @@ namespace pdfobjects {
 // CArray
 //=====================================================================================
 
-
 /** 
- * Template class representing complex PDF objects from specification v1.5.
+ * Class representing array object from specification v1.5.
  *
- * This is a generic class joining implementation of dictionary and array together in in one place.
- *
- * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
- * exists. It is because PropertyTraitSimple is not specialized for these types.
- *
- * We use memory checking with this class which save information about existing IProperties.
- * This technique can be used to detect memory leaks etc. 
- *
- * Xpdf object is real mess so we just instantiate this object with xpdf object and
- * use this object. They were definitely not meant for changing, actually there
- * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
+ * Xpdf object is a real mess so we just initialize our object with xpdf object.
+ * Xpdf objects were definitely not meant for changing, actually there
+ * are many places which clearly dissolve any hope for a sane way to change the object.
  * 
- * This class uses another advance c++ technique called Incomplete
- * Instantiation. The specific features are implemented using this feature.
- * It simply means that when a function in a template class is not used, it is not instatiated
- * (e.g. CArray won't have addProperty (IProperty& ,string&) method.)
- *
  * This class does not provide default copy constructor because copying a
  * property could be understood either as deep copy or shallow copy. 
  * Copying complex types could be very expensive so we have made this decision to
  * avoid it.
  *
- * \see CObjectSimple, CObjectStream
+ * REMARK: It is similar to CDict but it has also too much differences to be
+ * clearly implemented as one template class. (It has been implemented like one
+ * template class but later was seperated to CArray and CDict)
+ *
+ * \see CObjectSimple, CDict, CObjectStream
  */
 class CArray : noncopyable, public IProperty
 {
@@ -59,9 +48,9 @@ public:
 	typedef unsigned int	 						 PropertyId;
 	typedef observer::ComplexChangeContext<IProperty, PropertyId> CArrayComplexObserverContext;
 
-	/** Type of the property.
-	 * This fields holds pArray value. It is used by template functions to get to
-	 * property type from template type.
+	/** 
+	 * Type of this property object.
+	 * This association allows us to get the PropertyType from object type.
 	 */
 	static const PropertyType type = pArray;
 private:

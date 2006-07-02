@@ -67,11 +67,11 @@ public:
 	typedef const std::string& 			PropertyId;
 	typedef observer::ComplexChangeContext<IProperty, PropertyId> CDictComplexObserverContext;
 
-	/** Type of the property.
-	 * This fields holds pDict value. It is used by template functions to get to
-	 * property type from template type.
+	/** 
+	 * Type of this property object.
+	 * This association allows us to get the PropertyType from object type.
 	 */
-	static const PropertyType type=pDict;
+	static const PropertyType type = pDict;
 private:
 	
 	/** Object's value. */
