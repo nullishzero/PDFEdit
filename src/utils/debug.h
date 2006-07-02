@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.20  2006/07/02 14:10:57  misuj1am
+ *
+ * -- docs updated
+ *
  * Revision 1.19  2006/06/29 22:23:41  misuj1am
  *
  * -- code cleanup + doc updated
@@ -70,10 +74,7 @@ namespace debug {
 // =============================================================================
 
 	
-/**
- * Helper class for STATIC_CHECK.
- */
-
+/** Helper class for STATIC_CHECK. */
 template<bool> struct CompileTimeChecker;
 template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {}; };
 

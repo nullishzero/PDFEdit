@@ -69,17 +69,18 @@ protected:
 	ListItem _cur;		/**< Current item. */
 	_Position _curpos;	/**< Current position state. */
 
+
 	//
 	// Constructor
 	// 
 public:
 
-	/** Constructors. */
+	/** Constructor. */
 	SharedDoubleLinkedListIterator (ListItem oper) : _cur (oper), _curpos (pvalid)
 		{ if (_invalidItem (oper)) _curpos = pinvalid; };
 	
 	/** 
-	 * Constructors. 
+	 * Constructor. 
 	 * Be carefull when using this one. It does point nowhere.
 	 */
 	SharedDoubleLinkedListIterator () : _cur (ListItem()), _curpos (pinvalid) {};
@@ -95,12 +96,8 @@ public:
 	//
 public:
 	/** 
-	 * Go to the next item. The same as 
-	 * \code
-	 * ++iterator;
-	 * \endcode
-	 * in the stl.
-	 * We can iterate only over specific items that are selected by the validItem function
+	 * Go to the next item. The same as <code>++iterator;</code> in the stl.
+	 * We can iterate only over specific items that are selected by the <code>validItem</code> function
 	 *
 	 * \see validItem
 	 *
@@ -140,12 +137,8 @@ public:
 	}
 	
 	/** 
-	 * Go to the previous item. The same as 
-	 * \code
-	 * ++reverse_iterator;
-	 * \endcode
-	 * in the stl.
-	 * We can iterate only over specific items that are selected by the validItem function
+	 * Go to the previous item. The same as <code>++reverse_iterator</code> in the stl.
+	 * We can iterate only over specific items that are selected by the <code>validItem</code> function
 	 *
 	 * \see validItem
 
