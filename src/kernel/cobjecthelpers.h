@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.35  2006/07/02 14:03:55  misuj1am
+ *
+ * -- ADD: getXRef() helper function
+ *
  * Revision 1.34  2006/06/29 20:00:07  hockm0bm
  * doc updated
  *
@@ -506,6 +510,11 @@ getAllChildrenOfPdfObject (boost::shared_ptr<CDict> topdict, Container& cont)
  */
 bool checkAndReplace(boost::shared_ptr<CDict> annotDict, std::string fieldName, IProperty & fieldValue);
 
+
+/**
+ * Get xref from an object.
+ */
+::XRef* getXRef (boost::shared_ptr<IProperty> ip);
 
 }// end of utils namespace
 

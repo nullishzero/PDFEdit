@@ -4,6 +4,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.21  2006/07/02 14:03:55  misuj1am
+ *
+ * -- ADD: getXRef() helper function
+ *
  * Revision 1.20  2006/06/05 11:36:52  misuj1am
  *
  * -- ADD:  getValue(), changed several occurencies
@@ -104,6 +108,9 @@ namespace pdfobjects
 namespace utils
 {
 
+using namespace std;
+using namespace boost;
+	
 
 int getIntFromDict(std::string name, boost::shared_ptr<CDict> dict)
 {
@@ -365,6 +372,17 @@ using namespace boost;
 		return false;
 	}
 }
+
+
+//
+//
+//
+::XRef*
+getXRef (shared_ptr<IProperty> ip)
+ { return (ip->getPdf() == NULL) ? NULL : ip->getPdf()->getCXref(); }
+
+
+ 
 } // end of utils namespace
 
 } // end of pdfobjects namespace
