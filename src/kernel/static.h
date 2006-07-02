@@ -126,6 +126,8 @@ typedef struct Point
 template <typename Coord>
 struct GenRect
 {
+	typedef struct GenRect<Coord> Type;
+		
 	Coord xleft; /**< Left x coordinate. */
 	Coord yleft; /**< Left y coordinate. */
 	Coord xright;/**< Right x coordinate. */
@@ -157,6 +159,9 @@ struct GenRect
 				yleft == rc.yleft && yright == rc.yright);
 	}
 
+	/** Is initialized. */
+	static bool isInitialized (Type rc)
+		{ return !(COORDINATE_INVALID == rc.xleft); }
 	
 };
 
