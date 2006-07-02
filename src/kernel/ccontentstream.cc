@@ -463,7 +463,7 @@ namespace {
 				{ // FIRST PARSE
 
 					// We have found complete and correct content stream.
-					if (streamreader.eofOfActualStream() || streamreader.nextEofOfActualStream())
+					if (streamreader.eofOfActualStream())
 						break;				
 				}
 			}
@@ -525,6 +525,9 @@ namespace {
 	{
 		void operator() (shared_ptr<PdfOperator> op, const GfxState&, Rectangle rc) const
 		{
+			// If not initialized, means an error occured (missing font etc..)
+			if (!Rectangle::isInitialized (rc))
+				rc.xleft = rc.xright = rc.yleft = rc.yright = 0;
 			op->setBBox (rc);
 		}
 	};
