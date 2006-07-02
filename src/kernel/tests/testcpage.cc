@@ -276,9 +276,9 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 
 
 //=====================================================================================
-bool setattr(__attribute__((unused))	ostream & oss, const char * fname)
+bool setattr(__attribute__((unused)) ostream& oss, const char* fileName)
 {
-	CPdf * pdf=getTestCPdf(fname);
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -293,14 +293,13 @@ bool setattr(__attribute__((unused))	ostream & oss, const char * fname)
 		CPPUNIT_ASSERT (10 == page->getRotation());
 
 	}
-	pdf->close();
 	return true;
 }
 
 //=====================================================================================
-bool change(__attribute__((unused))	ostream & oss, const char * fname)
+bool change(__attribute__((unused))	ostream& oss, const char* fileName)
 {
-	CPdf * pdf=getTestCPdf(fname);
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -353,15 +352,15 @@ bool change(__attribute__((unused))	ostream & oss, const char * fname)
 			in >> text1;
 
 		CPPUNIT_ASSERT_EQUAL (text,text1);
+		_working (oss);
 	}
-	pdf->close();
 	return true;
 }
 
 //=====================================================================================
-bool move(__attribute__((unused))	ostream & oss, const char * fname)
+bool move(__attribute__((unused)) ostream& oss, const char* fileName)
 {
-	CPdf * pdf=getTestCPdf(fname);
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
 
 	size_t pageCount=pdf->getPageCount();
 	for(size_t pos=1; pos<=pageCount; pos++)
@@ -389,8 +388,8 @@ bool move(__attribute__((unused))	ostream & oss, const char * fname)
 		CPPUNIT_ASSERT_EQUAL (ccs[0],ccs1[1]);
 		CPPUNIT_ASSERT_EQUAL (ccs[1],ccs1[0]);
 		
+		_working (oss);
 	}
-	pdf->close();
 	return true;
 }
 
@@ -445,9 +444,9 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestExport);
 		CPPUNIT_TEST(TestFind);
 		CPPUNIT_TEST(TestAnnotations);
-		CPPUNIT_TEST(TestSet);
 		//CPPUNIT_TEST(TestChanges);
 		CPPUNIT_TEST(TestMoveUpDown);
+		CPPUNIT_TEST(TestSet);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
