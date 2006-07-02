@@ -25,6 +25,7 @@ Parser::Parser(XRef *xrefA, Lexer *lexerA) {
   xref = xrefA;
   lexer = lexerA;
   inlineImg = 0;
+  endOfActStream = 0;
   lexer->getObj(&buf1);
   lexer->getObj(&buf2);
 }
@@ -210,5 +211,13 @@ void Parser::shift() {
   if (inlineImg > 0)		// don't buffer inline image data
     buf2.initNull();
   else
+  {
+	size_t pos = lexer->strIndex ();
     lexer->getObj(&buf2);
+	if (pos != lexer->strIndex())
+		endOfActStream = 2;
+	else if (0 < endOfActStream)
+		--endOfActStream;
+  }
+
 }

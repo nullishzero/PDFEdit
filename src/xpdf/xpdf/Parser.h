@@ -41,12 +41,16 @@ public:
   // Get current position in file.
   int getPos() { return lexer->getPos(); }
 
+  // End of actual stream
+  bool eofOfActualStream () const { return (1 == endOfActStream); }
+
 private:
 
   XRef *xref;			// the xref table for this PDF file
   Lexer *lexer;			// input stream
   Object buf1, buf2;		// next two tokens
   int inlineImg;		// set when inline image data is encountered
+  size_t endOfActStream; // When 1 means end of act stream
 
   Stream *makeStream(Object *dict);
   void shift();

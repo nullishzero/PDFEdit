@@ -69,9 +69,6 @@ public:
   size_t strIndex () const
   	{ return static_cast<size_t>(strPtr); }
 
-  // (06/07/02) jmisutka Returns true if there is no other object we can read
-  bool eof ();
-  
 private:
 
   int getChar();

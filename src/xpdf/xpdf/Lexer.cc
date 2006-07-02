@@ -483,21 +483,3 @@ void Lexer::skipToNextLine() {
 GBool Lexer::isSpace(int c) {
   return c >= 0 && c <= 0xff && specialChars[c] == 1;
 }
-
-// Eof
-bool 
-Lexer::eof ()
-{
-  int c = EOF;
-  
-  while (EOF != (c = lookChar()))
-  {
-	if (!Lexer::isSpace (c))
-		return false;
-	else
-		getChar();
-  }
-  
-  return true;
-}
-
