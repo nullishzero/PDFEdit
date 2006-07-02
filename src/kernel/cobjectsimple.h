@@ -100,10 +100,12 @@ public:
 	typedef typename PropertyTraitSimple<Tp>::value 	 Value;
 	typedef observer::BasicChangeContext<IProperty>		 BasicObserverContext;
 
-	/** Type of the property.
+	/** 
+	 * Type of the property.
 	 * Static field common to all simple objects with same type.
+	 * This association allows us to get the PropertyType from object type.
 	 */
-	static const PropertyType type=Tp;
+	static const PropertyType type = Tp;
 
 private:
 	/** Object's valuei holder. */
