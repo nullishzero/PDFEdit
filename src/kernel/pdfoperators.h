@@ -398,7 +398,7 @@ public:
 	 * @return Bounding box.
 	 */
 	Rectangle getBBox () const
-		{ assert (COORDINATE_INVALID != bbox.xleft); return bbox; };
+		{ assert (Rectangle::isInitialized(bbox)); return bbox; };
 	
 };
 
