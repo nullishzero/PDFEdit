@@ -162,10 +162,12 @@ public:
 	::Stream* getXpdfStream ()
 		{ return parser->getStream(); }
 
-	/**  Are we at the end of actual stream. */
+	/**  
+	 * Are we at the end of actual stream. We need to ask parser, because of
+	 * object caching.
+	 */
 	bool eofOfActualStream ()
-		{ return (lexer->eof()); }
-
+		{ return (parser->eofOfActualStream()); }
 	
 };
 
