@@ -65,6 +65,13 @@ public:
   // Returns true if <c> is a whitespace character.
   static GBool isSpace(int c);
 
+  // (06/07/02) jmisutka Returns index of actual read stream
+  size_t strIndex () const
+  	{ return static_cast<size_t>(strPtr); }
+
+  // (06/07/02) jmisutka Returns true if there is no other object we can read
+  bool eof ();
+  
 private:
 
   int getChar();
