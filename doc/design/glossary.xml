@@ -1,0 +1,29 @@
+<!-- Each entry of glossary should be defined within glossary tags by
+glossentry tags with id used by xref tag in the general text. 
+Example:
+        <glossary>
+                ...
+                <glossentry id="identificator">
+                        <glossterm>Term declaration</glossterm>
+                        <glossdef>
+                                Term definition/describtion (it can contain 
+                                formated text pictures or arbitrary formatted 
+                                text.
+                        </glossdef>
+                </glossentry>
+                ...
+        </glossary>
+-->
+
+
+<glossary>
+        <glossentry id="facade">
+                <glossterm>Facade</glossterm>
+                <glossdef>
+                <para>
+                        Facade is designed pattern ...
+                </para>
+                </glossdef>
+        </glossentry> 
+</glossary>
+

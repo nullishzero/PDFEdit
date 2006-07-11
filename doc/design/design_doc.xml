@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+
+<!-- Part entities declaration.
+     These should point to book part definitions (each describing specifig book
+     part) included directly in this file. There is no problem to reference to 
+     these parts from each compomenet. 
+-->
+<!ENTITY purpose        SYSTEM    "purpose.xml">
+<!ENTITY general        SYSTEM    "general.xml">
+<!ENTITY kernel         SYSTEM    "kernel/main.xml">
+<!ENTITY gui            SYSTEM    "gui/main.xml">
+<!ENTITY glossary       SYSTEM    "glossary.xml">
+
+<!-- Component entities definitions.
+     These should be included by part entities form concrete part. There is no 
+     problem to reference to these compomenets from other components. General 
+     convention is to keep following format:
+        part_chaptername
+-->
+<!-- <!ENTITY kernel_cpdf   SYSTEM    "kernel/cpdf.xml"> -->
+
+<!-- Entities used generally in whole book. Entities may (and should) refer to 
+     term definition (definition of term should be defined in glossary part 
+     document - glossentry with id same as in xref tag).
+-->
+<!ENTITY fascade "Fascade design pattern <xref linkend='fascade' />">
+<!ENTITY version "1.0">
+
+<!-- end of entities declaration -->
+]>
+
+
+<book>
+ <title>Design documentation</title>
+ <bookinfo>
+         <authorgroup>
+                 <collab>
+                         <collabname>PDFEdit Team</collabname>
+                 </collab>
+                 <author>
+                         <firstname>Michal</firstname>
+                         <surname>Hocko</surname>
+                         <email>mstsxfx@gmail.com</email>
+                 </author>
+                 <author>
+                         <firstname>Miroslav</firstname>
+                         <surname>Jahoda</surname>
+                         <email>vemem@email.cz</email>
+                 </author>
+                 <author>
+                         <firstname>Jozef</firstname>
+                         <surname>Misutka</surname>
+                         <email>misutkajunior@hotmail.com</email>
+                 </author>
+                 <author>
+                         <firstname>Martin</firstname>
+                         <surname>Petricek</surname>
+                         <email>martin@petricek.net</email>
+                 </author>
+                 <othercredit>
+                         <firstname>Martin</firstname>
+                         <surname>Beran</surname>
+                         <email>beran@ms.mff.cuni.cz</email>
+                         <contrib>Extensive technical help and project leader</contrib>
+                 </othercredit>
+         </authorgroup>
+         <edition>Design documentation version &version;</edition>
+         <pubdate>2006</pubdate>
+ </bookinfo>
+
+ &purpose;
+ &general;
+ &kernel;
+ &gui;
+ &glossary;
+
+</book>
+
