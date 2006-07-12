@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/07/12 18:41:16  hockm0bm
+ * content stream test case uncommented
+ *
  * Revision 1.9  2006/06/25 09:27:19  hockm0bm
  * mem leak fixed
  *         - thanks to Jozo
@@ -253,7 +256,7 @@ public:
 		{
 			fileStreamTC(*i);
 			CPdf * pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);
-			//contentStreamTC(*pdf);
+			contentStreamTC(*pdf);
 			pdf->close();
 		}
 	}
