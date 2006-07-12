@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/07/12 18:27:14  hockm0bm
+ * minor changes - code comments etc.
+ *
  * Revision 1.24  2006/06/27 18:19:48  hockm0bm
  * code formating - no code changed
  *
@@ -203,7 +206,7 @@ using namespace debug;
 	if(!clonedObject)
 	{
 		// cloning has failed
-		kernelPrintDbg(DBG_ERR, "Object can't be cloned. Uses objNull instead");
+		kernelPrintDbg(DBG_ERR, "Object can't be cloned.");
 		throw NotImplementedException("clone failure.");
 	}
 
@@ -224,6 +227,9 @@ using namespace debug;
 	}
 	changedEntry->object=clonedObject;
 	assert(ref.num!=0);
+
+	// return value - original one - can be safely ignored, because either new 
+	// entry is inserted or one from storage is changed directly
 	changedStorage.put(ref, changedEntry);
 
 	// object has been newly created, so we will set value in

@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.27  2006/07/12 18:27:17  hockm0bm
+ * minor changes - code comments etc.
+ *
  * Revision 1.26  2006/06/25 16:25:09  hockm0bm
  * doc update - doxygen warnings removed (if they are real problem)
  *
@@ -429,7 +432,7 @@ public:
 	 * @param obj Instance of object.
 	 *
 	 * If revision is 0 (most recent), delegates to the to the 
-	 * CXref::insertObject method. Otherwise deny to make chage, because
+	 * CXref::changeObject method. Otherwise deny to make chage, because
 	 * it is not possible to do changes to a older release.
 	 * <br>
 	 * If mode is set to paranoid, checks the reference existence and after
@@ -476,8 +479,8 @@ public:
 	 * Method gets also newRevision flag parameter which says whether to save
 	 * changes as new revision. If new revision is created, storePos is moved
 	 * after stored data (more precisely after new trailer) and CXref super type
-	 * is forced to reopen (CXref::reopen method is called TODO link) to handle
-	 * new revision creation.
+	 * is forced to reopen (CXref::reopen method is called) to handle new 
+	 * revision creation.
 	 * Otherwise storePos is not moved and all objects from changeStorage are 
 	 * kept as they are. This means that default behaviour doens't have any 
 	 * influence on internal structure. 

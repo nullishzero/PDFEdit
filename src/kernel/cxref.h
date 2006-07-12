@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/07/12 18:27:17  hockm0bm
+ * minor changes - code comments etc.
+ *
  * Revision 1.25  2006/06/01 14:46:24  hockm0bm
  * doc update - doxygen warnings removed (if possible)
  *
@@ -236,7 +239,7 @@ protected:
 	 * @throw NotImplementedException if object cloning fails.
 	 *
 	 * @return Old value of object from changedStorage or NULL if it's first
-	 * revision of object.
+	 * revision of object - caller is responsible for deallocation.
 	 */
 	::Object * changeObject(::Ref ref, ::Object * instance);
 
