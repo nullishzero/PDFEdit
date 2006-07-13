@@ -26,7 +26,7 @@
      term definition (definition of term should be defined in glossary part 
      document - glossentry with id same as in xref tag).
 -->
-<!ENTITY fascade "Fascade design pattern <xref linkend='fascade' />">
+<!ENTITY facade "Fascade design pattern <xref linkend='fascade' />">
 <!ENTITY version "1.0">
 
 <!-- end of entities declaration -->
@@ -34,7 +34,7 @@
 
 
 <book>
- <title>Design documentation</title>
+ <title>PDFedit design documentation</title>
  <bookinfo>
          <authorgroup>
                  <collab>

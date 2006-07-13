@@ -291,7 +291,7 @@
       </para>
       <mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/xpdf_streams" format="PNG"/>
+	   <imagedata fileref="images/xpdf_streams.png" format="PNG"/>
 	  </imageobject>
           <textobject>
                   <phrase>Modified xpdf Stream hierarchy diagram

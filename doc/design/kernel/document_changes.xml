@@ -188,7 +188,7 @@
         see following figure.
  	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/xref_layer_diagram" format="PNG"/>
+	   <imagedata fileref="images/xref_layer_diagram.png" format="PNG"/>
 	  </imageobject>
 	  <textobject><phrase>3 layers diagram</phrase></textobject>
 	  <caption><para>3 layers diagram</para></caption>
@@ -313,6 +313,7 @@
         example:
         <programlisting>
         <code>
+        <![CDATA[
         IPdfWriter * writer=new OldStylePdfWriter();
         Delinearizator *delinearizator=Delinearizator::getInstance(fileName.c_str(), writer);
         if(!delinearizator)
@@ -325,6 +326,7 @@
         printf("\tDelinearized output is in %s file\n", outputFile.c_str());
         delinearizator->delinearize(outputFile.c_str());
         delete delinearizator;
+        ]]>
         </code>
         </programlisting>
    </para>

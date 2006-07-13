@@ -16,7 +16,7 @@ Example:
 -->
 
 
-<glossary>
+<glossary id="glossary_part">
         <glossentry id="facade">
                 <glossterm>Facade</glossterm>
                 <glossdef>

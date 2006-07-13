@@ -4,6 +4,6 @@
      declaration part)
 -->
 
-<part>
+<part id="gui_part">
         <title>GUI design describtion</title>
 </part>

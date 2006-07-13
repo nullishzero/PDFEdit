@@ -4,6 +4,6 @@
      declaration part)
 -->
 
-<part>
+<part id="kernel_part">
         <title>Kernel design describtion</title>
 </part>

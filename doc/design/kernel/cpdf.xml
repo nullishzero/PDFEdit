@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
-
- <chapter>
+<chapter>
   <title>CPdf</title>
   <para>
         CPdf class is main pdf document class. It maintains document content 
@@ -16,7 +12,7 @@
         Observers chapter - TODO link). 
   </para>
   <para>
-        In design terminology, CPdf provides Facade pattern (TODO literature 
+        In design terminology, CPdf provides &facade; pattern (TODO literature 
         link) to manipulate with file in document scope of view. 
   </para>
   <sect1>
@@ -107,16 +103,11 @@
         see following figure.
  	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/xref_layer_diagram" format="PNG"/>
+          <imagedata fileref="kernel/images/xref_layer_diagram.png" format="PNG"/>
 	  </imageobject>
 	  <textobject><phrase>3 layers diagram</phrase></textobject>
 	  <caption><para>3 layers diagram</para></caption>
 	</mediaobject>
   </para>
   </sect1>
- </chapter>
-
-  
-</book>
-
-
+</chapter>
