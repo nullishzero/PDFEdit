@@ -359,7 +359,7 @@ namespace {
 			for (int i = 0; i < len; ++i)
 			{
 					// Get Object at i-th position
-					string key = dict.dictGetKey (i);
+					string key (dict.dictGetKey (i));
 					obj->free ();
 					dict.dictGetValNF (i,obj.get());
 

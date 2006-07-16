@@ -136,6 +136,7 @@ public:
 	/** Get xpdf object. */
 	void getXpdfObject (::Object& obj)
 	{
+		curobj.reset ();
 		parser->getObj (curobj.get());
 		curobj->copy (&obj);
 
