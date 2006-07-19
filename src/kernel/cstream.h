@@ -138,8 +138,7 @@ protected:
 
 	/**
      * Implementation of clone method. 
-	 *
-     * @param Deep copy of this object.
+     * @return Deep copy of this object.
 	 */
 	virtual IProperty* doClone () const;
 
@@ -286,7 +285,7 @@ public:
 	/**
 	 * Set ref to itself and also tu all children
 	 *
-	 * @param pdf New indirect reference numbers.
+	 * @param rf New indirect reference numbers.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
@@ -533,6 +532,7 @@ namespace utils {
  * 
  * @param it Start insert iterator.
  * @param end End iterator.
+ * @param out Output valid string.
  */
 template<typename Iter>
 void
@@ -590,8 +590,6 @@ void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, O
  * @param strDict Dictionary string representation.
  * @param streambuf Raw stream buffer.
  * @param outbuf Output buffer.
- *
- * @param Length of data.
  */
 size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf);
 

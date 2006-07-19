@@ -440,7 +440,7 @@ template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (::Object& obj
 /**
  * Create xpdf Object which represents value.
  * 
- * @param obj	Value where the value is stored.
+ * @param val	Value where the value is stored.
  * @return 		Xpdf object where the value is stored.
  */
 template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
@@ -462,6 +462,8 @@ template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
  * 
  * @param str	String to be parsed.
  * @param val	Desired value.
+ *
+ * @throw ObjBadValueE Thrown when the string, can't be parsed correctly.
  */
 void simpleValueFromString (const std::string& str, bool& val);
 void simpleValueFromString (const std::string& str, int& val);
@@ -481,10 +483,10 @@ void simpleValueFromString (const std::string& str, IndiRef& val);
  * This is done at compile time with use of templates, but because of this we have to
  * make other functions also template.
  *
- * @param Value that will be converted to string.
- * @param Output string
+ * @param val that will be converted to string.
+ * @param str string
  */
-template <PropertyType Tp> void simpleValueToString (bool val,std::string& str);
+template <PropertyType Tp> void simpleValueToString (bool val, std::string& str);
 
 /** \copydoc simpleValueToString */
 template <PropertyType Tp> void simpleValueToString (int val,std::string& str);
@@ -651,8 +653,7 @@ getStringFromIProperty (const boost::shared_ptr<IProperty>& ip)
  * Set simple value.
  *
  * @param ip IProperty.
- *
- * @return Value.
+ * @param val Value to set.
  */
 template<typename ItemType, PropertyType ItemPType, typename Value>
 inline void

@@ -147,7 +147,7 @@ public:
 	/**
 	 * Get the string operator name.
 	 *
-	 * @param str String that will hold operator name.
+	 * @param first String that will hold operator name.
 	 */
 	virtual void getOperatorName (std::string& first) const = 0;
 
@@ -186,7 +186,7 @@ protected:
 	 *
 	 * REMARK: This will not remove it from the Iterator list.
 	 *
-	 * @param Operator to be erased.
+	 * @param op to be erased.
 	 */
 	virtual void remove (boost::shared_ptr<PdfOperator>)
 		{ throw NotImplementedException ("PdfOperator::remove ()"); };
@@ -245,7 +245,7 @@ public:
 	/**
 	 * Get childrens.
 	 *
-	 * @param p Children container.
+	 * @param opers Children container.
 	 */
 	virtual void getChildren (PdfOperators& opers) const
 		{ opers.clear(); };	
@@ -387,7 +387,7 @@ public:
 	/** 
 	 * Set bounding box.
 	 *
-	 * @param bbox Bounding box.
+	 * @param rc Bounding box.
 	 */
 	void setBBox (const Rectangle& rc)
 		{ bbox = rc; };

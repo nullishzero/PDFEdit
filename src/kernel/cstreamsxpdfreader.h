@@ -140,7 +140,7 @@ public:
 		parser->getObj (curobj.get());
 		curobj->copy (&obj);
 
-		/** debugging \TODO remove. */
+		/** debugging \todo remove. */
 		objread ++;
 		if (!obj.isEOF() && !obj.isError())
 		{

@@ -160,7 +160,7 @@ public:
 	 *
 	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
 	 *
-	 * @param	name	Name of the property.
+	 * @param	id	Name of the property.
 	 * @return Property type.	
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Set ref to this object and also to all its children.
 	 *
-	 * @param pdf New indirect reference numbers.
+	 * @param rf New indirect reference numbers.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
@@ -193,7 +193,7 @@ public:
 	 * exist it is added.
 	 * 
 	 * @param	id		Name/Index of property
-	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
+	 * @param	ip		Value, for simple types (int,string,...) and for complex types IProperty*
 	 *
 	 * @return Pointer to the new property.
 	 */
@@ -209,7 +209,6 @@ public:
 	 * \exception OutOfRange Thrown when position is out of range.
 	 *
 	 * @param newIp 		New property.
-	 * @param propertyName 	Name of the created property.
 	 *
 	 * @return Pointer to the new property.
 	 */
@@ -249,7 +248,7 @@ public:
 	 *
 	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
 	 * 
-	 * @param fnc Functor that will do the work.
+	 * @param fctor Functor that will do the work.
 	 */
 	template<typename Fctor>
 	void forEach (Fctor& fctor)
@@ -278,6 +277,7 @@ private:
 	 * REMARK: Be carefull. Deallocate this object.
 	 * 
 	 * @param changedIp Pointer to old value.
+	 * @param id		Id identifies changed property.
 	 * 
 	 * @return Context in which a change occured.
 	 */
@@ -301,7 +301,7 @@ protected:
 	 * Set mode of a property.
 	 *
 	 * @param ip IProperty which mode will be set.
-	 * @param name Identification of the property. String for dicts, number for
+	 * @param id Identification of the property. String for dicts, number for
 	 * arrays.
 	 */
 	void _setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const;
@@ -350,8 +350,8 @@ template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& i
  * REMARK: It is a template function because I think stream won't be converted to string
  * as easily as a dictionary. So we specialize these function for pArray and pDict.
  *
- * @param Value that will be converted to string.
- * @param Output string
+ * @param val that will be converted to string.
+ * @param str string
  */
 template <typename T> void complexValueToString (const typename T::Value& val, std::string& str);
 
@@ -365,7 +365,7 @@ template <typename T> void complexValueToString (const typename T::Value& val, s
  * \todo Use MPL because ItemType and ItemPType depend on each other.!!
  *
  * @param array	Array.
- * @param id 	Position in the array.
+ * @param position 	Position in the array.
  */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
@@ -555,9 +555,9 @@ setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)
  * Checks given property type and if it is pArray, casts it to CArray and calls
  * setSimpleValueInArray with CArray parameter.
  *
- * @param array Array property.
+ * @param ip Array property.
  * @param position Position of element to set.
- * @param value Simple value to set.
+ * @param val Simple value to set.
  * @throw ElementBadTypeException if given property is not CArray instance.
  */
 template<typename ItemType>
@@ -603,7 +603,7 @@ setDoubleInArray (const IP& ip, size_t position, double val)
  * Get iproperty casted to specific type from array.
  *
  * @param array Array.
- * @param id   Position in the array.
+ * @param pos   Position in the array.
  */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>

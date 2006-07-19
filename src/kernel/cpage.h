@@ -533,7 +533,7 @@ private:
 		/** 
 		 * Observer handler.
 		 * 
-		 * @param newValue New value of changed property.
+		 * @param 
 		 * @param context Context of the change.
 		 */
 		virtual void notify (boost::shared_ptr<IProperty>, 
@@ -854,7 +854,7 @@ public:
 	 * This function can be used to separate our changes from other
 	 * content streams.
 	 *
-	 * @param container Container of operators to add.
+	 * @param cont Container of operators to add.
 	 */
 	template<typename Container> void addContentStreamToFront (const Container& cont);
 	
@@ -878,7 +878,7 @@ public:
 	 * This function can be used to separate our changes from other
 	 * COntent streams.
 	 *
-	 * @param container Container of operators to add.
+	 * @param cont Container of operators to add.
 	 */
 	template<typename Container> void addContentStreamToBack (const Container& cont);
 

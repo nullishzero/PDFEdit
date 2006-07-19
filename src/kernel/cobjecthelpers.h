@@ -7,6 +7,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.36  2006/07/19 13:07:14  misuj1am
+ *
+ * -- doc update
+ *
  * Revision 1.35  2006/07/02 14:03:55  misuj1am
  *
  * -- ADD: getXRef() helper function
@@ -288,23 +292,23 @@ public:
 	 *
 	 * Two values are equal iff:
 	 * <ul>
-	 * <li> have same types (getType returns same value)
+	 * <li> have same types (getType returns same value)</li>
 	 * <ul> They have same values
-	 * 	<li> if value is simple - direct values are same (getValue is used)
+	 * 	<li> if value is simple - direct values are same (getValue is used)</li>
 	 * 	<li> if value is complex - same number of elements and elements with same
-	 * 	identifier are equal
+	 * 	identifier are equal</li>
 	 * </ul>
 	 * </ul>
 	 *
 	 * <b>Supported types</b><br>
 	 * <ul>
-			<li> pNull
-			<li> pBool
-			<li> pInt
-			<li> pReal
-			<li> pString
-			<li> pName
-			<li> pRef
+			<li> pNull </li>
+			<li> pBool </li>
+			<li> pInt </li>
+			<li> pReal </li>
+			<li> pString </li>
+			<li> pName </li>
+			<li> pRef </li>
 	 * </ul>
 	 * @throw NotImplementedException if value type is not supported (see supported
 	 * types table).

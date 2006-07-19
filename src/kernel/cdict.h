@@ -202,7 +202,7 @@ public:
 	 *
 	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
 	 *
-	 * @param	name	Name of the property.
+	 * @param id Name of the property.
 	 * @return Property type.	
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
@@ -223,7 +223,7 @@ public:
 	/**
 	 * Set ref to this object and also to all its children.
 	 *
-	 * @param pdf New indirect reference numbers.
+	 * @param rf New indirect reference numbers.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
@@ -234,8 +234,8 @@ public:
 	 * The cloned object replaces object specified by id. If the item does not
 	 * exist it is added.
 	 * 
-	 * @param	id		Name/Index of property
-	 * @param	value	Value, for simple types (int,string,...) and for complex types IProperty*
+	 * @param	id	Name/Index of property
+	 * @param	ip	Value, for simple types (int,string,...) and for complex types IProperty*
 	 *
 	 * @return Pointer to the new property.
 	 */
@@ -291,7 +291,7 @@ public:
 	 *
 	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
 	 * 
-	 * @param fnc Functor that will do the work.
+	 * @param fctor Functor that will do the work.
 	 */
 	template<typename Fctor>
 	void forEach (Fctor& fctor)
@@ -320,6 +320,7 @@ private:
 	 * REMARK: Be carefull. Deallocate this object.
 	 * 
 	 * @param changedIp Pointer to old value.
+	 * @param id		Id identifies changed property.
 	 * 
 	 * @return Context in which a change occured.
 	 */
@@ -343,7 +344,7 @@ protected:
 	 * Set mode of a property.
 	 *
 	 * @param ip IProperty which mode will be set.
-	 * @param name Identification of the property. String for dicts, number for
+	 * @param id Identification of the property. String for dicts, number for
 	 * arrays.
 	 */
 	void _setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const;
@@ -780,7 +781,7 @@ setDoubleInDict (const IP& ip, const std::string& name, double val)
  * Get iproperty casted to specific type from dictionary.
  *
  * @param dict Dictionary.
- * @param id   Position in the array.
+ * @param key   Position in the array.
  */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
