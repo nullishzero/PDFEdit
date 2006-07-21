@@ -55,8 +55,10 @@ typedef observer::IObserver<IProperty> IIPropertyObserver;
  * to save the content stream, which means changing streams one after another.
  * After a change the content stream becomes invalid.)
  * 
- * Operators form a tree-like structure consisting of Simple objecst and Composite objects. 
+ * Operators form a tree-like structure consisting of Simple and Composite objects. 
+ * 
  * \todo reference to general documentation [pdfoperators].
+ * 
  * Only first level operators are stored.
  * 
  * The pdf feature that a content stream can consist of several streams means we
@@ -69,13 +71,14 @@ typedef observer::IObserver<IProperty> IIPropertyObserver;
  * ...)
  *
  * The requirement of processing operators sequentially has lead to the decision
- * that these operators will be in an iterator queue meainig we can process them
+ * that these operators will be in an iterator queue meaning we can process them
  * seqeuntially with the advantage of Iterator design pattern.
  * \todo reference to general documentation [pdfoperators].
+ *
  * Another characteristis of content stream operators is that they build a tree
  * like structure which has lead to another decision that these operators will
  * be in a tree like queue. It means operators are designed as a Composite
- * design pattern. This enables (e.g. gui to represent content stream in a human
+ * design pattern. This enables e.g. gui to represent content stream in a human
  * readable from)
  */
 class CContentStream : public noncopyable, public CContentStreamObserverSubject
@@ -203,8 +206,8 @@ public:
 	 * Traverse all operators using specific iterator and save their string
 	 * repersentation. 
 	 *
-	 * REMARK: If an iterator accepts composite objects and also simple objects and a composite
-	 * contains one of such simple objects, the 
+	 * REMARK: If an iterator accepts composite objects and also simple objects and if an accepted composite
+	 * contains one accepted simple object, the 
 	 * string representation will be incorrect. It will contain the string
 	 * represenation of the composite including the child and also a separate
 	 * string representation of the child.
@@ -310,7 +313,7 @@ public:
 	/**
 	 * Get first level pdf operators.
 	 *
-	 * Operators form a tree-like structure. We save all root operands to
+	 * Operators form a tree-like structure. We store all root operands in a
 	 * container.
 	 * 
 	 * @param container Output container.
@@ -388,7 +391,7 @@ public:
 	 * iterator queue of the original, because it was altered when inserting it
 	 * into the new operator and points to items in the new operator.
 	 *
-	 * All change functions (e.g. operatorSetColor) behave this way. They insert
+	 * All change functions behave this way. They insert
 	 * the original operator in a new composite altering the iterator queue and
 	 * making the content stream iterator queue invalid. That is why we need 
 	 * the next and previous items of the original operator as function
@@ -483,25 +486,9 @@ public:
 
 
 //==========================================================
-// Operator creating functions
-//==========================================================
-
-// BT oper ET
-//boost::shared_ptr<PdfOperator> createTextOperator (boost::shared_ptr<PdfOperator> oper);
-// (text) Td
-//boost::shared_ptr<PdfOperator> createText (const std::string text);
-	
-
-//==========================================================
 // Operator changing functions
 //==========================================================
 
-
-//boost::shared_ptr<PdfOperator> setPosition (boost::shared_ptr<PdfOperator> oper, const Point pt);
-//boost::shared_ptr<PdfOperator> setFontSize (boost::shared_ptr<PdfOperator> oper, size_t fontSize);
-// ?? boost::shared_ptr<PdfOperator> setFont (boost::shared_ptr<PdfOperator> oper);
-// ?? boost::shared_ptr<PdfOperator> setBackground (const Rectangle rc, RGB color);
- 
 //
 // All changing operators have one drawback. They have to know if they change
 // "nonstroking" operations or "stroking" operations.
@@ -535,28 +522,6 @@ bool containsNonStrokingOperator (boost::shared_ptr<PdfOperator> oper);
  * @return True if found, false otherwise.
  */
 bool containsStrokingOperator (boost::shared_ptr<PdfOperator> oper);
-
-
-/**
- * Set color of an operator in RGB format.
- *
- * Example: 1 0 0 is red
- *
- * REMARK: When changing an operator that is in a content stream, we can not use
- * Iterator list after calling this function. This function puts oper in a new
- * iterator list. Method replaceOperator has to be called immmediately after
- * this function.
- * 
- * @param oper Operator that will be changed.
- * @param r R in RGB
- * @param g G in RGB
- * @param b B in RGB
- *
- * @return Operator that contains changed original operator.
- */
-boost::shared_ptr<PdfOperator>
-operatorSetColor (boost::shared_ptr<PdfOperator> oper, double r, double g, double b);
-
 
 //==========================================================
 } // namespace pdfobjects
