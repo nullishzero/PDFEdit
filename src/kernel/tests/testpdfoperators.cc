@@ -471,24 +471,24 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 		assert (!opers.empty());
 		TextOperatorIterator it = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
 		boost::shared_ptr<PdfOperator> tmpop;
-		while (!it.isEnd())
+		//while (!it.isEnd())
 		{
 			std::string tmp;
 			it.getCurrent()->getStringRepresentation (tmp);
 			
 			// This will change iterator list of it.getCurrent() !!!
-			tmpop = operatorSetColor (it.getCurrent()->clone(), 1, 0, 0);
-			cs->replaceOperator (it, tmpop, false);
+			//tmpop = operatorSetColor (it.getCurrent()->clone(), 1, 0, 0);
+			//cs->replaceOperator (it, tmpop, false);
 			//cs->replaceOperator (it, operatorSetColor (it.getCurrent(), 1, 0, 0), itPrv, itNxt, false);
 			std::string tmp1;
-			tmpop->getStringRepresentation (tmp1);
+			//tmpop->getStringRepresentation (tmp1);
 
 			//oss << tmp << endl;
 			//oss << "[" << tmp1 << "]" << endl;
 			//oss << string("[q 1 0 0 rg ") + tmp + string(" Q ]") << flush;
-			CPPUNIT_ASSERT (string("q 1 0 0 rg ") + tmp + string(" Q ") == tmp1);
+			//CPPUNIT_ASSERT (string("q 1 0 0 rg ") + tmp + string(" Q ") == tmp1);
 			
-			it = PdfOperator::getIterator<TextOperatorIterator> (getLastOperator(tmpop));
+			//it = PdfOperator::getIterator<TextOperatorIterator> (getLastOperator(tmpop));
 		}
 		
 		_working (oss);
