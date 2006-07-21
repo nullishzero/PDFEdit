@@ -6,12 +6,12 @@
 
  \section intro_sec Introduction
 
- PDF Editor consist of two logical parts - Kernel and GUI.<br>
- Also, there are utility classes that are used by both of them.
+ PDF Editor consists of two logical parts - Kernel and GUI.<br>
+ Both use a set of utility classes.
 
  \section kernel_sec Kernel
 
- Kernel part is responsible for manipulation with PDF files and provides API that is used by GUI
+ Kernel part is responsible for PDF file manipulation and provides API that is used by GUI.
 
  \section gui_sec GUI
 
@@ -19,9 +19,14 @@
 
  \section util_sec Utility classes
 
- Various utility classes.<br>
- They include configuration parser, delinearizator, object storage and iterator classes
- and classes to aid with debugging
+ Various utility classes
+ <ul> 
+ 	<li>configuration parser - </li>
+	<li>delinearizator - </li>
+	<li>object storage - </li>
+	<li>iterator - implementation of iterator design pattern</li>
+	<li>debugging</li>
+</ul>
   
 */
 
