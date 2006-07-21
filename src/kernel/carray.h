@@ -23,11 +23,10 @@ namespace pdfobjects {
 //=====================================================================================
 
 /** 
- * Class representing array object from specification v1.5.
+ * Class representing array object from pdf specification v1.5.
  *
- * Xpdf object is a real mess so we just initialize our object with xpdf object.
- * Xpdf objects were definitely not meant for changing, actually there
- * are many places which clearly dissolve any hope for a sane way to change the object.
+ * We do not want to use xpdf array because it is a real mess and it is really
+ * not suitable for editing. We use xpdf object just for initializing.
  * 
  * This class does not provide default copy constructor because copying a
  * property could be understood either as deep copy or shallow copy. 
@@ -35,10 +34,10 @@ namespace pdfobjects {
  * avoid it.
  *
  * REMARK: It is similar to CDict but it has also too much differences to be
- * clearly implemented as one template class. (It has been implemented like one
+ * cleanly implemented as one template class. (It has been implemented like one
  * template class but later was seperated to CArray and CDict)
  *
- * \see CObjectSimple, CDict, CObjectStream
+ * \see CObjectSimple, CDict, CStream
  */
 class CArray : noncopyable, public IProperty
 {
@@ -156,15 +155,15 @@ public:
 	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
 
 	/**
-	 * Returns property type of an item identified by name/position.
-	 *
-	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
+	 * Returns property type of an item identified by position.
 	 *
 	 * @param	id	Name of the property.
 	 * @return Property type.	
+	 *
+	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
-		{return getProperty(id)->getType();};
+		{ return getProperty(id)->getType(); };
 
 	
 	//
@@ -172,14 +171,14 @@ public:
 	//
 public:
 	/**
-	 * Set pdf to this object and also to all its children.
+	 * Set pdf to this object and its children.
 	 *
 	 * @param pdf New pdf.
 	 */
 	virtual void setPdf (CPdf* pdf);
 
 	/**
-	 * Set ref to this object and also to all its children.
+	 * Set ref to this object and its children.
 	 *
 	 * @param rf New indirect reference numbers.
 	 */
@@ -188,29 +187,29 @@ public:
 	/**
 	 * Sets property type of an item.
 	 * 
-	 * Firstly, the property that is passed as argument is cloned, the argument itself is not used.
-	 * The cloned object replaces object specified by id. If the item does not
+	 * Firstly, the property that is passed as argument is cloned and
+	 * the cloned object replaces object specified by id. If the item does not
 	 * exist it is added.
 	 * 
 	 * @param	id		Name/Index of property
 	 * @param	ip		Value, for simple types (int,string,...) and for complex types IProperty*
-	 *
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> setProperty (PropertyId id, IProperty& ip);
 	
 	/**
-	 * Adds property to array/dict. 
+	 * Add property to array. 
 	 *
-	 * Firstly, the property that is passed as argument is cloned, the argument itself is not added. 
-	 * The cloned object is added, automatically associated with the pdf where the object is beeing added.
+	 * Firstly, the property that is passed as argument is cloned and 
+	 * the cloned object is added.
 	 * Indicate that this object has changed and return the pointer to the cloned object.
 	 *
-	 * \exception OutOfRange Thrown when position is out of range.
+	 * REMARK: It is automatically associated with the pdf where the object is beeing added.
 	 *
 	 * @param newIp 		New property.
-	 *
 	 * @return Pointer to the new property.
+	 *
+	 * \exception OutOfRange Thrown when position is out of range.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
 
@@ -219,11 +218,11 @@ public:
 	
 	
 	/**
-	 * Remove property from array/dict. 
+	 * Remove property from array. 
+	 *
+	 * @param id Name/Index of property
 	 *
 	 * \exception ElementNotFoundException Thrown when object is not found.
-	 * 
-	 * @param id Name/Index of property
 	 */
 	void delProperty (PropertyId id);
 
@@ -244,9 +243,9 @@ public:
 public:
 
 	/**
-	 * Perform an action on each element.
-	 *
-	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
+	 * Apply functor operator() on each element.
+	 * The operator() will get std::pair<int, shared_ptr<IProperty>> as
+	 * parameter.
 	 * 
 	 * @param fctor Functor that will do the work.
 	 */
@@ -260,13 +259,12 @@ public:
 
 	/**
 	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
-	 * Caller has to free the xpdf Object (call Object::free and then
-	 * deallocating)
+	 * Caller has to deallocate the xpdf Object.
+	 *
+	 * @return Xpdf object representing value of this simple object.
 	 *
 	 * \exception ObjBadValueE Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
-	 * 
-	 * @return Xpdf object representing value of this simple object.
 	 */
 	virtual ::Object* _makeXpdfObject () const;
 
@@ -274,7 +272,7 @@ private:
 	/**
 	 * Create context of a change.
 	 *
-	 * REMARK: Be carefull. Deallocate this object.
+	 * REMARK: Be carefull. Deallocate the object.
 	 * 
 	 * @param changedIp Pointer to old value.
 	 * @param id		Id identifies changed property.
@@ -308,7 +306,7 @@ protected:
 
 public:
 	/**
-	 * Return all object we have access to.
+	 * Return all child objects.
 	 *
 	 * @param store Output container of all child objects.
 	 */
