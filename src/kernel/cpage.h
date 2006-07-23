@@ -28,15 +28,14 @@ namespace pdfobjects {
 
 
 //=====================================================================================
-// Display parameters (loose xpdf paramters put into a simple structure)
+// Display parameters (loose xpdf parameters put into a simple structure)
 // 	--  default values are in cpage.cc because we do not want to have global variables.
 //=====================================================================================
 
 /** 
  * Graphical state parameters. 
  *
- * These parameters are used by xpdf and can be changed. These parameters are
- * important when updating bounding boxex of content stream operators,
+ * These parameters are used by xpdf when updating bounding boxex of content stream operators,
  * displaying page etc.
  */
 typedef struct DisplayParams
@@ -87,7 +86,7 @@ typedef struct DisplayParams
 
 
 //=====================================================================================
-// Text search parameters (loose xpdf paramters put into a simple structure)
+// Text search parameters (loose xpdf parameters put into a simple structure)
 // 	--  default values are in cpage.cc because we do not want to pollute global space.
 //=====================================================================================
 
@@ -146,13 +145,16 @@ struct PdfOpCmpRc
 	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {};
 	
 	/** 
-	 * Is in in a range. 
+	 * Is the intersection of supplied rectangle and rectangle specified in the
+	 * constructor not empty. 
 	 *
 	 * Our rectangle does NOT contain another rectangle if
-	 * min (xleft-our, xright-our) >= min (xleft, xright)
-	 * max (xleft-our, xright-our) <= max (xleft, xright)
-	 * min (yleft-our, yright-our) >= min (yleft, yright)
-	 * max (yleft-our, yright-our) <= max (yleft, yright)
+	 * <ul>
+	 * 	<li>min (xleft-our, xright-our) >= min (xleft, xright)</li>
+	 * 	<li>max (xleft-our, xright-our) <= max (xleft, xright)</li>
+	 * 	<li>min (yleft-our, yright-our) >= min (yleft, yright)</li>
+	 * 	<li>max (yleft-our, yright-our) <= max (yleft, yright)</li>
+	 * </ul>
 	 */
 	bool operator() (const Rectangle& rc) const
 	{
@@ -230,13 +232,14 @@ class CPage;
 typedef observer::ObserverHandler<CPage> CPageObserverSubject;
 
 /**
- * This object represents one pdf page object. PDF page object is a dictionary
+ * This object represents page object from pdf specification v1.5. Pdf page object is a dictionary
  * reachable from page tree structure with several required properties. 
  * It is responsible just for one single page.
  *
  * Every pdf page contains all information required for displaying the page
  * (e.g. page metrics, page contents etc.) Page properties can be inherited from
- * its parent in the page tree. Only the most specific is used. This feature can
+ * its parent in the page tree. The first encountered during page tree traversal
+ * is used. This feature can
  * cause problems because it is no well defined what does it mean to change a
  * property that is inherited (it is not present in the page dictionary but in a
  * parent)
@@ -253,15 +256,15 @@ typedef observer::ObserverHandler<CPage> CPageObserverSubject;
  * sequentially. The operators define what is really on a page. The pdf
  * specification is too general about pdf operators and that is why working with
  * operators is difficult. According to pdf specification text is split
- * neither to sentences nor words. ALso the letters can occur in the content stream
- * at random because the position is specified absolutely. (e.g. it is very likely
+ * neither to sentences nor words. Letters of a word can occur randomly in the content stream
+ * because the position of a letter (text) is absolute. (e.g. it is very likely
  * that a word "humor" will be split into "hu" "m" "or" because of the "m"
- * beeing wider than other letters.) That makes searching and exporting the text a problem. 
+ * beeing wider than other letters.) This makes searching and exporting page text a problem. 
  * We use xpdf code to perform both actions. Xpdf parses a page to lines and
  * words with a rough approuch when a more letters are claimed as one word when
  * they are close enough. This algorithm is working ok for normal pdf files, but
  * if the pdf creator would like to disable text exporting it could produce such
- * set of pdfoperators, that nobody could tell if they form a word or not.
+ * sequence of pdfoperators, that hardly any program could export text correctly.
  *
  * Pdf operators are in one or more streams. Problem with this
  * approach is that these operators can be split
@@ -272,7 +275,7 @@ typedef observer::ObserverHandler<CPage> CPageObserverSubject;
  * the page for a text, selecting objects, drawing the page. 
  *
  * Each page content stream is a selfcontained entity that can not
- * use resources defined in another page. It can only use inherited resources
+ * use resources defined in another page. It can use only inherited resources
  * from a parent in the page tree. Which means we can not simply change fonts
  * on a page to match another page, use images from another page etc.
  */
@@ -783,7 +786,7 @@ public:
 	 * Base names should be human readable or at least standard system fonts
 	 * defined in the pdf specification. We
 	 * must choose from these items to make a font change valid. Otherwise, we
-	 * have to add a standard system font or manually a font object.
+	 * have to add standard system font or manually a font object.
 	 *
 	 * @param cont Output container of font id and basename pairs.
 	 */
@@ -793,7 +796,7 @@ public:
 	/**
 	 * Add new simple type 1 font item to the page resource dictionary. 
 	 *
-	 * The id of this font is arbitrary but it has to be unique. Itwill be generated as folows: 
+	 * The id of this font is arbitrary but it has to be unique. It will be generated as follows: 
 	 * PdfEditor for the first item, PdfEditorr for the second, PdfEditorrr for
 	 * the third etc.
 	 *
@@ -812,7 +815,7 @@ public:
 	 * Draw page on an output device.
 	 *
 	 * We use xpdf code to draw a page. It uses insane global parameters and
-	 * many local paramters.
+	 * many local parameters.
 	 *
 	 * @param out Output device.
  	 * @param params Display parameters.
@@ -830,7 +833,7 @@ public:
 
 	/**
 	 * Parse content stream. 
-	 * Content stream is optional property. When found it is parsed,
+	 * Content stream is an optional property. When found it is parsed,
 	 * nothing is done otherwise.
 	 *
 	 * @return True if content stream was found and was parsed, false otherwise.
@@ -838,7 +841,7 @@ public:
 	bool parseContentStream ();
 
 	/**
-	 * Reparse content stream using actual display paramters. 
+	 * Reparse content stream using actual display parameters. 
 	 */
 	void reparseContentStream ();
 
@@ -851,8 +854,7 @@ public:
 	 * should be handled at the beginning end e.g. should be drawn first which means
 	 * they will appear the "below" other object.
 	 *
-	 * This function can be used to separate our changes from other
-	 * content streams.
+	 * This function can be used to separate our changes from original content stream.
 	 *
 	 * @param cont Container of operators to add.
 	 */
@@ -875,8 +877,7 @@ public:
 	 * should be handled at the end e.g. should be drawn at the end which means
 	 * they will appear "above" other objects.
 	 *
-	 * This function can be used to separate our changes from other
-	 * COntent streams.
+	 * This function can be used to separate our changes from original content stream.
 	 *
 	 * @param cont Container of operators to add.
 	 */
@@ -887,8 +888,8 @@ public:
 	//
 public:
 	/**
-	 * Set tranform matrix of a page. This operator will be preceding first cm
-	 * operator, if not found it will be the first operator.
+	 * Set transform matrix of a page. This operator will be preceding first cm
+	 * operator (see pdf specification), if not found it will be the first operator.
 	 *
 	 * @param tm Six number representing transform matrix.
 	 */
@@ -942,8 +943,7 @@ public:
 	 /**
 	  * Find all occurences of a text on this page.
 	  *
-	  * It uses xpdf TextOutputDevice function to get the bounding box of a
-	  * found text.
+	  * It uses xpdf TextOutputDevice to get the bounding box of found text.
 	  *
 	  * @param text Text to find.
 	  * @param recs Output container of rectangles of all occurences of the text.
@@ -961,9 +961,9 @@ public:
 	 //
 private:
 	 /**
-	  * Create xpdf's state and res paramters.
+	  * Create xpdf's state and resource parameters.
 	  *
-	  * @param res Gfx resource paramter.
+	  * @param res Gfx resource parameter.
 	  * @param state Gfx state parameter.
 	  */
 	 void createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::shared_ptr<GfxState>& state);
@@ -991,13 +991,14 @@ public:
 
 	/**
 	 * Get our changes sorted.
-	 * The first change is the last change if any.
+	 * The first change is the last change. If there are no changes
+	 * container is empty.
 	 */
 	template<typename Container>
 	void getChanges (Container& cont) const;
 
 	/**
-	 * Get number of our changes.
+	 * Get count of our changes.
 	 */
 	size_t getChangeCount () const;
 

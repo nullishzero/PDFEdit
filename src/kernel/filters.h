@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.14  2006/07/23 16:56:42  misuj1am
+ *
+ * -- docs updated
+ *
  * Revision 1.13  2006/06/02 17:01:28  misuj1am
  *
  * -- documentation updated
@@ -65,9 +69,11 @@ struct NoFilter;
  *
  * This is an implementation of STRATEGY design pattern. We need a set of filters which
  * behave differently but process the same data with the same information avaliable. We make
- * them interchangeable. [GoF/Strategy]
+ * them interchangeable [GoF/Strategy] and in addition we use a special type of
+ * Chain of Responsibility design pattern where on source object decides to
+ * really read a character. Filters can be also chained together.
  *
- * REMARK: We do not use templates because we do not know which implementation will be used at compile time.
+ * REMARK: We do not use templates because we do not know which implementation will be used at compile time.<br>
  * REMARK: Change getSupportedStreams & setStringRepresentation in order to expose newly created filters.
  */
 struct CFilterFactory
@@ -214,7 +220,7 @@ public:
 
 //=======================================
 
-/** Functor changing characters to printable characters. */
+/** Functor replacing non printable characters with printable. */
 template<typename T>
 struct Printable
 {

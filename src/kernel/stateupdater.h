@@ -20,7 +20,14 @@ namespace pdfobjects {
 //==========================================================
 
 /**
- * General state updater.
+ * Graphical state updater.
+ *
+ * Content stream is a sequence of operations which alter graphical state. We
+ * need to obtain some information after each of these operations and xpdf code
+ * is no suitable for this sort of things.
+ *
+ * If appropriate functions would be defined, this could also be used to display
+ * the content stream.
  */
 class StateUpdater 
 {
@@ -39,12 +46,12 @@ public:
 	 * It is used to find an update function, which alters graphical state
 	 * according to the operator and its operands.
 	 *
-	 * It is also used to check whether the operand cound and type match the pdf specifiaction
+	 * It is also used to check whether the operand count and type match the pdf specification
 	 * of an operator. It the argument number is less than zero, arbitrary
 	 * number of operands is allowed up to the absolute value of argNum.
 	 *
 	 * If the operator is a composite, endTag is the string representation of
-	 * the ending operator of the composite..
+	 * the ending operator of the composite.
 	 */
 	typedef struct
 	{
@@ -181,7 +188,7 @@ public:
 /** 
  * Is it a simple or a composite operator. 
  * @param chck Check type structure.
- * @return True if the check type is a simple operator, false otherwise.
+ * @return True if the chck is a simple operator, false otherwise.
  */
 inline bool 
 isSimpleOp (const StateUpdater::CheckTypes& chck)

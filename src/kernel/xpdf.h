@@ -3,8 +3,7 @@
  * =====================================================================================
  *        Filename:  xpdf.h
  *     Description:  Header file containing all includes to xpdf, can be used
- *				     as the base include file when precompiled header technique
- *				     is used
+ *				     as the base include file when precompiled header technique is used
  *         Created:  03/07/2006 18:41:44 PM CET
  *          Author:  jmisutka ()
  * =====================================================================================
