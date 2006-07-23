@@ -15,7 +15,7 @@ GUI
  ??? Toolbar Widget na zobrazovani souradnic
  [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
  [ ] Zobrazovat "N properties are hidden" pokud jsou nejake skryte v property editoru
- [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden"
+ [x] Hlaska "N properties are complex (array/dict/...) and thus hidden"
  [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
  [ ] QSA wrappery poradne osetrit memory leaky (uvolnovani pameti az pri zavreni okna je pozde :)
  [x] Odstranit ze skriptingu promenne treeitem a item (deprecated)
