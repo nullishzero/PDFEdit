@@ -5,7 +5,6 @@
  *     Description:  Header file containing definition of IProperty and CObject classes.
  *         Created:  01/18/2006 
  *          Author:  jmisutka (06/01/19), 
- *
  * =====================================================================================
  */
 #ifndef _CSTREAMSXPDFREADER_H
@@ -19,10 +18,11 @@
 #include "cobjecthelpers.h"
 
 /** 
- * Problem only cstream use is that streams can be separated in crazy
- * places e.g. first stream: "... ["	second stream: " fdas  as fs]"
- * and xpdf does not return valid objects when stream ends in the middle of
- * an object.
+ * Content streams can be separated in crazy
+ * places e.g. first stream: "... ["	second stream: " fdas  as fs]" and the
+ * result must be one array of 3 objects. Xpdf does not make possible to read separately each stream and then
+ * combine it somehow. We have to use xpdf parser and supply all streams at the
+ * beginning. 
  */
 #define CSTREAMSREADER_USE_XPDF	1
 
@@ -33,7 +33,7 @@ namespace pdfobjects {
 #if CSTREAMSREADER_USE_XPDF
 
 /**
- * Adapter which is able to read sequentially from more CStreams.
+ * Adapter which is able to read sequentially from more cstreams.
  *
  * It stores a container of streams and when the actual stream does not
  * contain more objects, tries to read the next one if any.
@@ -368,7 +368,7 @@ public:
 #endif // #if CSTREAMSREADER_USE_XPDF
 
 //=====================================================================================
-} /* namespace pdfobjects */
+} // namespace pdfobjects
 //=====================================================================================
 
 

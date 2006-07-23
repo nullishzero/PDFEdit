@@ -5,7 +5,8 @@
 
 using namespace pdfobjects;
 
-class CGraphic : public CDict {
+class CGraphic // : public CDict 
+{
   //
   // Konstruktor
   //

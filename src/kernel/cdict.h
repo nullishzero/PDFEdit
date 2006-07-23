@@ -27,35 +27,28 @@ namespace pdfobjects {
 // CDict
 //=====================================================================================
 
-//class CStream;
-
-
 /** 
- * Template class representing complex PDF objects from specification v1.5.
+ * Class representing dictionary object from pdf specification v1.5.
  *
- * This is a generic class joining implementation of dictionary and array together in in one place.
- *
- * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
- * exists. It is because PropertyTraitSimple is not specialized for these types.
- *
- * We use memory checking with this class which save information about existing IProperties.
- * This technique can be used to detect memory leaks etc. 
- *
- * Xpdf object is real mess so we just instantiate this object with xpdf object and
- * use this object. They were definitely not meant for changing, actually there
- * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
+ * We do not want to use xpdf dictionary because it is a real mess and it is really
+ * not suitable for editing. We use xpdf object just for initializing.
  * 
- * This class uses another advance c++ technique called Incomplete
- * Instantiation. The specific features are implemented using this feature.
- * It simply means that when a function in a template class is not used, it is not instatiated
- * (e.g. CArray won't have addProperty (IProperty& ,string&) method.)
- *
+ * According to pdf specification, dictionary is a container of keys and values.
+ * Keys are strings identifying items. You can not rely on the position of a
+ * value.
+ * Value can be any object from pdf specification. Pdf objects form a tree like
+ * structure.
+ * 
  * This class does not provide default copy constructor because copying a
  * property could be understood either as deep copy or shallow copy. 
- * Copying complex types could be very expensive so we have made this decision to
+ * Copying complex types could be very expensive so we have made the decision to
  * avoid it.
  *
- * \see CObjectSimple, CObjectStream
+ * REMARK: It is similar to CArray but it has also too much differences to be
+ * cleanly implemented as one template class. (It has been implemented like one
+ * template class but later was seperated to CArray and CDict)
+
+ * \see CObjectSimple, CArray, CStream
  */
 class CDict : noncopyable, public IProperty
 {
@@ -74,7 +67,7 @@ public:
 	static const PropertyType type = pDict;
 private:
 	
-	/** Object's value. */
+	/** Dictionary representation. */
 	Value value;
 
 
@@ -169,8 +162,6 @@ public:
 	/**
 	 * Inserts all property names of this complex type to the container supplied by caller. 
 	 * 
-	 * REMARK: Specific for pDict.
-   	 *
 	 * @param container Output container of string objects. Could be vector,list,deque etc.
 	 */
 	template<typename Container>
@@ -190,23 +181,24 @@ public:
 	bool containsProperty (const std::string& name) const;
 	
 	/**
-	 * Returns value of property identified by its name/position depending on the type of this object.
+	 * Returns value of property identified by its name.
    	 *
-   	 * @param 	id 	Variable identifying position of the property.
+   	 * @param 	id 	Name of the property.
 	 * @return	Output variable where the value will be stored.
    	 */
 	boost::shared_ptr<IProperty> getProperty (PropertyId id) const;
 
 	/**
-	 * Returns property type of an item identified by name/position.
-	 *
-	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
+	 * Returns property type of an item identified by name.
 	 *
 	 * @param id Name of the property.
 	 * @return Property type.	
+	 *
+	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
+	 *
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
-		{return getProperty(id)->getType();};
+		{ return getProperty(id)->getType(); };
 
 	
 	//
@@ -214,46 +206,42 @@ public:
 	//
 public:
 	/**
-	 * Set pdf to this object and also to all its children.
-	 *
+	 * Set pdf to this object and its children.
 	 * @param pdf New pdf.
 	 */
 	virtual void setPdf (CPdf* pdf);
 
 	/**
-	 * Set ref to this object and also to all its children.
-	 *
-	 * @param rf New indirect reference numbers.
+	 * Set ref to this object and its children.
+	 * @param rf New indirect reference number.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
 	/**
 	 * Sets property type of an item.
 	 * 
-	 * Firstly, the property that is passed as argument is cloned, the argument itself is not used.
-	 * The cloned object replaces object specified by id. If the item does not
+	 * Firstly, the property that is passed as argument is cloned and
+	 * the cloned object replaces object specified by id. If the item does not
 	 * exist it is added.
 	 * 
 	 * @param	id	Name/Index of property
 	 * @param	ip	Value, for simple types (int,string,...) and for complex types IProperty*
-	 *
 	 * @return Pointer to the new property.
 	 */
 	boost::shared_ptr<IProperty> setProperty (PropertyId id, IProperty& ip);
 	
 	/**
-	 * Adds property to array/dict. 
+	 * Add property to dictionary. 
 	 *
-	 * Firstly, the property that is passed as argument is cloned, the argument itself is not added. 
-	 * The cloned object is added, automatically associated with the pdf where the object is beeing added.
+	 * Firstly, the property that is passed as argument is cloned and 
+	 * the cloned object is added.
 	 * Indicate that this object has changed and return the pointer to the cloned object.
 	 *
-	 * \exception OutOfRange Thrown when position is out of range.
-	 *
-	 * @param newIp 		New property.
 	 * @param propertyName 	Name of the created property.
-	 *
+	 * @param newIp 		New property.
 	 * @return Pointer to the new property.
+	 *
+	 * \exception OutOfRange Thrown when property not found.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
 	
@@ -262,11 +250,11 @@ public:
 
 	
 	/**
-	 * Remove property from array/dict. 
+	 * Remove property from dictionary. 
+	 *
+	 * @param id Name/Index of property
 	 *
 	 * \exception ElementNotFoundException Thrown when object is not found.
-	 * 
-	 * @param id Name/Index of property
 	 */
 	void delProperty (PropertyId id);
 
@@ -287,9 +275,9 @@ public:
 public:
 
 	/**
-	 * Perform an action on each element.
-	 *
-	 * Fctor::operator () (std::pair<int/string, shared_ptr<IProperty> >)
+	 * Apply functor operator() on each element.
+	 * The operator() will get std::pair<string, shared_ptr<IProperty>> as
+	 * parameter. First item identifies the property.
 	 * 
 	 * @param fctor Functor that will do the work.
 	 */
@@ -303,13 +291,13 @@ public:
 
 	/**
 	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
-	 * Caller has to free the xpdf Object (call Object::free and then
-	 * deallocating)
+	 * Caller has to deallocate the xpdf Object.
+	 *
+	 * @return Xpdf object representing this object.
 	 *
 	 * \exception ObjBadValueE Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
-	 * 
-	 * @return Xpdf object representing value of this simple object.
+
 	 */
 	virtual ::Object* _makeXpdfObject () const;
 
@@ -317,7 +305,7 @@ private:
 	/**
 	 * Create context of a change.
 	 *
-	 * REMARK: Be carefull. Deallocate this object.
+	 * REMARK: Be carefull. Deallocate the object.
 	 * 
 	 * @param changedIp Pointer to old value.
 	 * @param id		Id identifies changed property.
@@ -344,14 +332,13 @@ protected:
 	 * Set mode of a property.
 	 *
 	 * @param ip IProperty which mode will be set.
-	 * @param id Identification of the property. String for dicts, number for
-	 * arrays.
+	 * @param id Key identifying property.
 	 */
 	void _setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const;
 
 public:
 	/**
-	 * Return all object we have access to.
+	 * Return all child objects.
 	 *
 	 * @param store Output container of all child objects.
 	 */
@@ -371,26 +358,24 @@ public:
 //=====================================================================================
 
 /**
- * This class is used as functor to an equal algorithm to std::find_if algorithm.
+ * This functor is used as a parameter to a function equal to std::find_if algorithm.
  * 
- * Finds out an item specified by its position. find_if CANNOT be used, because it 
- * does not meet 2 main requirements. a) ordering b) not making COPIES of the functor and
- * this functor RELIES on these requirements.
+ * Finds out an item specified by its name. std::find_if() CANNOT be used, because in c++ specification two 
+ * important requirements are missing.
+ * <ul>
+ * <li> ordering - order of item traversal </li>
+ * <li> using supplied instance - it is specified that find_if can not make copies of supplied functor </li>
+ * </ul>
+ * This functor relies on the first one.
  *
- * Perhaps more effective algorithms could be used but this approach is 
- * used to be more generic.
+ * REMARK: More effective algorithms could be used but this approach is 
+ * more generic.
  */
-class DictIdxComparator
+class DictIdxComparator : noncopyable
 {
 private:
 	const std::string str;
 	boost::shared_ptr<IProperty> ip;
-
-private:
-	//
-	// We have a stateful object, so prevent copying
-	//
-	DictIdxComparator (const DictIdxComparator&);
 
 public:
 	DictIdxComparator (const std::string& s) : str(s) {};
@@ -430,11 +415,11 @@ template <PropertyType Tp,typename T> void complexValueFromXpdfObj (IProperty& i
 
 /**
  * This function is a slower equivalent to complexValueFromXpdfObj. But on the
- * other hand, complexValueFromXpdfObj needs inner dictionary container that we
+ * other hand, complexValueFromXpdfObj() needs inner dictionary container that we
  * do not have always access to.
  *
  * @param resultDict Dictionary.
- * @param dict Xpdf object from which we init dict.
+ * @param dict Xpdf object from which we init dictionary.
  */
 void dictFromXpdfObj (CDict& dict, ::Object& objDict);
 
@@ -512,7 +497,7 @@ getStringFromXpdfStream (std::string& str, ::Object& obj);
 //=========================================================
 
 /**
- * Get simple value from dict.
+ * Get simple value from dictionary.
  *
  * \todo Use MPL because ItemType and ItemPType depend on each other.!!
  *
@@ -523,7 +508,7 @@ template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)__attribute__((deprecated));
 
-// gcc doesn't like __attribute__ in function definition
+/** \copydoc getSimpleValueFromDict */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
 getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string& id)
@@ -537,7 +522,7 @@ getSimpleValueFromDict (const boost::shared_ptr<CDict>& dict, const std::string&
 }
 
 /**
- * Get simple value from dict.
+ * Get simple value from dictionary.
  *
  * Uses getReferencedObject to property with given id to get target property (if
  * it is reference) and getValueFromSimple with target property.
@@ -626,13 +611,13 @@ getSimpleValueFromDict (const boost::shared_ptr<IProperty>& ip, const std::strin
 	return getSimpleValueFromDict<ItemType> (dict, id);
 }
 
-/** Get int from dict. */
+/** Get int from dictionary. */
 template<typename IP>
 inline int
 getIntFromDict (const IP& ip, const std::string& id)
 	{ return getSimpleValueFromDict<int, CInt, pInt> (ip, id);}
 
-/** Get	double from dict. */
+/** Get	double from dictionary. */
 template<typename IP>
 inline double
 getDoubleFromDict (const IP& ip, const std::string& id)
@@ -647,13 +632,13 @@ getDoubleFromDict (const IP& ip, const std::string& id)
 	return getSimpleValueFromDict<double, CReal, pReal> (ip, id);
 }
 
-/** Get string from dict. */
+/** Get string from dictionary. */
 template<typename IP>
 inline std::string
 getStringFromDict (const IP& ip, const std::string& id)
 	{ return getSimpleValueFromDict<CString> (ip, id);}
 
-/** Get name from dict. */
+/** Get name from dictionary. */
 template<typename IP>
 inline std::string
 getNameFromDict (const IP& ip, const std::string& id)
@@ -665,7 +650,7 @@ getNameFromDict (const IP& ip, const std::string& id)
 
 
 /** 
- * Set simple value in dict. 
+ * Set simple value in dictionary. 
  * If it is a reference, set fetch it and set it to the fetched object.
  *
  * @param ip Dict property.
@@ -737,8 +722,7 @@ setSimpleValueInDict (const IProperty& ip, const std::string& name, const Value&
 	setSimpleValueInDict<Value, ItemType, ItemPType> (*dict, name, val);
 }
 
-/** @copydoc setSimpleValueInDict
- */
+/** \copydoc setSimpleValueInDict */
 template<typename ItemType>
 inline void
 setSimpleValueInDict (const IProperty& ip, CDict::PropertyId name, const typename ItemType::Value& val)
@@ -752,13 +736,13 @@ setSimpleValueInDict (const IProperty& ip, CDict::PropertyId name, const typenam
 	setSimpleValueInDict<ItemType> (*dict, name, val);
 }
 
-/** Set int in array. */
+/** Set int in dictionary. */
 template<typename IP>
 inline void
 setIntInDict (const IP& ip, const std::string& name, int val)
 	{ setSimpleValueInDict<int, CInt, pInt> (ip, name, val);}
 
-/** Set	double in array. */
+/** Set	double in dictioary. */
 template<typename IP>
 inline void
 setDoubleInDict (const IP& ip, const std::string& name, double val)
@@ -781,7 +765,7 @@ setDoubleInDict (const IP& ip, const std::string& name, double val)
  * Get iproperty casted to specific type from dictionary.
  *
  * @param dict Dictionary.
- * @param key   Position in the array.
+ * @param key   Position in the dictionary.
  */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>

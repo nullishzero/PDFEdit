@@ -28,9 +28,14 @@ namespace pdfobjects {
  * We do not want to use xpdf array because it is a real mess and it is really
  * not suitable for editing. We use xpdf object just for initializing.
  * 
+ * According to pdf specification, array is a container of values.
+ * Value position identifies an item. You can rely on a value position.
+ * Value can be any object from pdf specification. Pdf objects form a tree like
+ * structure.
+ * 
  * This class does not provide default copy constructor because copying a
  * property could be understood either as deep copy or shallow copy. 
- * Copying complex types could be very expensive so we have made this decision to
+ * Copying complex types could be very expensive so we have made the decision to
  * avoid it.
  *
  * REMARK: It is similar to CDict but it has also too much differences to be
@@ -54,7 +59,7 @@ public:
 	static const PropertyType type = pArray;
 private:
 	
-	/** Object's value. */
+	/** Array representation. */
 	Value value;
 
 
@@ -147,7 +152,7 @@ public:
  
 
 	/**
-	 * Returns value of property identified by its name/position depending on the type of this object.
+	 * Returns value of property identified by its position.
    	 *
    	 * @param 	id 	Variable identifying position of the property.
 	 * @return	Output variable where the value will be stored.
@@ -157,7 +162,7 @@ public:
 	/**
 	 * Returns property type of an item identified by position.
 	 *
-	 * @param	id	Name of the property.
+	 * @param	id	Position of the property.
 	 * @return Property type.	
 	 *
 	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
@@ -172,15 +177,13 @@ public:
 public:
 	/**
 	 * Set pdf to this object and its children.
-	 *
 	 * @param pdf New pdf.
 	 */
 	virtual void setPdf (CPdf* pdf);
 
 	/**
 	 * Set ref to this object and its children.
-	 *
-	 * @param rf New indirect reference numbers.
+	 * @param rf New indirect reference number.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
@@ -191,7 +194,7 @@ public:
 	 * the cloned object replaces object specified by id. If the item does not
 	 * exist it is added.
 	 * 
-	 * @param	id		Name/Index of property
+	 * @param	id		Position of property
 	 * @param	ip		Value, for simple types (int,string,...) and for complex types IProperty*
 	 * @return Pointer to the new property.
 	 */
@@ -209,7 +212,7 @@ public:
 	 * @param newIp 		New property.
 	 * @return Pointer to the new property.
 	 *
-	 * \exception OutOfRange Thrown when position is out of range.
+	 * \exception OutOfRange Thrown when property not found.
 	 */
 	boost::shared_ptr<IProperty> addProperty (const IProperty& newIp);
 
@@ -220,7 +223,7 @@ public:
 	/**
 	 * Remove property from array. 
 	 *
-	 * @param id Name/Index of property
+	 * @param id Position of property
 	 *
 	 * \exception ElementNotFoundException Thrown when object is not found.
 	 */
@@ -245,7 +248,7 @@ public:
 	/**
 	 * Apply functor operator() on each element.
 	 * The operator() will get std::pair<int, shared_ptr<IProperty>> as
-	 * parameter.
+	 * parameter. First item identifies the property.
 	 * 
 	 * @param fctor Functor that will do the work.
 	 */
@@ -261,7 +264,7 @@ public:
 	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
 	 * Caller has to deallocate the xpdf Object.
 	 *
-	 * @return Xpdf object representing value of this simple object.
+	 * @return Xpdf object representing this object.
 	 *
 	 * \exception ObjBadValueE Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
@@ -299,8 +302,7 @@ protected:
 	 * Set mode of a property.
 	 *
 	 * @param ip IProperty which mode will be set.
-	 * @param id Identification of the property. String for dicts, number for
-	 * arrays.
+	 * @param id Position of the property.
 	 */
 	void _setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const;
 

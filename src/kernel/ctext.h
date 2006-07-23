@@ -5,7 +5,7 @@
 
 using namespace pdfobjects;
 
-class CText : public CString /*...*/
+class CText // : public CString /*...*/
 {
 
   //

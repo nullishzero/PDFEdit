@@ -25,19 +25,14 @@ namespace pdfobjects {
  * CObjectSimple type trait.
  *
  * This is an advance c++ template technique which allows us to store
- * additional information that identify variable type (e.g. specification of function types of a function template --
- * function in a template class).
+ * additional information that identify variable type (e.g. function type specification of a function template --
+ * method in a template class).
  *
  * If someone tries to use unsupported type (e.g pCmd, etc.), she should get compile error
  * because PropertyTraitSimple<> has no body.
  *
- * REMARK: BE CAREFUL when manipulating these ones. Because a small change could
- * be hard to find.
- *
- * This class does not provide default copy constructor because copying a
- * property could be understood either as deep copy or shallow copy. 
- * Copying complex types could be very expensive so we have made this decision to
- * avoid it.
+ * REMARK: BE CAREFUL when manipulating these ones. Small change could resulting
+ * in an error could be very difficult to find.
  *
  * \see CDict, CArray, CObjectStream
  */
@@ -77,20 +72,18 @@ template<> struct PropertyTraitSimple<pRef>
 //=====================================================================================
 
 /** 
- * Template class representing simple PDF objects from specification v1.5.
+ * Template class representing simple PDF objects from pdf specification v1.5.
  *
  * This is a very generic class representing simple objects like null, string, number etc.
- *
+ * Simple types only store information like string, name, number, two numbers etc. 
+ * 
  * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
  * exists. It is because PropertyTraitSimple is not specialized for these types.
  *
- * We use memory checking with this class which save information about existing IProperties.
- * This technique can be used to detect memory leaks etc. 
- *
- * Xpdf object is real mess so we just instantiate this object with xpdf object and
- * use this object. They were definitely not meant for changing, actually there
- * are meany places which clearly prohibit dissolve any hope for a sane way to change the object.
- *
+ * This class does not provide default copy constructor because copying a
+ * property could be understood either as deep copy or shallow copy. 
+ * Copying complex types could be very expensive so we have made the decision to
+ * avoid it.
  */
 template <PropertyType Tp>
 class CObjectSimple : noncopyable, public IProperty
@@ -108,7 +101,7 @@ public:
 	static const PropertyType type = Tp;
 
 private:
-	/** Object's valuei holder. */
+	/** Simple value. */
 	Value value;
 	
 
@@ -457,8 +450,6 @@ template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
 
 /**
  * Parses string to get simple values like int, name, bool etc.
- * 
- * <a cref="ObjBadValueE" /> Thrown when the string, can't be parsed correctly.
  * 
  * @param str	String to be parsed.
  * @param val	Desired value.

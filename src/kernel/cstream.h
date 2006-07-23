@@ -34,27 +34,18 @@ template<typename T> class CStreamsXpdfReader;
 namespace utils { template<typename Iter> void makeStreamPdfValid (Iter it, Iter end, std::string& out); }
 
 /**
- * Template class representing stream PDF objects from specification v1.5.
+ * Class representing stream object from pdf specification v1.5.
  *
- * It is neither a simple object, because it does not
- * contain just simple value, nor a complex object, because it can not be simple represented
- * in that generic class. It contains a dictionary and a stream. It does not have methods common
- * to complex objects.
- *
- * This is a generic class joining implementation of dictionary and array together in in one place.
- *
- * Other xpdf objects like objCmd can not be instantiated although the PropertyType 
- * exists. It is because PropertyTraitSimple is not specialized for these types.
- *
- * We use memory checking with this class which save information about existing IProperties.
- * This technique can be used to detect memory leaks etc. 
- *
- * Xpdf stream objects are the worst from all xpdf objects because of their deallocation politics.
- * It is really not easy to say when, where and who should deallocate an xpdf stream, its buffer etc...
+ * We do not want to use xpdf stream because it is a real mess and it is really
+ * not suitable for editing. We use xpdf object just for initializing and for
+ * reading objects.
+ * 
+ * According to pdf specification, stream is a dictionary and a stream of characters of specified length.
+ * Dictionary is used to describe the stream (its length, filters, parameters, etc..) 
  * 
  * This class does not provide default copy constructor because copying a
  * property could be understood either as deep copy or shallow copy. 
- * Copying complex types could be very expensive so we have made this decision to
+ * Copying complex types could be very expensive so we have made the decision to
  * avoid it.
  */
 class CStream : noncopyable, public IProperty
@@ -79,9 +70,9 @@ public:
 	// Storage
 	//
 protected:
-	/** Object dictionary. */
+	/** Stream dictionary. */
 	CDict dictionary;
-	/** Buffer. */
+	/** Stream buffer. */
 	Buffer buffer;
 
 	//
@@ -102,7 +93,7 @@ private:
 	//
 public:
 	/**
-	 * Constructor. Only kernel can call this constructor
+	 * Constructor. Stream will be associated with specified pdf.
 	 *
 	 * @param p		Pointer to pdf object.
 	 * @param o		Xpdf object. 
@@ -111,9 +102,8 @@ public:
 	CStream (CPdf& p, Object& o, const IndiRef& rf);
 
 	/**
-	 * Constructor. Only kernel can call this constructor
-	 *
-	 * @param o		Xpdf object. 
+	 * Constructor. Stream will not be associated with a pdf.
+	 * @param o	Xpdf object. 
 	 */
 	CStream (Object& o);
 
@@ -122,10 +112,10 @@ public:
 	
 	/** 
 	 * Public constructor. This object will not be associated with a pdf.
-	 * It adds one required property to objects dictionary namely "Length". This
-	 * is according to the pdf specification.
+	 * It adds all required properties to object dictionary in compliance with the pdf specification
+	 * if needed.
 	 *
-	 * @param makeReqEntries If true required entries are added to stream
+	 * @param makeReqEntries If true required entries are added to the stream
 	 * dictionary.
 	 */
 	CStream (bool makeReqEntries = true);
@@ -276,22 +266,19 @@ public:
 	//
 public:
 	/**
-	 * Set pdf to itself and also tu all children
-	 *
+	 * Set pdf to itself and also to all children.
 	 * @param pdf New pdf.
 	 */
 	virtual void setPdf (CPdf* pdf);
 
 	/**
-	 * Set ref to itself and also tu all children
-	 *
+	 * Set ref to itself and also to all children.
 	 * @param rf New indirect reference numbers.
 	 */
 	virtual void setIndiRef (const IndiRef& rf);
 
 	/**
 	 * Set encoded buffer.
-	 *
 	 * @param buf New buffer.
 	 */
 	void setRawBuffer (const Buffer& buf);
@@ -343,7 +330,7 @@ private:
 	void close ();
 	
 	/**
-	 * Get xpdf object and copy it to obj.
+	 * Get next xpdf object from the stream.
 	 *
 	 * REMARK: We can not do any buffering (caching) of xpdf objects, because
 	 * xpdf already does caching and it will NOT work correctly with inline
@@ -391,13 +378,12 @@ public:
 public:
 	/**
 	 * Make xpdf Object from this object. This function allocates and initializes xpdf object.
-	 * Caller has to free the xpdf Object (call Object::free and then
-	 * deallocating)
+	 * Caller has to deallocate the xpdf Object.
+	 *
+	 * @return Xpdf object representin this object.
 	 *
 	 * \exception ObjBadValueE Thrown when xpdf can't parse the string representation of this
 	 * object correctly.
-	 * 
-	 * @return Xpdf object representing value of this simple object.
 	 */
 	virtual Object* _makeXpdfObject () const; 
 
@@ -483,7 +469,7 @@ private:
 	/**
 	 * Create context of a change.
 	 *
-	 * REMARK: Be carefull. Deallocate this object.
+	 * REMARK: Be carefull. Deallocate the object.
 	 * 
 	 * @return Context in which a change occured.
 	 */
@@ -491,7 +477,7 @@ private:
 
 public:
 	/**
-	 * Return all object we have access to.
+	 * Return all child objects.
 	 *
 	 * @param store Container of objects.
 	 */
@@ -510,7 +496,7 @@ public:
 public:
 
 	/**
-	 * Return the list of all supported streams
+	 * Return the list of all supported streams.
 	 *
 	 * @return List of supported stream filters.
 	 */
@@ -622,9 +608,9 @@ getCStreamFromArray (IP& ip, size_t pos)
 
 
 //=====================================================================================
-} /* namespace utils*/
+} // namespace utils
 //=====================================================================================
-} /* namespace pdfobjects */
+} // namespace pdfobjects
 //=====================================================================================
 
 

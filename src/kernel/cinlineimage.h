@@ -30,14 +30,13 @@ namespace pdfobjects {
  * can be present only in a content stream.
  *
  * It is a direct object and it can not be referenced from outside the
- * content. 
+ * content stream. 
  *
- * It can inherit from CStream and therefore it has several advantages. 
- * 
  * The string representation of inline image is different that of a normal
- * stream. The advantage of inheriting from CStream is that transparently handles
- * different string representation simply by overloading getStringRepresentation method.
- * Otherwise it could be a problem.
+ * stream. The advantage of inheriting from CStream is the transparent handling
+ * of different string representation (to CStream) simply by overloading getStringRepresentation() method.
+ *
+ * \see CStream
  */
 class CInlineImage : public CStream
 {
@@ -46,9 +45,7 @@ class CInlineImage : public CStream
 	//
 public:
 	/**
-	 * Constructor. 
-	 *
-	 * It does not belong to any pdf.
+	 * Constructor. It will not be associated with a pdf.
 	 *
 	 * @param objDict Inline image dictionary.
 	 * @param buffer Raw stream data.
@@ -56,9 +53,7 @@ public:
 	CInlineImage (::Object& objDict, const CStream::Buffer& buffer);
 
 	/**
-	 * Constructor.
-	 *
-	 * This inline image is in a pdf.
+	 * Constructor. It will be associated with specified pdf.
 	 * 
 	 * @param p Pdf where it belongs.
 	 * @param objDict Inline image dictionary.
@@ -67,7 +62,7 @@ public:
 	 */
 	CInlineImage (CPdf& p, ::Object& objDict, const CStream::Buffer& buffer, const IndiRef& rf);
 
-	/** Default constructor. */
+	/** Constructor. It will not be associated with a pdf. */
 	CInlineImage () : CStream(false) {};
 
 	
@@ -77,7 +72,6 @@ public:
 protected:
 	/** 
 	 * Factory method.
-	 * 
 	 * @return New instance of inline image.
 	 */
 	virtual CStream* _newInstance () const
@@ -100,9 +94,7 @@ public:
 	virtual void getStringRepresentation (std::string& str) const;
 
 	/**
-     * Creates xpdf object from this object. 
-	 *
-	 * This function is just to for catching programming errors, it does not make 
+	 * This function is justfor catching programming errors, it does not make 
 	 * any sense to make an xpdf object from a direct object.
 	 *
      * @return Xpdf object(s).
@@ -118,7 +110,7 @@ public:
 
 
 //=====================================================================================
-} /* namespace pdfobjects */
+} // namespace pdfobjects
 //=====================================================================================
 
 

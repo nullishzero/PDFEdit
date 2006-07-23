@@ -60,11 +60,11 @@ typedef unsigned int ObjNum;
 /** Object generation number. */
 typedef unsigned int GenNum;
 
-/** Values specifying indirect reference to an (x)pdf object. */
+/** Two numbers specifying indirect reference of a pdf object. */
 typedef struct IndiRef
 {
-	ObjNum	num; /**< Object's pdf identification number. */
-	GenNum	gen; /**< Object's pdf generation number. */
+	ObjNum	num; /**< Objects pdf identification number. */
+	GenNum	gen; /**< Objects pdf generation number. */
 
 	static const ObjNum invalidnum = 0;	/**< Invalid object identification number. */
 	static const GenNum invalidgen = 0; /**< Invalid object generation number. */
@@ -115,26 +115,25 @@ typedef struct IndiRef
 
 /** 
  * Narrow interface describing properties of every pdf object. We use this 
- * interface when we access properties of pdf object.
+ * interface when accessing properties of pdf object.
  *
  * Each IProperty is associated with one pdf object.
- * Changes made to this object are visible by xpdf only after registered
- * dispatchChange() method.
+ * Changes made to this object are visible by xpdf only after calling dispatchChange() method.
  *
  * When accessing complex properties, we have to know their type.
- * According to the type, we can cast this object to CObjectComplex<type> 
- * to get more functionality.
- *
- * REMARK: The connection to CPdf is stored in CPdf* and not a smart pointer. This has a good reason
- * namely cyclic references of smart pointers.
+ * According to the type, we can cast this object to CArray, CDict, CStream to get more functionality.
  *
  * This object implements Observer interface which means we can observe changes
- * made to all CObjects.
+ * made to all cobjects.
+ *
+ * REMARK: The association with CPdf is stored in pdf variable as CPdf* and not a smart pointer. This has a good reason
+ * namely cyclic references of smart pointers.
+
  */
 class IProperty : public IPropertyObserverSubject
 {
 private:
-	IndiRef 		ref;		/**< Object's pdf identification and generation number. */
+	IndiRef 		ref;		/**< Objects pdf identification and generation number. */
 	PropertyMode	mode;		/**< Mode of this property. */
 	CPdf* 			pdf;		/**< This object belongs to this pdf. */	
 	bool			wantDispatch;/**< If true changes are dispatched. */
@@ -144,7 +143,7 @@ private:
 	//
 private:
 	/** Copy constructor. */
-	IProperty (const IProperty&) : IPropertyObserverSubject() {};
+	//IProperty (const IProperty&) : IPropertyObserverSubject() {};
 
 protected:	
 
@@ -187,17 +186,13 @@ protected:
 public:
   
 	/**
-	 * Set pdf.
-	 * <exception cref="ObjInvalidOperation"> Thrown when we want to set pdf association to 
-	 * already associated object.
-	 *
+	 * Set association with pdf.
 	 * @param p pdf that this object belongs to
 	 */
 	virtual void setPdf (CPdf* p);
 
 	/**
 	 * Returns pdf in which this object resides.
-	 *
 	 * @return Pdf that this object is associated with.
 	 */
 	CPdf* getPdf () const {return pdf;};
@@ -207,7 +202,7 @@ public:
 	//
 public:
 	/**
-	 * Returns object's identification number. If it is a direct object
+	 * Returns object identification number. If it is a direct object
 	 * returns identification and generation number of parent object.
 	 *
 	 * @return Identification and generation number.
@@ -226,8 +221,8 @@ public:
 	/**
 	 * Set object identification number and generation number.
 	 *
-	 * @param n Object's identification number.
-	 * @param g Object's generation number.
+	 * @param n Objects identification number.
+	 * @param g Objects generation number.
 	 */
 	void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
 
@@ -267,12 +262,10 @@ public:
     	STATIC_CHECK(sizeof(T)>=sizeof(IProperty),DESTINATION_TYPE_TOO_NARROW); 
 		boost::shared_ptr<T> newptr = boost::dynamic_pointer_cast<T, IProperty> (ptr);
 		if (newptr)
-		{
 	  	  	return newptr;
-		}
 		else
 		{
-			assert (!"doClone INCORRECTLY overriden!! ");
+			assert (!"RTTI error: Want to cast to invalid type!! ");
 			throw CObjInvalidObject (); 
 		}
     }

@@ -5,7 +5,6 @@
  *     Description:  Header file containing definition of IProperty and CObject classes.
  *         Created:  01/18/2006 
  *          Author:  jmisutka (06/01/19), 
- *
  * =====================================================================================
  */
 #ifndef _COBJECT_H
@@ -16,7 +15,6 @@
 // Base class for all cobjects
 //=====================================================================================
 #include "iproperty.h"
-
 
 //=====================================================================================
 // CObjectSimple
@@ -43,11 +41,10 @@
 //=====================================================================================
 #include "cstreamsxpdfreader.h"
 
-
 //=====================================================================================
 // Utility functions not included in previous includes
 //=====================================================================================
 #include "cobjecthelpers.h"
 
-#endif // _COBJECT_H
 
+#endif // _COBJECT_H
