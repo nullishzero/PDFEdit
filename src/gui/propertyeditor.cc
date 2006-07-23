@@ -201,6 +201,23 @@ bool PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
  return true;
 }
 
+/**
+ Append message as next "property"
+ @param message Message string
+*/
+void PropertyEditor::appendMessage(const QString &message) {
+ QString name="the_label";
+ QLabel *label=new QLabel(message,grid);
+ label->setTextFormat(Qt::RichText);
+ int labelHeight=label->sizeHint().height();
+ gridl->setRowSpacing(nObjects,labelHeight);
+ gridl->addMultiCellWidget(label,nObjects,nObjects,0,1);
+ nObjects++;
+ list->append(name);
+ labels->insert(name,label);
+ label->show();
+}
+
 /** Show some message inside property editor instead of its usual contents
  (like "this is not editable", "this object does not have properties", etc ...)
  @param message Message to show
@@ -208,47 +225,7 @@ bool PropertyEditor::addProperty(const QString &name,boost::shared_ptr<IProperty
 void PropertyEditor::setObject(const QString &message) {
  setUpdatesEnabled( FALSE );
  clear();
-
- QString name="the_label";
- QLabel *label=new QLabel(message,grid);
- label->setTextFormat(Qt::RichText);
- int labelHeight=label->sizeHint().height();
- gridl->setRowSpacing(nObjects,labelHeight);
- gridl->addMultiCellWidget(label,0,0,0,1);
- nObjects=1;
- list->append(name);
- labels->insert(name,label);
- label->show();
- setUpdatesEnabled( TRUE );
-}
-
-/**
- Set PdfOperator to be active (edited) in this editor.
- Operands will be edited
- @param pdfOp Object to set for editing in the widget
-*/
-void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
- setUpdatesEnabled( FALSE );
- clear();
- currentOp=pdfOp;
- if (!pdfOp.get()) {
-  unsetObject();
- } else {
-  PdfOperator::Operands list;
-  pdfOp->getParameters(list);
-  PdfOperator::Operands::iterator it;
-  int i=0;
-  for(it=list.begin();it!=list.end();++it) { // for each property
-   i++;
-   addProperty(QObject::tr("Parameter")+" "+QString::number(i),*it);
-  }
-  if (!i) { //No subproperties at all
-   setObject(tr("This operator does not have any parameter"));
-  } else if (!nObjects) { //No editable subproperties
-   setObject(tr("This operator does not have any directly editable parameters"));
-  }
-  grid->update();
- }
+ appendMessage(message);
  setUpdatesEnabled( TRUE );
 }
 
@@ -277,6 +254,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
  setUpdatesEnabled( FALSE );
  clear();
  currentObj=pdfObject;
+ int complex_properties=0; //Number of complex (directly uneditable) properties
  if (!pdfObject.get()) {
   unsetObject();
  } else if (pdfObject->getType()==pDict) {	//Object is CDict -> edit its properties
@@ -289,8 +267,9 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   for( it=list.begin();it!=list.end();++it) { // for each property
    i++;
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
-   addProperty(*it,property);
+   if (!addProperty(*it,property)) complex_properties++;
   }
+  complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This %1 is empty").arg(tr("dictionary","property type")));
   } else if (!nObjects) { //No editable subproperties
@@ -308,8 +287,9 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   for( it=list.begin();it!=list.end();++it) { // for each property
    i++;
    boost::shared_ptr<IProperty> property=cstream->getProperty(*it);
-   addProperty(*it,property);
+   if (!addProperty(*it,property)) complex_properties++;
   }
+  complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This %1 is empty").arg(tr("stream","property type")));
   } else if (!nObjects) { //No editable subproperties
@@ -324,17 +304,60 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   for(;i<n;i++) { //for each property
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
    name.sprintf("[ %4d ]",i);
-   addProperty(name,property);
+   if (!addProperty(name,property)) complex_properties++;
   }
+  complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This array is empty"));
   } else if (!nObjects) { //No editable subproperties
-   setObject(tr("This array does not have any directly editable properties"));
+   setObject(tr("This array does not have any directly editable elements"));
   }
  } else { //Simple or unknown type
   setObject(tr("This type of object does not have any properties")+" ("+getTypeName(pdfObject)+")");
  }
  setUpdatesEnabled( TRUE );
+}
+
+/**
+ Set PdfOperator to be active (edited) in this editor.
+ Operands will be edited
+ @param pdfOp Object to set for editing in the widget
+*/
+void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
+ setUpdatesEnabled( FALSE );
+ clear();
+ currentOp=pdfOp;
+ if (!pdfOp.get()) {
+  unsetObject();
+ } else {
+  int complex_properties=0; //Number of complex (directly uneditable) properties
+  PdfOperator::Operands list;
+  pdfOp->getParameters(list);
+  PdfOperator::Operands::iterator it;
+  int i=0;
+  for(it=list.begin();it!=list.end();++it) { // for each property
+   i++;
+   if (!addProperty(QObject::tr("Parameter")+" "+QString::number(i),*it)) complex_properties++;
+  }
+  complex_message(complex_properties);
+  if (!i) { //No subproperties at all
+   setObject(tr("This operator does not have any parameters"));
+  } else if (!nObjects) { //No editable subproperties
+   setObject(tr("This operator does not have any directly editable parameters"));
+  }
+  grid->update();
+ }
+ setUpdatesEnabled( TRUE );
+}
+
+/**
+ Display additional message informing about number of complex
+ properti4es that are not editable and thus not show
+ @param num_complex Number of complex properties
+*/
+void PropertyEditor::complex_message(int num_complex) {
+ if (!num_complex) return; /// No message to show
+ appendMessage(countString(num_complex,"complex item is not shown","complex items are not shown"));
 }
 
 /** set single IProperty object to be active (edited) in this editor

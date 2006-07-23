@@ -71,6 +71,8 @@ private:
  void override(bool _showHidden,bool _editReadOnly);
  bool addProperty(const QString &name,boost::shared_ptr<IProperty> value);
  void addProperty(Property *prop,boost::shared_ptr<IProperty> value);
+ void appendMessage(const QString &message);
+ void complex_message(int num_complex);
  void deleteLayout();
  void createLayout();
  void fixPropertyHeight(Property *pr);
