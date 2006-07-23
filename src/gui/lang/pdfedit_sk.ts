@@ -766,10 +766,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Mode not supported.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>End position</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1019,6 +1015,21 @@ Data: %3
     </message>
     <message>
         <source>r,g,b must be from 0 to 255</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>complex item is not shown</source>
+        <comment>1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>complex items are not shown</source>
+        <comment>2-4</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>complex items are not shown</source>
+        <comment>5+</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1285,6 +1296,13 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::ColorTool</name>
+    <message>
+        <source>Choose color</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::HelpWindow</name>
     <message>
         <source>help</source>
@@ -1532,11 +1550,11 @@ Data: %3
 <context>
     <name>gui::PageView</name>
     <message>
-        <source>Selected area is not set!</source>
+        <source>Mode is not set!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Selection mode is set to nonsense!</source>
+        <source>Selected area is empty!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1633,10 +1651,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This operator does not have any parameter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>This operator does not have any directly editable parameters</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1663,7 +1677,11 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This array does not have any directly editable properties</source>
+        <source>This array does not have any directly editable elements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This operator does not have any parameters</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

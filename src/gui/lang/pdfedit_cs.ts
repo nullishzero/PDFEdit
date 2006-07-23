@@ -781,10 +781,6 @@ Data: %3
         <translation>Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
     </message>
     <message>
-        <source>Mode not supported.</source>
-        <translation>Režim není podporován.</translation>
-    </message>
-    <message>
         <source>End position</source>
         <translation>Koncový bod</translation>
     </message>
@@ -1023,6 +1019,21 @@ Data: %3
     <message>
         <source>Shortcut for</source>
         <translation>Zkratka pro</translation>
+    </message>
+    <message>
+        <source>complex item is not shown</source>
+        <comment>1</comment>
+        <translation>komplexní položka není zobrazena</translation>
+    </message>
+    <message>
+        <source>complex items are not shown</source>
+        <comment>2-4</comment>
+        <translation>komplexní položky nejsou zobrazeny</translation>
+    </message>
+    <message>
+        <source>complex items are not shown</source>
+        <comment>5+</comment>
+        <translation>komplexních položek není zobrazeno</translation>
     </message>
 </context>
 <context>
@@ -1288,6 +1299,13 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::ColorTool</name>
+    <message>
+        <source>Choose color</source>
+        <translation>Vyberte barvu</translation>
+    </message>
+</context>
+<context>
     <name>gui::HelpWindow</name>
     <message>
         <source>help</source>
@@ -1532,12 +1550,12 @@ Data: %3
 <context>
     <name>gui::PageView</name>
     <message>
-        <source>Selected area is not set!</source>
-        <translation>Vybraný výsek není nastaven!</translation>
+        <source>Mode is not set!</source>
+        <translation>Režim není nastaven!</translation>
     </message>
     <message>
-        <source>Selection mode is set to nonsense!</source>
-        <translation>Mód výběru je nastaven na nesmysl!</translation>
+        <source>Selected area is empty!</source>
+        <translation>Vybraná oblast je prázdná!</translation>
     </message>
 </context>
 <context>
@@ -1633,10 +1651,6 @@ Data: %3
         <translation>Tento typ objektu nemá žádné položky</translation>
     </message>
     <message>
-        <source>This operator does not have any parameter</source>
-        <translation>Tento operátor nemá žádné parametry</translation>
-    </message>
-    <message>
         <source>This operator does not have any directly editable parameters</source>
         <translation>Tento operátor nemá žádné přímo měnitelné parametry</translation>
     </message>
@@ -1663,8 +1677,12 @@ Data: %3
         <translation>Toto pole je prázdné</translation>
     </message>
     <message>
-        <source>This array does not have any directly editable properties</source>
-        <translation>Toto pole nemá žádné přímo měnitelné položky</translation>
+        <source>This array does not have any directly editable elements</source>
+        <translation>Toto pole nemá žádné přímo měnitelné prvky</translation>
+    </message>
+    <message>
+        <source>This operator does not have any parameters</source>
+        <translation>Tento operátor nemá žádné parametry</translation>
     </message>
 </context>
 <context>
