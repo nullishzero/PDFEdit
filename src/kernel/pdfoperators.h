@@ -33,7 +33,7 @@ class CContentStream;
  * This class is the base class for COMPOSITE design pattern and also DECORATOR design pattern.
  * 
  * This is a special implementation, a hybrid between implementation of stl containers and GoF
- * example).
+ * example.
  *
  * Content stream consists of operators and their operands. Operators can be
  * composites. Each operator alters graphical state in a predefined way.
@@ -46,25 +46,25 @@ class CContentStream;
  * iterate over them sequentially.
  *
  * They also form a tree like structure and that is the reason why Composite
- * design pattern is used here. Decorator and composite together form a very
- * easy to use way how to change these operators. (e.g. changing font means 
+ * design pattern is used here. Decorator and composite together allow a very
+ * easy way to change these operators. (e.g. changing font means 
  * wrapping the text operator to a composite, which includes also the font
  * change operator.) 
  *
- * This approach allows us to represent operators in a human readible way
+ * This approach allows us to represent operators in a human readable way
  * (tree like structure) and to have the power of double linked list with
  * iterators.
  *
  * We can not simply represent these two queues in one. If we want to have all
- * info only in interator queue items can not be shares pointers because of the
+ * info only in interator queue, items can not be shared pointers because of the
  * cyclic shared pointer problem (no item would get ever deallocated). If we
  * want to have all the info in tree like queue, we would have to know the
- * parents and it would not be easy to write an iterator and it is not a clean
+ * parents and it would not be easy to write an iterator. It would not be a clean
  * straight forward solution. Another possibility is to have the queue outside
- * but (e.g. in content stream) but then we would not be able to soimply create
+ * (e.g. in content stream) but then we would not be able to simply create
  * composites.
  *
- * Another advantage of the composite designe pattern is the single unified interface.
+ * Another advantage of the composite design pattern is the single unified interface.
  * In most cases we do not need to distinguish between a composite and a leaf.
  *
  * Iterators are crucial when selecting operators. 
@@ -626,10 +626,10 @@ class CInlineImage;
 
 /**
  * Inline image pdf operator. This is not a real composite but we can represent
- * it as one. This object is special it is other than
- * every other operator according to the pdf specification.
+ * it as one. This object is special. It is different than
+ * every other pdf operator.
  *
- * This is an implementation of Composite design pattern where leaves and
+ * This is an implementation of the Composite design pattern where leaves and
  * composites share the same interface.
  * 
  * \see PdfOperator, CompositePdfOperator

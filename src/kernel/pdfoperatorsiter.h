@@ -41,7 +41,7 @@ typedef enum
 /**
  * Generic iterator that accepts set of operators.
  *
- * This is a very generic class iterates only over specified operators. Use this
+ * This is a very generic class which iterates only over specified operators. Use this
  * class when a special iterator is desired.
  *
  * \see Iterator, RejectingPdfOperatorIterator
@@ -94,7 +94,7 @@ private:
 /**
  * Generic iterator that rejects set of operators.
  * 
- * This is a very generic class iterates over all but specified operators. Use this
+ * This is a very generic class which iterates over all but specified operators. Use this
  * class when a special iterator is desired.
  *
  * \see Iterator, AcceptingPdfOperatorIterator
@@ -155,6 +155,9 @@ typedef AcceptingPdfOperatorIterator<4, itTextIterator> TextOperatorIterator;
 
 /**
  * Font operator iterator.
+ *  
+ * Constructed from an arbitrary operator, but it will always start from a valid
+ * font operator. This is done in the constructor.
  *
  * This iterator traverses only through operators that alter graphical font state.
  */
@@ -210,7 +213,7 @@ typedef struct AcceptingPdfOperatorIterator<4, itStrokingIterator> StrokingOpera
  * Graphical operator iterator.
  *
  * Constructed from an arbitrary operator, but it will always start from a valid
- * common operator. This is done in the constructor.
+ * graphical operator. This is done in the constructor.
  *
  * This iterator iterates over all graphical operators on a page this includes
  * lines, rectangles, paths.
@@ -220,7 +223,7 @@ typedef struct AcceptingPdfOperatorIterator<24, itGraphicalIterator> GraphicalOp
 
 
 /**
- *
+ * Decides if the operator is from content stream of our change or not.
  */
 struct ChangePdfOperatorIterator: public PdfOperator::Iterator
 {
