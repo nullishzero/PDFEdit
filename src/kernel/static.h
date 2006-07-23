@@ -100,28 +100,32 @@ private:
 
 //=====================================================================================
 
-/** Coordinate. */
+/** Coordinate according to pdf specification. */
 typedef double Coordinate;
 /** Invalid coordinate. */
 const double COORDINATE_INVALID = std::numeric_limits<Coordinate>::max();
 
 /**
- * Point. 
+ * Generic point. 
  */
-typedef struct Point
+template <typename Coord>
+struct GenPoint
 {
-	Coordinate x; /**< X coordinate. */
-	Coordinate y; /**< Y coordinate. */
+	Coord x; /**< X coordinate. */
+	Coord y; /**< Y coordinate. */
 	/** Constructor. */
-	Point () {x = y = COORDINATE_INVALID;}
+	GenPoint () {x = y = COORDINATE_INVALID;}
 	/** Constructor. */
-	Point (Coordinate _x, Coordinate _y) : x(_x), y(_y) {}
+	GenPoint (Coord _x, Coord _y) : x(_x), y(_y) {}
 
-} Point;
+};
+
+/** Pint defined in compliance with the pdf specification v1.5 (p. 133). */
+typedef struct GenPoint<Coordinate> Point;
 
 
 /**
- * Rectangle structure. Defined in compliance with the pdf specification v1.5 (p. 133).
+ * Generic rectangle.
  */
 template <typename Coord>
 struct GenRect
@@ -165,7 +169,7 @@ struct GenRect
 	
 };
 
-/** Our specialization of general rectangle. */
+/** Rectangle defined in compliance with the pdf specification v1.5 (p. 133). */
 typedef struct GenRect<Coordinate> Rectangle;
 
 
