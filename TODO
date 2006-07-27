@@ -1,6 +1,7 @@
 Vysvetlivky
 ----------
 	- x Feature je implementovana + otestovana
+	- s Feature je implemetovana ve skriptingu a kernelu, ale zatim neni otestovana
 	- o Feature je implementovana
 
 TODO list:
@@ -76,7 +77,7 @@ Kernel
  [ ] Unicode v properties, problemy s charsetem ...
  ??? Decryption/Encryption - asi future wishlist
  [x] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
- [o] Posunutie contenstreamu o level vyssie / nizsie
+ [s] Posunutie contenstreamu o level vyssie / nizsie
  [ ] Filtre (LZW,FlateDecode,..)
  [o] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
 
