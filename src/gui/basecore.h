@@ -53,6 +53,7 @@ public:
  void removeGC(QSCObject *o);
  void errorNullPointer(const QString &className,const QString &methodName);
  void errorBadParameter(const QString &className,const QString &methodName,int paramNum,const QObject *param,const QString &expected);
+ void errorException(const QString &className,const QString &methodName,const QString &exceptionInfo);
  void addTreeItemToList(QSTreeItem* theWrap);
  void removeTreeItemFromList(QSTreeItem* theWrap);
  QSInterpreter* interpreter();

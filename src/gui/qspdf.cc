@@ -118,7 +118,11 @@ QSPage* QSPdf::insertPage(QObject* page, int position) {
 */
 void QSPdf::removePage(int position) {
  if (nullPtr(obj,"removePage")) return;
- obj->removePage(position);
+ try {
+  obj->removePage(position);
+ } catch (PageNotFoundException &e) {
+  base->errorException("Pdf","removePage",tr("Page not found"));
+ }
 }
 
 /**
@@ -161,7 +165,11 @@ int QSPdf::getPageCount() {
 */
 QSPage* QSPdf::getPage(int position) {
  if (nullPtr(obj,"getPage")) return NULL;
- return new QSPage(obj->getPage(position),base);
+ try {
+  return new QSPage(obj->getPage(position),base);
+ } catch (PageNotFoundException &e) {
+  base->errorException("Pdf","getPage",tr("Page not found"));
+ }
 }
 
 /**

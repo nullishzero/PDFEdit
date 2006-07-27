@@ -32,6 +32,14 @@ public:
  QSPage(boost::shared_ptr<CPage> _page,BaseCore *_base);
  boost::shared_ptr<CPage> get() const;
 public slots:
+ /*- Move specified content stream in this page one level up in painting order. */
+ void moveAbove(QSContentStream* cs);
+ /*- Move specified content stream in this page one level down in painting order. */
+ void moveBelow(QSContentStream* cs);
+ /*- Move content stream with specified index in this page one level up in painting order. */
+ void moveAbove(int csi);
+ /*- Move content stream with specified index in this page one level down in painting order. */
+ void moveBelow(int csi);
  /*- Add copy of given annotation to this page */
  void addAnnotation(QSAnnotation* an);
  void addAnnotation(QObject *an);

@@ -326,6 +326,16 @@ void BaseCore::errorNullPointer(const QString &className,const QString &methodNa
 }
 
 /**
+ Script error invoked when script encounter an exception
+ @param className Name of class, in which this exception occured
+ @param methodName Name of method, in which this exception occured
+ @param exceptionInfo Extra exception information
+ */
+void BaseCore::errorException(const QString &className,const QString &methodName,const QString &exceptionInfo) {
+ qs->throwError(tr("Exception in ")+className+"."+methodName+" : "+exceptionInfo);
+}
+
+/**
  Script error invoked when script function was executed with bad parameter
  @param className Name of class, in which this error occured
  @param methodName Name of method, in which this error occured

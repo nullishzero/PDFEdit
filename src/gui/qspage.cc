@@ -51,6 +51,38 @@ QSDict* QSPage::getDictionary() {
  return new QSDict(obj->getDictionary(),base);
 }
 
+/** 
+ \see CPage::moveAbove
+ @param cs Content stream to move one level up painting order
+*/
+void QSPage::moveAbove(QSContentStream* cs) {
+ obj->moveAbove(cs->get());
+}
+
+/** 
+ \see CPage::moveBelow
+ @param cs Content stream to move one level below in painting order
+*/
+void QSPage::moveBelow(QSContentStream* cs) {
+ obj->moveBelow(cs->get());
+}
+
+/** 
+ \see CPage::moveAbove
+ @param csi Index of content stream to move one level up painting order
+*/
+void QSPage::moveAbove(int csi) {
+ obj->moveAbove(csi);
+}
+
+/** 
+ \see CPage::moveBelow
+ @param csi Index of content stream to move one level below in painting order
+*/
+void QSPage::moveBelow(int csi) {
+ obj->moveBelow(csi);
+}
+
 /**
  Set transform matrix of this page
  \see CPage::setTransformMatrix
