@@ -42,11 +42,11 @@ function movePage(page, diff)
                 return currPos;
 
         document.removePage(currPos);
-        document.insertPage(page, storePos)
+        document.insertPage(page, storePos);
         PageSpace.refresh(currPos);
 
         // reload
         go();
-        reuturn storePos;
+        return storePos;
 }
 
