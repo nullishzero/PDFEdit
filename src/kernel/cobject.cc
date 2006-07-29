@@ -1369,10 +1369,8 @@ parseStreamToContainer (T& container, ::Object& obj)
 	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());
 	
 	if (len != container.size())
-	{
-		int* i = 0;
-		*i  = 100;
-	}
+		utilsPrintDbg(debug::DBG_ERR, "Stream buffer length ("<<container.size()<<") doesn't match Length value ("<<len<<").")
+
 	assert (len == container.size());
 	// Cleanup
 	obj.streamClose ();
