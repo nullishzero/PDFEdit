@@ -140,15 +140,15 @@ function calcDiff(positions, value, n)
  * // pp1 should be inserted to the p1's position (currently 1st)
  * // pp2 should be inserted to the p2's position (currently 2nd)
  * // pp3 should be inserted to the p3's position (currently 3rd)
- * mergeWithFile([pp1,pp2,pp3], [1,2,3])
+ * mergeWithPages([pp1,pp2,pp3], [1,2,3])
  * // or with skipped position parameters
- * mergeWithFile([pp1,pp2,pp3], [1,2])
+ * mergeWithPages([pp1,pp2,pp3], [1,2])
  * // with same meaning as
- * mergeWithFile([pp1,pp2,pp3], [1,2])
+ * mergeWithPages([pp1,pp2,pp3], [1,2])
  * // or
- * mergeWithFile([pp1,pp2,pp3], [1])
+ * mergeWithPages([pp1,pp2,pp3], [1])
  * // or empty positions means from the begining of document
- * mergeWithFile([pp1,pp2,pp3]. [])
+ * mergeWithPages([pp1,pp2,pp3]. [])
  *
  * // As a result:
  * // pp1, p1, pp2, p2, pp3, p3
@@ -157,7 +157,7 @@ function calcDiff(positions, value, n)
  * // pp1 should be inserted to the p3's position (currently 1st)
  * // pp2 should be inserted to the p2's position (currently 2nd)
  * // pp3 should be inserted to the p1's position (currently 3rd)
- * mergeWithFile([pp1,pp2,pp3], [3, 2, 1])
+ * mergeWithPages([pp1,pp2,pp3], [3, 2, 1])
  *
  * // As a result:
  * // pp3, p1, pp2, p2, pp1, p3
@@ -165,7 +165,7 @@ function calcDiff(positions, value, n)
  * // 3.)
  * // merge pp1, pp2, pp3 behind current pages (join documents with
  * // current in front part. 
- * mergeWithFile([pp1,pp2,pp3], [document.getPageCount()])
+ * mergeWithPages([pp1,pp2,pp3], [document.getPageCount()+1])
  *
  * // As a result:
  * // p1, p2 ,p3, pp1, pp2, pp3
@@ -173,7 +173,7 @@ function calcDiff(positions, value, n)
  * // 4.)
  * // merge pp1, pp2, pp3 before current pages (join documents with
  * // current in back part. 
- * mergeWithFile([pp1,pp2,pp3], [1,1,1])
+ * mergeWithPages([pp1,pp2,pp3], [1,1,1])
  *
  * // As a result:
  * // pp1, pp2 ,pp3, p1, p2, p3
