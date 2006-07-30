@@ -101,3 +101,126 @@ function removePage(pos)
 
         return displayPos;
 }
+
+/** Calculates number of first n elements lower than value from given
+ * array.
+ * @param positions Array of numbers.
+ * @param value Value which to compare.
+ * @return Number of positions array members which are lower than given
+ * value.
+ */
+function calcDiff(positions, value, n)
+{
+        var diff=0;
+
+        for(j=0; j<n; ++j)
+                if(positions[j]>0 && positions[j]<=value)
+                        diff++;
+
+        return diff;
+}
+
+/** Merge given pages with current document.
+ * @param pages Array of pages to merge with.
+ * @param positions Array of positions for pages (see below).
+ *
+ * Inserts all pages from given array each to the position from given array.
+ * positions members are positions of pages in original document where to 
+ * insert coresponding page. If positions array is shorter than pages, missing
+ * members are calculated as successors of the highest positions member.
+ * If pages array is shorther than positions array, positions's redundant 
+ * (those without page) are ignored.
+ * <br>
+ * Examples:
+ * <pre>
+ * // Current document has 3 pages (p1, p2, p3)
+ * // We want to merge pp1, pp2, pp3 with current document and
+ *
+ * // 1.)
+ * // pp1 should be inserted to the p1's position (currently 1st)
+ * // pp2 should be inserted to the p2's position (currently 2nd)
+ * // pp3 should be inserted to the p3's position (currently 3rd)
+ * mergeWithFile([pp1,pp2,pp3], [1,2,3])
+ * // or with skipped position parameters
+ * mergeWithFile([pp1,pp2,pp3], [1,2])
+ * // with same meaning as
+ * mergeWithFile([pp1,pp2,pp3], [1,2])
+ * // or
+ * mergeWithFile([pp1,pp2,pp3], [1])
+ * // or empty positions means from the begining of document
+ * mergeWithFile([pp1,pp2,pp3]. [])
+ *
+ * // As a result:
+ * // pp1, p1, pp2, p2, pp3, p3
+ *
+ * // 2.)
+ * // pp1 should be inserted to the p3's position (currently 1st)
+ * // pp2 should be inserted to the p2's position (currently 2nd)
+ * // pp3 should be inserted to the p1's position (currently 3rd)
+ * mergeWithFile([pp1,pp2,pp3], [3, 2, 1])
+ *
+ * // As a result:
+ * // pp3, p1, pp2, p2, pp1, p3
+ *
+ * // 3.)
+ * // merge pp1, pp2, pp3 behind current pages (join documents with
+ * // current in front part. 
+ * mergeWithFile([pp1,pp2,pp3], [document.getPageCount()])
+ *
+ * // As a result:
+ * // p1, p2 ,p3, pp1, pp2, pp3
+ *
+ * // 4.)
+ * // merge pp1, pp2, pp3 before current pages (join documents with
+ * // current in back part. 
+ * mergeWithFile([pp1,pp2,pp3], [1,1,1])
+ *
+ * // As a result:
+ * // pp1, pp2 ,pp3, p1, p2, p3
+ * </pre>
+ */
+function mergeWithPages(pages, positions)
+{
+        var maxPos=0;
+        var pos;
+        
+        // stores all pages which have their position
+        for(i=0;i<pages.length && i<positions.length; ++i)
+        {
+                pos=positions[i];
+
+                // ignores all out of range positions
+                if(pos<1)
+                {
+                        warn(pos+" "+"out of range");
+                        continue;
+                }
+
+                // cheks maximum of positions for pages which don't have 
+                // their position
+                if(maxPos<pos)
+                        maxPos=pos;
+
+                // given pos has to be recalculated because of previous
+                // insertions. So all lower positions increments diff
+                // for it.
+                pos+=calcDiff(positions, pos, i-1);
+
+                // inserts page to the current document to the calculated place
+                document.insertPage(pages[i], pos);
+        }
+
+        // handles also pages which doesn't have their position
+        // stores them behind last
+        pos=maxPos+calcDiff(positions, maxPos+1, positions.length)+1;
+        System.println("maxPos="+maxPos+" pos="+pos);
+        for(j=0;i<pages.length; ++i)
+        {
+                document.insertPage(pages[i], pos);
+
+                // moves to next position with respect to above insertion
+                pos+=2;
+        }
+
+        go();
+}
