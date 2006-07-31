@@ -65,6 +65,7 @@ GUI
  [ ] Zobraz iba poslednu zmenu na stranke
  [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
  [ ] Button a dialogy pre mergovanie dokumentov.
+ [ ] Text search
 
 Skripting
  [ ] pridat getAllAnnotations
