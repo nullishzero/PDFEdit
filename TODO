@@ -64,6 +64,7 @@ GUI
  [ ] Slovenska lokalizace :)
  [ ] Zobraz iba poslednu zmenu na stranke
  [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
+ [ ] Button a dialogy pre mergovanie dokumentov.
 
 Skripting
  [ ] pridat getAllAnnotations
@@ -74,6 +75,7 @@ Skripting
  [ ] Wrapper kolem Const cdict -> pro cteni veci z traileru. Eventuelne pak dat i do stromu
  [x] Odstranit treeitem, item, source, target (z skriptu, kodu i dokumentace, je to deprecated)
  [x] Scripty na manipulaciu stranok (movePage, insertPage, removePage())
+ [ ] Scripty na mergovanie dokumentov.
 
 Kernel
  [ ] Unicode v properties, problemy s charsetem ...
