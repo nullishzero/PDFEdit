@@ -1,0 +1,21 @@
+<chapter id="general_layers_chapter">
+        <title>PDFedit layers</title>
+        <para>
+                TODO separation to layers + image and short description.
+        </para>
+
+        <sect1>
+                <title>Layers description</title>
+                <para>
+                        TODO responsibilities of each
+                </para>
+        </sect1>
+        
+        <sect1>
+                <title>Interface between layers</title>
+                <para>
+                        TODO kernel - gui interface (high level CObjects).
+                        GUI - scripting QSObjects
+                </para>
+        </sect1>
+</chapter>

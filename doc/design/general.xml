@@ -1,3 +1,28 @@
 <part id="general_part">
-        <title>pdfedit general design overview</title>
+        <title>PDFEdit general design overview</title>
+        <para>
+                PDFEdit project is build on top of popular open source 
+                <ulink url="http://www.foolabs.com/xpdf/">Xpdf</ulink> project. 
+                It reuses xpdf code for low-level pdf document access - reading 
+                and decoding content and parsing it to objects as well as 
+                displaying functionality. xpdf objects are transformed to 
+                PDFedit special objects (TODO link CObject)  
+                which provides interface for comunication between higher layers,
+                making changes to objects and finally make the rest of the code
+                at least dependant as possible.
+        </para>
+        <para>
+                TODO describe used libraries and techniques (boost - filter 
+                streams, smart pointers; STL - containers, exceptions; QSA -
+                scripting; Qt - gui; Valgrind - memleaks discovering; doxygen -
+                programming documentation generation; docbook - hand written
+                documentation; design patterns - objects designing). Divide 
+                them to design, code writing, documentation cathegories.
+        </para>
+
+        &general_layers;
+
+        &general_utils;
+        
+        &general_xpdf;
 </part>
