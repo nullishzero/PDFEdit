@@ -400,12 +400,49 @@
           };
           </code>
           </programlisting>
-          where all parameters needed for StreamPredictor creation are storef. 
-          These structure is initialized constructor and never changed. It is 
+          where all parameters needed for StreamPredictor creation are stored. 
+          This structure is initialized in constructor and never changed. It is 
           just used for cloning.
       </para>
      </sect3>
     </sect2>
+
+
+	<!-- 
+	 ! Parser changes
+	 ! 		jmisutka (2006/08/09)
+	 !-->
+    <sect2>
+	 <title>Parser.h and Stream.cc</title>
+     <sect3>
+	  <title>New features</title>
+      <para>
+	  Content streams can consist of more streams. Decoding and concatenating of these streams must form a valid 
+	  content stream. The problem is, that the content stream can be split into streams at almost arbitrary place.
+	  Xpdf Parser object can read objects either from a single stream or from an array of streams
+	  (simply reading one stream after another could result in incomplete objects returned at the
+	  end of a stream). 
+	  
+	  Content streams could consist of many small valid content streams. 
+	  When splitted correctly, user can easily delete/add such a small content stream. Our changes can be considered
+	  as such small valid content streams. 
+	  The missing feature of Parser object which was added is the information when it has finished reading one stream
+	  and started reading another. One obstacle is object buffering done by Parser object.
+	  Added method
+      <programlisting>
+      <code>
+  		// End of actual stream
+		bool eofOfActualStream () const { return (1 == endOfActStream); }
+      </code>
+      </programlisting>
+	  where endOfActStream is new variable indicating how many objects have been buffered from current stream.
+      </para>
+     </sect3>
+    </sect2>	<!--end of <sect2><title>Parser.h and Stream.cc</title>!-->
+	
+
+
+	
   </sect1>
  </chapter>
 </book>
