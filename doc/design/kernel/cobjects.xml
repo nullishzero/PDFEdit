@@ -1,104 +1,125 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
- <bookinfo>
-  <title>Representing pdf objects</title>
- </bookinfo>
+<!--  
+	jmisutka (2006/08/07)
+		TODO: 
+			o  replace <xref linkend.. with real entity definitions
+-->
 
- <chapter>
+<chapter id="cobjects_chapter">
 
-  <sect1><title>Objects according to pdf specification</title>
+    
+  <title>CObjects</title>
   <para>
-  Almost everything in a pdf file can be considered an object, but be careful as it is not the same as e.g. c++ objects. 
+  Pdf file consists of objects. These objects are referenced from a special structure forming a tree. 
   Objects can be either simple (number, string, name, boolean value, reference, null) or 
-  complex (array, dictionary, stream). Whole pdf (except "header" at the end of a file) is a
-  tree like structure with direct and indirect nodes. Indirect nodes are uniquely identyfied by two numbers.
-  </para>
- </sect1>
-
- <sect1><title>Objects</title>
-  <para>
-  All objects are derived from one base class IProperty. 
-  Pdf has a tree like structure. Therefore we can divide objects into single objects (leafs) and composite objects (nodes). This
-  is an example of <glossterm>Composite design patern</glossterm>. In contrast to xpdf implementation
-  where every pdf object is represented by one huge class. 
-  
-  The concept in xpdf to have one class representing every pdf object has lead to many problems. The Object class was not designed to 
-  change values so this and more hat to be implemented.
-  For example, it would be unbearable, unmanagable to inherit from such a horribly designed object.
-  It was redesigned. The new design counted with new object for each pdf object. Firstly, these objects should have used xpdf Object as its
-  value holder, but the technical aspect of xpdf was not considered as impossible to change and maintain. So it was redesigned with the possibility not 
-  to use xpdf in mind. Xpdf objects are used only and only when creating objects and saving object and one special purpose in streams. 
-  There are many interesting issues how xpdf objects are implemented. For example memory handling makes it almost unsound to delete objects from 
-  complex types. And memory allocation policy, that means who/when/how is to deallocate Object is a mess which would lead to either memory leaks or
-  many hours spendt on finding memory leaks.
+  complex (array, dictionary, stream).
   </para>
 
-  <sect2><title>Base class</title>
-  <para>
-  Every object is derived from one base class. This base class acts like a hanger which we can use to 
-  acces different object uniformly. This class is also a read only interface for all objects.
-  Objects can be created empty, from an xpdf Object of the same type or from a value.
-  </para>
+  <sect1>
+	  <title>General description</title>
+	  <para>
+	  CObjects are objects in pdfedit which represent objects in pdf file.
+	  All cobjects are derived from one base class IProperty. 
+	  Objects form a tree like structure so we can divide objects into single objects (leafs) and composite objects (nodes). This
+	  is an example of Composite design pattern <xref linkend="composite" /> design pattern. 
+	  This is a different approach to xpdf implementation where each pdf object is represented by the same huge class. 
+	  
+	  The concept of having exactly one class representing each pdf object leads to many problems:
+	  <itemizedlist mark="opencircle">
+		<listitem><para>inheriting - unclear oo design, unmanagable, it breaks the idiom of one entity for one purpose</para></listitem>
+		<listitem><para>adding changing operations - would result in even more monstrous class</para></listitem>
+		<listitem><para>sometimes value inside class, sometimes outside - unclear oo design</para></listitem>
+	  </itemizedlist>
+	  
+	  There are many interesting design decisions in xpdf objects implementation. 
+	  For example memory handling makes it almost unsound to delete objects from 
+	  complex types. Memory allocation policy, that means who/when/how is to deallocate xpdf Object is a mess which could easily
+	  lead to either memory leaks or memory corruption.
+
+	  The new design counted with new object for each different pdf object. Because of the pdf decoding complexity (pdf can be encoded
+	  using many filters) these objects use xpdf Object just for initializing and dispatching changes to CXref object.
+	  </para>
+	 
+	 <para>
+		<mediaobject>
+		  <imageobject>
+		   <imagedata fileref="images/iproperty.png" format="PNG"/>
+		  </imageobject>
+		  <textobject><phrase>CObject class hierarchy</phrase></textobject>
+		  <caption><para>CObject class hierarchy</para></caption>
+		</mediaobject>
+	 </para>
+	 
+  <sect2>
+	  <title>Base class</title>
+	  <para>
+	  Every object is derived from one base class - IProperty. This base class is a hanger which can be used to 
+	  access child objects uniformly. This class is a read only interface for all properties.
+	  Objects can be created uninitialized or can be initialized from an xpdf Object of the same type and simple objects 
+	  cat be initialized directly from a value.
+	  </para>
   </sect2>
 
-  <sect2><title>Simple objects</title>
-  <para>
-  As simple objects share method names and behaviour, they are naturally implemented with
-  use of c++ templates. One template class, paramterized by object type, represents all 7 types of simple objects.
-  </para>
- </sect2>
- 
- <sect2><title>Complex objects</title>
-  <para>
-  However it is more difficult with complex types. Each complex type must contain reference to its children which are 
-  pdf also objects. After considerations, we have decided to use smart pointers. Reasons:
-	<orderedlist numeration="arabic">
-	 <listitem>
-	  <para>Allocation and deallocation policy - we cannot be sure that when an object is deallocated, someone does not 
-	  hold a pointer to the object. This could be solved by implementing reference counting, but why reimplement the wheel.
+  <sect2>
+	  <title>Simple objects</title>
+	  <para>
+	  Simple objects are very similar. They share behaviour and because of this also method names. They are represented by one class
+	  using c++ templates. One template class, parameterized by object type, represents all 7 types of simple objects.
 	  </para>
-	 </listitem>
-	 <listitem>
-	  <para>Automatic deallocating when not needed.</para>
-	 </listitem>
-	</orderedlist>
+  </sect2>
+  <sect2>
+	  <title>Complex objects</title>
+	  <para>
+	  It is more difficult with complex types. Each complex type must contain reference to its children which are 
+	  also pdf objects. A design decision was made to use smart pointers for referencing child objects. The reasons are:
+	  <orderedlist numeration="arabic">
+	   <listitem>
+	    <para>Allocation and deallocation policy - we cannot be sure that when an object is deallocated, someone does not 
+	    hold a pointer to the object. This could be solved by implementing reference counting, but why reimplement the wheel.
+	    </para>
+	   </listitem>
+	   <listitem> <para>Automatic deallocating when not needed.</para> </listitem>
+  	  </orderedlist>
 
-  </para>
- </sect2>
- <sect3><title>Array / Dictionary</title>
-  <para>
-  Arrays and dictionary store their children in containers. They are similar so they are 
-  implemented as one template class parametrized by type. The beauty of smart pointers arise when deallocating
-  an array and it deallocated its children, they deallocate their childre atc forming a cascade effect.
-  </para>
- </sect3>
- <sect3><title>Streams</title>
-  <para>
-  Streams are most complicated from all object types. The problem is that xpdf can decode pdf files to characters but it can 
-  not do it the other way around. It is obvious because it never needs the other way around. We use boost filtering iostream 
-  which provide us with the necessary general concept. However we have to implement the filters. We do not know the filters as long
-  as we do not change the object. However we can change raw buffer without appropriate filters but we can not setting decoded buffer.
-  
-  We access streams through general open/close interface but we can get only xpdf objects from the stream. This is the other case when xpdf objects
-  are used. Each stream consists of a dictionary and stream buffer. The dictionary can not be accessed directly but the calls to dictionary methos in
-  the cstream object are delegated to the dictionary object. Filtes are described in the next section.
-  </para>
- </sect3>
- 
- <para>
+	  Pdf objects can be referenced using ids which are similar to pointers. This leads to many problems one of them is the
+	  impossibility to really delete such objects. Many of the problems are automatically handled by smart pointers. 
+	  </para>
+  </sect2>
+ </sect1>
 
- 
- 
- 	<mediaobject>
-	  <imageobject>
-	   <imagedata fileref="images/iproperty.png" format="PNG"/>
-	  </imageobject>
-	  <textobject><phrase>Pdfoperator class overview</phrase></textobject>
-	  <caption><para>Pdfoperator class overview</para></caption>
-	</mediaobject>
- </para>
+ <sect1>
+	 <title>Array and dictionary</title>
+	  <para>
+	  Array store its children in a simple container indexed by position. Dictionary stores its children 
+	  in container indexed by string which uniquely identifies a property. The beauty of smart pointers arise when deallocating
+	  an array, it automatically deallocates its children when not referenced and this is done recursively.
+	  </para>
+ </sect1>
+
+ <sect1>
+	 <title>Streams</title>
+	  <para>
+	  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
+	  not do it the other way around. (it is because it never needs it) Xpdf impelementation of streams is very rough.
+	
+	  We use boost <xref linkend="boost" /> filtering iostream which provide us with the necessary general concept of
+	  encoded streams. However we have to implement the filters ourselves. (the easiest way is to simply save decoded streams
+	  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
+	  or we can save decoded stream which is automatically encoded when saved using avaliable filters.
+	
+	  Each stream consists of a dictionary and stream buffer. The dictionary can not be accessed directly. 
+	  Dictionary interface is simulated by simple methods which delegate the calls to  to the dictionary object. 
+	  Buffer is stored in encoded form allowing us to return the same byte representation of an
+	  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
+      </para>
+
+	  <sect2>
+	  <title>Accessing streams</title>
+	  <para>
+	  We access streams using Adapter design pattern <xref linkend="adapter" /> implementing open/close interface. We need
+	  to be able to read from more streams byte per byte because content streams can be splitted anywhere. 
+	  We decided to return only xpdf objects. 
+	  </para>
+	  </sect2>
  </sect1>
 
  </chapter>
-</book>
