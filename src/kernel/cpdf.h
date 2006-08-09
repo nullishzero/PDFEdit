@@ -6,6 +6,20 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.74  2006/08/09 20:46:35  hockm0bm
+ * * new cpdf_id_t type, id field and getId method
+ * * addIndirectProperty
+ * 	- directly adds prop if it is from same pdf - previously done in
+ *           addPropety method
+ * 	- creates entry for resolvedRefMapping if doesn't exist, otherwise reuses
+ * 	  ResolvedRefStorage associated with prop's pdf id
+ * 	- skipps adding of object with ResolvedRefStorage mapping initialized to
+ * 	  non CNull value
+ * * ResolvedRefStorage typedef moved to CPdf class
+ * * ResolvedRefMapping type added and used for pdf -> ResolvedRefStorage
+ * 	- guarantees that cross referencies from different pdf are tracked
+ * 	  correctly (referencies are stable)
+ *
  * Revision 1.73  2006/06/29 20:00:08  hockm0bm
  * doc updated
  *
@@ -399,12 +413,6 @@ public:
 class CPage;
 class COutline;
 
-/** Type for resolv mapping.
- * Element::first stands for reference in original property and
- * Element::second stands for reserved reference which should replace
- * original one.
- */
-typedef std::vector<std::pair<IndiRef, IndiRef> > ResolvedRefStorage;
 
 /** Type for page tree node count chache.
  * It is mapping where key is indirect reference of page tree node and
@@ -417,13 +425,23 @@ typedef std::map<IndiRef, size_t, utils::IndComparator> PageTreeNodeCountCache;
  */
 typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache;
 
+/** Type for resolv mapping.
+ * Key stands for reference in original property and associated value stands 
+ * for reserved reference which should replace original one.
+ * <br>
+ * Mapping is used for adding indirect properties from different pdf.
+ *
+ * @see CPdf::addIndirectProperty
+ */
+typedef std::map<IndiRef, IndiRef, utils::IndComparator > ResolvedRefStorage;
+
 /** CPdf special object.
  *
  * This class is responsible for pdf document maintainance. It provides wrapper
- * on document catalog dictionary with advanced logic concering revision
+ * on document catalog dictionary with advanced logic concerning revision
  * handling, high level object creation and their synchronization with actual
  * properties state and mode depending operations. Provides interface for making
- * changes to document. In a result it provides fascade for all oparation which
+ * changes to document. In a result it provides fascade for all oparations which
  * have document scope.
  *
  * <p>
@@ -534,6 +552,9 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator> PageTreeKidsParentCache
  * This version of CPdf and all its components doesn't support linearized pdf
  * files very well. Revision handling and all related, are not prepared for
  * special format and objects deployed for such documents.
+ * <br>
+ * Each instance cotains unique identificator which is returned by getId 
+ * method.
  *
  */
 class CPdf
@@ -558,6 +579,16 @@ public:
 	 * consider this ordering.  
 	 */
 	enum OpenMode {ReadOnly, ReadWrite, Advanced};
+
+	/** Type for pdf identificator.
+	 */
+	typedef unsigned long cpdf_id_t;
+
+	/** Constant for pdf id of no pdf.
+	 * This is used for properties which comes from no pdf. Each CPdf instance
+	 * must have id different from this value.
+	 */
+	static const cpdf_id_t NO_PDF_ID=0;
 	
 protected:
 
@@ -843,6 +874,35 @@ protected:
 	 */
 	typedef std::map<IndiRef, boost::shared_ptr<IProperty>, utils::IndComparator> IndirectMapping;
 
+	
+	/** Type for mapping from pdfs to their resolved storage.
+	 * Maps pdf identificators to their resolved reference storage.
+	 * 
+	 */
+	typedef std::map<CPdf::cpdf_id_t, ResolvedRefStorage *> ResolvedRefMapping;
+
+	/** Mapping for pdf's to their resolved storage.
+	 * This mapping is used during new indirect property adding. When object
+	 * from different pdf is about to be inserted, this storage contains
+	 * mapping from original references (from such pdf) to newly created
+	 * referencies in this pdf. Whenever object is from unknown (not present 
+	 * in this mapping) pdf, new entry is created with new associated storage. 
+	 * Helper methods like addProperty, subsReferencies then uses this 
+	 * storage.
+	 * <p>
+	 * <b>REMARK</b>:<br>
+	 * This enables proper insertion of shared objects from different pdf
+	 * because each original reference is mapped to one reserved in this pdf.
+	 * If mapping already exists, it is reused.
+	 * <br>
+	 * Set of objects can be inserted and their cross referencies are kept
+	 * also for this pdf (with referencies suitable for this pdf).
+	 *
+	 * @see addProperty
+	 * @see subsReferencies
+	 */
+	ResolvedRefMapping resolvedRefMapping;
+
 	/** Consolidates page tree.
 	 * @param interNode Intermediate node dictionary under which change has
 	 * occured.
@@ -990,15 +1050,14 @@ protected:
 	 */
 	void unregisterPageTreeObservers(boost::shared_ptr<IProperty>& prop);
 
-	/** Helper method for property adding.
+	/** Helper method for property from different pdf adding.
 	 * @param ip Property to add.
 	 * @param indiRef New reference for object.
 	 * @param storage Resolved storage which contains mapping from old indirect
 	 * referencies to newly reserved ones.
 	 * @param followRefs Flag for reference handling.
 	 *
-	 * If given property is from same pdf, just calls registerIndirectProperty.
-	 * Otherwise makes deep copy of given ip (to prevent changes in original ip
+	 * Makes deep copy of given ip (to prevent changes in original ip
 	 * - and also different pdf where it belongs to) and calls subsReferencies
 	 * to replace all referencies in property with valid in this pdf. Finally
 	 * calls registerIndirectProperty with corrected property.
@@ -1066,6 +1125,10 @@ protected:
 	IndiRef subsReferencies(boost::shared_ptr<IProperty> ip, ResolvedRefStorage & container, bool followRefs);
 private:
 	
+	/** Identificator for this pdf instance.
+	 */
+	cpdf_id_t id;
+
 	/**************************************************************************
 	 * Revision specific data
 	 *************************************************************************/
@@ -1279,6 +1342,15 @@ public:
 	 */
 	static CPdf * getInstance(const char * filename, OpenMode mode);
 
+	/** Returns unique identificator for this pdf.
+	 *
+	 * @return Identificator of this pdf.
+	 */
+	cpdf_id_t getId()const
+	{
+		return id;
+	}
+	
 	/** Closes pdf file.
 	 * @param saveFlag Flag which determine whether to save before close
 	 *	(parameter may be omited and false is used by default).
@@ -1354,6 +1426,24 @@ public:
 	 * This method is responsible for clear indirect object creation and
 	 * also safe indirect object copying between different documents (properties
 	 * from different CPdf instances).
+	 * <br>
+	 * If given prop is from same pdf, it is just deep copied and inserted as
+	 * new new indirect object with new reference (calls registerIndirectProperty 
+	 * with newly reserved reference).
+	 * <br>
+	 * Otherwise tries to get ResolvedRefStorage for prop's pdf (uses getId as
+	 * pdf identificator). If it doesn't exist in resolvedRefMapping, new entry 
+	 * is created otherwise reuses ResolvedRefStorage instance associated with 
+	 * prop's pdf.
+	 * <br>
+	 * Then checks whether given prop is indirect object (uses hasValidRef). If
+	 * yes and there already is mapping in ResolvedRefStorage and mapped
+	 * reference points to non CNull object, no object is added and just mapped
+	 * reference is returned. This situation may happen when object has already
+	 * been added before - e. g. as a result of addition of property which
+	 * refere to this one.
+	 * Otherwise creates mapping in ResolvedRefStorage (calls createMapping) and 
+	 * delegates the rest to addProperty method.
 	 * <p>
 	 * Implementation details:
 	 * <ul>
@@ -1363,6 +1453,8 @@ public:
 	 * registerIndirectProperty method.
 	 * <li> Property from different pdf instance is added by recursive 
 	 * addProperty helper method.
+	 * <li> Property from different pdf instance is added only if it hasn't been
+	 * added before.
 	 * <li> followRefs flag controls how referencies in property from different
 	 * file should be handled. If value is true, also all referenced properties
 	 * are added, otherwise just reserves referencies in this pdf for them and

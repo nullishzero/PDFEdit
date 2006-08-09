@@ -3,6 +3,20 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.75  2006/08/09 20:46:34  hockm0bm
+ * * new cpdf_id_t type, id field and getId method
+ * * addIndirectProperty
+ * 	- directly adds prop if it is from same pdf - previously done in
+ *           addPropety method
+ * 	- creates entry for resolvedRefMapping if doesn't exist, otherwise reuses
+ * 	  ResolvedRefStorage associated with prop's pdf id
+ * 	- skipps adding of object with ResolvedRefStorage mapping initialized to
+ * 	  non CNull value
+ * * ResolvedRefStorage typedef moved to CPdf class
+ * * ResolvedRefMapping type added and used for pdf -> ResolvedRefStorage
+ * 	- guarantees that cross referencies from different pdf are tracked
+ * 	  correctly (referencies are stable)
+ *
  * Revision 1.74  2006/06/27 17:27:49  hockm0bm
  * cosmetic changes
  *         - post-incrementation replaced by pre-incrementation (for performance)
@@ -2014,6 +2028,10 @@ CPdf::CPdf(StreamWriter * stream, OpenMode openMode)
 	// control over document
 	if(mode==Advanced)
 		xref->setMode(XRefWriter::easy);
+
+	// sets id as address of this instance
+	// FIXME make more unique
+	this->id=(unsigned long)this;
 }
 
 CPdf::~CPdf()
@@ -2028,6 +2046,14 @@ CPdf::~CPdf()
 		kernelPrintDbg(DBG_DBG, "Invalidating page at pos="<<i->first);
 		i->second->invalidate();
 	}
+
+	// clean up resolved reference mapping for different pdf objects
+	for(ResolvedRefMapping::iterator i=resolvedRefMapping.begin(); i!=resolvedRefMapping.end(); ++i)
+	{
+		kernelPrintDbg(DBG_DBG, "Discarding resolved storage (size="<<i->second->size()<<") for pdf wih id="<<i->first);
+		delete i->second;
+	}
+	resolvedRefMapping.clear();
 
 	// TODO handle outlines when ready
 	
@@ -2124,15 +2150,6 @@ IndiRef CPdf::addProperty(boost::shared_ptr<IProperty> ip, IndiRef indiRef, Reso
 {
 	kernelPrintDbg(DBG_DBG, "");
 	
-	// checks whether given ip is from same pdf
-	if(ip->getPdf()==this)
-	{
-		// ip is from same pdf and so all possible referencies are already in 
-		// pdf too. We can clearly register with gien indiRef
-		kernelPrintDbg(DBG_DBG, "Property from same pdf");
-		return registerIndirectProperty(ip, indiRef);
-	}
-
 	// ip is not from same pdf - may be in different one or stand alone object
 	// toSubstitute is deep copy of ip to prevent changes in original data.
 	// Also sets same pdf as orignal to cloned to enable dereferencing
@@ -2184,10 +2201,9 @@ using namespace debug;
 	// object is indirect and if mapping is not in container yet
 	if(isRefValid(&oldRef))
 	{
-		ResolvedRefStorage::value_type mapping(oldRef, indiRef);
-		if(find(container.begin(), container.end(), mapping)==container.end())
+		if(container.find(oldRef)==container.end())
 		{
-			container.push_back(mapping);
+			container.insert(ResolvedRefStorage::value_type(oldRef, indiRef));
 			kernelPrintDbg(DBG_DBG, "Created mapping from "<<oldRef<<" to "<<indiRef);
 		}
 	}
@@ -2206,7 +2222,7 @@ using namespace utils;
 	// this method makes sense only for properties from different pdf	
 	assert(this!=ip->getPdf());
 	
-	kernelPrintDbg(debug::DBG_DBG,"property type="<<ip->getType()<<" container size="<<container.size());
+	kernelPrintDbg(debug::DBG_DBG,"property type="<<ip->getType()<<" ResolvedRefStorage size="<<container.size());
 
 	PropertyType type=ip->getType();
 	ChildrenStorage childrenStorage;
@@ -2219,27 +2235,29 @@ using namespace utils;
 			// endless loops for cyclic structures
 			ResolvedRefStorage::iterator i;
 			IndiRef ipRef=getValueFromSimple<CRef>(ip);
-			for(i=container.begin(); i!=container.end(); ++i)
+			IndiRef indiRef;
+			if((i=container.find(ipRef))!=container.end())
 			{
-				IndiRef elem=i->first;
-				if(elem==ipRef)
+				// this reference has already been processed, so reuses
+				// reference which already has been created/reserved
+				kernelPrintDbg(DBG_DBG, ipRef<<" already mapped to "<<i->second);
+				if(!isNull(*getIndirectProperty(i->second)))
 				{
-					kernelPrintDbg(DBG_DBG, ipRef<<" already mapped to "<<elem);
-					// this reference has already been processed, so reuses
-					// reference which already has been created/reserved
-					return elem;
+					// object with mapped reference is already initialized and
+					// so it can be directly returned
+					return i->second;
 				}
-			}
-
-			// reserves new reference and creates mapping
-			IndiRef indiRef=createMapping(container, *xref, ipRef);
+			}else
+				// No mapping for ipRef
+				// reserves new reference and creates mapping
+				indiRef=createMapping(container, *xref, ipRef);
 
 			// if followRefs is true, adds also target property too. Reference
-			// is already registered yet and so registerIndirectProperty will
+			// is already registered now and so registerIndirectProperty will
 			// use it correctly
 			if(followRefs)
 			{
-				kernelPrintDbg(DBG_DBG, "Following reference.");	
+				kernelPrintDbg(DBG_DBG, "Following reference "<<ipRef<<" mapped to "<<indiRef);	
 				// ip may be stand alone and in such case uses CNull
 				shared_ptr<IProperty> followedIp;
 				if(!hasValidPdf(ip))
@@ -2291,6 +2309,7 @@ using namespace utils;
 		{
 			// new reference for this child
 			boost::shared_ptr<CRef> ref_ptr=IProperty::getSmartCObjectPtr<CRef>(child);
+			ref_ptr->lockChange();
 			ref_ptr->setValue(ref);
 			kernelPrintDbg(debug::DBG_DBG,"Reference changed to " << ref);
 			continue;
@@ -2322,18 +2341,65 @@ using namespace boost;
 		kernelPrintDbg(DBG_ERR, "Reference can't be value of indirect property.");
 		throw ElementBadTypeException("ip");
 	}
+	
+	// checks whether given ip is from same pdf
+	if(ip->getPdf()==this)
+	{
+		// ip is from same pdf and so all possible referencies are already in 
+		// pdf too. We can clearly register with given indiRef
+		kernelPrintDbg(DBG_DBG, "Property from same pdf");
+		return registerIndirectProperty(ip, xref->reserveRef());
+	}
 
-	// creates empty resolvedStorage
-	ResolvedRefStorage resolvedStorage;
+	// ip is from different pdf.
+	// Get or create mapping for ip's pdf (pdf is identiefied by its id - if 
+	// pdf==null - prop from no pdf - then uses NO_PDF_ID constant). 
+	// It contains mappings from such pdf indirect reference to coresponding 
+	// newly created reference for this pdf.
+	CPdf::cpdf_id_t id=(ip->getPdf())?ip->getPdf()->getId():CPdf::NO_PDF_ID;
+	ResolvedRefMapping::iterator i=resolvedRefMapping.find(id);
+	ResolvedRefStorage * resolvedStorage;
+	if(i==resolvedRefMapping.end())
+	{
+		// creates new storage and insert mapping and associates it with ip's
+		// pdf (represented by its id and newly created resolvedStorage).
+		resolvedStorage=new ResolvedRefStorage();
+		resolvedRefMapping.insert(ResolvedRefMapping::value_type(id, resolvedStorage));
+		kernelPrintDbg(DBG_DBG, "No resolvedRefMapping entry for "<<id<<" pdf. Created new entry");
+	}else
+		// uses already created storage
+		resolvedStorage=i->second;
 
-	// resereves reference for new indirect object and if given ip is indirect
-	// object too, creates also resolved mapping
-	IndiRef indiRef=createMapping(resolvedStorage, *xref, ip->getIndiRef());
+	// If given ip is indirect and there already is mapping in resolvedStorage,
+	// this property or reference to it has already been processed
+	ResolvedRefStorage::iterator resIter;
+	IndiRef indiRef;
+	if(hasValidRef(ip)&&
+	  (resIter=resolvedStorage->find(ip->getIndiRef()))!=resolvedStorage->end())
+	{
+		kernelPrintDbg(DBG_DBG, "Property with "<<ip->getIndiRef()<<" already in mapping. Mapped to "<<resIter->second);
+
+		// If property associated with mapped reference is not CNull,
+		// value has been initialized and so this property is not stored
+		// again and just its reference - in this pdf - is returned
+		if(!isNull(*getIndirectProperty(resIter->second)))
+		{
+			kernelPrintDbg(DBG_INFO, "Property with "<<ip->getIndiRef()<<" already stored as "<<resIter->second);
+			return resIter->second;
+		}
+		indiRef=resIter->second;
+	}
+
+	// Uses already reserved reference or create new one in createMapping
+	if(!isRefValid(&indiRef))
+		// reserves reference for new indirect object and if given ip is indirect
+		// object too, creates also resolved mapping for it
+		indiRef=createMapping(*resolvedStorage, *xref, ip->getIndiRef());
 
 	// everything is checked now and all the work is delegated to recursive
 	// addProperty method
 	kernelPrintDbg(DBG_DBG, "Adding new indirect object.");
-	IndiRef addRef=addProperty(ip, indiRef, resolvedStorage, followRefs);
+	IndiRef addRef=addProperty(ip, indiRef, *resolvedStorage, followRefs);
 	assert(addRef==indiRef);
 
 	kernelPrintDbg(DBG_INFO, "New indirect object added with "<<indiRef<<" with type="<<ip->getType());
