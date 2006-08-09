@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.34  2006/08/09 20:47:35  hockm0bm
+ * indirectPropertyTC minor changes
+ *
  * Revision 1.33  2006/06/27 17:26:24  hockm0bm
  * cloneTC skips linearized pdfs
  *
@@ -1018,8 +1021,17 @@ public:
 		}
 
 		printf("TC06:\taddIndirectProperty from different pdf (followRefs==true)\n");
-		// does the same as for tc05 with followRefs set to true
+		// does the same as for tc05 with followRefs set to true and "Parent"
+		// property from differentPageDict - insertion should reuse mapping from
+		// firts insetion - without followRefs
+		parentProp=differentPageDict->getProperty("Parent");
+		IndiRef parentRef=getValueFromSimple<CRef>(parentProp);
+		shared_ptr<IProperty> differentPageProp=differentPdf->getIndirectProperty(parentRef);
+		CPPUNIT_ASSERT(isDict(*differentPageProp));
+		differentPageDict=IProperty::getSmartCObjectPtr<CDict>(differentPageProp);
 		addedRef=pdf->addIndirectProperty(differentPageDict, true);
+		// addededRef must be same as reserved in first insertion
+		CPPUNIT_ASSERT(addedRef==ref);
 		added=pdf->getIndirectProperty(addedRef);
 		CPPUNIT_ASSERT(added->getIndiRef()==addedRef);
 		CPPUNIT_ASSERT(added->getPdf()==pdf);
@@ -1028,23 +1040,6 @@ public:
 		CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(addedRef)==INITIALIZED_REF);
 		addedDict=IProperty::getSmartCObjectPtr<CDict>(added);
 		CPPUNIT_ASSERT(addedDict->getPropertyCount()==differentPageDict->getPropertyCount());
-		// gets parent dictionary and checks if its reference is known and value
-		// has same type as in pageDict - deep copy has been done
-		parentProp=addedDict->getProperty("Parent");
-		if(isRef(*parentProp))
-		{
-			ref=getValueFromSimple<CRef>(parentProp);
-			// has to know reference as INITIALIZED_REF
-			CPPUNIT_ASSERT(pdf->getCXref()->knowsRef(ref)==INITIALIZED_REF);
-			printf("\t\tReference state of parentProp is INITIALIZED_REF (according CXref::knowsRef)\n");
-			shared_ptr<IProperty> parentDict=pdf->getIndirectProperty(ref);
-			shared_ptr<IProperty> differentParentDict=
-				differentPdf->getIndirectProperty(getValueFromSimple<CRef>(differentPageDict->getProperty("Parent")));
-			PropertyType p1=parentDict->getType();
-			PropertyType p2=differentPageDict->getType();
-			CPPUNIT_ASSERT(parentDict->getType()==differentParentDict->getType());
-			// TODO compare also content 
-		}
 		differentPdf->close();
 
 		printf("TC07:\tgetIndirectProperty with uknown reference returns CNull\n");
