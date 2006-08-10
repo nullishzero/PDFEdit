@@ -20,7 +20,7 @@
 	  CObjects are objects in pdfedit which represent objects in pdf file.
 	  All cobjects are derived from one base class IProperty. 
 	  Objects form a tree like structure so we can divide objects into single objects (leafs) and composite objects (nodes). This
-	  is an example of Composite design pattern <xref linkend="composite" /> design pattern. 
+	  is an example of Composite design pattern <xref linkend="composite" />. 
 	  This is a different approach to xpdf implementation where each pdf object is represented by the same huge class. 
 	  
 	  The concept of having exactly one class representing each pdf object leads to many problems:
@@ -101,7 +101,7 @@
 	  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
 	  not do it the other way around. (it is because it never needs it) Xpdf impelementation of streams is very rough.
 	
-	  We use boost <xref linkend="boost" /> filtering iostream which provide us with the necessary general concept of
+	  We use boost <xref linkend="boost" /> filtering iostream <xref linkend="boost_iostreams" /> which provide us with the necessary general concept of
 	  encoded streams. However we have to implement the filters ourselves. (the easiest way is to simply save decoded streams
 	  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
 	  or we can save decoded stream which is automatically encoded when saved using avaliable filters.

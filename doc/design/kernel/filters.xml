@@ -1,53 +1,68 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
- <bookinfo>
-  <title>Decoding and encoding filters</title>
- </bookinfo>
+<!--  
+	jmisutka (2006/08/10)
+		TODO: 
+			o  replace <xref linkend.. with real entity definitions
+-->
 
- <chapter>
+<chapter id="filters_chapter">
 
-  <sect1><title>Decoding and encoding according to pdf specification</title>
+  <title>Stream encoding</title>
   <para>
-  Pdf stream can be encoded using one of several filters specified by pdf specification.
-  The encoding algorthm is called a filter. There are two types of filters, ASCII filters and 
-  decompression filters. It is up to the viewer how it handles unknown filter. 
+  Pdf streams can be encoded using one or more filters specified by pdf specification.
+  The encoding/decoding algorithm is called a filter. There are two types of filters 
+  <itemizedlist mark="opencircle">
+	<listitem><para>ASCII filters - enable decoding of arbitrary 8-bit binary data that has been encoded as ASCII text</para></listitem>
+	<listitem><para>(de)compression filters - enable decoding of data that has been compressed</para></listitem>
+  </itemizedlist>
+  There is a set of filters which every pdf viewer must implement.
+  It is up to the viewer how it handles an unknown filter. 
   </para>
- </sect1>
 
  <sect1><title>Xpdf filters</title>
-  <para>Xpdf viewer implements all decoding filters from pdf v1.5 specification. However it
-  does not need encoding filters so it does not implement them. We can use xpdf filters to 
-  decode data.
-  </para>
- 
-  <sect2><title>Filters</title>
-  <para>Decoding filters are used from xpdf. It is dangerous, because of the very poor fault tolerance, 
-  but as it is very toilsome, it has not been reimplemented. However, encoding filters are implemented using
-  boost filtering iostreams, which give us very nice filtering input/output concept. 
-  A filtesing stream consists of filters and devices. For our purpose we use only one device. A device can be 
-  either a sink a or a source. It depends whether it is an input or output stream. We implement only one device and that is
-  a simple source. We can connect arbitrary number of filters to this source. When we read from a source, it is read from the 
-  underlying buffer and then gets decoded through all the filters and finally an encoded character(s) falls from the other 
-  side of the filter chain. Filters are appended to the chain according to pdf stream dictionary item describing which filters
-  should be used. 
-  This design is easily extensible as we have to only implement the new filter and add it if the filter name matches the desired
-  filter name.  
-  </para>
-  </sect2>
-
+  <para>Xpdf viewer implements all decoding filters from pdf specification v1.5. However it
+  does not implement any encoding filters (it does not need them). 
   
-  
-  <para>
  	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/iproperty.png" format="PNG"/>
+	   <imagedata fileref="images/xpdf_streams_simple.png" format="PNG" />
 	  </imageobject>
-	  <textobject><phrase>Pdfoperator class overview</phrase></textobject>
-	  <caption><para>Pdfoperator class overview</para></caption>
+	  <textobject><phrase>Simple xpdf stream hierarchy</phrase></textobject>
+	  <caption><para>Simple xpdf stream hierarchy</para></caption>
 	</mediaobject>
- </para>
+
+  Xpdf stream design is good but can be improved. The design resulted into many objects 
+  that are tightly coupled together (see picture). They can be decoupled using Facade design pattern which also
+  makes objects more reusable.
+  
+  Finally, the unclear implementation makes it difficult to use and very difficult to extend and
+  it lacks almost any fault tolerance.
+  We use xpdf filters (because it is hardwired into xpdf parsing) only to decode data but we design our own encoding filters.
+  </para>
  </sect1>
+ 
+  <sect1><title>Encoding filter design</title>
+  <para>
+  The idea behind filtering streams is quite simple and common so instead of reinventing the wheel we use boost <xref linkend="boost" /> 
+  filtering iostreams <xref linkend="boost_iostreams" /> which give us a very nice filtering input/output concept. 
+  Filtering stream consists of filters and devices. A device can be 
+  either a sink(input) a or a source(output). We need just buffer encoding so we use only sources (devices you can read from). 
+  We can connect arbitrary number of filters to source. When we read from a filtering input stream, the read call is delegated through 
+  the chain of filters to first device which returns raw character(s). Then every filter, in reverse order, encodes 
+  the character(s) and passes it to the next filter. Finally an encoded character(s) falls from the filtering input stream.
+  
+  Which filters to use is specified in stream dictionary.
+
+    <mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/boost_streams_pdfedit.png" format="PNG" />
+	  </imageobject>
+	  <textobject><phrase>Boost stream concept in pdfedit</phrase></textobject>
+	  <caption><para>Stream concept in pdfedit</para></caption>
+	</mediaobject>
+
+  This design is flexible, easily extensible as we only have to implement the new filter and connect it to the source 
+  when the filter name matches the filter name specified in the stream dictionary.
+  </para>
+  </sect1>
 
  </chapter>
-</book>
