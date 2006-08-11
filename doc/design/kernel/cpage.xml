@@ -1,0 +1,81 @@
+<!--  
+	jmisutka (2006/08/07)
+		TODO: 
+			o replace <xref linkend.. with real entity definitions
+			o add link to contentstream
+			o add pagetree, annotations+ what has miso implemented
+			o add miro's comments to objects on page
+-->
+
+
+<chapter id="cpages_chapter">
+
+        <title>Page</title>
+        <para>
+		Pdf dictionaries referenced from page tree are called page objects.
+		These dictionaries must contain a "Type" entry and the value must be a name
+		object equal to "Page". Page objects are basic building blocks of pdf files. 
+		Each page can be indipendent with all required information stored in its dictionary. Some of its properties can
+		be inherited from parent pages. Page object describes the appereance of the page (witdth, length, fonts used, rotation etc.).
+		
+		TODO: add pagetree desc
+
+		The core of a page is one or more content streams which specify what is on a page (text, pictures, graphics ...). 
+		</para>
+
+		<sect1>
+		<title>Observering cpage</title>
+		Generally, changing an object can result in many other changes. Objects often depend on other objects. Changing a page property 
+		can result in 
+  	    <itemizedlist mark="opencircle">
+		  <listitem><para>redraw of the page</para></listitem>
+		  <listitem><para>redraw of other pages</para></listitem>
+	    </itemizedlist>
+		This is the reason why cpage implements observer subject interface. An object can be notified if cpage changes.
+		</sect1>
+
+		<sect1>
+		<title>Changing cpage</title>
+		Page dictionary can be changed in two ways. Either by cpage methods or by requesting raw dictionary by its reference number.
+		If we do not want to parse the whole pdf file, we do not have the information whether an object is a page or just an object
+		with page type. That is is a problem solved by Observer design pattern<xref linkend="observer" />. We observe the underlying
+		dictionary which implement the observer subject interface. This way, we know every time the dictionary is changed either
+		by cpage or by cobject.
+		</sect1>
+
+		<sect1>
+		<title>Changing page contents</title>
+		Any change to a visible part of a page are delegated to content stream object.
+		</sect1>
+
+		<sect1>
+		<title>Displaying page</title>
+		Xpdf has the best displaying enginge of all tested viewers. All calls to display methods are delegated to this engine.
+		</sect1>
+
+		<sect1>
+		<title>Objects on a page</title>
+		Everything on a page is in its content stream. 
+		Every operation in a content stream means altering the actual position by moving the drawing pen from one position to another
+		position creating a rectangle which can be used to constrain each object.
+		The rectangle can be used to order all objects into a structure which can be easily searched. This enables effective selection of
+		only some objects.
+			<sect2>
+			<title>Text on a page</title>
+			Pdf specification does not force pdf converters to keep text structure of converted document. This means that no text element
+			needs to correspond to an element in the original file e.g. paragraphs, lines, words. Even the order of single letters can be
+			arbitrary. Xpdf (or any other sophisticated) viewer only guesses which letter form a word or which words form a line.
+			We use xpdf text engine to extract, search text.
+			</sect2>
+	
+			<sect2>
+			<title>Fonts on a page</title>
+			Pdf file can refer either to extern system fonts which are specified by pdf specification 
+			and each viewer should have these fonts avaliable or it can inline font metrics into the pdf file. The latter option is very tricky
+			because it allows the font to contain only those letters which are actually used. CPage object supports adding fonts which
+			can be used on a page. Fonts must be present in the pdf file or they must refer to system fonts.			
+			</sect2>
+
+		</sect1>
+
+</chapter>
