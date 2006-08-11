@@ -3,7 +3,7 @@
 #
 
 #HTML documents to generate
-html_docs=observers.html pdfoperators.html cobjects.html cpdf.html document_changes.html xpdf_modifications.html filters.html cpage.html
+html_docs=observers.html pdfoperators.html cobjects.html cpdf.html document_changes.html xpdf_modifications.html filters.html cpage.html stateupdater.html
 
 #PDF documents to generate
 pdf_docs=$(html_docs:.html=.pdf)

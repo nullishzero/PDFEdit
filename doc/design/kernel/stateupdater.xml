@@ -1,0 +1,52 @@
+<!--  
+	jmisutka (2006/08/11)
+		TODO: 
+			o replace <xref linkend.. with real entity definitions
+-->
+
+<chapter id="stateupdater_chapter">
+        <title>Graphical state</title>
+        <para>
+		Content stream is a sequence of operations which alter graphical state. We
+		need to obtain some information after each of these operations and xpdf code
+		is no suitable for this sort of things.
+		If appropriate functions are defined and the object is changed a bit, it could be used to display the content stream.
+		It can be easily extended by adding appropriate operations when 
+
+		Xpdf code is very difficult to extend here because it is adjusted just for
+		displaying purposes. Again it has almost zero fault tolerance which was improved by adding
+		some constraints into xpdf code.
+
+		Functions altering the graphical state were heavily inspired by xpdf code. Most of the
+		code is just copied from xpdf.
+        </para>
+
+		<sect1>
+		<title>Obtaining information after every operator</title>
+		<para>
+		Each pdf operator has its function which alters the graphical state appropriately. The mechanism
+		used by stateupdater is simple but very flexible. It gets a simple iterator which it uses to iterate
+		through all operators. After performing a function assigned to the operator a functor with all
+		needed information avaliable is called.		
+
+		<mediaobject>
+		  <imageobject>
+		   <imagedata fileref="images/stateupdater.png" format="PNG"/>
+		  </imageobject>
+		  <textobject><phrase>StateUpdater class</phrase></textobject>
+		  <caption><para>StateUpdater class</para></caption>
+		</mediaobject>
+		</para>
+		
+			 <sect2>
+			 <title>Setting operator bounding boxes</title>
+			 <para>
+			 Kernel supplies a special functor to the stateupdater, which gets called after every operation 
+			 with infromation about the rectangle the operator used. The functor sets this rectangle as the 
+			 bounding box of the operator.
+			 </para>
+			 </sect2>
+
+		</sect1>
+</chapter>
+
