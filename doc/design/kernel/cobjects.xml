@@ -1,13 +1,14 @@
 <!--  
 	jmisutka (2006/08/07)
 		TODO: 
-			o  replace <xref linkend.. with real entity definitions
+			o replace <xref linkend.. with real entity definitions
+			o add observers
 -->
 
 <chapter id="cobjects_chapter">
 
     
-  <title>CObjects</title>
+  <title>Objects</title>
   <para>
   Pdf file consists of objects. These objects are referenced from a special structure forming a tree. 
   Objects can be either simple (number, string, name, boolean value, reference, null) or 
