@@ -26,7 +26,7 @@ namespace pdfobjects {
  * need to obtain some information after each of these operations and xpdf code
  * is no suitable for this sort of things.
  *
- * If appropriate functions would be defined, this could also be used to display
+ * If appropriate functions are defined, this mechanism could be used to display
  * the content stream.
  */
 class StateUpdater 
