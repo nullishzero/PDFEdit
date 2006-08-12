@@ -3,6 +3,7 @@
 		TODO: 
 			o replace <xref linkend.. with real entity definitions
 			o add reference to pdfoperatoriterator
+			o add real examples
 -->
 
 <chapter id="pdfoperators_chapter">
@@ -51,13 +52,6 @@
 	  <textobject><phrase>Operator overview</phrase></textobject>
 	  <caption><para>Operator overview</para></caption>
 	</mediaobject>
-  </para>
-  </sect1>
-  
-  <sect1><title>Grouping operators together</title>
-  <para>Operators are stored in a tree like structure. CContentStream contains container of
-  operators. These operators are either components or leafs of a tree like structure. Leaf and
-  non leaf objects implement the same functions, but the output is different. 
   </para>
   </sect1>
   
