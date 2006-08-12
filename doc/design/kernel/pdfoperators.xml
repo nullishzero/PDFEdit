@@ -22,6 +22,15 @@
   Content stream consists of operators and their operands. Operators can be
   either simple or composite objects. The requirement for processing operators sequentially
   and representing operators in human readable form resulted in storing each operator in two queues.
+  
+  	<mediaobject>
+	  <imageobject>
+	   <imagedata fileref="images/pdfoperators.png" format="PNG"/>
+	  </imageobject>
+	  <textobject><phrase>Operator overview</phrase></textobject>
+	  <caption><para>Operator overview</para></caption>
+	</mediaobject>
+
   </para>
   </sect1>
 
@@ -47,10 +56,10 @@
 	
 	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/pdfoperators.png" format="PNG"/>
+	   <imagedata fileref="images/pdfoperatorexample.png" format="PNG"/>
 	  </imageobject>
-	  <textobject><phrase>Operator overview</phrase></textobject>
-	  <caption><para>Operator overview</para></caption>
+	  <textobject><phrase>Example of changed pdf operator</phrase></textobject>
+	  <caption><para>Example of changed pdf operator</para></caption>
 	</mediaobject>
   </para>
   </sect1>
