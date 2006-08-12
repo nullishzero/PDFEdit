@@ -38,7 +38,7 @@
 		<title>Changing cpage</title>
 		Page dictionary can be changed in two ways. Either by cpage methods or by requesting raw dictionary by its reference number.
 		If we do not want to parse the whole pdf file, we do not have the information whether an object is a page or just an object
-		with page type. That is is a problem solved by Observer design pattern<xref linkend="observer" />. We observe the underlying
+		with page type. This problem is solved by Observer design pattern<xref linkend="observer" />. We observe the underlying
 		dictionary which implement the observer subject interface. This way, we know every time the dictionary is changed either
 		by cpage or by cobject.
 		</sect1>
