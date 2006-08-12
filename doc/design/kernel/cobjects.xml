@@ -13,6 +13,16 @@
   Pdf file consists of objects. These objects are referenced from a special structure forming a tree. 
   Objects can be either simple (number, string, name, boolean value, reference, null) or 
   complex (array, dictionary, stream).
+	 <para>
+		<mediaobject>
+		  <imageobject>
+		   <imagedata fileref="images/cobjectsexample.png" format="PNG"/>
+		  </imageobject>
+		  <textobject><phrase>CObject class hierarchy</phrase></textobject>
+		  <caption><para>CObject class hierarchy</para></caption>
+		</mediaobject>
+	 </para>
+
   </para>
 
   <sect1>
@@ -38,6 +48,8 @@
 
 	  The new design counted with new object for each different pdf object. Because of the pdf decoding complexity (pdf can be encoded
 	  using many filters) these objects use xpdf Object just for initializing and dispatching changes to CXref object.
+
+	  Objects can not be simply copied, because it is not clear if a copy is a deep copy with all indirect object copied or not.
 	  </para>
 	 
 	 <para>
@@ -45,8 +57,8 @@
 		  <imageobject>
 		   <imagedata fileref="images/iproperty.png" format="PNG"/>
 		  </imageobject>
-		  <textobject><phrase>CObject class hierarchy</phrase></textobject>
-		  <caption><para>CObject class hierarchy</para></caption>
+		  <textobject><phrase>Object class hierarchy</phrase></textobject>
+		  <caption><para>Object class hierarchy</para></caption>
 		</mediaobject>
 	 </para>
 	 
@@ -84,43 +96,56 @@
 	  Pdf objects can be referenced using ids which are similar to pointers. This leads to many problems one of them is the
 	  impossibility to really delete such objects. Many of the problems are automatically handled by smart pointers. 
 	  </para>
-  </sect2>
+		 <sect3>
+			 <title>Array and dictionary</title>
+			  <para>
+			  Array store its children in a simple container indexed by position. Dictionary stores its children 
+			  in container indexed by string which uniquely identifies a property. The beauty of smart pointers arise when deallocating
+			  an array, it automatically deallocates its children when not referenced and this is done recursively.
+			  </para>
+		 </sect3>
+
+		 <sect3>
+			 <title>Streams</title>
+			  <para>
+			  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
+			  not do it the other way around. (it is because it never needs it) Xpdf impelementation of streams is very rough.
+			
+			  We use boost <xref linkend="boost" /> filtering iostream <xref linkend="boost_iostreams" /> which provide us 
+			  with the necessary general concept of
+			  encoded streams. However we have to implement the filters ourselves. (the easiest way is to simply save decoded streams
+			  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
+			  or we can save decoded stream which is automatically encoded when saved using avaliable filters.
+			
+			  Each stream consists of a dictionary and stream buffer. The dictionary can not be accessed directly. 
+			  Dictionary interface is simulated by simple methods which delegate the calls to  to the dictionary object. 
+			  Buffer is stored in encoded form allowing us to return the same byte representation of an
+			  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
+			  </para>
+
+			  <sect4>
+			  <title>Accessing streams</title>
+			  <para>
+			  We access streams using Adapter design pattern <xref linkend="adapter" /> implementing open/close interface. We need
+			  to be able to read from more streams byte per byte because content streams can be splitted anywhere. 
+			  We decided to return only xpdf objects. 
+			  </para>
+			  </sect4>
+		 </sect3>
+	</sect2>
  </sect1>
 
- <sect1>
-	 <title>Array and dictionary</title>
-	  <para>
-	  Array store its children in a simple container indexed by position. Dictionary stores its children 
-	  in container indexed by string which uniquely identifies a property. The beauty of smart pointers arise when deallocating
-	  an array, it automatically deallocates its children when not referenced and this is done recursively.
-	  </para>
- </sect1>
 
- <sect1>
-	 <title>Streams</title>
+<sect1>
+	 <title>Changing objects</title>
 	  <para>
-	  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
-	  not do it the other way around. (it is because it never needs it) Xpdf impelementation of streams is very rough.
-	
-	  We use boost <xref linkend="boost" /> filtering iostream <xref linkend="boost_iostreams" /> which provide us with the necessary general concept of
-	  encoded streams. However we have to implement the filters ourselves. (the easiest way is to simply save decoded streams
-	  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
-	  or we can save decoded stream which is automatically encoded when saved using avaliable filters.
-	
-	  Each stream consists of a dictionary and stream buffer. The dictionary can not be accessed directly. 
-	  Dictionary interface is simulated by simple methods which delegate the calls to  to the dictionary object. 
-	  Buffer is stored in encoded form allowing us to return the same byte representation of an
-	  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
+	  Every object can be obtained from CXref when knowing its reference number and then changed using iproperty interface.
+	  Internal state of special object (cpage, ccontentstream, etc.) depend on these raw objects. 
+	  Therefore a mechanism was designed to allow special object be notified about raw changes. Objects implement subject interface from
+	  Observer design pattern<xref linkend="observer" /> which allows everyone to register observers on these object. 
+	  This observer gets notified each time the object is changed. 
       </para>
 
-	  <sect2>
-	  <title>Accessing streams</title>
-	  <para>
-	  We access streams using Adapter design pattern <xref linkend="adapter" /> implementing open/close interface. We need
-	  to be able to read from more streams byte per byte because content streams can be splitted anywhere. 
-	  We decided to return only xpdf objects. 
-	  </para>
-	  </sect2>
  </sect1>
 
- </chapter>
+</chapter>
