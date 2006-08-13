@@ -85,15 +85,15 @@
 	  also pdf objects. A design decision was made to use smart pointers for referencing child objects. The reasons are:
 	  <orderedlist numeration="arabic">
 	   <listitem>
-	    <para>Allocation and deallocation policy - we cannot be sure that when an object is deallocated, someone does not 
-	    hold a pointer to the object. This could be solved by implementing reference counting, but why reimplement the wheel.
+	    <para>Allocation and deallocation policy - we cannot be sure when an object is deallocated nobody 
+	    holds a pointer to the object. This could be solved by implementing reference counting, but why reimplement the wheel.
 	    </para>
 	   </listitem>
 	   <listitem> <para>Automatic deallocating when not needed.</para> </listitem>
   	  </orderedlist>
 
-	  Pdf objects can be referenced using ids which are similar to pointers. This leads to many problems one of them is the
-	  impossibility to really delete such objects. Many of the problems are automatically handled by smart pointers. 
+	  Pdf objects can be referenced using ids which are similar to pointers. This brings many problems. One of them is the
+	  impossibility to delete such objects. Many of the problems are automatically handled by smart pointers. 
 	  </para>
 		 <sect3>
 			 <title>Array and dictionary</title>
@@ -108,16 +108,16 @@
 			 <title>Streams</title>
 			  <para>
 			  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
-			  not do it the other way around. (it is because it never needs it) Xpdf impelementation of streams is very rough.
+			  not do it the other way round. (it is because it never needs it) Xpdf impelementation of streams is very rough.
 			
 			  We use boost <xref linkend="boost" /> filtering iostream <xref linkend="boost_iostreams" /> which provide us 
 			  with the necessary general concept of
-			  encoded streams. However we have to implement the filters ourselves. (the easiest way is to simply save decoded streams
+			  encoded streams. However we have to implement the filters ourselves. (the easiest way is to save decoded streams
 			  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
 			  or we can save decoded stream which is automatically encoded when saved using avaliable filters.
 			
 			  Each stream consists of a dictionary and stream buffer. The dictionary can not be accessed directly. 
-			  Dictionary interface is simulated by simple methods which delegate the calls to  to the dictionary object. 
+			  Dictionary interface is simulated by simple methods which delegate the calls to the dictionary object. 
 			  Buffer is stored in encoded form allowing us to return the same byte representation of an
 			  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
 			  </para>
@@ -139,10 +139,10 @@
 	 <title>Changing objects</title>
 	  <para>
 	  Every object can be obtained from CXref when knowing its reference number and then changed using iproperty interface.
-	  Internal state of special object (cpage, ccontentstream, etc.) depend on these raw objects. 
-	  Therefore a mechanism was designed to allow special object be notified about raw changes. Objects implement subject interface from
-	  Observer design pattern<xref linkend="observer" /> which allows everyone to register observers on these object. 
-	  This observer gets notified each time the object is changed. 
+	  Internal state of special object (cpage, ccontentstream, etc.) depends on these raw objects. 
+	  Therefore a mechanism was designed to allow special object to be notified about raw changes. Objects implement subject interface from
+	  Observer design pattern<xref linkend="observer" /> which allows everyone to register observers on these objects. 
+	  This observer gets notified each time the object was changed. 
       </para>
 
  </sect1>
