@@ -25,6 +25,11 @@
 <!ENTITY general_utils          SYSTEM    "general_utils.xml">
 <!ENTITY general_xpdf           SYSTEM    "general_xpdf.xml">
 
+<!ENTITY gui_menu            SYSTEM    "gui/menu.xml">
+<!ENTITY gui_settings        SYSTEM    "gui/settings.xml">
+<!ENTITY gui_tree            SYSTEM    "gui/tree.xml">
+
+
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 
      document - glossentry with id same as in xref tag).
