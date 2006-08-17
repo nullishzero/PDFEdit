@@ -6,7 +6,7 @@ Example:
                 <glossentry id="identificator">
                         <glossterm>Term declaration</glossterm>
                         <glossdef>
-                                Term definition/describtion (it can contain 
+                                Term definition/description (it can contain 
                                 formated text pictures or arbitrary formatted 
                                 text.
                         </glossdef>

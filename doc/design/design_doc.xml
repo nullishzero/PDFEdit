@@ -4,7 +4,7 @@
 [
 
 <!-- Part entities declaration.
-     These should point to book part definitions (each describing specifig book
+     These should point to book part definitions (each describing specific book
      part) included directly in this file. There is no problem to reference to 
      these parts from each compomenet. 
 -->

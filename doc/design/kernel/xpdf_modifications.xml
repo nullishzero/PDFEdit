@@ -38,7 +38,7 @@
                   meaning of some components so they better fit our usage.
           </listitem>
           </itemizedlist>
-          For more information see following detailed describtion.
+          For more information see following detailed description.
     </para>
     <sect2>
      <title>Object.h and Object.cc</title>

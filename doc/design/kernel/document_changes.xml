@@ -22,7 +22,7 @@
         newest one is always used. 
   </para>
   <para>
-        Previous very short describtion says that making changes requires 
+        Previous very short description says that making changes requires 
         taking over cross reference table manipulation. This has to be done 
         transparently that nobody knows that object is changed and he always
         gets the most accurate objects. We also want to control who can
