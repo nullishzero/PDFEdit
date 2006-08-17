@@ -11,7 +11,7 @@ all:	doc_core
 doc_core_nopdf:
 	cd user && ( gmake all_no_pdf || make all_no_pdf )
 	cd design/kernel && ( gmake all_no_pdf || make all_no_pdf )
-	cd design/gui && ( gmake all_no_pdf || make all_no_pdf )
+	cd design && ( gmake all_no_pdf || make all_no_pdf )
 
 #Documentation that will be build before packing in distributiin tarball
 doc_dist:	doc_core_nopdf
@@ -20,11 +20,11 @@ doc_dist:	doc_core_nopdf
 doc_core:
 	cd user && ( gmake || make )
 	cd design/kernel && ( gmake || make )
-	cd design/gui && ( gmake || make )
+	cd design && ( gmake || make )
 
 #Clean everything
 clean:
 	cd user && ( gmake clean || make clean )
 	cd design/kernel && ( gmake clean || make clean )
-	cd design/gui && ( gmake clean || make clean )
+	cd design && ( gmake clean || make clean )
 	rm -rf programmer
