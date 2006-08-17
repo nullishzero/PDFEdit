@@ -5,5 +5,12 @@
 -->
 
 <part id="gui_part">
-        <title>GUI design description</title>
+<title>GUI design description</title>
+
+&gui_menu;
+
+&gui_settings;
+
+&gui_tree;
+
 </part>

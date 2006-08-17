@@ -1,10 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
- <bookinfo>
-  <title>Design documentation for settings system</title>
- </bookinfo>
-
  <chapter>
   <title>Settings system</title>
   <para>
@@ -72,4 +65,3 @@
    </para>
   </sect1>
  </chapter>
-</book>
