@@ -35,7 +35,21 @@
     to allow indentation and comments, so the file is better readable and manageable.
    </para>
    <para>
-    TODO : detailed description of format
+    The file is automatically assumed to be in utf-8 encoding.
+    Any leading or trailing whitespaces on line are ignored, as are any whitespaces
+    between key and equal sign, or between equal sign and value.
+    Blank lines are ignored too.
+    This allow to indent the file to be more human-readable.
+    Basically, not counting comments and blank lines, the file may contain any number
+    of lines with section identifiers and key-value pairs.
+    Section identifier, in format <code>[section path]</code>, sets prefix (i.e. the
+    path in which the keys are stored in) for all following keys, until different
+    section identifier is encountered.
+    Key-value pair, in format <code>key=value</code> specifies one setting that maps value to specified key.
+    Any number of whitespaces can be present directly behind and after the equality (=) character
+    For example, value <code>name = MyName</code> in section specified by its heading
+    <code>[settings/part1]</code> is then referenced in editor by its entire key name
+    <name>settings/part1/name</name> and its value would be <name>MyName</name>
    </para>
   </sect1>
   <sect1>
@@ -58,10 +72,18 @@
    <para>
     The format is basically an "ini file". You can not insert any comments in the file
     or indent it, as it is not supported by the <classname>QSettings</classname>
-    configuration file parser and they'll be overwritten anyway when the file is updated.
+    configuration file parser and the settings will be overwritten anyway when the file is updated.
    </para>
    <para>
-    TODO : detailed description of format
+    Basically, the file may contain any number of sections, each section having one or more key-value pairs.
+    Section identifier, in format <code>[section path]</code>, sets prefix (i.e. the
+    path in which the keys are stored in) for all keys in the section, while section named <name>General</name>
+    have special meaning off being section with "empty prefix" (root section)
+    After section identifier, the key-value pairs follow, one on line, in format <code>key=value</code> - 
+    they specify one setting that maps value to specified key.
+    After last key-value pair in one section and the next section is one extra blank line.
+    Putting extra blank lines in middle of the section (or anywhere else) is not allowed,
+    as it will break the file format.
    </para>
   </sect1>
  </chapter>
