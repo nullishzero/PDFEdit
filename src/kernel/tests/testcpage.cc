@@ -394,6 +394,43 @@ bool move(__attribute__((unused)) ostream& oss, const char* fileName)
 }
 
 
+//=====================================================================================
+bool getcc (__attribute__((unused)) ostream& oss, const char* fileName)
+{
+	boost::shared_ptr<CPdf> pdf (getTestCPdf (fileName), pdf_deleter());
+
+	size_t pageCount=pdf->getPageCount();
+	for(size_t pos=1; pos<=pageCount; pos++)
+	{
+		shared_ptr<CPage> page=pdf->getPage(pos);
+
+		typedef vector<shared_ptr<CContentStream> > CCs;
+		typedef vector<shared_ptr<PdfOperator> > Ops;
+		
+		CCs ccs;
+		page->getContentStreams (ccs);
+		if (ccs.empty())
+			continue;
+	
+		Ops ops;
+		ccs.front()->getPdfOperators (ops);
+		assert (!ops.empty());
+		
+
+		PdfOperator::Iterator it = PdfOperator::getIterator (ops.front());
+		while (!it.isEnd())		
+		{
+			CContentStream* cc = it.getCurrent()->getContentStream ();
+			CPPUNIT_ASSERT (page->getContentStream(cc).get() == cc);
+			it.next();
+		}
+		
+		_working (oss);
+	}
+	return true;
+}
+
+
 
 
 //=====================================================================================
@@ -437,6 +474,7 @@ bool annotsTests(ostream &, const char * fname)
 class TestCPage : public CppUnit::TestFixture 
 {
 	CPPUNIT_TEST_SUITE(TestCPage);
+		CPPUNIT_TEST(TestOperators);
 		CPPUNIT_TEST(TestFonts);
 		CPPUNIT_TEST(Test);
 		CPPUNIT_TEST(TestCreation);
@@ -470,6 +508,7 @@ public:
 			OK_TEST;
 		}
 	}
+	
 	//
 	//
 	//
@@ -483,6 +522,23 @@ public:
 		
 			TEST(" set");
 			CPPUNIT_ASSERT (setattr (OUTPUT, (*it).c_str()));
+			OK_TEST;
+		}
+	}
+
+	//
+	//
+	//
+	void TestOperators ()
+	{
+		OUTPUT << "CPage operator test..." << endl;
+
+		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		{
+			OUTPUT << "Testing filename: " << *it << endl;
+		
+			TEST(" getcontentstream");
+			CPPUNIT_ASSERT (getcc (OUTPUT, (*it).c_str()));
 			OK_TEST;
 		}
 	}
@@ -734,11 +790,4 @@ CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestCPage, "TEST_CPAGE");
 //=====================================================================================
 } // namespace
 //=====================================================================================
-
-
-
-
-
-
-
 

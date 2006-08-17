@@ -644,7 +644,11 @@ cstreamsreader (__attribute__((unused))	ostream& oss, const char* fileName)
 		{
 			if (o.getType() != o1.getType())
 			{
-				oss << "Cstreams are not read equally." << flush;
+				oss << "Cstreams are not read equally. [" << o.getTypeName() << "] [" << o1.getTypeName() << "]" << flush;
+			
+			}else
+			{
+				oss << "[" << o.getTypeName() << "] " << flush;
 			}
 			
 			CPPUNIT_ASSERT_EQUAL (o.getType(), o1.getType());

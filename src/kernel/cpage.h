@@ -959,6 +959,22 @@ public:
 	 //
 	 // Helper functions
 	 //
+public:
+	 /**
+	  * Return shared pointer to the content stream.
+	  * @param cc Raw ccontentstream pointer.
+	  */
+	  boost::shared_ptr<CContentStream> 
+	  getContentStream (CContentStream* cc) 
+	  {
+		  for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
+			  if ((*it).get() == cc)
+				  return *it;
+		  
+		  assert (!"Contentstream not found");
+		  throw CObjInvalidOperation ();
+	  }
+	 
 private:
 	 /**
 	  * Create xpdf's state and resource parameters.
@@ -1033,6 +1049,7 @@ public:
 		moveBelow (contentstreams[pos]); 
 	};
 
+	
 };
 
 
