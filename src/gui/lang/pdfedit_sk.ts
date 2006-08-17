@@ -1032,6 +1032,10 @@ Data: %3
         <comment>5+</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>out of range</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1292,6 +1296,10 @@ Data: %3
     </message>
     <message>
         <source>line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exception in </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1682,6 +1690,13 @@ Data: %3
     </message>
     <message>
         <source>This operator does not have any parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::QSPdf</name>
+    <message>
+        <source>Page not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1035,6 +1035,10 @@ Data: %3
         <comment>5+</comment>
         <translation>komplexních položek není zobrazeno</translation>
     </message>
+    <message>
+        <source>out of range</source>
+        <translation>mimo rozsah</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1296,6 +1300,10 @@ Data: %3
     <message>
         <source>line</source>
         <translation>řádka</translation>
+    </message>
+    <message>
+        <source>Exception in </source>
+        <translation>Výjimka v </translation>
     </message>
 </context>
 <context>
@@ -1683,6 +1691,13 @@ Data: %3
     <message>
         <source>This operator does not have any parameters</source>
         <translation>Tento operátor nemá žádné parametry</translation>
+    </message>
+</context>
+<context>
+    <name>gui::QSPdf</name>
+    <message>
+        <source>Page not found</source>
+        <translation>Stránka nenalezena</translation>
     </message>
 </context>
 <context>
