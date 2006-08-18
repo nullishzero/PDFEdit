@@ -960,7 +960,7 @@ CPage::setMediabox (const Rectangle& rc)
 // Display a page
 //
 void
-CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict) const
+CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, int w, int h) const
 {
 	// Are we in valid pdf
 	assert (hasValidPdf (dictionary));
@@ -1011,9 +1011,9 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict) const
 	// Page object display (..., useMediaBox, crop, links, catalog)
 	//
 	int rotation = lastParams.rotate - getRotation ();
-	page.display   (&out, lastParams.hDpi, lastParams.vDpi, 
+	page.displaySlice   (&out, lastParams.hDpi, lastParams.vDpi, 
 					rotation, lastParams.useMediaBox, 
-					lastParams.crop, NULL, xpdfCatalog.get());
+					lastParams.crop,x,y,w,h, NULL, xpdfCatalog.get());
 
 	//
 	// Cleanup
@@ -1027,7 +1027,7 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict) const
 //
 //
 void 
-CPage::displayPage (::OutputDev& out, const DisplayParams params) 
+CPage::displayPage (::OutputDev& out, const DisplayParams params, int x, int y, int w, int h) 
 {
 	// Reparse content streams if parameters changed
 	if (!(lastParams == params))
@@ -1043,7 +1043,7 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params)
 	}
 
 	// display page
-	displayPage (out);
+	displayPage (out,dictionary,x,y,w,h);
 }
 
 

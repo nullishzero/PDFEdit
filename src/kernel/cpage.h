@@ -822,7 +822,7 @@ public:
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
-	void displayPage (::OutputDev& out, const DisplayParams params); 
+	void displayPage (::OutputDev& out, const DisplayParams params, int x = -1, int y = -1, int w = -1, int h = -1); 
 	
 	/**
 	 * Draw page on an output device with last used display parameters.
@@ -831,7 +831,7 @@ public:
 	 * @param dict If not null, page is created from dict otherwise
 	 * this page dictionary is used. But still some information is gathered from this page dictionary.
 	 */
-	void displayPage (::OutputDev& out, boost::shared_ptr<CDict> dict = boost::shared_ptr<CDict> ()) const;
+	void displayPage (::OutputDev& out, boost::shared_ptr<CDict> dict = boost::shared_ptr<CDict> (), int x = -1, int y = -1, int w = -1, int h = -1) const;
 
 	/**
 	 * Parse content stream. 
