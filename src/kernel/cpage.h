@@ -708,8 +708,10 @@ public:
 	 * algorithm that works most of the time.
 	 *
 	 * @param text Output string  where the text will be saved.
+	 * @param encoding Encoding format.
+	 * @param rc Rectangle from which to extract the text.
 	 */
- 	void getText (std::string& text) const;
+ 	void getText (std::string& text, const std::string* encoding = NULL, const Rectangle* rc = NULL)  const;
 
 	//
 	// Annotations

@@ -896,7 +896,7 @@ CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
 // \TODO magic constants 0,0, 1000, 1000
 //
 void
-CPage::getText (std::string& text) const
+CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 
@@ -909,11 +909,18 @@ CPage::getText (std::string& text) const
 	// Display page
 	displayPage (*textDev);	
 
+
 	// Init xpdf mess
 	xpdf::openXpdfMess ();
 
+	// Set encoding
+	if (encoding)
+    	globalParams->setTextEncoding(const_cast<char*>(encoding->c_str()));
+
 	// Get the text
-	boost::scoped_ptr<GString> gtxt (textDev->getText(0, 0, 1000, 1000));
+	if (NULL == rc)
+		rc = &(lastParams.pageRect);
+	boost::scoped_ptr<GString> gtxt (textDev->getText(rc->xleft, rc->yleft, rc->xright, rc->yright));
 	text = gtxt->getCString();
 	
 	// Uninit xpdf mess
