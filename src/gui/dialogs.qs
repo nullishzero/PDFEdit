@@ -54,7 +54,7 @@ function editPageMediaBox() {
 }
 
 /** Perform "set color" operation on currently selected operator */
-function setColor() {
+function setOpColor() {
 	
 	if (!isPageAvaliable() || !(isTreeItemSelected())) {
 		warn(tr("No page or operator selected!"));
@@ -68,7 +68,7 @@ function setColor() {
 	}
 
 	stream=op.stream();
-	col=pickColor();
+	col=getColor("fg");
 	if (!col) return;//Dialog aborted
 	operatorSetColor(op,col.red, col.green, col.blue);
 	print (tr("Colour changed."));
@@ -514,7 +514,7 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 		if (!dialog.exec()) return;
 
 		if (color.checked) {
-			col = pickColor ();
+			col = getColor("fg");
 			if (!col) return;
 		}
 
@@ -582,7 +582,7 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
 	 
 		if (!dialog.exec()) return;
 		if (color.checked) {
-			col = pickColor ();
+			col = getColor("fg");
 			if (!col) return;
 		}
 

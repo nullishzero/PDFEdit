@@ -156,8 +156,8 @@ function operatorSetColor(operator,r,g,b) {
 		return ;
 	}
 	if ((r == undefined) || (g == undefined) || (b == undefined)) {
-		var col = pickColor();
-		if (isNaN(col)) {
+		var col = getColor("fg");
+		if (!col) {
 			warn( tr("Must define color")+" !!!" );
 			return operator;
 		}
@@ -212,7 +212,7 @@ function operatorSetColor(operator,r,g,b) {
 	composite.pushBack( operator );
 	putendq(composite);
 
-	operator.stream().replace(operator, composite, posit[0], posit[1]);
+	operator.stream().replace(operator, composite);//, posit[0], posit[1]);
 }
 
 /** 
@@ -287,7 +287,7 @@ function operatorSetFont(operator, fontid, fontsize) {
 	putendq(composite);
 
 	// replace it
-	operator.stream().replace (operator, composite, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
 }
 
 /** 
@@ -331,7 +331,7 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
 	if (!globchange)
 		putendq(composite);
 
-	operator.stream().replace (operator, composite, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
 }
 
 /** 
@@ -409,7 +409,7 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 	if (!globchange)
 		putendq (composite);
 
-	operator.stream().replace (operator, composite, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
 }
 
 
@@ -466,7 +466,7 @@ function operatorSetPosition(operator, dx, dy) {
 	puttextrelpos (composite,-dx,-dy)
 	putendq(composite);
 
-	operator.stream().replace (operator, composite, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
 
 }
 

@@ -78,7 +78,7 @@ function onTreeRightClick() {
  }
  if (tree_item_type=="PdfOperator") {
   menu.addSeparator();
-  menu.addItemDef("item "+tr("Set color")+",setColor(),,operator_setcolor.png");
+  menu.addItemDef("item "+tr("Set color")+",setOpColor(),,operator_setcolor.png");
   menu.addItemDef("item "+tr("Set font properties")+",editFontProps(),,operator_editfont.png");
   menu.addItemDef("item "+tr("Set relative position of a single operator")+",moveOperPos(),,operator_setrelposop.png");
   menu.addItemDef("item "+tr("Set relative position")+",moveTextPos(),,operator_setrelpos.png");
