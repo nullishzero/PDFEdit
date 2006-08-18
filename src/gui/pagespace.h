@@ -7,10 +7,9 @@
 #include <qevent.h>
 #include <qscrollview.h>
 #include <qlayout.h>
-#include "pageview.h"
+#include "pageviewS.h"
 #include "qspage.h"
 #include "qspdf.h"
-#include "cpage.h"
 
 using namespace pdfobjects;
 
@@ -305,41 +304,27 @@ class PageSpace : public QWidget {
 		 */
 		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > );
 
+		void changeMousePosition ( double x, double y );
 		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
 		void executeCommand ( QString cmd );
-	protected:
-		virtual void resizeEvent ( QResizeEvent * );
-		void initializeWorkOperatorsInMode();
 	private slots:
 		// slots for connecting pageImage's signals
 		void newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & );
 		void requestPopupMenu ( const QPoint & );
-		void showMousePosition ( const QPoint & );
+		void showMousePosition ( double x, double y );
 	private:
 		void newSelection ();
 		void actualizeSelection ();
-		void newPageView();
-		void newPageView( QPixmap &qp );
-		void centerPageView( );
 	private:
 		QLabel		* pageNumber;
 		QLabel		* mousePositionOnPage;
-		PageView	* pageImage;
+		PageViewS	* pageImage;
 		QVBoxLayout	* vBox;	// mozna nebude potreba
 		QHBoxLayout	* hBox;	// mozna nebude potreba
 		QScrollView	* scrollPageSpace;
 
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;
-		QPixmap		* actualPagePixmap;
-
-		/** Pixels per point when zoom is 100 % */
-		float		basePpP;
-		/** Zoom factor requirement by user */
-		float		zoomFactor;
-
-		/** Display parameters ( hDpi, vDpi, rotate, ... ) */
-		DisplayParams	displayParams;
 
 		boost::shared_ptr< PageViewMode >	selectionMode;
 };

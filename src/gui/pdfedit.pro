@@ -154,8 +154,8 @@ HEADERS += revisiontool.h  colortool.h  zoomtool.h  pagetool.h  toolbutton.h  to
 SOURCES += revisiontool.cc colortool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc toolfactory.cc
 
 #Main Window
-HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageview.h  statusbar.h
-SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageview.cc statusbar.cc
+HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageviewS.h  statusbar.h
+SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageviewS.cc statusbar.cc
 
 #Commandline mode
 HEADERS += consolewindow.h

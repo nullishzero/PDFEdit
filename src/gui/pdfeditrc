@@ -85,10 +85,10 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     addtextm		= item Add text			, addText()		,	, add_text.png		,need_page
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectText,selectAll,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
-    selectAllObjects	= item Select all objects	,PageSpace.setSelectionMode(0), , selectmode_allobjects.png		,need_page
-    selectText		= item Select text		,PageSpace.setSelectionMode("text_selection"), , selectmode_text.png	,need_page
-    selectAll		= item Select all		,PageSpace.setSelectionMode(2), , selectmode_all.png			,need_page
-    opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator_page
+    selectAllObjects	= item Select all objects	,PageSpace.setSelectionMode("operators_selection"\,""\,"rect")	, , selectmode_allobjects.png	,need_page
+    selectText		= item Select text		,PageSpace.setSelectionMode("text_selection")			, , selectmode_text.png		,need_page
+    selectAll		= item Select all		,PageSpace.setSelectionMode(2)					, , selectmode_all.png		,need_page
+    opsetcolor		= item Set color		,setColor()		,	, operator_setcolor.png		,need_operator_page
     opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator_page
     opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator_page
     opsetfont		= item Set font			,editFontProps()	,	, operator_editfont.png		,need_operator_page

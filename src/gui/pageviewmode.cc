@@ -16,27 +16,36 @@ DrawingObject * DrawingObjectFactory::create( const QString & nameOfObject )
 			guiPrintDbg( debug::DBG_DBG, "Undefined drawing!!!" );
 			return NULL;
 		}
+DrawingObject::DrawingObject ()
+		{
+			pen.setWidth( 1 );
+			pen.setColor( Qt::black );
+			pen.setStyle( Qt::SolidLine );
+		};
+DrawingObject::~DrawingObject ()
+		{};
 void DrawingObject::drawObject ( QPainter & /* painter */, QPoint /* p1 */, QPoint /* p2 */ )
 		{};
 void DrawingObject::drawObject ( QPainter & painter, QRegion reg )
 		{
+			QPen old_pen ( painter.pen() );
+			painter.setPen( pen );
+
 			QMemArray<QRect> h_mar (reg.rects());
 			QMemArray<QRect>::Iterator it = h_mar.begin();
 			for ( ; it != h_mar.end() ; ++it )
 				painter.fillRect( it->normalize(), Qt::yellow );
 
 			painter.drawRect( reg.boundingRect().normalize() );
+
+			painter.setPen( old_pen );
 		};
 void DrawingObject::drawObject ( QPainter & painter, QRect rect )
 		{
 			drawObject ( painter, QRegion( rect.normalize() ) );
 		};
 DrawingLine::DrawingLine ()
-		{
-			pen.setWidth( 1 );
-			pen.setColor( Qt::black );
-			pen.setStyle( Qt::SolidLine );
-		};
+		{};
 DrawingLine::~DrawingLine ()
 		{};
 void DrawingLine::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
@@ -49,11 +58,7 @@ void DrawingLine::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
 			painter.setPen( old_pen );
 		};
 DrawingRect::DrawingRect ()
-		{
-			pen.setWidth( 1 );
-			pen.setColor( Qt::black );
-			pen.setStyle( Qt::SolidLine );
-		};
+		{};
 DrawingRect::~DrawingRect ()
 		{};
 void DrawingRect::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
@@ -71,9 +76,10 @@ PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
 							const QString & drawingObject,
 							const QString & _scriptFncAtMouseRelease )
 		{
-			if (nameOfMode == "new_object")			return new PageViewMode_NewObject		( drawingObject, _scriptFncAtMouseRelease );
-			if (nameOfMode == "text_selection")		return new PageViewMode_TextSelection	( drawingObject, _scriptFncAtMouseRelease );
-			if (nameOfMode == "")					return new PageViewMode					( drawingObject, _scriptFncAtMouseRelease );
+			if (nameOfMode == "new_object")				return new PageViewMode_NewObject			( drawingObject, _scriptFncAtMouseRelease );
+			if (nameOfMode == "text_selection")			return new PageViewMode_TextSelection		( drawingObject, _scriptFncAtMouseRelease );
+			if (nameOfMode == "operators_selection")	return new PageViewMode_OperatorsSelection	( drawingObject, _scriptFncAtMouseRelease );
+			if (nameOfMode == "")						return new PageViewMode						( drawingObject, _scriptFncAtMouseRelease );
 
 			guiPrintDbg( debug::DBG_DBG, "Undefined mode!!!" );
 			return NULL;
@@ -81,8 +87,10 @@ PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
 
 void PageViewMode::movedSelectedObjects ( QPoint relativeMove )
 		{
-			emit executeCommand ( scriptFncAtMoveSelectedObjects	.arg( relativeMove.x() )
-																	.arg( relativeMove.y() ) );
+			if (relativeMove != QPoint(0,0)) {
+				emit executeCommand ( scriptFncAtMoveSelectedObjects	.arg( relativeMove.x() )
+																		.arg( relativeMove.y() ) );
+			}
 		};
 void PageViewMode::resizedSelectedObjects ( int dleft, int dtop, int dright, int dbottom )
 		{
@@ -92,29 +100,29 @@ void PageViewMode::resizedSelectedObjects ( int dleft, int dtop, int dright, int
 																	.arg( dbottom ) );
 		};
 
-void PageViewMode::mousePressLeftButton ( QMouseEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mousePressLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::mouseReleaseLeftButton ( QMouseEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mouseReleaseLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{
 			emit executeCommand ( scriptFncAtMouseRelease	.arg( pressPosition.x() )
 															.arg( pressPosition.y() )
 															.arg( releasePosition.x() )
 															.arg( releasePosition.y() ) );
 		};
-void PageViewMode::mouseMoveWithPressedLeftButton ( QMouseEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mouseMoveWithPressedLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::mousePressMidButton ( QMouseEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mousePressMidButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::mouseReleaseMidButton ( QMouseEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mouseReleaseMidButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::mousePressRightButton ( QMouseEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mousePressRightButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::mouseReleaseRightButton ( QMouseEvent * e, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::mouseReleaseRightButton ( QMouseEvent * e, QPainter * /* p */, QWidget * /* w */ )
 		{
 			emit popupMenu ( e->pos() );
 		};
 
-void PageViewMode::moveSelectedObjects ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void PageViewMode::moveSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
 			if (! isMoving)
 			{			// initialize moving process
@@ -125,31 +133,44 @@ void PageViewMode::moveSelectedObjects ( QMouseEvent * e, QPainter & p, QWidget 
 
 				isMoving = true;
 
-				drawingObject->drawObject( p, mouseSelectedRegion );		// draw new selection
+				if (p) {
+					drawingObject->drawObject( *p, mouseSelectedRegion );		// draw new selection
+				} else {
+					emit needRepaint();
+				}
 
 				return;
 			}
 
 			QPoint h_p (mouseSelectedRegion.boundingRect().normalize().topLeft() - e->pos() + pointInRect);
 
-			drawingObject->drawObject( p, mouseSelectedRegion );		// undraw old selection
+			if (p)
+				drawingObject->drawObject( *p, mouseSelectedRegion );		// undraw old selection
 
 			mouseSelectedRegion.translate( -h_p.x(), -h_p.y() );	// move selection
-			drawingObject->drawObject( p, mouseSelectedRegion );		// draw new selection
+
+			if (p)
+				drawingObject->drawObject( *p, mouseSelectedRegion );		// draw new selection
+			else {
+				emit needRepaint();
+			}
 		};
-void PageViewMode::movedSelectedObjects ( QMouseEvent * e, QPainter & p, QWidget * w )
+void PageViewMode::movedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			moveSelectedObjects( e, p, w );
-
-			drawingObject->drawObject( p, mouseSelectedRegion );		// undraw old selection
+			if (p)
+				drawingObject->drawObject( *p, mouseSelectedRegion );		// undraw old selection
 
 			isMoving = false;
 
 			movedSelectedObjects(  mouseSelectedRegion.boundingRect().normalize().topLeft()
 									- selectedOpRegion.boundingRect().normalize().topLeft() );
+
+			if (p == NULL)
+				emit needRepaint();
 		};
 
-void PageViewMode::resizeSelectedObjects ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void PageViewMode::resizeSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
 			if (! isResizing)
 			{			// initialize resizing process
@@ -186,22 +207,30 @@ void PageViewMode::resizeSelectedObjects ( QMouseEvent * e, QPainter & p, QWidge
 				pointInRect = releasePosition;
 				isResizing = true;
 
-				drawingObject->drawObject( p, QRect( pressPosition, releasePosition ) );
+				if (p)
+					drawingObject->drawObject( *p, QRect( pressPosition, releasePosition ) );
+				else
+					emit needRepaint();
+
 				return;
 			}
 
-			drawingObject->drawObject( p, QRect( pressPosition, releasePosition ) );		// undraw
+			if (p)
+				drawingObject->drawObject( *p, QRect( pressPosition, releasePosition ) );		// undraw
 
 			releasePosition.setX( pointInRect.x() * (! resizeCoefficientX) + e->pos().x() * resizeCoefficientX );
 			releasePosition.setY( pointInRect.y() * (! resizeCoefficientY) + e->pos().y() * resizeCoefficientY );
 
-			drawingObject->drawObject( p, QRect( pressPosition, releasePosition ) );		// draw new
+			if (p)
+				drawingObject->drawObject( *p, QRect( pressPosition, releasePosition ) );		// draw new
+			else
+				needRepaint();
 		};
-void PageViewMode::resizedSelectedObjects ( QMouseEvent * e, QPainter & p, QWidget * w )
+void PageViewMode::resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			resizeSelectedObjects( e, p, w );
-			
-			drawingObject->drawObject( p, QRect( pressPosition, releasePosition ) );		// undraw
+			if (p)
+				drawingObject->drawObject( *p, QRect( pressPosition, releasePosition ) );		// undraw
 
 			isResizing = false;
 
@@ -233,8 +262,11 @@ void PageViewMode::resizedSelectedObjects ( QMouseEvent * e, QPainter & p, QWidg
 				dbottom	= rectSelected.bottom()	- releasePosition.y();
 			}
 			resizedSelectedObjects ( dleft, dtop, dright, dbottom );
+
+			if (p == NULL)
+				needRepaint();
 		};
-void PageViewMode::mousePressEvent ( QMouseEvent * e, QPainter & p, QWidget * w )
+void PageViewMode::mousePressEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			switch (e->button()) {
 				case Qt::LeftButton:
@@ -243,7 +275,8 @@ void PageViewMode::mousePressEvent ( QMouseEvent * e, QPainter & p, QWidget * w 
 							isMoving = false;
 							isResizing = false;
 
-							drawingObject->drawObject ( p, selectedOpRegion );		// undraw
+							if (p)
+								drawingObject->drawObject ( *p, selectedOpRegion );		// undraw
 
 							int pomCur = none;
 							if (selectedOpRegion.boundingRect().normalize().contains( e->pos() ) )
@@ -272,7 +305,7 @@ void PageViewMode::mousePressEvent ( QMouseEvent * e, QPainter & p, QWidget * w 
 						break;
 			}
 		};
-void PageViewMode::mouseReleaseEvent ( QMouseEvent * e, QPainter & p, QWidget * w )
+void PageViewMode::mouseReleaseEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			switch (e->button()) {
 				case Qt::LeftButton:
@@ -281,12 +314,18 @@ void PageViewMode::mouseReleaseEvent ( QMouseEvent * e, QPainter & p, QWidget * 
 								movedSelectedObjects( e, p, w );
 							} else if (isResizing) {
 								resizedSelectedObjects( e, p, w );
-							} else
+							} else {
 								mouseReleaseLeftButton ( e, p, w );
+							}
 
-							drawingObject->drawObject ( p, selectedOpRegion );		// draw
+							if (p)
+								drawingObject->drawObject ( *p, selectedOpRegion );		// draw
 						}
 						isPressedLeftButton = false;
+
+						if (p == NULL)
+							emit needRepaint();
+
 						break;
 				case Qt::RightButton:
 						mouseReleaseRightButton ( e, p, w );
@@ -299,19 +338,20 @@ void PageViewMode::mouseReleaseEvent ( QMouseEvent * e, QPainter & p, QWidget * 
 						break;
 			}
 		};
-void PageViewMode::mouseDoubleClickEvent ( QMouseEvent * e, QPainter & p, QWidget * w )
+void PageViewMode::mouseDoubleClickEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			mousePressEvent( e, p, w );
 		};
-void PageViewMode::mouseMoveEvent ( QMouseEvent * e, QPainter & p, QWidget * w )
+void PageViewMode::mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			if (isPressedLeftButton) {
 				if (isMoving) {
 					moveSelectedObjects ( e, p, w );
 				} else if (isResizing) {
 					resizeSelectedObjects ( e, p, w );
-				} else
+				} else {
 					mouseMoveWithPressedLeftButton ( e, p, w );
+				}
 
 				return;
 			}
@@ -324,21 +364,34 @@ void PageViewMode::mouseMoveEvent ( QMouseEvent * e, QPainter & p, QWidget * w )
 
 			w->setCursor( QCursor( mappingResizingModeToCursor[ pomCur ] ) );
 		};
-void PageViewMode::wheelEvent ( QWheelEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::wheelEvent ( QWheelEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
 
-void PageViewMode::keyPressEvent ( QKeyEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::keyPressEvent ( QKeyEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::keyReleaseEvent ( QKeyEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::keyReleaseEvent ( QKeyEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
 
-void PageViewMode::focusInEvent ( QFocusEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::focusInEvent ( QFocusEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::focusOutEvent ( QFocusEvent * /* e */, QPainter & /* p */, QWidget * /* w */ )
+void PageViewMode::focusOutEvent ( QFocusEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
 
 void PageViewMode::repaint ( QPainter & p,  QWidget * /* w */ )
 		{
+			if (isPressedLeftButton) {
+				if (isMoving) {
+					drawingObject->drawObject( p, mouseSelectedRegion );
+					drawingObject->drawObject( p, selectedOpRegion );
+				} else if (isResizing) {
+					drawingObject->drawObject( p, QRect( pressPosition, releasePosition ) );
+				} else {
+					drawingObject->drawObject( p, pressPosition, releasePosition );		// undraw
+				}
+
+				return;
+			}
+
 			drawingObject->drawObject( p, selectedOpRegion );
 		};
 
@@ -576,29 +629,42 @@ PageViewMode_NewObject::PageViewMode_NewObject ( const QString & drawingObject, 
 			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
 		{};
 
-void	PageViewMode_NewObject::mousePressLeftButton ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void	PageViewMode_NewObject::mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
 			pressPosition = releasePosition = e->pos();
-			drawingObject->drawObject( p, e->pos(), e->pos() );
+			if (p)
+				drawingObject->drawObject( *p, e->pos(), e->pos() );
+			else
+				emit needRepaint();
 		}
-void	PageViewMode_NewObject::mouseReleaseLeftButton ( QMouseEvent * e, QPainter & p, QWidget * w )
+void	PageViewMode_NewObject::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
-			drawingObject->drawObject( p, pressPosition, releasePosition );		// undraw
+			if (p)
+				drawingObject->drawObject( *p, pressPosition, releasePosition );		// undraw
 
 			releasePosition = e->pos();
 
 			this->PageViewMode::mouseReleaseLeftButton (e, p, w);
+
+			if (p == NULL)
+				emit needRepaint();
 		}
-void	PageViewMode_NewObject::mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void	PageViewMode_NewObject::mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
-			drawingObject->drawObject( p, pressPosition, releasePosition );		// undraw
+			if (p)
+				drawingObject->drawObject( *p, pressPosition, releasePosition );		// undraw
+
 			releasePosition = e->pos();
-			drawingObject->drawObject( p, pressPosition, releasePosition );		// draw new
+
+			if (p)
+				drawingObject->drawObject( *p, pressPosition, releasePosition );		// draw new
+			else
+				emit needRepaint();
 		}
 
 void	PageViewMode_NewObject::repaint ( QPainter & p, QWidget * w  )
 		{
-			if (isPressedLeftButton)
+			if ((isPressedLeftButton) && (isMoving))
 				drawingObject->drawObject( p, pressPosition, releasePosition );
 			else
 				this->PageViewMode::repaint( p, w );
@@ -646,19 +712,19 @@ void PageViewMode_TextSelection::addWorkOperators ( const std::vector< boost::sh
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
-			guiPrintDbg( debug::DBG_DBG, "->" );
-			std::vector< boost::shared_ptr< PdfOperator > > hOps;
-			TextOperatorIterator textIter ( wOps[0] );
-			for ( ; ! textIter.isEnd() ; textIter.next() )
-			{
-				hOps.push_back( textIter.getCurrent() );
-				QRect r = getBBox(textIter.getCurrent());
-				boost::shared_ptr<PdfOperator> o = textIter.getCurrent();
-				arrayOfBBoxes.myAppend( new BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >( r, o ) );
+			std::vector< boost::shared_ptr< PdfOperator > >					hOps;
+			std::vector< boost::shared_ptr< PdfOperator > >::const_iterator	wOps_iter = wOps.begin();
+			for ( ; wOps_iter != wOps.end() ; ++wOps_iter ) {
+				// select only text operators
+				TextOperatorIterator textIter ( * wOps_iter );
 
-				std::string s;
-				textIter.getCurrent()->getStringRepresentation( s );
-				guiPrintDbg( debug::DBG_DBG, s );
+				if ((! textIter.isEnd()) && (textIter.getCurrent() == (* wOps_iter))) {
+					hOps.push_back( * wOps_iter );
+
+					QRect r = getBBox( * wOps_iter );
+					boost::shared_ptr<PdfOperator> o = * wOps_iter;
+					arrayOfBBoxes.myAppend( new BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >( r, o ) );
+				}
 			}
 
 			arrayOfBBoxes.initAllBBoxPtr();
@@ -673,14 +739,16 @@ void PageViewMode_TextSelection::addSelectedOperators ( const std::vector< boost
 			if (isPressedLeftButton && (isResizing || isMoving))
 				isPressedLeftButton = false;
 
-			std::vector< boost::shared_ptr< PdfOperator > > hOps;
-			TextOperatorIterator textIter ( sOps[0] );
-			for ( ; ! textIter.isEnd() ; textIter.next() )
-			{
-				hOps.push_back( textIter.getCurrent() );
+			std::vector< boost::shared_ptr< PdfOperator > >					hOps;
+			std::vector< boost::shared_ptr< PdfOperator > >::const_iterator	sOps_iter = sOps.begin();
+			for ( ; sOps_iter != sOps.end() ; ++sOps_iter ) {
+				// select only text operators
+				TextOperatorIterator textIter ( * sOps_iter );
+				if ((! textIter.isEnd()) && (textIter.getCurrent() == (* sOps_iter)))
+					hOps.push_back( * sOps_iter );
 			}
 
-			this->PageViewMode::addWorkOperators ( hOps );
+			this->PageViewMode::addSelectedOperators ( hOps );
 		};
 
 const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * PageViewMode_TextSelection::getNearestObject( const QPoint & point )
@@ -712,7 +780,7 @@ const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * PageViewMode_TextSe
 			return prevNearest;
 		};
 
-void PageViewMode_TextSelection::mousePressLeftButton ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void PageViewMode_TextSelection::mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* nearestObjectToClick;
 
@@ -729,11 +797,16 @@ void PageViewMode_TextSelection::mousePressLeftButton ( QMouseEvent * e, QPainte
 			lastSelectedObject = firstSelectedObject;
 			if (firstSelectedObject) {
 				mouseSelectedRegion = QRegion( * firstSelectedObject );
-				drawingObject->drawObject( p, mouseSelectedRegion );	// draw new selected object
+				if (p)
+					drawingObject->drawObject( *p, mouseSelectedRegion );	// draw new selected object
 			} else {
 				isPressedLeftButton = false;
-				drawingObject->drawObject( p, selectedOpRegion );		// draw old selected object
+				if (p)
+					drawingObject->drawObject( *p, selectedOpRegion );		// draw old selected object
 			}
+
+			if (p == NULL)
+				emit needRepaint();
 		};
 void PageViewMode_TextSelection::updateSelection (	const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > *	first,
 													const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > *	last,
@@ -784,21 +857,26 @@ void PageViewMode_TextSelection::updateSelection (	const BBoxOfObjectOnPage< boo
 			if (selOpsRegion)
 				* selOpsRegion |= QRegion( getBBox( last->getObject() ) );
 		};
-void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
 			assert( firstSelectedObject );
 			assert( lastSelectedObject );
 
-			drawingObject->drawObject( p, mouseSelectedRegion );		// undraw
+			if (p)
+				drawingObject->drawObject( *p, mouseSelectedRegion );		// undraw
 
 			// actualize selected operators
 			updateSelection( firstSelectedObject, lastSelectedObject,  & selectedOpRegion, & selectedOperators );
 
 			emit newSelectedOperators( selectedOperators );
+
+			if (p == NULL)
+				emit needRepaint();
 		};
-void PageViewMode_TextSelection::mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter & p, QWidget * /* w */ )
+void PageViewMode_TextSelection::mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
-			drawingObject->drawObject( p, mouseSelectedRegion );		// undraw
+			if (p)
+				drawingObject->drawObject( *p, mouseSelectedRegion );		// undraw
 
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * h = lastSelectedObject;
 			//  -----------   y   -----------
@@ -869,14 +947,185 @@ void PageViewMode_TextSelection::mouseMoveWithPressedLeftButton ( QMouseEvent * 
 			//  ------------   upddate region   ------------
 			updateSelection( firstSelectedObject, lastSelectedObject,  & mouseSelectedRegion );
 
-			drawingObject->drawObject( p, mouseSelectedRegion );		// draw
+			if (p)
+				drawingObject->drawObject( *p, mouseSelectedRegion );		// draw
+			else
+				emit needRepaint();
 		};
 
 void PageViewMode_TextSelection::repaint ( QPainter & p, QWidget * w  )
 		{
-			if (isPressedLeftButton)
+			if ((isPressedLeftButton) && (! isMoving) && (! isResizing))
 				drawingObject->drawObject( p, mouseSelectedRegion );
 			else
 				this->PageViewMode::repaint( p, w );
 		};
+
+// ----------------------------------  PageViewMode_OperatorsSelection  --------------------------- //
+PageViewMode_OperatorsSelection::PageViewMode_OperatorsSelection ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease ) :
+			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
+		{
+			lastSelectedOperator = workOperators.end();
+		};
+
+void	PageViewMode_OperatorsSelection::findOperators (	const std::vector< boost::shared_ptr< PdfOperator > >	& in_v,
+															std::vector< boost::shared_ptr< PdfOperator > >			& founded,
+															const QRegion	& r )
+		{
+				std::vector< boost::shared_ptr< PdfOperator > >::const_iterator		h_it = in_v.begin();
+
+				for ( ; h_it != in_v.end() ; ++h_it ) {
+					QRegion bbox ( getBBox( * h_it ) );
+					if ( ((r & bbox) ^ bbox).isEmpty() )
+						founded.push_back( * h_it );
+				}
+		}
+
+bool	PageViewMode_OperatorsSelection::findPrevOperator ( std::vector< boost::shared_ptr< PdfOperator > >::iterator	& it,
+															std::vector< boost::shared_ptr< PdfOperator > >				& v,
+															bool 			& fromEnd,
+															const QPoint	& p )
+		{
+				std::vector< boost::shared_ptr< PdfOperator > >::iterator	h_it = it;
+
+				fromEnd = false;
+
+				if (v.empty()) {
+					fromEnd = true;
+					return false;
+				}
+
+				if (it != v.begin()) {
+					do {
+						--it;
+						if (getBBox( * it ).contains( p ))
+							return true;
+					} while ( it != v.begin() );
+				}
+
+				fromEnd = true;
+
+				it = v.end();
+				do {
+					--it;
+					if (getBBox( * it ).contains( p ))
+						return true;
+				} while ( (it != h_it) && (it != v.begin()) );
+
+				return false;
+		}
+
+void	PageViewMode_OperatorsSelection::mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
+		{
+			pressPosition = releasePosition = e->pos();
+			if (p)
+				drawingObject->drawObject( *p, e->pos(), e->pos() );
+			else
+				emit needRepaint();
+		}
+void	PageViewMode_OperatorsSelection::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w )
+		{
+			if (p)
+				drawingObject->drawObject( *p, pressPosition, releasePosition );		// undraw
+
+			releasePosition = e->pos();
+
+			lastSelectedOperator = workOperators.end();
+
+			std::vector< boost::shared_ptr< PdfOperator > >		h_v;
+			if ( pressPosition != releasePosition ) {
+				QRegion h_r ( QRect( pressPosition, releasePosition ).normalize() );
+				findOperators ( workOperators, h_v, h_r );
+			} else {
+				bool fromEnd;
+				if ( findPrevOperator ( lastSelectedOperator, workOperators, fromEnd, releasePosition ) ) {
+					h_v.push_back( * lastSelectedOperator );
+				}
+			}
+			setSelectedOperators ( h_v );
+
+			emit newSelectedOperators( selectedOperators );
+
+			// execute skript command
+			this->PageViewMode::mouseReleaseLeftButton (e, p, w);
+
+			if (p == NULL)
+				emit needRepaint();
+		}
+void	PageViewMode_OperatorsSelection::movedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w )
+		{
+			// if is only clicked
+			if ( mouseSelectedRegion.boundingRect().normalize().topLeft() ==
+				 selectedOpRegion.boundingRect().normalize().topLeft() )
+			{
+				std::vector< boost::shared_ptr< PdfOperator > >		h_v;
+				bool fromEnd;
+				if ( findPrevOperator ( lastSelectedOperator, workOperators, fromEnd, e->pos() ) ) {
+					h_v.push_back( * lastSelectedOperator );
+				}
+				setSelectedOperators ( h_v );
+
+				emit newSelectedOperators( selectedOperators );
+			} else {
+				this->PageViewMode::movedSelectedObjects ( e, p, w );
+			}
+		}
+void	PageViewMode_OperatorsSelection::resizeSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w )
+		{
+			// if isResizing == false then user press left mouse button now
+			if (! isResizing)
+				resizingPress = e->pos();
+
+			this->PageViewMode::resizeSelectedObjects ( e, p, w );
+		}
+void	PageViewMode_OperatorsSelection::resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w )
+		{
+			// if is only clicked
+			if ( resizingPress == e->pos()  )
+			{
+				std::vector< boost::shared_ptr< PdfOperator > >		h_v;
+				bool fromEnd;
+				if ( findPrevOperator ( lastSelectedOperator, workOperators, fromEnd, e->pos() ) ) {
+					h_v.push_back( * lastSelectedOperator );
+				}
+				setSelectedOperators ( h_v );
+
+				emit newSelectedOperators( selectedOperators );
+			} else {
+				this->PageViewMode::resizedSelectedObjects ( e, p, w );
+			}
+		}
+void	PageViewMode_OperatorsSelection::mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
+		{
+			if (p)
+				drawingObject->drawObject( *p, pressPosition, releasePosition );		// undraw
+
+			releasePosition = e->pos();
+
+			if (p)
+				drawingObject->drawObject( *p, pressPosition, releasePosition );		// draw new
+			else
+				emit needRepaint();
+		}
+
+void	PageViewMode_OperatorsSelection::setSelectedRegion ( QRegion r )
+		{
+			std::vector< boost::shared_ptr< PdfOperator > >		h_v;
+			findOperators ( workOperators, h_v, r );
+			setSelectedOperators ( h_v );
+		}
+
+void	PageViewMode_OperatorsSelection::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps )
+		{
+			this->PageViewMode::addWorkOperators ( wOps );
+
+			lastSelectedOperator = workOperators.end();
+		}
+void	PageViewMode_OperatorsSelection::clearWorkOperators ()
+		{
+			this->PageViewMode::clearWorkOperators ();
+
+			lastSelectedOperator = workOperators.end();
+		}
+
 } // namespace gui
