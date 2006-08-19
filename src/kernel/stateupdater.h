@@ -179,6 +179,9 @@ public:
 
 		// Close xpdf mess
 		xpdf::closeXpdfMess ();
+		// If malformed content stream (missing Q)
+		while (tmpstate->hasSaves())
+			tmpstate = tmpstate->restore ();
 		// Delete gfx state
 		delete tmpstate;
 	}
