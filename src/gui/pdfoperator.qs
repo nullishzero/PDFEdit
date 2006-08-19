@@ -19,20 +19,6 @@ function isChangeableOp(operator) {
 		return false;
 }
 
-/* === Helper functions === */
-function operatorInitChange(operator) {
-	var prev = operator.iterator();
-	prev.prev();
-	var next = operator.getLastOperator().iterator();
-	next.next();
-
-	operator.setPrev( createEmptyOperator() );
-	operator.getLastOperator().setNext( createEmptyOperator() );
-
-	return [prev,next];
-}
-
-
 /* === Content stream helper functions === */
 /** Change nonstroking color. */
 function putnscolor (op,r,g,b) {
@@ -266,10 +252,6 @@ function operatorSetFont(operator, fontid, fontsize) {
 		return;
 	}
 
-	// == Set new font around this operator
-
-	var posit = operatorInitChange (operator);
-
 	//
 	// q 
 	// fontid fontsize Tf
@@ -281,11 +263,11 @@ function operatorSetFont(operator, fontid, fontsize) {
 	putfont(composite,fontid,fontsize);
 
     /* Put the changed operator also in the queue */
-	composite.pushBack (operator);
+	composite.pushBack (operator.clone());
 	putendq(composite);
 
 	// replace it
-	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);
 }
 
 /** 
@@ -306,8 +288,6 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
 
 	// == Set new font around this operator
 
-	var posit = operatorInitChange (operator);
-	
 	//
 	// q
 	// linewidth w
@@ -323,13 +303,13 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
 	putlinewidth (composite,linewidth);
 
     /* Put the changed operator also in the queue */
-	composite.pushBack (operator);
+	composite.pushBack (operator.clone());
 
 	operands.clear();
 	if (!globchange)
 		putendq(composite);
 
-	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);
 }
 
 /** 
@@ -378,8 +358,6 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 
 	// == Set new font around this operator
 
-	var posit = operatorInitChange(operator);
-	
 	//
 	// q
 	// array phase d
@@ -401,13 +379,13 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 	composite.pushBack (createOperator("d",operands), composite);
 
     /* Put the changed operator also in the queue */
-	composite.pushBack (operator);
+	composite.pushBack (operator.clone());
 
 	operands.clear();
 	if (!globchange)
 		putendq (composite);
 
-	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);
 }
 
 
@@ -446,8 +424,6 @@ function operatorSetPosition(operator, dx, dy) {
 
 	// == Set new operator position
 
-	var posit = operatorInitChange(operator);
-	
 	//
 	// q
 	// array phase d
@@ -459,12 +435,12 @@ function operatorSetPosition(operator, dx, dy) {
 	puttextrelpos(composite,dx,dy);
 
     /* Put the changed operator also in the queue */
-	composite.pushBack (operator);
+	composite.pushBack (operator.clone());
 
 	puttextrelpos (composite,-dx,-dy)
 	putendq(composite);
 
-	operator.stream().replace (operator, composite);//, posit[0], posit[1]);
+	operator.stream().replace (operator, composite);
 
 }
 
