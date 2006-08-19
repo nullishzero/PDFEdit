@@ -130,6 +130,11 @@ public slots:
  void setPrev(QSPdfOperator *op);
  void setPrev(QObject *op);
  /*-
+  Clone this object
+ */
+ QSPdfOperator* clone ();
+
+ /*-
   Return content stream in which this operator is contained
   May return NULL if the stream is not known or if this operator is not contained in any content stream
  */

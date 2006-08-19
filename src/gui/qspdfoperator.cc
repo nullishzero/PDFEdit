@@ -54,7 +54,7 @@ QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr
  Reset the csRef if these two do not match
 */
 void QSPdfOperator::csCheck() {
- if(obj->getContentStream()!=csRef.get()) {
+ if(obj->getContentStream()!=csRef) {
   //The stream is invalid, set it to NULL rather than to invalid stream
   csRef.reset();
  }
@@ -324,12 +324,12 @@ bool QSPdfOperator::isEmpty() {
 */
 void QSPdfOperator::remove() {
  if (nullPtr(obj,"remove")) return;
- CContentStream* cStream=obj->getContentStream();
- if (!cStream) {
-  //This operator is not in any content stream, so technically, it is already removed from it :)
-  return;
+ boost::shared_ptr<CContentStream> cStream=obj->getContentStream();
+ if (cStream) {
+   cStream->deleteOperator(obj);
  }
- cStream->deleteOperator(obj);
+ //This operator is not in any content stream, so technically, it is already removed from it :)
+ return;
 //This is ugly hack anyway. Add the tree reload to gui if really necessary
 // treeNeedReload();
 }
@@ -387,5 +387,15 @@ QSContentStream* QSPdfOperator::stream() {
  }
  return new QSContentStream(csRef,base);
 }
+
+/**
+ Clone this object.
+ @return Clone of this object.
+*/
+QSPdfOperator* QSPdfOperator::clone() {
+ csCheck();
+ return new QSPdfOperator (obj->clone(),base);
+}
+
 
 } // namespace gui

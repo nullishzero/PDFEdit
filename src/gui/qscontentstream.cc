@@ -61,7 +61,7 @@ bool QSContentStream::opValid(QSPdfOperator *op,bool checkThis/*=false*/) {
  if (!op->get()) return false;
  if (checkThis) {
   //Check if operator is in correct contentstream (this contentstream)
-  if (op->get()->getContentStream()!=obj.get()) return false;
+  if (op->get()->getContentStream()!=obj) return false;
  }
  //We found no errors, so we declare it valid
  return true;

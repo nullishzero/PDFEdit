@@ -180,8 +180,6 @@ function operatorSetColor(operator,r,g,b) {
 
 	// --------  set color of operator  ---------
 
-	var posit = operatorInitChange(operator);
-
 	//
 	// Create 
 	//  q
@@ -209,10 +207,10 @@ function operatorSetColor(operator,r,g,b) {
 		putscolor (composite,r,g,b);
 	}
 
-	composite.pushBack( operator );
+	composite.pushBack( operator.clone() );
 	putendq(composite);
 
-	operator.stream().replace(operator, composite);//, posit[0], posit[1]);
+	operator.stream().replace(operator, composite);
 }
 
 /** 

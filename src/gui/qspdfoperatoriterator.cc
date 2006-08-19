@@ -66,7 +66,7 @@ void QSPdfOperatorIterator::csCheck() {
   return;
  }
  assert(obj->getCurrent());
- if(obj->getCurrent()->getContentStream()!=csRef.get()) {
+ if(obj->getCurrent()->getContentStream()!=csRef) {
   //The stream is invalid, set it to NULL rather than to invalid stream
   csRef.reset();
  }
