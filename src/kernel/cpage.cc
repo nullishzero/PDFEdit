@@ -1912,18 +1912,21 @@ CPage::moveAbove (shared_ptr<const CContentStream> ct)
 void 
 CPage::moveBelow (shared_ptr<const CContentStream> ct)
 {
-	ContentStreams::iterator itPrev = find (contentstreams.begin(), contentstreams.end(), ct);
-	if (itPrev == contentstreams.end())
+	// Get the item index
+	unsigned int pos = 0;
+	for (pos = 0; pos < contentstreams.size(); ++pos)
+		if (contentstreams[pos] == ct)
+			break;
+	
+	// If first or not found throw exception
+	if (pos == contentstreams.size() || 0 == pos)
 		throw CObjInvalidOperation ();
-	--itPrev;
-	if (itPrev == contentstreams.begin())
-		throw OutOfRange ();
-
-	// Delete prev item but store it
-	shared_ptr<CContentStream> tmp = *itPrev;
-	contentstreams.erase (itPrev, itPrev + 1);
-	// Insert stored item after supplied (simply swap ct with the prev item)
-	contentstreams.insert (find (contentstreams.begin(), contentstreams.end(), ct) + 1, tmp);
+	assert (0 < pos);
+	
+	// Swap
+	shared_ptr<CContentStream> tmp = contentstreams[pos];
+	contentstreams[pos] = contentstreams[pos - 1];
+	contentstreams[pos - 1] = tmp;
 
 	// Also change Contents entry of page dictionary
 	unregisterContentsObserver ();
