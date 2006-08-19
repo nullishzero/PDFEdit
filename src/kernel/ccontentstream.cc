@@ -599,9 +599,6 @@ throw ()
 	// Stream has changed, reparse it
 	contentstream->saveChange ();
 	
-	// Reparse bounding box
-	contentstream->reparse (true);
-	
 	}catch (...)
 	{
 		assert (!"This is very very bad because this function can't throw according to the interface.");
@@ -733,6 +730,9 @@ CContentStream::_objectChanged ()
 	// 
 	registerCStreamObservers ();
 	
+	// Update bboxes
+	reparse (true);
+
 	// Notify observers
 	boost::shared_ptr<CContentStream> current (this, EmptyDeallocator<CContentStream> ());
 	this->notifyObservers (current, shared_ptr<const ObserverContext> (new BasicObserverContext (current)));
@@ -888,7 +888,6 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 		newOper->setNext (itNxt.getCurrent());
 	}
 
-
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
 		_objectChanged ();
@@ -1016,7 +1015,7 @@ CContentStream::replaceOperator (OperatorIterator it,
 	//
 	toReplace->setPrev (PdfOperator::ListItem());
 	getLastOperator(toReplace)->setNext (PdfOperator::ListItem());
-
+	
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
 		_objectChanged ();

@@ -103,6 +103,9 @@ private:
 	/** Graphical resources. */
 	boost::shared_ptr<GfxResources> gfxres;
 
+	/** Smart pointer to this object. */
+	boost::weak_ptr<CContentStream> smart_this;
+
 	//
 	// Observer observing underlying cstreams and operands
 	//
@@ -441,6 +444,23 @@ public:
 	 */
 	void saveChange () 
 		{ _objectChanged(); };
+
+	/**
+	 * Get smart pointer to this content stream.
+	 *
+	 * @return Smart pointer to this content stream.
+	 */
+	boost::shared_ptr<CContentStream> getSmartPointer () const
+		{ assert (!smart_this.expired()); return smart_this.lock(); }
+
+	/**
+	 * Set smart pointer to this content stream.
+	 *
+	 * @param ths Smart pointer to this content stream.
+	 */
+	void setSmartPointer (boost::shared_ptr<CContentStream> ths)
+		{ assert (smart_this.expired()); smart_this = ths; }
+
 
 private:
 	/**

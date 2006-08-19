@@ -1151,7 +1151,12 @@ bool CPage::parseContentStream ()
 	// True if Contents is not [ ]
 	//assert (!streams.empty());
 	while (!streams.empty())
-		contentstreams.push_back (shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+	{
+		shared_ptr<CContentStream> cc (new CContentStream(streams,state,res));
+		// Save smart pointer of the content stream so pdfoperators can return it
+		cc->setSmartPointer (cc);
+		contentstreams.push_back (cc);
+	}
 
 	// Everything went ok
 	return true;
@@ -1682,7 +1687,11 @@ CPage::addContentStreamToFront (const Container& cont)
 	boost::shared_ptr<GfxState> state;
 	createXpdfDisplayParams (res, state);
 	ContentStreams _tmp;
-	_tmp.push_back(boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+	boost::shared_ptr<CContentStream> cc (new CContentStream(streams,state,res));
+	// Save smart pointer of the content stream so pdfoperators can return it
+	cc->setSmartPointer (cc);
+	_tmp.push_back (cc);
+
 	std::copy (contentstreams.begin(), contentstreams.end(), std::back_inserter(_tmp));
 	contentstreams = _tmp;
 
@@ -1721,7 +1730,10 @@ CPage::addContentStreamToBack (const Container& cont)
 	boost::shared_ptr<GfxResources> res;
 	boost::shared_ptr<GfxState> state;
 	createXpdfDisplayParams (res, state);
-	contentstreams.push_back(boost::shared_ptr<CContentStream> (new CContentStream(streams,state,res)));
+	boost::shared_ptr<CContentStream> cc (new CContentStream(streams,state,res));
+	// Save smart pointer
+	cc->setSmartPointer (cc);
+	contentstreams.push_back (cc);
 }
 template void CPage::addContentStreamToBack<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
 template void CPage::addContentStreamToBack<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);

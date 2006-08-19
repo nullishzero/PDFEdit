@@ -15,6 +15,8 @@
 #include "iproperty.h"
 #include "cinlineimage.h"
 
+#include "ccontentstream.h"
+
 //==========================================================
 namespace pdfobjects {
 //==========================================================
@@ -23,6 +25,22 @@ using namespace std;
 using namespace boost;
 using namespace debug;
 
+
+//==========================================================
+// PdfOperator
+//==========================================================
+
+//
+//
+//
+shared_ptr<CContentStream>
+PdfOperator::getContentStream () const
+{
+	assert (contentstream);
+	assert (contentstream == contentstream->getSmartPointer().get());
+	return contentstream->getSmartPointer();
+}
+	
 
 //==========================================================
 // Concrete implementations of PdfOperator

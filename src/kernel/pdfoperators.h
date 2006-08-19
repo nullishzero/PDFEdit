@@ -363,11 +363,9 @@ public:
 	
 	/**
 	 * Get content stream.
-	 *
 	 * @return Content stream that this pdfoperator belongs to.
 	 */
-	CContentStream* getContentStream () const
-		{return contentstream;}
+	boost::shared_ptr<CContentStream> getContentStream () const;
 
 	//
 	// BBox
