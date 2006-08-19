@@ -420,8 +420,8 @@ bool getcc (__attribute__((unused)) ostream& oss, const char* fileName)
 		PdfOperator::Iterator it = PdfOperator::getIterator (ops.front());
 		while (!it.isEnd())		
 		{
-			CContentStream* cc = it.getCurrent()->getContentStream ();
-			CPPUNIT_ASSERT (page->getContentStream(cc).get() == cc);
+			shared_ptr<CContentStream> cc = it.getCurrent()->getContentStream ();
+			CPPUNIT_ASSERT (page->getContentStream(cc.get()) == cc);
 			it.next();
 		}
 		
