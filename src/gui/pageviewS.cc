@@ -132,7 +132,7 @@ void PageViewS::showPage ( boost::shared_ptr<CPage> page ) {
 	updateDisplayParameters (output);
 
 	// initialize work operators in mode - must be after change display parameters and reloaded BBox of operators (with displayPage)
-	actualPage->displayPage( output, displayParams, 0, 0, 0, 0 );
+	actualPage->displayPage( output, displayParams, 0, 0, 1, 1 );
 	initializeWorkOperatorsInMode();
 
 	// set correct size of viewport
@@ -153,7 +153,8 @@ void PageViewS::setPixmap (const QRect & r) {
 	QOutputDevPixmap output ( paperColor );
 
 	// create pixmap for page
-	actualPage->displayPage( output, displayParams, r.left(), r.top(), r.width(), r.height() );
+	// if width or height is 0 then change because call displayPage do segmentation fault in xpdf code
+	actualPage->displayPage( output, displayParams, r.left(), r.top(), (r.width() != 0) ? r.width() : 1, (r.height() != 0) ? r.height() : 1 );
 
 	// get created pixmap
 	QImage img = output.getImage();
