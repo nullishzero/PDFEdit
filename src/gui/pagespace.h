@@ -325,6 +325,7 @@ class PageSpace : public QWidget {
 
 		QSPdf		* actualPdf;
 		QSPage		* actualPage;
+		int		actualPagePos;
 
 		boost::shared_ptr< PageViewMode >	selectionMode;
 };

@@ -53,6 +53,7 @@ vBox->addWidget( da );
 
 	actualPdf = NULL;
 	actualPage = NULL;
+	actualPagePos = -1;
 
 	hBox->addStretch();
 	pageNumber = new QLabel( QString(tr("%1 of %2")).arg(0).arg(0), this, "cisStr" );
@@ -141,14 +142,27 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		// else  need reload page ( changed zoom, ... )
 	}
 
+	// if actual page is removed then show new page at same position
+	try {
+		actualPagePos = actualPdf->getPagePosition( actualPage );
+	} catch (PageNotFoundException) {
+		delete actualPage;
+		actualPage = NULL;
+
+		refresh( actualPagePos );
+
+		return;
+	}
+
+	// show actual page
 	pageImage->showPage( actualPage->get() );
 
 	// emit new page position
-	emit changedPageTo( * actualPage, actualPdf->getPagePosition( actualPage ) );
+	emit changedPageTo( * actualPage, actualPagePos );
 
 	// show actual information of position in document
 	pageNumber->setText( QString(tr("%1 of %2"))
-				.arg(actualPdf->getPagePosition( actualPage ))
+				.arg(actualPagePos)
 				.arg(actualPdf->getPageCount()) );
 }
 
@@ -441,6 +455,13 @@ void PageSpace::prevPage ( ) {
 	if ( (actualPdf->get()->hasPrevPage( actualPage->get() )) == true) {
 		QSPage p (actualPdf->get()->getPrevPage( actualPage->get() ) , NULL);
 		refresh( &p, actualPdf );
+	} else {
+		// if actual page is removed then show new page at same position -1
+		try {
+			actualPdf->getPagePosition( actualPage );
+		} catch (PageNotFoundException) {
+			refresh( actualPagePos -1 );
+		}
 	}
 }
 void PageSpace::nextPage ( ) {
@@ -454,6 +475,13 @@ void PageSpace::nextPage ( ) {
 	if ( (actualPdf->get()->hasNextPage( actualPage->get() )) == true) {
 		QSPage p (actualPdf->get()->getNextPage( actualPage->get() ) , NULL);
 		refresh( &p, actualPdf );
+	} else {
+		// if actual page is removed then show new page at same position
+		try {
+			actualPdf->getPagePosition( actualPage );
+		} catch (PageNotFoundException) {
+			refresh( actualPagePos );
+		}
 	}
 }
 void PageSpace::lastPage ( ) {
