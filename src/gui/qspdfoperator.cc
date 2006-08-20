@@ -49,15 +49,10 @@ QSPdfOperator::QSPdfOperator(boost::shared_ptr<PdfOperator> op,boost::shared_ptr
 }
 
 /**
- Check if the csRef point to the same contentstream,
- as the content stream operator thinks it is in<br>
- Reset the csRef if these two do not match
+ Reset the csRef to the real contentstream
 */
 void QSPdfOperator::csCheck() {
- if(obj->getContentStream()!=csRef) {
-  //The stream is invalid, set it to NULL rather than to invalid stream
-  csRef.reset();
- }
+ csRef=obj->getContentStream();
 }
 
 /** destructor */
