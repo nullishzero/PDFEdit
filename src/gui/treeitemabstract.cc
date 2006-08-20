@@ -32,6 +32,7 @@ TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QList
  initAbs();
 }
 
+
 /**
  constructor of TreeItemAbstract - create child item
  @param itemName Name of this item
@@ -318,6 +319,14 @@ QString TreeItemAbstract::path() {
   theParent=dynamic_cast<TreeItemAbstract*>(theParent->parent());
  }
  return path;
+}
+
+/**
+ Return hint (description) of this item
+ @return hint for given item
+*/
+QString TreeItemAbstract::itemHint() {
+ return path();
 }
 
 } // namespace gui

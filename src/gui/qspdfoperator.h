@@ -132,7 +132,7 @@ public slots:
  /*-
   Clone this object
  */
- QSPdfOperator* clone ();
+ QSPdfOperator* clone();
 
  /*-
   Return content stream in which this operator is contained

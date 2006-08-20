@@ -50,6 +50,7 @@ public:
  virtual QSCObject* getQSObject(BaseCore *_base);
  virtual void setOpen(bool open);
  virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
+ virtual QString itemHint();
 
  //Abstract functions
  /** 

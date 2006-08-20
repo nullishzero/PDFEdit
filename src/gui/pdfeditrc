@@ -88,7 +88,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     selectAllObjects	= item Select all objects	,PageSpace.setSelectionMode("operators_selection"\,""\,"rect")	, , selectmode_allobjects.png	,need_page
     selectText		= item Select text		,PageSpace.setSelectionMode("text_selection")			, , selectmode_text.png		,need_page
     selectAll		= item Select all		,PageSpace.setSelectionMode(2)					, , selectmode_all.png		,need_page
-    opsetcolor		= item Set color		,setColor()		,	, operator_setcolor.png		,need_operator_page
+    opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator_page
     opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator_page
     opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator_page
     opsetfont		= item Set font			,editFontProps()	,	, operator_editfont.png		,need_operator_page
@@ -193,5 +193,9 @@ init_path 	= $PDFEDIT_DATA/scripts;$PDFEDIT_BIN/scripts;$HOME/.pdfedit/scripts
 init_path_console = $PDFEDIT_DATA/scripts/console;$PDFEDIT_BIN/scripts/console;$HOME/.pdfedit/scripts/console
 
 [modecontroller]
-	  # Modecontroller confguration files. First file that is found is used and the rest is ignored
+	  # Modecontroller configuration files. First file that is found is used and the rest is ignored
 config	= $HOME/.pdfedit/mode.conf;$PDFEDIT_DATA/mode.conf;$PDFEDIT_BIN/mode.conf
+
+[operatorhint]
+	  # Operator hinter configuration file (database) First file that is found is used and the rest is ignored
+config	= $HOME/.pdfedit/operator.hint.$LANG;$PDFEDIT_DATA/operator.hint.$LANG;$PDFEDIT_BIN/operator.hint.$LANG;$HOME/.pdfedit/operator.hint;$PDFEDIT_DATA/operator.hint;$PDFEDIT_BIN/operator.hint

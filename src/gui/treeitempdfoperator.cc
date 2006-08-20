@@ -3,11 +3,12 @@
  @author Martin Petricek
 */
 
-#include "treeitempdfoperator.h"
-#include "treeitem.h"
-#include "treedata.h"
+#include "operatorhint.h"
 #include "pdfutil.h"
 #include "qspdfoperator.h"
+#include "treedata.h"
+#include "treeitem.h"
+#include "treeitempdfoperator.h"
 #include "util.h"
 #include <cobject.h>
 #include <ccontentstream.h>
@@ -64,6 +65,18 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,b
  assert(data);
  obj=pdfObj;
  reload();
+}
+
+/**
+ Return hint (description) of this item.
+ Hint is taken from OperatorHint class 
+ @return hint for given item
+*/
+QString TreeItemPdfOperator::itemHint() {
+ std::string operatorName;
+ obj->getOperatorName(operatorName);
+ QString opName=operatorName;
+ return path()+" "+opName+" : "+OperatorHint::getInstance()->hint(opName);
 }
 
 //See TreeItemAbstract for description of this virtual method

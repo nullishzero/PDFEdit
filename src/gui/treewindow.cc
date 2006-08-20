@@ -78,7 +78,7 @@ void TreeWindow::moveOnItem(QListViewItem *item) {
   emit itemInfo("");
   return;
  }
- emit itemInfo(abst->path());
+ emit itemInfo(abst->itemHint());
 }
 
 /**

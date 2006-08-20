@@ -56,7 +56,15 @@ QSDict* QSPage::getDictionary() {
  @param cs Content stream to move one level up painting order
 */
 void QSPage::moveAbove(QSContentStream* cs) {
- obj->moveAbove(cs->get());
+ try {
+  obj->moveAbove(cs->get());
+ } catch (CObjInvalidOperation &e) {
+  base->errorException("Page","moveAbove",tr("Invalid operation"));
+ } catch (OutOfRange &e) {
+  base->errorException("Page","moveAbove",tr("Out of range"));
+ } catch(...) {
+  base->errorException("Page","moveAbove",tr("Unknown exception"));
+ }
 }
 
 /** 
@@ -64,7 +72,15 @@ void QSPage::moveAbove(QSContentStream* cs) {
  @param cs Content stream to move one level below in painting order
 */
 void QSPage::moveBelow(QSContentStream* cs) {
- obj->moveBelow(cs->get());
+ try {
+  obj->moveBelow(cs->get());
+ } catch (CObjInvalidOperation &e) {
+  base->errorException("Page","moveBelow",tr("Invalid operation"));
+ } catch (OutOfRange &e) {
+  base->errorException("Page","moveBelow",tr("Out of range"));
+ } catch(...) {
+  base->errorException("Page","moveBelow",tr("Unknown exception"));
+ }
 }
 
 /** 
@@ -72,7 +88,15 @@ void QSPage::moveBelow(QSContentStream* cs) {
  @param csi Index of content stream to move one level up painting order
 */
 void QSPage::moveAbove(int csi) {
- obj->moveAbove(csi);
+ try {
+  obj->moveAbove(csi);
+ } catch (CObjInvalidOperation &e) {
+  base->errorException("Page","moveAbove",tr("Invalid operation"));
+ } catch (OutOfRange &e) {
+  base->errorException("Page","moveAbove",tr("Out of range"));
+ } catch(...) {
+  base->errorException("Page","moveAbove",tr("Unknown exception"));
+ }
 }
 
 /** 
@@ -80,7 +104,15 @@ void QSPage::moveAbove(int csi) {
  @param csi Index of content stream to move one level below in painting order
 */
 void QSPage::moveBelow(int csi) {
- obj->moveBelow(csi);
+ try {
+  obj->moveBelow(csi);
+ } catch (CObjInvalidOperation &e) {
+  base->errorException("Page","moveBelow",tr("Invalid operation"));
+ } catch (OutOfRange &e) {
+  base->errorException("Page","moveBelow",tr("Out of range"));
+ } catch(...) {
+  base->errorException("Page","moveBelow",tr("Unknown exception"));
+ }
 }
 
 /**
@@ -141,8 +173,9 @@ void QSPage::appendContentStream(QObject* opStack) {
 /** Call CPage::getText(ret); return ret */
 QString QSPage::getText() {
  std::string text;
- obj->getText(text);
- return text;
+ std::string encoding="UTF-8";
+ obj->getText(text,&encoding);
+ return QString::fromUtf8(text.c_str());
 }
 
 /**

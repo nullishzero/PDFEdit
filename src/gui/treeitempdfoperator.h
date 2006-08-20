@@ -37,6 +37,7 @@ public:
  virtual QStringList getChildNames();
  virtual bool haveChild();
  virtual QSCObject* getQSObject();
+ virtual QString itemHint();
 private:
  /** Operator inside this item */
  boost::shared_ptr<PdfOperator> obj;

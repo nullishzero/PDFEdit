@@ -1,5 +1,5 @@
-#ifndef __PAGEVIEW_H__
-#define __PAGEVIEW_H__
+#ifndef __PAGEVIEWS_H__
+#define __PAGEVIEWS_H__
 
 #include <qscrollview.h>
 #include <qevent.h>
