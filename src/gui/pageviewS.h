@@ -66,7 +66,12 @@ class PageViewS : public QScrollView {
 		 */
 		void changeMousePosition( double x, double y );
 	protected:
+		/** Method set correct width and height of viewport for actual page \a actualPage. */
 		void setCorrectSize ();
+		/** Method update display parameters \a displayParams for output devices \a output
+		 * and actual page \a actualPage.
+		 * @param output Initialized output device.
+		 */
 		virtual void updateDisplayParameters ( OutputDev & output );
 
 		/** Method for process mouse press events (see QScrollView's method).
@@ -123,8 +128,22 @@ class PageViewS : public QScrollView {
 		 */
 		virtual void drawContents(QPainter* p, int cx, int cy, int cw, int ch);
 
+		/** Method set left-top position of page on viewport (set \a movedPageToCenter).
+		 * Set x = 0 if page's width is greatter then visible viewport's width. Otherwise set x to
+		 * half of ( visible viewport's width  minus  page's width ).
+		 * Set y = 0 if page's height is ...
+		 */
 		void centerPage( );
+
+		/** Method is call if viewport is resized (\see Qt::QWidget::viewportResizeEvent).
+		 * @param e Resiaze event structure.
+		 *
+		 * Center actual page for new size of viewport.
+		 * @see centerPage
+		 */
 		virtual void viewportResizeEvent ( QResizeEvent * e );
+
+		/** Method send all operators in page to mode and initialize him. */
 		void initializeWorkOperatorsInMode();
 	public slots:
 		/** Function return actual zoom factor of viewed page.
@@ -184,6 +203,7 @@ class PageViewS : public QScrollView {
 		/** Display parameters ( hDpi, vDpi, rotate, ... ) */
 		pdfobjects::DisplayParams	displayParams;
 
+		/** Smart pointer to actual viewed page. */
 		boost::shared_ptr<pdfobjects::CPage>	actualPage;
 
 		/** Pixels per point when zoom is 100 % */

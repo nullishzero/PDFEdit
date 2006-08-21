@@ -61,7 +61,7 @@ class DrawingObject {
 };
 
 /** Class is STRATEGY pattern to draw line as new object.
- * (Resizing, moving and draw selected region is keeping from parent (\see DrawingObject).)
+ * (Resizing, moving and draw selected region is keeping from parent (see DrawingObject).)
  */
 class DrawingLine: public DrawingObject {
 	public:
@@ -83,7 +83,7 @@ class DrawingLine: public DrawingObject {
 };
 
 /** Class is STRATEGY pattern to draw rectangle as new object.
- * (Resizing, moving and draw selected region is keeping from parent (\see DrawingObject).)
+ * (Resizing, moving and draw selected region is keeping from parent (see DrawingObject).)
  */
 class DrawingRect: public DrawingObject {
 	public:
@@ -113,6 +113,9 @@ class PageViewModeFactory {
 											const QString & scriptFncAtMouseRelease );
 };
 
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ */
 class PageViewMode: public QObject {
 	Q_OBJECT
 	signals:
@@ -153,10 +156,10 @@ class PageViewMode: public QObject {
 			virtual void resizedSelectedObjects ( int dleft, int dtop, int dright, int dbottom );
 
 			/** Method is calling if is need move selected region (operation 'move' is NOT finished).
-			 * @param e		Pointer to mouse event (\see Qt::QMouseEvent).
-			 * @param p		Pointer to initialized painter for draw changes (\see Qt::QPainter).
-			 * 				Method emit at end 'needRepaint' if \arg p is NULL.
-			 * @param w		Pointer to widget (\see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
 			 *
 			 * @see mousePressLeftButton
 			 * @see mouseReleaseLeftButton
@@ -165,13 +168,22 @@ class PageViewMode: public QObject {
 			 * @see movedSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
 			 */
 			virtual void moveSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is need move selected region (operation 'move' is finished).
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see movedSelectedObjects( QPoint )
+			 * @see moveSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void movedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
 
 			/** Method is calling if is need resize selected region (operation 'resize' is NOT finished).
-			 * @param e		Pointer to mouse event (\see Qt::QMouseEvent).
-			 * @param p		Pointer to initialized painter for draw changes (\see Qt::QPainter).
-			 * 				Method emit at end 'needRepaint' if \arg p is NULL.
-			 * @param w		Pointer to widget (\see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
 			 *
 			 * @see mousePressLeftButton
 			 * @see mouseReleaseLeftButton
@@ -180,6 +192,15 @@ class PageViewMode: public QObject {
 			 * @see resizedSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
 			 */
 			virtual void resizeSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is need resize selected region (operation 'resize' is finished).
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see resizeSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
+			 * @see resizedSelectedObjects ( int, int, int, int )
+			 */
 			virtual void resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
 
 			/* ------------------------------------------------------------------------------ */
@@ -197,9 +218,62 @@ class PageViewMode: public QObject {
 			/* ------------------------------------------------------------------------------ */
 			/* ---        mouse events - equivalents of method called in QWidget          --- */
 			/* ------------------------------------------------------------------------------ */
+
+			/** Method is call if press mouse button (see Qt::QWidget::mousePressEvent)
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Is switch which call other method. For press left button is settings \a isPressedLeftButton, \a isMoving,
+			 * \a isResizing, \a pomCur and undrawing old selectedOpRegion.
+			 *
+			 * @see mousePressLeftButton ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see mousePressRightButton ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see mousePressMidButton ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see moveSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see resizeSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void mousePressEvent ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is call if release mouse button (see Qt::QWidget::mouseReleaseEvent)
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Is switch which call other method. For press left button is settings \a isPressedLeftButton and drawing
+			 * selectedOpRegion.
+			 *
+			 * @see mouseReleaseLeftButton ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see mouseReleaseRightButton ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see mouseReleaseMidButton ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see movedSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see resizedSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void mouseReleaseEvent ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is call if mouse double-click (see Qt::QWidget::mouseDoubleClickEvent)
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Call mousePressEvent.
+			 *
+			 * @see mousePressEvent ( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void mouseDoubleClickEvent ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is call if mouse is moving (see Qt::QWidget::mouseMoveEvent)
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Is switch which call other method. Is settings \a pomCur and mouse cursor for widget \a w.
+			 *
+			 * @see moveSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see resizeSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see mouseMoveWithPressedLeftButton ( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w );
 			virtual void wheelEvent ( QWheelEvent * e, QPainter * p, QWidget * w );
 
@@ -216,9 +290,9 @@ class PageViewMode: public QObject {
 			virtual void focusOutEvent ( QFocusEvent *, QPainter * p, QWidget * w );
 
 			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
-			 * @param p		Pointer to initialized painter for draw changes (\see Qt::QPainter).
-			 * 				Method emit at end 'needRepaint' if \arg p is NULL.
-			 * @param w		Pointer to widget (\see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
 			 *
 			 * It is only drawing method use, if viewing parent need clear repaint.
 			 */
@@ -248,7 +322,7 @@ class PageViewMode: public QObject {
 			void setResizingZone ( unsigned int width);
 
 			/** Standard constructor.
-			 * @param drawingObject				Text definition of drawing method (\see DrawingObjectFactory)
+			 * @param drawingObject				Text definition of drawing method (see DrawingObjectFactory)
 			 * @param _scriptFncAtMouseRelease	Script command for call after select object(s)
 			 */
 			PageViewMode( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
@@ -350,6 +424,7 @@ class PageViewMode: public QObject {
 			QString scriptFncAtResizeSelectedObjects;
 };
 
+/** */
 class PageViewMode_NewObject: public PageViewMode {
 	Q_OBJECT
 	public slots:
@@ -362,6 +437,7 @@ class PageViewMode_NewObject: public PageViewMode {
 			PageViewMode_NewObject ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
 };
 
+/** */
 class PageViewMode_TextSelection: public PageViewMode {
 	Q_OBJECT
 	public slots:
@@ -398,6 +474,7 @@ class PageViewMode_TextSelection: public PageViewMode {
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* lastSelectedObject;
 };
 
+/** */
 class PageViewMode_OperatorsSelection: public PageViewMode {
 	Q_OBJECT
 	public slots:
