@@ -8,82 +8,75 @@ TODO list:
 ----------
 
 GUI
- [x] Toolbar Widget na vyber aktualni barvy
- [ ] Toolbar Widget na vyber aktualni sirky/stylu cary
- ??? Toolbar Widget na vyber pisma -> bude potreba na neco? Pridavani noveho textu?
- [ ] PageTool -> zobrazovat pocet stranek ("1 z N") misto jen ("1")
- [ ] zobrazovat souradnice z PageView ve statusbaru
- ??? Toolbar Widget na zobrazovani souradnic
+ [ ] Mod: zvyraznovani pod textem (berevny ctverec pod textem)
+ [ ] Tool na defualtni font face, font size, line width, line pattern
+ [ ] Charset v options (pro properties)
+ [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
+ [ ] Delete objektu na strance - emit + skripty
+ [ ] Esc, klavesove zkratky v pageview
+ [ ] Text selecte bez ohraniceni - Miro
+ [ ] Toolbar Widget na vyber aktualni sirky/stylu cary - MP S 
+ [ ] Toolbar Widget na vyber pisma (face, velikost) - MP S 
  [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
- [ ] Zobrazovat "N properties are hidden" pokud jsou nejake skryte v property editoru
- [x] Hlaska "N properties are complex (array/dict/...) and thus hidden"
+ [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit
  [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
- [ ] QSA wrappery poradne osetrit memory leaky (uvolnovani pameti az pri zavreni okna je pozde :)
- [x] Odstranit ze skriptingu promenne treeitem a item (deprecated)
- [ ] "Plugin skripty" -> nutno pridat funkce na pridani menu items/menus/toolbars/toolbuttons za behu bez zmeny konfigurace
- [ ] "Plugin skripty" -> nutno funckce na dynamickou registraci vice callbacku
- [ ] "Plugin skripty" -> nejaky autoupdater? (pres QHttp a dialog)
  [ ] "Save selected area", "save page as image" -> pred prepsanim obrazku by se to melo zeptat
- [ ] Wrapper kolem Const cdict (treeitem) -?
  [ ] Trochu konzistentnejsi chovani treeitem.remove()
- [ ] Zobrazovat popisky operatoru ve stylu "Tj - show string"
- [ ] Option na zobrazovani referenci v tabech/primo, to same pro contentstreamy
+ [ ] CGraphic - zrusit wrapper v GUI, zrusit cGraphic v kernelu
+ [ ] Korektne ukazovat v menu/toolbaru co je schovane a co ne (check/uncheck items...).
+ [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...."
+ [ ] Pridavani anotaci - dialog
+ [ ] Zobrazovat anotace na strance - Miro
+ [ ] Neprepinat revize pokud zvolim jiz aktivni revizi
+ [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP
+ [ ] Observer na anotace v CPage
+  ?  Prepinat ikony za behu bez reloadu
+  ?  U wrapperu s obecnymi QObject parametry pri zadani spatneho parametru hodit typeError a ne jen tise selhat (nekde uz je, ale prekontrolovat jestli je to vsude)
+ [ ] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
+ [ ] Property editor: observer na "source item" + reloadovani - MP
+ [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
+ [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec
+ [ ] odstranit closeWindow ze skriptingu
+  ?  TreeItemRef -> cil je nekde v parent stromu. Zjistit co dela zmacknuti sipky na treeitem (ve zdrojacich QT)
+     a podle toho pak udelat trochu konzistentnejsi posun kurzoru v tomhle "patologickem pripade"
+ [ ] Zobraz iba poslednu zmenu na stranke - je v kernelu.
+ [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
+ [ ] Button a dialogy pre mergovanie dokumentov.
+ [ ] Text search - chybi dialog
+????? Windows build (asi jedine pres cygwin kvuli xpdf/splashdevice) - wishlist
+ ??? Slovenska lokalizace :)
+ ??? Vkladani "template items" z PDF (nejake to sablonovani nebo neco na ten zpusob)
+ ??? Value based tree reloading - optimalizace pro lepsi reloading array-based tree items (seznam operatoru, CArray)
+     - veci co nejsou identifikovany klicem jako i dict apod ale hodnotou
+ ??? TreeItemRef - podporovat deepreload() - optimalizace pri reloadu
+ ??? Recently opened documents v menu + nastaveni jejich poctu co se uklada
+ ??? QSA wrappery poradne osetrit memory leaky (uvolnovani pameti az pri zavreni okna je pozde :)
+ ??? "Plugin skripty" -> nutno pridat funkce na pridani menu items/menus/toolbars/toolbuttons za behu bez zmeny konfigurace
+ ??? "Plugin skripty" -> nutno funckce na dynamickou registraci vice callbacku
+ ??? "Plugin skripty" -> nejaky autoupdater? (pres QHttp a dialog)
+ ??? Wrapper kolem Const cdict (treeitem) -?
+ ??? Option na zobrazovani referenci v tabech/primo, to same pro contentstreamy
      - u veci co se maji zobrazit v tabu, by melo childs() u treeitem vratit prazdny seznam, pokud neni tento treeitem v koreni
      - to same u referenci co nejdou otevrit, jako treba reference na parent (tam by tio ale melo uz fungovat)
- [ ] CGraphic - v GUI je nejaky nedokonceny wrapper kolem toho, jaky je stav cgraphic v kernelu? Smazat wrapper, nebo ho dodelat? (a nacpat do stromu ...)
- [ ] Automaticke testy na GUI (muselo by se asi jeste neco malo dopsat neco do skriptingu, ale neco by tak pak testovat slo)
- [ ] Schovani preview okna (zatim jdou schovavat jen ty 4 ostatni prvky (konzole, property editor, treeview, statusbar), osetrit situace "nic neni videt")
- [ ] Korektne ukazovat v menu/toolbaru co je schovane a co ne (check/uncheck items...).
- [ ] Korektni restore splitteru pokud bylo neco schovaneho a doslo k ukonceni aplikace a opetovnemu otevreni te veci
- [ ] Popup menu na prepinani tabu v multitree by mohlo byt serazene abecedne
- [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...."
+ ??? Automaticke testy na GUI (muselo by se asi jeste neco malo dopsat neco do skriptingu, ale neco by tak pak testovat slo)
+ ??? Korektni restore splitteru pokud bylo neco schovaneho a doslo k ukonceni aplikace a opetovnemu otevreni te veci
+ ??? Popup menu na prepinani tabu v multitree by mohlo byt serazene abecedne
  ??? Page Dictionary zobrazit jako indirect object, misto primo "Dictionary" zjistit cislo indirect objectu (IndiRef, getReference() )a dat na nej referenci
      + ve stromu je celkove min items, vim jaky objekt to je
      - mam o uroven vic ve stromu
- [ ] Neprepinat revize pokud zvolim jiz aktivni revizi
- [ ] Observer na anotace v CPage
- [ ] Prepinat ikony za behu bez reloadu
- [ ] Vkladani "template items" z PDF (nejake to sablonovani nebo neco na ten zpusob)
  ??? Save/load na streamy (ulozit na disk, nahrat z disku) - asi future wishlist
- [ ] U wrapperu s obecnymi QObject parametry pri zadani spatneho parametru hodit typeError a ne jen tise selhat (nekde uz je, ale prekontrolovat jestli je to vsude)
- [ ] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline)
- [ ] Property editor: observer na "source item" + reloadovani
- [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal"
- [ ] Value based tree reloading - optimalizace pro lepsi reloading array-based tree items (seznam operatoru, CArray)
-     - veci co nejsou identifikovany klicem jako i dict apod ale hodnotou
- [ ] TreeItemRef - podporovat deepreload() - optimalizace pri reloadu
- [ ] Undo - asi wishlist, ledaze by nekoho napadlo jak to delat elegantne
- [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec
- [ ] Presouvat properties v ramci array (bez drag'n'drop asi spis wishlist)
- [ ] zkusit zaridit aby zavolani closeWindow() neshodilo skript (je to ale tezke a lze se bez toho obejit)
- ??? Recently opened documents v menu + nastaveni jejich poctu co se uklada
- [ ] Config: list ...,+listName zkopiruje items z listName (lepsi user rozsiritelnost)
- [ ] Windows build (asi jedine pres cygwin kvuli xpdf/splashdevice) - wishlist
- [ ] TreeItemRef -> cil je nekde v parent stromu. Zjistit co dela zmacknuti sipky na treeitem (ve zdrojacich QT)
-     a podle toho pak udelat trochu konzistentnejsi posun kurzoru v tomhle "patologickem pripade"
- [ ] Slovenska lokalizace :)
- [ ] Zobraz iba poslednu zmenu na stranke
- [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
- [ ] Button a dialogy pre mergovanie dokumentov.
- [ ] Text search
 
 Skripting
  [ ] pridat getAllAnnotations
- [ ] pridat addAllSystemFonts
- [ ] Upravit skripty na multiselect
+ [ ] Upravit skripty na multiselect (u kterych ma smysl)
  [ ] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
- [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho)
- [ ] Wrapper kolem Const cdict -> pro cteni veci z traileru. Eventuelne pak dat i do stromu
- [x] Odstranit treeitem, item, source, target (z skriptu, kodu i dokumentace, je to deprecated)
- [x] Scripty na manipulaciu stranok (movePage, insertPage, removePage())
- [ ] Scripty na mergovanie dokumentov.
+ [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho - concat documents, sude/liche ...)
+ ??? Wrapper kolem Const cdict -> pro cteni veci z traileru. Eventuelne pak dat i do stromu
 
 Kernel
- [ ] Unicode v properties, problemy s charsetem ...
  ??? Decryption/Encryption - asi future wishlist
- [x] Pridanie contentstream na predne alebo posledne miesto v polozke "Contents"
  [s] Posunutie contenstreamu o level vyssie / nizsie
- [ ] Filtre (LZW,FlateDecode,..)
+ ??? Filtre (LZW,FlateDecode,..)
  [o] Vrat iba poslednu zmenu ako pdfoperatory?? ako cstream??
 
 Dokumentace
@@ -104,6 +97,6 @@ Configure
  [ ] Zdokumentovat configure (v install.xml ?)
 
 Web
- [ ] Dat tam nejakou wiki
+ [ ] Naplnit wiki obsahem -> skript na automaticke cpani vyg. dokumentace na wiki
  [ ] Dat tam prostor pro cpani skriptu
      (kazdy si tam muze vystavit nejaky uzitecny skript co napsal)
