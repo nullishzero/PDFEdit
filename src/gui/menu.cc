@@ -312,10 +312,20 @@ void Menu::createItem(const QString &parentName,const QString &name,const QStrin
  } else {
   ToolBar *tb=getToolbar(parentName);
   if (tb) {
+   if (name=="-" || name=="") {
+    tb->addSeparator();
+    return;
+   }
    //Try special item (this includes separator too)
-   if (ToolFactory::specialItem(tb,name,main)) return;
+   QWidget *spec_tb=ToolFactory::specialItem(tb,name,main);
+   if (spec_tb) {
+    //special toolbar buttons are added to list with their full parameters
+    addToMap(name,spec_tb);
+    return;
+   }
    //Create ordinary item
-   ToolButton *tbutton=createToolBarItem(tb,name,caption,action,accel,icon,classes);
+   //ToolButton *tbutton=
+   createToolBarItem(tb,name,caption,action,accel,icon,classes);
   } else {
    guiPrintDbg(debug::DBG_WARN,"Toolbar/menu to install into not found: " << parentName);
   }
@@ -466,7 +476,16 @@ bool Menu::chopCommand(QString &line, const QString &command) {
 */
 void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuException) {
  //Check for special item
- if (ToolFactory::specialItem(tb,item,main)) return;
+ if (item=="-" || item=="") {
+  tb->addSeparator();
+  return;
+ }
+ QWidget *spec_tb=ToolFactory::specialItem(tb,item,main);
+ if (spec_tb) {
+  //special toolbar buttons are added to list with their full parameters
+  addToMap(item,spec_tb);
+  return;
+ }
  QString line=readItem(item);
  if (chopCommand(line,"item")) { //Format: Tooltip, Action,[,accelerator, [,icon]]
   QStringList qs=explode(MENUDEF_SEPARATOR,line,true);
@@ -698,6 +717,23 @@ void Menu::checkByName(const QString &name,bool check) {
    QMenuData* md=el.first;
    int id=el.second;
    md->setItemChecked(id,check);
+  }
+ }
+}
+
+/**
+ Show or hide item in toolbar, given its name.<br>
+ Items in menu can't be show or hidden this way
+ @param name Name of item
+ @param show True to show, false to hide
+*/
+void Menu::showByName(const QString &name,bool show) {
+ for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
+  if (it.key().first==name) {
+   QWidget* el=dynamic_cast<QWidget*>(it.data());
+   if (el) {
+    if (show) el->show(); else el->hide();
+   }
   }
  }
 }

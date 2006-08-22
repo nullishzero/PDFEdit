@@ -1,14 +1,28 @@
-#ifndef MERGEDIALOG_H
-#define MERGEDIALOG_H
+#ifndef __MERGEFORM_H__
+#define __MERGEFORM_H__
 
 #include <qvariant.h>
 #include <qdialog.h>
 #include <qfiledialog.h>
 
+class QVBoxLayout;
+class QHBoxLayout;
+class QGridLayout;
+class QSpacerItem;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QFrame;
+class QListBox;
+class QListBoxItem;
+
+namespace gui {
+
 /** Type for merge dialog result.
  * Contains 2 arrays, one for items, which are T typed and second keeps
  * an array of positions for items in original document. Each mergePositions
  * element corresponds to mergeItems element with same index.
+ @brief Type for merge dialog result.
  */
 template<typename T> class MergeArray
 {
@@ -65,16 +79,6 @@ public:
 };
 
 
-class QVBoxLayout;
-class QHBoxLayout;
-class QGridLayout;
-class QSpacerItem;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QFrame;
-class QListBox;
-class QListBoxItem;
 
 /** Dialog for merging documents.
  * <pre>
@@ -111,9 +115,9 @@ class QListBoxItem;
  * delete dialog;
  * 
  * </pre>
+ @brief Dialog for merging documents.
  */
-class MergeDialog : public QDialog
-{
+class MergeDialog : public QDialog {
     Q_OBJECT
 
 public:
@@ -190,8 +194,9 @@ protected:
      * with NodeData with FROMFILE type) for fileList list box.
      * <br>
      * Method is called when openBtn is clicked.
+     * return true in case of sucecss, false in case of failure
      */
-    void initFileList( QString & fileName );
+    bool initFileList( QString & fileName );
 
     QGridLayout* MergeDialogLayout;
     QVBoxLayout* layout48;
@@ -204,12 +209,12 @@ protected:
     QSpacerItem* spacer3;
     QHBoxLayout* layout6;
     QSpacerItem* spacer5;
-    QSpacerItem* spacer4;
     QSpacerItem* spacer6;
 
 protected slots:
     virtual void languageChange();
-
 };
 
-#endif // MERGEDIALOG_H
+} //namespace gui
+
+#endif // __MERGEDIALOG_H__

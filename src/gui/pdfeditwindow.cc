@@ -168,6 +168,22 @@ void PdfEditWindow::addColorTool(ColorTool *tool) {
 }
 
 /**
+ Add line edit tool to list of "known line edit tools"
+ @param tool Tool to add
+*/
+void PdfEditWindow::addEditTool(EditTool *tool) {
+ base->addEditTool(tool);
+}
+
+/**
+ Add number edit tool to list of "known number edit tools"
+ @param tool Tool to add
+*/
+void PdfEditWindow::addNumberTool(NumberTool *tool) {
+ base->addNumberTool(tool);
+}
+
+/**
  Signal handler invoked on menu activation
  @param id Menu ID of clicked item
  */

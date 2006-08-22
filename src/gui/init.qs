@@ -69,6 +69,11 @@ function isTreeItemSelected() {
 
 /* ==== Code to run on start ==== */
 
+//Pre-selected font sizes
+setNumberPredefs('fontsize','8,9,10,12,14,16,18,24,36,72');
+//Pre-selected line widths
+setNumberPredefs('linewidth','0.5,1,1.5,2,3,4,8,16');
+
 //Print welcome message
 print("PDF Editor "+version());
 checkMenus();

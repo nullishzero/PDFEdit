@@ -3,6 +3,7 @@
 
 class QMainWindow;
 class QString;
+class QWidget;
 
 namespace gui {
 
@@ -14,7 +15,7 @@ class ToolBar;
  */
 class ToolFactory {
 public:
- static bool specialItem(ToolBar *tb,const QString &item,QMainWindow *main);
+ static QWidget *specialItem(ToolBar *tb,const QString &item,QMainWindow *main);
 };
 
 } // namespace gui

@@ -332,7 +332,8 @@ void BaseCore::errorNullPointer(const QString &className,const QString &methodNa
  @param exceptionInfo Extra exception information
  */
 void BaseCore::errorException(const QString &className,const QString &methodName,const QString &exceptionInfo) {
- qs->throwError(tr("Exception in ")+className+"."+methodName+" : "+exceptionInfo);
+ if (className=="") qs->throwError(tr("Exception in ")+methodName+" : "+exceptionInfo);
+ else qs->throwError(tr("Exception in ")+className+"."+methodName+" : "+exceptionInfo);
 }
 
 /**

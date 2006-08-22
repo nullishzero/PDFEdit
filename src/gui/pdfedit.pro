@@ -100,6 +100,8 @@ HEADERS += stringoption.h  realoption.h  intoption.h  booloption.h  combooption.
 SOURCES += stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc
 HEADERS += dialogoption.h  fileoption.h  fontoption.h
 SOURCES += dialogoption.cc fileoption.cc fontoption.cc
+HEADERS += mergeform.h
+SOURCES += mergeform.cc
 
 #Help window
 HEADERS += helpwindow.h
@@ -151,7 +153,9 @@ SOURCES += invalidmenuexception.cc nullpointerexception.cc
 
 #Toolbar
 HEADERS += revisiontool.h  colortool.h  zoomtool.h  pagetool.h  toolbutton.h  toolbar.h  toolfactory.h  
+HEADERS += edittool.h  numbertool.h
 SOURCES += revisiontool.cc colortool.cc zoomtool.cc pagetool.cc toolbutton.cc toolbar.cc toolfactory.cc
+SOURCES += edittool.cc numbertool.cc
 
 #Main Window
 HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageviewS.h  statusbar.h

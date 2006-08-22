@@ -9,9 +9,12 @@
 #include "consolewritergui.h"
 #include "commandwindow.h"
 #include "dialog.h"
+#include "edittool.h"
 #include "helpwindow.h"
 #include "multitreewindow.h"
 #include "menu.h"
+#include "mergeform.h"
+#include "numbertool.h"
 #include "optionwindow.h"
 #include "pagespace.h"
 #include "pdfeditwindow.h"
@@ -83,6 +86,22 @@ void BaseGUI::runInitScript() {
 */
 void BaseGUI::addColorTool(ColorTool *tool) {
  colorPickers.insert(tool->getName(),tool);
+}
+
+/**
+ Add edit tool to list of "known edit tools"
+ @param tool Tool to add
+*/
+void BaseGUI::addEditTool(EditTool *tool) {
+ editTools.insert(tool->getName(),tool);
+}
+
+/**
+ Add number tool to list of "known number tools"
+ @param tool Tool to add
+*/
+void BaseGUI::addNumberTool(NumberTool *tool) {
+ numberTools.insert(tool->getName(),tool);
 }
 
 /**
@@ -216,6 +235,11 @@ void BaseGUI::checkItem(const QString &name,bool check) {
  w->menuSystem->checkByName(name,check);
 }
 
+/** \copydoc Menu::showByName */
+void BaseGUI::showItem(const QString &name,bool show) {
+ w->menuSystem->showByName(name,show);
+}
+
 /** \copydoc PdfEditWindow::exitApp */
 void BaseGUI::closeAll() {
  w->exitApp();
@@ -280,6 +304,7 @@ QString BaseGUI::fileSaveDialog(const QString &oldName/*=QString::null*/) {
 /**
  Get color from color picker with given name
  @param colorName Name of color picker
+ @return Color from the picker or empty Variant if color picker is not found
 */
 QVariant BaseGUI::getColor(const QString &colorName) {
  //Check if we have the picker
@@ -289,6 +314,31 @@ QVariant BaseGUI::getColor(const QString &colorName) {
  return QVariant(pick->getColor());
 }
 
+/**
+ Get text from text edit box with given name
+ @param textName Name of text edit box
+ @return text in the edit box or QString::null if edit box is not found
+*/
+QString BaseGUI::getEditText(const QString &textName) {
+ //Check if we have the tool
+ if (!editTools.contains(textName)) return QString::null;
+ EditTool *pick=editTools[textName];
+ assert(pick);
+ return pick->getText();
+}
+
+/**
+ Get number from number edit box with given name
+ @param name Name of edit box
+ @return number in the edit box or 0 if given edit box is not found
+*/
+double BaseGUI::getNumber(const QString &name) {
+ //Check if we have the tool
+ if (!numberTools.contains(name)) return 0;
+ NumberTool *pick=numberTools[name];
+ assert(pick);
+ return pick->getNum();
+}
 
 /**
  Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
@@ -317,6 +367,47 @@ bool BaseGUI::isVisible(const QString &widgetName) {
  */
 void BaseGUI::message(const QString &msg) {
  QMessageBox::information(w,APP_NAME,msg,QObject::tr("&Ok"),QString::null,QString::null,QMessageBox::Ok | QMessageBox::Default);
+}
+
+/**
+ Brings up "merge documents" dialog and return the results
+ @return Result of merge or empty variant if dialog was cancelled
+ */
+QVariant BaseGUI::mergeDialog() {
+ QVariant retValue;
+ CPdf *doc=qpdf->get();
+ if (!doc) {
+  //No document opened at all
+  errorException("","mergeDialog",tr("No document opened"));
+  return retValue;
+ }
+ // Create dialog instance
+ MergeDialog *dialog=new MergeDialog();
+ // Inits original document (one which is currently opened) with its page count.
+ dialog->initOriginal(doc->getPageCount());
+ // Starts dialog as modal and does something if OK was pressed
+ if(dialog->exec()==QDialog::Accepted) {
+  // gets result of merging operation
+  MergeArray<int> * result=dialog->getResult();
+  // if result length is 0 - there is nothing to merge
+  if(result->getLength()>0) {
+
+   //TODO: the result
+   //TODO: documentation for result format
+   //TODO: modify script to use dialog
+
+   // result->getItems() returns an array of pages to be merged
+   // with current document
+   // result->getPositions() returns an array of positions for
+   // those pages
+  }
+ // result cleanup
+  delete result;
+ }
+ // dialog cleanup
+ dialog->destroyOpenFile();
+ delete dialog;
+ return retValue;
 }
 
 /** \copydoc PdfEditWindow::modified */
@@ -463,6 +554,46 @@ void BaseGUI::setColor(const QString &colorName,const QVariant &newColor) {
  QColor col=newColor.toColor();
  if (!col.isValid()) return;
  pick->setColor(col);
+}
+
+/**
+ Set text of text edit box with given name
+ @param textName Name of text edit box
+ @param newText New text to set
+*/
+void BaseGUI::setEditText(const QString &textName,const QString &newText) {
+ //Check if we have the tool
+ if (!editTools.contains(textName)) return;
+ EditTool *pick=editTools[textName];
+ assert(pick);
+ pick->setText(newText);
+}
+
+/**
+ Set number in number edit box with given name
+ @param name Name of edit box
+ @param number New number to set
+*/
+void BaseGUI::setNumber(const QString &name,double number) {
+ //Check if we have the tool
+ if (!numberTools.contains(name)) return;
+ NumberTool *pick=numberTools[name];
+ assert(pick);
+ pick->setNum(number);
+}
+
+/**
+ Set predefined numbers to chose from for number edit box with given name.
+ The user is still able to type its own numbers.
+ @param name Name of edit box
+ @param predefs List of predefined numbers, separated with commas
+*/
+void BaseGUI::setNumberPredefs(const QString &name,const QString &predefs) {
+ //Check if we have the tool
+ if (!numberTools.contains(name)) return;
+ NumberTool *pick=numberTools[name];
+ assert(pick);
+ pick->setPredefs(predefs);
 }
 
 /**

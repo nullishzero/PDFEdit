@@ -11,6 +11,8 @@ namespace gui {
 
 class ColorTool;
 class ConsoleWriterGui;
+class EditTool;
+class NumberTool;
 class PdfEditWindow;
 class QSMenu;
 class TreeItemAbstract;
@@ -30,6 +32,8 @@ public:
  virtual ~BaseGUI();
  void runInitScript();
  void addColorTool(ColorTool *tool);
+ void addEditTool(EditTool *tool);
+ void addNumberTool(NumberTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
  /*- Invokes "About" dialog, showing information about this program and its authors */
@@ -110,6 +114,16 @@ public slots: //This will be all exported to scripting
   Returns false if the color picker does not exist.
  */
  QVariant getColor(const QString &colorName);/*Variant=Color*/
+ /*-
+  Get text from editbox in toolbar with given name.
+  Returns false if the editbox does not exist.
+ */
+ QString getEditText(const QString &textName);
+ /*-
+  Get number from number editbox in toolbar with given name.
+  Returns 0 if the number editbox does not exist.
+ */
+ double getNumber(const QString &name);
 
  /*- Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked */
  void help(const QString &topic=QString::null);
@@ -129,6 +143,11 @@ public slots: //This will be all exported to scripting
  bool isVisible(const QString &widgetName);
  /*- Show simple messagebox with specified message and wait until user dismiss it */
  void message(const QString &msg);
+ /*-
+  Bring up "merge pages from another PDF in this document" dialog.
+  Returns result of merge or NULL if dialog was cancelled
+ */
+ QVariant mergeDialog();
  /*- Return true if the document was modified since it was opened or last saved, false otherwise. */
  bool modified();
  /*-
@@ -197,6 +216,20 @@ public slots: //This will be all exported to scripting
   Set color of color picker with given name
  */
  void setColor(const QString &colorName,const QVariant &newColor);
+ /*-
+  Set text in toolbar editbox with given name
+ */
+ void setEditText(const QString &textName,const QString &newText);
+ /*-
+  Set number in toolbar number editbox with given name
+ */
+ void setNumber(const QString &name,double number);
+ /*-
+  Set list of predefined values for number editbox with given name.
+  The values in the list must be separated by commas.
+  User is still able to type in any value not in the list.
+ */
+ void setNumberPredefs(const QString &name,const QString &predefs);
  /*- Change active revision in current PDF document */
  void setRevision(int revision);
  /*-
@@ -205,6 +238,12 @@ public slots: //This will be all exported to scripting
   of possible names.
  */
  void setVisible(const QString &widgetName, bool visible);
+ /*-
+  Show (second parameter is true) or hide (false) item in toolbar, given its name
+  If you prefix name with slash ("/"), you will affect "class" of items
+  - every item that belong to the specified class
+ */
+ void showItem(const QString &name,bool show);
  /*- Return root item of currently selected tree */
  QSTreeItem* treeRoot();
  /*- Return root item of main tree */
@@ -291,6 +330,10 @@ private:
  PdfEditWindow* w;
  /** Map with color picker tools */
  QMap<QString,ColorTool*> colorPickers;
+ /** Map with edit tools */
+ QMap<QString,EditTool*> editTools;
+ /** Map with number tools */
+ QMap<QString,NumberTool*> numberTools;
 };
 
 } // namespace gui

@@ -41,8 +41,7 @@
 MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,helpmenu
 
   #File submenu
-  filemenu		= list &File,fnew,fload,fsave,fsavecopy,fsaverev,-,neww,closew,-,quit
-    fnew		= item &New document	 , func_new()		,	, new.png
+  filemenu		= list &File,fload,fsave,fsavecopy,fsaverev,-,neww,closew,-,quit
     fload		= item &Open...		 , func_load()		,F3	, load.png
     fsave		= item &Save		 , func_save()		,F2	, save.png	 ,need_document
     fsaverev		= item Save new &revision, func_saverev()	,	, save.png	 ,need_document
@@ -104,10 +103,10 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
 SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectText,selectAll
   # look in menu for definition of items
 
-MainToolbar		= list Main Toolbar,fnew,fload,fsave,opts,closew,hideCmd
+MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
   # look in menu for definition of items
 
-PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in,-,_color_tool fg
+PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in,-,_color_tool fg,_color_tool bg,_edit_tool text,_number_tool fontsize,_number_tool linewidth
   # _page_tool is special toolbar item to show/change current page
   drawline		= item Draw line	, PageSpace.setSelectionMode("new_object"\,"drawLine(%1\,%2\,%3\,%4\,false)"\,"line")	, , draw_line.png	,need_page
   drawlinee		= item Draw line	, PageSpace.setSelectionMode("new_object"\,"drawLine(%1\,%2\,%3\,%4\,true)"\,"line")	, , draw_line.png	,need_page

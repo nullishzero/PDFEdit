@@ -43,6 +43,7 @@ function checkMenus() {
  enableItem("/need_page",		(have_page));
  enableItem("/need_document",		(have_document));
  enableItem("/need_contentstream_root",	cstream_tab);
+ enableItem("_zoom_tool",have_page);
  if (cstream_tab) {
   mod=treeRoot().getMode();
   activateMode(mod);

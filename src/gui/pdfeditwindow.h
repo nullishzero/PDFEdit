@@ -16,8 +16,10 @@ namespace gui {
 class BaseGUI;
 class ColorTool;
 class CommandWindow;
+class EditTool;
 class Menu;
 class MultiTreeWindow;
+class NumberTool;
 class PageSpace;
 class PropertyEditor;
 class QSPage;
@@ -37,6 +39,8 @@ public:
  PdfEditWindow(const QString &fName=QString::null,QWidget *parent=0,const char *name=0);
  ~PdfEditWindow();
  void addColorTool(ColorTool *tool);
+ void addEditTool(EditTool *tool);
+ void addNumberTool(NumberTool *tool);
  bool modified();
  QString filename();
  void saveVisibility(QWidget *w,const QString &name);

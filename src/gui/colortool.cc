@@ -47,7 +47,7 @@ QSize ColorTool::sizeHint() const {
 
 /**
  Called on resizing of property editing control
- Will simply set the same fixed size to inner Zoom list
+ Will simply set the same fixed size to inner button
  @param e resize event
 */
 void ColorTool::resizeEvent (QResizeEvent *e) {
