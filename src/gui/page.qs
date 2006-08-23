@@ -113,10 +113,12 @@ function calcDiff(positions, value, n)
 {
         var diff=0;
 
+	print(positions+" "+value+" "+n);
         for(j=0; j<n; ++j)
                 if(positions[j]>0 && positions[j]<=value)
                         diff++;
 
+	print(diff);
         return diff;
 }
 
@@ -204,7 +206,7 @@ function mergeWithPages(pages, positions)
                 // given pos has to be recalculated because of previous
                 // insertions. So all lower positions increments diff
                 // for it.
-                pos+=calcDiff(positions, pos, i-1);
+                pos+=calcDiff(positions, pos, i);
 
                 // inserts page to the current document to the calculated place
                 document.insertPage(pages[i], pos);
