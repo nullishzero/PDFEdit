@@ -8,6 +8,7 @@ TODO list:
 ----------
 
 GUI
+ [ ] Pri reload page savnout vsechny contentstreamy na dane page (v go())
  [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text
  [ ] Callback pokud edittool (nebo i jine tooly? Number/selection) zmeni svoji hodnotu - MP P
  [ ] pouzit edittool na editaci textu (v jednotlivem operatoru?)
@@ -18,7 +19,7 @@ GUI
  [ ] Delete objektu na strance - emit + skripty
  [ ] Esc, klavesove zkratky v pageview
  [ ] Text select bez ohraniceni - Miro
- [ ] Pridavani textu "inline" rovnou na stranbce - Miro
+ [ ] Pridavani textu "inline" rovnou na strance - Miro
  [x] Toolbar Widget na vyber aktualni sirky cary
   ?  Toolbar Widget na vyber aktualniho stylu cary
  [x] Toolbar Widget na vyber pisma (face, velikost)
