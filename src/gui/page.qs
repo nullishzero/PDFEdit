@@ -224,3 +224,22 @@ function mergeWithPages(pages, positions)
 
         go();
 }
+
+/**
+ Function that is invoked when slecting "Merge pages from other document" from menu/toolbar
+*/
+function mergeDocument() {
+ var mresult=mergeDialog();
+ if (!mresult) return;
+ var pageNumbers=mresult[0];
+ var pagePositions=mresult[1];
+ var filename=mresult[2];
+ var pages=[];
+ var pdf2=loadPdf(filename);
+ for (i=0;i<pageNumbers.length;i++) {
+  pages[i]=pdf2.getPage(pageNumbers[i]);
+ }
+ mergeWithPages(pages,pagePositions);
+ pdf2.unloadPdf();
+ return mresult;
+}

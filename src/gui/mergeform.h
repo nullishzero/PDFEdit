@@ -174,6 +174,12 @@ public:
      */
     void destroyOpenFile();
 
+    /**
+     Return file name of document that contain pages to merge
+     @return filename of selected document
+    */
+    QString fileName();
+
 public slots:
     // Events handlers
     virtual void mergeList_currentChanged( QListBoxItem * item );

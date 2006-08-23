@@ -254,7 +254,6 @@ void QSPage::addAnnotation(QObject *an) {
  \see CPage::getMediabox
 */
 QVariant QSPage::mediabox() {
- //QStringList will be "autoconverted" to Array in QSA
  Rectangle r=obj->getMediabox();
  QValueList<QVariant> rect;
  rect.append(r.xleft);

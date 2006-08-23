@@ -66,8 +66,9 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     streamFont		= item Show only font operators in stream	, streamMode('font')	,		, stream_mode_font.png	,need_contentstream_root
     streamGfx		= item Show only graphical operators in stream	, streamMode('graphic')	,		, stream_mode_gfx.png	,need_contentstream_root
   #Tools submenu
-  toolsmenu		= list &Tools,opts
+  toolsmenu		= list &Tools,opts,mergeDoc
     opts		= item &Options,options(),F9,options.png
+    mergeDoc		= item &Insert Pages from other document,mergeDocument()
   #Page submenu
   pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinem,drawrectm,addtextm
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
@@ -106,7 +107,7 @@ SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectText,s
 MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
   # look in menu for definition of items
 
-PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in,-,_color_tool fg,_color_tool bg,_edit_tool text,_number_tool fontsize,_number_tool linewidth,_select_tool fontface
+PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   # _page_tool is special toolbar item to show/change current page
   drawline		= item Draw line	, PageSpace.setSelectionMode("new_object"\,"drawLine(%1\,%2\,%3\,%4\,false)"\,"line")	, , draw_line.png	,need_page
   drawlinee		= item Draw line	, PageSpace.setSelectionMode("new_object"\,"drawLine(%1\,%2\,%3\,%4\,true)"\,"line")	, , draw_line.png	,need_page
@@ -115,6 +116,11 @@ PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage
   addtext		= item Add text		, PageSpace.setSelectionMode("new_object"\,"addText(%1\,%2\,%3\,%4)"\,"rect")		, , add_text.png	,need_page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
+
+TextToolBar		= list Text Toolbar,_select_tool fontface,_number_tool fontsize,_edit_tool text
+  # _select_tool is special toolbar item to select font face
+  # _number_tool is special toolbar item to select font size
+  # _edit_tool is special toolbar item to modify text
 
 RevisionToolbar		= list Revision Toolbar,revlabel,_revision_tool
   revlabel		= label Revisions
@@ -137,7 +143,7 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 
 [gui]
 #Which toolbars are available for use
-toolbars	= MainToolbar,PageToolbar,ObjectToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar
+toolbars	= MainToolbar,PageToolbar,ObjectToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar
 #Settings affecting preview window
 PageSpace/ResizingZone			= 2
 PageSpace/onClickedSelectOneObject	= true

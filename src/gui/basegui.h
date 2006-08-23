@@ -68,11 +68,6 @@ public slots: //This will be all exported to scripting
  */
  bool closeFile(bool askSave,bool onlyAsk=false);
  /*-
-  Closes current editor window.
-  If the file is not saved, user is asked to save changes to current file.
- */
- void closeWindow();
- /*-
   Load one menu or toolbar item and insert it into parent menu or toolbar.
   If the name is "" or "-", separator is inserted on place of the item and rest of parameters are ignored.
   If inserting item into toolbar and the name will match one of the special items, the special item
@@ -148,6 +143,13 @@ public slots: //This will be all exported to scripting
  /*-
   Bring up "merge pages from another PDF in this document" dialog.
   Returns result of merge or NULL if dialog was cancelled
+
+  Result is array of three elements:
+  <itemizedlist>
+   <listitem><para>First element is array with page numbers</para></listitem>
+   <listitem><para>Second element is array with page positions</para></listitem>
+   <listitem><para>Third is filename of the document to be merged in</para></listitem>
+  </itemizedlist>
  */
  QVariant mergeDialog();
  /*- Return true if the document was modified since it was opened or last saved, false otherwise. */

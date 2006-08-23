@@ -259,11 +259,6 @@ bool BaseGUI::closeFile(bool askSave,bool onlyAsk/*=false*/) {
  return w->closeFile(askSave,onlyAsk);
 }
 
-/** \copydoc PdfEditWindow::closeWindow */
-void BaseGUI::closeWindow() {
- w->closeWindow();
-}
-
 /**
  \copydoc Menu::createItem(const QString &,const QString &,const QString &,const QString &,const QString &,const QString &,const QStringList &)
 */ 
@@ -388,8 +383,13 @@ void BaseGUI::message(const QString &msg) {
 
 /**
  Brings up "merge documents" dialog and return the results
+
+ Result is array of three elements:
+ First element is array with page numbers
+ Second element is array with page positions
+ Third is filename of the document to be merged in
  @return Result of merge or empty variant if dialog was cancelled
- */
+*/
 QVariant BaseGUI::mergeDialog() {
  QVariant retValue;
  CPdf *doc=qpdf->get();
@@ -407,18 +407,27 @@ QVariant BaseGUI::mergeDialog() {
   // gets result of merging operation
   MergeArray<int> * result=dialog->getResult();
   // if result length is 0 - there is nothing to merge
-  if(result->getLength()>0) {
-
-   //TODO: the result
-   //TODO: documentation for result format
-   //TODO: modify script to use dialog
-
+  int n=result->getLength();
+  if(n>0) {
+   QValueList<QVariant> rItems;
+   QValueList<QVariant> rPos;
    // result->getItems() returns an array of pages to be merged
    // with current document
+   int *res_items=result->getItems();
    // result->getPositions() returns an array of positions for
    // those pages
+   size_t *res_pos=result->getPositions();
+   for (int i=0;i<n;i++) {
+    rItems.append(res_items[i]);
+    rPos.append(res_pos[i]);
+   }
+   QValueList<QVariant> res;
+   res.append(rItems);
+   res.append(rPos);   
+   res.append(dialog->fileName());   
+   retValue=QVariant(res);
   }
- // result cleanup
+  // result cleanup
   delete result;
  }
  // dialog cleanup

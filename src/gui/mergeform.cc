@@ -309,10 +309,10 @@ MergeArray<int> * MergeDialog::getResult()
         return mergeArray;
 }
 
-/**
- Initialize original document pages from their count
- @count number of pages in current document
- */
+QString MergeDialog::fileName() {
+ return fileNameInput->text();
+}
+
 void MergeDialog::initOriginal( size_t count ) {
  char itemLabel[128];
  for(size_t i=1; i<=count; ++i) {
