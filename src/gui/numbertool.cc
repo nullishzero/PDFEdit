@@ -45,8 +45,17 @@ QSize NumberTool::sizeHint() const {
 */
 void NumberTool::setPredefs(const QString &predefs,const QString &separator/*=","*/) {
  QStringList plist=QStringList::split(separator,predefs,true);
+ setPredefs(plist);
+}
+
+/**
+ Set list of predefined values
+ @param predefs List of predefined values for quick selecting
+ @param separator separator of values in list, by default comma
+*/
+void NumberTool::setPredefs(const QStringList &predefs) {
  ed->clear();
- ed->insertStringList(plist);
+ ed->insertStringList(predefs);
 }
 
 /**

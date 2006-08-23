@@ -14,6 +14,7 @@ class ConsoleWriterGui;
 class EditTool;
 class NumberTool;
 class PdfEditWindow;
+class SelectTool;
 class QSMenu;
 class TreeItemAbstract;
 
@@ -33,6 +34,7 @@ public:
  void runInitScript();
  void addColorTool(ColorTool *tool);
  void addEditTool(EditTool *tool);
+ void addSelectTool(SelectTool *tool);
  void addNumberTool(NumberTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
@@ -115,8 +117,8 @@ public slots: //This will be all exported to scripting
  */
  QVariant getColor(const QString &colorName);/*Variant=Color*/
  /*-
-  Get text from editbox in toolbar with given name.
-  Returns false if the editbox does not exist.
+  Get text from editbox or text selection box in toolbar with given name.
+  Returns false if the box does not exist.
  */
  QString getEditText(const QString &textName);
  /*-
@@ -217,7 +219,9 @@ public slots: //This will be all exported to scripting
  */
  void setColor(const QString &colorName,const QVariant &newColor);
  /*-
-  Set text in toolbar editbox with given name
+  Set text in toolbar editbox with given name or set selection in text selection box.
+  If you specify string that is not one of the items in the selection box,
+   the current item will remain selected.
  */
  void setEditText(const QString &textName,const QString &newText);
  /*-
@@ -225,12 +229,19 @@ public slots: //This will be all exported to scripting
  */
  void setNumber(const QString &name,double number);
  /*-
-  Set list of predefined values for number editbox with given name.
+  Set list of predefined values for number edit box or select text box with given name.
   The values in the list must be separated by commas.
-  User is still able to type in any value not in the list.
+  For number edit box, the user is still able to type in any value not in the list.
  */
- void setNumberPredefs(const QString &name,const QString &predefs);
- /*- Change active revision in current PDF document */
+ void setPredefs(const QString &name,const QString &predefs);
+ /*-
+  Set list of predefined values for number edit box or select text box with given name.
+  For number edit box, the user is still able to type in any value not in the list.
+ */
+ void setPredefs(const QString &name,const QStringList &predefs);
+ /*-
+  Change active revision in current PDF document
+ */
  void setRevision(int revision);
  /*-
   Set part of the window to be either visible or invisible,
@@ -334,6 +345,8 @@ private:
  QMap<QString,EditTool*> editTools;
  /** Map with number tools */
  QMap<QString,NumberTool*> numberTools;
+ /** Map with select tools */
+ QMap<QString,SelectTool*> selectTools;
 };
 
 } // namespace gui

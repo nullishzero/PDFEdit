@@ -1,6 +1,7 @@
-#This file contain description of PDF operators
+# This file contain description of PDF operators
 
 B :     Fill and stroke path using nonzero winding number rule
+b :     Close, fill, and stroke path using nonzero winding number rule
 b* :    Close, fill, and stroke path using even-odd rule
 B* :    Fill and stroke path using even-odd rule
 BDC :   (PDF 1.2) Begin marked-content sequence with property list
@@ -71,4 +72,4 @@ W :     Set clipping path using nonzero winding number rule
 W* :    Set clipping path using even-odd rule
 y :     Append curved segment to path (final point replicated)
 ' :     Move to next line and show text
-" : Set word and character spacing, move to next line, and show text
+" :     Set word and character spacing, move to next line, and show text

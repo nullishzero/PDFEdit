@@ -184,6 +184,14 @@ void PdfEditWindow::addNumberTool(NumberTool *tool) {
 }
 
 /**
+ Add select text tool to list of "known select text tools"
+ @param tool Tool to add
+*/
+void PdfEditWindow::addSelectTool(SelectTool *tool) {
+ base->addSelectTool(tool);
+}
+
+/**
  Signal handler invoked on menu activation
  @param id Menu ID of clicked item
  */

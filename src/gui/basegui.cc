@@ -3,17 +3,17 @@
  @author Martin Petricek
 */
 
-#include "basegui.h"
 #include "aboutwindow.h"
+#include "basegui.h"
 #include "colortool.h"
-#include "consolewritergui.h"
 #include "commandwindow.h"
+#include "consolewritergui.h"
 #include "dialog.h"
 #include "edittool.h"
 #include "helpwindow.h"
-#include "multitreewindow.h"
 #include "menu.h"
 #include "mergeform.h"
+#include "multitreewindow.h"
 #include "numbertool.h"
 #include "optionwindow.h"
 #include "pagespace.h"
@@ -26,6 +26,7 @@
 #include "qspage.h"
 #include "qspdf.h"
 #include "qstreeitem.h"
+#include "selecttool.h"
 #include "settings.h"
 #include "statusbar.h"
 #include "treeitemabstract.h"
@@ -102,6 +103,14 @@ void BaseGUI::addEditTool(EditTool *tool) {
 */
 void BaseGUI::addNumberTool(NumberTool *tool) {
  numberTools.insert(tool->getName(),tool);
+}
+
+/**
+ Add select tool to list of "known select tools"
+ @param tool Tool to add
+*/
+void BaseGUI::addSelectTool(SelectTool *tool) {
+ selectTools.insert(tool->getName(),tool);
 }
 
 /**
@@ -315,16 +324,24 @@ QVariant BaseGUI::getColor(const QString &colorName) {
 }
 
 /**
- Get text from text edit box with given name
+ Get text from text edit box or select text box with given name
  @param textName Name of text edit box
  @return text in the edit box or QString::null if edit box is not found
 */
 QString BaseGUI::getEditText(const QString &textName) {
- //Check if we have the tool
- if (!editTools.contains(textName)) return QString::null;
- EditTool *pick=editTools[textName];
- assert(pick);
- return pick->getText();
+ //Check if we have the tool as edit text
+ if (editTools.contains(textName)) {
+  EditTool *pick=editTools[textName];
+  assert(pick);
+  return pick->getText();
+ }
+ //Check if we have the tool as select text
+ if (selectTools.contains(textName)) {
+  SelectTool *pick=selectTools[textName];
+  assert(pick);
+  return pick->getText();
+ }
+ return QString::null;
 }
 
 /**
@@ -562,11 +579,22 @@ void BaseGUI::setColor(const QString &colorName,const QVariant &newColor) {
  @param newText New text to set
 */
 void BaseGUI::setEditText(const QString &textName,const QString &newText) {
- //Check if we have the tool
- if (!editTools.contains(textName)) return;
- EditTool *pick=editTools[textName];
- assert(pick);
- pick->setText(newText);
+ //Check if we have the tool as edit text
+ if (editTools.contains(textName)) {
+  EditTool *pick=editTools[textName];
+  assert(pick);
+  pick->setText(newText);
+  return;
+ }
+ //Check if we have the tool as select text
+ if (selectTools.contains(textName)) {
+  SelectTool *pick=selectTools[textName];
+  assert(pick);
+  pick->setText(newText);
+  return;
+ }
+ //Nope. Nothing
+ return;
 }
 
 /**
@@ -583,17 +611,53 @@ void BaseGUI::setNumber(const QString &name,double number) {
 }
 
 /**
- Set predefined numbers to chose from for number edit box with given name.
- The user is still able to type its own numbers.
+ Set predefined values to choose from for number edit box or select text box with given name.
+ For number edit box, the user is still able to type its own numbers.
  @param name Name of edit box
  @param predefs List of predefined numbers, separated with commas
 */
-void BaseGUI::setNumberPredefs(const QString &name,const QString &predefs) {
- //Check if we have the tool
- if (!numberTools.contains(name)) return;
- NumberTool *pick=numberTools[name];
- assert(pick);
- pick->setPredefs(predefs);
+void BaseGUI::setPredefs(const QString &name,const QString &predefs) {
+ //Check if we have the tool as number tool
+ if (numberTools.contains(name)) {
+  NumberTool *pick=numberTools[name];
+  assert(pick);
+  pick->setPredefs(predefs);
+  return;
+ }
+ //Check if we have the tool as select text
+ if (selectTools.contains(name)) {
+  SelectTool *pick=selectTools[name];
+  assert(pick);
+  pick->setPredefs(predefs);
+  return;
+ }
+ //Nope. Nothing
+ return;
+}
+
+/**
+ Set predefined values to choose from for number edit box or select text box with given name.
+ For number edit box, the user is still able to type its own numbers.
+ @param name Name of edit box
+ @param predefs List of predefined numbers, separated with commas
+*/
+void BaseGUI::setPredefs(const QString &name,const QStringList &predefs) {
+ //Check if we have the tool as number tool
+ if (numberTools.contains(name)) {
+  NumberTool *pick=numberTools[name];
+  assert(pick);
+  pick->setPredefs(predefs);
+  return;
+ }
+ //Check if we have the tool as select text
+ if (selectTools.contains(name)) {
+  SelectTool *pick=selectTools[name];
+  assert(pick);
+  pick->setPredefs(predefs);
+  return;
+ }
+ //Nope. Nothing
+ return;
 }
 
 /**

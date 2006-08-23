@@ -23,6 +23,7 @@ class NumberTool;
 class PageSpace;
 class PropertyEditor;
 class QSPage;
+class SelectTool;
 class StatusBar;
 class TreeItemAbstract;
 
@@ -41,6 +42,7 @@ public:
  void addColorTool(ColorTool *tool);
  void addEditTool(EditTool *tool);
  void addNumberTool(NumberTool *tool);
+ void addSelectTool(SelectTool *tool);
  bool modified();
  QString filename();
  void saveVisibility(QWidget *w,const QString &name);

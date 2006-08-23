@@ -9,6 +9,7 @@
 #include "edittool.h"
 #include "numbertool.h"
 #include "pagetool.h"
+#include "selecttool.h"
 #include "revisiontool.h"
 #include "zoomtool.h"
 //Other includes needed
@@ -95,6 +96,15 @@ QWidget *ToolFactory::specialItem(ToolBar *tb,const QString &item,QMainWindow *m
   PdfEditWindow *pdfw=dynamic_cast<PdfEditWindow*>(main);
   assert(pdfw);
   pdfw->addNumberTool(tool);
+  tool->show();
+  return tool;
+ }
+ if (itemName=="_select_tool") {
+  //Add SelectTool to toolbar and return
+  SelectTool *tool =new SelectTool(itemParam,tb,"edit");
+  PdfEditWindow *pdfw=dynamic_cast<PdfEditWindow*>(main);
+  assert(pdfw);
+  pdfw->addSelectTool(tool);
   tool->show();
   return tool;
  }

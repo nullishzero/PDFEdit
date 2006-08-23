@@ -9,8 +9,6 @@ class QDoubleValidator;
 
 namespace gui {
 
-class ToolButton;
-
 /**
  Toolbutton allowing to change number in the line edit control with simple drop down box
  Scripts can read/write the number when needed
@@ -22,6 +20,7 @@ Q_OBJECT
 public:
  NumberTool(const QString &cName,QWidget *parent=0,const char *name=NULL);
  ~NumberTool();
+ void setPredefs(const QStringList &predefs);
  void setPredefs(const QString &predefs,const QString &separator=",");
  QSize sizeHint() const;
  QString getName() const;
