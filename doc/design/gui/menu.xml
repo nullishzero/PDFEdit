@@ -139,9 +139,21 @@
           in the list.
          </entry>
         </row>
+        <row>
+         <entry>_select_tool</entry>
+         <entry>
+          Tool to select text from list of strings. Parameter specifies name of the text
+          and it is possible in script to specify set of strings, that will be
+          available in a drop-down box.
+         </entry>
+        </row>
        </tbody>
       </tgroup>
      </table>
+     <note>
+      The name must be unique for special toolbar items that have name as parameter.
+      If you create two toolbar items with same name, the results are undefined.
+     </note>
     </para>
    </sect2>
   </sect1>
