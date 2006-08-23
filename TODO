@@ -9,14 +9,16 @@ TODO list:
 
 GUI
  [ ] Mod: zvyraznovani pod textem (berevny ctverec pod textem)
- [ ] Tool na defualtni font face, font size, line width, line pattern
  [ ] Charset v options (pro properties)
  [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
  [ ] Delete objektu na strance - emit + skripty
  [ ] Esc, klavesove zkratky v pageview
- [ ] Text selecte bez ohraniceni - Miro
- [ ] Toolbar Widget na vyber aktualni sirky/stylu cary - MP S 
- [ ] Toolbar Widget na vyber pisma (face, velikost) - MP S 
+ [ ] Text select bez ohraniceni - Miro
+ [ ] Pridavani textu "inline" rovnou na stranbce - Miro
+ [x] Toolbar Widget na vyber aktualni sirky cary - MP S 
+  ?  Toolbar Widget na vyber aktualniho stylu cary - MP S 
+ [x] Toolbar Widget na vyber pisma (face, velikost) - MP S
+ [ ] Updatovat pisma vzdy pri prepnuti stranky (ty na strance + systemove), update bez ztraty selection -MP P
  [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
  [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit
  [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
@@ -27,8 +29,8 @@ GUI
  [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...."
  [ ] Pridavani anotaci - dialog
  [ ] Zobrazovat anotace na strance - Miro
- [ ] Neprepinat revize pokud zvolim jiz aktivni revizi
- [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP
+ [ ] Neprepinat revize pokud zvolim jiz aktivni revizi - MP S
+ [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
  [ ] Observer na anotace v CPage
   ?  Prepinat ikony za behu bez reloadu
   ?  U wrapperu s obecnymi QObject parametry pri zadani spatneho parametru hodit typeError a ne jen tise selhat (nekde uz je, ale prekontrolovat jestli je to vsude)
@@ -36,12 +38,10 @@ GUI
  [ ] Property editor: observer na "source item" + reloadovani - MP
  [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
  [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec
- [ ] odstranit closeWindow ze skriptingu
   ?  TreeItemRef -> cil je nekde v parent stromu. Zjistit co dela zmacknuti sipky na treeitem (ve zdrojacich QT)
      a podle toho pak udelat trochu konzistentnejsi posun kurzoru v tomhle "patologickem pripade"
  [ ] Zobraz iba poslednu zmenu na stranke - je v kernelu.
  [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
- [ ] Button a dialogy pre mergovanie dokumentov.
  [ ] Text search - chybi dialog
 ????? Windows build (asi jedine pres cygwin kvuli xpdf/splashdevice) - wishlist
  ??? Slovenska lokalizace :)

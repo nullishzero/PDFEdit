@@ -1,3 +1,19 @@
+2006-07-22 PDF Editor 0.1.2
+	* Added commandline mode, editor can automatically process files
+	  using a script without opening any window or needing an X server
+	* Added ./configure script
+	* Page view improved
+	* Added delinearizator
+	* Many operations added to GUI
+	* Added statusbar
+	* Added support for Annotations
+	* Added support for Outlines
+	* Installation now working
+	* Improved documentation
+	* Can now install as non-root user into any directory
+	* Large internal changes, reorganization of some code
+	* Fixed stability
+
 2006-06-02 PDF Editor 0.1.1
 	* Added PDF operator editing and content stream manipulation
 	* Added tabbed tree view
