@@ -208,6 +208,11 @@ void PdfEditWindow::menuActivated(int id) {
  else base->runScript(action);
 }
 
+ProgressBar * PdfEditWindow::getProgressBar()
+{
+        return progressBar;
+}
+
 /**
  constructor of PdfEditWindow, creates window and fills it with elements
  @param parent parent widget containing this control
@@ -253,7 +258,9 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Property editor
  prop=new PropertyEditor(splProp);
 
+ progressBar=new ProgressBar();
  status=new StatusBar(this,"statusbar");
+ status->addWidget(progressBar);
 
  //Connections
  connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
@@ -681,6 +688,14 @@ bool PdfEditWindow::openFile(const QString &name) {
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
   document=CPdf::getInstance(name,mode);
+  // registers observer with progress bar on document
+  pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();
+  if(writer)
+          writer->registerObserver(
+                          boost::shared_ptr<pdfobjects::utils::PdfWriterObserver>(
+                                  new pdfobjects::utils::ProgressObserver(progressBar)
+                                  )
+                          );
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
   PropertyModeController *modeCtrl=PropertyModeController::getInstance();

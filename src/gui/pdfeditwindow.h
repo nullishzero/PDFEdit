@@ -5,6 +5,7 @@
 #include <cpdf.h>
 #include <pdfoperators.h>
 #include <qmainwindow.h>
+#include "progressbar.h"
 
 class QFont;
 class QListViewItem;
@@ -61,6 +62,7 @@ public:
  void run(const QString &scriptName);
  void runFile(const QString &scriptName);
  void eval(const QString &code);
+ ProgressBar * getProgressBar();
 public slots:
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void changeRevision(int revision);
@@ -101,6 +103,8 @@ private:
  void setFileName(const QString &name);
  void destroyFile();
  void emptyFile();
+ /** Progress bar.*/
+ ProgressBar * progressBar;
  /** Commandline window */
  CommandWindow *cmdLine;
  /** Object treeview */
