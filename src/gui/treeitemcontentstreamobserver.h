@@ -18,7 +18,7 @@ public:
   Constructor
   @param _parent Object to be reloaded on any change to monitored item
  */
- TreeItemContentStreamObserver::TreeItemContentStreamObserver(TreeItemAbstract* _parent) : TreeItemGenericObserver<pdfobjects::CContentStream> (_parent) {
+ TreeItemContentStreamObserver(TreeItemAbstract* _parent) : TreeItemGenericObserver<pdfobjects::CContentStream> (_parent) {
   //No extra initialization
  };
  /** Destructor */
