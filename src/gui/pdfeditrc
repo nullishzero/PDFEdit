@@ -50,13 +50,14 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     closew		= item Close Window	 , closewindow		,	, close.png
     quit		= item &Quit		 , quit
   #View submenu
-  showmenu		= list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,hideStatus,-,streamAll,streamText,streamFont,streamGfx
-    firstpage		= item First Page			, PageSpace.firstPage()		, Ctrl+Home	, first.png 
-    prevpage		= item Prev Page			, PageSpace.prevPage()		, Ctrl+PgUp	, prev.png 
-    nextpage		= item Next Page			, PageSpace.nextPage()		, Ctrl+PgDown	, next.png 
-    lastpage		= item Last Page			, PageSpace.lastPage()		, Ctrl+End	, last.png 
-    zoom_in		= item Zoom &in				, PageSpace.zoomIn()		, Ctrl++	, zoom_in.png
-    zoom_out		= item Zoom &out			, PageSpace.zoomOut()		, Ctrl+-	, zoom_out.png
+  showmenu		= list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,hideStatus,-,streamAll,streamText,streamFont,streamGfx,-,searchText
+    searchText		= item &Find text			, findText()			, Ctrl+F	, searchText.png	,need_page
+    firstpage		= item First Page			, PageSpace.firstPage()		, Ctrl+Home	, first.png 		,need_page
+    prevpage		= item Prev Page			, PageSpace.prevPage()		, Ctrl+PgUp	, prev.png 		,need_page
+    nextpage		= item Next Page			, PageSpace.nextPage()		, Ctrl+PgDown	, next.png 		,need_page
+    lastpage		= item Last Page			, PageSpace.lastPage()		, Ctrl+End	, last.png 		,need_page
+    zoom_in		= item Zoom &in				, PageSpace.zoomIn()		, Ctrl++	, zoom_in.png		,need_page
+    zoom_out		= item Zoom &out			, PageSpace.zoomOut()		, Ctrl+-	, zoom_out.png		,need_page
     hideCmd		= item Show/Hide &commandline		, showHide('commandline')	, F8		, hide_cmdline.png
     hideProp		= item Show/Hide &property editor	, showHide('propertyeditor')	, Ctrl+Alt+P	, hide_propedit.png
     hideTree		= item Show/Hide object &tree		, showHide('tree')		, Ctrl+Alt+T	, hide_tree.png
@@ -84,10 +85,10 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     drawrectm		= item Draw rectangle		, drawRect()		,	, draw_rect.png		,need_page
     addtextm		= item Add text			, addText()		,	, add_text.png		,need_page
   #Edit submenu
-  editopersmenu		= list &Edit,selectAllObjects,selectText,selectAll,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
-    selectAllObjects	= item Select all objects	,PageSpace.setSelectionMode("operators_selection"\,""\,"rect")	, , selectmode_allobjects.png	,need_page
-    selectText		= item Select text		,PageSpace.setSelectionMode("text_selection")			, , selectmode_text.png		,need_page
-    selectAll		= item Select all		,PageSpace.setSelectionMode(2)					, , selectmode_all.png		,need_page
+  editopersmenu		= list &Edit,selectAllObjects,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
+    selectAllObjects	= item Select all objects	, onSelectMode_AllObjects()	, , selectmode_allobjects.png
+    selectText		= item Select text		, onSelectMode_Text()		, , selectmode_text.png
+    selectAnnot		= item Select annotations	, onSelectMode_Annot()		, , selectmode_all.png
     opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator_page
     opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator_page
     opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator_page
@@ -101,7 +102,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
 
 #Toolbars. Most toolbar items are items from menu
 
-SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectText,selectAll
+SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectText,selectAnnot
   # look in menu for definition of items
 
 MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
@@ -109,11 +110,11 @@ MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
 
 PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   # _page_tool is special toolbar item to show/change current page
-  drawline		= item Draw line	, PageSpace.setSelectionMode("new_object"\,"drawLine(%1\,%2\,%3\,%4\,false)"\,"line")	, , draw_line.png	,need_page
-  drawlinee		= item Draw line	, PageSpace.setSelectionMode("new_object"\,"drawLine(%1\,%2\,%3\,%4\,true)"\,"line")	, , draw_line.png	,need_page
-  drawrect		= item Draw rectangle	, PageSpace.setSelectionMode("new_object"\,"drawRect(%1\,%2\,%3\,%4\,false)"\,"rect")	, , draw_rect.png	,need_page
-  drawrecte		= item Draw rectangle	, PageSpace.setSelectionMode("new_object"\,"drawRect(%1\,%2\,%3\,%4\,true)"\,"rect")	, , draw_rect.png	,need_page
-  addtext		= item Add text		, PageSpace.setSelectionMode("new_object"\,"addText(%1\,%2\,%3\,%4)"\,"rect")		, , add_text.png	,need_page
+  drawline		= item Draw line	, onSelectMode_drawLine()	, , draw_line.png	,need_page
+  drawlinee		= item Draw line	, onSelectMode_drawLinee()	, , draw_line.png	,need_page
+  drawrect		= item Draw rectangle	, onSelectMode_drawRect()	, , draw_rect.png	,need_page
+  drawrecte		= item Draw rectangle	, onSelectMode_drawRecte()	, , draw_rect.png	,need_page
+  addtext		= item Add text		, onSelectMode_addText()	, , add_text.png	,need_page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
 
@@ -146,7 +147,6 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 toolbars	= MainToolbar,PageToolbar,ObjectToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar
 #Settings affecting preview window
 PageSpace/ResizingZone			= 2
-PageSpace/onClickedSelectOneObject	= true
 
 [gui/CommandLine]
 # Commandline settings

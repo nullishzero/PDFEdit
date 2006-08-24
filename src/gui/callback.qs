@@ -156,3 +156,46 @@ function onChangeRevision() {
 function onTreeSelectionChange() {
  checkMenus();
 }
+
+
+// TODO  potreba zachovat stlaceny stav tlacitka v toolbare a zaroven zarucit stlacene len toto posledne tlacitko (musia sa odskrtnut vsetky nasledujuce :
+
+/** Callback when selection mode is changes to select all objects on page */
+function onSelectMode_AllObjects() {
+	PageSpace.setSelectionMode("operators_selection","","rect");
+}
+
+/** Callback when selection mode is changes to select text operators only */
+function onSelectMode_Text() {
+	PageSpace.setSelectionMode("text_selection","","rect2");
+}
+
+/** Callback when selection mode is changes to select annotations on page */
+function onSelectMode_Annot() {
+	PageSpace.setSelectionMode("annotations","","rect");
+}
+
+/** Callback when selection mode is changes to draw new line */
+function onSelectMode_drawLine() {
+	PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,false)","line");
+}
+
+/** Callback when selection mode is changes to draw new line */
+function onSelectMode_drawLinee() {
+	PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,true)","line");
+}
+
+/** Callback when selection mode is changes to draw new rectangle */
+function onSelectMode_drawRect() {
+	PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,false)","rect");
+}
+
+/** Callback when selection mode is changes to draw new rectangle */
+function onSelectMode_drawRecte() {
+	PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,true)","rect");
+}
+
+/** Callback when selection mode is changes to add text to page */
+function onSelectMode_addText() {
+	PageSpace.setSelectionMode("new_object","addText(%1,%2,%3,%4)","rect");
+}

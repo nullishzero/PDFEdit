@@ -67,6 +67,46 @@ typedef struct DisplayParams
 				upsideDown == dp.upsideDown);
 	}
 
+	/** Converting position from pixmap of viewed page to pdf position.
+	 * @param fromX	X position on viewed page.
+	 * @param fromY	Y position on viewed page.
+	 *
+	 * @param toX	return X position in pdf page.
+	 * @param toY	return Y position in pdf page.
+	 *
+	 * @see convertPdfPosToPixmapPos
+	 */
+	void convertPixmapPosToPdfPos( double fromX, double fromY, double & toX, double & toY ) const {
+		double * ctm /*[6]*/;
+		double h;
+		PDFRectangle pdfRect ( pageRect.xleft, pageRect.yleft, pageRect.xright, pageRect.yright );
+		GfxState state (hDpi, vDpi, &pdfRect, rotate, upsideDown );
+		ctm = state.getCTM();
+
+		h = (ctm[0]*ctm[3] - ctm[1]*ctm[2]);
+
+		assert( h != 0 );
+
+		toX = (fromX*ctm[3] - ctm[2]*fromY + ctm[2]*ctm[5] - ctm[4]*ctm[3]) / h;
+		toY = (ctm[0]*fromY + ctm[1]*ctm[4] - ctm[0]*ctm[5] - ctm[1]*fromX) / h;
+	}
+
+	/** Converting pdf position to position on pixmap of viewed page.
+	 * @param fromX	X position in pdf page.
+	 * @param fromY	Y position in pdf page.
+	 *
+	 * @param toX	return X position on viewed page.
+	 * @param toY	return Y position on viewed page.
+	 *
+	 * @see convertPixmapPosToPdfPos
+	 */
+	void convertPdfPosToPixmapPos( double fromX, double fromY, double & toX, double & toY ) const {
+		PDFRectangle pdfRect ( pageRect.xleft, pageRect.yleft, pageRect.xright, pageRect.yright );
+		GfxState state (hDpi, vDpi, &pdfRect, rotate, upsideDown );
+
+		state.transform( fromX, fromY, &toX, &toY );
+	}
+
 	//
 	// Default values
 	// -- small hack to declare them as ints, to be able to init

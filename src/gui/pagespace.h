@@ -303,13 +303,16 @@ class PageSpace : public QWidget {
 		/** Signal is emited, if 
 		 */
 		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > );
+		void changeSelection ( std::vector< boost::shared_ptr< CAnnotation > > );
 
 		void changeMousePosition ( double x, double y );
 		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
 		void executeCommand ( QString cmd );
+		void deleteSelection ( );
 	private slots:
 		// slots for connecting pageImage's signals
 		void newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & );
+		void newSelection ( const std::vector< boost::shared_ptr< CAnnotation > > & objects );
 		void requestPopupMenu ( const QPoint & );
 		void showMousePosition ( double x, double y );
 	private:

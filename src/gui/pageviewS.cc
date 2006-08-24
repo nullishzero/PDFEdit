@@ -35,7 +35,8 @@ PageViewS::PageViewS (QWidget *parent) : QScrollView(parent) {
 	displayParams = DisplayParams();
 
 	// if something use on page, take focus
-	setFocusPolicy( ClickFocus );
+	setFocusPolicy( WheelFocus );
+	viewport()->setFocusPolicy( WheelFocus );
 	// call mouseMoveEvent everytime if mouse move (not only if is a button pressed)
 	viewport()->setMouseTracking( true );
 }
@@ -104,10 +105,16 @@ void PageViewS::updateDisplayParameters ( OutputDev & output ) {
 	// TODO  cropbox, ...
 }
 void PageViewS::setCorrectSize() {
+	if (actualPage == NULL) {
+		sizeOfPage.setWidth( 0 );
+		sizeOfPage.setHeight( 0 );
+		return;
+	}
+
 	double x1,y1,x2,y2;
 
-	convertPdfPosToPixmapPos( displayParams.pageRect.xleft, displayParams.pageRect.yleft, x1, y1 );
-	convertPdfPosToPixmapPos( displayParams.pageRect.xright, displayParams.pageRect.yright, x2, y2 );
+	displayParams.convertPdfPosToPixmapPos( displayParams.pageRect.xleft, displayParams.pageRect.yleft, x1, y1 );
+	displayParams.convertPdfPosToPixmapPos( displayParams.pageRect.xright, displayParams.pageRect.yright, x2, y2 );
 
 	sizeOfPage.setWidth( (int)std::max(x1,x2) );
 	sizeOfPage.setHeight( (int)std::max(y1,y2) );
@@ -298,7 +305,7 @@ void PageViewS::contentsMouseMoveEvent ( QMouseEvent * e ) {
 		mousePos = ee.pos();
 
 		double x, y;
-		convertPixmapPosToPdfPos( mousePos.x(), mousePos.y(), x, y );
+		displayParams.convertPixmapPosToPdfPos( mousePos.x(), mousePos.y(), x, y );
 		emit changeMousePosition( x, y );
 	}
 }
@@ -351,6 +358,10 @@ void PageViewS::focusOutEvent ( QFocusEvent * e ) {
 void PageViewS::initializeWorkOperatorsInMode() {
 	if (mode && actualPage) {
 		mode->clearWorkOperators();
+
+		// for annotation, ...
+		mode->extraInitialize( actualPage, displayParams );
+		guiPrintDbg( debug::DBG_DBG, "actualPage "<< (int) actualPage.get() );
 
 		std::vector< boost::shared_ptr< PdfOperator > > ops;
 
@@ -408,44 +419,26 @@ float PageViewS::getZoomFactor ( ) {
 	return zoomFactor;
 }
 
-// -------------------------------------------------------------------- //
-// --------------------- converting positions ------------------------- //
-// -------------------------------------------------------------------- //
+//  ---------------------------------------------------------------------  //
+//  --------------------  converting positions  -------------------------  //
+//  ---------------------------------------------------------------------  //
 
 void PageViewS::convertPixmapPosToPdfPos( double fromX, double fromY, double & toX, double & toY ) {
-	if (actualPage == NULL) {
-		toX = 0;
-		toY = 0;
-		return ;
+	if (actualPage)
+		displayParams.convertPixmapPosToPdfPos( fromX, fromY, toX, toY );
+	else {
+		toX = fromX;
+		toY = fromY;
 	}
-
-	double * ctm /*[6]*/;
-	double h;
-	PDFRectangle pdfRect ( displayParams.pageRect.xleft, displayParams.pageRect.yleft,
-							displayParams.pageRect.xright, displayParams.pageRect.yright );
-	GfxState state (displayParams.hDpi, displayParams.vDpi, &pdfRect, displayParams.rotate, displayParams.upsideDown );
-	ctm = state.getCTM();
-
-	h = (ctm[0]*ctm[3] - ctm[1]*ctm[2]);
-
-	assert( h != 0 );
-
-	toX = (fromX*ctm[3] - ctm[2]*fromY + ctm[2]*ctm[5] - ctm[4]*ctm[3]) / h;
-	toY = (ctm[0]*fromY + ctm[1]*ctm[4] - ctm[0]*ctm[5] - ctm[1]*fromX) / h;
 }
 
 void PageViewS::convertPdfPosToPixmapPos( double fromX, double fromY, double & toX, double & toY ) {
-	if (actualPage == NULL) {
-		toX = 0;
-		toY = 0;
-		return ;
+	if (actualPage)
+		displayParams.convertPdfPosToPixmapPos( fromX, fromY, toX, toY );
+	else {
+		toX = fromX;
+		toY = fromY;
 	}
-
-	PDFRectangle pdfRect ( displayParams.pageRect.xleft, displayParams.pageRect.yleft,
-							displayParams.pageRect.xright, displayParams.pageRect.yright );
-	GfxState state (displayParams.hDpi, displayParams.vDpi, &pdfRect, displayParams.rotate, displayParams.upsideDown );
-
-	state.transform( fromX, fromY, &toX, &toY );
 }
 
 #undef _splashMakeRGB8

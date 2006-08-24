@@ -8,18 +8,23 @@ TODO list:
 ----------
 
 GUI
+ [ ] Zobrazovat anotace na strance (podivat se na Target v XPDF) - Miro
+ [ ] Spatne poradi selection pri selecteni zdola nahoru
+ [ ] Mod: zvyraznovani pod textem (berevny ctverec pod textem)
+ [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
+ [ ] Pridavani textu "inline" rovnou na strance - Miro
+ [ ] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
+ [ ] Zmena jednotiek (cm, palce, ...) + oprava skriptov
+ [ ] Text search - v celem dokumentu
+ [x] Esc, klavesove zkratky v pageview
+ [x] "Save selected area", "save page as image" -> pred prepsanim obrazku by se to melo zeptat
+ [x] Text select bez ohraniceni - Miro
+ [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty
  [ ] Pri reload page savnout vsechny contentstreamy na dane page (v go())
  [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text
  [ ] Callback pokud edittool (nebo i jine tooly? Number/selection) zmeni svoji hodnotu - MP P
  [ ] pouzit edittool na editaci textu (v jednotlivem operatoru?)
- [ ] Spatne poradi selection pri selecteni zdola nahoru
- [ ] Mod: zvyraznovani pod textem (berevny ctverec pod textem)
  [ ] Charset v options (pro properties)
- [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
- [ ] Delete objektu na strance - emit + skripty
- [ ] Esc, klavesove zkratky v pageview
- [ ] Text select bez ohraniceni - Miro
- [ ] Pridavani textu "inline" rovnou na strance - Miro
  [x] Toolbar Widget na vyber aktualni sirky cary
   ?  Toolbar Widget na vyber aktualniho stylu cary
  [x] Toolbar Widget na vyber pisma (face, velikost)
@@ -28,20 +33,17 @@ GUI
  [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
  [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit
  [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
- [ ] "Save selected area", "save page as image" -> pred prepsanim obrazku by se to melo zeptat
  [ ] Trochu konzistentnejsi chovani treeitem.remove()
  [ ] CGraphic - zrusit wrapper v GUI, zrusit cGraphic v kernelu
  [ ] Korektne ukazovat v menu/toolbaru co je schovane a co ne (check/uncheck items...).
  [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...."
  [ ] Pridavani anotaci - dialog
- [ ] Zobrazovat anotace na strance (podivat se na Target v XPDF) - Miro
  [ ] Neprepinat revize pokud zvolim jiz aktivni revizi - MP S
  [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
  [ ] Observer na anotace v CPage
  [ ] Zobrazovat anotace v treeview jako selection - via signal
   ?  Prepinat ikony za behu bez reloadu
   ?  U wrapperu s obecnymi QObject parametry pri zadani spatneho parametru hodit typeError a ne jen tise selhat (nekde uz je, ale prekontrolovat jestli je to vsude)
- [ ] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
  [ ] Property editor: observer na "source item" + reloadovani - MP
  [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
  [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec
@@ -49,7 +51,6 @@ GUI
      a podle toho pak udelat trochu konzistentnejsi posun kurzoru v tomhle "patologickem pripade"
  [ ] Zobraz iba poslednu zmenu na stranke - je v kernelu.
  [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
- [ ] Text search - chybi dialog
 ????? Windows build (asi jedine pres cygwin kvuli xpdf/splashdevice) - wishlist
  ??? Slovenska lokalizace :)
  ??? Vkladani "template items" z PDF (nejake to sablonovani nebo neco na ten zpusob)

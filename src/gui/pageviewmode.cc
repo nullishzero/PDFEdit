@@ -5,6 +5,14 @@
 #include "pageviewmode.h"
 #include "pdfoperatorsiter.h"
 
+#include "cpage.h"
+#include "cannotation.h"
+#include "pdfoperators.h"
+#include "carray.h"
+
+using namespace pdfobjects;
+using namespace utils;
+
 namespace gui {
 
 //  ---------------------   drawing objects  ----------------- //
@@ -12,6 +20,7 @@ DrawingObject * DrawingObjectFactory::create( const QString & nameOfObject )
 		{
 			if (nameOfObject == "line")  return new DrawingLine();
 			if (nameOfObject == "rect")  return new DrawingRect();
+			if (nameOfObject == "rect2")  return new DrawingRect2();
 
 			guiPrintDbg( debug::DBG_DBG, "Undefined drawing!!!" );
 			return NULL;
@@ -70,6 +79,22 @@ void DrawingRect::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
 
 			painter.setPen( old_pen );
 		};
+DrawingRect2::DrawingRect2 ()
+		{};
+DrawingRect2::~DrawingRect2 ()
+		{};
+void DrawingRect2::drawObject ( QPainter & painter, QRegion reg )
+		{
+			QPen old_pen ( painter.pen() );
+			painter.setPen( pen );
+
+			QMemArray<QRect> h_mar (reg.rects());
+			QMemArray<QRect>::Iterator it = h_mar.begin();
+			for ( ; it != h_mar.end() ; ++it )
+				painter.fillRect( it->normalize(), Qt::yellow );
+
+			painter.setPen( old_pen );
+		};
 
 //  ---------------------  selection mode  --------------------- //
 PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
@@ -79,6 +104,7 @@ PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
 			if (nameOfMode == "new_object")				return new PageViewMode_NewObject			( drawingObject, _scriptFncAtMouseRelease );
 			if (nameOfMode == "text_selection")			return new PageViewMode_TextSelection		( drawingObject, _scriptFncAtMouseRelease );
 			if (nameOfMode == "operators_selection")	return new PageViewMode_OperatorsSelection	( drawingObject, _scriptFncAtMouseRelease );
+			if (nameOfMode == "annotations")			return new PageViewMode_Annotations			( drawingObject, _scriptFncAtMouseRelease );
 			if (nameOfMode == "")						return new PageViewMode						( drawingObject, _scriptFncAtMouseRelease );
 
 			guiPrintDbg( debug::DBG_DBG, "Undefined mode!!!" );
@@ -369,8 +395,25 @@ void PageViewMode::wheelEvent ( QWheelEvent * /* e */, QPainter * /* p */, QWidg
 
 void PageViewMode::keyPressEvent ( QKeyEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::keyReleaseEvent ( QKeyEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
-		{};
+void PageViewMode::keyReleaseEvent ( QKeyEvent * e, QPainter * /* p */, QWidget * /* w */ )
+		{
+			switch (e->key()) {
+				case Qt::Key_Escape:
+						if (isPressedLeftButton)
+							isPressedLeftButton = false;
+						else
+							clearSelectedOperators();
+
+						break;
+				case Qt::Key_Delete:
+						if (isPressedLeftButton)
+							isPressedLeftButton = false;
+
+						emit deleteSelection();
+			}
+
+			emit needRepaint();
+		};
 
 void PageViewMode::focusInEvent ( QFocusEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
@@ -493,6 +536,12 @@ void PageViewMode::setSelectedRegion ( QRegion r )
 				isPressedLeftButton = false;
 
 			selectedOpRegion = r;
+		};
+void PageViewMode::extraInitialize( const boost::shared_ptr< CPage > & /* page */, const DisplayParams & /*displayParams*/ )
+		{};
+void PageViewMode::sendAllSelectedOperators ()
+		{
+			emit newSelectedOperators( selectedOperators );
 		};
 
 bool PageViewMode::isSomeoneSelected ()
@@ -857,7 +906,7 @@ void PageViewMode_TextSelection::updateSelection (	const BBoxOfObjectOnPage< boo
 			if (selOpsRegion)
 				* selOpsRegion |= QRegion( getBBox( last->getObject() ) );
 		};
-void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
+void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * /* e */, QPainter * p, QWidget * /* w */ )
 		{
 			assert( firstSelectedObject );
 			assert( lastSelectedObject );
@@ -1128,4 +1177,90 @@ void	PageViewMode_OperatorsSelection::clearWorkOperators ()
 			lastSelectedOperator = workOperators.end();
 		}
 
+// ----------------------------------  PageViewMode_Annotations  --------------------------- //
+PageViewMode_Annotations::PageViewMode_Annotations ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease ) :
+			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
+		{
+			// initialize mapping cursors
+			setMappingCursor();
+		};
+
+void PageViewMode_Annotations::setMappingCursor()
+		{
+			this->PageViewMode::setMappingCursor();
+
+			mappingResizingModeToCursor [ onUnselectedObject ] = Qt::PointingHandCursor;
+		};
+
+void PageViewMode_Annotations::setWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & /* wOps */ )
+		{};
+void PageViewMode_Annotations::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & /* wOps */ )
+		{};
+void PageViewMode_Annotations::clearWorkOperators ()
+		{};
+void PageViewMode_Annotations::clearSelectedOperators ()
+		{};
+void PageViewMode_Annotations::setSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & /* sOps */ )
+		{};
+void PageViewMode_Annotations::addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & /* sOps */ )
+		{};
+void PageViewMode_Annotations::actualizeSelection ()
+		{};
+
+Rectangle PageViewMode_Annotations::getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot )
+		{
+			Rectangle rc;
+
+			boost::shared_ptr< CDict >	dictionary = annot->getDictionary();
+			try {
+				boost::shared_ptr<IProperty>	prop = dictionary->getProperty("Rect");
+				boost::shared_ptr<CArray>		rect= prop->getSmartCObjectPtr<CArray> (prop);
+				//if (prop->getType == ) = prop->getCObjectFromRef<CArray> (prop);
+
+				rc.xleft	= getDoubleFromArray (rect, 0);
+				rc.yleft	= getDoubleFromArray (rect, 1);
+				rc.xright	= getDoubleFromArray (rect, 2);
+				rc.yright	= getDoubleFromArray (rect, 3);
+			} catch (ElementNotFoundException) {
+				// Rect is requirement.
+				guiPrintDbg( debug::DBG_WARN, tr( "For Annotation is property 'Rect' requirement but is missing !!!" ) );
+				rc.xleft	= -1;
+				rc.yleft	= -1;
+				rc.xright	= -1;
+				rc.yright	= -1;
+			}
+
+			return rc;
+		};
+void PageViewMode_Annotations::extraInitialize( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams )
+		{
+			if (page == NULL)
+				return;
+
+			workOpRegion = QRegion();
+			annotations.clear();
+
+			// get all annotations
+			std::vector< boost::shared_ptr< CAnnotation > >	annots;
+			page->getAllAnnotations ( annots );
+
+			const boost::shared_ptr< CDict >							dictionary;
+			std::vector< boost::shared_ptr< CAnnotation > >::iterator	it_annots = annots.begin();
+			for ( ; it_annots != annots.end() ; ++it_annots )
+			{
+				Rectangle rc = getRectOfAnnotation( * it_annots );
+				displayParams.convertPdfPosToPixmapPos( rc.xleft, rc.yleft, rc.xleft, rc.yleft );
+				displayParams.convertPdfPosToPixmapPos( rc.xright, rc.yright, rc.xright, rc.yright );
+				QRect rr;
+				rr.setCoords((int) rc.xleft, (int) rc.yleft, (int) rc.xright, (int) rc.yright );
+				QRegion r ( rr.normalize() );
+
+				workOpRegion += r;
+				
+				annot_rect ar;
+				ar.annot = * it_annots;
+				ar.activation_region = r;	// TODO use correct activation region
+				annotations.push_back( ar );
+			}
+		};
 } // namespace gui

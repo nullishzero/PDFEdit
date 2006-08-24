@@ -749,3 +749,42 @@ function delPage (i) {
 	go();	
 }
 
+/** Search text */
+function findText ( text ) {
+
+	if (!isPageAvaliable()) {
+		warn(tr("No page selected!"));
+		return;
+	}
+
+	// set text mode
+	onSelectMode_Text();
+
+	var numOfFounded = 0;
+
+	if ( (undefined == text) || (text == "") ) {
+
+		var searchDialog = createDialog( tr("Search text"), tr("Find"), tr("Cancel") );
+
+		var searchText = createLineEditAndDisplay( tr("Text :"), "", searchDialog );
+		searchText.toolTip = tr("Find what");
+
+		var gb = createGroupBoxAndDisplay( "", searchDialog );
+
+		var actualPageOnly = createRadioButtonAndDisplay( tr("On viewed page only"), gb );
+		actualPageOnly.checked = true;
+
+		if (searchDialog.exec()) {
+		    numOfFounded = PageSpace.findText( searchText.text );
+		} else
+			return 0;
+	} else
+		    numOfFounded = PageSpace.findText( text );
+
+	if (numOfFounded == 0) {
+		MessageBox.information( tr("Nothig was found."), MessageBox.Ok );
+	}
+
+	return numOfFounded;
+}
+			

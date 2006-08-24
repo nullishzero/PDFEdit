@@ -7,6 +7,7 @@
 #include <qimage.h>
 #include <qdockarea.h>
 #include <qfiledialog.h>
+#include <qmessagebox.h>
 
 #include "pagespace.h"
 #include "settings.h"
@@ -73,8 +74,12 @@ vBox->addWidget( da );
 	hBox->setResizeMode(QLayout::Minimum);
 
 	selectionMode.reset();
-	setSelectionMode( "new_object","script","line" );
-	setSelectionMode( "text_selection","script","line" );
+//	setSelectionMode( "new_object","script","line" );
+//	setSelectionMode( "text_selection","script","line" );
+	setSelectionMode( "annotations","script","line" );
+
+	// if something use on page, take focus
+	setFocusPolicy( WheelFocus );
 }
 
 PageSpace::~PageSpace() {
@@ -189,8 +194,12 @@ void PageSpace::setSelectionMode( QString mode, QString scriptFncAtMouseRelease,
 				this, SLOT( requestPopupMenu(const QPoint &) ) );
 		connect( selectionMode.get(), SIGNAL( newSelectedOperators(const std::vector< boost::shared_ptr< PdfOperator > > &) ),
 				this, SLOT( newSelection(const std::vector< boost::shared_ptr< PdfOperator > > &) ) );
+		connect( selectionMode.get(), SIGNAL( newSelectedAnnotations(const std::vector< boost::shared_ptr< CAnnotation > > &) ),
+				this, SLOT( newSelection(const std::vector< boost::shared_ptr< CAnnotation > > &) ) );
 		connect( selectionMode.get(), SIGNAL( executeCommand(QString) ),
 				this, SIGNAL( executeCommand(QString) ) );
+		connect( selectionMode.get(), SIGNAL( deleteSelection() ),
+				this, SIGNAL( deleteSelection() ) );
 	}
 }
 
@@ -200,6 +209,9 @@ void PageSpace::setSelectArea ( int left, int top, int right, int bottom ) {
 }
 
 void PageSpace::newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & objects ) {
+	emit changeSelection( objects );
+}
+void PageSpace::newSelection ( const std::vector< boost::shared_ptr< CAnnotation > > & objects ) {
 	emit changeSelection( objects );
 }
 
@@ -224,7 +236,14 @@ bool PageSpace::saveImageWithDialog ( bool onlySelectedArea ) {
 	QString filename = QFileDialog::getSaveFileName( "", filters, NULL, NULL, tr("Save as image ..."), & sf );
 	sf = sf.left( sf.find(' ') );
 
-	if (! filename.isNull())
+	QFile f ( filename );
+	if ( (! filename.isNull()) &&
+		((! f.exists()) || 
+			(0 == QMessageBox::question( this, tr("Overwrite File?"),
+							tr("A file called %1 already exists."
+							" Do you want to overwrite it?") .arg( filename ),
+							tr("&Yes"), tr("&No"),
+							QString::null, 0, 1 ) )) )
 		return saveImage( filename, sf, -1, onlySelectedArea );
 
 	return false;
@@ -318,8 +337,10 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 		}
 	}
 
-	if (selectionMode)
+	if (selectionMode) {
 		selectionMode->addSelectedOperators( foundedIn );	// TODO change mode to textmode
+		selectionMode->sendAllSelectedOperators ();
+	}
 
 	return count;
 }

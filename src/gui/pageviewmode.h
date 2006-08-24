@@ -5,9 +5,15 @@
 #include <qevent.h>
 #include <qwidget.h>
 #include <vector>
-#include "pdfoperators.h"
 #include "rect2Darray.h"
 
+/*class pdfobjects::CAnnotation;
+class pdfobjects::CPage;
+class pdfobjects::PdfOperator;*/
+#include "cpage.h"
+#include "cannotation.h"
+#include "pdfoperators.h"
+#include "static.h"
 
 using namespace pdfobjects;
 
@@ -103,6 +109,27 @@ class DrawingRect: public DrawingObject {
 			 */
 			virtual void drawObject ( QPainter & painter, QPoint p1, QPoint p2 );
 };
+
+/** Class is STRATEGY pattern to draw rectangle as new object.
+ * (Resizing, moving and draw selected region is keeping from parent (see DrawingObject).)
+ */
+class DrawingRect2: public DrawingRect {
+	public:
+			/** Standard constructor.
+			 * Initialize pen.
+			 */
+			DrawingRect2 ();
+			/** Standard destructor. */
+			virtual ~DrawingRect2 ();
+
+			/** Drawing region \a reg useing \a painter for draw.
+			 * @param painter initialize painter for drawing.
+			 * @param reg region for drawing.
+			 *
+			 * This method is mostly useing for drawing selected operators (nothing button is press or in text mode).
+			 */
+			virtual void drawObject ( QPainter & painter, QRegion reg );
+};
 //  ---------------------  selection mode  --------------------- //
 class PageViewMode;
 
@@ -123,6 +150,7 @@ class PageViewMode: public QObject {
 			 * @param  objects Objects which are selected.
 			 */
 			void newSelectedOperators( const std::vector< boost::shared_ptr< PdfOperator > > & objects );
+			void newSelectedAnnotations( const std::vector< boost::shared_ptr< CAnnotation > > & objects );
 
 			/** Signal is generated if page nedd repaint after changes. */
 			void needRepaint ( );
@@ -134,6 +162,8 @@ class PageViewMode: public QObject {
 			 * @param cmd Script command for executing.
 			 */
 			void executeCommand ( QString cmd );
+
+			void deleteSelection ( );
 	public slots:
 			/** Method is calling if is need move selected region (operation 'move' is finished).
 			 * @param relativeMove relativ move x and y position of selected region.
@@ -203,9 +233,9 @@ class PageViewMode: public QObject {
 			 */
 			virtual void resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ */
-			/* --- mouse press (and coresponding release) events not above selection area --- */
-			/* ------------------------------------------------------------------------------ */
+			/* ------------------------------------------------------------------------------ * 
+			 * --- mouse press (and coresponding release) events not above selection area --- * 
+			 * ------------------------------------------------------------------------------ */
 			virtual void mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 			virtual void mousePressRightButton ( QMouseEvent * e, QPainter * p, QWidget * w );
@@ -215,9 +245,9 @@ class PageViewMode: public QObject {
 
 			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ */
-			/* ---        mouse events - equivalents of method called in QWidget          --- */
-			/* ------------------------------------------------------------------------------ */
+			/* ------------------------------------------------------------------------------ * 
+			 * ---        mouse events - equivalents of method called in QWidget          --- * 
+			 * ------------------------------------------------------------------------------ */
 
 			/** Method is call if press mouse button (see Qt::QWidget::mousePressEvent)
 			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
@@ -275,18 +305,60 @@ class PageViewMode: public QObject {
 			 * @see mouseMoveWithPressedLeftButton ( QMouseEvent *, QPainter *, QWidget * )
 			 */
 			virtual void mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is call if some wheel event (see Qt::QWidget::wheelEvent)
+			 * @param e		Pointer to wheel event (see Qt::QWheelEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Do nothing in this mode.
+			 */
 			virtual void wheelEvent ( QWheelEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ */
-			/* ---         key events - equivalents of method called in QWidget           --- */
-			/* ------------------------------------------------------------------------------ */
+			/* ------------------------------------------------------------------------------ * 
+			 * ---         key events - equivalents of method called in QWidget           --- * 
+			 * ------------------------------------------------------------------------------ */
+
+			/** Method is call if press key event (see Qt::QWidget::keyPressEvent)
+			 * @param e		Pointer to key event (see Qt::QKeyEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Do nothing in this mode.
+			 */
 			virtual void keyPressEvent ( QKeyEvent * e, QPainter * p, QWidget * w );
+			/** Method is call if release key event (see Qt::QWidget::keyReleaseEvent)
+			 * @param e		Pointer to key event (see Qt::QKeyEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Esc and Delete key functionality is programed.
+			 */
 			virtual void keyReleaseEvent ( QKeyEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ */
-			/* ---        focus events - equivalents of method called in QWidget          --- */
-			/* ------------------------------------------------------------------------------ */
+			/* ------------------------------------------------------------------------------ * 
+			 * ---        focus events - equivalents of method called in QWidget          --- * 
+			 * ------------------------------------------------------------------------------ */
+
+			/** Method is call if focus-in event (see Qt::QWidget::focusInEvent)
+			 * @param e		Pointer to focus event (see Qt::QFocusEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Do nothing in this mode.
+			 */
 			virtual void focusInEvent ( QFocusEvent *, QPainter * p, QWidget * w );
+			/** Method is call if focus-out event (see Qt::QWidget::focusOutEvent)
+			 * @param e		Pointer to focus event (see Qt::QFocusEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Do nothing in this mode.
+			 */
 			virtual void focusOutEvent ( QFocusEvent *, QPainter * p, QWidget * w );
 
 			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
@@ -308,6 +380,10 @@ class PageViewMode: public QObject {
 			virtual void setSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 			virtual void actualizeSelection ();
+
+			/* E.g. for annotation */
+			virtual void extraInitialize ( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams );
+			virtual void sendAllSelectedOperators ();
 	public:
 			/** Function return if some object is selected (not in selection mode PageView::SelectRect)
 			 * @return Return TRUE, if some object is selected. Otherwise return FALSE.
@@ -503,6 +579,45 @@ class PageViewMode_OperatorsSelection: public PageViewMode {
 			std::vector< boost::shared_ptr< PdfOperator > >::iterator		lastSelectedOperator;
 
 			QPoint	resizingPress;
+};
+
+/** */
+class PageViewMode_Annotations: public PageViewMode {
+	Q_OBJECT
+	public slots:
+	/*		virtual void mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			virtual void movedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			virtual void resizeSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			virtual void resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+*/
+			//virtual void setSelectedRegion ( QRegion r );
+
+			virtual void setWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			virtual void clearWorkOperators ();
+			virtual void clearSelectedOperators ();
+			virtual void setSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+			virtual void actualizeSelection ();
+			/* E.g. for annotation */
+			virtual void extraInitialize( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams );
+	public:
+			PageViewMode_Annotations ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
+	protected:
+			/** Set mapping cursors for viewing on the page for actual selection mode */
+			virtual void setMappingCursor();
+			Rectangle getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot );
+	protected:
+			QPoint	resizingPress;
+			
+			typedef struct {
+					boost::shared_ptr<CAnnotation>	annot;
+					QRegion				activation_region;
+				} annot_rect;
+
+			std::vector< annot_rect >	annotations;
 };
 
 } // namespace gui
