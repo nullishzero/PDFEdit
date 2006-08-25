@@ -6,6 +6,7 @@
 #include "util.h"
 #include <utils/debug.h>
 #include <iostream>
+#include <qvbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qfile.h>
@@ -15,6 +16,8 @@
 #include <qcombobox.h>
 #include <qseditor.h>
 #include <qsinterpreter.h>
+#include <qsplitter.h>
+#include <qsizepolicy.h>
 
 using namespace std;
 using namespace util;
@@ -55,12 +58,16 @@ bool DEFAULT__CMDSHOWEDITOR = false;
  @param name Name of the widget (used for debugging)
 */
 CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):QWidget(parent,name) {
- QBoxLayout * l = new QVBoxLayout( this );
- out = new QTextEdit( this );
+ QBoxLayout * hl = new QHBoxLayout( this );
+ spl=new QSplitter( Vertical, this, "spl" );
+ hl->addWidget( spl );
+
+ QVBox * l = new QVBox( spl );
+ out = new QTextEdit( /*this*/ l );
  cmd = new QLineEdit( this , "CmdLine" );
 
  // init history
- history = new QComboBox( this, "CmdHistory" );
+ history = new QComboBox( /*this*/ l, "CmdHistory" );
  history->setLineEdit( cmd );
  history->setEditable( true );
  history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
@@ -77,18 +84,18 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  cmd->setText( "" );			//clear commandline
 // history->setAutoCompletion( true );
  QObject::connect(cmd, SIGNAL(returnPressed()), this, SLOT(execute()));
- l->addWidget(out);
- l->addWidget(history);
+// l->addWidget(out);
+// l->addWidget(history);
  out->setTextFormat(LogText);
  out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
 
- in = new QSEditor( this , "CmdEditor" );
+ in = new QSEditor( spl , "CmdEditor" );
  in->textEdit()->setText("");
  in->textEdit()->installEventFilter( this );
  in->textEdit()->viewport()->installEventFilter( this );
  in->setFocus();
  interpreter = NULL;
- l->addWidget( in );
+// l->addWidget( in );
 
  connect( history, SIGNAL( activated(int) ), this, SLOT( selectedHistoryItem(int) ));
  reloadSettings();
@@ -323,6 +330,16 @@ void CommandWindow::addError(const QString &message) {
  consoleLog("! "+message,globalSettings->readExpand("path/console_log"));
 }
 
+/** Saves command state to application settings*/
+void CommandWindow::saveWindowState() {
+ globalSettings->saveSplitter(spl,"spl_cmd"); 
+}
+
+
+/** Restores window state from application settings */
+void CommandWindow::restoreWindowState() {
+ globalSettings->restoreSplitter(spl,"spl_cmd"); 
+}
 /** default destructor */
 CommandWindow::~CommandWindow() {
 	saveHistory();

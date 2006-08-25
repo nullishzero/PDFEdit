@@ -118,6 +118,7 @@ void PdfEditWindow::saveWindowState() {
  globalSettings->saveSplitter(spl,"spl_main"); 
  globalSettings->saveSplitter(splProp,"spl_right"); 
  globalSettings->saveSplitter(splCmd,"spl_left"); 
+ cmdLine->saveWindowState();
  saveVisibility(cmdLine,"cmd"); 
  saveVisibility(prop,"prop"); 
  saveVisibility(splProp,"right"); 
@@ -132,6 +133,7 @@ void PdfEditWindow::restoreWindowState() {
  globalSettings->restoreSplitter(spl,"spl_main"); 
  globalSettings->restoreSplitter(splProp,"spl_right"); 
  globalSettings->restoreSplitter(splCmd,"spl_left"); 
+ cmdLine->restoreWindowState();
  loadVisibility(cmdLine,"cmd"); 
  loadVisibility(prop,"prop"); 
  loadVisibility(splProp,"right"); 

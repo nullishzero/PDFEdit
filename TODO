@@ -8,14 +8,15 @@ TODO list:
 ----------
 
 GUI
- [ ] Zobrazovat anotace na strance (podivat se na Target v XPDF) - Miro
- [ ] Spatne poradi selection pri selecteni zdola nahoru
  [ ] Mod: zvyraznovani pod textem (berevny ctverec pod textem)
  [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
  [ ] Pridavani textu "inline" rovnou na strance - Miro
- [ ] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
  [ ] Zmena jednotiek (cm, palce, ...) + oprava skriptov
  [ ] Text search - v celem dokumentu
+  ?  skript na skocenie na target po kliknuti na anotaciu
+ [x] Zobrazovat anotace na strance
+ [x] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
+ [x] Spatne poradi selection pri selecteni zdola nahoru
  [x] Esc, klavesove zkratky v pageview
  [x] "Save selected area", "save page as image" -> pred prepsanim obrazku by se to melo zeptat
  [x] Text select bez ohraniceni - Miro

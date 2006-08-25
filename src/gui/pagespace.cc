@@ -76,7 +76,7 @@ vBox->addWidget( da );
 	selectionMode.reset();
 //	setSelectionMode( "new_object","script","line" );
 //	setSelectionMode( "text_selection","script","line" );
-	setSelectionMode( "annotations","script","line" );
+//	setSelectionMode( "annotations","script","line" );
 
 	// if something use on page, take focus
 	setFocusPolicy( WheelFocus );

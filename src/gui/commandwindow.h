@@ -7,6 +7,7 @@ class QLineEdit;
 class QComboBox;
 class QSInterpreter;
 class QSEditor;
+class QSplitter;
 
 namespace gui {
 
@@ -26,6 +27,8 @@ public:
  void addString(const QString &str);
  virtual bool	eventFilter( QObject * o, QEvent * e );
  void reloadSettings();
+ void saveWindowState();
+ void restoreWindowState();
  ~CommandWindow();
 public slots:
  void execute( enum cmd  from = CmdLine );
@@ -59,6 +62,8 @@ private:
  QComboBox *history;
  /** Interpreter */
  QSInterpreter *interpreter;
+ /** Vetical  splitter between (out + command line) and command editor */
+ QSplitter *spl;
 };
 
 } // namespace gui

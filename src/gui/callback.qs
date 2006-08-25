@@ -172,7 +172,7 @@ function onSelectMode_Text() {
 
 /** Callback when selection mode is changes to select annotations on page */
 function onSelectMode_Annot() {
-	PageSpace.setSelectionMode("annotations","","rect");
+	PageSpace.setSelectionMode("annotations","go_to_target_from_selected_annotation()","rect");
 }
 
 /** Callback when selection mode is changes to draw new line */

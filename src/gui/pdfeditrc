@@ -162,6 +162,7 @@ main		= 796,608,10,2
 spl_left	= 369,172
 spl_main	= 517,269
 spl_right	= 367,174
+spl_cmd		= 81,74
 
 
 [icon]

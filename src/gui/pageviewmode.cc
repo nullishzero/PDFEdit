@@ -368,6 +368,16 @@ void PageViewMode::mouseDoubleClickEvent ( QMouseEvent * e, QPainter * p, QWidge
 		{
 			mousePressEvent( e, p, w );
 		};
+void PageViewMode::setCorrectCursor (  const QPoint & p, QPainter * /* p */, QWidget * w )
+		{
+			int pomCur = none;
+			if (selectedOpRegion.boundingRect().normalize().contains( p ) )
+				pomCur = theNeerestResizingMode( selectedOpRegion, p );
+			if ((pomCur == none) && (workOpRegion.contains( p )))
+				pomCur = onUnselectedObject;
+
+			w->setCursor( QCursor( mappingResizingModeToCursor[ pomCur ] ) );
+		};
 void PageViewMode::mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			if (isPressedLeftButton) {
@@ -382,13 +392,7 @@ void PageViewMode::mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 				return;
 			}
 
-			int pomCur = none;
-			if (selectedOpRegion.boundingRect().normalize().contains( e->pos() ) )
-				pomCur = theNeerestResizingMode( selectedOpRegion, e->pos() );
-			if ((pomCur == none) && (workOpRegion.contains( e->pos() )))
-				pomCur = onUnselectedObject;
-
-			w->setCursor( QCursor( mappingResizingModeToCursor[ pomCur ] ) );
+			setCorrectCursor( e->pos(), p, w );
 		};
 void PageViewMode::wheelEvent ( QWheelEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
@@ -906,6 +910,15 @@ void PageViewMode_TextSelection::updateSelection (	const BBoxOfObjectOnPage< boo
 			if (selOpsRegion)
 				* selOpsRegion |= QRegion( getBBox( last->getObject() ) );
 		};
+
+void PageViewMode_TextSelection::reorderSelectedOp()
+		{
+			if (firstSelectedObject && lastSelectedObject && (*firstSelectedObject > *lastSelectedObject) ) {
+				std::vector< boost::shared_ptr< PdfOperator > >		h_sop;
+				h_sop.swap( selectedOperators );
+				selectedOperators.insert( selectedOperators.begin(), h_sop.rbegin(), h_sop.rend() );
+			}
+		};
 void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * /* e */, QPainter * p, QWidget * /* w */ )
 		{
 			assert( firstSelectedObject );
@@ -917,6 +930,7 @@ void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * /* e */,
 			// actualize selected operators
 			updateSelection( firstSelectedObject, lastSelectedObject,  & selectedOpRegion, & selectedOperators );
 
+			reorderSelectedOp ();
 			emit newSelectedOperators( selectedOperators );
 
 			if (p == NULL)
@@ -1189,6 +1203,7 @@ void PageViewMode_Annotations::setMappingCursor()
 		{
 			this->PageViewMode::setMappingCursor();
 
+			mappingResizingModeToCursor [ left | right | top | bottom ] = Qt::PointingHandCursor;
 			mappingResizingModeToCursor [ onUnselectedObject ] = Qt::PointingHandCursor;
 		};
 
@@ -1262,5 +1277,57 @@ void PageViewMode_Annotations::extraInitialize( const boost::shared_ptr< CPage >
 				ar.activation_region = r;	// TODO use correct activation region
 				annotations.push_back( ar );
 			}
+		};
+PageViewMode_Annotations::annot_rect PageViewMode_Annotations::getAnnotationOnPosition ( const QPoint & p )
+		{
+			std::vector< annot_rect >::iterator		it_annot = annotations.begin();
+			for ( ; it_annot != annotations.end() ; ++it_annot )
+				if ( (*it_annot).activation_region.contains( p ) )
+					return (* it_annot);
+
+			annot_rect h_ar;
+			h_ar.annot.reset ();
+			h_ar.activation_region = QRegion();
+			return h_ar;
+		};
+void PageViewMode_Annotations::mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
+		{
+			annot_rect	h_ar = getAnnotationOnPosition( e->pos() );
+
+			std::vector< boost::shared_ptr< CAnnotation > >	h_v;
+			if (h_ar.annot)
+				h_v.push_back( h_ar.annot );
+
+			if (selectedOpRegion != h_ar.activation_region)
+			{
+				selectedOpRegion = h_ar.activation_region;
+				emit newSelectedAnnotations( h_v );
+				emit needRepaint();
+			}
+
+			if (isPressedLeftButton && ! (isMoving || isResizing))
+				isPressedLeftButton = false;
+					
+			this->PageViewMode::mouseMoveEvent( e, p, w );
+		};
+void PageViewMode_Annotations::movedSelectedObjects ( QPoint relativeMove )
+		{
+			if (relativeMove == QPoint(0,0)) {
+				emit executeCommand ( scriptFncAtMouseRelease	.arg( relativeMove.x() )
+																.arg( relativeMove.y() )
+																.arg( relativeMove.y() )
+																.arg( relativeMove.y() ) );
+			} else
+				this->PageViewMode::movedSelectedObjects( relativeMove );
+		};
+void PageViewMode_Annotations::resizedSelectedObjects ( int dleft, int dtop, int dright, int dbottom )
+		{
+			if (dleft == 0 && dtop == 0 && dright == 0 && dbottom == 0) {
+				emit executeCommand ( scriptFncAtResizeSelectedObjects	.arg( releasePosition.x() )
+																		.arg( releasePosition.y() )
+																		.arg( releasePosition.x() )
+																		.arg( releasePosition.y() ) );
+			} else
+				this->PageViewMode::resizedSelectedObjects ( dleft, dtop, dright, dbottom );
 		};
 } // namespace gui
