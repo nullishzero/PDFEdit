@@ -78,4 +78,5 @@ setPredefs('fontface',getSystemFonts());
 
 //Print welcome message
 print("PDF Editor "+version());
+onSelectMode_AllObjects();
 checkMenus();

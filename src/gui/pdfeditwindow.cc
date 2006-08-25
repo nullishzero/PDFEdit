@@ -700,7 +700,7 @@ bool PdfEditWindow::openFile(const QString &name) {
   // registers observer with progress bar on document
   pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();
   if(writer) {
-   writer->registerObserver(boost::shared_ptr<pdfobjects::utils::PdfWriterObserver>(new pdfobjects::utils::ProgressObserver(progressBar)));
+//   writer->registerObserver(boost::shared_ptr<pdfobjects::utils::PdfWriterObserver>(new pdfobjects::utils::ProgressObserver(progressBar)));
   }
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
@@ -740,6 +740,7 @@ void PdfEditWindow::emptyFile() {
  emit documentChanged(document);
  setFileName(QString::null);
  selectedPageNumber=0;
+ pagespc->refresh((QSPage*)NULL,(QSPdf*)NULL);
 }
 
 /**

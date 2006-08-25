@@ -313,6 +313,7 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
  try {
   guiPrintDbg(debug::DBG_DBG,"Delinearizator started");
   wr=new utils::OldStylePdfWriter();
+  //TODO: nekde tady zaregistrovat progress observer
   delin=utils::Delinearizator::getInstance(inFile,wr);
   guiPrintDbg(debug::DBG_DBG,"Delinearizator created");
   int ret=delin->delinearize(outFile);

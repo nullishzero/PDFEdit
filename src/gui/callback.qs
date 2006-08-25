@@ -36,7 +36,7 @@ function checkMenus() {
   rootType="";
  }
  cstream_tab=(rootType=="ContentStream");
- enableItem("/mode_button",have_page);
+// enableItem("/mode_button",have_page);
  enableItem("/need_operator_page",	(theType=="PDFOperator" || have_page));
 // enableItem("/need_dict_or_array",	(theType=="Dict" || theType=="Array"));
  enableItem("/need_dict_or_array_p",	(theType=="Dict" || theType=="Array" || parentType=="Dict" || parentType=="Array"));
