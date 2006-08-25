@@ -8,56 +8,52 @@ TODO list:
 ----------
 
 GUI
- [ ] Search text: On currently viewed page only by mel byt checkbox a melo by to asi hledat i na jinych stranach. Chybi ikonka
- [ ] Pri closeFile se nezlikviduje aktualni stranka (coz zpusobi pad)
- [ ] Zobrazovat anotace na strance (podivat se na Target v XPDF) - Miro
- [ ] Spatne poradi selection pri selecteni zdola nahoru
- [ ] Mod: zvyraznovani pod textem (berevny ctverec pod textem)
- [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
+Miro
+ [ ] Pri closeFile se nezlikviduje aktualni stranka (coz zpusobi pad) - Miro
  [ ] Pridavani textu "inline" rovnou na strance - Miro
- [ ] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
+ [ ] Mod: preskrtavani, zvyraznovani pod textem (barevny ctverec pod textem) - Miro
+ [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text - Miro
+ [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
  [ ] Zmena jednotiek (cm, palce, ...) + oprava skriptov
- [ ] Text search - v celem dokumentu
-  ?  skript na skocenie na target po kliknuti na anotaciu
- [x] Zobrazovat anotace na strance
- [x] Splitter v commandwindow mezi editorem a vypisem konzole (resp. klasickou commanline) - Miro
- [x] Spatne poradi selection pri selecteni zdola nahoru
- [x] Esc, klavesove zkratky v pageview
- [x] "Save selected area", "save page as image" -> pred prepsanim obrazku by se to melo zeptat
- [x] Text select bez ohraniceni - Miro
- [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty
- [ ] Pri reload page savnout vsechny contentstreamy na dane page (v go())
- [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text
- [x] Callback pokud edittool (nebo i jine tooly? Number/selection) zmeni svoji hodnotu
- [ ] pouzit edittool na editaci textu (v jednotlivem operatoru?)
- [x] Charset v options (pro properties)
- [x] Toolbar Widget na vyber aktualni sirky cary
-  ?  Toolbar Widget na vyber aktualniho stylu cary
- [x] Toolbar Widget na vyber pisma (face, velikost)
- [x] checkMenus -> zbyte cudlitka disablovat, pridat en/disablopvani cudlitka na mod
+ [ ] spravne nastaveni cm operatoru pri vkladani novych objektu - skript funkce
+  ?  Text search - v celem dokumentu + dialog upravit + historie hledani (v ramci session) - Miro - ?
+  ?  Kresleni kruznice a jinych primitiv?
+  ?  Skakat na cil anotaci (podivat se na Target v XPDF) - Miro
+MP
  [ ] Updatovat pisma vzdy pri prepnuti stranky (ty na strance + systemove), update bez ztraty selection -MP P
- [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru
- [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit
- [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi - MP
  [ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
- [x] CGraphic - zrusit wrapper v GUI
- [ ] zrusit cGraphic v kernelu
+ stredni:
  [ ] Korektne ukazovat v menu/toolbaru co je schovane (statusbar apod.) a co ne (check/uncheck items...).
- [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...."
- [ ] Pridavani anotaci - dialog
- [x] Neprepinat revize pokud zvolim jiz aktivni revizi
  [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
  [ ] Observer na anotace v CPage - MP ?
- [ ] Zobrazovat anotace v treeview jako selection - via signal
+ [ ] Charset v options (pro properties) -> doladit
+ [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec - MP
+ minor:
+ [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty - MP?
+ [ ] Pri reload page savnout vsechny contentstreamy na aktualni page (v go()) - MP
+ [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit -mP
+ [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi - MP
+ [ ] Property editor: observer na "source item" + reloadovani - asi je, zkontrolovat - MP
+ [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
+ [ ] Zobrazovat anotace v treeview jako selection - via signal ktery uz je - MP
+ [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage) - button -MP !!
+     vyseparovat z page toolbaru navigaci po strankach a tam to pridat
+Michal
+ [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru - doladit, pada - Michal
+ [ ] zrusit cGraphic v kernelu - Michal
+ [ ] Pridavani anotaci - dialog - Michal
+ [ ] Upravit skripty na multiselect (u kterych ma smysl)
+ [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho - concat documents, sude/liche ...)
+ [ ] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
+?
+ [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...." -> pripominka pro kontrolu
+  ?  skript na skocenie na target po kliknuti na anotaciu
+  ?  Toolbar Widget na vyber aktualniho stylu cary
   ?  Prepinat ikony za behu bez reloadu
   ?  U wrapperu s obecnymi QObject parametry pri zadani spatneho parametru hodit typeError a ne jen tise selhat (nekde uz je, ale prekontrolovat jestli je to vsude)
- [ ] Property editor: observer na "source item" + reloadovani - MP
- [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
- [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec - MP
   ?  TreeItemRef -> cil je nekde v parent stromu. Zjistit co dela zmacknuti sipky na treeitem (ve zdrojacich QT)
      a podle toho pak udelat trochu konzistentnejsi posun kurzoru v tomhle "patologickem pripade"
- [ ] Zobraz iba poslednu zmenu na stranke - je v kernelu.
- [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage).
+  ?  Zobraz iba poslednu zmenu na stranke - je v kernelu - pokud si nekdo vzpomene co to bylo.
 ????? Windows build (asi jedine pres cygwin kvuli xpdf/splashdevice) - wishlist
  ??? Slovenska lokalizace :)
  ??? Vkladani "template items" z PDF (nejake to sablonovani nebo neco na ten zpusob)
@@ -82,10 +78,7 @@ GUI
  ??? Save/load na streamy (ulozit na disk, nahrat z disku) - asi future wishlist
 
 Skripting
- [ ] pridat getAllAnnotations
- [ ] Upravit skripty na multiselect (u kterych ma smysl)
- [ ] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
- [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho - concat documents, sude/liche ...)
+  ?  pridat getAllAnnotations
  ??? Wrapper kolem Const cdict -> pro cteni veci z traileru. Eventuelne pak dat i do stromu
 
 Kernel
@@ -109,7 +102,7 @@ Dokumentace
 
 Configure
  [ ] Otestovat existenci a verzi vsech knihoven, obzvlaste QSA, kde s 1.1.1 to sice zkompilovat jde, ale pak to pada
- [ ] Zdokumentovat configure (v install.xml ?)
+ [ ] Zdokumentovat configure (v install.xml ?) -MP
 
 Web
  [ ] Naplnit wiki obsahem -> skript na automaticke cpani vyg. dokumentace na wiki
