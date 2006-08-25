@@ -211,9 +211,9 @@ void PdfEditWindow::menuActivated(int id) {
  else base->runScript(action);
 }
 
-ProgressBar * PdfEditWindow::getProgressBar()
+boost::shared_ptr<pdfobjects::utils::ProgressObserver> PdfEditWindow::getProgressObserver()
 {
-        return progressBar;
+        return progressObserver;
 }
 
 /**
@@ -261,9 +261,17 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Property editor
  prop=new PropertyEditor(splProp);
 
- progressBar=new ProgressBar();
+ // creates qt progress bar and its adapter so it can be used in 
+ // ProgressObserver. progressObserver can be registered to observer handlers.
+ QProgressBar * pB=new QProgressBar();
+ ProgressBar * progressBar=new ProgressBar(pB);
+ progressObserver=boost::shared_ptr<pdfobjects::utils::ProgressObserver>(
+                 new pdfobjects::utils::ProgressObserver(progressBar)
+                 );
+
+ // creates status bar and adds qt progress bar inside
  status=new StatusBar(this,"statusbar");
- status->addWidget(progressBar);
+ status->addWidget(pB);
 
  //Connections
  connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
@@ -697,10 +705,11 @@ bool PdfEditWindow::openFile(const QString &name) {
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
   document=CPdf::getInstance(name,mode);
-  // registers observer with progress bar on document
+  // registers observer with progress bar on document writer
+  // this will cause displaying of content saving progress
   pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();
   if(writer) {
-//   writer->registerObserver(boost::shared_ptr<pdfobjects::utils::PdfWriterObserver>(new pdfobjects::utils::ProgressObserver(progressBar)));
+   writer->registerObserver(progressObserver);
   }
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");

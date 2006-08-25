@@ -62,7 +62,12 @@ public:
  void run(const QString &scriptName);
  void runFile(const QString &scriptName);
  void eval(const QString &code);
- ProgressBar * getProgressBar();
+
+ /** Returns progress observer.
+  * This progress observer holds qt progress bar stored in status bar.
+  * It can be registered on ObserverHandler to display progress.
+  */
+ boost::shared_ptr<pdfobjects::utils::ProgressObserver> getProgressObserver();
 public slots:
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void changeRevision(int revision);
@@ -103,8 +108,12 @@ private:
  void setFileName(const QString &name);
  void destroyFile();
  void emptyFile();
- /** Progress bar.*/
- ProgressBar * progressBar;
+ /** Progress observer which holds progress bar.
+  * Value is initialized in constructor. Wrapped qt progress bar
+  * instance is allocated in constructor but deallocating by
+  * qt.
+  */
+ boost::shared_ptr<pdfobjects::utils::ProgressObserver> progressObserver;
  /** Commandline window */
  CommandWindow *cmdLine;
  /** Object treeview */
