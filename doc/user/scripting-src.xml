@@ -95,8 +95,8 @@
  <chapter id="callbacks">
   <title>Callback functions</title>
   <para>
-   These are functions called from editor on certain events. All callback function
-   are called without any parameters and return value (if any) is ignored.
+   These are functions called from editor on certain events.
+   Return value (if any) is ignored.
    If the callback function does not exist, it is skipped
   </para>
   <sect1 id="onChangeRevision">
@@ -166,6 +166,17 @@
    <title>onTreeSelectionChange()</title>
    <para>
     This function is called after selection in tree changes.
+   </para>
+  </sect1>
+  <sect1 id="onValueChange">
+   <title>onValueChange(name)</title>
+   <para>
+    This function is called after some of special tools change its value because of interaction.
+    Parameter is name of the special tool.
+    Color selection tool calls this after user select some color in it,
+    edit tool calls this after user presses enter or leaves the control,
+    number tool calls this after user presses enter or selects some of predefined numbers,
+    select tool calls this after changing the selection.
    </para>
   </sect1>
  </chapter>
