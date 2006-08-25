@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2006/08/25 17:25:43  petrm1am
+ * typo
+ *
  * Revision 1.28  2006/06/27 17:27:49  hockm0bm
  * cosmetic changes
  *         - post-incrementation replaced by pre-incrementation (for performance)
@@ -434,7 +437,7 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "");
 
 	if(linearized)
-		kernelPrintDbg(DBG_WARN, "Pdf is linearized and changes may brake rules for linearization.");
+		kernelPrintDbg(DBG_WARN, "Pdf is linearized and changes may break rules for linearization.");
 
 	// if changedStorage is empty, there is nothing to do
 	if(changedStorage.size()==0)
