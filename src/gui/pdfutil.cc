@@ -111,7 +111,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   case pName: {
    std::string value;
    dynamic_cast<CName*>(obj.get())->getValue(value);
-   QString ret=value;
+   QString ret=util::convertToUnicode(value);
    if (ret.length()>22) {
     ret.truncate(20);
     ret+="...";
@@ -121,7 +121,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   case pString: {
    std::string value;
    dynamic_cast<CString*>(obj.get())->getValue(value);
-   QString ret=value;
+   QString ret=util::convertToUnicode(value);
    if (ret.length()>22) {
     ret.truncate(20);
     ret+="...";

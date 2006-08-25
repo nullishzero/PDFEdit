@@ -459,6 +459,12 @@ void PdfEditWindow::settingUpdate(QString key) {
    else    tb->hide();
   return;
  }
+ if (key=="editor/charset") {
+  //charset change
+  setDefaultCharset(globalSettings->read("editor/charset"));
+  prop->reloadItem();//since we changed the charset ...
+  return;
+ }
  if (key.startsWith("editor/")) { //Something from property editor
   prop->checkOverrides();
   return;
@@ -693,12 +699,9 @@ bool PdfEditWindow::openFile(const QString &name) {
   document=CPdf::getInstance(name,mode);
   // registers observer with progress bar on document
   pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();
-  if(writer)
-          writer->registerObserver(
-                          boost::shared_ptr<pdfobjects::utils::PdfWriterObserver>(
-                                  new pdfobjects::utils::ProgressObserver(progressBar)
-                                  )
-                          );
+  if(writer) {
+   writer->registerObserver(boost::shared_ptr<pdfobjects::utils::PdfWriterObserver>(new pdfobjects::utils::ProgressObserver(progressBar)));
+  }
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");
   PropertyModeController *modeCtrl=PropertyModeController::getInstance();

@@ -6,6 +6,11 @@
 
 namespace gui {
 
+/**
+ Class representing progressbar.<br>
+ Shows progress of some operations, like saving documents.
+ \brief progress bar
+ */
 class ProgressBar: public pdfobjects::utils::IProgressBar, public QProgressBar {
 public:
  ProgressBar( QWidget* parent=0, const char* name=0, WFlags f=0);

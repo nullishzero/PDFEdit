@@ -244,6 +244,9 @@ int main(int argc, char *argv[]){
 
  guiPrintDbg(debug::DBG_DBG,"Font and style applied");
 
+ //We need to set default charset on the beginning
+ util::setDefaultCharset(globalSettings->read("editor/charset"));
+
  //open editor windows(s)
  int nFiles=params.size();
  if (nFiles) { //open files from cmdline

@@ -69,7 +69,7 @@ void StringProperty::setValue(IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CString* obj=dynamic_cast<CString*>(pdfObject);
  assert(obj);
- string val=ed->text();
+ string val=util::convertFromUnicode(ed->text());
  obj->setValue(val);
  changed=false;
 }
@@ -82,7 +82,7 @@ void StringProperty::readValue(IProperty *pdfObject) {
  assert(obj);
  string val;
  obj->getValue(val);
- ed->setText(val);
+ ed->setText(util::convertToUnicode(val));
  changed=false;
 }
 

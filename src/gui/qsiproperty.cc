@@ -5,11 +5,12 @@
  @author Martin Petricek
 */
 
-#include "qsiproperty.h"
 #include "pdfutil.h"
-#include <qstring.h>
+#include "qsiproperty.h"
+#include "util.h"
 #include <cobject.h>
 #include <qsimporter.h>
+#include <qstring.h>
 #include <qvaluelist.h>
 
 namespace gui {
@@ -76,13 +77,13 @@ QVariant QSIProperty::value() {
  if (str) {
   std::string value;
   str->getValue(value);
-  return QString(value);
+  return QString(util::convertToUnicode(value));
  }
  CName* name=dynamic_cast<CName*>(obj.get());
  if (name) {
   std::string value;
   name->getValue(value);
-  return QString(value);
+  return QString(util::convertToUnicode(value));
  }
  CInt* tInt=dynamic_cast<CInt*>(obj.get());
  if (tInt) {
@@ -171,13 +172,13 @@ void QSIProperty::set(const QString &value) {
   case pName: {
    CName *ip=dynamic_cast<CName*>(obj.get());
    std::string str=value;
-   ip->setValue(str);
+   ip->setValue(util::convertFromUnicode(str));
    return;
   }
   case pString: {
    CString *ip=dynamic_cast<CString*>(obj.get());
    std::string str=value;
-   ip->setValue(str);
+   ip->setValue(util::convertFromUnicode(str));
    return;
   }
   default:;//Do nothing

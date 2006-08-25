@@ -4,6 +4,8 @@
  \brief Utility functions header
 */
 
+#include <string>
+
 class QColor;
 class QString;
 class QStringList;
@@ -35,7 +37,12 @@ QString countString(int count,QString singular,QString plural);
 QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor);
 void colorMod(QWidget* widget,QColor fg,double weight_fg,QColor bg,double weight_bg);
 QStringList countList(unsigned int count,unsigned int start=0);
+
+//Charset encoding related functions
 QStringList supportedEncodings();
+void setDefaultCharset(const QString &charsetName);
+QString convertToUnicode(const std::string &str);
+std::string convertFromUnicode(const QString &str);
 
 } //namespace util
 

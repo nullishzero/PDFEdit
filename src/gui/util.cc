@@ -296,12 +296,42 @@ QStringList countList(unsigned int count,unsigned int start/*=0*/) {
  (Based on support from QTextCodec in Qt)
 */
 QStringList supportedEncodings() {
- return QStringList::split(",",",Apple Roman,Big5,Big5-HKSCS,c\
+ return QStringList::split(",",",Apple Roman,Big5,Big5-HKSCS,\
 CP874,CP1250,CP1251,CP1252,CP1253,CP1254,CP1255,CP1256,CP1257,CP1258,\
 GB2312,GB18030,GBK,IBM 850,IBM 866,\
 ISO8859-1,ISO8859-2,ISO8859-3,ISO8859-4,ISO8859-5,ISO8859-6,ISO8859-7,ISO8859-8,ISO8859-8-i,ISO8859-9,\
 ISO8859-10,ISO8859-13,ISO8859-14,ISO8859-15,\
 JIS7,KOI8-R,KOI8-U,Latin1Shift-JIS,TIS-620TSCII,eucJP,eucKR,utf8,utf16",true);
+}
+
+/** Codec for default charset */
+QTextCodec *defCodec=NULL;
+
+/**
+ set default charset used when reading (and writing
+*/
+void setDefaultCharset(const QString &charsetName) {
+ //Codecs should not be deleted, as Qt is maniaging them
+ if (defCodec) defCodec=NULL;
+ if (charsetName.isNull() || charsetName=="") return;//no codec
+ defCodec=QTextCodec::codecForName(charsetName); 
+}
+
+/** Return QString from std::string with optional character conversion according to settings */
+QString convertToUnicode(const std::string &str) {
+ if (defCodec) {
+  return defCodec->toUnicode(str.c_str());
+ }
+ return QString(str);
+}
+
+/** Return std::string from QString with optional character conversion according to settings */
+std::string convertFromUnicode(const QString &str) {
+ if (defCodec) {
+  const char *cstr=defCodec->fromUnicode(str);
+  return cstr;
+ }
+ return str;
 }
 
 } //namespace util
