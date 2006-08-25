@@ -35,6 +35,7 @@ QString countString(int count,QString singular,QString plural);
 QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor);
 void colorMod(QWidget* widget,QColor fg,double weight_fg,QColor bg,double weight_bg);
 QStringList countList(unsigned int count,unsigned int start=0);
+QStringList supportedEncodings();
 
 } //namespace util
 

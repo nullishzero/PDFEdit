@@ -34,6 +34,12 @@ public slots:
  /*- Return true, if document is linearized PDF, false otherwise */
  bool isLinearized();
  /*-
+  Check for PDF validity - return true, if this object is valid PDF document,
+  false if the PDF document was closed or not yet opened
+  (so the object is invalid)
+ */
+ bool isValid();
+ /*-
   Close the document.
   If the document was opened directly in editor window (with openFile function), it won't be closed,
   you must use closeFile() function for this.

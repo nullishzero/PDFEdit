@@ -267,7 +267,7 @@ bool AddItemDialog::commit() {
   try {
    PropertyType pt=dict->getPropertyType(tex);
    QString msg=tr("Property '%1' already exist as %2").arg(propertyName->text(),getTypeName(pt));
-   if (questionDialog(this,msg+"\n"+tr("Overwrite?"))) {
+   if (questionDialog(this,msg+"\n"+QObject::tr("Overwrite?"))) {
     dict->delProperty(tex);
    } else {
     error(msg);

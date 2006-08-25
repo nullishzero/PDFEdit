@@ -69,7 +69,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
   #Tools submenu
   toolsmenu		= list &Tools,opts,mergeDoc
     opts		= item &Options,options(),F9,options.png
-    mergeDoc		= item &Insert Pages from other document,mergeDocument()
+    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,,need_document
   #Page submenu
   pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinem,drawrectm,addtextm
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
@@ -86,9 +86,9 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     addtextm		= item Add text			, addText()		,	, add_text.png		,need_page
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
-    selectAllObjects	= item Select all objects	, onSelectMode_AllObjects()	, , selectmode_allobjects.png
-    selectText		= item Select text		, onSelectMode_Text()		, , selectmode_text.png
-    selectAnnot		= item Select annotations	, onSelectMode_Annot()		, , selectmode_all.png
+    selectAllObjects	= item Select all objects	, onSelectMode_AllObjects()	, , selectmode_allobjects.png	,mode_button
+    selectText		= item Select text		, onSelectMode_Text()		, , selectmode_text.png		,mode_button
+    selectAnnot		= item Select annotations	, onSelectMode_Annot()		, , selectmode_all.png		,mode_button
     opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator_page
     opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator_page
     opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator_page
@@ -110,11 +110,11 @@ MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
 
 PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,drawlinee,drawrecte,addtext,-,zoom_out,_zoom_tool,zoom_in,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   # _page_tool is special toolbar item to show/change current page
-  drawline		= item Draw line	, onSelectMode_drawLine()	, , draw_line.png	,need_page
-  drawlinee		= item Draw line	, onSelectMode_drawLinee()	, , draw_line.png	,need_page
-  drawrect		= item Draw rectangle	, onSelectMode_drawRect()	, , draw_rect.png	,need_page
-  drawrecte		= item Draw rectangle	, onSelectMode_drawRecte()	, , draw_rect.png	,need_page
-  addtext		= item Add text		, onSelectMode_addText()	, , add_text.png	,need_page
+  drawline		= item Draw line	, onSelectMode_drawLine()	, , draw_line.png	,need_page,mode_button
+  drawlinee		= item Draw line	, onSelectMode_drawLinee()	, , draw_line.png	,need_page,mode_button
+  drawrect		= item Draw rectangle	, onSelectMode_drawRect()	, , draw_rect.png	,need_page,mode_button
+  drawrecte		= item Draw rectangle	, onSelectMode_drawRecte()	, , draw_rect.png	,need_page,mode_button
+  addtext		= item Add text		, onSelectMode_addText()	, , add_text.png	,need_page,mode_button
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
 

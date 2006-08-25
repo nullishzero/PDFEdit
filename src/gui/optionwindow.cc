@@ -326,6 +326,7 @@ void OptionWindow::init() {
  addOptionBool(edit_tab,tr("Show hidden properties"),"editor/show_hidden");
  addOptionBool(edit_tab,tr("Allow editing read-only properties"),"editor/edit_readonly");
  addOptionBool(edit_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
+ addOptionCombo(edit_tab,tr("Character encoding"),"editor/charset",util::supportedEncodings());
  finishTab    (edit_tab);
 
  QWidget *data_tab=addTab(tr("Paths"));

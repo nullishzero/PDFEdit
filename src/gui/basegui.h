@@ -320,6 +320,8 @@ public slots: //This will be all exported to scripting
  */
  QSCObject* nextSelected();
 
+private slots:
+ void toolChangeValue(const QString &toolName);
 #ifndef DRAGDROP
 private://This is workaround because of bug in MOC - it tries to include methods that are ifdef'ed out
 #else

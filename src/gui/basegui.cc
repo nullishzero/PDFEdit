@@ -82,11 +82,21 @@ void BaseGUI::runInitScript() {
 }
 
 /**
+ slot called when any of tools (color tool, edit tool, etc ...) change it's value
+*/
+void BaseGUI::toolChangeValue(const QString &toolName) {
+ guiPrintDbg(debug::DBG_DBG,"tool change: " << toolName);
+ //TODO: properly escape the name of tool
+ call("onValueChange","'"+toolName+"'");
+}
+
+/**
  Add color selection tool to list of "known color selection tools"
  @param tool Tool to add
 */
 void BaseGUI::addColorTool(ColorTool *tool) {
  colorPickers.insert(tool->getName(),tool);
+ connect(tool,SIGNAL(clicked(const QString &)),this,SLOT(toolChangeValue(const QString &)));
 }
 
 /**
@@ -95,6 +105,7 @@ void BaseGUI::addColorTool(ColorTool *tool) {
 */
 void BaseGUI::addEditTool(EditTool *tool) {
  editTools.insert(tool->getName(),tool);
+ connect(tool,SIGNAL(clicked(const QString &)),this,SLOT(toolChangeValue(const QString &)));
 }
 
 /**
@@ -103,6 +114,7 @@ void BaseGUI::addEditTool(EditTool *tool) {
 */
 void BaseGUI::addNumberTool(NumberTool *tool) {
  numberTools.insert(tool->getName(),tool);
+ connect(tool,SIGNAL(clicked(const QString &)),this,SLOT(toolChangeValue(const QString &)));
 }
 
 /**
@@ -111,6 +123,7 @@ void BaseGUI::addNumberTool(NumberTool *tool) {
 */
 void BaseGUI::addSelectTool(SelectTool *tool) {
  selectTools.insert(tool->getName(),tool);
+ connect(tool,SIGNAL(clicked(const QString &)),this,SLOT(toolChangeValue(const QString &)));
 }
 
 /**

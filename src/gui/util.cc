@@ -291,4 +291,17 @@ QStringList countList(unsigned int count,unsigned int start/*=0*/) {
  return items;
 }
 
+/**
+ Return list of supported text encodings
+ (Based on support from QTextCodec in Qt)
+*/
+QStringList supportedEncodings() {
+ return QStringList::split(",",",Apple Roman,Big5,Big5-HKSCS,c\
+CP874,CP1250,CP1251,CP1252,CP1253,CP1254,CP1255,CP1256,CP1257,CP1258,\
+GB2312,GB18030,GBK,IBM 850,IBM 866,\
+ISO8859-1,ISO8859-2,ISO8859-3,ISO8859-4,ISO8859-5,ISO8859-6,ISO8859-7,ISO8859-8,ISO8859-8-i,ISO8859-9,\
+ISO8859-10,ISO8859-13,ISO8859-14,ISO8859-15,\
+JIS7,KOI8-R,KOI8-U,Latin1Shift-JIS,TIS-620TSCII,eucJP,eucKR,utf8,utf16",true);
+}
+
 } //namespace util

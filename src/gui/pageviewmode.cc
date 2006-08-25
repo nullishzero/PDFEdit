@@ -1238,7 +1238,7 @@ Rectangle PageViewMode_Annotations::getRectOfAnnotation ( boost::shared_ptr<CAnn
 				rc.yright	= getDoubleFromArray (rect, 3);
 			} catch (ElementNotFoundException) {
 				// Rect is requirement.
-				guiPrintDbg( debug::DBG_WARN, tr( "For Annotation is property 'Rect' requirement but is missing !!!" ) );
+				guiPrintDbg( debug::DBG_WARN, "For Annotation is property 'Rect' requirement but is missing !!!" );
 				rc.xleft	= -1;
 				rc.yleft	= -1;
 				rc.xright	= -1;

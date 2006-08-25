@@ -19,7 +19,7 @@ function checkMenus() {
  }
  try {
   //Check for document being opened
-  if (document) have_document=true;  else have_document=false;
+  if (document.isValid()) have_document=true;  else have_document=false;
  } catch (e) {
   have_document=false;
  }
@@ -36,6 +36,7 @@ function checkMenus() {
   rootType="";
  }
  cstream_tab=(rootType=="ContentStream");
+ enableItem("/mode_button",have_page);
  enableItem("/need_operator_page",	(theType=="PDFOperator" || have_page));
 // enableItem("/need_dict_or_array",	(theType=="Dict" || theType=="Array"));
  enableItem("/need_dict_or_array_p",	(theType=="Dict" || theType=="Array" || parentType=="Dict" || parentType=="Array"));
@@ -44,6 +45,7 @@ function checkMenus() {
  enableItem("/need_document",		(have_document));
  enableItem("/need_contentstream_root",	cstream_tab);
  enableItem("_zoom_tool",have_page);
+ enableItem("_page_tool",have_document);
  if (cstream_tab) {
   mod=treeRoot().getMode();
   activateMode(mod);
@@ -116,6 +118,11 @@ function onTreeLeftClick() {
 // print('Left click, type of item = '+firstSelectedItem().itemtype());
 }
 
+/** Callback for changing value in any of special tools in toolbar */
+function onValueChange(x) {
+ print(x+' have changed');
+}
+
 /** Callback for click with middle mouse button in tree window */
 function onTreeMiddleClick() {
  firstSelectedItem().reload();
@@ -157,45 +164,63 @@ function onTreeSelectionChange() {
  checkMenus();
 }
 
+/** Set certain mode button to pressed while the others are unpressed */
+function setModeButton(newmode) {
+ checkItem("/mode_button",false);
+ checkItem(newmode,true);
+}
 
-// TODO  potreba zachovat stlaceny stav tlacitka v toolbare a zaroven zarucit stlacene len toto posledne tlacitko (musia sa odskrtnut vsetky nasledujuce :
+// When adding new mode, it is necessary for its button to have
+// "mode_button" class for it to work correctly (i.e. others modes
+// are deselected in GUI) and the mode must call:
+// setModeButton(NAME_OF_BUTTON_OR_MENU_ITEM_USED_TO_SELECT_IT);
+// when it is selected.
 
 /** Callback when selection mode is changes to select all objects on page */
 function onSelectMode_AllObjects() {
-	PageSpace.setSelectionMode("operators_selection","","rect");
+ PageSpace.setSelectionMode("operators_selection","","rect");
+ setModeButton('selectAllObjects');
 }
 
 /** Callback when selection mode is changes to select text operators only */
 function onSelectMode_Text() {
-	PageSpace.setSelectionMode("text_selection","","rect2");
+ PageSpace.setSelectionMode("text_selection","","rect2");
+ setModeButton('selectText');
 }
 
 /** Callback when selection mode is changes to select annotations on page */
 function onSelectMode_Annot() {
-	PageSpace.setSelectionMode("annotations","go_to_target_from_selected_annotation()","rect");
+ PageSpace.setSelectionMode("annotations","go_to_target_from_selected_annotation()","rect");
+ setModeButton('selectAnnot');
 }
+ 
 
 /** Callback when selection mode is changes to draw new line */
 function onSelectMode_drawLine() {
-	PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,false)","line");
+ PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,false)","line");
+ setModeButton('drawline');
 }
 
 /** Callback when selection mode is changes to draw new line */
 function onSelectMode_drawLinee() {
-	PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,true)","line");
+ PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,true)","line");
+ setModeButton('drawlinee');
 }
 
 /** Callback when selection mode is changes to draw new rectangle */
 function onSelectMode_drawRect() {
-	PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,false)","rect");
+ PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,false)","rect");
+ setModeButton('drawrect');
 }
 
 /** Callback when selection mode is changes to draw new rectangle */
 function onSelectMode_drawRecte() {
-	PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,true)","rect");
+ PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,true)","rect");
+ setModeButton('drawrecte');
 }
 
 /** Callback when selection mode is changes to add text to page */
 function onSelectMode_addText() {
-	PageSpace.setSelectionMode("new_object","addText(%1,%2,%3,%4)","rect");
+ PageSpace.setSelectionMode("new_object","addText(%1,%2,%3,%4)","rect");
+ setModeButton('addtext');
 }

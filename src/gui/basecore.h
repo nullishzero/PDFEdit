@@ -44,7 +44,7 @@ public:
  void conPrintError(const QString &line);
  void conPrintLine(const QString &line);
  void runScript(const QString &script);
- void call(const QString &name);
+ void call(const QString &name,const QString &arguments="");
  void importDocument(pdfobjects::CPdf *pdf);
  void destroyDocument();
  QSPdf* getQSPdf() const;

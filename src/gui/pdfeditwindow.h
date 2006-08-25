@@ -5,7 +5,6 @@
 #include <cpdf.h>
 #include <pdfoperators.h>
 #include <qmainwindow.h>
-#include "progressbar.h"
 
 class QFont;
 class QListViewItem;
@@ -22,6 +21,7 @@ class Menu;
 class MultiTreeWindow;
 class NumberTool;
 class PageSpace;
+class ProgressBar;
 class PropertyEditor;
 class QSPage;
 class SelectTool;

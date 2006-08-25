@@ -90,6 +90,16 @@ bool QSPdf::isLinearized() {
 }
 
 /**
+ Check for PDF validity - return true, if this object is valid PDF wrapper,
+ false if the pdf was closed or not yet opened
+ @return True if document is valid
+*/
+bool QSPdf::isValid() {
+ if (obj==NULL) return false;
+ return true;
+}
+
+/**
  Insert page in document at specified position
  \see CPdf::insertPage
  @param page page to insert
@@ -169,6 +179,7 @@ QSPage* QSPdf::getPage(int position) {
   return new QSPage(obj->getPage(position),base);
  } catch (PageNotFoundException &e) {
   base->errorException("Pdf","getPage",tr("Page not found"));
+  return NULL;
  }
 }
 

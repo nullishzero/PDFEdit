@@ -239,10 +239,9 @@ bool PageSpace::saveImageWithDialog ( bool onlySelectedArea ) {
 	QFile f ( filename );
 	if ( (! filename.isNull()) &&
 		((! f.exists()) || 
-			(0 == QMessageBox::question( this, tr("Overwrite File?"),
-							tr("A file called %1 already exists."
-							" Do you want to overwrite it?") .arg( filename ),
-							tr("&Yes"), tr("&No"),
+			(0 == QMessageBox::question( this, QObject::tr("Overwrite?"),
+                                                        QObject::tr("File called \"%1\" already exists. Do you want to overwrite it?").arg( filename ),
+							QObject::tr("&Yes"), QObject::tr("&No"),
 							QString::null, 0, 1 ) )) )
 		return saveImage( filename, sf, -1, onlySelectedArea );
 

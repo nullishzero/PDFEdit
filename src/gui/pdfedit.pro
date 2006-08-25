@@ -138,8 +138,8 @@ HEADERS += qscobject.h  qscontentstream.h  qspdf.h  qspage.h  qsdict.h
 SOURCES += qscobject.cc qscontentstream.cc qspdf.cc qspage.cc qsdict.cc
 HEADERS += qstreeitem.h  qsmenu.h  qsarray.h  qsstream.h  qsiproperty.h  qspdfoperator.h
 SOURCES += qstreeitem.cc qsmenu.cc qsarray.cc qsstream.cc qsiproperty.cc qspdfoperator.cc
-HEADERS += qsipropertyarray.h  qspdfoperatorstack.h  qstreeitemcontentstream.h  qsgraphics.h
-SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc qsgraphics.cc
+HEADERS += qsipropertyarray.h  qspdfoperatorstack.h  qstreeitemcontentstream.h
+SOURCES += qsipropertyarray.cc qspdfoperatorstack.cc qstreeitemcontentstream.cc
 HEADERS += qspdfoperatoriterator.h  qsannotation.h
 SOURCES += qspdfoperatoriterator.cc qsannotation.cc
 
@@ -158,8 +158,8 @@ SOURCES += revisiontool.cc colortool.cc zoomtool.cc pagetool.cc toolbutton.cc to
 SOURCES += edittool.cc numbertool.cc selecttool.cc
 
 #Main Window
-HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageviewS.h  statusbar.h
-SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageviewS.cc statusbar.cc
+HEADERS += pdfeditwindow.h  commandwindow.h  pagespace.h  pageviewS.h  statusbar.h  progressbar.h
+SOURCES += pdfeditwindow.cc commandwindow.cc pagespace.cc pageviewS.cc statusbar.cc progressbar.cc
 
 #Commandline mode
 HEADERS += consolewindow.h

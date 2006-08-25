@@ -20,7 +20,7 @@ SelectTool::SelectTool(const QString &cName,QWidget *parent/*=0*/,const char *na
  text="";
  ed=new QComboBox(false,this,"SelectTool");
  ed->setDuplicatesEnabled(false);
- QObject::connect(ed,SIGNAL(textChanged(const QString &)),this,SLOT(textEntered(const QString &)));
+ QObject::connect(ed,SIGNAL(activated(const QString &)),this,SLOT(textEntered(const QString &)));
 }
 
 /** default destructor */
@@ -41,10 +41,15 @@ QSize SelectTool::sizeHint() const {
  @param separator separator of values in list, by default comma
 */
 void SelectTool::setPredefs(const QStringList &predefs) {
+ //Get old text
+ QString oldText=ed->currentText();
+ //Update choices
  ed->clear();
  ed->insertStringList(predefs);
  text=predefs[0];
  choices=predefs;
+ //Try to select back original text if possible
+ setText(oldText);
 }
 
 /**
@@ -94,7 +99,7 @@ QString SelectTool::getName() const {
  @param newText new text to set
 */
 void SelectTool::setText(const QString &newText) {
- for (int i=0;i<choices.count();i++) {
+ for (int i=0;i<(int)(choices.count());i++) {
   if (choices[i]==newText) {
    text=newText;
    ed->setCurrentItem(i);

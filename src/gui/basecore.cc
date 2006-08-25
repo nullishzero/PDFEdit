@@ -125,11 +125,12 @@ void BaseCore::stopScript() {
 }
 
 /** 
- Call a callback function (no arguments, no return value) in a script
+ Call a callback function (without return value) in a script
  @param name Function name
+ @param arguments Function arguments, separated by comma. Strings must be properly quoted
 */
-void BaseCore::call(const QString &name) {
- QString funct=name+"();";
+void BaseCore::call(const QString &name,const QString &arguments/*=""*/) {
+ QString funct=name+"("+arguments+");";
  guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
  //Check if this call handler is called from a script
  bool running=qs->isRunning();

@@ -54,18 +54,18 @@ bool PageViewS::saveImage ( const QString & file, const char * format, int quali
 		if (pagePixmap)
 			return pagePixmap->save( file, format, quality );
 		else {
-			guiPrintDbg ( debug::DBG_INFO, tr("Page is not loaded!") );
+			guiPrintDbg ( debug::DBG_INFO, "Page is not loaded!" );
 			return false;
 		}
 	}
 
 	QRect r;
 	if (! mode) {
-		guiPrintDbg ( debug::DBG_INFO, tr("Mode is not set!") );
+		guiPrintDbg ( debug::DBG_INFO, "Mode is not set!" );
 		return false;
 	}
 	if (mode->getSelectedRegion().isEmpty()) {
-		guiPrintDbg ( debug::DBG_INFO, tr("Selected area is empty!") );
+		guiPrintDbg ( debug::DBG_INFO, "Selected area is empty!" );
 		return false;
 	}
 	r = mode->getSelectedRegion().boundingRect() & croppedPage;

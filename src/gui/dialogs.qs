@@ -771,7 +771,7 @@ function findText ( text ) {
 
 		var gb = createGroupBoxAndDisplay( "", searchDialog );
 
-		var actualPageOnly = createRadioButtonAndDisplay( tr("On viewed page only"), gb );
+		var actualPageOnly = createRadioButtonAndDisplay( tr("On currently viewed page only"), gb );
 		actualPageOnly.checked = true;
 
 		if (searchDialog.exec()) {
@@ -782,7 +782,7 @@ function findText ( text ) {
 		    numOfFounded = PageSpace.findText( text );
 
 	if (numOfFounded == 0) {
-		MessageBox.information( tr("Nothig was found."), MessageBox.Ok );
+		MessageBox.information( tr("Nothing was found."), MessageBox.Ok );
 	}
 
 	return numOfFounded;

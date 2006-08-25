@@ -150,8 +150,9 @@ QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/
    //TODO: check if not directory
    if (askOverwrite && QFile::exists(name)) {
     //File exists : ask if it should be overwritten
-    int answer=QMessageBox::question(parent,APP_NAME,QObject::tr("File \"")+name+QObject::tr("\" already exists. Overwrite?"),
-                                     QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),1,2);
+    int answer=QMessageBox::question(parent,APP_NAME,
+     QObject::tr("File called \"%1\" already exists. Do you want to overwrite it?").arg(name),
+     QObject::tr("&Yes"),QObject::tr("&No"),QObject::tr("&Cancel"),1,2);
     if (answer==0) {				 //Yes, overwrite is ok
      //Break from the cycle mean valid file was selected
      break;

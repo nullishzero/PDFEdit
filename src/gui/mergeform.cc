@@ -274,7 +274,7 @@ void MergeDialog::openBtn_clicked() {
 
 void MergeDialog::fileNameBtn_clicked() {
  QString fileName = QFileDialog::getOpenFileName(
-      QString::null, tr("Pdf document (*.pdf)"), this, "file open", tr("Merge dialog -- File Open"));
+      QString::null, QObject::tr("PDF files (*.pdf)"), this, "file open", tr("Open file with pages to be inserted"));
  if(!fileName.isEmpty()) {
   fileNameInput->setText(fileName);
  }
@@ -504,21 +504,21 @@ MergeDialog::~MergeDialog() {
  *  language.
  */
 void MergeDialog::languageChange() {
- setCaption( tr( "Merge dialog" ) );
- textLabel1->setText( tr( "&FileName" ) );
- fileNameBtn->setText( tr( "..." ) );
- openBtn->setText( tr( "&Open" ) );
- openBtn->setAccel( QKeySequence( "Alt+O" ) );
- addBtn->setText( "<<" );
- removeBtn->setText( ">>" );
- upBtn->setText( tr( "&Up" ) );
- upBtn->setAccel( QKeySequence( "Alt+U" ) );
- downBtn->setText( tr( "&Down" ) );
- downBtn->setAccel( QKeySequence( "Alt+D" ) );
- cancelBtn->setText( QObject::tr( "&Cancel" ) );
- cancelBtn->setAccel( QKeySequence( "Alt+C" ) );
- okBtn->setText( QObject::tr( "&OK" ) );
- okBtn->setAccel( QKeySequence( "Alt+O" ) );
+ setCaption(tr("Insert pages from another document"));
+ textLabel1->setText(tr("&Filename"));
+ fileNameBtn->setText("...");
+ openBtn->setText(QObject::tr("&Open"));
+ openBtn->setAccel(QKeySequence("Alt+O"));
+ addBtn->setText("<<");
+ removeBtn->setText(">>");
+ upBtn->setText(QObject::tr("&Up"));
+ upBtn->setAccel(QKeySequence("Alt+U"));
+ downBtn->setText(QObject::tr("&Down"));
+ downBtn->setAccel(QKeySequence("Alt+D"));
+ cancelBtn->setText(QObject::tr("&Cancel"));
+ cancelBtn->setAccel(QKeySequence("Alt+C"));
+ okBtn->setText(QObject::tr("&Ok"));
+ okBtn->setAccel(QKeySequence("Alt+O"));
 }
 
 } //namespace gui

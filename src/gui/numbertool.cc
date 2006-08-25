@@ -23,7 +23,7 @@ NumberTool::NumberTool(const QString &cName,QWidget *parent/*=0*/,const char *na
  val=new QDoubleValidator(this);
  val->setBottom(0);
  ed->setValidator(val);
- QObject::connect(ed,SIGNAL(textChanged(const QString &)),this,SLOT(textEntered(const QString &)));
+ QObject::connect(ed,SIGNAL(activated(const QString &)),this,SLOT(textEntered(const QString &)));
 }
 
 /** default destructor */

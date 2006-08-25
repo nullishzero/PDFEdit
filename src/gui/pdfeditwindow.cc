@@ -11,6 +11,7 @@
 #include "pagespace.h"
 #include "pdfeditwindow.h"
 #include "pdfutil.h"
+#include "progressbar.h"
 #include "propertyeditor.h"
 #include "propertymodecontroller.h"
 #include "settings.h"

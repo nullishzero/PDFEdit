@@ -1,45 +1,19 @@
-#ifndef _PROGRESSBAR_H_
-#define _PROGRESSBAR_H_
+#ifndef __PROGRESSBAR_H__
+#define __PROGRESSBAR_H__
 
 #include <qprogressbar.h>
 #include "kernel/pdfwriter.h"
 
-namespace gui
-{
-class ProgressBar: public pdfobjects::utils::IProgressBar, public QProgressBar
-{
+namespace gui {
+
+class ProgressBar: public pdfobjects::utils::IProgressBar, public QProgressBar {
 public:
-       ProgressBar( QWidget* parent=0, const char* name=0, WFlags f=0 )
-               :QProgressBar(parent, name, f)
-       {
-               hide();
-       }
-       
-       ProgressBar( int totalSteps, QWidget* parent=0, const char* name=0, WFlags f=0 )
-               :QProgressBar(totalSteps, parent, name, f)
-       {
-               hide();
-       }
-
-       void start()
-       {
-               show();
-       }
-
-       void finish()
-       {
-               hide();
-       }
-
-       void setMaxStep(int maxStep)
-       {
-               setTotalSteps(maxStep);
-       }
-
-       void update(int step)
-       {
-               setProgress(step);
-       }
+ ProgressBar( QWidget* parent=0, const char* name=0, WFlags f=0);
+ ProgressBar( int totalSteps, QWidget* parent=0, const char* name=0, WFlags f=0);
+ void start();
+ void finish();
+ void setMaxStep(int maxStep);
+ void update(int step);
 };
 
 } // gui namespace
