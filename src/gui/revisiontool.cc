@@ -61,6 +61,8 @@ void RevisionTool::resizeEvent (QResizeEvent *e) {
 void RevisionTool::selectRevision(int revision) {
  if (!document) return;
  guiPrintDbg(debug::DBG_DBG,"Document revision setting to : " << revision);
+ int currentRevision=document->getActualRevision();
+ if (revision==currentRevision) return;//no need to switch
  emit revisionChanged(revision);
 }
 
