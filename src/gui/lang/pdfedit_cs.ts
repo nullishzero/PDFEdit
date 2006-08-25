@@ -132,14 +132,6 @@
         <translation>&amp;Storno</translation>
     </message>
     <message>
-        <source>File &quot;</source>
-        <translation>Soubor &quot;</translation>
-    </message>
-    <message>
-        <source>&quot; already exists. Overwrite?</source>
-        <translation>&quot; již existuje. Přepsat?</translation>
-    </message>
-    <message>
         <source>PDF</source>
         <translation>PDF</translation>
     </message>
@@ -1039,6 +1031,50 @@ Data: %3
         <source>out of range</source>
         <translation>mimo rozsah</translation>
     </message>
+    <message>
+        <source>Search text</source>
+        <translation>Hledat text</translation>
+    </message>
+    <message>
+        <source>Find</source>
+        <translation>Hledat</translation>
+    </message>
+    <message>
+        <source>Text :</source>
+        <translation>Text :</translation>
+    </message>
+    <message>
+        <source>Find what</source>
+        <translation>Co hledat</translation>
+    </message>
+    <message>
+        <source>On currently viewed page only</source>
+        <translation>Pouze na zobrazené stránce</translation>
+    </message>
+    <message>
+        <source>Nothing was found.</source>
+        <translation>Nebylo nic nalezeno.</translation>
+    </message>
+    <message>
+        <source>Overwrite?</source>
+        <translation>Přepsat?</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Otevřít</translation>
+    </message>
+    <message>
+        <source>&amp;Up</source>
+        <translation>Nahor&amp;u</translation>
+    </message>
+    <message>
+        <source>&amp;Down</source>
+        <translation>&amp;Dolů</translation>
+    </message>
+    <message>
+        <source>File called &quot;%1&quot; already exists. Do you want to overwrite it?</source>
+        <translation>Soubor s názvem &quot;%1&quot; již existuje. Chcete ho přepsat?</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1229,10 +1265,6 @@ Data: %3
         <translation>Položka &apos;%1&apos; již existuje jako %2</translation>
     </message>
     <message>
-        <source>Overwrite?</source>
-        <translation>Přepsat?</translation>
-    </message>
-    <message>
         <source>Reference target does not exist!</source>
         <translation>Cíl reference neexistuje!</translation>
     </message>
@@ -1307,6 +1339,13 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::BaseGUI</name>
+    <message>
+        <source>No document opened</source>
+        <translation>Není otevřen dokument</translation>
+    </message>
+</context>
+<context>
     <name>gui::ColorTool</name>
     <message>
         <source>Choose color</source>
@@ -1318,6 +1357,21 @@ Data: %3
     <message>
         <source>help</source>
         <translation>nápověda</translation>
+    </message>
+</context>
+<context>
+    <name>gui::MergeDialog</name>
+    <message>
+        <source>Insert pages from another document</source>
+        <translation>Vložit stránky z jiného dokumentu</translation>
+    </message>
+    <message>
+        <source>&amp;Filename</source>
+        <translation>Jméno souboru</translation>
+    </message>
+    <message>
+        <source>Open file with pages to be inserted</source>
+        <translation>Otevřít soubor se stránkami k vložení</translation>
     </message>
 </context>
 <context>
@@ -1543,6 +1597,10 @@ Data: %3
         <source>&lt;b&gt;Note&lt;/b&gt;: changing icon theme will take effect on next program start</source>
         <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna tématu ikon bude mít efekt až při přístím startu programu</translation>
     </message>
+    <message>
+        <source>Character encoding</source>
+        <translation>Kódování znaků</translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
@@ -1553,17 +1611,6 @@ Data: %3
     <message>
         <source>%1 of %2</source>
         <translation>%1 z %2</translation>
-    </message>
-</context>
-<context>
-    <name>gui::PageView</name>
-    <message>
-        <source>Mode is not set!</source>
-        <translation>Režim není nastaven!</translation>
-    </message>
-    <message>
-        <source>Selected area is empty!</source>
-        <translation>Vybraná oblast je prázdná!</translation>
     </message>
 </context>
 <context>
@@ -1694,6 +1741,21 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::QSPage</name>
+    <message>
+        <source>Invalid operation</source>
+        <translation>Neplatná operace</translation>
+    </message>
+    <message>
+        <source>Out of range</source>
+        <translation>Mimo rozsah</translation>
+    </message>
+    <message>
+        <source>Unknown exception</source>
+        <translation>Neznámá výjimka</translation>
+    </message>
+</context>
+<context>
     <name>gui::QSPdf</name>
     <message>
         <source>Page not found</source>
@@ -1763,11 +1825,6 @@ Data: %3
         <source>&amp;Quit</source>
         <comment>quit</comment>
         <translation>Konec</translation>
-    </message>
-    <message>
-        <source>&amp;New document</source>
-        <comment>fnew</comment>
-        <translation>&amp;Nový document</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
@@ -1950,11 +2007,6 @@ Data: %3
         <translation>Vybírat text</translation>
     </message>
     <message>
-        <source>Select all</source>
-        <comment>selectAll</comment>
-        <translation>Vybírat vše</translation>
-    </message>
-    <message>
         <source>&amp;File</source>
         <comment>filemenu</comment>
         <translation>Soubor</translation>
@@ -2063,6 +2115,26 @@ Data: %3
         <source>Draw rectangle</source>
         <comment>drawrecte</comment>
         <translation>Nakreslit obdélník</translation>
+    </message>
+    <message>
+        <source>Select annotations</source>
+        <comment>selectAnnot</comment>
+        <translation>Vybírat anotace</translation>
+    </message>
+    <message>
+        <source>Text Toolbar</source>
+        <comment>TextToolBar</comment>
+        <translation>Textový Toolbar</translation>
+    </message>
+    <message>
+        <source>&amp;Find text</source>
+        <comment>searchText</comment>
+        <translation>Hledat text</translation>
+    </message>
+    <message>
+        <source>&amp;Insert Pages from other document</source>
+        <comment>mergeDoc</comment>
+        <translation>Vložit stránky z jiného dokumentu</translation>
     </message>
 </context>
 <context>

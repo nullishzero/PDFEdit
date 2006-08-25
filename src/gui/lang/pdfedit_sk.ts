@@ -132,14 +132,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&quot; already exists. Overwrite?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PDF</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1036,6 +1028,50 @@ Data: %3
         <source>out of range</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Search text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find what</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On currently viewed page only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing was found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File called &quot;%1&quot; already exists. Do you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1226,10 +1262,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Overwrite?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Reference target does not exist!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1304,6 +1336,13 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::BaseGUI</name>
+    <message>
+        <source>No document opened</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::ColorTool</name>
     <message>
         <source>Choose color</source>
@@ -1318,14 +1357,25 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::MergeDialog</name>
+    <message>
+        <source>Insert pages from another document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open file with pages to be inserted</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::MultiTreeWindow</name>
     <message>
         <source>Tree</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stream</source>
-        <translation type="obsolete">Stream</translation>
     </message>
     <message>
         <source>Close current tab</source>
@@ -1543,6 +1593,10 @@ Data: %3
         <source>&lt;b&gt;Note&lt;/b&gt;: changing icon theme will take effect on next program start</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Character encoding</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
@@ -1552,17 +1606,6 @@ Data: %3
     </message>
     <message>
         <source>%1 of %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>gui::PageView</name>
-    <message>
-        <source>Mode is not set!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Selected area is empty!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1694,6 +1737,21 @@ Data: %3
     </message>
 </context>
 <context>
+    <name>gui::QSPage</name>
+    <message>
+        <source>Invalid operation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Out of range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown exception</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>gui::QSPdf</name>
     <message>
         <source>Page not found</source>
@@ -1747,11 +1805,6 @@ Data: %3
     <message>
         <source>Main Toolbar</source>
         <comment>MainToolbar</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New document</source>
-        <comment>fnew</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1950,11 +2003,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select all</source>
-        <comment>selectAll</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;File</source>
         <comment>filemenu</comment>
         <translation type="unfinished"></translation>
@@ -2062,6 +2110,26 @@ Data: %3
     <message>
         <source>Draw rectangle</source>
         <comment>drawrecte</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select annotations</source>
+        <comment>selectAnnot</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Toolbar</source>
+        <comment>TextToolBar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Find text</source>
+        <comment>searchText</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Insert Pages from other document</source>
+        <comment>mergeDoc</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
