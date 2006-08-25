@@ -6,6 +6,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.75  2006/08/25 16:21:22  hockm0bm
+ * getPdfWriter method added
+ *
  * Revision 1.74  2006/08/09 20:46:35  hockm0bm
  * * new cpdf_id_t type, id field and getId method
  * * addIndirectProperty
@@ -1897,6 +1900,15 @@ public:
 		assert (toplevel);
 
 		utils::getAllChildrenOfPdfObject (toplevel, cont);
+	}
+
+	/** Returns current xref's pdf content writer.
+	 * This instance can't be deallocated! It should be used only for observer
+	 * registration or similar purposes.
+	 */
+	utils::IPdfWriter * getPdfWriter()
+	{
+		return xref->setPdfWriter(NULL);
 	}
 };
 
