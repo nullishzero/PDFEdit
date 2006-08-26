@@ -201,7 +201,7 @@ function editFontProps() {
                         if(firstTime)
                         {
                                 warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-                                continue;
+                                return;
                         }
                 }
 
