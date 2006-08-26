@@ -123,7 +123,7 @@ function setLineWidth() {
                         continue;
                 }
                 
-                operatorSetLineWidth(op,width,false);
+                operatorSetLineWidth(op,width,true);
 
                 op=nextSelected();
         }
@@ -194,7 +194,7 @@ function editFontProps() {
 
 	// Get selected item
  	op=firstSelected("select");
-        while(op)
+        if(op)
         {
                 if (!isTextOp(op)) 
                 {
@@ -255,7 +255,8 @@ function editFontProps() {
                 // Set the font
                 operatorSetFont(op,newfontid,newfontsize);
 
-                op=nextSelected();
+                // FIXME uncomment
+                //op=nextSelected();
         }
                 
 	print (tr("Font changed."));
