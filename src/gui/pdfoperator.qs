@@ -495,7 +495,7 @@ function operatorDrawLine (lx,ly,rx,ry,width,col) {
 /**
  * Draw rectangle specyfing left upper corner, width and height.
  */
-function operatorDrawRect (lx,ly,width,height,col) {
+function operatorDrawRect (lx,ly,width,height,col,widthLine) {
 	
 	//
 	// q
@@ -504,6 +504,10 @@ function operatorDrawRect (lx,ly,width,height,col) {
 	// Q
 	//
 	var composite = createCompositeOperator("q","Q");
+
+	if (undefined != widthLine) {
+		putlinewidth (composite,widthLine);
+	}
 
 	if (undefined != col) {
 		putscolor(composite,col.red,col.green,col.blue);
