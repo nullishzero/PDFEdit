@@ -39,8 +39,9 @@ MP
  [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage) - button -MP !!
      vyseparovat z page toolbaru navigaci po strankach a tam to pridat
 Michal
- [ ] Progress observer + progressbar pri save a delinearize -> do statusbaru - doladit, pada - Michal
- [ ] zrusit cGraphic v kernelu - Michal
+ [x] Progress observer + progressbar pri save a delinearize -> do statusbaru - doladit, pada - Michal
+ [ ] Progress bar v skriptoch (mergeWithPages a tam, kde sa to bude hodit)
+ [x] zrusit cGraphic v kernelu - Michal
  [ ] Pridavani anotaci - dialog - Michal
  [ ] Upravit skripty na multiselect (u kterych ma smysl)
  [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho - concat documents, sude/liche ...)
