@@ -3,6 +3,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.24  2006/08/26 10:19:33  hockm0bm
+ * FIXME removed
+ *
  * Revision 1.23  2006/06/17 18:34:51  hockm0bm
  * Refactoring changes
  *
@@ -513,7 +516,6 @@ public:
  * This implementation supports priority ordering of observers.
  *
  */
-// FIXME rename to ObserverHandler
 template<typename T> class ObserverHandler
 {
 public:
