@@ -216,9 +216,20 @@ function mergeWithPages(pages, positions)
         // stores them behind last
         pos=maxPos+calcDiff(positions, maxPos+1, positions.length)+1;
         System.println("maxPos="+maxPos+" pos="+pos);
+
+        // gets editor progress bar
+        progressBar=progressBar();
         for(j=0;i<pages.length; ++i)
         {
                 document.insertPage(pages[i], pos);
+
+                // displays current state of progress.
+                // document might use same progress observer, so we will
+                // initializes total steps and make the bar visible just
+                // to be sure
+                progressBar.setTotalSteps(pages.legth);
+                progressBar.setProgress(j+1);
+                progressBar.show();
 
                 // moves to next position with respect to above insertion
                 pos+=2;

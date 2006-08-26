@@ -5,6 +5,7 @@
 #include <cpdf.h>
 #include <pdfoperators.h>
 #include <qmainwindow.h>
+#include <qprogressbar.h>
 
 class QFont;
 class QListViewItem;
@@ -64,10 +65,21 @@ public:
  void eval(const QString &code);
 
  /** Returns progress observer.
-  * This progress observer holds qt progress bar stored in status bar.
+  * This progress observer holds qt progress bar (progressBar field) stored in 
+  * status bar.
   * It can be registered on ObserverHandler to display progress.
   */
  boost::shared_ptr<pdfobjects::utils::ProgressObserver> getProgressObserver();
+
+ /** Returns common progress bar.
+  *
+  * Note that this progress bar is shared and so user should keep in mind
+  * that someone is using same progress bar while he starts to use it.
+  *
+  * @return qt progress bar instance.
+  */
+ QProgressBar * getProgressBar();
+ 
 public slots:
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void changeRevision(int revision);
@@ -114,6 +126,7 @@ private:
   * qt.
   */
  boost::shared_ptr<pdfobjects::utils::ProgressObserver> progressObserver;
+ QProgressBar * progressBar;
  /** Commandline window */
  CommandWindow *cmdLine;
  /** Object treeview */

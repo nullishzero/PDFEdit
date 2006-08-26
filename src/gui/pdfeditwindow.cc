@@ -216,6 +216,11 @@ boost::shared_ptr<pdfobjects::utils::ProgressObserver> PdfEditWindow::getProgres
         return progressObserver;
 }
 
+QProgressBar * PdfEditWindow::getProgressBar()
+{
+        return progressBar;
+}
+
 /**
  constructor of PdfEditWindow, creates window and fills it with elements
  @param parent parent widget containing this control
@@ -263,15 +268,15 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  // creates qt progress bar and its adapter so it can be used in 
  // ProgressObserver. progressObserver can be registered to observer handlers.
- QProgressBar * pB=new QProgressBar();
- ProgressBar * progressBar=new ProgressBar(pB);
+ QProgressBar * progressBar=new QProgressBar();
  progressObserver=boost::shared_ptr<pdfobjects::utils::ProgressObserver>(
-                 new pdfobjects::utils::ProgressObserver(progressBar)
+                 new pdfobjects::utils::ProgressObserver(
+                         new ProgressBar(progressBar))
                  );
 
  // creates status bar and adds qt progress bar inside
  status=new StatusBar(this,"statusbar");
- status->addWidget(pB);
+ status->addWidget(progressBar);
 
  //Connections
  connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));

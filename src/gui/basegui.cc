@@ -767,6 +767,10 @@ QSCObject* BaseGUI::nextSelected() {
  return w->tree->nextSelected();
 }
 
+QProgressBar * BaseGUI::progressBar()
+{
+        return w->getProgressBar();
+}
 
 // === Non-scripting slots ===
 

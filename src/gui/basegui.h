@@ -6,6 +6,7 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qvariant.h>
+#include <qprogressbar.h>
 
 namespace gui {
 
@@ -319,6 +320,15 @@ public slots: //This will be all exported to scripting
   Move internal selected item pointer to next selected item (or invalidate it if no more selected items is found)
  */
  QSCObject* nextSelected();
+
+ /*-
+  Returns progress bar which can be used to display progress of action of script.
+  User should set total steps before it starts using it and also after each 
+  calling of subscript which also may use same progress bar (and potentialy set
+  different value of total steps - this can be solved by calling setTotalSteps
+  before setProgress method all the time).
+  */
+ QProgressBar * progressBar();
 
 private slots:
  void toolChangeValue(const QString &toolName);
