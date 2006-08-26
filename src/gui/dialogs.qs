@@ -1,3 +1,4 @@
+// helper functions which handles some common behavior
 /* === Dialogs === */
 
 /** rotate current page N degrees clockwise */
@@ -55,23 +56,42 @@ function editPageMediaBox() {
 
 /** Perform "set color" operation on currently selected operator */
 function setOpColor() {
+
+        firstTime=true;
 	
 	if (!isPageAvaliable() || !(isTreeItemSelected())) {
 		warn(tr("No page or operator selected!"));
 		return;
 	}
 	
-	op=firstSelected();
-	if (!isChangeableOp(op)) {
-		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
-		return;
-	}
+        // uses currently set foregroud colour
+        col=getColor("fg");
+        if (!col) 
+                return;//Dialog aborted
+                
+        // set color operator to all selected which are changeable
+	op=firstSelected("select");
+        count=0;
+        while(op)
+        {
+                if (!isChangeableOp(op)) {
+                        // displays just for the first time and then just silently 
+                        // ignores
+                        if(firstTime)
+                        {
+                                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
+                                firstTime=false;
+                        }
+                        continue;
+                }
 
-	stream=op.stream();
-	col=getColor("fg");
-	if (!col) return;//Dialog aborted
-	operatorSetColor(op,col.red, col.green, col.blue);
-	print (tr("Colour changed."));
+                stream=op.stream();
+                operatorSetColor(op,col.red, col.green, col.blue);
+                op=nextSelected();
+                count++;
+        }
+	print (tr("Colour changed")+" "+tr("for")+" "+count+" "+tr("operators"));
+
 	//reload the page
 	go();
 }
@@ -80,30 +100,35 @@ function setOpColor() {
 /** Change dash style of an operator. */
 function setLineWidth() {
 	
+        firstTime = true;
+
 	if (!isPageAvaliable() || !(isTreeItemSelected())) {
 		warn(tr("No page or operator selected!"));
 		return;
 	}
-	
-	op=firstSelected();
-	if (!isChangeableOp(op)) {
-		warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for line width change.")+" "+tr("Please see the pdf specification for details."));
-		return;
-	}
-	
-	var dialog = createDialog (tr("Change line width"), tr("Change"), tr("Cancel"), tr("Change line width"));
-	
-	var gb = createGroupBoxAndDisplay ("Line width", dialog);
-	var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
-	 
-	gb = createGroupBoxAndDisplay (tr("Change effect"), dialog);
-	var glob = createCheckBoxAndDisplay (tr("Global change"),gb);
-	glob.checked = true;
 
-	if (!dialog.exec()) return;
-	 
-	operatorSetLineWidth(op,sb.value,glob.checked);
+        width = getNumber("linewidth");
+	
+	op=firstSelected("select");
+        while(op)
+        {
+                if (!isChangeableOp(op)) {
+                        // displays just for the first time and then just silently 
+                        // ignores
+                        if(firstTime)
+                        {
+                                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
+                                firstTime=false;
+                        }
+                        continue;
+                }
+                
+                operatorSetLineWidth(op,width,false);
+
+                op=nextSelected();
+        }
 	print (tr("Line width changed."));
+
 	// Reload page
 	go ();
 }
@@ -117,12 +142,16 @@ function setDashPattern() {
 		return;
 	}
 	
+        // TODO multiselect
 	op=firstSelected();
-	if (!isChangeableOp(op)) {
-		warn(tr("Operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+" "+tr("Please see the pdf specification for details."));
-		return;
-	}
+        if (!isChangeableOp(op)) {
+                // displays just for the first time and then just silently 
+                // ignores
+                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
+                return;
+        }
 	
+        // TODO remove dialog and use currently set values
 	var dialog = createDialog (tr("Change line dash pattern"), tr("Change"), tr("Cancel"), tr("Change line dash pattern"));
 	 
 	var gb = createGroupBoxAndDisplay (tr("Line dashing patterns"), dialog);
@@ -161,62 +190,74 @@ function editFontProps() {
 		return;
 	}
 
+        firstTime=true;
+
 	// Get selected item
- 	op=firstSelected();
+ 	op=firstSelected("select");
+        while(op)
+        {
+                if (!isTextOp(op)) 
+                {
+                        if(firstTime)
+                        {
+                                warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+                                continue;
+                        }
+                }
 
-	if (!isTextOp(op)) {
- 		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-		return;
-	}
-	
-	var fontspecs = operatorGetFont(op);
-	var fontsize = fontspecs[1];
-	var fontname = fontspecs[0];
-	
-	var dg = createDialog (tr("Change font properties"), tr("Change font"), tr("Cancel"), tr("Change font"));
-	var gb = createGroupBoxAndDisplay (tr("Avaliable fonts"),dg);
-	var cb = new ComboBox;
-	cb.label = tr("Select from all avaliable fonts");
-	
-	// Put all avaliable fonts here and select the operator font 
-	var fonts = page().getFontIdsAndNames();
-	var fontnames = new Array(fonts.length/2);
-	
-	// Fill fontnames with symbolic font names
-	for(i = 1,j=0; i < fonts.length; ++i) {
-        fontnames[j] = fonts[i];
-		// Save symbolic name of operator font
-		if (fonts[i-1] == fontname)
-			fontname = fonts[i];
-		// Skip id
-		++i;++j;
-    }
-	cb.itemList = fontnames;
-	cb.currentItem = fontname;
-	gb.add (cb);
-	
-	var gb1 = createGroupBoxAndDisplay (tr("Font size according to the pdf document"),dg);
-	var sb = createNumbereditAndDisplay (tr("Font size (not in px)"), 0, 100, gb1);
-	print(fontsize);
-	sb.value = fontsize;
+                var fontspecs = operatorGetFont(op);
+                var fontsize = fontspecs[1];
+                var fontname = fontspecs[0];
 
-	if (!dg.exec()) return;
-	
-	// Get font metrics and change the operator
-	var newfontsize = sb.value;
-	var newfontname = cb.currentItem;// get Idx according to a name
+                // TODO remove dialog and use current setting
+                var dg = createDialog (tr("Change font properties"), tr("Change font"), tr("Cancel"), tr("Change font"));
+                var gb = createGroupBoxAndDisplay (tr("Avaliable fonts"),dg);
+                var cb = new ComboBox;
+                cb.label = tr("Select from all avaliable fonts");
 
-	for(i = 1; i < fonts.length; ++i) {
-		// Save symbolic name of operator font
-		if (fonts[i] == newfontname) {
-			newfontid = fonts[i-1];
-			break;
-		}
-		// Skip id
-		++i;
-     }
-	// Set the font
-	operatorSetFont(op,newfontid,newfontsize);
+                // Put all avaliable fonts here and select the operator font 
+                var fonts = page().getFontIdsAndNames();
+                var fontnames = new Array(fonts.length/2);
+
+                // Fill fontnames with symbolic font names
+                for(i = 1,j=0; i < fonts.length; ++i) {
+                fontnames[j] = fonts[i];
+                        // Save symbolic name of operator font
+                        if (fonts[i-1] == fontname)
+                                fontname = fonts[i];
+                        // Skip id
+                        ++i;++j;
+                }
+                cb.itemList = fontnames;
+                cb.currentItem = fontname;
+                gb.add (cb);
+
+                var gb1 = createGroupBoxAndDisplay (tr("Font size according to the pdf document"),dg);
+                var sb = createNumbereditAndDisplay (tr("Font size (not in px)"), 0, 100, gb1);
+                print(fontsize);
+                sb.value = fontsize;
+
+                if (!dg.exec()) return;
+
+                // Get font metrics and change the operator
+                var newfontsize = sb.value;
+                var newfontname = cb.currentItem;// get Idx according to a name
+
+                for(i = 1; i < fonts.length; ++i) {
+                        // Save symbolic name of operator font
+                        if (fonts[i] == newfontname) {
+                                newfontid = fonts[i-1];
+                                break;
+                        }
+                        // Skip id
+                        ++i;
+                }
+                // Set the font
+                operatorSetFont(op,newfontid,newfontsize);
+
+                op=nextSelected();
+        }
+                
 	print (tr("Font changed."));
 	go();
 }
@@ -478,65 +519,22 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
 		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
 		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
-	}else {
-		lx = 0;
-		ly = 0;
-		rx = 0;
-		ry = 0;
-	}
+	}else 
+                return;
+
 	print (lx+" "+ly+" "+rx+" "+ry);
 
-	if (undefined == wantedit || wantedit) { // Ask user 
-			
-		var dialog = createDialog (tr("Draw line"), tr("Draw"), tr("Cancel"), tr("Draw line"));
-		 
-		//
-		// x y
-		//
-		var lxy = xydialogs (dialog,tr("Start position"));
-		var rxy = xydialogs (dialog,tr("End position"));
-	
-		lxy[0].text = lx;
-		lxy[1].text = ly;
-		rxy[0].text = rx;
-		rxy[1].text = ry;
-		
-		//
-		// Line width
-		//
-		dialog.newColumn();
-		
-		var gb = createGroupBoxAndDisplay ("Line width (0-default)", dialog);
-		var sb = createSpinboxAndDisplay ("Line width", 0, 100,gb);
-		sb.value = 0;
-		var color = createCheckBoxAndDisplay (tr("Change background color"),gb);
-	 
-		if (!dialog.exec()) return;
+        // uses current foreground colour
+        col = getColor("fg");
+        if (!col) return;
 
-		if (color.checked) {
-			col = getColor("fg");
-			if (!col) return;
-		}
+        // uses current line with value
+        width = getNumber("linewidth");
 
-		if (!isNumber4(lxy[0].text,lxy[1].text,rxy[0].text,rxy[1].text)) {
-			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
-			return;
-		}
-		// op
-		lx = parseFloat(lxy[0].text);
-		ly = parseFloat(lxy[1].text);
-		rx = parseFloat(rxy[0].text);
-		ry = parseFloat(rxy[1].text);
-
-		if (sb.value != 0)
-			width = parseFloat (sb.value);
-	}
-	
-	print (col);
 	operatorDrawLine(lx,ly,rx,ry,width,col);
 
-	print (tr("Line was drawn."));
 	// Reload page
+	print (tr("Line was drawn."));
 	go ();
 }
 
@@ -552,7 +550,14 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
 	
 	// State paramters
 	var col;
+
+        // Uses current colour
+        col = getColor("bg");
+        if (!col) return;
 	
+        // uses current line with value
+        width = getNumber("linewidth");
+
 	if (undefined != _lx && undefined != _ry) {
 		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
 		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
@@ -560,46 +565,11 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
 		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
 		w = rx - lx;
 		h = ry - ly;
-	}else {
-		lx = 0;
-		ly = 0;
-		w = 0;
-		h = 0;
-	}
-
-	if (undefined == wantedit || wantedit) { // Ask user 
-		var dialog = createDialog (tr("Draw rectangle"), tr("Draw"), tr("Cancel"), tr("Draw rectangle"));
-		var lxy = xydialogs (dialog,tr("Upper left corner"));
-		lxy[0].text = lx;
-		lxy[1].text = ly;
-
-		dialog.newColumn();
-		var wh = twonumdialogs (dialog,tr("Metrics"),tr("Width"),tr("Height"));
-		wh[0].text = w;
-		wh[1].text = h;
-		
-		var color = createCheckBoxAndDisplay (tr("Change background color"),gb);
-	 
-		if (!dialog.exec()) return;
-		if (color.checked) {
-			col = getColor("fg");
-			if (!col) return;
-		}
-
-		if (!isNumber4(lxy[0].text,lxy[1].text,wh[0].text,wh[1].text)) {
-			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
-			return;
-		}
-		// op
-		lx = parseFloat(lxy[0].text);
-		ly = parseFloat(lxy[1].text);
-		w = parseFloat(wh[0].text);
-		h = parseFloat(wh[1].text);
-
-	}
+	}else 
+                return;
 	
 	print (lx+", "+ly+", "+w+", "+h);
-	operatorDrawRect(lx,ly,w,h,col);
+	operatorDrawRect(lx,ly,w,h,col,width);
 
 	print (tr("Rect was drawn."));
 	// Reload page
