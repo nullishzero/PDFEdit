@@ -428,35 +428,46 @@ function moveOperPos() {
 		warn(tr("No page or operator selected!"));
 		return;
 	}
+
+        var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
+         
+        var xy = xydialogs (dialog,tr("Relative operator position (this is not absolute position)"));
+         
+        dialog.width = 100;
+        if (!dialog.exec()) return;
 	
+        firstTime = true;
 	op=firstSelected();
-	if (!isTextOp(op)) {
- 		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-		return;
-	}
+        while(op)
+        {
+                if (!isTextOp(op)) 
+                {
+                        if(firstTime)
+                        {
+                                warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+                                firstTime = false;
+                        }
+                        continue;
+                }
 
-	var posop = getPosInfoOfOperator (op);
-	var x = parseFloat (posop.params().property(0).value());
-	var y = parseFloat (posop.params().property(1).value());
+                var posop = getPosInfoOfOperator (op);
+                if (undefined == posop) {
+                        warn(tr("Could not find text positioning."));
+                        continue;
+                }
+                var x = parseFloat (posop.params().property(0).value());
+                var y = parseFloat (posop.params().property(1).value());
 
-	if (undefined == posop) {
-		warn(tr("Could not find text positioning."));
-	}
+                if (!isNumber(xy[0].text) || !isNumber(xy[1].text)) {
+                        warn(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
+                        continue;
+                }
+                
+                // op, change, change
+                operatorSetPosition(op, parseFloat(xy[0].text), parseFloat(xy[1].text));
 
-	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
-	 
-	var xy = xydialogs (dialog,tr("Relative operator position (this is not absolute position)"));
-	 
-	dialog.width = 100;
-	if (!dialog.exec()) return;
-
-	if (!isNumber(xy[0].text) || !isNumber(xy[1].text)) {
-		warn(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
-		return;
-	}
-	
-	// op, change, change
-	operatorSetPosition(op, parseFloat(xy[0].text), parseFloat(xy[1].text));
+                op=nextSelected();
+        }
 
 	print (tr("Operator position changed."));
 	// Reload page
@@ -472,27 +483,38 @@ function moveTextPos() {
 		warn(tr("No page or operator selected!"));
 		return;
 	}
-	
+
+        var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
+         
+        var xy = xydialogs (dialog,tr("Relative operator position"));
+         
+        if (!dialog.exec()) return;
+
+        firstTime=true;
 	op=firstSelected();
-	if (!isTextOp(op)) {
- 		warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-		return;
-	}
+        while(op)
+        {
+                if (!isTextOp(op)) {
+                        if(firstTime)
+                        {
+                                warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+                                firstTime = false;
+                        }
+                        continue;
+                }
 
-	var posop = getPosInfoOfOperator (op);
+                var posop = getPosInfoOfOperator (op);
 
-	if (undefined == posop) {
-		warn(tr("Could not find text positioning."));
-	}
+                if (undefined == posop) {
+                        warn(tr("Could not find text positioning."));
+                        continue;
+                }
+                 
+                // op, change, change
+                operatorMovePosition(posop, parseFloat(xy[0].text), parseFloat(xy[1].text));
 
-	var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
-	 
-	var xy = xydialogs (dialog,tr("Relative operator position"));
-	 
-	if (!dialog.exec()) return;
-	 
-	// op, change, change
-	operatorMovePosition(posop, parseFloat(xy[0].text), parseFloat(xy[1].text));
+                op=nextSelected();
+        }
 
 	print (tr("Operator position changed."));
 	// Reload page
