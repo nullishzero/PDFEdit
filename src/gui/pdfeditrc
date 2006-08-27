@@ -69,7 +69,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
   #Tools submenu
   toolsmenu		= list &Tools,opts,mergeDoc
     opts		= item &Options,options(),F9,options.png
-    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,,need_document
+    mergeDoc		= item &Insert Pages from other document,mergeDocument(),,insert_pages.png,need_document
   #Page submenu
   pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinem,drawrectm,addtextm
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
