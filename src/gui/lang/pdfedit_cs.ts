@@ -451,11 +451,11 @@ Data: %3
     </message>
     <message>
         <source>Colour changed.</source>
-        <translation>Barva změněna.</translation>
+        <translation type="obsolete">Barva změněna.</translation>
     </message>
     <message>
         <source>suitable for line width change.</source>
-        <translation>vhodný pro nastavení šířky čáry</translation>
+        <translation type="obsolete">vhodný pro nastavení šířky čáry</translation>
     </message>
     <message>
         <source>Line width changed.</source>
@@ -463,7 +463,7 @@ Data: %3
     </message>
     <message>
         <source>suitable for dash style change.</source>
-        <translation>vhodný pro nastavení stylu čáry.</translation>
+        <translation type="obsolete">vhodný pro nastavení stylu čáry.</translation>
     </message>
     <message>
         <source>Dash pattern changed.</source>
@@ -583,7 +583,7 @@ Data: %3
     </message>
     <message>
         <source>Change line width</source>
-        <translation>Změnit šířku čáry</translation>
+        <translation type="obsolete">Změnit šířku čáry</translation>
     </message>
     <message>
         <source>Change effect</source>
@@ -758,7 +758,7 @@ Data: %3
     </message>
     <message>
         <source>Draw</source>
-        <translation>Nakreslit</translation>
+        <translation type="obsolete">Nakreslit</translation>
     </message>
     <message>
         <source>Invalid position</source>
@@ -774,27 +774,27 @@ Data: %3
     </message>
     <message>
         <source>End position</source>
-        <translation>Koncový bod</translation>
+        <translation type="obsolete">Koncový bod</translation>
     </message>
     <message>
         <source>Draw rectangle</source>
-        <translation>Nakreslit obdélník</translation>
+        <translation type="obsolete">Nakreslit obdélník</translation>
     </message>
     <message>
         <source>Upper left corner</source>
-        <translation>Levý horní roh</translation>
+        <translation type="obsolete">Levý horní roh</translation>
     </message>
     <message>
         <source>Metrics</source>
-        <translation>Rozměry</translation>
+        <translation type="obsolete">Rozměry</translation>
     </message>
     <message>
         <source>Width</source>
-        <translation>Šířka</translation>
+        <translation type="obsolete">Šířka</translation>
     </message>
     <message>
         <source>Height</source>
-        <translation>Výška</translation>
+        <translation type="obsolete">Výška</translation>
     </message>
     <message>
         <source>Rect was drawn.</source>
@@ -842,7 +842,7 @@ Data: %3
     </message>
     <message>
         <source>Start position</source>
-        <translation>Počáteční bod</translation>
+        <translation type="obsolete">Počáteční bod</translation>
     </message>
     <message>
         <source>Text position</source>
@@ -862,7 +862,7 @@ Data: %3
     </message>
     <message>
         <source>Change background color</source>
-        <translation>Změnit barvu pozadí</translation>
+        <translation type="obsolete">Změnit barvu pozadí</translation>
     </message>
     <message>
         <source>Remove page</source>
@@ -1074,6 +1074,38 @@ Data: %3
     <message>
         <source>File called &quot;%1&quot; already exists. Do you want to overwrite it?</source>
         <translation>Soubor s názvem &quot;%1&quot; již existuje. Chcete ho přepsat?</translation>
+    </message>
+    <message>
+        <source>Move page up</source>
+        <translation>Posunout stránku nahoru</translation>
+    </message>
+    <message>
+        <source>Move page down</source>
+        <translation>Posunout stránku dolů</translation>
+    </message>
+    <message>
+        <source>Delinearization failed!</source>
+        <translation>Delnearizace selhala!</translation>
+    </message>
+    <message>
+        <source>Colour changed</source>
+        <translation>Barva změněna</translation>
+    </message>
+    <message>
+        <source>for</source>
+        <translation>pro</translation>
+    </message>
+    <message>
+        <source>operators</source>
+        <translation>operátor(ů)</translation>
+    </message>
+    <message>
+        <source>Annotations</source>
+        <translation>Anotace</translation>
+    </message>
+    <message>
+        <source>Input and output files must be different</source>
+        <translation>Vstupní a výstupní soubor musí být jiný</translation>
     </message>
 </context>
 <context>
@@ -1612,6 +1644,10 @@ Data: %3
         <source>%1 of %2</source>
         <translation>%1 z %2</translation>
     </message>
+    <message>
+        <source>Resizing zone must be positive integer or null !</source>
+        <translation>Zóna pro změnu velikosti musí být kladné celé číslo nebo null !</translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -1670,6 +1706,10 @@ Data: %3
     <message>
         <source>Selected operators</source>
         <translation>Vybrané operátory</translation>
+    </message>
+    <message>
+        <source>Selected annotations</source>
+        <translation>Vybrané anotace</translation>
     </message>
 </context>
 <context>
@@ -2136,6 +2176,11 @@ Data: %3
         <comment>mergeDoc</comment>
         <translation>Vložit stránky z jiného dokumentu</translation>
     </message>
+    <message>
+        <source>Draw Toolbar</source>
+        <comment>DrawToolbar</comment>
+        <translation>Kreslící Toolbar</translation>
+    </message>
 </context>
 <context>
     <name>gui::TreeItemPdf</name>
@@ -2161,6 +2206,137 @@ Data: %3
     <message>
         <source>Data</source>
         <translation>Data</translation>
+    </message>
+</context>
+<context>
+    <name>gui::Units</name>
+    <message>
+        <source>point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation>palec</translation>
+    </message>
+    <message>
+        <source>inches</source>
+        <translation>palce</translation>
+    </message>
+    <message>
+        <source>hands</source>
+        <translation>ruce</translation>
+    </message>
+    <message>
+        <source>hand</source>
+        <translation>ruka</translation>
+    </message>
+    <message>
+        <source>foot</source>
+        <translation>stopa</translation>
+    </message>
+    <message>
+        <source>feet</source>
+        <translation>stopy</translation>
+    </message>
+    <message>
+        <source>link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>yard</source>
+        <translation>yard</translation>
+    </message>
+    <message>
+        <source>yards</source>
+        <translation>yardy</translation>
+    </message>
+    <message>
+        <source>rod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pole</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>poles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>perch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>perches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fathom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fathoms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>chain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>chains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>furlong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>furlongs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mile</source>
+        <translation>míle</translation>
+    </message>
+    <message>
+        <source>miles</source>
+        <translation>mil</translation>
+    </message>
+    <message>
+        <source>land</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>lands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>league</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>leagues</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>nautical mile</source>
+        <translation>námořní míle</translation>
+    </message>
+    <message>
+        <source>nautical miles</source>
+        <translation>námořních mil</translation>
     </message>
 </context>
 </TS>

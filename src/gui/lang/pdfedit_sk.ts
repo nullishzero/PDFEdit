@@ -435,19 +435,7 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Colour changed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>suitable for line width change.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Line width changed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>suitable for dash style change.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -564,10 +552,6 @@ Data: %3
     </message>
     <message>
         <source>Page metrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change line width</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -742,10 +726,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Draw</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid position</source>
         <translation type="unfinished"></translation>
     </message>
@@ -755,30 +735,6 @@ Data: %3
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Draw rectangle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Upper left corner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Metrics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Width</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Height</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -826,10 +782,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Start position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Text position</source>
         <translation type="unfinished"></translation>
     </message>
@@ -843,10 +795,6 @@ Data: %3
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change background color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1070,6 +1018,38 @@ Data: %3
     </message>
     <message>
         <source>File called &quot;%1&quot; already exists. Do you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move page up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move page down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearization failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colour changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>for</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Annotations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input and output files must be different</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1608,6 +1588,10 @@ Data: %3
         <source>%1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Resizing zone must be positive integer or null !</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -1665,6 +1649,10 @@ Data: %3
     </message>
     <message>
         <source>Selected operators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected annotations</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2132,6 +2120,11 @@ Data: %3
         <comment>mergeDoc</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Draw Toolbar</source>
+        <comment>DrawToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::TreeItemPdf</name>
@@ -2156,6 +2149,137 @@ Data: %3
     </message>
     <message>
         <source>Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::Units</name>
+    <message>
+        <source>point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>inches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>foot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>feet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>yard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>yards</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pole</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>poles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>perch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>perches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fathom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fathoms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>chain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>chains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>furlong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>furlongs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>miles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>land</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>lands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>league</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>leagues</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>nautical mile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>nautical miles</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
