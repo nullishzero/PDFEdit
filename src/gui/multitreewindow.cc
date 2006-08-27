@@ -468,6 +468,26 @@ void MultiTreeWindow::activate(const OperatorVector &vec,const QString &pName,co
 }
 
 /**
+ Create if not exist and then activate secondary tree that contains given vector of annotations as root item
+ This type of item is special, as if the tree already exist, its contents is replaced
+ @param vec Annotation vector
+ @param pName Name used for this property
+ @param pToolTip Tooltip used for this property
+ */
+void MultiTreeWindow::activate(const AnnotationVector &vec,boost::shared_ptr<CPage> page,const QString &pName,const QString &pToolTip) {
+ TreeKey tk(Tree_OperatorVector,NULL);
+ if (!activate(tk)) {
+  //Create the page if it does not exist
+  TreeWindow* t=createPage(pName,pToolTip);
+  t->init(vec,page,pName);
+  trees.insert(tk,t);
+  treesReverse.insert(t,tk);
+ }
+ trees[tk]->init(vec,page,pName);
+ activate(tk);
+}
+
+/**
  Delete specified secondary tree that contains given IProperty as root item
  @param doc IProperty used to identify secondary treeview
 */
@@ -481,6 +501,15 @@ void MultiTreeWindow::deactivate(boost::shared_ptr<IProperty> doc) {
  @param vec  Operator vector, but in fact it is ignored
 */
 void MultiTreeWindow::deactivate(__attribute__((unused)) const OperatorVector &vec) {
+ TreeKey tk(Tree_OperatorVector,NULL);
+ deactivate(tk);
+}
+
+/**
+ Delete specified secondary tree that contains Annotation Vector
+ @param vec Annotation vector, but in fact it is ignored
+*/
+void MultiTreeWindow::deactivate(__attribute__((unused)) const AnnotationVector &vec) {
  TreeKey tk(Tree_OperatorVector,NULL);
  deactivate(tk);
 }

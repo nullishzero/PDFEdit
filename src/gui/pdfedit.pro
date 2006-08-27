@@ -119,8 +119,8 @@ HEADERS += treeitemcstream.h  treeitempdf.h  treeitem.h  treeitemcontentstream.h
 SOURCES += treeitemcstream.cc treeitempdf.cc treeitem.cc treeitemcontentstream.cc
 HEADERS += treeitempdfoperator.h  treeitemoperatorcontainer.h  treeitemoutline.h
 SOURCES += treeitempdfoperator.cc treeitemoperatorcontainer.cc treeitemoutline.cc
-HEADERS += treeitemannotation.h
-SOURCES += treeitemannotation.cc
+HEADERS += treeitemannotation.h  treeitemannotationcontainer.h  
+SOURCES += treeitemannotation.cc treeitemannotationcontainer.cc
 
 #Property editor
 HEADERS += refvalidator.h  propertyeditor.h  propertyfactory.h  property.h  propertymodecontroller.h

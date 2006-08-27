@@ -10,12 +10,17 @@
 #include <vector>
 namespace pdfobjects {
  class PdfOperator;
+ class CAnnotation;
+ class CPage;
 }
 
 namespace gui {
 
 /** Vector with operators */
 typedef std::vector<boost::shared_ptr<pdfobjects::PdfOperator> > OperatorVector;
+
+/** Vector with annotationss */
+typedef std::vector<boost::shared_ptr<pdfobjects::CAnnotation> > AnnotationVector;
 
 }
 

@@ -269,7 +269,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
    boost::shared_ptr<IProperty> property=dict->getProperty(*it);
    if (!addProperty(*it,property)) complex_properties++;
   }
-  complex_message(complex_properties);
+  //complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This %1 is empty").arg(tr("dictionary","property type")));
   } else if (!nObjects) { //No editable subproperties
@@ -289,7 +289,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
    boost::shared_ptr<IProperty> property=cstream->getProperty(*it);
    if (!addProperty(*it,property)) complex_properties++;
   }
-  complex_message(complex_properties);
+  //complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This %1 is empty").arg(tr("stream","property type")));
   } else if (!nObjects) { //No editable subproperties
@@ -306,7 +306,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
    name.sprintf("[ %4d ]",i);
    if (!addProperty(name,property)) complex_properties++;
   }
-  complex_message(complex_properties);
+  //complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This array is empty"));
   } else if (!nObjects) { //No editable subproperties
@@ -339,7 +339,7 @@ void PropertyEditor::setObject(boost::shared_ptr<PdfOperator> pdfOp) {
    i++;
    if (!addProperty(QObject::tr("Parameter")+" "+QString::number(i),*it)) complex_properties++;
   }
-  complex_message(complex_properties);
+  //complex_message(complex_properties);
   if (!i) { //No subproperties at all
    setObject(tr("This operator does not have any parameters"));
   } else if (!nObjects) { //No editable subproperties

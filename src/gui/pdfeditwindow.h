@@ -3,6 +3,7 @@
 
 #include <cobject.h>
 #include <cpdf.h>
+#include <cannotation.h>
 #include <pdfoperators.h>
 #include <qmainwindow.h>
 #include <qprogressbar.h>
@@ -82,6 +83,7 @@ public:
  
 public slots:
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
+ void setSelection(std::vector<boost::shared_ptr<CAnnotation> > vec);
  void changeRevision(int revision);
  void receiveHelpText(const QString &message);
 signals:

@@ -13,6 +13,7 @@
 #include "treedata.h"
 #include "pdfutil.h"
 #include "treeitempdf.h"
+#include "treeitemannotationcontainer.h"
 #include "treeitemcontentstream.h"
 #include "treeitemoperatorcontainer.h"
 #include "treeitem.h"
@@ -326,6 +327,42 @@ void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::
  setUpdatesEnabled( FALSE );
  TreeItemAbstract *rootItem=new TreeItemOperatorContainer(data,tree,vec,pName); 
  rootItem->setOpen(TRUE);
+ //Select all items except the root
+ QListViewItem *sel=rootItem->itemBelow();
+ while (sel) {
+  tree->setSelected(sel,true);
+  sel=sel->itemBelow();
+ }
+ setUpdatesEnabled( TRUE );
+}
+
+/**
+ Init contents of treeview from given vector with annotations
+ @param vec Vector used to initialize treeview
+ @param pName Name of the root item
+*/
+void TreeWindow::init(const AnnotationVector &vec,boost::shared_ptr<pdfobjects::CPage> page,const QString &pName/*=QString::null*/) {
+ clear();
+ setUpdatesEnabled( FALSE );
+ TreeItemAbstract *rootItem=new TreeItemAnnotationContainer(data,tree,vec,page,pName); 
+ rootItem->setOpen(TRUE);
+ //Select all items except the root
+ QListViewItem *sel=rootItem->itemBelow();
+ QListViewItem *sel2=NULL;
+ while (sel) {
+  tree->setOpen(sel,true);
+  if (!sel2) { // Get dictionary of first annotation
+   sel2=sel->firstChild();
+   if (sel2) {
+    tree->setOpen(sel2,true);
+    tree->setSelected(sel2,true);
+   }
+  }
+  sel=sel->nextSibling();
+ }
+ if (sel2) {
+  emit itemSelected();
+ }
  setUpdatesEnabled( TRUE );
 }
 

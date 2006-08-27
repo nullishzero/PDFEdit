@@ -486,7 +486,7 @@ int BaseGUI::pageNumber() {
 */
 QSPage* BaseGUI::page() {
  if (w->selectedPage.get()) {
-  //REturn selected page
+  //Return selected page
   return new QSPage(w->selectedPage,this);
  } else {
   //No page selected currently

@@ -66,6 +66,12 @@ function onLoadError() {
  warn(error());
 }
 
+/** Force reloading of parent tree item. */
+function parentReload() {
+ //TODO: solve better
+ firstSelectedItem().parent().reload();
+}
+
 /** Callback for click with right mouse button in tree window */
 function onTreeRightClick() {
  menu=popupMenu("popup_generic");
@@ -99,6 +105,9 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Draw line")+",initconnection(0),,draw_line.png");
   menu.addItemDef("item "+tr("Draw rect")+",initconnection(10),,draw_rect.png");
   menu.addItemDef("item "+tr("Add text")+",addText(),,add_text.png");
+  menu.addItemDef("item "+tr("Move page up")+",movePage(firstSelected()\\,-1);parentReload(),,");
+  menu.addItemDef("item "+tr("Move page down")+",movePage(firstSelected()\\,1);parentReload(),,");
+  menu.addItemDef("item "+tr("Remove page")+",document.removePage(document.getPagePosition(firstSelected()));parentReload(),,");
  }
  if (tree_item_type=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
   menu.addSeparator();

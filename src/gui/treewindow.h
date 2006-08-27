@@ -4,6 +4,7 @@
 #include <qlistview.h>
 #include <qwidget.h>
 #include <cobject.h>
+#include <cpage.h>
 #include "types.h"
 class QListView;
 class QListViewItem;
@@ -32,6 +33,7 @@ class TreeWindow : public QWidget {
  Q_OBJECT
 public:
  void uninit();
+ void init(const AnnotationVector &vec,boost::shared_ptr<pdfobjects::CPage> page,const QString &pName=QString::null);
  void init(pdfobjects::CPdf *pdfDoc,const QString &fileName);
  void init(const OperatorVector &vec,const QString &pName=QString::null);
  void init(boost::shared_ptr<pdfobjects::IProperty> doc,const QString &pName=QString::null);

@@ -315,6 +315,7 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   wr=new utils::OldStylePdfWriter();
   //TODO: nekde tady zaregistrovat progress observer
   delin=utils::Delinearizator::getInstance(inFile,wr);
+  if (!delin) return false;//No delinearizator instance?
   guiPrintDbg(debug::DBG_DBG,"Delinearizator created");
   int ret=delin->delinearize(outFile);
   guiPrintDbg(debug::DBG_DBG,"Delinearizator finished");

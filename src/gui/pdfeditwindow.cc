@@ -288,6 +288,8 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  connect(pagespc,SIGNAL(changedPageTo(const QSPage&,int)),this,SLOT(pageChange(const QSPage&,int)));
  connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
  connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
+ connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<CAnnotation> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<CAnnotation> >)));
+
  connect(pagespc, SIGNAL(executeCommand(QString)), this, SLOT(runScript(QString)));
  connect(prop,SIGNAL(infoText(const QString&)),status,SLOT(receiveInfoText(const QString&)));
  connect(prop,SIGNAL(warnText(const QString&)),status,SLOT(receiveWarnText(const QString&)));
@@ -402,6 +404,20 @@ void PdfEditWindow::setSelection(std::vector<boost::shared_ptr<PdfOperator> > ve
  if (vec.size()) {
   //Selected objects
   tree->activate(vec,tr("Selection"),tr("Selected operators"));
+ } else {
+  //Selection is empty
+  tree->deactivate(vec);
+ }
+}
+
+/**
+ Slot called on selecting something from page -> display it in the tree
+ @param vec Vector with annotations
+*/
+void PdfEditWindow::setSelection(std::vector<boost::shared_ptr<CAnnotation> > vec) {
+ if (vec.size()) {
+  //Selected objects
+  tree->activate(vec,selectedPage,tr("Selection"),tr("Selected annotations"));
  } else {
   //Selection is empty
   tree->deactivate(vec);

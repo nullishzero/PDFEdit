@@ -57,11 +57,13 @@ public:
  void init(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip);
  void activateMain();
  void activate(const OperatorVector &vec,const QString &pName,const QString &pToolTip);
+ void activate(const AnnotationVector &vec,boost::shared_ptr<CPage> page,const QString &pName,const QString &pToolTip);
  void activate(boost::shared_ptr<CContentStream> cs,const QString &pName,const QString &pToolTip);
  void activate(boost::shared_ptr<IProperty> doc,const QString &pName,const QString &pToolTip);
  void deactivate(const OperatorVector &vec);
  void deactivate(boost::shared_ptr<IProperty> doc);
  void deactivate(boost::shared_ptr<CContentStream> cs);
+ void deactivate(const AnnotationVector &vec);
  MultiTreeWindow(Base *_base,QWidget *parent=0,const char *name=0);
  ~MultiTreeWindow();
  TreeItemAbstract* root();
