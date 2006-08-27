@@ -28,16 +28,18 @@ MP
  [ ] Observer na anotace v CPage - MP ?
  [ ] Charset v options (pro properties) -> doladit
  [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec - MP
+ [~] Delinearize do tools - as a plugin skript - need icon + localization
  minor:
  [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty - MP?
- [ ] Pri reload page savnout vsechny contentstreamy na aktualni page (v go()) - MP
- [ ] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit -mP
- [ ] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi - MP
+ [x] Pri reload page savnout vsechny contentstreamy na aktualni page (v go())
+ [x] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit
+ [x] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
  [ ] Property editor: observer na "source item" + reloadovani - asi je, zkontrolovat - MP
  [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
- [ ] Zobrazovat anotace v treeview jako selection - via signal ktery uz je - MP
- [ ] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage) - button -MP !!
+ [x] Zobrazovat anotace v treeview jako selection - via signal ktery uz je
+ [~] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage) - button -MP !!
      vyseparovat z page toolbaru navigaci po strankach a tam to pridat
+     +korekni reloadovani stromu po tomhle (coz nejak moc nefunguje)
 Michal
  [x] Progress observer + progressbar pri save a delinearize -> do statusbaru - doladit, pada - Michal
  [ ] Progress bar v skriptoch (mergeWithPages a tam, kde sa to bude hodit)
@@ -94,6 +96,7 @@ Dokumentace
  [ ] Design dokumentacia KERNEL (jozo) (tazko chyba)
  [ ] Popsat veci v *.qs souborech
  [ ] Ve scripting.xml tez podrobneji popsat skripting jako takovy
+ [ ] Vice examples ve scripting dokumentaci
  [ ] User dokumentace (tezce chybi)
  [x] Dokumentace dialog & utility framework (prekonvertovano z .leaf v QSA)
  [ ] Popsat metainformace v komentarich konzolovych skriptu
