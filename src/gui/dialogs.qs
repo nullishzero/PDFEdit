@@ -523,7 +523,7 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
         // uses current line with value
         width = getNumber("linewidth");
 
-	operatorDrawLine(lx,ly,rx,ry,width,col);
+	operatorDrawLine( [[lx,ly,rx,ry]], width, col );
 
 	// Reload page
 	print (tr("Line was drawn."));
@@ -561,7 +561,7 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
                 return;
 	
 	print (lx+", "+ly+", "+w+", "+h);
-	operatorDrawRect(lx,ly,w,h,col,width);
+	operatorDrawRect([[lx,ly,w,h]],col,width);
 
 	print (tr("Rect was drawn."));
 	// Reload page
@@ -716,4 +716,70 @@ function findText ( text ) {
 
 	return numOfFounded;
 }
-			
+
+function highlightingSelectedText() {
+	function getFirstTextOp( operator ) {
+		// TODO kontrola
+		var i = operator.iterator();
+		for ( ; ! i.isBegin() ; i.prev() ) {
+			if (i.current().getName() == "BT") {
+				return i.current();
+			}
+		}
+		return i.current();
+	}
+
+	var _op = this.firstSelected();
+	var _firstTextOp = undefined;
+	var _rectangles = [];
+	while (_op) {
+		if (isTextOp( _op )) {
+			var _pom = getFirstTextOp( _op );
+
+			if (_firstTextOp == undefined)
+				_firstTextOp = _pom;
+
+			if ( ! _pom.equals (_firstTextOp) ) {
+				this.operatorDrawRect( _rectangles, getColor("bg"), 0, _firstTextOp );
+				_firstTextOp = _pom;
+				_rectangles = [];
+			}
+
+			var _br = _op.getBBox();
+			var _x1 = PageSpace.convertPixmapPosToPdfPos_x( _br[0], _br[1] );
+			var _y1 = PageSpace.convertPixmapPosToPdfPos_y( _br[0], _br[1] );
+			var _x2 = PageSpace.convertPixmapPosToPdfPos_x( _br[2], _br[3] );
+			var _y2 = PageSpace.convertPixmapPosToPdfPos_y( _br[2], _br[3] );
+
+			_rectangles.push( [_x1, _y1, _x2-_x1, _y2-_y1 ] );
+		}
+
+		_op = this.nextSelected();
+	}
+
+	this.operatorDrawRect( _rectangles, getColor("bg"), 0, _firstTextOp );
+
+	go();
+}
+
+function strikeTroughSelection() {
+	var _op = this.firstSelected();
+	var _lines = [];
+	while (_op) {
+		var _br = _op.getBBox();
+		var _x1 = PageSpace.convertPixmapPosToPdfPos_x( _br[0], _br[1] );
+		var _y1 = PageSpace.convertPixmapPosToPdfPos_y( _br[0], _br[1] );
+		var _x2 = PageSpace.convertPixmapPosToPdfPos_x( _br[2], _br[3] );
+		var _y2 = PageSpace.convertPixmapPosToPdfPos_y( _br[2], _br[3] );
+		var halfw = (_x2 - _x1) /2;
+		var halfh = (_y2 - _y1) /2;
+
+		_lines.push( [_x1, _y1 + halfh, _x2, _y1 + halfh ] );
+
+		_op = this.nextSelected();
+	}
+
+	this.operatorDrawLine( _lines, getNumber("linewidth"), getColor("fg") );
+
+	go();
+}

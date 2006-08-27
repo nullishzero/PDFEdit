@@ -84,6 +84,8 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     drawlinem		= item Draw line		, drawLine()		,	, draw_line.png		,need_page
     drawrectm		= item Draw rectangle		, drawRect()		,	, draw_rect.png		,need_page
     addtextm		= item Add text			, addText()		,	, add_text.png		,need_page
+    striketroughm	= item Strike trough		, strikeTrough()	,	, selectmode_all.png	,need_page
+    highlightingtextm	= item Highlighting text	, highlightingText()	,	, selectmode_all.png	,need_page
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
     selectAllObjects	= item Select all objects	, onSelectMode_AllObjects()	, , selectmode_allobjects.png	,mode_button
@@ -113,12 +115,14 @@ PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
 
-DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
-  drawline		= item Draw line	, onSelectMode_drawLine()	, , draw_line.png	,need_page,mode_button
-  drawlinee		= item Draw line	, onSelectMode_drawLinee()	, , draw_line.png	,need_page,mode_button
-  drawrect		= item Draw rectangle	, onSelectMode_drawRect()	, , draw_rect.png	,need_page,mode_button
-  drawrecte		= item Draw rectangle	, onSelectMode_drawRecte()	, , draw_rect.png	,need_page,mode_button
-  addtext		= item Add text		, onSelectMode_addText()	, , add_text.png	,need_page,mode_button
+DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
+  drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button
+  drawlinee		= item Draw line		, onSelectMode_drawLinee()		, , draw_line.png	,need_page,mode_button
+  drawrect		= item Draw rectangle		, onSelectMode_drawRect()		, , draw_rect.png	,need_page,mode_button
+  drawrecte		= item Draw rectangle		, onSelectMode_drawRecte()		, , draw_rect.png	,need_page,mode_button
+  addtext		= item Add text			, onSelectMode_addText()		, , add_text.png	,need_page,mode_button
+  striketrough		= item Strike trough		, onSelectMode_strikeTrough()		, , selectmode_all.png	,need_page,mode_button
+  highlightingtext	= item Highlighting text	, onSelectMode_highlightingText()	, , selectmode_all.png	,need_page,mode_button
   # _color_tool is special toolbar item to select current color
   # _number_tool is special toolbar item to select line width
   # look in menu for definition of rest of items

@@ -197,6 +197,18 @@ function onSelectMode_Text() {
  setModeButton('selectText');
 }
 
+/** Callback when selection mode is changes to select text operators only */
+function onSelectMode_highlightingText() {
+ PageSpace.setSelectionMode("text_marking","rect2","highlightingSelectedText()");
+ setModeButton('selectText');
+}
+
+/** Callback when selection mode is changes to select text operators only */
+function onSelectMode_strikeTrough( ) {
+ PageSpace.setSelectionMode("text_marking","rect2","strikeTroughSelection()");
+ setModeButton('selectText');
+}
+
 /** Callback when selection mode is changes to select annotations on page */
 function onSelectMode_Annot() {
  PageSpace.setSelectionMode("annotations","rect2","go_to_target_from_selected_annotation()");

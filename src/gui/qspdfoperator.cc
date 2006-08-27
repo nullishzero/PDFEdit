@@ -15,6 +15,7 @@
 #include <ccontentstream.h>
 #include <iterator.h>
 #include <qstring.h>
+#include <qvaluelist.h>
 
 namespace gui {
 
@@ -59,6 +60,17 @@ void QSPdfOperator::csCheck() {
 QSPdfOperator::~QSPdfOperator() {
 }
 
+QVariant QSPdfOperator::getBBox () {
+ Rectangle br = obj->getBBox ();
+
+ QValueList<QVariant> r;
+ r.append( QVariant( br.xleft ) );
+ r.append( QVariant( br.yleft ) );
+ r.append( QVariant( br.xright ) );
+ r.append( QVariant( br.yright ) );
+
+ return QVariant( r );
+}
 /**
  Return text representation of pdf operator
  \see PdfOperator::getStringRepresentation

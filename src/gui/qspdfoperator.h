@@ -1,6 +1,7 @@
 #ifndef __QSPDFOPERATOR_H__
 #define __QSPDFOPERATOR_H__
 
+#include <qvariant.h>
 #include <qobject.h>
 #include <pdfoperators.h>
 #include "qscobject.h"
@@ -26,6 +27,7 @@ public:
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
+ QVariant getBBox ();
  /*-
   Return true, if this object is equal to specified object (i.e. if they internally point to the same item)
   Reference is compared, not the value of objects

@@ -126,6 +126,21 @@ function _dbgprintOpers() {
 	}
 }
 
+function operatorPutBeforOp( next_operator, op_to_put ) {
+	var composite = createCompositeOperator( "", "" );
+	composite.pushBack( op_to_put, composite.getLastOperator() );
+	composite.pushBack( next_operator.clone(), composite.getLastOperator() );
+
+	next_operator.stream().replace( next_operator, composite );
+}
+function operatorPutBehindOp( prev_operator, op_to_put ) {
+	var composite = createCompositeOperator( "", "" );
+	composite.pushBack( prev_operator.clone(), composite.getLastOperator() );
+	composite.pushBack( op_to_put, composite.getLastOperator() );
+
+	prev_operator.stream().replace( prev_operator, composite );
+}
+
 /** set color of operator
  * @param operator change color of this operator
  * @param r red component of color for set
@@ -463,8 +478,9 @@ function getPosInfoOfOperator (operator) {
 
 /**
  * Draw line from start position to end position.
+ * Argument lines is array of array of 4 double (x1,y1, x2,y2).
  */
-function operatorDrawLine (lx,ly,rx,ry,width,col) {
+function operatorDrawLine ( lines, width, col ) {
 	//
 	// q
 	// array phase d
@@ -481,7 +497,10 @@ function operatorDrawLine (lx,ly,rx,ry,width,col) {
 		putscolor(composite,col.red,col.green,col.blue);
 	}
 	
-	putline (composite,lx,ly,rx,ry)
+	var i = 0;
+	for ( ; i < lines.length ; ++i ) {
+		putline (composite, lines[i][0], lines[i][1], lines[i][2], lines[i][3]);
+	}
 	putenddraw (composite);
 
 	putendq(composite,composite);
@@ -492,9 +511,10 @@ function operatorDrawLine (lx,ly,rx,ry,width,col) {
 }
 
 /**
- * Draw rectangle specyfing left upper corner, width and height.
+ * Draw rectangles specyfing left upper corner, width and height.
+ * Rectangles is array of array of 4 double (x,y, width,height).
  */
-function operatorDrawRect (lx,ly,width,height,col,widthLine) {
+function operatorDrawRect ( rectangles ,col ,widthLine, next_operator ) {
 	
 	//
 	// q
@@ -513,14 +533,21 @@ function operatorDrawRect (lx,ly,width,height,col,widthLine) {
 		putnscolor(composite,col.red,col.green,col.blue);
 	}
 
-	putrect (composite,lx,ly,width,height);
+	var i = 0;
+	for ( ; i < rectangles.length ; ++i ) {
+		putrect (composite, rectangles[i][0], rectangles[i][1], rectangles[i][2], rectangles[i][3]);
+	}
+
 	putfill (composite);
 	putenddraw (composite);
 	putendq(composite,composite);
 
-	var ops = createPdfOperatorStack();
-	ops.append (composite);
-	page().prependContentStream(ops);
+	if ((undefined == next_operator) || (next_operator.type() != "PdfOperator")) {
+		var ops = createPdfOperatorStack();
+		ops.append (composite);
+		page().prependContentStream(ops);
+	} else
+		operatorPutBeforOp( next_operator, composite );
 }
 
 /**
