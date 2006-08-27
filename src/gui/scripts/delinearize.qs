@@ -18,7 +18,7 @@ function delinearize_gui() {
  outFile=fileSaveDialog();
  if (!outFile) return;
  if (!exists(inFile)) { delinearize_fail(tr("Input file '%1' does not exist").arg(inFile)); return; }
- if (inFile==outFile) { delinearize_fail(tr("Input and output files muste be different")); return; }
+ if (inFile==outFile) { delinearize_fail(tr("Input and output files must be different")); return; }
 // if (exists(outFile)) delinearize_fail(tr("Output file '%1' already exist").arg(outFile));
  if (delinearize(inFile,outFile)) {
   print(tr("Delinearized")+" :"+inFile+" -> "+outFile);
