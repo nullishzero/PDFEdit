@@ -63,6 +63,11 @@ public slots:
  void appendContentStream(QSPdfOperatorStack* opStack);
  void appendContentStream(QObject* opStack);
  /*-
+  For given font name (case sensitive) return it's ID if present on page.
+  If the font is not present, returns NULL
+ */
+ QString getFontId(const QString &fontName);
+ /*-
   Return list of all font id's and base names from resource dictionary of a page.
   For each font id and name pair there are two consecutive elements in returned array,
   first one containing font id and second one containing the name,

@@ -307,6 +307,25 @@ QStringList QSPage::getFontIdsAndNames() {
 }
 
 /**
+ For given font name (case sensitive) return it's ID if present on page.
+ If the font is not present, returns NULL
+ @param fontName name of desired font
+ @return ID of font with given name, or NULL if not found in the page
+*/
+QString QSPage::getFontId(const QString &fontName) {
+ FontList fonts;
+ //Format is like "pair<R13, Helvetica>"
+ obj->getFontIdsAndNames(fonts);
+ QStringList ret;
+ FontList::iterator it;
+ for( it=fonts.begin();it!=fonts.end();++it) { // for each font
+  if (it->second==fontName) return it->first;
+ }
+ //Not found
+ return QString::null;
+}
+
+/**
  Add new Type 1 font to this page resource dictionary
  \see CPage::addSystemType1Font
  @param fontName name of font

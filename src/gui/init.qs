@@ -70,11 +70,13 @@ function isTreeItemSelected() {
 /* ==== Code to run on start ==== */
 
 //Pre-selected font sizes
+setPredefs('fontface',getSystemFonts());
+//Pre-selected font sizes
 setPredefs('fontsize','8,9,10,12,14,16,18,24,36,72');
+setNumber('fontsize',10);//default value
 //Pre-selected line widths
 setPredefs('linewidth','0.5,1,1.5,2,3,4,8,16');
-//Pre-selected font sizes
-setPredefs('fontface',getSystemFonts());
+setNumber('linewidth',1);//default value
 
 //Print welcome message
 print("PDF Editor "+version());
