@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.10  2006/08/27 21:34:12  hockm0bm
+ * typo
+ *
  * Revision 1.9  2006/06/29 20:00:07  hockm0bm
  * doc updated
  *
@@ -219,12 +222,12 @@ public:
 	 */
 	static std::string CONTENTS;
 
-	/** Default value for Open entry in Annotation dictionary.
+	/** Default value for Name entry in Annotation dictionary.
 	 * Value is Comment by default.
 	 */
 	static std::string NAME;
 
-	/** Default value for Open entry in Annotation dictionary.
+	/** Default value for State entry in Annotation dictionary.
 	 * Value is Unmarked by default.
 	 */
 	static std::string STATE;
