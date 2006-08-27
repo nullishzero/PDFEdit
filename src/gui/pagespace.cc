@@ -140,7 +140,7 @@ Units::Units( QString _defaultUnit ) : QObject() {
 
 	units["A"] = 0.1 * units["nm"];			// 1 angstrom = 0.1 nm	
 
-	units["nautical mile"] = 1852 * units["km"];	// 1 nautical mile == 1852 km;
+	units["nautical mile"] = 1.852 * units["km"];	// 1 nautical mile == 1.852 km;
 
 	aliases[	"nautical miles"]	= "nautical mile";
 	aliases[tr("nautical mile")]	= "nautical mile";
