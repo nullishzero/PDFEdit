@@ -45,9 +45,9 @@ Michal
  [ ] Progress bar v skriptoch (mergeWithPages a tam, kde sa to bude hodit)
  [x] zrusit cGraphic v kernelu - Michal
  [ ] Pridavani anotaci - dialog - Michal
- [ ] Upravit skripty na multiselect (u kterych ma smysl)
+ [x] Upravit skripty na multiselect (u kterych ma smysl)
  [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho - concat documents, sude/liche ...)
- [ ] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
+ [x] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
 ?
  [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...." -> pripominka pro kontrolu
   ?  skript na skocenie na target po kliknuti na anotaciu
