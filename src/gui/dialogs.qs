@@ -678,39 +678,6 @@ function addText (_x1,_y1,_x2,_y2) {
 	go();
 }
 
-/** Delete page */
-function delPage (i) {
-
-	if (!isPageAvaliable()) {
-		warn(tr("No page selected!"));
-		return;
-	}
-
-	if (undefined == i) {
-
-		var dg = createDialog (tr("Remove page"), tr("Remove"), tr("Cancel"), tr("Remove page"));
-		sb = createSpinboxAndDisplay (tr("Remove page")+" [1.."+document.getPageCount()+"]",1,document.getPageCount(),dg);
-
-		if (!dg.exec()) return;
-
-		if (!isNumber(sb.value)) {
-			warn (tr("Invalid page"));
-			return;
-		}
-
-		i = parseInt (sb.value);
-	}
-
-	print (i);
-	document.removePage (i);
-
-
-	print ("Page removed");
-	
-	// Reload
-	go();	
-}
-
 /** Search text */
 function findText ( text ) {
 
