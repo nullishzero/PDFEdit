@@ -86,6 +86,16 @@ void PageViewS::updateDisplayParameters ( OutputDev & output ) {
 	// update upsideDown
 	displayParams.upsideDown = output.upsideDown();
 
+	// set null pageRect if actual page doesn't define
+	if (actualPage == NULL) {
+		displayParams.pageRect.xleft =
+		displayParams.pageRect.yleft =
+		displayParams.pageRect.xright =
+		displayParams.pageRect.yright = 0;
+
+		return;
+	}
+
 	// update mediabox
 	try {
 		Rectangle mb = actualPage->getMediabox();
@@ -108,6 +118,8 @@ void PageViewS::setCorrectSize() {
 	if (actualPage == NULL) {
 		sizeOfPage.setWidth( 0 );
 		sizeOfPage.setHeight( 0 );
+		resizeContents( 0, 0 );
+
 		return;
 	}
 
@@ -139,7 +151,8 @@ void PageViewS::showPage ( boost::shared_ptr<CPage> page ) {
 	updateDisplayParameters (output);
 
 	// initialize work operators in mode - must be after change display parameters and reloaded BBox of operators (with displayPage)
-	actualPage->displayPage( output, displayParams, 0, 0, 1, 1 );
+	if (actualPage)
+		actualPage->displayPage( output, displayParams, 0, 0, 1, 1 );
 	initializeWorkOperatorsInMode();
 
 	// set correct size of viewport
@@ -386,7 +399,11 @@ void PageViewS::initializeWorkOperatorsInMode() {
 
 		// actualize selected operators in mode
 		mode->actualizeSelection();
-	}
+	} else
+		if (mode && (! actualPage)) {
+			mode->clearWorkOperators();
+			mode->clearSelectedOperators();
+		}
 }
 
 //  ------------------------------------------------------  //

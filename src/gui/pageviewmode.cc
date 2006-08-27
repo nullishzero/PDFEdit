@@ -98,14 +98,35 @@ void DrawingRect2::drawObject ( QPainter & painter, QRegion reg )
 
 //  ---------------------  selection mode  --------------------- //
 PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
-							const QString & drawingObject,
-							const QString & _scriptFncAtMouseRelease )
+											const QString & drawingObject,
+											const QString & scriptFncAtMouseRelease,
+											const QString & scriptFncAtMoveSelectedObjects,
+											const QString & scriptFncAtResizeSelectedObjects )
 		{
-			if (nameOfMode == "new_object")				return new PageViewMode_NewObject			( drawingObject, _scriptFncAtMouseRelease );
-			if (nameOfMode == "text_selection")			return new PageViewMode_TextSelection		( drawingObject, _scriptFncAtMouseRelease );
-			if (nameOfMode == "operators_selection")	return new PageViewMode_OperatorsSelection	( drawingObject, _scriptFncAtMouseRelease );
-			if (nameOfMode == "annotations")			return new PageViewMode_Annotations			( drawingObject, _scriptFncAtMouseRelease );
-			if (nameOfMode == "")						return new PageViewMode						( drawingObject, _scriptFncAtMouseRelease );
+			if (nameOfMode == "new_object")				return new PageViewMode_NewObject			( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
+			if (nameOfMode == "text_selection")			return new PageViewMode_TextSelection		( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
+			if (nameOfMode == "operators_selection")	return new PageViewMode_OperatorsSelection	( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
+			if (nameOfMode == "annotations")			return new PageViewMode_Annotations			( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
+			if (nameOfMode == "text_marking")			return new PageViewMode_TextMarking			( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
+			if (nameOfMode == "")						return new PageViewMode						( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
 
 			guiPrintDbg( debug::DBG_DBG, "Undefined mode!!!" );
 			return NULL;
@@ -557,17 +578,32 @@ void PageViewMode::setResizingZone ( unsigned int width)
 		{
 			resizingZone = width;
 		};
+int PageViewMode::getResizingZone ( )
+		{
+			return resizingZone;
+		};
 
 PageViewMode::~PageViewMode()
 		{};
 
-PageViewMode::PageViewMode( const QString & _drawingObject, const QString & _scriptFncAtMouseRelease ) :
+PageViewMode::PageViewMode( const QString & _drawingObject,
+							const QString & _scriptFncAtMouseRelease,
+							const QString & _scriptFncAtMoveSelectedObjects,
+							const QString & _scriptFncAtResizeSelectedObjects ) :
 			QObject()
 		{
 			resizingZone = 2;
 			scriptFncAtMouseRelease = _scriptFncAtMouseRelease;
-			scriptFncAtMoveSelectedObjects = "moveSelectedObject( %1, %2 )";
-			scriptFncAtResizeSelectedObjects = "resizedSelectedObjects( %1, %2, %3, %4 )";
+
+			if (_scriptFncAtMoveSelectedObjects.isNull())
+				scriptFncAtMoveSelectedObjects = "moveSelectedObject( %1, %2 )";
+			else
+				scriptFncAtMoveSelectedObjects = _scriptFncAtMoveSelectedObjects;
+
+			if (_scriptFncAtResizeSelectedObjects.isNull())
+				scriptFncAtResizeSelectedObjects = "resizedSelectedObjects( %1, %2, %3, %4 )";
+			else
+				scriptFncAtResizeSelectedObjects = _scriptFncAtResizeSelectedObjects;
 
 			isPressedLeftButton = false;
 
@@ -678,8 +714,14 @@ int	PageViewMode::theNeerestResizingMode ( const QRegion & r, const QPoint & p )
 		};
 
 // ----------------------------------  PageViewMode_NewObject  --------------------------- //
-PageViewMode_NewObject::PageViewMode_NewObject ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease ) :
-			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
+PageViewMode_NewObject::PageViewMode_NewObject ( const QString & drawingObject,
+												const QString & _scriptFncAtMouseRelease,
+												const QString & _scriptFncAtMoveSelectedObjects,
+												const QString & _scriptFncAtResizeSelectedObjects ) :
+			PageViewMode ( drawingObject,
+							_scriptFncAtMouseRelease,
+							_scriptFncAtMoveSelectedObjects,
+							_scriptFncAtResizeSelectedObjects )
 		{};
 
 void	PageViewMode_NewObject::mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
@@ -723,8 +765,14 @@ void	PageViewMode_NewObject::repaint ( QPainter & p, QWidget * w  )
 				this->PageViewMode::repaint( p, w );
 		}
 // ----------------------------------  PageViewMode_TextSelection  --------------------------- //
-PageViewMode_TextSelection::PageViewMode_TextSelection ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease ) :
-			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
+PageViewMode_TextSelection::PageViewMode_TextSelection ( const QString & drawingObject,
+														const QString & _scriptFncAtMouseRelease,
+														const QString & _scriptFncAtMoveSelectedObjects,
+														const QString & _scriptFncAtResizeSelectedObjects ) :
+			PageViewMode ( drawingObject, 
+							_scriptFncAtMouseRelease, 
+							_scriptFncAtMoveSelectedObjects, 
+							_scriptFncAtResizeSelectedObjects )
 		{
 			// initialize mapping cursors
 			setMappingCursor();
@@ -919,7 +967,7 @@ void PageViewMode_TextSelection::reorderSelectedOp()
 				selectedOperators.insert( selectedOperators.begin(), h_sop.rbegin(), h_sop.rend() );
 			}
 		};
-void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * /* e */, QPainter * p, QWidget * /* w */ )
+void PageViewMode_TextSelection::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
 			assert( firstSelectedObject );
 			assert( lastSelectedObject );
@@ -1025,8 +1073,14 @@ void PageViewMode_TextSelection::repaint ( QPainter & p, QWidget * w  )
 		};
 
 // ----------------------------------  PageViewMode_OperatorsSelection  --------------------------- //
-PageViewMode_OperatorsSelection::PageViewMode_OperatorsSelection ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease ) :
-			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
+PageViewMode_OperatorsSelection::PageViewMode_OperatorsSelection ( const QString & drawingObject,
+																	const QString & _scriptFncAtMouseRelease,
+																	const QString & _scriptFncAtMoveSelectedObjects,
+																	const QString & _scriptFncAtResizeSelectedObjects ) :
+			PageViewMode ( drawingObject, 
+							_scriptFncAtMouseRelease, 
+							_scriptFncAtMoveSelectedObjects, 
+							_scriptFncAtResizeSelectedObjects )
 		{
 			lastSelectedOperator = workOperators.end();
 		};
@@ -1192,8 +1246,14 @@ void	PageViewMode_OperatorsSelection::clearWorkOperators ()
 		}
 
 // ----------------------------------  PageViewMode_Annotations  --------------------------- //
-PageViewMode_Annotations::PageViewMode_Annotations ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease ) :
-			PageViewMode ( drawingObject, _scriptFncAtMouseRelease )
+PageViewMode_Annotations::PageViewMode_Annotations ( const QString & drawingObject,
+														const QString & _scriptFncAtMouseRelease,
+														const QString & _scriptFncAtMoveSelectedObjects,
+														const QString & _scriptFncAtResizeSelectedObjects ) :
+			PageViewMode ( drawingObject, 
+							_scriptFncAtMouseRelease, 
+							_scriptFncAtMoveSelectedObjects, 
+							_scriptFncAtResizeSelectedObjects )
 		{
 			// initialize mapping cursors
 			setMappingCursor();
@@ -1330,4 +1390,38 @@ void PageViewMode_Annotations::resizedSelectedObjects ( int dleft, int dtop, int
 			} else
 				this->PageViewMode::resizedSelectedObjects ( dleft, dtop, dright, dbottom );
 		};
+
+
+// ----------------------------------  PageViewMode_TextMarking  --------------------------- //
+PageViewMode_TextMarking::PageViewMode_TextMarking ( const QString & drawingObject,
+														const QString & _scriptFncAtMouseRelease,
+														const QString & _scriptFncAtMoveSelectedObjects,
+														const QString & _scriptFncAtResizeSelectedObjects )
+		: PageViewMode_TextSelection( drawingObject, 
+										_scriptFncAtMouseRelease, 
+										_scriptFncAtMoveSelectedObjects, 
+										_scriptFncAtResizeSelectedObjects )
+		{
+			// initialize mapping cursors
+			setMappingCursor();
+		};
+
+void PageViewMode_TextMarking::setMappingCursor()
+		{
+			this->PageViewMode::setMappingCursor();
+
+			mappingResizingModeToCursor [ left | right | top | bottom ] = Qt::PointingHandCursor;
+			mappingResizingModeToCursor [ onUnselectedObject ] = Qt::PointingHandCursor;
+		};
+void PageViewMode_TextMarking::addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps )
+		{};
+void PageViewMode_TextMarking::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w )
+		{
+			this->PageViewMode_TextSelection::mouseReleaseLeftButton ( e, p, w );
+
+			clearSelectedOperators ();
+
+			this->PageViewMode::mouseReleaseLeftButton ( e, p, w );
+		}
+
 } // namespace gui

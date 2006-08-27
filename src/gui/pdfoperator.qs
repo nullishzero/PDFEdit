@@ -305,8 +305,6 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
     /* Put the changed operator also in the queue */
 	composite.pushBack (operator.clone());
 
-	// FIXME where it is initialized ?
-        //operands.clear();
 	if (!globchange)
 		putendq(composite);
 

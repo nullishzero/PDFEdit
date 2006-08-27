@@ -3,6 +3,7 @@
 
 #include <qlabel.h>
 #include <qstring.h>
+#include <qmap.h>
 #include <qpixmap.h>
 #include <qimage.h>
 #include <qdockarea.h>
@@ -33,9 +34,182 @@ void Init( initStruct * is, const QString & s ) {
 namespace gui {
 
 QString PAGESPC = "gui/PageSpace/";
-QString format = "x:%'.2f y:%'.2f";
+QString RESIZINGZONE = "ResizingZone";
+int DEFAULT__RESIZINGZONE = 2;
+QString VIEWED_UNITS = "ViewedUnits";
+QString DEFAULT__VIEWED_UNITS = "cm";
+QString format = "x:%1 y:%2 %3";
+
+//  ------------------------------------------------------
+//  --------------------   Units   -----------------------
+//  ------------------------------------------------------
+Units::Units( QString _defaultUnit ) : QObject() {
+	units["pt"]		= 1;					// 1 Point
+	units["in"]		= 1 / 0.013837;			// 1 Point == 0.013837 inch
+	units["mil"]	= 0.001 * units["in"];	// 1 mil == 0.001 inch
+	units["hand"]	= 4 * units["in"];		// 1 hand == 4 inches
+	units["ft"]		= 12 * units["in"];		// 12 inches == 1 foot
+	units["li"]		= 0.66 * units["ft"];	// 1 link == 0.66 foot
+	units["yd"]		= 3 * units["ft"];		// 3 feet == 1 yard
+	units["fathom"]	= 6 * units["ft"];		// 1 fathom == 6 feet
+	units["rd"]		= 16.5 * units["ft"];	// 16.5 feet == 1 rod
+	units["ch"]		= 66 * units["ft"];		// 1 chain == 66 feet
+	units["fur"]	= 10 * units["ch"];		// 1 furlong == 10 chains
+	units["cable"]	= 720 * units["ft"];	// 1 cable's length == 720 feet
+	units["mi"]		= 8 * units["fur"];		// 1 mile == 8 furlongs
+	units["land"]	= 3 * units["mi"];		// 1 league == 3 miles
+
+	aliases[	"point"]	= "pt";
+	aliases[tr("point")]	= "pt";
+	aliases[	"inch"]		= "in";
+	aliases[	"inches"]	= "in";
+	aliases[tr("inch")]		= "in";
+	aliases[tr("inches")]	= "in";
+	aliases[	"hands"]	= "hand";
+	aliases[tr("hands")]	= "hand";
+	aliases[tr("hand")]		= "hand";
+	aliases[	"foot"]		= "ft";
+	aliases[	"feet"]		= "ft";
+	aliases[tr("foot")] 	= "ft";
+	aliases[tr("feet")] 	= "ft";
+	aliases[	"link"]		= "li";
+	aliases[	"links"]	= "li";
+	aliases[tr("link")]		= "li";
+	aliases[tr("links")]	= "li";
+	aliases[	"yard"]		= "yd";
+	aliases[	"yards"]	= "yd";
+	aliases[tr("yard")]		= "yd";
+	aliases[tr("yards")]	= "yd";
+	aliases[	"rod"]		= "rd";
+	aliases[	"rods"]		= "rd";
+	aliases[tr("rod")]		= "rd";
+	aliases[tr("rods")]		= "rd";
+	aliases[	"pole"]		= "rd";
+	aliases[	"poles"]	= "rd";
+	aliases[tr("pole")]		= "rd";
+	aliases[tr("poles")]	= "rd";
+	aliases[	"perch"]	= "rd";
+	aliases[	"perches"]	= "rd";
+	aliases[tr("perch")]	= "rd";
+	aliases[tr("perches")]	= "rd";
+	aliases[	"fathoms"]	= "fathom";
+	aliases[tr("fathom")]	= "fathom";
+	aliases[tr("fathoms")]	= "fathom";
+	aliases[	"chain"]	= "ch";
+	aliases[	"chains"]	= "ch";
+	aliases[tr("chain")]	= "ch";
+	aliases[tr("chains")]	= "ch";
+	aliases[	"furlong"]	= "fur";
+	aliases[	"furlongs"]	= "fur";
+	aliases[tr("furlong")]	= "fur";
+	aliases[tr("furlongs")]	= "fur";
+	aliases[tr("cable")]	= "cable";
+	aliases[	"mile"]		= "mi";
+	aliases[	"miles"]	= "mi";
+	aliases[tr("mile")]		= "mi";
+	aliases[tr("miles")]	= "mi";
+	aliases[	"lands"]	= "land";
+	aliases[tr("land")]		= "land";
+	aliases[tr("lands")]	= "land";
+	aliases[	"league"]	= "land";
+	aliases[	"leagues"]	= "land";
+	aliases[tr("league")]	= "land";
+	aliases[tr("leagues")]	= "land";
+
+	units["m"] = units["in"] / 0.0254;		// 1 inch = 2.54 cm
+	units["Ym"] = 1e24 * units["m"];		// Y (yotta)	meter
+	units["Zm"] = 1e21 * units["m"];		// Z (zetta)	meter
+	units["Em"] = 1e18 * units["m"];		// E (exa)	meter
+	units["Pm"] = 1e15 * units["m"];		// P (peta)	meter
+	units["Tm"] = 1e12 * units["m"];		// T (tera)	meter
+	units["Gm"] = 1e9 * units["m"];			// G (giga)	meter
+	units["Mm"] = 1e6 * units["m"];			// M (mega)	meter
+	units["km"] = 1e3 * units["m"];			// k (kilo)	meter
+	units["hm"] = 1e2 * units["m"];			// h (hecto)	meter
+	units["dam"] = 10 * units["m"];			// da (deka)	meter
+	units["dm"] = 0.1 * units["m"];			// d (deci)	meter
+	units["cm"] = 1e-2 * units["m"];		// c (centi)	meter
+	units["mm"] = 1e-3 * units["m"];		// m (milli)	meter
+	units["um"] = 1e-6 * units["m"];		// u (micro)	meter
+	units["nm"] = 1e-9 * units["m"];		// n (nano)	meter
+	units["pm"] = 1e-12 * units["m"];		// p (pico)	meter
+	units["fm"] = 1e-15 * units["m"];		// f (femto)	meter
+	units["am"] = 1e-18 * units["m"];		// a (atto)	meter
+	units["zm"] = 1e-21 * units["m"];		// z (zepto)	meter
+	units["ym"] = 1e-24 * units["m"];		// y (yocto)	meter
+
+	units["A"] = 0.1 * units["nm"];			// 1 angstrom = 0.1 nm	
+
+	units["nautical mile"] = 1852 * units["km"];	// 1 nautical mile == 1852 km;
+
+	aliases[	"nautical miles"]	= "nautical mile";
+	aliases[tr("nautical mile")]	= "nautical mile";
+	aliases[tr("nautical miles")]	= "nautical mile";
+
+	setDefaultUnits( _defaultUnit );
+}
+Units::~Units()
+	{}
+void Units::getAllUnits( QStringList & names ) {
+	names.clear();
+	names += units.keys();
+}
+bool Units::setDefaultUnits( const QString dunits )
+	{
+		if (dunits.isNull()) {
+			defaultUnit = "pt";
+			return true;
+		}
+		if (units.contains( dunits )) {
+			defaultUnit = dunits;
+			return true;
+		}
+		if (aliases.contains( dunits )) {
+			defaultUnit = aliases[ dunits ];
+			return true;
+		}
+
+		return false;
+	}
+QString Units::getDefaultUnits( ) const
+	{
+		return defaultUnit;
+	}
+double Units::convertFromUnitsToPoint( double num, const QString & fromUnits ) const
+	{
+		bool h_unit;
+		if (fromUnits.isNull())
+			return num * units[ defaultUnit ];
+		if (! ((h_unit = units.contains( fromUnits )) || aliases.contains( fromUnits )))
+			return num;
+		// else
+		if (h_unit)
+			return num * units[ fromUnits ];
+		else
+			return num * units[ aliases[ fromUnits ] ];
+	}
+double Units::convertFromPointToUnits( double num, const QString & toUnits ) const
+	{
+		bool h_unit;
+		if (toUnits.isNull())
+			return num / units[ defaultUnit ];
+		if (! ((h_unit = units.contains( toUnits )) || aliases.contains( toUnits )))
+			return num;
+		// else
+		if (h_unit)
+			return num / units[ toUnits ];
+		else
+			return num / units[ aliases[ toUnits ] ];
+	}
+double Units::convertUnits( double num, const QString fromUnits, const QString toUnits ) const
+	{
+		return convertFromPointToUnits( convertFromUnitsToPoint( num, fromUnits ), toUnits );
+	}
 
 
+//  ----------------------------------------------------------
+//  --------------------   PageSpace   -----------------------
+//  ----------------------------------------------------------
 PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name) {
 	initStruct is;
 
@@ -53,7 +227,7 @@ vBox->addWidget( da );
 	hBox = new QHBoxLayout(vBox);
 
 	actualPdf = NULL;
-	actualPage = NULL;
+	actualPage.reset();
 	actualPagePos = -1;
 
 	hBox->addStretch();
@@ -62,9 +236,10 @@ vBox->addWidget( da );
 	hBox->addWidget( pageNumber );
 	hBox->addStretch();
         
-	QString pom;
-	Init( &is , format + "0000" );
-	mousePositionOnPage = new QLabel( pom.sprintf( format, 0.0,0.0 ), this );
+ 	actualUnits.setDefaultUnits( globalSettings->read( PAGESPC + VIEWED_UNITS, DEFAULT__VIEWED_UNITS ) );
+
+	Init( &is , format + "00000000xx" );
+	mousePositionOnPage = new QLabel( format.arg(0.0,0,'g',3).arg(0.0,0,'g',3).arg( actualUnits.getDefaultUnits() ), this );
 	mousePositionOnPage->setMinimumWidth( is.labelWidth );
 	mousePositionOnPage->setAlignment( AlignRight | mousePositionOnPage->alignment() );
 	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
@@ -74,9 +249,6 @@ vBox->addWidget( da );
 	hBox->setResizeMode(QLayout::Minimum);
 
 	selectionMode.reset();
-//	setSelectionMode( "new_object","script","line" );
-//	setSelectionMode( "text_selection","script","line" );
-//	setSelectionMode( "annotations","script","line" );
 
 	// if something use on page, take focus
 	setFocusPolicy( WheelFocus );
@@ -84,7 +256,6 @@ vBox->addWidget( da );
 
 PageSpace::~PageSpace() {
 	delete actualPdf;
-	delete actualPage;
 }
 
 void PageSpace::hidePageNumberAndPosition  ( ) {
@@ -134,41 +305,64 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		return;
 	}
 */
-	if ((pageToView != NULL) && ( (actualPage == NULL) || (actualPage->get() != pageToView->get()) ) && ( (pdf != NULL) || (actualPdf != NULL) ) ) {
+	guiPrintDbg( debug::DBG_DBG, "som tu" );
+	if ((pageToView != NULL) && ( (actualPage == NULL) || (actualPage != pageToView->get()) ) && ( (pdf != NULL) || (actualPdf != NULL) ) ) {
+		guiPrintDbg( debug::DBG_DBG, "som tu" );
 		if ((actualPdf == NULL) || (pdf->get() != actualPdf->get())) {
 			delete actualPdf;
 			actualPdf = new QSPdf( pdf->get() , NULL );
 		}
-		delete actualPage;
-		actualPage = new QSPage( pageToView->get() , NULL );
+		actualPage = pageToView->get();
 	} else {
+		guiPrintDbg( debug::DBG_DBG, "som tu" );
 		if ((actualPage == NULL) || (actualPdf == NULL) || (pageToView != NULL))
 			return ;					// no page to refresh
+		guiPrintDbg( debug::DBG_DBG, "som tu" );
+		if ((pageToView == NULL) && (pdf == NULL)) {
+			guiPrintDbg( debug::DBG_DBG, "som tu" );
+			actualPage.reset();
+			guiPrintDbg( debug::DBG_DBG, "som tu" );
+			delete actualPdf;
+			actualPdf = NULL;
+		}
 		// else  need reload page ( changed zoom, ... )
 	}
 
+	guiPrintDbg( debug::DBG_DBG, "som tu" );
+
 	// if actual page is removed then show new page at same position
 	try {
-		actualPagePos = actualPdf->getPagePosition( actualPage );
+		if (actualPdf)
+			actualPagePos = actualPdf->get()->getPagePosition( actualPage );
+		else
+			actualPagePos = 0;
 	} catch (PageNotFoundException) {
-		delete actualPage;
-		actualPage = NULL;
+		actualPage.reset();
 
 		refresh( actualPagePos );
 
 		return;
 	}
 
+	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	// show actual page
-	pageImage->showPage( actualPage->get() );
+	pageImage->showPage( actualPage );
 
+	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	// emit new page position
-	emit changedPageTo( * actualPage, actualPagePos );
+	QSPage * qs_actualPage = new QSPage( actualPage, NULL );
+	emit changedPageTo( *qs_actualPage, actualPagePos );
+	delete qs_actualPage;
 
+	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	// show actual information of position in document
+	int pageCount = 0;
+	if (actualPdf)
+		pageCount = actualPdf->getPageCount();
 	pageNumber->setText( QString(tr("%1 of %2"))
 				.arg(actualPagePos)
-				.arg(actualPdf->getPageCount()) );
+				.arg(pageCount) );
+	guiPrintDbg( debug::DBG_DBG, "som tu" );
 }
 
 void PageSpace::selectObjectOnPage ( const std::vector<boost::shared_ptr<PdfOperator> > & ops ) {
@@ -184,12 +378,39 @@ void PageSpace::unselectObjectOnPage ( ) {
 		selectionMode->clearSelectedOperators();
 }
 
-void PageSpace::setSelectionMode( QString mode, QString scriptFncAtMouseRelease, QString drawingObject ) {
-	selectionMode.reset(  PageViewModeFactory::create( mode, drawingObject, scriptFncAtMouseRelease ) );
+void PageSpace::setResizingZone ( int width ) {
+	if (width < 0) {
+		guiPrintDbg( debug::DBG_INFO, tr("Resizing zone must be positive integer or null !") );
+		width = 0;
+	}
+	if (selectionMode)
+		selectionMode->setResizingZone( width );
+
+	globalSettings->write( PAGESPC + RESIZINGZONE, width );
+}
+int PageSpace::getResizingZone() {
+	if (selectionMode)
+		return selectionMode->getResizingZone ();
+	// else
+	return globalSettings->readNum( PAGESPC + RESIZINGZONE, DEFAULT__RESIZINGZONE );
+}
+void PageSpace::setSelectionMode( QString mode, 
+									QString drawingObject,
+									QString scriptFncAtMouseRelease,
+									QString scriptFncAtMoveSelectedObjects,
+									QString scriptFncAtResizeSelectedObjects ) {
+	selectionMode.reset( 
+					PageViewModeFactory::create( mode,
+												drawingObject,
+												scriptFncAtMouseRelease,
+												scriptFncAtMoveSelectedObjects,
+												scriptFncAtResizeSelectedObjects ) );
 	if (pageImage)
 		pageImage->setSelectionMode( selectionMode );
 
 	if (selectionMode) {
+		selectionMode->setResizingZone( globalSettings->readNum( PAGESPC + RESIZINGZONE, DEFAULT__RESIZINGZONE ) );
+
 		connect( selectionMode.get(), SIGNAL( popupMenu(const QPoint &) ),
 				this, SLOT( requestPopupMenu(const QPoint &) ) );
 		connect( selectionMode.get(), SIGNAL( newSelectedOperators(const std::vector< boost::shared_ptr< PdfOperator > > &) ),
@@ -268,7 +489,7 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 	tsp.yEnd = yEnd;
 
 	std::vector<Rectangle> recs;
-	int count = actualPage->get()->findText( text, recs, tsp );
+	int count = actualPage->findText( text, recs, tsp );
 
 	guiPrintDbg( debug::DBG_DBG, "Founded "<<count<<" items:");
 	for (std::vector<Rectangle>::iterator it = recs.begin(); it != recs.end() ; ++it) {
@@ -281,7 +502,7 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 	std::vector<boost::shared_ptr<PdfOperator> > foundedIn;
 	std::vector<boost::shared_ptr<PdfOperator> > ops;
 	std::vector<boost::shared_ptr<CContentStream> > ccs;
-	actualPage->get()->getContentStreams(ccs);
+	actualPage->getContentStreams(ccs);
 	// loop through all of content streams of actual page
 	for ( std::vector<boost::shared_ptr<CContentStream> >::iterator ccsIt = ccs.begin(); ccsIt != ccs.end() ; ++ccsIt ) {
 		(*ccsIt)->getPdfOperators( ops );
@@ -345,6 +566,32 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 }
 
 //----------------------------------------------------------------------
+QStringList PageSpace::getAllUnits ( ) {
+	QStringList		all_units;
+	actualUnits.getAllUnits( all_units );
+
+	return all_units;
+}
+bool PageSpace::setDefaultUnits ( const QString dunits ) {
+		bool h = actualUnits.setDefaultUnits ( dunits );
+
+		if (h)
+			globalSettings->write( PAGESPC + VIEWED_UNITS, actualUnits.getDefaultUnits() );
+
+		return h;
+}
+QString PageSpace::getDefaultUnits ( ) const {
+		return actualUnits.getDefaultUnits ();
+}
+double PageSpace::convertUnits ( double num, const QString fromUnits , const QString toUnits ) const {
+		return actualUnits.convertUnits ( num, fromUnits, toUnits );
+}
+double PageSpace::convertFromUnitsToPoint ( double num, const QString & fromUnits ) const {
+		return actualUnits.convertFromUnitsToPoint ( num, fromUnits );
+}
+double PageSpace::convertFromPointToUnits ( double num, const QString & toUnits ) const {
+		return actualUnits.convertFromPointToUnits ( num, toUnits );
+}
 
 double PageSpace::convertPixmapPosToPdfPos_x( double fromX, double fromY ) {
 	if (pageImage) {
@@ -454,7 +701,9 @@ void PageSpace::zoomOut ( float step ) {
 
 void PageSpace::showMousePosition ( double x, double y ) {
 	QString pom;
-	pom = pom.sprintf( format, x, y );
+	pom = format.arg( convertUnits(x,"pt") ,0,'g',3 )
+				.arg( convertUnits(y,"pt") ,0,'g',3 )
+				.arg( actualUnits.getDefaultUnits() );
 	mousePositionOnPage->setText( pom );
 }
 
@@ -472,13 +721,13 @@ void PageSpace::prevPage ( ) {
 		return;
 	}
 
-	if ( (actualPdf->get()->hasPrevPage( actualPage->get() )) == true) {
-		QSPage p (actualPdf->get()->getPrevPage( actualPage->get() ) , NULL);
+	if ( (actualPdf->get()->hasPrevPage( actualPage )) == true) {
+		QSPage p (actualPdf->get()->getPrevPage( actualPage ) , NULL);
 		refresh( &p, actualPdf );
 	} else {
 		// if actual page is removed then show new page at same position -1
 		try {
-			actualPdf->getPagePosition( actualPage );
+			actualPdf->get()->getPagePosition( actualPage );
 		} catch (PageNotFoundException) {
 			refresh( actualPagePos -1 );
 		}
@@ -492,13 +741,13 @@ void PageSpace::nextPage ( ) {
 		return;
 	}
 
-	if ( (actualPdf->get()->hasNextPage( actualPage->get() )) == true) {
-		QSPage p (actualPdf->get()->getNextPage( actualPage->get() ) , NULL);
+	if ( (actualPdf->get()->hasNextPage( actualPage )) == true) {
+		QSPage p (actualPdf->get()->getNextPage( actualPage ) , NULL);
 		refresh( &p, actualPdf );
 	} else {
 		// if actual page is removed then show new page at same position
 		try {
-			actualPdf->getPagePosition( actualPage );
+			actualPdf->get()->getPagePosition( actualPage );
 		} catch (PageNotFoundException) {
 			refresh( actualPagePos );
 		}

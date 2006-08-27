@@ -140,7 +140,9 @@ class PageViewModeFactory {
 	public:
 			static PageViewMode * create(	const QString & nameOfMode,
 											const QString & drawingObject,
-											const QString & scriptFncAtMouseRelease );
+											const QString & scriptFncAtMouseRelease,
+											const QString & scriptFncAtMoveSelectedObjects,
+											const QString & scriptFncAtResizeSelectedObjects );
 };
 
 /** Class is STRATEGY pattern for mode construction.
@@ -402,13 +404,17 @@ class PageViewMode: public QObject {
 			 *
 			 * Default is set to 2.
 			 */
-			void setResizingZone ( unsigned int width);
+			void setResizingZone ( unsigned int width );
+			int getResizingZone ( );
 
 			/** Standard constructor.
 			 * @param drawingObject				Text definition of drawing method (see DrawingObjectFactory)
 			 * @param _scriptFncAtMouseRelease	Script command for call after select object(s)
 			 */
-			PageViewMode( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
+			PageViewMode( const QString & drawingObject,
+							const QString & _scriptFncAtMouseRelease,
+							const QString & _scriptFncAtMoveSelectedObjects,
+							const QString & _scriptFncAtResizeSelectedObjects );
 
 			/** Standard destructor. */
 			virtual ~PageViewMode();
@@ -518,7 +524,10 @@ class PageViewMode_NewObject: public PageViewMode {
 
 			virtual void repaint ( QPainter & p, QWidget * w  );
 	public:
-			PageViewMode_NewObject ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
+			PageViewMode_NewObject ( const QString & drawingObject,
+										const QString & _scriptFncAtMouseRelease,
+										const QString & _scriptFncAtMoveSelectedObjects,
+										const QString & _scriptFncAtResizeSelectedObjects );
 };
 
 /** */
@@ -538,7 +547,11 @@ class PageViewMode_TextSelection: public PageViewMode {
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 	public:
-			PageViewMode_TextSelection ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
+			PageViewMode_TextSelection ( const QString & drawingObject,
+											const QString & _scriptFncAtMouseRelease,
+											const QString & _scriptFncAtMoveSelectedObjects,
+											const QString & _scriptFncAtResizeSelectedObjects );
+
 	protected:
 			/** Set mapping cursors for viewing on the page for actual selection mode */
 			virtual void setMappingCursor();
@@ -576,7 +589,11 @@ class PageViewMode_OperatorsSelection: public PageViewMode {
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
 			virtual void clearWorkOperators ();
 	public:
-			PageViewMode_OperatorsSelection ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
+			PageViewMode_OperatorsSelection ( const QString & drawingObject,
+												const QString & _scriptFncAtMouseRelease,
+												const QString & _scriptFncAtMoveSelectedObjects,
+												const QString & _scriptFncAtResizeSelectedObjects );
+
 	protected:
 			void	findOperators (	const std::vector< boost::shared_ptr< PdfOperator > >	& in_v,
 									std::vector< boost::shared_ptr< PdfOperator > >			& founded,
@@ -632,7 +649,11 @@ class PageViewMode_Annotations: public PageViewMode {
 			/* E.g. for annotation */
 			virtual void extraInitialize( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams );
 	public:
-			PageViewMode_Annotations ( const QString & drawingObject, const QString & _scriptFncAtMouseRelease );
+			PageViewMode_Annotations ( const QString & drawingObject,
+							const QString & _scriptFncAtMouseRelease,
+							const QString & _scriptFncAtMoveSelectedObjects,
+							const QString & _scriptFncAtResizeSelectedObjects );
+
 	protected:
 			typedef struct {
 					boost::shared_ptr<CAnnotation>	annot;
@@ -648,6 +669,23 @@ class PageViewMode_Annotations: public PageViewMode {
 			QPoint	resizingPress;
 			
 			std::vector< annot_rect >	annotations;
+};
+
+/** */
+class PageViewMode_TextMarking: public PageViewMode_TextSelection {
+	Q_OBJECT
+	public slots:
+			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+	public:
+			PageViewMode_TextMarking ( const QString & drawingObject,
+										const QString & _scriptFncAtMouseRelease,
+										const QString & _scriptFncAtMoveSelectedObjects,
+										const QString & _scriptFncAtResizeSelectedObjects );
+
+	protected:
+			/** Set mapping cursors for viewing on the page for actual selection mode */
+			virtual void setMappingCursor();
 };
 
 } // namespace gui

@@ -17,6 +17,24 @@ namespace gui {
 
 class PageViewMode;
 
+class Units : protected QObject {
+	public:
+		Units ( const QString _defaultUnit = QString::null );
+		virtual ~Units ();
+
+		bool setDefaultUnits ( const QString dunits = QString::null );
+		QString getDefaultUnits ( ) const;
+		double convertUnits ( double num, const QString fromUnits = QString::null, const QString toUnits = QString::null ) const;
+		double convertFromUnitsToPoint ( double num, const QString & fromUnits ) const;
+		double convertFromPointToUnits ( double num, const QString & toUnits ) const;
+
+		void getAllUnits( QStringList & names );
+	protected:
+		QMap<QString, double>	units;
+		QMap<QString, QString>	aliases;
+		QString					defaultUnit;
+};
+
 /** QWidget's class for viewing a page.
  */
 class PageSpace : public QWidget {
@@ -54,6 +72,21 @@ class PageSpace : public QWidget {
 		 */
 		void convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos );
 	public slots:
+		QStringList getAllUnits ( );
+		bool setDefaultUnits ( const QString dunits = QString::null );
+		QString getDefaultUnits ( ) const;
+		double convertUnits ( double num, const QString fromUnits = QString::null, const QString toUnits = QString::null ) const;
+		double convertFromUnitsToPoint ( double num, const QString & fromUnits ) const;
+		double convertFromPointToUnits ( double num, const QString & toUnits ) const;
+
+		/** Method set width of resizing zone
+		 * @param width width in pixels
+		 *
+		 * Default is set to 2.
+		 */
+		void setResizingZone ( int width );
+		int getResizingZone();
+
 		/** Method for refreshing page on screen and actualize selected objects.
 		 * @param pageToView Page for refresh. If \a pageToView is other then actual viewed, view this new page.
 		 * 					(default is set to NULL = refresh actual viewed page)
@@ -88,15 +121,21 @@ class PageSpace : public QWidget {
 
 		/** Set selection mode.
 		 * @param mode Mode for selection.
-		 * @param scriptFncAtMouseRelease Name of function in script, which be call at mouse left button release
 		 * @param drawingObject What be drawing in \a mode
+		 * @param scriptFncAtMouseRelease Name of function in script, which be call at mouse left button release
+		 * @param scriptFncAtMoveSelectedObjects Name of function in script, which be call at mouse moved with selected area
+		 * @param scriptFncAtResizeSelectedObjects Name of function in script, which be call at mouse resize selected area
 		 *
 		 * @return Return TRUE, if selection mode was changed. Otherwise return FALSE
 		 *
 		 * @see PageViewModeFactory
 		 * @see DrawingObjectFactory
 		 */
-		void setSelectionMode( QString mode, QString scriptFncAtMouseRelease = QString::null, QString drawingObject = QString::null );
+		void setSelectionMode( QString mode, 
+								QString drawingObject = QString::null, 
+								QString scriptFncAtMouseRelease = QString::null,
+								QString scriptFncAtMoveSelectedObjects = QString::null,
+								QString scriptFncAtResizeSelectedObjects = QString::null );
 
 		/** Select area on viewed page.
 		 * @param left X position of lefttop edge of new select rectangle
@@ -326,11 +365,13 @@ class PageSpace : public QWidget {
 		QHBoxLayout	* hBox;	// mozna nebude potreba
 		QScrollView	* scrollPageSpace;
 
-		QSPdf		* actualPdf;
-		QSPage		* actualPage;
-		int		actualPagePos;
+		QSPdf						* actualPdf;
+		boost::shared_ptr<CPage>	actualPage;
+		int							actualPagePos;
 
 		boost::shared_ptr< PageViewMode >	selectionMode;
+
+		Units		actualUnits;
 };
 
 } // namespace gui

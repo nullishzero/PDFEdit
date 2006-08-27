@@ -178,49 +178,49 @@ function setModeButton(newmode) {
 
 /** Callback when selection mode is changes to select all objects on page */
 function onSelectMode_AllObjects() {
- PageSpace.setSelectionMode("operators_selection","","rect");
+ PageSpace.setSelectionMode("operators_selection","rect");
  setModeButton('selectAllObjects');
 }
 
 /** Callback when selection mode is changes to select text operators only */
 function onSelectMode_Text() {
- PageSpace.setSelectionMode("text_selection","","rect2");
+ PageSpace.setSelectionMode("text_selection","rect2");
  setModeButton('selectText');
 }
 
 /** Callback when selection mode is changes to select annotations on page */
 function onSelectMode_Annot() {
- PageSpace.setSelectionMode("annotations","go_to_target_from_selected_annotation()","rect");
+ PageSpace.setSelectionMode("annotations","rect2","go_to_target_from_selected_annotation()");
  setModeButton('selectAnnot');
 }
  
 
 /** Callback when selection mode is changes to draw new line */
 function onSelectMode_drawLine() {
- PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,false)","line");
+ PageSpace.setSelectionMode("new_object","line","drawLine(%1,%2,%3,%4,false)");
  setModeButton('drawline');
 }
 
 /** Callback when selection mode is changes to draw new line */
 function onSelectMode_drawLinee() {
- PageSpace.setSelectionMode("new_object","drawLine(%1,%2,%3,%4,true)","line");
+ PageSpace.setSelectionMode("new_object","line","drawLine(%1,%2,%3,%4,true)");
  setModeButton('drawlinee');
 }
 
 /** Callback when selection mode is changes to draw new rectangle */
 function onSelectMode_drawRect() {
- PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,false)","rect");
+ PageSpace.setSelectionMode("new_object","rect","drawRect(%1,%2,%3,%4,false)");
  setModeButton('drawrect');
 }
 
 /** Callback when selection mode is changes to draw new rectangle */
 function onSelectMode_drawRecte() {
- PageSpace.setSelectionMode("new_object","drawRect(%1,%2,%3,%4,true)","rect");
+ PageSpace.setSelectionMode("new_object","rect","drawRect(%1,%2,%3,%4,true)");
  setModeButton('drawrecte');
 }
 
 /** Callback when selection mode is changes to add text to page */
 function onSelectMode_addText() {
- PageSpace.setSelectionMode("new_object","addText(%1,%2,%3,%4)","rect");
+ PageSpace.setSelectionMode("new_object","rect","addText(%1,%2,%3,%4)");
  setModeButton('addtext');
 }

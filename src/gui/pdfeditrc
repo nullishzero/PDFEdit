@@ -145,8 +145,11 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 [gui]
 #Which toolbars are available for use
 toolbars	= MainToolbar,PageToolbar,ObjectToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar
+
+[gui/PageSpace]
 #Settings affecting preview window
-PageSpace/ResizingZone			= 2
+ResizingZone	= 2
+ViewedUnits	= cm
 
 [gui/CommandLine]
 # Commandline settings
