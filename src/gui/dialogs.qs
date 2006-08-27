@@ -183,7 +183,7 @@ function setDashPattern() {
 /**
  * Display and allow to change font atributes of a text operator.
  */
-function editFontProps() {
+function editFontProps(page) {
 
 	if (!isPageAvaliable() || !(isTreeItemSelected())) {
 		warn(tr("No page or operator selected!"));
@@ -192,71 +192,40 @@ function editFontProps() {
 
         firstTime=true;
 
+        // gets current font from font tool, if this font is not
+        // page part, adds it to the page
+        currentFont=getEditText("fontface");
+        print(currentFont);
+        currentFontId=page.getFontId(currentFont);
+        if(!currentFontId)
+        {
+                // this font is unknown for page, we have to add it
+                page.addSystemType1Font(currentFont);
+                currentFontId=page.getFontId(currentFont);
+                print(currentFont+" "+tr("added to")+" "+tr("page"))
+        }
+
+        // gets current font size from font tool
+        currentFontSize=getNumber("fontsize");
+
 	// Get selected item
  	op=firstSelected("select");
-        if(op)
+        while(op)
         {
                 if (!isTextOp(op)) 
                 {
                         if(firstTime)
                         {
                                 warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-                                return;
+                                firstTime=false;
+                                continue;
                         }
                 }
 
-                var fontspecs = operatorGetFont(op);
-                var fontsize = fontspecs[1];
-                var fontname = fontspecs[0];
-
-                // TODO remove dialog and use current setting
-                var dg = createDialog (tr("Change font properties"), tr("Change font"), tr("Cancel"), tr("Change font"));
-                var gb = createGroupBoxAndDisplay (tr("Avaliable fonts"),dg);
-                var cb = new ComboBox;
-                cb.label = tr("Select from all avaliable fonts");
-
-                // Put all avaliable fonts here and select the operator font 
-                var fonts = page().getFontIdsAndNames();
-                var fontnames = new Array(fonts.length/2);
-
-                // Fill fontnames with symbolic font names
-                for(i = 1,j=0; i < fonts.length; ++i) {
-                fontnames[j] = fonts[i];
-                        // Save symbolic name of operator font
-                        if (fonts[i-1] == fontname)
-                                fontname = fonts[i];
-                        // Skip id
-                        ++i;++j;
-                }
-                cb.itemList = fontnames;
-                cb.currentItem = fontname;
-                gb.add (cb);
-
-                var gb1 = createGroupBoxAndDisplay (tr("Font size according to the pdf document"),dg);
-                var sb = createNumbereditAndDisplay (tr("Font size (not in px)"), 0, 100, gb1);
-                print(fontsize);
-                sb.value = fontsize;
-
-                if (!dg.exec()) return;
-
-                // Get font metrics and change the operator
-                var newfontsize = sb.value;
-                var newfontname = cb.currentItem;// get Idx according to a name
-
-                for(i = 1; i < fonts.length; ++i) {
-                        // Save symbolic name of operator font
-                        if (fonts[i] == newfontname) {
-                                newfontid = fonts[i-1];
-                                break;
-                        }
-                        // Skip id
-                        ++i;
-                }
                 // Set the font
-                operatorSetFont(op,newfontid,newfontsize);
+                operatorSetFont(op,currentFontId, currentFontSize);
 
-                // FIXME uncomment
-                //op=nextSelected();
+                op=nextSelected();
         }
                 
 	print (tr("Font changed."));
