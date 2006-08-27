@@ -471,6 +471,7 @@ void MultiTreeWindow::activate(const OperatorVector &vec,const QString &pName,co
  Create if not exist and then activate secondary tree that contains given vector of annotations as root item
  This type of item is special, as if the tree already exist, its contents is replaced
  @param vec Annotation vector
+ @param page Page with annotations
  @param pName Name used for this property
  @param pToolTip Tooltip used for this property
  */

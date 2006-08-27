@@ -339,6 +339,7 @@ void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::
 /**
  Init contents of treeview from given vector with annotations
  @param vec Vector used to initialize treeview
+ @param page Page with annotations
  @param pName Name of the root item
 */
 void TreeWindow::init(const AnnotationVector &vec,boost::shared_ptr<pdfobjects::CPage> page,const QString &pName/*=QString::null*/) {

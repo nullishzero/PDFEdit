@@ -38,7 +38,6 @@ QSize SelectTool::sizeHint() const {
 /**
  Set list of predefined values
  @param predefs List of predefined values for quick selecting
- @param separator separator of values in list, by default comma
 */
 void SelectTool::setPredefs(const QStringList &predefs) {
  //Get old text

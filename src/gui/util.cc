@@ -308,7 +308,8 @@ JIS7,KOI8-R,KOI8-U,Latin1Shift-JIS,TIS-620TSCII,eucJP,eucKR,utf8,utf16",true);
 QTextCodec *defCodec=NULL;
 
 /**
- set default charset used when reading (and writing
+ set default charset used when reading (and writing) property values
+ @param charsetName charset name used for all 8bit to/from unicode conversions
 */
 void setDefaultCharset(const QString &charsetName) {
  //Codecs should not be deleted, as Qt is maniaging them
@@ -317,7 +318,11 @@ void setDefaultCharset(const QString &charsetName) {
  defCodec=QTextCodec::codecForName(charsetName); 
 }
 
-/** Return QString from std::string with optional character conversion according to settings */
+/**
+ Return QString from std::string with optional character conversion according to settings
+ @param str String to convert
+ @return converted string
+ */
 QString convertToUnicode(const std::string &str) {
  if (defCodec) {
   return defCodec->toUnicode(str.c_str());
@@ -325,7 +330,11 @@ QString convertToUnicode(const std::string &str) {
  return QString(str);
 }
 
-/** Return std::string from QString with optional character conversion according to settings */
+/**
+ Return std::string from QString with optional character conversion according to settings
+ @param str String to convert
+ @return converted string
+ */
 std::string convertFromUnicode(const QString &str) {
  if (defCodec) {
   const char *cstr=defCodec->fromUnicode(str);

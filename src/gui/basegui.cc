@@ -82,7 +82,8 @@ void BaseGUI::runInitScript() {
 }
 
 /**
- slot called when any of tools (color tool, edit tool, etc ...) change it's value
+ Slot called when any of tools (color tool, edit tool, etc ...) change it's value
+ @param toolName Name of the tool affected
 */
 void BaseGUI::toolChangeValue(const QString &toolName) {
  guiPrintDbg(debug::DBG_DBG,"tool change: " << toolName);
