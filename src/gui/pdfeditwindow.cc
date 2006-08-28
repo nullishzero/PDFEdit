@@ -268,7 +268,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
 
  // creates qt progress bar and its adapter so it can be used in 
  // ProgressObserver. progressObserver can be registered to observer handlers.
- QProgressBar * progressBar=new QProgressBar();
+ progressBar=new QProgressBar();
  progressObserver=boost::shared_ptr<pdfobjects::utils::ProgressObserver>(
                  new pdfobjects::utils::ProgressObserver(
                          new ProgressBar(progressBar))
