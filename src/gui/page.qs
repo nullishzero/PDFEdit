@@ -227,9 +227,8 @@ function mergeWithPages(pages, positions)
                 // document might use same progress observer, so we will
                 // initializes total steps and make the bar visible just
                 // to be sure
-                progressBar.setTotalSteps(pages.legth);
-                progressBar.setProgress(j+1);
                 progressBar.show();
+                progressBar.setProgress(j+1, pages.legth);
 
                 // moves to next position with respect to above insertion
                 pos+=2;
