@@ -82,6 +82,8 @@ function setOpColor() {
                                 warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
                                 firstTime=false;
                         }
+                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+                        op=nextSelected();
                         continue;
                 }
 
@@ -120,6 +122,8 @@ function setLineWidth() {
                                 warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
                                 firstTime=false;
                         }
+                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+                        op=nextSelected();
                         continue;
                 }
                 
@@ -218,8 +222,10 @@ function editFontProps(page) {
                         {
                                 warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
                                 firstTime=false;
-                                continue;
                         }
+                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+                        op=nextSelected();
+                        continue;
                 }
 
                 // Set the font
@@ -417,6 +423,8 @@ function moveOperPos() {
                                 warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
                                 firstTime = false;
                         }
+                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+                        op=nextSelected();
                         continue;
                 }
 
@@ -470,6 +478,8 @@ function moveTextPos() {
                                 warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
                                 firstTime = false;
                         }
+                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+                        op=nextSelected();
                         continue;
                 }
 
