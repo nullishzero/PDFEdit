@@ -191,19 +191,25 @@ function onSelectMode_AllObjects() {
  setModeButton('selectAllObjects');
 }
 
+/** Callback when selection mode is changes to select graphical operators on page */
+function onSelectMode_GraphicalOperators() {
+ PageSpace.setSelectionMode("graphical_operators","rect");
+ setModeButton('selectGraphical');
+}
+
 /** Callback when selection mode is changes to select text operators only */
 function onSelectMode_Text() {
  PageSpace.setSelectionMode("text_selection","rect2");
  setModeButton('selectText');
 }
 
-/** Callback when selection mode is changes to select text operators only */
+/** Callback when selection mode is changes to select text operators only for highlighting */
 function onSelectMode_highlightingText() {
  PageSpace.setSelectionMode("text_marking","rect2","highlightingSelectedText()");
  setModeButton('selectText');
 }
 
-/** Callback when selection mode is changes to select text operators only */
+/** Callback when selection mode is changes to select text operators only for strike trough */
 function onSelectMode_strikeTrough( ) {
  PageSpace.setSelectionMode("text_marking","rect2","strikeTroughSelection()");
  setModeButton('selectText');

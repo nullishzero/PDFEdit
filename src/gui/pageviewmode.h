@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab
 #ifndef __PAGEVIEWMODE_H__
 #define __PAGEVIEWMODE_H__
 
@@ -686,6 +687,19 @@ class PageViewMode_TextMarking: public PageViewMode_TextSelection {
 	protected:
 			/** Set mapping cursors for viewing on the page for actual selection mode */
 			virtual void setMappingCursor();
+};
+
+/** */
+class PageViewMode_GraphicalOperatorsSelection: public PageViewMode_OperatorsSelection {
+	Q_OBJECT
+	public slots:
+			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+	public:
+			PageViewMode_GraphicalOperatorsSelection ( const QString & drawingObject,
+														const QString & _scriptFncAtMouseRelease,
+														const QString & _scriptFncAtMoveSelectedObjects,
+														const QString & _scriptFncAtResizeSelectedObjects );
 };
 
 } // namespace gui

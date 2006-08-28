@@ -1,3 +1,4 @@
+// vim:tabstop=4:shiftwidth=4:noexpandtab
 #include <stdlib.h>
 #include <math.h>
 #include <qcursor.h>
@@ -112,6 +113,10 @@ PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
 																										scriptFncAtMoveSelectedObjects,
 																										scriptFncAtResizeSelectedObjects);
 			if (nameOfMode == "operators_selection")	return new PageViewMode_OperatorsSelection	( drawingObject,
+																										scriptFncAtMouseRelease,
+																										scriptFncAtMoveSelectedObjects,
+																										scriptFncAtResizeSelectedObjects);
+			if (nameOfMode == "graphical_operators")	return new PageViewMode_GraphicalOperatorsSelection	( drawingObject,
 																										scriptFncAtMouseRelease,
 																										scriptFncAtMoveSelectedObjects,
 																										scriptFncAtResizeSelectedObjects);
@@ -1358,7 +1363,7 @@ void PageViewMode_Annotations::mouseMoveEvent ( QMouseEvent * e, QPainter * p, Q
 			if (h_ar.annot)
 				h_v.push_back( h_ar.annot );
 
-			if (selectedOpRegion != h_ar.activation_region)
+			if ((! h_ar.activation_region.isEmpty()) && (selectedOpRegion != h_ar.activation_region))
 			{
 				selectedOpRegion = h_ar.activation_region;
 				emit newSelectedAnnotations( h_v );
@@ -1413,7 +1418,7 @@ void PageViewMode_TextMarking::setMappingCursor()
 			mappingResizingModeToCursor [ left | right | top | bottom ] = Qt::PointingHandCursor;
 			mappingResizingModeToCursor [ onUnselectedObject ] = Qt::PointingHandCursor;
 		};
-void PageViewMode_TextMarking::addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps )
+void PageViewMode_TextMarking::addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & /* sOps */ )
 		{};
 void PageViewMode_TextMarking::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w )
 		{
@@ -1424,4 +1429,54 @@ void PageViewMode_TextMarking::mouseReleaseLeftButton ( QMouseEvent * e, QPainte
 			this->PageViewMode::mouseReleaseLeftButton ( e, p, w );
 		}
 
+// ----------------------------------  PageViewMode_GraphicalOperatorsSelection  --------------------------- //
+PageViewMode_GraphicalOperatorsSelection::PageViewMode_GraphicalOperatorsSelection
+				( const QString & drawingObject,
+					const QString & _scriptFncAtMouseRelease,
+					const QString & _scriptFncAtMoveSelectedObjects,
+					const QString & _scriptFncAtResizeSelectedObjects ) :
+			PageViewMode_OperatorsSelection ( drawingObject,
+												_scriptFncAtMouseRelease,
+												_scriptFncAtMoveSelectedObjects,
+												_scriptFncAtResizeSelectedObjects )
+		{};
+void PageViewMode_GraphicalOperatorsSelection::addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps )
+		{
+			if (sOps.empty())
+				return;
+
+			if (isPressedLeftButton && (isResizing || isMoving))
+				isPressedLeftButton = false;
+
+			std::vector< boost::shared_ptr< PdfOperator > >					hOps;
+			std::vector< boost::shared_ptr< PdfOperator > >::const_iterator	sOps_iter = sOps.begin();
+			for ( ; sOps_iter != sOps.end() ; ++sOps_iter ) {
+				// select only graphical operators
+				GraphicalOperatorIterator iter ( * sOps_iter );
+				if ((! iter.isEnd()) && (iter.getCurrent() == (* sOps_iter)))
+					hOps.push_back( * sOps_iter );
+			}
+
+			this->PageViewMode_OperatorsSelection::addSelectedOperators ( hOps );
+		};
+void PageViewMode_GraphicalOperatorsSelection::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps )
+		{
+			if (wOps.empty())
+				return;
+
+			if (isPressedLeftButton && (isResizing || isMoving))
+				isPressedLeftButton = false;
+
+			std::vector< boost::shared_ptr< PdfOperator > >					hOps;
+			std::vector< boost::shared_ptr< PdfOperator > >::const_iterator	wOps_iter = wOps.begin();
+			for ( ; wOps_iter != wOps.end() ; ++wOps_iter ) {
+				// select only graphical operators
+				GraphicalOperatorIterator iter ( * wOps_iter );
+
+				if ((! iter.isEnd()) && (iter.getCurrent() == (* wOps_iter)))
+					hOps.push_back( * wOps_iter );
+			}
+
+			this->PageViewMode_OperatorsSelection::addWorkOperators ( hOps );
+		};
 } // namespace gui

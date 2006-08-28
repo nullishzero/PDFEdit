@@ -87,10 +87,11 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     striketroughm	= item Strike trough		, strikeTrough()	,	, selectmode_all.png	,need_page
     highlightingtextm	= item Highlighting text	, highlightingText()	,	, selectmode_all.png	,need_page
   #Edit submenu
-  editopersmenu		= list &Edit,selectAllObjects,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
-    selectAllObjects	= item Select all objects	, onSelectMode_AllObjects()	, , selectmode_allobjects.png	,mode_button
-    selectText		= item Select text		, onSelectMode_Text()		, , selectmode_text.png		,mode_button
-    selectAnnot		= item Select annotations	, onSelectMode_Annot()		, , selectmode_all.png		,mode_button
+  editopersmenu		= list &Edit,selectAllObjects,selectGraphical,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
+    selectAllObjects	= item Select all objects		, onSelectMode_AllObjects()		, , selectmode_allobjects.png	,mode_button
+    selectGraphical	= item Select graphical operators	, onSelectMode_GraphicalOperators()	, , selectmode_allobjects.png	,mode_button
+    selectText		= item Select text			, onSelectMode_Text()			, , selectmode_text.png		,mode_button
+    selectAnnot		= item Select annotations		, onSelectMode_Annot()			, , selectmode_all.png		,mode_button
     opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator_page
     opsetposop		= item Set relative position of operator,moveOperPos()	,	, operator_setrelposop.png	,need_operator_page
     opsetpos		= item Change relative position	,moveTextPos()		,	, operator_setrelpos.png	,need_operator_page
@@ -104,7 +105,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
 
 #Toolbars. Most toolbar items are items from menu
 
-SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectText,selectAnnot
+SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectGraphical,selectText,selectAnnot
   # look in menu for definition of items
 
 MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
