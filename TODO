@@ -44,7 +44,7 @@ MP
  [x] Nastavovani jednotek v settings -> (PageSpace.setDefaultUnits( ), PageSpace.getAllUnits   - vraci to QStringList)
 Michal
  [x] Progress observer + progressbar pri save a delinearize -> do statusbaru - doladit, pada - Michal
- [ ] Progress bar v skriptoch (mergeWithPages a tam, kde sa to bude hodit)
+ [x] Progress bar v skriptoch (mergeWithPages a tam, kde sa to bude hodit)
  [x] zrusit cGraphic v kernelu - Michal
  [ ] Pridavani anotaci - dialog - Michal
  [x] Upravit skripty na multiselect (u kterych ma smysl)
