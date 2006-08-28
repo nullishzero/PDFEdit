@@ -291,16 +291,17 @@ void QSPage::setMediabox(QRect rc) {
 /**
  Return list of font id's and names,
  for each font id and name return two elements in output array (id followed by name)
+ @param onlyNames if true, id's are ommited and only list of names is returned instead.
  @return list of font id's and names
 */
-QStringList QSPage::getFontIdsAndNames() {
+QStringList QSPage::getFontIdsAndNames(bool onlyNames/*=false*/) {
  FontList fonts;
  //Format is like "pair<R13, Helvetica>"
  obj->getFontIdsAndNames(fonts);
  QStringList ret;
  FontList::iterator it;
  for( it=fonts.begin();it!=fonts.end();++it) { // for each font
-  ret+=it->first;
+  if (!onlyNames) ret+=it->first;
   ret+=it->second;
  }
  return ret;

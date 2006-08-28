@@ -245,3 +245,14 @@ function onSelectMode_addText() {
  PageSpace.setSelectionMode("new_object","rect","addText(%1,%2,%3,%4)");
  setModeButton('addtext');
 }
+
+/** Called when page in preview window is changed */
+function onPageChange() {
+ print('page change');
+ //System fonts
+ stdfonts=getSystemFonts();
+ //Fonts in page
+ exfonts=page().getFontIdsAndNames(true);
+ //Both can be used
+ setPredefs('fontface',stdfonts.concat(exfonts));
+}

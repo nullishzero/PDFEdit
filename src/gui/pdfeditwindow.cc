@@ -432,6 +432,7 @@ void PdfEditWindow::setSelection(std::vector<boost::shared_ptr<CAnnotation> > ve
 void PdfEditWindow::pageChange(const QSPage &pg, int numberOfPage) {
  selectedPage=pg.get();
  selectedPageNumber=numberOfPage;
+ base->call("onPageChange");
 }
 
 /**
@@ -475,6 +476,14 @@ void PdfEditWindow::runScript(QString script) {
 }
 
 /**
+ Return list of available length units
+ @return list of units
+*/
+QStringList PdfEditWindow::allUnits() {
+ return pagespc->getAllUnits();
+}
+
+/**
  Called when any settings are updated (in script, option editor, etc ...)
  @param key Key of setting that was updated
  */
@@ -486,6 +495,11 @@ void PdfEditWindow::settingUpdate(QString key) {
   bool vis=globalSettings->readBool(key,true);
   if (vis) tb->show();
    else    tb->hide();
+  return;
+ }
+ if (key=="gui/PageSpace/ViewedUnits") {
+  //Changing units
+  pagespc->setDefaultUnits(globalSettings->read(key));
   return;
  }
  if (key=="editor/charset") {

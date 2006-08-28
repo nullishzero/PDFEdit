@@ -470,7 +470,7 @@ void BaseGUI::openFileNew(const QString &name) {
 
 /** Show options dialog. Does not wait for dialog to finish. */
 void BaseGUI::options() {
- OptionWindow::optionsDialog(w->menuSystem);
+ OptionWindow::optionsDialog(w->menuSystem,w->allUnits());
 }
 
 /**

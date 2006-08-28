@@ -72,8 +72,9 @@ public slots:
   For each font id and name pair there are two consecutive elements in returned array,
   first one containing font id and second one containing the name,
   so number of elements in output array is always even.
+  If parametr onlyNames is true, id's are ommited and only list of names is returned instead.
  */
- QStringList getFontIdsAndNames();
+ QStringList getFontIdsAndNames(bool onlyNames=false);
  /*-
   Add new Type 1 font to this page resource dictionary with specified font name
   It is supposed that you insert standard system font name that should be avaiable to all PDF viewers.

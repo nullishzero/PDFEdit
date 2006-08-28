@@ -48,12 +48,13 @@ OptionWindow *opt=NULL;
 /**
  Invoke option dialog. Ensure only one copy is running at time
  @param msystem Menu system reference for given option window (needed to get toolbar list)
+ @param units list of available length units
 */
-void OptionWindow::optionsDialog(Menu *msystem) {
+void OptionWindow::optionsDialog(Menu *msystem,const QStringList &units) {
  if (opt) { //the dialog is already active
   opt->setActiveWindow();
  } else { //create new dialog
-  opt=new OptionWindow(msystem);
+  opt=new OptionWindow(msystem,units);
   opt->show();
  }
 }
@@ -61,10 +62,11 @@ void OptionWindow::optionsDialog(Menu *msystem) {
 /** Default constructor of option window.
  The window is initially empty
  @param msystem Menu system (Needed for toolbar list)
+ @param units list of available length units
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
  */
-OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
+OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
  guiPrintDbg(debug::DBG_DBG,"Options creating ...");
  menuSystem=msystem;
  setCaption(QString(APP_NAME)+" - "+tr("options"));
@@ -74,7 +76,7 @@ OptionWindow::OptionWindow(Menu *msystem,QWidget *parent /*=0*/, const char *nam
  items=new QDict<Option>();
  //create labels dictionary
  labels=new QDict<QLabel>();
-
+ l_units=units;
  QGridLayout* grl_up=new QGridLayout(this,2,1);
  grl_up->setRowStretch(0,1);
  grl_up->setRowStretch(1,0);
@@ -315,7 +317,9 @@ void OptionWindow::addOptionInt(QWidget *otab,const QString &caption,const QStri
  addOption(otab,caption,new IntOption(key,otab,defValue));
 }
 
-/** Initialize window with options */
+/**
+ Initialize window with options
+ */
 void OptionWindow::init() {
  setUpdatesEnabled( FALSE );
 
@@ -326,6 +330,7 @@ void OptionWindow::init() {
  addOptionBool(edit_tab,tr("Show hidden properties"),"editor/show_hidden");
  addOptionBool(edit_tab,tr("Allow editing read-only properties"),"editor/edit_readonly");
  addOptionBool(edit_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
+ addOptionCombo(edit_tab,tr("Length units"),"gui/PageSpace/ViewedUnits",l_units);
  addOptionCombo(edit_tab,tr("Character encoding"),"editor/charset",util::supportedEncodings());
  finishTab    (edit_tab);
 

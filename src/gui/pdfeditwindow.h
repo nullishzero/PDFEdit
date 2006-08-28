@@ -64,6 +64,7 @@ public:
  void run(const QString &scriptName);
  void runFile(const QString &scriptName);
  void eval(const QString &code);
+ QStringList allUnits();
 
  /** Returns progress observer.
   * This progress observer holds qt progress bar (progressBar field) stored in 

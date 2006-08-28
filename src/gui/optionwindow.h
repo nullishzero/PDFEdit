@@ -27,12 +27,12 @@ public slots:
  void apply();
  void ok();
 public:
- static void optionsDialog(Menu *msystem);
+ static void optionsDialog(Menu *msystem,const QStringList &units);
  ~OptionWindow();
 protected:
  void closeEvent(QCloseEvent *e);
 private:
- OptionWindow(Menu *msystem,QWidget *parent=0, const char *name=0);
+ OptionWindow(Menu *msystem,const QStringList &units,QWidget *parent=0, const char *name=0);
  void init();
  QWidget* addTab(const QString name,bool makeSegments=false);
  void initGridFrame(QWidget *grid);
@@ -65,6 +65,8 @@ private:
  QMap<QWidget*,int> nObjects;
  /** Menu system (for toolbar list ... ) */
  Menu *menuSystem;
+ /** Available length units */
+ QStringList l_units;
 };
 
 void applyLookAndFeel(bool notify=false);

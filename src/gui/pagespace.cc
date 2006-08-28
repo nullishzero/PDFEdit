@@ -58,7 +58,6 @@ Units::Units( QString _defaultUnit ) : QObject() {
 	units["cable"]	= 720 * units["ft"];	// 1 cable's length == 720 feet
 	units["mi"]		= 8 * units["fur"];		// 1 mile == 8 furlongs
 	units["land"]	= 3 * units["mi"];		// 1 league == 3 miles
-
 	aliases[	"point"]	= "pt";
 	aliases[tr("point")]	= "pt";
 	aliases[	"inch"]		= "in";
@@ -140,9 +139,13 @@ Units::Units( QString _defaultUnit ) : QObject() {
 
 	units["A"] = 0.1 * units["nm"];			// 1 angstrom = 0.1 nm	
 
+	units["AU"] = 149597870691.0 * units["m"];	// AU (astronomical unit)
+	units["ly"] = 9460528404879.0 * units["km"];	//Light year
+	units["pc"] = 3.26156378 * units["ly"];		//Parsec
+
 	units["nautical mile"] = 1.852 * units["km"];	// 1 nautical mile == 1.852 km;
 
-	aliases[	"nautical miles"]	= "nautical mile";
+	aliases["nautical miles"]	= "nautical mile";
 	aliases[tr("nautical mile")]	= "nautical mile";
 	aliases[tr("nautical miles")]	= "nautical mile";
 
@@ -575,8 +578,9 @@ QStringList PageSpace::getAllUnits ( ) {
 bool PageSpace::setDefaultUnits ( const QString dunits ) {
 		bool h = actualUnits.setDefaultUnits ( dunits );
 
-		if (h)
-			globalSettings->write( PAGESPC + VIEWED_UNITS, actualUnits.getDefaultUnits() );
+//Cannot write -> infinite loop
+//		if (h)
+//			globalSettings->write( PAGESPC + VIEWED_UNITS, actualUnits.getDefaultUnits() );
 
 		return h;
 }
