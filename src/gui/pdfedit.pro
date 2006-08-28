@@ -100,6 +100,8 @@ HEADERS += stringoption.h  realoption.h  intoption.h  booloption.h  combooption.
 SOURCES += stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc
 HEADERS += dialogoption.h  fileoption.h  fontoption.h
 SOURCES += dialogoption.cc fileoption.cc fontoption.cc
+SOURCES += annotdialog.cc
+HEADERS += annotdialog.h
 HEADERS += mergeform.h
 SOURCES += mergeform.cc
 
