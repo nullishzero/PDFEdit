@@ -132,6 +132,12 @@
     This function is called after an error occured while trying to load a document
    </para>
   </sect1>
+  <sect1 id="onPageChange">
+   <title>onPageChange()</title>
+   <para>
+    This function is called after changing to another page in the preview window.
+   </para>
+  </sect1>
   <sect1 id="onPageRightClick">
    <title>onPageRightClick()</title>
    <para>
