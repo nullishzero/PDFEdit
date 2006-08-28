@@ -337,8 +337,8 @@ QString convertToUnicode(const std::string &str) {
  */
 std::string convertFromUnicode(const QString &str) {
  if (defCodec) {
-  const char *cstr=defCodec->fromUnicode(str);
-  return cstr;
+  QCString cstr=defCodec->fromUnicode(str);
+  return std::string(cstr);
  }
  return str;
 }
