@@ -581,7 +581,7 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
 /**
  * Add text
  */
-function addText (_x1,_y1,_x2,_y2) {
+function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 
 	if (!isPageAvaliable()) {
 		warn(tr("No page selected!"));
@@ -591,7 +591,8 @@ function addText (_x1,_y1,_x2,_y2) {
 	// set default values
 	var setpos = false;
 	
-	if (undefined == _x1 || undefined == _y1 || undefined == _x2 || undefined == _y2) { 
+	if (undefined == _x1 || undefined == _y1 || undefined == _x2 || undefined == _y2 || 
+		undefined == _glob_left || undefined == _glob_top) { 
 		_x1 = 0;
 		_y1 = 0;
 		_x2 = 0;

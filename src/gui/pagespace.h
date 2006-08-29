@@ -7,6 +7,8 @@
 #include <qevent.h>
 #include <qscrollview.h>
 #include <qlayout.h>
+#include <qmainwindow.h>
+#include <qlineedit.h>
 #include "pageviewS.h"
 #include "qspage.h"
 #include "qspdf.h"
@@ -16,6 +18,26 @@ using namespace pdfobjects;
 namespace gui {
 
 class PageViewMode;
+
+class TextLine: public QMainWindow {
+	Q_OBJECT
+	public:
+		TextLine ();
+		~TextLine ();
+	public slots:
+		void setText( const QString & );
+	signals:
+		void lostFocus ( QString text );
+		void returnPressed ( QString text );
+		void escape ();
+	protected:
+		virtual void keyReleaseEvent ( QKeyEvent * e );
+	private slots:
+		void lostFocus ();
+		void returnPressed ();
+	private:
+		QLineEdit * edit;
+};
 
 class Units : protected QObject {
 	public:
@@ -329,6 +351,7 @@ class PageSpace : public QWidget {
 		 */
 		int findText ( QString &text, bool startAtTop = true, double xStart = 0, double yStart = 0, double xEnd = -1, double yEnd = -1);
 
+		QMainWindow * getTextLine( int x, int y );
 	signals:
 		/** Signal is emited, if is changed viewed page.
 		 * @param page			Page whitch is actual viewed.
@@ -372,6 +395,7 @@ class PageSpace : public QWidget {
 		boost::shared_ptr< PageViewMode >	selectionMode;
 
 		Units		actualUnits;
+		TextLine	* textLine;
 };
 
 } // namespace gui

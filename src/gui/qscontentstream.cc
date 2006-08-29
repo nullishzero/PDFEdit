@@ -25,6 +25,17 @@ QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,BaseCore 
 QSContentStream::~QSContentStream() {
 }
 
+/** 
+ Return true, if this contentstream is equal to given object (i.e. if objects inside the wrapper are the same)
+ @param otherObject object to compare with this one
+ @return True if the both objects hold the same item, false otherwise
+*/
+bool QSContentStream::equals(QObject* otherObject) {
+ QSContentStream * other=dynamic_cast<QSContentStream*>(otherObject);
+ if (!other) return false;	//It's not even IProperty ... 
+ return obj==other->get();
+}
+
 /**
  Return text representation of Content Stream
  \see CContentStream::getStringRepresentation

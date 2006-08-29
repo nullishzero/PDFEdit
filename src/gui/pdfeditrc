@@ -71,7 +71,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     opts		= item &Options,options(),F9,options.png
     mergeDoc		= item &Insert Pages from other document,mergeDocument(),,insert_pages.png,need_document
   #Page submenu
-  pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinem,drawrectm,addtextm
+  pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinee,drawrecte,addtext,striketrough,highlightingtext
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
     reloadpage		= item Reload Page		, go()			, F5	, reload.png		,need_page
     pagetext		= item Extract text from page	, viewPageText()	,	, page_text.png		,need_page
@@ -81,11 +81,6 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     editPageMediaBox	= item Edit page metrics	, editPageMediaBox()	,	, page_edit_metrics.png	,need_page
     setpagetm		= item Set page transformation matrix,setPageTm()	,	, page_settm.png	,need_page
     addSystemFont	= item Add system font to page	, addSystemFont()	,	, page_add_font.png	,need_page
-    drawlinem		= item Draw line		, drawLine()		,	, draw_line.png		,need_page
-    drawrectm		= item Draw rectangle		, drawRect()		,	, draw_rect.png		,need_page
-    addtextm		= item Add text			, addText()		,	, add_text.png		,need_page
-    striketroughm	= item Strike trough		, strikeTrough()	,	, selectmode_all.png	,need_page
-    highlightingtextm	= item Highlighting text	, highlightingText()	,	, selectmode_all.png	,need_page
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectGraphical,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
     selectAllObjects	= item Select all objects		, onSelectMode_AllObjects()		, , selectmode_allobjects.png	,mode_button

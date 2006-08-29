@@ -40,6 +40,38 @@ QString VIEWED_UNITS = "ViewedUnits";
 QString DEFAULT__VIEWED_UNITS = "cm";
 QString format = "x:%1 y:%2 %3";
 
+TextLine::TextLine ()
+	: QMainWindow ( NULL, NULL, Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_StaysOnTop | Qt::WDestructiveClose )
+{
+	edit = new QLineEdit ( this, "textline" );
+//	edit->setFocus ();
+	setCentralWidget ( edit );
+	setSizePolicy ( QSizePolicy::Minimum, QSizePolicy::Minimum );
+
+	connect( edit, SIGNAL( lostFocus() ), this, SLOT( lostFocus() ) );
+	connect( edit, SIGNAL( returnPressed() ), this, SLOT( returnPressed() ) );
+}
+TextLine::~TextLine () {
+}
+void TextLine::keyReleaseEvent ( QKeyEvent * e ) {
+	switch (e->key()) {
+		case Qt::Key_Escape:
+			emit escape();
+			hide();
+	}
+}
+void TextLine::setText( const QString & s ) {
+	edit->setText( s );
+}
+void TextLine::lostFocus () {
+	emit lostFocus ( edit->text() );
+	hide();
+}
+void TextLine::returnPressed () {
+	emit returnPressed ( edit->text() );
+	hide();
+}
+
 //  ------------------------------------------------------
 //  --------------------   Units   -----------------------
 //  ------------------------------------------------------
@@ -253,12 +285,31 @@ vBox->addWidget( da );
 
 	selectionMode.reset();
 
+	textLine = new TextLine();
+	textLine->hide();
+
 	// if something use on page, take focus
 	setFocusPolicy( WheelFocus );
 }
 
 PageSpace::~PageSpace() {
 	delete actualPdf;
+	delete textLine;
+}
+
+QMainWindow * PageSpace::getTextLine( int x, int y ) {
+	textLine->adjustSize ();
+	textLine->move ( x, y );
+
+	textLine->disconnect( SIGNAL( lostFocus( QString ) ) );
+	textLine->disconnect( SIGNAL( returnPressed( QString ) ) );
+	textLine->disconnect( SIGNAL( escape() ) );
+
+	textLine->setText("");
+	textLine->show ();
+	textLine->setFocus ();
+
+	return textLine;
 }
 
 void PageSpace::hidePageNumberAndPosition  ( ) {
@@ -308,30 +359,23 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		return;
 	}
 */
-	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	if ((pageToView != NULL) && ( (actualPage == NULL) || (actualPage != pageToView->get()) ) && ( (pdf != NULL) || (actualPdf != NULL) ) ) {
-		guiPrintDbg( debug::DBG_DBG, "som tu" );
 		if ((actualPdf == NULL) || (pdf->get() != actualPdf->get())) {
 			delete actualPdf;
 			actualPdf = new QSPdf( pdf->get() , NULL );
 		}
 		actualPage = pageToView->get();
 	} else {
-		guiPrintDbg( debug::DBG_DBG, "som tu" );
 		if ((actualPage == NULL) || (actualPdf == NULL) || (pageToView != NULL))
 			return ;					// no page to refresh
-		guiPrintDbg( debug::DBG_DBG, "som tu" );
 		if ((pageToView == NULL) && (pdf == NULL)) {
-			guiPrintDbg( debug::DBG_DBG, "som tu" );
 			actualPage.reset();
-			guiPrintDbg( debug::DBG_DBG, "som tu" );
 			delete actualPdf;
 			actualPdf = NULL;
 		}
 		// else  need reload page ( changed zoom, ... )
 	}
 
-	guiPrintDbg( debug::DBG_DBG, "som tu" );
 
 	// if actual page is removed then show new page at same position
 	try {
@@ -347,17 +391,14 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 		return;
 	}
 
-	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	// show actual page
 	pageImage->showPage( actualPage );
 
-	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	// emit new page position
 	QSPage * qs_actualPage = new QSPage( actualPage, NULL );
 	emit changedPageTo( *qs_actualPage, actualPagePos );
 	delete qs_actualPage;
 
-	guiPrintDbg( debug::DBG_DBG, "som tu" );
 	// show actual information of position in document
 	int pageCount = 0;
 	if (actualPdf)
@@ -365,7 +406,6 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	pageNumber->setText( QString(tr("%1 of %2"))
 				.arg(actualPagePos)
 				.arg(pageCount) );
-	guiPrintDbg( debug::DBG_DBG, "som tu" );
 }
 
 void PageSpace::selectObjectOnPage ( const std::vector<boost::shared_ptr<PdfOperator> > & ops ) {

@@ -23,6 +23,11 @@ public:
  boost::shared_ptr<CContentStream> get();
 public slots:
  /*-
+  Return true, if this object is equal to specified object (i.e. if they internally point to the same item)
+  Reference is compared, not the value of objects
+ */
+ bool equals(QObject* otherObject);
+ /*-
   Delete specified operator from this content stream.
   If parameter indicateChange is true (which is default), changes are immediately written to underlying stream.
  */
