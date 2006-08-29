@@ -430,14 +430,16 @@ function moveOperPos() {
 
                 var posop = getPosInfoOfOperator (op);
                 if (undefined == posop) {
-                        warn(tr("Could not find text positioning."));
+                        print(tr("Could not find text positioning."));
+                        op=nextSelected();
                         continue;
                 }
                 var x = parseFloat (posop.params().property(0).value());
                 var y = parseFloat (posop.params().property(1).value());
 
                 if (!isNumber(xy[0].text) || !isNumber(xy[1].text)) {
-                        warn(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
+                        print(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
+                        op=nextSelected();
                         continue;
                 }
                 
@@ -486,7 +488,8 @@ function moveTextPos() {
                 var posop = getPosInfoOfOperator (op);
 
                 if (undefined == posop) {
-                        warn(tr("Could not find text positioning."));
+                        print(tr("Could not find text positioning."));
+                        op=nextSelected();
                         continue;
                 }
                  
