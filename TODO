@@ -28,8 +28,8 @@ Miro
   -> [ ] Edit page metric jeste zbyl
  [ ] actualize selection emitovat zbyle operatory
  [ ] zjistit jak je to s PdfOperator.getBBox v console modu
+ [ ] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - baseconsole???
 MP
- [ ] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - ???
  [ ] Vyrobit ikonky pro mody a zkontrolovat hi-color ikonky esi sou vsechny
  [ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
  stredni:
