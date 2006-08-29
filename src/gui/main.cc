@@ -13,6 +13,7 @@
 #include "settings.h"
 #include "util.h"
 #include "version.h"
+#include "kernel/cannotation.h"
 #include <iostream>
 #include <qapplication.h>
 #include <qdir.h>
@@ -23,6 +24,8 @@
 
 using namespace std;
 using namespace gui;
+using namespace pdfobjects;
+using namespace pdfobjects::utils;
 
 /** Path to directory in which the binary resides */
 QString appPath;
@@ -205,6 +208,19 @@ int main(int argc, char *argv[]){
 
  guiPrintDbg(debug::DBG_DBG,"Settings loaded");
 
+ ///Register annotation factories
+ boost::shared_ptr<pdfobjects::utils::IAnnotInitializator> null;
+ boost::shared_ptr<IAnnotInitializator> ia=CAnnotation::setAnnotInitializator(null);
+ boost::shared_ptr<UniversalAnnotInitializer> ua=boost::dynamic_pointer_cast<UniversalAnnotInitializer>(ia);
+ string text_t="Text";
+ boost::shared_ptr<pdfobjects::utils::IAnnotInitializator> textA(new TextAnnotInitializer());
+ boost::shared_ptr<pdfobjects::utils::IAnnotInitializator> linkA(new LinkAnnotInitializer());
+ ua->registerInitializer("Text",textA);
+ ua->registerInitializer("Link",linkA);
+
+ //We need to set default charset on the beginning
+ util::setDefaultCharset(globalSettings->read("editor/charset"));
+
  if (consoleMode) {
   //Running in console mode
   ConsoleWindow c(params);
@@ -244,8 +260,6 @@ int main(int argc, char *argv[]){
 
  guiPrintDbg(debug::DBG_DBG,"Font and style applied");
 
- //We need to set default charset on the beginning
- util::setDefaultCharset(globalSettings->read("editor/charset"));
 
  //open editor windows(s)
  int nFiles=params.size();

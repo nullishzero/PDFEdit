@@ -258,6 +258,8 @@ function onPageChange() {
  //System fonts
  stdfonts=getSystemFonts();
  //Fonts in page
+ the_page=page();
+// todo: spravit kdyz page==null
  exfonts=page().getFontIdsAndNames(true);
  //Both can be used
  setPredefs('fontface',stdfonts.concat(exfonts));

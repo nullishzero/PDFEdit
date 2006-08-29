@@ -58,10 +58,10 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     lastpage		= item Last Page			, PageSpace.lastPage()		, Ctrl+End	, last.png 		,need_page
     zoom_in		= item Zoom &in				, PageSpace.zoomIn()		, Ctrl++	, zoom_in.png		,need_page
     zoom_out		= item Zoom &out			, PageSpace.zoomOut()		, Ctrl+-	, zoom_out.png		,need_page
-    hideCmd		= item Show/Hide &commandline		, showHide('commandline')	, F8		, hide_cmdline.png
-    hideProp		= item Show/Hide &property editor	, showHide('propertyeditor')	, Ctrl+Alt+P	, hide_propedit.png
-    hideTree		= item Show/Hide object &tree		, showHide('tree')		, Ctrl+Alt+T	, hide_tree.png
-    hideStatus		= item Show/Hide &status bar		, showHide('statusbar')		, Ctrl+Alt+S	, hide_statusbar.png
+    hideCmd		= item Show/Hide &commandline		, showHide('commandline'\,'hideCmd')	, F8		, hide_cmdline.png
+    hideProp		= item Show/Hide &property editor	, showHide('propertyeditor'\,'hideProp')	, Ctrl+Alt+P	, hide_propedit.png
+    hideTree		= item Show/Hide object &tree		, showHide('tree'\,'hideTree')		, Ctrl+Alt+T	, hide_tree.png
+    hideStatus		= item Show/Hide &status bar		, showHide('statusbar'\,'hideStatus')		, Ctrl+Alt+S	, hide_statusbar.png
     streamAll		= item Show all operators in stream		, streamMode('all')	,		, stream_mode_all.png	,need_contentstream_root
     streamText		= item Show only text operators in stream	, streamMode('text')	,		, stream_mode_text.png	,need_contentstream_root
     streamFont		= item Show only font operators in stream	, streamMode('font')	,		, stream_mode_font.png	,need_contentstream_root
@@ -106,10 +106,13 @@ SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectGraphi
 MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
   # look in menu for definition of items
 
-PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,zoom_out,_zoom_tool,zoom_in
+PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,zoom_out,_zoom_tool,zoom_in,-,pageMoveUp,pageMoveDown,pageRemove
   # _page_tool is special toolbar item to show/change current page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
+  pageMoveUp		= item Move page up,movePage(firstSelected()\,-1);parentReload(),,page_move_up.png,need_page
+  pageMoveDown		= item Move page down,movePage(firstSelected()\,1);parentReload(),,page_move_down.png,need_page
+  pageRemove		= item Remove page,document.removePage(document.getPagePosition(firstSelected()));parentReload(),,page_delete.png,need_page
 
 DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button

@@ -4,24 +4,25 @@
  @author Martin Petricek
 */
 #include "additemdialog.h"
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qhbox.h>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include "version.h"
-#include "pdfutil.h"
 #include "boolproperty.h"
+#include "dialog.h"
 #include "intproperty.h"
+#include "nameproperty.h"
+#include "pdfutil.h"
 #include "realproperty.h"
 #include "refproperty.h"
-#include "stringproperty.h"
-#include "nameproperty.h"
 #include "settings.h"
-#include "dialog.h"
+#include "stringproperty.h"
 #include "util.h"
+#include "version.h"
+#include <qbuttongroup.h>
+#include <qhbox.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qvalidator.h>
 
 namespace gui {
 
@@ -130,8 +131,22 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
   settingName="add_item_dialog_array";
   globalSettings->restoreWindow(this,settingName);
   usingArray=true;
-  lu->addWidget(new QLabel(tr("Object will be appended at end of array"),target));
-  //TODO: insert at arbitrary place in array
+
+// QVBox *qv_typ=new QVBox(this,"array_pos_box_v");
+// QHBox *qb_pos=new QHBox(qv_typ,"array_pos_box");
+ QHBox *qb_pos=new QHBox(this,"array_pos_box");
+
+ posNum=new QRadioButton(tr("Add to position"),qb_pos);
+ arrayPos=new QLineEdit("0",qb_pos);
+ QIntValidator *vv=new QIntValidator(this);
+ vv->setBottom(0);
+ arrayPos->setValidator(vv);
+ posEnd=new QRadioButton(tr("Append to end"),qb_pos);
+ l->addWidget(qb_pos);
+ posNum->setChecked(true);
+ posNumSet(true);
+ connect(posNum,SIGNAL(toggled(bool)),this,SLOT(posNumSet(bool)));
+ connect(posEnd,SIGNAL(toggled(bool)),this,SLOT(posEndSet(bool)));
  } else {
   //Should never happen
   assert(0);
@@ -140,6 +155,18 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  l->addWidget(items);
  l->addWidget(qb);
  l->addWidget(msg);
+}
+
+void AddItemDialog::posNumSet(bool on) {
+ if (!on) return;
+ arrayPos->setEnabled(true);
+ posEnd->setChecked(false);
+}
+
+void AddItemDialog::posEndSet(bool on) {
+ if (!on) return;
+ arrayPos->setEnabled(false);
+ posNum->setChecked(false);
 }
 
 /**
@@ -282,9 +309,23 @@ bool AddItemDialog::commit() {
  }
  CArray* arr=dynamic_cast<CArray*>(item.get());
  if (arr) { //Add to array
-  message(tr("Property added to end of array"));
-  arr->addProperty(*(property.get()));
-  return true;
+  if (posNum->isChecked()) {
+   int array_pos=0;
+   try {
+    //Add to specific index
+    array_pos=arrayPos->text().toInt();
+    message(tr("Property added to position %1 in array").arg(array_pos));
+    arr->addProperty(array_pos,*(property.get()));
+    return true;
+   } catch (...) {
+    error(tr("Array index %1 out of range").arg(array_pos));
+    return false;
+   }
+  } else {
+   message(tr("Property added to end of array"));
+   arr->addProperty(*(property.get()));
+   return true;
+  }
  }
  assert(0);//Should never happen 
  return false;

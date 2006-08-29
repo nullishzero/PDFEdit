@@ -721,6 +721,46 @@ void Menu::checkByName(const QString &name,bool check) {
  }
 }
 
+void Menu::setTextByName(const QString &name,const QString &newText) {
+ for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
+  if (it.key().first==name) {
+   ToolButton* el=dynamic_cast<ToolButton*>(it.data());
+   if (el) {
+    el->setTextLabel(newText);
+   }
+  }
+ }
+ for (MenuItems::ConstIterator it=mapMenu.begin();it!=mapMenu.end();++it) {
+  if (it.key().first==name) {
+   MenuItemsValue el=it.data();
+   QMenuData* md=el.first;
+   int id=el.second;
+   md->changeItem(id,newText);
+  }
+ }
+}
+
+QString Menu::getTextByName(const QString &name) {
+ //TODO: zjistovat nazvy odjinud
+ for (MenuItems::ConstIterator it=mapMenu.begin();it!=mapMenu.end();++it) {
+  if (it.key().first==name) {
+   MenuItemsValue el=it.data();
+   QMenuData* md=el.first;
+   int id=el.second;
+   return md->text(id);
+  }
+ }
+ for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
+  if (it.key().first==name) {
+   ToolButton* el=dynamic_cast<ToolButton*>(it.data());
+   if (el) {
+    return el->textLabel();
+   }
+  }
+ }
+ return QString::null;
+}
+
 /**
  Show or hide item in toolbar, given its name.<br>
  Items in menu can't be show or hidden this way

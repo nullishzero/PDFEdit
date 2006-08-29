@@ -66,7 +66,7 @@ public:
     QLabel* textLabel2_2;
     QComboBox* highLight;
 
-    void setRectangle(int xl, int yl, int width, int heigth);
+    void setRectangle(double xl, double yl, double width, double height);
 
 public slots:
     virtual void fillStates( const QString & current );

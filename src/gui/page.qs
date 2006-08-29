@@ -229,7 +229,7 @@ function mergeWithPages(pages, positions)
                 // to be sure
                 progressBar.show();
                 progressBar.setProgress(j+1, pages.legth);
-
+		processEvents();
                 // moves to next position with respect to above insertion
                 pos+=2;
         }

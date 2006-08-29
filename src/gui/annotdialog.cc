@@ -358,10 +358,10 @@ void AnnotDialog::createAnnot()
 }
 
 
-void AnnotDialog::setRectangle(int xl, int yl, int width, int heigth)
+void AnnotDialog::setRectangle(double xl, double yl, double width, double height)
 {
         this->rect.xleft=xl;
         this->rect.yleft=yl;
         this->rect.xright=xl+width;
-        this->rect.yright=yl+heigth;
+        this->rect.yright=yl+height;
 }

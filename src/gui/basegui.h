@@ -40,8 +40,20 @@ public:
  void addNumberTool(NumberTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
+ //TODO:m diopsat k temhle dvema dokumentaci
+ void processEvents();
+ //TODO:m diopsat k temhle dvema dokumentaci
+ void setItemText(const QString &name,const QString &itemText);
+ //TODO:m diopsat k temhle dvema dokumentaci
+ QString getItemText(const QString &name);
  /*- Invokes "About" dialog, showing information about this program and its authors */
  void about();
+ /*-
+  Creates dialog for annotations creation.
+  Returns after annotation have been inserted into page, or dialog have been cancelled
+  */
+ void addAnnotation(QSPage * page,double x1,double y1,double w,double h);
+ void addAnnotation(QObject * page,double x1,double y1,double w,double h);
  /*-
   Invokes dialog for adding additional objects to specified container (which must be <link linkend="type_Dict">Dictionary</link> or <link linkend="type_Array">Array</link>).
   After invoking dialog, this function returns immediately and the dialog is left for the user to use.
@@ -330,12 +342,6 @@ public slots: //This will be all exported to scripting
   */
  QProgressBar * progressBar();
 
- /*-
-  Creates and returns dialog for annotations creation. Dialog should be executed
-  be exec method. If it returns with QDialog::Accepted value, annotation has 
-  been created and inserted to the page. 
-  */
- AnnotDialog * addAnnotation(QSPage * page);
  
 private slots:
  void toolChangeValue(const QString &toolName);
@@ -356,11 +362,6 @@ protected:
  virtual void preRun(const QString &script,bool callback=false);
  virtual void postRun();
 private:
- /** Dialog for annotation creation.
-  * Instance is created on demand in addAnnotation method.
-  */
- AnnotDialog * annotDialog;
- 
  /** Console writer class writing to command window */
  ConsoleWriterGui* consoleWriter;
  /** Editor window in which this class exist */

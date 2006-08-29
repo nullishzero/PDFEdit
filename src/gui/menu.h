@@ -82,6 +82,8 @@ public:
  void checkByName(const QString &name,bool check);
  void showByName(const QString &name,bool show);
  void createItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel=QString::null,const QString &icon=QString::null,const QStringList &classes=QStringList()) throw (InvalidMenuException);
+ void setTextByName(const QString &name,const QString &newText);
+ QString getTextByName(const QString &name);
 private:
  ToolButton* createToolBarItem(ToolBar *tb,const QString &name,const QString &text,const QString &action, const QString &accel,const QString &icon, const QStringList &classes=QStringList());
  void addToMap(const QString &name,QWidget* item);

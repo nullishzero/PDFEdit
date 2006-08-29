@@ -145,7 +145,7 @@ bool Base::runFile(const QString &scriptName) {
  @return new PDF operator
 */
 QSPdfOperator* Base::createOperator(const QString &text,QSIPropertyArray* parameters) {
- std::string opTxt=text;
+ std::string opTxt=util::convertFromUnicode(text);
  PdfOperator::Operands param;
  parameters->copyTo(param);
  boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(opTxt,param));
@@ -169,7 +169,7 @@ QSPdfOperator* Base::createOperator(const QString &text,QObject* parameters) {
  @return new PDF operator
 */
 QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QString &endText) {
- boost::shared_ptr<UnknownCompositePdfOperator> op(new UnknownCompositePdfOperator(beginText,endText));
+ boost::shared_ptr<UnknownCompositePdfOperator> op(new UnknownCompositePdfOperator(util::convertFromUnicode(beginText).c_str(),util::convertFromUnicode(endText).c_str()));
  return new QSPdfOperator(op,this); 
 }
 
@@ -200,7 +200,7 @@ QSAnnotation* Base::createAnnotation(QVariant rect,const QString &type) {
  }
  Rectangle rc(tm[0],tm[1],tm[2],tm[3]);
  boost::shared_ptr<CPage> nullPage;
- boost::shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rc,type);
+ boost::shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rc,util::convertFromUnicode(type));
  return new QSAnnotation(annot,nullPage,this);
 }
 
@@ -268,7 +268,8 @@ QSIProperty* Base::createRef(int valueNum,int valueGen) {
  @return created IProperty
 */
 QSIProperty* Base::createString(const QString &value) {
- return new QSIProperty(boost::shared_ptr<IProperty>(CStringFactory::getInstance(value)),this);
+
+ return new QSIProperty(boost::shared_ptr<IProperty>(CStringFactory::getInstance(util::convertFromUnicode(value))),this);
 }
 
 /**
@@ -277,7 +278,7 @@ QSIProperty* Base::createString(const QString &value) {
  @return created IProperty
 */
 QSIProperty* Base::createName(const QString &value) {
- return new QSIProperty(boost::shared_ptr<IProperty>(CNameFactory::getInstance(value)),this);
+ return new QSIProperty(boost::shared_ptr<IProperty>(CNameFactory::getInstance(util::convertFromUnicode(value))),this);
 }
 
 

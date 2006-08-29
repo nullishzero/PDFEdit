@@ -27,8 +27,8 @@ class TextLine: public QMainWindow {
 	public slots:
 		void setText( const QString & );
 	signals:
-		void lostFocus ( QString text );
-		void returnPressed ( QString text );
+		void lostFocus ( const QString &text );
+		void returnPressed ( const QString &text );
 		void escape ();
 	protected:
 		virtual void keyReleaseEvent ( QKeyEvent * e );

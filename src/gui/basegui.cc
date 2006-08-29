@@ -11,6 +11,7 @@
 #include "dialog.h"
 #include "edittool.h"
 #include "helpwindow.h"
+#include "main.h"
 #include "menu.h"
 #include "mergeform.h"
 #include "multitreewindow.h"
@@ -33,6 +34,7 @@
 #include "util.h"
 #include "version.h"
 #include <string.h>
+#include <qapplication.h>
 #include <qdir.h>
 #include <qfile.h>
 #include <qmessagebox.h>
@@ -48,7 +50,6 @@ using namespace util;
  @param parent Parent editor window containing this class
 */
 BaseGUI::BaseGUI(PdfEditWindow *parent) : Base() {
- annotDialog=NULL;
  w=parent;
  import->addQSObj(w->pagespc,"PageSpace");
  import->addQSObj(w->cmdLine,"CommandWindow");
@@ -60,16 +61,27 @@ BaseGUI::BaseGUI(PdfEditWindow *parent) : Base() {
 
 /** destructor */
 BaseGUI::~BaseGUI() {
- if(annotDialog)
-         delete annotDialog;
  delete consoleWriter;
 }
 
-AnnotDialog * BaseGUI::addAnnotation(QSPage * page)
-{
-        if(!annotDialog)
-                annotDialog=new AnnotDialog(*page);
-        return annotDialog;
+
+//TODO: diopsat dokumentaci, zaradit
+void BaseGUI::processEvents() {
+ qApp->processEvents();
+}
+
+void BaseGUI::addAnnotation(QObject * page,double x1,double y1,double w,double h) {
+ addAnnotation(dynamic_cast<QSPage*>(page),x1,y1,w,h);
+}
+
+void BaseGUI::addAnnotation(QSPage * page,double x1,double y1,double w,double h) {
+ if (!page) {
+  //TODO: typeError
+  return;
+ }
+ AnnotDialog *annotDialog=new AnnotDialog(*page);
+ annotDialog->setRectangle(x1,y1,w,h);
+ annotDialog->exec();
 }
 
 /**
@@ -268,10 +280,6 @@ void BaseGUI::checkItem(const QString &name,bool check) {
  w->menuSystem->checkByName(name,check);
 }
 
-/** \copydoc Menu::showByName */
-void BaseGUI::showItem(const QString &name,bool show) {
- w->menuSystem->showByName(name,show);
-}
 
 /** \copydoc PdfEditWindow::exitApp */
 void BaseGUI::closeAll() {
@@ -376,6 +384,11 @@ double BaseGUI::getNumber(const QString &name) {
  return pick->getNum();
 }
 
+/** \copydoc Menu::getTextByName */
+QString BaseGUI::getItemText(const QString &name) {
+ return w->menuSystem->getTextByName(name);
+}
+
 /**
  Invokes program help. Optional parameter is topic - if invalid or not defined, help title page will be invoked
  @param topic Starting help topic
@@ -392,9 +405,9 @@ void BaseGUI::help(const QString &topic/*=QString::null*/) {
  @return True if widget is visible, false if not
 */
 bool BaseGUI::isVisible(const QString &widgetName) {
- QWidget *w=getWidgetByName(widgetName);
- if (!w) return false;
- return w->isVisible();
+ QWidget *ww=getWidgetByName(widgetName);
+ if (!ww) return false;
+ return ww->isVisibleTo(w);
 }
 
 /**
@@ -711,6 +724,17 @@ void BaseGUI::setVisible(const QString &widgetName, bool visible) {
  QWidget *w=getWidgetByName(widgetName);
  if (!w) return;
  if (visible) w->show(); else w-> hide();
+}
+
+/** \copydoc Menu::setTextByName */
+void BaseGUI::setItemText(const QString &name,const QString &itemText) {
+ w->menuSystem->setTextByName(name,itemText);
+}
+
+
+/** \copydoc Menu::showByName */
+void BaseGUI::showItem(const QString &name,bool show) {
+ w->menuSystem->showByName(name,show);
 }
 
 /**

@@ -4,3 +4,4 @@ pagespace.cc
 commandwindow.cc
 rect2Darray.cc
 pageviewS.cc
+annotdialog.cc

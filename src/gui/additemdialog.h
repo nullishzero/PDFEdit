@@ -39,6 +39,8 @@ public:
  static AddItemDialog* create(QWidget *parent,boost::shared_ptr<CDict> cont);
  static AddItemDialog* create(QWidget *parent,boost::shared_ptr<CArray> cont);
 protected slots:
+ void posNumSet(bool on);
+ void posEndSet(bool on);
  void buttonSelected(int id);
  bool commit();
  void commitClose();
@@ -75,6 +77,9 @@ private:
  QString settingName;
  /** Pdf document (for validating reference) */
  CPdf* pdf;
+ /** Radiobuttons for appending at end or arbitrary position */
+ QRadioButton *posNum,*posEnd;
+ QLineEdit *arrayPos;
 };
 
 } // namespace gui
