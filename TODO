@@ -9,16 +9,18 @@ TODO list:
 
 GUI
 Miro
- [ ] Pri closeFile se nezlikviduje aktualni stranka (coz zpusobi pad) - Miro
- [ ] Pridavani textu "inline" rovnou na strance - Miro
- [ ] Mod: preskrtavani, zvyraznovani pod textem (barevny ctverec pod textem) - Miro
+ [~] Pridavani textu "inline" rovnou na strance - Miro
  [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text - Miro
+ [~] spravne nastaveni cm operatoru pri vkladani novych objektu - skript funkce
+ [ ] spravne nastaveni velikosti fontu pri zmene velikosti fontu u nejakeho operatoru
  [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
- [ ] Zmena jednotiek (cm, palce, ...) + oprava skriptov
- [ ] spravne nastaveni cm operatoru pri vkladani novych objektu - skript funkce
+ [ ] opravit vyber textovych operatov
   ?  Text search - v celem dokumentu + dialog upravit + historie hledani (v ramci session) - Miro - ?
   ?  Kresleni kruznice a jinych primitiv?
   ?  Skakat na cil anotaci (podivat se na Target v XPDF) - Miro
+ [x] Mod: preskrtavani, zvyraznovani pod textem (barevny ctverec pod textem) - Miro
+ [x] Zmena jednotiek (cm, palce, ...) + oprava skriptov
+ [x] Pri closeFile se nezlikviduje aktualni stranka (coz zpusobi pad) - Miro
 MP
  [x] Updatovat pisma vzdy pri prepnuti stranky (ty na strance + systemove), update bez ztraty selection -MP P
  [ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
