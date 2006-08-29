@@ -4,6 +4,10 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.10  2006/08/29 17:21:25  petrm1am
+ *
+ * const -> neconst in annota<tion initializers
+ *
  * Revision 1.9  2006/08/29 16:28:00  hockm0bm
  * LinkAnnotInitializer imlpemented
  *
@@ -205,7 +209,7 @@ string TextAnnotInitializer::STATEMODEL="Marked";
 string TextAnnotInitializer::CONTENTS="";
 int TextAnnotInitializer::FLAGS=0;
 
-bool TextAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const
+bool TextAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)
 {
 	if(annotType!="Text")
 		return false;
@@ -252,7 +256,7 @@ string LinkAnnotInitializer::CONTENTS="link";
 string LinkAnnotInitializer::DEST="";
 string LinkAnnotInitializer::H="N";
 
-bool LinkAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const
+bool LinkAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)
 {
 	if(annotType!="Link")
 		return false;

@@ -4,6 +4,10 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.12  2006/08/29 17:21:25  petrm1am
+ *
+ * const -> neconst in annota<tion initializers
+ *
  * Revision 1.11  2006/08/29 16:28:00  hockm0bm
  * LinkAnnotInitializer imlpemented
  *
@@ -265,7 +269,7 @@ public:
 	 *
 	 * @return true if initialization is successfull, false otherwise.
 	 */
-	virtual bool operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const;
+	virtual bool operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType);
 };
 
 /** Initializator for Link annotation.
@@ -311,7 +315,7 @@ public:
 	 *
 	 * @return true if initialization is successfull, false otherwise.
 	 */
-	virtual bool operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const;
+	virtual bool operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType);
 };
 } // namespace utils
 
