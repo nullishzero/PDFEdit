@@ -3,6 +3,7 @@ Vysvetlivky
 	- x Feature je implementovana + otestovana
 	- s Feature je implemetovana ve skriptingu a kernelu, ale zatim neni otestovana
 	- o Feature je implementovana
+	- ~ Feature je, ale je potreba doladit
 
 TODO list:
 ----------
@@ -12,46 +13,43 @@ Miro
  [~] Pridavani textu "inline" rovnou na strance - Miro
  [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text - Miro
  [~] spravne nastaveni cm operatoru pri vkladani novych objektu - skript funkce
- [ ] spravne nastaveni velikosti fontu pri zmene velikosti fontu u nejakeho operatoru
- [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
- [ ] opravit vyber textovych operatov
+  -> [ ] spravne nastaveni velikosti fontu pri zmene velikosti fontu u nejakeho operatoru
+  -> [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
+ [ ] Bug: opravit vyber textovych operatorov
+ [ ] Tridit jednotky dle velikosti, vracet v nejakem hezcim tvaru s popisem
+ [ ] Bug: je li vyselectena anotace a otevru-li novy dokument, zustane zvyraznena
+ [ ] V anotacnim modu kreslit ramecek kolem anotaci
   ?  Text search - v celem dokumentu + dialog upravit + historie hledani (v ramci session) - Miro - ?
   ?  Kresleni kruznice a jinych primitiv?
   ?  Skakat na cil anotaci (podivat se na Target v XPDF) - Miro
  [x] Mod: preskrtavani, zvyraznovani pod textem (barevny ctverec pod textem) - Miro
+  -> [ ] Chyba nastaveni CM
  [x] Zmena jednotiek (cm, palce, ...) + oprava skriptov
- [x] Pri closeFile se nezlikviduje aktualni stranka (coz zpusobi pad) - Miro
+  -> [ ] Edit page metric jeste zbyl
+ [ ] actualize selection emitovat zbyle operatory
+ [ ] zjistit jak je to s PdfOperator.getBBox v console modu
 MP
- [x] Updatovat pisma vzdy pri prepnuti stranky (ty na strance + systemove), update bez ztraty selection -MP P
+ [ ] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - ???
+ [ ] Vyrobit ikonky pro mody a zkontrolovat hi-color ikonky esi sou vsechny
  [ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
  stredni:
- [ ] Korektne ukazovat v menu/toolbaru co je schovane (statusbar apod.) a co ne (check/uncheck items...).
+ [~] Korektne ukazovat v menu/toolbaru co je schovane (statusbar apod.) a co ne (check/uncheck items...).
  [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
  [ ] Observer na anotace v CPage - MP ?
- [ ] Charset v options (pro properties) -> doladit
- [ ] AddItemDialog -> pridavat v array na pozici/zacatek, nejen na konec - MP
- [x] Delinearize do tools - as a plugin skript
+ ??? Neco na vymazani obsahu konzole
  minor:
  [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty - MP?
- [x] Pri reload page savnout vsechny contentstreamy na aktualni page (v go())
- [x] Hlaska "N properties are complex (array/dict/...) and thus hidden" -> zrusit
- [x] Pri vyberu operatoru ze stranky je hned vsechny vybrat i ve stromu kde se objevi
  [ ] Property editor: observer na "source item" + reloadovani - asi je, zkontrolovat - MP
  [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
- [x] Zobrazovat anotace v treeview jako selection - via signal ktery uz je
- [x] Buttony a dialogy pre skripty na manipalciu pozicie stranky (movePage, insertPage, removePage) - button -MP !!
-     vyseparovat z page toolbaru navigaci po strankach a tam to pridat
- [ ] +korekni reloadovani stromu po tomhle (ma to jeste trochu mouchy)
+ [ ] korekni reloadovani stromu po presouvani stranek (ma to jeste trochu mouchy, asi chybi nekde observer)
  [ ] Observer na contentstream -> reloadovani operatoru
- [x] Nastavovani jednotek v settings -> (PageSpace.setDefaultUnits( ), PageSpace.getAllUnits   - vraci to QStringList)
+Nedulezite:
+ [ ] Proc nefunguje processevents() a progressbar?
+ [ ] Progress observer + progressbar pri delinearize -> zaregistrovat ho tam pokud jsem v GUI modu
 Michal
- [x] Progress observer + progressbar pri save a delinearize -> do statusbaru - doladit, pada - Michal
- [x] Progress bar v skriptoch (mergeWithPages a tam, kde sa to bude hodit)
- [x] zrusit cGraphic v kernelu - Michal
- [ ] Pridavani anotaci - dialog - Michal
- [x] Upravit skripty na multiselect (u kterych ma smysl)
- [ ] Dopsat vic commandline skriptu nez jen delinearizator (aspon neco jednouchyho - concat documents, sude/liche ...)
- [x] Upravit skripty protoze "Nechci pri pridani kazdy cary 4 dialogy"
+ [ ] Dopsat vic commandline skriptu nez jen delinearizator
+     (aspon neco jednouchyho - concat documents, sude/liche ...)
+     -> udelat z toho grandiozni example do uziv. prirucky (to dame dohromady nejak spolecne)
 ?
  [ ] Osetrit vsude vsechny vyjimky z kernelu a hodit pak hlasku "Tohle pdf je vadne...." -> pripominka pro kontrolu
   ?  skript na skocenie na target po kliknuti na anotaciu
@@ -84,6 +82,9 @@ Michal
      - mam o uroven vic ve stromu
  ??? Save/load na streamy (ulozit na disk, nahrat z disku) - asi future wishlist
 
+Final
+ [ ] zkompilovat -DNDEBUG (bez debug a assertu)
+
 Skripting
   ?  pridat getAllAnnotations
  ??? Wrapper kolem Const cdict -> pro cteni veci z traileru. Eventuelne pak dat i do stromu
@@ -107,6 +108,8 @@ Dokumentace
  [ ] Nejakou handbook "jak tvorit skripty, kam je cpat", atd ...
  [ ] Zdokumentovat klavesove zkratky (spec. klavesy typu PageDn apod ...)
  [ ] Doxygen: nastavit EXTRACT_ALL=YES (prijdeme o vetsinu warningu, ale mame pak zarucene kompletni dokumentaci - az tesne pred odevzdanim)
+ [ ] Zminka o tom, ze bbox je v nejakych divnych jednotkach (pixelech, viz dokumentace), MOZNA funkce nas konverzi
+
 
 Configure
  [ ] Otestovat existenci a verzi vsech knihoven, obzvlaste QSA, kde s 1.1.1 to sice zkompilovat jde, ale pak to pada
