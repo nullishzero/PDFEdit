@@ -94,6 +94,9 @@ protected:
     QHBoxLayout* layout8_2;
     QHBoxLayout* layout9;
 
+    void createTextAnnot();
+    void createLinkAnnot();
+
 protected slots:
     virtual void languageChange();
 

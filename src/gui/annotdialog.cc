@@ -25,6 +25,8 @@
 #include <qimage.h>
 #include <qpixmap.h>
 
+#include "kernel/cpage.h"
+#include "kernel/cannotation.h"
 #include "annotdialog.h"
 
 using namespace gui;
@@ -264,7 +266,74 @@ void AnnotDialog::fillStates( const QString & current )
 }
 
 
+void AnnotDialog::createTextAnnot()
+{
+using namespace pdfobjects::utils;
+using namespace std;
+using namespace boost;
 
+        // backs up default values
+        bool dOpen=TextAnnotInitializer::OPEN;
+        string dContents=TextAnnotInitializer::CONTENTS;
+        string dName=TextAnnotInitializer::NAME;
+        string dState=TextAnnotInitializer::STATE;
+        string dStateMode=TextAnnotInitializer::STATEMODEL;
+        int dFlags=TextAnnotInitializer::FLAGS;
+
+        // sets default values according form values
+        TextAnnotInitializer::OPEN=open->isChecked();
+        // FIXME this may be problem with enconding
+        TextAnnotInitializer::CONTENTS=textContent->text().ascii();
+        TextAnnotInitializer::NAME=iconName->currentText().ascii();
+        TextAnnotInitializer::STATE=state->currentText().ascii();
+        TextAnnotInitializer::STATEMODEL=stateModel->currentText().ascii();
+        // TODO support flags field
+        //TextAnnotInitializer::FLAGS=dFlags;
+
+        // creates CAnnotation instance with factory, this should
+        // use TextAnnotInitializer with values which we have
+        // set above
+        shared_ptr<CAnnotation> annotInstance=CAnnotation::createAnnotation(rect, "Text");
+        page.get()->addAnnotation(annotInstance);
+
+        
+        // sets back defaul values
+        TextAnnotInitializer::OPEN=dOpen;
+        TextAnnotInitializer::CONTENTS=dContents;
+        TextAnnotInitializer::NAME=dName;
+        TextAnnotInitializer::STATE=dState;
+        TextAnnotInitializer::STATEMODEL=dStateMode;
+        TextAnnotInitializer::FLAGS=dFlags;
+}
+
+void AnnotDialog::createLinkAnnot()
+{
+using namespace pdfobjects::utils;
+using namespace std;
+using namespace boost;
+
+        // backs up default values
+        string dContents=LinkAnnotInitializer::CONTENTS;
+        string dDest=LinkAnnotInitializer::DEST;
+        string dH=LinkAnnotInitializer::H;
+
+        // sets default values according form values
+        // FIXME this may be problem with enconding
+        LinkAnnotInitializer::CONTENTS=linkContent->text().ascii();
+        LinkAnnotInitializer::DEST=destination->text().ascii();
+        LinkAnnotInitializer::H=highLight->currentText().ascii();
+
+        // creates CAnnotation instance with factory, this should
+        // use LinkAnnotInitializer with values which we have
+        // set above
+        shared_ptr<CAnnotation> annotInstance=CAnnotation::createAnnotation(rect, "Link");
+        page.get()->addAnnotation(annotInstance);
+        
+        // sets back defaul values
+        LinkAnnotInitializer::CONTENTS=dContents;
+        LinkAnnotInitializer::DEST=dDest;
+        LinkAnnotInitializer::H=dH;
+}
 
 void AnnotDialog::createAnnot()
 {
@@ -272,7 +341,20 @@ void AnnotDialog::createAnnot()
 // its setting
 // finally creates QSAnnotation and registers it to the page
         int current=tabWidget3->currentPageIndex();
-        printf("createAnnot current=%d\n", current);
+        switch(current)
+        {
+                // Text annotation
+                case 0:
+                        createTextAnnot();
+                        break;
+                // Link annotation
+                case 1:
+                        createLinkAnnot();
+                        break;
+                // Annotation is not supported at this moment
+                default:
+                        break;
+        }
 }
 
 
