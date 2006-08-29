@@ -48,6 +48,7 @@ using namespace util;
  @param parent Parent editor window containing this class
 */
 BaseGUI::BaseGUI(PdfEditWindow *parent) : Base() {
+ annotDialog=NULL;
  w=parent;
  import->addQSObj(w->pagespc,"PageSpace");
  import->addQSObj(w->cmdLine,"CommandWindow");
@@ -59,7 +60,16 @@ BaseGUI::BaseGUI(PdfEditWindow *parent) : Base() {
 
 /** destructor */
 BaseGUI::~BaseGUI() {
+ if(annotDialog)
+         delete annotDialog;
  delete consoleWriter;
+}
+
+AnnotDialog * BaseGUI::addAnnotation(QSPage * page)
+{
+        if(!annotDialog)
+                annotDialog=new AnnotDialog(*page);
+        return annotDialog;
 }
 
 /**

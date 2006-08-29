@@ -2,6 +2,7 @@
 #define __BASEGUI_H__
 
 #include "base.h"
+#include "annotdialog.h"
 #include <qmap.h>
 #include <qobject.h>
 #include <qstring.h>
@@ -322,14 +323,20 @@ public slots: //This will be all exported to scripting
  QSCObject* nextSelected();
 
  /*-
-  Returns progress bar which can be used to display progress of action of script.
-  User should set total steps before it starts using it and also after each 
-  calling of subscript which also may use same progress bar (and potentialy set
-  different value of total steps - this can be solved by calling setTotalSteps
-  before setProgress method all the time).
+  Returns progress bar which can be used to provide visualization of progress.
+  Uses common progress bar from PdfEditWindow class. User should keep in mind,
+  that also someone alse can use this progress bar in same time and he should
+  set total steps before each setProgress method.
   */
  QProgressBar * progressBar();
 
+ /*-
+  Creates and returns dialog for annotations creation. Dialog should be executed
+  be exec method. If it returns with QDialog::Accepted value, annotation has 
+  been created and inserted to the page. 
+  */
+ AnnotDialog * addAnnotation(QSPage * page);
+ 
 private slots:
  void toolChangeValue(const QString &toolName);
 #ifndef DRAGDROP
@@ -349,6 +356,11 @@ protected:
  virtual void preRun(const QString &script,bool callback=false);
  virtual void postRun();
 private:
+ /** Dialog for annotation creation.
+  * Instance is created on demand in addAnnotation method.
+  */
+ AnnotDialog * annotDialog;
+ 
  /** Console writer class writing to command window */
  ConsoleWriterGui* consoleWriter;
  /** Editor window in which this class exist */
