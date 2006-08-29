@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.9  2006/08/29 16:28:00  hockm0bm
+ * LinkAnnotInitializer imlpemented
+ *
  * Revision 1.8  2006/06/18 12:04:42  hockm0bm
  * obsevers code clean up and consolidation
  *
@@ -231,6 +234,42 @@ bool TextAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std:
 
 	scoped_ptr<IProperty> defaultStateModel(CStringFactory::getInstance(STATEMODEL));
 	checkAndReplace(annotDict, "StateModel", *defaultStateModel);
+
+	return true;
+}
+
+
+IAnnotInitializator::SupportedList LinkAnnotInitializer::getSupportedList()const
+{
+	SupportedList list;
+	list.push_back("Link");
+
+	return list;
+}
+
+// initializes static constant
+string LinkAnnotInitializer::CONTENTS="link";
+string LinkAnnotInitializer::DEST="";
+string LinkAnnotInitializer::H="N";
+
+bool LinkAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const
+{
+	if(annotType!="Link")
+		return false;
+
+	// Initializes common entries for annotation dictionary - Type, P, Rect fields are
+	// already set
+	scoped_ptr<IProperty> defaultSubType(CNameFactory::getInstance("Link"));
+	checkAndReplace(annotDict, "Subtype", *defaultSubType);
+
+	scoped_ptr<IProperty> defaultContents(CStringFactory::getInstance(CONTENTS));
+	checkAndReplace(annotDict, "Contents", *defaultContents);
+
+	scoped_ptr<IProperty> defaultDest(CNameFactory::getInstance(DEST));
+	checkAndReplace(annotDict, "Dest", *defaultDest);
+
+	scoped_ptr<IProperty> defaultH(CNameFactory::getInstance(H));
+	checkAndReplace(annotDict, "H", *defaultH);
 
 	return true;
 }

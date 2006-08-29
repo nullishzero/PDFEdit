@@ -4,6 +4,9 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.11  2006/08/29 16:28:00  hockm0bm
+ * LinkAnnotInitializer imlpemented
+ *
  * Revision 1.10  2006/08/27 21:34:12  hockm0bm
  * typo
  *
@@ -265,6 +268,51 @@ public:
 	virtual bool operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const;
 };
 
+/** Initializator for Link annotation.
+ *
+ * Initializes link annotation. Default values for link specific annotation
+ * dictionary fields are stored in public static class fields and so can be
+ * changed be class user.
+ */
+class LinkAnnotInitializer: public IAnnotInitializator
+{
+public:
+	/** Default value for Contents entry in Annotation dictionary.
+	 * Value is empty string by default.
+	 */
+	static std::string CONTENTS;
+
+	/** Default value for Dest entry in Annotation dictionary.
+	 */
+	static std::string DEST;
+
+	/** Default value for H (highlight mode) entry in Annotation dictionary.
+	 */
+	static std::string H;
+
+	/** Returns supported type.
+	 *
+	 * @return list with one element with Link type.
+	 */
+	IAnnotInitializator::SupportedList getSupportedList()const;
+
+	/** Initializes Link annotation.
+	 * @param annotDict Annotation dictionary to initialize.
+	 * @param annotType Name of the annotation type to initialize (must be Link).
+	 *
+	 * Checks if given annotType is Link and if yes, initializes given
+	 * dictionary as Link annotation. Otherwise immediately returns with false.
+	 * <br>
+	 * Assumes that following entries are initialized: Type, P, Rect, M.
+	 * <br>
+	 * Initialization doesn't do any checking and so annotation dictioanries
+	 * initialized to different type shouldn't be used here. Result may be
+	 * incorrect annotation dictionary in such situation.
+	 *
+	 * @return true if initialization is successfull, false otherwise.
+	 */
+	virtual bool operator()(boost::shared_ptr<CDict> & annotDict, std::string annotType)const;
+};
 } // namespace utils
 
 /** High level object for annotations.
@@ -389,7 +437,7 @@ public:
 	{
 		boost::shared_ptr<utils::IAnnotInitializator> old=annotInit;
 
-		// if given is un NULL, sets new value
+		// if given is non NULL, sets new value
 		if(init.get())
 			annotInit=init;
 
