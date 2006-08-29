@@ -248,7 +248,7 @@ function onSelectMode_drawRecte() {
 
 /** Callback when selection mode is changes to add text to page */
 function onSelectMode_addText() {
- PageSpace.setSelectionMode("new_object","rect","addText(%1,%2,%3,%4)");
+ PageSpace.setSelectionMode("new_object","rect","addText(%1,%2,%3,%4,%5,%6)");
  setModeButton('addtext');
 }
 

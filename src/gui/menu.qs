@@ -19,11 +19,11 @@ function func_saverev() {
 }
 
 /** Show/hide certain window (toggle) */
-function showHide(win) {
+function showHide(win,item) {
  vis=isVisible(win);
  setVisible(win,!vis);
+ toggleVisItem(win,item);
 }
-
 
 /** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
 function func_savecopy() {

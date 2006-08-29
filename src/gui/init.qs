@@ -67,6 +67,15 @@ function isTreeItemSelected() {
  	return true;
 }
 
+/** Update menus to correctly show certain window shown/hidden state */
+function toggleVisItem(item,menuitem) {
+ vis=isVisible(item);
+ print(vis);
+ checkItem(menuitem,vis);
+ t=getItemText(menuitem);
+ print(t)
+}
+
 /* ==== Code to run on start ==== */
 
 //Pre-selected font sizes
@@ -82,3 +91,9 @@ setNumber('linewidth',1);//default value
 print("PDF Editor "+version());
 onSelectMode_AllObjects();
 checkMenus();
+
+//Item visibility toggleboxes
+toggleVisItem('commandline','hideCmd');
+toggleVisItem('propertyeditor','hideProp');
+toggleVisItem('tree','hideTree');
+toggleVisItem('statusbar','hideStatus');

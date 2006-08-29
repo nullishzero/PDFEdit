@@ -606,20 +606,20 @@ function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 		_glob_top = _glob_top + _y1 - _y2;
 
 	var lineEdit = PageSpace.getTextLine( _glob_left, _glob_top );
-	connect( lineEdit, SIGNAL("returnPressed( QString )"), _AddTextSlot );
-	connect( lineEdit, SIGNAL("returnPressed( QString )"), _AddTextSlot );
+	connect( lineEdit, "returnPressed(const QString&)", _AddTextSlot );
+	connect( lineEdit, "lostFocus(const QString&)", _AddTextSlot );
 	// TODO set font to lineEdit.textline
 }
 function _AddTextSlot ( text ) {
-	// TODO fid  = fontid
-	// TODO fs = fontsize
-
-	var page  = page();
-	var cs_count = page.getContentStreamCount();
+	var thepage  = page();
+	fid=thepage.getFontId(getEditText("fontface"));
+	fs=getNumber("fontsize");
+print("-----");
+	var cs_count = thepage.getContentStreamCount();
 	var ctm = [1,0,0,1,0,0];
 	for ( --cs_count ; cs_count > 0 ; --cs_count ) {
-		var strean = page.getContentStream( cs_count );
-		if (! strean.isEmpty() )
+		var stream = thepage.getContentStream( cs_count );
+		if (! stream.isEmpty() )
 			ctm = cmToDetransformation( stream.getLastOperator(), false, ctm );
 	}
 	

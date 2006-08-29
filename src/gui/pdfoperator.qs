@@ -105,7 +105,7 @@ function putendq (op) {
 }
 
 function createOperator_cm( matrix : Array_of_6_doubles ) {
-	if (matrix.lenght != 6) {
+	if (matrix.length != 6) {
 		warn( tr("Operator cm must have 6 parameters of type numbers !") );
 		return ;
 	}
