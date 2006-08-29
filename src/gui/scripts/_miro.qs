@@ -49,23 +49,34 @@ function ctmToBack( oldCTM : Array_of_6_boubles, newCTM : Array_of_6_boubles ) {
 
 function matrixMul( a, b ) {
 	var c = [0,0,0,0,0,0];
-	c[0] = a[0]*b[0]+a[1]*b[2];
-	c[1] = a[0]*b[1]+a[1]*b[3];
-	c[2] = a[2]*b[0]+a[3]*b[2];
-	c[3] = a[2]*b[1]+a[3]*b[3];
-	c[4] = a[4]*b[0]+a[5]*b[2]+b[4];
-	c[5] = a[4]*b[1]+a[5]*b[3]+b[5];
+	if (a.length == 6) {
+		// 3x3 matrix multiply 3x3 matrix
+		c[0] = a[0]*b[0]+a[1]*b[2];
+		c[1] = a[0]*b[1]+a[1]*b[3];
+		c[2] = a[2]*b[0]+a[3]*b[2];
+		c[3] = a[2]*b[1]+a[3]*b[3];
+		c[4] = a[4]*b[0]+a[5]*b[2]+b[4];
+		c[5] = a[4]*b[1]+a[5]*b[3]+b[5];
+	} else if (a.length == 2) {
+		// 1x3 vector multiply 3x3 matrix
+		c = [0,0];
+		c[0] = a[0]*b[0]+a[1]*b[2] + b[4];
+		c[1] = a[0]*b[1]+a[1]*b[3] + b[5];
+	}
 
 	return c;
 }
 
-function cmToDetransformation( operator: PdfOperator, before: bool ) {
+function cmToDetransformation( operator: PdfOperator, before: bool, _ctm : Array_of_6_doubles ) {
 	if (operator.type() != "PdfOperator")
 		return ;
 
 	var it = operator.iterator();
 	var num_of_Q_without_q = 0;
 	var ctm = [1,0,0,1,0,0];
+
+	if (_ctm != undefined)
+		ctm = _ctm;
 
 	if ((undefined == before) || (before == true) || (! it.isBegin()))
 		it.prev();

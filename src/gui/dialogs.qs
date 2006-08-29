@@ -588,103 +588,43 @@ function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 		return;
 	}
 
-	// set default values
-	var setpos = false;
-	
 	if (undefined == _x1 || undefined == _y1 || undefined == _x2 || undefined == _y2 || 
 		undefined == _glob_left || undefined == _glob_top) { 
-		_x1 = 0;
-		_y1 = 0;
-		_x2 = 0;
-		_y2 = 0;
-		setpos = true;
+		return ;
 	}
 	
-	//
-	// Text and position selection if needed
-	// 
-	var dg = createDialog (tr("Add text line"), tr("Add"), tr("Cancel"), tr("Add text line"));
-	 
-	var gb = createGroupBoxAndDisplay (tr("Text"), dg);
-	etxt = createLineEditAndDisplay (tr("Text to add"), "", gb);
-
-	if (setpos) {
-		xy = xydialogs (dg,tr("Text position"));
-	}
-
-	dg.newColumn();
-
-	//
-	// Font selection
-	//
-	gb = createGroupBoxAndDisplay (tr("Set font"),dg);
-	cf = new ComboBox;
-	cf.label = tr("Select from all avaliable fonts");
-	// Put all avaliable fonts here and select the operator font 
-	var fonts = page().getFontIdsAndNames();
-	var fontnames = new Array(fonts.length/2);
-	// Fill fontnames with symbolic font names
-	for(i = 1,j=0; i < fonts.length; ++i) {
-        fontnames[j] = fonts[i];
-		// Skip id
-		++i;++j;
-    }
-	cf.itemList = fontnames;
-	gb.add (cf);
-
-	//
-	// Font size
-	//
-	gb = createGroupBoxAndDisplay (tr("Font size"),dg);
-	var fs = createNumbereditAndDisplay (tr("Size"), 0, 100, gb);
-	// Why not 10?
-	fs.value = 10;
-
-	//
-	// Open dialog
-	//
-	if (!dg.exec()) return;
-
 	//
 	// Convert x,y to real x,y
 	//
-	if (setpos) {
-		if (!isNumber2(xy[0].text,xy[1].text)) {
-			warn(tr("Invalid position")+". "+tr("Only real numbers allowed")+".");
-			return;
-		}
-		_x = parseFloat(xy[0].text);
-		_y = parseFloat(xy[1].text);
-		x = PageSpace.convertPixmapPosToPdfPos_x(_x,_y);
-		y = PageSpace.convertPixmapPosToPdfPos_y(_x,_y);
+	global_addText_x = Math.min (PageSpace.convertPixmapPosToPdfPos_x(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_x(_x2,_y2));
+	global_addText_y = Math.min (PageSpace.convertPixmapPosToPdfPos_y(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_y(_x2,_y2));
 
-	}else {
-		x = Math.min (PageSpace.convertPixmapPosToPdfPos_x(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_x(_x2,_y2));
-		y = Math.min (PageSpace.convertPixmapPosToPdfPos_y(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_y(_x2,_y2));
-		//print (_x1+" "+_y1);
-		//x = PageSpace.convertPixmapPosToPdfPos_x(_x1,_y1);
-		//y = PageSpace.convertPixmapPosToPdfPos_y(_x1,_y1);
+	if (_x1 < _x2)
+		_glob_left = _glob_left - _x2 + _x1;
+
+	if (_y1 > _y2)
+		_glob_top = _glob_top + _y1 - _y2;
+
+	var lineEdit = PageSpace.getTextLine( _glob_left, _glob_top );
+	connect( lineEdit, SIGNAL("returnPressed( QString )"), _AddTextSlot );
+	connect( lineEdit, SIGNAL("returnPressed( QString )"), _AddTextSlot );
+	// TODO set font to lineEdit.textline
+}
+function _AddTextSlot ( text ) {
+	// TODO fid  = fontid
+	// TODO fs = fontsize
+
+	var page  = page();
+	var cs_count = page.getContentStreamCount();
+	var ctm = [1,0,0,1,0,0];
+	for ( --cs_count ; cs_count > 0 ; --cs_count ) {
+		var strean = page.getContentStream( cs_count );
+		if (! strean.isEmpty() )
+			ctm = cmToDetransformation( stream.getLastOperator(), false, ctm );
 	}
+	
+	operatorAddTextLine ( text, global_addText_x, global_addText_y, fid, fs, createOperator_cm( ctm ) );
 
-	//
-	// Get font id
-	//
-	var newfontname = cf.currentItem;// get Idx according to a name
-	newfontid = "";
-	for(i = 1; i < fonts.length; ++i) {
-		// Save symbolic name of operator font
-		if (fonts[i] == newfontname) {
-			fid = fonts[i-1];
-			break;
-		}
-		// Skip id
-		++i;
-    }
-	
-	// Draw the text
-	print (x+" "+y);
-	operatorAddTextLine (etxt.text,x,y,fid,fs.value);
-	
 	// Update
 	go();
 }

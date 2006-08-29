@@ -49,6 +49,21 @@ public slots:
  void replace(QObject* oldOp,QObject* newOp,bool indicateChange=true);
  /*- Write any unwritten changes to operators to underlying stream. */
  void saveChange();
+
+ /*-
+  Return first operator in this contentstream.
+  If not contains any operator, return NULL.
+ */
+ QSPdfOperator * getFirstOperator();
+ /*-
+  Return last operator in this contentstream.
+  If not contains any operator, return NULL.
+ */
+ QSPdfOperator * getLastOperator();
+ /*-
+  Check if contentstream contains some operator.
+ */
+ bool isEmpty();
 private:
  bool opValid(QSPdfOperator *op,bool checkThis=false);
 private:

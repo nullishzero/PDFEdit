@@ -154,12 +154,14 @@ void PageViewMode::resizedSelectedObjects ( int dleft, int dtop, int dright, int
 
 void PageViewMode::mousePressLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
-void PageViewMode::mouseReleaseLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
+void PageViewMode::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * /* p */, QWidget * /* w */ )
 		{
 			emit executeCommand ( scriptFncAtMouseRelease	.arg( pressPosition.x() )
 															.arg( pressPosition.y() )
 															.arg( releasePosition.x() )
-															.arg( releasePosition.y() ) );
+															.arg( releasePosition.y() )
+															.arg( e->globalPos().x() )
+															.arg( e->globalPos().y() ) );
 		};
 void PageViewMode::mouseMoveWithPressedLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
@@ -1380,7 +1382,9 @@ void PageViewMode_Annotations::movedSelectedObjects ( QPoint relativeMove )
 			if (relativeMove == QPoint(0,0)) {
 				emit executeCommand ( scriptFncAtMouseRelease	.arg( relativeMove.x() )
 																.arg( relativeMove.y() )
+																.arg( relativeMove.x() )
 																.arg( relativeMove.y() )
+																.arg( relativeMove.x() )
 																.arg( relativeMove.y() ) );
 			} else
 				this->PageViewMode::movedSelectedObjects( relativeMove );

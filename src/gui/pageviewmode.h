@@ -471,12 +471,14 @@ class PageViewMode: public QObject {
 
 			/** Name of script function, which will call at mouse release.
 			 * Must be in this format:
-			 * 		"fncName ( %1, %2, %3, %4 )"
+			 * 		"fncName ( %1, %2, %3, %4, %5, %6 )"
 			 * where
 			 * 		%1	will be replaced with x1 (X position at mouse press)
 			 * 		%2	will be replaced with y1 (Y position at mouse press)
 			 * 		%3	will be replaced with x2 (X position at mouse release)
 			 * 		%4	will be replaced with y2 (Y position at mouse release)
+			 * 		%3	will be replaced with global position of x2 (global X position at mouse release)
+			 * 		%4	will be replaced with global position of y2 (global Y position at mouse release)
 			 *
 			 * @see QString::arg
 			 * 

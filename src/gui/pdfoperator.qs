@@ -104,6 +104,23 @@ function putendq (op) {
 	op.pushBack( createOperator("Q",operands), op.getLastOperator());
 }
 
+function createOperator_cm( matrix : Array_of_6_doubles ) {
+	if (matrix.lenght != 6) {
+		warn( tr("Operator cm must have 6 parameters of type numbers !") );
+		return ;
+	}
+
+	var operands = createIPropertyArray ();
+	operands.append (createReal(matrix[0]));
+	operands.append (createReal(matrix[1]));
+	operands.append (createReal(matrix[2]));
+	operands.append (createReal(matrix[3]));
+	operands.append (createReal(matrix[4]));
+	operands.append (createReal(matrix[5]));
+
+	return createOperator("cm",operands);
+}
+
 /** == debug utilities == */
 function _dbgprintOpersB() {
 	
@@ -553,7 +570,7 @@ function operatorDrawRect ( rectangles ,col ,widthLine, next_operator ) {
 /**
  * Add text line.
  */
-function operatorAddTextLine (text,x,y,fname,fsize) {
+function operatorAddTextLine (text,x,y,fname,fsize,putBefore) {
 	//
 	// q
 	// BT
@@ -566,6 +583,8 @@ function operatorAddTextLine (text,x,y,fname,fsize) {
 	var q = createCompositeOperator("q","Q");
 	var BT = createCompositeOperator("BT","ET");
 	
+	if ((undefined != putBefore) && (putBefore.type() == "PdfOperator"))
+		q.pushBack( putBefore, q );
 	q.pushBack (BT,q);
 	
 	putfont(BT,fname,fsize);

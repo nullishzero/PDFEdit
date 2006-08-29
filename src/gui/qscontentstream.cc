@@ -156,4 +156,38 @@ void QSContentStream::saveChange() {
  obj->saveChange();
 }
 
+/**
+ Return first operator in this contentstream.
+ @return If not contains any operator, return NULL.
+*/
+QSPdfOperator * QSContentStream::getFirstOperator() {
+	std::vector< boost::shared_ptr< PdfOperator > >	ops;
+	obj->getPdfOperators( ops );
+	if (ops.size() > 0)
+		return new QSPdfOperator( ops.front(), obj, base );
+	// else
+	return NULL;
+}
+/**
+ Return last operator in this contentstream.
+ @return If not contains any operator, return NULL.
+*/
+QSPdfOperator * QSContentStream::getLastOperator() {
+	std::vector< boost::shared_ptr< PdfOperator > >	ops;
+	obj->getPdfOperators( ops );
+	if (ops.size() > 0)
+		return new QSPdfOperator( ops.back(), obj, base );
+	// else
+	return NULL;
+}
+/**
+ Check if contentstream contains some operator.
+ @return Return false if conntentstream contains some operator. Otherwise return true.
+*/
+bool QSContentStream::isEmpty() {
+	std::vector< boost::shared_ptr< PdfOperator > >	ops;
+	obj->getPdfOperators( ops );
+	return (ops.size() == 0);
+}
+
 } // namespace gui
