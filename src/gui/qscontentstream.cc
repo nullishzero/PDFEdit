@@ -176,7 +176,7 @@ QSPdfOperator * QSContentStream::getLastOperator() {
 	std::vector< boost::shared_ptr< PdfOperator > >	ops;
 	obj->getPdfOperators( ops );
 	if (ops.size() > 0)
-		return new QSPdfOperator( ops.back(), obj, base );
+		return new QSPdfOperator( pdfobjects::getLastOperator(ops.back()), obj, base );
 	// else
 	return NULL;
 }

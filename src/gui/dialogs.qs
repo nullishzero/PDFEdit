@@ -41,15 +41,22 @@ function editPageMediaBox() {
  var dialog = createDialog (tr("Change page rectangle"), tr("Change"), tr("Cancel"), tr("Page metrics"));
  
  var gb = createGroupBoxAndDisplay (tr("Page metrics"), dialog);
- var exl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+": ", xleft, gb);
- var eyl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("y position")+": ", yleft, gb);
- var exr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+": ", xright, gb);
- var eyr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+": ", yright, gb);
+ var exl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+ 									PageSpace.convertUnits(xleft,"pt"), gb);
+ var eyl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+									PageSpace.convertUnits(yleft,"pt"), gb);
+ var exr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+									PageSpace.convertUnits(xright,"pt"), gb);
+ var eyr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+									PageSpace.convertUnits(yright,"pt"), gb);
 
  if (!dialog.exec()) return;
 
  // Save media box
- page().setMediabox (exl.text, eyl.text, exr.text, eyr.text);
+ page().setMediabox ( PageSpace.convertUnits( exl.text, undefined, "pt" ),
+						PageSpace.convertUnits( eyl.text, undefined, "pt" ),
+						PageSpace.convertUnits( exr.text, undefined, "pt" ),
+						PageSpace.convertUnits( eyr.text, undefined, "pt" ));
  print (tr("MediaBox changed."));
  go ();
 }
@@ -187,53 +194,55 @@ function setDashPattern() {
 /**
  * Display and allow to change font atributes of a text operator.
  */
-function editFontProps(page) {
+function editFontProps(thepage) {
 
-	if (!isPageAvaliable() || !(isTreeItemSelected())) {
+	if ( !isPageAvaliable() || !isTreeItemSelected()) {
 		warn(tr("No page or operator selected!"));
 		return;
 	}
+	if (undefined == thepage)
+		thepage = page();
 
-        firstTime=true;
+	firstTime=true;
 
-        // gets current font from font tool, if this font is not
-        // page part, adds it to the page
-        currentFont=getEditText("fontface");
-        print(currentFont);
-        currentFontId=page.getFontId(currentFont);
-        if(!currentFontId)
-        {
-                // this font is unknown for page, we have to add it
-                page.addSystemType1Font(currentFont);
-                currentFontId=page.getFontId(currentFont);
-                print(currentFont+" "+tr("added to")+" "+tr("page"))
-        }
+	// gets current font from font tool, if this font is not
+	// page part, adds it to the page
+	currentFont=getEditText("fontface");
+	print(currentFont);
+	currentFontId=thepage.getFontId(currentFont);
+	if(!currentFontId)
+	{
+		// this font is unknown for page, we have to add it
+		thepage.addSystemType1Font(currentFont);
+		currentFontId=thepage.getFontId(currentFont);
+		print(currentFont+" "+tr("added to")+" "+tr("page"))
+	}
 
-        // gets current font size from font tool
-        currentFontSize=getNumber("fontsize");
+	// gets current font size from font tool
+	currentFontSize=getNumber("fontsize");
 
 	// Get selected item
- 	op=firstSelected("select");
-        while(op)
-        {
-                if (!isTextOp(op)) 
-                {
-                        if(firstTime)
-                        {
-                                warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-                                firstTime=false;
-                        }
-                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
-                        op=nextSelected();
-                        continue;
-                }
+	op=firstSelected("select");
+	while(op)
+	{
+		if (!isTextOp(op)) 
+		{
+			if(firstTime)
+			{
+				warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+				firstTime=false;
+			}
+			print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+			op=nextSelected();
+			continue;
+		}
 
-                // Set the font
-                operatorSetFont(op,currentFontId, currentFontSize);
+		// Set the font
+		operatorSetFont(op,currentFontId, currentFontSize);
 
-                op=nextSelected();
-        }
-                
+		op=nextSelected();
+	}
+				
 	print (tr("Font changed."));
 	go();
 }
@@ -608,16 +617,25 @@ function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 	if (_y1 > _y2)
 		_glob_top = _glob_top + _y1 - _y2;
 
-	var lineEdit = PageSpace.getTextLine( _glob_left, _glob_top );
+	var lineEdit = PageSpace.getTextLine( _glob_left, _glob_top, getNumber( "fontsize" ), getEditText( "fontface" ) );
+	lineEdit.resize( Math.max( 50, Math.abs (_x2 - _x1)), lineEdit.height );
+
 	connect( lineEdit, "returnPressed(const QString&)", _AddTextSlot );
 	connect( lineEdit, "lostFocus(const QString&)", _AddTextSlot );
-	// TODO set font to lineEdit.textline
 }
 function _AddTextSlot ( text ) {
+	if ((undefined == text) || (text == ""))
+		return;
+
 	var thepage  = page();
-	fid=thepage.getFontId(getEditText("fontface"));
-	fs=getNumber("fontsize");
-print("-----");
+	var fname = getEditText( "fontface" );
+	var fid=thepage.getFontId( fname );
+	if (fid.isEmpty()) {
+		thepage.addSystemType1Font( fname );
+		fid = thepage.getFontId( fname );
+	}
+	var fs=getNumber( "fontsize" );
+
 	var cs_count = thepage.getContentStreamCount();
 	var ctm = [1,0,0,1,0,0];
 	for ( --cs_count ; cs_count > 0 ; --cs_count ) {

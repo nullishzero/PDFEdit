@@ -57,6 +57,8 @@ void TextLine::keyReleaseEvent ( QKeyEvent * e ) {
 	switch (e->key()) {
 		case Qt::Key_Escape:
 			emit escape();
+			disconnect( SIGNAL( lostFocus( const QString & ) ) );
+			disconnect( SIGNAL( returnPressed( const QString & ) ) );
 			hide();
 	}
 }
@@ -65,10 +67,14 @@ void TextLine::setText( const QString & s ) {
 }
 void TextLine::lostFocus () {
 	emit lostFocus ( edit->text() );
+	disconnect( SIGNAL( lostFocus( const QString & ) ) );
+	disconnect( SIGNAL( returnPressed( const QString & ) ) );
 	hide();
 }
 void TextLine::returnPressed () {
 	emit returnPressed ( edit->text() );
+	disconnect( SIGNAL( lostFocus( const QString & ) ) );
+	disconnect( SIGNAL( returnPressed( const QString & ) ) );
 	hide();
 }
 
@@ -91,26 +97,27 @@ Units::Units( QString _defaultUnit ) : QObject() {
 	units["mi"]		= 8 * units["fur"];		// 1 mile == 8 furlongs
 	units["land"]	= 3 * units["mi"];		// 1 league == 3 miles
 	aliases[	"point"]	= "pt";
-	aliases[tr("point")]	= "pt";
+	aliases[tr("point")]	= "pt";		description["pt"]	= tr("pt : point");
 	aliases[	"inch"]		= "in";
 	aliases[	"inches"]	= "in";
 	aliases[tr("inch")]		= "in";
-	aliases[tr("inches")]	= "in";
+	aliases[tr("inches")]	= "in";		description["in"]	= tr("in : inch");
+										description["mil"]	= tr("mil :");
 	aliases[	"hands"]	= "hand";
 	aliases[tr("hands")]	= "hand";
-	aliases[tr("hand")]		= "hand";
+	aliases[tr("hand")]		= "hand";	description["hand"]	= tr("hand : hand");
 	aliases[	"foot"]		= "ft";
 	aliases[	"feet"]		= "ft";
 	aliases[tr("foot")] 	= "ft";
-	aliases[tr("feet")] 	= "ft";
+	aliases[tr("feet")] 	= "ft";		description["ft"]	= tr("ft : foot");
 	aliases[	"link"]		= "li";
 	aliases[	"links"]	= "li";
 	aliases[tr("link")]		= "li";
-	aliases[tr("links")]	= "li";
+	aliases[tr("links")]	= "li";		description["li"]	= tr("li : link");
 	aliases[	"yard"]		= "yd";
 	aliases[	"yards"]	= "yd";
 	aliases[tr("yard")]		= "yd";
-	aliases[tr("yards")]	= "yd";
+	aliases[tr("yards")]	= "yd";		description["yd"]	= tr("yd : yard");
 	aliases[	"rod"]		= "rd";
 	aliases[	"rods"]		= "rd";
 	aliases[tr("rod")]		= "rd";
@@ -122,30 +129,30 @@ Units::Units( QString _defaultUnit ) : QObject() {
 	aliases[	"perch"]	= "rd";
 	aliases[	"perches"]	= "rd";
 	aliases[tr("perch")]	= "rd";
-	aliases[tr("perches")]	= "rd";
+	aliases[tr("perches")]	= "rd";		description["rd"]	= tr("rd : rod (pole, perch)");
 	aliases[	"fathoms"]	= "fathom";
 	aliases[tr("fathom")]	= "fathom";
-	aliases[tr("fathoms")]	= "fathom";
+	aliases[tr("fathoms")]	= "fathom";	description["fathom"]	= tr("fathom :");								
 	aliases[	"chain"]	= "ch";
 	aliases[	"chains"]	= "ch";
 	aliases[tr("chain")]	= "ch";
-	aliases[tr("chains")]	= "ch";
+	aliases[tr("chains")]	= "ch";		description["ch"]	= tr("ch : chain");
 	aliases[	"furlong"]	= "fur";
 	aliases[	"furlongs"]	= "fur";
 	aliases[tr("furlong")]	= "fur";
-	aliases[tr("furlongs")]	= "fur";
-	aliases[tr("cable")]	= "cable";
+	aliases[tr("furlongs")]	= "fur";	description["fur"]	= tr("fur : furlong");
+	aliases[tr("cable")]	= "cable";	description["cable"]	= tr("cable :");
 	aliases[	"mile"]		= "mi";
 	aliases[	"miles"]	= "mi";
 	aliases[tr("mile")]		= "mi";
-	aliases[tr("miles")]	= "mi";
+	aliases[tr("miles")]	= "mi";		description["mi"]	= tr("mi : mile");
 	aliases[	"lands"]	= "land";
 	aliases[tr("land")]		= "land";
 	aliases[tr("lands")]	= "land";
 	aliases[	"league"]	= "land";
 	aliases[	"leagues"]	= "land";
 	aliases[tr("league")]	= "land";
-	aliases[tr("leagues")]	= "land";
+	aliases[tr("leagues")]	= "land";	description["land"]	= tr("land : land (league)");
 
 	units["m"] = units["in"] / 0.0254;		// 1 inch = 2.54 cm
 	units["Ym"] = 1e24 * units["m"];		// Y (yotta)	meter
@@ -169,26 +176,70 @@ Units::Units( QString _defaultUnit ) : QObject() {
 	units["zm"] = 1e-21 * units["m"];		// z (zepto)	meter
 	units["ym"] = 1e-24 * units["m"];		// y (yocto)	meter
 
-	units["A"] = 0.1 * units["nm"];			// 1 angstrom = 0.1 nm	
+	description["m"]	= tr("m : meter");
+	description["Ym"]	= tr("Ym : yotta meter");
+	description["Zm"]	= tr("Zm : zetta meter");
+	description["Em"]	= tr("Em : exa meter");
+	description["Pm"]	= tr("Pm : peta meter");
+	description["Tm"]	= tr("Tm : tera meter");
+	description["Gm"]	= tr("Gm : giga meter");
+	description["Mm"]	= tr("Mm : mega meter");
+	description["km"]	= tr("km : kilo meter");
+	description["hm"]	= tr("hm : hecto meter");
+	description["dam"]	= tr("dam : deka meter");
+	description["dm"]	= tr("dm : deci meter");
+	description["cm"]	= tr("cm : centi meter");
+	description["mm"]	= tr("mm : milli meter");
+	description["um"]	= tr("um : micro meter");
+	description["nm"]	= tr("nm : nano meter");
+	description["pm"]	= tr("pm : pico meter");
+	description["fm"]	= tr("fm : femto meter");
+	description["am"]	= tr("am : atto meter");
+	description["zm"]	= tr("zm : zepto meter");
+	description["ym"]	= tr("ym : yocto meter");
 
-	units["AU"] = 149597870691.0 * units["m"];	// AU (astronomical unit)
-	units["ly"] = 9460528404879.0 * units["km"];	//Light year
-	units["pc"] = 3.26156378 * units["ly"];		//Parsec
+	units["A"] = 0.1 * units["nm"];			// 1 angstrom = 0.1 nm	
+	description["A"]	= tr("A : angstrom");
+
+	units["AU"] = 149597870691.0 * units["m"];		// AU (astronomical unit)
+	units["ly"] = 9460528404879.0 * units["km"];	// Light year
+	units["pc"] = 3.26156378 * units["ly"];			// Parsec
+
+	aliases[	"astronomical unit"]	= "AU";
+	aliases[	"astronomical units"]	= "AU";
+	aliases[tr("astronomical unit")]	= "AU";
+	aliases[tr("astronomical units")]	= "AU";		description["AU"]	= tr("AU : astronomical unit");
+	aliases[	"light year"]			= "ly";
+	aliases[	"light years"]			= "ly";
+	aliases[tr("light year")]			= "ly";
+	aliases[tr("light years")]			= "ly";		description["ly"]	= tr("ly : light year");
+	aliases[	"parsec"]				= "pc";
+	aliases[tr("parsec")]				= "pc";		description["pc"]	= tr("pc : parsec");
 
 	units["nautical mile"] = 1.852 * units["km"];	// 1 nautical mile == 1.852 km;
 
 	aliases["nautical miles"]	= "nautical mile";
 	aliases[tr("nautical mile")]	= "nautical mile";
-	aliases[tr("nautical miles")]	= "nautical mile";
+	aliases[tr("nautical miles")]	= "nautical mile";	description["nautical mile"]	= tr("nautical mile :");
+
 
 	setDefaultUnits( _defaultUnit );
 }
 Units::~Units()
 	{}
-void Units::getAllUnits( QStringList & names ) {
+void Units::getAllUnits( QStringList & names ) const {
+	QMap<double,QString>					h_map;
+	QMap<QString,double>::ConstIterator		it = units.begin();
+	for ( ; it != units.end() ; ++it )
+		if (description.contains( it.key() ))
+			h_map[ it.data() ] = description[ it.key() ];
+		else
+			h_map[ it.data() ] = it.key();
+
 	names.clear();
-	names += units.keys();
+	names += h_map.values();
 }
+
 bool Units::setDefaultUnits( const QString dunits )
 	{
 		if (dunits.isNull()) {
@@ -203,6 +254,10 @@ bool Units::setDefaultUnits( const QString dunits )
 			defaultUnit = aliases[ dunits ];
 			return true;
 		}
+		if (description.values().contains( dunits )) {
+			defaultUnit = description.keys()[description.values().findIndex( dunits )];
+			return true;
+		}
 
 		return false;
 	}
@@ -212,29 +267,39 @@ QString Units::getDefaultUnits( ) const
 	}
 double Units::convertFromUnitsToPoint( double num, const QString & fromUnits ) const
 	{
-		bool h_unit;
+		bool hu_unit;
+		bool ha_unit;
 		if (fromUnits.isNull())
 			return num * units[ defaultUnit ];
-		if (! ((h_unit = units.contains( fromUnits )) || aliases.contains( fromUnits )))
+		if (! (	(hu_unit = units.contains( fromUnits )) ||
+				(ha_unit = aliases.contains( fromUnits )) ||
+				description.values().contains( fromUnits ) ))
 			return num;
 		// else
-		if (h_unit)
+		if (hu_unit)
 			return num * units[ fromUnits ];
-		else
+		else if (ha_unit)
 			return num * units[ aliases[ fromUnits ] ];
+		else
+			return num * units[ description.keys()[description.values().findIndex( fromUnits )] ];
 	}
 double Units::convertFromPointToUnits( double num, const QString & toUnits ) const
 	{
-		bool h_unit;
+		bool hu_unit;
+		bool ha_unit;
 		if (toUnits.isNull())
 			return num / units[ defaultUnit ];
-		if (! ((h_unit = units.contains( toUnits )) || aliases.contains( toUnits )))
+		if (! (	(hu_unit = units.contains( toUnits )) ||
+				(ha_unit = aliases.contains( toUnits )) ||
+				description.values().contains( toUnits ) ))
 			return num;
 		// else
-		if (h_unit)
+		if (hu_unit)
 			return num / units[ toUnits ];
-		else
+		else if (ha_unit)
 			return num / units[ aliases[ toUnits ] ];
+		else
+			return num / units[ description.keys()[description.values().findIndex( toUnits )] ];
 	}
 double Units::convertUnits( double num, const QString fromUnits, const QString toUnits ) const
 	{
@@ -297,13 +362,18 @@ PageSpace::~PageSpace() {
 	delete textLine;
 }
 
-QMainWindow * PageSpace::getTextLine( int x, int y ) {
+QMainWindow * PageSpace::getTextLine( int x, int y, int fontsize, const QString & fontName ) {
+	delete textLine;
+	textLine = new TextLine();
+	QFont font;
+	if (fontName.isEmpty()) {
+		font = textLine->font();
+		font.setPointSize( fontsize );
+	} else
+		font = QFont( fontName, fontsize );
+	textLine->setFont( font );
 	textLine->adjustSize ();
-	textLine->move ( x, y );
-
-	textLine->disconnect( SIGNAL( lostFocus( QString ) ) );
-	textLine->disconnect( SIGNAL( returnPressed( QString ) ) );
-	textLine->disconnect( SIGNAL( escape() ) );
+	textLine->move ( x, y - textLine->height() );
 
 	textLine->setText("");
 	textLine->show ();

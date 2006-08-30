@@ -169,7 +169,7 @@ QSPdfOperator* Base::createOperator(const QString &text,QObject* parameters) {
  @return new PDF operator
 */
 QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QString &endText) {
- boost::shared_ptr<UnknownCompositePdfOperator> op(new UnknownCompositePdfOperator(util::convertFromUnicode(beginText).c_str(),util::convertFromUnicode(endText).c_str()));
+ boost::shared_ptr<UnknownCompositePdfOperator> op(new UnknownCompositePdfOperator(beginText,endText));
  return new QSPdfOperator(op,this); 
 }
 

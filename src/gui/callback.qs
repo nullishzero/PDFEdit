@@ -217,7 +217,7 @@ function onSelectMode_strikeTrough( ) {
 
 /** Callback when selection mode is changes to select annotations on page */
 function onSelectMode_Annot() {
- PageSpace.setSelectionMode("annotations","rect2","go_to_target_from_selected_annotation()");
+ PageSpace.setSelectionMode("annotations","rect3","go_to_target_from_selected_annotation()");
  setModeButton('selectAnnot');
 }
  

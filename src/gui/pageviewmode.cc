@@ -22,6 +22,7 @@ DrawingObject * DrawingObjectFactory::create( const QString & nameOfObject )
 			if (nameOfObject == "line")  return new DrawingLine();
 			if (nameOfObject == "rect")  return new DrawingRect();
 			if (nameOfObject == "rect2")  return new DrawingRect2();
+			if (nameOfObject == "rect3")  return new DrawingRect3();
 
 			guiPrintDbg( debug::DBG_DBG, "Undefined drawing!!!" );
 			return NULL;
@@ -80,6 +81,7 @@ void DrawingRect::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
 
 			painter.setPen( old_pen );
 		};
+
 DrawingRect2::DrawingRect2 ()
 		{};
 DrawingRect2::~DrawingRect2 ()
@@ -95,6 +97,36 @@ void DrawingRect2::drawObject ( QPainter & painter, QRegion reg )
 				painter.fillRect( it->normalize(), Qt::yellow );
 
 			painter.setPen( old_pen );
+		};
+
+DrawingRect3::DrawingRect3 ()
+		{};
+DrawingRect3::~DrawingRect3 ()
+		{};
+void DrawingRect3::drawObject ( QPainter & painter, QPoint p1, QPoint p2 )
+		{
+			QPen old_pen ( painter.pen() );
+
+			painter.setPen( pen );
+			painter.fillRect( QRect(p1, p2).normalize(), Qt::yellow );
+
+			painter.setPen( old_pen );
+		};
+void DrawingRect3::drawObject ( QPainter & painter, QRegion reg )
+		{
+			QPen old_pen ( painter.pen() );
+			painter.setPen( pen );
+
+			QMemArray<QRect> h_mar (reg.rects());
+			QMemArray<QRect>::Iterator it = h_mar.begin();
+			for ( ; it != h_mar.end() ; ++it )
+				painter.drawRect( it->normalize() );
+
+			painter.setPen( old_pen );
+		};
+void DrawingRect3::drawObject ( QPainter & painter, QRect rect )
+		{
+			drawObject( painter, rect.topLeft(), rect.bottomRight() );
 		};
 
 //  ---------------------  selection mode  --------------------- //
@@ -433,8 +465,10 @@ void PageViewMode::keyReleaseEvent ( QKeyEvent * e, QPainter * /* p */, QWidget 
 				case Qt::Key_Escape:
 						if (isPressedLeftButton)
 							isPressedLeftButton = false;
-						else
+						else {
 							clearSelectedOperators();
+							emit newSelectedOperators( selectedOperators );
+						}
 
 						break;
 				case Qt::Key_Delete:
@@ -539,6 +573,7 @@ void PageViewMode::actualizeSelection ()
 			selectedOpRegion = QRegion();
 			addOpsBBoxToRegion ( selectedOpRegion, selectedOperators );
 			emit needRepaint();
+			emit newSelectedOperators( selectedOperators );
 		};
 
 QRect PageViewMode::getBBox( const boost::shared_ptr<PdfOperator> & op ) const
@@ -1237,6 +1272,8 @@ void	PageViewMode_OperatorsSelection::setSelectedRegion ( QRegion r )
 			std::vector< boost::shared_ptr< PdfOperator > >		h_v;
 			findOperators ( workOperators, h_v, r );
 			setSelectedOperators ( h_v );
+
+			emit newSelectedOperators( selectedOperators );
 		}
 
 void	PageViewMode_OperatorsSelection::addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps )
@@ -1319,7 +1356,8 @@ void PageViewMode_Annotations::extraInitialize( const boost::shared_ptr< CPage >
 			if (page == NULL)
 				return;
 
-			workOpRegion = QRegion();
+			selectedOpRegion	= QRegion();
+			workOpRegion		= QRegion();
 			annotations.clear();
 
 			// get all annotations
@@ -1344,6 +1382,22 @@ void PageViewMode_Annotations::extraInitialize( const boost::shared_ptr< CPage >
 				ar.activation_region = r;	// TODO use correct activation region
 				annotations.push_back( ar );
 			}
+		};
+void PageViewMode_Annotations::repaint ( QPainter & p, QWidget * w )
+		{
+			drawingObject->drawObject( p, workOpRegion );
+
+			if (isPressedLeftButton && (isMoving || isResizing))
+			{
+				if (isMoving)
+					drawingObject->drawObject( p, mouseSelectedRegion.boundingRect() );
+				else
+					this->PageViewMode::repaint ( p, w );
+			} else
+				if (! selectedOpRegion.isEmpty()) {
+					QRect r = selectedOpRegion.boundingRect();
+					drawingObject->drawObject( p, r.topLeft(), r.bottomRight() );
+				}
 		};
 PageViewMode_Annotations::annot_rect PageViewMode_Annotations::getAnnotationOnPosition ( const QPoint & p )
 		{

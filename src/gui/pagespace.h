@@ -50,10 +50,11 @@ class Units : protected QObject {
 		double convertFromUnitsToPoint ( double num, const QString & fromUnits ) const;
 		double convertFromPointToUnits ( double num, const QString & toUnits ) const;
 
-		void getAllUnits( QStringList & names );
+		void getAllUnits( QStringList & names ) const;
 	protected:
 		QMap<QString, double>	units;
 		QMap<QString, QString>	aliases;
+		QMap<QString, QString>	description;
 		QString					defaultUnit;
 };
 
@@ -351,7 +352,7 @@ class PageSpace : public QWidget {
 		 */
 		int findText ( QString &text, bool startAtTop = true, double xStart = 0, double yStart = 0, double xEnd = -1, double yEnd = -1);
 
-		QMainWindow * getTextLine( int x, int y );
+		QMainWindow * getTextLine( int x, int y, int fontsize = 12, const QString & fontName = QString::null );
 	signals:
 		/** Signal is emited, if is changed viewed page.
 		 * @param page			Page whitch is actual viewed.

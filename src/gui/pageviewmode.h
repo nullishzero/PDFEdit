@@ -113,7 +113,7 @@ class DrawingRect: public DrawingObject {
 };
 
 /** Class is STRATEGY pattern to draw rectangle as new object.
- * (Resizing, moving and draw selected region is keeping from parent (see DrawingObject).)
+ * (Resizing, moving and draw selected region is keeping from parent (see DrawingRect).)
  * Different between this class and DrawingRect (it's parent) is in draw selected region without
  * bounding-rectangle.
  */
@@ -133,6 +133,44 @@ class DrawingRect2: public DrawingRect {
 			 * This method is mostly useing for drawing selected operators (nothing button is press or in text mode).
 			 */
 			virtual void drawObject ( QPainter & painter, QRegion reg );
+};
+
+/** Class is STRATEGY pattern to draw rectangle as new object.
+ * (Resizing, moving and draw selected region is keeping from parent (see DrawingRect).)
+ * Different between this class and DrawingRect (it's parent) is in draw selected region with
+ * only bounding-rectangle (not fill). And draw rect from point to point is fill rectangle.
+ */
+class DrawingRect3: public DrawingRect {
+	public:
+			/** Standard constructor.
+			 * Initialize pen.
+			 */
+			DrawingRect3 ();
+			/** Standard destructor. */
+			virtual ~DrawingRect3 ();
+
+			/** Drawing object useing \a painter from \a p1 to \a p2.
+			 * @param painter initialize painter for drawing.
+			 * @param p1 start point
+			 * @param p2 end point
+			 *
+			 * This method is mostly useing if don't moving or resizing and is pressed left button.
+			 */
+			virtual void drawObject ( QPainter & painter, QPoint p1, QPoint p2 );
+			/** Drawing region \a reg useing \a painter for draw.
+			 * @param painter initialize painter for drawing.
+			 * @param reg region for drawing.
+			 *
+			 * This method is mostly useing for drawing selected operators (nothing button is press or in text mode).
+			 */
+			virtual void drawObject ( QPainter & painter, QRegion reg );
+			/** Drawing rectangle \a rect useing \a painter for draw.
+			 * @param painter initialize painter for drawing.
+			 * @param rect rectangle for drawing.
+			 *
+			 * This method is mostly useing for drawing selected bounding rectangle (moving and resizing selected region).
+			 */
+			virtual void drawObject ( QPainter & painter, QRect rect );
 };
 //  ---------------------  selection mode  --------------------- //
 class PageViewMode;
@@ -651,6 +689,14 @@ class PageViewMode_Annotations: public PageViewMode {
 			virtual void actualizeSelection ();
 			/* E.g. for annotation */
 			virtual void extraInitialize( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams );
+			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * It is only drawing method use, if viewing parent need clear repaint.
+			 */
+			virtual void repaint ( QPainter & p, QWidget * w  );
 	public:
 			PageViewMode_Annotations ( const QString & drawingObject,
 							const QString & _scriptFncAtMouseRelease,
