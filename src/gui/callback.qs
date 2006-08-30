@@ -115,7 +115,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Add text")+",addText(),,add_text.png");
   menu.addItemDef("item "+tr("Move page up")+",movePage(firstSelected()\\,-1);parentReload(),,page_move_up.png");
   menu.addItemDef("item "+tr("Move page down")+",movePage(firstSelected()\\,1);parentReload(),,page_move_down.png");
-  menu.addItemDef("item "+tr("Remove page")+",document.removePage(document.getPagePosition(firstSelected()));parentReload(),,page_delete.png");
+  menu.addItemDef("item "+tr("Remove page")+",removePage(document.getPagePosition(firstSelected()));parentReload(),,page_delete.png");
  }
  if (tree_item_type=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
   menu.addSeparator();
