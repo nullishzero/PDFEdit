@@ -2,6 +2,7 @@
 
 /** Function to enable/disable certain items when currently selected object changes */
 function checkMenus() {
+ //TODO: multiselect
  var first=firstSelectedItem();
  try {
    //Check current tree item
@@ -81,6 +82,7 @@ function rootReload() {
 /** Callback for click with right mouse button in tree window */
 function onTreeRightClick() {
  menu=popupMenu("popup_generic");
+ //TODO: check for multiselect
  tree_item_type=firstSelectedItem().itemtype();
  if (holdContainer(firstSelectedItem())) { // Dict, Array
   menu.addSeparator();
@@ -135,11 +137,12 @@ function onTreeLeftClick() {
 
 /** Callback for changing value in any of special tools in toolbar */
 function onValueChange(x) {
- print(x+' have changed');
+// print(x+' have changed');
 }
 
 /** Callback for click with middle mouse button in tree window */
 function onTreeMiddleClick() {
+ //TODO: check for multiselect
  firstSelectedItem().reload();
 }
 

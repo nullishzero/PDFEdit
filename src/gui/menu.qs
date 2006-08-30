@@ -132,3 +132,27 @@ function holdContainer(ti) {
  }
  return false;
 }
+
+/** Delete all selected objects present in tree */
+function deleteObjectsInTree() {
+ /*
+  Note:
+  deleting the object MAY change the selection in tree in the process,
+  so we need to store the objects first, then delete them all.
+ */
+ victims=[];
+ treeItem=firstSelectedItem();
+ i=0;
+ while (treeItem) {
+  if (treeItem) {
+   victims[i]=treeItem;
+   i++;
+  }
+  treeItem=nextSelectedItem();
+ }
+ //We have them, now delete them all
+ for (i=0;i<victims.length;i++) {
+  victims[i].remove();
+//  print (victims[i].item().type());
+ }
+}
