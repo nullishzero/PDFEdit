@@ -85,6 +85,8 @@ public:
  void setTextByName(const QString &name,const QString &newText);
  QString getTextByName(const QString &name);
 private:
+ QString menuItemText(const QString &caption,const QString &name);
+ QString toolTipText(const QString &text,const QString &name,QString accel=QString::null);
  ToolButton* createToolBarItem(ToolBar *tb,const QString &name,const QString &text,const QString &action, const QString &accel,const QString &icon, const QStringList &classes=QStringList());
  void addToMap(const QString &name,QWidget* item);
  void addToMap(const QString &name,QMenuData* parent,int itemId);
@@ -110,6 +112,10 @@ private:
  ToolBarList toolbarList;
  /** List of installed accelerators */
  AccelList accels;
+ /** Text for item by its name */
+ QMap<QString, QString> itemText;
+ /** Accelerator for item by its name */
+ QMap<QString, QString> accelText;
  /** Cache for menu items */
  MenuCache mCache;
  /** Cache for menu items - names */

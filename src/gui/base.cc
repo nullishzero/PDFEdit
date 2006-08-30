@@ -158,7 +158,10 @@ QSPdfOperator* Base::createOperator(const QString &text,QSIPropertyArray* parame
 */
 QSPdfOperator* Base::createOperator(const QString &text,QObject* parameters) {
  QSIPropertyArray* par=dynamic_cast<QSIPropertyArray*>(parameters);
- if (!par) return NULL;
+ if (!par) {
+  errorBadParameter("","createOperator",2,parameters,"IPropertyArray");
+  return NULL;
+ }
  return createOperator(text,par);
 }
 

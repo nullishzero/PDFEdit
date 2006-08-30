@@ -259,6 +259,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
   //TODO: need multimap for always-correct behavior -> or warn in documentation about diff. behavior
   mCache[name]=item;
   mCacheName[name]=menuName;
+  itemText.replace(name,menuName);
  } else if (line.startsWith("item ")) { // A single item
   if (parent) addItem(line,parent,name);
  } else { //something invalid
@@ -369,6 +370,25 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
  }
  addItem(parent,name,caption,action,accel,icon,classes);
 }
+
+/**
+ Return item text for given menu item
+ Will translate the text
+ @param caption Caption of the menu item
+ @param name Name if the menu item
+ @return localized item text
+*/
+QString Menu::menuItemText(const QString &caption,const QString &name) {
+ QString captionTr;
+ if (name.isNull()) {
+  captionTr=Settings::tr(caption);
+ } else {
+  captionTr=Settings::tr(caption,name);
+ }
+ itemText.replace(name,caption);
+ return captionTr;
+}
+
 /**
  Add menu item specified by given data to parent
  @param parent parent menu in which this item will be appended
@@ -382,12 +402,8 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
 */
 int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,const QString &action,const QString &accel/*=QString::null*/,const QString &icon/*=QString::null*/,const QStringList &classes/*=QStringList()*/) throw (InvalidMenuException) {
  int menu_id=addAction(action);
- QString captionTr;
- if (name.isNull()) {
-  captionTr=Settings::tr(caption);
- } else {
-  captionTr=Settings::tr(caption,name);
- }
+ QString captionTr=menuItemText(caption,name);
+ accelText.replace(name,accel);
  char accelChar=getAccel(captionTr);
  if (accelChar) {
   //Some accelerator specified for item
@@ -510,6 +526,26 @@ void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuEx
 }
 
 /**
+ Return tooltip text for given text
+ Will translate the tooltip, remove any & characters that have meaning in menus and add accelerator if specified
+ @param text Tooltip text
+ @param name Name of the toolbar item for which the text is. Used for correctly determining possible translation
+ @param accel Accelerator specified for the item (or QString::null if none defined or unknown)
+ @return localized tooltip text
+*/
+QString Menu::toolTipText(const QString &text,const QString &name,QString accel/*=QString::null*/) {
+ if (accel.isNull() && accelText.contains(name)) accel=accelText[name];
+ itemText.replace(name,text);
+ QString tooltip=Settings::tr(text,name);
+ tooltip=tooltip.replace("&","");
+ if (!accel.isNull() && accel.length()>0) { //accelerator specified
+  tooltip+=" ("+accel+")";
+ }
+ accelText.replace(name,accel);
+ return tooltip;
+}
+
+/**
  Create single toolbar button and add it to toolbar
  @param tb Toolbar for addition of item
  @param name Name of the item. Key in settings, or specified from script. Have to be unique
@@ -526,11 +562,7 @@ ToolButton* Menu::createToolBarItem(ToolBar *tb,const QString &name,const QStrin
  if (!iconSet) {
   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << icon);
  }
- QString tooltip=Settings::tr(text,name);
- tooltip=tooltip.replace("&","");
- if (!accel.isNull() && accel.length()>0) { //accelerator specified
-  tooltip+=" ("+accel+")";
- }
+ QString tooltip=toolTipText(text,name,accel);
  ToolButton *tbutton=new ToolButton(iconSet,tooltip,menu_id,tb);
  addToMap(name,tbutton);
  if (!accel.isNull() && accel.length()>0) { //accelerator specified
@@ -721,12 +753,20 @@ void Menu::checkByName(const QString &name,bool check) {
  }
 }
 
+/**
+ Set text on toolbar or menu item with given name.
+ If both text and menu item exist with same name, both are updated.
+ Note: the text wilol be translated according to the translation file,
+ so english text should be used and any translation should be put into the translation file
+ @param name Name of the item
+ @param newText text on the item
+*/
 void Menu::setTextByName(const QString &name,const QString &newText) {
  for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
   if (it.key().first==name) {
    ToolButton* el=dynamic_cast<ToolButton*>(it.data());
    if (el) {
-    el->setTextLabel(newText);
+    el->setTextLabel(toolTipText(newText,name));
    }
   }
  }
@@ -735,29 +775,21 @@ void Menu::setTextByName(const QString &name,const QString &newText) {
    MenuItemsValue el=it.data();
    QMenuData* md=el.first;
    int id=el.second;
-   md->changeItem(id,newText);
+   md->changeItem(id,menuItemText(newText,name));
+   optimizeItems(md);
   }
  }
 }
 
+/**
+ Given name of toolbar or menu item, return its text
+ This will return original (untranslated) text (in english)
+ Setting it back with setTextByName will translate it according to the translation file
+ @param name Name of the item
+ @return text on the item
+*/
 QString Menu::getTextByName(const QString &name) {
- //TODO: zjistovat nazvy odjinud
- for (MenuItems::ConstIterator it=mapMenu.begin();it!=mapMenu.end();++it) {
-  if (it.key().first==name) {
-   MenuItemsValue el=it.data();
-   QMenuData* md=el.first;
-   int id=el.second;
-   return md->text(id);
-  }
- }
- for (ToolbarItems::ConstIterator it=mapTool.begin();it!=mapTool.end();++it) {
-  if (it.key().first==name) {
-   ToolButton* el=dynamic_cast<ToolButton*>(it.data());
-   if (el) {
-    return el->textLabel();
-   }
-  }
- }
+ if (itemText.contains(name)) return itemText[name];
  return QString::null;
 }
 

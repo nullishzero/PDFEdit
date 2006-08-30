@@ -64,19 +64,32 @@ BaseGUI::~BaseGUI() {
  delete consoleWriter;
 }
 
-
-//TODO: diopsat dokumentaci, zaradit
+/**
+ Call QApplication::processEvents, to process any events (redrawing, etc)
+ May be useful if you perform some lengthy operation to allow GUI to redraw
+*/
 void BaseGUI::processEvents() {
  qApp->processEvents();
 }
 
+/**
+ \copydoc addAnnotation(QSPage *,double,double,double,double)
+*/
 void BaseGUI::addAnnotation(QObject * page,double x1,double y1,double w,double h) {
  addAnnotation(dynamic_cast<QSPage*>(page),x1,y1,w,h);
 }
 
+/**
+ Invoke dialog for adding annotation to page
+ @param page Page in which the annotation will be added
+ @param x1 X coordinate of the annotation rectangle lower left point
+ @param y1 Y coordinate of the annotation rectangle lower left point
+ @param w Width of annotation rectangle
+ @param h Height of annotation rectangle
+*/
 void BaseGUI::addAnnotation(QSPage * page,double x1,double y1,double w,double h) {
  if (!page) {
-  //TODO: typeError
+  errorBadParameter("","addAnnotation",1,page,"Page");
   return;
  }
  AnnotDialog *annotDialog=new AnnotDialog(*page);
@@ -270,8 +283,8 @@ void BaseGUI::addObjectDialog(QObject *container) {
  if (_container) {
   w->addObjectDialogI(_container->get());
  } else {
-  guiPrintDbg(debug::DBG_ERR,"type Error: " << container->className());
-  w->addObjectDialogI(w->selectedProperty);
+  //No IProperty? Nothing
+  errorBadParameter("","addObjectDialog",1,container,"IProperty");
  }
 }
 
@@ -280,6 +293,10 @@ void BaseGUI::checkItem(const QString &name,bool check) {
  w->menuSystem->checkByName(name,check);
 }
 
+/** Clear the console output window */
+void BaseGUI::clearConsole() {
+ w->cmdLine->clearWindow();
+}
 
 /** \copydoc PdfEditWindow::exitApp */
 void BaseGUI::closeAll() {
@@ -384,7 +401,10 @@ double BaseGUI::getNumber(const QString &name) {
  return pick->getNum();
 }
 
-/** \copydoc Menu::getTextByName */
+/**
+ \copydoc Menu::getTextByName
+ \see Menu::getTextByName
+ */
 QString BaseGUI::getItemText(const QString &name) {
  return w->menuSystem->getTextByName(name);
 }
@@ -726,9 +746,12 @@ void BaseGUI::setVisible(const QString &widgetName, bool visible) {
  if (visible) w->show(); else w-> hide();
 }
 
-/** \copydoc Menu::setTextByName */
-void BaseGUI::setItemText(const QString &name,const QString &itemText) {
- w->menuSystem->setTextByName(name,itemText);
+/**
+ \copydoc Menu::setTextByName 
+ \see Menu::setTextByName 
+*/
+void BaseGUI::setItemText(const QString &name,const QString &newText) {
+ w->menuSystem->setTextByName(name,newText);
 }
 
 
@@ -802,6 +825,13 @@ QSCObject* BaseGUI::nextSelected() {
  return w->tree->nextSelected();
 }
 
+/**
+ Returns progress bar which can be used to provide visualization of progress.
+ Uses common progress bar from PdfEditWindow class. User should keep in mind,
+ that also someone alse can use this progress bar in same time and he should
+ set total steps before each setProgress method.
+ @return Progress bar at bottom of window
+*/
 QProgressBar * BaseGUI::progressBar()
 {
         return w->getProgressBar();

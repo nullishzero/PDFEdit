@@ -57,7 +57,10 @@ public slots:
  QSDict* getDictionary();
  /*- Remove page with given number from document */
  void removePage(int position);
- /*- Get position of given page in document */
+ /*-
+   Get position of given page in document or -1 in case of error
+  (page not in document, invalid page, etc...)
+ */
  int getPagePosition(QSPage *page);
  int getPagePosition(QObject *page);
  /*- Get number of pages in document */

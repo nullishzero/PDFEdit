@@ -72,6 +72,12 @@ function parentReload() {
  firstSelectedItem().parent().reload();
 }
 
+/** Force reloading of root tree item. */
+function rootReload() {
+ //TODO: solve better
+ treeRootMain().reload();
+}
+
 /** Callback for click with right mouse button in tree window */
 function onTreeRightClick() {
  menu=popupMenu("popup_generic");

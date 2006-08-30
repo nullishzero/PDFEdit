@@ -139,11 +139,16 @@ void QSPdf::removePage(int position) {
  Return position of given page
  \see CPdf::getPagePosition
  @param page page to examine
- @return page position
+ @return page position or -1 in case of error (page not in document, invalid page, etc...)
 */
 int QSPdf::getPagePosition(QSPage *page) {
  if (nullPtr(obj,"getPagePosition")) return -1;
- return obj->getPagePosition(page->get());
+ try {
+  return obj->getPagePosition(page->get());
+ } catch (...) {
+  //Probably "page not found"
+  return -1;
+ }
 }
 
 /**

@@ -118,6 +118,13 @@ void CommandWindow::setInterpreter( QSInterpreter * ainterpreter, QObject * cont
 	interpreter = ainterpreter;
 }
 
+/**
+ Erase all text in the window
+*/
+void CommandWindow::clearWindow() {
+	out->setText("");
+}
+
 bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 {
 	if ( o != in->textEdit() && o != in->textEdit()->viewport() )

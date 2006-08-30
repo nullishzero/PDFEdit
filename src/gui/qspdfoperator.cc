@@ -60,6 +60,10 @@ void QSPdfOperator::csCheck() {
 QSPdfOperator::~QSPdfOperator() {
 }
 
+/**
+ Return bounding box of this PDF operator
+ @return bounding box
+*/
 QVariant QSPdfOperator::getBBox () {
  Rectangle br = obj->getBBox ();
 

@@ -27,12 +27,15 @@ public:
  virtual ~QSPdfOperator();
  boost::shared_ptr<PdfOperator> get();
 public slots:
- QVariant getBBox ();
  /*-
   Return true, if this object is equal to specified object (i.e. if they internally point to the same item)
   Reference is compared, not the value of objects
  */
  bool equals(QObject* otherObject);
+ /*-
+  Return bounding box (rectangle) of this PDF operator
+ */
+ QVariant getBBox (); /*Variant=double[4]*/
  /*- Return last operator if a this operator is a composite */
  QSPdfOperator* getLastOperator();
  /**
@@ -135,7 +138,6 @@ public slots:
   Clone this object
  */
  QSPdfOperator* clone();
-
  /*-
   Return content stream in which this operator is contained
   May return NULL if the stream is not known or if this operator is not contained in any content stream

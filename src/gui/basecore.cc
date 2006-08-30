@@ -323,7 +323,9 @@ void BaseCore::preRun(const QString &script,bool callback/*=false*/) {
  @param methodName Name of method, in which this error occured
  */
 void BaseCore::errorNullPointer(const QString &className,const QString &methodName) {
- qs->throwError(tr("Null pointer access in ")+className+"."+methodName);
+ QString where;
+ if (className=="") where=methodName; else where=className+"."+methodName;
+ qs->throwError(tr("Null pointer access in ")+where);
 }
 
 /**
@@ -333,8 +335,9 @@ void BaseCore::errorNullPointer(const QString &className,const QString &methodNa
  @param exceptionInfo Extra exception information
  */
 void BaseCore::errorException(const QString &className,const QString &methodName,const QString &exceptionInfo) {
- if (className=="") qs->throwError(tr("Exception in ")+methodName+" : "+exceptionInfo);
- else qs->throwError(tr("Exception in ")+className+"."+methodName+" : "+exceptionInfo);
+ QString where;
+ if (className=="") where=methodName; else where=className+"."+methodName;
+ qs->throwError(tr("Exception in ")+where+" : "+exceptionInfo);
 }
 
 /**
@@ -346,7 +349,9 @@ void BaseCore::errorException(const QString &className,const QString &methodName
  @param expected What was expected to see as parameter
  */
 void BaseCore::errorBadParameter(const QString &className,const QString &methodName,int paramNum,const QObject *param,const QString &expected) {
- QString invMessage=tr("Invalid object given for parameter %1 in ").arg(QString::number(paramNum))+className+"."+methodName;
+ QString where;
+ if (className=="") where=methodName; else where=className+"."+methodName;
+ QString invMessage=tr("Invalid object given for parameter %1 in ").arg(QString::number(paramNum))+where;
  QString passedObject=param->className();
  qs->throwError(invMessage+"\n"
                +tr("Expected","object type")+" : "+expected+"\n"

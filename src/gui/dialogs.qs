@@ -41,22 +41,25 @@ function editPageMediaBox() {
  var dialog = createDialog (tr("Change page rectangle"), tr("Change"), tr("Cancel"), tr("Page metrics"));
  
  var gb = createGroupBoxAndDisplay (tr("Page metrics"), dialog);
- var exl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+ var exl = createNumberEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
  									PageSpace.convertUnits(xleft,"pt"), gb);
- var eyl = createLineEditAndDisplay(tr("Left upper corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+ var eyl = createNumberEditAndDisplay(tr("Left upper corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
 									PageSpace.convertUnits(yleft,"pt"), gb);
- var exr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+ var exr = createNumberEditAndDisplay(tr("Right bottom corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
 									PageSpace.convertUnits(xright,"pt"), gb);
- var eyr = createLineEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
+ var eyr = createNumberEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
 									PageSpace.convertUnits(yright,"pt"), gb);
-
+ exl.minimum=0;
+ eyl.minimum=0;
+ exr.minimum=0;
+ eyr.minimum=0;
  if (!dialog.exec()) return;
 
  // Save media box
- page().setMediabox ( PageSpace.convertUnits( exl.text, undefined, "pt" ),
-						PageSpace.convertUnits( eyl.text, undefined, "pt" ),
-						PageSpace.convertUnits( exr.text, undefined, "pt" ),
-						PageSpace.convertUnits( eyr.text, undefined, "pt" ));
+ page().setMediabox ( PageSpace.convertUnits( exl.value, undefined, "pt" ),
+						PageSpace.convertUnits( eyl.value, undefined, "pt" ),
+						PageSpace.convertUnits( exr.value, undefined, "pt" ),
+						PageSpace.convertUnits( eyr.value, undefined, "pt" ));
  print (tr("MediaBox changed."));
  go ();
 }

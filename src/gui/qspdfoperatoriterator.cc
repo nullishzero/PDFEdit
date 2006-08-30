@@ -43,7 +43,7 @@ QSPdfOperatorIterator::QSPdfOperatorIterator(boost::shared_ptr<PdfOperator> op,b
 /**
  Construct wrapper around new Iterator
  and with reference to content stream in which the iterator resides
- This class takes ownership of the iterator
+ This class takes ownership of the iterator (and will free it once it is destroyed)
  @param op PDF Operator iterator
  @param cs CContentstream in which this PdfOperator is contained
  @param _base scripting base
@@ -74,6 +74,7 @@ void QSPdfOperatorIterator::csCheck() {
 
 /** destructor */
 QSPdfOperatorIterator::~QSPdfOperatorIterator() {
+ assert(obj);
  delete obj;
 }
 

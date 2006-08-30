@@ -77,8 +77,11 @@ private:
  QString settingName;
  /** Pdf document (for validating reference) */
  CPdf* pdf;
- /** Radiobuttons for appending at end or arbitrary position */
- QRadioButton *posNum,*posEnd;
+ /** Radiobutton for inserting at arbitrary position in array */
+ QRadioButton *posNum;
+ /** Radiobutton for appending at end of array */
+ QRadioButton *posEnd;
+ /** Edit box for editing array position at which the element should be inserted */
  QLineEdit *arrayPos;
 };
 

@@ -211,14 +211,24 @@ void PdfEditWindow::menuActivated(int id) {
  else base->runScript(action);
 }
 
-boost::shared_ptr<pdfobjects::utils::ProgressObserver> PdfEditWindow::getProgressObserver()
-{
-        return progressObserver;
+/** Returns progress observer.
+ * This progress observer holds qt progress bar (progressBar field) stored in 
+ * status bar.
+ * It can be registered on ObserverHandler to display progress.
+ */
+boost::shared_ptr<pdfobjects::utils::ProgressObserver> PdfEditWindow::getProgressObserver() {
+ return progressObserver;
 }
 
-QProgressBar * PdfEditWindow::getProgressBar()
-{
-        return progressBar;
+/** Returns common progress bar.
+ *
+ * Note that this progress bar is shared and so user should keep in mind
+ * that someone is using same progress bar while he starts to use it.
+ *
+ * @return Qt progress bar instance.
+ */
+QProgressBar * PdfEditWindow::getProgressBar() {
+ return progressBar;
 }
 
 /**

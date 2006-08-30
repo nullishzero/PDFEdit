@@ -22,6 +22,18 @@ function createLineEditAndDisplay(label,text,widget) {
  return e;
 }
 
+/** 
+ * Create NumberEdit dialog with label and value filled and add it 
+ * to another widget.
+ */
+function createNumberEditAndDisplay(label,value,widget) {
+ e = new NumberEdit;
+ e.label = label;
+ e.value = value;
+ widget.add(e);
+ return e;
+}
+
 /**
  * Create group box with title and tooltip the same.
  */

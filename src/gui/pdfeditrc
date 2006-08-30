@@ -110,9 +110,9 @@ PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage
   # _page_tool is special toolbar item to show/change current page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
-  pageMoveUp		= item Move page up,movePage(firstSelected()\,-1);parentReload(),,page_move_up.png,need_page
-  pageMoveDown		= item Move page down,movePage(firstSelected()\,1);parentReload(),,page_move_down.png,need_page
-  pageRemove		= item Remove page,document.removePage(document.getPagePosition(firstSelected()));parentReload(),,page_delete.png,need_page
+  pageMoveUp		= item Move page up,movePage(page()\,-1);rootReload(),,page_move_up.png,need_page
+  pageMoveDown		= item Move page down,movePage(page()\,1);rootReload(),,page_move_down.png,need_page
+  pageRemove		= item Remove page,document.removePage(document.getPagePosition(page()));rootReload(),,page_delete.png,need_page
 
 DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button

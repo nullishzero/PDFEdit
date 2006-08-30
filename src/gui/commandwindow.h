@@ -29,6 +29,7 @@ public:
  void reloadSettings();
  void saveWindowState();
  void restoreWindowState();
+ void clearWindow();
  ~CommandWindow();
 public slots:
  void execute( enum cmd  from = CmdLine );

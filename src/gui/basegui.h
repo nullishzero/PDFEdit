@@ -7,7 +7,8 @@
 #include <qobject.h>
 #include <qstring.h>
 #include <qvariant.h>
-#include <qprogressbar.h>
+
+class QProgressBar;
 
 namespace gui {
 
@@ -40,16 +41,33 @@ public:
  void addNumberTool(NumberTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
- //TODO:m diopsat k temhle dvema dokumentaci
+ /** 
+  Allow application to process its events, so the gui can redraw itself.
+  Useful, it it is called periodically while doing some lenthy operation
+ */
  void processEvents();
- //TODO:m diopsat k temhle dvema dokumentaci
- void setItemText(const QString &name,const QString &itemText);
- //TODO:m diopsat k temhle dvema dokumentaci
+ /**
+  Set text of all menu and toolbar items with given name to specified string.
+  The string will be transtated according to the translation file, so it is
+  suggested to supply english text and add corresponding localized translation
+  into the localization file.
+ */
+ void setItemText(const QString &name,const QString &newText);
+ /**
+  Get text of menu or toolbar item with given name.
+  Returns untranslated (english) string, even when the application is run
+  using another language translation.
+  When setting back the same string, it will be re-translated according to
+  translation file, if different GUI language is selected
+ */
  QString getItemText(const QString &name);
  /*- Invokes "About" dialog, showing information about this program and its authors */
  void about();
  /*-
   Creates dialog for annotations creation.
+  Parameter page is page in which the annotation will be added
+  (x1,y1) are coordinated of lower left point of annotation rectangle.
+  W is the rectangle widht and h is its height
   Returns after annotation have been inserted into page, or dialog have been cancelled
   */
  void addAnnotation(QSPage * page,double x1,double y1,double w,double h);
@@ -72,6 +90,8 @@ public slots: //This will be all exported to scripting
   </note>
  */
  void checkItem(const QString &name,bool check);
+ /*- Clear the console output window */
+ void clearConsole();
  /*- Closes all windows (and thus ends application) */
  void closeAll();
  /*-
@@ -333,7 +353,6 @@ public slots: //This will be all exported to scripting
   Move internal selected item pointer to next selected item (or invalidate it if no more selected items is found)
  */
  QSCObject* nextSelected();
-
  /*-
   Returns progress bar which can be used to provide visualization of progress.
   Uses common progress bar from PdfEditWindow class. User should keep in mind,
@@ -342,7 +361,6 @@ public slots: //This will be all exported to scripting
   */
  QProgressBar * progressBar();
 
- 
 private slots:
  void toolChangeValue(const QString &toolName);
 #ifndef DRAGDROP

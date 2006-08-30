@@ -157,12 +157,20 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  l->addWidget(msg);
 }
 
+/**
+ This slot is called when state of the "insert at position" radiobox is changed
+ @param on True of it was checked as "on"
+*/
 void AddItemDialog::posNumSet(bool on) {
  if (!on) return;
  arrayPos->setEnabled(true);
  posEnd->setChecked(false);
 }
 
+/**
+ This slot is called when state of the "insert at end" radiobox is changed
+ @param on True of it was checked as "on"
+*/
 void AddItemDialog::posEndSet(bool on) {
  if (!on) return;
  arrayPos->setEnabled(false);

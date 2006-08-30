@@ -177,26 +177,26 @@ Units::Units( QString _defaultUnit ) : QObject() {
 	units["ym"] = 1e-24 * units["m"];		// y (yocto)	meter
 
 	description["m"]	= tr("m : meter");
-	description["Ym"]	= tr("Ym : yotta meter");
-	description["Zm"]	= tr("Zm : zetta meter");
-	description["Em"]	= tr("Em : exa meter");
-	description["Pm"]	= tr("Pm : peta meter");
-	description["Tm"]	= tr("Tm : tera meter");
-	description["Gm"]	= tr("Gm : giga meter");
-	description["Mm"]	= tr("Mm : mega meter");
-	description["km"]	= tr("km : kilo meter");
-	description["hm"]	= tr("hm : hecto meter");
-	description["dam"]	= tr("dam : deka meter");
-	description["dm"]	= tr("dm : deci meter");
-	description["cm"]	= tr("cm : centi meter");
-	description["mm"]	= tr("mm : milli meter");
-	description["um"]	= tr("um : micro meter");
-	description["nm"]	= tr("nm : nano meter");
-	description["pm"]	= tr("pm : pico meter");
-	description["fm"]	= tr("fm : femto meter");
-	description["am"]	= tr("am : atto meter");
-	description["zm"]	= tr("zm : zepto meter");
-	description["ym"]	= tr("ym : yocto meter");
+	description["Ym"]	= tr("Ym : yottameter");
+	description["Zm"]	= tr("Zm : zettameter");
+	description["Em"]	= tr("Em : exameter");
+	description["Pm"]	= tr("Pm : petameter");
+	description["Tm"]	= tr("Tm : terameter");
+	description["Gm"]	= tr("Gm : gigameter");
+	description["Mm"]	= tr("Mm : megameter");
+	description["km"]	= tr("km : kilometer");
+	description["hm"]	= tr("hm : hectometer");
+	description["dam"]	= tr("dam : decameter");
+	description["dm"]	= tr("dm : decimeter");
+	description["cm"]	= tr("cm : centimeter");
+	description["mm"]	= tr("mm : millimeter");
+	description["um"]	= tr("um : micrometer");
+	description["nm"]	= tr("nm : nanometer");
+	description["pm"]	= tr("pm : picometer");
+	description["fm"]	= tr("fm : femtometer");
+	description["am"]	= tr("am : attometer");
+	description["zm"]	= tr("zm : zeptometer");
+	description["ym"]	= tr("ym : yoctometer");
 
 	units["A"] = 0.1 * units["nm"];			// 1 angstrom = 0.1 nm	
 	description["A"]	= tr("A : angstrom");
