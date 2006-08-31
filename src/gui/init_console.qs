@@ -147,7 +147,7 @@ function onConsoleStart() {
  func=takeParameter();
  if (!func) {
   print(tr("Usage:"));
-  print(" pdfedit -console ["+tr("function name")+"] ["+tr("function parameter(s)")+"]"));
+  print(" pdfedit -console ["+tr("function name")+"] ["+tr("function parameter(s)")+"]");
   print(tr("First parameter is name of function to invoke (case insensitive) or its unambiguous part."));
   print(tr("Rest of parameters are passed to invoked function."));
   functionList.list();
