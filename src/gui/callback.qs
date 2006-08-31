@@ -237,13 +237,13 @@ function onSelectMode_Text() {
 /** Callback when selection mode is changes to select text operators only for highlighting */
 function onSelectMode_highlightingText() {
  PageSpace.setSelectionMode("text_marking","rect2","highlightingSelectedText()");
- setModeButton('selectText');
+ setModeButton('highlightingtext');
 }
 
 /** Callback when selection mode is changes to select text operators only for strike trough */
 function onSelectMode_strikeTrough( ) {
  PageSpace.setSelectionMode("text_marking","rect2","strikeTroughSelection()");
- setModeButton('selectText');
+ setModeButton('striketrough');
 }
 
 /** Callback when selection mode is changes to select annotations on page */
