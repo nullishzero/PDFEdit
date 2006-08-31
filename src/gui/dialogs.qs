@@ -49,10 +49,6 @@ function editPageMediaBox() {
 									PageSpace.convertUnits(xright,"pt"), gb);
  var eyr = createNumberEditAndDisplay(tr("Right bottom corner")+", "+tr("y position")+"( "+PageSpace.getDefaultUnits()+" ): ",
 									PageSpace.convertUnits(yright,"pt"), gb);
- exl.minimum=0;
- eyl.minimum=0;
- exr.minimum=0;
- eyr.minimum=0;
  if (!dialog.exec()) return;
 
  // Save media box

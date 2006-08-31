@@ -50,8 +50,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     closew		= item Close Window	 , closewindow		,	, close.png
     quit		= item &Quit		 , quit
   #View submenu
-  showmenu		= list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,hideStatus,-,streamAll,streamText,streamFont,streamGfx,-,searchText
-    searchText		= item &Find text			, findText()			, Ctrl+F	, searchText.png	,need_page
+  showmenu		= list &View,firstpage,prevpage,nextpage,lastpage,-,zoom_in,zoom_out,-,hideCmd,hideProp,hideTree,hideStatus,-,searchText
     firstpage		= item First Page			, PageSpace.firstPage()		, Ctrl+Home	, first.png 		,need_page
     prevpage		= item Prev Page			, PageSpace.prevPage()		, Ctrl+PgUp	, prev.png 		,need_page
     nextpage		= item Next Page			, PageSpace.nextPage()		, Ctrl+PgDown	, next.png 		,need_page
@@ -62,10 +61,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
     hideProp		= item Show/Hide &property editor	, showHide('propertyeditor'\,'hideProp')	, Ctrl+Alt+P	, hide_propedit.png
     hideTree		= item Show/Hide object &tree		, showHide('tree'\,'hideTree')		, Ctrl+Alt+T	, hide_tree.png
     hideStatus		= item Show/Hide &status bar		, showHide('statusbar'\,'hideStatus')		, Ctrl+Alt+S	, hide_statusbar.png
-    streamAll		= item Show all operators in stream		, streamMode('all')	,		, stream_mode_all.png	,need_contentstream_root
-    streamText		= item Show only text operators in stream	, streamMode('text')	,		, stream_mode_text.png	,need_contentstream_root
-    streamFont		= item Show only font operators in stream	, streamMode('font')	,		, stream_mode_font.png	,need_contentstream_root
-    streamGfx		= item Show only graphical operators in stream	, streamMode('graphic')	,		, stream_mode_gfx.png	,need_contentstream_root
+    searchText		= item &Find text			, findText()			, Ctrl+F	, searchText.png	,need_page
   #Tools submenu
   toolsmenu		= list &Tools,opts,mergeDoc
     opts		= item &Options,options(),F9,options.png
@@ -135,12 +131,17 @@ RevisionToolbar		= list Revision Toolbar,revlabel,_revision_tool
   revlabel		= label Revisions
   # _revision_tool is special toolbar item to list/change revisions
 
-ObjectToolbar		= list Object Toolbar,treeAdditem,treeDelitem
+
+OperatorToolbar		= list Operator Toolbar,opsetcolor,opsetfont,opsetposop,opsetpos
+  # look in menu for definition of items
+
+TreeViewToolbar		= list TreeView Toolbar,treeAdditem,treeDelitem,-,streamAll,streamText,streamFont,streamGfx
   treeAdditem		= item Add object	,add_obj_dlg()		, Ins	, item_add.png		,need_dict_or_array_p
   treeDelitem		= item Delete object	,deleteObjectsInTree()	, Del	, item_delete.png	,need_removable
-
-OperatorToolbar		= list Operator Toolbar,streamAll,streamText,streamFont,streamGfx,-,opsetcolor,opsetfont,opsetposop,opsetpos
-  # look in menu for definition of items
+  streamAll		= item Show all operators in stream		, streamMode('all')	,		, stream_mode_all.png	,need_contentstream_root
+  streamText		= item Show only text operators in stream	, streamMode('text')	,		, stream_mode_text.png	,need_contentstream_root
+  streamFont		= item Show only font operators in stream	, streamMode('font')	,		, stream_mode_font.png	,need_contentstream_root
+  streamGfx		= item Show only graphical operators in stream	, streamMode('graphic')	,		, stream_mode_gfx.png	,need_contentstream_root
 
 #Generic popup menu
 popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
@@ -152,7 +153,7 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 
 [gui]
 #Which toolbars are available for use
-toolbars	= MainToolbar,PageToolbar,DrawToolbar,ObjectToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar
+toolbars	= MainToolbar,PageToolbar,DrawToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar,TreeViewToolbar
 
 [gui/PageSpace]
 #Settings affecting preview window

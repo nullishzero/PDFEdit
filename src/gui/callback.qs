@@ -44,7 +44,7 @@ function checkMenus() {
  enableItem("/need_removable",		(theType!="Pdf" && theType!=""));
  enableItem("/need_page",		(have_page));
  enableItem("/need_document",		(have_document));
- enableItem("/need_contentstream_root",	cstream_tab);
+ showItem("/need_contentstream_root",	cstream_tab);
  enableItem("_zoom_tool",have_page);
  enableItem("_page_tool",have_document);
  if (cstream_tab) {
@@ -115,7 +115,7 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Add text")+",addText(),,add_text.png");
   menu.addItemDef("item "+tr("Move page up")+",movePage(firstSelected()\\,-1);parentReload(),,page_move_up.png");
   menu.addItemDef("item "+tr("Move page down")+",movePage(firstSelected()\\,1);parentReload(),,page_move_down.png");
-  menu.addItemDef("item "+tr("Remove page")+",removePage(document.getPagePosition(firstSelected()));parentReload(),,page_delete.png");
+  menu.addItemDef("item "+tr("Remove page")+",removePageWithConditionalRefresh(),,page_delete.png");
  }
  if (tree_item_type=="ContentStream" && treeRoot().itemtype()=="ContentStream") {
   menu.addSeparator();
@@ -128,6 +128,18 @@ function onTreeRightClick() {
   if (tree_item_type=="Stream") test_stream_items(menu);
  }
  print_eval(menu.popup());
+}
+
+/** Remove page and redraw current page only if  */
+function removePageWithConditionalRefresh() {
+ ppos=document.getPagePosition(firstSelected());
+ ppos_p=document.getPagePosition(page());
+ removePage(ppos);
+ if (ppos==ppos_p) {
+  //We removed current page, so we need refreshing
+  go();
+ }
+ parentReload();
 }
 
 /** Callback for click with left mouse button in tree window */
