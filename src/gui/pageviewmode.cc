@@ -899,44 +899,34 @@ const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * PageViewMode_TextSe
 			if (arrayOfBBoxes.isEmpty())
 				return NULL;
 
-			RectArray< boost::shared_ptr<PdfOperator> > * prevLine = NULL;
 			RectArray< boost::shared_ptr<PdfOperator> > * line = arrayOfBBoxes.first();
-			for ( ; line ; prevLine = line, line = arrayOfBBoxes.next() ) {
+			for ( ; line ; line = arrayOfBBoxes.next() ) {
+				if (line->getMaxY() < point.y())
+					continue ;
 				if (line->getMinY() > point.y())
-				break;
-			}
-
-			if (prevLine == NULL)
-				prevLine = line;
-
-			BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * nearest = prevLine->first();
-			BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * prevNearest = nearest;
-			for ( ; nearest ; prevNearest = nearest, nearest = prevLine->next() ) {
-				if (nearest->left() > point.x())
-					break;
-				if (nearest->right() > point.x()) {
-					prevNearest = nearest;
-					break;
+					break ;
+				
+				BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > * nearest = line->first();
+				for ( ; nearest ; nearest = line->next() ) {
+					if (nearest->right() < point.x())
+						continue;
+					if (nearest->left() > point.x())
+						break;
+					if (nearest->contains( point ))
+						return nearest;
 				}
 			}
 
-			return prevNearest;
+			return NULL;
 		};
 
 void PageViewMode_TextSelection::mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * /* w */ )
 		{
-			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* nearestObjectToClick;
+			if (workOpRegion.contains( e->pos() ))
+				firstSelectedObject = getNearestObject( e->pos() );
+			else
+				firstSelectedObject = NULL;
 
-			nearestObjectToClick = getNearestObject( e->pos() );
-			firstSelectedObject = nearestObjectToClick;
-			for ( ; firstSelectedObject ; firstSelectedObject = firstSelectedObject->getRightBBox() ) {
-				if (firstSelectedObject->left() > e->pos().x()) {
-					firstSelectedObject = NULL;
-					break;
-				}
-				if (firstSelectedObject->contains( e->pos() ) )
-					break;
-			}
 			lastSelectedObject = firstSelectedObject;
 			if (firstSelectedObject) {
 				mouseSelectedRegion = QRegion( * firstSelectedObject );

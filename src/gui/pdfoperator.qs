@@ -19,6 +19,15 @@ function isChangeableOp(operator) {
 		return false;
 }
 
+/** Is this operator graphical operator. */
+function isGraphicalOp(operator) {
+	var txtit = operator.graphicalIterator();
+	if (!txtit.isEnd() && operator.equals(txtit.current()))
+		return true;
+	else
+		return false;
+}
+
 /* === Content stream helper functions === */
 /** Change nonstroking color. */
 function putnscolor (op,r,g,b) {
@@ -163,10 +172,11 @@ function operatorPutBehindOp( prev_operator, op_to_put ) {
  * @param r red component of color for set
  * @param g green component of color for set
  * @param b blue component of color for set
+ * @param globchange If true change is global.
  *
  * If red,green or blue component is not set, view color dialog for set correct color.
  */
-function operatorSetColor(operator,r,g,b) {
+function operatorSetColor(operator,r,g,b, globchange) {
 	// --------  check parameters  ---------
 
 	if (operator.type() != "PdfOperator") {
@@ -205,7 +215,11 @@ function operatorSetColor(operator,r,g,b) {
 	//  oper
 	//  Q
 	//
-	var composite = createCompositeOperator("q","Q");
+	if (globchange) {
+		composite = createCompositeOperator ("","");
+	}else {
+		composite = createCompositeOperator ("q","Q");
+	}
 
 
 	var cntNon = operator.containsNonStrokingOperator();
@@ -226,7 +240,8 @@ function operatorSetColor(operator,r,g,b) {
 	}
 
 	composite.pushBack( operator.clone() );
-	putendq(composite);
+	if (!globchange)
+		putendq(composite);
 
 	operator.stream().replace(operator, composite);
 }
@@ -506,6 +521,10 @@ function operatorDrawLine ( lines, width, col ) {
 	//
 	var composite = createCompositeOperator("q","Q");
 
+	var ctm = detransformationMatrix( page() );
+	if (ctm != [1,0,0,1,0,0])
+		composite.pushBack( createOperator_cm( ctm ), composite );
+
 	if (undefined != width) {
 		putlinewidth (composite,width);
 	}
@@ -540,6 +559,15 @@ function operatorDrawRect ( rectangles ,col ,widthLine, next_operator ) {
 	// Q
 	//
 	var composite = createCompositeOperator("q","Q");
+	
+	var ctm = [1,0,0,1,0,0];
+	if ((undefined == next_operator) || (next_operator.type() != "PdfOperator")) {
+		ctm = detransformationMatrix( page() );
+	} else {
+		ctm = detransformationMatrix( page(), next_operator );
+	}
+	if (ctm != [1,0,0,1,0,0])
+		composite.pushBack( createOperator_cm( ctm ), composite );
 
 	if (undefined != widthLine) {
 		putlinewidth (composite,widthLine);
@@ -570,7 +598,7 @@ function operatorDrawRect ( rectangles ,col ,widthLine, next_operator ) {
 /**
  * Add text line.
  */
-function operatorAddTextLine (text,x,y,fname,fsize,putBefore) {
+function operatorAddTextLine (text,x,y,fname,fsize,opToPutBefore) {
 	//
 	// q
 	// BT
@@ -583,8 +611,8 @@ function operatorAddTextLine (text,x,y,fname,fsize,putBefore) {
 	var q = createCompositeOperator("q","Q");
 	var BT = createCompositeOperator("BT","ET");
 	
-	if ((undefined != putBefore) && (putBefore.type() == "PdfOperator"))
-		q.pushBack( putBefore, q );
+	if ((undefined != opToPutBefore) && (opToPutBefore.type() == "PdfOperator"))
+		q.pushBack( opToPutBefore, q );
 	q.pushBack (BT,q);
 	
 	putfont(BT,fname,fsize);
@@ -598,3 +626,66 @@ function operatorAddTextLine (text,x,y,fname,fsize,putBefore) {
 	page().prependContentStream(ops);
 }
 
+function detransformationMatrix( page, op ) {
+	var cs_count = page.getContentStreamCount() - 1;
+	var ctm = [1,0,0,1,0,0];
+
+	if ((undefined != op) && (op.type() == "PdfOperator")) {
+		// find contentstream which contains operator op
+		var h_cs_count = cs_count;
+		var h_stream = op.stream();
+		for ( ; h_cs_count >=0 ; --h_cs_count ) {
+			if (page.getContentStream( h_cs_count ).equals( h_stream  )) {
+				ctm = cmToDetransformation( op, true, ctm );
+				cs_count = h_cs_count - 1;
+				break;
+			}
+		}
+	};
+
+	for ( ; cs_count >= 0 ; --cs_count ) {
+		var stream = page.getContentStream( cs_count );
+		if (! stream.isEmpty() )
+			ctm = cmToDetransformation( stream.getLastOperator(), false, ctm );
+	}
+
+	return ctm;
+}
+
+/** Get only text from text operator. */
+function getTextFromTextOperator( op ) {
+	if (! isTextOp( op ))
+		return "";
+
+	switch (op.getName()) {
+		case "'":
+		case "Tj":
+				if (op.paramCount() == 1) {
+					return op.params().property(0).value();
+				}
+				break;
+		case "\"":
+				if (op.paramCount() == 3) {
+					return op.params().property(2).value();
+				}
+				break;
+		case "TJ":
+				if ((op.paramCount() != 1) ||
+					(op.params().property(0).type() != "Array")) {
+					break;
+				}
+				var p = op.params().property(0);	// Array of String and Numbers
+				var c = p.count();
+				var i = 0;
+				var text = "";
+				for ( ; i < c ; ++i ) {
+					if (p.property(i).getType() == "String") {
+						text = text + p.property(i).value();
+					}
+				}
+				return text;
+				break;
+	}
+
+	return "";
+}

@@ -78,7 +78,7 @@ function cmToDetransformation( operator: PdfOperator, before: bool, _ctm : Array
 	if (_ctm != undefined)
 		ctm = _ctm;
 
-	if ((undefined == before) || (before == true) || (! it.isBegin()))
+	if (((undefined == before) || (before == true)) && (! it.isBegin()))
 		it.prev();
 
 	while (! it.isBegin()) {

@@ -98,7 +98,7 @@ function setOpColor() {
                 }
 
                 stream=op.stream();
-                operatorSetColor(op,col.red, col.green, col.blue);
+                operatorSetColor(op,col.red, col.green, col.blue, isGraphicalOp(op));
                 op=nextSelected();
                 count++;
         }
@@ -639,13 +639,7 @@ function _AddTextSlot ( text ) {
 	}
 	var fs=getNumber( "fontsize" );
 
-	var cs_count = thepage.getContentStreamCount();
-	var ctm = [1,0,0,1,0,0];
-	for ( --cs_count ; cs_count > 0 ; --cs_count ) {
-		var stream = thepage.getContentStream( cs_count );
-		if (! stream.isEmpty() )
-			ctm = cmToDetransformation( stream.getLastOperator(), false, ctm );
-	}
+	var ctm = detransformationAtEnd( thepage );
 	
 	operatorAddTextLine ( text, global_addText_x, global_addText_y, fid, fs, createOperator_cm( ctm ) );
 
@@ -704,7 +698,7 @@ function highlightingSelectedText() {
 		return i.current();
 	}
 
-	var _op = this.firstSelected();
+	var _op = firstSelected();
 	var _firstTextOp = undefined;
 	var _rectangles = [];
 	while (_op) {
@@ -715,7 +709,7 @@ function highlightingSelectedText() {
 				_firstTextOp = _pom;
 
 			if ( ! _pom.equals (_firstTextOp) ) {
-				this.operatorDrawRect( _rectangles, getColor("bg"), 0, _firstTextOp );
+				operatorDrawRect( _rectangles, getColor("bg"), 0, _firstTextOp );
 				_firstTextOp = _pom;
 				_rectangles = [];
 			}
@@ -729,16 +723,17 @@ function highlightingSelectedText() {
 			_rectangles.push( [_x1, _y1, _x2-_x1, _y2-_y1 ] );
 		}
 
-		_op = this.nextSelected();
+		_op = nextSelected();
 	}
 
-	this.operatorDrawRect( _rectangles, getColor("bg"), 0, _firstTextOp );
+	operatorDrawRect( _rectangles, getColor("bg"), 0, _firstTextOp );
 
 	go();
 }
 
+/** Strike trougn text which are selected. */
 function strikeTroughSelection() {
-	var _op = this.firstSelected();
+	var _op = firstSelected();
 	var _lines = [];
 	while (_op) {
 		var _br = _op.getBBox();
@@ -751,10 +746,76 @@ function strikeTroughSelection() {
 
 		_lines.push( [_x1, _y1 + halfh, _x2, _y1 + halfh ] );
 
-		_op = this.nextSelected();
+		_op = nextSelected();
 	}
 
-	this.operatorDrawLine( _lines, getNumber("linewidth"), getColor("fg") );
+	operatorDrawLine( _lines, getNumber("linewidth"), getColor("fg") );
 
 	go();
 }
+
+/** Fill line edit named "text" on toolbox with text from all selected text operators. */
+function fillTextFromSelectedOperators() {
+	if ((!isTreeItemSelected()) ||
+		(firstSelected().type()!="PdfOperator") ||
+		(! isTextOp( firstSelected() )))
+		return false;
+
+	var all_is_text = true;
+	var text = "";
+	var op = firstSelected();
+	while (op) {
+		if (! isTextOp( op ) ) {
+			all_is_text = false;
+			break;
+		}
+		text = text + getTextFromTextOperator( op );
+		op = nextSelected();
+	}
+	if (! all_is_text)
+		return false;
+
+	setEditText( "text", text );
+	global_EditText_last_for_text = text;
+	return true;
+}
+/** Remove all selected operators (all must be text) and put operator "Tj" with text from "text" */
+function changeSelectedText () {
+	if (getEditText("text") == global_EditText_last_for_text)
+		return false;
+
+	if ((!isTreeItemSelected()) ||
+		(firstSelected().type()!="PdfOperator") ||
+		(! isTextOp( firstSelected() )))
+		return false;
+
+	var all_is_text = true;
+	var op = firstSelected();
+	while (op) {
+		if (! isTextOp( op ) )
+			all_is_text = false;
+		op = nextSelected();
+	}
+	if (! all_is_text)
+		return false;
+
+	op = firstSelected();
+	var op_to_delete = nextSelected();
+	while (op_to_delete) {
+		op_to_delete.remove();
+		op_to_delete = nextSelected();
+	};
+
+	global_EditText_last_for_text = getEditText("text");
+
+	if (op.getName() == "Tj") {
+		op.params().property(0).set( getEditText("text") );
+		return true;
+	};
+	var params = createIPropertyArray();
+	params.append( createString(getEditText("text")) );
+	var new_op = createOperator("Tj",params);
+	op.stream().replace( op, new_op );
+
+	return true;
+};

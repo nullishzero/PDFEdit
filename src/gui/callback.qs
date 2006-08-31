@@ -138,6 +138,10 @@ function onTreeLeftClick() {
 /** Callback for changing value in any of special tools in toolbar */
 function onValueChange(x) {
 // print(x+' have changed');
+
+ if (x == "text")
+ 	if (changeSelectedText ())
+		go();
 }
 
 /** Callback for click with middle mouse button in tree window */
@@ -180,6 +184,12 @@ function onChangeRevision() {
 /** Callback when selection in tree (which item is selected) changes */
 function onTreeSelectionChange() {
  checkMenus();
+ 
+ if (fillTextFromSelectedOperators()) {
+	showItem("_edit_tool text",true);
+ } else {
+	showItem("_edit_tool text",false);
+ }
 }
 
 /** Set certain mode button to pressed while the others are unpressed */
@@ -268,8 +278,10 @@ function onPageChange() {
  stdfonts=getSystemFonts();
  //Fonts in page
  the_page=page();
-// todo: spravit kdyz page==null
- exfonts=page().getFontIdsAndNames(true);
+ if (undefined == the_page)
+   exfonts=[];
+ else
+   exfonts=the_page.getFontIdsAndNames(true);
  //Both can be used
  setPredefs('fontface',stdfonts.concat(exfonts));
 }

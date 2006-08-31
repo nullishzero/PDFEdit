@@ -83,6 +83,7 @@ class RectArray : public QPtrList< BBoxOfObjectOnPage<T> > {
 			return getMinY() == second.getMinY();
 		}
 		int getMinY() const;
+		int getMaxY() const;
 		void initAllBBoxPtr( RectArray * prev, RectArray * next );
 	protected:
 	    virtual int compareItems( QPtrCollection::Item s1, QPtrCollection::Item s2 ) {
@@ -93,6 +94,7 @@ class RectArray : public QPtrList< BBoxOfObjectOnPage<T> > {
 	
 	private:
 		int minY;
+		int maxY;
 };
 
 /* ************************************************************************************************
@@ -262,6 +264,7 @@ RectArray<T>::RectArray() :
 	QPtrList< BBoxOfObjectOnPage<T> >()
 {
 	minY = std::numeric_limits<int>::max();
+	maxY = std::numeric_limits<int>::min();
 	this->setAutoDelete( true );
 }
 
@@ -272,15 +275,20 @@ RectArray<T>::~RectArray() {
 template <typename T>
 void RectArray<T>::myAppend ( const BBoxOfObjectOnPage<T> * item ) {
 	if (! item->isNull()) {  //TODO
-		minY = std::min( minY, item->y() );
+		minY = std::min( minY, item->top() );
+		maxY = std::max( maxY, item->bottom() );
 	}
-	assert( !((minY != item->y()) && (this->count() > 0)) );
 	append( item );
 }
 
 template <typename T>
 int RectArray<T>::getMinY() const {
 	return minY;
+}
+
+template <typename T>
+int RectArray<T>::getMaxY() const {
+	return maxY;
 }
 
 template <typename T>

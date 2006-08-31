@@ -44,6 +44,7 @@ TextLine::TextLine ()
 	: QMainWindow ( NULL, NULL, Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_StaysOnTop | Qt::WDestructiveClose )
 {
 	edit = new QLineEdit ( this, "textline" );
+	edit->setFrame( false );
 //	edit->setFocus ();
 	setCentralWidget ( edit );
 	setSizePolicy ( QSizePolicy::Minimum, QSizePolicy::Minimum );
@@ -417,9 +418,13 @@ void PageSpace::refresh ( int pageToView, QSPdf * pdf ) {			// if pdf is NULL re
 	pageCount = pdf->get()->getPageCount();
 	if (pageToView > pageCount)
 			pageToView = pageCount;
-		
-	QSPage p( pdf->get()->getPage( pageToView ) , NULL );
-	refresh( &p, pdf );
+
+	try {
+		QSPage p( pdf->get()->getPage( pageToView ) , NULL );
+		refresh( &p, pdf );
+	} catch (PageNotFoundException) {
+		refresh( (QSPage *) NULL, (QSPdf *) NULL );
+	}
 }
 
 void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView is NULL, refresh actual page
@@ -438,7 +443,7 @@ void PageSpace::refresh ( QSPage * pageToView, QSPdf * pdf ) {		// if pageToView
 	} else {
 		if ((actualPage == NULL) || (actualPdf == NULL) || (pageToView != NULL))
 			return ;					// no page to refresh
-		if ((pageToView == NULL) && (pdf == NULL)) {
+		if (((pageToView == NULL) && (pdf == NULL)) || (actualPdf->getPageCount() == 0)) {
 			actualPage.reset();
 			delete actualPdf;
 			actualPdf = NULL;

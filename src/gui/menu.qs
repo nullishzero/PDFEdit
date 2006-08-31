@@ -99,7 +99,11 @@ function zoom(x) {
 
 /** Go to page with number x in document. If parameter is empty, current page is reloaded */
 function go(x) {
- tpage=page();
+ if (x == undefined) {
+    tpage=page();
+ } else {
+    tpage=document.getPage(x);
+ }
  csc=tpage.getContentStreamCount();
  //flush all content streams
  for(i=0;i<csc;i++) {
