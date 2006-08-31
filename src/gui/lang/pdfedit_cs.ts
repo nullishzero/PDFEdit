@@ -450,12 +450,8 @@ Data: %3
         <translation>vhodný pro nastavení barvy</translation>
     </message>
     <message>
-        <source>Colour changed.</source>
-        <translation type="obsolete">Barva změněna.</translation>
-    </message>
-    <message>
         <source>suitable for line width change.</source>
-        <translation type="obsolete">vhodný pro nastavení šířky čáry</translation>
+        <translation>vhodný pro nastavení šířky čáry</translation>
     </message>
     <message>
         <source>Line width changed.</source>
@@ -463,7 +459,7 @@ Data: %3
     </message>
     <message>
         <source>suitable for dash style change.</source>
-        <translation type="obsolete">vhodný pro nastavení stylu čáry.</translation>
+        <translation>vhodný pro nastavení stylu čáry.</translation>
     </message>
     <message>
         <source>Dash pattern changed.</source>
@@ -472,30 +468,6 @@ Data: %3
     <message>
         <source>text operator</source>
         <translation>textový operátor</translation>
-    </message>
-    <message>
-        <source>Change font properties</source>
-        <translation>Změnit vlastnosti písma</translation>
-    </message>
-    <message>
-        <source>Change font</source>
-        <translation>Změnit písmo</translation>
-    </message>
-    <message>
-        <source>Avaliable fonts</source>
-        <translation>Dostupná písma</translation>
-    </message>
-    <message>
-        <source>Select from all avaliable fonts</source>
-        <translation>Vyberte ze všech dostupných písem</translation>
-    </message>
-    <message>
-        <source>Font size according to the pdf document</source>
-        <translation>Velikost písma dle pdf documentu</translation>
-    </message>
-    <message>
-        <source>Font size (not in px)</source>
-        <translation>Velikost písma (ne v px)</translation>
     </message>
     <message>
         <source>Font changed.</source>
@@ -580,10 +552,6 @@ Data: %3
     <message>
         <source>Page metrics</source>
         <translation>Metrika stránky</translation>
-    </message>
-    <message>
-        <source>Change line width</source>
-        <translation type="obsolete">Změnit šířku čáry</translation>
     </message>
     <message>
         <source>Change effect</source>
@@ -757,14 +725,6 @@ Data: %3
         <translation>Nakreslit čáru</translation>
     </message>
     <message>
-        <source>Draw</source>
-        <translation type="obsolete">Nakreslit</translation>
-    </message>
-    <message>
-        <source>Invalid position</source>
-        <translation>Neplatná pozice</translation>
-    </message>
-    <message>
         <source>Line was drawn.</source>
         <translation>Čára nakreslena</translation>
     </message>
@@ -773,48 +733,8 @@ Data: %3
         <translation>Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
     </message>
     <message>
-        <source>End position</source>
-        <translation type="obsolete">Koncový bod</translation>
-    </message>
-    <message>
-        <source>Draw rectangle</source>
-        <translation type="obsolete">Nakreslit obdélník</translation>
-    </message>
-    <message>
-        <source>Upper left corner</source>
-        <translation type="obsolete">Levý horní roh</translation>
-    </message>
-    <message>
-        <source>Metrics</source>
-        <translation type="obsolete">Rozměry</translation>
-    </message>
-    <message>
-        <source>Width</source>
-        <translation type="obsolete">Šířka</translation>
-    </message>
-    <message>
-        <source>Height</source>
-        <translation type="obsolete">Výška</translation>
-    </message>
-    <message>
         <source>Rect was drawn.</source>
         <translation>Obdélník byl nakreslen</translation>
-    </message>
-    <message>
-        <source>Add text line</source>
-        <translation>Přidat řádek textu</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Přidat</translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <translation>Text</translation>
-    </message>
-    <message>
-        <source>Text to add</source>
-        <translation>Text k přidání</translation>
     </message>
     <message>
         <source>Draw rect</source>
@@ -841,40 +761,8 @@ Data: %3
         <translation>Relativní pozice operátoru</translation>
     </message>
     <message>
-        <source>Start position</source>
-        <translation type="obsolete">Počáteční bod</translation>
-    </message>
-    <message>
-        <source>Text position</source>
-        <translation>Pozice textu</translation>
-    </message>
-    <message>
-        <source>Set font</source>
-        <translation>Nastavit písmo</translation>
-    </message>
-    <message>
-        <source>Font size</source>
-        <translation>Velikost písma</translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation>Velikost</translation>
-    </message>
-    <message>
-        <source>Change background color</source>
-        <translation type="obsolete">Změnit barvu pozadí</translation>
-    </message>
-    <message>
         <source>Remove page</source>
         <translation>Odstranit stránku</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Odstranit</translation>
-    </message>
-    <message>
-        <source>Invalid page</source>
-        <translation>Neplatná stránka</translation>
     </message>
     <message>
         <source>View page</source>
@@ -1076,16 +964,8 @@ Data: %3
         <translation>Soubor s názvem &quot;%1&quot; již existuje. Chcete ho přepsat?</translation>
     </message>
     <message>
-        <source>Move page up</source>
-        <translation>Posunout stránku nahoru</translation>
-    </message>
-    <message>
-        <source>Move page down</source>
-        <translation>Posunout stránku dolů</translation>
-    </message>
-    <message>
         <source>Delinearization failed!</source>
-        <translation>Delnearizace selhala!</translation>
+        <translation>Delinearizace selhala!</translation>
     </message>
     <message>
         <source>Colour changed</source>
@@ -1106,6 +986,26 @@ Data: %3
     <message>
         <source>Input and output files must be different</source>
         <translation>Vstupní a výstupní soubor musí být jiný</translation>
+    </message>
+    <message>
+        <source>changeable</source>
+        <translation>měnitelný</translation>
+    </message>
+    <message>
+        <source>Delinearize</source>
+        <translation>Delinearizovat</translation>
+    </message>
+    <message>
+        <source>%1 added to page</source>
+        <translation>%1 přidán na stránku</translation>
+    </message>
+    <message>
+        <source>Operator %1 is not changeable</source>
+        <translation>Operátor %1 není měnitelný</translation>
+    </message>
+    <message>
+        <source>Operator cm must have array with 6 numbers as parameter!</source>
+        <translation>Operátor cm musí mít pole 6 čísel jako parametr!</translation>
     </message>
 </context>
 <context>
@@ -1269,10 +1169,6 @@ Data: %3
         <translation>Jméno položky</translation>
     </message>
     <message>
-        <source>Object will be appended at end of array</source>
-        <translation>Objekt bude přidán na konec pole</translation>
-    </message>
-    <message>
         <source>No object type selected</source>
         <translation>Není zvolen typ objektu</translation>
     </message>
@@ -1299,6 +1195,126 @@ Data: %3
     <message>
         <source>Reference target does not exist!</source>
         <translation>Cíl reference neexistuje!</translation>
+    </message>
+    <message>
+        <source>Add to position</source>
+        <translation>Vložit na pozici</translation>
+    </message>
+    <message>
+        <source>Append to end</source>
+        <translation>Přidat na konec</translation>
+    </message>
+    <message>
+        <source>Property added to position %1 in array</source>
+        <translation>Položka přidána na pozici &apos;%1&apos; v poli</translation>
+    </message>
+    <message>
+        <source>Array index %1 out of range</source>
+        <translation>Index pole %1 je mimo rozsah</translation>
+    </message>
+</context>
+<context>
+    <name>gui::AnnotDialog</name>
+    <message>
+        <source>Text Annotation</source>
+        <translation>Textová Anotace</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>&amp;Otevřená</translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation>Obsah</translation>
+    </message>
+    <message>
+        <source>Icon &amp;Name</source>
+        <translation>Jmé&amp;no ikony</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Komentář</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Nápověda (Help)</translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation>Vložit (Insert)</translation>
+    </message>
+    <message>
+        <source>Key</source>
+        <translation>Klíč (Key)</translation>
+    </message>
+    <message>
+        <source>NewParagraph</source>
+        <translation>Nový Odstavec (NewParagraph)</translation>
+    </message>
+    <message>
+        <source>Note</source>
+        <translation>Poznámka (Note)</translation>
+    </message>
+    <message>
+        <source>Paragraph</source>
+        <translation>Odstavec (Paragraph)</translation>
+    </message>
+    <message>
+        <source>&amp;State</source>
+        <translation>&amp;Stav</translation>
+    </message>
+    <message>
+        <source>Marked</source>
+        <translation>Označená</translation>
+    </message>
+    <message>
+        <source>Unmarked</source>
+        <translation>Neoznačená</translation>
+    </message>
+    <message>
+        <source>State &amp;Model</source>
+        <translation>&amp;Model stavů</translation>
+    </message>
+    <message>
+        <source>Review</source>
+        <translation>Přezkoumání</translation>
+    </message>
+    <message>
+        <source>&amp;Text Annotation</source>
+        <translation>&amp;Textová anotace</translation>
+    </message>
+    <message>
+        <source>&amp;Destination</source>
+        <translation>Cíl</translation>
+    </message>
+    <message>
+        <source>&amp;Highlight mode</source>
+        <translation>
+Režim zvýraznění</translation>
+    </message>
+    <message>
+        <source>N - None</source>
+        <translation>N - Žádný</translation>
+    </message>
+    <message>
+        <source>I - Invert</source>
+        <translation>I - Inverze</translation>
+    </message>
+    <message>
+        <source>O - Outline</source>
+        <translation>O - Obrys</translation>
+    </message>
+    <message>
+        <source>P - Push</source>
+        <translation>P - Vytlačený okraj</translation>
+    </message>
+    <message>
+        <source>&amp;Link Annotation</source>
+        <translation>&amp;Link anotace (odkaz)</translation>
+    </message>
+    <message>
+        <source>Add new annotation</source>
+        <translation>Přidat novou anotaci</translation>
     </message>
 </context>
 <context>
@@ -1633,6 +1649,10 @@ Data: %3
         <source>Character encoding</source>
         <translation>Kódování znaků</translation>
     </message>
+    <message>
+        <source>Length units</source>
+        <translation>Jednotky délky</translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
@@ -1892,11 +1912,6 @@ Data: %3
         <translation>Obnovit stránku</translation>
     </message>
     <message>
-        <source>Object Toolbar</source>
-        <comment>ObjectToolbar</comment>
-        <translation>Toolbar objektů</translation>
-    </message>
-    <message>
         <source>Add object</source>
         <comment>treeAdditem</comment>
         <translation>Přidat objekt</translation>
@@ -2133,21 +2148,6 @@ Data: %3
     </message>
     <message>
         <source>Draw line</source>
-        <comment>drawlinem</comment>
-        <translation>Nakreslit čáru</translation>
-    </message>
-    <message>
-        <source>Draw rectangle</source>
-        <comment>drawrectm</comment>
-        <translation>Nakreslit obdélník</translation>
-    </message>
-    <message>
-        <source>Add text</source>
-        <comment>addtextm</comment>
-        <translation>Přidat text</translation>
-    </message>
-    <message>
-        <source>Draw line</source>
         <comment>drawlinee</comment>
         <translation>Nakreslit čáru</translation>
     </message>
@@ -2181,6 +2181,46 @@ Data: %3
         <comment>DrawToolbar</comment>
         <translation>Kreslící Toolbar</translation>
     </message>
+    <message>
+        <source>Move page up</source>
+        <comment>pageMoveUp</comment>
+        <translation>Posunout stránku nahoru</translation>
+    </message>
+    <message>
+        <source>Move page down</source>
+        <comment>pageMoveDown</comment>
+        <translation>Posunout stránku dolů</translation>
+    </message>
+    <message>
+        <source>Remove page</source>
+        <comment>pageRemove</comment>
+        <translation>Odstranit stránku</translation>
+    </message>
+    <message>
+        <source>Strike trough</source>
+        <comment>striketrough</comment>
+        <translation>Přeškrtnout</translation>
+    </message>
+    <message>
+        <source>Highlighting text</source>
+        <comment>highlightingtext</comment>
+        <translation>Zvýraznit text</translation>
+    </message>
+    <message>
+        <source>Select graphical operators</source>
+        <comment>selectGraphical</comment>
+        <translation>Vybírat grafické operátory</translation>
+    </message>
+    <message>
+        <source>TreeView Toolbar</source>
+        <comment>TreeViewToolbar</comment>
+        <translation>Toolbar stromuobjektů</translation>
+    </message>
+    <message>
+        <source>Dynamic Toolbar</source>
+        <comment>DynamicToolBar</comment>
+        <translation>Dynamický Toolbar</translation>
+    </message>
 </context>
 <context>
     <name>gui::TreeItemPdf</name>
@@ -2212,7 +2252,7 @@ Data: %3
     <name>gui::Units</name>
     <message>
         <source>point</source>
-        <translation type="unfinished"></translation>
+        <translation>bod</translation>
     </message>
     <message>
         <source>inch</source>
@@ -2240,11 +2280,11 @@ Data: %3
     </message>
     <message>
         <source>link</source>
-        <translation type="unfinished"></translation>
+        <translation>článek</translation>
     </message>
     <message>
         <source>links</source>
-        <translation type="unfinished"></translation>
+        <translation>články</translation>
     </message>
     <message>
         <source>yard</source>
@@ -2256,55 +2296,55 @@ Data: %3
     </message>
     <message>
         <source>rod</source>
-        <translation type="unfinished"></translation>
+        <translation>prut</translation>
     </message>
     <message>
         <source>rods</source>
-        <translation type="unfinished"></translation>
+        <translation>pruty</translation>
     </message>
     <message>
         <source>pole</source>
-        <translation type="unfinished"></translation>
+        <translation>prut</translation>
     </message>
     <message>
         <source>poles</source>
-        <translation type="unfinished"></translation>
+        <translation>pruty</translation>
     </message>
     <message>
         <source>perch</source>
-        <translation type="unfinished"></translation>
+        <translation>prut</translation>
     </message>
     <message>
         <source>perches</source>
-        <translation type="unfinished"></translation>
+        <translation>pruty</translation>
     </message>
     <message>
         <source>fathom</source>
-        <translation type="unfinished"></translation>
+        <translation>sáh</translation>
     </message>
     <message>
         <source>fathoms</source>
-        <translation type="unfinished"></translation>
+        <translation>sáhy</translation>
     </message>
     <message>
         <source>chain</source>
-        <translation type="unfinished"></translation>
+        <translation>řetěz</translation>
     </message>
     <message>
         <source>chains</source>
-        <translation type="unfinished"></translation>
+        <translation>řetězy</translation>
     </message>
     <message>
         <source>furlong</source>
-        <translation type="unfinished"></translation>
+        <translation>brázda</translation>
     </message>
     <message>
         <source>furlongs</source>
-        <translation type="unfinished"></translation>
+        <translation>brázdy</translation>
     </message>
     <message>
         <source>cable</source>
-        <translation type="unfinished"></translation>
+        <translation>kabel</translation>
     </message>
     <message>
         <source>mile</source>
@@ -2316,19 +2356,19 @@ Data: %3
     </message>
     <message>
         <source>land</source>
-        <translation type="unfinished"></translation>
+        <translation>legua</translation>
     </message>
     <message>
         <source>lands</source>
-        <translation type="unfinished"></translation>
+        <translation>leguy</translation>
     </message>
     <message>
         <source>league</source>
-        <translation type="unfinished"></translation>
+        <translation>legua</translation>
     </message>
     <message>
         <source>leagues</source>
-        <translation type="unfinished"></translation>
+        <translation>leguy</translation>
     </message>
     <message>
         <source>nautical mile</source>
@@ -2337,6 +2377,186 @@ Data: %3
     <message>
         <source>nautical miles</source>
         <translation>námořních mil</translation>
+    </message>
+    <message>
+        <source>pt : point</source>
+        <translation>pt : bod</translation>
+    </message>
+    <message>
+        <source>in : inch</source>
+        <translation>in : palec</translation>
+    </message>
+    <message>
+        <source>hand : hand</source>
+        <translation>hand : ruka</translation>
+    </message>
+    <message>
+        <source>ft : foot</source>
+        <translation>ft : stopa</translation>
+    </message>
+    <message>
+        <source>li : link</source>
+        <translation>li : článek</translation>
+    </message>
+    <message>
+        <source>yd : yard</source>
+        <translation>yd : yard</translation>
+    </message>
+    <message>
+        <source>rd : rod (pole, perch)</source>
+        <translation>rd: prut</translation>
+    </message>
+    <message>
+        <source>ch : chain</source>
+        <translation>ch : řetěz</translation>
+    </message>
+    <message>
+        <source>mi : mile</source>
+        <translation>mi : míle</translation>
+    </message>
+    <message>
+        <source>land : land (league)</source>
+        <translation>land : legua</translation>
+    </message>
+    <message>
+        <source>m : meter</source>
+        <translation>m : metr</translation>
+    </message>
+    <message>
+        <source>Ym : yottameter</source>
+        <translation>Ym : yottametr</translation>
+    </message>
+    <message>
+        <source>Zm : zettameter</source>
+        <translation>Zm : zettametr</translation>
+    </message>
+    <message>
+        <source>Em : exameter</source>
+        <translation>Em : exametr</translation>
+    </message>
+    <message>
+        <source>Pm : petameter</source>
+        <translation>Pm : petametr</translation>
+    </message>
+    <message>
+        <source>Tm : terameter</source>
+        <translation>Tm : terametr</translation>
+    </message>
+    <message>
+        <source>Gm : gigameter</source>
+        <translation>Gm : gigametr</translation>
+    </message>
+    <message>
+        <source>Mm : megameter</source>
+        <translation>Mm : megametr</translation>
+    </message>
+    <message>
+        <source>km : kilometer</source>
+        <translation>km : kilometr</translation>
+    </message>
+    <message>
+        <source>hm : hectometer</source>
+        <translation>hm : hektometr</translation>
+    </message>
+    <message>
+        <source>dam : decameter</source>
+        <translation>dam : dekametr</translation>
+    </message>
+    <message>
+        <source>dm : decimeter</source>
+        <translation>dm : decimetr</translation>
+    </message>
+    <message>
+        <source>cm : centimeter</source>
+        <translation>cm : centimetr</translation>
+    </message>
+    <message>
+        <source>mm : millimeter</source>
+        <translation>mm : milimetr</translation>
+    </message>
+    <message>
+        <source>um : micrometer</source>
+        <translation>um : mikrometr</translation>
+    </message>
+    <message>
+        <source>nm : nanometer</source>
+        <translation>nm : nanometr</translation>
+    </message>
+    <message>
+        <source>pm : picometer</source>
+        <translation>pm : pikometr</translation>
+    </message>
+    <message>
+        <source>fm : femtometer</source>
+        <translation>fm : femtometr</translation>
+    </message>
+    <message>
+        <source>am : attometer</source>
+        <translation>am : attometr</translation>
+    </message>
+    <message>
+        <source>zm : zeptometer</source>
+        <translation>zm : zeptometr</translation>
+    </message>
+    <message>
+        <source>ym : yoctometer</source>
+        <translation>ym : yoctometr</translation>
+    </message>
+    <message>
+        <source>A : angstrom</source>
+        <translation>A : angstrom</translation>
+    </message>
+    <message>
+        <source>astronomical unit</source>
+        <translation>astronomická jednotka</translation>
+    </message>
+    <message>
+        <source>astronomical units</source>
+        <translation>astronomické ednotky</translation>
+    </message>
+    <message>
+        <source>AU : astronomical unit</source>
+        <translation>AU : astronomická jednotka</translation>
+    </message>
+    <message>
+        <source>light year</source>
+        <translation>světelný rok</translation>
+    </message>
+    <message>
+        <source>light years</source>
+        <translation>světelné roky</translation>
+    </message>
+    <message>
+        <source>ly : light year</source>
+        <translation>ly : světelný rok</translation>
+    </message>
+    <message>
+        <source>parsec</source>
+        <translation>parsek</translation>
+    </message>
+    <message>
+        <source>pc : parsec</source>
+        <translation>pc : parsek</translation>
+    </message>
+    <message>
+        <source>mil : milli-inch</source>
+        <translation>mil : mili-palec</translation>
+    </message>
+    <message>
+        <source>fm. : fathom</source>
+        <translation>fm. : sáh</translation>
+    </message>
+    <message>
+        <source>fur. : furlong</source>
+        <translation>fur. : brázda</translation>
+    </message>
+    <message>
+        <source>cable : cable</source>
+        <translation>cable : kabel</translation>
+    </message>
+    <message>
+        <source>n.m. : nautical mile</source>
+        <translation>n.m. : námořní míle</translation>
     </message>
 </context>
 </TS>

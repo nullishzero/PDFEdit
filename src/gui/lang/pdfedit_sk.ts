@@ -447,30 +447,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Change font properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Change font</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Avaliable fonts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select from all avaliable fonts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Font size according to the pdf document</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Font size (not in px)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Font changed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -726,10 +702,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Line was drawn.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -739,22 +711,6 @@ Data: %3
     </message>
     <message>
         <source>Rect was drawn.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add text line</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text to add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -782,31 +738,7 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Text position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set font</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Font size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1021,14 +953,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Move page up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move page down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Delinearization failed!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1050,6 +974,34 @@ Data: %3
     </message>
     <message>
         <source>Input and output files must be different</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>changeable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>suitable for line width change.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>suitable for dash style change.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delinearize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 added to page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator %1 is not changeable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator cm must have array with 6 numbers as parameter!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1230,10 +1182,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Object will be appended at end of array</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No object type selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1243,6 +1191,125 @@ Data: %3
     </message>
     <message>
         <source>Reference target does not exist!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Append to end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Property added to position %1 in array</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Array index %1 out of range</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::AnnotDialog</name>
+    <message>
+        <source>Add new annotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Annotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Icon &amp;Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NewParagraph</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paragraph</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Marked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unmarked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>State &amp;Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Review</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Text Annotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Highlight mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N - None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>I - Invert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>O - Outline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>P - Push</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Link Annotation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1577,6 +1644,10 @@ Data: %3
         <source>Character encoding</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Length units</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
@@ -1836,11 +1907,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Object Toolbar</source>
-        <comment>ObjectToolbar</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add object</source>
         <comment>treeAdditem</comment>
         <translation type="unfinished"></translation>
@@ -2077,21 +2143,6 @@ Data: %3
     </message>
     <message>
         <source>Draw line</source>
-        <comment>drawlinem</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Draw rectangle</source>
-        <comment>drawrectm</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add text</source>
-        <comment>addtextm</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Draw line</source>
         <comment>drawlinee</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -2123,6 +2174,46 @@ Data: %3
     <message>
         <source>Draw Toolbar</source>
         <comment>DrawToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move page up</source>
+        <comment>pageMoveUp</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move page down</source>
+        <comment>pageMoveDown</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove page</source>
+        <comment>pageRemove</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Strike trough</source>
+        <comment>striketrough</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlighting text</source>
+        <comment>highlightingtext</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select graphical operators</source>
+        <comment>selectGraphical</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TreeView Toolbar</source>
+        <comment>TreeViewToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic Toolbar</source>
+        <comment>DynamicToolBar</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2280,6 +2371,186 @@ Data: %3
     </message>
     <message>
         <source>nautical miles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pt : point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>in : inch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hand : hand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ft : foot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>li : link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>yd : yard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>rd : rod (pole, perch)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ch : chain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mi : mile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>land : land (league)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>m : meter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ym : yottameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zm : zettameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Em : exameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pm : petameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tm : terameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gm : gigameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mm : megameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>km : kilometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hm : hectometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dam : decameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dm : decimeter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cm : centimeter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm : millimeter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>um : micrometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>nm : nanometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pm : picometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fm : femtometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>am : attometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zm : zeptometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ym : yoctometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A : angstrom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>astronomical unit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>astronomical units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AU : astronomical unit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>light year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>light years</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ly : light year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>parsec</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pc : parsec</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mil : milli-inch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fm. : fathom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fur. : furlong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>cable : cable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>n.m. : nautical mile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
