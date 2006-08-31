@@ -40,10 +40,14 @@ if ($tr) {
 #read input (file with settings, containing all menu items)
 my %out=();
 while (<STDIN>) {
+ s/([^\\])\\,/$1<COmMA>/g; #escaped comma
  if (/^(items\/)?[^=]+=\s*item\s+([^,]*)\s*,\s*([^,]*),\s*([^, ]+)/) {
   #Item with shortcut found
   my $kbd=$4;
   my $action=$2;
+  #escaped comma -> back to comma
+  $kbd=~s/<COmMA>/,/g;
+  $action=~s/<COmMA>/,/g;
   $kbd=~s/^\s+//;
   $action=~s/^\s+//;
   $kbd=~s/\s+$//;
