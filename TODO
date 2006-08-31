@@ -29,22 +29,22 @@ Miro
  [ ] actualize selection emitovat zbyle operatory
  [ ] zjistit jak je to s PdfOperator.getBBox v console modu
  [ ] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - baseconsole???
-MP
+MP (all is now in bugtracker)
  BT[ ] Vyrobit ikonky pro mody a zkontrolovat hi-color ikonky esi sou vsechny
- [ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
+ BT[ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
  stredni:
- [~] Korektne ukazovat v menu/toolbaru co je schovane (statusbar apod.) a co ne (check/uncheck items...).
- [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
- [ ] Observer na anotace v CPage - MP ?
+ BT[~] Korektne ukazovat v menu/toolbaru co je schovane (statusbar apod.) a co ne (check/uncheck items...).
+ BT[ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
+ BT[ ] Observer na anotace v CPage - MP ?
  minor:
- [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty - MP?
- [ ] Property editor: observer na "source item" + reloadovani - asi je, zkontrolovat - MP
- [ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
- [ ] korekni reloadovani stromu po presouvani stranek (ma to jeste trochu mouchy, asi chybi nekde observer)
- [ ] Observer na contentstream -> reloadovani operatoru
+ BT[ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty - MP?
+ BT[ ] Property editor: observer na "source item" + reloadovani - asi je, zkontrolovat - MP
+ BT[ ] Smazani treeitem -> zavreni addObjectDialogu co k tomu patrily, reset property editoru pokud se tam editovala dotycna polozka -> nejaky "delete signal". Asi je, ale otestovat - MP
+ BT[ ] korekni reloadovani stromu po presouvani stranek (ma to jeste trochu mouchy, asi chybi nekde observer)
+ BT[ ] Observer na contentstream -> reloadovani operatoru
 Nedulezite:
- [ ] Proc nefunguje processevents() a progressbar?
- [ ] Progress observer + progressbar pri delinearize -> zaregistrovat ho tam pokud jsem v GUI modu
+ BT[ ] Proc nefunguje processevents() a progressbar?
+ BT[ ] Progress observer + progressbar pri delinearize -> zaregistrovat ho tam pokud jsem v GUI modu
 Michal
  [ ] Dopsat vic commandline skriptu nez jen delinearizator
      (aspon neco jednouchyho - concat documents, sude/liche ...)
