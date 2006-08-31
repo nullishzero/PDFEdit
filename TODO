@@ -30,13 +30,12 @@ Miro
  [ ] zjistit jak je to s PdfOperator.getBBox v console modu
  [ ] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - baseconsole???
 MP
- [ ] Vyrobit ikonky pro mody a zkontrolovat hi-color ikonky esi sou vsechny
+ BT[ ] Vyrobit ikonky pro mody a zkontrolovat hi-color ikonky esi sou vsechny
  [ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
  stredni:
  [~] Korektne ukazovat v menu/toolbaru co je schovane (statusbar apod.) a co ne (check/uncheck items...).
  [ ] BUG: pri otevrenych vice stromech a aktivnim ne-hlavnim stromu a prepnuti revize to sleti - MP S
  [ ] Observer na anotace v CPage - MP ?
- ??? Neco na vymazani obsahu konzole
  minor:
  [ ] Delete objektu na strance - (emitujem PageSpace.deleteSelection() ) - skripty - MP?
  [ ] Property editor: observer na "source item" + reloadovani - asi je, zkontrolovat - MP
