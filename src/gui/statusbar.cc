@@ -89,6 +89,7 @@ void StatusBar::receiveWarnText(const QString &theMessage){
 
 /** default destructor */
 StatusBar::~StatusBar() {
+ delete tm;
 }
 
 } // namespace gui

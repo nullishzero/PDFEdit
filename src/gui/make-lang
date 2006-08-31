@@ -15,7 +15,7 @@ grep 'countString.*".*".*".*"' *.cc |perl -e '
 ' >>.menu-trans.h
 
 # process localizable strings in init.qs
-grep "tr(" *.qs | ./trans-qs.pl >>.menu-trans.h
+grep "tr(" scripts/d*.qs *.qs | ./trans-qs.pl >>.menu-trans.h
 
 lupdate pdfedit.pro -noobsolete
 lrelease pdfedit.pro

@@ -1,12 +1,7 @@
-/****************************************************************************
-** Form implementation generated from reading ui file 'annotdialog.ui'
-**
-** Created: Po aug 28 22:27:02 2006
-**      by: The User Interface Compiler ($Id$)
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
-
+/** @file
+ "Add Annotation" dialog<br>
+ This dialog is used to add annotation in PDF document
+*/
 #include "annotdialog.h"
 
 #include <qvariant.h>
@@ -29,7 +24,7 @@
 #include "kernel/cannotation.h"
 #include "annotdialog.h"
 
-using namespace gui;
+namespace gui {
 
 /*
  *  Constructs a AnnotDialog as a child of 'parent', with the
@@ -207,47 +202,47 @@ AnnotDialog::~AnnotDialog()
  */
 void AnnotDialog::languageChange()
 {
-    setCaption( tr( "Annotation dialog" ) );
-    okBtn->setText( tr( "&OK" ) );
-    okBtn->setAccel( QKeySequence( tr( "Alt+O" ) ) );
-    pushButton11->setText( tr( "&Cancel" ) );
-    pushButton11->setAccel( QKeySequence( tr( "Alt+C" ) ) );
-    groupBox1->setTitle( tr( "Text Annotation" ) );
-    open->setText( tr( "&Open" ) );
-    open->setAccel( QKeySequence( tr( "Alt+O" ) ) );
-    textLabel2->setText( tr( "Content" ) );
-    textLabel3->setText( tr( "Icon &Name" ) );
+    setCaption(tr("Add new annotation"));
+    okBtn->setText(QObject::tr("&Ok"));
+    okBtn->setAccel(QKeySequence("Alt+O"));
+    pushButton11->setText(QObject::tr("&Cancel"));
+    pushButton11->setAccel(QKeySequence("Alt+C"));
+    groupBox1->setTitle(tr("Text Annotation"));
+    open->setText(tr("&Open"));
+    open->setAccel(QKeySequence("Alt+O"));
+    textLabel2->setText(tr("Content"));
+    textLabel3->setText(tr("Icon &Name"));
     iconName->clear();
-    iconName->insertItem( QString::null );
-    iconName->insertItem( tr( "Comment" ) );
-    iconName->insertItem( tr( "Help" ) );
-    iconName->insertItem( tr( "Insert" ) );
-    iconName->insertItem( tr( "Key" ) );
-    iconName->insertItem( tr( "NewParagraph" ) );
-    iconName->insertItem( tr( "Note" ) );
-    iconName->insertItem( tr( "Paragraph" ) );
-    iconName->setCurrentItem( 6 );
-    textLabel4_2->setText( tr( "&State" ) );
+    iconName->insertItem(QString::null);
+    iconName->insertItem(tr("Comment"));
+    iconName->insertItem(tr("Help"));
+    iconName->insertItem(tr("Insert"));
+    iconName->insertItem(tr("Key"));
+    iconName->insertItem(tr("NewParagraph"));
+    iconName->insertItem(tr("Note"));
+    iconName->insertItem(tr("Paragraph"));
+    iconName->setCurrentItem(6);
+    textLabel4_2->setText(tr("&State"));
     state->clear();
-    state->insertItem( tr( "Marked" ) );
-    state->insertItem( tr( "Unmarked" ) );
-    textLabel5_2->setText( tr( "State &Model" ) );
+    state->insertItem(tr("Marked"));
+    state->insertItem(tr("Unmarked"));
+    textLabel5_2->setText(tr("State &Model"));
     stateModel->clear();
-    stateModel->insertItem( tr( "Marked" ) );
-    stateModel->insertItem( tr( "Review" ) );
-    tabWidget3->changeTab( tab, tr( "&Text Annotation" ) );
-    textLabel2_3->setText( tr( "Content" ) );
-    textLabel1->setText( tr( "&Destination" ) );
-    textLabel2_2->setText( tr( "&Highlight mode" ) );
+    stateModel->insertItem(tr("Marked"));
+    stateModel->insertItem(tr("Review"));
+    tabWidget3->changeTab(tab, tr("&Text Annotation"));
+    textLabel2_3->setText(tr("Content"));
+    textLabel1->setText(tr("&Destination"));
+    textLabel2_2->setText(tr("&Highlight mode"));
     highLight->clear();
-    highLight->insertItem( tr( "N - None" ) );
-    highLight->insertItem( tr( "I - Invert" ) );
-    highLight->insertItem( tr( "O - Outline" ) );
-    highLight->insertItem( tr( "P - Push" ) );
-    tabWidget3->changeTab( tab_2, tr( "&Link Annotation" ) );
+    highLight->insertItem(tr("N - None"));
+    highLight->insertItem(tr("I - Invert"));
+    highLight->insertItem(tr("O - Outline"));
+    highLight->insertItem(tr("P - Push"));
+    tabWidget3->changeTab(tab_2, tr("&Link Annotation"));
 }
 
-void AnnotDialog::fillStates( const QString & current )
+void AnnotDialog::fillStates(const QString & current)
 {
         state->clear();
         if(current == "Marked")
@@ -365,3 +360,5 @@ void AnnotDialog::setRectangle(double xl, double yl, double width, double height
         this->rect.xright=xl+width;
         this->rect.yright=yl+height;
 }
+
+} //namespace gui

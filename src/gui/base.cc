@@ -271,7 +271,6 @@ QSIProperty* Base::createRef(int valueNum,int valueGen) {
  @return created IProperty
 */
 QSIProperty* Base::createString(const QString &value) {
-
  return new QSIProperty(boost::shared_ptr<IProperty>(CStringFactory::getInstance(util::convertFromUnicode(value))),this);
 }
 

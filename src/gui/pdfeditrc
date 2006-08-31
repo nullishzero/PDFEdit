@@ -122,7 +122,7 @@ DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,striketrough,highli
   # _number_tool is special toolbar item to select line width
   # look in menu for definition of rest of items
 
-TextToolBar		= list Text Toolbar,_select_tool fontface,_number_tool fontsize,_edit_tool text
+TextToolBar		= list Text Toolbar,_select_tool fontface,_number_tool fontsize
   # _select_tool is special toolbar item to select font face
   # _number_tool is special toolbar item to select font size
   # _edit_tool is special toolbar item to modify text
@@ -131,13 +131,14 @@ RevisionToolbar		= list Revision Toolbar,revlabel,_revision_tool
   revlabel		= label Revisions
   # _revision_tool is special toolbar item to list/change revisions
 
-
 OperatorToolbar		= list Operator Toolbar,opsetcolor,opsetfont,opsetposop,opsetpos
   # look in menu for definition of items
 
-TreeViewToolbar		= list TreeView Toolbar,treeAdditem,treeDelitem,-,streamAll,streamText,streamFont,streamGfx
+TreeViewToolbar		= list TreeView Toolbar,treeAdditem,treeDelitem
   treeAdditem		= item Add object	,add_obj_dlg()		, Ins	, item_add.png		,need_dict_or_array_p
   treeDelitem		= item Delete object	,deleteObjectsInTree()	, Del	, item_delete.png	,need_removable
+
+DynamicToolBar		= list Dynamic Toolbar,streamAll,streamText,streamFont,streamGfx,_edit_tool text
   streamAll		= item Show all operators in stream		, streamMode('all')	,		, stream_mode_all.png	,need_contentstream_root
   streamText		= item Show only text operators in stream	, streamMode('text')	,		, stream_mode_text.png	,need_contentstream_root
   streamFont		= item Show only font operators in stream	, streamMode('font')	,		, stream_mode_font.png	,need_contentstream_root
@@ -153,7 +154,7 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 
 [gui]
 #Which toolbars are available for use
-toolbars	= MainToolbar,PageToolbar,DrawToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar,TreeViewToolbar
+toolbars	= MainToolbar,PageToolbar,DrawToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar,TreeViewToolbar,DynamicToolBar
 
 [gui/PageSpace]
 #Settings affecting preview window

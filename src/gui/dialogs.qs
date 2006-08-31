@@ -125,7 +125,7 @@ function setLineWidth() {
                         // ignores
                         if(firstTime)
                         {
-                                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
+                                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for line width change.")+" "+tr("Please see the pdf specification for details."));
                                 firstTime=false;
                         }
                         print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
@@ -157,7 +157,7 @@ function setDashPattern() {
         if (!isChangeableOp(op)) {
                 // displays just for the first time and then just silently 
                 // ignores
-                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for colour setting.")+" "+tr("Please see the pdf specification for details."));
+                warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+" "+tr("Please see the pdf specification for details."));
                 return;
         }
 	
@@ -214,7 +214,7 @@ function editFontProps(thepage) {
 		// this font is unknown for page, we have to add it
 		thepage.addSystemType1Font(currentFont);
 		currentFontId=thepage.getFontId(currentFont);
-		print(currentFont+" "+tr("added to")+" "+tr("page"))
+		print(tr("%1 added to page").arg(currentFont));
 	}
 
 	// gets current font size from font tool
@@ -231,7 +231,7 @@ function editFontProps(thepage) {
 				warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
 				firstTime=false;
 			}
-			print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+			print(tr("Operator %1 is not changeable").arg(op.getName()));
 			op=nextSelected();
 			continue;
 		}

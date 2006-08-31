@@ -12,6 +12,7 @@
 #include "pageviewS.h"
 #include "qspage.h"
 #include "qspdf.h"
+#include "units.h"
 
 using namespace pdfobjects;
 
@@ -37,25 +38,6 @@ class TextLine: public QMainWindow {
 		void returnPressed ();
 	private:
 		QLineEdit * edit;
-};
-
-class Units : protected QObject {
-	public:
-		Units ( const QString _defaultUnit = QString::null );
-		virtual ~Units ();
-
-		bool setDefaultUnits ( const QString dunits = QString::null );
-		QString getDefaultUnits ( ) const;
-		double convertUnits ( double num, const QString fromUnits = QString::null, const QString toUnits = QString::null ) const;
-		double convertFromUnitsToPoint ( double num, const QString & fromUnits ) const;
-		double convertFromPointToUnits ( double num, const QString & toUnits ) const;
-
-		void getAllUnits( QStringList & names ) const;
-	protected:
-		QMap<QString, double>	units;
-		QMap<QString, QString>	aliases;
-		QMap<QString, QString>	description;
-		QString					defaultUnit;
 };
 
 /** QWidget's class for viewing a page.

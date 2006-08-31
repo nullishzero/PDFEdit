@@ -1,14 +1,5 @@
-/****************************************************************************
-** Form interface generated from reading ui file 'annotdialog.ui'
-**
-** Created: Po aug 28 22:27:00 2006
-**      by: The User Interface Compiler ($Id$)
-**
-** WARNING! All changes made in this file will be lost!
-****************************************************************************/
-
-#ifndef ANNOTDIALOG_H
-#define ANNOTDIALOG_H
+#ifndef __ANNOTDIALOG_H__
+#define __ANNOTDIALOG_H__
 
 #include <qvariant.h>
 #include <qdialog.h>
@@ -29,8 +20,7 @@ class QLineEdit;
 class QComboBox;
 class QFrame;
 
-namespace gui
-{
+namespace gui {
 
 class AnnotDialog : public QDialog
 {
@@ -101,6 +91,7 @@ protected slots:
     virtual void languageChange();
 
 };
+
 } // namespace gui
 
-#endif // ANNOTDIALOG_H
+#endif
