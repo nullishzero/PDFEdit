@@ -603,8 +603,7 @@ FileStream::~FileStream() {
   close();
 }
 
-// creates memory stream from start with length bytes or until
-// end of file if length is 0
+// creates memory stream from start with length bytes
 // Returns NULL if not able to read all data for buffer
 Stream * FileStream::clone()
 {
@@ -617,11 +616,11 @@ Stream * FileStream::clone()
    long startPos=ftell(f);
 
    // if length is 0, calculates it until end of file
-   if(!l)
-   {
-      fseek(f, 0, SEEK_END); 
-      l=ftell(f)-startPos;
-   }
+   //if(!l)
+   //{
+   //   fseek(f, 0, SEEK_END); 
+   //   l=ftell(f)-startPos;
+   //}
    // sets position to the beging of data which are copied
    fseek(f, start, SEEK_SET);
 
