@@ -22,19 +22,38 @@ class QFrame;
 
 namespace gui {
 
-class AnnotDialog : public QDialog
-{
+/**
+ Dialog for adding annotation to documents.
+ Dialog expect to receive the annotation rectangle in constructor,
+ it will solicit the annotation data from user and add the annotation to page,
+ if user presses Ok
+ @brief Dialog for adding annotations
+*/
+
+class AnnotDialog : public QDialog {
     Q_OBJECT
 
 private:
+    /** Annotation rectangle */
     Rectangle rect;
+    /** Page in which the annotation will be added */
     QSPage & page;
 public:
     AnnotDialog(QSPage & p, QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
     ~AnnotDialog();
 
+
+    void setRectangle(double xl, double yl, double width, double height);
+
+public slots:
+    virtual void fillStates( const QString & current );
+    virtual void createAnnot();
+
+protected:
+    /** OK button to accept the dialog */
     QPushButton* okBtn;
-    QPushButton* pushButton11;
+    /** Cancel button to cancel the dialog */
+    QPushButton* cancelButton;
     QTabWidget* tabWidget3;
     QWidget* tab;
     QGroupBox* groupBox1;
@@ -56,13 +75,6 @@ public:
     QLabel* textLabel2_2;
     QComboBox* highLight;
 
-    void setRectangle(double xl, double yl, double width, double height);
-
-public slots:
-    virtual void fillStates( const QString & current );
-    virtual void createAnnot();
-
-protected:
     QGridLayout* AnnotDialogLayout;
     QHBoxLayout* layout8;
     QSpacerItem* spacer8;

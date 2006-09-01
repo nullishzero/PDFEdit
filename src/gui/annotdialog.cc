@@ -49,8 +49,8 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     spacer7 = new QSpacerItem( 40, 20, QSizePolicy::Fixed, QSizePolicy::Minimum );
     layout8->addItem( spacer7 );
 
-    pushButton11 = new QPushButton( this, "pushButton11" );
-    layout8->addWidget( pushButton11 );
+    cancelButton = new QPushButton( this, "cancelButton" );
+    layout8->addWidget( cancelButton );
     spacer9 = new QSpacerItem( 50, 21, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout8->addItem( spacer9 );
 
@@ -173,7 +173,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     clearWState( WState_Polished );
 
     // signals and slots connections
-    connect( pushButton11, SIGNAL( clicked() ), this, SLOT( reject() ) );
+    connect( cancelButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
     connect( stateModel, SIGNAL( textChanged(const QString&) ), this, SLOT( fillStates(const QString&) ) );
     connect( okBtn, SIGNAL( clicked() ), this, SLOT( createAnnot() ) );
     connect( okBtn, SIGNAL( clicked() ), this, SLOT( accept() ) );
@@ -205,8 +205,8 @@ void AnnotDialog::languageChange()
     setCaption(tr("Add new annotation"));
     okBtn->setText(QObject::tr("&Ok"));
     okBtn->setAccel(QKeySequence("Alt+O"));
-    pushButton11->setText(QObject::tr("&Cancel"));
-    pushButton11->setAccel(QKeySequence("Alt+C"));
+    cancelButton->setText(QObject::tr("&Cancel"));
+    cancelButton->setAccel(QKeySequence("Alt+C"));
     groupBox1->setTitle(tr("Text Annotation"));
     open->setText(tr("&Open"));
     open->setAccel(QKeySequence("Alt+O"));

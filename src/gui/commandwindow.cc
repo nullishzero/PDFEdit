@@ -125,6 +125,12 @@ void CommandWindow::clearWindow() {
 	out->setText("");
 }
 
+/**
+ Overloaded QObject::eventFilter
+ This function will filter events for various widgets inside the commandwindow
+ @param o Watched object
+ @param e Event
+*/
 bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 {
 	if ( o != in->textEdit() && o != in->textEdit()->viewport() )
@@ -269,43 +275,79 @@ void CommandWindow::execute( enum cmd  from ) {
  emit commandExecuted(command);		//execute command via signal
 }
 
+/**
+ Slot called when a history item from drop-down box is selected
+*/
 void CommandWindow::selectedHistoryItem( int ) {
 	in->textEdit()->setText( history->currentText() );
 }
 
+/**
+ Show/hide command history
+ @param hide True to hide, false to show
+ */
 void CommandWindow::hideCmdHistory( bool hide ) {
 	 showCmdHistory( ! hide );
 }
+/**
+ Enable/disable command history editability
+ @param hide False to enable editing, true to act only as list
+ */
 void CommandWindow::hideCmdLine( bool hide ) {
 	 showCmdLine( ! hide );
 }
+/**
+ Show/hide command editor
+ @param hide True to hide, false to show
+ */
 void CommandWindow::hideCmdEditor( bool hide ) {
 	 showCmdEditor( ! hide );
 }
+
+/**
+ Show/hide command history
+ @param show True to show, false to hide
+ */
 void CommandWindow::showCmdHistory( bool show ) {
 	if (show)
 		history->show();
 	else
 		history->hide();
 }
+
+/**
+ Enable/disable command history editability
+ @param show True to enable editing, false to act only as list
+ */
 void CommandWindow::showCmdLine( bool show ) {
 	if (show)
 		cmd->show();
 	else
 		cmd->hide();
 }
+
+/**
+ Show/hide command editor
+ @param show True to show, false to hide
+ */
 void CommandWindow::showCmdEditor( bool show ) {
 	if (show)
 		in->show();
 	else
 		in->hide();
 }
+
+/** Return true, if command history is shown */
 bool CommandWindow::isShownCmdHistory() {
 	 return history->isShown();
 }
+
+/** Return true, if command history is editable */
 bool CommandWindow::isShownCmdLine() {
 	 return cmd->isShown();
 }
+
+/** Return true, if command editor is shown */
 bool CommandWindow::isShownCmdEditor() {
 	 return in->isShown();
 }

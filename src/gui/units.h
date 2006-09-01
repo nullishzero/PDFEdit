@@ -8,6 +8,11 @@
 
 namespace gui {
 
+/**
+ Class for conversion between various length units
+ @brief Units conversion
+*/
+
 class Units : protected QObject {
 	public:
 		Units( const QString _defaultUnit=QString::null);

@@ -31,16 +31,22 @@ private:
         size_t * mergePositions;
         size_t length;
 
+	/** Private constructor for empty array */
         MergeArray():length(0), mergeItems(NULL), mergePositions(NULL)
         {
         }
 public:        
+	/**
+ 	  Construct MergeArray with arrays of specified length
+	  @param _length Length of item and position arrays
+	 */
         MergeArray(size_t _length):length(_length)
         {
                 mergeItems=new T[length+1];
                 mergePositions=new size_t[length+1];
         }
 
+	/** Destructor */
         ~MergeArray()
         {
                 if(length>0)
@@ -50,28 +56,41 @@ public:
                 }
         }
 
+	/**
+	 Initialize the contents of items array from given data
+	 Array passed as parameter must have at least same number of elements as length of the MergeArray
+	 @param items Items
+	 */
         void initItems(T * items)
         {
                 for(size_t i=0; i<length; ++i)
                         mergeItems[i]=items[i];
         }
 
+	/**
+	 Initialize the contents of position array from given data
+	 Array passed as parameter must have at least same number of elements as length of the MergeArray
+	 @param positions Item positions
+	 */
         void initPositions(size_t * positions)
         {
                 for(size_t i=0; i<length; ++i)
                         mergePositions[i]=positions[i];
         }
 
+	/** Returns length of the array */
         size_t getLength()const
         {
                 return length;
         }
 
+	/** return array with items */
         T * getItems()
         {
                 return mergeItems;
         }
 
+	/** Returns array with item positions */
         size_t * getPositions()
         {
                 return mergePositions;
@@ -125,17 +144,23 @@ public:
     ~MergeDialog();
 
     QLabel* textLabel1;
+    /** Editbox for typing in a filename*/
     QLineEdit* fileNameInput;
+    /** button for invoking a dialog to pick the filename*/
     QPushButton* fileNameBtn;
     QPushButton* openBtn;
     QFrame* line1;
     QListBox* mergeList;
     QPushButton* addBtn;
     QPushButton* removeBtn;
+    /** button to move current page one position up*/
     QPushButton* upBtn;
+    /** button to move current page one position down*/
     QPushButton* downBtn;
     QListBox* fileList;
+    /** Cancel button - dismiss dialog without doing anything*/
     QPushButton* cancelBtn;
+    /** Ok button - accept result of dialog and merge pages*/
     QPushButton* okBtn;
 
     /** Returns result of merging.

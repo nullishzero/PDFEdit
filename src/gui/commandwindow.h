@@ -58,6 +58,7 @@ private:
  QTextEdit *out;
  /** Commandline widget */
  QLineEdit *cmd;
+ /** Script editor widget */
  QSEditor  *in;
  /** History widget */
  QComboBox *history;
