@@ -80,7 +80,7 @@ MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,hel
   #Edit submenu
   editopersmenu		= list &Edit,selectAllObjects,selectGraphical,selectText,selectAnnot,-,opsetcolor,opsetfont,opsetposop,opsetpos,-,opsetdash,opsetlinewidth
     selectAllObjects	= item Select all objects		, onSelectMode_AllObjects()		, , selectmode_allobjects.png	,mode_button
-    selectGraphical	= item Select graphical operators	, onSelectMode_GraphicalOperators()	, , selectmode_allobjects.png	,mode_button
+    selectGraphical	= item Select graphical operators	, onSelectMode_GraphicalOperators()	, , selectmode_all_gfx.png	,mode_button
     selectText		= item Select text			, onSelectMode_Text()			, , selectmode_text.png		,mode_button
     selectAnnot		= item Select annotations		, onSelectMode_Annot()			, , selectmode_all.png		,mode_button
     opsetcolor		= item Set color		,setOpColor()		,	, operator_setcolor.png		,need_operator_page
@@ -116,8 +116,8 @@ DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,striketrough,highli
   drawrect		= item Draw rectangle		, onSelectMode_drawRect()		, , draw_rect.png	,need_page,mode_button
   drawrecte		= item Draw rectangle		, onSelectMode_drawRecte()		, , draw_rect.png	,need_page,mode_button
   addtext		= item Add text			, onSelectMode_addText()		, , add_text.png	,need_page,mode_button
-  striketrough		= item Strike trough		, onSelectMode_strikeTrough()		, , selectmode_all.png	,need_page,mode_button
-  highlightingtext	= item Highlighting text	, onSelectMode_highlightingText()	, , selectmode_all.png	,need_page,mode_button
+  striketrough		= item Strike through		, onSelectMode_strikeTrough()		, , selectmode_strike.png	,need_page,mode_button
+  highlightingtext	= item Highlighting text	, onSelectMode_highlightingText()	, , selectmode_hilite.png	,need_page,mode_button
   # _color_tool is special toolbar item to select current color
   # _number_tool is special toolbar item to select line width
   # look in menu for definition of rest of items
