@@ -408,7 +408,7 @@ getSimpleValueFromArray (const boost::shared_ptr<CArray>& array, size_t position
 /** \copydoc getSimpleValueFromArray */
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
 inline SimpleValueType
-getSimpleValueFromArray (const boost::shared_ptr<IProperty>& ip, size_t position)__attribute__((deprecated));
+getSimpleValueFromArray (const boost::shared_ptr<IProperty>& array, size_t position)__attribute__((deprecated));
 	
 // gcc doesn't like __attribute__ in function definition
 template<typename SimpleValueType, typename ItemType, PropertyType ItemPType>
@@ -482,7 +482,7 @@ getDoubleFromArray (const IP& ip, size_t position)
  * Set simple value in array. 
  * If it is a reference, set fetch it and set it to the fetched object.
  *
- * @param ip Array property.
+ * @param array Array property.
  * @param position Position in the array.
  * @param val Value to be written.
  */
@@ -511,7 +511,7 @@ setSimpleValueInArray (const CArray& array, size_t position, const Value& val)
  *
  * @param array Array property.
  * @param position Position of element to set.
- * @param value Simple value to set.
+ * @param val Simple value to set.
  */
 template<typename ItemType>
 inline void
@@ -531,7 +531,7 @@ setSimpleValueInArray (const CArray& array, size_t position, const typename Item
 /** \copydoc setSimpleValueInArray */
 template<typename Value, typename ItemType, PropertyType ItemPType>
 inline void
-setSimpleValueInArray (const IProperty& ip, size_t position, const Value& val)__attribute__((deprecated));
+setSimpleValueInArray (const IProperty& array, size_t position, const Value& val)__attribute__((deprecated));
 	
 // gcc doesn't like __attribute__ in function definition
 template<typename Value, typename ItemType, PropertyType ItemPType>
@@ -668,7 +668,7 @@ getTypeFromArray (const boost::shared_ptr<CArray>& array, size_t pos)
 /** \copydoc getTypeFromArray */
 template<typename ItemType, PropertyType ItemPType>
 inline boost::shared_ptr<ItemType>
-getTypeFromArray (const boost::shared_ptr<IProperty>& ip, size_t pos)__attribute__((deprecated));
+getTypeFromArray (const boost::shared_ptr<IProperty>& array, size_t pos)__attribute__((deprecated));
 
 // gcc doesn't like __attribute__ in function definition
 template<typename ItemType, PropertyType ItemPType>
