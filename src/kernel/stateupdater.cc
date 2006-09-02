@@ -110,7 +110,7 @@ namespace {
 			  state->textTransformDelta(dx, dy, &tdx, &tdy);
 			  state->transform(curX + riseX, curY + riseY, &x, &y);
 			  
-			  state->setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
+			  //state->setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
 			  
 			  curX += tdx;
 			  curY += tdy;
@@ -229,6 +229,19 @@ namespace {
 
 		// Set edge of rectangle from actual position on output devices
 		state->transform(state->getCurX (), state->getCurY(), & rc->xright, & rc->yright);
+
+		// return changed state
+		return state;
+	}
+	// "Do"
+	GfxState *
+	opDoUpdate (GfxState* state, boost::shared_ptr<GfxResources>, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands&, Rectangle* rc)
+	{
+		// Set edge of rectangle from actual position on output devices
+		state->transform(0, 0, & rc->xleft, & rc->yleft);
+		
+		// Set edge of rectangle from actual position + [1,1] on output devices
+		state->transform(1, 1, & rc->xright, & rc->yright);
 
 		// return changed state
 		return state;
@@ -841,7 +854,7 @@ StateUpdater::CheckTypes StateUpdater::KNOWN_OPERATORS[] = {
 	{"DP",  2,	{setNthBitsShort (pName), setNthBitsShort (pDict, pName)}, 
 			unknownUpdate, "" },	
 	{"Do",  1, {setNthBitsShort (pName)}, 
-			unknownUpdate, "" },	
+			opDoUpdate, "" },	
 	{"EI",  -10, {setNoneBitsShort ()}, 
 			unknownUpdate, "" },	
 	{"EMC", 0, {setNoneBitsShort ()}, 

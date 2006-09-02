@@ -1033,6 +1033,11 @@ CPage::displayPage (::OutputDev& out, const DisplayParams params, int x, int y, 
 	if (!(lastParams == params))
 	{
 		lastParams = params;
+
+		// set rotate to positive integer
+		lastParams.rotate -= ((int)(lastParams.rotate / 360) -1) * 360;
+		// set rotate to range [ 0, 360 )
+		lastParams.rotate -= ((int)lastParams.rotate / 360) * 360;
 		
 		// Use mediabox
 		if (lastParams.useMediaBox)

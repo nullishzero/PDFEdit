@@ -51,6 +51,7 @@ clean:
 	cd utils && make clean
 	cd xpdf && make clean
 	cd kpdf-kde-3.3.2 && make clean
+	rm config_xpdf_variables
 
 # Dist Cleanup
 distclean:
@@ -59,6 +60,7 @@ distclean:
 	cd utils && make distclean
 	cd xpdf && make distclean
 	cd kpdf-kde-3.3.2 && make distclean
+	rm config_xpdf_variables
 
 # Installation
 install:

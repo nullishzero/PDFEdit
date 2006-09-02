@@ -11,7 +11,7 @@ namespace gui {
 //  ------------------------------------------------------
 Units::Units( const QString _defaultUnit/*=QString::null*/ ) : QObject() {
 	units["pt"]		= 1;					// 1 Point
-	units["in"]		= 1 / 0.013837;			// 1 Point == 0.013837 inch
+	units["in"]		= 72 /*1 / 0.013837*/;			// 1 Point == 0.013837 inch
 	units["mil"]	= 0.001 * units["in"];	// 1 mil == 0.001 inch
 	units["hand"]	= 4 * units["in"];		// 1 hand == 4 inches
 	units["ft"]		= 12 * units["in"];		// 12 inches == 1 foot

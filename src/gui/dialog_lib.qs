@@ -122,10 +122,20 @@ function createCheckBoxAndDisplay (text,widget) {
 /**
  * Make x,y edit boxes in a group box.
  */
-function xydialogs (dg,text) {
+function xydialogs ( dg, text, units, default_x, default_y ) {
+	var units_name = "";
+	if (undefined != units)
+		units_name = "( "+units+" )";
+	var x = 0;
+	if (undefined != default_x)
+		x = default_x;
+	var y = 0;
+	if (undefined != default_y)
+		y = default_y;
+
 	gb = createGroupBoxAndDisplay (text, dg);
-	ex = createLineEditAndDisplay ("x"+tr("position"), "0", gb);
-	ey = createLineEditAndDisplay ("y"+tr("position"), "0", gb);
+	ex = createLineEditAndDisplay ("x"+tr("position")+units_name, x, gb);
+	ey = createLineEditAndDisplay ("y"+tr("position")+units_name, y, gb);
 	return [ex,ey];
 }
 

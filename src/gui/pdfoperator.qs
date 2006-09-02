@@ -113,11 +113,15 @@ function putendq (op) {
 	op.pushBack( createOperator("Q",operands), op.getLastOperator());
 }
 
-function createOperator_cm( matrix : Array_of_6_doubles ) {
+/** Transformation matrix ( "cm" or "Tm" ) */
+function createOperator_transformationMatrix( matrix : Array_of_6_doubles, name_of_op : String ) {
 	if (matrix.length != 6) {
-		warn( tr("Operator cm must have array with 6 numbers as parameter!") );
+		warn( tr("Operator cm must have 6 parameters of type numbers !") );
 		return ;
 	}
+
+	if (undefined == name_of_op)
+		name_of_op = "cm";
 
 	var operands = createIPropertyArray ();
 	operands.append (createReal(matrix[0]));
@@ -127,9 +131,214 @@ function createOperator_cm( matrix : Array_of_6_doubles ) {
 	operands.append (createReal(matrix[4]));
 	operands.append (createReal(matrix[5]));
 
-	return createOperator("cm",operands);
+	return createOperator( name_of_op, operands );
+}
+/** Multiplicate matrix  ( a * b ) */
+function transformationMatrixMul( a, b ) {
+	var c = [0,0,0,0,0,0];
+	if (a.length == 6) {
+		// 3x3 matrix multiply 3x3 matrix
+		c[0] = a[0]*b[0]+a[1]*b[2];
+		c[1] = a[0]*b[1]+a[1]*b[3];
+		c[2] = a[2]*b[0]+a[3]*b[2];
+		c[3] = a[2]*b[1]+a[3]*b[3];
+		c[4] = a[4]*b[0]+a[5]*b[2]+b[4];
+		c[5] = a[4]*b[1]+a[5]*b[3]+b[5];
+	} else if (a.length == 2) {
+		// 1x3 vector multiply 3x3 matrix
+		c = [0,0];
+		c[0] = a[0]*b[0]+a[1]*b[2] + b[4];
+		c[1] = a[0]*b[1]+a[1]*b[3] + b[5];
+	}
+
+	return c;
 }
 
+/** Solve eqeuation  oldCTM * requiredCTM = newCTM */
+function transformationMatrixDiv( oldCTM : Array_of_6_boubles, newCTM : Array_of_6_boubles ) {
+	var nowCTM = [0,0,0,0,0,0];
+	var menovatel = oldCTM[0]*oldCTM[3]-oldCTM[1]*oldCTM[2];
+	if (menovatel == 0) {
+		warm(tr(" Matrix is in bad state !!!"));
+		return;
+	}
+	nowCTM[0] = (-oldCTM[2]*newCTM[1]+newCTM[0]*oldCTM[3]) / menovatel
+	nowCTM[1] = (oldCTM[0]*newCTM[1]-oldCTM[1]*newCTM[0]) / menovatel
+	nowCTM[2] = (-oldCTM[2]*newCTM[3]+newCTM[2]*oldCTM[3]) / menovatel
+	nowCTM[3] = (oldCTM[0]*newCTM[3]-oldCTM[1]*newCTM[2]) / menovatel
+	nowCTM[4] = -(-oldCTM[2]*oldCTM[5]+oldCTM[2]*newCTM[5]+oldCTM[4]*oldCTM[3]-newCTM[4]*oldCTM[3]) / menovatel
+	nowCTM[5] = (oldCTM[1]*oldCTM[4]-oldCTM[0]*oldCTM[5]+oldCTM[0]*newCTM[5]-oldCTM[1]*newCTM[4]) / menovatel
+
+	return nowCTM;
+}
+
+/** Get text transformation matrix using for operator or for next operator.
+ * (nothing global transformation)
+ */
+function get_textTransformationMatrix( operator: PdfOperator, before: bool ) {
+	if ((operator == undefined) || (operator.type() != "PdfOperator"))
+		return ;
+
+	var it = operator.iterator();
+	var end_op = operator;
+	var textLeading = 0;
+	var ttm = [1,0,0,1,0,0];
+
+	if ((undefined != before) && (before == false))
+		end_op = it.next().current();
+
+	it.prev();
+
+	// find begin of text (operator "BT")
+	while (! it.isBegin()) {
+		var name = it.current().getName();
+		if (name == "ET") {
+			// operator is not in text space (or contentstream is bad)
+			return [1,0,0,1,0,0];
+		}
+		if (name == "BT")
+			break;
+
+		it.prev();
+	}
+
+	if (it.isBegin()) {
+		// operator is not in text space (or contentstream is bad)
+		return [1,0,0,1,0,0];
+	}
+
+	var it_cur = it.current();
+	while ((! it.isEnd()) && (! it_cur.equals( end_op ))) {
+		switch (it_cur.getName()) {
+			case "TL":	// Text Leading
+					if (it_cur.paramCount() != 1) {
+						warn(	tr("Maybe bad stream!") +
+								tr("Operator '%1' should have 1 parameter, but has %2 !")
+										.arg(it_cur.getName())
+										.arg(it_cur.paramCount()));
+						return ;
+					}
+					textLeading = it_cur.params().property(0).value();
+					break;
+			case "TD":	// Move text position and set leading
+					if (it_cur.paramCount() == 2)
+						textLeading =  - it_cur.params().property(1).value();
+					// next code is equal for TD and Td
+			case "Td":	// Move text position
+					if (it_cur.paramCount() != 2) {
+						warn(	tr("Maybe bad stream!") +
+								tr("Operator '%1' should have %2 parameters, but has %3 !")
+										.arg(it_cur.getName())
+										.arg(2)
+										.arg(it_cur.paramCount()));
+						return ;
+					}
+
+					var h_params = it_cur.params();
+					ttm = transformationMatrixMul( [1,0,0,1, h_params.property(0).value(), h_params.property(1).value() ], ttm );
+					break;
+			case "T*":	// Move to next line
+					ttm = transformationMatrixMul( [1,0,0,0, 0,textLeading], ttm );
+					break;
+			case "Tm":	// Set text transformation matrix
+					if (it_cur.paramCount() != 6) {
+						warn(	tr("Maybe bad stream!") +
+								tr("Operator '%1' should have %2 parameters, but has %3 !")
+										.arg(it_cur.getName())
+										.arg(6)
+										.arg(it_cur.paramCount()));
+						return ;
+					}
+
+					var h_params = it_cur.params();
+					ttm = [	h_params.property(0).value(),
+							h_params.property(1).value(),
+							h_params.property(2).value(),
+							h_params.property(3).value(),
+							h_params.property(4).value(),
+							h_params.property(5).value() ];
+					break;
+		}	// switch
+
+		it_cur = it.next().current();
+	}
+
+	return ttm;
+}
+
+/** Get transformation matrix using for operator or for next operator.
+ * Calculate only inside its stream (nothing text transformation)
+ */
+function get_transformationMatrix( operator: PdfOperator, before: bool, prev_ctm : Array_of_6_doubles ) {
+	if ((operator == undefined) || (operator.type() != "PdfOperator"))
+		return ;
+
+	var it = operator.iterator();
+	var num_of_Q_without_q = 0;
+	var ctm = [1,0,0,1,0,0];
+
+	if ((undefined == before) || (before == true))
+		it.prev();
+
+	while (! it.isBegin()) {
+		var it_cur = it.current();
+		var it_cur_name = it_cur.getName();
+		switch (it_cur.getName()) {
+			case "Q":
+					++num_of_Q_without_q;
+					break;
+			case "q":
+					if (num_of_Q_without_q > 0)
+						--num_of_Q_without_q;
+					break;
+			case "cm":
+					if (num_of_Q_without_q == 0) {
+						if (it_cur.paramCount() != 6) {
+							warn(	tr("Maybe bad stream!") +
+									tr("Operator '%1' should have %2 parameters, but has %3 !")
+											.arg(it_cur.getName())
+											.arg(6)
+											.arg(it_cur.paramCount()));
+							return ;
+						}
+						it_cur = it_cur.params();
+						var h_ctm = [	it_cur.property(0).value(),
+										it_cur.property(1).value(),
+										it_cur.property(2).value(),
+										it_cur.property(3).value(),
+										it_cur.property(4).value(),
+										it_cur.property(5).value() ];
+						ctm = transformationMatrixMul( h_ctm, ctm );
+					}
+					break;
+		}	// switch
+
+		it.prev();
+	}
+
+	if (prev_ctm != undefined)
+		ctm = transformationMatrixMul( prev_ctm, ctm );
+
+	return ctm;
+}
+
+/** */
+function get_cmToDetransformation( operator: PdfOperator, before: bool, prev_ctm : Array_of_6_doubles ) {
+	if ((operator == undefined) || (operator.type() != "PdfOperator"))
+		return ;
+
+	var ctm = [1,0,0,1,0,0];
+
+	if (prev_ctm == undefined)
+		ctm = get_transformationMatrix( operator, before );
+	else
+		ctm = get_transformationMatrix( operator, before, prev_ctm );
+
+	if (ctm == undefined)
+		return ;
+	
+	return transformationMatrixDiv( ctm, [1,0,0,1,0,0] );
+}
 /** == debug utilities == */
 function _dbgprintOpersB() {
 	
@@ -152,6 +361,7 @@ function _dbgprintOpers() {
 	}
 }
 
+/** put operator \a op_to_put befor operator \a next_operator to contentstream */
 function operatorPutBeforOp( next_operator, op_to_put ) {
 	var composite = createCompositeOperator( "", "" );
 	composite.pushBack( op_to_put, composite.getLastOperator() );
@@ -159,6 +369,7 @@ function operatorPutBeforOp( next_operator, op_to_put ) {
 
 	next_operator.stream().replace( next_operator, composite );
 }
+/** put operator \a op_to_put behind operator \a prev_operator to contentstream */
 function operatorPutBehindOp( prev_operator, op_to_put ) {
 	var composite = createCompositeOperator( "", "" );
 	composite.pushBack( prev_operator.clone(), composite.getLastOperator() );
@@ -282,15 +493,35 @@ function operatorGetFont(operator) {
 	return [fonttype, fontsize];
 }
 
+function getFontOperatorForOp( operator ) {
+	var it = operator.iterator();
+
+	while (! it.isBegin()) {
+		var h_name = it.current().getName();
+		switch (h_name) {
+			case "Tf":
+					return it.current();	// break
+			case "BT":
+			case "ET":
+					return ;
+		}
+
+		it.prev();
+	}
+
+	return ;
+}
+
 /** 
  * Set font and font size of a text operator.
  * We have to find preceding Font operator.
  *
+ * @param thepage Page in which is operator \a operator viewed.
  * @param operator Pdf operator.
  * @param fontid Font id of the new font. Not the font name.
  * @param fontsize Font size, but this can vary from normal pixel size.
  */
-function operatorSetFont(operator, fontid, fontsize) {
+function operatorSetFont(thepage, operator, fontid, fontsize) {
 
 	// == Check type
 
@@ -299,11 +530,24 @@ function operatorSetFont(operator, fontid, fontsize) {
 		return;
 	}
 
+	if (thepage == undefined) {
+		warn( tr("Page parameter must be defined!") );
+		return;
+	}
+
+	var ctm = getTextDetransformationMatrix ( thepage, op );
+	var h_null = transformationMatrixMul ( [ 0, 0 ], ctm );
+	var h_delta = transformationMatrixMul ( [ 0, fontsize ], ctm );
+
+	var x = (h_delta[0] - h_null[0]);
+	var y = (h_delta[1] - h_null[1]);
+	fontsize = Math.sqrt( x * x + y * y );
+
+	old_font = getFontOperatorForOp( operator );
 	//
-	// q 
 	// fontid fontsize Tf
 	// oper
-	// Q
+	// old_fontid old_fontsize Tf
 	//
 	var composite = createCompositeOperator ("q","Q");
 
@@ -311,6 +555,8 @@ function operatorSetFont(operator, fontid, fontsize) {
 
     /* Put the changed operator also in the queue */
 	composite.pushBack (operator.clone());
+
+	composite.pushBack (old_font.clone());
 	putendq(composite);
 
 	// replace it
@@ -521,9 +767,9 @@ function operatorDrawLine ( lines, width, col ) {
 	//
 	var composite = createCompositeOperator("q","Q");
 
-	var ctm = detransformationMatrix( page() );
+	var ctm = getDetransformationMatrix( page() );
 	if (ctm != [1,0,0,1,0,0])
-		composite.pushBack( createOperator_cm( ctm ), composite );
+		composite.pushBack( createOperator_transformationMatrix( ctm ), composite );
 
 	if (undefined != width) {
 		putlinewidth (composite,width);
@@ -562,12 +808,12 @@ function operatorDrawRect ( rectangles ,col ,widthLine, next_operator ) {
 	
 	var ctm = [1,0,0,1,0,0];
 	if ((undefined == next_operator) || (next_operator.type() != "PdfOperator")) {
-		ctm = detransformationMatrix( page() );
+		ctm = getDetransformationMatrix( page() );
 	} else {
-		ctm = detransformationMatrix( page(), next_operator );
+		ctm = getDetransformationMatrix( page(), next_operator );
 	}
 	if (ctm != [1,0,0,1,0,0])
-		composite.pushBack( createOperator_cm( ctm ), composite );
+		composite.pushBack( createOperator_transformationMatrix( ctm ), composite );
 
 	if (undefined != widthLine) {
 		putlinewidth (composite,widthLine);
@@ -626,7 +872,10 @@ function operatorAddTextLine (text,x,y,fname,fsize,opToPutBefore) {
 	page().prependContentStream(ops);
 }
 
-function detransformationMatrix( page, op ) {
+/**
+ * Function return transformation matrix using to operator.
+ */
+function getTransformationMatrix( page, op ) {
 	var cs_count = page.getContentStreamCount() - 1;
 	var ctm = [1,0,0,1,0,0];
 
@@ -636,7 +885,7 @@ function detransformationMatrix( page, op ) {
 		var h_stream = op.stream();
 		for ( ; h_cs_count >=0 ; --h_cs_count ) {
 			if (page.getContentStream( h_cs_count ).equals( h_stream  )) {
-				ctm = cmToDetransformation( op, true, ctm );
+				ctm = get_transformationMatrix( op, true, ctm );
 				cs_count = h_cs_count - 1;
 				break;
 			}
@@ -646,13 +895,46 @@ function detransformationMatrix( page, op ) {
 	for ( ; cs_count >= 0 ; --cs_count ) {
 		var stream = page.getContentStream( cs_count );
 		if (! stream.isEmpty() )
-			ctm = cmToDetransformation( stream.getLastOperator(), false, ctm );
+			ctm = get_transformationMatrix( stream.getLastOperator(), false, ctm );
 	}
 
 	return ctm;
 }
 
-/** Get only text from text operator. */
+/**
+ * Function return transformation matrix to eliminate previous transformation.
+ */
+function getDetransformationMatrix( page, op ) {
+	var ctm = getTransformationMatrix( page, op );
+	return transformationMatrixDiv( ctm, [1,0,0,1,0,0] );
+}
+
+/**
+ * Function return transformation matrix using to operator with text transformation.
+ */
+function getTextTransformationMatrix( page, op ) {
+	var ctm = [1,0,0,1,0,0];
+	var ttm = ctm;
+
+	ttm = get_textTransformationMatrix( op );
+	ctm = getTransformationMatrix( page, op );
+
+	return transformationMatrixMul( ttm, ctm );
+}
+
+/**
+ * Function return transformation matrix to eliminate previous transformation with text transformation.
+ */
+function getTextDetransformationMatrix( page, op ) {
+	var ctm = getTextTransformationMatrix( page, op );
+	return transformationMatrixDiv( ctm, [1,0,0,1,0,0] );
+}
+
+/** Get only text from text operator.
+ * @param op Text operator
+ *
+ * @return Text from operator \a op.
+ */
 function getTextFromTextOperator( op ) {
 	if (! isTextOp( op ))
 		return "";
@@ -688,4 +970,84 @@ function getTextFromTextOperator( op ) {
 	}
 
 	return "";
+}
+
+/** Move text operator relative [dx,dy] */
+function moveTextOp( thepage, op, dx, dy ) {
+	if ((undefined == thepage) || (undefined == op) || (!isTextOp(op)) || (undefined == dx) || (undefined == dy))
+		return;
+
+	var ctm = getTextDetransformationMatrix ( thepage, op );
+	var h_null = transformationMatrixMul ( [ 0, 0 ], ctm );
+	var h_delta = transformationMatrixMul ( [ dx, dy ], ctm );
+
+	dx = h_delta[0] - h_null[0];
+	dy = h_delta[1] - h_null[1];
+
+	//
+	// q
+	// dx dy Td
+	// op
+	// -dx -dy Td
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
+
+	puttextrelpos ( composite, dx, dy );
+	composite.pushBack( op.clone() );
+	puttextrelpos ( composite, -dx, -dy );
+
+	putendq( composite );
+
+	// replace it
+	op.stream().replace (op, composite);
+}
+
+function moveOp( thepage, op, dx, dy ) {
+	if ((undefined == thepage) || (undefined == op) || (undefined == dx) || (undefined == dy))
+		return;
+
+	var ctm = getDetransformationMatrix ( thepage, op );
+	var h_null = transformationMatrixMul ( [ 0, 0 ], ctm );
+	var h_delta = transformationMatrixMul ( [ dx, dy ], ctm );
+
+	dx = h_delta[0] - h_null[0];
+	dy = h_delta[1] - h_null[1];
+
+	//
+	// q
+	// array cm
+	// op
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
+
+	composite.pushBack( createOperator_transformationMatrix( [1,0,0,1,dx,dy], "cm" ), composite );
+
+	composite.pushBack( op.clone() );
+	putendq( composite );
+
+	// replace it
+	op.stream().replace (op, composite);
+}
+
+function moveSelectedGraphicalOp( op, dx, dy ) {
+	if ((undefined == op) || (!isGraphicalOp(op))  || (undefined == dx) || (undefined == dy))
+		return;
+
+	//
+	// q
+	// array cm
+	// op
+	// Q
+	//
+	var composite = createCompositeOperator("q","Q");
+
+	composite.pushBack( createOperator_transformationMatrix( [1,0,0,1,dx,dy], "cm" ), composite );
+
+	composite.pushBack( op.clone() );
+	putendq( composite );
+
+	// replace it
+	op.stream().replace (op, composite);
 }

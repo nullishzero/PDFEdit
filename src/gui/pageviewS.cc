@@ -151,8 +151,11 @@ void PageViewS::showPage ( boost::shared_ptr<CPage> page ) {
 	updateDisplayParameters (output);
 
 	// initialize work operators in mode - must be after change display parameters and reloaded BBox of operators (with displayPage)
-	if (actualPage)
+	if (actualPage) {
+		displayParams.rotate += 360;
 		actualPage->displayPage( output, displayParams, 0, 0, 1, 1 );
+		displayParams.rotate -= 360;
+	}
 	initializeWorkOperatorsInMode();
 
 	// set correct size of viewport

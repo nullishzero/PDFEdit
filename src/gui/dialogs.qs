@@ -221,7 +221,7 @@ function editFontProps(thepage) {
 	currentFontSize=getNumber("fontsize");
 
 	// Get selected item
-	op=firstSelected("select");
+	op=firstSelected();
 	while(op)
 	{
 		if (!isTextOp(op)) 
@@ -237,7 +237,7 @@ function editFontProps(thepage) {
 		}
 
 		// Set the font
-		operatorSetFont(op,currentFontId, currentFontSize);
+		operatorSetFont( thepage, op,currentFontId, currentFontSize );
 
 		op=nextSelected();
 	}
@@ -465,47 +465,55 @@ function moveOperPos() {
 /**
  * Change values of a positioning operator.
  */
-function moveTextPos() {
+function moveTextPos( delta_x, delta_y ) {
 
 	if (!isPageAvaliable() || !(isTreeItemSelected())) {
 		warn(tr("No page or operator selected!"));
-		return;
+		return [0,0];
 	}
 
-        var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
-         
-        var xy = xydialogs (dialog,tr("Relative operator position"));
-         
-        if (!dialog.exec()) return;
+	if ((undefined == delta_x) || (undefined == delta_y)) {
+		var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
 
-        firstTime=true;
+		var xy = xydialogs (dialog,tr("Relative operator position"),PageSpace.getDefaultUnits());
+
+		var exec_dialog = true;
+		while (exec_dialog) {
+			if (!dialog.exec())
+				return [0,0];
+
+			delta_x = parseFloat(xy[0].text);
+			delta_y = parseFloat(xy[1].text);
+
+			if (isNumber( delta_x ) && isNumber( delta_y )) {
+				exec_dialog = false;
+				delta_x = PageSpace.convertUnits( delta_x, undefined, "pt" );
+				delta_y = PageSpace.convertUnits( delta_y, undefined, "pt" );
+			} else
+				MessageBox.critical( tr("X and Y position must be a number"), MessageBox.Ok );
+		}
+	}
+
+	var thepage = page();
+	var firstTime = true;
 	op=firstSelected();
-        while(op)
-        {
-                if (!isTextOp(op)) {
-                        if(firstTime)
-                        {
-                                warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
-                                firstTime = false;
-                        }
-                        print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
-                        op=nextSelected();
-                        continue;
-                }
+	while(op)
+	{
+		if (!isTextOp(op)) {
+			if(firstTime)
+			{
+				warn(tr("Not valid")+" "+tr("text operator")+". "+tr("Only text operators allowed!"));
+				firstTime = false;
+			}
+			print(op.getName()+" "+tr("is not")+" "+tr("changeable"));
+			op=nextSelected();
+			continue;
+		}
 
-                var posop = getPosInfoOfOperator (op);
+		moveTextOp( thepage, op, delta_x, delta_y );
 
-                if (undefined == posop) {
-                        print(tr("Could not find text positioning."));
-                        op=nextSelected();
-                        continue;
-                }
-                 
-                // op, change, change
-                operatorMovePosition(posop, parseFloat(xy[0].text), parseFloat(xy[1].text));
-
-                op=nextSelected();
-        }
+		op=nextSelected();
+	}
 
 	print (tr("Operator position changed."));
 	// Reload page
@@ -623,8 +631,9 @@ function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 	connect( lineEdit, "lostFocus(const QString&)", _AddTextSlot );
 }
 function _AddTextSlot ( text ) {
-	if ((undefined == text) || (text == ""))
+	if ((undefined == text) || (text.isEmpty())) {
 		return;
+	}
 
 	var thepage  = page();
 	var fname = getEditText( "fontface" );
@@ -635,9 +644,9 @@ function _AddTextSlot ( text ) {
 	}
 	var fs=getNumber( "fontsize" );
 
-	var ctm = detransformationAtEnd( thepage );
-	
-	operatorAddTextLine ( text, global_addText_x, global_addText_y, fid, fs, createOperator_cm( ctm ) );
+	var ctm = getDetransformationMatrix( thepage );
+
+	operatorAddTextLine ( text, global_addText_x, global_addText_y, fid, fs, createOperator_transformationMatrix( ctm ) );
 
 	// Update
 	go();
@@ -815,3 +824,67 @@ function changeSelectedText () {
 
 	return true;
 };
+
+function moveSelectedObject( _dx, _dy ) {
+	var op = firstSelected();
+
+	if ((_dx == undefined) || (_dy == undefined))
+		return ;
+
+	var dx = PageSpace.convertPixmapPosToPdfPos_x( _dx, _dy ) - PageSpace.convertPixmapPosToPdfPos_x( 0, 0 );
+	var dy = PageSpace.convertPixmapPosToPdfPos_y( _dx, _dy ) - PageSpace.convertPixmapPosToPdfPos_y( 0, 0 );
+
+	while (op) {
+		switch (op.type()) {
+			case "PdfOperator":
+					if (isTextOp( op ))
+						moveTextOp( page(), op, dx, dy );
+					else
+						print("Move nontext operators is not implemented!");
+						// moveOp( page(), op, dx, dy );
+					break;
+			case "Dict":
+					var h_type = op.child("Type");
+					if (h_type == undefined) {
+						warn( tr("Dictionary has no type!") );
+						return ;
+					}
+
+					switch (h_type.value()) {
+						case "Annot" :
+									// annotation todo
+									var rect = op.child("Rect");
+									if (rect == undefined) {
+										warn( tr("Maybe bad stream!") +
+												tr("%1 is requirement for %2, but not found for it !")
+													.arg("Rect")
+													.arg(h_type.value()) );
+										return ;
+									}
+
+									if (rect.count() != 4) {
+										warn( tr("Maybe bad stream!") +
+												tr("For child %1 of %2 is requirement %3 subchild, but has %4")
+													.arg("Rect")
+													.arg(h_type.value())
+													.arg(4)
+													.arg(rect.count()) );
+										return ;
+									}
+
+									// set rect
+									rect.child(0).set( rect.child(0).value() + dx );
+									rect.child(1).set( rect.child(1).value() + dy );
+									rect.child(2).set( rect.child(2).value() + dx );
+									rect.child(3).set( rect.child(3).value() + dy );
+
+									break;
+					}
+					break;
+		}
+
+		op = nextSelected();
+	}
+
+	go();
+}
