@@ -9,26 +9,28 @@ TODO list:
 ----------
 
 GUI
-Miro
- [~] Pridavani textu "inline" rovnou na strance - Miro
- [ ] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text - Miro
- [~] spravne nastaveni cm operatoru pri vkladani novych objektu - skript funkce
-  -> [ ] spravne nastaveni velikosti fontu pri zmene velikosti fontu u nejakeho operatoru
-  -> [ ] operatory MoveAbove, MoveBelow, REsize, Move -> pro vyselectene ze sranky
- [ ] Bug: opravit vyber textovych operatorov
- [ ] Tridit jednotky dle velikosti, vracet v nejakem hezcim tvaru s popisem
- [ ] Bug: je li vyselectena anotace a otevru-li novy dokument, zustane zvyraznena
- [ ] V anotacnim modu kreslit ramecek kolem anotaci
+Miro (all is now bugtracker)
+ BT[x] Bug: setOpColor pre graficke operatory
+ [x] Pridavani textu "inline" rovnou na strance - Miro
+ [x] Editace textu -> v textovem poli, ale smaze vsechny operatory krom posledniho a ten prvni bude mit novy text - Miro
+ [x] spravne nastaveni cm operatoru pri vkladani novych objektu - skript funkce
+  -> [x] spravne nastaveni velikosti fontu pri zmene velikosti fontu u nejakeho operatoru
+  -> BT [ ] operatory MoveAbove, MoveBelow, REsize, Move (iba pre graficky) -> pro vyselectene ze sranky
+ [x] Bug: opravit vyber textovych operatorov
+ [x] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - baseconsole???
+  -> [x] pridat convertPixmapPosToPdfPos aj pre commandline (rozdelit baseGUI a baseCMD) (dat do BASE)
   ?  Text search - v celem dokumentu + dialog upravit + historie hledani (v ramci session) - Miro - ?
   ?  Kresleni kruznice a jinych primitiv?
   ?  Skakat na cil anotaci (podivat se na Target v XPDF) - Miro
  [x] Mod: preskrtavani, zvyraznovani pod textem (barevny ctverec pod textem) - Miro
-  -> [ ] Chyba nastaveni CM
+  -> [x] Chyba nastaveni CM
+ [x] actualize selection emitovat zbyle operatory
  [x] Zmena jednotiek (cm, palce, ...) + oprava skriptov
-  -> [ ] Edit page metric jeste zbyl
- [ ] actualize selection emitovat zbyle operatory
- [ ] zjistit jak je to s PdfOperator.getBBox v console modu
- [ ] bbox je v nejakych divnych jednotkach, funkce nas konverzi jsou v displayparams v CPage ... nejak je dat do skriptingu - baseconsole???
+  -> [x] Edit page metric jeste zbyl
+ [x] Tridit jednotky dle velikosti, vracet v nejakem hezcim tvaru s popisem
+ [x] Bug: je li vyselectena anotace a otevru-li novy dokument, zustane zvyraznena
+ [x] V anotacnim modu kreslit ramecek kolem anotaci
+ [x] zjistit jak je to s PdfOperator.getBBox v console modu
 MP (all is now in bugtracker)
  BT[ ] Vyrobit ikonky pro mody a zkontrolovat hi-color ikonky esi sou vsechny
  BT[ ] Trochu konzistentnejsi chovani treeitem.remove() - MP
