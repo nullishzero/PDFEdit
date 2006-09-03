@@ -1,46 +1,46 @@
 <!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
 -->
 <part>
-	<title>Document purpose</title>
-		<para>
-			This document describes design of PDFedit program intended for
-			PDF documents manipulation. It doesn't bring precise code or 
-			classes description and rather provides with ideas and general
-			information to understand implementation. If somebody wants to
-			follow in implementation or understand current state he/she 
-			should start with this document and then follow with 
-			automatically generated programming documentation.
-		</para>
-		<sect1>
-			<title>Document organization</title>
-			<para>
-				Document itself is divided into several parts:
-				<itemizedlist>
-					<listitem>
-						<xref linkend="general_part"/> which focuces on global 
-						application design, separation to layers, general utils
-						common for all layers and cooperation and integration
-						with xpdf project.
-					</listitem>
-					<listitem>
-						<xref linkend="kernel_part"/> which focuses on 
-						detailed kernel architecture and interface for gui 
-						descibtion.
-					</listitem>
-					<listitem>
-						<xref linkend="gui_part"/> which describes gui
-						architecture.
-					</listitem>
-					<listitem>
-						<xref linkend="glossary_part"/> which describes used
-						terms in whole document.
-					</listitem>
-				</itemizedlist>
-			</para>
-		</sect1>
-		<sect1>
-			<title>Conventions</title>
-			<para>
-			</para>
-		</sect1>
+    <title>Document purpose</title>
+	<para>
+		This document describes design and internals of PDFedit program intended 
+		for PDF documents manipulation. It doesn't bring precise code or 
+	    classes description and rather provides with ideas and general
+	    information to understand implementation. If somebody wants to
+	    follow in implementation or understand current state he/she 
+	    should start with this document and then follow with 
+	    automatically generated programming documentation.
+	</para>
+	<sect1>
+	    <title>Document organization</title>
+	    <para>
+		Document itself is divided into several parts:
+		<itemizedlist>
+		    <listitem>
+			<xref linkend="general_part"/> which focuces on global 
+			application design, separation to layers, general utils
+			common for all layers and cooperation and integration
+			with xpdf project.
+		    </listitem>
+		    <listitem>
+			<xref linkend="kernel_part"/> which focuses on 
+			detailed kernel architecture and interface for gui 
+			descibtion.
+		    </listitem>
+		    <listitem>
+			<xref linkend="gui_part"/> which describes gui
+			architecture.
+		    </listitem>
+		    <listitem>
+			<xref linkend="glossary_part"/> which describes used
+			terms in whole document.
+		    </listitem>
+		</itemizedlist>
+	    </para>
+	</sect1>
+	<sect1>
+	    <title>Conventions</title>
+	    <para>
+	    </para>
+	</sect1>
 </part>

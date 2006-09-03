@@ -8,32 +8,46 @@
      part) included directly in this file. There is no problem to reference to 
      these parts from each compomenet. 
 -->
-<!ENTITY purpose        SYSTEM    "purpose.xml">
-<!ENTITY general        SYSTEM    "general.xml">
-<!ENTITY kernel         SYSTEM    "kernel/main.xml">
-<!ENTITY gui            SYSTEM    "gui/main.xml">
-<!ENTITY glossary       SYSTEM    "glossary.xml">
+<!ENTITY purpose	SYSTEM	  "purpose.xml">
+<!ENTITY general	SYSTEM	  "general.xml">
+<!ENTITY kernel		SYSTEM	  "kernel/main.xml">
+<!ENTITY gui		SYSTEM	  "gui/main.xml">
+<!ENTITY glossary	SYSTEM	  "glossary.xml">
 
 <!-- Component entities definitions.
      These should be included by part entities form concrete part. There is no 
      problem to reference to these compomenets from other components. General 
      convention is to keep following format:
-        part_chaptername
+	part_chaptername
 -->
 <!-- <!ENTITY kernel_cpdf   SYSTEM    "kernel/cpdf.xml"> -->
-<!ENTITY general_layers         SYSTEM    "general_layers.xml">
-<!ENTITY general_utils          SYSTEM    "general_utils.xml">
-<!ENTITY general_xpdf           SYSTEM    "general_xpdf.xml">
+<!ENTITY general_techn		SYSTEM	  "general_technologies.xml">
+<!ENTITY general_layers		SYSTEM	  "general_layers.xml">
+<!ENTITY general_utils		SYSTEM	  "general_utils.xml">
+<!ENTITY general_xpdf		SYSTEM	  "general_xpdf.xml">
 
-<!ENTITY gui_menu            SYSTEM    "gui/menu.xml">
-<!ENTITY gui_settings        SYSTEM    "gui/settings.xml">
-<!ENTITY gui_tree            SYSTEM    "gui/tree.xml">
+<!ENTITY gui_menu	     SYSTEM    "gui/menu.xml">
+<!ENTITY gui_settings	     SYSTEM    "gui/settings.xml">
+<!ENTITY gui_tree	     SYSTEM    "gui/tree.xml">
 
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 
      document - glossentry with id same as in xref tag).
 -->
+<!ENTITY xpdf_link_index '<ulink url="http://www.foolabs.com/xpdf/">Xpdf</ulink>'>
+<!ENTITY qsa_link_index '<ulink url="http://doc.trolltech.com/qsa-1.0.1/index.html">QSA</ulink>'>
+<!ENTITY qt_link_index '<ulink url="http://doc.trolltech.com/3.3/index.html">Qt</ulink>'>
+<!ENTITY qt_link_classes '<ulink url="http://doc.trolltech.com/3.3/classes.html">Qt classes</ulink>'>
+<!ENTITY boost_link_index '<ulink url="http://www.boost.org/index.htm">Boost home</ulink>'>
+<!ENTITY boost_link_smartptr '<ulink url="http://www.boost.org/libs/smart_ptr/smart_ptr.htm">smart pointers</ulink>'>
+<!ENTITY boost_link_sharedptr '<ulink url="http://www.boost.org/libs/smart_ptr/shared_ptr.htm">shared_ptr</ulink>'>
+<!ENTITY stl_link_index '<ulink url="http://www.sgi.com/tech/stl/">documentation</ulink>'>
+<!ENTITY cppunit_link_index '<ulink url="http://cppunit.sourceforge.net/cppunit-wiki">CPP Unit</ulink>'>
+<!ENTITY doxygen_link_index '<ulink url="http://www.stack.nl/~dimitri/doxygen/">Doxygen</ulink>'>
+<!ENTITY docbook_link_index '<ulink url="http://www.docbook.org/tdg/en/html/docbook.html">Docbook</ulink>'>
+<!ENTITY docbook_link_dtd '<ulink url="http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">DTD</ulink>'>
+
 <!ENTITY facade "Fascade design pattern <xref linkend='fascade' />">
 <!ENTITY version "1.0">
 
@@ -44,39 +58,39 @@
 <book>
  <title>PDFedit design documentation</title>
  <bookinfo>
-         <authorgroup>
-                 <collab>
-                         <collabname>PDFEdit Team</collabname>
-                 </collab>
-                 <author>
-                         <firstname>Michal</firstname>
-                         <surname>Hocko</surname>
-                         <email>mstsxfx@gmail.com</email>
-                 </author>
-                 <author>
-                         <firstname>Miroslav</firstname>
-                         <surname>Jahoda</surname>
-                         <email>vemem@email.cz</email>
-                 </author>
-                 <author>
-                         <firstname>Jozef</firstname>
-                         <surname>Misutka</surname>
-                         <email>misutkajunior@hotmail.com</email>
-                 </author>
-                 <author>
-                         <firstname>Martin</firstname>
-                         <surname>Petricek</surname>
-                         <email>martin@petricek.net</email>
-                 </author>
-                 <othercredit>
-                         <firstname>Martin</firstname>
-                         <surname>Beran</surname>
-                         <email>beran@ms.mff.cuni.cz</email>
-                         <contrib>Extensive technical help and project leader</contrib>
-                 </othercredit>
-         </authorgroup>
-         <edition>Design documentation version &version;</edition>
-         <pubdate>2006</pubdate>
+	 <authorgroup>
+		 <collab>
+			 <collabname>PDFEdit Team</collabname>
+		 </collab>
+		 <author>
+			 <firstname>Michal</firstname>
+			 <surname>Hocko</surname>
+			 <email>mstsxfx@gmail.com</email>
+		 </author>
+		 <author>
+			 <firstname>Miroslav</firstname>
+			 <surname>Jahoda</surname>
+			 <email>vemem@email.cz</email>
+		 </author>
+		 <author>
+			 <firstname>Jozef</firstname>
+			 <surname>Misutka</surname>
+			 <email>misutkajunior@hotmail.com</email>
+		 </author>
+		 <author>
+			 <firstname>Martin</firstname>
+			 <surname>Petricek</surname>
+			 <email>martin@petricek.net</email>
+		 </author>
+		 <othercredit>
+			 <firstname>Martin</firstname>
+			 <surname>Beran</surname>
+			 <email>beran@ms.mff.cuni.cz</email>
+			 <contrib>Extensive technical help and project leader</contrib>
+		 </othercredit>
+	 </authorgroup>
+	 <edition>Design documentation version &version;</edition>
+	 <pubdate>2006</pubdate>
  </bookinfo>
 
  &purpose;

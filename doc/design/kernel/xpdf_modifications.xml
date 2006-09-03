@@ -323,7 +323,7 @@
           copy all data (from stream start to the end - if stream is limited, 
           then just first length bytes) somewhere else. Creation of new file, 
           just for temporarily created clone is not very effective and may 
-          produce several problems (not enough free place, creation adn removing 
+          produce several problems (not enough free place, creation and removing 
           of temporary file, etc.). We have solved this problem by creating 
           MemStream with buffer containing same data as FileStream. This brakes
           contract of clone meaning a bit, because cloned stream is not 

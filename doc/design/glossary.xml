@@ -1,29 +1,54 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
 <!-- Each entry of glossary should be defined within glossary tags by
 glossentry tags with id used by xref tag in the general text. 
 Example:
-        <glossary>
-                ...
-                <glossentry id="identificator">
-                        <glossterm>Term declaration</glossterm>
-                        <glossdef>
-                                Term definition/description (it can contain 
-                                formated text pictures or arbitrary formatted 
-                                text.
-                        </glossdef>
-                </glossentry>
-                ...
-        </glossary>
+	<glossary>
+		...
+		<glossentry id="identificator">
+			<glossterm>Term declaration</glossterm>
+			<glossdef>
+				Term definition/description (it can contain 
+				formated text pictures or arbitrary formatted 
+				text.
+			</glossdef>
+		</glossentry>
+		...
+	</glossary>
 -->
 
 
 <glossary id="glossary_part">
-        <glossentry id="facade">
-                <glossterm>Facade</glossterm>
-                <glossdef>
-                <para>
-                        Facade is designed pattern ...
-                </para>
-                </glossdef>
-        </glossentry> 
+	<glossentry id="gpl">
+		<glossterm>GPL - General public licence</glossterm>
+		<glossdef>
+		<para>
+			General public licence created by Free Software Foundation. The 
+			purpose of the GPL is to grant any user the right to copy, modify and 
+			redistribute programs and source code from developers that have chosen 
+			to license their work under the GPL. See <ulink url="http://en.wikipedia.org/wiki/GPL">GPL wiki</ulink> 
+			for more information. TODO link to complete licence
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="facade">
+		<glossterm>Facade</glossterm>
+		<glossdef>
+		<para>
+			Facade is designed pattern ...
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="invariant">
+		<glossterm>Invariant</glossterm>
+		<glossdef>
+		<para>
+			Invariant is a condition that is always true at a 
+			certain point in a program. In context of automatical 
+			testing, invariant defines expectation of behavior 
+			compared to real result of operation.
+		</para>
+		</glossdef>
+	</glossentry> 
 </glossary>
 
