@@ -438,7 +438,7 @@ function operatorSetColor(operator,r,g,b, globchange) {
 
 	// E.g if text found put rg, if lin put RG, can be both
 	if (cntNon) {
-		putnscolor (composite,r,g,b,composite);
+		putnscolor (composite,r,g,b);
 	}
 	if (cntStr) {
 		putscolor (composite,r,g,b);
@@ -844,10 +844,11 @@ function operatorDrawRect ( rectangles ,col ,widthLine, next_operator ) {
 /**
  * Add text line.
  */
-function operatorAddTextLine (text,x,y,fname,fsize,opToPutBefore) {
+function operatorAddTextLine (text,x,y,fname,fsize,opToPutBefore,col) {
 	//
 	// q
 	// BT
+	// rg col
 	// fname fsize Tf
 	// x y Td
 	// text Tj
@@ -863,6 +864,8 @@ function operatorAddTextLine (text,x,y,fname,fsize,opToPutBefore) {
 	
 	putfont(BT,fname,fsize);
 	puttextrelpos (BT,x,y);
+	if (undefined != col)
+		putnscolor (BT,col.red,col.green,col.blue);
 	puttext (BT,text);
 	putendtext (BT);
 	putendq(q);

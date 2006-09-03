@@ -646,7 +646,7 @@ function _AddTextSlot ( text ) {
 
 	var ctm = getDetransformationMatrix( thepage );
 
-	operatorAddTextLine ( text, global_addText_x, global_addText_y, fid, fs, createOperator_transformationMatrix( ctm ) );
+	operatorAddTextLine ( text, global_addText_x, global_addText_y, fid, fs, createOperator_transformationMatrix( ctm ), getColor("fg"));
 
 	// Update
 	go();
