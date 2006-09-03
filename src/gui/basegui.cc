@@ -880,4 +880,17 @@ void BaseGUI::_dragDropOther(TreeItemAbstract *source,TreeItemAbstract *target) 
 
 #endif
 
+double BaseGUI::convertPixmapPosToPdfPos_x ( double fromX, double fromY ) {
+ return w->getPageSpace()->convertPixmapPosToPdfPos_x( fromX, fromY );
+}
+double BaseGUI::convertPixmapPosToPdfPos_y ( double fromX, double fromY ) {
+ return w->getPageSpace()->convertPixmapPosToPdfPos_y( fromX, fromY );
+}
+double BaseGUI::convertPdfPosToPixmapPos_x ( double fromX, double fromY ) {
+ return w->getPageSpace()->convertPdfPosToPixmapPos_x( fromX, fromY );
+}
+double BaseGUI::convertPdfPosToPixmapPos_y ( double fromX, double fromY ) {
+ return w->getPageSpace()->convertPdfPosToPixmapPos_y( fromX, fromY );
+}
+
 } // namespace gui

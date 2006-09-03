@@ -7,6 +7,7 @@
 #include "consolewriterconsole.h"
 #include "util.h"
 #include "settings.h"
+#include "cpage.h"
 #include <stdlib.h>
 
 namespace gui {
@@ -75,6 +76,31 @@ QString BaseConsole::takeParameter() {
  QString p0=params[0];
  params.pop_front();
  return p0;
+}
+
+double BaseConsole::convertPixmapPosToPdfPos_x ( double fromX, double fromY ) {
+ pdfobjects::DisplayParams displayParams = pdfobjects::DisplayParams();
+ double toX, toY;
+ displayParams.convertPixmapPosToPdfPos( fromX, fromY, toX, toY );
+ return toX;
+}
+double BaseConsole::convertPixmapPosToPdfPos_y ( double fromX, double fromY ) {
+ pdfobjects::DisplayParams displayParams = pdfobjects::DisplayParams();
+ double toX, toY;
+ displayParams.convertPixmapPosToPdfPos( fromX, fromY, toX, toY );
+ return toY;
+}
+double BaseConsole::convertPdfPosToPixmapPos_x ( double fromX, double fromY ) {
+ pdfobjects::DisplayParams displayParams = pdfobjects::DisplayParams();
+ double toX, toY;
+ displayParams.convertPdfPosToPixmapPos( fromX, fromY, toX, toY );
+ return toX;
+}
+double BaseConsole::convertPdfPosToPixmapPos_y ( double fromX, double fromY ) {
+ pdfobjects::DisplayParams displayParams = pdfobjects::DisplayParams();
+ double toX, toY;
+ displayParams.convertPdfPosToPixmapPos( fromX, fromY, toX, toY );
+ return toY;
 }
 
 } // namespace gui

@@ -536,10 +536,10 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 	var width;
 	
 	if (undefined != _lx && undefined != _ry) {
-		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
-		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
-		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
+		lx = convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = convertPixmapPosToPdfPos_y(_lx,_ly);
+		rx = convertPixmapPosToPdfPos_x(_rx,_ry);
+		ry = convertPixmapPosToPdfPos_y(_rx,_ry);
 	}else 
                 return;
 
@@ -580,10 +580,10 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
         width = getNumber("linewidth");
 
 	if (undefined != _lx && undefined != _ry) {
-		lx = PageSpace.convertPixmapPosToPdfPos_x(_lx,_ly);
-		ly = PageSpace.convertPixmapPosToPdfPos_y(_lx,_ly);
-		rx = PageSpace.convertPixmapPosToPdfPos_x(_rx,_ry);
-		ry = PageSpace.convertPixmapPosToPdfPos_y(_rx,_ry);
+		lx = convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = convertPixmapPosToPdfPos_y(_lx,_ly);
+		rx = convertPixmapPosToPdfPos_x(_rx,_ry);
+		ry = convertPixmapPosToPdfPos_y(_rx,_ry);
 		w = rx - lx;
 		h = ry - ly;
 	}else 
@@ -615,8 +615,8 @@ function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 	//
 	// Convert x,y to real x,y
 	//
-	global_addText_x = Math.min (PageSpace.convertPixmapPosToPdfPos_x(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_x(_x2,_y2));
-	global_addText_y = Math.min (PageSpace.convertPixmapPosToPdfPos_y(_x1,_y1),PageSpace.convertPixmapPosToPdfPos_y(_x2,_y2));
+	global_addText_x = Math.min (convertPixmapPosToPdfPos_x(_x1,_y1),convertPixmapPosToPdfPos_x(_x2,_y2));
+	global_addText_y = Math.min (convertPixmapPosToPdfPos_y(_x1,_y1),convertPixmapPosToPdfPos_y(_x2,_y2));
 
 	if (_x1 < _x2)
 		_glob_left = _glob_left - _x2 + _x1;
@@ -720,10 +720,10 @@ function highlightingSelectedText() {
 			}
 
 			var _br = _op.getBBox();
-			var _x1 = PageSpace.convertPixmapPosToPdfPos_x( _br[0], _br[1] );
-			var _y1 = PageSpace.convertPixmapPosToPdfPos_y( _br[0], _br[1] );
-			var _x2 = PageSpace.convertPixmapPosToPdfPos_x( _br[2], _br[3] );
-			var _y2 = PageSpace.convertPixmapPosToPdfPos_y( _br[2], _br[3] );
+			var _x1 = convertPixmapPosToPdfPos_x( _br[0], _br[1] );
+			var _y1 = convertPixmapPosToPdfPos_y( _br[0], _br[1] );
+			var _x2 = convertPixmapPosToPdfPos_x( _br[2], _br[3] );
+			var _y2 = convertPixmapPosToPdfPos_y( _br[2], _br[3] );
 
 			_rectangles.push( [_x1, _y1, _x2-_x1, _y2-_y1 ] );
 		}
@@ -745,10 +745,10 @@ function strikeTroughSelection( thepage ) {
 	var _lines = [];
 	while (_op) {
 		var _br = _op.getBBox();
-		var _x1 = PageSpace.convertPixmapPosToPdfPos_x( _br[0], _br[1] );
-		var _y1 = PageSpace.convertPixmapPosToPdfPos_y( _br[0], _br[1] );
-		var _x2 = PageSpace.convertPixmapPosToPdfPos_x( _br[2], _br[3] );
-		var _y2 = PageSpace.convertPixmapPosToPdfPos_y( _br[2], _br[3] );
+		var _x1 = convertPixmapPosToPdfPos_x( _br[0], _br[1] );
+		var _y1 = convertPixmapPosToPdfPos_y( _br[0], _br[1] );
+		var _x2 = convertPixmapPosToPdfPos_x( _br[2], _br[3] );
+		var _y2 = convertPixmapPosToPdfPos_y( _br[2], _br[3] );
 		var halfw = (_x2 - _x1) /2;
 		var halfh = (_y2 - _y1) /2;
 		var _sx = (_x2 + _x1) /2;
@@ -857,8 +857,8 @@ function moveSelectedObject( _dx, _dy ) {
 	if ((_dx == undefined) || (_dy == undefined))
 		return ;
 
-	var dx = PageSpace.convertPixmapPosToPdfPos_x( _dx, _dy ) - PageSpace.convertPixmapPosToPdfPos_x( 0, 0 );
-	var dy = PageSpace.convertPixmapPosToPdfPos_y( _dx, _dy ) - PageSpace.convertPixmapPosToPdfPos_y( 0, 0 );
+	var dx = convertPixmapPosToPdfPos_x( _dx, _dy ) - convertPixmapPosToPdfPos_x( 0, 0 );
+	var dy = convertPixmapPosToPdfPos_y( _dx, _dy ) - convertPixmapPosToPdfPos_y( 0, 0 );
 
 	while (op) {
 		switch (op.type()) {

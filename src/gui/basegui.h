@@ -361,6 +361,50 @@ public slots: //This will be all exported to scripting
   */
  QProgressBar * progressBar();
 
+ /** Function return X position in pdf page from position of viewed page on screen (unapply rotation, viewing dpi, ...)
+  @param fromX	X position on viewed page.
+  @param fromY	Y position on viewed page.
+
+  @return Return X position in pdf page.
+
+  @see convertPixmapPosToPdfPos_y
+  @see convertPdfPosToPixmapPos_x
+  @see convertPdfPosToPixmapPos_y
+ */
+double convertPixmapPosToPdfPos_x ( double fromX, double fromY );
+ /** Function return Y position in pdf page from position of viewed page on screen (unapply rotation, viewing dpi, ...)
+  @param fromX	X position on viewed page.
+  @param fromY	Y position on viewed page.
+
+  @return Return Y position in pdf page.
+
+  @see convertPixmapPosToPdfPos_x
+  @see convertPdfPosToPixmapPos_x
+  @see convertPdfPosToPixmapPos_y
+ */
+double convertPixmapPosToPdfPos_y ( double fromX, double fromY );
+ /** Function return X position on viewed page from position in pdf page (apply rotation, viewing dpi, ...)
+  @param fromX	X position in pdf page.
+  @param fromY	Y position in pdf page.
+
+  @return Return X position in pdf page.
+
+  @see convertPdfPosToPixmapPos_y
+  @see convertPixmapPosToPdfPos_x
+  @see convertPixmapPosToPdfPos_y
+ */
+double convertPdfPosToPixmapPos_x ( double fromX, double fromY );
+ /** Function return Y position on viewed page from position in pdf page (apply rotation, viewing dpi, ...)
+  @param fromX	X position in pdf page.
+  @param fromY	Y position in pdf page.
+
+  @return Return Y position in pdf page.
+
+  @see convertPdfPosToPixmapPos_x
+  @see convertPixmapPosToPdfPos_x
+  @see convertPixmapPosToPdfPos_y
+ */
+double convertPdfPosToPixmapPos_y ( double fromX, double fromY );
 private slots:
  void toolChangeValue(const QString &toolName);
 #ifndef DRAGDROP
