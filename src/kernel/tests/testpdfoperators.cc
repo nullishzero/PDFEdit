@@ -471,7 +471,7 @@ changeColor (__attribute__((unused))	ostream& oss, const char* fileName)
 		assert (!opers.empty());
 		TextOperatorIterator it = PdfOperator::getIterator<TextOperatorIterator> (opers.front());
 		boost::shared_ptr<PdfOperator> tmpop;
-		//while (!it.isEnd())
+		if (!it.isEnd()) //while (!it.isEnd())
 		{
 			std::string tmp;
 			it.getCurrent()->getStringRepresentation (tmp);
