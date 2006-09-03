@@ -30,7 +30,7 @@
         supposed to do changes. This is handled by 3 layer model described in
         following section.
   </para>
-  <sect1>
+  <sect1 id="kernel_3_layer_model">
     <title>3 layer model</title>
     <sect2>
      <title>The lowest layer</title>

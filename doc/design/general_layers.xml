@@ -1,21 +1,60 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
 <chapter id="general_layers_chapter">
-        <title>PDFedit layers</title>
-        <para>
-                This chapter describes
-        </para>
+	<title>PDFedit layers</title>
+	<para>
+		This chapter describes PDFedit layers, their comunication interface and
+		responsibilities.
+	</para>
+	<sect1 id="general_kernel_layer">
+		<title>Kernel layer</title>
+		<para>
+			Kernel, as the lowest layer, is responsible to maintain pdf content from
+			file and to	provide object interface for making changes to higher layer. 
+			We will call this objects as <emphasis>cobjects</emphasis>. More 
+			precisely - highlevel cobjects (CPdf, CPage, etc.) which provide higher 
+			pdf entities logic and lowlevel cobjects which are pdf data types carrier 
+			(CInt, CArray, CDict, CString, etc.). Values stored in lowlevel cobjects
+			are also called properties and they are wrapped by IProperty class.
+			Properties are identified by indirect reference (the way how pdf
+			adresses entities).
+			User of kernel should start with CPdf instance which provides all
+			properties from document as well as access to document pages or
+			outlines. Pages then provide access to Annotations. All cobjects are
+			returned wrapped by shared_ptr (see <xref linkend="general_techn"/>).
+		</para>
+		<para>
+			Kernel uses &xpdf_link_index; code for document content parsing. 
+			XPdf's XRef class provides fetching and parsing functionality. 
+			Oposite way (from cobjects to file writing) is provided by IPdfWriter
+			implementation. XPdf Stream class is replaced by StreamWriter kernel
+			class. 
+		</para>
+		<para>
+			CXRef class inherits from XRef (xpdf class) and adds internals for
+			storing of changed objects not public for direct user. XRefWriter
+			enables interface for making changes inherited from CXRef. See 
+			<xref linkend="kernel_3_layer_model"/> for more information.
+		</para>
+		<mediaobject>
+		  <imageobject>
+			  <imagedata fileref="images/kernel.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Kernel architecture</para></caption>
+		</mediaobject>
+	</sect1>
 
-        <sect1>
-                <title>Layers description</title>
-                <para>
-                        TODO responsibilities of each
-                </para>
-        </sect1>
-        
-        <sect1>
-                <title>Interface between layers</title>
-                <para>
-                        TODO kernel - gui interface (high level CObjects).
-                        GUI - scripting QSObjects
-                </para>
-        </sect1>
+	<sect1 id="general_scripting_layer">
+		<title>Scripting layer</title>
+		<para>
+			TODO martin
+		</para>
+	</sect1>
+	
+	<sect1 id="general_gui_layer">
+		<title>Gui layer</title>
+		<para>
+			TODO martin
+		</para>
+	</sect1>
 </chapter>
