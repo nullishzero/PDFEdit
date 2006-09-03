@@ -1,0 +1,178 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
+<chapter id="general_techn">
+	<title>Used technologies</title>
+	<sect1>
+		Our project uses several technologies. All of them are open,
+		standardized and generally accepted and free. Their licence policy is
+		compatible with <xref linkend="gpl" />
+		<title>Used Libraries</title>
+		<sect2>
+			<title>Boost libraries</title>
+			<para>
+				Boost is free, highly portable and de facto standard set of libraries
+				for C++ language (see &boost_link_index;).
+			</para>
+			<para>
+				We are using mainly &boost_link_smartptr;
+				especially shared pointers which provides easy to use and
+				safe automatic object life cycle maintainance for shared objects. 
+				All objects exported from kernel to higher layers are wrapped by 
+				&boost_link_sharedptr; smart pointers.  
+			</para>
+			<para>
+				TODO Jozo - describe io streams
+			</para>
+		</sect2>
+		<sect2>
+			<title>STL - standard template libraries</title>
+			<para>
+				STL is C++ standard set of libraries which provides container,
+				algorithm, iterators (and many more) template classes. Their
+				implementation is highly portable and optimized for high 
+				performance. We are using mainly mentioned containers for data
+				storage purposes, iterators for effective data structures
+				traversing. For more information and documentation for STL,
+				see &stl_link_index;.
+			</para>
+		</sect2>
+		<sect2>
+			<title>Qt framework</title>
+			<para>
+				Qt is a multiplatform C++ GUI toolkit created and maintained by 
+				Trolltech. We are using mainly gui (widgets) classes (see
+				&qt_link_classes;) and &qsa_link_index; framework for scripting
+				layer. 
+			</para>
+		</sect2>
+	</sect1>
+	<sect1>
+		<title>CPP Unit automatic testing</title>
+		<para>
+			&cppunit_link_index; is a C++ unit testing framework. We are using 
+			this framework for automatic testing of kernel interface and its 
+			functionality. All test cases are placed in kernel/tests directory
+			and they are linked to kernel/kernel_tests binary output. We have
+			implemented test classes for all interface objects. Each class is
+			specialized for certain class interface object. Each class have
+			general name form 
+<programlisting>
+	TestClassName
+</programlisting>
+			where ClassName stands for tested class. Test class implements test
+			suite which is identified by its name. Main test program runs all
+			test suites spefied by name (<xref linkend="general_techn_test_program"/>).
+			Each test suit consists of test cases which test particular behavior
+			of tested class.
+		</para>
+		<sect2>
+			<title>Test class description</title>
+			<para>
+				Each test class should inherit from CPP unit TextFixture class.
+				At first CPPUNIT_TEST_SUITE and CPPUNIT_TEST macros should be
+				used to prepare this class to cpp unit framework and to define
+				test case functions. Finally should be class registered to
+				framework, so test program can run it by specified name (this
+				name should follow TEST_CLASSNAME convention).
+			</para>
+			<para>
+				Each test case should perform operations on tested class and
+				check <xref linkend="invariant"/> which have to be kept for 
+				such operations. CPPUNIT_ASSERT macro should be used to check
+				invariant condition or CPPUNIT_FAIL should be used to force
+				failure of test.
+			</para>
+			<para>
+				See following example (it can be used as template for new test
+				suite creation).
+<programlisting>
+	class TestClassName : public CppUnit::TestFixture
+	{
+		// defines this class as test suite
+		CPPUNIT_TEST_SUITE(TestClassName);
+			// This method has to be implemented as test case
+			CPPUNIT_TEST(TestMethod);
+
+			// definition of other test cases
+		CPPUNIT_TEST_SUITE_END();
+	public:
+		void setUp()
+		{
+			// this method should initialize local test class
+			// data used in tests
+		}
+
+		void tearDown()
+		{
+			// clean up after setUp method
+		}
+
+		void Test()
+		{
+			// Implementation of testcase
+			CPPUNIT_ASSERT(expected==op())
+
+			// ...
+
+			// sometimes we need to test that something throws an
+			// exception
+			try
+			{
+				// this operation should throw with this parameters
+				op(parameters);
+
+				// exception hasn't occured, we will force failure
+				CPPUNIT_FAIL("This operation should have failed.");
+			}catch(ExceptionType &amp; e)
+			{
+				// ok, exception has been thrown
+			}
+		}
+		
+	};
+
+	// registers this class to CPP Unit framework and assigns it
+	// with given name
+	CPPUNIT_TEST_SUITE_REGISTRATION(TestClassName);
+	CPPUNIT_TEST_SUITE_NAMED_REGISTRATION(TestClassName, "TEST_CLASSNAME");
+</programlisting>
+
+			</para>
+		</sect2>
+		<sect2 id="general_techn_test_program">
+			<title>Test program</title>
+			<para>
+				TODO jozo describe parameters and debug output
+			</para>
+		</sect2>
+	</sect1>
+	<sect1>
+		<title>Documentation</title>
+		<sect2>
+			<title>Code and script documentation</title>
+			<para>
+				We are using &doxygen_link_index; documentation tool. This means
+				that documented parts use special format for commets. These
+				comments are then used by doxygen to create html pages (or other
+				formats).
+			</para>
+			<para>
+				Script functions use different kind of documentation 
+				TODO Martin describe format and why it is different than 
+			</para>
+		</sect2>
+		<sect2>
+			<title>Design and user documentations</title>
+			<para>
+				Design and user manual are written in &docbook_link_index;
+				standardized and open free format.
+				XML files (with osasis docbook 4.2 &docbook_link_dtd; file) which 
+				forms (this) design documentation are stored in doc/design
+				directory. Main file is design_doc.xml file which includes all
+				other files. Files specialized for kernel design are stored in
+				doc/design/kernel directory. With same logic, gui design files
+				are stored in doc/design/gui directory.
+			</para>
+		</sect2>
+	</sect1>
+</chapter>
