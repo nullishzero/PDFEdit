@@ -135,8 +135,16 @@ public:
 		// True only if no exception occurs
 		//assert (actstream->eof());
 		
-		for (size_t i = 0; i < lexer->strIndex(); ++i)
-			parsedstreams.push_back (streams[i]);
+		// If anything went bad
+		if (0 == lexer->strIndex())
+		{
+			parsedstreams.push_back (streams[0]);
+		
+		}else		
+		{
+			for (size_t i = 0; i < lexer->strIndex(); ++i)
+				parsedstreams.push_back (streams[i]);
+		}
 		
 		close();
 		

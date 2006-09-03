@@ -505,7 +505,6 @@ namespace {
 
 		case objStream:
 			obj.streamReset ();
-			assert (0 == obj.streamGetPos());
 			{
 				Dict* dict = obj.streamGetDict ();
 				assert (NULL != dict);
@@ -1363,7 +1362,7 @@ parseStreamToContainer (T& container, ::Object& obj)
 
 	// Save chars
 	int c;
-	while (EOF != (c = rawstr->getChar())) 
+	while (container.size() < len && EOF != (c = rawstr->getChar())) 
 		container.push_back (static_cast<typename T::value_type> (c));
 	
 	utilsPrintDbg (debug::DBG_DBG, "Container length: " << container.size());

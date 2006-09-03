@@ -1739,6 +1739,9 @@ CPage::addContentStreamToBack (const Container& cont)
 	// Save smart pointer
 	cc->setSmartPointer (cc);
 	contentstreams.push_back (cc);
+
+	// Indicate change
+	_objectChanged ();
 }
 template void CPage::addContentStreamToBack<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
 template void CPage::addContentStreamToBack<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
