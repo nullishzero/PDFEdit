@@ -4,6 +4,13 @@
 	<title>PDFEdit general overview</title>
 	<para>
 		PDFEdit project is based on 3 layers model:
+		<mediaobject>
+		  <imageobject>
+			  <imagedata fileref="images/layers.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>PDFedit layers</para></caption>
+		</mediaobject>
+
 		<itemizedlist>
 		<listitem>Kernel - which has responsibility to maintain pdf
 			document content and provides with interface for
