@@ -18,13 +18,15 @@ class Units : protected QObject {
 		Units( const QString _defaultUnit=QString::null);
 		virtual ~Units();
 
-		bool setDefaultUnits( const QString dunits=QString::null);
+		bool setDefaultUnits( const QString dunits = QString::null);
 		QString getDefaultUnits( ) const;
+		QString getDescriptionForUnit( const QString _unit ) const;
+		QString getUnitFromAlias( const QString _unit ) const;
 		double convertUnits( double num, const QString fromUnits=QString::null, const QString toUnits=QString::null) const;
 		double convertFromUnitsToPoint( double num, const QString & fromUnits ) const;
 		double convertFromPointToUnits( double num, const QString & toUnits ) const;
 
-		void getAllUnits( QStringList & names ) const;
+		QStringList getAllUnits( ) const;
 	protected:
 		QMap<QString, double>	units;
 		QMap<QString, QString>	aliases;

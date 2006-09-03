@@ -176,7 +176,7 @@ Units::Units( const QString _defaultUnit/*=QString::null*/ ) : QObject() {
 
 Units::~Units()
 	{}
-void Units::getAllUnits( QStringList & names ) const {
+QStringList Units::getAllUnits( ) const {
 	QMap<double,QString>					h_map;
 	QMap<QString,double>::ConstIterator		it = units.begin();
 	for ( ; it != units.end() ; ++it )
@@ -185,30 +185,46 @@ void Units::getAllUnits( QStringList & names ) const {
 		else
 			h_map[ it.data() ] = it.key();
 
-	names.clear();
-	names += h_map.values();
+	return h_map.values();
 }
 
 bool Units::setDefaultUnits( const QString dunits/*=QString::null*/ )
 	{
-		if (dunits.isNull()) {
-			defaultUnit = "pt";
-			return true;
-		}
-		if (units.contains( dunits )) {
-			defaultUnit = dunits;
-			return true;
-		}
-		if (aliases.contains( dunits )) {
-			defaultUnit = aliases[ dunits ];
-			return true;
-		}
-		if (description.values().contains( dunits )) {
-			defaultUnit = description.keys()[description.values().findIndex( dunits )];
+		QString h_unit = getUnitFromAlias( dunits );
+
+		if (! h_unit.isEmpty()) {
+			defaultUnit = h_unit;
 			return true;
 		}
 
 		return false;
+	}
+
+QString Units::getUnitFromAlias( const QString _unit ) const
+	{
+		if (_unit.isNull()) {
+			return "pt";
+		}
+		if (units.contains( _unit )) {
+			return _unit;
+		}
+		if (aliases.contains( _unit )) {
+			return aliases[ _unit ];
+		}
+		if (description.values().contains( _unit )) {
+			return description.keys()[description.values().findIndex( _unit )];
+		}
+
+		return QString::null;
+	}
+
+QString Units::getDescriptionForUnit( const QString _unit ) const
+	{
+		QString h_unit = getUnitFromAlias( _unit );
+		if (description.contains( h_unit ))
+			return description[ h_unit ];
+		// else
+		return _unit;
 	}
 
 QString Units::getDefaultUnits( ) const

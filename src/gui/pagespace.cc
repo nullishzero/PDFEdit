@@ -457,10 +457,7 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 
 //----------------------------------------------------------------------
 QStringList PageSpace::getAllUnits ( ) {
-	QStringList		all_units;
-	actualUnits.getAllUnits( all_units );
-
-	return all_units;
+	return actualUnits.getAllUnits( );
 }
 bool PageSpace::setDefaultUnits ( const QString dunits ) {
 		bool h = actualUnits.setDefaultUnits ( dunits );
@@ -473,6 +470,12 @@ bool PageSpace::setDefaultUnits ( const QString dunits ) {
 }
 QString PageSpace::getDefaultUnits ( ) const {
 		return actualUnits.getDefaultUnits ();
+}
+QString PageSpace::getDescriptionForUnit( const QString _unit ) const {
+		return actualUnits.getDescriptionForUnit( _unit );
+}
+QString PageSpace::getUnitFromAlias( const QString _unit ) const {
+		return actualUnits.getUnitFromAlias( _unit );
 }
 double PageSpace::convertUnits ( double num, const QString fromUnits , const QString toUnits ) const {
 		return actualUnits.convertUnits ( num, fromUnits, toUnits );

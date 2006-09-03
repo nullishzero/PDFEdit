@@ -80,6 +80,8 @@ class PageSpace : public QWidget {
 		QStringList getAllUnits ( );
 		bool setDefaultUnits ( const QString dunits = QString::null );
 		QString getDefaultUnits ( ) const;
+		QString getDescriptionForUnit( const QString _unit ) const;
+		QString getUnitFromAlias( const QString _unit ) const;
 		double convertUnits ( double num, const QString fromUnits = QString::null, const QString toUnits = QString::null ) const;
 		double convertFromUnitsToPoint ( double num, const QString & fromUnits ) const;
 		double convertFromPointToUnits ( double num, const QString & toUnits ) const;
