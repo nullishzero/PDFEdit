@@ -1003,6 +1003,7 @@ function moveTextOp( thepage, op, dx, dy ) {
 	op.stream().replace (op, composite);
 }
 
+/** Move operator relative [dx,dy] */
 function moveOp( thepage, op, dx, dy ) {
 	if ((undefined == thepage) || (undefined == op) || (undefined == dx) || (undefined == dy))
 		return;
@@ -1031,23 +1032,11 @@ function moveOp( thepage, op, dx, dy ) {
 	op.stream().replace (op, composite);
 }
 
-function moveSelectedGraphicalOp( op, dx, dy ) {
+function moveGraphicalOp( thepage, op, dx, dy ) {
 	if ((undefined == op) || (!isGraphicalOp(op))  || (undefined == dx) || (undefined == dy))
 		return;
 
-	//
-	// q
-	// array cm
-	// op
-	// Q
-	//
-	var composite = createCompositeOperator("q","Q");
+	// TODO
 
-	composite.pushBack( createOperator_transformationMatrix( [1,0,0,1,dx,dy], "cm" ), composite );
-
-	composite.pushBack( op.clone() );
-	putendq( composite );
-
-	// replace it
-	op.stream().replace (op, composite);
+	print("Move graphical operators is not implemented!");
 }

@@ -737,7 +737,10 @@ function highlightingSelectedText() {
 }
 
 /** Strike trougn text which are selected. */
-function strikeTroughSelection() {
+function strikeTroughSelection( thepage ) {
+	if (thepage == undefined)
+		thepage = page();
+
 	var _op = firstSelected();
 	var _lines = [];
 	while (_op) {
@@ -748,8 +751,31 @@ function strikeTroughSelection() {
 		var _y2 = PageSpace.convertPixmapPosToPdfPos_y( _br[2], _br[3] );
 		var halfw = (_x2 - _x1) /2;
 		var halfh = (_y2 - _y1) /2;
+		var _sx = (_x2 + _x1) /2;
+		var _sy = (_y2 + _y1) /2;
 
-		_lines.push( [_x1, _y1 + halfh, _x2, _y1 + halfh ] );
+		var ctm = [1,0,0,1,0,0];
+		if (isTextOp( _op ))
+			ctm = getTextTransformationMatrix( thepage, _op );
+		else
+			ctm = getTransformationMatrix( thepage, _op );
+		var h_null	= transformationMatrixMul( [0,0], ctm );
+		var h_hor	= transformationMatrixMul( [1,0], ctm );
+		h_hor[0]	-= h_null[0];
+		h_hor[1]	-= h_null[1];
+
+		var dx = 0;
+		var dy = 0;
+		if ((h_hor[1] != 0) && (Math.abs(h_hor[0] / h_hor[1]) < 1)) {
+			dx	= h_hor[0] / h_hor[1] * halfh;
+			dy	= halfh;
+		} else {
+			dx	= halfw;
+			dy	= h_hor[1] / h_hor[0] * halfw;
+		}
+
+		// add line to draw
+		_lines.push( [_sx - dx, _sy - dy, _sx + dx, _sy + dy ] );
 
 		_op = nextSelected();
 	}
@@ -839,9 +865,11 @@ function moveSelectedObject( _dx, _dy ) {
 			case "PdfOperator":
 					if (isTextOp( op ))
 						moveTextOp( page(), op, dx, dy );
-					else
-						print("Move nontext operators is not implemented!");
-						// moveOp( page(), op, dx, dy );
+					else if (isGraphicalOp( op )) {
+						moveGraphicalOp( page(), op, dx, dy );
+					} else
+						moveOp( page(), op, dx, dy );
+
 					break;
 			case "Dict":
 					var h_type = op.child("Type");
