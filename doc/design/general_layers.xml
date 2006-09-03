@@ -3,6 +3,48 @@
 <chapter id="general_layers_chapter">
 	<title>PDFedit layers</title>
 	<para>
+		PDFEdit project is based on 3 layers model:
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/layers.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>PDFedit layers</para></caption>
+		</mediaobject>
+
+		<itemizedlist>
+		<listitem>Kernel - which has responsibility to maintain pdf
+			document content and provides with interface for
+			changes.
+		</listitem>
+		<listitem>Script - which has responsibility to wrap kernel 
+			interface and export it to user or gui.
+		</listitem>
+		<listitem>Gui - which visualize and makes comfortable usage of 
+			all the functionality which is accessible directly from 
+			kernel or Script layers.
+		</listitem>
+		</itemizedlist>
+	</para>
+	<para>
+		Kernel layer is build on top of popular open source &xpdf_link_index; 
+		project. 
+		It reuses xpdf code for low-level pdf document access - reading 
+		and decoding content and parsing it to objects as well as 
+		displaying functionality. Xpdf objects are transformed to 
+		interface internal pdfedit obejcts which provides additional
+		logic and as such they are exported to higher layers.
+	</para>
+	<para> 
+		Script layer is base on &qsa_link_index; - Qt script for applications - 
+		developed by Trolltech. 
+	</para>
+	<para>
+		Gui layer uses &qt_link_index; framework also developed by Trolltech. 
+		Most of gui parts are based on scripts. This means that user interface 
+		is very flexible and changes are possible without need of code
+		recompilation or they can be done in runtime.
+	</para>
+	<para>
 		This chapter describes PDFedit layers, their comunication interface and
 		responsibilities.
 	</para>
