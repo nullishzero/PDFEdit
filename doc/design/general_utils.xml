@@ -247,9 +247,14 @@
 		</para>
 	</sect1>
 	<sect1>
-		<title>Iterators</title>
+		<title>Iterator</title>
 		<para>
-			TODO Jozo
+			Iterator is a specific implementation of Iterator design pattern.
+			Main goal of the iterator is to be flexible and easily extensible.
+			The iterator is bidirectional. Information about previous and next
+			item is obtained from the item itself. 
+			Special iterator can be easily created from base iterator just by
+			overloading one function which selects valid items. 
 		</para>
 	</sect1>
 </chapter>
