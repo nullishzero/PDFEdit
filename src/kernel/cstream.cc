@@ -335,10 +335,18 @@ CStream::_objectChanged (shared_ptr<const ObserverContext> context)
 	if (context)
 	{
 		// Clone new value
-		shared_ptr<IProperty> newValue (this->clone());
+		// TODO why to clone? This may be preformance problem. Streams are
+		// rather big
+		//shared_ptr<IProperty> newValue (this->clone());
+		
+		// doesn't clone but rather wrap this with shared pointer
+		// and empty deallocator to prevent from this instance
+		// deallocation
+		shared_ptr<IProperty> newValue(this, EmptyDeallocator<IProperty>());
 		// Fill it with correct values
 		newValue->setPdf (this->getPdf());
 		newValue->setIndiRef (this->getIndiRef());
+
 		// Notify everybody about this change
 		this->notifyObservers (newValue, context);
 
