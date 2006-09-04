@@ -56,24 +56,12 @@ private:
 	boost::shared_ptr<Parser> parser; /**< Xpdf parser. */
 	::Lexer* lexer;					  /**< Xpdf lexer. */
 
-#ifdef STREAM_DEBUG
-	/**\todo debug */
-	size_t objread;	/**< Helper variable for debugging. Number of read objects. */
-	std::ofstream oss;
-#endif	
-
 public:
 
 	/** Constructor. */
 	CStreamsXpdfReader (Container& strs) :  lexer(NULL)
-#ifdef STREAM_DEBUG
-, objread (0)
-#endif	
 		{ assert (!strs.empty()); std::copy (strs.begin(), strs.end(), std::back_inserter(streams)); }
 	CStreamsXpdfReader (boost::shared_ptr<CStream> str) : lexer(NULL)
-#ifdef STREAM_DEBUG
-, objread (0)
-#endif	
 		{ assert (str); streams.push_back (str); }
 
 	/** Open. */
@@ -100,11 +88,6 @@ public:
 		// Create parser
 		lexer = new ::Lexer (xref, xarr.get());
 		parser = boost::shared_ptr<Parser> (new ::Parser (xref, lexer));
-
-#ifdef STREAM_DEBUG
-		/**\todo DEBUG */
-		oss.open ("_stream");
-#endif	
 	}
 
 	/** Close. */
@@ -114,11 +97,6 @@ public:
 		lexer = NULL;
 		xarr.reset ();
 		curobj.reset ();
-		
-#ifdef STREAM_DEBUG
-		/**\todo DEBUG */
-		oss.close();
-#endif	
 	}
 
 	/** 
@@ -147,11 +125,6 @@ public:
 		}
 		
 		close();
-		
-#ifdef STREAM_DEBUG
-		/**\todo DEBUG */
-		oss.close();
-#endif	
 	}
 
 	/** Get xpdf object. */
@@ -160,17 +133,6 @@ public:
 		curobj.reset ();
 		parser->getObj (curobj.get());
 		curobj->copy (&obj);
-
-#ifdef STREAM_DEBUG
-		/** debugging \todo remove. */
-		objread ++;
-		if (!obj.isEOF() && !obj.isError())
-		{
-			std::string tmp;
-			utils::xpdfObjToString (obj,tmp);
-			oss << objread << " " << tmp << std::endl;
-		}
-#endif	
 	}
 
 	/** 
@@ -220,10 +182,6 @@ private:
 	size_t pos;			/**< Position of actual parsed stream in the stream container. */
 	size_t objread; 	/**< Helper variable for debugging. Number of read objects. */
 	::Object nxtObj;	/**< Sometimes it is good to know if next object is the end. */
-#ifdef STREAM_DEBUG
-	/**\todo debug */
-	std::ofstream oss;
-#endif	
 
 public:
 
@@ -242,29 +200,6 @@ public:
 
 		actstream = streams.front ();
 		actstream->open ();
-
-#ifdef STREAM_DEBUG
-		/**\todo DEBUG */
-		oss.open ("_stream");
-#endif
-		
-	}
-
-	/** Close. */
-	void close ()
-	{
-		assert (!streams.empty());
-		
-		// True if no exception occurs
-		//assert (streams.size() == pos + 1);
-		//assert (actstream == streams.back());
-		//assert (actstream->eof());
-		
-		actstream->close ();
-
-#ifdef STREAM_DEBUG
-		oss.close();
-#endif
 	}
 
 	/** 
@@ -286,9 +221,6 @@ public:
 		
 		nxtObj.free ();
 		actstream->close ();
-#ifdef STREAM_DEBUG
-		oss.close();
-#endif
 	}
 
 	/** Get xpdf object. */
@@ -306,31 +238,11 @@ public:
 			nxtObj.free();
 		}
 
-#ifdef STREAM_DEBUG
-		/** debugging \TODO remove. */
-		objread ++;
-		std::string tmp;
-		if (!obj.isEOF() && !obj.isError())
-		{
-			utils::xpdfObjToString (obj,tmp);
-			oss << objread << " " << tmp << std::endl;
-		}
-#endif
-
 		// If we are at the end of this stream but another stream is not empty 
 		// get the object
 		if (eofOfActualStream() && !eof())
 		{
 			actstream->getXpdfObject (obj);
-
-#ifdef STREAM_DEBUG
-			/** debugging \TODO remove. */
-			if (!obj.isEOF())
-			{
-				utils::xpdfObjToString (obj,tmp);
-				oss << objread << " NEW STREAM !!! " << actstream->getIndiRef() << tmp << std::endl;
-			}
-#endif
 		}
 	}
 

@@ -1702,7 +1702,6 @@ CPage::addContentStreamToFront (const Container& cont)
 
 	// Indicate change
 	_objectChanged ();
-
 }
 template void CPage::addContentStreamToFront<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
 template void CPage::addContentStreamToFront<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);

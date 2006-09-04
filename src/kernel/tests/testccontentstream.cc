@@ -779,9 +779,12 @@ public:
 			OUTPUT << "Testing filename: " << *it << endl;
 
 			std::ofstream o;
-			//o.open ("/dev/null");
+			#if TEMP_FILES_CREATE
 			o.open ("_primitive");
-			TEST("primitive  print contentstream");
+			#else
+			o.open ("/dev/null");
+			#endif
+			TEST("primitive print contentstream");
 			CPPUNIT_ASSERT (primitiveprintContentStream (o /*OUTPUT*/, (*it).c_str()));
 			o.close();
 			OK_TEST;

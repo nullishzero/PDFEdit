@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/09/04 01:22:58  misuj1am
+ *
+ * -- code cleanup
+ * 	-- removed not used testing output
+ * 	-- tests do not create temporary files if not specified
+ *
  * Revision 1.25  2006/06/17 15:11:50  misuj1am
  *
  * -- observers updated
@@ -170,6 +176,9 @@ extern FileList fileList;
 
 // if set validation functions will output
 #define REALLY_ALL_OUTPUT	0
+
+// If set, some tests can create files with some special information
+#define TEMP_FILES_CREATE	0
 
 // MAX. of tested pages on 1 pdf.. if many, could take hours to complete
 static const size_t TEST_MAX_PAGE_COUNT = 10000;
