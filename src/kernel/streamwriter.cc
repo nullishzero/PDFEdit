@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2006/09/04 13:12:50  hockm0bm
+ * FileStreamWriter::clone
+ *         - if length parameter is 0, nothing is copied rather than to the end
+ *           of document content (feature wasn't implemented completly and this
+ *           feature is not used in project)
+ *
  * Revision 1.11  2006/05/23 19:04:50  hockm0bm
  * * new StreamWriter::trim method
  * * FileStreamWriter::trim implemented
@@ -143,11 +149,6 @@ using namespace debug;
 
 	kernelPrintDbg(DBG_DBG, "start="<<start<<" length="<<length);
 
-	// if length is negative value, content until file end is duplicated
-	bool wholeContent=false;
-	if(length==0)
-		wholeContent=true;
-		
 	setPos(start);
 	char buffer[BUFSIZ];
 	size_t read=0;

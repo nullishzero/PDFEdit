@@ -4,6 +4,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.10  2006/09/04 13:12:50  hockm0bm
+ * FileStreamWriter::clone
+ *         - if length parameter is 0, nothing is copied rather than to the end
+ *           of document content (feature wasn't implemented completly and this
+ *           feature is not used in project)
+ *
  * Revision 1.9  2006/06/25 16:25:09  hockm0bm
  * doc update - doxygen warnings removed (if they are real problem)
  *
@@ -121,7 +127,6 @@ public:
 	 * @param length Number of bytes to be duplicated.
 	 *
 	 * Copies up to length bytes from start postion from stream to given file.
-	 * If length is 0, copies content until end of stream.
 	 *
 	 * @return number of bytes writen to given file.
 	 */ 
