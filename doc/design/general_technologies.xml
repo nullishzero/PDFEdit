@@ -11,21 +11,30 @@
 			<title>Boost libraries</title>
 			<para>
 				Boost is free, highly portable and de facto standard set of libraries
-				for C++ language (see &boost_link_index;).
+				for C++ language (see &boost_link_index;). Most of new C++
+				features which are very likely to became part of the
+				standard are firstly implemented and tested here. Also the
+				technical report (TR1) is implemented in boost.
 			</para>
 			<para>
 				We are using mainly &boost_link_smartptr;
-				especially shared pointers which provides easy to use and
-				safe automatic object life cycle maintainance for shared objects. 
+				especially shared pointers which provide easy to use and
+				safe automatic object life cycle maintainance of shared objects. 
 				All objects exported from kernel to higher layers are wrapped by 
 				&boost_link_sharedptr; smart pointers.  
 			</para>
 			<para>
-				TODO Jozo - describe io streams
+				 Boost Iostreams make it easy to create standard C++ streams and stream
+				 buffers and provide a framework for defining Filters and
+				 attaching them to standard streams and stream buffers. The
+				 second feature allows creating a flexible, easy to use and
+				 extend solution to support encryption/decryption and
+				 compression/decompression of objects.
+				 
 			</para>
 		</sect2>
 		<sect2>
-			<title>STL - standard template libraries</title>
+			<title>STL - standard template library</title>
 			<para>
 				STL is C++ standard set of libraries which provides container,
 				algorithm, iterators (and many more) template classes. Their
@@ -54,7 +63,7 @@
 			functionality. All test cases are placed in kernel/tests directory
 			and they are linked to kernel/kernel_tests binary output. We have
 			implemented test classes for all interface objects. Each class is
-			specialized for certain class interface object. Each class have
+			specialized for certain class interface object. Each class has
 			general name form 
 <programlisting>
 	TestClassName
@@ -142,7 +151,12 @@
 		<sect2 id="general_techn_test_program">
 			<title>Test program</title>
 			<para>
-				TODO jozo describe parameters and debug output
+			There are two sets of input parameters you can specify.
+			The first set of parameters specifies input pdf files or directories.
+			After no file with specified name is found the parameter is assumed
+			to be a name of a test suite to run. Result of these tests is
+			information whether the test was successful, threw an exception or 
+			a condition was not met.
 			</para>
 		</sect2>
 	</sect1>
