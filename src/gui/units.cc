@@ -171,6 +171,7 @@ Units::Units( const QString _defaultUnit/*=QString::null*/ ) : QObject() {
 	aliases[tr("nautical miles")]		= "n.m.";
 	description["n.m."]	= tr("n.m. : nautical mile");
 
+	defaultUnit = "pt";
 	setDefaultUnits( _defaultUnit );
 }
 

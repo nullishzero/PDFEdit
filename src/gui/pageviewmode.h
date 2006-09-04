@@ -284,13 +284,90 @@ class PageViewMode: public QObject {
 			/* ------------------------------------------------------------------------------ * 
 			 * --- mouse press (and coresponding release) events not above selection area --- * 
 			 * ------------------------------------------------------------------------------ */
+
+			/** Method is calling if is press left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mouseReleaseLeftButton
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is press right mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mouseReleaseRightButton
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mousePressRightButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is release right mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressRightButton
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mouseReleaseRightButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is press middle mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mouseReleaseMidButton
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mousePressMidButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is release middle mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressMidButton
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mouseReleaseMidButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
+			/** Method is calling if is press left mouse button and is moving with mouse.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressEvent
+			 *
+			 * Editing this function is the best way to create new mode.
+			 */
 			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
 			/* ------------------------------------------------------------------------------ * 
@@ -382,7 +459,7 @@ class PageViewMode: public QObject {
 			 * 				Method emit at end 'needRepaint' if \a p is NULL.
 			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
 			 *
-			 * Esc and Delete key functionality is programed.
+			 * Esc and Delete key functionality is implemented.
 			 */
 			virtual void keyReleaseEvent ( QKeyEvent * e, QPainter * p, QWidget * w );
 
@@ -398,7 +475,7 @@ class PageViewMode: public QObject {
 			 *
 			 * Do nothing in this mode.
 			 */
-			virtual void focusInEvent ( QFocusEvent *, QPainter * p, QWidget * w );
+			virtual void focusInEvent ( QFocusEvent * e, QPainter * p, QWidget * w );
 			/** Method is call if focus-out event (see Qt::QWidget::focusOutEvent)
 			 * @param e		Pointer to focus event (see Qt::QFocusEvent).
 			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
@@ -407,7 +484,7 @@ class PageViewMode: public QObject {
 			 *
 			 * Do nothing in this mode.
 			 */
-			virtual void focusOutEvent ( QFocusEvent *, QPainter * p, QWidget * w );
+			virtual void focusOutEvent ( QFocusEvent * e, QPainter * p, QWidget * w );
 
 			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
 			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
@@ -418,19 +495,54 @@ class PageViewMode: public QObject {
 			 */
 			virtual void repaint ( QPainter & p, QWidget * w  );
 
+			/** Function return region of selected objects on the page.
+			 * @return Region of selected objects.
+			 */
 			virtual QRegion getSelectedRegion ();
+			/** Set selection region on the page.
+			 * @param r Which region to set.
+			 */
 			virtual void setSelectedRegion ( QRegion r );
 
+			/** Set operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 */
 			virtual void setWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Add operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 */
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Clear all operators which acan be possible select on the page. */
 			virtual void clearWorkOperators ();
+			/** Clear all operators which are selected on the page. */
 			virtual void clearSelectedOperators ();
+			/** Set operators selected on the page.
+			 * @param sOps Vector of operators.
+			 */
 			virtual void setSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+			/** Add operators selected on the page.
+			 * @param sOps Vector of operators.
+			 */
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+			/** Actualize selected operators on the page.
+			 * This method is very very well call after change operators for posiible selection.
+			 * If any selected operators are not longer inter operators which are possible select, are removed from
+			 * selected operators. Otherwise stay selected.
+			 */
 			virtual void actualizeSelection ();
 
-			/* E.g. for annotation */
+			/** Extra initialization mode.
+			 * @param page			Page which are viewed.
+			 * @param displayParams	Display parameters viewed page. 
+			 *
+			 * This method is good called after change viewed page, or change display parameters (zoom, rotation, ...)
+			 * Is good for initialize other objects then operators (E.g. for annotation).
+			 */
 			virtual void extraInitialize ( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams );
+			/** This method emit all selected Objects.
+			 * In mode work with operators emits signal newSelectedOperators with all selected operators.
+			 * In mode work with annotations emit signal newSelectedAnnotations with all selected annotations.
+			 */
 			virtual void sendAllSelectedOperators ();
 	public:
 			/** Function return if some object is selected (not in selection mode PageView::SelectRect)
@@ -444,11 +556,16 @@ class PageViewMode: public QObject {
 			 * Default is set to 2.
 			 */
 			void setResizingZone ( unsigned int width );
+			/** Function return actual set width of resizing zone
+			 * @return Actual set resizing zone
+			 */
 			int getResizingZone ( );
 
 			/** Standard constructor.
-			 * @param drawingObject				Text definition of drawing method (see DrawingObjectFactory)
-			 * @param _scriptFncAtMouseRelease	Script command for call after select object(s)
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
 			 */
 			PageViewMode( const QString & drawingObject,
 							const QString & _scriptFncAtMouseRelease,
@@ -462,7 +579,16 @@ class PageViewMode: public QObject {
 			enum resizingParts	{ none = 0, left = 1, right = 2, top = 4, bottom = 8, onUnselectedObject = 16 };
 			/** Set mapping cursors for viewing on the page for actual selection mode */
 			virtual void setMappingCursor();
-			virtual void setCorrectCursor( const QPoint & p, QPainter * p, QWidget * w );
+			/** Method set currsor to correct for actual situation.
+			 * @param point		Actual cursor position.
+			 * @param painter	Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 					Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w			Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Cursor is set by \a mappingResizingModeToCursor.
+			 * @see setMappingCursor
+			 */
+			virtual void setCorrectCursor( const QPoint & point, QPainter * painter, QWidget * w );
 
 			/** Method for calculation resizing mode
 			 * @param r rectsngle for resizing
@@ -472,24 +598,50 @@ class PageViewMode: public QObject {
 			 */
 			virtual int	theNeerestResizingMode ( const QRegion & r, const QPoint & p );
 
+			/** Method add operators bounding boxes to region.
+			 * @param r		To which region add operators bounding boxes.
+			 * @param ops	Container of operators which bboxes will be added to region \a r.
+			 */
 			void addOpsBBoxToRegion ( QRegion & r, const std::vector< boost::shared_ptr< PdfOperator > > & ops );
+			/** Get bounding box of operator.
+			 * @param op	Operator which bbox is required.
+			 *
+			 * @return	Rectangle = bounding box of operator \a op.
+			 */
 			QRect getBBox( const boost::shared_ptr<PdfOperator> & op ) const;
 	protected:
+			/** Vector of operators which will be possible selected. */
 			std::vector< boost::shared_ptr< PdfOperator > >		workOperators;
+			/** Vector of selected operators. */
 			std::vector< boost::shared_ptr< PdfOperator > >		selectedOperators;
 
+			/** Bounding region of possible selected objects. */
 			QRegion		workOpRegion;
+			/** Bounding region of selected objects */
 			QRegion		selectedOpRegion;
 
+			/** Helpes region of temporary selected area on page.
+			 * Is using for moving, resizing or new selecting. */
 			QRegion		mouseSelectedRegion;
-			QPoint		pressPosition,
-						releasePosition;
+			/** Point of press mouse button on page. */
+			QPoint		pressPosition;
+			/** Point of release mouse button on page. */
+			QPoint		releasePosition;
+			/** Relative position in selected area.
+			 * Is using for member point in selected area in moving action. */
 			QPoint		pointInRect;
+			/** Coeficient for multiply with movable X position.
+			 * Is using in resizing action. Defined if is resized width. */
 			int			resizeCoefficientX;
+			/** Coeficient for multiply with movable Y position.
+			 * Is using in resizing action. Defined if is resized height. */
 			int			resizeCoefficientY;
 
+			/** Is true if was press left mouse button and not release. */
 			bool		isPressedLeftButton;
+			/** Is true if is actual moved selection area. */
 			bool		isMoving;
+			/** Is true if is actual resized selection area. */
 			bool		isResizing;
 
 			/** Smart pointer for drawing selection area on page.
@@ -555,39 +707,151 @@ class PageViewMode: public QObject {
 			QString scriptFncAtResizeSelectedObjects;
 };
 
-/** */
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ *
+ * This implementation only draw new objects with draw methods (STRATEGY pattern) defined in
+ * constructor.
+ * Nothing operators or other objects are selected.
+ */
 class PageViewMode_NewObject: public PageViewMode {
 	Q_OBJECT
 	public slots:
+			/** Method is calling if is press left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mouseReleaseLeftButton
+			 * @see PageViewMode::mousePressEvent
+			 */
 			virtual void mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see PageViewMode::mousePressEvent
+			 */
 			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is press left mouse button and is moving with mouse.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see PageViewMode::mousePressEvent
+			 */
 			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
+			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * It is only drawing method use, if viewing parent need clear repaint.
+			 */
 			virtual void repaint ( QPainter & p, QWidget * w  );
 	public:
+			/** Standard constructor.
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
+			 */
 			PageViewMode_NewObject ( const QString & drawingObject,
 										const QString & _scriptFncAtMouseRelease,
 										const QString & _scriptFncAtMoveSelectedObjects,
 										const QString & _scriptFncAtResizeSelectedObjects );
 };
 
-/** */
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ *
+ * This implementation is for standard way to selecting text (line by line).
+ */
 class PageViewMode_TextSelection: public PageViewMode {
 	Q_OBJECT
 	public slots:
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see PageViewMode::mousePressEvent
+			 *
+			 * Method find the nearest text operator below mouse cursor. If cursor is not over text operator, nothing do.
+			 */
 			virtual void mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see PageViewMode::mousePressEvent
+			 *
+			 * Method end selection text.
+			 */
 			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is press left mouse button and is moving with mouse.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see updateSelection
+			 * @see PageViewMode::mousePressEvent
+			 *
+			 * If is selecting action (mousePressLeftButton find and select one text operator), method find
+			 * the nearest text operator to mouse cursor and select all text operator from first selected
+			 * text operator to it respecting word and line order.
+			 */
 			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
-			virtual void repaint ( QPainter & p, QWidget * w  );
+			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * It is only drawing method use, if viewing parent need clear repaint.
+			 */
+			virtual void repaint ( QPainter & p, QWidget * w );
 
+			/** Set selection region on the page.
+			 * @param r Which region to set.
+			 */
 			virtual void setSelectedRegion ( QRegion r );
 
+			/** Clear all operators which can be possible select on the page. */
 			virtual void clearWorkOperators ();
+			/** Clear all operators which are selected on the page. */
 			virtual void clearSelectedOperators ();
+			/** Add operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 *
+			 * Method filter only text operator.
+			 */
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Add operators selected on the page.
+			 * @param sOps Vector of operators.
+			 *
+			 * Method filter only text operator.
+			 */
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 	public:
+			/** Standard constructor.
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
+			 */
 			PageViewMode_TextSelection ( const QString & drawingObject,
 											const QString & _scriptFncAtMouseRelease,
 											const QString & _scriptFncAtMoveSelectedObjects,
@@ -597,13 +861,31 @@ class PageViewMode_TextSelection: public PageViewMode {
 			/** Set mapping cursors for viewing on the page for actual selection mode */
 			virtual void setMappingCursor();
 
+			/** Method reorder selected operators to order by from top to bottom and from left to right on the line. */
 			virtual void reorderSelectedOp();
 
+			/** Method update selected operators and add new or remove operators from vector of selected operators.
+			 * @param first	First selected operator (pointer to sorted structure by line and word on line)
+			 * @param last	Last selected operator (pointer to sorted structure by line and word on line)
+			 * @param selOpsRegion	Bounding region of all selected operators.
+			 * @param selOps		Vector of selected operators.
+			 * 
+			 * Method find the nearest text operator to mouse cursor and select all text operator from first selected
+			 * text operator to it respecting word and line order.
+			 * New selected operators add to \a selOps. Removed selected operators remove from that.
+			 * Actualize \a selOpsRegion by \a selOps.
+			 */
 			void updateSelection (	const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > *	first,
 									const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> > *	last,
 									QRegion *														selOpsRegion = NULL,
 									std::vector< boost::shared_ptr< PdfOperator > > *				selOps = NULL );
 
+			/** Method return the nearest text operator to point on the page.
+			 * @param point	Point on the page.
+			 *
+			 * @return Return pointer to the nearest text operators to point \a point.
+			 *			If point is not inside any text operator, return NULL.
+			 */
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* getNearestObject( const QPoint & point );
 	protected:
 			/** 2D array of bboxes objects for special selection */
@@ -614,42 +896,141 @@ class PageViewMode_TextSelection: public PageViewMode {
 			const BBoxOfObjectOnPage< boost::shared_ptr<PdfOperator> >	* lastSelectedObject;
 };
 
-/** */
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ *
+ * This implementation is for selecting any operators on the page.
+ * If press left button and move mouse, and then release left button, mode select all oprators which are all
+ * inside the selected area.
+ * If press and then release left button (don't move), then mode select the last (top) operator which contains
+ * mouse button release position on the page. If press and then release left button over selected operator,
+ * mode select previous operator (operator which is first below now selected operators).
+ */
 class PageViewMode_OperatorsSelection: public PageViewMode {
 	Q_OBJECT
 	public slots:
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see PageViewMode::mousePressEvent
+			 */
 			virtual void mousePressLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see PageViewMode::mousePressEvent
+			 */
 			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is need move selected region (operation 'move' is finished).
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see movedSelectedObjects( QPoint )
+			 * @see moveSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void movedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is need resize selected region (operation 'resize' is NOT finished).
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see mouseReleaseLeftButton
+			 * @see mouseMoveWithPressedLeftButton
+			 *
+			 * @see resizedSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void resizeSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is need resize selected region (operation 'resize' is finished).
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see resizeSelectedObjects( QMouseEvent *, QPainter *, QWidget * )
+			 * @see resizedSelectedObjects ( int, int, int, int )
+			 */
 			virtual void resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Method is calling if is press left mouse button and is moving with mouse.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see updateSelection
+			 * @see PageViewMode::mousePressEvent
+			 */
 			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
+			/** Set selection region on the page.
+			 * @param r Which region to set.
+			 */
 			virtual void setSelectedRegion ( QRegion r );
 
+			/** Add operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 */
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Clear all operators which can be possible select on the page. */
 			virtual void clearWorkOperators ();
 	public:
+			/** Standard constructor.
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
+			 */
 			PageViewMode_OperatorsSelection ( const QString & drawingObject,
 												const QString & _scriptFncAtMouseRelease,
 												const QString & _scriptFncAtMoveSelectedObjects,
 												const QString & _scriptFncAtResizeSelectedObjects );
 
 	protected:
+			/** Finf all operators which are all in region \a r.
+			 * @param in_v		Vector of operator in which are finding.
+			 * @param founded	Vector to puch all founded operators.
+			 * @param r			Region which is selected.
+			 */
 			void	findOperators (	const std::vector< boost::shared_ptr< PdfOperator > >	& in_v,
 									std::vector< boost::shared_ptr< PdfOperator > >			& founded,
 									const QRegion	& r );
+			/** Finf prev operator which is under position \a p.
+			 * @param it		Iterator in vector of all operators which can be selected.
+			 * @param v			Vector which will be contains previous operator.
+			 * @param fromEnd	Boolean will be true, if nothing previous operator found.
+			 * @param p			Point under which will be search previous operator.
+			 *
+			 * @return Return true if exist some operator on position \a p. Otherwise return false (\a founded is empty).
+			 */
 			bool	findPrevOperator (	std::vector< boost::shared_ptr< PdfOperator > >::iterator	& it,
 										std::vector< boost::shared_ptr< PdfOperator > >				& v,
 										bool 			& fromEnd,
 										const QPoint	& p );
-			// iterator for vector of workOperators
+			/** Iterator at last selected operator in \a workOperators */
 			std::vector< boost::shared_ptr< PdfOperator > >::iterator		lastSelectedOperator;
 
+			/** Helpes position for decide if user resize selected area or only click on that. */
 			QPoint	resizingPress;
 };
 
-/** */
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ *
+ * This implementation is for selecting only annotation on the page.
+ * If mouse cursor is over some annotation, then emits new selected annotation.
+ * If click on annotation emit required execute script commad.
+ */
 class PageViewMode_Annotations: public PageViewMode {
 	Q_OBJECT
 	public slots:
@@ -678,16 +1059,60 @@ class PageViewMode_Annotations: public PageViewMode {
 			 * @see PageViewMode::movedSelectedObjects( QPoint )
 			 */
 			virtual void movedSelectedObjects ( QPoint relativeMove );
+			/** Method is call if mouse is moving (see Qt::QWidget::mouseMoveEvent)
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * Is switch which call other method. Is settings \a pomCur and mouse cursor for widget \a w.
+			 *
+			 * @see moveSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see resizeSelectedObjects ( QMouseEvent *, QPainter *, QWidget * )
+			 * @see mouseMoveWithPressedLeftButton ( QMouseEvent *, QPainter *, QWidget * )
+			 */
 			virtual void mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w );
 
+			/** Set operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 *
+			 * Method is reimplemented from parent and nothing operators are be set.
+			 */
 			virtual void setWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Add operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 *
+			 * Method is reimplemented from parent and nothing operators are be set.
+			 */
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Clear all operators and annotations which can be possible select on the page. */
 			virtual void clearWorkOperators ();
+			/** Clear all operators and annotations which are selected on the page. */
 			virtual void clearSelectedOperators ();
+			/** Set operators selected on the page.
+			 * @param sOps Vector of operators.
+			 *
+			 * Method is reimplemented from parent and nothing operators are be set.
+			 */
 			virtual void setSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+			/** Add operators selected on the page.
+			 * @param sOps Vector of operators.
+			 *
+			 * Method is reimplemented from parent and nothing operators are be set.
+			 */
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
+			/** Actualize selected operators on the page.
+			 *
+			 * Method is reimplemented from parent and nothing operators are be set.
+			 */
 			virtual void actualizeSelection ();
-			/* E.g. for annotation */
+			/** Extra initialization mode.
+			 * @param page			Page which are viewed.
+			 * @param displayParams	Display parameters viewed page. 
+			 *
+			 * This method is good called after change viewed page, or change display parameters (zoom, rotation, ...)
+			 * Initialize annotation for selecting on the page \a page.
+			 */
 			virtual void extraInitialize( const boost::shared_ptr< CPage > & page, const DisplayParams & displayParams );
 			/** Repaint method for draw actual state of mode (selected region, moving and resizing in action, ...).
 			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
@@ -698,6 +1123,12 @@ class PageViewMode_Annotations: public PageViewMode {
 			 */
 			virtual void repaint ( QPainter & p, QWidget * w  );
 	public:
+			/** Standard constructor.
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
+			 */
 			PageViewMode_Annotations ( const QString & drawingObject,
 							const QString & _scriptFncAtMouseRelease,
 							const QString & _scriptFncAtMoveSelectedObjects,
@@ -712,21 +1143,59 @@ class PageViewMode_Annotations: public PageViewMode {
 			/** Set mapping cursors for viewing on the page for actual selection mode */
 			virtual void setMappingCursor();
 
+			/** Method get rectangle of activation region for annotation.
+			 * @param annot	Annotation which is required activayion rectangle.
+			 *
+			 * @return Return activation rectangle for \a annot.
+			 */
 			Rectangle getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot );
+			/** Get struct for annotation and its activation rectangle for annotation under point on the page
+			 * @param p	Position on the page.
+			 *
+			 * @return Return initialized struct for annotation and its activation region. If nothing annotation
+			 * 			is under position \a p, struct is initialized to null shared pointer to annotation.
+			 */
 			annot_rect getAnnotationOnPosition ( const QPoint & p );
 	protected:
-			QPoint	resizingPress;
-			
+			/** Vector of all annotations which are into the page. */
 			std::vector< annot_rect >	annotations;
 };
 
-/** */
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ *
+ * This implementation is reimplemented class PageViewMode_TextSelection.
+ * Different between parent and this implementation is after select new operator.
+ * After select new text operator is called script and then all selected operators will be unselected.
+ */
 class PageViewMode_TextMarking: public PageViewMode_TextSelection {
 	Q_OBJECT
 	public slots:
+			/** Method is calling if is release left mouse button.
+			 * @param e		Pointer to mouse event (see Qt::QMouseEvent).
+			 * @param p		Pointer to initialized painter for draw changes (see Qt::QPainter).
+			 * 				Method emit at end 'needRepaint' if \a p is NULL.
+			 * @param w		Pointer to widget (see Qt::QWidget). E.g. for change mouse cursor above operators.
+			 *
+			 * @see mousePressLeftButton
+			 * @see mousePressEvent
+			 *
+			 * Call script and then unselect all selected operators.
+			 */
 			virtual void mouseReleaseLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
+			/** Add operators selected on the page.
+			 * @param sOps Vector of operators.
+			 *
+			 * This method is reimplemented and don't add operators to selected operators.
+			 */
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 	public:
+			/** Standard constructor.
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
+			 */
 			PageViewMode_TextMarking ( const QString & drawingObject,
 										const QString & _scriptFncAtMouseRelease,
 										const QString & _scriptFncAtMoveSelectedObjects,
@@ -737,13 +1206,38 @@ class PageViewMode_TextMarking: public PageViewMode_TextSelection {
 			virtual void setMappingCursor();
 };
 
-/** */
+/** Class is STRATEGY pattern for mode construction.
+ * Includes method for selecting objects on page and manipulating with him.
+ *
+ * This implementation is for selecting graphical operators on the page (see PageViewMode_OperatorsSelection).
+ * If press left button and move mouse, and then release left button, mode select all oprators which are all
+ * inside the selected area.
+ * If press and then release left button (don't move), then mode select the last (top) operator which contains
+ * mouse button release position on the page. If press and then release left button over selected operator,
+ * mode select previous operator (operator which is first below now selected operators).
+ */
 class PageViewMode_GraphicalOperatorsSelection: public PageViewMode_OperatorsSelection {
 	Q_OBJECT
 	public slots:
+			/** Add operators for selection on the page.
+			 * @param wOps Vector of operators.
+			 *
+			 * Method filter only graphical operator.
+			 */
 			virtual void addWorkOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & wOps );
+			/** Add operators selected on the page.
+			 * @param sOps Vector of operators.
+			 *
+			 * Method filter only graphical operator.
+			 */
 			virtual void addSelectedOperators ( const std::vector< boost::shared_ptr< PdfOperator > > & sOps );
 	public:
+			/** Standard constructor.
+			 * @param drawingObject						Text definition of drawing method (see DrawingObjectFactory)
+			 * @param _scriptFncAtMouseRelease			Script command for call after selected object(s)
+			 * @param _scriptFncAtMoveSelectedObjects	Script command for call after move selected object(s)
+			 * @param _scriptFncAtResizeSelectedObjects	Script command for call after resize selected object(s)
+			 */
 			PageViewMode_GraphicalOperatorsSelection ( const QString & drawingObject,
 														const QString & _scriptFncAtMouseRelease,
 														const QString & _scriptFncAtMoveSelectedObjects,

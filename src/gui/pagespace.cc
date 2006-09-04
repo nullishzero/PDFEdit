@@ -20,8 +20,13 @@
 #include "pageviewmode.h"
 #include "units.h"
 
-typedef struct { int labelWidth, labelHeight; } initStruct;
-// TODO asi prepracovat
+/** Helpes struct for initializing width and height text labeles. */
+typedef struct { /** lebel width */ int labelWidth, /** label height */ labelHeight; } initStruct;
+
+/** Helpes init function for get correct width and height label of text.
+ * @param is	Struct which will be updated.
+ * @param s		Text which be in label.
+ */
 void Init( initStruct * is, const QString & s ) {
 	QLabel pageNumber( s ,0);
 	pageNumber.show();
@@ -34,11 +39,17 @@ void Init( initStruct * is, const QString & s ) {
 
 namespace gui {
 
+/** Path to setting, where are stored settings for PageSpace. */
 QString PAGESPC = "gui/PageSpace/";
+/** Name of setting for resizing zone. */
 QString RESIZINGZONE = "ResizingZone";
+/** Default value for resizing zone. */
 int DEFAULT__RESIZINGZONE = 2;
+/** Name of setting for viewed units. */
 QString VIEWED_UNITS = "ViewedUnits";
+/** Default value for viewed units. */
 QString DEFAULT__VIEWED_UNITS = "cm";
+/** Template for viewing mouse position on page. */
 QString format = "x:%1 y:%2 %3";
 
 TextLine::TextLine ()

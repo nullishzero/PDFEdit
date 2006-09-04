@@ -20,23 +20,48 @@ namespace gui {
 
 class PageViewMode;
 
+/** Class for showing (only) edit line. */
 class TextLine: public QMainWindow {
 	Q_OBJECT
 	public:
+		/** Standard constructor. */
 		TextLine ();
+		/** Standard destructor. */
 		~TextLine ();
 	public slots:
-		void setText( const QString & );
+		/** Set text to edit line.
+		 * @param text Text to set.
+		 */
+		void setText( const QString & text );
 	signals:
+		/** Signal emited if edit line lost focus.
+		 * @param text Text which was typed to edit line
+		 */
 		void lostFocus ( const QString &text );
+		/** Signal emited if press return in edit line.
+		 * @param text Text which was typed to edit line
+		 */
 		void returnPressed ( const QString &text );
+		/** Signal emited if press escape in edit line. */
 		void escape ();
 	protected:
+		/** Method is call if release key event (see Qt::QWidget::keyReleaseEvent)
+		 * @param e		Pointer to key event (see Qt::QKeyEvent).
+		 *
+		 * Esc and Delete key functionality is implemented.
+		 */
 		virtual void keyReleaseEvent ( QKeyEvent * e );
 	private slots:
+		/** On this slot is connected same named signal from edit line.
+		 * Emit lostFocus(QString &)
+		 */
 		void lostFocus ();
+		/** On this slot is connected same named signal from edit line.
+		 * Emit returnPressed(QString &)
+		 */
 		void returnPressed ();
 	private:
+		/** Pointer to edit line widget. */
 		QLineEdit * edit;
 };
 
@@ -77,13 +102,60 @@ class PageSpace : public QWidget {
 		 */
 		void convertPdfPosToPixmapPos( const Point & pdfPos, QPoint & pos );
 	public slots:
+		/** Function return description of all units internal defined.
+		 * @return Return description of units.
+		 */
 		QStringList getAllUnits ( );
+		/** Method set default unit for conversion.
+		 * @param dunits Unit for set as default. Nothing chenage, if not find in internal units.
+		 *
+		 * @return Return true if default unit is change to \a dunits. Otherwise return false.
+		 */
 		bool setDefaultUnits ( const QString dunits = QString::null );
+		/** Method return default conversion unit.
+		 * @return Return defualt unit.
+		 */
 		QString getDefaultUnits ( ) const;
+		/** Method return description for unit.
+		 * @param _unit Which unit is required description.
+		 *
+		 * @return Description for \a _unit. If nothing description found for \a _unit, return \a _unit.
+		 */
 		QString getDescriptionForUnit( const QString _unit ) const;
+		/** Function return unit from its aliases or description.
+		 * @param _unit Alias or description of unit.
+		 *
+		 * @return Return unit for alias \a _unit. If alias \a _unit is not find in internal aliases or
+		 *		descrition, return \a _unit.
+		 */
 		QString getUnitFromAlias( const QString _unit ) const;
+		/** Convert value from one unit to other.
+		 * @param num Value for conversion.
+		 * @param fromUnits Unit of value \a num.
+		 * @param toUnits To which unit is required conversion of value \a num.
+		 *
+		 * If \a fromUnits or \a toUnits is not set, then default unit use.
+		 *
+		 * @return Return value \a num conversed to unit \a toUnits.
+		 */
 		double convertUnits ( double num, const QString fromUnits = QString::null, const QString toUnits = QString::null ) const;
+		/** Conver value to point ("pt").
+		 * @param num Value for conversion.
+		 * @param fromUnits Unit of value \a num.
+		 *
+		 * If \a fromUnits is not set, then default unit use.
+		 *
+		 * @return Return value \a num conversed to points.
+		 */
 		double convertFromUnitsToPoint ( double num, const QString & fromUnits ) const;
+		/** Conver value from points ("pt") to some unite.
+		 * @param num Value for conversion.
+		 * @param toUnits To which unit is required conversion of value \a num.
+		 *
+		 * If \a toUnits is not set, then default unit use.
+		 *
+		 * @return Return value \a num conversed from points to units \a toUnits.
+		 */
 		double convertFromPointToUnits ( double num, const QString & toUnits ) const;
 
 		/** Method set width of resizing zone
@@ -92,6 +164,9 @@ class PageSpace : public QWidget {
 		 * Default is set to 2.
 		 */
 		void setResizingZone ( int width );
+		/** Function return actual set width of resizing zone
+		 * @return Actual set resizing zone
+		 */
 		int getResizingZone();
 
 		/** Method for refreshing page on screen and actualize selected objects.
@@ -103,7 +178,7 @@ class PageSpace : public QWidget {
 		 * @see refresh(int,QSPdf)
 		 */
 		void refresh ( QSPage * pageToView = NULL, QSPdf * pdf = NULL );	// if pageToView is NULL, refresh actual page
-		/** @copydoc refresh(QSPage,QSPdf) */
+		/** @copydoc refresh(QSPage*,QSPdf*) */
 		void refresh ( QSPage * pageToView, /*QSPdf * */ QObject * pdf );	// same as above
 		/** Method for refreshing page on screen.
 		 * @param pageToView Page position in \a pdf for refresh. If page is other then actual viewed, view this new page.
@@ -111,10 +186,10 @@ class PageSpace : public QWidget {
 		 * @param pdf Pdf in whitch is pageToView. If pdf is NULL then \a pageToView is from same pdf as
 		 * 					actual viewed page, if exist actual viewed page. Otherwise don't view \a pageToView.
 		 *
-		 * @see refresh(QSPage,QSPdf)
+		 * @see refresh(QSPage*,QSPdf*)
 		 */
 		void refresh ( int pageToView, QSPdf * pdf = NULL );			// if pdf is NULL refresh page from current pdf
-		/** @copydoc refresh(int,QSPdf) */
+		/** @copydoc refresh(int,QSPdf*) */
 		void refresh ( int pageToView, /*QSPdf * */ QObject * pdf );	// same as above
 
 		/** Hide bar for view number of actual viewed page and mouse position on page.
@@ -263,7 +338,7 @@ class PageSpace : public QWidget {
 		 * @param filename		Name of destination file.
 		 * @param format		Format of file (see QImageIO::outputFormats)
 		 * @param quality		Quality factor. Must be in range [0, 100] or -1 (default) (see QPixmap::save for more)
-		 * @onlySelectedArea	Save all page, if is FALSE (default). Otherwise save only bounding rectangle of selected area.
+		 * @param onlySelectedArea	Save all page, if is FALSE (default). Otherwise save only bounding rectangle of selected area.
 		 *
 		 * @return	Return TRUE, if image is saved. Otherwise return FALSE.
 		 *
@@ -271,7 +346,7 @@ class PageSpace : public QWidget {
 		 */
 		bool saveImage ( const QString & filename, const char * format, int quality = -1, bool onlySelectedArea = false);
 		/** Function save viewed page to file and for choose destination file view dialog with all available destination file format.
-		 * @onlySelectedArea	Save all page, if is FALSE (default). Otherwise save only bounding rectangle of selected area.
+		 * @param onlySelectedArea	Save all page, if is FALSE (default). Otherwise save only bounding rectangle of selected area.
 		 *
 		 * @return	Return TRUE, if image is saved. Otherwise return FALSE.
 		 *
@@ -336,6 +411,14 @@ class PageSpace : public QWidget {
 		 */
 		int findText ( QString &text, bool startAtTop = true, double xStart = 0, double yStart = 0, double xEnd = -1, double yEnd = -1);
 
+		/** Get pointer to insance of widget to show only edit line.
+		 * @param x			Global X position for showing edit line.
+		 * @param y			Global Y position for showing edit line.
+		 * @param fontsize	To which font size will be set text in edit line.
+		 * @param fontName	To which font will be set text in edit line.
+		 *
+		 * @return Return instance of widget to show only edit line.
+		 */
 		QMainWindow * getTextLine( int x, int y, int fontsize = 12, const QString & fontName = QString::null );
 	signals:
 		/** Signal is emited, if is changed viewed page.
@@ -347,39 +430,84 @@ class PageSpace : public QWidget {
 		 * @param zoom	Zoom factor, whitch is current set (1.0 = 100%)
 		 */
 		void changedZoomFactorTo ( float zoom );
-		/** Signal is emited, if 
+		/** Signal is emited, if new operators are selected.
+		 * @param ops Vector of selected operators.
 		 */
-		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > );
-		void changeSelection ( std::vector< boost::shared_ptr< CAnnotation > > );
+		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > ops );
+		/** Signal is emited, if new annotations are selected.
+		 * @param annots Vector of selected annotations.
+		 */
+		void changeSelection ( std::vector< boost::shared_ptr< CAnnotation > > annots);
 
+		/** Signal is emited, if is changed mouse position over the viewed page.
+		 * @param x	Horizontal position on the page.
+		 * @param y	Vertical position on the page.
+		 */
 		void changeMousePosition ( double x, double y );
-		void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
+		/** Signal is emited, if is required popup menu for the page.
+		 * @param pagePos	Position on the page over which is calling popup menu.
+		 */
+		void popupMenu ( const QPoint & pagePos /*, Cobject & */ );
+		/** Signal is emited, if is required execute command into script.
+		 * @param cmd	Command for executing.
+		 */
 		void executeCommand ( QString cmd );
+		/** Signal is emited, if is required delete selected objects on the page. */
 		void deleteSelection ( );
 	private slots:
-		// slots for connecting pageImage's signals
-		void newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & );
+		/** On this slot is connected same named signal from class viewed the page (see pageImage).
+		 * @param objects Vector of selected operators.
+		 *
+		 * This method emit signal "changeSelection".
+		 */
+		void newSelection ( const std::vector< boost::shared_ptr< PdfOperator > > & objects);
+		/** On this slot is connected same named signal from class viewed the page (see pageImage).
+		 * @param objects Vector of selected annotations.
+		 *
+		 * This method emit signal "changeSelection".
+		 */
 		void newSelection ( const std::vector< boost::shared_ptr< CAnnotation > > & objects );
-		void requestPopupMenu ( const QPoint & );
+		/** On this slot is connected same named signal from class viewed the page (see pageImage).
+		 * @param p		Position on the page over which is calling popup menu.
+		 *
+		 * This method emit signal "popupMenu".
+		 */
+		void requestPopupMenu ( const QPoint & p );
+		/** On this slot is connected same named signal from class viewed the page (see pageImage).
+		 * @param x	Horizontal position on the page.
+		 * @param y	Vertical position on the page.
+		 *
+		 * This method emit signal "changeMousePosition".
+		 */
 		void showMousePosition ( double x, double y );
 	private:
-		void newSelection ();
-		void actualizeSelection ();
-	private:
+		/** Text contains number of actual page and how many pages has documents. */
 		QLabel		* pageNumber;
+		/** Text contains mouse position on the page. */
 		QLabel		* mousePositionOnPage;
+		/** Pointer to class which is viewing pages. */
 		PageViewS	* pageImage;
-		QVBoxLayout	* vBox;	// mozna nebude potreba
-		QHBoxLayout	* hBox;	// mozna nebude potreba
+		/** Helpes layout. It contains page view widget and information line */
+		QVBoxLayout	* vBox;
+		/** Helpes layout. It contains information's label in information line */
+		QHBoxLayout	* hBox;
+		/** Pointer to class which is default for srcroll viewing pages (now is same as \a pageImage). */
 		QScrollView	* scrollPageSpace;
 
+		/** Pointer to actual viewed Pdf. */
 		QSPdf						* actualPdf;
+		/** Actual viewed page from \a actualPdf. */
 		boost::shared_ptr<CPage>	actualPage;
+		/** Page position of actual viewed page. */
 		int							actualPagePos;
 
+		/** Concrete implementation of selection mode. */
 		boost::shared_ptr< PageViewMode >	selectionMode;
 
+		/** Class which implement conversion between diferent units. */
 		Units		actualUnits;
+
+		/** Pointer to widget for showing only edit line to type text. */
 		TextLine	* textLine;
 };
 

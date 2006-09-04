@@ -73,12 +73,12 @@ class PageView : public QLabel {
 		/** Method for process focus in event (see QWidget's method).
 		 * @param  e focus event
 		 */
-		virtual void focusInEvent ( QFocusEvent * );
+		virtual void focusInEvent ( QFocusEvent * e );
 
 		/** Method for process focus out event (see QWidget's method).
 		 * @param  e focus event
 		 */
-		virtual void focusOutEvent ( QFocusEvent * );
+		virtual void focusOutEvent ( QFocusEvent * e );
 	public slots:
 		/** Method set selection mode.
 		 * @param m Shared pointer to new selection mode

@@ -10,6 +10,8 @@ namespace gui {
  *                                 BBoxOfObjectOnPage
  * ************************************************************************************************/
 
+/*-
+ */
 template <typename T>
 class BBoxOfObjectOnPage : public QRect {
 	public:

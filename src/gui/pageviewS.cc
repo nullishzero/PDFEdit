@@ -135,7 +135,7 @@ void PageViewS::setCorrectSize() {
 	// set correct position page on viewport
 	centerPage( );
 }
-void PageViewS::showPage ( boost::shared_ptr<CPage> page ) {
+void PageViewS::showPage ( boost::shared_ptr<pdfobjects::CPage> page ) {
 	actualPage = page;
 
 	// reset saved crop of page
