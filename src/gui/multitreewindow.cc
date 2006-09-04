@@ -370,6 +370,15 @@ void MultiTreeWindow::notifyDelete(TreeItemAbstract *dest) {
 }
 
 /**
+ Notification function, that will be called when tree item
+ of type "TreeItem" is deleting itself, in addition of notifyDelete
+ @param dest Treeitem about to be deleted
+*/
+void MultiTreeWindow::notifyDeleteItem(TreeItem *dest) {
+ emit itemDeleted(dest);
+}
+
+/**
  Signal called whyen received statusbar information from one of the trees
  (tree items).<br>
  Re-emit the signal

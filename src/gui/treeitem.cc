@@ -3,6 +3,8 @@
  @author Martin Petricek
 */
 
+#include "multitreewindow.h"
+#include "settings.h"
 #include "treedata.h"
 #include "treeitem.h"
 #include "treeitemref.h"
@@ -183,6 +185,7 @@ void TreeItem::uninitObserver() {
 
 /** default destructor */
 TreeItem::~TreeItem() {
+ data->multi()->notifyDeleteItem(this);
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -206,7 +209,20 @@ void TreeItem::remove() {
   array->remove(name().toUInt());
   return;
  }
- guiPrintDbg(debug::DBG_DBG,"Can remove propertry only from dict or array");
+/*
+ // (commented out, as it can damage PDF beyond recovery - no functions to re-add the property)
+ //This should be limited to advanced mode
+ if (globalSettings->readBool("mode/advanced")) {
+  // Is parent a Stream?
+  TreeItemCStream* stream=dynamic_cast<TreeItemCStream*>(_parent);
+  if (stream) { //removing from stream
+   stream->remove(name());
+   return;
+  }
+  //Maybe: remove from operator parameters (same issue as above)
+ }
+*/
+ guiPrintDbg(debug::DBG_DBG,"Can remove property only from dict or array");
 }
 
 /**

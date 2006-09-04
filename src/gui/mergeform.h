@@ -151,7 +151,9 @@ public:
     QPushButton* openBtn;
     QFrame* line1;
     QListBox* mergeList;
+    /** button to add current page from right (imported document) to the left (current document)*/
     QPushButton* addBtn;
+    /** button to remove current page from left*/
     QPushButton* removeBtn;
     /** button to move current page one position up*/
     QPushButton* upBtn;
@@ -209,9 +211,13 @@ public slots:
     // Events handlers
     virtual void mergeList_currentChanged( QListBoxItem * item );
     virtual void fileList_currentChanged( QListBoxItem * );
+    /** Slot called when button "<<" to add page to current document is clicked */
     virtual void addBtn_clicked();
+    /** Slot called when button ">>" to remove page from current document is clicked */
     virtual void removeBtn_clicked();
+    /** Slot called when button "Up" to move page up in the document is clicked */
     virtual void upBtn_clicked();
+    /** Slot called when button "Down" to move page down in the document is clicked */
     virtual void downBtn_clicked();
     virtual void openBtn_clicked();
     virtual void fileNameBtn_clicked();

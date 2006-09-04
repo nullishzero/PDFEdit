@@ -41,19 +41,19 @@ public:
  void addNumberTool(NumberTool *tool);
  void treeItemDeleted(TreeItemAbstract* theItem);
 public slots: //This will be all exported to scripting
- /** 
+ /*-
   Allow application to process its events, so the gui can redraw itself.
   Useful, it it is called periodically while doing some lenthy operation
  */
  void processEvents();
- /**
+ /*-
   Set text of all menu and toolbar items with given name to specified string.
   The string will be transtated according to the translation file, so it is
   suggested to supply english text and add corresponding localized translation
   into the localization file.
  */
  void setItemText(const QString &name,const QString &newText);
- /**
+ /*-
   Get text of menu or toolbar item with given name.
   Returns untranslated (english) string, even when the application is run
   using another language translation.

@@ -281,6 +281,7 @@ bool TreeItemPdf::haveChild() {
 //See TreeItemAbstract for description of this virtual method
 void TreeItemPdf::remove() {
  //Cannot remove entire document, just return
+ //Removing of special subelements (list of pages, list of outlines) does not make sense too
  return;
 }
 

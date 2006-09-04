@@ -170,8 +170,8 @@ SOURCES += consolewindow.cc
 #Other source files
 HEADERS += pdfutil.h  util.h  menu.h  settings.h  iconcache.h  args.h  main.h 
 SOURCES += pdfutil.cc util.cc menu.cc settings.cc iconcache.cc args.cc main.cc
-HEADERS += selfdestructivewidget.h  rect2Darray.h  staticsettings.h  pageviewmode.h
-SOURCES += selfdestructivewidget.cc rect2Darray.cc staticsettings.cc pageviewmode.cc
+HEADERS += selfdestructivewidget.h  staticsettings.h  pageviewmode.h
+SOURCES += selfdestructivewidget.cc staticsettings.cc pageviewmode.cc
 HEADERS += operatorhint.h  units.h
 SOURCES += operatorhint.cc units.cc
 
@@ -182,7 +182,7 @@ HEADERS += consolewriter.h  consolewritergui.h  consolewriterconsole.h
 SOURCES += consolewriter.cc consolewritergui.cc consolewriterconsole.cc
 
 #Misc. headers
-HEADERS += types.h version.h config.h
+HEADERS += types.h version.h config.h rect2Darray.h 
 
 #Dummy header file for menu translation, needed by lupdate
 exists( .menu-trans.h  ) {

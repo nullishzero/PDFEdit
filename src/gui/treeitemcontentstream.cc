@@ -144,7 +144,7 @@ QSCObject* TreeItemContentStream::getQSObject() {
 //See TreeItemAbstract for description of this virtual method
 void TreeItemContentStream::remove() {
  // Do nothing
- // Contentstream can't just delete itself.
+ // Contentstream can't just delete itself, no such function in either CPage or CContentstream.
  return;
 }
 
@@ -217,14 +217,21 @@ void TreeItemContentStream::initObserver() {
  guiPrintDbg(debug::DBG_DBG,"Set Observer");
  observer=boost::shared_ptr<TreeItemContentStreamObserver>(new TreeItemContentStreamObserver(this));
  obj->registerObserver(observer);
+ guiPrintDbg(debug::DBG_DBG,"UC PRE" << observer.use_count() << " " << (intptr_t)(&(*observer)));
 }
 
 /** Unsets observer for this item */
 void TreeItemContentStream::uninitObserver() {
- observer->deactivate();
- obj->unregisterObserver(observer);
- observer.reset();
- guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
+ if (observer) {
+  guiPrintDbg(debug::DBG_DBG,"UC POST" << observer.use_count() << " " << (intptr_t)(&(*observer)));
+  observer->deactivate();
+  obj->unregisterObserver(observer);
+  observer.reset();
+  guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
+ } else {
+  //Because of some strange reason, the observer was destroyed
+  guiPrintDbg(debug::DBG_ERR,"Observer does not exist anymore!");
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method

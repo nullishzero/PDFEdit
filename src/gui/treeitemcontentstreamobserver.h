@@ -4,6 +4,7 @@
 #include "treeitemgenericobserver.h"
 #include <ccontentstream.h>
 #include <observer.h>
+#include <utils/debug.h>
 
 namespace gui {
 
@@ -19,10 +20,12 @@ public:
   @param _parent Object to be reloaded on any change to monitored item
  */
  TreeItemContentStreamObserver(TreeItemAbstract* _parent) : TreeItemGenericObserver<pdfobjects::CContentStream> (_parent) {
+  guiPrintDbg(debug::DBG_DBG, "OBServer begin" );
   //No extra initialization
  };
  /** Destructor */
  virtual ~TreeItemContentStreamObserver() throw() {
+  guiPrintDbg(debug::DBG_DBG, "OBServer end" );
   //Empty for now
  }
 };

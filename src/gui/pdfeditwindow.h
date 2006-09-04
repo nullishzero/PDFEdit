@@ -28,6 +28,7 @@ class PropertyEditor;
 class QSPage;
 class SelectTool;
 class StatusBar;
+class TreeItem;
 class TreeItemAbstract;
 
 using namespace pdfobjects;
@@ -73,6 +74,11 @@ public slots:
  void changeRevision(int revision);
  void receiveHelpText(const QString &message);
 signals:
+ /** 
+  Signal emitted whenever any IProperty object is deleted
+  @param it Property that was deleted
+ */
+ void itemDeleted(boost::shared_ptr<IProperty> it);
  /**
   Signal emitted when closing a file or editor window. All helper editor widgets opened from
   this window that are subclasses of SelfDestructiveWidget will close themselves
@@ -98,6 +104,7 @@ protected slots:
  void menuActivated(int id);
  void setObject();
 private slots:
+ void unsetObjectIf(TreeItem *ipItem);
  void unsetObjectIf(TreeItemAbstract *theItem);
  void pagePopup(const QPoint &globalPos);
  void settingUpdate(QString key);

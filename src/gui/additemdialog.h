@@ -38,6 +38,8 @@ public:
  ~AddItemDialog();
  static AddItemDialog* create(QWidget *parent,boost::shared_ptr<CDict> cont);
  static AddItemDialog* create(QWidget *parent,boost::shared_ptr<CArray> cont);
+public slots:
+ void itemDeleted(boost::shared_ptr<IProperty> it);
 protected slots:
  void posNumSet(bool on);
  void posEndSet(bool on);

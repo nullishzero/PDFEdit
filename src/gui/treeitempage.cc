@@ -159,7 +159,7 @@ bool TreeItemPage::validChild(const QString &name,QListViewItem *oldChild) {
   return streams[streamNumber].get()==its->getObject().get();
  }
  TreeItemAnnotation *ita=dynamic_cast<TreeItemAnnotation*>(oldChild);
- if (ita && name[0]=='a') { //Is a content stream
+ if (ita && name[0]=='a') { //Is an annotation
   size_t annotNumber=name.mid(1).toUInt();
   assert(annotNumber<anots.size());  //These should be already weed out ... 
   return anots[annotNumber].get()==ita->getObject().get();

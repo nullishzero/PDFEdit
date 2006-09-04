@@ -292,6 +292,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
  connect(tree, SIGNAL(itemDeleted(TreeItemAbstract*)), this, SLOT(unsetObjectIf(TreeItemAbstract*)));
+ connect(tree, SIGNAL(itemDeleted(TreeItem*)), this, SLOT(unsetObjectIf(TreeItem*)));
  connect(tree, SIGNAL(treeClicked(int,QListViewItem*)), this, SLOT(treeClicked(int,QListViewItem*)));
  connect(globalSettings, SIGNAL(settingChanged(QString)), tree, SLOT(settingUpdate(QString)));
  connect(globalSettings, SIGNAL(settingChanged(QString)), this, SLOT(settingUpdate(QString)));
@@ -337,11 +338,14 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Run initscript
  //Any document-related classes are NOT available to the initscript, as no document is currently loaded
  //initscript may use onLoad() to perform some code after document is loaded
+
+ // If the script will do something like loading a document, it will be unloaded after all scripts are done
+ // (and replaced by document specified on commandline, if any)
  base->runInitScript();
 
  if (fName.isNull()) { //start with empty editor
   emptyFile();
- //TODO: onEmptyFile() callbask
+  base->call("onEmptyFile");
  } else { //open file
   openFile(fName);
  }
@@ -377,6 +381,17 @@ void PdfEditWindow::unsetObjectIf(TreeItemAbstract *theItem) {
  }
  // look for wrappers using this tree item and somehow disable them
  base->treeItemDeleted(theItem);
+}
+
+/**
+ Function called when deleting tree item of type TreeItem
+ @param ipItem object to check (and possibly unselect)
+*/
+void PdfEditWindow::unsetObjectIf(TreeItem *ipItem) {
+ guiPrintDbg(debug::DBG_DBG,"Iproperty was just deleted");
+ //Iproperty is about to be deleted -> warn all "add object" dialogs
+ boost::shared_ptr<IProperty> it=ipItem->getObject();
+ emit itemDeleted(it);
 }
 
 /** Called upon selecting some item in treeview */
@@ -570,6 +585,7 @@ bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
  if (!onlyAsk) {
   destroyFile();
   emptyFile();
+  base->call("onEmptyFile");
  }
  return true;
 }

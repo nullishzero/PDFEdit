@@ -20,6 +20,7 @@ using namespace pdfobjects;
 class TreeData;
 class TreeWindow;
 class TreeItemAbstract;
+class TreeItem;
 class QSCObject;
 class Base;
 
@@ -78,6 +79,7 @@ public:
  void clear();
  void clearSecondary();
  void notifyDelete(TreeItemAbstract *dest);
+ void notifyDeleteItem(TreeItem *dest);
 public slots:
  void deleteCurrent();
  void settingUpdate(QString key);
@@ -91,6 +93,11 @@ signals:
   @param dest item to be deleted
  */
  void itemDeleted(TreeItemAbstract *dest);
+ /**
+  Signal emitted when tree item of type TreeItem is about to be deleted
+  @param dest item to be deleted
+ */
+ void itemDeleted(TreeItem *dest);
  /**
   Signal emitted when mouse moves over items.
   @param info Info sent to statusbar

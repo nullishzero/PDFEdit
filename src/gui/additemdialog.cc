@@ -134,19 +134,19 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
 
 // QVBox *qv_typ=new QVBox(this,"array_pos_box_v");
 // QHBox *qb_pos=new QHBox(qv_typ,"array_pos_box");
- QHBox *qb_pos=new QHBox(this,"array_pos_box");
+  QHBox *qb_pos=new QHBox(this,"array_pos_box");
 
- posNum=new QRadioButton(tr("Add to position"),qb_pos);
- arrayPos=new QLineEdit("0",qb_pos);
- QIntValidator *vv=new QIntValidator(this);
- vv->setBottom(0);
- arrayPos->setValidator(vv);
- posEnd=new QRadioButton(tr("Append to end"),qb_pos);
- l->addWidget(qb_pos);
- posNum->setChecked(true);
- posNumSet(true);
- connect(posNum,SIGNAL(toggled(bool)),this,SLOT(posNumSet(bool)));
- connect(posEnd,SIGNAL(toggled(bool)),this,SLOT(posEndSet(bool)));
+  posNum=new QRadioButton(tr("Add to position"),qb_pos);
+  arrayPos=new QLineEdit("0",qb_pos);
+  QIntValidator *vv=new QIntValidator(this);
+  vv->setBottom(0);
+  arrayPos->setValidator(vv);
+  posEnd=new QRadioButton(tr("Append to end"),qb_pos);
+  l->addWidget(qb_pos);
+  posNum->setChecked(true);
+  posNumSet(true);
+  connect(posNum,SIGNAL(toggled(bool)),this,SLOT(posNumSet(bool)));
+  connect(posEnd,SIGNAL(toggled(bool)),this,SLOT(posEndSet(bool)));
  } else {
   //Should never happen
   assert(0);
@@ -157,6 +157,16 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  l->addWidget(msg);
 }
 
+/**
+ Called whenever item in main window is deleted. If the item matches the item in which we are adding, close the dialog 
+ @param it deleted item
+*/
+void AddItemDialog::itemDeleted(boost::shared_ptr<IProperty> it) {
+ if (it==item) {
+  //Our item in which we are adding stuff was deleted
+  close();
+ }
+}
 /**
  This slot is called when state of the "insert at position" radiobox is changed
  @param on True of it was checked as "on"
@@ -186,6 +196,7 @@ void AddItemDialog::posEndSet(bool on) {
 */
 AddItemDialog* AddItemDialog::create(QWidget *parent,boost::shared_ptr<CDict> cont) {
  AddItemDialog* ret=new AddItemDialog(parent);
+ connect(parent,SIGNAL(itemDeleted(boost::shared_ptr<IProperty>)),ret,SLOT(itemDeleted(boost::shared_ptr<IProperty>)));
  ret->setItem(cont);
  ret->show();
  return ret;
@@ -200,6 +211,7 @@ AddItemDialog* AddItemDialog::create(QWidget *parent,boost::shared_ptr<CDict> co
 */
 AddItemDialog* AddItemDialog::create(QWidget *parent,boost::shared_ptr<CArray> cont) {
  AddItemDialog* ret=new AddItemDialog(parent);
+ connect(parent,SIGNAL(itemDeleted(boost::shared_ptr<IProperty>)),ret,SLOT(itemDeleted(boost::shared_ptr<IProperty>)));
  ret->setItem(cont);
  ret->show();
  return ret;
