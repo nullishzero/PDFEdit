@@ -78,6 +78,12 @@
   <para>
    After that, the document is loaded (if it was not specified on commandline,
    the window will be initially empty without any document)   
+   <note>
+    Init script should not load a document while starting, as it will be replaced by new one as soon as the script finishes.
+    If functionality such as "automatic loading of a document on startup" is desired, appropriate 
+    code should be added to onEmptyFile() function, which will be triggered after starting the editor with empty document.
+    Alterantively, onLoad, onLoadUser or onLoadError fnuctions may be used for this.
+  </note>
   </para>
  </chapter>
  <chapter id="static_common">
@@ -112,6 +118,13 @@
     in commanline parameters -
     unless some of the scripts exit the application prematurely, for example
     by calling <link linkend="exit">exit()</link>.
+   </para>
+  </sect1>
+  <sect1 id="onEmptyFile">
+   <title>onEmptyFile()</title>
+   <para>
+    This function is called after the editor is opened without specifying any document on commandline (without opening any file)
+    or if the current file is closed.
    </para>
   </sect1>
   <sect1 id="onLoad">
