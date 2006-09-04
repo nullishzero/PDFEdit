@@ -3,7 +3,7 @@
 #
 TEMPLATE = app
 LANGUAGE = C++
-TARGET = kernel
+TARGET = kernel_tests
 
 CONFIG += complete 
 CONFIG += console precompile_header

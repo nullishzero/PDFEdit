@@ -3,7 +3,6 @@
 #
 TEMPLATE = lib
 LANGUAGE = C++
-TARGET = kernel
 
 CONFIG += staticlib
 CONFIG += complete 
