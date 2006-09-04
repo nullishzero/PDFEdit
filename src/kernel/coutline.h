@@ -27,7 +27,7 @@ std::string getOutlineText (boost::shared_ptr<IProperty> ip);
 		
 
 // not needed yet
-class COutline {};
+//class COutline {};
 
 
 //=====================================================================================

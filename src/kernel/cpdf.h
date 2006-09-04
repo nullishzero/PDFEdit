@@ -6,6 +6,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.76  2006/09/04 18:25:27  petrm1am
+ *
+ * 2 typos in documentation (descriPtion !) + commented out "class COutline {}"
+ * (not used anywhere and it causes empty doxygen page to be generated)
+ *
  * Revision 1.75  2006/08/25 16:21:22  hockm0bm
  * getPdfWriter method added
  *
@@ -414,7 +419,7 @@ public:
 } // namespace utils
 
 class CPage;
-class COutline;
+//class COutline;
 
 
 /** Type for page tree node count chache.
@@ -513,7 +518,7 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator > ResolvedRefStorage;
  * that this may not represent values used for inner page counting writen on the
  * page. CPdf doesn't handle any kind of special document numbering.
  *
- * TODO outlines describtion
+ * TODO outlines description
  *
  * <p>
  * <b>Revision manipulation</b><br>

@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2006/09/04 18:25:27  petrm1am
+ *
+ * 2 typos in documentation (descriPtion !) + commented out "class COutline {}"
+ * (not used anywhere and it causes empty doxygen page to be generated)
+ *
  * Revision 1.27  2006/06/27 17:10:15  hockm0bm
  * gcc warnings removed (parameter shadows class member)
  *
@@ -69,7 +74,7 @@
 /**
  * @file exceptions.h
  *
- * Exceptions describtion.
+ * Exceptions description.
  *
  * Kernel is using different types of exceptions for unexpected situation 
  * handling.
