@@ -414,7 +414,9 @@ bool getcc (__attribute__((unused)) ostream& oss, const char* fileName)
 	
 		Ops ops;
 		ccs.front()->getPdfOperators (ops);
-		assert (!ops.empty());
+		//assert (!ops.empty());
+		if (ops.empty())
+			continue;
 		
 
 		PdfOperator::Iterator it = PdfOperator::getIterator (ops.front());
