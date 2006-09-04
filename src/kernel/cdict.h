@@ -501,7 +501,7 @@ getStringFromXpdfStream (std::string& str, ::Object& obj);
 /**
  * Get simple value from dictionary.
  *
- * \todo Use MPL because ItemType and ItemPType depend on each other.!!
+ * \todo Can use MPL because ItemType and ItemPType depend on each other.!!
  *
  * @param dict	Dictionary.
  * @param id 	Position in the dictionary.

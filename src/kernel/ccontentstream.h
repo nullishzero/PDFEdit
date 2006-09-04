@@ -57,8 +57,6 @@ typedef observer::IObserver<IProperty> IIPropertyObserver;
  * 
  * Operators form a tree-like structure consisting of Simple and Composite objects. 
  * 
- * \todo reference to general documentation [pdfoperators].
- * 
  * Only first level operators are stored.
  * 
  * The pdf feature that a content stream can consist of several streams means we
@@ -73,7 +71,6 @@ typedef observer::IObserver<IProperty> IIPropertyObserver;
  * The requirement of processing operators sequentially has lead to the decision
  * that these operators will be in an iterator queue meaning we can process them
  * seqeuntially with the advantage of Iterator design pattern.
- * \todo reference to general documentation [pdfoperators].
  *
  * Another characteristis of content stream operators is that they build a tree
  * like structure which has lead to another decision that these operators will

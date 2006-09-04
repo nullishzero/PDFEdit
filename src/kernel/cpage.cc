@@ -893,7 +893,8 @@ CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
 	return false;
 }
 
-// \TODO magic constants 0,0, 1000, 1000
+//
+//
 //
 void
 CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) const

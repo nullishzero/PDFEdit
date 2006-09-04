@@ -329,9 +329,7 @@ public:
 	/** Position in content stream container. */
 	typedef size_t CcPosition;
 	
-	/** Type for page observer context.
-	 * TODO really this one?.
-	 */
+	/** Type of page observer context. */
 	typedef observer::BasicChangeContext<CPage> BasicObserverContext;
 
 private:

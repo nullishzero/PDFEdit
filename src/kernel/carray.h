@@ -362,7 +362,7 @@ template <typename T> void complexValueToString (const typename T::Value& val, s
 /**
  * Get simple value from array.
  *
- * \todo Use MPL because ItemType and ItemPType depend on each other.!!
+ * \todo Can use MPL because ItemType and ItemPType depend on each other.!!
  *
  * @param array	Array.
  * @param position 	Position in the array.

@@ -473,7 +473,6 @@ namespace {
 			kernelPrintDbg (debug::DBG_ERR, "Invalid content stream...");
 			operands.clear ();
 			//operators.clear ();
-			/** \todo SET INVALID CONTENTSTREAM. */
 		}
 		
 		//
