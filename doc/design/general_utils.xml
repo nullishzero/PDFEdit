@@ -1,7 +1,256 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
 <chapter id="general_utils_chapter">
-        <title>General utilities used in PDFedit</title>
-        <para>
-
-        </para>
+	<title>General utilities used in PDFedit</title>
+	<para>
+		This chapter deals with utility classes implemented for pdfedit 
+		purposes but can be reused also somewhere else (implementation 
+		tends to be as much independant on pdfedit as possible.
+		They are stored (with some exceptions) in src/utils dicrectory and when
+		compiled, they are collected in one <emphasis>libutils.a</emphasis>
+		statuc library.
+	</para>
+	<sect1>
+		<title>Delinearizator</title>
+		<para>
+			Delinearizator is class which provides simple interface for pdf
+			document delinearization (see also <xref linkend="linearized_pdf"/>).
+			Class instances are created by <xref linkend="factory_method"/> and
+			one instance handles one pdf file, which has to be linearized. If
+			file is not linearezed, instance is not created and exception is
+			thrown. When instance is created, document can be simply
+			delinearized by delinearize method.
+		</para>
+		<para>
+			As well as XRefWriter it also uses IPdfWriter impementator for
+			content writing (this can be changed in runtime and provides
+			flexibility for output format).
+		</para>
+		<para>
+			Delinearizator itslef is build on top of xpdf XRef class which
+			provides object fetching functionality and cross reference table
+			maintainance. This is used for fetching of all objects (without
+			those which are specific for linearized content) and IPdfWriter
+			implementation is used to write them to the new file.
+		</para>
+		<para>
+			This class (implemented in src/utils/delinearizator.cc) depends on
+			xpdf code and kernel/pdfwriter module.
+		</para>
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/delinearizator.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Delinearizator architecture</para></caption>
+		</mediaobject>
+	</sect1>
+	<sect1 id="general_utils_confparser">
+		<title>Configuration parser</title>
+		<para>
+			IConfigurationParser provides interface for underlaying stream
+			parsing where stream data can be somehow (depends on format and
+			parser implementation) transformed to <emphasis>key</emphasis>, 
+			<emphasis>value</emphasis> pair, where key stands for data
+			identifier and value is associated with this key.
+		</para>
+		<para>
+			Class is template and abstract which means that implementators have
+			to implement all methods and supply data types for key and value.
+			IConfigurationParser is defined in src/utils/confparser.h file.
+			We have implemented simple implementation in StringConfigurationParser
+			class which parses file with simple format:
+<programlisting>
+	# comments are ignore
+	% this allso stand for comment by default
+	key : value # this key value is associaed with value
+</programlisting>
+			Where both key and value are strings. This parser can be configured
+			to ignore comments (strings starting with character from
+			commentsSet), to use different delimiter character (the one which
+			separates key from value) by setting delimiterSet or to set
+			characters which should be considered as blank characters (by
+			setting blankSet).
+		</para>
+		<para>
+			Configuration parser code doesn't depend on pdfedit or xpdf code and
+			can be reused as it is without any changes. It uses STL streams. In
+			PDFedit project it is used e. g. in ModeController or OperatorHinter 
+			classes.
+		</para>
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/confparser.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Configuration parser object structure.</para></caption>
+		</mediaobject>
+	</sect1>
+	<sect1 id="general_utils_rulesmanager">
+		<title>Rules manager</title>
+		<para>
+			RulesManager is simple concept based on association of
+			<emphasis>rule</emphasis> and its <emphasis>target</emphasis>.
+			Implementation uses C++ template mechanism to be generic in way of
+			data type definition for both rule and target. Both types have to
+			fullfill certain contracts (see doxygen program documentation for
+			more details). Rules are keys in internal storage and they are
+			associated with their targets (1:1 relation).  
+		</para>
+		<para>
+			Described storage with data forms RulesManager configuration. 
+			Second part is based on IRuleMatcher (implementator if this abstract
+			class). It has responsibility to provide logic related to rules 
+			choosing, evaluating of compatibility of rules and defining priority 
+			for rules. When findMatching method is called, matcher is considered
+			to choose association from storage which matches given rule the best.
+			Implementator of matcher has to implement class <xref linkend="functor"/>
+			so that it describes when given rule matches given original rule
+			and also provide with priority of this match.
+		</para>
+		<para>
+			Class user just defines rule and target data types, implements
+			IRuleMatcher for rule data type with matching logic and use class as
+			it is. RulesManager also enables loading rule, value configuration
+			from configuration file. loadFromFile uses Parser template data
+			type. IConfigurationParser implementator with rule type for key and
+			target type for value can be used here.
+		</para>
+		<para>
+			This concept was used for ModeController class and OperatorHinter in
+			our project. (TODO xref for both)
+		</para>
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/rulesmanager.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Rules manager object structure</para></caption>
+		</mediaobject>
+	</sect1>
+	<sect1 id="general_utils_observers">
+		<title>Observers</title>
+		<para>
+			IObserver class which stands for observer in following context is
+			mechanism to allow announcing internal object state change to other
+			objects. Object with internal state which announces is obsever
+			<emphasis>observer handler</emphasis> and classes which monitor
+			(observe) are called <emphasis>observers</emphasis>. This is basic
+			idea of <xref linkend="observer_design_pattern"/>. This
+			implementation keeps basic contracts of this pattern and adds
+			additional functionality to be as flexible as possible. 
+		</para>
+		<para>
+			From class point of view <emphasis>observer handler</emphasis> is
+			class which inherits from ObserverHandler class. This template 
+			class provides interface for observer registration and 
+			unregistration. Each observer has to be registered before it is 
+			notified about changes. When it is no longer interested in changes, 
+			it should unregister itself from observed objects. ObserverHandler 
+			also provides method which announces all registered observer about 
+			change (notifyObservers method). Observers are called in order which
+			depends on their priorities and for same priorities on registration
+			order.
+			Observer handler is responsible to call this notifyObservers method
+			whenever its internal state has changed (and he wants to announce
+			this change) and provides correct parameters for it.
+		</para>
+		<para>
+			<emphasis>Observer</emphasis> has to implement IObserver abstract
+			class. The most important to implement is notify method. This method
+			is called by <emphasis>observer handler</emphasis> when after its
+			state has changed. Observer can use given newValue parameter which
+			holds current value which has changed. Additional information can be
+			obtained from given context (see bellow). notify method can use
+			given values to update its internal state or to do additional
+			information but in any case it shouldn't modify given data (this can
+			leed to end less loop, because observer handler notifies about
+			change and so observer is notified again and this will never stops). 
+		</para>
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/observer_cooperation.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Observer and observer handler cooperation</para></caption>
+		</mediaobject>
+		<para>
+			Notifying would be rather poor if just newValue was available. So
+			our observer concept adds context to notify method. This context
+			keeps additional information. Context hierarchy is based on
+			IChangeContext abstract class. This provides just information about
+			type of context. notify implementator should check this type and
+			cast given context to correct type and use it as needed. If observer
+			handler doesn't want to give any context, this should keep NULL
+			value.
+		</para>
+		<para>
+			We have implemented following types of contexts because they were
+			needed by project. 
+			<itemizedlist>
+				<listitem>
+					BasicChangeContext - additionaly gives previous value
+					(originalValue) of newValue
+				</listitem>
+				<listitem>
+					ComplexChangeContext - inherits from BasicChangeContext and
+					additionaly gives information about value id. This can be
+					used for complex objects or containers where value is stored
+					inside and identifier is value name (in complex object
+					scope) or id (position or key) from container. We have
+					defined following conventions - if value was added, then
+					originalValue is NULL (or something that represents NULL)
+					and when value is removed, newValue is NULL. 
+				</listitem>
+				<listitem>
+					ScopedChangeContext - inherits from IChangeContext and adds
+					second template parameter for scope data type. Scope is
+					abstraction for area where current newValue change belong.
+					We are using this context for ProgressObserver (TODO link).
+				</listitem>
+			</itemizedlist>
+			New context types can be defined as well and very easily - just 
+			inherit from IChangeContext and implement getType to return correct 
+			type enum value and add some information specific for context inside 
+			to class.
+		</para>
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/observer_classes.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Observer concept classes</para></caption>
+		</mediaobject>
+		<para>
+			Note that all mentioned class are C++ template classes and uses data
+			type for value as template parameter. This type stands for data type
+			of value which change is announced (newValue in notify method e. g.).
+			All instances are wrapped by share_ptr (boost smart pointer) to
+			prevent from data life cycle problems because share_ptr correctly
+			shares data between multiple user and they are deallocated in moment
+			when nobody holds shared pointer with them. If shared pointers are
+			used correctly (this means that object wrapped inside is never
+			deallocated by hand), no problems should occure with object
+			instances. This is very important because obsever handler doesn't
+			have any information whether observers, which are registered are
+			alive in moment when it calls their notify method.
+		</para>
+		<para>
+			Second restriction for implementators and users is that notify
+			method as well as all other methods (also constructors and
+			desctructor) can't throw an exception. This is intention, because
+			observer handler has to guarantee that each observer is called after
+			it finishes notifyObservers method. It doesn't know anything about
+			observers so it also doesn't know how to handle their exceptions.
+			Only reaction would be (to keep contract that all observers are
+			notified) to silently ignore (or to log) exception. This could lead
+			to inconsistencies and so it is safer to forbit exceptions at all.
+			notify method implementator has to keep this in mind because, if
+			exception is thrown and it is forbiden in method signature (throw()
+			clause after method definition), program is forced to terminate by
+			default.
+		</para>
+	</sect1>
+	<sect1>
+		<title>Iterators</title>
+		<para>
+			TODO Jozo
+		</para>
+	</sect1>
 </chapter>
 

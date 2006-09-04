@@ -19,6 +19,22 @@ Example:
 
 
 <glossary id="glossary_part">
+	<glossentry id="factory_method">
+		<glossterm>Factory method</glossterm>
+		<glossdef>
+		<para>
+			Factory method is ... TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="functor">
+		<glossterm>Functor</glossterm>
+		<glossdef>
+		<para>
+			In C++ context, functor is method implementing functional operator.
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="gpl">
 		<glossterm>GPL - General public licence</glossterm>
 		<glossdef>
@@ -35,7 +51,21 @@ Example:
 		<glossterm>Facade</glossterm>
 		<glossdef>
 		<para>
-			Facade is designed pattern ...
+			Facade is designed pattern ... TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="linearized_pdf">
+		<glossterm>Linearized pdf document</glossterm>
+		<glossdef>
+		<para>
+			Linearized document is specially optimized pdf document for quick
+			viewing without need to have whole document at the time when viewing
+			starts.
+		</para>
+		<para>
+			All objects related for first page (or fiew pages) are stored in
+			first 1024 bytes and TODO
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -47,6 +77,14 @@ Example:
 			certain point in a program. In context of automatical 
 			testing, invariant defines expectation of behavior 
 			compared to real result of operation.
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="observer_design_pattern">
+		<glossterm>Observer design patter</glossterm>
+		<glossdef>
+		<para>
+			TODO
 		</para>
 		</glossdef>
 	</glossentry> 
