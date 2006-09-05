@@ -14,7 +14,7 @@ kernel-tests: kernel
 	cd kernel && qmake -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
 
 # PDF editor
-pdfedit: ../config.pro utils kernel xpdf qoutputdevices
+pdfedit: ../config.pro utils kernel xpdf qoutputdevices qsa
 	cd gui && qmake && make
 
 # QOutputDevices
