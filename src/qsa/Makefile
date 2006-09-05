@@ -25,4 +25,11 @@ clean:
 	$(MAKE) -f Makefile.qsa clean
 
 distclean:
+	rm -f configure2/configure2 src/qsa/qsconfig.h configure2/Makefile
 	$(MAKE) -f Makefile.qsa distclean
+
+staticlib: Makefile.qsa
+	$(MAKE) -f Makefile.qsa src/Makefile
+	cd src && $(MAKE) qsa/Makefile
+	cd src/qsa && $(MAKE) staticlib
+
