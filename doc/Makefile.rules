@@ -24,4 +24,4 @@ $(html_help_dir)/%.html: %.xml
 
 #rule for generating docbook XML from .leaf files (some tex-like Trolltech format)
 %.xml: %.leaf $(TOP_DIR)/tools/leaf2xml.pl
-	$(TOP_DIR)/tools/leaf2xml.pl $< >$@
+	$(TOP_DIR)/tools/leaf2xml.pl <$< >$@
