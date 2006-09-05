@@ -461,30 +461,51 @@
 
     <sect2 id="general_xpdf_parser">
 	 <title>Parser.h and Stream.cc</title>
+	 <para>
+	 Xpdf reads pdf files using two level mechanism. The lowest level, called Lexer, decodes streams if necessary 
+	 and reads byte after byte. The second level, called Parser, reads from Lexer byte after byte until one complete
+	 object is read. This can be applied recursively. Then it initializes xpdf Object class with type and data
+	 of the read object. Parser object can read objects either from a single stream or from an array of streams
+	 (simply reading one stream after another could result in incomplete objects returned at the end of a stream). 
+	 Parser is used to parse all objects including content stream tags.
+
+	  <mediaobject>
+		  <imageobject>
+		   <imagedata fileref="images/parser.png" format="PNG"/>
+		  </imageobject>
+		  <textobject><phrase>xpdf Parser class</phrase></textobject>
+		  <caption><para>xpdf Parser class</para></caption>
+		</mediaobject>
+
+	 </para>
      <sect3>
 	  <title>New features</title>
       <para>
-	  Content streams can consist of more streams. Decoding and concatenating of these streams must form a valid 
+	  Content streams can consist of more streams. Decoding and then concatenating of these streams must form a valid 
 	  content stream. The problem is, that the content stream can be split into streams at almost arbitrary place.
-	  Xpdf Parser object can read objects either from a single stream or from an array of streams
-	  (simply reading one stream after another could result in incomplete objects returned at the
-	  end of a stream). 
 	  
-	  Content streams could consist of many small valid content streams. 
-	  When splitted correctly, user can easily delete/add such a small content stream. Our changes can be considered
-	  as such small valid content streams. 
-	  The missing feature of Parser object which was added is the information when it has finished reading one stream
-	  and started reading another. One obstacle is object buffering done by Parser object.
+	  Added feature which was missing in the Parser object is the information when it has finished reading one stream
+	  and started reading another. 
 	  Added method
-<programlisting>
-<code>
-	// End of actual stream
-	bool eofOfActualStream () const { return (1 == endOfActStream); }
-</code>
-</programlisting>
+      <programlisting>
+      <code>
+  		// End of actual stream
+		bool eofOfActualStream () const { return (1 == endOfActStream); }
+      </code>
+      </programlisting>
 	  where endOfActStream is new variable indicating how many objects have been buffered from current stream.
-      </para>
+	
+	  Content streams can consist of many small valid content streams. 
+	  When splitted correctly, user can easily delete/add small content streams. 
+	  Changes made by PdfEditor can be considered as such small valid content streams. After saving our changes we
+	  want to see these changes separately to existing content streams.
+  	  This new feature is used to split many streams (which create one page content stream) 
+	  to many small content streams.
+
+	  Because of the object buffering done by Parser the new feature had to be implemented specially this way.
+	  </para>
      </sect3>
     </sect2>
+
 </sect1>
 </chapter>
