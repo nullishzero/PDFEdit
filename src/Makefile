@@ -1,5 +1,5 @@
 #makefile for PDF editor
-.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices xpdf_configure install qsa
+.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices xpdf_configure install qsa qsa_configure
 
 include Makefile.flags
 
@@ -26,8 +26,11 @@ utils: xpdf
 	cd utils && make
 
 #QSA
-qsa:
-	cd qsa && ./configure && make staticlib
+qsa: qsa/Makefile.qsa
+	cd qsa && make staticlib
+
+qsa/Makefile.qsa: qsa/qsa.pro
+	cd qsa && ./configure
 
 # Kernel
 kernel: xpdf config_xpdf_variables utils
