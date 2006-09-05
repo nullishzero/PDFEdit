@@ -436,9 +436,14 @@ void BaseCore::cleanup() {
  treeWrap.setAutoDelete(false);
  guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << baseObjects.count() << " objects");
  //Set autodelete and clear the list
- baseObjects.setAutoDelete(true);
+
+ QPtrDict<QSCObject> baseObjectsCopy=baseObjects;
+
+ baseObjectsCopy.setAutoDelete(true);
+ baseObjectsCopy.clear();
+ baseObjectsCopy.setAutoDelete(false);
+ guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << baseObjects.count() << " objects (should be 0)");
  baseObjects.clear();
- baseObjects.setAutoDelete(false);
  guiPrintDbg(debug::DBG_DBG,"Garbage collection done");
 }
 

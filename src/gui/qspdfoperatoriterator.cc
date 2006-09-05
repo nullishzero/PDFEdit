@@ -90,7 +90,7 @@ QSPdfOperator* QSPdfOperatorIterator::current() {
 }
 
 /**
- Duplicate the operator, while trying to preserve its type
+ Duplicate the operator iterator, while trying to preserve its type
  @param src source iterator
  @return new iterator of same type aas source iterator, initially pointing at the same element
 */
@@ -144,7 +144,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::next() {
   //if we are after last valid, return NULL
   if (obj->isEnd()) return NULL;
   csCheck();
-  return new QSPdfOperatorIterator(obj,csRef,base);
+  return new QSPdfOperatorIterator(copyIterator(obj),csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
   return NULL; ///a.k.a. false ... 
@@ -162,7 +162,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::prev() {
   //if we are before first valid, return NULL
   if (obj->isBegin()) return NULL;
   csCheck();
-  return new QSPdfOperatorIterator(obj,csRef,base);
+  return new QSPdfOperatorIterator(copyIterator(obj),csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
   return NULL; ///a.k.a. false ... 
