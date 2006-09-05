@@ -2,4 +2,11 @@
 -->
 <chapter id="kernel_part_helper_ch">
 	<title>Kernel internal objects</title>
+	<para>
+	</para>
+
+	&kernel_pdfwriter;
+
+	&kernel_xrefwriter;
+
 </chapter>

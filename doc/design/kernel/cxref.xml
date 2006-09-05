@@ -1,0 +1,64 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
+<sect1 id="kernel_part_cxref">
+	<title>CXRef</title>
+	<para>
+		CXRef class wrapps Xpdf XRef class and provides additional functionality
+		with same interface (see <xref linkend="wrapper"/>. It provides with
+		protected interface for making changes and internally stores changed
+		objects. When object should be fetched (<emphasis>fetch</emphasis>
+		method is called), it will check whether this object is already changed
+		and if so, uses changed value. Otherwise delegates to XRef original
+		implementation (this logic is kept in all methods defined in XRef).
+	</para>
+	<para>
+		CXRef inherits from XRef and so can be polymorphicaly used in xpdf code
+		and this code doesn't need any changes to use CXref functionality.
+		Aditional interface enables changes, but as we want to keep this making
+		changes under control so it is protected and so accessible only for its
+		inheritance descendants.
+	</para>
+	<para>
+		Added functionality includes:
+		<itemizedlist>
+			<listitem>
+				new indirect objects creation - creates new pdf object and
+				associates it with reserved reference.
+			</listitem>
+			<listitem>
+				changing of already existing indirect objects.
+				<emphasis>changeObject</emphasis> method which changes object
+				with given reference with given object.
+			</listitem>
+			<listitem>
+				changing of document trailer - add, remove or change elements of
+				<xref linkend="trailer"/>.
+			</listitem>
+			<listitem>
+				checking for type safety - checks whether given object can
+				safely replace original value (in document or currently saved
+				form) according types. Type safe change is consider such change,
+				when new value type is either same as old type, or dereferenced
+				types (if any of types is reference) or if original value is
+				CNull, then new value may have arbitrary type.
+			</listitem>
+			<listitem>
+				reopen functionality - <emphasis>reopen</emphasis> method which
+				is responsible for document content reopen with <xref linkend="crossref_table"/>
+				at specified position. This is then used to change current
+				revision of document, where cross reference table position is
+				specific for desired revision.
+			</listitem>
+		</itemizedlist>
+	</para>
+	<para>
+		For more information about CXref usage, please see <xref linkend="kernel_part_layers_ch"/>.
+	</para>
+ 	<mediaobject>
+	  <imageobject>
+          <imagedata fileref="kernel/images/cxref.png" format="PNG"/>
+	  </imageobject>
+	  <caption><para>CXref class scheme</para></caption>
+	</mediaobject>
+</sect1>
+

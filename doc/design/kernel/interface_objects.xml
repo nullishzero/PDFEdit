@@ -17,4 +17,6 @@
 	&kernel_cpage;
 
 	&kernel_cannotation;
+
+	&kernel_cxref;
 </chapter>

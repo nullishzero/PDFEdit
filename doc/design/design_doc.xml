@@ -38,6 +38,10 @@
 <!ENTITY kernel_cobjects	SYSTEM	  "kernel/cobjects.xml">
 <!ENTITY kernel_cpdf	        SYSTEM	  "kernel/cpdf.xml">
 <!ENTITY kernel_cpage	        SYSTEM	  "kernel/cpage.xml">
+<!ENTITY kernel_cannotation     SYSTEM	  "kernel/cannotation.xml">
+<!ENTITY kernel_cxref     SYSTEM	  "kernel/cxref.xml">
+<!ENTITY kernel_xrefwriter     SYSTEM	  "kernel/xrefwriter.xml">
+<!ENTITY kernel_pdfwriter     SYSTEM	  "kernel/pdfwriter.xml">
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 

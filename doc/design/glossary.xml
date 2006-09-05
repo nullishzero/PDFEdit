@@ -209,6 +209,14 @@ Example:
 		</mediaobject>
 		</glossdef>
 	</glossentry> 
+	<glossentry id="trailer">
+		<glossterm>Pdf trailer</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="wrapper">
 		<glossterm>Wrapper design patter</glossterm>
 		<glossdef>

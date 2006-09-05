@@ -1,0 +1,32 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
+<sect1 id="kernel_part_pdfwriter">
+	<title>IPdfwriter</title>
+	<para>
+		IPdfWriter abstract class provides interface for pdf content writing.
+	</para>
+    <para>
+        IPdfWriter writes pdf content in two phases:
+       <itemizedlist>
+        <listitem>Real data writing and information collecting. This is done 
+                during writeContent method. Implementator is responsible to 
+                collect all data needed for cross reference section generation.
+        </listitem>
+        <listitem>Cross reference section writing. This is done in writeTrailer
+                method, which gets all collected data and writes cross reference
+                table (or stream - depends on implementation), writes trailer 
+                dictionary and finaly information about last xref position.
+        </listitem>
+       </itemizedlist>
+        Different implementator of IPdfWriter interface can be set by 
+        XRefWriter::setPdfWriter method.
+    </para>
+    <para>
+        Each sequence of writeContent, [writeContent, ]* writeTrailer forms new
+        revision of document in incremental update sense. In this moment 
+        OldStylePdfWriter implementation is used which forms old style cross 
+        reference table (see pdf specification 2.4.3 Cross reference table
+		chapter).
+    </para>
+</sect1>
+
