@@ -379,7 +379,7 @@ void MultiTreeWindow::notifyDeleteItem(TreeItem *dest) {
 }
 
 /**
- Signal called whyen received statusbar information from one of the trees
+ Signal called when received statusbar information from one of the trees
  (tree items).<br>
  Re-emit the signal
  @param info Information from tree item

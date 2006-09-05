@@ -303,7 +303,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   size_t i=0;
   for(;i<n;i++) { //for each property
    boost::shared_ptr<IProperty> property=ar->getProperty(i);
-   name.sprintf("[ %4d ]",i);
+   name.sprintf("[ %4d ]",(int)i);
    if (!addProperty(name,property)) complex_properties++;
   }
   //complex_message(complex_properties);

@@ -316,7 +316,7 @@ QString MergeDialog::fileName() {
 void MergeDialog::initOriginal( size_t count ) {
  char itemLabel[128];
  for(size_t i=1; i<=count; ++i) {
-  snprintf(itemLabel, 127, "Page%d", i);
+  snprintf(itemLabel, 127, "Page%d", (int)i);
   //ListItem * listItem=
   new ListItem(new NodeData(NodeData::ORIGINAL, i), mergeList, itemLabel);
  }
@@ -353,7 +353,7 @@ bool MergeDialog::initFileList( QString & fileName ) {
  QFileInfo fi(fileName);
  QString baseName=fi.baseName(false);
  for(size_t i=1; i<=count; ++i) {
-  snprintf(itemLabel, 127, "%s Page%d", baseName.ascii(), i);
+  snprintf(itemLabel, 127, "%s Page%d", baseName.ascii(), (int)i);
   //ListItem * listItem=
   new ListItem(new NodeData(NodeData::FROMFILE, i), fileList, itemLabel);
  }

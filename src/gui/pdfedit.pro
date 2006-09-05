@@ -46,13 +46,17 @@ data_scripts.files 	= scripts/[a-z0-9A-Z]*.qs
 
 # Documentation installed in documentation path (typically /usr/share/doc)
 doc.path        = $$DOC_PATH
-doc.files       = ../../doc/user/*.html ../../doc/user/*.xml ../../doc/design/gui/menu.* ../../doc/LICENSE.GPL
+doc.files       = ../../doc/user/*.html ../../doc/user/*.pdf  ../../doc/LICENSE.GPL
 doc_images.path		= $$DOC_PATH/images
 doc_images.files	= ../../doc/user/images/*.png
 doc_kernel.path 	= $$DOC_PATH/kernel
-doc_kernel.files	= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.xml
+doc_kernel.files	= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.pdf
 doc_kernel_images.path	= $$DOC_PATH/kernel/images
 doc_kernel_images.files	= ../../doc/design/kernel/images/*.png
+doc_design.path 	= $$DOC_PATH/design
+doc_design.files	= ../../doc/design/*.html ../../doc/design/kernel/*.pdf
+doc_design_images.path	= $$DOC_PATH/design/images
+doc_design_images.files	= ../../doc/design/images/*.png
 
 # Man page installed in man path (typically /usr/share/man/man1)
 man.path	= $$MAN_PATH
@@ -64,7 +68,7 @@ pdfedit.files   = pdfedit
 
 #List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
-INSTALLS += doc doc_images doc_kernel doc_kernel_images
+INSTALLS += doc doc_images doc_kernel doc_kernel_images doc_design doc_design_images
 INSTALLS += man
 INSTALLS += pdfedit
 

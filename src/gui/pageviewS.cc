@@ -377,7 +377,7 @@ void PageViewS::initializeWorkOperatorsInMode() {
 
 		// for annotation, ...
 		mode->extraInitialize( actualPage, displayParams );
-		guiPrintDbg( debug::DBG_DBG, "actualPage "<< (int) actualPage.get() );
+		guiPrintDbg( debug::DBG_DBG, "actualPage "<< (intptr_t) actualPage.get() );
 
 		std::vector< boost::shared_ptr< PdfOperator > > ops;
 
