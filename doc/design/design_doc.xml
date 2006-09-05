@@ -37,6 +37,7 @@
 <!ENTITY kernel_helper_objects	SYSTEM	  "kernel/helper_objects.xml">
 <!ENTITY kernel_cobjects	SYSTEM	  "kernel/cobjects.xml">
 <!ENTITY kernel_cpdf	        SYSTEM	  "kernel/cpdf.xml">
+<!ENTITY kernel_cpage	        SYSTEM	  "kernel/cpage.xml">
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 

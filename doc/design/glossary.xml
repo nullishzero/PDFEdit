@@ -59,6 +59,14 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
+	<glossentry id="dictionary">
+		<glossterm>Pdf dictionary data type</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="document_catalog">
 		<glossterm>Pdf document catalog</glossterm>
 		<glossdef>
@@ -150,6 +158,55 @@ Example:
 		<para>
 			TODO
 		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="page_tree">
+		<glossterm>Pdf page tree</glossterm>
+		<glossdef>
+		<para>
+			Pdf stores all page dictionaries organized in so called page tree.
+			This tree distinguish 2 types of nodes:
+			<itemizedlist>
+				<listitem>
+					Intermediate tree node - this node's purpose is to collect
+					other nodes as a subtree. It is represented by <xref linkend="dictionary"/>
+					which contains element with <emphasis>Kids</emphasis> name
+					and which contains reference to <xref linkend="indirect_object"/>
+					of a node (this node can be either intermediate or page node.
+					Intermediate tree node dictionary contains element with 
+					<emphasis>Type</emphasis> name and this has to have
+					<emphasis>Pages</emphasis> value. To enable travirsing in
+					the tree, also <emphasis>Count</emphasis> element is
+					required for node's dictionary. This element holds number of
+					page tree nodes in current intermediate node.
+				</listitem>
+				<listitem>
+					Page (leaf) tree node - this node contains direct page
+					information. It is represented by page dictionary which has
+					element with <emphasis>Type</emphasis> name and
+					<emphasis>Page</emphasis> value.
+				</listitem>
+			</itemizedlist>
+			Root of the tree is referenced by <xref linkend="document_catalog"/>
+			dictionary as <emphasis>Pages</emphasis> element reference. 
+		</para>
+		<para>
+			With well balanced tree, it is possible to access arbitrary page
+			(also for very big amount of pages) in very short time (just fiew
+			hops through intermediate nodes). Pdf creators usually collects
+			pages in chunks in one intermediate node. Also intermediate nodes
+			are collected by 10. This means that document with 1000 pages has
+			page tree with 3 intermediate nodes.
+			<note>
+				Page tree root is allways intermediate node.
+			</note>
+		</para>
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/page_tree.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Page tree</para></caption>
+		</mediaobject>
 		</glossdef>
 	</glossentry> 
 	<glossentry id="wrapper">
