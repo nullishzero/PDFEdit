@@ -476,7 +476,7 @@ QVariant BaseGUI::mergeDialog() {
    size_t *res_pos=result->getPositions();
    for (int i=0;i<n;i++) {
     rItems.append(res_items[i]);
-    rPos.append(res_pos[i]);
+    rPos.append((int)res_pos[i]);
    }
    QValueList<QVariant> res;
    res.append(rItems);
