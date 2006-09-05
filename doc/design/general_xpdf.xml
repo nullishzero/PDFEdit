@@ -487,12 +487,12 @@
 	  Added feature which was missing in the Parser object is the information when it has finished reading one stream
 	  and started reading another. 
 	  Added method
-      <programlisting>
-      <code>
-  		// End of actual stream
-		bool eofOfActualStream () const { return (1 == endOfActStream); }
-      </code>
-      </programlisting>
+<programlisting>
+<code>
+	// End of actual stream
+	bool eofOfActualStream () const { return (1 == endOfActStream); }
+</code>
+</programlisting>
 	  where endOfActStream is new variable indicating how many objects have been buffered from current stream.
 	
 	  Content streams can consist of many small valid content streams. 
