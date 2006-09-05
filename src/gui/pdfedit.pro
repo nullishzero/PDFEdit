@@ -74,7 +74,7 @@ INSTALLS += pdfedit
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator
-menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o .obj/util.o .obj/staticsettings.o $(SUBLIBS) -L$(QTDIR)/lib -L../utils -L/usr/X11R6/lib -lqsa -lutils -lqt-mt -lXext -lX11 -lm
+menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o .obj/util.o .obj/staticsettings.o $(SUBLIBS) -L$(QTDIR)/lib -L../utils -L/usr/X11R6/lib -lutils -lqt-mt -lXext -lX11 -lm
 menugenerator.depends    = .obj/menugenerator.o .obj/util.o .obj/staticsettings.o
 menugenerator_o.target   = .obj/menugenerator.o
 menugenerator_o.commands = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o .obj/menugenerator.o menugenerator.cc
@@ -83,10 +83,8 @@ QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
 POST_TARGETDEPS = menugenerator
 QMAKE_CLEAN += .obj/menugenerator.o
 
-LIBS       += -lqsa
-
 #include headers from kernel and used by kernel
-INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
+INCLUDEPATH += ../qsa/src/qsa ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
 
 #must be specified, otherwise namespace debug will clash with debug() in QT
 QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
@@ -195,6 +193,9 @@ exists( .menu-trans.h  ) {
 
 #Kernel objects - now using library
 LIBS += -lkernel -L../kernel
+
+#QSA static lib
+LIBS += -L../qsa/lib -lqsa_pdfedit
 
 #OutputDevice
 LIBS += -lqoutputdevices -L../kpdf-kde-3.3.2

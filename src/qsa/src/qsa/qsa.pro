@@ -1,6 +1,6 @@
 TEMPLATE	= lib
 CONFIG		+= qt warn_on link_prl staticlib
-TARGET 		= qsa
+TARGET 		= qsa_pdfedit
 VERSION  	= 1.1.4m
 
 isEmpty(QSA_INSTALL_PREFIX) {
