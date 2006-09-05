@@ -1,0 +1,8 @@
+CONFIG		+= qt warn_on
+unix:LIBS 	+= -lqsa
+shared {
+   	win32:LIBS += qsa114.lib
+} else {
+	win32:LIBS += -lqsa
+	DEFINES += QSA_NO_DLL
+}
