@@ -28,6 +28,11 @@
 <!ENTITY gui_pagespace				SYSTEM    "gui/pagespace.xml">
 <!ENTITY gui_objtreepropedit		SYSTEM    "gui/objtreepropedit.xml">
 
+<!ENTITY scripts_intro		SYSTEM	  "scripts/scripting_intro.xml">
+<!ENTITY scripts_startup	SYSTEM	  "scripts/scripting_startup.xml">
+<!ENTITY scripts_callbacks	SYSTEM	  "scripts/scripting_callback.xml">
+<!ENTITY scripts_objects	SYSTEM	  "scripts/scripting_objects.xml">
+
 <!ENTITY install_requiredlib	SYSTEM    "install/requiredlib.xml">
 <!ENTITY install_compiling		SYSTEM    "install/compiling.xml">
 <!ENTITY install_platforms		SYSTEM    "install/platforms.xml">

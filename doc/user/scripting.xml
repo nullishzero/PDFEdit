@@ -6,6 +6,12 @@
 <!ENTITY version "0.2.0">
 
 <!ENTITY scripts	SYSTEM    "scripts/scripting.xml">
+
+<!ENTITY scripts_intro		SYSTEM	  "scripts/scripting_intro.xml">
+<!ENTITY scripts_startup	SYSTEM	  "scripts/scripting_startup.xml">
+<!ENTITY scripts_callbacks	SYSTEM	  "scripts/scripting_callback.xml">
+<!ENTITY scripts_objects	SYSTEM	  "scripts/scripting_objects.xml">
+
 <!-- Small file to generate only part with scripting documentation for online help -->
 
 <!-- These two sections are generated separately for this file -->
