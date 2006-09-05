@@ -312,15 +312,22 @@ void MultiTreeWindow::clearSecondary() {
   //Selection is one of trees to be deleted
   treeSelection=NULL;
  }
+
+ TreeWindowList treesCopy=trees;
+ //Both trees must be cleared before proceeding, otherwise double free might occur
+ //(when root item of the tree is destroyed, it tries to deaallocate its tree window,
+ //if it is in the trees list)
+
+ //Clear both lists, so no non-primary trees are listed
+ trees.clear();
+ treesReverse.clear();
  //Close all non-primary trees
- TreeWindowList::iterator it=trees.begin();
- while (it!=trees.end()) {
+ TreeWindowList::iterator it=treesCopy.begin();
+ while (it!=treesCopy.end()) {
   delete (*it);
   ++it;
  }
- //No trees exist, clear both lists
- trees.clear();
- treesReverse.clear();
+ //No non-primary trees exist now
 }
 
 /** Init contents of main tree from given PDF document

@@ -19,10 +19,10 @@ isEmpty( PREFIX ) {
 #Data files installed in application data path (typically /usr/share/pdfedit)
 # Basic data files
 data.path       = $$DATA_PATH
-data.files      = pdfeditrc *.conf *.qs
+data.files      = pdfeditrc *.conf *.qs operator.hint
 # Icons
 data_icon.path  	= $$DATA_PATH/icon
-data_icon.files 	= icon/*.png 
+data_icon.files 	= icon/*.png icon/*.svg
 # Hi-color icon theme
 data_icon_hicolor.path  = $$DATA_PATH/icon/hicolor
 data_icon_hicolor.files = icon/hicolor/*.png 
