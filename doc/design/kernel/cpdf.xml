@@ -1,31 +1,37 @@
 <!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
 -->
-<chapter>
+<sect1 id="kernel_part_cpdf">
   <title>CPdf</title>
   <para>
         CPdf class is main pdf document class. It maintains document content 
         using XRefWriter field, document catalog PDF dictionary and provides 
-        other specialized highlevel objects such as CPage and COutline.
+        other specialized highlevel objects such as CPage (TODO link) and
+		COutline (TODO link).
   </para>
   <para>
         Main responsibility is to keep all objects (it provides) synchronized 
         with data which are used for them. As an example, it has to keep
-        CPage instances synchronized with current state of page tree (see 
-        Observers chapter - TODO link). 
+        CPage instances synchronized with current state of page tree. 
   </para>
   <para>
-        In design terminology, CPdf provides &facade; pattern (TODO literature 
-        link) to manipulate with file in document scope of view. 
+	  In design terminology, CPdf provides <xref linkend="facade"/>;  to 
+	  manipulate with file in document scope of view. All internal objects 
+	  used for particular purposes are hidden from class user and CPdf 
+	  provides interface for manipulation with it (as an example, CPdf uses XRefWriter TODO link which enables to
+	  make changes to document, but exports only CXref TODO link which enables just
+	  objects fetching).
   </para>
-  <sect1>
+  <sect2>
     <title>Instance life cycle</title>
     <para>
-        Instance of CPdf can be create and destroyedonly in described way 
-        (see programming documentation for more information). Inbetween it
-        maintains exactly one documnet. 
+		Instance of CPdf can be create only by <emphasis>getInstance</emphasis>
+		factory method (see <xref linkend="factory_method"/>) and destroyed 
+		only by <emphasis>close</emphasis> method described. CPdf instance is 
+		one purpose object which maintains exactly one document during its 
+		lifetime (between creation and close).
     </para>
-  </sect1>
-  <sect1>
+  </sect2>
+  <sect2>
     <title>CPdf modes</title>
     <para>
         Each document may be opened in one of several modes. Each controls
@@ -35,12 +41,12 @@
         for more information). Finaly Advanced mode brigns full control
         upon document.
     </para>
-  </sect1>
-  <sect1>
+  </sect2>
+  <sect2>
     <title>Properties changing and revision handling</title>
     <para>
-        All changes to the document are done using XRefWriter  as 
-        described in Changes to pdf document (TODO link) chapter. Additional
+        All changes to the document are done using XRefWriter (TODO link) as 
+		described in <xref linkend="kernel_part_layers_ch"/>. Additional
         logic and responsibility of CPdf in this direction is to make adpater
         from IProperty interface of property to xpdf Object required by 
         XRefWriter. Even more it also provides interface to get indirect
@@ -64,42 +70,24 @@
         is required, just checks whether mode is not read only and delegates
         the rest to XRefWriter
     </para>
-  </sect1>
-  <sect1>
+  </sect2>
+  <sect2>
     <title>Provided high level objects</title>
     <para>
         CPdf provides high level objects maintaining some specialized part
-        of document catalog. These objects bring logic on properties with
-        special meaning in pdf document.
+		of document <xref linkend="document_catalog"/>. These objects brings 
+		logic on properties with special meaning in pdf document.
+		<footnote>
+			<para>
+				E. g. Pdf describes page as dictionary which contains all 
+				neccessary information for page (page attributes), its position
+				in page tree (reference to parent tree node) and its content 
+				stored in <xref linkend="content_stream"/>. CPage then uses 
+				this dictionary for its initialization and provides logic for
+				this dictionary.
+			</para>
+		</footnote>
     </para>
-    <sect2>
-      <title>CPage special objects</title>
-      <para>
-        CPage objects (see TODO) keeps logic on Page dictionary property. 
-        Responsibility of CPdf is to keep it synchronized with page tree and to
-        provide simple interface how to get to their instances according
-        absolute and relative position in document. Pages are considered
-        to be same if they are in same position (numbering) and they are 
-        represented by same CPage instances.
-      </para>
-      <para>
-        To enable all these requirements, CPdf keeps and maintains pageList
-        storage which maps postions to returned CPage instances. It is
-        created in lazy mode, which means that page is added if it is 
-        required. This aproach enables iteration methods (such as 
-        getNextPage, getPrevPage with CPage as parameter) to be implemented
-        very easily, but brings problem with synchronization which has
-        to be done each time page tree is chnaged (see for more information
-        in Observer chapter TODO link).
-      </para>
-    </sect2>
-    <sect2>
-      <title>COutline special objects</title>
-      <para>
-      </para>
-      <para>
-      </para>
-    </sect2>
     <para>
         For more information about responsibility and functionality separation
         see following figure.
@@ -111,5 +99,5 @@
 	  <caption><para>3 layers diagram</para></caption>
 	</mediaobject>
   </para>
-  </sect1>
-</chapter>
+  </sect2>
+</sect1>

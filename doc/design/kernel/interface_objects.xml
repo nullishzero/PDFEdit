@@ -11,4 +11,6 @@
 	</para>
 
 	&kernel_cobjects;
+
+	&kernel_cpdf;
 </chapter>

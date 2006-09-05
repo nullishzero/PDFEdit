@@ -59,11 +59,27 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
+	<glossentry id="document_catalog">
+		<glossterm>Pdf document catalog</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="factory_method">
 		<glossterm>Factory method design pattern</glossterm>
 		<glossdef>
 		<para>
 			Factory method is ... TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="facade">
+		<glossterm>Facade design pattern</glossterm>
+		<glossdef>
+		<para>
+			Facade is designed pattern ... TODO
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -84,14 +100,6 @@ Example:
 			redistribute programs and source code from developers that have chosen 
 			to license their work under the GPL. See <ulink url="http://en.wikipedia.org/wiki/GPL">GPL wiki</ulink> 
 			for more information. TODO link to complete licence
-		</para>
-		</glossdef>
-	</glossentry> 
-	<glossentry id="facade">
-		<glossterm>Facade design pattern</glossterm>
-		<glossdef>
-		<para>
-			Facade is designed pattern ... TODO
 		</para>
 		</glossdef>
 	</glossentry> 
