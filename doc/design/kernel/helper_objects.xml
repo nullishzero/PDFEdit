@@ -9,4 +9,7 @@
 
 	&kernel_xrefwriter;
 
+	&kernel_filters;
+
+	&kernel_observers;
 </chapter>

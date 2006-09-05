@@ -4,7 +4,7 @@
 			o  replace <xref linkend.. with real entity definitions
 -->
 
-<chapter id="filters_chapter">
+<sect1 id="kernel_part_filters_chapter">
 
   <title>Stream encoding</title>
   <para>
@@ -18,13 +18,13 @@
   It is up to the viewer how it handles an unknown filter. 
   </para>
 
- <sect1><title>Xpdf filters</title>
+ <sect2><title>Xpdf filters</title>
   <para>Xpdf viewer implements all decoding filters from pdf specification v1.5. However it
   does not implement any encoding filters (it does not need them). 
   
  	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/xpdf_streams_simple.png" format="PNG" />
+	   <imagedata fileref="kernel/images/xpdf_streams_simple.png" format="PNG" />
 	  </imageobject>
 	  <textobject><phrase>Simple xpdf stream hierarchy</phrase></textobject>
 	  <caption><para>Simple xpdf stream hierarchy</para></caption>
@@ -38,9 +38,9 @@
   it lacks almost any fault tolerance.
   We use xpdf filters (because it is hardwired into xpdf parsing) only to decode data but we design our own encoding filters.
   </para>
- </sect1>
+ </sect2>
  
-  <sect1><title>Encoding filter design</title>
+  <sect2><title>Encoding filter design</title>
   <para>
   The idea behind filtering streams is quite simple and common so instead of reinventing the wheel we use boost <xref linkend="boost" /> 
   filtering iostreams <xref linkend="boost_iostreams" /> which give us a very nice filtering input/output concept. 
@@ -54,7 +54,7 @@
 
     <mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/boost_streams_pdfedit.png" format="PNG" />
+                  <imagedata fileref="kernel/images/boost_streams_pdfedit.png" format="PNG" />
 	  </imageobject>
 	  <textobject><phrase>Boost stream concept in pdfedit</phrase></textobject>
 	  <caption><para>Stream concept in pdfedit</para></caption>
@@ -63,6 +63,6 @@
   This design is flexible, easily extensible as we only have to implement the new filter and connect it to the source 
   when the filter name matches the filter name specified in the stream dictionary.
   </para>
-  </sect1>
+  </sect2>
 
- </chapter>
+ </sect1>

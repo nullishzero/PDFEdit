@@ -138,6 +138,14 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
+	<glossentry id="iterator">
+		<glossterm>Iterator desing pattern</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="linearized_pdf">
 		<glossterm>Linearized pdf document</glossterm>
 		<glossdef>

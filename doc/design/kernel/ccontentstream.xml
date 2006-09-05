@@ -5,8 +5,8 @@
 -->
 
 
-<chapter id="ccontentstream_chapter">
-        <title>Content stream</title>
+<sect1 id="kernel_part_ccontentstream">
+        <title>CContentStream</title>
         <para>
 		Content stream can consist of one or more streams. It is responsible for everything on a page. 
 		If anything visible is changed the content stream must be changed.
@@ -15,7 +15,7 @@
 		operators and their operands. Each operator updates graphical state. 
 		</para>
 		
-		<sect1>
+		<sect2>
 		<title>Observering cpage</title>
 		<para>
 		Generally, changing anything visible on a page means changing something in underlying content stream. 
@@ -24,45 +24,44 @@
 		because it must reparse operators. CContentStream implements observer subject interface so cpage can be informed
 		when it is changed.
 		</para>
-		</sect1>
+		</sect2>
 		 
-		<sect1>
+		<sect2>
 		<title>Changing ccontentstream</title>
 		<para>
 		Content stream can be changed in two ways. Either by ccontentstream methods or by requesting raw operator and changing
 		its operands. The third way is to add/delete whole stream.
-		This problem is solved by Observer design pattern<xref linkend="observer" />. We register an observer on all streams 
-		which this content stream consists from and also on all operators. When a change occurs, content stream is reparsed.
-		</para>
-		</sect1>
+                This problem is solved by <xref linkend="kernel_part_ccontentstream_observers"/>. 		
+                </para>
+		</sect2>
 
-		<sect1>
+		<sect2>
 		<title>Storing pdf operators</title>
 		<para>
 		Operators are processed sequentially and there are many situations when only some types of operators are needed. Clear solution
-		is to use the Iterator design pattern<xref linkend="iterator" />. With this patter we can process operators one by one.
+		is to use the <xref linkend="iterator" />. With this patter we can process operators one by one.
 		If we need specific iterators we just create another child of basic iterator.
 		There can be simple operators and composite operators. Operators form a tree-like structure. This is more readable than a list of
 		all operators. So we implement another tree-like queue. Only the first level of operators is stored in ccontentstream. Each composite
-		operator stores its children. This is an example of Composite design pattern <xref linkend="composite" />. Simple and
+		operator stores its children. This is an example of <xref linkend="composite" />. Simple and
 		composite operators are accessed uniformly.
 
 		<mediaobject>
 		  <imageobject>
-		   <imagedata fileref="images/ccontentstream_operator.png" format="PNG"/>
+                          <imagedata fileref="kernel/images/ccontentstream_operator.png" format="PNG"/>
 		  </imageobject>
 		  <textobject><phrase>Operator queues</phrase></textobject>
 		  <caption><para>Operator queues</para></caption>
 		</mediaobject>
 		</para>
-		</sect1>
+		</sect2>
 
-		<sect1>
+		<sect2>
 		<title>Changing pdf operators</title>
 		<para>
 		Deleting and inserting an operator is not easy because it is stored in two queues. We have information only about one queue (that one which
 		was used to get the operator) so we need to find out the position in the second queue and change it adequately.
 		</para>
-		</sect1>
-</chapter>
+		</sect2>
+</sect1>
 

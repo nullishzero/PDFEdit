@@ -129,7 +129,6 @@
 	  <imageobject>
 		  <imagedata fileref="kernel/images/xref_layer_diagram.png" format="PNG"/>
 	  </imageobject>
-	  <textobject><phrase>3 layers diagram</phrase></textobject>
 	  <caption><para>3 layers diagram</para></caption>
 	</mediaobject>
    </para>

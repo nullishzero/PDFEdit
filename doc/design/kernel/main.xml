@@ -68,16 +68,16 @@
 	</para>
 	<para>
 		Following chapters will focus more deeply on particular parts of kernel
-		stuff. At first all classes which are used as interface objects (TODO link) for 
-		higher layers are described. Then 3 layer model (TODO link) which enables transparent and
-		controlled making changes to document and finally some kernel classes (TODO link)
-		which are not part of interface but they are used internally by
-		interface classes.
+		stuff. At first all classes which are used as interface objects for 
+		higher layers are described. Then some kernel classes which are not 
+		part of interface but they are used internally by interface classes.
+		Finally there is describtion how document changes are handled and
+		revision changing.
 	</para>
 
 	&kernel_interface_objects;
 	
-	&kernel_layer_model;
-
 	&kernel_helper_objects;
+	
+	&kernel_layer_model;
 </part>

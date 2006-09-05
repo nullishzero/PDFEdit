@@ -42,6 +42,9 @@
 <!ENTITY kernel_cxref     SYSTEM	  "kernel/cxref.xml">
 <!ENTITY kernel_xrefwriter     SYSTEM	  "kernel/xrefwriter.xml">
 <!ENTITY kernel_pdfwriter     SYSTEM	  "kernel/pdfwriter.xml">
+<!ENTITY kernel_contentstream     SYSTEM        "kernel/ccontentstream.xml">
+<!ENTITY kernel_filters     SYSTEM        "kernel/filters.xml">
+<!ENTITY kernel_observers     SYSTEM        "kernel/observers.xml">
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 
