@@ -40,6 +40,13 @@
 <!ENTITY cmdline_description	SYSTEM    "cmdline/description.xml">
 <!ENTITY cmdline_localization	SYSTEM    "cmdline/localization.xml">
 
+<!ENTITY gui_settings_editor		SYSTEM    "gui/settings_editor.xml">
+<!ENTITY gui_settings_paths			SYSTEM    "gui/settings_paths.xml">
+<!ENTITY gui_settings_objecttree	SYSTEM    "gui/settings_objecttree.xml">
+<!ENTITY gui_settings_commandline	SYSTEM    "gui/settings_commandline.xml">
+<!ENTITY gui_settings_toolbars		SYSTEM    "gui/settings_toolbars.xml">
+<!ENTITY gui_settings_lookandfeel	SYSTEM    "gui/settings_lookandfeel.xml">
+
 <!ENTITY qsa_util	SYSTEM    "scripts/qsa-util.xml">
 <!ENTITY qsa_dialog	SYSTEM    "scripts/qsa-inputdialog.xml">
 
