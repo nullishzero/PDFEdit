@@ -1,0 +1,101 @@
+ <chapter id="callbacks">
+  <title>Callback functions</title>
+  <para>
+   These are functions called from editor on certain events.
+   Return value (if any) is ignored.
+   If the callback function does not exist, it is skipped
+  </para>
+  <sect1 id="onChangeRevision">
+   <title>onChangeRevision()</title>
+   <para>
+    This function is called after active revision of document is changed
+   </para>
+  </sect1>
+  <sect1 id="onConsoleStart">
+   <title>onConsoleStart()</title>
+   <para>
+    This function is called in commandline mode after calling all scripts specified
+    in commanline parameters -
+    unless some of the scripts exit the application prematurely, for example
+    by calling <link linkend="exit">exit()</link>.
+   </para>
+  </sect1>
+  <sect1 id="onEmptyFile">
+   <title>onEmptyFile()</title>
+   <para>
+    This function is called after the editor is opened without specifying any document on commandline (without opening any file)
+    or if the current file is closed.
+   </para>
+  </sect1>
+  <sect1 id="onLoad">
+   <title>onLoad()</title>
+   <para>
+    This function is called after document is opened
+   </para>
+  </sect1>
+  <sect1 id="onLoadUser">
+   <title>onLoadUser()</title>
+   <para>
+    This function is called after document is opened (after <link linkend="onLoad">onLoad()</link> is called)
+   </para>
+  </sect1>
+  <sect1 id="onLoadError">
+   <title>onLoadError()</title>
+   <para>
+    This function is called after an error occured while trying to load a document
+   </para>
+  </sect1>
+  <sect1 id="onPageChange">
+   <title>onPageChange()</title>
+   <para>
+    This function is called after changing to another page in the preview window.
+   </para>
+  </sect1>
+  <sect1 id="onPageRightClick">
+   <title>onPageRightClick()</title>
+   <para>
+    This function is called after clicking with right mouse button in window with page preview.
+   </para>
+  </sect1>
+  <sect1 id="onTreeLeftClick">
+   <title>onTreeLeftClick()</title>
+   <para>
+    This function is called after clicking with left mouse button on any item in tree window.
+   </para>
+  </sect1>
+  <sect1 id="onTreeRightClick">
+   <title>onTreeRightClick()</title>
+   <para>
+    This function is called after clicking with right mouse button on any item in tree window.
+   </para>
+  </sect1>
+  <sect1 id="onTreeMiddleClick">
+   <title>onTreeMiddleClick()</title>
+   <para>
+    This function is called after clicking with middle mouse button on any item in tree window.
+   </para>
+  </sect1>
+  <sect1 id="onTreeDoubleClick">
+   <title>onTreeDoubleClick()</title>
+   <para>
+    This function is called after doubleclicking with left mouse button on any item in tree window.
+   </para>
+  </sect1>
+  <sect1 id="onTreeSelectionChange">
+   <title>onTreeSelectionChange()</title>
+   <para>
+    This function is called after selection in tree changes.
+   </para>
+  </sect1>
+  <sect1 id="onValueChange">
+   <title>onValueChange(name)</title>
+   <para>
+    This function is called after some of special tools change its value because of interaction.
+    Parameter is name of the special tool.
+    Color selection tool calls this after user select some color in it,
+    edit tool calls this after user presses enter or leaves the control,
+    number tool calls this after user presses enter or selects some of predefined numbers,
+    select tool calls this after changing the selection.
+   </para>
+  </sect1>
+ </chapter>

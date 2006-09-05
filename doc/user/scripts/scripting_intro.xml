@@ -1,0 +1,28 @@
+ <chapter id="intro">
+  <title>Introduction</title>
+  <para>
+   PDFEditor have support for scripting. Evey item in menu (or toolbar) runs a script
+   (mostly just short call of function, but using complex scripts from menu
+   is possible), and also user can type script commands directly into
+   commandline. Every invocation of script from menu will echo the command
+   to the commandline, so user can learn how to do things in menu directly
+   from commandline if he wants.
+  </para>
+  <para>
+   QSA is used for scripting, which is based on ECMAScript standard
+   (if you don't know what ECMAScript is, it is basically the same
+    syntax as JavaScript)
+  </para>
+  <para>
+   This documentation will not explain the language syntax, but will document
+   all functions and objects that are exported from the application to the
+   scripting engine so they may be used in scripts and menus.
+   Also how the scripting work in general and how it can be configured will be explained.
+  </para>
+  <para>
+   <note>Scripts are not "secure" by design, as the API contain functions to read or write
+   arbitrary files and directories and to execute external processes.
+   See http://doc.trolltech.com/qsa-1.1.4/extensions-2.html for description
+   of File, Dir and Process classes, which are available to script.</note>
+  </para>
+ </chapter>

@@ -1,0 +1,54 @@
+ <chapter id="startup">
+  <title>Startup scripts</title>
+  <para>
+   When new editor window is launched (but before the document is loaded or created),
+   file <filename>init.qs</filename> from application's data directory is run, then
+   file <filename>userinit.qs</filename> from users's application configuration
+   directory (which is <filename>$HOME/.pdfedit</filename>) is run, if it exists
+   <footnote id="note_default_files">
+    <para>
+     This is in default configuration and it can be changed by user to different
+     filename(s) in settings
+    </para>
+   </footnote>
+   .
+   These files should contain declaration of all functions used in toolbars
+   or menus and may also contain any startup code to be run
+   before loading or creating new document.
+  </para>
+  <para>
+   In commandline mode, file <filename>init_console.qs</filename> from application's data
+   directory is run instead, then file <filename>userinit_console.qs</filename> from users's
+   application configuration directory (which is <filename>$HOME/.pdfedit</filename>)
+   is run, if it exists <footnoteref linkend='note_default_files'/>
+  </para>
+  <para>
+   After running these init scripts, any "plugin" scripts from directories specified
+   in configuration are run.
+   By default, these directories are:
+   <orderedlist>
+    <listitem><para>Directory <filename>scripts</filename> in application's data directory</para></listitem>
+    <listitem><para>Directory <filename>scripts</filename> in application's binary directory</para></listitem>
+    <listitem><para>Directory <filename>./pdfedit/scripts</filename> in user's home directory</para></listitem>
+   </orderedlist>
+   For "plugin scripts" in commandline mode, scripts are searched in <filename>console</filename>
+   subdirectory of above directories instead.
+  </para>
+  <para>
+   Scripts are run in alphabetical order (by their filename, case sensitive)
+   and if the same script is encountered in more than one directory,
+   only the one in directory later in list is executed.
+   This ensures that if user install newer version of some script in his home directory,
+   only his version will get executed.
+  </para>
+  <para>
+   After that, the document is loaded (if it was not specified on commandline,
+   the window will be initially empty without any document)   
+   <note>
+    Init script should not load a document while starting, as it will be replaced by new one as soon as the script finishes.
+    If functionality such as "automatic loading of a document on startup" is desired, appropriate 
+    code should be added to onEmptyFile() function, which will be triggered after starting the editor with empty document.
+    Alterantively, onLoad, onLoadUser or onLoadError fnuctions may be used for this.
+  </note>
+  </para>
+ </chapter>
