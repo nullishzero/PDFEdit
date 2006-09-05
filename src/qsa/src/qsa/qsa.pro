@@ -9,7 +9,7 @@ isEmpty(QSA_INSTALL_PREFIX) {
   QSA_BUILD_PREFIX=../..
 }
 
-DESTDIR         = $$QSA_BUILD_PREFIX/lib
+DESTDIR         = ../../lib
 DLLDESTDIR      = $$QSA_BUILD_PREFIX/bin
 
 HEADERS		= \
