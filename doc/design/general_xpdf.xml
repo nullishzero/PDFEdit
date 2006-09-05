@@ -13,19 +13,19 @@
   <para>
 	  To prevent from errors comming from xpdf code as well as to be less
 	  depended on xpdf in whole project, this is used just in few places 
-	  (namely CXref, XRefWriter, CObject classes TODO output devices) and 
+	  (namely CXref, XRefWriter, CObject, CPdf and CPage classes) and 
 	  rest of our pdfedit code uses just our classes and  special objects. 
 	  This means that substitution of xpdf code by something 
 	  different is possible with changes on concrete places and rest of the code
 	  doesn't know about that. Project currently uses xpdf in 3.01 version.
   </para>
-  <sect1>
+  <sect1 id="general_xpdf_changes">
     <title>Changes needed for code reuse</title>
     <para>
-	  Code of XPDF project couldn't have been reused without modifications,
-	  because it is not prepared for making changes to objects very well (code 
-	  assumes data reading and using them - not to use and change them). Our 
-	  code changes can be divided to 3 cathegories:
+	  Code of XPDF project couldn't have been reused without modifications
+	  because it is not prepared for making changes to its objects very well 
+	  (code assumes data reading and using them - not to use and change them). 
+	  Our code changes can be divided to 3 cathegories:
 	  <itemizedlist>
 	  <listitem>Syntactic - these are changes related to functions/methods 
 		  signature (const modificators, private methods changed to
@@ -42,19 +42,19 @@
 	  </itemizedlist>
 	  For more information see following detailed description.
     </para>
-    <sect2>
+    <sect2 id="general_xpdf_object">
      <title>Object.h and Object.cc</title>
      <para>
-	  Object class is used as value keeper in whole xpdf code. Design is not 
-	  very good, because all value types are stored in this one object (even 
-	  more in one union in Object class) and real value type is then identified 
-	  by enumeration Object type (returned by getType method). We consider this
-	  desing not very good because this doesn't prevent user from bad usage and 
-	  different value type can be obtained than really stored (no internal
-	  checking is done and so on).
-	  Nevertheless this behavior is kept, because change would require whole
-	  xpdf code reorganization. We have focused just to Syntactic and new 
-	  features changes here.
+		 <emphasis>Object</emphasis>  class is used as value keeper in whole 
+		 xpdf code. Design is not very good, because all value types are stored
+		 in this one object (even more in one union in Object class) and real
+		 value type is then identified by enumeration Object type (returned by 
+		 getType method). We consider this desing not very good because this 
+		 doesn't prevent user from bad usage and different value type can be 
+		 obtained than really stored (no internal checking is done and so on).
+		 Nevertheless this behavior is kept, because change would require whole
+		 xpdf code reorganization. We have focused just to Syntactic and new 
+		 features changes here.
      </para>
      <para>
 	  Xpdf code uses kind of optimization for objects copying and so complex
@@ -70,6 +70,7 @@
 	  original. 
 	  
 	  <footnote>
+	  <para>
 	  Clone is considered to be same typed object as original with equal
 	  value (deep copy). Following contracts has to be fullfiled (if there
 	  is not special limitation which is not possible/required to keep -
@@ -88,6 +89,7 @@
 	]]>
 </code>
 </programlisting>
+	  </para>
 	  </footnote>
 
 	  Returned Object instance is change independant on original 
@@ -102,10 +104,10 @@
 	  xpdf code usage.
      </para>
     </sect2>
-    <sect2>
+    <sect2 id="general_xpdf_xref">
      <title>XRef.h and XRef.cc</title>
       <para>
-	  XRref class is responsible for pdf object fetching from stream. Pdf
+	  XRref class is responsible for pdf objects fetching from stream. Pdf
 	  defines so called <xref linkend="indirect_object"/>. This objects are
 	  identified by their object and generic numbers. XRef keeps and maintains 
 	  <xref linkend="crossref_table"/> which contains mapping from indirect
@@ -117,20 +119,21 @@
       <title>Design changes</title>
 	  <para>
 		  In first XRef had to be prepared for transparent wrapper usage (see
-		  <xref linkend="wrapper_design_pattern"/>, so all public methods were 
-		  changed to virtual and private elements to protected (to enable 
-		  access to and manipulation with them in inheritance hierarchy). XRef
-		  class is then wrapped by CXref (TODO link) class and rest of xpdf code
-		  doesn't know difference and can be used without changes (with respect
-		  to XRef usage).
+		  <xref linkend="wrapper"/>, so all public methods were changed to 
+		  virtual and private elements to protected (to enable access to and 
+		  manipulation with them in inheritance hierarchy). XRef class is then 
+		  wrapped by CXref (TODO link) class and rest of xpdf code doesn't know 
+		  difference and can be used without changes (with respect to XRef usage).
       </para>
       <para>
 	  CXref reopen
 	     <footnote> 
+		 <para>
 	     This method is essential for revision changing, because it forces
 	     XRef supertype to do the clean up for current revision and init
 	     all internals for revision staring at given position (so all 
 	     document content before this position).
+		 </para>
 	     </footnote>
 	  functionality requires correct chaning of XRef internal 
 	  state (which includes entries array reinitialization, trailer creation
@@ -163,7 +166,9 @@
 	  XRef class didn't provide information whether pdf reference (object and
 	  generation number pair) is known
 	  <footnote>
+		  <para>
 		  Information whether there is indirect object with this reference. 
+		  </para>
 	  </footnote>
 	  and so it wasn't possible to find out whether object value is null object 
 	  or it is not present. To solve this problem, we have added new public
@@ -202,7 +207,7 @@
       </para>
      </sect3>
     </sect2>
-    <sect2>
+    <sect2 id="general_xpdf_array">
      <title>Array.h and Array.cc</title>
      <para>
 	  Array class represents pdf array object. It is one of complex
@@ -216,7 +221,7 @@
 	  Object::clone() method). 
      </para>
     </sect2>
-    <sect2>
+    <sect2 id="general_xpdf_dict">
      <title>Dict.h and Dict.cc</title>
 	 <para>
 		 Dict class represents pdf dictionary data type. It is one of complex
@@ -272,7 +277,7 @@
       </para>
      </sect3>
     </sect2>
-    <sect2>
+    <sect2 id="general_xpdf_stream">
      <title>Stream.h and Stream.cc</title>
 	 <para>
 	  	Xpdf code defines Stream hierarchy to describe pdf stream objects.
@@ -366,6 +371,7 @@
 		  we have allocated new buffer for clone and so it has to be 
 		  deallocated when MemStream is destroyed.
 		  <footnote>
+		  <para>
 		  Note that MemStream may contain buffer but this buffer is not used
 		  whole. This is controled by start field, which says where is the first
 		  byte of this concrete stream. This is original behaviour of MemStream's
@@ -374,6 +380,7 @@
 		  So xpdf code just reuses some buffer and says that new MemStream
 		  starts from here and its lenght is such value. Such MemStream is
 		  marked not to be deallocated in destructor by needFree field.
+		  </para>
 		  </footnote>
       </para>
       <para>
@@ -388,11 +395,11 @@
 		  <emphasis>FilterStream</emphasis> stream branch represents different
 		  types of filters which can be used to encode stream data (Pdf
 		  specification describes which filters can be used). Hierarchy and
-		  design of filters follows <xref linkend="decorator"/> design pattern
-		  and each filter works with underlaying stream (which is stored as
-		  pointer) field which is typed as Stream (so it can be either stream
-		  with data - MemStream, FileStream or EmbedStream - or onother filter
-		  stream).
+		  design of filters follows <xref linkend="decorator"/> and each filter
+		  works with underlaying stream (which is stored as pointer) field 
+		  which is typed as Stream (so it can be either stream with data - 
+		  <emphasis>MemStream</emphasis>, <emphasis>FileStream</emphasis> or
+		  <emphasis>EmbedStream</emphasis> - or another filter stream).
 	  </para>
 	  <para>
 		  FileStream is cloned in similar way as EmbedStream. Each 
@@ -406,12 +413,14 @@
 		  in time they have to be stored somewhere else in constructor 
 		  specially for this purpose).
 		  <footnote>
+		  <para>
 			  As an expample, FlatStream stream can't reconstruct original 
 			  parameters (uses parameters for StreamPredictor initialization 
 			  in constructor but doesn't store them to internal fields). We 
 			  have added additional data structures to store such parameters. 
 			  This kind of work around enables to create filter with same 
 			  attributes. 
+		  </para>
 	  	  </footnote>
 	  General implementation for all filter streams is as follows:
 <programlisting>
@@ -450,7 +459,7 @@
      </sect3>
     </sect2>
 
-    <sect2>
+    <sect2 id="general_xpdf_parser">
 	 <title>Parser.h and Stream.cc</title>
      <sect3>
 	  <title>New features</title>
@@ -467,16 +476,15 @@
 	  The missing feature of Parser object which was added is the information when it has finished reading one stream
 	  and started reading another. One obstacle is object buffering done by Parser object.
 	  Added method
-      <programlisting>
-      <code>
-		// End of actual stream
-		bool eofOfActualStream () const { return (1 == endOfActStream); }
-      </code>
-      </programlisting>
+<programlisting>
+<code>
+	// End of actual stream
+	bool eofOfActualStream () const { return (1 == endOfActStream); }
+</code>
+</programlisting>
 	  where endOfActStream is new variable indicating how many objects have been buffered from current stream.
       </para>
      </sect3>
-    </sect2>	<!--end of <sect2><title>Parser.h and Stream.cc</title>!-->
+    </sect2>
 </sect1>
 </chapter>
-

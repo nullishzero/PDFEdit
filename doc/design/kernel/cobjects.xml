@@ -4,10 +4,10 @@
 			o replace <xref linkend.. with real entity definitions
 -->
 
-<chapter id="cobjects_chapter">
+<sect1 id="kernel_part_cobjects_ch">
 
     
-  <title>Objects</title>
+  <title>Low level CObjects</title>
   <para>
   Pdf file consists of objects. These objects are referenced from a special structure forming a tree. 
   Objects can be either simple (number, string, name, boolean value, reference, null) or 
@@ -15,22 +15,21 @@
 	 <para>
 		<mediaobject>
 		  <imageobject>
-		   <imagedata fileref="images/cobjectsexample.png" format="PNG"/>
+                          <imagedata fileref="kernel/images/cobjectsexample.png" format="PNG"/>
 		  </imageobject>
-		  <textobject><phrase>CObject class hierarchy</phrase></textobject>
 		  <caption><para>CObject class hierarchy</para></caption>
 		</mediaobject>
 	 </para>
 
   </para>
 
-  <sect1>
+  <sect2>
 	  <title>General description</title>
 	  <para>
 	  CObjects are objects in pdfedit which represent objects in pdf file.
 	  All cobjects are derived from one base class IProperty. 
 	  Objects form a tree like structure so we can divide objects into single objects (leafs) and composite objects (nodes). This
-	  is an example of Composite design pattern <xref linkend="composite" />. 
+	  is an example of <xref linkend="composite" />. 
 	  This is a different approach to xpdf implementation where each pdf object is represented by the same huge class. 
 	  
 	  The concept of having exactly one class representing each pdf object leads to many problems:
@@ -54,14 +53,14 @@
 	 <para>
 		<mediaobject>
 		  <imageobject>
-		   <imagedata fileref="images/iproperty.png" format="PNG"/>
+		   <imagedata fileref="kernel/images/iproperty.png" format="PNG"/>
 		  </imageobject>
 		  <textobject><phrase>Object class hierarchy</phrase></textobject>
 		  <caption><para>Object class hierarchy</para></caption>
 		</mediaobject>
 	 </para>
 	 
-  <sect2>
+  <sect3>
 	  <title>Base class</title>
 	  <para>
 	  Every object is derived from one base class - IProperty. This base class is a hanger which can be used to 
@@ -69,16 +68,16 @@
 	  Objects can be created uninitialized or can be initialized from an xpdf Object of the same type and simple objects 
 	  cat be initialized directly from a value.
 	  </para>
-  </sect2>
+  </sect3>
 
-  <sect2>
+  <sect3>
 	  <title>Simple objects</title>
 	  <para>
 	  Simple objects are very similar. They share behaviour and because of this also method names. They are represented by one class
 	  using c++ templates. One template class, parameterized by object type, represents all 7 types of simple objects.
 	  </para>
-  </sect2>
-  <sect2>
+  </sect3>
+  <sect3>
 	  <title>Complex objects</title>
 	  <para>
 	  It is more difficult with complex types. Each complex type must contain reference to its children which are 
@@ -95,16 +94,16 @@
 	  Pdf objects can be referenced using ids which are similar to pointers. This brings many problems. One of them is the
 	  impossibility to delete such objects. Many of the problems are automatically handled by smart pointers. 
 	  </para>
-		 <sect3>
+		 <sect4>
 			 <title>Array and dictionary</title>
 			  <para>
 			  Array store its children in a simple container indexed by position. Dictionary stores its children 
 			  in container indexed by string which uniquely identifies a property. The beauty of smart pointers arise when deallocating
 			  an array, it automatically deallocates its children when not referenced and this is done recursively.
 			  </para>
-		 </sect3>
+		 </sect4>
 
-		 <sect3>
+		 <sect4>
 			 <title>Streams</title>
 			  <para>
 			  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
@@ -122,29 +121,29 @@
 			  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
 			  </para>
 
-			  <sect4>
+			  <sect5>
 			  <title>Accessing streams</title>
 			  <para>
 			  We access streams using Adapter design pattern <xref linkend="adapter" /> implementing open/close interface. We need
 			  to be able to read from more streams byte per byte because content streams can be splitted anywhere. 
 			  We decided to return only xpdf objects. 
 			  </para>
-			  </sect4>
-		 </sect3>
-	</sect2>
- </sect1>
+			  </sect5>
+		 </sect4>
+	</sect3>
+ </sect2>
 
 
-<sect1>
+<sect2>
 	 <title>Changing objects</title>
 	  <para>
-	  Every object can be obtained from CXref when knowing its reference number and then changed using iproperty interface.
+	  Every object can be obtained from CXref (TODO link) when knowing its reference number and then changed using iproperty interface.
 	  Internal state of special object (cpage, ccontentstream, etc.) depends on these raw objects. 
 	  Therefore a mechanism was designed to allow special object to be notified about raw changes. Objects implement subject interface from
 	  Observer design pattern<xref linkend="observer" /> which allows everyone to register observers on these objects. 
 	  This observer gets notified each time the object was changed. 
       </para>
 
- </sect1>
+ </sect2>
 
-</chapter>
+</sect1>

@@ -133,9 +133,9 @@
 			objects. Object with internal state which announces is obsever
 			<emphasis>observer handler</emphasis> and classes which monitor
 			(observe) are called <emphasis>observers</emphasis>. This is basic
-			idea of <xref linkend="observer_design_pattern"/>. This
-			implementation keeps basic contracts of this pattern and adds
-			additional functionality to be as flexible as possible. 
+			idea of <xref linkend="observer"/>. This implementation keeps basic 
+			contracts of this pattern and adds additional functionality to be as 
+			flexible as possible. 
 		</para>
 		<para>
 			From class point of view <emphasis>observer handler</emphasis> is

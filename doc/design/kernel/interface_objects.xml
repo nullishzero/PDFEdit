@@ -2,4 +2,13 @@
 -->
 <chapter id="kernel_part_interface_ch">
 	<title>Interface objects</title>
+	<para>
+		As descibed above, kernel comunicates with higher layers (see <xref	linkend="general_layers_ch"/>)
+		with objects called <emphasis>cobjects</emphasis>. Those
+		<emphasis>cobjects</emphasis> can be <emphasis>high level</emphasis> and
+		<emphasis>low level</emphasis>. This chapter and its sub chapters
+		describes these objects, their responsibilities and mutual cooperation.
+	</para>
+
+	&kernel_cobjects;
 </chapter>

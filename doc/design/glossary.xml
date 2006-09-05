@@ -19,6 +19,22 @@ Example:
 
 
 <glossary id="glossary_part">
+	<glossentry id="adapter">
+		<glossterm>Adapter design pattern</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="composite">
+		<glossterm>Composite design pattern</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="content_stream">
 		<glossterm>Content stream</glossterm>
 		<glossdef>
@@ -35,8 +51,8 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
-	<glossentry id="decorator_design_patter">
-		<glossterm>Decorator</glossterm>
+	<glossentry id="decorator">
+		<glossterm>Decorator design patter</glossterm>
 		<glossdef>
 		<para>
 			TODO
@@ -44,7 +60,7 @@ Example:
 		</glossdef>
 	</glossentry> 
 	<glossentry id="factory_method">
-		<glossterm>Factory method</glossterm>
+		<glossterm>Factory method design pattern</glossterm>
 		<glossdef>
 		<para>
 			Factory method is ... TODO
@@ -72,7 +88,7 @@ Example:
 		</glossdef>
 	</glossentry> 
 	<glossentry id="facade">
-		<glossterm>Facade</glossterm>
+		<glossterm>Facade design pattern</glossterm>
 		<glossdef>
 		<para>
 			Facade is designed pattern ... TODO
@@ -120,16 +136,16 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
-	<glossentry id="observer_design_pattern">
-		<glossterm>Observer</glossterm>
+	<glossentry id="observer">
+		<glossterm>Observer design patter</glossterm>
 		<glossdef>
 		<para>
 			TODO
 		</para>
 		</glossdef>
 	</glossentry> 
-	<glossentry id="wrapper_design_pattern">
-		<glossterm>Wrapper</glossterm>
+	<glossentry id="wrapper">
+		<glossterm>Wrapper design patter</glossterm>
 		<glossdef>
 		<para>
 			TODO

@@ -1,6 +1,6 @@
 <!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
 -->
-<chapter id="general_layers_chapter">
+<chapter id="general_layers_ch">
 	<title>PDFedit layers</title>
 	<para>
 		PDFEdit project is based on 3 layers model:

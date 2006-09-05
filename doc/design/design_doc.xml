@@ -20,16 +20,22 @@
      convention is to keep following format:
 	part_chaptername
 -->
-<!-- <!ENTITY kernel_cpdf   SYSTEM    "kernel/cpdf.xml"> -->
+<!-- General entities -->
 <!ENTITY general_techn		SYSTEM	  "general_technologies.xml">
 <!ENTITY general_layers		SYSTEM	  "general_layers.xml">
 <!ENTITY general_utils		SYSTEM	  "general_utils.xml">
 <!ENTITY general_xpdf		SYSTEM	  "general_xpdf.xml">
 
+<!-- GUI entities -->
 <!ENTITY gui_menu	     SYSTEM    "gui/menu.xml">
 <!ENTITY gui_settings	     SYSTEM    "gui/settings.xml">
 <!ENTITY gui_tree	     SYSTEM    "gui/tree.xml">
 
+<!-- Kernel entities -->
+<!ENTITY kernel_interface_objects	SYSTEM	  "kernel/interface_objects.xml">
+<!ENTITY kernel_layer_model	SYSTEM	  "kernel/layer_model.xml">
+<!ENTITY kernel_helper_objects	SYSTEM	  "kernel/helper_objects.xml">
+<!ENTITY kernel_cobjects	SYSTEM	  "kernel/cobjects.xml">
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 
