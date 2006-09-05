@@ -19,12 +19,10 @@ doc_dist:	doc_core_nopdf
 #Core documentation, with PDF
 doc_core:
 	cd user && ( gmake || make )
-	cd design/kernel && ( gmake || make )
 	cd design && ( gmake || make )
 
 #Clean everything
 clean:
 	cd user && ( gmake clean || make clean )
-	cd design/kernel && ( gmake clean || make clean )
 	cd design && ( gmake clean || make clean )
 	rm -rf programmer
