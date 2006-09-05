@@ -19,6 +19,30 @@ Example:
 
 
 <glossary id="glossary_part">
+	<glossentry id="content_stream">
+		<glossterm>Content stream</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="crossref_table">
+		<glossterm>Cross reference table</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="decorator_design_patter">
+		<glossterm>Decorator</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="factory_method">
 		<glossterm>Factory method</glossterm>
 		<glossdef>
@@ -55,17 +79,19 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
-	<glossentry id="linearized_pdf">
-		<glossterm>Linearized pdf document</glossterm>
+	<glossentry id="incremental_update">
+		<glossterm>Incremental update</glossterm>
 		<glossdef>
 		<para>
-			Linearized document is specially optimized pdf document for quick
-			viewing without need to have whole document at the time when viewing
-			starts.
+			TODO
 		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="indirect_object">
+		<glossterm>Indirect pdf object</glossterm>
+		<glossdef>
 		<para>
-			All objects related for first page (or fiew pages) are stored in
-			first 1024 bytes and TODO
+			TODO
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -80,8 +106,30 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
+	<glossentry id="linearized_pdf">
+		<glossterm>Linearized pdf document</glossterm>
+		<glossdef>
+		<para>
+			Linearized document is specially optimized pdf document for quick
+			viewing without need to have whole document at the time when viewing
+			starts.
+		</para>
+		<para>
+			All objects related for first page (or fiew pages) are stored in
+			first 1024 bytes and TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="observer_design_pattern">
-		<glossterm>Observer design patter</glossterm>
+		<glossterm>Observer</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="wrapper_design_pattern">
+		<glossterm>Wrapper</glossterm>
 		<glossdef>
 		<para>
 			TODO
