@@ -1,0 +1,12 @@
+<part id="install_part">
+  <title>Installation</title>
+  <para>
+  </para>
+
+ &install_requiredlib;
+
+ &install_compiling;
+
+ &install_platforms;
+
+</part>

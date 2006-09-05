@@ -1,0 +1,10 @@
+<part id="cmdline_part">
+  <title>Command line</title>
+  <para>
+  </para>
+
+ &cmdline_description;
+
+ &cmdline_localization;
+
+</part>

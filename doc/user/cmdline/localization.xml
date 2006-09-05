@@ -1,0 +1,18 @@
+ <chapter id="cmdline_localization">
+  <title>Localization</title>
+  <para>
+   PDF Editor is run in english language by default, but by setting environment variable <envar>LANG</envar> before launching
+   the program, you can tell PDF Editor to look for specific language file. If the localization you requested is
+   not available, english will be used instead.
+  </para>
+  <para>
+   Aside default english, these localizations are available:
+   <informaltable frame="none">
+    <tgroup cols="2"><tbody>
+     <row><entry>cs</entry><entry> - Czech</entry></row>
+     <row><entry>sk</entry><entry> - Slovak</entry></row>
+    </tbody></tgroup>
+   </informaltable>
+  </para>
+ </chapter>
+

@@ -1,0 +1,47 @@
+<part>
+    <title>Document purpose</title>
+	<para>
+		This document describes how users can use PDFedit program.
+		Describes how install and run program and how work with him in command
+		line mode or in gui. Describes using and writing users scripts too.
+	</para>
+	<sect1>
+	    <title>Document organization</title>
+	    <para>
+		Document itself is divided into several parts:
+		<itemizedlist>
+		    <listitem>
+				<xref linkend="general_part"/> which focuces on global view of 
+				application. 
+		    </listitem>
+		    <listitem>
+				<xref linkend="install_part"/> which focuses on instalation of
+				PDFEdit. Describes what is need and how configured instalation for
+				concrete user.
+		    </listitem>
+		    <listitem>
+				<xref linkend="cmdline_part"/> which describes command
+				parameters of programs.
+		    </listitem>
+		    <listitem>
+				<xref linkend="gui_part"/> which describes graphical user
+				interface. How use and simple manipulate with pdf documents.
+		    </listitem>
+		    <listitem>
+				<xref linkend="scripts_part"/> which describes script language
+				useing in PDFEdit and usable function and classes to edit pdf
+				documents.
+		    </listitem>
+		    <listitem>
+				<xref linkend="glossary_part"/> which describes used
+				terms in whole document.
+		    </listitem>
+		</itemizedlist>
+	    </para>
+	</sect1>
+	<sect1>
+	    <title>Conventions</title>
+	    <para>
+	    </para>
+	</sect1>
+</part>

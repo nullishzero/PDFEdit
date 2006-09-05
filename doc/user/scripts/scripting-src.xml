@@ -1,9 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
- <bookinfo>
-  <title>Documentation for PDF Editor - Scripting</title>
- </bookinfo>
+<part id="scripts_part">
+  <title>Scripting documentation for PDF Editor</title>
+
  <chapter id="intro">
   <title>Introduction</title>
   <para>
@@ -305,4 +302,6 @@
 <!--TYPE: qstreeitem.h -->
 <!--TYPE: qstreeitemcontentstream.h -->
  </chapter>
-</book>
+ &qsa_util;
+ &qsa_dialog;
+</part>

@@ -1,11 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
- <bookinfo>
-  <title>Documentation for PDF Editor</title>
- </bookinfo>
-
- <chapter id="description">
+ <chapter id="cmdline_description">
   <title>PDF Editor Commandline parameters</title>
   <para>
    You can specify any number of filenames as parameters on commandline.
@@ -107,21 +100,4 @@
    </para>
   </sect1>
  </chapter>
- <chapter id="localization">
-  <title>Localization</title>
-  <para>
-   PDF Editor is run in english language by default, but by setting environment variable <envar>LANG</envar> before launching
-   the program, you can tell PDF Editor to look for specific language file. If the localization you requested is
-   not available, english will be used instead.
-  </para>
-  <para>
-   Aside default english, these localizations are available:
-   <informaltable frame="none">
-    <tgroup cols="2"><tbody>
-     <row><entry>cs</entry><entry> - Czech</entry></row>
-     <row><entry>sk</entry><entry> - Slovak</entry></row>
-    </tbody></tgroup>
-   </informaltable>
-  </para>
- </chapter>
-</book>
+

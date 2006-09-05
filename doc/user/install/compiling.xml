@@ -1,0 +1,14 @@
+ <chapter>
+  <title>Compiling and installing from source</title>
+  <formalpara>
+   <title>Compiling from source</title>
+   In CVS root (or root of distribution archive)
+   type <command>make</command> to compile PDF Editor and re-genereate documentation (if needed)
+  </formalpara>
+  <formalpara>
+   <title>Installing from source</title>
+   In CVS root (or root of distribution archive)
+   type <command>make install</command> to install PDF Editor
+  </formalpara>
+ </chapter>
+

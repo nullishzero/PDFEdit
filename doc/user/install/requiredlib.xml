@@ -1,10 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
-<book>
- <bookinfo>
-  <title>Documentation for PDF Editor - Installation</title>
- </bookinfo>
-
  <chapter>
   <title>Required libraries</title>
   <para>
@@ -42,29 +35,3 @@
    In distribution archive, HTML documentation is already generated.
   </para>
  </chapter>
- <chapter>
-  <title>Installing and compiling from source</title>
-  <formalpara>
-   <title>Compiling from source</title>
-   In CVS root (or root of distribution archive)
-   type <command>make</command> to compile PDF Editor and re-genereate documentation (if needed)
-  </formalpara>
-  <formalpara>
-   <title>Installing from source</title>
-   In CVS root (or root of distribution archive)
-   type <command>make install</command> to install PDF Editor
-  </formalpara>
- </chapter>
- <chapter>
-  <title>Tested platforms</title>
-  PDF Editor has been compiled and tested on following platforms:
-   <informaltable frame="none">
-    <tgroup cols="2"><tbody>
-     <row><entry>Gentoo Linux x86</entry><entry> - ok</entry></row>
-     <row><entry>FreeBSD 6.0 x86</entry><entry> - ok</entry></row>
-     <row><entry>Ubuntu Linux 5.10 x86</entry><entry> - ok</entry></row>
-     <row><entry>Debian unstable amd64</entry><entry> - ok</entry></row>
-    </tbody></tgroup>
-   </informaltable>
- </chapter>
-</book>

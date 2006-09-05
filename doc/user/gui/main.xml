@@ -1,0 +1,25 @@
+<part id="gui_part">
+	<title>Graphical user interface (GUI)</title>
+	<para>
+			Window of PDFEdit is split to 5 basic parts : Menu, Toolbars, Command part,
+			Page space and Objects tree + property editor.
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/pdfedit.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Parts of PDFEdit's GUI</phrase>
+				</textobject>
+				<caption><para>Parts of PDFEdit's GUI</para></caption>
+			</mediaobject>
+	</para>
+
+	&gui_command;
+	&gui_pagespace;
+	&gui_objtreepropedit;
+	&gui_menuAndToolbarsFun;
+	&gui_settings;
+
+</part>
+
