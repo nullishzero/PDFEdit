@@ -1,5 +1,5 @@
 #makefile for PDF editor
-.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices xpdf_configure install
+.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices xpdf_configure install qsa
 
 include Makefile.flags
 
@@ -25,6 +25,10 @@ qoutputdevices: xpdf config_xpdf_variables
 utils: xpdf
 	cd utils && make
 
+#QSA
+qsa:
+	cd qsa && ./configure && make staticlib
+
 # Kernel
 kernel: xpdf config_xpdf_variables utils
 	cd kernel && qmake && make staticlib
@@ -47,6 +51,7 @@ config_xpdf_variables: xpdf/config.status
 # Cleanup
 clean:
 	cd gui && make clean
+	cd qsa && make clean || true
 	cd kernel && make clean
 	cd utils && make clean
 	cd xpdf && make clean
@@ -56,6 +61,7 @@ clean:
 # Dist Cleanup
 distclean:
 	cd gui && make distclean
+	cd qsa && make distclean || true
 	cd kernel && make distclean
 	cd utils && make distclean
 	cd xpdf && make distclean
