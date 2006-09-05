@@ -13,4 +13,6 @@
 	&kernel_cobjects;
 
 	&kernel_cpdf;
+
+	&kernel_cpage;
 </chapter>
