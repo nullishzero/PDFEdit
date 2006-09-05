@@ -1,3 +1,5 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
 <!-- Description of kernel design. All chapters specific for kernel should be 
      placed here. If description chapter (component) is written in separate 
      file, entity has to be defined in design_doc.xml file (in entity 
@@ -5,5 +7,8 @@
 -->
 
 <part id="kernel_part">
-        <title>Kernel design description</title>
+	<title>Kernel design description</title>
+	<para>
+		
+	</para>
 </part>
