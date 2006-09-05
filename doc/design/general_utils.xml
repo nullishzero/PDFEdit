@@ -250,12 +250,33 @@
 		<title>Iterator</title>
 		<para>
 			Iterator is a specific implementation of Iterator design pattern.
-			Main goal of the iterator is to be flexible and easily extensible.
-			The iterator is bidirectional. Information about previous and next
-			item is obtained from the item itself. 
-			Special iterator can be easily created from base iterator just by
-			overloading one function which selects valid items. 
+			It is used to traverse an arbitrary linked list that meets few
+			requirements. Main goal of this iterator implementation is to be flexible 
+			and easily extensible because we need many special iterators
+			iterating only over specific items.
 		</para>
+		
+		<para>
+			The iterator is bidirectional. Information about previous and next
+			item is obtained from the item itself. Sometimes it is not possible
+			to have a container outside stored items, what would be more
+			flexible, but the information must be stored in the items itself.
+			Item before first item and item after last item are not valid objects.
+		</para>
+		
+		<para>
+			New special iterator can be easily created from the base iterator just by
+			inheriting and overloading one function which selects valid items.
+			Example of special iterators can be found in <xref linkend="pdfoperatorsiterator_chapter"/>.
+		</para>
+
+		<mediaobject>
+		  <imageobject align="center">
+			  <imagedata fileref="images/iterator.png" format="PNG"/>
+		  </imageobject>
+		  <caption><para>Iterator</para></caption>
+		</mediaobject>
+
 	</sect1>
 </chapter>
 
