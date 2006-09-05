@@ -88,16 +88,11 @@
 			</para>
 		</footnote>
     </para>
-    <para>
-        For more information about responsibility and functionality separation
-        see following figure.
  	<mediaobject>
 	  <imageobject>
-          <imagedata fileref="kernel/images/xref_layer_diagram.png" format="PNG"/>
+          <imagedata fileref="kernel/images/cpdf_facade.png" format="PNG"/>
 	  </imageobject>
-	  <textobject><phrase>3 layers diagram</phrase></textobject>
-	  <caption><para>3 layers diagram</para></caption>
+	  <caption><para>CPdf facade scheme</para></caption>
 	</mediaobject>
-  </para>
   </sect2>
 </sect1>
