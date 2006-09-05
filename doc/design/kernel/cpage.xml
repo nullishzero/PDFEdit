@@ -36,7 +36,7 @@
 		  <listitem><para>redraw of other pages</para></listitem>
 	    </itemizedlist>
 		This is the reason why cpage implements observer subject interface (see
-		<xref linkend="general_observer"/>. 
+		<xref linkend="general_utils_observers"/>. 
 		An object can be notified if cpage changes.
 		</sect2>
 

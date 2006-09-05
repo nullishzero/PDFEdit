@@ -1,0 +1,98 @@
+<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
+-->
+<sect1 id="kernel_part_cannotation">
+	<title>CAnnotation</title>
+	<para>
+		Annotations is interactive entity which is associated with rectangle 
+		on page. They are organized in <emphasis>Annots</emphasis> array 
+		entry in page dictionary and so CPage is responsible for returning of
+		all available annotations and also to provide interface to add new
+		annotation. 
+	</para>
+	<para>
+		Each annotations is described by dictionary, which has to contain at
+		least <emphasis>Type</emphasis> element with <emphasis>Annot</emphasis>
+		and <emphasis>Subtype</emphasis> element with concrete annotation type.
+		Pdf specification describes several types of annotation types (e. g.
+		text annotation - which describes text box floating upon normal page
+		text, link annotation - which enables to jump to target within document
+		or to perform certain action when link is activated by mouse click).
+		<emphasis>Rect</emphasis> element should be present as well, because it
+		specifies where annotation should be spreaded.
+	</para>
+	<para>
+		CAnnotation represent such annotation and provides simple interface to
+		manipulate elements in annotation dictionary. It implements
+		ObserverHandler (see <xref linkend="general_utils_observers"/>) to anable user
+		to be informed about changes inside annotation dictionary. This class
+		provides just simple interface for internal manipulation and it is
+		intended to be base class for specific annotation types (no such
+		specialized class are available yet, because they are not required by
+		project in this moment).
+	</para>
+	<sect2>
+		<title>Instance creation</title>
+		<para>
+			Instance can be created in 2 different ways. 
+		</para>
+		<para>
+			First possibility is to use existing annotation dictionary (e. g. 
+			fetched from document). This way is used in <xref linkend="kernel_part_cpage"/> 
+			class where already existing annotations are fetched and used for 
+			CAnnotation instance.
+		</para>
+		<para>
+			Second way is to use factory 
+<programlisting>
+<code>
+	<![CDATA[
+	static boost::shared_ptr<CAnnotation> 
+		createAnnotation(Rectangle rect, std::string annotType);
+	]]>
+</code>
+</programlisting>
+			method (see <xref linkend="factory_method"/>). This method uses
+			internal <emphasis>annotInit</emphasis> static <xref linkend="kernel_part_annot_initializator"/>.
+			Intializator is responsible for correct annotation dictionary
+			initialization according given type and for given rectangle.
+			This is safe way how to create new annotation instances.
+		</para>
+	</sect2>
+
+	<sect2 id="kernel_part_annot_initializator">
+		<title>Annotation initializator</title>
+		<para>
+			Annotation initializator represented by	<emphasis>IAnnotInitializator</emphasis>
+			abstract class. It provides <xref linkend="functor"/> which
+			intialize given dictionary with correct data according given type.
+			Initializator is designed as <xref linkend="composite"/> and so one
+			initializator class can support initialization of several annotation
+			types (getSupportedList returns annotation types which are supported
+			by this initializator). 
+		</para>
+		<para>
+			We have implemented <emphasis>UniversalAnnotInitializer</emphasis>
+			which adds 
+<programlisting>
+<code>
+	<![CDATA[
+	bool registerInitializer(std::string annotType, boost::shared_ptr<IAnnotInitializator> impl, bool forceNew=false);
+	]]>
+</code>
+</programlisting>
+			method responsible for registration of other initializator to
+			composite of initializators. When
+			<emphasis>createAnnotation</emphasis> is called,
+			<emphasis>UniversalAnnotInitializer</emphasis> choose registered
+			implementetator which supports such annotation type.
+			UniversalAnnotInitializer itself just initializes common elements
+			for all annotations (such as Type, Subtype, Rect elements).
+		</para>
+	</sect2>
+ 	<mediaobject>
+	  <imageobject>
+          <imagedata fileref="kernel/images/cannotation.png" format="PNG"/>
+	  </imageobject>
+	  <caption><para>CAnnotation class hierarchy</para></caption>
+	</mediaobject>
+</sect1>
