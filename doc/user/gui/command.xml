@@ -1,3 +1,7 @@
-<chapter>
-	<title>TODO</title>
+<chapter id="gui_command">
+	<title>Command console</title>
+	<para>
+			It's very useful for type scripts and macros. Can set to 3 different looks.
+	</para>
+
 </chapter>

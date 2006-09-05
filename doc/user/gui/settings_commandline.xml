@@ -1,0 +1,72 @@
+<sect1>
+	<title>Commandline tab</title>
+
+	<para>
+			Looks command editor is settings in options dialog on tab "commandline".
+			To execute options dialog click to menu on Tools/Options. Or type to
+			command editor <emphasis>options()</emphasis>. Or click to options icon in toolbars.
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/options_commandline.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Commandline tab</phrase>
+				</textobject>
+				<caption><para>Commandline tab</para></caption>
+			</mediaobject>
+	</para>
+
+	<sect2>
+		<title>Show return value of executed script in console</title>
+		<para>
+				If check this setting, command console will print result last command
+				after execute him. It has same effect as last command was as parameter
+				function <emphasis>print()</emphasis>.
+		</para>
+	</sect2>
+	<sect2>
+		<title>Show return value also for complex type</title>
+		<para>
+				TODO
+		</para>
+	</sect2>
+	<sect2>
+		<title>Show errors from event handlers</title>
+		<para>
+				TODO
+		</para>
+	</sect2>
+	<sect2>
+		<title>Show command editor</title>
+		<para>
+				This option set command editor showen, if is check.
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="gui/images/command_options_cmdedit.png" format="PNG"/>
+					</imageobject>
+					<textobject>
+						<phrase>Command console without / with command editor</phrase>
+					</textobject>
+					<caption><para>Command console without / with command editor</para></caption>
+				</mediaobject>
+		</para>
+	</sect2>
+	<sect2>
+		<title>Show command line</title>
+		<para>
+				TODO
+		</para>
+	</sect2>
+	<sect2>
+		<title>Editable command line</title>
+		<para>
+				TODO
+		</para>
+	</sect2>
+	<sect2>
+		<title>History options</title>
+		<para>
+				TODO
+		</para>
+	</sect2>
+</sect1>

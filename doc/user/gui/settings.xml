@@ -1,3 +1,33 @@
-<chapter>
-	<title>TODO</title>
+<chapter id="gui_settings">
+	<title>How set PDFEdit</title>
+
+	<para>
+			Settings options in PDFEdit is very easy. Options can be set are in gui or directly in configuration
+			file <emphasis>pdfeditrc</emphasis> in <emphasis>~/.pdfedit</emphasis> and in PDFEdit home directory.
+			If exist diferent setting for some option, is use setting in <emphasis>~/.pdfedit/pdfeditrc</emphasis>.
+	</para>
+	<para>
+			To execute options dialog in gui click to menu on Tools/Options. Or type to
+			command console <emphasis>options()</emphasis>. Or click to options icon in toolbars.
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/menu_tools.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Execute options dialog from menu</phrase>
+				</textobject>
+				<caption><para>Execute options dialog from menu</para></caption>
+			</mediaobject>
+	</para>
+
+	<para>
+	</para>
+
+	&gui_settings_editor;
+	&gui_settings_paths;
+	&gui_settings_objecttree;
+	&gui_settings_commandline;
+	&gui_settings_toolbars;
+	&gui_settings_lookandfeel;
+
 </chapter>
