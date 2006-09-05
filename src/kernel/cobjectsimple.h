@@ -355,7 +355,7 @@ makeNamePdfValid (const char* str)
  * Make string pdf valid.
  *
  Any characters may appear in a string except unbalanced parentheses and
- the backslash, which must be treated specially./
+ the backslash, which must be treated specially.
  *
  * @param it Start iterator.
  * @param end End iterator.
@@ -374,8 +374,7 @@ makeStringPdfValid (Iter it, Iter end)
 		}
 		else if ( '(' == (*it) || ')' == (*it))
 		{ // Prepend \ before ( or )
-			if ('\\' != tmp[tmp.length() - 1])
-				tmp += '\\';
+			tmp += '\\';
 		}
 		
 		tmp += *it;
