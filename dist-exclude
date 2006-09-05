@@ -1,5 +1,7 @@
 .cvsignore
 CVS
+TODO
+FEATURES
 dist-exclude
 makedist
 pdfedit*tar*
@@ -52,9 +54,12 @@ src/xpdf/xpdf/pdftoppm
 src/xpdf/xpdf/pdftops
 src/xpdf/xpdf/pdftotext
 src/xpdf/xpdf/xpdf
+test/documents
 test/documents/*.pdf
 test/gui-misc/misc
 test/gui-misc/Makefile
-test/propedit/Makefile
-test/qt-multi-window/Makefile
+test/propedit
+test/qsettings
+test/qt-multi-window
+test/styles
 test/*/*.o
