@@ -10,7 +10,6 @@ all:	doc_core
 #Core documentation, without PDF
 doc_core_nopdf:
 	cd user && ( gmake all_no_pdf || make all_no_pdf )
-	cd design/kernel && ( gmake all_no_pdf || make all_no_pdf )
 	cd design && ( gmake all_no_pdf || make all_no_pdf )
 
 #Documentation that will be build before packing in distributiin tarball
