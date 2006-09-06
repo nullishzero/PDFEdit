@@ -50,9 +50,12 @@
 
 		<sect2>
 		<title>Displaying page</title>
-		Xpdf has the best displaying enginge of all tested viewers. All calls
-		to display methods are delegated to this engine.
-		TODO better description
+		Xpdf has the best displaying engine of all tested viewers. All calls
+		to display methods are delegated to this engine. When displaying a page 
+		CPage creates xpdf Page object from its actual state. Then it uses Page
+		object method <emphasize>displaySlice()</emphasize> to display a
+		rectangle of a page. Xpdf creates the graphical environment for drawing
+		into an output device. Finally it draws the page into supplied device.
 		</sect2>
 
 		<sect2>
