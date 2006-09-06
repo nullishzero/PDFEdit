@@ -2,25 +2,47 @@
 	<title>Object tree, Stream, Selection and Property editor</title>
 	<para>
 	  The right part of PdfEditor is called <emphasis>Object tree</emphasis> and <emphasis>Property editor</emphasis>. 
+	</para>
+	
+	<para>
 	  Pdf file consists of objects which form a tree-like structure. There are several simple objects (null, boolean, integer, 
 	  real, string, name, reference) and few complex (array, dictionary, stream).
 	  Object tree displays the tree-like object hierarchy starting at the most important objects and 
-	  Property editor displays the contents of selected object in human readable form.
+	  Property editor displays the contents of selected object in human readable form and allows editing the objects in raw form.
+	</para>
+	 
+	<para>
+	  Object tree is not the only tool which shows pdf objects. Specialized tools are used to show some special objects more clearly.
+	  The content stream is shown in Stream window and selected operators from a content stream are shown in Selection 
+	  window.
       <mediaobject>
 		  <imageobject><imagedata fileref="images/propedit_all.png" format="PNG"/></imageobject>
-		  <caption><para>Object tree and Property editor</para></caption>
+		  <caption><para>Object tree, Stream, Selection and Property editor</para></caption>
       </mediaobject>
 	</para>
 
 	<sect1>
-	<title>Usage</title>
+	<title>Purpose and usage</title>
 	<para>
+	  The purpose of the these windows is enabling complete control over pdf objects and structure of a pdf file. 
+	  It allows editing raw objects which mostly requires knowledge of the pdf standard.
+	  It also shows raw structure of a pdf file. 
+	 </para>
+	 <para>
+	  We gain complete control over pdf file with this tool. It can be used for 
+	  advanced editing that almost makes PdfEditor a pdf creator. With the description of operators, object type
+	  highlighting and object importance visualization this tool can be also used by normal users for simple
+	  but powerful editions.
+	  We can add and delete objects almost at will (some top level objects are just for more human readibility and
+	  can be neither deleted nor added.)
 	</para>
 	</sect1>
 
 	<sect1>
 	<title>Controls</title>
 	<para>
+	There are two ways how to to open, close and select objects. We can use either mouse or arrows. Up/down is used to 
+	go one object above/below current and right/left is used to open/close complext objects.
 	</para>
 	</sect1>
 
