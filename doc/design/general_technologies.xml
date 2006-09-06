@@ -51,9 +51,11 @@
 			<title>Qt framework</title>
 			<para>
 				Qt is a multiplatform C++ GUI toolkit created and maintained by 
-				Trolltech. We are using mainly gui (widgets) classes (see
+				Trolltech, we are using version 3 of the toolkit.
+				We are using mainly gui (widgets) classes (see
 				&qt_link_classes;) and &qsa_link_index; framework for scripting
-				layer. 
+				layer. Slightly modified QSA version based on QSA 1.1.4 is
+				included in our source tree.
 			</para>
 		</sect2>
 	</sect1>
