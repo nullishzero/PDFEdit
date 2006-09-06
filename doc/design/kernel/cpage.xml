@@ -1,15 +1,5 @@
 <!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
 -->
-<!--  
-	jmisutka (2006/08/07)
-		TODO: 
-			o replace <xref linkend.. with real entity definitions
-			o add link to contentstream
-			o add pagetree, annotations+ what has miso implemented
-			o add miro's comments to objects on page
--->
-
-
 <sect1 id="kernel_part_cpage">
 	<title>CPage</title>
 	<para>
@@ -55,19 +45,20 @@
 		<sect2>
 		<title>Changing page contents</title>
 		Any change to a visible part of a page are delegated to content stream 
-		object.
+		object (<xref linkend="kernel_part_ccontentstream"/>).
 		</sect2>
 
 		<sect2>
 		<title>Displaying page</title>
 		Xpdf has the best displaying enginge of all tested viewers. All calls
 		to display methods are delegated to this engine.
+		TODO better description
 		</sect2>
 
 		<sect2>
 		<title>Objects on a page</title>
 		<para>
-		Everything on a page is in its content stream. 
+		Everything on a page is in its content stream(s). 
 		Every operation in a content stream means altering the actual position 
 		by moving the drawing pen from one position to another position creating 
 		a rectangle which can be used to constrain each object. The rectangle can 
@@ -84,6 +75,7 @@
 				be arbitrary. Xpdf (or any other sophisticated) viewer only 
 				guesses which letter form a word or which words form a line.
 				We use xpdf text engine to extract, search text.
+				TODO description of engine
 			</para>
 		</sect3>
 		<sect3>

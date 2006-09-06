@@ -1,9 +1,3 @@
-<!--  
-	jmisutka (2006/08/07)
-		TODO: 
-			o replace <xref linkend.. with real entity definitions
--->
-
 <sect1 id="kernel_part_cobjects">
 
     
@@ -109,8 +103,7 @@
 			  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
 			  not do it the other way round. (it is because it never needs it) Xpdf impelementation of streams is very rough.
 			
-			  We use boost <xref linkend="boost" /> filtering iostream <xref linkend="boost_iostreams" /> which provide us 
-			  with the necessary general concept of
+			  We use boost filtering iostream which provide us with the necessary general concept of
 			  encoded streams. However we have to implement the filters ourselves. (the easiest way is to save decoded streams
 			  without any filters) We do not know the filters as long as we do not change the object. We can modify either raw encoded stream 
 			  or we can save decoded stream which is automatically encoded when saved using avaliable filters.
@@ -124,7 +117,7 @@
 			  <sect5>
 			  <title>Accessing streams</title>
 			  <para>
-			  We access streams using Adapter design pattern <xref linkend="adapter" /> implementing open/close interface. We need
+			  We access streams using <xref linkend="adapter" /> implementing open/close interface. We need
 			  to be able to read from more streams byte per byte because content streams can be splitted anywhere. 
 			  We decided to return only xpdf objects. 
 			  </para>
@@ -137,7 +130,7 @@
 <sect2>
 	 <title>Changing objects</title>
 	  <para>
-	  Every object can be obtained from CXref (TODO link) when knowing its reference number and then changed using iproperty interface.
+                  Every object can be obtained from CXref (see <xref linkend="kernel_part_cxref"/>) when knowing its reference number and then changed using iproperty interface.
 	  Internal state of special object (cpage, ccontentstream, etc.) depends on these raw objects. 
 	  Therefore a mechanism was designed to allow special object to be notified about raw changes. Objects implement subject interface from
 	  Observer design pattern<xref linkend="observer" /> which allows everyone to register observers on these objects. 
