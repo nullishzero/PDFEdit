@@ -40,7 +40,16 @@ appendix.xml: appendix-src.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
 #depenedencies
-user_doc.html: scripts/scripting_nodoc.xml qsa-inputdialog.xml qsa-util.xml scripts/qsa-util.xml scripts/qsa-inputdialog.xml version.xml
+
+install_deps=install/compiling.xml \
+install/install.xml \
+install/platforms.xml \
+install/requiredlib.xml
+
+scripting_deps=scripts/scripting_nodoc.xml \
+scripts/qsa-util.xml scripts/qsa-inputdialog.xml
+
+user_doc.html: $(scripting_deps) $(install_deps) qsa-inputdialog.xml qsa-util.xml version.xml
 
 #generate from template by adding table of keyboard shortcuts parsed from pdfeditrc
 keyboard.xml: $(TOOL_DIR)/kbd_gen.pl ../../src/gui/pdfeditrc keyboard-src.xml
