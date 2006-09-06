@@ -5,8 +5,8 @@
   <para>
         CPdf class is main pdf document class. It maintains document content 
         using XRefWriter field, document catalog PDF dictionary and provides 
-        other specialized highlevel objects such as CPage (TODO link) and
-		COutline (TODO link).
+		other specialized highlevel objects such as CPage (see <xref linkend="kernel_part_cpage"/>) 
+		and COutline.
   </para>
   <para>
         Main responsibility is to keep all objects (it provides) synchronized 
@@ -17,9 +17,11 @@
 	  In design terminology, CPdf provides <xref linkend="facade"/>;  to 
 	  manipulate with file in document scope of view. All internal objects 
 	  used for particular purposes are hidden from class user and CPdf 
-	  provides interface for manipulation with it (as an example, CPdf uses XRefWriter TODO link which enables to
-	  make changes to document, but exports only CXref TODO link which enables just
-	  objects fetching).
+	  provides interface for manipulation with it (as an example, CPdf uses
+	  <xref linkend="kernel_part_xrefwriter"/> which enables making changes
+	  to document, but exports only <xref linkend="kernel_part_cxref"/> 
+	  which enables just objects fetching - almost same interface as Xpdf 
+	  XRef class).
   </para>
   <sect2>
     <title>Instance life cycle</title>
@@ -45,7 +47,7 @@
   <sect2>
     <title>Properties changing and revision handling</title>
     <para>
-        All changes to the document are done using XRefWriter (TODO link) as 
+		All changes to the document are done using <xref linkend="kernel_part_xrefwriter"/> as 
 		described in <xref linkend="kernel_part_layers_ch"/>. Additional
         logic and responsibility of CPdf in this direction is to make adpater
         from IProperty interface of property to xpdf Object required by 

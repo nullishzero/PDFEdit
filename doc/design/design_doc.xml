@@ -47,6 +47,8 @@
 <!ENTITY kernel_observers     SYSTEM        "kernel/observers.xml">
 <!ENTITY kernel_pdfoperators     SYSTEM        "kernel/pdfoperators.xml">
 <!ENTITY kernel_stateupdater     SYSTEM        "kernel/stateupdater.xml">
+<!ENTITY kernel_modecontroller     SYSTEM        "kernel/modecontroller.xml">
+<!ENTITY kernel_progressobserver     SYSTEM        "kernel/progressobserver.xml">
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 

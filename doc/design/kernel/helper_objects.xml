@@ -13,6 +13,10 @@
 
 	&kernel_observers;
 
+	&kernel_modecontroller;
+
+	&kernel_progressobserver;
+
 	<!-- TODO these two maybe belongs to interface_objects -->
 	&kernel_stateupdater;
 

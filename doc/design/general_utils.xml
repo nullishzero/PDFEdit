@@ -116,7 +116,7 @@
 		</para>
 		<para>
 			This concept was used for ModeController class and OperatorHinter in
-			our project. (TODO xref for both)
+			our project. (<xref linkend="kernel_part_modecontroller"/>).
 		</para>
 		<mediaobject>
 		  <imageobject align="center">
@@ -201,8 +201,8 @@
 				<listitem>
 					ScopedChangeContext - inherits from IChangeContext and adds
 					second template parameter for scope data type. Scope is
-					abstraction for area where current newValue change belong.
-					We are using this context for ProgressObserver (TODO link).
+					abstraction for area where current newValue change g.
+					We are using this context for <xref linkend="kernel_part_progress_observer"/>.
 				</listitem>
 			</itemizedlist>
 			New context types can be defined as well and very easily - just 

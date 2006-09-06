@@ -122,7 +122,7 @@
 		  <xref linkend="wrapper"/>, so all public methods were changed to 
 		  virtual and private elements to protected (to enable access to and 
 		  manipulation with them in inheritance hierarchy). XRef class is then 
-		  wrapped by CXref (TODO link) class and rest of xpdf code doesn't know 
+		  wrapped by CXref (see <xref linkend="kernel_part_cxref"/>) class and rest of xpdf code doesn't know 
 		  difference and can be used without changes (with respect to XRef usage).
       </para>
       <para>
@@ -151,7 +151,7 @@
      <sect3>
       <title>New features</title>
       <para>
-		  XRefWriter (TODO link) (descendant of CXref class which inherits directly from XRef) 
+		  XRefWriter (see <xref linkend="kernel_part_xrefwriter"/>) (descendant of CXref class which inherits directly from XRef) 
 	  needs to know where it is safe to put data not to destroy original 
 	  document data when changes are written to the document (as an <xref linkend="incremental_update"/>). 
 	  To enable this, XRef has new 
