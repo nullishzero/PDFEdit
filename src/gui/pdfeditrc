@@ -131,7 +131,7 @@ RevisionToolbar		= list Revision Toolbar,revlabel,_revision_tool
   revlabel		= label Revisions
   # _revision_tool is special toolbar item to list/change revisions
 
-OperatorToolbar		= list Operator Toolbar,opsetcolor,opsetfont,opsetposop,opsetpos
+OperatorToolbar		= list Operator Toolbar,opsetcolor,opsetfont,opsetlinewidth
   # look in menu for definition of items
 
 TreeViewToolbar		= list TreeView Toolbar,treeAdditem,treeDelitem

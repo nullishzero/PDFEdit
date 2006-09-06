@@ -49,10 +49,12 @@ doc.path        = $$DOC_PATH
 doc.files       = ../../doc/user/*.html ../../doc/user/*.pdf  ../../doc/LICENSE.GPL
 doc_images.path		= $$DOC_PATH/images
 doc_images.files	= ../../doc/user/images/*.png
-doc_kernel.path 	= $$DOC_PATH/kernel
-doc_kernel.files	= ../../doc/design/kernel/*.html ../../doc/design/kernel/*.pdf
 doc_kernel_images.path	= $$DOC_PATH/kernel/images
 doc_kernel_images.files	= ../../doc/design/kernel/images/*.png
+doc_gui_images.path	= $$DOC_PATH/gui/images
+doc_gui_images.files	= ../../doc/design/gui/images/*.png
+doc_gui_m_images.path	= $$DOC_PATH/gui/menuAndToolbarsFun/images
+doc_gui_m_images.files	= ../../doc/design/gui/menuAndToolbarsFun/images/*.png
 doc_design.path 	= $$DOC_PATH/design
 doc_design.files	= ../../doc/design/*.html ../../doc/design/kernel/*.pdf
 doc_design_images.path	= $$DOC_PATH/design/images
@@ -68,7 +70,7 @@ pdfedit.files   = pdfedit
 
 #List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
-INSTALLS += doc doc_images doc_kernel doc_kernel_images doc_design doc_design_images
+INSTALLS += doc doc_images doc_kernel_images doc_design doc_design_images doc_gui_images doc_gui_m_images
 INSTALLS += man
 INSTALLS += pdfedit
 
