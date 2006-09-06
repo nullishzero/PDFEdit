@@ -6,7 +6,7 @@
 		CXRef class wrapps Xpdf XRef class and provides additional functionality
 		with same interface (see <xref linkend="wrapper"/>. It provides with
 		protected interface for making changes and internally stores changed
-		objects. When object should be fetched (<emphasis>fetch</emphasis>
+		objects. When object should be fetched (<classname>fetch</classname>
 		method is called), it will check whether this object is already changed
 		and if so, uses changed value. Otherwise delegates to XRef original
 		implementation (this logic is kept in all methods defined in XRef).
@@ -27,7 +27,7 @@
 			</listitem>
 			<listitem>
 				changing of already existing indirect objects.
-				<emphasis>changeObject</emphasis> method which changes object
+				<classname>changeObject</classname> method which changes object
 				with given reference with given object.
 			</listitem>
 			<listitem>
@@ -43,7 +43,7 @@
 				CNull, then new value may have arbitrary type.
 			</listitem>
 			<listitem>
-				reopen functionality - <emphasis>reopen</emphasis> method which
+				reopen functionality - <classname>reopen</classname> method which
 				is responsible for document content reopen with <xref linkend="crossref_table"/>
 				at specified position. This is then used to change current
 				revision of document, where cross reference table position is

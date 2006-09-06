@@ -23,12 +23,12 @@
 			each mode should be treated).
         </para>
 		<para>
-			<emphasis>ModeController</emphasis> class is responsible to provide
+			<classname>ModeController</classname> class is responsible to provide
 			mode to property according property name (id) and the type of parent
 			type. All pdf properties are part of certain context (parent data).
 			This context may be dictionary or array or object can be indirect
 			and in so it is its own context. ModeController is based on
-			<emphasis>RulesManager</emphasis> (see <xref linkend="general_utils_rulesmanager"/>).
+			<classname>RulesManager</classname> (see <xref linkend="general_utils_rulesmanager"/>).
 			As a rule data type, we use 
 <programlisting>
 <code>
@@ -73,10 +73,10 @@ struct ModeRule
 	<para>
 		Inherited RulesManager enables configuration loading from stream by
 		default. We have additionally implemented
-		<emphasis>ModeConfigurationParser</emphasis> which is able to parse
+		<classname>ModeConfigurationParser</classname> which is able to parse
 		strings from configuration file. To be less dependant on particular
 		configuration file format, we have built it upon
-		<emphasis>StringConfigurationParser</emphasis> which simply reads 
+		<classname>StringConfigurationParser</classname> which simply reads 
 		key value pairs. from file and ModeConfigurationParser transforms this
 		values to its internals data types for rule and target (ModeRule and
 		Mode types). This is example of <xref linkend="adapter"/> implementation. 

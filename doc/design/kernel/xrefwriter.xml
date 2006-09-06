@@ -43,8 +43,8 @@
 	<para>
 		Underlaying stream with data which is stored in XRef supertype is typed
 		as a Stream (see <xref linkend="general_xpdf_stream"/>.
-		<emphasis>IPdfWriter</emphasis> requires
-		<emphasis>StreamWriter</emphasis> (see <xref linkend="general_xpdf_changes"/>).
+		<classname>IPdfWriter</classname> requires
+		<classname>StreamWriter</classname> (see <xref linkend="general_xpdf_changes"/>).
 		So XRefWriter uses StreamWriter implementator in constructor and
 		XRef use this Stream when fetching objects and IPdfWriter uses it when
 		writing content. 

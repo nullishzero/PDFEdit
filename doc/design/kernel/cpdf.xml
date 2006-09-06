@@ -26,9 +26,9 @@
   <sect2>
     <title>Instance life cycle</title>
     <para>
-		Instance of CPdf can be create only by <emphasis>getInstance</emphasis>
+		Instance of CPdf can be create only by <classname>getInstance</classname>
 		factory method (see <xref linkend="factory_method"/>) and destroyed 
-		only by <emphasis>close</emphasis> method described. CPdf instance is 
+		only by <classname>close</classname> method described. CPdf instance is 
 		one purpose object which maintains exactly one document during its 
 		lifetime (between creation and close).
     </para>

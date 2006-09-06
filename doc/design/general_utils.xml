@@ -16,19 +16,19 @@
 			Delinearizator is class which provides simple interface for pdf
 			document delinearization (see also <xref linkend="linearized_pdf"/>).
 			Class instances are created by factory method
-			<emphasis>getInstance</emphasis> (see <xref linkend="factory_method"/>) and
+			<classname>getInstance</classname> (see <xref linkend="factory_method"/>) and
 			one instance handles one pdf file, which has to be linearized. If
 			file is not linearezed, instance is not created and exception is
 			thrown. When instance is created, document can be simply
-			delinearized by <emphasis>delinearize</emphasis> method.
+			delinearized by <classname>delinearize</classname> method.
 		</para>
 		<para>
-			As well as XRefWriter it also uses <emphasis>IPdfWriter</emphasis> impementator for
+			As well as XRefWriter it also uses <classname>IPdfWriter</classname> impementator for
 			content writing (this can be changed in runtime and provides
 			flexibility for output format).
 		</para>
 		<para>
-			Delinearizator itslef is build on top of Xpdf <emphasis>XRef</emphasis> class which
+			Delinearizator itslef is build on top of Xpdf <classname>XRef</classname> class which
 			provides object fetching functionality and cross reference table
 			maintainance. This is used for fetching of all objects (without
 			those which are specific for linearized content) and IPdfWriter
@@ -150,7 +150,7 @@
 			depends on their priorities and for same priorities on registration
 			order.
 			Observer handler is responsible to call this
-			<emphasis>notifyObservers</emphasis> method
+			<classname>notifyObservers</classname> method
 			whenever its internal state has changed (and he wants to announce
 			this change) and provides correct parameters for it.
 		</para>
@@ -176,8 +176,8 @@
 			Notifying would be rather poor if just newValue was available. So
 			our observer concept adds context to notify method. This context
 			keeps additional information. Context hierarchy is based on
-			<emphasis>IChangeContext</emphasis> abstract class. This provides just information about
-			type of context. <emphasis>notify</emphasis> implementator should check this type and
+			<classname>IChangeContext</classname> abstract class. This provides just information about
+			type of context. <classname>notify</classname> implementator should check this type and
 			cast given context to correct type and use it as needed. If observer
 			handler doesn't want to give any context, this should keep NULL
 			value.
@@ -242,7 +242,7 @@
 			Only reaction would be (to keep contract that all observers are
 			notified) to silently ignore (or to log) exception. This could lead
 			to inconsistencies and so it is safer to forbit exceptions at all.
-			<emphasis>notify</emphasis> method implementator has to keep this in mind because, if
+			<classname>notify</classname> method implementator has to keep this in mind because, if
 			exception is thrown and it is forbiden in method signature (throw()
 			clause after method definition), program is forced to terminate by
 			default.

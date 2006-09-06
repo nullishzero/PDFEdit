@@ -182,7 +182,7 @@
         save method is called. This enables separation of implementation from 
         design. All saving is delegated to pdfWriter implementation holder and 
 		it depends on it how content is writen (see <xref linkend="kernel_part_pdfwriter"/>.
-		We have implemented <emphasis>OldStylePdfWriter</emphasis> pdf writer,
+		We have implemented <classname>OldStylePdfWriter</classname> pdf writer,
 		which writes objects according pdf specification and creates an old
 		style pdf cross reference table (standard for Pdf specification prior to
 		version 1.5, see <xref linkend="crossref_table"/>).

@@ -57,7 +57,7 @@
 			pdf entities logic and <emphasis>lowlevel</emphasis> cobjects which are pdf data types carrier 
 			(CInt, CArray, CDict, CString, etc.). Values stored in lowlevel cobjects
 			are also called <emphasis>properties</emphasis> and they are wrapped
-			by <emphasis>IProperty</emphasis> class.
+			by <classname>IProperty</classname> class.
 			Properties are identified by indirect reference (the way how pdf
 			adresses entities).
 			User of kernel should start with CPdf instance which provides all
@@ -67,9 +67,9 @@
 		</para>
 		<para>
 			Kernel uses &xpdf_link_index; code for document content parsing. 
-			XPdf's <emphasis>XRef</emphasis> class provides fetching and parsing functionality. 
+			XPdf's <classname>XRef</classname> class provides fetching and parsing functionality. 
 			Oposite way (from cobjects to file writing) is provided by
-			<emphasis>IPdfWriter</emphasis>
+			<classname>IPdfWriter</classname>
 			implementation. XPdf Stream class is replaced by StreamWriter kernel
 			class. 
 		</para>

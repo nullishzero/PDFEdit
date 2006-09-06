@@ -4,9 +4,9 @@
 	<title>xpdf project in PDFedit</title>
   <para>
 	  Pdfedit project uses &xpdf_link_index; code for low level pdf content
-	  operations, such as pdf object parsing (with quite good matching of the
+	  operations, such as pdf object parsing (with quite good matching to the
 	  Adobe pdf specification ver. 1.6. ), indirect object resolving, 
-	  generation of page and text output devices, streams deconding and so on. 
+	  generation of page and text output devices, streams decoding and so on. 
 	  We have tried to reuse the most of functionality which is not somehow 
 	  directly related to xpdf application special logic.
   </para>
@@ -45,7 +45,7 @@
     <sect2 id="general_xpdf_object">
      <title>Object.h and Object.cc</title>
      <para>
-		 <emphasis>Object</emphasis>  class is used as value keeper in whole 
+		 <classname>Object</classname>  class is used as value keeper in whole 
 		 xpdf code. Design is not very good, because all value types are stored
 		 in this one object (even more in one union in Object class) and real
 		 value type is then identified by enumeration Object type (returned by 
@@ -242,7 +242,7 @@
 	  returns) or just use it to get information (so it can be 
 	  deallocated). This could possibly lead to memory leaks or worse 
 	  to duplicate deallocation od same memory. To solve this potential 
-	  problems, all methods which don't store key have <emphasis>const char * key</emphasis> 
+	  problems, all methods which don't store key have <classname>const char * key</classname> 
 	  parameter.
       </para>	     
      </sect3>
@@ -345,14 +345,14 @@
 			it (and has to check whether filter stream has cloned correctly).
       </para>
       <para>
-		  <emphasis>FileStream</emphasis> is stream which reads data directly 
+		  <classname>FileStream</classname> is stream which reads data directly 
 		  from FILE stream and so cloning has to copy all data (from stream 
 		  start to the end - if stream is limited, then just first length 
 		  bytes) somewhere else. Creation of new file, just for temporarily 
 		  created clone is not very effective and may produce several problems
 		  (not enough free place, creation and removing of temporary file, 
 		  etc.). We have solved this problem by creating
-		  <emphasis>MemStream</emphasis> with buffer containing same data as 
+		  <classname>MemStream</classname> with buffer containing same data as 
 		  FileStream. This brakes contract of clone meaning a bit, because 
 		  cloned stream is not precisely the same as original, because it is 
 		  represented by another Stream class. Nevertheless it keeps the most 
@@ -361,7 +361,7 @@
 		  is changed.
       </para>
       <para>
-		  <emphasis>MemStream</emphasis> represent stream stored in buffer in
+		  <classname>MemStream</classname> represent stream stored in buffer in
 		  the memory. So cloning is straightforward and just buffer is copied 
 		  for new MemStream. All other attributes are set according copied 
 		  buffer.
@@ -384,7 +384,7 @@
 		  </footnote>
       </para>
       <para>
-		  <emphasis>EmbedStream</emphasis> is special stream which is stored in
+		  <classname>EmbedStream</classname> is special stream which is stored in
 		  some other stream. Clonig is also very simple, because this stream 
 		  just holds one Stream pointer field and some attributes which doesn't
 		  change during instance life cycle. Cloning is then just delegation
@@ -392,14 +392,14 @@
 		  cloned value and same parameters which were used for given instance.
       </para>
       <para>
-		  <emphasis>FilterStream</emphasis> stream branch represents different
+		  <classname>FilterStream</classname> stream branch represents different
 		  types of filters which can be used to encode stream data (Pdf
 		  specification describes which filters can be used). Hierarchy and
 		  design of filters follows <xref linkend="decorator"/> and each filter
 		  works with underlaying stream (which is stored as pointer) field 
 		  which is typed as Stream (so it can be either stream with data - 
-		  <emphasis>MemStream</emphasis>, <emphasis>FileStream</emphasis> or
-		  <emphasis>EmbedStream</emphasis> - or another filter stream).
+		  <classname>MemStream</classname>, <classname>FileStream</classname> or
+		  <classname>EmbedStream</classname> - or another filter stream).
 	  </para>
 	  <para>
 		  FileStream is cloned in similar way as EmbedStream. Each 

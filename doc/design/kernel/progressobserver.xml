@@ -5,12 +5,12 @@
 	<para>
 		Sometimes it is desireable to display progress of current operation to
 		user. To accomplish this task, we have implemented ProgressObserver
-		class which implements <emphasis>IObserver</emphasis> (see <xref linkend="general_utils_observers"/>) 
-		and internally stores implementator of <emphasis>IProgressBar</emphasis>
+		class which implements <classname>IObserver</classname> (see <xref linkend="general_utils_observers"/>) 
+		and internally stores implementator of <classname>IProgressBar</classname>
 		interface. 
 	</para>
 	<para>
-		Responsibility of this class is to implement <emphasis>notify</emphasis> 
+		Responsibility of this class is to implement <classname>notify</classname> 
 		method so that current state of progress given as parameter is displayed
 		by IProgressBar implementator. It has to recognize when progress starts
 		(this is provided by internal flag), when it finishes (when scope's 
@@ -18,15 +18,15 @@
 	</para>
 	<para>
 		Instance of this class can be registered on arbitrary descendant of
-		<emphasis>ObserverHandler</emphasis> class which registers
-		<emphasis>PdfWriterObserver</emphasis> 
+		<classname>ObserverHandler</classname> class which registers
+		<classname>PdfWriterObserver</classname> 
 		<footnote>
 		<para>
 			This is just typedef to IObserver implementation  with OperationStep 
 			template parameter.
 		</para>
 		</footnote>
-		compatible observers and uses <emphasis>ScopeChangeContext</emphasis> with 
+		compatible observers and uses <classname>ScopeChangeContext</classname> with 
 		OperationStep and OperationScope template parameters.
 	</para>
 	<mediaobject>

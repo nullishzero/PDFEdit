@@ -56,25 +56,25 @@
 		consolidation.
 	</para>
 	</footnote>
-	classes which implements <emphasis>IObserver</emphasis> interface. 
+	classes which implements <classname>IObserver</classname> interface. 
 	To make their logic easier, each observer is specialized for one 
 	type of change. So that we have
 	<itemizedlist>
 		<listitem>
-			<emphasis>PageTreeRootObserver</emphasis> - which is registered on
+			<classname>PageTreeRootObserver</classname> - which is registered on
 			Pages entry in <xref linkend="document_catalog"/>. If this 
 			value changes, we have to throw away and invalidate all pages
 			which were returned until now.
 		</listitem>
 		<listitem>
-			<emphasis>PageTreeNodeObserver</emphasis> - which is registered on
+			<classname>PageTreeNodeObserver</classname> - which is registered on
 			all intermediate nodes. If any of node's dictionary is changed,
 			checks whether it is entry which may affect page tree (Kids, Count
 			or Parent properties are added, removed, or their value is changed).
 			it has to invalidate all subtree of this node.
 		</listitem>
 		<listitem>
-			<emphasis>PageTreeKidsObserver</emphasis> - which is registered on
+			<classname>PageTreeKidsObserver</classname> - which is registered on
 			all elements of intermediate node's Kids array. If any of this 
 			element changes its value (they all should be referencies to Pages 
 			or Page dictionary), original node has to be invalidated and also 
@@ -86,8 +86,8 @@
 	propagated to the page tree root. 
 </para>
 <para>
-	All this stuff is implemented by <emphasis>consolidatePageTree</emphasis>
-	and <emphasis>consolidatePageList</emphasis> methods in CPdf. For more
+	All this stuff is implemented by <classname>consolidatePageTree</classname>
+	and <classname>consolidatePageList</classname> methods in CPdf. For more
 	implementation details, please see doxygen documentation.
 </para>
 </sect2>
@@ -105,14 +105,14 @@
 		<title>Observer for annotation</title>
 		<para>
 			CPage stores all CAnnotation instance from its Annots array in 
-			internal <emphasis>annotStorage</emphasis>. User can change
-			annotatations with <emphasis>addAnnotation</emphasis> or
-			<emphasis>delAnnotation</emphasis> methods but also by changing
+			internal <classname>annotStorage</classname>. User can change
+			annotatations with <classname>addAnnotation</classname> or
+			<classname>delAnnotation</classname> methods but also by changing
 			Annots array directly. 
 		</para>
 		<para>
 			To prevent from problems with inconsistency, CPage instance
-			registers <emphasis>AnnotsArrayWatchDog</emphasis> observer
+			registers <classname>AnnotsArrayWatchDog</classname> observer
 			implementation on Annots array and all its members (because they are
 			referencies and someone may change reference value to target which
 			is not annotation dictionary). Whenever this array changes,

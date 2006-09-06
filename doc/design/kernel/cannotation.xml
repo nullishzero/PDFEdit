@@ -52,7 +52,7 @@
 </code>
 </programlisting>
 			method (see <xref linkend="factory_method"/>). This method uses
-			internal <emphasis>annotInit</emphasis> static <xref linkend="kernel_part_annot_initializator"/>.
+			internal <classname>annotInit</classname> static <xref linkend="kernel_part_annot_initializator"/>.
 			Intializator is responsible for correct annotation dictionary
 			initialization according given type and for given rectangle.
 			This is safe way how to create new annotation instances.
@@ -62,7 +62,7 @@
 	<sect2 id="kernel_part_annot_initializator">
 		<title>Annotation initializator</title>
 		<para>
-			Annotation initializator represented by	<emphasis>IAnnotInitializator</emphasis>
+			Annotation initializator represented by	<classname>IAnnotInitializator</classname>
 			abstract class. It provides <xref linkend="functor"/> which
 			intialize given dictionary with correct data according given type.
 			Initializator is designed as <xref linkend="composite"/> and so one
@@ -71,7 +71,7 @@
 			by this initializator). 
 		</para>
 		<para>
-			We have implemented <emphasis>UniversalAnnotInitializer</emphasis>
+			We have implemented <classname>UniversalAnnotInitializer</classname>
 			which adds 
 <programlisting>
 <code>
@@ -82,8 +82,8 @@
 </programlisting>
 			method responsible for registration of other initializator to
 			composite of initializators. When
-			<emphasis>createAnnotation</emphasis> is called,
-			<emphasis>UniversalAnnotInitializer</emphasis> choose registered
+			<classname>createAnnotation</classname> is called,
+			<classname>UniversalAnnotInitializer</classname> choose registered
 			implementetator which supports such annotation type.
 			UniversalAnnotInitializer itself just initializes common elements
 			for all annotations (such as Type, Subtype, Rect elements).
