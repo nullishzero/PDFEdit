@@ -23,7 +23,18 @@ Example:
 		<glossterm>Adapter design pattern</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The adapter design pattern (sometimes referred to as the wrapper 
+			pattern or simply a wrapper) 'adapts' one interface for a class 
+			into one that a client expects. An adapter allows classes to work 
+			together that normally could not because of incompatible interfaces
+			by wrapping its own interface around that of an already existing 
+			class.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/objectadapter.png" format="PNG"/>
+			  </imageobject>
+			  <caption><para>Object Adapter</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -31,7 +42,17 @@ Example:
 		<glossterm>Composite design pattern</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			Composite is an object designed as a composition of one-or-more 
+			similar objects (other kinds of shapes/geometries), all exhibiting 
+			similar functionality. This is known as a "has-a" relationship 
+			between objects. The key concept is that you can manipulate a 
+			single instance of the object just as you would a group of them.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/compositepattern.png" format="PNG"/>
+			  </imageobject>
+			  <caption><para>Composite</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -55,7 +76,18 @@ Example:
 		<glossterm>Decorator design patter</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The decorator pattern works by wrapping the new "decorator" object 
+			around the original object, which is typically achieved by passing 
+			the original object as a parameter to the constructor of the 
+			decorator, with the decorator implementing the new functionality. 
+			The interface of the original object needs to be maintained by the 
+			decorator.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/decaratorpattern.png" format="PNG"/>
+			  </imageobject>
+			  <caption><para>Decorator</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -92,7 +124,20 @@ Example:
 		<glossterm>Factory method design pattern</glossterm>
 		<glossdef>
 		<para>
-			Factory method is ... TODO
+			The Factory Method pattern is an object-oriented design pattern. 
+			Like other creational patterns, it deals with the problem of 
+			creating objects (products) without specifying the exact class 
+			of object that will be created. Factory Method, one of the 
+			patterns from the Design Patterns book, handles this problem by
+			defining a separate method for creating the objects, which 
+			subclasses can then override to specify the derived type of 
+			product that will be created.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/factorymethodpattern.png" format="PNG"/>
+			  </imageobject>
+			  <caption><para>Factory method</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -100,7 +145,15 @@ Example:
 		<glossterm>Facade design pattern</glossterm>
 		<glossdef>
 		<para>
-			Facade is designed pattern ... TODO
+			The facade pattern is an object-oriented design pattern. A facade 
+			is an object that provides a simplified interface to a larger body
+			of code, such as a class library.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/facadepattern.gif" format="GIF"/>
+			  </imageobject>
+			  <caption><para>Facade</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -155,7 +208,16 @@ Example:
 		<glossterm>Iterator design pattern</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The Iterator pattern defines an interface that declares methods
+			for sequentially accessing the objects in a collection. A class
+			that accesses a collection only through such an interface remains
+			independent of the class that implements the interface.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/iteratorpattern.gif" format="GIF"/>
+			  </imageobject>
+			  <caption><para>Iterator</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -177,7 +239,16 @@ Example:
 		<glossterm>Observer design patter</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The observer pattern (sometimes known as publish/subscribe) is a 
+			design pattern used in computer programming to observe the state 
+			of an object in a program. It is related to the principle of 
+			Implicit invocation.
+			<mediaobject>
+			  <imageobject align="center">
+				  <imagedata fileref="images/observerpattern.jpg" format="JPG"/>
+			  </imageobject>
+			  <caption><para>Observer</para></caption>
+			</mediaobject>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -250,7 +321,9 @@ Example:
 		<glossterm>Wrapper design patter</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			A wrapper converts the interface of a class into another interface
+			clients expect. Wrappers let classes work together that couldn't 
+			otherwise because of incompatible interfaces.
 		</para>
 		</glossdef>
 	</glossentry> 
