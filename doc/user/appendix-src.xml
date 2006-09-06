@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+
+<!-- Part entities declaration.
+     These should point to book part definitions (each describing specific book
+     part) included directly in this file. There is no problem to reference to 
+     these parts from each compomenet. 
+-->
+<!ENTITY scripts	SYSTEM	  "scripts/scripting.xml">
+
+<!-- Component entities definitions.
+     These should be included by part entities form concrete part. There is no 
+     problem to reference to these compomenets from other components. General 
+     convention is to keep following format:
+	part_chaptername
+-->
+<!ENTITY scripts_intro		SYSTEM	  "scripts/scripting_intro.xml">
+<!ENTITY scripts_startup	SYSTEM	  "scripts/scripting_startup.xml">
+<!ENTITY scripts_callbacks	SYSTEM	  "scripts/scripting_callback.xml">
+<!ENTITY scripts_objects	SYSTEM	  "scripts/scripting_objects.xml">
+
+<!ENTITY qsa_util	SYSTEM    "scripts/qsa-util.xml">
+<!ENTITY qsa_dialog	SYSTEM    "scripts/qsa-inputdialog.xml">
+
+<!-- Entities used generally in whole book. Entities may (and should) refer to 
+     term definition (definition of term should be defined in glossary part 
+     document - glossentry with id same as in xref tag).
+-->
+
+<!ENTITY version	SYSTEM	"version.xml">
+
+<!-- end of entities declaration -->
+]>
+
+
+<book>
+	<title>PDFedit user documentation - Appendix</title>
+	<bookinfo>
+		<authorgroup>
+			<collab>
+				<collabname>PDFEdit Team</collabname>
+			</collab>
+			<author>
+				<firstname>Michal</firstname>
+				<surname>Hocko</surname>
+				<email>mstsxfx@gmail.com</email>
+			</author>
+			<author>
+				<firstname>Miroslav</firstname>
+				<surname>Jahoda</surname>
+				<email>vemem@email.cz</email>
+			</author>
+			<author>
+				<firstname>Jozef</firstname>
+				<surname>Misutka</surname>
+				<email>misutkajunior@hotmail.com</email>
+			</author>
+			<author>
+				<firstname>Martin</firstname>
+				<surname>Petricek</surname>
+				<email>martin@petricek.net</email>
+			</author>
+			<othercredit>
+				<firstname>Martin</firstname>
+				<surname>Beran</surname>
+				<email>beran@ms.mff.cuni.cz</email>
+				<contrib>Extensive technical help and project leader</contrib>
+			</othercredit>
+		</authorgroup>
+		<edition>Appendix for user documentation version &version;</edition>
+		<pubdate>2006</pubdate>
+	</bookinfo>
+
+<part id="scripts_part">
+ <title>Scripting API documentation for PDF Editor</title>
+ <chapter id="static_common">
+  <title>Static functions common for GUI and command line</title>
+<!--BASETYPE: base.h -->
+ </chapter>
+ <chapter id="static_gui">
+  <title>Static functions in GUI</title>
+<!--BASETYPE: basegui.h -->
+ </chapter>
+ <chapter id="static_cmdline">
+  <title>Static functions in command line</title>
+<!--BASETYPE: baseconsole.h -->
+ </chapter>
+ &scripts_callbacks;
+ &scripts_objects;
+ <chapter>
+  <title>Object types (common and PDF objects)</title>
+<!--TYPE: qsannotation.h -->
+<!--TYPE: qsarray.h -->
+<!--TYPE: qscobject.h -->
+<!--TYPE: qscontentstream.h -->
+<!--TYPE: qsdict.h -->
+<!--TYPE: qsiproperty.h -->
+<!--TYPE: qsipropertyarray.h -->
+<!--TYPE: qspage.h -->
+<!--TYPE: qspdf.h -->
+<!--TYPE: qspdfoperator.h -->
+<!--TYPE: qspdfoperatoriterator.h -->
+<!--TYPE: qspdfoperatorstack.h -->
+<!--TYPE: qsstream.h -->
+ </chapter>
+ <chapter>
+  <title>Object types (GUI objects)</title>
+  <para>
+   These object types do not have direct corespondence to any object inside PDF document,
+   but some of them may allow you to manipulate them indirectly.
+   Main focus of these types is to interact with user.
+  </para>
+<!--TYPE: qsmenu.h -->
+<!--TYPE: qstreeitem.h -->
+<!--TYPE: qstreeitemcontentstream.h -->
+ </chapter>
+ &qsa_util;
+ &qsa_dialog;
+</part>
+
+</book>

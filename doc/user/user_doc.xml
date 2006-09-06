@@ -13,6 +13,7 @@
 <!ENTITY gui		SYSTEM	  "gui/main.xml">
 <!ENTITY cmdline	SYSTEM	  "cmdline/main.xml">
 <!ENTITY scripts	SYSTEM	  "scripts/scripting.xml">
+<!ENTITY scripts_nodoc	SYSTEM	  "scripts/scripting_nodoc.xml">
 <!ENTITY install	SYSTEM	  "install/install.xml">
 <!ENTITY glossary	SYSTEM	  "glossary.xml">
 
@@ -77,7 +78,7 @@
      document - glossentry with id same as in xref tag).
 -->
 
-<!ENTITY version "0.2.0">
+<!ENTITY version	SYSTEM	"version.xml">
 
 <!-- end of entities declaration -->
 ]>
@@ -126,7 +127,7 @@
 	&install;
 	&cmdline;
 	&gui; <!-- //todo -->
-	&scripts;
+	&scripts_nodoc;
 	&glossary;
 
 </book>

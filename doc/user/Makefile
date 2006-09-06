@@ -10,7 +10,7 @@ TOOL_DIR=$(TOP_DIR)/tools
 html_docs= keyboard.html cs/keyboard.html qsa-util.html qsa-inputdialog.html scripting.html
 
 #html docs that won't get into online help
-html_docs_all=user_doc.html
+html_docs_all=user_doc.html appendix.html
 
 #directory in which to place generated html help files
 html_help_dir=../../src/gui/help
@@ -28,13 +28,17 @@ all: $(docs)
 all_no_pdf: $(docs_no_pdf)
 
 clean:
-	rm -f $(docs) scripts/scripting.xml keyboard.xml cs/keyboard.xml pdfedit.xml qsa-inputdialog.xml qsa-util.xml scripts/qsa-util.xml scripts/qsa-inputdialog.xml
+	rm -f $(docs) scripts/scripting.xml keyboard.xml cs/keyboard.xml pdfedit.xml qsa-inputdialog.xml qsa-util.xml scripts/qsa-util.xml scripts/qsa-inputdialog.xml appendix.xml
 
 #generate by parsing header files and adding scripting API documentation
 scripts/scripting.xml: scripts/scripting-src.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
-user_doc.html: scripts/scripting.xml qsa-inputdialog.xml qsa-util.xml scripts/qsa-util.xml scripts/qsa-inputdialog.xml
+appendix.xml: appendix-src.xml $(TOOL_DIR)/scripting.gen.pl
+	$(TOOL_DIR)/scripting.gen.pl $< >$@
+
+#depenedencies
+user_doc.html: scripts/scripting_nodoc.xml qsa-inputdialog.xml qsa-util.xml scripts/qsa-util.xml scripts/qsa-inputdialog.xml version.xml
 
 #generate from template by adding table of keyboard shortcuts parsed from pdfeditrc
 keyboard.xml: $(TOOL_DIR)/kbd_gen.pl ../../src/gui/pdfeditrc keyboard-src.xml

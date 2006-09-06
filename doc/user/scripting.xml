@@ -3,7 +3,7 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
 [
 
-<!ENTITY version "0.2.0">
+<!ENTITY version	SYSTEM	"version.xml">
 
 <!ENTITY scripts	SYSTEM    "scripts/scripting.xml">
 
@@ -23,7 +23,5 @@
 
 <book>
 	<title>PDFedit &version; scripting documentation</title>
-
 	&scripts;
-
 </book>
