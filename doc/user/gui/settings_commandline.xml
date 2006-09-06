@@ -1,4 +1,4 @@
-<sect1>
+<sect1 id="gui_settings_commandline" xreflabel="settings of command console">
 	<title>Commandline tab</title>
 
 	<para>
@@ -39,7 +39,7 @@
 	<sect2>
 		<title>Show command editor</title>
 		<para>
-				This option set command editor showen, if is check.
+				This option set command editor shown, if is check.
 				<mediaobject>
 					<imageobject>
 						<imagedata fileref="gui/images/command_options_cmdedit.png" format="PNG"/>

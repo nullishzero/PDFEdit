@@ -1,7 +1,10 @@
 <chapter id="gui_command">
 	<title>Command console</title>
 	<para>
-			It's very useful for type scripts and macros. Can set to 3 different looks.
+			It's very useful for type scripts and macros.
+			Can set to 3 different looks (see <xref linkend="gui_settings_commandline"/>).
 	</para>
+
+	TODO
 
 </chapter>

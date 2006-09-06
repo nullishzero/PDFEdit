@@ -1,8 +1,77 @@
 <chapter>
-	<title>Page space and what's all is showen</title>
+	<title>Page space and what's all is shown</title>
 	<para>
-			TODO
+			In page space is shown 1 page from opened documents. In the bottom is shown which
+			page is actual viewed, how many pages has documents and the right is cursor position
+			on the page with units in which is shown position.
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/pagespace.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Page space design</phrase>
+				</textobject>
+				<caption><para>Page space design</para></caption>
+			</mediaobject>
 	</para>
 
-	TODO
+	<sect1>
+			<title>Refresh information</title>
+			<para>
+					In page space are 2 indenpendent parts, which must be refreshing.
+			</para>
+			<para>
+					First is the page and information about count pages in the document.
+					This part is refreshing only if someone call script function
+					<emphasis>go()</emphasis>, because it's very slow operation (it's
+					not very good refreshing page after each chage).
+					Reload page button in toolbars and menu (and many others usefull
+					functionality) are calling <emphasis>go()</emphasis>.
+					But direct changes in <xref linkend="gui_objtreepropedit_id" />
+					and changes via scripts are not automaticly projection to viewed page
+					and information about count pages.
+			</para>
+			<para>
+					Second is mouse position on page. This positions are converted to base
+					internal page positions. This positions is not depending to viewed zoom,
+					or actual rotation of page. (If user see that text is started at position
+					[x:6, y:7 cm] in 100% zoom, than same position will be started this text
+					in 200% zoom and rotated about 90 degrees.)
+					<para>
+							Notice: Usually is zero point in left-bottom edge of page and
+							enlarge to right-top edge.
+					</para>
+					
+			</para>
+			<para>
+					Sometimes after change zoom do not refresh outer page space. For correct view is needing
+					refresh page type <emphasis>go()</emphasis> or click to reload page button.
+			</para>
+	</sect1>
+	<sect1>
+			<title>Popup menu</title>
+			<para>
+					If user click to viewed page with right mouse button, popup menu will be displayed.
+					In this menu is at choice 1 or 2 items. First item is
+					<emphasis>Save page as image</emphasis>. It's everytime to choose. Second is
+					<emphasis>Save selected area as image</emphasis> which is to choose only if is
+					some selected on the page.
+			</para>
+			<para>
+					From names of items is clear that is using to storing viewed page to image file.
+					Format of image files are depending on system and version of Qt.
+			</para>
+			<para>
+					<emphasis>Save page as image</emphasis> store actual viewed page to image file.
+					If is viewed only part of page, is storing only part of page which cantains viewed
+					part (usualy is greate then viewed, but not whole page).
+			</para>
+			<para>
+					<emphasis>Save selected area as image</emphasis> store only actual selected area.
+					If selected area is fragmented or has not a rectangle shape, then is storing bounding
+					rectangle of selected area. If selected area is greate then viewed part of page, storing
+					area is cropped with same rectangle as is cropped page in <emphasis>Save page as image</emphasis>.
+			</para>
+	</sect1>
 </chapter>
