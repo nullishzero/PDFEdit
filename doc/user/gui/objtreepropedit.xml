@@ -177,7 +177,7 @@
 	should be locked to changes.
 	In menu click Tools->Options and select Editor tab. In order to take effect reload the object tree.
 	  <mediaobject>
-		  <imageobject><imagedata fileref="gui/images/propedit_opt_edit.png" format="PNG"/></imageobject>
+		  <imageobject><imagedata fileref="gui/images/propedit_opt_editor.png" format="PNG"/></imageobject>
 		  <caption><para>Editor options</para></caption>
 	  </mediaobject>
 	In menu click Tools->Options and select Object tree tab. In order to take effect reload the object tree.
