@@ -134,8 +134,8 @@ function xydialogs ( dg, text, units, default_x, default_y ) {
 		y = default_y;
 
 	gb = createGroupBoxAndDisplay (text, dg);
-	ex = createLineEditAndDisplay ("x"+tr("position")+units_name, x, gb);
-	ey = createLineEditAndDisplay ("y"+tr("position")+units_name, y, gb);
+	ex = createNumberEditAndDisplay ("x"+tr("position")+units_name, x, gb);
+	ey = createNumberEditAndDisplay ("y"+tr("position")+units_name, y, gb);
 	return [ex,ey];
 }
 
@@ -144,7 +144,7 @@ function xydialogs ( dg, text, units, default_x, default_y ) {
  */
 function twonumdialogs (dg,text,t1,t2) {
 	gb = createGroupBoxAndDisplay (text, dg);
-	ex = createLineEditAndDisplay (t1, "0", gb);
-	ey = createLineEditAndDisplay (t2, "0", gb);
+	ex = createNumberEditAndDisplay (t1, "0", gb);
+	ey = createNumberEditAndDisplay (t2, "0", gb);
 	return [ex,ey];
 }

@@ -21,7 +21,7 @@ namespace gui {
 QSCObject::QSCObject(QString _typeName, BaseCore* _base) {
  typeName=_typeName;
  base=_base;
- guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
+// guiPrintDbg(debug::DBG_DBG,"adding QSCObject "<< typeName);
  if (base) base->addGC(this);
 }
 

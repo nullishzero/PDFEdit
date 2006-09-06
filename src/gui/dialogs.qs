@@ -376,16 +376,16 @@ function setPageTm() {
 	// Default matrix
 	tm = [1,0,0,1,0,0];
 	if (rbtran.checked) {
-		tm[4] = parseFloat(ef[0].text);
-		tm[5] = parseFloat(ef[1].text);
+		tm[4] = ef[0].value;
+		tm[5] = ef[1].value;
 	}
 	if (rbscal.checked) {
-		tm[0] = parseFloat(ad[0].text);
-		tm[3] = parseFloat(ad[1].text);
+		tm[0] = ad[0].value;
+		tm[3] = ad[1].value;
 	}
 	if (rbskew.checked) {
-		tm[1] = parseFloat(bc[0].text);
-		tm[2] = parseFloat(bc[1].text);
+		tm[1] = bc[0].value;
+		tm[2] = bc[1].value;
 	}
 
 	if (!rbtran.checked && !rbscal.checked && !rbskew.checked)
@@ -444,15 +444,9 @@ function moveOperPos() {
                 }
                 var x = parseFloat (posop.params().property(0).value());
                 var y = parseFloat (posop.params().property(1).value());
-
-                if (!isNumber(xy[0].text) || !isNumber(xy[1].text)) {
-                        print(tr("Invalid x or y")+". "+tr("Only real numbers allowed")+".");
-                        op=nextSelected();
-                        continue;
-                }
-                
+             
                 // op, change, change
-                operatorSetPosition(op, parseFloat(xy[0].text), parseFloat(xy[1].text));
+                operatorSetPosition(op, xy[0].value, xy[1].value);
 
                 op=nextSelected();
         }
@@ -482,8 +476,8 @@ function moveTextPos( delta_x, delta_y ) {
 			if (!dialog.exec())
 				return [0,0];
 
-			delta_x = parseFloat(xy[0].text);
-			delta_y = parseFloat(xy[1].text);
+			delta_x = xy[0].value;
+			delta_y = xy[1].value;
 
 			if (isNumber( delta_x ) && isNumber( delta_y )) {
 				exec_dialog = false;
