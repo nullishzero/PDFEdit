@@ -300,6 +300,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  connect(pagespc,SIGNAL(popupMenu(const QPoint&)),this,SLOT(pagePopup(const QPoint&)));
  connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<PdfOperator> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<PdfOperator> >)));
  connect(pagespc,SIGNAL(changeSelection(std::vector<boost::shared_ptr<CAnnotation> >)),this,SLOT(setSelection(std::vector<boost::shared_ptr<CAnnotation> >)));
+ connect(pagespc,SIGNAL(deleteSelection()),this,SLOT(pageDeleteSelection()));
 
  connect(pagespc, SIGNAL(executeCommand(QString)), this, SLOT(runScript(QString)));
  connect(prop,SIGNAL(infoText(const QString&)),status,SLOT(receiveInfoText(const QString&)));
@@ -350,6 +351,15 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
   openFile(fName);
  }
 }
+
+/**
+ Slot called when deleteSelection from pagespace is emitted.
+ Script callback function is invoked.
+*/
+void PdfEditWindow::pageDeleteSelection() {
+ base->call("onPageDelete");
+}
+
 
 /** 
  Signal called when receiving help message.

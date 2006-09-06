@@ -67,6 +67,11 @@ function onLoadError() {
  warn(error());
 }
 
+/** Callback called when pressing "delete" key while in preview window */
+function onPageDelete() {
+// print("onPageDelete")
+}
+
 /** Force reloading of parent tree item. */
 function parentReload() {
  //TODO: solve better

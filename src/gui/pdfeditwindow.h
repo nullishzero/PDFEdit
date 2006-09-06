@@ -69,6 +69,7 @@ public:
  boost::shared_ptr<pdfobjects::utils::ProgressObserver> getProgressObserver();
  QProgressBar * getProgressBar();
 public slots:
+ void pageDeleteSelection();
  void setSelection(std::vector<boost::shared_ptr<PdfOperator> > vec);
  void setSelection(std::vector<boost::shared_ptr<CAnnotation> > vec);
  void changeRevision(int revision);
