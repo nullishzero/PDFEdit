@@ -47,6 +47,14 @@
 <!ENTITY gui_settings_toolbars		SYSTEM    "gui/settings_toolbars.xml">
 <!ENTITY gui_settings_lookandfeel	SYSTEM    "gui/settings_lookandfeel.xml">
 
+<!ENTITY gui_menuAndToolbarsFun_file		SYSTEM    "gui/menuAndToolbarsFun_file.xml">
+<!ENTITY gui_menuAndToolbarsFun_view		SYSTEM    "gui/menuAndToolbarsFun_view.xml">
+<!ENTITY gui_menuAndToolbarsFun_tools		SYSTEM    "gui/menuAndToolbarsFun_tools.xml">
+<!ENTITY gui_menuAndToolbarsFun_page		SYSTEM    "gui/menuAndToolbarsFun_page.xml">
+<!ENTITY gui_menuAndToolbarsFun_edit		SYSTEM    "gui/menuAndToolbarsFun_edit.xml">
+<!ENTITY gui_menuAndToolbarsFun_help		SYSTEM    "gui/menuAndToolbarsFun_help.xml">
+<!ENTITY gui_menuAndToolbarsFun_toolbars	SYSTEM    "gui/menuAndToolbarsFun_toolbars.xml">
+
 <!ENTITY qsa_util	SYSTEM    "scripts/qsa-util.xml">
 <!ENTITY qsa_dialog	SYSTEM    "scripts/qsa-inputdialog.xml">
 
