@@ -5,7 +5,7 @@
 	<para>
 		This chapter deals with utility classes implemented for pdfedit 
 		purposes but can be reused also somewhere else (implementation 
-		tends to be as much independant on pdfedit as possible.
+		tends to be as much independant on pdfedit as possible).
 		They are stored (with some exceptions) in src/utils dicrectory and when
 		compiled, they are collected in one <emphasis>libutils.a</emphasis>
 		statuc library.
@@ -15,19 +15,20 @@
 		<para>
 			Delinearizator is class which provides simple interface for pdf
 			document delinearization (see also <xref linkend="linearized_pdf"/>).
-			Class instances are created by <xref linkend="factory_method"/> and
+			Class instances are created by factory method
+			<emphasis>getInstance</emphasis> (see <xref linkend="factory_method"/>) and
 			one instance handles one pdf file, which has to be linearized. If
 			file is not linearezed, instance is not created and exception is
 			thrown. When instance is created, document can be simply
-			delinearized by delinearize method.
+			delinearized by <emphasis>delinearize</emphasis> method.
 		</para>
 		<para>
-			As well as XRefWriter it also uses IPdfWriter impementator for
+			As well as XRefWriter it also uses <emphasis>IPdfWriter</emphasis> impementator for
 			content writing (this can be changed in runtime and provides
 			flexibility for output format).
 		</para>
 		<para>
-			Delinearizator itslef is build on top of xpdf XRef class which
+			Delinearizator itslef is build on top of Xpdf <emphasis>XRef</emphasis> class which
 			provides object fetching functionality and cross reference table
 			maintainance. This is used for fetching of all objects (without
 			those which are specific for linearized content) and IPdfWriter

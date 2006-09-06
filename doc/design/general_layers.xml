@@ -13,13 +13,12 @@
 
 		<itemizedlist>
 		<listitem>Kernel - which has responsibility to maintain pdf
-			document content and provides with interface for
-			changes.
+			document content and provides interface for changes.
 		</listitem>
 		<listitem>Script - which has responsibility to wrap kernel 
 			interface and export it to user or gui.
 		</listitem>
-		<listitem>Gui - which visualize and makes comfortable usage of 
+		<listitem>Gui - which visualizes and makes comfortable usage of 
 			all the functionality which is accessible directly from 
 			kernel or Script layers.
 		</listitem>
@@ -27,7 +26,7 @@
 	</para>
 	<para>
 		Kernel layer is build on top of popular open source &xpdf_link_index; 
-		project. 
+		project (see <xref linkend="general_xpdf_chapter"/>). 
 		It reuses xpdf code for low-level pdf document access - reading 
 		and decoding content and parsing it to objects as well as 
 		displaying functionality. Xpdf objects are transformed to 
@@ -51,13 +50,14 @@
 	<sect1 id="general_kernel_layer">
 		<title>Kernel layer</title>
 		<para>
-			Kernel, as the lowest layer, is responsible to maintain pdf content from
+			Kernel, as the lowest layer, is responsible for maintaing  of pdf content from
 			file and to	provide object interface for making changes to higher layer. 
 			We will call this objects as <emphasis>cobjects</emphasis>. More 
-			precisely - highlevel cobjects (CPdf, CPage, etc.) which provide higher 
-			pdf entities logic and lowlevel cobjects which are pdf data types carrier 
+			precisely - <emphasis>highlevel</emphasis> cobjects (CPdf, CPage, etc.) which provide higher 
+			pdf entities logic and <emphasis>lowlevel</emphasis> cobjects which are pdf data types carrier 
 			(CInt, CArray, CDict, CString, etc.). Values stored in lowlevel cobjects
-			are also called properties and they are wrapped by IProperty class.
+			are also called <emphasis>properties</emphasis> and they are wrapped
+			by <emphasis>IProperty</emphasis> class.
 			Properties are identified by indirect reference (the way how pdf
 			adresses entities).
 			User of kernel should start with CPdf instance which provides all
@@ -67,8 +67,9 @@
 		</para>
 		<para>
 			Kernel uses &xpdf_link_index; code for document content parsing. 
-			XPdf's XRef class provides fetching and parsing functionality. 
-			Oposite way (from cobjects to file writing) is provided by IPdfWriter
+			XPdf's <emphasis>XRef</emphasis> class provides fetching and parsing functionality. 
+			Oposite way (from cobjects to file writing) is provided by
+			<emphasis>IPdfWriter</emphasis>
 			implementation. XPdf Stream class is replaced by StreamWriter kernel
 			class. 
 		</para>

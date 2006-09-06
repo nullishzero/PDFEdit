@@ -2,10 +2,12 @@
 -->
 <chapter id="general_techn">
 	<title>Used technologies</title>
-	<sect1>
+	<para>
 		Our project uses several technologies. All of them are open,
 		standardized and generally accepted and free. Their licence policy is
 		compatible with <xref linkend="gpl" />
+	</para>
+	<sect1>
 		<title>Used Libraries</title>
 		<sect2>
 			<title>Boost libraries</title>
@@ -70,7 +72,7 @@
 </programlisting>
 			where ClassName stands for tested class. Test class implements test
 			suite which is identified by its name. Main test program runs all
-			test suites spefied by name (<xref linkend="general_techn_test_program"/>).
+			test suites specified by name (<xref linkend="general_techn_test_program"/>).
 			Each test suit consists of test cases which test particular behavior
 			of tested class.
 		</para>
@@ -80,13 +82,13 @@
 				Each test class should inherit from CPP unit TextFixture class.
 				At first CPPUNIT_TEST_SUITE and CPPUNIT_TEST macros should be
 				used to prepare this class to cpp unit framework and to define
-				test case functions. Finally should be class registered to
+				test case functions. Finally class should be registered to
 				framework, so test program can run it by specified name (this
 				name should follow TEST_CLASSNAME convention).
 			</para>
 			<para>
 				Each test case should perform operations on tested class and
-				check <xref linkend="invariant"/> which have to be kept for 
+				checks <xref linkend="invariant"/> which have to be kept for 
 				such operations. CPPUNIT_ASSERT macro should be used to check
 				invariant condition or CPPUNIT_FAIL should be used to force
 				failure of test.
