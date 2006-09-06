@@ -70,7 +70,8 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
 }
 
 /**
- Slot called when mouse moves to some item in tree
+ Slot called when mouse moves to some item in tree,
+ OR when user navigates to new item via keyboard
  @param item Item over which mouse moved
 */
 void TreeWindow::moveOnItem(QListViewItem *item) {
@@ -189,6 +190,8 @@ void TreeWindow::settingUpdate(QString key) {
  @param item The item that was selected
  */
 void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *item) {
+ QListViewItem *theItem=tree->currentItem();
+ moveOnItem(theItem);
  emit itemSelected();
 }
 
@@ -196,6 +199,8 @@ void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *ite
  Called upon changing selection in the tree window (multiselect)
  */
 void TreeWindow::treeSelectionChanged() {
+ QListViewItem *theItem=tree->currentItem();
+ moveOnItem(theItem);
  emit itemSelected();
 }
 
