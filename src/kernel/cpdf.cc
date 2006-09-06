@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.76  2006/09/06 00:17:08  hockm0bm
+ * bug fix 44
+ * - typo error - oldValue was check whether it is array instead of newValue
+ *
  * Revision 1.75  2006/08/09 20:46:34  hockm0bm
  * * new cpdf_id_t type, id field and getId method
  * * addIndirectProperty
@@ -1609,7 +1613,7 @@ using namespace observer;
 		if(isRef(newValue))
 			kidsArray=utils::getCObjectFromRef<CArray>(newValue);
 		else
-			if(isArray(oldValue))
+			if(isArray(newValue))
 				kidsArray=IProperty::getSmartCObjectPtr<CArray>(newValue);
 		if(kidsArray.get())
 		{

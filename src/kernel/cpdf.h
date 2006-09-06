@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.77  2006/09/06 00:17:08  hockm0bm
+ * bug fix 44
+ * - typo error - oldValue was check whether it is array instead of newValue
+ *
  * Revision 1.76  2006/09/04 18:25:27  petrm1am
  *
  * 2 typos in documentation (descriPtion !) + commented out "class COutline {}"
@@ -517,8 +521,6 @@ typedef std::map<IndiRef, IndiRef, utils::IndComparator > ResolvedRefStorage;
  * Pages are counted from 1 (first page) up to getPageCount return value. Note
  * that this may not represent values used for inner page counting writen on the
  * page. CPdf doesn't handle any kind of special document numbering.
- *
- * TODO outlines description
  *
  * <p>
  * <b>Revision manipulation</b><br>
