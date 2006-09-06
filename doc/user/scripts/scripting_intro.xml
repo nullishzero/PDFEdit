@@ -1,4 +1,4 @@
- <chapter id="intro">
+ <section id="intro">
   <title>Introduction</title>
   <para>
    PDFEditor have support for scripting. Evey item in menu (or toolbar) runs a script
@@ -25,4 +25,4 @@
    See http://doc.trolltech.com/qsa-1.1.4/extensions-2.html for description
    of File, Dir and Process classes, which are available to script.</note>
   </para>
- </chapter>
+ </section>

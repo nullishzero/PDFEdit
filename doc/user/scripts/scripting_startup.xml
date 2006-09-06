@@ -1,4 +1,4 @@
- <chapter id="startup">
+ <section id="startup">
   <title>Startup scripts</title>
   <para>
    When new editor window is launched (but before the document is loaded or created),
@@ -48,7 +48,7 @@
     Init script should not load a document while starting, as it will be replaced by new one as soon as the script finishes.
     If functionality such as "automatic loading of a document on startup" is desired, appropriate 
     code should be added to onEmptyFile() function, which will be triggered after starting the editor with empty document.
-    Alterantively, onLoad, onLoadUser or onLoadError fnuctions may be used for this.
+    Alternatively, onLoad, onLoadUser or onLoadError fnuctions may be used for this.
   </note>
   </para>
- </chapter>
+ </section>

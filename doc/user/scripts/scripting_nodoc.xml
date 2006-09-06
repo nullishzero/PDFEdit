@@ -2,10 +2,10 @@
  <title>Scripting documentation for PDF Editor</title>
  &scripts_intro;
  &scripts_startup;
- <chapter>
+ <section>
   <title>Scripting API documentation</title>
   <para>
    Scripting API documentation is included in Appendix
   </para>
- </chapter>
+ </section>
 </part>
