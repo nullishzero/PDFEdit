@@ -71,7 +71,7 @@
 		stuff. At first all classes which are used as interface objects for 
 		higher layers are described. Then some kernel classes which are not 
 		part of interface but they are used internally by interface classes.
-		Finally there is describtion how document changes are handled and
+		Finally there is description how document changes are handled and
 		revision changing.
 	</para>
 
