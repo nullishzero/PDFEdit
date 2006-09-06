@@ -40,4 +40,11 @@
    type <command>make install</command> to install PDF Editor. It will check whether the project is compiled
    (if not, it will compile it) and install the editor.
   </formalpara>
+  <formalpara>
+   <title>Uninstalling</title>
+   In CVS root (or root of distribution archive)
+   type <command>make uninstall</command> to uninstall PDF Editor.
+   The editor must be already built (and installed) for this to work.
+   This will remove all the files that have been installed by <command>make install</command>
+  </formalpara>
  </section>
