@@ -3,7 +3,7 @@
 <sect1 id="kernel_part_cannotation">
 	<title>CAnnotation</title>
 	<para>
-		Annotations is interactive entity which is associated with rectangle 
+		Annotation is interactive entity which is associated with rectangle 
 		on page. They are organized in <emphasis>Annots</emphasis> array 
 		entry in page dictionary and so <classname>CPage</classname> is responsible for returning of
 		all available annotations and also to provide interface to add new
@@ -15,7 +15,7 @@
 		and <emphasis>Subtype</emphasis> element with concrete annotation type.
 		Pdf specification describes several types of annotation types (e. g.
 		text annotation - which describes text box floating upon normal page
-		text, link annotation - which enables to jump to target within document
+		text, link annotation - which enables to jump to the target within document
 		or to perform certain action when link is activated by mouse click).
 		<emphasis>Rect</emphasis> element should be present as well, because it
 		specifies where annotation should be spreaded.

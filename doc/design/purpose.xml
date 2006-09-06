@@ -7,7 +7,7 @@
 		for PDF documents manipulation. It doesn't bring precise code or 
 	    classes description and rather provides with ideas and general
 	    information to understand implementation. If somebody wants to
-	    follow in implementation or understand current state he/she 
+	    use or reuse this project or understand current state he/she 
 	    should start with this document and then follow with 
 	    automatically generated doxygen programming documentation.
 	</para>
