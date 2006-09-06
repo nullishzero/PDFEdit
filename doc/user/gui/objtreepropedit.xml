@@ -1,32 +1,54 @@
 <chapter id="gui_objtreepropedit_id" xreflabel="objects tree and property editor">
 	<title>Object tree, Stream, Selection and Property editor</title>
 	<para>
-	  The right part of PdfEditor is called <emphasis>Object tree</emphasis> and <emphasis>Property editor</emphasis>. 
+	  The right side of PdfEditor consists of two main parts <emphasis>Object tree</emphasis> and <emphasis>Property editor</emphasis>. 
+	  It can be further specialized to <emphasis>Selection</emphasis> and <emphasis>Stream</emphasis> windows.
 	</para>
 	
 	<para>
-	  Pdf file consists of objects which form a tree-like structure. There are several simple objects (null, boolean, integer, 
-	  real, string, name, reference) and few complex (array, dictionary, stream).
+	  Pdf file consists of objects which form a tree-like structure. There are seven simple objects 
+	  <itemizedlist mark="opencircle">
+		<listitem><para>null</para></listitem>
+		<listitem><para>boolean</para></listitem>
+		<listitem><para>integer</para></listitem>
+		<listitem><para>real</para></listitem>
+		<listitem><para>string</para></listitem>
+		<listitem><para>name</para></listitem>
+		<listitem><para>reference</para></listitem>
+	  </itemizedlist>
+	  and three complex
+	  <itemizedlist mark="opencircle">
+		<listitem><para>array</para></listitem>
+		<listitem><para>dictionary</para></listitem>
+		<listitem><para>stream</para></listitem>
+	  </itemizedlist>
 	  Object tree displays the tree-like object hierarchy starting at the most important objects and 
 	  Property editor displays the contents of selected object in human readable form and allows editing the objects in raw form.
 	</para>
 	 
 	<para>
-	  Object tree is not the only tool which shows pdf objects. Specialized tools are used to show some special objects more clearly.
-	  The content stream is shown in Stream window and selected operators from a content stream are shown in Selection 
-	  window.
+	  There is one important object called content stream which consists of many small operators and their operands. Everything visible
+	  on a page is in these content streams. Pdf operators are the objects that contorl what is displayed on a page.
+	  The content stream is shown in Stream window in human editable form.
+    </para>
+	  
+	<para>
+	Last tool used to display objects is the Selection window. When some operators are selected using selection modes, those operators
+	are displayed in the Selection window.
+	</para>
+	  
       <mediaobject>
-		  <imageobject><imagedata fileref="images/propedit_all.png" format="PNG"/></imageobject>
+		  <imageobject><imagedata fileref="gui/images/propedit_all.png" format="PNG"/></imageobject>
 		  <caption><para>Object tree, Stream, Selection and Property editor</para></caption>
       </mediaobject>
-	</para>
 
 	<sect1>
 	<title>Purpose and usage</title>
 	<para>
 	  The purpose of the these windows is enabling complete control over pdf objects and structure of a pdf file. 
-	  It allows editing raw objects which mostly requires knowledge of the pdf standard.
-	  It also shows raw structure of a pdf file. 
+	  It shows raw pdf objects in user friendly way with the possibility to traverse the objects using the tree like
+	  structure, select special category of operators and perform operation on resulting set, see exactly which operators
+	  were selected using graphical selection tools. It also allows editing raw objects which mostly requires knowledge of the pdf standard.
 	 </para>
 	 <para>
 	  We gain complete control over pdf file with this tool. It can be used for 
@@ -42,32 +64,50 @@
 	<title>Controls</title>
 	<para>
 	There are two ways how to to open, close and select objects. We can use either mouse or arrows. Up/down is used to 
-	go one object above/below current and right/left is used to open/close complext objects.
+	go one object above/below current and right/left is used to open/close complex objects. When an object is selected
+	mouse right click opens a menu with operations we can perform on the object according to its type.
+	  <mediaobject>
+		  <imageobject><imagedata fileref="gui/images/propedit_rclick.png" format="PNG"/></imageobject>
+		  <caption><para>Mouse right click menu</para></caption>
+	  </mediaobject>
 	</para>
 	</sect1>
 
 	<sect1>
 	<title>Object tree</title>
 	<para>
+	There are many special objects. You can specify which of them to display and which not. And whether crucial objects
+	should be locked to changes.
+	In menu click Tools->Options and select Object tree tab. In order to take effect reload the object tree.
+	  <mediaobject>
+		  <imageobject><imagedata fileref="gui/images/propedit_opt_objtree.png" format="PNG"/></imageobject>
+		  <caption><para>Object tree display options</para></caption>
+	  </mediaobject>
 	</para>
 
 		<sect2>
-		<title>Type of object</title>
+		<title>Property mode</title>
 		<para>
+		Many pdf objects are compulsory or must contain required entries or have specified values. Incompetent manipulation
+		with these objects can result in invalid pdf files or non predictable output. Therefore a mode is assigned to every
+		property which indicates the importance of the property. There are 
+
+	 <itemizedlist mark="opencircle">
+		<listitem><para>Unknown - mode not known</para></listitem>
+		<listitem><para>Normal - normal property, editing should not harm</para></listitem>
+		<listitem><para>Hidden - not crucial property, editing should not harm</para></listitem>
+		<listitem><para>Read only - not property, manual editing does not make sense</para></listitem>
+		<listitem><para>Advanced - crucial property, incompetent editing can make harm </para></listitem>
+	  </itemizedlist>
+		When mouse cursor is over a property the property mode is displayed as text in the status bar. Hidden, read only and advanced
+		tincture property colour to blue, gray and red. It depends on the theme used.
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_type.png" format="PNG"/></imageobject>
-			  <caption><para>Visualization of object type</para></caption>
+			  <imageobject><imagedata fileref="gui/images/propedit_impor.png" format="PNG"/></imageobject>
+			  <caption><para>Visualization of object mode</para></caption>
 		  </mediaobject>
 		</para>
-		</sect2>
-
-		<sect2>
-		<title>Importance of object</title>
 		<para>
-		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_impor.png" format="PNG"/></imageobject>
-			  <caption><para>Visualization of object importance</para></caption>
-		  </mediaobject>
+		These settings are stored in <emphasis>mode.conf</emphasis> file which can be easily modified to match user own pdf skills.
 		</para>
 		</sect2>
 
@@ -88,8 +128,11 @@
 		<sect2>
 		<title>Editing properties</title>
 		<para>
+		Each pdf object has simple value or set of values which can be changed. Almost all pdf operators have
+		operands which are normal pdf objects which can be changed. We do not implicitly allow to change object types (e.g. integer
+		object to string etc.) but this can be done by deleting and adding desired property type.
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_edit.png" format="PNG"/></imageobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_edit.png" format="PNG"/></imageobject>
 			  <caption><para>Editing a property</para></caption>
 		  </mediaobject>
 		</para>
@@ -107,7 +150,7 @@
 		<para>
 
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_text_selection.png" format="PNG"/></imageobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_text_selection.png" format="PNG"/></imageobject>
 			  <caption><para>Text selection</para></caption>
 		  </mediaobject>
 		</para>
@@ -117,7 +160,7 @@
 		<title>Graphical objects selection</title>
 		<para>
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_gfx_selection.png" format="PNG"/></imageobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_gfx_selection.png" format="PNG"/></imageobject>
 			  <caption><para>Graphical object selection</para></caption>
 		  </mediaobject>
 		</para>
@@ -128,7 +171,7 @@
 		<para>
 		
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_multiselection.png" format="PNG"/></imageobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_multiselection.png" format="PNG"/></imageobject>
 			  <caption><para>Multiselection</para></caption>
 		  </mediaobject>
 		</para>
@@ -140,8 +183,11 @@
 	<sect1>
 	<title>Stream</title>
 	<para>
+	Page is drawn by executing operations which are equal to small changes. These changes are stored in content stream of a page.
+	You can display these operations by clicking Pages->Page #->Stream # in Object tree. New tab is displayed which shows pdf operators
+	and their operands.
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_stream.png" format="PNG"/></imageobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_stream.png" format="PNG"/></imageobject>
 			  <caption><para>Stream</para></caption>
 		  </mediaobject>
 	</para>
@@ -149,8 +195,34 @@
 		<sect2>
 		<title>Operator description</title>
 		<para>
+		As mentioned above, operators control what is displayed on a page. For advanced editing, it is crucial to be able
+		to change them. For non advanced users the operator tags are not very intuitive so a human description of each operator
+		is shown in the status bar.
 		  <mediaobject>
-			  <imageobject><imagedata fileref="images/propedit_op_desc.png" format="PNG"/></imageobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_op_desc.png" format="PNG"/></imageobject>
+			  <caption><para>Operator description</para></caption>
+		  </mediaobject>
+		</para>
+		<para>
+		The definition of the operators is stored in <emphasis>operator.hint</emphasis> and can be edited freely.
+		</para>
+		</sect2>
+
+		<sect2>
+		<title>Operator modes</title>
+		<para>
+		There many operators but only few worth changing manually. To allow fast search of these operators, operator modes were
+		designed. After selecting one of the operator modes in Stream window, only those operators are shown. Currently there are
+		four operator modes
+		 <itemizedlist mark="opencircle">
+			<listitem><para>operators</para></listitem>
+			<listitem><para>text operators</para></listitem>
+			<listitem><para>font operators</para></listitem>
+			<listitem><para>graphical objects iterators</para></listitem>
+		  </itemizedlist>
+
+		  <mediaobject>
+			  <imageobject><imagedata fileref="gui/images/propedit_op_modes.png" format="PNG"/></imageobject>
 			  <caption><para>Operator description</para></caption>
 		  </mediaobject>
 		</para>
