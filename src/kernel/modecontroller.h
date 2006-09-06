@@ -5,6 +5,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2006/09/06 14:18:31  hockm0bm
+ * typo fix
+ *
  * Revision 1.15  2006/06/29 20:44:05  hockm0bm
  * doc update
  *
@@ -184,7 +187,7 @@ public:
 	 * PRIO2 priority.
 	 * <li>original={type, name} - rule matches if original==rule with
 	 * PRIO3 priority.
-	 * <li> PRIO0 &lt PRIO1 &lt PRIO2 &lt PRIO3
+	 * <li> PRIO0 &lt; PRIO1 &lt; PRIO2 &lt; PRIO3
 	 * </ul>
 	 *
 	 * @return true if given rule matches original, false otherwise.
