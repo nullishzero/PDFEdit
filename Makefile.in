@@ -6,7 +6,7 @@
 all: src doc
 
 #install PDF editor
-install: all
+install: src
 	cd src && make install
 
 #make documentation

@@ -54,6 +54,7 @@ src/xpdf/xpdf/pdftoppm
 src/xpdf/xpdf/pdftops
 src/xpdf/xpdf/pdftotext
 src/xpdf/xpdf/xpdf
+test/docbook
 test/documents
 test/documents/*.pdf
 test/gui-misc/misc
