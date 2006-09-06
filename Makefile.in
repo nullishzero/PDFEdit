@@ -9,6 +9,10 @@ all: src doc
 install: src
 	cd src && make install
 
+#uninstall PDF editor
+uninstall: 
+	cd src && make uninstall
+
 #make documentation
 #GNU make is required to build documentation, BSD make will not work
 #GNU make is installed sometimes as gmake, sometimes as make
