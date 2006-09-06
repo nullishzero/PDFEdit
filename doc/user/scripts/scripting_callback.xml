@@ -51,6 +51,12 @@
     This function is called after changing to another page in the preview window.
    </para>
   </sect1>
+  <sect1 id="onPageDelete">
+   <title>onPageDelete()</title>
+   <para>
+    This function is called after pressing "delete" key while in preview window
+   </para>
+  </sect1>
   <sect1 id="onPageRightClick">
    <title>onPageRightClick()</title>
    <para>
