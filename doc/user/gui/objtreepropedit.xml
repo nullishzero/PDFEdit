@@ -113,7 +113,7 @@
 		<para>
 		This feature is for very advanced users. Object tree can be used to to add and delete objects, stream and selection 
 		to delete objects. User can choose the type of object which to add. Deletion of pdf operator operands is not allowed 
-		because in most cases the result would be invalid content stream.
+		because in most cases the result would be an invalid content stream.
 		</para>
 		
 		<sect2>
@@ -233,7 +233,7 @@
 		<title>Editing properties</title>
 		<para>
 		Each pdf object has simple value or set of values which can be changed. Almost all pdf operators have
-		operands which are normal pdf objects which can be changed. We do not implicitly allow to change object types (e.g. integer
+		operands which are normal pdf objects which can be changed. Implicit changing of object types is not allowed (e.g. integer
 		object to string etc.) but this can be done by deleting and adding desired property type. When changing integer object only
 		integers are accepted, when changing boolean values only true/false is accepted etc.
 		  <mediaobject>
@@ -349,7 +349,7 @@
 
 		  <mediaobject>
 			  <imageobject><imagedata fileref="gui/images/propedit_op_modes.png" format="PNG"/></imageobject>
-			  <caption><para>Operator description</para></caption>
+			  <caption><para>Operator modes</para></caption>
 		  </mediaobject>
 		</para>
 		</sect2>
