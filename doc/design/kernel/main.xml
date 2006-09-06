@@ -13,7 +13,7 @@
 		pdf document, its high level entities (like pages, outlines and
 		annotations) and all properties of entities. All these objects keeps
 		document logic inside and provides interface for higher layer for
-		simple manipulation. Those higher layers (GUI and script in our case)
+		simple manipulation. Higher layers (GUI and script in our case)
 		should use only these objects to get or change document related
 		information.
 	</para>
@@ -68,11 +68,11 @@
 	</para>
 	<para>
 		Following chapters will focus more deeply on particular parts of kernel
-		stuff. At first all classes which are used as interface objects for 
+		stuff. At first, all classes which are used as interface objects for 
 		higher layers are described. Then some kernel classes which are not 
 		part of interface but they are used internally by interface classes.
-		Finally there is description how document changes are handled and
-		revision changing.
+		Finally there is description how document changes and revisions are
+		handled.
 	</para>
 
 	&kernel_interface_objects;
