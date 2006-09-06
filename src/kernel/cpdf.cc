@@ -3,6 +3,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.77  2006/09/06 19:08:17  hockm0bm
+ * * bug fixed
+ *         PageTreeNodeObserver::notify
+ *         - doesn't check consolidatePageTree return value
+ *         - as a result, page count is not invalidated and
+ *           so not synchronized with current state
+ *         - fix - if method returns with false, pdf->pageCount is set to 0
+ *
  * Revision 1.76  2006/09/06 00:17:08  hockm0bm
  * bug fix 44
  * - typo error - oldValue was check whether it is array instead of newValue
@@ -1639,7 +1647,10 @@ using namespace observer;
 		if(isDict(interNodeProp))
 		{
 			shared_ptr<CDict> interNode=IProperty::getSmartCObjectPtr<CDict>(interNodeProp);
-			pdf->consolidatePageTree(interNode, true);
+			// if consolidatePageTree hasn't kept page count numbers, total number
+			// of pages must be invalidated
+			if(!pdf->consolidatePageTree(interNode, true))
+				pdf->pageCount=0;
 		}
 	}catch(...)
 	{
