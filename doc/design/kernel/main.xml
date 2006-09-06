@@ -25,9 +25,9 @@
 			<listitem>
 				<para>
 				<emphasis>High level</emphasis> objects - which wrapps pdf high
-				level entities, such as pages (CPage TODO link), annotations
-				(CAnnotation TODO link), outlines (COutline TODO link), whole
-				document (CPdf TODO link). 
+				level entities, such as pages (<xref linkend="kernel_part_cxref"/>), annotations
+				(<xref linkend="kernel_part_cannotation"/>), outlines, whole
+				document (<xref linkend="kernel_part_cpdf"/>). 
 				</para>
 				<para>
 				Each object has certain properties which are defined by pdf
@@ -35,7 +35,7 @@
 				objects form. If pdf entity contains other high level entity in
 				its substructure (like pages contains annotations etc.), this
 				entity is responsible for creation and maintainance of such 
-				high level object. CPdf (TODO link) is then root of all high 
+				high level object. CPdf is then root of all high 
 				level objects.
 				</para>
 			</listitem>

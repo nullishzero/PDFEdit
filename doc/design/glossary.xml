@@ -217,11 +217,19 @@ Example:
 		</mediaobject>
 		</glossdef>
 	</glossentry> 
-	<glossentry id="trailer">
-		<glossterm>Pdf trailer</glossterm>
+	<glossentry id="stream">
+		<glossterm>pdf stream</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			todo
+		</para>
+		</glossdef>
+	</glossentry> 
+	<glossentry id="trailer">
+		<glossterm>pdf trailer</glossterm>
+		<glossdef>
+		<para>
+			todo
 		</para>
 		</glossdef>
 	</glossentry> 
