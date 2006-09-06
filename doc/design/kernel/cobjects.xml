@@ -130,7 +130,7 @@
 <sect2>
 	 <title>Changing objects</title>
 	  <para>
-                  Every object can be obtained from CXref (see <xref linkend="kernel_part_cxref"/>) when knowing its reference number and then changed using iproperty interface.
+                  Every object can be obtained from <classname>CXref</classname> (see <xref linkend="kernel_part_cxref"/>) when knowing its reference number and then changed using iproperty interface.
 	  Internal state of special object (cpage, ccontentstream, etc.) depends on these raw objects. 
 	  Therefore a mechanism was designed to allow special object to be notified about raw changes. Objects implement subject interface from
 	  Observer design pattern<xref linkend="observer" /> which allows everyone to register observers on these objects. 
