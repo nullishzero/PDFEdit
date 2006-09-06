@@ -18,8 +18,9 @@
 	  manipulate with file in document scope of view. All internal objects 
 	  used for particular purposes are hidden from class user and CPdf 
 	  provides interface for manipulation with it (as an example, CPdf uses
-	  <xref linkend="kernel_part_xrefwriter"/> which enables making changes
-	  to document, but exports only <xref linkend="kernel_part_cxref"/> 
+	  <classname>XRefWriter</classname> (see <xref linkend="kernel_part_xrefwriter"/>) 
+	  which enables making changes to document, but exports only
+	  <classname>CXref</classname> (see <xref linkend="kernel_part_cxref"/>)
 	  which enables just objects fetching - almost same interface as Xpdf 
 	  <classname>XRef</classname> class).
   </para>
@@ -47,8 +48,8 @@
   <sect2>
     <title>Properties changing and revision handling</title>
     <para>
-		All changes to the document are done using <xref linkend="kernel_part_xrefwriter"/> as 
-		described in <xref linkend="kernel_part_layers_ch"/>. Additional
+		All changes to the document are done using
+		<classname>XRefWriter</classname> as described in <xref linkend="kernel_part_layers_ch"/>. Additional
         logic and responsibility of CPdf in this direction is to make adpater
 		from <classname>IProperty</classname> interface of property to xpdf Object required by 
 		<classname>XRefWriter</classname>. Even more it also provides interface to get indirect
