@@ -22,7 +22,7 @@
      convention is to keep following format:
 	part_chaptername
 -->
-<!ENTITY gui_menuAndToolbarsFun		SYSTEM    "gui/menuAndToolbarsFun.xml">
+<!ENTITY gui_menuAndToolbarsFun		SYSTEM    "gui/menuAndToolbarsFun/main.xml">
 <!ENTITY gui_settings				SYSTEM    "gui/settings.xml">
 <!ENTITY gui_command				SYSTEM    "gui/command.xml">
 <!ENTITY gui_pagespace				SYSTEM    "gui/pagespace.xml">
@@ -47,13 +47,27 @@
 <!ENTITY gui_settings_toolbars		SYSTEM    "gui/settings_toolbars.xml">
 <!ENTITY gui_settings_lookandfeel	SYSTEM    "gui/settings_lookandfeel.xml">
 
-<!ENTITY gui_menuAndToolbarsFun_file		SYSTEM    "gui/menuAndToolbarsFun_file.xml">
-<!ENTITY gui_menuAndToolbarsFun_view		SYSTEM    "gui/menuAndToolbarsFun_view.xml">
-<!ENTITY gui_menuAndToolbarsFun_tools		SYSTEM    "gui/menuAndToolbarsFun_tools.xml">
-<!ENTITY gui_menuAndToolbarsFun_page		SYSTEM    "gui/menuAndToolbarsFun_page.xml">
-<!ENTITY gui_menuAndToolbarsFun_edit		SYSTEM    "gui/menuAndToolbarsFun_edit.xml">
-<!ENTITY gui_menuAndToolbarsFun_help		SYSTEM    "gui/menuAndToolbarsFun_help.xml">
-<!ENTITY gui_menuAndToolbarsFun_toolbars	SYSTEM    "gui/menuAndToolbarsFun_toolbars.xml">
+<!ENTITY gui_menu			SYSTEM    "gui/menuAndToolbarsFun/menu.xml">
+<!ENTITY gui_menu_file		SYSTEM    "gui/menuAndToolbarsFun/menu_file.xml">
+<!ENTITY gui_menu_view		SYSTEM    "gui/menuAndToolbarsFun/menu_view.xml">
+<!ENTITY gui_menu_tools		SYSTEM    "gui/menuAndToolbarsFun/menu_tools.xml">
+<!ENTITY gui_menu_page		SYSTEM    "gui/menuAndToolbarsFun/menu_page.xml">
+<!ENTITY gui_menu_edit		SYSTEM    "gui/menuAndToolbarsFun/menu_edit.xml">
+<!ENTITY gui_menu_help		SYSTEM    "gui/menuAndToolbarsFun/menu_help.xml">
+
+<!ENTITY gui_toolbars					SYSTEM    "gui/menuAndToolbarsFun/toolbars.xml">
+<!ENTITY gui_toolbars_selectionModes	SYSTEM    "gui/menuAndToolbarsFun/toolbars_selectionModes.xml">
+
+<!ENTITY gui_onclickFunctions						SYSTEM    "gui/menuAndToolbarsFun/functions.xml">
+<!ENTITY gui_onclickFunctions_selectAll				SYSTEM    "gui/menuAndToolbarsFun/functions_selectAll.xml">
+<!ENTITY gui_onclickFunctions_selectGraphicalOp		SYSTEM    "gui/menuAndToolbarsFun/functions_selectGraphicalOp.xml">
+<!ENTITY gui_onclickFunctions_selectText			SYSTEM    "gui/menuAndToolbarsFun/functions_selectText.xml">
+<!ENTITY gui_onclickFunctions_selectAnnotations		SYSTEM    "gui/menuAndToolbarsFun/functions_selectAnnotations.xml">
+<!ENTITY gui_onclickFunctions_drawLine				SYSTEM    "gui/menuAndToolbarsFun/functions_drawLine.xml">
+<!ENTITY gui_onclickFunctions_drawRect				SYSTEM    "gui/menuAndToolbarsFun/functions_drawRect.xml">
+<!ENTITY gui_onclickFunctions_addText				SYSTEM    "gui/menuAndToolbarsFun/functions_addText.xml">
+<!ENTITY gui_onclickFunctions_strikeThrough			SYSTEM    "gui/menuAndToolbarsFun/functions_strikeThrough.xml">
+<!ENTITY gui_onclickFunctions_highlightingText		SYSTEM    "gui/menuAndToolbarsFun/functions_highlightingText.xml">
 
 <!ENTITY qsa_util	SYSTEM    "scripts/qsa-util.xml">
 <!ENTITY qsa_dialog	SYSTEM    "scripts/qsa-inputdialog.xml">
