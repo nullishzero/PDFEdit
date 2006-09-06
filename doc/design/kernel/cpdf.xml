@@ -4,9 +4,9 @@
   <title>CPdf</title>
   <para>
         CPdf class is main pdf document class. It maintains document content 
-        using XRefWriter field, document catalog PDF dictionary and provides 
+		using <classname>XRefWriter</classname> field, document catalog PDF dictionary and provides 
 		other specialized highlevel objects such as CPage (see <xref linkend="kernel_part_cpage"/>) 
-		and COutline.
+		and <classname>COutline</classname>.
   </para>
   <para>
         Main responsibility is to keep all objects (it provides) synchronized 
@@ -21,7 +21,7 @@
 	  <xref linkend="kernel_part_xrefwriter"/> which enables making changes
 	  to document, but exports only <xref linkend="kernel_part_cxref"/> 
 	  which enables just objects fetching - almost same interface as Xpdf 
-	  XRef class).
+	  <classname>XRef</classname> class).
   </para>
   <sect2>
     <title>Instance life cycle</title>
@@ -50,8 +50,8 @@
 		All changes to the document are done using <xref linkend="kernel_part_xrefwriter"/> as 
 		described in <xref linkend="kernel_part_layers_ch"/>. Additional
         logic and responsibility of CPdf in this direction is to make adpater
-        from IProperty interface of property to xpdf Object required by 
-        XRefWriter. Even more it also provides interface to get indirect
+		from <classname>IProperty</classname> interface of property to xpdf Object required by 
+		<classname>XRefWriter</classname>. Even more it also provides interface to get indirect
         objects in IProperty form. This means that it obscures low level 
         information about who is doing parsing and storing and what data
         types are used. Also guaranties that all indirect properties are
@@ -68,9 +68,9 @@
     <para>
         Revision handling is done similar way but in this case without any 
         special logic. Revision changing and geting current revision or 
-        cloning is directly delegated to XRefWriter. If document save
+		cloning is directly delegated to <classname>XRefWriter</classname>. If document save
         is required, just checks whether mode is not read only and delegates
-        the rest to XRefWriter
+		the rest to <classname>XRefWriter</classname>
     </para>
   </sect2>
   <sect2>
@@ -84,7 +84,7 @@
 				E. g. Pdf describes page as dictionary which contains all 
 				neccessary information for page (page attributes), its position
 				in page tree (reference to parent tree node) and its content 
-				stored in <xref linkend="content_stream"/>. CPage then uses 
+				stored in <xref linkend="content_stream"/>. <classname>CPage</classname> then uses 
 				this dictionary for its initialization and provides logic for
 				this dictionary.
 			</para>
