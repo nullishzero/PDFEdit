@@ -19,7 +19,7 @@ html_help_dir=../../src/gui/help
 pdf_docs_all=$(html_docs_all:.html=.pdf)
 
 #generated documentation
-html_help_docs=$(addprefix $(html_help_dir)/,$(html_docs))
+html_help_docs=$(addprefix $(html_help_dir)/,$(html_docs)) $(html_help_dir)/pdfedit.html
 docs_no_pdf=$(html_docs_all) pdfedit.1 $(html_help_docs)
 docs=$(docs_no_pdf) $(pdf_docs_all)
 
@@ -47,7 +47,7 @@ keyboard.xml: $(TOOL_DIR)/kbd_gen.pl ../../src/gui/pdfeditrc keyboard-src.xml
 cs/keyboard.xml: $(TOOL_DIR)/kbd_gen.pl ../../src/gui/pdfeditrc cs/keyboard-src.xml
 	$(TOOL_DIR)/kbd_gen.pl <../../src/gui/pdfeditrc cs/keyboard-src.xml ../../src/gui/lang/pdfedit_cs.ts >cs/keyboard.xml
 
-pdfedit.xml: cmdline/description.xml cmdline/localization.xml
+pdfedit.xml: cmdline/pdfedit.head cmdline/description.xml cmdline/localization.xml cmdline/pdfedit.tail
 	cat $+ >$@
 
 # special rules rule for generating docbook XML from .leaf files (some tex-like Trolltech format)
