@@ -267,7 +267,7 @@
 		<para>
 			New special iterator can be easily created from the base iterator just by
 			inheriting and overloading one function which selects valid items.
-			Example of special iterators can be found in <xref linkend="pdfoperatorsiterator_chapter"/>.
+			Example of special iterators can be found in <xref linkend="kernel_part_pdfoperatorsiterator"/>.
 		</para>
 
 		<mediaobject>

@@ -36,8 +36,8 @@
  
   <sect2><title>Encoding filter design</title>
   <para>
-  The idea behind filtering streams is quite simple and common so instead of reinventing the wheel we use boost <xref linkend="boost" /> 
-  filtering iostreams <xref linkend="boost_iostreams" /> which give us a very nice filtering input/output concept. 
+  The idea behind filtering streams is quite simple and common so we use boost 
+  filtering iostreams which give us a very nice filtering input/output concept. 
   Filtering stream consists of filters and devices. A device can be 
   either a sink(input) a or a source(output). We need just buffer encoding so we use only sources (devices you can read from). 
   We can connect arbitrary number of filters to source. When we read from a filtering input stream, the read call is delegated through 

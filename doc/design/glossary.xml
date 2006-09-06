@@ -139,7 +139,7 @@ Example:
 		</glossdef>
 	</glossentry> 
 	<glossentry id="iterator">
-		<glossterm>Iterator desing pattern</glossterm>
+		<glossterm>Iterator design pattern</glossterm>
 		<glossdef>
 		<para>
 			TODO

@@ -49,7 +49,7 @@
 		 xpdf code. Design is not very good, because all value types are stored
 		 in this one object (even more in one union in Object class) and real
 		 value type is then identified by enumeration Object type (returned by 
-		 getType method). We consider this desing not very good because this 
+		 getType method). We consider this design not very good because this 
 		 doesn't prevent user from bad usage and different value type can be 
 		 obtained than really stored (no internal checking is done and so on).
 		 Nevertheless this behavior is kept, because change would require whole
