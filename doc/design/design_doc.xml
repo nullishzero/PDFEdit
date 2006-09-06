@@ -45,6 +45,8 @@
 <!ENTITY kernel_contentstream     SYSTEM        "kernel/ccontentstream.xml">
 <!ENTITY kernel_filters     SYSTEM        "kernel/filters.xml">
 <!ENTITY kernel_observers     SYSTEM        "kernel/observers.xml">
+<!ENTITY kernel_pdfoperators     SYSTEM        "kernel/pdfoperators.xml">
+<!ENTITY kernel_stateupdater     SYSTEM        "kernel/stateupdater.xml">
 
 <!-- Entities used generally in whole book. Entities may (and should) refer to 
      term definition (definition of term should be defined in glossary part 

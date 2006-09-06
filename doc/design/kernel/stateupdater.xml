@@ -2,7 +2,7 @@
 	jmisutka (2006/08/11)
 -->
 
-<chapter id="stateupdater_chapter">
+<sect1 id="kernel_part_stateupdater_chapter">
         <title>Graphical state</title>
         <para>
 		Content stream is a sequence of operations which alter graphical state. We
@@ -19,7 +19,7 @@
 		code is just copied from xpdf.
         </para>
 
-		<sect1>
+		<sect2>
 		<title>Obtaining information after every operator</title>
 		<para>
 		Each pdf operator has its function which alters the graphical state appropriately. The mechanism
@@ -29,22 +29,22 @@
 
 		<mediaobject>
 		  <imageobject>
-		   <imagedata fileref="images/stateupdater.png" format="PNG"/>
+                          <imagedata fileref="kernel/images/stateupdater.png" format="PNG"/>
 		  </imageobject>
 		  <textobject><phrase>StateUpdater class</phrase></textobject>
 		  <caption><para>StateUpdater class</para></caption>
 		</mediaobject>
 		</para>
 		
-			 <sect2>
+			 <sect3>
 			 <title>Setting operator bounding boxes</title>
 			 <para>
 			 Kernel supplies a special functor to the stateupdater, which gets called after every operation 
 			 with infromation about the rectangle the operator used. The functor sets this rectangle as the 
 			 bounding box of the operator.
 			 </para>
-			 </sect2>
+			 </sect3>
 
-		</sect1>
-</chapter>
+		</sect2>
+</sect1>
 

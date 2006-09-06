@@ -1,11 +1,4 @@
- <!--  
-	jmisutka (2006/08/12)
-		TODO: 
-			o replace <xref linkend.. with real entity definitions
-			o add reference to pdfoperatoriterator
--->
-
-<chapter id="pdfoperators_chapter">
+<sect1 id="kernel_part_pdfoperators">
   
   <title>Operators</title>
   <para>
@@ -16,7 +9,7 @@
 	  If no content stream is avaliable (or is empty) the approperiate page is empty. 
   </para>
   
- <sect1><title>PdfOperators</title>
+ <sect2><title>PdfOperators</title>
   <para>
   Content stream consists of operators and their operands. Operators can be
   either simple or composite objects. The requirement for processing operators sequentially
@@ -24,49 +17,90 @@
   
   	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/pdfoperators.png" format="PNG"/>
+                  <imagedata fileref="kernel/images/pdfoperators.png" format="PNG"/>
 	  </imageobject>
 	  <textobject><phrase>Operator overview</phrase></textobject>
 	  <caption><para>Operator overview</para></caption>
 	</mediaobject>
 
   </para>
-  </sect1>
+  </sect2>
 
- <sect1><title>Changing pdf operators</title>
+ <sect2><title>Changing pdf operators</title>
  <para>
   Changing the visible object properties means wrap those objects into other objects. Object can depend on previous
   objects. We need to be able to iterate backwards.
   Summarizing these requirements with human readable representation of operators leads to these decisions: 
 	<itemizedlist mark="circle">
 	<listitem><para>sequentially processing the list, the order has to be the same as in the file we edit - 
-	Iterator design pattern<xref linkend="iterator" /></para>
+	<xref linkend="iterator" /></para>
 	</listitem>
-	<listitem><para>grouping and wrapping operators - Component design pattern<xref linkend="component" /> and 
-	specific Decorator design pattern<xref linkend="decorator" /></para>
+	<listitem><para>grouping and wrapping operators - <xref linkend="component" /> and 
+	specific <xref linkend="decorator" /></para>
 	</listitem>
 	</itemizedlist>
 	The first requirement is needed when simulating the display process of an pdf viewer (e.g. when 
-	finding out the absolute position of an operator). The Component design pattern <xref linkend="component" /> used in 
+	finding out the absolute position of an operator). <xref linkend="component" /> used in 
 	representation of pdf operators
 	is very useful, when changing objects (e.g. changing an existing text object to composite is very easy allowing us to 
-	add some special formatting). This becomes very useful with the Decorator design pattern<xref linkend="decorator" />
+	add some special formatting). This becomes very useful with the <xref linkend="decorator" />
 	which allows us to change this object in conjuction with previous changes.
 	
 	<mediaobject>
 	  <imageobject>
-	   <imagedata fileref="images/pdfoperatorexample.png" format="PNG"/>
+                  <imagedata fileref="kernel/images/pdfoperatorexample.png" format="PNG"/>
 	  </imageobject>
 	  <textobject><phrase>Example of changed pdf operator</phrase></textobject>
 	  <caption><para>Example of changed pdf operator</para></caption>
 	</mediaobject>
   </para>
-  </sect1>
+  </sect2>
   
-  <sect1><title>Traversing operators</title>
-  <para>
-  See pdf operator iterator.
-  </para>
-  </sect1>
+ </sect1>
+ 
+<sect1 id="kernel_part_pdfoperatorsiterator_chapter">
 
- </chapter>
+    <title>Pdfoperator iterator</title>
+    <para>
+	<xref linkend="iterator" /> allows us to iterate over items. When designed correctly
+	specific iterator can be added easily. 
+    </para>
+
+	<sect2>
+	<title>PdfOperatorIterator</title>
+	<para>
+	Pdf operator iterator is a bidirectional iterator over PdfOperator objects.
+	This iterator is special. The information about next and previous object is stored in the object itself. 
+	This iterator works with smart pointers which brings us the problem of dependency cycle and objects would
+	not get deallocated. This was solved by introducing another type of smart pointer which can handle this.
+	
+	It is very similar to a normal bidirectional linked list. The iterator class holds the information whether it is before the 
+	beginning, after the end or at a valid item.  
+	</para>
+	</sect2>
+	
+	<sect2>
+	<title>Extending iterator</title>
+	<para>
+	Basic iterator class implements one Template method. Specific iterators are created by
+	overloading this method. It decides whether an item is valid or not.
+	There are two important children of the base iterator class. 
+	  <itemizedlist mark="opencircle">
+		<listitem><para>AcceptingPdfOperatorIterator class</para></listitem>
+		<listitem><para>RejectingPdfOperatorIterator class</para></listitem>
+	  </itemizedlist>
+	
+	These two classes either accept a set or operators or accept everything except those iterators. Extending these classes 
+	requires only defining the set of operators. 
+  	  
+	  <mediaobject>
+		  <imageobject>
+                          <imagedata fileref="kernel/images/pdfoperatoriterator.png" format="PNG"/>
+		  </imageobject>
+		  <textobject><phrase>Pdf operator iterators overview</phrase></textobject>
+		  <caption><para>Pdf operator iterators overview</para></caption>
+		</mediaobject>
+	</para>
+	</sect2>	
+	
+</sect1>
