@@ -34,6 +34,8 @@ clean:
 scripts/scripting.xml: scripts/scripting-src.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
+scripting.xml: scripts/scripting.xml
+
 appendix.xml: appendix-src.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
