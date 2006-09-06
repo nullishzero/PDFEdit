@@ -61,8 +61,8 @@ doc_design_images.path	= $$DOC_PATH/design/images
 doc_design_images.files	= ../../doc/design/images/*.png
 
 # Man page installed in man path (typically /usr/share/man/man1)
-man.path	= $$MAN_PATH
-man.file	= ../../doc/user/*.1
+pdfedit_manual.path	= $$MAN_PATH
+pdfedit_manual.files	= ../../doc/user/pdfedit.1
 
 #Binary file installed in binary path (typically /usr/bin)
 pdfedit.path    = $$BIN_PATH
@@ -71,8 +71,8 @@ pdfedit.files   = pdfedit
 #List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
 INSTALLS += doc doc_images doc_kernel_images doc_design doc_design_images doc_gui_images doc_gui_m_images
-INSTALLS += man
 INSTALLS += pdfedit
+INSTALLS += pdfedit_manual
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator
