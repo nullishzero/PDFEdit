@@ -30,14 +30,15 @@
   in that way. Property part is without any logic and enables making
   changes which are not covered by special objects. This advantage and
   extensibility is payed by additional synchronization. 
-  <note>Property tree doesn't know the way how it was changed).</note>
+  <note>Property tree doesn't know the way how it was changed.</note>
 </para>
 
 <sect2>
 <title>Page tree synchronization</title>
 <para>
      Page tree, as mentiont above, can be changed from property site of 
-     view by making changes directly to the tree or by CPdf using 
+	 view by making changes directly to the <xref linkend="page_tree"/> 
+	 or by CPdf using 
 <programlisting>
 	CPdf::insertPage
 	Cpdf::removePage
@@ -47,7 +48,47 @@
      any kind of data can be supplied.
 </para>
 <para>
-	To handle this situation <emphasis>TODO</emphasis>
+	Synchronization is guarantied by 3 internal
+	<footnote>
+	<para>
+		Classes are internal because they need access to CPdf internals, such as
+		pageList and protected methods for page tree and page list
+		consolidation.
+	</para>
+	</footnote>
+	classes which implements <emphasis>IObserver</emphasis> interface. 
+	To make their logic easier, each observer is specialized for one 
+	type of change. So that we have
+	<itemizedlist>
+		<listitem>
+			<emphasis>PageTreeRootObserver</emphasis> - which is registered on
+			Pages entry in <xref linkend="document_catalog"/>. If this 
+			value changes, we have to throw away and invalidate all pages
+			which were returned until now.
+		</listitem>
+		<listitem>
+			<emphasis>PageTreeNodeObserver</emphasis> - which is registered on
+			all intermediate nodes. If any of node's dictionary is changed,
+			checks whether it is entry which may affect page tree (Kids, Count
+			or Parent properties are added, removed, or their value is changed).
+			it has to invalidate all subtree of this node.
+		</listitem>
+		<listitem>
+			<emphasis>PageTreeKidsObserver</emphasis> - which is registered on
+			all elements of intermediate node's Kids array. If any of this 
+			element changes its value (they all should be referencies to Pages 
+			or Page dictionary), original node has to be invalidated and also 
+			its children if it is intermediate node.
+		</listitem>
+	</itemizedlist>
+	Whenever Kids array changes and as a result subtree of intermediate node is
+	changed, Count entry in node's dictionary has to be changed too and
+	propagated to the page tree root. 
+</para>
+<para>
+	All this stuff is implemented by <emphasis>consolidatePageTree</emphasis>
+	and <emphasis>consolidatePageList</emphasis> methods in CPdf. For more
+	implementation details, please see doxygen documentation.
 </para>
 </sect2>
 </sect1>
