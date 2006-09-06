@@ -1,6 +1,9 @@
 <part id="cmdline_part">
   <title>Command line</title>
   <para>
+   All commandline parameters are also described on editor manpage,
+   which is installed with the program.
+   To see the manpage, type command: <command>man pdfedit</command>.
   </para>
 
  &cmdline_description;
