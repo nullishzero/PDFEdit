@@ -63,7 +63,12 @@ Example:
 		<glossterm>ECMAScript</glossterm>
 		<glossdef>
 		<para>
-			TODO
+		ECMAScript is programming language, similar to Javascript (which is in fact extension of ECMAScript).
+		The language is standardized by Ecma International as Standard ECMA-262, also approved as ISO/IEC 16262.
+		For more details, see the specification:
+                </para>
+                <para>
+                <ulink url="http://www.ecma-international.org/publications/files/ecma-st/ECMA-262.pdf">ECMAScript Language Specification, 3rd edition (December 1999)</ulink>
 		</para>
 		</glossdef>
 	</glossentry> 

@@ -68,7 +68,7 @@
 <!ENTITY docbook_link_dtd '<ulink url="http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">DTD</ulink>'>
 
 <!ENTITY facade "Fascade design pattern <xref linkend='fascade' />">
-<!ENTITY version "1.0">
+<!ENTITY version	SYSTEM	"../user/version.xml">
 
 <!-- end of entities declaration -->
 ]>
