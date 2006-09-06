@@ -74,3 +74,7 @@ distclean:
 # Installation
 install:
 	cd gui && make install
+
+# Uninstallation
+uninstall:
+	cd gui && make uninstall
