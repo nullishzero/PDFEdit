@@ -60,7 +60,15 @@ Example:
 		<glossterm>Content stream</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			A content stream is a PDF stream object whose data consists of a
+			sequence of instructions describing the graphical elements to be 
+			painted on a page. The instructions are represented in the form 
+			of PDF objects, using the same object syntax as in the rest of the
+			PDF document. However, whereas the document as a whole is a static,
+			random-access data structure, the objects in the content stream 
+			are intended to be interpreted and acted upon sequentially.
+      		Each page of a document is represented by one or more content 
+			streams.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -68,7 +76,18 @@ Example:
 		<glossterm>Cross reference table</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The cross-reference table contains information that permits 
+			random access to indirect objects within the file so that the 
+			entire file need not be read to locate any particular object. The
+			table contains a one-line entry for each indirect object, 
+			specifying the location of that object within the body of the 
+			file. (Beginning with PDF 1.5, some or all of the cross-reference
+			information may alternatively be contained in cross-reference 
+			streams; see Pdf specification Section 3.4.7, (Cross-Reference 
+			Streams).
+			The cross-reference table is the only part of a PDF file with a 
+			fixed format, which permits entries in the table to be accessed 
+			randomly.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -108,7 +127,12 @@ Example:
 		<glossterm>Pdf dictionary data type</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			A dictionary object is an associative table containing pairs of 
+			objects, known as the dictionary's entries. The first element of 
+			each entry is the key and the second element is the value. The 
+			key must be a name (unlike dictionary keys in PostScript, which 
+			may be objects of any type). The value can be any kind of object,
+      		including another dictionary.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -116,7 +140,16 @@ Example:
 		<glossterm>Pdf document catalog</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The root of a document's object hierarchy is the catalog 
+			dictionary, located by means of the Root entry in the trailer of 
+			the PDF file (see Pdf specification Section 3.4.4, File Trailer). 
+			The catalog contains references to other objects defining the 
+			document's contents, outline, article threads (PDF 1.1), named 
+			destinations, and other attributes. In addition, it contains 
+			information about how the document should be displayed on the 
+			screen, such as whether its outline and thumbnail page images
+      		should be displayed automatically and whether some location other 
+			than the first page should be shown when the document is opened.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -173,7 +206,8 @@ Example:
 			purpose of the GPL is to grant any user the right to copy, modify and 
 			redistribute programs and source code from developers that have chosen 
 			to license their work under the GPL. See <ulink url="http://en.wikipedia.org/wiki/GPL">GPL wiki</ulink> 
-			for more information. TODO link to complete licence
+			for more information. 
+			<ulink url="http://www.gnu.org/licenses/gpl.html">Licence</ulink>
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -181,7 +215,11 @@ Example:
 		<glossterm>Incremental update</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			The contents of a PDF file can be updated incrementally without 
+			rewriting the entire file. Changes are appended to the end of the 
+			file, leaving its original contents intact. Each such incremental
+			update adds new cross reference section with trailer and so new
+			revision of document.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -189,7 +227,29 @@ Example:
 		<glossterm>Indirect pdf object</glossterm>
 		<glossdef>
 		<para>
-			TODO
+			Any object in a PDF file may be labeled as an indirect object. This
+			gives the object a unique object identifier by which other objects 
+			can refer to it (for example, as an element of an array or as the 
+			value of a dictionary entry). The object identifier consists of two 
+			parts:
+			<itemizedlist>
+				<listitem>
+        			A positive integer object number. Indirect objects are often
+					numbered sequentially within a PDF file, but this is not 
+					required; object numbers may be assigned in any arbitrary 
+					order.
+				</listitem>
+				<listitem>
+        			A non-negative integer generation number. In a newly
+					created file, all indirect objects have generation numbers 
+					of 0. Nonzero generation numbers may be introduced when the 
+					file is later updated
+				</listitem>
+			</itemizedlist>
+			Together, the combination of an object number and a generation 
+			number uniquely identifies an indirect object. The object retains 
+			the same object number and generation number throughout its 
+			existence, even if its value is modified. 
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -225,13 +285,13 @@ Example:
 		<glossterm>Linearized pdf document</glossterm>
 		<glossdef>
 		<para>
-			Linearized document is specially optimized pdf document for quick
-			viewing without need to have whole document at the time when viewing
-			starts.
-		</para>
-		<para>
-			All objects related for first page (or fiew pages) are stored in
-			first 1024 bytes and TODO
+			A Linearized PDF file is a file that has been organized in a special
+			way to enable efficient incremental access in a network environment. 
+			The file is valid PDF in all respects, and is compatible with all 
+			existing viewers and other PDF applications. Enhanced viewer 
+			applications can recognize that a PDF file has been linearized and 
+			can take advantage of that organization (as well as added hint 
+			information) to enhance viewing performance.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -305,7 +365,13 @@ Example:
 		<glossterm>pdf stream</glossterm>
 		<glossdef>
 		<para>
-			todo
+			A stream object, like a string object, is a sequence of bytes.
+			However, a PDF application can read a stream incrementally, 
+			while a string must be read in its entirety. Furthermore, 
+			a stream can be of unlimited length, whereas a string is subject 
+			to an implementation limit. For this reason, objects with 
+			potentially large amounts of data, such as images and page 
+			descriptions, are represented as streams.
 		</para>
 		</glossdef>
 	</glossentry> 
@@ -313,7 +379,12 @@ Example:
 		<glossterm>pdf trailer</glossterm>
 		<glossdef>
 		<para>
-			todo
+			The trailer of a PDF file enables an application reading the file
+			to quickly find the cross-reference table and certain special 
+			objects. It is represented by dictionary and it is stored at the
+			file end. It contains entries for document root (<xref linkend="document_catalog"/>),
+			previous cross reference section and others (see Pdf specifiaction
+			section 3.4.4.).
 		</para>
 		</glossdef>
 	</glossentry> 
