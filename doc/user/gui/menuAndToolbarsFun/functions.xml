@@ -1,0 +1,24 @@
+<sect1>
+		<title>Functions in menu and toolbars</title>
+		<para>
+				Following functions are calling from menu and toolbars and provide
+				user friendly enviroments for simple editing pdf documents.
+		</para>
+
+		<sect2>
+				<title>Selection modes</title>
+				&gui_onclickFunctions_selectAll;
+				&gui_onclickFunctions_selectGraphicalOp;
+				&gui_onclickFunctions_selectText;
+				&gui_onclickFunctions_selectAnnotations;
+		</sect2>
+		<sect2>
+				<title>Drawing and adding new objects</title>
+				&gui_onclickFunctions_drawLine;
+				&gui_onclickFunctions_drawRect;
+				&gui_onclickFunctions_addText;
+				&gui_onclickFunctions_strikeThrough;
+				&gui_onclickFunctions_highlightingText;
+		</sect2>
+		TODO
+</sect1>

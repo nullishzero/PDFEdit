@@ -1,0 +1,55 @@
+<sect1 id="gui_menu_Tools" xreflabel="menu item Tools">
+	<title>Tools</title>
+	<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_tools.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Default menu item - Tools</phrase>
+				</textobject>
+				<caption><para>Default menu item <emphasis>Tools</emphasis></para></caption>
+			</mediaobject>
+	</para>
+
+	<variablelist>
+		<title>Tools - description of items </title>
+
+		<varlistentry>
+			<term>Options</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Insert pages from other document</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Delinearize</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+	</variablelist>
+</sect1>

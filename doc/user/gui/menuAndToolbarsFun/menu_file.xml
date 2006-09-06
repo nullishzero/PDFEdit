@@ -1,0 +1,106 @@
+<sect1 id="gui_menu_File" xreflabel="menu item File">
+	<title>File</title>
+	<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_file.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Default menu item - File</phrase>
+				</textobject>
+				<caption><para>Default menu item <emphasis>File</emphasis></para></caption>
+			</mediaobject>
+	</para>
+
+	<variablelist>
+		<title>File - description of items </title>
+
+		<varlistentry>
+			<term>Open...</term>
+			<listitem>
+				<para>
+						If is now opened document and last changes in the document
+						are not saved, execute question dialog to decide what doing with
+						nonsaved changes. Otherwise close opened file and execute
+						standard open dialog to choose pdf file which are to be opening.
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>fnc_load()</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Save</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Save copy...</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Save new revision</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>New window</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Close window</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Quit</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+	</variablelist>
+</sect1>

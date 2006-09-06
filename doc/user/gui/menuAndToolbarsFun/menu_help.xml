@@ -1,0 +1,55 @@
+<sect1 id="gui_menu_Help" xreflabel="menu item Help">
+	<title>Help</title>
+	<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_help.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Default menu item - Help</phrase>
+				</textobject>
+				<caption><para>Default menu item <emphasis>Help</emphasis></para></caption>
+			</mediaobject>
+	</para>
+
+	<variablelist>
+		<title>Help - description of items </title>
+
+		<varlistentry>
+			<term>About</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Help</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Menu item from test plugin</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+	</variablelist>
+</sect1>

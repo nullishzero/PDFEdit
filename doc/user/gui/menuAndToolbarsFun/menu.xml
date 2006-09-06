@@ -1,0 +1,10 @@
+<sect1>
+
+	&gui_menu_file;
+	&gui_menu_view;
+	&gui_menu_tools;
+	&gui_menu_page;
+	&gui_menu_edit;
+	&gui_menu_help;
+
+</sect1>

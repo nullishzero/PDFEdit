@@ -1,0 +1,140 @@
+<sect1 id="gui_menu_Edit" xreflabel="menu item Edit">
+	<title>Edit</title>
+	<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_edit.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Default menu item - Edit</phrase>
+				</textobject>
+				<caption><para>Default menu item <emphasis>Edit</emphasis></para></caption>
+			</mediaobject>
+	</para>
+
+	<variablelist>
+		<title>Edit - description of items </title>
+
+		<varlistentry>
+			<term>Select all objects</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Select graphical operators</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Select text</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Select annotations</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Set color</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Set font</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Set relative position of operator</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Change relative position</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Set line dash style</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Set line width</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+	</variablelist>
+	TODO
+</sect1>

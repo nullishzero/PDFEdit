@@ -1,0 +1,176 @@
+<sect1 id="gui_menu_Page" xreflabel="menu item Page">
+	<title>Page</title>
+	<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_page.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Default menu item - Page</phrase>
+				</textobject>
+				<caption><para>Default menu item <emphasis>Page</emphasis></para></caption>
+			</mediaobject>
+	</para>
+
+	<variablelist>
+		<title>Page - description of items </title>
+
+		<varlistentry>
+			<term>Save page as image...</term>
+			<listitem>
+				<para>
+						Save page to image file. For more details see <xref linkend="gui_pagespace_popupmenu"/>.
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>savePageImage( false )</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Reload page</term>
+			<listitem>
+				<para>
+						Reload page and information about count pages in opened document.
+						For more details see <xref linkend="gui_pagespace_refresh"/>.
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>go()</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Extract text from page</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Rotate page 270 degrees</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Rotate page 90 degrees</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Edit page metrics</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Add system font to page</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Set page transformation matrix</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Draw line</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Draw rectangle</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Add text</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Strike through</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+		<varlistentry>
+			<term>Highlighting text</term>
+			<listitem>
+				<para>
+						TODO
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>TODO</emphasis>
+				</para>
+			</listitem>
+		</varlistentry>
+
+	</variablelist>
+</sect1>
