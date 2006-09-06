@@ -1,8 +1,139 @@
 <chapter id="gui_objtreepropedit_id" xreflabel="objects tree and property editor">
-	<title>Obcets tree and Property editor</title>
+	<title>Object tree, Stream, Selection and Property editor</title>
 	<para>
-			TODO
+	  The right part of PdfEditor is called <emphasis>Object tree</emphasis> and <emphasis>Property editor</emphasis>. 
+	  Pdf file consists of objects which form a tree-like structure. There are several simple objects (null, boolean, integer, 
+	  real, string, name, reference) and few complex (array, dictionary, stream).
+	  Object tree displays the tree-like object hierarchy starting at the most important objects and 
+	  Property editor displays the contents of selected object in human readable form.
+      <mediaobject>
+		  <imageobject><imagedata fileref="images/propedit_all.png" format="PNG"/></imageobject>
+		  <caption><para>Object tree and Property editor</para></caption>
+      </mediaobject>
 	</para>
 
-	TODO
+	<sect1>
+	<title>Usage</title>
+	<para>
+	</para>
+	</sect1>
+
+	<sect1>
+	<title>Controls</title>
+	<para>
+	</para>
+	</sect1>
+
+	<sect1>
+	<title>Object tree</title>
+	<para>
+	</para>
+
+		<sect2>
+		<title>Type of object</title>
+		<para>
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_type.png" format="PNG"/></imageobject>
+			  <caption><para>Visualization of object type</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+		<sect2>
+		<title>Importance of object</title>
+		<para>
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_impor.png" format="PNG"/></imageobject>
+			  <caption><para>Visualization of object importance</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+
+		<sect2>
+		<title>Adding and deleting properties</title>
+		<para>
+		</para>
+		</sect2>
+	
+	</sect1>
+	
+	<sect1>
+	<title>Property editor</title>
+	<para>
+	</para>
+
+		<sect2>
+		<title>Editing properties</title>
+		<para>
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_edit.png" format="PNG"/></imageobject>
+			  <caption><para>Editing a property</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+	</sect1>
+
+	<sect1>
+	<title>Selection</title>
+	<para>
+	</para>
+
+		<sect2>
+		<title>Text selection</title>
+		<para>
+
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_text_selection.png" format="PNG"/></imageobject>
+			  <caption><para>Text selection</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+		<sect2>
+		<title>Graphical objects selection</title>
+		<para>
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_gfx_selection.png" format="PNG"/></imageobject>
+			  <caption><para>Graphical object selection</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+		<sect2>
+		<title>Multiselection</title>
+		<para>
+		
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_multiselection.png" format="PNG"/></imageobject>
+			  <caption><para>Multiselection</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+
+	</sect1>
+
+	<sect1>
+	<title>Stream</title>
+	<para>
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_stream.png" format="PNG"/></imageobject>
+			  <caption><para>Stream</para></caption>
+		  </mediaobject>
+	</para>
+
+		<sect2>
+		<title>Operator description</title>
+		<para>
+		  <mediaobject>
+			  <imageobject><imagedata fileref="images/propedit_op_desc.png" format="PNG"/></imageobject>
+			  <caption><para>Operator description</para></caption>
+		  </mediaobject>
+		</para>
+		</sect2>
+
+	</sect1>
+
 </chapter>
