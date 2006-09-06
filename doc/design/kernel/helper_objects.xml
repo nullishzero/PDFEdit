@@ -17,8 +17,6 @@
 
 	&kernel_progressobserver;
 
-	<!-- TODO these two maybe belongs to interface_objects -->
 	&kernel_stateupdater;
 
-	&kernel_pdfoperators;
 </chapter>

@@ -96,12 +96,6 @@
 <sect1>
 	<title>Observers in CPage</title>
 	<sect2>
-		<title>Observer for content stream</title>
-		<para>
-			TODO Jozo - describe Observer implementation - maybe some image whould be good 
-		</para>
-	</sect2>
-	<sect2>
 		<title>Observer for annotation</title>
 		<para>
 			CPage stores all CAnnotation instance from its Annots array in 
@@ -123,6 +117,7 @@
 	</sect2>
 </sect1>
 
+<!--
 <sect1 id="kernel_part_ccontentstream_observers">
 	<title>Observers in CContentStream</title>
 	<para>
@@ -130,3 +125,5 @@
 		implementation - maybe some image whould be good 
 	</para>
 </sect1>
+-->
+
