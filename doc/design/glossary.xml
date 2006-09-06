@@ -59,6 +59,14 @@ Example:
 		</para>
 		</glossdef>
 	</glossentry> 
+	<glossentry id="ecmascript">
+		<glossterm>ECMAScript</glossterm>
+		<glossdef>
+		<para>
+			TODO
+		</para>
+		</glossdef>
+	</glossentry> 
 	<glossentry id="dictionary">
 		<glossterm>Pdf dictionary data type</glossterm>
 		<glossdef>

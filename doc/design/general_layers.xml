@@ -35,7 +35,7 @@
 	</para>
 	<para> 
 		Script layer is based on &qsa_link_index; - Qt script for applications,
-		scripting langage based on ECMAScript, developed by Trolltech. 
+		scripting langage based on <xref linkend="ecmascript"/>, developed by Trolltech. 
 	</para>
 	<para>
 		Gui layer uses &qt_link_index; framework also developed by Trolltech. 
