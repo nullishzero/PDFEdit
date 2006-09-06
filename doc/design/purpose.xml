@@ -9,7 +9,7 @@
 	    information to understand implementation. If somebody wants to
 	    follow in implementation or understand current state he/she 
 	    should start with this document and then follow with 
-	    automatically generated programming documentation.
+	    automatically generated doxygen programming documentation.
 	</para>
 	<sect1>
 	    <title>Document organization</title>
@@ -36,11 +36,6 @@
 			terms in whole document.
 		    </listitem>
 		</itemizedlist>
-	    </para>
-	</sect1>
-	<sect1>
-	    <title>Conventions</title>
-	    <para>
 	    </para>
 	</sect1>
 </part>
