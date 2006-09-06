@@ -1,15 +1,15 @@
 <sect1 id="gui_menu_Tools" xreflabel="menu item Tools">
 	<title>Tools</title>
 	<para>
-			<mediaobject>
-				<imageobject>
-					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_tools.png" format="PNG"/>
-				</imageobject>
-				<textobject>
-					<phrase>Default menu item - Tools</phrase>
-				</textobject>
-				<caption><para>Default menu item <emphasis>Tools</emphasis></para></caption>
-			</mediaobject>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="gui/menuAndToolbarsFun/images/menu_tools.png" format="PNG"/>
+            </imageobject>
+            <textobject>
+                <phrase>Default menu item - Tools</phrase>
+            </textobject>
+            <caption><para>Default menu item <emphasis>Tools</emphasis></para></caption>
+        </mediaobject>
 	</para>
 
 	<variablelist>
@@ -19,10 +19,11 @@
 			<term>Options</term>
 			<listitem>
 				<para>
-						TODO
+                                        This menu item opens options dialog.
+                                        TODO link
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+				        Scripts equivalent: <emphasis>options()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -31,10 +32,46 @@
 			<term>Insert pages from other document</term>
 			<listitem>
 				<para>
-						TODO
+                    This tool enables pages insertion from arbitrary pdf document. 
+                    After item is selected, dialog is opened. This dialog works 
+                    in 3 steps:
+                    <itemizedlist>
+                        <listitem>
+                        <para>
+                            Select file which pages we want to insert. When file is 
+                            selected, <emphasis>Open</emphasis> button should be 
+                            pressed. Then the midle part is enabled and current top 
+                            part is disabled (file can't be changed after Open is 
+                            pressed).
+                        </para>
+                        </listitem>
+                        <listitem>
+                        <para>
+                            Select which pages to insert from right items list 
+                            to the left list in which there are pages from current 
+                            document. Use &lt;&lt; button to move currently selected
+                            page from right list to left (before selected item in left
+                            list). If you want't to move page back, use &gt;&gt; 
+                            button. Inserted pages can be moved in left list by Up 
+                            and down buttons.
+                            <note>
+                                Original pages (in left list) can't be moved or 
+                                removed.
+                            </note>
+                            Items lists enables also multiselection
+                        </para>
+                        </listitem>
+                        <listitem>
+                                When all pages which we want to insert are on their 
+                                positions among pages from current document, press
+                                OK button for insertion start. You can press Cancel
+                                button anytime to skip this dialog.
+                                TODO add image of dialog
+                        </listitem>
+                    </itemizedlist>
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+					Scripts equivalent: <emphasis>mergeDocument()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -43,10 +80,16 @@
 			<term>Delinearize</term>
 			<listitem>
 				<para>
-						TODO
+                                        This tool enables to delinearize pdf files. When menu 
+                                        option is pressed, file open dialog is displayed. 
+                                        Linearized pdf file should be selected. After open file
+                                        is selected, save dialog is opened for output (delinearized)
+                                        file. After both files are selected, delinearization process 
+                                        starts. This may fail, if input file is not linearized or it 
+                                        is not valid pdf document and process ends with error dialog.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+				        Scripts equivalent: <emphasis>delinearize_gui()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
