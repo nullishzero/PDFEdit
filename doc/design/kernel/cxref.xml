@@ -3,16 +3,16 @@
 <sect1 id="kernel_part_cxref">
 	<title>CXRef</title>
 	<para>
-		CXRef class wrapps Xpdf XRef class and provides additional functionality
+		CXRef class wrapps Xpdf <classname>XRef</classname> class and provides additional functionality
 		with same interface (see <xref linkend="wrapper"/>. It provides with
 		protected interface for making changes and internally stores changed
 		objects. When object should be fetched (<classname>fetch</classname>
 		method is called), it will check whether this object is already changed
-		and if so, uses changed value. Otherwise delegates to XRef original
+		and if so, uses changed value. Otherwise delegates to <classname>XRef</classname> original
 		implementation (this logic is kept in all methods defined in XRef).
 	</para>
 	<para>
-		CXRef inherits from XRef and so can be polymorphicaly used in xpdf code
+		CXRef inherits from <classname>XRef</classname> and so can be polymorphicaly used in xpdf code
 		and this code doesn't need any changes to use CXref functionality.
 		Aditional interface enables changes, but as we want to keep this making
 		changes under control so it is protected and so accessible only for its

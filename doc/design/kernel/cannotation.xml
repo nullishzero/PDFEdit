@@ -5,7 +5,7 @@
 	<para>
 		Annotations is interactive entity which is associated with rectangle 
 		on page. They are organized in <emphasis>Annots</emphasis> array 
-		entry in page dictionary and so CPage is responsible for returning of
+		entry in page dictionary and so <classname>CPage</classname> is responsible for returning of
 		all available annotations and also to provide interface to add new
 		annotation. 
 	</para>
@@ -21,9 +21,9 @@
 		specifies where annotation should be spreaded.
 	</para>
 	<para>
-		CAnnotation represent such annotation and provides simple interface to
+		CAnnotation represents such annotation and provides simple interface to
 		manipulate elements in annotation dictionary. It implements
-		ObserverHandler (see <xref linkend="general_utils_observers"/>) to anable user
+		<classname>ObserverHandler</classname> (see <xref linkend="general_utils_observers"/>) to anable user
 		to be informed about changes inside annotation dictionary. This class
 		provides just simple interface for internal manipulation and it is
 		intended to be base class for specific annotation types (no such

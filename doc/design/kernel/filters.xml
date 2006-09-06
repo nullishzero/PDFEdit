@@ -25,7 +25,7 @@
 	</mediaobject>
 
   Xpdf stream design is good but can be improved. The design resulted into many objects 
-  that are tightly coupled together (see picture). They can be decoupled using Facade design pattern which also
+  that are tightly coupled together (see picture). They can be decoupled using <xref linkend="facade"/> which also
   makes objects more reusable.
   
   Finally, the unclear implementation makes it difficult to use and very difficult to extend and

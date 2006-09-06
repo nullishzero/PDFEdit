@@ -3,7 +3,7 @@
 <sect1 id="kernel_part_xrefwriter">
 	<title>XRefWriter</title>
 	<para>
-		XRefWriter class inherits from CXref and provides 
+		XRefWriter class inherits from <classname>CXref</classname> and provides 
 		<itemizedlist>
 			<listitem>
 				public interface for making changes and storing them to the
@@ -19,9 +19,9 @@
 				<listitem><emphasis>paranoid</emphasis> mode forces paranoiCheck method
 						call in changeObject method. This checks whether given reference
 						is known and given object is compared with current one by 
-						CXref::typeSafe method. If checking doesn't fail, object can be
+						<classname>CXref::typeSafe</classname> method. If checking doesn't fail, object can be
 						changed and delegates the rest of the work to the 
-						CXRef::changeObject implementation.
+						<classname>CXRef::changeObject</classname> implementation.
 				</listitem>
 				<listitem><emphasis>easy</emphasis> mode doesn't do any kind of 
 						checking. This is not very safe, but if class user knows what 
@@ -34,19 +34,21 @@
     <para>
         XRefWriter responsibility is to enable writing changes to the XRef's stream 
         to make them visible after all required changes are finished. To separate 
-        from concrete implementation of storing, XRefWriter uses IPdfWriter 
+        from concrete implementation of storing, XRefWriter uses
+		<classname>IPdfWriter</classname> 
         abstract interface for object writing. Concrete implementation can be 
-        set in runtime and OldStylePdfWriter is used by default. XRefWriter 
+		set in runtime and <classname>OldStylePdfWriter</classname> is used by default. XRefWriter 
         is just responsible to provide with all changed objects which are 
         retrieved from lower (CXref) layer (mapping is protected). 
 	</para>
 	<para>
-		Underlaying stream with data which is stored in XRef supertype is typed
-		as a Stream (see <xref linkend="general_xpdf_stream"/>.
+		Underlaying stream with data which is stored in <classname>XRef</classname> supertype is typed
+		as a <classname>Stream</classname> (see <xref linkend="general_xpdf_stream"/>.
 		<classname>IPdfWriter</classname> requires
 		<classname>StreamWriter</classname> (see <xref linkend="general_xpdf_changes"/>).
-		So XRefWriter uses StreamWriter implementator in constructor and
-		XRef use this Stream when fetching objects and IPdfWriter uses it when
+		So XRefWriter uses <classname>StreamWriter</classname> implementator in constructor and
+		<classname>XRef</classname> use this stream when fetching objects and
+		<classname>IPdfWriter</classname> uses it when
 		writing content. 
 	</para>
      <para>
@@ -64,8 +66,8 @@
         for revision number (0 is the newest one) and value is stream offset
         of associated cross reference section start for revision. This is used
         to get information about revision - for example to get revision size
-        (see XRefWriter::getRevisionSize method) - and to enable revision 
-        changing. CXref implements
+		(see <classname>XRefWriter::getRevisionSize</classname> method) - and to enable revision 
+		changing. <classname>CXref</classname> implements
 <programlisting>
 	void CXref::reopen(size_t xrefOff);
 </programlisting>
@@ -77,13 +79,14 @@
      <para>
         PDF format is prepared for such revisions and multi version documents 
         very well, but doesn't support any kind of branching which means that
-        changes can be done only for newest revision. XRefWriter take in mind
+        changes can be done only for the newest revision. XRefWriter take in mind
         also this aspect and so all methods take care of current revision.
         This means that anytime current revision is not the newest one, changed
         objects are ignored and everything is delegated directly to the lowest
-        layer. Also all methods producing changes throws ReadOnlyDocumentException.
-        Even more all methods reimplemented by CXRef class, which depedns on 
-        changes, are omited and directly XRef implementation is used instead.
+        layer. Also all methods producing changes throws
+		<classname>ReadOnlyDocumentException</classname>.
+		Even more all methods reimplemented by <classname>CXRef</classname> class, which depedns on 
+		changes, are omited and directly <classname>XRef</classname> implementation is used instead.
      </para>
 </sect1>
 

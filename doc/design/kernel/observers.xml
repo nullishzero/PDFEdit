@@ -4,17 +4,17 @@
 <title>Observers in cobjects</title>
 <para>
   Generic observer mechanism described in <xref linkend="general_utils_observers"/> 
-  is used in our cobject implementation. IProperty base class implements
-  IObserverHandler interface and so all its descendants are responsible
+  is used in our cobject implementation. <classname>IProperty</classname> base class implements
+  <classname>IObserverHandler</classname> interface and so all its descendants are responsible
   for notifying about changes (see <xref linkend="kernel_part_cobjects"/>. 
 </para>
 <para>
-  All cobjects provides BasicChangeContext which contains previous value
+	All cobjects provides <classname>BasicChangeContext</classname> which contains previous value
   of changed one. Because complex types can add and remove its elements,
   special behaviour is specified. New value given as mandatory parameter
-  of notify method may be CNull if element is deleted from comlex type.
-  Old value in the context may also CNull if element was added. It is
-  imposible to have both of them CNull.
+  of notify method may be <classname>CNull</classname> if element is deleted from comlex type.
+  Old value in the context may also <classname>CNull</classname> if element was added. It is
+  imposible to have both of them <classname>CNull</classname>.
 </para>
 </sect1>
 

@@ -7,24 +7,26 @@
 	</para>
     <para>
         IPdfWriter writes pdf content in two phases:
-       <itemizedlist>
+		<itemizedlist>
         <listitem>Real data writing and information collecting. This is done 
-                during writeContent method. Implementator is responsible to 
-                collect all data needed for cross reference section generation.
+			during <classname>writeContent</classname> method. Implementator is responsible to 
+            collect all data needed for cross reference section generation.
         </listitem>
-        <listitem>Cross reference section writing. This is done in writeTrailer
-                method, which gets all collected data and writes cross reference
-                table (or stream - depends on implementation), writes trailer 
-                dictionary and finaly information about last xref position.
+        <listitem>Cross reference section writing. This is done in
+			<classname>writeTrailer</classname> method, which gets all 
+			collected data and writes cross reference table (or stream - 
+			depends on implementation), writes trailer dictionary and finally 
+			information about last xref position.
         </listitem>
        </itemizedlist>
         Different implementator of IPdfWriter interface can be set by 
-        XRefWriter::setPdfWriter method.
+		<classname>XRefWriter::setPdfWriter</classname> method.
     </para>
     <para>
-        Each sequence of writeContent, [writeContent, ]* writeTrailer forms new
+        Each sequence of <classname>writeContent, [writeContent, ]*
+			writeTrailer</classname> forms new
         revision of document in incremental update sense. In this moment 
-        OldStylePdfWriter implementation is used which forms old style cross 
+		<classname>OldStylePdfWriter</classname> implementation is used which forms old style cross 
         reference table (see pdf specification 2.4.3 Cross reference table
 		chapter).
     </para>

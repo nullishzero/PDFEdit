@@ -6,7 +6,7 @@
 		Pdf dictionaries referenced from <xref linkend="page_tree"/> are 
 		called page objects. These dictionaries must contain a "Type" entry 
 		and the value must be a name object equal to "Page". Page objects 
-		are basic building blocks of pdf files. Each page can be indipendent 
+		are basic building blocks of pdf files. Each page can be independent 
 		with all required information stored in its dictionary. Some of its 
 		properties can be inherited from parent pages. Page object describes 
 		the appereance of the page (witdth, length, fonts used, rotation etc.).
