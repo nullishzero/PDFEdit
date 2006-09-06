@@ -170,13 +170,58 @@
 			<title>Code and script documentation</title>
 			<para>
 				We are using &doxygen_link_index; documentation tool. This means
-				that documented parts use special format for commets. These
-				comments are then used by doxygen to create html pages (or other
-				formats).
+				that documented parts use special format for comments, where
+				the comment starts with double star, like:
+				<emphasis>/** Doxygen comment */</emphasis>. These comments are
+				then used by doxygen to create html pages (or other formats).
 			</para>
 			<para>
-				Script functions use different kind of documentation 
-				TODO Martin describe format and why it is different than 
+				Functions exported to scripting use different kind of documentation
+				in addition to doxygen comments.
+				We had to use format different from doxygen, otherwise doxygen would
+				parse our comments and we would parse doxygen comments, which would
+				lead into confusion. So, besides of ordinary doxygen comment which
+				is located above the function body in .cc file, we write extra comment
+				in corresponding .h file, that is exported to scripting API documentation.
+				Content of the comment is often similar, but often doxygen documentation
+				for programmer contain information not useful or misleading for script
+				users and vice versa.
+			</para>
+			<para>
+				Documentation for scripts are in comment with first comment character
+				being a dash (unlike another star for doxygen comments), like this comment:
+				<emphasis>/*- Comment for function */</emphasis>.
+				The comment have to be put in a header file directly above the
+				function declaration.
+				Comment for class is similar, but it have equal sign instead of dash, like:
+				<emphasis>/*= Comment for class */</emphasis>.
+				It have to be put directly above class declaration.
+			</para>
+			<para>
+				Another difference between doxygen and this format is that the
+				comment is treated as docbook code - it can contain docbook tags to
+				format the comment or insert a list or table in it, basically whetever
+				docbook code can be put between &lt;para&gt; and &lt;/para&gt; tags.
+			</para>
+			<para>
+				Among tools for generating documentation there is a perl script, which
+				will parse docbook file and all strings in format of
+				<code>&lt;!--TYPE:&nbsp;filename.h&nbsp;--&gt;</code> will be replaced by generated
+				chunk of documentation from filename.h, that will document the class in it.
+				This is used for wrapper classes, where class methods correspond to same
+				methods in scripting environment.
+				Similarly, all strings in format
+				<code>&lt;!--BASETYPE:&nbsp;filename.h&nbsp;--&gt;</code> will be replaced with
+				similarly generated doumentation chunk, except functions are assumed to
+				be static functions available to script, not methods of class contained
+				in the header file. This is used to comment the base classes
+				(<classname>Base</classname>, <classname>BaseGui</classname> and
+				<classname>BaseConsole</classname>), because slot functions in these
+				classes are exported to scripting as static functions.
+			</para>
+			<para>
+				Documentation generated this way is then treated as ordinary docbook XML
+				file. The scripting API is documented in User documentation Appendix.
 			</para>
 		</sect2>
 		<sect2>
