@@ -60,6 +60,54 @@
 	</para>
 	</sect1>
 
+    <sect1>
+	<title>Object tree start objects</title>
+	<para>
+	There are three main objects in the object tree. 
+	  <itemizedlist mark="opencircle">
+		<listitem><para>Catalog</para></listitem>
+		<listitem><para>Pages</para></listitem>
+		<listitem><para>Outlines</para></listitem>
+	  </itemizedlist>
+	Catalog object is the start point of all objects. Any object can be reached from Catalog. Pages and Outlines are just
+	shortcuts for special objects somewhere deep in Catalog object.
+	</para>
+	
+	    <sect2>
+		<title>Catalog</title>
+		<para>
+		Root object of all objects.
+			  <mediaobject>
+				  <imageobject><imagedata fileref="gui/images/propedit_catalog.png" format="PNG"/></imageobject>
+				  <caption><para>Catalog</para></caption>
+			  </mediaobject>
+		</para>
+		</sect2>	
+
+	    <sect2>
+		<title>Pages</title>
+		<para>
+		Set of all pages and it is a shortcut to all page dictionaries.
+			  <mediaobject>
+				  <imageobject><imagedata fileref="gui/images/propedit_pages.png" format="PNG"/></imageobject>
+				  <caption><para>Pages</para></caption>
+			  </mediaobject>
+		</para>
+		</sect2>
+		
+		<sect2>
+		<title>Outlines</title>
+		<para>
+		List of all outlines with the ability to edit the title.
+			  <mediaobject>
+				  <imageobject><imagedata fileref="gui/images/propedit_outlines.png" format="PNG"/></imageobject>
+				  <caption><para>Outlines</para></caption>
+			  </mediaobject>
+		</para>
+		</sect2>
+
+	</sect1>
+
 	<sect1>
 		<title>Adding and deleting objects</title>
 		<para>
@@ -127,11 +175,17 @@
 	<para>
 	There are many special objects. You can specify which of them to display and which not. And whether crucial objects
 	should be locked to changes.
+	In menu click Tools->Options and select Editor tab. In order to take effect reload the object tree.
+	  <mediaobject>
+		  <imageobject><imagedata fileref="gui/images/propedit_opt_edit.png" format="PNG"/></imageobject>
+		  <caption><para>Editor options</para></caption>
+	  </mediaobject>
 	In menu click Tools->Options and select Object tree tab. In order to take effect reload the object tree.
 	  <mediaobject>
 		  <imageobject><imagedata fileref="gui/images/propedit_opt_objtree.png" format="PNG"/></imageobject>
 		  <caption><para>Object tree display options</para></caption>
 	  </mediaobject>
+
 	</para>
 
 		<sect2>
