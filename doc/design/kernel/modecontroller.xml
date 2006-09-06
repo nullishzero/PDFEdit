@@ -3,6 +3,94 @@
 <sect1 id="kernel_part_modecontroller">
         <title>ModeController</title>
         <para>
-                TODO
+			Mode controller is class which provides us with property mode
+			configuration. Each property keeps its mode. This is just
+			information (kind of tag) which can be used by property user to
+			determine how he should present it to application user. This is not
+			any kind of restriction how property can be used. 
+		</para>
+		<para>
+			The reason why to create such mode is that Pdf has many objects 
+			which are good for changes and some of them are just technical 
+			or more they contain meta data. Changes made to meta data or 
+			technical objects may lead to total corruption of whole document 
+			with very less effort (e. g. change of reference to page tree root
+			leads to all pages lost). We didn't want to have what is possible
+			and what not logic hardcoded in kernel. So we have defined mode for
+			property and GUI which displays objects in property editor may look
+			at property mode and decide whether it provides read only, visible
+			or warning throwing access (GUI can also provide configuration how
+			each mode should be treated).
         </para>
+		<para>
+			<emphasis>ModeController</emphasis> class is responsible to provide
+			mode to property according property name (id) and the type of parent
+			type. All pdf properties are part of certain context (parent data).
+			This context may be dictionary or array or object can be indirect
+			and in so it is its own context. ModeController is based on
+			<emphasis>RulesManager</emphasis> (see <xref linkend="general_utils_rulesmanager"/>).
+			As a rule data type, we use 
+<programlisting>
+<code>
+<![CDATA[
+struct ModeRule
+{
+	std::string type;
+	std::string name;
+	bool operator==(const ModeRule & rule)const
+	{
+		return type==rule.type && name==rule.name;
+	}
+};
+]]>
+</code>
+</programlisting>
+		structure. Type stands for context type (Type field value of parent data
+		type or itself if object is indirect and so it has no parent) and name
+		stands for name of property in context. 
+	</para>
+	<para>
+		Property matcher implemented for ModeController defines 3 priorities of
+		matching with following logic:
+		<itemizedlist>
+			<listitem>original={"", ""} - rule allways matches with PRIO0 priority.
+			</listitem>
+			<listitem>original={type, ""} - rule matches if rule.type==original.type with
+			PRIO1 priority.
+			</listitem>
+			<listitem>original={"", name} - rule matches if rule.name==original.name with
+			PRIO2 priority.
+			</listitem>
+			<listitem>original={type, name} - rule matches if original==rule with
+			PRIO3 priority.
+			</listitem>
+			<listitem> PRIO0 &lt; PRIO1 &lt; PRIO2 &lt; PRIO3
+			</listitem>
+		</itemizedlist>
+		This enables to define rules with more or less general meaning and
+		explicit setting for one property.
+	</para>
+	<para>
+		Inherited RulesManager enables configuration loading from stream by
+		default. We have additionally implemented
+		<emphasis>ModeConfigurationParser</emphasis> which is able to parse
+		strings from configuration file. To be less dependant on particular
+		configuration file format, we have built it upon
+		<emphasis>StringConfigurationParser</emphasis> which simply reads 
+		key value pairs. from file and ModeConfigurationParser transforms this
+		values to its internals data types for rule and target (ModeRule and
+		Mode types). This is example of <xref linkend="adapter"/> implementation. 
+	</para>
+	<para>
+		We have written also example configuration file (TODO where is it stored?) 
+		with quite reasonablerestrictions. For more inforamtion about file 
+		format and mode types, please see project doxygen documentation for 
+		ModeController.
+	</para>
+	<mediaobject>
+	  <imageobject align="center">
+		  <imagedata fileref="kernel/images/modecontroller.png" format="PNG"/>
+	  </imageobject>
+	  <caption><para>Mode controller and related classes.</para></caption>
+	</mediaobject>
 </sect1>
