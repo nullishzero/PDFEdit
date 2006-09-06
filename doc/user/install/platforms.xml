@@ -1,4 +1,4 @@
- <chapter>
+ <section>
   <title>Tested platforms</title>
   PDF Editor has been compiled and tested on following platforms:
    <informaltable frame="none">
@@ -9,5 +9,5 @@
      <row><entry>Debian unstable x86_64</entry><entry> - ok</entry></row>
     </tbody></tgroup>
    </informaltable>
- </chapter>
+ </section>
 

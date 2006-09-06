@@ -1,4 +1,4 @@
- <chapter>
+ <section>
   <title>Required libraries</title>
   <para>
    These libraries are required to build and install PDF Editor:
@@ -10,6 +10,11 @@
     </tbody></tgroup>
    </informaltable>
    Modified version of qsa library (Qt Script for Applications), version 1.1.4 is included in the source tree
+  </para>
+  <para>
+   We tested compiling with various g++ versions - 3.x and 4.x were fine, it may compile on older versions
+   like 2.95, but it was not tested.
+   Program uses extensively RTTI, so the compiler used to build the program must support it.
   </para>
   <para>
    For building kernel tests, you need to have CPPunit installed
@@ -36,4 +41,4 @@
   <para>
    For rebuilding programmer reference, doxygen is required.
   </para>
- </chapter>
+ </section>

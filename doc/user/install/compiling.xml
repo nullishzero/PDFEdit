@@ -1,14 +1,43 @@
- <chapter>
+ <section>
   <title>Compiling and installing from source</title>
   <formalpara>
-   <title>Compiling from source</title>
-   In CVS root (or root of distribution archive)
-   type <command>make</command> to compile PDF Editor and re-genereate documentation (if needed)
+   <title>Prerequisites</title>
+   Make sure you have all needed libraries (qt3, boost and xlib) along with their headers.
+   You also need the environment variable <envar>QTDIR</envar> to be set to directory in which the Qt toolkit
+   (version 3) is installed. Many distributions already set this when installing Qt, but some
+   of them don't. In that case, you have to set the <envar>QTDIR</envar> manually. Usually it is set to
+   something like <filename>/usr/qt/3</filename> or <filename>/usr/share/qt3</filename>
+   Also, <envar>QMAKESPEC</envar> have to be set to match your system type. For most linuxes is is
+   <parameter>linux-g++</parameter>, on BSD systems it can differ. If <envar>QTDIR</envar> is set in your
+   distribution, this environment variable is probably set too. Once you set <envar>QTDIR</envar>, you may
+   try typing <command>ls $QTDIR/mkspecs</command> - <envar>QMAKESPEC</envar> need to be set to name of one
+   of the directories that are in <filename>mkspecs</filename> subdirectory in the Qt directory.
   </formalpara>
   <formalpara>
-   <title>Installing from source</title>
+   <title>Configuration</title>
+   First step is to run configuration script, it will do some checks of required libraries and environment.
+   Also, it allow to alter default settings
+   (which is that the application will be installed in /usr/local directory tree)
    In CVS root (or root of distribution archive)
-   type <command>make install</command> to install PDF Editor
+   type <command>./configure [parameters]</command> to run configuration
   </formalpara>
- </chapter>
-
+  <para>
+   With parametr <parameter>--prefix</parameter> you can specify where to install the program,
+   so if you do not have root privileges, you can install somewhere in your home directory,
+   for example by specifying <parameter>--prefix=$HOME/pdfedit</parameter> .
+   Type <command>./configure --help</command> to show all parameters of the configure script.
+  </para>
+  <formalpara>
+   <title>Compiling</title>
+   After running configure, type <command>make</command> to compile PDF Editor and re-genereate documentation
+   (if needed, in the distribution archive the documentation is already pre-generated in HTML format, if you
+   have proper tools installed (xstlproc, apache fop), then PDF version of documentation is also generated,
+   if not, it is simply skipped as it is not essential)
+  </formalpara>
+  <formalpara>
+   <title>Installing</title>
+   In CVS root (or root of distribution archive)
+   type <command>make install</command> to install PDF Editor. It will check whether the project is compiled
+   (if not, it will compile it) and install the editor.
+  </formalpara>
+ </section>
