@@ -1,4 +1,22 @@
 <sect3 id="gui_onclickFunctions_selectText" xreflabel="mode to select text">
 		<title>Selecting text</title>
-		TODO
+
+		<para>
+				This mode is usefull to selecting text on page. It's natural behaviour
+				in selecting operations. Respect line and word order on the page, but
+				only text which have hirizontal text lines.
+		</para>
+		<para>
+				Selection text in the mode is simple. Selection is started if user
+				press left button over text on page. (If is over text is seeing on cursor.
+				Over text has cursor ibeam's shape.) After draging with press left button
+				is selected text line by line. Text is selected by parts as in storing in
+				pdf documents (some documents have minimal parts of text storing as one
+				line).
+		</para>
+		<para>
+				One line of text is in mode defined same vertical position of top bounding
+				rectangle of text parts. This shows that change font or fontsize could create
+				new text line.
+		</para>
 </sect3>

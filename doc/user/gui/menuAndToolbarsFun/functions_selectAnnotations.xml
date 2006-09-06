@@ -1,4 +1,16 @@
 <sect3 id="gui_onclickFunctions_selectAnnotations" xreflabel="mode to select annotations">
 		<title>Selecting annotations</title>
-		TODO
+
+		<para>
+				This is special mode to shown and selecting anotations on page.
+				On activation its, show rectangle round every annotation (show
+				activation rectangle for each of annotations). It's very usefull,
+				because user see all annotations on page and couldn't search where
+				are they.
+		</para>
+		<para>
+				Anotations are selected one by one according as mouse cursor is over
+				them. Last annotation is selected while cursor is not over other
+				annotation or while don't press <emphasis>Esc</emphasis> key.
+		</para>
 </sect3>
