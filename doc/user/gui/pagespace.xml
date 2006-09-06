@@ -16,8 +16,8 @@
 			</mediaobject>
 	</para>
 
-	<sect1>
-			<title>Refresh information</title>
+	<sect1 id="gui_pagespace_refresh" xreflabel="refreshing page">
+			<title>Refresh page and information</title>
 			<para>
 					In page space are 2 indenpendent parts, which must be refreshing.
 			</para>
@@ -49,7 +49,7 @@
 					refresh page type <emphasis>go()</emphasis> or click to reload page button.
 			</para>
 	</sect1>
-	<sect1>
+	<sect1 id="gui_pagespace_popupmenu" xreflabel="popup menu for page space">
 			<title>Popup menu</title>
 			<para>
 					If user click to viewed page with right mouse button, popup menu will be displayed.

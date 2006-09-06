@@ -11,7 +11,7 @@
 			command console <emphasis>options()</emphasis>. Or click to options icon in toolbars.
 			<mediaobject>
 				<imageobject>
-					<imagedata fileref="gui/images/menu_tools.png" format="PNG"/>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/menu_tools.png" format="PNG"/>
 				</imageobject>
 				<textobject>
 					<phrase>Execute options dialog from menu</phrase>
