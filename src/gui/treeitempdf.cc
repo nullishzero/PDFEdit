@@ -167,7 +167,14 @@ TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QLi
   //name = Page number
   unsigned int i=name.toUInt();
   guiPrintDbg(debug::DBG_DBG,"Adding page by reload() - " << i);
-  return new TreeItemPage(data,obj->getPage(i),this,name,after);
+  try {
+   boost::shared_ptr<CPage> ourPage=obj->getPage(i);
+   return new TreeItemPage(data,ourPage,this,name,after);
+  } catch (...) {
+   //Probably a PageNotFoundException
+   //so ... someone deleted the page while we were not looking ...
+   return NULL;
+  }
  }
  if (typ==outlineItem) { //Outlines - get specific outline
   unsigned int i=name.toUInt();
@@ -187,7 +194,13 @@ bool TreeItemPdf::validChild(const QString &name,QListViewItem *oldChild) {
  TreeItemPage *itp=dynamic_cast<TreeItemPage*>(oldChild);
  if (itp) { //Is a page
   unsigned int i=name.toUInt();
-  return obj->getPage(i).get()==itp->getObject().get();
+  try {
+   return obj->getPage(i).get()==itp->getObject().get();
+  } catch (...) {
+   //Probably PageNotFoundException
+   //Someone deleted that page
+   return false;
+  }
  }
  TreeItemOutline *ito=dynamic_cast<TreeItemOutline*>(oldChild);
  if (ito) { //Is an outline
@@ -213,7 +226,13 @@ bool TreeItemPdf::deepReload(const QString &childName,QListViewItem *oldItem) {
  TreeItemPage *itp=dynamic_cast<TreeItemPage*>(oldItem);
  if (itp) { //Is a page
   unsigned int i=childName.toUInt();
-  return itp->setObject(obj->getPage(i));
+  try {
+   boost::shared_ptr<CPage> ourPage=obj->getPage(i);
+   return itp->setObject(ourPage);
+  } catch(...) {
+   //Page not found probably, so reloading failed
+   return false;
+  }
  }
  //Anything else=not supported
  return false;

@@ -153,7 +153,10 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/,bool forceReload/*=false*
   } else { //not there -> add
    x=createChild(*it,typ,before);
    if (!x) { //child item does not exist after all -> indication of major bug somewhere
-    assert(0);
+    //This can happen for example if someone does really horrible to edited PDF like deleting "kids" in page dictionary
+    //That way, page count reports 1, but no pages in fact exist. We try to handle this simply omitting that tree item
+    //It is rare, but it can happen.
+    //assert(0);
     continue;
    }
   }
