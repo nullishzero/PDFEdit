@@ -51,7 +51,7 @@
 			IConfigurationParser provides interface for underlaying stream
 			parsing where stream data can be somehow (depends on format and
 			parser implementation) transformed to <emphasis>key</emphasis>, 
-			<emphasis>value</emphasis> pair, where key stands for data
+			<emphasis>value</emphasis> pairs, where key stands for data
 			identifier and value is associated with this key.
 		</para>
 		<para>
@@ -98,7 +98,7 @@
 		</para>
 		<para>
 			Described storage with data forms RulesManager configuration. 
-			Second part is based on IRuleMatcher (implementator if this abstract
+			Second part is based on IRuleMatcher (implementator of this abstract
 			class). It has responsibility to provide logic related to rules 
 			choosing, evaluating of compatibility of rules and defining priority 
 			for rules. When findMatching method is called, matcher is considered
@@ -131,7 +131,7 @@
 		<para>
 			IObserver class which stands for observer in following context is
 			mechanism to allow announcing internal object state change to other
-			objects. Object with internal state which announces is obsever
+			objects. Object with internal state which announces is 
 			<emphasis>observer handler</emphasis> and classes which monitor
 			(observe) are called <emphasis>observers</emphasis>. This is basic
 			idea of <xref linkend="observer"/>. This implementation keeps basic 
@@ -149,19 +149,20 @@
 			change (notifyObservers method). Observers are called in order which
 			depends on their priorities and for same priorities on registration
 			order.
-			Observer handler is responsible to call this notifyObservers method
+			Observer handler is responsible to call this
+			<emphasis>notifyObservers</emphasis> method
 			whenever its internal state has changed (and he wants to announce
 			this change) and provides correct parameters for it.
 		</para>
 		<para>
 			<emphasis>Observer</emphasis> has to implement IObserver abstract
 			class. The most important to implement is notify method. This method
-			is called by <emphasis>observer handler</emphasis> when after its
+			is called by <emphasis>observer handler</emphasis> after its
 			state has changed. Observer can use given newValue parameter which
 			holds current value which has changed. Additional information can be
 			obtained from given context (see bellow). notify method can use
 			given values to update its internal state or to do additional
-			information but in any case it shouldn't modify given data (this can
+			actions but in any case it shouldn't modify given data (this can
 			leed to end less loop, because observer handler notifies about
 			change and so observer is notified again and this will never stops). 
 		</para>
@@ -175,8 +176,8 @@
 			Notifying would be rather poor if just newValue was available. So
 			our observer concept adds context to notify method. This context
 			keeps additional information. Context hierarchy is based on
-			IChangeContext abstract class. This provides just information about
-			type of context. notify implementator should check this type and
+			<emphasis>IChangeContext</emphasis> abstract class. This provides just information about
+			type of context. <emphasis>notify</emphasis> implementator should check this type and
 			cast given context to correct type and use it as needed. If observer
 			handler doesn't want to give any context, this should keep NULL
 			value.
@@ -186,12 +187,12 @@
 			needed by project. 
 			<itemizedlist>
 				<listitem>
-					BasicChangeContext - additionaly gives previous value
+					BasicChangeContext - additionally gives previous value
 					(originalValue) of newValue
 				</listitem>
 				<listitem>
 					ComplexChangeContext - inherits from BasicChangeContext and
-					additionaly gives information about value id. This can be
+					additionally gives information about value id. This can be
 					used for complex objects or containers where value is stored
 					inside and identifier is value name (in complex object
 					scope) or id (position or key) from container. We have
@@ -202,7 +203,7 @@
 				<listitem>
 					ScopedChangeContext - inherits from IChangeContext and adds
 					second template parameter for scope data type. Scope is
-					abstraction for area where current newValue change g.
+					abstraction for area where current newValue has changed.
 					We are using this context for <xref linkend="kernel_part_progress_observer"/>.
 				</listitem>
 			</itemizedlist>
@@ -218,7 +219,7 @@
 		  <caption><para>Observer concept classes</para></caption>
 		</mediaobject>
 		<para>
-			Note that all mentioned class are C++ template classes and uses data
+			Note that all mentioned classes are C++ template classes and they use data
 			type for value as template parameter. This type stands for data type
 			of value which change is announced (newValue in notify method e. g.).
 			All instances are wrapped by share_ptr (boost smart pointer) to
@@ -241,7 +242,7 @@
 			Only reaction would be (to keep contract that all observers are
 			notified) to silently ignore (or to log) exception. This could lead
 			to inconsistencies and so it is safer to forbit exceptions at all.
-			notify method implementator has to keep this in mind because, if
+			<emphasis>notify</emphasis> method implementator has to keep this in mind because, if
 			exception is thrown and it is forbiden in method signature (throw()
 			clause after method definition), program is forced to terminate by
 			default.
@@ -250,7 +251,7 @@
 	<sect1>
 		<title>Iterator</title>
 		<para>
-			Iterator is a specific implementation of Iterator design pattern.
+			Iterator is a specific implementation of <xref linkend="iterator"/>.
 			It is used to traverse an arbitrary linked list that meets few
 			requirements. Main goal of this iterator implementation is to be flexible 
 			and easily extensible because we need many special iterators
