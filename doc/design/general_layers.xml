@@ -34,14 +34,14 @@
 		logic and as such they are exported to higher layers.
 	</para>
 	<para> 
-		Script layer is base on &qsa_link_index; - Qt script for applications - 
-		developed by Trolltech. 
+		Script layer is based on &qsa_link_index; - Qt script for applications,
+		scripting langage based on ECMAScript, developed by Trolltech. 
 	</para>
 	<para>
 		Gui layer uses &qt_link_index; framework also developed by Trolltech. 
-		Most of gui parts are based on scripts. This means that user interface 
+		Most of gui parts are based on scripts, which means that user interface 
 		is very flexible and changes are possible without need of code
-		recompilation or they can be done in runtime.
+		recompilation, most changes can be done even in runtime.
 	</para>
 	<para>
 		This chapter describes PDFedit layers, their comunication interface and
@@ -87,17 +87,224 @@
 		</mediaobject>
 	</sect1>
 
-	<sect1 id="general_scripting_layer">
-		<title>Scripting layer</title>
-		<para>
-			TODO martin
-		</para>
-	</sect1>
+<sect1 id="general_scripting_layer">
+ <title>Scripting layer</title>
+ <mediaobject>
+  <imageobject><imagedata fileref="images/scripting.png" format="PNG"/></imageobject>
+  <caption><para>Scripting architecture</para></caption>
+ </mediaobject>
+ <para>
+  Scripting is base of the editor functionality.
+  Each editor window have its own script context and scripts run independently in them.
+  On creating of each window, the scripting base is constructed (<classname>BaseGUI</classname>,
+  extended by GUI specific functions from <classname>Base</classname>).
+  The <classname>Base</classname> will construct some necessary objects:
+  <itemizedlist>
+   <listitem><para><classname>QSProject</classname>
+    - QSA class for scripting project</para></listitem>
+   <listitem><para><classname>QSInterpreter</classname>
+    - script interpreter from <classname>QSProject</classname></para></listitem>
+   <listitem><para><classname>QSImporter</classname>
+    - Helper class used for adding and removing objects into scripting environment in runtime</para></listitem>
+   <listitem><para><classname>QSUtilFactory</classname>
+    - Standard QSA utility factory, provides <classname>File</classname>, <classname>Dir</classname>
+    and <classname>Process</classname> object, that will allow scripts to manipulate with files and
+    directories (reading, writing, creating, ...) and with processes (running external commands)</para></listitem>
+   <listitem><para><classname>QSInputDialogFactory</classname>
+    - Standard QSA input dialog factory, allowing scripts to create simple dialogs for requesting user
+    input</para></listitem>
+  </itemizedlist>
+  Window will set <classname>ConsoleWriter</classname> object, that will handle script output.
+  There are two classes derived from <classname>ConsoleWriter</classname>:
+  <itemizedlist>
+   <listitem><para>
+    <classname>ConsoleWriterGui</classname>, used in GUI mode, which transfers the output to command window
+   </para></listitem>
+   <listitem><para>
+    <classname>ConsoleWriterConsole</classname>, used in console mode, which simply writes the output to STDOUT.
+   </para></listitem>
+  </itemizedlist>
+  Class <classname>Base</classname> (respectively <classname>BaseGui</classname>
+  or <classname>BaseConsole</classname>) export many functions as slots. These are visible as static
+  functions in the script and they are main way of communication between the .
+  <classname>BaseCore</classname> class, from which the <classname>Base</classname> class is extended
+  does not provide any static functions, but it provides basic script functionality - garbage collection,
+  support for callback functions, running init scripts and handling of script errors.
+ </para>
+ <formalpara>
+  <title>Wrappers</title>
+  Script need to manipulate with objects in PDf and in editor. Due to the limitations of QSA,
+  every C++ object (except some basic types, such as strings, numbers and some QT types, such as QColor)
+  need to be derived from QObject to be usable in scripting and only functions exported as slots will
+  be available for script. Due to this limitation, wrappers need to exist around most objects, like
+  tree items in object tree (<classname>QSTreeItem</classname>,
+  <classname>QSTreeItemContentStream</classname>), PDF objects
+  (<classname>QSAnnotation</classname>, <classname>QSArray</classname>
+  , <classname>QSContentStream</classname>, <classname>QSDict</classname>
+  , <classname>QSIProperty</classname>, <classname>QSPage</classname>
+  , <classname>QSPdf</classname>, <classname>QSPdfOperator</classname>
+  and <classname>QSStream</classname>), class for invoking popup menus (<classname>QSMenu</classname>)
+  and helper classes related to PDF objects (<classname>QSIPropertyarray</classname>
+  ,<classname>QSPdfOperatorIterator</classname>
+  and <classname>QSPdfOperatorStack</classname>).
+  All wrappers are derived from <classname>QSCObject</classname> class, which provides
+  some basic function for memory handling and error handling.
+ </formalpara>
+ <formalpara>
+  <title>Source of script input</title>
+  <itemizedlist>
+   <listitem><para>
+    One source of script input are init scripts - they are run on application startup.
+   </para></listitem>
+   <listitem><para>
+    Another source of script input are menus and toolbars. Each menu or toolbar item have
+    some associated script code which is run when the item is activated. User can see
+    commands invoked by these scripts in teh console window.
+   </para></listitem>
+   <listitem><para>
+    Third source of script input is the preview window, as interaction with it can result in
+    script functions being called, depending on the mode of the window (different functions
+    will be called in "add new line" and "add new text" mde, for example)
+   </para></listitem>
+   <listitem><para>
+    Callbacks is anothe rsource of script input. There are some special toolbar items, which
+    either manipulate their internal state or edited document itself when interacted by user
+    (item to switch revision, select current color, edit text, item to show and edit current page number).
+    These items use callbacks to notify the script of their action, so the script may react
+    (for example reacting to another color being selected or react on text in the text edit
+    toolbar item being changed).
+   </para></listitem>
+   <listitem><para>
+    Finally, user can use the commandline and type in any script code he want to execute.
+   </para></listitem>
+  </itemizedlist>
+ </formalpara>
+ <formalpara>
+  <title>Scripting API documentation</title>
+  Description of static scripting functions, functions provided by settings and PageSpace objects and
+  description of scripting objects and their methods is included in the user documentation.
+ </formalpara>
+ <formalpara>
+  <title>Console mode</title>
+  Functionality in console mode is similar, with few exceptions:
+  <orderedlist>
+   <listitem><para><classname>BaseConsole</classname> is used instead of
+    <classname>BaseGUI</classname>. This class extend the <classname>Base</classname>
+    class with few console-specific functions.</para></listitem>
+   <listitem><para><classname>ConsoleWindow</classname> instead of
+    <classname>PDFEditWindow</classname> is used. This class provide some of the
+    functionality for running scripts on console (handling its input and output),
+    similarly as <classname>PDFEditWindow</classname> does.</para></listitem>
+   <listitem><para><classname>PageSpace</classname> object is unavailable.</para></listitem>
+   <listitem><para>There is no interactivity. Editor will run scripts,
+    as specified on commandline, and the it will exit.</para></listitem>
+  </orderedlist>
+ </formalpara>
+</sect1>
 	
-	<sect1 id="general_gui_layer">
-		<title>Gui layer</title>
-		<para>
-			TODO martin
-		</para>
-	</sect1>
+<sect1 id="general_gui_layer">
+ <title>Gui layer</title>
+ <para>
+  Basic class in GUI is <classname>PdfEditorWindow</classname>, which represent the main editor window.
+  Application can have more such windows opened, in each of them editing different document.
+  On top of the window is menubar and toolbar (although being on top is only default position,
+  user can move all toolbars as he wants, all toolbars will dock on either of four sides of the
+  editor window, or they can float outside of it).
+ </para>
+ <para>
+  All toolbars are of <classname>ToolBar</classname> class,
+  derived from QT class <classname>QToolBar</classname>.
+  The menubar is standard QT <classname>QMenuBar</classname>, although filling the menubar and also
+  toolbar with its items and maintaining them and their association to script code is responsility
+  of class <classname>Menu</classname>.
+  On bottom there is a statusbar, which can be used to show various information
+  (class <classname>StatusBar</classname>, derived from QT class <classname>QStatusBar</classname>)
+  Rest of the area not occupied by statusbar, menu and any toolbars is divided by movable splitter on left
+  and right part. Left part is divided by another splitted into part with preview window
+  (class <classname>PageSpace</classname>) on top and commandline window, providing script input and output
+  (class <classname>CommandWindow</classname>) on bottom.
+  Right part is also divided by splitter, on upper part there is object tree view
+  (class <classname>MultiTreeWindow</classname>), on lower part is property editor
+  (class <classname>PropertyEditor</classname>).
+ </para>
+ <para>
+  Every element mentioned above (except menu and the preview window) can he hidden and shown by user. Application will
+  remember the element layout (size and position of window, position of splitters and position of toolbars)
+  in settings when closing and will reopen next time with the same layout.
+ </para>
+ <para>
+  Dialogs are also part of the GUI. Many simple dialogs are handled by script, but
+  as script is unable to create more complex dialogs, some of them had to be implemented directly in C++.
+  They are:
+  <itemizedlist>
+   <listitem><para>
+    <classname>AboutWindow</classname>
+     - window showing version of editor and information about program and its authors
+   </para></listitem>
+   <listitem><para>
+    <classname>AddItemDialog</classname>
+     - Dialog invoked when adding new properties to dictionary
+       (<classname>CDict</classname>) or new elements to array
+       (<classname>CArray</classname>) in the tree view.
+   </para></listitem>
+   <listitem><para>
+    <classname>AnnotDialog</classname>
+     - Dialog invoked when creating new annotation to fill in its data
+   </para></listitem>
+   <listitem><para>
+    <classname>HelpWindow</classname>
+     - Dialog invoked for displaying help. Basically a very simple HTML browser
+   </para></listitem>
+   <listitem><para>
+    <classname>MergeDialog</classname>
+     - Dialog invoked when function "Import pages from another document" is invoked.
+     The dialog allow to select pages from another document to import and specify
+     positions at which they should be imported
+   </para></listitem>
+   <listitem><para>
+    <classname>OptionWindow</classname>
+     - Dialog for editing the user preferences interactively.
+     The options are organized into tabs, each tab containing
+     elements derived from <classname>Option</classname> class,
+     which maps one value in settings to widget for editing it.
+     Sublasses of <classname>Option</classname> are:
+     <itemizedlist>
+      <listitem><para>
+       <classname>BoolOption</classname>
+        - editing with checkbox as boolean value</para></listitem>
+      <listitem><para>
+       <classname>ComboOption</classname>
+       - editing with combobox, allowing to select from list of predefined values</para></listitem>
+      <listitem><para>
+       <classname>DialogOption</classname>
+       - generic class for editable string, with "..." button allowing to invoke dialog
+         to edit the option in some alternative and possibly more comfortable way</para></listitem>
+      <listitem><para>
+       <classname>FileOption</classname>, derived from <classname>DialogOption</classname>
+       - editing with possibility to invoke dialog to pick a filename</para></listitem>
+      <listitem><para>
+       <classname>FontOption</classname>, derived from <classname>DialogOption</classname>
+       - editing with possibility to invoke dialog to choose the font and
+         it s parameters interactively</para></listitem>
+      <listitem><para>
+       <classname>StringOption</classname>
+       - editing with classical one line edit box</para></listitem>
+      <listitem><para>
+       <classname>IntOption</classname>, derived from <classname>StringOption</classname>
+       - allowed input is limited to integer numbers</para></listitem>
+      <listitem><para>
+       <classname>RealOption</classname>, derived from <classname>StringOption</classname>
+       - allowed input is limited to real numbers</para></listitem>
+     </itemizedlist>
+     When the user presses "Ok" or "Apply" button, each of the option editing widgets
+     is asked to save its state in the corresponding option.
+   </para></listitem>
+   <listitem><para>
+    <classname>RefPropertyDialog</classname>
+     - Dialog to interactively select target for reference while adding or editing it.
+   </para></listitem>
+  </itemizedlist>
+  Also, some standard system dialogs (to pick font, color or name of file) are used.
+ </para>
+</sect1>
 </chapter>
