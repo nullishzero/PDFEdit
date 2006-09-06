@@ -1,0 +1,17 @@
+<sect2 id="gui_toolbars_dynamic" xreflabel="toolbar Dynamic">
+		<title>Dynamic</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_dynamic.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Dynamic</phrase>
+				</textobject>
+				<caption><para>Toolbar - Dynamic</para></caption>
+			</mediaobject>
+		</para>
+
+		TODO
+</sect2>

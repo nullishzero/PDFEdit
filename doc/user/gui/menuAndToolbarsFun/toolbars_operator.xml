@@ -1,0 +1,17 @@
+<sect2 id="gui_toolbars_operator" xreflabel="toolbar Operator">
+		<title>Operator</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_operator.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Operator</phrase>
+				</textobject>
+				<caption><para>Toolbar - Operator</para></caption>
+			</mediaobject>
+		</para>
+
+		TODO
+</sect2>

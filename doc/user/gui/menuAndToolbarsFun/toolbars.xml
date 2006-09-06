@@ -4,6 +4,14 @@
 			TODO
 	</para>
 
+	&gui_toolbars_main;
+	&gui_toolbars_page;
 	&gui_toolbars_selectionModes;
-	TODO
+	&gui_toolbars_draw;
+	&gui_toolbars_text;
+	&gui_toolbars_operator;
+	&gui_toolbars_dynamic;
+	&gui_toolbars_treeview;
+	&gui_toolbars_revision;
+
 </sect1>

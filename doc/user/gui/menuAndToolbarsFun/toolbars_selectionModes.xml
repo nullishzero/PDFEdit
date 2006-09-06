@@ -1,4 +1,17 @@
 <sect2 id="gui_toolbars_selectionModes" xreflabel="toolbar Selection modes">
 		<title>Selection modes</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_selectionmode.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Selection Mode</phrase>
+				</textobject>
+				<caption><para>Toolbar - Selection Mode</para></caption>
+			</mediaobject>
+		</para>
+
 		TODO
 </sect2>

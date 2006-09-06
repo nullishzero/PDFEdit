@@ -56,8 +56,16 @@
 <!ENTITY gui_menu_edit		SYSTEM    "gui/menuAndToolbarsFun/menu_edit.xml">
 <!ENTITY gui_menu_help		SYSTEM    "gui/menuAndToolbarsFun/menu_help.xml">
 
-<!ENTITY gui_toolbars					SYSTEM    "gui/menuAndToolbarsFun/toolbars.xml">
-<!ENTITY gui_toolbars_selectionModes	SYSTEM    "gui/menuAndToolbarsFun/toolbars_selectionModes.xml">
+<!ENTITY gui_toolbars					SYSTEM	"gui/menuAndToolbarsFun/toolbars.xml">
+<!ENTITY gui_toolbars_selectionModes	SYSTEM	"gui/menuAndToolbarsFun/toolbars_selectionModes.xml">
+<!ENTITY gui_toolbars_draw				SYSTEM	"gui/menuAndToolbarsFun/toolbars_draw.xml">
+<!ENTITY gui_toolbars_dynamic			SYSTEM	"gui/menuAndToolbarsFun/toolbars_dynamic.xml">
+<!ENTITY gui_toolbars_main				SYSTEM	"gui/menuAndToolbarsFun/toolbars_main.xml">
+<!ENTITY gui_toolbars_operator			SYSTEM	"gui/menuAndToolbarsFun/toolbars_operator.xml">
+<!ENTITY gui_toolbars_page				SYSTEM	"gui/menuAndToolbarsFun/toolbars_page.xml">
+<!ENTITY gui_toolbars_revision			SYSTEM	"gui/menuAndToolbarsFun/toolbars_revision.xml">
+<!ENTITY gui_toolbars_text				SYSTEM	"gui/menuAndToolbarsFun/toolbars_text.xml">
+<!ENTITY gui_toolbars_treeview			SYSTEM	"gui/menuAndToolbarsFun/toolbars_treeview.xml">
 
 <!ENTITY gui_onclickFunctions						SYSTEM    "gui/menuAndToolbarsFun/functions.xml">
 <!ENTITY gui_onclickFunctions_selectAll				SYSTEM    "gui/menuAndToolbarsFun/functions_selectAll.xml">

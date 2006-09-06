@@ -1,0 +1,17 @@
+<sect2 id="gui_toolbars_text" xreflabel="toolbar Text">
+		<title>Text</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_text.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Text</phrase>
+				</textobject>
+				<caption><para>Toolbar - Text</para></caption>
+			</mediaobject>
+		</para>
+
+		TODO
+</sect2>

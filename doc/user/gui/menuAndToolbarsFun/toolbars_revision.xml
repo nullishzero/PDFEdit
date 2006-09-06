@@ -1,0 +1,17 @@
+<sect2 id="gui_toolbars_revision" xreflabel="toolbar Revision">
+		<title>Revision</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_revision.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Revision</phrase>
+				</textobject>
+				<caption><para>Toolbar - Revision</para></caption>
+			</mediaobject>
+		</para>
+
+		TODO
+</sect2>

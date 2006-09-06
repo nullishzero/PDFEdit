@@ -1,0 +1,17 @@
+<sect2 id="gui_toolbars_treeview" xreflabel="toolbar Treeview">
+		<title>Treeview</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_treeview.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Treeview</phrase>
+				</textobject>
+				<caption><para>Toolbar - Treeview</para></caption>
+			</mediaobject>
+		</para>
+
+		TODO
+</sect2>

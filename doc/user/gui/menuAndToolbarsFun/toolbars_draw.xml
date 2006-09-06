@@ -1,0 +1,17 @@
+<sect2 id="gui_toolbars_draw" xreflabel="toolbar Draw">
+		<title>Draw</title>
+
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/menuAndToolbarsFun/images/toolbars_draw.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbar - Draw</phrase>
+				</textobject>
+				<caption><para>Toolbar - Draw</para></caption>
+			</mediaobject>
+		</para>
+
+		TODO
+</sect2>
