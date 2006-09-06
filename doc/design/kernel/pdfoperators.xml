@@ -35,12 +35,12 @@
 	<listitem><para>sequentially processing the list, the order has to be the same as in the file we edit - 
 	<xref linkend="iterator" /></para>
 	</listitem>
-	<listitem><para>grouping and wrapping operators - <xref linkend="component" /> and 
+	<listitem><para>grouping and wrapping operators - <xref linkend="composite" /> and 
 	specific <xref linkend="decorator" /></para>
 	</listitem>
 	</itemizedlist>
 	The first requirement is needed when simulating the display process of an pdf viewer (e.g. when 
-	finding out the absolute position of an operator). <xref linkend="component" /> used in 
+	finding out the absolute position of an operator). <xref linkend="composite" /> used in 
 	representation of pdf operators
 	is very useful, when changing objects (e.g. changing an existing text object to composite is very easy allowing us to 
 	add some special formatting). This becomes very useful with the <xref linkend="decorator" />

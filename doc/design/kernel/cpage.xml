@@ -28,9 +28,9 @@
 		This is the reason why cpage implements observer subject interface (see
 		<xref linkend="general_utils_observers"/>. 
 		An object can be notified if cpage changes.
-		</sect2>
+	</sect2>
 
-		<sect2>
+	<sect2>
 		<title>Changing cpage</title>
 		Page dictionary can be changed in two ways. Either by cpage methods or 
 		by requesting raw dictionary by its reference number. If we do not 
@@ -40,25 +40,25 @@
 		underlying dictionary which implements the observer subject interface.
 		This way, we know every time the dictionary is changed either by cpage 
 		or by cobject.
-		</sect2>
+	</sect2>
 
-		<sect2>
+	<sect2>
 		<title>Changing page contents</title>
 		Any change to a visible part of a page are delegated to content stream 
 		object (<xref linkend="kernel_part_ccontentstream"/>).
-		</sect2>
+	</sect2>
 
-		<sect2>
+	<sect2>
 		<title>Displaying page</title>
 		Xpdf has the best displaying engine of all tested viewers. All calls
 		to display methods are delegated to this engine. When displaying a page 
 		CPage creates xpdf Page object from its actual state. Then it uses Page
-		object method <emphasize>displaySlice()</emphasize> to display a
+		object method <emphasis>displaySlice()</emphasis> to display a
 		rectangle of a page. Xpdf creates the graphical environment for drawing
 		into an output device. Finally it draws the page into supplied device.
-		</sect2>
+	</sect2>
 
-		<sect2>
+	<sect2>
 		<title>Objects on a page</title>
 		<para>
 		Everything on a page is in its content stream(s). 
@@ -93,6 +93,6 @@
 				can be used on a page. Fonts must be present in the pdf 
 				file or they must refer to system fonts.			
 			</para>
-			</sect3>
-		</sect2>
+		</sect3>
+	</sect2>
 </sect1>
