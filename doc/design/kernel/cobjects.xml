@@ -21,7 +21,7 @@
 	  <title>General description</title>
 	  <para>
 	  CObjects are objects in pdfedit which represent objects in pdf file.
-	  All cobjects are derived from one base class IProperty. 
+          All cobjects are derived from one base class <classname>IProperty</classname>. 
 	  Objects form a tree like structure so we can divide objects into single objects (leafs) and composite objects (nodes). This
 	  is an example of <xref linkend="composite" />. 
 	  This is a different approach to xpdf implementation where each pdf object is represented by the same huge class. 
@@ -35,11 +35,11 @@
 	  
 	  There are many interesting design decisions in xpdf objects implementation. 
 	  For example memory handling makes it almost unsound to delete objects from 
-	  complex types. Memory allocation policy, that means who/when/how is to deallocate xpdf Object is a mess which could easily
+          complex types. Memory allocation policy, that means who/when/how is to deallocate xpdf <classname>Object</classname> is a mess which could easily
 	  lead to either memory leaks or memory corruption.
 
 	  The new design counted with new object for each different pdf object. Because of the pdf decoding complexity (pdf can be encoded
-	  using many filters) these objects use xpdf Object just for initializing and dispatching changes to CXref object.
+          using many filters) these objects use xpdf <classname>Object</classname> just for initializing and dispatching changes to <classname>CXref</classname> object.
 
 	  Objects can not be simply copied, because it is not clear if a copy is a deep copy with all indirect object copied or not.
 	  </para>
@@ -57,7 +57,7 @@
   <sect3>
 	  <title>Base class</title>
 	  <para>
-	  Every object is derived from one base class - IProperty. This base class is a hanger which can be used to 
+                  Every object is derived from one base class - <classname>IProperty</classname>. This base class is a hanger which can be used to 
 	  access child objects uniformly. This class is a read only interface for all properties.
 	  Objects can be created uninitialized or can be initialized from an xpdf Object of the same type and simple objects 
 	  cat be initialized directly from a value.
@@ -67,14 +67,14 @@
   <sect3>
 	  <title>Simple objects</title>
 	  <para>
-	  Simple objects are very similar. They share behaviour and because of this also method names. They are represented by one class
-	  using c++ templates. One template class, parameterized by object type, represents all 7 types of simple objects.
+	  Simple objects are very similar. They share behaviour and because of this also method names (only value keeper is different). They are represented by one class
+          using c++ templates. One template class (<classname>CObjectSimple</classname>), parameterized by object type, represents all 7 types of simple objects.
 	  </para>
   </sect3>
   <sect3>
 	  <title>Complex objects</title>
 	  <para>
-	  It is more difficult with complex types. Each complex type must contain reference to its children which are 
+	  It is more difficult with complex types. Each complex type must contain references to its children which are 
 	  also pdf objects. A design decision was made to use smart pointers for referencing child objects. The reasons are:
 	  <orderedlist numeration="arabic">
 	   <listitem>
@@ -91,7 +91,7 @@
 		 <sect4>
 			 <title>Array and dictionary</title>
 			  <para>
-			  Array store its children in a simple container indexed by position. Dictionary stores its children 
+                                  <classname>CArray</classname> stores its children in a simple container indexed by position. <classname>CDict</classname> stores its children 
 			  in container indexed by string which uniquely identifies a property. The beauty of smart pointers arise when deallocating
 			  an array, it automatically deallocates its children when not referenced and this is done recursively.
 			  </para>
