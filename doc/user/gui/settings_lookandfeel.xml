@@ -34,6 +34,16 @@
 		Select icon theme used for icons in menus and toolbars. There are two predistributed icon sets,
 		<filename>default</filename> and <filename>hicolor</filename>. adding new set is easy, just add
 		subdirectory with your icons to any directory in icon path.
+			<mediaobject>
+				<imageobject><imagedata fileref="gui/images/theme2.png" format="PNG"/></imageobject>
+				<caption><para>Default icon theme</para></caption>
+			</mediaobject>
+
+			<mediaobject>
+				<imageobject><imagedata fileref="gui/images/theme1.png" format="PNG"/></imageobject>
+				<caption><para>Hicolor icon theme</para></caption>
+			</mediaobject>
+
 	</sect2>
 	<sect2>
 		<title>Use big icons</title>
