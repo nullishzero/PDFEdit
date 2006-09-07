@@ -2,9 +2,9 @@
 	<title>Commandline tab</title>
 
 	<para>
-			Looks command editor is settings in options dialog on tab "commandline".
-			To execute options dialog click to menu on Tools/Options. Or type to
-			command editor <emphasis>options()</emphasis>. Or click to options icon in toolbars.
+			The appereance of command editor can be customized in options dialog on tab "commandline".
+			To execute options dialog click Tools/Options in menu or type <emphasis>options()</emphasis>
+			in command editor or click the options icon in toolbar.
 			<mediaobject>
 				<imageobject>
 					<imagedata fileref="gui/images/options_commandline.png" format="PNG"/>
@@ -26,23 +26,23 @@
 	<sect2>
 		<title>Show return value also for complex type</title>
 		<para>
-				This will toggle showin the return value for complex types, such as arrays,
+				This will toggle displaying the return value for complex types, such as arrays,
 				which are likely to produce lot of output, as arrays tend to be large.
 		</para>
 	</sect2>
 	<sect2>
 		<title>Show errors from event handlers</title>
 		<para>
-				This specify if you want to see error from callback handlers.
-				If there is error in callback handler that is called very often,
-				like handler for current item in tree being changes, it can produce
-				lot out output.
+				Check this if you want to see error from callback handlers.
+				If there is error in callback handler which is called very often,
+				like handler for current item in tree being changed, it can produce
+				lot of output.
 		</para>
 	</sect2>
 	<sect2>
 		<title>Show command editor</title>
 		<para>
-				This option set command editor shown, if is check.
+				If set, command editor is shown.
 				<mediaobject>
 					<imageobject>
 						<imagedata fileref="gui/images/command_options_cmdedit.png" format="PNG"/>
@@ -57,26 +57,25 @@
 	<sect2>
 		<title>Show command line</title>
 		<para>
-				This option set shown history combobox, if is check. This is usefull,
-				if user want very old histry command.
+				If set, history is displayed in a combobox. This is useful when older history commands are needed.
 		</para>
 	</sect2>
 	<sect2>
 		<title>Editable command line</title>
 		<para>
-				This option set shown editable command line in combobox of history, if is check.
-				This is usefull, if user want small space for typing command (set command editor
-				hiden).
+				If set, editable command line is shown in history combobox.
+				This is usefull when small space for typing command is needed.
+				(set command editor	hidden).
 		</para>
 	</sect2>
 	<sect2>
-		<title>History options</title>
+		<title>History option</title>
 		<para>
-				This options set where will be saved and loaded command history and how much command in the
-				past are saving.
+				If set, history is saved and loaded to the command line. You can specify the maximum number 
+				of lines to store.
 		</para>
 		<para>
-				Note: History is saving after close PDFedit's window.
+				Note: History is saved when PDFedit's window is closed.
 		</para>
 	</sect2>
 </sect1>
