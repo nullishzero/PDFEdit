@@ -2,21 +2,23 @@
 		<title>Selecting text</title>
 
 		<para>
-				This mode is usefull to selecting text on page. It's natural behaviour
-				in selecting operations. Respect line and word order on the page, but
-				only text which have hirizontal text lines.
+				This mode is useful when selecting text on page. Its natural behaviour
+				in selecting operations. Word and line order is respected on pages with
+				horizontal text lines (most of pdf files).
 		</para>
 		<para>
-				Selection text in the mode is simple. Selection is started if user
-				press left button over text on page. (If is over text is seeing on cursor.
-				Over text has cursor ibeam's shape.) After draging with press left button
-				is selected text line by line. Text is selected by parts as in storing in
-				pdf documents (some documents have minimal parts of text storing as one
-				line).
+				Text selection is very simple using this mode. The selection starts when
+				mouse left button is pressed on a text element. (If the mouse is over a text element
+				the cursor changes to ibeam.) When dragging, text is
+				selected line by line. The selection is limited in how the text elements are stored in
+				the pdf document (some documents have text elements equal to letters, to words,
+				to lines or arbitrary).
 		</para>
 		<para>
-				One line of text is in mode defined same vertical position of top bounding
-				rectangle of text parts. This shows that change font or fontsize could create
-				new text line.
+			Note:
+				When a text on one line is written using different fonts it is very likely that it will
+				be parsed into more lines. This is due to the fact that the base vertical positions are different
+				and without wild guessing it is almost impossible to distinguish between text on one with different
+				fonts and text on more lines with different fonts.
 		</para>
 </sect3>

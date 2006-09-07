@@ -2,32 +2,29 @@
 		<title>Selecting all objects</title>
 
 		<para>
-				This mode is usefull to selecting objects on page (without annotations - see
+				This mode is usefull when selecting page objects (without annotations - see
 				<xref linkend="gui_onclickFunctions_selectAnnotations"/>) which are not
 				text (see <xref linkend="gui_onclickFunctions_selectText"/>) or
 				graphical (see <xref linkend="gui_onclickFunctions_selectGraphicalOp"/>)
 				operator (line, rectangle, but not image).
 		</para>
 		<para>
-				If user has activated this mode, can select nonempty area on page with press
-				mouse left button, drag mouse and release left button. Than will be selecting
-				all objects, which are all in area selected by user.
+				When this mode is activated,nonempty areas can be selected pressing the
+				mouse left button, dragging the mouse and releasing left button. All objects within
+				selected area will be selected.
 		</para>
 		<para>
-				On only click with left mouse button to page, is selected only 1 object on the
-				page. Will be selected the top objects under mouse cursor, if no one objects
-				has been selected under cursor in relese left button moment. Otherwise will be
-				selected the first top object, which is under mouse cursur and is below actual
-				selected object. So user doesn't need to know how size required object has, and
-				select only this object.
+				When clicked only once, the one top level object on the
+				page is seleceted. If clicked again the second top most object is selected etc.
+				User doesn't need to know the size of desired object.
 		</para>
 		<para>
-				For this mode is very usefull have shown <xref linkend="gui_objtreepropedit_id"/>,
-				because usually has same size some few different objects on the page.
+				This mode is very usefull when because only few objects have the same size 
+				<xref linkend="gui_objtreepropedit_id"/>.
 		</para>
 		<para>
-				Activation this selection mode is by way of toolbar (see
-				<xref linkend="gui_toolbars_selectionModes"/>) or by way of menu (see
+				To activate this selection mode just click on appropriate place in the toolbar 
+				<xref linkend="gui_toolbars_selectionModes"/>) or select it in menu (see
 				<xref linkend="gui_menu_Edit"/>).
 		</para>
 </sect3>

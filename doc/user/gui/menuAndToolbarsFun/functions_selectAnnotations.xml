@@ -2,15 +2,16 @@
 		<title>Selecting annotations</title>
 
 		<para>
-				This is special mode to shown and selecting anotations on page.
-				On activation its, show rectangle round every annotation (show
-				activation rectangle for each of annotations). It's very usefull,
-				because user see all annotations on page and couldn't search where
-				are they.
+				This mode displayes and enables selecting of annotations on a page.
+				When activated each annotation is displayed as a rectangle (shows
+				activation rectangle for each of annotations). It's very useful
+				because user can see all the annotations on a page and does not need
+				to search for (annotations can be hidden). Only very few viewers support
+				this feature.
 		</para>
 		<para>
-				Anotations are selected one by one according as mouse cursor is over
-				them. Last annotation is selected while cursor is not over other
-				annotation or while don't press <emphasis>Esc</emphasis> key.
+				An annotations is selected when the mouse cursor is over.
+				It is selected until the mouse cursor get over another annotation or 
+				till <emphasis>Esc</emphasis> key is not pressed.
 		</para>
 </sect3>

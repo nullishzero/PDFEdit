@@ -2,7 +2,7 @@
 		<title>Selecting graphical operators</title>
 
 		<para>
-				This mode is same as <xref linkend="gui_onclickFunctions_selectAll"/> except for
-				working and selecting only graphical operators.
+				This mode is the same as <xref linkend="gui_onclickFunctions_selectAll"/> except for
+				it only selects graphical operators.
 		</para>
 </sect3>
