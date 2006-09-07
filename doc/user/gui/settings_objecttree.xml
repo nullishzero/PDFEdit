@@ -14,35 +14,35 @@
 
 	<sect2>
 			<title>Document dictionary</title>
-			This option toggle showing of main document dictionary (called "document catalog") in tree.
+			This option toggles showwing of main document dictionary (called "document catalog") in tree.
 	</sect2>
 	<sect2>
 			<title>Object dictionaries</title>
-			This option toggle showing of dictionaries of various objects (like pages) in tree.
+			This option toggles showwing of dictionaries of various objects (like pages) in tree.
 	</sect2>
 	<sect2>
 			<title>Graphic objects</title>
-			This option toggle showing of graphic objects in tree.
+			This option toggles showwing of graphic objects in tree.
 	</sect2>
 	<sect2>
 			<title>Annotations</title>
-			This option toggle showing of outlines in tree.
+			This option toggles showwing of outlines in tree.
 	</sect2>
 	<sect2>
 			<title>Pages</title>
-			This option toggle showing of outlines in tree.
+			This option toggles showwing of outlines in tree.
 	</sect2>
 	<sect2>
 			<title>Outlines</title>
-			This option toggle showing of outlines in tree.
+			This option toggles showwing of outlines in tree.
 	</sect2>
 	<sect2>
 			<title>Content streams</title>
-			This option toggle showing of content streams in tree.
+			This option toggles showwing of content streams in tree.
 	</sect2>
 	<sect2>
 			<title>Simple objects</title>
-			This option toggle showing of simple objects (int,bool,real,string,name) in tree.
+			This option toggles showwing of simple objects (int,bool,real,string,name) in tree.
 	</sect2>
 	<sect2>
 			<title>Sort dictionary items alphabetically</title>

@@ -2,8 +2,8 @@
 	<title>PDFEdit general overview</title>
 	<para>
 			Pdf Editor is primary created for simple editation and manipulation with objects of documents in PDF format
-			and storing new version of him.
-			Editation and manipulation with objets is by graphical and by only commandline interface too.
+			and storing them as new version of document.
+			Editation and manipulation with objets is by graphical and by commandline interface too.
 			For simple use command line is using script language, which is usefull in graphical interface too.
 	</para>
 </part>

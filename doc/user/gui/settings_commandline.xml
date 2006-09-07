@@ -57,19 +57,26 @@
 	<sect2>
 		<title>Show command line</title>
 		<para>
-				TODO
+				This option set shown history combobox, if is check. This is usefull,
+				if user want very old histry command.
 		</para>
 	</sect2>
 	<sect2>
 		<title>Editable command line</title>
 		<para>
-				TODO
+				This option set shown editable command line in combobox of history, if is check.
+				This is usefull, if user want small space for typing command (set command editor
+				hiden).
 		</para>
 	</sect2>
 	<sect2>
 		<title>History options</title>
 		<para>
-				TODO
+				This options set where will be saved and loaded command history and how much command in the
+				past are saving.
+		</para>
+		<para>
+				Note: History is saving after close PDFedit's window.
 		</para>
 	</sect2>
 </sect1>
