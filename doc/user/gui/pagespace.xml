@@ -1,9 +1,9 @@
 <chapter>
 	<title>Page space</title>
 	<para>
-			The page space displayes one page from opened document. The bottom shows page number of
-			displayed page and how many pages contains the document. On the right the actual position of mouse cursor
-			on the page is shown in specified units.
+			The page space displayes one page from opened document. Page number is shown at the bottom of
+			displayed page, as is number of pages in document. On the right  the actual position of mouse cursor
+			on page in specified units is shown.
 			<mediaobject>
 				<imageobject>
 					<imagedata fileref="gui/images/pagespace.png" format="PNG"/>

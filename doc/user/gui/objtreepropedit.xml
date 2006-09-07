@@ -45,7 +45,7 @@
 	<sect1>
 	<title>Purpose and usage</title>
 	<para>
-	  The purpose of the these windows is enabling complete control over pdf objects and structure of a pdf file. 
+	  The purpose of these windows is to enable complete control over pdf objects and structure of a pdf file. 
 	  It shows raw pdf objects in user friendly way with the possibility to traverse the objects using the tree like
 	  structure, select special category of operators and perform operation on resulting set, see exactly which operators
 	  were selected using graphical selection tools. It also allows editing raw objects which mostly requires knowledge of the pdf standard.
@@ -218,7 +218,8 @@
 		<sect2>
 		<title>Adding and deleting properties</title>
 		<para>
-		Adding and deleting is possible.
+		 Adding and deleting objects in the object tree is possible.
+		 There are two keyboard shortcuts for this, <keycap>Insert</keycap> of adding, <keycap>Delete</keycap> for deleting
 		</para>
 		</sect2>
 	
@@ -296,9 +297,9 @@
 		</sect2>
 
 		<sect2>
-		<title>Adding and deleting properties</title>
+		<title>Deleting objects</title>
 		<para>
-		Only deleting is possible.
+		 Press <keycap>Delete</keycap> key to delete selected objects.
 		</para>
 		</sect2>
 

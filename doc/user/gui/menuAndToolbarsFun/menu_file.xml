@@ -19,9 +19,9 @@
 			<term id="gui_menu_open" xreflabel="open file">Open...</term>
 			<listitem>
 				<para>
-						If opened document is changed, executes simple dialog allowing us
-						to choose what to do with the not saved changes. Otherwise closes opened file and executes
-						standard open dialog where we can choose pdf file we want to open.
+					Close currently opened docuement (if it is changed, shows question
+					dialog whether we want to save changes) and displays open file dialog. If file
+					is selected and contains correct pdf document, it is opened in current window.	
 				</para>
 				<para>
 						Script equivalent: <emphasis>func_load()</emphasis>
@@ -33,8 +33,11 @@
 			<term id="gui_menu_save" xreflabel="save file">Save</term>
 			<listitem>
 				<para>
-						Save actual opened file. All unsaved changes will be save
-						as new revision of documents.
+					Saves changes for current document. This changes will appear as new
+					revision after document is closed. Repeating save action will update previous
+					Save calls. If you whant to close bunch of changes and stores them as new
+					revision use <link linkend="gui_menu_save_new_revision">Save new revision </link>. This will allow you to conserve
+					previous changes and continue in new bunch of changes.
 				</para>
 				<para>
 						Script equivalent: <emphasis>func_save()</emphasis>
@@ -46,7 +49,12 @@
 			<term>Save copy...</term>
 			<listitem>
 				<para>
-						Save copy of opened document to other file.
+					Saves copy of current document in selected revision (TODO link). This
+					feature is very usefull if you want to make changes for older revisions. This
+					is normally not possible, because pdf documents doesn't support revision
+					branching. So you can select desired revision and then use Save copy to create
+					new pdf file, which contains everything up to selected revision. This file can
+					be then opened and manipulated as usual.
 				</para>
 				<para>
 						Script equivalent: <emphasis>func_savecopy()</emphasis>
@@ -55,11 +63,12 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Save new revision</term>
+			<term id="gui_menu_save_new_revision">Save new revision</term>
 			<listitem>
 				<para>
-						Save all unsaved changes in opened document as new revision
-						to the document.
+					This is same as Save except that changes are closed and forms new
+					revision which is definitivelly written to the file. All changes made after
+					doesn't	affect saved revision and goes to the currently newest one (as usual).
 				</para>
 				<para>
 						Script equivalent: <emphasis>func_saverev()</emphasis>
