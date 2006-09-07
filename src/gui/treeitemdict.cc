@@ -36,15 +36,27 @@ TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_p
 //See TreeItemAbstract for description of this virtual method
 TreeItemAbstract* TreeItemDict::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
- return TreeItem::create(data,this,property,name,after);
+ try {
+  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  return TreeItem::create(data,this,property,name,after);
+ } catch (...) {
+  //Should never happen, unless something else is seriously broken
+  guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+  return NULL;
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemDict::getChildType(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
- return property->getType();
+ try {
+  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  return property->getType();
+ } catch (...) {
+  //Should never happen, unless something else is seriously broken
+  guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+  return 0;//whatever ... it will fail again later when creating the child
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -90,13 +102,19 @@ QSCObject* TreeItemDict::getQSObject(BaseCore *_base) {
 //See TreeItemAbstract for description of this virtual method
 bool TreeItemDict::validChild(const QString &name,QListViewItem *oldChild) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
- TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
- assert(it);
- if (!it) return false;//Probably error on unknown child
- //Same address = same item
- //Different address = probably different item
- return property.get()==it->getObject().get();
+ try {
+  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
+  assert(it);
+  if (!it) return false;//Probably error on unknown child
+  //Same address = same item
+  //Different address = probably different item
+  return property.get()==it->getObject().get();
+ } catch (...) {
+  //Should never happen, unless something else is seriously broken
+  guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+  return false;
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -104,9 +122,15 @@ bool TreeItemDict::deepReload(const QString &childName,QListViewItem *oldItem) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  TreeItem *it=dynamic_cast<TreeItem*>(oldItem);
  if (it) { //Is an IProperty
-  boost::shared_ptr<IProperty> property=dict->getProperty(childName);
-  //If replaced, return success, otherwise failure
-  return it->setObject(property);
+  try {
+   boost::shared_ptr<IProperty> property=dict->getProperty(childName);
+   //If replaced, return success, otherwise failure
+   return it->setObject(property);
+  } catch (...) {
+   //Should never happen, unless something else is seriously broken
+   guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+   return false;
+  }
  }
  //Anything else=not supported
  return false;

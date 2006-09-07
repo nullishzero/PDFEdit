@@ -37,18 +37,30 @@ TreeItemArray::TreeItemArray(TreeData *_data,QListViewItem *parent,boost::shared
 TreeItemAbstract* TreeItemArray::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  CArray *ar=dynamic_cast<CArray*>(obj.get());
  unsigned int i=name.toUInt();
- boost::shared_ptr<IProperty> property=ar->getProperty(i);
- QString oname;
- oname.sprintf("[%d]",i);
- return TreeItem::create(data,this,property,oname,after,name);
+ try {
+  boost::shared_ptr<IProperty> property=ar->getProperty(i);
+  QString oname;
+  oname.sprintf("[%d]",i);
+  return TreeItem::create(data,this,property,oname,after,name);
+ } catch (...) {
+  //Should never happen, unless something else is seriously broken
+  guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+  return NULL;
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemArray::getChildType(const QString &name) {
  size_t i=name.toUInt();
  CArray *ar=dynamic_cast<CArray*>(obj.get());
- boost::shared_ptr<IProperty> property=ar->getProperty(i);
- return property->getType();
+ try {
+  boost::shared_ptr<IProperty> property=ar->getProperty(i);
+  return property->getType();
+ } catch (...) {
+  //Should never happen, unless something else is seriously broken
+  guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+  return 0;//whatever ... it will fail again later when creating the child
+ }
 }
 
 //See TreeItemAbstract for description of this virtual method
@@ -70,13 +82,19 @@ QStringList TreeItemArray::getChildNames() {
 bool TreeItemArray::validChild(const QString &name,QListViewItem *oldChild) {
  size_t i=name.toUInt();
  CArray *ar=dynamic_cast<CArray*>(obj.get());
- boost::shared_ptr<IProperty> property=ar->getProperty(i);
- TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
- assert(it);
- if (!it) return false;//Probably error on unknown child
- //Same address = same item
- //Different address = probably different item
- return property.get()==it->getObject().get();
+ try {
+  boost::shared_ptr<IProperty> property=ar->getProperty(i);
+  TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
+  assert(it);
+  if (!it) return false;//Probably error on unknown child
+  //Same address = same item
+  //Different address = probably different item
+  return property.get()==it->getObject().get();
+ } catch (...) {
+  //Should never happen, unless something else is seriously broken
+  guiPrintDbg(debug::DBG_ERR,"Broken code: failure to get property");
+  return false;
+ }
 }
 
 //TODO: support deepReload too (need value-based treeitem support, not trivial)

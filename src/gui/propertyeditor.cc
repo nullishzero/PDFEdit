@@ -139,7 +139,13 @@ void PropertyEditor::update(Property *p) {
  guiPrintDbg(debug::DBG_DBG,"Updating property" << pname);
  assert(props->contains(pname));
  boost::shared_ptr<IProperty> obj=(*props)[pname];
- p->setValue(obj.get());
+ try {
+  p->setValue(obj.get());
+ } catch (ReadOnlyDocumentException &e) {
+  //Read only, cannot change the property
+  emit warnText(tr("Document is read-only"));
+  return;
+ }
  emit propertyChanged(obj.get());
 }
 
