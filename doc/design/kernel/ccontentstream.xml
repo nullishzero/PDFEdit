@@ -14,7 +14,7 @@
 		</para>
 		
 		<sect2>
-		<title>Observering content stream</title>
+		<title>Observing ccontentstream</title>
 		<para>
 			Generally, changing anything visible on a page means changing 
 			something in underlying content stream. Because operators are 

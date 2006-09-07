@@ -17,7 +17,7 @@
 	</para>
 
 	<sect2>
-		<title>Observering cpage</title>
+		<title>Observing cpage</title>
 		Generally, changing an object can result in many other changes. 
 		Objects often depend on other objects. Changing a page property 
 		can result in 

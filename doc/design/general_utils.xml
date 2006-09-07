@@ -163,7 +163,7 @@
 			obtained from given context (see bellow). notify method can use
 			given values to update its internal state or to do additional
 			actions but in any case it shouldn't modify given data (this can
-			leed to end less loop, because observer handler notifies about
+			lead to end less loop, because observer handler notifies about
 			change and so observer is notified again and this will never stops). 
 		</para>
 		<mediaobject>
@@ -220,7 +220,7 @@
 		</mediaobject>
 		<para>
 			Note that all mentioned classes are C++ template classes and they use data
-			type for value as template parameter. This type stands for data type
+			type as template parameter. This type stands for data type
 			of value which change is announced (newValue in notify method e. g.).
 			All instances are wrapped by share_ptr (boost smart pointer) to
 			prevent from data life cycle problems because share_ptr correctly
