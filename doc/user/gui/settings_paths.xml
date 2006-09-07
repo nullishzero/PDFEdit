@@ -9,22 +9,36 @@
 					<phrase>Paths tab</phrase>
 				</textobject>
 			</mediaobject>
-	</para>
-
-	<sect2>
-			<title>Icon path</title>
-			TODO
-	</sect2>
-	<sect2>
-			<title>Script path</title>
-			TODO
-	</sect2>
-	<sect2>
-			<title>Scripts to run on start</title>
-			TODO
-	</sect2>
-	<sect2>
-			<title>Console log file</title>
-			TODO
-	</sect2>
+	You can set paths to various files here. The path is semicolon-separated list of directories,
+	each of them can contain environment variablesm, which will be automatically expanded,
+	such as <envar>$HOME</envar> (which will
+	expand to user's home directory) or <envar>$LANG</envar> (which can expand to name of selected locale)	
+	There are also two special variables, <envar>$PDFEDIT_DATA</envar> will expand to directory with
+	editor datafiles (<filename>/usr/local/share/pdfedit</filename> by default) and <envar>$PDFEDIT_BIN</envar>
+	will expand to directory where the editor binary is located (<filename>/usr/local/bin</filename> by default)
+ </para>
+ <sect2>
+  <title>Icon path</title>
+  <para>
+   Paths in which to look for application icons. 
+  </para>
+ </sect2>
+ <sect2>
+  <title>Script path</title>
+  <para>
+   Paths in which to look for script files.
+  </para>
+ </sect2>
+ <sect2>
+  <title>Scripts to run on start</title>
+  <para>
+   List of files which will be run on start.
+  </para>
+ </sect2>
+ <sect2>
+ <title>Console log file</title>
+  <para>
+   Name of file in which all console commands and output will be logged. If empty, logging will be turned off.
+  </para>
+ </sect2>
 </sect1>

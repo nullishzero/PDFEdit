@@ -9,42 +9,44 @@
 					<phrase>Object tree tab</phrase>
 				</textobject>
 			</mediaobject>
+		In this tab you can specify what items will be visible in the object treeview.
 	</para>
 
 	<sect2>
 			<title>Document dictionary</title>
-			TODO
+			This option toggle showing of main document dictionary (called "document catalog") in tree.
 	</sect2>
 	<sect2>
 			<title>Object dictionaries</title>
-			TODO
+			This option toggle showing of dictionaries of various objects (like pages) in tree.
 	</sect2>
 	<sect2>
 			<title>Graphic objects</title>
-			TODO
+			This option toggle showing of graphic objects in tree.
 	</sect2>
 	<sect2>
 			<title>Annotations</title>
-			TODO
+			This option toggle showing of outlines in tree.
 	</sect2>
 	<sect2>
 			<title>Pages</title>
-			TODO
+			This option toggle showing of outlines in tree.
 	</sect2>
 	<sect2>
 			<title>Outlines</title>
-			TODO
+			This option toggle showing of outlines in tree.
 	</sect2>
 	<sect2>
 			<title>Content streams</title>
-			TODO
+			This option toggle showing of content streams in tree.
 	</sect2>
 	<sect2>
 			<title>Simple objects</title>
-			TODO
+			This option toggle showing of simple objects (int,bool,real,string,name) in tree.
 	</sect2>
 	<sect2>
 			<title>Sort dictionary items alphabetically</title>
-			TODO
+			This specify whether items in dictionaries should be sorted alphabetically (checked)
+			or in order they appear in PDF file (unchecked)
 	</sect2>
 </sect1>
