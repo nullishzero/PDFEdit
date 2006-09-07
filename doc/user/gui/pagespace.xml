@@ -2,7 +2,7 @@
 	<title>Page space</title>
 	<para>
 			The page space displayes one page from opened document. The bottom shows page number of
-			displayed page, how many pages has the document. On the right the actual position of mouse cursor
+			displayed page and how many pages contains the document. On the right the actual position of mouse cursor
 			on the page is shown in specified units.
 			<mediaobject>
 				<imageobject>
@@ -21,9 +21,9 @@
 					There are two independent information in page space which must be actualized.
 			</para>
 			<para>
-					First is the page and information about page count in the document.
+					First is the image of the page itself and information about page count.
 					This part is updated only if someone calls script function
-					<emphasis>go()</emphasis> because it's very slow operation (to update
+					<emphasis>go()</emphasis> because it can be very slow (to update
 					page after each change could be a performance problem).
 					Reload page button in toolbars and menu (and many other useful
 					functions) call <emphasis>go()</emphasis> automatically.
@@ -31,13 +31,13 @@
 					and changes using scripting do not update the page and page count automatically.
 			</para>
 			<para>
-					The second is the mouse position on page. Position must be converted to 
+					The second is the mouse position on page. Position must be converted into 
 					internal coordinates. The position does not depend on zoom level
-					or actual rotation of page. (If the text starte at position
+					or actual rotation of page. (If the text starts at position
 					[x:6, y:7 cm] in 100% zoom the same position will be used to started the text
 					in 200% zoom.)
 					<para>
-							Notice: Most common practise is to have the zero in the left-bottom edge of page and
+							Notice: The most common way is to have the zero in the left-bottom edge of page and
 							to have the maximum in right-top edge.
 					</para>
 					
@@ -52,10 +52,12 @@
 			<title>Popup menu</title>
 			<para>
 					Right click of a mouse displayes a menu which will be displayed near the cursor.
-					You can choose among two functions. Firstly to
-					<emphasis>Save page as image</emphasis>. Secondly to
-					<emphasis>Save selected area as image</emphasis> which can be used only when a selection
-					is already present.
+					You can choose from two functions
+					 <itemizedlist mark="opencircle">
+						<listitem><para><emphasis>Save page as image</emphasis></para></listitem>
+						<listitem><para><emphasis>Save selected area as image</emphasis></para></listitem>
+					  </itemizedlist>
+					 The latter one can be used only when a selection is already present.
 			</para>
 			<para>
 					Both functions store portion of viewed page to an image file.
@@ -66,7 +68,7 @@
 					If only a part of a page is displayed, only the part of page is stored.
 			</para>
 			<para>
-					<emphasis>Save selected area as image</emphasis> stores only actual selected area.
+					<emphasis>Save selected area as image</emphasis> stores only selected area.
 					If selected area is fragmented or has not a rectangle shape, then a bounding
 					rectangle of selected area is sotred. If selected area is bigger then actual displayed part of 
 					page, storing
