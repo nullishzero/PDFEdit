@@ -1,9 +1,9 @@
 <chapter>
 	<title>Menu, toolbars and on-click functions</title>
 	<para>
-			This chapter describe only default functionality available from menu
-			and toolbars, because all functionality in menu and toolbars
-			are configurable and remove or add new functionality is simple.
+			This chapter describes only default functionality available from menu
+			and toolbars because it is very customizable and can very differ from release to release.
+			Removing and adding new functionality is very simple.
 	</para>
 
 	&gui_menu;

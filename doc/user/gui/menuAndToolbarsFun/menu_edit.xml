@@ -22,7 +22,7 @@
 						See <xref linkend="gui_onclickFunctions_selectAll"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_AllObjects()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_AllObjects()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -34,7 +34,7 @@
 						See <xref linkend="gui_onclickFunctions_selectGraphicalOp"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_GraphicalOperators()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_GraphicalOperators()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -46,7 +46,7 @@
 						See <xref linkend="gui_onclickFunctions_selectText"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_Text()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_Text()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -58,7 +58,7 @@
 						See <xref linkend="gui_onclickFunctions_selectAnnotations"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_Annot()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_Annot()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -67,12 +67,12 @@
 			<term id="gui_menu_setColor" xreflabel="set color">Set color</term>
 			<listitem>
 				<para>
-						This function set actual <xref linkend="gui_toolbars_foregroundColor"/>
+						This function sets actual <xref linkend="gui_toolbars_foregroundColor"/>
 						and <xref linkend="gui_toolbars_backgroundColor"/> to all selected
-						operators in actual tab of object tree.
+						operators in Stream or Selection tab of <xref linkend="gui_objtreepropedit_id"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>setOpColor()</emphasis>
+						Script equivalent: <emphasis>setOpColor()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -81,12 +81,12 @@
 			<term id="gui_menu_setFont" xreflabel="set font">Set font</term>
 			<listitem>
 				<para>
-						This function set actual <xref linkend="gui_toolbars_font"/>
+						This function sets actual <xref linkend="gui_toolbars_font"/>
 						and <xref linkend="gui_toolbars_fontSize"/> to all selected
-						text operators in actual tab of object tree.
+						operators in Stream or Selection tab of <xref linkend="gui_objtreepropedit_id"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>editFontProps()</emphasis>
+						Script equivalent: <emphasis>editFontProps()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -95,13 +95,14 @@
 			<term>Set relative position of operator</term>
 			<listitem>
 				<para>
-						Execute dialog to set delta move position, if
-						some operators are selected.
-						Usefull is moving selected operators direct on
-						the page (see <xref linkend="gui_onclickFunctions_selectionModes"/>).
+						Executes dialog to set delta move position of every selected operator. 
+						Operators must be selected in order for
+						this function to be avaliable.
+						Useful when moving single operators on
+						a page (see <xref linkend="gui_onclickFunctions_selectionModes"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>moveOperPos()</emphasis>
+						Script equivalent: <emphasis>moveOperPos()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -110,13 +111,14 @@
 			<term>Change relative position</term>
 			<listitem>
 				<para>
-						Execute dialog to set delta move position, if
-						some text operators are selected.
-						Usefull is moving selected operators direct on
-						the page (see <xref linkend="gui_onclickFunctions_selectionModes"/>).
+						Executes dialog to set delta move position of a text block. 
+						Text operators must be selected in order
+						for this function to be avaliable.
+						Useful when moving text paragraphs on
+						a page (see <xref linkend="gui_onclickFunctions_selectionModes"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>moveTextPos()</emphasis>
+						Script equivalent: <emphasis>moveTextPos()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -125,7 +127,7 @@
 			<term id="gui_menu_dashStyle" xreflabel="dash style">Set line dash style</term>
 			<listitem>
 				<para>
-						If is selected graphical operators, execute dialog for change
+						If graphical operators are selected executes dialog which enables changing
 						dash pattern.
 						<mediaobject>
 							<imageobject>
@@ -136,15 +138,15 @@
 							</textobject>
 							<caption><para>Dash pattern dialog</para></caption>
 						</mediaobject>
-						After choose dash pattern and confirming its, this dash pattern
-						will be set to all selected graphical opeartors.
+						After choosing the dash pattern this dash pattern
+						will be set to all selected graphical operators.
 				</para>
 				<para>
-						Note: Change dash pattern may result in change dash pattenr some other
+						Note: Changing dash pattern may result in changing dash pattern of other
 						graphical operators (see PdfReference).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>setDashPattern()</emphasis>
+						Script equivalent: <emphasis>setDashPattern()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -153,15 +155,15 @@
 			<term id="gui_menu_setLineWidth" xreflabel="set line width">Set line width</term>
 			<listitem>
 				<para>
-						Set <xref linkend="gui_toolbars_lineWidth"/> all selected graphical
+						Set <xref linkend="gui_toolbars_lineWidth"/> to all selected graphical
 						operators.
 				</para>
 				<para>
-						Note: Change dash pattern may result in change dash pattenr some other
+						Note: Changing line width may result in changing line width of other
 						graphical operators (see PdfReference).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>setLineWidth()</emphasis>
+						Script equivalent: <emphasis>setLineWidth()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
