@@ -1,10 +1,11 @@
 <chapter id="gui_command">
-	<title>Command console</title>
-	<para>
-			It's very useful for type scripts and macros.
-			Can set to 3 different looks (see <xref linkend="gui_settings_commandline"/>).
-	</para>
-
-	TODO
-
+ <title>Command console</title>
+ <para>
+  Command console is useful for typing in your own scripts and macros.
+  In can be set in 3 different modes of behavior (see <xref linkend="gui_settings_commandline"/>).
+ </para>
+ <para>
+  You can type your script code in the lower part of the window (the commandline or script editor, depending on settings)
+  and observe output of your commands in upper part (console)
+ </para>
 </chapter>
