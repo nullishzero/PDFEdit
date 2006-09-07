@@ -1,7 +1,14 @@
 <sect1>
 	<title>Object tree tab</title>
 	<para>
-			TODO
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/options_objecttree.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Object tree tab</phrase>
+				</textobject>
+			</mediaobject>
 	</para>
 
 	<sect2>

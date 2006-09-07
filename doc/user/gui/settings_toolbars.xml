@@ -1,7 +1,14 @@
 <sect1>
 	<title>Toolbars tab</title>
 	<para>
-			TODO
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/options_toolbars.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Toolbars tab</phrase>
+				</textobject>
+			</mediaobject>
 	</para>
 
 	<sect2>

@@ -1,7 +1,14 @@
 <sect1>
 	<title>Editor tab</title>
 	<para>
-	TODO
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/options_editor.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Editor tab</phrase>
+				</textobject>
+			</mediaobject>
 	</para>
 
 	<sect2>

@@ -1,7 +1,14 @@
 <sect1>
 	<title>Paths tab</title>
 	<para>
-			TODO
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/options_paths.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Paths tab</phrase>
+				</textobject>
+			</mediaobject>
 	</para>
 
 	<sect2>

@@ -1,7 +1,14 @@
 <sect1>
 	<title>Look and Feel tab</title>
 	<para>
-	TODO
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="gui/images/options_lookandfeel.png" format="PNG"/>
+				</imageobject>
+				<textobject>
+					<phrase>Look and Feel tab</phrase>
+				</textobject>
+			</mediaobject>
 	</para>
 
 	<sect2>
