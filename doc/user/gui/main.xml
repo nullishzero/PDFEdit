@@ -4,14 +4,14 @@
 			Window of PDFEdit is split to 5 basic parts : Menu, Toolbars, Command part,
 			Page space and Objects tree + property editor.
 
-			<mediaobject>
+			<mediaobject id="gui_layout" xreflabel="layout of PDFedit's gui">
 				<imageobject>
 					<imagedata fileref="gui/images/pdfedit.png" format="PNG"/>
 				</imageobject>
 				<textobject>
-					<phrase>Layout of PDFEdit's GUI</phrase>
+					<phrase>Layout of PDFedit's GUI</phrase>
 				</textobject>
-				<caption><para>Layout of PDFEdit's GUI</para></caption>
+				<caption><para>Layout of PDFedit's GUI</para></caption>
 			</mediaobject>
 	</para>
 
