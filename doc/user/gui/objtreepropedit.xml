@@ -1,4 +1,4 @@
-<chapter id="gui_objtreepropedit_id" xreflabel="objects tree and property editor">
+<chapter id="gui_objtreepropedit_id" xreflabel="Object tree and property editor">
 	<title>Object tree, Stream, Selection and Property editor</title>
 	<para>
 	  The right side of PdfEditor consists of two main parts <emphasis>Object tree</emphasis> and <emphasis>Property editor</emphasis>. 
