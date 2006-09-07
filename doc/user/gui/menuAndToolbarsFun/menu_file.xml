@@ -16,7 +16,7 @@
 		<title>File - description of items </title>
 
 		<varlistentry>
-			<term>Open...</term>
+			<term id="gui_menu_open" xreflabel="open file">Open...</term>
 			<listitem>
 				<para>
 						If is now opened document and last changes in the document
@@ -25,19 +25,20 @@
 						standard open dialog to choose pdf file which are to be opening.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>fnc_load()</emphasis>
+						Scripts equivalent: <emphasis>func_load()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Save</term>
+			<term id="gui_menu_save" xreflabel="save file">Save</term>
 			<listitem>
 				<para>
-						TODO
+						Save actual opened file. All unsaved changes will be save
+						as new revision of documents.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>func_save()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -46,10 +47,10 @@
 			<term>Save copy...</term>
 			<listitem>
 				<para>
-						TODO
+						Save copy of opened document to other file.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>func_savecopy()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -58,10 +59,11 @@
 			<term>Save new revision</term>
 			<listitem>
 				<para>
-						TODO
+						Save all unsaved changes in opened document as new revision
+						to the document.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>func_saverev()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -70,22 +72,23 @@
 			<term>New window</term>
 			<listitem>
 				<para>
-						TODO
+						Open new window of PDFedit.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>newwindow()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Close window</term>
+			<term id="gui_menu_closeWindow" xreflabel="close window">Close window</term>
 			<listitem>
 				<para>
-						TODO
+						Close actual window of PDFedit. Ask for save changes of opened document
+						in actual window, if was not save.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis></emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -94,10 +97,10 @@
 			<term>Quit</term>
 			<listitem>
 				<para>
-						TODO
+						Close all windows of PDFedit and quit.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>closeAll()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>

@@ -16,73 +16,77 @@
 		<title>Edit - description of items </title>
 
 		<varlistentry>
-			<term>Select all objects</term>
+			<term id="gui_menu_selectAll" xreflabel="select all objects">Select all objects</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_selectAll"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_AllObjects()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Select graphical operators</term>
+			<term id="gui_menu_selectGraphical" xreflabel="select graphical operators">Select graphical operators</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_selectGraphicalOp"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_GraphicalOperators()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Select text</term>
+			<term id="gui_menu_selectText" xreflabel="select text">Select text</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_selectText"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_Text()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Select annotations</term>
+			<term id="gui_menu_selectAnnot" xreflabel="select annotations">Select annotations</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_selectAnnotations"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_Annot()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Set color</term>
+			<term id="gui_menu_setColor" xreflabel="set color">Set color</term>
 			<listitem>
 				<para>
-						TODO
+						This function set actual <xref linkend="gui_toolbars_foregroundColor"/>
+						and <xref linkend="gui_toolbars_backgroundColor"/> to all selected
+						operators in actual tab of object tree.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>setOpColor()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Set font</term>
+			<term id="gui_menu_setFont" xreflabel="set font">Set font</term>
 			<listitem>
 				<para>
-						TODO
+						This function set actual <xref linkend="gui_toolbars_font"/>
+						and <xref linkend="gui_toolbars_fontSize"/> to all selected
+						text operators in actual tab of object tree.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>editFontProps()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -91,10 +95,13 @@
 			<term>Set relative position of operator</term>
 			<listitem>
 				<para>
-						TODO
+						Execute dialog to set delta move position, if
+						some operators are selected.
+						Usefull is moving selected operators direct on
+						the page (see <xref linkend="gui_onclickFunctions_selectionModes"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>moveOperPos()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -103,10 +110,13 @@
 			<term>Change relative position</term>
 			<listitem>
 				<para>
-						TODO
+						Execute dialog to set delta move position, if
+						some text operators are selected.
+						Usefull is moving selected operators direct on
+						the page (see <xref linkend="gui_onclickFunctions_selectionModes"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>moveTextPos()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -115,10 +125,26 @@
 			<term id="gui_menu_dashStyle" xreflabel="dash style">Set line dash style</term>
 			<listitem>
 				<para>
-						TODO
+						If is selected graphical operators, execute dialog for change
+						dash pattern.
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_dashpattern.png" format="PNG"/>
+							</imageobject>
+							<textobject>
+								<phrase>Dash pattern dialog</phrase>
+							</textobject>
+							<caption><para>Dash pattern dialog</para></caption>
+						</mediaobject>
+						After choose dash pattern and confirming its, this dash pattern
+						will be set to all selected graphical opeartors.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Note: Change dash pattern may result in change dash pattenr some other
+						graphical operators (see PdfReference).
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>setDashPattern()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -127,14 +153,18 @@
 			<term id="gui_menu_setLineWidth" xreflabel="set line width">Set line width</term>
 			<listitem>
 				<para>
-						TODO
+						Set <xref linkend="gui_toolbars_lineWidth"/> all selected graphical
+						operators.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Note: Change dash pattern may result in change dash pattenr some other
+						graphical operators (see PdfReference).
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>setLineWidth()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 	</variablelist>
-	TODO
 </sect1>

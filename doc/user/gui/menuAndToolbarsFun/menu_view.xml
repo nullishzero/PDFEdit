@@ -16,7 +16,7 @@
 		<title>View - description of items </title>
 
 		<varlistentry>
-			<term>First page</term>
+			<term id="gui_menu_firstPage" xreflabel="first page">First page</term>
 			<listitem>
 				<para>
 						TODO
@@ -28,7 +28,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Prev page</term>
+			<term id="gui_menu_prevPage" xreflabel="prev page">Prev page</term>
 			<listitem>
 				<para>
 						TODO
@@ -40,7 +40,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Next page</term>
+			<term id="gui_menu_nextPage" xreflabel="next page">Next page</term>
 			<listitem>
 				<para>
 						TODO
@@ -52,7 +52,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Last page</term>
+			<term id="gui_menu_lastPage" xreflabel="last page">Last page</term>
 			<listitem>
 				<para>
 						TODO
@@ -64,7 +64,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Zoom in</term>
+			<term id="gui_menu_zoomIn" xreflabel="zoom in">Zoom in</term>
 			<listitem>
 				<para>
 						TODO
@@ -76,7 +76,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Zoom out</term>
+			<term id="gui_menu_zoomOut" xreflabel="zoom out">Zoom out</term>
 			<listitem>
 				<para>
 						TODO
@@ -88,7 +88,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Show/Hide commandline</term>
+			<term id="gui_menu_sh_commandline" xreflabel="show/hide commandline">Show/Hide commandline</term>
 			<listitem>
 				<para>
 						TODO

@@ -16,11 +16,11 @@
 		<variablelist>
 			<varlistentry>
 				<term>First page</term>
-				<listitem>TODO</listitem>
+				<listitem>See <xref linkend="gui_menu_firstPage"/>.</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Prev page</term>
-				<listitem>TODO</listitem>
+				<listitem>See <xref linkend="gui_menu_prevPage"/>.</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Page position</term>
@@ -28,11 +28,11 @@
 			</varlistentry>
 			<varlistentry>
 				<term>Next page</term>
-				<listitem>TODO</listitem>
+				<listitem>See <xref linkend="gui_menu_nextPage"/>.</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Last page</term>
-				<listitem>TODO</listitem>
+				<listitem>See <xref linkend="gui_menu_lastPage"/>.</listitem>
 			</varlistentry>
 
 			<varlistentry>

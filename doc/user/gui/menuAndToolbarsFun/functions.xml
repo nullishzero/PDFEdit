@@ -5,7 +5,7 @@
 				user friendly enviroments for simple editing pdf documents.
 		</para>
 
-		<sect2>
+		<sect2 id="gui_onclickFunctions_selectionModes" xreflabel="selection modes">
 				<title>Selection modes</title>
 				<para>
 						Modes in this section are using to selecting objects on
