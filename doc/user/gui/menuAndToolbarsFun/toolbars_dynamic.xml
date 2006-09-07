@@ -12,6 +12,9 @@
 				<caption><para>Toolbar - Dynamic</para></caption>
 			</mediaobject>
 		</para>
-
-		TODO
+	This toolbar contain dynamic items and its content is updated based on context, i.e. what are you doing now.
+	It can contain field used to edit text in PDF operators or icons used to filter displayed operators in current stream.
+        There are four modes available for filtering operators. First and default mode is to show all operators.
+	The other three modes are to show only text, only font and only graphical operators. The filter settings are per stream,
+	so you can set diffrnent filterig in different streams.
 </sect2>
