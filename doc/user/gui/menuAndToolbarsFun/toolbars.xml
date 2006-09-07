@@ -1,7 +1,10 @@
 <sect1>
 	<title>Toolbars</title>
 	<para>
-			TODO
+		Toolbars are shortcut for functions found either in menu, or by right clicking on specific objects.
+		Menu items can be either in enabled or disabled state. Some operations have no effect when a document
+		is not open so they are disabled. Also some operations are not avaliable when specific objects from specific
+		windows are not selected.
 	</para>
 
 	&gui_toolbars_main;
