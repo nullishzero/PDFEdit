@@ -1,4 +1,4 @@
-2006-08-31 PDF Editor 0.2.0
+2006-09-07 PDF Editor 0.2.0
 	* Added commandline mode, editor can automatically process files
 	  using a script without opening any window or needing an X server
 	* Added ./configure script
@@ -12,6 +12,7 @@
 	* Added support for Outlines
 	* Installation now working
 	* Improved documentation
+	* Added user documentation
 	* Can now install as non-root user into any directory
 	* Large internal changes, reorganization of some code
 	* Fixed stability
