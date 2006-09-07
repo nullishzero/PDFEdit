@@ -2,8 +2,8 @@
 		<title>Selecting text</title>
 
 		<para>
-				This mode is useful when selecting text on page. Its natural behaviour
-				in selecting operations. Word and line order is respected on pages with
+				This mode is useful when selecting text on page. It behaves like expected from
+				text selecting. Word and line order is respected on pages with
 				horizontal text lines (most of pdf files).
 		</para>
 		<para>
