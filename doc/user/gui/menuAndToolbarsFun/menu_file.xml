@@ -19,13 +19,12 @@
 			<term id="gui_menu_open" xreflabel="open file">Open...</term>
 			<listitem>
 				<para>
-						If is now opened document and last changes in the document
-						are not saved, execute question dialog to decide what doing with
-						nonsaved changes. Otherwise close opened file and execute
-						standard open dialog to choose pdf file which are to be opening.
+						If opened document is changed, executes simple dialog allowing us
+						to choose what to do with the not saved changes. Otherwise closes opened file and executes
+						standard open dialog where we can choose pdf file we want to open.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>func_load()</emphasis>
+						Script equivalent: <emphasis>func_load()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -38,7 +37,7 @@
 						as new revision of documents.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>func_save()</emphasis>
+						Script equivalent: <emphasis>func_save()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -50,7 +49,7 @@
 						Save copy of opened document to other file.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>func_savecopy()</emphasis>
+						Script equivalent: <emphasis>func_savecopy()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -63,7 +62,7 @@
 						to the document.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>func_saverev()</emphasis>
+						Script equivalent: <emphasis>func_saverev()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -75,7 +74,7 @@
 						Open new window of PDFedit.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>newwindow()</emphasis>
+						Script equivalent: <emphasis>newwindow()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -84,11 +83,10 @@
 			<term id="gui_menu_closeWindow" xreflabel="close window">Close window</term>
 			<listitem>
 				<para>
-						Close actual window of PDFedit. Ask for save changes of opened document
-						in actual window, if was not save.
+						Close actual window of PDFedit. If the document is changed allows saving the changes.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis></emphasis>
+						Script equivalent: <emphasis></emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -100,7 +98,7 @@
 						Close all windows of PDFedit and quit.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>closeAll()</emphasis>
+						Script equivalent: <emphasis>closeAll()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>

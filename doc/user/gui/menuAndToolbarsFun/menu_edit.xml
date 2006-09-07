@@ -67,7 +67,7 @@
 			<term id="gui_menu_setColor" xreflabel="set color">Set color</term>
 			<listitem>
 				<para>
-						This function sets actual <xref linkend="gui_toolbars_foregroundColor"/>
+						Set actual <xref linkend="gui_toolbars_foregroundColor"/>
 						and <xref linkend="gui_toolbars_backgroundColor"/> to all selected
 						operators in Stream or Selection tab of <xref linkend="gui_objtreepropedit_id"/>.
 				</para>
@@ -81,7 +81,7 @@
 			<term id="gui_menu_setFont" xreflabel="set font">Set font</term>
 			<listitem>
 				<para>
-						This function sets actual <xref linkend="gui_toolbars_font"/>
+						Set actual <xref linkend="gui_toolbars_font"/>
 						and <xref linkend="gui_toolbars_fontSize"/> to all selected
 						operators in Stream or Selection tab of <xref linkend="gui_objtreepropedit_id"/>.
 				</para>
@@ -95,7 +95,7 @@
 			<term>Set relative position of operator</term>
 			<listitem>
 				<para>
-						Executes dialog to set delta move position of every selected operator. 
+						Set delta move position of every selected operator. 
 						Operators must be selected in order for
 						this function to be avaliable.
 						Useful when moving single operators on
@@ -111,7 +111,7 @@
 			<term>Change relative position</term>
 			<listitem>
 				<para>
-						Executes dialog to set delta move position of a text block. 
+						Set delta move position of a text block. 
 						Text operators must be selected in order
 						for this function to be avaliable.
 						Useful when moving text paragraphs on
@@ -127,8 +127,8 @@
 			<term id="gui_menu_dashStyle" xreflabel="dash style">Set line dash style</term>
 			<listitem>
 				<para>
-						If graphical operators are selected executes dialog which enables changing
-						dash pattern.
+						Set dash pattern of graphical objects.
+						Graphical objects must be selected in order for this function to be avaliable.
 						<mediaobject>
 							<imageobject>
 								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_dashpattern.png" format="PNG"/>
