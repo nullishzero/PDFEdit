@@ -116,7 +116,7 @@ function putendq (op) {
 /** Transformation matrix ( "cm" or "Tm" ) */
 function createOperator_transformationMatrix( matrix : Array_of_6_doubles, name_of_op : String ) {
 	if (matrix.length != 6) {
-		warn( tr("Operator cm must have 6 parameters of type numbers !") );
+		warn( tr("Operator cm must have array with 6 numbers as parameter!") );
 		return ;
 	}
 
@@ -159,7 +159,7 @@ function transformationMatrixDiv( oldCTM : Array_of_6_boubles, newCTM : Array_of
 	var nowCTM = [0,0,0,0,0,0];
 	var menovatel = oldCTM[0]*oldCTM[3]-oldCTM[1]*oldCTM[2];
 	if (menovatel == 0) {
-		warm(tr(" Matrix is in bad state !!!"));
+		warm(tr("Matrix is in bad state !"));
 		return;
 	}
 	nowCTM[0] = (-oldCTM[2]*newCTM[1]+newCTM[0]*oldCTM[3]) / menovatel
@@ -391,13 +391,13 @@ function operatorSetColor(operator,r,g,b, globchange) {
 	// --------  check parameters  ---------
 
 	if (operator.type() != "PdfOperator") {
-		warn (tr("Operator must be")+" QSPdfOperator !!!");
+		warn (tr("Operator must be")+" QSPdfOperator !");
 		return ;
 	}
 	if ((r == undefined) || (g == undefined) || (b == undefined)) {
 		var col = getColor("fg");
 		if (!col) {
-			warn( tr("Must define color")+" !!!" );
+			warn( tr("Must define color")+" !" );
 			return operator;
 		}
 		r=col.red;
@@ -407,13 +407,13 @@ function operatorSetColor(operator,r,g,b, globchange) {
 	if (((typeof r ) != "number") ||
 		((typeof g ) != "number") ||
 		((typeof b ) != "number")) {
-		warn( tr("r,g,b must be number")+" !!!" );
+		warn( tr("r,g,b must be number")+" !" );
 		return operator;
 	}
 	if (((r<0) || (r>255)) ||
 		((g<0) || (g>255)) ||
 		((b<0) || (b>255))) {
-		warn( tr("r,g,b must be from 0 to 255")+" !!!" );
+		warn( tr("r,g,b must be from 0 to 255")+" !" );
 		return operator;
 	}
 
@@ -468,7 +468,7 @@ function operatorGetFont(operator) {
 	// === Check parameters  ===
 
 	if ("PdfOperator" != operator.type()) {
-		warn (tr("Operator must be")+" QSPdfOperator !!!");
+		warn (tr("Operator must be")+" QSPdfOperator !");
 		return;
 	}
 
@@ -526,7 +526,7 @@ function operatorSetFont(thepage, operator, fontid, fontsize) {
 	// == Check type
 
 	if ("PdfOperator" != operator.type()) {
-		warn( tr("Operator must be") + " QSPdfOperator !!!");
+		warn( tr("Operator must be") + " QSPdfOperator !");
 		return;
 	}
 
@@ -575,7 +575,7 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
 	// == Check type
 
 	if ("PdfOperator" != operator.type()) {
-		warn( tr("Operator must be") + " QSPdfOperator !!!");
+		warn( tr("Operator must be") + " QSPdfOperator !");
 		return;
 	}
 
@@ -644,7 +644,7 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 	// == Check type
 
 	if ("PdfOperator" != operator.type()) {
-		warn( tr("Operator must be") + " QSPdfOperator !!!");
+		warn( tr("Operator must be") + " QSPdfOperator !");
 		return;
 	}
 
