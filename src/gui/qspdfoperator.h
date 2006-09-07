@@ -122,15 +122,15 @@ public slots:
   doing so may result in an exception
  */
  void remove();
+ //TODO: what is this function exactly doing?
  /*-
   Set next operator
- TODO: what is this function exactly doing?
  */
  void setNext(QSPdfOperator *op);
  void setNext(QObject *op);
+ //TODO: what is this function exactly doing?
  /*-
   Set previous operator
- TODO: what is this function exactly doing?
  */
  void setPrev(QSPdfOperator *op);
  void setPrev(QObject *op);
