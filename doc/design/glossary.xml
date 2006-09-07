@@ -183,7 +183,7 @@ Example:
 			of code, such as a class library.
 			<mediaobject>
 			  <imageobject align="center">
-				  <imagedata fileref="images/facadepattern.gif" format="GIF"/>
+				  <imagedata fileref="images/facadepattern.png" format="PNG"/>
 			  </imageobject>
 			  <caption><para>Facade</para></caption>
 			</mediaobject>
@@ -274,7 +274,7 @@ Example:
 			independent of the class that implements the interface.
 			<mediaobject>
 			  <imageobject align="center">
-				  <imagedata fileref="images/iteratorpattern.gif" format="GIF"/>
+				  <imagedata fileref="images/iteratorpattern.png" format="PNG"/>
 			  </imageobject>
 			  <caption><para>Iterator</para></caption>
 			</mediaobject>
