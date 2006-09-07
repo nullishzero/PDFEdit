@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2006/09/07 00:29:13  petrm1am
+ *
+ * modified default debug level
+ *
  * Revision 1.6  2006/05/06 08:48:50  hockm0bm
  * *PrintDbg macros really uses printDbg rather than _printDbg to dump information
  *   to default stream
@@ -12,9 +16,9 @@
 #include "debug.h"
 
 // if default debug level doesn't come from gcc command line, we use
-// CRIT
+// ERR
 #ifndef DEFAULT_DEBUG_LEVEL
-#define DEFAULT_DEBUG_LEVEL debug::DBG_CRIT
+#define DEFAULT_DEBUG_LEVEL debug::DBG_ERR
 #endif
 
 /** Prefix for debug messages. */
