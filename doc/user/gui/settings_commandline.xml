@@ -20,7 +20,7 @@
 		<para>
 				If this setting is checked, command console will print return value of last command
 				after executing it. It has basically the same effect as if last command was a
-				parameter of function <funcion>print()</function>.
+				parameter of function <function>print()</function>.
 		</para>
 	</sect2>
 	<sect2>
