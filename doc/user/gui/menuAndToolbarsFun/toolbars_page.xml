@@ -24,7 +24,7 @@
 			</varlistentry>
 			<varlistentry>
 				<term>Page position</term>
-				<listitem>TODO</listitem>
+				<listitem>Actual page number which can be changed. To load the page press enter.</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Next page</term>
@@ -66,7 +66,7 @@
 			<varlistentry>
 				<term>Zoom</term>
 				<listitem>
-						TODO
+					Manual selection of zoom level.
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -76,19 +76,19 @@
 			<varlistentry>
 				<term>Move page up</term>
 				<listitem>
-						TODO
+					 Move displayed page one level up which means the page number will decrement.
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Move page down</term>
 				<listitem>
-						TODO
+					 Move displayed page one level down which means the page number will increment.
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Remove page</term>
 				<listitem>
-						TODO
+					 Remove displayed page from the document.
 				</listitem>
 			</varlistentry>
 		</variablelist>
