@@ -1,4 +1,15 @@
 <sect3 id="gui_onclickFunctions_highlightingText" xreflabel="mode to highlighting text">
 		<title>Highlighting text</title>
-		TODO
+
+		<para>
+				Offen enough corrector highlight text. For this case is usefull
+				this mode.
+		</para>
+		<para>
+				After activated this mode, user can select text same as by
+				<xref linkend="gui_onclickFunctions_selectText"/>. After end selection
+				is calling script function, which draw under text fill rectangle with
+				actual set of color (for more details see
+				<xref linkend="gui_onclickFunctions_drawRect"/>).
+		</para>
 </sect3>

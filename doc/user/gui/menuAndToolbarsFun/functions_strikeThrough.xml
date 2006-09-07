@@ -1,4 +1,15 @@
-<sect3>
-		<title>TODO</title>
-		TODO
+<sect3 id="gui_onclickFunctions_strikeThrough" xreflabel="mode to strike trough of text">
+		<title>Strike through of text</title>
+
+		<para>
+				Offen enough corrector strike through of text. For this case is usefull
+				this mode.
+		</para>
+		<para>
+				After activated this mode, user can select text same as by
+				<xref linkend="gui_onclickFunctions_selectText"/>. After end selection
+				is calling script function, which draw through text line with actual set of
+				color, dash style and line width (for more details see
+				<xref linkend="gui_onclickFunctions_drawLine"/>).
+		</para>
 </sect3>

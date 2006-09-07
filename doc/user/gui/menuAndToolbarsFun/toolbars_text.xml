@@ -13,5 +13,19 @@
 			</mediaobject>
 		</para>
 
-		TODO
+		<variablelist>
+			<varlistentry>
+				<term id="gui_toolbars_font" xreflabel="font">Font</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+
+			<varlistentry>
+				<term id="gui_toolbars_fontSize" xreflabel="font size">Font size</term>
+				<listitem>
+				</listitem>
+						TODO
+			</varlistentry>
+		</variablelist>
 </sect2>

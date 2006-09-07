@@ -2,6 +2,14 @@
 		<title>Drawing lines</title>
 
 		<para>
-			TODO
+				Drawing lines to page is easy with this mode. User first set on toolbars and menu
+				which <xref linkend="gui_toolbars_foregroundColor"/>, <xref linkend="gui_toolbars_lineWidth"/>
+				and <xref linkend="gui_menu_dashStyle"/> can use. Then only click left button and drag line
+				on the page. For information is in draging viewed line of 1 pixel width.
+				The viewed part of the page is refreshing after each added line.
+		</para>
+		<para>
+				If user doesn't end of adding new line, can press <emphasis>Esc</emphasis> key befor
+				release of left button.
 		</para>
 </sect3>

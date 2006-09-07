@@ -13,5 +13,27 @@
 			</mediaobject>
 		</para>
 
-		TODO
+
+			TODO
+		<variablelist>
+			<varlistentry>
+				<term id="gui_toolbars_foregroundColor" xreflabel="foreground color">Foreground color</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term id="gui_toolbars_backgroundColor" xreflabel="background color">Background color</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+
+			<varlistentry>
+				<term id="gui_toolbars_lineWidth" xreflabel="line width">Line width</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+		</variablelist>
 </sect2>

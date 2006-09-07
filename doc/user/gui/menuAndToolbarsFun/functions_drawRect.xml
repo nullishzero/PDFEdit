@@ -1,4 +1,14 @@
 <sect3 id="gui_onclickFunctions_drawRect" xreflabel="mode to drawing rectangles">
 		<title>Drawing rectangles</title>
-		TODO
+
+		<para>
+				Drawing fill rectangle to page is easy with this mode. User first set on toolbars and menu
+				which <xref linkend="gui_toolbars_backgroundColor"/> can use. Then only click left button
+				and drag new fill rectangle on the page. For information is in draging viewed rectangle.
+				The viewed part of the page is refreshing after each added rectangle.
+		</para>
+		<para>
+				If user doesn't end of adding new rectangle, can press <emphasis>Esc</emphasis> key befor
+				release of left button.
+		</para>
 </sect3>

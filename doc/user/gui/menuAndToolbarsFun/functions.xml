@@ -47,9 +47,6 @@
 		</sect2>
 		<sect2>
 				<title>Drawing and adding new objects</title>
-				<para>
-						TODO global colorFG and globalBG
-				</para>
 				&gui_onclickFunctions_drawLine;
 				&gui_onclickFunctions_drawRect;
 				&gui_onclickFunctions_addText;

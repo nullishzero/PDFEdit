@@ -112,7 +112,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Set line dash style</term>
+			<term id="gui_menu_dashStyle" xreflabel="dash style">Set line dash style</term>
 			<listitem>
 				<para>
 						TODO
@@ -124,7 +124,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Set line width</term>
+			<term id="gui_menu_setLineWidth" xreflabel="set line width">Set line width</term>
 			<listitem>
 				<para>
 						TODO

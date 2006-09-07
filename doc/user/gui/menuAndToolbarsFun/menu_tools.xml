@@ -20,7 +20,7 @@
 			<listitem>
 				<para>
                                         This menu item opens options dialog.
-                                        TODO link
+                                        (see <xref linkend="gui_settings"/>).
 				</para>
 				<para>
 				        Scripts equivalent: <emphasis>options()</emphasis>
@@ -66,7 +66,15 @@
                                 positions among pages from current document, press
                                 OK button for insertion start. You can press Cancel
                                 button anytime to skip this dialog.
-                                TODO add image of dialog
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="gui/menuAndToolbarsFun/images/insert_pages.png" format="PNG"/>
+									</imageobject>
+									<textobject>
+										<phrase>Insert pages dialog</phrase>
+									</textobject>
+									<caption><para>Insert pages dialog</para></caption>
+								</mediaobject>
                         </listitem>
                     </itemizedlist>
 				</para>
