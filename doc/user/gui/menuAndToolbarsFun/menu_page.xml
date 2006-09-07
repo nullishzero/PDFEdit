@@ -28,7 +28,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Reload page</term>
+			<term id="gui_menu_reloadPage" xreflabel="reload page">Reload page</term>
 			<listitem>
 				<para>
 						Reload page and information about count pages in opened document.
@@ -41,7 +41,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Extract text from page</term>
+			<term id="gui_menu_extractText" xreflabel="extract text from page">Extract text from page</term>
 			<listitem>
 				<para>
 						TODO
@@ -53,7 +53,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Rotate page 270 degrees</term>
+			<term id="gui_menu_rotate270" xreflabel="rotate page 270 degrees">Rotate page 270 degrees</term>
 			<listitem>
 				<para>
 						TODO
@@ -65,7 +65,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Rotate page 90 degrees</term>
+			<term id="gui_menu_rotate90" xreflabel="rotate page 90 degrees">Rotate page 90 degrees</term>
 			<listitem>
 				<para>
 						TODO
@@ -77,7 +77,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Edit page metrics</term>
+			<term id="gui_menu_editPageMetrics" xreflabel="edit page metrics">Edit page metrics</term>
 			<listitem>
 				<para>
 						TODO
@@ -89,7 +89,7 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Add system font to page</term>
+			<term id="gui_menu_addSystemFont" xreflabel="add system font to page">Add system font to page</term>
 			<listitem>
 				<para>
 						TODO
@@ -101,73 +101,75 @@
 		</varlistentry>
 
 		<varlistentry>
-			<term>Set page transformation matrix</term>
+			<term id="gui_menu_setPageTM" xreflabel="set page transformation matrix">
+					Set page transformation matrix
+			</term>
 			<listitem>
 				<para>
 						TODO
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>setPageTm()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Draw line</term>
+			<term id="gui_menu_drawLine" xreflabel="draw line">Draw line</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_drawLine"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_drawLine()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Draw rectangle</term>
+			<term id="gui_menu_drawRectangle" xreflabel="draw rectangle">Draw rectangle</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_drawRect"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_drawRect()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Add text</term>
+			<term id="gui_menu_addText" xreflabel="add text">Add text</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_addText"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_addText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Strike through</term>
+			<term id="gui_menu_strikeThrough" xreflabel="starting through">Strike through</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_strikeThrough"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_strikeThrough()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
 
 		<varlistentry>
-			<term>Highlighting text</term>
+			<term id="gui_menu_highlightingText" xreflabel="highlighting text">Highlighting text</term>
 			<listitem>
 				<para>
-						TODO
+						See <xref linkend="gui_onclickFunctions_highlightingText"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>onSelectMode_highlightingText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>

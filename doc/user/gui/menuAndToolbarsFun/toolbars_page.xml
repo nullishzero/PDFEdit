@@ -13,5 +13,83 @@
 			</mediaobject>
 		</para>
 
-		TODO
+		<variablelist>
+			<varlistentry>
+				<term>First page</term>
+				<listitem>TODO</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Prev page</term>
+				<listitem>TODO</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Page position</term>
+				<listitem>TODO</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Next page</term>
+				<listitem>TODO</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Last page</term>
+				<listitem>TODO</listitem>
+			</varlistentry>
+
+			<varlistentry>
+				<term>Rotate page 270 degrees</term>
+				<listitem>See <xref linkend="gui_menu_rotate270"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Rotate page 90 degrees</term>
+				<listitem>See <xref linkend="gui_menu_rotate90"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Edit page metrics</term>
+				<listitem>See <xref linkend="gui_menu_editPageMetrics"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Add system font to page</term>
+				<listitem>See <xref linkend="gui_menu_addSystemFont"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Set page transformation metrics</term>
+				<listitem>See <xref linkend="gui_menu_setPageTM"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Extract text from page</term>
+				<listitem>See <xref linkend="gui_menu_extractText"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Zoom out</term>
+				<listitem>See <xref linkend="gui_menu_zoomOut"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Zoom</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Zoom in</term>
+				<listitem>See <xref linkend="gui_menu_zoomIn"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Move page up</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Move page down</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Remove page</term>
+				<listitem>
+						TODO
+				</listitem>
+			</varlistentry>
+		</variablelist>
 </sect2>

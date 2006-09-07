@@ -13,5 +13,26 @@
 			</mediaobject>
 		</para>
 
-		TODO
+		<variablelist>
+			<varlistentry>
+				<term>Open ...</term>
+				<listitem>See <xref linkend="gui_menu_open"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Save</term>
+				<listitem>See <xref linkend="gui_menu_save"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Options</term>
+				<listitem>See <xref linkend="gui_settings"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Close window</term>
+				<listitem>See <xref linkend="gui_menu_closeWindow"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Show/hide commandline</term>
+				<listitem>See <xref linkend="gui_menu_sh_commandline"/>.</listitem>
+			</varlistentry>
+		</variablelist>
 </sect2>

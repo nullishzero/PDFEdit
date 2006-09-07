@@ -13,5 +13,18 @@
 			</mediaobject>
 		</para>
 
-		TODO
+		<variablelist>
+			<varlistentry>
+				<term>Set color</term>
+				<listitem>See <xref linkend="gui_menu_setColor"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Set font</term>
+				<listitem>See <xref linkend="gui_menu_setFont"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Set line width</term>
+				<listitem>See <xref linkend="gui_menu_setLineWidth"/>.</listitem>
+			</varlistentry>
+		</variablelist>
 </sect2>

@@ -14,8 +14,28 @@
 		</para>
 
 
-			TODO
 		<variablelist>
+			<varlistentry>
+				<term>Draw line</term>
+				<listitem>See <xref linkend="gui_menu_drawLine"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Draw rectangle</term>
+				<listitem>See <xref linkend="gui_menu_drawRectangle"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Add text</term>
+				<listitem>See <xref linkend="gui_menu_addText"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Strike through</term>
+				<listitem>See <xref linkend="gui_menu_strikeThrough"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Highlighting text</term>
+				<listitem>See <xref linkend="gui_menu_highlightingText"/>.</listitem>
+			</varlistentry>
+
 			<varlistentry>
 				<term id="gui_toolbars_foregroundColor" xreflabel="foreground color">Foreground color</term>
 				<listitem>

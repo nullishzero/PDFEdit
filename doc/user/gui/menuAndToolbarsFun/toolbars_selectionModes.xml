@@ -13,5 +13,22 @@
 			</mediaobject>
 		</para>
 
-		TODO
+		<variablelist>
+			<varlistentry>
+				<term>Select all objects</term>
+				<listitem>See <xref linkend="gui_menu_selectAll"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Select graphical operators</term>
+				<listitem>See <xref linkend="gui_menu_selectGraphical"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Select text</term>
+				<listitem>See <xref linkend="gui_menu_selectText"/>.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Select annotations</term>
+				<listitem>See <xref linkend="gui_menu_selectAnnot"/>.</listitem>
+			</varlistentry>
+		</variablelist>
 </sect2>
