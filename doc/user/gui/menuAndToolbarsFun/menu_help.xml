@@ -19,10 +19,10 @@
 			<term>About</term>
 			<listitem>
 				<para>
-						TODO
+						Shows About dialog box.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Script equivalent: <emphasis>about()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -31,10 +31,18 @@
 			<term>Help</term>
 			<listitem>
 				<para>
-						TODO
+						Shows help dialog which includes
+					<itemizedlist mark="opencircle">
+					  <listitem><para>Commandline usage</para></listitem>
+					  <listitem><para>Keyboard shortcuts</para></listitem>
+					  <listitem><para>Scripting help</para></listitem>
+					  <listitem><para>Utility Framework documentation</para></listitem>
+					  <listitem><para>Input Dialog Framework documentation</para></listitem>
+					</itemizedlist>
+
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Script equivalent: <emphasis>help()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -43,10 +51,10 @@
 			<term>Menu item from test plugin</term>
 			<listitem>
 				<para>
-						TODO
+						Menu item for debugging purposes.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Script equivalent: <emphasis>testplugin()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
