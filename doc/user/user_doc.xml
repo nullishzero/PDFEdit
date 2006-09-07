@@ -134,7 +134,7 @@
 	&general;
 	&install;
 	&cmdline;
-	&gui; <!-- //todo -->
+	&gui;
 	&scripts_nodoc;
 	&glossary;
 

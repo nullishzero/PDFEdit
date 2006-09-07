@@ -12,3 +12,6 @@ h1.title{font-size:16pt}
 h2.title{font-size:14pt}
 h3.title{font-size:12pt}
 
+.funcsynopsis{font-size:11pt}
+h3.title .funcsynopsis{font-size:11pt}
+a .funcsynopsis{font-size:8pt}
