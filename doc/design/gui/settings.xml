@@ -17,6 +17,11 @@
    (static) settings, so basically only values not found in user settings are
    searched in system settings.
   </para>
+  <para>
+   There is also support for connecting function to a slot that notifies about any setting change.
+   This way the GUI can maintain consistent state with stored settings, independend of way in which
+   the settings is changed, whether it is in option dialog, or by some script.
+  </para>
   <sect1>
    <title>Static (system) Settings</title>
    <para>
