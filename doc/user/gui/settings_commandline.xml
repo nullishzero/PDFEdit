@@ -18,21 +18,25 @@
 	<sect2>
 		<title>Show return value of executed script in console</title>
 		<para>
-				If check this setting, command console will print result last command
-				after execute him. It has same effect as last command was as parameter
-				function <emphasis>print()</emphasis>.
+				If this setting is checked, command console will print return value of last command
+				after executing it. It has basically the same effect as if last command was a
+				parameter of function <funcion>print()</function>.
 		</para>
 	</sect2>
 	<sect2>
 		<title>Show return value also for complex type</title>
 		<para>
-				TODO
+				This will toggle showin the return value for complex types, such as arrays,
+				which are likely to produce lot of output, as arrays tend to be large.
 		</para>
 	</sect2>
 	<sect2>
 		<title>Show errors from event handlers</title>
 		<para>
-				TODO
+				This specify if you want to see error from callback handlers.
+				If there is error in callback handler that is called very often,
+				like handler for current item in tree being changes, it can produce
+				lot out output.
 		</para>
 	</sect2>
 	<sect2>
