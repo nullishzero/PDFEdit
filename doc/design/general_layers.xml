@@ -30,7 +30,7 @@
 		It reuses xpdf code for low-level pdf document access - reading 
 		and decoding content and parsing it to objects as well as 
 		displaying functionality. Xpdf objects are transformed to 
-		interface internal pdfedit obejcts which provides additional
+		interface internal pdfedit objects which provides additional
 		logic and as such they are exported to higher layers.
 	</para>
 	<para> 
