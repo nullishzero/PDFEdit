@@ -22,7 +22,7 @@
 						Save page to image file. For more details see <xref linkend="gui_pagespace_popupmenu"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>savePageImage( false )</emphasis>
+						Script equivalent: <emphasis>savePageImage( false )</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -31,11 +31,11 @@
 			<term id="gui_menu_reloadPage" xreflabel="reload page">Reload page</term>
 			<listitem>
 				<para>
-						Reload page and information about count pages in opened document.
+						Reload page and information about page count in opened document.
 						For more details see <xref linkend="gui_pagespace_refresh"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>go()</emphasis>
+						Script equivalent: <emphasis>go()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -44,7 +44,7 @@
 			<term id="gui_menu_extractText" xreflabel="extract text from page">Extract text from page</term>
 			<listitem>
 				<para>
-						If is shown page, execute dialog with fill text box with text from page.
+						Extract text from page into dialog.
 						<mediaobject>
 							<imageobject>
 								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_extractedText.png" format="PNG"/>
@@ -54,12 +54,12 @@
 							</textobject>
 							<caption><para>Dialog with extracted text from page</para></caption>
 						</mediaobject>
-						If text is nonreadable, set other text coding (see
-						<xref linkend="gui_settings"/>). Some Pdf has text defined only as mapping to
-						viewed forms, but has no information about text coding.
+						If text is not readable or has bad encoding try setting another (see
+						<xref linkend="gui_settings"/>). Some Pdf files does not contain information
+						aboud text encoding.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>viewPageText()</emphasis>
+						Script equivalent: <emphasis>viewPageText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -68,10 +68,10 @@
 			<term id="gui_menu_rotate270" xreflabel="rotate page 270 degrees">Rotate page 270 degrees</term>
 			<listitem>
 				<para>
-						Greate rotaion of page about 270 degrees.
+						Rotate page about 270 degrees.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>rotatePage(-90)</emphasis>
+						Script equivalent: <emphasis>rotatePage(-90)</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -80,10 +80,10 @@
 			<term id="gui_menu_rotate90" xreflabel="rotate page 90 degrees">Rotate page 90 degrees</term>
 			<listitem>
 				<para>
-						Greate rotaion of page about 90 degrees.
+						Rotate page about 90 degrees.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>rotatePage(-90)</emphasis>
+						Script equivalent: <emphasis>rotatePage(-90)</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -92,7 +92,7 @@
 			<term id="gui_menu_editPageMetrics" xreflabel="edit page metrics">Edit page metrics</term>
 			<listitem>
 				<para>
-						Execute dialog to change page metrics. Value in dialog are converted to default
+						Execute dialog to change page metrics. Values in the dialog are converted into default
 						units (see <xref linkend="gui_settings"/>).
 						<mediaobject>
 							<imageobject>
@@ -105,7 +105,7 @@
 						</mediaobject>
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>editPageMediaBox()</emphasis>
+						Script equivalent: <emphasis>editPageMediaBox()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -114,8 +114,10 @@
 			<term id="gui_menu_addSystemFont" xreflabel="add system font to page">Add system font to page</term>
 			<listitem>
 				<para>
-						Because page must have text font defined in its resources (see PdfReference), this
-						function add one system font ther. User define in dialog which font want to add.
+						Because page must have text font defined in its resources (see PdfReference) otherwise
+						the font can not be used. This
+						function adds one system font into a page. Specify which font to add from a list of
+						all possible fonts.
 						<mediaobject>
 							<imageobject>
 								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_addFont.png" format="PNG"/>
@@ -127,11 +129,11 @@
 						</mediaobject>
 				</para>
 				<para>
-						Note:  Mode for add text to page automatic adding actual font to page if
-						is not added.
+						Note:  When adding text onto a page the selected font is automatically 
+						added to the page if not already present.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>addSystemFont()</emphasis>
+						Script equivalent: <emphasis>addSystemFont()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -142,12 +144,12 @@
 			</term>
 			<listitem>
 				<para>
-						Helpes dialog can user change transformation of page (e.g. to
+						With this dialog user can change the transformation of a page (e.g. to
 						half size and rotate about 90 degrees). For details see to
 						PdfReference.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>setPageTm()</emphasis>
+						Script equivalent: <emphasis>setPageTm()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -159,7 +161,7 @@
 						See <xref linkend="gui_onclickFunctions_drawLine"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_drawLine()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_drawLine()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -171,7 +173,7 @@
 						See <xref linkend="gui_onclickFunctions_drawRect"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_drawRect()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_drawRect()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -183,7 +185,7 @@
 						See <xref linkend="gui_onclickFunctions_addText"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_addText()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_addText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -195,7 +197,7 @@
 						See <xref linkend="gui_onclickFunctions_strikeThrough"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_strikeThrough()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_strikeThrough()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -207,7 +209,7 @@
 						See <xref linkend="gui_onclickFunctions_highlightingText"/>.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>onSelectMode_highlightingText()</emphasis>
+						Script equivalent: <emphasis>onSelectMode_highlightingText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>

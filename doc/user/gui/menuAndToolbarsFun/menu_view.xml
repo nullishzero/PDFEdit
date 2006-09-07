@@ -19,10 +19,10 @@
 			<term id="gui_menu_firstPage" xreflabel="first page">First page</term>
 			<listitem>
 				<para>
-						This function show first page of viewed document.
+						Show first page of viewed document.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>PageSpace.firstPage()</emphasis>
+						Script equivalent: <emphasis>PageSpace.firstPage()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -31,10 +31,10 @@
 			<term id="gui_menu_prevPage" xreflabel="prev page">Prev page</term>
 			<listitem>
 				<para>
-						This function show previous page of viewed document.
+						Show previous page of viewed document.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>PageSpace.prevPage()</emphasis>
+						Script equivalent: <emphasis>PageSpace.prevPage()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -43,10 +43,10 @@
 			<term id="gui_menu_nextPage" xreflabel="next page">Next page</term>
 			<listitem>
 				<para>
-						This function show next page of viewed document.
+						Show next page of viewed document.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>PageSpace.nextPage()</emphasis>
+						Script equivalent: <emphasis>PageSpace.nextPage()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -55,10 +55,10 @@
 			<term id="gui_menu_lastPage" xreflabel="last page">Last page</term>
 			<listitem>
 				<para>
-						This function show last page of viewed document.
+						Show last page of viewed document.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>PageSpace.lastPage()</emphasis>
+						Script equivalent: <emphasis>PageSpace.lastPage()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -67,10 +67,10 @@
 			<term id="gui_menu_zoomIn" xreflabel="zoom in">Zoom in</term>
 			<listitem>
 				<para>
-						Zoom in viewed page.
+						Zoom in the displayed page.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>PageSpace.zoomIn()</emphasis>
+						Script equivalent: <emphasis>PageSpace.zoomIn()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -79,10 +79,10 @@
 			<term id="gui_menu_zoomOut" xreflabel="zoom out">Zoom out</term>
 			<listitem>
 				<para>
-						Zoom out viewed page.
+						Zoom out the displayed page.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>PageSpace.zoomOut()</emphasis>
+						Script equivalent: <emphasis>PageSpace.zoomOut()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -94,7 +94,7 @@
 						Show or hide command console (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>showHide("commandline","hideCmd")</emphasis>
+						Script equivalent: <emphasis>showHide("commandline","hideCmd")</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -106,7 +106,7 @@
 						Show or hide property editor (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>showHide("propertyeditor","hideProp")</emphasis>
+						Script equivalent: <emphasis>showHide("propertyeditor","hideProp")</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -118,7 +118,7 @@
 						Show or hide object tree (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>showHide("tree","hideTree")</emphasis>
+						Script equivalent: <emphasis>showHide("tree","hideTree")</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -130,7 +130,7 @@
 						Show or hide status bar (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>showHide("statusbar","hideStatus")</emphasis>
+						Script equivalent: <emphasis>showHide("statusbar","hideStatus")</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -139,8 +139,7 @@
 			<term>Find text</term>
 			<listitem>
 				<para>
-						If is viewed some page, then execute find dialog for search text on
-						the page.
+						Find dialog for text search is executed. It searches text on current page.
 						<mediaobject>
 							<imageobject>
 								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_findText.png" format="PNG"/>
@@ -150,17 +149,18 @@
 							</textobject>
 							<caption><para>Search dialog</para></caption>
 						</mediaobject>
-						This simple dialog is for find all occurrence of text on the page
-						and select them.
+						This simple dialog allows us to search for all occurrences of text on actual page
+						and to select them.
 				</para>
 				<para>
-						 Because text is in Pdf store in parts (somtimes is part == leter
-						 and sometimes is part == line), will be selected the smallest
-						 union of parts (union of text operators), which contains all
-						 founded text.
+						Note:
+						 Usually the text structure (paragraphs, lines, words) is not kept.
+						 More words can create one operator or more operators can create one word.
+						 If the text is found the smallest possible operator is higlighted which can be
+						 bigger than searched text.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>findText()</emphasis>
+						Script equivalent: <emphasis>findText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>

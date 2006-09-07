@@ -88,7 +88,7 @@
 			<term>Delinearize</term>
 			<listitem>
 				<para>
-                                        This tool converts linearized pdf files to normlan pdf files. 
+                                        This tool converts linearized pdf files to normal pdf files. 
 										When executed, a file open dialog is displayed. 
                                         Linearized pdf file should be selected. After open file
                                         is selected save dialog is opened for output (delinearized)
