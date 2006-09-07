@@ -1,20 +1,20 @@
 <sect3 id="gui_onclickFunctions_addText" xreflabel="mode to add new text">
-		<title>Add new text</title>
+		<title>Adding text</title>
 
 		<para>
-				To add new text line is this mode the right. User first set on toolbars and menu
-				which <xref linkend="gui_toolbars_foregroundColor"/>, <xref linkend="gui_toolbars_font"/>
-				and <xref linkend="gui_toolbars_fontSize"/> can use. Then only click left button on page
-				and type new text to viewed text edit line and press Enter.
-				The viewed part of the page is refreshing after added text.
+				This mode enables adding text lines onto the page. First set some default properties on the toolbar like
+				<xref linkend="gui_toolbars_foregroundColor"/>, <xref linkend="gui_toolbars_font"/>
+				and <xref linkend="gui_toolbars_fontSize"/>. Then by clicking mouse left button on page an edit box is shown
+				where the added text is written. After pressing Enter the text will be displayed on the page.
+				The viewed part of the page is updated after text addition.
 		</para>
 		<para>
-				Text is added to page too if the text edit line lost focus (this is unpleasant for
-				window managers, which set focus to window under mouse cursor. Otherwise is very usefull).
-				To escape from adding text is using <emphasis>Esc</emphasis> key.
+				The text is added to the page also if the text edit line losts focus (this can be unpleasant for
+				window managers that set focus to windows under the mouse cursor).
+				To cancel text addition press <emphasis>Esc</emphasis> key.
 		</para>
 		<para>
-				Unresolved prombles are rotated page, because text is add to correct start point, but is rotated by set
-				of actual rotation of page.
+				Note: When pages are rotated the text can appear unrotated. This is because the text uses own transformation
+				matrix than the whole page.
 		</para>
 </sect3>

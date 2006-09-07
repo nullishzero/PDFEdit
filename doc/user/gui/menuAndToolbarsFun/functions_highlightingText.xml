@@ -2,14 +2,13 @@
 		<title>Highlighting text</title>
 
 		<para>
-				Offen enough corrector highlight text. For this case is usefull
-				this mode.
+				Highlighting of text is a very desired feature. This mode can highlight selected text.
 		</para>
 		<para>
-				After activated this mode, user can select text same as by
-				<xref linkend="gui_onclickFunctions_selectText"/>. After end selection
-				is calling script function, which draw under text fill rectangle with
-				actual set of color (for more details see
+				After activating this mode user can select text the same way as by
+				<xref linkend="gui_onclickFunctions_selectText"/>. After ending the selection
+				script function is called which draws filled rectangle under each text operator with
+				default background colour (for more details see
 				<xref linkend="gui_onclickFunctions_drawRect"/>).
 		</para>
 </sect3>

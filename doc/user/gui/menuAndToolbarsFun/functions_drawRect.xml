@@ -2,13 +2,15 @@
 		<title>Drawing rectangles</title>
 
 		<para>
-				Drawing fill rectangle to page is easy with this mode. User first set on toolbars and menu
-				which <xref linkend="gui_toolbars_backgroundColor"/> can use. Then only click left button
-				and drag new fill rectangle on the page. For information is in draging viewed rectangle.
-				The viewed part of the page is refreshing after each added rectangle.
+				Drawing rectangles and rectangles with background is easy with this mode. 
+				First set default properties in the toolbar:
+				<xref linkend="gui_toolbars_backgroundColor"/>. Then by pressing the mouse left button
+				and dragging a new rectangle is crated.
+				After releasing mouse button the rectangle is drawn.
+				The rectangle drawn during dragging is only informative. 
+				The viewed part of the page is updated after each added line.
 		</para>
 		<para>
-				If user doesn't end of adding new rectangle, can press <emphasis>Esc</emphasis> key befor
-				release of left button.
+				To cancel rectangle drawing press <emphasis>Esc</emphasis> key before releasing the mouse button.
 		</para>
 </sect3>

@@ -1,44 +1,40 @@
 <sect1>
 		<title>Functions in menu and toolbars</title>
 		<para>
-				Following functions are calling from menu and toolbars and provide
-				user friendly enviroments for simple editing pdf documents.
+				Following functions are called from menu and toolbars and provide
+				user friendly enviroment for simple editing.
 		</para>
 
 		<sect2 id="gui_onclickFunctions_selectionModes" xreflabel="selection modes">
 				<title>Selection modes</title>
 				<para>
-						Modes in this section are using to selecting objects on
-						viewed page. Inside all this modes is implemented possibility
-						move and resize selected objects, but this functionalities are
-						dependence on implemented scripts, which do concrete actions with
-						selected objects (e.g. is implemented scripts for moving nongraphical
-						operators (text, pictures) and moving annotation's activation rectangle,
-						but is not implemented moving graphical operators (line, rectangle, ...)
-						and resizing functions for all operators and annotations).
+						Modes in this section can be used to select objects on the
+						displayed page. All modes support move and resize of selected objects, 
+						but the real functionality depends on implemented scripts, which perform
+						real action with selected objects (e.g. moving nongraphical
+						operators (text, pictures) and moving annotation activation rectangle,
+						but moving graphical operators (line, rectangle, ...) is not implemented).
 				</para>
 				<para>
-						If user wish move selected objects, then must move mouse cursor into
-						selected region (cursor will change to 4 arrow starting in 1 middle
-						point - cross from arrows). After press left button, selection region
-						is moving by movement of cursor. Script function for moving is execute
-						on release mouse left button.
+						When moving selected objects cursor must be in the selected
+						region (cursor pointer will change to cross from arrows pointer). After pressing 
+						the mouse left button selection region
+						can be moved. After releasing mouse left button script moving function is executed
+						on the selected operators.
 				</para>
 				<para>
-						If user wish resize objects, then must move mouse cursor on edge of bounding
-						rectangle of selected region (cursor will change to 2 arrow oriented from each
-						other direct in allowed resizing way - are 4 possibilities: left-right, top-bottom,
-						(left-top)-(right-bottom) and (left-bottom)-(right-top)). After press left
-						button, selection region is resizing by movement of cursor. Script function for
-						resizing is execute on release mouse left button.
+						When resizing objects cursor must be moved to the edge of bounding
+						rectangle of selected region (cursor will change to two arrow oriented from each
+						other direction - there are four possibilities how to resize: left-right, top-bottom,
+						(left-top)-(right-bottom) and (left-bottom)-(right-top)). After pressing the left
+						mouse button selected region is resized by cursor movement. Script function for
+						resizing is executed when mouse left button is released.
 				</para>
 				<para>
-						For occurence that user doesn't want press left button, can before release button
-						press <emphasis>Esc</emphasis> key. If <emphasis>Esc</emphasis> is press duration
-						draging event with pressed left button, moving, resising or new selection is interrupt
-						and select all object, which has been selected before pressing left button.
-						If <emphasis>Esc</emphasis> is press and nothing mouse action is doing, all objects
-						on the page will be unselected.
+						When cancelling started action press <emphasis>Esc</emphasis> key before releasing left mouse
+						button. 
+						If <emphasis>Esc</emphasis> key is pressed during no action all objects
+						on the page are unselected.
 				</para>
 				&gui_onclickFunctions_selectAll;
 				&gui_onclickFunctions_selectGraphicalOp;
