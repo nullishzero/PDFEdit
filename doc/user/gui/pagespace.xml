@@ -1,10 +1,9 @@
 <chapter>
-	<title>Page space and what's all is shown</title>
+	<title>Page space</title>
 	<para>
-			In page space is shown 1 page from opened documents. In the bottom is shown which
-			page is actual viewed, how many pages has documents and the right is cursor position
-			on the page with units in which is shown position.
-
+			The page space displayes one page from opened document. The bottom shows page number of
+			displayed page, how many pages has the document. On the right the actual position of mouse cursor
+			on the page is shown in specified units.
 			<mediaobject>
 				<imageobject>
 					<imagedata fileref="gui/images/pagespace.png" format="PNG"/>
@@ -17,61 +16,61 @@
 	</para>
 
 	<sect1 id="gui_pagespace_refresh" xreflabel="refreshing page">
-			<title>Refresh page and information</title>
+			<title>Changing page information</title>
 			<para>
-					In page space are 2 indenpendent parts, which must be refreshing.
+					There are two independent information in page space which must be actualized.
 			</para>
 			<para>
-					First is the page and information about count pages in the document.
-					This part is refreshing only if someone call script function
-					<emphasis>go()</emphasis>, because it's very slow operation (it's
-					not very good refreshing page after each chage).
-					Reload page button in toolbars and menu (and many others usefull
-					functionality) are calling <emphasis>go()</emphasis>.
+					First is the page and information about page count in the document.
+					This part is updated only if someone calls script function
+					<emphasis>go()</emphasis> because it's very slow operation (to update
+					page after each change could be a performance problem).
+					Reload page button in toolbars and menu (and many other useful
+					functions) call <emphasis>go()</emphasis> automatically.
 					But direct changes in <xref linkend="gui_objtreepropedit_id" />
-					and changes via scripts are not automaticly projection to viewed page
-					and information about count pages.
+					and changes using scripting do not update the page and page count automatically.
 			</para>
 			<para>
-					Second is mouse position on page. This positions are converted to base
-					internal page positions. This positions is not depending to viewed zoom,
-					or actual rotation of page. (If user see that text is started at position
-					[x:6, y:7 cm] in 100% zoom, than same position will be started this text
-					in 200% zoom and rotated about 90 degrees.)
+					The second is the mouse position on page. Position must be converted to 
+					internal coordinates. The position does not depend on zoom level
+					or actual rotation of page. (If the text starte at position
+					[x:6, y:7 cm] in 100% zoom the same position will be used to started the text
+					in 200% zoom.)
 					<para>
-							Notice: Usually is zero point in left-bottom edge of page and
-							enlarge to right-top edge.
+							Notice: Most common practise is to have the zero in the left-bottom edge of page and
+							to have the maximum in right-top edge.
 					</para>
 					
 			</para>
 			<para>
-					Sometimes after change zoom do not refresh outer page space. For correct view is needing
-					refresh page type <emphasis>go()</emphasis> or click to reload page button.
+					It can happen that after a zoom change the outer page space is not updated. 
+					To corret this call either script <emphasis>go()</emphasis> function or click the 
+					reload page button.
 			</para>
 	</sect1>
 	<sect1 id="gui_pagespace_popupmenu" xreflabel="popup menu for page space">
 			<title>Popup menu</title>
 			<para>
-					If user click to viewed page with right mouse button, popup menu will be displayed.
-					In this menu is at choice 1 or 2 items. First item is
-					<emphasis>Save page as image</emphasis>. It's everytime to choose. Second is
-					<emphasis>Save selected area as image</emphasis> which is to choose only if is
-					some selected on the page.
+					Right click of a mouse displayes a menu which will be displayed near the cursor.
+					You can choose among two functions. Firstly to
+					<emphasis>Save page as image</emphasis>. Secondly to
+					<emphasis>Save selected area as image</emphasis> which can be used only when a selection
+					is already present.
 			</para>
 			<para>
-					From names of items is clear that is using to storing viewed page to image file.
-					Format of image files are depending on system and version of Qt.
+					Both functions store portion of viewed page to an image file.
+					Format of the image file is depending on the system and version of Qt.
 			</para>
 			<para>
-					<emphasis>Save page as image</emphasis> store actual viewed page to image file.
-					If is viewed only part of page, is storing only part of page which cantains viewed
-					part (usualy is greate then viewed, but not whole page).
+					<emphasis>Save page as image</emphasis> stores actual viewed page to an image file.
+					If only a part of a page is displayed, only the part of page is stored.
 			</para>
 			<para>
-					<emphasis>Save selected area as image</emphasis> store only actual selected area.
-					If selected area is fragmented or has not a rectangle shape, then is storing bounding
-					rectangle of selected area. If selected area is greate then viewed part of page, storing
-					area is cropped with same rectangle as is cropped page in <emphasis>Save page as image</emphasis>.
+					<emphasis>Save selected area as image</emphasis> stores only actual selected area.
+					If selected area is fragmented or has not a rectangle shape, then a bounding
+					rectangle of selected area is sotred. If selected area is bigger then actual displayed part of 
+					page, storing
+					area is cropped with same rectangle as page is cropped in <emphasis>Save page as image</emphasis>.
 			</para>
 	</sect1>
 </chapter>
