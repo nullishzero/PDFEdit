@@ -44,10 +44,22 @@
 			<term id="gui_menu_extractText" xreflabel="extract text from page">Extract text from page</term>
 			<listitem>
 				<para>
-						TODO
+						If is shown page, execute dialog with fill text box with text from page.
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_extractedText.png" format="PNG"/>
+							</imageobject>
+							<textobject>
+								<phrase>Dialog with extracted text from page</phrase>
+							</textobject>
+							<caption><para>Dialog with extracted text from page</para></caption>
+						</mediaobject>
+						If text is nonreadable, set other text coding (see
+						<xref linkend="gui_settings"/>). Some Pdf has text defined only as mapping to
+						viewed forms, but has no information about text coding.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>viewPageText()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -56,10 +68,10 @@
 			<term id="gui_menu_rotate270" xreflabel="rotate page 270 degrees">Rotate page 270 degrees</term>
 			<listitem>
 				<para>
-						TODO
+						Greate rotaion of page about 270 degrees.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>rotatePage(-90)</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -68,10 +80,10 @@
 			<term id="gui_menu_rotate90" xreflabel="rotate page 90 degrees">Rotate page 90 degrees</term>
 			<listitem>
 				<para>
-						TODO
+						Greate rotaion of page about 90 degrees.
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>rotatePage(-90)</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -80,10 +92,20 @@
 			<term id="gui_menu_editPageMetrics" xreflabel="edit page metrics">Edit page metrics</term>
 			<listitem>
 				<para>
-						TODO
+						Execute dialog to change page metrics. Value in dialog are converted to default
+						units (see <xref linkend="gui_settings"/>).
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_editPageMetrics.png" format="PNG"/>
+							</imageobject>
+							<textobject>
+								<phrase>Dialog to change page metrics</phrase>
+							</textobject>
+							<caption><para>Dialog to change page metrics</para></caption>
+						</mediaobject>
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Scripts equivalent: <emphasis>editPageMediaBox()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -92,10 +114,24 @@
 			<term id="gui_menu_addSystemFont" xreflabel="add system font to page">Add system font to page</term>
 			<listitem>
 				<para>
-						TODO
+						Because page must have text font defined in its resources (see PdfReference), this
+						function add one system font ther. User define in dialog which font want to add.
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="gui/menuAndToolbarsFun/images/dialog_addFont.png" format="PNG"/>
+							</imageobject>
+							<textobject>
+								<phrase>Dialog to add system font to page</phrase>
+							</textobject>
+							<caption><para>Dialog to add system font to page</para></caption>
+						</mediaobject>
 				</para>
 				<para>
-						Scripts equivalent: <emphasis>TODO</emphasis>
+						Note:  Mode for add text to page automatic adding actual font to page if
+						is not added.
+				</para>
+				<para>
+						Scripts equivalent: <emphasis>addSystemFont()</emphasis>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -106,7 +142,9 @@
 			</term>
 			<listitem>
 				<para>
-						TODO
+						Helpes dialog can user change transformation of page (e.g. to
+						half size and rotate about 90 degrees). For details see to
+						PdfReference.
 				</para>
 				<para>
 						Scripts equivalent: <emphasis>setPageTm()</emphasis>

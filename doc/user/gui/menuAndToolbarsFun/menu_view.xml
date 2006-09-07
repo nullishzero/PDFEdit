@@ -91,7 +91,7 @@
 			<term id="gui_menu_sh_commandline" xreflabel="show/hide commandline">Show/Hide commandline</term>
 			<listitem>
 				<para>
-						Show or hide command console (see <xref linkend="gui_layout"/>.
+						Show or hide command console (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
 						Scripts equivalent: <emphasis>showHide("commandline","hideCmd")</emphasis>
@@ -103,7 +103,7 @@
 			<term>Show/Hide property editor</term>
 			<listitem>
 				<para>
-						Show or hide property editor (see <xref linkend="gui_layout"/>.
+						Show or hide property editor (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
 						Scripts equivalent: <emphasis>showHide("propertyeditor","hideProp")</emphasis>
@@ -115,7 +115,7 @@
 			<term>Show/Hide object tree</term>
 			<listitem>
 				<para>
-						Show or hide object tree (see <xref linkend="gui_layout"/>.
+						Show or hide object tree (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
 						Scripts equivalent: <emphasis>showHide("tree","hideTree")</emphasis>
@@ -127,7 +127,7 @@
 			<term>Show/Hide status bar</term>
 			<listitem>
 				<para>
-						Show or hide status bar (see <xref linkend="gui_layout"/>.
+						Show or hide status bar (see <xref linkend="gui_layout"/>).
 				</para>
 				<para>
 						Scripts equivalent: <emphasis>showHide("statusbar","hideStatus")</emphasis>
