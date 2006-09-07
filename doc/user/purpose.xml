@@ -32,10 +32,10 @@
 				used in PDFEdit, with function and classes usable for editing pdf
 				documents.
 		    </listitem>
-		    <listitem>
+<!--		    <listitem>
 				<xref linkend="glossary_part"/> which describes some terms used
 				in this document.
-		    </listitem>
+		    </listitem>-->
 		</itemizedlist>
 	    </para>
 	</sect1>
