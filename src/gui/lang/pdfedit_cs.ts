@@ -367,7 +367,7 @@ Data: %3
     </message>
     <message>
         <source>No page selected!</source>
-        <translation>Není zvolena žádná stránka</translation>
+        <translation>Není zvolena žádná stránka!</translation>
     </message>
     <message>
         <source>Must define color</source>
@@ -427,11 +427,11 @@ Data: %3
     </message>
     <message>
         <source>Page rotated.</source>
-        <translation>Stránka otočena</translation>
+        <translation>Stránka otočena.</translation>
     </message>
     <message>
         <source>MediaBox changed.</source>
-        <translation>MediaBox změněn</translation>
+        <translation>MediaBox změněn.</translation>
     </message>
     <message>
         <source>No page or operator selected!</source>
@@ -447,11 +447,11 @@ Data: %3
     </message>
     <message>
         <source>suitable for colour setting.</source>
-        <translation>vhodný pro nastavení barvy</translation>
+        <translation>vhodný pro nastavení barvy.</translation>
     </message>
     <message>
         <source>suitable for line width change.</source>
-        <translation>vhodný pro nastavení šířky čáry</translation>
+        <translation>vhodný pro nastavení šířky čáry.</translation>
     </message>
     <message>
         <source>Line width changed.</source>
@@ -507,7 +507,7 @@ Data: %3
     </message>
     <message>
         <source>Page text displayed</source>
-        <translation>Text stránky zobrazen.</translation>
+        <translation>Text stránky zobrazen</translation>
     </message>
     <message>
         <source>Operator must be</source>
@@ -515,7 +515,7 @@ Data: %3
     </message>
     <message>
         <source>No preceding font operator found...</source>
-        <translation>Nenalezen žádný předcházející operátor písma.</translation>
+        <translation>Nenalezen žádný předcházející operátor písma...</translation>
     </message>
     <message>
         <source>Invalid operand type</source>
@@ -523,7 +523,7 @@ Data: %3
     </message>
     <message>
         <source>This option is not supported.</source>
-        <translation>Tato volba není podporována</translation>
+        <translation>Tato volba není podporována.</translation>
     </message>
     <message>
         <source>Show only graphical operators</source>
@@ -654,16 +654,8 @@ Data: %3
         <translation>Změnit relativní pozici textu</translation>
     </message>
     <message>
-        <source>Invalid x or y</source>
-        <translation>Neplatné x nebo y</translation>
-    </message>
-    <message>
-        <source>Only real numbers allowed</source>
-        <translation>Povolena jsou pouze reálná čísla</translation>
-    </message>
-    <message>
         <source>Operator position changed.</source>
-        <translation>Pozice operátoru změněna</translation>
+        <translation>Pozice operátoru změněna.</translation>
     </message>
     <message>
         <source>Showing graphic. op.</source>
@@ -726,7 +718,7 @@ Data: %3
     </message>
     <message>
         <source>Line was drawn.</source>
-        <translation>Čára nakreslena</translation>
+        <translation>Čára nakreslena.</translation>
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
@@ -734,7 +726,7 @@ Data: %3
     </message>
     <message>
         <source>Rect was drawn.</source>
-        <translation>Obdélník byl nakreslen</translation>
+        <translation>Obdélník byl nakreslen.</translation>
     </message>
     <message>
         <source>Draw rect</source>
@@ -1006,6 +998,42 @@ Data: %3
     <message>
         <source>Operator cm must have array with 6 numbers as parameter!</source>
         <translation>Operátor cm musí mít pole 6 čísel jako parametr!</translation>
+    </message>
+    <message>
+        <source>X and Y position must be a number</source>
+        <translation>X a Y pozice musí být číslo</translation>
+    </message>
+    <message>
+        <source>Dictionary has no type!</source>
+        <translation>Slovník nemá žádný typ!</translation>
+    </message>
+    <message>
+        <source>Maybe bad stream!</source>
+        <translation>Pravděpodobně špatný stream!</translation>
+    </message>
+    <message>
+        <source>%1 is requirement for %2, but not found for it !</source>
+        <translation>%1 je požadováno pro %2, ale nebylo nalezeno !</translation>
+    </message>
+    <message>
+        <source>For child %1 of %2 is requirement %3 subchild, but has %4</source>
+        <translation>Pro potomka %1 je %2 požadován potomek %3, ale je tam %4</translation>
+    </message>
+    <message>
+        <source>Operator &apos;%1&apos; should have 1 parameter, but has %2 !</source>
+        <translation>Operátor &apos;%1&apos; má mít 1 parametr, ale má %2 !</translation>
+    </message>
+    <message>
+        <source>Operator &apos;%1&apos; should have %2 parameters, but has %3 !</source>
+        <translation>Operátor &apos;%1&apos; má mít %2 parametrů, ale má %3 !</translation>
+    </message>
+    <message>
+        <source>Page parameter must be defined!</source>
+        <translation>Parametr stránky musí být definován!</translation>
+    </message>
+    <message>
+        <source>Matrix is in bad state !</source>
+        <translation>Matice je ve špatném stavu !</translation>
     </message>
 </context>
 <context>
@@ -1525,7 +1553,7 @@ Režim zvýraznění</translation>
     </message>
     <message>
         <source>Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document.</source>
-        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu</translation>
+        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing Advanced mode will affect only newly opened files</source>
@@ -2139,7 +2167,7 @@ Režim zvýraznění</translation>
     <message>
         <source>Show/Hide &amp;status bar</source>
         <comment>hideStatus</comment>
-        <translation>Zobrazit/skrýt stavový řádek</translation>
+        <translation>Zobrazit/skrýt &amp;stavový řádek</translation>
     </message>
     <message>
         <source>Add text</source>
@@ -2174,7 +2202,7 @@ Režim zvýraznění</translation>
     <message>
         <source>&amp;Insert Pages from other document</source>
         <comment>mergeDoc</comment>
-        <translation>Vložit stránky z jiného dokumentu</translation>
+        <translation>Vlož&amp;it stránky z jiného dokumentu</translation>
     </message>
     <message>
         <source>Draw Toolbar</source>
@@ -2197,11 +2225,6 @@ Režim zvýraznění</translation>
         <translation>Odstranit stránku</translation>
     </message>
     <message>
-        <source>Strike trough</source>
-        <comment>striketrough</comment>
-        <translation>Přeškrtnout</translation>
-    </message>
-    <message>
         <source>Highlighting text</source>
         <comment>highlightingtext</comment>
         <translation>Zvýraznit text</translation>
@@ -2220,6 +2243,11 @@ Režim zvýraznění</translation>
         <source>Dynamic Toolbar</source>
         <comment>DynamicToolBar</comment>
         <translation>Dynamický Toolbar</translation>
+    </message>
+    <message>
+        <source>Strike through</source>
+        <comment>striketrough</comment>
+        <translation>Přeškrtnout</translation>
     </message>
 </context>
 <context>

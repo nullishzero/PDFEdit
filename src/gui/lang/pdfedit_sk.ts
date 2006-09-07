@@ -627,14 +627,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid x or y</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only real numbers allowed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Operator position changed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1001,7 +993,43 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>X and Y position must be a number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dictionary has no type!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maybe bad stream!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 is requirement for %2, but not found for it !</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>For child %1 of %2 is requirement %3 subchild, but has %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator &apos;%1&apos; should have 1 parameter, but has %2 !</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Operator &apos;%1&apos; should have %2 parameters, but has %3 !</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Page parameter must be defined!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Operator cm must have array with 6 numbers as parameter!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Matrix is in bad state !</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2192,11 +2220,6 @@ Data: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Strike trough</source>
-        <comment>striketrough</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Highlighting text</source>
         <comment>highlightingtext</comment>
         <translation type="unfinished"></translation>
@@ -2214,6 +2237,11 @@ Data: %3
     <message>
         <source>Dynamic Toolbar</source>
         <comment>DynamicToolBar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Strike through</source>
+        <comment>striketrough</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
