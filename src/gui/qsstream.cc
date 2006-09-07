@@ -167,7 +167,11 @@ void QSStream::setBuffer(const QString &s) {
  if (s.isNull()) return;
  CStream *st=dynamic_cast<CStream*>(obj.get());
  assert(st);
- st->setBuffer(stringToBuffer(s));
+ try {
+  st->setBuffer(stringToBuffer(s));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Stream","setBuffer",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -177,7 +181,11 @@ void QSStream::setBuffer(const QString &s) {
 void QSStream::setBuffer(const QByteArray &a) {
  CStream *st=dynamic_cast<CStream*>(obj.get());
  assert(st);
- st->setBuffer(arrayToBuffer(a));
+ try {
+  st->setBuffer(arrayToBuffer(a));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Stream","setBuffer",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -188,7 +196,11 @@ void QSStream::setRawBuffer(const QString &s) {
  if (s.isNull()) return;
  CStream *st=dynamic_cast<CStream*>(obj.get());
  assert(st);
- st->setRawBuffer(stringToBuffer(s));
+ try {
+  st->setRawBuffer(stringToBuffer(s));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Stream","setRawBuffer",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -198,7 +210,11 @@ void QSStream::setRawBuffer(const QString &s) {
 void QSStream::setRawBuffer(const QByteArray &a) {
  CStream *st=dynamic_cast<CStream*>(obj.get());
  assert(st);
- st->setRawBuffer(arrayToBuffer(a));
+ try {
+  st->setRawBuffer(arrayToBuffer(a));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Stream","setRawBuffer",tr("Document is read-only"));
+ }
 }
 
 /** 

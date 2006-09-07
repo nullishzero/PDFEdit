@@ -107,7 +107,12 @@ bool QSPdf::isValid() {
  */
 QSPage* QSPdf::insertPage(QSPage* page, int position) {
  if (nullPtr(obj,"insertPage")) return NULL;
- return new QSPage(obj->insertPage(page->get(),position),base);
+ try {
+  return new QSPage(obj->insertPage(page->get(),position),base);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Pdf","insertPage",tr("Document is read-only"));
+  return NULL;
+ }
 }
 
 /**
@@ -117,7 +122,12 @@ QSPage* QSPdf::insertPage(QSPage* page, int position) {
 QSPage* QSPdf::insertPage(QObject* page, int position) {
  QSPage *qpage=qobject_cast<QSPage*>(page,"insertPage",1,"Page");
  if (!qpage) return NULL;//Something invalid passed
- return insertPage(qpage,position);
+ try {
+  return insertPage(qpage,position);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Pdf","insertPage",tr("Document is read-only"));
+  return NULL;
+ }
 }
 
 /**
@@ -130,6 +140,8 @@ void QSPdf::removePage(int position) {
  if (nullPtr(obj,"removePage")) return;
  try {
   obj->removePage(position);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Pdf","removePage",tr("Document is read-only"));
  } catch (PageNotFoundException &e) {
   base->errorException("Pdf","removePage",tr("Page not found"));
  }

@@ -60,6 +60,8 @@ void QSPage::moveAbove(QSContentStream* cs) {
   obj->moveAbove(cs->get());
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveAbove",tr("Invalid operation"));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","moveAbove",tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveAbove",tr("Out of range"));
  } catch(...) {
@@ -76,6 +78,8 @@ void QSPage::moveBelow(QSContentStream* cs) {
   obj->moveBelow(cs->get());
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveBelow",tr("Invalid operation"));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","moveBelow",tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveBelow",tr("Out of range"));
  } catch(...) {
@@ -92,6 +96,8 @@ void QSPage::moveAbove(int csi) {
   obj->moveAbove(csi);
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveAbove",tr("Invalid operation"));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","moveAbove",tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveAbove",tr("Out of range"));
  } catch(...) {
@@ -108,6 +114,8 @@ void QSPage::moveBelow(int csi) {
   obj->moveBelow(csi);
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveBelow",tr("Invalid operation"));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","moveBelow",tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveBelow",tr("Out of range"));
  } catch(...) {
@@ -131,7 +139,11 @@ void QSPage::setTransformMatrix(QVariant tMatrix) {
   ++it;
   ++i;
  }
- obj->setTransformMatrix(tm);
+ try {
+  obj->setTransformMatrix(tm);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","setTransformMatrix",tr("Document is read-only"));
+ }
 }
 
 /** 
@@ -142,7 +154,11 @@ void QSPage::setTransformMatrix(QVariant tMatrix) {
 */
 void QSPage::prependContentStream(QSPdfOperatorStack* opStack) {
  assert(opStack);
- obj->addContentStreamToFront(opStack->get());
+ try {
+  obj->addContentStreamToFront(opStack->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","prependContentStream",tr("Document is read-only"));
+ }
 }
 
 /** 
@@ -153,7 +169,11 @@ void QSPage::prependContentStream(QSPdfOperatorStack* opStack) {
 */
 void QSPage::appendContentStream(QSPdfOperatorStack* opStack) {
  assert(opStack);
- obj->addContentStreamToBack(opStack->get());
+ try {
+  obj->addContentStreamToBack(opStack->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","appendContentStream",tr("Document is read-only"));
+ }
 }
 
 /** \copydoc appendContentStream(QSPdfOperatorStack*) */
@@ -239,7 +259,11 @@ void QSPage::loadContentStreams() {
  @param an Annotation to add
 */
 void QSPage::addAnnotation(QSAnnotation* an) {
- obj->addAnnotation(an->get());
+ try {
+  obj->addAnnotation(an->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","addAnnotation",tr("Document is read-only"));
+ }
 }
 
 /** \copydoc addAnnotation(QSAnnotation*) */
@@ -273,7 +297,11 @@ QVariant QSPage::mediabox() {
 */
 void QSPage::setMediabox(double x1,double y1,double x2,double y2) {
  Rectangle r(x1,y1,x2,y2);
- obj->setMediabox(r);
+ try {
+  obj->setMediabox(r);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","setMediaBox",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -285,7 +313,11 @@ void QSPage::setMediabox(QRect rc) {
  //Note that Rectangle uses double coordinates, while Qrect use int coordinates.
  //However, media box is often array of int, so this may not be a problem
  Rectangle r(rc.left(),rc.top(),rc.right(),rc.bottom());
- obj->setMediabox(r);
+ try {
+  obj->setMediabox(r);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","setMediaBox",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -332,7 +364,11 @@ QString QSPage::getFontId(const QString &fontName) {
  @param fontName name of font
 */
 void QSPage::addSystemType1Font(const QString &fontName) {
- obj->addSystemType1Font(fontName);
+ try {
+  obj->addSystemType1Font(fontName);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Page","addSystemType1Font",tr("Document is read-only"));
+ }
 }
 
 /** get CPage held inside this class. Not exposed to scripting */

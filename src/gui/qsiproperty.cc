@@ -146,42 +146,46 @@ QString QSIProperty::getTypeName() {
  @param value new value for the property
 */
 void QSIProperty::set(const QString &value) {
- switch(obj->getType()) {
-  case pBool: { //Convert to bool, call set()
-   if (value.find("true",0,false)==0) {
-    //String starts with "true" (case insensitive)
-    set(true);
+ try {
+  switch(obj->getType()) {
+   case pBool: { //Convert to bool, call set()
+    if (value.find("true",0,false)==0) {
+     //String starts with "true" (case insensitive)
+     set(true);
+     return;
+    }
+    if (value.find("false",0,false)==0) {
+     //String starts with "false" (case insensitive)
+     set(false);
+     return;
+    }
+    set(value.toInt()!=0);
     return;
    }
-   if (value.find("false",0,false)==0) {
-    //String starts with "false" (case insensitive)
-    set(false);
+   case pInt: { //Convert to int, call set()
+    set(value.toInt());
     return;
    }
-   set(value.toInt()!=0);
-   return;
+   case pReal: { //Convert to double, call set()
+    set(value.toDouble());
+    return;
+   }
+   case pName: {
+    CName *ip=dynamic_cast<CName*>(obj.get());
+    std::string str=value;
+    ip->setValue(util::convertFromUnicode(str));
+    return;
+   }
+   case pString: {
+    CString *ip=dynamic_cast<CString*>(obj.get());
+    std::string str=value;
+    ip->setValue(util::convertFromUnicode(str));
+    return;
+   }
+   default:;//Do nothing
   }
-  case pInt: { //Convert to int, call set()
-   set(value.toInt());
-   return;
-  }
-  case pReal: { //Convert to double, call set()
-   set(value.toDouble());
-   return;
-  }
-  case pName: {
-   CName *ip=dynamic_cast<CName*>(obj.get());
-   std::string str=value;
-   ip->setValue(util::convertFromUnicode(str));
-   return;
-  }
-  case pString: {
-   CString *ip=dynamic_cast<CString*>(obj.get());
-   std::string str=value;
-   ip->setValue(util::convertFromUnicode(str));
-   return;
-  }
-  default:;//Do nothing
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("IProperty","set",tr("Document is read-only"));
  }
 }
 
@@ -194,7 +198,11 @@ void QSIProperty::set(int value) {
   }
   case pInt: {
    CInt *ip=dynamic_cast<CInt*>(obj.get());
-   ip->setValue(value);
+   try {
+    ip->setValue(value);
+   } catch (ReadOnlyDocumentException &e) {
+    base->errorException("IProperty","set",tr("Document is read-only"));
+    }
    return;
   }
   case pReal: { //Convert to double, call set()
@@ -223,7 +231,11 @@ void QSIProperty::set(double value) {
   }
   case pReal: {
    CReal *ip=dynamic_cast<CReal*>(obj.get());
-   ip->setValue(value);
+   try {
+    ip->setValue(value);
+   } catch (ReadOnlyDocumentException &e) {
+    base->errorException("IProperty","set",tr("Document is read-only"));
+   }
    return;
   }
   case pName: 
@@ -240,7 +252,11 @@ void QSIProperty::set(bool value) {
  switch(obj->getType()) {
   case pBool: {
    CBool *ip=dynamic_cast<CBool*>(obj.get());
-   ip->setValue(value);
+   try {
+    ip->setValue(value);
+   } catch (ReadOnlyDocumentException &e) {
+    base->errorException("IProperty","set",tr("Document is read-only"));
+   }
    return;
   }
   case pInt: { //Convert to int, call set()

@@ -259,7 +259,11 @@ int QSPdfOperator::paramCount() {
 */
 void QSPdfOperator::setNext(QSPdfOperator *op) {
  if (nullPtr(obj,"setNext")) return;
- obj->setNext(op->get());
+ try {
+  obj->setNext(op->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("PdfOperator","setNext",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -269,7 +273,11 @@ void QSPdfOperator::setNext(QSPdfOperator *op) {
 */
 void QSPdfOperator::setPrev(QSPdfOperator *op) {
  if (nullPtr(obj,"setPrev")) return;
- obj->setPrev(op->get());
+ try {
+  obj->setPrev(op->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("PdfOperator","setPrev",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -280,7 +288,11 @@ void QSPdfOperator::setNext(QObject *op) {
  if (nullPtr(obj,"setNext")) return;
  QSPdfOperator *qop=qobject_cast<QSPdfOperator*>(op,"setNext",1,"PdfOperator");
  if (!qop) return; //Invalid parameter
- obj->setNext(qop->get());
+ try {
+  obj->setNext(qop->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("PdfOperator","setNext",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -291,7 +303,11 @@ void QSPdfOperator::setPrev(QObject *op) {
  if (nullPtr(obj,"setPrev")) return;
  QSPdfOperator *qop=qobject_cast<QSPdfOperator*>(op,"setPrev",1,"PdfOperator");
  if (!qop) return; //Invalid parameter
- obj->setPrev(qop->get());
+ try {
+  obj->setPrev(qop->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("PdfOperator","setPrev",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -337,7 +353,11 @@ void QSPdfOperator::remove() {
  if (nullPtr(obj,"remove")) return;
  boost::shared_ptr<CContentStream> cStream=obj->getContentStream();
  if (cStream) {
+  try {
    cStream->deleteOperator(obj);
+  } catch (ReadOnlyDocumentException &e) {
+   base->errorException("PdfOperator","remove",tr("Document is read-only"));
+  }
  }
  //This operator is not in any content stream, so technically, it is already removed from it :)
  return;
@@ -353,11 +373,15 @@ void QSPdfOperator::remove() {
 */
 void QSPdfOperator::pushBack(QSPdfOperator *op,QSPdfOperator *prev/*=NULL*/) {
  if (nullPtr(obj,"pushBack")) return;
- if (!prev) {
-  obj->push_back(op->get());
-  return;
+ try {
+  if (!prev) {
+   obj->push_back(op->get());
+   return;
+  }
+  obj->push_back(op->get(),prev->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("PdfOperator","pushBack",tr("Document is read-only"));
  }
- obj->push_back(op->get(),prev->get());
 }
 
 /**
@@ -369,11 +393,15 @@ void QSPdfOperator::pushBack(QObject *op,QObject *prev/*=NULL*/) {
  QSPdfOperator *qop=qobject_cast<QSPdfOperator*>(op,"pushBack",1,"PdfOperator");
  if (!qop) return;
  QSPdfOperator *qprev=dynamic_cast<QSPdfOperator*>(prev);
- if (!prev) {
-  obj->push_back(qop->get());
-  return;
+ try {
+  if (!prev) {
+   obj->push_back(qop->get());
+   return;
+  }
+  obj->push_back(qop->get(),qprev->get());
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("PdfOperator","pushBack",tr("Document is read-only"));
  }
- obj->push_back(qop->get(),qprev->get());
 }
 
 /**

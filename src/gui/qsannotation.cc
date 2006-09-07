@@ -60,9 +60,14 @@ QString QSAnnotation::getTypeName() {
 */
 bool QSAnnotation::remove() {
  if (!page.get()) return false;//Not in page
- bool result=page->delAnnotation(obj);
- page.reset();//It's not in page anymore
- return result;
+ try {
+  bool result=page->delAnnotation(obj);
+  page.reset();//It's not in page anymore
+  return result;
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Annotation","remove",tr("Document is read-only"));
+  return false;
+ }
 }
 
 /** get CAnnotation held inside this class. Not exposed to scripting */

@@ -115,7 +115,11 @@ QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
 void QSDict::delProperty(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
- dict->delProperty(pName);
+ try {
+  dict->delProperty(pName);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Dict","delProperty",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -127,7 +131,11 @@ void QSDict::delProperty(const QString &name) {
 void QSDict::add(const QString &name,QSIProperty *ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
- dict->addProperty(pName,*(ip->get().get()));
+ try {
+  dict->addProperty(pName,*(ip->get().get()));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Dict","add",tr("Document is read-only"));
+ }
 }
 
 /** \copydoc add(const QString&,QSIProperty*) */
@@ -147,7 +155,11 @@ void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
  CString property(ip);
- dict->addProperty(pName,property);
+ try {
+  dict->addProperty(pName,property);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Dict","add",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -160,7 +172,11 @@ void QSDict::add(const QString &name,int ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=name;
  CInt property(ip);
- dict->addProperty(pName,property);
+ try {
+  dict->addProperty(pName,property);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Dict","add",tr("Document is read-only"));
+ }
 }
 
 /**

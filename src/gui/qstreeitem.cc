@@ -140,7 +140,11 @@ void QSTreeItem::reload_force() {
 /** Remove itself from Dict/Array where this property is held (and from document) */
 void QSTreeItem::remove() {
  if (nullPtr(obj,"remove")) return;
- obj->remove();
+ try {
+  obj->remove();
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("TreeItem","remove",tr("Document is read-only"));
+ }
 }
 
 /**

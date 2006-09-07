@@ -70,7 +70,11 @@ QSCObject* QSArray::property(int index) {
 */
 void QSArray::delProperty(int index) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- array->delProperty(index);
+ try {
+  array->delProperty(index);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","delProperty",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -93,7 +97,11 @@ QString QSArray::getText() {
 */
 void QSArray::add(int index,QSIProperty *ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- array->addProperty(index,*(ip->get().get()));
+ try {
+  array->addProperty(index,*(ip->get().get()));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /** \copydoc add(int,QSIProperty *) */
@@ -101,7 +109,11 @@ void QSArray::add(int index,QObject *ip) {
  //QSA-bugfix variant of this method
  CArray *array=dynamic_cast<CArray*>(obj.get());
  QSIProperty *ipx=dynamic_cast<QSIProperty*>(ip);
- if (ipx) array->addProperty(index,*(ipx->get().get()));
+ try {
+  if (ipx) array->addProperty(index,*(ipx->get().get()));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -113,7 +125,11 @@ void QSArray::add(int index,QObject *ip) {
 void QSArray::add(int index,const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CString property(ip);
- array->addProperty(index,property);
+ try {
+  array->addProperty(index,property);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -125,7 +141,11 @@ void QSArray::add(int index,const QString &ip) {
 void QSArray::add(int index,int ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CInt property(ip);
- array->addProperty(index,property);
+ try {
+  array->addProperty(index,property);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -135,7 +155,11 @@ void QSArray::add(int index,int ip) {
 */
 void QSArray::add(QSIProperty *ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- array->addProperty(*(ip->get().get()));
+ try {
+  array->addProperty(*(ip->get().get()));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /** \copydoc add(QSIProperty *) */
@@ -143,7 +167,11 @@ void QSArray::add(QObject *ip) {
  //QSA-bugfix variant of this method
  CArray *array=dynamic_cast<CArray*>(obj.get());
  QSIProperty *ipx=dynamic_cast<QSIProperty*>(ip);
- if (ipx) array->addProperty(*(ipx->get().get()));
+ try {
+  if (ipx) array->addProperty(*(ipx->get().get()));
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -154,7 +182,11 @@ void QSArray::add(QObject *ip) {
 void QSArray::add(const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CString property(ip);
- array->addProperty(property);
+ try {
+  array->addProperty(property);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -165,7 +197,11 @@ void QSArray::add(const QString &ip) {
 void QSArray::add(int ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  CInt property(ip);
- array->addProperty(property);
+ try {
+  array->addProperty(property);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Array","add",tr("Document is read-only"));
+ }
 }
 
 /**

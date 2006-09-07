@@ -86,7 +86,11 @@ bool QSContentStream::opValid(QSPdfOperator *op,bool checkThis/*=false*/) {
 */
 void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,bool indicateChange/*=true*/) {
  if (!(oldOp && newOp)) return;
- obj->replaceOperator(oldOp->get(),newOp->get(),indicateChange);
+ try {
+  obj->replaceOperator(oldOp->get(),newOp->get(),indicateChange);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("ContentStream","replace",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -97,7 +101,11 @@ void QSContentStream::replace(QObject* oldOp,QObject* newOp,bool indicateChange/
  QSPdfOperator* _oldOp=qobject_cast<QSPdfOperator*>(oldOp,"replace",1,"PdfOperator");
  QSPdfOperator* _newOp=qobject_cast<QSPdfOperator*>(newOp,"replace",2,"PdfOperator");
  if (!(_oldOp && _newOp)) return;
- obj->replaceOperator(_oldOp->get(),_newOp->get(),indicateChange);
+ try {
+  obj->replaceOperator(_oldOp->get(),_newOp->get(),indicateChange);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("ContentStream","replace",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -109,7 +117,11 @@ void QSContentStream::replace(QObject* oldOp,QObject* newOp,bool indicateChange/
 void QSContentStream::deleteOperator(QSPdfOperator *op,bool indicateChange/*=true*/) {
  //First check for validity
  if (!opValid(op,true)) return;
- obj->deleteOperator(op->get(),indicateChange);
+ try {
+  obj->deleteOperator(op->get(),indicateChange);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("ContentStream","deleteOperator",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -133,7 +145,11 @@ void QSContentStream::insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool
  //First check for validity
  if (!opValid(op,this)) return;
  if (!opValid(newOp)) return;
- obj->insertOperator(op->get(),newOp->get(),indicateChange);
+ try {
+  obj->insertOperator(op->get(),newOp->get(),indicateChange);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("ContentStream","insertOperator",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -145,7 +161,11 @@ void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateCha
  QSPdfOperator* qopNew=qobject_cast<QSPdfOperator*>(newOp,"insertOperator",1,"PdfOperator");
  if (!qop) return;
  if (!qopNew) return;
- insertOperator((QSPdfOperator*)qop,(QSPdfOperator*)qopNew,indicateChange);
+ try {
+  insertOperator((QSPdfOperator*)qop,(QSPdfOperator*)qopNew,indicateChange);
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("ContentStream","insertOperator",tr("Document is read-only"));
+ }
 }
 
 /**
@@ -153,7 +173,11 @@ void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateCha
  \see CContentStream::saveChange
 */
 void QSContentStream::saveChange() {
- obj->saveChange();
+ try {
+  obj->saveChange();
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("ContentStream","saveChange",tr("Document is read-only"));
+ }
 }
 
 /**
