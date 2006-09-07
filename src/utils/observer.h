@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.25  2006/09/07 10:31:30  misuj1am
+ *
+ * -- hack
+ *
  * Revision 1.24  2006/08/26 10:19:33  hockm0bm
  * FIXME removed
  *
@@ -582,8 +586,8 @@ public:
 
 			if (it != observers.end ())
 				observers.erase (observer);
-			else
-				throw ObserverException ();
+		//	else
+		//		throw ObserverException ();
 		
 		}else
 			throw ObserverException ();
