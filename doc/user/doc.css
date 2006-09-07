@@ -1,0 +1,14 @@
+/*
+<link rel="stylesheet" href="doc.css" type="text/css" />
+*/
+body{font-family:Verdana;font-size:10pt}
+.authorgroup{font-size:10pt}
+.authorgroup .contrib,.authorgroup .email,.authorgroup .surname,.authorgroup .firstname{font-size:10pt}
+h3.author{margin-bottom:2pt}
+.part .titlepage h1.title{page-break-before:always}
+
+
+h1.title{font-size:16pt}
+h2.title{font-size:14pt}
+h3.title{font-size:12pt}
+

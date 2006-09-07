@@ -1,11 +1,11 @@
-<part>
+<part id="purpose">
     <title>Document purpose</title>
 	<para>
 		This document describes usage of PDFedit, how to install and run program and
 		how to work in commandline or graphical mode (GUI).
 		It also describes using and writing user scripts.
 	</para>
-	<sect1>
+	<sect1 id="organization">
 	    <title>Document organization</title>
 	    <para>
 		Document itself is divided into several parts:
