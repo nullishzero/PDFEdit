@@ -65,7 +65,7 @@ bool QSAnnotation::remove() {
   page.reset();//It's not in page anymore
   return result;
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Annotation","remove",tr("Document is read-only"));
+  base->errorException("Annotation","remove",QObject::tr("Document is read-only"));
   return false;
  }
 }

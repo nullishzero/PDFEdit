@@ -262,7 +262,7 @@ void QSPdfOperator::setNext(QSPdfOperator *op) {
  try {
   obj->setNext(op->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("PdfOperator","setNext",tr("Document is read-only"));
+  base->errorException("PdfOperator","setNext",QObject::tr("Document is read-only"));
  }
 }
 
@@ -276,7 +276,7 @@ void QSPdfOperator::setPrev(QSPdfOperator *op) {
  try {
   obj->setPrev(op->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("PdfOperator","setPrev",tr("Document is read-only"));
+  base->errorException("PdfOperator","setPrev",QObject::tr("Document is read-only"));
  }
 }
 
@@ -291,7 +291,7 @@ void QSPdfOperator::setNext(QObject *op) {
  try {
   obj->setNext(qop->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("PdfOperator","setNext",tr("Document is read-only"));
+  base->errorException("PdfOperator","setNext",QObject::tr("Document is read-only"));
  }
 }
 
@@ -306,7 +306,7 @@ void QSPdfOperator::setPrev(QObject *op) {
  try {
   obj->setPrev(qop->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("PdfOperator","setPrev",tr("Document is read-only"));
+  base->errorException("PdfOperator","setPrev",QObject::tr("Document is read-only"));
  }
 }
 
@@ -356,7 +356,7 @@ void QSPdfOperator::remove() {
   try {
    cStream->deleteOperator(obj);
   } catch (ReadOnlyDocumentException &e) {
-   base->errorException("PdfOperator","remove",tr("Document is read-only"));
+   base->errorException("PdfOperator","remove",QObject::tr("Document is read-only"));
   }
  }
  //This operator is not in any content stream, so technically, it is already removed from it :)
@@ -380,7 +380,7 @@ void QSPdfOperator::pushBack(QSPdfOperator *op,QSPdfOperator *prev/*=NULL*/) {
   }
   obj->push_back(op->get(),prev->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("PdfOperator","pushBack",tr("Document is read-only"));
+  base->errorException("PdfOperator","pushBack",QObject::tr("Document is read-only"));
  }
 }
 
@@ -400,7 +400,7 @@ void QSPdfOperator::pushBack(QObject *op,QObject *prev/*=NULL*/) {
   }
   obj->push_back(qop->get(),qprev->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("PdfOperator","pushBack",tr("Document is read-only"));
+  base->errorException("PdfOperator","pushBack",QObject::tr("Document is read-only"));
  }
 }
 

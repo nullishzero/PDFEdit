@@ -170,7 +170,7 @@ void QSStream::setBuffer(const QString &s) {
  try {
   st->setBuffer(stringToBuffer(s));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setBuffer",tr("Document is read-only"));
+  base->errorException("Stream","setBuffer",QObject::tr("Document is read-only"));
  }
 }
 
@@ -184,7 +184,7 @@ void QSStream::setBuffer(const QByteArray &a) {
  try {
   st->setBuffer(arrayToBuffer(a));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setBuffer",tr("Document is read-only"));
+  base->errorException("Stream","setBuffer",QObject::tr("Document is read-only"));
  }
 }
 
@@ -199,7 +199,7 @@ void QSStream::setRawBuffer(const QString &s) {
  try {
   st->setRawBuffer(stringToBuffer(s));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setRawBuffer",tr("Document is read-only"));
+  base->errorException("Stream","setRawBuffer",QObject::tr("Document is read-only"));
  }
 }
 
@@ -213,7 +213,7 @@ void QSStream::setRawBuffer(const QByteArray &a) {
  try {
   st->setRawBuffer(arrayToBuffer(a));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Stream","setRawBuffer",tr("Document is read-only"));
+  base->errorException("Stream","setRawBuffer",QObject::tr("Document is read-only"));
  }
 }
 

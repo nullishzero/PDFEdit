@@ -185,7 +185,7 @@ void QSIProperty::set(const QString &value) {
    default:;//Do nothing
   }
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("IProperty","set",tr("Document is read-only"));
+  base->errorException("IProperty","set",QObject::tr("Document is read-only"));
  }
 }
 
@@ -201,7 +201,7 @@ void QSIProperty::set(int value) {
    try {
     ip->setValue(value);
    } catch (ReadOnlyDocumentException &e) {
-    base->errorException("IProperty","set",tr("Document is read-only"));
+    base->errorException("IProperty","set",QObject::tr("Document is read-only"));
     }
    return;
   }
@@ -234,7 +234,7 @@ void QSIProperty::set(double value) {
    try {
     ip->setValue(value);
    } catch (ReadOnlyDocumentException &e) {
-    base->errorException("IProperty","set",tr("Document is read-only"));
+    base->errorException("IProperty","set",QObject::tr("Document is read-only"));
    }
    return;
   }
@@ -255,7 +255,7 @@ void QSIProperty::set(bool value) {
    try {
     ip->setValue(value);
    } catch (ReadOnlyDocumentException &e) {
-    base->errorException("IProperty","set",tr("Document is read-only"));
+    base->errorException("IProperty","set",QObject::tr("Document is read-only"));
    }
    return;
   }

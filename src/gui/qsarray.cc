@@ -73,7 +73,7 @@ void QSArray::delProperty(int index) {
  try {
   array->delProperty(index);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","delProperty",tr("Document is read-only"));
+  base->errorException("Array","delProperty",QObject::tr("Document is read-only"));
  }
 }
 
@@ -100,7 +100,7 @@ void QSArray::add(int index,QSIProperty *ip) {
  try {
   array->addProperty(index,*(ip->get().get()));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -112,7 +112,7 @@ void QSArray::add(int index,QObject *ip) {
  try {
   if (ipx) array->addProperty(index,*(ipx->get().get()));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -128,7 +128,7 @@ void QSArray::add(int index,const QString &ip) {
  try {
   array->addProperty(index,property);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -144,7 +144,7 @@ void QSArray::add(int index,int ip) {
  try {
   array->addProperty(index,property);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -158,7 +158,7 @@ void QSArray::add(QSIProperty *ip) {
  try {
   array->addProperty(*(ip->get().get()));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -170,7 +170,7 @@ void QSArray::add(QObject *ip) {
  try {
   if (ipx) array->addProperty(*(ipx->get().get()));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -185,7 +185,7 @@ void QSArray::add(const QString &ip) {
  try {
   array->addProperty(property);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -200,7 +200,7 @@ void QSArray::add(int ip) {
  try {
   array->addProperty(property);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Array","add",tr("Document is read-only"));
+  base->errorException("Array","add",QObject::tr("Document is read-only"));
  }
 }
 

@@ -61,7 +61,7 @@ void QSPage::moveAbove(QSContentStream* cs) {
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveAbove",tr("Invalid operation"));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","moveAbove",tr("Document is read-only"));
+  base->errorException("Page","moveAbove",QObject::tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveAbove",tr("Out of range"));
  } catch(...) {
@@ -79,7 +79,7 @@ void QSPage::moveBelow(QSContentStream* cs) {
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveBelow",tr("Invalid operation"));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","moveBelow",tr("Document is read-only"));
+  base->errorException("Page","moveBelow",QObject::tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveBelow",tr("Out of range"));
  } catch(...) {
@@ -97,7 +97,7 @@ void QSPage::moveAbove(int csi) {
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveAbove",tr("Invalid operation"));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","moveAbove",tr("Document is read-only"));
+  base->errorException("Page","moveAbove",QObject::tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveAbove",tr("Out of range"));
  } catch(...) {
@@ -115,7 +115,7 @@ void QSPage::moveBelow(int csi) {
  } catch (CObjInvalidOperation &e) {
   base->errorException("Page","moveBelow",tr("Invalid operation"));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","moveBelow",tr("Document is read-only"));
+  base->errorException("Page","moveBelow",QObject::tr("Document is read-only"));
  } catch (OutOfRange &e) {
   base->errorException("Page","moveBelow",tr("Out of range"));
  } catch(...) {
@@ -142,7 +142,7 @@ void QSPage::setTransformMatrix(QVariant tMatrix) {
  try {
   obj->setTransformMatrix(tm);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","setTransformMatrix",tr("Document is read-only"));
+  base->errorException("Page","setTransformMatrix",QObject::tr("Document is read-only"));
  }
 }
 
@@ -157,7 +157,7 @@ void QSPage::prependContentStream(QSPdfOperatorStack* opStack) {
  try {
   obj->addContentStreamToFront(opStack->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","prependContentStream",tr("Document is read-only"));
+  base->errorException("Page","prependContentStream",QObject::tr("Document is read-only"));
  }
 }
 
@@ -172,7 +172,7 @@ void QSPage::appendContentStream(QSPdfOperatorStack* opStack) {
  try {
   obj->addContentStreamToBack(opStack->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","appendContentStream",tr("Document is read-only"));
+  base->errorException("Page","appendContentStream",QObject::tr("Document is read-only"));
  }
 }
 
@@ -262,7 +262,7 @@ void QSPage::addAnnotation(QSAnnotation* an) {
  try {
   obj->addAnnotation(an->get());
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","addAnnotation",tr("Document is read-only"));
+  base->errorException("Page","addAnnotation",QObject::tr("Document is read-only"));
  }
 }
 
@@ -300,7 +300,7 @@ void QSPage::setMediabox(double x1,double y1,double x2,double y2) {
  try {
   obj->setMediabox(r);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","setMediaBox",tr("Document is read-only"));
+  base->errorException("Page","setMediaBox",QObject::tr("Document is read-only"));
  }
 }
 
@@ -316,7 +316,7 @@ void QSPage::setMediabox(QRect rc) {
  try {
   obj->setMediabox(r);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","setMediaBox",tr("Document is read-only"));
+  base->errorException("Page","setMediaBox",QObject::tr("Document is read-only"));
  }
 }
 
@@ -367,7 +367,7 @@ void QSPage::addSystemType1Font(const QString &fontName) {
  try {
   obj->addSystemType1Font(fontName);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Page","addSystemType1Font",tr("Document is read-only"));
+  base->errorException("Page","addSystemType1Font",QObject::tr("Document is read-only"));
  }
 }
 

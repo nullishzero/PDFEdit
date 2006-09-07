@@ -143,7 +143,7 @@ void QSTreeItem::remove() {
  try {
   obj->remove();
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("TreeItem","remove",tr("Document is read-only"));
+  base->errorException("TreeItem","remove",QObject::tr("Document is read-only"));
  }
 }
 

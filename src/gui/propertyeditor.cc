@@ -143,7 +143,7 @@ void PropertyEditor::update(Property *p) {
   p->setValue(obj.get());
  } catch (ReadOnlyDocumentException &e) {
   //Read only, cannot change the property
-  emit warnText(tr("Document is read-only"));
+  emit warnText(QObject::tr("Document is read-only"));
   return;
  }
  emit propertyChanged(obj.get());

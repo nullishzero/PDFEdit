@@ -118,7 +118,7 @@ void QSDict::delProperty(const QString &name) {
  try {
   dict->delProperty(pName);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","delProperty",tr("Document is read-only"));
+  base->errorException("Dict","delProperty",QObject::tr("Document is read-only"));
  }
 }
 
@@ -134,7 +134,7 @@ void QSDict::add(const QString &name,QSIProperty *ip) {
  try {
   dict->addProperty(pName,*(ip->get().get()));
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","add",tr("Document is read-only"));
+  base->errorException("Dict","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -158,7 +158,7 @@ void QSDict::add(const QString &name,const QString &ip) {
  try {
   dict->addProperty(pName,property);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","add",tr("Document is read-only"));
+  base->errorException("Dict","add",QObject::tr("Document is read-only"));
  }
 }
 
@@ -175,7 +175,7 @@ void QSDict::add(const QString &name,int ip) {
  try {
   dict->addProperty(pName,property);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Dict","add",tr("Document is read-only"));
+  base->errorException("Dict","add",QObject::tr("Document is read-only"));
  }
 }
 

@@ -110,7 +110,7 @@ QSPage* QSPdf::insertPage(QSPage* page, int position) {
  try {
   return new QSPage(obj->insertPage(page->get(),position),base);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Pdf","insertPage",tr("Document is read-only"));
+  base->errorException("Pdf","insertPage",QObject::tr("Document is read-only"));
   return NULL;
  }
 }
@@ -125,7 +125,7 @@ QSPage* QSPdf::insertPage(QObject* page, int position) {
  try {
   return insertPage(qpage,position);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Pdf","insertPage",tr("Document is read-only"));
+  base->errorException("Pdf","insertPage",QObject::tr("Document is read-only"));
   return NULL;
  }
 }
@@ -141,7 +141,7 @@ void QSPdf::removePage(int position) {
  try {
   obj->removePage(position);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("Pdf","removePage",tr("Document is read-only"));
+  base->errorException("Pdf","removePage",QObject::tr("Document is read-only"));
  } catch (PageNotFoundException &e) {
   base->errorException("Pdf","removePage",tr("Page not found"));
  }

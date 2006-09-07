@@ -89,7 +89,7 @@ void QSContentStream::replace(QSPdfOperator* oldOp,QSPdfOperator* newOp,bool ind
  try {
   obj->replaceOperator(oldOp->get(),newOp->get(),indicateChange);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("ContentStream","replace",tr("Document is read-only"));
+  base->errorException("ContentStream","replace",QObject::tr("Document is read-only"));
  }
 }
 
@@ -104,7 +104,7 @@ void QSContentStream::replace(QObject* oldOp,QObject* newOp,bool indicateChange/
  try {
   obj->replaceOperator(_oldOp->get(),_newOp->get(),indicateChange);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("ContentStream","replace",tr("Document is read-only"));
+  base->errorException("ContentStream","replace",QObject::tr("Document is read-only"));
  }
 }
 
@@ -120,7 +120,7 @@ void QSContentStream::deleteOperator(QSPdfOperator *op,bool indicateChange/*=tru
  try {
   obj->deleteOperator(op->get(),indicateChange);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("ContentStream","deleteOperator",tr("Document is read-only"));
+  base->errorException("ContentStream","deleteOperator",QObject::tr("Document is read-only"));
  }
 }
 
@@ -148,7 +148,7 @@ void QSContentStream::insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool
  try {
   obj->insertOperator(op->get(),newOp->get(),indicateChange);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("ContentStream","insertOperator",tr("Document is read-only"));
+  base->errorException("ContentStream","insertOperator",QObject::tr("Document is read-only"));
  }
 }
 
@@ -164,7 +164,7 @@ void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateCha
  try {
   insertOperator((QSPdfOperator*)qop,(QSPdfOperator*)qopNew,indicateChange);
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("ContentStream","insertOperator",tr("Document is read-only"));
+  base->errorException("ContentStream","insertOperator",QObject::tr("Document is read-only"));
  }
 }
 
@@ -176,7 +176,7 @@ void QSContentStream::saveChange() {
  try {
   obj->saveChange();
  } catch (ReadOnlyDocumentException &e) {
-  base->errorException("ContentStream","saveChange",tr("Document is read-only"));
+  base->errorException("ContentStream","saveChange",QObject::tr("Document is read-only"));
  }
 }
 
