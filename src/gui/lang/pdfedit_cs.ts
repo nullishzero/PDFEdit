@@ -1035,6 +1035,10 @@ Data: %3
         <source>Matrix is in bad state !</source>
         <translation>Matice je ve špatném stavu !</translation>
     </message>
+    <message>
+        <source>Document is read-only</source>
+        <translation>Dokument je pouze pro čtení</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>

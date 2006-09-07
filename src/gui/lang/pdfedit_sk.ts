@@ -1032,6 +1032,10 @@ Data: %3
         <source>Matrix is in bad state !</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Document is read-only</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
