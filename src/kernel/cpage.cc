@@ -1320,14 +1320,14 @@ CPage::addSystemType1Font (const std::string& fontname)
 	// Create font dictionary
 	// << 
 	//    /Type /Font
-	//    /SubType /Type1
+	//    /Subtype /Type1
 	//    /BaseFont / ...
 	// >>
 	boost::shared_ptr<CDict> font (new CDict ());
 	boost::shared_ptr<CName> name (new CName ("Font"));
 	font->addProperty (string("Type"), *name);
 	name->setValue ("Type1");
-	font->addProperty (string ("SubType"), *name);
+	font->addProperty (string ("Subtype"), *name);
 	name->setValue (fontname);
 	font->addProperty (string ("BaseFont"), *name);
 	
@@ -1413,7 +1413,7 @@ CPage::getFontIdsAndNames (Container& cont) const
 				if (font->containsProperty ("BaseFont")) // Type{1,2} font
 					fontbasename = utils::getNameFromDict (font, "BaseFont");
 				else									// TrueType font
-					fontbasename = utils::getNameFromDict (font, "SubType");
+					fontbasename = utils::getNameFromDict (font, "Subtype");
 				cont.push_back (std::make_pair (*it, fontbasename));
 
 			}catch (ElementNotFoundException&)
