@@ -82,7 +82,9 @@ struct ModeRule
 		Mode types). This is example of <xref linkend="adapter"/> implementation. 
 	</para>
 	<para>
-		We have written also example configuration file (TODO where is it stored?) 
+		We have written also example configuration file (this file is stored in
+		data directory - by default /usr/share/pdfedit, but depends on 
+		<emphasis>prefix</emphasis> parameter during installation) 
 		with quite reasonablerestrictions. For more inforamtion about file 
 		format and mode types, please see project doxygen documentation for 
 		ModeController.

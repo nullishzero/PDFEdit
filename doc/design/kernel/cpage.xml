@@ -78,7 +78,6 @@
 				be arbitrary. Xpdf (or any other sophisticated) viewer only 
 				guesses which letter form a word or which words form a line.
 				We use xpdf text engine to extract, search text.
-				TODO description of engine
 			</para>
 		</sect3>
 		<sect3>
