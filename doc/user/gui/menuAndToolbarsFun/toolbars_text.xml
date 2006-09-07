@@ -17,7 +17,8 @@
 			<varlistentry>
 				<term id="gui_toolbars_font" xreflabel="font">Font</term>
 				<listitem>
-						TODO
+					According to pdf specifications, pdf viewers must support several standard fonts. The selected font
+					is used as the default in operations where font name is needed (e.g. inserting text lines, ...)
 				</listitem>
 			</varlistentry>
 
@@ -25,7 +26,8 @@
 				<term id="gui_toolbars_fontSize" xreflabel="font size">Font size</term>
 				<listitem>
 				</listitem>
-						TODO
+					The selected font size
+					is used as the default in operations where font size is needed (e.g. inserting text lines, ...)
 			</varlistentry>
 		</variablelist>
 </sect2>
