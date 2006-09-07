@@ -136,6 +136,6 @@
 	&cmdline;
 	&gui;
 	&scripts_nodoc;
-	&glossary;
+<!--	&glossary; is empty -->
 
 </book>
