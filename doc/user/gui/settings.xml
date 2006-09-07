@@ -1,5 +1,5 @@
-<chapter id="gui_settings">
-	<title>How set PDFEdit</title>
+<chapter id="gui_settings" xreflabel="settings">
+	<title>Settings</title>
 
 	<para>
 			Settings options in PDFEdit is very easy. Options can be set are in gui or directly in configuration
