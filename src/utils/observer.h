@@ -3,6 +3,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.26  2006/09/11 13:50:39  misuj1am
+ *
+ * -- one hack removed
+ * 	-- added to assure " a bit " more stability
+ *
  * Revision 1.25  2006/09/07 10:31:30  misuj1am
  *
  * -- hack
@@ -586,8 +591,8 @@ public:
 
 			if (it != observers.end ())
 				observers.erase (observer);
-		//	else
-		//		throw ObserverException ();
+			else
+				throw ObserverException ();
 		
 		}else
 			throw ObserverException ();
