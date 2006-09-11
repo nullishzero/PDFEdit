@@ -612,7 +612,13 @@ protected:
 public:
 	
 	/** Destructor. */
-	~CPage () { kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); };
+	~CPage () 
+	{ 
+		kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); 
+		
+		// Unregister contents observer
+		unregisterContentsObserver ();
+	};
 
 	
 	//

@@ -496,6 +496,8 @@ public:
 	~CContentStream ()
 	{
 		kernelPrintDbg (debug::DBG_DBG, "destructing..");
+		// Unregister cstream observers
+		unregisterCStreamObservers ();
 	};
 };
 
