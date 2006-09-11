@@ -156,39 +156,49 @@ CDict::delProperty (PropertyId id)
 	// We could have used getProperty but we also need the iterator
 	//
 	DictIdxComparator cmp (id);
-	Value::iterator it = value.begin();
-	for (; it != value.end(); ++it)
+	Value::iterator oldit = value.begin();
+	for (; oldit != value.end(); ++oldit)
 	{
-			if (cmp (*it))
+			if (cmp (*oldit))
 					break;
 	}
 	
-	if (it == value.end())
+	if (oldit == value.end())
 		throw ElementNotFoundException ("CDict", "item not found");
 	
-	shared_ptr<IProperty> ip = cmp.getIProperty ();
+	shared_ptr<IProperty> oldip = cmp.getIProperty ();
+	
+	// Store old pair
+	Value::value_type oldval = *oldit;	
+	// Delete that item	
+	Value::iterator it = value.erase (oldit);
+
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
-		// Delete that item
-		value.erase (it);
-		
 		// Indicate that this object has changed
-		shared_ptr<ObserverContext> context (_createContext (ip,id));	
-		_objectChanged (shared_ptr<IProperty> (new CNull), context);
+		shared_ptr<ObserverContext> context (_createContext (oldip,id));	
+		
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (shared_ptr<IProperty> (new CNull), context);
+			
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			
+			// Restore old value
+			value.insert (it, oldval);
+			throw;
+		}
 
 		// Be sure
-		ip->setPdf (NULL);
-		ip->setIndiRef (IndiRef());
+		oldip->setPdf (NULL);
+		oldip->setIndiRef (IndiRef());
 
 	}else
-	{
-		assert (!hasValidRef (this));
-		// Delete that item
-		value.erase (it);
-	}
-
+		{ assert (!hasValidRef (this)); }
 }
 
 
@@ -223,8 +233,22 @@ CDict::addProperty (const string& propertyName, const IProperty& newIp)
 		
 		// notify observers and dispatch change
 		shared_ptr<ObserverContext> context (_createContext(shared_ptr<IProperty>(new CNull ()), propertyName));
-		_objectChanged (newIpClone, context);
-	}
+
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (newIpClone, context);
+			
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			
+			// Restore old value
+			value.pop_back ();
+			throw;
+		}
+	
+	}else
+		{ assert (!hasValidRef (this)); }
 
 	// Set mode only if pdf is valid
 	_setMode (newIpClone, propertyName);
@@ -267,6 +291,8 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 	newIpClone->setIndiRef (this->getIndiRef());
 	newIpClone->setPdf (this->getPdf());
 
+	// Store old pair
+	Value::value_type oldval = *it;
 	// Construct item, and replace it with this one
 	fill_n (it, 1, make_pair ((*it).first, newIpClone));
 
@@ -279,12 +305,26 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 		
 		// Notify observers and dispatch change
 		shared_ptr<ObserverContext> context (_createContext (oldIp,id));
-		_objectChanged (newIpClone, context);
+
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (newIpClone, context);
+
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			
+			// Restore old value
+			replace (value.begin(), value.end(), make_pair ((*it).first, newIpClone), oldval);
+			throw;
+		}
 
 		// Be sure
 		oldIp->setPdf (NULL);
 		oldIp->setIndiRef (IndiRef());
-	}
+	
+	}else
+		{ assert (!hasValidRef (this)); }
 
 	// Set mode only if pdf is valid
 	_setMode (newIpClone,id);
@@ -420,7 +460,7 @@ IProperty::ObserverContext*
 CDict::_createContext (shared_ptr<IProperty> changedIp, PropertyId id)
 {
 	// Create the context
-	return new CDictComplexObserverContext (changedIp,id);
+	return new CDictComplexObserverContext (changedIp, id);
 }
 
 

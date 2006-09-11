@@ -174,6 +174,10 @@ CStream::setRawBuffer (const Buffer& buf)
 	if (NULL != parser)
 		throw CObjInvalidOperation ();
 	
+	// Store old value
+	Buffer oldbuf;
+	std::copy (buffer.begin(), buffer.end(), std::back_inserter(oldbuf));
+
 	// Create context
 	shared_ptr<ObserverContext> context (this->_createContext());
 
@@ -183,8 +187,20 @@ CStream::setRawBuffer (const Buffer& buf)
 	// Change length
 	setLength (buffer.size());
 	
-	//Dispatch change 
-	_objectChanged (context);
+	try {
+		//Dispatch change 
+		_objectChanged (context);
+		
+	}catch (PdfException&)
+	{
+		kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+
+		// Restore old value
+		buffer.clear ();
+		std::copy (oldbuf.begin(), oldbuf.end(), std::back_inserter(buffer));
+		setLength (buffer.size());
+		throw;
+	}
 }
 
 //

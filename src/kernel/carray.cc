@@ -126,28 +126,38 @@ CArray::delProperty (PropertyId id)
 	if (id >= value.size())
 		throw OutOfRange ();
 	
-	shared_ptr<IProperty> ip = value[id];
+	shared_ptr<IProperty> oldip = value[id];
+
+	// Delete that item
+	Value::iterator it = value.erase (remove (value.begin(), value.end(), oldip));
+
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
-		// Delete that item
-		value.erase (remove (value.begin(), value.end(), ip));
-		
 		// Indicate that this object has changed
-		shared_ptr<ObserverContext> context (_createContext (ip,id));	
-		_objectChanged (shared_ptr<IProperty> (new CNull), context);
+		shared_ptr<ObserverContext> context (_createContext (oldip,id));	
+	
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (shared_ptr<IProperty> (new CNull), context);
+			
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+
+			// Restore old value
+			value.insert (it, oldip);
+			throw;
+		}
+
 		
 		// Be sure
-		ip->setPdf (NULL);
-		ip->setIndiRef (IndiRef());
+		oldip->setPdf (NULL);
+		oldip->setIndiRef (IndiRef());
 
 	}else
-	{
-		assert (!hasValidRef (this));
-		// Delete that item
-		value.erase (remove (value.begin(), value.end(), ip));
-	}
+		{ assert (!hasValidRef (this)); }
 }
 
 
@@ -201,8 +211,23 @@ CArray::addProperty (PropertyId position, const IProperty& newIp)
 		
 		// Notify observers and dispatch change
 		shared_ptr<ObserverContext> context (_createContext(shared_ptr<IProperty>(new CNull ()), position));
-		_objectChanged (newIpClone, context);
-	}
+
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (newIpClone, context);
+			
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			
+			// Restore old value
+			value.erase (remove (value.begin(), value.end(), newIpClone));
+			throw;
+		}
+
+	}else
+		{ assert (!hasValidRef (this)); }
+
 	
 	// Set mode only if pdf is valid
 	_setMode (newIpClone, position);
@@ -224,7 +249,7 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 		return addProperty (id, newIp);
 
 	// Save the old one
-	shared_ptr<IProperty> oldIp = value[id];
+	shared_ptr<IProperty> oldip = value[id];
 	// Clone the added property
 	shared_ptr<IProperty> newIpClone = newIp.clone ();
 	assert (newIpClone);
@@ -234,7 +259,7 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 	newIpClone->setPdf (this->getPdf());
 
 	// Construct item, and replace it with this one
-	replace (value.begin(), value.end(), oldIp, newIpClone);
+	replace (value.begin(), value.end(), oldip, newIpClone);
 
 	//
 	// Dispatch change if we are in valid pdf
@@ -244,13 +269,27 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 		assert (hasValidRef (this));
 		
 		// Notify observers and dispatch change
-		shared_ptr<ObserverContext> context (_createContext (oldIp,id));	
-		_objectChanged (newIpClone, context);
+		shared_ptr<ObserverContext> context (_createContext (oldip,id));	
+
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (newIpClone, context);
+
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			
+			// Restore old value
+			replace (value.begin(), value.end(), newIpClone, oldip);
+			throw;
+		}
 
 		// Be sure
-		oldIp->setPdf (NULL);
-		oldIp->setIndiRef (IndiRef());
-	}
+		oldip->setPdf (NULL);
+		oldip->setIndiRef (IndiRef());
+
+	}else
+		{ assert (!hasValidRef (this)); }
 
 	// Set mode only if pdf is valid
 	_setMode (newIpClone, id);

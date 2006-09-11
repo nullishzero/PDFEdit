@@ -711,18 +711,27 @@ CContentStream::_objectChanged ()
 	// 
 	unregisterCStreamObservers ();
 
-	// Save it
-	string tmp;
-	getStringRepresentation (tmp);
-	assert (!cstreams.empty());
-	CStreams::iterator it = cstreams.begin();
-	assert (it != cstreams.end());
-	// Put it to the first cstream
-	(*it)->setBuffer (tmp);
-	++it;
-	// Erase all others
-	for (;it != cstreams.end();++it)
-		(*it)->setBuffer (string(""));
+	try {
+		// Save it
+		string tmp;
+		getStringRepresentation (tmp);
+		assert (!cstreams.empty());
+		CStreams::iterator it = cstreams.begin();
+		assert (it != cstreams.end());
+		// Put it to the first cstream
+		(*it)->setBuffer (tmp);
+		++it;
+		// Erase all others
+		for (;it != cstreams.end();++it)
+			(*it)->setBuffer (string(""));
+
+	}catch (PdfException&)
+	{
+		kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+		// Register observers again
+		registerCStreamObservers ();
+		throw;
+	}
 
 	//
 	// Register observers again

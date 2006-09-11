@@ -114,13 +114,26 @@ CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
+
+		// Store old value
+		Value oldval = value;
 		
 		// Create context in which the change occurs
 		boost::shared_ptr<ObserverContext> context (this->_createContext());
 		// Change our value
-		utils::simpleValueFromString (strO, this->value);
-		// notify observers and dispatch the change
-		_objectChanged (context);
+		utils::simpleValueFromString (strO, value);
+		
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (context);
+			
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+
+			value = oldval;
+			throw;
+		}
 
 	}else
 	{
@@ -145,13 +158,25 @@ CObjectSimple<Tp>::setValue (WriteType val)
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
+		// Store old value
+		Value oldval = value;
 		
 		// Create context in which the change occurs
 		boost::shared_ptr<ObserverContext> context (this->_createContext());
 		// Change the value
 		value = val;
-		// notify observers and dispatch the change
-		_objectChanged (context);
+		
+		try {
+			// notify observers and dispatch the change
+			_objectChanged (context);
+			
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+
+			value = oldval;
+			throw;
+		}
 	
 	}else
 	{
