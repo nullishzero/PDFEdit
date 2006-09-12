@@ -297,9 +297,8 @@ public:
 		if (NULL != parser)
 			throw CObjInvalidOperation ();
 
-		// Store old value
-		Buffer oldbuf;
-		std::copy (buffer.begin(), buffer.end(), std::back_inserter(oldbuf));
+		// Check whether we can make the change
+		this->canChange();
 	
 		// Create context
 		boost::shared_ptr<ObserverContext> context (this->_createContext());
@@ -317,12 +316,7 @@ public:
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-
-			// Restore old value
-			buffer.clear ();
-			std::copy (oldbuf.begin(), oldbuf.end(), std::back_inserter(buffer));
-			setLength (buffer.size());
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	}

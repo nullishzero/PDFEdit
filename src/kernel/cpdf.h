@@ -6,6 +6,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.78  2006/09/12 02:15:07  misuj1am
+ *
+ * -- bug #88, #75 fixed
+ *
  * Revision 1.77  2006/09/06 00:17:08  hockm0bm
  * bug fix 44
  * - typo error - oldValue was check whether it is array instead of newValue
@@ -1917,6 +1921,9 @@ public:
 	{
 		return xref->setPdfWriter(NULL);
 	}
+
+	/** Throws an exception if this document can not be changed. */
+	void canChange () const;
 };
 
 

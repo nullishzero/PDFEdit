@@ -197,6 +197,11 @@ public:
 	 */
 	CPdf* getPdf () const {return pdf;};
 
+	/**
+	 * Checks if a property can be changed.
+	 */
+	void canChange () const;
+	
 	//
 	// IndiRef
 	//

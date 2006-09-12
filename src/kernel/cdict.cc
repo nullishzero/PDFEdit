@@ -151,6 +151,9 @@ CDict::delProperty (PropertyId id)
 {
 	kernelPrintDbg (debug::DBG_DBG,"delProperty(" << id << ")");
 
+	// Check whether we can make the change
+	this->canChange();
+
 	//
 	// BEWARE using find_if with stateful functors !!!!!
 	// We could have used getProperty but we also need the iterator
@@ -168,10 +171,8 @@ CDict::delProperty (PropertyId id)
 	
 	shared_ptr<IProperty> oldip = cmp.getIProperty ();
 	
-	// Store old pair
-	Value::value_type oldval = *oldit;	
 	// Delete that item	
-	Value::iterator it = value.erase (oldit);
+	value.erase (oldit);
 
 	if (hasValidPdf (this))
 	{
@@ -186,10 +187,7 @@ CDict::delProperty (PropertyId id)
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			
-			// Restore old value
-			value.insert (it, oldval);
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 
@@ -209,6 +207,9 @@ shared_ptr<IProperty>
 CDict::addProperty (const string& propertyName, const IProperty& newIp)
 {
 	kernelPrintDbg (debug::DBG_DBG,"addProperty( " << propertyName << ",...)");
+
+	// Check whether we can make the change
+	this->canChange();
 
 	// Clone the added property
 	shared_ptr<IProperty> newIpClone = newIp.clone ();
@@ -240,10 +241,7 @@ CDict::addProperty (const string& propertyName, const IProperty& newIp)
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			
-			// Restore old value
-			value.pop_back ();
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	
@@ -265,6 +263,9 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 {
 	kernelPrintDbg (debug::DBG_DBG, "setProperty(" << id << ")");
 	
+	// Check whether we can make the change
+	this->canChange();
+
 	//
 	// Find the item we want
 	// BEWARE using find_if with stateful functors !!!!!
@@ -291,8 +292,6 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 	newIpClone->setIndiRef (this->getIndiRef());
 	newIpClone->setPdf (this->getPdf());
 
-	// Store old pair
-	Value::value_type oldval = *it;
 	// Construct item, and replace it with this one
 	fill_n (it, 1, make_pair ((*it).first, newIpClone));
 
@@ -312,10 +311,7 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			
-			// Restore old value
-			replace (value.begin(), value.end(), make_pair ((*it).first, newIpClone), oldval);
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 

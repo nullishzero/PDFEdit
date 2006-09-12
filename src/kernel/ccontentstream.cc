@@ -12,6 +12,7 @@
 #include "ccontentstream.h"
 
 //
+#include "cpdf.h"
 #include "pdfoperators.h"
 #include "stateupdater.h"
 #include "cobject.h"
@@ -586,18 +587,21 @@ throw ()
 {
 	try {
 
-	utilsPrintDbg (debug::DBG_DBG, "");
-	
-	assert (newValue);
-	if (!isNull(newValue)) 
-	{ // We could have deleted a property
-		assert (hasValidPdf (newValue));
-		assert (hasValidRef (newValue));
-	}
+		utilsPrintDbg (debug::DBG_DBG, "");
+		
+		assert (newValue);
+		if (!isNull(newValue)) 
+		{ // We could have deleted a property
+			assert (hasValidPdf (newValue));
+			assert (hasValidRef (newValue));
+		}
 
-	// Stream has changed, reparse it
-	contentstream->saveChange ();
-	
+		// Stream has changed, reparse it
+		contentstream->saveChange ();
+		
+	}catch (ReadOnlyDocumentException&)
+	{
+		kernelPrintDbg (debug::DBG_WARN, "Catching read-only exception...");
 	}catch (...)
 	{
 		assert (!"This is very very bad because this function can't throw according to the interface.");
@@ -761,7 +765,11 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (!operators.empty());
+	assert (!cstreams.empty());
 
+	// Check whether we can make the change
+	cstreams.front()->canChange();
+	
 	// Be sure that the operator won't get deallocated along the way
 	boost::shared_ptr<PdfOperator> toDel = it.getCurrent ();
 	
@@ -827,9 +835,7 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			// Restore old value
-			assert (!"Not implemented yet...");
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	}
@@ -843,6 +849,10 @@ void
 CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperator> newOper, bool indicateChange)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (!cstreams.empty());
+
+	// Check whether we can make the change
+	cstreams.front()->canChange();
 
 	// Insert into empty contentstream
 	if (operators.empty ())
@@ -917,9 +927,7 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			// Restore old value
-			assert (!"Not implemented yet...");
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	}
@@ -932,6 +940,11 @@ void
 CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper, 
 									 bool indicateChange)
 {
+	assert (!cstreams.empty());
+
+	// Check whether we can make the change
+	cstreams.front()->canChange();
+
 	if (operators.empty ())
 	{ // Insert into empty contentstream
 		
@@ -965,16 +978,7 @@ CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper,
 
 		}catch (PdfException&)
 		{
-			assert (!operators.empty());
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			// To be sure
-			operators.front()->setNext (PdfOperator::ListItem ());
-			
-			// Restore old value
-			operators.pop_front ();
-			// Indicate that it is the first operator
-			if (!operators.empty())
-				operators.front()->setPrev (PdfOperator::ListItem ());
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	}
@@ -988,11 +992,12 @@ CContentStream::replaceOperator (OperatorIterator it,
 								 boost::shared_ptr<PdfOperator> newOper, 
 								 bool indicateChange)
 {
-
-
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (!operators.empty());
 	assert (!cstreams.empty());
+
+	// Check whether we can make the change
+	cstreams.front()->canChange();
 
 	// Be sure that the operator won't get deallocated along the way
 	boost::shared_ptr<PdfOperator> toReplace = it.getCurrent ();
@@ -1075,9 +1080,7 @@ CContentStream::replaceOperator (OperatorIterator it,
 
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			// Restore old value
-			assert (!"Not implemented yet...");
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	}

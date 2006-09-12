@@ -123,19 +123,23 @@ CArray::delProperty (PropertyId id)
 {
 	//kernelPrintDbg (debug::DBG_DBG,"delProperty(" << id << ")");
 
+	// Check if we are out of bounds
 	if (id >= value.size())
 		throw OutOfRange ();
 	
+	// Check whether we can make the change
+	this->canChange();
+
 	shared_ptr<IProperty> oldip = value[id];
 
 	// Delete that item
-	Value::iterator it = value.erase (remove (value.begin(), value.end(), oldip));
+	value.erase (remove (value.begin(), value.end(), oldip));
 
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 		
-		// Indicate that this object has changed
+		// Create contest
 		shared_ptr<ObserverContext> context (_createContext (oldip,id));	
 	
 		try {
@@ -144,10 +148,7 @@ CArray::delProperty (PropertyId id)
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-
-			// Restore old value
-			value.insert (it, oldip);
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 
@@ -187,6 +188,9 @@ CArray::addProperty (PropertyId position, const IProperty& newIp)
 	if (position > value.size())
 		throw OutOfRange ();
 	
+	// Check whether we can make the change
+	this->canChange();
+
 	// Clone the added property
 	shared_ptr<IProperty> newIpClone = newIp.clone ();
 	assert (newIpClone);
@@ -209,7 +213,7 @@ CArray::addProperty (PropertyId position, const IProperty& newIp)
 	{
 		assert (hasValidRef (this));
 		
-		// Notify observers and dispatch change
+		// Create contest
 		shared_ptr<ObserverContext> context (_createContext(shared_ptr<IProperty>(new CNull ()), position));
 
 		try {
@@ -218,10 +222,7 @@ CArray::addProperty (PropertyId position, const IProperty& newIp)
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			
-			// Restore old value
-			value.erase (remove (value.begin(), value.end(), newIpClone));
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 
@@ -248,6 +249,9 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 	if (id >= value.size())
 		return addProperty (id, newIp);
 
+	// Check whether we can make the change
+	this->canChange();
+
 	// Save the old one
 	shared_ptr<IProperty> oldip = value[id];
 	// Clone the added property
@@ -268,7 +272,7 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 	{	
 		assert (hasValidRef (this));
 		
-		// Notify observers and dispatch change
+		// Create contest
 		shared_ptr<ObserverContext> context (_createContext (oldip,id));	
 
 		try {
@@ -277,10 +281,7 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-			
-			// Restore old value
-			replace (value.begin(), value.end(), newIpClone, oldip);
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 

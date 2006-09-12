@@ -111,13 +111,13 @@ CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
 	STATIC_CHECK ((Tp != pNull),INCORRECT_USE_OF_setStringRepresentation_FUNCTION_FOR_pNULL_TYPE);
 	//kernelPrintDbg (debug::DBG_DBG,"text:" << strO);
 
+	// Check whether we can make the change
+	this->canChange();
+
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
 
-		// Store old value
-		Value oldval = value;
-		
 		// Create context in which the change occurs
 		boost::shared_ptr<ObserverContext> context (this->_createContext());
 		// Change our value
@@ -129,9 +129,7 @@ CObjectSimple<Tp>::setStringRepresentation (const std::string& strO)
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-
-			value = oldval;
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 
@@ -154,12 +152,13 @@ CObjectSimple<Tp>::setValue (WriteType val)
 {
 	STATIC_CHECK ((pNull != Tp),INCORRECT_USE_OF_setValue_FUNCTION_FOR_pNULL_TYPE);
 	//kernelPrintDbg (debug::DBG_DBG, "setValue() type: " << Tp);
+	
+	// Check whether we can make the change
+	this->canChange();
 
 	if (hasValidPdf (this))
 	{
 		assert (hasValidRef (this));
-		// Store old value
-		Value oldval = value;
 		
 		// Create context in which the change occurs
 		boost::shared_ptr<ObserverContext> context (this->_createContext());
@@ -172,9 +171,7 @@ CObjectSimple<Tp>::setValue (WriteType val)
 			
 		}catch (PdfException&)
 		{
-			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
-
-			value = oldval;
+			assert (!"Should not happen.. Condition must be included in CPdf::canChange()...");
 			throw;
 		}
 	

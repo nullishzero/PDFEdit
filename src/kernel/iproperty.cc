@@ -61,6 +61,13 @@ IProperty::setPdf (CPdf* p)
 	{ pdf = p; }
 
 
+void
+IProperty::canChange () const
+{
+	if (pdf && wantDispatch)
+		pdf->canChange ();
+}
+	
 //
 // Dispatch change
 //

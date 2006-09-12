@@ -3,6 +3,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.78  2006/09/12 02:15:06  misuj1am
+ *
+ * -- bug #88, #75 fixed
+ *
  * Revision 1.77  2006/09/06 19:08:17  hockm0bm
  * * bug fixed
  *         PageTreeNodeObserver::notify
@@ -3290,6 +3294,20 @@ void CPdf::changeRevision(revision_t revisionNum)
 	
 	// prepares internal structures for new revision
 	initRevisionSpecific();
+}
+
+void CPdf::canChange () const
+{
+	//
+	// Not in lates revision
+	//
+	if (xref->getActualRevision())
+		throw ReadOnlyDocumentException("Document is not in latest revision.");
+	//
+	// In read only mode
+	//
+	if (ReadOnly == getMode())
+		throw ReadOnlyDocumentException("Document is in Read-only mode.");
 }
 
 } // end of pdfobjects namespace
