@@ -820,7 +820,19 @@ CContentStream::deleteOperator (OperatorIterator it, bool indicateChange)
 	
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
-		_objectChanged ();
+	{
+		try {
+			// notify observers and dispatch the change
+			_objectChanged ();
+
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			// Restore old value
+			assert (!"Not implemented yet...");
+			throw;
+		}
+	}
 }
 
 
@@ -898,7 +910,19 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
-		_objectChanged ();
+	{
+		try {
+			// notify observers and dispatch the change
+			_objectChanged ();
+
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			// Restore old value
+			assert (!"Not implemented yet...");
+			throw;
+		}
+	}
 }
 
 //
@@ -934,8 +958,26 @@ CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper,
 
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
-		_objectChanged ();
+	{
+		try {
+			// notify observers and dispatch the change
+			_objectChanged ();
 
+		}catch (PdfException&)
+		{
+			assert (!operators.empty());
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			// To be sure
+			operators.front()->setNext (PdfOperator::ListItem ());
+			
+			// Restore old value
+			operators.pop_front ();
+			// Indicate that it is the first operator
+			if (!operators.empty())
+				operators.front()->setPrev (PdfOperator::ListItem ());
+			throw;
+		}
+	}
 }
 
 //
@@ -1026,7 +1068,19 @@ CContentStream::replaceOperator (OperatorIterator it,
 	
 	// If indicateChange is true, pdf&rf&contenstream is set when reparsing
 	if (indicateChange)
-		_objectChanged ();
+	{
+		try {
+			// notify observers and dispatch the change
+			_objectChanged ();
+
+		}catch (PdfException&)
+		{
+			kernelPrintDbg (debug::DBG_WARN, "Restoring old value...");
+			// Restore old value
+			assert (!"Not implemented yet...");
+			throw;
+		}
+	}
 }
 
 //
