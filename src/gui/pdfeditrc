@@ -110,9 +110,11 @@ PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage
   pageMoveDown		= item Move page down,movePage(page()\,1);rootReload(),,page_move_down.png,need_page
   pageRemove		= item Remove page,removePage(document.getPagePosition(page()));rootReload(),,page_delete.png,need_page
 
-DrawToolbar		= list Draw Toolbar,drawlinee,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
+DrawToolbar		= list Draw Toolbar,drawlinee,drawarrowe,drawrecte,addtext,striketrough,highlightingtext,-,_color_tool fg,_color_tool bg,_number_tool linewidth
   drawline		= item Draw line		, onSelectMode_drawLine()		, , draw_line.png	,need_page,mode_button
   drawlinee		= item Draw line		, onSelectMode_drawLinee()		, , draw_line.png	,need_page,mode_button
+  drawarrow		= item Draw arrow		, onSelectMode_drawArrow()		, , draw_arrow.png	,need_page,mode_button
+  drawarrowe	= item Draw arrow		, onSelectMode_drawArrowe()		, , draw_arrow.png	,need_page,mode_button
   drawrect		= item Draw rectangle		, onSelectMode_drawRect()		, , draw_rect.png	,need_page,mode_button
   drawrecte		= item Draw rectangle		, onSelectMode_drawRecte()		, , draw_rect.png	,need_page,mode_button
   addtext		= item Add text			, onSelectMode_addText()		, , add_text.png	,need_page,mode_button

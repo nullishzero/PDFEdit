@@ -270,6 +270,18 @@ function onSelectMode_drawLinee() {
  setModeButton('drawlinee');
 }
 
+/** Callback when selection mode is changed to draw new line */
+function onSelectMode_drawArrow() {
+ PageSpace.setSelectionMode("new_object","line","drawArrow(%1,%2,%3,%4,false)");
+ setModeButton('drawarrow');
+}
+
+/** Callback when selection mode is changes to draw new line */
+function onSelectMode_drawArrowe() {
+ PageSpace.setSelectionMode("new_object","line","drawArrow(%1,%2,%3,%4,true)");
+ setModeButton('drawarrowe');
+}
+
 /** Callback when selection mode is changes to draw new rectangle */
 function onSelectMode_drawRect() {
  PageSpace.setSelectionMode("new_object","rect","drawRect(%1,%2,%3,%4,false)");

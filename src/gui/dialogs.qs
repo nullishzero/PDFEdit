@@ -554,6 +554,39 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 }
 
 /**
+ * Draw an arrow.
+  */
+function drawArrow(_lx,_ly,_rx,_ry,wantedit) {
+	// Get the end points
+    var _a1 = _rx+(_lx-_ry+_ly-_rx)/10;
+    var _a2 = _ry+(_ly+_rx-_lx-_ry)/10;
+    var _b1 = _rx+(_lx+_ry-_ly-_rx)/10;
+    var _b2 = _ry+(_ly-_rx+_lx-_ry)/10;
+
+	if (undefined != _lx && undefined != _ry) {
+		
+		// Convert main line points
+		lx = convertPixmapPosToPdfPos_x(_lx,_ly);
+		ly = convertPixmapPosToPdfPos_y(_lx,_ly);
+		rx = convertPixmapPosToPdfPos_x(_rx,_ry);
+		ry = convertPixmapPosToPdfPos_y(_rx,_ry);
+		
+		// Convert arrow end points
+		a1 = convertPixmapPosToPdfPos_x(_a1,_a2);
+		a2 = convertPixmapPosToPdfPos_y(_a1,_a2);
+		b1 = convertPixmapPosToPdfPos_x(_b1,_b2);
+		b2 = convertPixmapPosToPdfPos_y(_b1,_b2);
+		
+	}else 
+        return;
+
+
+    operatorDrawLine ([ [lx,ly,rx,ry], [rx,ry,a1,a2], [rx,ry,b1,b2]], getNumber("linewidth"), getColor("fg"));
+	// Reload page
+	go()
+}
+
+/**
  * Draw rect.
  */
 function drawRect(_lx,_ly,_rx,_ry,wantedit) {
