@@ -342,6 +342,9 @@ private:
 
 	/** Actual display parameters. */
 	DisplayParams lastParams;
+
+	/** Is page valid. */
+	bool valid;
 	
 	/** Keeps all annotations from this page.
 	 *
@@ -615,9 +618,20 @@ public:
 	~CPage () 
 	{ 
 		kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); 
-		
-		// Unregister contents observer
-		unregisterContentsObserver ();
+	
+		// Unregister all observers
+		if (valid)
+		{
+			// Unregister contents observer
+			unregisterContentsObserver ();
+			// unregisters annotation observers - if annotation array present in
+			// page dictionary
+			if(dictionary->containsProperty("Annots"))
+			{
+				boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
+				unregisterAnnotsObservers(annotsDict);
+			}
+		}
 	};
 
 	
@@ -644,8 +658,8 @@ public:
 	 * Inform all obsevers that this page is not valid.
 	 */
 	void invalidate ()
-		
 	{ 
+		assert (valid);
 		// unregisters annotation observers - if annotation array present in
 		// page dictionary
 		if(dictionary->containsProperty("Annots"))
@@ -653,7 +667,10 @@ public:
 			boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
 			unregisterAnnotsObservers(annotsDict);
 		}
+		// Unregister contents observer
+		unregisterContentsObserver ();
 		_objectChanged (true); 
+		valid = false;
 	};
 	
 	//
@@ -743,6 +760,7 @@ public:
 	getContentStreams (Container& container)
 	{
 		kernelPrintDbg (debug::DBG_DBG, "");
+		assert (valid);
 
 		// If not parsed
 		if (contentstreams.empty())
@@ -785,6 +803,7 @@ public:
 	template<typename T>
 	void getAllAnnotations(T  & container)const
 	{
+		assert (valid);
 		container.clear();	
 		container.insert(container.begin(), annotStorage.begin(), annotStorage.end());
 	}

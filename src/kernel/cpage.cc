@@ -693,6 +693,7 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty>,
 //
 CPage::CPage (boost::shared_ptr<CDict>& pageDict) : 
 		dictionary(pageDict), 
+		valid (true),
 		annotsPropWatchDog(new AnnotsPropWatchDog(this)), 
 		annotsArrayWatchDog(new AnnotsArrayWatchDog(this)), 
 		contentsWatchDog (new ContentsWatchDog(this))
@@ -700,6 +701,7 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (pageDict);
+	assert (valid);
 
 // Better not throw in a constructor
 //  if (!isPage (pageDict))
@@ -747,6 +749,7 @@ Rectangle
 CPage::getMediabox () const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (valid);
 	
 	InheritedPageAttr atr;
 	fillInheritedPageAttr (dictionary,atr);
@@ -766,6 +769,7 @@ CPage::getMediabox () const
 int
 CPage::getRotation () const
 {
+	assert (valid);
 	InheritedPageAttr atr;
 	fillInheritedPageAttr (dictionary,atr);
 	return atr.rotate->getValue();
@@ -778,6 +782,7 @@ CPage::getRotation () const
 void
 CPage::setRotation (int rot)
 {
+	assert (valid);
 	CInt crot (rot);
 	dictionary->setProperty ("Rotate", crot);
 }
@@ -790,6 +795,7 @@ void
 CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
 {
 	kernelPrintDbg(debug::DBG_DBG, "");
+	assert (valid);
 	
 	// checks whether this page is valid (has pdf and valid reference.
 	if(!hasValidPdf(dictionary) || !hasValidPdf(dictionary))
@@ -860,6 +866,7 @@ bool
 CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
 {
 	kernelPrintDbg(debug::DBG_DBG, "");
+	assert (valid);
 
 	// searches annotation in annotStorage - which is synchronized with current
 	// state of Annots array
@@ -900,6 +907,7 @@ void
 CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
+	assert (valid);
 
 	// Create text output device
 	boost::scoped_ptr<TextOutputDev> textDev (new ::TextOutputDev (NULL, gFalse, gFalse, gFalse));
@@ -940,6 +948,7 @@ void
 CPage::setMediabox (const Rectangle& rc)
 {
 	kernelPrintDbg (debug::DBG_DBG, " [" << rc << "]");
+	assert (valid);
 	
 	CArray mb;
 	CReal r (rc.xleft);
@@ -966,6 +975,7 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, 
 	// Are we in valid pdf
 	assert (hasValidPdf (dictionary));
 	assert (hasValidRef (dictionary));
+	assert (valid);
 	if (!hasValidPdf (dictionary) || !hasValidRef (dictionary))
 		throw XpdfInvalidObject ();
 
@@ -1030,6 +1040,8 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, 
 void 
 CPage::displayPage (::OutputDev& out, const DisplayParams params, int x, int y, int w, int h) 
 {
+	assert (valid);
+
 	// Reparse content streams if parameters changed
 	if (!(lastParams == params))
 	{
@@ -1101,6 +1113,7 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 //
 bool CPage::parseContentStream ()
 {
+	assert (valid);
 	// Clear content streams
 	contentstreams.clear();
 	
@@ -1180,6 +1193,7 @@ bool CPage::parseContentStream ()
 void
 CPage::registerContentsObserver () const
 {
+	assert (valid);
 	if (contentsWatchDog)
 	{ // Register contents observer
 		
@@ -1199,6 +1213,7 @@ CPage::registerContentsObserver () const
 void
 CPage::unregisterContentsObserver () const
 {
+	assert (valid);
 	if (contentsWatchDog)
 	{ // Unregister contents observer
 		
@@ -1219,6 +1234,7 @@ CPage::unregisterContentsObserver () const
 //
 void CPage::reparseContentStream ( )
 {
+	assert (valid);
 	assert (hasValidRef(dictionary));
 	assert (hasValidPdf (dictionary));
 	if (!hasValidPdf(dictionary) || !hasValidRef(dictionary))
@@ -1437,6 +1453,7 @@ template void CPage::getFontIdsAndNames<vector<pair<string,string> > > (vector<p
 void
 CPage::setTransformMatrix (double tm[6])
 {
+	assert (valid);
 	if (contentstreams.empty())
 	{ // Try parsing streams
 		parseContentStream ();
@@ -1470,6 +1487,7 @@ CPage::setTransformMatrix (double tm[6])
 void
 CPage::_objectChanged (bool invalid)
 {
+	assert (valid);
 	// Do not notify anything if we are not in a valid pdf
 	if (!hasValidPdf (dictionary))
 		return;
