@@ -62,6 +62,12 @@ function onLoad() {
  checkMenus();
 }
 
+/** Callback called after new window is opened without opening file or after closing a file */
+function onEmptyFile() {
+ //just check menus and disable items as appropriate
+ checkMenus();
+}
+
 /** Callback called after error occured while trying to load document */
 function onLoadError() {
  warn(error());
