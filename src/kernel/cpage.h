@@ -644,7 +644,17 @@ public:
 	 * Inform all obsevers that this page is not valid.
 	 */
 	void invalidate ()
-		{ _objectChanged (true); };
+		
+	{ 
+		// unregisters annotation observers - if annotation array present in
+		// page dictionary
+		if(dictionary->containsProperty("Annots"))
+		{
+			boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
+			unregisterAnnotsObservers(annotsDict);
+		}
+		_objectChanged (true); 
+	};
 	
 	//
 	// Get methods
