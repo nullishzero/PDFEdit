@@ -260,92 +260,102 @@ bool AddItemDialog::commit() {
   }
  }
  boost::shared_ptr<IProperty> property;
- switch (selectedItem) {
-  case 0: {//pBool  
-   property=boost::shared_ptr<IProperty>(new CBool(true));
-   break;
-  }
-  case 1: {//pInt     
-   property=boost::shared_ptr<IProperty>(new CInt(0));
-   break;
-  }
-  case 2: {//pReal  
-   property=boost::shared_ptr<IProperty>(new CReal(0));
-   break;
-  }
-  case 3: {//pString
-   property=boost::shared_ptr<IProperty>(new CString(""));
-   break;
-  }
-  case 4: {//pName  
-   property=boost::shared_ptr<IProperty>(new CName(""));
-   break;
-  }
-  case 5: {//pRef   
-   IndiRef refValue;
-   RefProperty* refProp=dynamic_cast<RefProperty*>(props[selectedItem]);
-   refProp->setPdf(pdf);
-   assert(refProp);
-   refValue=refProp->getValue();
-   if (!isRefValid(pdf,refValue)) {
-    error(tr("Reference target does not exist!"));
-    return false;
+ try {
+  switch (selectedItem) {
+   case 0: {//pBool  
+    property=boost::shared_ptr<IProperty>(new CBool(true));
+    break;
    }
-   property=boost::shared_ptr<IProperty>(new CRef());
-   break;
-  }
-  case 6: {//pDict  
-   property=boost::shared_ptr<IProperty>(new CDict());
-   break;
-  }
-  case 7: {//pArray 
-   property=boost::shared_ptr<IProperty>(new CArray());
-   break;
-  }
-  default:
-   assert(0);//Should not get here
- }
- //Write value of new property
- if (props[selectedItem]) props[selectedItem]->setValue(property.get());
- //TODO: validate refproperty, if selected
- CDict* dict=dynamic_cast<CDict*>(item.get());
- if (dict) { //Add to dict
-  string tex=propertyName->text();
-  try {
-   PropertyType pt=dict->getPropertyType(tex);
-   QString msg=tr("Property '%1' already exist as %2").arg(propertyName->text(),getTypeName(pt));
-   if (questionDialog(this,msg+"\n"+QObject::tr("Overwrite?"))) {
-    dict->delProperty(tex);
-   } else {
-    error(msg);
-    return false;
+   case 1: {//pInt     
+    property=boost::shared_ptr<IProperty>(new CInt(0));
+    break;
    }
-  } catch (...) {
-   //The property does not exist, so it is ok to add it
+   case 2: {//pReal  
+    property=boost::shared_ptr<IProperty>(new CReal(0));
+    break;
+   }
+   case 3: {//pString
+    property=boost::shared_ptr<IProperty>(new CString(""));
+    break;
+   }
+   case 4: {//pName  
+    property=boost::shared_ptr<IProperty>(new CName(""));
+    break;
+   }
+   case 5: {//pRef   
+    IndiRef refValue;
+    RefProperty* refProp=dynamic_cast<RefProperty*>(props[selectedItem]);
+    refProp->setPdf(pdf);
+    assert(refProp);
+    refValue=refProp->getValue();
+    if (!isRefValid(pdf,refValue)) {
+     error(tr("Reference target does not exist!"));
+     return false;
+    }
+    property=boost::shared_ptr<IProperty>(new CRef());
+    break;
+   }
+   case 6: {//pDict  
+    property=boost::shared_ptr<IProperty>(new CDict());
+    break;
+   }
+   case 7: {//pArray 
+    property=boost::shared_ptr<IProperty>(new CArray());
+    break;
+   }
+   default:
+    assert(0);//Should not get here
   }
-  message(tr("Property '%1' added to dictionary").arg(propertyName->text()));
-  dict->addProperty(tex,*(property.get()));
-  return true;
- }
- CArray* arr=dynamic_cast<CArray*>(item.get());
- if (arr) { //Add to array
-  if (posNum->isChecked()) {
-   int array_pos=0;
+  //Write value of new property
+  if (props[selectedItem]) props[selectedItem]->setValue(property.get());
+  //TODO: validate refproperty, if selected
+  CDict* dict=dynamic_cast<CDict*>(item.get());
+  if (dict) { //Add to dict
+   string tex=propertyName->text();
    try {
-    //Add to specific index
-    array_pos=arrayPos->text().toInt();
-    message(tr("Property added to position %1 in array").arg(array_pos));
-    arr->addProperty(array_pos,*(property.get()));
-    return true;
+    PropertyType pt=dict->getPropertyType(tex);
+    QString msg=tr("Property '%1' already exist as %2").arg(propertyName->text(),getTypeName(pt));
+    if (questionDialog(this,msg+"\n"+QObject::tr("Overwrite?"))) {
+     dict->delProperty(tex);
+    } else {
+     error(msg);
+     return false;
+    }
    } catch (...) {
-    error(tr("Array index %1 out of range").arg(array_pos));
-    return false;
+    //The property does not exist, so it is ok to add it
    }
-  } else {
-   message(tr("Property added to end of array"));
-   arr->addProperty(*(property.get()));
+   message(tr("Property '%1' added to dictionary").arg(propertyName->text()));
+   dict->addProperty(tex,*(property.get()));
    return true;
   }
+  CArray* arr=dynamic_cast<CArray*>(item.get());
+  if (arr) { //Add to array
+   if (posNum->isChecked()) {
+    int array_pos=0;
+    try {
+     //Add to specific index
+     array_pos=arrayPos->text().toInt();
+     message(tr("Property added to position %1 in array").arg(array_pos));
+     arr->addProperty(array_pos,*(property.get()));
+     return true;
+    } catch (ReadOnlyDocumentException &e) {
+     //The document is read only, so we can't add anything in in
+     error(QObject::tr("Document is read-only"));
+     return false;
+    } catch (...) {
+     error(tr("Array index %1 out of range").arg(array_pos));
+     return false;
+    }
+   } else {
+    message(tr("Property added to end of array"));
+    arr->addProperty(*(property.get()));
+    return true;
+   }
+  }
+ } catch (ReadOnlyDocumentException &e) {
+  //The document is read only, so we can't add anything in in
+  error(QObject::tr("Document is read-only"));
+  return false;
  }
  assert(0);//Should never happen 
  return false;
