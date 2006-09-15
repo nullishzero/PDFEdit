@@ -141,7 +141,7 @@ void PageViewS::showPage ( boost::shared_ptr<pdfobjects::CPage> page ) {
 	// reset saved crop of page
 	delete pagePixmap;
 	pagePixmap = NULL;
-	croppedPage.setRect(-1,-1,-1,-1);
+//	croppedPage.setRect(-1,-1,-1,-1);
 
 	// initialize create pixmap for page
 	SplashColor paperColor;
@@ -150,18 +150,29 @@ void PageViewS::showPage ( boost::shared_ptr<pdfobjects::CPage> page ) {
 	// update display parameters
 	updateDisplayParameters (output);
 
-	// initialize work operators in mode - must be after change display parameters and reloaded BBox of operators (with displayPage)
-	if (actualPage) {
-		displayParams.rotate += 360;
-		actualPage->displayPage( output, displayParams, 0, 0, 1, 1 );
-		displayParams.rotate -= 360;
-	}
-	initializeWorkOperatorsInMode();
-
 	// set correct size of viewport
 	setCorrectSize();
 
+	// center page on viewport if page is smaller then viewport
 	centerPage( );
+
+	if (actualPage) {
+		int x,y, w,h;
+		w = contentsX() - 100 - movedPageToCenter.x();
+		h = contentsY() - 100 - movedPageToCenter.y();
+		x = std::max( w, 0 );
+		y = std::max( h, 0 );
+		w = std::min( viewport()->width() + contentsX() - x - movedPageToCenter.x() + 200, sizeOfPage.width() );
+		h = std::min( viewport()->height() + contentsY() - y - movedPageToCenter.y() + 200, sizeOfPage.height() );
+		QRect hr (x,y,w,h);
+
+		displayParams.rotate += 360;
+		setPixmap( hr );
+		displayParams.rotate -= 360;
+	}
+	// initialize work operators in mode - must be after change display parameters
+	//		and reloaded BBox of operators (with displayPage)
+	initializeWorkOperatorsInMode();
 
 	// show new pixmap
 	repaintContents( true );
@@ -230,21 +241,19 @@ void PageViewS::drawContents(QPainter* p, int cx, int cy, int cw, int ch) {
 		return;
 
 	int x,y, w,h;
-	w = cx - movedPageToCenter.x();
-	h = cy - movedPageToCenter.y();
-	x = std::max( w, 0 );
-	y = std::max( h, 0 );
-	w = std::min( cw + w - x, sizeOfPage.width() );
-	h = std::min( ch + h - y, sizeOfPage.height() );
-	QRect dr ( x, y, w, h);
+	x = std::max( cx, movedPageToCenter.x() );
+	y = std::max( cy, movedPageToCenter.y() );
+	w = std::min( cx + cw - x+1, sizeOfPage.width() );
+	h = std::min( cy + ch - y+1, sizeOfPage.height() );
+	QRect dr ( x - movedPageToCenter.x(), y - movedPageToCenter.y(), w, h);
 	
 	if (! croppedPage.contains( dr )) {
-		w = contentsX() - 100;
-		h = contentsY() - 100;
+		w = contentsX() - 100 - movedPageToCenter.x();
+		h = contentsY() - 100 - movedPageToCenter.y();
 		x = std::max( w, 0 );
 		y = std::max( h, 0 );
-		w = std::min( viewport()->width() + w - x + 200, sizeOfPage.width() );
-		h = std::min( viewport()->height() + h - y + 200, sizeOfPage.height() );
+		w = std::min( viewport()->width() + contentsX() - x - movedPageToCenter.x() + 200, sizeOfPage.width() );
+		h = std::min( viewport()->height() + contentsY() - y - movedPageToCenter.y() + 200, sizeOfPage.height() );
 		QRect hr (x,y,w,h);
 		setPixmap( hr );
 	}
@@ -269,6 +278,17 @@ void PageViewS::drawContents(QPainter* p, int cx, int cy, int cw, int ch) {
 
 		p->translate( -movedPageToCenter.x(), -movedPageToCenter.y() );
 	}
+
+
+	dr.moveBy( movedPageToCenter.x(), movedPageToCenter.y() );
+	if (cx < dr.left())
+		p->fillRect( cx, cy, dr.left()-cx, ch, viewport()->eraseColor() );
+	if (cx + cw > dr.right())
+		p->fillRect( dr.right()+1, cy, cx + cw - dr.right(), ch, viewport()->eraseColor() );
+	if (cy < dr.top())
+		p->fillRect( cx, cy, cw, dr.top()-cy, viewport()->eraseColor() );
+	if (cy + ch > dr.bottom())
+		p->fillRect( cx, dr.bottom(), cw, cy + ch - dr.bottom(), viewport()->eraseColor() );
 }
 
 void PageViewS::viewportResizeEvent ( QResizeEvent * e ) {
