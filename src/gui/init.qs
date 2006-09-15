@@ -70,10 +70,8 @@ function isTreeItemSelected() {
 /** Update menus to correctly show certain window shown/hidden state */
 function toggleVisItem(item,menuitem) {
  vis=isVisible(item);
- print(vis);
  checkItem(menuitem,vis);
- t=getItemText(menuitem);
- print(t)
+// t=getItemText(menuitem);
 }
 
 /* ==== Code to run on start ==== */
