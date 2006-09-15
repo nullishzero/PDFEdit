@@ -159,7 +159,7 @@ function transformationMatrixDiv( oldCTM : Array_of_6_boubles, newCTM : Array_of
 	var nowCTM = [0,0,0,0,0,0];
 	var menovatel = oldCTM[0]*oldCTM[3]-oldCTM[1]*oldCTM[2];
 	if (menovatel == 0) {
-		warm(tr("Matrix is in bad state !"));
+		warn(tr("Matrix is in bad state !"));
 		return;
 	}
 	nowCTM[0] = (-oldCTM[2]*newCTM[1]+newCTM[0]*oldCTM[3]) / menovatel

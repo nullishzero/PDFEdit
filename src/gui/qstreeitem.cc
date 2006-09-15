@@ -142,6 +142,8 @@ void QSTreeItem::remove() {
  if (nullPtr(obj,"remove")) return;
  try {
   obj->remove();
+ } catch (CObjInvalidOperation &e) {
+  base->errorException("TreeItem","remove",QObject::tr("Invalid operation"));
  } catch (ReadOnlyDocumentException &e) {
   base->errorException("TreeItem","remove",QObject::tr("Document is read-only"));
  }
