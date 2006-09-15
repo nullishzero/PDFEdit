@@ -59,6 +59,8 @@ doc_design.path 	= $$DOC_PATH/design
 doc_design.files	= ../../doc/design/*.html ../../doc/design/kernel/*.pdf
 doc_design_images.path	= $$DOC_PATH/design/images
 doc_design_images.files	= ../../doc/design/images/*.png
+doc_examples.path 	= $$DOC_PATH/examples
+doc_examples.files	= ../../doc/examples/*.qs
 
 # Man page installed in man path (typically /usr/share/man/man1)
 pdfedit_manual.path	= $$MAN_PATH
@@ -71,6 +73,7 @@ pdfedit.files   = pdfedit
 #List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
 INSTALLS += doc doc_images doc_kernel_images doc_design doc_design_images doc_gui_images doc_gui_m_images
+INSTALLS += doc_examples
 INSTALLS += pdfedit
 INSTALLS += pdfedit_manual
 
