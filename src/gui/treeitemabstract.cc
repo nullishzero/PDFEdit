@@ -293,8 +293,12 @@ void TreeItemAbstract::setName(const QString &newNameId) {
 
 /** default destructor */
 TreeItemAbstract::~TreeItemAbstract() {
- //Notify root window - if that item is selected, unselect it
- if (rootWindow) rootWindow->deleteNotify(this);
+ if (rootWindow) {
+  //Notify root window - if that item is selected, unselect it
+  rootWindow->deleteNotify(this);
+  //unselect self
+  data->tree()->setSelected(this,false);
+ }
  //Notify MultiTreeWindow about deletion of itself
 // guiPrintDbg(debug::DBG_DBG,"Item deleting" << intptr_t(this));
  data->multi()->notifyDelete(this);
