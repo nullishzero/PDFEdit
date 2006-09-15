@@ -1039,6 +1039,18 @@ Data: %3
         <source>Document is read-only</source>
         <translation>Dokument je pouze pro čtení</translation>
     </message>
+    <message>
+        <source>Move one level up</source>
+        <translation>Posunout o úroveň nahoru</translation>
+    </message>
+    <message>
+        <source>Move one level down</source>
+        <translation>Posunout o úroveň dolů</translation>
+    </message>
+    <message>
+        <source>Invalid operation</source>
+        <translation>Neplatná operace</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -2252,6 +2264,11 @@ Režim zvýraznění</translation>
         <source>Strike through</source>
         <comment>striketrough</comment>
         <translation>Přeškrtnout</translation>
+    </message>
+    <message>
+        <source>Draw arrow</source>
+        <comment>drawarrowe</comment>
+        <translation>Nakreslit šipku</translation>
     </message>
 </context>
 <context>
