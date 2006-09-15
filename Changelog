@@ -1,3 +1,7 @@
+2006-09-16 PDF Editor 0.2.1
+	* Many bugfixes
+	* Added move up and move down fuinction to contentstreams in pages
+
 2006-09-07 PDF Editor 0.2.0
 	* Added commandline mode, editor can automatically process files
 	  using a script without opening any window or needing an X server
