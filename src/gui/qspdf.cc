@@ -155,6 +155,7 @@ void QSPdf::removePage(int position) {
 */
 int QSPdf::getPagePosition(QSPage *page) {
  if (nullPtr(obj,"getPagePosition")) return -1;
+ if (nullPtr(page,"getPagePosition")) return -1;
  try {
   return obj->getPagePosition(page->get());
  } catch (...) {
