@@ -69,6 +69,7 @@ void QSPage::moveAbove(QSContentStream* cs) {
  }
 }
 
+
 /** 
  \see CPage::moveBelow
  @param cs Content stream to move one level below in painting order
@@ -85,6 +86,26 @@ void QSPage::moveBelow(QSContentStream* cs) {
  } catch(...) {
   base->errorException("Page","moveBelow",tr("Unknown exception"));
  }
+}
+
+/** 
+ \see CPage::moveAbove
+ @param cs Content stream to move one level up painting order
+*/
+void QSPage::moveAbove(QObject* cs) {
+ QSContentStream *qsc=qobject_cast<QSContentStream*>(cs,"moveAbove",1,"ContentStream");
+ if (!qsc) return;//Something invalid passed
+ moveAbove(qsc);
+}
+
+/** 
+ \see CPage::moveBelow
+ @param cs Content stream to move one level up painting order
+*/
+void QSPage::moveBelow(QObject* cs) {
+ QSContentStream *qsc=qobject_cast<QSContentStream*>(cs,"moveBelow",1,"ContentStream");
+ if (!qsc) return;//Something invalid passed
+ moveBelow(qsc);
 }
 
 /** 

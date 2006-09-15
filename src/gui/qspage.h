@@ -34,8 +34,10 @@ public:
 public slots:
  /*- Move specified content stream in this page one level up in painting order. */
  void moveAbove(QSContentStream* cs);
+ void moveAbove(QObject* cs);
  /*- Move specified content stream in this page one level down in painting order. */
  void moveBelow(QSContentStream* cs);
+ void moveBelow(QObject* cs);
  /*- Move content stream with specified index in this page one level up in painting order. */
  void moveAbove(int csi);
  /*- Move content stream with specified index in this page one level down in painting order. */
