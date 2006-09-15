@@ -135,10 +135,26 @@ function onTreeRightClick() {
   menu.addItemDef("item "+tr("Show only font operators")+",firstSelectedItem().setMode('font'),,stream_mode_font.png");
   menu.addItemDef("item "+tr("Show only graphical operators")+",firstSelectedItem().setMode('graphic'),,stream_mode_gfx.png");
  }
+ if (tree_item_type=="ContentStream" && treeRoot().itemtype()!="ContentStream") {
+  menu.addItemDef("item "+tr("Move one level up")+",currMoveAbove()");
+  menu.addItemDef("item "+tr("Move one level down")+",currMoveBelow()");
+ }
  if (tests) {
   if (tree_item_type=="Stream") test_stream_items(menu);
  }
  print_eval(menu.popup());
+}
+
+/** move current item above if it is contentstream*/
+function currMoveAbove() {
+ curr=firstSelectedItem();
+ curr.parent().item().moveAbove(curr.item());
+}
+
+/** move current item below if it is contentstream*/
+function currMoveBelow() {
+ curr=firstSelectedItem();
+ curr.parent().item().moveBelow(curr.item());
 }
 
 /** Remove page and redraw current page only if  */
