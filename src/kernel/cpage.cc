@@ -28,6 +28,7 @@ namespace pdfobjects {
 using namespace std;
 using namespace boost;
 using namespace utils;
+using namespace observer;
 
 // =====================================================================================
 namespace {
@@ -632,7 +633,7 @@ using namespace observer;
 			{
 				// this means that Annots element reference value has changed	
 				shared_ptr<const BasicChangeContext<IProperty> > basicContext=
-					dynamic_pointer_cast<const BasicChangeContext<IProperty>, const IChangeContext<IProperty> >(context); 
+					dynamic_pointer_cast<const BasicChangeContext<IProperty>, const observer::IChangeContext<IProperty> >(context); 
 				oldValue=basicContext->getOriginalValue();
 				assert(isRef(newValue));
 				assert(isRef(oldValue));
@@ -675,10 +676,54 @@ using namespace observer;
 //
 //
 void 
-CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty>, 
-								boost::shared_ptr<const IProperty::ObserverContext>) const throw()
+CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue, 
+								boost::shared_ptr<const IProperty::ObserverContext> context) const throw()
 {
 	kernelPrintDbg(debug::DBG_DBG, "");
+	assert (context);
+	kernelPrintDbg (debug::DBG_DBG, "context type=" << context->getType());
+	
+	switch(context->getType())
+	{
+		case ComplexChangeContextType:
+			{
+				//
+				// Is it a dictionary (probably Page dictionary)
+				//
+				shared_ptr<const CDict::CDictComplexObserverContext> ctxtdict =
+					dynamic_pointer_cast<const CDict::CDictComplexObserverContext, const IChangeContext<IProperty> > (context); 
+				if (ctxtdict)
+				{
+					shared_ptr<IProperty> oldValue = ctxtdict->getOriginalValue ();
+			
+					// Contents entry was removed
+					if (isNull(newValue))
+					{
+						// Unregister observer
+						ctxtdict->getOriginalValue ()->unregisterObserver (page->contentsWatchDog);
+						
+					}else
+					{
+						// New contents entry
+						if ("Contents" == ctxtdict->getValueId ())
+								page->registerContentsObserver ();
+					}
+					break;
+				}
+				//
+				// Is it an array (Probably Contents) -- do nothing just reparse
+				//
+				shared_ptr<const CArray::CArrayComplexObserverContext> ctxtarray =
+					dynamic_pointer_cast<const CArray::CArrayComplexObserverContext, const IChangeContext<IProperty> > (context); 
+				if (ctxtarray)
+					break;
+			}
+			break;
+
+		default:
+			assert (!"Unsupported context type");
+			break;
+	}
 
 	// Parse content streams (add or delete of object)
 	page->parseContentStream ();
@@ -1198,7 +1243,11 @@ CPage::registerContentsObserver () const
 	{ // Register contents observer
 		
 		if (dictionary->containsProperty("Contents"))
+		{
+			// Register dictionary and Contents observer
+			dictionary->registerObserver (contentsWatchDog);
 			dictionary->getProperty("Contents")->registerObserver (contentsWatchDog);
+		}
 		
 	}else
 	{
@@ -1214,12 +1263,15 @@ void
 CPage::unregisterContentsObserver () const
 {
 	assert (valid);
+
+	// If contentsWatchDog is null it can mean that Contents entry was removed
 	if (contentsWatchDog)
-	{ // Unregister contents observer
-		
+	{ 
+		// Unregister dictionary observer
+		dictionary->unregisterObserver (contentsWatchDog);
+		// Unregister contents observer
 		if (dictionary->containsProperty("Contents"))
 			dictionary->getProperty("Contents")->unregisterObserver (contentsWatchDog);
-		
 	}else
 	{
 		assert (!"Observer is not initialized.");
