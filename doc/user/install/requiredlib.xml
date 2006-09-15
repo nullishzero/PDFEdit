@@ -10,6 +10,11 @@
     </tbody></tgroup>
    </informaltable>
    Modified version of qsa library (Qt Script for Applications), version 1.1.4 is included in the source tree
+   <note>
+    If you have both Qt3 and Qt4 installed, you must have directory with Qt3 tools
+    (<filename>qmake</filename>, etc...) before Qt4 in <envar>PATH</envar>.
+     Pdf editor cannot be compiled with Qt Toolkit version 4.x.
+   </note> 
   </para>
   <para>
    We tested compiling with various g++ versions - 3.x and 4.x were fine, it may compile on older versions
