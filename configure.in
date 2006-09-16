@@ -7,11 +7,20 @@ AC_INIT([PDF Editor], PDFEDIT_VERSION, [BUGTRACKER - http://pdfedit.petricek.net
 AC_CONFIG_SRCDIR([src/gui/base.cc])
 AC_CONFIG_HEADER([src/utils/aconf.h])
 
-# Checks for programs.
+# Checks for programs. (c++ compiler,...)
+AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
+
+
+dnl -------------------------------------------
+dnl     BOOST support (http://www.boost.org)
+dnl -------------------------------------------
+AC_CHECK_HEADER([boost/smart_ptr.hpp], , [AC_MSG_ERROR([You need boost library to compile PDFedit])])
+AC_CHECK_HEADER([boost/iostreams/stream.hpp], , [AC_MSG_ERROR([You need boost iostreams library to compile PDFedit])])
+
 
 # Checks for libraries.
 
