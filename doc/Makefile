@@ -4,8 +4,8 @@
 
 #Build all documentation, including doxygen programmer documentation and doxygen's default stylesheet
 all:	doc_core
-	doxygen -w html /dev/null /dev/null programmer/html/doxygen.css
-	doxygen
+	doxygen -w html /dev/null /dev/null programmer/html/doxygen.css || true
+	doxygen || true
 
 #Core documentation, without PDF
 doc_core_nopdf:
