@@ -218,7 +218,7 @@ function mergeWithPages(pages, positions)
         System.println("maxPos="+maxPos+" pos="+pos);
 
         // gets editor progress bar
-        progressBar=progressBar();
+        progress_bar=progressBar();
         for(j=0;i<pages.length; ++i)
         {
                 document.insertPage(pages[i], pos);
@@ -227,8 +227,8 @@ function mergeWithPages(pages, positions)
                 // document might use same progress observer, so we will
                 // initializes total steps and make the bar visible just
                 // to be sure
-                progressBar.show();
-                progressBar.setProgress(j+1, pages.legth);
+                progress_bar.show();
+                progress_bar.setProgress(j+1, pages.legth);
 		processEvents();
                 // moves to next position with respect to above insertion
                 pos+=2;

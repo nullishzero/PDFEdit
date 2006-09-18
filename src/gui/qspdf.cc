@@ -208,7 +208,12 @@ QSPage* QSPdf::getPage(int position) {
 */
 QSPage* QSPdf::getFirstPage() {
  if (nullPtr(obj,"getFirstPage")) return NULL;
- return new QSPage(obj->getFirstPage(),base);
+ try {
+  return new QSPage(obj->getFirstPage(),base);
+ } catch (PageNotFoundException &e) {
+  base->errorException("Pdf","getFirstPage",tr("Page not found"));
+  return NULL;
+ }
 }
 
 /**
@@ -219,7 +224,12 @@ QSPage* QSPdf::getFirstPage() {
 */
 QSPage* QSPdf::getNextPage(QSPage* page) {
  if (nullPtr(obj,"getNextPage")) return NULL;
- return new QSPage(obj->getNextPage(page->get()),base);
+ try {
+  return new QSPage(obj->getNextPage(page->get()),base);
+ } catch (PageNotFoundException &e) {
+  base->errorException("Pdf","getNextPage",tr("Page not found"));
+  return NULL;
+ }
 }
 
 /**
@@ -230,7 +240,12 @@ QSPage* QSPdf::getNextPage(QSPage* page) {
 */
 QSPage* QSPdf::getPrevPage(QSPage* page) {
  if (nullPtr(obj,"getPrevPage")) return NULL;
- return new QSPage(obj->getPrevPage(page->get()),base);
+ try {
+  return new QSPage(obj->getPrevPage(page->get()),base);
+ } catch (PageNotFoundException &e) {
+  base->errorException("Pdf","getPrevPage",tr("Page not found"));
+  return NULL;
+ }
 }
 
 /**
@@ -322,7 +337,12 @@ int QSPdf::getActualRevision() {
 */
 QSPage* QSPdf::getLastPage() {
  if (nullPtr(obj,"getLastPage")) return 0;
- return new QSPage(obj->getLastPage(),base);
+ try {
+  return new QSPage(obj->getLastPage(),base);
+ } catch (PageNotFoundException &e) {
+  base->errorException("Pdf","getLastPage",tr("Page not found"));
+  return NULL;
+ }
 }
 
 /**

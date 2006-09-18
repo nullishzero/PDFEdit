@@ -615,8 +615,13 @@ void PageSpace::showMousePosition ( double x, double y ) {
 void PageSpace::firstPage ( ) {
 	if (!actualPdf)
 		return;
-	QSPage p (actualPdf->get()->getFirstPage(),NULL);
-	refresh( &p, actualPdf );
+	try {
+		QSPage p (actualPdf->get()->getFirstPage(),NULL);
+		refresh( &p, actualPdf );
+	} catch (PageNotFoundException) {
+		//Pathological case when document have no pages
+		//Do nothing, nothing to show
+	}	
 }
 void PageSpace::prevPage ( ) {
 	if (!actualPdf)
@@ -661,7 +666,13 @@ void PageSpace::nextPage ( ) {
 void PageSpace::lastPage ( ) {
 	if (!actualPdf)
 		return;
-	QSPage p (actualPdf->get()->getLastPage() , NULL);
-	refresh( &p, actualPdf );
+	try {
+		QSPage p (actualPdf->get()->getLastPage() , NULL);
+		refresh( &p, actualPdf );
+	} catch (PageNotFoundException) {
+		//Pathological case when document have no pages
+		//Do nothing, nothing to show
+	}	
 }
+
 } // namespace gui
