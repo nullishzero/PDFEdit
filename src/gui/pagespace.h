@@ -421,38 +421,37 @@ class PageSpace : public QWidget {
 		 */
 		QMainWindow * getTextLine( int x, int y, int fontsize = 12, const QString & fontName = QString::null );
 	signals:
-		/** Signal is emited, if is changed viewed page.
-		 * @param page			Page whitch is actual viewed.
+		/** Signal emitted when viewed page is changed.
+		 * @param page			Page which is actual viewed.
 		 * @param numberOfPage	Position of \a page in documents.
 		 */
 		void changedPageTo ( const QSPage & page, int numberOfPage );
-		/** Signal is emited, if changed zoom of viewed page.
-		 * @param zoom	Zoom factor, whitch is current set (1.0 = 100%)
+		/** Signal emitted when zoom of viewed page is changed.
+		 * @param zoom	Current zoom factor (1.0 = 100%)
 		 */
 		void changedZoomFactorTo ( float zoom );
-		/** Signal is emited, if new operators are selected.
+		/** Signal emitted when new operators are selected.
 		 * @param ops Vector of selected operators.
 		 */
 		void changeSelection ( std::vector<boost::shared_ptr<PdfOperator> > ops );
-		/** Signal is emited, if new annotations are selected.
+		/** Signal emitted when new annotations are selected.
 		 * @param annots Vector of selected annotations.
 		 */
 		void changeSelection ( std::vector< boost::shared_ptr< CAnnotation > > annots);
-
-		/** Signal is emited, if is changed mouse position over the viewed page.
-		 * @param x	Horizontal position on the page.
-		 * @param y	Vertical position on the page.
+		/** Signal emitted when mouse position over the viewed page is changed.
+		 * @param x	Horizontal position on page.
+		 * @param y	Vertical position on page.
 		 */
 		void changeMousePosition ( double x, double y );
-		/** Signal is emited, if is required popup menu for the page.
-		 * @param pagePos	Position on the page over which is calling popup menu.
+		/** Signal emitted when popup menu for page is requested
+		 * @param pagePos	Position on the page when popup menu was invoked.
 		 */
 		void popupMenu ( const QPoint & pagePos /*, Cobject & */ );
-		/** Signal is emited, if is required execute command into script.
+		/** Signal emitted when command in script needs to be executed
 		 * @param cmd	Command for executing.
 		 */
 		void executeCommand ( QString cmd );
-		/** Signal is emited, if is required delete selected objects on the page. */
+		/** Signal emitted, when selected objects on page should be deleted. */
 		void deleteSelection ( );
 	private slots:
 		/** On this slot is connected same named signal from class viewed the page (see pageImage).
