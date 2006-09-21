@@ -133,6 +133,8 @@ public slots: //This will be all exported to scripting
   You can call this to explicitly request the tree to reload after the script finishes execution.
  */
  void treeNeedReload();
+ /*- Return string converted from utf8 encoding to unicode encoding */
+ QString utf8(QString original);
  /*-
   Debugging function usable by script developers.
   Returns sorted list of all variables that are in current script interpreter.

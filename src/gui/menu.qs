@@ -5,7 +5,9 @@ function func_save() {
  if (!save()) {
   err=error();
   warn(err);
+  return false;
  }
+ return true;
 }
 
 /** Save new revision (action from menu/toolbar) */
@@ -13,8 +15,10 @@ function func_saverev() {
  if (!saveRevision()) {
   err=error();
   warn(err);
+  return false;
  } else {
   print(tr("New revision of document created"));
+  return true;
  }
 }
 
@@ -28,9 +32,9 @@ function showHide(win,item) {
 /** Save a copy (action from menu/toolbar). Asks for name, then saves under new name */
 function func_savecopy() {
  var name=fileSaveDialog(filename());
- if (!name) return;
+ if (!name) return false;
  print(tr("Saving as")+" "+name);
- saveCopy(name);
+ return saveCopy(name);
 }
 
 /** Open new file (action from menu/toolbar) */

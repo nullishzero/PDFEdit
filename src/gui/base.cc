@@ -472,6 +472,14 @@ void Base::treeNeedReload() {
  treeReloadFlag=true;
 }
 
+/** Convert string as it is read by QFile/QSFile/File in QSA to
+ Unicode, asuming the string was utf8
+ @param original 
+ */
+QString Base::utf8(QString original) {
+ return QString::fromUtf8(original.latin1());
+}
+
 /** Return sorted list of all variables that are in current script interpreter */
 QStringList Base::variables() {
  QStringList objs=qs->variables(this);
@@ -484,5 +492,6 @@ QStringList Base::variables() {
 QString Base::version() {
  return VERSION;
 }
+
 
 } // namespace gui
