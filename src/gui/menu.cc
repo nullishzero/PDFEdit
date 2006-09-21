@@ -381,9 +381,9 @@ void Menu::addItem(QString line,QMenuData *parent,const QString &name/*=QString:
 QString Menu::menuItemText(const QString &caption,const QString &name) {
  QString captionTr;
  if (name.isNull()) {
-  captionTr=Settings::tr(caption);
+  captionTr=Settings::trUtf8(caption.utf8());
  } else {
-  captionTr=Settings::tr(caption,name);
+  captionTr=Settings::trUtf8(caption.utf8(),name);
  }
  itemText.replace(name,caption);
  return captionTr;
@@ -519,7 +519,7 @@ void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuEx
   createToolBarItem(tb,item,caption,action,accel,icon,classes);
  } else if (chopCommand(line,"label")) { //Format: Text
   if (!line.length()) invalidItem(QObject::tr("label item"),item,line);
-  new QLabel(Settings::tr(line,item),tb);
+  new QLabel(Settings::trUtf8(line.utf8(),item),tb);
  } else {
   invalidItem(QObject::tr("toolbar item"),item,line);
  }
@@ -536,7 +536,7 @@ void Menu::loadToolBarItem(ToolBar *tb,const QString &item) throw (InvalidMenuEx
 QString Menu::toolTipText(const QString &text,const QString &name,QString accel/*=QString::null*/) {
  if (accel.isNull() && accelText.contains(name)) accel=accelText[name];
  itemText.replace(name,text);
- QString tooltip=Settings::tr(text,name);
+ QString tooltip=Settings::trUtf8(text.utf8(),name);
  tooltip=tooltip.replace("&","");
  if (!accel.isNull() && accel.length()>0) { //accelerator specified
   tooltip+=" ("+accel+")";
