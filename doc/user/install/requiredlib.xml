@@ -4,7 +4,14 @@
    These libraries are required to build and install PDF Editor:
    <informaltable frame="none">
     <tgroup cols="2"><tbody>
-     <row><entry>qt3</entry><entry>Qt GUI Toolkit (Version 3.x)</entry></row>
+     <row><entry>qt3</entry><entry>Qt GUI Toolkit (Version 3.x)
+      <note>
+       Most linux distribution split libraries into two parts, binary (containing the library binaries) and development (containing headers and development tools).
+       Also, in most linux distributions, the development libraries are not installed by default.
+       For QT3 you will need the development version too. Name of the package is usually the same as name of the library binary package, suffixed by "-dev".
+       (For example in ubuntu it is <filename>libq3-mt-dev</filename> for the development version, while the library binaries are named <filename>libq3-mt</filename>)
+      </note> 
+     </entry></row>
      <row><entry>boost</entry><entry>Boost C++ Libraries (smart_ptr, iostreams)</entry></row>
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
