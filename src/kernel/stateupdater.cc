@@ -33,7 +33,9 @@ using namespace utils;
 namespace {
 //==========================================================
 
-	
+	/** Default type 3 font height. */
+	static const unsigned int DEFAULT_TYPE3_FONT_HEIGHT = 80;
+
 	//==========================================================
 	// Actual state (position) updaters
 	//==========================================================
@@ -53,18 +55,21 @@ namespace {
 		Dict *resDict = NULL;
 		char *p;
 		int len = 0, n = 0, uLen = 0, nChars = 0, nSpaces = 0, i = 0;
-		GString s (txt.c_str());
+		GString s (txt.c_str(),txt.size());
 
 		font = state->getFont();
 		wMode = font->getWMode();
 		
 		// Set edge of rectangle from actual position on output devices
 		state->textTransformDelta(0, font->getDescent() * state->getFontSize(), & x, & y);
-                state->transform(state->getCurX() + x, state->getCurY() + y, & rc->xleft, & rc->yleft);
+        state->transform(state->getCurX() + x, state->getCurY() + y, & rc->xleft, & rc->yleft);
 
 		// handle a Type 3 char
 		if (font->getType() == fontType3 /* && out->interpretType3Chars() */) 
 		{
+			// Default type3 font heignt
+			double heightType3Font = DEFAULT_TYPE3_FONT_HEIGHT;
+
 			Rectangle h_rc();
 
 			mat = state->getCTM();
@@ -100,25 +105,100 @@ namespace {
 									u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
 									&dx, &dy, &originX, &originY);
 			  
-			  dx = dx * state->getFontSize() + state->getCharSpace();
-			  if (n == 1 && *p == ' ') 
+			  //
+			  // Try to find out the height and width of this letter
+			  //
+  			  xpdf::XpdfObject charProc;
+			  static_cast<Gfx8BitFont*>(font)->getCharProc (code, charProc.get());
+			  if (charProc->isStream())
 			  {
+				  // Make parser
+				  scoped_ptr<Parser> parser (new ::Parser (NULL, new ::Lexer(NULL, charProc->getStream())));
+				  xpdf::XpdfObject obj;
+				  // Read till BI found
+				  while (!parser->eofOfActualStream() && !obj->isCmd("BI"))
+				  {
+				    obj.reset ();
+				  	parser->getObj (obj.get());
+				  }
+
+				  if (!parser->eofOfActualStream())
+				  {
+					  //
+					  // Find height information in image stream dictionary
+					  //
+					  parser->getObj (obj.get());
+					  while (!obj->isCmd("ID") && !obj->isEOF()) 
+					  { 
+						if (obj->isName()) 
+						{
+						  // Get name
+						  string key (copyString (obj->getName()));
+						  obj.reset();
+						  // Get key
+						  parser->getObj(obj.get());
+						  if (obj->isEOF() || obj->isError()) 
+							break;
+						  //
+						  // Look for /H or /Height in image dictionary
+						  // 
+						  if ("Height" == key || "H" == key)
+						  {
+							  if (obj->isInt())
+								heightType3Font = max (heightType3Font,obj->getNum());
+						  }
+
+						  if ("Width" == key || "W" == key)
+						  {
+							  if (obj->isInt() && len == n)
+								dx = obj->getNum();
+						  }
+
+						}else
+						{
+							kernelPrintDbg (DBG_DBG, "Bad inline image dictionary.");
+							break;
+						}
+						parser->getObj(obj.get());
+					  }
+
+				   } //  if (parser->eofOfActualStream())
+			    } // if (charProc->isStream())
+
+				// Free resources
+				charProc.reset ();
+ 
+ 				//
+				// Found right width now do the transformations
+				//
+ 				dx = dx * state->getFontSize() + state->getCharSpace();
+			    if (n == 1 && *p == ' ') 
 				  dx += state->getWordSpace();
-			  }
-			  dx *= state->getHorizScaling();
-			  dy *= state->getFontSize();
-			  state->textTransformDelta(dx, dy, &tdx, &tdy);
-			  state->transform(curX + riseX, curY + riseY, &x, &y);
-			  
-			  //state->setCTM(newCTM[0], newCTM[1], newCTM[2], newCTM[3], x, y);
-			  
-			  curX += tdx;
-			  curY += tdy;
-			  state->moveTo(curX, curY);
-			  state->textSetPos(lineX, lineY);
-			  p += n;
-			  len -= n;
+			    dx *= state->getHorizScaling();
+			    dy *= state->getFontSize();
+
+				state->textTransformDelta(dx, dy, &tdx, &tdy);
+			  	state->transform(curX + riseX, curY + riseY, &x, &y);
+	
+				//
+				// Move gfx pointer
+				//
+			    curX += tdx;
+			    curY += tdy;
+			    state->moveTo (curX, curY);
+			    state->textSetPos (lineX, lineY);
+			    p += n;
+			    len -= n;
 			}
+
+			//
+			// This is a bit of a hack
+			//
+			// Set edge of rectangle from actual position on output devices
+			state->textTransformDelta (0, state->getFontSize() * font->getAscent() + heightType3Font, &x, &y);
+			state->transform (state->getCurX() + x, state->getCurY() + y, &rc->xright, &rc->yright);
+			return state;
+
 		} else /* if (out->useDrawChar()) */ {
 			state->textTransformDelta(0, state->getRise(), &riseX, &riseY);
 			p = s.getCString();
