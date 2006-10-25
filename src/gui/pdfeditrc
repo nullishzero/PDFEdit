@@ -182,7 +182,7 @@ spl_cmd		= 81,74
 
 [icon]
 		  # Default icon theme
-theme/current	= default
+theme/current	= hicolor
 		  # Application icon
 app		= pdfedit_icon_32.png
 
