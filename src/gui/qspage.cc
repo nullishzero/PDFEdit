@@ -233,6 +233,17 @@ QSContentStream* QSPage::getContentStream(int streamNumber) {
 }
 
 /**
+ Remove stream with given number from page.
+ @param streamNumber number of stream to remove
+*/
+void QSPage::removeContentStream(int streamNumber) {
+ if (numStreams<0) loadContentStreams();
+ if (streamNumber<0) return;		//Stream number outside range
+ if (streamNumber>=numStreams) return;	//Stream number outside range
+ obj->removeContentStream (streamNumber);
+}
+
+/**
  Return number of content streams in page
  Get the streams from CPage and store for later use if necessary
  @return number of streams in this Page

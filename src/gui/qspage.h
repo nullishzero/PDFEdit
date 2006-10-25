@@ -88,6 +88,10 @@ public slots:
  */
  QSContentStream* getContentStream(int streamNumber);
  /*-
+  Removes content stream with given number from page.
+ */
+ void removeContentStream(int streamNumber);
+ /*-
   Returns number of content streams in this page
   Use data fetched by loadContentStreams method, if it wasn't called, it is called before returning the count
  */
