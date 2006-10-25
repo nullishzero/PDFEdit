@@ -1429,7 +1429,7 @@ CPage::addSystemType1Font (const std::string& fontname)
 	//
 	size_t len = 0;
 	bool our = false;
-	string ourfontname ("PdfEditor");
+	string ourfontname ("Fonticek");
 	for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
 	{// Compare basenames and look for longest string and for PdfEdit string
 		if (ourfontname == (*it).first)
@@ -1443,12 +1443,24 @@ CPage::addSystemType1Font (const std::string& fontname)
 		len -= ourfontname.length();
 		++len;
 		for (size_t i = 0; i < len; ++i)
-			ourfontname.push_back ('r');
+			ourfontname.push_back ('k');
 	}
 
 	// Add it
 	fonts->addProperty (ourfontname, *font);
-		
+	
+	//
+	// Create state and resources and update our contentstreams
+	//
+	shared_ptr<GfxResources> gfxres;
+	shared_ptr<GfxState> gfxstate;
+	createXpdfDisplayParams (gfxres, gfxstate);
+
+	for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
+	{
+		// todo: a bit of a hack -- bbox update not need only saving of new gfx states
+		(*it)->setGfxParams (gfxstate, gfxres);
+	}
 }
 //
 //
@@ -1726,6 +1738,73 @@ namespace {
 				toBack (rf);
 			}
 		}
+
+		/**
+		 * Remove content streams references from Contents entry.
+		 */
+		void remove (shared_ptr<const CContentStream> cs)
+		{
+			if (!_dict->containsProperty ("Contents"))
+				throw CObjInvalidOperation ();
+			
+			//
+			// Loop throug all content streams and add all cstreams from each
+			// content streams to "Contents" entry of page dictionary
+			//
+			typedef vector<shared_ptr<CStream> > Css;
+			Css css;
+			cs->getCStreams (css);
+			
+			// Loop through all cstreams
+			for (Css::iterator it = css.begin(); it != css.end(); ++it)
+			{
+				assert (hasValidPdf (*it));
+				assert (hasValidRef (*it));
+				if (!hasValidPdf (*it) || !hasValidRef (*it))
+					throw CObjInvalidObject ();
+
+				// Remove the reference 
+				remove ((*it)->getIndiRef ());
+			}
+		}
+
+private:
+		/**
+		 * Remove one indiref from Contents entry.
+		 */
+		void remove (const IndiRef& rf)
+		{
+			shared_ptr<IProperty> content = _dict->getProperty ("Contents");
+			shared_ptr<IProperty> realcontent = getReferencedObject (content);
+			assert (content);
+			// Contents can be either stream or an array of streams
+			if (isStream (realcontent))	
+			{
+				// Set empty contents
+				CArray arr;
+				_dict->setProperty ("Contents", arr);
+		
+			}else if (isArray (realcontent))
+			{
+				// We can be sure that streams are indirect objects (pdf spec)
+				shared_ptr<CArray> array = IProperty::getSmartCObjectPtr<CArray> (realcontent);
+				for (size_t i = 0; i < array->getPropertyCount(); ++i)
+				{
+					IndiRef _rf = getRefFromArray (array,i);
+					if (_rf == rf)
+					{
+						array->delProperty (i);
+						return;
+					}
+				}
+			
+			}else // Neither stream nor array
+			{
+				kernelPrintDbg (debug::DBG_CRIT, "Content stream type: " << realcontent->getType());
+				throw ElementBadTypeException ("Bad content stream type.");
+			}
+		}
+
 	
 	}; // struct ContentsHandler
 
@@ -1815,6 +1894,33 @@ CPage::addContentStreamToBack (const Container& cont)
 }
 template void CPage::addContentStreamToBack<vector<shared_ptr<PdfOperator> > > (const vector<shared_ptr<PdfOperator> >& cont);
 template void CPage::addContentStreamToBack<deque<shared_ptr<PdfOperator> > > (const deque<shared_ptr<PdfOperator> >& cont);
+
+
+//
+//
+//
+void 
+CPage::removeContentStream (size_t csnum)
+{
+	// Create cstream from container of pdf operators
+	CPdf* pdf = dictionary->getPdf();
+	assert (pdf);
+
+	if (csnum >= contentstreams.size())
+		throw OutOfRange ();
+
+	// Change the contents entry
+	unregisterContentsObserver ();
+	ContentsHandler cnts (dictionary);
+	cnts.remove (contentstreams[csnum]);
+	registerContentsObserver ();
+
+	// Remove contentstream from container
+	contentstreams.erase (contentstreams.begin() + csnum, contentstreams.begin() + csnum + 1);
+
+	// Indicate change
+	_objectChanged ();
+}
 
 
 //

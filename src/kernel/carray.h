@@ -472,6 +472,11 @@ getDoubleFromArray (const IP& ip, size_t position)
 	return getSimpleValueFromArray<CReal> (ip, position);
 }
 
+/** Get	ref from array. */
+template<typename IP>
+inline CRef::Value
+getRefFromArray (const IP& ip, size_t position)
+	{ return getSimpleValueFromArray<CRef> (ip, position); }
 
 //=========================================================
 //	CArray "set value" helper methods

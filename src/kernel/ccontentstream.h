@@ -435,6 +435,16 @@ public:
 				  boost::shared_ptr<GfxResources> res = boost::shared_ptr<GfxResources> ());
 
 	/**
+	 * Set gfx resources.
+	 */
+	void setGfxParams (boost::shared_ptr<GfxState> state, boost::shared_ptr<GfxResources> res)
+	{
+		gfxstate = state;
+		gfxres = res;
+	}
+
+
+	/**
 	 * Save content stream to underlying cstream(s) and notify all observers. 
 	 *
 	 * Does not reparse anything. 

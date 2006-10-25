@@ -943,7 +943,7 @@ public:
 		{int THIS_FUNCTION_SHOULD_NOT_BE_USED_USE__addContentStreamToFront_OR_addContentStreamToBack__INSTEAD;}
 		addContentStreamToFront (cont);
 	}
-	
+
 	/**
 	 * Add new content stream to the back. This function adds new entry in the "Contents"
 	 * property of a page. The container of provided operators must form a valid
@@ -957,6 +957,14 @@ public:
 	 * @param cont Container of operators to add.
 	 */
 	template<typename Container> void addContentStreamToBack (const Container& cont);
+
+	/**
+	 * Remove content stream. 
+	 * This function removes all objects from "Contents" entry which form specified contentstream.
+	 *
+	 * @param csnum Number of content stream to remove.
+	 */
+	void removeContentStream (size_t csnum);
 
 	//
 	// Page translation 
