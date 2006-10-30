@@ -4,6 +4,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.35  2006/10/30 21:24:46  hockm0bm
+ * test case for inserting page to an empty document
+ *
  * Revision 1.34  2006/08/09 20:47:35  hockm0bm
  * indirectPropertyTC minor changes
  *
@@ -141,6 +144,8 @@ using namespace pdfobjects;
 using namespace utils;
 using namespace observer;
 using namespace boost;
+
+#define TEST_FILE "../../doc/zadani.pdf"
 
 class ProgressBar:public IProgressBar
 {
@@ -435,10 +440,18 @@ public:
 
 		printf("%s\n", __FUNCTION__);
 
-		printf("TC01:\tremovePage, insertPage changes pageCount\n");
 		size_t pageCount=pdf->getPageCount();
 		if (0 == pageCount)
+		{
+			printf("TC01:\tinsertPage to an empty document results in 1 total pages\n");
+			CPdf * test_doc = getTestCPdf(TEST_FILE);
+			pdf->insertPage(test_doc->getFirstPage(), 1);
+			CPPUNIT_ASSERT(pdf->getPageCount()==1);
+			test_doc->close();
 			return;
+		}
+
+		printf("TC01:\tremovePage, insertPage changes pageCount\n");
 		shared_ptr<CPage> page=pdf->getPage(1);
 		// remove page implies pageCount decrementation test
 		pdf->removePage(1);
@@ -903,7 +916,6 @@ public:
 		
 	}
 
-#define TEST_FILE "../../doc/zadani.pdf"
 
 	void indirectPropertyTC(CPdf * pdf)
 	{
