@@ -878,8 +878,9 @@ public:
 	 * We supposed that the font name is a standard system font avaliable to all viewers.
 	 *
 	 * @param fontname Output container of pairs of (Id,Name).
+	 * @param winansienc Set encoding to standard WinAnsiEnconding.
 	 */
-	void addSystemType1Font (const std::string& fontname);
+	void addSystemType1Font (const std::string& fontname, bool winansienc = true);
 
 
 	//
@@ -1109,6 +1110,18 @@ public:
 	 */
 	template<typename Container>
 	void displayChange (::OutputDev& out, const Container& cont) const;
+
+	void displayChange (::OutputDev& out, const std::vector<size_t> cs) const
+	{
+		ContentStreams css;
+		for (std::vector<size_t>::const_iterator it = cs.begin(); it != cs.end(); ++it)
+		{
+			if (static_cast<size_t>(*it) >= contentstreams.size())
+				throw CObjInvalidOperation ();
+			css.push_back (contentstreams[*it]);
+		}
+		displayChange (out, css);
+	}
 
 	/**
 	 * Move contentstream up one level. Which means it will be repainted by less objects.

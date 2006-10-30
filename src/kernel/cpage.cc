@@ -1383,7 +1383,7 @@ template size_t CPage::findText<std::vector<Rectangle> >
 //
 //
 void
-CPage::addSystemType1Font (const std::string& fontname)
+CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 {
 	// Create font dictionary
 	// << 
@@ -1399,6 +1399,13 @@ CPage::addSystemType1Font (const std::string& fontname)
 	name->setValue (fontname);
 	font->addProperty (string ("BaseFont"), *name);
 	
+	// For accents
+	if (winansienc)
+	{
+		name->setValue ("WinAnsiEncoding");
+		font->addProperty (string ("Encoding"), *name);
+	}
+
 	// Resources is an inheritable property, must be present
 	if (!dictionary->containsProperty ("Resources"))
 	{
@@ -2056,6 +2063,14 @@ CPage::displayChange (::OutputDev& out, const Container& cont) const
 	assert (fakeDict);
 	ContentsHandler hnd (fakeDict);
 	hnd.setContents (cont);
+
+	//
+	// Beware: from this point, fakeDict is not changed so xpdf can be set
+	// otherwise the condition that when pdf is valid ref must be also is not
+	// met
+	//
+	if (hasValidPdf (dictionary))
+		fakeDict->setPdf(dictionary->getPdf());
 
 	// Display page using our dictionary
 	displayPage (out, fakeDict);
