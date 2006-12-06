@@ -1,0 +1,36 @@
+#!/bin/sh
+
+#
+#docbook to HTML convertor. Depends on docbook2html in same directory as this
+#
+#If docbook2html fails becase it cannot find its prerequisites (xsltproc, etd ...),
+#it tries using docbook2html from jade.
+#If it fails because if invalid input file (unclosed xml tags, etc ...)
+# ... it fails too
+
+# use docbook2html in tools
+cmd=`echo $0 | sed 's/_any$//'`
+
+input=$1
+output=$2
+
+# run docbook2html [in] [tmp]
+$cmd $input $output
+retx=$?
+if [ $retx -eq 0 ]
+then
+ # success
+ exit 0
+fi
+
+if [ $retx -eq 2 ]
+then
+ # invalid input file
+ exit 2
+fi
+
+#something other wrong -> try docbook2html
+docbook2html -u $input 2>&1 >/dev/null
+
+retx=$?
+exit $retx

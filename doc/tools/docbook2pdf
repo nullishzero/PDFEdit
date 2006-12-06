@@ -1,0 +1,34 @@
+#!/bin/sh
+
+#docbook to PDF convertor. Depends on docbook2html in same directory as this
+#needs Apache FOP to work in addition to xsltproc and FO stylesheets
+
+#Check for fop
+FOP=fop
+fop=`which fop 2>/dev/null`
+if [ -z "$fop" ]
+then
+ echo "'fop' not found. Please install it to be able to generate PDF files"
+ echo "You can get Apache FOP from http://xmlgraphics.apache.org/fop/"
+ exit 1
+fi
+#fop found
+
+# use docbook2html with target type 'fo' to get .fo output
+cmd=`echo $0 | sed 's/pdf$/html/'`
+tmp=`mktemp`
+
+# run docbook2html [in] [tmp] fo
+$cmd $1 $tmp fo docbook.xsl "--param generate.index 0 --param toc.section.depth 0 --param toc.max.depth 0 --param generate.toc '' --param headers.on.blank.pages 0 --param footers.on.blank.pages 1"
+retx=$?
+# success?
+if [ $retx -eq 0 ]
+then
+ # run fop [tmp] [out]
+ $FOP $tmp $2
+ retx=$?
+fi
+# delete temporary .fo file
+rm $tmp
+#return code from fop (or error from docbook2html)
+exit $retx

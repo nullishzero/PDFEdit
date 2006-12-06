@@ -1,0 +1,98 @@
+#!/bin/sh
+
+# check parameters
+source="$1"
+target="$2"
+type="$3"
+sheet="$4"
+extraparams=$5
+
+if [ -z "$sheet" ]
+then
+ #docbook.xsl or chunk.xsl
+ #set default stylesheet
+ sheet="docbook.xsl"
+fi
+
+if [ -z "$source" ]
+then
+ echo "Usage: $0 <filename.xml> [filename.html] [type] [stylesheet] [extra xsltproc parameters]"
+ echo "Convert DocBook XML file to HTML (or other type) using xsltproc and installed $sheet stylesheet"
+ echo "If second filename is not specified, it defaults to first filename with .xml extension changed to .html"
+ echo "If type is not specified, defaults to xhtml"
+ echo "If stylesheet is not specified, defaults to docbook.xsl"
+ exit 1
+fi
+
+#default type
+if [ -z "$type" ]
+then
+ type=xhtml
+fi
+
+# list of space separated paths where $sheet can possibly be
+# wildcards (like *) are allowed
+# Entries are tried from firt to last until $sheet is found
+#FreeBSD
+XSLPATHS="/usr/local/share/xsl/docbook/$type /usr/share/xsl/docbook/$type"
+#Gentoo
+XSLPATHS="$XSLPATHS /usr/share/sgml/docbook/xsl-stylesheets*/$type /usr/local/share/sgml/docbook/xsl-stylesheets*/$type"
+#Debian, Ubuntu
+XSLPATHS="$XSLPATHS /usr/share/xml/docbook/stylesheet/nwalsh/$type"
+
+# look for stylesheet
+xslpath=""
+for xsl in $XSLPATHS
+
+do
+ if [ -r $xsl/$sheet ]
+ then
+  xslpath="$xsl/$sheet"
+  break
+ fi
+done
+
+# check if any stylesheet is found
+if [ -z "$xslpath" ]
+then
+  echo "XSL stylesheet not found - check if $sheet stylesheet is installed"
+  echo "or modify XSLPATHS in $0 to point to directory where it is installed"
+  echo "(if installed in non-standard directory)"
+  echo "Looked for $sheet in:"
+  echo $XSLPATHS
+  exit 1
+fi
+
+# check if source fuile exists
+if [ ! -r "$source" ]
+then
+ echo "File $source not found"
+ exit 1
+fi
+
+echo "$source: using XSL stylesheet $xslpath"
+
+#if target not specified, it is guessed from name of source file
+if [ -z "$target" ]
+then
+ target=`echo $source | sed s/\.xml$/\.html/`
+fi
+#Check for xsltproc
+xsltpr=`which xsltproc`
+if [ -n "$xsltpr" ]
+then
+ #run xsltproc
+ xsltproc $extraparams $xslpath $source >$target
+ retx=$?
+ # success?
+ if [ $retx -eq 0 ]
+ then
+  exit 0
+ fi
+ #so failure - input file is invalid
+ rm $target
+ exit 2
+fi
+#xsltproc not found
+echo xsltproc not found
+exit 1

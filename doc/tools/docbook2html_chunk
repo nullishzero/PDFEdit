@@ -1,0 +1,44 @@
+#!/bin/sh
+
+#
+#docbook to HTML convertor. Depends on docbook2html in same directory as this
+#This convertor generate chunked output
+#
+#If docbook2html fails becase it cannot find its prerequisites (xsltproc, etd ...),
+#or because if invalid input file (unclosed xml tags, etc ...), it fails
+
+# usage: docbook2html_chunk <input file> [type]
+# Type can be xhtml or html. If not specified, default is xhtml
+
+# use docbook2html in tools
+cmd=`echo $0 | sed 's/_chunk$//'`
+
+input=$1
+type="$2"
+output=$3
+
+#default type
+if [ -z "$type" ]
+then
+ type=xhtml
+fi
+
+# run docbook2html [in] [tmp]
+$cmd $input /dev/null $type chunk.xsl
+retx=$?
+if [ $retx -eq 0 ]
+then
+ # success
+ exit 0
+fi
+
+if [ $retx -eq 2 ]
+then
+ # invalid input file
+ exit 2
+fi
+
+#something other wrong -> try docbook2html
+#docbook2html cannot chunk
+
+exit 1
