@@ -22,6 +22,7 @@
 #include "version.h"
 #include <string.h>
 #include <cpdf.h>
+#include <cannotation.h>
 #include <delinearizator.h> 
 #include <factories.h> 
 #include <pdfwriter.h> 
@@ -29,6 +30,8 @@
 #include <qfile.h>
 #include <qsinterpreter.h>
 #include <utils/debug.h>
+#include <textoutput.h>
+#include <cpage.h>
 
 namespace gui {
 
@@ -338,6 +341,76 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   if (delin) delete delin;  
   return false;
  }
+}
+/**
+ * Convert pdf to xml.
+ * @param inFile input file
+ * @param pagenums List of page numbers.
+ * @param outFile output file
+ */
+QString 
+Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile) 
+{
+	using namespace textoutput;
+	using namespace std;
+	typedef vector<size_t> PageNums;
+
+	guiPrintDbg (debug::DBG_DBG, "pdftoxml started...");
+	
+	// Create normal container
+	PageNums nums;
+	QValueList<QVariant> pagenumslist = pagenums.toList();
+	for (QValueList<QVariant>::Iterator it = pagenumslist.begin(); it != pagenumslist.end(); ++it)
+		nums.push_back ((*it).toUInt());
+	
+	// Create cpdf
+	CPdf* pdf;
+	CPdf::OpenMode mode = CPdf::ReadOnly;
+
+	try {
+
+		guiPrintDbg (debug::DBG_DBG,"Opening document.");
+		pdf = CPdf::getInstance (inFile,mode);
+		assert(pdf);
+		guiPrintDbg (debug::DBG_DBG,"Document opened.");
+	
+	}catch (PdfOpenException& e) 
+	{
+		std::string err;
+		e.getMessage(err);
+		guiPrintDbg(debug::DBG_DBG,"Failed opeining document " << err);
+		return QString ();
+	}
+
+	//
+	// Build the output
+	//
+	XmlOutputBuilder out;
+	try
+	{
+		// Get xml from all pages
+		for (PageNums::iterator it = nums.begin(); it != nums.end(); ++it)
+			pdf->getPage(*it)->convert<SimpleWordEngine,
+									   SimpleLineEngine,
+									   SimpleColumnEngine> (out);
+	}catch (CObjectException& e)
+	{
+		setError (tr(e.what()));
+		pdf->close();
+		return QString ();
+	}
+
+	// Cleanup
+	pdf->close ();
+
+	// Save it
+	ofstream of;
+	of.open (outFile);
+	of << XmlOutputBuilder::xml (out) << flush;
+	of.close();
+
+	// Do something with the result
+	return QString (XmlOutputBuilder::xml(out));
 }
 
 /**

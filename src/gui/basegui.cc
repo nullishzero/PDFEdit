@@ -14,6 +14,7 @@
 #include "main.h"
 #include "menu.h"
 #include "mergeform.h"
+#include "selectpagesdialog.h"
 #include "multitreewindow.h"
 #include "numbertool.h"
 #include "optionwindow.h"
@@ -355,6 +356,18 @@ QString BaseGUI::fileSaveDialog(const QString &oldName/*=QString::null*/) {
 }
 
 /**
+ Show "save file" dialog and return file selected, or NULL if dialog was cancelled
+ @param oldName Old name of the file (if known) - will be preselected
+ @return name of selected file.
+ */
+QString BaseGUI::fileSaveDialogXml(const QString &oldName/*=QString::null*/) {
+ guiPrintDbg(debug::DBG_DBG,"fileSaveDialogXml");
+ QString ret=saveFileDialogXml(w,oldName);
+ return ret;
+}
+
+
+/**
  Get color from color picker with given name
  @param colorName Name of color picker
  @return Color from the picker or empty Variant if color picker is not found
@@ -491,6 +504,34 @@ QVariant BaseGUI::mergeDialog() {
  dialog->destroyOpenFile();
  delete dialog;
  return retValue;
+}
+
+/**
+ * Bring up "select pages" dialog.
+ * @return Result of selection or empty variant if dialog was cancelled.
+ */
+QVariant 
+BaseGUI::selectPagesDialog (const QString& filename) const
+{
+	using namespace boost;
+	typedef std::list<size_t> StdItems;
+
+	QVariant qvitems;				// Result of this function
+	QValueList<QVariant> qitems;	// Selected page numbers
+	scoped_ptr<SelectPagesDialog> dialog (new SelectPagesDialog(filename));	// Create dialog
+
+	// Starts dialog as modal and do something if OK is pressed
+	if(QDialog::Accepted == dialog->exec()) 
+	{
+		// Get result and craete QVariant from it using QValueList
+		StdItems stditems;
+		dialog->getResult (stditems);
+		for (StdItems::iterator it = stditems.begin(); it != stditems.end(); ++it)
+			qitems.append (*it);
+		qvitems = QVariant(qitems);
+	}
+	// Cleanup
+	return qvitems;
 }
 
 /** \copydoc PdfEditWindow::modified */

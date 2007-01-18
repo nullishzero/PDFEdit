@@ -14,11 +14,97 @@
 #include <qtextcodec.h>
 #include <qstringlist.h>
 #include <utils/debug.h>
+#include <static.h>
 #include <assert.h>
 
 namespace util {
 
 using namespace std;
+
+namespace {
+
+	//
+	// Pdfedit encoding class
+	//
+	
+	/**
+	 * This class is used because of special pdf accented character encoding.
+	 */
+	class PdfeditEncoding : public QTextCodec
+	{
+		typedef std::map<unsigned short, string> UMap;
+
+		// Display this char when mapping is not known
+		const static char UNKNOWN_CHAR = '?';
+
+		private:
+			UMap umap;	// Mapping from unicode to windows character encoding
+
+			//
+			// Ctor - singleton 
+			//
+		private:
+			PdfeditEncoding ()
+			{
+				umap[271] = string (1,'d') + string (1,(char)39);	// daccent
+				umap[318] = string (1,'l') + string (1,(char)39);	// laccent
+				umap[352] = string (1,(char)138);					// Scaron
+				umap[353] = string (1,(char)154);					// scaron
+				umap[357] = string (1,'t') + string (1,(char)39);	// tcaron
+				umap[381] = string (1,(char)142);					// Zcaron
+				umap[382] = string (1,(char)158);					// zcaron
+			
+			};
+
+			//
+			// Instance
+			// 
+		public:
+			static PdfeditEncoding* get ()
+			{ 
+				static PdfeditEncoding _instance;
+				return &_instance; 
+			}
+
+			//
+			// Interface
+			//
+		public:
+			const char* name () const
+			{
+				static const char* _name = "Pdfedit accented windows encoding";
+				return _name;
+			}
+			int mibEnum () const
+				{ return 2252; /* windows 1252 */};
+			int heuristicContentMatch (const char* ,int) const
+				{ return 0; }
+			QString 
+			toUnicode (const char* chars, int len ) const
+			{
+				return QString (string(chars,len));
+			}
+			QCString 
+			fromUnicode (const QString& uc, int& lenInOut) const
+			{
+				string tmp;
+				for (size_t i = 0; i < uc.length(); ++i)
+				{
+					QChar c (uc[i]);
+					UMap::const_iterator it = umap.find (c.unicode());
+					if (it != umap.end())
+						tmp += (*it).second;
+					else
+						tmp += c.latin1() ? c.latin1() : UNKNOWN_CHAR ;
+				}
+				lenInOut = tmp.size();
+				assert (tmp.size() >= uc.length());
+				return QCString (tmp.c_str());
+			}
+	
+	}; // class PdfeditEncoding
+
+} // namespace
 
 /**
  Prints error message and terminates application
@@ -301,7 +387,7 @@ CP874,CP1250,CP1251,CP1252,CP1253,CP1254,CP1255,CP1256,CP1257,CP1258,\
 GB2312,GB18030,GBK,IBM 850,IBM 866,\
 ISO8859-1,ISO8859-2,ISO8859-3,ISO8859-4,ISO8859-5,ISO8859-6,ISO8859-7,ISO8859-8,ISO8859-8-i,ISO8859-9,\
 ISO8859-10,ISO8859-13,ISO8859-14,ISO8859-15,\
-JIS7,KOI8-R,KOI8-U,Latin1,Shift-JIS,TIS-620TSCII,eucJP,eucKR,utf8,utf16",true);
+JIS7,KOI8-R,KOI8-U,Latin1,Shift-JIS,TIS-620TSCII,eucJP,eucKR,utf8,utf16," + QString(PdfeditEncoding::get()->name()),true);
 }
 
 /** Codec for default charset */
@@ -312,8 +398,15 @@ QTextCodec *defCodec=NULL;
  @param charsetName charset name used for all 8bit to/from unicode conversions
 */
 void setDefaultCharset(const QString &charsetName) {
- //Codecs should not be deleted, as Qt is maniaging them
+ //Codecs should not be deleted, as Qt is managing them
  if (defCodec) defCodec=NULL;
+ // Is it our codec?
+ if (PdfeditEncoding::get()->name() == charsetName)
+ {	
+ 	defCodec = PdfeditEncoding::get();
+	return;
+ }
+ // Default codecs
  if (charsetName.isNull() || charsetName=="") return;//no codec
  defCodec=QTextCodec::codecForName(charsetName); 
 }

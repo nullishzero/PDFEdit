@@ -195,6 +195,19 @@ QString saveFileDialogPdf(QWidget* parent,const QString &oldname,bool askOverwri
 }
 
 /**
+ Invoke "save file" dialog for xml files. Specialization of saveFileDialog
+ \see saveFileDialog
+ @param parent Parent widget - will be disabled during the dialog.
+ @param oldname Name of file to be saved - if specified, this name will be pre-selected.
+ @param askOverwrite If true and selected file exists, user will be asked to confirm overwriting it
+ @return selected Filename (or NULL)
+*/
+QString saveFileDialogXml(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/) {
+ return saveFileDialog(parent,oldname,askOverwrite,QObject::tr("Save file as ..."),"file_dialog",QObject::tr("xml files (*.xml)"),"filePath");
+}
+
+
+/**
  Invoke "read string" dialog. Show message and wait for user to type any string, 
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.

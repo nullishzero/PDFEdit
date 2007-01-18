@@ -76,7 +76,7 @@ function setOpColor() {
                 return;//Dialog aborted
                 
         // set color operator to all selected which are changeable
-	op=firstSelected("select");
+	op=firstSelected();
         count=0;
         while(op)
         {
@@ -117,7 +117,7 @@ function setLineWidth() {
 
         width = getNumber("linewidth");
 	
-	op=firstSelected("select");
+	op=firstSelected();
         while(op)
         {
                 if (!isChangeableOp(op)) {
@@ -661,7 +661,7 @@ function _AddTextSlot ( text ) {
 	if ((undefined == text) || (text.isEmpty())) {
 		return;
 	}
-
+	
 	var thepage  = page();
 	var fname = getEditText( "fontface" );
 	var fid=thepage.getFontId( fname );

@@ -82,6 +82,10 @@ public slots: //This will be all exported to scripting
  */
  bool delinearize(const QString &inFile,const QString &outFile);
  /*-
+  Converts pdf to xml.
+ */
+ QString pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile);
+ /*-
   Returns last error message (localized) from some operations
   (openFile, save, saveRevision, saveCopy, delinearize)
  */

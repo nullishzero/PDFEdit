@@ -109,8 +109,8 @@ HEADERS += dialogoption.h  fileoption.h  fontoption.h
 SOURCES += dialogoption.cc fileoption.cc fontoption.cc
 SOURCES += annotdialog.cc
 HEADERS += annotdialog.h
-HEADERS += mergeform.h
-SOURCES += mergeform.cc
+HEADERS += mergeform.h selectpagesdialog.h
+SOURCES += mergeform.cc selectpagesdialog.cc
 
 #Help window
 HEADERS += helpwindow.h

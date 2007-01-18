@@ -140,6 +140,7 @@ public slots: //This will be all exported to scripting
   If file selected in dialog already exists, user is asked to confirm overwriting before returing its name.
  */
  QString fileSaveDialog(const QString &oldName=QString::null);
+ QString fileSaveDialogXml (const QString &oldName=QString::null);
  /*-
   Get color from color picker with given name.
   Returns false if the color picker does not exist.
@@ -186,6 +187,18 @@ public slots: //This will be all exported to scripting
   </itemizedlist>
  */
  QVariant mergeDialog();
+ /*-
+  Bring up "select pages" dialog.
+  Returns result of selection or NULL if dialog was cancelled.
+
+  Result is array of three elements:
+  <itemizedlist>
+   <listitem><para>First element is array with page numbers</para></listitem>
+   <listitem><para>Third is filename of the document to be merged in</para></listitem>
+  </itemizedlist>
+ */
+ QVariant selectPagesDialog (const QString& filename) const;
+
  /*- Return true if the document was modified since it was opened or last saved, false otherwise. */
  bool modified();
  /*-
