@@ -26,6 +26,7 @@ exists( $${XPDFPATH}/xpdf/$${XPDFLIB} ) {
 	exists( ../config_xpdf_variables ) {
 		include( ../config_xpdf_variables )
 		LIBS += $$config_xpdf_t1_LIBS
+		LIBS += $$config_xpdf_libpaper_LIBS
 		LIBS += $$config_xpdf_freetype2_LIBS
 	}else{
 		error( "You do not have ../config_xpdf_variables created from ../xpdf/config.status" )

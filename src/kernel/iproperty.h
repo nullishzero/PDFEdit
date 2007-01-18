@@ -55,14 +55,14 @@ enum PropertyType
 };
 
 
-/** Object identification number. */
-typedef unsigned int ObjNum;
-/** Object generation number. */
-typedef unsigned int GenNum;
-
 /** Two numbers specifying indirect reference of a pdf object. */
 typedef struct IndiRef
 {
+	/** Object identification number. */
+	typedef unsigned int ObjNum;
+	/** Object generation number. */
+	typedef unsigned int GenNum;
+
 	ObjNum	num; /**< Objects pdf identification number. */
 	GenNum	gen; /**< Objects pdf generation number. */
 
@@ -229,7 +229,7 @@ public:
 	 * @param n Objects identification number.
 	 * @param g Objects generation number.
 	 */
-	void setIndiRef (ObjNum n, GenNum g) {ref.num = n; ref.gen = g;};
+	void setIndiRef (IndiRef::ObjNum n, IndiRef::GenNum g) {ref.num = n; ref.gen = g;};
 
 	//
 	// PropertyMode
@@ -387,6 +387,8 @@ template<typename T> inline bool isNull	 (T& ip) {return isIPType<pNull> (ip);}
 template<typename T> inline bool isInt 	 (T& ip) {return isIPType<pInt> (ip);}
 /** \copydoc isNull*/
 template<typename T> inline bool isReal  (T& ip) {return isIPType<pReal> (ip);}
+/** \copydoc isNull*/
+template<typename T> inline bool isNumber(T& ip) {return (isIPType<pReal> (ip) || isIPType<pInt> (ip));}
 /** \copydoc isNull*/
 template<typename T> inline bool isString(T& ip) {return isIPType<pString> (ip);}
 /** \copydoc isNull*/

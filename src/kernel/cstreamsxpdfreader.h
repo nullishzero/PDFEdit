@@ -136,6 +136,14 @@ public:
 	}
 
 	/** 
+	 * Look at next xpdf object. 
+	 * It need not return the real next object, but it does at the start
+	 * of a stream.
+	 */
+	void lookXpdfObject (::Object& obj)
+		{ parser->getNextObj (obj);	}
+
+	/** 
 	 * Is end of all streams.
 	 *
 	 * We can not cache and due to this fact we can not tell if a stream

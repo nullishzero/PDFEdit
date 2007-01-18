@@ -37,7 +37,7 @@ using namespace utils;
 namespace {
 //==========================================================
 
-	
+
 	/**
 	 * Set pdf, indiref, contentstream to operands, alse register observers on all operands.
 	 *
@@ -303,7 +303,7 @@ namespace {
 			return shared_ptr<PdfOperator> ();
 		
 		// Try to find the op by its name
-		const StateUpdater::CheckTypes* chcktp = StateUpdaterFactory::getInstance()->findOp (o->getCmd());
+		const StateUpdater::CheckTypes* chcktp = StateUpdater::findOp (o->getCmd());
 		// Operator not found, create unknown operator
 		if (NULL == chcktp)
 			return shared_ptr<PdfOperator> (new SimpleGenericOperator (string (o->getCmd()),operands));
@@ -368,7 +368,7 @@ namespace {
 		{
 			string opname;
 			result->getOperatorName (opname);
-			string endtag = StateUpdaterFactory::getInstance()->getEndTag (opname);
+			string endtag = StateUpdater::getEndTag (opname);
 			bool foundEndTag = false;
 			
 			// The same as in (re)parseContentStream
@@ -455,17 +455,49 @@ namespace {
 		//
 		try 
 		{
+			bool our_change = false;
 			while (newop=parseOp (streamreader, operands))
 			{
+				//
+				// Is it our change
+				//
+				if (isPdfOp (*newop,getChangeTagName()))
+				{	
+					PdfOperator::Operands ops;
+					newop->getParameters (ops);
+					if (!ops.empty())
+					{
+						try {
+							if (getChangeTagId() == getNameFromIProperty(ops.front()))
+								our_change = true;
+						}catch (ElementBadTypeException&)
+							{}
+					}
+				}
+
 				topoperator->push_back (newop, previousLast);
 				previousLast = getLastOperator (newop);
 
 				if (parsedstreams)
 				{ // FIRST PARSE
-
+					//
 					// We have found complete and correct content stream.
+					//  BUT this can be tricky -- e.g. 
+					//  Tf ...
+					//  <<END>>
+					//  Tj 
+					// if we want to do something with all operators (xml
+					// output) we have a problem
+					//
 					if (streamreader.eofOfActualStream())
-						break;				
+					{
+						if (our_change)
+							break;
+						xpdf::XpdfObject o;
+						streamreader.lookXpdfObject (*o);
+						if (o->isName (getChangeTagId().c_str()))
+							break;
+					}
 				}
 			}
 
@@ -523,10 +555,16 @@ namespace {
 	 */
 	struct BBoxUpdater 
 	{
-		void operator() (shared_ptr<PdfOperator> op, const GfxState&, Rectangle rc) const
+		typedef PdfOperator::BBox BBox;
+
+		// Init resources
+		void operator() (shared_ptr<GfxResources>) const {}
+
+		// Loop through operators
+		void operator() (shared_ptr<PdfOperator> op, BBox rc, const GfxState&) const
 		{
 			// If not initialized, means an error occured (missing font etc..)
-			if (!Rectangle::isInitialized (rc))
+			if (!BBox::isInitialized (rc))
 				rc.xleft = rc.xright = rc.yleft = rc.yright = 0;
 			op->setBBox (rc);
 		}
@@ -649,7 +687,7 @@ CContentStream::CContentStream (CStreams& strs,
 	
 	// Save bounding boxes
 	if (!operators.empty()) 
-		StateUpdaterFactory::getInstance()->updatePdfOperators (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate, BBoxUpdater());
+		StateUpdater::updatePdfOperators (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate, BBoxUpdater());
 
 	// Register observer on all cstream
 	registerCStreamObservers ();
@@ -685,7 +723,7 @@ CContentStream::reparse (bool bboxOnly, boost::shared_ptr<GfxState> state, boost
 	
 	// Save bounding boxes
 	if (!operators.empty()) 
-		StateUpdaterFactory::getInstance()->updatePdfOperators (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate, BBoxUpdater());
+		StateUpdater::updatePdfOperators (PdfOperator::getIterator (operators.front()), gfxres, *gfxstate, BBoxUpdater());
 }
 
 //

@@ -4,8 +4,6 @@
 #define _FACTORIES_H_
 
 #include "cobject.h"
-#include "cpage.h"
-#include "stateupdater.h"
 
 /** 
  * @file factories.h
@@ -274,6 +272,11 @@ public:
  * High level Cobjects factories
  *****************************************************************************/
 
+//
+// Forward declarations
+// 
+class CPage;
+
 /** CPageFactory factory class.
  */
 class CPageFactory
@@ -285,23 +288,7 @@ public:
 	 *
 	 * @return CPage instance.
 	 */
-	static CPage * getInstance(boost::shared_ptr<CDict> pageDict)
-	{
-		return new CPage(pageDict);
-	}
-};
-
-
-/** State updater factory.
- */
-struct StateUpdaterFactory
-{
-	/** Create basic UpdaterFactory class. */
-	static StateUpdater* getInstance ()
-	{
-		static StateUpdater up;
-		return &up;
-	}
+	static CPage * getInstance(boost::shared_ptr<CDict> pageDict);
 };
 
  

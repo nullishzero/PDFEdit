@@ -20,7 +20,12 @@
 #include "ccontentstream.h"
 // CAnnotation
 #include "cannotation.h"
-
+// Text output
+#include "textoutput.h" 
+// Factories
+#include "factories.h"
+// State updater
+#include "stateupdater.h"
 
 //=====================================================================================
 namespace pdfobjects {
@@ -197,23 +202,7 @@ struct PdfOpCmpRc
 	 * </ul>
 	 */
 	bool operator() (const Rectangle& rc) const
-	{
-		if ( std::min(rc_.xleft,rc_.xright) >= std::min(rc.xleft, rc.xright) ) {
-			return false;
-		}
-		if ( std::max(rc_.xleft,rc_.xright) <= std::max(rc.xleft, rc.xright) ) {
-			return false;
-		}
-
-		if ( std::min(rc_.yleft,rc_.yright) >= std::min(rc.yleft, rc.yright) ) {
-			return false;
-		}
-		if ( std::max(rc_.yleft,rc_.yright) <= std::max(rc.yleft, rc.yright) ) {
-			return false;
-		}
-
-		return true;
-	}
+		{ return Rectangle::isInitialized (libs::rectangle_intersect (rc_, rc)); }
 
 private:
 	const Rectangle rc_;	/**< Rectangle to be compared. */
@@ -785,6 +774,54 @@ public:
 	 */
  	void getText (std::string& text, const std::string* encoding = NULL, const Rectangle* rc = NULL)  const;
 
+	/**
+	 * Get text source of a page.
+	 */
+	template<typename WordEngine, 
+			 typename LineEngine, 
+			 typename ColumnEngine 
+			 >
+ 	void convert (textoutput::OutputBuilder& out)
+	{
+		typedef textoutput::PageTextSource<WordEngine, LineEngine, ColumnEngine> TextSource;
+		kernelPrintDbg (debug::DBG_INFO, ""); 
+
+		// If not parsed
+		if (contentstreams.empty())
+			parseContentStream ();		
+
+		// Create gfx resource and state
+		boost::shared_ptr<GfxResources> gfxres;
+		boost::shared_ptr<GfxState> gfxstate;
+		createXpdfDisplayParams (gfxres, gfxstate);
+		assert (gfxres && gfxstate);
+
+		// Create page text class with parametrized parts
+		TextSource text_source;
+
+		// Get text from all content streams
+		for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
+		{
+			// Get operators and build text representation if not empty
+			CContentStream::Operators ops;
+			(*it)->getPdfOperators (ops);
+			if (!ops.empty())
+			{
+				PdfOperator::Iterator itt = PdfOperator::getIterator (ops.front());
+				StateUpdater::updatePdfOperators<TextSource&> (itt, gfxres, *gfxstate, text_source);
+			}
+		}
+
+		// Create lines, columns...
+		text_source.format ();
+		// Build the output
+		if (hasValidPdf(dictionary))
+			text_source.output (out, getPagePosition());
+		else
+			text_source.output (out, 0);
+	}
+
+
 	//
 	// Annotations
 	//
@@ -888,6 +925,28 @@ public:
 	//
 public:	
 	/**
+	 * Get page position.
+	 */
+	size_t getPagePosition () const;
+
+	/**
+	 * Set display params.
+	 */
+	void setDisplayParams (const DisplayParams& dp)
+	{ 
+		lastParams = dp; 
+		// set rotate to positive integer
+		lastParams.rotate -= ((int)(lastParams.rotate / 360) -1) * 360;
+		// set rotate to range [ 0, 360 )
+		lastParams.rotate -= ((int)lastParams.rotate / 360) * 360;
+		// Use mediabox
+		if (lastParams.useMediaBox)
+			lastParams.pageRect = getMediabox ();
+		// Change bbox etc...
+		reparseContentStream ();
+	}
+
+	/**
 	 * Draw page on an output device.
 	 *
 	 * We use xpdf code to draw a page. It uses insane global parameters and
@@ -896,8 +955,14 @@ public:
 	 * @param out Output device.
  	 * @param params Display parameters.
 	 */
-	void displayPage (::OutputDev& out, const DisplayParams params, int x = -1, int y = -1, int w = -1, int h = -1); 
+	void displayPage (::OutputDev& out, const DisplayParams& params, int x = -1, int y = -1, int w = -1, int h = -1);
 	
+	/**
+	 * Draw page on an output device.
+	 * Use old display params.
+	 */
+	void displayPage (::OutputDev& out, int x = -1, int y = -1, int w = -1, int h = -1);
+
 	/**
 	 * Draw page on an output device with last used display parameters.
 	 *

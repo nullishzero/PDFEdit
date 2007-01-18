@@ -3,6 +3,23 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.79  2007/01/18 20:20:51  misuj1am
+ *
+ * -- pdf to whatever feature
+ * 	-- added files to enable this feature
+ * 	-- pdf2xml
+ *
+ * -- cleaned up some code
+ * -- contentstream splitting fixed
+ *
+ * Revision 1.79  2006/12/08 02:00:16  misuj1am
+ *
+ * -- stateupdater printText made public -- we can use it to obtain bbox of each and every char in a word
+ * -- some code from static.h added to ../utils/types ../utils/algorithm
+ * -- dependency added into cpdf.cc
+ * -- several small changes + added helper functions in ccontentstream, iproperty, pdfoperataors
+ * -- moved some code from factories.h to cc
+ *
  * Revision 1.78  2006/09/12 02:15:06  misuj1am
  *
  * -- bug #88, #75 fixed
@@ -347,6 +364,7 @@
 
 #include "cobject.h"
 #include "cpdf.h"
+#include "cpage.h"
 #include "factories.h"
 #include "utils/debug.h"
 

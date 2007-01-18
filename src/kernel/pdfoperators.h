@@ -77,6 +77,7 @@ public:
 	typedef iterator::SharedDoubleLinkedListIterator<PdfOperator> Iterator;
 	typedef Iterator::ListItem							ListItem;
 	typedef std::list<boost::shared_ptr<PdfOperator> > 	PdfOperators;
+	typedef Rectangle									BBox;
 
 	// iterator has to be a friend
 	friend class iterator::SharedDoubleLinkedListIterator<PdfOperator>;
@@ -372,7 +373,7 @@ public:
 	//
 private:
 	/** Bounding box of this operator. */
-	Rectangle bbox;
+	BBox bbox;
 
 public:
 	/** 
@@ -380,7 +381,7 @@ public:
 	 *
 	 * @param rc Bounding box.
 	 */
-	void setBBox (const Rectangle& rc)
+	void setBBox (const BBox& rc)
 		{ bbox = rc; };
 
 	/**
@@ -388,8 +389,8 @@ public:
 	 *
 	 * @return Bounding box.
 	 */
-	Rectangle getBBox () const
-		{ assert (Rectangle::isInitialized(bbox)); return bbox; };
+	BBox getBBox () const
+		{ assert (BBox::isInitialized(bbox)); return bbox; };
 	
 };
 
@@ -670,7 +671,7 @@ protected:
 
 
 //==========================================================
-// Helper funcions
+// Helper funcions - general
 //==========================================================
 
 /** Is an operator a composite. */
@@ -750,9 +751,75 @@ boost::shared_ptr<PdfOperator> createChangeTag ();
 std::string getChangeTagName ();
 
 /**
+ * Get change tag id. It is the first object in new stream.
+ */
+std::string getChangeTagId ();
+
+/**
  * Get change tag time.
  */
 time_t getChangeTagTime (boost::shared_ptr<PdfOperator> op);
+
+
+//
+// Specific operator
+//
+inline bool
+isPdfOp (const PdfOperator& op, const std::string& opn)
+{
+	std::string tmp;
+	op.getOperatorName (tmp);
+	return opn == tmp;
+}
+inline bool
+isPdfOp (const PdfOperator& op, 
+		 const std::string& opn1, 
+		 const std::string& opn2)
+{ 
+	std::string tmp;
+	op.getOperatorName (tmp);
+	return (tmp == opn1) || (tmp == opn2); 
+}
+inline bool
+isPdfOp (const PdfOperator& op, 
+		 const std::string& opn1, 
+		 const std::string& opn2, 
+		 const std::string& opn3)
+{
+	std::string tmp;
+	op.getOperatorName (tmp);
+	return (tmp == opn1) || (tmp == opn2) || (tmp == opn3); 
+}
+inline bool
+isPdfOp (const PdfOperator& op, 
+		 const std::string& opn1, 
+		 const std::string& opn2, 
+		 const std::string& opn3, 
+		 const std::string& opn4)
+{
+	std::string tmp;
+	op.getOperatorName (tmp);
+	return (tmp == opn1) || (tmp == opn2) || (tmp == opn3) || (tmp == opn4);
+}
+
+/** Is specific operator. */
+template<typename T>
+inline bool
+isPdfOp (const T& op, const std::string& opn)
+	{ return isPdfOp (*op, opn); }
+template<typename T>
+inline bool
+isPdfOp (const T& op, const std::string& opn1, const std::string& opn2)
+	{ return isPdfOp (*op, opn1, opn2); }
+template<typename T>
+inline bool
+isPdfOp (const T& op, const std::string& opn1, const std::string& opn2, const std::string& opn3)
+	{ return isPdfOp (*op, opn1, opn2, opn3); }
+template<typename T>
+inline bool
+isPdfOp (const T& op, const std::string& opn1, const std::string& opn2, const std::string& opn3, const std::string& opn4)
+	{ return isPdfOp (*op, opn1, opn2, opn3, opn4); }
+
 
 
 //==========================================================

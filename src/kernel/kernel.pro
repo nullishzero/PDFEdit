@@ -37,7 +37,7 @@ HEADERS += ../utils/debug.h ../utils/iterator.h ../utils/observer.h
 #
 HEADERS += exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h factories.h
 HEADERS += pdfwriter.h
-SOURCES += modecontroller.cc filters.cc 
+SOURCES += modecontroller.cc filters.cc factories.cc
 
 #
 # CObjects
@@ -55,6 +55,12 @@ SOURCES += cobjecthelpers.cc ccontentstream.cc pdfoperators.cc pdfoperatorsiter.
 SOURCES += pdfwriter.cc
 SOURCES += cinlineimage.cc coutline.cc
 SOURCES += cpage.cc cpdf.cc 
+
+#
+# Add ons
+#
+HEADERS += textoutput.h textoutputbuilder.h textoutputentities.h textoutputengines.h
+SOURCES += textoutputengines.cc textoutputentities.cc textoutputbuilder.cc
 
 #
 # Kernel special settings

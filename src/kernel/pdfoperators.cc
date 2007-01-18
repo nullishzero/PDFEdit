@@ -372,6 +372,7 @@ boost::shared_ptr<PdfOperator> getLastOperator (boost::shared_ptr<PdfOperator> o
 namespace {
 	/** Change tag. */
 	static const char* CHANGE_TAG_NAME = "DP";
+	static const char* CHANGE_TAG_ID = "PdfEdit";
 }
 
 //
@@ -382,7 +383,7 @@ boost::shared_ptr<PdfOperator> createChangeTag ()
 	PdfOperator::Operands opers;
 	
 	// Name or our application
-	shared_ptr<CName> name (new CName ("PdfEdit"));
+	shared_ptr<CName> name (new CName (CHANGE_TAG_ID));
 	opers.push_back (name);
 	
 	// Dict with our informatio
@@ -404,6 +405,10 @@ boost::shared_ptr<PdfOperator> createChangeTag ()
 string
 getChangeTagName ()
 	{ return CHANGE_TAG_NAME; }
+string
+getChangeTagId ()
+	{ return CHANGE_TAG_ID; }
+
 
 //
 //
@@ -414,10 +419,8 @@ getChangeTagTime (shared_ptr<PdfOperator> op)
 	assert (op);
 
 	// Check operator name
-	string name;
-	op->getOperatorName (name);
-	assert (name == CHANGE_TAG_NAME);
-	if (CHANGE_TAG_NAME != name)
+	assert (isPdfOp (op, CHANGE_TAG_NAME));
+	if (!isPdfOp (op,CHANGE_TAG_NAME))
 		throw CObjInvalidObject ();
 
 	time_t time = 0;

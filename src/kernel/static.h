@@ -1,8 +1,8 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 /*
  * =====================================================================================
- *        Filename:  xpdf.h
- *     Description:  Header file containing all includes to xpdf
+ *        Filename:  static.h
+ *     Description:  Basic stuff.
  *         Created:  03/07/2006 18:42:41 PM CET
  *          Author:  jmisutka ()
  * =====================================================================================
@@ -12,17 +12,13 @@
 #define _STATIC_H_
 
 //============================================
-// Basic includes
-//============================================
-
-//
 //  POSIX
-//
+//============================================
 #include <time.h>
 
-//
+//============================================
 // stl
-//
+//============================================
 #include <ostream>
 #include <fstream>
 #include <iostream>
@@ -39,171 +35,53 @@
 
 #include <limits>
 
-//
+//============================================
 // boost
-//
+//============================================
 #include <boost/smart_ptr.hpp>
-// Typelists THIS IS NOT AN STL VECTOR not any other similar RUN-TIME container
-//#include <boost/mpl/vector.hpp>
-//#include <boost/mpl/size.hpp>
-//#include <boost/mpl/reverse.hpp>
-//#include <boost/mpl/insert.hpp>
-//#include <boost/mpl/at.hpp>
-// Filters
-//#include <boost/iostreams/categories.hpp> // output_filter_tag
-//#include <boost/iostreams/operations.hpp> // put
-//#include <boost/iostreams/concepts.hpp> // multichar_output_filter
-//#include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
-//#include <boost/iostreams/filtering_streambuf.hpp>
 
-//
+
+//============================================
 // our stuff
-//
+//============================================
+
 #include "utils/debug.h"
 #include "utils/objectstorage.h"
 #include "utils/observer.h"
 
+// types
+#define _JM_NAMESPACE libs	 
+#include "utils/types.h"
+using _JM_NAMESPACE::Point;
+using _JM_NAMESPACE::Rectangle;
+using _JM_NAMESPACE::NullType;
+using _JM_NAMESPACE::noncopyable;
+// basic algorithms
+#include "utils/algorithms.h"
+using _JM_NAMESPACE::max;
+using _JM_NAMESPACE::min;
+
+// other includes
 #include "exceptions.h"
 #include "xpdf.h"
 
 
-//============================================
-// Types
-//============================================
-
-//
-// Null and empty types.
-//
-
-/** Null type. */
-class NullType {};
-/** Null type. */
-struct EmptyType {};
-
-
-/**
- * Correct null pointer (NULL) implementation (from CUJ 5/22 by Herb Sutter)
- */
-const class 
-{
-public:
-	template<typename T> operator T*() const { return 0; }
-	template<typename C,typename T> operator T C::*() const { return 0; }
-private:
-	void operator&() const {}; // not defined  
-
-} nullPtr = {};
-
-
 
 //=====================================================================================
+// Deallocator
+//=====================================================================================
 
-/** Coordinate according to pdf specification. */
-typedef double Coordinate;
-/** Invalid coordinate. */
-const double COORDINATE_INVALID = std::numeric_limits<Coordinate>::max();
-
-/**
- * Generic point. 
+/** 
+ * Empty deallocator.
+ * This functor can be used with smart pointers when instance cannot be deallocated.
  */
-template <typename Coord>
-struct GenPoint
+template<typename T> struct EmptyDeallocator
 {
-	Coord x; /**< X coordinate. */
-	Coord y; /**< Y coordinate. */
-	/** Constructor. */
-	GenPoint () {x = y = COORDINATE_INVALID;}
-	/** Constructor. */
-	GenPoint (Coord _x, Coord _y) : x(_x), y(_y) {}
-
+	/** Deallocation function operator. */
+	void operator()(T * ){};
 };
-
-/** Pint defined in compliance with the pdf specification v1.5 (p. 133). */
-typedef struct GenPoint<Coordinate> Point;
-
-
-/**
- * Generic rectangle.
- */
-template <typename Coord>
-struct GenRect
-{
-	typedef struct GenRect<Coord> Type;
-		
-	Coord xleft; /**< Left x coordinate. */
-	Coord yleft; /**< Left y coordinate. */
-	Coord xright;/**< Right x coordinate. */
-	Coord yright;/**< Right y coordinate. */
-
-	// Constructor
-	GenRect ()	{xleft = yleft = xright = yright = COORDINATE_INVALID;}
-	GenRect (Coord x1, Coord y1, Coord x2, Coord y2) : xleft(x1), yleft(y1), xright(x2), yright(y2) {}
-
-	/** 
-	 * True if the rectangle contains the point.
-	 * 
-	 * @param x x-coordinate of point.
-	 * @param y y-coordinate of point.
-	 *
-	 * @return True if the specified point is in the rectangle, false otherwise.
-	 */
-	bool contains (Coord x, Coord y) const
-	{
-		//kernelPrintDbg (debug::DBG_DBG, "x: " << x << " y: " << y << " Rect:" << *this);
-		return ( std::min(xleft,xright) <= x && x <= std::max(xleft,xright) 
-				&& std::min (yleft,yright) <= y && y <= std::max(yleft,yright) );
-	}
-
-	/** Equality operator. */
-	bool operator== (const GenRect<Coord>& rc) const
-	{
-		return (xleft == rc.xleft && xright == rc.xright &&
-				yleft == rc.yleft && yright == rc.yright);
-	}
-
-	/** Is initialized. */
-	static bool isInitialized (Type rc)
-		{ return !(COORDINATE_INVALID == rc.xleft); }
-	
-};
-
-/** Rectangle defined in compliance with the pdf specification v1.5 (p. 133). */
-typedef struct GenRect<Coordinate> Rectangle;
-
-
-/**
- * Print Rectangle to output stream.
- *
- * @param os Output stream.
- * @param rc Rectangle to be printed.
- *
- * @return Output stream.
- */
-inline std::ostream& 
-operator << (std::ostream& os, const Rectangle& rc)
-{
-	os 	<< "xleft: " << rc.xleft << " yleft: " << rc.yleft
-		<< " xright: " << rc.xright << " yright: " << rc.yright ;
-	
-	return os;
-}
-
-/**
- * Print Point to output stream.
- * 
- * @param os Output stream.
- * @param pt Point to be printed.
- *
- * @return Output stream.
- */
-inline std::ostream& 
-operator << (std::ostream& os, const Point& pt)
-{
-	os 	<< "x: " << pt.x << " y: " << pt.y;
-	return os;
-}
 
 
 //=====================================================================================
@@ -233,37 +111,6 @@ struct char_buffer_delete
 /** Char buffer alocator. */
 inline char* char_buffer_new (size_t l) {return new char [l];}
 
-
-/** Empty deallocator functor.
- * This functor can be used with smart pointers as deallocator when instance
- * cannot be deallocated by smart pointer.
- */
-template<typename T> struct EmptyDeallocator
-{
-	/** Deallocation function operator.
-	 * This method is empty and so no deallocation is done.
-	 */
-	void operator()(T * ){};
-};
-
-
-//=====================================================================================
-
-/**
- * This empty class ensures that the derived object can not use copy
- * constructor.
- *
- * Idea from from boost library.
- */
-class noncopyable
-{
-protected:
-	noncopyable() {}
-	~noncopyable() {}
-private:  // emphasize the following members are private
-	noncopyable( const noncopyable& );
-	const noncopyable& operator=( const noncopyable& );
-};
 
 //==========================================================
 // Somewhat special bit functions.
@@ -311,9 +158,6 @@ inline unsigned short setNthBitsShort(U mask, U mask1, U mask2, U mask3)
 template<class U>
 inline unsigned short setNthBitsShort(U mask, U mask1, U mask2, U mask3, U mask4)
 	{ return setNthBitsShort (mask,mask1,mask2,mask3) | setNthBitsShort (mask4); }
-
-
-
 
 #endif // _STATIC_H_
 

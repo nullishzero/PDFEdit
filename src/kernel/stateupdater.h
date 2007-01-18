@@ -27,10 +27,11 @@ namespace pdfobjects {
  * is no suitable for this sort of things.
  *
  * If appropriate functions are defined, this mechanism could be used to display
- * the content stream.
+ * the content stream. E.g. we update op*Update functions to call output device.
  */
 class StateUpdater 
 {
+	typedef PdfOperator::BBox BBox;
 
 private:
 	/** Maximum argument count of an operator. See pdf specfication of all operators.*/
@@ -62,7 +63,7 @@ public:
 		/** Function to execute when updating position. */
 		GfxState* (*update) (GfxState* , boost::shared_ptr<GfxResources>, 
 						const boost::shared_ptr<PdfOperator>, 
-						const PdfOperator::Operands&, Rectangle* rc);
+						const PdfOperator::Operands&, BBox* rc);
 		
 		char endTag[MAX_OPERATOR_NAMELEN]; /**< If it is a complex type, its end tag.*/	
 		
@@ -89,7 +90,7 @@ public:
 	static GfxState* unknownUpdate (GfxState* state, 
 								 boost::shared_ptr<GfxResources>, 
 								 const boost::shared_ptr<PdfOperator>, 
-								 const PdfOperator::Operands&, Rectangle* rc);
+								 const PdfOperator::Operands&, BBox* rc);
 	
 	//
 	// Accessors
@@ -100,7 +101,7 @@ public:
 	 *
 	 * @param name Name of the operator.
 	 */
-	const CheckTypes* findOp (const std::string& name) const;
+	static const CheckTypes* findOp (const std::string& name);
 
 	/**
 	 *  Get end tag of an operator.
@@ -109,7 +110,7 @@ public:
 	 * 
 	 * @return Operator end tag. Can be empty.
 	 */
-	std::string getEndTag (const std::string& name) const;
+	static std::string getEndTag (const std::string& name);
 	
 public:
 	/**
@@ -124,14 +125,22 @@ public:
 	 * @param ftor Functor applied after each update.
 	 */
 	template <typename Ftor>
-	void updatePdfOperators (PdfOperator::Iterator it, boost::shared_ptr<GfxResources> res, /*const*/ GfxState& state, Ftor ftor) const
+	static boost::shared_ptr<GfxState> 
+	updatePdfOperators (PdfOperator::Iterator it, 
+						boost::shared_ptr<GfxResources> res, 
+						/*const*/ GfxState& state, 
+						Ftor ftor) 
 	{
 		assert (!state.isPath());		// if isPath, state is from other ccontentstream or is bad
 		GfxState* tmpstate = state.copy (false);
 
+		assert (tmpstate);
 		utilsPrintDbg (debug::DBG_DBG, "");
 		boost::shared_ptr<PdfOperator> op;
-		Rectangle rc;
+		BBox rc;
+
+		// Init ftor
+		ftor (res);
 
 		// Init global variables
 		xpdf::openXpdfMess ();
@@ -158,11 +167,10 @@ public:
 					
 					// Delete gfx state
 					delete tmpstate;
-					
 					throw CObjInvalidObject ();
 				}
 
-				// Update the state and 
+				// Update the state
 				tmpstate = (chcktp->update) (tmpstate, res, op, ops, &rc);
 				
 			}else
@@ -172,7 +180,7 @@ public:
 			}
 
 			assert (tmpstate);
-			ftor (op, *tmpstate, rc);
+			ftor (op, rc, *tmpstate);
 			it = it.next ();
 		
 		} // while
@@ -182,12 +190,21 @@ public:
 		// If malformed content stream (missing Q)
 		while (tmpstate->hasSaves())
 			tmpstate = tmpstate->restore ();
-		// Delete gfx state
-		delete tmpstate;
+
+		// Return gfx state
+		return boost::shared_ptr<GfxState> (tmpstate);
 	}
+
+
+	//
+	// Helper functions
+	//
+public:
+	static GfxState* printTextUpdate (GfxState* state, const std::string& txt, BBox* rc);
 
 };
 	
+
 /** 
  * Is it a simple or a composite operator. 
  * @param chck Check type structure.

@@ -1083,28 +1083,16 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, 
 //
 //
 void 
-CPage::displayPage (::OutputDev& out, const DisplayParams params, int x, int y, int w, int h) 
+CPage::displayPage (::OutputDev& out, const DisplayParams& params, int x, int y, int w, int h)
+{
+	setDisplayParams (params);
+	displayPage (out,x,y,w,h);
+}
+
+void 
+CPage::displayPage (::OutputDev& out, int x, int y, int w, int h) 
 {
 	assert (valid);
-
-	// Reparse content streams if parameters changed
-	if (!(lastParams == params))
-	{
-		lastParams = params;
-
-		// set rotate to positive integer
-		lastParams.rotate -= ((int)(lastParams.rotate / 360) -1) * 360;
-		// set rotate to range [ 0, 360 )
-		lastParams.rotate -= ((int)lastParams.rotate / 360) * 360;
-		
-		// Use mediabox
-		if (lastParams.useMediaBox)
-			lastParams.pageRect = getMediabox ();
-	
-		// Update bounding boxes if changed
-		reparseContentStream ();
-	}
-
 	// display page
 	displayPage (out,dictionary,x,y,w,h);
 }
@@ -1182,7 +1170,7 @@ bool CPage::parseContentStream ()
 
 	if (!dictionary->containsProperty ("Contents"))
 		return true;
-	shared_ptr<IProperty> contents = getReferencedObject(dictionary->getProperty ("Contents"));
+	shared_ptr<IProperty> contents = getReferencedObject (dictionary->getProperty ("Contents"));
 	assert (contents);
 	
 	CContentStream::CStreams streams;
@@ -1464,10 +1452,7 @@ CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 	createXpdfDisplayParams (gfxres, gfxstate);
 
 	for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
-	{
-		// todo: a bit of a hack -- bbox update not need only saving of new gfx states
 		(*it)->setGfxParams (gfxstate, gfxres);
-	}
 }
 //
 //
@@ -2103,6 +2088,9 @@ CPage::moveAbove (shared_ptr<const CContentStream> ct)
 	ContentsHandler cnts (dictionary);
 	cnts.setContents (contentstreams);
 	registerContentsObserver ();
+
+	// Indicate change
+	_objectChanged ();
 }
 
 //
@@ -2132,9 +2120,23 @@ CPage::moveBelow (shared_ptr<const CContentStream> ct)
 	ContentsHandler cnts (dictionary);
 	cnts.setContents (contentstreams);
 	registerContentsObserver ();
+
+	// Indicate change
+	_objectChanged ();
 }
 
 
+//
+// Page position
+//
+size_t
+CPage::getPagePosition () const
+{
+	if (hasValidPdf (dictionary))
+		return dictionary->getPdf()->getPagePosition (shared_ptr<CPage> (const_cast<CPage*>(this),EmptyDeallocator<CPage> ()));
+
+	throw CObjInvalidOperation ();
+}
 
 // =====================================================================================
 // Helper functions

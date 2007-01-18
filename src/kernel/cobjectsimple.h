@@ -634,6 +634,12 @@ inline std::string
 getStringFromIProperty (const boost::shared_ptr<IProperty>& ip)
 		{return getValueFromSimple<CString> (ip);}
 	
+/** Get name from ip. */
+inline std::string
+getNameFromIProperty (const boost::shared_ptr<IProperty>& ip)
+		{return getValueFromSimple<CName> (ip);}
+	
+
 
 //=========================================================
 //	CObjectSimple "set value" helper methods
