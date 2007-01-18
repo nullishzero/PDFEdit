@@ -43,6 +43,9 @@ public:
 
   // End of actual stream
   bool eofOfActualStream () const { return (1 == endOfActStream); }
+  // Get bext token -- be carefull, it need not point to real next object
+  void getNextObj (Object& obj) 
+  	{ buf1.copy (&obj); }
 
 private:
 
