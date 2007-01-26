@@ -72,6 +72,25 @@ bool QSPdf::saveAs(QString name) {
 }
 
 /**
+ Save document to disk under original name
+ @param newRevision If true, create new revision while saving
+ @return true if saved succesfully, false if failed to save because of any reason
+*/
+bool QSPdf::save(bool newRevision/*=false*/) {
+ try {
+  //Exception can occur while saving, for example if document is read-only
+  obj->save(newRevision);
+  return true;
+ } catch (ReadOnlyDocumentException &e) {
+  base->errorException("Pdf","save",tr("Document is in read-only mode"));
+  return false;
+ } catch (...) {
+  base->errorException("Pdf","save",tr("Unknown error occured while saving document"));
+  return false;
+ }
+}
+
+/**
  \see CPdf::getDictionary
  @return document catalog
  */

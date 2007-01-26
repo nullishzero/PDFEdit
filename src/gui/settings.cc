@@ -157,7 +157,7 @@ QString Settings::getFullPathName(const QString &nameOfPath,QString fileName/*=Q
   }
   if (QFile::exists(absName)) return absName;
  }
- guiPrintDbg(debug::DBG_WARN,"File not found: " << fileName);
+ guiPrintDbg(debug::DBG_WARN,"File not found (" << nameOfPath << "): " << fileName);
  return QString::null;
 }
 

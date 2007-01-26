@@ -199,7 +199,7 @@ show_simple	= 1
 	  # Icon path - where to search for icons?
 icon	= $HOME/.pdfedit/icon;$PDFEDIT_DATA/icon;$PDFEDIT_BIN/icon
 	  # Script path - where to search for scripts?
-script	= $HOME/.pdfedit;$PDFEDIT_DATA;$PDFEDIT_BIN
+script	= $HOME/.pdfedit;$PDFEDIT_DATA;$PDFEDIT_BIN;.
 	  # Help path - where to search for help files?
 help	= $PDFEDIT_DATA/help/$LANG;$PDFEDIT_BIN/help/$LANG;$PDFEDIT_DATA/help;$PDFEDIT_BIN/help
 

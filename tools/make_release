@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#run in sufficiently empty directory!
+
+if [ -e tarball ]
+then
+echo directory tarball already exist
+exit 1
+fi
+
+mkdir tarball
+cd tarball
+cvs export -D now pdfedit
+cd pdfedit
+./makedist
+cd ..

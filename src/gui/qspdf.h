@@ -53,6 +53,12 @@ public slots:
   Return true if document was saved, false if it failed to save for any reason
  */
  bool saveAs(QString name);
+ /*-
+  Save document to disk under original name
+  If newRevision is true, create new revision while saving.
+  Return true if saved succesfully, false if failed to save because of any reason
+ */
+ bool save(bool newRevision=false);
  /*- Get document dictionary */
  QSDict* getDictionary();
  /*- Remove page with given number from document */

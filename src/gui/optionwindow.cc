@@ -26,7 +26,6 @@
 #include <qstylefactory.h>
 #include <qapplication.h>
 #include <qlayout.h>
-#include "option.h"
 #include "version.h"
 #include "settings.h"
 #include "option.h"

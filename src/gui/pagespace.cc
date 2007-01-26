@@ -123,7 +123,7 @@ vBox->addWidget( da );
  	actualUnits.setDefaultUnits( globalSettings->read( PAGESPC + VIEWED_UNITS, DEFAULT__VIEWED_UNITS ) );
 
 	Init( &is , format + "00000000xx" );
-	mousePositionOnPage = new QLabel( format.arg(0.0,0,'g',3).arg(0.0,0,'g',3).arg( actualUnits.getDefaultUnits() ), this );
+	mousePositionOnPage = new QLabel( format.arg(0.0,8,'g',6).arg(0.0,8,'g',6).arg( actualUnits.getDefaultUnits() ), this );
 	mousePositionOnPage->setMinimumWidth( is.labelWidth );
 	mousePositionOnPage->setAlignment( AlignRight | mousePositionOnPage->alignment() );
 	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
@@ -606,8 +606,8 @@ void PageSpace::zoomOut ( float step ) {
 
 void PageSpace::showMousePosition ( double x, double y ) {
 	QString pom;
-	pom = format.arg( convertUnits(x,"pt") ,0,'g',3 )
-				.arg( convertUnits(y,"pt") ,0,'g',3 )
+	pom = format.arg( convertUnits(x,"pt") ,8,'g',6 )
+				.arg( convertUnits(y,"pt") ,8,'g',6 )
 				.arg( actualUnits.getDefaultUnits() );
 	mousePositionOnPage->setText( pom );
 }

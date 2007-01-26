@@ -1,3 +1,9 @@
+2007-01-26 PDF Editor 0.2.4
+	* 64bit compilability fix
+	* Fixed bug with units precision, 1234pt showing up as 1.23e+3pt
+	* Console scripts bug fixed (not running scripts from current directory)
+	* Added QSPdf.save() function
+
 2006-12-12 PDF Editor 0.2.3
 	* Export to XML
 	* documentation fixes

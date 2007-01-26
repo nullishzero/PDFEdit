@@ -1,0 +1,21 @@
+Headergen
+---------
+ Program to automatically update .h files from .cc file
+ On execution will parse all .cc files in current directory and generate
+ or refresh all .h files if needed.
+ You can put list of files (ore file or regexp per line) in file .headergen.ignore in
+ directory with files. These files will be ignored.
+ Any functions from .cc file not present in header file will be added to header, rest
+ of header is unmodified
+ Program will also add include guards
+ (#ifdef __FILENAME_H__ ... ) if not present in header
+ Current limitations:
+ -  return type of function must be on same line as name of function
+ -  File must conform to coding rules (name of class included in file must be equal
+    to name of file, except case of letters)
+
+ Default parameter in constructors:
+ These cannot be in .c files, so it is parsed from comments:
+  Class::Class(int param /*=default_value*/,int param2 .... in .c file
+   to
+  Class::Class(int param=default_value,int param2 .... in .h file

@@ -54,21 +54,28 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  //Logo on right
  QWidget* logo=new QWidget(this);
  QPixmap* logoImage=ic.getIcon("pdfedit_logo.png");
- logo->setErasePixmap(*logoImage);
- QSize imageSize=logoImage->size();
- logo->setFixedSize(imageSize);
+ QSize imageSize;
+ QSize bgSize;
+ if (logoImage) {
+  logo->setErasePixmap(*logoImage);
+  imageSize=logoImage->size();
+  logo->setFixedSize(imageSize);
+ }
 
  //Background of text
  QPixmap* bgImage=ic.getIcon("pdfedit_bg.png");
- lb->setErasePixmap(*bgImage);
- QSize bgSize=bgImage->size();
- lb->setMaximumSize(bgSize);
- lb->setMaximumHeight(imageSize.height());
- okFrame->setFixedHeight(10+ok->sizeHint().height());
-
- setMinimumSize(imageSize);
- setMaximumSize(bgSize);
- setFixedHeight(10+ok->sizeHint().height()+imageSize.height());
+ if (bgImage) {
+  lb->setErasePixmap(*bgImage);
+  bgSize=bgImage->size();
+  lb->setMaximumSize(bgSize);
+  lb->setMaximumHeight(imageSize.height());
+  okFrame->setFixedHeight(10+ok->sizeHint().height());
+ }
+ if (bgImage!=NULL & logoImage!=NULL) {
+  setMinimumSize(imageSize);
+  setMaximumSize(bgSize);
+  setFixedHeight(10+ok->sizeHint().height()+imageSize.height());
+ }
  l->addWidget(lb,0,0);
  l->addWidget(logo,0,1);
  l->addMultiCellWidget(okFrame,1,1,0,1);

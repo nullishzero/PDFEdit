@@ -1,5 +1,5 @@
 /** @file
- GUI Base - class containing extra functionalyty presen only in GUI
+ GUI Base - class containing extra functionality present only in GUI
  @author Martin Petricek
 */
 
@@ -523,11 +523,11 @@ BaseGUI::selectPagesDialog (const QString& filename) const
 	// Starts dialog as modal and do something if OK is pressed
 	if(QDialog::Accepted == dialog->exec()) 
 	{
-		// Get result and craete QVariant from it using QValueList
+		// Get result and create QVariant from it using QValueList
 		StdItems stditems;
 		dialog->getResult (stditems);
 		for (StdItems::iterator it = stditems.begin(); it != stditems.end(); ++it)
-			qitems.append (*it);
+			qitems.append ((uint)*it);
 		qvitems = QVariant(qitems);
 	}
 	// Cleanup

@@ -1,0 +1,157 @@
+#!/usr/bin/perl
+# Program to automatically update .h files from .cc file
+# For more info, see headergen.txt
+
+use strict;
+my $QTDIR=$ENV{'QTDIR'};
+my $cppflags="-I$QTDIR/include -D__GNUC__";	#preprocessor flags
+
+my $file_count=0;
+
+# refresh one header
+sub refresh {
+ my ($name)=@_;		# Base name without extension
+ my $wmessage="Parsing $name";
+ my @fn=();
+ my $f_c=$name.".cc";	# Name of .cc file
+ my $f_h=$name.".h";	# Name of .h file
+ my $realname='';	# Name of class with proper capitalization
+ my $mark="__".uc($f_h)."__";
+ $mark=~s/\./_/g;
+
+ # Open C++ file
+# open FC, "cpp $f_c $cppflags|";	#use preprocessor to strip comments etc ...
+ open FC, "cat $f_c|";	#do not use preprocessor
+ while (my $line=<FC>) {
+  next if ($line=~/^\s*$/);	# Empty line
+  next if ($line=~/^#/);	# Line with preprocessor directive
+  if ($line=~/\/\*\*/) {	# Line contain /** style doxygen comment
+   while (!($line=~/\*\//)) {	# Read until first "*/" comment end
+    my $lw=<FC>;
+    $line.=$lw;
+    last if ($lw eq '');	# End of file
+   }
+   $line=~s/\/\*\*[\x00-\xff]*?\*\///mg;	# Weed the comment out
+  }
+  $line=~s/^\s+//g;
+  if ($line=~/(^|\s)${name}::/i) {	# Line contain class name (assuming filename=classname, except for case)
+   while (!($line=~/\{/)) {	# Read until first "{" bracket
+    my $lw=<FC>;
+    $line.=$lw;
+    last if ($lw eq '');	# End of file
+   }
+   $line=~s/\n/ /mg;		# Newlines to space
+   $line=~s/\s*\{.*\s*//g;	# strip bracket {
+   $line.=';';			# Append semicolon ;
+   $line=~/::(~?\w+)/;		# get name of method
+   my $func=$1;			# Name of method
+   if ($line=~s/(${name}):://i) {
+    $realname=$1;		# Set correct name of class when we found it
+   }
+   # Convert commented initializers ( "/*=something*/" --> "=something" )
+   $line=~s|\s*/\*=\s*(.*?)\*/\s*|=\1|g;
+   $line=~s/([^:])\s*:\s*[a-zA-Z_][a-zA-Z_0-9]*\s*\([^()]*\)\s*;$/\1;/;
+   # Remove "unused" attribute
+   $line=~s/__attribute__\(\(unused\)\)\s*//g;
+   # Add to line with functions found
+   push @fn,$line;
+#   print $func." -> ".$line."\n";
+  } 
+ }
+ close FC;
+ $file_count++;
+ if (!@fn) { #nothing that can be added to headers in this file -> return
+  print "$wmessage .. no headers\n";
+  return;
+ }
+ $wmessage.="\n";
+
+ # Open header file
+ open FH, "<$f_h";
+ my $head='';
+ my $head_h='';
+ while (my $line=<FH>) {
+  $head.=$line;
+  # Look for class definition
+  if ($line=~/class\s+$name(\s+|:|$)/i) {
+   #split the content into two pieces ("before class definition" and "inside class definition and further")
+   $head_h=$head;$head='';
+  }
+ }
+ if ($head_h=~/^$/) {
+  # No class defined in header -> create one
+  $head_h="$head\n\nclass $realname {\n";
+  $head="};\n";
+ }
+ close FH;
+
+ my $added=0;
+ my $addedh=0;
+ # Look for include guards
+ if (!($head_h=~/$mark/)) {
+  $head_h="#ifndef $mark\n#define $mark\n".$head_h;
+  $head.="#endif\n";
+  $addedh=1;
+ }
+ my $out='';
+ $out.=$head_h;
+ # For each function found in .cc file
+ foreach my $i (@fn) {
+  # Is present in header?
+  my $idx=0;
+  my $c='';
+  for(;;) {
+   $idx=index($head,$i,$idx);
+   last if ($idx<=0);
+   #check for character before definition -> must be whitespace
+   $c=substr($head,$idx-1,1);
+   if ($c=~/\S/) {	#non-whitespace -> Invalid match
+    my $idxo=$idx;
+    $idx=index($head,$i,$idx+1);
+    last if ($idx<=0);
+    next;
+   }
+   last;
+  }
+  if ($idx==-1) {
+   if (!$added) {$out.="//ADDED functions begin\n";}
+   $out.=" $i\n";$added++;
+  }
+ }
+ if ($added) {$out.="//ADDED functions end\n";}
+ $out.=$head;
+ # Write modifications, if any ...
+ if ($added || $addedh) {
+  if ($added) { print "$wmessage (added $added function(s) to $f_h)\n"; $wmessage='';}
+  if ($addedh) { print "$wmessage (added include guards to $f_h)\n"; $wmessage='';}
+  # Backup the original file
+  rename($f_h,$f_h.".old");
+  # Write modified header file
+  open FH, ">$f_h";
+  print FH $out;
+  close FH;
+ }
+}
+
+my @ignore=();
+open IGN, "<.headergen.ignore";
+while (my $l=<IGN>){
+ $l=~s/^\s+//mg;
+ $l=~s/\s+$//mg;
+ push @ignore,$l;
+}
+my $ign=join('|',@ignore);
+#print "Ignoring: $ign\n";
+close IGN;
+
+opendir (DH,".") || die "Cannot open current directory";
+while (my $s=readdir(DH)) {
+ if ($ign=~/./ && $s=~/$ign/) {
+#  print "Ignoring $s\n";
+  next;
+ }
+ next if (!($s=~/(.*)\.cc$/i));
+ refresh($1);
+}
+print "Parsed $file_count file(s)\n";
+closedir DH;
