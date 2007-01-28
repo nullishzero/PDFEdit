@@ -1048,6 +1048,10 @@ Data: %3
         <source>Invalid operation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>xml files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1860,6 +1864,14 @@ Data: %3
         <source>Page not found</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Document is in read-only mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error occured while saving document</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::RefPropertyDialog</name>
@@ -1900,6 +1912,13 @@ Data: %3
     </message>
     <message>
         <source>Linearized PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>gui::SelectPagesDialog</name>
+    <message>
+        <source>Convert pdf to xml</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

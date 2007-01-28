@@ -24,32 +24,32 @@
     <message>
         <source>String</source>
         <comment>Type name</comment>
-        <translation>Řetězec</translation>
+        <translation>String</translation>
     </message>
     <message>
         <source>Name</source>
         <comment>Type name</comment>
-        <translation>Jméno</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <source>Ref</source>
         <comment>Type name</comment>
-        <translation>Odkaz</translation>
+        <translation>Ref</translation>
     </message>
     <message>
         <source>Array</source>
         <comment>Type name</comment>
-        <translation>Pole</translation>
+        <translation>Array</translation>
     </message>
     <message>
         <source>Dict</source>
         <comment>Type name</comment>
-        <translation>Slovník</translation>
+        <translation>Dict</translation>
     </message>
     <message>
         <source>Stream</source>
         <comment>Type name</comment>
-        <translation>Stream</translation>
+        <translation>Flujo</translation>
     </message>
     <message>
         <source>DebugCmd</source>
@@ -73,43 +73,43 @@
     </message>
     <message>
         <source>&lt;no name&gt;</source>
-        <translation>&lt;bez jména&gt;</translation>
+        <translation>&lt;sin nombre&gt;</translation>
     </message>
     <message>
         <source>Fatal Error</source>
-        <translation>Kritická chyba</translation>
+        <translation>Error Fatal</translation>
     </message>
     <message>
         <source>Options: </source>
-        <translation>Přepínače: </translation>
+        <translation>Opciones: </translation>
     </message>
     <message>
         <source>Print help and exit</source>
-        <translation>Vypsat nápovědu a skončit</translation>
+        <translation>Imprimir ayuda y salir</translation>
     </message>
     <message>
         <source>Print version and exit</source>
-        <translation>Vypsat verzi a skončit</translation>
+        <translation>Imprimir versión y salir</translation>
     </message>
     <message>
         <source>Stop processing options</source>
-        <translation>Přestat zpracovávat přepínače</translation>
+        <translation>Parar procesamiento de opciones</translation>
     </message>
     <message>
         <source>Invalid commandline option : </source>
-        <translation>Nesprávný přepínač na příkazové řádce : </translation>
+        <translation>Opción de comando inválida : </translation>
     </message>
     <message>
         <source>PDF files (*.pdf)</source>
-        <translation>PDF soubory (*.pdf)</translation>
+        <translation>Archivos PDF (*.pdf)</translation>
     </message>
     <message>
         <source>Open file ...</source>
-        <translation>Otevřít soubor ...</translation>
+        <translation>Abrir archivo ...</translation>
     </message>
     <message>
         <source>Save file as ...</source>
-        <translation>Uložit soubor jako ...</translation>
+        <translation>Guardar archivo como ...</translation>
     </message>
     <message>
         <source>&amp;Ok</source>
@@ -117,19 +117,19 @@
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation>&amp;Ano</translation>
+        <translation>&amp;Si</translation>
     </message>
     <message>
         <source>&amp;No</source>
-        <translation>&amp;Ne</translation>
+        <translation>&amp;No</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
-        <translation>&amp;Použít</translation>
+        <translation>&amp;Aplicar</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation>&amp;Storno</translation>
+        <translation>&amp;Cancelar</translation>
     </message>
     <message>
         <source>PDF</source>
@@ -137,97 +137,97 @@
     </message>
     <message>
         <source>Dictionary</source>
-        <translation>Slovník</translation>
+        <translation>Diccionario</translation>
     </message>
     <message>
         <source>List</source>
-        <translation>Seznam</translation>
+        <translation>Lista</translation>
     </message>
     <message>
         <source>Page</source>
-        <translation>Strana</translation>
+        <translation>Página</translation>
     </message>
     <message>
         <source>&amp;Index</source>
-        <translation>Obsah</translation>
+        <translation>&amp;Indice</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>Zavřít</translation>
+        <translation>&amp;Cerrar</translation>
     </message>
     <message>
         <source>Invalid %1 in config:
 Name: %2
 Data: %3
 </source>
-        <translation>Chybná položka typu %1 v konfiguraci:
-Jméno: %2
-Data: %3
+        <translation>Inválido %1 en configuración:
+Nombre: %2
+Datos: %3
 </translation>
     </message>
     <message>
         <source>Expected: </source>
-        <translation>Očekáváno: </translation>
+        <translation>Esperado: </translation>
     </message>
     <message>
         <source>Missing item in config</source>
-        <translation>Chybějící položka v konfiguraci</translation>
+        <translation>Componente perdido en la configuración</translation>
     </message>
     <message>
         <source>menu definition</source>
-        <translation>definice menu</translation>
+        <translation>definición de menú</translation>
     </message>
     <message>
         <source>menu item</source>
-        <translation>položka menu</translation>
+        <translation>componente de menú</translation>
     </message>
     <message>
         <source>2 or more parameters in item definition</source>
-        <translation>2 nebo více parametrů v definici položky</translation>
+        <translation>2 o más parámetros en la definición de componente</translation>
     </message>
     <message>
         <source>toolbar item</source>
-        <translation>položka toolbaru</translation>
+        <translation>componente de la barra de herramientas</translation>
     </message>
     <message>
         <source>4 parameters in item definition</source>
-        <translation>4 parametry v definici položky</translation>
+        <translation>4 parámetros en la definición de componente</translation>
     </message>
     <message>
         <source>toolbar definition</source>
-        <translation>definice toolbaru</translation>
+        <translation>definición de la barra de herramientas</translation>
     </message>
     <message>
         <source>Cycle in menu detected</source>
-        <translation>Nalezen cyklus v menu</translation>
+        <translation>Ciclo en el menú detectado</translation>
     </message>
     <message>
         <source>Catalog</source>
-        <translation>Katalog</translation>
+        <translation>Catálogo</translation>
     </message>
     <message>
         <source>Menu items list</source>
-        <translation>Seznam menu položek</translation>
+        <translation>Lista de componentes del menú</translation>
     </message>
     <message>
         <source>&amp;Add object</source>
-        <translation>Přid&amp;at objekt</translation>
+        <translation>&amp;Añadir objeto</translation>
     </message>
     <message>
         <source>Add and c&amp;lose</source>
-        <translation>Přidat a zavřít</translation>
+        <translation>Añadir y &amp;cerrar</translation>
     </message>
     <message>
         <source>Stream</source>
-        <translation>Stream</translation>
+        <translation>Flujo</translation>
     </message>
     <message>
         <source>Parameter missing for option : </source>
-        <translation>Chybí parametr pro přepínač : </translation>
+        <translation>Parámetro perdido para la opcion : </translation>
     </message>
     <message>
         <source>Set debug messages verbosity</source>
-        <translation>Nastaví podrobnost výpisu ladících zpráv</translation>
+        <translation>Establecer verbosidad en mensajes de depuración</translation>
     </message>
     <message>
         <source>(n = -1 .. 5)</source>
@@ -235,267 +235,267 @@ Data: %3
     </message>
     <message>
         <source>label item</source>
-        <translation>položka &apos;label&apos;</translation>
+        <translation>etiqueta del componente</translation>
     </message>
     <message>
         <source>Content Stream</source>
-        <translation>Content Stream</translation>
+        <translation>Contenido de flujo</translation>
     </message>
     <message>
         <source>Parameter</source>
-        <translation>Parametr</translation>
+        <translation>Parámetro</translation>
     </message>
     <message>
         <source>Operator</source>
-        <translation>Operátor</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <source>page</source>
         <comment>1</comment>
-        <translation>strana</translation>
+        <translation>página</translation>
     </message>
     <message>
         <source>pages</source>
         <comment>2-4</comment>
-        <translation>strany</translation>
+        <translation>páginas</translation>
     </message>
     <message>
         <source>pages</source>
         <comment>5+</comment>
-        <translation>stran</translation>
+        <translation>páginas</translation>
     </message>
     <message>
         <source>parameter</source>
         <comment>1</comment>
-        <translation>parametr</translation>
+        <translation>parámetro</translation>
     </message>
     <message>
         <source>parameters</source>
         <comment>2-4</comment>
-        <translation>parametry</translation>
+        <translation>parámetros</translation>
     </message>
     <message>
         <source>parameters</source>
         <comment>5+</comment>
-        <translation>parametrů</translation>
+        <translation>parámetros</translation>
     </message>
     <message>
         <source>child</source>
         <comment>1</comment>
-        <translation>potomek</translation>
+        <translation>hijo</translation>
     </message>
     <message>
         <source>childs</source>
         <comment>2-4</comment>
-        <translation>potomci</translation>
+        <translation>hijos</translation>
     </message>
     <message>
         <source>childs</source>
         <comment>5+</comment>
-        <translation>potomků</translation>
+        <translation>hijos</translation>
     </message>
     <message>
         <source>Pick a file ...</source>
-        <translation>Vyberte soubor ...</translation>
+        <translation>Elige un archivo ...</translation>
     </message>
     <message>
         <source>New revision of document created</source>
-        <translation>Vytvořena nová revize dokumentu</translation>
+        <translation>Nueva revisión del documento creada</translation>
     </message>
     <message>
         <source>Error occured while loading file</source>
-        <translation>Nastala chyba při nahrávání souboru</translation>
+        <translation>Error ocurrido mientras se cargaba el archivo</translation>
     </message>
     <message>
         <source>Image was not saved!</source>
-        <translation>Obrázek nebyl uložen!</translation>
+        <translation>No se guardó la imagen!</translation>
     </message>
     <message>
         <source>Changed revision to:</source>
-        <translation>Změněna revize:</translation>
+        <translation>Revisión cambiada a:</translation>
     </message>
     <message>
         <source>Saving as</source>
-        <translation>Ukládám jako</translation>
+        <translation>Guardando como</translation>
     </message>
     <message>
         <source>Operators</source>
-        <translation>Operátory</translation>
+        <translation>Operadores</translation>
     </message>
     <message>
         <source>Warning: This document is linearized PDF!</source>
-        <translation>Upozornění: Tento dokument je linearizované PDF!</translation>
+        <translation>Cuidado: Este documento es un PDF linearizado!</translation>
     </message>
     <message>
         <source>Show all operators</source>
-        <translation>Zobrazit všechny operátory</translation>
+        <translation>Mostrar todos los operadores</translation>
     </message>
     <message>
         <source>Show only text operators</source>
-        <translation>Zobrazit jen textové operátory</translation>
+        <translation>Mostrar sólo operadores de texto</translation>
     </message>
     <message>
         <source>Showing all</source>
         <comment>mode</comment>
-        <translation>Zobrazuji vše</translation>
+        <translation>Mostrando todo</translation>
     </message>
     <message>
         <source>Showing text. op.</source>
         <comment>mode</comment>
-        <translation>Zobrazuji text. op.</translation>
+        <translation>Mostrando text. op.</translation>
     </message>
     <message>
         <source>Null pointer access in </source>
-        <translation>Přístup na null ukazatel v </translation>
+        <translation>Acceso a un puntero nulo en </translation>
     </message>
     <message>
         <source>Show only font operators</source>
-        <translation>Zobrazit jen font operátory</translation>
+        <translation>Mostrar sólo los operadores de la fuente</translation>
     </message>
     <message>
         <source>Showing font. op.</source>
         <comment>mode</comment>
-        <translation>Zobrazuji font. op.</translation>
+        <translation>Mostrando font. op.</translation>
     </message>
     <message>
         <source>Warning: This document is encrypted!</source>
-        <translation>Upozornění: Tento dokument je zašifrovaný!</translation>
+        <translation>Cuidado: Este documento está cifrado!</translation>
     </message>
     <message>
         <source>Encryption filter:</source>
-        <translation>Šifrovací filtr:</translation>
+        <translation>Filtro de cifrado:</translation>
     </message>
     <message>
         <source>No page selected!</source>
-        <translation>Není zvolena žádná stránka!</translation>
+        <translation>Ninguna página seleccionada!</translation>
     </message>
     <message>
         <source>Must define color</source>
-        <translation>Je nutno definovat barvu</translation>
+        <translation>Debes definir un color</translation>
     </message>
     <message>
         <source>r,g,b must be number</source>
-        <translation>r,g,b musí být číslo</translation>
+        <translation>r,g,b tienen que ser números</translation>
     </message>
     <message>
         <source>r,g,b must be from 0 to 255</source>
-        <translation>r,g,b musí být z 0 až 255</translation>
+        <translation>r,g,b tienen que ser de 0 a 255</translation>
     </message>
     <message>
         <source>Left upper corner</source>
-        <translation>Levý horní roh</translation>
+        <translation>Esquina superior izquierda</translation>
     </message>
     <message>
         <source>x position</source>
-        <translation>x souřadnice</translation>
+        <translation>posición x</translation>
     </message>
     <message>
         <source>y position</source>
-        <translation>y souřadnice</translation>
+        <translation>posición y</translation>
     </message>
     <message>
         <source>Right bottom corner</source>
-        <translation>Pravý dolní roh</translation>
+        <translation>Esquina inferior derecha</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Set color</source>
-        <translation>Nastavit barvu</translation>
+        <translation>Establecer color</translation>
     </message>
     <message>
         <source>Set font properties</source>
-        <translation>Nastavit vlastnosti fontu</translation>
+        <translation>Establecer propiedades de fuente</translation>
     </message>
     <message>
         <source>Set line dash style</source>
-        <translation>Nastavit styl čáry</translation>
+        <translation>Establecer estilo de relleno de línea</translation>
     </message>
     <message>
         <source>Set line width</source>
-        <translation>Nastavit šířku čáry</translation>
+        <translation>Establecer grosor de línea</translation>
     </message>
     <message>
         <source>Add system font</source>
-        <translation>Přidat systémový font</translation>
+        <translation>Añadir fuente del sistema</translation>
     </message>
     <message>
         <source>Extract text from page</source>
-        <translation>Extrahovat text ze stránky</translation>
+        <translation>Extraer texto desde página</translation>
     </message>
     <message>
         <source>Page rotated.</source>
-        <translation>Stránka otočena.</translation>
+        <translation>Página rotada.</translation>
     </message>
     <message>
         <source>MediaBox changed.</source>
-        <translation>MediaBox změněn.</translation>
+        <translation>MediaBox cambiado.</translation>
     </message>
     <message>
         <source>No page or operator selected!</source>
-        <translation>Není zvolena stránka nebo operátor!</translation>
+        <translation>Página u operador no seleccionado!</translation>
     </message>
     <message>
         <source>Selected operator</source>
-        <translation>Zvolený operátor</translation>
+        <translation>Operador seleccionado</translation>
     </message>
     <message>
         <source>is not</source>
-        <translation>není</translation>
+        <translation>no es</translation>
     </message>
     <message>
         <source>suitable for colour setting.</source>
-        <translation>vhodný pro nastavení barvy.</translation>
+        <translation>adecuado para ajuste de color.</translation>
     </message>
     <message>
         <source>suitable for line width change.</source>
-        <translation>vhodný pro nastavení šířky čáry.</translation>
+        <translation>adecuado para cambio de grosor de línea.</translation>
     </message>
     <message>
         <source>Line width changed.</source>
-        <translation>Šířka čáry změněna.</translation>
+        <translation>Grosor de la línea cambiado.</translation>
     </message>
     <message>
         <source>suitable for dash style change.</source>
-        <translation>vhodný pro nastavení stylu čáry.</translation>
+        <translation>adecuado para cambio de estilo de relleno.</translation>
     </message>
     <message>
         <source>Dash pattern changed.</source>
-        <translation>Styl čáry změněn.</translation>
+        <translation>Patrón de relleno cambiado.</translation>
     </message>
     <message>
         <source>text operator</source>
-        <translation>textový operátor</translation>
+        <translation>operador de texto</translation>
     </message>
     <message>
         <source>Font changed.</source>
-        <translation>Písmo změněno.</translation>
+        <translation>Fuente cambiada.</translation>
     </message>
     <message>
         <source>Add font</source>
-        <translation>Přidat písmo</translation>
+        <translation>Añadir fuente</translation>
     </message>
     <message>
         <source>Add system fonts</source>
-        <translation>Přidat systémové písmo</translation>
+        <translation>Añadir fuentes del sistema</translation>
     </message>
     <message>
         <source>Avaliable system fonts</source>
-        <translation>Dostupná systémová písma</translation>
+        <translation>Fuentes del sistema disponibles</translation>
     </message>
     <message>
         <source>Select system Type1 font</source>
-        <translation>Vyberte systémové Type1 písmo</translation>
+        <translation>Seleccionar fuente Type1 del sistema</translation>
     </message>
     <message>
         <source>System font added.</source>
-        <translation>Systémové písmo přidáno.</translation>
+        <translation>Fuente del sistema añadida.</translation>
     </message>
     <message>
         <source>Text on page</source>
-        <translation>Text na stránce</translation>
+        <translation>Texto en página</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -503,620 +503,620 @@ Data: %3
     </message>
     <message>
         <source>Text extracted from page</source>
-        <translation>Text získaný ze stránky</translation>
+        <translation>Texto extraido de página</translation>
     </message>
     <message>
         <source>Page text displayed</source>
-        <translation>Text stránky zobrazen</translation>
+        <translation>Texto de página visualizado</translation>
     </message>
     <message>
         <source>Operator must be</source>
-        <translation>Operátor musí být</translation>
+        <translation>El operador tiene que ser</translation>
     </message>
     <message>
         <source>No preceding font operator found...</source>
-        <translation>Nenalezen žádný předcházející operátor písma...</translation>
+        <translation>Ningún operador de fuente anterior encontrado...</translation>
     </message>
     <message>
         <source>Invalid operand type</source>
-        <translation>Neplatný typ operandu</translation>
+        <translation>Tipo de operando inválido</translation>
     </message>
     <message>
         <source>This option is not supported.</source>
-        <translation>Tato volba není podporována.</translation>
+        <translation>Esta opción no está soportada.</translation>
     </message>
     <message>
         <source>Show only graphical operators</source>
-        <translation>Zobrazovat pouze grafické operátory</translation>
+        <translation>Mostrar sólo operadores gráficos</translation>
     </message>
     <message>
         <source>Set relative position of a single operator</source>
-        <translation>Nastavit relativní pozici jednoho operátoru</translation>
+        <translation>Establecer posición relativa de un operador simple</translation>
     </message>
     <message>
         <source>Set relative position</source>
-        <translation>Nastavit relativní pozici</translation>
+        <translation>Establecer posición relativa</translation>
     </message>
     <message>
         <source>Set page tranformation matrix</source>
-        <translation>Nastavit transformační matici stránky</translation>
+        <translation>Establecer matriz transformación de página</translation>
     </message>
     <message>
         <source>Change page rectangle</source>
-        <translation>Změnit rámeček stránky</translation>
+        <translation>Cambiar rectángulo de página</translation>
     </message>
     <message>
         <source>Change</source>
-        <translation>Změnit</translation>
+        <translation>Cambiar</translation>
     </message>
     <message>
         <source>Page metrics</source>
-        <translation>Metrika stránky</translation>
+        <translation>Métrica de página</translation>
     </message>
     <message>
         <source>Change effect</source>
-        <translation>Efekt změny</translation>
+        <translation>Cambiar efecto</translation>
     </message>
     <message>
         <source>Global change</source>
-        <translation>Globální změna</translation>
+        <translation>Cambio global</translation>
     </message>
     <message>
         <source>Change line dash pattern</source>
-        <translation>Změnit styl čáry</translation>
+        <translation>Cambiar patrón de relleno de línea</translation>
     </message>
     <message>
         <source>Line dashing patterns</source>
-        <translation>Styl čáry</translation>
+        <translation>Patrones de líneas de relleno</translation>
     </message>
     <message>
         <source>Solid line</source>
-        <translation>Plná čára</translation>
+        <translation>Línea continua</translation>
     </message>
     <message>
         <source>Slightly dashed</source>
-        <translation>Přerušovaná čára</translation>
+        <translation>Ligeramente punteada</translation>
     </message>
     <message>
         <source>Dot and dashed</source>
-        <translation>Čerchovaná čára</translation>
+        <translation>Punto y guión</translation>
     </message>
     <message>
         <source>Not valid</source>
-        <translation>Neplatný</translation>
+        <translation>No válido</translation>
     </message>
     <message>
         <source>Only text operators allowed!</source>
-        <translation>Povoleny pouze textové operátory!</translation>
+        <translation>Sólo operadores de texto permitidos!</translation>
     </message>
     <message>
         <source>Add page transformation matrix</source>
-        <translation>Přidat transformační matici stránky</translation>
+        <translation>Añadir matriz tranformación de página</translation>
     </message>
     <message>
         <source>Change page transformation matrix</source>
-        <translation>Změnit transformační matici stránky</translation>
+        <translation>Cambiar matriz transformación de página</translation>
     </message>
     <message>
         <source>Page transformation matrix description</source>
-        <translation>Popis transformační matice stránky</translation>
+        <translation>Descripción de matriz tranformación de página</translation>
     </message>
     <message>
         <source>Page transformation description</source>
-        <translation>Popis transformací stránky</translation>
+        <translation>Descripción de transformación de página</translation>
     </message>
     <message>
         <source>Select which transformations to use</source>
-        <translation>Vyberte, které transformace použít</translation>
+        <translation>Seleccionar transformaciones a usar</translation>
     </message>
     <message>
         <source>Translate (shift) page</source>
-        <translation>Posunutí stránky</translation>
+        <translation>Transladar (cambiar) página</translation>
     </message>
     <message>
         <source>Scale page</source>
-        <translation>Změna měřítka stránky</translation>
+        <translation>Escala de página</translation>
     </message>
     <message>
         <source>Skew page</source>
-        <translation>Zkosení stránky</translation>
+        <translation>Página torcida</translation>
     </message>
     <message>
         <source>Page translation</source>
-        <translation>Posun stránky</translation>
+        <translation>Translado de página</translation>
     </message>
     <message>
         <source>Page scaling</source>
-        <translation>Změna měřítka stránky</translation>
+        <translation>Escalamiento de página</translation>
     </message>
     <message>
         <source>Page skewing</source>
-        <translation>Zkosení stránky</translation>
+        <translation>Torciendo página</translation>
     </message>
     <message>
         <source>Invalid number supplied.</source>
-        <translation>Zadáno neplatné číslo</translation>
+        <translation>Número proporcionado inválido.</translation>
     </message>
     <message>
         <source>Page transformation matrix changed to </source>
-        <translation>Transformační matice stránky změněna na </translation>
+        <translation>Matriz transformación de página cambiada a </translation>
     </message>
     <message>
         <source>Could not find text positioning.</source>
-        <translation>Nemohu najít pozicování textu</translation>
+        <translation>No puedo encontrar el posicionamiento de texto.</translation>
     </message>
     <message>
         <source>Change relative text operator position</source>
-        <translation>Změnit relativní pozici textového operátoru</translation>
+        <translation>Cambiar posición relativa del operador de texto</translation>
     </message>
     <message>
         <source>Change relative text position</source>
-        <translation>Změnit relativní pozici textu</translation>
+        <translation>Cambiar posición relativa de texto</translation>
     </message>
     <message>
         <source>Operator position changed.</source>
-        <translation>Pozice operátoru změněna.</translation>
+        <translation>Posición del operador cambiada.</translation>
     </message>
     <message>
         <source>Showing graphic. op.</source>
         <comment>mode</comment>
-        <translation>Zobrazuji graf. op.</translation>
+        <translation>Mostrando op. graf.</translation>
     </message>
     <message>
         <source>element</source>
         <comment>1</comment>
-        <translation>prvek</translation>
+        <translation>elemento</translation>
     </message>
     <message>
         <source>elements</source>
         <comment>2-4</comment>
-        <translation>prvky</translation>
+        <translation>elementos</translation>
     </message>
     <message>
         <source>elements</source>
         <comment>5+</comment>
-        <translation>prvků</translation>
+        <translation>elementos</translation>
     </message>
     <message>
         <source>item</source>
         <comment>1</comment>
-        <translation>položka</translation>
+        <translation>componente</translation>
     </message>
     <message>
         <source>items</source>
         <comment>2-4</comment>
-        <translation>položky</translation>
+        <translation>componentes</translation>
     </message>
     <message>
         <source>items</source>
         <comment>5+</comment>
-        <translation>položek</translation>
+        <translation>componentes</translation>
     </message>
     <message>
         <source>Add item to dictionary</source>
-        <translation>Přidat položku do slovníku</translation>
+        <translation>Añadir componente a diccionario</translation>
     </message>
     <message>
         <source>Add element to array</source>
-        <translation>Přidat prvek do pole</translation>
+        <translation>Añadir elemento a array</translation>
     </message>
     <message>
         <source>Save page as image</source>
-        <translation>Uložit stránku jako obrázek</translation>
+        <translation>Guardar página como imagen</translation>
     </message>
     <message>
         <source>Save selected area as image</source>
-        <translation>Uložit zvolený výřez jako obrázek</translation>
+        <translation>Guardar área seleccionada como imagen</translation>
     </message>
     <message>
         <source>Annotation</source>
-        <translation>Anotace</translation>
+        <translation>Anotación</translation>
     </message>
     <message>
         <source>Draw line</source>
-        <translation>Nakreslit čáru</translation>
+        <translation>Dibujar línea</translation>
     </message>
     <message>
         <source>Line was drawn.</source>
-        <translation>Čára nakreslena.</translation>
+        <translation>La línea fue dibujada.</translation>
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation>Zašifrovaný obsah bude vypadat jako smetí a mnoho operací nebude možných</translation>
+        <translation>El contenido cifrado se mostrará difuso y muchas operaciones serán imposibles</translation>
     </message>
     <message>
         <source>Rect was drawn.</source>
-        <translation>Obdélník byl nakreslen.</translation>
+        <translation>La recta fue dibujada.</translation>
     </message>
     <message>
         <source>Draw rect</source>
-        <translation>Nakreslit obdélník</translation>
+        <translation>Dibujar recta</translation>
     </message>
     <message>
         <source>Add text</source>
-        <translation>Přidat text</translation>
+        <translation>Añadir texto</translation>
     </message>
     <message>
         <source>position</source>
-        <translation>pozice</translation>
+        <translation>posición</translation>
     </message>
     <message>
         <source>Set values</source>
-        <translation>Nastavit hodnoty</translation>
+        <translation>Establecer valores</translation>
     </message>
     <message>
         <source>Relative operator position (this is not absolute position)</source>
-        <translation>Relativní pozice operátoru (toto není absolutní pozice)</translation>
+        <translation>Posición relativa del operador (esto no es una posición absoluta)</translation>
     </message>
     <message>
         <source>Relative operator position</source>
-        <translation>Relativní pozice operátoru</translation>
+        <translation>Posición relativa del operador</translation>
     </message>
     <message>
         <source>Remove page</source>
-        <translation>Odstranit stránku</translation>
+        <translation>Eliminar página</translation>
     </message>
     <message>
         <source>View page</source>
-        <translation>Zobrazit stránku</translation>
+        <translation>Ver página</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation>bytů</translation>
+        <translation>bytes</translation>
     </message>
     <message>
         <source>Usage:</source>
-        <translation>Použití:</translation>
+        <translation>Usar:</translation>
     </message>
     <message>
         <source>input file</source>
-        <translation>vstupní soubor</translation>
+        <translation>archivo de entrada</translation>
     </message>
     <message>
         <source>output file</source>
-        <translation>výstupní soubor</translation>
+        <translation>archivo de salida</translation>
     </message>
     <message>
         <source>Input file must exist</source>
-        <translation>Vstupní soubor musí existovat</translation>
+        <translation>El archivo de entrada debe existir</translation>
     </message>
     <message>
         <source>Output file must not exist</source>
-        <translation>Výstupní soubor nesmí existovat</translation>
+        <translation>El archivo de salida no debe existir</translation>
     </message>
     <message>
         <source>is expecting two parameters</source>
-        <translation>očekává dva parametry</translation>
+        <translation>se esperan dos parámetros</translation>
     </message>
     <message>
         <source>Input file &apos;%1&apos; does not exist</source>
-        <translation>Vstupní soubor &apos;%1&apos; neexistuje</translation>
+        <translation>El archivo de entrada &apos;%1&apos; no existe</translation>
     </message>
     <message>
         <source>Output file &apos;%1&apos; already exist</source>
-        <translation>Výstupní soubor &apos;%1&apos; již existuje</translation>
+        <translation>El archivo de salida &apos;%1&apos; ya existe</translation>
     </message>
     <message>
         <source>Delinearized</source>
-        <translation>Delinearizováno</translation>
+        <translation>Delinearizado</translation>
     </message>
     <message>
         <source>Available functions:</source>
-        <translation>Dostupné funkce:</translation>
+        <translation>Funciones disponibles:</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Popis</translation>
+        <translation>Descripción</translation>
     </message>
     <message>
         <source>Parameters</source>
-        <translation>Parametry</translation>
+        <translation>Parámetros</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation>Jméno souboru</translation>
+        <translation>Nombre del archivo</translation>
     </message>
     <message>
         <source>No function found matching &apos;%1&apos;</source>
-        <translation>Nenalezena funkce odpovídající &apos;%1&apos;</translation>
+        <translation>Ninguna función encontrada coincidente con &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Too many function found matching &apos;%1&apos;</source>
-        <translation>Nalezeno příliš mnoho funkcí odpovídajících &apos;%1&apos;</translation>
+        <translation>Demasiadas funciones encontradas coincidentes con &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Matching functions</source>
-        <translation>Odpovídající funkce</translation>
+        <translation>Funciones coincidentes</translation>
     </message>
     <message>
         <source>Running</source>
-        <translation>Spouštím</translation>
+        <translation>Ejecutándose</translation>
     </message>
     <message>
         <source>First parameter is name of function to invoke (case insensitive) or its unambiguous part.</source>
-        <translation>První parametr je název funkce, která se zavolá (nezáleží na velikosti písmen) nebo jeho jednoznačná část.</translation>
+        <translation>El primer parámetro es el nombre de la función a invocar (no sensible a may./min.) o su parte inequívoca.</translation>
     </message>
     <message>
         <source>Rest of parameters are passed to invoked function.</source>
-        <translation>Zbytek parametrů je předán volané funkci.</translation>
+        <translation>El resto de parámetros se pasan a la función invocada.</translation>
     </message>
     <message>
         <source>Run in commandline mode</source>
-        <translation>Spustit v režimu příkazového řádku</translation>
+        <translation>Ejecutar en modo línea de comandos</translation>
     </message>
     <message>
         <source>file</source>
-        <translation>soubor</translation>
+        <translation>archivo</translation>
     </message>
     <message>
         <source>Run script from script path or current directory if not found</source>
-        <translation>Spustí skript z cesty ke skriptům nebo z aktuálního adresáře, pokud není nalezen</translation>
+        <translation>Ejecutar script desde la ruta de scripts o desde el directorio actual si no se encuentra</translation>
     </message>
     <message>
         <source>Run script from current directory</source>
-        <translation>Spustí skript z aktuálního adresáře</translation>
+        <translation>Ejecutar script desde el directorio actual</translation>
     </message>
     <message>
         <source>code</source>
-        <translation>kód</translation>
+        <translation>código</translation>
     </message>
     <message>
         <source>Evaluate script code</source>
-        <translation>Spustit skriptový kód</translation>
+        <translation>Evaluar el código del script</translation>
     </message>
     <message>
         <source>function name</source>
-        <translation>jméno funkce</translation>
+        <translation>nombre de función</translation>
     </message>
     <message>
         <source>function parameter(s)</source>
-        <translation>parametr(y) funkce</translation>
+        <translation>parametro(s) de función</translation>
     </message>
     <message>
         <source>option(s)</source>
-        <translation>přepínač(e)</translation>
+        <translation>opción(es)</translation>
     </message>
     <message>
         <source>files(s)</source>
-        <translation>soubor(y)</translation>
+        <translation>archivo(s)</translation>
     </message>
     <message>
         <source>Please see the pdf specification for details.</source>
-        <translation>Podívejte se do pdf specifikace pro detaily.</translation>
+        <translation>Por favor mire la especificación de pdf para más detalles.</translation>
     </message>
     <message>
         <source>Text on a page.</source>
-        <translation>Text na stránce.</translation>
+        <translation>Texto en una página.</translation>
     </message>
     <message>
         <source>Shortcut for</source>
-        <translation>Zkratka pro</translation>
+        <translation>Atajo para</translation>
     </message>
     <message>
         <source>complex item is not shown</source>
         <comment>1</comment>
-        <translation>komplexní položka není zobrazena</translation>
+        <translation>componente complejo no mostrado</translation>
     </message>
     <message>
         <source>complex items are not shown</source>
         <comment>2-4</comment>
-        <translation>komplexní položky nejsou zobrazeny</translation>
+        <translation>componentes complejos no mostrados</translation>
     </message>
     <message>
         <source>complex items are not shown</source>
         <comment>5+</comment>
-        <translation>komplexních položek není zobrazeno</translation>
+        <translation>componentes complejos no mostrados</translation>
     </message>
     <message>
         <source>out of range</source>
-        <translation>mimo rozsah</translation>
+        <translation>fuera de rango</translation>
     </message>
     <message>
         <source>Search text</source>
-        <translation>Hledat text</translation>
+        <translation>Buscar en texto</translation>
     </message>
     <message>
         <source>Find</source>
-        <translation>Hledat</translation>
+        <translation>Encontrar</translation>
     </message>
     <message>
         <source>Text :</source>
-        <translation>Text :</translation>
+        <translation>Texto :</translation>
     </message>
     <message>
         <source>Find what</source>
-        <translation>Co hledat</translation>
+        <translation>Encontran qué</translation>
     </message>
     <message>
         <source>On currently viewed page only</source>
-        <translation>Pouze na zobrazené stránce</translation>
+        <translation>En la página visitada actualmente sólo</translation>
     </message>
     <message>
         <source>Nothing was found.</source>
-        <translation>Nebylo nic nalezeno.</translation>
+        <translation>No se encontró nada.</translation>
     </message>
     <message>
         <source>Overwrite?</source>
-        <translation>Přepsat?</translation>
+        <translation>Sobreescribir?</translation>
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation>&amp;Otevřít</translation>
+        <translation>&amp;Abrir</translation>
     </message>
     <message>
         <source>&amp;Up</source>
-        <translation>Nahor&amp;u</translation>
+        <translation>&amp;Arriba</translation>
     </message>
     <message>
         <source>&amp;Down</source>
-        <translation>&amp;Dolů</translation>
+        <translation>&amp;Abajo</translation>
     </message>
     <message>
         <source>File called &quot;%1&quot; already exists. Do you want to overwrite it?</source>
-        <translation>Soubor s názvem &quot;%1&quot; již existuje. Chcete ho přepsat?</translation>
+        <translation>El archivo llamado &quot;%1&quot; ya existe. Quieres sobreescribirlo?</translation>
     </message>
     <message>
         <source>Delinearization failed!</source>
-        <translation>Delinearizace selhala!</translation>
+        <translation>La delinearización falló!</translation>
     </message>
     <message>
         <source>Colour changed</source>
-        <translation>Barva změněna</translation>
+        <translation>Color cambiado</translation>
     </message>
     <message>
         <source>for</source>
-        <translation>pro</translation>
+        <translation>para</translation>
     </message>
     <message>
         <source>operators</source>
-        <translation>operátor(ů)</translation>
+        <translation>operadores</translation>
     </message>
     <message>
         <source>Annotations</source>
-        <translation>Anotace</translation>
+        <translation>Anotaciones</translation>
     </message>
     <message>
         <source>Input and output files must be different</source>
-        <translation>Vstupní a výstupní soubor musí být jiný</translation>
+        <translation>Los archivos de entrada y salida tienen que ser diferentes</translation>
     </message>
     <message>
         <source>changeable</source>
-        <translation>měnitelný</translation>
+        <translation>variable</translation>
     </message>
     <message>
         <source>Delinearize</source>
-        <translation>Delinearizovat</translation>
+        <translation>Delinearizar</translation>
     </message>
     <message>
         <source>%1 added to page</source>
-        <translation>%1 přidán na stránku</translation>
+        <translation>%1 añadido a la página</translation>
     </message>
     <message>
         <source>Operator %1 is not changeable</source>
-        <translation>Operátor %1 není měnitelný</translation>
+        <translation>El operador %1 no es variable</translation>
     </message>
     <message>
         <source>Operator cm must have array with 6 numbers as parameter!</source>
-        <translation>Operátor cm musí mít pole 6 čísel jako parametr!</translation>
+        <translation>El operador cm tiene que tener un array con 6 números como parámetros!</translation>
     </message>
     <message>
         <source>X and Y position must be a number</source>
-        <translation>X a Y pozice musí být číslo</translation>
+        <translation>Las posiciones X e Y tienen que ser números</translation>
     </message>
     <message>
         <source>Dictionary has no type!</source>
-        <translation>Slovník nemá žádný typ!</translation>
+        <translation>El diccionario no tiene caracteres!</translation>
     </message>
     <message>
         <source>Maybe bad stream!</source>
-        <translation>Pravděpodobně špatný stream!</translation>
+        <translation>Quizás mal flujo!</translation>
     </message>
     <message>
         <source>%1 is requirement for %2, but not found for it !</source>
-        <translation>%1 je požadováno pro %2, ale nebylo nalezeno !</translation>
+        <translation>%1 es requerimiento para %2, pero lo encuentra !</translation>
     </message>
     <message>
         <source>For child %1 of %2 is requirement %3 subchild, but has %4</source>
-        <translation>Pro potomka %1 je %2 požadován potomek %3, ale je tam %4</translation>
+        <translation>Para hijo %1 de %2 es requerimiento subhijo %3, pero tiene %4</translation>
     </message>
     <message>
         <source>Operator &apos;%1&apos; should have 1 parameter, but has %2 !</source>
-        <translation>Operátor &apos;%1&apos; má mít 1 parametr, ale má %2 !</translation>
+        <translation>El operador &apos;%1&apos; debería tener 1 parámetro, pero tiene %2 !</translation>
     </message>
     <message>
         <source>Operator &apos;%1&apos; should have %2 parameters, but has %3 !</source>
-        <translation>Operátor &apos;%1&apos; má mít %2 parametrů, ale má %3 !</translation>
+        <translation>El operador &apos;%1&apos; debería tener %2 parámetros, pero tiene %3 !</translation>
     </message>
     <message>
         <source>Page parameter must be defined!</source>
-        <translation>Parametr stránky musí být definován!</translation>
+        <translation>El parámetro de página tendría que definirse!</translation>
     </message>
     <message>
         <source>Matrix is in bad state !</source>
-        <translation>Matice je ve špatném stavu !</translation>
+        <translation>Matriz en mal estado !</translation>
     </message>
     <message>
         <source>Document is read-only</source>
-        <translation>Dokument je pouze pro čtení</translation>
+        <translation>El documento es de sólo-lectura</translation>
     </message>
     <message>
         <source>Move one level up</source>
-        <translation>Posunout o úroveň nahoru</translation>
+        <translation>Mover un nivel hacia arriba</translation>
     </message>
     <message>
         <source>Move one level down</source>
-        <translation>Posunout o úroveň dolů</translation>
+        <translation>Mover un nivel hacia abajo</translation>
     </message>
     <message>
         <source>Invalid operation</source>
-        <translation>Neplatná operace</translation>
+        <translation>Operación inválida</translation>
     </message>
     <message>
         <source>xml files (*.xml)</source>
-        <translation>xml soubory (*.xml)</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>annotation_type</name>
     <message>
         <source>Text</source>
-        <translation>Text</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <source>Link</source>
-        <translation>Odkaz</translation>
+        <translation>Enlace</translation>
     </message>
     <message>
         <source>FreeText</source>
-        <translation>FreeText</translation>
+        <translation>TextoLibre</translation>
     </message>
     <message>
         <source>Line</source>
-        <translation>Čára</translation>
+        <translation>Línea</translation>
     </message>
     <message>
         <source>Square</source>
-        <translation>Čtverec</translation>
+        <translation>Cuadrado</translation>
     </message>
     <message>
         <source>Circle</source>
-        <translation>Kružnice</translation>
+        <translation>Círculo</translation>
     </message>
     <message>
         <source>Polygon</source>
-        <translation>Mnohoúhelník</translation>
+        <translation>Polígono</translation>
     </message>
     <message>
         <source>PolyLine</source>
-        <translation>Lomená čára</translation>
+        <translation>PoliLínea</translation>
     </message>
     <message>
         <source>Highlight</source>
-        <translation>Zvýraznění</translation>
+        <translation>Resaltar</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Podtržení</translation>
+        <translation>Subrayar</translation>
     </message>
     <message>
         <source>Squiggly</source>
-        <translation>Zvlněné podtržení</translation>
+        <translation>Squiggly</translation>
     </message>
     <message>
         <source>StrikeOut</source>
-        <translation>Přeškrtnutí</translation>
+        <translation>Tachar</translation>
     </message>
     <message>
         <source>Stamp</source>
-        <translation>Razítko</translation>
+        <translation>Sellar</translation>
     </message>
     <message>
         <source>Caret</source>
-        <translation>Kurzor</translation>
+        <translation>Caret</translation>
     </message>
     <message>
         <source>Ink</source>
-        <translation>Kresba</translation>
+        <translation>Tinta</translation>
     </message>
     <message>
         <source>Popup</source>
@@ -1124,27 +1124,27 @@ Data: %3
     </message>
     <message>
         <source>Fileattachement</source>
-        <translation>Příloha (soubor)</translation>
+        <translation>ArchivoAdjunto</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation>Zvuk</translation>
+        <translation>Sonido</translation>
     </message>
     <message>
         <source>Movie</source>
-        <translation>Video</translation>
+        <translation>Película</translation>
     </message>
     <message>
         <source>Widget</source>
-        <translation>Widget</translation>
+        <translation>Trasto</translation>
     </message>
     <message>
         <source>Screen</source>
-        <translation>Obrazovka</translation>
+        <translation>Pantalla</translation>
     </message>
     <message>
         <source>Printermark</source>
-        <translation>Tisková značka</translation>
+        <translation>MarcaDeImpresión</translation>
     </message>
     <message>
         <source>Trapnet</source>
@@ -1152,7 +1152,7 @@ Data: %3
     </message>
     <message>
         <source>Watermark</source>
-        <translation>Vodoznak</translation>
+        <translation>MarcaDeAgua</translation>
     </message>
     <message>
         <source>3D</source>
@@ -1160,344 +1160,343 @@ Data: %3
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Neznámá</translation>
+        <translation>Desconocido</translation>
     </message>
 </context>
 <context>
     <name>gui::AboutWindow</name>
     <message>
         <source>PDF editor for unix systems</source>
-        <translation>PDF editor pro unix systémy</translation>
+        <translation>PDF editor pro para sistemas unix</translation>
     </message>
     <message>
         <source>Project leader</source>
-        <translation>Vedoucí projektu</translation>
+        <translation>Líder del proyecto</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation>Autoři</translation>
+        <translation>Autores</translation>
     </message>
     <message>
         <source>About program</source>
-        <translation>O programu</translation>
+        <translation>Sobre el programa</translation>
     </message>
     <message>
         <source>Compiled</source>
-        <translation>Zkompilováno</translation>
+        <translation>Compilado</translation>
     </message>
     <message>
         <source>This program is distributed under terms of GNU GPL</source>
-        <translation>Tento program je distribuován pod GNU GPL licencí</translation>
+        <translation>Este programa se distribuye bajo los términos de GNU GPL</translation>
     </message>
     <message>
         <source>Homepage</source>
-        <translation>Stránka</translation>
+        <translation>Homepage</translation>
     </message>
 </context>
 <context>
     <name>gui::AddItemDialog</name>
     <message>
         <source>Add object</source>
-        <translation>Přidat objekt</translation>
+        <translation>Añadir objeto</translation>
     </message>
     <message>
         <source>Type and value of new object</source>
-        <translation>Typ a hodnota nového objektu</translation>
+        <translation>Tipo y valor del nuevo objeto</translation>
     </message>
     <message>
         <source>New empty Dictionary</source>
-        <translation>Nový prázndný slovník</translation>
+        <translation>Nuevo Diccionario vacío</translation>
     </message>
     <message>
         <source>New empty Array</source>
-        <translation>Nové prázdné pole</translation>
+        <translation>Nuevo Array vacío</translation>
     </message>
     <message>
         <source>Property name</source>
-        <translation>Jméno položky</translation>
+        <translation>Nombre de la propiedad</translation>
     </message>
     <message>
         <source>No object type selected</source>
-        <translation>Není zvolen typ objektu</translation>
+        <translation>Ningún tipo de objeto seleccionado</translation>
     </message>
     <message>
         <source>Entered property is not valid</source>
-        <translation>Zadaná položka není platná</translation>
+        <translation>La propiedad entrada no es válida</translation>
     </message>
     <message>
         <source>Name of new property must be specified</source>
-        <translation>Musí být zadané jméno položky</translation>
+        <translation>El nombre de la nueva propiedad tiene que ser especificado</translation>
     </message>
     <message>
         <source>Property &apos;%1&apos; added to dictionary</source>
-        <translation>Položka &apos;%1&apos; přidána do slovníku</translation>
+        <translation>Propiedad &apos;%1&apos; añadida a diccionario</translation>
     </message>
     <message>
         <source>Property added to end of array</source>
-        <translation>Položka přidána na konec pole</translation>
+        <translation>Propiedad añadida al final de array</translation>
     </message>
     <message>
         <source>Property &apos;%1&apos; already exist as %2</source>
-        <translation>Položka &apos;%1&apos; již existuje jako %2</translation>
+        <translation>Propiedad &apos;%1&apos; ya existe como %2</translation>
     </message>
     <message>
         <source>Reference target does not exist!</source>
-        <translation>Cíl reference neexistuje!</translation>
+        <translation>La referencia destino no existe!</translation>
     </message>
     <message>
         <source>Add to position</source>
-        <translation>Vložit na pozici</translation>
+        <translation>Añadido a posición</translation>
     </message>
     <message>
         <source>Append to end</source>
-        <translation>Přidat na konec</translation>
+        <translation>Agregado al final</translation>
     </message>
     <message>
         <source>Property added to position %1 in array</source>
-        <translation>Položka přidána na pozici &apos;%1&apos; v poli</translation>
+        <translation>Propiedad añadida a posición %1 en array</translation>
     </message>
     <message>
         <source>Array index %1 out of range</source>
-        <translation>Index pole %1 je mimo rozsah</translation>
+        <translation>Indice %1 del array fuera de rango</translation>
     </message>
 </context>
 <context>
     <name>gui::AnnotDialog</name>
     <message>
         <source>Text Annotation</source>
-        <translation>Textová Anotace</translation>
+        <translation>Anotación de Texto</translation>
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation>&amp;Otevřená</translation>
+        <translation>&amp;Abrir</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation>Obsah</translation>
+        <translation>Contenido</translation>
     </message>
     <message>
         <source>Icon &amp;Name</source>
-        <translation>Jmé&amp;no ikony</translation>
+        <translation>Nombre del &amp;Icono</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Komentář</translation>
+        <translation>Comentario</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Nápověda (Help)</translation>
+        <translation>Ayuda</translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation>Vložit (Insert)</translation>
+        <translation>Insertar</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation>Klíč (Key)</translation>
+        <translation>Clave</translation>
     </message>
     <message>
         <source>NewParagraph</source>
-        <translation>Nový Odstavec (NewParagraph)</translation>
+        <translation>Nuevo Párrafo</translation>
     </message>
     <message>
         <source>Note</source>
-        <translation>Poznámka (Note)</translation>
+        <translation>Nota</translation>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation>Odstavec (Paragraph)</translation>
+        <translation>Párrafo</translation>
     </message>
     <message>
         <source>&amp;State</source>
-        <translation>&amp;Stav</translation>
+        <translation>&amp;Estado</translation>
     </message>
     <message>
         <source>Marked</source>
-        <translation>Označená</translation>
+        <translation>Marcado</translation>
     </message>
     <message>
         <source>Unmarked</source>
-        <translation>Neoznačená</translation>
+        <translation>Desmarcado</translation>
     </message>
     <message>
         <source>State &amp;Model</source>
-        <translation>&amp;Model stavů</translation>
+        <translation>State &amp;Model</translation>
     </message>
     <message>
         <source>Review</source>
-        <translation>Přezkoumání</translation>
+        <translation>Revisión</translation>
     </message>
     <message>
         <source>&amp;Text Annotation</source>
-        <translation>&amp;Textová anotace</translation>
+        <translation>Anotación de &amp;Texto</translation>
     </message>
     <message>
         <source>&amp;Destination</source>
-        <translation>Cíl</translation>
+        <translation>&amp;Destino</translation>
     </message>
     <message>
         <source>&amp;Highlight mode</source>
-        <translation>
-Režim zvýraznění</translation>
+        <translation>Modo &amp;resaltado</translation>
     </message>
     <message>
         <source>N - None</source>
-        <translation>N - Žádný</translation>
+        <translation>N - Ninguno</translation>
     </message>
     <message>
         <source>I - Invert</source>
-        <translation>I - Inverze</translation>
+        <translation>I - Invertir</translation>
     </message>
     <message>
         <source>O - Outline</source>
-        <translation>O - Obrys</translation>
+        <translation>O - Contorno</translation>
     </message>
     <message>
         <source>P - Push</source>
-        <translation>P - Vytlačený okraj</translation>
+        <translation>P - Poner</translation>
     </message>
     <message>
         <source>&amp;Link Annotation</source>
-        <translation>&amp;Link anotace (odkaz)</translation>
+        <translation>A&amp;notación de Enlace</translation>
     </message>
     <message>
         <source>Add new annotation</source>
-        <translation>Přidat novou anotaci</translation>
+        <translation>Añadir nueva anotación</translation>
     </message>
 </context>
 <context>
     <name>gui::Base</name>
     <message>
         <source>Warning</source>
-        <translation>Upozornění</translation>
+        <translation>Advertencia</translation>
     </message>
     <message>
         <source>No init script found - check your configuration</source>
-        <translation>Nenalezen žádný init skript - zkontrolujte svoji konfiguraci</translation>
+        <translation>Ningún script de inicio encontrado - comprueba tu configuración</translation>
     </message>
     <message>
         <source>Looked for</source>
         <comment>scripts</comment>
-        <translation>Zkoušel jsem</translation>
+        <translation>Buscado</translation>
     </message>
     <message>
         <source>Error running</source>
-        <translation>Chyba při spouštění</translation>
+        <translation>Error de ejecución</translation>
     </message>
     <message>
         <source>Script not found</source>
-        <translation>Skript nenalezen</translation>
+        <translation>Script no encontrado</translation>
     </message>
 </context>
 <context>
     <name>gui::BaseCore</name>
     <message>
         <source>Error in callback handler: </source>
-        <translation>Chyba v obsluze volání: </translation>
+        <translation>Error en manejador de llamadas: </translation>
     </message>
     <message>
         <source>Exception in callback handler: </source>
-        <translation>Výjimka v obsluze volání: </translation>
+        <translation>Excepción en manejador de llamadas: </translation>
     </message>
     <message>
         <source>Unknown exception in script occured</source>
-        <translation>Ve skriptu došlo k neznámé výjimce</translation>
+        <translation>Excepción desconocida ocurrida en script</translation>
     </message>
     <message>
         <source>Null pointer access in </source>
-        <translation>Přístup na null ukazatel v </translation>
+        <translation>Acceso a puntero nulo en </translation>
     </message>
     <message>
         <source>Invalid object given for parameter %1 in </source>
-        <translation>Neplatný objekt předán jako parametr %1 v </translation>
+        <translation>Objeto inválido dado por parámetro %1 en </translation>
     </message>
     <message>
         <source>Expected</source>
         <comment>object type</comment>
-        <translation>Očekáváno</translation>
+        <translation>Expected</translation>
     </message>
     <message>
         <source>Got</source>
         <comment>object type</comment>
-        <translation>Předáno</translation>
+        <translation>Got</translation>
     </message>
     <message>
         <source>In script</source>
-        <translation>Ve skriptu</translation>
+        <translation>En script</translation>
     </message>
     <message>
         <source>line</source>
-        <translation>řádka</translation>
+        <translation>línea</translation>
     </message>
     <message>
         <source>Exception in </source>
-        <translation>Výjimka v </translation>
+        <translation>Excepción en </translation>
     </message>
 </context>
 <context>
     <name>gui::BaseGUI</name>
     <message>
         <source>No document opened</source>
-        <translation>Není otevřen dokument</translation>
+        <translation>Ningún documento abierto</translation>
     </message>
 </context>
 <context>
     <name>gui::ColorTool</name>
     <message>
         <source>Choose color</source>
-        <translation>Vyberte barvu</translation>
+        <translation>Elegir color</translation>
     </message>
 </context>
 <context>
     <name>gui::HelpWindow</name>
     <message>
         <source>help</source>
-        <translation>nápověda</translation>
+        <translation>ayuda</translation>
     </message>
 </context>
 <context>
     <name>gui::MergeDialog</name>
     <message>
         <source>Insert pages from another document</source>
-        <translation>Vložit stránky z jiného dokumentu</translation>
+        <translation>Insertar páginas desde otro documento</translation>
     </message>
     <message>
         <source>&amp;Filename</source>
-        <translation>Jméno souboru</translation>
+        <translation>&amp;Nombre del archivo</translation>
     </message>
     <message>
         <source>Open file with pages to be inserted</source>
-        <translation>Otevřít soubor se stránkami k vložení</translation>
+        <translation>Abrir archivo con las páginas a insertarse</translation>
     </message>
 </context>
 <context>
     <name>gui::MultiTreeWindow</name>
     <message>
         <source>Tree</source>
-        <translation>Strom</translation>
+        <translation>Arbol</translation>
     </message>
     <message>
         <source>Close current tab</source>
-        <translation>Zavřít aktuální záložku</translation>
+        <translation>Cerrar pestaña actual</translation>
     </message>
     <message>
         <source>Document tree</source>
-        <translation>Strom dokumentu</translation>
+        <translation>Arbol del documento</translation>
     </message>
     <message>
         <source>Switch to ...</source>
-        <translation>Přepnout na ...</translation>
+        <translation>Intercambiar a ...</translation>
     </message>
 </context>
 <context>
     <name>gui::OptionWindow</name>
     <message>
         <source>options</source>
-        <translation>nastavení</translation>
+        <translation>opciones</translation>
     </message>
     <message>
         <source>Icon Path</source>
-        <translation>Cesta k ikonám</translation>
+        <translation>Ruta de Iconos</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -1505,426 +1504,426 @@ Režim zvýraznění</translation>
     </message>
     <message>
         <source>Advanced mode</source>
-        <translation>Režim pro pokročilé</translation>
+        <translation>Modo avanzado</translation>
     </message>
     <message>
         <source>Object tree</source>
-        <translation>Strom objektů</translation>
+        <translation>Arbol objeto</translation>
     </message>
     <message>
         <source>Document dictionary</source>
-        <translation>Slovník dokumentu</translation>
+        <translation>Diccionario documento</translation>
     </message>
     <message>
         <source>Object dictionaries</source>
-        <translation>Slovníky objektů</translation>
+        <translation>Diccionarios objeto</translation>
     </message>
     <message>
         <source>Outlines</source>
-        <translation>Outliny</translation>
+        <translation>Contornos</translation>
     </message>
     <message>
         <source>Graphic objects</source>
-        <translation>Grafické objekty</translation>
+        <translation>Objetos gráficos</translation>
     </message>
     <message>
         <source>Annotations</source>
-        <translation>Anotace</translation>
+        <translation>Anotaciones</translation>
     </message>
     <message>
         <source>Pages</source>
-        <translation>Stránky</translation>
+        <translation>Páginas</translation>
     </message>
     <message>
         <source>Simple Objects</source>
-        <translation>Jednoduché objekty</translation>
+        <translation>Objetos Simples</translation>
     </message>
     <message>
         <source>Show return value of executed scripts in console</source>
-        <translation>Zobrazovat návratovou hodnotu skriptů v příkazovém řádku</translation>
+        <translation>Mostrar valor de retorno de los scripts ejecutados en consola</translation>
     </message>
     <message>
         <source>Toolbars</source>
-        <translation>Toolbary</translation>
+        <translation>Barras de herramientas</translation>
     </message>
     <message>
         <source>History file</source>
-        <translation>Soubor historie</translation>
+        <translation>Archivo de histórico</translation>
     </message>
     <message>
         <source>Max. lines in history</source>
-        <translation>Max. řádek v historii</translation>
+        <translation>Max. líneas en histórico</translation>
     </message>
     <message>
         <source>Look and Feel</source>
-        <translation>Vzhled</translation>
+        <translation>Mirar y Sentir</translation>
     </message>
     <message>
         <source>You can specify overall visual style</source>
-        <translation>Zde lze nastavit celkový vzhled</translation>
+        <translation>Puedes especificar el estilo visual global</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Styl</translation>
+        <translation>Estilo</translation>
     </message>
     <message>
         <source>Remember path of last opened/saved file</source>
-        <translation>Pamatovat si cestu k poslednímu otevřenému/uloženému souboru</translation>
+        <translation>Recordar la ruta del último archivo abierto/guardado</translation>
     </message>
     <message>
         <source>Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document.</source>
-        <translation>Zapnutí režimu pro pokročilé umožní složitější (ale také potenciálně nebezpečné) změny v dokumentu.</translation>
+        <translation>Activar el modo avanzado permitirá más cambios poderosos (pero también más peligrosos) al documento editado.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing Advanced mode will affect only newly opened files</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna Režimu pro pokročilé ovlivní až nově otevřené soubory</translation>
+        <translation>&lt;b&gt;Nota&lt;/b&gt;: el cambio al Modo Avanzado afectará sólo a los archivos abiertos recientemente</translation>
     </message>
     <message>
         <source>Paths</source>
-        <translation>Cesty</translation>
+        <translation>Rutas</translation>
     </message>
     <message>
         <source>You can use environment variables (for example $HOME) in settings on this page</source>
-        <translation>Lze použít proměnné prostředí (např. $HOME) v nastavení na této stránce</translation>
+        <translation>Puedes usar las variables de entorno (por ejemplo $HOME) en ajustes en esta página</translation>
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing Icon Path will take effect on next program start</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna cesty k ikonám bude mít efekt až při přístím startu programu</translation>
+        <translation>&lt;b&gt;Nota&lt;/b&gt;: el cambio de la Ruta de Iconos afectará en el próximo inicio del programa</translation>
     </message>
     <message>
         <source>Console log file</source>
-        <translation>Log soubor pro příkazový řádek</translation>
+        <translation>Archivo log de consola</translation>
     </message>
     <message>
         <source>These objects will be shown in the object tree</source>
-        <translation>Tyto objekty budou zobrazeny ve stromu objektů</translation>
+        <translation>Estos objetos serán mostrados en el árbol objeto</translation>
     </message>
     <message>
         <source>These toolbars will be shown:</source>
-        <translation>Tyto toolbary budou zobrazeny:</translation>
+        <translation>Estas barras de herramientas serán mostradas:</translation>
     </message>
     <message>
         <source>Show errors from event handlers</source>
-        <translation>Zobrazovat chyby z funkcí obsluhy událostí</translation>
+        <translation>Mostrar errores desde los manejadores de evento</translation>
     </message>
     <message>
         <source>Content Streams</source>
-        <translation>Content Stream</translation>
+        <translation>Contenido de Flujos</translation>
     </message>
     <message>
         <source>Show command editor</source>
-        <translation>Zobrazit editor příkazů</translation>
+        <translation>Mostrar editor de comandos</translation>
     </message>
     <message>
         <source>Show command line</source>
-        <translation>Zobrazit příkazovou řádku</translation>
+        <translation>Mostrar línea de comandos</translation>
     </message>
     <message>
         <source>Editable command line</source>
-        <translation>Editovatelná příkazová řádka</translation>
+        <translation>Línea de comandos editable</translation>
     </message>
     <message>
         <source>Script Path</source>
-        <translation>Cesta ke skriptům</translation>
+        <translation>Ruta de Scripts</translation>
     </message>
     <message>
         <source>Scripts to run on start</source>
-        <translation>Skripty spouštěné při startu</translation>
+        <translation>Scripts a ejecutar al inicio</translation>
     </message>
     <message>
         <source>You can set fonts used in application</source>
-        <translation>Zde lze nastavit písma použitá v editoru</translation>
+        <translation>Puedes establecer fuentes utilizadas en la aplicación</translation>
     </message>
     <message>
         <source>Application font</source>
-        <translation>Písmo aplikace</translation>
+        <translation>Fuente de aplicación</translation>
     </message>
     <message>
         <source>Console font</source>
-        <translation>Písmo v příkazovém řádku</translation>
+        <translation>Fuente de consola</translation>
     </message>
     <message>
         <source>Icon theme</source>
-        <translation>Téma ikon</translation>
+        <translation>Icon theme</translation>
     </message>
     <message>
         <source>Use big icons</source>
-        <translation>Použít velké ikony</translation>
+        <translation>Usar iconos grandes</translation>
     </message>
     <message>
         <source>Show hidden properties</source>
-        <translation>Zobrazovat skryté položky</translation>
+        <translation>Mostrar propiedades ocultas</translation>
     </message>
     <message>
         <source>Allow editing read-only properties</source>
-        <translation>Povolit měnit položky pouze pro čtení</translation>
+        <translation>Permitir editar propiedades de sólo-lectura</translation>
     </message>
     <message>
         <source>Commandline</source>
-        <translation>Příkazová řádka</translation>
+        <translation>Línea de comandos</translation>
     </message>
     <message>
         <source>Commandline options</source>
-        <translation>Nastavení příkazové řádky</translation>
+        <translation>Opciones de línea de comandos</translation>
     </message>
     <message>
         <source>Options affecting object tree and property editor</source>
-        <translation>Nastavení ovlivňující strom objektů a editor položek</translation>
+        <translation>Opciones que afectan al árbol de objetos y al editor de propiedades</translation>
     </message>
     <message>
         <source>Sort dictionary items alphabetically</source>
-        <translation>Řadit položky slovníku abecedně</translation>
+        <translation>Ordenar diccionario alfabéticamente</translation>
     </message>
     <message>
         <source>History options</source>
-        <translation>Nastavení historie</translation>
+        <translation>Opciones de histórico</translation>
     </message>
     <message>
         <source>Statusbar font</source>
-        <translation>Písmo stavového řádku</translation>
+        <translation>Fuente de la barra de estado</translation>
     </message>
     <message>
         <source>Show return value also for complex types
 (possibly long output)</source>
-        <translation>Zobrazovat návratovou hodnotu též pro komplexní typy
-(možný delší výstup)</translation>
+        <translation>Mostrar valor de retorno también para tipos complejo
+(posiblemente salida larga)</translation>
     </message>
     <message>
         <source>&lt;b&gt;Note&lt;/b&gt;: changing icon theme will take effect on next program start</source>
-        <translation>&lt;b&gt;Poznámka&lt;/b&gt;: změna tématu ikon bude mít efekt až při přístím startu programu</translation>
+        <translation>&lt;b&gt;Nota&lt;/b&gt;: el cambio del tema de iconos tendrá efecto en el próximo inicio del programa</translation>
     </message>
     <message>
         <source>Character encoding</source>
-        <translation>Kódování znaků</translation>
+        <translation>Codificación de caracteres</translation>
     </message>
     <message>
         <source>Length units</source>
-        <translation>Jednotky délky</translation>
+        <translation>Longitud de unidades</translation>
     </message>
 </context>
 <context>
     <name>gui::PageSpace</name>
     <message>
         <source>Save as image ...</source>
-        <translation>Uložit jako obrázek...</translation>
+        <translation>Guardar como imagen ...</translation>
     </message>
     <message>
         <source>%1 of %2</source>
-        <translation>%1 z %2</translation>
+        <translation>%1 de %2</translation>
     </message>
     <message>
         <source>Resizing zone must be positive integer or null !</source>
-        <translation>Zóna pro změnu velikosti musí být kladné celé číslo nebo null !</translation>
+        <translation>La zona a redimensionar debe ser entero positivo o nulo !</translation>
     </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
     <message>
         <source>Loaded file</source>
-        <translation>Nahrán soubor</translation>
+        <translation>Archivo cargado</translation>
     </message>
     <message>
         <source>Current file is not saved. Do you want to save it?</source>
-        <translation>Editovaný soubor není uložen. Přejete si ho uložit?</translation>
+        <translation>El archivo actual no está guardado. ¿Quiéres guardarlo?</translation>
     </message>
     <message>
         <source>Error while loading document </source>
-        <translation>Chyba při nahrávání dokumentu </translation>
+        <translation>Error cargando el documento </translation>
     </message>
     <message>
         <source>Unknown error while loading document </source>
-        <translation>Neznámá chyba při nahrávání dokumentu </translation>
+        <translation>Error desconocido cargando el documento </translation>
     </message>
     <message>
         <source>No document to save</source>
-        <translation>Není žádný dokument k uložení</translation>
+        <translation>Ningún documento para guardar</translation>
     </message>
     <message>
         <source>viewing revision</source>
-        <translation>zobrazuji revizi</translation>
+        <translation>viewing revision</translation>
     </message>
     <message>
         <source>Name is empty</source>
-        <translation>Jméno je prázdné</translation>
+        <translation>El nombre está vacío</translation>
     </message>
     <message>
         <source>Document is in read-only mode</source>
-        <translation>Dokument je v režimu pouze pro čtení</translation>
+        <translation>El documento está en modo sólo-lectura</translation>
     </message>
     <message>
         <source>Unknown error occured while saving document</source>
-        <translation>Neznámá chyba při ukládání dokumentu</translation>
+        <translation>Error desconocido ocurrido mientras se guardaba el documento</translation>
     </message>
     <message>
         <source>Error occured while saving copy</source>
-        <translation>Při ukládání kopie došlo k chybě</translation>
+        <translation>Error ocurrido mientras se guardaba una copia</translation>
     </message>
     <message>
         <source>Linearized PDF</source>
-        <translation>Linearizované PDF</translation>
+        <translation>PDF linearizado</translation>
     </message>
     <message>
         <source>Encrypted</source>
-        <translation>Zašifrované</translation>
+        <translation>Cifrado</translation>
     </message>
     <message>
         <source>Selection</source>
-        <translation>Výběr</translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <source>Selected operators</source>
-        <translation>Vybrané operátory</translation>
+        <translation>Operadores seleccionados</translation>
     </message>
     <message>
         <source>Selected annotations</source>
-        <translation>Vybrané anotace</translation>
+        <translation>Anotaciones seleccionadas</translation>
     </message>
 </context>
 <context>
     <name>gui::Property</name>
     <message>
         <source>Read only</source>
-        <translation>Pouze pro čtení</translation>
+        <translation>Leer sólo</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation>Pokročilá</translation>
+        <translation>Avanzado</translation>
     </message>
     <message>
         <source>Hidden</source>
-        <translation>Skrytá</translation>
+        <translation>Oculto</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Neznámá</translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Normální</translation>
+        <translation>Normal</translation>
     </message>
 </context>
 <context>
     <name>gui::PropertyEditor</name>
     <message>
         <source>No object selected</source>
-        <translation>Není zvolen žádný objekt</translation>
+        <translation>Ningún objeto seleccionado</translation>
     </message>
     <message>
         <source>This type of object does not have any properties</source>
-        <translation>Tento typ objektu nemá žádné položky</translation>
+        <translation>Este tipo de objetos no tienen ninguna propiedad</translation>
     </message>
     <message>
         <source>This operator does not have any directly editable parameters</source>
-        <translation>Tento operátor nemá žádné přímo měnitelné parametry</translation>
+        <translation>Este operador no tiene parámetros directamente editables</translation>
     </message>
     <message>
         <source>This %1 is empty</source>
-        <translation>Tento %1 je prázdný</translation>
+        <translation>Este %1 está vacio</translation>
     </message>
     <message>
         <source>dictionary</source>
         <comment>property type</comment>
-        <translation>slovník</translation>
+        <translation>diccionario</translation>
     </message>
     <message>
         <source>This %1 does not have any directly editable properties</source>
-        <translation>Tento %1 nemá žádné přímo měnitelné položky</translation>
+        <translation>Este %1 no tiene propiedades directamente editables</translation>
     </message>
     <message>
         <source>stream</source>
         <comment>property type</comment>
-        <translation>stream</translation>
+        <translation>flujo</translation>
     </message>
     <message>
         <source>This array is empty</source>
-        <translation>Toto pole je prázdné</translation>
+        <translation>Este array está vacío</translation>
     </message>
     <message>
         <source>This array does not have any directly editable elements</source>
-        <translation>Toto pole nemá žádné přímo měnitelné prvky</translation>
+        <translation>Este array no tiene elementos directamente editables</translation>
     </message>
     <message>
         <source>This operator does not have any parameters</source>
-        <translation>Tento operátor nemá žádné parametry</translation>
+        <translation>Este operador no tiene parámetros</translation>
     </message>
 </context>
 <context>
     <name>gui::QSPage</name>
     <message>
         <source>Invalid operation</source>
-        <translation>Neplatná operace</translation>
+        <translation>Operación inválida</translation>
     </message>
     <message>
         <source>Out of range</source>
-        <translation>Mimo rozsah</translation>
+        <translation>Fuera de rango</translation>
     </message>
     <message>
         <source>Unknown exception</source>
-        <translation>Neznámá výjimka</translation>
+        <translation>Excepción desconocida</translation>
     </message>
 </context>
 <context>
     <name>gui::QSPdf</name>
     <message>
         <source>Page not found</source>
-        <translation>Stránka nenalezena</translation>
+        <translation>Página no encontrada</translation>
     </message>
     <message>
         <source>Document is in read-only mode</source>
-        <translation>Dokument je v režimu pouze pro čtení</translation>
+        <translation>El documento está en modo sólo-lectura</translation>
     </message>
     <message>
         <source>Unknown error occured while saving document</source>
-        <translation>Neznámá chyba při ukládání dokumentu</translation>
+        <translation>Error desconocido ocurrido mientras se guardaba el documento</translation>
     </message>
 </context>
 <context>
     <name>gui::RefPropertyDialog</name>
     <message>
         <source>Reference target</source>
-        <translation>Cíl reference</translation>
+        <translation>Destino de referencia</translation>
     </message>
     <message>
         <source>Choose target for indirect reference</source>
-        <translation>Vyberte cíl pro nepřímou referenci</translation>
+        <translation>Elegir destino para referencia indirecta</translation>
     </message>
     <message>
         <source>Object number</source>
-        <translation>Číslo objektu</translation>
+        <translation>Número objeto</translation>
     </message>
     <message>
         <source>Generation number</source>
-        <translation>Číslo generace</translation>
+        <translation>Número generación</translation>
     </message>
     <message>
         <source>Reference target is not valid</source>
-        <translation>Cíl reference je neplatný</translation>
+        <translation>Destino de referencia no válido</translation>
     </message>
 </context>
 <context>
     <name>gui::RevisionTool</name>
     <message>
         <source>No revisions</source>
-        <translation>Bez revizí</translation>
+        <translation>Ninguna revisión</translation>
     </message>
     <message>
         <source>Revision: </source>
-        <translation>Revize: </translation>
+        <translation>Revisión: </translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation>bytů</translation>
+        <translation>bytes</translation>
     </message>
     <message>
         <source>Linearized PDF</source>
-        <translation>Linearizované PDF</translation>
+        <translation>PDF linearizado</translation>
     </message>
 </context>
 <context>
     <name>gui::SelectPagesDialog</name>
     <message>
         <source>Convert pdf to xml</source>
-        <translation>Převést pdf na xml</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1932,503 +1931,503 @@ Režim zvýraznění</translation>
     <message>
         <source>Main Toolbar</source>
         <comment>MainToolbar</comment>
-        <translation>Hlavní toolbar</translation>
+        <translation>Barra de Herramientas Principal</translation>
     </message>
     <message>
         <source>&amp;Options</source>
         <comment>opts</comment>
-        <translation>Nastavení</translation>
+        <translation>&amp;Opciones</translation>
     </message>
     <message>
         <source>Main menu</source>
         <comment>MainMenu</comment>
-        <translation>Hlavní menu</translation>
+        <translation>Menú principal</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
         <comment>quit</comment>
-        <translation>Konec</translation>
+        <translation>&amp;Salir</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
         <comment>fload</comment>
-        <translation>&amp;Otevřít...</translation>
+        <translation>&amp;Abrir...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
         <comment>fsave</comment>
-        <translation>&amp;Uložit</translation>
+        <translation>&amp;Guardar</translation>
     </message>
     <message>
         <source>New &amp;Window</source>
         <comment>neww</comment>
-        <translation>Nové okno</translation>
+        <translation>Nueva &amp;Ventana</translation>
     </message>
     <message>
         <source>Page Toolbar</source>
         <comment>PageToolbar</comment>
-        <translation>Toolbar stránky</translation>
+        <translation>Barra de Herramientas de Página</translation>
     </message>
     <message>
         <source>Reload Page</source>
         <comment>reloadpage</comment>
-        <translation>Obnovit stránku</translation>
+        <translation>&amp;Recargar página</translation>
     </message>
     <message>
         <source>Add object</source>
         <comment>treeAdditem</comment>
-        <translation>Přidat objekt</translation>
+        <translation>Añadir objeto</translation>
     </message>
     <message>
         <source>Delete object</source>
         <comment>treeDelitem</comment>
-        <translation>Smazat objekt</translation>
+        <translation>Borrar objeto</translation>
     </message>
     <message>
         <source>&amp;Help</source>
         <comment>help_index</comment>
-        <translation>Nápověda</translation>
+        <translation>A&amp;yuda</translation>
     </message>
     <message>
         <source>&amp;About</source>
         <comment>help_about</comment>
-        <translation>O Progr&amp;amu</translation>
+        <translation>&amp;Acerca de</translation>
     </message>
     <message>
         <source>First Page</source>
         <comment>firstpage</comment>
-        <translation>První strana</translation>
+        <translation>&amp;Primera página</translation>
     </message>
     <message>
         <source>Prev Page</source>
         <comment>prevpage</comment>
-        <translation>Předchozí strana</translation>
+        <translation>Pá&amp;gina anterior</translation>
     </message>
     <message>
         <source>Next Page</source>
         <comment>nextpage</comment>
-        <translation>Další strana</translation>
+        <translation>Página &amp;siguiente</translation>
     </message>
     <message>
         <source>Last Page</source>
         <comment>lastpage</comment>
-        <translation>Poslední strana</translation>
+        <translation>&amp;Ultima página</translation>
     </message>
     <message>
         <source>Revision Toolbar</source>
         <comment>RevisionToolbar</comment>
-        <translation>Toolbar revizí</translation>
+        <translation>Barra de Herramientas de Revisión</translation>
     </message>
     <message>
         <source>Revisions</source>
         <comment>revlabel</comment>
-        <translation>Revize</translation>
+        <translation>Revisiones</translation>
     </message>
     <message>
         <source>Rotate page 270 degrees</source>
         <comment>rot-90</comment>
-        <translation>Otočit stránku o 270 stupňů</translation>
+        <translation>R&amp;otar página 270 grados</translation>
     </message>
     <message>
         <source>Rotate page 90 degrees</source>
         <comment>rot90</comment>
-        <translation>Otočit stránku o 90 stupňů</translation>
+        <translation>Rotar página 90 &amp;grados</translation>
     </message>
     <message>
         <source>Save &amp;copy...</source>
         <comment>fsavecopy</comment>
-        <translation>Uložit kopii...</translation>
+        <translation>Guardar c&amp;opia...</translation>
     </message>
     <message>
         <source>&amp;Page</source>
         <comment>pagemenu</comment>
-        <translation>Strana</translation>
+        <translation>&amp;Página</translation>
     </message>
     <message>
         <source>Save page as image...</source>
         <comment>savepage</comment>
-        <translation>Uložit stranu jako obrázek...</translation>
+        <translation>&amp;Guardar página como imagen...</translation>
     </message>
     <message>
         <source>Show all operators in stream</source>
         <comment>streamAll</comment>
-        <translation>Zobrazit všechny operátory ve streamu</translation>
+        <translation>Mostrar todos los operadores en flujo</translation>
     </message>
     <message>
         <source>Show only text operators in stream</source>
         <comment>streamText</comment>
-        <translation>Zobrazit pouze textové operátory ve streamu</translation>
+        <translation>Mostrar sólo operadores de texto en flujo</translation>
     </message>
     <message>
         <source>Show only font operators in stream</source>
         <comment>streamFont</comment>
-        <translation>Zobrazit pouze font operátory ve streamu</translation>
+        <translation>Mostrar sólo operadores de fuente en flujo</translation>
     </message>
     <message>
         <source>Operator Toolbar</source>
         <comment>OperatorToolbar</comment>
-        <translation>Toolbar operátorů</translation>
+        <translation>Barra de Herramientas de Operador</translation>
     </message>
     <message>
         <source>Edit page metrics</source>
         <comment>editPageMediaBox</comment>
-        <translation>Změnit metriky stránky</translation>
+        <translation>Editar &amp;métrica de página</translation>
     </message>
     <message>
         <source>Close Window</source>
         <comment>closew</comment>
-        <translation>Zavřít okno</translation>
+        <translation>&amp;Cerrar Ventana</translation>
     </message>
     <message>
         <source>Show/Hide &amp;commandline</source>
         <comment>hideCmd</comment>
-        <translation>Zobrazit/skrýt příkazový řádek</translation>
+        <translation>Mostrar/Ocultar &amp;línea de comandos</translation>
     </message>
     <message>
         <source>Add system font to page</source>
         <comment>addSystemFont</comment>
-        <translation>Přidat systémové písmo na stránku</translation>
+        <translation>&amp;Añadir fuente del sistema a página</translation>
     </message>
     <message>
         <source>Extract text from page</source>
         <comment>pagetext</comment>
-        <translation>Extrahovat text ze stránky</translation>
+        <translation>&amp;Extraer texto desde página</translation>
     </message>
     <message>
         <source>Zoom &amp;out</source>
         <comment>zoom_out</comment>
-        <translation>&amp;Oddálit měřítko</translation>
+        <translation>Z&amp;oom out</translation>
     </message>
     <message>
         <source>Zoom &amp;in</source>
         <comment>zoom_in</comment>
-        <translation>Př&amp;iblížit měřítko</translation>
+        <translation>&amp;Zoom in</translation>
     </message>
     <message>
         <source>Show only graphical operators in stream</source>
         <comment>streamGfx</comment>
-        <translation>Zobrazit jen grafické operátory ve streamu</translation>
+        <translation>Mostrar sólo operadores gráficos en flujo</translation>
     </message>
     <message>
         <source>Selection mode Toolbar</source>
         <comment>SelectionModeToolbar</comment>
-        <translation>Toolbar režimů výběru</translation>
+        <translation>Barra de Herramientas en modo de Selección</translation>
     </message>
     <message>
         <source>Select all objects</source>
         <comment>selectAllObjects</comment>
-        <translation>Vybírat všechny objekty</translation>
+        <translation>Seleccionar todos los objetos</translation>
     </message>
     <message>
         <source>Select text</source>
         <comment>selectText</comment>
-        <translation>Vybírat text</translation>
+        <translation>Seleccionar texto</translation>
     </message>
     <message>
         <source>&amp;File</source>
         <comment>filemenu</comment>
-        <translation>Soubor</translation>
+        <translation>&amp;Archivo</translation>
     </message>
     <message>
         <source>Save new &amp;revision</source>
         <comment>fsaverev</comment>
-        <translation>Uložit novou &amp;revizi</translation>
+        <translation>Guardar nueva &amp;revisión</translation>
     </message>
     <message>
         <source>&amp;View</source>
         <comment>showmenu</comment>
-        <translation>Zobrazit</translation>
+        <translation>&amp;Ver</translation>
     </message>
     <message>
         <source>Show/Hide &amp;property editor</source>
         <comment>hideProp</comment>
-        <translation>Zobrazit/skrýt editor &amp;položek</translation>
+        <translation>Mostrar/Ocultar &amp;editor de propiedades</translation>
     </message>
     <message>
         <source>Show/Hide object &amp;tree</source>
         <comment>hideTree</comment>
-        <translation>Zobrazit/skrýt s&amp;trom objektů</translation>
+        <translation>Mostrar/Ocultar &amp;arbol de objeto</translation>
     </message>
     <message>
         <source>&amp;Tools</source>
         <comment>toolsmenu</comment>
-        <translation>Nás&amp;troje</translation>
+        <translation>&amp;Herramientas</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
         <comment>editopersmenu</comment>
-        <translation>Úpravy</translation>
+        <translation>&amp;Editar</translation>
     </message>
     <message>
         <source>Set color</source>
         <comment>opsetcolor</comment>
-        <translation>Nastavit barvu</translation>
+        <translation>Establecer color</translation>
     </message>
     <message>
         <source>Set font</source>
         <comment>opsetfont</comment>
-        <translation>Nastavit písmo</translation>
+        <translation>Establecer fuente</translation>
     </message>
     <message>
         <source>Set line dash style</source>
         <comment>opsetdash</comment>
-        <translation>Nastavit styl čáry</translation>
+        <translation>Establecer estilo de relleno de línea</translation>
     </message>
     <message>
         <source>Set line width</source>
         <comment>opsetlinewidth</comment>
-        <translation>Nastavit šířku čáry</translation>
+        <translation>Establecer grosor de línea</translation>
     </message>
     <message>
         <source>&amp;Help</source>
         <comment>helpmenu</comment>
-        <translation>Nápověda</translation>
+        <translation>A&amp;yuda</translation>
     </message>
     <message>
         <source>Set page transformation matrix</source>
         <comment>setpagetm</comment>
-        <translation>Nastavit transformační matici stránky</translation>
+        <translation>Establecer matriz de &amp;transformación de página</translation>
     </message>
     <message>
         <source>Set relative position of operator</source>
         <comment>opsetposop</comment>
-        <translation>Nastavit relativní pozici operátoru</translation>
+        <translation>Establecer posición relativa de operador</translation>
     </message>
     <message>
         <source>Change relative position</source>
         <comment>opsetpos</comment>
-        <translation>Nastavit relativní pozici</translation>
+        <translation>Cambiar posición relativa</translation>
     </message>
     <message>
         <source>Show/Hide &amp;status bar</source>
         <comment>hideStatus</comment>
-        <translation>Zobrazit/skrýt &amp;stavový řádek</translation>
+        <translation>Mostrar/Ocultar &amp;barra de estado</translation>
     </message>
     <message>
         <source>Add text</source>
         <comment>addtext</comment>
-        <translation>Přidat text</translation>
+        <translation>Añadir te&amp;xto</translation>
     </message>
     <message>
         <source>Draw line</source>
         <comment>drawlinee</comment>
-        <translation>Nakreslit čáru</translation>
+        <translation>Dibujar &amp;línea</translation>
     </message>
     <message>
         <source>Draw rectangle</source>
         <comment>drawrecte</comment>
-        <translation>Nakreslit obdélník</translation>
+        <translation>Di&amp;bujar rectángulo</translation>
     </message>
     <message>
         <source>Select annotations</source>
         <comment>selectAnnot</comment>
-        <translation>Vybírat anotace</translation>
+        <translation>Seleccionar anotaciones</translation>
     </message>
     <message>
         <source>Text Toolbar</source>
         <comment>TextToolBar</comment>
-        <translation>Textový Toolbar</translation>
+        <translation>Barra de Herramientas de Texto</translation>
     </message>
     <message>
         <source>&amp;Find text</source>
         <comment>searchText</comment>
-        <translation>Hledat text</translation>
+        <translation>Encontrar &amp;texto</translation>
     </message>
     <message>
         <source>&amp;Insert Pages from other document</source>
         <comment>mergeDoc</comment>
-        <translation>Vlož&amp;it stránky z jiného dokumentu</translation>
+        <translation>&amp;Insertar Páginas desde otro documento</translation>
     </message>
     <message>
         <source>Draw Toolbar</source>
         <comment>DrawToolbar</comment>
-        <translation>Kreslící Toolbar</translation>
+        <translation>Dibujar Barra de Herramientas</translation>
     </message>
     <message>
         <source>Move page up</source>
         <comment>pageMoveUp</comment>
-        <translation>Posunout stránku nahoru</translation>
+        <translation>Mover página hacia arriba</translation>
     </message>
     <message>
         <source>Move page down</source>
         <comment>pageMoveDown</comment>
-        <translation>Posunout stránku dolů</translation>
+        <translation>Mover página hacia abajo</translation>
     </message>
     <message>
         <source>Remove page</source>
         <comment>pageRemove</comment>
-        <translation>Odstranit stránku</translation>
+        <translation>Eliminar página</translation>
     </message>
     <message>
         <source>Highlighting text</source>
         <comment>highlightingtext</comment>
-        <translation>Zvýraznit text</translation>
+        <translation>Texto re&amp;saltado</translation>
     </message>
     <message>
         <source>Select graphical operators</source>
         <comment>selectGraphical</comment>
-        <translation>Vybírat grafické operátory</translation>
+        <translation>Seleccionar operadores gráficos</translation>
     </message>
     <message>
         <source>TreeView Toolbar</source>
         <comment>TreeViewToolbar</comment>
-        <translation>Toolbar stromuobjektů</translation>
+        <translation>Barra de Herramientas de Vista de Arbol</translation>
     </message>
     <message>
         <source>Dynamic Toolbar</source>
         <comment>DynamicToolBar</comment>
-        <translation>Dynamický Toolbar</translation>
+        <translation>Barra de Herramientas Dinámica</translation>
     </message>
     <message>
         <source>Strike through</source>
         <comment>striketrough</comment>
-        <translation>Přeškrtnout</translation>
+        <translation>Ta&amp;char</translation>
     </message>
     <message>
         <source>Draw arrow</source>
         <comment>drawarrowe</comment>
-        <translation>Nakreslit šipku</translation>
+        <translation>Dibujar flecha</translation>
     </message>
 </context>
 <context>
     <name>gui::TreeItemPdf</name>
     <message>
         <source>Pages</source>
-        <translation>Stránky</translation>
+        <translation>Páginas</translation>
     </message>
     <message>
         <source>Outlines</source>
-        <translation>Outliny</translation>
+        <translation>Contornos</translation>
     </message>
 </context>
 <context>
     <name>gui::TreeWindow</name>
     <message>
         <source>Object</source>
-        <translation>Objekt</translation>
+        <translation>Objeto</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation>Data</translation>
+        <translation>Datos</translation>
     </message>
 </context>
 <context>
     <name>gui::Units</name>
     <message>
         <source>point</source>
-        <translation>bod</translation>
+        <translation>punto</translation>
     </message>
     <message>
         <source>inch</source>
-        <translation>palec</translation>
+        <translation>pulgada</translation>
     </message>
     <message>
         <source>inches</source>
-        <translation>palce</translation>
+        <translation>pulgadas</translation>
     </message>
     <message>
         <source>hands</source>
-        <translation>ruce</translation>
+        <translation>manos</translation>
     </message>
     <message>
         <source>hand</source>
-        <translation>ruka</translation>
+        <translation>mano</translation>
     </message>
     <message>
         <source>foot</source>
-        <translation>stopa</translation>
+        <translation>pie</translation>
     </message>
     <message>
         <source>feet</source>
-        <translation>stopy</translation>
+        <translation>pies</translation>
     </message>
     <message>
         <source>link</source>
-        <translation>článek</translation>
+        <translation>enlace</translation>
     </message>
     <message>
         <source>links</source>
-        <translation>články</translation>
+        <translation>enlaces</translation>
     </message>
     <message>
         <source>yard</source>
-        <translation>yard</translation>
+        <translation>yarda</translation>
     </message>
     <message>
         <source>yards</source>
-        <translation>yardy</translation>
+        <translation>yardas</translation>
     </message>
     <message>
         <source>rod</source>
-        <translation>prut</translation>
+        <translation>bara</translation>
     </message>
     <message>
         <source>rods</source>
-        <translation>pruty</translation>
+        <translation>baras</translation>
     </message>
     <message>
         <source>pole</source>
-        <translation>prut</translation>
+        <translation>pole</translation>
     </message>
     <message>
         <source>poles</source>
-        <translation>pruty</translation>
+        <translation>poles</translation>
     </message>
     <message>
         <source>perch</source>
-        <translation>prut</translation>
+        <translation>perch</translation>
     </message>
     <message>
         <source>perches</source>
-        <translation>pruty</translation>
+        <translation>perches</translation>
     </message>
     <message>
         <source>fathom</source>
-        <translation>sáh</translation>
+        <translation>braza</translation>
     </message>
     <message>
         <source>fathoms</source>
-        <translation>sáhy</translation>
+        <translation>brazas</translation>
     </message>
     <message>
         <source>chain</source>
-        <translation>řetěz</translation>
+        <translation>cadena</translation>
     </message>
     <message>
         <source>chains</source>
-        <translation>řetězy</translation>
+        <translation>cadenas</translation>
     </message>
     <message>
         <source>furlong</source>
-        <translation>brázda</translation>
+        <translation>furlong</translation>
     </message>
     <message>
         <source>furlongs</source>
-        <translation>brázdy</translation>
+        <translation>furlongs</translation>
     </message>
     <message>
         <source>cable</source>
-        <translation>kabel</translation>
+        <translation>cable</translation>
     </message>
     <message>
         <source>mile</source>
-        <translation>míle</translation>
+        <translation>milla</translation>
     </message>
     <message>
         <source>miles</source>
-        <translation>mil</translation>
+        <translation>millas</translation>
     </message>
     <message>
         <source>land</source>
-        <translation>legua</translation>
+        <translation>tierra</translation>
     </message>
     <message>
         <source>lands</source>
-        <translation>leguy</translation>
+        <translation>tierras</translation>
     </message>
     <message>
         <source>league</source>
@@ -2436,51 +2435,51 @@ Režim zvýraznění</translation>
     </message>
     <message>
         <source>leagues</source>
-        <translation>leguy</translation>
+        <translation>leguas</translation>
     </message>
     <message>
         <source>nautical mile</source>
-        <translation>námořní míle</translation>
+        <translation>milla náutica</translation>
     </message>
     <message>
         <source>nautical miles</source>
-        <translation>námořních mil</translation>
+        <translation>millas náuticas</translation>
     </message>
     <message>
         <source>pt : point</source>
-        <translation>pt : bod</translation>
+        <translation>pt : punto</translation>
     </message>
     <message>
         <source>in : inch</source>
-        <translation>in : palec</translation>
+        <translation>in : pulgada</translation>
     </message>
     <message>
         <source>hand : hand</source>
-        <translation>hand : ruka</translation>
+        <translation>hand : mano</translation>
     </message>
     <message>
         <source>ft : foot</source>
-        <translation>ft : stopa</translation>
+        <translation>ft : pie</translation>
     </message>
     <message>
         <source>li : link</source>
-        <translation>li : článek</translation>
+        <translation>li : enlace</translation>
     </message>
     <message>
         <source>yd : yard</source>
-        <translation>yd : yard</translation>
+        <translation>yd : yarda</translation>
     </message>
     <message>
         <source>rd : rod (pole, perch)</source>
-        <translation>rd: prut</translation>
+        <translation>rd: rod (pole, perch)</translation>
     </message>
     <message>
         <source>ch : chain</source>
-        <translation>ch : řetěz</translation>
+        <translation>ch : cadena</translation>
     </message>
     <message>
         <source>mi : mile</source>
-        <translation>mi : míle</translation>
+        <translation>mi : milla</translation>
     </message>
     <message>
         <source>land : land (league)</source>
@@ -2488,87 +2487,87 @@ Režim zvýraznění</translation>
     </message>
     <message>
         <source>m : meter</source>
-        <translation>m : metr</translation>
+        <translation>m : metro</translation>
     </message>
     <message>
         <source>Ym : yottameter</source>
-        <translation>Ym : yottametr</translation>
+        <translation>Ym : yottameter</translation>
     </message>
     <message>
         <source>Zm : zettameter</source>
-        <translation>Zm : zettametr</translation>
+        <translation>Zm : zettameter</translation>
     </message>
     <message>
         <source>Em : exameter</source>
-        <translation>Em : exametr</translation>
+        <translation>Em : exameter</translation>
     </message>
     <message>
         <source>Pm : petameter</source>
-        <translation>Pm : petametr</translation>
+        <translation>Pm : petameter</translation>
     </message>
     <message>
         <source>Tm : terameter</source>
-        <translation>Tm : terametr</translation>
+        <translation>Tm : terameter</translation>
     </message>
     <message>
         <source>Gm : gigameter</source>
-        <translation>Gm : gigametr</translation>
+        <translation>Gm : gigameter</translation>
     </message>
     <message>
         <source>Mm : megameter</source>
-        <translation>Mm : megametr</translation>
+        <translation>Mm : megameter</translation>
     </message>
     <message>
         <source>km : kilometer</source>
-        <translation>km : kilometr</translation>
+        <translation>km : kilometro</translation>
     </message>
     <message>
         <source>hm : hectometer</source>
-        <translation>hm : hektometr</translation>
+        <translation>hm : hectómetro</translation>
     </message>
     <message>
         <source>dam : decameter</source>
-        <translation>dam : dekametr</translation>
+        <translation>dam : decametro</translation>
     </message>
     <message>
         <source>dm : decimeter</source>
-        <translation>dm : decimetr</translation>
+        <translation>dm : decímetro</translation>
     </message>
     <message>
         <source>cm : centimeter</source>
-        <translation>cm : centimetr</translation>
+        <translation>cm : centímetro</translation>
     </message>
     <message>
         <source>mm : millimeter</source>
-        <translation>mm : milimetr</translation>
+        <translation>mm : milímetro</translation>
     </message>
     <message>
         <source>um : micrometer</source>
-        <translation>um : mikrometr</translation>
+        <translation>um : micrómetro</translation>
     </message>
     <message>
         <source>nm : nanometer</source>
-        <translation>nm : nanometr</translation>
+        <translation>nm : nanómetro</translation>
     </message>
     <message>
         <source>pm : picometer</source>
-        <translation>pm : pikometr</translation>
+        <translation>pm : picómetro</translation>
     </message>
     <message>
         <source>fm : femtometer</source>
-        <translation>fm : femtometr</translation>
+        <translation>fm : femtometer</translation>
     </message>
     <message>
         <source>am : attometer</source>
-        <translation>am : attometr</translation>
+        <translation>am : attometer</translation>
     </message>
     <message>
         <source>zm : zeptometer</source>
-        <translation>zm : zeptometr</translation>
+        <translation>zm : zeptometer</translation>
     </message>
     <message>
         <source>ym : yoctometer</source>
-        <translation>ym : yoctometr</translation>
+        <translation>ym : yoctometer</translation>
     </message>
     <message>
         <source>A : angstrom</source>
@@ -2576,43 +2575,43 @@ Režim zvýraznění</translation>
     </message>
     <message>
         <source>astronomical unit</source>
-        <translation>astronomická jednotka</translation>
+        <translation>unidad astronómica</translation>
     </message>
     <message>
         <source>astronomical units</source>
-        <translation>astronomické ednotky</translation>
+        <translation>unidades astronómicas</translation>
     </message>
     <message>
         <source>AU : astronomical unit</source>
-        <translation>AU : astronomická jednotka</translation>
+        <translation>AU : unidad astronómica</translation>
     </message>
     <message>
         <source>light year</source>
-        <translation>světelný rok</translation>
+        <translation>año luz</translation>
     </message>
     <message>
         <source>light years</source>
-        <translation>světelné roky</translation>
+        <translation>años luz</translation>
     </message>
     <message>
         <source>ly : light year</source>
-        <translation>ly : světelný rok</translation>
+        <translation>ly : año luz</translation>
     </message>
     <message>
         <source>parsec</source>
-        <translation>parsek</translation>
+        <translation>parsec</translation>
     </message>
     <message>
         <source>pc : parsec</source>
-        <translation>pc : parsek</translation>
+        <translation>pc : parsec</translation>
     </message>
     <message>
         <source>mil : milli-inch</source>
-        <translation>mil : mili-palec</translation>
+        <translation>mil : mili-pulgada</translation>
     </message>
     <message>
         <source>fm. : fathom</source>
-        <translation>fm. : sáh</translation>
+        <translation>fm. : braza</translation>
     </message>
     <message>
         <source>fur. : furlong</source>
@@ -2624,7 +2623,7 @@ Režim zvýraznění</translation>
     </message>
     <message>
         <source>n.m. : nautical mile</source>
-        <translation>n.m. : námořní míle</translation>
+        <translation>n.m. : milla náutica</translation>
     </message>
 </context>
 </TS>
