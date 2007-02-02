@@ -11,15 +11,15 @@ tests: all kernel-tests
 
 # kernel tests
 kernel-tests: kernel
-	cd kernel && qmake -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
+	cd kernel && $(QTDIR)/bin/qmake -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
 
 # PDF editor
 pdfedit: ../config.pro utils kernel xpdf qoutputdevices qsa
-	cd gui && qmake && make
+	cd gui && $(QTDIR)/bin/qmake && make
 
 # QOutputDevices
 qoutputdevices: xpdf config_xpdf_variables
-	cd kpdf-kde-3.3.2 && qmake && make staticlib
+	cd kpdf-kde-3.3.2 && $(QTDIR)/bin/qmake && make staticlib
 
 # Utils
 utils: xpdf
@@ -34,7 +34,7 @@ qsa/Makefile.qsa: qsa/qsa.pro
 
 # Kernel
 kernel: xpdf config_xpdf_variables utils
-	cd kernel && qmake && make staticlib
+	cd kernel && $(QTDIR)/bin/qmake && make staticlib
 
 # XPdf
 xpdf: xpdf_configure
