@@ -1,3 +1,12 @@
+/*                                                                              
+ * PDFedit - free program for PDF document manipulation.                        
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
+ *                                              Miroslav Jahoda,       
+ *                                              Jozef Misutka, 
+ *                                              Martin Petricek                                             
+ *
+ * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
+ */ 
 /** @file
  This class manages Menu, Toolbars and Shortcuts
  Menus, menu items, toolbars and toolbar items share the same namespace and often

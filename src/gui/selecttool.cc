@@ -1,3 +1,12 @@
+/*                                                                              
+ * PDFedit - free program for PDF document manipulation.                        
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
+ *                                              Miroslav Jahoda,       
+ *                                              Jozef Misutka, 
+ *                                              Martin Petricek                                             
+ *
+ * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
+ */ 
 /** @file
  SelectTool - Toolbutton with drop-down combobox with selectable items
  @author Martin Petricek

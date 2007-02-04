@@ -1,3 +1,12 @@
+/*                                                                              
+ * PDFedit - free program for PDF document manipulation.                        
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
+ *                                              Miroslav Jahoda,       
+ *                                              Jozef Misutka, 
+ *                                              Martin Petricek                                             
+ *
+ * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
+ */ 
 /** @file
  AddItemDialog - class representing dialog for adding new item to Dictionary/array
  Dialog does not block focus of main window and you can have multiple of them opened simultaneously (even for same Dict / Array)

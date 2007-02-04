@@ -1,3 +1,12 @@
+/*                                                                              
+ * PDFedit - free program for PDF document manipulation.                        
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
+ *                                              Miroslav Jahoda,       
+ *                                              Jozef Misutka, 
+ *                                              Martin Petricek                                             
+ *
+ * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
+ */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 /*
@@ -6,6 +15,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.79  2007/02/04 20:17:02  mstsxfx
+ * Common Licence comment for all cc and h files available in doc/licence_header
+ * file and its content to all cc and h files in src/{gui,kernel,utils}
+ * directories.
+ * Xpdf code, QSA and QOutputDevice code are not touched
+ *
  * Revision 1.78  2006/09/12 02:15:07  misuj1am
  *
  * -- bug #88, #75 fixed

@@ -1,3 +1,12 @@
+/*                                                                              
+ * PDFedit - free program for PDF document manipulation.                        
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
+ *                                              Miroslav Jahoda,       
+ *                                              Jozef Misutka, 
+ *                                              Martin Petricek                                             
+ *
+ * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
+ */ 
 #ifndef _OBJECTCOMPARATOR_H_
 #define _OBJECTCOMPARATOR_H_
 
@@ -8,6 +17,12 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.8  2007/02/04 20:17:03  mstsxfx
+ * Common Licence comment for all cc and h files available in doc/licence_header
+ * file and its content to all cc and h files in src/{gui,kernel,utils}
+ * directories.
+ * Xpdf code, QSA and QOutputDevice code are not touched
+ *
  * Revision 1.7  2006/04/27 17:44:16  hockm0bm
  * minor documentation update
  *
