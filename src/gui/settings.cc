@@ -127,7 +127,10 @@ void Settings::initSettings() {
  //Look in directory with the binary -> lowest priority
  if (!haveSettings) haveSettings=staticSet->tryLoad(appPath,CONFIG_FILE);
  if (!haveSettings) {
-  guiPrintDbg(debug::DBG_ERR,"No settings found - " << CONFIG_FILE);
+  //Main settings file not found
+  guiPrintDbg(debug::DBG_ERR,"Main configuration file not found. PDFedit is unlikely to start");
+  guiPrintDbg(debug::DBG_ERR,"Searched in: " << DATA_PATH << "/" << CONFIG_FILE);
+  guiPrintDbg(debug::DBG_ERR,"Searched in: " << appPath << "/" << CONFIG_FILE);
  }
  //Look in $HOME (or something like that, for example QT maps this to "Application Data" in windows)
  QString homeDir=QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR);

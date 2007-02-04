@@ -35,7 +35,9 @@ namespace {
 	//
 	// Pdfedit encoding class
 	//
-	
+	class PdfeditEncoding; //forward declaration
+	/** Single instance of PdfeditEncoding class */
+	PdfeditEncoding *encoding_instance=0;
 	/**
 	 * This class is used because of special pdf accented character encoding.
 	 */
@@ -71,8 +73,8 @@ namespace {
 		public:
 			static PdfeditEncoding* get ()
 			{ 
-				static PdfeditEncoding _instance;
-				return &_instance; 
+				if (!encoding_instance) encoding_instance=new PdfeditEncoding();
+				return encoding_instance; 
 			}
 
 			//

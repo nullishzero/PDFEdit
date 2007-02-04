@@ -44,11 +44,14 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  QGridLayout *l=new QGridLayout(this,2,2);
 
  //Text in about window
- QString info=QString("<big>")+tr("PDF editor for unix systems")+"</big><br><br>"+tr("Homepage")+" : http://pdfedit.petricek.net/";
- QString authors=QString("<b>")+tr("Project leader")+":</b><br>&nbsp; Martin Beran<br><b>"+tr("Authors")
-  +QString::fromUtf8(":</b><br>&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Mišutka<br>&nbsp; Martin Petříček<br>");
- QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1><br>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
-  info+"</td><td valign=\"bottom\">"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
+ QString info=QString("<big>")+tr("Free program for PDF document manipulation")+"</big><br><br>"
+  +tr("Homepage")+" : http://pdfedit.petricek.net/<br>"
+  +tr("Project page")+" : http://sourceforge.net/projects/pdfedit";
+
+ QString authors=QString("<b>Copyright (C) 2006, 2007 PDFedit team:</b><br>")
+  +QString::fromUtf8("&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Mišutka<br>&nbsp; Martin Petříček<br>");
+ QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
+  info+"<br><br>"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
  lb->setTextFormat(Qt::RichText);
 
  //Lower frame with Ok button

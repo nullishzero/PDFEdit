@@ -181,22 +181,28 @@ PageViewMode * PageViewModeFactory::create(	const QString & nameOfMode,
 void PageViewMode::movedSelectedObjects ( QPoint relativeMove )
 		{
 			if (relativeMove != QPoint(0,0)) {
+				//Return if script not defined
+				if (scriptFncAtMoveSelectedObjects.isNull()) return;
 				emit executeCommand ( scriptFncAtMoveSelectedObjects	.arg( relativeMove.x() )
-																		.arg( relativeMove.y() ) );
+											.arg( relativeMove.y() ) );
 			}
 		};
 void PageViewMode::resizedSelectedObjects ( int dleft, int dtop, int dright, int dbottom )
 		{
+			//Return if script not defined
+			if (scriptFncAtResizeSelectedObjects.isNull()) return;
 			emit executeCommand ( scriptFncAtResizeSelectedObjects	.arg( dleft )
-																	.arg( dtop )
-																	.arg( dright )
-																	.arg( dbottom ) );
+										.arg( dtop )
+										.arg( dright )
+										.arg( dbottom ) );
 		};
 
 void PageViewMode::mousePressLeftButton ( QMouseEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
 void PageViewMode::mouseReleaseLeftButton ( QMouseEvent * e, QPainter * /* p */, QWidget * /* w */ )
 		{
+			//Return if script not defined
+			if (scriptFncAtMouseRelease.isNull()) return;
 			emit executeCommand ( scriptFncAtMouseRelease	.arg( pressPosition.x() )
 															.arg( pressPosition.y() )
 															.arg( releasePosition.x() )

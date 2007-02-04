@@ -5,7 +5,7 @@ my $x=1;
 
 #Specific settings
 my $appname="pdfedit";
-my $longname="PDF Editor";
+my $longname="PDFedit";
 my $desc="Editor for PDF files";
 
 #version

@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.59)
 define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion),[]))
-AC_INIT([PDF Editor], PDFEDIT_VERSION, [BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
+AC_INIT([PDFedit], PDFEDIT_VERSION, [BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
 AC_CONFIG_SRCDIR([src/gui/base.cc])
 AC_CONFIG_HEADER([src/utils/aconf.h])
 

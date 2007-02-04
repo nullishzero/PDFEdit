@@ -1,3 +1,6 @@
+2007-02-04 PDF Editor 0.2.5
+	* Minor bugfixes
+
 2007-01-28 PDF Editor 0.2.4
 	* 64bit compilability fix
 	* Fixed bug with units precision, 1234pt showing up as 1.23e+3pt

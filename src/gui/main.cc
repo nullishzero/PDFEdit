@@ -137,7 +137,7 @@ QApplication *qApp;
  @param w Editor window
 */
 void runCmdScripts(PdfEditWindow *w) {
- //Run scripts given on commandline in given PDF editor window
+ //Run scripts given on commandline in given PDFedit window
  for (unsigned int i=0;i<runScript.count();i++) {
   QString typ=runScript[i];
   guiPrintDbg(debug::DBG_DBG, "Script cmdline " << typ << " " << runScriptParam[i]);

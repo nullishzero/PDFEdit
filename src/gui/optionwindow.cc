@@ -37,7 +37,6 @@
 #include <qlayout.h>
 #include "version.h"
 #include "settings.h"
-#include "option.h"
 #include "menu.h"
 #include "toolbar.h"
 #include "config.h"

@@ -1,4 +1,4 @@
-//PDF Editor init script
+//PDFedit init script
 //This script will be run at start, or on creation of new window
 //Each window have its own scripting context
 
@@ -86,7 +86,7 @@ setPredefs('linewidth','0.5,1,1.5,2,3,4,8,16');
 setNumber('linewidth',1);//default value
 
 //Print welcome message
-print("PDF Editor "+version());
+print("PDFedit "+version());
 onSelectMode_AllObjects();
 checkMenus();
 
