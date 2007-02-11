@@ -92,10 +92,10 @@ QMAKE_CLEAN += .obj/menugenerator.o
 INCLUDEPATH += ../qsa/src/qsa ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
 
 #must be specified, otherwise namespace debug will clash with debug() in QT
-QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE
+QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions
 
 
-QMAKE_CXXFLAGS_DEBUG += -O0 
+QMAKE_CXXFLAGS_DEBUG += -O0 -fexceptions 
 
 #debug information
 QMAKE_CXXFLAGS += -g
