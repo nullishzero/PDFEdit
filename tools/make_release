@@ -2,6 +2,7 @@
 
 #run in sufficiently empty directory!
 
+umask 022
 if [ -e tarball ]
 then
 echo directory tarball already exist
