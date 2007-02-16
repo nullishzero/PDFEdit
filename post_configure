@@ -25,3 +25,22 @@ else
   echo >$CONFIG_FLAGS xpdf_configure_flags=
  fi
 fi
+
+#Try to pick a good qmake (from qt3)
+
+#try $QTDIR/bin/qmake
+good_qmake='$(QTDIR)/bin/qmake'
+is_qmake_3=`$QTDIR/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+if [ -z "$is_qmake_3" ]
+then
+ #try qmake
+ good_qmake='qmake'
+ is_qmake_3=`qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+ if [ -z "$is_qmake_3" ]
+ then
+  #try debian-like qmake-qt3
+  good_qmake="qmake-qt3"
+ fi
+fi
+
+echo >>$CONFIG_FLAGS "QMAKE=$good_qmake"
