@@ -17,6 +17,7 @@
 #include <qframe.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qsaglobal.h>
 #include "version.h"
 #include "util.h"
 #include "iconcache.h"
@@ -44,14 +45,17 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  QGridLayout *l=new QGridLayout(this,2,2);
 
  //Text in about window
- QString info=QString("<big>")+tr("Free program for PDF document manipulation")+"</big><br><br>"
+ QString info=QString("<big><b>")+tr("Free program for PDF document manipulation")+"</b></big><br><br>"
   +tr("Homepage")+" : http://pdfedit.petricek.net/<br>"
   +tr("Project page")+" : http://sourceforge.net/projects/pdfedit";
 
  QString authors=QString("<b>Copyright (C) 2006, 2007 PDFedit team:</b><br>")
   +QString::fromUtf8("&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Mišutka<br>&nbsp; Martin Petříček<br>");
- QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1>"+tr("Compiled")+": "+COMPILE_TIME+"<br><br>"+
-  info+"<br><br>"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
+
+ QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1>"+tr("Compiled")+": "+COMPILE_TIME+
+  +"<br>"+tr("Using Qt %1").arg(QT_VERSION_STR)+
+  +tr(", QSA %1").arg(QSA_VERSION_STRING)+
+  "<br><br>"+info+"<br><br>"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
  lb->setTextFormat(Qt::RichText);
 
  //Lower frame with Ok button
