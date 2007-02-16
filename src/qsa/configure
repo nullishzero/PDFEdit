@@ -55,10 +55,13 @@ fi
 
 find src -name Makefile -exec rm {} \;
 
+#Use the correct qmake
+. ../Makefile.flags
+
 # build 2nd stage configure tool
 echo "Building 2nd stage configure"
 cd configure2
-qmake "${CONF}" && make > /dev/null
+$QMAKE "${CONF}" && make > /dev/null
 if [ $? -gt 0 -o ! -x configure2 ]; then
     exit 1
 fi
