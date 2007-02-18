@@ -28,6 +28,8 @@ fi
 
 #Try to pick a good qmake (from qt3)
 
+#TODO: /usr/lib/qt3/bin/qmake (cygwin)
+
 #try $QTDIR/bin/qmake
 good_qmake='$(QTDIR)/bin/qmake'
 is_qmake_3=`$QTDIR/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`

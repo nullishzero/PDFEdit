@@ -15,3 +15,9 @@ cvs export -D now pdfedit
 cd pdfedit
 ./makedist
 cd ..
+
+echo Do not forget to tag CVS:
+echo Use:
+echo " cvs tag RELEASE_X_Y_Z"
+echo "in cvs root dir"
+

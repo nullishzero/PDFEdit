@@ -1166,18 +1166,6 @@ Data: %3
 <context>
     <name>gui::AboutWindow</name>
     <message>
-        <source>PDF editor for unix systems</source>
-        <translation>PDF editor pro unix systémy</translation>
-    </message>
-    <message>
-        <source>Project leader</source>
-        <translation>Vedoucí projektu</translation>
-    </message>
-    <message>
-        <source>Authors</source>
-        <translation>Autoři</translation>
-    </message>
-    <message>
         <source>About program</source>
         <translation>O programu</translation>
     </message>
@@ -1192,6 +1180,22 @@ Data: %3
     <message>
         <source>Homepage</source>
         <translation>Stránka</translation>
+    </message>
+    <message>
+        <source>Free program for PDF document manipulation</source>
+        <translation>Svobodný program pro manipulaci s PDF dokumenty</translation>
+    </message>
+    <message>
+        <source>Project page</source>
+        <translation>Stránka projektu</translation>
+    </message>
+    <message>
+        <source>Using Qt %1</source>
+        <translation>Použito Qt %1</translation>
+    </message>
+    <message>
+        <source>, QSA %1</source>
+        <translation>, QSA %1</translation>
     </message>
 </context>
 <context>

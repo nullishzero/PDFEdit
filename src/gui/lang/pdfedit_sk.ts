@@ -1163,19 +1163,7 @@ Data: %3
 <context>
     <name>gui::AboutWindow</name>
     <message>
-        <source>PDF editor for unix systems</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Homepage</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Project leader</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Authors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1188,6 +1176,22 @@ Data: %3
     </message>
     <message>
         <source>This program is distributed under terms of GNU GPL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free program for PDF document manipulation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Using Qt %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, QSA %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

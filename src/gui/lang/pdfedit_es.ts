@@ -1167,15 +1167,15 @@ Datos: %3
     <name>gui::AboutWindow</name>
     <message>
         <source>PDF editor for unix systems</source>
-        <translation>PDF editor pro para sistemas unix</translation>
+        <translation type="obsolete">PDF editor pro para sistemas unix</translation>
     </message>
     <message>
         <source>Project leader</source>
-        <translation>Líder del proyecto</translation>
+        <translation type="obsolete">Líder del proyecto</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation>Autores</translation>
+        <translation type="obsolete">Autores</translation>
     </message>
     <message>
         <source>About program</source>
@@ -1192,6 +1192,22 @@ Datos: %3
     <message>
         <source>Homepage</source>
         <translation>Homepage</translation>
+    </message>
+    <message>
+        <source>Free program for PDF document manipulation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Using Qt %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, QSA %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
