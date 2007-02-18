@@ -28,20 +28,29 @@ fi
 
 #Try to pick a good qmake (from qt3)
 
-#TODO: /usr/lib/qt3/bin/qmake (cygwin)
-
-#try $QTDIR/bin/qmake
-good_qmake='$(QTDIR)/bin/qmake'
-is_qmake_3=`$QTDIR/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+#This one is mainly because of cygwin
+good_qmake='/usr/lib/qt3/bin/qmake'
+is_qmake_3=`/usr/lib/qt3/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
 if [ -z "$is_qmake_3" ]
 then
- #try qmake
- good_qmake='qmake'
- is_qmake_3=`qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+ #try $QTDIR/bin/qmake
+ good_qmake='$(QTDIR)/bin/qmake'
+ is_qmake_3=`$QTDIR/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
  if [ -z "$is_qmake_3" ]
  then
-  #try debian-like qmake-qt3
-  good_qmake="qmake-qt3"
+  #try qmake
+  good_qmake='qmake'
+  is_qmake_3=`qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+  if [ -z "$is_qmake_3" ]
+  then
+   #try debian-like qmake-qt3
+   good_qmake="qmake-qt3"
+   is_qmake_3=`qmake-qt3 --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+   if [ -z "$is_qmake_3" ]
+   then
+    echo "Failed to find qmake from QT3!"
+   fi
+  fi
  fi
 fi
 

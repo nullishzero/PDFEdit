@@ -65,10 +65,10 @@ SOURCES += textoutputengines.cc textoutputentities.cc textoutputbuilder.cc
 #
 # Kernel special settings
 #
-#QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -ansi -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
-#QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings  -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function
+#QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
+#QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings -pedantic -Wno-unused-variable -O0 -Wunused-function
 QMAKE_CXXFLAGS += -fexceptions
-QMAKE_CXXFLAGS_DEBUG += -fexceptions -W -Wall -Wconversion -Wwrite-strings  -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function -Wwrite-strings -Wunused-macros 
+QMAKE_CXXFLAGS_DEBUG += -fexceptions -W -Wall -Wconversion -Wwrite-strings -pedantic -Wno-unused-variable -O0 -Wunused-function -Wwrite-strings -Wunused-macros 
 
 #
 # Static lib
