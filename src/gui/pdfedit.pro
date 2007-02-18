@@ -79,13 +79,14 @@ INSTALLS += pdfedit_manual
 
 #too complicated for small utility.
 menugenerator.target     = menugenerator
-menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o .obj/util.o .obj/staticsettings.o $(SUBLIBS) -L$(QTDIR)/lib -L../utils -L/usr/X11R6/lib -lutils -lqt-mt -lXext -lX11 -lm
+menugenerator.commands   = $(LINK) $(LFLAGS) -o menugenerator .obj/menugenerator.o .obj/util.o .obj/staticsettings.o $(LIBS)
 menugenerator.depends    = .obj/menugenerator.o .obj/util.o .obj/staticsettings.o
 menugenerator_o.target   = .obj/menugenerator.o
 menugenerator_o.commands = $(CXX) -c $(CXXFLAGS) $(INCPATH) -o .obj/menugenerator.o menugenerator.cc
 menugenerator_o.depends  = menugenerator.cc menugenerator.h
 QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
-POST_TARGETDEPS = menugenerator
+#It is not necessary to build this utility for installation. Commented out
+#POST_TARGETDEPS = menugenerator
 QMAKE_CLEAN += .obj/menugenerator.o
 
 #include headers from kernel and used by kernel
