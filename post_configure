@@ -30,7 +30,10 @@ fi
 
 #This one is mainly because of cygwin
 good_qmake='/usr/lib/qt3/bin/qmake'
-is_qmake_3=`/usr/lib/qt3/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+if [ -x $good_qmake ]
+then
+	is_qmake_3=`/usr/lib/qt3/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+fi
 if [ -z "$is_qmake_3" ]
 then
  #try $QTDIR/bin/qmake
