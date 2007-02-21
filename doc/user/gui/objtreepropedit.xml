@@ -42,7 +42,7 @@
 		  <caption><para>Object tree, Stream, Selection and Property editor</para></caption>
       </mediaobject>
 
-	<sect1>
+	<sect1 id="purpose_and_usage">
 	<title>Purpose and usage</title>
 	<para>
 	  The purpose of these windows is to enable complete control over pdf objects and structure of a pdf file. 
@@ -60,7 +60,7 @@
 	</para>
 	</sect1>
 
-    <sect1>
+    <sect1 id="object_tree_start_objects">
 	<title>Object tree start objects</title>
 	<para>
 	There are three main objects in the object tree. 
@@ -73,7 +73,7 @@
 	shortcuts for special objects somewhere deep in Catalog object.
 	</para>
 	
-	    <sect2>
+	    <sect2 id="obj_catalog">
 		<title>Catalog</title>
 		<para>
 		Root object of all objects.
@@ -84,7 +84,7 @@
 		</para>
 		</sect2>	
 
-	    <sect2>
+	    <sect2 id="obj_pages">
 		<title>Pages</title>
 		<para>
 		Set of all pages and it is a shortcut to all page dictionaries.
@@ -95,7 +95,7 @@
 		</para>
 		</sect2>
 		
-		<sect2>
+		<sect2 id="obj_outlines">
 		<title>Outlines</title>
 		<para>
 		List of all outlines with the ability to edit the title.
@@ -108,7 +108,7 @@
 
 	</sect1>
 
-	<sect1>
+	<sect1 id="adding_deleting_objects">
 		<title>Adding and deleting objects</title>
 		<para>
 		This feature is for very advanced users. Object tree can be used to to add and delete objects, stream and selection 
@@ -116,7 +116,7 @@
 		because in most cases the result would be an invalid content stream.
 		</para>
 		
-		<sect2>
+		<sect2 id="creating_pdf_files">
 		<title>Creating pdf files</title>
 		<para>
 		The adding object feature can be used to create completely new pdf files. With the help of scripting, PdfEditor can 
@@ -127,7 +127,7 @@
 		</sect2>
 	</sect1>
 
-	<sect1>
+	<sect1 id="controls">
 	<title>Controls</title>
 	<para>
 	There are two ways how to to open, close and select objects. We can use either mouse or arrows. Up/down is used to 
@@ -158,7 +158,7 @@
 	</para>
 	</sect1>
 
-	<sect1>
+	<sect1 id="multiselect">
 		<title>Multiselect</title>
 		<para>
 		We can use multiselect to select more objects and to perform specific action on all of them. We can use this
@@ -170,7 +170,7 @@
 		</para>
 	</sect1>
 
-	<sect1>
+	<sect1 id="object_tree">
 	<title>Object tree</title>
 	<para>
 	There are many special objects. You can specify which of them to display and which not. And whether crucial objects
@@ -188,7 +188,7 @@
 
 	</para>
 
-		<sect2>
+		<sect2 id="property_mode">
 		<title>Property mode</title>
 		<para>
 		Many pdf objects are compulsory or must contain required entries or have specified values. Incompetent manipulation
@@ -215,7 +215,7 @@
 		</sect2>
 
 
-		<sect2>
+		<sect2 id="adding_deleting_properties">
 		<title>Adding and deleting properties</title>
 		<para>
 		 Adding and deleting objects in the object tree is possible.
@@ -225,12 +225,12 @@
 	
 	</sect1>
 
-	<sect1>
+	<sect1 id="property_editor">
 	<title>Property editor</title>
 	<para>
 	</para>
 
-		<sect2>
+		<sect2 id="edit_properties">
 		<title>Editing properties</title>
 		<para>
 		Each pdf object has simple value or set of values which can be changed. Almost all pdf operators have
@@ -260,7 +260,7 @@
 
 	</sect1>
 
-	<sect1>
+	<sect1 id="selection">
 	<title>Selection</title>
 	<para>
 	PdfEditor allows selecting specific operators easily using selection modes. There are two main object selection modes namely
@@ -268,7 +268,7 @@
 	manually select more objects. Selection is very useful when performing an action on many objects (e.g. deleting...)
 	</para>
 
-		<sect2>
+		<sect2 id="text_selection">
 		<title>Text selection</title>
 		<para>
 		When this mode is selected we can select only text objects. 
@@ -284,7 +284,7 @@
 		</para>
 		</sect2>
 
-		<sect2>
+		<sect2 id="graphical_selection">
 		<title>Graphical objects selection</title>
 		<para>
 		When this mode is selected we can select only graphical objects. Many pdf creators are putting strange invisible 
@@ -296,7 +296,7 @@
 		</para>
 		</sect2>
 
-		<sect2>
+		<sect2 id="deleting objects">
 		<title>Deleting objects</title>
 		<para>
 		 Press <keycap>Delete</keycap> key to delete selected objects.
@@ -306,7 +306,7 @@
 
 	</sect1>
 
-	<sect1>
+	<sect1 id="stream">
 	<title>Stream</title>
 
 	<para>
@@ -319,7 +319,7 @@
 		  </mediaobject>
 	</para>
 
-		<sect2>
+		<sect2 id="operator_description">
 		<title>Operator description</title>
 		<para>
 		As mentioned above, operators control what is displayed on a page. For advanced editing, it is crucial to be able
@@ -335,7 +335,7 @@
 		</para>
 		</sect2>
 
-		<sect2>
+		<sect2 id="operator_modes">
 		<title>Operator modes</title>
 		<para>
 		There many operators but only few worth changing manually. To allow fast search of these operators, operator modes were
@@ -355,7 +355,7 @@
 		</para>
 		</sect2>
 	
-		<sect2>
+		<sect2 id="add_delete_properties">
 		<title>Adding and deleting properties</title>
 		<para>
 		Only deleting is possible.

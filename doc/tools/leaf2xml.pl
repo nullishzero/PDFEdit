@@ -32,6 +32,27 @@ my %tagx=();
 $tagx{'c'}='code';
 $tagx{'e'}='emphasis';
 
+sub munge {
+ my $par=shift;
+ $par=~s/[^a-zA-Z0-9]/_/g;
+ return $par;
+}
+
+my %taken_sections=();
+
+sub uniq {
+ my $par=shift;
+ if ($taken_sections{$par}) {
+  my $i=0;
+  while ($taken_sections{$par.'_'.$i}) {
+   $i++;
+  }
+  $par=$par.'_'.$i;
+ }
+ $taken_sections{$par}=1;
+ return $par;
+}
+
 sub tag {
  my $tg=shift;
  my $param=shift;
@@ -44,7 +65,9 @@ sub tag {
   if ($1 eq 'chapter') {$t=close_tags('.*'); }
   else {my $n=$2;$t=close_tags('sect['.$n.'-9]'); $tg=~s/^section/sect/;}
   add_tag($tg);
-  return $t.'<'.$tg.'><title>'.$param.'</title>';
+  my $idsect='p_'.munge($param);
+ $idsect=uniq($idsect);
+  return $t.'<'.$tg.' id="'.$idsect.'"><title>'.$param.'</title>';
  }
  if ($tg=~/^(c|e)(\{?)$/)	{
   my $cn=$tagx{$1};

@@ -33,7 +33,7 @@
 			Content stream can be changed in two ways. Either by 
 			ccontentstream methods or by requesting raw operator and changing 
 			its operands. The third way is to add/delete whole stream.
-			This problem is solved by <xref linkend="kernel_part_ccontentstream_observers"/>.		
+			This problem is solved by Observers <!-- Target of link is commented out <xref linkend="kernel_part_ccontentstream_observers"/> -->.
 		</para>
 		</sect2>
 

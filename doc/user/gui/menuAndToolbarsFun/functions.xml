@@ -1,4 +1,4 @@
-<sect1>
+<sect1 id="toolbars_menus_functions">
 		<title>Functions in menu and toolbars</title>
 		<para>
 				Following functions are called from menu and toolbars and provide
@@ -41,7 +41,7 @@
 				&gui_onclickFunctions_selectText;
 				&gui_onclickFunctions_selectAnnotations;
 		</sect2>
-		<sect2>
+		<sect2 id="drawing_adding_new">
 				<title>Drawing and adding new objects</title>
 				&gui_onclickFunctions_drawLine;
 				&gui_onclickFunctions_drawRect;

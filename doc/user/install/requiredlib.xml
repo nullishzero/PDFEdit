@@ -1,4 +1,4 @@
- <section>
+ <section id="required_libraries">
   <title>Required libraries</title>
   <para>
    These libraries are required to build and install PDF Editor:

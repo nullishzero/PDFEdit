@@ -1,4 +1,4 @@
-<sect1>
+<sect1 id="editor_tab">
 	<title>Editor tab</title>
 	<para>
 			<mediaobject>
@@ -11,34 +11,34 @@
 			</mediaobject>
 	</para>
 
-	<sect2>
+	<sect2 id="advanced_mode">
 		<title>Advanced mode</title>
 		Open files in advanced mode, allowing some more advanced,
 		but also potentially more destructive changes to be made to the file.
 	</sect2>
-	<sect2>
+	<sect2 id="show_hidden">
 		<title>Show hidden properties</title>
 		If checked, properties that are marked as hidden by configuration in mode.conf
 		will be shown.
 	</sect2>
-	<sect2>
+	<sect2 id="edit_read_only">
 		<title>Allow editing read-only properties</title>
 		If checked, properties that are marked as read-only by configuration in mode.conf
 		will be fully editable.
 	</sect2>
-	<sect2>
+	<sect2 id="remember_path">
 		<title>Remember path of last opened/saved file</title>
 		If checked, editor will remember path of last opened or saved file
 		and when opening or saving file, the dialog will start in that directory.
 		If unchecked, current directory is used.
 	</sect2>
-	<sect2>
+	<sect2 id="len_units">
 		<title>Length units</title>
 		This option allow to choose prefered length units.
 		These will be used for showing coordinates in the preview window and also
 		in some other places, like when editing size of the page.
 	</sect2>
-	<sect2>
+	<sect2 id="char_enconding">
 		<title>Character encoding</title>
 		Specify character encoding to use when editing text properties
 	</sect2>

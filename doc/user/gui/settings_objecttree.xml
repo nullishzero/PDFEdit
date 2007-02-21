@@ -1,4 +1,4 @@
-<sect1>
+<sect1 id="object_tree_tab">
 	<title>Object tree tab</title>
 	<para>
 			<mediaobject>
@@ -12,39 +12,39 @@
 		In this tab you can specify what items will be visible in the object treeview.
 	</para>
 
-	<sect2>
+	<sect2 id="document_dictionary">
 			<title>Document dictionary</title>
 			This option toggles showwing of main document dictionary (called "document catalog") in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="object_dictionaries">
 			<title>Object dictionaries</title>
 			This option toggles showwing of dictionaries of various objects (like pages) in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="graphic objects">
 			<title>Graphic objects</title>
 			This option toggles showwing of graphic objects in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="annotations">
 			<title>Annotations</title>
 			This option toggles showwing of outlines in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="pages">
 			<title>Pages</title>
 			This option toggles showwing of outlines in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="outlines">
 			<title>Outlines</title>
 			This option toggles showwing of outlines in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="content_streams">
 			<title>Content streams</title>
 			This option toggles showwing of content streams in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="simple_objects">
 			<title>Simple objects</title>
 			This option toggles showwing of simple objects (int,bool,real,string,name) in tree.
 	</sect2>
-	<sect2>
+	<sect2 id="sort_dict_items_alpha">
 			<title>Sort dictionary items alphabetically</title>
 			This specify whether items in dictionaries should be sorted alphabetically (checked)
 			or in order they appear in PDF file (unchecked)

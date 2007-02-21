@@ -16,7 +16,7 @@
  </chapter>
  &scripts_callbacks;
  &scripts_objects;
- <chapter>
+ <chapter id="object_types_common">
   <title>Object types (common and PDF objects)</title>
 <!--TYPE: qsannotation.h -->
 <!--TYPE: qsarray.h -->
@@ -32,7 +32,7 @@
 <!--TYPE: qspdfoperatorstack.h -->
 <!--TYPE: qsstream.h -->
  </chapter>
- <chapter>
+ <chapter id="object_types_gui">
   <title>Object types (GUI objects)</title>
   <para>
    These object types do not have direct corespondence to any object inside PDF document,

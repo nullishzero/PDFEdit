@@ -25,26 +25,26 @@
    they are used after commandline init script.
    After these scripts finish execution, the editor terminates.
   </para>
-  <sect1>
+  <sect1 id="opt__help">
    <title>Option <option>--help</option></title>
    <para>
     Print brief help about commandline options to STDOUT and exit
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt__version">
    <title>Option <option>--version</option></title>
    <para>
     Print version of editor to STDOUT and exit
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt_d">
    <title>Option <option>-d (n)</option></title>
    <para>
     Set verbosity of debugging messages reported by editor.
     Only messages below or equal level specified in parameter will be shown, default is debugging level 1.
     Also, any of symbolic constants defined below (case insensitive), or starting part of them may be given instead of
     corresponding number.
-   <table frame="none">
+   <table frame="none" id="table_debug_levels">
     <title>Explanation of debugging levels</title>
     <tgroup cols="3"><tbody>
      <row><entry>0</entry><entry>PANIC</entry><entry>Critical errors</entry></row>
@@ -59,14 +59,14 @@
     Debugging messages are sent to STDERR.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt_console">
    <title>Option <option>-console</option></title>
    <para>
     Run in commandline mode.
     No editor windows are opened and commandline init script is executed.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt_script">
    <title>Option <option>-script (filename)</option></title>
    <para>
     Run script with given filename.
@@ -74,25 +74,25 @@
     If not found, look for the script in current directory.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt_run">
    <title>Option <option>-run (filename)</option></title>
    <para>
     Run script with given filename, but unlike <option>-script</option> option, script path is not searched.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt_eval">
    <title>Option <option>-eval (code)</option></title>
    <para>
     Evaluate given script code
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt_s">
    <title>Option <option>-s (filename)</option></title>
    <para>
     This is just shortcut for <option>-console -script (filename)</option>
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="opt__">
    <title>Option <option>--</option></title>
    <para>
     Stop processing options. Any further parameters after this one are treated as filenames.

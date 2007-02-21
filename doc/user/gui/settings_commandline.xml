@@ -15,7 +15,7 @@
 			</mediaobject>
 	</para>
 
-	<sect2>
+	<sect2 id="show_retvalue">
 		<title>Show return value of executed script in console</title>
 		<para>
 				If this setting is checked, command console will print return value of last command
@@ -23,14 +23,14 @@
 				parameter of function <function>print()</function>.
 		</para>
 	</sect2>
-	<sect2>
+	<sect2 id="show_retvalue_complex">
 		<title>Show return value also for complex type</title>
 		<para>
 				This will toggle displaying the return value for complex types, such as arrays,
 				which are likely to produce lot of output, as arrays tend to be large.
 		</para>
 	</sect2>
-	<sect2>
+	<sect2 id="show_error_event">
 		<title>Show errors from event handlers</title>
 		<para>
 				Check this if you want to see error from callback handlers.
@@ -39,7 +39,7 @@
 				lot of output.
 		</para>
 	</sect2>
-	<sect2>
+	<sect2 id="show_cmdedit">
 		<title>Show command editor</title>
 		<para>
 				If set, command editor is shown.
@@ -54,13 +54,13 @@
 				</mediaobject>
 		</para>
 	</sect2>
-	<sect2>
+	<sect2 id="show_cmdline">
 		<title>Show command line</title>
 		<para>
 				If set, history is displayed in a combobox. This is useful when older history commands are needed.
 		</para>
 	</sect2>
-	<sect2>
+	<sect2 id="editable_cmdline">
 		<title>Editable command line</title>
 		<para>
 				If set, editable command line is shown in history combobox.
@@ -68,7 +68,7 @@
 				(set command editor	hidden).
 		</para>
 	</sect2>
-	<sect2>
+	<sect2 id="history_option">
 		<title>History option</title>
 		<para>
 				If set, history is saved and loaded to the command line. You can specify the maximum number 

@@ -1,4 +1,4 @@
- <chapter>
+ <chapter id="objects_exported_to_scripting">
   <title>Objects exported to scripting</title>
   <sect1 id="settings">
    <title>settings</title>
@@ -31,7 +31,7 @@
      Some internal variables (all of them beginning with $PDFEDIT_) can override corresponding environment variables.
      This function will use the internal variable in expansion if both internal and environment variables exist.
     </note>
-    <table frame="none">
+    <table frame="none" id="internal_vars_list">
      <title>List of internal variables</title>
      <tgroup cols="2"><tbody>
       <row>
@@ -63,7 +63,7 @@
     to disk on application exit, but this can flush them to disk explicitly.
    </sect2>
   </sect1>
-  <sect1>
+  <sect1 id="document_related">
    <title>Document-related objects in scripting</title>
    <para>
    These objects are set to reflect currently edited document

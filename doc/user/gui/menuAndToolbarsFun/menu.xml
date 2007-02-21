@@ -1,4 +1,4 @@
-<sect1>
+<sect1 id="menu">
 
 	&gui_menu_file;
 	&gui_menu_view;
