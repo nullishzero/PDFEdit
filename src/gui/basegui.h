@@ -329,7 +329,7 @@ public slots: //This will be all exported to scripting
   Return first selected tree item.
   Set internal selected item pointer to first selected item
   For getting other selected tree items (in case more than one is selected, repeat calling nextSelectedItem() until NULL is returned (no more items)
-  <example>
+  <example id="getting_through_list_of_selected_tree_items">
    <title>Getting through list of selected tree items</title>
    <programlisting>
     treeItem=firstSelectedItem();<br/>
@@ -354,7 +354,7 @@ public slots: //This will be all exported to scripting
   Return object held in first selected tree item.
   Set internal selected item pointer to first selected item
   For getting other selected tree items (in case more than one is selected, repeat calling nextSelected() until NULL is returned (no more items)
-  <example>
+  <example id="getting_through_list_of_selected_items">
    <title>Getting through list of selected items</title>
    <programlisting>
     treeObject=firstSelected();<br/>
