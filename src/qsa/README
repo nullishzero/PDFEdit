@@ -1,0 +1,10 @@
+Differences of included build against stock QSA 1.1.4:
+
+* Removed examples, documentation and similar unnecessary stuff
+* Renamed library from qsa to qsa_pdfedit to avoid collisions
+* Modified the build process to allow using different qmake
+  (on some systems using "qmake" will invoke Qt4 qmake, while
+  Qt3 qmake is under different name and/or path)
+* Removed mention of commercial license - since this instance
+  of QSA is inserted into GPL'ed project, it's now GPL only.
+* Fixed "make distclean" not cleaning everything it should.
