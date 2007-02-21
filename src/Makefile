@@ -59,7 +59,11 @@ clean:
 	cd utils && make clean
 	cd xpdf && make clean
 	cd kpdf-kde-3.3.2 && make clean
-	rm config_xpdf_variables
+	rm -f config_xpdf_variables
+	rm -f kpdf-kde-3.3.2/Makefile 
+	rm -f kernel/Makefile 
+	rm -f gui/Makefile gui/menugenerator gui/pdfedit
+
 
 # Dist Cleanup
 distclean:
@@ -69,7 +73,11 @@ distclean:
 	cd utils && make distclean
 	cd xpdf && make distclean
 	cd kpdf-kde-3.3.2 && make distclean
-	rm config_xpdf_variables
+	rm -f config_xpdf_variables
+	rm -f kpdf-kde-3.3.2/Makefile 
+	rm -f kernel/Makefile 
+	rm -f utils/aconf.h
+	rm -f gui/config.h gui/Makefile gui/menugenerator gui/pdfedit
 
 # Installation
 install:

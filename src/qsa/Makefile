@@ -25,7 +25,9 @@ clean:
 	$(MAKE) -f Makefile.qsa clean
 
 distclean:
+	rm -rf .moc .obj configure2/.moc configure2/.obj src/qsa/.obj src/qsa/.moc 
 	rm -f configure2/configure2 src/qsa/qsconfig.h configure2/Makefile
+	rm -f Makefile.qsa .qmake.cache lib/libqsa_pdfedit.prl lib/libqsa_pdfedit.a src/Makefile src/qsa/Makefile tools/designer/editor/preferences.h tools/designer/editor/preferences.cpp
 	$(MAKE) -f Makefile.qsa distclean
 
 staticlib: Makefile.qsa

@@ -32,11 +32,13 @@ src: doc-dist
 clean:
 	cd doc/user && make clean
 	cd src && make clean
+	rm -f config.log
 
 #dist cleanup
 distclean:
 	cd doc/user && make clean
 	cd src && make distclean
+	rm -f Makefile config.status config.log config.pro config.pro.in src/Makefile.flags
 
 #re-generate programmer documentation
 regen:

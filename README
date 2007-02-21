@@ -1,4 +1,4 @@
-PDF Editor readme
+PDFedit readme
 -----------------
 
 For more detailed documentation, look into "doc" subdirectory.
@@ -27,4 +27,3 @@ Installation
 
  Example:
   INSTALL_ROOT=/chroot/pdfedit make install
-
