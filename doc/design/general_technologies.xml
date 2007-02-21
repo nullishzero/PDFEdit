@@ -7,9 +7,9 @@
 		standardized and generally accepted and free. Their licence policy is
 		compatible with <xref linkend="gpl" />
 	</para>
-	<sect1>
+	<sect1 id="used_libs">
 		<title>Used Libraries</title>
-		<sect2>
+		<sect2 id="boost">
 			<title>Boost libraries</title>
 			<para>
 				Boost is free, highly portable and de facto standard set of libraries
@@ -35,7 +35,7 @@
 				 
 			</para>
 		</sect2>
-		<sect2>
+		<sect2 id="stl">
 			<title>STL - standard template library</title>
 			<para>
 				STL is C++ standard set of libraries which provides container,
@@ -47,7 +47,7 @@
 				see &stl_link_index;.
 			</para>
 		</sect2>
-		<sect2>
+		<sect2 id="qt">
 			<title>Qt framework</title>
 			<para>
 				Qt is a multiplatform C++ GUI toolkit created and maintained by 
@@ -59,7 +59,7 @@
 			</para>
 		</sect2>
 	</sect1>
-	<sect1>
+	<sect1 id="cppunit">
 		<title>CPP Unit automatic testing</title>
 		<para>
 			&cppunit_link_index; is a C++ unit testing framework. We are using 
@@ -78,7 +78,7 @@
 			Each test suit consists of test cases which test particular behavior
 			of tested class.
 		</para>
-		<sect2>
+		<sect2 id="test_class">
 			<title>Test class description</title>
 			<para>
 				Each test class should inherit from CPP unit TextFixture class.
@@ -164,9 +164,9 @@
 			</para>
 		</sect2>
 	</sect1>
-	<sect1>
+	<sect1 id="documentation">
 		<title>Documentation</title>
-		<sect2>
+		<sect2 id="code_and_script">
 			<title>Code and script documentation</title>
 			<para>
 				We are using &doxygen_link_index; documentation tool. This means
@@ -224,7 +224,7 @@
 				file. The scripting API is documented in User documentation Appendix.
 			</para>
 		</sect2>
-		<sect2>
+		<sect2 id="design_and_user">
 			<title>Design and user documentation</title>
 			<para>
 				Design and user manual are written in &docbook_link_index;

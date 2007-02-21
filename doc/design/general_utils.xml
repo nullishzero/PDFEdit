@@ -10,7 +10,7 @@
 		compiled, they are collected in one <emphasis>libutils.a</emphasis>
 		statuc library.
 	</para>
-	<sect1>
+	<sect1 id="delinearizator">
 		<title>Delinearizator</title>
 		<para>
 			Delinearizator is class which provides simple interface for pdf
@@ -248,7 +248,7 @@
 			default.
 		</para>
 	</sect1>
-	<sect1>
+	<sect1 id="utils_iterator">
 		<title>Iterator</title>
 		<para>
 			Iterator is a specific implementation of <xref linkend="iterator"/>.

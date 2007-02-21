@@ -7,7 +7,7 @@
 <part id="gui_part">
 <title>GUI design description</title>
 
- <section>
+ <section id="gui_part_intro">
   <para>
    This part describes some basic principles of graphical user interface.
    Described is menu settings system, used to manage menu and toolbar items, 

@@ -195,7 +195,7 @@
 	  current revision and so on).
       </para>
      </sect3>
-     <sect3>
+     <sect3 id="implementation_changes">
       <title>Implementation changes</title>
       <para>
 	  XRef's getNumObjects returned the size of allocated entries array.
@@ -246,7 +246,7 @@
 	  parameter.
       </para>	     
      </sect3>
-     <sect3>
+     <sect3 id="dict_new_features">
       <title>New features</title>
       <para>
 	  Dict as complex object stored in general Object data keeper has to 
@@ -478,7 +478,7 @@
 		</mediaobject>
 
 	 </para>
-     <sect3>
+     <sect3 id="parser_new_features">
 	  <title>New features</title>
       <para>
 	  Content streams can consist of more streams. Decoding and then concatenating of these streams must form a valid 

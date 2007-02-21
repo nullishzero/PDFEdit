@@ -1,4 +1,4 @@
- <chapter>
+ <chapter id="tree_view">
   <title>Object tree view</title>
   <para>
    Structure of PDF can be represented as a tree, and as such, it is shown in the treeview.
@@ -31,7 +31,7 @@
     </para></listitem>
    </itemizedlist>
   </para>
-  <sect1>
+  <sect1 id="MultiTreeWindow">
    <title>MultiTreeWindow class</title>
    <para>
     Class providing tree view of PDF objects.
@@ -52,7 +52,7 @@
     Single tree in the multi tree window is managed by TreeWindow class
    </para>
   </sect1>  
-  <sect1>
+  <sect1 id="TreeWindow">
    <title>TreeWindow class</title>
    <para>
     Class providing tree view of PDF objects, having one object at root and showing its children.
@@ -66,7 +66,7 @@
     Also, it simplifies some things.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="TreeItemAbstract">
    <title>TreeItemAbstract class</title>
    <para>
     This class is inherited from basic QListViewItem, providing some extra functionality
@@ -77,7 +77,7 @@
     The methods needed to fill tree with child items (if any) are purely virtual (abstract).
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="TreeItemAbstract.subclass">
    <title>TreeItemAbstract subclasses</title>
    <para>
     <itemizedlist>

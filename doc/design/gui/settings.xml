@@ -1,4 +1,4 @@
- <chapter>
+ <chapter id="settings">
   <title>Settings system</title>
   <para>
    PDF Editor uses <classname>QSettings</classname> and <classname>StaticSettings</classname>
@@ -22,7 +22,7 @@
    This way the GUI can maintain consistent state with stored settings, independend of way in which
    the settings is changed, whether it is in option dialog, or by some script.
   </para>
-  <sect1>
+  <sect1 id="static_settings">
    <title>Static (system) Settings</title>
    <para>
     Static settings are stored in file <filename>pdfeditrc</filename>.
@@ -33,7 +33,7 @@
     <classname>StaticSettings</classname> class handles reading of this file.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="settings_format">
    <title>File format for static settings</title>
    <para>
     The format is very similar to the format of "ini file", but have been improved
@@ -57,7 +57,7 @@
     <varname>settings/part1/name</varname> and its value would be <parameter>MyName</parameter>
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="dynamic_settings">
    <title>Dynamic (user) Settings</title>
    <para>
     Static settings are stored in file <filename>pdfeditrc</filename>
@@ -72,7 +72,7 @@
     or if requested by script, for example by calling <code>settings.flush()</code>.
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="user_settings">
    <title>File format for user settings</title>
    <para>
     The format is basically an "ini file". You can not insert any comments in the file

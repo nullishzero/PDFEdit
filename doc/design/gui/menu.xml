@@ -1,4 +1,4 @@
- <chapter>
+ <chapter id="menu_toolbar_sys">
   <title>PDF Editor menu and toolbar system</title>
   <para>
    Configuration of menus and toolbars are in the main configuration file <filename>pdfeditrc</filename>,
@@ -10,14 +10,14 @@
    In home directory in file <filename>.pdfedit/pdfeditrc</filename> are user settings. User can redefine any key
    in any section, thus he have possibility to modify editor menus as he deem appropriate.
   </para>
-  <sect1>
+  <sect1 id="menu_toolbar">
    <title>Menus and Toolbars</title>
    <para>
     Menus are stored in <structname>gui</structname> section. Each menu, menu item, toolbar or toolbar item have
     a unique name (all these share common namespace) - also, menu items often can be used as toolbar items (as long
     as they have icon) and toolbar items can be used as menu items (as long as they have text).
    </para>
-   <sect2>
+   <sect2 id="list_item">
     <title>Lists and items</title>
     <para>
      Each item is either a "list", "label" or "item".
@@ -90,7 +90,7 @@
      Label is valid only in toolbar, menu can not contain a label.
     </formalpara>
    </sect2>
-   <sect2>
+   <sect2 id="special_item">
     <title>Special toolbar items</title>
     <para>
      Toolbar can also contain some special items,
@@ -103,7 +103,7 @@
      followed by space, followed by the parameter value. For example,
      <userinput>_color_tool fg</userinput> specify <varname>_color_tool</varname> item
      with parameter <parameter>fg</parameter>.
-     <table frame="none">
+     <table frame="none" id="list_special_item">
       <title>List of special toolbar items</title>
       <tgroup cols="2">
        <thead>
@@ -157,7 +157,7 @@
     </para>
    </sect2>
   </sect1>
-  <sect1>
+  <sect1 id="icons">
    <title>Icons</title>
    Path where to look for icons is defined in <varname>path</varname> section of configuration file.
    Key <varname>icon</varname> specifies semiciolon separated list of path, which will be searched
@@ -168,7 +168,7 @@
    Recommended way for user to install his own icons is doing it in by copying them to <filename>.pdfedit/icon</filename>
    subdirectory in his home directory.
   </sect1>  
-  <sect1>
+  <sect1 id="icon themes">
    <title>Icon themes</title>
    <para>
     PDF Editor support icon themes.
