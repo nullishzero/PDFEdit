@@ -102,7 +102,8 @@ SelectionModeToolbar	= list Selection mode Toolbar,selectAllObjects,selectGraphi
 MainToolbar		= list Main Toolbar,fload,fsave,opts,closew,hideCmd
   # look in menu for definition of items
 
-PageToolbar		= list Page Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage,reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,zoom_out,_zoom_tool,zoom_in,-,pageMoveUp,pageMoveDown,pageRemove
+PageToolbar		= list Page Toolbar reloadpage,-,rot-90,rot90,editPageMediaBox,addSystemFont,setpagetm,pagetext,-,zoom_out,_zoom_tool,zoom_in,-,pageMoveUp,pageMoveDown,pageRemove
+PageRiderToolbar	= list PageRider Toolbar,firstpage,prevpage,_page_tool,nextpage,lastpage
   # _page_tool is special toolbar item to show/change current page
   # _zoom_tool is special toolbar item to show/change current zoom level
   # look in menu for definition of rest of items
@@ -156,7 +157,7 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 
 [gui]
 #Which toolbars are available for use
-toolbars	= MainToolbar,PageToolbar,DrawToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar,TreeViewToolbar,DynamicToolBar
+toolbars	= MainToolbar,PageToolbar,DrawToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar,TreeViewToolbar,PageRiderToolbar,DynamicToolBar
 
 [gui/PageSpace]
 #Settings affecting preview window
