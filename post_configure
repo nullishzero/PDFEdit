@@ -74,4 +74,4 @@ then
  echo "Failed to find qmake from QT3!"
 fi
 
-echo >>$CONFIG_FLAGS "GQMAKE=$GOOD_QMAKE3"
+echo >>$CONFIG_FLAGS "QMAKE=$GOOD_QMAKE3"
