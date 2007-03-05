@@ -30,7 +30,7 @@
 		specialized class are available yet, because they are not required by
 		project in this moment).
 	</para>
-	<sect2>
+	<sect2 id="instance_creation">
 		<title>Instance creation</title>
 		<para>
 			Instance can be created in 2 different ways. 

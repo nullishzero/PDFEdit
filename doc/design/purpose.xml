@@ -1,6 +1,6 @@
 <!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
 -->
-<part>
+<part id="document_purpose">
     <title>Document purpose</title>
 	<para>
 		This document describes design and internals of PDFedit program intended 
@@ -11,7 +11,7 @@
 	    should start with this document and then follow with 
 	    automatically generated doxygen programming documentation.
 	</para>
-	<sect1>
+	<sect1 id="document_organization">
 	    <title>Document organization</title>
 	    <para>
 		Document itself is divided into several parts:
@@ -25,7 +25,7 @@
 		    <listitem>
 			<xref linkend="kernel_part"/> which focuses on 
 			detailed kernel architecture and interface for gui 
-			descibtion.
+			description.
 		    </listitem>
 		    <listitem>
 			<xref linkend="gui_part"/> which describes gui

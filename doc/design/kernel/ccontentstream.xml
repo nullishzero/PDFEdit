@@ -13,7 +13,7 @@
 		graphical state. 
 		</para>
 		
-		<sect2>
+		<sect2 id="observing_ccontentstream">
 		<title>Observing ccontentstream</title>
 		<para>
 			Generally, changing anything visible on a page means changing 
@@ -27,7 +27,7 @@
 		</para>
 		</sect2>
 		 
-		<sect2>
+		<sect2 id="changing_ccontentstream">
 		<title>Changing ccontentstream</title>
 		<para>
 			Content stream can be changed in two ways. Either by 
@@ -37,7 +37,7 @@
 		</para>
 		</sect2>
 
-		<sect2>
+		<sect2 id="storing_pdf_operators">
 		<title>Storing pdf operators</title>
 		<para>
 			Operators are processed sequentially and there are many situations
@@ -61,7 +61,7 @@
 		</para>
 		</sect2>
 
-		<sect2>
+		<sect2 id="changing_pdf_operators">
 		<title>Changing pdf operators</title>
 		<para>
 			Deleting and inserting an operator is not easy because it is stored

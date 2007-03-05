@@ -17,7 +17,7 @@
 
   </para>
 
-  <sect2>
+  <sect2 id="cobjects_general_description">
 	  <title>General description</title>
 	  <para>
 	  CObjects are objects in pdfedit which represent objects in pdf file.
@@ -54,7 +54,7 @@
 		</mediaobject>
 	 </para>
 	 
-  <sect3>
+  <sect3 id="cobjects_base_class">
 	  <title>Base class</title>
 	  <para>
                   Every object is derived from one base class - <classname>IProperty</classname>. This base class is a hanger which can be used to 
@@ -64,14 +64,14 @@
 	  </para>
   </sect3>
 
-  <sect3>
+  <sect3 id="simple_objects">
 	  <title>Simple objects</title>
 	  <para>
 	  Simple objects are very similar. They share behaviour and because of this also method names (only value keeper is different). They are represented by one class
           using c++ templates. One template class (<classname>CObjectSimple</classname>), parameterized by object type, represents all 7 types of simple objects.
 	  </para>
   </sect3>
-  <sect3>
+  <sect3 id="complex_objects">
 	  <title>Complex objects</title>
 	  <para>
 	  It is more difficult with complex types. Each complex type must contain references to its children which are 
@@ -88,7 +88,7 @@
 	  Pdf objects can be referenced using ids which are similar to pointers. This brings many problems. One of them is the
 	  impossibility to delete such objects. Many of the problems are automatically handled by smart pointers. 
 	  </para>
-		 <sect4>
+		 <sect4 id="array_dict">
 			 <title>Array and dictionary</title>
 			  <para>
                                   <classname>CArray</classname> stores its children in a simple container indexed by position. <classname>CDict</classname> stores its children 
@@ -97,7 +97,7 @@
 			  </para>
 		 </sect4>
 
-		 <sect4>
+		 <sect4 id="streams">
 			 <title>Streams</title>
 			  <para>
 			  Streams are the most complicated from all pdf objects. The problem is that xpdf can decode pdf files but it can 
@@ -114,7 +114,7 @@
 			  unchanged object as read from a pdf file. At the time of writing this not all reversed filters have been implemented.
 			  </para>
 
-			  <sect5>
+			  <sect5 id="accessing_streams">
 			  <title>Accessing streams</title>
 			  <para>
 			  We access streams using <xref linkend="adapter" /> implementing open/close interface. We need
@@ -127,7 +127,7 @@
  </sect2>
 
 
-<sect2>
+<sect2 id="changing_objects">
 	 <title>Changing objects</title>
 	  <para>
                   Every object can be obtained from <classname>CXref</classname> (see <xref linkend="kernel_part_cxref"/>) when knowing its reference number and then changed using iproperty interface.

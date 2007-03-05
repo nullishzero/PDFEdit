@@ -1,6 +1,4 @@
-<!-- vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80 
--->
-<sect1>
+<sect1 id="observers_in_cobjects">
 <title>Observers in cobjects</title>
 <para>
   Generic observer mechanism described in <xref linkend="general_utils_observers"/> 
@@ -18,7 +16,7 @@
 </para>
 </sect1>
 
-<sect1>
+<sect1 id="observers_in_cpdf">
 <title>Observers in CPdf</title>
 <para>
   CPdf class as PDF file maintainer uses observers for synchronization
@@ -33,7 +31,7 @@
   <note>Property tree doesn't know the way how it was changed.</note>
 </para>
 
-<sect2>
+<sect2 id="page_tree_synchronization">
 <title>Page tree synchronization</title>
 <para>
      Page tree, as mentiont above, can be changed from property site of 
@@ -93,9 +91,9 @@
 </sect2>
 </sect1>
 
-<sect1>
+<sect1 id="observer_cpage">
 	<title>Observers in CPage</title>
-	<sect2>
+	<sect2 id="observer_for_annotation">
 		<title>Observer for annotation</title>
 		<para>
 			CPage stores all CAnnotation instance from its Annots array in 

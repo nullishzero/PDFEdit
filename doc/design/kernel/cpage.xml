@@ -16,7 +16,7 @@
 		is on a page (text, pictures, graphics ...). 
 	</para>
 
-	<sect2>
+	<sect2 id="observing_cpage">
 		<title>Observing cpage</title>
 		Generally, changing an object can result in many other changes. 
 		Objects often depend on other objects. Changing a page property 
@@ -30,7 +30,7 @@
 		An object can be notified if cpage changes.
 	</sect2>
 
-	<sect2>
+	<sect2 id="changing_cpage">
 		<title>Changing cpage</title>
 		Page dictionary can be changed in two ways. Either by cpage methods or 
 		by requesting raw dictionary by its reference number. If we do not 
@@ -42,13 +42,13 @@
 		or by cobject.
 	</sect2>
 
-	<sect2>
+	<sect2 id="changing_page_contents">
 		<title>Changing page contents</title>
 		Any change to a visible part of a page are delegated to content stream 
 		object (<xref linkend="kernel_part_ccontentstream"/>).
 	</sect2>
 
-	<sect2>
+	<sect2 id="displaying_page">
 		<title>Displaying page</title>
 		Xpdf has the best displaying engine of all tested viewers. All calls
 		to display methods are delegated to this engine. When displaying a page 
@@ -58,7 +58,7 @@
 		into an output device. Finally it draws the page into supplied device.
 	</sect2>
 
-	<sect2>
+	<sect2 id="objects_on_page">
 		<title>Objects on a page</title>
 		<para>
 		Everything on a page is in its content stream(s). 
@@ -68,7 +68,7 @@
 		be used to order all objects into a structure which can be easily 
 		searched. This enables effective selection of only some objects.
 		</para>
-		<sect3>
+		<sect3 id="text_on_page">
 			<title>Text on a page</title>
 			<para>
 				Pdf specification does not force pdf converters to keep text 
@@ -80,7 +80,7 @@
 				We use xpdf text engine to extract, search text.
 			</para>
 		</sect3>
-		<sect3>
+		<sect3 id="fonts_on_page">
 			<title>Fonts on a page</title>
 			<para>
 				Pdf file can refer either to extern system fonts which are 

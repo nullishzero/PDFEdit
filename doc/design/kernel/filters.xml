@@ -12,7 +12,7 @@
   It is up to the viewer how it handles an unknown filter. 
   </para>
 
- <sect2><title>Xpdf filters</title>
+ <sect2 id="xpdf_filters"><title>Xpdf filters</title>
   <para>Xpdf viewer implements all decoding filters from pdf specification v1.5. However it
   does not implement any encoding filters (it does not need them). 
   
@@ -34,7 +34,7 @@
   </para>
  </sect2>
  
-  <sect2><title>Encoding filter design</title>
+  <sect2 id="encoding_filter_design"><title>Encoding filter design</title>
   <para>
   The idea behind filtering streams is quite simple and common so we use boost 
   filtering iostreams which give us a very nice filtering input/output concept. 

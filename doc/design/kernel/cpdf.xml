@@ -24,7 +24,7 @@
 	  which enables just objects fetching - almost same interface as Xpdf 
 	  <classname>XRef</classname> class).
   </para>
-  <sect2>
+  <sect2 id="instance_life_cycle">
     <title>Instance life cycle</title>
     <para>
 		Instance of CPdf can be create only by <classname>getInstance</classname>
@@ -34,7 +34,7 @@
 		lifetime (between creation and close).
     </para>
   </sect2>
-  <sect2>
+  <sect2 id="cpdf_modes">
     <title>CPdf modes</title>
     <para>
         Each document may be opened in one of several modes. Each controls
@@ -45,7 +45,7 @@
         upon document.
     </para>
   </sect2>
-  <sect2>
+  <sect2 id="properties_chaning">
     <title>Properties changing and revision handling</title>
     <para>
 		All changes to the document are done using
@@ -74,7 +74,7 @@
 		the rest to <classname>XRefWriter</classname>
     </para>
   </sect2>
-  <sect2>
+  <sect2 id="high_level_objects">
     <title>Provided high level objects</title>
     <para>
         CPdf provides high level objects maintaining some specialized part

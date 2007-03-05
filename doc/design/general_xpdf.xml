@@ -115,7 +115,7 @@
 	  Parser and Lexer classes to parse file stream content to Object.
 	 </para> 
 		 
-     <sect3>
+     <sect3 id="xref_design_changes">
       <title>Design changes</title>
 	  <para>
 		  In first XRef had to be prepared for transparent wrapper usage (see
@@ -148,7 +148,7 @@
 	  such internal state change anytime during XRef instance's life.
       </para>
      </sect3>
-     <sect3>
+     <sect3 id="xref_new_features">
       <title>New features</title>
       <para>
 		  XRefWriter (see <xref linkend="kernel_part_xrefwriter"/>) (descendant of CXref class which inherits directly from XRef) 
@@ -195,7 +195,7 @@
 	  current revision and so on).
       </para>
      </sect3>
-     <sect3 id="implementation_changes">
+     <sect3 id="xref_implementation_changes">
       <title>Implementation changes</title>
       <para>
 	  XRef's getNumObjects returned the size of allocated entries array.
@@ -228,7 +228,7 @@
 		 value type holding association of objects with their names (key, 
 		 value pair where key is name object and value is Object instance).
 	 </para>
-     <sect3>
+     <sect3 id="dict_design_changes">
       <title>Design changes</title>
       <para>
 	  DictEntry used as entry (key, value pair association) kept value
@@ -287,7 +287,7 @@
 		XRef class reads data from stream or <xref linkend="content_stream"/> 
 		object is based on stream.
 	 </para>
-     <sect3>
+     <sect3 id="stream_design_changes">
       <title>Design changes</title>
       <para>
 	  Stream is base class for both normal streams represented by 
@@ -328,7 +328,7 @@
 	  <caption><para>Stream hierarchy</para></caption>
       </mediaobject>
      </sect3>
-     <sect3>
+     <sect3 id="stream_new_features">
       <title>New features</title>
       <para>
 		 	Stream object as one of complext value data type which is stored in

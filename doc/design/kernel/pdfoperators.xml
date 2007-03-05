@@ -9,7 +9,7 @@
 	  If no content stream is avaliable (or is empty) the approperiate page is empty. 
   </para>
   
- <sect2><title>PdfOperators</title>
+ <sect2 id="pdfoperators"><title>PdfOperators</title>
   <para>
   Content stream consists of operators and their operands. Operators can be
   either simple or composite objects. The requirement for processing operators sequentially
@@ -26,7 +26,7 @@
   </para>
   </sect2>
 
- <sect2><title>Changing pdf operators</title>
+ <sect2 id="changing_pdf_operators"><title>Changing pdf operators</title>
  <para>
   Changing the visible object properties means wrap those objects into other objects. Object can depend on previous
   objects. We need to be able to iterate backwards.
@@ -66,7 +66,7 @@
 	specific iterator can be added easily. 
     </para>
 
-	<sect2>
+	<sect2 id="PdfOperatorIterator">
 	<title>PdfOperatorIterator</title>
 	<para>
 	Pdf operator iterator is a bidirectional iterator over PdfOperator objects.
@@ -79,7 +79,7 @@
 	</para>
 	</sect2>
 	
-	<sect2>
+	<sect2 id="extending_iterator">
 	<title>Extending iterator</title>
 	<para>
 	Basic iterator class implements one Template method. Specific iterators are created by

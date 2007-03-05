@@ -19,7 +19,7 @@
 		code is just copied from xpdf.
         </para>
 
-		<sect2>
+		<sect2 id="obtaining_operator_info">
 		<title>Obtaining information after every operator</title>
 		<para>
 		Each pdf operator has its function which alters the graphical state appropriately. The mechanism
@@ -36,7 +36,7 @@
 		</mediaobject>
 		</para>
 		
-			 <sect3>
+			 <sect3 id="setting_operator_bounding_boxes">
 			 <title>Setting operator bounding boxes</title>
 			 <para>
 			 Kernel supplies a special functor to the stateupdater, which gets called after every operation 

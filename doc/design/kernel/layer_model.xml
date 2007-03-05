@@ -30,7 +30,7 @@
   </para>
   <sect1 id="kernel_3_layer_model">
     <title>3 layer model</title>
-    <sect2>
+    <sect2 id="lowest_layer">
      <title>The lowest layer</title>
      <para>
         Cross reference table is mantained by XRef class in xpdf code. This 
@@ -55,7 +55,7 @@
 		<xref linkend="general_xpdf_changes"/>).
      </para>
     </sect2>
-    <sect2>
+    <sect2 id="middle_layer">>
      <title>The middle layer</title>
      <para>
 		 Second (middle) layer of model is formed by CXref (see <xref linkend="kernel_part_cxref"/>) 
@@ -112,7 +112,7 @@
         in paranoid mode).
      </para>
     </sect2> 
-    <sect2>
+    <sect2 id="highest_layer">
      <title>The highest layer</title>
      <para>
 		 Highest layer is represented by <xref linkend="kernel_part_xrefwriter"/> 
@@ -133,7 +133,7 @@
 	</mediaobject>
    </para>
   </sect1>
-  <sect1>
+  <sect1 id="document_saving">
    <title>Document saving</title>
    <para>
         As it was mantioned above, PDF format supports changes in document in so 
@@ -146,7 +146,7 @@
         doesn't thing about some revisions. If each save created it would lead to 
         mess with horrible number of referencies without any meaning.
    </para>
-   <sect2>
+   <sect2 id="revision_saving">
     <title>Revision saving</title>
     <para>
         XRefWriter provides save functionality with flag. This flag sais how data
@@ -175,7 +175,7 @@
         it is explicitly said.
     </para>
    </sect2>
-   <sect2>
+   <sect2 id="content_writing">
     <title>Content writing and IPdfWriter</title>
     <para>
         XRefWriter uses abstract IPdfWriter class to write changed content when
@@ -188,7 +188,7 @@
 		version 1.5, see <xref linkend="crossref_table"/>).
     </para>
    </sect2>
-   <sect2>
+   <sect2 id="document_cloning">
     <title>Document cloning</title>
     <para>
         To be able to effectively solve problem with PDF disability to branch 
@@ -205,7 +205,7 @@
     </para>
    </sect2>
   </sect1>
-  <sect1>
+  <sect1 id="linearized_pdf_documents">
    <title>Linearized pdf documents</title>
    <para>
         All previously mentioned functionality depends on <emphasis>incremental
