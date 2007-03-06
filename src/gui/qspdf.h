@@ -26,8 +26,8 @@ using namespace pdfobjects;
 
 /*=
  This type of object represents entire document.
- Note to page manipulation - page number start from number 1,
- number of last page is equal to count of pages
+ Note to page manipulation - page numbers start from number 1 (not from zero as some programmers may expect),
+ number of last page is equal to count of pages.
  */
 /** \brief QObject wrapper around CPdf */
 class QSPdf : public QSCObject {
@@ -65,12 +65,12 @@ public slots:
  /*-
   Save document to disk under original name
   If newRevision is true, create new revision while saving.
-  Return true if saved succesfully, false if failed to save because of any reason
+  Return true if saved successfully, false if failed to save because of any reason
  */
  bool save(bool newRevision=false);
- /*- Get document dictionary */
+ /*- Get document dictionary (object catalog) */
  QSDict* getDictionary();
- /*- Remove page with given number from document */
+ /*- Remove page with given number from document. */
  void removePage(int position);
  /*-
    Get position of given page in document or -1 in case of error
@@ -83,16 +83,16 @@ public slots:
  /*- Insert given page in document, at given position. Return inserted page. */
  QSPage* insertPage(QSPage* page, int position);
  QSPage* insertPage(QObject* page, int position);
- /*- Get Page, given its page number. */
+ /*- Return page from document, given its page number. */
  QSPage* getPage(int position);
- /*- Get first page in document. */
+ /*- Return first page in document. */
  QSPage* getFirstPage();
- /*- Get last page in document. */
+ /*- Return last page in document. */
  QSPage* getLastPage();
- /*- Get next page in document, relative to given page. */
+ /*- Return next page in document, relative to specified page. */
  QSPage* getNextPage(QSPage* page);
  QSPage* getNextPage(QObject* page);
- /*- Get previous page in document, relative to given page. */
+ /*- Return previous page in document, relative to specified page. */
  QSPage* getPrevPage(QSPage* page);
  QSPage* getPrevPage(QObject* page);
  /*- Return true, if there is next page in document for given page. */
@@ -101,14 +101,14 @@ public slots:
  /*- Return true, if there is previous page in document for given page. */
  bool hasPrevPage(QSPage* page);
  bool hasPrevPage(QObject* page);
- /*- Return number of available revisions */
+ /*- Return number of available revisions in document */
  int getRevisionsCount();
  /*- Return number of currently active revisions */
  int getActualRevision();
- /* Check validity of specified reference. Return true if it is valid */
+ /* Check validity of specified reference. Return true the number and generation number is a valid reference, false otherwise */
  bool referenceValid(int valueNum,int valueGen);
 private:
- /** Object held in class*/
+ /** Pointer to object held in class*/
  CPdf *obj;
  /** Destructive flag - if the PDF file may be closed with the unloadPdf() function */
  bool destructive;

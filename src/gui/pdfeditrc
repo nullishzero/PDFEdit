@@ -41,11 +41,12 @@
 MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,helpmenu
 
   #File submenu
-  filemenu		= list &File,fload,fsave,fsavecopy,fsaverev,-,neww,closew,-,quit
+  filemenu		= list &File,fload,fsave,fsavecopy,fsaverev,fsaveastext,-,neww,closew,-,quit
     fload		= item &Open...		 , func_load()		,F3	, load.png
     fsave		= item &Save		 , func_save()		,F2	, save.png	 ,need_document
     fsaverev		= item Save new &revision, func_saverev()	,	, save.png	 ,need_document
     fsavecopy		= item Save &copy...	 , func_savecopy()	,	, save.png	 ,need_document
+    fsaveastext		= item Save as text...   , func_saveastext()	,	, save.png	 ,need_document
     neww		= item New &Window	 , newwindow()		,Ctrl+N	, new_window.png
     closew		= item Close Window	 , closewindow		,	, close.png
     quit		= item &Quit		 , quit

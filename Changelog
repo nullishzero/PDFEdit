@@ -3,6 +3,7 @@
 	* post_configure tries to find correct qmake
 	* modified makefiles to properly clean stuff with make clean/make distclean
 	  (thanks to Varun Hiremath for patch)
+	* Added "save as text" feature
 	* Minor bugfixes
 
 2007-02-04 PDF Editor 0.2.5

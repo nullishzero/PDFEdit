@@ -59,6 +59,27 @@ function func_load() {
  }
 }
 
+/** Save all text from document to single file */
+function save_as_text(filename) {
+ var of=new File(filename);
+ of.open(File.WriteOnly);
+ pages=document.getPageCount();
+ for (i=1;i<=pages;i++) {
+  pg=document.getPage(i);
+  text=pg.getText();  
+  of.write(text);
+  of.write("\n");
+ }
+ of.close();
+}
+
+/** Callback when selection mode is changed to draw new arrow */
+function func_saveastext() {
+ name=FileDialog.getSaveFileName("*.txt",tr("Save as text file"));
+ if (name==undefined) return;
+ save_as_text(name);
+}
+
 /** close current file and create a new one (action from menu/toolbar) */
 function func_new() {
  closeFile(true);
