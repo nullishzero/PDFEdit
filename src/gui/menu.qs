@@ -71,6 +71,7 @@ function save_as_text(filename) {
   of.write("\n");
  }
  of.close();
+ print(tr("Text saved to %1").arg(filename));
 }
 
 /** Callback when selection mode is changed to draw new arrow */

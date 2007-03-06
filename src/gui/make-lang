@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Update language files specified in projectfile according to sources
-./menugenerator -trans
+./menugenerator -trans || exit 1
 
 # process countable items localization
 grep 'countString.*".*".*".*"' *.cc |perl -e '
@@ -19,3 +19,6 @@ grep "tr(" scripts/d*.qs *.qs | ./trans-qs.pl >>.menu-trans.h
 
 lupdate pdfedit.pro -noobsolete
 lrelease pdfedit.pro
+
+#generate template translation file
+lupdate pdfedit.lang -noobsolete

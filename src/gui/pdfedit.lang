@@ -1,0 +1,5 @@
+# Dummy "project file" used to generate translation template
+
+include(pdfedit.pro)
+
+TRANSLATIONS = lang/pdfedit_xx.ts

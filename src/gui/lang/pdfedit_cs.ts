@@ -1055,6 +1055,14 @@ Data: %3
         <source>xml files (*.xml)</source>
         <translation>xml soubory (*.xml)</translation>
     </message>
+    <message>
+        <source>Save as text file</source>
+        <translation>Uložit jako textový soubor</translation>
+    </message>
+    <message>
+        <source>Text saved to %1</source>
+        <translation>Text uložen do %1</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -2276,7 +2284,7 @@ Režim zvýraznění</translation>
     <message>
         <source>TreeView Toolbar</source>
         <comment>TreeViewToolbar</comment>
-        <translation>Toolbar stromuobjektů</translation>
+        <translation>Toolbar stromu objektů</translation>
     </message>
     <message>
         <source>Dynamic Toolbar</source>
@@ -2292,6 +2300,16 @@ Režim zvýraznění</translation>
         <source>Draw arrow</source>
         <comment>drawarrowe</comment>
         <translation>Nakreslit šipku</translation>
+    </message>
+    <message>
+        <source>PageRider Toolbar</source>
+        <comment>PageRiderToolbar</comment>
+        <translation>Toolbar navigace stránek</translation>
+    </message>
+    <message>
+        <source>Save as text...</source>
+        <comment>fsaveastext</comment>
+        <translation>Uložit jako text...</translation>
     </message>
 </context>
 <context>

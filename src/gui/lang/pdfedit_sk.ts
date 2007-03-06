@@ -1052,6 +1052,14 @@ Data: %3
         <source>xml files (*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Save as text file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -2286,6 +2294,16 @@ Data: %3
     <message>
         <source>Draw arrow</source>
         <comment>drawarrowe</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PageRider Toolbar</source>
+        <comment>PageRiderToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as text...</source>
+        <comment>fsaveastext</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
