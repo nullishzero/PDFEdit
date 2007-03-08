@@ -149,7 +149,11 @@ public slots: //This will be all exported to scripting
   If file selected in dialog already exists, user is asked to confirm overwriting before returing its name.
  */
  QString fileSaveDialog(const QString &oldName=QString::null);
- QString fileSaveDialogXml (const QString &oldName=QString::null);
+ /*-
+  Invokes "save file" dialog for XML file and return selected filename, or NULL if dialog was cancelled.
+  If file selected in dialog already exists, user is asked to confirm overwriting before returing its name.
+ */
+ QString fileSaveDialogXml(const QString &oldName=QString::null);
  /*-
   Get color from color picker with given name.
   Returns false if the color picker does not exist.

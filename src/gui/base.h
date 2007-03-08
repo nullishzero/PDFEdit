@@ -86,14 +86,10 @@ public slots: //This will be all exported to scripting
  /*-
   Tries to delinearize PDF, reading from input file and writing delinearized result to output file.
   Does not check for overwriting output.
-  Returnis true if delinearization was successful, false in case of failure.
+  Returns true if delinearization was successful, false in case of failure.
   In case of failure the error mesage is available via error() function.
  */
  bool delinearize(const QString &inFile,const QString &outFile);
- /*-
-  Converts pdf to xml.
- */
- QString pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile);
  /*-
   Returns last error message (localized) from some operations
   (openFile, save, saveRevision, saveCopy, delinearize)
@@ -121,6 +117,21 @@ public slots: //This will be all exported to scripting
   Returns list of all objects that are in current script interpreter
  */
  QStringList objects();
+ /*-
+  Converts pdf to xml.
+  inFile is name of PDF file to convert,
+  pagenums is array with page numbers to convert,
+  outFile is name of XML file to be created
+ */
+ QString pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile);
+ /*-
+  Load content of file into string. File is expected to be in utf-8 encoding.
+ */
+ QString loadFile(const QString &name);
+ /*-
+  Save string into file. File will be saved in utf-8 encoding.
+ */
+ bool saveFile(const QString &name,const QString &content);
  /*-
   Outputs given string to command window, followed by newline.
   Useful to output various debugging or status messages

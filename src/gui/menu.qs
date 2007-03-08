@@ -61,16 +61,15 @@ function func_load() {
 
 /** Save all text from document to single file */
 function save_as_text(filename) {
- var of=new File(filename);
- of.open(File.WriteOnly);
  pages=document.getPageCount();
+ qs="";
  for (i=1;i<=pages;i++) {
   pg=document.getPage(i);
   text=pg.getText();  
-  of.write(text);
-  of.write("\n");
+  qs+=text;
+  qs+="\n";
  }
- of.close();
+ saveFile(filename,qs);
  print(tr("Text saved to %1").arg(filename));
 }
 

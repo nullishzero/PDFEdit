@@ -17,8 +17,8 @@
  */
 
 
-#ifndef _SELECTPAGESDIALOG_H_
-#define _SELECTPAGESDIALOG_H_
+#ifndef __SELECTPAGESDIALOG_H__
+#define __SELECTPAGESDIALOG_H__
 
 #include <vector>
 #include <qvariant.h>
@@ -140,4 +140,4 @@ protected slots:
 } //namespace gui
 // =====================================================================================
 
-#endif // _SELECTPAGESDIALOG_H_
+#endif // __SELECTPAGESDIALOG_H__

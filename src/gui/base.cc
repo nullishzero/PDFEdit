@@ -44,8 +44,13 @@
 
 namespace gui {
 
+using namespace textoutput;
+using namespace std;
 using namespace util;
 using namespace pdfobjects;
+
+/** (for pdftoxml)*/
+typedef vector<size_t> PageNums;
 
 /**
  Create new Base class 
@@ -95,7 +100,6 @@ int Base::runScriptList(const QStringList &initScripts) {
  }
  return scriptsRun;
 }
-
 
 /**
  Try to run each script file (*.qs) present in one of the directories from given list
@@ -351,18 +355,14 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   return false;
  }
 }
+
 /**
  * Convert pdf to xml.
  * @param inFile input file
  * @param pagenums List of page numbers.
  * @param outFile output file
  */
-QString 
-Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile) 
-{
-	using namespace textoutput;
-	using namespace std;
-	typedef vector<size_t> PageNums;
+QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile) {
 
 	guiPrintDbg (debug::DBG_DBG, "pdftoxml started...");
 	
@@ -471,6 +471,16 @@ QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/) {
  } catch (...) {
   return NULL;
  }
+}
+
+/** \copydoc loadFromFile */
+QString Base::loadFile(const QString &name) {
+ return loadFromFile(name);
+}
+
+/** \copydoc saveToFile */
+bool Base::saveFile(const QString &name,const QString &content) {
+ return saveToFile(name,content);
 }
 
 /** Return list of all objects that are in current script interpreter */

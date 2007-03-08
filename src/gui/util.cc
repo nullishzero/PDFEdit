@@ -228,6 +228,25 @@ QString loadFromFile(const QString &name) {
 }
 
 /**
+ Save string into file with utf8 encoding.
+ @param name Filename of file to write to. It will be overwritten.
+ @return content String to write.
+*/
+bool saveToFile(const QString &name,const QString &content) {
+ QFile f(name);
+ if (!f.open(IO_WriteOnly)) {
+  //Failure
+  return false;
+ } 
+ QTextCodec *codec=QTextCodec::codecForName("utf8");
+ assert(codec); 
+ QCString qb=codec->fromUnicode(content);
+ f.writeBlock(qb.data(),qb.length());
+ f.close();
+ return true;
+}
+
+/**
  Print stringlist to stdout
  @param l String list to print
 */
