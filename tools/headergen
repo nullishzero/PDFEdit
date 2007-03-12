@@ -128,6 +128,7 @@ sub refresh {
   rename($f_h,$f_h.".old");
   # Write modified header file
   open FH, ">$f_h";
+  binmode FH;
   print FH $out;
   close FH;
  }
