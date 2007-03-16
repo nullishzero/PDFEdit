@@ -815,7 +815,7 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 xpdfObjFromString (const std::string& str, XRef* xref)
 {
 	//utilsPrintDbg (debug::DBG_DBG,"xpdfObjFromString from " << str);
-	utilsPrintDbg (debug::DBG_DBG,"xpdfObjFromString size " << str.size());
+	//utilsPrintDbg (debug::DBG_DBG,"xpdfObjFromString size " << str.size());
 	
 	//
 	// Create parser. It can create complex types. Lexer knows just simple types.
@@ -826,7 +826,7 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	::Object dct;
 	
 	// xpdf MemStream frees buf 
-	size_t len = str.length ();
+	size_t len = str.size ();
 	char* pStr = (char *)gmalloc(len + 1);
 	strncpy (pStr, str.c_str(), len + 1);
 					
