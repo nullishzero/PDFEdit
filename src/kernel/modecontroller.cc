@@ -14,6 +14,10 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2007/03/16 20:45:04  bilboq
+ *
+ * slight speed optimization
+ *
  * Revision 1.14  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -88,8 +92,11 @@ namespace configuration
 
 bool ModeMatcher::operator()(const ModeRule & original, const ModeRule & rule,  priority_t * priority)const
 {
+	bool type_empty=(original.type=="");
+	bool name_empty=(original.name=="");
+
 	// most general if original is empty
-	if(original.type=="" && original.name=="")
+	if(type_empty && name_empty)
 	{
 		if(priority)
 			*priority=PRIO0;
@@ -97,7 +104,7 @@ bool ModeMatcher::operator()(const ModeRule & original, const ModeRule & rule,  
 	}
 
 	// type global rule
-	if(original.type!="" && original.name=="")
+	if(!type_empty && name_empty)
 	{
 		if(original.type!=rule.type)
 			return false;
@@ -109,7 +116,7 @@ bool ModeMatcher::operator()(const ModeRule & original, const ModeRule & rule,  
 	}
 
 	// name global rule
-	if(original.type=="" && original.name!="")
+	if(type_empty && !name_empty)
 	{
 		if(original.name!=rule.name)
 			return false;
