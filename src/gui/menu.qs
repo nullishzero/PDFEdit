@@ -184,4 +184,6 @@ function deleteObjectsInTree() {
   victims[i].remove();
 //  print (victims[i].item().type());
  }
+ //redraw the page
+ go();
 }
