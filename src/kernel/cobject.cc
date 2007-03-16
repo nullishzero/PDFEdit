@@ -938,9 +938,9 @@ template <>
 void
 simpleValueToString<pInt> (int val, string& str)
 {
-	stringstream oss;
-	oss << val;
-	str = oss.str ();
+	char buf[24];
+	sprintf(buf,"%d",val);
+	str=buf;
 }
 template void simpleValueToString<pInt> (int val, string& str);
 //
@@ -950,9 +950,9 @@ template <>
 void
 simpleValueToString<pReal> (double val, string& str)
 {
-	stringstream oss;
-	oss << val;
-	str = oss.str ();
+	char buf[64];
+	sprintf(buf,"%g",val);
+	str.assign(buf);
 }
 template void simpleValueToString<pReal> (double val, string& str);
 //
