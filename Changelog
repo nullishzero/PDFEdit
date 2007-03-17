@@ -6,6 +6,7 @@
 	* Added "save as text" feature
 	* Added loadFile and saveFile functions to scripting
 	* Minor bugfixes
+	* Speedup of some kernel functions
 
 2007-02-04 PDF Editor 0.2.5
 	* Minor bugfixes
