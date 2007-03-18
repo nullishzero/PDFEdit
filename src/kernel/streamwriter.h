@@ -13,6 +13,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.12  2007/03/18 22:14:29  mstsxfx
+ * typo
+ *
  * Revision 1.11  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -248,7 +251,7 @@ public:
 		fflush(f);
 	}
 
-	/** Duplicates content ro given file.
+	/** Duplicates content to given file.
 	 * @param file File where to put duplicated content.
 	 * @param start Position where to start duplication.
 	 * @param length Number of bytes to be duplicated.
