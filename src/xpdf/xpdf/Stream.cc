@@ -615,19 +615,25 @@ Stream * FileStream::clone()
    fseek(f, start, SEEK_SET);
    long startPos=ftell(f);
 
+   if(limited && !l) 
+           printf("%s: limited stream with 0 lenght\n", __FUNCTION__);
+
    // if length is 0, calculates it until end of file
-   //if(!l)
-   //{
-   //   fseek(f, 0, SEEK_END); 
-   //   l=ftell(f)-startPos;
-   //}
+   if(!limited && !l)
+   {
+      fseek(f, 0, SEEK_END); 
+      l=ftell(f)-startPos;
+   }
    // sets position to the beging of data which are copied
-   fseek(f, start, SEEK_SET);
+   fseek(f, startPos, SEEK_SET);
 
    // copies file content to buffer
    char * buffer=(char *)gmalloc(sizeof(char)*(l+1));
    if(!buffer)
+   {
+      fseek(f, currPos, SEEK_SET);
       return NULL;
+   }
 
    int readCount, totalRead=0;
    while((readCount=fread(buffer+totalRead, sizeof(char), l-totalRead, f))>0)
@@ -637,6 +643,7 @@ Stream * FileStream::clone()
    {
       // unable to get all data
       free(buffer);
+      fseek(f, currPos, SEEK_SET);
       return NULL;
    }
    buffer[l]='\0';
