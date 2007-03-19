@@ -23,7 +23,7 @@ namespace gui {
 /** Default constructor of RealOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
- @param _defValue Default value if property not found
+ @param _defValue Default value if option not found
  */
 RealOption::RealOption(const QString &_key/*=0*/,QWidget *parent/*=0*/,double _defValue/*=0*/)
  : StringOption (_key,parent) {

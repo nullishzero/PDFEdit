@@ -61,14 +61,16 @@ void StringOption::readValue() {
  changed=false; //Since we've just read the actual setting
 }
 
-/** return size hint of this property editing control
+/**
+ return size hint of this option editing control
  @return size hint from inner editbox
   */
 QSize StringOption::sizeHint() const {
  return ed->sizeHint();
 }
 
-/** Called on resizing of property editing control
+/**
+ Called on resizing of option editing control
  Will simply set the same fixed size to inner editbox
  @param e resize event
  */

@@ -58,11 +58,11 @@ private:
  QWidget* addBreak(QWidget *otab);
  void finishTab(QWidget *otab);
 private:
- /** List of property names */
+ /** List of option names */
  QStringList *list;
- /** Dictionary wit property items */
+ /** Dictionary with option items */
  QDict<Option> *items;
- /** Dictionary wit property labels */
+ /** Dictionary with option labels */
  QDict<QLabel> *labels;
  /** Main tab widget */ 
  QTabWidget *tab;

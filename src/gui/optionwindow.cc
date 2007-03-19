@@ -79,7 +79,7 @@ OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *paren
  setCaption(QString(APP_NAME)+" - "+tr("options"));
  //create list of properties in this editor;
  list=new QStringList();
- //create property dictionary
+ //create option dictionary
  items=new QDict<Option>();
  //create labels dictionary
  labels=new QDict<QLabel>();

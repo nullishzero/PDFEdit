@@ -23,7 +23,7 @@ namespace gui {
  Default constructor of BoolOption item
  @param parent parent Option Editor containing this control
  @param _key Key in settings for this option
- @param _defValue Default value if property not found
+ @param _defValue Default value if option not found
  */
 BoolOption::BoolOption(const QString &_key,QWidget *parent/*=0*/,bool _defValue/*=false*/)
  : Option (_key,parent) {

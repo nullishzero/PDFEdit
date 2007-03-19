@@ -73,7 +73,8 @@ void ComboOption::readValue() {
  changed=false; //Since we've just read the actual setting
 }
 
-/** Set case sensitivity of list items. Default is case insensitive
+/**
+ Set case sensitivity of list items. Default is case insensitive
  @param value New value for case-sensitivity
  */
 void ComboOption::setCaseSensitive(bool value) {
@@ -81,15 +82,15 @@ void ComboOption::setCaseSensitive(bool value) {
 }
 
 /**
- return size hint of this property editing control
- @return Optimal property size
+ return size hint of this option editing control
+ @return Optimal size
  */
 QSize ComboOption::sizeHint() const {
  return ed->sizeHint();
 }
 
 /**
- Called on resizing of property editing control
+ Called on resizing of option editing control
  @param e Resize event data (new size)
 */
 void ComboOption::resizeEvent (QResizeEvent *e) {
