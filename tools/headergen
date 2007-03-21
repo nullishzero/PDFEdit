@@ -50,7 +50,9 @@ sub refresh {
    }
    # Convert commented initializers ( "/*=something*/" --> "=something" )
    $line=~s|\s*/\*=\s*(.*?)\*/\s*|=\1|g;
-   $line=~s/([^:])\s*:\s*[a-zA-Z_][a-zA-Z_0-9]*\s*\([^()]*\)\s*;$/\1;/;
+   # Strip out calling of superclass constructor(s) "X() : Y();" -> "X();"
+   # up to one extra level of brackets can occur in calling of constructor, like "X(x):Y(f(x))"
+   $line=~s/([^:])\s*:\s*[a-zA-Z_][a-zA-Z_0-9]*\s*\(([^()]*|\([^()]*\))*\)(\s*,\s*[a-zA-Z_][a-zA-Z_0-9]*\s*\(([^()]*|\([^()]*\))*\))*\s*;$/\1;/;
    # Remove "unused" attribute
    $line=~s/__attribute__\(\(unused\)\)\s*//g;
    # Add to line with functions found
