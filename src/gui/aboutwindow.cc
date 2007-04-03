@@ -87,7 +87,7 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
   lb->setMaximumHeight(imageSize.height());
   okFrame->setFixedHeight(10+ok->sizeHint().height());
  }
- if (bgImage!=NULL & logoImage!=NULL) {
+ if (bgImage!=NULL && logoImage!=NULL) {
   setMinimumSize(imageSize);
   setMaximumSize(bgSize);
   setFixedHeight(10+ok->sizeHint().height()+imageSize.height());
