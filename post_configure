@@ -37,21 +37,17 @@ try_qmake() {
   return 0
  fi
  echo -n "Trying qmake: $1"
- #Is it executable?
- if [ -x "$1" ]
+ is_qmake_3=`$1 --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+ #Is it from Qt 3?
+ if [ -z "$is_qmake_3" ]
  then
-  is_qmake_3=`/usr/lib/qt3/bin/qmake --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
-  #Is it from Qt 3?
-  if [ -z "$is_qmake_3" ]
-  then
-   echo " ... not valid"
-   return 1
-  else 
-   echo " ... ok"
-   echo "Using qmake: $1"
-   export GOOD_QMAKE3="$1"
-   return 0
-  fi
+  echo " ... not valid"
+  return 1
+ else 
+  echo " ... ok"
+  echo "Using qmake: $1"
+  export GOOD_QMAKE3="$1"
+  return 0
  fi
  echo " ... not found"
  return 1
