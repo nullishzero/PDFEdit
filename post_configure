@@ -37,7 +37,7 @@ try_qmake() {
   return 0
  fi
  echo -n "Trying qmake: $1"
- is_qmake_3=`$1 --version 2>&1 | grep 3\.[0-9]*\.[0-9]*`
+ is_qmake_3=`$1 --version 2>&1 | grep 3\.[0-9][0-9]*\.[0-9][0-9]*`
  #Is it from Qt 3?
  if [ -z "$is_qmake_3" ]
  then
