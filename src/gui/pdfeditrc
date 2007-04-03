@@ -38,7 +38,7 @@
 # Format of menu/toolbar items: item [name],[called script],[keyboard shortcut],[icon],[item classes]
 
 # Main menu structure
-MainMenu	= list Main menu,filemenu,showmenu,toolsmenu,pagemenu,editopersmenu,helpmenu
+MainMenu	= list Main menu,filemenu,editopersmenu,showmenu,pagemenu,toolsmenu,helpmenu
 
   #File submenu
   filemenu		= list &File,fload,fsave,fsavecopy,fsaverev,fsaveastext,-,neww,closew,-,quit
