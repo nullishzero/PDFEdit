@@ -20,6 +20,7 @@
 #pragma implementation
 #endif
 
+#include <stdlib.h>
 #include <GfxState.h>
 
 #include <qpixmap.h>
