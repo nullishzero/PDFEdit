@@ -19,18 +19,19 @@
 */
 
 #include "settings.h"
-#include <utils/debug.h>
-#include <qdir.h>
-#include <qapplication.h>
-#include <qregexp.h>
+#include "config.h"
+#include "main.h"
+#include "staticsettings.h"
 #include "util.h"
+#include <qapplication.h>
+#include <qdir.h>
+#include <qregexp.h>
 #include <qsettings.h>
 #include <qsplitter.h>
-#include <qstringlist.h> 
 #include <qstring.h>
-#include "main.h"
-#include "config.h"
-#include "staticsettings.h"
+#include <qstringlist.h> 
+#include <stdlib.h>
+#include <utils/debug.h>
 
 namespace gui {
 

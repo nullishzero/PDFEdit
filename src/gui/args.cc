@@ -14,12 +14,13 @@
 */
 
 #include "args.h"
+#include "util.h"
 #include <assert.h>
 #include <iostream>
 #include <qobject.h>
 #include <qvaluelist.h>
 #include <qstringlist.h>
-#include "util.h"
+#include <stdlib.h>
 
 using namespace std;
 using namespace util;
