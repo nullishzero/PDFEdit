@@ -7,6 +7,8 @@
 	* Added loadFile and saveFile functions to scripting
 	* Minor bugfixes
 	* Speedup of some kernel functions
+	* Reordered menu for more standard order
+	* Added russian translation
 
 2007-02-04 PDF Editor 0.2.5
 	* Minor bugfixes
