@@ -383,7 +383,7 @@ QString BaseGUI::fileSaveDialogXml(const QString &oldName/*=QString::null*/) {
 */
 QVariant BaseGUI::getColor(const QString &colorName) {
  //Check if we have the picker
- if (!colorPickers.contains(colorName)) return QVariant();
+ if (!colorPickers.contains(colorName)) return QVariant();//NULL variant
  ColorTool *pick=colorPickers[colorName];
  assert(pick);
  return QVariant(pick->getColor());
@@ -597,7 +597,7 @@ QSPage* BaseGUI::page() {
 QVariant BaseGUI::pickColor() {
  QColor ret=colorDialog(w);
  if (!ret.isValid()) {
-  return QVariant();
+  return QVariant();//NULL variant
   guiPrintDbg(debug::DBG_DBG,"Color is not valid");
  }
  return QVariant(ret);

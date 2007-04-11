@@ -29,10 +29,6 @@ dnl # FIXME: Replace `main' with a function in `-lX11':
 dnl #AC_CHECK_LIB([X11], [main])
 dnl # FIXME: Replace `main' with a function in `-lfreetype':
 dnl #AC_CHECK_LIB([freetype], [main])
-dnl #AC_CHECK_LIB([qsa], [QSInterpreter::defaultInterpreter],[],[
-dnl # echo "Error! You need to have QSA 1.1.4."
-dnl # exit -1
-dnl #])
 
 # Checks for header files.
 AC_HEADER_STDC

@@ -136,7 +136,7 @@ function createOperator_transformationMatrix( matrix : Array_of_6_doubles, name_
 
 /**
  Multiply matrix or vector by another matrix ( a * b )
- Obsoleted by implementation in C++
+ Obsoleted by re-implementation in C++
  */
 function _transformationMatrixMul( a, b ) {
 	var c = [0,0,0,0,0,0];
@@ -158,8 +158,11 @@ function _transformationMatrixMul( a, b ) {
 	return c;
 }
 
-/** Solve eqeuation  oldCTM * requiredCTM = newCTM */
-function transformationMatrixDiv( oldCTM : Array_of_6_doubles, newCTM : Array_of_6_doubles ) {
+/**
+ Solve equation  oldCTM * requiredCTM = newCTM
+ Obsoleted by re-implementation in C++
+ */
+function _transformationMatrixDiv( oldCTM : Array_of_6_doubles, newCTM : Array_of_6_doubles ) {
 	var nowCTM = [0,0,0,0,0,0];
 	var menovatel = oldCTM[0]*oldCTM[3]-oldCTM[1]*oldCTM[2];
 	if (menovatel == 0) {
@@ -540,8 +543,8 @@ function operatorSetFont(thepage, operator, fontid, fontsize) {
 	}
 
 	var ctm = getTextDetransformationMatrix ( thepage, op );
-	var h_null = transformationMatrixMul ( [ 0, 0 ], ctm );
-	var h_delta = transformationMatrixMul ( [ 0, fontsize ], ctm );
+	var h_null = transformationMatrixMul (  0, 0 , ctm );
+	var h_delta = transformationMatrixMul (  0, fontsize , ctm );
 
 	var x = (h_delta[0] - h_null[0]);
 	var y = (h_delta[1] - h_null[1]);
@@ -985,8 +988,8 @@ function moveTextOp( thepage, op, dx, dy ) {
 		return;
 
 	var ctm = getTextDetransformationMatrix ( thepage, op );
-	var h_null = transformationMatrixMul ( [ 0, 0 ], ctm );
-	var h_delta = transformationMatrixMul ( [ dx, dy ], ctm );
+	var h_null = transformationMatrixMul ( 0, 0 , ctm );
+	var h_delta = transformationMatrixMul ( dx, dy , ctm );
 
 	dx = h_delta[0] - h_null[0];
 	dy = h_delta[1] - h_null[1];
@@ -1016,8 +1019,8 @@ function moveOp( thepage, op, dx, dy ) {
 		return;
 
 	var ctm = getDetransformationMatrix ( thepage, op );
-	var h_null = transformationMatrixMul ( [ 0, 0 ], ctm );
-	var h_delta = transformationMatrixMul ( [ dx, dy ], ctm );
+	var h_null = transformationMatrixMul ( 0, 0 , ctm );
+	var h_delta = transformationMatrixMul ( dx, dy , ctm );
 
 	dx = h_delta[0] - h_null[0];
 	dy = h_delta[1] - h_null[1];

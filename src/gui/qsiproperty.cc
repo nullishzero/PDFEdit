@@ -122,7 +122,7 @@ QVariant QSIProperty::value() {
   return val;
  }
  // Dict/Array/Null/Stream ... 
- return QVariant();
+ return QVariant();//NULL variant
 }
 
 /**

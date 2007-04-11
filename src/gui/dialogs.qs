@@ -786,8 +786,8 @@ function strikeTroughSelection( thepage ) {
 			ctm = getTextTransformationMatrix( thepage, _op );
 		else
 			ctm = getTransformationMatrix( thepage, _op );
-		var h_null	= transformationMatrixMul( [0,0], ctm );
-		var h_hor	= transformationMatrixMul( [1,0], ctm );
+		var h_null	= transformationMatrixMul( 0,0, ctm );
+		var h_hor	= transformationMatrixMul( 1,0, ctm );
 		h_hor[0]	-= h_null[0];
 		h_hor[1]	-= h_null[1];
 

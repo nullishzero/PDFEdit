@@ -110,7 +110,7 @@ QVariant Base::transformationMatrixMul(const QVariant &ma,const QVariant &mb) {
  double a[6];
  double b[6];
  int al=varToDoubleArray(ma,a,6);
- int bl=varToDoubleArray(mb,b,6);
+ varToDoubleArray(mb,b,6);
  if (al==6) {
   double c[6];
   // 3x3 matrix multiply 3x3 matrix
@@ -130,13 +130,15 @@ QVariant Base::transformationMatrixMul(const QVariant &ma,const QVariant &mb) {
   return varFromDoubleArray(c,2);
  }
  //Invalid
- return QVariant();
+ return QVariant();//NULL variant
 }
 
 /**
- Multiply vector[2] by another matrix ( a * b )
- @param ma first operand
- @param mb second operand
+ Multiply vector[2] by transformation matrix
+ ( [a0,a1] * mb, transform vector with matrix mb )
+ @param a0 first vector coordinate
+ @param a1 second vector coordinate
+ @param mb transformation matrix
  */
 QVariant Base::transformationMatrixMul(double a0,double a1,const QVariant &mb) {
  double b[6];
@@ -146,6 +148,33 @@ QVariant Base::transformationMatrixMul(double a0,double a1,const QVariant &mb) {
  c[0]=a0*b[0]+a1*b[2]+b[4];
  c[1]=a0*b[1]+a1*b[3]+b[5];
  return varFromDoubleArray(c,2);
+}
+
+/**
+ Solve equation oldCTM * requiredCTM = newCTM (find inverse transformation).
+ Return requiredCTM.
+ NULL is returned if no such matrix exists
+ All transformation matrixes are represented as array of 6 doubles.
+ */
+QVariant Base::transformationMatrixDiv(const QVariant &oldCTM,const QVariant &newCTM) {
+ double nowM[6];
+ double oldM[6];
+ varToDoubleArray(oldCTM,oldM,6);
+ double newM[6];
+ varToDoubleArray(newCTM,newM,6);
+ double menovatel = oldM[0]*oldM[3]-oldM[1]*oldM[2];
+ if (menovatel==0) {
+  //Cannot find proper inverse matrix
+  //warn(tr("Matrix is in bad state !"));
+  return QVariant();//NULL variant
+ }
+ nowM[0]=(-oldM[2]*newM[1]+newM[0]*oldM[3]) / menovatel;
+ nowM[1]=(oldM[0]*newM[1]-oldM[1]*newM[0]) / menovatel;
+ nowM[2]=(-oldM[2]*newM[3]+newM[2]*oldM[3]) / menovatel;
+ nowM[3]=(oldM[0]*newM[3]-oldM[1]*newM[2]) / menovatel;
+ nowM[4]=-(-oldM[2]*oldM[5]+oldM[2]*newM[5]+oldM[4]*oldM[3]-newM[4]*oldM[3]) / menovatel;
+ nowM[5]=(oldM[1]*oldM[4]-oldM[0]*oldM[5]+oldM[0]*newM[5]-oldM[1]*newM[4]) / menovatel;
+ return varFromDoubleArray(nowM,6);
 }
 
 /**

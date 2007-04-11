@@ -1,16 +1,18 @@
 2007-??-?? PDF Editor 0.2.6
 	* Fixed wrong permission of files in source tarball
 	* post_configure tries to find correct qmake
-	* modified makefiles to properly clean stuff with make clean/make distclean
-	  (thanks to Varun Hiremath for patch)
+	* modified makefiles to properly clean stuff with
+	  make clean/make distclean (thanks to Varun Hiremath for patch)
 	* Added "save as text" feature
 	* Added loadFile and saveFile functions to scripting
-	* Minor bugfixes
 	* Speedup of some kernel functions
 	* Reordered menu for more standard order
 	* Added russian translation
-	* added time, tick, rand functions to scripting
-	* transformationMatrixMul implemented in C++, 2-3x faster than script version
+	* Added time, tick, rand functions to scripting
+	* Functions transformationMatrixMul and transformationMatrixDiv
+	  implemented in C++, 2-3x faster than script version
+	* Updated internal QSA to 1.1.5
+	* Minor bugfixes
 
 2007-02-04 PDF Editor 0.2.5
 	* Minor bugfixes

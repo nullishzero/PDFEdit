@@ -440,7 +440,18 @@ the name of the program and the following items are command line
 arguments. This version is useful if you have arguments that contain
 spaces or other characters that would need to be quoted if you just
 passed a single string command line, since it takes care of the
-quoting for you.
+quoting for you. Note that if the user passes an array of only one
+element this function behaves like the overload taking a string, thus
+splitting it into "command" and "arguments".
+
+\ executeNoSplit( command : String[], stdin : String ); Same as
+above, except that \c command is an array of strings, where the first
+item is the name of the program and the following items are command
+line arguments. This version is useful if you have arguments that
+contain spaces or other characters that would need to be quoted if you
+just passed a single string command line, since it takes care of the
+quoting for you. This function never splits the first argument,
+regardless of the number of strings in the command array.
 
 \endlist
 

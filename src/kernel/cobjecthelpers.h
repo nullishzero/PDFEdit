@@ -16,6 +16,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.38  2007/04/11 20:58:49  bilboq
+ *
+ * kernel doxygen comment fixes
+ *
+ * c++ impl of transformMatrixDiv
+ *
+ * doc & changelog update
+ *
  * Revision 1.37  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -305,14 +313,14 @@ public:
 	 * @param val1 Value to compare (with T type wrapped by smart poiter).
 	 * @param val2 Value to compare (with T type wrapped by smart poiter).
 	 *
-	 * Two values are equal iff:
+	 * Two values are equal iff they:
 	 * <ul>
 	 * <li> have same types (getType returns same value)</li>
-	 * <ul> They have same values
+	 * <li><ul> have same values
 	 * 	<li> if value is simple - direct values are same (getValue is used)</li>
 	 * 	<li> if value is complex - same number of elements and elements with same
 	 * 	identifier are equal</li>
-	 * </ul>
+	 * </ul></li>
 	 * </ul>
 	 *
 	 * <b>Supported types</b><br>

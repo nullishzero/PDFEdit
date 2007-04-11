@@ -190,6 +190,13 @@ public slots: //This will be all exported to scripting
  */
  int tick();
  /*-
+  Solve equation oldCTM * requiredCTM = newCTM (find inverse transformation).
+  Return requiredCTM.
+  NULL is returned if no such matrix exists
+  All transformation matrixes are represented as array of 6 doubles.
+ */
+ QVariant transformationMatrixDiv(const QVariant &oldCTM,const QVariant &newCTM);
+ /*-
   Multiply vector by transformation matrix (resulting in transformad vector)
   or transformation matrix by another transformation matrix
   (joining transformations int single matrix)

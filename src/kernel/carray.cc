@@ -338,7 +338,7 @@ CArray::_makeXpdfObject () const
 //
 //
 void 
-CArray::_objectChanged (shared_ptr<IProperty> newValue, shared_ptr<const ObserverContext> context)
+CArray::_objectChanged (boost::shared_ptr<IProperty> newValue, boost::shared_ptr<const ObserverContext> context)
 {
 	// Do not notify anything if we are not in a valid pdf
 	if (!hasValidPdf (this))
@@ -364,7 +364,7 @@ CArray::_objectChanged (shared_ptr<IProperty> newValue, shared_ptr<const Observe
 // Set mode
 //
 void
-CArray::_setMode (shared_ptr<IProperty> ip, PropertyId id) const
+CArray::_setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const
 {
 	configuration::ModeController* modecontroller = NULL;
 	if (hasValidPdf (this) && (NULL != (modecontroller=this->getPdf()->getModeController())))

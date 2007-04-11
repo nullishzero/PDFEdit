@@ -136,7 +136,7 @@ QVariant varFromDoubleArray(double *d,int count) {
  only part will be converted. If size is smaller, output array will be zero-padded
  @param v Variant to convert
  @param out pointer to array of doubles
- @param number of elements in output array.
+ @param out_size number of elements in output array.
  @return number of elements converted (between 0 and out_size)
 */
 int varToDoubleArray(const QVariant &v,double *out,int out_size) {
@@ -271,7 +271,8 @@ QString loadFromFile(const QString &name) {
 /**
  Save string into file with utf8 encoding.
  @param name Filename of file to write to. It will be overwritten.
- @return content String to write.
+ @param content String to write.
+ @return true in case of success, false in case of failure
 */
 bool saveToFile(const QString &name,const QString &content) {
  QFile f(name);

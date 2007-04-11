@@ -22,7 +22,7 @@
   <para>
    <note>Scripts are not "secure" by design, as the API contain functions to read or write
    arbitrary files and directories and to execute external processes.
-   See http://doc.trolltech.com/qsa-1.1.4/extensions-2.html for description
+   See http://doc.trolltech.com/qsa-1.1.5/extensions-2.html for description
    of File, Dir and Process classes, which are available to script.</note>
   </para>
  </section>

@@ -16,7 +16,7 @@
      <row><entry>xlib</entry><entry>X Window System libraries</entry></row>
     </tbody></tgroup>
    </informaltable>
-   Modified version of qsa library (Qt Script for Applications), version 1.1.4 is included in the source tree
+   Modified version of qsa library (Qt Script for Applications), version 1.1.5 is included in the source tree
    <note>
     If you have both Qt3 and Qt4 installed, you must have directory with Qt3 tools
     (<filename>qmake</filename>, etc...) before Qt4 in <envar>PATH</envar>.
