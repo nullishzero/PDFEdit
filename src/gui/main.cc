@@ -29,6 +29,7 @@
 #include <qtranslator.h>
 #include <qstringlist.h>
 #include <stdlib.h>
+#include <time.h>
 #include <utils/debug.h>
 
 using namespace std;
@@ -54,7 +55,7 @@ void saveSettings(void) {
 
 /**
  handle --help parameter<br>
- Prtin help to STDOUT and exit
+ Print help to STDOUT and exit
 */
 void handleHelp(){
  cout << APP_NAME << " " << VERSION << endl;
@@ -169,6 +170,8 @@ int main(int argc, char *argv[]){
  //Get application path
  appPath=app.applicationDirPath();
  appPath=QDir(appPath).absPath();
+ //Seed random number generator
+ srand(time(NULL));
  //Translation support
  QTranslator translator;
  const char *env_lang=getenv("LANG");

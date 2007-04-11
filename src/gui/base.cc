@@ -30,6 +30,7 @@
 #include "util.h"
 #include "version.h"
 #include <string.h>
+#include <stdlib.h>
 #include <cpdf.h>
 #include <cannotation.h>
 #include <delinearizator.h> 
@@ -37,6 +38,7 @@
 #include <pdfwriter.h> 
 #include <qdir.h>
 #include <qfile.h>
+#include <qdatetime.h>
 #include <qsinterpreter.h>
 #include <utils/debug.h>
 #include <textoutput.h>
@@ -64,6 +66,86 @@ Base::Base() : BaseCore() {
 /** destructor */
 Base::~Base() {
  //Empty
+}
+
+/**
+ Return current date and time
+ @param format Date/time format
+*/
+QString Base::time(const QString &format/*=QString::null*/) {
+ QDateTime d=QDateTime::currentDateTime();
+ if (format.isNull()) return d.toString(Qt::LocalDate);
+ if (format=="") return d.toString(Qt::LocalDate);
+ if (format=="ISO") return d.toString(Qt::ISODate);
+ return d.toString(format);
+}
+
+/**
+ Return (pseudo)random value between 0 and 1 inclusive
+*/
+double Base::rand() {
+ return ((double)::rand())/RAND_MAX;
+}
+
+/** Base datetime (for tick counter) */
+static QDateTime basetime=QDateTime::currentDateTime();
+
+/**
+ Return current tick counter
+ (msecs since aplication start. May overflow in time)
+*/
+int Base::tick() {
+ QDateTime now=QDateTime::currentDateTime();
+ int dt=basetime.date().daysTo(now.date());
+ int tt=basetime.time().msecsTo(now.time());
+ return dt*(1000*3600*24)+tt;
+}
+
+/**
+ Multiply transformation matrix or vector[2] by another transformation matrix ( a * b )
+ @param ma first operand
+ @param mb second operand
+ */
+QVariant Base::transformationMatrixMul(const QVariant &ma,const QVariant &mb) {
+ double a[6];
+ double b[6];
+ int al=varToDoubleArray(ma,a,6);
+ int bl=varToDoubleArray(mb,b,6);
+ if (al==6) {
+  double c[6];
+  // 3x3 matrix multiply 3x3 matrix
+  c[0]=a[0]*b[0]+a[1]*b[2];
+  c[1]=a[0]*b[1]+a[1]*b[3];
+  c[2]=a[2]*b[0]+a[3]*b[2];
+  c[3]=a[2]*b[1]+a[3]*b[3];
+  c[4]=a[4]*b[0]+a[5]*b[2]+b[4];
+  c[5]=a[4]*b[1]+a[5]*b[3]+b[5];
+  return varFromDoubleArray(c,6);
+ }
+ if (al==2) {
+  double c[2];
+  // 1x3 vector multiply 3x3 matrix
+  c[0]=a[0]*b[0]+a[1]*b[2]+b[4];
+  c[1]=a[0]*b[1]+a[1]*b[3]+b[5];
+  return varFromDoubleArray(c,2);
+ }
+ //Invalid
+ return QVariant();
+}
+
+/**
+ Multiply vector[2] by another matrix ( a * b )
+ @param ma first operand
+ @param mb second operand
+ */
+QVariant Base::transformationMatrixMul(double a0,double a1,const QVariant &mb) {
+ double b[6];
+ varToDoubleArray(mb,b,6);
+ double c[2];
+ // 1x3 vector multiply 3x3 matrix
+ c[0]=a0*b[0]+a1*b[2]+b[4];
+ c[1]=a0*b[1]+a1*b[3]+b[5];
+ return varFromDoubleArray(c,2);
 }
 
 /**

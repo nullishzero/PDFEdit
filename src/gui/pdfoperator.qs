@@ -133,8 +133,12 @@ function createOperator_transformationMatrix( matrix : Array_of_6_doubles, name_
 
 	return createOperator( name_of_op, operands );
 }
-/** Multiplicate matrix  ( a * b ) */
-function transformationMatrixMul( a, b ) {
+
+/**
+ Multiply matrix or vector by another matrix ( a * b )
+ Obsoleted by implementation in C++
+ */
+function _transformationMatrixMul( a, b ) {
 	var c = [0,0,0,0,0,0];
 	if (a.length == 6) {
 		// 3x3 matrix multiply 3x3 matrix
@@ -155,7 +159,7 @@ function transformationMatrixMul( a, b ) {
 }
 
 /** Solve eqeuation  oldCTM * requiredCTM = newCTM */
-function transformationMatrixDiv( oldCTM : Array_of_6_boubles, newCTM : Array_of_6_boubles ) {
+function transformationMatrixDiv( oldCTM : Array_of_6_doubles, newCTM : Array_of_6_doubles ) {
 	var nowCTM = [0,0,0,0,0,0];
 	var menovatel = oldCTM[0]*oldCTM[3]-oldCTM[1]*oldCTM[2];
 	if (menovatel == 0) {

@@ -19,6 +19,7 @@ class QColor;
 class QString;
 class QStringList;
 class QWidget;
+class QVariant;
 
 /** macro returning greater of two values */
 #define MAX(x,y) ((x)>=(y)?(x):(y))
@@ -47,6 +48,8 @@ QString countString(int count,QString singular,QString plural);
 QColor mixColor(const QColor &oldColor,double weight,const QColor &newColor);
 void colorMod(QWidget* widget,QColor fg,double weight_fg,QColor bg,double weight_bg);
 QStringList countList(unsigned int count,unsigned int start=0);
+QVariant varFromDoubleArray(double *d,int count);
+int varToDoubleArray(const QVariant &v,double *out,int out_size);
 
 //Charset encoding related functions
 QStringList supportedEncodings();

@@ -105,6 +105,10 @@ public slots: //This will be all exported to scripting
  */
  QStringList functions(bool includeSignatures=false);
  /*-
+  Load content of file into string. File is expected to be in utf-8 encoding.
+ */
+ QString loadFile(const QString &name);
+ /*-
   Loads a PDF file without replacing currently opened file in GUI.
   Scripts can manipulate the PDF file as necessary, but should close it with unloadPdf() method
   after it don't need to use it anymore.
@@ -125,18 +129,14 @@ public slots: //This will be all exported to scripting
  */
  QString pdftoxml (const QString& inFile, QVariant pagenums, const QString& outFile);
  /*-
-  Load content of file into string. File is expected to be in utf-8 encoding.
- */
- QString loadFile(const QString &name);
- /*-
-  Save string into file. File will be saved in utf-8 encoding.
- */
- bool saveFile(const QString &name,const QString &content);
- /*-
   Outputs given string to command window, followed by newline.
   Useful to output various debugging or status messages
  */
  void print(const QString &str);
+ /*-
+  return floating point pseudorandom value between 0 and 1 inclusive
+ */
+ double rand();
  /*-
   Loads and runs script from given filename.
   File is looked for in the script path, unless absolute filename is given or parameter skipScriptPath is specified.
@@ -144,10 +144,66 @@ public slots: //This will be all exported to scripting
  */
  void run(QString scriptName,bool skipScriptPath=false);
  /*-
+  Save string into file. File will be saved in utf-8 encoding.
+ */
+ bool saveFile(const QString &name,const QString &content);
+ /*-
   Sets new debugging verbosity level. Accepts same parameter as -d option on commandline
   (either number or symbolic constant).
  */
  void setDebugLevel(const QString &param);
+ /*-
+  Return current date/time using given format string
+  If format string is "ISO", return time in ISO format. If format string is not specified or empty, return in default localized format.
+
+  Format string may contain following:
+  <informaltable frame="none">
+   <tgroup cols="2"><tbody>
+    <row><entry>d    </entry><entry>day without leading zero</entry></row>
+    <row><entry>dd   </entry><entry>day with leading zero</entry></row>
+    <row><entry>ddd  </entry><entry>short localized day name</entry></row>
+    <row><entry>dddd </entry><entry>long localized day name</entry></row>
+    <row><entry>M    </entry><entry>month without leading zero</entry></row>
+    <row><entry>MM   </entry><entry>month with leading zero</entry></row>
+    <row><entry>MMM  </entry><entry>short localized month name</entry></row>
+    <row><entry>MMMM </entry><entry>long localized month name</entry></row>
+    <row><entry>yy   </entry><entry>two digit year</entry></row>
+    <row><entry>yyyy </entry><entry>four digit year</entry></row>
+
+    <row><entry>h   </entry><entry>hour without leading zero</entry></row>
+    <row><entry>hh  </entry><entry>hour with leading zero</entry></row>
+    <row><entry>m   </entry><entry>minute without leading zero</entry></row>
+    <row><entry>mm  </entry><entry>minute with leading zero</entry></row>
+    <row><entry>s   </entry><entry>second without leading zero</entry></row>
+    <row><entry>ss  </entry><entry>second with leading zero</entry></row>
+    <row><entry>z   </entry><entry>milliseconds without leading zeroes</entry></row>
+    <row><entry>zzz </entry><entry>milliseconds with leading zeroes</entry></row>
+    <row><entry>AP  </entry><entry>use AM/PM display. AP will be replaced by either "AM" or "PM".</entry></row>
+    <row><entry>ap  </entry><entry>use am/pm display. ap will be replaced by either "am" or "pm".</entry></row>
+   </tbody></tgroup>
+  </informaltable>
+  Anything else is left as is.
+ */
+ QString time(const QString &format=QString::null);
+ /*-
+  Return "tick counter" in milli
+ */
+ int tick();
+ /*-
+  Multiply vector by transformation matrix (resulting in transformad vector)
+  or transformation matrix by another transformation matrix
+  (joining transformations int single matrix)
+  First parameter (ma) is vector or matrix to multiply.
+  Second parameter (mb) is transformation matrix
+  Transformation matrix is represented by array of 6 float numbers
+  Vector is array of 2 float numbers
+ */
+ QVariant transformationMatrixMul(const QVariant &ma,const QVariant &mb);
+ /*-
+  Variant of transformationMatrixMul.
+  Multiply vector [a0,a1] by transformation matrix mb and return resulting transformed vector
+ */
+ QVariant transformationMatrixMul(double a0,double a1,const QVariant &mb);
  /*-
   Translates given text to current locale. Optional parameter context can specify context
   of localized text. Returns translated text.

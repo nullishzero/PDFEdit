@@ -21,6 +21,7 @@
 #include <qobject.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
+#include <qvariant.h>
 #include <qstringlist.h>
 #include <utils/debug.h>
 #include <static.h>
@@ -116,6 +117,46 @@ namespace {
 	}; // class PdfeditEncoding
 
 } // namespace
+
+/**
+ Convert array of double values to variant
+ @param d Pointer to array fo doubles
+ @param count number of elements in the array
+*/
+QVariant varFromDoubleArray(double *d,int count) {
+ QValueList<QVariant> rPos;
+ for (int i=0;i<count;i++) {
+  rPos.append(d[i]);
+ }
+ return QVariant(rPos);
+}
+
+/**
+ Convert variant to array of doubles. If size of variant array is larger than out_size,
+ only part will be converted. If size is smaller, output array will be zero-padded
+ @param v Variant to convert
+ @param out pointer to array of doubles
+ @param number of elements in output array.
+ @return number of elements converted (between 0 and out_size)
+*/
+int varToDoubleArray(const QVariant &v,double *out,int out_size) {
+ QValueList<QVariant> list=v.toList();
+ QValueList<QVariant>::const_iterator it=list.constBegin();
+ int al=0;
+ while(it!=list.constEnd()) {
+  if (al>=out_size) break;//We filled all values
+  out[al]=(*it).toDouble();
+  it++;
+  al++;
+ }
+ //Pad with zeroes
+ int alx=al;
+ while (alx<out_size) {
+  out[alx]=0;
+  alx++;
+ }
+ return al;
+}
 
 /**
  Prints error message and terminates application
