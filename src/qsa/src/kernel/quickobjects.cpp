@@ -380,7 +380,7 @@ static QSObject qsa_execute_slot_no_cast(QSEnv *env, QObject *qobj,
 
             // has return value
             if (offset) {
-                QSObject ret = uObjectToQS(ip, &slotargs[0], m->parameters[0].typeExtra, 
+                QSObject ret = uObjectToQS(ip, &slotargs[0], m->parameters[0].typeExtra,
                     qobj);
                 return ret;
             } else {
@@ -516,10 +516,14 @@ QSWrapperShared::QSWrapperShared( const QSWrapperClass *cl )
       udata( 0 ), objTyp( FactoryObject )
 {
     watcher.parent = this;
+    creator = 0;
 }
 
 QSWrapperShared::~QSWrapperShared()
 {
+    if (!cls->env()->isShuttingDown() && isConnected())
+        cls->env()->removeShared(this);
+
     for( QMap<QString,QuickScriptProperty>::Iterator cached = propertyCache.begin();
          cached != propertyCache.end(); ++cached )
         if( (*cached).type == QSOT::Property ) {
@@ -703,7 +707,9 @@ void QSWrapperClass::deref( QSObject *o ) const
     o->shVal()->deref();
     if ( o->shVal()->count==0 ) {
         ((QSWrapperClass*)this)->invalidate();
-        env()->removeShared( o->shVal() );
+        // Removed from environment by the destructor... Do it there
+        // since it can also be removed as an effect of the userdata
+        // being deleted...
         delete o->shVal();
         o->setVal( (QSShared*)0 );
     }
@@ -1267,8 +1273,17 @@ QSObject QSObjectConstructor::construct( const QSList &args ) const
                                       QString::fromLatin1("Could not construct ") + cname +
                                       QString::fromLatin1(". Invalid constructor arguments were specified") );
 
-        if ( !result[0]->inherits( "QuickPtrDispatchObject" ) )
-            return interpreter()->wrapperClass()->wrap( result );
+         // ### this seems wrong... Why would we ever get a dispatch
+         // ### object here... They should all be QObject's coming
+         // ### from the factories... so the code below should always
+         // ### run
+        if (!result[0]->inherits("QuickPtrDispatchObject")) {
+            QSObject obj = interpreter()->wrapperClass()->wrap(result);
+            if (m_proxy) {
+                ((QSWrapperShared *) obj.shVal())->creator = m_proxy;
+            }
+            return obj;
+        }
         return interpreter()->pointerClass()->
             wrapPointer( (QuickPtrDispatchObject*)result[ 0 ] );
     }
@@ -2093,7 +2108,7 @@ void qsKillTimers( QSEnv *env )
 
 ////////////////////////////////////////////////////////////////////
 
-QSObject uObjectToQS( QuickInterpreter *ip, QUObject *o, const void *extra, 
+QSObject uObjectToQS( QuickInterpreter *ip, QUObject *o, const void *extra,
                       QObject *qobj )
 {
     if ( QUType::isEqual( o->type, &static_QUType_double ) )
@@ -2150,7 +2165,7 @@ QSObject uObjectToQS( QuickInterpreter *ip, QUObject *o, const void *extra,
             int pos = s.findRev( "::" );
             if ( pos >= 0 ) {
                 s = s.left( pos + 2 );
-                s += QCString( (char*)extra );            
+                s += QCString( (char*)extra );
                 if ( QMetaObject::hasMetaObject( s ) )
                     return ip->wrap( (QObject*)static_QUType_ptr.get( o ) );
             }
@@ -2174,6 +2189,8 @@ bool qsToUObject( QUObject *o, const QSObject &v,
     if( QUType::isEqual( t, &static_QUType_QString ) ) {
         static_QUType_QString.set( o, VARIANT.toString() );
     } else if( QUType::isEqual( t, &static_QUType_int ) ) {
+        if (QS::isNaN(v.toNumber()))
+            return false;
         static_QUType_int.set( o, VARIANT.toInt() );
     } else if( QUType::isEqual( t, &static_QUType_double ) ) {
         static_QUType_double.set( o, VARIANT.toDouble() );
@@ -2208,10 +2225,14 @@ bool qsToUObject( QUObject *o, const QSObject &v,
             allocs->append( new qs_ptr_ref( f ) );
             static_QUType_ptr.set( o, f );
         } else if (qstrcmp((const char*) extra, "long") == 0) {
+            if (QS::isNaN(v.toNumber()))
+                return false;
             long *l = new long( (long)v.toNumber() );
             allocs->append( new qs_ptr_ref( l ) );
             static_QUType_ptr.set( o, l );
         } else if (qstrcmp((const char*) extra, "ulong") == 0) {
+            if (QS::isNaN(v.toNumber()))
+                return false;
             ulong *l = new ulong( (ulong)v.toNumber() );
             allocs->append( new qs_ptr_ref( l ) );
             static_QUType_ptr.set( o, l );
@@ -2232,10 +2253,14 @@ bool qsToUObject( QUObject *o, const QSObject &v,
             allocs->append( new qs_ptr_ref(c) );
             static_QUType_ptr.set(o, c);
         } else if (qstrcmp((const char*) extra, "short") == 0) {
+            if (QS::isNaN(v.toNumber()))
+                return false;
             short *c = new short( (short)v.toNumber() );
             allocs->append( new qs_ptr_ref(c) );
             static_QUType_ptr.set(o, c);
         } else if (qstrcmp((const char*) extra, "ushort") == 0) {
+            if (QS::isNaN(v.toNumber()))
+                return false;
             ushort *c = new ushort( (ushort)v.toNumber() );
             allocs->append( new qs_ptr_ref(c) );
             static_QUType_ptr.set(o, c);
@@ -2389,6 +2414,7 @@ QSUserData::~QSUserData()
     if ( dat ) {
         QSWrapperShared *tmp = dat;
         tmp->invalidate(); // sets our dat to 0
-        tmp->deref();
+        if (tmp->deref())
+            delete tmp;
     }
 }

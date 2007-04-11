@@ -971,8 +971,9 @@ void QSProject::evaluate()
     QSScript *script;
     while( ( script = it() ) ) {
 	ip->execute( script->context(), script->code(), script->name() );
-	if( ip->hadError() )
+	if( ip->hadError() ) {
 	    return;
+        }
     }
 
     initEventHandlers();
@@ -1075,6 +1076,7 @@ bool QSProject::loadInternal( QDataStream *stream )
     QString header = QString::fromLatin1("%1.%2.%3").arg(major - '0').arg(minor - '0').arg(patch - '0');
 
     if (header != QString::fromLatin1(QSA_VERSION_STRING)
+	&& header != QString::fromLatin1("1.1.4")
 	&& header != QString::fromLatin1("1.1.3")
 	&& header != QString::fromLatin1("1.1.2")
 	&& header != QString::fromLatin1("1.1.1")

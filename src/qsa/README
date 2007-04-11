@@ -1,4 +1,4 @@
-Differences of included build against stock QSA 1.1.4:
+Differences of included build against stock QSA 1.1.5:
 
 * Removed examples, documentation and similar unnecessary stuff
 * Renamed library from qsa to qsa_pdfedit to avoid collisions

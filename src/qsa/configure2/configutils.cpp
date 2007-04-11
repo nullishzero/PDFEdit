@@ -86,7 +86,10 @@ static bool execute( const QStringList &args )
     return !bp.exitStatus() && bp.normalExit();
 }
 
-static void runQMake(const QString &d, const QStringList &configs, const QString &prefix,
+static void runQMake(const QString &d,
+                     const QStringList &configs,
+                     const QStringList &antiConfigs,
+                     const QString &prefix,
                      const QString &target)
 {
     QDir dir(d);
@@ -97,23 +100,30 @@ static void runQMake(const QString &d, const QStringList &configs, const QString
     // make the top level Makefile
     QStringList args;
     args.append( "qmake" );
-    if ( !configs.isEmpty() )
-	args.append( "CONFIG+=" + configs.join( " " ) );
     if ( !prefix.isEmpty() )
 	args.append( "QSA_INSTALL_PREFIX=" + prefix );
     if (!target.isNull()) {
         args.append("-o");
         args.append(target);
     }
+
+    if (configs.size() > 0 || antiConfigs.size() > 0) {
+        args.append("-after");
+        if (!configs.isEmpty())
+            args.append( "CONFIG+=" + configs.join( " " ) );
+        if (!antiConfigs.isEmpty())
+            args << "CONFIG-=" + antiConfigs.join(" ");
+    }
+
     if( !execute( args ) )
 	warnings++;
     QDir::setCurrent(oldDir);
 }
 
 
-void runQMake( const QStringList &configs, const QString &prefix )
+void runQMake( const QStringList &configs, const QStringList &antiConfigs, const QString &prefix )
 {
-    runQMake(".", configs, prefix, "Makefile.qsa");
+    runQMake(".", configs, antiConfigs, prefix, "Makefile.qsa");
 }
 
 void mkDir( const QString &dir )

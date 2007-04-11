@@ -437,16 +437,28 @@ QString QSACompletion::resolveValue( const QString &value, const QValueList<QPai
     return QString::null;
 }
 
+QString qsa_strip_open_parenthesis(const QString &str, char type) {
+    int pos = str.findRev(type);
+    if (pos >= 0)
+        return str.mid(pos + 1);
+    return str;
+}
+
 QString qsa_strip_down(const QString &str, char start, char stop)
 {
     // Match inside paranthesis
+    QString s = str;
     int pos = str.findRev(start);
-    if (pos > 0) {
+    if (pos >= 0) {
         int end = str.find(stop, pos+1);
         if (end < 0)
-            return str.mid(pos+1);
+            s = str.mid(pos+1);
+    } else {
+        s = str;
     }
-    return str;
+
+    s = qsa_strip_open_parenthesis(s, start);
+    return s;
 }
 
 QString QSACompletion::resolveFullyQualifiedValue(const QString &value,

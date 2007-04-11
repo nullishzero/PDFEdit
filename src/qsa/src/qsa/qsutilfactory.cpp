@@ -403,6 +403,7 @@ public:
 
 public slots:
     int execute(const QStringList &command, const QString &stdinBuffer=QString::null);
+    int executeNoSplit(const QStringList &command, const QString &stdinBuffer = QString::null);
     int execute(const QString &command, const QString &stdinBuffer=QString::null)
     {
 	return execute(QStringList(command), stdinBuffer);
@@ -865,6 +866,27 @@ int QSProcessStatic::execute(const QStringList &command, const QString &stdinBuf
     out = err = QString::null;
     QSBlockingProcess pl;
     pl.setArguments(commands);
+    if (!pl.start()) {
+	factory->interpreter()->throwError(QString::fromLatin1("Failed to run process: '%1'")
+					   .arg(command.join(QString::fromLatin1(" "))));
+        return -1;
+    }
+    if (!stdinBuffer.isEmpty()) {
+	pl.writeToStdin(stdinBuffer);
+    }
+    Q_ASSERT(qApp);
+    qApp->enter_loop();
+    int retCode = pl.exitStatus();
+    out = QString::fromLatin1(pl.out, pl.outUsed);
+    err = QString::fromLatin1(pl.err, pl.errUsed);
+    return retCode;
+}
+
+int QSProcessStatic::executeNoSplit(const QStringList &command, const QString &stdinBuffer)
+{
+    out = err = QString::null;
+    QSBlockingProcess pl;
+    pl.setArguments(command);
     if (!pl.start()) {
 	factory->interpreter()->throwError(QString::fromLatin1("Failed to run process: '%1'")
 					   .arg(command.join(QString::fromLatin1(" "))));

@@ -33,10 +33,10 @@
 
 #include "qsconfig.h"
 
-#define QSA_VERSION_STRING "1.1.4"
+#define QSA_VERSION_STRING "1.1.5"
 #define QSA_VERSION_MAJOR 1
 #define QSA_VERSION_MINOR 1
-#define QSA_VERSION_MICRO 4
+#define QSA_VERSION_MICRO 5
 
 // helper macros
 #define QSA_MAKE_VERSION(maj, min, mic) (((maj) << 16) | ((min) << 8) | (mic))

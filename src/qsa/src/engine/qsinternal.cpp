@@ -273,8 +273,6 @@ bool QSEngineImp::evaluate( const QString &code, const QSObject *thisV,
 			       lineZero );
     int parseError = qsyyparse();
     progNode = QSProgramNode::last();
-    if (progNode)
-        progNode->ref();
 
     if( parseError || QSLexer::lexer()->lexerState() == QSLexer::Bad ) {
 	errType = QSErrParseError;

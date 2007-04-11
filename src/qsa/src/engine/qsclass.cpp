@@ -415,7 +415,15 @@ void QSClass::write( QSObject *objPtr, const QSMember &mem,
 		     const QSObject &val ) const
 {
     Q_ASSERT( mem.isWritable() );
-    Q_ASSERT( mem.type()==QSMember::Variable );
+
+    if (mem.type() != QSMember::Variable) {
+        env()->throwError(ReferenceError,
+                          QString::fromLatin1("Member '%1' cannot be overwritten in '%2'")
+                          .arg(mem.name()).arg(name()));
+        return;
+
+    }
+
     if ( mem.isWritable() && mem.type()==QSMember::Variable ) {
 	if ( !mem.isStatic() ) {
 	    QSInstanceData *data = (QSInstanceData*)objPtr->shVal();

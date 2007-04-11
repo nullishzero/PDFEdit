@@ -38,6 +38,8 @@
 #include "grammar.h"
 #include "qslexer.lut.h"
 
+#include <qlocale.h>
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -411,7 +413,7 @@ int QSLexer::lex()
 
     double dval = 0;
     if ( state == Number ) {
-	dval = strtod( buffer8, 0L );
+	dval = QLocale::c().toDouble(buffer8);
     } else if ( state == Hex ) { // scan hex numbers
 	// TODO: support long uint
 	uint i;

@@ -470,6 +470,7 @@ void QuickInterpreter::init()
 	    new QSObjectConstructor( objClass, *it );
 	QSFactoryObjectProxy *ptype =
 	    new QSFactoryObjectProxy( env()->typeClass(), staticInst, constr );
+        constr->setFactoryObjectProxy(ptype);
 	QSObject proxy( ptype, env()->typeClass()->createTypeShared(constr) );
 	env()->globalClass()->addStaticVariableMember( constr->identifier(),
 						       proxy,

@@ -1,7 +1,7 @@
 TEMPLATE	= lib
 CONFIG		+= qt warn_on link_prl staticlib
 TARGET 		= qsa_pdfedit
-VERSION  	= 1.1.4m
+VERSION  	= 1.1.5m
 
 isEmpty(QSA_INSTALL_PREFIX) {
   QSA_BUILD_PREFIX=$$(QTDIR)
@@ -85,4 +85,4 @@ include( ../kernel/kernel.pri )
 include( ../editor/editor.pri )
 include(../../tools/designer/editor/editor.pri)
 
-PRECOMPILED_HEADER = qsa_pch.h
+win32:PRECOMPILED_HEADER = qsa_pch.h

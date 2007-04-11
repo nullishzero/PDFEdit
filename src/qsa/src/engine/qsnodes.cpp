@@ -40,6 +40,8 @@
 #include "qserror_object.h"
 #include <qapplication.h>
 
+#include "quickobjects.h" // from ../kernel
+
 #include <math.h>
 #include <assert.h>
 
@@ -728,8 +730,14 @@ QSObject QSRelationalNode::rhs( QSEnv *env ) const
 	    b = r==CompareGreater ? oper==OpGreater : oper==OpLessEq ;
 
     } else if ( oper == OpIs || oper == OpInstanceOf ) {
+
 	// ### emit runtime warning about deprecated instanceof operator ?
 	// ### without prototype support it doesn't do the right thing anyway
+        if (v2.objectType()->name() == "FactoryObject") {
+            QSWrapperShared *s = (QSWrapperShared *) v1.shVal();
+            return env->createBoolean(s->creator == v2.objectType());
+        }
+
 	if( v2.objectType() != env->typeClass() ) {
 	    return throwError( env, TypeError,
 			       "Right side of operator 'is' is not a type" );
@@ -1272,6 +1280,9 @@ QSObject QSIfNode::execute( QSEnv *env )
     QSObject result;
 
     QSObject v = expr->rhs( env );
+    if (env->isExceptionMode())
+        return QSObject();
+
     bool b = v.toBoolean();
 
     if ( b )
@@ -1413,6 +1424,14 @@ QSObject QSWithNode::executeStatement( QSEnv *env )
     QSObject v = expr->rhs( env );
     if( env->isExceptionMode() || v.isUndefined() )
 	return QSObject();
+    if (!v.isObject()) {
+        return env->throwError(ReferenceError,
+                               QString::fromLatin1("Evaluation of with statement is not an object, "
+                                                   "was '%1' of type %2")
+                               .arg(v.toString())
+                               .arg(v.isValid() ? v.typeName() : QString::fromLatin1("invalid")),
+                               lineNo());
+    }
     env->pushScope( v );
     QSObject oldThis = env->thisValue();
     env->setThisValue( v );

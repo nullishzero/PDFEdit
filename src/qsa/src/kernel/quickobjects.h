@@ -48,6 +48,8 @@ class QuickInterpreter;
 class QuickScriptVariant;
 class QuickScriptObjectFunc;
 class QuickPtrDispatchObject;
+class QSFactoryObjectProxy;
+
 
 extern void stopAllTimers();
 
@@ -190,6 +192,8 @@ public:
     ObjectType objectType() const { return objTyp; }
     void setObjectType( ObjectType type ) { objTyp = type; }
 
+    QSFactoryObjectProxy *creator;
+
 private:
     EventId findEventId( const QString &event );
     const QSWrapperClass *cls;
@@ -305,16 +309,20 @@ class QSObjectConstructor : public QSClass, public QuickEnvClass
 public:
     enum Type { Class, Form };
     QSObjectConstructor( QSClass *b, const QString &className, Type t=Class );
-    QString name() const { return QString::fromLatin1("Widget"); }
+    QString name() const { return QString::fromLatin1("ObjectConstructor"); }
     QString identifier() const { return cname; }
     QSObject construct( const QSList &args ) const;
     QSObject cast( const QSList &args ) const;
     bool member( const QSObject *objPtr, const QString &name, QSMember *m ) const;
     QSObject fetchValue( const QSObject *o, const QSMember &mem ) const;
 
+    QSFactoryObjectProxy *proxy() const { return m_proxy; }
+    void setFactoryObjectProxy(QSFactoryObjectProxy *proxy) { m_proxy = proxy; }
+
 private:
     QString cname;
     Type type;
+    QSFactoryObjectProxy *m_proxy;
 };
 
 class QSVariantShared;

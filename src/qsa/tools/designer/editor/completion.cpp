@@ -489,11 +489,12 @@ bool EditorCompletion::doObjectCompletion()
 	i--;
     }
 
+    if (object.isEmpty())
+	return false;
+
     if ( object[ (int)object.length() - 1 ] == '-' )
 	object.remove( object.length() - 1, 1 );
 
-    if ( object.isEmpty() )
-	return FALSE;
     return doObjectCompletion( object );
 }
 

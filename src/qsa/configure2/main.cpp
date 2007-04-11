@@ -52,6 +52,7 @@ int main( int argc, char **argv )
     app = argv[0];
     QApplication qapp( argc, argv, FALSE );
 
+    QStringList antiConfigs;
     QStringList configs;
     QString prefix;
     bool buildIde = TRUE;
@@ -73,6 +74,15 @@ int main( int argc, char **argv )
 	} else if ( arg == "-no-ide" ) {
 	    buildIde = FALSE;
 	    configs << "noide";
+
+        } else if (arg == "-release") {
+            configs << "release";
+            antiConfigs << "debug";
+
+        } else if (arg == "-debug") {
+            configs << "debug";
+            antiConfigs << "release";
+
 	} else {
 	    qWarning( "Unknown option: %s", qapp.argv()[i] );
 	    exit( 1 );
@@ -106,7 +116,7 @@ int main( int argc, char **argv )
 	return 1;
     }
 
-    runQMake( configs, prefix );
+    runQMake( configs, antiConfigs, prefix );
 
     int retVal = processes > 0 ? qapp.exec() : 0;
     if( retVal || errors ) {

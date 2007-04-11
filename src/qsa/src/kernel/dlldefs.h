@@ -31,14 +31,6 @@
 
 #include <qglobal.h>
 
-#if defined(Q_OS_WIN32) && !defined(QSA_NO_DLL)
-#  if defined (QSA_DLL)
-#    define QUICKCORE_EXPORT __declspec(dllexport)
-#  else
-#    define QUICKCORE_EXPORT __declspec(dllimport)
-#  endif
-#else
-#  define QUICKCORE_EXPORT
-#endif
+#define QUICKCORE_EXPORT
 
 #endif

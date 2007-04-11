@@ -39,8 +39,8 @@ public:
 	: bs( b ), mem( m ), cls(c) { }
     QSReference( const QSObject &b ) : bs( b ), cls(0) { }
 
-    bool isWritable() const { return mem.isWritable(); }
-    bool isDefined() const { return mem.isDefined(); }
+    bool isWritable() const { return isReference() && mem.isWritable(); }
+    bool isDefined() const { return isReference() && mem.isDefined(); }
     bool isReference() const { return cls!=0; }
     QSObject base() const { return bs; }
     QSMember member() const { return mem; }

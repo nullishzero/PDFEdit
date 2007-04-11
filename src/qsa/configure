@@ -26,6 +26,8 @@ Options:
   -thread       Force a threaded configuration.
   -prefix       Installation prefix
   -no-ide       Does not compile QSA Workbench into QSA.
+  -release 	Forces release build.
+  -debug 	Forces debug build.
 EOF
    exit 0
 fi

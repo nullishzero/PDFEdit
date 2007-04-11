@@ -20,7 +20,7 @@ public:
     QString name() const { return "Qt Script"; }
     QString description() const { return "Qt Script Core Functionality"; }
     QString version() const { return "0.1"; }
-    QString author() const { return "Trolltech AS"; }
+    QString author() const { return "Trolltech ASA"; }
 
 private:
     ulong ref;
