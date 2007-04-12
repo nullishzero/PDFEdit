@@ -79,6 +79,14 @@ int main( int argc, char **argv )
             configs << "release";
             antiConfigs << "debug";
 
+        } else if (arg == "-qmake") {
+	    if ( i + 1 < qapp.argc() ) {
+                setQMake(qapp.argv()[++i]);
+	    } else {
+		qWarning( "-qmake option requires argument" );
+		exit( 2 );
+	    }
+
         } else if (arg == "-debug") {
             configs << "debug";
             antiConfigs << "release";

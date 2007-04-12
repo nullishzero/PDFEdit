@@ -25,6 +25,7 @@ Options:
   -help         Display this information
   -thread       Force a threaded configuration.
   -prefix       Installation prefix
+  -qmake        QMake to invoke
   -no-ide       Does not compile QSA Workbench into QSA.
   -release 	Forces release build.
   -debug 	Forces debug build.
@@ -70,7 +71,7 @@ fi
 
 # invoke 2nd stage
 cd ..
-configure2/configure2 "$@" || exit 1
+configure2/configure2 -qmake "$QMAKE" "$@" || exit 1
 
 # (cd examples; qmake "${CONF}")
 # (cd src/ide; qmake "${CONF}")

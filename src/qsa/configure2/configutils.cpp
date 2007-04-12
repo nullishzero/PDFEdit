@@ -21,6 +21,15 @@ bool autoShutdown = TRUE;
 
 static QStringList static_messages;
 
+/** Which program to invoke as qmake. Default is "qmake" */
+QString qmake = "qmake";
+
+/** Set program to be used as qmake */
+void setQMake( const QString &str ) {
+    message ( QString("Using qmake: ") + str);
+    qmake = str;
+}
+
 void message( const QString &str )
 {
     static_messages.append( str );
@@ -99,7 +108,7 @@ static void runQMake(const QString &d,
     QDir::setCurrent(runDir);
     // make the top level Makefile
     QStringList args;
-    args.append( "qmake" );
+    args.append( qmake );
     if ( !prefix.isEmpty() )
 	args.append( "QSA_INSTALL_PREFIX=" + prefix );
     if (!target.isNull()) {
