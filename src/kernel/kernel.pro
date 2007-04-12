@@ -7,9 +7,35 @@ LANGUAGE = C++
 CONFIG += staticlib
 CONFIG += complete 
 CONFIG += console precompile_header
-CONFIG += debug
 CONFIG -= qt
-DEFINES += DEBUG
+
+include(../../config.pro)
+
+#check debug/release
+contains( E_RELEASE, no ) {
+ CONFIG += debug
+ DEFINES += DEBUG
+ CONFIG -= release
+ QMAKE_CXXFLAGS += -W -Wall -Wconversion -Wwrite-strings -pedantic -Wno-unused-variable -O0 -Wunused-function -Wwrite-strings -Wunused-macros 
+}
+contains( E_RELEASE, yes ) {
+ # release mode
+ # turns on optimalizations
+ CONFIG += release
+ CONFIG -= debug
+ QMAKE_CXXFLAGS += -O2 -DNDEBUG
+}
+
+#
+# Kernel special settings
+#
+QMAKE_CXXFLAGS += -fexceptions
+
+#
+# Static lib
+#
+QMAKE_CXXFLAGS += -static
+
 
 #PRECOMPILED_HEADER = static.h
 
@@ -62,18 +88,6 @@ SOURCES += cpage.cc cpdf.cc
 HEADERS += textoutput.h textoutputbuilder.h textoutputentities.h textoutputengines.h
 SOURCES += textoutputengines.cc textoutputentities.cc textoutputbuilder.cc
 
-#
-# Kernel special settings
-#
-#QMAKE_CXXFLAGS += -Wall -W -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -Wuninitialized -pedantic -Wno-unused-variable -finline-limit=10000 --param inline-unit-growth=1000 --param large-function-growth=1000
-#QMAKE_CXXFLAGS_DEBUG += -W -Wall -Wconversion -Wcast-qual -Wwrite-strings -pedantic -Wno-unused-variable -O0 -Wunused-function
-QMAKE_CXXFLAGS += -fexceptions
-QMAKE_CXXFLAGS_DEBUG += -fexceptions -W -Wall -Wconversion -Wwrite-strings -pedantic -Wno-unused-variable -O0 -Wunused-function -Wwrite-strings -Wunused-macros 
-
-#
-# Static lib
-#
-QMAKE_CXXFLAGS_DEBUG += -static
 
 #
 # xpdf and utils

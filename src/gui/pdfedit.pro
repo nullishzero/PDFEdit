@@ -17,7 +17,7 @@ contains( E_RELEASE, yes ) {
  # turns on optimalizations
  CONFIG += release
  CONFIG -= debug
- QMAKE_CXXFLAGS += -O2
+ QMAKE_CXXFLAGS += -O2 -DNDEBUG
 }
 
 #Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored

@@ -361,7 +361,12 @@ void PageViewMode::resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidg
 				dtop	= rectSelected.top()	- pressPosition.y();		// = 0
 				dright	= rectSelected.right()	- releasePosition.x();
 				dbottom	= rectSelected.bottom()	- releasePosition.y();
+			} else {
+				//Should not get here, but compiler is screaming
+				assert(0);
+				return;
 			}
+
 			resizedSelectedObjects ( dleft, dtop, dright, dbottom );
 
 			if (p == NULL)
