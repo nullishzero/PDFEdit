@@ -1,0 +1,11 @@
+#!/bin/sh
+./configure && make
+cd src/gui
+make menugenerator && ./make-lang
+export INSTALL_ROOT=/tmp/pdfedit-package
+strip src/gui/pdfedit.exe
+mkdir -p $INSTALL_ROOT
+make install
+cp doc/README.cygwin $INSTALL_ROOT
+cd $INSTALL_ROOT
+echo 7z a -mx -r -tzip -x!*.bat pdfedit >pack.bat

@@ -39,6 +39,8 @@ XSLPATHS="/usr/local/share/xsl/docbook/$type /usr/share/xsl/docbook/$type"
 XSLPATHS="$XSLPATHS /usr/share/sgml/docbook/xsl-stylesheets*/$type /usr/local/share/sgml/docbook/xsl-stylesheets*/$type"
 #Debian, Ubuntu
 XSLPATHS="$XSLPATHS /usr/share/xml/docbook/stylesheet/nwalsh/$type"
+#Cygwin
+XSLPATHS="$XSLPATHS /usr/share/docbook-xsl/$type"
 
 # look for stylesheet
 xslpath=""

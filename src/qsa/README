@@ -11,4 +11,7 @@ Differences of included build against stock QSA 1.1.5:
 * Unfortunately, one of the bugfixes in QSA 1.1.5 caused
   scripting in pdfedit to became nonfunctional.
   File quickobjects.cpp was partially reverted to state in 1.1.4
-  (removed some isNaN tests caused by improperly fixed bug)
+  (removed some isNaN tests caused by improperly fixed bug.
+  This reintroduces the bug, but the bug is minor,
+  as it affect only badly written scripts and does not result
+  in crash :)

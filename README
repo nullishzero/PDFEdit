@@ -27,3 +27,15 @@ Installation
 
  Example:
   INSTALL_ROOT=/chroot/pdfedit make install
+
+Cygwin build
+------------
+PATH in cygwin must contain these three directories
+/bin			(most required executables are stashed here)
+/usr/X11R6/bin		(some libraries are here)
+/usr/lib/qt3/bin	(qmake must be in PATH)
+
+You can use cygwin_build.bat to start the build process
+(you will need to set CYGWIN_ROOT in the file first)
+This will create the package in /tmp/pdfedit-package
+and create pack.bat to pack the package with 7-zip

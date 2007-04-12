@@ -90,6 +90,11 @@ pdfedit_manual.files	= ../../doc/user/pdfedit.1
 pdfedit.path    = $$BIN_PATH
 pdfedit.files   = pdfedit
 
+# cygwin hack
+contains( QMAKE_CYGWIN_EXE, 1 ) {
+pdfedit.files   += pdfedit.exe
+}
+
 #List of installed targets
 INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
 INSTALLS += doc doc_images doc_kernel_images doc_design doc_design_images doc_gui_images doc_gui_m_images
