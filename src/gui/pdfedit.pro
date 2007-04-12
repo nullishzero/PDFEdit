@@ -2,10 +2,30 @@
 TEMPLATE = app
 TARGET = pdfedit
 
-# turns off optimalizations
-CONFIG += debug
-
 include(../../config.pro)
+
+#check debug/release
+contains( E_RELEASE, no ) {
+ # debug mode
+ # turns off optimalizations
+ CONFIG += debug
+ CONFIG -= release
+ QMAKE_CXXFLAGS += -O0 -g
+}
+contains( E_RELEASE, yes ) {
+ # release mode
+ # turns on optimalizations
+ CONFIG += release
+ CONFIG -= debug
+ QMAKE_CXXFLAGS += -O2
+}
+
+#Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored
+#Note Qt4 is not (yet) supported
+QT += qt3support
+
+#must be specified, otherwise namespace debug will clash with debug() in QT
+QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions
 
 # Check installation prefix
 isEmpty( PREFIX ) {
@@ -92,14 +112,6 @@ QMAKE_CLEAN += .obj/menugenerator.o
 #include headers from kernel and used by kernel
 INCLUDEPATH += ../qsa/src/qsa ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
 
-#must be specified, otherwise namespace debug will clash with debug() in QT
-QMAKE_CXXFLAGS += -DQT_CLEAN_NAMESPACE -fexceptions
-
-
-QMAKE_CXXFLAGS_DEBUG += -O0 -fexceptions 
-
-#debug information
-QMAKE_CXXFLAGS += -g
 
 #Dialogs
 HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h

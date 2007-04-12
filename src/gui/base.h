@@ -186,11 +186,11 @@ public slots: //This will be all exported to scripting
  */
  QString time(const QString &format=QString::null);
  /*-
-  Return "tick counter" in milli
+  Return "tick counter" in milliseconds, usable to measure time differences
  */
  int tick();
  /*-
-  Solve equation oldCTM * requiredCTM = newCTM (find inverse transformation).
+  Solve equation oldCTM * requiredCTM = newCTM (find matrix for inverse transformation).
   Return requiredCTM.
   NULL is returned if no such matrix exists
   All transformation matrixes are represented as array of 6 doubles.

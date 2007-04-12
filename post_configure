@@ -53,6 +53,12 @@ try_qmake() {
  return 1
 }
 
+#Qmake passed as argument
+if [ -n "$1" ]
+then
+ try_qmake "$1"
+fi
+
 #Qmake in QTDIR
 try_qmake "$QTDIR/bin/qmake"
 
