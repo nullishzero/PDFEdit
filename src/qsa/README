@@ -8,3 +8,7 @@ Differences of included build against stock QSA 1.1.5:
 * Removed mention of commercial license - since this instance
   of QSA is inserted into GPL'ed project, it's now GPL only.
 * Fixed "make distclean" not cleaning everything it should.
+* Unfortunately, one of the bugfixes in QSA 1.1.5 caused
+  scripting in pdfedit to became nonfunctional.
+  File quickobjects.cpp was partially reverted to state in 1.1.4
+  (removed some isNaN tests caused by improperly fixed bug)

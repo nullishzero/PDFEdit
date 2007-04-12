@@ -2189,8 +2189,6 @@ bool qsToUObject( QUObject *o, const QSObject &v,
     if( QUType::isEqual( t, &static_QUType_QString ) ) {
         static_QUType_QString.set( o, VARIANT.toString() );
     } else if( QUType::isEqual( t, &static_QUType_int ) ) {
-        if (QS::isNaN(v.toNumber()))
-            return false;
         static_QUType_int.set( o, VARIANT.toInt() );
     } else if( QUType::isEqual( t, &static_QUType_double ) ) {
         static_QUType_double.set( o, VARIANT.toDouble() );
@@ -2225,14 +2223,10 @@ bool qsToUObject( QUObject *o, const QSObject &v,
             allocs->append( new qs_ptr_ref( f ) );
             static_QUType_ptr.set( o, f );
         } else if (qstrcmp((const char*) extra, "long") == 0) {
-            if (QS::isNaN(v.toNumber()))
-                return false;
             long *l = new long( (long)v.toNumber() );
             allocs->append( new qs_ptr_ref( l ) );
             static_QUType_ptr.set( o, l );
         } else if (qstrcmp((const char*) extra, "ulong") == 0) {
-            if (QS::isNaN(v.toNumber()))
-                return false;
             ulong *l = new ulong( (ulong)v.toNumber() );
             allocs->append( new qs_ptr_ref( l ) );
             static_QUType_ptr.set( o, l );
@@ -2253,14 +2247,10 @@ bool qsToUObject( QUObject *o, const QSObject &v,
             allocs->append( new qs_ptr_ref(c) );
             static_QUType_ptr.set(o, c);
         } else if (qstrcmp((const char*) extra, "short") == 0) {
-            if (QS::isNaN(v.toNumber()))
-                return false;
             short *c = new short( (short)v.toNumber() );
             allocs->append( new qs_ptr_ref(c) );
             static_QUType_ptr.set(o, c);
         } else if (qstrcmp((const char*) extra, "ushort") == 0) {
-            if (QS::isNaN(v.toNumber()))
-                return false;
             ushort *c = new ushort( (ushort)v.toNumber() );
             allocs->append( new qs_ptr_ref(c) );
             static_QUType_ptr.set(o, c);
