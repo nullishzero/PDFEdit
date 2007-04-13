@@ -13,6 +13,7 @@
 	  implemented in C++, 2-3x faster than script version
 	* Updated internal QSA to 1.1.5
 	* PageView now can be scrolled by keyboard
+	* Added --enable-release to configure
 	* Minor bugfixes
 
 2007-02-04 PDF Editor 0.2.5

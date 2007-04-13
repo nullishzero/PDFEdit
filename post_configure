@@ -26,6 +26,18 @@ else
  fi
 fi
 
+#debug/release
+RELEASE_MODE=`grep '^E_RELEASE *=' <config.pro.in |sed 's/^[^=]*= *//'`
+echo E_RELEASE=$RELEASE_MODE >>$CONFIG_FLAGS
+
+#debug/release for utils
+if [ "$RELEASE_MODE" = "yes" ]; then
+   UTIL_CXXFLAGS="-DNDEBUG -O2"
+else
+   UTIL_CXXFLAGS="-DDEBUG -g -O0"
+fi
+echo UTIL_CXXFLAGS=$UTIL_CXXFLAGS >>$CONFIG_FLAGS
+
 #Try to pick a good qmake (from qt3)
 
 GOOD_QMAKE3=""

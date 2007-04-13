@@ -3,6 +3,9 @@
 #
 ################################################################################
 
+#Makefile flags
+include ../Makefile.flags
+
 # Source files for library
 SOURCES=debug.cc \
      	delinearizator.cc \
@@ -15,30 +18,16 @@ BINS=debug.o \
 
 AR       = ar cqs
 DEL_FILE = rm -f
-CC       = gcc
 CXX      = g++
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -Wall -W -g -D_REENTRANT  -DDEBUG
-CXXFLAGS = -pipe -Wall -W -g -W -Wall -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -O0 -Wunused-function -D_REENTRANT  -DDEBUG
+CXXFLAGS = -pipe -Wall -W -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -Wunused-function -D_REENTRANT $(UTIL_CXXFLAGS)
 INCPATH	 = -I./ -I../ -I../xpdf/ -I../xpdf/xpdf -I../xpdf/goo -I../xpdf/splash -I../xpdf/fofi 
 
-.SUFFIXES: .c .o .cpp .cc .cxx .C
-
-.cpp.o:
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
+.SUFFIXES: .o .cc
 
 .cc.o:
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
-
-.cxx.o:
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
-
-.C.o:
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
-
-.c.o:
-	$(CC) -c $(CFLAGS) $(INCPATH) -o $@ $<
 
 libutils.a: $(BINS)
 	$(AR) libutils.a $(BINS)

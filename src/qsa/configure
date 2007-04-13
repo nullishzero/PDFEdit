@@ -61,6 +61,13 @@ find src -name Makefile -exec rm {} \;
 #Use the correct qmake
 . ../Makefile.flags
 
+#debug/release
+if [ "$E_RELEASE" = "yes" ]; then
+   BUILD="-release"
+else
+   BUILD="-debug"
+fi
+
 # build 2nd stage configure tool
 echo "Building 2nd stage configure"
 cd configure2
@@ -71,7 +78,7 @@ fi
 
 # invoke 2nd stage
 cd ..
-configure2/configure2 -qmake "$QMAKE" "$@" || exit 1
+configure2/configure2 -qmake "$QMAKE" $BUILD "$@" || exit 1
 
 # (cd examples; qmake "${CONF}")
 # (cd src/ide; qmake "${CONF}")
