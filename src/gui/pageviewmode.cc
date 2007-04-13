@@ -477,8 +477,38 @@ void PageViewMode::mouseMoveEvent ( QMouseEvent * e, QPainter * p, QWidget * w )
 void PageViewMode::wheelEvent ( QWheelEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
 		{};
 
-void PageViewMode::keyPressEvent ( QKeyEvent * /* e */, QPainter * /* p */, QWidget * /* w */ )
-		{};
+void PageViewMode::keyPressEvent ( QKeyEvent * e , QPainter * /* p */, QWidget * w  ) {
+ switch (e->key()) {
+  case Qt::Key_Up:
+   emit scroll(0,-16);
+   break;
+  case Qt::Key_Down:
+   emit scroll(0,16);
+   break;
+  case Qt::Key_Left:
+   emit scroll(-16,0);
+   break;
+  case Qt::Key_Right:
+   emit scroll(16,0);
+   break;
+  case Qt::Key_Home:
+   emit scroll(-32767,0);
+   break;
+  case Qt::Key_End:
+   emit scroll(32767,0);
+   break;
+  case Qt::Key_PageUp:
+   emit scroll(0,-w->height());
+   break;
+  case Qt::Key_PageDown:
+   emit scroll(0,w->height());
+   break;
+  default:
+   return;
+ }
+ emit needRepaint();
+}
+
 void PageViewMode::keyReleaseEvent ( QKeyEvent * e, QPainter * /* p */, QWidget * /* w */ )
 		{
 			switch (e->key()) {

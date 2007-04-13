@@ -25,7 +25,7 @@ class PageViewMode;
 /** QWidget's class for viewing a page.
  *
  */
-class PageView : public QLabel {
+class PageView : public QWidget {
 	Q_OBJECT
 	public:
 		/** Default constructor of pageView.

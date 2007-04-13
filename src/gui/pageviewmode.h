@@ -208,13 +208,20 @@ class PageViewMode: public QObject {
 			 */
 			void newSelectedAnnotations( const std::vector< boost::shared_ptr< CAnnotation > > & objects );
 
-			/** Signal is generated if page nedd repaint after changes. */
+			/** Signal is generated if page need repaint after changes. */
 			void needRepaint ( );
-			/** Signal is generated if after released right button.
+			/** Signal is generated when scrolling of the page should be done.
+			 * @param x amount to scroll to left (can be negative to scroll to right)
+			 * @param y amount to scroll to up (can be negative to scroll to bottom)
+			 * Note: notion of left/right/up/down may be a bit counter-intuitive.
+			 * If we press right arrow key, we want to scroll "to left"
+			 */
+			void scroll ( int x, int y );
+			/** Signal is generated after right mouse button is released.
 			 * @param PagePos Mouse position on page.
 			 */
 			void popupMenu ( const QPoint & PagePos /*, Cobject & */ );
-			/** Signal is generated if need execute command \a cmd in script.
+			/** Signal is generated, when command \a cmd is to be executed in scripting.
 			 * @param cmd Script command for executing.
 			 */
 			void executeCommand ( QString cmd );

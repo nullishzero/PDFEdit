@@ -220,6 +220,7 @@ void PageViewS::setSelectionMode ( const boost::shared_ptr<PageViewMode> & m ) {
 	initializeWorkOperatorsInMode();
 
 	connect( mode.get(), SIGNAL( needRepaint() ), this, SLOT( needRepaint() ) );
+	connect( mode.get(), SIGNAL( scroll(int,int) ), this, SLOT( scrollBy(int,int) ) );
 	repaintContents( false );
 }
 

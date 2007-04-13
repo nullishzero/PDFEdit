@@ -22,7 +22,7 @@ using namespace pdfobjects;
 
 namespace gui {
 
-PageView::PageView (QWidget *parent) : QLabel(parent) {
+PageView::PageView (QWidget *parent) : QWidget(parent) {
 	// initialize privet variable
 //	pageImage = NULL;
 
