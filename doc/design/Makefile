@@ -18,7 +18,7 @@ all_no_pdf: $(html_docs)
 clean:
 	rm -f $(docs)
 
-#extra depenedencies on included files
+#extra dependencies on included files
 
 kernel_includes=kernel/cannotation.xml \
 kernel/ccontentstream.xml \

@@ -39,7 +39,7 @@ scripting.xml: scripts/scripting.xml
 appendix.xml: appendix-src.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
-#depenedencies
+#dependencies
 
 install_deps=install/compiling.xml \
 install/install.xml \

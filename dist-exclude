@@ -5,6 +5,7 @@ FEATURES
 dist-exclude
 makedist
 pdfedit*tar*
+doc/README.cygwin
 doc/doxygen.warnings
 doc/navrh
 doc/programmer

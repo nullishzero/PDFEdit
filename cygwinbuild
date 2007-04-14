@@ -6,6 +6,6 @@ export INSTALL_ROOT=/tmp/pdfedit-package
 strip src/gui/pdfedit.exe
 mkdir -p $INSTALL_ROOT
 make install
-cp doc/README.cygwin $INSTALL_ROOT
+cp -f ../../doc/README.cygwin $INSTALL_ROOT/readme.txt
 cd $INSTALL_ROOT
-echo 7z a -mx -r -tzip -x!*.bat pdfedit >pack.bat
+echo 7z a -mx -r -tzip -x!*.bat -x!*.zip pdfedit >pack.bat

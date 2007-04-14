@@ -18,7 +18,7 @@ my $c='';
 
 while (<>) {
  s/<[?!][^>]+>//gm; # doctype/xml/whatever
- s/<\/?(book|bookinfo)[^>]*>//gm;
+ s/<\/?(book|bookinfo|part)[^>]*>//gm;
  s/^\s+//gm;
  s/[\r\n]+//gm;
  if ($x) {
@@ -30,7 +30,7 @@ while (<>) {
 my $opts='';
 my $optlist='';
 my $chaps='';
-while($c=~s|<sect1>\s*<title>Option\s*<option>([^<>]+)</option></title>\s*<para>\s*([\x00-\xff]+?)\s*</para>\s*</sect1>||m) {
+while($c=~s|<sect1[^<>]*>\s*<title>Option\s*<option>([^<>]+)</option></title>\s*<para>\s*([\x00-\xff]+?)\s*</para>\s*</sect1>||m) {
  $optlist.=" [$1]";
  $opts.=".TP\n.I \"\\$1\"\n$2\n";
 }
@@ -83,4 +83,5 @@ print '.SH "OPTIONS"'."\n";
 print $opts;
 print $chaps;
 $c=~s/ +$//g;
-print $c;
+#possible rest of content - probably nothing useful
+#print $c;
