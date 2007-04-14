@@ -1,4 +1,4 @@
-2007-??-?? PDF Editor 0.2.6
+2007-04-15 PDF Editor 0.3.0
 	* Fixed wrong permission of files in source tarball
 	* post_configure tries to find correct qmake
 	* modified makefiles to properly clean stuff with
