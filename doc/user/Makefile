@@ -34,9 +34,9 @@ clean:
 scripts/scripting.xml: scripts/scripting-src.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
-scripting.xml: scripts/scripting.xml
+scripting.xml: scripts/scripting.xml version.xml
 
-appendix.xml: appendix-src.xml $(TOOL_DIR)/scripting.gen.pl
+appendix.xml: appendix-src.xml version.xml $(TOOL_DIR)/scripting.gen.pl
 	$(TOOL_DIR)/scripting.gen.pl $< >$@
 
 #dependencies
@@ -47,7 +47,7 @@ install/platforms.xml \
 install/requiredlib.xml
 
 scripting_deps=scripts/scripting_nodoc.xml \
-scripts/qsa-util.xml scripts/qsa-inputdialog.xml
+scripts/qsa-util.xml scripts/qsa-inputdialog.xml version.xml
 
 user_doc.html: $(scripting_deps) $(install_deps) qsa-inputdialog.xml qsa-util.xml version.xml
 
@@ -68,5 +68,10 @@ scripts/qsa-inputdialog.xml: qsa-inputdialog.leaf $(TOP_DIR)/tools/leaf2xml.pl
 scripts/qsa-util.xml: qsa-util.leaf $(TOP_DIR)/tools/leaf2xml.pl
 	$(TOP_DIR)/tools/leaf2xml.pl <$< >$@ no
 
+#refresh version number
+version.xml: ../../src/gui/version.h
+	cd ../.. && ./getversion >doc/user/$@
+
 #include rules to generate various documentation formats
 include $(TOP_DIR)/Makefile.rules
+
