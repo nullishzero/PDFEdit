@@ -24,6 +24,7 @@
 #  include <shlobj.h>
 #endif
 #if HAVE_PAPER_H
+#define __STRICT_ANSI__
 #include <paper.h>
 #endif
 #include "gmem.h"
