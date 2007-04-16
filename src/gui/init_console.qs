@@ -107,9 +107,9 @@ class FunctionList {
   var fn=func.toLowerCase();
   var cnt=0;
   var match=new Array();
-  for(var i=0;i<fnames.length;i++) {  
+  for(var i=0;i<fnames.length;i++) {
    var name=fnames[i];
-   if (name.toLowerCase().startsWith(func)) {
+   if (name.toLowerCase().startsWith(fn)) {
     cnt++;
     match.push(name);
    }
