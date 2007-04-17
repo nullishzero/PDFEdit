@@ -70,7 +70,7 @@ MainMenu	= list Main menu,filemenu,editopersmenu,showmenu,pagemenu,toolsmenu,hel
   #Page submenu
   pagemenu		= list &Page,savepage,reloadpage,pagetext,-,rot-90,rot90,-,editPageMediaBox,addSystemFont,setpagetm,-,drawlinee,drawrecte,addtext,striketrough,highlightingtext
     savepage		= item Save page as image...	, savePageImage(false)	,	, save_page_as_image.png,need_page
-    reloadpage		= item Reload Page		, go()			, F5	, reload.png		,need_page
+    reloadpage		= item Reload Page (show changes), go()			, F5	, reload.png		,need_page
     pagetext		= item Extract text from page	, viewPageText()	,	, page_text.png		,need_page
     rot-90		= item Rotate page 270 degrees	, rotatePage(-90)	,Ctrl+[	, page_rotate_-90.png	,need_page
     rot90		= item Rotate page 90 degrees	, rotatePage(90)	,Ctrl+]	, page_rotate_90.png	,need_page
