@@ -1922,8 +1922,10 @@ void QSVariantClass::write( QSObject *objPtr, const QSMember &mem,
 QSObject QSVariantClass::invoke( QSObject * objPtr, const QSMember &mem ) const
 {
     QSVariantShared *sh = shared( objPtr );
-    Q_ASSERT( sh->iobj.isValid() );
-    return sh->iobj.invoke( mem, *env()->arguments() );
+    if (sh->iobj.isValid())
+        return sh->iobj.invoke( mem, *env()->arguments() );
+    else
+        return QSSharedClass::invoke(objPtr, mem);
 }
 
 /////////////////////////////////////////////////////////////////////////////
