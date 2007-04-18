@@ -116,13 +116,13 @@ static void runQMake(const QString &d,
         args.append(target);
     }
 
-    if (configs.size() > 0 || antiConfigs.size() > 0) {
-        args.append("-after");
-        if (!configs.isEmpty())
-            args.append( "CONFIG+=" + configs.join( " " ) );
-        if (!antiConfigs.isEmpty())
-            args << "CONFIG-=" + antiConfigs.join(" ");
-    }
+    args.append("-after");
+    if (!configs.isEmpty())
+        args.append( "CONFIG+=" + configs.join( " " ) );
+    if (!antiConfigs.isEmpty())
+        args << "CONFIG-=" + antiConfigs.join(" ");
+    //Need to pass QMAKE to qmake subprocesses
+    args.append( "QMAKE=" + qmake );
 
     if( !execute( args ) )
 	warnings++;
