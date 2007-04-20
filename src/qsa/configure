@@ -58,8 +58,9 @@ fi
 
 find src -name Makefile -exec rm {} \;
 
-#Use the correct qmake
-. ../Makefile.flags
+#Use the correct qmake and debug/release mode
+E_RELEASE=`grep E_RELEASE= <../Makefile.flags |sed s/[^=]*=//`
+QMAKE=`grep QMAKE= <../Makefile.flags |sed s/[^=]*=//`
 
 #debug/release
 if [ "$E_RELEASE" = "yes" ]; then
