@@ -9,9 +9,9 @@ AC_CONFIG_HEADER([src/utils/aconf.h])
 
 # Release/debug mode. Debug is default (for now)
 AC_ARG_ENABLE(release,
-[  --enable-release        Turn on compiler optimizations, turn off debugging symbols],[release=no])
+[AS_HELP_STRING([--enable-release],[Turn on compiler optimizations, turn off debugging symbols])]
+,,[enable_release=no])
 AC_SUBST(enable_release)
-AC_ARG_VAR(enable_release,[Enable release mode])
 
 # Checks for programs. (c++ compiler,...)
 AC_LANG_CPLUSPLUS

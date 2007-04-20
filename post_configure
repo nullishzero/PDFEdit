@@ -1,6 +1,6 @@
 #!/bin/sh
 #Fix config.pro to be suitable for QMake
-sed <config.pro.in 's/${prefix}/$$PREFIX/g' | sed 's/${exec_prefix}/$$EPREFIX/g' >config.pro
+sed <config.pro.in 's/${prefix}/$$PREFIX/g' | sed 's/${datarootdir}/$$DATAROOTDIR/g' | sed 's/${exec_prefix}/$$EPREFIX/g' >config.pro
 
 #Write expanded data path
 prefix=`grep '^PREFIX *=' <config.pro.in |sed 's/^[^=]*= *//'`

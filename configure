@@ -674,7 +674,6 @@ ac_subst_files=''
       ac_precious_vars='build_alias
 host_alias
 target_alias
-enable_release
 CXX
 CXXFLAGS
 LDFLAGS
@@ -1254,11 +1253,11 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-release        Turn on compiler optimizations, turn off debugging symbols
+  --enable-release        Turn on compiler optimizations, turn off debugging
+                          symbols
+
 
 Some influential environment variables:
-  enable_release
-              Enable release mode
   CXX         C++ compiler command
   CXXFLAGS    C++ compiler flags
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -1708,9 +1707,10 @@ ac_config_headers="$ac_config_headers src/utils/aconf.h"
 # Release/debug mode. Debug is default (for now)
 # Check whether --enable-release was given.
 if test "${enable_release+set}" = set; then
-  enableval=$enable_release; release=no
+  enableval=$enable_release;
+else
+  enable_release=no
 fi
-
 
 
 
