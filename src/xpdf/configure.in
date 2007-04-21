@@ -328,7 +328,7 @@ AC_SUBST(X)
 AC_SUBST(XPDF_TARGET)
 
 dnl ##### Write the makefiles.
-AC_OUTPUT(Makefile goo/Makefile fofi/Makefile splash/Makefile xpdf/Makefile)
+AC_OUTPUT(Makefile goo/Makefile fofi/Makefile splash/Makefile xpdf/Makefile config_xpdf_variables)
 
 dnl ##### Warn user if X is missing.
 if test -n "$no_x" -o "x$smr_have_Xm_library" != xyes -o "x$smr_have_freetype2_library" != xyes; then

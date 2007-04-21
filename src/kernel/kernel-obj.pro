@@ -23,8 +23,8 @@ exists( $${XPDFPATH}/xpdf/$${XPDFLIB} ) {
 	LIBS += -lfofi -lGoo -L$$XPDFPATH/fofi -L$$XPDFPATH/goo
 	LIBS += -lsplash -L$$XPDFPATH/splash
 
-	exists( ../config_xpdf_variables ) {
-		include( ../config_xpdf_variables )
+	exists( ../xpdf/config_xpdf_variables ) {
+		include( ../xpdf/config_xpdf_variables )
 		LIBS += $$config_xpdf_t1_LIBS
 		LIBS += $$config_xpdf_libpaper_LIBS
 		LIBS += $$config_xpdf_freetype2_LIBS

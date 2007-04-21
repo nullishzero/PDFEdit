@@ -1,0 +1,3 @@
+config_xpdf_t1_LIBS=@t1_LIBS@
+config_xpdf_libpaper_LIBS=@libpaper_LIBS@
+config_xpdf_freetype2_LIBS=@freetype2_LIBS@
