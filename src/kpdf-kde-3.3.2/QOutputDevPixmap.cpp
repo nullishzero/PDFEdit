@@ -37,7 +37,7 @@
 // QOutputDevPixmap
 //------------------------------------------------------------------------
 
-QOutputDevPixmap::QOutputDevPixmap(SplashColor paperColor) : QOutputDev(paperColor), m_image(0)
+QOutputDevPixmap::QOutputDevPixmap(SplashColor paperColor) : QOutputDev(paperColor), m_image((const char * const*)0)
 {
 	raw_image = NULL;	//  -- this is necessary while Splash.cc::drawImage will not complete --
 }

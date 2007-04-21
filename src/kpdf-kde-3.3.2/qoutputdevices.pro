@@ -20,6 +20,10 @@ contains( E_RELEASE, yes ) {
  QMAKE_CXXFLAGS += -O2 -DNDEBUG
 }
 
+#Needed for Qt4. Qt3's Qmake does not know this variable, so it is ignored
+#Note Qt4 is not (yet) supported
+QT += qt3support
+
 #include headers from kernel and used by kernel
 INCLUDEPATH += ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../xpdf/splash ../xpdf/fofi
 
