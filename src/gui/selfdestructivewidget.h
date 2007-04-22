@@ -11,6 +11,7 @@
 #define __SELFDESTRUCTIVEWIDGET_H__
 
 #include <qwidget.h>
+#include "qtcompat.h"
 
 namespace gui {
 
@@ -26,7 +27,12 @@ namespace gui {
 class SelfDestructiveWidget : public QWidget {
 Q_OBJECT
 public:
+#ifdef QT4
+ SelfDestructiveWidget(QWidget *killer,QWidget *parent=0, Qt::WindowFlags f=0);
+ SelfDestructiveWidget(QWidget *killer,QWidget *parent=0, const char *name=0, Qt::WindowFlags f=0);
+#else
  SelfDestructiveWidget(QWidget *killer,QWidget *parent=0, const char *name=0, WFlags f=0);
+#endif
  ~SelfDestructiveWidget();
 };
 

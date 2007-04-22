@@ -10,6 +10,7 @@
 #ifndef __OPTIONWINDOW_H__
 #define __OPTIONWINDOW_H__
 
+#include "qtcompat.h"
 #include <qwidget.h>
 #include <qdict.h>
 #include <qmap.h>

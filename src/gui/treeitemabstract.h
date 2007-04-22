@@ -10,6 +10,7 @@
 #ifndef __TREEITEMABSTRACT_H__
 #define __TREEITEMABSTRACT_H__
 
+#include "qtcompat.h"
 #include <qlistview.h>
 #include <qdict.h>
 #include <qmap.h>

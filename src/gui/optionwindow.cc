@@ -73,7 +73,7 @@ void OptionWindow::optionsDialog(Menu *msystem,const QStringList &units) {
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
  */
-OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,WDestructiveClose || WType_TopLevel) {
+OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel) {
  guiPrintDbg(debug::DBG_DBG,"Options creating ...");
  menuSystem=msystem;
  setCaption(QString(APP_NAME)+" - "+tr("options"));
@@ -121,7 +121,7 @@ void OptionWindow::apply() {
  QDictIterator<Option> it(*items);
  for (;it.current();++it) {
   Option* c=it.current();
-  guiPrintDbg(debug::DBG_DBG,"Writing " << c->getName());
+  guiPrintDbg(debug::DBG_DBG,"Writing " << QSTRINGDEBUG(c->getName()));
   c->writeValue();
  }
  //Write settings to disk (editor may crash or be killed, right?)

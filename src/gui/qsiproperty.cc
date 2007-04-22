@@ -181,14 +181,14 @@ void QSIProperty::set(const QString &value) {
    }
    case pName: {
     CName *ip=dynamic_cast<CName*>(obj.get());
-    std::string str=value;
-    ip->setValue(util::convertFromUnicode(str));
+//    std::string str=value;
+    ip->setValue(util::convertFromUnicode(value));
     return;
    }
    case pString: {
     CString *ip=dynamic_cast<CString*>(obj.get());
-    std::string str=value;
-    ip->setValue(util::convertFromUnicode(str));
+//    std::string str=value;
+    ip->setValue(util::convertFromUnicode(value));
     return;
    }
    default:;//Do nothing

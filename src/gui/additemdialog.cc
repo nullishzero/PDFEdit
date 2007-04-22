@@ -25,7 +25,7 @@
 #include "util.h"
 #include "version.h"
 #include <qbuttongroup.h>
-#include <qhbox.h>
+#include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -45,23 +45,33 @@ using namespace util;
  @param name Name of this window (used only for debugging
  */
 AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
- : SelfDestructiveWidget(parent,parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
+ : SelfDestructiveWidget(parent,parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel | Qt::WStyle_Minimize | Qt::WStyle_SysMenu | Qt::WStyle_Title | Qt::WStyle_Customize) {
  //Parent is also killer -> this is always toplevel widget
  settingName="add_item_dialog";
  globalSettings->restoreWindow(this,settingName); 
  setCaption(tr("Add object"));
- l=new QVBoxLayout(this,4,4);
- qb=new QHBox(this,"additem_buttons");
- //Subpanel to select name or how to add to array - will be initialized later
- target=new QFrame(this,"additem_targetframe");
- //Subpanel to edit content to be added
- items=new QButtonGroup(2,Qt::Horizontal,tr("Type and value of new object"),this,"additem_itemframe");
- QPushButton *ok=new QPushButton(QObject::tr("&Add object"), qb);
- QPushButton *okclo=new QPushButton(QObject::tr("Add and c&lose"), qb);
- QPushButton *cancel=new QPushButton(QObject::tr("&Cancel"), qb);
+ layout=new QVBoxLayout(this);
+ layout->setMargin(4);
+ layout->setSpacing(4);
+
+ //Lower frame with buttons
+ qbox=new QFrame(this);
+ QHBoxLayout *qblayout = new QHBoxLayout(qbox);
+ QPushButton *ok=new QPushButton(QObject::tr("&Add object"), qbox);
+ QPushButton *okclo=new QPushButton(QObject::tr("Add and c&lose"), qbox);
+ QPushButton *cancel=new QPushButton(QObject::tr("&Cancel"), qbox);
+ qblayout->addWidget(ok);
+ qblayout->addWidget(okclo);
+ qblayout->addWidget(cancel);
  QObject::connect(cancel, SIGNAL(clicked()), this, SLOT(close()));
  QObject::connect(ok, SIGNAL(clicked()), this, SLOT(commit()));
  QObject::connect(okclo, SIGNAL(clicked()), this, SLOT(commitClose()));
+
+ //Subpanel to select name or how to add to array - will be initialized later
+ target=new QFrame(this);
+
+ //Subpanel to edit content to be added
+ items=new QButtonGroup(2,Qt::Horizontal,tr("Type and value of new object"),this);
  int i=0;
  selectedItem=-1;
  //Start adding widgets for various types of editable properties
@@ -119,7 +129,7 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
  item=it;
  pdf=it->getPdf();
 
- //We mnust set PDF to property
+ //We must set PDF to property
  RefProperty* refProp=dynamic_cast<RefProperty*>(props[5]);
  assert(refProp);
  refProp->setPdf(pdf);
@@ -141,9 +151,8 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
   globalSettings->restoreWindow(this,settingName);
   usingArray=true;
 
-// QVBox *qv_typ=new QVBox(this,"array_pos_box_v");
-// QHBox *qb_pos=new QHBox(qv_typ,"array_pos_box");
-  QHBox *qb_pos=new QHBox(this,"array_pos_box");
+  QFrame *qb_pos=new QFrame(this);
+  QHBoxLayout *qb_pos_layout = new QHBoxLayout(qb_pos);
 
   posNum=new QRadioButton(tr("Add to position"),qb_pos);
   arrayPos=new QLineEdit("0",qb_pos);
@@ -151,7 +160,11 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
   vv->setBottom(0);
   arrayPos->setValidator(vv);
   posEnd=new QRadioButton(tr("Append to end"),qb_pos);
-  l->addWidget(qb_pos);
+  qb_pos_layout->addWidget(posNum);
+  qb_pos_layout->addWidget(arrayPos);
+  qb_pos_layout->addWidget(posEnd);
+
+  layout->addWidget(qb_pos);
   posNum->setChecked(true);
   posNumSet(true);
   connect(posNum,SIGNAL(toggled(bool)),this,SLOT(posNumSet(bool)));
@@ -160,10 +173,10 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
   //Should never happen
   assert(0);
  }
- l->addWidget(target);
- l->addWidget(items);
- l->addWidget(qb);
- l->addWidget(msg);
+ layout->addWidget(target);
+ layout->addWidget(items);
+ layout->addWidget(qbox);
+ layout->addWidget(msg);
 }
 
 /**
@@ -320,7 +333,7 @@ bool AddItemDialog::commit() {
   //TODO: validate refproperty, if selected
   CDict* dict=dynamic_cast<CDict*>(item.get());
   if (dict) { //Add to dict
-   string tex=propertyName->text();
+   string tex=util::convertFromUnicode(propertyName->text());
    try {
     PropertyType pt=dict->getPropertyType(tex);
     QString msg=tr("Property '%1' already exist as %2").arg(propertyName->text(),getTypeName(pt));

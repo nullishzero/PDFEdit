@@ -12,6 +12,7 @@
 
 #include <qmap.h>
 #include <qstringlist.h>
+#include <qiconset.h>
 #include "invalidmenuexception.h"
 class QMainWindow;
 class QMenuBar;
@@ -19,7 +20,6 @@ class QMenuData;
 class QPopupMenu;
 class QPixmap;
 class QWidget;
-class QIconSet;
 class QWidget;
 
 namespace gui {

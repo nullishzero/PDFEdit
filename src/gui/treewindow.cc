@@ -53,9 +53,9 @@ TODO:
 TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name) {
  QBoxLayout *l=new QVBoxLayout(this);
 #ifdef DRAGDROP
- tree=new DragListView(this,"tree_view");//DragListView for drag and drop
+ tree=new DragListView(this);//DragListView for drag and drop
 #else
- tree=new QListView(this,"tree_view");//DragListView for drag and drop
+ tree=new QListView(this);//DragListView for drag and drop
 #endif
  tree->setSorting(-1);
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));

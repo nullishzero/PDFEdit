@@ -641,6 +641,7 @@ int BaseGUI::question_ync(const QString &msg) {
   case 2: return -1;	//QMessageBox::Cancel
   default: assert(0);
  }
+ return -1;
 }
 
 /** \copydoc PdfEditWindow::restoreWindowState */

@@ -17,7 +17,6 @@
 #include "util.h"
 #include <assert.h>
 #include <qfile.h>
-#include <qiconset.h> 
 #include <qmap.h>
 #include <qpixmap.h>
 #include <qstring.h>

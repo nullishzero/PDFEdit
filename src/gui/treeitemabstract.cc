@@ -20,7 +20,6 @@
 #include "treewindow.h"
 #include "util.h"
 #include <assert.h>
-#include <qlistview.h>
 #include <utils/debug.h>
 #include <qstring.h>
 
@@ -212,7 +211,7 @@ QListViewItem* TreeItemAbstract::child(const QString &name) {
  Move selection away from this item to nearest sensible item<br>
  If this item is not selected, task is done, does nothing<br>
  If it is selected, firt attempt is to move selection on next sibling, then on item above, then on item below.
- @param tree QLIstView in which this item resides
+ @param tree QListView in which this item resides
 */
 void TreeItemAbstract::unSelect(QListView *tree) {
  if (!tree->isSelected(this)) return;
@@ -266,7 +265,7 @@ void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
 void TreeItemAbstract::deleteChild(const QString &name) {
  QListViewItem *target=items.take(name);//Remove from list and return 
  if (!target) { //Item not found (should not happen usually)
-  guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << name);
+  guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << QSTRINGDEBUG(name));
   return;
  }
  types.remove(name); //Item found - so we remove its type from dictionary too

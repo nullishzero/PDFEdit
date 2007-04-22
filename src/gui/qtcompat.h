@@ -6,33 +6,32 @@
  *                                              Martin Petricek                                             
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
-#ifndef __ICONCACHE_H__
-#define __ICONCACHE_H__
-
-#include <qiconset.h>
-
-class QString;
-class QPixmap;
-
-namespace gui {
+ */
+#ifndef __QTCOMPAT_H__
+#define __QTCOMPAT_H__
 
 /**
- Class responsible for loading and caching icons<br>
- There can be multiple instances of this class at once,
- but all of them share common cache
- \brief Class caching loaded icons
+ @file 
+ Compatibility fixes to allow Qt3 code to work in Qt4
 */
-class IconCache {
-public:
- IconCache();
- ~IconCache();
- QPixmap* getIcon(const QString &name);
- QIconSet* getIconSet(const QString &name);
-private:
- QString getIconFile(const QString &name);
-};
+#include <qglobal.h>
 
-} // namespace gui
+#if defined(QT_VERSION) && QT_VERSION >= 0x040000
+
+ // QT4 or newer
+#define QT4 1
+
+/** Macro working in QT3 and QT4, allowing to send QString to std::basic_stream */
+#define QSTRINGDEBUG(x) (x.toUtf8().data())
+
+#else
+
+ // QT3
+#define QT3 1
+
+/** Macro working in QT3 and QT4, allowing to send QString to std::basic_stream */
+#define QSTRINGDEBUG(x) (x.utf8())
+
+#endif
 
 #endif

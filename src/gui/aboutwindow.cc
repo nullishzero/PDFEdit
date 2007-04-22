@@ -52,10 +52,10 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  QString authors=QString("<b>Copyright (C) 2006, 2007 PDFedit team:</b><br>")
   +QString::fromUtf8("&nbsp; Michal Hocko<br>&nbsp; Miro Jahoda<br>&nbsp; Jozef Mišutka<br>&nbsp; Martin Petříček<br>");
 
- QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1>"+tr("Compiled")+": "+COMPILE_TIME+
-  +"<br>"+tr("Using Qt %1").arg(QT_VERSION_STR)+
-  +tr(", QSA %1").arg(QSA_VERSION_STRING)+
-  "<br><br>"+info+"<br><br>"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
+ QLabel *lb=new QLabel(QString("<table><tr><td valign=\"top\"><h1>")+app+"</h1>"+tr("Compiled")+": "+COMPILE_TIME
+  +"<br>"+tr("Using Qt %1").arg(QT_VERSION_STR)
+  +tr(", QSA %1").arg(QSA_VERSION_STRING)
+  +"<br><br>"+info+"<br><br>"+authors+"</td></tr><tr><td colspan=\"\2\">"+tr("This program is distributed under terms of GNU GPL")+"</td></tr></table>", this);
  lb->setTextFormat(Qt::RichText);
 
  //Lower frame with Ok button

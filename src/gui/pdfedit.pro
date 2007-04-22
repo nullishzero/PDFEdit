@@ -117,7 +117,6 @@ QMAKE_CLEAN += .obj/menugenerator.o
 #include headers from kernel and used by kernel
 INCLUDEPATH += ../qsa/src/qsa ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
 
-
 #Dialogs
 HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h
 SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc dialog.cc
@@ -207,7 +206,7 @@ HEADERS += consolewriter.h  consolewritergui.h  consolewriterconsole.h
 SOURCES += consolewriter.cc consolewritergui.cc consolewriterconsole.cc
 
 #Misc. headers
-HEADERS += types.h version.h config.h rect2Darray.h 
+HEADERS += types.h version.h config.h rect2Darray.h qtcompat.h
 
 #Dummy header file for menu translation, needed by lupdate
 exists( .menu-trans.h  ) {

@@ -22,7 +22,6 @@ class QFrame;
 class QRadioButton;
 class QButtonGroup;
 class QLineEdit;
-class QHBox;
 class QLabel;
 
 namespace gui {
@@ -77,9 +76,9 @@ private:
  /** Adding to array? */
  bool usingArray;
  /** General layout of this widget */
- QBoxLayout *l;
+ QBoxLayout *layout;
  /** Box holding buttons */
- QHBox *qb;
+ QFrame *qbox;
  /** Group with content items */
  QButtonGroup *items;
  /** Label used to show message */

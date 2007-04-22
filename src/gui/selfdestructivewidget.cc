@@ -20,6 +20,33 @@
 
 namespace gui {
 
+#ifdef QT4
+
+/**
+ Default constructor of Self destructive widget
+ @param killer Window that will destruct this widget
+ @param parent parent widget (passed to QWidget)
+ @param f Widget flags (passed to QWidget)
+ */
+SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, Qt::WindowFlags f/*=0*/) 
+ : QWidget(parent,f) {
+QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
+}
+
+/**
+ Default constructor of Self destructive widget
+ @param killer Window that will destruct this widget
+ @param parent parent widget (passed to QWidget)
+ @param name name of this widget (passed to QWidget)
+ @param f Widget flags (passed to QWidget)
+ */
+SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, const char *name/*=0*/, Qt::WindowFlags f/*=0*/) 
+ : QWidget(parent,f) {
+QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
+}
+
+#else
+
 /**
  Default constructor of Self destructive widget
  @param killer Window that will destruct this widget
@@ -31,6 +58,8 @@ SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0
  : QWidget(parent,name,f) {
 QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
 }
+
+#endif
 
 /** default destructor */
 SelfDestructiveWidget::~SelfDestructiveWidget() {

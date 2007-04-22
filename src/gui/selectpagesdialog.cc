@@ -86,15 +86,21 @@ SelectPagesDialog::SelectPagesDialog (const QString& filename)
 	setName ("Select page dialog.");
     SelectPagesDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "SelectPagesDialogLayout"); 
 
-    layout48 = new QVBoxLayout( 0, 0, 6, "layout48"); 
-    layout27 = new QHBoxLayout( 0, 0, 6, "layout27"); 
+    layout48 = new QVBoxLayout();
+    layout48->setMargin(0);
+    layout48->setSpacing(6);
+    layout27 = new QHBoxLayout();
+    layout27->setMargin(0);
+    layout27->setSpacing(6);
 
-    textLabel1 = new QLabel( this, "textLabel1" );
+    textLabel1 = new QLabel( this);
 	textLabel1->setText (filename);
     textLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, textLabel1->sizePolicy().hasHeightForWidth() ) );
     layout27->addWidget( textLabel1 );
     layout48->addLayout( layout27 );
-    layout47 = new QHBoxLayout( 0, 0, 6, "layout47"); 
+    layout47 = new QHBoxLayout();
+    layout47->setMargin(0);
+    layout47->setSpacing(6);
 	// selectedList
     selectedList = new QListBox( this, "selectedList" );
     selectedList->setEnabled( FALSE );
