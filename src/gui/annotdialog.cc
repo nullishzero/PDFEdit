@@ -17,7 +17,7 @@
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 #include <qwidget.h>
-#include <qgroupbox.h>
+#include QGROUPBOX
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
@@ -70,7 +70,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     tab = new QWidget( tabWidget3, "tab" );
     tabLayout = new QGridLayout( tab, 1, 1, 11, 6, "tabLayout"); 
 
-    groupBox1 = new QGroupBox( tab, "groupBox1" );
+    groupBox1 = new Q_GroupBox( tab, "groupBox1" );
     groupBox1->setColumnLayout(0, Qt::Vertical );
     groupBox1->layout()->setSpacing( 6 );
     groupBox1->layout()->setMargin( 11 );

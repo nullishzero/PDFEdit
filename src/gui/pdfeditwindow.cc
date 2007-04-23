@@ -248,7 +248,7 @@ QProgressBar * PdfEditWindow::getProgressBar() {
  @param name name of widget (currently unused)
  @param fName Name of file to open in this window. If empty or null, no file will be opened 
  */
-PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,WDestructiveClose || WType_TopLevel) {
+PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel) {
  //Set the initial title
  setFileName(QString::null);
  document=NULL;

@@ -19,8 +19,8 @@
 #include <iostream>
 #include <string.h>
 #include <qfile.h>
-#include <qvaluelist.h> 
 #include <qstringlist.h> 
+#include <qtextstream.h> 
 #include <qdir.h>
 #include "config.h"
 #include "util.h"
@@ -115,7 +115,7 @@ void MenuGenerator::check() {
   cout << "Item : ";
   cout.width(20);
   cout.flags(ios::left);
-  cout << *it;
+  cout << convertFromUnicode(*it,CON);
   ava=avail[*it];
   if (!ava) cout << " (unreachable!)";
   else  cout << " (" << ava << " refs)";
@@ -130,7 +130,7 @@ void MenuGenerator::check() {
 */
 void MenuGenerator::addLocString(const QString &id,const QString &name) {
  trans+=QString("QT_TRANSLATE_NOOP( \"gui::Settings\",\"")+name+"\",\""+id+"\")";
- cout << id << " = " << name << endl;
+ cout << convertFromUnicode(id,CON) << " = " << convertFromUnicode(name,CON) << endl;
 }
 
 /** Produce dummy header used for menu items localization */

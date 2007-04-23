@@ -14,13 +14,14 @@
  @author Martin Petricek
 */
 
+#include "qtcompat.h"
 #include "pdfutil.h"
 #include "qsiproperty.h"
 #include "util.h"
 #include <cobject.h>
 #include <qsimporter.h>
 #include <qstring.h>
-#include <qvaluelist.h>
+#include QLIST
 
 namespace gui {
 
@@ -74,7 +75,7 @@ bool QSIProperty::equals(QObject* otherObject) {
 QString QSIProperty::getText() {
  std::string text;
  obj->getStringRepresentation(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /**
@@ -116,7 +117,7 @@ QVariant QSIProperty::value() {
  if (ref) {
   IndiRef value;
   ref->getValue(value);
-  QValueList<QVariant> val;
+  Q_List<QVariant> val;
   val+=value.num;
   val+=value.gen;
   return val;

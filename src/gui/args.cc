@@ -14,11 +14,12 @@
 */
 
 #include "args.h"
+#include "qtcompat.h"
 #include "util.h"
 #include <assert.h>
 #include <iostream>
 #include <qobject.h>
-#include <qvaluelist.h>
+#include QLIST
 #include <qstringlist.h>
 #include <stdlib.h>
 
@@ -56,9 +57,9 @@ const QString nextParam(const QString &param);
  and exits
 */
 void handleHelpOptions(){
- cout << QObject::tr("Options: ") << endl;
- QValueList<QString> opt=optHelp.keys();
- for (QValueList<QString>::Iterator it=opt.begin();it!=opt.end();++it) {
+ cout << convertFromUnicode(QObject::tr("Options: "),CON) << endl;
+ Q_List<QString> opt=optHelp.keys();
+ for (Q_List<QString>::Iterator it=opt.begin();it!=opt.end();++it) {
   QString paramName=*it;
   if (optParamName.contains(paramName)) { //Add name of parameter
    paramName+=" ["+optParamName[paramName]+"]";
@@ -66,7 +67,7 @@ void handleHelpOptions(){
   cout << " ";
   cout.width(16);		//width of option name
   cout.flags(ios::left);
-  cout << paramName << optHelp[*it] << endl;
+  cout << convertFromUnicode(paramName,CON) << convertFromUnicode(optHelp[*it],CON) << endl;
  }
  exit(0);
 }

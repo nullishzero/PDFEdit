@@ -489,8 +489,8 @@ QVariant BaseGUI::mergeDialog() {
   // if result length is 0 - there is nothing to merge
   int n=result->getLength();
   if(n>0) {
-   QValueList<QVariant> rItems;
-   QValueList<QVariant> rPos;
+   Q_List<QVariant> rItems;
+   Q_List<QVariant> rPos;
    // result->getItems() returns an array of pages to be merged
    // with current document
    int *res_items=result->getItems();
@@ -501,7 +501,7 @@ QVariant BaseGUI::mergeDialog() {
     rItems.append(res_items[i]);
     rPos.append((int)res_pos[i]);
    }
-   QValueList<QVariant> res;
+   Q_List<QVariant> res;
    res.append(rItems);
    res.append(rPos);   
    res.append(dialog->fileName());   
@@ -527,7 +527,7 @@ BaseGUI::selectPagesDialog (const QString& filename) const
 	typedef std::list<size_t> StdItems;
 
 	QVariant qvitems;				// Result of this function
-	QValueList<QVariant> qitems;	// Selected page numbers
+	Q_List<QVariant> qitems;	// Selected page numbers
 	scoped_ptr<SelectPagesDialog> dialog (new SelectPagesDialog(filename));	// Create dialog
 
 	// Starts dialog as modal and do something if OK is pressed

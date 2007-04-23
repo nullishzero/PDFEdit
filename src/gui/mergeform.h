@@ -10,6 +10,7 @@
 #ifndef __MERGEFORM_H__
 #define __MERGEFORM_H__
 
+#include "qtcompat.h"
 #include <qvariant.h>
 #include <qdialog.h>
 #include <qfiledialog.h>

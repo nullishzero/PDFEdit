@@ -16,6 +16,7 @@
  readStringDialog - Ask user a question end expect him to enter some string as answer<br>
  @author Martin Petricek
 */
+#include "qtcompat.h"
 #include "dialog.h"
 #include "settings.h"
 #include "version.h"
@@ -37,9 +38,14 @@ namespace gui {
  @return current directory
 */
 QString getDir(QFileDialog &fd) {
+#ifdef QT3
  const QDir *d=fd.dir();
  QString name=d->absPath();
  delete d;
+#else
+ QDir d=fd.directory();
+ QString name=d.absPath();
+#endif
  return name;
 }
 
@@ -56,12 +62,18 @@ QString getDir(QFileDialog &fd) {
 */
 QString openFileDialog(QWidget* parent,const QString &caption/*=QString::null*/,const QString &settingName/*=QString::null*/,const QString &filters/*=QString::null*/,const QString &savePath/*=QString::null*/) {
  guiPrintDbg(debug::DBG_DBG,"openFileDialog invoked");
+#ifdef QT3
  QFileDialog fd(parent,"openfiledialog",TRUE);
+#else
+ QFileDialog fd(parent);
+#endif
  if (!filters.isNull()) {
   //Set filters if filters specified
   fd.setFilter(filters);
  }
+#ifdef QT3
  fd.setShowHiddenFiles(TRUE);
+#endif
  if (!caption.isNull()) fd.setCaption(caption);
  if (savePath.isNull()) {
   //No save path specified -> start in current directory
@@ -126,12 +138,18 @@ QString openFileDialogPdf(QWidget* parent) {
 */
 QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/*=true*/,const QString &caption/*=QString::null*/,const QString &settingName/*=QString::null*/,const QString &filters/*=QString::null*/,const QString &savePath/*=QString::null*/) {
  guiPrintDbg(debug::DBG_DBG,"saveFileDialog invoked");
+#ifdef QT3
  QFileDialog fd(parent,"savefiledialog",TRUE);
+#else
+ QFileDialog fd(parent);
+#endif
  if (!filters.isNull()) {
   //Set filters if filters specified
   fd.setFilter(filters);
  }
+#ifdef QT3
  fd.setShowHiddenFiles(TRUE);
+#endif
  if (!caption.isNull()) fd.setCaption(caption);
  if (savePath.isNull()) {
   //No save path specified -> start in current directory
@@ -140,7 +158,13 @@ QString saveFileDialog(QWidget* parent,const QString &oldname,bool askOverwrite/
   //Try to set last used saved path, if it exists
   fd.setDir(globalSettings->read("history/path/"+savePath,"."));
  }
- if (!oldname.isNull()) fd.setSelection(oldname);
+ if (!oldname.isNull()) {
+#ifdef QT3
+  fd.setSelection(oldname);
+#else
+  fd.selectFile(oldname);
+#endif
+ }
  fd.setMode(QFileDialog::AnyFile);
  //Name that will hold the file (if some is picked)
  QString name;

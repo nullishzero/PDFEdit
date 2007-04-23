@@ -15,6 +15,7 @@
 */
 
 #include "qspdfoperator.h"
+#include "qtcompat.h"
 #include "qspdfoperatorstack.h"
 #include "qspdfoperatoriterator.h"
 #include "qsimporter.h"
@@ -24,7 +25,8 @@
 #include <ccontentstream.h>
 #include <iterator.h>
 #include <qstring.h>
-#include <qvaluelist.h>
+#include "util.h"
+#include QLIST
 
 namespace gui {
 
@@ -76,7 +78,7 @@ QSPdfOperator::~QSPdfOperator() {
 QVariant QSPdfOperator::getBBox () {
  Rectangle br = obj->getBBox ();
 
- QValueList<QVariant> r;
+ Q_List<QVariant> r;
  r.append( QVariant( br.xleft ) );
  r.append( QVariant( br.yleft ) );
  r.append( QVariant( br.xright ) );
@@ -93,7 +95,7 @@ QString QSPdfOperator::getText() {
  std::string text;
  if (nullPtr(obj,"getText")) return QString::null;
  obj->getStringRepresentation(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /** 
@@ -210,7 +212,7 @@ QString QSPdfOperator::getName() {
  if (nullPtr(obj,"getName")) return QString::null;
  std::string text;
  obj->getOperatorName(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /**

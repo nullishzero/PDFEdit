@@ -13,6 +13,7 @@
  merge pages from that document in currently edited document
 */
 
+#include "mergeform.h"
 #include <qvariant.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
@@ -21,7 +22,6 @@
 #include <qlistbox.h>
 #include <qlayout.h>
 #include <cpdf.h>
-#include "mergeform.h"
 
 namespace gui {
 

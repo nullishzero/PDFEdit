@@ -16,6 +16,7 @@
 #include "settings.h"
 #include <qvalidator.h>
 #include <utils/debug.h>
+#include <qevent.h>
 
 namespace gui {
 

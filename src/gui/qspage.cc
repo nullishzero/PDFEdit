@@ -15,18 +15,21 @@
 */
 
 #include "qspage.h"
+#include "qtcompat.h"
 #include "qsdict.h"
 #include <qrect.h>
 #include <qvariant.h>
-#include <qvaluelist.h>
+#include QLIST
 #include "qscontentstream.h"
 #include "qsannotation.h"
 #include "qspdfoperatorstack.h"
+#include "util.h"
 #include <cpage.h>
 
 namespace gui {
 
 using namespace std;
+using namespace util;
 
 /** List of fonts returned ftom CPage::getFontIdsAndNames */
 typedef vector<pair<string,string> > FontList;
@@ -159,8 +162,8 @@ void QSPage::moveBelow(int csi) {
 */
 void QSPage::setTransformMatrix(QVariant tMatrix) {
  double tm[6]={0};
- QValueList<QVariant> list=tMatrix.toList();
- QValueList<QVariant>::Iterator it = list.begin();
+ Q_List<QVariant> list=tMatrix.toList();
+ Q_List<QVariant>::Iterator it = list.begin();
  int i=0;
  while(it!=list.end()) {
   if (i>=6) break;//We filled all 6 values
@@ -319,7 +322,7 @@ void QSPage::addAnnotation(QObject *an) {
 */
 QVariant QSPage::mediabox() {
  Rectangle r=obj->getMediabox();
- QValueList<QVariant> rect;
+ Q_List<QVariant> rect;
  rect.append(r.xleft);
  rect.append(r.yleft);
  rect.append(r.xright);
@@ -373,8 +376,8 @@ QStringList QSPage::getFontIdsAndNames(bool onlyNames/*=false*/) {
  QStringList ret;
  FontList::iterator it;
  for( it=fonts.begin();it!=fonts.end();++it) { // for each font
-  if (!onlyNames) ret+=it->first;
-  ret+=it->second;
+  if (!onlyNames) ret+=convertToUnicode(it->first,PDF);
+  ret+=convertToUnicode(it->second,PDF);
  }
  return ret;
 }
@@ -391,8 +394,9 @@ QString QSPage::getFontId(const QString &fontName) {
  obj->getFontIdsAndNames(fonts);
  QStringList ret;
  FontList::iterator it;
+ string fontNameString=convertFromUnicode(fontName,PDF);
  for( it=fonts.begin();it!=fonts.end();++it) { // for each font
-  if (it->second==fontName) return it->first;
+  if (it->second==fontNameString) return convertToUnicode(it->first,PDF);
  }
  //Not found
  return QString::null;
@@ -405,7 +409,7 @@ QString QSPage::getFontId(const QString &fontName) {
 */
 void QSPage::addSystemType1Font(const QString &fontName) {
  try {
-  obj->addSystemType1Font(fontName);
+  obj->addSystemType1Font(convertFromUnicode(fontName,PDF));
  } catch (ReadOnlyDocumentException &e) {
   base->errorException("Page","addSystemType1Font",QObject::tr("Document is read-only"));
  }

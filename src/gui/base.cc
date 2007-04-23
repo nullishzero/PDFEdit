@@ -320,8 +320,8 @@ QSPdfOperator* Base::createEmptyOperator() {
 */
 QSAnnotation* Base::createAnnotation(QVariant rect,const QString &type) {
  double tm[4]={0};
- QValueList<QVariant> list=rect.toList();
- QValueList<QVariant>::Iterator it = list.begin();
+ Q_List<QVariant> list=rect.toList();
+ Q_List<QVariant>::Iterator it = list.begin();
  int i=0;
  while(it!=list.end()) {
   if (i>=4) break;//We filled all values
@@ -480,8 +480,8 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 	
 	// Create normal container
 	PageNums nums;
-	QValueList<QVariant> pagenumslist = pagenums.toList();
-	for (QValueList<QVariant>::Iterator it = pagenumslist.begin(); it != pagenumslist.end(); ++it)
+	Q_List<QVariant> pagenumslist = pagenums.toList();
+	for (Q_List<QVariant>::Iterator it = pagenumslist.begin(); it != pagenumslist.end(); ++it)
 		nums.push_back ((*it).toUInt());
 	
 	// Create cpdf

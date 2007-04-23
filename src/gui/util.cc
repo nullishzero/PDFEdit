@@ -23,6 +23,7 @@
 #include <qregexp.h>
 #include <qtextcodec.h>
 #include <qvariant.h>
+#include QLIST
 #include <qstringlist.h>
 #include <utils/debug.h>
 #include <static.h>
@@ -125,7 +126,7 @@ namespace {
  @param count number of elements in the array
 */
 QVariant varFromDoubleArray(double *d,int count) {
- QValueList<QVariant> rPos;
+ Q_List<QVariant> rPos;
  for (int i=0;i<count;i++) {
   rPos.append(d[i]);
  }
@@ -141,8 +142,8 @@ QVariant varFromDoubleArray(double *d,int count) {
  @return number of elements converted (between 0 and out_size)
 */
 int varToDoubleArray(const QVariant &v,double *out,int out_size) {
- QValueList<QVariant> list=v.toList();
- QValueList<QVariant>::const_iterator it=list.constBegin();
+ Q_List<QVariant> list=v.toList();
+ Q_List<QVariant>::const_iterator it=list.constBegin();
  int al=0;
  while(it!=list.constEnd()) {
   if (al>=out_size) break;//We filled all values
@@ -164,7 +165,9 @@ int varToDoubleArray(const QVariant &v,double *out,int out_size) {
  @param message Error message to show
 */
 void fatalError(const QString &message){
- cerr << endl << QObject::tr("Fatal Error") << "!" << endl << message << endl;
+ cerr << endl
+      << convertFromUnicode(QObject::tr("Fatal Error"),CON) << "!" << endl
+      << convertFromUnicode(message,CON) << endl;
  exit(-1);
 }
 
@@ -198,7 +201,7 @@ int findSep(int start,const QString &line,char separator) {
    if (pos>start) { //Want escaped character and this is not first character
     if (line.at(pos-1)=='\\') { //Preceding character is a backslash -> need to track back
      int count=0;
-     while(pos>count && line.at(pos-count-1)=="\\") {
+     while(pos>count && line.at(pos-count-1)=='\\') {
       count++;
      }
      if (!(count&1)) {

@@ -143,16 +143,16 @@ IconCache::~IconCache() {
  assert(iconCacheInstances>=1);
  if (iconCacheInstances<=1) {
   //This is last instance -> free the internal data
-  QValueList<QString> pixmaps=iconCache.keys();
+  Q_List<QString> pixmaps=iconCache.keys();
   //Delete all pixmaps from cache
-  for (QValueList<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
+  for (Q_List<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
    QPixmap *rm=iconCache[*it];
    delete rm;
   }
   iconCache.clear();
-  QValueList<QString> iconSets=setCache.keys();
+  Q_List<QString> iconSets=setCache.keys();
   //Delete all icon sets from cache
-  for (QValueList<QString>::Iterator it=iconSets.begin();it!=iconSets.end();++it) {
+  for (Q_List<QString>::Iterator it=iconSets.begin();it!=iconSets.end();++it) {
    QIconSet *rm=setCache[*it];
    delete rm;
   }

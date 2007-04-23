@@ -14,6 +14,7 @@
 #include <qcombobox.h>
 #include <qstring.h>
 
+class QResizeEvent;
 class QDoubleValidator;
 
 namespace gui {

@@ -31,20 +31,6 @@ ToolBar::ToolBar(const QString &label,QMainWindow *mainWindow) : QToolBar(label,
 
 /**
  Same constructor as QToolBar
- @param label Name of toolbar
- @param mainWindow Main window in which toolbar will be managed
- @param parent Parent window containing toolbar
- @param newLine Dock toolbar in a new line? (default is false = dock in same line)
- @param name Parameter passed to QDockWindow
- @param f Parameter passed to QDockWindow
- */
-ToolBar::ToolBar(const QString &label,QMainWindow *mainWindow,QWidget *parent,bool newLine/*=FALSE*/,const char * name/*=0*/,WFlags f/*=0*/)
- : QToolBar(label,mainWindow,parent,newLine,name,f) {
- //Empty constructor
-} 
-
-/**
- Same constructor as QToolBar
  @param parent Main window in which toolbar will be managed
  @param name Name of toolbar (for debugging)
  */

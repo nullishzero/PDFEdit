@@ -10,6 +10,7 @@
 #ifndef __ANNOTDIALOG_H__
 #define __ANNOTDIALOG_H__
 
+#include "qtcompat.h"
 #include <qvariant.h>
 #include <qdialog.h>
 #include "qspage.h"
@@ -22,7 +23,7 @@ class QSpacerItem;
 class QPushButton;
 class QTabWidget;
 class QWidget;
-class QGroupBox;
+class Q_GroupBox;
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -65,7 +66,7 @@ protected:
     QPushButton* cancelButton;
     QTabWidget* tabWidget3;
     QWidget* tab;
-    QGroupBox* groupBox1;
+    Q_GroupBox* groupBox1;
     QCheckBox* open;
     QLabel* textLabel2;
     QLineEdit* textContent;

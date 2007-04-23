@@ -115,7 +115,8 @@ QMAKE_EXTRA_UNIX_TARGETS += menugenerator menugenerator_o
 QMAKE_CLEAN += .obj/menugenerator.o
 
 #include headers from kernel and used by kernel
-INCLUDEPATH += ../qsa/src/qsa ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
+INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-kde-3.3.2 ../xpdf/splash
+
 
 #Dialogs
 HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h
@@ -219,8 +220,16 @@ exists( .menu-trans.h  ) {
 #Kernel objects - now using library
 LIBS += -lkernel -L../kernel
 
-#QSA static lib
-LIBS += -L../qsa/lib -lqsa_pdfedit
+contains( QTVERSION, qt3 ) {
+ #use included QSA
+ #QSA include
+ INCLUDEPATH += ../qsa/src/qsa
+ #QSA static lib
+ LIBS += -L../qsa/lib -lqsa_pdfedit
+}
+contains( QTVERSION, qt4 ) {
+ error(Qt4 is not supported in this release)
+}
 
 #OutputDevice
 LIBS += -lqoutputdevices -L../kpdf-kde-3.3.2
