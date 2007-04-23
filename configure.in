@@ -13,6 +13,10 @@ AC_ARG_ENABLE(release,
 ,,[enable_release=no])
 AC_SUBST(enable_release)
 
+#check for QTDIR
+CHK_ENV_VAR([QTDIR],[QTDIR environment variable must be set])
+CHK_ENV_VAR([QMAKESPEC],[QMAKESPEC environment variable must be set])
+
 # Checks for programs. (c++ compiler,...)
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
@@ -25,7 +29,6 @@ dnl     BOOST support (http://www.boost.org)
 dnl -------------------------------------------
 AC_CHECK_HEADER([boost/smart_ptr.hpp], , [AC_MSG_ERROR([You need boost library to compile PDFedit])])
 AC_CHECK_HEADER([boost/iostreams/stream.hpp], , [AC_MSG_ERROR([You need boost iostreams library to compile PDFedit])])
-
 
 # Checks for libraries.
 

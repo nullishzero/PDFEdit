@@ -1714,6 +1714,22 @@ fi
 
 
 
+#check for QTDIR
+
+ if test "x$QTDIR" = x; then
+  { { echo "$as_me:$LINENO: error: QTDIR environment variable must be set" >&5
+echo "$as_me: error: QTDIR environment variable must be set" >&2;}
+   { (exit 1); exit 1; }; }
+ fi
+
+
+ if test "x$QMAKESPEC" = x; then
+  { { echo "$as_me:$LINENO: error: QMAKESPEC environment variable must be set" >&5
+echo "$as_me: error: QMAKESPEC environment variable must be set" >&2;}
+   { (exit 1); exit 1; }; }
+ fi
+
+
 # Checks for programs. (c++ compiler,...)
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -4040,7 +4056,6 @@ else
 echo "$as_me: error: You need boost iostreams library to compile PDFedit" >&2;}
    { (exit 1); exit 1; }; }
 fi
-
 
 
 
