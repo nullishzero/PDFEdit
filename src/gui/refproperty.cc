@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string>
 #include <utils/debug.h>
+#include <qevent.h>
 
 namespace gui {
 

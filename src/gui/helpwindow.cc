@@ -32,7 +32,7 @@ namespace gui {
  @param parent Parent of this window
  @param name Name of this window (for debugging)
 */
-HelpWindow::HelpWindow(const QString &pageName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,WDestructiveClose || WType_TopLevel || WStyle_Minimize || WStyle_SysMenu || WStyle_Title || WStyle_Customize) {
+HelpWindow::HelpWindow(const QString &pageName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel | Qt::WStyle_Minimize | Qt::WStyle_SysMenu | Qt::WStyle_Title | Qt::WStyle_Customize | Qt::WStyle_NormalBorder) {
  globalSettings->restoreWindow(this,"help"); 
  setCaption(QString(APP_NAME)+" - "+tr("help"));
 // QBoxLayout *l=new QVBoxLayout(this);

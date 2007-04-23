@@ -15,6 +15,7 @@
 #include "selecttool.h"
 #include "settings.h"
 #include <utils/debug.h>
+#include <qevent.h>
 
 namespace gui {
 

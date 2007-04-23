@@ -15,7 +15,7 @@
 #include <qmap.h>
 #include <qpixmap.h>
 #include <qimage.h>
-#include <qdockarea.h>
+//#include <qdockarea.h>
 #include <qfiledialog.h>
 #include <qmessagebox.h>
 
@@ -114,8 +114,8 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	vBox->addWidget(scrollPageSpace);
 //QObject *pomObj = this;
 //while (pomObj->parent() !=NULL) pomObj = pomObj->parent();
-QDockArea * da = new QDockArea( Qt::Horizontal, QDockArea::Normal, this /*dynamic_cast<QWidget *>(pomObj)*/ );
-vBox->addWidget( da );
+//QDockArea * da = new QDockArea( Qt::Horizontal, QDockArea::Normal, this /*dynamic_cast<QWidget *>(pomObj)*/ );
+//vBox->addWidget( da );
 	
 	hBox = new QHBoxLayout(vBox);
 
@@ -125,7 +125,7 @@ vBox->addWidget( da );
 
 	hBox->addStretch();
 	pageNumber = new QLabel( QString(tr("%1 of %2")).arg(0).arg(0), this, "cisStr" );
-	pageNumber->setAlignment( AlignCenter | pageNumber->alignment() );
+	pageNumber->setAlignment( Qt::AlignCenter | pageNumber->alignment() );
 	hBox->addWidget( pageNumber );
 	hBox->addStretch();
         
@@ -134,8 +134,8 @@ vBox->addWidget( da );
 	Init( &is , format + "00000000xx" );
 	mousePositionOnPage = new QLabel( format.arg(0.0,8,'g',6).arg(0.0,8,'g',6).arg( actualUnits.getDefaultUnits() ), this );
 	mousePositionOnPage->setMinimumWidth( is.labelWidth );
-	mousePositionOnPage->setAlignment( AlignRight | mousePositionOnPage->alignment() );
-	hBox->addWidget( mousePositionOnPage, 0, AlignRight);
+	mousePositionOnPage->setAlignment( Qt::AlignRight | mousePositionOnPage->alignment() );
+	hBox->addWidget( mousePositionOnPage, 0, Qt::AlignRight);
 
 	hBox->insertSpacing( 0, is.labelWidth );	// for center pageNumber
 
@@ -147,7 +147,7 @@ vBox->addWidget( da );
 	textLine->hide();
 
 	// if something use on page, take focus
-	setFocusPolicy( WheelFocus );
+	setFocusPolicy( QWidget::WheelFocus );
 }
 
 PageSpace::~PageSpace() {

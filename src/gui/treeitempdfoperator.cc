@@ -84,7 +84,7 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,b
 QString TreeItemPdfOperator::itemHint() {
  std::string operatorName;
  obj->getOperatorName(operatorName);
- QString opName=operatorName;
+ QString opName=convertToUnicode(operatorName,PDF);
  return path()+" "+opName+" : "+OperatorHint::getInstance()->hint(opName);
 }
 

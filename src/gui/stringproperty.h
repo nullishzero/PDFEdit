@@ -11,6 +11,7 @@
 #define __STRINGPROPERTY_H__
 
 #include "property.h"
+class QResizeEvent;
 class QLineEdit;
 namespace pdfobjects {
  class IProperty;

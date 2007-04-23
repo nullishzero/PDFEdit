@@ -18,7 +18,7 @@
 #include "qsimporter.h"
 #include <cobject.h>
 #include "pdfutil.h"
-#include <qstringlist.h>
+#include "util.h"
 
 namespace gui {
 
@@ -64,7 +64,7 @@ int QSDict::count() {
 QSCObject* QSDict::property(const QString &name) {
  try {
   CDict *dict=dynamic_cast<CDict*>(obj.get());
-  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  boost::shared_ptr<IProperty> property=dict->getProperty(util::convertFromUnicode(name,util::PDF));
   return QSImporter::createQSObject(property,base);
  } catch (...) { 
   //Some error, probably the property does not exist
@@ -79,7 +79,7 @@ QSCObject* QSDict::property(const QString &name) {
 */
 bool QSDict::exist(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- return dict->containsProperty(name);;
+ return dict->containsProperty(util::convertFromUnicode(name,util::PDF));;
 }
 
 /**
@@ -123,7 +123,7 @@ QSCObject* QSDict::propertyDef(const QString &name,QString defValue) {
 */
 void QSDict::delProperty(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=name;
+ string pName=util::convertFromUnicode(name,util::PDF);
  try {
   dict->delProperty(pName);
  } catch (ReadOnlyDocumentException &e) {
@@ -139,7 +139,7 @@ void QSDict::delProperty(const QString &name) {
 */
 void QSDict::add(const QString &name,QSIProperty *ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=name;
+ string pName=util::convertFromUnicode(name,util::PDF);
  try {
   dict->addProperty(pName,*(ip->get().get()));
  } catch (ReadOnlyDocumentException &e) {
@@ -162,7 +162,7 @@ void QSDict::add(const QString &name,QObject *ip) {
 */
 void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=name;
+ string pName=util::convertFromUnicode(name,util::PDF);
  CString property(ip);
  try {
   dict->addProperty(pName,property);
@@ -179,7 +179,7 @@ void QSDict::add(const QString &name,const QString &ip) {
 */
 void QSDict::add(const QString &name,int ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- string pName=name;
+ string pName=util::convertFromUnicode(name,util::PDF);
  CInt property(ip);
  try {
   dict->addProperty(pName,property);
@@ -197,7 +197,7 @@ QString QSDict::getText() {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string text;
  dict->getStringRepresentation(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /**
@@ -212,7 +212,7 @@ QStringList QSDict::propertyNames() {
  dict->getAllPropertyNames(list);
  vector<string>::iterator it;
  for( it=list.begin();it!=list.end();++it) { // for each property
-  names+=*it;
+  names+=util::convertToUnicode(*it,util::PDF);
  }
  return names;
 }

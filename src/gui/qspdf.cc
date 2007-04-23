@@ -22,6 +22,7 @@
 #include "qsdict.h"
 #include <cobject.h>
 #include <cpdf.h>
+#include "util.h"
 
 namespace gui {
 
@@ -397,7 +398,7 @@ QString QSPdf::encryption() {
  if (nullPtr(obj,"encryption")) return 0;
  std::string filter;
  if (!pdfobjects::utils::isEncrypted(*obj,&filter)) return QString::null;
- return filter;
+ return util::convertToUnicode(filter,util::PDF);
 }
 
 } // namespace gui 

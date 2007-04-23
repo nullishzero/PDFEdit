@@ -17,6 +17,7 @@
 #include <qstring.h>
 #include <qcombobox.h>
 #include <qvalidator.h>
+#include <qevent.h>
 #include "settings.h"
 
 namespace gui {

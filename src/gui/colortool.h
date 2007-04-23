@@ -14,6 +14,7 @@
 #include <qcolor.h>
 #include <qstring.h>
 
+class QResizeEvent;
 class QPixmap;
 
 namespace gui {

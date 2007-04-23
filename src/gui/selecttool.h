@@ -14,6 +14,7 @@
 #include <qcombobox.h>
 #include <qstring.h>
 #include <qstringlist.h>
+class QResizeEvent;
 
 namespace gui {
 

@@ -38,6 +38,7 @@
 #include "version.h"
 #include "settings.h"
 #include "menu.h"
+#include "main.h"
 #include "toolbar.h"
 #include "config.h"
 #include <assert.h>
@@ -482,7 +483,7 @@ void applyLookAndFeel(bool notify) {
 void applyStyle() {
  QString style=globalSettings->read("gui/style","");
  if (style!="") {
-  QStyle *styl=qApp->setStyle(style);
+  QStyle *styl=q_App->setStyle(style);
   if (!styl) {
    globalSettings->write("gui/style",""); //No such style -> reset
    return;

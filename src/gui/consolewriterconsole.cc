@@ -38,7 +38,7 @@ ConsoleWriterConsole::~ConsoleWriterConsole() {
  @param line String to print
 */
 void ConsoleWriterConsole::printLine(const QString &line) {
- cout << line << endl;
+ cout << util::convertFromUnicode(line,util::CON) << endl;
 }
 
 /**
@@ -46,7 +46,7 @@ void ConsoleWriterConsole::printLine(const QString &line) {
  @param line String to print
 */
 void ConsoleWriterConsole::printErrorLine(const QString &line) {
- cout << "! " << line << endl;
+ cout << "! " << util::convertFromUnicode(line,util::CON) << endl;
 }
 
 /**
@@ -54,7 +54,7 @@ void ConsoleWriterConsole::printErrorLine(const QString &line) {
  @param cmd Command string
 */
 void ConsoleWriterConsole::printCommand(const QString &cmd) {
- cout << "> " << cmd << endl;
+ cout << "> " << util::convertFromUnicode(cmd,util::CON) << endl;
 }
 
 

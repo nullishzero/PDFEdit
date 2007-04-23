@@ -12,6 +12,7 @@
 
 #include "property.h"
 #include <iproperty.h>
+class QResizeEvent;
 class QLineEdit;
 class QPushButton;
 namespace pdfobjects {

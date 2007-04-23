@@ -16,7 +16,6 @@
 
 #include "qspage.h"
 #include "qsdict.h"
-#include <qstring.h>
 #include <qrect.h>
 #include <qvariant.h>
 #include <qvaluelist.h>

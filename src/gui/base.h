@@ -13,6 +13,7 @@
 #include "basecore.h"
 #include <qobject.h>
 #include <qstring.h>
+#include <qstringlist.h>
 #include <qvariant.h>
 
 namespace gui {

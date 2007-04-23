@@ -20,6 +20,7 @@
 #include <qvalidator.h>
 #include "settings.h"
 #include "util.h"
+#include <qevent.h>
 
 namespace gui {
 

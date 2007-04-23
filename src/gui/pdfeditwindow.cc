@@ -30,6 +30,7 @@
 #include "treeitem.h"
 #include "treeitempdfoperator.h"
 #include "util.h"
+#include "main.h"
 #include "version.h"
 #include <iostream>
 #include <qapplication.h>
@@ -55,7 +56,7 @@ int windowCount;
 /** application exit handler invoked when "Quit" is selected in menu/toolbar/etc ... */
 void PdfEditWindow::exitApp() {
  guiPrintDbg(debug::DBG_INFO,"Exiting program");
- qApp->closeAllWindows();
+ q_App->closeAllWindows();
  //Application will exit after last window is closed
  //todo: if invoked from qscript then handle specially
 }

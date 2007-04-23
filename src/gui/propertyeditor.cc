@@ -405,7 +405,7 @@ void PropertyEditor::setObject(const QString &name,boost::shared_ptr<IProperty> 
 */
 void PropertyEditor::commitProperty() {
  //Find active widget
- QWidget* propNow=qApp->focusWidget();//This is probably a Linedit if edited control is Property
+ QWidget* propNow=q_App->focusWidget();//This is probably a Linedit if edited control is Property
  if (!propNow) return;
 // guiPrintDbg(debug::DBG_DBG,"commitProperty classname=" << propNow->className() << " name=" << propNow->name());
  while(propNow && !dynamic_cast<Property*>(propNow)) { //Look for parent until Property is found

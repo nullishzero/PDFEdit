@@ -80,7 +80,7 @@ BaseGUI::~BaseGUI() {
  May be useful if you perform some lengthy operation to allow GUI to redraw
 */
 void BaseGUI::processEvents() {
- qApp->processEvents();
+ q_App->processEvents();
 }
 
 /**

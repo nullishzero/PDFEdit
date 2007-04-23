@@ -31,8 +31,11 @@
 #define Q_DictIterator		Q3DictIterator
 #define Q_ListBox		Q3ListBox
 #define Q_ListBoxItem		Q3ListBoxItem
+#define Q_PtrCollection		Q3PtrCollection
 #define Q_PtrDict		Q3PtrDict
 #define Q_PtrDictIterator	Q3PtrDictIterator
+#define Q_PtrList		Q3PtrList
+#define Q_PtrListIterator	Q3PtrListIterator
 
 //Include aliases
 #define QBUTTONGROUP	<Q3ButtonGroup>
@@ -40,6 +43,8 @@
 #define QDICT		<Q3Dict>
 #define QLISTBOX	<Q3ListBox> 
 #define QPTRDICT	<Q3PtrDict>
+#define QPTRLIST	<Q3PtrList>
+#define QPTRCOLLECTION	<Q3PtrCollection>
 
 #else
 
@@ -56,8 +61,11 @@
 #define Q_DictIterator		QDictIterator
 #define Q_ListBox		QListBox
 #define Q_ListBoxItem		QListBoxItem
+#define Q_PtrCollection		QPtrCollection
 #define Q_PtrDict		QPtrDict
 #define Q_PtrDictIterator	QPtrDictIterator
+#define Q_PtrList		QPtrList
+#define Q_PtrListIterator	QPtrListIterator
 
 //Include aliases
 #define QBUTTONGROUP	<qbuttongroup.h>
@@ -65,6 +73,8 @@
 #define QDICT		<qdict.h>
 #define QLISTBOX	<qlistbox.h> 
 #define QPTRDICT	<qptrdict.h>
+#define QPTRLIST	<qptrlist.h>
+#define QPTRCOLLECTION	<qptrcollection.h>
 
 #endif
 

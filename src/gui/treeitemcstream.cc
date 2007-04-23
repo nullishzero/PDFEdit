@@ -47,7 +47,7 @@ TreeItemCStream::TreeItemCStream(TreeData *_data,QListViewItem *parent,boost::sh
 //See TreeItemAbstract for description of this virtual method
 TreeItemAbstract* TreeItemCStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  CStream *dict=dynamic_cast<CStream*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,PDF));
  return TreeItem::create(data,this,property,name,after);
 }
 
@@ -56,14 +56,14 @@ bool TreeItemCStream::validChild(const QString &name,QListViewItem *oldChild) {
  TreeItem* old=dynamic_cast<TreeItem*>(oldChild);
  if (!old) return false;
  CStream *dict=dynamic_cast<CStream*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,PDF));
  return (old->getObject()==property);
 }
 
 //See TreeItemAbstract for description of this virtual method
 ChildType TreeItemCStream::getChildType(const QString &name) {
  CStream *dict=dynamic_cast<CStream*>(obj.get());
- boost::shared_ptr<IProperty> property=dict->getProperty(name);
+ boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,PDF));
  return property->getType();
 }
 
@@ -77,7 +77,7 @@ QStringList TreeItemCStream::getChildNames() {
  for( it=list.begin();it!=list.end();++it) { // for each property
   boost::shared_ptr<IProperty> property=dict->getProperty(*it);
   if (!data->showSimple() && isSimple(property)) continue; //simple item -> skip it
-  itemList += *it;
+  itemList += convertToUnicode(*it,PDF);
  }
  return itemList;
 }
@@ -113,7 +113,7 @@ void TreeItemCStream::remove(const QString &name) {
  guiPrintDbg(debug::DBG_DBG,"Removing from CStream: " << Q_OUT(name));
  TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[name]);
  if (t) t->unSelect(data->tree());
- oDict->delProperty(name);
+ oDict->delProperty(convertFromUnicode(name,PDF));
 }
 
 /** default destructor */

@@ -18,6 +18,7 @@
 #include <cpdf.h>
 #include <qcombobox.h>
 #include "settings.h"
+#include <qevent.h>
 
 namespace gui {
 

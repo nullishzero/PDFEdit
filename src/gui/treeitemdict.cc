@@ -156,7 +156,7 @@ void TreeItemDict::remove(const QString &name) {
  guiPrintDbg(debug::DBG_DBG,"Removing from dict: " << Q_OUT(name));
  TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[name]);
  if (t) t->unSelect(data->tree());
- oDict->delProperty(name);
+ oDict->delProperty(convertFromUnicode(name,util::PDF));
 }
 
 /** default destructor */

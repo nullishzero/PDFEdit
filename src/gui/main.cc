@@ -60,7 +60,10 @@ void saveSettings(void) {
 */
 void handleHelp(){
  cout << APP_NAME << " " << VERSION << endl;
- cout << QObject::tr("Usage:") << " " << binName << " [" << QObject::tr("option(s)") << "] [" << QObject::tr("files(s)") << "]" << endl;
+ cout << util::convertFromUnicode(QObject::tr("Usage:"),util::CON)
+      << " " << util::convertFromUnicode(binName,util::CON)
+      << " [" << util::convertFromUnicode(QObject::tr("option(s)"),util::CON)
+      << "] [" << util::convertFromUnicode(QObject::tr("files(s)"),util::CON) << "]" << endl;
  handleHelpOptions();
 }
 
@@ -132,7 +135,7 @@ void handleScriptShort(const QString &param){
 }
 
 /** QApplication - main application */
-QApplication *qApp;
+QApplication *q_App;
 
 /**
  Run scripts/code specified on commandline in given editor window
@@ -167,7 +170,7 @@ int main(int argc, char *argv[]){
  bool useGUI=true;
 #endif
  QApplication app(argc,argv,useGUI);
- qApp=&app;
+ q_App=&app;
  //Get application path
  appPath=app.applicationDirPath();
  appPath=QDir(appPath).absPath();

@@ -59,7 +59,7 @@ QString QSStream::getDecoded() {
  assert(st);
  std::string text;
  st->getDecodedStringRepresentation(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /**

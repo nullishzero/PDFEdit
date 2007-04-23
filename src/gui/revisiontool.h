@@ -13,6 +13,7 @@
 #include <qwidget.h>
 
 class QComboBox;
+class QResizeEvent;
 
 namespace pdfobjects {
  class CPdf;

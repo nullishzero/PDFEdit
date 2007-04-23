@@ -12,6 +12,7 @@
 
 #include <qwidget.h>
 
+class QResizeEvent;
 class QLineEdit;
 class QIntValidator;
 

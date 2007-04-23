@@ -14,6 +14,8 @@
 #include <qlineedit.h>
 #include <qstring.h>
 
+class QResizeEvent;
+
 namespace gui {
 
 /**

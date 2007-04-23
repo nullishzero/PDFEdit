@@ -11,6 +11,7 @@
 #define __QSDICT_H__
 
 #include "qsiproperty.h"
+#include <qstringlist.h>
 #include <cobject.h>
 
 namespace gui {

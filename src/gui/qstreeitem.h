@@ -12,6 +12,7 @@
 
 #include <qobject.h>
 #include "qscobject.h"
+#include <qstringlist.h>
 
 namespace gui {
 

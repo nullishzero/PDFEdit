@@ -18,6 +18,7 @@
 #include "qspdfoperator.h"
 #include "qspdfoperatoriterator.h"
 #include <pdfoperators.h>
+#include "util.h"
 
 namespace gui {
 
@@ -53,7 +54,7 @@ bool QSContentStream::equals(QObject* otherObject) {
 QString QSContentStream::getText() {
  std::string text;
  obj->getStringRepresentation(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /**

@@ -14,8 +14,9 @@
 #include <qobject.h>
 #include <boost/shared_ptr.hpp>
 #include <vector>
+#include <qstringlist.h>
+#include <qstring.h>
 class QRect;
-class QString;
 class QVariant;
 namespace pdfobjects {
  class CPage;

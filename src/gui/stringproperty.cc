@@ -19,6 +19,7 @@
 #include <qlineedit.h>
 #include <cobject.h>
 #include "util.h"
+#include <qevent.h>
 
 namespace gui {
 

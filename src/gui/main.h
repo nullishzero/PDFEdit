@@ -13,7 +13,7 @@
 class QApplication;
 
 /** Main QApplication object */
-extern QApplication *qApp;
+extern QApplication *q_App;
 /** Path to directory in which the binary resides */
 extern QString appPath;
 

@@ -13,7 +13,7 @@
 #include "treeitemabstract.h"
 #include <boost/shared_ptr.hpp>
 #include <vector>
-class QString;
+#include <qstring.h>
 namespace pdfobjects {
  class IProperty;
  class PdfOperator;

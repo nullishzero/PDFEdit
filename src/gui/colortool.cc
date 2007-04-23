@@ -18,6 +18,7 @@
 #include <qcolordialog.h>
 #include <qpixmap.h>
 #include <utils/debug.h>
+#include <qevent.h>
 
 namespace gui {
 

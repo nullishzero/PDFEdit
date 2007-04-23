@@ -134,8 +134,11 @@ HEADERS += helpwindow.h
 SOURCES += helpwindow.cc
 
 #Tree window
-HEADERS += treeitemabstract.h  treewindow.h  treedata.h  draglistview.h  multitreewindow.h
-SOURCES += treeitemabstract.cc treewindow.cc treedata.cc draglistview.cc multitreewindow.cc
+HEADERS += treeitemabstract.h  treewindow.h  treedata.h  multitreewindow.h
+SOURCES += treeitemabstract.cc treewindow.cc treedata.cc multitreewindow.cc
+#Drag and drop component (disabled)
+#HEADERS += draglistview.h
+#SOURCES += draglistview.cc
 #Tree item observers
 HEADERS += treeitemcontentstreamobserver.h  treeitemobserver.h  treeitempageobserver.h treeitemgenericobserver.h
 #Tree item types

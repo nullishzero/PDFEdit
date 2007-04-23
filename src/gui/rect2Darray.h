@@ -10,8 +10,10 @@
 #ifndef __RECT2DARRAY_H__
 #define __RECT2DARRAY_H__
 
+#include <qtcompat.h>
 #include <qrect.h>
-#include <qptrlist.h>
+#include QPTRLIST
+#include QPTRCOLLECTION
 
 namespace gui {
 
@@ -78,7 +80,7 @@ class BBoxOfObjectOnPage : public QRect {
  * ************************************************************************************************/
 
 template <typename T>
-class RectArray : public QPtrList< BBoxOfObjectOnPage<T> > {
+class RectArray : public Q_PtrList< BBoxOfObjectOnPage<T> > {
 	public:
 		RectArray();
 		~RectArray();
@@ -97,7 +99,7 @@ class RectArray : public QPtrList< BBoxOfObjectOnPage<T> > {
 		int getMaxY() const;
 		void initAllBBoxPtr( RectArray * prev, RectArray * next );
 	protected:
-	    virtual int compareItems( QPtrCollection::Item s1, QPtrCollection::Item s2 ) {
+	    virtual int compareItems( Q_PtrCollection::Item s1, Q_PtrCollection::Item s2 ) {
 			if ( *((BBoxOfObjectOnPage<T>*)s1) == *((BBoxOfObjectOnPage<T>*)s2) )
 				return 0;
 			return ( *((BBoxOfObjectOnPage<T>*)s1) < *((BBoxOfObjectOnPage<T>*)s2) ? -1 : 1 );
@@ -113,7 +115,7 @@ class RectArray : public QPtrList< BBoxOfObjectOnPage<T> > {
  * ************************************************************************************************/
 
 template <typename T>
-class Rect2DArray : public QPtrList< RectArray<T> > {
+class Rect2DArray : public Q_PtrList< RectArray<T> > {
 	public:
 		Rect2DArray();
 		~Rect2DArray();
@@ -123,7 +125,7 @@ class Rect2DArray : public QPtrList< RectArray<T> > {
 		void initAllBBoxPtr();
 		void myAppend( BBoxOfObjectOnPage<T> * bbox );
 	protected:
-	    virtual int compareItems( QPtrCollection::Item s1, QPtrCollection::Item s2 ) {
+	    virtual int compareItems( Q_PtrCollection::Item s1, Q_PtrCollection::Item s2 ) {
 			if ( *((RectArray<T>*)s1) == *((RectArray<T>*)s2) )
 				return 0;
 			return ( *((RectArray<T>*)s1) < *((RectArray<T>*)s2) ? -1 : 1 );
@@ -272,7 +274,7 @@ BBoxOfObjectOnPage<T>::~BBoxOfObjectOnPage() {
 
 template <typename T>
 RectArray<T>::RectArray() :
-	QPtrList< BBoxOfObjectOnPage<T> >()
+	Q_PtrList< BBoxOfObjectOnPage<T> >()
 {
 	minY = std::numeric_limits<int>::max();
 	maxY = std::numeric_limits<int>::min();
@@ -315,19 +317,19 @@ void RectArray<T>::initAllBBoxPtr( RectArray * prev, RectArray * next ) {
 							* prevLineLast = NULL,
 							* curNextLine = NULL,
 							* curPrevLine = NULL;
-	QPtrListIterator< BBoxOfObjectOnPage<T> >	* prevLineItems = NULL,
+	Q_PtrListIterator< BBoxOfObjectOnPage<T> >	* prevLineItems = NULL,
 												* nextLineItems = NULL;
 	if (prev != NULL) {
-		prevLineItems = new QPtrListIterator< BBoxOfObjectOnPage<T> > (*prev);
+		prevLineItems = new Q_PtrListIterator< BBoxOfObjectOnPage<T> > (*prev);
 		prevLineLast = prevLineItems->toLast();
 		curPrevLine = prevLineItems->toFirst();
 	}
 	if (next != NULL) {
-		nextLineItems = new QPtrListIterator< BBoxOfObjectOnPage<T> > (*next);
+		nextLineItems = new Q_PtrListIterator< BBoxOfObjectOnPage<T> > (*next);
 		nextLineFirst = curNextLine = nextLineItems->toFirst();
 	}
 
-	QPtrListIterator< BBoxOfObjectOnPage<T> >	currentLine (*this);
+	Q_PtrListIterator< BBoxOfObjectOnPage<T> >	currentLine (*this);
 	cur = currentLine.toFirst();
 	first = this->getFirst();
 	last = this->getLast();
@@ -377,7 +379,7 @@ void RectArray<T>::initAllBBoxPtr( RectArray * prev, RectArray * next ) {
 
 template <typename T>
 Rect2DArray<T>::Rect2DArray() :
-	QPtrList< RectArray<T> >()
+	Q_PtrList< RectArray<T> >()
 {
 	this->setAutoDelete(true);
 }
@@ -389,7 +391,7 @@ Rect2DArray<T>::~Rect2DArray() {
 template <typename T>
 void Rect2DArray<T>::setAutoDeleteAll( bool ada ) {
 	this->setAutoDelete( ada );
-	QPtrListIterator< RectArray<T> > it ( *this );
+	Q_PtrListIterator< RectArray<T> > it ( *this );
 	RectArray<T> * current = it.toFirst();
 	while ((current = it.current()) != NULL) {
 		current->setAutoDelete( ada );
@@ -400,7 +402,7 @@ void Rect2DArray<T>::setAutoDeleteAll( bool ada ) {
 template <typename T>
 void Rect2DArray<T>::sortAll() {
 	this->sort();
-	QPtrListIterator< RectArray<T> > it ( *this );
+	Q_PtrListIterator< RectArray<T> > it ( *this );
 	RectArray<T> * current = it.toFirst();
 	while ((current = it.current()) != NULL) {
 		current->sort();
@@ -416,7 +418,7 @@ void Rect2DArray<T>::initAllBBoxPtr() {
 
 	sortAll();
 
-	QPtrListIterator< RectArray<T> > it ( *this );
+	Q_PtrListIterator< RectArray<T> > it ( *this );
 	current = it.toFirst();
 	next = ++it;
 	while (current != NULL) {
@@ -433,7 +435,7 @@ void Rect2DArray<T>::myAppend( BBoxOfObjectOnPage<T> * bbox ) {
 		return;
 
 	bool toAppend = true;
-	QPtrListIterator< RectArray<T> > it ( *this );
+	Q_PtrListIterator< RectArray<T> > it ( *this );
 	RectArray<T> * current = it.toFirst();
 	while (((current = it.current()) != NULL) && toAppend) {
 		if ( current->getMinY() == bbox->top() ) {
