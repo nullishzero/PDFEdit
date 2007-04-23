@@ -12,6 +12,7 @@
 
 #include "property.h"
 class QCheckBox;
+class QResizeEvent;
 namespace pdfobjects {
  class IProperty;
 }

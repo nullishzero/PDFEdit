@@ -86,13 +86,13 @@ QVariant QSIProperty::value() {
  if (str) {
   std::string value;
   str->getValue(value);
-  return QString(util::convertToUnicode(value));
+  return QString(util::convertToUnicode(value,util::PDF));
  }
  CName* name=dynamic_cast<CName*>(obj.get());
  if (name) {
   std::string value;
   name->getValue(value);
-  return QString(util::convertToUnicode(value));
+  return QString(util::convertToUnicode(value,util::PDF));
  }
  CInt* tInt=dynamic_cast<CInt*>(obj.get());
  if (tInt) {
@@ -182,13 +182,13 @@ void QSIProperty::set(const QString &value) {
    case pName: {
     CName *ip=dynamic_cast<CName*>(obj.get());
 //    std::string str=value;
-    ip->setValue(util::convertFromUnicode(value));
+    ip->setValue(util::convertFromUnicode(value,util::PDF));
     return;
    }
    case pString: {
     CString *ip=dynamic_cast<CString*>(obj.get());
 //    std::string str=value;
-    ip->setValue(util::convertFromUnicode(value));
+    ip->setValue(util::convertFromUnicode(value,util::PDF));
     return;
    }
    default:;//Do nothing

@@ -12,6 +12,7 @@
  @author Martin Petricek
 */
 #include "treewindow.h"
+#include "qtcompat.h"
 #include "settings.h"
 #include "util.h"
 #include <iostream>
@@ -188,7 +189,7 @@ void TreeWindow::paintEvent(QPaintEvent *e) {
 */
 void TreeWindow::settingUpdate(QString key) {
  //TODO: only once per bunch of tree/show... signals ... setting blocks
- guiPrintDbg(debug::DBG_DBG,"Settings observer: " << key);
+ guiPrintDbg(debug::DBG_DBG,"Settings observer: " << Q_OUT(key));
  if (key.startsWith("tree/show")) { //Updated settings of what to show and what not
   updateTreeSettings();
  }

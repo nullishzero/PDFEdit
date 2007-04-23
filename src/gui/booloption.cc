@@ -16,6 +16,7 @@
 #include "settings.h"
 #include <qstring.h>
 #include <qcheckbox.h>
+#include <qevent.h>
 
 namespace gui {
 

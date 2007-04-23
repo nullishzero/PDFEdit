@@ -290,7 +290,7 @@ void PageSpace::unselectObjectOnPage ( ) {
 
 void PageSpace::setResizingZone ( int width ) {
 	if (width < 0) {
-		guiPrintDbg( debug::DBG_INFO, tr("Resizing zone must be positive integer or null !") );
+		guiPrintDbg( debug::DBG_INFO, "Resizing zone must be positive integer or null !" );
 		width = 0;
 	}
 	if (selectionMode)

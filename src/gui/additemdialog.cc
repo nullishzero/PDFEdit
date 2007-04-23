@@ -24,7 +24,7 @@
 #include "stringproperty.h"
 #include "util.h"
 #include "version.h"
-#include <qbuttongroup.h>
+#include QBUTTONGROUP
 #include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -71,7 +71,7 @@ AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
  target=new QFrame(this);
 
  //Subpanel to edit content to be added
- items=new QButtonGroup(2,Qt::Horizontal,tr("Type and value of new object"),this);
+ items=new Q_ButtonGroup(2,Qt::Horizontal,tr("Type and value of new object"),this);
  int i=0;
  selectedItem=-1;
  //Start adding widgets for various types of editable properties
@@ -333,7 +333,7 @@ bool AddItemDialog::commit() {
   //TODO: validate refproperty, if selected
   CDict* dict=dynamic_cast<CDict*>(item.get());
   if (dict) { //Add to dict
-   string tex=util::convertFromUnicode(propertyName->text());
+   string tex=util::convertFromUnicode(propertyName->text(),util::PDF);
    try {
     PropertyType pt=dict->getPropertyType(tex);
     QString msg=tr("Property '%1' already exist as %2").arg(propertyName->text(),getTypeName(pt));

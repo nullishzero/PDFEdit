@@ -13,6 +13,7 @@
 #include "option.h"
 class QString;
 class QCheckBox;
+class QResizeEvent;
 
 namespace gui {
 

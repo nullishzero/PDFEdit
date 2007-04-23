@@ -17,6 +17,7 @@
 */
 
 #include "menu.h"
+#include "qtcompat.h"
 #include "iconcache.h"
 #include "settings.h"
 #include "toolbar.h"
@@ -166,7 +167,7 @@ void Menu::optimizeItems(QMenuData *menu) {
   //Look for first usable letter
   int idx=filterText.find(QRegExp("[^"+used+"0]",false));
   if (idx<0) {
-   guiPrintDbg(debug::DBG_INFO,"No accel for Item "  << itemText << " Used chars: " << used);
+   guiPrintDbg(debug::DBG_INFO,"No accel for Item "  << Q_OUT(itemText) << " Used chars: " << Q_OUT(used));
    //No usable letter for accelerator found. How unfortunate ... 
    continue;
   }
@@ -337,7 +338,7 @@ void Menu::createItem(const QString &parentName,const QString &name,const QStrin
    //ToolButton *tbutton=
    createToolBarItem(tb,name,caption,action,accel,icon,classes);
   } else {
-   guiPrintDbg(debug::DBG_WARN,"Toolbar/menu to install into not found: " << parentName);
+   guiPrintDbg(debug::DBG_WARN,"Toolbar/menu to install into not found: " << Q_OUT(parentName));
   }
  }
 }
@@ -420,7 +421,7 @@ int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,c
   if (s.isNull()) s="";
   if (s.find(accelChar)>=0) {
    //Already used
-   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << caption << " is already used elsewhere!")
+   guiPrintDbg(debug::DBG_WARN,"Accelerator for " << Q_OUT(caption) << " is already used elsewhere!")
   } else {
    //Not yet used
    s=s+accelChar;
@@ -437,7 +438,7 @@ int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,c
   if (iconSet) {
    parent->changeItem(itemId,*iconSet,captionTr);
   } else {
-   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << icon);
+   guiPrintDbg(debug::DBG_WARN, "Icon missing: " << Q_OUT(icon));
   }
  }
  if (classes.count()) { //Extra data - Item classes
@@ -472,7 +473,7 @@ QMenuBar* Menu::loadMenu(QWidget *parent) throw (InvalidMenuException) {
 bool Menu::reserveAccel(const QString &accelDef,const QString &action) {
  if (accels.contains(accelDef)) {
   if (accels[accelDef]!=action) {
-   guiPrintDbg(debug::DBG_WARN,"Attempt to redefine accel " << accelDef << " from '" << accels[accelDef] << "' to '" << action << "'");
+   guiPrintDbg(debug::DBG_WARN,"Attempt to redefine accel " << Q_OUT(accelDef) << " from '" << Q_OUT(accels[accelDef]) << "' to '" << Q_OUT(action) << "'");
   }
   return false;
  }
@@ -569,7 +570,7 @@ ToolButton* Menu::createToolBarItem(ToolBar *tb,const QString &name,const QStrin
  const QIconSet *iconSet=cache->getIconSet(icon);
  int menu_id=addAction(action);
  if (!iconSet) {
-  guiPrintDbg(debug::DBG_WARN, "Icon missing: " << icon);
+  guiPrintDbg(debug::DBG_WARN, "Icon missing: " << Q_OUT(icon));
  }
  QString tooltip=toolTipText(text,name,accel);
  ToolButton *tbutton=new ToolButton(iconSet,tooltip,menu_id,tb);
@@ -613,7 +614,7 @@ const QIconSet* Menu::getIconSet(const QString &name) {
 */
 ToolBar* Menu::loadToolbar(const QString &name,bool visible/*=true*/) throw (InvalidMenuException) {
  QString line=readItem(name);
- guiPrintDbg(debug::DBG_INFO,"Loading toolbar:" << name);
+ guiPrintDbg(debug::DBG_INFO,"Loading toolbar:" << Q_OUT(name));
  if (!isList(line)) { // List of values - first is name, others are items in it
   invalidItem(QObject::tr("toolbar definition"),name,line,"list");
   return NULL;

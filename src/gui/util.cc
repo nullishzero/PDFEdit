@@ -13,6 +13,7 @@
  \brief Utility functions
 */
 #include "util.h"
+#include "qtcompat.h"
 #include <iostream>
 #include <qcolor.h>
 #include <qfile.h>
@@ -296,7 +297,7 @@ void printList(const QStringList &l) {
  QStringList::ConstIterator it=l.begin();
  for (;it!=l.end();++it) { //load all subitems
   QString x=*it;
-  cout << x <<endl;
+  cout << Q_OUT(x) <<endl;
  }
 }
 
@@ -486,9 +487,14 @@ void setDefaultCharset(const QString &charsetName) {
 /**
  Return QString from std::string with optional character conversion according to settings
  @param str String to convert
+ @param ctx Context of conversion (PDF, console, filename ...)
  @return converted string
  */
-QString convertToUnicode(const std::string &str) {
+QString convertToUnicode(const std::string &str, CharsetContext ctx) {
+ /** \todo: handle context, different settings for different contexts */
+ if (ctx==UTF8) {
+  return QString::fromUtf8(str.c_str());
+ }
  if (defCodec) {
   return defCodec->toUnicode(str.c_str());
  }
@@ -498,9 +504,14 @@ QString convertToUnicode(const std::string &str) {
 /**
  Return std::string from QString with optional character conversion according to settings
  @param str String to convert
+ @param ctx Context of conversion (PDF, console, filename ...)
  @return converted string
  */
-std::string convertFromUnicode(const QString &str) {
+std::string convertFromUnicode(const QString &str, CharsetContext ctx) {
+ /** \todo: handle context, different settings for different contexts */
+ if (ctx==UTF8) {
+  return std::string(str.utf8());
+ }
  if (defCodec) {
   QCString cstr=defCodec->fromUnicode(str);
   return std::string(cstr);

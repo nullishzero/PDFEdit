@@ -12,7 +12,6 @@
 
 #include <qobject.h>
 #include "qscobject.h"
-#include <qptrlist.h> 
 #include <qstringlist.h> 
 
 class QPopupMenu;

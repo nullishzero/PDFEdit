@@ -15,11 +15,12 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include "dialogoption.h"
+#include <utils/debug.h>
 #include <qstring.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
+#include <qevent.h>
 #include "settings.h"
 #include "util.h"
 

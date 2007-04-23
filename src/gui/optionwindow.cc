@@ -80,9 +80,9 @@ OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *paren
  //create list of properties in this editor;
  list=new QStringList();
  //create option dictionary
- items=new QDict<Option>();
+ items=new Q_Dict<Option>();
  //create labels dictionary
- labels=new QDict<QLabel>();
+ labels=new Q_Dict<QLabel>();
  l_units=units;
  QGridLayout* grl_up=new QGridLayout(this,2,1);
  grl_up->setRowStretch(0,1);
@@ -118,10 +118,10 @@ OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *paren
 /** Called on pushing 'Apply' button */
 void OptionWindow::apply() {
  //save settings
- QDictIterator<Option> it(*items);
+ Q_DictIterator<Option> it(*items);
  for (;it.current();++it) {
   Option* c=it.current();
-  guiPrintDbg(debug::DBG_DBG,"Writing " << QSTRINGDEBUG(c->getName()));
+  guiPrintDbg(debug::DBG_DBG,"Writing " << Q_OUT(c->getName()));
   c->writeValue();
  }
  //Write settings to disk (editor may crash or be killed, right?)
@@ -239,7 +239,7 @@ void OptionWindow::addWidget(QWidget *otab,QWidget *elem) {
  */
 void OptionWindow::addText(QWidget *otab,const QString &text) {
  QLabel *txt=new QLabel(text,otab);
- txt->setTextFormat(RichText);
+ txt->setTextFormat(Qt::RichText);
  addWidget(otab,txt);
 }
 
@@ -408,7 +408,7 @@ void OptionWindow::init() {
  //theme cannot be named 'default'
  iconThemes.remove("default");
  //Sort list
- qHeapSort(iconThemes);
+ iconThemes.sort();
  //Remove duplicates
  QString lastTheme;
  QStringList iconThemesUnique;

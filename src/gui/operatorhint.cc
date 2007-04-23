@@ -14,14 +14,17 @@
 */
 
 #include "operatorhint.h"
+#include "qtcompat.h"
 #include "settings.h"
 #include <qstring.h>
 #include <stdlib.h>
 #include <confparser.h>
+#include "util.h"
 
 namespace gui {
 
 using namespace configuration;
+using namespace util;
 
 /** Single hinter instance for entire application */
 OperatorHint *OperatorHintInstance=NULL;
@@ -58,10 +61,10 @@ OperatorHint::OperatorHint(){
  if (confFile.isNull()) {
   guiPrintDbg(debug::DBG_WARN,"Operator hint file not found");
  }
- guiPrintDbg(debug::DBG_DBG,"Operator hint file: " << confFile);
- int result=hinter.loadFromFile(confFile,parserHint);
+ guiPrintDbg(debug::DBG_DBG,"Operator hint file: " << Q_OUT(confFile));
+ int result=hinter.loadFromFile(convertFromUnicode(confFile,NAME),parserHint);
  if(result==-1) {
-  guiPrintDbg(debug::DBG_WARN,"Operator hinter failed to parse file: " << confFile);
+  guiPrintDbg(debug::DBG_WARN,"Operator hinter failed to parse file: " << Q_OUT(confFile));
   //TODO alert user
  }
 };
@@ -84,9 +87,9 @@ OperatorHint* OperatorHint::getInstance() {
 */
 QString OperatorHint::hint(const QString &operatorName) {
  std::string theHint;
- std::string opName=operatorName;
+ std::string opName=convertFromUnicode(operatorName,util::PDF);
  hinter.getHint(opName,theHint);
- return theHint;
+ return convertToUnicode(theHint,util::UTF8);
 }
 
 /**

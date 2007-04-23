@@ -11,12 +11,14 @@
 #define __PROPERTYEDITOR_H__
 
 #include <qobjectlist.h>
-#include <qdict.h>
+#include "qtcompat.h"
+#include QDICT
 #include <qmap.h>
 #include <qwidget.h>
 #include <iproperty.h>
 #include <pdfoperators.h>
 
+class QResizeEvent;
 class QScrollView;
 class QLabel;
 class QStringList;
@@ -97,7 +99,7 @@ private:
  /** List of property names */
  QStringList *list;
  /** Dictionary with property items */
- QDict<Property> *items;
+ Q_Dict<Property> *items;
  /** Dictionary with IProperty items */
  QMap<QString,boost::shared_ptr<IProperty> > *props;
  /** Dictionary with Row numbers for proerties */
@@ -105,7 +107,7 @@ private:
  /** Dictionary with labes for properties*/
  QMap<QWidget*,QLabel*> propLabel;
  /** Dictionary with property labels */
- QDict<QLabel> *labels;
+ Q_Dict<QLabel> *labels;
  /** PropertyModeController - modecontroller wrapper instance */
  PropertyModeController *mode;
  /** Show hidden properties */

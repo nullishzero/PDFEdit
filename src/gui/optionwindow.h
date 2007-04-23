@@ -12,7 +12,7 @@
 
 #include "qtcompat.h"
 #include <qwidget.h>
-#include <qdict.h>
+#include QDICT
 #include <qmap.h>
 class QLabel;
 class QTabWidget;
@@ -62,9 +62,9 @@ private:
  /** List of option names */
  QStringList *list;
  /** Dictionary with option items */
- QDict<Option> *items;
+ Q_Dict<Option> *items;
  /** Dictionary with option labels */
- QDict<QLabel> *labels;
+ Q_Dict<QLabel> *labels;
  /** Main tab widget */ 
  QTabWidget *tab;
  /** Grid layout for the tab */

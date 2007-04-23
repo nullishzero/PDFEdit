@@ -34,6 +34,18 @@ class QVariant;
 
 namespace util {
 
+
+/**
+ Context of unicode to/from 8bit conversion
+ (PDF, console, filename ...)
+*/
+typedef enum CharsetContext {
+ PDF, /** PDF */
+ CON, /** Console/terminal */
+ NAME, /** File name */
+ UTF8, /** Use UTF8 (content of pdfedit help/resource files) */
+};
+
 void fatalError(const QString &message);
 QStringList explode(char separator,const QString &line,bool escape=false);
 QString htmlEnt(const QString &str);
@@ -54,8 +66,8 @@ int varToDoubleArray(const QVariant &v,double *out,int out_size);
 //Charset encoding related functions
 QStringList supportedEncodings();
 void setDefaultCharset(const QString &charsetName);
-QString convertToUnicode(const std::string &str);
-std::string convertFromUnicode(const QString &str);
+QString convertToUnicode(const std::string &str, CharsetContext ctx);
+std::string convertFromUnicode(const QString &str, CharsetContext ctx);
 
 } //namespace util
 

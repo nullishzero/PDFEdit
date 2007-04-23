@@ -14,6 +14,7 @@
  @author Martin Petricek
 */
 
+#include "qtcompat.h"
 #include "args.h"
 #include "config.h"
 #include "consolewindow.h"
@@ -141,7 +142,7 @@ void runCmdScripts(PdfEditWindow *w) {
  //Run scripts given on commandline in given PDFedit window
  for (unsigned int i=0;i<runScript.count();i++) {
   QString typ=runScript[i];
-  guiPrintDbg(debug::DBG_DBG, "Script cmdline " << typ << " " << runScriptParam[i]);
+  guiPrintDbg(debug::DBG_DBG, "Script cmdline " << Q_OUT(typ) << " " << Q_OUT(runScriptParam[i]));
        if (typ=="run")		w->runFile(runScriptParam[i]);
   else if (typ=="script")	w->run(runScriptParam[i]);
   else if (typ=="eval")		w->eval(runScriptParam[i]);
@@ -184,7 +185,7 @@ int main(int argc, char *argv[]){
    if (!translator.load(lang,QDir::home().path()+"/"+CONFIG_DIR+"/lang")) {
     //Look in binary path - testing compilations and (possibly) windows builds
     if (!translator.load(lang,appPath+"/lang")) { 
-     guiPrintDbg(debug::DBG_WARN,"Translation file " << lang << " not found");
+     guiPrintDbg(debug::DBG_WARN,"Translation file " << Q_OUT(lang) << " not found");
     }
    }
   }
@@ -211,7 +212,7 @@ int main(int argc, char *argv[]){
  QStringList params=handleParams(app.argc(),app.argv());
 
  guiPrintDbg(debug::DBG_DBG,"Commandline parameters processed");
- guiPrintDbg(debug::DBG_DBG,"App path: " << appPath);
+ guiPrintDbg(debug::DBG_DBG,"App path: " << Q_OUT(appPath));
 
  //load settings
  globalSettings=Settings::getInstance();
@@ -240,7 +241,7 @@ int main(int argc, char *argv[]){
   //Run scripts given on commandline
   for (unsigned int i=0;i<runScript.count();i++) {
    QString typ=runScript[i];
-   guiPrintDbg(debug::DBG_DBG, "Script cmdline " << typ << " " << runScriptParam[i]);
+   guiPrintDbg(debug::DBG_DBG, "Script cmdline " << Q_OUT(typ) << " " << Q_OUT(runScriptParam[i]));
         if (typ=="run")		c.runFile(runScriptParam[i]);
    else if (typ=="script")	c.run(runScriptParam[i]);
    else if (typ=="eval")	c.eval(runScriptParam[i]);
@@ -278,8 +279,9 @@ int main(int argc, char *argv[]){
  if (nFiles) { //open files from cmdline
   guiPrintDbg(debug::DBG_DBG,"Opening files from commandline");
   for (QStringList::Iterator it=params.begin();it!=params.end();++it) {
-   guiPrintDbg(debug::DBG_INFO,"Opening parameter: " << *it)
-   runCmdScripts(PdfEditWindow::create(*it));
+   QString parameter=*it;
+   guiPrintDbg(debug::DBG_INFO,"Opening parameter: " << Q_OUT(parameter));
+   runCmdScripts(PdfEditWindow::create(parameter));
   }
  } else { //no parameters
   guiPrintDbg(debug::DBG_DBG,"Opening empty editor window");

@@ -12,7 +12,7 @@
 
 #include "qtcompat.h"
 #include <qlistview.h>
-#include <qdict.h>
+#include QDICT
 #include <qmap.h>
 
 class QStringList;
@@ -123,7 +123,7 @@ protected:
  /** Name of this item */
  QString nameId;
  /** Mapping of all child names to child items for this tree item */
- QDict<QListViewItem> items;
+ Q_Dict<QListViewItem> items;
  /** Mapping of all child names to types of child items for this tree item */
  QMap<QString,ChildType> types;
  /** Data from treewindow containing reference to it and other needed data */

@@ -14,8 +14,9 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include "qscobject.h"
+#include "qtcompat.h"
+#include <utils/debug.h>
 #include <qstring.h>
 #include "util.h"
 #include "nullpointerexception.h"
@@ -47,7 +48,7 @@ QSCObject::QSCObject(QSCObject &source) : QObject() {
 
 /** destructor */
 QSCObject::~QSCObject() {
- guiPrintDbg(debug::DBG_DBG,"removing QSCObject " << typeName);
+ guiPrintDbg(debug::DBG_DBG,"removing QSCObject " << Q_OUT(typeName));
 //TODO: implement QSWrapperFacrory for scripting as "garbage collector"
  if (base) base->removeGC(this);
 }

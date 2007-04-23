@@ -19,6 +19,7 @@
 */
 
 #include "settings.h"
+#include "qtcompat.h"
 #include "config.h"
 #include "main.h"
 #include "staticsettings.h"
@@ -130,8 +131,8 @@ void Settings::initSettings() {
  if (!haveSettings) {
   //Main settings file not found
   guiPrintDbg(debug::DBG_ERR,"Main configuration file not found. PDFedit is unlikely to start");
-  guiPrintDbg(debug::DBG_ERR,"Searched in: " << DATA_PATH << "/" << CONFIG_FILE);
-  guiPrintDbg(debug::DBG_ERR,"Searched in: " << appPath << "/" << CONFIG_FILE);
+  guiPrintDbg(debug::DBG_ERR,"Searched in: " << DATA_PATH << "/" << Q_OUT(CONFIG_FILE));
+  guiPrintDbg(debug::DBG_ERR,"Searched in: " << Q_OUT(appPath) << "/" << Q_OUT(CONFIG_FILE));
  }
  //Look in $HOME (or something like that, for example QT maps this to "Application Data" in windows)
  QString homeDir=QDir::convertSeparators(QDir::home().path()+"/"+CONFIG_DIR);
@@ -170,7 +171,7 @@ QString Settings::getFullPathName(const QString &nameOfPath,QString fileName/*=Q
   }
   if (QFile::exists(absName)) return absName;
  }
- guiPrintDbg(debug::DBG_WARN,"File not found (" << nameOfPath << "): " << fileName);
+ guiPrintDbg(debug::DBG_WARN,"File not found (" << Q_OUT(nameOfPath) << "): " << Q_OUT(fileName));
  return QString::null;
 }
 

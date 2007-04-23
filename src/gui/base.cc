@@ -14,6 +14,7 @@
 */
 
 #include "base.h"
+#include "qtcompat.h"
 #include "qsannotation.h"
 #include "qsarray.h"
 #include "qscobject.h"
@@ -199,11 +200,11 @@ int Base::runScriptList(const QStringList &initScripts) {
   //guiPrintDbg(debug::DBG_INFO,"Considering init script: " << initScriptFilename);
   //Check if the script exists. If not, it is silently skipped
   if (exists(initScriptFilename)) {   
-   guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
+   guiPrintDbg(debug::DBG_INFO,"Running init script: " << Q_OUT(initScriptFilename));
    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
    if (!runFile(initScriptFilename)) {  
     errorMessage();
-    guiPrintDbg(debug::DBG_INFO,"Error running file: " << initScriptFilename);
+    guiPrintDbg(debug::DBG_INFO,"Error running file: " << Q_OUT(initScriptFilename));
     conPrintError(tr("Error running")+" "+initScriptFilename);
    }
    scriptsRun++;
@@ -223,7 +224,7 @@ void Base::runScriptsFromPath(const QStringList &initScriptPaths) {
  for (unsigned int ip=0;ip<initScriptPaths.count();ip++) {
   QString initPath=initScriptPaths[ip];
   if (!exists(initPath)) {
-   guiPrintDbg(debug::DBG_WARN,"Init path does not exist: " << initPath);
+   guiPrintDbg(debug::DBG_WARN,"Init path does not exist: " << Q_OUT(initPath));
    continue;
   }
   QDir dir(initPath);
@@ -240,11 +241,11 @@ void Base::runScriptsFromPath(const QStringList &initScriptPaths) {
  QMap<QString,QString>::Iterator it;
  for (it=initScriptAbsPaths.begin();it!=initScriptAbsPaths.end();++it) {
   QString initScriptFilename=it.data();
-  guiPrintDbg(debug::DBG_INFO,"Running init script: " << initScriptFilename);
+  guiPrintDbg(debug::DBG_INFO,"Running init script: " << Q_OUT(initScriptFilename));
   //Any document-related classes are NOT available to the initscript, as no document is currently loaded
   if (!runFile(initScriptFilename)) {  
    errorMessage();
-   guiPrintDbg(debug::DBG_INFO,"Error running file: " << initScriptFilename);
+   guiPrintDbg(debug::DBG_INFO,"Error running file: " << Q_OUT(initScriptFilename));
    conPrintError(tr("Error running")+" "+initScriptFilename);
   }
  }
@@ -272,7 +273,7 @@ bool Base::runFile(const QString &scriptName) {
  @return new PDF operator
 */
 QSPdfOperator* Base::createOperator(const QString &text,QSIPropertyArray* parameters) {
- std::string opTxt=util::convertFromUnicode(text);
+ std::string opTxt=util::convertFromUnicode(text,util::PDF);
  PdfOperator::Operands param;
  parameters->copyTo(param);
  boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(opTxt,param));
@@ -330,7 +331,7 @@ QSAnnotation* Base::createAnnotation(QVariant rect,const QString &type) {
  }
  Rectangle rc(tm[0],tm[1],tm[2],tm[3]);
  boost::shared_ptr<CPage> nullPage;
- boost::shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rc,util::convertFromUnicode(type));
+ boost::shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rc,util::convertFromUnicode(type,util::PDF));
  return new QSAnnotation(annot,nullPage,this);
 }
 
@@ -398,7 +399,7 @@ QSIProperty* Base::createRef(int valueNum,int valueGen) {
  @return created IProperty
 */
 QSIProperty* Base::createString(const QString &value) {
- return new QSIProperty(boost::shared_ptr<IProperty>(CStringFactory::getInstance(util::convertFromUnicode(value))),this);
+ return new QSIProperty(boost::shared_ptr<IProperty>(CStringFactory::getInstance(util::convertFromUnicode(value,util::PDF))),this);
 }
 
 /**
@@ -407,7 +408,7 @@ QSIProperty* Base::createString(const QString &value) {
  @return created IProperty
 */
 QSIProperty* Base::createName(const QString &value) {
- return new QSIProperty(boost::shared_ptr<IProperty>(CNameFactory::getInstance(util::convertFromUnicode(value))),this);
+ return new QSIProperty(boost::shared_ptr<IProperty>(CNameFactory::getInstance(util::convertFromUnicode(value,util::PDF))),this);
 }
 
 

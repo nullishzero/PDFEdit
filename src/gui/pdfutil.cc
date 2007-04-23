@@ -15,6 +15,7 @@
 */
 
 #include "pdfutil.h"
+#include "qtcompat.h"
 #include <qstring.h>
 #include <qobject.h>
 #include <cobject.h>
@@ -120,7 +121,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   case pName: {
    std::string value;
    dynamic_cast<CName*>(obj.get())->getValue(value);
-   QString ret=util::convertToUnicode(value);
+   QString ret=util::convertToUnicode(value,util::PDF);
    if (ret.length()>22) {
     ret.truncate(20);
     ret+="...";
@@ -130,7 +131,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   case pString: {
    std::string value;
    dynamic_cast<CString*>(obj.get())->getValue(value);
-   QString ret=util::convertToUnicode(value);
+   QString ret=util::convertToUnicode(value,util::PDF);
    if (ret.length()>22) {
     ret.truncate(20);
     ret+="...";
@@ -290,7 +291,7 @@ template <typename T>
 boost::shared_ptr<IProperty> _recursiveProperty(boost::shared_ptr<T> obj,const QString &name) {
  QString nameFirst=name.section('/',0,0);
  QString nameEnd=name.section('/',1);
- guiPrintDbg(debug::DBG_DBG,"Recurse '" << name << "' -> '" << nameFirst << "' / '" << (nameEnd.isNull()?"(NULL)":nameEnd) << "'");
+ guiPrintDbg(debug::DBG_DBG,"Recurse '" << Q_OUT(name) << "' -> '" << Q_OUT(nameFirst) << "' / '" << (nameEnd.isNull()?"(NULL)":Q_OUT(nameEnd)) << "'");
  boost::shared_ptr<IProperty> r=getObjProperty(obj,nameFirst);
  r=dereference(r);
  if (nameEnd.isNull()) return r;//This is the property we want
@@ -310,13 +311,13 @@ boost::shared_ptr<IProperty> _recursiveProperty(boost::shared_ptr<T> obj,const Q
 
 /** \copydoc _recursiveProperty */
 boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CDict> obj,const QString &name) {
- guiPrintDbg(debug::DBG_DBG,"Recurse Dict " << name);
+ guiPrintDbg(debug::DBG_DBG,"Recurse Dict " << Q_OUT(name));
  return _recursiveProperty(obj,name);
 }
 
 /** \copydoc _recursiveProperty */
 boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CArray> obj,const QString &name) {
- guiPrintDbg(debug::DBG_DBG,"Recurse Array " << name);
+ guiPrintDbg(debug::DBG_DBG,"Recurse Array " << Q_OUT(name));
  return _recursiveProperty(obj,name);
 }
 
@@ -327,8 +328,8 @@ boost::shared_ptr<IProperty> recursiveProperty(boost::shared_ptr<CArray> obj,con
  @return specified property
 */
 boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CDict> obj,const QString &name) {
- std::string theName=name;
- guiPrintDbg(debug::DBG_DBG,"getObjDict " << name);
+ std::string theName=convertFromUnicode(name,util::PDF);
+ guiPrintDbg(debug::DBG_DBG,"getObjDict " << Q_OUT(name));
  return obj->getProperty(theName);
 }
 
@@ -341,7 +342,7 @@ boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CDict> obj,const Q
 boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const QString &name) {
  bool ok=false;
  int index=name.toInt(&ok);
- guiPrintDbg(debug::DBG_DBG,"getObjArray " << name << " -> " << index);
+ guiPrintDbg(debug::DBG_DBG,"getObjArray " << Q_OUT(name) << " -> " << index);
  if (!ok) {
   //Not a number;
   throw ElementNotFoundException("","");

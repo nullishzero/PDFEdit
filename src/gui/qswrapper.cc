@@ -13,6 +13,7 @@
 */
 
 #include "qswrapper.h"
+#include "qtcompat.h"
 #include "qstreeitem.h"
 #include <utils/debug.h>
 
@@ -36,7 +37,7 @@ QSWrapper::~QSWrapper() {
  @param ptr object pointer
 */
 QObject* QSWrapper::create(const QString &className, void *ptr) {
- guiPrintDbg(debug::DBG_DBG,"Wrapper for: " << className);
+ guiPrintDbg(debug::DBG_DBG,"Wrapper for: " << Q_OUT(className));
  QObject *ret=0;
  if (className=="gui::QSTreeItem") {
   ret=(QSTreeItem*)ptr;

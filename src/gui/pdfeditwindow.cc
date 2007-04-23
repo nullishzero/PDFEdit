@@ -10,6 +10,8 @@
 /** @file
  PdfEditWindow - class representing main application window
 */
+#include "pdfeditwindow.h"
+#include "qtcompat.h"
 #include "GlobalParams.h"
 #include "additemdialog.h"
 #include "basegui.h"
@@ -18,7 +20,6 @@
 #include "menu.h"
 #include "multitreewindow.h"
 #include "pagespace.h"
-#include "pdfeditwindow.h"
 #include "pdfutil.h"
 #include "progressbar.h"
 #include "propertyeditor.h"
@@ -209,7 +210,7 @@ void PdfEditWindow::addSelectTool(SelectTool *tool) {
  */
 void PdfEditWindow::menuActivated(int id) {
  QString action=menuSystem->getAction(id);
- guiPrintDbg(debug::DBG_INFO,"Performing menu action: " << action);
+ guiPrintDbg(debug::DBG_INFO,"Performing menu action: " << Q_OUT(action));
  /* quit and closewindow are special - these can't be easily called from script
     as regular function, because invoking them calls window destructor, removing
     script interpreter instance in the process -> after returning from script
@@ -532,7 +533,7 @@ QStringList PdfEditWindow::allUnits() {
  @param key Key of setting that was updated
  */
 void PdfEditWindow::settingUpdate(QString key) {
- guiPrintDbg(debug::DBG_DBG,"Settings observer: " << key);
+ guiPrintDbg(debug::DBG_DBG,"Settings observer: " << Q_OUT(key));
  if (key.startsWith("toolbar/")) { //Show/hide toolbar
   ToolBar *tb=menuSystem->getToolbar(key.mid(8));	// 8=strlen("toolbar/")
   if (!tb) return; //Someone put invalid toolbar in settings. Just ignore it

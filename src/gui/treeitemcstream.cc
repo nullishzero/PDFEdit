@@ -13,6 +13,7 @@
 */
 
 #include "treeitemcstream.h"
+#include "qtcompat.h"
 #include "treedata.h"
 #include "pdfutil.h"
 #include "qsstream.h"
@@ -109,7 +110,7 @@ QSCObject* TreeItemCStream::getQSObject(BaseCore *_base) {
 void TreeItemCStream::remove(const QString &name) {
  boost::shared_ptr<CStream> oDict=boost::dynamic_pointer_cast<CStream>(obj);
  assert(oDict.get());
- guiPrintDbg(debug::DBG_DBG,"Removing from CStream: " << name);
+ guiPrintDbg(debug::DBG_DBG,"Removing from CStream: " << Q_OUT(name));
  TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[name]);
  if (t) t->unSelect(data->tree());
  oDict->delProperty(name);

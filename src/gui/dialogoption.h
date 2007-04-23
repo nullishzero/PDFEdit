@@ -14,6 +14,7 @@
 class QString;
 class QLineEdit;
 class QPushButton;
+class QResizeEvent;
 
 namespace gui {
 

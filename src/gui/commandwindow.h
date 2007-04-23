@@ -10,10 +10,11 @@
 #ifndef __COMMANDWINDOW_H__
 #define __COMMANDWINDOW_H__
 
+#include "qtcompat.h"
 #include <qwidget.h>
+class Q_ComboBox;
 class QTextEdit;
 class QLineEdit;
-class QComboBox;
 class QSInterpreter;
 class QSEditor;
 class QSplitter;
@@ -70,7 +71,7 @@ private:
  /** Script editor widget */
  QSEditor  *in;
  /** History widget */
- QComboBox *history;
+ Q_ComboBox *history;
  /** Interpreter */
  QSInterpreter *interpreter;
  /** Vetical  splitter between (out + command line) and command editor */

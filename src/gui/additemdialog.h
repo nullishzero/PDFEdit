@@ -11,6 +11,7 @@
 #define __ADDITEMDIALOG_H__
 
 #include "selfdestructivewidget.h"
+#include "qtcompat.h"
 #include <iproperty.h>
 #include <cobject.h>
 namespace pdfopbjects {
@@ -20,7 +21,7 @@ namespace pdfopbjects {
 class QBoxLayout;
 class QFrame;
 class QRadioButton;
-class QButtonGroup;
+class Q_ButtonGroup;
 class QLineEdit;
 class QLabel;
 
@@ -80,7 +81,7 @@ private:
  /** Box holding buttons */
  QFrame *qbox;
  /** Group with content items */
- QButtonGroup *items;
+ Q_ButtonGroup *items;
  /** Label used to show message */
  QLabel *msg;
  /** Settings used to save dialog position (dict/array) - this is useful, as these can have different sizes */

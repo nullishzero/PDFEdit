@@ -12,8 +12,9 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
 #include "treeitemdict.h"
+#include "qtcompat.h"
+#include <cobject.h>
 #include "treedata.h"
 #include "pdfutil.h"
 #include "qsdict.h"
@@ -46,7 +47,7 @@ TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_p
 TreeItemAbstract* TreeItemDict::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  try {
-  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,util::PDF));
   return TreeItem::create(data,this,property,name,after);
  } catch (...) {
   //Should never happen, unless something else is seriously broken
@@ -59,7 +60,7 @@ TreeItemAbstract* TreeItemDict::createChild(const QString &name,__attribute__((u
 ChildType TreeItemDict::getChildType(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  try {
-  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,util::PDF));
   return property->getType();
  } catch (...) {
   //Should never happen, unless something else is seriously broken
@@ -78,7 +79,7 @@ QStringList TreeItemDict::getChildNames() {
  for( it=list.begin();it!=list.end();++it) { // for each property
   boost::shared_ptr<IProperty> property=dict->getProperty(*it);
   if (!data->showSimple() && isSimple(property)) continue; //simple item -> skip it
-  itemList += *it;
+  itemList += convertToUnicode(*it,util::PDF);
  }
  if (data->sortDict()) {
   //Sort the keys
@@ -112,7 +113,7 @@ QSCObject* TreeItemDict::getQSObject(BaseCore *_base) {
 bool TreeItemDict::validChild(const QString &name,QListViewItem *oldChild) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  try {
-  boost::shared_ptr<IProperty> property=dict->getProperty(name);
+  boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,util::PDF));
   TreeItem *it=dynamic_cast<TreeItem*>(oldChild);
   assert(it);
   if (!it) return false;//Probably error on unknown child
@@ -132,7 +133,7 @@ bool TreeItemDict::deepReload(const QString &childName,QListViewItem *oldItem) {
  TreeItem *it=dynamic_cast<TreeItem*>(oldItem);
  if (it) { //Is an IProperty
   try {
-   boost::shared_ptr<IProperty> property=dict->getProperty(childName);
+   boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(childName,util::PDF));
    //If replaced, return success, otherwise failure
    return it->setObject(property);
   } catch (...) {
@@ -152,7 +153,7 @@ bool TreeItemDict::deepReload(const QString &childName,QListViewItem *oldItem) {
 void TreeItemDict::remove(const QString &name) {
  boost::shared_ptr<CDict> oDict=boost::dynamic_pointer_cast<CDict>(obj);
  assert(oDict.get());
- guiPrintDbg(debug::DBG_DBG,"Removing from dict: " << name);
+ guiPrintDbg(debug::DBG_DBG,"Removing from dict: " << Q_OUT(name));
  TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[name]);
  if (t) t->unSelect(data->tree());
  oDict->delProperty(name);

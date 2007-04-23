@@ -15,6 +15,7 @@
 */
 
 #include "refvalidator.h"
+#include "qtcompat.h"
 #include <qstring.h> 
 #include <utils/debug.h> 
 #include "util.h"
@@ -49,14 +50,14 @@ void RefValidator::fixup(QString &input) const {
 */
 QValidator::State RefValidator::validate(QString &input,__attribute__((unused)) int &pos) const {
  if (valid.exactMatch(input)) {
-  guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Acceptable");
+  guiPrintDbg(debug::DBG_DBG,"Validate: " << Q_OUT(input) << " Acceptable");
   return Acceptable;
  }
  if (ivalid.exactMatch(input)) {
-  guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Intermediate");
+  guiPrintDbg(debug::DBG_DBG,"Validate: " << Q_OUT(input) << " Intermediate");
   return Intermediate;
  }
- guiPrintDbg(debug::DBG_DBG,"Validate: " << input << " Invalid");
+ guiPrintDbg(debug::DBG_DBG,"Validate: " << Q_OUT(input) << " Invalid");
  return Invalid;
 }
 

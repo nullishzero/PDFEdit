@@ -12,8 +12,9 @@
  @author Martin Petricek
 */
 
-#include "aboutwindow.h"
 #include "basegui.h"
+#include "qtcompat.h"
+#include "aboutwindow.h"
 #include "colortool.h"
 #include "commandwindow.h"
 #include "consolewritergui.h"
@@ -131,7 +132,7 @@ void BaseGUI::runInitScript() {
  @param toolName Name of the tool affected
 */
 void BaseGUI::toolChangeValue(const QString &toolName) {
- guiPrintDbg(debug::DBG_DBG,"tool change: " << toolName);
+ guiPrintDbg(debug::DBG_DBG,"tool change: " << Q_OUT(toolName));
  //TODO: properly escape the name of tool
  call("onValueChange","'"+toolName+"'");
 }
@@ -239,7 +240,7 @@ void BaseGUI::addScriptingObjects() {
 */
 void BaseGUI::treeItemDeleted(TreeItemAbstract* theItem) {
  //Get dictionary with all wrappers for given treeitem
- QPtrDict<void>* pDict=treeWrap[theItem];
+ Q_PtrDict<void>* pDict=treeWrap[theItem];
  if (!pDict) {
   //No wrapper exists. Done.
   //guiPrintDbg(debug::DBG_DBG,"Item deleted that is not in wrapper"); 
@@ -248,12 +249,12 @@ void BaseGUI::treeItemDeleted(TreeItemAbstract* theItem) {
  //Ok, now disable all wrappers pointing to this item
 
  // For each wrapper
- QPtrDictIterator<void> it(*pDict);
+ Q_PtrDictIterator<void> it(*pDict);
  for(;it.current();++it) {
   QSTreeItem* theWrap=reinterpret_cast<QSTreeItem*>(it.currentKey());
   guiPrintDbg(debug::DBG_DBG,"Disabling wrapper " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem); 
   assert(theWrap);
-  guiPrintDbg(debug::DBG_DBG,"Check type: " << theWrap->type()); 
+  guiPrintDbg(debug::DBG_DBG,"Check type: " << Q_OUT(theWrap->type())); 
   //Disable the wrapper, so calling it will not result in crash, but some error/exception instead
   theWrap->disable();
   guiPrintDbg(debug::DBG_DBG,"Disabled wrapper"); 

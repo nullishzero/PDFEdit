@@ -12,8 +12,9 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
 #include "treeitemarray.h"
+#include "qtcompat.h"
+#include <cobject.h>
 #include "treedata.h"
 #include "pdfutil.h"
 #include "util.h"
@@ -152,7 +153,7 @@ void TreeItemArray::remove(unsigned int idx) {
  assert(tx);//Not a treeitem? What is that?
  items.replace("--",tx);//Copy "current" so we don't lose it;
  tx->unSelect(data->tree());
- QDictIterator<QListViewItem> it(items);
+ Q_DictIterator<QListViewItem> it(items);
  for(int i=idx;i<cnt-1;i++) {
   //TODO: this is a bit ugly (but still working)
   TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[QString::number(i+1)]);

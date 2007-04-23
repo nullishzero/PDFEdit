@@ -15,6 +15,7 @@
 */
 
 #include "multitreewindow.h"
+#include "qtcompat.h"
 #include "iconcache.h"
 #include "treeitemabstract.h"
 #include "treewindow.h"
@@ -69,7 +70,7 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  if (closeIcon) {
   theCorner->setIconSet(*closeIcon);
  } else {
-  guiPrintDbg(debug::DBG_WARN,"Icon not found: " << closeIconName);
+  guiPrintDbg(debug::DBG_WARN,"Icon not found: " << Q_OUT(closeIconName));
  }
  theCorner->setTextLabel(tr("Close current tab"));
  cornerRight=theCorner;
@@ -82,7 +83,7 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  if (expandIcon) {
   tabExpand->setIconSet(*expandIcon);
  } else {
-  guiPrintDbg(debug::DBG_WARN,"Icon not found: " << expandIconName);
+  guiPrintDbg(debug::DBG_WARN,"Icon not found: " << Q_OUT(expandIconName));
  }
  tabExpand->setTextLabel(tr("Switch to ..."));
  cornerLeft=tabExpand;
@@ -237,7 +238,7 @@ void MultiTreeWindow::settingUpdate(QString key) {
 TreeWindow* MultiTreeWindow::getTree(const QString &name) {
  if (name.isNull()) return tree;
  QString aName=name.lower().simplifyWhiteSpace();
-  guiPrintDbg(debug::DBG_DBG,"getTree : " << aName);
+  guiPrintDbg(debug::DBG_DBG,"getTree : " << Q_OUT(aName));
  if (aName=="main") return mainTree;
  if (aName=="current") return tree;
  if (aName=="select") {

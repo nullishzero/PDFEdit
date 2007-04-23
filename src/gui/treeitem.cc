@@ -12,10 +12,11 @@
  @author Martin Petricek
 */
 
+#include "treeitem.h"
+#include "qtcompat.h"
 #include "multitreewindow.h"
 #include "settings.h"
 #include "treedata.h"
-#include "treeitem.h"
 #include "treeitemref.h"
 #include "treeitemsimple.h"
 #include "treeitemdict.h"
@@ -69,7 +70,7 @@ TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<I
  QString useName;
  if (nameId.isNull()) useName=name; else useName=nameId;
  PropertyType type=pdfObj->getType();
- guiPrintDbg(debug::DBG_DBG,"create root:" << getTypeName(type) << "  " << name);
+ guiPrintDbg(debug::DBG_DBG,"create root:" << Q_OUT(getTypeName(type)) << "  " << Q_OUT(name));
  if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after,useName);
  if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after,useName);
  if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after,useName);
@@ -86,7 +87,7 @@ TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_p
  QString useName;
  if (nameId.isNull()) useName=name; else useName=nameId;
  PropertyType type=pdfObj->getType();
- guiPrintDbg(debug::DBG_DBG,"create item:" << getTypeName(type) << "  " << name);
+ guiPrintDbg(debug::DBG_DBG,"create item:" << Q_OUT(getTypeName(type)) << "  " << Q_OUT(name));
  if (type==pRef) return new TreeItemRef(_data,parent,pdfObj,name,after,useName);
  if (type==pDict) return new TreeItemDict(_data,parent,pdfObj,name,after,useName);
  if (type==pArray) return new TreeItemArray(_data,parent,pdfObj,name,after,useName);
@@ -114,7 +115,7 @@ void TreeItem::setParent(TreeItem *parent) {
 void TreeItem::init(boost::shared_ptr<IProperty> pdfObj,const QString &name) {
  obj=pdfObj;
  typ=obj->getType();
- guiPrintDbg(debug::DBG_DBG,"init type -> " << getTypeName(typ));
+ guiPrintDbg(debug::DBG_DBG,"init type -> " << Q_OUT(getTypeName(typ)));
  // object name
  if (name.isNull()) {
   setText(0,QObject::tr("<no name>"));
@@ -246,7 +247,7 @@ void TreeItem::unSelect() {
 //See TreeItemAbstract for description of this virtual method
 void TreeItem::reloadSelf() {
  assert(typ!=pRef);//Must not be called on CRefs
- guiPrintDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+ guiPrintDbg(debug::DBG_DBG,"This item will now reload data " << Q_OUT(getTypeName(obj)));
 }
 
 //See TreeItemAbstract for description of this virtual method

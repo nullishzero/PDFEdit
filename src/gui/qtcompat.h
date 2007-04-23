@@ -21,16 +21,50 @@
  // QT4 or newer
 #define QT4 1
 
-/** Macro working in QT3 and QT4, allowing to send QString to std::basic_stream */
-#define QSTRINGDEBUG(x) (x.toUtf8().data())
+/** Macro working in QT3 and QT4, allowing to send QString to debugging output */
+#define Q_OUT(x) (x.toUtf8().data())
+
+//Type aliases
+#define Q_ButtonGroup		Q3ButtonGroup
+#define Q_ComboBox		Q3ComboBox
+#define Q_Dict			Q3Dict
+#define Q_DictIterator		Q3DictIterator
+#define Q_ListBox		Q3ListBox
+#define Q_ListBoxItem		Q3ListBoxItem
+#define Q_PtrDict		Q3PtrDict
+#define Q_PtrDictIterator	Q3PtrDictIterator
+
+//Include aliases
+#define QBUTTONGROUP	<Q3ButtonGroup>
+#define QCOMBOBOX	<Q3ComboBox> 
+#define QDICT		<Q3Dict>
+#define QLISTBOX	<Q3ListBox> 
+#define QPTRDICT	<Q3PtrDict>
 
 #else
 
  // QT3
 #define QT3 1
 
-/** Macro working in QT3 and QT4, allowing to send QString to std::basic_stream */
-#define QSTRINGDEBUG(x) (x.utf8())
+/** Macro working in QT3 and QT4, allowing to send QString to debugging output */
+#define Q_OUT(x) (x.utf8())
+
+//Type aliases
+#define Q_ButtonGroup		QButtonGroup
+#define Q_ComboBox		QComboBox
+#define Q_Dict			QDict
+#define Q_DictIterator		QDictIterator
+#define Q_ListBox		QListBox
+#define Q_ListBoxItem		QListBoxItem
+#define Q_PtrDict		QPtrDict
+#define Q_PtrDictIterator	QPtrDictIterator
+
+//Include aliases
+#define QBUTTONGROUP	<qbuttongroup.h>
+#define QCOMBOBOX	<qcombobox.h> 
+#define QDICT		<qdict.h>
+#define QLISTBOX	<qlistbox.h> 
+#define QPTRDICT	<qptrdict.h>
 
 #endif
 

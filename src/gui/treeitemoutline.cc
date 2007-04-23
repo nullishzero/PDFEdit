@@ -13,6 +13,7 @@
 */
 
 #include "treeitemoutline.h"
+#include "qtcompat.h"
 #include <iproperty.h>
 #include <coutline.h>
 #include "util.h"
@@ -57,7 +58,7 @@ void TreeItemOutline::showTitle() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemOutline::reloadSelf() {
- guiPrintDbg(debug::DBG_DBG,"Reload Outline ->" << title);
+ guiPrintDbg(debug::DBG_DBG,"Reload Outline ->" << Q_OUT(title));
  TreeItemDict::reloadSelf();
  showTitle();
 }

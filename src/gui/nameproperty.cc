@@ -46,7 +46,7 @@ void NameProperty::setValue(pdfobjects::IProperty *pdfObject) {
  if (effectiveReadonly) return;//Honor readonly setting
  CName* obj=dynamic_cast<CName*>(pdfObject);
  assert(obj);
- string val=util::convertFromUnicode(ed->text());
+ string val=util::convertFromUnicode(ed->text(),util::PDF);
  obj->setValue(val);
  changed=false;
 }
@@ -59,7 +59,7 @@ void NameProperty::readValue(pdfobjects::IProperty *pdfObject) {
  assert(obj);
  string val;
  obj->getValue(val);
- ed->setText(util::convertToUnicode(val));
+ ed->setText(util::convertToUnicode(val,util::PDF));
  changed=false;
 }
 

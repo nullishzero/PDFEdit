@@ -14,6 +14,7 @@
 */
 
 #include "property.h"
+#include "qtcompat.h"
 #include <iproperty.h>
 #include <qstring.h>
 #include <qlabel.h>
@@ -31,7 +32,7 @@ using namespace util;
  @param _flags flags of this property items (default 0)
 */
 Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFlags _flags/*=defaultPropertyMode*/)
- : QWidget (parent, "property"){
+ : QWidget (parent){
  name=_name;
  changed=false;
  effectiveReadonly=hidden=readonly=false; 
@@ -82,7 +83,7 @@ void Property::modifyColor(QWidget* widget) {
  @param widget Property's label
 */
 void Property::initLabel(QLabel *widget) {
- guiPrintDbg(debug::DBG_DBG,"Property " << widget->text() << " " << modeName(flags));
+ guiPrintDbg(debug::DBG_DBG,"Property " << Q_OUT(widget->text()) << " " << Q_OUT(modeName(flags)));
  propertyLabel=widget;
  switch (flags) {
   case mdNormal:
@@ -124,8 +125,8 @@ void Property::override(bool showHidden,bool editReadOnly) {
  @param hideThis New hidden flag value
 */
 void Property::applyHidden(bool hideThis) {
- assert(propertyLabel);
- guiPrintDbg(debug::DBG_DBG,"Hide/show >> " << hideThis << " ?? " << dynamic_cast<QLabel*>(propertyLabel)->text());
+ assert(dynamic_cast<QLabel*>(propertyLabel));
+ guiPrintDbg(debug::DBG_DBG,"Hide/show >> " << hideThis << " ?? " << Q_OUT(dynamic_cast<QLabel*>(propertyLabel)->text()));
  if (hideThis) {
   propertyLabel->hide();
   this->hide();
@@ -205,7 +206,7 @@ Property::~Property() {
 */
 void Property::emitChanged() {
  emit propertyChanged(this);
- guiPrintDbg(debug::DBG_DBG,"Property was edited: " << name);
+ guiPrintDbg(debug::DBG_DBG,"Property was edited: " << Q_OUT(name));
  changed=true;
 }
 

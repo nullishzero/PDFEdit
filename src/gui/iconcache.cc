@@ -13,6 +13,7 @@
 */
 
 #include "iconcache.h"
+#include "qtcompat.h"
 #include "settings.h"
 #include "util.h"
 #include <assert.h>
@@ -87,7 +88,7 @@ QString IconCache::getIconFile(const QString &name) {
   absName=*it+"/"+name;
   if (QFile::exists(absName)) return absName;
  }
- guiPrintDbg(debug::DBG_WARN,"Icon file not found: " << name);
+ guiPrintDbg(debug::DBG_WARN,"Icon file not found: " << Q_OUT(name));
  return name;
 }
 
@@ -106,7 +107,7 @@ QPixmap* IconCache::getIcon(const QString &name) {
  QFile f(absName);
  if (!f.open(IO_ReadOnly)) {
   //file not found or unreadable or whatever ...
-  guiPrintDbg(debug::DBG_WARN,"File not found:" << absName);
+  guiPrintDbg(debug::DBG_WARN,"File not found:" << Q_OUT(absName));
   return NULL;
  }
  QByteArray qb=f.readAll();

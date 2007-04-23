@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "main.h"
 #include "propertymodecontroller.h"
+#include <qevent.h>
 
 namespace gui {
 
@@ -49,11 +50,11 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  //create list of properties in this editor;
  list=new QStringList();
  //create property dictionary
- items=new QDict<Property>();
+ items=new Q_Dict<Property>();
  //create IProperty dictionary
  props=new QMap<QString,boost::shared_ptr<IProperty> > ();
  //create labels dictionary
- labels=new QDict<QLabel>();
+ labels=new Q_Dict<QLabel>();
  //number of objects - empty
  nObjects=0;
  //Set some minimum height to be at least somewhat visible
@@ -63,7 +64,7 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  scroll->setHScrollBarMode(QScrollView::AlwaysOff);
  scroll->setVScrollBarMode(QScrollView::AlwaysOn);//TODO:CHECK
  //create grid in scrollview
- grid=new QFrame(scroll,"propertyeditor_grid");
+ grid=new QFrame(scroll);
 
  createLayout();
  checkOverrides();
@@ -103,13 +104,13 @@ void PropertyEditor::clear() {
  rowNum.clear();
  propLabel.clear();
  //clear properties in property dictionary
- QDictIterator<Property> itp(*items);
+ Q_DictIterator<Property> itp(*items);
  for (;itp.current();++itp) {
   gridl->remove(itp.current());
   delete itp.current();
  }
  //clear labels in label dictionary
- QDictIterator<QLabel> itl(*labels);
+ Q_DictIterator<QLabel> itl(*labels);
  for (;itl.current();++itl) {
   gridl->remove(itl.current());
   delete itl.current();
@@ -145,7 +146,7 @@ void PropertyEditor::clear() {
  */
 void PropertyEditor::update(Property *p) {
  QString pname=p->getName();
- guiPrintDbg(debug::DBG_DBG,"Updating property" << pname);
+ guiPrintDbg(debug::DBG_DBG,"Updating property" << Q_OUT(pname));
  assert(props->contains(pname));
  boost::shared_ptr<IProperty> obj=(*props)[pname];
  try {
@@ -167,7 +168,7 @@ void PropertyEditor::addProperty(Property *prop,boost::shared_ptr<IProperty> val
  QString name=prop->getName();
  QLabel *label;
  label=new QLabel(QString(" ")+name+" ",grid);
- label->setTextFormat(PlainText);
+ label->setTextFormat(Qt::PlainText);
  int labelHeight=label->sizeHint().height();
  int propHeight=prop->sizeHint().height();
  gridl->setRowSpacing(nObjects,MAX(labelHeight,propHeight));
@@ -455,7 +456,7 @@ PropertyEditor::~PropertyEditor() {
  @param _editReadOnly Edit read-only properties
 */
 void PropertyEditor::override(bool _showHidden,bool _editReadOnly) {
- QDictIterator<Property> itp(*items);
+ Q_DictIterator<Property> itp(*items);
  for (;itp.current();++itp) {
   itp.current()->override(_showHidden,_editReadOnly);
   fixPropertyHeight(itp.current());

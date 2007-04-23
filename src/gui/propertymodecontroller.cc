@@ -14,11 +14,13 @@
 */
 
 #include "propertymodecontroller.h"
+#include "qtcompat.h"
 #include "settings.h"
 #include <qstring.h>
 #include <stdlib.h>
 #include <modecontroller.h>
 #include <confparser.h>
+#include "util.h"
 
 namespace gui {
 
@@ -59,10 +61,10 @@ PropertyModeController::PropertyModeController(){
  if (confFile.isNull()) {
   guiPrintDbg(debug::DBG_WARN,"Mode controller config not found");
  }
- guiPrintDbg(debug::DBG_DBG,"Mode controller config file: " << confFile);
- int result=modeController.loadFromFile(confFile,parser);
+ guiPrintDbg(debug::DBG_DBG,"Mode controller config file: " << Q_OUT(confFile));
+ int result=modeController.loadFromFile(util::convertFromUnicode(confFile,util::NAME),parser);
  if(result==-1) {
-  guiPrintDbg(debug::DBG_WARN,"Mode controller failed to parse file: " << confFile);
+  guiPrintDbg(debug::DBG_WARN,"Mode controller failed to parse file: " << Q_OUT(confFile));
   //TODO alert user
  }
 };
@@ -85,7 +87,7 @@ PropertyModeController* PropertyModeController::getInstance() {
  @return property mode
 */
 PropertyMode PropertyModeController::mode(const QString &type,const QString &name) {
- return modeController.getMode(type,name);
+ return modeController.getMode(util::convertFromUnicode(type,util::PDF),util::convertFromUnicode(name,util::PDF));
 }
 
 /**

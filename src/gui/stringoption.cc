@@ -13,9 +13,10 @@
  @author Martin Petricek
 */
 
-#include <utils/debug.h>
 #include "stringoption.h"
+#include <utils/debug.h>
 #include <qstring.h>
+#include <qevent.h>
 #include <qlineedit.h>
 #include "settings.h"
 #include "util.h"

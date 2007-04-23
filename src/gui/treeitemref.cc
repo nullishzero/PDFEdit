@@ -12,12 +12,13 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
-#include <cpdf.h>
 #include "treeitemref.h"
+#include "qtcompat.h"
 #include "treedata.h"
 #include "pdfutil.h"
 #include "util.h"
+#include <cobject.h>
+#include <cpdf.h>
 
 namespace gui {
 
@@ -90,7 +91,7 @@ void TreeItemRef::setOpen(bool open) {
  assert(typ==pRef); //paranoid check
  if (!complete) { //not expanded
   if (open) {
-   guiPrintDbg(debug::DBG_DBG," Opening referenced property pREF : " << selfRef);
+   guiPrintDbg(debug::DBG_DBG," Opening referenced property pREF : " << Q_OUT(selfRef));
    TreeItem *up=parentCheck();
    if (up) { //some parent of this object is referencing the same object
     guiPrintDbg(debug::DBG_DBG,"Found ref in parent - not expanding item (-> infinite recursion)");
@@ -136,14 +137,14 @@ TreeItemRef::~TreeItemRef() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemRef::reloadSelf() {
- guiPrintDbg(debug::DBG_DBG,"This item will now reload data " << getTypeName(obj));
+ guiPrintDbg(debug::DBG_DBG,"This item will now reload data " << Q_OUT(getTypeName(obj)));
  QString old=selfRef;
  //Update reference target
  addData();
  if (old!=selfRef) {
   //Remove old reference from list of opened and available items
   if (complete) data->remove(old);//Was complete -> remove data
-  guiPrintDbg(debug::DBG_DBG,"Reference target changed: " << old << " -> " << selfRef);
+  guiPrintDbg(debug::DBG_DBG,"Reference target changed: " << Q_OUT(old) << " -> " << Q_OUT(selfRef));
   //Close itself
   this->setOpen(false);
   //Set as incomplete

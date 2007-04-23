@@ -126,7 +126,7 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/,bool forceReload/*=false*
   setExpandable(haveChild());
   return;
  }
- QDict<QListViewItem> newItems;
+ Q_Dict<QListViewItem> newItems;
  QMap<QString,ChildType> newTypes;
 
  QStringList childs=getChildNames();
@@ -184,7 +184,7 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/,bool forceReload/*=false*
 /** Erase all items in current item dictionary. After returning, the item dictionary is empty */
 void TreeItemAbstract::eraseItems() {
  //Delete each item in "items"
- QDictIterator<QListViewItem> it(items);
+ Q_DictIterator<QListViewItem> it(items);
  for(;it.current();++it) deleteChild(it.current());
  //Clear lists
  items.clear();
@@ -265,7 +265,7 @@ void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
 void TreeItemAbstract::deleteChild(const QString &name) {
  QListViewItem *target=items.take(name);//Remove from list and return 
  if (!target) { //Item not found (should not happen usually)
-  guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << QSTRINGDEBUG(name));
+  guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << Q_OUT(name));
   return;
  }
  types.remove(name); //Item found - so we remove its type from dictionary too

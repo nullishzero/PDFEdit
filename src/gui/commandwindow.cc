@@ -19,10 +19,11 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qfile.h>
-#include <qlistbox.h>
+#include QLISTBOX
+#include QCOMBOBOX
+#include <qtextstream.h>
 #include <qtextedit.h> 
 #include <qlineedit.h>
-#include <qcombobox.h>
 #include <qseditor.h>
 #include <qsinterpreter.h>
 #include <qsplitter.h>
@@ -68,7 +69,7 @@ bool DEFAULT__CMDSHOWEDITOR = false;
 */
 CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):QWidget(parent,name) {
  QBoxLayout * hl = new QHBoxLayout( this );
- spl=new QSplitter( Vertical, this, "spl" );
+ spl=new QSplitter( Qt::Vertical, this, "spl" );
  hl->addWidget( spl );
 
  QVBox * l = new QVBox( spl );
@@ -76,7 +77,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  cmd = new QLineEdit( this , "CmdLine" );
 
  // init history
- history = new QComboBox( /*this*/ l, "CmdHistory" );
+ history = new Q_ComboBox( /*this*/ l, "CmdHistory" );
  history->setLineEdit( cmd );
  history->setEditable( true );
  history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
@@ -87,15 +88,15 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  history->setMinimumHeight( history->sizeHint().height() );
 
  loadHistory();
-// history->setInsertionPolicy( QComboBox::AtTop );
- history->setInsertionPolicy( QComboBox::NoInsertion );
+// history->setInsertionPolicy( Q_ComboBox::AtTop );
+ history->setInsertionPolicy( Q_ComboBox::NoInsertion );
 
  cmd->setText( "" );			//clear commandline
 // history->setAutoCompletion( true );
  QObject::connect(cmd, SIGNAL(returnPressed()), this, SLOT(execute()));
 // l->addWidget(out);
 // l->addWidget(history);
- out->setTextFormat(LogText);
+ out->setTextFormat(Qt::LogText);
  out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
 
  in = new QSEditor( spl , "CmdEditor" );
@@ -147,9 +148,9 @@ bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 	if ( e->type() == QEvent::KeyPress ) {
 		QKeyEvent *ke = (QKeyEvent*)e;
 		switch ( ke->key() ) {
-			case Key_Return:
-			case Key_Enter:
-				if ( ke->state() & ControlButton ) {
+			case Qt::Key_Return:
+			case Qt::Key_Enter:
+				if ( ke->state() & Qt::ControlButton ) {
 					in->textEdit()->doKeyboardAction( QTextEdit::ActionReturn );
 				} else {
 					QString code = in->textEdit()->text();
@@ -162,8 +163,8 @@ bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 					execute( CmdEditor );
 				}
 				return TRUE;
-			case Key_Up:
-				if ( ke->state() & ControlButton ) {
+			case Qt::Key_Up:
+				if ( ke->state() & Qt::ControlButton ) {
 					if ( history->currentItem() > 0 ) {
 						history->setCurrentItem( history->currentItem() - 1);
 						in->textEdit()->setText( history->currentText() );
@@ -171,8 +172,8 @@ bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 					return TRUE;
 				}
 				break;
-			case Key_Down:
-				if ( ke->state() & ControlButton ) {
+			case Qt::Key_Down:
+				if ( ke->state() & Qt::ControlButton ) {
 					if ( history->currentItem() < history->count() - 1 ) {
 						history->setCurrentItem( history->currentItem() + 1);
 						in->textEdit()->setText( history->currentText() );
@@ -182,7 +183,7 @@ bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 					return TRUE;
 				}
 				break;
-			case Key_Escape:
+			case Qt::Key_Escape:
 				ke->ignore();
 				return TRUE;
 		}  // end of switch
@@ -257,7 +258,7 @@ void CommandWindow::saveHistory() {
 		if (history->listBox()->firstItem() != NULL) {
 			QTextStream stream( &file );
 			stream.setEncoding( QTextStream::UnicodeUTF8 );
-			for ( QListBoxItem * it = history->listBox()->firstItem(); it != NULL; it = it->next() ) {
+			for ( Q_ListBoxItem * it = history->listBox()->firstItem(); it != NULL; it = it->next() ) {
 				stream << it->text().replace( '\n', QString(" \n") ) << enditem << "\n" ;
 			}
 		}

@@ -13,6 +13,7 @@
 #include "option.h"
 class QString;
 class QLineEdit;
+class QResizeEvent;
 
 namespace gui {
 

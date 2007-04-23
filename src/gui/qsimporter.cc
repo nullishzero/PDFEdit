@@ -16,10 +16,11 @@
  QSCObjects from some common types (dict, page ..)
  @author Martin Petricek
 */
+#include "qsimporter.h"
+#include "qtcompat.h"
 #include "qsarray.h"
 #include "qscobject.h"
 #include "qsdict.h"
-#include "qsimporter.h"
 #include "qsiproperty.h"
 #include "qspage.h"
 #include "qspdf.h"
@@ -157,16 +158,16 @@ void QSImporter::addQSObj(QObject *obj,const QString &name) {
  if (obj) obj->setName(name);//NULL can be imported too
  qobj=obj;
  if (obj) {
-  guiPrintDbg(debug::DBG_DBG,"Importing " <<name);
+  guiPrintDbg(debug::DBG_DBG,"Importing " << Q_OUT(name));
  } else {
-  guiPrintDbg(debug::DBG_DBG,"Importing NULL " <<name);
+  guiPrintDbg(debug::DBG_DBG,"Importing NULL " << Q_OUT(name));
  }
  QString code=QString("var ")+name+"=importer.getQSObj();";
 // guiPrintDbg(debug::DBG_DBG,"Importing with code:" <<code);
  qs->evaluate(code,context,"<qsimporter>");
  QString err=qs->errorMessage();
  if (!err.isNull()) {
-  guiPrintDbg(debug::DBG_ERR,"Failed import: " <<err);
+  guiPrintDbg(debug::DBG_ERR,"Failed import: " << Q_OUT(err));
  }
  qobj=NULL;
 }

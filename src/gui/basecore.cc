@@ -140,7 +140,7 @@ void BaseCore::stopScript() {
 */
 void BaseCore::call(const QString &name,const QString &arguments/*=""*/) {
  QString funct=name+"("+arguments+");";
- guiPrintDbg(debug::DBG_INFO,"Performing callback: " << name);
+ guiPrintDbg(debug::DBG_INFO,"Performing callback: " << Q_OUT(name));
  //Check if this call handler is called from a script
  bool running=qs->isRunning();
  if (!running) {
@@ -150,10 +150,10 @@ void BaseCore::call(const QString &name,const QString &arguments/*=""*/) {
   addScriptingObjects();
  }
  try {
-  guiPrintDbg(debug::DBG_DBG,"Begin callback: " << name);
+  guiPrintDbg(debug::DBG_DBG,"Begin callback: " << Q_OUT(name));
   //Call the function. Do not care about result
   qs->evaluate(funct,this,"<GUI>");
-  guiPrintDbg(debug::DBG_DBG,"End callback: " << name);
+  guiPrintDbg(debug::DBG_DBG,"End callback: " << Q_OUT(name));
   if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
    QString error=qs->errorMessage();
    if (error!=QString::null) { /// some error occured
@@ -162,7 +162,7 @@ void BaseCore::call(const QString &name,const QString &arguments/*=""*/) {
    }
   }
  } catch (...) {
-  guiPrintDbg(debug::DBG_INFO,"Exception in callback: " << name);
+  guiPrintDbg(debug::DBG_INFO,"Exception in callback: " << Q_OUT(name));
   //Do not care about exception in callbacks either ... 
   if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
    con->printErrorLine(tr("Exception in callback handler: ")+name);
@@ -201,8 +201,8 @@ void BaseCore::conPrintError(const QString &line) {
  @param lineNumber
 */
 void BaseCore::scriptError(const QString &message,const QString &scriptName,int lineNumber) {
- guiPrintDbg(debug::DBG_DBG,"Script error in " << scriptName << " line " << lineNumber);
- guiPrintDbg(debug::DBG_DBG,"Script error: " << message);
+ guiPrintDbg(debug::DBG_DBG,"Script error in " << Q_OUT(scriptName) << " line " << lineNumber);
+ guiPrintDbg(debug::DBG_DBG,"Script error: " << Q_OUT(message));
 //It is not a good idea to print the message, at if it
 // happened in the included file it is re-throw again after returing from include
 // conPrintError(tr("In script")+" '"+scriptName+"', "+tr("line")+" "+QString::number(lineNumber)+":");
@@ -268,7 +268,7 @@ void BaseCore::runScript(const QString &script) {
        //TODO: some more types in future?
        QString tName=v.typeName();
        assert(!tName.isNull());
-       guiPrintDbg(debug::DBG_WARN,"Cannot display result: " << tName);
+       guiPrintDbg(debug::DBG_WARN,"Cannot display result: " << Q_OUT(tName));
        conPrintLine(QString("[")+tName+"]");
       }
      }
@@ -396,11 +396,11 @@ void BaseCore::addTreeItemToList(QSTreeItem* theWrap) {
 
  //Get inner dictionary for the treeitem (dict of all wrappers for given treeitem)
  // Some wrappers may already exist for this treeitem
- QPtrDict<void>* pDict=treeWrap[theItem];
+ Q_PtrDict<void>* pDict=treeWrap[theItem];
 
  if (!pDict) {	//No wrappers for this yet ....
   //We must create and insert inner dictionary for this tree item
-  pDict=new QPtrDict<void>(7);
+  pDict=new Q_PtrDict<void>(7);
   //Smaller dict, typically there will be few wrappers to same item
   treeWrap.insert(theItem,pDict); 
  }
@@ -420,7 +420,7 @@ void BaseCore::removeTreeItemFromList(QSTreeItem* theWrap) {
  TreeItemAbstract* theItem=theWrap->get();
 
  //Get inner dictionary for the treeitem (dict of all wrappers for given treeitem)
- QPtrDict<void>* pDict=treeWrap[theItem];
+ Q_PtrDict<void>* pDict=treeWrap[theItem];
  assert (pDict);//Not in list? WTF?
  assert (pDict->find(theWrap));//Not in list? WTF?
 
@@ -446,7 +446,7 @@ void BaseCore::cleanup() {
  guiPrintDbg(debug::DBG_INFO,"Garbage collection: " << baseObjects.count() << " objects");
  //Set autodelete and clear the list
 
- QPtrDict<QSCObject> baseObjectsCopy=baseObjects;
+ Q_PtrDict<QSCObject> baseObjectsCopy=baseObjects;
 
  baseObjectsCopy.setAutoDelete(true);
  baseObjectsCopy.clear();

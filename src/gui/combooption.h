@@ -14,6 +14,7 @@
 class QString;
 class QComboBox;
 class QStringList;
+class QResizeEvent;
 
 namespace gui {
 

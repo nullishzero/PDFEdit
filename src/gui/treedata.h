@@ -10,7 +10,8 @@
 #ifndef __TREEDATA_H__
 #define __TREEDATA_H__
 
-#include <qdict.h>
+#include "qtcompat.h"
+#include QDICT
 class QListView;
 class QString;
 
@@ -66,7 +67,7 @@ private:
  /** Scripting base */
  BaseCore *_base;
  /** Dictionary holding tree items that are references */
- QDict<TreeItemRef> refs;
+ Q_Dict<TreeItemRef> refs;
  //ShowData
  /** Show simple objects (int,bool,string,name,real) in object tree? */
  bool show_simple;
