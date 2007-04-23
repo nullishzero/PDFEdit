@@ -2,10 +2,11 @@
 #Fix config.pro to be suitable for QMake
 sed <config.pro.in 's/${prefix}/$$PREFIX/g' | sed 's/${datarootdir}/$$DATAROOTDIR/g' | sed 's/${exec_prefix}/$$EPREFIX/g' >config.pro
 
-#Write expanded data path
+#Write expanded data path into config.h
 prefix=`grep '^PREFIX *=' <config.pro.in |sed 's/^[^=]*= *//'`
 exec_prefix=`grep '^EPREFIX *=' <config.pro.in |sed 's/^[^=]*= *//' |sed "s^\\\${prefix}^$prefix^"`
-data_path=`grep '^DATA_PATH *=' <config.pro.in |sed 's/^[^=]*= *//' |sed "s^\\\${prefix}^$prefix^" |sed "s^\\\${exec_prefix}^$exec_prefix^"`
+data_root_dir=`grep '^DATAROOTDIR *=' <config.pro.in |sed 's/^[^=]*= *//' |sed "s^\\\${prefix}^$prefix^"`
+data_path=`grep '^DATA_PATH *=' <config.pro.in |sed 's/^[^=]*= *//' |sed "s^\\\${prefix}^$prefix^" |sed "s^\\\${exec_prefix}^$exec_prefix^" |sed "s^\\\${datarootdir}^$data_root_dir^"`
 sed <src/gui/config.h.in "s^@DATAPATH@^$data_path^" >src/gui/config.h
 
 #check for freetype include parameters for xpdf
