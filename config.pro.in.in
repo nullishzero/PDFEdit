@@ -6,3 +6,4 @@ DOC_PATH    = @datadir@/doc/pdfedit
 MAN_PATH    = @mandir@/man1
 BIN_PATH    = @bindir@
 E_RELEASE   = @enable_release@
+QTVERSION   = qt4
