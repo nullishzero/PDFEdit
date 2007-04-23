@@ -3,6 +3,7 @@
 	* Fixed QSA using bad qmake
 	* Fixed --enable-release option in configure script
 	* XPDF code cleanup (removed unused files)
+	* Removed possible unicode handling errors
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0
