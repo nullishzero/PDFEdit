@@ -15,7 +15,6 @@
 #include "util.h"
 #include <utils/debug.h>
 #include <iostream>
-#include <qvbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qfile.h>
@@ -72,7 +71,9 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  spl=new QSplitter( Qt::Vertical, this, "spl" );
  hl->addWidget( spl );
 
- QVBox * l = new QVBox( spl );
+ QWidget * l = new QWidget( spl );
+ QVBoxLayout *vblayout = new QVBoxLayout(l);
+
  out = new QTextEdit( /*this*/ l );
  cmd = new QLineEdit( this , "CmdLine" );
 
@@ -81,6 +82,9 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  history->setLineEdit( cmd );
  history->setEditable( true );
  history->setMaxCount( globalSettings->readNum( CMD + HISTORYSIZE, DEFAULT__HISTORYSIZE ) + 1 );
+
+ vblayout->addWidget(out);
+ vblayout->addWidget(history);
  
  // setting sizePolicy for ignoring width hint (some history items are too large)
  QSizePolicy spol ( QSizePolicy::Ignored, QSizePolicy::Preferred );
