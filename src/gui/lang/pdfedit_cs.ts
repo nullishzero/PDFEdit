@@ -1724,10 +1724,6 @@ Režim zvýraznění</translation>
         <source>%1 of %2</source>
         <translation>%1 z %2</translation>
     </message>
-    <message>
-        <source>Resizing zone must be positive integer or null !</source>
-        <translation>Zóna pro změnu velikosti musí být kladné celé číslo nebo null !</translation>
-    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -1980,11 +1976,6 @@ Režim zvýraznění</translation>
         <source>Page Toolbar</source>
         <comment>PageToolbar</comment>
         <translation>Toolbar stránky</translation>
-    </message>
-    <message>
-        <source>Reload Page</source>
-        <comment>reloadpage</comment>
-        <translation>Obnovit stránku</translation>
     </message>
     <message>
         <source>Add object</source>
@@ -2310,6 +2301,11 @@ Režim zvýraznění</translation>
         <source>Save as text...</source>
         <comment>fsaveastext</comment>
         <translation>Uložit jako text...</translation>
+    </message>
+    <message>
+        <source>Reload Page (show changes)</source>
+        <comment>reloadpage</comment>
+        <translation>Obnovit stránku (ukázat změny)</translation>
     </message>
 </context>
 <context>
