@@ -137,7 +137,7 @@
     </message>
     <message>
         <source>Set line dash style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Linienstrich-Stil setzen</translation>
     </message>
     <message>
         <source>Set line width</source>
@@ -1054,6 +1054,14 @@ Daten: %3</translation>
         <source>Stop processing options</source>
         <translation>Verarbeitung der Optionen anhalten</translation>
     </message>
+    <message>
+        <source>Text saved to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as text file</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1712,7 +1720,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Resizing zone must be positive integer or null !</source>
-        <translation>Skalierungsbereich muss positiv ganzzahlig oder Null sein !</translation>
+        <translation type="obsolete">Skalierungsbereich muss positiv ganzzahlig oder Null sein !</translation>
     </message>
     <message>
         <source>Save as image ...</source>
@@ -1991,7 +1999,7 @@ fsave</translation>
     <message>
         <source>Reload Page</source>
         <comment>reloadpage</comment>
-        <translation>Seite erneut Laden</translation>
+        <translation type="obsolete">Seite erneut Laden</translation>
     </message>
     <message>
         <source>Rotate page 270 degrees</source>
@@ -2296,6 +2304,21 @@ opsetfont</translation>
         <source>&amp;Help</source>
         <comment>help_index</comment>
         <translation>&amp;Hilfe</translation>
+    </message>
+    <message>
+        <source>Reload Page (show changes)</source>
+        <comment>reloadpage</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PageRider Toolbar</source>
+        <comment>PageRiderToolbar</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save as text...</source>
+        <comment>fsaveastext</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2636,4 +2659,3 @@ opsetfont</translation>
     </message>
 </context>
 </TS>
-
