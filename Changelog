@@ -6,6 +6,7 @@
 	* Fixed possible unicode handling errors
 	* Added checks for QTDIR and QMAKESPEC to ./configure
 	* Compilation fixes for gcc-4.3 (thanks to Martin Michlmayr for patch)
+	* Added german translation (thanks to Andreas Mantke)
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0

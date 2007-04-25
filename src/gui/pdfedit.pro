@@ -236,7 +236,7 @@ LIBS += -lqoutputdevices -L../kpdf-kde-3.3.2
 
 #Translations
 DEPENDPATH += lang
-TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts
+TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts
 
 include(../kernel/kernel-obj.pro)
 
