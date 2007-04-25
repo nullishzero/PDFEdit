@@ -1719,10 +1719,6 @@ Data: %3
         <source>%1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Resizing zone must be positive integer or null !</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>gui::PdfEditWindow</name>
@@ -1974,11 +1970,6 @@ Data: %3
     <message>
         <source>Page Toolbar</source>
         <comment>PageToolbar</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reload Page</source>
-        <comment>reloadpage</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2304,6 +2295,11 @@ Data: %3
     <message>
         <source>Save as text...</source>
         <comment>fsaveastext</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload Page (show changes)</source>
+        <comment>reloadpage</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -121,7 +121,7 @@
     </message>
     <message>
         <source>Set color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Установить цвет</translation>
     </message>
     <message>
         <source>Set font properties</source>
@@ -137,11 +137,11 @@
     </message>
     <message>
         <source>Set line dash style</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Установить стиль пунктира линии</translation>
     </message>
     <message>
         <source>Set line width</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Установить толщину линии</translation>
     </message>
     <message>
         <source>View page</source>
@@ -1207,7 +1207,7 @@ Data: %3
     <name>gui::AddItemDialog</name>
     <message>
         <source>Add object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Добавить объект</translation>
     </message>
     <message>
         <source>Type and value of new object</source>
@@ -1716,10 +1716,6 @@ Data: %3
         <translation>%1 из %2</translation>
     </message>
     <message>
-        <source>Resizing zone must be positive integer or null !</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save as image ...</source>
         <translation>Сохранить как изображение...</translation>
     </message>
@@ -1768,7 +1764,7 @@ Data: %3
     </message>
     <message>
         <source>Linearized PDF</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Линеаризованный PDF</translation>
     </message>
     <message>
         <source>Encrypted</source>
@@ -1974,7 +1970,7 @@ Data: %3
     <message>
         <source>Reload Page</source>
         <comment>reloadpage</comment>
-        <translation>Перезагрузить страницу</translation>
+        <translation type="obsolete">Перезагрузить страницу</translation>
     </message>
     <message>
         <source>Rotate page 270 degrees</source>
@@ -2305,6 +2301,11 @@ Data: %3
         <source>&amp;Help</source>
         <comment>help_index</comment>
         <translation>&amp;Содержание</translation>
+    </message>
+    <message>
+        <source>Reload Page (show changes)</source>
+        <comment>reloadpage</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

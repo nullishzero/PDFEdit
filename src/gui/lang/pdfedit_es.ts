@@ -1737,7 +1737,7 @@ Datos: %3
     </message>
     <message>
         <source>Resizing zone must be positive integer or null !</source>
-        <translation>La zona a redimensionar debe ser entero positivo o nulo !</translation>
+        <translation type="obsolete">La zona a redimensionar debe ser entero positivo o nulo !</translation>
     </message>
 </context>
 <context>
@@ -1995,7 +1995,7 @@ Datos: %3
     <message>
         <source>Reload Page</source>
         <comment>reloadpage</comment>
-        <translation>&amp;Recargar página</translation>
+        <translation type="obsolete">&amp;Recargar página</translation>
     </message>
     <message>
         <source>Add object</source>
@@ -2320,6 +2320,11 @@ Datos: %3
     <message>
         <source>Save as text...</source>
         <comment>fsaveastext</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload Page (show changes)</source>
+        <comment>reloadpage</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
