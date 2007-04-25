@@ -77,21 +77,21 @@ public:
 	typedef T element_type;
 
 	/** Constructor. */
-	MassiveIdiocyWrapper () {};
+	MassiveIdiocyWrapper () {}
 
 	/** Explicit delete.	*/
-	void reset () { obj.free (); };
+	void reset () { obj.free (); }
 	
 	/** Dereference. */
-	T& operator*() /*const*/ { return obj; };
+	T& operator*() /*const*/ { return obj; }
 	/** Dereference. */
-	T* operator->() /*const*/ { return &obj; };
+	T* operator->() /*const*/ { return &obj; }
 
 	/** Get raw pointer. */
-	T* get () /*const*/ { return &obj; };
+	T* get () /*const*/ { return &obj; }
 	
 	/** Destructor. */
-	~MassiveIdiocyWrapper () { obj.free (); };
+	~MassiveIdiocyWrapper () { obj.free (); }
 };
 
 /** Xpdf object wrapper. */
@@ -134,8 +134,8 @@ closeXpdfMess ()
 /** Create this class in a function using xpdf code sensitive to global variables. */
 struct GlobalUseXpdf
 {
-	GlobalUseXpdf () {openXpdfMess ();};
-	~GlobalUseXpdf () {closeXpdfMess ();};
+	GlobalUseXpdf () {openXpdfMess ();}
+	~GlobalUseXpdf () {closeXpdfMess ();}
 };
 
 

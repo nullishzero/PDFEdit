@@ -44,7 +44,7 @@ public:
 	template<typename T> operator T*() const { return 0; }
 	template<typename C,typename T> operator T C::*() const { return 0; }
 private:
-	void operator&() const {}; // not defined  
+	void operator&() const {} // not defined  
 
 } NULLPTR = {};
 

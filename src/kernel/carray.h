@@ -98,7 +98,7 @@ public:
 	/** 
 	 * Public constructor. This object will not be associated with a pdf.
 	 */
-	CArray () {};
+	CArray () {}
 
 
 	//
@@ -135,7 +135,7 @@ public:
 	 *
 	 * @return Type of this property.
 	 */
-	virtual PropertyType getType () const {return type;};
+	virtual PropertyType getType () const {return type;}
 	
 
 	/**
@@ -157,7 +157,7 @@ public:
 	{
 		//kernelPrintDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
 		return value.size();
-	};
+	}
  
 
 	/**
@@ -177,7 +177,7 @@ public:
 	 * \exception ObjInvalidPositionInComplex When the id does not correctly identify an item.
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
-		{ return getProperty(id)->getType(); };
+		{ return getProperty(id)->getType(); }
 
 	
 	//
@@ -246,7 +246,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CArray () {};
+	~CArray () {}
 	
 
 	//

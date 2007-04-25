@@ -89,7 +89,7 @@ using _JM_NAMESPACE::min;
 template<typename T> struct EmptyDeallocator
 {
 	/** Deallocation function operator. */
-	void operator()(T * ){};
+	void operator()(T * ){}
 };
 
 
@@ -116,7 +116,7 @@ typedef boost::shared_ptr<char> CharBuffer;
 
 /** Char buffer deleter. */
 struct char_buffer_delete
-	{void operator() (char* p) {assert (p); delete [] p;};};
+	{void operator() (char* p) {assert (p); delete [] p;}};
 /** Char buffer alocator. */
 inline char* char_buffer_new (size_t l) {return new char [l];}
 

@@ -110,9 +110,9 @@ typedef struct IndiRef
 	IndiRef(int _num, int _gen) : num(_num), gen(_gen) {}
 
 	/** Copy constructor. */
-	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;};
+	IndiRef& operator= (const IndiRef& _r) { num = _r.num; gen = _r.gen; return *this;}
 	/** Equality operator. */
-	bool operator== (const IndiRef& _r) const { return (num == _r.num && gen == _r.gen) ? true : false;};
+	bool operator== (const IndiRef& _r) const { return (num == _r.num && gen == _r.gen) ? true : false;}
 			
 } IndiRef;
 
@@ -152,7 +152,7 @@ private:
 	//
 private:
 	/** Copy constructor. */
-	//IProperty (const IProperty&) : IPropertyObserverSubject() {};
+	//IProperty (const IProperty&) : IPropertyObserverSubject() {}
 
 protected:	
 
@@ -204,7 +204,7 @@ public:
 	 * Returns pdf in which this object resides.
 	 * @return Pdf that this object is associated with.
 	 */
-	CPdf* getPdf () const {return pdf;};
+	CPdf* getPdf () const {return pdf;}
 
 	/**
 	 * Checks if a property can be changed.
@@ -221,7 +221,7 @@ public:
 	 *
 	 * @return Identification and generation number.
 	 */
-	const IndiRef& getIndiRef () const {return ref;};
+	const IndiRef& getIndiRef () const {return ref;}
 
 
 	/**
@@ -229,7 +229,7 @@ public:
 	 *
 	 * @param rf Indirect reference identification and generation number.
 	 */
-	virtual void setIndiRef (const IndiRef& rf) {ref = rf;};
+	virtual void setIndiRef (const IndiRef& rf) {ref = rf;}
 
  
 	/**
@@ -238,7 +238,7 @@ public:
 	 * @param n Objects identification number.
 	 * @param g Objects generation number.
 	 */
-	void setIndiRef (IndiRef::ObjNum n, IndiRef::GenNum g) {ref.num = n; ref.gen = g;};
+	void setIndiRef (IndiRef::ObjNum n, IndiRef::GenNum g) {ref.num = n; ref.gen = g;}
 
 	//
 	// PropertyMode
@@ -250,14 +250,14 @@ public:
 	 *
 	 * @return Mode.
 	 */
-	PropertyMode getMode () const {return mode;};
+	PropertyMode getMode () const {return mode;}
 
 	/**
 	 * Set mode of this property.
 	 *
 	 * @param md Mode.
 	 */
-	void setMode (PropertyMode md) {mode = md;};
+	void setMode (PropertyMode md) {mode = md;}
 	
 
 public:
@@ -333,7 +333,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~IProperty () {};
+	virtual ~IProperty () {}
 
 }; /* class IProperty */
 

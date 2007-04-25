@@ -14,6 +14,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.18  2007/04/25 18:24:35  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.17  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -439,7 +445,7 @@ public:
 	{ 
 		// initializes specialized rules matcher for property modes.
 		setRuleMatcher(&matcher);
-	};
+	}
 
 	/** Constructor with default mode.
 	 * @param defMod Default mode to be used.
@@ -451,12 +457,12 @@ public:
 	{
 		// initializes specialized rules matcher for property modes.
 		setRuleMatcher(&matcher);
-	};
+	}
 
 	/** Virtual destructor.
 	 * This method is empty, because no special treatment is required.
 	 */
-	virtual ~ModeController () {};
+	virtual ~ModeController () {}
 
 	/** 
 	 * Get default mode.

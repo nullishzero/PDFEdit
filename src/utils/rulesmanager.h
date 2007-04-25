@@ -12,6 +12,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.7  2007/04/25 18:24:36  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.6  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -69,7 +75,7 @@ public:
 
 	/** Virtual destructor.
 	 */
-	virtual ~IRuleMatcher(){};
+	virtual ~IRuleMatcher(){}
 	
 	/** Checks whether prio2 is higher than prio1.
 	 * @param prio1 Priority.
@@ -187,14 +193,14 @@ public:
 	/** Empty constructor.
 	 * Initializes matcher to NULL.
 	 */
-	RulesManager():matcher(NULL){};
+	RulesManager():matcher(NULL){}
 	
 	/** Constructor.
 	 * @param m Implementation of rules matcher.
 	 *
 	 * Sets matcher field and creates empty mapping.
 	 */
-	RulesManager(const RuleMatcherType * m):matcher(m){};
+	RulesManager(const RuleMatcherType * m):matcher(m){}
 
 	/** Constructor with initial mapping.
 	 * @param m Implementation of rules matcher.
@@ -202,12 +208,12 @@ public:
 	 *
 	 * Sets matcher field and initializes mapping with given storage.
 	 */
-	RulesManager(const RuleMatcherType * m, RuleStorage map):mapping(map.begin(), map.end()), matcher(m){};
+	RulesManager(const RuleMatcherType * m, RuleStorage map):mapping(map.begin(), map.end()), matcher(m){}
 
 	/** Virtual destructor.
 	 * This method is empty, because no special treatment is required.
 	 */
-	virtual ~RulesManager(){};
+	virtual ~RulesManager(){}
 	
 	/** Sets new rule matcher implementation.
 	 * @param newMatcher New matcher implementation.

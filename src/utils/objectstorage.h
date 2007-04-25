@@ -17,6 +17,12 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.9  2007/04/25 18:24:36  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.8  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -102,7 +108,7 @@ public:
         /** Empty constructor.
          *
          */
-        ObjectStorage(){};
+        ObjectStorage(){}
 
         /** Clears mapping.
          *
@@ -111,7 +117,7 @@ public:
         void clear()
         {
                 mapping.clear();
-        };
+        }
 
         /** Add/change mapping.
          * @param key Key of the mapping.
@@ -144,7 +150,7 @@ public:
                 
                 // returns old value
                 return old;
-        };
+        }
 
         /** Finds value with the key.
          * @param key Key of the value.
@@ -162,7 +168,7 @@ public:
                         return 0;
 
                 return iter->second;
-        };
+        }
 
         /** Checks of given key is in the storage.
          * @param key Key object.
@@ -200,7 +206,7 @@ public:
                 mapping.erase(key);
                 
                 return old;
-        };
+        }
 
         /** Number of elements.
          *

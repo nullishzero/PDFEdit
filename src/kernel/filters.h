@@ -12,6 +12,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.16  2007/04/25 18:24:35  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.15  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -150,7 +156,7 @@ struct NoFilter : public boost::iostreams::input_filter
 	typedef boost::iostreams::input_filter_tag  category;
 	
 	/** Default constructor. */
-	NoFilter () {utilsPrintDbg (debug::DBG_DBG, "NoFilter created."); };
+	NoFilter () {utilsPrintDbg (debug::DBG_DBG, "NoFilter created."); }
 
 	/** Single char output function. */
 	template<typename Source>
@@ -160,7 +166,7 @@ struct NoFilter : public boost::iostreams::input_filter
 	}
 
 	/** Destructor. */
-	~NoFilter () { utilsPrintDbg (debug::DBG_DBG, "NoFilter destroyed."); };
+	~NoFilter () { utilsPrintDbg (debug::DBG_DBG, "NoFilter destroyed."); }
 
 };
 
@@ -182,7 +188,7 @@ public:
 	typedef struct boost::iostreams::source_tag category;
 
 	/** Constructor. */
-	buffer_source (const T& _b) : buffer (_b), pos(0) {utilsPrintDbg (debug::DBG_DBG, "");};
+	buffer_source (const T& _b) : buffer (_b), pos(0) {utilsPrintDbg (debug::DBG_DBG, "");}
 
 	/** Read function.*/
     std::streamsize 

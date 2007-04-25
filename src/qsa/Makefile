@@ -1,6 +1,6 @@
 # -*- makefile -*-
 #
-# Main Makefile for building the QSA library with examples.
+# Main Makefile for building the QSA library.
 
 all: run-make
 

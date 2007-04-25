@@ -176,7 +176,7 @@ public:
 	 *
 	 * @return Type of this property.
 	 */
-	virtual PropertyType getType () const {return type;};
+	virtual PropertyType getType () const {return type;}
 			
 
 	/**
@@ -235,7 +235,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CObjectSimple () {};
+	~CObjectSimple () {}
 	
 
 	//

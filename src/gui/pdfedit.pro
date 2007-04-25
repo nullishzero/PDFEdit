@@ -228,7 +228,7 @@ contains( QTVERSION, qt3 ) {
  LIBS += -L../qsa/lib -lqsa_pdfedit
 }
 contains( QTVERSION, qt4 ) {
- error(Qt4 is not supported in this release)
+ error (Qt4.x is not supported)
 }
 
 #OutputDevice

@@ -1,5 +1,16 @@
 #!/bin/sh
 
+#Use the correct qmake and debug/release mode
+QTVERSION=`grep QTVERSION.*= <../../config.pro |sed 's/[^=]*= *//'`
+
+if [ "$QTVERSION" = "qt3" ]; then
+ rm Makefile.qsa
+else
+ echo Skipping QSA-1.1.5
+ echo nocompile > Makefile.qsa
+ exit 0
+fi
+
 OPT_HELP=no
 OPT_FORCE_THREAD=no
 

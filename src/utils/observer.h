@@ -12,6 +12,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2007/04/25 18:24:36  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.27  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -202,7 +208,7 @@ public:
 	/** Virtual destructor.
 	 *
 	 */
-	virtual ~IChangeContext(){};
+	virtual ~IChangeContext(){}
 };
 
 /** Basic change context template class.
@@ -221,12 +227,12 @@ public:
 	/** Constructor with original value.
 	 * @param origVal Original value used for originalValue initialization.
 	 */
-	BasicChangeContext(boost::shared_ptr<T> origVal)throw() :originalValue(origVal){};
+	BasicChangeContext(boost::shared_ptr<T> origVal)throw() :originalValue(origVal){}
 
 	/** Destructor.
 	 * Just to mark all destructors in subtypes as virtual.
 	 */
-	virtual ~BasicChangeContext()throw() {};
+	virtual ~BasicChangeContext()throw() {}
 
 	/** Returns type of context.
 	 *
@@ -316,7 +322,7 @@ public:
 	 *
 	 * Initializes scope field.
 	 */
-	ScopedChangeContext(boost::shared_ptr<S> s):scope(s){};
+	ScopedChangeContext(boost::shared_ptr<S> s):scope(s){}
 
 	/** Returns scope.
 	 * @return Scope value wrapped by shared_ptr smart pointer.
@@ -411,7 +417,7 @@ public:
 	/**
 	 * Virtual destructor.
 	 */
-	virtual ~IObserver ()throw() {};
+	virtual ~IObserver ()throw() {}
 };
 
 namespace {

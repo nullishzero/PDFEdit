@@ -106,7 +106,7 @@ public:
 	/** 
 	 * Public constructor. This object will not be associated with a pdf.
 	 */
-	CDict () {};
+	CDict () {}
 
 
 	//
@@ -143,7 +143,7 @@ public:
 	 *
 	 * @return Type of this property.
 	 */
-	virtual PropertyType getType () const {return type;};
+	virtual PropertyType getType () const {return type;}
 	
 
 	/**
@@ -165,7 +165,7 @@ public:
 	{
 		//kernelPrintDbg (debug::DBG_DBG, "getPropertyCount(" << debug::getStringType<Tp>() << ") = " << value.size());
 		return value.size();
-	};
+	}
  
 
 	/**
@@ -207,7 +207,7 @@ public:
 	 *
 	 */
 	PropertyType getPropertyType (PropertyId id) const 
-		{ return getProperty(id)->getType(); };
+		{ return getProperty(id)->getType(); }
 
 	
 	//
@@ -277,7 +277,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CDict () {};
+	~CDict () {}
 	
 
 	//
@@ -389,9 +389,9 @@ private:
 	boost::shared_ptr<IProperty> ip;
 
 public:
-	DictIdxComparator (const std::string& s) : str(s) {};
+	DictIdxComparator (const std::string& s) : str(s) {}
 		
-	boost::shared_ptr<IProperty> getIProperty () {return ip;};
+	boost::shared_ptr<IProperty> getIProperty () {return ip;}
 		
 	bool operator() (const CDict::Value::value_type& item)
 	{	
@@ -402,7 +402,7 @@ public:
 		}
 			
 		return false;
-	};
+	}
 };
 
 

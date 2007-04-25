@@ -16,6 +16,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.39  2007/04/25 18:24:35  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.38  2007/04/11 20:58:49  bilboq
  *
  * kernel doxygen comment fixes
@@ -373,7 +379,7 @@ public:
 	 */
 	IdCollector(Container & cont, const boost::shared_ptr<IProperty> & search)
 		:container(cont), searched(search), comp(Comparator())
-		{};
+		{}
 
 	/** Filters ids of properties which equals searched.
 	 * @param entry Entry which contains identificator, property pair.

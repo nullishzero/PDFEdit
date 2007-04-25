@@ -13,6 +13,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.13  2007/04/25 18:24:35  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.12  2007/03/18 22:14:29  mstsxfx
  * typo
  *
@@ -91,7 +97,7 @@ public:
 	/** Constructor with dictionary object.
 	 * @param dictA Object where to store stream dictionary.
 	 */
-	StreamWriter(Object * dictA):BaseStream(dictA){};
+	StreamWriter(Object * dictA):BaseStream(dictA){}
 	
 	/** Puts character at current position.
 	 * @param ch Character to put to the stream.
@@ -177,14 +183,14 @@ public:
 		: BaseStream(dictA),
 		  StreamWriter(dictA),
 		  FileStream(fA, startA, limitedA, lengthA, dictA) 
-		  {};
+		  {}
 
 	/** Destructor for FileStreamWriter.
 	 *
 	 * NOTE: doesn't close given file handle. Instance creator is responsible to
 	 * that.
 	 */
-	virtual ~FileStreamWriter(){};
+	virtual ~FileStreamWriter(){}
 	
 	/** Puts character to the file.
 	 * @param ch Character to write.

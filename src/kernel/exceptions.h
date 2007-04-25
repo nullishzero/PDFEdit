@@ -12,6 +12,12 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.30  2007/04/25 18:24:35  bilboq
+ *
+ * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
+ *
+ * fixed some typos in comments
+ *
  * Revision 1.29  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -167,7 +173,7 @@ public:
 	/** Exception constructor.
 	 * @param msg Cause message.
 	 */
-	PdfOpenException(std::string msg):message(msg){};
+	PdfOpenException(std::string msg):message(msg){}
 
 	virtual ~PdfOpenException()throw()
 	{
@@ -192,7 +198,7 @@ class IndirectObjectsExhausted: public PdfException
 public:
 	/** Exception constructor.
 	 */
-	IndirectObjectsExhausted(){};
+	IndirectObjectsExhausted(){}
 
 	virtual ~IndirectObjectsExhausted()throw()
 	{
@@ -214,7 +220,7 @@ class NoPageRootException: public PdfException
 public:
 	/** Exception constructor.
 	 */
-	NoPageRootException(){};
+	NoPageRootException(){}
 
 	virtual ~NoPageRootException()throw()
 	{
