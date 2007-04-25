@@ -5,6 +5,7 @@
 	* XPDF code cleanup (removed unused files)
 	* Fixed possible unicode handling errors
 	* Added checks for QTDIR and QMAKESPEC to ./configure
+	* Compilation fixes for gcc-4.3 (thanks to Martin Michlmayr for patch)
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0
