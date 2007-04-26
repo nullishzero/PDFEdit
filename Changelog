@@ -2,11 +2,13 @@
 	* Fixed commandline function invocation
 	* Fixed QSA using bad qmake
 	* Fixed --enable-release option in configure script
-	* XPDF code cleanup (removed unused files)
-	* Fixed possible unicode handling errors
+	* Xpdf code cleanup (removed unused files)
+	* Fixed possible unicode string handling errors
 	* Added checks for QTDIR and QMAKESPEC to ./configure
 	* Compilation fixes for gcc-4.3 (thanks to Martin Michlmayr for patch)
 	* Added german translation (thanks to Andreas Mantke)
+	* Updated Xpdf to 3.01pl2 (some security bugs were fixed)
+	* Fixed unicode file name handling
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0
