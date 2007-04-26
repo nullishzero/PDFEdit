@@ -786,7 +786,7 @@ bool PdfEditWindow::openFile(const QString &name) {
  CPdf::OpenMode mode=globalSettings->readBool("mode/advanced")?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
   guiPrintDbg(debug::DBG_DBG,"Opening document");
-  document=CPdf::getInstance(name,mode);
+  document=CPdf::getInstance(util::convertFromUnicode(name,util::NAME).c_str(),mode);
   // registers observer with progress bar on document writer
   // this will cause displaying of content saving progress
   pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();

@@ -577,7 +577,7 @@ QSPdf* Base::loadPdf(const QString &name,bool advancedMode/*=false*/) {
  if (name.isNull()) return NULL;
  CPdf::OpenMode mode=advancedMode?(CPdf::Advanced):(CPdf::ReadWrite);
  try {
-  CPdf *opened=CPdf::getInstance(name,mode);
+  CPdf *opened=CPdf::getInstance(util::convertFromUnicode(name,util::NAME).c_str(),mode);
   //Return pdf wrapper with 'destructive close' behavior
   return new QSPdf(opened,this,true);
  } catch (...) {

@@ -16,6 +16,8 @@
  * =====================================================================================
  */
 
+#include "selectpagesdialog.h"
+#include "util.h"
 #include <qvariant.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
@@ -24,7 +26,6 @@
 #include <qlistbox.h>
 #include <qlayout.h>
 #include <cpdf.h>
-#include "selectpagesdialog.h"
 
 //=====================================================================================
 namespace gui {
@@ -343,7 +344,7 @@ SelectPagesDialog::init (const QString& fileName)
 	try {
 
 		guiPrintDbg (debug::DBG_DBG,"Opening document.");
-		document = CPdf::getInstance (fileName,mode);
+		document = CPdf::getInstance (util::convertFromUnicode(fileName,util::NAME).c_str(),mode);
 		assert(document);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	
