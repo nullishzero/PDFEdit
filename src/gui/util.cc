@@ -498,6 +498,9 @@ QString convertToUnicode(const std::string &str, CharsetContext ctx) {
  if (ctx==UTF8) {
   return QString::fromUtf8(str.c_str());
  }
+ if (ctx==NAME) {
+  return QFile::decodeName(str.c_str());
+ }
  if (defCodec) {
   return defCodec->toUnicode(str.c_str());
  }
@@ -514,6 +517,9 @@ std::string convertFromUnicode(const QString &str, CharsetContext ctx) {
  /** \todo: handle context, different settings for different contexts */
  if (ctx==UTF8) {
   return std::string(str.utf8());
+ }
+ if (ctx==NAME) {
+  return std::string(QFile::encodeName(str).data());
  }
  if (defCodec) {
   QCString cstr=defCodec->fromUnicode(str);

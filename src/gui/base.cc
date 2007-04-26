@@ -491,7 +491,7 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 	try {
 
 		guiPrintDbg (debug::DBG_DBG,"Opening document.");
-		pdf = CPdf::getInstance (inFile,mode);
+		pdf = CPdf::getInstance (util::convertFromUnicode(inFile,util::NAME).c_str(),mode);
 		assert(pdf);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	
