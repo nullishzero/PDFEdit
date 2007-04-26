@@ -13,6 +13,10 @@
  * $RCSfile$ 
  *
  * $Log$
+ * Revision 1.14  2007/04/26 09:31:52  bilboq
+ *
+ * gcc-4.3 compilation fixes
+ *
  * Revision 1.13  2007/02/04 20:17:01  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -124,7 +128,7 @@ public:
 	 */
 	typedef std::vector<std::string> SupportedList;
 
-	virtual ~IAnnotInitializator(){};
+	virtual ~IAnnotInitializator(){}
 	
 	/** Returns list of supported annotation types.
 	 *
@@ -133,7 +137,7 @@ public:
 	 * 
 	 * @return SupportedList container with all supprted types.
 	 */
-	virtual SupportedList getSupportedList()const =0;
+	virtual SupportedList getSupportedList() const =0;
 
 	/** Initialization (builder) function.
 	 * @param annotDict Annotation dictionary to initialize.
@@ -188,7 +192,7 @@ public:
 	 */
 	UniversalAnnotInitializer(AnnotList impls):implList(impls){}
 
-	virtual ~UniversalAnnotInitializer(){};
+	virtual ~UniversalAnnotInitializer(){}
 
 	/** Returns list of supported initializators.
 	 * 

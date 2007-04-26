@@ -64,7 +64,7 @@ protected:
 	// Ctor
 	//
 public:
-	OutputBuilder () : _pagepos (std::numeric_limits<size_t>::max()) {};
+	OutputBuilder () : _pagepos (std::numeric_limits<size_t>::max()) {}
 
 	//
 	// Building interface
@@ -79,17 +79,17 @@ public:
 
 	/** Start page. */
 	void start_page (size_t pagepos)
-		{ assert (std::numeric_limits<size_t>::max() == _pagepos); _pagepos = pagepos; };
+		{ assert (std::numeric_limits<size_t>::max() == _pagepos); _pagepos = pagepos; }
 
 	/** End page. */
 	void end_page (size_t pagepos)
-		{ assert (pagepos == _pagepos); _pagepos = std::numeric_limits<size_t>::max(); };
+		{ assert (pagepos == _pagepos); _pagepos = std::numeric_limits<size_t>::max(); }
 
 	//
 	// Dtor
 	//
 public:
-	virtual ~OutputBuilder () {};
+	virtual ~OutputBuilder () {}
 
 };
 

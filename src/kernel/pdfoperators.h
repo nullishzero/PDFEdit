@@ -107,7 +107,7 @@ protected:
 	/**
 	 * Constructor.
 	 */
-	PdfOperator () : contentstream (NULL) {};
+	PdfOperator () : contentstream (NULL) {}
 
 
 	//
@@ -118,7 +118,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~PdfOperator ()	{};
+	virtual ~PdfOperator ()	{}
 
 	
 	//
@@ -172,7 +172,7 @@ public:
 	 */
 	virtual void push_back ( __attribute__((unused)) const boost::shared_ptr<PdfOperator> oper, 
 							__attribute__((unused)) boost::shared_ptr<PdfOperator> prev = boost::shared_ptr<PdfOperator> ())
-		{ throw NotImplementedException ("PdfOperator::push_back ()"); };
+		{ throw NotImplementedException ("PdfOperator::push_back ()"); }
 
 protected:
 	/**
@@ -182,7 +182,7 @@ protected:
 	 * @param newOper Operator to be inserted.
 	 */
 	virtual void insert_after (const boost::shared_ptr<PdfOperator>, boost::shared_ptr<PdfOperator>)
-		{ throw NotImplementedException ("PdfOperator::insert_after ()"); };
+		{ throw NotImplementedException ("PdfOperator::insert_after ()"); }
 
 	/**
 	 * Remove an operator from the composite interface.
@@ -192,7 +192,7 @@ protected:
 	 * @param op to be erased.
 	 */
 	virtual void remove (boost::shared_ptr<PdfOperator>)
-		{ throw NotImplementedException ("PdfOperator::remove ()"); };
+		{ throw NotImplementedException ("PdfOperator::remove ()"); }
 
 protected:	
 	/**
@@ -243,7 +243,7 @@ public:
 	 * @return Number of children.
 	 */
 	virtual size_t getChildrenCount () const
-		{ return 0; };	
+		{ return 0; }
 	
 	/**
 	 * Get childrens.
@@ -251,7 +251,7 @@ public:
 	 * @param opers Children container.
 	 */
 	virtual void getChildren (PdfOperators& opers) const
-		{ opers.clear(); };	
+		{ opers.clear(); }
 
 	
 	//
@@ -313,7 +313,7 @@ public:
 			utilsPrintDbg (debug::DBG_DBG, "Changing valid next variable.");
 
 		next = nxt;
-	};
+	}
 	
 	/** \copydoc setPrev */
 	void setPrev (ListItem prv) 
@@ -322,7 +322,7 @@ public:
 			utilsPrintDbg (debug::DBG_DBG, "Changing valid prev variable.");
 		
 		prev = prv; 
-	};
+	}
 
 protected:
 	/**
@@ -330,14 +330,14 @@ protected:
 	 *
 	 * @return Previous item.
 	 */
-	ListItem _next () const {return next;};
+	ListItem _next () const {return next;}
 	
 	/**
 	 * Get next item in the iterator list that is implemented by PdfOperator.
 	 *
 	 * @return Next item.
 	 */
-	ListItem _prev () const {return prev;};
+	ListItem _prev () const {return prev;}
 
 	//
 	// Clone interface
@@ -391,7 +391,7 @@ public:
 	 * @param rc Bounding box.
 	 */
 	void setBBox (const BBox& rc)
-		{ bbox = rc; };
+		{ bbox = rc; }
 
 	/**
 	 * Get bounding box of this operator.
@@ -399,7 +399,7 @@ public:
 	 * @return Bounding box.
 	 */
 	BBox getBBox () const
-		{ assert (BBox::isInitialized(bbox)); return bbox; };
+		{ assert (BBox::isInitialized(bbox)); return bbox; }
 	
 };
 
@@ -524,7 +524,7 @@ public:
 			// Remove the element from input parameter
 			opers.pop_back ();
 		}
-	};
+	}
 
 	/** 
 	 * Constructor. 
@@ -555,7 +555,7 @@ public:
 		{ return operands.size (); };
 
 	virtual void getParameters (Operands& container) const
-		{ copy (operands.begin(), operands.end(), back_inserter(container)); };
+		{ copy (operands.begin(), operands.end(), back_inserter(container)); }
 
 	virtual void getOperatorName (std::string& first) const
 		{ first = opText;}
@@ -608,7 +608,7 @@ public:
 public:
 	// End operator is added to composite as normal operator so just prepand start operator
 	virtual void getStringRepresentation (std::string& str) const;
-	virtual void getOperatorName (std::string& first) const {first = opBegin;};
+	virtual void getOperatorName (std::string& first) const {first = opBegin;}
 
 	//
 	// Clone interface
@@ -666,7 +666,7 @@ public:
 	virtual size_t getParametersCount () const {return 1;};
 	virtual void getParameters (Operands& opers) const;
 	virtual void getStringRepresentation (std::string& str) const;
-	virtual void getOperatorName (std::string& first) const {first = opBegin;};
+	virtual void getOperatorName (std::string& first) const {first = opBegin;}
 
 	//
 	// Clone interface
@@ -724,7 +724,7 @@ isInlineImageOp (boost::shared_ptr<PdfOperator> oper)
  * @return Composite operator.
  */
 boost::shared_ptr<CompositePdfOperator> findCompositeOfPdfOperator (PdfOperator::Iterator begin, 
-																	boost::shared_ptr<PdfOperator> oper);
+									boost::shared_ptr<PdfOperator> oper);
 
 /**
  * Get last operator if a composite.

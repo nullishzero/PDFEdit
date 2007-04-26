@@ -196,7 +196,7 @@ struct PdfOpCmpRc
 	 *
 	 * @param rc Rectangle used when comparing.
 	 */
-	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {};
+	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {}
 	
 	/** 
 	 * Is the intersection of supplied rectangle and rectangle specified in the
@@ -229,7 +229,7 @@ struct PdfOpCmpPt
 	 * 
 	 * @param pt Point that we use when comparing.
 	 */
-	PdfOpCmpPt (const Point& pt) : pt_(pt) {};
+	PdfOpCmpPt (const Point& pt) : pt_(pt) {}
 	
 	/** 
 	 * Is point in a rectangle. 
@@ -413,7 +413,7 @@ private:
 
 		/** Empty destructor.
 		 */
-		virtual ~AnnotsPropWatchDog() throw(){}; 
+		virtual ~AnnotsPropWatchDog() throw(){}
 		
 		/** Observer handler.
 		 * 
@@ -485,7 +485,7 @@ private:
 
 		/** Empty destructor.
 		 */
-		virtual ~AnnotsArrayWatchDog() throw(){}; 
+		virtual ~AnnotsArrayWatchDog() throw(){}
 		
 		/** Observer handler.
 		 * 
@@ -570,7 +570,7 @@ private:
 			{ assert(_page); }
 
 		/** Empty destructor.  */
-		virtual ~ContentsWatchDog() throw() {}; 
+		virtual ~ContentsWatchDog() throw() {}
 		
 		/** 
 		 * Observer handler.
@@ -630,7 +630,7 @@ public:
 				unregisterAnnotsObservers(annotsDict);
 			}
 		}
-	};
+	}
 
 	
 	//
@@ -645,7 +645,7 @@ public:
 	bool operator== (const CPage& page)
 	{
 		return (this == &page) ? true : false;
-	};
+	}
 
 	
 	//
@@ -669,7 +669,7 @@ public:
 		unregisterContentsObserver ();
 		_objectChanged (true); 
 		valid = false;
-	};
+	}
 	
 	//
 	// Get methods
@@ -681,7 +681,7 @@ public:
 	 *
 	 * @return Dictionary.
 	 */
-	boost::shared_ptr<CDict> getDictionary () const { return dictionary; };
+	boost::shared_ptr<CDict> getDictionary () const { return dictionary; }
 	
 	
 	/**
@@ -1206,7 +1206,7 @@ public:
 		if (pos >= contentstreams.size())
 			throw OutOfRange();
 		moveAbove (contentstreams[pos]); 
-	};
+	}
 
 	/**
 	 * Move contentstream below one level. Which means it will be repainted by more objects.
@@ -1217,7 +1217,7 @@ public:
 		if (pos >= contentstreams.size())
 			throw OutOfRange();
 		moveBelow (contentstreams[pos]); 
-	};
+	}
 
 	
 };

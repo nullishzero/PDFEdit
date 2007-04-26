@@ -3,6 +3,7 @@
 #It is expected that the directory in which the sources are exported is named 'pdfedit'
 #Make documentation before making tarball
 (cd doc && make doc_dist)
+#Translate all .ts files to .qm
 (cd src/gui && lrelease pdfedit.pro)
 #Get version number
 VERSION=`./getversion`

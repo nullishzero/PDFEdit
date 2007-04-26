@@ -160,7 +160,7 @@ public:
 	// Dtor
 	//
 public:
-	virtual ~PageFragment () {};
+	virtual ~PageFragment () {}
 
 };
 
@@ -250,7 +250,7 @@ public:
 	// Dtor
 	//
 public:
-	virtual ~PageLine () {};
+	virtual ~PageLine () {}
 
 
 	//
@@ -322,7 +322,7 @@ public:
 	// Dtor
 	//
 public:
-	virtual ~PageColumn () {};
+	virtual ~PageColumn () {}
 
 
 

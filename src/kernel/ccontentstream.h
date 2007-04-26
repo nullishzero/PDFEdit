@@ -137,11 +137,11 @@ private:
 		//
 		virtual void notify (boost::shared_ptr<IProperty> newValue, 
 							 boost::shared_ptr<const IProperty::ObserverContext> context) const throw();
-		virtual priority_t getPriority() const throw ()	{return 0;};
+		virtual priority_t getPriority() const throw ()	{return 0;}
 		//
 		// Destructor
 		//
-		virtual ~CStreamObserver () throw () {};
+		virtual ~CStreamObserver () throw () {}
 
 	private:
 		CContentStream* contentstream;
@@ -164,11 +164,11 @@ private:
 		//
 		virtual void notify (boost::shared_ptr<IProperty> newValue, 
 							 boost::shared_ptr<const IProperty::ObserverContext>) const throw();
-		virtual priority_t getPriority() const throw ()	{return 0;};
+		virtual priority_t getPriority() const throw ()	{return 0;}
 		//
 		// Destructor
 		//
-		virtual ~OperandObserver () throw () {};
+		virtual ~OperandObserver () throw () {}
 
 	private:
 		CContentStream* contentstream;
@@ -357,7 +357,7 @@ public:
 	void deleteOperator (OperatorIterator it, bool indicateChange = true);
 	
 	void deleteOperator (boost::shared_ptr<PdfOperator> oper, bool indicateChange = true)
-		{ deleteOperator (PdfOperator::getIterator<OperatorIterator> (oper), indicateChange); };
+		{ deleteOperator (PdfOperator::getIterator<OperatorIterator> (oper), indicateChange); }
 
 	/**
 	 * Insert pdf operator after specified position. If it is not valid it is
@@ -377,7 +377,7 @@ public:
 
 	/** \see insertOperator */
 	void insertOperator (boost::shared_ptr<PdfOperator> oper, boost::shared_ptr<PdfOperator> newOper, bool indicateChange = true)
-		{ insertOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); };
+		{ insertOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); }
 	
 	/**
 	 * Insert pdf operator in the front. 
@@ -418,7 +418,7 @@ public:
 	void replaceOperator (boost::shared_ptr<PdfOperator> oper, 
 						  boost::shared_ptr<PdfOperator> newOper, 
 						  bool indicateChange = true)
-		{ replaceOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); };
+		{ replaceOperator (PdfOperator::getIterator<OperatorIterator> (oper), newOper, indicateChange); }
 
 	//
 	// Helper methods
@@ -429,7 +429,7 @@ public:
 	 * 
 	 * @return True if the contentstream is empty, false otherwise.
 	 */
-	bool empty () const {return operators.empty ();};
+	bool empty () const {return operators.empty ();}
 
 	/**
 	 * Reparse pdf operators and set their bounding boxes.
@@ -459,7 +459,7 @@ public:
 	 * Does not reparse anything. 
 	 */
 	void saveChange () 
-		{ _objectChanged(); };
+		{ _objectChanged(); }
 
 	/**
 	 * Get smart pointer to this content stream.
@@ -517,7 +517,7 @@ public:
 		kernelPrintDbg (debug::DBG_DBG, "destructing..");
 		// Unregister cstream observers
 		unregisterCStreamObservers ();
-	};
+	}
 };
 
 
