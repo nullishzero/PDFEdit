@@ -15,6 +15,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.80  2007/04/26 09:59:21  bilboq
+ *
+ *
+ * gcc-4.3 compilation fixes
+ *
  * Revision 1.79  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -655,7 +660,7 @@ protected:
 
 		/** Empty destructor.
 		 */
-		virtual ~PageTreeRootObserver() throw(){}; 
+		virtual ~PageTreeRootObserver() throw(){}
 		
 		/** Observer handler.
 		 * @param newValue New value of changed property.
@@ -738,7 +743,7 @@ protected:
 
 		/** Empty destructor.
 		 */
-		virtual ~PageTreeNodeObserver() throw(){}; 
+		virtual ~PageTreeNodeObserver() throw(){}
 		
 		/** Observer handler.
 		 * @param newValue New value of changed property.
@@ -825,7 +830,7 @@ protected:
 
 		/** Empty destructor.
 		 */
-		virtual ~PageTreeKidsObserver() throw(){}; 
+		virtual ~PageTreeKidsObserver() throw(){} 
 		
 		/** Observer handler.
 		 * @param newValue New value of changed property.
@@ -1336,7 +1341,7 @@ private:
 	 * If you want to create instance, please use static factory method 
 	 * getInstance.
 	 */
-	CPdf ():mode(ReadOnly), modeController(NULL){};
+	CPdf ():mode(ReadOnly), modeController(NULL){}
 
 	/** Initializating constructor.
 	 * @param stream Stream with data.

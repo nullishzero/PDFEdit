@@ -72,7 +72,7 @@ public:
 	CInlineImage (CPdf& p, ::Object& objDict, const CStream::Buffer& buffer, const IndiRef& rf);
 
 	/** Constructor. It will not be associated with a pdf. */
-	CInlineImage () : CStream(false) {};
+	CInlineImage () : CStream(false) {}
 
 	
 	//
@@ -84,7 +84,7 @@ protected:
 	 * @return New instance of inline image.
 	 */
 	virtual CStream* _newInstance () const
-		{ return new CInlineImage; };
+		{ return new CInlineImage; }
 
 	
 	//
@@ -112,7 +112,7 @@ public:
 	{ 
 		assert (!"Failure. This operation is not permitted.");
 		throw CObjInvalidOperation ();
-	}; 
+	}
 
 };
 

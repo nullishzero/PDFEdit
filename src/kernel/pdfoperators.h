@@ -428,13 +428,13 @@ protected:
 	/**
 	 * Constructor.
 	 */
-	CompositePdfOperator () {};
+	CompositePdfOperator () {}
 
 	//
 	// Composite interface
 	//
 public:
-	virtual size_t getChildrenCount () const {return children.size ();};	
+	virtual size_t getChildrenCount () const {return children.size ();}
 	virtual void push_back (const boost::shared_ptr<PdfOperator> oper, 
 							boost::shared_ptr<PdfOperator> prev = boost::shared_ptr<PdfOperator> ());
 	virtual void getChildren (PdfOperators& container) const;
@@ -446,8 +446,8 @@ protected:
 	// PdfOperator interface
 	//
 public:
-	virtual size_t getParametersCount () const {return 0;};
-	virtual void getParameters (Operands&) const {};
+	virtual size_t getParametersCount () const {return 0;}
+	virtual void getParameters (Operands&) const {}
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const = 0;
 
@@ -465,7 +465,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~CompositePdfOperator() {};
+	virtual ~CompositePdfOperator() {}
 		
 };
 
@@ -552,7 +552,7 @@ public:
 public:
 
 	virtual size_t getParametersCount () const
-		{ return operands.size (); };
+		{ return operands.size (); }
 
 	virtual void getParameters (Operands& container) const
 		{ copy (operands.begin(), operands.end(), back_inserter(container)); }
@@ -663,7 +663,7 @@ public:
 	// PdfOperator interface
 	//
 public:
-	virtual size_t getParametersCount () const {return 1;};
+	virtual size_t getParametersCount () const {return 1;}
 	virtual void getParameters (Operands& opers) const;
 	virtual void getStringRepresentation (std::string& str) const;
 	virtual void getOperatorName (std::string& first) const {first = opBegin;}

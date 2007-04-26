@@ -1638,7 +1638,7 @@ namespace {
 	{
 		shared_ptr<CDict> _dict;
 			
-		ContentsHandler (shared_ptr<CDict> dict) : _dict(dict) {};
+		ContentsHandler (shared_ptr<CDict> dict) : _dict(dict) {}
 
 		void toFront (CRef& ref)
 		{

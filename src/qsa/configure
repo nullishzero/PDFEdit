@@ -4,7 +4,7 @@
 QTVERSION=`grep QTVERSION.*= <../../config.pro |sed 's/[^=]*= *//'`
 
 if [ "$QTVERSION" = "qt3" ]; then
- rm Makefile.qsa
+ rm -f Makefile.qsa
 else
  echo Skipping QSA-1.1.5
  echo nocompile > Makefile.qsa

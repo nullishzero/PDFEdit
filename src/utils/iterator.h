@@ -91,19 +91,19 @@ public:
 
 	/** Constructor. */
 	SharedDoubleLinkedListIterator (ListItem oper) : _cur (oper), _curpos (pvalid)
-		{ if (_invalidItem (oper)) _curpos = pinvalid; };
+		{ if (_invalidItem (oper)) _curpos = pinvalid; }
 	
 	/** 
 	 * Constructor. 
 	 * Created iterator is not in valid state and can not be used to iterate.
 	 */
-	SharedDoubleLinkedListIterator () : _cur (ListItem()), _curpos (pinvalid) {};
+	SharedDoubleLinkedListIterator () : _cur (ListItem()), _curpos (pinvalid) {}
 
 	//
 	// Destructor
 	//
 public:
-	virtual ~SharedDoubleLinkedListIterator () {};
+	virtual ~SharedDoubleLinkedListIterator () {}
 	
 	//
 	// Iterator interface

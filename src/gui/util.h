@@ -39,7 +39,7 @@ namespace util {
  Context of unicode to/from 8bit conversion
  (PDF, console, filename ...)
 */
-typedef enum CharsetContext {
+enum CharsetContext {
  PDF, /** PDF */
  CON, /** Console/terminal */
  NAME, /** File name */
