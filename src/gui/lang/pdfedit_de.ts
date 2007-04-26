@@ -137,7 +137,7 @@
     </message>
     <message>
         <source>Set line dash style</source>
-        <translation type="unfinished">Linienstrich-Stil setzen</translation>
+        <translation>Linienstrich-Stil setzen</translation>
     </message>
     <message>
         <source>Set line width</source>
@@ -157,7 +157,7 @@
     </message>
     <message>
         <source>Set page tranformation matrix</source>
-        <translation type="unfinished"></translation>
+        <translation>Seitentransformationsmatrix setzen</translation>
     </message>
     <message>
         <source>Draw line</source>
@@ -333,27 +333,27 @@
     </message>
     <message>
         <source>suitable for dash style change.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geeignet für Wechsel des Strichstils.</translation>
     </message>
     <message>
         <source>Change line dash pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Linienstrichmuster ändern</translation>
     </message>
     <message>
         <source>Line dashing patterns</source>
-        <translation type="unfinished"></translation>
+        <translation>Linienstrichmuster</translation>
     </message>
     <message>
         <source>Solid line</source>
-        <translation type="unfinished"></translation>
+        <translation>durchgezogene Linie</translation>
     </message>
     <message>
         <source>Slightly dashed</source>
-        <translation type="unfinished"></translation>
+        <translation>Leicht gestrichelt</translation>
     </message>
     <message>
         <source>Dot and dashed</source>
-        <translation type="unfinished"></translation>
+        <translation>Punkt und Strich</translation>
     </message>
     <message>
         <source>Change effect</source>
@@ -365,7 +365,7 @@
     </message>
     <message>
         <source>Dash pattern changed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Strichmuster geändert.</translation>
     </message>
     <message>
         <source>%1 added to page</source>
@@ -433,19 +433,19 @@
     </message>
     <message>
         <source>Add page transformation matrix</source>
-        <translation type="unfinished"></translation>
+        <translation>Seitentransformationsmatrix hinzufügen</translation>
     </message>
     <message>
         <source>Change page transformation matrix</source>
-        <translation type="unfinished"></translation>
+        <translation>Seitentransformationsmatrix ändern</translation>
     </message>
     <message>
         <source>Page transformation matrix description</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung der Seitentransformationsmatrix</translation>
     </message>
     <message>
         <source>Page transformation description</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung der Seitentransformationsmatrix</translation>
     </message>
     <message>
         <source>Select which transformations to use</source>
@@ -485,7 +485,7 @@
     </message>
     <message>
         <source>Page transformation matrix changed to </source>
-        <translation type="unfinished"></translation>
+        <translation>Änderung der Seitentransformationsmatrix zu</translation>
     </message>
     <message>
         <source>Change relative text operator position</source>
@@ -549,7 +549,7 @@
     </message>
     <message>
         <source>Dictionary has no type!</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnis hat keine Typ!</translation>
     </message>
     <message>
         <source>Maybe bad stream!</source>
@@ -609,7 +609,7 @@
     </message>
     <message>
         <source>Rest of parameters are passed to invoked function.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rest der Parameter werden übergeben an die aufzurufende Funktion.</translation>
     </message>
     <message>
         <source>New revision of document created</source>
@@ -633,7 +633,7 @@
     </message>
     <message>
         <source>Encrypted content will show up as garbage and many operations will be impossible</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschlüsselter Inhalt wird als Datenmüll erscheinen und viele Operationen werden unmöglich sein</translation>
     </message>
     <message>
         <source>Error occured while loading file</source>
@@ -653,7 +653,7 @@
     </message>
     <message>
         <source>Matrix is in bad state !</source>
-        <translation type="unfinished"></translation>
+        <translation>Matrix ist in einem schlechten Zustand !</translation>
     </message>
     <message>
         <source>Operator &apos;%1&apos; should have 1 parameter, but has %2 !</source>
@@ -853,7 +853,7 @@
     </message>
     <message>
         <source>Null pointer access in </source>
-        <translation type="unfinished"></translation>
+        <translation>Null Pointer Access in</translation>
     </message>
     <message>
         <source>Null</source>
@@ -968,7 +968,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>2 or more parameters in item definition</source>
-        <translation type="unfinished"></translation>
+        <translation>2 oder mehr Parameter in Definition des Eintrags</translation>
     </message>
     <message>
         <source>toolbar item</source>
@@ -1016,7 +1016,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Set debug messages verbosity</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzte Debugmeldungen auf umfangreich</translation>
     </message>
     <message>
         <source>(n = -1 .. 5)</source>
@@ -1032,11 +1032,11 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Run script from script path or current directory if not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte das Skript aus dem Skript-Path oder, falls nicht gefunden, aus dem aktuellen Verzeichnis</translation>
     </message>
     <message>
         <source>Run script from current directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte das Skript aus dem aktuellen Verzeichnis</translation>
     </message>
     <message>
         <source>code</source>
@@ -1044,7 +1044,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Evaluate script code</source>
-        <translation type="unfinished"></translation>
+        <translation>Werte den Skriptcode aus</translation>
     </message>
     <message>
         <source>Shortcut for</source>
@@ -1056,11 +1056,11 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Text saved to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Text gesichert in %1</translation>
     </message>
     <message>
         <source>Save as text file</source>
-        <translation type="unfinished"></translation>
+        <translation>Als Textdatei sichern</translation>
     </message>
 </context>
 <context>
@@ -1249,7 +1249,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Reference target does not exist!</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgerufenes Ziel existiert nicht!</translation>
     </message>
     <message>
         <source>Property &apos;%1&apos; already exist as %2</source>
@@ -1372,14 +1372,14 @@ Daten: %3</translation>
     </message>
     <message>
         <source>&amp;Link Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Link Anmerkung</translation>
     </message>
 </context>
 <context>
     <name>gui::Base</name>
     <message>
         <source>Error running</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlerlauf</translation>
     </message>
     <message>
         <source>Script not found</source>
@@ -1392,7 +1392,7 @@ Daten: %3</translation>
     <message>
         <source>Looked for</source>
         <comment>scripts</comment>
-        <translation type="unfinished"></translation>
+        <translation>Suchen nach</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -1403,7 +1403,7 @@ Daten: %3</translation>
     <name>gui::BaseCore</name>
     <message>
         <source>Error in callback handler: </source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler im Rückfrage-Steuerungsprogramm:</translation>
     </message>
     <message>
         <source>Exception in callback handler: </source>
@@ -1423,7 +1423,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Null pointer access in </source>
-        <translation type="unfinished"></translation>
+        <translation>Null-Pointer Access in</translation>
     </message>
     <message>
         <source>Exception in </source>
@@ -1431,7 +1431,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Invalid object given for parameter %1 in </source>
-        <translation type="unfinished">Ungültiges Objekt </translation>
+        <translation>Ungültiges Objekt vorgegeben für Parameter %1 in</translation>
     </message>
     <message>
         <source>Expected</source>
@@ -1611,7 +1611,7 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Options affecting object tree and property editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Optionen wirken sich auf den Objektbaum und die Eigenschaftsbearbeitung aus</translation>
     </message>
     <message>
         <source>Sort dictionary items alphabetically</source>
@@ -1892,11 +1892,11 @@ Daten: %3</translation>
     <name>gui::RefPropertyDialog</name>
     <message>
         <source>Reference target</source>
-        <translation type="unfinished"></translation>
+        <translation>Referenvorgabe</translation>
     </message>
     <message>
         <source>Choose target for indirect reference</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Object number</source>
@@ -1904,11 +1904,11 @@ Daten: %3</translation>
     </message>
     <message>
         <source>Generation number</source>
-        <translation type="unfinished"></translation>
+        <translation>Versionsnummer</translation>
     </message>
     <message>
         <source>Reference target is not valid</source>
-        <translation type="unfinished"></translation>
+        <translation>Referenzvorgabe ist nicht zulässig</translation>
     </message>
 </context>
 <context>
@@ -2178,22 +2178,22 @@ opsetfont</translation>
     <message>
         <source>Show all operators in stream</source>
         <comment>streamAll</comment>
-        <translation type="unfinished"></translation>
+        <translation>Alle Operatoren im Datenstrom anzeigen</translation>
     </message>
     <message>
         <source>Show only text operators in stream</source>
         <comment>streamText</comment>
-        <translation type="unfinished"></translation>
+        <translation>Nur Textoperatoren im Datenstrom anzeigen</translation>
     </message>
     <message>
         <source>Show only font operators in stream</source>
         <comment>streamFont</comment>
-        <translation type="unfinished"></translation>
+        <translation>Nur Schriftartenoperatoren im Datenstrom anzeigen</translation>
     </message>
     <message>
         <source>Show only graphical operators in stream</source>
         <comment>streamGfx</comment>
-        <translation type="unfinished"></translation>
+        <translation>Nur Grafikoperatoren im Datenstrom anzeigen</translation>
     </message>
     <message>
         <source>Main menu</source>
@@ -2213,12 +2213,12 @@ opsetfont</translation>
     <message>
         <source>Save new &amp;revision</source>
         <comment>fsaverev</comment>
-        <translation>Speichern als neu &amp;revision</translation>
+        <translation>Speichern als neu &amp;Revision</translation>
     </message>
     <message>
         <source>New &amp;Window</source>
         <comment>neww</comment>
-        <translation>Neu &amp;Window</translation>
+        <translation>Neues &amp;Window</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -2308,17 +2308,17 @@ opsetfont</translation>
     <message>
         <source>Reload Page (show changes)</source>
         <comment>reloadpage</comment>
-        <translation type="unfinished"></translation>
+        <translation>Seite erneut laden (zeigt Änderungen)</translation>
     </message>
     <message>
         <source>PageRider Toolbar</source>
         <comment>PageRiderToolbar</comment>
-        <translation type="unfinished"></translation>
+        <translation>PageRider Werkzeugleiste</translation>
     </message>
     <message>
         <source>Save as text...</source>
         <comment>fsaveastext</comment>
-        <translation type="unfinished"></translation>
+        <translation>Als Text speichern...</translation>
     </message>
 </context>
 <context>
@@ -2439,51 +2439,51 @@ opsetfont</translation>
     </message>
     <message>
         <source>perch</source>
-        <translation type="unfinished"></translation>
+        <translation>Perch</translation>
     </message>
     <message>
         <source>perches</source>
-        <translation type="unfinished"></translation>
+        <translation>Perch</translation>
     </message>
     <message>
         <source>rd : rod (pole, perch)</source>
-        <translation type="unfinished"></translation>
+        <translation>rd : rod (Pole, Perch)</translation>
     </message>
     <message>
         <source>fathom</source>
-        <translation type="unfinished"></translation>
+        <translation>Faden, Klafter</translation>
     </message>
     <message>
         <source>fathoms</source>
-        <translation type="unfinished"></translation>
+        <translation>Fäden, Klafter</translation>
     </message>
     <message>
         <source>fm. : fathom</source>
-        <translation type="unfinished"></translation>
+        <translation>fm : Faden, Klafter</translation>
     </message>
     <message>
         <source>chain</source>
-        <translation type="unfinished"></translation>
+        <translation>Kette</translation>
     </message>
     <message>
         <source>chains</source>
-        <translation type="unfinished"></translation>
+        <translation>Ketten</translation>
     </message>
     <message>
         <source>ch : chain</source>
-        <translation type="unfinished"></translation>
+        <translation>ch : Kette</translation>
     </message>
     <message>
         <source>furlong</source>
-        <translation type="unfinished"></translation>
+        <translation>Furlong</translation>
     </message>
     <message>
         <source>furlongs</source>
-        <translation type="unfinished"></translation>
+        <translation>Furlonge</translation>
     </message>
     <message>
         <source>fur. : furlong</source>
-        <translation type="unfinished"></translation>
+        <translation>fur. : Furlong</translation>
     </message>
     <message>
         <source>cable</source>
@@ -2507,23 +2507,23 @@ opsetfont</translation>
     </message>
     <message>
         <source>land</source>
-        <translation type="unfinished"></translation>
+        <translation>Land</translation>
     </message>
     <message>
         <source>lands</source>
-        <translation type="unfinished"></translation>
+        <translation>Land</translation>
     </message>
     <message>
         <source>league</source>
-        <translation type="unfinished"></translation>
+        <translation>League</translation>
     </message>
     <message>
         <source>leagues</source>
-        <translation type="unfinished"></translation>
+        <translation>Leagues</translation>
     </message>
     <message>
         <source>land : land (league)</source>
-        <translation type="unfinished"></translation>
+        <translation>land : Land (League)</translation>
     </message>
     <message>
         <source>m : meter</source>
@@ -2531,31 +2531,31 @@ opsetfont</translation>
     </message>
     <message>
         <source>Ym : yottameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Ym : Yottameter</translation>
     </message>
     <message>
         <source>Zm : zettameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Zm : Zettameter</translation>
     </message>
     <message>
         <source>Em : exameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Em : Exameter</translation>
     </message>
     <message>
         <source>Pm : petameter</source>
-        <translation type="unfinished"></translation>
+        <translation>PM : Petameter</translation>
     </message>
     <message>
         <source>Tm : terameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Tm : Terameter</translation>
     </message>
     <message>
         <source>Gm : gigameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Gm : Gigameter</translation>
     </message>
     <message>
         <source>Mm : megameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Mm : Megameter</translation>
     </message>
     <message>
         <source>km : kilometer</source>
