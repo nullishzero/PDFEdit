@@ -12,6 +12,7 @@
 #pragma implementation
 #endif
 
+#include <limits.h>
 #include "gmem.h"
 #include "Error.h"
 #include "JArithmeticDecoder.h"
@@ -830,6 +831,12 @@ GBool JPXStream::readCodestream(Guint len) {
 	            / img.xTileSize;
       img.nYTiles = (img.ySize - img.yTileOffset + img.yTileSize - 1)
 	            / img.yTileSize;
+      // check for overflow before allocating memory
+      if (img.nXTiles <= 0 || img.nYTiles <= 0 ||
+	  img.nXTiles >= INT_MAX / img.nYTiles) {
+	error(getPos(), "Bad tile count in JPX SIZ marker segment");
+	return gFalse;
+      }
       img.tiles = (JPXTile *)gmallocn(img.nXTiles * img.nYTiles,
 				      sizeof(JPXTile));
       for (i = 0; i < img.nXTiles * img.nYTiles; ++i) {
