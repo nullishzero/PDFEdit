@@ -1,7 +1,10 @@
 PDFedit readme
 -----------------
 
-For more detailed documentation, look into "doc" subdirectory.
+PDFedit is distributed under terms of GNU GPL.
+See doc/LICENSE.GPL for full license text.
+See doc/AUTHORS for full list of authors and contributors.
+For other more detailed documentation, look into "doc" subdirectory.
 File doc/user/user_doc.html contain more detailed installation instructions
 (in the Installation section) and list of required libraries.
 
