@@ -72,6 +72,12 @@ then
  try_qmake "$1"
 fi
 
+#Qmake in QMAKE environment variable (if set)
+if [ -n "$QMAKE" ]
+then
+ try_qmake "$QMAKE"
+fi
+
 #Qmake in QTDIR
 try_qmake "$QTDIR/bin/qmake"
 
