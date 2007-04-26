@@ -30,14 +30,6 @@ dnl -------------------------------------------
 AC_CHECK_HEADER([boost/smart_ptr.hpp], , [AC_MSG_ERROR([You need boost library to compile PDFedit])])
 AC_CHECK_HEADER([boost/iostreams/stream.hpp], , [AC_MSG_ERROR([You need boost iostreams library to compile PDFedit])])
 
-# Checks for libraries.
-
-dnl #TODO: incomplete, and checking for QSA is not exactly trivial
-dnl # FIXME: Replace `main' with a function in `-lX11':
-dnl #AC_CHECK_LIB([X11], [main])
-dnl # FIXME: Replace `main' with a function in `-lfreetype':
-dnl #AC_CHECK_LIB([freetype], [main])
-
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([limits.h stdlib.h string.h unistd.h])
