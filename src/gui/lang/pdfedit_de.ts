@@ -1711,6 +1711,22 @@ Daten: %3</translation>
         <source>Use big icons</source>
         <translation>Verwende große Symbole</translation>
     </message>
+    <message>
+        <source>Page view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Command Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initial focus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will specify which part of editor window will receive keyboard focus when new window is opened</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>

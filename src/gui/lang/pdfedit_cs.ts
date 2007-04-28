@@ -1713,6 +1713,22 @@ Režim zvýraznění</translation>
         <source>Length units</source>
         <translation>Jednotky délky</translation>
     </message>
+    <message>
+        <source>Page view</source>
+        <translation>Náhled stránky</translation>
+    </message>
+    <message>
+        <source>Command Line</source>
+        <translation>Příkazová řádka</translation>
+    </message>
+    <message>
+        <source>Initial focus</source>
+        <translation>Počáteční výběr</translation>
+    </message>
+    <message>
+        <source>This will specify which part of editor window will receive keyboard focus when new window is opened</source>
+        <translation>Toto určuje, která část editoru dostane fokus z klávesnice při otevření nového okna</translation>
+    </message>
 </context>
 <context>
     <name>gui::PageSpace</name>

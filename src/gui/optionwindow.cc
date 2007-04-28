@@ -365,7 +365,7 @@ void OptionWindow::init() {
  addOptionCombo(edit_tab,tr("Length units"),"gui/PageSpace/ViewedUnits",l_units_id,l_units);
  addOptionCombo(edit_tab,tr("Character encoding"),"editor/charset",util::supportedEncodings());
  addOptionCombo(edit_tab,tr("Initial focus"),"gui/init_focus",focuses,focusesDesc);
- addText       (edit_tab,tr("This will specify which part of editor window will receive focus when new window is opened"));
+ addText       (edit_tab,tr("This will specify which part of editor window will receive keyboard focus when new window is opened"));
  finishTab     (edit_tab);
 
  QWidget *data_tab=addTab(tr("Paths"));
