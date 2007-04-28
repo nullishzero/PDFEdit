@@ -34,6 +34,13 @@ isEmpty( PREFIX ) {
  error("PREFIX not defined");
 }
 
+#Translations
+DEPENDPATH += lang
+TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts
+
+# .qm files must exist before continuing, otherwise translations may be omitted from installing etc. (qmake bug)
+DUMMY = $$system(lrelease $$TRANSLATIONS)
+
 # Installation details
 
 #Data files installed in application data path (typically /usr/share/pdfedit)
@@ -233,10 +240,6 @@ contains( QTVERSION, qt4 ) {
 
 #OutputDevice
 LIBS += -lqoutputdevices -L../kpdf-kde-3.3.2
-
-#Translations
-DEPENDPATH += lang
-TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts
 
 include(../kernel/kernel-obj.pro)
 
