@@ -107,7 +107,6 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  in->textEdit()->setText("");
  in->textEdit()->installEventFilter( this );
  in->textEdit()->viewport()->installEventFilter( this );
- in->setFocus();
  interpreter = NULL;
 // l->addWidget( in );
 
@@ -117,9 +116,24 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 
 /** Load/reload show/hide settings from global settings and apply them to this widget */
 void CommandWindow::reloadSettings() {
- showCmdHistory(	globalSettings->readBool( CMD + CMDSHOWHISTORY, DEFAULT__CMDSHOWHISTORY ) );
- showCmdLine(		globalSettings->readBool( CMD + CMDSHOWLINE, DEFAULT__CMDSHOWLINE ) );
- showCmdEditor(		globalSettings->readBool( CMD + CMDSHOWEDITOR, DEFAULT__CMDSHOWEDITOR ) );
+ bool showHistory=globalSettings->readBool( CMD + CMDSHOWHISTORY, DEFAULT__CMDSHOWHISTORY );
+ bool showCmd	=globalSettings->readBool( CMD + CMDSHOWLINE, DEFAULT__CMDSHOWLINE ) ;
+ bool showEditor=globalSettings->readBool( CMD + CMDSHOWEDITOR, DEFAULT__CMDSHOWEDITOR );
+ showCmdHistory	(showHistory);
+ showCmdLine	(showCmd);
+ showCmdEditor	(showEditor);
+ 
+ //First appropriate visible widget will be declared as focus proxy (widget that will get focus instead of this widget)
+ if (showEditor) {
+  setFocusProxy(in);	// Script editor
+  return;
+ }
+ if (showCmd) {
+  setFocusProxy(cmd);	// "Classical" combobox commandline
+  return;
+ }
+ // No commandline is visible -> give focus to history window
+ setFocusProxy(history);
 }
 
 /**

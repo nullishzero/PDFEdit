@@ -324,7 +324,7 @@ function onSelectMode_addText() {
 
 /** Called when page in preview window is changed */
 function onPageChange() {
- print('page change');
+ //print('page change');
  //System fonts
  stdfonts=getSystemFonts();
  //Fonts in page

@@ -28,6 +28,7 @@ namespace gui {
 class ComboOption : public Option {
  Q_OBJECT
 public:
+ ComboOption(const QStringList &_values,const QStringList &_valueDesc,const QString &_key=0,QWidget *parent=0);
  ComboOption(const QStringList &_values,const QString &_key=0,QWidget *parent=0);
  ~ComboOption();
  virtual void writeValue();
@@ -36,6 +37,8 @@ public:
  void setCaseSensitive(bool value);
 protected:
  virtual void resizeEvent (QResizeEvent *e);
+private:
+ void init(const QStringList &_values, const QStringList &_desc);
 protected slots:
  void itemActivated(int index);
 protected:
@@ -45,6 +48,8 @@ protected:
  QStringList values;
  /** Are items case sensitive? */
  bool caseSensitive;
+ /** Index of selected item */
+ int idx;
 };
 
 } // namespace gui

@@ -109,6 +109,7 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	vBox = new QVBoxLayout(this);
 	
 	scrollPageSpace = pageImage = new PageViewS(this);
+	setFocusProxy(pageImage);
 	connect( pageImage, SIGNAL( changeMousePosition(double, double) ), this, SLOT( showMousePosition(double, double) ) );
 	connect( pageImage, SIGNAL( changeMousePosition(double, double) ), this, SIGNAL( changeMousePosition(double, double) ) );
 	vBox->addWidget(scrollPageSpace);
@@ -476,8 +477,12 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 }
 
 //----------------------------------------------------------------------
-QStringList PageSpace::getAllUnits ( ) {
+QStringList PageSpace::getAllUnits ( ) const {
 	return actualUnits.getAllUnits( );
+}
+
+QStringList PageSpace::getAllUnitIds ( ) const {
+	return actualUnits.getAllUnitIds( );
 }
 bool PageSpace::setDefaultUnits ( const QString dunits ) {
 		bool h = actualUnits.setDefaultUnits ( dunits );

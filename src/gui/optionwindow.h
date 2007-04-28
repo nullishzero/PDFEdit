@@ -37,12 +37,12 @@ public slots:
  void apply();
  void ok();
 public:
- static void optionsDialog(Menu *msystem,const QStringList &units);
+ static void optionsDialog(Menu *msystem,const QStringList &units,const QStringList &units_id);
  ~OptionWindow();
 protected:
  void closeEvent(QCloseEvent *e);
 private:
- OptionWindow(Menu *msystem,const QStringList &units,QWidget *parent=0, const char *name=0);
+ OptionWindow(Menu *msystem,const QStringList &units,const QStringList &units_id,QWidget *parent=0, const char *name=0);
  void init();
  QWidget* addTab(const QString name,bool makeSegments=false);
  void initGridFrame(QWidget *grid);
@@ -51,6 +51,7 @@ private:
  void addOptionFile(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
  void addOptionFont(QWidget *otab,const QString &caption,const QString &key,const QString &defValue=QString::null);
  void addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values);
+ void addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values,const QStringList &descriptions);
  void addOptionInt(QWidget *otab,const QString &caption,const QString &key,int defValue=0);
  void addOptionBool(QWidget *otab,const QString &caption,const QString &key,bool defValue=false);
  void addOptionFloat(QWidget *otab,const QString &caption,const QString &key);
@@ -77,6 +78,8 @@ private:
  Menu *menuSystem;
  /** Available length units */
  QStringList l_units;
+ /** Available length units - identifiers */
+ QStringList l_units_id;
 };
 
 void applyLookAndFeel(bool notify=false);

@@ -87,6 +87,10 @@ class Units : protected QObject {
 		 * @return Return description of units.
 		 */
 		QStringList getAllUnits( ) const;
+		/** Function return identifiers of all units internal defined.
+		 * @return Return identifiers of units.
+		 */
+		QStringList getAllUnitIds ( ) const;
 	protected:
 		/** Units with its multipltiplicator for conversion to points. */
 		QMap<QString, double>	units;

@@ -198,6 +198,15 @@ QStringList Units::getAllUnits( ) const {
 	return h_map.values();
 }
 
+QStringList Units::getAllUnitIds( ) const {
+	QMap<double,QString>					h_map;
+	QMap<QString,double>::ConstIterator		it = units.begin();
+	for ( ; it != units.end() ; ++it )
+		h_map[ it.data() ] = it.key();
+
+	return h_map.values();
+}
+
 bool Units::setDefaultUnits( const QString dunits/*=QString::null*/ )
 	{
 		QString h_unit = getUnitFromAlias( dunits );

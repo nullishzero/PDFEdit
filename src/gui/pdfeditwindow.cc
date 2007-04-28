@@ -299,6 +299,15 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  status=new StatusBar(this,"statusbar");
  status->addWidget(progressBar);
 
+ // Read settings - which widget will initially have focus
+ QString foc=globalSettings->read("gui/init_focus","pagespace");
+ if (foc=="pagespace") {
+  // Page preview window - scrolling, etc ...
+  pagespc->setFocus();
+ } else if (foc=="cmdline") {
+  // Commandline - for more advanced users :)
+  cmdLine->setFocus();
+ }
  //Connections
  connect(cmdLine, SIGNAL(commandExecuted(QString)), this, SLOT(runScript(QString)));
  connect(tree, SIGNAL(itemSelected()), this, SLOT(setObject()));
@@ -527,6 +536,15 @@ void PdfEditWindow::runScript(QString script) {
 */
 QStringList PdfEditWindow::allUnits() {
  return pagespc->getAllUnits();
+}
+
+/**
+ Return list of available length unit identifiers
+ Identifiers are 1:1 with units returned by allUnits
+ @return list of units
+*/
+QStringList PdfEditWindow::allUnitIds() {
+ return pagespc->getAllUnitIds();
 }
 
 /**

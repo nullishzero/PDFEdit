@@ -57,12 +57,13 @@ OptionWindow *opt=NULL;
  Invoke option dialog. Ensure only one copy is running at time
  @param msystem Menu system reference for given option window (needed to get toolbar list)
  @param units list of available length units
+ @param units_id list of available length unit identifiers. Same count and order as units
 */
-void OptionWindow::optionsDialog(Menu *msystem,const QStringList &units) {
+void OptionWindow::optionsDialog(Menu *msystem,const QStringList &units,const QStringList &units_id) {
  if (opt) { //the dialog is already active
   opt->setActiveWindow();
  } else { //create new dialog
-  opt=new OptionWindow(msystem,units);
+  opt=new OptionWindow(msystem,units,units_id);
   opt->show();
  }
 }
@@ -71,10 +72,11 @@ void OptionWindow::optionsDialog(Menu *msystem,const QStringList &units) {
  The window is initially empty
  @param msystem Menu system (Needed for toolbar list)
  @param units list of available length units
+ @param units_id list of available length unit identifiers. Same count and order as units
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
  */
-OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel) {
+OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,const QStringList &units_id,QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel) {
  guiPrintDbg(debug::DBG_DBG,"Options creating ...");
  menuSystem=msystem;
  setCaption(QString(APP_NAME)+" - "+tr("options"));
@@ -85,6 +87,7 @@ OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,QWidget *paren
  //create labels dictionary
  labels=new Q_Dict<QLabel>();
  l_units=units;
+ l_units_id=units_id;
  QGridLayout* grl_up=new QGridLayout(this,2,1);
  grl_up->setRowStretch(0,1);
  grl_up->setRowStretch(1,0);
@@ -286,7 +289,20 @@ void OptionWindow::addOptionFont(QWidget *otab,const QString &caption,const QStr
  addOption(otab,caption,new FontOption(key,otab,defValue));
 }
 
-/** add Option to the window (type of option is string, edited by combobox)
+/**
+ add Option to the window (type of option is string, edited by combobox)
+ @param otab Tab holding that option
+ @param caption Label for this option
+ @param key Key of the given option
+ @param values List of allowed values for this combobox
+ @param values List of value descriptions for this combobox, must correspond in number and order with values
+ */
+void OptionWindow::addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values,const QStringList &descriptions) {
+ addOption(otab,caption,new ComboOption(values,descriptions,key,otab));
+}
+
+/**
+ add Option to the window (type of option is string, edited by combobox)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -331,16 +347,26 @@ void OptionWindow::addOptionInt(QWidget *otab,const QString &caption,const QStri
 void OptionWindow::init() {
  setUpdatesEnabled( FALSE );
 
+ QStringList focuses;
+ focuses+="pagespace";
+ focuses+="cmdline";
+
+ QStringList focusesDesc;
+ focusesDesc+=tr("Page view");
+ focusesDesc+=tr("Command Line");
+
  QWidget *edit_tab=addTab(tr("Editor"));
- addOptionBool(edit_tab,tr("Advanced mode"),"mode/advanced");
- addText      (edit_tab,tr("Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document."));
- addText      (edit_tab,tr("<b>Note</b>: changing Advanced mode will affect only newly opened files"));
- addOptionBool(edit_tab,tr("Show hidden properties"),"editor/show_hidden");
- addOptionBool(edit_tab,tr("Allow editing read-only properties"),"editor/edit_readonly");
- addOptionBool(edit_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
- addOptionCombo(edit_tab,tr("Length units"),"gui/PageSpace/ViewedUnits",l_units);
+ addOptionBool (edit_tab,tr("Advanced mode"),"mode/advanced");
+ addText       (edit_tab,tr("Turning on advanced mode will allow more powerful (but also more dangerous) changes to edited document."));
+ addText       (edit_tab,tr("<b>Note</b>: changing Advanced mode will affect only newly opened files"));
+ addOptionBool (edit_tab,tr("Show hidden properties"),"editor/show_hidden");
+ addOptionBool (edit_tab,tr("Allow editing read-only properties"),"editor/edit_readonly");
+ addOptionBool (edit_tab,tr("Remember path of last opened/saved file"),"history/save_filePath",true);
+ addOptionCombo(edit_tab,tr("Length units"),"gui/PageSpace/ViewedUnits",l_units_id,l_units);
  addOptionCombo(edit_tab,tr("Character encoding"),"editor/charset",util::supportedEncodings());
- finishTab    (edit_tab);
+ addOptionCombo(edit_tab,tr("Initial focus"),"gui/init_focus",focuses,focusesDesc);
+ addText       (edit_tab,tr("This will specify which part of editor window will receive focus when new window is opened"));
+ finishTab     (edit_tab);
 
  QWidget *data_tab=addTab(tr("Paths"));
  addText  (data_tab,tr("You can use environment variables (for example $HOME) in settings on this page"));

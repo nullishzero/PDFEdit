@@ -34,10 +34,33 @@ namespace gui {
  */
 ComboOption::ComboOption(const QStringList &_values,const QString &_key/*=0*/,QWidget *parent/*=0*/)
  : Option (_key,parent) {
- ed=new QComboBox(false,this,"option_combo");
+ init(_values,_values);
+}
+
+/**
+ Default constructor of ComboOption item
+ @param parent parent Option Editor containing this control
+ @param _key Key in settings for this option
+ @param _values List of accepted values
+ @param _valueDesc List of value descriptions, must map 1:1 with values (same count and order of items)
+ */
+ComboOption::ComboOption(const QStringList &_values,const QStringList &_valueDesc,const QString &_key/*=0*/,QWidget *parent/*=0*/)
+ : Option (_key,parent) {
+ init(_values,_valueDesc);
+}
+
+/**
+ Internal initialization function used in constructor
+ @param _values list to use as item values
+ @param _desc list to use as item descriptions
+*/
+void ComboOption::init(const QStringList &_values, const QStringList &_desc) {
+ idx=-1;
+ ed=new QComboBox(false,this);
  values=_values;
  caseSensitive=false;
- ed->insertStringList(values);
+ ed->setDuplicatesEnabled(true);
+ ed->insertStringList(_desc);
  ed->setInsertionPolicy(QComboBox::NoInsertion);
  connect(ed,SIGNAL(activated(int)),this,SLOT(itemActivated(int)));
 }
@@ -50,27 +73,42 @@ ComboOption::~ComboOption() {
 /** write edited value to settings */
 void ComboOption::writeValue() {
  if (!changed) return;
- globalSettings->write(key,ed->currentText());
+ if (idx<0) {
+  //No index, so just guess ... shouldn't happen
+  globalSettings->write(key,ed->currentText());
+ } else {
+  globalSettings->write(key,values[idx]);
+ }
 }
 
 /**
  Slot called when changing the item in combobox
  @param index Index of newly selected item
 */
-void ComboOption::itemActivated(__attribute__((unused)) int index) {
+void ComboOption::itemActivated(int index) {
  changed=true;
+ idx=index;
 }
 
 /** read value from settings for editing */
 void ComboOption::readValue() {
  QString value=globalSettings->read(key);
  if (value.isNull()) return;
+ if (caseSensitive) value=value.lower();
  //Look for item in the list
- QStringList matches=values.grep(value,caseSensitive);
- //If value not in list, use first value
- if (matches.count()==0) ed->setCurrentText(values[0]);
+ int valuesCount=values.count();
+ idx=0;
+ QString v;
+ for(int i=0;i<valuesCount;i++) {
+  v=values[i];
+  if (caseSensitive) v=v.lower();
+  if (v==value) {
+   idx=i;
+   break;
+  }
+ }
  //Use first match (Will "normalize" case in case of case-insensitive matching)
- ed->setCurrentText(matches[0]);
+ ed->setCurrentItem(idx);
  changed=false; //Since we've just read the actual setting
 }
 

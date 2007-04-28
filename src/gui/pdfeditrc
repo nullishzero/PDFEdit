@@ -160,6 +160,8 @@ popup_generic	= list Popup menu,tree_string,tree_type,tree_childs
 #Which toolbars are available for use
 toolbars	= MainToolbar,PageToolbar,DrawToolbar,RevisionToolbar,OperatorToolbar,SelectionModeToolbar,TextToolBar,TreeViewToolbar,PageRiderToolbar,DynamicToolBar
 
+init_focus	= pagespace
+
 [gui/PageSpace]
 #Settings affecting preview window
 ResizingZone	= 2

@@ -75,6 +75,7 @@ public:
  void runFile(const QString &scriptName);
  void eval(const QString &code);
  QStringList allUnits();
+ QStringList allUnitIds();
  boost::shared_ptr<pdfobjects::utils::ProgressObserver> getProgressObserver();
  QProgressBar * getProgressBar();
 public slots:

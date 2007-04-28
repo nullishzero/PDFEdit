@@ -114,7 +114,11 @@ class PageSpace : public QWidget {
 		/** Function return description of all units internal defined.
 		 * @return Return description of units.
 		 */
-		QStringList getAllUnits ( );
+		QStringList getAllUnits ( ) const;
+		/** Function return identifiers of all units internal defined.
+		 * @return Return identifiers of units.
+		 */
+		QStringList getAllUnitIds ( ) const;
 		/** Method set default unit for conversion.
 		 * @param dunits Unit for set as default. Nothing chenage, if not find in internal units.
 		 *
