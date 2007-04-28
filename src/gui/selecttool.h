@@ -35,14 +35,23 @@ public:
  void setPredefs(const QStringList &predefs);
  QString getText() const;
  void setText(const QString &newText);
+ void setTooltip(const QString &t);
 signals:
  /**
   Signal emitted when user changes the text
   @param name Name of the text tool
  */
  void clicked(const QString &name);
+ /** 
+  Send help message when mouse cursor enters/leaves the button.
+  Help message is sent on enter and QString::null on leave.
+  @param message Help message
+ */
+ void helpText(const QString &message);
 protected:
- void resizeEvent (QResizeEvent *e);
+ virtual void resizeEvent (QResizeEvent *e);
+ virtual void enterEvent(QEvent *e);
+ virtual void leaveEvent(QEvent *e);
 protected slots:
  void textEntered(const QString &str);
 protected:
@@ -54,6 +63,8 @@ protected:
  QString textName;
  /** Allowed choices */
  QStringList choices;
+ /** Tooltip for this selectbox */
+ QString tip;
 };
 
 } // namespace gui

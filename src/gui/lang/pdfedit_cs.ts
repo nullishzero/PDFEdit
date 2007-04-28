@@ -1063,6 +1063,18 @@ Data: %3
         <source>Text saved to %1</source>
         <translation>Text uložen do %1</translation>
     </message>
+    <message>
+        <source>Font face</source>
+        <translation>Písmo</translation>
+    </message>
+    <message>
+        <source>Font size (in points)</source>
+        <translation>Velikost písma (v bodech)</translation>
+    </message>
+    <message>
+        <source>Line width (in points)</source>
+        <translation>Šířka čáry (v bodech)</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1458,6 +1470,14 @@ Režim zvýraznění</translation>
     <message>
         <source>Choose color</source>
         <translation>Vyberte barvu</translation>
+    </message>
+    <message>
+        <source>Foreground</source>
+        <translation>Popředí</translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation>Pozadí</translation>
     </message>
 </context>
 <context>

@@ -297,6 +297,11 @@ public slots: //This will be all exported to scripting
  */
  void setPredefs(const QString &name,const QString &predefs);
  /*-
+  Set tooltip text for specified number edit box or select text box with given name.
+  Tooltip text will be shown when hovering with mouse over the tool.
+ */
+ void setTooltip(const QString &name,const QString &tip);
+ /*-
   Set list of predefined values for number edit box or select text box with given name.
   For number edit box, the user is still able to type in any value not in the list.
  */

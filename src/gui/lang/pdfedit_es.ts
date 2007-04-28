@@ -1063,6 +1063,18 @@ Datos: %3
         <source>Text saved to %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Font face</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size (in points)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line width (in points)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1469,6 +1481,14 @@ Datos: %3
     <message>
         <source>Choose color</source>
         <translation>Elegir color</translation>
+    </message>
+    <message>
+        <source>Foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -26,14 +26,14 @@ namespace gui {
  Default constructor of ColorTool
  @param parent Toolbar containing this control
  @param name Name of this widget (passed to QWidget constructor)
- @param cName name of color in this widget
+ @param cName identifier of color in this widget
+ @param niceName displayed name of color in this widget
 */
-ColorTool::ColorTool(const QString &cName,QWidget *parent/*=0*/,const char *name/*=NULL*/) : QWidget (parent,name) {
+ColorTool::ColorTool(const QString &cName,const QString &niceName,QWidget *parent/*=0*/,const char *name/*=NULL*/) : QWidget (parent,name) {
  colorName=cName;
  color=QColor(0,0,0);
  pm=new QPixmap(20,20);
- QString toolTip=tr("Choose color")+": "+cName;
- //TODO: localize some standard cName's
+ QString toolTip=tr("Choose color")+": "+niceName;
  pb=new ToolButton(pm,toolTip,-1,this);
  updateColor();
  QObject::connect(pb,SIGNAL(clicked()),this,SLOT(colorClicked()));
@@ -45,6 +45,17 @@ ColorTool::ColorTool(const QString &cName,QWidget *parent/*=0*/,const char *name
 /** default destructor */
 ColorTool::~ColorTool() {
  delete pm;
+}
+
+/**
+ For given ID return it's displayable name
+ @param id Identifier (name) of color
+ @return string to display
+*/
+QString ColorTool::niceName(const QString &id){
+ if (id=="fg") return tr("Foreground");
+ if (id=="bg") return tr("Background");
+ return id;
 }
 
 /**

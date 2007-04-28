@@ -1060,6 +1060,18 @@ Data: %3
         <source>Stop processing options</source>
         <translation>Остановить обработку параметров</translation>
     </message>
+    <message>
+        <source>Font face</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size (in points)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line width (in points)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1454,6 +1466,14 @@ Data: %3
     <message>
         <source>Choose color</source>
         <translation>Выбрать цвет</translation>
+    </message>
+    <message>
+        <source>Foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

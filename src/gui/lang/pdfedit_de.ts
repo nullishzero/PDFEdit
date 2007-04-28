@@ -1062,6 +1062,18 @@ Daten: %3</translation>
         <source>Save as text file</source>
         <translation>Als Textdatei sichern</translation>
     </message>
+    <message>
+        <source>Font face</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font size (in points)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line width (in points)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
@@ -1456,6 +1468,14 @@ Daten: %3</translation>
     <message>
         <source>Choose color</source>
         <translation>Wählen Sie die Farbe</translation>
+    </message>
+    <message>
+        <source>Foreground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

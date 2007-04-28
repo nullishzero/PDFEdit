@@ -95,3 +95,8 @@ toggleVisItem('commandline','hideCmd');
 toggleVisItem('propertyeditor','hideProp');
 toggleVisItem('tree','hideTree');
 toggleVisItem('statusbar','hideStatus');
+
+//Set tooltips for items
+setTooltip("fontface",tr("Font face"));
+setTooltip("fontsize",tr("Font size (in points)"));
+setTooltip("linewidth",tr("Line width (in points)"));

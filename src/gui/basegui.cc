@@ -754,6 +754,30 @@ void BaseGUI::setPredefs(const QString &name,const QString &predefs) {
 }
 
 /**
+ Set tooltip for specified number edit box or select text box with given name.
+ @param name Name of edit box
+ @param tip text used as tooltip
+*/
+void BaseGUI::setTooltip(const QString &name,const QString &tip) {
+ //Check if we have the tool as number tool
+ if (numberTools.contains(name)) {
+  NumberTool *pick=numberTools[name];
+  assert(pick);
+  pick->setTooltip(tip);
+  return;
+ }
+ //Check if we have the tool as select text
+ if (selectTools.contains(name)) {
+  SelectTool *pick=selectTools[name];
+  assert(pick);
+  pick->setTooltip(tip);
+  return;
+ }
+ //Nope. Nothing
+ return;
+}
+
+/**
  Set predefined values to choose from for number edit box or select text box with given name.
  For number edit box, the user is still able to type its own numbers.
  @param name Name of edit box

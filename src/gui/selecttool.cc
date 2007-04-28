@@ -16,6 +16,7 @@
 #include "settings.h"
 #include <utils/debug.h>
 #include <qevent.h>
+#include <qtooltip.h>
 
 namespace gui {
 
@@ -31,6 +32,7 @@ SelectTool::SelectTool(const QString &cName,QWidget *parent/*=0*/,const char *na
  ed=new QComboBox(false,this,"SelectTool");
  ed->setDuplicatesEnabled(false);
  QObject::connect(ed,SIGNAL(activated(const QString &)),this,SLOT(textEntered(const QString &)));
+ QObject::connect(this,SIGNAL(helpText(const QString&)),parent,SLOT(receiveHelpText(const QString&)));
 }
 
 /** default destructor */
@@ -43,6 +45,36 @@ SelectTool::~SelectTool() {
 */
 QSize SelectTool::sizeHint() const {
  return ed->sizeHint();
+}
+
+/**
+ Set tooltip to be show for this tool
+ @param t text to be used as tooltip
+*/
+void SelectTool::setTooltip(const QString &t) {
+ tip=t;
+ QToolTip::remove(this);
+ QToolTip::add(this,t);
+}
+
+/**
+ Event handler for mouse cursor entering tool.
+ Sends its tooltip as help text.
+ @param e Event
+*/
+void SelectTool::enterEvent(QEvent *e) {
+ emit helpText(tip);
+ QWidget::enterEvent(e);
+}
+
+/**
+ Event handler for mouse cursor leaving tool.
+ Sends empty helptext, thus disabling it
+ @param e Event
+*/
+void SelectTool::leaveEvent(QEvent *e) {
+ emit helpText(QString::null);
+ QWidget::leaveEvent(e);
 }
 
 /**

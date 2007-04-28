@@ -34,6 +34,7 @@ public:
  void setPredefs(const QString &predefs,const QString &separator=",");
  QSize sizeHint() const;
  QString getName() const;
+ void setTooltip(const QString &t);
  double getNum() const;
  void setNum(double newNum);
 signals:
@@ -42,8 +43,16 @@ signals:
   @param name Name of the tool
  */
  void clicked(const QString &name);
+ /** 
+  Send help message when mouse cursor enters/leaves the button.
+  Help message is sent on enter and QString::null on leave.
+  @param message Help message
+ */
+ void helpText(const QString &message);
 protected:
- void resizeEvent (QResizeEvent *e);
+ virtual void resizeEvent(QResizeEvent *e);
+ virtual void enterEvent(QEvent *e);
+ virtual void leaveEvent(QEvent *e);
 protected slots:
  void textEntered(const QString &str);
 protected:
@@ -55,6 +64,8 @@ protected:
  double num;
  /** Name of text in this widget */
  QString textName;
+ /** Tooltip for this number select box */
+ QString tip;
 };
 
 } // namespace gui

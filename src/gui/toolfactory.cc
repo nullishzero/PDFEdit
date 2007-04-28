@@ -83,7 +83,7 @@ QWidget *ToolFactory::specialItem(ToolBar *tb,const QString &item,QMainWindow *m
  }
  if (itemName=="_color_tool") {
   //Add ColorTool to toolbar and return
-  ColorTool *tool =new ColorTool(itemParam,tb,"color");
+  ColorTool *tool =new ColorTool(itemParam,ColorTool::niceName(itemParam),tb,"color");
   PdfEditWindow *pdfw=dynamic_cast<PdfEditWindow*>(main);
   assert(pdfw);
   pdfw->addColorTool(tool);

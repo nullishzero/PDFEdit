@@ -30,12 +30,13 @@ class ToolButton;
 class ColorTool : public QWidget {
 Q_OBJECT
 public:
- ColorTool(const QString &cName,QWidget *parent=0,const char *name=NULL);
+ ColorTool(const QString &cName,const QString &niceName,QWidget *parent=0,const char *name=NULL);
  ~ColorTool();
  QSize sizeHint() const;
  QString getName() const;
  QColor getColor() const;
  void setColor(const QColor &src);
+ static QString niceName(const QString &id);
 signals:
  /**
   Signal emitted when user changes the color

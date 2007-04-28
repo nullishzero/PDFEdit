@@ -17,6 +17,7 @@
 #include <qvalidator.h>
 #include <utils/debug.h>
 #include <qevent.h>
+#include <qtooltip.h>
 
 namespace gui {
 
@@ -34,6 +35,7 @@ NumberTool::NumberTool(const QString &cName,QWidget *parent/*=0*/,const char *na
  val->setBottom(0);
  ed->setValidator(val);
  QObject::connect(ed,SIGNAL(activated(const QString &)),this,SLOT(textEntered(const QString &)));
+ QObject::connect(this,SIGNAL(helpText(const QString&)),parent,SLOT(receiveHelpText(const QString&)));
 }
 
 /** default destructor */
@@ -97,6 +99,36 @@ double NumberTool::getNum() const {
 */
 QString NumberTool::getName() const {
  return textName;
+}
+
+/**
+ Set tooltip to be show for this tool
+ @param t text to be used as tooltip
+*/
+void NumberTool::setTooltip(const QString &t) {
+ tip=t;
+ QToolTip::remove(this);
+ QToolTip::add(this,t);
+}
+
+/**
+ Event handler for mouse cursor entering tool.
+ Sends its tooltip as help text.
+ @param e Event
+*/
+void NumberTool::enterEvent(QEvent *e) {
+ emit helpText(tip);
+ QWidget::enterEvent(e);
+}
+
+/**
+ Event handler for mouse cursor leaving tool.
+ Sends empty helptext, thus disabling it
+ @param e Event
+*/
+void NumberTool::leaveEvent(QEvent *e) {
+ emit helpText(QString::null);
+ QWidget::leaveEvent(e);
 }
 
 /**
