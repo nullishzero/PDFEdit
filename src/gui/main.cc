@@ -178,8 +178,11 @@ int main(int argc, char *argv[]){
  srand(time(NULL));
  //Translation support
  QTranslator translator;
- const char *env_lang=getenv("LANG");
- if (env_lang) {//LANG variable is present in environment -> attempt to load localization
+ //Try LC_ALL, LC_MESSAGES and LANG - first one that is set is used
+ const char *env_lang=getenv("LC_ALL");
+ if (!env_lang) env_lang=getenv("LC_MESSAGES");
+ if (!env_lang) env_lang=getenv("LANG");
+ if (env_lang) {//LC_ALL/LC_MESSAGES/LANG variable is present in environment -> attempt to load localization
   guiPrintDbg(debug::DBG_WARN,"LANG= " << env_lang);
   QString lang=QString("pdfedit_")+env_lang;
   //look for translation file in DATA_PATH
