@@ -18,7 +18,8 @@ grep 'countString.*".*".*".*"' *.cc |perl -e '
 grep "tr(" scripts/d*.qs *.qs | ./trans-qs.pl >>.menu-trans.h
 
 lupdate pdfedit.pro -noobsolete
-lrelease pdfedit.pro
+lrelease lang/*.ts
 
 #generate template translation file
+mkdir -p lang/template
 lupdate pdfedit.lang -noobsolete

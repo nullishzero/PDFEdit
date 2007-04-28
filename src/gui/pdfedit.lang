@@ -2,4 +2,4 @@
 
 include(pdfedit.pro)
 
-TRANSLATIONS = lang/pdfedit_xx.ts
+TRANSLATIONS = lang/template/pdfedit_xx.ts
