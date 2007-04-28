@@ -10,6 +10,7 @@
 	* Updated Xpdf to 3.01pl2 (some security bugs were fixed)
 	* Fixed unicode file name handling
 	* LC_ALL and LC_MESSAGES env. variables are now processed, not only LANG
+	* .qm files are now (re)compiled when running qmake in src/gui
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0
