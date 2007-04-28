@@ -94,7 +94,6 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     layout18_2 = new QHBoxLayout( 0, 0, 6, "layout18_2"); 
 
     textLabel3 = new QLabel( groupBox1, "textLabel3" );
-    textLabel3->setFocusPolicy( QLabel::StrongFocus );
     textLabel3->setMidLineWidth( -6 );
     layout18_2->addWidget( textLabel3 );
 
@@ -179,7 +178,6 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     AnnotDialogLayout->addWidget( tabWidget3, 0, 0 );
     languageChange();
     resize( QSize(477, 341).expandedTo(minimumSizeHint()) );
-    clearWState( WState_Polished );
 
     // signals and slots connections
     connect( cancelButton, SIGNAL( clicked() ), this, SLOT( reject() ) );

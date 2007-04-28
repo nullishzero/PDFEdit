@@ -10,8 +10,9 @@
 #ifndef __HELPWINDOW_H__
 #define __HELPWINDOW_H__
 
+#include "qtcompat.h"
 #include <qwidget.h>
-class QTextBrowser;
+class Q_TextBrowser;
 class QString;
 class QLineEdit;
 
@@ -36,7 +37,7 @@ protected:
  void closeEvent(QCloseEvent *e);
 private:
  /** Rich text browser with hypertext navigation. Core of this help window */
- QTextBrowser *help;
+ Q_TextBrowser *help;
  /** Name of file loaded into help */
  QString fileName;
  /** Line edit control used to show/edit name of current file */

@@ -20,6 +20,7 @@
 #ifndef __SELECTPAGESDIALOG_H__
 #define __SELECTPAGESDIALOG_H__
 
+#include "qtcompat.h"
 #include <vector>
 #include <qvariant.h>
 #include <qdialog.h>
@@ -33,8 +34,8 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class QFrame;
-class QListBox;
-class QListBoxItem;
+class Q_ListBox;
+class Q_ListBoxItem;
 
 // =====================================================================================
 namespace gui {
@@ -47,6 +48,7 @@ namespace gui {
 
 /** 
  * Select page dialog.
+ * Used to select pages for PDF to XML export
  * \see MergeDialog
  */
 class SelectPagesDialog : public QDialog 
@@ -72,8 +74,8 @@ protected:
     QSpacerItem* spacer6;
 
 	QLabel* textLabel1;
-    QListBox* originalList;
-    QListBox* selectedList;
+    Q_ListBox* originalList;
+    Q_ListBox* selectedList;
     /** button to add current page from right (imported document) to the left (current document)*/
     QPushButton* addBtn;
     /** button to remove current page from left*/
@@ -128,8 +130,15 @@ public slots:
     /** Slot called when button ">>" to remove page from current document is clicked */
     virtual void removeBtn_clicked ();
 	// Other handlers
+#ifdef QT3
     virtual void originalList_changed (QListBoxItem* item);
     virtual void selectedList_changed (QListBoxItem*);
+#else
+//MOC_SKIP_BEGIN (Qt3 moc will skip this. Qt4 moc won't and it is able to understande ifdef. Good)
+    virtual void originalList_changed (Q3ListBoxItem* item);
+    virtual void selectedList_changed (Q3ListBoxItem*);
+//MOC_SKIP_END
+#endif
 
 protected slots:
     virtual void languageChange();

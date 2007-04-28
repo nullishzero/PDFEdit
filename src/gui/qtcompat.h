@@ -38,11 +38,13 @@ typedef Qt::WindowFlags WFlags;
 #define Q_List			QList
 #define Q_ListBox		Q3ListBox
 #define Q_ListBoxItem		Q3ListBoxItem
+#define Q_ListBoxText		Q3ListBoxText
 #define Q_PtrCollection		Q3PtrCollection
 #define Q_PtrDict		Q3PtrDict
 #define Q_PtrDictIterator	Q3PtrDictIterator
 #define Q_PtrList		Q3PtrList
 #define Q_PtrListIterator	Q3PtrListIterator
+#define Q_TextBrowser		Q3TextBrowser
 
 //Include aliases
 #define QBUTTONGROUP	<Q3ButtonGroup>
@@ -54,6 +56,7 @@ typedef Qt::WindowFlags WFlags;
 #define QPTRLIST	<Q3PtrList>
 #define QPTRCOLLECTION	<Q3PtrCollection>
 #define QLIST		<QList>
+#define QTEXTBROWSER	<Q3TextBrowser>
 
 #else
 
@@ -72,11 +75,13 @@ typedef Qt::WindowFlags WFlags;
 #define Q_List			QValueList
 #define Q_ListBox		QListBox
 #define Q_ListBoxItem		QListBoxItem
+#define Q_ListBoxText		QListBoxText
 #define Q_PtrCollection		QPtrCollection
 #define Q_PtrDict		QPtrDict
 #define Q_PtrDictIterator	QPtrDictIterator
 #define Q_PtrList		QPtrList
 #define Q_PtrListIterator	QPtrListIterator
+#define Q_TextBrowser		QTextBrowser
 
 //Include aliases
 #define QBUTTONGROUP	<qbuttongroup.h>
@@ -88,6 +93,7 @@ typedef Qt::WindowFlags WFlags;
 #define QPTRLIST	<qptrlist.h>
 #define QPTRCOLLECTION	<qptrcollection.h>
 #define QLIST		<qvaluelist.h>
+#define QTEXTBROWSER	<qtextbrowser.h>
 
 #endif
 

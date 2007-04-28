@@ -19,7 +19,7 @@
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qstring.h>
-#include <qtextbrowser.h> 
+#include QTEXTBROWSER
 #include "settings.h"
 #include "version.h"
 #include "util.h"
@@ -57,7 +57,7 @@ HelpWindow::HelpWindow(const QString &pageName/*=QString::null*/,QWidget *parent
  QObject::connect(btClose,  SIGNAL(clicked()), this, SLOT(close()));
 
  //Help window
- help=new QTextBrowser(this,"help_browser");
+ help=new Q_TextBrowser(this,"help_browser");
  grl->addWidget(help,1,0);
 
  help->mimeSourceFactory()->setFilePath(globalSettings->readPath("help"));

@@ -23,8 +23,8 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class QFrame;
-class QListBox;
-class QListBoxItem;
+class Q_ListBox;
+class Q_ListBoxItem;
 
 namespace gui {
 
@@ -160,7 +160,7 @@ public:
     QPushButton* fileNameBtn;
     QPushButton* openBtn;
     QFrame* line1;
-    QListBox* mergeList;
+    Q_ListBox* mergeList;
     /** button to add current page from right (imported document) to the left (current document)*/
     QPushButton* addBtn;
     /** button to remove current page from left*/
@@ -169,7 +169,7 @@ public:
     QPushButton* upBtn;
     /** button to move current page one position down*/
     QPushButton* downBtn;
-    QListBox* fileList;
+    Q_ListBox* fileList;
     /** Cancel button - dismiss dialog without doing anything*/
     QPushButton* cancelBtn;
     /** Ok button - accept result of dialog and merge pages*/
@@ -219,8 +219,15 @@ public:
 
 public slots:
     // Events handlers
+#ifdef QT3
     virtual void mergeList_currentChanged( QListBoxItem * item );
     virtual void fileList_currentChanged( QListBoxItem * );
+#else
+//MOC_SKIP_BEGIN (Qt3 moc will skip this. Qt4 moc won't and it is able to understande ifdef. Good)
+    virtual void mergeList_currentChanged( Q3ListBoxItem * item );
+    virtual void fileList_currentChanged( Q3ListBoxItem * );
+//MOC_SKIP_END
+#endif
     /** Slot called when button "<<" to add page to current document is clicked */
     virtual void addBtn_clicked();
     /** Slot called when button ">>" to remove page from current document is clicked */

@@ -215,7 +215,7 @@ function mergeWithPages(pages, positions)
         // handles also pages which doesn't have their position
         // stores them behind last
         pos=maxPos+calcDiff(positions, maxPos+1, positions.length)+1;
-        System.println("maxPos="+maxPos+" pos="+pos);
+        //System.println("maxPos="+maxPos+" pos="+pos);
 
         // gets editor progress bar
         progress_bar=progressBar();

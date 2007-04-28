@@ -20,7 +20,7 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qframe.h>
-#include <qlistbox.h>
+#include QLISTBOX
 #include <qlayout.h>
 #include <cpdf.h>
 
@@ -63,16 +63,16 @@ struct NodeData {
 /** List box item.
  * Inherits from QListBoxText item type and adds NodeData data field.
  */
-class ListItem:public QListBoxText {
+class ListItem:public Q_ListBoxText {
         NodeData * nodeData;
 public:
-        ListItem(NodeData * _nodeData, QListBox * _parent, const QString & text = QString::null):QListBoxText(_parent, text), nodeData(_nodeData)
+        ListItem(NodeData * _nodeData, Q_ListBox * _parent, const QString & text = QString::null):Q_ListBoxText(_parent, text), nodeData(_nodeData)
         {
         }
-        ListItem(NodeData * _nodeData, const QString & text = QString::null):QListBoxText(text), nodeData(_nodeData)
+        ListItem(NodeData * _nodeData, const QString & text = QString::null):Q_ListBoxText(text), nodeData(_nodeData)
         {
         }
-        ListItem(NodeData * _nodeData, QListBox * _parent, const QString & text, QListBoxItem * after):QListBoxText(_parent, text, after), nodeData(_nodeData)
+        ListItem(NodeData * _nodeData, Q_ListBox * _parent, const QString & text, Q_ListBoxItem * after):Q_ListBoxText(_parent, text, after), nodeData(_nodeData)
         {
         }
 
@@ -102,7 +102,7 @@ public:
         }
 };
 
-void MergeDialog::mergeList_currentChanged( QListBoxItem * item)
+void MergeDialog::mergeList_currentChanged( Q_ListBoxItem * item)
 {
         ListItem * listItem=dynamic_cast<ListItem *>(item);
         if(listItem==NULL)
@@ -133,7 +133,7 @@ void MergeDialog::mergeList_currentChanged( QListBoxItem * item)
 }
 
 
-void MergeDialog::fileList_currentChanged( QListBoxItem * ) {
+void MergeDialog::fileList_currentChanged( Q_ListBoxItem * ) {
  // allways enable add button when something is selected
  if(!addBtn->isEnabled()) addBtn->setEnabled(TRUE);
 }
@@ -212,7 +212,7 @@ void MergeDialog::removeBtn_clicked()
 
                 // insert to correct position in fileList - keeps ordering
                 int pos=0;
-                while(QListBoxItem * item=fileList->item(pos))
+                while(Q_ListBoxItem * item=fileList->item(pos))
                 {
                         ListItem * i=dynamic_cast<ListItem *>(item);
                         if(!i)
@@ -239,7 +239,7 @@ void MergeDialog::upBtn_clicked() {
         int pos=mergeList->currentItem();
         if (pos>0) {
                 // current item can be moved upwards
-                QListBoxItem * item=mergeList->item(pos);
+                Q_ListBoxItem * item=mergeList->item(pos);
 
                 // removes and insert with decremented position
                 mergeList->takeItem(item);
@@ -252,7 +252,7 @@ void MergeDialog::upBtn_clicked() {
 void MergeDialog::downBtn_clicked() {
         int pos=mergeList->currentItem();
         if (pos<(int)(mergeList->count())) {
-                QListBoxItem * item=mergeList->item(pos);
+                Q_ListBoxItem * item=mergeList->item(pos);
                 mergeList->takeItem(item);
                 mergeList->insertItem(item, pos+1);
                 mergeList->setCurrentItem(item);
@@ -422,7 +422,7 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
 
     layout47 = new QHBoxLayout( 0, 0, 6, "layout47"); 
 
-    mergeList = new QListBox( this, "mergeList" );
+    mergeList = new Q_ListBox( this, "mergeList" );
     mergeList->setEnabled( FALSE );
     layout47->addWidget( mergeList );
 
@@ -447,10 +447,10 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
     layout4->addWidget( downBtn );
     layout47->addLayout( layout4 );
 
-    fileList = new QListBox( this, "fileList" );
+    fileList = new Q_ListBox( this, "fileList" );
     fileList->setEnabled( FALSE );
-    fileList->setFrameShape( QListBox::StyledPanel );
-    fileList->setSelectionMode( QListBox::Extended );
+    fileList->setFrameShape( Q_ListBox::StyledPanel );
+    fileList->setSelectionMode( Q_ListBox::Extended );
     layout47->addWidget( fileList );
     layout48->addLayout( layout47 );
 
@@ -474,7 +474,7 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
     MergeDialogLayout->addLayout( layout48, 0, 0 );
     languageChange();
     resize( QSize(759, 380).expandedTo(minimumSizeHint()) );
-    clearWState( WState_Polished );
+//    clearWState( WState_Polished );
 
     // signals and slots connections
     connect( cancelBtn, SIGNAL( clicked() ), this, SLOT( reject() ) );
@@ -485,8 +485,13 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
     connect( downBtn, SIGNAL( clicked() ), this, SLOT( downBtn_clicked() ) );
     connect( openBtn, SIGNAL( clicked() ), this, SLOT( openBtn_clicked() ) );
     connect( fileNameBtn, SIGNAL( clicked() ), this, SLOT( fileNameBtn_clicked() ) );
+#ifdef QT3
     connect( mergeList, SIGNAL( currentChanged(QListBoxItem*) ), this, SLOT( mergeList_currentChanged(QListBoxItem*) ) );
     connect( fileList, SIGNAL( currentChanged(QListBoxItem*) ), this, SLOT( fileList_currentChanged(QListBoxItem*) ) );
+#else
+    connect( mergeList, SIGNAL( currentChanged(Q3ListBoxItem*) ), this, SLOT( mergeList_currentChanged(Q3ListBoxItem*) ) );
+    connect( fileList, SIGNAL( currentChanged(Q3ListBoxItem*) ), this, SLOT( fileList_currentChanged(Q3ListBoxItem*) ) );
+#endif
 
     // tab order
     setTabOrder( fileNameInput, fileNameBtn );
