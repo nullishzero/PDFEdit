@@ -9,8 +9,8 @@ AC_CONFIG_HEADER([src/utils/aconf.h])
 
 # Release/debug mode. Debug is default (for now)
 AC_ARG_ENABLE(release,
-[AS_HELP_STRING([--enable-release],[Turn on compiler optimizations, turn off debugging symbols])]
-,,[enable_release=no])
+[AS_HELP_STRING([--enable-release],[Turn on compiler optimizations, turn off debugging symbols (enabled by default, disable with --disable-release)])]
+,,[enable_release=yes])
 AC_SUBST(enable_release)
 
 #check for QTDIR
