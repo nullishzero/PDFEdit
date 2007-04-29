@@ -12,6 +12,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.6  2007/04/29 15:03:53  mstsxfx
+ * TODO added
+ *
  * Revision 1.5  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -42,6 +45,9 @@
 
 #include "confparser.h"
 
+/* TODO - tune for performance - to many string object creation - replace by
+ * referencies
+ */
 namespace configuration
 {
 

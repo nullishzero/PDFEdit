@@ -12,6 +12,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.8  2007/04/29 15:03:53  mstsxfx
+ * TODO added
+ *
  * Revision 1.7  2007/04/25 18:24:36  bilboq
  *
  * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
@@ -51,6 +54,9 @@
 #include<vector>
 #include"utils/confparser.h"
 
+/* TODO - tune for performance - to many string object creation - replace by
+ * referencies
+ */
 namespace rulesmanager
 {
 	
