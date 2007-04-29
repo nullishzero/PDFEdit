@@ -14,6 +14,8 @@
 	* Setting units in options now does not break when changing locale
 	* Added settings to change initial focus
 	* Added tooltips for line width, font face and font size selection boxes
+	* In configure, --enable-release is turned on by default
+	  (use --disable-release to turn it off)
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0
