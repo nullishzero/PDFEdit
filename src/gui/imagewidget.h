@@ -7,32 +7,33 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
-#ifndef __ABOUTWINDOW_H__
-#define __ABOUTWINDOW_H__
+#ifndef __IMAGEWIDGET_H__
+#define __IMAGEWIDGET_H__
 
 #include <qwidget.h>
 
+class QPaintEvent;
+class QPixmap;
+
 namespace gui {
 
-class IconCache;
-
 /**
- Class representing about window.<br>
- Display authors, application name, version and some info.
- \brief Window displaying program version and authors 
+ Simple widget, that will show image in it
+ Will not allow to resize itself to be smaller than the image
 */
-class AboutWindow : public QWidget {
-Q_OBJECT
+
+class ImageWidget: public QWidget {
+Q_OBJECT 
 public:
- AboutWindow(QWidget *parent=0,const char *name=0);
- ~AboutWindow();
+ ImageWidget(const QPixmap *p,QColor bgColor,QWidget *parent);
+ virtual ~ImageWidget();
 protected:
- void closeEvent(QCloseEvent *e);
+ virtual void paintEvent(QPaintEvent *e);
 private:
- /** Iconcache, must exist as long as the window exists */
- IconCache *ic;
+ /** Image that is shown in the widget */
+ const QPixmap *img;
 };
 
-} // namespace gui
+} //namespace gui
 
 #endif

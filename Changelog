@@ -18,6 +18,9 @@
 	  (use --disable-release to turn it off)
 	* Files README, Changelog and doc/AUTHORS are now installed
 	  to documentation directory with "make install"
+	* Fixed about window not showing all text if font size is too big
+	* Fixed icon cache freeing data prematurely, causing ineffectivity
+	  and possibly crashes
 	* Minor bugfixes
 
 2007-04-15 PDF Editor 0.3.0

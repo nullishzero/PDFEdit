@@ -127,8 +127,8 @@ INCLUDEPATH += ../ ../utils ../xpdf/ ../xpdf/xpdf ../xpdf/goo ../kernel ../kpdf-
 
 
 #Dialogs
-HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h
-SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc dialog.cc
+HEADERS += additemdialog.h  aboutwindow.h  option.h  optionwindow.h  dialog.h  imagewidget.h
+SOURCES += additemdialog.cc aboutwindow.cc option.cc optionwindow.cc dialog.cc imagewidget.cc
 HEADERS += stringoption.h  realoption.h  intoption.h  booloption.h  combooption.h
 SOURCES += stringoption.cc realoption.cc intoption.cc booloption.cc combooption.cc
 HEADERS += dialogoption.h  fileoption.h  fontoption.h

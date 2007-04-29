@@ -54,13 +54,16 @@ int iconCacheInstances=0;
  Default constructor of IconCache
 */
 IconCache::IconCache() {
- if (iconCacheInstances) return;//Initialization already done
+ if (iconCacheInstances>0) {
+  iconCacheInstances++;
+  return;//Initialization already done
+ }
+ iconCacheInstances++;
  iconPath=globalSettings->readPath("icon");
  //Read icon style
  iconStyleName=globalSettings->read("icon/theme/current");
  if (iconStyleName=="default") iconStyleName=QString::null;
  if (iconStyleName=="") iconStyleName=QString::null;
- iconCacheInstances++;
 }
 
 /**
@@ -95,6 +98,8 @@ QString IconCache::getIconFile(const QString &name) {
 /**
  Returns icon with given name, loading if necessary and caching for later use<br>
  Returns NULL if the icon cannot be loaded.
+ Warning: Pixmap will be deleted when last instance of iconcache is deleted.
+ If it is desired for application to hold the pixmap after iconcache is destroyed, it should make a copy
  @param name Name of icon to get
  @return Pixmap containing specified icon
 */
@@ -141,8 +146,9 @@ QIconSet* IconCache::getIconSet(const QString &name) {
 /** default destructor */
 IconCache::~IconCache() {
  assert(iconCacheInstances>=1);
- if (iconCacheInstances<=1) {
-  //This is last instance -> free the internal data
+ iconCacheInstances--;
+ if (iconCacheInstances<=0) {
+  //This was last instance -> free the internal data
   Q_List<QString> pixmaps=iconCache.keys();
   //Delete all pixmaps from cache
   for (Q_List<QString>::Iterator it=pixmaps.begin();it!=pixmaps.end();++it) {
@@ -157,9 +163,6 @@ IconCache::~IconCache() {
    delete rm;
   }
   setCache.clear();
- } else {
-  //More than one instance - do not free the data now
-  iconCacheInstances--;
  }
 }
 

@@ -13,14 +13,16 @@
  @author Martin Petricek
 */
 #include "aboutwindow.h"
-#include <qlayout.h>
-#include <qframe.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qsaglobal.h>
 #include "version.h"
 #include "util.h"
 #include "iconcache.h"
+#include "imagewidget.h"
+#include <qframe.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qsaglobal.h>
+#include <qsizepolicy.h>
 
 namespace gui {
 
@@ -38,11 +40,12 @@ const Qt::WFlags aboutDialogFlags=Qt::WDestructiveClose | Qt::WType_Dialog;
  @param name Name of this window (used only for debugging
  */
 AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,aboutDialogFlags) {
- IconCache ic;
+ ic=new IconCache();
  //Window title
  setCaption(app+" - "+tr("About program"));
 
  QGridLayout *l=new QGridLayout(this,2,2);
+ l->setRowStretch(0,1);
 
  //Text in about window
  QString info=QString("<big><b>")+tr("Free program for PDF document manipulation")+"</b></big><br><br>"
@@ -61,42 +64,46 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  //Lower frame with Ok button
  QFrame *okFrame=new QFrame(this);
  QGridLayout *lFrame=new QGridLayout(okFrame,1,2,5);
-// okFrame->setPaletteBackgroundColor(white);
-// okFrame->setBackgroundMode(FixedColor);
+
+ //Ok button
  QPushButton *ok=new QPushButton(QObject::tr("&Ok"), okFrame);
  lFrame->addWidget(ok,0,1);
  QObject::connect(ok, SIGNAL(clicked()), this, SLOT(close()));
+ okFrame->setFixedHeight(10+ok->sizeHint().height());
 
- //Logo on right
- QWidget* logo=new QWidget(this);
- QPixmap* logoImage=ic.getIcon("pdfedit_logo.png");
+ //Image sizes
  QSize imageSize;
  QSize bgSize;
+
+ //Logo on right
+ QPixmap* logoImage=ic->getIcon("pdfedit_logo.png");
+ QWidget *logo=new ImageWidget(logoImage,QColor(255,255,255),this);
  if (logoImage) {
-  logo->setErasePixmap(*logoImage);
   imageSize=logoImage->size();
-  logo->setFixedSize(imageSize);
+  logo->setFixedWidth(imageSize.width());
  }
 
  //Background of text
- QPixmap* bgImage=ic.getIcon("pdfedit_bg.png");
+ QPixmap* bgImage=ic->getIcon("pdfedit_bg.png");
  if (bgImage) {
   lb->setErasePixmap(*bgImage);
   bgSize=bgImage->size();
   lb->setMaximumSize(bgSize);
-  lb->setMaximumHeight(imageSize.height());
-  okFrame->setFixedHeight(10+ok->sizeHint().height());
  }
+
+ //Set minumum/maximum sizes
  if (bgImage!=NULL && logoImage!=NULL) {
-  setMinimumSize(imageSize);
-  setMaximumSize(bgSize);
-  setFixedHeight(10+ok->sizeHint().height()+imageSize.height());
+  // Two conditions should be met:
+  // Background must not repeat
+  // Logo must be shown completely
+  setMaximumSize(QSize(bgSize.width()+imageSize.width(),10+ok->sizeHint().height()+bgSize.height()));
+  setMinimumSize(QSize(imageSize.width(),10+ok->sizeHint().height()+imageSize.height()));
  }
+
+ l->setResizeMode(QLayout::Minimum);
  l->addWidget(lb,0,0);
  l->addWidget(logo,0,1);
  l->addMultiCellWidget(okFrame,1,1,0,1);
- ok->show();
- lb->show();
 }
 
 /**
@@ -110,6 +117,7 @@ void AboutWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
 
 /** default destructor */
 AboutWindow::~AboutWindow() {
+ delete ic;
 }
 
 } // namespace gui

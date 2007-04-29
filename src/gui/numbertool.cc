@@ -74,7 +74,7 @@ void NumberTool::setPredefs(const QStringList &predefs) {
  Will simply set the same fixed size to inner editbox
  @param e resize event
 */
-void NumberTool::resizeEvent (QResizeEvent *e) {
+void NumberTool::resizeEvent(QResizeEvent *e) {
  ed->setFixedSize(e->size());
 }
 
