@@ -39,7 +39,8 @@ DEPENDPATH += lang
 TRANSLATIONS += lang/pdfedit_cs.ts lang/pdfedit_sk.ts lang/pdfedit_es.ts lang/pdfedit_ru.ts lang/pdfedit_de.ts
 
 # .qm files must exist before continuing, otherwise translations may be omitted from installing etc. (qmake bug)
-DUMMY = $$system(lrelease $$TRANSLATIONS)
+# In release, qm file are already compiled, so lrelease is not necessary
+DUMMY = $$system(lrelease $$TRANSLATIONS 2>/dev/null)
 
 # Installation details
 
