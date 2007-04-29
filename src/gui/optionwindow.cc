@@ -295,7 +295,7 @@ void OptionWindow::addOptionFont(QWidget *otab,const QString &caption,const QStr
  @param caption Label for this option
  @param key Key of the given option
  @param values List of allowed values for this combobox
- @param values List of value descriptions for this combobox, must correspond in number and order with values
+ @param descriptions List of value descriptions for this combobox, must correspond in number and order with values
  */
 void OptionWindow::addOptionCombo(QWidget *otab,const QString &caption,const QString &key,const QStringList &values,const QStringList &descriptions) {
  addOption(otab,caption,new ComboOption(values,descriptions,key,otab));
