@@ -1,4 +1,4 @@
 .moc
 .obj
-configure2
 Makefile
+qsconfig.h
