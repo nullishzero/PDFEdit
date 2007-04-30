@@ -176,7 +176,10 @@ QStringList handleParams(int _argc,char **_argv) {
   assert(argv[argIndex]);
   param=argv[argIndex];
   if (param.startsWith("-") && !stopOpt) { //option
-   if (handleOption(param)==-1) fatalError(QObject::tr("Invalid commandline option : ")+param);
+   if (handleOption(param)==-1) {
+    fatalError(QObject::tr("Invalid commandline option : ")+param+"\n\n"
+              +QObject::tr("Use '%1 --help' to see list of commandline options").arg(binName));
+   }
   } else {
    params+=param;
   }
