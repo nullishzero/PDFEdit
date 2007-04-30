@@ -10,7 +10,7 @@ install: src
 	cd src && make install
 
 #uninstall PDF editor
-uninstall: 
+uninstall:
 	cd src && make uninstall
 
 #make documentation

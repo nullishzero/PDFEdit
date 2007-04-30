@@ -93,7 +93,10 @@ static QDateTime basetime=QDateTime::currentDateTime();
 
 /**
  Return current tick counter
- (msecs since aplication start. May overflow in time)
+ (msecs since some arbitrary point in time, usually aplication start.
+ Reference point will not change while running the application,
+ but can (and probably will) change across different application runs
+ May overflow in time)
 */
 int Base::tick() {
  QDateTime now=QDateTime::currentDateTime();

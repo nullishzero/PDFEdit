@@ -56,7 +56,7 @@ try_qmake() {
  then
   echo " ... not valid"
   return 1
- else 
+ else
   echo " ... ok"
   echo "Using qmake: $1"
   export GOOD_QMAKE3="$1"
