@@ -4,27 +4,28 @@ This is binary build of pdfedit for Cygwin on Windows.
 For sources and for more information about pdfedit, head to:
 
 http://pdfedit.petricek.net		- PDFedit homepage
-http://sourceforge.net/projects/pdfedit	- PDFedit project on sourceforge 
+http://sourceforge.net/projects/pdfedit	- PDFedit project on sourceforge
 
-PDFedit is released under GNU GPL license. A copy is available 
+PDFedit is released under GNU GPL license.
+A copy of is available in usr/local/share/doc/LICENSE.GPL in this package.
 
 Requirements
 ------------
 You will need to have cygwin installed.
-From cygwin packages, you will need Qt3 and X Window installed
+From cygwin packages, you will need Qt3 and X Window installed.
 
 Installation
 ------------
-Extract all files from this package to root directory where cygwin is installed
+Extract all files from this package to root directory where cygwin is installed.
 
 All pdfedit files will be placed under /usr/local directory
 You may want to add /usr/local/bin to your PATH.
 
-You can delete this readme file after installation
+You can delete this readme file after installation.
 
 Running pdfedit
 ---------------
 
 If you put /usr/local/bin to your PATH in cygwin, run "pdfedit"
-You will need to have running X server before running pdfedit,
+You will need to have running X Window server before running pdfedit,
 unless you stick only with the commandline interface.
