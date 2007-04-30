@@ -47,5 +47,6 @@ void handleStopOpt();
 void optionHandler(const QString &param, optHandler h,const QString &help="");
 void optionHandlerParam(const QString &param, const QString &paramName, optHandlerParam h,const QString &help="");
 QStringList handleParams(int _argc,char **_argv);
+void appHeader();
 
 #endif

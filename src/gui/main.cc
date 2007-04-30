@@ -59,7 +59,7 @@ void saveSettings(void) {
  Print help to STDOUT and exit
 */
 void handleHelp(){
- cout << APP_NAME << " " << VERSION << endl;
+ appHeader();
  cout << util::convertFromUnicode(QObject::tr("Usage:"),util::CON)
       << " " << util::convertFromUnicode(binName,util::CON)
       << " [" << util::convertFromUnicode(QObject::tr("option(s)"),util::CON)

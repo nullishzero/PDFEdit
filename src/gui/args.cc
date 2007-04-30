@@ -16,6 +16,7 @@
 #include "args.h"
 #include "qtcompat.h"
 #include "util.h"
+#include "version.h"
 #include <assert.h>
 #include <iostream>
 #include <qobject.h>
@@ -50,6 +51,13 @@ char **argv;
 //Forward declarations that should not be visible in header file
 int handleOption(const QString &param);
 const QString nextParam(const QString &param);
+
+/**
+ Print out application header (name and version) to stdout
+*/
+void appHeader() {
+ cout << APP_NAME << " " << VERSION << endl;
+}
 
 /**
  Standard handler to handle --help parameter
@@ -155,7 +163,9 @@ const QString nextParam(const QString &param) {
   assert(argv[argIndex]);
   return argv[argIndex];
  }
- fatalError(QObject::tr("Parameter missing for option : ")+param);
+ appHeader();
+ fatalError(QObject::tr("Parameter missing for option : ")+param+"\n\n"
+           +QObject::tr("Use '%1 --help' to see list of commandline options and their parameters").arg(binName));
  return "";
 }
 
@@ -177,8 +187,9 @@ QStringList handleParams(int _argc,char **_argv) {
   param=argv[argIndex];
   if (param.startsWith("-") && !stopOpt) { //option
    if (handleOption(param)==-1) {
+    appHeader();
     fatalError(QObject::tr("Invalid commandline option : ")+param+"\n\n"
-              +QObject::tr("Use '%1 --help' to see list of commandline options").arg(binName));
+              +QObject::tr("Use '%1 --help' to see list of commandline options and their parameters").arg(binName));
    }
   } else {
    params+=param;

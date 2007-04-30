@@ -1,3 +1,6 @@
+2007-??-?? PDF Editor 0.3.2
+	* Better error message when invalid commandline option is specified
+
 2007-04-29 PDF Editor 0.3.1
 	* Fixed commandline function invocation
 	* Fixed QSA using bad qmake
