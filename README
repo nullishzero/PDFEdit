@@ -1,12 +1,31 @@
 PDFedit readme
 -----------------
 
-PDFedit is distributed under terms of GNU GPL.
+PDFedit is distributed under terms of GNU GPL in version 2.
 See doc/LICENSE.GPL for full license text.
 See doc/AUTHORS for full list of authors and contributors.
 For other more detailed documentation, look into "doc" subdirectory.
 File doc/user/user_doc.html contain more detailed installation instructions
 (in the Installation section) and list of required libraries.
+
+Prerequisites
+------------
+Make sure you have all needed libraries (qt3, boost and xlib) along with their 
+headers. 
+You also need the environment variable QTDIR to be set to directory in which 
+the Qt toolkit (version 3) is installed. Many distributions already set this 
+when installing Qt, but some of them don't. In that case, you have to set the 
+QTDIR manually. Usually it is set to something like /usr/qt/3 or /usr/share/qt3
+(use e. g. export QTDIR=/usr/share/qt3 to set the variable if this is your 
+case).  
+Also, QMAKESPEC have to be set to match your system type. For most linuxes is 
+linux-g++, on BSD systems it can differ. If QTDIR is set in your distribution, 
+this environment variable is probably set too. Once you set QTDIR, you may try 
+typing ls $QTDIR/mkspecs - QMAKESPEC need to be set to name of one of the 
+directories that are in mkspecs subdirectory in the Qt directory (use e. g. 
+export QMAKESPEC=${QTDIR}/mkspecs/default if this is you case).
+See http://www.digitalfanatics.org/projects/qt_tutorial/chapter04.html for more
+information.
 
 Compilation
 -----------
@@ -16,7 +35,7 @@ Compilation
  Optionally you can specify prefix (default is /usr/local/) or other parameters.
  Run "./configure --help" to see list of possible configuration parameters.
 
- After configure succesfully finishes, run "make" in this directory to start
+ After configure successfully finishes, run "make" in this directory to start
  compilation.
 
 Installation
