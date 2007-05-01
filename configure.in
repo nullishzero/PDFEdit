@@ -15,7 +15,7 @@ AC_SUBST(enable_release)
 
 dnl check for QTDIR
 CHK_ENV_VAR([QTDIR],[QTDIR environment variable must be set])
-CHK_ENV_VAR_NOTICE([QMAKESPEC],[QMAKESPEC environment variable is not set, default will be used.])
+CHK_ENV_VAR_NOTICE([QMAKESPEC],[QMAKESPEC environment variable is not set - default will be used.])
 
 dnl Checks for programs. (c++ compiler,...)
 AC_LANG_CPLUSPLUS
