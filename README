@@ -24,8 +24,8 @@ this environment variable is probably set too. Once you set QTDIR, you may try
 typing ls $QTDIR/mkspecs - QMAKESPEC need to be set to name of one of the 
 directories that are in mkspecs subdirectory in the Qt directory (use e. g. 
 export QMAKESPEC=${QTDIR}/mkspecs/default if this is you case).
-See http://www.digitalfanatics.org/projects/qt_tutorial/chapter04.html for more
-information.
+See http://www.digitalfanatics.org/projects/qt_tutorial/chapter04.html or 
+http://doc.trolltech.com/3.0/qmake-guide.html for more information.
 
 Compilation
 -----------
