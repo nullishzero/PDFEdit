@@ -1705,7 +1705,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers src/utils/aconf.h"
 
 
-# Release/debug mode. Debug is default (for now)
 # Check whether --enable-release was given.
 if test "${enable_release+set}" = set; then
   enableval=$enable_release;
@@ -1715,7 +1714,6 @@ fi
 
 
 
-#check for QTDIR
 
  if test "x$QTDIR" = x; then
   { { echo "$as_me:$LINENO: error: QTDIR environment variable must be set" >&5
@@ -1725,13 +1723,11 @@ echo "$as_me: error: QTDIR environment variable must be set" >&2;}
 
 
  if test "x$QMAKESPEC" = x; then
-  { { echo "$as_me:$LINENO: error: QMAKESPEC environment variable must be set" >&5
-echo "$as_me: error: QMAKESPEC environment variable must be set" >&2;}
-   { (exit 1); exit 1; }; }
+  { echo "$as_me:$LINENO: QMAKESPEC environment variable is not set." >&5
+echo "$as_me: QMAKESPEC environment variable is not set." >&6;}
  fi
 
 
-# Checks for programs. (c++ compiler,...)
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4060,7 +4056,6 @@ fi
 
 
 
-# Checks for header files.
 { echo "$as_me:$LINENO: checking for ANSI C header files" >&5
 echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6; }
 if test "${ac_cv_header_stdc+set}" = set; then
@@ -4384,7 +4379,6 @@ fi
 done
 
 
-# Checks for typedefs, structures, and compiler characteristics.
 { echo "$as_me:$LINENO: checking for stdbool.h that conforms to C99" >&5
 echo $ECHO_N "checking for stdbool.h that conforms to C99... $ECHO_C" >&6; }
 if test "${ac_cv_header_stdbool_h+set}" = set; then
@@ -4871,7 +4865,6 @@ _ACEOF
 fi
 
 
-# Checks for library functions.
 { echo "$as_me:$LINENO: checking for error_at_line" >&5
 echo $ECHO_N "checking for error_at_line... $ECHO_C" >&6; }
 if test "${ac_cv_lib_error_at_line+set}" = set; then

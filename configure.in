@@ -1,5 +1,5 @@
-#                    -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+dnl                    -*- Autoconf -*-
+dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion),[]))
@@ -7,17 +7,17 @@ AC_INIT([PDFedit], PDFEDIT_VERSION, [BUGTRACKER - http://pdfedit.petricek.net/bt
 AC_CONFIG_SRCDIR([src/gui/base.cc])
 AC_CONFIG_HEADER([src/utils/aconf.h])
 
-# Release/debug mode. Debug is default (for now)
+dnl Release/debug mode. Debug is default (for now)
 AC_ARG_ENABLE(release,
 [AS_HELP_STRING([--enable-release],[Turn on compiler optimizations, turn off debugging symbols (enabled by default, disable with --disable-release)])]
 ,,[enable_release=yes])
 AC_SUBST(enable_release)
 
-#check for QTDIR
+dnl check for QTDIR
 CHK_ENV_VAR([QTDIR],[QTDIR environment variable must be set])
-CHK_ENV_VAR([QMAKESPEC],[QMAKESPEC environment variable must be set])
+CHK_ENV_VAR_NOTICE([QMAKESPEC],[QMAKESPEC environment variable is not set, default will be used.])
 
-# Checks for programs. (c++ compiler,...)
+dnl Checks for programs. (c++ compiler,...)
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_CC
@@ -30,18 +30,18 @@ dnl -------------------------------------------
 AC_CHECK_HEADER([boost/smart_ptr.hpp], , [AC_MSG_ERROR([You need boost library to compile PDFedit])])
 AC_CHECK_HEADER([boost/iostreams/stream.hpp], , [AC_MSG_ERROR([You need boost iostreams library to compile PDFedit])])
 
-# Checks for header files.
+dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([limits.h stdlib.h string.h unistd.h])
 
-# Checks for typedefs, structures, and compiler characteristics.
+dnl Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
 
-# Checks for library functions.
+dnl Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_FUNC_STAT
