@@ -1075,6 +1075,10 @@ Datos: %3
         <source>Line width (in points)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>

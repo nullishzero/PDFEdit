@@ -1075,6 +1075,10 @@ Data: %3
         <source>Line width (in points)</source>
         <translation>Šířka čáry (v bodech)</translation>
     </message>
+    <message>
+        <source>Use &apos;%1 --help&apos; to see list of commandline options and their parameters</source>
+        <translation>Použijte &apos;%1 --help&apos; k zobrazení seznamu přepínačů na příkazové řádce a jejich parametrů</translation>
+    </message>
 </context>
 <context>
     <name>annotation_type</name>
