@@ -18,12 +18,12 @@ when installing Qt, but some of them don't. In that case, you have to set the
 QTDIR manually. Usually it is set to something like /usr/qt/3 or /usr/share/qt3
 (use e. g. export QTDIR=/usr/share/qt3 to set the variable if this is your 
 case).  
-Also, QMAKESPEC have to be set to match your system type. For most linuxes is 
-linux-g++, on BSD systems it can differ. If QTDIR is set in your distribution, 
-this environment variable is probably set too. Once you set QTDIR, you may try 
-typing ls $QTDIR/mkspecs - QMAKESPEC need to be set to name of one of the 
-directories that are in mkspecs subdirectory in the Qt directory (use e. g. 
-export QMAKESPEC=${QTDIR}/mkspecs/default if this is you case).
+Also, while usually not needed, QMAKESPEC may be set to match your system type.
+For most systems it is unnecessary to set it, alhough it may be needed if you
+crosscompile (like producing i386 binaries on amd64 platform) or in some rare
+configurations. Once you set QTDIR, you may try typing "ls $QTDIR/mkspecs".
+QMAKESPEC should be set to name of one of the directories that are in mkspecs
+subdirectory in the Qt directory.
 See http://www.digitalfanatics.org/projects/qt_tutorial/chapter04.html or 
 http://doc.trolltech.com/3.0/qmake-guide.html for more information.
 
