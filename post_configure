@@ -87,6 +87,9 @@ try_qmake 'qmake'
 #debian-like qmake-qt3
 try_qmake "qmake-qt3"
 
+#Sometime it is there...
+try_qmake '/usr/bin/qmake'
+
 #This one is mainly because of cygwin
 try_qmake '/usr/lib/qt3/bin/qmake'
 
