@@ -1,6 +1,7 @@
 2007-??-?? PDF Editor 0.3.2
 	* Better error message when invalid commandline option is specified
 	* QMAKESPEC is not required by configure
+	* Minor fixes in documentation
 
 2007-04-29 PDF Editor 0.3.1
 	* Fixed commandline function invocation
