@@ -10,10 +10,10 @@ Other contributors
 Vicente Romero Calero 	Spanish translation
 Andreas Mantke		German translation
 Alexandre Prokoudine 	Russian translation
-Pavel Ondrousek 	RPM package available at http://sourceforge.net/project/showfiles.php?group_id=177354
-Varun Hiremath	 	Debian package available at http://packages.qa.debian.org/p/pdfedit.html
-Pavel Sanda		Gentoo ebuild available at Sun Overlay repository
-Lubomir Kundrak		NetBSD package available at http://pkgsrc.se/wip/pdfedit
+Pavel Ondrousek 	RPM package, available at http://sourceforge.net/project/showfiles.php?group_id=177354
+Varun Hiremath	 	Debian package, available at http://packages.qa.debian.org/p/pdfedit.html
+Pavel Sanda		Gentoo ebuild, available at Sun Overlay repository
+Lubomir Kundrak		NetBSD package, available at http://pkgsrc.se/wip/pdfedit
 
 Also thanks to Varun Hiremath and Martin Michlmayr for various small patches
 and many other people for their suggestions and bug reports.
