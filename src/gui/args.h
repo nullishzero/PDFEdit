@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __ARGS_H__
 #define __ARGS_H__
 /** @file
@@ -47,6 +47,7 @@ void handleStopOpt();
 void optionHandler(const QString &param, optHandler h,const QString &help="");
 void optionHandlerParam(const QString &param, const QString &paramName, optHandlerParam h,const QString &help="");
 QStringList handleParams(int _argc,char **_argv);
-void appHeader();
+void printHeader();
+void printHeaderErr();
 
 #endif
