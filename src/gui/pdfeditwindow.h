@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __PDFEDITWINDOW_H__
 #define __PDFEDITWINDOW_H__
 
@@ -85,7 +85,7 @@ public slots:
  void changeRevision(int revision);
  void receiveHelpText(const QString &message);
 signals:
- /** 
+ /**
   Signal emitted whenever any IProperty object is deleted
   @param it Property that was deleted
  */
@@ -95,8 +95,8 @@ signals:
   this window that are subclasses of SelfDestructiveWidget will close themselves
  */
  void selfDestruct();
- /** 
-  Signal emitted when active document is changed 
+ /**
+  Signal emitted when active document is changed
   Reference to newly opened document is sent.
   If document is closed without opening a new file, NULL is sent instead.
   @param newDocument Pointer to new document
@@ -108,7 +108,7 @@ signals:
  */
  void revisionChanged(int revision);
 protected:
- void closeEvent(QCloseEvent *e);
+ virtual void closeEvent(QCloseEvent *e);
 protected slots:
  void pageChange(const QSPage &pg, int numberOfPage);
  void treeClicked(int button,QListViewItem *item);
