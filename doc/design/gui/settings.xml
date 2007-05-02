@@ -60,7 +60,7 @@
   <sect1 id="dynamic_settings">
    <title>Dynamic (user) Settings</title>
    <para>
-    Static settings are stored in file <filename>pdfeditrc</filename>
+    Dynamic settings are stored in file <filename>pdfeditrc</filename>
     in subdirectory <filename>.pdfedit</filename> in user's home directory.
     Nota that most other settings (any custom scripts, icons, etc ...) are stored by default
     in that directory too.
