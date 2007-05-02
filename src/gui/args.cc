@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Utility functions to work with commandline arguments
  \brief Commandline arguments utility functions
@@ -27,7 +27,7 @@
 using namespace std;
 using namespace util;
 
-/** Stop processing options from comandline? */
+/** Stop processing options from commandline? */
 bool stopOpt=false;
 
 /** Name of the program (argv[0]) */
