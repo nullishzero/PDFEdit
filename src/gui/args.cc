@@ -27,6 +27,15 @@
 using namespace std;
 using namespace util;
 
+/** Option handler map*/
+typedef QMap<QString, optHandler> OptionMap;
+
+/** Option handler map (with parameter) */
+typedef QMap<QString, optHandlerParam> OptionMapParam;
+
+/** Option help map*/
+typedef QMap<QString, QString> OptionHelp;
+
 /** Stop processing options from commandline? */
 bool stopOpt=false;
 
@@ -47,6 +56,8 @@ int argIndex;
 int argc;
 /** Standard argv */
 char **argv;
+/** Length of longest parameter name (including name of its argument)*/
+int maxParamNameLen=1;
 
 //Forward declarations that should not be visible in header file
 int handleOption(const QString &param);
@@ -80,7 +91,7 @@ void handleHelpOptions(){
    paramName+=" ["+optParamName[paramName]+"]";
   }
   cout << " ";
-  cout.width(16);		//width of option name
+  cout.width(maxParamNameLen+1);		//width of option name
   cout.flags(ios::left);
   cout << convertFromUnicode(paramName,CON) << convertFromUnicode(optHelp[*it],CON) << endl;
  }
@@ -101,6 +112,8 @@ void handleStopOpt(){
 void optionHandler(const QString &param, optHandler h,const QString &help) {
  optMap[param]=h;
  optHelp[param]=help;
+ int len=param.length();	//Length of parameter including its name in help
+ if (len>maxParamNameLen) maxParamNameLen=len;
 }
 
 /**
@@ -115,6 +128,8 @@ void optionHandlerParam(const QString &param, const QString &paramName, optHandl
  optMapParam[param]=h;
  optHelp[param]=help;
  optParamName[param]=paramName;
+ int len=param.length()+3+paramName.length();	//Length of parameter including its name in help
+ if (len>maxParamNameLen) maxParamNameLen=len;
 }
 
 /**
@@ -158,7 +173,6 @@ int handleOption(const QString &param) {
 void setArgv0(const QString &name) {
  binName=name;
 }
-
 
 /**
  Get next parameter from commandline

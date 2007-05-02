@@ -18,7 +18,10 @@
 
 class QStringList;
 
-/** Name of the program (argv[0]) */
+/**
+ Name of the program (argv[0]).
+ This variable will be set after running handleParams
+*/
 extern QString binName;
 
 /** Option handler function */
@@ -32,15 +35,6 @@ typedef optHandlerFn *optHandler;
 
 /** Option handler function pointer (with parameter)*/
 typedef optHandlerFnParam *optHandlerParam;
-
-/** Option handler map*/
-typedef QMap<QString, optHandler> OptionMap;
-
-/** Option handler map (with parameter) */
-typedef QMap<QString, optHandlerParam> OptionMapParam;
-
-/** Option help map*/
-typedef QMap<QString, QString> OptionHelp;
 
 void handleHelpOptions();
 void handleStopOpt();
