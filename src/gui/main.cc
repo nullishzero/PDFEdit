@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Main function<br>
  Handle commandline options and then open editor window(s)
@@ -59,7 +59,7 @@ void saveSettings(void) {
  Print help to STDOUT and exit
 */
 void handleHelp(){
- appHeader();
+ printHeader();
  cout << util::convertFromUnicode(QObject::tr("Usage:"),util::CON)
       << " " << util::convertFromUnicode(binName,util::CON)
       << " [" << util::convertFromUnicode(QObject::tr("option(s)"),util::CON)
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]){
    //Look for translation file in config directory in $HOME
    if (!translator.load(lang,QDir::home().path()+"/"+CONFIG_DIR+"/lang")) {
     //Look in binary path - testing compilations and (possibly) windows builds
-    if (!translator.load(lang,appPath+"/lang")) { 
+    if (!translator.load(lang,appPath+"/lang")) {
      guiPrintDbg(debug::DBG_WARN,"Translation file " << Q_OUT(lang) << " not found");
     }
    }
@@ -263,6 +263,7 @@ int main(int argc, char *argv[]){
 
  if (!useGUI) {
   // Up until now DISPLAY was optional. For running GUI, it is mandatory
+  printHeaderErr();
   util::fatalError(QObject::tr("Environment variable DISPLAY is not set - cannot run GUI of " APP_NAME));
  }
 
