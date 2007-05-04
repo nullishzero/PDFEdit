@@ -1,6 +1,9 @@
 #!/bin/sh
+#This is script that will create distribution tarballs
+
 #This file should be run on exported directory, not directly in CVS tree
 #It is expected that the directory in which the sources are exported is named 'pdfedit'
+
 #Make documentation before making tarball
 (cd doc && make doc_dist)
 #Translate all .ts files to .qm
@@ -11,5 +14,7 @@ VERSION=`./getversion`
 rm ../pdfedit-$VERSION
 ln -s pdfedit ../pdfedit-$VERSION
 cd ..
-tar -czvhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
-tar -cjvhf pdfedit-$VERSION.tar.bz2 pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
+tar -czhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
+echo pdfedit-$VERSION.tar.gz created
+tar -cjhf pdfedit-$VERSION.tar.bz2 pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
+echo pdfedit-$VERSION.tar.bz2 created
