@@ -1,18 +1,22 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 /*
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.15  2007/05/04 09:26:00  bilboq
+ *
+ * fixed bad formating strings on 64bit machines (%u printing size_t ...)
+ *
  * Revision 1.14  2007/02/04 20:17:02  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -114,13 +118,13 @@ namespace pdfobjects
 namespace utils
 {
 	
-void ProgressObserver::notify(boost::shared_ptr<OperationStep> newValue, 
+void ProgressObserver::notify(boost::shared_ptr<OperationStep> newValue,
 		boost::shared_ptr<const observer::IChangeContext<OperationStep> > context)const throw()
 {
 using namespace boost;
 using namespace observer;
 
-	// if no progress visualizator is set or no context is provided, 
+	// if no progress visualizator is set or no context is provided,
 	// immediatelly returns
 	if(!progressBar || !context.get())
 		return;
@@ -160,16 +164,16 @@ using namespace observer;
  * @param obj Xpdf object to write.
  * @param stream Stream where to write.
  *
- * Creates correct pdf string representation of given object and writes 
- * everything to the given stream. Given xpdf object data (like stream 
+ * Creates correct pdf string representation of given object and writes
+ * everything to the given stream. Given xpdf object data (like stream
  * or string) can contain unprintable or 0 bytes.
  */
-void writeDirectObject(::Object & obj, StreamWriter & stream) 
+void writeDirectObject(::Object & obj, StreamWriter & stream)
 {
 using namespace boost;
 using namespace std;
 
-	// stream requires special handling, because it may 
+	// stream requires special handling, because it may
 	// contain binary data
 	if(obj.isStream())
 	{
@@ -205,12 +209,12 @@ using namespace std;
  * header and footer and writes everything to the given stream. Given xpdf
  * object data (like stream or string) can contain unprintable or 0 bytes.
  */
-void writeIndirectObject(::Object & obj, ::Ref ref, StreamWriter & stream) 
+void writeIndirectObject(::Object & obj, ::Ref ref, StreamWriter & stream)
 {
 using namespace boost;
 using namespace std;
 
-	// stream requires special handling, because it may 
+	// stream requires special handling, because it may
 	// contain binary data
 	if(obj.isStream())
 	{
@@ -225,7 +229,7 @@ using namespace std;
 		string objPdfFormat;
 		cobj_ptr->getStringRepresentation(objPdfFormat);
 		
-		// we have to add some more information to write indirect 
+		// we have to add some more information to write indirect
 		// object (this includes header and footer)
 		std::string indirectFormat;
 		IndiRef indiRef(ref);
@@ -361,8 +365,8 @@ using namespace boost;
 		if(sub!=subSectionTable.end())
 		{
 			// if num can be added to current sub, appends entries array
-			// NOTE: num can be added if sub's key+entries size == num, which 
-			// means that entries array won't destroy sequence without holes 
+			// NOTE: num can be added if sub's key+entries size == num, which
+			// means that entries array won't destroy sequence without holes
 			// condition after addition
 			if((size_t)num == sub->first + (sub->second).size())
 			{
@@ -414,14 +418,14 @@ using namespace boost;
 		// one entry on one line
 		// according specificat, line has following format:
 		// nnnnnnnnnn ggggg n \n
-		// 	where 
+		// 	where
 		// 		n* stands for file offset of object (padded by leading 0)
 		// 		g* is generation number (padded by leading 0)
 		// 		n is literal keyword identifying in-use object
 		// We don't provide information about free objects
 		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
 		{
-			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", entry->first, entry->second);
+			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", (unsigned int)entry->first, entry->second);
 			stream.putLine(xrefRow);
 		}
 		
@@ -431,7 +435,7 @@ using namespace boost;
 		notifyObservers(newValue, context);
 	}
 
-	// updates Prev field - to say where previous xref table starts 
+	// updates Prev field - to say where previous xref table starts
 	// if 0, removes Prev entry if present
 	if(!prevSection.xrefPos)
 	{
@@ -479,7 +483,7 @@ using namespace boost;
 	// stores offset of last (created one) xref table
 	stream.putLine(STARTXREF_KEYWORD);
 	char xrefPosStr[128];
-	sprintf(xrefPosStr, "%u", xrefPos);
+	sprintf(xrefPosStr, "%u", (unsigned int)xrefPos);
 	stream.putLine(xrefPosStr);
 	
 	// Finaly puts %%EOF behind but keeps position of marker start
@@ -488,7 +492,7 @@ using namespace boost;
 	kernelPrintDbg(DBG_DBG, "PDF end of file marker saved");
 
 	// stream may contain some non sense information behind, so they has to be
-	// cleaned. 
+	// cleaned.
 	size_t currPos=stream.getPos();
 	stream.setPos(0, -1);
 	size_t eofPos=stream.getPos();
@@ -511,6 +515,6 @@ void OldStylePdfWriter::reset()
 	maxObjNum=0;
 }
 
-} // utils namespace 
+} // utils namespace
 
 } // pdfobjects namespace
