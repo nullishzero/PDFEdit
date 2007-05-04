@@ -7,7 +7,7 @@
 #Make documentation before making tarball
 (cd doc && make doc_dist)
 #Translate all .ts files to .qm
-(cd src/gui && lrelease pdfedit.pro)
+(cd src/gui/lang && lrelease *.ts)
 #Get version number
 VERSION=`./getversion`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
