@@ -18,11 +18,6 @@ QStringList messages();
 void setQMake( const QString &str );
 void runQMake( const QStringList &configs, const QStringList &antiConfigs, const QString &prefix );
 void mkDir( const QString &dir );
-void copy( const QString &source, const QString &target );
-void symLink( const QString &source, const QString &target );
 bool writeQSConfig( bool buildIde );
-void rmDirRecursive( const QDir &dir );
-
-
 
 #endif

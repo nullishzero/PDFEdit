@@ -46,6 +46,11 @@ static void dumpMessages()
     qWarning( messages().join( "\n" ) );
 }
 
+static void dumpMessagesStdout()
+{
+    printf("%s\n", messages().join( "\n" ).ascii() );
+}
+
 
 int main( int argc, char **argv )
 {
@@ -129,17 +134,19 @@ int main( int argc, char **argv )
     int retVal = processes > 0 ? qapp.exec() : 0;
     if( retVal || errors ) {
 	message( "\nThere were errors during configure!" );
+        dumpMessages();
     } else if( warnings ) {
 	message( "\nThere were errors during configure, but these"
 		 "\ndo not appear to be fatal, so you should still be"
 		 "\nable to build QSA."
 		 "\nRun your make tool to build QSA." );
+        dumpMessages();
     } else {
 	message( "\n"
 		"Configuration completed successfully\n"
 		"Run your make tool to build QSA" );
+        dumpMessagesStdout();
     }
 
-    dumpMessages();
     return retVal || errors;
 }

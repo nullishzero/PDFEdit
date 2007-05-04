@@ -141,54 +141,6 @@ void mkDir( const QString &dir )
     current.mkdir( dir );
 }
 
-
-void copy( const QString &source, const QString &dest )
-{
-    QString s = QDir::convertSeparators( source );
-    QString d = QDir::convertSeparators( dest );
-#ifdef Q_OS_UNIX
-    system( "cp " + QFile::encodeName( s ) + " " + QFile::encodeName( d ) );
-    system( "chmod +w " + QFile::encodeName( d ) );
-#else
-    QT_WA(
-    {
-	if ( !CopyFileW( (TCHAR*) s.ucs2(), (TCHAR*) d.ucs2(), FALSE ) ) {
-	    message( "Failed to copy file: " + s );
-	    errors++;
-	}
-	if ( !SetFileAttributesW( (TCHAR*) d.ucs2(), FILE_ATTRIBUTE_NORMAL ) ) {
-	    message( "Failed to set file attributes to normal" );
-	    errors++;
-	}
-    }, {
-	if ( !CopyFileA( QFile::encodeName( s ), QFile::encodeName( d ), FALSE ) ) {
-	    message( "Failed to copy file: " + s );
-	    errors++;
-	}
-	if ( !SetFileAttributesA( QFile::encodeName( d ), FILE_ATTRIBUTE_NORMAL ) ) {
-	    message( "Failed to set file attributes to normal" );
-	    errors++;
-	}
-    } );
-
-#endif
-}
-
-
-void symLink( const QString &source, const QString &dest )
-{
-#ifdef Q_OS_UNIX
-    QString s = QDir::convertSeparators( source );
-    QFileInfo info( s );
-    s = info.absFilePath();
-    QString d = QDir::convertSeparators( dest );
-    system( "rm -f " + QFile::encodeName( d ) );
-    system( "ln -s " + QFile::encodeName( s ) + " " + QFile::encodeName( d ) );
-#else
-    copy( source, dest );
-#endif
-}
-
 bool writeQSConfig( bool buildIde )
 {
     QFile file( "src/qsa/qsconfig.h" );
@@ -208,27 +160,4 @@ bool writeQSConfig( bool buildIde )
     return TRUE;
 }
 
-void rmDirRecursive( const QDir &dir )
-{
-    const QFileInfoList* list = dir.entryInfoList( QDir::All | QDir::System | QDir::Hidden );
-    if ( list ) {
-	QFileInfoListIterator it( *list );
-	QFileInfo* fi;
-
-	while( ( fi = it.current() ) ) {
-	    if( ( fi->fileName() != "." ) && ( fi->fileName() != ".." ) ){
-		if( fi->isDir() )
-		    rmDirRecursive( QDir(fi->absFilePath()) );
-		else
-		    QFile::remove( fi->absFilePath() );
-	    }
-	    ++it;
-	}
-    }
-    // Remove this dir as well
-    dir.rmdir( dir.absPath() );
-}
-
-
 #include "configutils.moc"
-
