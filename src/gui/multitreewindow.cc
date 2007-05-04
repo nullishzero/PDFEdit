@@ -281,7 +281,7 @@ QSCObject* MultiTreeWindow::getSelected(const QString &name) {
  \see getTree
 */
 TreeItemAbstract* MultiTreeWindow::getSelectedItem(const QString &name) {
- treeSelection=getTree(name);;
+ treeSelection=getTree(name);
  if (!treeSelection) return NULL;
  return treeSelection->getSelectedItem();
 }

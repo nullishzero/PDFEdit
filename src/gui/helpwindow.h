@@ -33,8 +33,6 @@ public slots:
  void setFile(const QString &fName);
  void index();
  void setPage(QString name);
-protected:
- void closeEvent(QCloseEvent *e);
 private:
  /** Rich text browser with hypertext navigation. Core of this help window */
  Q_TextBrowser *help;

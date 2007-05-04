@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  AddItemDialog - class representing dialog for adding new item to Dictionary/array
  Dialog does not block focus of main window and you can have multiple of them opened simultaneously (even for same Dict / Array)
@@ -48,7 +48,7 @@ AddItemDialog::AddItemDialog(QWidget *parent/*=0*/,const char *name/*=0*/)
  : SelfDestructiveWidget(parent,parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel | Qt::WStyle_Minimize | Qt::WStyle_SysMenu | Qt::WStyle_Title | Qt::WStyle_Customize) {
  //Parent is also killer -> this is always toplevel widget
  settingName="add_item_dialog";
- globalSettings->restoreWindow(this,settingName); 
+ globalSettings->restoreWindow(this,settingName);
  setCaption(tr("Add object"));
  layout=new QVBoxLayout(this);
  layout->setMargin(4);
@@ -106,15 +106,6 @@ void AddItemDialog::buttonSelected(int id) {
  selectedItem=id;
  //Select new item;
  if (props[selectedItem]) props[selectedItem]->setDisabled(false);
-}
-
-/**
- This is called on attempt to close window.
- The window will delete itself
- @param e Close event (unused)
-*/
-void AddItemDialog::closeEvent(__attribute__((unused)) QCloseEvent* e) {
- delete this;
 }
 
 //TODO: detect if dict no longer exists in document and close/disable dialog
@@ -180,7 +171,7 @@ void AddItemDialog::setItem(boost::shared_ptr<IProperty> it) {
 }
 
 /**
- Called whenever item in main window is deleted. If the item matches the item in which we are adding, close the dialog 
+ Called whenever item in main window is deleted. If the item matches the item in which we are adding, close the dialog
  @param it deleted item
 */
 void AddItemDialog::itemDeleted(boost::shared_ptr<IProperty> it) {
@@ -239,7 +230,7 @@ AddItemDialog* AddItemDialog::create(QWidget *parent,boost::shared_ptr<CArray> c
  return ret;
 }
 
-/** 
+/**
  Show informational message for this window
  @param message message to show
 */
@@ -248,7 +239,7 @@ void AddItemDialog::message(const QString &message) {
  msg->setText(message);
 }
 
-/** 
+/**
  Show error message for this window
  @param message message to show
 */
@@ -260,7 +251,7 @@ void AddItemDialog::error(const QString &message) {
 /**
  Adds the item, but keep the window open,
  so user can easily modify value and add another similar item.
- @return true if successfull, false if cannot commit because of some errors in user-entered data 
+ @return true if successfull, false if cannot commit because of some errors in user-entered data
 */
 bool AddItemDialog::commit() {
  if (selectedItem<0) {
@@ -268,7 +259,7 @@ bool AddItemDialog::commit() {
   return false;
  }
  if (props[selectedItem]) {	//Editable item type selected
-  if (!props[selectedItem]->isValid()) {  
+  if (!props[selectedItem]->isValid()) {
    error(tr("Entered property is not valid"));
    props[selectedItem]->setFocus();
    return false;
@@ -284,15 +275,15 @@ bool AddItemDialog::commit() {
  boost::shared_ptr<IProperty> property;
  try {
   switch (selectedItem) {
-   case 0: {//pBool  
+   case 0: {//pBool
     property=boost::shared_ptr<IProperty>(new CBool(true));
     break;
    }
-   case 1: {//pInt     
+   case 1: {//pInt
     property=boost::shared_ptr<IProperty>(new CInt(0));
     break;
    }
-   case 2: {//pReal  
+   case 2: {//pReal
     property=boost::shared_ptr<IProperty>(new CReal(0));
     break;
    }
@@ -300,11 +291,11 @@ bool AddItemDialog::commit() {
     property=boost::shared_ptr<IProperty>(new CString(""));
     break;
    }
-   case 4: {//pName  
+   case 4: {//pName
     property=boost::shared_ptr<IProperty>(new CName(""));
     break;
    }
-   case 5: {//pRef   
+   case 5: {//pRef
     IndiRef refValue;
     RefProperty* refProp=dynamic_cast<RefProperty*>(props[selectedItem]);
     refProp->setPdf(pdf);
@@ -317,11 +308,11 @@ bool AddItemDialog::commit() {
     property=boost::shared_ptr<IProperty>(new CRef());
     break;
    }
-   case 6: {//pDict  
+   case 6: {//pDict
     property=boost::shared_ptr<IProperty>(new CDict());
     break;
    }
-   case 7: {//pArray 
+   case 7: {//pArray
     property=boost::shared_ptr<IProperty>(new CArray());
     break;
    }
@@ -379,7 +370,7 @@ bool AddItemDialog::commit() {
   error(QObject::tr("Document is read-only"));
   return false;
  }
- assert(0);//Should never happen 
+ assert(0);//Should never happen
  return false;
 }
 
@@ -390,7 +381,7 @@ void AddItemDialog::commitClose() {
 
 /** default destructor */
 AddItemDialog::~AddItemDialog() {
- globalSettings->saveWindow(this,settingName); 
+ globalSettings->saveWindow(this,settingName);
 }
 
 } // namespace gui

@@ -79,7 +79,7 @@ QSCObject* QSDict::property(const QString &name) {
 */
 bool QSDict::exist(const QString &name) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
- return dict->containsProperty(util::convertFromUnicode(name,util::PDF));;
+ return dict->containsProperty(util::convertFromUnicode(name,util::PDF));
 }
 
 /**

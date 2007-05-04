@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  AboutWindow - class representing about window.
  Display authors, application name and version.
@@ -104,15 +104,6 @@ AboutWindow::AboutWindow(QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(p
  l->addWidget(lb,0,0);
  l->addWidget(logo,0,1);
  l->addMultiCellWidget(okFrame,1,1,0,1);
-}
-
-/**
- This is called on attempt to close window.
- The window will delete itself
- @param e Event parameters (unused)
-*/
-void AboutWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
- delete this;
 }
 
 /** default destructor */

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  PdfEditWindow - class representing main application window
 */
@@ -37,7 +37,7 @@
 #include <qfile.h>
 #include <qfont.h>
 #include <qmenubar.h>
-#include <qmessagebox.h> 
+#include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qregexp.h>
 #include <qsplitter.h>
@@ -63,7 +63,7 @@ void PdfEditWindow::exitApp() {
 
 /**
  This is called on attempt to close window. If there is unsaved work,
- dialog asking to save it would appear, otherwise the windows is closed. 
+ dialog asking to save it would appear, otherwise the windows is closed.
  @param e Close event
 */
 void PdfEditWindow::closeEvent(QCloseEvent *e) {
@@ -74,7 +74,6 @@ void PdfEditWindow::closeEvent(QCloseEvent *e) {
  e->accept();
  saveWindowState();
  windowCount--;
- delete this;
  //The PdfEditWindow itself will be deleted on close();
 }
 
@@ -91,7 +90,7 @@ PdfEditWindow* PdfEditWindow::create(const QString &fName/*=QString::null*/) {
  return main;
 }
 
-/** 
+/**
  Slot called when right-clicked in current page
  @param globalPos Position of mouse cursor
 */
@@ -126,34 +125,34 @@ void PdfEditWindow::loadVisibility(QWidget *w,const QString &name) {
 
 /** Saves window state to application settings*/
 void PdfEditWindow::saveWindowState() {
- globalSettings->saveWindow(this,"main"); 
- globalSettings->saveSplitter(spl,"spl_main"); 
- globalSettings->saveSplitter(splProp,"spl_right"); 
- globalSettings->saveSplitter(splCmd,"spl_left"); 
+ globalSettings->saveWindow(this,"main");
+ globalSettings->saveSplitter(spl,"spl_main");
+ globalSettings->saveSplitter(splProp,"spl_right");
+ globalSettings->saveSplitter(splCmd,"spl_left");
  cmdLine->saveWindowState();
- saveVisibility(cmdLine,"cmd"); 
- saveVisibility(prop,"prop"); 
- saveVisibility(splProp,"right"); 
- saveVisibility(tree,"tre"); 
+ saveVisibility(cmdLine,"cmd");
+ saveVisibility(prop,"prop");
+ saveVisibility(splProp,"right");
+ saveVisibility(tree,"tre");
  menuSystem->saveToolbars();
 }
 
 
 /** Restores window state from application settings */
 void PdfEditWindow::restoreWindowState() {
- globalSettings->restoreWindow(this,"main"); 
- globalSettings->restoreSplitter(spl,"spl_main"); 
- globalSettings->restoreSplitter(splProp,"spl_right"); 
- globalSettings->restoreSplitter(splCmd,"spl_left"); 
+ globalSettings->restoreWindow(this,"main");
+ globalSettings->restoreSplitter(spl,"spl_main");
+ globalSettings->restoreSplitter(splProp,"spl_right");
+ globalSettings->restoreSplitter(splCmd,"spl_left");
  cmdLine->restoreWindowState();
- loadVisibility(cmdLine,"cmd"); 
- loadVisibility(prop,"prop"); 
- loadVisibility(splProp,"right"); 
- loadVisibility(tree,"tre"); 
+ loadVisibility(cmdLine,"cmd");
+ loadVisibility(prop,"prop");
+ loadVisibility(splProp,"right");
+ loadVisibility(tree,"tre");
  menuSystem->restoreToolbars();
 }
 
-/** 
+/**
  Show dialog for adding objects into given container.<br>
  Container must be Dict or Array, otherwise the dialog is not created.
  After creating, dialog is shown and usable and this function immediately returns.<br>
@@ -223,7 +222,7 @@ void PdfEditWindow::menuActivated(int id) {
 }
 
 /** Returns progress observer.
- * This progress observer holds qt progress bar (progressBar field) stored in 
+ * This progress observer holds qt progress bar (progressBar field) stored in
  * status bar.
  * It can be registered on ObserverHandler to display progress.
  */
@@ -246,7 +245,7 @@ QProgressBar * PdfEditWindow::getProgressBar() {
  constructor of PdfEditWindow, creates window and fills it with elements
  @param parent parent widget containing this control
  @param name name of widget (currently unused)
- @param fName Name of file to open in this window. If empty or null, no file will be opened 
+ @param fName Name of file to open in this window. If empty or null, no file will be opened
  */
 PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QMainWindow(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel) {
  //Set the initial title
@@ -287,7 +286,7 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Property editor
  prop=new PropertyEditor(splProp);
 
- // creates qt progress bar and its adapter so it can be used in 
+ // creates qt progress bar and its adapter so it can be used in
  // ProgressObserver. progressObserver can be registered to observer handlers.
  progressBar=new QProgressBar();
  progressObserver=boost::shared_ptr<pdfobjects::utils::ProgressObserver>(
@@ -335,12 +334,12 @@ PdfEditWindow::PdfEditWindow(const QString &fName/*=QString::null*/,QWidget *par
  //Menu
  try {
   QMenuBar *qb=menuSystem->loadMenu(this);
-  QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int))); 
+  QObject::connect(qb, SIGNAL(activated(int)), this, SLOT(menuActivated(int)));
 
   //ToolBars
   ToolBarList tblist=menuSystem->loadToolBars();
   for (ToolBarList::Iterator toolbar=tblist.begin();toolbar!=tblist.end();++toolbar) {
-   QObject::connect(*toolbar,SIGNAL(itemClicked(int)),this,SLOT(menuActivated(int))); 
+   QObject::connect(*toolbar,SIGNAL(itemClicked(int)),this,SLOT(menuActivated(int)));
    QObject::connect(*toolbar,SIGNAL(helpText(const QString&)),this,SLOT(receiveHelpText(const QString&)));
   }
  } catch (InvalidMenuException &e) {
@@ -381,7 +380,7 @@ void PdfEditWindow::pageDeleteSelection() {
 }
 
 
-/** 
+/**
  Signal called when receiving help message.
  Show it in statusbar
  @param message Help message
@@ -615,7 +614,7 @@ bool PdfEditWindow::closeFile(bool askSave,bool onlyAsk/*=false*/) {
    if (!save()) {
     base->warn(base->error());
     //Unable to save document -> not closing;
-    return false; 
+    return false;
    }
   }
   if (answer==-1) return false; //Cancel: abort closing
@@ -668,7 +667,7 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
  }
  if (fileName.isNull()) { //We need a name
   //We don't know the filename and there is nothing like "save as",
-  //so we are a bit out of luck here ... 
+  //so we are a bit out of luck here ...
   assert(0);//Should never get here anyway
   QString name=base->fileSaveDialog(filename());
   if (name.isNull()) {
@@ -692,7 +691,7 @@ bool PdfEditWindow::save(bool newRevision/*=false*/) {
   //Exception can occur while saving, for example if document is read-only
   document->save(newRevision);
  } catch (ReadOnlyDocumentException &e) {
-  base->setError(tr("Document is in read-only mode")); 
+  base->setError(tr("Document is in read-only mode"));
   return false;
  } catch (...) {
   base->setError(tr("Unknown error occured while saving document"));

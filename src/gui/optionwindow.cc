@@ -463,24 +463,14 @@ void OptionWindow::init() {
  setUpdatesEnabled( TRUE );
 }
 
-
-/**
- This is called on attempt to close window.
- The window will delete itself
- @param e Close event (unused)
-*/
-void OptionWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
- delete this;
-}
-
 /** default destructor */
 OptionWindow::~OptionWindow() {
+ guiPrintDbg(debug::DBG_DBG,"Options closing ...");
  globalSettings->saveWindow(this,"options"); 
  delete labels;
  delete items;
  delete list;
  opt=NULL;//No instance active now
- guiPrintDbg(debug::DBG_DBG,"Options closing ...");
 }
 
 /** applies look and feel settings from options

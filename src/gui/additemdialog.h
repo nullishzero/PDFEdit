@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __ADDITEMDIALOG_H__
 #define __ADDITEMDIALOG_H__
 
@@ -60,7 +60,6 @@ protected:
  void error(const QString &message);
  AddItemDialog(QWidget *parent=0,const char *name=0);
  void setItem(boost::shared_ptr<IProperty> it);
- void closeEvent(QCloseEvent* e);
 private:
  /** Object (Dict or Array) into which any subitems will be added */
  boost::shared_ptr<IProperty> item;

@@ -39,8 +39,6 @@ public slots:
 public:
  static void optionsDialog(Menu *msystem,const QStringList &units,const QStringList &units_id);
  ~OptionWindow();
-protected:
- void closeEvent(QCloseEvent *e);
 private:
  OptionWindow(Menu *msystem,const QStringList &units,const QStringList &units_id,QWidget *parent=0, const char *name=0);
  void init();

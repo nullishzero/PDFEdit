@@ -95,15 +95,6 @@ void HelpWindow::index() {
  setPage(QString::null);
 }
 
-/**
- This is called on attempt to close window.
- The window will delete itself
- @param e Close event (unused)
-*/
-void HelpWindow::closeEvent(__attribute__((unused)) QCloseEvent *e) {
- delete this;
-}
-
 /** default destructor */
 HelpWindow::~HelpWindow() {
  globalSettings->saveWindow(this,"help"); 

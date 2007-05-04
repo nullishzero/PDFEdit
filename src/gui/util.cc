@@ -264,7 +264,7 @@ QString loadFromFile(const QString &name) {
   //Failure
   return QString::null;
  } 
- QByteArray qb=f.readAll();;
+ QByteArray qb=f.readAll();
  f.close();
  QTextCodec *codec=QTextCodec::codecForName("utf8");
  assert(codec);
