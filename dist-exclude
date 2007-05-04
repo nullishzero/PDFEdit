@@ -4,7 +4,6 @@ TODO
 FEATURES
 dist-exclude
 makedist
-pdfedit*tar*
 doc/README.cygwin
 doc/doxygen.warnings
 doc/navrh
@@ -55,13 +54,4 @@ src/xpdf/xpdf/pdftoppm
 src/xpdf/xpdf/pdftops
 src/xpdf/xpdf/pdftotext
 src/xpdf/xpdf/xpdf
-test/docbook
-test/documents
-test/documents/*.pdf
-test/gui-misc/misc
-test/gui-misc/Makefile
-test/propedit
-test/qsettings
-test/qt-multi-window
-test/styles
-test/*/*.o
+test/*

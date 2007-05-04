@@ -11,7 +11,7 @@
 #Get version number
 VERSION=`./getversion`
 #Pack all files, excluding unwanted ones (CVS files, generated programmer documentation, object files, binaries, etc ...)
-rm ../pdfedit-$VERSION
+rm -f ../pdfedit-$VERSION
 ln -s pdfedit ../pdfedit-$VERSION
 cd ..
 tar -czhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude

@@ -2,6 +2,8 @@
 	* Better error message when invalid commandline option is specified
 	* QMAKESPEC is not required by configure
 	* Minor fixes in documentation
+	* Fixed bug in script used to make tarballs - one documentation file
+	  was not included in releases
 
 2007-04-29 PDF Editor 0.3.1
 	* Fixed commandline function invocation
