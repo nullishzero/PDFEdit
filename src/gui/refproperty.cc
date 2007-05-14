@@ -95,10 +95,11 @@ void RefProperty::setPdf(CPdf *_pdf) {
 void RefProperty::resizeEvent(QResizeEvent *e) {
  int w=e->size().width();
  int h=e->size().height();
+ if (w<=0 || h<=0) return;//Some invalid size anyway. No need to move the subwidgets
  pb->move(w-h,0);
  pb->setFixedSize(QSize(h,h));
  ed->move(0,0);
- ed->setFixedSize(QSize(w-h,h));
+ ed->setFixedSize(QSize(MAX(0,w-h),h));
 }
 
 /** default destructor */
