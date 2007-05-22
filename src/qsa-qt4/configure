@@ -1,0 +1,73 @@
+#!/bin/sh
+
+OPT_HELP=no
+OPT_FORCE_THREAD=no
+
+# parse arguments
+for a in "$@"; do
+    case "$a" in
+    -help|--help)
+	OPT_HELP=yes
+	;;
+    *)
+        # passed to configure2
+	;;
+    esac
+done
+
+if [ "$OPT_HELP" = "yes" ]; then
+    cat <<EOF
+Usage: configure [options]
+Options:
+  -help         Display this information
+  -prefix       Installation prefix
+  -no-ide       Excludes QSA Workbench from the qsa library.
+  -no-editor    Excludes the QSA Editor from the qsa library.
+  -debug 	Force debug build
+  -release 	Force release build
+EOF
+   exit 0
+fi
+
+if [ -z $QTDIR ]
+then
+    echo "Can't find Qt library. No QTDIR set."
+    exit 1
+else
+    echo "Using Qt library in $QTDIR."
+fi
+
+QMAKE_CACHE=${QTDIR}/.qmake.cache
+if [ -f ${QMAKE_CACHE} ]; then
+    rm -f .qmake.cache
+    ln -s ${QMAKE_CACHE} .qmake.cache
+else
+    echo Trying my best without a .qmake.cache file
+fi
+
+
+if uname | grep -q "Darwin" ; then
+    SPEC=macx-g++
+fi
+
+find src -name Makefile -exec rm {} \;
+find examples -name Makefile -exec rm {} \;
+
+# build 2nd stage configure tool
+echo "Building 2nd stage configure"
+cd configure2
+
+if [ -z $SPEC ]; then
+    qmake && make > /dev/null
+else
+    QMAKESPEC=$SPEC qmake && make > /dev/null
+fi
+
+if [ $? -gt 0 -o ! -x configure2 ]; then
+    exit 1
+fi
+
+# invoke 2nd stage
+cd ..
+configure2/configure2 "$@" || exit 1
+

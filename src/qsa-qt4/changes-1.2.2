@@ -1,0 +1,83 @@
+QSA 1.2.2 is a patch release, containing mostly bug fixes. It maintains both
+forward and backward compatibility (source and binary) with QSA 1.2.1
+
+
+********************************************************************************
+Interpreter/Language:
+
+  * Bugfix: Calling a slot with signature (int) now reports an error if
+            a string that is not a numeric string, is passed as argument.
+
+  * Bugfix: instanceof operator did not work for objects created with
+            QSObjectFactory
+
+  * Bugfix: Scripts containing "0++" would crash.
+
+  * Bugfix: Several memory leaks.
+
+  * Bugfix: Throwing an execption while evaluating the condition of an
+            if statement, would cause a crash.
+  
+  * Bugfix: Setting a script function to null would cause an assert.
+
+  * Bugfix: Using the with node on a non-object, such as a number, would cause 
+            a crash.
+
+  * Bugfix: Number parsing is now always based on C locale.
+
+  * Bugfix: Recursively calling slots from scripts would sometimes cause a crash.
+
+  * Bugfix: Calling a slot with signature (QStringList) failed when
+            passed an empty array.
+
+  * Bugfix: Slots in base classes where shadowed and unavailable from scripts.
+
+  * Bugfix: Calling a slot with signature (QVariant) failed when a QObject *.
+            is passed as argument.
+
+********************************************************************************
+QSWorkbench:
+
+  * Bugfix: QSWorkbench leaked memory.
+
+  * Bugfix: QSWorkbench would sometimes crash on mac, due to a bad image
+            reference.
+
+  * QSWorkbench now stores its window state between runs.
+
+  * QSWorkbench now supports translation.
+
+
+********************************************************************************
+Build System:
+
+  * Added -release and -debug build options to override default settings.
+
+  * Improved buildsystem for Mac OS X.
+ 
+  * Compiles with -no-ide
+
+********************************************************************************
+QSEditor:
+
+  * Bugfix: Completion would cause a crash when typing "." in an empty script.
+
+  * Bugfix: (x. and {x. now opens completion for x.
+
+
+********************************************************************************
+QSProject:
+ 
+  * Bugfix: isRunning() would sometimes report true after an error.
+
+
+********************************************************************************
+QSUtilFactory:
+
+  * Bugfix: Process.execute would sometimes fail if the program name contained
+            spaces.
+
+  * Bugfix: Process.execute() would sometimes fail if the stdin parameter was used.
+
+  * The Process class can now be used from any thread.
+  

@@ -1,0 +1,63 @@
+Installing Qt Script for Applications (QSA)
+-------------------------------------------
+
+This version of QSA requires Qt 4.0.1 or newer. It will not work
+against Qt 3 or Qt 4.0.0.
+
+Make sure that the $QTDIR environment variable points to the Qt
+installation directory and that $QTDIR/bin is in your PATH and
+$QTDIR/lib has to specified in your library path.
+
+
+Unix or Mac:
+------------
+./configure
+make
+
+
+Windows:
+--------
+configure
+nmake
+
+*********************************************************************
+Alternatively:
+It is possible to do a make install, by configuring with -prefix:
+
+configure -prefix dest_dir
+make
+make install
+
+
+*********************************************************************
+It is possible to configure with -no-editor to have QSA build without
+the QSWorkbench and QSEditor classes. QSA will not depend on the Qt3
+support library in this configuration
+
+For further information on Qt Script for Applications, 
+see the README file.
+
+
+*********************************************************************
+Launching QSA applications from the Finder on Mac
+
+If you built Qt and QSA statically option, your executables will
+contain the Qt library and can be run from Finder
+automatically. Otherwise, your executables will need to use the Qt
+library on your system. You can achieve this by using symbolic
+links.
+
+    ln -sf $QTDIR/lib/libqsa.1.dylib /usr/lib
+
+You may need to have 'administrator' access to do this, (in which
+case, precede each command with 'sudo', e.g. 'sudo ln -s ...'). If
+you use sudo you'll be prompted for your password.
+
+If you do not have administrator access, or you would prefer to do
+a user install (rather than system install) of the libraries you 
+can do:
+
+ln -sf $QTDIR/lib/libqsa.1.dylib $HOME/lib
+
+Note: you can also achieve similar functionality by adding your
+DYLD_LIBRARY_PATH to the GUI's environment.

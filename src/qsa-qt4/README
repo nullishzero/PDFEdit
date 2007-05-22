@@ -1,0 +1,44 @@
+Getting Started with Qt Script for Applications
+===============================================
+
+Thank you for choosing QSA!
+
+The INSTALL file contains information on how to install QSA.
+
+========================================
+This version of QSA is strictly for Qt 4
+========================================
+
+QSA Documentation
+-----------------
+
+The full QSA reference documentation in HTML format is included in the
+doc\html directory. You can read it by opening the file
+doc\html\index.html with any web browser or by using Qt Assistant
+after QSA has been installed.
+
+If you are new to QSA, we recommend that you check out the
+Getting Started section. 
+
+
+Reporting Bugs, Mailing List and Support
+----------------------------------------
+
+Any inquiries or problems encountered with QSA should be reported to
+support@trolltech.com. Include as much information as you can about
+your environment and versions.
+
+If you want to join the QSA users' mailing list, send a mail to
+qsa-interest-request@trolltech.com containing the single word "subscribe".
+
+
+More information
+----------------
+Please see http://www.trolltech.com/products/qsa for more information
+about QSA.
+
+Please do not hesitate to contact us at sales@trolltech.com if you
+have questions regarding purchasing of QSA. 
+
+Enjoy QSA!
+The Trolltech team

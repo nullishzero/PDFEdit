@@ -1,0 +1,223 @@
+<!DOCTYPE UI><UI version="4.0">
+<class>QSReplaceText</class>
+<comment>****************************************************************************
+**
+** Copyright (C) 1992-2007 Trolltech AS. All rights reserved.
+**
+** This file is part of the QSA of the Qt Toolkit.
+**
+** For QSA Commercial License Holders (non-open source):
+** 
+** Licensees holding a valid Qt Script for Applications (QSA) License Agreement
+** may use this file in accordance with the rights, responsibilities and
+** obligations contained therein.  Please consult your licensing agreement or
+** contact sales@trolltech.com if any conditions of the Licensing Agreement are
+** not clear to you.
+** 
+** Further information about QSA licensing is available at:
+** http://www.trolltech.com/products/qsa/licensing.html or by contacting
+** info@trolltech.com.
+** 
+** 
+** For Open Source Edition:  
+** 
+** This file may be used under the terms of the GNU General Public License
+** version 2 as published by the Free Software Foundation and appearing in the
+** file LICENSE.GPL included in the packaging of this file.  Please review the
+** following information to ensure GNU General Public Licensing requirements
+** will be met:  http://www.trolltech.com/products/qt/opensource.html 
+** 
+** If you are unsure which license is appropriate for your use, please review
+** the following information:
+** http://www.trolltech.com/products/qsa/licensing.html or contact the 
+** sales department at sales@trolltech.com.
+
+**
+** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+**
+****************************************************************************</comment>
+<widget class="QDialog" name="QSReplaceText">
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>294</width>
+            <height>223</height>
+        </rect>
+    </property>
+    <property name="windowTitle">
+        <string>Replace Text</string>
+    </property>
+    <property name="sizeGripEnabled">
+        <bool>true</bool>
+    </property>
+    <layout class="QGridLayout">
+        <item row="1" column="1">
+        <widget class="QGroupBox" name="findDirection">
+            <property name="title">
+                <string>Direction</string>
+            </property>
+            <layout class="QVBoxLayout">
+                <item>
+                <widget class="QRadioButton" name="radioForward">
+                    <property name="text">
+                        <string>Forwar&amp;d</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                </item>
+                <item>
+                <widget class="QRadioButton" name="radioBackward">
+                    <property name="text">
+                        <string>Bac&amp;kward</string>
+                    </property>
+                </widget>
+                </item>
+            </layout>
+        </widget>
+        </item>
+        <item row="1" column="0">
+        <widget class="QGroupBox" name="findOptions">
+            <property name="title">
+                <string>Options</string>
+            </property>
+            <layout class="QVBoxLayout">
+                <item>
+                <widget class="QCheckBox" name="checkWhole">
+                    <property name="text">
+                        <string>&amp;Whole words only</string>
+                    </property>
+                </widget>
+                </item>
+                <item>
+                <widget class="QCheckBox" name="checkCase">
+                    <property name="text">
+                        <string>Case &amp;sensitive</string>
+                    </property>
+                </widget>
+                </item>
+                <item>
+                <widget class="QCheckBox" name="checkStart">
+                    <property name="text">
+                        <string>Start at &amp;Beginning</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                </item>
+            </layout>
+        </widget>
+        </item>
+        <item row="2" column="0" rowspan="1" colspan="2">
+        <widget class="QWidget" name="layout19">
+            <layout class="QHBoxLayout">
+                <item>
+                <widget class="QPushButton" name="pushReplace">
+                    <property name="text">
+                        <string>&amp;Replace</string>
+                    </property>
+                </widget>
+                </item>
+                <item>
+                <widget class="QPushButton" name="pushReplaceAll">
+                    <property name="text">
+                        <string>Replace &amp;All</string>
+                    </property>
+                </widget>
+                </item>
+                <item>
+                <widget class="QPushButton" name="pushClose">
+                    <property name="text">
+                        <string>&amp;Close</string>
+                    </property>
+                </widget>
+                </item>
+            </layout>
+        </widget>
+        </item>
+        <item row="0" column="0" rowspan="1" colspan="2">
+        <widget class="QWidget" name="layout27">
+            <layout class="QGridLayout">
+                <item row="0" column="1">
+                <widget class="QComboBox" name="comboFind">
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="editable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="insertPolicy">
+                        <enum>InsertAtTop</enum>
+                    </property>
+                </widget>
+                </item>
+                <item row="0" column="0">
+                <widget class="QLabel" name="textLabel">
+                    <property name="text">
+                        <string>F&amp;ind:</string>
+                    </property>
+                    <property name="buddy">
+                        <cstring>comboFind</cstring>
+                    </property>
+                </widget>
+                </item>
+                <item row="1" column="1">
+                <widget class="QComboBox" name="comboReplace">
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="editable">
+                        <bool>true</bool>
+                    </property>
+                    <property name="insertPolicy">
+                        <enum>InsertAtTop</enum>
+                    </property>
+                </widget>
+                </item>
+                <item row="1" column="0">
+                <widget class="QLabel" name="textLabel_2">
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>R&amp;eplace:</string>
+                    </property>
+                    <property name="buddy">
+                        <cstring>comboFind</cstring>
+                    </property>
+                </widget>
+                </item>
+            </layout>
+        </widget>
+        </item>
+    </layout>
+</widget>
+<connections>
+    <connection>
+        <sender>pushClose</sender>
+        <signal>clicked()</signal>
+        <receiver>QSReplaceText</receiver>
+        <slot>close()</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>
