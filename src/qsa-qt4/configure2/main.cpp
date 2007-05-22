@@ -34,6 +34,11 @@ static void dumpMessages()
     qWarning( "%s", qPrintable(messages().join( QLatin1String("\n") )) );
 }
 
+static void dumpMessagesStdout()
+{
+    printf("%s\n", qPrintable(messages().join( QLatin1String("\n") )) );
+}
+
 int main( int argc, char **argv )
 {
 #ifndef QT_VERSION
@@ -88,6 +93,13 @@ int main( int argc, char **argv )
         } else if (arg == QLatin1String("-release")) {
             configs << QLatin1String("release");
             antiConfigs << QLatin1String("debug") << QLatin1String("debug_and_release");
+        } else if (arg == QLatin1String("-qmake")) {
+	    if ( i + 1 < qapp.argc() ) {
+                setQMake(qapp.argv()[++i]);
+	    } else {
+		qWarning( "-qmake option requires argument" );
+		exit( 2 );
+	    }
         } else if (arg == QLatin1String("-no-editor")) {
             buildEditor = false;
             configs << QLatin1String("noeditor");
@@ -110,11 +122,6 @@ int main( int argc, char **argv )
     }
     *qtDir += QLatin1String("/");
 
-    if ( !checkLicense() ) {
-        dumpMessages();
-        return 1;
-    }
-
     if( !writeQSConfig( buildIde, buildEditor, buildNewEditor ) ) {
         dumpMessages();
         return 1;
@@ -130,15 +137,11 @@ int main( int argc, char **argv )
         return 1;
     }
 
-    if ( !qsa_prefix || qsa_prefix->isEmpty() )
-        copyQSAHeaders();
-
-    installDocs();
-
     runQMake( configs, antiConfigs, qsa_prefix ? *qsa_prefix : QString());
 
     if( errors ) {
         message(QLatin1String("\nThere were errors during configure!"));
+        dumpMessages();
     } else if( warnings ) {
         if (qdoc_warning) {
             message(QLatin1String("\nFailed to install documentation"));
@@ -151,13 +154,14 @@ int main( int argc, char **argv )
             "\ndo not appear to be fatal, so you should still be"
             "\nable to build QSA."
             "\nRun your make tool to build QSA."));
+        dumpMessages();
     } else {
         message(QLatin1String("\n"
             "Configuration completed successfully\n"
             "Run your make tool to build QSA"));
+        dumpMessagesStdout();
     }
 
-    dumpMessages();
     return errors;
 }
 

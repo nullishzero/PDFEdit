@@ -1,14 +1,10 @@
 TEMPLATE	= lib
-CONFIG		+= warn_on link_prl
+CONFIG		+= warn_on link_prl staticlib
 shared:CONFIG += qt dll
-VERSION  	= 1.2.2
-TARGET = qsa
+TARGET 		= qsa_pdfedit
+VERSION  	= 1.2.2m
 
-isEmpty(QSA_INSTALL_PREFIX) {
-  QSA_BUILD_PREFIX=$$(QTDIR)
-} else {
-  QSA_BUILD_PREFIX=../..
-}
+QSA_BUILD_PREFIX=../..
 
 DESTDIR         = $$QSA_BUILD_PREFIX/lib
 DLLDESTDIR      = $$QSA_BUILD_PREFIX/bin

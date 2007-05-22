@@ -3,12 +3,6 @@
 # Main Makefile for building the QSA library with examples.
 
 all: run-make
-	@echo .
-	@echo The QSA library is now built.
-	@echo The QSA examples are built in examples directories.
-	@echo .
-	@echo Enjoy!   - the Trolltech team
-	@echo .
 
 Makefile.qsa:
 	@echo .
@@ -30,3 +24,10 @@ clean:
 
 distclean:
 	$(MAKE) -f Makefile.qsa distclean
+	rm -rf .moc .obj configure2/.moc configure2/.obj
+	rm -f configure2/configure2 configure2/Makefile
+	rm -f Makefile.qsa .qmake.cache lib/libqsa_pdfedit.prl lib/libqsa_pdfedit.a
+
+staticlib: Makefile.qsa
+	$(MAKE) -f Makefile.qsa
+

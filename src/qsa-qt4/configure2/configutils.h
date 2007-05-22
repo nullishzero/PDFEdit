@@ -30,20 +30,10 @@ extern bool qmake_warning;
 void message( const QString &msg );
 QStringList messages();
 
-QString licenseFile();
-bool isUsLicense();
-
 void runQMake( const QStringList &configs, const QStringList &antiConfigs, const QString &prefix );
-void copyQSAHeaders();
-void installDocs();
-void mkDir( const QString &dir );
-void copy( const QString &source, const QString &target );
-void symLink( const QString &source, const QString &target );
-bool checkLicense();
 bool writeQSConfig(bool buildIde, bool buildEditor, bool buildNewEditor);
-uint convertor( const QString &list );
-void rmDirRecursive( const QDir &dir );
 bool writeExtraConfigs(const QStringList &configs);
 bool writeQsaPrfFile(bool include_qt3_support);
+void setQMake( const QString &str );
 
 #endif
