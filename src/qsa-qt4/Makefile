@@ -24,9 +24,11 @@ clean:
 
 distclean:
 	$(MAKE) -f Makefile.qsa distclean
-	rm -rf .moc .obj configure2/.moc configure2/.obj
 	rm -f configure2/configure2 configure2/Makefile
-	rm -f Makefile.qsa .qmake.cache lib/libqsa_pdfedit.prl lib/libqsa_pdfedit.a
+	rm -f .qmake.cache lib/libqsa_pdfedit.prl lib/libqsa_pdfedit.a
+	rm -f src/kernel/plugin/Makefile.qsa
+	rm -f src/qsa/qsa.prf
+	rm -f src/qsa/qsconfig.h
 
 staticlib: Makefile.qsa
 	$(MAKE) -f Makefile.qsa

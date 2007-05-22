@@ -7,7 +7,7 @@ VERSION  	= 1.2.2m
 QSA_BUILD_PREFIX=../..
 
 DESTDIR         = $$QSA_BUILD_PREFIX/lib
-DLLDESTDIR      = $$QSA_BUILD_PREFIX/bin
+DLLDESTDIR      = $$QSA_BUILD_PREFIX/lib
 
 HEADERS		= \
 		  qsproject.h \
@@ -81,7 +81,7 @@ headers.files 	= \
 !isEmpty(QSA_INSTALL_PREFIX) {
   headers.path = $$QSA_INSTALL_PREFIX/include
   win32 {
-    target.path = $$QSA_INSTALL_PREFIX/bin
+    target.path = $$QSA_INSTALL_PREFIX/lib
   } else {
     target.path = $$QSA_INSTALL_PREFIX/lib
   }
