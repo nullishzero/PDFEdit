@@ -238,7 +238,7 @@ contains( QTVERSION, qt3 ) {
 contains( QTVERSION, qt4 ) {
  #use included QSA
  #QSA include
- INCLUDEPATH += ../qsa/src/qsa-qt4
+ INCLUDEPATH += ../qsa-qt4/src/qsa
  #QSA static lib
  LIBS += -L../qsa-qt4/lib -lqsa_pdfedit
 }
