@@ -236,7 +236,11 @@ contains( QTVERSION, qt3 ) {
  LIBS += -L../qsa/lib -lqsa_pdfedit
 }
 contains( QTVERSION, qt4 ) {
- error (Qt4.x is not supported)
+ #use included QSA
+ #QSA include
+ INCLUDEPATH += ../qsa/src/qsa-qt4
+ #QSA static lib
+ LIBS += -L../qsa-qt4/lib -lqsa_pdfedit
 }
 
 #OutputDevice
