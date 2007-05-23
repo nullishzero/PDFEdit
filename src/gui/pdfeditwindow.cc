@@ -817,7 +817,7 @@ bool PdfEditWindow::openFile(const QString &name) {
  } catch (PdfOpenException &ex) {
   string err;
   ex.getMessage(err);
-  base->setError(tr("Error while loading document ")+name+"\n"+err);
+  base->setError(tr("Error while loading document ")+name+"\n"+util::convertToUnicode(err,UTF8));
   //File failed to open, keep window opened with empty file.
   emptyFile();
   base->call("onLoadError");

@@ -28,18 +28,18 @@ class TreeItemObserver;//internal class (observer)
  */
 class TreeItemRef : public TreeItem {
 public:
- TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemRef(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemRef(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemRef(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemRef();
  QString getRef();
  virtual void setOpen(bool open);
  void unOpen();
  bool isComplete();
  //From TreeItemAbstract interface
- virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
+ virtual bool deepReload(const QString &childName,Q_ListViewItem *oldItem);
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual bool haveChild();
  virtual void reloadSelf();

@@ -17,7 +17,6 @@
 */
 
 #include "menu.h"
-#include "qtcompat.h"
 #include "iconcache.h"
 #include "settings.h"
 #include "toolbar.h"
@@ -30,7 +29,7 @@
 #include <qmenubar.h>
 #include <qmenudata.h>
 #include <qpixmap.h>
-#include <qpopupmenu.h>
+#include QPOPUPMENU
 #include <qregexp.h>
 #include <qstring.h>
 #include <qtextstream.h> 
@@ -171,7 +170,7 @@ void Menu::optimizeItems(QMenuData *menu) {
    //No usable letter for accelerator found. How unfortunate ... 
    continue;
   }
-  char pAccel=filterText[idx].lower();
+  char pAccel=filterText[idx].lower().latin1();
   //Find positoon of accel in original string
   idx=itemText.find(pAccel,0,false);
   assert(idx>=0);
@@ -258,7 +257,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
  //Load items into list
  QString line=readItem(name);
  if (isList(line)) { // List of values - a submenu, first is name of submenu, others are items in it
-  QPopupMenu *item=new QPopupMenu();
+  Q_PopupMenu *item=new Q_PopupMenu();
   QString menuName=parseName(line,name);
   loadItemsDef(line,item,prev);
   if (parent) {
@@ -285,7 +284,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
 char Menu::getAccel(const QString &name) {
  int pos=name.find('&');
  if (pos==-1) return 0;
- return name[pos+1].lower();
+ return name[pos+1].lower().latin1();
 }
 
 /**
@@ -670,10 +669,15 @@ ToolBar* Menu::getToolbar(const QString &name) {
  Save toolbar state of QMainWindow to configuration
 */
 void Menu::saveToolbars() {
+#ifdef QT4
+ QByteArray ba=main->saveState();
+ globalSettings->write("gui/toolbarpos",QString(ba.toBase64()));
+#else
  QString out;
  QTextStream qs(out,IO_WriteOnly);
  qs << *main;
  globalSettings->write("gui/toolbarpos",out);
+#endif
 } 
 
 /**
@@ -682,8 +686,12 @@ void Menu::saveToolbars() {
 void Menu::restoreToolbars() {
  QString out=globalSettings->read("gui/toolbarpos");
  if (out.isNull()) return;
+#ifdef QT4
+ main->restoreState(QByteArray::fromBase64(out.toAscii()));
+#else
  QTextStream qs(out,IO_ReadOnly);
  qs >> *main;
+#endif
 } 
 
 /**

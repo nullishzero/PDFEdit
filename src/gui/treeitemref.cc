@@ -27,9 +27,9 @@ using namespace util;
 using namespace pdfobjects;
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemRef::TreeItemRef(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  complete=false;
  addData();
  reload(false);
@@ -37,9 +37,9 @@ TreeItemRef::TreeItemRef(TreeData *_data,QListView *parent,boost::shared_ptr<IPr
 }
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemRef::TreeItemRef(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemRef::TreeItemRef(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  complete=false;
  addData();
  reload(false);
@@ -155,7 +155,7 @@ void TreeItemRef::reloadSelf() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  assert(name=="Target");
  QString s;
  CPdf* pdf=obj->getPdf();
@@ -170,7 +170,7 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((un
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemRef::validChild(__attribute__((unused)) const QString &name,QListViewItem *oldChild) {
+bool TreeItemRef::validChild(__attribute__((unused)) const QString &name,Q_ListViewItem *oldChild) {
  CPdf* pdf=obj->getPdf();
  if (!pdf) return false; //No document opened -> cannot parse references
  CRef* cref=dynamic_cast<CRef*>(obj.get());
@@ -183,7 +183,7 @@ bool TreeItemRef::validChild(__attribute__((unused)) const QString &name,QListVi
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemRef::deepReload(__attribute__((unused)) const QString &childName,QListViewItem *oldItem) {
+bool TreeItemRef::deepReload(__attribute__((unused)) const QString &childName,Q_ListViewItem *oldItem) {
  CPdf* pdf=obj->getPdf();
  if (!pdf) return false; //No document opened -> cannot parse references
  CRef* cref=dynamic_cast<CRef*>(obj.get());

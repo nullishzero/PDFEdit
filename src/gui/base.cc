@@ -534,7 +534,7 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 	of.close();
 
 	// Do something with the result
-	return QString (XmlOutputBuilder::xml(out));
+	return QString (util::convertToUnicode(XmlOutputBuilder::xml(out),UTF8));
 }
 
 /**

@@ -26,25 +26,25 @@ using namespace std;
 using namespace util;
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemArray::TreeItemArray(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemArray::TreeItemArray(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemArray::TreeItemArray(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemArray::TreeItemArray(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemArray::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemArray::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  CArray *ar=dynamic_cast<CArray*>(obj.get());
  unsigned int i=name.toUInt();
  try {
@@ -89,7 +89,7 @@ QStringList TreeItemArray::getChildNames() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemArray::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemArray::validChild(const QString &name,Q_ListViewItem *oldChild) {
  size_t i=name.toUInt();
  CArray *ar=dynamic_cast<CArray*>(obj.get());
  try {
@@ -153,7 +153,7 @@ void TreeItemArray::remove(unsigned int idx) {
  assert(tx);//Not a treeitem? What is that?
  items.replace("--",tx);//Copy "current" so we don't lose it;
  tx->unSelect(data->tree());
- Q_DictIterator<QListViewItem> it(items);
+ Q_DictIterator<Q_ListViewItem> it(items);
  for(int i=idx;i<cnt-1;i++) {
   //TODO: this is a bit ugly (but still working)
   TreeItemAbstract* t=dynamic_cast<TreeItemAbstract*>(items[QString::number(i+1)]);

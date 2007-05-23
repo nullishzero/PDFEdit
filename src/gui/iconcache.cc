@@ -13,13 +13,13 @@
 */
 
 #include "iconcache.h"
-#include "qtcompat.h"
 #include "settings.h"
 #include "util.h"
 #include <assert.h>
 #include <qfile.h>
 #include <qmap.h>
 #include <qpixmap.h>
+#include QICON
 #include <qstring.h>
 #include <qstringlist.h>
 #include <utils/debug.h>
@@ -38,7 +38,7 @@ int iconCacheInstances=0;
  /** Icon Cache type: mapping from icon name to pixmap */
  typedef QMap<QString, QPixmap*> IconCacheData;
  /** Icon Sets Cache type: mapping from icon name to icon set */
- typedef QMap<QString, QIconSet*> IconSetsData;
+ typedef QMap<QString, QIcon*> IconSetsData;
 
 //Internal icon cache data shared by all icon cache instance
  /** List with paths to application icons */
@@ -130,14 +130,14 @@ QPixmap* IconCache::getIcon(const QString &name) {
  @param name Name of icon set to get
  @return IconSet containing specified icon set
 */
-QIconSet* IconCache::getIconSet(const QString &name) {
+QIcon* IconCache::getIconSet(const QString &name) {
  //Look in cache first
  if (setCache.contains(name)) return setCache[name];
  //Not found in cache - try to create
  QPixmap* pix=getIcon(name);
  if (!pix) return NULL;//File not found ... 
  //Pixmap is OK
- QIconSet *ico=new QIconSet(*pix);
+ QIcon *ico=new QIcon(*pix);
  setCache[name]=ico;
  return ico; 
 }

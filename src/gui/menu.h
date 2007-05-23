@@ -10,14 +10,15 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
+#include "qtcompat.h"
 #include <qmap.h>
 #include <qstringlist.h>
-#include <qiconset.h>
+#include QICON
 #include "invalidmenuexception.h"
 class QMainWindow;
 class QMenuBar;
 class QMenuData;
-class QPopupMenu;
+class Q_PopupMenu;
 class QPixmap;
 class QWidget;
 class QWidget;
@@ -44,7 +45,7 @@ typedef QMap<QString, ToolBar*> ToolBarList;
 /** Mapping from accel name to widget that have this accel */
 typedef QMap<QString, QString> AccelList;
 /** Cache of already defined menu items (some menus may be used on more than one place) */
-typedef QMap<QString, QPopupMenu*> MenuCache;
+typedef QMap<QString, Q_PopupMenu*> MenuCache;
 /** List of already used accelerators for specific popup menu */
 typedef QMap<QMenuData*, QString> MenuAccels;
 /** Cache of already defined menu items (names) */
@@ -83,7 +84,7 @@ public:
  static bool isList(const QString &line);
  static QString parseName(QString &line, const QString &name=QString::null) throw (InvalidMenuException);
  const QPixmap* getIcon(const QString &name);
- const QIconSet* getIconSet(const QString &name);
+ const QIcon* getIconSet(const QString &name);
  void loadItem(const QString &name,QMenuData *parent=NULL,QStringList prev=QStringList()) throw (InvalidMenuException);
  static bool chopCommand(QString &line, const QString &command);
  static void invalidItem(const QString &type,const QString &name,const QString &line,const QString &expected=QString::null) throw (InvalidMenuException);

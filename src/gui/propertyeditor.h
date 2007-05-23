@@ -19,7 +19,7 @@
 #include <pdfoperators.h>
 
 class QResizeEvent;
-class QScrollView;
+class Q_ScrollView;
 class QLabel;
 class QStringList;
 class QGridLayout;
@@ -95,7 +95,7 @@ private:
  /** Layout used for the grid */
  QGridLayout *gridl;
  /** Scrollview holding the grid */
- QScrollView *scroll;
+ Q_ScrollView *scroll;
  /** List of property names */
  QStringList *list;
  /** Dictionary with property items */

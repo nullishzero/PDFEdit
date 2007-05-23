@@ -59,9 +59,17 @@ function isPageAvaliable() {
  	return false;
 }
 
-/** Validate item selection */
+/** Validate tree item selection */
 function isTreeItemSelected() {
  if (undefined == firstSelectedItem()) {
+	return false;
+ }else
+ 	return true;
+}
+
+/** Validate item selection */
+function isItemInTreeSelected() {
+ if (undefined == firstSelected()) {
 	return false;
  }else
  	return true;

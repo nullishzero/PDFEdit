@@ -35,37 +35,37 @@ using namespace util;
 
 /**
  constructor of TreeItem - create root item from given object
- @param parent QListView in which to put item
+ @param parent Q_ListView in which to put item
  @param pdfObj Object contained in this item
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
  */
-TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItem::TreeItem(const QString &nameId,TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  _parent=NULL; //If not TreeItem, _parent will be NULL
  init(pdfObj,name);
 }
 
 /**
  constructor of TreeItem - create child item from given object
- @param parent QListViewItem which is parent of this object
+ @param parent Q_ListViewItem which is parent of this object
  @param pdfObj Object contained in this item
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param _data TreeData containing necessary information about tree in which this item will be inserted
  @param after Item after which this one will be inserted
 */
-TreeItem::TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItem::TreeItem(const QString &nameId,TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  _parent=dynamic_cast<TreeItem*>(parent); //If not TreeItem, _parent will be NULL
  init(pdfObj,name);
 }
 
 /**
  "Constructor" that will create object of proper class based on type of IProperty <br>
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
 */
-TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
+TreeItem* TreeItem::create(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
  assert(_data);
  QString useName;
  if (nameId.isNull()) useName=name; else useName=nameId;
@@ -80,9 +80,9 @@ TreeItem* TreeItem::create(TreeData *_data,QListView *parent,boost::shared_ptr<I
 
 /**
  "Constructor" that will create object of proper class based on type of IProperty <br>
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
 */
-TreeItem* TreeItem::create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
+TreeItem* TreeItem::create(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=QString::null*/) {
  assert(_data);
  QString useName;
  if (nameId.isNull()) useName=name; else useName=nameId;
@@ -160,11 +160,11 @@ bool TreeItem::setObject(boost::shared_ptr<IProperty> newItem) {
 
 
 /** Insert existing item as child of this item
- @param newChild child QListViewItem to be inserted
+ @param newChild child Q_ListViewItem to be inserted
  */
-void TreeItem::insertItem(QListViewItem *newChild) {
+void TreeItem::insertItem(Q_ListViewItem *newChild) {
  guiPrintDbg(debug::DBG_DBG,"Insert existing item");
- QListViewItem::insertItem(newChild);
+ Q_ListViewItem::insertItem(newChild);
  TreeItem *oChild=dynamic_cast<TreeItem*> (newChild);
  if (oChild) oChild->setParent(this);
 }

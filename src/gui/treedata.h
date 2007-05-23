@@ -12,7 +12,7 @@
 
 #include "qtcompat.h"
 #include QDICT
-class QListView;
+class Q_ListView;
 class QString;
 
 namespace gui {
@@ -30,10 +30,10 @@ class BaseCore;
 */
 class TreeData {
 public:
- TreeData(TreeWindow *parent,QListView *tree,BaseCore *base,MultiTreeWindow *multi);
+ TreeData(TreeWindow *parent,Q_ListView *tree,BaseCore *base,MultiTreeWindow *multi);
  ~TreeData();
  TreeWindow* parent();
- QListView* tree();
+ Q_ListView* tree();
  MultiTreeWindow* multi();
  BaseCore* base();
  void add(TreeItemRef *it);
@@ -63,7 +63,7 @@ private:
  /** MultiTreeWindow holding specified window */
  MultiTreeWindow *_multi;
  /** List view from inside the tree window */
- QListView *_tree;
+ Q_ListView *_tree;
  /** Scripting base */
  BaseCore *_base;
  /** Dictionary holding tree items that are references */

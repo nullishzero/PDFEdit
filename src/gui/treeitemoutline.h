@@ -31,8 +31,8 @@ class TreeData;
 */
 class TreeItemOutline : public TreeItemDict {
 public:
- TreeItemOutline(TreeData *_data,QListView *parent,OutlineItem pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemOutline(TreeData *_data,QListViewItem *parent,OutlineItem pdfObj,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemOutline(TreeData *_data,Q_ListView *parent,OutlineItem pdfObj,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemOutline(TreeData *_data,Q_ListViewItem *parent,OutlineItem pdfObj,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemOutline();
  //From TreeItemAbstract interface
  virtual void reloadSelf();

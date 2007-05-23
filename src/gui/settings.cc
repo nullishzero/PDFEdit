@@ -348,7 +348,7 @@ void Settings::restoreWindow(QWidget *win,const QString &name) {
  @param name Name of key to be used in configuration */  
 void Settings::saveSplitter(QSplitter *spl,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"save splitter " << name);
- QValueList<int> siz=spl->sizes();
+ Q_List<int> siz=spl->sizes();
  QString line;
  int cnt=siz.size();
  for (int i=0;i<cnt;i++) {
@@ -366,7 +366,7 @@ void Settings::restoreSplitter(QSplitter *spl,const QString &name) {
  QString line=read("gui/windowstate/"+name);
  QStringList pos=explode(',',line);
  int cnt=pos.count();
- QValueList<int> splSize;
+ Q_List<int> splSize;
  if (cnt<2) return;//No previous window state information available, or it is invalid
  for(int i=0;i<cnt;i++) {
   int v=atoi(pos[i]);

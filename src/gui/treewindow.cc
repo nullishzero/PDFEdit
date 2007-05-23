@@ -12,7 +12,6 @@
  @author Martin Petricek
 */
 #include "treewindow.h"
-#include "qtcompat.h"
 #include "settings.h"
 #include "util.h"
 #include <iostream>
@@ -56,7 +55,7 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
 #ifdef DRAGDROP
  tree=new DragListView(this);//DragListView for drag and drop
 #else
- tree=new QListView(this);//DragListView for drag and drop
+ tree=new Q_ListView(this);//DragListView for drag and drop
 #endif
  tree->setSorting(-1);
  QObject::connect(tree,SIGNAL(selectionChanged(QListViewItem *)),this,SLOT(treeSelectionChanged(QListViewItem *)));
@@ -69,8 +68,8 @@ TreeWindow::TreeWindow(MultiTreeWindow *multi,Base *base,QWidget *parent/*=0*/,c
  tree->addColumn(tr("Object"));
  tree->addColumn(tr("Type"));
  tree->addColumn(tr("Data"));
- tree->setSelectionMode(QListView::Extended);
- tree->setColumnWidthMode(0,QListView::Maximum);
+ tree->setSelectionMode(Q_ListView::Extended);
+ tree->setColumnWidthMode(0,Q_ListView::Maximum);
  tree->show();
  data=new TreeData(this,tree,base,multi);
  QObject::connect(tree,SIGNAL(mouseButtonClicked(int,QListViewItem*,const QPoint &,int)),this,SLOT(mouseClicked(int,QListViewItem*,const QPoint &,int)));
@@ -209,7 +208,7 @@ void TreeWindow::treeSelectionChanged(__attribute__((unused)) QListViewItem *ite
  Called upon changing selection in the tree window (multiselect)
  */
 void TreeWindow::treeSelectionChanged() {
- QListViewItem *theItem=tree->currentItem();
+ Q_ListViewItem *theItem=tree->currentItem();
  moveOnItem(theItem);
  emit itemSelected();
 }
@@ -244,14 +243,14 @@ QSCObject* TreeWindow::nextSelected() {
  @return currently selected item
 */
 TreeItemAbstract* TreeWindow::getSelectedItem() {
- if (tree->selectionMode()==QListView::Single) {
+ if (tree->selectionMode()==Q_ListView::Single) {
   //Ask the tree for selected item
   TreeItemAbstract *selected=dynamic_cast<TreeItemAbstract*>(tree->selectedItem());
   if (!selected) return NULL; //nothing selected
   return selected;
  } else {
   //Multiselect - find first item and store it
-  selIter=QListViewItemIterator(tree);
+  selIter=Q_ListViewItemIterator(tree);
   if (!selIter.current()) return NULL;//No items in tree
   //Get "next selected item", but as we are on start, we get the first
   return nextSelectedItem();
@@ -265,7 +264,7 @@ TreeItemAbstract* TreeWindow::getSelectedItem() {
  @return next selected item or NULL if no more selected items
 */
 TreeItemAbstract* TreeWindow::nextSelectedItem() {
- if (tree->selectionMode()==QListView::Single) return NULL;
+ if (tree->selectionMode()==Q_ListView::Single) return NULL;
  //Iterator points to first item we should check for being selected
  TreeItemAbstract *selectedPtr=NULL;
  while (selIter.current()) {
@@ -281,7 +280,7 @@ TreeItemAbstract* TreeWindow::nextSelectedItem() {
 
 /** Clears all items from TreeWindow */
 void TreeWindow::clear() {
- QListViewItem *li;
+ Q_ListViewItem *li;
  while ((li=tree->firstChild())) {
   delete li;
  }
@@ -343,7 +342,7 @@ void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::
  TreeItemAbstract *rootItem=new TreeItemOperatorContainer(data,tree,vec,pName); 
  rootItem->setOpen(TRUE);
  //Select all items except the root
- QListViewItem *sel=rootItem->itemBelow();
+ Q_ListViewItem *sel=rootItem->itemBelow();
  while (sel) {
   tree->setSelected(sel,true);
   sel=sel->itemBelow();
@@ -363,8 +362,8 @@ void TreeWindow::init(const AnnotationVector &vec,boost::shared_ptr<pdfobjects::
  TreeItemAbstract *rootItem=new TreeItemAnnotationContainer(data,tree,vec,page,pName); 
  rootItem->setOpen(TRUE);
  //Select all items except the root
- QListViewItem *sel=rootItem->itemBelow();
- QListViewItem *sel2=NULL;
+ Q_ListViewItem *sel=rootItem->itemBelow();
+ Q_ListViewItem *sel2=NULL;
  while (sel) {
   tree->setOpen(sel,true);
   if (!sel2) { // Get dictionary of first annotation

@@ -15,19 +15,21 @@
 #include "util.h"
 #include "qtcompat.h"
 #include <iostream>
+#include <assert.h>
+#include QBYTEARRAY
 #include <qcolor.h>
 #include <qfile.h>
-#include <qstring.h>
-#include <qwidget.h>
 #include <qobject.h>
 #include <qregexp.h>
-#include <qtextcodec.h>
-#include <qvariant.h>
-#include QLIST
+#include <qstring.h>
 #include <qstringlist.h>
-#include <utils/debug.h>
+#include <qtextcodec.h>
+#include <qtextstream.h>
+#include <qvariant.h>
+#include <qwidget.h>
 #include <static.h>
-#include <assert.h>
+#include <utils/debug.h>
+#include QLIST
 
 namespace util {
 
@@ -84,7 +86,11 @@ namespace {
 			// Interface
 			//
 		public:
-			const char* name () const
+#ifdef QT4
+			virtual QByteArray name () const
+#else
+			virtual const char* name () const
+#endif
 			{
 				static const char* _name = "Pdfedit accented windows encoding";
 				return _name;
@@ -93,11 +99,34 @@ namespace {
 				{ return 2252; /* windows 1252 */};
 			int heuristicContentMatch (const char* ,int) const
 				{ return 0; }
+
+
 			QString 
 			toUnicode (const char* chars, int len ) const
 			{
-				return QString (string(chars,len));
+				return QString::fromLatin1(string(chars,len).c_str());
 			}
+#ifdef QT4
+			QString convertToUnicode (const char* chars, int len, QTextCodec::ConverterState* ) const
+			{
+				return toUnicode(chars,len);
+			}
+			QByteArray convertFromUnicode (const QChar* chars, int len, QTextCodec::ConverterState* ) const
+			{
+				string tmp;
+				for (int i = 0; i < len; ++i)
+				{
+					QChar c =chars[i];
+					UMap::const_iterator it = umap.find (c.unicode());
+					if (it != umap.end())
+						tmp += (*it).second;
+					else
+						tmp += c.latin1() ? c.latin1() : UNKNOWN_CHAR ;
+				}
+				assert (tmp.size() >= len);
+				return QCString (tmp.c_str());
+			}
+#else
 			QCString 
 			fromUnicode (const QString& uc, int& lenInOut) const
 			{
@@ -115,6 +144,7 @@ namespace {
 				assert (tmp.size() >= uc.length());
 				return QCString (tmp.c_str());
 			}
+#endif
 	
 	}; // class PdfeditEncoding
 
@@ -498,13 +528,17 @@ QString convertToUnicode(const std::string &str, CharsetContext ctx) {
  if (ctx==UTF8) {
   return QString::fromUtf8(str.c_str());
  }
+ if (ctx==CON) {
+  return QString::fromLocal8Bit(str.c_str());
+ }
  if (ctx==NAME) {
   return QFile::decodeName(str.c_str());
  }
+ //PDF
  if (defCodec) {
   return defCodec->toUnicode(str.c_str());
  }
- return QString(str);
+ return QString::fromLatin1(str.c_str());
 }
 
 /**
@@ -518,14 +552,19 @@ std::string convertFromUnicode(const QString &str, CharsetContext ctx) {
  if (ctx==UTF8) {
   return std::string(str.utf8());
  }
+ if (ctx==CON) {
+  return std::string(str.local8Bit());
+ }
  if (ctx==NAME) {
   return std::string(QFile::encodeName(str).data());
  }
+ //PDF
  if (defCodec) {
   QCString cstr=defCodec->fromUnicode(str);
   return std::string(cstr);
  }
- return str;
+ //Fallback to Latin1 if no codec is set
+ return std::string(str.latin1());
 }
 
 } //namespace util

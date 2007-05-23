@@ -31,10 +31,10 @@ using namespace std;
  constructor of TreeItemAbstract - create root item
  @param itemName Name of this item
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put item
+ @param parent Q_ListView in which to put item
  @param after Item after which this one will be inserted
  */
-TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,Q_ListView *parent,Q_ListViewItem *after/*=NULL*/):Q_ListViewItem(parent,after) {
  nameId=itemName;
  data=_data;
  initAbs();
@@ -45,10 +45,10 @@ TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QList
  constructor of TreeItemAbstract - create child item
  @param itemName Name of this item
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem which is parent of this object
+ @param parent Q_ListViewItem which is parent of this object
  @param after Item after which this one will be inserted
  */
-TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after/*=NULL*/):QListViewItem(parent,after) {
+TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,Q_ListViewItem *parent,Q_ListViewItem *after/*=NULL*/):Q_ListViewItem(parent,after) {
  nameId=itemName;
  data=_data;
  initAbs();
@@ -60,7 +60,7 @@ TreeItemAbstract::TreeItemAbstract(const QString &itemName,TreeData *_data,QList
 void TreeItemAbstract::initAbs() {
  parsed=false;
  assert(data);
- QListView *lv=listView();
+ Q_ListView *lv=listView();
  assert(lv);
  assert(lv->parentWidget());
  rootWindow=dynamic_cast<TreeWindow*>(lv->parentWidget());
@@ -86,7 +86,7 @@ void TreeItemAbstract::setOpen(bool open) {
   parsed=true;
   reload(false);//And now get the subitems!
  }
- QListViewItem::setOpen(open);
+ Q_ListViewItem::setOpen(open);
 }
 
 /** 
@@ -106,7 +106,7 @@ void TreeItemAbstract::setOpen(bool open) {
  @param oldItem reference to old child tree item
  @return true if successful, false otherwise
 */
-bool TreeItemAbstract::deepReload(__attribute__((unused)) const QString &childName,__attribute__((unused)) QListViewItem *oldItem) {
+bool TreeItemAbstract::deepReload(__attribute__((unused)) const QString &childName,__attribute__((unused)) Q_ListViewItem *oldItem) {
  //By default this feature is not supported. Reimplement this method to support it.
  return false;
 }
@@ -126,13 +126,13 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/,bool forceReload/*=false*
   setExpandable(haveChild());
   return;
  }
- Q_Dict<QListViewItem> newItems;
+ Q_Dict<Q_ListViewItem> newItems;
  QMap<QString,ChildType> newTypes;
 
  QStringList childs=getChildNames();
- QListViewItem *before=NULL;
+ Q_ListViewItem *before=NULL;
  for (QStringList::Iterator it=childs.begin();it!=childs.end();++it) {
-  QListViewItem *x=items.take(*it);	//Return and remove item from list of current
+  Q_ListViewItem *x=items.take(*it);	//Return and remove item from list of current
   ChildType typ=getChildType(*it);
   if (forceReload) { //Just create that child again
    deleteChild(x);	//Delete the old item
@@ -184,7 +184,7 @@ void TreeItemAbstract::reload(bool reloadThis/*=true*/,bool forceReload/*=false*
 /** Erase all items in current item dictionary. After returning, the item dictionary is empty */
 void TreeItemAbstract::eraseItems() {
  //Delete each item in "items"
- Q_DictIterator<QListViewItem> it(items);
+ Q_DictIterator<Q_ListViewItem> it(items);
  for(;it.current();++it) deleteChild(it.current());
  //Clear lists
  items.clear();
@@ -197,7 +197,7 @@ void TreeItemAbstract::eraseItems() {
  @param name Name of child to look for
  @return Specified child of this tree item
 */
-QListViewItem* TreeItemAbstract::child(const QString &name) {
+Q_ListViewItem* TreeItemAbstract::child(const QString &name) {
  if (!parsed) {
   //Tree not expanded here.
   //We need to expand it, so we can return the items
@@ -211,12 +211,12 @@ QListViewItem* TreeItemAbstract::child(const QString &name) {
  Move selection away from this item to nearest sensible item<br>
  If this item is not selected, task is done, does nothing<br>
  If it is selected, firt attempt is to move selection on next sibling, then on item above, then on item below.
- @param tree QListView in which this item resides
+ @param tree Q_ListView in which this item resides
 */
-void TreeItemAbstract::unSelect(QListView *tree) {
+void TreeItemAbstract::unSelect(Q_ListView *tree) {
  if (!tree->isSelected(this)) return;
  //It is selected
- QListViewItem* it=nextSibling();
+ Q_ListViewItem* it=nextSibling();
  if (it) { //Next in same level
   tree->setSelected(it,true);
   return;
@@ -244,7 +244,7 @@ void TreeItemAbstract::unSelect(QListView *tree) {
 void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
  //Delete all local items
  eraseItems();
- QListViewItem *otherChild;
+ Q_ListViewItem *otherChild;
  while ((otherChild=src->firstChild())) {	 //For each child
   guiPrintDbg(debug::DBG_DBG,"Relocating child");
   src->takeItem(otherChild);
@@ -263,7 +263,7 @@ void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
  @param name Name of subitem to delete
  */
 void TreeItemAbstract::deleteChild(const QString &name) {
- QListViewItem *target=items.take(name);//Remove from list and return 
+ Q_ListViewItem *target=items.take(name);//Remove from list and return 
  if (!target) { //Item not found (should not happen usually)
   guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << Q_OUT(name));
   return;
@@ -276,7 +276,7 @@ void TreeItemAbstract::deleteChild(const QString &name) {
  Delete subitem, given by its pointer
  @param target Pointer to subitem to delete
  */
-void TreeItemAbstract::deleteChild(QListViewItem *target) {
+void TreeItemAbstract::deleteChild(Q_ListViewItem *target) {
  delete target;
 }
 
@@ -317,7 +317,7 @@ TreeItemAbstract::~TreeItemAbstract() {
  @param selected true to select, false to unselect
 */
 void TreeItemAbstract::setSelect(bool selected) {
- QListView *lv=listView();
+ Q_ListView *lv=listView();
  assert(lv);
  lv->setSelected(this,selected); 
 }

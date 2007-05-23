@@ -39,12 +39,12 @@ using namespace pdfobjects;
 
 /** constructor of TreeItemPdf - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put item
+ @param parent Q_ListView in which to put item
  @param _pdf CPdf Object contained in this item
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListView *parent,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  assert(_pdf);
  init(_pdf,name);
  reloadSelf();
@@ -53,12 +53,12 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QStr
 
 /** constructor of TreeItemPdf - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem which is parent of this object
+ @param parent Q_ListViewItem which is parent of this object
  @param _pdf CPdf Object contained in this item
  @param name Name of file - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString &name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListViewItem *parent,const QString &name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract("Document",_data,parent,after) {
  init(_pdf,name);
  reloadSelf();
 }
@@ -66,11 +66,11 @@ TreeItemPdf::TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const 
 /**
  constructor of TreeItemPdf - create special child item of TreeItemPdf
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem which is parent of this object
+ @param parent Q_ListViewItem which is parent of this object
  @param name Name (type) of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPdf::TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  initSpec(parent->getObject(),name);
 }
 
@@ -168,7 +168,7 @@ void TreeItemPdf::reloadSelf() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  if (typ==dictItem) return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Catalog"));
  if (typ==pageList) return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Pages"),after); 
  if (typ==outlineList) return new TreeItemPdf(data,this,QT_TRANSLATE_NOOP("gui::TreeItemPdf","Outlines"),after); 
@@ -195,7 +195,7 @@ TreeItemAbstract* TreeItemPdf::createChild(const QString &name,ChildType typ,QLi
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemPdf::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemPdf::validChild(const QString &name,Q_ListViewItem *oldChild) {
  TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldChild);
  if (itc) { //Is a document catalog
   return obj->getDictionary().get()==itc->getObject().get();
@@ -221,7 +221,7 @@ bool TreeItemPdf::validChild(const QString &name,QListViewItem *oldChild) {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemPdf::deepReload(const QString &childName,QListViewItem *oldItem) {
+bool TreeItemPdf::deepReload(const QString &childName,Q_ListViewItem *oldItem) {
  TreeItemOutline *ito=dynamic_cast<TreeItemOutline*>(oldItem);
  if (ito) { //Outline
   return false;

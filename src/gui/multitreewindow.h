@@ -10,7 +10,9 @@
 #ifndef __MULTITREEWINDOW_H__
 #define __MULTITREEWINDOW_H__
 
+#include "qtcompat.h"
 #include <qwidget.h>
+#include <qmap.h>
 #include "types.h"
 namespace pdfobjects {
  class IProperty;
@@ -20,7 +22,7 @@ namespace pdfobjects {
 
 class QListViewItem;
 class QTabWidget;
-class QButton;
+class QAbstractButton;
 
 namespace gui {
  
@@ -139,9 +141,9 @@ private:
  /** Tab Widget */
  QTabWidget *tab;
  /** Right Corner widget */
- QButton *cornerRight;
+ QAbstractButton *cornerRight;
  /** Left Corner widget */
- QButton *cornerLeft;
+ QAbstractButton *cornerLeft;
  /** Scripting base */
  Base *base;
 };

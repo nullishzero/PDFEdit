@@ -29,7 +29,7 @@ using namespace std;
  @param base Scripting base
  @param multi MultiTreeWindow holding given tree
 */
-TreeData::TreeData(TreeWindow *parent,QListView *tree,BaseCore *base,MultiTreeWindow *multi) {
+TreeData::TreeData(TreeWindow *parent,Q_ListView *tree,BaseCore *base,MultiTreeWindow *multi) {
  _parent=parent;
  _tree=tree;
  _base=base;
@@ -238,10 +238,10 @@ BaseCore* TreeData::base() {
 }
 
 /**
- Return parent tree (QListView) associated with this TreeData
- @return parent QListView
+ Return parent tree (Q_ListView) associated with this TreeData
+ @return parent Q_ListView
 */
-QListView* TreeData::tree() {
+Q_ListView* TreeData::tree() {
  return _tree;
 }
 

@@ -10,7 +10,8 @@
 #ifndef __PAGEVIEWS_H__
 #define __PAGEVIEWS_H__
 
-#include <qscrollview.h>
+#include "qtcompat.h"
+#include QSCROLLVIEW
 #include <qevent.h>
 #include <qpainter.h>
 #include <qcursor.h>
@@ -33,7 +34,7 @@ class PageViewMode;
 /** QWidget's class for viewing a page.
  *
  */
-class PageViewS : public QScrollView {
+class PageViewS : public Q_ScrollView {
 	Q_OBJECT
 	public:
 		/** Default constructor of pageView.

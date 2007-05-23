@@ -21,7 +21,7 @@
 #include QLISTBOX
 #include QCOMBOBOX
 #include <qtextstream.h>
-#include <qtextedit.h> 
+#include QTEXTEDIT
 #include <qlineedit.h>
 #include <qseditor.h>
 #include <qsinterpreter.h>
@@ -74,7 +74,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
  QWidget * l = new QWidget( spl );
  QVBoxLayout *vblayout = new QVBoxLayout(l);
 
- out = new QTextEdit( /*this*/ l );
+ out = new Q_TextEdit( /*this*/ l );
  cmd = new QLineEdit( this , "CmdLine" );
 
  // init history
@@ -101,7 +101,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 // l->addWidget(out);
 // l->addWidget(history);
  out->setTextFormat(Qt::LogText);
- out->setWrapPolicy(QTextEdit::AtWordOrDocumentBoundary);
+ out->setWrapPolicy(Q_TextEdit::AtWordOrDocumentBoundary);
 
  in = new QSEditor( spl , "CmdEditor" );
  in->textEdit()->setText("");
@@ -169,13 +169,13 @@ bool CommandWindow::eventFilter( QObject *o, QEvent *e )
 			case Qt::Key_Return:
 			case Qt::Key_Enter:
 				if ( ke->state() & Qt::ControlButton ) {
-					in->textEdit()->doKeyboardAction( QTextEdit::ActionReturn );
+					in->textEdit()->doKeyboardAction( Q_TextEdit::ActionReturn );
 				} else {
 					QString code = in->textEdit()->text();
 					if ( code[ 0 ] == '?' )
 						code = "debug(" + code.mid( 1 ) + ");";
 					if ( !interpreter->checkSyntax( code ) ) {
-						in->textEdit()->doKeyboardAction( QTextEdit::ActionReturn );
+						in->textEdit()->doKeyboardAction( Q_TextEdit::ActionReturn );
 						return TRUE;
 					}
 					execute( CmdEditor );
@@ -285,6 +285,14 @@ void CommandWindow::saveHistory() {
 	}
 	guiPrintDbg(debug::DBG_INFO,"Cannot open pdfedit-history to read!!!");
 }
+
+/**
+ Execute and clear current command (invoked from commandline as source)
+ */
+void CommandWindow::execute() {
+ execute(CmdLine);
+}
+
 /**
  Execute and clear current command
  @param from Source of the command

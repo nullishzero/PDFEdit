@@ -35,17 +35,17 @@ using namespace pdfobjects;
 */
 class TreeItemPage : public TreeItemAbstract {
 public:
- TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListView *parent,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListViewItem *parent,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,Q_ListView *parent,const QString name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,Q_ListViewItem *parent,const QString name=QString::null,Q_ListViewItem *after=NULL);
  virtual ~TreeItemPage();
  boost::shared_ptr<CPage> getObject();
  //From TreeItemAbstract interface
  bool setObject(boost::shared_ptr<CPage> newPage);
- virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
+ virtual bool deepReload(const QString &childName,Q_ListViewItem *oldItem);
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
  virtual QSCObject* getQSObject(BaseCore *_base);
  virtual ChildType getChildType(const QString &name);
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual bool haveChild();
  virtual void reloadSelf();

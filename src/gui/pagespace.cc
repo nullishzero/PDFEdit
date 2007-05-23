@@ -7,6 +7,8 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
+#include "pagespace.h"
+#include QSCROLLVIEW
 #include <stdlib.h>
 #include <math.h>
 
@@ -18,8 +20,8 @@
 //#include <qdockarea.h>
 #include <qfiledialog.h>
 #include <qmessagebox.h>
+#include QSTRLIST
 
-#include "pagespace.h"
 #include "settings.h"
 #include "cpdf.h"
 #include "cpage.h"
@@ -28,6 +30,9 @@
 
 #include "pageviewmode.h"
 #include "units.h"
+#ifdef QT4
+#include <QImageWriter>
+#endif
 
 /** Helpes struct for initializing width and height text labeles. */
 typedef struct { /** lebel width */ int labelWidth, /** label height */ labelHeight; } initStruct;
@@ -148,7 +153,7 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	textLine->hide();
 
 	// if something use on page, take focus
-	setFocusPolicy( QWidget::WheelFocus );
+	setFocusPolicy( TheWheelFocus );
 }
 
 PageSpace::~PageSpace() {
@@ -358,10 +363,16 @@ bool PageSpace::isSomeoneSelected ( ) {
 
 bool PageSpace::saveImageWithDialog ( bool onlySelectedArea ) {
 	QString filters = "";
-	for (unsigned int i = 0; i < QImageIO::outputFormats().count() ;++i) {
+
+#ifdef QT4
+	QStrList lst=QImageWriter::supportedImageFormats();
+#else
+	QStrList lst=QImageIO::outputFormats();
+#endif
+	for (unsigned int i = 0; i < lst.count() ;++i) {
 		filters += QString("\n%1 (*.%2)")
-				.arg(QImageIO::outputFormats().at(i))
-				.arg(QString(QImageIO::outputFormats().at(i)).lower());
+				.arg(QString(lst.at(i)))
+				.arg(QString(lst.at(i)).lower());
 	}
 
 	QString sf;
@@ -400,7 +411,7 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 	tsp.yEnd = yEnd;
 
 	std::vector<Rectangle> recs;
-	int count = actualPage->findText( text, recs, tsp );
+	int count = actualPage->findText( util::convertFromUnicode(text,util::PDF), recs, tsp );
 
 	guiPrintDbg( debug::DBG_DBG, "Founded "<<count<<" items:");
 	for (std::vector<Rectangle>::iterator it = recs.begin(); it != recs.end() ; ++it) {

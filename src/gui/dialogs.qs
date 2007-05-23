@@ -814,7 +814,7 @@ function strikeTroughSelection( thepage ) {
 
 /** Fill line edit named "text" on toolbox with text from all selected text operators. */
 function fillTextFromSelectedOperators() {
-	if ((!isTreeItemSelected()) ||
+	if ((!isItemInTreeSelected()) ||
 		(firstSelected().type()!="PdfOperator") ||
 		(! isTextOp( firstSelected() )))
 		return false;

@@ -25,9 +25,9 @@ class TreeData;
 using namespace std;
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemOutline::TreeItemOutline(TreeData *_data,QListView *parent,OutlineItem pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
+TreeItemOutline::TreeItemOutline(TreeData *_data,Q_ListView *parent,OutlineItem pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemDict(_data,parent,pdfObj,name,after,nameId) {
  assert(data);
  reload(false);
@@ -35,9 +35,9 @@ TreeItemOutline::TreeItemOutline(TreeData *_data,QListView *parent,OutlineItem p
 }
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemOutline::TreeItemOutline(TreeData *_data,QListViewItem *parent,OutlineItem pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
+TreeItemOutline::TreeItemOutline(TreeData *_data,Q_ListViewItem *parent,OutlineItem pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemDict(_data,parent,pdfObj,name,after,nameId) {
  assert(data);
  reload(false);
@@ -48,7 +48,7 @@ TreeItemOutline::TreeItemOutline(TreeData *_data,QListViewItem *parent,OutlineIt
 void TreeItemOutline::showTitle() {
  try {
   //Reload the title
-  title=getOutlineText(obj);
+  title=util::convertToUnicode(getOutlineText(obj),util::PDF);
  } catch (...) {
   guiPrintDbg(debug::DBG_WARN,"Someone deleted title property in outline");
   title="<?>";

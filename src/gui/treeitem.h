@@ -28,14 +28,14 @@ class TreeItemObserver;
  */
 class TreeItem : public TreeItemAbstract {
 public:
- static TreeItem* create(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL,const QString &nameId=QString::null);
- static TreeItem* create(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL,const QString &nameId=QString::null);
+ static TreeItem* create(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=QString::null);
+ static TreeItem* create(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=QString::null);
  TreeItem* parent();
  virtual ~TreeItem();
  boost::shared_ptr<IProperty> getObject();
  void setParent(TreeItem *parent);
  virtual bool setObject(boost::shared_ptr<IProperty> newItem);
- virtual void insertItem(QListViewItem *newChild);
+ virtual void insertItem(Q_ListViewItem *newChild);
  void unSelect();
  //From TreeItemAbstract interface
  virtual void reloadSelf();
@@ -43,8 +43,8 @@ public:
  virtual QSCObject* getQSObject(BaseCore *_base);
  virtual void remove();
 protected:
- TreeItem(const QString &nameId,TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);
- TreeItem(const QString &nameId,TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,QListViewItem *after=NULL);
+ TreeItem(const QString &nameId,TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItem(const QString &nameId,TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString &name=QString::null,Q_ListViewItem *after=NULL);
  void initObserver();
  void uninitObserver();
  bool haveObserver();

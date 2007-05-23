@@ -28,13 +28,13 @@ using namespace std;
 /**
  constructor of TreeItemOperatorContainer - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put this item
+ @param parent Q_ListView in which to put this item
  @param _op Vector with operators
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemOperatorContainer::TreeItemOperatorContainer(TreeData *_data,QListView *parent,const OperatorVector &_op,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItemOperatorContainer::TreeItemOperatorContainer(TreeData *_data,Q_ListView *parent,const OperatorVector &_op,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  op=_op;
  init(name);
  reload();
@@ -43,13 +43,13 @@ TreeItemOperatorContainer::TreeItemOperatorContainer(TreeData *_data,QListView *
 /**
  constructor of TreeItemOperatorContainer - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem under which to put this item
+ @param parent Q_ListViewItem under which to put this item
  @param _op Vector with operators
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemOperatorContainer::TreeItemOperatorContainer(TreeData *_data,QListViewItem *parent,const OperatorVector &_op,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItemOperatorContainer::TreeItemOperatorContainer(TreeData *_data,Q_ListViewItem *parent,const OperatorVector &_op,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  op=_op;
  init(name);
  reload();
@@ -75,13 +75,13 @@ TreeItemOperatorContainer::~TreeItemOperatorContainer() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemOperatorContainer::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemOperatorContainer::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  size_t position=name.toUInt();
  return new TreeItemPdfOperator(data,this,op[position],name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemOperatorContainer::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemOperatorContainer::validChild(const QString &name,Q_ListViewItem *oldChild) {
  TreeItemPdfOperator* oper=dynamic_cast<TreeItemPdfOperator*>(oldChild);
  if (!oper) return false;
  size_t position=name.toUInt();

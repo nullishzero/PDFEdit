@@ -31,19 +31,19 @@ class TreeData;
  */
 class TreeItemAnnotation : public TreeItemAbstract {
 public:
- TreeItemAnnotation(TreeData *_data,QListView *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemAnnotation(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemAnnotation(TreeData *_data,Q_ListView *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemAnnotation(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemAnnotation();
  boost::shared_ptr<CAnnotation> getObject();
  //From TreeItemAbstract interface
  virtual bool haveChild();
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL);
  virtual void reloadSelf();
  virtual ChildType getChildType(const QString &name);
  virtual QStringList getChildNames();
  virtual QSCObject* getQSObject();
  virtual void remove();
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
 private:
  void init();
 private:

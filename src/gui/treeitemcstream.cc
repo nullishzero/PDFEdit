@@ -27,32 +27,32 @@ using namespace std;
 using namespace util;
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemCStream::TreeItemCStream(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemCStream::TreeItemCStream(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemCStream::TreeItemCStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemCStream::TreeItemCStream(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemCStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemCStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  CStream *dict=dynamic_cast<CStream*>(obj.get());
  boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,PDF));
  return TreeItem::create(data,this,property,name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemCStream::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemCStream::validChild(const QString &name,Q_ListViewItem *oldChild) {
  TreeItem* old=dynamic_cast<TreeItem*>(oldChild);
  if (!old) return false;
  CStream *dict=dynamic_cast<CStream*>(obj.get());

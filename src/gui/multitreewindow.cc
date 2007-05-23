@@ -22,7 +22,7 @@
 #include "util.h"
 #include <qcursor.h>
 #include <qlayout.h>
-#include <qpopupmenu.h>
+#include QPOPUPMENU
 #include <qtabwidget.h>
 #include <qtoolbutton.h>
 #include <utils/debug.h>
@@ -101,7 +101,7 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  Switch to selected tab.
 */
 void MultiTreeWindow::tabSwitchPopup() {
- QPopupMenu m(this,"tab_switch_popup");
+ Q_PopupMenu m(this,"tab_switch_popup");
  m.insertItem(tr("Switch to ..."),0x3fffffff);
  m.setItemEnabled(0x3fffffff,false);
  int tabCount=tab->count();

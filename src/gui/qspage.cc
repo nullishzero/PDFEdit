@@ -17,8 +17,6 @@
 #include "qspage.h"
 #include "qtcompat.h"
 #include "qsdict.h"
-#include <qrect.h>
-#include <qvariant.h>
 #include QLIST
 #include "qscontentstream.h"
 #include "qsannotation.h"

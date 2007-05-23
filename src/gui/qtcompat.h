@@ -39,24 +39,44 @@ typedef Qt::WindowFlags WFlags;
 #define Q_ListBox		Q3ListBox
 #define Q_ListBoxItem		Q3ListBoxItem
 #define Q_ListBoxText		Q3ListBoxText
+#define Q_ListView		Q3ListView
+#define Q_ListViewItem		Q3ListViewItem
+#define Q_ListViewItemIterator	Q3ListViewItemIterator
+#define Q_Painter		Q3Painter
+#define Q_PopupMenu		Q3PopupMenu
 #define Q_PtrCollection		Q3PtrCollection
 #define Q_PtrDict		Q3PtrDict
 #define Q_PtrDictIterator	Q3PtrDictIterator
 #define Q_PtrList		Q3PtrList
 #define Q_PtrListIterator	Q3PtrListIterator
+#define Q_ScrollView		Q3ScrollView
 #define Q_TextBrowser		Q3TextBrowser
+#define Q_TextEdit		Q3TextEdit
+#define QStrList		QList<QByteArray>
+#define QMenuData		QMenu
+#define QCString		QByteArray
+#define QMemArray		QVector
+#define IbeamCursor		IBeamCursor
+#define TheWheelFocus		Qt::WheelFocus
 
 //Include aliases
 #define QBUTTONGROUP	<Q3ButtonGroup>
+#define QBYTEARRAY	<QByteArray>
 #define QCOMBOBOX	<Q3ComboBox> 
 #define QDICT		<Q3Dict>
 #define QGROUPBOX	<Q3GroupBox> 
+#define QICON		<QIcon>
 #define QLISTBOX	<Q3ListBox> 
+#define QLISTVIEW	<Q3ListView>
+#define QPOPUPMENU	<Q3PopupMenu>
 #define QPTRDICT	<Q3PtrDict>
 #define QPTRLIST	<Q3PtrList>
 #define QPTRCOLLECTION	<Q3PtrCollection>
 #define QLIST		<QList>
+#define QSCROLLVIEW	<Q3ScrollView>
+#define QSTRLIST	<QList>
 #define QTEXTBROWSER	<Q3TextBrowser>
+#define QTEXTEDIT	<Q3TextEdit>
 
 #else
 
@@ -76,24 +96,43 @@ typedef Qt::WindowFlags WFlags;
 #define Q_ListBox		QListBox
 #define Q_ListBoxItem		QListBoxItem
 #define Q_ListBoxText		QListBoxText
+#define Q_ListView		QListView
+#define Q_ListViewItem		QListViewItem
+#define Q_ListViewItemIterator	QListViewItemIterator
+#define Q_Painter		QPainter
+#define Q_PopupMenu		QPopupMenu
 #define Q_PtrCollection		QPtrCollection
 #define Q_PtrDict		QPtrDict
 #define Q_PtrDictIterator	QPtrDictIterator
 #define Q_PtrList		QPtrList
 #define Q_PtrListIterator	QPtrListIterator
+#define Q_ScrollView		QScrollView
 #define Q_TextBrowser		QTextBrowser
+#define Q_TextEdit		QTextEdit
+//Classes renamed between Qt3 and Qt4 -> using Qt4 names
+#define QIcon			QIconSet
+//Similarity aliases
+#define QAbstractButton		QButton
+#define TheWheelFocus		QWidget::WheelFocus
 
 //Include aliases
 #define QBUTTONGROUP	<qbuttongroup.h>
+#define QBYTEARRAY	<qcstring.h>
 #define QCOMBOBOX	<qcombobox.h> 
 #define QDICT		<qdict.h>
 #define QGROUPBOX	<qgroupbox.h> 
+#define QICON		<qiconset.h>
 #define QLISTBOX	<qlistbox.h> 
+#define QLISTVIEW	<qlistview.h>
+#define QPOPUPMENU	<qpopupmenu.h>
 #define QPTRDICT	<qptrdict.h>
 #define QPTRLIST	<qptrlist.h>
 #define QPTRCOLLECTION	<qptrcollection.h>
 #define QLIST		<qvaluelist.h>
+#define QSCROLLVIEW	<qscrollview.h>
+#define QSTRLIST	<qstrlist.h>
 #define QTEXTBROWSER	<qtextbrowser.h>
+#define QTEXTEDIT	<qtextedit.h>
 
 #endif
 

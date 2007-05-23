@@ -31,13 +31,13 @@ using namespace util;
 /**
  constructor of TreeItemPdfOperator - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put this item
+ @param parent Q_ListView in which to put this item
  @param pdfObj Operator contained in this item
  @param cs Content stream in which this pdf operator is contained
  @param name Internal name of this item (order of operator)
  @param after Item after which this one will be inserted
  */
-TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,Q_ListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  csRef=cs;
 // assert(csRef.get());//This assert was not valid, since contentstreamless operator will have contentstreamless suboperators
  assert(data);
@@ -48,13 +48,13 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListView *parent,boost
 /**
  constructor of TreeItemPdfOperator - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem under which to put this item
+ @param parent Q_ListViewItem under which to put this item
  @param pdfObj Operator contained in this item
  @param cs Content stream in which this pdf operator is contained
  @param name Internal name of this item (order of operator)
  @param after Item after which this one will be inserted
  */
-TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  csRef=cs;
 // assert(csRef.get());//This assert was not valid, since contentstreamless operator will have contentstreamless suboperators
  assert(data);
@@ -65,12 +65,12 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,b
 /**
  constructor of TreeItemPdfOperator - create child item from given object (without any content stream information)
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem under which to put this item
+ @param parent Q_ListViewItem under which to put this item
  @param pdfObj Operator contained in this item
  @param name Internal name of this item (order of operator)
  @param after Item after which this one will be inserted
  */
-TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  assert(data);
  obj=pdfObj;
  reload();
@@ -89,7 +89,7 @@ QString TreeItemPdfOperator::itemHint() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemPdfOperator::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemPdfOperator::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  int position=name.toInt();
  if (position>=0) {//Operator
   return new TreeItemPdfOperator(data,this,op[position],csRef,name,after);
@@ -112,7 +112,7 @@ boost::shared_ptr<PdfOperator> TreeItemPdfOperator::getObject() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemPdfOperator::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemPdfOperator::validChild(const QString &name,Q_ListViewItem *oldChild) {
  int position=name.toInt();
  if (position>=0) {//Check Operator
   TreeItemPdfOperator *it=dynamic_cast<TreeItemPdfOperator*>(oldChild);
@@ -185,7 +185,7 @@ void TreeItemPdfOperator::remove() {
 void TreeItemPdfOperator::reloadSelf() {
  std::string operatorName;
  obj->getOperatorName(operatorName);
- setText(0,operatorName);
+ setText(0,util::convertToUnicode(operatorName,util::PDF));
  // object type
  setText(1,QObject::tr("Operator"));
  int paramCount=obj->getParametersCount();

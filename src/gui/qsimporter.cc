@@ -114,8 +114,9 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip,BaseCore *
  return new QSIProperty(ip,_base);
 }
 
-/** Overloaded factory function to create QSCObjects from various C... classes
-    Returns QSCObject that can be added directly with addQSObj()
+/**
+ Overloaded factory function to create QSCObjects from various C... classes
+ Returns QSCObject that can be added directly with addQSObj()
  @param pdf CPdf to wrap into to QSPdf
  @return QSPdf(pdf)
  */

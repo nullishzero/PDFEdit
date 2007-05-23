@@ -13,8 +13,9 @@
 #include <qobject.h>
 #include "qscobject.h"
 #include <qstringlist.h> 
+#include "qtcompat.h"
 
-class QPopupMenu;
+class Q_PopupMenu;
 class QMenuData;
 class QString;
 
@@ -54,7 +55,7 @@ public slots:
  void addSeparator();
 private:
  /** Menu held in class*/
- QPopupMenu *menu;
+ Q_PopupMenu *menu;
  /** Menu system of window in which this popup menu will be shown */
  Menu *msys;
  /** last used action ID */

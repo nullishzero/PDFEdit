@@ -10,7 +10,6 @@
 #ifndef __TREEITEMANNOTATIONCONTAINER_H__
 #define __TREEITEMANNOTATIONCONTAINER_H__
 
-#include <qlistview.h>
 #include "treeitemabstract.h"
 #include "types.h"
 class QString;
@@ -29,13 +28,13 @@ class TreeData;
 */
 class TreeItemAnnotationContainer : public TreeItemAbstract {
 public:
- TreeItemAnnotationContainer(TreeData *_data,QListView *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
- TreeItemAnnotationContainer(TreeData *_data,QListViewItem *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name=QString::null,QListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemAnnotationContainer(TreeData *_data,Q_ListView *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
+ TreeItemAnnotationContainer(TreeData *_data,Q_ListViewItem *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name=QString::null,Q_ListViewItem *after=NULL,const QString &nameId=NULL);
  virtual ~TreeItemAnnotationContainer();
  //From TreeItemAbstract interface
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual bool haveChild();
  virtual QSCObject* getQSObject();
@@ -48,7 +47,6 @@ private:
  AnnotationVector op;
  /** CPage containing these annotation */
  boost::shared_ptr<CPage> page;
-
 };
 
 } // namespace gui

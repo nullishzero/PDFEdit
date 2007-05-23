@@ -26,25 +26,25 @@ using namespace std;
 using namespace util;
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemDict::TreeItemDict(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemDict::TreeItemDict(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemDict::TreeItemDict(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemDict::TreeItemDict(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
  initObserver();
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemDict::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemDict::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  try {
   boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,util::PDF));
@@ -110,7 +110,7 @@ QSCObject* TreeItemDict::getQSObject(BaseCore *_base) {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemDict::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemDict::validChild(const QString &name,Q_ListViewItem *oldChild) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  try {
   boost::shared_ptr<IProperty> property=dict->getProperty(convertFromUnicode(name,util::PDF));
@@ -128,7 +128,7 @@ bool TreeItemDict::validChild(const QString &name,QListViewItem *oldChild) {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemDict::deepReload(const QString &childName,QListViewItem *oldItem) {
+bool TreeItemDict::deepReload(const QString &childName,Q_ListViewItem *oldItem) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  TreeItem *it=dynamic_cast<TreeItem*>(oldItem);
  if (it) { //Is an IProperty

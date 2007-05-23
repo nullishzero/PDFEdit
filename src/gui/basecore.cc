@@ -232,7 +232,11 @@ void BaseCore::runScript(const QString &script) {
  preRun(script);
  //Before running script, add document-related objects to scripting engine and remove tham afterwards
  addScriptingObjects();
+#ifdef QT4
+ QVariant ret;
+#else
  QSArgument ret;
+#endif
  try {
   ret=qs->evaluate(script,this,"<GUI>");
  } catch (...) {
@@ -240,6 +244,7 @@ void BaseCore::runScript(const QString &script) {
  }
 
  if (globalSettings->readBool("console/showretvalue")) { //Show return value on console;
+#ifndef QT4
   switch (ret.type()) {
    case QSArgument::QObjectPtr: { //QObject -> print type
     QObject *ob=ret.qobject();
@@ -252,33 +257,40 @@ void BaseCore::runScript(const QString &script) {
    }
    case QSArgument::Variant: { //Variant - simple type.
     QVariant v=ret.variant();
-    if (v.isNull()) break; //Null -> nothing to show
-    QString retVar=v.toString();
-    if (!retVar.isNull()) {
-     //Type convertable to string
-     conPrintLine(retVar);
-    } else {
-     //More complex type
-     if (globalSettings->readBool("console/showretvalue_complex")) { //Show return value of complex types
-      if (v.canCast(QVariant::StringList)) {
-       //Print as string list
-       QString list=v.toStringList().join("\n");   
-       conPrintLine(list);
-      } else {
-       //TODO: some more types in future?
-       QString tName=v.typeName();
-       assert(!tName.isNull());
-       guiPrintDbg(debug::DBG_WARN,"Cannot display result: " << Q_OUT(tName));
-       conPrintLine(QString("[")+tName+"]");
+#else
+    QVariant v=ret;
+#endif
+    if (!v.isNull()) {
+     //Null -> nothing to show
+     QString retVar=v.toString();
+     if (!retVar.isNull()) {
+      //Type convertable to string
+      conPrintLine(retVar);
+     } else {
+      //More complex type
+      if (globalSettings->readBool("console/showretvalue_complex")) { //Show return value of complex types
+       if (v.canCast(QVariant::StringList)) {
+        //Print as string list
+        QString list=v.toStringList().join("\n");   
+        conPrintLine(list);
+       } else {
+        //TODO: some more types in future?
+        QString tName=v.typeName();
+        assert(!tName.isNull());
+        guiPrintDbg(debug::DBG_WARN,"Cannot display result: " << Q_OUT(tName));
+        conPrintLine(QString("[")+tName+"]");
+       }
       }
      }
     }
+#ifndef QT4
     break;
    }
    default: { 
     //Invalid - print nothing (void, etc ...)
    }
   }
+#endif
  }
 /*
 //Error would be printed directly by the handler

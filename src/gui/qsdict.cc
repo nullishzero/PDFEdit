@@ -163,7 +163,7 @@ void QSDict::add(const QString &name,QObject *ip) {
 void QSDict::add(const QString &name,const QString &ip) {
  CDict *dict=dynamic_cast<CDict*>(obj.get());
  string pName=util::convertFromUnicode(name,util::PDF);
- CString property(ip);
+ CString property(util::convertFromUnicode(ip,util::PDF));
  try {
   dict->addProperty(pName,property);
  } catch (ReadOnlyDocumentException &e) {

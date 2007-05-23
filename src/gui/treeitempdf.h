@@ -10,7 +10,6 @@
 #ifndef __TREEITEMPDF_H__
 #define __TREEITEMPDF_H__
 
-#include <qlistview.h>
 #include "treeitemabstract.h"
 #include "treeitemoutline.h"
 
@@ -43,17 +42,17 @@ using namespace pdfobjects;
 */
 class TreeItemPdf : public TreeItemAbstract {
 public:
- TreeItemPdf(TreeData *_data,CPdf *_pdf,QListView *parent,const QString &name=QString::null,QListViewItem *after=NULL);
- TreeItemPdf(TreeData *_data,CPdf *_pdf,QListViewItem *parent,const QString &name=QString::null,QListViewItem *after=NULL);
- TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,QListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListView *parent,const QString &name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,CPdf *_pdf,Q_ListViewItem *parent,const QString &name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPdf(TreeData *_data,TreeItemPdf *parent,const QString &name,Q_ListViewItem *after=NULL);
  virtual ~TreeItemPdf();
  CPdf* getObject();
  //From TreeItemAbstract interface
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL);
  virtual QStringList getChildNames();
- virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
+ virtual bool deepReload(const QString &childName,Q_ListViewItem *oldItem);
  virtual bool haveChild();
  virtual void reloadSelf();
  virtual QSCObject* getQSObject();

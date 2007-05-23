@@ -11,13 +11,14 @@
 #define __QSPAGE_H__
 
 #include "qscobject.h"
-#include <qobject.h>
 #include <boost/shared_ptr.hpp>
-#include <vector>
-#include <qstringlist.h>
+#include <qobject.h>
+#include <qrect.h>
 #include <qstring.h>
+#include <qstringlist.h>
+#include <qvariant.h>
+#include <vector>
 class QRect;
-class QVariant;
 namespace pdfobjects {
  class CPage;
  class CContentStream;

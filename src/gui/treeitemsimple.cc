@@ -24,17 +24,17 @@ class TreeData;
 using namespace std;
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListView *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListView *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemSimple::TreeItemSimple(TreeData *_data,QListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemSimple::TreeItemSimple(TreeData *_data,Q_ListView *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
 }
 
 /**
- \copydoc TreeItem(const QString&,TreeData *,QListViewItem *,boost::shared_ptr<IProperty>,const QString&,QListViewItem *)
+ \copydoc TreeItem(const QString&,TreeData *,Q_ListViewItem *,boost::shared_ptr<IProperty>,const QString&,Q_ListViewItem *)
  */
-TreeItemSimple::TreeItemSimple(TreeData *_data,QListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
+TreeItemSimple::TreeItemSimple(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<IProperty> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItem(nameId,_data,parent,pdfObj,name,after) {
  assert(data);
  reload(false);
 }
@@ -44,7 +44,7 @@ TreeItemSimple::~TreeItemSimple() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemSimple::createChild(__attribute__((unused)) const QString &name,ChildType typ,__attribute__((unused)) QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemSimple::createChild(__attribute__((unused)) const QString &name,ChildType typ,__attribute__((unused)) Q_ListViewItem *after/*=NULL*/) {
  assert(typ!=pRef);//Must not be called on complex childs
  assert(typ!=pDict);
  assert(typ!=pArray);
@@ -76,7 +76,7 @@ bool TreeItemSimple::haveChild() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemSimple::validChild(__attribute__((unused)) const QString &name,__attribute__((unused)) QListViewItem *oldChild) {
+bool TreeItemSimple::validChild(__attribute__((unused)) const QString &name,__attribute__((unused)) Q_ListViewItem *oldChild) {
  //no childs
  return false;
 }

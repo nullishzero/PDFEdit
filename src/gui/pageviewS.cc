@@ -31,7 +31,7 @@ namespace gui {
 #define _splashMakeRGB8(to, r, g, b) \
 		  (to[3]=0, to[2]=((r) & 0xff) , to[1]=((g) & 0xff) , to[0]=((b) & 0xff) )
 
-PageViewS::PageViewS (QWidget *parent) : QScrollView(parent) {
+PageViewS::PageViewS (QWidget *parent) : Q_ScrollView(parent) {
 	// initialize variable
 	pagePixmap = NULL;
 	movedPageToCenter.setX( 0 );
@@ -44,8 +44,8 @@ PageViewS::PageViewS (QWidget *parent) : QScrollView(parent) {
 	displayParams = DisplayParams();
 
 	// if something use on page, take focus
-	setFocusPolicy( WheelFocus );
-	viewport()->setFocusPolicy( WheelFocus );
+	setFocusPolicy( TheWheelFocus );
+	viewport()->setFocusPolicy( TheWheelFocus );
 	// call mouseMoveEvent everytime if mouse move (not only if is a button pressed)
 	viewport()->setMouseTracking( true );
 }
@@ -302,7 +302,7 @@ void PageViewS::drawContents(QPainter* p, int cx, int cy, int cw, int ch) {
 }
 
 void PageViewS::viewportResizeEvent ( QResizeEvent * e ) {
-	this->QScrollView::viewportResizeEvent( e );
+	this->Q_ScrollView::viewportResizeEvent( e );
 	repaintContents( true );
 }
 
@@ -357,7 +357,7 @@ void PageViewS::contentsMouseMoveEvent ( QMouseEvent * e ) {
 }
 
 void PageViewS::wheelEvent ( QWheelEvent * e ) {
-	this->QScrollView::wheelEvent( e );
+	this->Q_ScrollView::wheelEvent( e );
 
 	if (mode) {
 		mode->wheelEvent( e, NULL, viewport() );
@@ -380,7 +380,7 @@ void PageViewS::keyReleaseEvent ( QKeyEvent * e ) {
 }
 
 void PageViewS::focusInEvent ( QFocusEvent * e ) {
-	this->QScrollView::focusInEvent( e );
+	this->Q_ScrollView::focusInEvent( e );
 
 	if (mode) {
 		mode->focusInEvent( e, NULL, viewport() );
@@ -389,7 +389,7 @@ void PageViewS::focusInEvent ( QFocusEvent * e ) {
 }
 
 void PageViewS::focusOutEvent ( QFocusEvent * e ) {
-	this->QScrollView::focusOutEvent( e );
+	this->Q_ScrollView::focusOutEvent( e );
 
 	if (mode) {
 		mode->focusOutEvent( e, NULL, viewport() );

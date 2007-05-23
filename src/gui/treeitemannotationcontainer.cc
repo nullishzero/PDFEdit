@@ -28,14 +28,14 @@ using namespace std;
 /**
  constructor of TreeItemAnnotationContainer - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put this item
+ @param parent Q_ListView in which to put this item
  @param _op Vector with annotations
  @param _page Page with annotations
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemAnnotationContainer::TreeItemAnnotationContainer(TreeData *_data,QListView *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItemAnnotationContainer::TreeItemAnnotationContainer(TreeData *_data,Q_ListView *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  op=_op;
  page=_page;
  init(name);
@@ -45,14 +45,14 @@ TreeItemAnnotationContainer::TreeItemAnnotationContainer(TreeData *_data,QListVi
 /**
  constructor of TreeItemAnnotationContainer - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem under which to put this item
+ @param parent Q_ListViewItem under which to put this item
  @param _op Vector with annotations
  @param _page Page with annotations
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemAnnotationContainer::TreeItemAnnotationContainer(TreeData *_data,QListViewItem *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItemAnnotationContainer::TreeItemAnnotationContainer(TreeData *_data,Q_ListViewItem *parent,const AnnotationVector &_op,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  op=_op;
  page=_page;
  init(name);
@@ -79,13 +79,13 @@ TreeItemAnnotationContainer::~TreeItemAnnotationContainer() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemAnnotationContainer::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemAnnotationContainer::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  size_t position=name.toUInt();
  return new TreeItemAnnotation(data,this,op[position],page,name,after);
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemAnnotationContainer::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemAnnotationContainer::validChild(const QString &name,Q_ListViewItem *oldChild) {
  TreeItemAnnotation* oper=dynamic_cast<TreeItemAnnotation*>(oldChild);
  if (!oper) return false;
  size_t position=name.toUInt();

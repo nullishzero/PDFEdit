@@ -10,23 +10,24 @@
 #ifndef __TOOLBUTTON_H__
 #define __TOOLBUTTON_H__
 
+#include "qtcompat.h"
 #include <qtoolbutton.h>
 class QPixmap;
 class QString;
-class QIconSet;
+class QIcon;
 
 namespace gui {
 
 /**
  Class wrapping QToolButton, adding button ID and providing also
- a different constructors (with QPixmap or QIconSet)<br>
+ a different constructors (with QPixmap or QIcon)<br>
  Also, emits clicked(id) signal in addition to normal clicked() signal
  \brief Pushbutton in application toolbar
  */
 class ToolButton : public QToolButton {
  Q_OBJECT
 public:
- ToolButton(const QIconSet *iconSet, const QString tooltip, int id, QWidget *parent=0, const char *name="");
+ ToolButton(const QIcon *iconSet, const QString tooltip, int id, QWidget *parent=0, const char *name="");
  ToolButton(const QPixmap *icon, const QString tooltip, int id, QWidget *parent=0, const char *name="");
 protected slots:
  void slotClicked();

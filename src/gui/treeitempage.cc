@@ -34,23 +34,23 @@ using namespace pdfobjects;
 
 /** constructor of TreeItemPage - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put item
+ @param parent Q_ListView in which to put item
  @param _page CPage Object contained in this item
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListView *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,Q_ListView *parent,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  init(_page,name);
 }
 
 /** constructor of TreeItemPage - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem which is parent of this object
+ @param parent Q_ListViewItem which is parent of this object
  @param _page CPage Object contained in this item
  @param name Name of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,QListViewItem *parent,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
+TreeItemPage::TreeItemPage(TreeData *_data,boost::shared_ptr<CPage> _page,Q_ListViewItem *parent,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/):TreeItemAbstract(name,_data,parent,after) {
  init(_page,name);
 }
 
@@ -113,7 +113,7 @@ TreeItemPage::~TreeItemPage() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  if (typ==0) { //Return page dictionary
   return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"),after);
  }
@@ -142,7 +142,7 @@ TreeItemAbstract* TreeItemPage::createChild(const QString &name,ChildType typ,QL
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemPage::deepReload(__attribute__((unused)) const QString &childName,QListViewItem *oldItem) {
+bool TreeItemPage::deepReload(__attribute__((unused)) const QString &childName,Q_ListViewItem *oldItem) {
  TreeItemDict *itc=dynamic_cast<TreeItemDict*>(oldItem);
  if (itc) { //Is a page dictionary
   //If replaced, return success, otherwise failure
@@ -156,7 +156,7 @@ bool TreeItemPage::deepReload(__attribute__((unused)) const QString &childName,Q
 
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemPage::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemPage::validChild(const QString &name,Q_ListViewItem *oldChild) {
  TreeItemDict *itp=dynamic_cast<TreeItemDict*>(oldChild);
  if (itp) { //Is a page dictionary
   return obj->getDictionary().get()==itp->getObject().get();
@@ -183,7 +183,7 @@ ChildType TreeItemPage::getChildType(const QString &name) {
  if (name=="Dict") { //Return page dictionary
   return 0;
  } else { //It's a stream
-  char c=name[0];
+  char c=name[0].latin1();
   if (c=='s') return 1;//Stream
   if (c=='a') return 2;//Annot
   assert(0);

@@ -10,14 +10,15 @@
 #ifndef __TREEWINDOW_H__
 #define __TREEWINDOW_H__
 
-#include <qlistview.h>
+#include "qtcompat.h"
+#include QLISTVIEW
 #include <qwidget.h>
 #include <cobject.h>
 #include <cpage.h>
 #include "types.h"
-class QListView;
+class Q_ListView;
 class QListViewItem;
-class QListViewItemIterator;
+class Q_ListViewItemIterator;
 namespace pdfobjects {
  class CPdf;
  class CContentStream;
@@ -95,14 +96,14 @@ private:
 #ifdef DRAGDROP
  DragListView *tree;
 #else
- QListView *tree;
+ Q_ListView *tree;
 #endif
  /** Tree data shared with tree items */
  TreeData *data;
  /** Name of root object - if applicable */
  QString rootName;
  /** Iterator for selected item */
- QListViewItemIterator selIter;
+ Q_ListViewItemIterator selIter;
 };
 
 } // namespace gui

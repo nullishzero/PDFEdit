@@ -30,14 +30,14 @@ using namespace util;
 /**
  constructor of TreeItemAnnotation - root item
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView which holds this object
+ @param parent Q_ListView which holds this object
  @param pdfObj Annotation contained in this item
  @param _page Page holding this annotation
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
 */
-TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,QListView *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
+TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,Q_ListView *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemAbstract(nameId,_data,parent,after) {
  assert(data);
  title=name;
@@ -50,14 +50,14 @@ TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,QListView *parent,boost::
 /**
  constructor of TreeItemAnnotation - child item
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem which is parent of this object
+ @param parent Q_ListViewItem which is parent of this object
  @param pdfObj Annotation contained in this item
  @param _page Page holding this annotation
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
 */
-TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
+TreeItemAnnotation::TreeItemAnnotation(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<CAnnotation> pdfObj,boost::shared_ptr<CPage> _page,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/)
  : TreeItemAbstract(nameId,_data,parent,after) {
  assert(data);
  title=name;
@@ -89,7 +89,7 @@ ChildType TreeItemAnnotation::getChildType(__attribute__((unused)) const QString
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemAnnotation::createChild(__attribute__((unused)) const QString &name,ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemAnnotation::createChild(__attribute__((unused)) const QString &name,ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  if (typ==1) { //Return object dictionary
   return TreeItem::create(data,this,obj->getDictionary(),QObject::tr("Dictionary"),after);
  }
@@ -130,7 +130,7 @@ void TreeItemAnnotation::remove() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemAnnotation::validChild(__attribute__((unused)) const QString &name,QListViewItem *oldChild) {
+bool TreeItemAnnotation::validChild(__attribute__((unused)) const QString &name,Q_ListViewItem *oldChild) {
  TreeItemDict *itp=dynamic_cast<TreeItemDict*>(oldChild);
  if (itp) { //Is a dictionary
   return obj->getDictionary().get()==itp->getObject().get();

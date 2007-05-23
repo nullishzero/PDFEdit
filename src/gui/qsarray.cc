@@ -18,6 +18,7 @@
 #include "qsimporter.h"
 #include <cobject.h>
 #include "pdfutil.h"
+#include "util.h"
 
 namespace gui {
 
@@ -95,7 +96,7 @@ QString QSArray::getText() {
  CArray *array=dynamic_cast<CArray*>(obj.get());
  std::string text;
  array->getStringRepresentation(text);
- return text;
+ return util::convertToUnicode(text,util::PDF);
 }
 
 /**
@@ -133,7 +134,7 @@ void QSArray::add(int index,QObject *ip) {
 */
 void QSArray::add(int index,const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- CString property(ip);
+ CString property(util::convertFromUnicode(ip,util::PDF));
  try {
   array->addProperty(index,property);
  } catch (ReadOnlyDocumentException &e) {
@@ -190,7 +191,7 @@ void QSArray::add(QObject *ip) {
 */
 void QSArray::add(const QString &ip) {
  CArray *array=dynamic_cast<CArray*>(obj.get());
- CString property(ip);
+ CString property(util::convertFromUnicode(ip,util::PDF));
  try {
   array->addProperty(property);
  } catch (ReadOnlyDocumentException &e) {

@@ -10,11 +10,11 @@
 #ifndef __PAGESPACE_H__
 #define __PAGESPACE_H__
 
+#include "qtcompat.h"
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qevent.h>
-#include <qscrollview.h>
 #include <qlayout.h>
 #include <qmainwindow.h>
 #include <qlineedit.h>
@@ -24,6 +24,8 @@
 #include "units.h"
 
 using namespace pdfobjects;
+
+class Q_ScrollView;
 
 namespace gui {
 
@@ -504,7 +506,7 @@ class PageSpace : public QWidget {
 		/** Helpes layout. It contains information's label in information line */
 		QHBoxLayout	* hBox;
 		/** Pointer to class which is default for srcroll viewing pages (now is same as \a pageImage). */
-		QScrollView	* scrollPageSpace;
+		Q_ScrollView	* scrollPageSpace;
 
 		/** Pointer to actual viewed Pdf. */
 		QSPdf						* actualPdf;

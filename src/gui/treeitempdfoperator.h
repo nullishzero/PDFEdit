@@ -32,17 +32,17 @@ class TreeData;
  */
 class TreeItemPdfOperator : public TreeItemAbstract {
 public:
- TreeItemPdfOperator(TreeData *_data,QListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,QListViewItem *after=NULL);
- TreeItemPdfOperator(TreeData *_data,QListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name=QString::null,QListViewItem *after=NULL);
+ TreeItemPdfOperator(TreeData *_data,Q_ListView *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPdfOperator(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,boost::shared_ptr<CContentStream> cs,const QString name=QString::null,Q_ListViewItem *after=NULL);
+ TreeItemPdfOperator(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<PdfOperator> pdfObj,const QString name=QString::null,Q_ListViewItem *after=NULL);
  virtual ~TreeItemPdfOperator();
  boost::shared_ptr<PdfOperator> getObject();
  //From TreeItemAbstract interface
  virtual void remove();
  virtual void reloadSelf();
- virtual bool validChild(const QString &name,QListViewItem *oldChild);
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild);
  virtual ChildType getChildType(const QString &name);
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL);
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL);
  virtual QStringList getChildNames();
  virtual bool haveChild();
  virtual QSCObject* getQSObject();

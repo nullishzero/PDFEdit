@@ -13,7 +13,7 @@
 #include "qtcompat.h"
 #include <qwidget.h>
 class Q_ComboBox;
-class QTextEdit;
+class Q_TextEdit;
 class QLineEdit;
 class QSInterpreter;
 class QSEditor;
@@ -35,14 +35,15 @@ public:
  void addCommand(const QString &command);
  void addError(const QString &message);
  void addString(const QString &str);
- virtual bool	eventFilter( QObject * o, QEvent * e );
+ virtual bool eventFilter( QObject * o, QEvent * e );
  void reloadSettings();
  void saveWindowState();
  void restoreWindowState();
  void clearWindow();
  ~CommandWindow();
+ void execute(enum cmd from);
 public slots:
- void execute( enum cmd  from = CmdLine );
+ void execute();
  void setHistorySize( int historySize );
  void setHistoryFile( const QString & historyFile );
  void setInterpreter( QSInterpreter * ainterpreter, QObject * context );
@@ -65,7 +66,7 @@ signals:
  void commandExecuted(QString);
 private:
  /** Console widget */
- QTextEdit *out;
+ Q_TextEdit *out;
  /** Commandline widget */
  QLineEdit *cmd;
  /** Script editor widget */

@@ -10,10 +10,11 @@
 #ifndef __ICONCACHE_H__
 #define __ICONCACHE_H__
 
-#include <qiconset.h>
+#include "qtcompat.h"
 
 class QString;
 class QPixmap;
+class QIcon;
 
 namespace gui {
 
@@ -28,7 +29,7 @@ public:
  IconCache();
  ~IconCache();
  QPixmap* getIcon(const QString &name);
- QIconSet* getIconSet(const QString &name);
+ QIcon* getIconSet(const QString &name);
 private:
  QString getIconFile(const QString &name);
 };

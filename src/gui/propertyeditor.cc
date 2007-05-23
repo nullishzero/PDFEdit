@@ -22,7 +22,7 @@
 #include "main.h"
 #include "propertyfactory.h"
 #include "property.h"
-#include <qscrollview.h>
+#include QSCROLLVIEW
 #include <qstringlist.h>
 #include <qlabel.h>
 #include <qgrid.h>
@@ -60,9 +60,9 @@ PropertyEditor::PropertyEditor(QWidget *parent /*=0*/, const char *name /*=0*/) 
  //Set some minimum height to be at least somewhat visible
  setMinimumHeight(40);
  // create scrollview
- scroll=new QScrollView(this,"propertyeditor_scroll",0);
- scroll->setHScrollBarMode(QScrollView::AlwaysOff);
- scroll->setVScrollBarMode(QScrollView::AlwaysOn);//TODO:CHECK
+ scroll=new Q_ScrollView(this,"propertyeditor_scroll",0);
+ scroll->setHScrollBarMode(Q_ScrollView::AlwaysOff);
+ scroll->setVScrollBarMode(Q_ScrollView::AlwaysOn);//TODO:CHECK
  //create grid in scrollview
  grid=new QFrame(scroll);
 

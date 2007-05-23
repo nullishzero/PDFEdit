@@ -11,7 +11,7 @@
 #define __TREEITEMABSTRACT_H__
 
 #include "qtcompat.h"
-#include <qlistview.h>
+#include QLISTVIEW
 #include QDICT
 #include <qmap.h>
 
@@ -41,25 +41,25 @@ typedef int ChildType;
  or its parts (subtrees)
  \brief Abstract tree item class
 */
-class TreeItemAbstract : public QListViewItem {
+class TreeItemAbstract : public Q_ListViewItem {
 public:
  void setSelect(bool selected);
- void unSelect(QListView *tree);
+ void unSelect(Q_ListView *tree);
  QString path();
- TreeItemAbstract(const QString &itemName,TreeData *_data,QListView *parent,QListViewItem *after=NULL);
- TreeItemAbstract(const QString &itemName,TreeData *_data,QListViewItem *parent,QListViewItem *after=NULL);
+ TreeItemAbstract(const QString &itemName,TreeData *_data,Q_ListView *parent,Q_ListViewItem *after=NULL);
+ TreeItemAbstract(const QString &itemName,TreeData *_data,Q_ListViewItem *parent,Q_ListViewItem *after=NULL);
  QString name();
  void setName(const QString &newNameId);
  virtual ~TreeItemAbstract();
  void reload(bool reloadThis=true,bool forceReload=false);
  virtual void deleteChild(const QString &name);
- virtual void deleteChild(QListViewItem *target);
+ virtual void deleteChild(Q_ListViewItem *target);
  void eraseItems();
  void moveAllChildsFrom(TreeItemAbstract* src);
- QListViewItem* child(const QString &name);
+ Q_ListViewItem* child(const QString &name);
  virtual QSCObject* getQSObject(BaseCore *_base);
  virtual void setOpen(bool open);
- virtual bool deepReload(const QString &childName,QListViewItem *oldItem);
+ virtual bool deepReload(const QString &childName,Q_ListViewItem *oldItem);
  virtual QString itemHint();
 
  //Abstract functions
@@ -78,7 +78,7 @@ public:
   @param oldChild reference to old child tree item
   @return True, if the old child is pointing to same item as item "name", false, if the child item "name" no longer point to same item as oldChild.
  */
- virtual bool validChild(const QString &name,QListViewItem *oldChild)=0;
+ virtual bool validChild(const QString &name,Q_ListViewItem *oldChild)=0;
  /** 
   Create and return object for scripting representing this tree  item
   @return object for scripting
@@ -88,11 +88,11 @@ public:
   Create one subchild
   @param name Name of child (the same as in list returned from getChildNames)
   @param typ Type of TreeItemAbstract's child. (see ChildType)
-  @param after QListViewItem after which will be this item added. If unspecified (or  NULL), it is added before any other items
+  @param after Q_ListViewItem after which will be this item added. If unspecified (or  NULL), it is added before any other items
   @return Pointer to subchild. If returned NULL, the subchild can not be created
   \see getChildNames
  */
- virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,QListViewItem *after=NULL)=0;
+ virtual TreeItemAbstract* createChild(const QString &name,ChildType typ,Q_ListViewItem *after=NULL)=0;
  /**
   Get list of all item's childs names
   @return list of child names. Names in the list must be unique and the list may be empty.
@@ -123,7 +123,7 @@ protected:
  /** Name of this item */
  QString nameId;
  /** Mapping of all child names to child items for this tree item */
- Q_Dict<QListViewItem> items;
+ Q_Dict<Q_ListViewItem> items;
  /** Mapping of all child names to types of child items for this tree item */
  QMap<QString,ChildType> types;
  /** Data from treewindow containing reference to it and other needed data */

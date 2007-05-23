@@ -15,18 +15,16 @@
 */
 
 #include "qsmenu.h"
-#include "qtcompat.h"
 #include <assert.h>
-#include <qpopupmenu.h>
+#include QPOPUPMENU
 #include <qcursor.h>
 #include "menu.h"
 #include "util.h"
 #include <utils/debug.h>
-
 #include "basecore.h"
 
 class QPixMap;
-class QIconSet;
+class QIcon;
 
 namespace gui {
 
@@ -44,7 +42,7 @@ const int TMP_OFFSET=0x3fffffff;
 QSMenu::QSMenu(Menu *_msys,BaseCore *_base,const QString &name/*=QString::null*/) : QSCObject ("Menu",_base) {
  msys=_msys;
  actionId=0;
- menu=new QPopupMenu();
+ menu=new Q_PopupMenu();
  try {
   if (!name.isNull()) { //Menu template specified
    QString line=Menu::readItem(name);

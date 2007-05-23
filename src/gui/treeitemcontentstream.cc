@@ -31,13 +31,13 @@ using namespace std;
 /**
  constructor of TreeItemContentStream - create root item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListView in which to put this item
+ @param parent Q_ListView in which to put this item
  @param pdfObj ContentStream contained in this item
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItemContentStream::TreeItemContentStream(TreeData *_data,Q_ListView *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
  mode=All;
@@ -46,13 +46,13 @@ TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListView *parent,b
 /**
  constructor of TreeItemContentStream - create child item from given object
  @param _data TreeData containing necessary information about tree in which this item will be inserted
- @param parent QListViewItem under which to put this item
+ @param parent Q_ListViewItem under which to put this item
  @param pdfObj ContentStream contained in this item
  @param nameId Internal name of this item
  @param name Caption of this item - will be shown in treeview
  @param after Item after which this one will be inserted
  */
-TreeItemContentStream::TreeItemContentStream(TreeData *_data,QListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,QListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
+TreeItemContentStream::TreeItemContentStream(TreeData *_data,Q_ListViewItem *parent,boost::shared_ptr<CContentStream> pdfObj,const QString name/*=QString::null*/,Q_ListViewItem *after/*=NULL*/,const QString &nameId/*=NULL*/):TreeItemAbstract(nameId,_data,parent,after) {
  obj=pdfObj;
  init(name);
 }
@@ -130,7 +130,7 @@ TreeItemContentStream::~TreeItemContentStream() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-TreeItemAbstract* TreeItemContentStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,QListViewItem *after/*=NULL*/) {
+TreeItemAbstract* TreeItemContentStream::createChild(const QString &name,__attribute__((unused)) ChildType typ,Q_ListViewItem *after/*=NULL*/) {
  size_t position=name.toUInt();
  return new TreeItemPdfOperator(data,this,op[position],obj,name,after);
 }
@@ -244,7 +244,7 @@ void TreeItemContentStream::uninitObserver() {
 }
 
 //See TreeItemAbstract for description of this virtual method
-bool TreeItemContentStream::validChild(const QString &name,QListViewItem *oldChild) {
+bool TreeItemContentStream::validChild(const QString &name,Q_ListViewItem *oldChild) {
  size_t i=name.toUInt();
  TreeItemPdfOperator *it=dynamic_cast<TreeItemPdfOperator*>(oldChild);
  assert(it);
