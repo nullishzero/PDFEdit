@@ -1,16 +1,12 @@
 TEMPLATE	= lib
 CONFIG		+= qt warn_on link_prl staticlib
+CONFIG		-= dll
 TARGET 		= qsa_pdfedit
 VERSION  	= 1.1.5m
 
-isEmpty(QSA_INSTALL_PREFIX) {
-  QSA_BUILD_PREFIX=$$(QTDIR)
-} else {
-  QSA_BUILD_PREFIX=../..
-}
+QSA_BUILD_PREFIX=../..
 
 DESTDIR         = ../../lib
-DLLDESTDIR      = $$QSA_BUILD_PREFIX/bin
 
 HEADERS		= \
 		  qsproject.h \
@@ -54,28 +50,6 @@ DEFINES += QT_INTERNAL_TABLE
 LIBS += -L$${QT_INSTALL_PREFIX}/lib
 
 mac:QMAKE_LFLAGS_PREBIND    = -prebind -seg1addr 0xBC000000
-
-headers.files 	= \
-		qsaglobal.h \
-                qsconfig.h \
-		qsobjectfactory.h \
-		qswrapperfactory.h \
-		qseditor.h \
-		qsproject.h \
-		qsinterpreter.h \
-		qsargument.h \
-		qsinputdialogfactory.h \
-		qsscript.h
-
-!isEmpty(QSA_INSTALL_PREFIX) {
-  headers.path = $$QSA_INSTALL_PREFIX/include
-  win32 {
-    target.path = $$QSA_INSTALL_PREFIX/bin
-  } else {
-    target.path = $$QSA_INSTALL_PREFIX/lib
-  }
-  INSTALLS += headers target
-}
 
 KERNELDIR = ../kernel
 EDITORDIR = ../editor

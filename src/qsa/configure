@@ -7,7 +7,8 @@ if [ "$QTVERSION" = "qt3" ]; then
  rm -f Makefile.qsa
 else
  echo Skipping QSA-1.1.5
- echo nocompile > Makefile.qsa
+ #create dummy makefile
+ echo staticlib: > Makefile.qsa
  exit 0
 fi
 

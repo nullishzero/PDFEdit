@@ -14,9 +14,7 @@ install: Makefile.qsa
 	$(MAKE) -f Makefile.qsa install
 
 run-make: Makefile.qsa
-	$(MAKE) -f Makefile.qsa src/Makefile
-	cd src && $(MAKE) qsa/Makefile
-	cd src/qsa && $(MAKE) staticlib
+	$(MAKE) -f Makefile.qsa
 
 sub-src: Makefile.qsa
 	$(MAKE) -f Makefile.qsa sub-src
@@ -30,8 +28,4 @@ distclean:
 	rm -f configure2/configure2 src/qsa/qsconfig.h configure2/Makefile
 	rm -f Makefile.qsa .qmake.cache lib/libqsa_pdfedit.prl lib/libqsa_pdfedit.a src/Makefile src/qsa/Makefile tools/designer/editor/preferences.h tools/designer/editor/preferences.cpp
 
-staticlib: Makefile.qsa
-	$(MAKE) -f Makefile.qsa src/Makefile
-	cd src && $(MAKE) qsa/Makefile
-	cd src/qsa && $(MAKE) staticlib
-
+staticlib: run-make
