@@ -424,15 +424,14 @@ void StreamPredictor::initContext(int predictorA,
   ok = gFalse;
 
   nVals = width * nComps;
-  if (width <= 0 || nComps <= 0 || nBits <= 0 ||
-      nComps >= INT_MAX / nBits ||
-      width >= INT_MAX / nComps / nBits ||
-      nVals * nBits + 7 < 0) {
-    return;
-  }
   pixBytes = (nComps * nBits + 7) >> 3;
   rowBytes = ((nVals * nBits + 7) >> 3) + pixBytes;
-  if (rowBytes <= 0) {
+  if (width <= 0 || nComps <= 0 || nBits <= 0 ||
+      nComps > gfxColorMaxComps ||
+      nBits > 16 ||
+      nVals <= 0 ||
+      nVals * nBits + 7 <= 0 ||
+      rowBytes <= 0) {
     return;
   }
   predLine = (Guchar *)gmalloc(rowBytes);
