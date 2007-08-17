@@ -1,4 +1,5 @@
 2007-??-?? PDF Editor 0.3.2
+	* Fixed bug in Xpdf StreamPredictor announced by http://secunia.com/advisories/26188/
 	* Fixed bug when doxygen would overwrite /dev/null device if run under root
 	  (thanks to Bernard Johnson for reporting)
 	* Better error message when invalid commandline option is specified
