@@ -366,6 +366,17 @@ CArray::_objectChanged (boost::shared_ptr<IProperty> newValue, boost::shared_ptr
 void
 CArray::_setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const
 {
+	/* FIXME this is not good implementation because we don't have
+	 * information about array name here. So if it is direct child
+	 * of some dictionary, we will set mode for the array correctly
+	 * (according mode rules) but all children properties have
+	 * different mode which match the most general setting (
+	 * .: mdAdvanced in our default configuration).
+	 * We need to get the name of direct property from the parent 
+	 * dictionary. Until this is implemented we will simply set 
+	 * child's mode to the array mode.
+	 */
+	/*
 	configuration::ModeController* modecontroller = NULL;
 	if (hasValidPdf (this) && (NULL != (modecontroller=this->getPdf()->getModeController())))
 	{
@@ -373,12 +384,15 @@ CArray::_setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const
 		
 		ostringstream oss;
 		oss << id;
+
 		PropertyMode mode = modecontroller->getMode ("",oss.str());
 		if (mdUnknown == mode)
 			ip->setMode (this->getMode());
 		else
 			ip->setMode (mode);
 	}
+	*/
+	ip->setMode(this->getMode());
 }
 
 
