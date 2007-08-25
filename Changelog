@@ -1,8 +1,9 @@
 2007-??-?? PDF Editor 0.3.2
+	* README updated for several platforms installation description
 	* Fixed bug in Xpdf StreamPredictor announced by http://secunia.com/advisories/26188/
 	* Fixed bug when doxygen would overwrite /dev/null device if run under root
 	  (thanks to Bernard Johnson for reporting)
-	* Better error message when invalid commandline option is specified
+	* Better error message when invalid command line option is specified
 	* QMAKESPEC is not required by configure
 	* Minor fixes in documentation
 	* Fixed bug in script used to make tarballs - one documentation file
@@ -10,14 +11,14 @@
 	* Fixed bad format string error on 64bit platforms
 
 2007-04-29 PDF Editor 0.3.1
-	* Fixed commandline function invocation
+	* Fixed command line function invocation
 	* Fixed QSA using bad qmake
 	* Fixed --enable-release option in configure script
 	* Xpdf code cleanup (removed unused files)
 	* Fixed possible unicode string handling errors
 	* Added checks for QTDIR and QMAKESPEC to ./configure
 	* Compilation fixes for gcc-4.3 (thanks to Martin Michlmayr for patch)
-	* Added german translation (thanks to Andreas Mantke)
+	* Added German translation (thanks to Andreas Mantke)
 	* Updated Xpdf to 3.01pl2 (some security bugs were fixed)
 	* Fixed unicode file name handling
 	* LC_ALL and LC_MESSAGES env. variables are now processed, not only LANG

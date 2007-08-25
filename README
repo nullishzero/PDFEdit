@@ -8,6 +8,7 @@ For other more detailed documentation, look into "doc" subdirectory.
 File doc/user/user_doc.html contain more detailed installation instructions
 (in the Installation section) and list of required libraries.
 
+
 Prerequisites
 ------------
 Make sure you have all needed libraries (qt3, boost and xlib) along with their 
@@ -27,6 +28,7 @@ subdirectory in the Qt directory.
 See http://www.digitalfanatics.org/projects/qt_tutorial/chapter04.html or 
 http://doc.trolltech.com/3.0/qmake-guide.html for more information.
 
+
 Compilation
 -----------
  Run:
@@ -37,6 +39,7 @@ Compilation
 
  After configure successfully finishes, run "make" in this directory to start
  compilation.
+
 
 Installation
 ------------
@@ -50,6 +53,7 @@ Installation
  Example:
   INSTALL_ROOT=/chroot/pdfedit make install
 
+
 Cygwin build
 ------------
 PATH in cygwin must contain these three directories
@@ -61,3 +65,58 @@ You can use cygwin_build.bat to start the build process
 (you will need to set CYGWIN_ROOT in the file first)
 This will create the package in /tmp/pdfedit-package
 and create pack.bat to pack the package with 7-zip
+
+
+FreeBSD build
+-------------
+Here is the short howto for PDFedit compilation and installation on FreeBSD 6.2 
+(Qt 3.38, Xorg 7.2). Thanks to Hao Chen.
+
+# untar current sources (this was done for 0.3.1 version)
+tar zxvf pdfedit-0.3.1.tar.bz2
+cd pdfedit-0.3.1
+setenv QTDIR /usr/local
+setenv QMAKESPEC /usr/local/share/qt/mkspecs/freebsd-g++
+setenv LOCALBASE /usr/local
+./configure
+cd src/xpdf
+./configure  --with-t1-library="${LOCALBASE}/lib"
+--with-t1-includes="${LOCALBASE}/include"
+
+#make sure you see this:
+#checking for T1_InitLib in -lt1... yes
+#using t1 library
+
+cd ../..
+
+
+NetBSD installation
+-------------------
+Package for NetBSD is available on http://pkgsrc.se/wip/pdfedit
+
+
+Debian package
+--------------
+The package for the Debian is in testing branch at the moment. 
+See http://packages.debian.org/unstable/utils/pdfedit
+
+The package for the Ubuntu can by found at http://packages.ubuntu.com/gutsy/utils/pdfedit
+
+
+RPM package
+-----------
+RPM package is available directly on source forge net download pages. 
+See http://sourceforge.net/project/showfiles.php?group_id=177354
+
+
+Gentoo package
+--------------
+Package is available on sunrise overlay repository
+which should be available in following way:
+
+emerge -va layman
+echo "source /usr/portage/local/layman/make.conf" >> /etc/make.conf
+layman -f -a sunrise
+
+pdfedit is then installed by:
+ACCEPT_KEYWORDS=~x86 emerge -av pdfedit
