@@ -12,6 +12,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.23  2007/08/25 14:43:47  mstsxfx
+ * formating
+ *
  * Revision 1.22  2007/04/25 18:24:35  bilboq
  *
  * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
@@ -134,7 +137,7 @@ const unsigned int  DBG_CRIT 	= 1;
  *
  * Priority for casual errors.
  */
-const unsigned int  DBG_ERR		= 2;
+const unsigned int  DBG_ERR	= 2;
 
 /** Warning massage priority.
  * Messages which contains comments to some non casual behaviour.
@@ -241,19 +244,19 @@ unsigned int changeDebugLevel(unsigned int level);
  * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
  * massage is printed out to the standard error output with following format:
  * @code 
- * priority:prefix:fileName:line: message
+ * priority:prefix:fileName:functionName:line: message
  * @endcode
  */
-#define _printDbg(prefix, level, stream, msg)						\
-{																	\
-	if ( debug::debugLevel >= level) 								\
-	{																\
-		(stream) << level <<":"<<prefix<<":"						\
+#define _printDbg(prefix, level, stream, msg)					\
+{										\
+	if ( debug::debugLevel >= level) 					\
+	{									\
+		(stream) << level <<":"<<prefix<<":"				\
 		    << __FILE__ << ":" << __FUNCTION__ <<":"<< __LINE__ 	\
-			<< ": "													\
-			<<  msg 												\
-			<< std::endl;											\
-	}																\
+			<< ": "							\
+			<<  msg 						\
+			<< std::endl;						\
+	}									\
 }
 
 // =============================================================================

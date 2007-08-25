@@ -17,6 +17,9 @@
  * $RCSfile$
  * 
  * $Log$
+ * Revision 1.10  2007/08/25 14:43:47  mstsxfx
+ * formating
+ *
  * Revision 1.9  2007/04/25 18:24:36  bilboq
  *
  * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
@@ -160,7 +163,7 @@ public:
          * @return value of the value (direct pointer) or 0 if no such key 
          * found.
          */
-        V get(K key)const
+        V get(K & key)const
         {
                 ConstIterator iter=mapping.find(key);
                 if(iter==mapping.end())
@@ -175,7 +178,7 @@ public:
          *
          * @return true if given key is in the storage, false otherwise.
          */
-        bool contains(K key)const
+        bool contains(K & key)const
         {
                 ConstIterator iter=mapping.find(key);
 

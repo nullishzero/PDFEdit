@@ -12,6 +12,9 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.9  2007/08/25 14:43:47  mstsxfx
+ * formating
+ *
  * Revision 1.8  2007/04/29 15:03:53  mstsxfx
  * TODO added
  *
@@ -54,9 +57,6 @@
 #include<vector>
 #include"utils/confparser.h"
 
-/* TODO - tune for performance - to many string object creation - replace by
- * referencies
- */
 namespace rulesmanager
 {
 	
