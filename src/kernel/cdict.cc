@@ -425,6 +425,12 @@ CDict::_setMode (shared_ptr<IProperty> ip, PropertyId id) const
 			if (isName (type))
 				IProperty::getSmartCObjectPtr<CName>(type)->getValue(tmp);
 			mode = modecontroller->getMode (tmp, id);
+
+			/* TODO Can we add parentName and name (id) which can 
+			 * be set to the child at this moment? So if child is 
+			 * an array, it can use this information for mode 
+			 * controllorer for elements.
+			 */
 		}
 	
 		if (mdUnknown == mode)
