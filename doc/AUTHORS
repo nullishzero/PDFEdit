@@ -11,6 +11,7 @@ Derek Noonburg		Xpdf author (http://www.foolabs.com/xpdf)
 
 Other contributors
 ==================
+Tiziano Mattei		Tango icon theme. See src/gui/icon/Tango/README for more information about this set
 Vicente Romero Calero 	Spanish translation
 Andreas Mantke		German translation
 Alexandre Prokoudine 	Russian translation
