@@ -54,6 +54,9 @@ data_icon.files 	= icon/*.png icon/*.svg
 # Hi-color icon theme
 data_icon_hicolor.path  = $$DATA_PATH/icon/hicolor
 data_icon_hicolor.files = icon/hicolor/*.png 
+# Tango icon theme
+data_icon_tango.path  = $$DATA_PATH/icon/Tango
+data_icon_tango.files = icon/Tango/*.png 
 # Help files (english)
 data_help.path  	= $$DATA_PATH/help
 data_help.files 	= help/*.html
@@ -104,7 +107,7 @@ pdfedit.files   += pdfedit.exe
 }
 
 #List of installed targets
-INSTALLS  = data data_icon data_icon_hicolor data_help data_help_cs data_help_images data_lang data_scripts
+INSTALLS  = data data_icon data_icon_hicolor data_icon_tango data_help data_help_cs data_help_images data_lang data_scripts
 INSTALLS += doc doc_images doc_kernel_images doc_design doc_design_images doc_gui_images doc_gui_m_images
 INSTALLS += doc_examples
 INSTALLS += pdfedit
