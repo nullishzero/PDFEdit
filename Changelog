@@ -2,6 +2,7 @@
 	* Added Tango icon theme from Tiziano Mattei.
 
 2007-08-28 PDF Editor 0.3.2
+	* bug #160 (http://pdfedit.petricek.net/bt/view.php?id=160) fixed
 	* README updated for several platforms installation description
 	* Fixed bug in Xpdf StreamPredictor announced by http://secunia.com/advisories/26188/
 	* Fixed bug when doxygen would overwrite /dev/null device if run under root
