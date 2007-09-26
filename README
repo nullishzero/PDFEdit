@@ -1,5 +1,5 @@
 PDFedit readme
------------------
+==============
 
 PDFedit is distributed under terms of GNU GPL in version 2.
 See doc/LICENSE.GPL for full license text.
@@ -8,9 +8,25 @@ For other more detailed documentation, look into "doc" subdirectory.
 File doc/user/user_doc.html contain more detailed installation instructions
 (in the Installation section) and list of required libraries.
 
+Contact
+-------
+Feel free to contact us with any question via our public
+pdfedit-support@lists.sourceforge.net mailing list. Note that you have to 
+be subscribed if you want to post messages to the list (subscription form
+is at https://lists.sourceforge.net/lists/listinfo/pdfedit-support).
+Mailing list archive is public visible also without registration. Please 
+try to look into the archive before you post your question and append 
+an existing thread rather than create a new one.
+
+If you want to be informed about important news you can register to the 
+pdfedit-news@lists.sourceforge.net mailing list. You can subscribe at
+https://lists.sourceforge.net/lists/listinfo/pdfedit-news
+
+All public mailing lists are listed at
+http://sourceforge.net/mail/?group_id=177354
 
 Prerequisites
-------------
+-------------
 Make sure you have all needed libraries (qt3, boost and xlib) along with their 
 headers. 
 You also need the environment variable QTDIR to be set to directory in which 
@@ -21,7 +37,7 @@ QTDIR manually. Usually it is set to something like /usr/qt/3 or /usr/share/qt3
 case).  
 Also, while usually not needed, QMAKESPEC may be set to match your system type.
 For most systems it is unnecessary to set it, alhough it may be needed if you
-crosscompile (like producing i386 binaries on amd64 platform) or in some rare
+cross-compile (like producing i386 binaries on amd64 platform) or in some rare
 configurations. Once you set QTDIR, you may try typing "ls $QTDIR/mkspecs".
 QMAKESPEC should be set to name of one of the directories that are in mkspecs
 subdirectory in the Qt directory.
