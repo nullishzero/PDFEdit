@@ -8,138 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.28  2007/04/25 18:24:36  bilboq
- *
- * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
- *
- * fixed some typos in comments
- *
- * Revision 1.27  2007/02/04 20:17:03  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.26  2006/09/11 13:50:39  misuj1am
- *
- * -- one hack removed
- * 	-- added to assure " a bit " more stability
- *
- * Revision 1.25  2006/09/07 10:31:30  misuj1am
- *
- * -- hack
- *
- * Revision 1.24  2006/08/26 10:19:33  hockm0bm
- * FIXME removed
- *
- * Revision 1.23  2006/06/17 18:34:51  hockm0bm
- * Refactoring changes
- *
- * * IObserverHandler
- *         -renamed to ObserverHandler - it is not interface
- *         - BasicObserverContext, CDictComplexObserverContext,
- *           CArrayComplexObserverContext removed - it doesn't have to know
- *           anything about existing context types
- * * CObjectSimple, CDict, CArray, CStream, CPage, CAnnotation, CContentStream
- *         - each provides typedef with produced change context
- *
- * Revision 1.22  2006/06/17 17:40:57  hockm0bm
- * * PriorityComparator
- *         - functor behaves like less
- * * PriorityList reimplemented
- *         - doesn't inherit from priority_queue - implements sorting directly
- *         - uses container with given type and sort function when element is
- *           inserted and removed
- *
- * Revision 1.21  2006/06/17 16:48:38  hockm0bm
- * ObserverHandler::registerObserver bug fix
- *         - obsever is pushed if find returns == end()
- *
- * Revision 1.20  2006/06/17 15:40:07  misuj1am
- *
- * -- minor changes
- *
- * Revision 1.19  2006/06/17 15:06:20  hockm0bm
- * quick fix
- *         - <std_queue.h> include replaced by <queue>
- *
- * Revision 1.18  2006/06/17 13:15:29  hockm0bm
- * * PriorityList added
- * * PriorityComparator added
- * * IObserverHandler
- *         - supports priorities - uses PriorityList storage
- *         - registerObserver wih already registered obsever is ignored
- *
- * NEEDS testing
- *
- * Revision 1.17  2006/06/15 15:56:00  jahom0bm
- * Fixed include
- *
- * Revision 1.16  2006/06/13 20:44:13  hockm0bm
- * * ChangeContextType enum removed from class IChangeContext to observer namespace
- * * pdfwriter.cc synced with ChangeContextType change
- *
- * Revision 1.15  2006/06/12 18:28:14  hockm0bm
- * ComplexChangeContext class added
- *
- * Revision 1.14  2006/05/30 21:04:12  hockm0bm
- * doc update
- *
- * Revision 1.13  2006/05/30 10:51:08  misuj1am
- *
- * -- improved
- *
- * Revision 1.12  2006/05/16 17:43:58  hockm0bm
- * * ScopedChangeContext added
- *         - new change context
- *
- * Revision 1.11  2006/05/14 13:51:40  hockm0bm
- * quick fix
- *         - virtual destructor for IObserverHandler
- *
- * Revision 1.10  2006/05/14 13:29:00  hockm0bm
- * IObserverHandler has virtual methods
- *
- * Revision 1.9  2006/05/14 12:51:46  misuj1am
- *
- * -- implementation moved from iproperty.cc here
- *
- * Revision 1.8  2006/04/18 17:25:29  hockm0bm
- * IObserverHandler returned back
- *
- * Revision 1.7  2006/04/17 17:08:10  hockm0bm
- * throw() added to all methods which can't throw
- *
- * Revision 1.6  2006/04/16 23:04:53  misuj1am
- *
- *
- * -- slightly changed observer interface
- *
- * Revision 1.5  2006/04/12 17:58:28  hockm0bm
- * BasicChangeContext changed to BasicChangeContextType
- *
- * Revision 1.4  2006/04/09 21:32:03  misuj1am
- *
- *
- * -- changed a bit
- * 	-- virtual destructor
- * 	-- pointer to context changed to shared_ptr
- *
- * Revision 1.3  2006/04/02 08:09:59  hockm0bm
- * new observer design
- * * IObserver - interface for observer implementation (template class)
- * * IObserverHandler - interface for value keepers which wants to be
- *         registration target of observers (template class)
- * * IChangeContext - interface for change context for notifier (template class)
- *         - BasicCahngeContext - implementation of basic context with original
- *           value of changed one
- *
- *
- */
 
 #ifndef _OBSERVER_H
 #define _OBSERVER_H
@@ -420,8 +288,6 @@ public:
 	virtual ~IObserver ()throw() {}
 };
 
-namespace {
-
 /** Priority comparator functor.
  *
  * T template parameter stands for elements which priority should be compared.
@@ -528,8 +394,6 @@ public:
 		}
 	}
 };
-
-} // annonymous namespace for priority list and related
 
 /** Base class for all notifiers.
  *
