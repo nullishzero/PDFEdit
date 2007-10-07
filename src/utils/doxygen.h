@@ -8,7 +8,7 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // This header file is not included anywhere,
-// but is parsed by doxygen, so it is used to add documentation
+// but it is parsed by doxygen, so it is used to add documentation
 
 /**
  \mainpage PDF Editor programmer documentation

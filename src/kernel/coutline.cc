@@ -8,13 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  coutline.cc
- *         Created:  02/06/2006 12:54:43 AM CET
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
 // static
 #include "static.h"

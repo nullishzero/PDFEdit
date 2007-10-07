@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  textoutput.h
- *     Description:  
- *         Created:  14/11/2006 18:11:44 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
 
 #ifndef _TEXTOUTPUT_H_
 #define _TEXTOUTPUT_H_

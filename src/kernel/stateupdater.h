@@ -8,13 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  stateupdater.cc
- *         Created:  06/10/2006 10:33:34 PM CET
- *          Author:  jmisutka, mjahoda
- * =====================================================================================
- */
 #ifndef _STATEUPDATER_H_
 #define _STATEUPDATER_H_
 

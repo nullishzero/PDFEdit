@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/* 
- * =====================================================================================
- *        Filename:  cstream.h
- *         Created:  01/18/2006 
- *          Author:  jmisutka (06/01/19), 
- *
- * =====================================================================================
- */
 #ifndef _CSTREAM_H
 #define _CSTREAM_H
 

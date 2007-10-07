@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  static.h
- *     Description:  Basic stuff.
- *         Created:  03/07/2006 18:42:41 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
 
 #ifndef _STATIC_H_
 #define _STATIC_H_

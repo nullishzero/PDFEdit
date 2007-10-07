@@ -9,67 +9,6 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.13  2007/02/04 20:17:02  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.12  2006/09/04 13:12:50  hockm0bm
- * FileStreamWriter::clone
- *         - if length parameter is 0, nothing is copied rather than to the end
- *           of document content (feature wasn't implemented completly and this
- *           feature is not used in project)
- *
- * Revision 1.11  2006/05/23 19:04:50  hockm0bm
- * * new StreamWriter::trim method
- * * FileStreamWriter::trim implemented
- *
- * Revision 1.10  2006/05/14 16:15:07  hockm0bm
- * quick fix
- *         - putLine appends new line character
- *
- * Revision 1.9  2006/05/14 12:35:24  hockm0bm
- * * StreamWriter
- *         - putLine() with size parameter method added
- * * FileStreamWriter
- *         - putLine(char *, size_t) implemented
- *         - putLine(char *) uses one with size
- *
- * Revision 1.8  2006/05/08 14:23:02  hockm0bm
- * * StreamWriter new flush method added
- * * clone method corrected
- *         - checking for whole content copy
- *
- * Revision 1.7  2006/05/06 08:43:14  hockm0bm
- * clone method bug fix assignment instead of comparision
- *
- * Revision 1.6  2006/04/23 13:11:38  hockm0bm
- * clone method added to StreamWriter
- *
- * Revision 1.5  2006/04/20 20:22:40  hockm0bm
- * charachter writing moves position - uses setPos() in both putChar and putLine
- *
- * Revision 1.4  2006/04/17 19:58:41  hockm0bm
- * FileStreamWriter::putLine checks parameter for NULL
- *
- * Revision 1.3  2006/04/13 18:17:43  hockm0bm
- * TODO for filter usage in FileStreamWriter if any
- *
- * Revision 1.2  2006/04/12 20:49:03  hockm0bm
- * FileStreamWriter methods flushes immediately after writing
- *
- * Revision 1.1  2006/04/12 17:39:05  hockm0bm
- * StreamWriter base class wor all stream writers
- * FileStreamWriter writer for FileStreams
- *
- *
- */
-
 #include <stdio.h>
 #include <errno.h>
 #include "static.h"

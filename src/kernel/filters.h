@@ -8,59 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.16  2007/04/25 18:24:35  bilboq
- *
- * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
- *
- * fixed some typos in comments
- *
- * Revision 1.15  2007/02/04 20:17:02  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.14  2006/07/23 16:56:42  misuj1am
- *
- * -- docs updated
- *
- * Revision 1.13  2006/06/02 17:01:28  misuj1am
- *
- * -- documentation updated
- *
- * Revision 1.12  2006/06/02 13:23:15  misuj1am
- *
- * -- documementation update
- *
- * Revision 1.11  2006/05/08 10:57:47  misuj1am
- *
- * -- small changes
- * 	-- CStream::Buffer wchar_t changed to char
- * 	-- commented some debugging output out
- * 	-- buggie: changed setRawBuffer to replace characters instead of appending
- *
- * Revision 1.10  2006/05/07 10:03:12  misuj1am
- *
- * -- ADD: filter exception
- * -- filter handling improved
- *
- * Revision 1.9  2006/05/03 23:56:16  misuj1am
- *
- * -- cstream improvement
- * 	-- ADD: buffer of raw chars
- * 	-- ADD: getStringRepresentation returns the same object as in pdf file, except that it outputs only printable characters
- * 	-- and more
- *
- * Revision 1.8  2006/05/01 13:53:07  hockm0bm
- * new style printDbg
- *
- *
- */
-
 #ifndef _FILTERS_H_
 #define _FILTERS_H_
 

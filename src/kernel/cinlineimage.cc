@@ -8,13 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  cinlineimage.cc
- *         Created:  05/01/2006 11:41:43 AM CET
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
 // static
 #include "static.h"

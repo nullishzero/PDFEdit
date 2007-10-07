@@ -7,14 +7,6 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
-/*
- * =====================================================================================
- *        Filename:  iterator.h
- *         Created:  03/25/2006 02:43:42 AM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
-
 #ifndef _ITERATOR_H_
 #define _ITERATOR_H_
 

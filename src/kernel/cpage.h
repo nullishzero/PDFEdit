@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  cpage.cc
- *     Description:  CPage.
- *         Created:  20/03/2006 11:46:14 AM CET
- *          Author:  jmisutka, mhocko (annotation stuff)
- * =====================================================================================
- */
 
 #ifndef _CPAGE_H
 #define _CPAGE_H

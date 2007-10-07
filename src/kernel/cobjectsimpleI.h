@@ -8,15 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  cobjectsimpleI.h
- *         Created:  02/02/2006 
- *          Author:  jmisutka (06/01/19), 
- * 			
- * =====================================================================================
- */
-
 #ifndef _COBJECTSIMPLEI_H
 #define _COBJECTSIMPLEI_H
 

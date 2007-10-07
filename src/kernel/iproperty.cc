@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *		  Filename:  iproperty.cc
- *	   Description:  IProperty.
- *		   Created:  12/04/2006 00:48:14 PM CET
- *			Author:  jmisutka (), 
- * =====================================================================================
- */
 
 #include "static.h"
 

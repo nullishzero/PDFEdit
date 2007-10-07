@@ -8,15 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/* 
- * =====================================================================================
- *        Filename:  cobjectsimple.h
- *     Description:  Header file containing definition of simple cobjects.
- *         Created:  01/18/2006 
- *          Author:  jmisutka (06/01/19), 
- *
- * =====================================================================================
- */
 #ifndef _COBJECTSIMPLE_H
 #define _COBJECTSIMPLE_H
 
@@ -29,50 +20,50 @@
 namespace pdfobjects {
 //=====================================================================================
 
-		
 /**
  * CObjectSimple type trait.
  *
  * This is an advance c++ template technique which allows us to store
- * additional information that identify variable type (e.g. function type specification of a function template --
- * method in a template class).
- *
- * If someone tries to use unsupported type (e.g pCmd, etc.), she should get compile error
- * because PropertyTraitSimple<> has no body.
- *
- * REMARK: BE CAREFUL when manipulating these ones. Small change could resulting
- * in an error could be very difficult to find.
+ * additional information that identify variable type (e.g. function 
+ * type specification of a function template -- method in a template 
+ * class).
+ * <br>
+ * If someone tries to use unsupported type (e.g pCmd, etc.), she 
+ * should get compile error because PropertyTraitSimple<> has no body.
+ * <br>
+ * REMARK: BE CAREFUL when manipulating these ones. Small change could 
+ * resulting in an error could be very difficult to find.
  *
  * \see CDict, CArray, CObjectStream
  */
 template<PropertyType T> struct PropertyTraitSimple; 
 template<> struct PropertyTraitSimple<pNull>
-{	public: typedef NullType		value;
-	public: typedef NullType		writeType; 
+{	public: typedef NullType value;
+	public: typedef NullType writeType; 
 };
 template<> struct PropertyTraitSimple<pBool>
-{	public: typedef bool			value;
-	public: typedef bool			writeType; 
+{	public: typedef bool value;
+	public: typedef bool writeType; 
 };
-template<> struct PropertyTraitSimple<pInt>	
-{	public: typedef int				value;
-	public: typedef int				writeType; 
+template<> struct PropertyTraitSimple<pInt>
+{	public: typedef int value;
+	public: typedef int writeType; 
 };
-template<> struct PropertyTraitSimple<pReal>	
-{	public: typedef double			value;
-	public: typedef double 			writeType; 
+template<> struct PropertyTraitSimple<pReal>
+{	public: typedef double value;
+	public: typedef double writeType; 
 };
 template<> struct PropertyTraitSimple<pString> 
-{	public: typedef std::string			value;
-	public: typedef const std::string& 	writeType; 
+{	public: typedef std::string value;
+	public: typedef const std::string& writeType; 
 };
-template<> struct PropertyTraitSimple<pName>	
-{	public: typedef std::string			value;
-	public: typedef const std::string& 	writeType; 
+template<> struct PropertyTraitSimple<pName>
+{	public: typedef std::string value;
+	public: typedef const std::string& writeType; 
 };
-template<> struct PropertyTraitSimple<pRef> 	
-{	public: typedef IndiRef				value;
-	public: typedef const IndiRef&	 	writeType; 
+template<> struct PropertyTraitSimple<pRef> 
+{	public: typedef IndiRef value;
+	public: typedef const IndiRef& writeType; 
 };
 
 
@@ -98,9 +89,9 @@ template <PropertyType Tp>
 class CObjectSimple : noncopyable, public IProperty
 {
 public:
-	typedef typename PropertyTraitSimple<Tp>::writeType	 WriteType;
-	typedef typename PropertyTraitSimple<Tp>::value 	 Value;
-	typedef observer::BasicChangeContext<IProperty>		 BasicObserverContext;
+	typedef typename PropertyTraitSimple<Tp>::writeType WriteType;
+	typedef typename PropertyTraitSimple<Tp>::value Value;
+	typedef observer::BasicChangeContext<IProperty> BasicObserverContext;
 
 	/** 
 	 * Type of the property.
@@ -108,12 +99,10 @@ public:
 	 * This association allows us to get the PropertyType from object type.
 	 */
 	static const PropertyType type = Tp;
-
 private:
 	/** Simple value. */
 	Value value;
 	
-
 	//
 	// Constructors
 	//
@@ -123,22 +112,19 @@ public:
 	 * Constructor. 
 	 * The object will read value from o and store it. We do NOT save any reference to o.
 	 *
-	 * @param p		Pointer to pdf object.
-	 * @param o		Xpdf object. 
-	 * @param rf	Indirect id and gen id.
+	 * @param p Pointer to pdf object.
+	 * @param o Xpdf object. 
+	 * @param rf Indirect id and gen id.
 	 */
 	CObjectSimple (CPdf& p, Object& o, const IndiRef& rf);
-
 	
 	/**
 	 * Constructor.
 	 * The object will read value from o and store it. We do NOT save any reference to o.
 	 *
-	 * @param o		Xpdf object. 
+	 * @param o Xpdf object. 
 	 */
 	CObjectSimple (Object& o);
-
-
 public:	
 
 	/**
@@ -146,7 +132,7 @@ public:
 	 * as a standalone and does not belong to any pdf. When added to a pdf
 	 * the relation will be saved to IProperty::pdf.
 	 *
-	 * @param val	Value that will this object hold.
+	 * @param val Value that will this object hold.
 	 */
 	CObjectSimple (const Value& val = Value());
 
@@ -177,14 +163,13 @@ public:
 	 * @return Type of this property.
 	 */
 	virtual PropertyType getType () const {return type;}
-			
 
 	/**
 	 * Returns string representation of this object according to pdf
 	 * specification. 
 	 * 
-	 * @param str 	Output string that will hold the string representation 
-	 * 				of current object.
+	 * @param str Output string that will hold the string representation 
+	 * of current object.
 	 */
 	virtual void getStringRepresentation (std::string& str) const;
 	
@@ -224,7 +209,7 @@ public:
 	 *
 	 * \see PropertyTraitSimple
 	 *
-	 * @param val	Value that will be set.
+	 * @param val Value that will be set.
 	 */
 	void setValue (WriteType val);
 
@@ -282,20 +267,19 @@ private:
 	 * @param context Context in which a change occured.
 	 */
 	void _objectChanged (boost::shared_ptr<const ObserverContext> context);
-
 };
 
 
 //
 // Typedefs
 //
-typedef CObjectSimple<pNull>	CNull;
-typedef CObjectSimple<pBool>	CBool;
-typedef CObjectSimple<pInt>		CInt;
-typedef CObjectSimple<pReal>	CReal;
-typedef CObjectSimple<pString> 	CString;
-typedef CObjectSimple<pName> 	CName;
-typedef CObjectSimple<pRef> 	CRef;
+typedef CObjectSimple<pNull> CNull;
+typedef CObjectSimple<pBool> CBool;
+typedef CObjectSimple<pInt> CInt;
+typedef CObjectSimple<pReal> CReal;
+typedef CObjectSimple<pString> CString;
+typedef CObjectSimple<pName> CName;
+typedef CObjectSimple<pRef> CRef;
 
 
 //=====================================================================================
@@ -310,16 +294,15 @@ namespace utils {
 /**
  * Make name valid.
  * 
-	Beginning with PDF 1.2, any character except null (character code 0) may be included
-	in a name by writing its 2-digit hexadecimal code, preceded by the number
-	sign character (#); see implementation notes 3 and 4 in Appendix H. This
-	syntax is required to represent any of the delimiter or white-space characters or
-	the number sign character itself; it is recommended but not required for characters
-	whose codes are outside the range 33 (!) to 126 (~). The examples shown in
-	Table 3.3 are valid literal names in PDF 1.2 and later.
-
- *	@param it Start iterator.
- *	@param end End iterator.
+ * Beginning with PDF 1.2, any character except null (character code 0) may be included
+ * in a name by writing its 2-digit hexadecimal code, preceded by the number
+ * sign character (#); see implementation notes 3 and 4 in Appendix H. This
+ * syntax is required to represent any of the delimiter or white-space characters or
+ * the number sign character itself; it is recommended but not required for characters
+ * whose codes are outside the range 33 (!) to 126 (~). The examples shown in
+ * Table 3.3 are valid literal names in PDF 1.2 and later.
+ * @param it Start iterator.
+ * @param end End iterator.
  */
 template<typename Iter>
 std::string 
@@ -331,11 +314,9 @@ makeNamePdfValid (Iter it, Iter end)
 	{
 		if ( '!' > (*it) || '~' < (*it))
 		{ // Convert it to ascii
-		
 			Item a = (Item) (*it) >> sizeof (Item) * 4;
 			Item b = (Item) (*it) & ((unsigned) 1 << sizeof(Item) * 4);
 			tmp += std::string ("#") + a + b;
-			
 		}else
 			tmp += *it;
 	}
@@ -346,25 +327,27 @@ makeNamePdfValid (Iter it, Iter end)
 /**
  * Make name valid.
  * 
-	Beginning with PDF 1.2, any character except null (character code 0) may be included
-	in a name by writing its 2-digit hexadecimal code, preceded by the number
-	sign character (#); see implementation notes 3 and 4 in Appendix H. This
-	syntax is required to represent any of the delimiter or white-space characters or
-	the number sign character itself; it is recommended but not required for characters
-	whose codes are outside the range 33 (!) to 126 (~). The examples shown in
-	Table 3.3 are valid literal names in PDF 1.2 and later.
-
- *	@param str Character string.
+ * Beginning with PDF 1.2, any character except null (character code 0) may be included
+ * in a name by writing its 2-digit hexadecimal code, preceded by the number
+ * sign character (#); see implementation notes 3 and 4 in Appendix H. This
+ * syntax is required to represent any of the delimiter or white-space characters or
+ * the number sign character itself; it is recommended but not required for characters
+ * whose codes are outside the range 33 (!) to 126 (~). The examples shown in
+ * Table 3.3 are valid literal names in PDF 1.2 and later.
+ *
+ * @param str Character string.
  */
 inline std::string 
 makeNamePdfValid (const char* str)
-	{ return makeNamePdfValid (&str[0], &str[strlen(str)]); }
+{ 
+	return makeNamePdfValid (&str[0], &str[strlen(str)]); 
+}
 
 /**
  * Make string pdf valid.
  *
- Any characters may appear in a string except unbalanced parentheses and
- the backslash, which must be treated specially.
+ * Any characters may appear in a string except unbalanced parentheses and
+ * the backslash, which must be treated specially.
  *
  * @param it Start iterator.
  * @param end End iterator.
@@ -393,19 +376,19 @@ makeStringPdfValid (Iter it, Iter end)
 }
 
 /**
- * 
  * Make string pdf valid.
  *
- Any characters may appear in a string except unbalanced parentheses and
- the backslash, which must be treated specially./
+ * Any characters may appear in a string except unbalanced parentheses and
+ * the backslash, which must be treated specially.
  *
  * @param str Character string.
  */
 inline std::string 
 makeStringPdfValid (const char* str)
-	{ return makeStringPdfValid (&str[0], &str[strlen(str)]); }
+{ 
+	return makeStringPdfValid (&str[0], &str[strlen(str)]); 
+}
 
-	
 //=========================================================
 // Creation functions
 //=========================================================
@@ -433,16 +416,16 @@ IProperty* createObjFromXpdfObj (::Object& obj);
 /**
  * Save real xpdf object value to val.
  * 
- * @param obj	Xpdf object which holds the value.
- * @param val	Variable where the value will be stored.
+ * @param obj Xpdf object which holds the value.
+ * @param val Variable where the value will be stored.
  */
 template <PropertyType Tp,typename T> void simpleValueFromXpdfObj (::Object& obj, T val);
 
 /**
  * Create xpdf Object which represents value.
  * 
- * @param val	Value where the value is stored.
- * @return 		Xpdf object where the value is stored.
+ * @param val Value where the value is stored.
+ * @return Xpdf object where the value is stored.
  */
 template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
 
@@ -459,8 +442,8 @@ template <PropertyType Tp,typename T> Object* simpleValueToXpdfObj (T val);
 /**
  * Parses string to get simple values like int, name, bool etc.
  * 
- * @param str	String to be parsed.
- * @param val	Desired value.
+ * @param str String to be parsed.
+ * @param val Desired value.
  *
  * @throw ObjBadValueE Thrown when the string, can't be parsed correctly.
  */
@@ -474,7 +457,7 @@ void simpleValueFromString (const std::string& str, IndiRef& val);
 //=========================================================
 // To string functions
 //=========================================================
-		
+
 /**
  * Return simple xpdf object (null,number,string...) in string representation.
  * 
@@ -483,7 +466,7 @@ void simpleValueFromString (const std::string& str, IndiRef& val);
  * make other functions also template.
  *
  * @param val that will be converted to string.
- * @param str string
+ * @param str string.
  */
 template <PropertyType Tp> void simpleValueToString (bool val, std::string& str);
 
@@ -527,7 +510,7 @@ template <PropertyType Tp> void simpleValueToString (const IndiRef& val,std::str
  *
  * Copy & paste from Object.h
  * 
- * @param obj	Object to be freed.
+ * @param obj Object to be freed.
  */
 void freeXpdfObject (Object* obj);
 
@@ -537,7 +520,7 @@ void freeXpdfObject (Object* obj);
  * \exception ObjInvalidOperation Thrown when the object does not belong
  * to a valid pdf.
  *
- * @param ip	IProperty of object. 
+ * @param ip IProperty of object. 
  */
 bool objHasParent (const IProperty& ip);
 
@@ -547,7 +530,7 @@ bool objHasParent (const IProperty& ip);
  * \exception ObjInvalidOperation Thrown when the object does not belong
  * to a valid pdf.
  *
- * @param ip	IProperty of object. 
+ * @param ip IProperty of object. 
  * @param indiObj Out parameter wheren indirect object will be saved, because
  * finding the object can be an expensive operation.
  */
@@ -555,7 +538,7 @@ bool objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj);
 
 
 //=========================================================
-//	CObject* "delegate" helper methods
+// CObject* "delegate" helper methods
 //=========================================================
 
 /**
@@ -567,7 +550,7 @@ boost::shared_ptr<IProperty> getReferencedObject (boost::shared_ptr<IProperty> i
 
 
 //=========================================================
-//	CObjectSimple "get value" helper methods
+// CObjectSimple "get value" helper methods
 //=========================================================
 
 /**
@@ -628,30 +611,34 @@ getValueFromSimple (const boost::shared_ptr<IProperty>& ip)
 /** Get int from ip. */
 inline int 
 getIntFromIProperty (const boost::shared_ptr<IProperty>& ip)
-	{return getValueFromSimple<CInt> (ip);}
+{
+	return getValueFromSimple<CInt> (ip);
+}
 
 /** Get double from ip. */
 inline double 
 getDoubleFromIProperty (const boost::shared_ptr<IProperty>& ip)
 {
-	return (isInt (ip)) ? getValueFromSimple<CInt> (ip) :
-						 getValueFromSimple<CReal> (ip);
+	return (isInt (ip)) ? getValueFromSimple<CInt> (ip) : 
+		getValueFromSimple<CReal> (ip);
 }
 
 /** Get string from ip. */
 inline std::string
 getStringFromIProperty (const boost::shared_ptr<IProperty>& ip)
-		{return getValueFromSimple<CString> (ip);}
-	
+{
+	return getValueFromSimple<CString> (ip);
+}
+
 /** Get name from ip. */
 inline std::string
 getNameFromIProperty (const boost::shared_ptr<IProperty>& ip)
-		{return getValueFromSimple<CName> (ip);}
-	
-
+{
+	return getValueFromSimple<CName> (ip);
+}
 
 //=========================================================
-//	CObjectSimple "set value" helper methods
+// CObjectSimple "set value" helper methods
 //=========================================================
 
 /**

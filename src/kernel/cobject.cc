@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *		  Filename:  cobject.cc
- *	   Description: CObject helper functions implementation.
- *		   Created:  08/02/2006 02:08:14 PM CET
- *			Author:   
- * =====================================================================================
- */
 
 // static
 #include "static.h"
@@ -73,12 +65,12 @@ namespace {
 	const string CNULL_NULL = "null";
 		
 	/** Object Bool false repersentation. */
-	const string CBOOL_TRUE  =	"true";
+	const string CBOOL_TRUE  = "true";
 	/** Object Bool true representation. */
-	const string CBOOL_FALSE =	"false";
+	const string CBOOL_FALSE = "false";
 
 	/** Object Name string representation. */
-	const string CNAME_PREFIX	= "/";
+	const string CNAME_PREFIX = "/";
 
 	/** Object String representation prefix string. */
 	const string CSTRING_PREFIX = "(";
@@ -86,26 +78,26 @@ namespace {
 	const string CSTRING_SUFFIX = ")";
 
 	/** Object Ref representation middle string. */
-	const string CREF_MIDDLE	= " ";
+	const string CREF_MIDDLE = " ";
 	/** Object Ref representation string suffix. */
-	const string CREF_SUFFIX	= " R";
+	const string CREF_SUFFIX = " R";
 
 	// CObjectComplex
 	/** Object Array representation prefix string. */
-	const string CARRAY_PREFIX	= "[";
+	const string CARRAY_PREFIX = "[";
 	/** Object Array representation middle string. */
-	const string CARRAY_MIDDLE	= " ";
+	const string CARRAY_MIDDLE = " ";
 	/** Object Array representation suffix string. */
-	const string CARRAY_SUFFIX	= " ]";
+	const string CARRAY_SUFFIX = " ]";
 
 	/** Object Dictionary representation specifics. */
-	const string CDICT_PREFIX	= "<<";
+	const string CDICT_PREFIX = "<<";
 	/** Object Dictionary representation specifics. */
-	const string CDICT_MIDDLE	= "\n/";
+	const string CDICT_MIDDLE = "\n/";
 	/** Object Dictionary representation specifics. */
 	const string CDICT_BETWEEN_NAMES = " ";
 	/** Object Dictionary representation specifics. */
-	const string CDICT_SUFFIX	= "\n>>";
+	const string CDICT_SUFFIX = "\n>>";
 
 	/** Object Stream string representation specifics. */
 	const string CSTREAM_HEADER = "\nstream\n";
@@ -125,31 +117,40 @@ namespace {
 	 */
 	template<typename Storage, typename Val>
 	struct xpdfBoolReader
-	{public:
+	{
+		public:
 			void operator() (Storage obj, Val val)
-			{if (objBool != obj.getType())
-				throw ElementBadTypeException ("Xpdf object is not bool.");
-			 val = (0 != obj.getBool());}
+			{
+				if (objBool != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not bool.");
+			 	val = (0 != obj.getBool());
+			}
 	};
 
 	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfIntReader
-	{public:
+	{
+		public:
 			void operator() (Storage obj, Val val)
-			{if (objInt != obj.getType())
-				throw ElementBadTypeException ("Xpdf object is not int.");
-			 val = obj.getInt ();}
+			{
+				if (objInt != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not int.");
+			 	val = obj.getInt ();
+			}
 	};
 
 	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfRealReader
-	{public:
+	{
+		public:
 			void operator() (Storage obj, Val val)
-			{if (!obj.isNum())
-				throw ElementBadTypeException ("Xpdf object is not real.");
-			 val = obj.getNum ();}
+			{
+				if (!obj.isNum())
+					throw ElementBadTypeException ("Xpdf object is not real.");
+			 	val = obj.getNum ();
+			}
 	};
 
 	/** 
@@ -160,7 +161,8 @@ namespace {
 	 */
 	template<typename Storage, typename Val>
 	struct xpdfStringReader
-	{public:
+	{
+		public:
 			/** Convers given xpdf string object to string stored to given val
 			 * representation.
 			 * @param obj Xpdf object to convert (must by objString).
@@ -189,22 +191,28 @@ namespace {
 	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfNameReader
-	{public:
+	{
+		public:
 			void operator() (Storage obj, Val val)
-			{if (objName != obj.getType())
-				throw ElementBadTypeException ("Xpdf object is not name.");
-			 val = obj.getName ();}
+			{
+				if (objName != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not name.");
+			 	val = obj.getName ();
+			}
 	};
 
 	/** \copydoc xpdfBoolReader */
 	template<typename Storage, typename Val>
 	struct xpdfRefReader
-	{public:
+	{
+		public:
 			void operator() (Storage obj, Val val)
-			{if (objRef != obj.getType())
-				throw ElementBadTypeException ("Xpdf object is not ref.");
-			val.num = obj.getRefNum();
-			val.gen = obj.getRefGen();}
+			{
+				if (objRef != obj.getType())
+					throw ElementBadTypeException ("Xpdf object is not ref.");
+				val.num = obj.getRefNum();
+				val.gen = obj.getRefGen();
+			}
 	};
 	
 	/**
@@ -214,57 +222,79 @@ namespace {
 	 */
 	template<typename Storage, typename Val>
 	struct xpdfBoolWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val val)
-				{return obj->initBool (GBool(val));}
+			{
+				return obj->initBool (GBool(val));
+			}
 	};
 
 	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfIntWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val val)
-				{return obj->initInt (val);}
+			{
+				return obj->initInt (val);
+			}
 	};
 
 	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfRealWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val val)
-				{return obj->initReal (val);}
+			{
+				return obj->initReal (val);
+			}
 	};
 
 	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfStringWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val val)
-				{return obj->initString (new GString(val.c_str()));}
+			{
+				const char * str = val.c_str();
+				return obj->initString (new GString(str));
+			}
 	};
 
 	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfNameWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val val)
-				{return obj->initName (const_cast<char*>(val.c_str()));}
+			{
+				return obj->initName (const_cast<char*>(val.c_str()));
+			}
 	};
 
 	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfNullWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val)
-				{return obj->initNull ();}
+			{
+				return obj->initNull ();
+			}
 	};
 
 	/** \copydoc xpdfBoolWriter */
 	template<typename Storage, typename Val>
 	struct xpdfRefWriter
-	{public:
+	{
+		public:
 			Object* operator() (Storage obj, Val val)
-				{return obj->initRef (val.num, val.gen);}
+			{
+				return obj->initRef (val.num, val.gen);
+			}
 	};
 
 
@@ -277,25 +307,39 @@ namespace {
 	 */
 	template<typename T, typename U, PropertyType Tp> struct ProcessorTraitSimple; 
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pBool>  
-		{typedef struct utils::xpdfBoolWriter<T,U>	xpdfWriteProcessor;
-		 typedef struct utils::xpdfBoolReader<T,U>	xpdfReadProcessor;};
+	{
+		typedef struct utils::xpdfBoolWriter<T,U> xpdfWriteProcessor;
+		typedef struct utils::xpdfBoolReader<T,U> xpdfReadProcessor;
+	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pInt>	 
-		{typedef struct utils::xpdfIntWriter<T,U>	xpdfWriteProcessor;
-		 typedef struct utils::xpdfIntReader<T,U>	xpdfReadProcessor;};
+	{
+		typedef struct utils::xpdfIntWriter<T,U> xpdfWriteProcessor;
+		typedef struct utils::xpdfIntReader<T,U> xpdfReadProcessor;
+	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pReal>  
-		{typedef struct utils::xpdfRealWriter<T,U>	xpdfWriteProcessor;
-		 typedef struct utils::xpdfRealReader<T,U>	xpdfReadProcessor;};
+	{
+		typedef struct utils::xpdfRealWriter<T,U> xpdfWriteProcessor;
+		typedef struct utils::xpdfRealReader<T,U> xpdfReadProcessor;
+	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pString>
-		{typedef struct utils::xpdfStringWriter<T,U>xpdfWriteProcessor;
-		 typedef struct utils::xpdfStringReader<T,U> xpdfReadProcessor;};
+	{
+		typedef struct utils::xpdfStringWriter<T,U> xpdfWriteProcessor;
+		typedef struct utils::xpdfStringReader<T,U> xpdfReadProcessor;
+	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pName>  
-		{typedef struct utils::xpdfNameWriter<T,U>	xpdfWriteProcessor;
-		 typedef struct utils::xpdfNameReader<T,U>	xpdfReadProcessor;};
+	{
+		typedef struct utils::xpdfNameWriter<T,U> xpdfWriteProcessor;
+		typedef struct utils::xpdfNameReader<T,U> xpdfReadProcessor;
+	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pNull>   
-		{typedef struct utils::xpdfNullWriter<T,U>	xpdfWriteProcessor;};
+	{
+		typedef struct utils::xpdfNullWriter<T,U> xpdfWriteProcessor;
+	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pRef>	 
-		{typedef struct utils::xpdfRefWriter<T,U>	xpdfWriteProcessor;
-		 typedef struct utils::xpdfRefReader<T,U>	xpdfReadProcessor;};
+	{
+		typedef struct utils::xpdfRefWriter<T,U> xpdfWriteProcessor;
+		typedef struct utils::xpdfRefReader<T,U> xpdfReadProcessor;
+	};
 
 
 	/**
@@ -318,30 +362,30 @@ namespace {
 			int len = array.arrayGetLength ();
 			for (int i = 0; i < len; ++i)
 			{
-					// Get Object at i-th position
-					array.arrayGetNF (i, obj.get());
+				// Get Object at i-th position
+				array.arrayGetNF (i, obj.get());
 					
-					shared_ptr<IProperty> cobj;
-					// Create CObject from it
-					if (isPdfValid(pdf))
-					{
-						hasValidRef (ip);
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
+				shared_ptr<IProperty> cobj;
+				// Create CObject from it
+				if (isPdfValid(pdf))
+				{
+					hasValidRef (ip);
+					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
 
-					}else
-					{
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
-					}
+				}else
+				{
+					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
+				}
 
-					if (cobj)
-					{
-						// Store it in the storage
-						resultArray.push_back (cobj);
-						// Free resources allocated by the object
-						obj.reset ();
+				if (cobj)
+				{
+					// Store it in the storage
+					resultArray.push_back (cobj);
+					// Free resources allocated by the object
+					obj.reset ();
 						
-					}else
-						throw CObjInvalidObject ();
+				}else
+					throw CObjInvalidObject ();
 
 			}	// for
 		}	// void operator
@@ -367,25 +411,25 @@ namespace {
 			int len = dict.dictGetLength ();
 			for (int i = 0; i < len; ++i)
 			{
-					// Get Object at i-th position
-					string key (dict.dictGetKey (i));
-					obj->free ();
-					dict.dictGetValNF (i,obj.get());
+				// Get Object at i-th position
+				string key (dict.dictGetKey (i));
+				obj->free ();
+				dict.dictGetValNF (i,obj.get());
 
-					shared_ptr<IProperty> cobj;
-					// Create CObject from it
-					if (isPdfValid (pdf))
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
-					else
-						cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
+				shared_ptr<IProperty> cobj;
+				// Create CObject from it
+				if (isPdfValid (pdf))
+					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*pdf, *obj, ip.getIndiRef()));
+				else
+					cobj = shared_ptr<IProperty> (createObjFromXpdfObj (*obj));
 
-					if (cobj)
-					{
-						// Store it in the storage
-						resultDict.push_back (make_pair(key,cobj));
+				if (cobj)
+				{
+					// Store it in the storage
+					resultDict.push_back (make_pair(key,cobj));
 
-					}else
-						throw CObjInvalidObject ();
+				}else
+					throw CObjInvalidObject ();
 			}
 		}
 	};
@@ -558,87 +602,85 @@ namespace {
 IProperty*
 createObjFromXpdfObj (CPdf& pdf, Object& obj,const IndiRef& ref)
 {
+	switch (obj.getType ())
+	{
+		case objBool:
+			return CBoolFactory::getInstance (pdf, ref, obj);
 
-		switch (obj.getType ())
-		{
-			case objBool:
-				return CBoolFactory::getInstance (pdf, ref, obj);
+		case objInt:
+			return CIntFactory::getInstance (pdf, ref, obj);
 
-			case objInt:
-				return CIntFactory::getInstance (pdf, ref, obj);
+		case objReal:
+			return CRealFactory::getInstance (pdf, ref, obj);
 
-			case objReal:
-				return CRealFactory::getInstance (pdf, ref, obj);
+		case objString:
+			return CStringFactory::getInstance (pdf, ref, obj);
 
-			case objString:
-				return CStringFactory::getInstance (pdf, ref, obj);
+		case objName:
+			return CNameFactory::getInstance (pdf, ref, obj);
 
-			case objName:
-				return CNameFactory::getInstance (pdf, ref, obj);
+		case objNull:
+			return CNullFactory::getInstance ();
 
-			case objNull:
-				return CNullFactory::getInstance ();
+		case objRef:
+			return CRefFactory::getInstance (pdf, ref, obj);
 
-			case objRef:
-				return CRefFactory::getInstance (pdf, ref, obj);
+		case objArray:
+			return CArrayFactory::getInstance (pdf,ref,obj);
 
-			case objArray:
-				return CArrayFactory::getInstance (pdf,ref,obj);
+		case objDict:
+			return CDictFactory::getInstance (pdf, ref, obj);
 
-			case objDict:
-				return CDictFactory::getInstance (pdf, ref, obj);
+		case objStream:
+			return new CStream (pdf,obj,ref);
 
-			case objStream:
-				return new CStream (pdf,obj,ref);
-
-			default:
-				assert (!"Bad type.");
-				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
-				break;
-		}
+		default:
+			assert (!"Bad type.");
+			throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
+			break;
+	}
 }
 
 IProperty*
 createObjFromXpdfObj (Object& obj)
 {
+	switch (obj.getType ())
+	{
+		case objBool:
+			return CBoolFactory::getInstance  (obj);
 
-		switch (obj.getType ())
-		{
-			case objBool:
-				return CBoolFactory::getInstance  (obj);
+		case objInt:
+			return CIntFactory::getInstance  (obj);
 
-			case objInt:
-				return CIntFactory::getInstance  (obj);
+		case objReal:
+			return CRealFactory::getInstance  (obj);
 
-			case objReal:
-				return CRealFactory::getInstance  (obj);
+		case objString:
+			return CStringFactory::getInstance  (obj);
 
-			case objString:
-				return CStringFactory::getInstance  (obj);
+		case objName:
+			return CNameFactory::getInstance  (obj);
 
-			case objName:
-				return CNameFactory::getInstance  (obj);
+		case objNull:
+			return CNullFactory::getInstance  ();
 
-			case objNull:
-				return CNullFactory::getInstance  ();
+		case objRef:
+			return CRefFactory::getInstance  (obj);
 
-			case objRef:
-				return CRefFactory::getInstance  (obj);
+		case objArray:
+			return CArrayFactory::getInstance (obj);
 
-			case objArray:
-				return CArrayFactory::getInstance (obj);
+		case objDict:
+			return CDictFactory::getInstance  (obj);
 
-			case objDict:
-				return CDictFactory::getInstance  (obj);
+		case objStream:
+			return new CStream (obj);
 
-			case objStream:
-				return new CStream (obj);
-
-			default:
-				//assert (!"Bad type.");
-				throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
-				break;
-		}
+		default:
+			//assert (!"Bad type.");
+			throw ElementBadTypeException ("createObjFromXpdfObj: Xpdf object has bad type.");
+			break;
+	}
 }
 
 
@@ -655,13 +697,13 @@ simpleValueToXpdfObj (T val)
 	return wp (obj,val);
 }
 
-template Object* simpleValueToXpdfObj<pBool,const bool&>	(const bool& val);
-template Object* simpleValueToXpdfObj<pInt,const int&>		(const int& val);
-template Object* simpleValueToXpdfObj<pReal,const double&>	(const double& val);
-template Object* simpleValueToXpdfObj<pString,const string&>(const string& val);
-template Object* simpleValueToXpdfObj<pName,const string&>	(const string&	val);
-template Object* simpleValueToXpdfObj<pNull,const NullType&>(const NullType& val);
-template Object* simpleValueToXpdfObj<pRef,const IndiRef&>	(const IndiRef& val);
+template Object* simpleValueToXpdfObj<pBool,const bool&> (const bool& val);
+template Object* simpleValueToXpdfObj<pInt,const int&> (const int& val);
+template Object* simpleValueToXpdfObj<pReal,const double&> (const double& val);
+template Object* simpleValueToXpdfObj<pString,const string&> (const string& val);
+template Object* simpleValueToXpdfObj<pName,const string&> (const string& val);
+template Object* simpleValueToXpdfObj<pNull,const NullType&> (const NullType& val);
+template Object* simpleValueToXpdfObj<pRef,const IndiRef&> (const IndiRef& val);
 
 //
 //
@@ -679,15 +721,18 @@ simpleValueFromXpdfObj (Object& obj, T val)
 //
 template <> 
 inline void
-simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) {/*assert (!"operation not permitted...");*//*THIS IS FORBIDDEN IN THE CALLER*/}
+simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&) 
+{
+	/*assert (!"operation not permitted...");*//*THIS IS FORBIDDEN IN THE CALLER*/
+}
 
-template void simpleValueFromXpdfObj<pBool, bool&>		(Object& obj,  bool& val);
-template void simpleValueFromXpdfObj<pInt, int&>		(Object& obj,  int& val);
-template void simpleValueFromXpdfObj<pReal, double&>	(Object& obj,  double& val);
-template void simpleValueFromXpdfObj<pString, string&>	(Object& obj,  string& val);
-template void simpleValueFromXpdfObj<pName, string&>	(Object& obj,  string&	val);
-template void simpleValueFromXpdfObj<pNull, NullType&>	(Object& obj,  NullType& val);
-template void simpleValueFromXpdfObj<pRef, IndiRef&>	(Object& obj,  IndiRef& val);
+template void simpleValueFromXpdfObj<pBool, bool&> (Object& obj,  bool& val);
+template void simpleValueFromXpdfObj<pInt, int&> (Object& obj,  int& val);
+template void simpleValueFromXpdfObj<pReal, double&> (Object& obj,  double& val);
+template void simpleValueFromXpdfObj<pString, string&> (Object& obj,  string& val);
+template void simpleValueFromXpdfObj<pName, string&> (Object& obj,  string&	val);
+template void simpleValueFromXpdfObj<pNull, NullType&> (Object& obj,  NullType& val);
+template void simpleValueFromXpdfObj<pRef, IndiRef&> (Object& obj,  IndiRef& val);
 
 //
 //
@@ -717,7 +762,7 @@ template void complexValueFromXpdfObj<pDict, CDict::Value&>
 void
 simpleValueFromString (const std::string& str, bool& val)
 {
-	static const string __true	("true");
+	static const string __true ("true");
 	static const string __false ("false");
 	
 	if ( equal (str.begin(), str.end(), __true.begin(), nocase_compare))
@@ -791,18 +836,18 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 	int len = dict.dictGetLength ();
 	for (int i = 0; i < len; ++i)
 	{
-			// Make string from key
-			string key = dict.dictGetKey (i);
-			// Make IProperty from value
-			dict.dictGetValNF (i,obj.get());
-			scoped_ptr<IProperty> cobj (createObjFromXpdfObj (*obj));
-			if (cobj)
-			{
-				// Store it in the dictionary
-				resultDict.addProperty (key, *cobj);
+		// Make string from key
+		string key = dict.dictGetKey (i);
+		// Make IProperty from value
+		dict.dictGetValNF (i,obj.get());
+		scoped_ptr<IProperty> cobj (createObjFromXpdfObj (*obj));
+		if (cobj)
+		{
+			// Store it in the dictionary
+			resultDict.addProperty (key, *cobj);
 
-			}else
-				throw CObjInvalidObject ();
+		}else
+			throw CObjInvalidObject ();
 	}
 	assert ((size_t)len == resultDict.getPropertyCount());
 }
@@ -830,12 +875,13 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	char* pStr = (char *)gmalloc(len + 1);
 	strncpy (pStr, str.c_str(), len + 1);
 					
-	scoped_ptr<Parser> parser	(new Parser (xref, 
-										  new Lexer (xref, 
-													 new MemStream (pStr, 0, len, &dct, true)
-													 )
-											) 
-								);
+	scoped_ptr<Parser> parser(
+			new Parser (xref, 
+				new Lexer (xref,
+					new MemStream (pStr, 0, len, &dct, true)
+					)
+				)
+			);
 	//
 	// Get xpdf obj from the stream
 	//
@@ -913,11 +959,11 @@ xpdfObjToString (Object& obj, string& str)
 		case objArray:
 		case objDict:
 		case objStream:
-				complexXpdfObjToString (obj,str);
-				break;
+			complexXpdfObjToString (obj,str);
+			break;
 		default:
-				simpleXpdfObjToString (obj,str);
-				break;
+			simpleXpdfObjToString (obj,str);
+			break;
 	}
 }
 
@@ -930,7 +976,7 @@ simpleValueToString<pBool> (bool val, string& str)
 {
 	str = ((val) ? CBOOL_TRUE : CBOOL_FALSE);
 }
-template void simpleValueToString<pBool>	(bool val, string& str);
+template void simpleValueToString<pBool> (bool val, string& str);
 //
 //
 //
@@ -966,17 +1012,17 @@ simpleValueToString (const std::string& val, std::string& str)
 
 	switch (Tp)
 	{
-			case pString:
-				str = CSTRING_PREFIX + makeStringPdfValid (val.begin(), val.end()) + CSTRING_SUFFIX;
-				break;
+		case pString:
+			str = CSTRING_PREFIX + makeStringPdfValid (val.begin(), val.end()) + CSTRING_SUFFIX;
+			break;
 
-			case pName:
-				str = CNAME_PREFIX + makeNamePdfValid (val.begin(), val.end());
-				break;
+		case pName:
+			str = CNAME_PREFIX + makeNamePdfValid (val.begin(), val.end());
+			break;
 
-			default:
-				assert (0);
-				break;
+		default:
+			assert (0);
+			break;
 	}
 }
 
@@ -1047,27 +1093,27 @@ template<>
 void
 complexValueToString<CArray> (const CArray::Value& val, string& str)
 {
-		utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
+	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
 		
-		ostringstream oss;
+	ostringstream oss;
 
-		// start tag
-		str = CARRAY_PREFIX;
+	// start tag
+	str = CARRAY_PREFIX;
 		
-		//
-		// Loop through all items and get each string and append it to the result
-		//
-		CArray::Value::const_iterator it = val.begin();
-		for (; it != val.end(); ++it) 
-		{
-			str += CARRAY_MIDDLE;
-			string tmp;
-			(*it)->getStringRepresentation (tmp);
-			str += tmp;
-		}
+	//
+	// Loop through all items and get each string and append it to the result
+	//
+	CArray::Value::const_iterator it = val.begin();
+	for (; it != val.end(); ++it) 
+	{
+		str += CARRAY_MIDDLE;
+		string tmp;
+		(*it)->getStringRepresentation (tmp);
+		str += tmp;
+	}
 		
-		// end tag
-		str += CARRAY_SUFFIX;
+	// end tag
+	str += CARRAY_SUFFIX;
 }
 template void complexValueToString<CArray> (const CArray::Value& val, string& str);
 //

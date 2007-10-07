@@ -8,46 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.7  2007/02/04 20:17:03  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.6  2006/06/29 20:00:09  hockm0bm
- * doc updated
- *
- * Revision 1.5  2006/06/22 18:45:53  hockm0bm
- * * doc update
- * * new file field to enable file closing
- *
- * Revision 1.4  2006/05/29 18:19:49  hockm0bm
- * typo fix
- *
- * Revision 1.3  2006/05/25 08:13:17  petrm1am
- * Quick fix: unable to comile
- *
- * Note: FILE stream has to be closed - FileStream::close method doesn't do that!
- *
- * Revision 1.2  2006/05/24 19:28:12  hockm0bm
- * * Delinearizator::getInstance mem leak
- *         - if Delinearizator constructor fails deallocates inputStream and
- *           closes FILE stream
- * * Delinearizator::delinearize mem leak
- *         - Object allocated also for free entries (which are skipped) - fixed
- * * destructor closes FILE stream
- *
- * Revision 1.1  2006/05/16 17:42:21  hockm0bm
- * * Delinearizator class implementation
- * * NotLinearizedException added
- *
- *
- */
-
 #ifndef _DELINEARIZATOR_H_
 #define _DELINEARIZATOR_H_
 

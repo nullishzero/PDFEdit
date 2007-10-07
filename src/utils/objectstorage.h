@@ -13,50 +13,6 @@
 #include <map>
 #include "xpdf/Object.h"
 
-/*
- * $RCSfile$
- * 
- * $Log$
- * Revision 1.10  2007/08/25 14:43:47  mstsxfx
- * formating
- *
- * Revision 1.9  2007/04/25 18:24:36  bilboq
- *
- * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
- *
- * fixed some typos in comments
- *
- * Revision 1.8  2007/02/04 20:17:03  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.7  2006/04/27 17:44:16  hockm0bm
- * minor documentation update
- *
- * Revision 1.6  2006/04/21 19:26:41  hockm0bm
- * RefComparator changed because it didn't have correct behaviour
- *
- * Revision 1.5  2006/03/23 22:32:53  hockm0bm
- * documentation updated
- *
- * Revision 1.4  2006/02/28 19:10:12  hockm0bm
- * Compile errors corrected
- *
- * Revision 1.3  2006/02/28 19:04:00  hockm0bm
- * Add iterators manipulation with ObjectStorage
- *
- * Revision 1.2  2006/02/13 19:05:35  hockm0bm
- * Template implementation of class.
- *
- * Revision 1.1  2006/01/29 17:09:07  hockm0bm
- * Object storage implementation
- * TODO - implement in template way
- *
- *
- */
-
 /** Reference comparator class.
  *
  * Implements functional operator to compare two referencies defined as

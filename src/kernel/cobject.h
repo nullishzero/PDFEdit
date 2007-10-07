@@ -8,14 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/* 
- * =====================================================================================
- *        Filename:  cobject.h
- *     Description:  Header file containing definition of IProperty and CObject classes.
- *         Created:  01/18/2006 
- *          Author:  jmisutka (06/01/19), 
- * =====================================================================================
- */
 #ifndef _COBJECT_H
 #define _COBJECT_H
 

@@ -8,61 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.10  2007/04/25 18:24:35  bilboq
- *
- * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
- *
- * fixed some typos in comments
- *
- * Revision 1.9  2007/02/04 20:17:03  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.8  2006/06/06 11:40:35  hockm0bm
- * StringConfigurationParser::parse trims output values
- *
- * Revision 1.7  2006/06/02 05:44:41  hockm0bm
- * typo fix
- *
- * Revision 1.6  2006/06/01 14:46:24  hockm0bm
- * doc update - doxygen warnings removed (if possible)
- *
- * Revision 1.5  2006/06/01 14:05:05  hockm0bm
- * * trim method added
- * * tokenizer method signature changed
- *         - text and deliminers parameters are const & now
- *
- * Revision 1.4  2006/06/01 09:12:30  hockm0bm
- * tokenizer function
- *         - moved to configuration::utils namespace
- *         - empty strings are not parsed
- *         - bug fix last token is also considered (when text is not
- *           finished by deliminer)
- *
- * Revision 1.3  2006/06/01 08:49:12  hockm0bm
- * * confparser.cc module added
- * * tokenizer function added
- *
- * Revision 1.2  2006/05/31 22:35:03  hockm0bm
- * * IConfigurationParser
- *         - stream is stored in the the class
- *         - it can be changed in runtime by setStream method
- * * StringConfigurationParser
- *         - stream removed from class (it is in super class)
- *         - handles no stream present
- *
- * Revision 1.1  2006/05/31 20:44:10  hockm0bm
- * * IConfigurationParser interface added
- * * StringConfigurationParser basic implemetation
- *
- *
- */
 #ifndef _CONFPARSER_H_
 #define _CONFPARSER_H_
 

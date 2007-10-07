@@ -8,13 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  textoutuputengines.cc
- *         Created:  17/11/2006 
- *          Author:  jmisutka, 
- * =====================================================================================
- */
 
 #include "iproperty.h"
 #include <math.h>

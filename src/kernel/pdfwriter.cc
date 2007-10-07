@@ -9,89 +9,6 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.15  2007/05/04 09:26:00  bilboq
- *
- * fixed bad formating strings on 64bit machines (%u printing size_t ...)
- *
- * Revision 1.14  2007/02/04 20:17:02  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.13  2006/06/29 20:00:08  hockm0bm
- * doc updated
- *
- * Revision 1.12  2006/06/18 12:04:42  hockm0bm
- * obsevers code clean up and consolidation
- *
- * Revision 1.11  2006/06/13 20:44:14  hockm0bm
- * * ChangeContextType enum removed from class IChangeContext to observer namespace
- * * pdfwriter.cc synced with ChangeContextType change
- *
- * Revision 1.10  2006/06/05 22:28:29  hockm0bm
- * * IProgressBar interface added
- * * ProgressObserver implemented
- *
- * Revision 1.9  2006/05/29 16:34:16  hockm0bm
- * * writeContent
- *         - uses writeIndirectObject method for object storing
- * * writeTrailer
- *         - uses writeDirectObject method for trailer storing
- * * writeIndirectObject
- *   writeDirectObject methods added
- *         - writes xpdf objects correctly - strings are escaped and can contain
- *           0 bytes, stream objects are also ok
- *         - Streams are used directly
- *         - other types objects are transformed to IProperty and use
- *           getStringRepresentation
- *
- * Revision 1.8  2006/05/29 10:30:04  hockm0bm
- * writeContent handles string with CharBuffer too
- *
- * Revision 1.7  2006/05/23 19:04:03  hockm0bm
- * OldStylePdfWriter::writeTrailer
- *         - signature changed returns position after stored xref section
- *         - trims averything behind stored data
- *
- * Revision 1.6  2006/05/16 17:57:27  hockm0bm
- * * infrastructure for obserevers usable for IPdfWriter
- *         - OperationStep, OperationScope structures
- *         - PdfWriterObserver and PdfWriterObserverContext types
- * * OldStylePdfWriter uses observers to provide progress information
- * * writeTrailer method changed
- *         - lastXref parameter replaced by PrevSecInfo structure
- *         - Trailer Prev field removed if PrevSecInfo::xrefPos==0
- *         - Trailer Size field is set to proper value
- *
- * Revision 1.5  2006/05/14 14:02:00  hockm0bm
- * quick fix
- *         - CharBuffer handling changed (uses CharBuffer.get rather than * operator and casting)
- *
- * Revision 1.4  2006/05/14 12:34:01  hockm0bm
- * support for special writing of stream objects
- *
- * Revision 1.3  2006/05/13 22:19:29  hockm0bm
- * isInValidPdf refactored to hasValidPdf or isPdfValid functions
- *
- * Revision 1.2  2006/05/09 20:10:55  hockm0bm
- * * doc update
- * * writeContent some checking added
- *         - duplicated entries are ignored
- *         - NULL entries are ignored
- *
- * Revision 1.1  2006/05/08 20:12:18  hockm0bm
- * * abstract IPdfWriter class for pdf content writers
- * * OldStylePdfWriter implementation of IPdfWriter
- * * pdf key words defined here now
- *
- *
- */
-
 #include "xpdf.h"
 #include "static.h"
 #include "pdfwriter.h"
@@ -159,6 +76,10 @@ using namespace observer;
 		progressBar->finish();
 	}
 }
+
+/* FIXME unify writeDirectObject and writeIndirectObject because they contain 
+ * a lot of common code
+ */
 
 /** Helper method for xpdf direct object writing to the stream.
  * @param obj Xpdf object to write.

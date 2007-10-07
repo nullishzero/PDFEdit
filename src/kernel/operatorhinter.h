@@ -9,28 +9,6 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-/*
- *
- * $RCSfile$
- *
- * $Log$
- * Revision 1.3  2007/02/04 20:17:02  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.2  2006/06/06 13:31:35  hockm0bm
- * * doc update
- * * constructor with defaultHint calls setRuleMatcher
- *
- * Revision 1.1  2006/06/06 11:46:52  hockm0bm
- * OperatorHinter rules manager added
- *         - already tested
- *
- *
- */
-
 #ifndef _OPERATOR_HINTER_H_
 #define _OPERATOR_HINTER_H_
 

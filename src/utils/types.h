@@ -7,15 +7,6 @@
  *
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
-/*
- * =====================================================================================
- *        Filename:  types.h
- *     Description: 
- *         Created:  26/11/2006 17:42:41 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
-
 #ifndef _TYPES_H_
 #define _TYPES_H_
 

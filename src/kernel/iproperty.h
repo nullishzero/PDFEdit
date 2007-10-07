@@ -8,15 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  iproperty.h
- *     Description:  IProperty class 
- *         Created:  01/19/2006 11:23:44 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
-
 #ifndef _IPROPERTY_H_
 #define _IPROPERTY_H_
 
@@ -222,7 +213,6 @@ public:
 	 * @return Identification and generation number.
 	 */
 	const IndiRef& getIndiRef () const {return ref;}
-
 
 	/**
 	 * Set object identification number and generation number.

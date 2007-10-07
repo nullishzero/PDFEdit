@@ -8,15 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  xpdf.h
- *     Description:  Header file containing all includes to xpdf, can be used
- *				     as the base include file when precompiled header technique is used
- *         Created:  03/07/2006 18:41:44 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
 
 #ifndef _XPDF_H_
 #define _XPDF_H_

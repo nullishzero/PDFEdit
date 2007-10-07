@@ -8,13 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/* 
- * =====================================================================================
- *        Filename:  carray.h
- *         Created:  01/18/2006 
- *          Author:  jmisutka (06/01/19), 
- * =====================================================================================
- */
 #ifndef _CARRAY_H
 #define _CARRAY_H
 

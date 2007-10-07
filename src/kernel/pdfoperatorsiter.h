@@ -8,13 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  pdfoperatorsiter.h
- *         Created:  06/11/2006 01:54:03 PM CET
- *          Author:  jmisutka ()
- * =====================================================================================
- */
 
 #ifndef _PDFOPERATORSITER_H_
 #define _PDFOPERATORSITER_H_

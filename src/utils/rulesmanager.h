@@ -8,49 +8,6 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * $RCSfile$
- *
- * $Log$
- * Revision 1.9  2007/08/25 14:43:47  mstsxfx
- * formating
- *
- * Revision 1.8  2007/04/29 15:03:53  mstsxfx
- * TODO added
- *
- * Revision 1.7  2007/04/25 18:24:36  bilboq
- *
- * applied patch from Martin Michlmayr to fix compilation with gcc-4.3
- *
- * fixed some typos in comments
- *
- * Revision 1.6  2007/02/04 20:17:03  mstsxfx
- * Common Licence comment for all cc and h files available in doc/licence_header
- * file and its content to all cc and h files in src/{gui,kernel,utils}
- * directories.
- * Xpdf code, QSA and QOutputDevice code are not touched
- *
- * Revision 1.5  2006/06/25 16:25:21  hockm0bm
- * doc update - doxygen warnings removed (if they are real problem)
- *
- * Revision 1.4  2006/06/06 11:42:44  hockm0bm
- * * RulesManager
- *         - uses RuleType::operator== rather than RuleType::equals
- *           (to better fit ready to be used types like string)
- *
- * Revision 1.3  2006/06/06 10:14:05  hockm0bm
- * loadFromFile method added
- *         - generic implementation
- *
- * Revision 1.2  2006/05/31 21:43:55  hockm0bm
- * gcc
- *
- * Revision 1.1  2006/05/31 14:11:19  hockm0bm
- * * IRuleMatcher abstract class
- * * RulesManager generic implementation
- *
- *
- */
 #ifndef _RULESMANAGER_H_
 #define _RULESMANAGER_H_
 
