@@ -755,7 +755,6 @@ template void complexValueFromXpdfObj<pDict, CDict::Value&>
 		 Object& obj, 
 		 CDict::Value& val);
 
-
 //
 //
 //
@@ -853,6 +852,10 @@ dictFromXpdfObj (CDict& resultDict, ::Object& dict)
 }
 
 
+// FIXME remove this is duplication from xpdf code. We don't
+// need it here (beside nasty complex CObject translation to 
+// the xpdf Object based on CObject->string->Object)
+
 //
 //
 //
@@ -873,7 +876,8 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 	// xpdf MemStream frees buf 
 	size_t len = str.size ();
 	char* pStr = (char *)gmalloc(len + 1);
-	strncpy (pStr, str.c_str(), len + 1);
+	memcpy(pStr, str.c_str(), len);
+	pStr[len] = '\0';
 					
 	scoped_ptr<Parser> parser(
 			new Parser (xref, 
