@@ -312,6 +312,10 @@ CArray::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
 	
+	// TODO reimplement - don't use string for translation - it is
+	// too bad for performance.
+	// We have already implemented CObjectSimple -> Object, so
+	// complex type is just simple recursive translation of entries
 	string rpr;
 	getStringRepresentation (rpr);
 
