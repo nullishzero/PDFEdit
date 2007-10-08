@@ -25,17 +25,6 @@ void FileStreamWriter::putChar(int ch)
 	setPos(pos+1);
 }
 
-void FileStreamWriter::putLine(const char * line)
-{
-	// NULL line is ignored
-	if(!line)
-		return;
-
-	// uses putLine with number of bytes same as string length
-	putLine(line, strlen(line));
-	
-}
-
 void FileStreamWriter::putLine(const char * line, size_t length)
 {
 	if(!line)

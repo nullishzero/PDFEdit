@@ -45,16 +45,6 @@ public:
 	 */
 	virtual void putChar(int ch)=0;
 
-	/** Puts line from current position.
-	 * @param line Line to put to the stream.
-	 *
-	 * If current position is not at the end of the file, overwrites original
-	 * content. Characters which doesn't fit, expands stream.
-	 * <br>
-	 * Given string is appended by newline character. 
-	 */
-	virtual void putLine(const char * line)=0;
-
 	/** Puts exactly length number of byte to one line.
 	 * @param line Line buffer pointer.
 	 * @param length Number of bytes to be printed.
@@ -139,18 +129,6 @@ public:
 	 */
 	virtual void putChar(int ch);
 
-	/** Puts line to the file.
-	 * @param line String to write.
-	 *
-	 * Additionally flushes all changes to the file. and position is moved after
-	 * inserted string. 
-	 * <br>
-	 * Note that given is writen untils first `\0' character.
-	 *
-	 * @see BaseStreamWriter::putLine
-	 */
-	virtual void putLine(const char * line);
-
 	/** Puts exactly length number of byte to one line.
 	 * @param line Line buffer pointer.
 	 * @param length Number of bytes to be printed.
@@ -159,7 +137,6 @@ public:
 	 * Additionally flushes all changes to the file and position is moved after
 	 * inserted buffer.
 	 *
-	 * @see StreamWriter::putLine(const char *, size_t)
 	 */
 	virtual void putLine(const char * line, size_t length);
 	

@@ -307,7 +307,7 @@ using namespace boost;
 	}
 
 	// cross reference offTable starts with xref row
-	stream.putLine(XREF_KEYWORD);
+	stream.putLine(XREF_KEYWORD, strlen(XREF_KEYWORD));
 
 	// subsection offTable is created, we can dump it to the file
 	// xrefRow represents one line of xref offTable which is exactly XREFROWLENGHT
@@ -333,7 +333,7 @@ using namespace boost;
 		utilsPrintDbg(DBG_DBG, "Starting subsection with startPos="<<startNum<<" and size="<<entries.size());
 
 		snprintf(xrefRow, sizeof(xrefRow)-1, "%d %d", startNum, (int)entries.size());
-		stream.putLine(xrefRow);
+		stream.putLine(xrefRow, strlen(xrefRow));
 
 		// now prints all entries for this subsection
 		// one entry on one line
@@ -347,7 +347,7 @@ using namespace boost;
 		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
 		{
 			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", (unsigned int)entry->first, entry->second);
-			stream.putLine(xrefRow);
+			stream.putLine(xrefRow, strlen(xrefRow));
 		}
 		
 		// notifies observers
@@ -397,19 +397,19 @@ using namespace boost;
 	utilsPrintDbg(DBG_DBG, "Setting Trailer::Size="<<newSize.getInt());
 
 	// stores changed trailer to the file
-	stream.putLine(TRAILER_KEYWORD);
+	stream.putLine(TRAILER_KEYWORD, strlen(TRAILER_KEYWORD));
 	writeDirectObject(trailer, stream);
 	kernelPrintDbg(DBG_DBG, "Trailer saved");
 
 	// stores offset of last (created one) xref table
-	stream.putLine(STARTXREF_KEYWORD);
+	stream.putLine(STARTXREF_KEYWORD, strlen(STARTXREF_KEYWORD));
 	char xrefPosStr[128];
 	sprintf(xrefPosStr, "%u", (unsigned int)xrefPos);
-	stream.putLine(xrefPosStr);
+	stream.putLine(xrefPosStr, strlen(xrefPosStr));
 	
 	// Finaly puts %%EOF behind but keeps position of marker start
 	size_t pos=stream.getPos();
-	stream.putLine(EOFMARKER);
+	stream.putLine(EOFMARKER, strlen(EOFMARKER));
 	kernelPrintDbg(DBG_DBG, "PDF end of file marker saved");
 
 	// stream may contain some non sense information behind, so they has to be
