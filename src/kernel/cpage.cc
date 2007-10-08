@@ -1897,8 +1897,7 @@ void
 CPage::removeContentStream (size_t csnum)
 {
 	// Create cstream from container of pdf operators
-	CPdf* pdf = dictionary->getPdf();
-	assert (pdf);
+	assert (dictionary->getPdf());
 
 	if (csnum >= contentstreams.size())
 		throw OutOfRange ();

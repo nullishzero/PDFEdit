@@ -71,11 +71,16 @@ public:
 
 	/** Start page. */
 	void start_page (size_t pagepos)
-		{ assert (std::numeric_limits<size_t>::max() == _pagepos); _pagepos = pagepos; }
+	{ 
+		assert (std::numeric_limits<size_t>::max() == _pagepos); 
+		_pagepos = pagepos; 
+	}
 
 	/** End page. */
-	void end_page (size_t pagepos)
-		{ assert (pagepos == _pagepos); _pagepos = std::numeric_limits<size_t>::max(); }
+	void end_page ()
+	{ 
+		_pagepos = std::numeric_limits<size_t>::max(); 
+	}
 
 	//
 	// Dtor

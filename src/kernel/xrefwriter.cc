@@ -131,8 +131,6 @@ using namespace utils;
 
 bool XRefWriter::paranoidCheck(::Ref ref, ::Object * obj)
 {
-	bool reinicialization=false;
-
 	kernelPrintDbg(DBG_DBG, ref<<" type="<<obj->getType());
 
 	if(mode==paranoid)
@@ -599,13 +597,12 @@ size_t XRefWriter::getRevisionEnd(size_t xrefStart)const
 	// starts from given position
 	streamWriter->setPos(xrefStart);
 	char buffer[BUFSIZ];
-	size_t length=0;
 	memset(buffer, '\0', sizeof(buffer));
 	while(streamWriter->getLine(buffer, sizeof(buffer)))
 	{
 		if(!strncmp(buffer, STARTXREF_KEYWORD, strlen(STARTXREF_KEYWORD)))
 		{
-			// we have found startstreamWriter key word, next line should contain
+			// we have found start-xref key word, next line should contain
 			// value of offset - this information is not important, we just have
 			// to get behind and calculates number of bytes
 			streamWriter->getLine(buffer, sizeof(buffer));

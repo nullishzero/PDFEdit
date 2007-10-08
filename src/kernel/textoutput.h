@@ -103,7 +103,7 @@ public:
 		// Try building output from words (list structure)
 		out.build (wordengine.begin(), wordengine.end());
 		// end page
-		out.end_page (pagepos);
+		out.end_page ();
 	}
 
 };

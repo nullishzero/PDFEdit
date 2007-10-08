@@ -2542,8 +2542,7 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "");
 
 	// gets pdf of the node - must be non null
-	CPdf * pdf=interNode->getPdf();
-	assert(pdf);
+	assert(interNode->getPdf());
 	
 	// only internode make sense to consolidate
 	PageTreeNodeType nodeType=getNodeType(interNode);
