@@ -338,9 +338,9 @@ makeNamePdfValid (Iter it, Iter end)
  * @param str Character string.
  */
 inline std::string 
-makeNamePdfValid (const char* str)
+makeNamePdfValid (const char * str)
 { 
-	return makeNamePdfValid (&str[0], &str[strlen(str)]); 
+	return makeNamePdfValid (str, str + strlen(str)); 
 }
 
 /**
@@ -348,6 +348,9 @@ makeNamePdfValid (const char* str)
  *
  * Any characters may appear in a string except unbalanced parentheses and
  * the backslash, which must be treated specially.
+ * <br>
+ * This includes also \0 (NUL) character, therefore we can't use standard
+ * str* functions for strings.
  *
  * @param it Start iterator.
  * @param end End iterator.
@@ -384,9 +387,10 @@ makeStringPdfValid (Iter it, Iter end)
  * @param str Character string.
  */
 inline std::string 
-makeStringPdfValid (const char* str)
+makeStringPdfValid (GString * str)
 { 
-	return makeStringPdfValid (&str[0], &str[strlen(str)]); 
+	char * string = str->getCString();
+	return makeStringPdfValid (string, string + str->getLength()); 
 }
 
 //=========================================================

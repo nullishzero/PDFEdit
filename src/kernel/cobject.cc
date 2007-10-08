@@ -181,7 +181,7 @@ namespace {
 				GString * xpdfString=obj.getString();
 				for(size_t i=0; i< len; ++i)
 				{
-					char c = obj.getString()->getChar (i);
+					char c = xpdfString->getChar(i);
 					val += c;
 				}
 				assert (len == val.length());
@@ -476,7 +476,7 @@ namespace {
 			break;
 
 		case objString:
-			oss << CSTRING_PREFIX  << utils::makeStringPdfValid(obj.getString()->getCString()) << CSTRING_SUFFIX;
+			oss << CSTRING_PREFIX  << utils::makeStringPdfValid(obj.getString()) << CSTRING_SUFFIX;
 			break;
 
 		case objName:
@@ -1213,11 +1213,13 @@ using namespace debug;
 
 	// indirect header is filled only if asIndirect flag is set
 	// same way footer
-	ostringstream indirectHeader;
-	indirectHeader << ref.num << " " << ref.gen << " " << INDIRECT_HEADER << "\n";
-	string header=(asIndirect)
-		?indirectHeader.str()
-		:"";
+	string header="";
+	if(asIndirect)
+	{
+		ostringstream indirectHeader;
+		indirectHeader << ref.num << " " << ref.gen << " " << INDIRECT_HEADER << "\n";
+		header += indirectHeader.str();
+	}
 	string footer=(asIndirect)
 		?INDIRECT_FOOTER
 		:"";
@@ -1245,18 +1247,19 @@ using namespace debug;
 		header.length() 
 		+ dict.length()
 		+ CSTREAM_HEADER.length() + bufferLen + CSTREAM_FOOTER.length() 
-		+ footer.size(); 
+		+ footer.length(); 
 	char* buf = char_buffer_new (len);
 	outputBuf = CharBuffer (buf, char_buffer_delete()); 
 	
-	// get everything together into created buf
-	memset(buf, '\0', len);
+	// get everything together into created buf - we can't use
+	// str* functions here, because there may be \0 inside
+	// dictionary string represenatation (string entries)
 	size_t copied=0;
-	strcpy(buf, header.c_str());
+	memcpy(buf, header.c_str(), header.length());
 	copied+=header.length();
-	strcat(buf, dict.c_str());
+	memcpy(buf+copied, dict.c_str(), dict.length());
 	copied+=dict.length();
-	strcat(buf, CSTREAM_HEADER.c_str());
+	memcpy(buf+copied, CSTREAM_HEADER.c_str(), CSTREAM_HEADER.length());
 	copied+=CSTREAM_HEADER.length();
 	// streamBuffer may contain '\0' so rest has to be copied by memcpy
 	BaseStream * base=streamObject.getStream()->getBaseStream();
@@ -1267,6 +1270,10 @@ using namespace debug;
 		int ch=base->getChar();
 		if(ch==EOF)
 			break;
+		// NOTE that we are reducing int -> char here, so multi-bytes
+		// returned from a stream will be stripped to 1B
+		if((unsigned char)ch != ch)
+			utilsPrintDbg(DBG_DBG, "Too wide character("<<ch<<") in the stream at pos="<<i);
 		buf[copied+i]=ch;
 	}
 	// checks number of written bytes and if any problem (more or less data),
@@ -1274,6 +1281,8 @@ using namespace debug;
 	if(i!=bufferLen)
 	{
 		utilsPrintDbg(DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read.");
+		// TODO do we really need to clear whole buffer here? Is it enough to clear
+		// the first byte?
 		memset(buf, '\0', len);
 		streamObject.getStream()->reset();
 		return 0;
@@ -1281,13 +1290,14 @@ using namespace debug;
 	if(base->getChar()!=EOF)
 	{
 		utilsPrintDbg(DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
+		// TODO do we really need to clear whole buffer here? Is it enough to clear
+		// the first byte?
 		memset(buf, '\0', len);
 		streamObject.getStream()->reset();
 		return 0;
 	}
 	copied+=bufferLen;
 	memcpy(buf + copied, CSTREAM_FOOTER.c_str(), CSTREAM_FOOTER.length());
-
 	copied+=CSTREAM_FOOTER.length();
 	memcpy(buf + copied, footer.c_str(), footer.length());
 	copied+=footer.length();
