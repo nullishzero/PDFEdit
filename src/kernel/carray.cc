@@ -12,6 +12,7 @@
 #include "static.h"
 #include "carray.h"
 #include "cpdf.h"
+#include "factories.h"
 
 //=====================================================================================
 namespace pdfobjects {
@@ -311,22 +312,15 @@ CArray::setProperty (PropertyId id, IProperty& newIp)
 CArray::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
-	
-	// TODO reimplement - don't use string for translation - it is
-	// too bad for performance.
-	// We have already implemented CObjectSimple -> Object, so
-	// complex type is just simple recursive translation of entries
-	string rpr;
-	getStringRepresentation (rpr);
+	::Object * arrayObj = XPdfObjectFactory::getInstance();
+	arrayObj->initArray(this->getPdf()->getCXref());
+	::Array * array = arrayObj->getArray();
 
-	::Object* o = NULL;
-	if (hasValidPdf (this))
-		o = utils::xpdfObjFromString (rpr, this->getPdf()->getCXref());
-	else
-		o = utils::xpdfObjFromString (rpr);
-	assert (o->isArray());
-
-	return o;
+	Value::const_iterator it = value.begin();
+	for (; it != value.end(); ++it)
+		array->add((*it)->_makeXpdfObject());
+	assert(array->getLength() == getPropertyCount());
+	return arrayObj;
 }
 
 

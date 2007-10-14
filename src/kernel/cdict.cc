@@ -12,6 +12,7 @@
 #include "static.h"
 #include "cdict.h"
 #include "cpdf.h"
+#include "factories.h"
 
 //=====================================================================================
 namespace pdfobjects {
@@ -33,7 +34,6 @@ using namespace boost;
 //
 CDict::CDict (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf) 
 {
-	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pDict,Value&> (*this, o, value);
 }
@@ -43,7 +43,6 @@ CDict::CDict (CPdf& p, Object& o, const IndiRef& rf) : IProperty (&p,rf)
 //
 CDict::CDict (Object& o)
 {
-	
 	// Build the tree from xpdf object
 	utils::complexValueFromXpdfObj<pDict,Value&> (*this, o, value);
 }
@@ -92,13 +91,11 @@ CDict::getProperty (PropertyId id) const
 	DictIdxComparator cmp (id);
 	Value::const_iterator it = value.begin();
 	for (; it != value.end(); ++it)
-	{
-			if (cmp (*it))
-					break;
-	}
+		if (cmp (*it))
+			break;
 
 	if (it == value.end())
-			throw ElementNotFoundException ("", "");
+		throw ElementNotFoundException ("", "");
 	
 	shared_ptr<IProperty> ip = cmp.getIProperty ();
 
@@ -162,10 +159,8 @@ CDict::delProperty (PropertyId id)
 	DictIdxComparator cmp (id);
 	Value::iterator oldit = value.begin();
 	for (; oldit != value.end(); ++oldit)
-	{
-			if (cmp (*oldit))
-					break;
-	}
+		if (cmp (*oldit))
+			break;
 	
 	if (oldit == value.end())
 		throw ElementNotFoundException ("CDict", "item not found");
@@ -197,7 +192,9 @@ CDict::delProperty (PropertyId id)
 		oldip->setIndiRef (IndiRef());
 
 	}else
-		{ assert (!hasValidRef (this)); }
+	{ 
+		assert (!hasValidRef (this)); 
+	}
 }
 
 
@@ -274,10 +271,8 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 	DictIdxComparator cmp (id);
 	Value::iterator it = value.begin();
 	for (; it != value.end(); ++it)
-	{
 		if (cmp (*it))
-				break;
-	}
+			break;
 
 	// Check the bounds, if fails add it
 	if (it == value.end())
@@ -321,7 +316,9 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 		oldIp->setIndiRef (IndiRef());
 	
 	}else
-		{ assert (!hasValidRef (this)); }
+	{ 
+		assert (!hasValidRef (this)); 
+	}
 
 	// Set mode only if pdf is valid
 	_setMode (newIpClone,id);
@@ -341,22 +338,19 @@ CDict::setProperty (PropertyId id, IProperty& newIp)
 CDict::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
-	
-	// TODO reimplement - don't use string for translation - it is
-	// too bad for performance.
-	// We have already implemented CObjectSimple -> Object, so
-	// complex type is just simple recursive translation of entries
-	string rpr;
-	getStringRepresentation (rpr);
+	::Object * dictObj = XPdfObjectFactory::getInstance();
+	dictObj->initDict(this->getPdf()->getCXref());
+	::Dict * dict = dictObj->getDict();
 
-	::Object* o = NULL;
-	if (hasValidPdf (this))
-		o = utils::xpdfObjFromString (rpr, this->getPdf()->getCXref());
-	else
-		o = utils::xpdfObjFromString (rpr);
-	assert (o->isDict());
+	Value::const_iterator it = value.begin();
+	for (; it != value.end(); ++it)
+	{
+		shared_ptr<IProperty> prop = it->second;
+		dict->add(strdup((it->first).c_str()), prop->_makeXpdfObject());
+	}
+	assert(dict->getLength() == getPropertyCount());
 
-	return o;
+	return dictObj;
 }
 
 
@@ -407,8 +401,8 @@ CDict::_setMode (shared_ptr<IProperty> ip, PropertyId id) const
 		Value::const_iterator it = value.begin();
 		for (; it != value.end(); ++it)
 		{
-				if (cmp (*it))
-						break;
+			if (cmp (*it))
+				break;
 		}
 		if (it == value.end())
 		{ // No type found
