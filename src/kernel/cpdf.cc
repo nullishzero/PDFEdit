@@ -869,7 +869,7 @@ using namespace pdfobjects::utils;
 		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(prop);
 	
 	// registers observer for Kids property change notification
-	dict_ptr->registerObserver(pageTreeNodeObserver);
+	REGISTER_SHAREDPTR_OBSERVER(dict_ptr, pageTreeNodeObserver);
 	
 	// gets Kids field from dictionary and all children from array and 
 	// registers PageTreeKidsObserver observer to array and to each member 
@@ -886,7 +886,7 @@ using namespace pdfobjects::utils;
 		// reference replacement should invalidate whole target array so
 		// observer is needed also to reference
 		utilsPrintDbg(DBG_DBG, "Kids array is reference. Registering obsever.");
-		kidsProp_ptr->registerObserver(pageTreeNodeObserver);
+		REGISTER_SHAREDPTR_OBSERVER(kidsProp_ptr, pageTreeNodeObserver);
 		
 		// gets target object
 		try
@@ -920,7 +920,7 @@ using namespace pdfobjects::utils;
 	// can't point to intermediate node (their value change is not important and
 	// their existence in Kids array is handled by obsever on array)
 	utilsPrintDbg(DBG_DBG, "Kids array found. Registering obsever.");
-	kids_ptr->registerObserver(pageTreeKidsObserver);
+	REGISTER_SHAREDPTR_OBSERVER(kids_ptr, pageTreeKidsObserver);
 	ChildrenStorage container;
 	kids_ptr->_getAllChildObjects(container);
 	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); ++i)
@@ -928,7 +928,7 @@ using namespace pdfobjects::utils;
 		shared_ptr<IProperty> elemProp_ptr=*i;
 		if(isRef(elemProp_ptr))
 		{
-			elemProp_ptr->registerObserver(pageTreeKidsObserver);
+			REGISTER_SHAREDPTR_OBSERVER(elemProp_ptr, pageTreeKidsObserver);
 			registerPageTreeObservers(elemProp_ptr);
 		}
 	}
@@ -936,7 +936,7 @@ using namespace pdfobjects::utils;
 	utilsPrintDbg(DBG_DBG, "All subnodes done for "<<dict_ptr->getIndiRef());
 }
 
-void CPdf::unregisterPageTreeObservers(boost::shared_ptr<IProperty> & prop)
+void CPdf::unregisterPageTreeObservers(boost::shared_ptr<IProperty> & prop, bool cleanup)
 {
 using namespace boost;
 using namespace std;
@@ -960,35 +960,41 @@ using namespace pdfobjects::utils;
 	}else
 		dict_ptr=IProperty::getSmartCObjectPtr<CDict>(prop);
 	
-	// we don't want to unregister observers from node which may be still in the
-	// page tree (this situation may occure if this position of node is 
-	// ambiguous). In such situation, keeps observers
-	bool unregister=true;
-	try
+	// If we are not doing cleanup, we don't want to unregister observers 
+	// from node which may be still in the page tree (this situation may 
+	// occure if this position of node is ambiguous). In such situation, 
+	// keeps observers
+	if(!cleanup)
 	{
-		unregister=!getNodePosition(*this, dict_ptr, &nodeCountCache);
-	}catch(AmbiguousPageTreeException &e)
-	{
-		// node is still in the tree and even more it is still ambiguous
-		unregister=false;	
-	}catch(...)
-	{
-		// all other exceptions means that node is not found for some reason
-		unregister=true;
-	}
-	if(!unregister)
-	{
-		kernelPrintDbg(DBG_WARN, "Keeps observers for "<<dict_ptr->getIndiRef()<<" because node is still in the tree.");
-		return;
+		bool unregister=true;
+		try
+		{
+			unregister=!getNodePosition(*this, dict_ptr, &nodeCountCache);
+		}catch(AmbiguousPageTreeException &e)
+		{
+			// node is still in the tree and even more it is still ambiguous
+			unregister=false;	
+		}catch(...)
+		{
+			// all other exceptions means that node is not found for some reason
+			unregister=true;
+		}
+		if(!unregister)
+		{
+			kernelPrintDbg(DBG_WARN, "Keeps observers for "
+					<<dict_ptr->getIndiRef()
+					<<" because node is still in the tree.");
+			return;
+		}
 	}
 	
-	// registers observer for Kids property change notification
-	dict_ptr->unregisterObserver(pageTreeNodeObserver);
+	// unregisters observer from Kids property change notification
+	UNREGISTER_SHAREDPTR_OBSERVER(dict_ptr, pageTreeNodeObserver);
 	
 	// gets Kids field from dictionary and all children from array and 
-	// registers PageTreeKidsObserver observer to array and to each member 
-	// reference. If Kids property is reference, registers PageTreeNodeObserver
-	// to it to enable notification also reference value notification
+	// unregisters PageTreeKidsObserver observer from array and from each member 
+	// reference. If Kids property is reference, unregisters PageTreeNodeObserver
+	// from it too
 	if(!dict_ptr->containsProperty("Kids"))
 		return;
 
@@ -1000,7 +1006,7 @@ using namespace pdfobjects::utils;
 		// reference replacement should invalidate whole target array so
 		// observer is needed also to reference
 		utilsPrintDbg(DBG_DBG, "Kids array is reference. Unregistering obsever.");
-		kidsProp_ptr->unregisterObserver(pageTreeNodeObserver);
+		UNREGISTER_SHAREDPTR_OBSERVER(kidsProp_ptr, pageTreeNodeObserver);
 		
 		// gets target object
 		try
@@ -1034,7 +1040,7 @@ using namespace pdfobjects::utils;
 	// can't point to intermediate node (their value change is not important and
 	// their existence in Kids array is handled by obsever on array)
 	utilsPrintDbg(DBG_DBG, "Kids array found. Unregistering obsever.");
-	kids_ptr->registerObserver(pageTreeKidsObserver);
+	UNREGISTER_SHAREDPTR_OBSERVER(kids_ptr, pageTreeKidsObserver);
 	ChildrenStorage container;
 	kids_ptr->_getAllChildObjects(container);
 	for(ChildrenStorage::iterator i=container.begin(); i!=container.end(); ++i)
@@ -1042,8 +1048,8 @@ using namespace pdfobjects::utils;
 		shared_ptr<IProperty> elemProp_ptr=*i;
 		if(isRef(elemProp_ptr))
 		{
-			elemProp_ptr->unregisterObserver(pageTreeKidsObserver);
-			unregisterPageTreeObservers(elemProp_ptr);
+			UNREGISTER_SHAREDPTR_OBSERVER(elemProp_ptr, pageTreeKidsObserver);
+			unregisterPageTreeObservers(elemProp_ptr, cleanup);
 		}
 	}
 
@@ -1104,7 +1110,7 @@ using namespace utils;
 					kernelPrintDbg(DBG_INFO, "unregistering obsever from old Pages property.");
 					try
 					{
-						oldValue->unregisterObserver(pdf->pageTreeRootObserver);
+						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, pdf->pageTreeRootObserver);
 					}catch(ObserverException & e)
 					{
 						kernelPrintDbg(DBG_ERR, "oldValue observer unregistration failed.");
@@ -1115,7 +1121,7 @@ using namespace utils;
 				if(isRef(newValue))
 				{
 					kernelPrintDbg(DBG_INFO, "registering observer to new Pages property.");
-					newValue->registerObserver(pdf->pageTreeRootObserver);
+					REGISTER_SHAREDPTR_OBSERVER(newValue, pdf->pageTreeRootObserver);
 				}
 			}
 			break;
@@ -1235,7 +1241,7 @@ using namespace observer;
 				{
 					try
 					{
-						oldValue->unregisterObserver(pdf->pageTreeNodeObserver);
+						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, pdf->pageTreeNodeObserver);
 					}catch(ObserverException & e)
 					{
 						kernelPrintDbg(DBG_ERR, "unregisterObserver has failed for oldValue.");
@@ -1247,7 +1253,7 @@ using namespace observer;
 				// this enables notifying when reference value is changed
 				// NOTE that observer to array is registered later
 				if(isRef(newValue))
-					newValue->registerObserver(pdf->pageTreeNodeObserver);
+					REGISTER_SHAREDPTR_OBSERVER(newValue, pdf->pageTreeNodeObserver);
 			}
 			break;
 		default:
@@ -1271,7 +1277,7 @@ using namespace observer;
 			kidsArray->_getAllChildObjects(oldValues);
 
 			// unregisters observer from kids oldValue array
-			kidsArray->unregisterObserver(pdf->pageTreeKidsObserver);
+			UNREGISTER_SHAREDPTR_OBSERVER(kidsArray, pdf->pageTreeKidsObserver);
 		}
 		kernelPrintDbg(DBG_DBG, "oldValues collected. size="<<oldValues.size());
 	}catch (CObjectException & e)
@@ -1299,7 +1305,7 @@ using namespace observer;
 			kidsArray->_getAllChildObjects(newValues);
 
 			// registers pageTreeKidsObserver observer to the array
-			kidsArray->registerObserver(pdf->pageTreeKidsObserver);
+			REGISTER_SHAREDPTR_OBSERVER(kidsArray, pdf->pageTreeKidsObserver);
 		}
 		kernelPrintDbg(DBG_DBG, "newValues collected. size="<<newValues.size());
 	}catch (CObjectException & e)
@@ -1422,7 +1428,7 @@ using namespace utils;
 				{
 					try
 					{
-						oldValue->unregisterObserver(pdf->pageTreeKidsObserver);
+						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, pdf->pageTreeKidsObserver);
 					}catch(ObserverException & e)
 					{
 						kernelPrintDbg(DBG_WARN, "oldValue observer unregistration failed");
@@ -1433,7 +1439,7 @@ using namespace utils;
 				// reference, registers observers to it and its whole subtree
 				if(isRef(newValue))
 				{
-					newValue->registerObserver(pdf->pageTreeKidsObserver);
+					REGISTER_SHAREDPTR_OBSERVER(newValue, pdf->pageTreeKidsObserver);
 				}
 			}
 			break;
@@ -1554,6 +1560,43 @@ using namespace utils;
 	
 	kernelPrintDbg(DBG_DBG, "observer handler finished");
 }
+void CPdf::unregisterPageObservers()
+{
+using namespace utils;
+using namespace observer;
+
+	if(!docCatalog.get())
+		return;
+
+	kernelPrintDbg(DBG_DBG, "Unregistering all observers for page tree");
+	try
+	{
+		UNREGISTER_SHAREDPTR_OBSERVER(docCatalog, pageTreeRootObserver);
+	}catch(ObserverException &e)
+	{
+		kernelPrintDbg(DBG_WARN, "document catalog observer unregistration failed.");
+	}
+	if(docCatalog->containsProperty("Pages"))
+	{
+		shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
+		if(isRef(pagesProp))
+		{
+			UNREGISTER_SHAREDPTR_OBSERVER(pagesProp, pageTreeRootObserver);
+			shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(*this);
+			if(pageTreeRoot.get())
+			{
+				try
+				{
+					unregisterPageTreeObservers(pageTreeRoot, true);
+				}catch(ObserverException &e)
+				{
+					kernelPrintDbg(DBG_WARN, "page tree root unregisterPageTreeObservers failed.");
+				}
+			}
+		}
+
+	}
+}
 
 void CPdf::initRevisionSpecific()
 {
@@ -1565,40 +1608,10 @@ using namespace observer;
 	// Clean up part:
 	// =============
 	
-	// unregisters all page tree observers befor docCatalog invalidation
+	// unregisters all page tree observers before docCatalog invalidation
 	// only if docCatalog is already initialized (not in first call from
 	// constructor
-	if(docCatalog.get())
-	{
-		kernelPrintDbg(DBG_DBG, "Unregistering all observers for page tree");
-		try
-		{
-			docCatalog->unregisterObserver(pageTreeRootObserver);
-		}catch(ObserverException &e)
-		{
-			kernelPrintDbg(DBG_WARN, "document catalog observer unregistration failed.");
-		}
-		if(docCatalog->containsProperty("Pages"))
-		{
-			shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
-			if(isRef(pagesProp))
-			{
-				pagesProp->unregisterObserver(pageTreeRootObserver);
-				shared_ptr<IProperty> pageTreeRoot=getPageTreeRoot(*this);
-				if(pageTreeRoot.get())
-				{
-					try
-					{
-						unregisterPageTreeObservers(pageTreeRoot);
-					}catch(ObserverException &e)
-					{
-						kernelPrintDbg(DBG_WARN, "page tree root unregisterPageTreeObservers failed.");
-					}
-				}
-			}
-
-		}
-	}
+	unregisterPageObservers();
 
 	// cleans up and invalidates all returned pages
 	if(pageList.size())
@@ -1676,12 +1689,12 @@ using namespace observer;
 	kernelPrintDbg(DBG_DBG, "Registering observers to page tree structure");
 	// registers pageTreeRootObserver to document catalog and to Pages property
 	// if it is reference
-	docCatalog->registerObserver(pageTreeRootObserver);
+	REGISTER_SHAREDPTR_OBSERVER(docCatalog, pageTreeRootObserver);
 	if(docCatalog->containsProperty("Pages"))
 	{
 		shared_ptr<IProperty> pagesProp=docCatalog->getProperty("Pages");
 		if(isRef(pagesProp))
-			pagesProp->registerObserver(pageTreeRootObserver);
+			REGISTER_SHAREDPTR_OBSERVER(pagesProp, pageTreeRootObserver);
 		else
 			kernelPrintDbg(DBG_WARN, "Pages field is not reference as required");
 	}else
@@ -1732,6 +1745,10 @@ CPdf::~CPdf()
 		kernelPrintDbg(DBG_DBG, "Invalidating page at pos="<<i->first);
 		i->second->invalidate();
 	}
+
+	// unregisters all observers registered on page tree nodes (root,
+	// intermediate and leaf nodes)
+	unregisterPageObservers();
 
 	// clean up resolved reference mapping for different pdf objects
 	for(ResolvedRefMapping::iterator i=resolvedRefMapping.begin(); i!=resolvedRefMapping.end(); ++i)

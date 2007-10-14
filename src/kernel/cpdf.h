@@ -295,13 +295,13 @@ protected:
 		 * <ul>
 		 * <li>tries to get dictionary from oldValue (if it is reference) and 
 		 * unregister observers from whole page tree (uses 
-		 * pdf-&gt;unregisterPageTreeObservers method). 
-		 * <li>invalidates pdf-&gt;pageCount
-		 * <li>clears pdf-&gt;pageList and invalidates all pages.
-		 * <li>clears pdf-&gt;nodeCountCache
+		 * pdf::unregisterPageTreeObservers method). 
+		 * <li>invalidates pdf-::pageCount
+		 * <li>clears pdf::pageList and invalidates all pages.
+		 * <li>clears pdf::nodeCountCache
 		 * <li>tries to get dictionary from newValue (if it is reference) and
 		 * registers observers to whole new page tree (uses
-		 * pdf-&gt;registerPageTreeObservers method).
+		 * pdf::registerPageTreeObservers method).
 		 * </ul>
 		 */
 		virtual void notify (
@@ -384,7 +384,7 @@ protected:
 		 * <li>consolidates parent of parent node (either newValue or oldValue -
 		 * depends on which is defined, because one of them may be CNull)
 		 * <li>unregisters observers for all collected properties from oldValue
-		 * array (uses pdf-&gt;unregisterPageTreeObservers) and consolidates
+		 * array (uses pdf::unregisterPageTreeObservers) and consolidates
 		 * pageList for each element (equivalent to removig this node)
 		 * <li>similary to collected referencies from newValue array property,
 		 * except that observers are registered and pageList is consolidated as
@@ -462,25 +462,25 @@ protected:
 		 * so immediatelly returns.
 		 * <li>If oldValue is reference, than observers from whole subtree have
 		 * to be unregistered because it is no more accessible from the tree.
-		 * Uses pdf-&gt;unregisterPageTreeObservers method.
+		 * Uses pdf::unregisterPageTreeObservers method.
 		 * <li>consolidates page tree for intermediate node, where change has
 		 * occured. Uses getIndiRef from oldValue or newValue (depends on which
 		 * is defined, because one can be CNull) and checks
-		 * pdf->pageTreeKidsParentCache. If cache entry exists, uses it. This is
+		 * CPdf::pageTreeKidsParentCache. If cache entry exists, uses it. This is
 		 * kind of work around to handle situation when Kids array is indirect
 		 * property (cache entries are done just for such Kids arrays). Uses
-		 * pdf-&gt;consolidatePageTree method. If this method returns with
-		 * false, discards pdf-&gt;pageCount field (sets it to 0). Consolidation
+		 * CPdf::consolidatePageTree method. If this method returns with
+		 * false, discards CPdf::pageCount field (sets it to 0). Consolidation
 		 * will change node's Count property and checks all direct childs
 		 * whether they contain correct reference to parent (consolidated node).
-		 * <li>consolidate pdf-&gt;pageList with pdf-&gt;consolidatePageList
+		 * <li>consolidate CPdf::pageList with Cpdf::consolidatePageList
 		 * method. Consolidation will remove and invalidate all pages from
 		 * oldValue subtree and moves all which position has changed because of
 		 * this removing.
-		 * <li>If oldValue is reference, discards pdf-&gt;nodeCountCache for it
+		 * <li>If oldValue is reference, discards Cpdf::nodeCountCache for it
 		 * and all nodes in its subtree.
 		 * <li>If newValue is reference, registers obserers to new subtree. Uses
-		 * pdf-&gt;registerPageTreeObservers method.
+		 * CPdf::registerPageTreeObservers method.
 		 * </ul>
 		 */
 		virtual void notify (
@@ -513,6 +513,10 @@ protected:
 	 * This observer handles changes of Kids array members.
 	 */
 	boost::shared_ptr<PageTreeKidsObserver> pageTreeKidsObserver;
+
+	/** TODO
+	 */
+	void unregisterPageObservers();
 
 	/**
 	 * Indirect properties mapping type.
@@ -683,17 +687,20 @@ protected:
 
 	/** Unregisters page tree observers.
 	 * @param prop Page tree node reference or dictionary.
+	 * @param cleanup Clean up flag.
 	 *
 	 * This method is inverse to registerPageTreeObservers (with same observers 
 	 * but, with unregistration rather than registration). Also removes cache
 	 * entry from pageTreeKidsParentCache.
 	 * <br>
-	 * This method should be called when node is removed from the tree.
+	 * This method should be called with clenaup flag set to false when 
+	 * node is removed from the tree and set to true when clean up for CPdf
+	 * is done (e.g. when document closed).
 	 * <br>
 	 * NOTE: If position of given node is ambiguous, unregistration is skipped,
 	 * because node is still in the tree.
 	 */
-	void unregisterPageTreeObservers(boost::shared_ptr<IProperty>& prop);
+	void unregisterPageTreeObservers(boost::shared_ptr<IProperty>& prop, bool cleanup=false);
 
 	/** Helper method for property from different pdf adding.
 	 * @param ip Property to add.
