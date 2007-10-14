@@ -393,10 +393,95 @@ public:
 			}
 		}
 	}
+
+	/** Returns number of registered elements.
+	 * @return number of elements.
+	 */
+	size_t size()const
+	{
+		return c.size();
+	}
 };
 
-/** Base class for all notifiers.
+#ifdef OBSERVER_DEBUG
+/** Helper macro for debug information printing.
+ * Note that this will be empty if OBSERVER_DEBUG is not defined.
+ */
+#define PRINT_DEBUG_INFO(obj, observer, prefix)		\
+	do {						\
+		std::cerr << prefix <<"("<<(obj) <<","<<(observer)<<") from ";\
+		std::cerr <<__FILE__ <<":"<< __FUNCTION__ <<":"<< __LINE__ << std::endl;\
+	} while (0)
+#else
+#define PRINT_DEBUG_INFO(obj, observer, prefix) do {} while(0)
+#endif
+
+/** Wrapper for observer registration.
+ * @param obj Observer handler (IObserverHandler wrapped by shared_ptr).
+ * @param observer Observer to be registered (IObserver wrapped by shared_ptr).
  *
+ * Note that this way of observer registration is preffered because
+ * of possible debug information.
+ * <br>
+ * Don't use expression parameters with side effects (e.g. ++i etc.), 
+ * because they may be executed more than once (if debuging is used).
+ */
+#define REGISTER_SHAREDPTR_OBSERVER(obj, observer)	\
+	do {					\
+		PRINT_DEBUG_INFO((obj).get(), (observer).get(), "registerObserver");\
+		obj->registerObserver(observer);\
+	}while(0)
+
+/** Wrapper for observer unregistration.
+ * @param obj Observer handler (IObserverHandler wrapped by shared_ptr).
+ * @param observer Observer to be registered (IObserver wrapped by shared_ptr).
+ *
+ * Note that this way of observer unregistration is preffered because
+ * of possible debug information.
+ * <br>
+ * Don't use expression parameters with side effects (e.g. ++i etc.), 
+ * because they may be executed more than once (if debuging is used).
+ */
+#define UNREGISTER_SHAREDPTR_OBSERVER(obj, observer)	\
+	do {					\
+		PRINT_DEBUG_INFO((obj).get(), (observer).get(), "unregisterObserver");\
+		obj->unregisterObserver(observer);\
+	}while(0)
+
+/** Wrapper for observer registration.
+ * @param obj Observer handler (simple pointer to IObserverHandler).
+ * @param observer Observer to be registered (simple pointer to IObserver).
+ *
+ * Note that this way of observer registration is preffered because
+ * of possible debug information.
+ * <br>
+ * Don't use expression parameters with side effects (e.g. ++i etc.), 
+ * because they may be executed more than once (if debuging is used).
+ */
+#define REGISTER_PTR_OBSERVER(obj, observer)	\
+	do {					\
+		PRINT_DEBUG_INFO((obj), (observer), "registerObserver");\
+		obj->registerObserver(observer);\
+	}while(0)
+
+/** Wrapper for observer unregistration.
+ * @param obj Observer handler (simple pointer to IObserverHandler).
+ * @param observer Observer to be unregistered (simple pointer to IObserver).
+ *
+ * Note that this way of observer unregistration is preffered because
+ * of possible debug information.
+ * <br>
+ * Don't use expression parameters with side effects (e.g. ++i etc.), 
+ * because they may be executed more than once (if debuging is used).
+ */
+#define UNREGISTER_PTR_OBSERVER(obj, observer)	\
+	do {					\
+		PRINT_DEBUG_INFO((obj), (observer), "unregisterObserver");\
+		obj->unregisterObserver(observer);\
+	}while(0)
+
+/** Base class for all notifiers.
+ a*
  * Each class which want to support observers should inherit from this class. It
  * provides basic implementation for registering, unregistering and notification
  * of observers.
@@ -434,11 +519,29 @@ protected:
 	 * means smaller priority value.
 	 */
 	ObserverList observers;
-	
+
+	/** Prints all registered observers.
+	 * Each observer is printed as pointer address. 
+	 * Method is empty if OBSERVER_DEBUG is not defined.
+	 */
+	void dumpObservers()const
+	{
+#ifdef OBSERVER_DEBUG
+		size_t size = observers.size();
+		std::cerr << " observer list (size="
+				<<size<<"): ";
+		typename ObserverList::const_iterator it = observers.begin();
+		for(;it!=observers.end(); ++it)
+		{
+			Observer observer = *it;
+			std::cerr << observer.get() << " ";
+		}
+#endif
+	}
 public:
 	/** Empty destructor.
 	 */
-	virtual ~ObserverHandler(){}
+	virtual ~ObserverHandler() {}
 	
 	/** Registers new observer.
 	 * @param observer Observer to register (if NULL, nothing is registered).
