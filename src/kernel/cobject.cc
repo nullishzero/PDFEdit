@@ -260,7 +260,7 @@ namespace {
 			Object* operator() (Storage obj, Val val)
 			{
 				const char * str = val.c_str();
-				return obj->initString (new GString(str));
+				return obj->initString (new GString(str, val.length()));
 			}
 	};
 
