@@ -225,7 +225,7 @@ boost::shared_ptr<CContentStream> TreeItemContentStream::getObject() {
 void TreeItemContentStream::initObserver() {
  guiPrintDbg(debug::DBG_DBG,"Set Observer");
  observer=boost::shared_ptr<TreeItemContentStreamObserver>(new TreeItemContentStreamObserver(this));
- obj->registerObserver(observer);
+ REGISTER_SHAREDPTR_OBSERVER(obj, observer);
  guiPrintDbg(debug::DBG_DBG,"UC PRE" << observer.use_count() << " " << (intptr_t)(&(*observer)));
 }
 
@@ -234,7 +234,7 @@ void TreeItemContentStream::uninitObserver() {
  if (observer) {
   guiPrintDbg(debug::DBG_DBG,"UC POST" << observer.use_count() << " " << (intptr_t)(&(*observer)));
   observer->deactivate();
-  obj->unregisterObserver(observer);
+  UNREGISTER_SHAREDPTR_OBSERVER(obj, observer);
   observer.reset();
   guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
  } else {

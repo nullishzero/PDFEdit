@@ -91,7 +91,7 @@ namespace {
 				{
 					(*oper)->setPdf (&pdf);
 					(*oper)->setIndiRef (rf);
-					(*oper)->registerObserver (observer);
+					REGISTER_SHAREDPTR_OBSERVER((*oper), observer);
 					(*oper)->lockChange ();
 				}
 			}
@@ -978,7 +978,7 @@ CContentStream::insertOperator (OperatorIterator it, boost::shared_ptr<PdfOperat
 //
 void 
 CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper, 
-									 bool indicateChange)
+		bool indicateChange)
 {
 	assert (!cstreams.empty());
 
@@ -1029,8 +1029,8 @@ CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper,
 //
 void
 CContentStream::replaceOperator (OperatorIterator it, 
-								 boost::shared_ptr<PdfOperator> newOper, 
-								 bool indicateChange)
+		boost::shared_ptr<PdfOperator> newOper, 
+		bool indicateChange)
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (!operators.empty());
@@ -1140,7 +1140,7 @@ CContentStream::registerCStreamObservers () const
 	{
 		// Register cstream observer
 		for (CStreams::const_iterator it = cstreams.begin(); it != cstreams.end(); ++it)
-			(*it)->registerObserver (cstreamobserver);
+			REGISTER_SHAREDPTR_OBSERVER((*it), cstreamobserver);
 	}else
 	{
 		assert (!"Observer is not initialized.");
@@ -1158,7 +1158,7 @@ CContentStream::unregisterCStreamObservers () const
 	{
 		// Unregister cstream observer
 		for (CStreams::const_iterator it = cstreams.begin(); it != cstreams.end(); ++it)
-			(*it)->unregisterObserver (cstreamobserver);
+			UNREGISTER_SHAREDPTR_OBSERVER((*it), cstreamobserver);
 	}else
 	{
 		assert (!"Observer is not initialized.");

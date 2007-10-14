@@ -182,13 +182,13 @@ bool TreeItem::haveObserver() {
 void TreeItem::initObserver() {
  guiPrintDbg(debug::DBG_DBG,"Set Observer");
  observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
- obj->registerObserver(observer);
+ REGISTER_SHAREDPTR_OBSERVER(obj, observer);
 }
 
 /** Unsets observer for this item */
 void TreeItem::uninitObserver() {
  observer->deactivate();
- obj->unregisterObserver(observer);
+ UNREGISTER_SHAREDPTR_OBSERVER(obj, observer);
  observer.reset();
  guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }

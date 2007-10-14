@@ -56,8 +56,8 @@ class CDict : noncopyable, public IProperty
 	
 public:
 	typedef std::list<std::pair<std::string, boost::shared_ptr<IProperty> > > Value; 
-	typedef const std::string& 			WriteType; 
-	typedef const std::string& 			PropertyId;
+	typedef const std::string& WriteType; 
+	typedef const std::string& PropertyId;
 	typedef observer::ComplexChangeContext<IProperty, PropertyId> CDictComplexObserverContext;
 
 	/** 
@@ -122,7 +122,9 @@ protected:
 	 * @return New complex object.
 	 */
 	virtual CDict* _newInstance () const
-		{ return new CDict; }
+	{ 
+		return new CDict; 
+	}
 	
 	//
 	// Get methods
@@ -237,7 +239,7 @@ public:
 	 * the cloned object is added.
 	 * Indicate that this object has changed and return the pointer to the cloned object.
 	 *
-	 * @param newIp 		New property.
+	 * @param newIp New property.
 	 * @return Pointer to the new property.
 	 *
 	 * \exception OutOfRange Thrown when property not found.
@@ -250,7 +252,6 @@ public:
 	 */
 	boost::shared_ptr<IProperty> addProperty (const std::string& propertyName, const IProperty& newIp);
 
-	
 	/**
 	 * Remove property from dictionary. 
 	 *
@@ -268,7 +269,15 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CDict () {}
+	~CDict () 
+	{
+#ifdef OBSERVER_DEBUG
+		std::cerr << this <<":"<< type << ":"<< getIndiRef();
+		if(observers.size())
+			dumpObservers();
+		std::cerr << std::endl;
+#endif
+	}
 	
 
 	//
@@ -324,7 +333,7 @@ private:
 	 * @param context Context in which a change occured.
 	 */
 	void _objectChanged (boost::shared_ptr<IProperty> newValue, 
-						 boost::shared_ptr<const ObserverContext> context);
+			boost::shared_ptr<const ObserverContext> context);
 
 	//
 	// Mode interface
@@ -348,7 +357,7 @@ public:
 	void _getAllChildObjects (Storage& store) const
 	{
 		Value::const_iterator it = value.begin ();
-		for	(; it != value.end (); ++it)
+		for(; it != value.end (); ++it)
 			store.push_back ((*it).second);
 	}
 
@@ -638,13 +647,17 @@ getDoubleFromDict (const IP& ip, const std::string& id)
 template<typename IP>
 inline std::string
 getStringFromDict (const IP& ip, const std::string& id)
-	{ return getSimpleValueFromDict<CString> (ip, id);}
+{ 
+	return getSimpleValueFromDict<CString> (ip, id);
+}
 
 /** Get name from dictionary. */
 template<typename IP>
 inline std::string
 getNameFromDict (const IP& ip, const std::string& id)
-	{ return getSimpleValueFromDict<CName> (ip, id);}
+{ 
+	return getSimpleValueFromDict<CName> (ip, id);
+}
 
 //=========================================================
 //	CDict "set value" helper methods
@@ -742,7 +755,9 @@ setSimpleValueInDict (const IProperty& ip, CDict::PropertyId name, const typenam
 template<typename IP>
 inline void
 setIntInDict (const IP& ip, const std::string& name, int val)
-	{ setSimpleValueInDict<int, CInt, pInt> (ip, name, val);}
+{ 
+	setSimpleValueInDict<int, CInt, pInt> (ip, name, val);
+}
 
 /** Set	double in dictioary. */
 template<typename IP>
@@ -825,7 +840,9 @@ getTypeFromDictionary (const boost::shared_ptr<CDict>& dict, CDict::PropertyId k
 	// Check the type
 	if (ItemType::type != ip->getType ())
 	{
-		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type << " got " << ip->getType () << " key[" << key << "]");
+		utilsPrintDbg (debug::DBG_DBG, "wanted type " << ItemType::type 
+				<< " got " << ip->getType () 
+				<< " key[" << key << "]");
 		std::string err= "getTypeFromDictionary() [" + key + "]";
 		throw ElementBadTypeException (err);
 	}
@@ -887,7 +904,9 @@ getTypeFromDictionary (const boost::shared_ptr<IProperty>& ip, CDict::PropertyId
 template<typename IP>
 inline boost::shared_ptr<CDict>
 getCDictFromDict (IP& ip, const std::string& key)
-	{return getTypeFromDictionary<CDict> (ip, key);}
+{
+	return getTypeFromDictionary<CDict> (ip, key);
+}
 
 /** 
  * Get array from dictionary. If it is an indirect object, fetch the object.
@@ -895,7 +914,9 @@ getCDictFromDict (IP& ip, const std::string& key)
 template<typename IP>
 inline boost::shared_ptr<CArray>
 getCArrayFromDict (IP& ip, const std::string& key)
-	{return getTypeFromDictionary<CArray> (ip, key);}
+{
+	return getTypeFromDictionary<CArray> (ip, key);
+}
 
 
 /** 
@@ -903,7 +924,9 @@ getCArrayFromDict (IP& ip, const std::string& key)
  */
 inline boost::shared_ptr<CDict>
 getCDictFromDict (boost::shared_ptr<CDict> dict, const std::string& key)
-	{return getTypeFromDictionary<CDict> (dict, key);}
+{
+	return getTypeFromDictionary<CDict> (dict, key);
+}
 
 
 //=====================================================================================

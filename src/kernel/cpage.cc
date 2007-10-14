@@ -363,7 +363,7 @@ using namespace utils;
 	shared_ptr<CArray> annotsArray;
 	if(isRef(annots))
 	{
-		annots->unregisterObserver(annotsPropWatchDog);
+		UNREGISTER_SHAREDPTR_OBSERVER(annots, annotsPropWatchDog);
 		try
 		{
 			annotsArray=getCObjectFromRef<CArray>(annots);
@@ -383,13 +383,13 @@ using namespace utils;
 	}
 
 	ChildrenStorage children;
-	annotsArray->unregisterObserver(annotsArrayWatchDog);
+	UNREGISTER_SHAREDPTR_OBSERVER(annotsArray, annotsArrayWatchDog);
 	annotsArray->_getAllChildObjects(children);
 	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); ++i)
 	{
 		shared_ptr<IProperty> child=*i;
 		if(isRef(child))
-			child->unregisterObserver(annotsArrayWatchDog);
+			UNREGISTER_SHAREDPTR_OBSERVER(child, annotsArrayWatchDog);
 	}
 }
 
@@ -402,7 +402,7 @@ using namespace debug;
 	shared_ptr<CArray> annotsArray;
 	if(isRef(annots))
 	{
-		annots->registerObserver(annotsPropWatchDog);
+		REGISTER_SHAREDPTR_OBSERVER(annots, annotsPropWatchDog);
 		try
 		{
 			annotsArray=getCObjectFromRef<CArray>(annots);
@@ -422,13 +422,13 @@ using namespace debug;
 	}
 
 	ChildrenStorage children;
-	annotsArray->registerObserver(annotsArrayWatchDog);
+	REGISTER_SHAREDPTR_OBSERVER(annotsArray, annotsArrayWatchDog);
 	annotsArray->_getAllChildObjects(children);
 	for(ChildrenStorage::iterator i=children.begin(); i!=children.end(); ++i)
 	{
 		shared_ptr<IProperty> child=*i;
 		if(isRef(child))
-			child->registerObserver(annotsArrayWatchDog);
+			REGISTER_SHAREDPTR_OBSERVER(child, annotsArrayWatchDog);
 	}
 
 }
@@ -544,11 +544,11 @@ using namespace observer;
 
 				// reference oldValue needs unregistration of this observer
 				if(isRef(oldValue))
-					oldValue->unregisterObserver(page->annotsPropWatchDog);
+					UNREGISTER_SHAREDPTR_OBSERVER(oldValue, page->annotsArrayWatchDog);
 
 				// if new value is reference, register this observer to it
 				if(isRef(newValue))
-					newValue->registerObserver(page->annotsPropWatchDog);
+					REGISTER_SHAREDPTR_OBSERVER(newValue, page->annotsPropWatchDog);
 			}
 			break;
 		default:
@@ -659,11 +659,11 @@ using namespace observer;
 				// if oldValue is reference, unregisters this observer from it 
 				// because it is no more available
 				if(isRef(oldValue))
-					oldValue->unregisterObserver(page->annotsArrayWatchDog);
+					UNREGISTER_SHAREDPTR_OBSERVER(oldValue, page->annotsArrayWatchDog);
 
 				// if new value is reference registers this observer to it
 				if(isRef(newValue))
-					newValue->registerObserver(page->annotsArrayWatchDog);
+					REGISTER_SHAREDPTR_OBSERVER(newValue, page->annotsArrayWatchDog);
 			}
 			break;
 		default:
@@ -702,7 +702,7 @@ CPage::ContentsWatchDog::notify (boost::shared_ptr<IProperty> newValue,
 					if (isNull(newValue))
 					{
 						// Unregister observer
-						ctxtdict->getOriginalValue ()->unregisterObserver (page->contentsWatchDog);
+						UNREGISTER_SHAREDPTR_OBSERVER(oldValue, page->contentsWatchDog);
 						
 					}else
 					{
@@ -774,7 +774,7 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 	// annotsPropWatchDog has to be registered to page dictionary and the 
 	// rest is done by registerAnnotsObservers
 	collectAnnotations(dictionary, annotStorage);
-	dictionary->registerObserver(annotsPropWatchDog);
+	REGISTER_SHAREDPTR_OBSERVER(dictionary, annotsPropWatchDog);
 	if(dictionary->containsProperty("Annots"))
 	{
 		shared_ptr<IProperty> annotsProp=dictionary->getProperty("Annots");
@@ -880,7 +880,7 @@ CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
 		annotsArray=IProperty::getSmartCObjectPtr<CArray>(
 				dictionary->getProperty("Annots")
 				);
-		annotsArray->registerObserver(annotsArrayWatchDog);	
+		REGISTER_SHAREDPTR_OBSERVER(annotsArray, annotsArrayWatchDog);	
 	}
 
 	kernelPrintDbg(debug::DBG_DBG, "Creating new indirect dictionary for annotation.");
@@ -1235,8 +1235,9 @@ CPage::registerContentsObserver () const
 		if (dictionary->containsProperty("Contents"))
 		{
 			// Register dictionary and Contents observer
-			dictionary->registerObserver (contentsWatchDog);
-			dictionary->getProperty("Contents")->registerObserver (contentsWatchDog);
+			REGISTER_SHAREDPTR_OBSERVER(dictionary, contentsWatchDog);
+			shared_ptr<IProperty> prop = dictionary->getProperty("Contents");
+			REGISTER_SHAREDPTR_OBSERVER(prop, contentsWatchDog);
 		}
 		
 	}else
@@ -1258,10 +1259,13 @@ CPage::unregisterContentsObserver () const
 	if (contentsWatchDog)
 	{ 
 		// Unregister dictionary observer
-		dictionary->unregisterObserver (contentsWatchDog);
+		UNREGISTER_SHAREDPTR_OBSERVER(dictionary, contentsWatchDog);
 		// Unregister contents observer
 		if (dictionary->containsProperty("Contents"))
-			dictionary->getProperty("Contents")->unregisterObserver (contentsWatchDog);
+		{
+			shared_ptr<IProperty> prop = dictionary->getProperty("Contents");
+			REGISTER_SHAREDPTR_OBSERVER(prop, contentsWatchDog);
+		}
 	}else
 	{
 		assert (!"Observer is not initialized.");

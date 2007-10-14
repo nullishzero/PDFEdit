@@ -808,7 +808,7 @@ bool PdfEditWindow::openFile(const QString &name) {
   // this will cause displaying of content saving progress
   pdfobjects::utils::IPdfWriter * writer=document->getPdfWriter();
   if(writer) {
-   writer->registerObserver(progressObserver);
+   REGISTER_PTR_OBSERVER(writer, progressObserver);
   }
   assert(document);
   guiPrintDbg(debug::DBG_DBG,"Opened document");

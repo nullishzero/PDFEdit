@@ -99,7 +99,7 @@ void TreeItemPdf::observePageDict() {
   if (pageDictionary.get()) {
    //Register observer on page dictionary (because of page count)
    observer=boost::shared_ptr<TreeItemObserver>(new TreeItemObserver(this));
-   pageDictionary->registerObserver(observer);
+   REGISTER_SHAREDPTR_OBSERVER(pageDictionary, observer);
   }
  } catch (...) {
   guiPrintDbg(debug::DBG_DBG,"Some exception");
@@ -113,7 +113,7 @@ void TreeItemPdf::removeObserver() {
   assert(pageDictionary.get());
   //If we have installed observer, we need to deactivate it
   observer->deactivate();
-  pageDictionary->unregisterObserver(observer);
+  UNREGISTER_SHAREDPTR_OBSERVER(pageDictionary, observer);
   observer.reset();
  }
 }

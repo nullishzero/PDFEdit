@@ -77,13 +77,13 @@ void TreeItemPage::init(boost::shared_ptr<CPage> page,const QString &name) {
 void TreeItemPage::initObserver() {
  guiPrintDbg(debug::DBG_DBG,"Set Observer");
  observer=boost::shared_ptr<TreeItemPageObserver>(new TreeItemPageObserver(this));
- obj->registerObserver(observer);
+ REGISTER_SHAREDPTR_OBSERVER(obj, observer);
 }
 
 /** Unsets observer for this item */
 void TreeItemPage::uninitObserver() {
  observer->deactivate();
- obj->unregisterObserver(observer);
+ UNREGISTER_SHAREDPTR_OBSERVER(obj, observer);
  observer.reset();
  guiPrintDbg(debug::DBG_DBG,"UnSet Observer");
 }

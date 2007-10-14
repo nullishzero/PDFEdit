@@ -503,6 +503,13 @@ CStream::~CStream ()
 	{
 		assert (curObj.isNone() || curObj.isNull());
 	}
+
+#ifdef OBSERVER_DEBUG
+	std::cerr << this <<":"<< type << ":"<< getIndiRef();
+	if(observers.size())
+		dumpObservers();
+	std::cerr << std::endl;
+#endif
 }
 
 
