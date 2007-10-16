@@ -270,7 +270,15 @@ public:
 		size_t objNum;
 	};
 
-	virtual ~IPdfWriter(){}
+	virtual ~IPdfWriter()
+	{
+#ifdef OBSERVER_DEBUG
+		std::cerr << this <<":pdfWriter:"<< getIndiRef();
+		if(observers.size())
+			dumpObservers();
+		std::cerr << std::endl;
+#endif
+	}
 
 	/** Puts all objects to given stream.
 	 * @param objectList List of objects to store.
