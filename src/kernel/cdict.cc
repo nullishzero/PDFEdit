@@ -339,7 +339,16 @@ CDict::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
 	::Object * dictObj = XPdfObjectFactory::getInstance();
-	dictObj->initDict(this->getPdf()->getCXref());
+
+	// We need to be carefull with pdf from property. Some
+	// properties (usually artificial ones) can be without
+	// any bound PDF instance. Nevertheless NULL xref is ok for
+	// Object hierarchy (see Object::fetch method)
+	XRef *xref = NULL;
+	CPdf *pdf = getPdf();
+	if(pdf)
+		xref = pdf->getCXref();
+	dictObj->initDict(xref);
 	::Dict * dict = dictObj->getDict();
 
 	Value::const_iterator it = value.begin();

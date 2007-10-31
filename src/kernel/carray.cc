@@ -313,7 +313,16 @@ CArray::_makeXpdfObject () const
 {
 	//kernelPrintDbg (debug::DBG_DBG,"_makeXpdfObject");
 	::Object * arrayObj = XPdfObjectFactory::getInstance();
-	arrayObj->initArray(this->getPdf()->getCXref());
+
+	// We need to be carefull with pdf from property. Some
+	// properties (usually artificial ones) can be without
+	// any bound PDF instance. Nevertheless NULL xref is ok for
+	// Object hierarchy (see Object::fetch method)
+	XRef *xref = NULL;
+	CPdf *pdf = getPdf();
+	if(pdf)
+		xref = pdf->getCXref();
+	arrayObj->initArray(xref);
 	::Array * array = arrayObj->getArray();
 
 	Value::const_iterator it = value.begin();
