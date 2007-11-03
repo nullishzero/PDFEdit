@@ -1,7 +1,7 @@
 ????-??-?? PDF Editor 0.?.?
 	* Internal: debuging for observers, more effective CObject -> Object
 	  translation for CDict and CArray
-	* Bug 164, 175, 180 fixed
+	* Bug 164, 175, 180, 182 fixed
 	* Added Tango icon theme from Tiziano Mattei.
 
 2007-08-28 PDF Editor 0.3.2
