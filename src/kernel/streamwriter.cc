@@ -27,6 +27,8 @@ void FileStreamWriter::putChar(int ch)
 
 void FileStreamWriter::putLine(const char * line, size_t length)
 {
+using namespace debug;
+
 	if(!line)
 		return;
 
@@ -34,13 +36,18 @@ void FileStreamWriter::putLine(const char * line, size_t length)
 	size_t totalWriten=0;
 	
 	// writes all data
-	// FIXME what if not enough place for writing...
 	while(totalWriten<length)
 	{
 		size_t writen=fwrite(line+totalWriten, sizeof(char), length-totalWriten, f);
+		if(!writen)
+		{
+			int err = errno;
+			kernelPrintDbg(DBG_ERR, "Write error \"" << strerror(err) << "\"");
+			return;
+		}
 		totalWriten+=writen;
 	}
-	fputc('\n', f);
+	fputc(0xA, f);
 	totalWriten++;
 	fflush(f);
 	setPos(pos+totalWriten);
@@ -56,7 +63,7 @@ using namespace debug;
 	// part
 	if(limited && length<pos)
 	{
-		kernelPrintDbg(DBG_ERR, "Trimed data are behind limited arae.");
+		kernelPrintDbg(DBG_ERR, "Trimed data are behind limited area.");
 		return false;
 	}
 

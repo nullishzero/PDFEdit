@@ -136,6 +136,7 @@ public:
 	 * Prints exactly length number of bytes starting from given line.
 	 * Additionally flushes all changes to the file and position is moved after
 	 * inserted buffer.
+	 * Appends LF after given string.
 	 *
 	 */
 	virtual void putLine(const char * line, size_t length);

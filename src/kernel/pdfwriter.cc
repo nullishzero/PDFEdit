@@ -336,17 +336,28 @@ using namespace boost;
 		stream.putLine(xrefRow, strlen(xrefRow));
 
 		// now prints all entries for this subsection
-		// one entry on one line
-		// according specificat, line has following format:
-		// nnnnnnnnnn ggggg n \n
+		// one entry per line
+		// according specification (3.4.3 Cross reference table), 
+		// line has following format:
+		// nnnnnnnnnn ggggg n eoln
 		// 	where
 		// 		n* stands for file offset of object (padded by leading 0)
 		// 		g* is generation number (padded by leading 0)
 		// 		n is literal keyword identifying in-use object
+		// 		eoln 2 characters end of line. If file uses 1 character
+		// 		     end of line character, it is preceeded by one space.
+		// Each entry is exactly 20 bytes long including the end-of-line marker.
 		// We don't provide information about free objects
 		for(EntriesType::iterator entry=entries.begin(); entry!=entries.end(); entry++)
 		{
-			snprintf(xrefRow, sizeof(xrefRow)-1, "%010u %05i n", (unsigned int)entry->first, entry->second);
+			int ret = snprintf(xrefRow, sizeof(xrefRow)-1, 
+					"%010u %05i n ", 
+					(unsigned int)entry->first, 
+					entry->second);
+			if(ret<19)
+				utilsPrintDbg(DBG_WARN, "Xref entry to short ("
+						<<ret<<") for "<<xrefRow);
+			// putLine uses simple LF end-of-line marker
 			stream.putLine(xrefRow, strlen(xrefRow));
 		}
 		
