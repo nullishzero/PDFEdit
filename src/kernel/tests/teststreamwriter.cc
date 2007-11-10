@@ -13,6 +13,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.3  2007/11/10 19:24:53  mstsxfx
+ * StreamWriter::clone renamed to cloneToFile
+ * 	- original name clashes with BaseStream method - thanks to Gwurk
+ * 	  for reporting
+ *
  * Revision 1.2  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -96,7 +101,7 @@ public:
 		size_t halfSize=ftell(file2) / 2;
 		string cloneName=test_file+"_clone";
 		FILE * file3=fopen(cloneName.c_str(), "w+");
-		streamWriter->clone(file3, 0, halfSize);
+		streamWriter->cloneToFile(file3, 0, halfSize);
 		fflush(file3);
 		
 		// compares cloned file3 and stream content

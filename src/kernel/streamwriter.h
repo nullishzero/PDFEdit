@@ -82,7 +82,7 @@ public:
 	 *
 	 * @return number of bytes writen to given file.
 	 */ 
-	virtual size_t clone(FILE * file, size_t start, size_t length) =0;
+	virtual size_t cloneToFile(FILE * file, size_t start, size_t length) =0;
 
 };
 
@@ -183,7 +183,7 @@ public:
 	 *
 	 * @return number of bytes writen to given file.
 	 */ 
-	virtual size_t clone(FILE * file, size_t start, size_t length);
+	virtual size_t cloneToFile(FILE * file, size_t start, size_t length);
 };
 
 #endif

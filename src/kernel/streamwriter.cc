@@ -90,7 +90,7 @@ using namespace debug;
 	return true;
 }
 
-size_t FileStreamWriter::clone(FILE * file, size_t start, size_t length)
+size_t FileStreamWriter::cloneToFile(FILE * file, size_t start, size_t length)
 {
 using namespace debug;
 

@@ -632,7 +632,7 @@ using namespace debug;
 	size_t revisionEOF=getRevisionEnd(revisions[revision]);
 
 	kernelPrintDbg(DBG_DBG, "Copies until "<<revisionEOF<<" offset");
-	streamWriter->clone(file, 0, revisionEOF);
+	streamWriter->cloneToFile(file, 0, revisionEOF);
 
 	// adds pdf end of line marker to the output file
 	fwrite(EOFMARKER, sizeof(char), strlen(EOFMARKER), file);
