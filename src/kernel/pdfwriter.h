@@ -273,7 +273,7 @@ public:
 	virtual ~IPdfWriter()
 	{
 #ifdef OBSERVER_DEBUG
-		std::cerr << this <<":pdfWriter:"<< getIndiRef();
+		std::cerr << this <<":pdfWriter:";
 		if(observers.size())
 			dumpObservers();
 		std::cerr << std::endl;

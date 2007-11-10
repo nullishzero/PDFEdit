@@ -355,6 +355,12 @@ public:
 	 */
 	~CAnnotation ()
 	{
+#ifdef OBSERVER_DEBUG
+		std::cerr << this <<":CAnnotation:"<< annotDictionary->getIndiRef();
+		if(observers.size())
+			dumpObservers();
+		std::cerr << std::endl;
+#endif
 	}
 
 	/** Sets new annotation initializator.
