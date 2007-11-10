@@ -1387,7 +1387,8 @@ objHasParent (const IProperty& ip, boost::shared_ptr<IProperty>& indiObj)
 		throw CObjInvalidOperation ();
 
 	CPdf* pdf = ip.getPdf ();
-	if ( &ip == (indiObj=pdf->getIndirectProperty(ip.getIndiRef())).get() )
+	IndiRef ref = ip.getIndiRef();
+	if ( &ip == (indiObj=pdf->getIndirectProperty(ref)).get() )
 		return false;
 	else
 		return true;

@@ -1068,7 +1068,7 @@ public:
 	 * 
 	 * @return IProperty wrapped by shared_ptr smart pointer.
 	 */
-	boost::shared_ptr<IProperty> getIndirectProperty(IndiRef ref);
+	boost::shared_ptr<IProperty> getIndirectProperty(IndiRef &ref);
 
 	/** Adds new indirect object.
 	 * @param prop Original property.
@@ -1211,9 +1211,9 @@ public:
 	 * be helpful when we want to make changes in older revision, what is not
 	 * possible normaly:
 	 * <pre>
-	 * cpdf->changeRevision(5);					// change to 5th revision
+	 * cpdf->changeRevision(5);			// change to 5th revision
 	 * cpdf->save("5th_revision_clone.pdf");	// creates copy of everything
-	 * 											// until 5th revision
+	 * 						// until 5th revision
 	 * </pre>
 	 * Then you can open this document and make changes inside.
 	 * <p>

@@ -1770,7 +1770,7 @@ CPdf::~CPdf()
 // 
 // this method can't be const because createObjFromXpdfObj requires 
 // CPdf * not const CPdf * given by this
-boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef ref)
+boost::shared_ptr<IProperty> CPdf::getIndirectProperty(IndiRef &ref)
 {
 using namespace debug;
 
