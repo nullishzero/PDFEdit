@@ -13,6 +13,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.29  2007/11/11 13:43:22  mstsxfx
+ * * Typo fixes
+ * * getIndirectProperty has reference property now
+ * 	- non compatible usage corrected
+ *
  * Revision 1.28  2007/11/11 12:41:47  mstsxfx
  * * XPdf 3.02 ported to the tree
  * 	- compilable but not tested at the moment
@@ -271,7 +276,7 @@ print (__attribute__((unused)) ostream& os, Object* o, XRef* xref)
 	Object obj;
 	assert (NULL != xref);
 	boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, o),
-				gtrue  // TODO is gtrue ok here?
+				gTrue  // TODO is gtrue ok here?
 				)
 			);
 	parser->getObj(&obj);

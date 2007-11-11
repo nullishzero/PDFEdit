@@ -13,6 +13,11 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.37  2007/11/11 13:43:22  mstsxfx
+ * * Typo fixes
+ * * getIndirectProperty has reference property now
+ * 	- non compatible usage corrected
+ *
  * Revision 1.36  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -542,8 +547,9 @@ public:
 		// gets parent of page dictionary and removes reference of this page
 		// from Kids array
 		shared_ptr<CRef> parentRef=IProperty::getSmartCObjectPtr<CRef>(pageDict->getProperty("Parent"));
+		IndiRef ref = getValueFromSimple<CRef>(parentRef);
 		shared_ptr<CDict> parentDict=IProperty::getSmartCObjectPtr<CDict>(
-				pdf->getIndirectProperty(getValueFromSimple<CRef>(parentRef)));
+				pdf->getIndirectProperty(ref));
 		shared_ptr<CArray> kidsArray=IProperty::getSmartCObjectPtr<CArray>(
 				parentDict->getProperty("Kids"));
 		vector<CArray::PropertyId> positions;
@@ -993,13 +999,8 @@ public:
 		CPPUNIT_ASSERT(isReal(*(addedDict->getProperty("Elem1"))));
 		CPPUNIT_ASSERT(isRef(*(addedDict->getProperty("Elem2"))));
 		// target of Elem2 has to be CNull
-		CPPUNIT_ASSERT(
-				isNull(
-					* pdf->getIndirectProperty(
-										  getValueFromSimple<CRef>(addedDict->getProperty("Elem2"))
-										  )
-				 )
-				);
+		ref = getValueFromSimple<CRef>(addedDict->getProperty("Elem2"));
+		CPPUNIT_ASSERT(isNull(* pdf->getIndirectProperty(ref)));
 		CPPUNIT_ASSERT(isArray(*(addedDict->getProperty("Elem3"))));
 
 		printf("TC04:\taddIndirectProperty with CRef from same pdf\n");
