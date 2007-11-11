@@ -25,6 +25,8 @@
 #include <xpdf/Page.h>
 #include <xpdf/TextOutputDev.h>
 #include <xpdf/SplashOutputDev.h>
+// Note that GlobalParams::initGlobalParams has to be called before
+// we can use globalParams
 #include <xpdf/GlobalParams.h>
 #include <xpdf/Catalog.h>
 
@@ -87,49 +89,6 @@ public:
 
 /** Xpdf object wrapper. */
 typedef MassiveIdiocyWrapper<Object> XpdfObject;
-
-
-//
-// Xpdf global variables
-//
-
-/**
- * Initialize xpdf global parameters and setup fonts.
- */
-inline void 
-openXpdfMess ()
-{
-	//
-	// Xpdf Global variable TFUJ!!!
-	// REMARK: xpdf uses global variable globalParams that uses another global
-	// variable builtinFonts which causes that globalParams can NOT be nested
-	// 
-	assert (NULL == globalParams);
-	globalParams = new ::GlobalParams (NULL);
-	globalParams->setupBaseFonts (NULL);	
-}
-
-/**
- * Uninitialize xpdf global parameters. 
- *
- */
-inline void
-closeXpdfMess ()
-{
-	// Clean-up
-	assert (NULL != globalParams);
-	delete globalParams;
-	globalParams = NULL;
-}
-
-/** Create this class in a function using xpdf code sensitive to global variables. */
-struct GlobalUseXpdf
-{
-	GlobalUseXpdf () {openXpdfMess ();}
-	~GlobalUseXpdf () {closeXpdfMess ();}
-};
-
-
 
 
 //=====================================================================================

@@ -602,7 +602,7 @@ Plugin::~Plugin() {
 // parsing
 //------------------------------------------------------------------------
 
-GlobalParams::GlobalParams(char *cfgFileName) {
+GlobalParams::GlobalParams(const char *cfgFileName) {
   UnicodeMap *map;
   GString *fileName;
   FILE *f;
@@ -786,6 +786,13 @@ GlobalParams::GlobalParams(char *cfgFileName) {
     delete fileName;
     fclose(f);
   }
+}
+
+GlobalParams * GlobalParams::initGlobalParams(const char *cfgFileName)
+{
+	if(globalParams)
+		return globalParams;
+	return globalParams = new GlobalParams(cfgFileName);
 }
 
 void GlobalParams::createDefaultKeyBindings() {

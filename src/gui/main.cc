@@ -170,6 +170,11 @@ int main(int argc, char *argv[]){
  bool useGUI=true;
 #endif
  QApplication app(argc,argv,useGUI);
+ 
+ // initializes global parameters for xpdf code - TODO use
+ // configuration file - from parameters
+ GlobalParams::initGlobalParams("");
+
  q_App=&app;
  //Get application path
  appPath=app.applicationDirPath();

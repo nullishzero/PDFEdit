@@ -144,9 +144,6 @@ public:
 		// Init ftor
 		ftor (res);
 
-		// Init global variables
-		xpdf::openXpdfMess ();
-		
 		while (!it.isEnd ())
 		{
 			op = it.getCurrent();
@@ -187,8 +184,6 @@ public:
 		
 		} // while
 
-		// Close xpdf mess
-		xpdf::closeXpdfMess ();
 		// If malformed content stream (missing Q)
 		while (tmpstate->hasSaves())
 			tmpstate = tmpstate->restore ();

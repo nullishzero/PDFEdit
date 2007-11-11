@@ -966,9 +966,6 @@ CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) 
 	displayPage (*textDev);	
 
 
-	// Init xpdf mess
-	xpdf::openXpdfMess ();
-
 	// Set encoding
 	if (encoding)
     	globalParams->setTextEncoding(const_cast<char*>(encoding->c_str()));
@@ -978,9 +975,6 @@ CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) 
 		rc = &(lastParams.pageRect);
 	boost::scoped_ptr<GString> gtxt (textDev->getText(rc->xleft, rc->yleft, rc->xright, rc->yright));
 	text = gtxt->getCString();
-	
-	// Uninit xpdf mess
-	xpdf::closeXpdfMess ();
 }
 
 
@@ -1046,9 +1040,6 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, 
 	assert (NULL != xpdfPageDict);
 
 	
-	// Init xpdf
-	xpdf::openXpdfMess ();
-
 	//
 	// We need to handle special case
 	//
@@ -1073,12 +1064,6 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, 
 					rotation, lastParams.useMediaBox, 
 					lastParams.crop,x,y,w,h, NULL, xpdfCatalog.get());
 
-	//
-	// Cleanup
-	// 
-
-	// Clean xpdf mess
-	xpdf::closeXpdfMess ();
 }
 
 //
@@ -1114,9 +1099,6 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 	// Init Gfx resources
 	//
 
-	// Init mess
-	xpdf::openXpdfMess ();
-
 	// Get resource dictionary
 	InheritedPageAttr atr;
 	fillInheritedPageAttr (dictionary,atr);
@@ -1138,9 +1120,6 @@ CPage::createXpdfDisplayParams (boost::shared_ptr<GfxResources>& res, boost::sha
 												  lastParams.pageRect.xright, lastParams.pageRect.yright));
 	state = shared_ptr<GfxState> (new GfxState (lastParams.hDpi, lastParams.vDpi, 
 												rc.get(), lastParams.rotate, lastParams.upsideDown));
-
-	// Close the mess
-	xpdf::closeXpdfMess ();
 }
 
 //

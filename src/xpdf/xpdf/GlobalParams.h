@@ -4,6 +4,9 @@
 //
 // Copyright 2001-2003 Glyph & Cog, LLC
 //
+// Changes: 
+// Michal Hocko   - initGlobalParams method added
+//
 //========================================================================
 
 #ifndef GLOBALPARAMS_H
@@ -194,7 +197,10 @@ public:
 
   // Initialize the global parameters by attempting to read a config
   // file.
-  GlobalParams(char *cfgFileName);
+  GlobalParams(const char *cfgFileName);
+
+  // initializes globalParams global variable if it is NULL
+  static GlobalParams *initGlobalParams(const char *cfgFileName);
 
   ~GlobalParams();
 

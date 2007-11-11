@@ -124,12 +124,9 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 		//oss << "Creating 1.txt which contains text from a pdf." << endl;
 		page->displayPage (textOut);
 		
-		xpdf::openXpdfMess ();
-
 		//oss << "Output from textoutputdevice." << endl;
 		//oss << textOut.getText(0, 0, 1000, 1000)->getCString() << endl;
 		delete textOut.getText(0, 0, 1000, 1000);
-		xpdf::closeXpdfMess ();
 
 		_working (oss);
 	}
