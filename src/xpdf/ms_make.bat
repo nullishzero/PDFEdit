@@ -11,9 +11,9 @@ cd goo
 %CXX% %CXXFLAGS% /c GHash.cc
 %CXX% %CXXFLAGS% /c GList.cc
 %CXX% %CXXFLAGS% /c GString.cc
+%CXX% %CXXFLAGS% /c gmem.cc
 %CXX% %CXXFLAGS% /c gmempp.cc
 %CXX% %CXXFLAGS% /c gfile.cc
-%CC% %CFLAGS% /c gmem.c
 %CC% %CFLAGS% /c parseargs.c
 %LIBPROG% /nologo /out:Goo.lib GHash.obj GList.obj GString.obj gmempp.obj gfile.obj gmem.obj parseargs.obj
 
@@ -70,21 +70,21 @@ cd ..\xpdf
 %CXX% %CXXFLAGS% /c pdffonts.cc
 %CXX% %CXXFLAGS% /c pdfimages.cc
 
-%CXX% %LINKFLAGS% /Fepdftops.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSOutputDev.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdftops.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib
+%CXX% %LINKFLAGS% /Fepdftops.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSOutputDev.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdftops.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib user32.lib gdi32.lib advapi32.lib
 
-%CXX% %LINKFLAGS% /Fepdftotext.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj TextOutputDev.obj UnicodeMap.obj UnicodeTypeTable.obj XRef.obj pdftotext.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib
+%CXX% %LINKFLAGS% /Fepdftotext.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj TextOutputDev.obj UnicodeMap.obj UnicodeTypeTable.obj XRef.obj pdftotext.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib user32.lib gdi32.lib advapi32.lib
 
-%CXX% %LINKFLAGS% /Fepdfinfo.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdfinfo.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib
+%CXX% %LINKFLAGS% /Fepdfinfo.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdfinfo.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib user32.lib gdi32.lib advapi32.lib
 
-%CXX% %LINKFLAGS% /Fepdffonts.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdffonts.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib
+%CXX% %LINKFLAGS% /Fepdffonts.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdffonts.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib user32.lib gdi32.lib advapi32.lib
 
-%CXX% %LINKFLAGS% /Fepdfimages.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj ImageOutputDev.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdfimages.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib
+%CXX% %LINKFLAGS% /Fepdfimages.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj ImageOutputDev.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj Stream.obj UnicodeMap.obj XRef.obj pdfimages.obj ..\fofi\fofi.lib ..\goo\Goo.lib shell32.lib user32.lib gdi32.lib advapi32.lib
 
 cd ..
 
 rem --- This part will only work if you have FreeType installed ---
 
-set FT2DIR=..\freetype-2.1.10
+set FT2DIR=..\freetype-2.3.1
 set CXXFLAGS=%CXXFLAGS% /I..\splash /I%FT2DIR%\include
 
 cd splash
@@ -113,6 +113,6 @@ cd ..\xpdf
 %CXX% %CXXFLAGS% /c SplashOutputDev.cc
 %CXX% %CXXFLAGS% /c pdftoppm.cc
 
-%CXX% %LINKFLAGS% /Fepdftoppm.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj SplashOutputDev.obj Stream.obj UnicodeMap.obj UnicodeTypeTable.obj XRef.obj pdftoppm.obj ..\splash\splash.lib ..\fofi\fofi.lib ..\goo\Goo.lib %FT2DIR%\freetype2.lib shell32.lib
+%CXX% %LINKFLAGS% /Fepdftoppm.exe Annot.obj Array.obj BuiltinFont.obj BuiltinFontTables.obj Catalog.obj CharCodeToUnicode.obj CMap.obj Decrypt.obj Dict.obj Error.obj FontEncodingTables.obj Function.obj Gfx.obj GfxFont.obj GfxState.obj GlobalParams.obj JArithmeticDecoder.obj JBIG2Stream.obj JPXStream.obj Lexer.obj Link.obj NameToCharCode.obj Object.obj Outline.obj OutputDev.obj Page.obj Parser.obj PDFDoc.obj PDFDocEncoding.obj PSTokenizer.obj SecurityHandler.obj SplashOutputDev.obj Stream.obj UnicodeMap.obj UnicodeTypeTable.obj XRef.obj pdftoppm.obj ..\splash\splash.lib ..\fofi\fofi.lib ..\goo\Goo.lib %FT2DIR%\freetype2.lib shell32.lib user32.lib gdi32.lib advapi32.lib
 
 cd ..

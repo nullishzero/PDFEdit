@@ -2,7 +2,7 @@
 //
 // about-text.h
 //
-// Copyright 2002-2003 Glyph & Cog, LLC
+// Copyright 2002-2007 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -16,7 +16,7 @@ static char *aboutWinText[] = {
   "Supports PDF version " supportedPDFVersionStr ".",
   " ",
   "The PDF data structures, operators, and specification",
-  "are copyright 1985-2004 Adobe Systems Inc.",
+  "are copyright 1985-2006 Adobe Systems Inc.",
   " ",
   "Mouse bindings:",
   "  button 1: select text / follow link",
@@ -37,6 +37,7 @@ static char *aboutWinText[] = {
   "  b              = backward (history path)",
   "  0 / + / -      = zoom zero / in / out",
   "  z / w          = zoom page / page width",
+  "  alt-F          = toggle full-screen mode",
   "  ctrl-L         = redraw",
   "  q              = quit",
   "  <home> / <end> = top / bottom of page",

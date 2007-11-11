@@ -41,8 +41,8 @@ typedef void (*XPDFUpdateCbk)(void *data, GString *fileName,
 
 typedef void (*XPDFActionCbk)(void *data, char *action);
 
-typedef void (*XPDFKeyPressCbk)(void *data, char *s, KeySym key,
-				Guint modifiers);
+typedef void (*XPDFKeyPressCbk)(void *data, KeySym key, Guint modifiers,
+				XEvent *event);
 
 typedef void (*XPDFMouseCbk)(void *data, XEvent *event);
 
@@ -72,6 +72,9 @@ public:
   virtual int loadFile(BaseStream *stream, GString *ownerPassword = NULL,
 		       GString *userPassword = NULL);
 
+  // Load an already-created PDFDoc object.
+  virtual void loadDoc(PDFDoc *docA);
+
   // Resize the window to fit page <pg> of the current document.
   void resizeToPage(int pg);
 
@@ -89,11 +92,17 @@ public:
 
   //----- selection
 
+  void startSelection(int wx, int wy);
+  void endSelection(int wx, int wy);
   void copySelection();
+  void startPan(int wx, int wy);
+  void endPan(int wx, int wy);
 
   //----- hyperlinks
 
   void doAction(LinkAction *action);
+  LinkAction *getLinkAction() { return linkAction; }
+  GString *mungeURL(GString *url);
 
   //----- find
 
@@ -120,6 +129,7 @@ public:
   Cursor getBusyCursor() { return busyCursor; }
   void takeFocus();
   void enableHyperlinks(GBool on) { hyperlinksEnabled = on; }
+  GBool getHyperlinksEnabled() { return hyperlinksEnabled; }
   void enableSelect(GBool on) { selectEnabled = on; }
   void setUpdateCbk(XPDFUpdateCbk cbk, void *data)
     { updateCbk = cbk; updateCbkData = data; }
@@ -129,15 +139,14 @@ public:
     { keyPressCbk = cbk; keyPressCbkData = data; }
   void setMouseCbk(XPDFMouseCbk cbk, void *data)
     { mouseCbk = cbk; mouseCbkData = data; }
+  GBool getFullScreen() { return fullScreen; }
 
 private:
 
   virtual GBool checkForNewFile();
 
   //----- hyperlinks
-  GBool doLink(int pg, int x, int y);
   void runCommand(GString *cmdFmt, GString *arg);
-  GString *mungeURL(GString *url);
 
   //----- selection
   static Boolean convertSelectionCbk(Widget widget, Atom *selection,
@@ -159,12 +168,12 @@ private:
   static void resizeCbk(Widget widget, XtPointer ptr, XtPointer callData);
   static void redrawCbk(Widget widget, XtPointer ptr, XtPointer callData);
   static void inputCbk(Widget widget, XtPointer ptr, XtPointer callData);
-  void keyPress(char *s, KeySym key, Guint modifiers);
   virtual PDFCoreTile *newTile(int xDestA, int yDestA);
-  virtual void updateTileData(PDFCoreTile *tileA,
-			      int xSrc, int ySrc, int width, int height);
+  virtual void updateTileData(PDFCoreTile *tileA, int xSrc, int ySrc,
+			      int width, int height, GBool composited);
   virtual void redrawRect(PDFCoreTile *tileA, int xSrc, int ySrc,
-			  int xDest, int yDest, int width, int height);
+			  int xDest, int yDest, int width, int height,
+			  GBool composited);
   virtual void updateScrollbars();
   void setCursor(Cursor cursor);
   GBool doDialog(int type, GBool hasCancel,

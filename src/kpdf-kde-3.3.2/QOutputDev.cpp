@@ -67,7 +67,9 @@ void QOutputDev::startPage(int pageNum, GfxState *state)
 void QOutputDev::endPage()
 {
 	SplashOutputDev::endPage();
-	m_text->coalesce(gTrue);
+	// FIXME use doHTML correctly - see TextOutputDev.h
+	// and enableHTMLExtras (doHTML is gFalse by default)
+	m_text->coalesce(gTrue, gFalse);
 }
 
 void QOutputDev::updateFont(GfxState *state)

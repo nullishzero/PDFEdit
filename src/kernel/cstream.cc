@@ -395,7 +395,7 @@ CStream::open ()
 	::XRef* xref = (NULL != this->getPdf ()) ? this->getPdf ()->getCXref() : NULL;
 	// Create xpdf object from current stream and parse it
 	tmpObj = _makeXpdfObject ();
-	parser = new ::Parser (xref, new ::Lexer(xref, tmpObj));
+	parser = new ::Parser (xref, new ::Lexer(xref, tmpObj), gFalse);
 }
 
 //

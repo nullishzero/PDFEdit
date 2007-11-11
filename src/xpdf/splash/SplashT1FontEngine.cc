@@ -105,7 +105,7 @@ SplashFontFile *SplashT1FontEngine::loadType1CFont(SplashFontFileID *idA,
     delete ff;
     return NULL;
   }
-  ff->convertToType1(NULL, gTrue, &fileWrite, tmpFile);
+  ff->convertToType1(NULL, NULL, gTrue, &fileWrite, tmpFile);
   delete ff;
   fclose(tmpFile);
   ret = SplashT1FontFile::loadType1Font(this, idA, tmpFileName->getCString(),

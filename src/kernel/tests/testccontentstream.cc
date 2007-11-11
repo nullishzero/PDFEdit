@@ -538,7 +538,12 @@ primitiveprintContentStream (__attribute__((unused))	ostream& oss, const char* f
 
 	cat.getPage(pagesNum)->getContents(&obj);
 
-	scoped_ptr<Parser> parser (new Parser (xref, new Lexer(xref, &obj)));
+	scoped_ptr<Parser> parser (new Parser (xref, new Lexer(xref, &obj), 
+				gfalse  // TODO check if gfalse is ok here
+					// it should be, because content stream
+					// mustn't contain stream objects
+				)
+			);
 	
 	Object o;
 	parser->getObj (&o);
@@ -643,7 +648,12 @@ cstreamsreader (__attribute__((unused))	ostream& oss, const char* fileName)
 		///
 
 		/// Intermezzo for xpdf
-		scoped_ptr<Parser> parser (new Parser (xref, new Lexer(xref, &obj)));
+		scoped_ptr<Parser> parser (new Parser (xref, new Lexer(xref, &obj),
+					gfalse  // TODO check if gfalse is ok here
+						// it should be, because content stream
+						// mustn't contain stream objects
+					)
+				);
 		Object o1;
 		parser->getObj (&o1);
 		///

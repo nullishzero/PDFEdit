@@ -17,6 +17,7 @@
 // Filters
 #include "cstream.h"
 #include "cobjecthelpers.h"
+#include "xpdf.h"
 
 /** 
  * Content streams can be separated in crazy
@@ -88,7 +89,12 @@ public:
 		
 		// Create parser
 		lexer = new ::Lexer (xref, xarr.get());
-		parser = boost::shared_ptr<Parser> (new ::Parser (xref, lexer));
+		parser = boost::shared_ptr<Parser> (new ::Parser (xref, lexer, 
+					gFalse  // TODO gfalse should be ok here
+				       		// because content stream must
+						// not contain stream objects
+					)
+				);
 	}
 
 	/** Close. */

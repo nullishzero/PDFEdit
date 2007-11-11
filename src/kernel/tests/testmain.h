@@ -13,6 +13,14 @@
  * $RCSfile$
  *
  * $Log$
+ * Revision 1.28  2007/11/11 12:41:47  mstsxfx
+ * * XPdf 3.02 ported to the tree
+ * 	- compilable but not tested at the moment
+ * 	- previous state marked by XPDF_3_01-PDFedit_patches
+ * 	- mark whole tree with XPDF_3_02-PDFedit_patches after testing
+ * * kernel, kpdf-kde-3.3.2 code synced with changes
+ * 	- mainly Parser constructor signature change
+ *
  * Revision 1.27  2007/02/04 20:17:03  mstsxfx
  * Common Licence comment for all cc and h files available in doc/licence_header
  * file and its content to all cc and h files in src/{gui,kernel,utils}
@@ -262,7 +270,10 @@ print (__attribute__((unused)) ostream& os, Object* o, XRef* xref)
 	
 	Object obj;
 	assert (NULL != xref);
-	boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, o)));
+	boost::scoped_ptr<Parser> parser (new Parser(xref, new Lexer(xref, o),
+				gtrue  // TODO is gtrue ok here?
+				)
+			);
 	parser->getObj(&obj);
 	while (!obj.isEOF()) 
 	{

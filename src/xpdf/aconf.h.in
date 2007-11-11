@@ -30,6 +30,11 @@
 #undef MULTITHREADED
 
 /*
+ * Enable C++ exceptions.
+ */
+#undef USE_EXCEPTIONS
+
+/*
  * Enable word list support.
  */
 #undef TEXTOUT_WORD_LIST
@@ -96,6 +101,11 @@
  * Enable support for loading plugins.
  */
 #undef ENABLE_PLUGINS
+
+/*
+ * Defined if the Splash library is avaiable.
+ */
+#undef HAVE_SPLASH
 
 /*
  * Enable support for CMYK output.

@@ -783,7 +783,11 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		  if (charProc->isStream())
 		  {
 			  // Make parser
-			  scoped_ptr<Parser> parser (new ::Parser (NULL, new ::Lexer(NULL, charProc->getStream())));
+			  scoped_ptr<Parser> parser (new ::Parser (NULL, 
+						  new ::Lexer(NULL, charProc->getStream()),
+						  gFalse
+						  )
+					  );
 			  xpdf::XpdfObject obj;
 			  // Read till BI found
 			  while (!parser->eofOfActualStream() && !obj->isCmd("BI"))

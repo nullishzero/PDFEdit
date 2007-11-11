@@ -23,6 +23,7 @@
 
 class GString;
 class GList;
+class PDFDoc;
 class XPDFViewer;
 
 //------------------------------------------------------------------------
@@ -45,6 +46,8 @@ public:
   XPDFViewer *openAtDest(GString *fileName, GString *dest,
 			 GString *ownerPassword = NULL,
 			 GString *userPassword = NULL);
+  XPDFViewer *reopen(XPDFViewer *viewer, PDFDoc *doc, int page,
+		     GBool fullScreenA);
   void close(XPDFViewer *viewer, GBool closeLast);
   void quit();
 
@@ -53,6 +56,7 @@ public:
   //----- remote server
   void setRemoteName(char *remoteName);
   GBool remoteServerRunning();
+  void remoteExec(char *cmd);
   void remoteOpen(GString *fileName, int page, GBool raise);
   void remoteOpenAtDest(GString *fileName, GString *dest, GBool raise);
   void remoteReload(GBool raise);
@@ -67,9 +71,9 @@ public:
   GBool getReverseVideo() { return reverseVideo; }
   SplashColorPtr getPaperRGB() { return paperRGB; }
   Gulong getPaperPixel() { return paperPixel; }
-  Gulong getMattePixel() { return mattePixel; }
+  Gulong getMattePixel(GBool fullScreenA)
+    { return fullScreenA ? fullScreenMattePixel : mattePixel; }
   GString *getInitialZoom() { return initialZoom; }
-  GBool getViKeys() { return viKeys; }
   void setFullScreen(GBool fullScreenA) { fullScreen = fullScreenA; }
   GBool getFullScreen() { return fullScreen; }
 
@@ -102,8 +106,8 @@ private:
   SplashColor paperRGB;
   Gulong paperPixel;
   Gulong mattePixel;
+  Gulong fullScreenMattePixel;
   GString *initialZoom;
-  GBool viKeys;
   GBool fullScreen;
 };
 

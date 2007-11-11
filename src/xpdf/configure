@@ -1289,8 +1289,10 @@ Optional Features:
   --enable-no-text-select do not allow text selection
   --enable-opi            include support for OPI comments
   --enable-multithreaded  include support for multithreading
+  --enable-exceptions     use C++ exceptions
   --enable-wordlist       include support for building word lists
   --enable-fixedpoint     use fixed point (instead of floating point) arithmetic
+  --enable-cmyk           include support for CMYK rasterization
   --disable-largefile     omit support for large files
 
 Optional Packages:
@@ -1793,6 +1795,14 @@ _ACEOF
 
 fi
 
+# Check whether --enable-exceptions was given.
+if test "${enable_exceptions+set}" = set; then
+  enableval=$enable_exceptions; cat >>confdefs.h <<\_ACEOF
+#define USE_EXCEPTIONS 1
+_ACEOF
+
+fi
+
 # Check whether --enable-wordlist was given.
 if test "${enable_wordlist+set}" = set; then
   enableval=$enable_wordlist; cat >>confdefs.h <<\_ACEOF
@@ -1805,6 +1815,14 @@ fi
 if test "${enable_fixedpoint+set}" = set; then
   enableval=$enable_fixedpoint; cat >>confdefs.h <<\_ACEOF
 #define USE_FIXEDPOINT 1
+_ACEOF
+
+fi
+
+# Check whether --enable-cmyk was given.
+if test "${enable_cmyk+set}" = set; then
+  enableval=$enable_cmyk; cat >>confdefs.h <<\_ACEOF
+#define SPLASH_CMYK 1
 _ACEOF
 
 fi
@@ -10673,6 +10691,10 @@ echo "$as_me: WARNING: requested freetype2 library not found!" >&2;}
 if test "x$smr_have_freetype2_library" = xyes; then
   cat >>confdefs.h <<\_ACEOF
 #define HAVE_FREETYPE_FREETYPE_H 1
+_ACEOF
+
+  cat >>confdefs.h <<\_ACEOF
+#define HAVE_SPLASH 1
 _ACEOF
 
 fi

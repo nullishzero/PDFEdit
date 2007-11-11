@@ -44,6 +44,7 @@ static GBool noEmbedT1Fonts = gFalse;
 static GBool noEmbedTTFonts = gFalse;
 static GBool noEmbedCIDPSFonts = gFalse;
 static GBool noEmbedCIDTTFonts = gFalse;
+static GBool preload = gFalse;
 static char paperSize[15] = "";
 static int paperWidth = 0;
 static int paperHeight = 0;
@@ -91,8 +92,10 @@ static ArgDesc argDesc[] = {
    "don't embed TrueType fonts"},
   {"-noembcidps", argFlag,     &noEmbedCIDPSFonts, 0,
    "don't embed CID PostScript fonts"},
-  {"-noembcidtt", argFlag, &noEmbedCIDTTFonts,  0,
+  {"-noembcidtt", argFlag,     &noEmbedCIDTTFonts,  0,
    "don't embed CID TrueType fonts"},
+  {"-preload",    argFlag,     &preload,        0,
+   "preload images and forms"},
   {"-paper",      argString,   paperSize,       sizeof(paperSize),
    "paper size (letter, legal, A4, A3, match)"},
   {"-paperw",     argInt,      &paperWidth,     0,
@@ -193,6 +196,9 @@ int main(int argc, char *argv[]) {
 
   // read config file
   globalParams = new GlobalParams(cfgFileName);
+#if HAVE_SPLASH
+  globalParams->setupBaseFonts(NULL);
+#endif
   if (paperSize[0]) {
     if (!globalParams->setPSPaperSize(paperSize)) {
       fprintf(stderr, "Invalid paper size\n");
@@ -236,6 +242,9 @@ int main(int argc, char *argv[]) {
   }
   if (noEmbedCIDTTFonts) {
     globalParams->setPSEmbedCIDTrueType(!noEmbedCIDTTFonts);
+  }
+  if (preload) {
+    globalParams->setPSPreload(preload);
   }
 #if OPI_SUPPORT
   if (doOPI) {
@@ -309,7 +318,7 @@ int main(int argc, char *argv[]) {
 			  doc->getCatalog(), firstPage, lastPage, mode);
   if (psOut->isOk()) {
     doc->displayPages(psOut, firstPage, lastPage, 72, 72,
-		      0, !pageCrop, globalParams->getPSCrop(), gFalse);
+		      0, !pageCrop, globalParams->getPSCrop(), gTrue);
   } else {
     delete psOut;
     exitCode = 2;

@@ -10,9 +10,9 @@ cd goo
 %CXX% %CXXFLAGS% -c GHash.cc
 %CXX% %CXXFLAGS% -c GList.cc
 %CXX% %CXXFLAGS% -c GString.cc
+%CXX% %CXXFLAGS% -c gmem.cc
 %CXX% %CXXFLAGS% -c gmempp.cc
 %CXX% %CXXFLAGS% -c gfile.cc
-%CC% %CFLAGS% -c gmem.c
 %CC% %CFLAGS% -c parseargs.c
 del libGoo.a
 %LIBPROG% -rc libGoo.a GHash.o GList.o GString.o gmempp.o gfile.o gmem.o parseargs.o

@@ -34,12 +34,12 @@ CXX_SRC = \
 	$(srcdir)/GHash.cc \
 	$(srcdir)/GList.cc \
 	$(srcdir)/GString.cc \
+	$(srcdir)/gmem.cc \
 	$(srcdir)/gmempp.cc \
 	$(srcdir)/gfile.cc \
 	$(srcdir)/FixedPoint.cc
 
 C_SRC = \
-	$(srcdir)/gmem.c \
 	$(srcdir)/parseargs.c
 
 #------------------------------------------------------------------------
@@ -48,8 +48,8 @@ all: $(LIBPREFIX)Goo.a
 
 #------------------------------------------------------------------------
 
-GOO_CXX_OBJS = GHash.o GList.o GString.o gmempp.o gfile.o FixedPoint.o
-GOO_C_OBJS = gmem.o parseargs.o
+GOO_CXX_OBJS = GHash.o GList.o GString.o gmem.o gmempp.o gfile.o FixedPoint.o
+GOO_C_OBJS = parseargs.o
 GOO_OBJS = $(GOO_CXX_OBJS) $(GOO_C_OBJS)
 
 $(LIBPREFIX)Goo.a: $(GOO_OBJS)

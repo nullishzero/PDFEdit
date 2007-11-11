@@ -85,6 +85,7 @@ CXX_SRC = \
 	$(srcdir)/PSTokenizer.cc \
 	$(srcdir)/Page.cc \
 	$(srcdir)/Parser.cc \
+	$(srcdir)/PreScanOutputDev.cc \
 	$(srcdir)/SecurityHandler.cc \
 	$(srcdir)/SplashOutputDev.cc \
 	$(srcdir)/Stream.cc \
@@ -121,10 +122,10 @@ XPDF_OBJS = Annot.o Array.o BuiltinFont.o BuiltinFontTables.o Catalog.o \
 	GfxState.o GlobalParams.o JArithmeticDecoder.o JBIG2Stream.o \
 	JPXStream.o Lexer.o Link.o NameToCharCode.o Object.o Outline.o \
 	OutputDev.o Page.o Parser.o PDFCore.o PDFDoc.o PDFDocEncoding.o \
-	PSOutputDev.o PSTokenizer.o SecurityHandler.x.o SplashOutputDev.o \
-	Stream.o TextOutputDev.o UnicodeMap.o UnicodeTypeTable.o XPDFApp.o \
-	XPDFCore.o XPDFTree.o XPDFViewer.o XpdfPluginAPI.o XRef.o \
-	xpdf.o
+	PreScanOutputDev.o PSOutputDev.o PSTokenizer.o SecurityHandler.x.o \
+	SplashOutputDev.o Stream.o TextOutputDev.o UnicodeMap.o \
+	UnicodeTypeTable.o XPDFApp.o XPDFCore.o XPDFTree.o XPDFViewer.o \
+	XpdfPluginAPI.o XRef.o xpdf.o
 XPDF_LIBS = -L$(GOOLIBDIR) -lGoo $(SPLASHLIBS) $(T1LIBS) $(FTLIBS) \
 	$(XLIBS) $(OTHERLIBS) -lm
 
@@ -138,10 +139,12 @@ PDFTOPS_OBJS = Annot.o Array.o BuiltinFont.o BuiltinFontTables.o \
 	FontEncodingTables.o Function.o Gfx.o GfxFont.o \
 	GfxState.o GlobalParams.o JArithmeticDecoder.o JBIG2Stream.o \
 	JPXStream.o Lexer.o Link.o NameToCharCode.o Outline.o Object.o \
-	OutputDev.o Page.o Parser.o PDFDoc.o PDFDocEncoding.o PSOutputDev.o \
-	PSTokenizer.o SecurityHandler.o Stream.o UnicodeMap.o \
-	XpdfPluginAPI.o XRef.o pdftops.o
-PDFTOPS_LIBS = -L$(GOOLIBDIR) -lGoo $(OTHERLIBS) -lm
+	OutputDev.o Page.o Parser.o PDFDoc.o PDFDocEncoding.o \
+	PreScanOutputDev.o PSOutputDev.o PSTokenizer.o SecurityHandler.o \
+	SplashOutputDev.o Stream.o UnicodeMap.o XpdfPluginAPI.o XRef.o \
+	pdftops.o
+PDFTOPS_LIBS = -L$(GOOLIBDIR) -lGoo $(SPLASHLIBS) $(T1LIBS) $(FTLIBS) \
+	$(OTHERLIBS) -lm
 
 pdftops$(EXE): $(PDFTOPS_OBJS) $(GOOLIBDIR)/$(LIBPREFIX)Goo.a
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o pdftops$(EXE) $(PDFTOPS_OBJS) \

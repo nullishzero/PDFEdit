@@ -73,7 +73,12 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "Triming all data behind absolute file offset="<<start+pos);
 	
 	// truncates to contain first start+pos bytes
-	ftruncate(fileno(f), start+pos);
+	if(ftruncate(fileno(f), start+pos)==-1)
+	{
+		int err = errno;
+		kernelPrintDbg(DBG_ERR, "Unable to truncate trailing data from "<<start+pos<<
+				"B (\""<< strerror(err)<<"\")");
+	}
 	flush();
 
 	// sets position to original one or at the end if original is after file end

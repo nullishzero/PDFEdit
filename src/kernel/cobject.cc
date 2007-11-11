@@ -883,7 +883,8 @@ xpdfObjFromString (const std::string& str, XRef* xref)
 			new Parser (xref, 
 				new Lexer (xref,
 					new MemStream (pStr, 0, len, &dct, true)
-					)
+					),
+				gTrue // TODO check if gtrue parameter is ok here
 				)
 			);
 	//

@@ -55,21 +55,26 @@ public:
 				GBool deleteFile, char **enc);
   SplashFontFile *loadType1CFont(SplashFontFileID *idA, char *fileName,
 				 GBool deleteFile, char **enc);
+  SplashFontFile *loadOpenTypeT1CFont(SplashFontFileID *idA, char *fileName,
+				      GBool deleteFile, char **enc);
   SplashFontFile *loadCIDFont(SplashFontFileID *idA, char *fileName,
 			      GBool deleteFile);
+  SplashFontFile *loadOpenTypeCFFFont(SplashFontFileID *idA, char *fileName,
+				      GBool deleteFile);
   SplashFontFile *loadTrueTypeFont(SplashFontFileID *idA, char *fileName,
 				   GBool deleteFile,
 				   Gushort *codeToGID, int codeToGIDLen);
 
   // Get a font - this does a cache lookup first, and if not found,
   // creates a new SplashFont object and adds it to the cache.  The
-  // matrix:
+  // matrix, mat = textMat * ctm:
   //    [ mat[0] mat[1] ]
   //    [ mat[2] mat[3] ]
   // specifies the font transform in PostScript style:
   //    [x' y'] = [x y] * mat
   // Note that the Splash y axis points downward.
-  SplashFont *getFont(SplashFontFile *fontFile, SplashCoord *mat);
+  SplashFont *getFont(SplashFontFile *fontFile,
+		      SplashCoord *textMat, SplashCoord *ctm);
 
 private:
 

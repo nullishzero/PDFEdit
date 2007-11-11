@@ -38,8 +38,12 @@ public:
 				GBool deleteFile, char **enc);
   SplashFontFile *loadType1CFont(SplashFontFileID *idA, char *fileName,
 				 GBool deleteFile, char **enc);
+  SplashFontFile *loadOpenTypeT1CFont(SplashFontFileID *idA, char *fileName,
+				      GBool deleteFile, char **enc);
   SplashFontFile *loadCIDFont(SplashFontFileID *idA, char *fileName,
 			      GBool deleteFile);
+  SplashFontFile *loadOpenTypeCFFFont(SplashFontFileID *idA, char *fileName,
+				      GBool deleteFile);
   SplashFontFile *loadTrueTypeFont(SplashFontFileID *idA, char *fileName,
 				   GBool deleteFile,
 				   Gushort *codeToGID, int codeToGIDLen);

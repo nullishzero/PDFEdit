@@ -85,10 +85,11 @@ SplashT1FontFile::~SplashT1FontFile() {
   T1_DeleteFont(t1libID);
 }
 
-SplashFont *SplashT1FontFile::makeFont(SplashCoord *mat) {
+SplashFont *SplashT1FontFile::makeFont(SplashCoord *mat,
+				       SplashCoord *textMat) {
   SplashFont *font;
 
-  font = new SplashT1Font(this, mat);
+  font = new SplashT1Font(this, mat, textMat);
   font->initCache();
   return font;
 }

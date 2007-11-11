@@ -41,52 +41,12 @@
 #undef XtIsRealized
 #endif
 
-// hack around old X includes which are missing these symbols
-#ifndef XK_Page_Up
-#define XK_Page_Up              0xFF55
-#endif
-#ifndef XK_Page_Down
-#define XK_Page_Down            0xFF56
-#endif
-#ifndef XK_KP_Home
-#define XK_KP_Home              0xFF95
-#endif
-#ifndef XK_KP_Left
-#define XK_KP_Left              0xFF96
-#endif
-#ifndef XK_KP_Up
-#define XK_KP_Up                0xFF97
-#endif
-#ifndef XK_KP_Right
-#define XK_KP_Right             0xFF98
-#endif
-#ifndef XK_KP_Down
-#define XK_KP_Down              0xFF99
-#endif
-#ifndef XK_KP_Prior
-#define XK_KP_Prior             0xFF9A
-#endif
-#ifndef XK_KP_Page_Up
-#define XK_KP_Page_Up           0xFF9A
-#endif
-#ifndef XK_KP_Next
-#define XK_KP_Next              0xFF9B
-#endif
-#ifndef XK_KP_Page_Down
-#define XK_KP_Page_Down         0xFF9B
-#endif
-#ifndef XK_KP_End
-#define XK_KP_End               0xFF9C
-#endif
-#ifndef XK_KP_Begin
-#define XK_KP_Begin             0xFF9D
-#endif
-#ifndef XK_KP_Insert
-#define XK_KP_Insert            0xFF9E
-#endif
-#ifndef XK_KP_Delete
-#define XK_KP_Delete            0xFF9F
-#endif
+//------------------------------------------------------------------------
+
+// Divide a 16-bit value (in [0, 255*255]) by 255, returning an 8-bit result.
+static inline Guchar div255(int x) {
+  return (Guchar)((x + (x >> 8) + 0x80) >> 8);
+}
 
 //------------------------------------------------------------------------
 
@@ -127,7 +87,7 @@ XPDFCore::XPDFCore(Widget shellA, Widget parentWidgetA,
 		   SplashColorPtr paperColorA, Gulong paperPixelA,
 		   Gulong mattePixelA, GBool fullScreenA, GBool reverseVideoA,
 		   GBool installCmap, int rgbCubeSizeA):
-  PDFCore(splashModeRGB8, 4, reverseVideoA, paperColorA)
+  PDFCore(splashModeRGB8, 4, reverseVideoA, paperColorA, !fullScreenA)
 {
   GString *initialZoom;
 
@@ -150,18 +110,22 @@ XPDFCore::XPDFCore(Widget shellA, Widget parentWidgetA,
   drawArea = NULL;
 
   // get the initial zoom value
-  initialZoom = globalParams->getInitialZoom();
-  if (!initialZoom->cmp("page")) {
+  if (fullScreen) {
     zoom = zoomPage;
-  } else if (!initialZoom->cmp("width")) {
-    zoom = zoomWidth;
   } else {
-    zoom = atoi(initialZoom->getCString());
-    if (zoom <= 0) {
-      zoom = defZoom;
+    initialZoom = globalParams->getInitialZoom();
+    if (!initialZoom->cmp("page")) {
+      zoom = zoomPage;
+    } else if (!initialZoom->cmp("width")) {
+      zoom = zoomWidth;
+    } else {
+      zoom = atoi(initialZoom->getCString());
+      if (zoom <= 0) {
+	zoom = defZoom;
+      }
     }
+    delete initialZoom;
   }
-  delete initialZoom;
 
   linkAction = NULL;
 
@@ -244,6 +208,21 @@ int XPDFCore::loadFile(BaseStream *stream, GString *ownerPassword,
   return err;
 }
 
+void XPDFCore::loadDoc(PDFDoc *docA) {
+  PDFCore::loadDoc(docA);
+
+  // save the modification time
+  if (doc->getFileName()) {
+    modTime = getModTime(doc->getFileName()->getCString());
+  }
+
+  // update the parent window
+  if (updateCbk) {
+    (*updateCbk)(updateCbkData, doc->getFileName(), -1,
+		 doc->getNumPages(), NULL);
+  }
+}
+
 void XPDFCore::resizeToPage(int pg) {
   Dimension width, height;
   double width1, height1;
@@ -256,7 +235,7 @@ void XPDFCore::resizeToPage(int pg) {
     width = displayW;
     height = displayH;
   } else {
-    if (pg < 0 || pg > doc->getNumPages()) {
+    if (!doc || pg <= 0 || pg > doc->getNumPages()) {
       width1 = 612;
       height1 = 792;
     } else if (doc->getPageRotate(pg) == 90 ||
@@ -338,7 +317,7 @@ GBool XPDFCore::gotoNextPage(int inc, GBool top) {
 }
 
 GBool XPDFCore::gotoPrevPage(int dec, GBool top, GBool bottom) {
-  if (!PDFCore::gotoPrevPage(dec, top, !fullScreen && bottom)) {
+  if (!PDFCore::gotoPrevPage(dec, top, bottom)) {
     XBell(display, 0);
     return gFalse;
   }
@@ -361,9 +340,60 @@ GBool XPDFCore::goBackward() {
   return gTrue;
 }
 
+void XPDFCore::startPan(int wx, int wy) {
+  panning = gTrue;
+  panMX = wx;
+  panMY = wy;
+}
+
+void XPDFCore::endPan(int wx, int wy) {
+  panning = gFalse;
+}
+
 //------------------------------------------------------------------------
 // selection
 //------------------------------------------------------------------------
+
+void XPDFCore::startSelection(int wx, int wy) {
+  int pg, x, y;
+
+  takeFocus();
+  if (doc && doc->getNumPages() > 0) {
+    if (selectEnabled) {
+      if (cvtWindowToDev(wx, wy, &pg, &x, &y)) {
+	setSelection(pg, x, y, x, y);
+	setCursor(selectCursor);
+	dragging = gTrue;
+      }
+    }
+  }
+}
+
+void XPDFCore::endSelection(int wx, int wy) {
+  int pg, x, y;
+  GBool ok;
+
+  if (doc && doc->getNumPages() > 0) {
+    ok = cvtWindowToDev(wx, wy, &pg, &x, &y);
+    if (dragging) {
+      dragging = gFalse;
+      setCursor(None);
+      if (ok) {
+	moveSelection(pg, x, y);
+      }
+#ifndef NO_TEXT_SELECT
+      if (selectULX != selectLRX &&
+	  selectULY != selectLRY) {
+	if (doc->okToCopy()) {
+	  copySelection();
+	} else {
+	  error(-1, "Copying of text from this document is not allowed.");
+	}
+      }
+#endif
+    }
+  }
+}
 
 // X's copy-and-paste mechanism is brain damaged.  Xt doesn't help
 // any, but doesn't make it too much worse, either.  Motif, on the
@@ -426,19 +456,6 @@ Boolean XPDFCore::convertSelectionCbk(Widget widget, Atom *selection,
 //------------------------------------------------------------------------
 // hyperlinks
 //------------------------------------------------------------------------
-
-GBool XPDFCore::doLink(int pg, int x, int y) {
-  LinkAction *action;
-  double xu, yu;
-
-  // look for a link
-  cvtDevToUser(pg, x, y, &xu, &yu);
-  if ((action = findLink(pg, xu, yu))) {
-    doAction(action);
-    return gTrue;
-  }
-  return gFalse;
-}
 
 void XPDFCore::doAction(LinkAction *action) {
   LinkActionKind kind;
@@ -577,7 +594,7 @@ void XPDFCore::doAction(LinkAction *action) {
       goForward();
     } else if (!actionName->cmp("Quit")) {
       if (actionCbk) {
-	(*actionCbk)(actionCbkData, "Quit");
+	(*actionCbk)(actionCbkData, actionName->getCString());
       }
     } else {
       error(-1, "Unknown named action: '%s'", actionName->getCString());
@@ -883,7 +900,9 @@ void XPDFCore::initWindow() {
   XtSetArg(args[n], XmNincrement, 1); ++n;
   XtSetArg(args[n], XmNpageIncrement, 1); ++n;
   hScrollBar = XmCreateScrollBar(scrolledWin, "hScrollBar", args, n);
-  XtManageChild(hScrollBar);
+  if (!fullScreen) {
+    XtManageChild(hScrollBar);
+  }
   XtAddCallback(hScrollBar, XmNvalueChangedCallback,
 		&hScrollChangeCbk, (XtPointer)this);
 #ifndef DISABLE_SMOOTH_SCROLL
@@ -899,7 +918,9 @@ void XPDFCore::initWindow() {
   XtSetArg(args[n], XmNincrement, 1); ++n;
   XtSetArg(args[n], XmNpageIncrement, 1); ++n;
   vScrollBar = XmCreateScrollBar(scrolledWin, "vScrollBar", args, n);
-  XtManageChild(vScrollBar);
+  if (!fullScreen) {
+    XtManageChild(vScrollBar);
+  }
   XtAddCallback(vScrollBar, XmNvalueChangedCallback,
 		&vScrollChangeCbk, (XtPointer)this);
 #ifndef DISABLE_SMOOTH_SCROLL
@@ -975,6 +996,9 @@ void XPDFCore::resizeCbk(Widget widget, XtPointer ptr, XtPointer callData) {
   XPDFCore *core = (XPDFCore *)ptr;
   XEvent event;
   Widget top;
+  Window rootWin;
+  int x1, y1;
+  Guint w1, h1, bw1, depth1;
   Arg args[2];
   int n;
   Dimension w, h;
@@ -982,15 +1006,20 @@ void XPDFCore::resizeCbk(Widget widget, XtPointer ptr, XtPointer callData) {
 
   // find the top-most widget which has an associated window, and look
   // for a pending ConfigureNotify in the event queue -- if there is
-  // one, that means we're still resizing, and we want to skip the
-  // current event
+  // one, and it specifies a different width or height, that means
+  // we're still resizing, and we want to skip the current event
   for (top = core->parentWidget;
        XtParent(top) && XtWindow(XtParent(top));
        top = XtParent(top)) ;
   if (XCheckTypedWindowEvent(core->display, XtWindow(top),
 			     ConfigureNotify, &event)) {
     XPutBackEvent(core->display, &event);
-    return;
+    XGetGeometry(core->display, event.xconfigure.window,
+		 &rootWin, &x1, &y1, &w1, &h1, &bw1, &depth1);
+    if ((Guint)event.xconfigure.width != w1 ||
+	(Guint)event.xconfigure.height != h1) {
+      return;
+    }
   }
 
   n = 0;
@@ -1035,105 +1064,22 @@ void XPDFCore::inputCbk(Widget widget, XtPointer ptr, XtPointer callData) {
   double xu, yu;
   char *s;
   KeySym key;
-  char buf[20];
-  int n;
   GBool ok;
 
   switch (data->event->type) {
   case ButtonPress:
-    if (data->event->xbutton.button == 1) {
-      core->takeFocus();
-      if (core->doc && core->doc->getNumPages() > 0) {
-	if (core->selectEnabled) {
-	  if (core->cvtWindowToDev(data->event->xbutton.x,
-				   data->event->xbutton.y,
-				   &pg, &x, &y)) {
-	    core->setSelection(pg, x, y, x, y);
-	    core->setCursor(core->selectCursor);
-	    core->dragging = gTrue;
-	  }
-	}
-      }
-    } else if (data->event->xbutton.button == 2) {
-      if (!core->fullScreen) {
-	core->panning = gTrue;
-	core->panMX = data->event->xbutton.x;
-	core->panMY = data->event->xbutton.y;
-      }
-    } else if (data->event->xbutton.button == 4) { // mouse wheel up
-      if (core->fullScreen) {
-	core->gotoPrevPage(1, gTrue, gFalse);
-      } else if (!core->continuousMode && core->scrollY == 0) {
-	core->gotoPrevPage(1, gFalse, gTrue);
-      } else {
-	core->scrollUp(1);
-      }
-    } else if (data->event->xbutton.button == 5) { // mouse wheel down
-      if (core->fullScreen) {
-	core->gotoNextPage(1, gTrue);
-      } else if (!core->continuousMode &&
-		 core->scrollY >=
-		   ((PDFCorePage *)core->pages->get(0))->h
-		   - core->drawAreaHeight) {
-	core->gotoNextPage(1, gTrue);
-      } else {
-	core->scrollDown(1);
-      }
-    } else if (data->event->xbutton.button == 6) { // second mouse wheel left
-      if (!core->fullScreen) {
-	core->scrollLeft(1);
-      }
-    } else if (data->event->xbutton.button == 7) { // second mouse wheel right
-      if (!core->fullScreen) {
-	core->scrollRight(1);
-      }
-    } else {
-      if (*core->mouseCbk) {
-	(*core->mouseCbk)(core->mouseCbkData, data->event);
-      }
+    if (*core->mouseCbk) {
+      (*core->mouseCbk)(core->mouseCbkData, data->event);
     }
     break;
   case ButtonRelease:
-    if (data->event->xbutton.button == 1) {
-      if (core->doc && core->doc->getNumPages() > 0) {
-	ok = core->cvtWindowToDev(data->event->xbutton.x,
-				  data->event->xbutton.y,
-				  &pg, &x, &y);
-	if (core->dragging) {
-	  core->dragging = gFalse;
-	  core->setCursor(None);
-	  if (ok) {
-	    core->moveSelection(pg, x, y);
-	  }
-#ifndef NO_TEXT_SELECT
-	  if (core->selectULX != core->selectLRX &&
-	      core->selectULY != core->selectLRY) {
-	    if (core->doc->okToCopy()) {
-	      core->copySelection();
-	    } else {
-	      error(-1, "Copying of text from this document is not allowed.");
-	    }
-	  }
-#endif
-	}
-	if (ok && core->hyperlinksEnabled) {
-	  if (core->selectULX == core->selectLRX ||
-	      core->selectULY == core->selectLRY) {
-	    core->doLink(pg, x, y);
-	  }
-	}
-      }
-    } else if (data->event->xbutton.button == 2) {
-      core->panning = gFalse;
-    } else {
-      if (*core->mouseCbk) {
-	(*core->mouseCbk)(core->mouseCbkData, data->event);
-      }
+    if (*core->mouseCbk) {
+      (*core->mouseCbk)(core->mouseCbkData, data->event);
     }
     break;
   case MotionNotify:
     if (core->doc && core->doc->getNumPages() > 0) {
-      ok = core->cvtWindowToDev(data->event->xbutton.x, data->event->xbutton.y,
+      ok = core->cvtWindowToDev(data->event->xmotion.x, data->event->xmotion.y,
 				&pg, &x, &y);
       if (core->dragging) {
 	if (ok) {
@@ -1185,83 +1131,20 @@ void XPDFCore::inputCbk(Widget widget, XtPointer ptr, XtPointer callData) {
       }
     }
     if (core->panning) {
-      core->scrollTo(core->scrollX - (data->event->xbutton.x - core->panMX),
-		     core->scrollY - (data->event->xbutton.y - core->panMY));
-      core->panMX = data->event->xbutton.x;
-      core->panMY = data->event->xbutton.y;
+      core->scrollTo(core->scrollX - (data->event->xmotion.x - core->panMX),
+		     core->scrollY - (data->event->xmotion.y - core->panMY));
+      core->panMX = data->event->xmotion.x;
+      core->panMY = data->event->xmotion.y;
     }
     break;
   case KeyPress:
-    n = XLookupString(&data->event->xkey, buf, sizeof(buf) - 1,
-		      &key, NULL);
-    core->keyPress(buf, key, data->event->xkey.state);
+    if (core->keyPressCbk) {
+      key = XLookupKeysym(&data->event->xkey,
+			  (data->event->xkey.state & ShiftMask) ? 1 : 0);
+      (*core->keyPressCbk)(core->keyPressCbkData,
+			   key, data->event->xkey.state, data->event);
+    }
     break;
-  }
-}
-
-void XPDFCore::keyPress(char *s, KeySym key, Guint modifiers) {
-  switch (key) {
-  case XK_Home:
-  case XK_KP_Home:
-    if (modifiers & ControlMask) {
-      displayPage(1, zoom, rotate, gTrue, gTrue);
-    } else if (!fullScreen) {
-      scrollTo(0, 0);
-    }
-    return;
-  case XK_End:
-  case XK_KP_End:
-    if (modifiers & ControlMask) {
-      displayPage(doc->getNumPages(), zoom, rotate, gTrue, gTrue);
-    } else if (!fullScreen) {
-      scrollTo(((PDFCorePage *)pages->get(0))->w - drawAreaWidth,
-	       ((PDFCorePage *)pages->get(0))->h - drawAreaHeight);
-    }
-    return;
-  case XK_Page_Up:
-  case XK_KP_Page_Up:
-    if (fullScreen) {
-      gotoPrevPage(1, gTrue, gFalse);
-    } else {
-      scrollPageUp();
-    }
-    return;
-  case XK_Page_Down:
-  case XK_KP_Page_Down:
-    if (fullScreen) {
-      gotoNextPage(1, gTrue);
-    } else {
-      scrollPageDown();
-    }
-    return;
-  case XK_Left:
-  case XK_KP_Left:
-    if (!fullScreen) {
-      scrollLeft();
-    }
-    return;
-  case XK_Right:
-  case XK_KP_Right:
-    if (!fullScreen) {
-      scrollRight();
-    }
-    return;
-  case XK_Up:
-  case XK_KP_Up:
-    if (!fullScreen) {
-      scrollUp();
-    }
-    return;
-  case XK_Down:
-  case XK_KP_Down:
-    if (!fullScreen) {
-      scrollDown();
-    }
-    return;
-  }
-
-  if (*keyPressCbk) {
-    (*keyPressCbk)(keyPressCbkData, s, key, modifiers);
   }
 }
 
@@ -1269,12 +1152,14 @@ PDFCoreTile *XPDFCore::newTile(int xDestA, int yDestA) {
   return new XPDFCoreTile(xDestA, yDestA);
 }
 
-void XPDFCore::updateTileData(PDFCoreTile *tileA,
-			      int xSrc, int ySrc, int width, int height) {
+void XPDFCore::updateTileData(PDFCoreTile *tileA, int xSrc, int ySrc,
+			      int width, int height, GBool composited) {
   XPDFCoreTile *tile = (XPDFCoreTile *)tileA;
   XImage *image;
   SplashColorPtr dataPtr, p;
   Gulong pixel;
+  Guchar *ap;
+  Guchar alpha, alpha1;
   int w, h, bw, x, y, r, g, b, gray;
   int *errDownR, *errDownG, *errDownB;
   int errRightR, errRightG, errRightB;
@@ -1298,10 +1183,26 @@ void XPDFCore::updateTileData(PDFCoreTile *tileA,
   if (trueColor) {
     for (y = 0; y < height; ++y) {
       p = dataPtr + (ySrc + y) * bw + xSrc * 3;
+      if (!composited && tile->bitmap->getAlphaPtr()) {
+	ap = tile->bitmap->getAlphaPtr() +
+	       (ySrc + y) * tile->bitmap->getWidth() + xSrc;
+      } else {
+	ap = NULL;
+      }
       for (x = 0; x < width; ++x) {
-	r = splashRGB8R(p) >> rDiv;
-	g = splashRGB8G(p) >> gDiv;
-	b = splashRGB8B(p) >> bDiv;
+	r = splashRGB8R(p);
+	g = splashRGB8G(p);
+	b = splashRGB8B(p);
+	if (ap) {
+	  alpha = *ap++;
+	  alpha1 = 255 - alpha;
+	  r = div255(alpha1 * paperColor[0] + alpha * r);
+	  g = div255(alpha1 * paperColor[1] + alpha * g);
+	  b = div255(alpha1 * paperColor[2] + alpha * b);
+	}
+	r >>= rDiv;
+	g >>= gDiv;
+	b >>= bDiv;
 	pixel = ((Gulong)r << rShift) +
 	        ((Gulong)g << gShift) +
 	        ((Gulong)b << bShift);
@@ -1313,10 +1214,24 @@ void XPDFCore::updateTileData(PDFCoreTile *tileA,
     //~ this should really use splashModeMono, with non-clustered dithering
     for (y = 0; y < height; ++y) {
       p = dataPtr + (ySrc + y) * bw + xSrc * 3;
+      if (!composited && tile->bitmap->getAlphaPtr()) {
+	ap = tile->bitmap->getAlphaPtr() +
+	       (ySrc + y) * tile->bitmap->getWidth() + xSrc;
+      } else {
+	ap = NULL;
+      }
       for (x = 0; x < width; ++x) {
-	gray = (int)(0.299 * splashRGB8R(p) +
-		     0.587 * splashRGB8G(p) +
-		     0.114 * splashRGB8B(p) + 0.5);
+	r = splashRGB8R(p);
+	g = splashRGB8G(p);
+	b = splashRGB8B(p);
+	if (ap) {
+	  alpha = *ap++;
+	  alpha1 = 255 - alpha;
+	  r = div255(alpha1 * paperColor[0] + alpha * r);
+	  g = div255(alpha1 * paperColor[1] + alpha * g);
+	  b = div255(alpha1 * paperColor[2] + alpha * b);
+	}
+	gray = (int)(0.299 * r + 0.587 * g + 0.114 * b + 0.5);
 	if (gray < 128) {
 	  pixel = colors[0];
 	} else {
@@ -1338,31 +1253,46 @@ void XPDFCore::updateTileData(PDFCoreTile *tileA,
     memset(errDownB, 0, (width + 2) * sizeof(int));
     for (y = 0; y < height; ++y) {
       p = dataPtr + (ySrc + y) * bw + xSrc * 3;
+      if (!composited && tile->bitmap->getAlphaPtr()) {
+	ap = tile->bitmap->getAlphaPtr() +
+	       (ySrc + y) * tile->bitmap->getWidth() + xSrc;
+      } else {
+	ap = NULL;
+      }
       for (x = 0; x < width; ++x) {
-	r0 = splashRGB8R(p) + errRightR + errDownR[x+1];
-	g0 = splashRGB8G(p) + errRightG + errDownG[x+1];
-	b0 = splashRGB8B(p) + errRightB + errDownB[x+1];
-	// ">> 8" is an approximation for "/ 255"
+	r = splashRGB8R(p);
+	g = splashRGB8G(p);
+	b = splashRGB8B(p);
+	if (ap) {
+	  alpha = *ap++;
+	  alpha1 = 255 - alpha;
+	  r = div255(alpha1 * paperColor[0] + alpha * r);
+	  g = div255(alpha1 * paperColor[1] + alpha * g);
+	  b = div255(alpha1 * paperColor[2] + alpha * b);
+	}
+	r0 = r + errRightR + errDownR[x+1];
+	g0 = g + errRightG + errDownG[x+1];
+	b0 = b + errRightB + errDownB[x+1];
 	if (r0 < 0) {
 	  r = 0;
 	} else if (r0 >= 255) {
 	  r = rgbCubeSize - 1;
 	} else {
-	  r = (r0 * (rgbCubeSize - 1)) >> 8;
+	  r = div255(r0 * (rgbCubeSize - 1));
 	}
 	if (g0 < 0) {
 	  g = 0;
 	} else if (g0 >= 255) {
 	  g = rgbCubeSize - 1;
 	} else {
-	  g = (g0 * (rgbCubeSize - 1)) >> 8;
+	  g = div255(g0 * (rgbCubeSize - 1));
 	}
 	if (b0 < 0) {
 	  b = 0;
 	} else if (b0 >= 255) {
 	  b = rgbCubeSize - 1;
 	} else {
-	  b = (b0 * (rgbCubeSize - 1)) >> 8;
+	  b = div255(b0 * (rgbCubeSize - 1));
 	}
 	re = r0 - ((r << 8) - r) / (rgbCubeSize - 1);
 	ge = g0 - ((g << 8) - g) / (rgbCubeSize - 1);
@@ -1391,7 +1321,8 @@ void XPDFCore::updateTileData(PDFCoreTile *tileA,
 }
 
 void XPDFCore::redrawRect(PDFCoreTile *tileA, int xSrc, int ySrc,
-			  int xDest, int yDest, int width, int height) {
+			  int xDest, int yDest, int width, int height,
+			  GBool composited) {
   XPDFCoreTile *tile = (XPDFCoreTile *)tileA;
   Window drawAreaWin;
   XGCValues gcValues;

@@ -1,10 +1,3 @@
-/*
- * $RCSfile$
- *
- * $log: $
- *
- */
-
 //========================================================================
 //
 // XRef.h
@@ -91,7 +84,8 @@ public:
 
   // Set the encryption parameters.
   virtual void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
-		     Guchar *fileKeyA, int keyLengthA, int encVersionA);
+  		     Guchar *fileKeyA, int keyLengthA, int encVersionA,
+		     CryptAlgorithm encAlgorithmA);
 
   // Is the file encrypted?
   virtual GBool isEncrypted() { return encrypted; }
@@ -101,17 +95,17 @@ public:
   virtual GBool okToChange(GBool ignoreOwnerPW = gFalse);
   virtual GBool okToCopy(GBool ignoreOwnerPW = gFalse);
   virtual GBool okToAddNotes(GBool ignoreOwnerPW = gFalse);
-
+  
   // Get catalog object.
   virtual Object *getCatalog(Object *obj) { return fetch(rootNum, rootGen, obj); }
-
+  
   // Fetch an indirect reference.
   virtual Object *fetch(int num, int gen, Object *obj);
-
+  
   // Return the document's Info dictionary (if any).
   virtual Object *getDocInfo(Object *obj);
   virtual Object *getDocInfoNF(Object *obj);
-
+  
   // Return the number of objects in the xref table.
   virtual int getNumObjects() 
   { 
@@ -128,7 +122,7 @@ public:
    * @param ref Reference to examine.
    *
    */
-  virtual RefState knowsRef(Ref ref)
+  virtual RefState knowsRef(Ref &ref)
   {
      // boundary checking
      if(ref.num<0 || ref.num>size)
@@ -195,14 +189,14 @@ protected:
   GBool ownerPasswordOk;	// true if owner password is correct
   Guchar fileKey[16];		// file decryption key
   int keyLength;		// length of key, in bytes
-  int encVersion;		// encryption algorithm
+  int encVersion;		// encryption version
+  CryptAlgorithm encAlgorithm;	// encryption algorithm
 
   // inits all internal structures which may change
   void initInternals(Guint pos);
-
   // destroy all internal structures which may be reinitialized
   void destroyInternals();
-  
+
   Guint getStartXref();
   GBool readXRef(Guint *pos);
   GBool readXRefTable(Parser *parser, Guint *pos);

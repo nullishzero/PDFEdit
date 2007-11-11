@@ -28,6 +28,7 @@ namespace {
 	 */
 	string font_type (GfxFontType tp)
 	{
+		// FIXME handle all GfxFontType values
 		switch (tp)
 		{
 			case fontUnknownType:

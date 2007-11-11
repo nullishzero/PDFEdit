@@ -9,6 +9,7 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include<errno.h>
 #include "xrefwriter.h"
 #include "cpdf.h"
 #include "cobject.h"
@@ -37,7 +38,8 @@ bool checkLinearized(StreamWriter & stream, XRef * xref, Ref * ref)
 	Parser parser=Parser(
 			xref, new Lexer(
 				NULL, stream.makeSubStream(stream.getPos(), false, 0, &obj)
-				)
+				),
+			gTrue
 			);
 
 	while(stream.getPos() < FIRST_LINEARIZED_BLOCK)
@@ -434,7 +436,8 @@ void XRefWriter::collectRevisions()
 		str->setPos(off);
 		Object parseObj, obj;
 		::Parser parser = Parser(this,
-			new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj))
+			new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj)),
+			gTrue
 			);
 		parser.getObj(&obj);
 		if(obj.isCmd(XREF_KEYWORD))
@@ -469,7 +472,8 @@ void XRefWriter::collectRevisions()
 					// we have to create new parser because we can't set
 					// position in parser to current in the stream
 					::Parser parser = Parser(this,
-						new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj))
+						new Lexer(NULL, str->makeSubStream(str->getPos(), gFalse, 0, &parseObj)),
+						gTrue
 						);
 
 					// deallocates previous one before it is filled by new one
@@ -635,7 +639,13 @@ using namespace debug;
 	streamWriter->cloneToFile(file, 0, revisionEOF);
 
 	// adds pdf end of line marker to the output file
-	fwrite(EOFMARKER, sizeof(char), strlen(EOFMARKER), file);
+	size_t marker_len = strlen(EOFMARKER);
+	if(marker_len > fwrite(EOFMARKER, sizeof(char), marker_len, file))
+	{
+		int err = errno;
+		kernelPrintDbg(DBG_ERR, "Unable to write whole EOFMARKER (\"" << 
+				strerror(err) << "\").");
+	}
 	fflush(file);
 
 	// restore stream position

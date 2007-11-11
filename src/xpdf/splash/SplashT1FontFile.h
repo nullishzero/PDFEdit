@@ -35,7 +35,8 @@ public:
 
   // Create a new SplashT1Font, i.e., a scaled instance of this font
   // file.
-  virtual SplashFont *makeFont(SplashCoord *mat);
+  virtual SplashFont *makeFont(SplashCoord *mat,
+			       SplashCoord *textMat);
 
 private:
 

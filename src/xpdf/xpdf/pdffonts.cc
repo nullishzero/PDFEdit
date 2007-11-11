@@ -2,7 +2,7 @@
 //
 // pdffonts.cc
 //
-// Copyright 2001-2003 Glyph & Cog, LLC
+// Copyright 2001-2007 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -24,15 +24,20 @@
 #include "PDFDoc.h"
 #include "config.h"
 
+// NB: this must match the definition of GfxFontType in GfxFont.h.
 static char *fontTypeNames[] = {
   "unknown",
   "Type 1",
   "Type 1C",
+  "Type 1C (OT)",
   "Type 3",
   "TrueType",
+  "TrueType (OT)",
   "CID Type 0",
   "CID Type 0C",
-  "CID TrueType"
+  "CID Type 0C (OT)",
+  "CID TrueType",
+  "CID TrueType (OT)"
 };
 
 static void scanFonts(Dict *resDict, PDFDoc *doc);
@@ -135,8 +140,8 @@ int main(int argc, char *argv[]) {
   }
 
   // scan the fonts
-  printf("name                                 type         emb sub uni object ID\n");
-  printf("------------------------------------ ------------ --- --- --- ---------\n");
+  printf("name                                 type              emb sub uni object ID\n");
+  printf("------------------------------------ ----------------- --- --- --- ---------\n");
   fonts = NULL;
   fontsLen = fontsSize = 0;
   for (pg = firstPage; pg <= lastPage; ++pg) {
@@ -272,7 +277,7 @@ static void scanFont(GfxFont *font, PDFDoc *doc) {
   }
 
   // print the font info
-  printf("%-36s %-12s %-3s %-3s %-3s",
+  printf("%-36s %-17s %-3s %-3s %-3s",
 	 name ? name->getCString() : "[none]",
 	 fontTypeNames[font->getType()],
 	 emb ? "yes" : "no",
