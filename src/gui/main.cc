@@ -170,10 +170,6 @@ int main(int argc, char *argv[]){
  bool useGUI=true;
 #endif
  QApplication app(argc,argv,useGUI);
- 
- // initializes global parameters for xpdf code - TODO use
- // configuration file - from parameters
- GlobalParams::initGlobalParams("");
 
  q_App=&app;
  //Get application path
@@ -224,6 +220,11 @@ int main(int argc, char *argv[]){
 
  guiPrintDbg(debug::DBG_DBG,"Commandline parameters processed");
  guiPrintDbg(debug::DBG_DBG,"App path: " << Q_OUT(appPath));
+
+ // initializes global parameters for xpdf code - TODO use
+ // configuration file - from parameters
+ GlobalParams::initGlobalParams("");
+ globalParams->setupBaseFonts(NULL);
 
  //load settings
  globalSettings=Settings::getInstance();
