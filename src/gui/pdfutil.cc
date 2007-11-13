@@ -105,22 +105,22 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
  switch (typ) {
   case pBool: {
    bool value;
-   dynamic_cast<CBool*>(obj.get())->getValue(value);
+   IProperty::getSmartCObjectPtr<CBool>(obj)->getValue(value);
    return value?"true":"false";
   }
   case pInt: {
    int value;
-   dynamic_cast<CInt*>(obj.get())->getValue(value);
+   IProperty::getSmartCObjectPtr<CInt>(obj)->getValue(value);
    return QString::number(value);
   }
   case pReal: {
    double value;
-   dynamic_cast<CReal*>(obj.get())->getValue(value);
+   IProperty::getSmartCObjectPtr<CReal>(obj)->getValue(value);
    return QString::number(value);
   }
   case pName: {
    std::string value;
-   dynamic_cast<CName*>(obj.get())->getValue(value);
+   IProperty::getSmartCObjectPtr<CName>(obj)->getValue(value);
    QString ret=util::convertToUnicode(value,util::PDF);
    if (ret.length()>22) {
     ret.truncate(20);
@@ -130,7 +130,7 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   }
   case pString: {
    std::string value;
-   dynamic_cast<CString*>(obj.get())->getValue(value);
+   IProperty::getSmartCObjectPtr<CString>(obj)->getValue(value);
    QString ret=util::convertToUnicode(value,util::PDF);
    if (ret.length()>22) {
     ret.truncate(20);
@@ -139,16 +139,19 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
    return ret;
   }
   case pArray: {
-   CArray* a=dynamic_cast<CArray*>(obj.get());
-   return countString(a->getPropertyCount(),"element","elements");
+   size_t count = IProperty::getSmartCObjectPtr<CArray>(obj)->getPropertyCount();
+   return countString(count,"element","elements");
   }
   case pDict: {
-   CDict* a=dynamic_cast<CDict*>(obj.get());
-   return countString(a->getPropertyCount(),"item","items");
+   size_t count = IProperty::getSmartCObjectPtr<CDict>(obj)->getPropertyCount();
+   return countString(count,"item","items");
   }
   case pStream: {
    try {
-    boost::shared_ptr<IProperty> len=dereference(dynamic_cast<CStream*>(obj.get())->getProperty("Length"));
+    boost::shared_ptr<IProperty> len=IProperty::getSmartCObjectPtr<CStream>(obj)->getProperty("Length");
+    // FIXME: Why this check? It can't be NULL AFAIK 
+    // dynamic_cast shouldn't be used and IProperty::getSmartCObjectPtr 
+    // should be used instead
     CInt* lenInt=dynamic_cast<CInt*>(len.get());
     if (!lenInt) return "";
     int iLen;
@@ -246,7 +249,7 @@ boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
  // TODO Is this really ok? Shouldn't we create rather CNull here?
  if (!pdf) return boost::shared_ptr<IProperty>(); //Property does not belong to document -> cannot dereference
  IndiRef ref;
- IProperty::getSmartCObjectPtr<CRef>(obj)->getValue(reg);
+ IProperty::getSmartCObjectPtr<CRef>(obj)->getValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  return rp;
 }
