@@ -5617,7 +5617,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile Makefile.flags"
 
 ac_config_files="$ac_config_files config.pro.in"
 
@@ -6181,6 +6181,7 @@ do
   case $ac_config_target in
     "src/utils/aconf.h") CONFIG_HEADERS="$CONFIG_HEADERS src/utils/aconf.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "Makefile.flags") CONFIG_FILES="$CONFIG_FILES Makefile.flags" ;;
     "config.pro.in") CONFIG_FILES="$CONFIG_FILES config.pro.in" ;;
     "default") CONFIG_COMMANDS="$CONFIG_COMMANDS default" ;;
 

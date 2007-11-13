@@ -1,8 +1,5 @@
 #top-level makefile for PDF editor
 
-EXTRA_CFLAGS=@EXTRA_CFLAGS@
-EXTRA_CXXFLAGS=@EXTRA_CXXFLAGS@
-
 .PHONY: distclean clean doc src install all regen
 
 #make PDF editor - source and documentation

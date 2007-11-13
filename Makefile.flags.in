@@ -1,0 +1,4 @@
+#Flags from configure script, included in some makefiles
+
+EXTRA_CFLAGS=@EXTRA_CFLAGS@
+EXTRA_CXXFLAGS=@EXTRA_CXXFLAGS@

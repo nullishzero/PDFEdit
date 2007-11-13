@@ -62,5 +62,5 @@ AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([atexit floor ftruncate localtime_r memset mkdir strdup strerror strpbrk strstr])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile Makefile.flags])
 AC_OUTPUT([config.pro.in],[./post_configure])

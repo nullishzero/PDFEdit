@@ -6,6 +6,9 @@
 #Makefile flags
 include ../Makefile.flags
 
+#extra settings from top-level makefile
+include ../../Makefile.flags
+
 # Source files for library
 SOURCES=debug.cc \
      	delinearizator.cc \
@@ -21,8 +24,9 @@ DEL_FILE = rm -f
 CXX      = g++
 LEX      = flex
 YACC     = yacc
-CXXFLAGS = -pipe -Wall -W -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -Wunused-function -D_REENTRANT $(UTIL_CXXFLAGS)
+CXXFLAGS = -pipe -Wall -W -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -Wunused-function -D_REENTRANT $(UTIL_CXXFLAGS) $(EXTRA_CXXFLAGS)
 INCPATH	 = -I./ -I../ -I../xpdf/ -I../xpdf/xpdf -I../xpdf/goo -I../xpdf/splash -I../xpdf/fofi 
+
 
 .SUFFIXES: .o .cc
 
