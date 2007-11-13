@@ -30,13 +30,13 @@ src: doc-dist
 
 #cleanup
 clean:
-	cd doc/user && make clean
+	cd doc && make clean
 	cd src && make clean
 	rm -f config.log
 
 #dist cleanup
 distclean:
-	cd doc/user && make clean
+	cd doc && make clean
 	cd src && make distclean
 	rm -f Makefile config.status config.log config.pro config.pro.in src/Makefile.flags
 
