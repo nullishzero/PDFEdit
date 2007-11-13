@@ -243,10 +243,10 @@ boost::shared_ptr<IProperty> dereference(boost::shared_ptr<IProperty> obj) {
  if (!obj.get()) return obj;  //Empty pointer
  if (obj->getType()!=pRef) return obj;  //Not a reference
  CPdf* pdf=obj->getPdf();
+ // TODO Is this really ok? Shouldn't we create rather CNull here?
  if (!pdf) return boost::shared_ptr<IProperty>(); //Property does not belong to document -> cannot dereference
- CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
- cref->getValue(ref);
+ IProperty::getSmartCObjectPtr<CRef>(obj)->getValue(reg);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  return rp;
 }

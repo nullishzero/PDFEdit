@@ -173,9 +173,8 @@ TreeItemAbstract* TreeItemRef::createChild(const QString &name,__attribute__((un
 bool TreeItemRef::validChild(__attribute__((unused)) const QString &name,Q_ListViewItem *oldChild) {
  CPdf* pdf=obj->getPdf();
  if (!pdf) return false; //No document opened -> cannot parse references
- CRef* cref=dynamic_cast<CRef*>(obj.get());
  IndiRef ref;
- cref->getValue(ref);
+ IProperty::getSmartCObjectPtr<CRef>(obj)->getValue(ref);
  boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(ref);
  TreeItem* it=dynamic_cast<TreeItem*>(oldChild);
  if (!it) return false;//Should not happen
