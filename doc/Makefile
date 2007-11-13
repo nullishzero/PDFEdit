@@ -3,7 +3,7 @@
 .PHONY: clean all doc_core doc_core_nopdf doc_dist
 
 #Build all documentation, including doxygen programmer documentation and doxygen's default stylesheet
-all:	doc_core
+all:	doc_core_nopdf
 	doxygen -w html _header _footer programmer/html/doxygen.css || true
 	rm -f _header _footer _header.bak _footer.bak
 	doxygen || true
