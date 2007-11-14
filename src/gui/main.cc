@@ -301,5 +301,7 @@ int main(int argc, char *argv[]){
   runCmdScripts(PdfEditWindow::create());
  }
  QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
- return app.exec();
+ int ret = app.exec();
+ GlobalParams::destroyGlobalParams();
+ return ret;
 }

@@ -5,7 +5,7 @@
 // Copyright 2001-2003 Glyph & Cog, LLC
 //
 // Changes: 
-// Michal Hocko   - initGlobalParams method added
+// Michal Hocko   - initGlobalParams, destroyGlobalParams methods added
 //
 //========================================================================
 
@@ -201,6 +201,8 @@ public:
 
   // initializes globalParams global variable if it is NULL
   static GlobalParams *initGlobalParams(const char *cfgFileName);
+  // destroys globalParams globalParams variable unless NULL
+  static void destroyGlobalParams();
 
   ~GlobalParams();
 

@@ -795,6 +795,17 @@ GlobalParams * GlobalParams::initGlobalParams(const char *cfgFileName)
 	return globalParams = new GlobalParams(cfgFileName);
 }
 
+void GlobalParams::destroyGlobalParams()
+{
+	if(!globalParams)
+	{
+		fprintf(stderr, "Trying to destroy uninitialized globalParams\n");
+		return;
+	}
+	delete globalParams;
+	globalParams = NULL;
+}
+
 void GlobalParams::createDefaultKeyBindings() {
   keyBindings = new GList();
 
