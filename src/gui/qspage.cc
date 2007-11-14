@@ -29,9 +29,6 @@ namespace gui {
 using namespace std;
 using namespace util;
 
-/** List of fonts returned ftom CPage::getFontIdsAndNames */
-typedef vector<pair<string,string> > FontList;
-
 /**
  Construct wrapper with given CPage
  @param _page CPage shared pointer
@@ -368,11 +365,11 @@ void QSPage::setMediabox(QRect rc) {
  @return list of font id's and names
 */
 QStringList QSPage::getFontIdsAndNames(bool onlyNames/*=false*/) {
- FontList fonts;
+ CPage::FontList fonts;
  //Format is like "pair<R13, Helvetica>"
  obj->getFontIdsAndNames(fonts);
  QStringList ret;
- FontList::iterator it;
+ CPage::FontList::iterator it;
  for( it=fonts.begin();it!=fonts.end();++it) { // for each font
   if (!onlyNames) ret+=convertToUnicode(it->first,PDF);
   ret+=convertToUnicode(it->second,PDF);
@@ -387,11 +384,11 @@ QStringList QSPage::getFontIdsAndNames(bool onlyNames/*=false*/) {
  @return ID of font with given name, or NULL if not found in the page
 */
 QString QSPage::getFontId(const QString &fontName) {
- FontList fonts;
+ CPage::FontList fonts;
  //Format is like "pair<R13, Helvetica>"
  obj->getFontIdsAndNames(fonts);
  QStringList ret;
- FontList::iterator it;
+ CPage::FontList::iterator it;
  string fontNameString=convertFromUnicode(fontName,PDF);
  for( it=fonts.begin();it!=fonts.end();++it) { // for each font
   if (it->second==fontNameString) return convertToUnicode(it->first,PDF);

@@ -901,24 +901,47 @@ public:
 	 * must choose from these items to make a font change valid. Otherwise, we
 	 * have to add standard system font or manually a font object.
 	 *
-	 * @param cont Output container of font id and basename pairs.
+	 * @param cont Output container of font id and basename pairs (FontList
+	 * container type should be prefered).
 	 */
 	template<typename Container>
 	void getFontIdsAndNames (Container& cont) const;
 	
+	/** Type for list of fonts. */
+	typedef std::vector<std::pair<std::string, std::string> > FontList;
+
+	/** Looks for a font with the given name.
+	 * @param container Container of fonts (filled with getFontIdsAndNames).
+	 * @param name Name of the font.
+	 * @return iterator to the container (container.end() if not found).
+	 */
+	FontList::const_iterator findFont(const FontList &containter,
+			const std::string & name)
+	{
+		for(FontList::const_iterator i=containter.begin();
+				i!=containter.end(); ++i)
+			if(i->first == name)
+				return i;
+		return containter.end();
+	}
+
 	/**
 	 * Add new simple type 1 font item to the page resource dictionary. 
 	 *
-	 * The id of this font is arbitrary but it has to be unique. It will be generated as follows: 
-	 * PdfEditor for the first item, PdfEditorr for the second, PdfEditorrr for
-	 * the third etc.
+	 * The id of this font is arbitrary but it has to be unique.
+	 * It will be generated as PDFEDIT_F#, where # is the lowest 
+	 * free number so that name is unique.
 	 *
-	 * We supposed that the font name is a standard system font avaliable to all viewers.
+	 * We supposed that the font name is a standard system font avaliable 
+	 * to all viewers.
 	 *
-	 * @param fontname Output container of pairs of (Id,Name).
+	 * @param fontname Name of the font to add.
 	 * @param winansienc Set encoding to standard WinAnsiEnconding.
+	 *
+	 * @return The font ID of the added font.
 	 */
-	void addSystemType1Font (const std::string& fontname, bool winansienc = true);
+	std::string addSystemType1Font (const std::string& fontname, 
+			bool winansienc = true);
 
 
 	//

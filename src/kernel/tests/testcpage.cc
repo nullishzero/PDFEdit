@@ -206,8 +206,7 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 		{
 			boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
-			typedef vector<pair<string,string> > Fonts;
-			Fonts fs;
+			CPage::FontList fs;
 			
 			page->getFontIdsAndNames (fs);
 
@@ -216,7 +215,7 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 			else
 			{
 				oss << "Fonts on " << (i + 1) << "-th page: " << flush;
-				for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+				for (CPage::FontList::iterator it = fs.begin(); it != fs.end(); ++it)
 					oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
 			}
 			
@@ -231,8 +230,7 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 		{
 			boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
-			typedef vector<pair<string,string> > Fonts;
-			Fonts fs;
+			CPage::FontList fs;
 			
 			const string fn ("Jozov-font");
 			page->addSystemType1Font (fn);
@@ -241,7 +239,8 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 			CPPUNIT_ASSERT (!fs.empty());
 
 			bool found = false;
-			for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+			for (CPage::FontList::iterator it = fs.begin(); 
+					it != fs.end(); ++it)
 			{
 				if (fn == (*it).second)
 				{
@@ -255,7 +254,8 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 			page->getFontIdsAndNames (fs);
 			CPPUNIT_ASSERT (!fs.empty());
 			//oss << "After change: " << (i + 1) << "-th page: " << flush;
-			for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+			for (CPage::FontList::iterator it = fs.begin(); 
+					it != fs.end(); ++it)
 			{
 			//	oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
 			}
@@ -268,7 +268,8 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 				page->getFontIdsAndNames (fs);
 				CPPUNIT_ASSERT (!fs.empty());
 				oss << "After change: " << (i + 1) << "-th page: " << flush;
-				for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
+				for (CPage::FontList::iterator it = fs.begin(); 
+						it != fs.end(); ++it)
 					oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
 			}
 

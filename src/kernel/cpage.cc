@@ -32,6 +32,8 @@ using namespace boost;
 using namespace utils;
 using namespace observer;
 
+static const char * PDFEDIT_FONTID = "PDFEDIT_F";
+
 // =====================================================================================
 namespace {
 // =====================================================================================
@@ -1060,9 +1062,10 @@ CPage::displayPage (::OutputDev& out, shared_ptr<CDict> pagedict, int x, int y, 
 	// Page object display (..., useMediaBox, crop, links, catalog)
 	//
 	int rotation = lastParams.rotate - getRotation ();
-	page.displaySlice   (&out, lastParams.hDpi, lastParams.vDpi, 
-					rotation, lastParams.useMediaBox, 
-					lastParams.crop,x,y,w,h, NULL, xpdfCatalog.get());
+	page.displaySlice (&out, lastParams.hDpi, lastParams.vDpi,
+			rotation, lastParams.useMediaBox, lastParams.crop,
+			x, y, w, h, 
+			false, xpdfCatalog.get());
 
 }
 
@@ -1355,7 +1358,7 @@ template size_t CPage::findText<std::vector<Rectangle> >
 //
 //
 //
-void
+std::string
 CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 {
 	// Create font dictionary
@@ -1400,34 +1403,20 @@ CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 	boost::shared_ptr<CDict> fonts = getCDictFromDict (res, "Font");
 
 	// Get all avaliable fonts
-	typedef vector<pair<string,string> > Fonts;
-	Fonts fs;
+	CPage::FontList fs;
 	getFontIdsAndNames (fs);
 
-	//
-	// Find suitable name
-	//
-	size_t len = 0;
-	bool our = false;
-	string ourfontname ("Fonticek");
-	for (Fonts::iterator it = fs.begin(); it != fs.end(); ++it)
-	{// Compare basenames and look for longest string and for PdfEdit string
-		if (ourfontname == (*it).first)
-			our = true;
-		len = std::max ((*it).first.length(), len);
-	}
-
-	// Make name unique
-	if (our)
-	{/**\todo make sane */
-		len -= ourfontname.length();
-		++len;
-		for (size_t i = 0; i < len; ++i)
-			ourfontname.push_back ('k');
-	}
+	// Try PDFEDIT_FONTID{1,2,3,..}, etc., until we find one that's not in 
+	// use
+	std::ostringstream newfontname;
+	int i = 1;
+	do {
+		newfontname.str(PDFEDIT_FONTID);
+		newfontname << i++;
+	} while (findFont(fs, newfontname.str()) != fs.end());
 
 	// Add it
-	fonts->addProperty (ourfontname, *font);
+	fonts->addProperty (newfontname.str(), *font);
 	
 	//
 	// Create state and resources and update our contentstreams
@@ -1438,10 +1427,12 @@ CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 
 	for (ContentStreams::iterator it = contentstreams.begin(); it != contentstreams.end(); ++it)
 		(*it)->setGfxParams (gfxstate, gfxres);
+
+	return newfontname.str();
 }
 //
 //
-//
+// TODO maybe change to FontList type?
 template<typename Container>
 void 
 CPage::getFontIdsAndNames (Container& cont) const
