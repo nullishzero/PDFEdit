@@ -169,6 +169,30 @@ protected:
 	 */
 	bool paranoidCheck(::Ref ref, ::Object * obj);
 
+	/** Parses old style trailer from given position.
+	 * @param trailer Previous trailer which will be filled with new data
+	 * 	(note that original content will be destroyed).
+	 * @param off File offset where to start.
+	 *
+	 * Note that file offset is assumed to point to the first byte of the
+	 * trailer object (exactly behind XREF_KEYWORD).
+	 * @return 0 on success, -1 otherwise.
+	 */
+	int getOldStyleTrailer(Object * trailer, size_t off);
+
+	/** Parses stream trailer from given position.
+	 * @param trailer Previous trailer which will be filled with new data
+	 * 	(note that original content will be destroyed).
+	 * @param off File offset of the trailer start.
+	 * @param parser Parser for the trailer.
+	 *
+	 * Note that parser has to point right behind first (object) number.
+	 * Then it assumes genereation number, `obj' keyword and trailer 
+	 * object definition.
+	 * @return 0 on success, -1 otherwise.
+	 */
+	int getStreamTrailer(Object * trailer, size_t off, ::Parser & parser);
+
 	/** Collects all revisions information.
 	 *
 	 * If linearized is set to true, immediately returns with warning message.
