@@ -1668,6 +1668,7 @@ using namespace observer;
 	// initialize trailer dictionary from xpdf trailer dictionary object
 	// no free should be called because trailer is returned directly from XRef
 	Object * trailerObj=xref->getTrailerDict();
+	assert(trailerObj->isDict());
 	kernelPrintDbg(DBG_DBG, "Creating trailer dictionary from type="<<trailerObj->getType());
 	trailer=boost::shared_ptr<CDict>(CDictFactory::getInstance(*trailerObj));
 	

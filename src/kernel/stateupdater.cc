@@ -772,8 +772,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		while (len > 0) 
 		{
 		  n = font->getNextChar(p, len, &code,
-								u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
-								&dx, &dy, &originX, &originY);
+				  u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+				  &dx, &dy, &originX, &originY);
 		  
 		  //
 		  // Try to find out the height and width of this letter

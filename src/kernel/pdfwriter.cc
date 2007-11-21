@@ -371,6 +371,11 @@ using namespace boost;
 	// if 0, removes Prev entry if present
 	if(!prevSection.xrefPos)
 	{
+		// FIXME prepare for stream trailers - we don't have this
+		// problem at the moment, becayse we don't create such 
+		// trailers and the first one never contains Prev. However
+		// this can be problem if we had incremental update from 
+		// other party which uses stream trailers for all.
 		Object * prev=trailer.getDict()->del("Prev");
 		if(prev)
 			freeXpdfObject(prev);

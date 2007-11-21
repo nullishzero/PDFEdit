@@ -26,7 +26,9 @@
 #include <xpdf/TextOutputDev.h>
 #include <xpdf/SplashOutputDev.h>
 // Note that GlobalParams::initGlobalParams has to be called before
-// we can use globalParams
+// we can use globalParams.
+// If we want to use fonts correctly, globalParams->setupBaseFonts(NULL)
+// has to be called
 #include <xpdf/GlobalParams.h>
 #include <xpdf/Catalog.h>
 
