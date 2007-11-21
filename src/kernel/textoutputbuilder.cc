@@ -31,8 +31,6 @@ namespace {
 		// FIXME handle all GfxFontType values
 		switch (tp)
 		{
-			case fontUnknownType:
-				return "UnknownType (8bit)";
 			case  fontType1:
 				return "Type1 (8bit)";
 			case  fontType1C:
@@ -47,6 +45,9 @@ namespace {
 				return "Type0C (CID)";
 			case  fontCIDType2:
 				return "Type2 (CID)";
+			case fontUnknownType:
+			default:
+				return "UnknownType (8bit)";
 		}
 
 		assert (0);

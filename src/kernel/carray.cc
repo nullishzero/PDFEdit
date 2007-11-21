@@ -328,7 +328,7 @@ CArray::_makeXpdfObject () const
 	Value::const_iterator it = value.begin();
 	for (; it != value.end(); ++it)
 		array->add((*it)->_makeXpdfObject());
-	assert(array->getLength() == getPropertyCount());
+	assert(static_cast<unsigned int>(array->getLength()) == getPropertyCount());
 	return arrayObj;
 }
 
@@ -363,7 +363,7 @@ CArray::_objectChanged (boost::shared_ptr<IProperty> newValue, boost::shared_ptr
 // Set mode
 //
 void
-CArray::_setMode (boost::shared_ptr<IProperty> ip, PropertyId id) const
+CArray::_setMode (boost::shared_ptr<IProperty> ip, PropertyId /*id*/) const
 {
 	/* FIXME this is not good implementation because we don't have
 	 * information about array name here. So if it is direct child

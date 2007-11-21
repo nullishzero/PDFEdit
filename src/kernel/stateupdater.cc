@@ -718,13 +718,13 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 	double riseX, riseY;
 	CharCode code;
 	Unicode u[8];
-	double x, y, dx, dy, dx2, dy2, curX, curY, tdx, tdy, lineX, lineY;
+	double x, y, dx, dy,/* dx2, dy2,*/ curX, curY, tdx, tdy, lineX, lineY;
 	double originX = 0, originY, tOriginX, tOriginY;
 	double oldCTM[6], newCTM[6];
 	double *mat = NULL;
-	Dict *resDict = NULL;
+	//Dict *resDict = NULL;
 	char *p;
-	int len = 0, n = 0, uLen = 0, nChars = 0, nSpaces = 0, i = 0;
+	int len = 0, n = 0, uLen = 0,/* nChars = 0, nSpaces = 0,*/ i = 0;
 	GString s (txt.c_str(),txt.size());
 
 	font = state->getFont();

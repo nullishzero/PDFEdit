@@ -374,7 +374,7 @@ SimpleLineEngine::LinePart::line_part (const PageLine& l, const PageFragment& f)
 	BBox b1 = l.bbox();
 	BBox b2 = f.bbox();
 	// word height
-	double lsize = abs (b1.yleft - b1.yright);
+	//double lsize = abs (b1.yleft - b1.yright);
 
 	//
 	// Check whether f is "below" current line -- next line
