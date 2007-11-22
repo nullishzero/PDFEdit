@@ -1316,11 +1316,9 @@ size_t CPage::findText (std::string text,
 	for (int i = 0; i < length; ++i)
 	    utext[i] = static_cast<Unicode> (text[i] & 0xff);
 	
-	if (textDev->findText  (utext, length, 
-							startAtTop, stopAtBottom, 
-							startAtLast,stopAtLast, 
-							caseSensitive, backward,
-							&xMin, &yMin, &xMax, &yMax))
+	if (textDev->findText(utext, length, startAtTop, stopAtBottom, 
+				startAtLast,stopAtLast, caseSensitive, backward,
+				&xMin, &yMin, &xMax, &yMax))
 	{
 		startAtTop = gFalse;
 		

@@ -224,9 +224,11 @@ CStream::setLength (size_t len)
 
 //
 // 1) Dictionary of a BaseStream is always freed in ~BaseStream
+//
+//
+// FIXME update - is this still true?
 // 2) In mem stream if needBuf variable is set, buf is freed
 // 	needBuf is set in doDecryption
-//
 //
 ::Object*
 CStream::_makeXpdfObject () const
