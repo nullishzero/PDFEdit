@@ -71,6 +71,12 @@ main (int argc, char** argv)
 	
 	
 	//
+	// Initialization
+	//
+	GlobalParams::initGlobalParams("");
+	globalParams->setupBaseFonts(NULL);
+
+	//
 	// Start testing
 	//
 	START_TEST;
