@@ -498,7 +498,7 @@ public:
 	 * @see RefState
 	 * @return Reference state.
 	 */
-	virtual RefState knowsRef(::Ref ref)
+	virtual RefState knowsRef(::Ref& ref)
 	{
 		// if we are in newest revision, delegates to CXref
 		if(!revision)

@@ -325,7 +325,7 @@ using namespace debug;
 	return obj;
 }
 
-RefState CXref::knowsRef(::Ref ref)
+RefState CXref::knowsRef(::Ref& ref)
 {
 using namespace debug;
 

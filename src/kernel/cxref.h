@@ -297,7 +297,7 @@ public:
 	 * @see INITIALIZED_REF
 	 * @return Current state of given reference.
 	 */
-	virtual RefState knowsRef(::Ref ref);
+	virtual RefState knowsRef(::Ref& ref);
 
 	/** Checks if given reference is known.
 	 * @param ref Reference to check.
