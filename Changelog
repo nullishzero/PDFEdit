@@ -5,6 +5,7 @@
 	  See src/xpdf/CHANGES for more information
 	* Internal: debuging for observers, more effective CObject -> Object
 	  translation for CDict and CArray
+	* Code cleanups by Gwurk
 	* Bugs 164, 168, 169, 175, 180, 182, 183, 187 fixed
 	* Added Tango icon theme from Tiziano Mattei.
 
