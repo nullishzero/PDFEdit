@@ -13,3 +13,4 @@ AC_DEFUN(CHK_ENV_VAR_NOTICE,[
   AC_MSG_NOTICE($2)
  fi
 ])
+
