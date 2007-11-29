@@ -327,7 +327,11 @@ CArray::_makeXpdfObject () const
 
 	Value::const_iterator it = value.begin();
 	for (; it != value.end(); ++it)
-		array->add((*it)->_makeXpdfObject());
+	{
+		Object * propObj = (*it)->_makeXpdfObject();
+		array->add(propObj);
+		gfree(propObj);
+	}
 	assert(static_cast<unsigned int>(array->getLength()) == getPropertyCount());
 	return arrayObj;
 }
