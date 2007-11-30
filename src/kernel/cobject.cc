@@ -1208,40 +1208,46 @@ using namespace debug;
 	
 	// gets stream dictionary string at first
 	string dict;
-	Object streamDict;
-	streamDict.initDict(streamObject.streamGetDict());
-	xpdfObjToString(streamDict, dict);
+	Dict *streamDict = streamObject.streamGetDict();
 
-	// indirect header is filled only if asIndirect flag is set
-	// same way footer
-	string header="";
-	if(asIndirect)
-	{
-		ostringstream indirectHeader;
-		indirectHeader << ref.num << " " << ref.gen << " " << INDIRECT_HEADER << "\n";
-		header += indirectHeader.str();
-	}
-	string footer=(asIndirect)
-		?INDIRECT_FOOTER
-		:"";
+	// FIXME dirty workaround because we don't have dedicated function
+	// for Dict -> String conversion
+	// initDict increases streamDict's reference thus we need to
+	// decrease it by free method.
+	Object streamDictObj;
+	streamDictObj.initDict(streamDict);
+	xpdfObjToString(streamDictObj, dict);
+	streamDictObj.free();
 
 	// gets buffer len from stream dictionary Length field
 	Object lenghtObj;
-	streamDict.getDict()->lookup("Length", &lenghtObj);
+	streamDict->lookup("Length", &lenghtObj);
 	if(!lenghtObj.isInt())
 	{
 		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
 		lenghtObj.free();
 		return 0;
 	}
+	// we don't need to call free for lenghtObj because it is 
+	// int which doesn't allocate any memory for internal data
 	if(!lenghtObj.getInt()<0)
 	{
 		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
-		lenghtObj.free();
 		return 0;
 	}
 	size_t bufferLen=(size_t)lenghtObj.getInt();
-	lenghtObj.free();
+
+	// indirect header is filled only if asIndirect flag is set
+	// same way footer
+	string header="";
+	string footer="";
+	if(asIndirect)
+	{
+		ostringstream indirectHeader;
+		indirectHeader << ref.num << " " << ref.gen << " " << INDIRECT_HEADER << "\n";
+		header += indirectHeader.str();
+		footer = INDIRECT_FOOTER;
+	}
 
 	// gets total length and allocates CharBuffer for output	
 	size_t len = 
