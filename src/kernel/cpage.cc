@@ -1409,8 +1409,8 @@ CPage::addSystemType1Font (const std::string& fontname, bool winansienc)
 	std::ostringstream newfontname;
 	int i = 1;
 	do {
-		newfontname.str(PDFEDIT_FONTID);
-		newfontname << i++;
+		newfontname.str("");
+		newfontname << PDFEDIT_FONTID << i++;
 	} while (findFont(fs, newfontname.str()) != fs.end());
 
 	// Add it
