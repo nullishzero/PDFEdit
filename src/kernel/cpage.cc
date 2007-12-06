@@ -1246,7 +1246,7 @@ CPage::unregisterContentsObserver () const
 		if (dictionary->containsProperty("Contents"))
 		{
 			shared_ptr<IProperty> prop = dictionary->getProperty("Contents");
-			REGISTER_SHAREDPTR_OBSERVER(prop, contentsWatchDog);
+			UNREGISTER_SHAREDPTR_OBSERVER(prop, contentsWatchDog);
 		}
 	}else
 	{
@@ -1564,7 +1564,7 @@ namespace {
 		{
 			std::string tmpop;
 			(*it)->getStringRepresentation (tmpop);
-			str += tmpop;
+			str += tmpop + " ";
 		}
 		kernelPrintDbg (debug::DBG_DBG, str);
 
