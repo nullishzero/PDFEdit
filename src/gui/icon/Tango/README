@@ -1,0 +1,38 @@
+***************************************
+*                                     *
+*    Tango icon theme for PDFEdit     *
+*                                     *
+******************* by mischamajskij **
+
+1) INSTALLATION - USE
+
+To install unpack the archive into ~/.pdfedit/icon or (as root) into <prefix>/share/pdfedit/icon, where <prefix> can be "/usr", "/usr/local" or other, depending on your installation
+
+To choose the theme go to Tools > Options > Look and Feel, select Tango and restart the program.
+
+
+This application icon theme was created by Tiziano Mattei using existing icons from various Tango sets; some icons have been re-assembled or drawn from scratch. The later are licensed under CC-BY-SA, the remaining ones are either under the same license or GPL.
+
+2) CREDITS - LICENSE
+
+Based on icons from the following projects:
+- Tango Desktop Project
+(http://tango.freedesktop.org/Tango_Desktop_Project)
+- GNOME 2.18 icon set
+(http://art.gnome.org/themes/icon/1352)
+- ArtLibreSet
+(http://tango.freedesktop.org/ArtLibreSet)
+- jimmac's Tango OpenOffice.org 2.0 set
+(http://jimmac.musichall.cz/i.php?i=Tango-OOo)
+- jimmac's Tango GIMP 2.4 set
+(http://jimmac.musichall.cz/i.php?i=Tango-GIMP)
+
+Many thanks to all the original authors.
+
+Icons are licensed under CC-by-nc-sa 2.5 (http://creativecommons.org/licenses/by-nc-sa/2.5/)
+_or_ GPL 2.0 (http://creativecommons.org/licenses/GPL/2.0/) license, depending on their origin.
+My own icons are GPL.
+
+3) AUTHOR
+
+This icon set was assembled on december 2007 by mischamajskij, who also drew or modified some of the included icons. Please contact me on my DA page for requests (http://mischamajskij.deviantart.com/)
