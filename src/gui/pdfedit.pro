@@ -77,7 +77,7 @@ data_scripts.files 	= scripts/[a-z0-9A-Z]*.qs
 
 # Documentation installed in documentation path (typically /usr/share/doc)
 doc.path        = $$DOC_PATH
-doc.files       = ../../doc/user/*.html ../../doc/user/*.pdf  ../../doc/LICENSE.GPL ../../README ../../Changelog ../../doc/AUTHORS
+doc.files       = ../../doc/user/*.html ../../doc/user/*.pdf  ../../doc/LICENSE.GPL ../../README ../../Changelog ../../doc/AUTHORS ../../doc/README-*
 doc_images.path		= $$DOC_PATH/images
 doc_images.files	= ../../doc/user/images/*.png
 doc_kernel_images.path	= $$DOC_PATH/design/kernel/images
