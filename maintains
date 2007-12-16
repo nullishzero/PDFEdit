@@ -28,3 +28,8 @@ miro
 
 miso
 ====
+xpdf - except output device (maybe Jozo - but I can take it)
+kernel/cannotation*, coutline*, cpdf*, cxref*, modecontroller*, pdfwriter*, xrefwriter*, streamwriter*, exceptions.h (with Jozo), cpage*(with Jozo)
+tests/testcpdf*, testutils*, testcpage* (with Jozo)
+utils/confparser*,delinearizator*, debug*, objectstorage*, observer*, confparser*, rulesmanager*
+configure & make files (with Martin)
