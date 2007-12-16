@@ -2,6 +2,7 @@
 CVS
 TODO
 FEATURES
+maintains
 dist-exclude
 makedist
 doc/README.cygwin
