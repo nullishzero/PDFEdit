@@ -1,0 +1,213 @@
+#!/usr/bin/perl -w
+# Copyright (c) 2003-2006 David Caldwell <david@porkrind.org>
+#                     and Jim Radford <radford@bleackbean.org>, All Rights Reserved.
+# This code can be distributed under the terms of the GNU Public License
+# Version: 2.0
+
+use strict;
+use Cwd qw(abs_path);
+use IPC::Run qw(run);
+use File::Temp qw(tempfile);
+use Getopt::Long;
+
+my $message;
+GetOptions("message|m=s" => \$message) and scalar @ARGV == 1 or die "Usage: $0 [--message|-m <message>] <patch-file>\n";
+my $patch = shift;
+
+die "bad patch file: $!" if -z $patch;
+die "Invalid message" if defined $message && $message eq "";
+
+my ($lsdiff_out, $err);
+run ["lsdiff", "--strip", "1", $patch], '|', ["sort"], '|', ["uniq"], \$lsdiff_out, \$err or die "lsdiff|sort|unique : $! ($err)";
+my @files = split(/\n/, $lsdiff_out);
+die "No files in patch" unless scalar @files;
+
+my %clean;
+my $repo=".";
+my %vc;
+while (!$vc{name}) {
+    if (-d "$repo/CVS" && $repo eq '.') {
+        $vc{name}         = 'cvs';
+        $vc{diff}         = 'cvs diff -u';
+        $vc{commit}       = 'cvs commit';
+        $vc{message_opt}  = '-m';
+        $vc{add}          = 'cvs add';
+        $vc{remove}       = 'cvs rm';
+        $vc{patcharg}     = '-p0';
+    } elsif (-d "$repo/_darcs") {
+        $vc{name}         = 'darcs';
+        $vc{diff}         = 'darcs diff -u';
+        $vc{add}          = 'darcs add';
+        $vc{remove}       = 'true';
+        $vc{commit}       = 'darcs record --all';
+        $vc{patcharg}     = '-p1';
+        if ($message) {
+            # Darcs doesn't like multiline -m comments so we have to put the log message into a file and use --logfile. Yuck.
+            #$vc{message_opt} = '-m';
+            $message .= "\n" unless $message =~ /\n$/s; # Darcs does screwey stuff when logfile has no trailing \n.
+            my ($message_file, $message_filename) = tempfile("commit-patch-message-XXXXXXXX", UNLINK=>0);
+            print $message_file $message;
+            close $message_file;
+            $clean{$message_filename} = undef; # make sure we delete this file on exit.
+            $vc{commit}  .= ' --logfile='.$message_filename;
+        } else {
+        }
+    } elsif (-d "$repo/.hg") {
+        $vc{name}         = 'hg';
+        $vc{diff}         = 'hg diff';
+        $vc{commit}       = 'hg commit';
+        $vc{message_opt}  = '-m';
+        $vc{add}          = 'hg addremove';
+        $vc{remove}       = 'true';
+        $vc{patcharg}     = '-p1';
+    } else {
+        $repo.="/..";
+        printf("Trying back a dir: $repo, abs:%s\n", abs_path($repo));
+        die "couldn't find repo" if abs_path($repo) eq "/";
+    }
+}
+
+#print "Found $vc{name} in $repo\n";
+#printf("files: %s\n", join(",", @files));
+
+eval {
+    for my $f (@files) {
+        run ["cp", "-f", $f, "$f.orig.$$"] or die "couldn't make backup of $f: $!";
+        $clean{"$f.orig.$$"} = $f;
+    }
+    $SIG{PIPE} = $SIG{INT} = $SIG{QUIT} = sub { clean(); print "Cleanly aborted\n"; };
+
+    $clean{"working.patch.$$"} = $clean{"non_committed.patch.$$"} = undef;
+
+    my ($out,$err,$non_committed_patch);
+    run([split(/ /,$vc{add}),    @files],                                               '>', \$out, '2>', \$err);# Expect these 2 to fail when
+    run([split(/ /,$vc{remove}), @files],                                               '>', \$out, '2>', \$err);# there are no new files.
+    run([split(/ /,$vc{diff}),   @files], '>', "working.patch.$$",                                  '2>', \$err);# CVS diff dies. Sigh. or die "$err\n";
+    run(["interdiff", $vc{patcharg}, $patch, "working.patch.$$"], '>', "non_committed.patch.$$",    '2>', \$err) or die "$err\n";
+    run(["patch", $vc{patcharg}, "-R"], '<', "working.patch.$$",                        '>', \$out, '2>', \$err) or die "$out\n$err\n";
+    run(["patch", $vc{patcharg}], '<', $patch,                                          '>', \$out, '2>', \$err) or die "$out\n$err\n";
+    # Don't capture stdout or stderr because it can be interactive (cough cough darcs)
+    run([split(/ /,$vc{commit}), $message && $vc{message_opt} ? ($vc{message_opt}, $message) : (), @files],debug => 0) or die "commit failed.\n";
+    run(["patch", $vc{patcharg}], '<', "non_committed.patch.$$",                        '>', \$out, '2>', \$err) or die "$out\n$err\n";
+};
+sub clean() {
+    foreach my $k (keys %clean) { rename $k,$clean{$k} if $clean{$k} }
+}
+if ($@) {
+    clean();
+    die "Failed: $@";
+}
+foreach my $k (keys %clean) { unlink $k }
+
+
+=head1 NAME
+
+commit-patch - commit patches to I<CVS>, I<Darcs> or I<Mercurial> repositories
+
+=head1 SYNOPSIS
+
+commit-patch [B<-m> I<message>] I<patch-file>
+
+=head1 DESCRIPTION
+
+Normally version control systems don't allow fine grained
+commits. B<commit-patch> allows the user to control I<exactly> what
+gets committed (or "recorded", in I<Darcs> parlance) by letting the user
+supply a patch to be committed rather than using the files in the
+current working directory.
+
+B<commit-patch> currently supports the following version control systems:
+B<I<CVS>>, B<I<Darcs>>, and B<I<Mercurial>>.
+
+=head1 OPTIONS
+
+B<-m>, B<--message>=I<message> - An optional I<message> to use as the commit
+text. If the message is multiple lines then I<Mercurial> and I<Darcs>
+will use the first line as the patch name and the rest as commit
+details. If the C<-m> option is not specified then the result will be
+the same as whatever the underlying version control system would do if
+you didn't specify a message name on the command line. That is,
+B<commit-patch> does not interfere with the patch naming process of
+the underlying version control system; I<Darcs> will still ask you
+interactively and I<CVS> will still launch your editor.
+
+=head1 DIAGNOSTICS
+
+B<commit-patch> works by manipulating the working directory using
+C<patch>, C<interdiff>, and the underlying version control system's
+C<diff>.  If any part of the process fails, B<commit-patch> will
+attempt to restore the working directory to the state it was before
+the command was run. Any errors from the underlying version control
+system or from patch will be printed.
+
+=head1 CAVEATS
+
+The patch specified on the command line must originate from the same
+place as the current directory. That is, the following will not work:
+
+  cvs diff -u > ../a.patch
+  cd ..
+  commit-patch a.patch
+
+You B<must> run B<commit-patch> from the same directory that the
+original patch was based from.
+
+I<Darcs> and I<Mercurial> put C<a/> and C<b/> in front of all the paths
+in the diff output. Don't worry about this; B<commit-patch> takes it into
+account.
+
+=head1 EXAMPLES
+
+Typical I<CVS> usage:
+
+  cvs diff -u > a.patch
+  emacs a.patch
+  commit-patch a.patch
+
+I<Mercurial> usage with a message specified:
+
+  hg diff > a.patch
+  emacs a.patch
+  commit-patch -m "This is a commit message" a.patch
+
+I<Darcs> usage with a multi-line message specified:
+
+  darcs diff -u > a.patch
+  emacs a.patch
+  commit-patch -m 'This is the patch name
+  Here are the patch details' a.patch
+
+=head1 AUTHORS
+
+=over
+
+=item *
+
+David Caldwell <david@porkrind.org>
+
+=item *
+
+Jim Radford <radford@blackbean.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2003-2006 by David Caldwell and Jim Radford.
+
+B<commit-patch> is distributed under the GNU General Public
+License. See the COPYING file in the distribution for more details.
+
+=head1 HISTORY
+
+B<commit-patch> was originally called C<cvs-commit-patch> and was a
+bash script written in 2003 by Jim Radford (with David Caldwell in the
+room drawing the procedure on a white board). David later converted it
+do C<darcs-commit-patch>, then integrated them back together into
+B<commit-patch>. I<Mercurial> support was then added. At some point
+David translated from bash into perl because funky bash quoting issues
+were causing problems with a repository that had a space in one of the
+directory names.
+
+=cut
+
