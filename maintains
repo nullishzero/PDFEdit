@@ -10,13 +10,11 @@ jozo
 
 martin
 ======
-gui (with Miro)
-qsa
+src/gui/* (with Miro)
+src/qsa/*
+src/qsa-qt4/*
 configure & make files (with Miso)
-
-
-
-
+helper scripts: tools/headergen, tools/make_release, doc/tools/*
 
 miro
 ====
