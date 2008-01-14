@@ -1,11 +1,10 @@
 jozo
 ====
+utils/algorithms, types, iterator, 
+tests/* except michal's
+kernel/* except michal's
 
-
-
-
-
-
+gui/ few script functions where content stream is handled directly
 
 
 martin
@@ -16,19 +15,15 @@ src/qsa-qt4/*
 configure & make files (with Miso)
 helper scripts: tools/headergen, tools/make_release, doc/tools/*
 
+
 miro
 ====
 
 
-
-
-
-
-
 miso
 ====
-xpdf - except output device (maybe Jozo - but I can take it)
-kernel/cannotation*, coutline*, cpdf*, cxref*, modecontroller*, pdfwriter*, xrefwriter*, streamwriter*, exceptions.h (with Jozo), cpage*(with Jozo)
+xpdf - (changes must be approved by jozo and vice versa)
+kernel/cannotation*, cpdf*, cxref*, modecontroller*, pdfwriter*, xrefwriter*, streamwriter*, exceptions.h (with Jozo), cpage*(with Jozo)
 tests/testcpdf*, testutils*, testcpage* (with Jozo)
 utils/confparser*,delinearizator*, debug*, objectstorage*, observer*, confparser*, rulesmanager*
 configure & make files (with Martin)
