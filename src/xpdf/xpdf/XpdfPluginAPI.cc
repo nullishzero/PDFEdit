@@ -10,16 +10,16 @@
 
 #ifdef ENABLE_PLUGINS
 
-#include "gmem.h"
-#include "GlobalParams.h"
-#include "Object.h"
-#include "PDFDoc.h"
+#include "goo/gmem.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Object.h"
+#include "xpdf/PDFDoc.h"
 #ifdef WIN32
-#include "WinPDFCore.h"
+#include "xpdf/WinPDFCore.h"
 #else
-#include "XPDFCore.h"
+#include "xpdf/XPDFCore.h"
 #endif
-#include "XpdfPluginAPI.h"
+#include "xpdf/XpdfPluginAPI.h"
 
 //------------------------------------------------------------------------
 

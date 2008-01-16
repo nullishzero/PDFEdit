@@ -1,10 +1,3 @@
-/*
- * $RCSfile$
- *
- * $log: $
- *
- */
-
 //========================================================================
 //
 // Array.cc
@@ -24,9 +17,9 @@
 
 #include <stdlib.h>
 #include <stddef.h>
-#include "gmem.h"
-#include "Object.h"
-#include "Array.h"
+#include "goo/gmem.h"
+#include "xpdf/Object.h"
+#include "xpdf/Array.h"
 
 //------------------------------------------------------------------------
 // Array

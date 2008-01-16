@@ -12,8 +12,8 @@
 
 #include "selfdestructivewidget.h"
 #include "qtcompat.h"
-#include <iproperty.h>
-#include <cobject.h>
+#include <kernel/iproperty.h>
+#include <kernel/cobject.h>
 namespace pdfopbjects {
  class CPdf;
 }

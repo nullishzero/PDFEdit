@@ -10,10 +10,10 @@
 #ifndef __PDFEDITWINDOW_H__
 #define __PDFEDITWINDOW_H__
 
-#include <cobject.h>
-#include <cpdf.h>
-#include <cannotation.h>
-#include <pdfoperators.h>
+#include <kernel/cobject.h>
+#include <kernel/cpdf.h>
+#include <kernel/cannotation.h>
+#include <kernel/pdfoperators.h>
 #include <qmainwindow.h>
 #include <qprogressbar.h>
 

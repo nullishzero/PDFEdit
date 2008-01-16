@@ -18,8 +18,8 @@
 #define Object XtObject
 #include <Xm/XmAll.h>
 #undef Object
-#include "gtypes.h"
-#include "SplashTypes.h"
+#include "goo/gtypes.h"
+#include "splash/SplashTypes.h"
 
 class GString;
 class GList;

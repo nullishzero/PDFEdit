@@ -9,11 +9,11 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "static.h"
+#include "kernel/static.h"
 
-#include "iproperty.h"
-#include "cobject.h"
-#include "cpdf.h"
+#include "kernel/iproperty.h"
+#include "kernel/cobject.h"
+#include "kernel/cpdf.h"
 
 //=====================================================================================
 namespace pdfobjects {

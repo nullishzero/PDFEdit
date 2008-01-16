@@ -27,8 +27,8 @@
 #include "treeitemoperatorcontainer.h"
 #include "treeitem.h"
 #include "base.h"
-#include <ccontentstream.h>
-#include <cpdf.h>
+#include <kernel/ccontentstream.h>
+#include <kernel/cpdf.h>
 #include <utils/debug.h>
 
 namespace gui {

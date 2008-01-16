@@ -13,8 +13,8 @@
 #pragma interface
 #endif
 
-#include "SplashTypes.h"
-#include "SplashMath.h"
+#include "splash/SplashTypes.h"
+#include "splash/SplashMath.h"
 
 class SplashPath;
 class SplashXPath;

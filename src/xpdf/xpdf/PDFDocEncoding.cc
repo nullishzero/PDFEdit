@@ -6,7 +6,7 @@
 //
 //========================================================================
 
-#include "PDFDocEncoding.h"
+#include "xpdf/PDFDocEncoding.h"
 
 Unicode pdfDocEncoding[256] = {
   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, // 00

@@ -18,7 +18,7 @@
 #endif
 
 #include <stdarg.h>
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 class GString {
 public:

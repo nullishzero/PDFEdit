@@ -16,7 +16,7 @@
 #include "consolewriterconsole.h"
 #include "util.h"
 #include "settings.h"
-#include "cpage.h"
+#include "kernel/cpage.h"
 #include <stdlib.h>
 
 namespace gui {

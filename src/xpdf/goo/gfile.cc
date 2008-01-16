@@ -29,8 +29,8 @@
 #    include <unixlib.h>
 #  endif
 #endif // WIN32
-#include "GString.h"
-#include "gfile.h"
+#include "goo/GString.h"
+#include "goo/gfile.h"
 
 // Some systems don't define this, so just make it something reasonably
 // large.

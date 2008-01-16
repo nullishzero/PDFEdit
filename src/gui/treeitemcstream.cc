@@ -18,8 +18,8 @@
 #include "pdfutil.h"
 #include "qsstream.h"
 #include "util.h"
-#include <cstream.h>
-#include <iproperty.h>
+#include <kernel/cstream.h>
+#include <kernel/iproperty.h>
 
 namespace gui {
 

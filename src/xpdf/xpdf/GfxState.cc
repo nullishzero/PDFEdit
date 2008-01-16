@@ -15,12 +15,12 @@
 #include <stddef.h>
 #include <math.h>
 #include <string.h>
-#include "gmem.h"
-#include "Error.h"
-#include "Object.h"
-#include "Array.h"
-#include "Page.h"
-#include "GfxState.h"
+#include "goo/gmem.h"
+#include "xpdf/Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Array.h"
+#include "xpdf/Page.h"
+#include "xpdf/GfxState.h"
 
 //------------------------------------------------------------------------
 

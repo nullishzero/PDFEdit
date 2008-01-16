@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 #define fixptShift 16
 #define fixptMaskL ((1 << fixptShift) - 1)

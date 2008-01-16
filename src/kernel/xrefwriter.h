@@ -18,10 +18,10 @@
  * Implementation of CXRef wrapper to enable making changes to the document.
  */
 
-#include "static.h"
-#include "cxref.h"
-#include "streamwriter.h"
-#include "pdfwriter.h"
+#include "kernel/static.h"
+#include "kernel/cxref.h"
+#include "kernel/streamwriter.h"
+#include "kernel/pdfwriter.h"
 
 
 namespace pdfobjects

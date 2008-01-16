@@ -19,9 +19,9 @@
 #include "treeitem.h"
 #include "treeitempdfoperator.h"
 #include "util.h"
-#include <cobject.h>
-#include <ccontentstream.h>
-#include <pdfoperators.h>
+#include <kernel/cobject.h>
+#include <kernel/ccontentstream.h>
+#include <kernel/pdfoperators.h>
 
 namespace gui {
 

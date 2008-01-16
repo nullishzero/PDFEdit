@@ -1,0 +1,30 @@
+################################################################################
+# This file contains general building rules with configuration info
+#
+# Include this file to the each subdirectory makefile. Note that REL_ADDR 
+# variable has to be defined if we are in deeper subdirectory.
+#
+# If you need only configuration data, use Makefile.flags instead
+################################################################################
+
+include $(REL_ADDR)Makefile.flags
+
+####### Implicit rules
+
+.SUFFIXES: .c .o .cpp .cc .cxx .C
+
+.cpp.o:
+	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+
+.cc.o:
+	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+
+.cxx.o:
+	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+
+.C.o:
+	$(CXX) -c $(CXX_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+
+.c.o:
+	$(CC) -c $(C_FLAGS) $(MANDATORY_INCPATH) -o $@ $<
+

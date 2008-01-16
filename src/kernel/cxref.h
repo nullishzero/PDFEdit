@@ -12,9 +12,9 @@
 #define _CXREF_H_
 
 // xpdf
-#include "xpdf.h"
+#include "kernel/xpdf.h"
 
-#include"iproperty.h"
+#include "kernel/iproperty.h"
 #include<limits.h>
 
 namespace pdfobjects

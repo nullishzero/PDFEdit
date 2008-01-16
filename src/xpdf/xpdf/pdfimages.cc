@@ -11,21 +11,21 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
-#include "parseargs.h"
-#include "GString.h"
-#include "gmem.h"
-#include "GlobalParams.h"
-#include "Object.h"
-#include "Stream.h"
-#include "Array.h"
-#include "Dict.h"
-#include "XRef.h"
-#include "Catalog.h"
-#include "Page.h"
-#include "PDFDoc.h"
-#include "ImageOutputDev.h"
-#include "Error.h"
-#include "config.h"
+#include "goo/parseargs.h"
+#include "goo/GString.h"
+#include "goo/gmem.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
+#include "xpdf/Array.h"
+#include "xpdf/Dict.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Catalog.h"
+#include "xpdf/Page.h"
+#include "xpdf/PDFDoc.h"
+#include "xpdf/ImageOutputDev.h"
+#include "xpdf/Error.h"
+#include "xpdf/config.h"
 
 static int firstPage = 1;
 static int lastPage = 0;

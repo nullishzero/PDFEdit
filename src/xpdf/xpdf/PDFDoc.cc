@@ -19,24 +19,24 @@
 #ifdef WIN32
 #  include <windows.h>
 #endif
-#include "GString.h"
-#include "config.h"
-#include "GlobalParams.h"
-#include "Page.h"
-#include "Catalog.h"
-#include "Stream.h"
-#include "XRef.h"
-#include "Link.h"
-#include "OutputDev.h"
-#include "Error.h"
-#include "ErrorCodes.h"
-#include "Lexer.h"
-#include "Parser.h"
-#include "SecurityHandler.h"
+#include "goo/GString.h"
+#include "xpdf/config.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Page.h"
+#include "xpdf/Catalog.h"
+#include "xpdf/Stream.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Link.h"
+#include "xpdf/OutputDev.h"
+#include "xpdf/Error.h"
+#include "xpdf/ErrorCodes.h"
+#include "xpdf/Lexer.h"
+#include "xpdf/Parser.h"
+#include "xpdf/SecurityHandler.h"
 #ifndef DISABLE_OUTLINE
-#include "Outline.h"
+#include "xpdf/Outline.h"
 #endif
-#include "PDFDoc.h"
+#include "xpdf/PDFDoc.h"
 
 //------------------------------------------------------------------------
 

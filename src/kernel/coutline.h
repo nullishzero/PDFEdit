@@ -12,7 +12,7 @@
 
 
 // all basic includes
-#include "static.h"
+#include "kernel/static.h"
 
 
 //=====================================================================================

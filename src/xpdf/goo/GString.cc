@@ -19,8 +19,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "gmem.h"
-#include "GString.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
 
 //------------------------------------------------------------------------
 

@@ -15,7 +15,7 @@
 #pragma interface
 #endif
 
-#include "Object.h"
+#include "xpdf/Object.h"
 
 class Dict;
 class XRef;

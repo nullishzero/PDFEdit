@@ -15,7 +15,7 @@
 
 #include "property.h"
 #include "qtcompat.h"
-#include <iproperty.h>
+#include <kernel/iproperty.h>
 #include <qstring.h>
 #include <qlabel.h>
 #include "util.h"

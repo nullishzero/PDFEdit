@@ -10,7 +10,7 @@
 #ifndef __QSIPROPERTY_H__
 #define __QSIPROPERTY_H__
 
-#include <iproperty.h>
+#include <kernel/iproperty.h>
 #include "qscobject.h"
 #include <qvariant.h>
 class QString;

@@ -10,9 +10,9 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 #include<errno.h>
-#include "xrefwriter.h"
-#include "cpdf.h"
-#include "cobject.h"
+#include "kernel/xrefwriter.h"
+#include "kernel/cpdf.h"
+#include "kernel/cobject.h"
 
 using namespace debug;
 

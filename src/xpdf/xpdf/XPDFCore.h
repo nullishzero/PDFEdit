@@ -18,10 +18,10 @@
 #define Object XtObject
 #include <Xm/XmAll.h>
 #undef Object
-#include "gtypes.h"
-#include "gfile.h" // for time_t
-#include "SplashTypes.h"
-#include "PDFCore.h"
+#include "goo/gtypes.h"
+#include "goo/gfile.h" // for time_t
+#include "splash/SplashTypes.h"
+#include "xpdf/PDFCore.h"
 
 class GString;
 class BaseStream;

@@ -13,8 +13,8 @@
 #endif
 
 #include <string.h>
-#include "gmem.h"
-#include "Decrypt.h"
+#include "goo/gmem.h"
+#include "xpdf/Decrypt.h"
 
 static void rc4InitKey(Guchar *key, int keyLen, Guchar *state);
 static Guchar rc4DecryptByte(Guchar *state, Guchar *x, Guchar *y, Guchar c);

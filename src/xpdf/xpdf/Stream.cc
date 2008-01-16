@@ -33,17 +33,17 @@
 #endif
 #include <string.h>
 #include <ctype.h>
-#include "gmem.h"
-#include "gfile.h"
-#include "config.h"
-#include "Error.h"
-#include "Object.h"
-#include "Lexer.h"
-#include "GfxState.h"
-#include "Stream.h"
-#include "JBIG2Stream.h"
-#include "JPXStream.h"
-#include "Stream-CCITT.h"
+#include "goo/gmem.h"
+#include "goo/gfile.h"
+#include "xpdf/config.h"
+#include "xpdf/Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Lexer.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/Stream.h"
+#include "xpdf/JBIG2Stream.h"
+#include "xpdf/JPXStream.h"
+#include "xpdf/Stream-CCITT.h"
 
 #ifdef __DJGPP__
 static GBool setDJSYSFLAGS = gFalse;

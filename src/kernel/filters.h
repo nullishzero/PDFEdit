@@ -12,7 +12,7 @@
 #define _FILTERS_H_
 
 // static includes
-#include "static.h"
+#include "kernel/static.h"
 
 //=======================================
 namespace filters {

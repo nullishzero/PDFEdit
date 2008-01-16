@@ -15,7 +15,7 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 //------------------------------------------------------------------------
 // Type 1 and 1C font data

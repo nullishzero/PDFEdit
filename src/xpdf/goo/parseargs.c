@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "parseargs.h"
+#include "goo/parseargs.h"
 
 static ArgDesc *findArg(ArgDesc *args, char *arg);
 static GBool grabArg(ArgDesc *arg, int i, int *argc, char *argv[]);

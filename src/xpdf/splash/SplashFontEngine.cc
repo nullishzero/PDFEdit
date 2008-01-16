@@ -19,15 +19,15 @@
 #ifndef WIN32
 #  include <unistd.h>
 #endif
-#include "gmem.h"
-#include "GString.h"
-#include "SplashMath.h"
-#include "SplashT1FontEngine.h"
-#include "SplashFTFontEngine.h"
-#include "SplashFontFile.h"
-#include "SplashFontFileID.h"
-#include "SplashFont.h"
-#include "SplashFontEngine.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashT1FontEngine.h"
+#include "splash/SplashFTFontEngine.h"
+#include "splash/SplashFontFile.h"
+#include "splash/SplashFontFileID.h"
+#include "splash/SplashFont.h"
+#include "splash/SplashFontEngine.h"
 
 #ifdef VMS
 #if (__VMS_VER < 70000000)

@@ -14,7 +14,7 @@
 
 #include "treeitemarray.h"
 #include "qtcompat.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "treedata.h"
 #include "pdfutil.h"
 #include "util.h"

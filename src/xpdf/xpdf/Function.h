@@ -15,8 +15,8 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "Object.h"
+#include "goo/gtypes.h"
+#include "xpdf/Object.h"
 
 class Dict;
 class Stream;

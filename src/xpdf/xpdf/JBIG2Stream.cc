@@ -14,13 +14,13 @@
 
 #include <stdlib.h>
 #include <limits.h>
-#include "GList.h"
-#include "Error.h"
-#include "JArithmeticDecoder.h"
-#include "JBIG2Stream.h"
+#include "goo/GList.h"
+#include "xpdf/Error.h"
+#include "xpdf/JArithmeticDecoder.h"
+#include "xpdf/JBIG2Stream.h"
 
 //~ share these tables
-#include "Stream-CCITT.h"
+#include "xpdf/Stream-CCITT.h"
 
 //------------------------------------------------------------------------
 

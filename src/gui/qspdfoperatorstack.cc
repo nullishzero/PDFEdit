@@ -16,7 +16,7 @@
 
 #include "qspdfoperatorstack.h"
 #include "qsimporter.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "qspdfoperator.h"
 
 namespace gui {

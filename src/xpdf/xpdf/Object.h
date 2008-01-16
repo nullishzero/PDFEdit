@@ -1,10 +1,3 @@
-/*
- * $RCSfile$
- *
- * $log: $
- *
- */
-
 //========================================================================
 //
 // Object.h
@@ -29,9 +22,9 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "gtypes.h"
-#include "gmem.h"
-#include "GString.h"
+#include "goo/gtypes.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
 
 class XRef;
 class Array;
@@ -232,7 +225,7 @@ private:
 // Array accessors.
 //------------------------------------------------------------------------
 
-#include "Array.h"
+#include "xpdf/Array.h"
 
 inline int Object::arrayGetLength()
   { return array->getLength(); }
@@ -250,7 +243,7 @@ inline Object *Object::arrayGetNF(int i, Object *obj)
 // Dict accessors.
 //------------------------------------------------------------------------
 
-#include "Dict.h"
+#include "xpdf/Dict.h"
 
 inline int Object::dictGetLength()
   { return dict->getLength(); }
@@ -283,7 +276,7 @@ inline Object *Object::dictGetValNF(int i, Object *obj)
 // Stream accessors.
 //------------------------------------------------------------------------
 
-#include "Stream.h"
+#include "xpdf/Stream.h"
 
 inline GBool Object::streamIs(const char *dictType)
   { return stream->getDict()->is(dictType); }

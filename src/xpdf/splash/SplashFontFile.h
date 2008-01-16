@@ -13,8 +13,8 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "SplashTypes.h"
+#include "goo/gtypes.h"
+#include "splash/SplashTypes.h"
 
 class GString;
 class SplashFontEngine;

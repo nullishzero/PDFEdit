@@ -18,7 +18,7 @@
 #include <string>
 #include <stdlib.h>
 #include <qlineedit.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "util.h"
 
 namespace gui {

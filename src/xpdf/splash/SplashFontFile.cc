@@ -14,9 +14,9 @@
 #ifndef WIN32
 #  include <unistd.h>
 #endif
-#include "GString.h"
-#include "SplashFontFile.h"
-#include "SplashFontFileID.h"
+#include "goo/GString.h"
+#include "splash/SplashFontFile.h"
+#include "splash/SplashFontFileID.h"
 
 #ifdef VMS
 #if (__VMS_VER < 70000000)

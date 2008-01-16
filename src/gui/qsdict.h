@@ -12,7 +12,7 @@
 
 #include "qsiproperty.h"
 #include <qstringlist.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 
 namespace gui {
 

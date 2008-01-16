@@ -15,8 +15,8 @@
 #pragma interface
 #endif
 
-#include "Object.h"
-#include "Stream.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
 
 class XRef;
 

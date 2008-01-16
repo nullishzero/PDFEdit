@@ -12,12 +12,12 @@
 #pragma implementation
 #endif
 
-#include "GString.h"
-#include "GList.h"
-#include "Error.h"
-#include "XPDFViewer.h"
-#include "XPDFApp.h"
-#include "config.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "xpdf/Error.h"
+#include "xpdf/XPDFViewer.h"
+#include "xpdf/XPDFApp.h"
+#include "xpdf/config.h"
 
 // these macro defns conflict with xpdf's Object class
 #ifdef LESSTIF_VERSION

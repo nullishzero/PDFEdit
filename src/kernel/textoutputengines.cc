@@ -9,12 +9,12 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "iproperty.h"
+#include "kernel/iproperty.h"
 #include <math.h>
-#include "carray.h"
-#include "cobjectsimple.h"
-#include "textoutputengines.h"
-#include "stateupdater.h"
+#include "kernel/carray.h"
+#include "kernel/cobjectsimple.h"
+#include "kernel/textoutputengines.h"
+#include "kernel/stateupdater.h"
 
 //=====================================================================================
 namespace textoutput {

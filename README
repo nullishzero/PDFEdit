@@ -27,6 +27,21 @@ http://sourceforge.net/mail/?group_id=177354
 
 Prerequisites
 -------------
+Base (kernel):
+==============
+Boost libraries must be installed. See detailed description about configure
+parameters if you have some unusual installation.
+Freetype library is almost necessary, because nearly all PDFs use these fonts.
+T1 font library is also recommended.
+
+Tests:
+======
+Our tests are based on CPPUNIT library, so it has to be present on your 
+system. See detailed description about configure parameters if you have 
+some unusual installation.
+
+Gui:
+========
 Make sure you have all needed libraries (qt3, boost and xlib) along with their 
 headers. 
 You also need the environment variable QTDIR to be set to directory in which 
@@ -43,18 +58,123 @@ QMAKESPEC should be set to name of one of the directories that are in mkspecs
 subdirectory in the Qt directory.
 See http://www.digitalfanatics.org/projects/qt_tutorial/chapter04.html or 
 http://doc.trolltech.com/3.0/qmake-guide.html for more information.
+QTDIR is used also for qmake (tool for generating makefiles from QT project
+files) detection. By default, this is stored somewhere under QTDIR directory
+(typically QTDIR/bin/), but there are also platforms, where this is not 
+exactly true. If you have such a platform, try to use --with-qmake-dir
+parameter to configure (see bellow)
 
+Documentation:
+==============
+There are 3 levels of documentation in this project.
+* Basic - in the form of the man page which is always installed 
+* doxygen - programming documentation extracted from sources and
+	    processed by doxygen tool. Obviously, doxygen has to
+	    be installed.
+	    This documentation is not created and installed by
+	    default and you have to explicitly enable it by
+	    --enable-doxygen-doc parameter to ./configure
+	    Result documentation is placed in the DOC_PATH/doxygen
+	    directory (DOC_PATH is PREFIX/share/doc/pdfedit)
+* advanced - design documentation which describes inner data 
+	    structures, algorithms and relations from the 
+	    programmer perspective. This one is usefull if you
+	    want to develop PDFedit or 3rd party application based
+	    on PDFedit.
+	    This documentation is not created by default too and
+	    you have to enable it by configure parameter 
+	    --enable-advanced-doc. We are using xml based docbook
+	    format, so you have to have docbook xsl and xslproc
+	    installed. 
+	    Result documentation is placed in the DOC_PATH/design/
+	    directory.
 
 Compilation
 -----------
  Run:
-  ./configure
+  ./configure [parameters]
 
- Optionally you can specify prefix (default is /usr/local/) or other parameters.
- Run "./configure --help" to see list of possible configuration parameters.
+NOTE for those who use sources from CVS. configure is NO MORE part of the
+CVS tree!!! You have to generate it. This can be done simply by
+$ autoconf
+in the root of the checkout project. Note that you have to have autoconf
+package installed on your machine.
 
- After configure successfully finishes, run "make" in this directory to start
- compilation.
+Simple run without any parameter results in default configuration where 
+application is compiled in release mode (optimizations turned on, debug
+symbols are not present, compilation warnings are eliminated), GUI is
+enabled, doxygen documentation is generated, no kernel tests (stored in 
+src/kernel/tests/) are compiled and application will be installed into the
+/usr/local/pdfedit directory.
+
+You can change this behavior with following parameters (feature is used
+if --enable- prefix is used, contrary --disable- prefix turns off this
+feature - e.g. if feature name stack-protector => --enable-stack-protector 
+uses this feature):
+	-stack-protector - adds stack protector parameter to the compilation
+	 flags. Disabled by default, because not all compilers support this
+	 feature (gcc > 4.1 supports it)
+
+	-release - controls compilation flags for release mode (no debugging
+	 needed). This is used by default. It means that optimizations are
+	 turned on, debug information is not included in the result binary.
+	 If you want to debug or do some development, --disable-release is
+	 strongly recommended.
+
+	-debug-info - if --enable-release is used and you still need debug
+	 information (e.g. when application crashes to have some reasonable
+	 stack traces) use --enable-debug-info. This parameter feature would
+	 be ignored if --disable-release is used.
+	
+	-observer-debug - just for developers only. Disabled by default. If
+	 turned on, some more debug information is added to the kernel code
+	 to enable debuging observers based code.
+
+	-gui - Creates GUI for PDFedit (pdfedit binary). Enabled by default. 
+	 If --disable-gui is used, no GUI (no pdfedit binary is created).
+	
+	-kernel-tests - Compiles all kernel tests (in src/kernel/tests). 
+	 Disabled by default and intended for developers/testers only. Note
+	 that this requires to have CPPUNIT installed on your system.
+	
+	-doxygen-doc - generates also doxygen documentation usefull for 
+	 programmers. Disabled by default. Note that doxygen has to be
+	 installed for this feature.
+
+	-advanced-doc - generates also docbook design documentation.
+	 Disabled by default. Note that docbook and its prerequisits
+	 has to be installed for this feature.
+
+You can also control search paths for FreeType2 and T1 font libraries as
+well as CPPUNIT, boost and qmake.
+	- Freetype2 font library
+	./configure --with-ft-prefix=PATH_TO_YOUR_FREETYPE2
+	resp. (for T1)
+	
+	- T1 font library
+	./configure --with-t1-includes=PATH_TO_YOUR_T1_HEADERS \
+		--with-t1-library=PATH_TO_YOUR_T1_LIB
+	
+	- CPPUnit
+	./configure  --with-cppunit-prefix=PATH_TO_YOUR_CPPUNIT
+
+	- Boost
+	./configure --with-boost=YOUR_BOOST_INSTALLATION
+
+	- qmake
+	./configure --with-qmake-dir=DIRECTORY_WITH_YOUR_QMAKE_BINARY
+
+If you need to change installation root (e. g. if you are packager and
+want to create package) use
+	--with-root-dir=YOUR_INSTALLATION_ROOT_DIR
+configure parameter and all data will be moved to the selected directory
+after you do make install (using correct --prefix of course)
+
+Run "./configure --help" to see the list of all possible configuration 
+parameters.
+
+After configure successfully finishes, run "make" in this directory to start
+compilation.
 
 
 Installation
@@ -94,16 +214,12 @@ cd pdfedit-0.3.1
 setenv QTDIR /usr/local
 setenv QMAKESPEC /usr/local/share/qt/mkspecs/freebsd-g++
 setenv LOCALBASE /usr/local
-./configure
-cd src/xpdf
-./configure  --with-t1-library="${LOCALBASE}/lib"
---with-t1-includes="${LOCALBASE}/include"
+./configure  --with-t1-library="${LOCALBASE}/lib" \
+	--with-t1-includes="${LOCALBASE}/include"
 
 #make sure you see this:
 #checking for T1_InitLib in -lt1... yes
 #using t1 library
-
-cd ../..
 
 
 NetBSD installation

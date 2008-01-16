@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "PSTokenizer.h"
+#include "xpdf/PSTokenizer.h"
 
 //------------------------------------------------------------------------
 

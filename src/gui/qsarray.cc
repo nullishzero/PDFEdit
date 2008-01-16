@@ -16,7 +16,7 @@
 
 #include "qsarray.h"
 #include "qsimporter.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "pdfutil.h"
 #include "util.h"
 

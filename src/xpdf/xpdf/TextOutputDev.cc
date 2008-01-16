@@ -21,17 +21,17 @@
 #include <fcntl.h> // for O_BINARY
 #include <io.h>    // for setmode
 #endif
-#include "gmem.h"
-#include "GString.h"
-#include "GList.h"
-#include "config.h"
-#include "Error.h"
-#include "GlobalParams.h"
-#include "UnicodeMap.h"
-#include "UnicodeTypeTable.h"
-#include "GfxState.h"
-#include "Link.h"
-#include "TextOutputDev.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "xpdf/config.h"
+#include "xpdf/Error.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/UnicodeMap.h"
+#include "xpdf/UnicodeTypeTable.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/Link.h"
+#include "xpdf/TextOutputDev.h"
 
 #ifdef MACOS
 // needed for setting type/creator of MacOS files

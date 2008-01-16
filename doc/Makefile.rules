@@ -7,6 +7,7 @@
 #rule for procesing docbook documentation
 #prefer using xsltproc and docbook.xsl (nicer output and is also faster)
 # over docbook2html (which uses jade)
+# TODO give parameter for XLSPATH from configure (set in ../Makefile.flags)
 %.html: %.xml
 	$(TOP_DIR)/tools/docbook2html_any $< $@ || true
 

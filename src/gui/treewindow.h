@@ -13,8 +13,8 @@
 #include "qtcompat.h"
 #include QLISTVIEW
 #include <qwidget.h>
-#include <cobject.h>
-#include <cpage.h>
+#include <kernel/cobject.h>
+#include <kernel/cpage.h>
 #include "types.h"
 class Q_ListView;
 class QListViewItem;

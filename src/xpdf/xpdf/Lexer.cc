@@ -16,8 +16,8 @@
 #include <stddef.h>
 #include <string.h>
 #include <ctype.h>
-#include "Lexer.h"
-#include "Error.h"
+#include "xpdf/Lexer.h"
+#include "xpdf/Error.h"
 
 //------------------------------------------------------------------------
 

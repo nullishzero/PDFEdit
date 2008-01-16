@@ -13,13 +13,13 @@
 #define _TEXTOUTPUT_H_
 
 // basic types
-#include "static.h"
+#include "kernel/static.h"
 
 // output builder
-#include "textoutputbuilder.h"
+#include "kernel/textoutputbuilder.h"
 
 // text output entities
-#include "textoutputentities.h"
+#include "kernel/textoutputentities.h"
 
 
 //=====================================================================================

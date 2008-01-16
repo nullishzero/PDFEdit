@@ -32,18 +32,18 @@
 #include "version.h"
 #include <string.h>
 #include <stdlib.h>
-#include <cpdf.h>
-#include <cannotation.h>
-#include <delinearizator.h> 
-#include <factories.h> 
-#include <pdfwriter.h> 
+#include <kernel/cpdf.h>
+#include <kernel/cannotation.h>
+#include <utils/delinearizator.h> 
+#include <kernel/factories.h> 
+#include <kernel/pdfwriter.h> 
 #include <qdir.h>
 #include <qfile.h>
 #include <qdatetime.h>
 #include <qsinterpreter.h>
 #include <utils/debug.h>
-#include <textoutput.h>
-#include <cpage.h>
+#include <kernel/textoutput.h>
+#include <kernel/cpage.h>
 
 namespace gui {
 

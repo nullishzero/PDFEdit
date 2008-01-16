@@ -16,8 +16,8 @@
 #endif
 
 #include <stdio.h>
-#include "gtypes.h"
-#include "OutputDev.h"
+#include "goo/gtypes.h"
+#include "xpdf/OutputDev.h"
 
 class GfxState;
 

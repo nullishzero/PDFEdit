@@ -16,7 +16,7 @@
 
 #include "boolproperty.h"
 #include <qcheckbox.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <qevent.h>
 
 namespace gui {

@@ -19,8 +19,8 @@
 #include "util.h"
 #include "pdfutil.h"
 #include "qsannotation.h"
-#include <cannotation.h>
-#include <cpage.h>
+#include <kernel/cannotation.h>
+#include <kernel/cpage.h>
 
 namespace gui {
 

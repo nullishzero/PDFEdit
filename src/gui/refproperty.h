@@ -11,7 +11,7 @@
 #define __REFPROPERTY_H__
 
 #include "property.h"
-#include <iproperty.h>
+#include <kernel/iproperty.h>
 class QResizeEvent;
 class QLineEdit;
 class QPushButton;

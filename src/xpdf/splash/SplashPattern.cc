@@ -10,9 +10,9 @@
 #pragma implementation
 #endif
 
-#include "SplashMath.h"
-#include "SplashScreen.h"
-#include "SplashPattern.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashScreen.h"
+#include "splash/SplashPattern.h"
 
 //------------------------------------------------------------------------
 // SplashPattern

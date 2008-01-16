@@ -11,9 +11,9 @@
 #endif
 
 #include <string.h>
-#include "gmem.h"
-#include "SplashErrorCodes.h"
-#include "SplashPath.h"
+#include "goo/gmem.h"
+#include "splash/SplashErrorCodes.h"
+#include "splash/SplashPath.h"
 
 //------------------------------------------------------------------------
 // SplashPath

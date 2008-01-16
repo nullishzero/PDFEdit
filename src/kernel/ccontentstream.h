@@ -13,14 +13,14 @@
 #define _CCONTENTSTREAM_H_
 
 // static includes
-#include "static.h"
+#include "kernel/static.h"
 
 //
-#include "cobject.h"
+#include "kernel/cobject.h"
 
 // PdfOperator and its iterators
-#include "pdfoperators.h"
-#include "pdfoperatorsiter.h"
+#include "kernel/pdfoperators.h"
+#include "kernel/pdfoperatorsiter.h"
 
 //==========================================================
 namespace pdfobjects {

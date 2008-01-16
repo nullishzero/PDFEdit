@@ -17,7 +17,7 @@
 #include "realproperty.h"
 #include <qvalidator.h>
 #include <qlineedit.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 
 namespace gui {
 

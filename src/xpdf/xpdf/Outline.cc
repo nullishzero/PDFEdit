@@ -12,12 +12,12 @@
 #pragma implementation
 #endif
 
-#include "gmem.h"
-#include "GString.h"
-#include "GList.h"
-#include "Link.h"
-#include "PDFDocEncoding.h"
-#include "Outline.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "xpdf/Link.h"
+#include "xpdf/PDFDocEncoding.h"
+#include "xpdf/Outline.h"
 
 //------------------------------------------------------------------------
 

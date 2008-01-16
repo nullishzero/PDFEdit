@@ -13,15 +13,15 @@
 #endif
 
 #include <stddef.h>
-#include "gmem.h"
-#include "Object.h"
-#include "XRef.h"
-#include "Array.h"
-#include "Dict.h"
-#include "Page.h"
-#include "Error.h"
-#include "Link.h"
-#include "Catalog.h"
+#include "goo/gmem.h"
+#include "xpdf/Object.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Array.h"
+#include "xpdf/Dict.h"
+#include "xpdf/Page.h"
+#include "xpdf/Error.h"
+#include "xpdf/Link.h"
+#include "xpdf/Catalog.h"
 
 //------------------------------------------------------------------------
 // Catalog

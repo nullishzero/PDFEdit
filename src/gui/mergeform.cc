@@ -22,7 +22,7 @@
 #include <qframe.h>
 #include QLISTBOX
 #include <qlayout.h>
-#include <cpdf.h>
+#include <kernel/cpdf.h>
 
 namespace gui {
 

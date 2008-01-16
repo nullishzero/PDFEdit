@@ -15,7 +15,7 @@
 #pragma interface
 #endif
 
-#include "Lexer.h"
+#include "xpdf/Lexer.h"
 
 //------------------------------------------------------------------------
 // Parser

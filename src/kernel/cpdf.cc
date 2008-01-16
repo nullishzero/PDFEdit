@@ -9,12 +9,12 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #include <errno.h>
-#include "static.h"
+#include "kernel/static.h"
 
-#include "cobject.h"
-#include "cpdf.h"
-#include "cpage.h"
-#include "factories.h"
+#include "kernel/cobject.h"
+#include "kernel/cpdf.h"
+#include "kernel/cpage.h"
+#include "kernel/factories.h"
 #include "utils/debug.h"
 
 using namespace boost;

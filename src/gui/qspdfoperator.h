@@ -12,7 +12,7 @@
 
 #include <qvariant.h>
 #include <qobject.h>
-#include <pdfoperators.h>
+#include <kernel/pdfoperators.h>
 #include "qscobject.h"
 class QString;
 

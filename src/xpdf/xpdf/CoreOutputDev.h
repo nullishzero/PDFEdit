@@ -13,8 +13,8 @@
 #pragma interface
 #endif
 
-#include "SplashTypes.h"
-#include "SplashOutputDev.h"
+#include "splash/SplashTypes.h"
+#include "xpdf/SplashOutputDev.h"
 
 class TextPage;
 

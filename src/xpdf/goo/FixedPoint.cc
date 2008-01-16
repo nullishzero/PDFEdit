@@ -16,7 +16,7 @@
 #pragma implementation
 #endif
 
-#include "FixedPoint.h"
+#include "goo/FixedPoint.h"
 
 #define ln2 ((FixedPoint)0.69314718)
 

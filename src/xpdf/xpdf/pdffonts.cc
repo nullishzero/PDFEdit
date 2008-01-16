@@ -12,17 +12,17 @@
 #include <stddef.h>
 #include <string.h>
 #include <math.h>
-#include "parseargs.h"
-#include "GString.h"
-#include "gmem.h"
-#include "GlobalParams.h"
-#include "Error.h"
-#include "Object.h"
-#include "Dict.h"
-#include "GfxFont.h"
-#include "Annot.h"
-#include "PDFDoc.h"
-#include "config.h"
+#include "goo/parseargs.h"
+#include "goo/GString.h"
+#include "goo/gmem.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Dict.h"
+#include "xpdf/GfxFont.h"
+#include "xpdf/Annot.h"
+#include "xpdf/PDFDoc.h"
+#include "xpdf/config.h"
 
 // NB: this must match the definition of GfxFontType in GfxFont.h.
 static char *fontTypeNames[] = {

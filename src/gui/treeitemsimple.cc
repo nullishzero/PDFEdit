@@ -12,7 +12,7 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "treeitemsimple.h"
 #include "util.h"
 #include "pdfutil.h"

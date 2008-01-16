@@ -10,7 +10,7 @@
 #ifndef __OPERATORHINT_H__
 #define __OPERATORHINT_H__
 
-#include <operatorhinter.h>
+#include <kernel/operatorhinter.h>
 
 class QString;
 

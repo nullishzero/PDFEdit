@@ -10,14 +10,14 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 // static
-#include "static.h"
+#include "kernel/static.h"
 // xpdf
-#include "xpdf.h"
+#include "kernel/xpdf.h"
 //
-#include "factories.h"
-#include "cobject.h"
-#include "cpdf.h"
-#include "cxref.h"
+#include "kernel/factories.h"
+#include "kernel/cobject.h"
+#include "kernel/cpdf.h"
+#include "kernel/cxref.h"
 
 
 // =====================================================================================

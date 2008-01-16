@@ -1,10 +1,3 @@
-/*
- * $RCSfile$
- *
- * $log: $
- *
- */
-
 //========================================================================
 //
 // Object.cc
@@ -23,12 +16,12 @@
 #endif
 
 #include <stddef.h>
-#include "Object.h"
-#include "Array.h"
-#include "Dict.h"
-#include "Error.h"
-#include "Stream.h"
-#include "XRef.h"
+#include "xpdf/Object.h"
+#include "xpdf/Array.h"
+#include "xpdf/Dict.h"
+#include "xpdf/Error.h"
+#include "xpdf/Stream.h"
+#include "xpdf/XRef.h"
 
 //------------------------------------------------------------------------
 // Object

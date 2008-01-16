@@ -12,9 +12,9 @@
 #define _STATEUPDATER_H_
 
 // static
-#include "static.h"
+#include "kernel/static.h"
 
-#include "pdfoperators.h"
+#include "kernel/pdfoperators.h"
 
 
 //==========================================================

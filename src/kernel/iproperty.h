@@ -12,10 +12,10 @@
 #define _IPROPERTY_H_
 
 // basic includes
-#include "static.h"
+#include "kernel/static.h"
 
 // property modes
-#include "modecontroller.h"
+#include "kernel/modecontroller.h"
 
 
 //=====================================================================================

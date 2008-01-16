@@ -10,12 +10,12 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 //
-#include "factories.h"
+#include "kernel/factories.h"
 
 // static includes
-#include "static.h"
+#include "kernel/static.h"
 //
-#include "cpage.h"
+#include "kernel/cpage.h"
 
 //=======================================
 namespace pdfobjects {

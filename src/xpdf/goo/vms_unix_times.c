@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <time.h>
-#include "vms_unix_time.h"
+#include "goo/vms_unix_time.h"
 
 /*
  *	gettimeofday(2) - Returns the current time

@@ -17,8 +17,8 @@
 #include "qsannotation.h"
 #include "qsdict.h"
 #include "qspage.h"
-#include <cannotation.h>
-#include <cpage.h>
+#include <kernel/cannotation.h>
+#include <kernel/cpage.h>
 #include "pdfutil.h"
 
 namespace gui {

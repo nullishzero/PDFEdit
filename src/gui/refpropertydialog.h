@@ -11,7 +11,7 @@
 #define __REFPROPERTYDIALOG_H__
 
 #include <qdialog.h>
-#include <iproperty.h>
+#include <kernel/iproperty.h>
 class QString;
 class QLabel;
 namespace pdfopbjects {

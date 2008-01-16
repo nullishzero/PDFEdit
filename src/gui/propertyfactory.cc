@@ -16,7 +16,7 @@
 */
 
 #include <qwidget.h>
-#include <iproperty.h>
+#include <kernel/iproperty.h>
 #include "propertyfactory.h"
 #include "stringproperty.h"
 #include "intproperty.h"

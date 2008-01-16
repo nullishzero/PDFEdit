@@ -16,8 +16,8 @@
 #endif
 
 #include <stdlib.h>
-#include "SplashTypes.h"
-#include "CharTypes.h"
+#include "splash/SplashTypes.h"
+#include "xpdf/CharTypes.h"
 
 class GString;
 class GList;

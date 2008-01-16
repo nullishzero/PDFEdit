@@ -14,8 +14,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "GList.h"
+#include "goo/gmem.h"
+#include "goo/GList.h"
 
 //------------------------------------------------------------------------
 // GList

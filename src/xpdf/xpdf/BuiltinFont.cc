@@ -14,9 +14,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "FontEncodingTables.h"
-#include "BuiltinFont.h"
+#include "goo/gmem.h"
+#include "xpdf/FontEncodingTables.h"
+#include "xpdf/BuiltinFont.h"
 
 //------------------------------------------------------------------------
 

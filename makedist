@@ -1,11 +1,35 @@
 #!/bin/sh
-#This is script that will create distribution tarballs
+# This is script that will create distribution tarballs
 
-#This file should be run on exported directory, not directly in CVS tree
-#It is expected that the directory in which the sources are exported is named 'pdfedit'
+# This file should be run on exported directory, not directly in CVS tree
+# It is expected that the directory in which the sources are exported is named 
+# 'pdfedit'
 
-#Make documentation before making tarball
-(cd doc && make doc_dist)
+AUTOCONF=`which autoconf`
+# Checks for configure script and generates it if either
+# existing one is older than configure.in or it doesn't exist at all
+if [ ! -x configure -o configure -ot configure.in ]
+then
+	if [ ! -x $AUTOCONF ]
+	then
+		echo Autoconf not found.
+		exit 1
+	fi
+	echo Generating configure script
+	RESULT=OK
+	$AUTOCONF || RESULT=FAILED
+	echo $RESULT
+	if [ "$RESULT" = "FAILED" ]
+	then
+		echo Unable to generate configure script
+		exit 1
+	fi
+fi
+
+# Make documentation before making tarball
+# FIXME can we get rid of this? It can be problem when we make without
+# configuration
+#(cd doc && make doc_dist)
 #Translate all .ts files to .qm
 (cd src/gui/lang && lrelease *.ts)
 #Get version number
@@ -14,6 +38,11 @@ VERSION=`./getversion`
 rm -f ../pdfedit-$VERSION
 ln -s pdfedit ../pdfedit-$VERSION
 cd ..
+
+# generates online help
+pdfedit-$VERSION/tools/generate_online_help.sh pdfedit-$VERSION/doc pdfedit-$VERSION/src/gui
+
+# creates distribution tarball
 tar -czhf pdfedit-$VERSION.tar.gz pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude
 echo pdfedit-$VERSION.tar.gz created
 tar -cjhf pdfedit-$VERSION.tar.bz2 pdfedit-$VERSION/* --exclude-from=pdfedit/dist-exclude

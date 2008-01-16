@@ -11,7 +11,7 @@
 #define __QSIMPORTER_H__
 
 #include <qobject.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 class QSProject;
 class QSInterpreter;
 class QString;

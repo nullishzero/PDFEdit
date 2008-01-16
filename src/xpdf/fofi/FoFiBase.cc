@@ -13,8 +13,8 @@
 #endif
 
 #include <stdio.h>
-#include "gmem.h"
-#include "FoFiBase.h"
+#include "goo/gmem.h"
+#include "fofi/FoFiBase.h"
 
 //------------------------------------------------------------------------
 // FoFiBase

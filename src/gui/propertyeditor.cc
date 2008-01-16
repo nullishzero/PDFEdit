@@ -17,7 +17,7 @@
 #include "propertyeditor.h"
 #include <utils/debug.h>
 #include "util.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <qapplication.h>
 #include "main.h"
 #include "propertyfactory.h"

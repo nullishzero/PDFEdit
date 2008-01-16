@@ -10,9 +10,9 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 // static
-#include "static.h"
+#include "kernel/static.h"
 //
-#include "cinlineimage.h"
+#include "kernel/cinlineimage.h"
 
 // =====================================================================================
 namespace pdfobjects {

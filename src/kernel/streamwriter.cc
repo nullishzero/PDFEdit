@@ -11,9 +11,9 @@
 
 #include <stdio.h>
 #include <errno.h>
-#include "static.h"
+#include "kernel/static.h"
 #include "utils/debug.h"
-#include "streamwriter.h"
+#include "kernel/streamwriter.h"
 
 //TODO use stream encoding
 

@@ -18,7 +18,7 @@
 #include "pdfutil.h"
 #include "qsiproperty.h"
 #include "util.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <qsimporter.h>
 #include <qstring.h>
 #include QLIST

@@ -12,10 +12,10 @@
 #define _CDICT_H
 
 // all basic includes
-#include "static.h"
-#include "iproperty.h"
-#include "cobjectsimple.h"
-#include "carray.h"
+#include "kernel/static.h"
+#include "kernel/iproperty.h"
+#include "kernel/cobjectsimple.h"
+#include "kernel/carray.h"
 
 
 //=====================================================================================

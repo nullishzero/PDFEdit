@@ -13,10 +13,10 @@
 #endif
 
 #include <stddef.h>
-#include "Object.h"
-#include "Stream.h"
-#include "GfxState.h"
-#include "OutputDev.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/OutputDev.h"
 
 //------------------------------------------------------------------------
 // OutputDev

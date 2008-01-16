@@ -17,7 +17,7 @@
 #include "qscontentstream.h"
 #include "qspdfoperator.h"
 #include "qspdfoperatoriterator.h"
-#include <pdfoperators.h>
+#include <kernel/pdfoperators.h>
 #include "util.h"
 
 namespace gui {

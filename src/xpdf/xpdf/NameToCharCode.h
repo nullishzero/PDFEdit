@@ -15,7 +15,7 @@
 #pragma interface
 #endif
 
-#include "CharTypes.h"
+#include "xpdf/CharTypes.h"
 
 struct NameToCharCodeEntry;
 

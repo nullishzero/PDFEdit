@@ -9,7 +9,7 @@
 #ifndef BUILTINFONTTABLES_H
 #define BUILTINFONTTABLES_H
 
-#include "BuiltinFont.h"
+#include "xpdf/BuiltinFont.h"
 
 #define nBuiltinFonts      14
 #define nBuiltinFontSubsts 12

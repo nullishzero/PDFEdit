@@ -16,10 +16,10 @@
 #endif
 
 #include <stddef.h>
-#include "config.h"
-#include "Object.h"
-#include "GlobalParams.h"
-#include "OutputDev.h"
+#include "xpdf/config.h"
+#include "xpdf/Object.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/OutputDev.h"
 
 class Function;
 class GfxPath;

@@ -9,7 +9,7 @@
 //========================================================================
 
 #include <aconf.h>
-#include "gmem.h"
+#include "goo/gmem.h"
 
 #ifdef DEBUG_MEM
 

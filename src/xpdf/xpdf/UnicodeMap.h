@@ -17,11 +17,11 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "CharTypes.h"
+#include "goo/gtypes.h"
+#include "xpdf/CharTypes.h"
 
 #if MULTITHREADED
-#include "GMutex.h"
+#include "goo/GMutex.h"
 #endif
 
 class GString;

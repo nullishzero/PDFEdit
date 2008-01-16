@@ -15,7 +15,7 @@
 #include <utils/debug.h>
 #include "revisiontool.h"
 #include <qstring.h>
-#include <cpdf.h>
+#include <kernel/cpdf.h>
 #include <qcombobox.h>
 #include "settings.h"
 #include <qevent.h>

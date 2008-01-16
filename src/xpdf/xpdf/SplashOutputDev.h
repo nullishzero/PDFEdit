@@ -15,11 +15,11 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "SplashTypes.h"
-#include "config.h"
-#include "OutputDev.h"
-#include "GfxState.h"
+#include "goo/gtypes.h"
+#include "splash/SplashTypes.h"
+#include "xpdf/config.h"
+#include "xpdf/OutputDev.h"
+#include "xpdf/GfxState.h"
 
 class Gfx8BitFont;
 class SplashBitmap;

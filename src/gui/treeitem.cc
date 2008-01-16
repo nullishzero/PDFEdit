@@ -26,7 +26,7 @@
 #include "pdfutil.h"
 #include "util.h"
 #include "qsiproperty.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 
 namespace gui {
 

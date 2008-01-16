@@ -12,19 +12,19 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "SplashErrorCodes.h"
-#include "SplashMath.h"
-#include "SplashBitmap.h"
-#include "SplashState.h"
-#include "SplashPath.h"
-#include "SplashXPath.h"
-#include "SplashXPathScanner.h"
-#include "SplashPattern.h"
-#include "SplashScreen.h"
-#include "SplashFont.h"
-#include "SplashGlyphBitmap.h"
-#include "Splash.h"
+#include "goo/gmem.h"
+#include "splash/SplashErrorCodes.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashBitmap.h"
+#include "splash/SplashState.h"
+#include "splash/SplashPath.h"
+#include "splash/SplashXPath.h"
+#include "splash/SplashXPathScanner.h"
+#include "splash/SplashPattern.h"
+#include "splash/SplashScreen.h"
+#include "splash/SplashFont.h"
+#include "splash/SplashGlyphBitmap.h"
+#include "splash/Splash.h"
 
 //------------------------------------------------------------------------
 

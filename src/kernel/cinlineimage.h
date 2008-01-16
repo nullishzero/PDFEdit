@@ -14,10 +14,10 @@
 
 
 // all basic includes
-#include "static.h"
+#include "kernel/static.h"
 
 // 
-#include "cobject.h"
+#include "kernel/cobject.h"
 
 
 //=====================================================================================

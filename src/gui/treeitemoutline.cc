@@ -14,8 +14,8 @@
 
 #include "treeitemoutline.h"
 #include "qtcompat.h"
-#include <iproperty.h>
-#include <coutline.h>
+#include <kernel/iproperty.h>
+#include <kernel/coutline.h>
 #include "util.h"
 
 namespace gui {

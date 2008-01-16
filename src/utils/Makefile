@@ -2,12 +2,14 @@
 # Make file for utils static library
 #
 ################################################################################
+# includes basic building rules
+# REL_ADDR has to be defined, because Makefile.rules refers 
+# to the Makefile.flags
+REL_ADDR = ../../
+include $(REL_ADDR)/Makefile.rules
 
-#Makefile flags
-include ../Makefile.flags
-
-#extra settings from top-level makefile
-include ../../Makefile.flags
+C_FLAGS += $(EXTRA_UTILS_CFLAGS)
+CXX_FLAGS += $(EXTRA_UTILS_CXXFLAGS)
 
 # Source files for library
 SOURCES=debug.cc \
@@ -19,25 +21,18 @@ BINS=debug.o \
      delinearizator.o \
      confparser.o
 
-AR       = ar cqs
-DEL_FILE = rm -f
-CXX      = g++
-LEX      = flex
-YACC     = yacc
-CXXFLAGS = -pipe -Wall -W -Wconversion -Wcast-qual -Wwrite-strings -ansi -pedantic -Wno-unused-variable -Wunused-function -D_REENTRANT $(UTIL_CXXFLAGS) $(EXTRA_CXXFLAGS)
-INCPATH	 = -I./ -I../ -I../xpdf/ -I../xpdf/xpdf -I../xpdf/goo -I../xpdf/splash -I../xpdf/fofi 
+# FIXME use LIBPREFIX
+TARGET = libutils.a
 
-
-.SUFFIXES: .o .cc
-
-.cc.o:
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o $@ $<
-
-libutils.a: $(BINS)
-	$(AR) libutils.a $(BINS)
+all: $(TARGET)
+$(TARGET): $(BINS)
+	-$(DEL_FILE) $(TARGET)
+	$(AR) $(TARGET) $(BINS)
+	$(RANLIB) $(TARGET)
 
 .PHONY: clean distclean
 clean:
-	$(DEL_FILE) $(BINS) libutils.a
+	$(DEL_FILE) $(BINS)
 
 distclean: clean
+	$(DEL_FILE) $(TARGET)

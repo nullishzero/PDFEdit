@@ -8,14 +8,14 @@
 #define SPLASHTYPES_H
 
 #include <aconf.h>
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 //------------------------------------------------------------------------
 // coordinates
 //------------------------------------------------------------------------
 
 #if USE_FIXEDPOINT
-#include "FixedPoint.h"
+#include "goo/FixedPoint.h"
 typedef FixedPoint SplashCoord;
 #else
 typedef double SplashCoord;

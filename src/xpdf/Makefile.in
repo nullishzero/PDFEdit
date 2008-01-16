@@ -6,54 +6,33 @@
 #
 #========================================================================
 
-SHELL = /bin/sh
+# includes basic building rules
+# REL_ADDR has to be defined, because Makefile.rules refers 
+# to the Makefile.flags
+REL_ADDR = ../../
+include $(REL_ADDR)/Makefile.rules
 
-DESTDIR =
-
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-srcdir = @srcdir@
-
-EXE = @EXE@
-
-all:
-	cd goo; $(MAKE)
-	cd @UP_DIR@fofi; $(MAKE)
-	cd @UP_DIR@splash; $(MAKE)
-	cd @UP_DIR@xpdf; $(MAKE) @XPDF_TARGET@
-
+all: libxpdf
 libxpdf:
-	cd goo; $(MAKE)
-	cd @UP_DIR@fofi; $(MAKE)
-	cd @UP_DIR@splash; $(MAKE)
-	cd @UP_DIR@xpdf; $(MAKE) libxpdf
-
-all-no-x:
-	cd goo; $(MAKE)
-	cd @UP_DIR@fofi; $(MAKE)
-	cd @UP_DIR@xpdf; $(MAKE) all-no-x
-
-dummy:
+	cd goo && $(MAKE)
+	cd fofi && $(MAKE)
+	cd splash && $(MAKE)
+	cd xpdf && $(MAKE) libxpdf
 
 clean:
-	-cd goo; $(MAKE) clean
-	-cd @UP_DIR@fofi; $(MAKE) clean
-	-cd @UP_DIR@splash; $(MAKE) clean
-	-cd @UP_DIR@xpdf; $(MAKE) clean
+	-cd goo && $(MAKE) clean || true
+	-cd fofi && $(MAKE) clean || true
+	-cd splash && $(MAKE) clean || true
+	-cd xpdf && $(MAKE) clean
 
 distclean: clean
-	rm -f config.log config.status config.cache
-	rm -f aconf.h
-	rm -f Makefile goo/Makefile xpdf/Makefile fofi/Makefile splash/Makefile
-	rm -f goo/Makefile.dep fofi/Makefile.dep splash/Makefile.dep xpdf/Makefile.dep
-	rm -f goo/Makefile.in.bak fofi/Makefile.in.bak splash/Makefile.in.bak xpdf/Makefile.in.bak
-	touch goo/Makefile.dep
-	touch fofi/Makefile.dep
-	touch splash/Makefile.dep
-	touch xpdf/Makefile.dep
+	$(DEL_FILE) aconf.h || true
+	$(DEL_FILE) Makefile goo/Makefile xpdf/Makefile fofi/Makefile splash/Makefile || true
+	$(DEL_FILE) goo/Makefile.dep fofi/Makefile.dep splash/Makefile.dep xpdf/Makefile.dep || true
+	$(DEL_FILE) goo/Makefile.in.bak fofi/Makefile.in.bak splash/Makefile.in.bak xpdf/Makefile.in.bak || true
 
 depend:
-	cd goo; $(MAKE) depend
-	cd @UP_DIR@fofi; $(MAKE) depend
-	cd @UP_DIR@splash; $(MAKE) depend
-	cd @UP_DIR@xpdf; $(MAKE) depend
+	cd goo && $(MAKE) Makefile.dep
+	cd fofi && $(MAKE) Makefile.dep
+	cd splash && $(MAKE) Makefile.dep
+	cd xpdf && $(MAKE) Makefile.dep

@@ -11,7 +11,7 @@
 #define __PROPERTY_H__
 
 #include <qwidget.h>
-#include <modecontroller.h>
+#include <kernel/modecontroller.h>
 
 class QString;
 class QLabel;

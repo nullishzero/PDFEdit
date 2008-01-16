@@ -3,16 +3,20 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 define([PDFEDIT_VERSION], patsubst(esyscmd(./getversion),[]))
-AC_INIT([PDFedit], PDFEDIT_VERSION, [BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
+AC_INIT([PDFedit], PDFEDIT_VERSION, 
+	[BUGTRACKER - http://pdfedit.petricek.net/bt/ ],[pdfedit])
 AC_CONFIG_SRCDIR([src/gui/base.cc])
-AC_CONFIG_HEADER([src/utils/aconf.h])
+dnl FIXME what do we use src/utils/aconf.h for? No includes according to
+dnl grep. Can we remove it?
+AC_CONFIG_HEADERS(src/utils/aconf.h src/xpdf/aconf.h)
+
 m4_include([config/env.m4])
 m4_include([config/boost_base.m4])
 m4_include([config/boost_iostreams.m4])
+m4_include([config/cppunit.m4])
+m4_include([config/freetype2.m4])
 
-dnl check for QTDIR
-CHK_ENV_VAR([QTDIR],[QTDIR environment variable must be set])
-CHK_ENV_VAR_NOTICE([QMAKESPEC],[QMAKESPEC environment variable is not set - default will be used.])
+m4_include([config/xpdf.m4])
 
 dnl Checks for programs. (c++ compiler,...)
 AC_LANG_CPLUSPLUS
@@ -26,6 +30,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([limits.h stdlib.h string.h unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
+dnl TODO where do we use output?
 AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE
@@ -35,25 +40,86 @@ AC_STRUCT_TM
 dnl Checks for boost and boost iostreams
 AX_BOOST_BASE
 AX_BOOST_IOSTREAMS
+if test "x$ax_cv_boost_iostreams" = "xno" 
+then
+	AC_MSG_ERROR(Boost IOStreams is required by PDFedit)
+fi
 
-dnl Release/debug mode. Debug is default (for now)
+AC_ARG_ENABLE(stack-protector,
+	      [AS_HELP_STRING([--enable-stack-protector],
+			      [Turn on stack protector (disabled by default)])],
+			      ,
+			      [enable_stack_protector=no])
+AC_MSG_CHECKING(whether we use stack protector)
+if test "x$enable_stack_protector" != "xno"
+then
+	STACK_PROTECTOR_FLAGS="-fstack-protector"
+	AC_MSG_RESULT(yes)
+else
+	AC_MSG_RESULT(no)
+	STACK_PROTECTOR_FLAGS=""
+fi
+AC_SUBST(STACK_PROTECTOR_FLAGS)
+
 AC_ARG_ENABLE(release,
-[AS_HELP_STRING([--enable-release],[Turn on compiler optimizations, turn off debugging symbols (enabled by default, disable with --disable-release)])],,[enable_release=yes])
+	      [AS_HELP_STRING([--enable-release],
+			      [Turn on compiler optimizations, turn off 
+			       debugging symbols (enabled by default, disable 
+						  with --disable-release)])],
+			      ,
+			      [enable_release=yes])
 AC_SUBST(enable_release)
+
+dnl if we want release then optimalization is turned on and we can optionally 
+dnl add debug information. Otherwise we will turn off optimizations and allways
+dnl get debug info
+AC_ARG_ENABLE(debug-info,
+	      [AS_HELP_STRING([--enable-debug-info],
+			      [Adds debug information (used only for release and
+			       it is disabled by default)])],
+			      ,
+			      [enable_debug_info=no])
+AC_MSG_CHECKING(whether we are releasing)
+E_RELEASE="no"
+if test "x$enable_release" = "xyes"; then
+	AC_MSG_RESULT(true)
+	OPTIM="$OPTIM -O2"
+	AC_MSG_CHECKING(whether debug info is included)
+	if test "x$enable_debug_info" = "xyes"
+	then
+		DEBUG="$DEBUG -g"
+		AC_MSG_RESULT(yes)
+	else
+		AC_MSG_RESULT(no)
+	fi
+	E_RELEASE="yes"
+else
+	AC_MSG_RESULT(no)
+	OPTIM="$OPTIM -O0"
+	dnl maybe asserts and stuff like that?
+	DEBUG="$DEBUG -g -DDEBUG"
+
+fi
+AC_SUBST(OPTIM)
+AC_SUBST(DEBUG)
+AC_SUBST(E_RELEASE)
 
 dnl Enable observer debugging (disabled by default
 AC_ARG_ENABLE(observer-debug,
-[AS_HELP_STRING([--enable-observer-debug],[Turn on observer debugging (disabled by default)])],,[enable_observer_debug=no])
+[AS_HELP_STRING([--enable-observer-debug],
+		[Turn on observer debugging (disabled by default)])],
+		,
+		[enable_observer_debug=no])
 AC_MSG_CHECKING(whether to enable observer debugging)
 if test "x$enable_observer_debug" = "xyes"; then
- EXTRA_CFLAGS="$EXTRA_CFLAGS -DOBSERVER_DEBUG"
- EXTRA_CXXFLAGS="$EXTRA_CXXFLAGS -DOBSERVER_DEBUG"
- AC_MSG_RESULT(yes)
+	OBSERVER_CFLAGS="$OBSERVER_CFLAGS -DOBSERVER_DEBUG"
+	OBSERVER_CXXFLAGS="$OBSERVER_CXXFLAGS -DOBSERVER_DEBUG"
+	AC_MSG_RESULT(yes)
 else
- AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 fi
-AC_SUBST(EXTRA_CFLAGS)
-AC_SUBST(EXTRA_CXXFLAGS)
+AC_SUBST(OBSERVER_CFLAGS)
+AC_SUBST(OBSERVER_CXXFLAGS)
 
 dnl Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
@@ -62,5 +128,312 @@ AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([atexit floor ftruncate localtime_r memset mkdir strdup strerror strpbrk strstr])
 
+dnl XPdf code requires >=2.0.5
+dnl TODO check for version
+AC_CHECK_FT2
+
+smr_CHECK_LIB(t1, t1, [Type 1 font rasterizer], 
+              T1_InitLib, t1lib.h,
+              -lm, $X_CFLAGS)
+AC_SUBST(t1_LIBS)
+AC_SUBST(t1_CFLAGS)
+
+dnl Sets GUI_TARGET and qt specific stuff
+AC_ARG_ENABLE(gui,
+	      [AS_HELP_STRING([--enable-gui],
+			      [Builds gui frontend (enabled by default, use 
+			       --disable-gui to disable it)])],
+			      ,
+			      [enable_gui=yes])
+
+dnl TODO remove - testing for qt envoronment
+AC_ARG_ENABLE(qt3,
+	      [AS_HELP_STRING([--enable-qt3],
+			      [Uses Qt3 infrastructure (use 
+			       --disable-qt3 to use QT4 instead)])],
+			      ,
+			      [enable_qt3=yes])
+
+dnl If we have qmake in some strange place, try to use explicit 
+dnl directory
+AC_ARG_WITH([qmake-dir],
+	    AS_HELP_STRING([--with-qmake-dir=DIR], 
+			   [Use explicit directory for qmake binary 
+			    (only for platforms where qmake is not 
+			     installed under QTDIR tree).]
+			   ),
+			   [
+				qmake_dir="$withval"
+			   ],
+			   [qmake_dir=""]
+	    )
+
+AC_MSG_CHECKING(whether we want to build PDFedit gui)
+dnl Check QT environment if we want GUI
+dnl QSA_DIR is set to qt3 by default. Note that this is important because
+dnl we need at least some qsa directory for src/Makefile and its clean target
+QSA_DIR="$QSA_DIR qsa"
+INSTALL_TARGET="$INSTALL_TARGET install-no"
+UNINSTALL_TARGET="$UNINSTALL_TARGET uninstall-no"
+if test "x$enable_gui" = "xyes"; then
+	AC_MSG_RESULT(yes)
+	GUI_TARGET="$GUI_TARGET pdfedit"
+	INSTALL_TARGET=""
+	INSTALL_TARGET="$INSTALL_TARGET install-gui"
+	UNINSTALL_TARGET=""
+	UNINSTALL_TARGET="$UNINSTALL_TARGET uninstall-gui"
+
+	dnl QTDIR is mandatory
+	CHK_ENV_VAR([QTDIR],
+		    [QTDIR environment variable must be set])
+	dnl QMAKESPEC is optional but recomended
+	CHK_ENV_VAR_NOTICE([QMAKESPEC],
+			   [QMAKESPEC environment variable is not set 
+			    - default will be used.])
+
+	AC_MSG_CHECKING(checking for QT library)
+	if test "x$enable_qt3" = "xyes"
+	then
+	{
+		qmake_bin=""
+		extra_bins=""
+		if test ! -z $qmake_dir
+		then
+			extra_bins="${qmake_dir}/qmake ${qmake_dir}/qmake-qt3"
+		fi
+		dnl TODO create macro for detecting
+		for i in ${extra_bins}		\
+			${QTDIR}/bin/qmake 	\
+			/usr/bin/qmake-qt3	
+		do
+			if test -x $i
+			then
+				qmake_bin=$i
+				break
+			fi
+		done
+		if test -z ${qmake_bin}
+		then
+			AC_MSG_ERROR(unable to find qmake for QT3)
+		fi
+		QMAKE="$QMAKE ${qmake_bin}"
+		AC_MSG_RESULT(Using QT3 with qmake=${qmake_bin})
+	}
+	else
+		AC_MSG_ERROR(Using QT4 - not supported at the moment)
+		QSA_DIR="$QSA_DIR qsa-qt4"
+	fi	
+	AC_SUBST(QMAKE)
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(GUI_TARGET)
+AC_SUBST(QSA_DIR)
+AC_SUBST(INSTALL_TARGET)
+AC_SUBST(UNINSTALL_TARGET)
+
+dnl TODO handle also dev package (exclusive with gui case)
+
+dnl Sets TESTS_TARGET and cppunit stuff, if we want to have 
+dnl also kernel tests
+AC_ARG_ENABLE(kernel-tests,
+	      [AS_HELP_STRING([--enable-kernel-tests],
+			      [Compiles also kernel tests 
+			       (disabled by default)])],
+			      ,
+			      [enable_kernel_tests=no])
+AC_MSG_CHECKING(whether we want to compile kernel tests too)
+if test "x$enable_kernel_tests" = "xyes"; then
+	AC_MSG_RESULT(yes)
+	TESTS_TARGET="$TESTS_TARGET kernel_tests"
+	dnl FIXME check the version - it is required by macro - I have used some
+	dnl random one
+	AM_PATH_CPPUNIT(1.10.0)
+	if test "x${no_cppunit}" != "x"
+	then
+		AC_MSG_ERROR(Unable to find CPPUnit required by --enable-kernel-tests)
+	fi
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(TESTS_TARGET)
+
+AC_ARG_ENABLE(doxygen-doc,
+	      [AS_HELP_STRING([--enable-doxygen-doc],
+			      [Creates doxygen documentation (extracted from sources)])],
+			      ,
+			      [enable_doxygen_doc=no])
+AC_MSG_CHECKING(whether we want to build doxygen documentation)
+if test "x$enable_doxygen_doc" = "xyes"
+then
+	AC_MSG_RESULT(yes)
+	AC_MSG_CHECKING(checking for doxygen binary)
+	doxygen_bin=""
+	dnl TODO create macro for detecting
+	for i in /usr/bin/ \
+		/usr/local/bin/
+	do
+		if test -x $i/doxygen
+		then
+			doxygen_bin=$i/doxygen
+			break
+		fi
+	done
+	if test -z ${doxygen_bin}
+	then
+		AC_MSG_ERROR(unable to find doxygen binary)
+	fi
+	AC_MSG_RESULT(found at ${doxygen_bin})
+	DOXYGEN_BIN="$DOXYGEN_BIN ${doxygen_bin}"
+	DOXYGEN_TARGET="$DOXYGEN_TARGET doc_doxygen"
+	DOXYGEN_INSTALL_TARGET="$DOXYGEN_INSTALL_TARGET doc_doxygen_install"
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(DOXYGEN_TARGET)
+AC_SUBST(DOXYGEN_INSTALL_TARGET)
+AC_SUBST(DOXYGEN_BIN)
+
+
+AC_ARG_ENABLE(advanced-doc,
+	      [AS_HELP_STRING([--enable-advanced-doc],
+			      [Creates advanced documentation (advanced 
+			       programming and design description)])],
+			      ,
+			      [enable_advanced_doc=no])
+AC_MSG_CHECKING(whether we want to build advanced documentation)
+if test "x$enable_advanced_doc" = "xyes"
+then
+	AC_MSG_RESULT(yes)
+	AC_MSG_CHECKING(checking for xsltproc binary)
+	advanced_bin=""
+	dnl TODO create macro for detecting
+	for i in /usr/bin/ \
+		/usr/local/bin/
+	do
+		if test -x $i/xsltproc
+		then
+			advanced_bin=$i/xsltproc
+			break
+		fi
+	done
+	if test -z ${advanced_bin}
+	then
+		AC_MSG_ERROR(unable to find xsltproc binary)
+	fi
+	AC_MSG_RESULT(found at ${advanced_bin})
+
+	dnl TODO create macro for detecting
+	AC_MSG_CHECKING(Checking docbook xsl)
+	docbook_xsl=""
+	for i in /usr/local/share/xsl/docbook/			\
+		/usr/share/xsl/docbook/				\
+		/usr/share/sgml/docbook/xsl-stylesheets*/	\
+		/usr/local/share/sgml/docbook/xsl-stylesheets*/	\
+		/usr/share/xml/docbook/stylesheet/nwalsh/	\
+		/usr/share/docbook-xsl/				\
+		/usr/share/xml/docbook/stylesheet/nwalsh/html/	\
+		/usr/share/xml/docbook/stylesheet/nwalsh*/*/html/
+	do
+		if test -f $i/docbook.xsl
+		then
+			docbook_xsl=$i/docbook.xsl
+			break
+		fi
+	done
+	if test -z ${docbook_xsl}
+	then
+		AC_MSG_ERROR(unable to find)
+	fi
+	AC_MSG_RESULT(found at ${docbook_xsl})
+
+	ADVANCED_TARGET="$ADVANCED_TARGET doc_advanced"
+	ADVANCED_INSTALL_TARGET="$ADVANCED_INSTALL_TARGET doc_advanced_install"
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(ADVANCED_TARGET)
+AC_SUBST(ADVANCED_INSTALL_TARGET)
+
+AC_ARG_WITH([root-dir],
+	    AS_HELP_STRING([--with-root-dir=DIR], 
+			   [Use different installation root (path to prepend before the prefix, empty by default).]
+			   ),
+			   [
+				root_dir="$withval/"
+			   ],
+			   [root_dir=""]
+	    )
+AC_SUBST(root_dir)
+
 AC_CONFIG_FILES([Makefile Makefile.flags])
-AC_OUTPUT([config.pro.in],[./post_configure])
+
+dnl
+dnl XPDF specific stuff taken from the original xpdf distribution
+dnl
+
+AC_PATH_XTRA
+AC_HEADER_DIRENT
+
+dnl ##### Switch over to C++.  This will make the checks below a little
+dnl ##### bit stricter (requiring function prototypes in include files).
+dnl ##### (99% of xpdf is written in C++.)
+AC_LANG_CPLUSPLUS
+
+dnl ##### Look for rewinddir.
+AC_CHECK_FUNCS(rewinddir)
+if test $ac_cv_func_rewinddir = no; then
+  AC_CHECK_LIB(cposix, rewinddir)
+fi
+
+dnl ##### Checks for library functions.
+AC_CHECK_FUNCS(popen)
+dnl # This should use 'AC_CHECK_FUNCS(mkstemp)' but that fails if
+dnl # the mkstemp exists in the library but isn't declared in the
+dnl # include file (e.g., in cygwin 1.1.2).
+AC_CACHE_CHECK([for mkstemp],
+xpdf_cv_func_mkstemp,
+[AC_TRY_LINK([#include <stdlib.h>
+#include <unistd.h>],
+[mkstemp("foo");],
+xpdf_cv_func_mkstemp=yes, xpdf_cv_func_mkstemp=no)])
+if test "$xpdf_cv_func_mkstemp" = yes; then
+  AC_DEFINE(HAVE_MKSTEMP)
+fi
+dnl # Check for mkstemps, just like mkstemp.
+AC_CACHE_CHECK([for mkstemps],
+xpdf_cv_func_mkstemps,
+[AC_TRY_LINK([#include <stdlib.h>
+#include <unistd.h>],
+[mkstemps("foo", 0);],
+xpdf_cv_func_mkstemps=yes, xpdf_cv_func_mkstemps=no)])
+if test "$xpdf_cv_func_mkstemps" = yes; then
+  AC_DEFINE(HAVE_MKSTEMPS)
+fi
+
+dnl ##### Back to C for the library tests.
+AC_LANG_C
+
+dnl ##### Check for fseeko/ftello or fseek64/ftell64
+dnl The LARGEFILE and FSEEKO macros have to be called in C, not C++, mode.
+AC_SYS_LARGEFILE
+AC_FUNC_FSEEKO
+AC_CHECK_FUNCS(fseek64, xpdf_cv_func_fseek64=yes, xpdf_cv_func_fseek64=no)
+AC_CHECK_FUNCS(ftell64, xpdf_cv_func_ftell64=yes, xpdf_cv_func_ftell64=no)
+if test "$xpdf_cv_func_fseek64" = yes -a "$xpdf_cv_func_ftell64" = yes; then
+  AC_DEFINE(HAVE_FSEEK64)
+fi
+
+if test "x${t1_LIBS}" != "x" 
+then
+	AC_DEFINE(HAVE_T1LIB_H)
+fi
+
+if test "x${FT2_LIBS}" != "x"
+then
+  AC_DEFINE(HAVE_FREETYPE_FREETYPE_H)
+  AC_DEFINE(HAVE_SPLASH)
+fi
+
+dnl ##### Write the makefiles.
+AC_OUTPUT(src/xpdf/Makefile src/xpdf/goo/Makefile src/xpdf/fofi/Makefile src/xpdf/splash/Makefile src/xpdf/xpdf/Makefile )

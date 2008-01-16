@@ -15,9 +15,9 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "GfxState.h"
-#include "OutputDev.h"
+#include "goo/gtypes.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/OutputDev.h"
 
 //------------------------------------------------------------------------
 // PreScanOutputDev

@@ -11,8 +11,8 @@
 #define __TREEITEMOBSERVER_H__
 
 #include "treeitemgenericobserver.h"
-#include <iproperty.h>
-#include <observer.h>
+#include <kernel/iproperty.h>
+#include <utils/observer.h>
 
 namespace gui {
 

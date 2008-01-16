@@ -13,10 +13,10 @@
 #endif
 
 #include <math.h>
-#include "GlobalParams.h"
-#include "GfxFont.h"
-#include "Link.h"
-#include "PreScanOutputDev.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/GfxFont.h"
+#include "xpdf/Link.h"
+#include "xpdf/PreScanOutputDev.h"
 
 //------------------------------------------------------------------------
 // PreScanOutputDev

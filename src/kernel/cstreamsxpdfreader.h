@@ -12,12 +12,12 @@
 #define _CSTREAMSXPDFREADER_H
 
 // all basic includes
-#include "static.h"
-#include "iproperty.h"
+#include "kernel/static.h"
+#include "kernel/iproperty.h"
 // Filters
-#include "cstream.h"
-#include "cobjecthelpers.h"
-#include "xpdf.h"
+#include "kernel/cstream.h"
+#include "kernel/cobjecthelpers.h"
+#include "kernel/xpdf.h"
 
 /** 
  * Content streams can be separated in crazy

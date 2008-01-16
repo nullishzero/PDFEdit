@@ -12,9 +12,9 @@
 #pragma implementation
 #endif
 
-#include "Object.h"
-#include "Stream.h"
-#include "JArithmeticDecoder.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
+#include "xpdf/JArithmeticDecoder.h"
 
 //------------------------------------------------------------------------
 // JArithmeticDecoderStates

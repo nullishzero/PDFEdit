@@ -12,7 +12,7 @@
 
 #include "qscobject.h"
 #include <stdlib.h>
-#include <pdfoperators.h>
+#include <kernel/pdfoperators.h>
 
 namespace gui {
 

@@ -15,7 +15,7 @@
 
 #include "intproperty.h"
 #include <qvalidator.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <qlineedit.h>
 
 namespace gui {

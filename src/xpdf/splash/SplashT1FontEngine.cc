@@ -18,11 +18,11 @@
 #  include <unistd.h>
 #endif
 #include <t1lib.h>
-#include "GString.h"
-#include "gfile.h"
-#include "FoFiType1C.h"
-#include "SplashT1FontFile.h"
-#include "SplashT1FontEngine.h"
+#include "goo/GString.h"
+#include "goo/gfile.h"
+#include "fofi/FoFiType1C.h"
+#include "splash/SplashT1FontFile.h"
+#include "splash/SplashT1FontEngine.h"
 
 #ifdef VMS
 #if (__VMS_VER < 70000000)

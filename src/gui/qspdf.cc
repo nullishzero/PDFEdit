@@ -20,8 +20,8 @@
 #include <stdio.h>
 #include "qspage.h"
 #include "qsdict.h"
-#include <cobject.h>
-#include <cpdf.h>
+#include <kernel/cobject.h>
+#include <kernel/cpdf.h>
 #include "util.h"
 
 namespace gui {

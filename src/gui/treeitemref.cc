@@ -17,8 +17,8 @@
 #include "treedata.h"
 #include "pdfutil.h"
 #include "util.h"
-#include <cobject.h>
-#include <cpdf.h>
+#include <kernel/cobject.h>
+#include <kernel/cpdf.h>
 
 namespace gui {
 

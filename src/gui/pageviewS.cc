@@ -14,10 +14,10 @@
 #include <assert.h>
 
 #include "util.h"
-#include "debug.h"
-#include "pdfoperators.h"
+#include "utils/debug.h"
+#include "kernel/pdfoperators.h"
 
-#include "OutputDev.h"
+#include "xpdf/OutputDev.h"
 #include "QOutputDevPixmap.h"
 
 #include "rect2Darray.h"

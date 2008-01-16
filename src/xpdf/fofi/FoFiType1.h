@@ -15,8 +15,8 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "FoFiBase.h"
+#include "goo/gtypes.h"
+#include "fofi/FoFiBase.h"
 
 //------------------------------------------------------------------------
 // FoFiType1

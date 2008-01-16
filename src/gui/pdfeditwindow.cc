@@ -12,7 +12,7 @@
 */
 #include "pdfeditwindow.h"
 #include "qtcompat.h"
-#include "GlobalParams.h"
+#include "xpdf/GlobalParams.h"
 #include "additemdialog.h"
 #include "basegui.h"
 #include "commandwindow.h"

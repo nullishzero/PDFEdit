@@ -4,8 +4,16 @@
 	  vulnerabilities reported by secunia as well as provide with 
 	  the new functionality (support for PDF 1.6 and 1.7). 
 	  See src/xpdf/CHANGES for more information
-	* Internal: debuging for observers, more effective CObject -> Object
-	  translation for CDict and CArray
+	* Internal: 
+		- debuging for observers, more effective CObject -> Object
+		  translation for CDict and CArray
+		- new makefiles infrastructure (see README for more
+		  information). 
+		  WARNING:
+		  For those who get sources directly from CVS, note that you
+		  have to generate configure script by hand, because it is 
+		  no more a part of CVS tree (simply run autoconf without
+		  any parameters).
 	* Code cleanups by Gwurk
 	* Bugs 164, 168, 169, 175, 180, 182, 183, 187 fixed
 	* Added Tango icon theme from Tiziano Mattei.

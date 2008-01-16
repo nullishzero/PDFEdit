@@ -12,13 +12,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "SplashErrorCodes.h"
-#include "SplashPath.h"
-#include "SplashXPath.h"
-#include "SplashXPathScanner.h"
-#include "SplashBitmap.h"
-#include "SplashClip.h"
+#include "goo/gmem.h"
+#include "splash/SplashErrorCodes.h"
+#include "splash/SplashPath.h"
+#include "splash/SplashXPath.h"
+#include "splash/SplashXPathScanner.h"
+#include "splash/SplashBitmap.h"
+#include "splash/SplashClip.h"
 
 //------------------------------------------------------------------------
 // SplashClip.flags

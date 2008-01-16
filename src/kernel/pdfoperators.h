@@ -13,7 +13,7 @@
 #define _PDFOPERATORS_H_
 
 // static includes
-#include "static.h"
+#include "kernel/static.h"
 #include "utils/iterator.h"
 
 //==========================================================

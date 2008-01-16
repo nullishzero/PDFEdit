@@ -1,28 +1,73 @@
 #Top-level Makefile for documentation
 
-.PHONY: clean all doc_core doc_core_nopdf doc_dist
+# General rules (with configuration options)
+include ../Makefile.flags
 
-#Build all documentation, including doxygen programmer documentation and doxygen's default stylesheet
-all:	doc_core_nopdf
-	doxygen -w html _header _footer programmer/html/doxygen.css || true
-	rm -f _header _footer _header.bak _footer.bak
-	doxygen || true
+TOP_DIR=.
+# Documentation generation rules
+include Makefile.rules
 
-#Core documentation, without PDF
-doc_core_nopdf:
-	cd user && ( gmake all_no_pdf || make all_no_pdf )
-	cd design && ( gmake all_no_pdf || make all_no_pdf )
+.PHONY: clean all doc_dist doc_man doc_doxygen doc_user doc_extended doc_user_nopdf doc_extended_nopdf
 
-#Documentation that will be build before packing in distributiin tarball
-doc_dist:	doc_core_nopdf
+all: doc_dist
 
-#Core documentation, with PDF
-doc_core:
-	cd user && ( gmake || make )
-	cd design && ( gmake || make )
+# Build man pages and doxygen doc if required
+doc_dist: doc_man $(DOXYGEN_TARGET) $(ADVANCED_DOC_TARGET)
 
-#Clean everything
+doc_dist_install: doc_man_install $(DOXYGEN_INSTALL_TARGET) \
+	$(ADVANCED_DOC_INSTALL_TARGET)
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/;
+	$(COPY_FILE) LICENSE.GPL ../README ../Changelog AUTHORS README-* \
+		README.cygwin $(INSTALL_ROOT)$(DOC_PATH)
+
+# TODO maybe we should be less brutal here and delete only our files
+doc_dist_uninstall:
+	$(DEL_FORCE_DIR) $(INSTALL_ROOT)$(DOC_PATH) || true;
+	$(DEL_FILE) $(INSTALL_ROOT)$(MAN_PATH)/pdfedit.1
+
+# Man pages are the core for documenation
+doc_man: 
+	cd user && $(MAKE) pdfedit.1
+
+doc_man_install: doc_man
+	$(MKDIR) $(INSTALL_ROOT)$(MAN_PATH);
+	$(COPY_FILE) user/pdfedit.1 $(INSTALL_ROOT)$(MAN_PATH)
+
+# Doxygen documenation
+doc_doxygen: $(DOXYGEN_BIN)
+	$(DOXYGEN_BIN) -w html _header _footer programmer/html/doxygen.css || true
+	$(DEL_FILE) _header _footer _header.bak _footer.bak || true
+	$(DOXYGEN_BIN) || true
+
+doc_doxygen_install: doc_doxygen
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/doxygen;
+	$(COPY_DIR) programmer/html/* $(INSTALL_ROOT)$(DOC_PATH)/doxygen
+
+# User documentation (installation target is part of gui)
+doc_user: doc_user_nopdf
+
+doc_user_nopdf:
+	cd user && $(MAKE) all_no_pdf
+
+# Extended (docbook design) documenation
+doc_advanced: doc_advanced_nopdf
+
+# TODO what about pdf generated doc?
+doc_advanced_install: doc_advanced
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/design ;
+	$(COPY_FILE) design/*.html $(INSTALL_ROOT)$(DOC_PATH)/design;
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/design/images ;
+	$(COPY_FILE) design/images/*.png $(INSTALL_ROOT)$(DOC_PATH)/design/images;
+	$(MKDIR) $(INSTALL_ROOT)$(DOC_PATH)/design/kernel/images;
+	$(COPY_FILE) design/kernel/images/*.png $(INSTALL_ROOT)$(DOC_PATH)/design/kernel/images;
+
+
+doc_advanced_nopdf:
+	cd design && $(MAKE) all_no_pdf
+
+# Clean everything
 clean:
-	cd user && ( gmake clean || make clean )
-	cd design && ( gmake clean || make clean )
-	rm -rf programmer
+	cd user && $(MAKE) clean
+	cd design && $(MAKE) clean
+	$(DEL_FORCE_DIR) programmer
+	$(DEL_FILE) doxygen.warnings

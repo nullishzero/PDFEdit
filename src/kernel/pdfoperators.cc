@@ -10,14 +10,14 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 // static
-#include "static.h"
-#include "pdfoperators.h"
+#include "kernel/static.h"
+#include "kernel/pdfoperators.h"
 //
-#include "pdfoperatorsiter.h"
-#include "iproperty.h"
-#include "cinlineimage.h"
+#include "kernel/pdfoperatorsiter.h"
+#include "kernel/iproperty.h"
+#include "kernel/cinlineimage.h"
 
-#include "ccontentstream.h"
+#include "kernel/ccontentstream.h"
 
 //==========================================================
 namespace pdfobjects {

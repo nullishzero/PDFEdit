@@ -9,9 +9,9 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include"cannotation.h"
-#include"debug.h"
-#include"factories.h"
+#include"kernel/cannotation.h"
+#include"utils/debug.h"
+#include"kernel/factories.h"
 
 using namespace boost;
 using namespace std;

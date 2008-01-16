@@ -22,7 +22,7 @@
 #include "qsannotation.h"
 #include "qspdfoperatorstack.h"
 #include "util.h"
-#include <cpage.h>
+#include <kernel/cpage.h>
 
 namespace gui {
 

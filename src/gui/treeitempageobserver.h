@@ -11,8 +11,8 @@
 #define __TREEITEMPAGEOBSERVER_H__
 
 #include "treeitemgenericobserver.h"
-#include <cpage.h>
-#include <observer.h>
+#include <kernel/cpage.h>
+#include <utils/observer.h>
 
 namespace gui {
 

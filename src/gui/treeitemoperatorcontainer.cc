@@ -12,7 +12,7 @@
  @author Martin Petricek
 */
 
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "treeitemoperatorcontainer.h"
 #include "treeitempdfoperator.h"
 #include "multitreewindow.h"

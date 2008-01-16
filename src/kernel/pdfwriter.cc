@@ -9,10 +9,10 @@
  */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "xpdf.h"
-#include "static.h"
-#include "pdfwriter.h"
-#include "cobject.h"
+#include "kernel/xpdf.h"
+#include "kernel/static.h"
+#include "kernel/pdfwriter.h"
+#include "kernel/cobject.h"
 
 /** Size of buffer for xref table row.
  * This includes also 1 byte for trailing '\0' (end of string marker).

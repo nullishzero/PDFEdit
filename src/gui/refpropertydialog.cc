@@ -20,7 +20,7 @@
 #include <qvalidator.h>
 #include <qstring.h>
 #include "pdfutil.h"
-#include <cpdf.h>
+#include <kernel/cpdf.h>
 
 namespace gui {
 

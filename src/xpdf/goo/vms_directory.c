@@ -28,7 +28,7 @@
 #include <rmsdef.h>
 #include <descrip.h>
 #include <lib$routines.h>
-#include "vms_dirent.h"
+#include "goo/vms_dirent.h"
 
 #define	NOWILD		0x00000001
 #define MULTIPLE	0x00000002

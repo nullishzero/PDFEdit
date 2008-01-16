@@ -15,8 +15,8 @@
 #pragma interface
 #endif
 
-#include "Object.h"
-#include "CharTypes.h"
+#include "xpdf/Object.h"
+#include "xpdf/CharTypes.h"
 
 class GString;
 class GList;

@@ -10,16 +10,16 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 // static
-#include "static.h"
-#include "ccontentstream.h"
+#include "kernel/static.h"
+#include "kernel/ccontentstream.h"
 
 //
-#include "cpdf.h"
-#include "pdfoperators.h"
-#include "stateupdater.h"
-#include "cobject.h"
-#include "factories.h"
-#include "cinlineimage.h"
+#include "kernel/cpdf.h"
+#include "kernel/pdfoperators.h"
+#include "kernel/stateupdater.h"
+#include "kernel/cobject.h"
+#include "kernel/factories.h"
+#include "kernel/cinlineimage.h"
 
 //fabs
 #include <math.h>

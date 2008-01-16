@@ -13,20 +13,20 @@
 #define _CPAGE_H
 
 // all basic includes
-#include "static.h"
+#include "kernel/static.h"
 
 // CDict
-#include "cobject.h"
+#include "kernel/cobject.h"
 // CContentstream
-#include "ccontentstream.h"
+#include "kernel/ccontentstream.h"
 // CAnnotation
-#include "cannotation.h"
+#include "kernel/cannotation.h"
 // Text output
-#include "textoutput.h" 
+#include "kernel/textoutput.h" 
 // Factories
-#include "factories.h"
+#include "kernel/factories.h"
 // State updater
-#include "stateupdater.h"
+#include "kernel/stateupdater.h"
 
 //=====================================================================================
 namespace pdfobjects {

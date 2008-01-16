@@ -27,22 +27,22 @@
 #define __STRICT_ANSI__
 #include <paper.h>
 #endif
-#include "gmem.h"
-#include "GString.h"
-#include "GList.h"
-#include "GHash.h"
-#include "gfile.h"
-#include "Error.h"
-#include "NameToCharCode.h"
-#include "CharCodeToUnicode.h"
-#include "UnicodeMap.h"
-#include "CMap.h"
-#include "BuiltinFontTables.h"
-#include "FontEncodingTables.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "goo/GHash.h"
+#include "goo/gfile.h"
+#include "xpdf/Error.h"
+#include "xpdf/NameToCharCode.h"
+#include "xpdf/CharCodeToUnicode.h"
+#include "xpdf/UnicodeMap.h"
+#include "xpdf/CMap.h"
+#include "xpdf/BuiltinFontTables.h"
+#include "xpdf/FontEncodingTables.h"
 #ifdef ENABLE_PLUGINS
-#  include "XpdfPluginAPI.h"
+#  include "xpdf/XpdfPluginAPI.h"
 #endif
-#include "GlobalParams.h"
+#include "xpdf/GlobalParams.h"
 
 #ifdef WIN32
 #  define strcasecmp stricmp
@@ -64,9 +64,9 @@
 #  define unlockCMapCache
 #endif
 
-#include "NameToUnicodeTable.h"
-#include "UnicodeMapTables.h"
-#include "UTF8.h"
+#include "xpdf/NameToUnicodeTable.h"
+#include "xpdf/UnicodeMapTables.h"
+#include "xpdf/UTF8.h"
 
 #ifdef ENABLE_PLUGINS
 #  ifdef WIN32

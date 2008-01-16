@@ -14,7 +14,7 @@
 #include "util.h"
 #include <boost/shared_ptr.hpp>
 #include <assert.h>
-#include <observer.h>
+#include <utils/observer.h>
 #include <utils/debug.h>
 
 namespace gui {

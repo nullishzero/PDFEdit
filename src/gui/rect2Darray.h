@@ -139,7 +139,7 @@ class Rect2DArray : public Q_PtrList< RectArray<T> > {
 #include "rect2Darray.h"
 #include <stdlib.h>
 #include "util.h"
-#include "debug.h"
+#include "utils/debug.h"
 
 #include <limits>
 #include <assert.h>

@@ -12,11 +12,11 @@
 #define _CSTREAM_H
 
 // all basic includes
-#include "static.h"
-#include "cdict.h"
-#include "iproperty.h"
+#include "kernel/static.h"
+#include "kernel/cdict.h"
+#include "kernel/iproperty.h"
 // Filters
-#include "filters.h"
+#include "kernel/filters.h"
 
 
 //=====================================================================================

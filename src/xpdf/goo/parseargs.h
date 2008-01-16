@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 /*
  * Argument kinds.

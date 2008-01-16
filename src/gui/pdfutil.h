@@ -13,9 +13,9 @@
  \brief PDF manipulation utility functions header
 */
 
-#include <iproperty.h>
-#include <cobject.h>
-#include <cannotation.h>
+#include <kernel/iproperty.h>
+#include <kernel/cobject.h>
+#include <kernel/cannotation.h>
 class QString;
 namespace pdfobjects {
 class CPdf;

@@ -15,9 +15,9 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "Object.h"
-#include "Function.h"
+#include "goo/gtypes.h"
+#include "xpdf/Object.h"
+#include "xpdf/Function.h"
 
 class Array;
 class GfxFont;

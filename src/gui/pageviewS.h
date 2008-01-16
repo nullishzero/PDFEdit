@@ -18,7 +18,7 @@
 
 #include <boost/smart_ptr.hpp>
 
-#include "cpage.h"
+#include "kernel/cpage.h"
 
 class OutputDev;
 

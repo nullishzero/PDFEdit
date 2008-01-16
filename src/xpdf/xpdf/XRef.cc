@@ -16,15 +16,15 @@
 #include <stddef.h>
 #include <string.h>
 #include <ctype.h>
-#include "gmem.h"
-#include "Object.h"
-#include "Stream.h"
-#include "Lexer.h"
-#include "Parser.h"
-#include "Dict.h"
-#include "Error.h"
-#include "ErrorCodes.h"
-#include "XRef.h"
+#include "goo/gmem.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
+#include "xpdf/Lexer.h"
+#include "xpdf/Parser.h"
+#include "xpdf/Dict.h"
+#include "xpdf/Error.h"
+#include "xpdf/ErrorCodes.h"
+#include "xpdf/XRef.h"
 
 //------------------------------------------------------------------------
 

@@ -10,10 +10,10 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 //
-#include "filters.h"
+#include "kernel/filters.h"
 
 // static includes
-#include "static.h"
+#include "kernel/static.h"
 
 //=======================================
 namespace filters  {

@@ -10,7 +10,7 @@
 #ifndef __PROPERTYMODECONTROLLER_H__
 #define __PROPERTYMODECONTROLLER_H__
 
-#include <modecontroller.h>
+#include <kernel/modecontroller.h>
 
 class QString;
 

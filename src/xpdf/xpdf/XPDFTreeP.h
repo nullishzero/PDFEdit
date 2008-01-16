@@ -10,7 +10,7 @@
 #define XPDFTREEP_H
 
 #include <Xm/ManagerP.h>
-#include "XPDFTree.h"
+#include "xpdf/XPDFTree.h"
 
 extern "C" {
 

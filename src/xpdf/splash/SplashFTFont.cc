@@ -20,13 +20,13 @@
 #include FT_SIZES_H
 #include FT_GLYPH_H
 #endif
-#include "gmem.h"
-#include "SplashMath.h"
-#include "SplashGlyphBitmap.h"
-#include "SplashPath.h"
-#include "SplashFTFontEngine.h"
-#include "SplashFTFontFile.h"
-#include "SplashFTFont.h"
+#include "goo/gmem.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashGlyphBitmap.h"
+#include "splash/SplashPath.h"
+#include "splash/SplashFTFontEngine.h"
+#include "splash/SplashFTFontFile.h"
+#include "splash/SplashFTFont.h"
 
 //------------------------------------------------------------------------
 

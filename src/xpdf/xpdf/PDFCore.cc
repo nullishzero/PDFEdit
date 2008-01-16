@@ -13,20 +13,20 @@
 #endif
 
 #include <math.h>
-#include "GString.h"
-#include "GList.h"
-#include "GlobalParams.h"
-#include "Splash.h"
-#include "SplashBitmap.h"
-#include "SplashPattern.h"
-#include "SplashPath.h"
-#include "Error.h"
-#include "ErrorCodes.h"
-#include "PDFDoc.h"
-#include "Link.h"
-#include "TextOutputDev.h"
-#include "CoreOutputDev.h"
-#include "PDFCore.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "xpdf/GlobalParams.h"
+#include "splash/Splash.h"
+#include "splash/SplashBitmap.h"
+#include "splash/SplashPattern.h"
+#include "splash/SplashPath.h"
+#include "xpdf/Error.h"
+#include "xpdf/ErrorCodes.h"
+#include "xpdf/PDFDoc.h"
+#include "xpdf/Link.h"
+#include "xpdf/TextOutputDev.h"
+#include "xpdf/CoreOutputDev.h"
+#include "xpdf/PDFCore.h"
 
 //------------------------------------------------------------------------
 // PDFCorePage

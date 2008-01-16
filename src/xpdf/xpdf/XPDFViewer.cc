@@ -25,26 +25,26 @@
 #include <Sgm/HPanedW.h>
 #undef Object
 #endif
-#include "gmem.h"
-#include "gfile.h"
-#include "GString.h"
-#include "GList.h"
-#include "Error.h"
-#include "GlobalParams.h"
-#include "PDFDoc.h"
-#include "Link.h"
-#include "ErrorCodes.h"
-#include "Outline.h"
-#include "UnicodeMap.h"
+#include "goo/gmem.h"
+#include "goo/gfile.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "xpdf/Error.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/PDFDoc.h"
+#include "xpdf/Link.h"
+#include "xpdf/ErrorCodes.h"
+#include "xpdf/Outline.h"
+#include "xpdf/UnicodeMap.h"
 #ifndef DISABLE_OUTLINE
 #define Object XtObject
-#include "XPDFTree.h"
+#include "xpdf/XPDFTree.h"
 #undef Object
 #endif
-#include "XPDFApp.h"
-#include "XPDFViewer.h"
-#include "PSOutputDev.h"
-#include "config.h"
+#include "xpdf/XPDFApp.h"
+#include "xpdf/XPDFViewer.h"
+#include "xpdf/PSOutputDev.h"
+#include "xpdf/config.h"
 
 // these macro defns conflict with xpdf's Object class
 #ifdef LESSTIF_VERSION

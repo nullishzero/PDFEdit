@@ -17,7 +17,7 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 class SplashFontFile;
 class SplashFontFileID;

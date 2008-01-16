@@ -21,10 +21,10 @@
 /*class pdfobjects::CAnnotation;
 class pdfobjects::CPage;
 class pdfobjects::PdfOperator;*/
-#include "cpage.h"
-#include "cannotation.h"
-#include "pdfoperators.h"
-#include "static.h"
+#include "kernel/cpage.h"
+#include "kernel/cannotation.h"
+#include "kernel/pdfoperators.h"
+#include "kernel/static.h"
 
 using namespace pdfobjects;
 

@@ -15,10 +15,10 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "GString.h"
-#include "Object.h"
-#include "CharTypes.h"
+#include "goo/gtypes.h"
+#include "goo/GString.h"
+#include "xpdf/Object.h"
+#include "xpdf/CharTypes.h"
 
 class Dict;
 class CMap;

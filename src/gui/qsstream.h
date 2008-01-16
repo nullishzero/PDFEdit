@@ -10,7 +10,7 @@
 #ifndef __QSSTREAM_H__
 #define __QSSTREAM_H__
 
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "qsiproperty.h"
 class QString;
 

@@ -14,13 +14,13 @@
 
 #include <stdlib.h>
 #include <t1lib.h>
-#include "gmem.h"
-#include "SplashMath.h"
-#include "SplashGlyphBitmap.h"
-#include "SplashPath.h"
-#include "SplashT1FontEngine.h"
-#include "SplashT1FontFile.h"
-#include "SplashT1Font.h"
+#include "goo/gmem.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashGlyphBitmap.h"
+#include "splash/SplashPath.h"
+#include "splash/SplashT1FontEngine.h"
+#include "splash/SplashT1FontFile.h"
+#include "splash/SplashT1Font.h"
 
 //------------------------------------------------------------------------
 

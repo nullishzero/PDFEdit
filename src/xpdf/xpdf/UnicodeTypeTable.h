@@ -9,7 +9,7 @@
 #ifndef UNICODETYPETABLE_H
 #define UNICODETYPETABLE_H
 
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 extern GBool unicodeTypeL(Unicode c);
 

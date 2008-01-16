@@ -13,10 +13,10 @@
 #define _TEXTOUTPUTENTITIES_H_
 
 // basic types
-#include "static.h"
+#include "kernel/static.h"
 
 // pdf operators
-#include "pdfoperators.h"
+#include "kernel/pdfoperators.h"
 
 
 //=====================================================================================

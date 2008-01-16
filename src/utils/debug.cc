@@ -8,7 +8,7 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-#include "debug.h"
+#include "utils/debug.h"
 
 // if default debug level doesn't come from gcc command line, we use
 // ERR

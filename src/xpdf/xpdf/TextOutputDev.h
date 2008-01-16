@@ -16,9 +16,9 @@
 #endif
 
 #include <stdio.h>
-#include "gtypes.h"
-#include "GfxFont.h"
-#include "OutputDev.h"
+#include "goo/gtypes.h"
+#include "xpdf/GfxFont.h"
+#include "xpdf/OutputDev.h"
 
 class GString;
 class GList;

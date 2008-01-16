@@ -12,8 +12,8 @@
 #define _COBJECTSIMPLE_H
 
 // all basic includes
-#include "static.h"
-#include "iproperty.h"
+#include "kernel/static.h"
+#include "kernel/iproperty.h"
 
 
 //=====================================================================================
@@ -688,7 +688,7 @@ setValueToSimple (const boost::shared_ptr<IProperty>& ip, const Value& val)
 //
 // Include the actual implementation of CObject class
 //
-#include "cobjectsimpleI.h"
+#include "kernel/cobjectsimpleI.h"
 
 
 #endif // _COBJECTSIMPLE_H

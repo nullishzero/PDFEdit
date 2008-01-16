@@ -15,7 +15,7 @@
 
 #include "qsipropertyarray.h"
 #include "qsimporter.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include "qsiproperty.h"
 
 namespace gui {

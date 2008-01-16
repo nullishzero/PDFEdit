@@ -6,41 +6,23 @@
 #
 #========================================================================
 
-SHELL = /bin/sh
-
-srcdir = @srcdir@
-VPATH = @srcdir@
-
-CFLAGS = @CFLAGS@ @DEFS@ -I.. -I$(srcdir)
-CXXFLAGS = @CXXFLAGS@ @DEFS@ -I.. -I$(srcdir)
-
-CC = @CC@
-CXX = @CXX@
-AR = @AR@
-RANLIB = @RANLIB@
-
-LIBPREFIX = @LIBPREFIX@
-
-#------------------------------------------------------------------------
-
-.SUFFIXES: .cc
-
-.cc.o:
-	$(CXX) $(CXXFLAGS) -c $<
-
-#------------------------------------------------------------------------
+# includes basic building rules
+# REL_ADDR has to be defined, because Makefile.rules refers 
+# to the Makefile.flags
+REL_ADDR = ../../../
+include $(REL_ADDR)/Makefile.rules
 
 CXX_SRC = \
-	$(srcdir)/GHash.cc \
-	$(srcdir)/GList.cc \
-	$(srcdir)/GString.cc \
-	$(srcdir)/gmem.cc \
-	$(srcdir)/gmempp.cc \
-	$(srcdir)/gfile.cc \
-	$(srcdir)/FixedPoint.cc
+	GHash.cc \
+	GList.cc \
+	GString.cc \
+	gmem.cc \
+	gmempp.cc \
+	gfile.cc \
+	FixedPoint.cc
 
 C_SRC = \
-	$(srcdir)/parseargs.c
+	parseargs.c
 
 #------------------------------------------------------------------------
 
@@ -53,19 +35,20 @@ GOO_C_OBJS = parseargs.o
 GOO_OBJS = $(GOO_CXX_OBJS) $(GOO_C_OBJS)
 
 $(LIBPREFIX)Goo.a: $(GOO_OBJS)
-	rm -f $(LIBPREFIX)Goo.a
+	$(DEL_FILE) $(LIBPREFIX)Goo.a
 	$(AR) $(LIBPREFIX)Goo.a $(GOO_OBJS)
 	$(RANLIB) $(LIBPREFIX)Goo.a
 
 #------------------------------------------------------------------------
 
 clean:
-	rm -f $(GOO_OBJS) $(LIBPREFIX)Goo.a
+	$(DEL_FILE) $(GOO_OBJS) $(LIBPREFIX)Goo.a
 
 #------------------------------------------------------------------------
 
-depend:
-	$(CXX) $(CXXFLAGS) -MM $(CXX_SRC) >Makefile.dep
-	$(CC) $(CFLAGS) -MM $(C_SRC) >>Makefile.dep
+Makefile.dep:
+	$(CXX) $(XPDFLAGS) -MM $(CXX_SRC) >Makefile.dep
+	$(CC) $(XPDFLAGS) -MM $(C_SRC) >>Makefile.dep
 
-include Makefile.dep
+# FIXME FreeBSD make is not able to include non existent file
+#include Makefile.dep

@@ -16,13 +16,13 @@
 #ifndef WIN32
 #  include <unistd.h>
 #endif
-#include "gmem.h"
-#include "GString.h"
-#include "gfile.h"
-#include "FoFiTrueType.h"
-#include "FoFiType1C.h"
-#include "SplashFTFontFile.h"
-#include "SplashFTFontEngine.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "goo/gfile.h"
+#include "fofi/FoFiTrueType.h"
+#include "fofi/FoFiType1C.h"
+#include "splash/SplashFTFontFile.h"
+#include "splash/SplashFTFontEngine.h"
 
 #ifdef VMS
 #if (__VMS_VER < 70000000)

@@ -18,7 +18,7 @@
 #include "settings.h"
 #include <qstring.h>
 #include <stdlib.h>
-#include <confparser.h>
+#include <utils/confparser.h>
 #include "util.h"
 
 namespace gui {

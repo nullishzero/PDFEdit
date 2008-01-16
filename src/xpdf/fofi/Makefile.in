@@ -6,37 +6,18 @@
 #
 #========================================================================
 
-SHELL = /bin/sh
-
-srcdir = @srcdir@
-VPATH = @srcdir@
-
-GOOSRCDIR = $(srcdir)/../goo
-GOOLIBDIR = ../goo
-
-CXXFLAGS = @CXXFLAGS@ @DEFS@ -I.. -I$(GOOSRCDIR) -I$(srcdir)
-
-CXX = @CXX@
-AR = @AR@
-RANLIB = @RANLIB@
-
-LIBPREFIX = @LIBPREFIX@
-
-#------------------------------------------------------------------------
-
-.SUFFIXES: .cc
-
-.cc.o:
-	$(CXX) $(CXXFLAGS) -c $<
-
-#------------------------------------------------------------------------
+# includes basic building rules
+# REL_ADDR has to be defined, because Makefile.rules refers 
+# to the Makefile.flags
+REL_ADDR = ../../../
+include $(REL_ADDR)/Makefile.rules
 
 CXX_SRC = \
-	$(srcdir)/FoFiBase.cc \
-	$(srcdir)/FoFiEncodings.cc \
-	$(srcdir)/FoFiTrueType.cc \
-	$(srcdir)/FoFiType1.cc \
-	$(srcdir)/FoFiType1C.cc
+	FoFiBase.cc \
+	FoFiEncodings.cc \
+	FoFiTrueType.cc \
+	FoFiType1.cc \
+	FoFiType1C.cc
 
 #------------------------------------------------------------------------
 
@@ -52,18 +33,19 @@ FOFI_OBJS = \
 	FoFiType1C.o
 
 $(LIBPREFIX)fofi.a: $(FOFI_OBJS)
-	rm -f $(LIBPREFIX)fofi.a
+	$(DEL_FILE) $(LIBPREFIX)fofi.a
 	$(AR) $(LIBPREFIX)fofi.a $(FOFI_OBJS)
 	$(RANLIB) $(LIBPREFIX)fofi.a
 
 #------------------------------------------------------------------------
 
 clean:
-	rm -f $(FOFI_OBJS) $(LIBPREFIX)fofi.a
+	$(DEL_FILE) $(FOFI_OBJS) $(LIBPREFIX)fofi.a
 
 #------------------------------------------------------------------------
 
-depend:
-	$(CXX) $(CXXFLAGS) -MM $(CXX_SRC) >Makefile.dep
+Makefile.dep:
+	$(CXX) $(XPDFLAGS) -MM $(CXX_SRC) >Makefile.dep
 
-include Makefile.dep
+# FIXME  FreeBSD make is not able to include non existent file
+#include Makefile.dep

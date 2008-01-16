@@ -15,7 +15,7 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 struct BuiltinFont;
 class BuiltinFontWidths;

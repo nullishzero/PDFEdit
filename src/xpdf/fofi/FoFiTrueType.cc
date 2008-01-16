@@ -14,12 +14,12 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gtypes.h"
-#include "gmem.h"
-#include "GString.h"
-#include "GHash.h"
-#include "FoFiType1C.h"
-#include "FoFiTrueType.h"
+#include "goo/gtypes.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "goo/GHash.h"
+#include "fofi/FoFiType1C.h"
+#include "fofi/FoFiTrueType.h"
 
 //
 // Terminology

@@ -13,8 +13,8 @@
 #endif
 
 #include <string.h>
-#include "gmem.h"
-#include "NameToCharCode.h"
+#include "goo/gmem.h"
+#include "xpdf/NameToCharCode.h"
 
 //------------------------------------------------------------------------
 

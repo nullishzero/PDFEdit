@@ -20,13 +20,13 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <ctype.h>
-#include "gmem.h"
-#include "config.h"
-#include "Error.h"
-#include "GfxState.h"
-#include "Object.h"
-#include "Stream.h"
-#include "ImageOutputDev.h"
+#include "goo/gmem.h"
+#include "xpdf/config.h"
+#include "xpdf/Error.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
+#include "xpdf/ImageOutputDev.h"
 
 ImageOutputDev::ImageOutputDev(char *fileRootA, GBool dumpJPEGA) {
   fileRoot = copyString(fileRootA);

@@ -13,21 +13,21 @@
 #endif
 
 #include <stddef.h>
-#include "GlobalParams.h"
-#include "Object.h"
-#include "Array.h"
-#include "Dict.h"
-#include "XRef.h"
-#include "Link.h"
-#include "OutputDev.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Object.h"
+#include "xpdf/Array.h"
+#include "xpdf/Dict.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Link.h"
+#include "xpdf/OutputDev.h"
 #ifndef PDF_PARSER_ONLY
-#include "Gfx.h"
-#include "GfxState.h"
-#include "Annot.h"
+#include "xpdf/Gfx.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/Annot.h"
 #endif
-#include "Error.h"
-#include "Catalog.h"
-#include "Page.h"
+#include "xpdf/Error.h"
+#include "xpdf/Catalog.h"
+#include "xpdf/Page.h"
 
 //------------------------------------------------------------------------
 // PDFRectangle

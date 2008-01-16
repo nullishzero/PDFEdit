@@ -8,9 +8,9 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-#include "cxref.h"
+#include "kernel/cxref.h"
 #include "utils/debug.h"
-#include "factories.h"
+#include "kernel/factories.h"
 
 using namespace pdfobjects;
 

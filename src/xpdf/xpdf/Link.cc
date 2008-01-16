@@ -14,13 +14,13 @@
 
 #include <stddef.h>
 #include <string.h>
-#include "gmem.h"
-#include "GString.h"
-#include "Error.h"
-#include "Object.h"
-#include "Array.h"
-#include "Dict.h"
-#include "Link.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "xpdf/Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Array.h"
+#include "xpdf/Dict.h"
+#include "xpdf/Link.h"
 
 //------------------------------------------------------------------------
 // LinkAction

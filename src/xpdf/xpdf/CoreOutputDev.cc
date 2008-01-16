@@ -12,9 +12,9 @@
 #pragma implementation
 #endif
 
-#include "Object.h"
-#include "TextOutputDev.h"
-#include "CoreOutputDev.h"
+#include "xpdf/Object.h"
+#include "xpdf/TextOutputDev.h"
+#include "xpdf/CoreOutputDev.h"
 
 //------------------------------------------------------------------------
 // CoreOutputDev

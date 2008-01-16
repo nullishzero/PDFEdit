@@ -5,54 +5,32 @@
 # Copyright 2003 Glyph & Cog, LLC
 #
 #========================================================================
-
-SHELL = /bin/sh
-
-srcdir = @srcdir@
-VPATH = @srcdir@
-
-GOOSRCDIR = $(srcdir)/../goo
-GOOLIBDIR = ../goo
-FOFISRCDIR = $(srcdir)/../fofi
-FOFILIBDIR = ../fofi
-
-CXXFLAGS = @CXXFLAGS@ @DEFS@ -I.. -I$(GOOSRCDIR) -I$(FOFISRCDIR) -I$(srcdir) @t1_CFLAGS@ @freetype2_CFLAGS@
-
-CXX = @CXX@
-AR = @AR@
-RANLIB = @RANLIB@
-
-LIBPREFIX = @LIBPREFIX@
-
-#------------------------------------------------------------------------
-
-.SUFFIXES: .cc
-
-.cc.o:
-	$(CXX) $(CXXFLAGS) -c $<
-
-#------------------------------------------------------------------------
+# includes basic building rules
+# REL_ADDR has to be defined, because Makefile.rules refers 
+# to the Makefile.flags
+REL_ADDR = ../../../
+include $(REL_ADDR)/Makefile.rules
 
 CXX_SRC = \
-	$(srcdir)/Splash.cc \
-	$(srcdir)/SplashBitmap.cc \
-	$(srcdir)/SplashClip.cc \
-	$(srcdir)/SplashFTFont.cc \
-	$(srcdir)/SplashFTFontEngine.cc \
-	$(srcdir)/SplashFTFontFile.cc \
-	$(srcdir)/SplashFont.cc \
-	$(srcdir)/SplashFontEngine.cc \
-	$(srcdir)/SplashFontFile.cc \
-	$(srcdir)/SplashFontFileID.cc \
-	$(srcdir)/SplashPath.cc \
-	$(srcdir)/SplashPattern.cc \
-	$(srcdir)/SplashScreen.cc \
-	$(srcdir)/SplashState.cc \
-	$(srcdir)/SplashT1Font.cc \
-	$(srcdir)/SplashT1FontEngine.cc \
-	$(srcdir)/SplashT1FontFile.cc \
-	$(srcdir)/SplashXPath.cc \
-	$(srcdir)/SplashXPathScanner.cc
+	Splash.cc \
+	SplashBitmap.cc \
+	SplashClip.cc \
+	SplashFTFont.cc \
+	SplashFTFontEngine.cc \
+	SplashFTFontFile.cc \
+	SplashFont.cc \
+	SplashFontEngine.cc \
+	SplashFontFile.cc \
+	SplashFontFileID.cc \
+	SplashPath.cc \
+	SplashPattern.cc \
+	SplashScreen.cc \
+	SplashState.cc \
+	SplashT1Font.cc \
+	SplashT1FontEngine.cc \
+	SplashT1FontFile.cc \
+	SplashXPath.cc \
+	SplashXPathScanner.cc
 
 #------------------------------------------------------------------------
 
@@ -82,18 +60,21 @@ SPLASH_OBJS = \
 	SplashXPathScanner.o
 
 $(LIBPREFIX)splash.a: $(SPLASH_OBJS)
-	rm -f $(LIBPREFIX)splash.a
+	$(DEL_FILE) $(LIBPREFIX)splash.a
 	$(AR) $(LIBPREFIX)splash.a $(SPLASH_OBJS)
 	$(RANLIB) $(LIBPREFIX)splash.a
 
 #------------------------------------------------------------------------
 
 clean:
-	rm -f $(SPLASH_OBJS) $(LIBPREFIX)splash.a
+	$(DEL_FILE) $(SPLASH_OBJS) $(LIBPREFIX)splash.a
 
 #------------------------------------------------------------------------
 
-depend:
-	$(CXX) $(CXXFLAGS) -MM $(CXX_SRC) >Makefile.dep
+# FIXME Makefile.dep fails because of SplashFTFont*.h which include from 
+# macro defined file name
+Makefile.dep:
+	-$(CXX) $(XPDFLAGS) -MM $(CXX_SRC) >Makefile.dep
 
-include Makefile.dep
+# FIXME  FreeBSD make is not able to include non existent file
+#include Makefile.dep

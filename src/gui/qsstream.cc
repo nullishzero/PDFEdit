@@ -17,7 +17,7 @@
 #include "qsstream.h"
 #include "util.h"
 #include <qfile.h>
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <qstring.h>
 
 namespace gui {

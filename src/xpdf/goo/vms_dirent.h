@@ -49,7 +49,7 @@ typedef	struct __dirdesc {
 	char	*dd_buf;	/* directory data buffer */
 } DIR;
 
-#include "vms_sys_dirent.h"
+#include "goo/vms_sys_dirent.h"
 
 extern	DIR *opendir(char *dirname);
 extern	struct dirent *readdir(DIR *dirp);

@@ -13,10 +13,10 @@
 #define _TEXTOUTPUTBUILDER_H_
 
 // basic types
-#include "static.h"
+#include "kernel/static.h"
 
 // Basic engines
-#include "textoutputengines.h"
+#include "kernel/textoutputengines.h"
 
 //=====================================================================================
 namespace textoutput {

@@ -20,7 +20,7 @@
 #include "qscontentstream.h"
 #include "qsiproperty.h"
 #include "nullpointerexception.h"
-#include <ccontentstream.h>
+#include <kernel/ccontentstream.h>
 #include <utils/iterator.h>
 
 namespace gui {

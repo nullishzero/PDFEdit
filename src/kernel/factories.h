@@ -12,7 +12,7 @@
 #ifndef _FACTORIES_H_
 #define _FACTORIES_H_
 
-#include "cobject.h"
+#include "kernel/cobject.h"
 
 /** 
  * @file factories.h

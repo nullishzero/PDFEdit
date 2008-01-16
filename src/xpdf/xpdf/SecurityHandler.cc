@@ -12,20 +12,20 @@
 #pragma implementation
 #endif
 
-#include "GString.h"
-#include "PDFDoc.h"
-#include "Decrypt.h"
-#include "Error.h"
-#include "GlobalParams.h"
+#include "goo/GString.h"
+#include "xpdf/PDFDoc.h"
+#include "xpdf/Decrypt.h"
+#include "xpdf/Error.h"
+#include "xpdf/GlobalParams.h"
 #if HAVE_XPDFCORE
-#  include "XPDFCore.h"
+#  include "xpdf/XPDFCore.h"
 #elif HAVE_WINPDFCORE
-#  include "WinPDFCore.h"
+#  include "xpdf/WinPDFCore.h"
 #endif
 #ifdef ENABLE_PLUGINS
-#  include "XpdfPluginAPI.h"
+#  include "xpdf/XpdfPluginAPI.h"
 #endif
-#include "SecurityHandler.h"
+#include "xpdf/SecurityHandler.h"
 
 //------------------------------------------------------------------------
 // SecurityHandler

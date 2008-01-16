@@ -1,94 +1,92 @@
 #makefile for PDF editor
-.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices xpdf_configure install qsa qsa_configure qsa4 qsa4_configure
+.PHONY: distclean clean pdfedit kernel xpdf kpdf-kde-3.3.2 utils qoutputdevices qsa qsa_configure qsa4 qsa4_configure gui
 
-include Makefile.flags
+# includes basic building rules
+# REL_ADDR has to be defined, because Makefile.rules refers 
+# to the Makefile.flags
+REL_ADDR=../
+include $(REL_ADDR)Makefile.rules
 
-#make PDF editor - source and documentation
-all: pdfedit
+# make PDF editor - source and documentation
+# targets are determined during configure
+all: kernel $(TESTS_TARGET) $(GUI_TARGET)
 
-#make PDF editor + tests
-tests: all kernel-tests
-
-# kernel tests
-kernel-tests: kernel
-	cd kernel && $(QMAKE) -o Makefile-tests kernel-tests.pro && make -f Makefile-tests
+# XPdf
+xpdf:
+	cd $(XPDFROOT) && $(MAKE) libxpdf
 
 # PDF editor
-pdfedit: ../config.pro utils kernel xpdf qoutputdevices qsa qsa4
-	cd gui && $(QMAKE) && make
+pdfedit: utils kernel xpdf qoutputdevices qsa gui
+	cd $(GUIROOT) && $(MAKE) -f Makefile.gui
+
+# generates QT makefile for gui
+# This monkey stuff is here because i was not able to persuate qmake
+# to include our Makefile.flags which contains all configuration stuff
+# Therefore we are building in two stages:
+# * gui/Makefile.gui simply generates gui/Makefile from gui/pdfedit.pro
+#   and includes this file to the gui/Makefile.gui
+# * gui/Makefile.qt is in full power of qmake and we simply refers to our
+#   configuration variables. These are not visible to the Makefile 
+#   directly, but we never use gui/Makefile.qt directly but rather as
+#   included in gui/Makefile.gui
+# Seems to be complicated and if someone finds better solution how to
+# get include ../../Makefile.flags into the generated makefile then
+# it can be safely removed.
+gui: $(GUIROOT)/Makefile.gui
+	$(SHELL) $(ROOT)/tools/generate_online_help.sh "$(DOCROOT)" "$(GUIROOT)"
+	cd $(GUIROOT) && $(QMAKE) pdfedit.pro -o Makefile.qt
+
+# Target for devel package - no gui, just header files and core (xpdf and 
+# kernel) libraries
+pdfedit-devel: utils kernel xpdf qoutputdevices
 
 # QOutputDevices
-qoutputdevices: xpdf xpdf/config_xpdf_variables
-	cd kpdf-kde-3.3.2 && $(QMAKE) && make staticlib
+qoutputdevices: xpdf $(QOUTPUTDEVROOT)/Makefile
+	cd $(QOUTPUTDEVROOT) && $(MAKE) staticlib
+
+$(QOUTPUTDEVROOT)/Makefile: $(QOUTPUTDEVROOT)/qoutputdevices.pro
+	cd $(QOUTPUTDEVROOT) && $(QMAKE)
 
 # Utils
 utils: xpdf
-	cd utils && make
+	cd $(UTILSROOT) && $(MAKE)
 
-#Both QSA's are used, although the 'wrong' one will just return
+#QSA
+qsa: $(QSAROOT)/Makefile.qsa
+	cd $(QSAROOT) && $(MAKE) staticlib
 
-#QSA for Qt3
-qsa: qsa/Makefile.qsa
-	cd qsa && make staticlib
-
-qsa/Makefile.qsa: qsa/qsa.pro
-	cd qsa && ./configure
-
-#QSA for Qt4
-qsa4: qsa-qt4/Makefile.qsa
-	cd qsa-qt4 && make staticlib
-
-qsa-qt4/Makefile.qsa: qsa-qt4/qsa.pro
-	cd qsa-qt4 && ./configure
+$(QSAROOT)/Makefile.qsa: $(QSAROOT)/qsa.pro
+	cd $(QSAROOT) && ./configure "${QMAKE}" "${E_RELEASE}"
 
 # Kernel
-kernel: xpdf xpdf/config_xpdf_variables utils
-	cd kernel && $(QMAKE) && make staticlib
+kernel: xpdf utils
+	cd $(KERNELROOT) && $(MAKE)
 
-# XPdf
-xpdf: xpdf_configure
-	cd xpdf && make libxpdf
-
-# XPdf configure
-xpdf_configure: xpdf/config_xpdf_variables
-
-#if any of the Makefile.in changes, we need to rebuild corresponding Makefile in xpdf -> we rebuild them all to be sure
-xpdf/config_xpdf_variables: xpdf/Makefile.in xpdf/xpdf/Makefile.in xpdf/splash/Makefile.in xpdf/goo/Makefile.in xpdf/fofi/Makefile.in
-	cd xpdf && ./configure $(xpdf_configure_flags)
+# kernel tests
+kernel_tests: kernel
+	cd $(TESTSROOT) && $(MAKE) kernel_tests
 
 # Cleanup
 clean:
-	cd gui && make clean || true
-	cd qsa && make clean || true
-	cd qsa-qt4 && make clean || true
-	cd kernel && make clean || true
-	cd utils && make clean
-	cd xpdf && make clean || true
-	cd kpdf-kde-3.3.2 && make clean || true
-	rm -f kpdf-kde-3.3.2/Makefile 
-	rm -f kernel/Makefile 
-	rm -f gui/Makefile gui/menugenerator gui/pdfedit
+	cd $(GUIROOT) && $(MAKE) -f Makefile.gui clean || true
+	cd $(QSAROOT) && $(MAKE) clean || true
+	cd $(KERNELROOT) && $(MAKE) clean || true
+	cd $(TESTSROOT) && $(MAKE) clean || true
+	cd $(UTILSROOT) && $(MAKE) clean
+	cd $(XPDFROOT) && $(MAKE) clean || true
+	cd $(QOUTPUTDEVROOT) && $(MAKE) clean || true
+	$(DEL_FILE) $(GUIROOT)/Makefile.qt 
 
 
 # Dist Cleanup
-distclean:
-	cd gui && make distclean || true
-	cd qsa && make distclean || true
-	cd qsa-qt4 && make distclean || true
-	cd kernel && make distclean || true
-	cd utils && make distclean
-	cd xpdf && make distclean || true
-	cd kpdf-kde-3.3.2 && make distclean || true
-	rm -f xpdf/config_xpdf_variables
-	rm -f kpdf-kde-3.3.2/Makefile 
-	rm -f kernel/Makefile 
-	rm -f utils/aconf.h
-	rm -f gui/config.h gui/Makefile gui/menugenerator gui/pdfedit
-
-# Installation
-install:
-	cd gui && make install
-
-# Uninstallation
-uninstall:
-	cd gui && make uninstall
+distclean: 
+	cd $(GUIROOT) && $(MAKE) -f Makefile.gui distclean || true
+	cd $(QSAROOT) && $(MAKE) clean || true
+	cd $(KERNELROOT) && $(MAKE) distclean || true
+	cd $(TESTSROOT) && $(MAKE) distclean || true
+	cd $(UTILSROOT) && $(MAKE) distclean || true
+	cd $(XPDFROOT) && $(MAKE) distclean || true
+	cd $(QOUTPUTDEVROOT) && $(MAKE) distclean || true
+	$(DEL_FILE) $(QOUTPUTDEVROOT)/Makefile || true
+	$(DEL_FILE) $(UTILSROOT)/aconf.h || true
+	$(DEL_FILE $(GUIROOT)/config.h $(GUIROOT)/Makefile.qt $(GUIROOT)/menugenerator $(GUIROOT)/pdfedit

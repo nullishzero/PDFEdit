@@ -16,13 +16,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "gmem.h"
-#include "gfile.h"
-#include "GString.h"
-#include "Error.h"
-#include "GlobalParams.h"
-#include "PSTokenizer.h"
-#include "CMap.h"
+#include "goo/gmem.h"
+#include "goo/gfile.h"
+#include "goo/GString.h"
+#include "xpdf/Error.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/PSTokenizer.h"
+#include "xpdf/CMap.h"
 
 //------------------------------------------------------------------------
 

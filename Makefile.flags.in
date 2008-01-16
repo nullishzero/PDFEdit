@@ -1,4 +1,174 @@
-#Flags from configure script, included in some makefiles
+E_RELEASE= @enable_release@
+QMAKE 	 = @QMAKE@
+CC       = @CC@
+CXX      = @CXX@
+LINK	 = $(CXX)
+# TODO from autoconf
+AR       = ar cqs
+RANLIB 	 = @RANLIB@
+# TODO from autoconf
+COPY     = cp -f
+COPY_FILE= $(COPY)
+COPY_DIR = $(COPY) -r
+INSTALL_FILE= $(COPY_FILE)
+INSTALL_DIR = $(COPY_DIR)
+# TODO from autoconf
+DEL_FILE = rm -f
+# TODO from autoconf
+SYMLINK  = ln -sf
+# TODO from autoconf
+DEL_DIR  = rmdir
+DEL_FORCE_DIR = rm -rf
+MOVE     = mv -f
+# TODO from autoconf
+CHK_DIR_EXISTS= test -d
+MKDIR    = mkdir -p
+SHELL	 = /bin/sh
+DOXYGEN_BIN = @DOXYGEN_BIN@
+# TODO from autoconf ?
+LIBPREFIX = lib
 
-EXTRA_CFLAGS=@EXTRA_CFLAGS@
-EXTRA_CXXFLAGS=@EXTRA_CXXFLAGS@
+###########################################
+# Installation directories
+###########################################
+
+# TODO set in configure 
+INSTALL_ROOT	= @root_dir@
+PREFIX		= @prefix@
+DATAROOTDIR	= $(PREFIX)/share
+DATA_PATH	= $(DATAROOTDIR)/pdfedit
+DOC_PATH	= $(DATAROOTDIR)/doc/pdfedit
+MAN_PATH	= $(DATAROOTDIR)/man/man1
+BIN_PATH	= $(PREFIX)/bin
+
+#############################################
+# Flags definition
+#############################################
+
+# Debug options
+DEBUG	 = @DEBUG@
+# Optimization options
+OPTIM	 = @OPTIM@
+# Architecture specific options
+# TODO how to find out?
+ARCH	 = 
+# Warning options
+# TODO accoring release => no warnings
+# FIXME do we really want to use -pedantic here (i had some compilation
+# prblems in gui (ANSI C++ forbids long long)
+WARN	 = -W -Wall -Wconversion -Wwrite-strings \
+	   -Wno-unused-variable -Wunused-function -Wwrite-strings\
+	   -Wunused-macros 
+# TODO check whether this is ok also for other platforms
+C_EXTRA	 = -fmessage-length=0 -D_FORTIFY_SOURCE=2 @STACK_PROTECTOR_FLAGS@\
+	   -fno-strict-aliasing
+CXX_EXTRA = -fmessage-length=0 -D_FORTIFY_SOURCE=2 @STACK_PROTECTOR_FLAGS@\
+	    -fno-strict-aliasing -fexceptions
+
+#######################################
+# Optional C parameters
+# Put special parameters here
+# In fact we are not using many pure C files, so this will be usually out of your concern
+#######################################
+
+EXTRA_UTILS_CFLAGS = 
+EXTRA_KERNEL_CFLAGS = 
+EXTRA_TESTS_CFLAGS = 
+
+
+#######################################
+# Optional C++ parameters
+# Put special parameters here
+#######################################
+
+# from autoconf --enable-observer-debug
+OBSERVER_CXXFLAGS = @OBSERVER_CXXFLAGS@
+
+EXTRA_UTILS_CXXFLAGS = 
+EXTRA_KERNEL_CXXFLAGS = 
+EXTRA_TESTS_CXXFLAGS = 
+EXTRA_GUI_CXXFLAGS = -D CONFIG_DATA_PATH="$(DATA_PATH)"
+
+# we don't use CFLAGS and CXXFLAGS because this doesn't work very well
+# with qmake Makefiles generation
+C_FLAGS   	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(C_EXTRA) -pipe 
+CXX_FLAGS   	= $(DEBUG) $(OPTIM) $(ARCH) $(WARN) $(CXX_EXTRA) $(OBSERVER_CXXFLAGS) -pipe 
+
+#######################################
+# Absolute paths for all components
+#
+# Although this is not optimal (e.g. you may want to move whole tree into other directory), this
+# is the simpliest solution I have found. We have only one file with whole configuration and 
+# all other Makefiles just need to include it and don't care about including stuff and so on.
+# Just look inside xpdf and the way how it includes its files (you don't want to include xpdf
+# headers from some deeper directory (like kernel/tests) because you will be drawned with ../).
+####################################### 
+
+ROOT		= @abs_builddir@
+SRCROOT		= $(ROOT)/src
+DOCROOT		= $(ROOT)/doc
+XPDFROOT 	= $(SRCROOT)/xpdf
+KERNELROOT 	= $(SRCROOT)/kernel
+UTILSROOT 	= $(SRCROOT)/utils
+TESTSROOT 	= $(SRCROOT)/tests/
+KERNELTESTSROOT = $(TESTSROOT)/kernel
+GUIROOT		= $(SRCROOT)/gui
+QSA_QT		= @QSA_DIR@
+QSAROOT		= $(SRCROOT)/$(QSA_QT)
+QOUTPUTDEVROOT  = $(SRCROOT)/kpdf-kde-3.3.2
+
+BOOSTFLAGS 	 = @BOOST_CPPFLAGS@
+CPPUNITFLAGS	 = @CPPUNIT_CFLAGS@
+FREETYPEFLAGS	 = @FT2_CFLAGS@
+T1FLAGS		 = @t1_CFLAGS@
+# TODO we can remove this but xpdf subtree including has to be corrected first
+XPDFLAGS 	 = -I$(XPDFROOT)/ 
+# This is required for qmake which always forces -I when specifying 
+# INCLUDEPATH
+QSAPATH		 = $(QSAROOT)/src/qsa
+QSAFLAGS	 = -I$(QSAPATH)
+QOUTPUTDEVPATH	 = $(QOUTPUTDEVROOT)
+QOUTPUTDEVFLAGS  = -I$(QOUTPUTDEVPATH)
+
+# All necessary includes
+MANDATORY_INCPATH = -I. -I$(SRCROOT) $(XPDFLAGS) $(BOOSTFLAGS)\
+		   $(FREETYPEFLAGS) $(T1FLAGS)
+# This is required for qmake which always forces -I when specifying 
+MANDATORY_PATHS	  = $(SRCROOT) $(XPDFLAGS) $(BOOSTFLAGS) $(FREETYPEFLAGS)
+
+FREETYPE_LIBS    = @FT2_LIBS@
+T1_LIBS		 = @t1_LIBS@
+
+BOOST_LIBS 	 = @BOOST_LDFLAGS@
+BOOST_IOSTREAMS_LIBS = @BOOST_IOSTREAMS_LIB@
+
+# PDFedit specific libs
+CPPUNIT_LIBS	 = @CPPUNIT_LIBS@
+QOUTPUTDEV_LIBS	 = -lqoutputdevices -L$(QOUTPUTDEVROOT)/
+QSALIB		 = -lqsa_pdfedit -L$(QSAROOT)/lib/
+PDFEDIT_LIBS     = -lkernel -L$(KERNELROOT) -lutils -L$(UTILSROOT) \
+		   -lxpdf -L$(XPDFROOT)/xpdf -lfofi -L$(XPDFROOT)/fofi \
+		   -lGoo -L$(XPDFROOT)/goo -lsplash -L$(XPDFROOT)/splash \
+		   -lutils -L$(UTILSROOT) 
+# given from configure parameters
+STANDARD_LIBS	 = @LIBS@
+STANDARD_LDFLAGS = @LDFLAGS@
+
+# all necessary libraries
+MANDATORY_LIBS	 = $(BOOST_LIBS) $(BOOST_IOSTREAMS_LIB) $(PDFEDIT_LIBS) \
+		   $(FREETYPE_LIBS) $(T1_LIBS)
+
+
+########################################
+# Compilation targets
+########################################
+
+# configure parameter --enable-gui
+GUI_TARGET	 = @GUI_TARGET@
+# configure parameter --enable-kernel-tests
+TESTS_TARGET 	 = @TESTS_TARGET@
+DOXYGEN_TARGET	 = @DOXYGEN_TARGET@
+DOXYGEN_INSTALL_TARGET = @DOXYGEN_INSTALL_TARGET@
+# Extended documentation (design)
+ADVANCED_DOC_TARGET = @ADVANCED_TARGET@
+ADVANCED_DOC_INSTALL_TARGET = @ADVANCED_INSTALL_TARGET@

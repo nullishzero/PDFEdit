@@ -18,8 +18,8 @@
 #define Object XtObject
 #include <Xm/XmAll.h>
 #undef Object
-#include "gtypes.h"
-#include "XPDFCore.h"
+#include "goo/gtypes.h"
+#include "xpdf/XPDFCore.h"
 
 #if (XmVERSION <= 1) && !defined(__sgi)
 #define DISABLE_OUTLINE

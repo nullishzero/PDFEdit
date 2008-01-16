@@ -1,10 +1,3 @@
-/*
- * $RCSfile$
- *
- * $log: $
- *
- */
-
 //========================================================================
 //
 // Dict.cc
@@ -25,10 +18,10 @@
 
 #include <stddef.h>
 #include <string.h>
-#include "gmem.h"
-#include "Object.h"
-#include "XRef.h"
-#include "Dict.h"
+#include "goo/gmem.h"
+#include "xpdf/Object.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Dict.h"
 
 //------------------------------------------------------------------------
 // Dict

@@ -8,16 +8,16 @@
 
 #include <aconf.h>
 #include <stdio.h>
-#include "parseargs.h"
-#include "gmem.h"
-#include "GString.h"
-#include "GlobalParams.h"
-#include "Object.h"
-#include "PDFDoc.h"
-#include "SplashBitmap.h"
-#include "Splash.h"
-#include "SplashOutputDev.h"
-#include "config.h"
+#include "goo/parseargs.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Object.h"
+#include "xpdf/PDFDoc.h"
+#include "splash/SplashBitmap.h"
+#include "splash/Splash.h"
+#include "xpdf/SplashOutputDev.h"
+#include "xpdf/config.h"
 
 static int firstPage = 1;
 static int lastPage = 0;

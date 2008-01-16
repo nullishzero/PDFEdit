@@ -21,10 +21,10 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "GString.h"
-#include "Object.h"
-#include "Stream.h"
+#include "goo/gtypes.h"
+#include "goo/GString.h"
+#include "xpdf/Object.h"
+#include "xpdf/Stream.h"
 
 //------------------------------------------------------------------------
 // Decrypt

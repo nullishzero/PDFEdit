@@ -9,8 +9,8 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #include <errno.h>
-#include "delinearizator.h"
-#include "debug.h"
+#include "utils/delinearizator.h"
+#include "utils/debug.h"
 #include "kernel/xrefwriter.h"
 #include "kernel/streamwriter.h"
 #include "kernel/factories.h"

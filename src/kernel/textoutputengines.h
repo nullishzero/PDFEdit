@@ -13,11 +13,11 @@
 #define _TEXTOUTPUTENGINES_H_
 
 // basic types
-#include "static.h"
+#include "kernel/static.h"
 #include <vector>
 
 // output builder
-#include "textoutputentities.h"
+#include "kernel/textoutputentities.h"
 
 
 //=====================================================================================

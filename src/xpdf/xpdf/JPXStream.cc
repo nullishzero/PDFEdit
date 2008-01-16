@@ -13,10 +13,10 @@
 #endif
 
 #include <limits.h>
-#include "gmem.h"
-#include "Error.h"
-#include "JArithmeticDecoder.h"
-#include "JPXStream.h"
+#include "goo/gmem.h"
+#include "xpdf/Error.h"
+#include "xpdf/JArithmeticDecoder.h"
+#include "xpdf/JPXStream.h"
 
 //~ to do:
 //  - precincts

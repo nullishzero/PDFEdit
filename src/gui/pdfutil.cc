@@ -18,8 +18,8 @@
 #include "qtcompat.h"
 #include <qstring.h>
 #include <qobject.h>
-#include <cobject.h>
-#include <cpdf.h>
+#include <kernel/cobject.h>
+#include <kernel/cpdf.h>
 #include "util.h"
 #include <utils/debug.h>
 

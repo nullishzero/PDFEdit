@@ -18,8 +18,8 @@
 #include "settings.h"
 #include <qstring.h>
 #include <stdlib.h>
-#include <modecontroller.h>
-#include <confparser.h>
+#include <kernel/modecontroller.h>
+#include <utils/confparser.h>
 #include "util.h"
 
 namespace gui {

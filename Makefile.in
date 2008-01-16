@@ -1,45 +1,78 @@
-#top-level makefile for PDF editor
+# top-level makefile for PDF editor
 
-.PHONY: distclean clean doc src install all regen
+.PHONY: distclean clean doc-dist source install install-no all uninstall \
+	uninstall-no install-gui uninstall-gui doc-dist-install \
+	doc-dist-uninstall check-configure
 
-#make PDF editor - source and documentation
-all: src doc
+# includes basic building rules
+include Makefile.rules
 
-#install PDF editor
-install: src
-	cd src && make install
+# make PDF editor - source and documentation
+all: check-configure source 
 
-#uninstall PDF editor
-uninstall:
-	cd src && make uninstall
+check-configure: configure
 
-#make documentation
-#GNU make is required to build documentation, BSD make will not work
-#GNU make is installed sometimes as gmake, sometimes as make
-doc:
-	cd doc && ( gmake || make )
+configure: configure.in
+	@echo configure script is outdated. You should do autoconf and
+	@echo rerun ./configure script 
+	exit 1
 
-#Minimal documentation needed to proper installation
-#(documentation must be build for it to be instlled & used)
+# Common install target. It depends on configuration which specific 
+# installation target will be used.
+install: @INSTALL_TARGET@ doc-dist-install 
+
+install-no:
+	@echo There is no installation target defined!!! You probably have
+	@echo not configured PDFedit with installation target. 
+
+# Installs gui part
+install-gui: source 
+	cd $(GUIROOT) && $(MAKE) -f Makefile.gui install
+
+# TODO Installs development package consisting of header files and 
+# configuration script for 3rd party applications
+
+# Common uninstall target. It depends on configuration which specific
+# uninstallation target will be used
+uninstall: @UNINSTALL_TARGET@ doc-dist-uninstall
+
+uninstall-no:
+	@echo There is no uninstallation target defined!!! You probably have
+	@echo not configured PDFedit with installation target so that 
+	@echo uninstallation is neither evailable. 
+
+# Uninstalls gui part
+uninstall-gui:
+	cd $(GUIROOT) && $(MAKE) -f Makefile.gui uninstall
+
+# TODO Installs development package consisting of header files and 
+# configuration script for 3rd party applications
+
+# Target for distributed documentation. 
 doc-dist:
-	cd doc && ( gmake doc_dist|| make doc_dist )
+	cd $(DOCROOT) && $(MAKE) doc_dist
 
-#make application
-src: doc-dist
-	cd src && make
+# Target for distributed documentation (un)installation 
+doc-dist-install: doc-dist
+	cd $(DOCROOT) && $(MAKE) doc_dist_install
 
-#cleanup
+doc-dist-uninstall:
+	cd $(DOCROOT) && $(MAKE) doc_dist_uninstall
+
+# make application
+source: 
+	cd $(SRCROOT) && $(MAKE)
+
+# cleanup
 clean:
-	cd doc && make clean
-	cd src && make clean
-	rm -f config.log
+	cd $(DOCROOT) && $(MAKE) clean || true
+	cd $(SRCROOT) && $(MAKE) clean || true
+	$(DEL_FILE) config.log
 
-#dist cleanup
+# dist cleanup
 distclean:
-	cd doc && make clean
-	cd src && make distclean
-	rm -f Makefile config.status config.log config.pro config.pro.in src/Makefile.flags
-
-#re-generate programmer documentation
-regen:
-	cd doc && doxygen
+	cd $(DOCROOT) && $(MAKE) clean || true
+	cd $(SRCROOT) && $(MAKE) distclean || true
+	$(DEL_FILE) Makefile config.status config.log Makefile.flags || true
+	$(DEL_FILE) autom4te.cache/* || true
+	$(DEL_DIR) autom4te.cache || true

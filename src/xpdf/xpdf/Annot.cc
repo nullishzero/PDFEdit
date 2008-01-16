@@ -14,15 +14,15 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include "gmem.h"
-#include "GList.h"
-#include "Error.h"
-#include "Object.h"
-#include "Catalog.h"
-#include "Gfx.h"
-#include "GfxFont.h"
-#include "Lexer.h"
-#include "Annot.h"
+#include "goo/gmem.h"
+#include "goo/GList.h"
+#include "xpdf/Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Catalog.h"
+#include "xpdf/Gfx.h"
+#include "xpdf/GfxFont.h"
+#include "xpdf/Lexer.h"
+#include "xpdf/Annot.h"
 
 //------------------------------------------------------------------------
 

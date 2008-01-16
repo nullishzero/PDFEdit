@@ -11,11 +11,11 @@
 #endif
 
 #include <string.h>
-#include "gmem.h"
-#include "SplashMath.h"
-#include "SplashGlyphBitmap.h"
-#include "SplashFontFile.h"
-#include "SplashFont.h"
+#include "goo/gmem.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashGlyphBitmap.h"
+#include "splash/SplashFontFile.h"
+#include "splash/SplashFont.h"
 
 //------------------------------------------------------------------------
 

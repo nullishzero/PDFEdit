@@ -19,7 +19,7 @@
 #include "refpropertydialog.h"
 #include "refvalidator.h"
 #include "util.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <qcolor.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>

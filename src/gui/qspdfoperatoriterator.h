@@ -12,8 +12,8 @@
 
 #include <qstring.h>
 #include <qobject.h>
-#include <pdfoperators.h>
-#include <ccontentstream.h>
+#include <kernel/pdfoperators.h>
+#include <kernel/ccontentstream.h>
 #include "qscobject.h"
 
 namespace gui {

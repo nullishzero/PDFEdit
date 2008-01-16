@@ -27,8 +27,8 @@
 #endif
 
 #include <stdio.h>
-#include "gtypes.h"
-#include "Object.h"
+#include "goo/gtypes.h"
+#include "xpdf/Object.h"
 
 class BaseStream;
 

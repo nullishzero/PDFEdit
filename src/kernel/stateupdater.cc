@@ -10,12 +10,12 @@
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 // static
-#include "static.h"
+#include "kernel/static.h"
 
 //
-#include "stateupdater.h"
-#include "pdfoperators.h"
-#include "cobject.h"
+#include "kernel/stateupdater.h"
+#include "kernel/pdfoperators.h"
+#include "kernel/cobject.h"
 
 //fabs
 #include <math.h>

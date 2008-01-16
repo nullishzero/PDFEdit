@@ -14,13 +14,13 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "gmem.h"
-#include "gfile.h"
-#include "GString.h"
-#include "Error.h"
-#include "GlobalParams.h"
-#include "PSTokenizer.h"
-#include "CharCodeToUnicode.h"
+#include "goo/gmem.h"
+#include "goo/gfile.h"
+#include "goo/GString.h"
+#include "xpdf/Error.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/PSTokenizer.h"
+#include "xpdf/CharCodeToUnicode.h"
 
 //------------------------------------------------------------------------
 

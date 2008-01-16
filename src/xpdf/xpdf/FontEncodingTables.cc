@@ -8,7 +8,7 @@
 
 #include <aconf.h>
 #include <stdlib.h>
-#include "FontEncodingTables.h"
+#include "xpdf/FontEncodingTables.h"
 
 char *macRomanEncoding[256] = {
   NULL,

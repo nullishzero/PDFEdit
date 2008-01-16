@@ -10,7 +10,7 @@
 #pragma implementation
 #endif
 
-#include "SplashFontFileID.h"
+#include "splash/SplashFontFileID.h"
 
 //------------------------------------------------------------------------
 // SplashFontFileID

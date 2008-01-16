@@ -14,10 +14,10 @@
 
 #include <string.h>
 #include <t1lib.h>
-#include "gmem.h"
-#include "SplashT1FontEngine.h"
-#include "SplashT1Font.h"
-#include "SplashT1FontFile.h"
+#include "goo/gmem.h"
+#include "splash/SplashT1FontEngine.h"
+#include "splash/SplashT1Font.h"
+#include "splash/SplashT1FontFile.h"
 
 //------------------------------------------------------------------------
 // SplashT1FontFile

@@ -15,8 +15,8 @@
 #pragma interface
 #endif
 
-#include "gtypes.h"
-#include "CharTypes.h"
+#include "goo/gtypes.h"
+#include "xpdf/CharTypes.h"
 
 class GString;
 class GfxState;

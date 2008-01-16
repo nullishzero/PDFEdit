@@ -17,7 +17,7 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include "SplashFont.h"
+#include "splash/SplashFont.h"
 
 class SplashFTFontFile;
 

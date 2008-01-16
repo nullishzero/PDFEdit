@@ -9,7 +9,7 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "textoutputbuilder.h"
+#include "kernel/textoutputbuilder.h"
 
 //=====================================================================================
 namespace textoutput {

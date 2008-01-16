@@ -13,7 +13,7 @@
 #endif
 
 #include <stdlib.h>
-#include "FoFiEncodings.h"
+#include "fofi/FoFiEncodings.h"
 
 //------------------------------------------------------------------------
 // Type 1 and 1C font data

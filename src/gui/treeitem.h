@@ -10,7 +10,7 @@
 #ifndef __TREEITEM_H__
 #define __TREEITEM_H__
 
-#include <iproperty.h>
+#include <kernel/iproperty.h>
 #include "treeitemabstract.h"
 
 class QString;

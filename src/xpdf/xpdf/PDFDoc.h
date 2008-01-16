@@ -16,9 +16,9 @@
 #endif
 
 #include <stdio.h>
-#include "XRef.h"
-#include "Catalog.h"
-#include "Page.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Catalog.h"
+#include "xpdf/Page.h"
 
 class GString;
 class BaseStream;

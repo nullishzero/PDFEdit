@@ -65,8 +65,8 @@ using _JM_NAMESPACE::max;
 using _JM_NAMESPACE::min;
 
 // other includes
-#include "exceptions.h"
-#include "xpdf.h"
+#include "kernel/exceptions.h"
+#include "kernel/xpdf.h"
 
 
 

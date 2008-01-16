@@ -11,9 +11,9 @@
 #endif
 
 #include <stdio.h>
-#include "gmem.h"
-#include "SplashErrorCodes.h"
-#include "SplashBitmap.h"
+#include "goo/gmem.h"
+#include "splash/SplashErrorCodes.h"
+#include "splash/SplashBitmap.h"
 
 //------------------------------------------------------------------------
 // SplashBitmap

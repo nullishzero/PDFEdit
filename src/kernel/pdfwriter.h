@@ -14,7 +14,7 @@
 
 #include<vector>
 #include<map>
-#include "streamwriter.h"
+#include "kernel/streamwriter.h"
 #include "utils/objectstorage.h"
 #include "utils/observer.h"
 

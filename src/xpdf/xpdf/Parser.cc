@@ -13,13 +13,13 @@
 #endif
 
 #include <stddef.h>
-#include "Object.h"
-#include "Array.h"
-#include "Dict.h"
-#include "Decrypt.h"
-#include "Parser.h"
-#include "XRef.h"
-#include "Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Array.h"
+#include "xpdf/Dict.h"
+#include "xpdf/Decrypt.h"
+#include "xpdf/Parser.h"
+#include "xpdf/XRef.h"
+#include "xpdf/Error.h"
 
 Parser::Parser(XRef *xrefA, Lexer *lexerA, GBool allowStreamsA) {
   xref = xrefA;

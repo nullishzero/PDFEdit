@@ -12,8 +12,8 @@
 #ifndef __CANNOTATION_H__
 #define __CANNOTATION_H__
 
-#include "static.h"
-#include "cobject.h"
+#include "kernel/static.h"
+#include "kernel/cobject.h"
 
 namespace pdfobjects
 {

@@ -4,7 +4,8 @@ CONFIG += staticlib
 
 TARGET = qoutputdevices
 
-include(../../config.pro)
+# include basic definitions from configuration process
+include(../../Makefile.flags)
 
 #check debug/release
 contains( E_RELEASE, no ) {

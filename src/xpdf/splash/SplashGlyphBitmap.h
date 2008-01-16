@@ -9,7 +9,7 @@
 
 #include <aconf.h>
 
-#include "gtypes.h"
+#include "goo/gtypes.h"
 
 //------------------------------------------------------------------------
 // SplashGlyphBitmap

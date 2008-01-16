@@ -14,9 +14,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "FoFiEncodings.h"
-#include "FoFiType1.h"
+#include "goo/gmem.h"
+#include "fofi/FoFiEncodings.h"
+#include "fofi/FoFiType1.h"
 
 //------------------------------------------------------------------------
 // FoFiType1

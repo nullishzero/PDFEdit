@@ -12,7 +12,7 @@
 #ifndef _OPERATOR_HINTER_H_
 #define _OPERATOR_HINTER_H_
 
-#include "static.h" 
+#include "kernel/static.h" 
 #include "utils/rulesmanager.h"
 #include "utils/confparser.h"
 

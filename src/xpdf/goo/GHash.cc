@@ -12,9 +12,9 @@
 #pragma implementation
 #endif
 
-#include "gmem.h"
-#include "GString.h"
-#include "GHash.h"
+#include "goo/gmem.h"
+#include "goo/GString.h"
+#include "goo/GHash.h"
 
 //------------------------------------------------------------------------
 

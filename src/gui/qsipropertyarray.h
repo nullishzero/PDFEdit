@@ -11,9 +11,9 @@
 #define __QSIPROPERTYARRAY_H__
 
 #include "qscobject.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 #include <stdlib.h>
-#include <pdfoperators.h>
+#include <kernel/pdfoperators.h>
 
 namespace gui {
 

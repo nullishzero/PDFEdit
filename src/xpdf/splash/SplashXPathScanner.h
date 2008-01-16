@@ -13,7 +13,7 @@
 #pragma interface
 #endif
 
-#include "SplashTypes.h"
+#include "splash/SplashTypes.h"
 
 class SplashXPath;
 class SplashBitmap;

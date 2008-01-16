@@ -9,11 +9,11 @@
 
 #include <aconf.h>
 #if USE_FIXEDPONT
-#include "FixedPoint.h"
+#include "goo/FixedPoint.h"
 #else
 #include <math.h>
 #endif
-#include "SplashTypes.h"
+#include "splash/SplashTypes.h"
 
 static inline SplashCoord splashAbs(SplashCoord x) {
 #if USE_FIXEDPOINT

@@ -15,7 +15,7 @@
 #pragma interface
 #endif
 
-#include "SplashFontFile.h"
+#include "splash/SplashFontFile.h"
 
 class SplashT1FontEngine;
 

@@ -12,8 +12,8 @@
 #define _CARRAY_H
 
 // all basic includes
-#include "static.h"
-#include "cobjectsimple.h"
+#include "kernel/static.h"
+#include "kernel/cobjectsimple.h"
 
 
 //=====================================================================================

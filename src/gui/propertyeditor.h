@@ -15,8 +15,8 @@
 #include QDICT
 #include <qmap.h>
 #include <qwidget.h>
-#include <iproperty.h>
-#include <pdfoperators.h>
+#include <kernel/iproperty.h>
+#include <kernel/pdfoperators.h>
 
 class QResizeEvent;
 class Q_ScrollView;

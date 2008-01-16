@@ -17,35 +17,35 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <math.h>
-#include "GString.h"
-#include "GList.h"
-#include "config.h"
-#include "GlobalParams.h"
-#include "Object.h"
-#include "Error.h"
-#include "Function.h"
-#include "Gfx.h"
-#include "GfxState.h"
-#include "GfxFont.h"
-#include "UnicodeMap.h"
-#include "FoFiType1C.h"
-#include "FoFiTrueType.h"
-#include "Catalog.h"
-#include "Page.h"
-#include "Stream.h"
-#include "Annot.h"
-#include "XRef.h"
-#include "PreScanOutputDev.h"
+#include "goo/GString.h"
+#include "goo/GList.h"
+#include "xpdf/config.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/Object.h"
+#include "xpdf/Error.h"
+#include "xpdf/Function.h"
+#include "xpdf/Gfx.h"
+#include "xpdf/GfxState.h"
+#include "xpdf/GfxFont.h"
+#include "xpdf/UnicodeMap.h"
+#include "fofi/FoFiType1C.h"
+#include "fofi/FoFiTrueType.h"
+#include "xpdf/Catalog.h"
+#include "xpdf/Page.h"
+#include "xpdf/Stream.h"
+#include "xpdf/Annot.h"
+#include "xpdf/XRef.h"
+#include "xpdf/PreScanOutputDev.h"
 #if HAVE_SPLASH
-#  include "Splash.h"
-#  include "SplashBitmap.h"
-#  include "SplashOutputDev.h"
+#  include "splash/Splash.h"
+#  include "splash/SplashBitmap.h"
+#  include "xpdf/SplashOutputDev.h"
 #endif
-#include "PSOutputDev.h"
+#include "xpdf/PSOutputDev.h"
 
 #ifdef MACOS
 // needed for setting type/creator of MacOS files
-#include "ICSupport.h"
+#include "xpdf/ICSupport.h"
 #endif
 
 // the MSVC math.h doesn't define this

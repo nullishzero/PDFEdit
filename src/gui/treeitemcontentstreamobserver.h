@@ -11,8 +11,8 @@
 #define __TREEITEMCONTENTSTREAMOBSERVER_H__
 
 #include "treeitemgenericobserver.h"
-#include <ccontentstream.h>
-#include <observer.h>
+#include <kernel/ccontentstream.h>
+#include <utils/observer.h>
 #include <utils/debug.h>
 
 namespace gui {

@@ -12,9 +12,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "SplashMath.h"
-#include "SplashScreen.h"
+#include "goo/gmem.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashScreen.h"
 
 //------------------------------------------------------------------------
 

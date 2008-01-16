@@ -12,15 +12,15 @@
 #ifndef __CPDF_H__
 #define __CPDF_H__
 
-#include "static.h"
+#include "kernel/static.h"
 
 // xpdf
-#include "xpdf.h"
+#include "kernel/xpdf.h"
 
 // mode controller
-#include "modecontroller.h"
-#include "cobject.h"
-#include "xrefwriter.h"
+#include "kernel/modecontroller.h"
+#include "kernel/cobject.h"
+#include "kernel/xrefwriter.h"
 
 // =============================================================================
 namespace pdfobjects {

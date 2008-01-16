@@ -12,10 +12,10 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gmem.h"
-#include "SplashMath.h"
-#include "SplashPath.h"
-#include "SplashXPath.h"
+#include "goo/gmem.h"
+#include "splash/SplashMath.h"
+#include "splash/SplashPath.h"
+#include "splash/SplashXPath.h"
 
 //------------------------------------------------------------------------
 

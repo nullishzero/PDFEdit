@@ -12,7 +12,7 @@
 
 #include <qstring.h>
 #include <qobject.h>
-#include <ccontentstream.h>
+#include <kernel/ccontentstream.h>
 #include "qscobject.h"
 
 namespace gui {

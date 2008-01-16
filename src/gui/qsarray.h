@@ -11,7 +11,7 @@
 #define __QSARRAY_H__
 
 #include "qsiproperty.h"
-#include <cobject.h>
+#include <kernel/cobject.h>
 
 namespace gui {
 

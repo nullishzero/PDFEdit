@@ -16,12 +16,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-#include "gmem.h"
-#include "Object.h"
-#include "Dict.h"
-#include "Stream.h"
-#include "Error.h"
-#include "Function.h"
+#include "goo/gmem.h"
+#include "xpdf/Object.h"
+#include "xpdf/Dict.h"
+#include "xpdf/Stream.h"
+#include "xpdf/Error.h"
+#include "xpdf/Function.h"
 
 //------------------------------------------------------------------------
 // Function

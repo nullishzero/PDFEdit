@@ -20,7 +20,7 @@
 #include "treeitempage.h"
 #include "treeitempdfoperator.h"
 #include "util.h"
-#include <ccontentstream.h>
+#include <kernel/ccontentstream.h>
 
 namespace gui {
 

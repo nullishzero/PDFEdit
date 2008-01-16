@@ -23,9 +23,9 @@
 #include QSTRLIST
 
 #include "settings.h"
-#include "cpdf.h"
-#include "cpage.h"
-#include "static.h"
+#include "kernel/cpdf.h"
+#include "kernel/cpage.h"
+#include "kernel/static.h"
 #include "rect2Darray.h"
 
 #include "pageviewmode.h"

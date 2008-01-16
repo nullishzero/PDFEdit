@@ -17,10 +17,10 @@
 #pragma interface
 #endif
 
-#include "CharTypes.h"
+#include "xpdf/CharTypes.h"
 
 #if MULTITHREADED
-#include "GMutex.h"
+#include "goo/GMutex.h"
 #endif
 
 struct CharCodeToUnicodeString;

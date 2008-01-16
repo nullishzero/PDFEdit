@@ -16,19 +16,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "gmem.h"
-#include "Error.h"
-#include "Object.h"
-#include "Dict.h"
-#include "GlobalParams.h"
-#include "CMap.h"
-#include "CharCodeToUnicode.h"
-#include "FontEncodingTables.h"
-#include "BuiltinFontTables.h"
-#include "FoFiType1.h"
-#include "FoFiType1C.h"
-#include "FoFiTrueType.h"
-#include "GfxFont.h"
+#include "goo/gmem.h"
+#include "xpdf/Error.h"
+#include "xpdf/Object.h"
+#include "xpdf/Dict.h"
+#include "xpdf/GlobalParams.h"
+#include "xpdf/CMap.h"
+#include "xpdf/CharCodeToUnicode.h"
+#include "xpdf/FontEncodingTables.h"
+#include "xpdf/BuiltinFontTables.h"
+#include "fofi/FoFiType1.h"
+#include "fofi/FoFiType1C.h"
+#include "fofi/FoFiTrueType.h"
+#include "xpdf/GfxFont.h"
 
 //------------------------------------------------------------------------
 

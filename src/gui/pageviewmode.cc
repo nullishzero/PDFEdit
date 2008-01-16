@@ -13,12 +13,12 @@
 #include <qcursor.h>
 
 #include "pageviewmode.h"
-#include "pdfoperatorsiter.h"
+#include "kernel/pdfoperatorsiter.h"
 
-#include "cpage.h"
-#include "cannotation.h"
-#include "pdfoperators.h"
-#include "carray.h"
+#include "kernel/cpage.h"
+#include "kernel/cannotation.h"
+#include "kernel/pdfoperators.h"
+#include "kernel/carray.h"
 
 using namespace pdfobjects;
 using namespace utils;

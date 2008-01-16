@@ -12,10 +12,10 @@
 #pragma implementation
 #endif
 
-#include "gmem.h"
-#include "SplashFTFontEngine.h"
-#include "SplashFTFont.h"
-#include "SplashFTFontFile.h"
+#include "goo/gmem.h"
+#include "splash/SplashFTFontEngine.h"
+#include "splash/SplashFTFont.h"
+#include "splash/SplashFTFontFile.h"
 
 //------------------------------------------------------------------------
 // SplashFTFontFile
