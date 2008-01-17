@@ -9,7 +9,6 @@
  */
 /* === Validation functions === */
 
-
 /** Is this operator text operator. */
 function isTextOp(operator) {
 	var txtit = operator.textIterator();
