@@ -17,6 +17,8 @@
 	* Code cleanups by Gwurk
 	* Bugs 164, 168, 169, 175, 180, 182, 183, 187 fixed
 	* Added Tango icon theme from Tiziano Mattei.
+	* Fixed bug with operator-only command available for non-operators too,
+	  leading to errors
 
 2007-08-28 PDF Editor 0.3.2
 	* bug #160 (http://pdfedit.petricek.net/bt/view.php?id=160) fixed
