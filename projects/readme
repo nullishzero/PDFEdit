@@ -1,0 +1,14 @@
+Windows Project Files
+---------------------------
+
+1) General Steps
+
+   a) open the project file according to your development environment
+   b) set BOOST & CPPUNIT includes in pdfedit->Property Pages->C/C++->General->Additional Include Directories
+   c) set debug parameters pdfedit->Property Pages->Configuration Properties->Debugging->Command Arguments to e.g. "-all -dir ..\testset -files ..\doc\zadani.pdf" 
+   d) build solution
+   e) run tests 
+
+Tested:
+VC 2005 Express Edition
+	-> Debug version
