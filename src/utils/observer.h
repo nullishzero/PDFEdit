@@ -18,6 +18,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include "debug.h"
+
 //=============================================================================
 namespace observer
 {
@@ -605,6 +607,20 @@ public:
 	}
 	
 };
+
+
+/**
+ * Checks whether the observer list is empty.
+ */
+template<typename T>
+inline static void 
+check_observerlist (const T& list) 
+{
+	if (list.size()) 
+	{
+		kernelPrintDbg (debug::DBG_CRIT, "unregistered observer(s): " << list.size());
+	}
+}
 
 
 } // namespace observer

@@ -19,6 +19,10 @@
 #ifndef _COORDINATES_H_
 #define _COORDINATES_H_
 
+#include <limits>
+#include <algorithm>
+#include <ostream>
+
 //============================================
 namespace _JM_NAMESPACE {
 //============================================
@@ -48,7 +52,6 @@ struct GenPoint
 	GenPoint () {x = y = COORDINATE_INVALID;}
 	/** Constructor. */
 	GenPoint (Coord _x, Coord _y) : x(_x), y(_y) {}
-
 };
 
 //
@@ -127,7 +130,7 @@ typedef struct GenRect<Coordinate> Rectangle;
 // Basic algorithms
 //=====================================================================================
 
-/** Merge two rectangles to one. */
+/** Merge two Rectangles to one. */
 inline Rectangle 
 rectangle_merge (Rectangle _b1, Rectangle _b2)
 {
@@ -159,7 +162,7 @@ rectangle_merge (Rectangle _b1, Rectangle _b2)
 	return Rectangle (xleft, yleft, xright, yright);
 }
 
-/** Intersect two rectangles. */
+/** Intersect two Rectangles. */
 inline Rectangle 
 rectangle_intersect (Rectangle _b1, Rectangle _b2)
 {

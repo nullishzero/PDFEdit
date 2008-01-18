@@ -24,11 +24,6 @@
 namespace _JM_NAMESPACE {
 //============================================
 
-#undef max
-#undef min
-using std::max;
-using std::min;
-
 
 //=====================================================================================
 // Standard min / max functions

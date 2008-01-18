@@ -11,34 +11,7 @@
 #define _OBJECTCOMPARATOR_H_
 
 #include <map>
-#include "xpdf/Object.h"
 
-/** Reference comparator class.
- *
- * Implements functional operator to compare two referencies defined as
- * Ref structures.
- * <br>
- * This can be used as comparator predicate in ObjectStorage where value is
- * Object type.
- */
-class RefComparator
-{
-public:
-        /** Comparator operator.
-         * @param v1 First value.
-         * @param v2 Second value.
-         *
-         * @returns true iff v1.num and v1.gen are less than v2.num and v2.gen.
-         *
-         */ 
-        bool operator()(const Ref & v1, const Ref & v2)const
-        {
-                if(v1.num == v2.num)
-                        return v1.gen < v2.gen;
-                else
-                        return v1.num < v2.num;
-        }
-};
 
 /**
  * @file objectstorage.h

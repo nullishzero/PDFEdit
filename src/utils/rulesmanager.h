@@ -222,17 +222,16 @@ public:
 	template<typename Parser>
 	int loadFromFile(const std::string & confFile, Parser & parser)
 	{
-	using namespace std;
 
 		int added=0;
 
 		// opens input stream
-		ifstream stream(confFile.c_str());
+		std::ifstream stream(confFile.c_str());
 		if(!stream.is_open())
 			return -1;
 		
 		// uses opened input file stream
-		istream * original=parser.setStream(&stream);
+		std::istream * original=parser.setStream(&stream);
 
 		// parses all rules and register them by super type interface
 		while(!parser.eod())
@@ -309,8 +308,7 @@ public:
 		for(; i!=mapping.end(); )
 		{
 			const RuleType original=i->first;
-			RuleMatcherType & matcher=matcher;
-			if(matcher(original, ruleDef, NULL))
+			if((*matcher)(original, ruleDef, NULL))
 			{
 				// this element matches
 				if(removed)

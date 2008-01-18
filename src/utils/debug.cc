@@ -8,7 +8,8 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-#include "utils/debug.h"
+#include "kernel/static.h" // WIN32 port - precompiled headers - REMOVE IN FUTURE!
+#include "debug.h"
 
 // if default debug level doesn't come from gcc command line, we use
 // ERR

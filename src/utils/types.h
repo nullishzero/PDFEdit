@@ -14,8 +14,8 @@
 // Basic includes
 //============================================
 
-#include "types/basic_types.h"
-#include "types/coordinates.h"
+#include <utils/types/basic_types.h>
+#include <utils/types/coordinates.h>
 
 
 #endif // _TYPES_H_

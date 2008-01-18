@@ -50,6 +50,40 @@ private:
 
 
 //============================================
+// Singleton idiom
+//============================================
+
+/**
+ * Singleton idiom.
+ *
+ * Derived class must declere this class a friend.
+ * Usage:
+ *	Derived : public Singleton<Derived> {
+ *		friend class Singleton<Derived>;
+ */
+template <class Derived>
+class Singleton
+{
+   public:
+     static Derived& instance ();
+
+   protected:
+     Singleton () {}
+
+   private:
+     Singleton (const Singleton&);
+	 Singleton& operator=(const Singleton&);
+};
+
+template <class Derived>
+Derived& Singleton<Derived>::instance()
+{
+  static Derived _instance;
+  return _instance;
+}
+
+
+//============================================
 // Class copy constructor abbreviations
 //============================================
 

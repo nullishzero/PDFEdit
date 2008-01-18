@@ -13,12 +13,10 @@ CXX_FLAGS += $(EXTRA_UTILS_CXXFLAGS)
 
 # Source files for library
 SOURCES=debug.cc \
-     	delinearizator.cc \
 	confparser.cc
 
 # Binary files to be included to the library
 BINS=debug.o \
-     delinearizator.o \
      confparser.o
 
 # FIXME use LIBPREFIX
