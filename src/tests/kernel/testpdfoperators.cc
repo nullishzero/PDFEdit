@@ -8,20 +8,13 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  testpdfoperators.cc
- *         Created:  04/20/2006 23:47:27 AM CEST
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpage.h"
-#include "testcpdf.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcobject.h"
+#include "tests/kernel/testcpage.h"
+#include "tests/kernel/testcpdf.h"
 
-#include <PDFDoc.h>
 #include "kernel/cpage.h"
 
 
@@ -541,7 +534,9 @@ public:
 	{
 		OUTPUT << "PDfOperators..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -557,7 +552,9 @@ public:
 	{
 		OUTPUT << "Delete PDfOperator..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -573,7 +570,9 @@ public:
 	{
 		OUTPUT << "Delete PDfOperator..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -590,7 +589,9 @@ public:
 	{
 		OUTPUT << "Insert PDfOperator..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -606,12 +607,21 @@ public:
 	{
 		OUTPUT << "Text iterator..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
 			TEST(" text iterator");
-			CPPUNIT_ASSERT (textIter (OUTPUT, (*it).c_str()));
+
+			#if REALLY_ALL_OUTPUT
+				CPPUNIT_ASSERT (cstreamsreader (OUTPUT, (*it).c_str()));
+			#else
+				std::ofstream o;
+				o.open ("/dev/null");
+				CPPUNIT_ASSERT (textIter (o, (*it).c_str()));
+			#endif
 			OK_TEST;
 		}
 	}
@@ -622,7 +632,9 @@ public:
 	{
 		OUTPUT << "Change color..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -638,7 +650,9 @@ public:
 	{
 		OUTPUT << "Clone PDfOperator..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 

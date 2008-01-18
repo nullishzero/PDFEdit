@@ -9,20 +9,19 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "testmain.h"
-#include "testcpdf.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcpdf.h"
 #include "kernel/factories.h"
 #include "kernel/cobjecthelpers.h"
 #include "kernel/cpdf.h"
 #include "kernel/pdfwriter.h"
-#include "utils/delinearizator.h"
+#include "kernel/delinearizator.h"
 
 using namespace pdfobjects;
 using namespace utils;
 using namespace observer;
 using namespace boost;
-
-#define TEST_FILE "../../doc/zadani.pdf"
 
 class ProgressBar:public IProgressBar
 {
@@ -91,9 +90,13 @@ public:
 		snprintf(suffix, sizeof(suffix)-1, "%u_clone.pdf", 0);
 		string file=originalFile+suffix;
 		printf("TC01:\tCloning of first (the newest one) revision. Output file=%s\n", file.c_str());
-		FILE * cloneFile=fopen(file.c_str(), "w");
+		FILE * cloneFile=fopen(file.c_str(), "wb");
 		pdf->clone(cloneFile);
 		fclose(cloneFile);
+		#if TEMP_FILES_CREATE
+		#else
+			remove (file.c_str());
+		#endif
 		
 		printf("TC02:\tCloning of later revisions.\n");
 		for(CPdf::revision_t rev=1; rev<pdf->getRevisionsCount(); rev++)
@@ -104,9 +107,13 @@ public:
 				pdf->changeRevision(rev);
 				snprintf(suffix, sizeof(suffix)-1, "%u_clone.pdf", rev);
 				file=originalFile+suffix;
-				cloneFile=fopen(file.c_str(), "w");
+				cloneFile=fopen(file.c_str(), "wb");
 				pdf->clone(cloneFile);
 				fclose(cloneFile);
+				#if TEMP_FILES_CREATE
+				#else
+					remove (file.c_str());
+				#endif
 			}catch(NotImplementedException & e)
 			{
 				printf("\t\tData not suitable for this test. Revision changing is not supported.\n");
@@ -321,10 +328,13 @@ public:
 		if (0 == pageCount)
 		{
 			printf("TC01:\tinsertPage to an empty document results in 1 total pages\n");
-			CPdf * test_doc = getTestCPdf(TEST_FILE);
-			pdf->insertPage(test_doc->getFirstPage(), 1);
-			CPPUNIT_ASSERT(pdf->getPageCount()==1);
-			test_doc->close();
+			if (0 < TestParams::instance().files.size())
+			{
+				CPdf * test_doc = getTestCPdf(TestParams::instance().files.front().c_str());
+				pdf->insertPage(test_doc->getFirstPage(), 1);
+				CPPUNIT_ASSERT(pdf->getPageCount()==1);
+				test_doc->close();
+			}
 			return;
 		}
 
@@ -673,7 +683,7 @@ public:
 	}
 
 /** Multiversion file name. */
-#define MV_F "tests/multiversion.pdf"
+#define MV_F "multiversion.pdf"
 
 /** Multiversion revisin count. */
 #define MV_RC  4
@@ -696,8 +706,8 @@ public:
 		printf("%s\n", __FUNCTION__);
 
 		// opens special test file
-		printf("Using file \"%s\"\n", MV_F);
-		CPdf *pdf=getTestCPdf(MV_F);
+		printf("Using file \"%s\"\n", TestParams::add_path(MV_F).c_str());
+		CPdf *pdf=getTestCPdf(TestParams::add_path(MV_F).c_str());
 		CPdf::OpenMode mode=pdf->getMode();
 
 		// number of revision must match
@@ -878,7 +888,9 @@ public:
 
 		printf("TC05:\taddIndirectProperty from different pdf (followRefs==false)\n");
 		// opens TEST_FILE
-		CPdf * differentPdf=getTestCPdf(TEST_FILE);
+		if (0 == TestParams::instance().files.size())
+			return;
+		CPdf * differentPdf=getTestCPdf(TestParams::instance().files.front().c_str());
 		// gets page dictionary which contains at least one reference (to its
 		// parent). addIndirectProperty with followRefs==false
 		shared_ptr<CDict> differentPageDict=differentPdf->getFirstPage()->getDictionary();
@@ -1030,7 +1042,9 @@ public:
 	{
 		instancingTC();
 		// creates pdf instances for all files
-		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
+		for(TestParams::FileList::const_iterator i = TestParams::instance().files.begin(); 
+				i != TestParams::instance().files.end(); 
+					++i)
 		{
 			string fileName=*i;
 			printf("\nTests for file:%s\n", fileName.c_str());

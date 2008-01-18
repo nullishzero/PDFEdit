@@ -13,6 +13,9 @@
 #define _TESTMAIN_H_
 
 #include "kernel/static.h"
+#include "tests/kernel/testparams.h"
+
+// kernel
 #include "kernel/cobject.h"
 #include "kernel/cpdf.h"
 #include "kernel/cpage.h"
@@ -35,32 +38,10 @@
 using namespace std;
 using namespace pdfobjects;
 
-//
-// Extern variable that will hold files that we should test
-//
-typedef std::vector<std::string> FileList;
-extern FileList fileList;
 
-
-//========= NASTY =============
-#define OUTPUT		cout
-#define KOUTPUT		cerr
-
-#define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;bool swap = false;
-#define	SWAP_BUFS			{swap=true;strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
-#define SWAP_BUFS_BACK		{KOUTPUT.rdbuf(strm_buffer);}
-#define OUTPUT_MAGIC_WORD 	"all"
-#define CHECK_OUTPUT(a,b)	INIT_BUFS;\
-							if (NULL != argv[1] && 0 == strcmp(argv[1],OUTPUT_MAGIC_WORD))\
-							{--(a);++(b);}\
-							else\
-							{SWAP_BUFS;}
-#define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
-#define TEST(a)		OUTPUT << "\t//== " << (a) << "  " << flush;
-#define START_TEST	OUTPUT << endl << "Started testing..." << endl;
-#define END_TEST	OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
-#define OK_TEST		OUTPUT << "\t...TEST PASSED...\n" << flush;
-//==========================
+//=====================================================================================
+// Settings
+//=====================================================================================
 
 // if set validation functions will output
 #define REALLY_ALL_OUTPUT	0
@@ -71,10 +52,35 @@ extern FileList fileList;
 // MAX. of tested pages on 1 pdf.. if many, could take hours to complete
 static const size_t TEST_MAX_PAGE_COUNT = 10000;
 
+
+//========= NASTY =============
+#define OUTPUT		cout
+#define KOUTPUT		cerr
+
+#define	INIT_BUFS			ofstream redirect_file("/dev/null"); streambuf * strm_buffer = NULL;bool swap = false;
+#define	SWAP_BUFS			{swap=true;strm_buffer = KOUTPUT.rdbuf(); KOUTPUT.rdbuf(redirect_file.rdbuf());}
+#define SWAP_BUFS_BACK		{KOUTPUT.rdbuf(strm_buffer);}
+#define CHECK_OUTPUT(a)		INIT_BUFS; if (!a) {SWAP_BUFS;}
+#define KERNEL_OUTPUT_BACK	if (swap) {SWAP_BUFS_BACK;}
+#define TEST(a)				OUTPUT << "\t//== " << (a) << "  " << flush;
+#define START_TEST			OUTPUT << endl << "Started testing..." << endl;
+#define END_TEST			OUTPUT << "Ended testing..." << endl; KERNEL_OUTPUT_BACK;
+#define OK_TEST				OUTPUT << "\t...TEST PASSED...\n" << flush;
+//==========================
+
+
+//=====================================================================================
+// Debug Helper functions
+//=====================================================================================
+
 //
 // PrintDbg from tests
 //
 #define testPrintDbg(level, msg) _printDbg("TEST", level,  OUTPUT, msg);
+
+//=====================================================================================
+// Helper functions
+//=====================================================================================
 
 //
 //

@@ -8,24 +8,15 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  testcstream.cc
- *         Created:  04/24/2006 02:57:27 AM CEST
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpage.h"
-#include "testcpdf.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcobject.h"
+#include "tests/kernel/testcpage.h"
+#include "tests/kernel/testcpdf.h"
 
 #include "kernel/factories.h"
 #include "kernel/filters.h"
-
-#include <PDFDoc.h>
-#include "kernel/cpage.h"
 
 
 //=====================================================================================
@@ -122,7 +113,7 @@ bool buffer (__attribute__((unused))	std::ostream& oss, __attribute__((unused))	
 
 		//CStream::Buffer& buf = stream->buffer;
 		//oss << "Buffer start: "<< std::flush;
-		filters::Printable<CStream::Buffer::value_type> print;
+		//filters::Printable<CStream::Buffer::value_type> print;
 		//for (CStream::Buffer::iterator it = buf.begin (); it != buf.end (); ++it)
 		//	oss << print(*it) << std::flush;
 		//oss << "\nBuffer end.."<< std::flush;
@@ -260,7 +251,7 @@ bool testmakexpdf (__attribute__((unused)) std::ostream& oss, const char* fileNa
 		//oss << "object type " << str->getTypeName() << flush;
 		assert (objStream == str->getType ());
 
-		int c;
+		//int c;
 		//while (EOF != (c = str->getStream()->getChar())) 
 		//	oss << (char)c << flush;
 	}
@@ -311,7 +302,9 @@ public:
 	//
 	void TestBuf ()
 	{
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -331,7 +324,9 @@ public:
 	{
 		OUTPUT << "CStream methods..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -347,7 +342,9 @@ public:
 	{
 		OUTPUT << "CStream string methods..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -368,7 +365,9 @@ public:
 	{
 		OUTPUT << "CStream string methods..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -393,7 +392,9 @@ public:
 	{
 		OUTPUT << "CStream dict methods..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -409,7 +410,9 @@ public:
 	{
 		OUTPUT << "CStream dict methods..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			

@@ -9,7 +9,8 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "testmain.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
 #include "utils/confparser.h"
 #include "kernel/modecontroller.h"
 #include "kernel/operatorhinter.h"
@@ -141,15 +142,15 @@ public:
 	}
 
 #ifndef BAD_MODE_CONF_FILE
-#define BAD_MODE_CONF_FILE "tests/mode_bad.conf"
+#define BAD_MODE_CONF_FILE "mode_bad.conf"
 #endif
 
 #ifndef EMPTY_MODE_CONF_FILE
-#define EMPTY_MODE_CONF_FILE "tests/mode_empty.conf"
+#define EMPTY_MODE_CONF_FILE "mode_empty.conf"
 #endif
 
 #ifndef MODE_CONF_FILE
-#define MODE_CONF_FILE "tests/mode.conf"
+#define MODE_CONF_FILE "mode.conf"
 #endif 
 	bool modeControllerTC()
 	{
@@ -161,13 +162,13 @@ public:
 		ModeController modeControler;
 		StringConfigurationParser baseParser(StringConfigurationParser(NULL));
 		ModeController::ConfParser parser(baseParser);
-		CPPUNIT_ASSERT(modeControler.loadFromFile(EMPTY_MODE_CONF_FILE, parser)==0);
+		CPPUNIT_ASSERT(modeControler.loadFromFile(TestParams::add_path(EMPTY_MODE_CONF_FILE), parser)==0);
 		
 		OUTPUT << "TC02:\tBad configuration file\n";
-		CPPUNIT_ASSERT(modeControler.loadFromFile(BAD_MODE_CONF_FILE, parser)==-1);
+		CPPUNIT_ASSERT(modeControler.loadFromFile(TestParams::add_path(BAD_MODE_CONF_FILE), parser)==-1);
 
 		OUTPUT << "TC03:\tCorrect configuration file\n";
-		CPPUNIT_ASSERT(modeControler.loadFromFile(MODE_CONF_FILE, parser)>0);
+		CPPUNIT_ASSERT(modeControler.loadFromFile(TestParams::add_path(MODE_CONF_FILE), parser)>0);
 		
 		// This is specific for conf file - this fits to following configuration
 		// .		: mdUnknown
@@ -195,7 +196,7 @@ public:
 		return true;
 	}
 #ifndef HINTER_CONF_FILE
-#define HINTER_CONF_FILE "tests/operator.conf"
+#define HINTER_CONF_FILE "operator.conf"
 #endif
 
 	bool operatorHinterTC()
@@ -206,7 +207,7 @@ public:
 		OperatorHinter opHinter;
 		StringConfigurationParser baseParser(StringConfigurationParser(NULL));
 		StringConfigurationParser parser(baseParser);
-		CPPUNIT_ASSERT(opHinter.loadFromFile(HINTER_CONF_FILE, parser)>0);
+		CPPUNIT_ASSERT(opHinter.loadFromFile(TestParams::add_path(HINTER_CONF_FILE), parser)>0);
 
 		// This is specific for conf file - this fits to following configuration
 		// :Hint for this is not available

@@ -8,21 +8,12 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  testccontentsream.cc
- *         Created:  04/20/2006 23:47:27 AM CEST
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpage.h"
-#include "testcpdf.h"
-
-#include <PDFDoc.h>
-#include "kernel/cpage.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcobject.h"
+#include "tests/kernel/testcpage.h"
+#include "tests/kernel/testcpdf.h"
 
 
 //=====================================================================================
@@ -54,10 +45,12 @@ setCS (__attribute__((unused))	ostream& oss, const char* fileName)
 		string tmp1, tmp2;
 		cs->getStringRepresentation (tmp1);
 		//oss << tmp << std::endl;
-		ofstream of1;
-		of1.open ("1.txt");
-		of1 << tmp1 << flush;
-		of1.close();
+		#if TEMP_FILES_CREATE
+			ofstream of1;
+			of1.open ("1.txt");
+			of1 << tmp1 << flush;
+			of1.close();
+		#endif
 	
 		// parse the content stream after change
 		CStream::Buffer buf;
@@ -139,7 +132,7 @@ frontinsert (ostream& oss, const char* fileName)
 //=====================================================================================
 
 bool
-position (ostream& oss, const char* fileName, const Rectangle rc)
+position (ostream& oss, const char* fileName, const libs::Rectangle rc)
 {
 	boost::shared_ptr<CPdf> ppdf (getTestCPdf (fileName), pdf_deleter());
 	size_t pagecnt = ppdf->getPageCount ();
@@ -449,7 +442,7 @@ addcc (__attribute__((unused))	ostream& oss, const char* fileName)
 				
 			Opers ops;
 			ops.push_back (boost::shared_ptr<PdfOperator> (new SimpleGenericOperator("lala",0,operands)));
-			page->addContentStream (ops);
+			page->addContentStreamToFront (ops);
 
 			vector<boost::shared_ptr<CContentStream> > cccs;
 			boost::shared_ptr<CContentStream> newcc;
@@ -719,7 +712,9 @@ public:
 	{
 		OUTPUT << "CContentStream..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -735,12 +730,14 @@ public:
 	{
 		OUTPUT << "CContentStream..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
 			TEST(" getPosition");
-			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), Rectangle (100,100,300,300)));
+			CPPUNIT_ASSERT (position (OUTPUT, (*it).c_str(), libs::Rectangle (100,100,300,300)));
 			OK_TEST;
 		}
 	}
@@ -751,7 +748,9 @@ public:
 	{
 		OUTPUT << "CContentStream ..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -771,7 +770,9 @@ public:
 	{
 		OUTPUT << "CContentStream ..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -793,7 +794,9 @@ public:
 	{
 		OUTPUT << "CContentStream..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -817,12 +820,21 @@ public:
 	{
 		OUTPUT << "CContentStream..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
 			TEST(" cstreams");
-			CPPUNIT_ASSERT (cstreamsreader (OUTPUT, (*it).c_str()));
+
+			#if REALLY_ALL_OUTPUT
+				CPPUNIT_ASSERT (cstreamsreader (OUTPUT, (*it).c_str()));
+			#else
+				std::ofstream o;
+				o.open ("/dev/null");
+				CPPUNIT_ASSERT (cstreamsreader (o, (*it).c_str()));
+			#endif
 			OK_TEST;
 		}
 	}
@@ -834,7 +846,9 @@ public:
 	{
 		OUTPUT << "CContentStream..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -850,7 +864,9 @@ public:
 	{
 		OUTPUT << "CContentStream..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 

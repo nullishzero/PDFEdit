@@ -9,9 +9,9 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include <errno.h>
-#include "testmain.h"
-#include "kernel/xpdf.h"
+#include "tests/kernel/testmain.h"
 
 class TestStream: public CppUnit::TestFixture
 {
@@ -50,7 +50,7 @@ public:
 	{
 
 		printf("%s fileName %s\n", __FUNCTION__, fileName.c_str());
-		FILE * f1=fopen(fileName.c_str(), "r+");
+		FILE * f1=fopen(fileName.c_str(), "rb+");
 		if(!f1)
 		{
 			printf("File open failed: %s\n", strerror(errno));
@@ -64,7 +64,7 @@ public:
 
 		printf("TC01:\tcontent of FileStream is same as file's content\n");
 		// opens same file 
-		FILE * f2=fopen(fileName.c_str(), "r+");
+		FILE * f2=fopen(fileName.c_str(), "rb+");
 		int ch1, ch2;
 		while((ch1=unlimitedStream->getChar())!=EOF)
 		{
@@ -141,7 +141,7 @@ public:
 					IndiRef contentRef=*i;
 					shared_ptr<CStream> contentStr=IProperty::getSmartCObjectPtr<CStream>(pdf.getIndirectProperty(contentRef));
 
-					int ch1, ch2;
+					int ch1;
 					size_t bytes=0;
 
 					// creates xpdf Object represenation and checks it
@@ -215,7 +215,9 @@ public:
 
 	void Test()
 	{
-		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
+		for(TestParams::FileList::const_iterator i = TestParams::instance().files.begin(); 
+				i != TestParams::instance().files.end(); 
+					++i)
 		{
 			fileStreamTC(*i);
 			CPdf * pdf=CPdf::getInstance((*i).c_str(), CPdf::ReadOnly);

@@ -8,20 +8,11 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  testcobject.cc
- *         Created:  04/01/2006 12:27:27 AM CEST
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpdf.h"
-
-#include <PDFDoc.h>
-#include "kernel/ccontentstream.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcobject.h"
+#include "tests/kernel/testcpdf.h"
 
 //=====================================================================================
 namespace {
@@ -667,7 +658,9 @@ public:
 	{
 		OUTPUT << "CObjectComplex getter methods..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -717,7 +710,9 @@ public:
 	{
 		OUTPUT << "CObjectComplex setter methods..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 
@@ -740,7 +735,9 @@ public:
 	{
 		OUTPUT << "CObjectComplex forEach method..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 

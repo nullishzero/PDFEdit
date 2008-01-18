@@ -9,8 +9,9 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include <errno.h>
-#include "testmain.h"
+#include "tests/kernel/testmain.h"
 #include "kernel/streamwriter.h"
 
 	
@@ -26,14 +27,14 @@ public:
 	{
 		printf("%s with file %s\n", __FUNCTION__, test_file.c_str());
 		
-		FILE * file1=fopen(test_file.c_str(), "r+");
+		FILE * file1=fopen(test_file.c_str(), "rb+");
 		// TODO ignore empty files
 		if(!file1)
 		{
 			printf("file: %s open error (reason=%s)\n", test_file.c_str(), strerror(errno));
 			return;
 		}
-		FILE * file2=fopen(test_file.c_str(), "r+");
+		FILE * file2=fopen(test_file.c_str(), "rb+");
 		if(!file2)
 		{
 			printf("file: %s open error (reason=%s)\n", test_file.c_str(), strerror(errno));
@@ -79,7 +80,7 @@ public:
 		fseek(file2, 0, SEEK_END);
 		size_t halfSize=ftell(file2) / 2;
 		string cloneName=test_file+"_clone";
-		FILE * file3=fopen(cloneName.c_str(), "w+");
+		FILE * file3=fopen(cloneName.c_str(), "wb+");
 		streamWriter->cloneToFile(file3, 0, halfSize);
 		fflush(file3);
 		
@@ -117,7 +118,9 @@ public:
 	void Test()
 	{
 		// creates pdf instances for all files
-		for(FileList::iterator i=fileList.begin(); i!=fileList.end(); i++)
+		for(TestParams::FileList::const_iterator i = TestParams::instance().files.begin(); 
+				i != TestParams::instance().files.end(); 
+					++i)
 		{
 			fileStreamWriterTC(*i);
 		}

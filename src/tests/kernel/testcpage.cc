@@ -8,22 +8,14 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  testcpage.cc
- *         Created:  04/02/2006 15:47:27 AM CEST
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpage.h"
-#include "testcpdf.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcobject.h"
+#include "tests/kernel/testcpage.h"
+#include "tests/kernel/testcpdf.h"
 
 #include "kernel/factories.h"
-
-#include "xpdf/PDFDoc.h"
 #include "kernel/cpage.h"
 
 
@@ -78,7 +70,7 @@ mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const ch
 			return true;
 		}
 
-		Rectangle rc;
+		libs::Rectangle rc;
 		rc.xleft = 42;
 		rc.yleft = 62;
 		rc.xright = 12;
@@ -112,9 +104,12 @@ display (__attribute__((unused)) ostream& oss, const char* fileName)
 	{
 		boost::shared_ptr<CPage> page = pdf->getPage (i+1);
 
-		//TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
-		const char* FILE_OUT = "1.txt";
-		TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
+		#if TEMP_FILES_CREATE
+			const char* FILE_OUT = "1.txt";
+			TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
+		#else	
+			TextOutputDev textOut (NULL, gTrue, gFalse, gTrue);
+		#endif
 		if (!textOut.isOk ())
 			throw;
 		
@@ -172,7 +167,7 @@ findtext (__attribute__((unused)) ostream& oss, const char* fileName)
 		//oss << "Text: " << tmp << endl;
 
 
-		typedef std::vector<Rectangle> Recs;
+		typedef std::vector<libs::Rectangle> Recs;
 		Recs recs;
 		string word;
 		if (tmp.length() > 10)
@@ -292,8 +287,8 @@ bool setattr(__attribute__((unused)) ostream& oss, const char* fileName)
 	{
 		shared_ptr<CPage> page=pdf->getPage(pos);
 
-		page->setMediabox (Rectangle (1,1,2,2));
-		Rectangle rc = page->getMediabox ();
+		page->setMediabox (libs::Rectangle (1,1,2,2));
+		libs::Rectangle rc = page->getMediabox ();
 		CPPUNIT_ASSERT (rc.xleft == 1 && rc.yleft == 1);
 		CPPUNIT_ASSERT (rc.xright == 2 && rc.yright == 2);
 		page->setRotation (10);
@@ -340,25 +335,27 @@ bool change(__attribute__((unused))	ostream& oss, const char* fileName)
 		page->getChanges (ccs1);
 		CPPUNIT_ASSERT ( (2 + prevCh) == ccs1.size());
 
-		const char* FILE_OUT = "2.txt";
-		{
-			TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
-			if (!textOut.isOk ())
-				throw;
+		#if TEMP_FILES_CREATE
+				const char* FILE_OUT = "2.txt";
+				{
+					TextOutputDev textOut (const_cast<char*>(FILE_OUT), gFalse, gFalse, gFalse);
+					if (!textOut.isOk ())
+						throw;
 
-			// Display our change
-			page->displayChange (textOut, ccs1);
-		}
+					// Display our change
+					page->displayChange (textOut, ccs1);
+				}
 
-		string text;
-		page->getText (text);
+				string text;
+				page->getText (text);
 
-		ifstream in (FILE_OUT);
-		string text1;
-		while (!in.eof())
-			in >> text1;
+				ifstream in (FILE_OUT);
+				string text1;
+				while (!in.eof())
+					in >> text1;
 
-		CPPUNIT_ASSERT_EQUAL (text,text1);
+				CPPUNIT_ASSERT_EQUAL (text,text1);
+		#endif
 		_working (oss);
 	}
 	return true;
@@ -491,7 +488,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestExport);
 		CPPUNIT_TEST(TestFind);
 		CPPUNIT_TEST(TestAnnotations);
-		//CPPUNIT_TEST(TestChanges);
+		CPPUNIT_TEST(TestChanges);
 		CPPUNIT_TEST(TestMoveUpDown);
 		CPPUNIT_TEST(TestSet);
 	CPPUNIT_TEST_SUITE_END();
@@ -508,7 +505,9 @@ public:
 	{
 		OUTPUT << "CPage methods..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
@@ -525,7 +524,9 @@ public:
 	{
 		OUTPUT << "CPage methods..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
@@ -542,7 +543,9 @@ public:
 	{
 		OUTPUT << "CPage operator test..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
@@ -559,7 +562,9 @@ public:
 	{
 		OUTPUT << "CPage display methods..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -586,7 +591,9 @@ public:
 	{
 		OUTPUT << "CPage export..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -602,7 +609,9 @@ public:
 	{
 		OUTPUT << "CPage find..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -618,7 +627,9 @@ public:
 	{
 		OUTPUT << "CPage fonts..." << endl;
 		
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -637,7 +648,9 @@ public:
 
 		OUTPUT << "CPage annotations..."<<endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			
@@ -718,7 +731,7 @@ public:
 
 				// adds text annotation to the array
 				annotsArray=getCObjectFromRef<CArray>(pageDict->getProperty("Annots"));
-				Rectangle rect(0,0,100,100);
+				libs::Rectangle rect(0,0,100,100);
 				shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rect, "Text");
 				IndiRef annotRef=pdf->addIndirectProperty(annot->getDictionary());
 				annotCRef=shared_ptr<CRef>(CRefFactory::getInstance(annotRef));
@@ -764,7 +777,9 @@ public:
 	{
 		OUTPUT << "CPage methods..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		
@@ -780,7 +795,9 @@ public:
 	{
 		OUTPUT << "CPage methods..." << endl;
 
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for(TestParams::FileList::const_iterator it = TestParams::instance().files.begin(); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 		

@@ -8,18 +8,12 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-/*
- * =====================================================================================
- *        Filename:  testtextoutput.cc
- *         Created:  13/10/2006 09:07:27 PM CEST
- *          Author:  jmisutka (), 
- * =====================================================================================
- */
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpage.h"
-#include "testcpdf.h"
+#include "kernel/static.h"
+#include "tests/kernel/testmain.h"
+#include "tests/kernel/testcobject.h"
+#include "tests/kernel/testcpage.h"
+#include "tests/kernel/testcpdf.h"
 
 #include "kernel/textoutput.h"
 #include "kernel/textoutputengines.h"
@@ -48,9 +42,11 @@ bool text_cpageout (__attribute__((unused)) std::ostream& oss,
 					  SimpleLineEngine,
 					  SimpleColumnEngine> (out);
 		ofstream of;
+		#if TEMP_FILES_CREATE
 		of.open ("1.xml");
 		of << XmlOutputBuilder::xml(out);
 		of.close();
+		#endif
 	}
 
 	return true;
@@ -77,7 +73,9 @@ public:
 	//
 	void test_cpageout ()
 	{
-		for (FileList::const_iterator it = fileList.begin (); it != fileList.end(); ++it)
+		for (TestParams::FileList::const_iterator it = TestParams::instance().files.begin (); 
+				it != TestParams::instance().files.end(); 
+					++it)
 		{
 			OUTPUT << "Testing filename: " << *it << endl;
 			

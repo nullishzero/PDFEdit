@@ -21,6 +21,7 @@ SOURCES = testcobjectsimple.cc \
 		testutils.cc \
 		testoutlines.cc \
 		testtextoutput.cc \
+		testparams.cc \
 		main.cc
 OBJECTS = $(SOURCES:.cc=.o)
 TARGET   = kernel_tests

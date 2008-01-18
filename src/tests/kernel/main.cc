@@ -15,60 +15,35 @@
  *
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include "kernel/static.h"
 
-#include "testmain.h"
-#include "testcobject.h"
-#include "testcpdf.h"
+//#include <unistd.h>
+#include "utils/debug.h"
+#include "tests/kernel/testmain.h"
 
-// Default rest pdf file
-const char* PDF_TEST_FILE_NAME = "../../doc/zadani.pdf";
-
-// Filelist
-FileList fileList;
+using namespace debug;
 
 /**
  *  Test main
+ *	-files files to test
+ *	-all
+ *	-dir input directory
+ *	-tests tests to execute
  */
 int 
-main (int argc, char** argv)
+main (int argc, char* argv[])
 {
-	//
-	// If first parameter is "all" clear it
-	//
-	CHECK_OUTPUT (argc,argv);
-	
-	// uses default file name
-	const char * fileName = PDF_TEST_FILE_NAME;
-	
-	// checks if first parameter is real file and if so, overwrites fileName
-	while (1 < argc)
-	{
-		struct stat info;
-		if(!stat(argv[1], &info))
-		{
-			// checks if it is regular file and if so, uses it
-			if(S_ISREG(info.st_mode))
-			{
-				// Push all files for testing into this conatiner	
-				fileName = argv[1];
-				fileList.push_back (fileName);
-				
-				--argc;++argv;
-				continue;
-			}
-		}
-		break;
-		
-	}// while (1 < argc)
+	changeDebugLevel (debug::DBG_WARN);
 
-	if (fileList.empty ())
-		fileList.push_back (fileName);
-	
+	// Parse params
+	if (!TestParams::init (argc, argv))
+	{
+		std::cout << "Invalid parameters." << std::endl;
+		return -1;
+	}
+
+	// If first parameter is "all" clear it
+	CHECK_OUTPUT (TestParams::instance().all_output);
 	
 	//
 	// Initialization
@@ -87,12 +62,13 @@ main (int argc, char** argv)
 	CPPUNIT_NS::TextTestRunner runner;
 	try 
 	{
-		if (1 < argc) 
+		if (0 < TestParams::instance().tests.size()) 
 		{// Run only specified
-           for (int i = 1; i < argc; ++i) 
+			for (TestParams::FileList::const_iterator it = TestParams::instance().tests.begin();
+					it != TestParams::instance().tests.end();
+						++it) 
 		   {
-				CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry(argv[i]).makeTest();
-                // Adds the test to the list of test to run
+				CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry(*it).makeTest();
 				runner.addTest(suite);
            }
 
@@ -100,7 +76,6 @@ main (int argc, char** argv)
 		{// Get the top level suite from the registry
 			
 			CPPUNIT_NS::Test* suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
-			// Adds the test to the list of test to run
 			runner.addTest(suite);
 		}
 		

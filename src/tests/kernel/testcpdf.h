@@ -12,7 +12,7 @@
 #ifndef _TESTCPDF_H_
 #define _TESTCPDF_H_
 
-#include "testmain.h"
+#include "tests/kernel/testmain.h"
 
 
 pdfobjects::CPdf * getTestCPdf(const char* filename);

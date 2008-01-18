@@ -9,6 +9,15 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-boost::shared_ptr<CPage> 
-getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1);
+#ifndef _TESTCPAGE_H_
+#define _TESTCPAGE_H_
+
+#include "tests/kernel/testmain.h"
+
+//
+//
+//
+boost::shared_ptr<CPage> getPage (const char* fileName, boost::shared_ptr<CPdf> pdf, size_t pageNum = 1);
+
+#endif // _TESTCPAGE_H_
 
