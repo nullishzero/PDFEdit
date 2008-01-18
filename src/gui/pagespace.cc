@@ -410,11 +410,11 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 	tsp.xEnd = xEnd;
 	tsp.yEnd = yEnd;
 
-	std::vector<Rectangle> recs;
+	std::vector<libs::Rectangle> recs;
 	int count = actualPage->findText( util::convertFromUnicode(text,util::PDF), recs, tsp );
 
 	guiPrintDbg( debug::DBG_DBG, "Founded "<<count<<" items:");
-	for (std::vector<Rectangle>::iterator it = recs.begin(); it != recs.end() ; ++it) {
+	for (std::vector<libs::Rectangle>::iterator it = recs.begin(); it != recs.end() ; ++it) {
 		guiPrintDbg( debug::DBG_DBG, "   ("<<(*it)<<")");
 	}
 
@@ -435,7 +435,7 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 		for ( ; !it.isEnd() ; it.next() ) {
 			boost::shared_ptr<PdfOperator> h_textOp ( it.getCurrent() );
 
-			Rectangle bbox = h_textOp->getBBox();
+			libs::Rectangle bbox = h_textOp->getBBox();
 			if (bbox.xleft > bbox.xright) {
 				double h = bbox.xleft;
 				bbox.xleft = bbox.xright;
@@ -453,7 +453,7 @@ int PageSpace::findText ( QString &text, bool startAtTop, double xStart, double 
 			bbox.yright -= bbox.yright / 1e10;
 
 			// loop through bboxes of founded text
-			for ( std::vector<Rectangle>::iterator it_recs = recs.begin(); it_recs != recs.end() ; ++it_recs ) {
+			for ( std::vector<libs::Rectangle>::iterator it_recs = recs.begin(); it_recs != recs.end() ; ++it_recs ) {
 				if ((	( std::min( (*it_recs).xleft, (*it_recs).xright ) <= bbox.xleft ) &&	// if operators width is all inside founded area
 						( std::max( (*it_recs).xleft, (*it_recs).xright ) >= bbox.xright ) &&
 						(std::max( std::min( (*it_recs).yleft, (*it_recs).yright ) , bbox.yleft ) <=	// and has some height intersection

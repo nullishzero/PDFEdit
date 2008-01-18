@@ -45,7 +45,7 @@ class AnnotDialog : public QDialog {
 
 private:
     /** Annotation rectangle */
-    Rectangle rect;
+    libs::Rectangle rect;
     /** Page in which the annotation will be added */
     QSPage & page;
 public:

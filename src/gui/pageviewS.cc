@@ -107,7 +107,7 @@ void PageViewS::updateDisplayParameters ( OutputDev & output ) {
 
 	// update mediabox
 	try {
-		Rectangle mb = actualPage->getMediabox();
+		libs::Rectangle mb = actualPage->getMediabox();
 		displayParams.pageRect = mb;
 	} catch (ElementNotFoundException) {
 		// TODO find mediabox in parent

@@ -1164,7 +1164,7 @@ class PageViewMode_Annotations: public PageViewMode {
 			 *
 			 * @return Return activation rectangle for \a annot.
 			 */
-			Rectangle getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot );
+			libs::Rectangle getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot );
 			/** Get struct for annotation and its activation rectangle for annotation under point on the page
 			 * @param p	Position on the page.
 			 *

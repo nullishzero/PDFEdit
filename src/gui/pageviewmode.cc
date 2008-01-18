@@ -628,7 +628,7 @@ void PageViewMode::actualizeSelection ()
 
 QRect PageViewMode::getBBox( const boost::shared_ptr<PdfOperator> & op ) const
 		{
-			Rectangle bbox = op->getBBox();
+			libs::Rectangle bbox = op->getBBox();
 			QRect box ( (int) floor(std::min(bbox.xleft,bbox.xright)), (int) floor(std::min(bbox.yleft, bbox.yright)),
 						std::abs((int)ceil(bbox.xright - bbox.xleft))+1, std::abs((int)ceil(bbox.yleft - bbox.yright))+1);
 			return box;
@@ -1366,9 +1366,9 @@ void PageViewMode_Annotations::addSelectedOperators ( const std::vector< boost::
 void PageViewMode_Annotations::actualizeSelection ()
 		{};
 
-Rectangle PageViewMode_Annotations::getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot )
+libs::Rectangle PageViewMode_Annotations::getRectOfAnnotation ( boost::shared_ptr<CAnnotation> & annot )
 		{
-			Rectangle rc;
+			libs::Rectangle rc;
 
 			boost::shared_ptr< CDict >	dictionary = annot->getDictionary();
 			try {
@@ -1408,7 +1408,7 @@ void PageViewMode_Annotations::extraInitialize( const boost::shared_ptr< CPage >
 			std::vector< boost::shared_ptr< CAnnotation > >::iterator	it_annots = annots.begin();
 			for ( ; it_annots != annots.end() ; ++it_annots )
 			{
-				Rectangle rc = getRectOfAnnotation( * it_annots );
+				libs::Rectangle rc = getRectOfAnnotation( * it_annots );
 				displayParams.convertPdfPosToPixmapPos( rc.xleft, rc.yleft, rc.xleft, rc.yleft );
 				displayParams.convertPdfPosToPixmapPos( rc.xright, rc.yright, rc.xright, rc.yright );
 				QRect rr;

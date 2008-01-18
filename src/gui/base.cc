@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <kernel/cpdf.h>
 #include <kernel/cannotation.h>
-#include <utils/delinearizator.h> 
+#include <kernel/delinearizator.h> 
 #include <kernel/factories.h> 
 #include <kernel/pdfwriter.h> 
 #include <qdir.h>
@@ -332,7 +332,7 @@ QSAnnotation* Base::createAnnotation(QVariant rect,const QString &type) {
   ++it;
   ++i;
  }
- Rectangle rc(tm[0],tm[1],tm[2],tm[3]);
+ libs::Rectangle rc(tm[0],tm[1],tm[2],tm[3]);
  boost::shared_ptr<CPage> nullPage;
  boost::shared_ptr<CAnnotation> annot=CAnnotation::createAnnotation(rc,util::convertFromUnicode(type,util::PDF));
  return new QSAnnotation(annot,nullPage,this);

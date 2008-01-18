@@ -316,7 +316,7 @@ void QSPage::addAnnotation(QObject *an) {
  \see CPage::getMediabox
 */
 QVariant QSPage::mediabox() {
- Rectangle r=obj->getMediabox();
+ libs::Rectangle r=obj->getMediabox();
  Q_List<QVariant> rect;
  rect.append(r.xleft);
  rect.append(r.yleft);
@@ -334,7 +334,7 @@ QVariant QSPage::mediabox() {
  @param y2 Y coordinate of lower right media box corner
 */
 void QSPage::setMediabox(double x1,double y1,double x2,double y2) {
- Rectangle r(x1,y1,x2,y2);
+ libs::Rectangle r(x1,y1,x2,y2);
  try {
   obj->setMediabox(r);
  } catch (ReadOnlyDocumentException &e) {
@@ -350,7 +350,7 @@ void QSPage::setMediabox(double x1,double y1,double x2,double y2) {
 void QSPage::setMediabox(QRect rc) {
  //Note that Rectangle uses double coordinates, while Qrect use int coordinates.
  //However, media box is often array of int, so this may not be a problem
- Rectangle r(rc.left(),rc.top(),rc.right(),rc.bottom());
+ libs::Rectangle r(rc.left(),rc.top(),rc.right(),rc.bottom());
  try {
   obj->setMediabox(r);
  } catch (ReadOnlyDocumentException &e) {

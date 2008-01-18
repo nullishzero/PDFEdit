@@ -76,7 +76,7 @@ QSPdfOperator::~QSPdfOperator() {
  @return bounding box
 */
 QVariant QSPdfOperator::getBBox () {
- Rectangle br = obj->getBBox ();
+ libs::Rectangle br = obj->getBBox ();
 
  Q_List<QVariant> r;
  r.append( QVariant( br.xleft ) );
