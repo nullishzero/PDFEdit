@@ -149,12 +149,11 @@ GString *appendToPath(GString *path, char *fileName) {
   //---------- Win32 ----------
   GString *tmp;
   char buf[256];
-  char *fp;
 
   tmp = new GString(path);
   tmp->append('/');
   tmp->append(fileName);
-  GetFullPathName(tmp->getCString(), sizeof(buf), buf, &fp);
+  GetFullPathName(tmp->getCString(), sizeof(buf), buf, NULL);
   delete tmp;
   path->clear();
   path->append(buf);
@@ -358,10 +357,9 @@ GString *makePathAbsolute(GString *path) {
 #elif defined(WIN32)
   //---------- Win32 ----------
   char buf[_MAX_PATH];
-  char *fp;
 
   buf[0] = '\0';
-  if (!GetFullPathName(path->getCString(), _MAX_PATH, buf, &fp)) {
+  if (!GetFullPathName(path->getCString(), _MAX_PATH, buf, NULL)) {
     path->clear();
     return path;
   }
@@ -462,9 +460,6 @@ GBool openTempFile(GString **name, FILE **f, char *mode, char *) {
   for (i = 0; i < 1000; ++i) {
     sprintf(buf, "%d", t + i);
     s2 = s->copy()->append(buf);
-    if (ext) {
-      s2->append(ext);
-    }
     if (!(f2 = fopen(s2->getCString(), "r"))) {
       if (!(f2 = fopen(s2->getCString(), mode))) {
 	delete s2;
@@ -646,7 +641,7 @@ GDirEntry *GDir::getNextEntry() {
 
 #if defined(WIN32)
   if (hnd) {
-    e = new GDirEntry(path->getCString(), ffd.cFileName, doStat);
+    e = new GDirEntry(path->getCString(), (char*)(ffd.cFileName), doStat);
     if (hnd  && !FindNextFile(hnd, &ffd)) {
       FindClose(hnd);
       hnd = NULL;

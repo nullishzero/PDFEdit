@@ -391,7 +391,7 @@ int CALLBACK WinFontList::enumFunc2(CONST LOGFONT *font,
   WinFontInfo *fi;
 
   if (type & TRUETYPE_FONTTYPE) {
-    if ((fi = WinFontInfo::make(new GString(font->lfFaceName),
+    if ((fi = WinFontInfo::make(new GString((const char*)(font->lfFaceName)),
 				font->lfWeight >= 600,
 				font->lfItalic ? gTrue : gFalse,
 				fl->regKey, fl->winFontDir))) {
@@ -1861,7 +1861,7 @@ void GlobalParams::setupBaseFonts(char *dir) {
 	 (BOOL (__stdcall *)(HWND hwndOwner, LPTSTR lpszPath,
 			     int nFolder, BOOL fCreate))
 	 GetProcAddress(shell32Lib, "SHGetSpecialFolderPathA"))) {
-      if (!(*SHGetSpecialFolderPathFunc)(NULL, winFontDir,
+      if (!(*SHGetSpecialFolderPathFunc)((HWND)NULL, (LPTSTR)winFontDir,
 					 CSIDL_FONTS, FALSE)) {
 	winFontDir[0] = '\0';
       }

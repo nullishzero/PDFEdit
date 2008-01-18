@@ -35,4 +35,11 @@
 #  define WIN32
 #endif
 
+/*
+ * Do not use GCC specifics if in win
+ */
+#ifndef __GNUC__
+	#define __attribute__(a)
+#endif
+
 #endif
