@@ -49,7 +49,7 @@ typedef struct DisplayParams
 	/** Paramaters */
 	double 		hDpi;		/**< Horizontal DPI. */
 	double 		vDpi; 		/**< Vertical DPI. 	*/
-	Rectangle 	pageRect;	/**< Page rectangle. */
+	libs::Rectangle 	pageRect;	/**< Page libs::Rectangle. */
 	int 		rotate;		/**< Page rotation. 	*/
 	GBool		useMediaBox;/**< Use page media box. */
 	GBool		crop;		/**< Crop the page. 	*/
@@ -58,7 +58,7 @@ typedef struct DisplayParams
 	/** Constructor. Default values are set. */
 	DisplayParams () : 
 		hDpi (DEFAULT_HDPI), vDpi (DEFAULT_VDPI),
-		pageRect (Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
+		pageRect (libs::Rectangle (DEFAULT_PAGE_LX, DEFAULT_PAGE_LY, DEFAULT_PAGE_RX, DEFAULT_PAGE_RY)),
 		rotate (DEFAULT_ROTATE), useMediaBox (gTrue), crop (gFalse), upsideDown (gTrue) 
 		{}
 
@@ -188,7 +188,7 @@ struct PdfOpCmpRc
 	 *
 	 * @param rc Rectangle used when comparing.
 	 */
-	PdfOpCmpRc (const Rectangle& rc) : rc_(rc) {}
+	PdfOpCmpRc (const libs::Rectangle& rc) : rc_(rc) {}
 	
 	/** 
 	 * Is the intersection of supplied rectangle and rectangle specified in the
@@ -202,11 +202,11 @@ struct PdfOpCmpRc
 	 * 	<li>max (yleft-our, yright-our) <= max (yleft, yright)</li>
 	 * </ul>
 	 */
-	bool operator() (const Rectangle& rc) const
-		{ return Rectangle::isInitialized (libs::rectangle_intersect (rc_, rc)); }
+	bool operator() (const libs::Rectangle& rc) const
+		{ return libs::Rectangle::isInitialized (libs::rectangle_intersect (rc_, rc)); }
 
 private:
-	const Rectangle rc_;	/**< Rectangle to be compared. */
+	const libs::Rectangle rc_;	/**< libs::Rectangle to be compared. */
 };
 
 
@@ -228,7 +228,7 @@ struct PdfOpCmpPt
 	 * 
 	 * @param rc Rectangle.
 	 */
-	bool operator() (const Rectangle& rc) const
+	bool operator() (const libs::Rectangle& rc) const
 	{
 		return (rc.contains (pt_.x, pt_.y));
 	}
@@ -605,24 +605,8 @@ protected:
 public:
 	
 	/** Destructor. */
-	~CPage () 
-	{ 
-		kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); 
+	~CPage ();
 	
-		// Unregister all observers
-		if (valid)
-		{
-			// Unregister contents observer
-			unregisterContentsObserver ();
-			// unregisters annotation observers - if annotation array present in
-			// page dictionary
-			if(dictionary->containsProperty("Annots"))
-			{
-				boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
-				unregisterAnnotsObservers(annotsDict);
-			}
-		}
-	}
 
 	
 	//
@@ -650,6 +634,10 @@ public:
 	void invalidate ()
 	{ 
 		assert (valid);
+		// Unregister contents observer
+		unregisterContentsObserver ();
+		// Unregister annots
+		UNREGISTER_SHAREDPTR_OBSERVER(dictionary, annotsPropWatchDog);
 		// unregisters annotation observers - if annotation array present in
 		// page dictionary
 		if(dictionary->containsProperty("Annots"))
@@ -657,8 +645,7 @@ public:
 			boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
 			unregisterAnnotsObservers(annotsDict);
 		}
-		// Unregister contents observer
-		unregisterContentsObserver ();
+
 		_objectChanged (true); 
 		valid = false;
 	}
@@ -685,9 +672,9 @@ public:
 	 * @param rc 		Rectangle around which we will be looking.
 	 */
 	template<typename OpContainer>
-	void getObjectsAtPosition  (OpContainer& opContainer, const Rectangle& rc)
+	void getObjectsAtPosition  (OpContainer& opContainer, const libs::Rectangle& rc)
 	{	
-		kernelPrintDbg (debug::DBG_DBG, " at rectangle (" << rc << ")");
+		kernelPrintDbg (debug::DBG_DBG, " at libs::Rectangle (" << rc << ")");
 		// Get the objects with specific comparator
 		getObjectsAtPosition (opContainer, PdfOpCmpRc (rc));
 	}
@@ -773,7 +760,7 @@ public:
 	 * @param encoding Encoding format.
 	 * @param rc Rectangle from which to extract the text.
 	 */
- 	void getText (std::string& text, const std::string* encoding = NULL, const Rectangle* rc = NULL)  const;
+ 	void getText (std::string& text, const std::string* encoding = NULL, const libs::Rectangle* rc = NULL)  const;
 
 	/**
 	 * Get text source of a page.
@@ -1010,7 +997,6 @@ public:
 	 */
 	void reparseContentStream ();
 
-
 	/**
 	 * Add new content stream to the front. This function adds new entry in the "Contents"
 	 * property of a page. The container of provided operators must form a valid
@@ -1026,14 +1012,6 @@ public:
 	template<typename Container> void addContentStreamToFront (const Container& cont);
 	
 	
-	template<typename Container> 
-	inline
-	void addContentStream (const Container& cont)
-	{ 
-		{int THIS_FUNCTION_SHOULD_NOT_BE_USED_USE__addContentStreamToFront_OR_addContentStreamToBack__INSTEAD;}
-		addContentStreamToFront (cont);
-	}
-
 	/**
 	 * Add new content stream to the back. This function adds new entry in the "Contents"
 	 * property of a page. The container of provided operators must form a valid
@@ -1081,7 +1059,7 @@ public:
 	 *
 	 * @return Rectangle specifying the box.
 	 */
-	 Rectangle getMediabox () const;
+	 libs::Rectangle getMediabox () const;
 
 	 
 	/**  
@@ -1089,7 +1067,7 @@ public:
 	 * 
 	 * @param rc Rectangle specifying the page metrics.
 	 */
-	 void setMediabox (const Rectangle& rc);
+	 void setMediabox (const libs::Rectangle& rc);
 
 	 //
 	 // Rotation

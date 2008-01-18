@@ -329,7 +329,7 @@ class OldStylePdfWriter: public IPdfWriter
 	/** Type for offset table.
 	 * Mapping from reference to file offset of indirect object.
 	 */
-	typedef std::map< ::Ref, size_t, RefComparator> OffsetTab;
+	typedef std::map< ::Ref, size_t, xpdf::RefComparator> OffsetTab;
 
 	/** Offset table.
 	 *

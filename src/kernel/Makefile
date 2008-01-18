@@ -9,16 +9,16 @@ include $(REL_ADDR)/Makefile.rules
 CFLAGS   += $(EXTRA_KERNEL_CFLAGS)
 CXXFLAGS += $(EXTRA_KERNEL_CXXFLAGS)
 
-HEADERS = $(UTILSROOT)/debug.h $(UTILSROOT)/iterator.h $(UTILSROOT)/observer.h\
-	  exceptions.h modecontroller.h filters.h xpdf.h cxref.h xrefwriter.h \
-	  factories.h pdfwriter.h iproperty.h cobject.h cobjectsimple.h \
+HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/iterator.h $(UTILSROOT)/observer.h\
+	  exceptions.h modecontroller.h filters.h xpdf.h utils.h cxref.h xrefwriter.h \
+	  factories.h pdfwriter.h indiref.h iproperty.h cobject.h cobjectsimple.h \
 	  cobjectsimpleI.h carray.h cdict.h cstream.h cstreamsxpdfreader.h \
 	  cobjecthelpers.h ccontentstream.h pdfoperators.h pdfoperatorsiter.h \
 	  cpage.h cpdf.h streamwriter.h cinlineimage.h coutline.h \
 	  stateupdater.h cannotation.h textoutput.h textoutputbuilder.h \
-	  textoutputentities.h textoutputengines.h static.h
+	  textoutputentities.h textoutputengines.h
 
-SOURCES = modecontroller.cc filters.cc factories.cc cannotation.cc \
+SOURCES = static.cc delinearizator.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
 	  cxref.cc xrefwriter.cc streamwriter.cc iproperty.cc carray.cc \
 	  cdict.cc cstream.cc cobject.cc cobjecthelpers.cc \
 	  ccontentstream.cc pdfoperators.cc pdfoperatorsiter.cc \

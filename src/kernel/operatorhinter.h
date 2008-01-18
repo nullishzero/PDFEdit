@@ -141,8 +141,7 @@ public:
 	 */
 	virtual std::string setDefaultHint(const std::string & defaultHint)
 	{
-	using namespace std;
-		string old=this->defaultHint;
+		std::string old=this->defaultHint;
 
 		this->defaultHint=defaultHint;
 
@@ -169,7 +168,6 @@ public:
 	 */
 	virtual std::string & getHint(std::string & operatorName, std::string & hintText)
 	{
-	using namespace std;
 		if(findMatching(operatorName, &hintText))
 			return hintText;
 

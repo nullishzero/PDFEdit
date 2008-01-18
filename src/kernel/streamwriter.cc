@@ -9,9 +9,9 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include <stdio.h>
 #include <errno.h>
-#include "kernel/static.h"
 #include "utils/debug.h"
 #include "kernel/streamwriter.h"
 

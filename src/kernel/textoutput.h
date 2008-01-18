@@ -56,7 +56,7 @@ template<typename WordEngine,
 class PageTextSource
 {
 typedef SimpleWordEngine::PdfOperatorPtr PdfOperatorPtr;
-typedef Rectangle BBox;
+typedef libs::Rectangle BBox;
 
 private:
 	WordEngine 	 wordengine;

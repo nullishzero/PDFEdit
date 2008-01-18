@@ -269,15 +269,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CDict () 
-	{
-#ifdef OBSERVER_DEBUG
-		std::cerr << this <<":"<< type << ":"<< getIndiRef();
-		if(observers.size())
-			dumpObservers();
-		std::cerr << std::endl;
-#endif
-	}
+	~CDict () {}
 	
 
 	//

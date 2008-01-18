@@ -245,9 +245,7 @@ public:
 	 */
 	~XRefWriter()
 	{
-	using namespace debug;
-	
-		kernelPrintDbg(DBG_DBG, "");
+		kernelPrintDbg(debug::DBG_DBG, "");
 		if(pdfWriter)
 			delete pdfWriter;
 	}

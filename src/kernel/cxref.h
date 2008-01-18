@@ -104,7 +104,7 @@ protected:
 	 * This structure contains new Object value for reference and 
 	 * flag. 
 	 */
-	ObjectStorage< ::Ref, ObjectEntry*, RefComparator> changedStorage;   
+	ObjectStorage< ::Ref, ObjectEntry*, xpdf::RefComparator> changedStorage;   
 
 	/** Object storage for newly created objects.
 	 * Value is the flag of newly created reference. When new entry is added, it
@@ -112,7 +112,7 @@ protected:
 	 * Initialized. Unused is default value for not found, so unknown
 	 * (ObjectStorage returns 0 if entry is not found). 
 	 */
-	ObjectStorage< ::Ref, RefState, RefComparator> newStorage;
+	ObjectStorage< ::Ref, RefState, xpdf::RefComparator> newStorage;
 
 	/** Registers change in given object addressable through given 
 	 * reference.

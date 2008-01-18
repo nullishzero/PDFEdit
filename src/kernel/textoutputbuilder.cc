@@ -9,6 +9,7 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include "kernel/textoutputbuilder.h"
 
 //=====================================================================================
@@ -49,9 +50,6 @@ namespace {
 			default:
 				return "UnknownType (8bit)";
 		}
-
-		assert (0);
-		throw CObjInvalidObject ();
 	}
 
 

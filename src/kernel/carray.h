@@ -51,7 +51,7 @@ class CArray : noncopyable, public IProperty
 public:
 	typedef std::vector<boost::shared_ptr<IProperty> > Value; 
 	typedef const std::string&		 				 WriteType; 
-	typedef unsigned int	 						 PropertyId;
+	typedef size_t			 						 PropertyId;
 	typedef observer::ComplexChangeContext<IProperty, PropertyId> CArrayComplexObserverContext;
 
 	/** 
@@ -239,16 +239,8 @@ public:
 	/**
 	 * Destructor
 	 */
-	~CArray ()
-	{
-#ifdef OBSERVER_DEBUG
-		std::cerr << this <<":"<< type << ":"<< getIndiRef();
-		if(observers.size())
-			dumpObservers();
-		std::cerr << std::endl;
-#endif
-	}
-	
+	~CArray () {}
+		
 
 	//
 	// Helper methods

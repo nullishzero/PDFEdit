@@ -9,8 +9,8 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-#include "kernel/factories.h"
 #include "kernel/static.h"
+#include "kernel/factories.h"
 #include "kernel/cobjecthelpers.h"
 #include "kernel/cpdf.h"
 
@@ -93,7 +93,7 @@ std::string getDictType(boost::shared_ptr<CDict> dict)
 	{
 		return getNameFromDict("Type", dict);
 	// FIXME change to proper exception
-	}catch(std::exception & e)
+	}catch(std::exception &)
 	{
 		// not found so returns empty string
 	}
@@ -230,7 +230,7 @@ getReferencedObject (boost::shared_ptr<IProperty> ip)
 }
 
 
-boost::shared_ptr<IProperty> getIPropertyFromRectangle(const Rectangle & rect)
+boost::shared_ptr<IProperty> getIPropertyFromRectangle(const libs::Rectangle & rect)
 {
 using namespace boost;
 
@@ -277,7 +277,7 @@ using namespace boost;
 		value=annotDict->getProperty(fieldName);
 		annotDict->setProperty(fieldName, fieldValue);
 		return true;
-	}catch(ElementNotFoundException &e)
+	}catch(ElementNotFoundException &)
 	{
 		// annotDict doesn't contain fieldName so one has to be added
 		annotDict->addProperty(fieldName, fieldValue);

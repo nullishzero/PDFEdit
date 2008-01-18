@@ -87,7 +87,7 @@ public:
 
 struct PageFragment
 {
-typedef Rectangle							  BBox;
+typedef libs::Rectangle							  BBox;
 
 typedef PageSimpleFragment::PdfOperatorPtr	  PdfOperatorPtr;
 typedef PageSimpleFragment::GfxStatePtr 	  GfxStatePtr;
@@ -199,7 +199,7 @@ public:
  */
 struct PageLine
 {
-typedef Rectangle BBox;
+typedef libs::Rectangle BBox;
 typedef boost::shared_ptr<PageFragment> PageFragmentPtr;
 typedef std::vector<PageFragmentPtr>	PageFragments;
 typedef	PageFragments::const_iterator	Iterator;
@@ -272,7 +272,7 @@ public:
  */
 struct PageColumn
 {
-typedef Rectangle 						BBox;
+typedef libs::Rectangle 						BBox;
 typedef boost::shared_ptr<PageLine>		PageLinePtr;
 typedef std::vector<PageLinePtr>		PageLines;
 typedef	PageLines::const_iterator		Iterator;

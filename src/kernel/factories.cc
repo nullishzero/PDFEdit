@@ -9,12 +9,10 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
-//
-#include "kernel/factories.h"
-
 // static includes
 #include "kernel/static.h"
 //
+#include "kernel/factories.h"
 #include "kernel/cpage.h"
 
 //=======================================

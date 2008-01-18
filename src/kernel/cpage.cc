@@ -189,7 +189,7 @@ fillInheritedPageAttr(const boost::shared_ptr<CDict> pageDict, InheritedPageAttr
 				attrs.resources=shared_ptr<CDict>(CDictFactory::getInstance());
 
 			// default A4 sized box
-			Rectangle defaultRect(
+			libs::Rectangle defaultRect(
 					DisplayParams::DEFAULT_PAGE_LX, 
 					DisplayParams::DEFAULT_PAGE_LY, 
 					DisplayParams::DEFAULT_PAGE_RX, 
@@ -332,7 +332,7 @@ namespace {
 					// creates CAnnotation instance and inserts it to the container
 					shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
 					container.push_back(annot);
-				}catch(ElementBadTypeException & e)
+				}catch(ElementBadTypeException &)
 				{
 					kernelPrintDbg(debug::DBG_WARN, "Annots["<<i<<"] target object is not dictionary. Ignoring.");
 				}
@@ -340,7 +340,7 @@ namespace {
 			
 		}catch(CObjectException & e)
 		{
-			kernelPrintDbg(debug::DBG_WARN, "Unable to get Annots array - message="<<e.what());
+			kernelPrintDbg(debug::DBG_INFO, "Unable to get Annots array - message="<<e.what());
 		}
 	}
 
@@ -369,7 +369,7 @@ using namespace utils;
 		try
 		{
 			annotsArray=getCObjectFromRef<CArray>(annots);
-		}catch(CObjectException & e)
+		}catch(CObjectException & )
 		{
 			IndiRef ref=getValueFromSimple<CRef>(annots);
 			kernelPrintDbg(DBG_WARN, ref<<" doesn't point to array.");
@@ -408,7 +408,7 @@ using namespace debug;
 		try
 		{
 			annotsArray=getCObjectFromRef<CArray>(annots);
-		}catch(CObjectException & e)
+		}catch(CObjectException & )
 		{
 			IndiRef ref=getValueFromSimple<CRef>(annots);
 			kernelPrintDbg(DBG_WARN, ref<<" doesn't point to array.");
@@ -449,6 +449,7 @@ using namespace debug;
 		{
 			shared_ptr<CDict> annotDict=getCObjectFromRef<CDict>(oldValue);
 			CPage::AnnotStorage::iterator i;
+			bool erased = false;
 			for(i=annotStorage.begin(); i!=annotStorage.end(); ++i)
 			{
 				shared_ptr<CAnnotation> annot=*i;
@@ -457,12 +458,13 @@ using namespace debug;
 					kernelPrintDbg(debug::DBG_DBG, "Annotation maintaining oldValue found and removed. Invalidating annotation");	
 					annot->invalidate();
 					annotStorage.erase(i);
+					erased = true;
 					break;
 				}
 			}
-			if(i==annotStorage.end())
+			if(!erased)
 				kernelPrintDbg(debug::DBG_WARN, "Removed value is not in annotStorage.")
-		}catch(ElementBadTypeException & e)
+		}catch(ElementBadTypeException & )
 		{
 			kernelPrintDbg(debug::DBG_WARN, "oldValue dereferenced value is not dictionary.");
 		}
@@ -486,7 +488,7 @@ using namespace debug;
 			// and adds it to annotStorage
 			shared_ptr<CAnnotation> annot(new CAnnotation(annotDict));
 			annotStorage.push_back(annot);
-		}catch(ElementBadTypeException & e)
+		}catch(ElementBadTypeException & )
 		{
 			kernelPrintDbg(debug::DBG_WARN, "Dereferenced newValue is not dictionary.");
 		}
@@ -566,7 +568,7 @@ using namespace observer;
 		try
 		{
 			oldArray=getCObjectFromRef<CArray>(oldValue);
-		}catch(CObjectException & e)
+		}catch(CObjectException & )
 		{
 			IndiRef ref=getValueFromSimple<CRef>(oldValue);
 			kernelPrintDbg(DBG_WARN, "Target of Annots "<<ref<<" is not an array");
@@ -596,7 +598,7 @@ using namespace observer;
 		try
 		{
 			newArray=getCObjectFromRef<CArray>(newValue);
-		}catch(CObjectException & e)
+		}catch(CObjectException & )
 		{
 			IndiRef ref=getValueFromSimple<CRef>(newValue);
 			kernelPrintDbg(DBG_WARN, "Target of Annots "<<ref<<" is not an array");
@@ -794,7 +796,7 @@ CPage::CPage (boost::shared_ptr<CDict>& pageDict) :
 //
 //
 //
-Rectangle
+libs::Rectangle
 CPage::getMediabox () const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
@@ -802,7 +804,7 @@ CPage::getMediabox () const
 	
 	InheritedPageAttr atr;
 	fillInheritedPageAttr (dictionary,atr);
-	Rectangle rc;
+	libs::Rectangle rc;
 	
   	rc.xleft  =	getDoubleFromArray (atr.mediaBox, 0);
 	rc.yleft  =	getDoubleFromArray (atr.mediaBox, 1);
@@ -863,13 +865,13 @@ CPage::addAnnotation(boost::shared_ptr<CAnnotation> annot)
 	try
 	{
 		annotsArray=getAnnotsArray(dictionary);
-	}catch(ElementBadTypeException & e)
+	}catch(ElementBadTypeException & )
 	{
 		// TODO provide also bad type information
 		kernelPrintDbg(debug::DBG_ERR, "Page's Annots field is malformed. Array property expected.");
 		throw;
 	}
-	catch(ElementNotFoundException & e)
+	catch(ElementNotFoundException &)
 	{
 		kernelPrintDbg(debug::DBG_INFO, "Page's Annots field missing. Creating one.");
 		
@@ -939,7 +941,7 @@ CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
 					<<"Invalidating annotation instance.");
 			annot->invalidate();
 			return true;
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			kernelPrintDbg(debug::DBG_CRIT, "Unexpected Annots array missing.");
 			return false;
@@ -953,7 +955,7 @@ CPage::delAnnotation(boost::shared_ptr<CAnnotation> annot)
 //
 //
 void
-CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) const
+CPage::getText (std::string& text, const string* encoding, const libs::Rectangle* rc) const
 {
 	kernelPrintDbg (debug::DBG_DBG, "");
 	assert (valid);
@@ -988,7 +990,7 @@ CPage::getText (std::string& text, const string* encoding, const Rectangle* rc) 
 //
 //
 void
-CPage::setMediabox (const Rectangle& rc)
+CPage::setMediabox (const libs::Rectangle& rc)
 {
 	kernelPrintDbg (debug::DBG_DBG, " [" << rc << "]");
 	assert (valid);
@@ -1322,7 +1324,7 @@ size_t CPage::findText (std::string text,
 	{
 		startAtTop = gFalse;
 		
-		recs.push_back (Rectangle (xMin, yMin, xMax, yMax));
+		recs.push_back (libs::Rectangle (xMin, yMin, xMax, yMax));
 		// Get all text objects
 		while (textDev->findText (utext, length,
 								  startAtTop, stopAtBottom, 
@@ -1330,7 +1332,7 @@ size_t CPage::findText (std::string text,
 								  caseSensitive, backward,
 								  &xMin, &yMin, &xMax, &yMax))
 		{
-			recs.push_back (Rectangle (xMin, yMin, xMax, yMax));
+			recs.push_back (libs::Rectangle (xMin, yMin, xMax, yMax));
 		}
 	}
 
@@ -1343,9 +1345,9 @@ size_t CPage::findText (std::string text,
 }
 
 // Explicit instantiation
-template size_t CPage::findText<std::vector<Rectangle> >
+template size_t CPage::findText<std::vector<libs::Rectangle> >
 	(std::string text, 
-	 std::vector<Rectangle>& recs, 
+	 std::vector<libs::Rectangle>& recs, 
 	 const TextSearchParams& params) const;
 
 
@@ -2098,6 +2100,29 @@ CPage::moveBelow (shared_ptr<const CContentStream> ct)
 	_objectChanged ();
 }
 
+
+//
+// Destructor
+//
+CPage::~CPage () 
+{ 
+	kernelPrintDbg (debug::DBG_INFO, "Page destroyed."); 
+
+	// Unregister all observers
+	if (valid)
+	{
+		UNREGISTER_SHAREDPTR_OBSERVER(dictionary, annotsPropWatchDog);
+		// Unregister contents observer
+		unregisterContentsObserver ();
+		// unregisters annotation observers - if annotation array present in
+		// page dictionary
+		if(dictionary->containsProperty("Annots"))
+		{
+			boost::shared_ptr<IProperty> annotsDict=dictionary->getProperty("Annots");
+			unregisterAnnotsObservers(annotsDict);
+		}
+	}
+}
 
 //
 // Page position

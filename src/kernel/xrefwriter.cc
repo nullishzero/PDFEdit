@@ -9,6 +9,7 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include<errno.h>
 #include "kernel/xrefwriter.h"
 #include "kernel/cpdf.h"
@@ -324,7 +325,7 @@ using namespace utils;
 
 	// gets vector of all changed objects
 	IPdfWriter::ObjectList changed;
-	ObjectStorage< ::Ref, ObjectEntry *, RefComparator>::Iterator i;
+	ObjectStorage< ::Ref, ObjectEntry *, xpdf::RefComparator>::Iterator i;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
 	{
 		::Ref ref=i->first;
@@ -362,7 +363,7 @@ using namespace utils;
 	kernelPrintDbg(DBG_DBG, "finished");
 }
 
-#define ERR_OFFSET (-1UL)
+#define ERR_OFFSET (size_t)(-1UL)
 #define isERR_OFFSET(value) (value == ERR_OFFSET)
 
 /** Gets value of the Prev field from given trailer.

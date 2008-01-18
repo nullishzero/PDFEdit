@@ -73,7 +73,7 @@ shared_ptr<CDict> getPageTreeRoot(const CPdf & pdf)
 			return result;
 
 		return getCObjectFromRef<CDict>(pagesProp);
-	}catch(CObjectException & e)
+	}catch(CObjectException & )
 	{
 	}
 
@@ -95,7 +95,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
 			try
 			{
 				nodeDict=getCObjectFromRef<CDict>(nodeProp);
-			}catch(ElementBadTypeException & e)
+			}catch(ElementBadTypeException &)
 			{
 				// target is not a dictionary
 				return ErrorNode;
@@ -126,7 +126,7 @@ PageTreeNodeType getNodeType(const boost::shared_ptr<IProperty> & nodeProp)throw
 				return LeafNode;
 			if(typeName=="Pages")
 				return InterNode;
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			// bad typed field
 		}
@@ -176,7 +176,7 @@ void getKidsFromInterNode(const boost::shared_ptr<CDict> & interNodeDict, Contai
 			try
 			{
 				kidsArray=getCObjectFromRef<CArray>(kidsProp);
-			}catch(CObjectException & e)
+			}catch(CObjectException &)
 			{
 				// target is not an array
 				return;
@@ -359,7 +359,7 @@ size_t getKidsCount(const boost::shared_ptr<IProperty> & interNodeProp, PageTree
 		try
 		{
 			interNodeDict=getCObjectFromRef<CDict>(interNodeProp);
-		}catch(CObjectException & e)
+		}catch(CObjectException & )
 		{
 			// target is not a dictionary
 			return 0;
@@ -432,7 +432,7 @@ boost::shared_ptr<CDict> findPageDict(
 		try
 		{
 			dict_ptr=getCObjectFromRef<CDict>(pagesDict);
-		}catch(ElementBadTypeException & e)
+		}catch(ElementBadTypeException & )
 		{
 			// malformed pdf
 			utilsPrintDbg(DBG_ERR, "pagesDict doesn't refer to dictionary");
@@ -786,7 +786,7 @@ using namespace utils;
 	{
 		shared_ptr<CDict> parentDict=getCObjectFromRef<CDict>(parentProp);
 		return isDescendant(pdf, parent, parentDict);
-	}catch(CObjectException & e)
+	}catch(CObjectException & )
 	{
 		// parent indirect object is not valid
 		return false;
@@ -815,7 +815,7 @@ bool isEncrypted(CPdf & pdf, string * filterName)
 		try
 		{
 			encryptDict=getCObjectFromRef<CDict>(ref, pdf);
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			utilsPrintDbg(DBG_WARN, ref<<" doesn't refere to dictionary.");
 		}
@@ -860,7 +860,7 @@ using namespace pdfobjects::utils;
 		try
 		{
 			dict_ptr=getCObjectFromRef<CDict>(prop);
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			// prop is not dictionary
 			return;
@@ -899,7 +899,7 @@ using namespace pdfobjects::utils;
 			// kidsProp_ptr is direct internode member, so getIndiRef is ok here
 			// as value.
 			updateCache(kids_ptr->getIndiRef(), kidsProp_ptr->getIndiRef(), pageTreeKidsParentCache);
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			// target is not an array, keeps kids_ptr uninitialized and do the
 			// handling later
@@ -952,7 +952,7 @@ using namespace pdfobjects::utils;
 		try
 		{
 			dict_ptr=getCObjectFromRef<CDict>(prop);
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			// prop is not dictionary
 			return;
@@ -970,7 +970,7 @@ using namespace pdfobjects::utils;
 		try
 		{
 			unregister=!getNodePosition(*this, dict_ptr, &nodeCountCache);
-		}catch(AmbiguousPageTreeException &e)
+		}catch(AmbiguousPageTreeException &)
 		{
 			// node is still in the tree and even more it is still ambiguous
 			unregister=false;	
@@ -1019,7 +1019,7 @@ using namespace pdfobjects::utils;
 			// kidsProp_ptr is direct internode member, so getIndiRef is ok here
 			// as value.
 			discardCachedEntry(kids_ptr->getIndiRef(), pageTreeKidsParentCache);
-		}catch(CObjectException & e)
+		}catch(CObjectException &)
 		{
 			// target is not an array, keeps kids_ptr uninitialized and do the
 			// handling later
@@ -1731,7 +1731,7 @@ CPdf::CPdf(StreamWriter * stream, OpenMode openMode)
 
 	// sets id as address of this instance
 	// FIXME make more unique
-	this->id=(unsigned long)this;
+	this->id=(cpdf_id_t)this;
 }
 
 CPdf::~CPdf()
@@ -2170,12 +2170,12 @@ using namespace std;
 	kernelPrintDbg(debug::DBG_DBG, "");
 	
 	// openMode is read-only by default
-	const char * openMode="r";
+	const char * openMode="rb";
 	
 	// if mode is ReadWrite or higher, set to read-write mode starting at the 
 	// begining.
 	if(mode >= ReadWrite)
-		openMode="r+";
+		openMode="rb+";
 
 	// opens file and creates (xpdf) FileStream
 	FILE * file=fopen(filename, openMode);

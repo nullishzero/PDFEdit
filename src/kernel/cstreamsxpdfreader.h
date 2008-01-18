@@ -157,7 +157,7 @@ public:
 	 * is empty without fetching an object. 
 	 */
 	bool eof ()
-		{ return (curobj->isEOF()); }
+		{ return gTrue == (curobj->isEOF()); }
 
 	/** Get xpdf stream. */
 	::Stream* getXpdfStream ()

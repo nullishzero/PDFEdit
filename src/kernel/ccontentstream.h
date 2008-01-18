@@ -510,12 +510,7 @@ public:
 		kernelPrintDbg (debug::DBG_DBG, "destructing..");
 		// Unregister cstream observers
 		unregisterCStreamObservers ();
-#ifdef OBSERVER_DEBUG
-		std::cerr << this <<":CContentStream:";
-		if(observers.size())
-			dumpObservers();
-		std::cerr << std::endl;
-#endif
+		check_observerlist (this->observers);
 	}
 };
 

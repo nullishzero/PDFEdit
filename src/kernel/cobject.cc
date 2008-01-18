@@ -26,7 +26,6 @@ namespace pdfobjects{
 
 namespace
 {
-
 	/**
 	 * Case insensitive comparator.
 	 */
@@ -308,37 +307,37 @@ namespace {
 	template<typename T, typename U, PropertyType Tp> struct ProcessorTraitSimple; 
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pBool>  
 	{
-		typedef struct utils::xpdfBoolWriter<T,U> xpdfWriteProcessor;
-		typedef struct utils::xpdfBoolReader<T,U> xpdfReadProcessor;
+		typedef struct xpdfBoolWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfBoolReader<T,U> xpdfReadProcessor;
 	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pInt>	 
 	{
-		typedef struct utils::xpdfIntWriter<T,U> xpdfWriteProcessor;
-		typedef struct utils::xpdfIntReader<T,U> xpdfReadProcessor;
+		typedef struct xpdfIntWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfIntReader<T,U> xpdfReadProcessor;
 	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pReal>  
 	{
-		typedef struct utils::xpdfRealWriter<T,U> xpdfWriteProcessor;
-		typedef struct utils::xpdfRealReader<T,U> xpdfReadProcessor;
+		typedef struct xpdfRealWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfRealReader<T,U> xpdfReadProcessor;
 	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pString>
 	{
-		typedef struct utils::xpdfStringWriter<T,U> xpdfWriteProcessor;
-		typedef struct utils::xpdfStringReader<T,U> xpdfReadProcessor;
+		typedef struct xpdfStringWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfStringReader<T,U> xpdfReadProcessor;
 	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pName>  
 	{
-		typedef struct utils::xpdfNameWriter<T,U> xpdfWriteProcessor;
-		typedef struct utils::xpdfNameReader<T,U> xpdfReadProcessor;
+		typedef struct xpdfNameWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfNameReader<T,U> xpdfReadProcessor;
 	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pNull>   
 	{
-		typedef struct utils::xpdfNullWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfNullWriter<T,U> xpdfWriteProcessor;
 	};
 	template<typename T, typename U> struct ProcessorTraitSimple<T,U,pRef>	 
 	{
-		typedef struct utils::xpdfRefWriter<T,U> xpdfWriteProcessor;
-		typedef struct utils::xpdfRefReader<T,U> xpdfReadProcessor;
+		typedef struct xpdfRefWriter<T,U> xpdfWriteProcessor;
+		typedef struct xpdfRefReader<T,U> xpdfReadProcessor;
 	};
 
 
@@ -443,153 +442,153 @@ namespace {
 	 */
 	template<typename T, typename U, PropertyType Tp> struct ProcessorTraitComplex; 
 	template<typename T, typename U> struct ProcessorTraitComplex<T,U,pArray>  
-		{typedef struct utils::xpdfArrayReader<T,U>		xpdfReadProcessor;};
+		{typedef struct xpdfArrayReader<T,U>		xpdfReadProcessor;};
 	template<typename T, typename U> struct ProcessorTraitComplex<T,U,pDict>   
-		{typedef struct utils::xpdfDictReader<T,U>		xpdfReadProcessor;};
+		{typedef struct xpdfDictReader<T,U>		xpdfReadProcessor;};
 
-
-	/**
-	 * Convert simple xpdf object to string.
-	 *
-	 * @param obj Object to parse.
-	 * @param str Result string representation.
-	 */
-	void
-	simpleXpdfObjToString (Object& obj,string& str)
-	{
-		utilsPrintDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
-
-		ostringstream oss;
-
-		switch (obj.getType()) 
-		{
-		case objBool:
-			oss << ((obj.getBool()) ? CBOOL_TRUE : CBOOL_FALSE);
-			break;
-
-		case objInt:
-			oss << obj.getInt();
-			break;
-
-		case objReal:
-			oss << obj.getReal ();
-			break;
-
-		case objString:
-			oss << CSTRING_PREFIX  << utils::makeStringPdfValid(obj.getString()) << CSTRING_SUFFIX;
-			break;
-
-		case objName:
-			oss << CNAME_PREFIX << utils::makeNamePdfValid(obj.getName());
-			break;
-
-		case objNull:
-			oss << CNULL_NULL;
-			break;
-
-		case objRef:
-			oss << obj.getRefNum() << CREF_MIDDLE << obj.getRefGen() << CREF_SUFFIX;
-			break;
-
-		case objCmd:
-			oss << obj.getCmd ();
-			break;
-
-		case objError:
-			oss << OBJERROR;
-			break;
-			
-		default:
-			assert (!"Bad object passed to simpleXpdfObjToString.");
-			throw XpdfInvalidObject (); 
-			break;
-		}
-
-		// convert oss to string
-		str = oss.str ();
-	}
-
-	/**
-	 * Convert complex xpdf object to string.
-	 *
-	 * @param obj Object to parse.
-	 * @param str Result string representation.
-	 */
-	void
-	complexXpdfObjToString (Object& obj, string& str)
-	{
-		
-		utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
-
-		ostringstream oss;
-		xpdf::XpdfObject o;
-		int i;
-
-		switch (obj.getType()) 
-		{
-		
-		case objArray:
-			oss << CARRAY_PREFIX;
-			for (i = 0; i < obj.arrayGetLength(); ++i) 
-			{
-				oss << CARRAY_MIDDLE;
-				obj.arrayGetNF (i,o.get());
-				string tmp;
-				xpdfObjToString (*o,tmp);
-				oss << tmp;
-				o.reset ();
-			}
-			oss << CARRAY_SUFFIX;
-			break;
-
-		case objDict:
-			oss << CDICT_PREFIX;
-			for (i = 0; i <obj.dictGetLength(); ++i) 
-			{
-				oss << CDICT_MIDDLE << obj.dictGetKey(i) << CDICT_BETWEEN_NAMES;
-				obj.dictGetValNF(i, o.get());
-				string tmp;
-				xpdfObjToString (*o,tmp);
-				oss << tmp;
-				o.reset ();
-			}
-			oss << CDICT_SUFFIX;
-			break;
-
-		case objStream:
-			obj.streamReset ();
-			{
-				Dict* dict = obj.streamGetDict ();
-				assert (NULL != dict);
-				o->initDict (dict);
-				std::string str;
-				complexXpdfObjToString (*o, str);
-				oss << str;
-			}
-			
-			oss << CSTREAM_HEADER;
-			obj.streamReset ();
-			{
-			int c = 0;
-			while (EOF != (c = obj.streamGetChar())) 
-				oss << static_cast<string::value_type> (c);
-			}
-			obj.streamClose ();
-			oss << CSTREAM_FOOTER;
-			break;
-		
-		default:
-			assert (false);	
-			break;
-		}
-
-		// convert oss to string
-		str = oss.str ();
-	}
 
 // =====================================================================================
-} // anonymous namespace
+} // namespace
 // =====================================================================================
+
+/**
+* Convert simple xpdf object to string.
+*
+* @param obj Object to parse.
+* @param str Result string representation.
+*/
+void
+simpleXpdfObjToString (Object& obj,string& str)
+{
+	utilsPrintDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
+
+	ostringstream oss;
+
+	switch (obj.getType()) 
+	{
+	case objBool:
+		oss << ((obj.getBool()) ? CBOOL_TRUE : CBOOL_FALSE);
+		break;
+
+	case objInt:
+		oss << obj.getInt();
+		break;
+
+	case objReal:
+		oss << obj.getReal ();
+		break;
+
+	case objString:
+		oss << CSTRING_PREFIX  << utils::makeStringPdfValid(obj.getString()) << CSTRING_SUFFIX;
+		break;
+
+	case objName:
+		oss << CNAME_PREFIX << utils::makeNamePdfValid(obj.getName());
+		break;
+
+	case objNull:
+		oss << CNULL_NULL;
+		break;
+
+	case objRef:
+		oss << obj.getRefNum() << CREF_MIDDLE << obj.getRefGen() << CREF_SUFFIX;
+		break;
+
+	case objCmd:
+		oss << obj.getCmd ();
+		break;
+
+	case objError:
+		oss << OBJERROR;
+		break;
+		
+	default:
+		assert (!"Bad object passed to simpleXpdfObjToString.");
+		throw XpdfInvalidObject (); 
+		break;
+	}
+
+	// convert oss to string
+	str = oss.str ();
+}
+
+/**
+ * Convert complex xpdf object to string.
+ *
+ * @param obj Object to parse.
+ * @param str Result string representation.
+ */
+void
+complexXpdfObjToString (Object& obj, string& str)
+{
+	
+	utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
+
+	ostringstream oss;
+	xpdf::XpdfObject o;
+	int i;
+
+	switch (obj.getType()) 
+	{
+	
+	case objArray:
+		oss << CARRAY_PREFIX;
+		for (i = 0; i < obj.arrayGetLength(); ++i) 
+		{
+			oss << CARRAY_MIDDLE;
+			obj.arrayGetNF (i,o.get());
+			string tmp;
+			xpdfObjToString (*o,tmp);
+			oss << tmp;
+			o.reset ();
+		}
+		oss << CARRAY_SUFFIX;
+		break;
+
+	case objDict:
+		oss << CDICT_PREFIX;
+		for (i = 0; i <obj.dictGetLength(); ++i) 
+		{
+			oss << CDICT_MIDDLE << obj.dictGetKey(i) << CDICT_BETWEEN_NAMES;
+			obj.dictGetValNF(i, o.get());
+			string tmp;
+			xpdfObjToString (*o,tmp);
+			oss << tmp;
+			o.reset ();
+		}
+		oss << CDICT_SUFFIX;
+		break;
+
+	case objStream:
+		obj.streamReset ();
+		{
+			Dict* dict = obj.streamGetDict ();
+			assert (NULL != dict);
+			o->initDict (dict);
+			std::string str;
+			complexXpdfObjToString (*o, str);
+			oss << str;
+		}
+		
+		oss << CSTREAM_HEADER;
+		obj.streamReset ();
+		{
+		int c = 0;
+		while (EOF != (c = obj.streamGetChar())) 
+			oss << static_cast<string::value_type> (c);
+		}
+		obj.streamClose ();
+		oss << CSTREAM_FOOTER;
+		break;
+	
+	default:
+		assert (false);	
+		break;
+	}
+
+	// convert oss to string
+	str = oss.str ();
+}
 
 
 // =====================================================================================
@@ -726,13 +725,6 @@ simpleValueFromXpdfObj<pNull,NullType&> (Object&, NullType&)
 	/*assert (!"operation not permitted...");*//*THIS IS FORBIDDEN IN THE CALLER*/
 }
 
-template void simpleValueFromXpdfObj<pBool, bool&> (Object& obj,  bool& val);
-template void simpleValueFromXpdfObj<pInt, int&> (Object& obj,  int& val);
-template void simpleValueFromXpdfObj<pReal, double&> (Object& obj,  double& val);
-template void simpleValueFromXpdfObj<pString, string&> (Object& obj,  string& val);
-template void simpleValueFromXpdfObj<pName, string&> (Object& obj,  string&	val);
-template void simpleValueFromXpdfObj<pNull, NullType&> (Object& obj,  NullType& val);
-template void simpleValueFromXpdfObj<pRef, IndiRef&> (Object& obj,  IndiRef& val);
 
 //
 //
@@ -764,9 +756,9 @@ simpleValueFromString (const std::string& str, bool& val)
 	static const string __true ("true");
 	static const string __false ("false");
 	
-	if ( equal (str.begin(), str.end(), __true.begin(), nocase_compare))
+	if (str.size() == __true.size() && equal(str.begin(), str.end(), __true.begin(), nocase_compare))
 		val = true;
-	else if ( equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
+	else if (str.size() == __false.size() && equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
 		val = false;
 	else
 		throw CObjBadValue ();
@@ -779,7 +771,7 @@ simpleValueFromString (const std::string& str, int& val)
 	ss.exceptions (stringstream::failbit | stringstream::badbit);
 	try {
 		ss >> val;
-	}catch (stringstream::failure& e) 
+	}catch (stringstream::failure&) 
 	{
 		throw CObjBadValue ();
 	}					
@@ -812,7 +804,7 @@ simpleValueFromString (const std::string& str, IndiRef& val)
 	try {
 		ss >> val.num;
 		ss >> val.gen;
-	}catch (stringstream::failure& e) 
+	}catch (stringstream::failure&) 
 	{
 		throw CObjBadValue ();
 	}
@@ -981,7 +973,6 @@ simpleValueToString<pBool> (bool val, string& str)
 {
 	str = ((val) ? CBOOL_TRUE : CBOOL_FALSE);
 }
-template void simpleValueToString<pBool> (bool val, string& str);
 //
 //
 //
@@ -993,7 +984,6 @@ simpleValueToString<pInt> (int val, string& str)
 	sprintf(buf,"%d",val);
 	str=buf;
 }
-template void simpleValueToString<pInt> (int val, string& str);
 //
 //
 //
@@ -1005,7 +995,6 @@ simpleValueToString<pReal> (double val, string& str)
 	sprintf(buf,"%g",val);
 	str.assign(buf);
 }
-template void simpleValueToString<pReal> (double val, string& str);
 //
 // Special case for pString and pName
 //
@@ -1074,7 +1063,6 @@ simpleValueToString<pNull> (const NullType&, string& str)
 {
 	str = CNULL_NULL;
 }
-template void simpleValueToString<pNull> (const NullType&, string& str);
 //
 // Special case for pRef
 //
@@ -1087,7 +1075,6 @@ simpleValueToString<pRef> (const IndiRef& ref, string& str)
 	// convert oss to string
 	str = oss.str ();
 }
-template void simpleValueToString<pRef> (const IndiRef&, string& str);
 
 
 
@@ -1120,7 +1107,6 @@ complexValueToString<CArray> (const CArray::Value& val, string& str)
 	// end tag
 	str += CARRAY_SUFFIX;
 }
-template void complexValueToString<CArray> (const CArray::Value& val, string& str);
 //
 //
 //
@@ -1149,7 +1135,6 @@ complexValueToString<CDict> (const CDict::Value& val, string& str)
 	// end tag
 	str += CDICT_SUFFIX;
 }
-template void complexValueToString<CDict> (const CDict::Value& val, string& str);
 
 //
 //
@@ -1230,7 +1215,7 @@ using namespace debug;
 	}
 	// we don't need to call free for lenghtObj because it is 
 	// int which doesn't allocate any memory for internal data
-	if(!lenghtObj.getInt()<0)
+	if(0>lenghtObj.getInt())
 	{
 		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
 		return 0;
@@ -1454,10 +1439,6 @@ parseStreamToContainer (T& container, ::Object& obj)
 	rawstr->close ();
 }
 template void parseStreamToContainer<CStream::Buffer> (CStream::Buffer& container, ::Object& obj);
-
-	
-
-
 
 // =====================================================================================
 } /* namespace utils */

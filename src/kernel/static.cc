@@ -1,0 +1,2 @@
+#include "kernel/static.h"
+

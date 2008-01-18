@@ -740,7 +740,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		// Default type3 font heignt
 		double heightType3Font = DEFAULT_TYPE3_FONT_HEIGHT;
 
-		BBox h_rc();
+		BBox h_rc;
 
 		mat = state->getCTM();
 		for (i = 0; i < 6; ++i) {

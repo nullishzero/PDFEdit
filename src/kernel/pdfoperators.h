@@ -14,6 +14,7 @@
 
 // static includes
 #include "kernel/static.h"
+#include "kernel/iproperty.h"
 #include "utils/iterator.h"
 
 //==========================================================
@@ -24,8 +25,9 @@ namespace pdfobjects {
 //
 // Forward declaration
 //
-class IProperty;
 class CContentStream;
+class CPdf;
+
 							 
 //==========================================================
 // PdfOperator
@@ -79,7 +81,7 @@ public:
 	typedef iterator::SharedDoubleLinkedListIterator<PdfOperator> Iterator;
 	typedef Iterator::ListItem							ListItem;
 	typedef std::list<boost::shared_ptr<PdfOperator> > 	PdfOperators;
-	typedef Rectangle									BBox;
+	typedef libs::Rectangle									BBox;
 
 	// iterator has to be a friend
 	friend class iterator::SharedDoubleLinkedListIterator<PdfOperator>;
@@ -394,6 +396,19 @@ public:
 	BBox getBBox () const
 		{ assert (BBox::isInitialized(bbox)); return bbox; }
 	
+
+	//
+	// Observer interface
+	//
+public:
+	/**
+	 * Init operands and store observer for later unregistering.
+	 */
+	virtual void init_operands (boost::shared_ptr<observer::IObserver<IProperty> >,
+								CPdf*,
+								IndiRef*)
+		{ throw NotImplementedException ("PdfOperator::register_operandobserver ()"); }
+
 };
 
 
@@ -561,6 +576,57 @@ public:
 protected:
 	virtual boost::shared_ptr<PdfOperator> clone ();
 
+	
+	//
+	// Observer interface
+	//
+private:
+	boost::shared_ptr<observer::IObserver<IProperty> > _operandobserver;
+public:
+	void init_operands (boost::shared_ptr<observer::IObserver<IProperty> > observer,
+						CPdf* pdf,
+						IndiRef* rf)
+	{ 
+		// store observer
+		_operandobserver = observer; 
+		//
+		for (Operands::iterator oper = operands.begin (); oper != operands.end (); ++oper)
+		{
+			if (hasValidPdf(*oper))
+			{ // We do not support adding operators from another stream
+				if ( ((*oper)->getPdf() != pdf) || !((*oper)->getIndiRef() == *rf) )
+				{
+					kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << *rf <<  " op has" <<(*oper)->getIndiRef());
+					throw CObjInvalidObject ();
+				}
+				
+			}else
+			{
+				(*oper)->setPdf (pdf);
+				(*oper)->setIndiRef (*rf);
+				REGISTER_SHAREDPTR_OBSERVER((*oper), observer);
+				(*oper)->lockChange ();
+			}
+		} // for
+	}
+
+	//
+	// Destructor
+	//
+public:
+	
+	/**
+	 * Destructor.
+	 */
+	virtual ~SimpleGenericOperator() 
+	{
+			// can happen when used as a temporary object
+			if (0 < operands.size() && !(_operandobserver)) 
+				return;
+		for (Operands::iterator it = operands.begin(); it != operands.end(); ++it) {
+			UNREGISTER_SHAREDPTR_OBSERVER ((*it), _operandobserver);
+		}
+	}
 };
 
 

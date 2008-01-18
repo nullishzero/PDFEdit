@@ -227,7 +227,7 @@ public:
 
 	/** Type for pdf identificator.
 	 */
-	typedef unsigned long cpdf_id_t;
+	typedef unsigned long long cpdf_id_t;
 
 	/** Constant for pdf id of no pdf.
 	 * This is used for properties which comes from no pdf. Each CPdf instance

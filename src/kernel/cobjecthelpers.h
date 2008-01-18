@@ -15,10 +15,11 @@
 #include "kernel/cobject.h"
 #include "kernel/iproperty.h"
 
-namespace pdfobjects
-{
-namespace utils
-{
+//=====================================================================================
+namespace pdfobjects {
+//=====================================================================================
+namespace utils {
+//=====================================================================================
 
 /** Gets type of the dictionary.
  * @param dict Dictionary wrapped in smart pointer.
@@ -209,7 +210,6 @@ public:
 	 */
 	void operator()(std::pair<IdType, boost::shared_ptr<IProperty> > entry)
 	{
-	using namespace debug;
 		try
 		{
 			// uses propertyEquals method to compare properties
@@ -217,13 +217,13 @@ public:
 			// simply ignore such values
 			if(comp(searched, entry.second))
 			{
-				utilsPrintDbg(DBG_DBG, "Element matches at id="<<entry.first);
+				utilsPrintDbg(debug::DBG_DBG, "Element matches at id="<<entry.first);
 				container.push_back(entry.first);
 			}
-		}catch(NotImplementedException & e)
+		}catch(NotImplementedException &)
 		{
 			// type of element is not supported
-			utilsPrintDbg(DBG_WARN, "Element comparing not supported for typ="<<entry.second->getType()<<". Ignoring element.");
+			utilsPrintDbg(debug::DBG_WARN, "Element comparing not supported for typ="<<entry.second->getType()<<". Ignoring element.");
 		}
 	}
 
@@ -266,11 +266,7 @@ public:
 template<typename Complex, typename Container > void 
 getPropertyId(const boost::shared_ptr<Complex> & parent, const boost::shared_ptr<IProperty> &child, Container & container) throw()
 {
-using namespace std;
-using namespace boost;
-using namespace debug;
-
-	utilsPrintDbg(DBG_DBG, "");
+	utilsPrintDbg(debug::DBG_DBG, "");
 
 	// collects all properties identificators which are same as child
 	// uses forEach with IdCollector functor
@@ -289,7 +285,7 @@ using namespace debug;
  *
  * @return Property (CArray) wrapped by smart pointer.
  */
-boost::shared_ptr<IProperty> getIPropertyFromRectangle(const Rectangle & rect);
+boost::shared_ptr<IProperty> getIPropertyFromRectangle(const libs::Rectangle & rect);
 
 /** Creates property with correct pdf time representation.
  * @param time Time to convert.
@@ -366,8 +362,11 @@ bool checkAndReplace(boost::shared_ptr<CDict> annotDict, std::string fieldName, 
  */
 ::XRef* getXRef (boost::shared_ptr<IProperty> ip);
 
+//=====================================================================================
 }// end of utils namespace
-
+//=====================================================================================
 }// end of pdfobjects namespace
+//=====================================================================================
+
 #endif
 

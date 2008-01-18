@@ -31,9 +31,9 @@ namespace textoutput {
 //
 // Forward declarations
 //
-class PageFragment;
-class PageLine;
-class PageColumn;
+struct PageFragment;
+struct PageLine;
+struct PageColumn;
 
 
 //

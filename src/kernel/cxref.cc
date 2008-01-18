@@ -8,6 +8,7 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
+#include "kernel/static.h"
 #include "kernel/cxref.h"
 #include "utils/debug.h"
 #include "kernel/factories.h"
@@ -25,7 +26,7 @@ using namespace debug;
 	// returned from remove object (iterators are not invalidated by remove
 	// method)
 	kernelPrintDbg(DBG_DBG, "Deallocating changedStorage (size="<<changedStorage.size()<<")");
-	ObjectStorage< ::Ref, ObjectEntry*, RefComparator>::Iterator i;
+	ObjectStorage< ::Ref, ObjectEntry*, xpdf::RefComparator>::Iterator i;
 	int index=0;
 	for(i=changedStorage.begin(); i!=changedStorage.end(); ++i)
 	{
@@ -173,7 +174,7 @@ using namespace debug;
 using namespace debug;
 
 	int i=1;
-	int num=-1, gen;
+	int num=-1, gen=0;
 
 	kernelPrintDbg(DBG_DBG, "");
 	
@@ -564,7 +565,7 @@ using namespace debug;
 	kernelPrintDbg(DBG_DBG, "");
 
 	size_t newSize=0;
-	ObjectStorage< ::Ref, RefState, RefComparator>::Iterator begin, i;
+	ObjectStorage< ::Ref, RefState, xpdf::RefComparator>::Iterator begin, i;
 
 	for(i=newStorage.begin(); i!=newStorage.end(); ++i)
 		if(i->second==INITIALIZED_REF)

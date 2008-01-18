@@ -346,7 +346,7 @@ public:
 	 * @return CAnnotation instance wrapped by shared pointer.
 	 */
 	static boost::shared_ptr<CAnnotation> 
-		createAnnotation(Rectangle rect, std::string annotType);
+		createAnnotation(libs::Rectangle rect, std::string annotType);
 
 	/** Destructor.
 	 *

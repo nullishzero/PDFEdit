@@ -433,11 +433,12 @@ getChangeTagTime (shared_ptr<PdfOperator> op)
 		assert (!ops.empty());
 		
 		try {
-			double tmp;
-			if (isDict (ops.front()))
+			if (isDict (ops.front())) {
+				double tmp;
 				utils::simpleValueFromString (utils::getStringFromDict (ops.front(),"Time"),tmp);
-			if (numeric_limits<time_t>::max() > tmp)
-				time = static_cast<time_t> (tmp);
+				if (numeric_limits<time_t>::max() > tmp)
+					time = static_cast<time_t> (tmp);
+			}
 			
 		}catch (CObjectException&) { 
 			utilsPrintDbg (debug::DBG_WARN, "Change tag is CORRUPTED!");

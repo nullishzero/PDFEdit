@@ -9,6 +9,7 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include"kernel/cannotation.h"
 #include"utils/debug.h"
 #include"kernel/factories.h"
@@ -215,7 +216,7 @@ bool LinkAnnotInitializer::operator()(boost::shared_ptr<CDict> & annotDict, std:
 shared_ptr<utils::IAnnotInitializator> 
 CAnnotation::annotInit=shared_ptr<utils::IAnnotInitializator>(new utils::UniversalAnnotInitializer());
 
-shared_ptr<CAnnotation> CAnnotation::createAnnotation(Rectangle rect, string annotType)
+shared_ptr<CAnnotation> CAnnotation::createAnnotation(libs::Rectangle rect, string annotType)
 {
 using namespace debug;
 using namespace utils;
@@ -289,7 +290,7 @@ using namespace debug;
 		string typeName;
 		subTypeName->getValue(typeName);
 		return utils::annotTypeMapping(typeName);
-	}catch(ElementNotFoundException & e)
+	}catch(ElementNotFoundException &)
 	{
 		// Subtype field not present
 		kernelPrintDbg(DBG_WARN, "Annotation dictionary doesn't contain Subtype field.");

@@ -9,6 +9,7 @@
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
+#include "kernel/static.h"
 #include "kernel/iproperty.h"
 #include <math.h>
 #include "kernel/carray.h"

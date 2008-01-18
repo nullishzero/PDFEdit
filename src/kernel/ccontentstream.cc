@@ -64,37 +64,13 @@ namespace {
 		{
 			// Set cs
 			it.getCurrent()->setContentStream (cs);
-			
-			// Get operands
-			PdfOperator::Operands operands;
-			it.getCurrent()->getParameters (operands);
-			
+
 			//
 			// Set valid pdf and ref but lock the change 
 			// 	-- cstream won't get notified by its children, not needed
 			// 
-			PdfOperator::Operands::iterator oper = operands.begin ();
-			for (; oper != operands.end (); ++oper)
-			{
-				if (hasValidPdf(*oper))
-				{ // We do not support adding operators from another stream so if
-				  // it has valid pdf, it has to be the same
-					if ( ((*oper)->getPdf() != &pdf) || !((*oper)->getIndiRef() == rf) )
-					{
-						kernelPrintDbg (debug::DBG_CRIT, "Pdf or indiref do not match: want " << rf << 
-														 " op has" <<(*oper)->getIndiRef());
-						throw CObjInvalidObject ();
-					}
-				
-					
-				}else
-				{
-					(*oper)->setPdf (&pdf);
-					(*oper)->setIndiRef (rf);
-					REGISTER_SHAREDPTR_OBSERVER((*oper), observer);
-					(*oper)->lockChange ();
-				}
-			}
+			if (0 < it.getCurrent()->getParametersCount())
+				it.getCurrent()->init_operands (observer, &pdf, &rf);
 			
 			it = it.next ();
 		}
@@ -145,7 +121,7 @@ namespace {
 			}
 
 			// 
-			// If xpdf returned an Int, bu the operand can be a real convert it
+			// If xpdf returned an Int, but the operand can be a real convert it
 			// 
 			if (isInt(*it))
 			{
@@ -980,26 +956,24 @@ void
 CContentStream::frontInsertOperator (boost::shared_ptr<PdfOperator> newoper, 
 		bool indicateChange)
 {
-	assert (!cstreams.empty());
-
-	// Check whether we can make the change
-	cstreams.front()->canChange();
-
-	if (operators.empty ())
-	{ // Insert into empty contentstream
-		
-		operators.push_back (newoper);
-	
-	}else
-	{ // Insert into
-
 		assert (!cstreams.empty());
 		// Set correct IndiRef, CPdf and cs to inserted operator
 		assert (hasValidRef (cstreams.front()));
 		assert (hasValidPdf (cstreams.front()));
-		CPdf* pdf = cstreams.front()->getPdf();
+
+	// Check whether we can make the change
+	cstreams.front()->canChange();
+	IndiRef rf = cstreams.front()->getIndiRef ();
+	CPdf* pdf = cstreams.front()->getPdf();
 		assert (pdf);
-		IndiRef rf = cstreams.front()->getIndiRef ();
+	// set accordingly	
+	opsSetPdfRefCs (newoper, *pdf, rf, *this, operandobserver);
+
+	if (operators.empty ())
+	{ // Insert into empty contentstream
+		operators.push_back (newoper);
+	}else
+	{ // Insert into
 		opsSetPdfRefCs (newoper, *pdf, rf, *this, operandobserver);
 
 		shared_ptr<PdfOperator> secondoper = operators.front();
