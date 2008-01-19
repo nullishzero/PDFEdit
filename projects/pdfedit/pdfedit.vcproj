@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				UseUnicodeResponseFiles="true"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;d:\Program Files\boost\boost_1_34_1&quot;;&quot;$(SolutionDir)..\..\cppunit-1.12.0\include&quot;;&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				GeneratePreprocessedFile="0"
 				KeepComments="false"
@@ -72,6 +72,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
 				UseLibraryDependencyInputs="true"
 				AdditionalDependencies="cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
 				ShowProgress="2"
@@ -79,6 +80,8 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
 				GenerateManifest="true"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				MapExports="false"
 				SubSystem="1"
@@ -135,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;d:\Program Files\boost\boost_1_34_1&quot;;&quot;$(SolutionDir)..\..\cppunit-1.12.0\include&quot;;&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)..\src\&quot;;&quot;$(SolutionDir)..\src\xpdf\&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
@@ -157,7 +160,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
+				AdditionalDependencies="cppunit.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
 				OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
