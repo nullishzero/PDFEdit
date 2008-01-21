@@ -162,7 +162,7 @@ well as CPPUNIT, boost and qmake.
 	./configure --with-boost=YOUR_BOOST_INSTALLATION
 
 	- qmake
-	./configure --with-qmake-dir=DIRECTORY_WITH_YOUR_QMAKE_BINARY
+	./configure --with-qmake=QMAKE_BINARY_WITH_PATH
 
 If you need to change installation root (e. g. if you are packager and
 want to create package) use

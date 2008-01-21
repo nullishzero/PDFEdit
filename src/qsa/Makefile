@@ -21,8 +21,9 @@ sub-src: Makefile.qsa
 
 clean:
 	$(MAKE) -f Makefile.qsa clean
+	cd configure2 && rm *.o *.moc
 
-distclean:
+distclean: clean
 	$(MAKE) -f Makefile.qsa distclean
 	rm -rf .moc .obj configure2/.moc configure2/.obj src/qsa/.obj src/qsa/.moc 
 	rm -f configure2/configure2 src/qsa/qsconfig.h configure2/Makefile

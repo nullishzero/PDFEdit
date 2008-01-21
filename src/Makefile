@@ -81,7 +81,7 @@ clean:
 # Dist Cleanup
 distclean: 
 	cd $(GUIROOT) && $(MAKE) -f Makefile.gui distclean || true
-	cd $(QSAROOT) && $(MAKE) clean || true
+	cd $(QSAROOT) && $(MAKE) distclean || true
 	cd $(KERNELROOT) && $(MAKE) distclean || true
 	cd $(TESTSROOT) && $(MAKE) distclean || true
 	cd $(UTILSROOT) && $(MAKE) distclean || true

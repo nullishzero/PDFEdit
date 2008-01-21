@@ -23,7 +23,7 @@
 #include "qsiproperty.h"
 #include "qsipropertyarray.h"
 #include <kernel/ccontentstream.h>
-#include <iterator.h>
+#include <utils/iterator.h>
 #include <qstring.h>
 #include "util.h"
 #include QLIST

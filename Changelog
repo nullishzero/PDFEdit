@@ -14,6 +14,7 @@
 		  have to generate configure script by hand, because it is 
 		  no more a part of CVS tree (simply run autoconf without
 		  any parameters).
+		- delinearizator moved from src/utils/ to src/kernel
 	* Code cleanups by Gwurk
 	* Bugs 164, 168, 169, 175, 180, 182, 183, 187 fixed
 	* Added Tango icon theme from Tiziano Mattei.
