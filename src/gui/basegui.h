@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __BASEGUI_H__
 #define __BASEGUI_H__
 
@@ -250,7 +250,7 @@ public slots: //This will be all exported to scripting
  int question_ync(const QString &msg);
  /*-
   Restore state of current editor window (size and position of window and elements inside it)
-  State is restored from state saved in editor's configuration file.   
+  State is restored from state saved in editor's configuration file.
  */
  void restoreWindowState();
  /*-

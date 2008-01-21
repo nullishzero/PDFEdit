@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Console Base - class containing extra functionalyty present only in commandline
  @author Martin Petricek
@@ -24,7 +24,7 @@ namespace gui {
 using namespace util;
 
 /**
- Create new Base class 
+ Create new Base class
  @param _params Commandline Parameters
 */
 BaseConsole::BaseConsole(const QStringList &_params) : Base() {

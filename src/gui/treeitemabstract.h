@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __TREEITEMABSTRACT_H__
 #define __TREEITEMABSTRACT_H__
 
@@ -63,7 +63,7 @@ public:
  virtual QString itemHint();
 
  //Abstract functions
- /** 
+ /**
   Validate child, given its name and reference to old child
   Usually it is valid, since item with same name refer to same subitem (key-based items),
   but for value-based items (array) same keys can correspond to different values after reloading.
@@ -79,7 +79,7 @@ public:
   @return True, if the old child is pointing to same item as item "name", false, if the child item "name" no longer point to same item as oldChild.
  */
  virtual bool validChild(const QString &name,Q_ListViewItem *oldChild)=0;
- /** 
+ /**
   Create and return object for scripting representing this tree  item
   @return object for scripting
  */

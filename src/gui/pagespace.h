@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __PAGESPACE_H__
 #define __PAGESPACE_H__
 
@@ -197,7 +197,7 @@ class PageSpace : public QWidget {
 		void refresh ( QSPage * pageToView, /*QSPdf * */ QObject * pdf );	// same as above
 		/** Method for refreshing page on screen.
 		 * @param pageToView Page position in \a pdf for refresh. If page is other then actual viewed, view this new page.
-		 * 					Nothing do, if page position don't exist in \a pdf 
+		 * 					Nothing do, if page position don't exist in \a pdf
 		 * @param pdf Pdf in whitch is pageToView. If pdf is NULL then \a pageToView is from same pdf as
 		 * 					actual viewed page, if exist actual viewed page. Otherwise don't view \a pageToView.
 		 *
@@ -229,7 +229,7 @@ class PageSpace : public QWidget {
 		 * @see DrawingObjectFactory
 		 */
 		void setSelectionMode( QString mode, 
-								QString drawingObject = QString::null, 
+								QString drawingObject = QString::null,
 								QString scriptFncAtMouseRelease = QString::null,
 								QString scriptFncAtMoveSelectedObjects = QString::null,
 								QString scriptFncAtResizeSelectedObjects = QString::null );
@@ -253,7 +253,7 @@ class PageSpace : public QWidget {
 		void selectObjectOnPage ( const std::vector<boost::shared_ptr<PdfOperator> > & ops );
 		/** Add objects (PdfOperators) to selection on page.
 		 * @param ops Vector of PdfOperators for add.
-		 * 
+		 *
 		 * @see selectObjectOnPage
 		 * @see unselectObjectOnPage
 		 * @see isSomeoneSelected

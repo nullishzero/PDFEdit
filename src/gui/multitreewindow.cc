@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  MultiTreeWindow - class providing multiple treeviews, switchable by tabs
  It always have at least one (main) tree tabs, and 0 or more "secondary" tree tabs,
@@ -49,7 +49,7 @@ MultiTreeWindow::MultiTreeWindow(Base *_base,QWidget *parent/*=0*/,const char *n
  //Tab widget
  tab=new QTabWidget(this,"treeview_tab");
  l->add(tab);
- 
+
  //Main tree
  mainTree=new TreeWindow(this,base,tab,"main_tree_view");
  connectSig(mainTree);
@@ -295,7 +295,7 @@ QSCObject* MultiTreeWindow::nextSelected() {
  return treeSelection->nextSelected();
 }
 
-/** 
+/**
  In current tree:
  \copydoc TreeWindow::nextSelectedItem()
 */
@@ -599,7 +599,7 @@ void MultiTreeWindow::uninit() {
 
 /** default destructor */
 MultiTreeWindow::~MultiTreeWindow() {
- //Nothing for now ... 
+ //Nothing for now ...
 }
 
 } // namespace gui

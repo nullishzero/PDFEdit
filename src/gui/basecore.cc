@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Base Core - class that host scripts
  This class is also responsible for garbage collection of scripting objects
@@ -23,7 +23,7 @@
 #include <qsinterpreter.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qsutilfactory.h> 
+#include <qsutilfactory.h>
 #include <qsinputdialogfactory.h>
 #include <utils/debug.h>
 #include "util.h"
@@ -32,7 +32,7 @@
 namespace gui {
 
 /**
- Create new BaseCore class 
+ Create new BaseCore class
 */
 BaseCore::BaseCore() {
  con=NULL;
@@ -133,7 +133,7 @@ void BaseCore::stopScript() {
  }
 }
 
-/** 
+/**
  Call a callback function (without return value) in a script
  @param name Function name
  @param arguments Function arguments, separated by comma. Strings must be properly quoted
@@ -163,7 +163,7 @@ void BaseCore::call(const QString &name,const QString &arguments/*=""*/) {
   }
  } catch (...) {
   guiPrintDbg(debug::DBG_INFO,"Exception in callback: " << Q_OUT(name));
-  //Do not care about exception in callbacks either ... 
+  //Do not care about exception in callbacks either ...
   if (globalSettings->readBool("console/show_handler_errors")) { //Show return value on console;
    con->printErrorLine(tr("Exception in callback handler: ")+name);
   }
@@ -251,7 +251,7 @@ void BaseCore::runScript(const QString &script) {
     conPrintLine(QString("(Object:")+ob->className()+")");
     break;
    }
-   case QSArgument::VoidPointer: { //void * 
+   case QSArgument::VoidPointer: { //void *
     conPrintLine("(Pointer)");
     break;
    }
@@ -271,7 +271,7 @@ void BaseCore::runScript(const QString &script) {
       if (globalSettings->readBool("console/showretvalue_complex")) { //Show return value of complex types
        if (v.canCast(QVariant::StringList)) {
         //Print as string list
-        QString list=v.toStringList().join("\n");   
+        QString list=v.toStringList().join("\n");
         conPrintLine(list);
        } else {
         //TODO: some more types in future?
@@ -286,7 +286,7 @@ void BaseCore::runScript(const QString &script) {
 #ifndef QT4
     break;
    }
-   default: { 
+   default: {
     //Invalid - print nothing (void, etc ...)
    }
   }
@@ -318,7 +318,7 @@ void BaseCore::errorMessage() {
 
 /**
  Function to be run after the script is executed
- BaseCore::postRun should be called in overrriden function if overiding with own function 
+ BaseCore::postRun should be called in overrriden function if overiding with own function
 */
 void BaseCore::postRun() {
  //Can be overridden to do some extra cleanup
@@ -327,7 +327,7 @@ void BaseCore::postRun() {
 
 /**
  Function to be run before the script is executed
- BaseCore::preRun should be called in overrriden function if overiding with own function 
+ BaseCore::preRun should be called in overrriden function if overiding with own function
  @param script Script code;
  @param callback is it callback from script?
 */
@@ -414,7 +414,7 @@ void BaseCore::addTreeItemToList(QSTreeItem* theWrap) {
   //We must create and insert inner dictionary for this tree item
   pDict=new Q_PtrDict<void>(7);
   //Smaller dict, typically there will be few wrappers to same item
-  treeWrap.insert(theItem,pDict); 
+  treeWrap.insert(theItem,pDict);
  }
 
  //Insert wrapper in inner dictionary
@@ -438,13 +438,13 @@ void BaseCore::removeTreeItemFromList(QSTreeItem* theWrap) {
 
  //remove from inner dictionary
  pDict->remove(theWrap);
- guiPrintDbg(debug::DBG_DBG,"Removed wrapper " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem); 
+ guiPrintDbg(debug::DBG_DBG,"Removed wrapper " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem);
 
  if (!pDict->count()) {
   //This was last wrapper - delete dictionary
   treeWrap.remove(theItem);
   //Autodelete is on, so the inner dictionary will be deleted ....
-  guiPrintDbg(debug::DBG_DBG,"Removed LAST wrapper : " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem);  
+  guiPrintDbg(debug::DBG_DBG,"Removed LAST wrapper : " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem);
  }
 }
 

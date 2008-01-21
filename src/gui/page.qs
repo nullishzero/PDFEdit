@@ -1,4 +1,4 @@
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -65,7 +65,7 @@ function movePage(page, diff)
  * @param page Page instance.
  * @param pos Position where to store given page.
  * @return Inserted page position.
- * 
+ *
  * Note that given page can be from different document.
  * <br>
  * If given pos &lt; 1 resp. &gt; page count, it will be stored before first
@@ -88,8 +88,8 @@ function insertPage(page, pos)
  * @param pos Page position.
  * @return Removed page position.
  *
- * Checks whether given position is in range. If not, warning dialog is 
- * displayed, otherwise delegate to document.removePage. 
+ * Checks whether given position is in range. If not, warning dialog is
+ * displayed, otherwise delegate to document.removePage.
  * <br>
  * Current (visible) page is changed to given pos (or lowered to page count).
  */
@@ -139,7 +139,7 @@ function calcDiff(positions, value, n)
  * positions members are positions of pages in original document where to 
  * insert coresponding page. If positions array is shorter than pages, missing
  * members are calculated as successors of the highest positions member.
- * If pages array is shorther than positions array, positions's redundant 
+ * If pages array is shorther than positions array, positions's redundant
  * (those without page) are ignored.
  * <br>
  * Examples:
@@ -183,7 +183,7 @@ function calcDiff(positions, value, n)
  *
  * // 4.)
  * // merge pp1, pp2, pp3 before current pages (join documents with
- * // current in back part. 
+ * // current in back part.
  * mergeWithPages([pp1,pp2,pp3], [1,1,1])
  *
  * // As a result:

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemContentStream - class holding CContentStream object in tree, descendant of TreeItem
  @author Martin Petricek
@@ -113,7 +113,7 @@ void TreeItemContentStream::setMode(const QString &newMode) {
  (that can be passed to setMode)
 */
 QString TreeItemContentStream::getMode() {
- switch(mode) { 
+ switch(mode) {
   case All:	return "all";
   case Text:	return "text";
   case Font:	return "font";
@@ -183,7 +183,7 @@ void TreeItemContentStream::reloadSelf() {
   op.push_back(it->getCurrent());
   it->next();
  }
- delete it; 
+ delete it;
 }
 
 //See TreeItemAbstract for description of this virtual method

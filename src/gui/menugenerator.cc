@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Checker and translation generator of menu configuration<br>
  This is helper utility used to:<br>
@@ -19,8 +19,8 @@
 #include <iostream>
 #include <string.h>
 #include <qfile.h>
-#include <qstringlist.h> 
-#include <qtextstream.h> 
+#include <qstringlist.h>
+#include <qtextstream.h>
 #include <qdir.h>
 #include "config.h"
 #include "util.h"
@@ -42,7 +42,7 @@ MenuGenerator::~MenuGenerator() {
  delete set;
 }
 
-/** 
+/**
  Check if given name is a "special item" (or separator)
  @param itemName Name of the item
  @return true if the item is special, false if not.
@@ -88,13 +88,12 @@ void MenuGenerator::setAvail(const QString &name) {
   if (qs.count()<2) fatalError("Invalid menu item in config:\n"+line);
  } else { //something invalid
   fatalError("Invalid menu item in config:\n"+line);
- } 
-
+ }
 }
 
-/** 
+/**
  Check menu structure, print items and their reference counts
- Warn about unreferenced items 
+ Warn about unreferenced items
 */
 void MenuGenerator::check() {
  QStringList items=set->entryList("gui/items");

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemPage - class holding CPage in tree, descendant of TreeItemAbstract
  @author Martin Petricek
@@ -96,7 +96,7 @@ boost::shared_ptr<CPage> TreeItemPage::getObject() {
  return obj;
 }
 
-/** 
+/**
  This method is needed for "deep reload" to work
  Try to replace page inside this treeitem with a new one.
  @param newPage new page to replace the old one
@@ -164,13 +164,13 @@ bool TreeItemPage::validChild(const QString &name,Q_ListViewItem *oldChild) {
  TreeItemContentStream *its=dynamic_cast<TreeItemContentStream*>(oldChild);
  if (its && name[0]=='s') { //Is a content stream
   size_t streamNumber=name.mid(1).toUInt();
-  assert(streamNumber<streams.size());  //These should be already weed out ... 
+  assert(streamNumber<streams.size());  //These should be already weed out ...
   return streams[streamNumber].get()==its->getObject().get();
  }
  TreeItemAnnotation *ita=dynamic_cast<TreeItemAnnotation*>(oldChild);
  if (ita && name[0]=='a') { //Is an annotation
   size_t annotNumber=name.mid(1).toUInt();
-  assert(annotNumber<anots.size());  //These should be already weed out ... 
+  assert(annotNumber<anots.size());  //These should be already weed out ...
   return anots[annotNumber].get()==ita->getObject().get();
  }
  //Something else

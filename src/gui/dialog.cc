@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Dialog - class with various static dialogs:<br>
  openFileDialog - pick a filename for opening it<br>
@@ -20,12 +20,12 @@
 #include "dialog.h"
 #include "settings.h"
 #include "version.h"
-#include <qdir.h> 
-#include <qinputdialog.h> 
-#include <qmessagebox.h> 
-#include <qfiledialog.h> 
+#include <qdir.h>
+#include <qinputdialog.h>
+#include <qmessagebox.h>
+#include <qfiledialog.h>
 #include <qcolordialog.h>
-#include <qfileinfo.h> 
+#include <qfileinfo.h>
 #include <utils/debug.h>
 #include <qstring.h>
 #include "util.h"
@@ -241,7 +241,7 @@ QString saveFileDialogXml(QWidget* parent,const QString &oldname,bool askOverwri
 
 
 /**
- Invoke "read string" dialog. Show message and wait for user to type any string, 
+ Invoke "read string" dialog. Show message and wait for user to type any string.
  Will return NULL if user cancels the dialog.
  @param parent Parent widget - will be disabled during the dialog.
  @param message Message to show in the dialog

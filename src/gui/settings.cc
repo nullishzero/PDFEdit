@@ -1,15 +1,15 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Settings - class handling basic application settings,
- reading and writing values with keys and also storing and 
+ reading and writing values with keys and also storing and
  restoring more complex settings (window and toolbar positions),
  reading Paths and expanding environment variables in settings.
  QSettings with two files (user file in $HOME (readwrite)
@@ -30,7 +30,7 @@
 #include <qsettings.h>
 #include <qsplitter.h>
 #include <qstring.h>
-#include <qstringlist.h> 
+#include <qstringlist.h>
 #include <stdlib.h>
 #include <utils/debug.h>
 
@@ -71,7 +71,8 @@ void Settings::init() {
 /** Read settings with given key from configuration file and return as QString
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
- @return Value of given setting */
+ @return Value of given setting
+*/
 QString Settings::read(const QString &key,const QString &defValue/*=QString::null*/) {
  QString x=set->readEntry(APP_KEY+key);
  if (x.isNull()) x=staticSet->readEntry(key,defValue);
@@ -81,7 +82,8 @@ QString Settings::read(const QString &key,const QString &defValue/*=QString::nul
 /** Read settings with given key from configuration file and return as bool
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
- @return Value of given setting (true or false) */
+ @return Value of given setting (true or false)
+*/
 bool Settings::readBool(const QString &key,bool defValue/*=false*/) {
  QString k=read(key);
  if (k.isNull()) return defValue;
@@ -97,7 +99,8 @@ bool Settings::readBool(const QString &key,bool defValue/*=false*/) {
 /** Read settings with given key from configuration file and return as integer
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
- @return Value of given setting */
+ @return Value of given setting
+*/
 int Settings::readNum(const QString &key,int defValue/*=0*/) {
  QString k=read(key);
  bool ok;
@@ -111,15 +114,18 @@ int Settings::readNum(const QString &key,int defValue/*=0*/) {
  \note Some internal variables (beginning with $PDFEDIT_) can override corresponding environment variables. See documentation for details on them
  @param key Key to read from settings
  @param defValue default value to use if key not found in settings.
- @return Value of given setting */
+ @return Value of given setting
+ */
 QString Settings::readExpand(const QString &key,const QString &defValue/*=QString::null*/) {
  QString x=read(key,defValue);
  x=expand(x);
  return x;
 }
 
-/** creates and inits new QSettings Object.
-    Set paths to config files */
+/**
+ creates and inits new QSettings Object.
+ Set paths to config files
+*/
 void Settings::initSettings() {
  QDir::home().mkdir(CONFIG_DIR);
  set=new QSettings(QSettings::Ini);
@@ -175,7 +181,7 @@ QString Settings::getFullPathName(const QString &nameOfPath,QString fileName/*=Q
  return QString::null;
 }
 
-/** 
+/**
  Remove key from user settings, effectively restoring the setting to its default value
  @param key Key to remove
 */
@@ -183,20 +189,21 @@ void Settings::remove(const QString &key) {
  set->removeEntry(key);
 }
 
-/** 
+/**
  Remove all keys directly under specified key according to hiararchic structure
  @param key Key to remove
 */
 void Settings::removeAll(const QString &key) {
  QStringList all=set->entryList(key);
  for(size_t i=0;i<all.count();i++) {
-  set->removeEntry(key+"/"+all[i]); 
+  set->removeEntry(key+"/"+all[i]);
  }
  //At last, try to remove the key itself
  set->removeEntry(key);
 }
 
-/** Expand environment variables in given string (like $HOME, etc ..)
+/**
+ Expand environment variables in given string (like $HOME, etc ..)
  @param s String to expand
  @return QString with variables expanded
 */
@@ -228,13 +235,13 @@ QString Settings::expand(QString s) {
 
 /**
  Read path list element from config file.
- Expands variables ($HOME, etc ...) and return as string list 
- Path elements are expected to be separated by semicolon
- Trailing slashes are removed from path elements
+ Expands variables ($HOME, etc ...) and return as string list.
+ Path elements are expected to be separated by semicolon.
+ Trailing slashes are removed from path elements.
  @param name Identifier of path in config file
  @param prefix Path prefix (Can be specified if desired to read from different configuration key than default "path"/)
  @return QStringList containing expanded path directories
- */
+*/
 QStringList Settings::readPath(const QString &name,const QString &prefix/*="path/"*/) {
  QString path=read(prefix+name,".");
  QStringList s=QStringList::split(";",path);
@@ -252,12 +259,13 @@ QStringList Settings::readPath(const QString &name,const QString &prefix/*="path
  return s;
 }
 
-/** read list of values from config file and return as string list 
-    List elements are expected to be separated by defined separator (default is comma)
+/**
+ Read list of values from config file and return as string list.
+ List elements are expected to be separated by defined separator (default is comma)
  @param name Identifier of list in config file
  @param separator String separating items in the list
  @return QStringList containing items from list
- */
+*/
 QStringList Settings::readList(const QString &name,const QString &separator/*=","*/) {
  QString lst=read(name,"");
  QStringList s=QStringList::split(separator,lst);
@@ -271,7 +279,7 @@ Settings::Settings() {
 
 /** flushes settings, saving all changes to disk */
 void Settings::flush() {
- delete set;  
+ delete set;
  delete staticSet;
  initSettings();
 }
@@ -282,9 +290,11 @@ Settings::~Settings() {
  delete staticSet;
 }
 
-/** Save window/widget size and position to settings.
+/**
+ Save window/widget size and position to settings.
  @param win Widget that will have it's size and position stored
- @param name Name of key to be used in configuration */  
+ @param name Name of key to be used in configuration
+*/
 void Settings::saveWindow(QWidget *win,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"save window " << name);
  QString line;
@@ -298,27 +308,31 @@ void Settings::saveWindow(QWidget *win,const QString &name) {
  write("gui/windowstate/"+name,line);
 }
 
-/** Write settings with given key and value to configuration
+/**
+ Write settings with given key and value to configuration
  @param key Key to write to settings
  @param value Value to write to settings
- */
+*/
 void Settings::write(const QString &key,const QString &value) {
  set->writeEntry(APP_KEY+key,value);
  emit settingChanged(key);
 }
 
-/** Write settings with given key and value to configuration
+/**
+ Write settings with given key and value to configuration
  @param key Key to write to settings
  @param value Value to write to settings
- */
+*/
 void Settings::write(const QString &key, int value) {
  set->writeEntry(APP_KEY+key,value);
  emit settingChanged(key);
 }
 
-/** Restore window/widget size and position from setting.
+/**
+ Restore window/widget size and position from setting.
  @param win Widget that will be resized and moved
- @param name Name of key to be used in configuration */
+ @param name Name of key to be used in configuration
+*/
 void Settings::restoreWindow(QWidget *win,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"restore window " << name);
  QWidget *desk = QApplication::desktop();
@@ -332,8 +346,8 @@ void Settings::restoreWindow(QWidget *win,const QString &name) {
  y=atoi(pos[3]);
  if (w<=0 || h<=0) return;//Negative/null size is invalid
  int dw=desk->width();
- int dh=desk->height(); 
- 
+ int dh=desk->height();
+
  //if window is offscreen, move it to screen
  if (x<-w+1) x=-w+1; //Offscreen -> Onscreen
  if (y<-h+1) y=-h+1; //Offscreen -> Onscreen
@@ -343,9 +357,11 @@ void Settings::restoreWindow(QWidget *win,const QString &name) {
  win->move(x,y);
 }
 
-/** Save splitter positions  to settings.
+/**
+ Save splitter positions  to settings.
  @param spl Splitter to save positions
- @param name Name of key to be used in configuration */  
+ @param name Name of key to be used in configuration
+*/
 void Settings::saveSplitter(QSplitter *spl,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"save splitter " << name);
  Q_List<int> siz=spl->sizes();
@@ -355,12 +371,14 @@ void Settings::saveSplitter(QSplitter *spl,const QString &name) {
   line+=QString::number(siz[i]);
   if (i<cnt-1) line+=",";
  }
- write("gui/windowstate/"+name,line);  
+ write("gui/windowstate/"+name,line);
 }
 
-/** Restore splitter positions from setting.
+/**
+ Restore splitter positions from setting.
  @param spl Splitter to be resized
- @param name Name of key to be used in configuration */
+ @param name Name of key to be used in configuration
+*/
 void Settings::restoreSplitter(QSplitter *spl,const QString &name) {
 // guiPrintDbg(debug::DBG_DBG,"restore splitter " << name);
  QString line=read("gui/windowstate/"+name);

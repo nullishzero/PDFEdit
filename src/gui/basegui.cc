@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  GUI Base - class containing extra functionality present only in GUI
  @author Martin Petricek
@@ -57,7 +57,7 @@ namespace gui {
 using namespace util;
 
 /**
- Create new Base class 
+ Create new Base class
  @param parent Parent editor window containing this class
 */
 BaseGUI::BaseGUI(PdfEditWindow *parent) : Base() {
@@ -243,7 +243,7 @@ void BaseGUI::treeItemDeleted(TreeItemAbstract* theItem) {
  Q_PtrDict<void>* pDict=treeWrap[theItem];
  if (!pDict) {
   //No wrapper exists. Done.
-  //guiPrintDbg(debug::DBG_DBG,"Item deleted that is not in wrapper"); 
+  //guiPrintDbg(debug::DBG_DBG,"Item deleted that is not in wrapper");
   return;
  }
  //Ok, now disable all wrappers pointing to this item
@@ -252,12 +252,12 @@ void BaseGUI::treeItemDeleted(TreeItemAbstract* theItem) {
  Q_PtrDictIterator<void> it(*pDict);
  for(;it.current();++it) {
   QSTreeItem* theWrap=reinterpret_cast<QSTreeItem*>(it.currentKey());
-  guiPrintDbg(debug::DBG_DBG,"Disabling wrapper " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem); 
+  guiPrintDbg(debug::DBG_DBG,"Disabling wrapper " << (intptr_t)theWrap << " w. item "<< (intptr_t)theItem);
   assert(theWrap);
-  guiPrintDbg(debug::DBG_DBG,"Check type: " << Q_OUT(theWrap->type())); 
+  guiPrintDbg(debug::DBG_DBG,"Check type: " << Q_OUT(theWrap->type()));
   //Disable the wrapper, so calling it will not result in crash, but some error/exception instead
   theWrap->disable();
-  guiPrintDbg(debug::DBG_DBG,"Disabled wrapper"); 
+  guiPrintDbg(debug::DBG_DBG,"Disabled wrapper");
  }
  //Remove reference to subdictionary from dictionary
  treeWrap.remove(theItem);
@@ -272,7 +272,7 @@ void BaseGUI::about() {
  aboutWin->show();
 }
 
-/** 
+/**
  Show dialog for adding objects into given container.<br>
  Container must be Dict or Array, otherwise the dialog is not created.
  If Container is NULL, currently selected object ihn property editor will be attempted to use as container..<br>
@@ -321,7 +321,7 @@ bool BaseGUI::closeFile(bool askSave,bool onlyAsk/*=false*/) {
 
 /**
  \copydoc Menu::createItem(const QString &,const QString &,const QString &,const QString &,const QString &,const QString &,const QStringList &)
-*/ 
+*/
 void BaseGUI::createMenuItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel/*=QString::null*/,const QString &icon/*=QString::null*/,const QStringList &classes/*=QStringList()*/) {
  try {
   w->menuSystem->createItem(parentName,name,caption,action,accel,icon,classes);
@@ -503,8 +503,8 @@ QVariant BaseGUI::mergeDialog() {
    }
    Q_List<QVariant> res;
    res.append(rItems);
-   res.append(rPos);   
-   res.append(dialog->fileName());   
+   res.append(rPos);
+   res.append(dialog->fileName());
    retValue=QVariant(res);
   }
   // result cleanup
@@ -520,9 +520,7 @@ QVariant BaseGUI::mergeDialog() {
  * Bring up "select pages" dialog.
  * @return Result of selection or empty variant if dialog was cancelled.
  */
-QVariant 
-BaseGUI::selectPagesDialog (const QString& filename) const
-{
+QVariant BaseGUI::selectPagesDialog (const QString& filename) const {
 	using namespace boost;
 	typedef std::list<size_t> StdItems;
 
@@ -531,7 +529,7 @@ BaseGUI::selectPagesDialog (const QString& filename) const
 	scoped_ptr<SelectPagesDialog> dialog (new SelectPagesDialog(filename));	// Create dialog
 
 	// Starts dialog as modal and do something if OK is pressed
-	if(QDialog::Accepted == dialog->exec()) 
+	if(QDialog::Accepted == dialog->exec())
 	{
 		// Get result and create QVariant from it using QValueList
 		StdItems stditems;
@@ -823,8 +821,8 @@ void BaseGUI::setVisible(const QString &widgetName, bool visible) {
 }
 
 /**
- \copydoc Menu::setTextByName 
- \see Menu::setTextByName 
+ \copydoc Menu::setTextByName
+ \see Menu::setTextByName
 */
 void BaseGUI::setItemText(const QString &name,const QString &newText) {
  w->menuSystem->setTextByName(name,newText);

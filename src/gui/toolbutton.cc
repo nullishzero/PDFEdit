@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  ToolButton - Class representing a single button on the toolbar
  Same as QToolButton, difference is that ToolButton also emit its ID in signal
@@ -36,7 +36,7 @@ ToolButton::ToolButton(const QPixmap *icon, const QString tooltip, int id, QWidg
   QIconSet ico=QIconSet(*icon);
   setIconSet(ico);
  }
-} 
+}
 
 /**
  Constructor of ToolButton
@@ -53,7 +53,7 @@ ToolButton::ToolButton(const QIcon *iconSet, const QString tooltip, int id, QWid
  if (iconSet) {
   setIconSet(*iconSet);
  }
-} 
+}
 
 /**
  Event handler for mouse cursor entering button.

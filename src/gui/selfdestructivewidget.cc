@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  SelfDestructiveWidget - widget class that will destruct
  when appropriate signal from killer window is sent<br>
@@ -28,7 +28,7 @@ namespace gui {
  @param parent parent widget (passed to QWidget)
  @param f Widget flags (passed to QWidget)
  */
-SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, Qt::WindowFlags f/*=0*/) 
+SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, Qt::WindowFlags f/*=0*/)
  : QWidget(parent,f) {
 QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
 }
@@ -40,7 +40,7 @@ QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
  @param name name of this widget (passed to QWidget)
  @param f Widget flags (passed to QWidget)
  */
-SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, const char *name/*=0*/, Qt::WindowFlags f/*=0*/) 
+SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, const char *name/*=0*/, Qt::WindowFlags f/*=0*/)
  : QWidget(parent,f) {
 QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
 }
@@ -54,7 +54,7 @@ QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
  @param name name of this widget (passed to QWidget)
  @param f Widget flags (passed to QWidget)
  */
-SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, const char *name/*=0*/, WFlags f/*=0*/) 
+SelfDestructiveWidget::SelfDestructiveWidget(QWidget *killer,QWidget *parent/*=0*/, const char *name/*=0*/, WFlags f/*=0*/)
  : QWidget(parent,name,f) {
 QObject::connect(killer,SIGNAL(selfDestruct()),this,SLOT(close()));
 }

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  HelpWindow - class representing help window.<br>
  Help window is basically just a limited HTML browser
@@ -33,7 +33,7 @@ namespace gui {
  @param name Name of this window (for debugging)
 */
 HelpWindow::HelpWindow(const QString &pageName/*=QString::null*/,QWidget *parent/*=0*/,const char *name/*=0*/):QWidget(parent,name,Qt::WDestructiveClose | Qt::WType_TopLevel | Qt::WStyle_Minimize | Qt::WStyle_SysMenu | Qt::WStyle_Title | Qt::WStyle_Customize | Qt::WStyle_NormalBorder) {
- globalSettings->restoreWindow(this,"help"); 
+ globalSettings->restoreWindow(this,"help");
  setCaption(QString(APP_NAME)+" - "+tr("help"));
 // QBoxLayout *l=new QVBoxLayout(this);
  QGridLayout* grl=new QGridLayout(this,2,1);
@@ -97,7 +97,7 @@ void HelpWindow::index() {
 
 /** default destructor */
 HelpWindow::~HelpWindow() {
- globalSettings->saveWindow(this,"help"); 
+ globalSettings->saveWindow(this,"help");
  delete help;
 }
 

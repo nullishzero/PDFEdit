@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  IconCache - class responsible for loading and caching icons<br>
  @author Martin Petricek
@@ -121,7 +121,7 @@ QPixmap* IconCache::getIcon(const QString &name) {
  QPixmap *pix=new QPixmap();
  pix->loadFromData (qb,0,0);
  iconCache[name]=pix;
- return pix; 
+ return pix;
 }
 
 /**
@@ -135,11 +135,11 @@ QIcon* IconCache::getIconSet(const QString &name) {
  if (setCache.contains(name)) return setCache[name];
  //Not found in cache - try to create
  QPixmap* pix=getIcon(name);
- if (!pix) return NULL;//File not found ... 
+ if (!pix) return NULL;//File not found ...
  //Pixmap is OK
  QIcon *ico=new QIcon(*pix);
  setCache[name]=ico;
- return ico; 
+ return ico;
 }
 
 

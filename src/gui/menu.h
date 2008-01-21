@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __MENU_H__
 #define __MENU_H__
 
@@ -139,7 +139,7 @@ private:
  /** Pointer to of all items by item or "item class" name - menu items */
  MenuItems mapMenu;
  /** Pointer to of all items by item or "item class" name - toolbar items */
- ToolbarItems mapTool; 
+ ToolbarItems mapTool;
  /** Sequenc id for map key*/
  int seqId;
  /** The main menu bar */

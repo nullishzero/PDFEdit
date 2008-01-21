@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeWindow - class providing treeview of PDF objects
  @author Martin Petricek
@@ -183,7 +183,7 @@ void TreeWindow::paintEvent(QPaintEvent *e) {
 }
 
 /**
- Called when any settings are updated (in script, option editor, etc ...) 
+ Called when any settings are updated (in script, option editor, etc ...)
  @param key Key of setting which have changed
 */
 void TreeWindow::settingUpdate(QString key) {
@@ -213,7 +213,7 @@ void TreeWindow::treeSelectionChanged() {
  emit itemSelected();
 }
 
-/** 
+/**
  Return QSCObject from currently selected item
  Caller is responsible for freeing object
  @return QSCObject from current item
@@ -225,7 +225,7 @@ QSCObject* TreeWindow::getSelected() {
  return selected->getQSObject();
 }
 
-/** 
+/**
  Return QSCObject from next selected item
  Caller is responsible for freeing object
  @return QSCObject from next item
@@ -237,7 +237,7 @@ QSCObject* TreeWindow::nextSelected() {
  return selected->getQSObject();
 }
 
-/** 
+/**
  Return pointer to currently selected tree item (single select)
  or first selected tree item (multiselect)
  @return currently selected item
@@ -257,7 +257,7 @@ TreeItemAbstract* TreeWindow::getSelectedItem() {
  }
 }
 
-/** 
+/**
  Return pointer to next selected tree item in multiselect mode
  (next mean next from the last item returned by getSelectedItem or nextSelectedItem)
  Returns NULL if nor more selected items can be found.
@@ -296,7 +296,7 @@ void TreeWindow::init(pdfobjects::CPdf *pdfDoc,const QString &fileName) {
  clear();
  rootName=fileName;
  setUpdatesEnabled( FALSE );
- TreeItemAbstract *rootItem=new TreeItemPdf(data,pdfDoc,tree,fileName); 
+ TreeItemAbstract *rootItem=new TreeItemPdf(data,pdfDoc,tree,fileName);
  rootItem->setOpen(TRUE);
  setUpdatesEnabled( TRUE );
 }
@@ -310,14 +310,14 @@ void TreeWindow::init(boost::shared_ptr<pdfobjects::IProperty> doc,const QString
  clear();
  if (doc.get()) {
   setUpdatesEnabled( FALSE );
-  TreeItemAbstract *rootItem=TreeItem::create(data,tree,doc,pName); 
+  TreeItemAbstract *rootItem=TreeItem::create(data,tree,doc,pName);
   rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
 }
 
 /**
- Init contents of treeview from given Content Stream 
+ Init contents of treeview from given Content Stream
  @param cs Content Stream used to initialize treeview
  @param pName Name of the content stream passed
 */
@@ -325,7 +325,7 @@ void TreeWindow::init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QSt
  clear();
  if (cs.get()) {
   setUpdatesEnabled( FALSE );
-  TreeItemAbstract *rootItem=new TreeItemContentStream(data,tree,cs,pName); 
+  TreeItemAbstract *rootItem=new TreeItemContentStream(data,tree,cs,pName);
   rootItem->setOpen(TRUE);
   setUpdatesEnabled( TRUE );
  }
@@ -339,7 +339,7 @@ void TreeWindow::init(boost::shared_ptr<pdfobjects::CContentStream> cs,const QSt
 void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::null*/) {
  clear();
  setUpdatesEnabled( FALSE );
- TreeItemAbstract *rootItem=new TreeItemOperatorContainer(data,tree,vec,pName); 
+ TreeItemAbstract *rootItem=new TreeItemOperatorContainer(data,tree,vec,pName);
  rootItem->setOpen(TRUE);
  //Select all items except the root
  Q_ListViewItem *sel=rootItem->itemBelow();
@@ -359,7 +359,7 @@ void TreeWindow::init(const OperatorVector &vec,const QString &pName/*=QString::
 void TreeWindow::init(const AnnotationVector &vec,boost::shared_ptr<pdfobjects::CPage> page,const QString &pName/*=QString::null*/) {
  clear();
  setUpdatesEnabled( FALSE );
- TreeItemAbstract *rootItem=new TreeItemAnnotationContainer(data,tree,vec,page,pName); 
+ TreeItemAbstract *rootItem=new TreeItemAnnotationContainer(data,tree,vec,page,pName);
  rootItem->setOpen(TRUE);
  //Select all items except the root
  Q_ListViewItem *sel=rootItem->itemBelow();

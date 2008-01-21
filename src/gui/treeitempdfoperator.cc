@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemPdfOperator - class holding one PDF Operator in tree, descendant of TreeItem
  @author Martin Petricek
@@ -78,7 +78,7 @@ TreeItemPdfOperator::TreeItemPdfOperator(TreeData *_data,Q_ListViewItem *parent,
 
 /**
  Return hint (description) of this item.
- Hint is taken from OperatorHint class 
+ Hint is taken from OperatorHint class
  @return hint for given item
 */
 QString TreeItemPdfOperator::itemHint() {
@@ -99,7 +99,7 @@ TreeItemAbstract* TreeItemPdfOperator::createChild(const QString &name,__attribu
   guiPrintDbg(debug::DBG_DBG,"Position mod " << position);
   assert(params[position].get());
   QString xName=QObject::tr("Parameter")+" "+QString::number(position);
-  return TreeItem::create(data,this,params[position],xName,after); 
+  return TreeItem::create(data,this,params[position],xName,after);
  }
 }
 

@@ -7,13 +7,13 @@
 
 #ifndef CONFIG_DATA_PATH
 #error CONFIG_DATA_PATH not defined
-#else 
+#else
 
 /* Ugly macros to force compiler to transform CONFIG_DATA_PATH
  * given by command line define to the string.
  * Note that we can't do
- * #define DATA_PATH S_DATA_PATH(CONFIG_DATA_PATH) 
- * directly, because # operator doesn't expand parameter so we 
+ * #define DATA_PATH S_DATA_PATH(CONFIG_DATA_PATH)
+ * directly, because # operator doesn't expand parameter so we
  * would get "CONFIG_DATA_PATH" as the result. So one more level is necessary
  * to force expansion (this is done by CONFIG_PATH.
  *

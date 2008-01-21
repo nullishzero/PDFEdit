@@ -1,7 +1,7 @@
 // Console: Delinearizator
 // Description: Delinearize input file
 // Parameters: [input file] [output file]
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -28,7 +28,7 @@ function delinearize_fail(err) {
 
 p=parameters();
 if (p.length!=2) {
- delinearize_help("Delinearizator "+tr("is expecting two parameters")) 
+ delinearize_help("Delinearizator "+tr("is expecting two parameters"));
 }
 inFile=p[0];
 outFile=p[1];

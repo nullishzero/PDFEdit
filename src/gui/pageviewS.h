@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __PAGEVIEWS_H__
 #define __PAGEVIEWS_H__
 
@@ -40,7 +40,7 @@ class PageViewS : public Q_ScrollView {
 		/** Default constructor of pageView.
 		 * @param parent widget containing this control
 		 *
-		 * It sets 
+		 * It sets
 		 *	selection mode to FillRectRectSelection
 		 **/
 		PageViewS (QWidget *parent);

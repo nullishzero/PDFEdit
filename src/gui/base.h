@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __BASE_H__
 #define __BASE_H__
 
@@ -228,7 +228,11 @@ public slots: //This will be all exported to scripting
   Returns sorted list of all variables that are in current script interpreter.
  */
  QStringList variables();
- /*- Returns version of editor (in format 'major.minor.release') */
+ /*-
+  Returns version of editor. String is in format 'major.minor.release' for ordinary releases
+  or 'major.minor.relase-suffix' for "special" versions, like cvs checkouts (suffix CVS appended)
+  or versions from branches, which would have branch tag added)
+ */
  QString version();
 
 private:

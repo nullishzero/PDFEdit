@@ -97,7 +97,7 @@ public:
 public:
     /** 
 	 * Returns result of selection.
-     * 
+     *
      * Creates structure representing the results.
 	 * Important: Caller is responsible for deallocation).
      */
@@ -107,13 +107,13 @@ public:
 	// Helper functions
 	//
 protected:
-    /** 
+    /**
 	 * Initializes page selection.
      * @param count Document page count.
      */
     void init (size_t count);
 
-	/** 
+	/**
 	 * Init page selection from pdf file name.
      * @param filename Document file name.
      */

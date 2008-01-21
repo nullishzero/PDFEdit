@@ -1,4 +1,4 @@
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -232,7 +232,7 @@ function onChangeRevision() {
 /** Callback when selection in tree (which item is selected) changes */
 function onTreeSelectionChange() {
  checkMenus();
- 
+
  if (fillTextFromSelectedOperators()) {
 	showItem("_edit_tool text",true);
  } else {
@@ -287,7 +287,6 @@ function onSelectMode_Annot() {
  PageSpace.setSelectionMode("annotations","rect3","go_to_target_from_selected_annotation()");
  setModeButton('selectAnnot');
 }
- 
 
 /** Callback when selection mode is changes to draw new line */
 function onSelectMode_drawLine() {

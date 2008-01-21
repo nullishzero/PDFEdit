@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  CommandWindow - class representing command window (editation of command and output of previous commands)
 */
@@ -85,7 +85,7 @@ CommandWindow::CommandWindow ( QWidget *parent/*=0*/, const char *name/*=0*/ ):Q
 
  vblayout->addWidget(out);
  vblayout->addWidget(history);
- 
+
  // setting sizePolicy for ignoring width hint (some history items are too large)
  QSizePolicy spol ( QSizePolicy::Ignored, QSizePolicy::Preferred );
  history->setSizePolicy( spol );
@@ -122,7 +122,7 @@ void CommandWindow::reloadSettings() {
  showCmdHistory	(showHistory);
  showCmdLine	(showCmd);
  showCmdEditor	(showEditor);
- 
+
  //First appropriate visible widget will be declared as focus proxy (widget that will get focus instead of this widget)
  if (showEditor) {
   setFocusProxy(in);	// Script editor
@@ -417,13 +417,13 @@ void CommandWindow::addError(const QString &message) {
 
 /** Saves command state to application settings*/
 void CommandWindow::saveWindowState() {
- globalSettings->saveSplitter(spl,"spl_cmd"); 
+ globalSettings->saveSplitter(spl,"spl_cmd");
 }
 
 
 /** Restores window state from application settings */
 void CommandWindow::restoreWindowState() {
- globalSettings->restoreSplitter(spl,"spl_cmd"); 
+ globalSettings->restoreSplitter(spl,"spl_cmd");
 }
 /** default destructor */
 CommandWindow::~CommandWindow() {

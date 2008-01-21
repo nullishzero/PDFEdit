@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
@@ -29,7 +29,7 @@ class Settings : public QObject {
 public:
  ~Settings();
  static Settings* getInstance();
- void saveWindow(QWidget *win,const QString &name); 
+ void saveWindow(QWidget *win,const QString &name);
  void restoreWindow(QWidget *win,const QString &name);
  void saveSplitter(QSplitter *spl,const QString &name);
  void restoreSplitter(QSplitter *spl,const QString &name);

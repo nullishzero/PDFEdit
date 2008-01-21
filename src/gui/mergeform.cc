@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  "Merge documents pages" dialog<br>
  This dialog is used to select another PDF document and
@@ -109,7 +109,7 @@ void MergeDialog::mergeList_currentChanged( Q_ListBoxItem * item)
                 return;
 
         // enables to manipulate only with FROMFILE nodes
-        // original items has to be in same order as in 
+        // original items has to be in same order as in
         // creation time
         if(listItem->isType(NodeData::FROMFILE)) {
                 removeBtn->setEnabled(TRUE);
@@ -118,9 +118,9 @@ void MergeDialog::mergeList_currentChanged( Q_ListBoxItem * item)
                 // item
                 if(mergeList->currentItem()>0)
                         upBtn->setEnabled(TRUE);
-                else 
+                else
                         upBtn->setEnabled(FALSE);
-                
+
                 // down button is enabled only if we are not on last
                 // item
                 if(mergeList->currentItem() + 1>=(int)(mergeList->count())) downBtn->setEnabled(FALSE);
@@ -149,7 +149,7 @@ void MergeDialog::addBtn_clicked()
                 // skips unselected items
                 if(!fileList->isSelected(i))
                         continue;
-                
+
                 ListItem * fileItem=dynamic_cast<ListItem *>(fileList->item(i));
                 if(!fileItem)
                         continue;
@@ -183,7 +183,7 @@ void MergeDialog::addBtn_clicked()
                 addBtn->setEnabled(FALSE);
                 return;
         }
-        
+
         // select and mark as current element behind last added
         // to mergeList
         if(oldPos>=0)
@@ -383,11 +383,11 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
 {
     if ( !name )
 	setName( "MergeDialog" );
-    MergeDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "MergeDialogLayout"); 
+    MergeDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "MergeDialogLayout");
 
-    layout48 = new QVBoxLayout( 0, 0, 6, "layout48"); 
+    layout48 = new QVBoxLayout( 0, 0, 6, "layout48");
 
-    layout27 = new QHBoxLayout( 0, 0, 6, "layout27"); 
+    layout27 = new QHBoxLayout( 0, 0, 6, "layout27");
 
     textLabel1 = new QLabel( this, "textLabel1" );
     textLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, textLabel1->sizePolicy().hasHeightForWidth() ) );

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  PropertyModeController - class providing wrapper around single ModeController
  instance and managing its configuration
@@ -37,7 +37,7 @@ ModeController modeController;
 /**
  Low-level parser for simple configuration files (one line = one setting).
  This base parser is used by ConfParser,
- which is used by ModeController in loadFromFile 
+ which is used by ModeController in loadFromFile
 */
 StringConfigurationParser baseParser(NULL);
 

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __UTIL_H__
 #define __UTIL_H__
 /** @file
@@ -29,11 +29,10 @@ class QVariant;
 
 #ifndef __GNUC__
 /** Turn off __attribute__ for non-gcc compilers */
-#define  __attribute__(x) /* Turn off __attribute__ for non-gcc compilers */ 
+#define  __attribute__(x) /* Turn off __attribute__ for non-gcc compilers */
 #endif
 
 namespace util {
-
 
 /**
  Context of unicode to/from 8bit conversion

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around CArray<br>
  Export some functions to scripting.<br>
@@ -102,7 +102,7 @@ QString QSArray::getText() {
 /**
  Add given property to array at specified index
  @param index Index of element in array
- @param ip property to add 
+ @param ip property to add
  \see CArray::addProperty
 */
 void QSArray::add(int index,QSIProperty *ip) {
@@ -129,7 +129,7 @@ void QSArray::add(int index,QObject *ip) {
 /**
  Add String property to array at specified index
  @param index Index of element in array
- @param ip string to add 
+ @param ip string to add
  \see CArray::addProperty
 */
 void QSArray::add(int index,const QString &ip) {
@@ -145,7 +145,7 @@ void QSArray::add(int index,const QString &ip) {
 /**
  Add Int property to array at specified index
  @param index Index of element in array
- @param ip integer to add 
+ @param ip integer to add
  \see CArray::addProperty
 */
 void QSArray::add(int index,int ip) {
@@ -160,7 +160,7 @@ void QSArray::add(int index,int ip) {
 
 /**
  Append given property to array
- @param ip property to add 
+ @param ip property to add
  \see CArray::addProperty
 */
 void QSArray::add(QSIProperty *ip) {
@@ -186,7 +186,7 @@ void QSArray::add(QObject *ip) {
 
 /**
  Append given String property to array
- @param ip string to add 
+ @param ip string to add
  \see CArray::addProperty
 */
 void QSArray::add(const QString &ip) {
@@ -201,7 +201,7 @@ void QSArray::add(const QString &ip) {
 
 /**
  Append given Int property to array
- @param ip integer to add 
+ @param ip integer to add
  \see CArray::addProperty
 */
 void QSArray::add(int ip) {
@@ -226,7 +226,7 @@ QSCObject* QSArray::child(const QString &name) {
   boost::shared_ptr<CArray> array=boost::dynamic_pointer_cast<CArray>(obj);
   boost::shared_ptr<IProperty> property=util::recursiveProperty(array,name);
   return QSImporter::createQSObject(property,base);
- } catch (...) { 
+ } catch (...) {
   //Some error, probably the property does not exist
   return NULL;
  }

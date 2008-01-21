@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemAnnotation - class holding one annotation in tree
  @author Martin Petricek
@@ -124,7 +124,7 @@ QSCObject* TreeItemAnnotation::getQSObject() {
 
 //See TreeItemAbstract for description of this virtual method
 void TreeItemAnnotation::remove() {
- //Remove from CPage 
+ //Remove from CPage
  page->delAnnotation(obj);
  return;
 }

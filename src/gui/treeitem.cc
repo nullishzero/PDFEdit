@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItem - class holding one PDF object (IProperty) in tree, descendant of TreeItemAbstract
  @author Martin Petricek
@@ -136,7 +136,7 @@ boost::shared_ptr<IProperty> TreeItem::getObject() {
  return obj;
 }
 
-/** 
+/**
  This method is needed for "deep reload" to work
  Try to replace object inside this treeitem with a new one.
  @param newItem new object to replace the old one

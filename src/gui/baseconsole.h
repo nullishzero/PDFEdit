@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __BASECONSOLE_H__
 #define __BASECONSOLE_H__
 
@@ -29,7 +29,7 @@ public:
  virtual ~BaseConsole();
  void runInitScript();
 public slots: //This will be all exported to scripting
- /*- 
+ /*-
  Terminate the application. You can specify return code of application in parameter
  */
  void exit(int returnCode=0);

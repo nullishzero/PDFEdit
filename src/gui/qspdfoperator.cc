@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around PdfOperator (one operator found inside content stream)<br>
  Export some functions to scripting.<br>
@@ -98,7 +98,7 @@ QString QSPdfOperator::getText() {
  return util::convertToUnicode(text,util::PDF);
 }
 
-/** 
+/**
  Create new operator iterator from this PDF operator.
  The iterator will be initially positioned at this item
  @return new iterator
@@ -108,7 +108,7 @@ QSPdfOperatorIterator* QSPdfOperator::iterator() {
  return new QSPdfOperatorIterator(obj,csRef,base);
 }
 
-/** 
+/**
  Create new text operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.
@@ -120,7 +120,7 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwardDir/*=true*/) {
  return new QSPdfOperatorIterator(opText,csRef,base);
 }
 
-/** 
+/**
  Return true, if this operator is equal to given object (i.e. if objects inside the wrapper are the same)
  @param otherObject object to compare with this one
  @return True if the both objects hold the same item, false otherwise
@@ -131,7 +131,7 @@ bool QSPdfOperator::equals(QObject* otherObject) {
  return obj==other->get();
 }
 
-/** 
+/**
  Create new font operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.
@@ -143,7 +143,7 @@ QSPdfOperatorIterator* QSPdfOperator::fontIterator(bool forwardDir/*=true*/) {
  return new QSPdfOperatorIterator(opFont,csRef,base);
 }
 
-/** 
+/**
  Create new changeable operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.
@@ -155,7 +155,7 @@ QSPdfOperatorIterator* QSPdfOperator::changeableIterator(bool forwardDir/*=true*
  return new QSPdfOperatorIterator(opChangeable,csRef,base);
 }
 
-/** 
+/**
  Create new stroking operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.
@@ -167,7 +167,7 @@ QSPdfOperatorIterator* QSPdfOperator::strokingIterator(bool forwardDir/*=true*/)
  return new QSPdfOperatorIterator(opStroking,csRef,base);
 }
 
-/** 
+/**
  Create new non stroking operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.
@@ -179,7 +179,7 @@ QSPdfOperatorIterator* QSPdfOperator::nonStrokingIterator(bool forwardDir/*=true
  return new QSPdfOperatorIterator(opNonStroking,csRef,base);
 }
 
-/** 
+/**
  Create new graphical operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.
@@ -191,7 +191,7 @@ QSPdfOperatorIterator* QSPdfOperator::graphicalIterator(bool forwardDir/*=true*/
  return new QSPdfOperatorIterator(opGraphical,csRef,base);
 }
 
-/** 
+/**
  Create new inline image operator iterator from this PDF operator.
  The iterator will be initialized from this item 
  @param forwardDir Direction of traversing the operators for first valid item.

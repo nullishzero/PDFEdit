@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __TREEWINDOW_H__
 #define __TREEWINDOW_H__
 
@@ -84,7 +84,7 @@ protected:
 private slots:
  void moveOnItem(QListViewItem *item);
  void moveOffItem();
- void treeSelectionChanged(QListViewItem *item); 
+ void treeSelectionChanged(QListViewItem *item);
  void treeSelectionChanged();
  void mouseClicked(int button,QListViewItem* item,const QPoint &coord,int column);
  void mouseDoubleClicked(QListViewItem* item,const QPoint &coord,int column);

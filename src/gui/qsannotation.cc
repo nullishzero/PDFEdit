@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around CAnnotation<br>
  Export some functions to scripting.<br>
@@ -43,13 +43,13 @@ QSAnnotation::~QSAnnotation() {
 }
 
 /** Get annotation's page */
-QSPage* QSAnnotation::getPage() { 
+QSPage* QSAnnotation::getPage() {
  if (!page.get()) return NULL;
  return new QSPage(page,base);
 }
 
 /** Call CAnnotation::getDictionary */
-QSDict* QSAnnotation::getDictionary() { 
+QSDict* QSAnnotation::getDictionary() {
  return new QSDict(obj->getDictionary(),base);
 }
 

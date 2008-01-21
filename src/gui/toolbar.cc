@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  ToolBar class, ancestor of QToolBar.
  This toolbar can handle only buttons derived from ToolButton class
@@ -40,7 +40,7 @@ ToolBar::ToolBar(QMainWindow *parent,const char *name/*=0*/) : QToolBar(parent,n
 
 /**
  Add button to toolbar and link slots, so clicks from buttons are passed along with button ID to the application
- @param qb Button to add to this toolbar 
+ @param qb Button to add to this toolbar
  */
 void ToolBar::addButton(ToolButton *qb) {
  QObject::connect(qb,SIGNAL(clicked(int)),this,SLOT(slotClicked(int)));
@@ -55,7 +55,7 @@ void ToolBar::slotClicked(int id) {
  emit itemClicked(id);
 }
 
-/** 
+/**
  Signal called when receiving help message.
  Forward the message via helpText
  @param message Help message

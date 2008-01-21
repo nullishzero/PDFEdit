@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Various utility functions (string processing, file loading, debugging, etc ...)
  @author Martin Petricek
@@ -57,7 +57,7 @@ namespace {
 			UMap umap;	// Mapping from unicode to windows character encoding
 
 			//
-			// Ctor - singleton 
+			// Ctor - singleton
 			//
 		private:
 			PdfeditEncoding ()
@@ -74,12 +74,12 @@ namespace {
 
 			//
 			// Instance
-			// 
+			//
 		public:
 			static PdfeditEncoding* get ()
-			{ 
+			{
 				if (!encoding_instance) encoding_instance=new PdfeditEncoding();
-				return encoding_instance; 
+				return encoding_instance;
 			}
 
 			//
@@ -101,7 +101,7 @@ namespace {
 				{ return 0; }
 
 
-			QString 
+			QString
 			toUnicode (const char* chars, int len ) const
 			{
 				return QString::fromLatin1(string(chars,len).c_str());
@@ -127,7 +127,7 @@ namespace {
 				return QCString (tmp.c_str());
 			}
 #else
-			QCString 
+			QCString
 			fromUnicode (const QString& uc, int& lenInOut) const
 			{
 				string tmp;
@@ -271,7 +271,7 @@ QStringList explode(char separator,const QString &line,bool escape/*=false*/) {
    qs+=add;
    if (nPos<0) break;
    pos=nPos+1;//Skip separatr and look for next
-  }  
+  }
  } else {
   qs=QStringList::split(separator,line,TRUE);
  }
@@ -293,7 +293,7 @@ QString loadFromFile(const QString &name) {
  if (!f.open(IO_ReadOnly)) {
   //Failure
   return QString::null;
- } 
+ }
  QByteArray qb=f.readAll();
  f.close();
  QTextCodec *codec=QTextCodec::codecForName("utf8");
@@ -313,9 +313,9 @@ bool saveToFile(const QString &name,const QString &content) {
  if (!f.open(IO_WriteOnly)) {
   //Failure
   return false;
- } 
+ }
  QTextCodec *codec=QTextCodec::codecForName("utf8");
- assert(codec); 
+ assert(codec);
  QCString qb=codec->fromUnicode(content);
  f.writeBlock(qb.data(),qb.length());
  f.close();
@@ -334,7 +334,7 @@ void printList(const QStringList &l) {
  }
 }
 
-/** 
+/**
  Write line to specified logfile
  @param message Line to write to logfile
  @param fileName Name of log file. If this is null or empty string, nothing is done
@@ -349,7 +349,7 @@ void consoleLog(const QString &message,const QString &fileName) {
  con.close();
 }
 
-/** 
+/**
  Replace two backslashes followed by any character (escaped character) with that character
  @param line String in which to remove extra backslashes (in,out)
 */
@@ -473,7 +473,7 @@ void colorMod(QWidget* widget,QColor fg,double weight_fg,QColor bg,double weight
 /**
  Return string list containing 'count' items, numbered from 'start' to 'start+count-1'
  @param count number of items in list
- @param start 
+ @param start first item in the list
 */
 QStringList countList(unsigned int count,unsigned int start/*=0*/) {
  QStringList items;
@@ -514,7 +514,7 @@ void setDefaultCharset(const QString &charsetName) {
  }
  // Default codecs
  if (charsetName.isNull() || charsetName=="") return;//no codec
- defCodec=QTextCodec::codecForName(charsetName); 
+ defCodec=QTextCodec::codecForName(charsetName);
 }
 
 /**

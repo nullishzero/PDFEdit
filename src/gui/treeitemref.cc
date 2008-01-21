@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemRef - class holding one CRef object in tree, descendant of TreeItem
  @author Martin Petricek
@@ -67,7 +67,7 @@ void TreeItemRef::addData() {
  setExpandable(true);
 }
 
-/** 
+/**
  Return reference target in text form.
  @return Refence target
 */
@@ -116,7 +116,7 @@ void TreeItemRef::setOpen(bool open) {
    }
    //Reload as "complete and opened item"
    complete=true;
-   reload();  
+   reload();
   }
  }
  //Call original method

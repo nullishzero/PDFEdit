@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemSimple - class holding one simple object in tree (not ref, dict or array), descendant of TreeItem
  @author Martin Petricek
@@ -67,7 +67,7 @@ QStringList TreeItemSimple::getChildNames() {
  assert(typ!=pDict);
  assert(typ!=pArray);
  //Null, Bool, Int, Real, Name, String -> These are simple types without any children
- return QStringList(); 
+ return QStringList();
 }
 
 //See TreeItemAbstract for description of this virtual method

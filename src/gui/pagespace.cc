@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #include "pagespace.h"
 #include QSCROLLVIEW
 #include <stdlib.h>
@@ -134,7 +134,7 @@ PageSpace::PageSpace(QWidget *parent /*=0*/, const char *name /*=0*/) : QWidget(
 	pageNumber->setAlignment( Qt::AlignCenter | pageNumber->alignment() );
 	hBox->addWidget( pageNumber );
 	hBox->addStretch();
-        
+
  	actualUnits.setDefaultUnits( globalSettings->read( PAGESPC + VIEWED_UNITS, DEFAULT__VIEWED_UNITS ) );
 
 	Init( &is , format + "00000000xx" );
@@ -381,7 +381,7 @@ bool PageSpace::saveImageWithDialog ( bool onlySelectedArea ) {
 
 	QFile f ( filename );
 	if ( (! filename.isNull()) &&
-		((! f.exists()) || 
+		((! f.exists()) ||
 			(0 == QMessageBox::question( this, QObject::tr("Overwrite?"),
                                                         QObject::tr("File called \"%1\" already exists. Do you want to overwrite it?").arg( filename ),
 							QObject::tr("&Yes"), QObject::tr("&No"),

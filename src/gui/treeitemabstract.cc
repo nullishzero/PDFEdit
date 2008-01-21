@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  TreeItemAbstract - common ancestor of TreeItems,
  with functions to support automatic loading and reloading of tree,
@@ -67,7 +67,7 @@ void TreeItemAbstract::initAbs() {
  assert(rootWindow);
 }
 
-/** 
+/**
  Create and return object for scripting representing this tree item, relocated in different base
  If the object cannot be copied into new base, return NULL
  @param _base BaseCore for the new object.
@@ -89,7 +89,7 @@ void TreeItemAbstract::setOpen(bool open) {
  Q_ListViewItem::setOpen(open);
 }
 
-/** 
+/**
  Attempt to "deep reload", i.e. exchange the item inside the tree for an actual (different) one,
  without destroying the object
  (destroying have unfortunate effect of losing information about which child were opened ...)
@@ -263,7 +263,7 @@ void TreeItemAbstract::moveAllChildsFrom(TreeItemAbstract* src) {
  @param name Name of subitem to delete
  */
 void TreeItemAbstract::deleteChild(const QString &name) {
- Q_ListViewItem *target=items.take(name);//Remove from list and return 
+ Q_ListViewItem *target=items.take(name);//Remove from list and return
  if (!target) { //Item not found (should not happen usually)
   guiPrintDbg(debug::DBG_WARN,"Child to delete not found! -> " << Q_OUT(name));
   return;
@@ -319,7 +319,7 @@ TreeItemAbstract::~TreeItemAbstract() {
 void TreeItemAbstract::setSelect(bool selected) {
  Q_ListView *lv=listView();
  assert(lv);
- lv->setSelected(this,selected); 
+ lv->setSelected(this,selected);
 }
 
 /**

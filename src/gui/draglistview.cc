@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  DragListView class, ancestor of QListView.
  Enhances QListView by drag and drop capability
@@ -14,7 +14,7 @@
 */
 
 #include "draglistview.h"
-#include <qdragobject.h> 
+#include <qdragobject.h>
 #include "treeitemabstract.h"
 #include <utils/debug.h>
 #include <assert.h>
@@ -92,7 +92,7 @@ QDragObject* DragListView::dragObject() {
  return dr;
 }
 
-/** 
+/**
  Handler called when something is moved over the window.
  The event should be accepted if there is some change for drop to be accepted
  @param e Event
@@ -109,7 +109,7 @@ void DragListView::contentsDragMoveEvent(QDragMoveEvent *e) {
  if (target) e->accept(); else e->ignore();
 }
 
-/** 
+/**
  Handler called when something is dropped in the window
  If it is tree item from this or another another window
  @param e Event

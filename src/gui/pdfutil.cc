@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Various utility functions for examining and manipulating pdf objects,
  related to kernel
@@ -34,16 +34,16 @@ using namespace pdfobjects;
  */
 QString getTypeName(PropertyType typ) {
  switch (typ) {
-  case pNull:   return QObject::tr("Null",	"Type name"); 
-  case pBool:   return QObject::tr("Bool",	"Type name"); 
-  case pInt:    return QObject::tr("Int",	"Type name"); 
-  case pReal:   return QObject::tr("Real",	"Type name"); 
+  case pNull:   return QObject::tr("Null",	"Type name");
+  case pBool:   return QObject::tr("Bool",	"Type name");
+  case pInt:    return QObject::tr("Int",	"Type name");
+  case pReal:   return QObject::tr("Real",	"Type name");
   case pString: return QObject::tr("String",	"Type name");
   case pName:   return QObject::tr("Name",	"Type name");
   case pRef:    return QObject::tr("Ref",	"Type name");
-  case pArray:  return QObject::tr("Array",	"Type name"); 
-  case pDict:   return QObject::tr("Dict",	"Type name"); 
-  case pStream: return QObject::tr("Stream",	"Type name"); 
+  case pArray:  return QObject::tr("Array",	"Type name");
+  case pDict:   return QObject::tr("Dict",	"Type name");
+  case pStream: return QObject::tr("Stream",	"Type name");
 // Debug types
   case pOther:    return QObject::tr("DebugCmd",	"Type name");
   case pOther1:  return QObject::tr("DebugError",	"Type name");
@@ -61,16 +61,16 @@ QString getTypeName(PropertyType typ) {
  */
 QString getTypeId(PropertyType typ) {
  switch (typ) {
-  case pNull:   return "Null"; 
-  case pBool:   return "Bool"; 
+  case pNull:   return "Null";
+  case pBool:   return "Bool";
   case pInt:    return "Int";
   case pReal:   return "Real";
   case pString: return "String";
   case pName:   return "Name";
   case pRef:    return "Ref";
-  case pArray:  return "Array"; 
-  case pDict:   return "Dict"; 
-  case pStream: return "Stream"; 
+  case pArray:  return "Array";
+  case pDict:   return "Dict";
+  case pStream: return "Stream";
 // Debug types
   case pOther:    return "DebugCmd";
   case pOther1:  return "DebugError";
@@ -149,8 +149,8 @@ QString propertyPreview(boost::shared_ptr<IProperty> obj) {
   case pStream: {
    try {
     boost::shared_ptr<IProperty> len=IProperty::getSmartCObjectPtr<CStream>(obj)->getProperty("Length");
-    // FIXME: Why this check? It can't be NULL AFAIK 
-    // dynamic_cast shouldn't be used and IProperty::getSmartCObjectPtr 
+    // FIXME: Why this check? It can't be NULL AFAIK
+    // dynamic_cast shouldn't be used and IProperty::getSmartCObjectPtr
     // should be used instead
     CInt* lenInt=dynamic_cast<CInt*>(len.get());
     if (!lenInt) return "";
@@ -225,10 +225,10 @@ bool isSimple(IProperty* prop) {
  PropertyType pt=prop->getType();
  switch(pt) {
   case pNull: 
-  case pBool: 
-  case pInt: 
-  case pReal: 
-  case pName: 
+  case pBool:
+  case pInt:
+  case pReal:
+  case pName:
   case pString:
    return true;
   default:
@@ -353,7 +353,7 @@ boost::shared_ptr<IProperty> getObjProperty(boost::shared_ptr<CArray> obj,const 
  return obj->getProperty(index);
 }
 
-/** 
+/**
  Return type identifier of annotation type
  @param at Annotation type
 */

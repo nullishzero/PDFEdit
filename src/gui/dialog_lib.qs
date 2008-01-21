@@ -1,4 +1,4 @@
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -9,8 +9,8 @@
  */
 /* === Dialog helper functions === */
 
-/** 
- * Create LineEdit dialog with label and text filled. 
+/**
+ * Create LineEdit dialog with label and text filled.
  */
 function createLineEdit(label,text) {
  e = new LineEdit;
@@ -19,8 +19,8 @@ function createLineEdit(label,text) {
  return e;
 }
 
-/** 
- * Create LineEdit dialog with label and text filled and add it 
+/**
+ * Create LineEdit dialog with label and text filled and add it
  * to another widget.
  */
 function createLineEditAndDisplay(label,text,widget) {
@@ -31,8 +31,8 @@ function createLineEditAndDisplay(label,text,widget) {
  return e;
 }
 
-/** 
- * Create NumberEdit dialog with label and value filled and add it 
+/**
+ * Create NumberEdit dialog with label and value filled and add it
  * to another widget.
  */
 function createNumberEditAndDisplay(label,value,widget) {

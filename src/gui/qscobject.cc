@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QSCObject -> base class of all QObject wrappers used in scripting<br>
  Export some functions to scripting.<br>
@@ -63,7 +63,7 @@ bool QSCObject::nullPtr(const void* ptr,const QString &methodName) {
  if (ptr) return false;
  if (!base) throw NullPointerException(typeName,methodName);
  base->errorNullPointer(typeName,methodName);
- return true; 
+ return true;
 }
 
 /**

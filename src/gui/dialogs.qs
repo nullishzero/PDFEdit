@@ -1,4 +1,4 @@
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -29,9 +29,9 @@ function rotatePage(n) {
  //Reload page after rotating
  go();
 }
-/** 
- * Show page rectangle and allow changing page metrics. 
- * It displayes MediaBox entry from a page dictionary and then sets new values if desired. 
+/**
+ * Show page rectangle and allow changing page metrics.
+ * It displayes MediaBox entry from a page dictionary and then sets new values if desired.
  */
 function editPageMediaBox() {
 
@@ -48,7 +48,7 @@ function editPageMediaBox() {
  var yright = mediabox[3];
 
  var dialog = createDialog (tr("Change page rectangle"), tr("Change"), tr("Cancel"), tr("Page metrics"));
- 
+
  var gb = createGroupBoxAndDisplay (tr("Page metrics"), dialog);
  var exl = createNumberEditAndDisplay(tr("Left upper corner")+", "+tr("x position")+"( "+PageSpace.getDefaultUnits()+" ): ",
  									PageSpace.convertUnits(xleft,"pt"), gb);
@@ -81,16 +81,16 @@ function setOpColor() {
 	
         // uses currently set foregroud colour
         col=getColor("fg");
-        if (!col) 
+        if (!col)
                 return;//Dialog aborted
-                
+
         // set color operator to all selected which are changeable
 	op=firstSelected();
         count=0;
         while(op)
         {
                 if (!isChangeableOp(op)) {
-                        // displays just for the first time and then just silently 
+                        // displays just for the first time and then just silently
                         // ignores
                         if(firstTime)
                         {
@@ -130,7 +130,7 @@ function setLineWidth() {
         while(op)
         {
                 if (!isChangeableOp(op)) {
-                        // displays just for the first time and then just silently 
+                        // displays just for the first time and then just silently
                         // ignores
                         if(firstTime)
                         {
@@ -141,7 +141,7 @@ function setLineWidth() {
                         op=nextSelected();
                         continue;
                 }
-                
+
                 operatorSetLineWidth(op,width,true);
 
                 op=nextSelected();
@@ -164,7 +164,7 @@ function setDashPattern() {
         // TODO multiselect
 	op=firstSelected();
         if (!isChangeableOp(op)) {
-                // displays just for the first time and then just silently 
+                // displays just for the first time and then just silently
                 // ignores
                 warn(tr("Selected operator")+" "+tr("is not")+" "+tr("suitable for dash style change.")+" "+tr("Please see the pdf specification for details."));
                 return;
@@ -172,7 +172,7 @@ function setDashPattern() {
 	
         // TODO remove dialog and use currently set values
 	var dialog = createDialog (tr("Change line dash pattern"), tr("Change"), tr("Cancel"), tr("Change line dash pattern"));
-	 
+
 	var gb = createGroupBoxAndDisplay (tr("Line dashing patterns"), dialog);
 	var rb = [];
 	rb[0] = createRadioButtonAndDisplay (tr("Solid line"),gb);
@@ -182,9 +182,9 @@ function setDashPattern() {
 	gb = createGroupBoxAndDisplay (tr("Change effect"), dialog);
 	var glob = createCheckBoxAndDisplay (tr("Global change"),gb);
 	glob.checked = true;
-	 
+
 	if (!dialog.exec()) return;
-	 
+
 	var i = 0;
 	for(; i<rb.length; ++i)
 		if (rb[i].checked)
@@ -233,7 +233,7 @@ function editFontProps(thepage) {
 	op=firstSelected();
 	while(op)
 	{
-		if (!isTextOp(op)) 
+		if (!isTextOp(op))
 		{
 			if(firstTime)
 			{
@@ -349,7 +349,7 @@ function setPageTm() {
 	rbtran = createCheckBoxAndDisplay (tr("Translate (shift) page"),gb);
 	rbscal = createCheckBoxAndDisplay (tr("Scale page"),gb);
 	rbskew = createCheckBoxAndDisplay (tr("Skew page"),gb);
-	     
+
 
 	/* == Second tab */
 	dg.newTab(tr("Page translation"));
@@ -423,9 +423,9 @@ function moveOperPos() {
 	}
 
         var dialog = createDialog (tr("Change relative text operator position"), tr("Change"), tr("Cancel"), tr("Change relative text position"));
-         
+
         var xy = xydialogs (dialog,tr("Relative operator position (this is not absolute position)"));
-         
+
         dialog.width = 100;
         if (!dialog.exec()) return;
 	
@@ -433,7 +433,7 @@ function moveOperPos() {
 	op=firstSelected();
         while(op)
         {
-                if (!isTextOp(op)) 
+                if (!isTextOp(op))
                 {
                         if(firstTime)
                         {
@@ -453,7 +453,7 @@ function moveOperPos() {
                 }
                 var x = parseFloat (posop.params().property(0).value());
                 var y = parseFloat (posop.params().property(1).value());
-             
+
                 // op, change, change
                 operatorSetPosition(op, xy[0].value, xy[1].value);
 
@@ -543,7 +543,7 @@ function drawLine(_lx,_ly,_rx,_ry,wantedit) {
 		ly = convertPixmapPosToPdfPos_y(_lx,_ly);
 		rx = convertPixmapPosToPdfPos_x(_rx,_ry);
 		ry = convertPixmapPosToPdfPos_y(_rx,_ry);
-	}else 
+	}else
                 return;
 
 	print (lx+" "+ly+" "+rx+" "+ry);
@@ -586,7 +586,7 @@ function drawArrow(_lx,_ly,_rx,_ry,wantedit) {
 		b1 = convertPixmapPosToPdfPos_x(_b1,_b2);
 		b2 = convertPixmapPosToPdfPos_y(_b1,_b2);
 		
-	}else 
+	}else
         return;
 
 
@@ -622,7 +622,7 @@ function drawRect(_lx,_ly,_rx,_ry,wantedit) {
 		ry = convertPixmapPosToPdfPos_y(_rx,_ry);
 		w = rx - lx;
 		h = ry - ly;
-	}else 
+	}else
                 return;
 	
 	print (lx+", "+ly+", "+w+", "+h);
@@ -643,9 +643,9 @@ function addText (_x1,_y1,_x2,_y2, _glob_left,_glob_top) {
 		return;
 	}
 
-	if (undefined == _x1 || undefined == _y1 || undefined == _x2 || undefined == _y2 || 
-		undefined == _glob_left || undefined == _glob_top) { 
-		return ;
+	if (undefined == _x1 || undefined == _y1 || undefined == _x2 || undefined == _y2 ||
+		undefined == _glob_left || undefined == _glob_top) {
+		return;
 	}
 	
 	//

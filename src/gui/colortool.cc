@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  ColorTool - Toolbutton allowing to change current color
  @author Martin Petricek
@@ -81,7 +81,7 @@ void ColorTool::resizeEvent (QResizeEvent *e) {
 void ColorTool::colorClicked() {
  QColor ret=QColorDialog::getColor(color,this,"std_color_dialog");
  if (!ret.isValid()) return;
- color=ret; 
+ color=ret;
  updateColor();
  emit clicked(colorName);
 }

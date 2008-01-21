@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __IMAGEWIDGET_H__
 #define __IMAGEWIDGET_H__
 
@@ -23,7 +23,7 @@ namespace gui {
 */
 
 class ImageWidget: public QWidget {
-Q_OBJECT 
+Q_OBJECT
 public:
  ImageWidget(const QPixmap *p,QColor bgColor,QWidget *parent);
  virtual ~ImageWidget();

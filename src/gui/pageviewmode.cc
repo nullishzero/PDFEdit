@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab
 #include <stdlib.h>
 #include <math.h>
@@ -861,9 +861,9 @@ PageViewMode_TextSelection::PageViewMode_TextSelection ( const QString & drawing
 														const QString & _scriptFncAtMouseRelease,
 														const QString & _scriptFncAtMoveSelectedObjects,
 														const QString & _scriptFncAtResizeSelectedObjects ) :
-			PageViewMode ( drawingObject, 
-							_scriptFncAtMouseRelease, 
-							_scriptFncAtMoveSelectedObjects, 
+			PageViewMode ( drawingObject,
+							_scriptFncAtMouseRelease,
+							_scriptFncAtMoveSelectedObjects,
 							_scriptFncAtResizeSelectedObjects )
 		{
 			// initialize mapping cursors

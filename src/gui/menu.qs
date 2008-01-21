@@ -1,4 +1,4 @@
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -74,7 +74,7 @@ function save_as_text(filename) {
  qs="";
  for (i=1;i<=pages;i++) {
   pg=document.getPage(i);
-  text=pg.getText();  
+  text=pg.getText();
   qs+=text;
   qs+="\n";
  }

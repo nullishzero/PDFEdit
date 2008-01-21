@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  This class manages Menu, Toolbars and Shortcuts
  Menus, menu items, toolbars and toolbar items share the same namespace and often
@@ -32,7 +32,7 @@
 #include QPOPUPMENU
 #include <qregexp.h>
 #include <qstring.h>
-#include <qtextstream.h> 
+#include <qtextstream.h>
 #include <utils/debug.h>
 #include <assert.h>
 
@@ -46,7 +46,7 @@ const QString ROOT="gui/items/";
 /** root key for user menu items appended to system menu items (lists) */
 const QString ROOT_ADD="gui/items_add/";
 
-/** 
+/**
  Exit with error message after encountering invalid menu/toolbar item
  @param type Type of offending item
  @param name Name of offending item
@@ -99,9 +99,9 @@ QString Menu::getAction(int index) {
 }
 
 /**
- Load one GUI item from config file, exiting application with fatal error if item not found 
+ Load one GUI item from config file, exiting application with fatal error if item not found
  @param name Name of the item to read
- @return line from config file  
+ @return line from config file
  */
 QString Menu::readItem(const QString &name) throw (InvalidMenuException) {
  QString line=globalSettings->read(ROOT+name);
@@ -110,13 +110,13 @@ QString Menu::readItem(const QString &name) throw (InvalidMenuException) {
  if (line.length()==0) throw InvalidMenuException(QObject::tr("Missing item in config")+":\n"+ROOT+name);
  if (isList(line)) { //Read user-specified additional items and append them if this is a list
   QString add=globalSettings->read(ROOT_ADD+name);
-  if (!add.isNull()) { 
+  if (!add.isNull()) {
    add=add.simplifyWhiteSpace();
    line+=",";
    line+=add;
   }
  }
- return line; 
+ return line;
 }
 
 /**
@@ -167,7 +167,7 @@ void Menu::optimizeItems(QMenuData *menu) {
   int idx=filterText.find(QRegExp("[^"+used+"0]",false));
   if (idx<0) {
    guiPrintDbg(debug::DBG_INFO,"No accel for Item "  << Q_OUT(itemText) << " Used chars: " << Q_OUT(used));
-   //No usable letter for accelerator found. How unfortunate ... 
+   //No usable letter for accelerator found. How unfortunate ...
    continue;
   }
   char pAccel=filterText[idx].lower().latin1();
@@ -232,7 +232,7 @@ void Menu::loadItems(const QString &name,QMenuData *menu,QStringList prev/*=QStr
  @param name name of item to be loaded from config file
  @param parent parent menu item. If NULL and the item is list, the item is loaded in cache, but not added anywhere
  @param prev String list containing names of all parents of this menu item (used for loop detection)
- */ 
+ */
 void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList prev/*=QStringList()*/) throw (InvalidMenuException) {
  //Check for cycles (unhandled cycle in menu = crash in QT)
  if (prev.contains(name)) {
@@ -273,7 +273,7 @@ void Menu::loadItem(const QString &name,QMenuData *parent/*=NULL*/,QStringList p
   if (parent) addItem(line,parent,name);
  } else { //something invalid
   invalidItem(QObject::tr("menu item"),name,line,"list | item");
- } 
+ }
 }
 
 /**
@@ -297,7 +297,7 @@ char Menu::getAccel(const QString &name) {
  @param accel Keyboard Accelerator
  @param icon Name of icon
  @param classes Item classes
- */ 
+ */
 void Menu::createItem(const QString &parentName,const QString &name,const QString &caption,const QString &action,const QString &accel/*=QString::null*/,const QString &icon/*=QString::null*/,const QStringList &classes/*=QStringList()*/) throw (InvalidMenuException) {
  //TODO: check for duplicate names (mapTool, mapMenu)
  QMenuData *parent=NULL;
@@ -428,7 +428,7 @@ int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,c
   }
  }
  int itemId=parent->insertItem(captionTr,menu_id);
- addToMap(name,parent,itemId);  
+ addToMap(name,parent,itemId);
  if (!accel.isNull() && accel.length()>0) { //accelerator specified
   if (reserveAccel(accel,action)) parent->setAccel(QKeySequence(accel),menu_id);
  }
@@ -442,7 +442,7 @@ int Menu::addItem(QMenuData *parent,const QString &name,const QString &caption,c
  }
  if (classes.count()) { //Extra data - Item classes
   for (QStringList::ConstIterator it=classes.begin();it!=classes.end();++it) {
-   addToMap("/"+*it,parent,itemId);  
+   addToMap("/"+*it,parent,itemId);
   }
  }
  return itemId;
@@ -678,7 +678,7 @@ void Menu::saveToolbars() {
  qs << *main;
  globalSettings->write("gui/toolbarpos",out);
 #endif
-} 
+}
 
 /**
  Restore toolbar state of QMainWindow from configuration
@@ -692,7 +692,7 @@ void Menu::restoreToolbars() {
  QTextStream qs(out,IO_ReadOnly);
  qs >> *main;
 #endif
-} 
+}
 
 /**
  Add specified toolbar item to "all items" map
@@ -721,7 +721,7 @@ void Menu::addToMap(const QString &name,QMenuData* parent,int itemId) {
 /**
  Enable or disable item in toolbar and/or menu, given its name
  @param name Name of item
- @param enable True to enable, false to disable 
+ @param enable True to enable, false to disable
 */
 void Menu::enableByName(const QString &name,bool enable) {
  //TODO: lookup is slow & linear, improve ....

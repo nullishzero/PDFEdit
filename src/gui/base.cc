@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Base - class that host scripts and contain static script functions
  This class is also responsible for garbage collection of scripting objects
@@ -34,9 +34,9 @@
 #include <stdlib.h>
 #include <kernel/cpdf.h>
 #include <kernel/cannotation.h>
-#include <kernel/delinearizator.h> 
-#include <kernel/factories.h> 
-#include <kernel/pdfwriter.h> 
+#include <kernel/delinearizator.h>
+#include <kernel/factories.h>
+#include <kernel/pdfwriter.h>
 #include <qdir.h>
 #include <qfile.h>
 #include <qdatetime.h>
@@ -56,7 +56,7 @@ using namespace pdfobjects;
 typedef vector<size_t> PageNums;
 
 /**
- Create new Base class 
+ Create new Base class
 */
 Base::Base() : BaseCore() {
  //Autodelete is on
@@ -202,10 +202,10 @@ int Base::runScriptList(const QStringList &initScripts) {
   QString initScriptFilename=initScripts[i];
   //guiPrintDbg(debug::DBG_INFO,"Considering init script: " << initScriptFilename);
   //Check if the script exists. If not, it is silently skipped
-  if (exists(initScriptFilename)) {   
+  if (exists(initScriptFilename)) {
    guiPrintDbg(debug::DBG_INFO,"Running init script: " << Q_OUT(initScriptFilename));
    //Any document-related classes are NOT available to the initscript, as no document is currently loaded
-   if (!runFile(initScriptFilename)) {  
+   if (!runFile(initScriptFilename)) {
     errorMessage();
     guiPrintDbg(debug::DBG_INFO,"Error running file: " << Q_OUT(initScriptFilename));
     conPrintError(tr("Error running")+" "+initScriptFilename);
@@ -246,7 +246,7 @@ void Base::runScriptsFromPath(const QStringList &initScriptPaths) {
   QString initScriptFilename=it.data();
   guiPrintDbg(debug::DBG_INFO,"Running init script: " << Q_OUT(initScriptFilename));
   //Any document-related classes are NOT available to the initscript, as no document is currently loaded
-  if (!runFile(initScriptFilename)) {  
+  if (!runFile(initScriptFilename)) {
    errorMessage();
    guiPrintDbg(debug::DBG_INFO,"Error running file: " << Q_OUT(initScriptFilename));
    conPrintError(tr("Error running")+" "+initScriptFilename);
@@ -280,7 +280,7 @@ QSPdfOperator* Base::createOperator(const QString &text,QSIPropertyArray* parame
  PdfOperator::Operands param;
  parameters->copyTo(param);
  boost::shared_ptr<SimpleGenericOperator> op(new SimpleGenericOperator(opTxt,param));
- return new QSPdfOperator(op,this); 
+ return new QSPdfOperator(op,this);
 }
 
 /**
@@ -298,13 +298,13 @@ QSPdfOperator* Base::createOperator(const QString &text,QObject* parameters) {
 
 /**
  Create new operator of type UnknownCompositePdfOperator
- @param beginText Start operator name text representation. 
+ @param beginText Start operator name text representation.
  @param endText End operator name text representation.
  @return new PDF operator
 */
 QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QString &endText) {
  boost::shared_ptr<UnknownCompositePdfOperator> op(new UnknownCompositePdfOperator(beginText,endText));
- return new QSPdfOperator(op,this); 
+ return new QSPdfOperator(op,this);
 }
 
 /**
@@ -312,7 +312,7 @@ QSPdfOperator* Base::createCompositeOperator(const QString &beginText,const QStr
  @return new empty PDF operator
 */
 QSPdfOperator* Base::createEmptyOperator() {
- return new QSPdfOperator(this); 
+ return new QSPdfOperator(this);
 }
 
 /**
@@ -456,17 +456,17 @@ bool Base::delinearize(const QString &inFile,const QString &outFile) {
   if (ret) {
    const char *whatWasWrong=strerror(ret);
    lastErrorMessage=whatWasWrong;
-  } 
+  }
 //  guiPrintDbg(debug::DBG_DBG,"deleting pdf writer");
 //  if (wr) delete wr;
   guiPrintDbg(debug::DBG_DBG,"deleting delinearizator");
-  if (delin) delete delin;  
+  if (delin) delete delin;
   guiPrintDbg(debug::DBG_DBG,"Delinearizator exit");
   return (ret==0);
  } catch (...) {
   //This is the case of failure ..
   if (wr) delete wr;
-  if (delin) delete delin;  
+  if (delin) delete delin;
   return false;
  }
 }
@@ -498,11 +498,11 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 		assert(pdf);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	
-	}catch (PdfOpenException& e) 
+	}catch (PdfOpenException& e)
 	{
 		std::string err;
 		e.getMessage(err);
-		guiPrintDbg(debug::DBG_DBG,"Failed opeining document " << err);
+		guiPrintDbg(debug::DBG_DBG,"Failed opening document " << err);
 		return QString ();
 	}
 
@@ -540,7 +540,7 @@ QString Base::pdftoxml (const QString& inFile, QVariant pagenums, const QString&
 /**
  Return last error message from some operations (like load, save, etc ...)
  If last command was successfull, it is undefined what this function returns
- @return Last error message 
+ @return Last error message
  */
 QString Base::error() {
  return lastErrorMessage;
@@ -673,7 +673,7 @@ QString Base::tr(const QString &text,const QString &context/*=QString::null*/) {
 
 /**
  Call after some action causes changes in the treeview that cannot be handled by observers.
- This will cause tree to be reloaded after the script finishes. 
+ This will cause tree to be reloaded after the script finishes.
 */
 void Base::treeNeedReload() {
  treeReloadFlag=true;
@@ -681,7 +681,8 @@ void Base::treeNeedReload() {
 
 /** Convert string as it is read by QFile/QSFile/File in QSA to
  Unicode, asuming the string was utf8
- @param original 
+ @param original Original string
+ @return converted string
  */
 QString Base::utf8(QString original) {
  return QString::fromUtf8(original.latin1());
@@ -694,8 +695,8 @@ QStringList Base::variables() {
  return objs;
 }
 
-/** Return version of editor
- @return Version of editor (major.minor.release) */
+/** Return version of editor as string
+ @return Version of editor (major.minor.release or major.minor.relase-suffix) */
 QString Base::version() {
  return VERSION;
 }

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around CPdf (PDF document)<br>
  Export some functions to scripting.<br>
@@ -43,7 +43,7 @@ QSPdf::~QSPdf() {
  unloadPdf();
 }
 
-/** 
+/**
  Close the document, if it was opened with 'destructive' flag set (via loadPdf).
  Otherwise it does nothing.
  The document must not be used in any way after it is closed

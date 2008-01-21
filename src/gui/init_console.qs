@@ -1,4 +1,4 @@
-/*                                                                              
+/*
  * PDFedit - free program for PDF document manipulation.
  * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
  *                                              Miroslav Jahoda,
@@ -34,7 +34,7 @@ class FunctionList {
    var f=dir.entryList('*.qs');
    for(var x=0;x<f.length;x++) {
     process(pt,f[x]);
-   }   
+   }
   }
  }
 
@@ -67,7 +67,7 @@ class FunctionList {
   var recx=[];
   while (!f.eof) {
    var line=f.readLine();
-   if (!line.startsWith('//')) break; 
+   if (!line.startsWith('//')) break;
    var dpos=line.find(':');
    if (dpos<0) break;
    var key=line.substring(2,dpos).replace(trim1,'').replace(trim2,'').toLowerCase();
@@ -122,7 +122,7 @@ class FunctionList {
     cnt++;
     match.push(name);
    }
-  } 
+  }
   if (!cnt) {
    var msg=tr("No function found matching '%1'");
    print(msg.arg(func));
