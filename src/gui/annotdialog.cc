@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  "Add Annotation" dialog<br>
  This dialog is used to add annotation in PDF document
@@ -47,9 +47,9 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
 {
     if ( !name )
 	setName( "AnnotDialog" );
-    AnnotDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "AnnotDialogLayout"); 
+    AnnotDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "AnnotDialogLayout");
 
-    layout8 = new QHBoxLayout( 0, 0, 6, "layout8"); 
+    layout8 = new QHBoxLayout( 0, 0, 6, "layout8");
     spacer8 = new QSpacerItem( 50, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout8->addItem( spacer8 );
 
@@ -68,7 +68,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     tabWidget3 = new QTabWidget( this, "tabWidget3" );
 
     tab = new QWidget( tabWidget3, "tab" );
-    tabLayout = new QGridLayout( tab, 1, 1, 11, 6, "tabLayout"); 
+    tabLayout = new QGridLayout( tab, 1, 1, 11, 6, "tabLayout");
 
     groupBox1 = new Q_GroupBox( tab, "groupBox1" );
     groupBox1->setColumnLayout(0, Qt::Vertical );
@@ -77,12 +77,12 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     groupBox1Layout = new QGridLayout( groupBox1->layout() );
     groupBox1Layout->setAlignment( Qt::AlignTop );
 
-    layout21_2 = new QVBoxLayout( 0, 0, 6, "layout21_2"); 
+    layout21_2 = new QVBoxLayout( 0, 0, 6, "layout21_2");
 
     open = new QCheckBox( groupBox1, "open" );
     layout21_2->addWidget( open );
 
-    layout16_2 = new QHBoxLayout( 0, 0, 6, "layout16_2"); 
+    layout16_2 = new QHBoxLayout( 0, 0, 6, "layout16_2");
 
     textLabel2 = new QLabel( groupBox1, "textLabel2" );
     layout16_2->addWidget( textLabel2 );
@@ -91,7 +91,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     layout16_2->addWidget( textContent );
     layout21_2->addLayout( layout16_2 );
 
-    layout18_2 = new QHBoxLayout( 0, 0, 6, "layout18_2"); 
+    layout18_2 = new QHBoxLayout( 0, 0, 6, "layout18_2");
 
     textLabel3 = new QLabel( groupBox1, "textLabel3" );
     textLabel3->setMidLineWidth( -6 );
@@ -101,7 +101,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     layout18_2->addWidget( iconName );
     layout21_2->addLayout( layout18_2 );
 
-    layout19_2 = new QHBoxLayout( 0, 0, 6, "layout19_2"); 
+    layout19_2 = new QHBoxLayout( 0, 0, 6, "layout19_2");
 
     textLabel4_2 = new QLabel( groupBox1, "textLabel4_2" );
     textLabel4_2->setMargin( 0 );
@@ -111,7 +111,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     layout19_2->addWidget( state );
     layout21_2->addLayout( layout19_2 );
 
-    layout20_2 = new QHBoxLayout( 0, 0, 6, "layout20_2"); 
+    layout20_2 = new QHBoxLayout( 0, 0, 6, "layout20_2");
 
     textLabel5_2 = new QLabel( groupBox1, "textLabel5_2" );
     layout20_2->addWidget( textLabel5_2 );
@@ -126,18 +126,18 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     tabWidget3->insertTab( tab, QString::fromLatin1("") );
 
     tab_2 = new QWidget( tabWidget3, "tab_2" );
-    tabLayout_2 = new QGridLayout( tab_2, 1, 1, 11, 6, "tabLayout_2"); 
+    tabLayout_2 = new QGridLayout( tab_2, 1, 1, 11, 6, "tabLayout_2");
 
     frame3 = new QFrame( tab_2, "frame3" );
     frame3->setFrameShape( QFrame::StyledPanel );
     frame3->setFrameShadow( QFrame::Raised );
-    frame3Layout = new QGridLayout( frame3, 1, 1, 11, 6, "frame3Layout"); 
+    frame3Layout = new QGridLayout( frame3, 1, 1, 11, 6, "frame3Layout");
 
-    layout17 = new QVBoxLayout( 0, 0, 6, "layout17"); 
+    layout17 = new QVBoxLayout( 0, 0, 6, "layout17");
 
-    layout12 = new QVBoxLayout( 0, 0, 6, "layout12"); 
+    layout12 = new QVBoxLayout( 0, 0, 6, "layout12");
 
-    layout16_2_2 = new QHBoxLayout( 0, 0, 6, "layout16_2_2"); 
+    layout16_2_2 = new QHBoxLayout( 0, 0, 6, "layout16_2_2");
 
     textLabel2_3 = new QLabel( frame3, "textLabel2_3" );
     layout16_2_2->addWidget( textLabel2_3 );
@@ -146,7 +146,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     layout16_2_2->addWidget( linkContent );
     layout12->addLayout( layout16_2_2 );
 
-    layout8_2 = new QHBoxLayout( 0, 0, 6, "layout8_2"); 
+    layout8_2 = new QHBoxLayout( 0, 0, 6, "layout8_2");
 
     textLabel1 = new QLabel( frame3, "textLabel1" );
     textLabel1->setFrameShape( QLabel::NoFrame );
@@ -156,7 +156,7 @@ AnnotDialog::AnnotDialog(QSPage & p, QWidget* parent, const char* name, bool mod
     layout8_2->addWidget( destination );
     layout12->addLayout( layout8_2 );
 
-    layout9 = new QHBoxLayout( 0, 0, 6, "layout9"); 
+    layout9 = new QHBoxLayout( 0, 0, 6, "layout9");
 
     textLabel2_2 = new QLabel( frame3, "textLabel2_2" );
     textLabel2_2->setFrameShape( QLabel::NoFrame );
@@ -284,7 +284,7 @@ using namespace boost;
 
         // sets default values according form values
         TextAnnotInitializer::OPEN=open->isChecked();
-        // FIXME this may be problem with enconding
+        // FIXME this may be problem with encoding
         TextAnnotInitializer::CONTENTS=textContent->text().ascii();
         TextAnnotInitializer::NAME=iconName->currentText().ascii();
         TextAnnotInitializer::STATE=state->currentText().ascii();
@@ -298,8 +298,8 @@ using namespace boost;
         shared_ptr<CAnnotation> annotInstance=CAnnotation::createAnnotation(rect, "Text");
         page.get()->addAnnotation(annotInstance);
 
-        
-        // sets back defaul values
+
+        // sets back default values
         TextAnnotInitializer::OPEN=dOpen;
         TextAnnotInitializer::CONTENTS=dContents;
         TextAnnotInitializer::NAME=dName;
@@ -320,7 +320,7 @@ using namespace boost;
         string dH=LinkAnnotInitializer::H;
 
         // sets default values according form values
-        // FIXME this may be problem with enconding
+        // FIXME this may be problem with encoding
         LinkAnnotInitializer::CONTENTS=linkContent->text().ascii();
         LinkAnnotInitializer::DEST=destination->text().ascii();
         LinkAnnotInitializer::H=highLight->currentText().ascii();
@@ -330,8 +330,8 @@ using namespace boost;
         // set above
         shared_ptr<CAnnotation> annotInstance=CAnnotation::createAnnotation(rect, "Link");
         page.get()->addAnnotation(annotInstance);
-        
-        // sets back defaul values
+
+        // sets back default values
         LinkAnnotInitializer::CONTENTS=dContents;
         LinkAnnotInitializer::DEST=dDest;
         LinkAnnotInitializer::H=dH;
