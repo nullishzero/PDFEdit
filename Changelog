@@ -15,11 +15,14 @@
 		  no more a part of CVS tree (simply run autoconf without
 		  any parameters).
 		- delinearizator moved from src/utils/ to src/kernel
+	  - Improved testing environment
 	* Code cleanups by Gwurk
-	* Bugs 164, 168, 169, 175, 180, 182, 183, 187 fixed
+	* Bugs 164, 168, 169, 175, 179, 180, 182, 183, 187 fixed
 	* Added Tango icon theme from Tiziano Mattei.
 	* Fixed bug with operator-only command available for non-operators too,
 	  leading to errors
+	* kernel+xpdf+utils+tests ported to Windows (vc2005 project)
+	* Fixed observer unregistering
 
 2007-08-28 PDF Editor 0.3.2
 	* bug #160 (http://pdfedit.petricek.net/bt/view.php?id=160) fixed
