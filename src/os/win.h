@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 #ifndef _WIN_H_
@@ -26,15 +26,15 @@
 //
 // localtime_r hack
 //
-inline struct tm* 
-localtime_r (const time_t *clock, struct tm *result) { 
-		if (!clock || !result) 
+inline struct tm*
+localtime_r (const time_t *clock, struct tm *result) {
+		if (!clock || !result)
 			return NULL;
 
 	// there is no localtime_r() on Windows, so for now
 	// we just call localtime() and deep copy the result.
 	struct tm* _ptr = localtime(clock);
-		if (NULL == _ptr) 
+		if (NULL == _ptr)
 			return NULL;
 	result->tm_sec   = _ptr->tm_sec;    /* seconds */
 	result->tm_min   = _ptr->tm_min;    /* minutes */
@@ -45,7 +45,7 @@ localtime_r (const time_t *clock, struct tm *result) {
 	result->tm_wday  = _ptr->tm_wday;   /* day of the week */
 	result->tm_yday  = _ptr->tm_yday;   /* day in the year */
 	result->tm_isdst = _ptr->tm_isdst;  /* daylight saving time */	
-	return result; 
+	return result;
 }
 
 //
