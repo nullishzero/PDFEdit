@@ -16,7 +16,8 @@ HEADERS = static.h $(UTILSROOT)/debug.h $(UTILSROOT)/iterator.h $(UTILSROOT)/obs
 	  cobjecthelpers.h ccontentstream.h pdfoperators.h pdfoperatorsiter.h \
 	  cpage.h cpdf.h streamwriter.h cinlineimage.h coutline.h \
 	  stateupdater.h cannotation.h textoutput.h textoutputbuilder.h \
-	  textoutputentities.h textoutputengines.h
+	  textoutputentities.h textoutputengines.h	\
+	  delinearizator.h
 
 SOURCES = static.cc delinearizator.cc modecontroller.cc filters.cc factories.cc cannotation.cc \
 	  cxref.cc xrefwriter.cc streamwriter.cc iproperty.cc carray.cc \
