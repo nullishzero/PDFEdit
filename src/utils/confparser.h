@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #ifndef _CONFPARSER_H_
 #define _CONFPARSER_H_
@@ -60,7 +60,7 @@ std::string & trim(std::string & str, const std::string & blankSet=" \t\n");
  * and moves to following one or returns with false if no more data are
  * available.
  * <br>
- * Data are read from input stream which is set in constructor and stored in 
+ * Data are read from input stream which is set in constructor and stored in
  * this class as protected field. Stream may be changed by setStream method.
  */
 template<typename KeyType=std::string, typename ValueType=std::string>
@@ -127,10 +127,10 @@ public:
 
 /** Simple string parser.
  * Reads input stream by lines and split line according delimiter. Everything
- * before delimiters member is marked as key and everything after as value. 
+ * before delimiters member is marked as key and everything after as value.
  * <br>
  * Deliminers are specified as set of characters where each stands for
- * separator. 
+ * separator.
  */
 class StringConfigurationParser: public IConfigurationParser<std::string, std::string>
 {

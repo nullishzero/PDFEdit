@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 
 #ifndef _OBSERVER_H
@@ -141,7 +141,7 @@ public:
 	/** Initialization constructor.
 	 * @param origVal Original value.
 	 * @param id Identificator of changed value.
-	 * 
+	 *
 	 * Initializes originalValue (uses BasicChangeContext constructor with
 	 * origVal parameter) and valueId from given id.
 	 */

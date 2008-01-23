@@ -1,23 +1,23 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /*
  * =====================================================================================
  *        Filename:  basic_algos.h
- *     Description: 
+ *     Description:
  *         Created:  26/11/2006 17:42:41 PM CET
  *          Author:  jmisutka ()
  * =====================================================================================
  */
 
 #ifndef _BASIC_ALGOS_H_
-#define _BASIC_ALGOS_H_ 
+#define _BASIC_ALGOS_H_
 
 
 //============================================
@@ -44,4 +44,4 @@ inline T max (T a, T b, T c, T d)
 //============================================
 
 
-#endif // _BASIC_ALGOS_H_ 
+#endif // _BASIC_ALGOS_H_

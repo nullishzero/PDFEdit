@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #ifndef DEBUG_H
 #define DEBUG_H
@@ -29,24 +29,24 @@ template<> struct CompileTimeChecker<true> { CompileTimeChecker(...) {} };
 /**
  * Compile time check.
  * Static (compile-time) assertions with a solid debug message.
- * 
+ *
  * borrowed AND MODIFIED from Andrei Alexandrescu's book Modern C++ design
  * almost the same as in BOOST library (the example in the book does not work)
- * 
+ *
  * @param expr	Expression to be evaluated.
  * @param msg	Message that will be printed if the expression evaluates
- *				to false. This has to be a valid variable name, e.g. 
+ *				to false. This has to be a valid variable name, e.g.
  *				BAD_EXPRESSION, COMPILE_TIME_CHECK_FAILED...
  */
-#define STATIC_CHECK(expr, msg)									\
-	{															\
+#define STATIC_CHECK(expr, msg)						\
+	{								\
 		debug::CompileTimeChecker<(expr) != 0> (ERROR_##msg);	\
 	}
 
 
 
 /** Panic situation priority.
- * After this kind of message, program usually ends without any resonable 
+ * After this kind of message, program usually ends without any resonable
  * rescue routines. It should contain the cause of this state.
  */
 const unsigned int DBG_PANIC 	= 0;
@@ -80,7 +80,7 @@ const unsigned int  DBG_DBG 	= 5;
 
 /** Filter for message logging.
  *
- * Only messages with priority higher (lower number) than this filter are 
+ * Only messages with priority higher (lower number) than this filter are
  * printed when printDbg (TODO link) macro is used.
  * <br>
  * DEBUG_<PRIORITY> macro should be used for value. Value can be changed also
@@ -95,7 +95,7 @@ extern unsigned int debugLevel;
  * Use DBG_* constants for parameter value.
  * <br>
  * Logs information about change.
- * 
+ *
  * @return Old value of debugLevel.
  */
 unsigned int changeDebugLevel(unsigned int level);
@@ -119,13 +119,13 @@ unsigned int changeDebugLevel(unsigned int level);
  * printDbg("", DBG_DBG,"getExistingProperty();");
  *
  * printDbg("", DBG_INFO, "Page moved to this location");
- * 
+ *
  * printDbg("", DBG_WARN, "This should be done this way");
  *
  * printDbg("", DBG_ERR, "Value of indirect object can't be reference");
  *
  * printDbg("KERNEL", DBG_CRIT, "Internal structures problem - program is about to exit");
- * 
+ *
  * printDbg("UTILS", DBG_PANIC, "Memmory allocation problem");
  * \endcode
  *
@@ -137,7 +137,7 @@ unsigned int changeDebugLevel(unsigned int level);
 /** Alias to printDbg for kernel messages.
  * @param dbgLevel Priority of message.
  * @param msg Message to dump.
- * 
+ *
  * Use this macro for all message important for kernel.
  */
 #define kernelPrintDbg(dbgLevel, msg) printDbg("KERNEL", (dbgLevel), msg)
@@ -145,7 +145,7 @@ unsigned int changeDebugLevel(unsigned int level);
 /** Alias to printDbg for gui messages.
  * @param dbgLevel Priority of message.
  * @param msg Message to dump.
- * 
+ *
  * Use this macro for all message important for gui.
  */
 #define guiPrintDbg(dbgLevel, msg) printDbg("GUI", (dbgLevel), msg)
@@ -153,7 +153,7 @@ unsigned int changeDebugLevel(unsigned int level);
 /** Alias to printDbg for util messages.
  * @param dbgLevel Priority of message.
  * @param msg Message to dump.
- * 
+ *
  * Use this macro for all message important for utils.
  */
 #define utilsPrintDbg(dbgLevel, msg) printDbg("UTILS", (dbgLevel), msg)
@@ -166,7 +166,7 @@ unsigned int changeDebugLevel(unsigned int level);
  *
  * If given priority is enough (number is smaller than __DEBUG_LEVEL macro),
  * massage is printed out to the standard error output with following format:
- * @code 
+ * @code
  * priority:prefix:fileName:functionName:line: message
  * @endcode
  */

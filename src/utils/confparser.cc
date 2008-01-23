@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
 #include "kernel/static.h"
 #include "utils/confparser.h"
@@ -57,7 +57,7 @@ using namespace std;
 
 	// removes everything behind last non blank
 	string::size_type pos = str.find_last_not_of(blankSet);
-	if(pos != string::npos) 
+	if(pos != string::npos)
 	{
 		// erases everything behind last non blank
 		str.erase(pos + 1);
@@ -65,7 +65,7 @@ using namespace std;
 		// gets first non blank from the begining
 		// and removes everything before if found
 		pos = str.find_first_not_of(' ');
-		if(pos != string::npos) 
+		if(pos != string::npos)
 			str.erase(0, pos);
 	}
 	else

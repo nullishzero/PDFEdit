@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef _OBJECTCOMPARATOR_H_
 #define _OBJECTCOMPARATOR_H_
 
@@ -17,7 +17,7 @@
  * @file objectstorage.h
  *
  * File which implements template object storage class. This is basicaly
- * mapping keys to objects and provide simple interface to manipulate 
+ * mapping keys to objects and provide simple interface to manipulate
  * with it. It wrapps STL map class functionality.
  */
 
@@ -59,7 +59,7 @@ public:
          * and puts to the mapping.
          * Otherwise update value of the previous mapping.
          * <br>
-         * This method doesn't invalidate existing (if any) iterator pointing 
+         * This method doesn't invalidate existing (if any) iterator pointing
          * to the association.
          *
          * @returns Value of the previous mapping or 0 if the key was inserted
@@ -74,12 +74,12 @@ public:
                         mapping.insert(Association(key, value));
                         return 0;
                 }
-                
+
                 V old=iter->second;
-                
+
                 // sets new value for association
                 iter->second=value;
-                
+
                 // returns old value
                 return old;
         }
@@ -89,7 +89,7 @@ public:
          *
          * Gets value associated with the key.
          *
-         * @return value of the value (direct pointer) or 0 if no such key 
+         * @return value of the value (direct pointer) or 0 if no such key
          * found.
          */
         V get(K & key)const
@@ -136,7 +136,7 @@ public:
                 // removes association
                 V old=get(key);
                 mapping.erase(key);
-                
+
                 return old;
         }
 
@@ -157,7 +157,7 @@ public:
         {
                 return mapping.begin();
         }
-        
+
         /** Returns iterator to end iterator.
          *
          * @return Iterator instance.

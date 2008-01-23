@@ -221,7 +221,7 @@ public:
 	/**
 	 * Are we after the last valid item.
 	 * 
-	 * @return True if we are at the end. (We are at an invalid item) 
+	 * @return True if we are at the end. (We are at an invalid item)
 	 */
 	bool isEnd () const { return (pend == _curpos); }
 
