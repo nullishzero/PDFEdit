@@ -2402,7 +2402,7 @@ using namespace utils;
 				IndiRef ref=getValueFromSimple<CRef>(oldValue);
 				
 				bool found=false;
-				for(PageList::iterator i=pageList.begin(); i!=pageList.end(); ++i)
+				for(PageList::iterator i=pageList.begin(); i!=pageList.end();)
 				{
 					shared_ptr<CPage> page=i->second;
 					// checks page's dictionary whether it is in oldDict_ptr sub
@@ -2418,18 +2418,19 @@ using namespace utils;
 							minPos=pos;
 						
 						page->invalidate();
-						// NOTE: std::map keeps iterators following iterators 
-						// valid after removing
-						pageList.erase(i);
+						pageList.erase(i++);
 						kernelPrintDbg(DBG_INFO, "CPage(pos="<<pos<<") associated with oldValue page dictionary removed. pageList.size="<<pageList.size());
-
-					}else
-						// if this element is not in subtree and found is true,
-						// this is first node which is in different node and so
-						// none of following pages can be descendant (PageList
-						// is sorted) 
-						if(found)
-							break;
+						continue;
+					}
+					// if this element is not in subtree and found is true,
+					// this is first node which is in different node and so
+					// none of following pages can be descendant (PageList
+					// is sorted) 
+					if(found)
+						break;
+					// note: we can't do this in for iteration section 
+					// because of erase above which invalidas iterator
+					++i;
 				}
 				break;
 			}
@@ -2497,7 +2498,7 @@ using namespace utils;
 	// all pages with position greater than minPos, has to be consolidated
 	PageList::iterator i;
 	PageList readdContainer;
-	for(i=pageList.begin(); i!=pageList.end(); ++i)
+	for(i=pageList.begin(); i!=pageList.end();)
 	{
 		size_t pos=i->first;
 		shared_ptr<CPage> page=i->second;
@@ -2506,8 +2507,9 @@ using namespace utils;
 		{
 			// collects all removed
 			readdContainer.insert(PageList::value_type(pos, page));	
-			pageList.erase(i);
-		}
+			pageList.erase(i++);
+		}else
+			++i;
 	}
 	
 	// checks minPos==0 and if so, we have to handle situation special way,
