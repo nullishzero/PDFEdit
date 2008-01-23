@@ -321,7 +321,7 @@ public:
 			}
 
 			// doesn't match, simply moves iterator
-			i++;
+			++i;
 		}
 	}
 
