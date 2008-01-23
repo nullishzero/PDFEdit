@@ -116,7 +116,15 @@ public:
 	/** Destructor for FileStreamWriter.
 	 *
 	 * NOTE: doesn't close given file handle. Instance creator is responsible to
-	 * that.
+	 * that. The reason for this is based on xpdf usage of streams in general.
+	 * Xpdf Parser/Lexer classes use higly Stream::makeSubStream method to get
+	 * only subset (limited range) of the stream data and when they are finieshed,
+	 * this substream is deallocated.
+	 * FileStream, in turn, creates such a substream that shares file handle with
+	 * the original one. Therefore FileStream and also all descendants *MUST NOT*
+	 * close file handle in destructor. This is the case also for this class.
+	 * Otherwise we would have invalid file handle in the original stream after
+	 * substream is not needed (and deallocated).
 	 */
 	virtual ~FileStreamWriter(){}
 	

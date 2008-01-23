@@ -307,6 +307,9 @@ public:
 
   FileStream(FILE *fA, Guint startA, GBool limitedA,
 	     Guint lengthA, Object *dictA);
+  // Note that file handle is not closed in constructor!!!
+  // This is because of makeSubStream which creates a new
+  // file stream with the shared file handled. 
   virtual ~FileStream();
   virtual Stream *makeSubStream(Guint startA, GBool limitedA,
 				Guint lengthA, Object *dictA);
