@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around IProperty (one property in dictionary or array)<br>
  Export some functions to scripting.<br>
@@ -56,14 +56,14 @@ QSIProperty::QSIProperty(boost::shared_ptr<IProperty> _ip, QString _className,Ba
  obj=_ip;
 }
 
-/** 
+/**
  Return true, if this property is equal to given object (i.e. if objects inside the wrapper are the same)
  @param otherObject object to compare with this one
  @return True if the both objects hold the same item, false otherwise
 */
 bool QSIProperty::equals(QObject* otherObject) {
  QSIProperty* other=dynamic_cast<QSIProperty*>(otherObject);
- if (!other) return false;	//It's not even IProperty ... 
+ if (!other) return false;	//It's not even IProperty ...
  return obj==other->get();
 }
 
@@ -122,7 +122,7 @@ QVariant QSIProperty::value() {
   val+=value.gen;
   return val;
  }
- // Dict/Array/Null/Stream ... 
+ // Dict/Array/Null/Stream ...
  return QVariant();//NULL variant
 }
 
@@ -139,12 +139,12 @@ int QSIProperty::getInt() {
  Get type identifier of this Property
  Can be one of: Null, Bool, Int, Real, String, Name, Ref, Array, Dict, Stream
 */
-QString QSIProperty::getType() { 
+QString QSIProperty::getType() {
  return util::getTypeId(obj);
 }
 
 /** Get human readable and localized name of type of this Property */
-QString QSIProperty::getTypeName() { 
+QString QSIProperty::getTypeName() {
  return util::getTypeName(obj);
 }
 
@@ -219,7 +219,7 @@ void QSIProperty::set(int value) {
    set((double)value);
    return;
   }
-  case pName: 
+  case pName:
   case pString: { //Convert to string, call set()
    set(QString::number(value));
    return;
@@ -248,7 +248,7 @@ void QSIProperty::set(double value) {
    }
    return;
   }
-  case pName: 
+  case pName:
   case pString: { //Convert to string, call set()
    set(QString::number(value));
    return;
@@ -277,7 +277,7 @@ void QSIProperty::set(bool value) {
    if (value) set((double)1.0); else set((double)0.0);
    return;
   }
-  case pName: 
+  case pName:
   case pString: { //Convert to string, call set()
    if (value) set("true"); else set("false");
    return;

@@ -12,7 +12,7 @@
 
 #include <qobject.h>
 #include "qscobject.h"
-#include <qstringlist.h> 
+#include <qstringlist.h>
 #include "qtcompat.h"
 
 class Q_PopupMenu;

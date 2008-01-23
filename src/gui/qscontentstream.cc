@@ -35,14 +35,14 @@ QSContentStream::QSContentStream(boost::shared_ptr<CContentStream> _cs,BaseCore 
 QSContentStream::~QSContentStream() {
 }
 
-/** 
+/**
  Return true, if this contentstream is equal to given object (i.e. if objects inside the wrapper are the same)
  @param otherObject object to compare with this one
  @return True if the both objects hold the same item, false otherwise
 */
 bool QSContentStream::equals(QObject* otherObject) {
  QSContentStream * other=dynamic_cast<QSContentStream*>(otherObject);
- if (!other) return false;	//It's not even IProperty ... 
+ if (!other) return false;	//It's not even IProperty ...
  return obj==other->get();
 }
 
@@ -120,7 +120,7 @@ void QSContentStream::replace(QObject* oldOp,QObject* newOp,bool indicateChange/
 
 /**
  Delete operator from content stream
- \see CContentStream::deleteOperator 
+ \see CContentStream::deleteOperator
  @param op Operator to delete
  @param indicateChange If set to true (default), changes will be written to underlying stream
 */
@@ -135,7 +135,7 @@ void QSContentStream::deleteOperator(QSPdfOperator *op,bool indicateChange/*=tru
 }
 
 /**
- \copydoc deleteOperator(QSPdfOperator*,bool) 
+ \copydoc deleteOperator(QSPdfOperator*,bool)
  QSA bugfixed version
 */
 void QSContentStream::deleteOperator(QObject *op,bool indicateChange/*=true*/) {
@@ -163,7 +163,7 @@ void QSContentStream::insertOperator(QSPdfOperator *op,QSPdfOperator *newOp,bool
 }
 
 /**
- \copydoc insertOperator(QSPdfOperator*,QSPdfOperator*,bool) 
+ \copydoc insertOperator(QSPdfOperator*,QSPdfOperator*,bool)
  QSA bugfixed version
 */
 void QSContentStream::insertOperator(QObject *op,QObject *newOp,bool indicateChange/*=true*/) {

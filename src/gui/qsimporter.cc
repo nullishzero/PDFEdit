@@ -96,7 +96,7 @@ QSCObject* QSImporter::createQSObject(boost::shared_ptr<PdfOperator> op) {
 /** Static version of factory function to create QSCObjects from various C... classes
     Returns QSCObject that can be added directly with addQSObj()
  @param ip IProperty to wrap into to QSIProperty
- @param _base Scripting base 
+ @param _base Scripting base
  @return QSIProperty(ip)
  */
 QSCObject* QSImporter::createQSObject(boost::shared_ptr<IProperty> ip,BaseCore *_base) {
@@ -129,7 +129,7 @@ QSPdf* QSImporter::createQSObject(CPdf* pdf) {
  Static version of factory function to create QSCObjects from various C... classes
  Returns QSCObject that can be added directly with addQSObj()
  @param item TreeItemAbstract to wrap into to QSTreeItem
- @param _base Scripting base 
+ @param _base Scripting base
  @return QSTreeItem(item)
 */
 QSCObject* QSImporter::createQSObject(TreeItemAbstract *item,BaseCore *_base) {

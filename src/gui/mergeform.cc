@@ -270,7 +270,7 @@ void MergeDialog::openBtn_clicked() {
         initFileList(fileName);
         // TODO handle when file doesn't exist or error occured
         // during CPdf creation
-        
+
         // Open dialog causes disabling fileNameInput and fileNameBtn
         // and enabling merging stuff
         openBtn->setEnabled(FALSE);
@@ -308,14 +308,14 @@ MergeArray<int> * MergeDialog::getResult()
                         continue;
                 }
                 pages[length]=item->getNodeData()->position;
-                positions[length]=storePos; 
+                positions[length]=storePos;
                 ++length;
         }
 
         MergeArray<int> * mergeArray=new MergeArray<int>(length);
         mergeArray->initItems(pages);
         mergeArray->initPositions(positions);
-        
+
         return mergeArray;
 }
 
@@ -403,7 +403,7 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
     layout27->addWidget( fileNameBtn );
     layout48->addLayout( layout27 );
 
-    layout2 = new QHBoxLayout( 0, 0, 6, "layout2"); 
+    layout2 = new QHBoxLayout( 0, 0, 6, "layout2");
     spacer1 = new QSpacerItem( 131, 21, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout2->addItem( spacer1 );
 
@@ -420,13 +420,13 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
     line1->setFrameShape( QFrame::HLine );
     layout48->addWidget( line1 );
 
-    layout47 = new QHBoxLayout( 0, 0, 6, "layout47"); 
+    layout47 = new QHBoxLayout( 0, 0, 6, "layout47");
 
     mergeList = new Q_ListBox( this, "mergeList" );
     mergeList->setEnabled( FALSE );
     layout47->addWidget( mergeList );
 
-    layout4 = new QVBoxLayout( 0, 0, 6, "layout4"); 
+    layout4 = new QVBoxLayout( 0, 0, 6, "layout4");
 
     addBtn = new QPushButton( this, "addBtn" );
     addBtn->setEnabled( FALSE );
@@ -454,7 +454,7 @@ MergeDialog::MergeDialog( QWidget* parent, const char* name, bool modal, WFlags 
     layout47->addWidget( fileList );
     layout48->addLayout( layout47 );
 
-    layout6 = new QHBoxLayout( 0, 0, 5, "layout6"); 
+    layout6 = new QHBoxLayout( 0, 0, 5, "layout6");
 
     spacer5 = new QSpacerItem( 61, 21, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout6->addItem( spacer5 );

@@ -86,7 +86,7 @@ int QSIPropertyArray::count() {
  */
 void QSIPropertyArray::copyTo(PdfOperator::Operands &oper) {
  oper.clear();
- std::copy(obj.begin(),obj.end(),std::back_inserter(oper)); 
+ std::copy(obj.begin(),obj.end(),std::back_inserter(oper));
 }
 
 /**

@@ -57,7 +57,7 @@ QSDict* QSPage::getDictionary() {
  return new QSDict(obj->getDictionary(),base);
 }
 
-/** 
+/**
  \see CPage::moveAbove
  @param cs Content stream to move one level up painting order
 */
@@ -76,7 +76,7 @@ void QSPage::moveAbove(QSContentStream* cs) {
 }
 
 
-/** 
+/**
  \see CPage::moveBelow
  @param cs Content stream to move one level below in painting order
 */
@@ -94,7 +94,7 @@ void QSPage::moveBelow(QSContentStream* cs) {
  }
 }
 
-/** 
+/**
  \see CPage::moveAbove
  @param cs Content stream to move one level up painting order
 */
@@ -104,7 +104,7 @@ void QSPage::moveAbove(QObject* cs) {
  moveAbove(qsc);
 }
 
-/** 
+/**
  \see CPage::moveBelow
  @param cs Content stream to move one level up painting order
 */
@@ -114,7 +114,7 @@ void QSPage::moveBelow(QObject* cs) {
  moveBelow(qsc);
 }
 
-/** 
+/**
  \see CPage::moveAbove
  @param csi Index of content stream to move one level up painting order
 */
@@ -132,7 +132,7 @@ void QSPage::moveAbove(int csi) {
  }
 }
 
-/** 
+/**
  \see CPage::moveBelow
  @param csi Index of content stream to move one level below in painting order
 */
@@ -173,7 +173,7 @@ void QSPage::setTransformMatrix(QVariant tMatrix) {
  }
 }
 
-/** 
+/**
  Add content stream to page, created from new operator stack
  Content stream is prepended before other content streams
  \see CPage::addContentStreamToFront
@@ -188,7 +188,7 @@ void QSPage::prependContentStream(QSPdfOperatorStack* opStack) {
  }
 }
 
-/** 
+/**
  Add content stream to page, created from new operator stack
  Content stream in appended after other content streams
  \see CPage::addContentStreamToBack
@@ -287,7 +287,7 @@ int QSPage::getChangeCount() {
 void QSPage::loadContentStreams() {
  obj->getContentStreams(streams);
  //Store number of streams
- numStreams=streams.size(); 
+ numStreams=streams.size();
 }
 
 //TODO: get list of annotations

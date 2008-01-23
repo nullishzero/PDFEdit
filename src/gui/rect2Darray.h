@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __RECT2DARRAY_H__
 #define __RECT2DARRAY_H__
 
@@ -176,7 +176,7 @@ BBoxOfObjectOnPage<T>::BBoxOfObjectOnPage( const BBoxOfObjectOnPage<T> & b) :
 template <typename T>
 BBoxOfObjectOnPage<T>::BBoxOfObjectOnPage( const QRect &r, T po ) :			// r must be normalized
 	QRect(r.topLeft(),r.bottomRight())
-//	QRect(r.left(),r.top(),r.width(),r.height()) 
+//	QRect(r.left(),r.top(),r.width(),r.height())
 {
 	ptr_up = ptr_down = ptr_right = ptr_left = ptr_nextLineFirst = ptr_prevLineLast = NULL;
 	object = po;

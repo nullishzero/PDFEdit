@@ -65,14 +65,14 @@ signals:
   Send property pointer with the signal
   @param prop Pointer to changed property item
  */
- void propertyChanged(IProperty *prop); 
- /** 
+ void propertyChanged(IProperty *prop);
+ /**
   Send informational message when mouse cursor enters/leaves some property
   The message is sent on enter and QString::null on leave.
   @param message Message
  */
  void infoText(const QString &message);
- /** 
+ /**
   Send warning message on some events (only once when the event occurs)
   @param message Message
  */

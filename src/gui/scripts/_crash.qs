@@ -6,7 +6,7 @@ function _crash() {
  y=x.getName();
  x.iterator();
 
- //Put any code that crashes script here for future semi-automatic testing 
+ //Put any code that crashes script here for future semi-automatic testing
 
  print('SUCCESS');
 }

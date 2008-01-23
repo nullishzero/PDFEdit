@@ -1,18 +1,16 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /*
  * =====================================================================================
- *        Filename:  selectpagesdialog.h
- *     Description:  
  *         Created:  03/12/2006 07:41:44 PM CET
- *          Author:  jmisutka ()
+ *          Author:  jmisutka
  * =====================================================================================
  */
 
@@ -46,13 +44,12 @@ namespace gui {
 //  SelectPagesDialog
 // =====================================================================================
 
-/** 
+/**
  * Select page dialog.
  * Used to select pages for PDF to XML export
  * \see MergeDialog
  */
-class SelectPagesDialog : public QDialog 
-{
+class SelectPagesDialog : public QDialog {
     Q_OBJECT
 
 public:
@@ -95,7 +92,7 @@ public:
 	// Interface
 	//
 public:
-    /** 
+    /**
 	 * Returns result of selection.
      *
      * Creates structure representing the results.

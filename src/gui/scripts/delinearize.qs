@@ -23,5 +23,5 @@ function delinearize_gui() {
 
 //Install the plugin
 
-// install the menu/toolbar items that are used by the plugin 
+// install the menu/toolbar items that are used by the plugin
 createMenuItem('toolsmenu','delinearize',tr('Delinearize'),'delinearize_gui()','','delin.png');

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  RefPropertyDialog - interactive reference target picker
  @author Martin Petricek
@@ -38,7 +38,7 @@ RefPropertyDialog::RefPropertyDialog(CPdf* _pdf,IndiRef src, QWidget *parent/*=0
  value=src;
  setCaption(tr("Reference target"));
  QGridLayout *l=new QGridLayout(this,4,2,8);
- 
+
  //The prompt
  QLabel *lbDesc=new QLabel(tr("Choose target for indirect reference"), this);
  l->addMultiCellWidget(lbDesc,0,0,0,1);
@@ -88,7 +88,7 @@ void RefPropertyDialog::maybeAccept() {
  accept();
 }
 
-/** 
+/**
  Show informational message for this window
  @param message message to show
 */
@@ -97,7 +97,7 @@ void RefPropertyDialog::message(const QString &message) {
  infoText->setText(message);
 }
 
-/** 
+/**
  Show error message for this window
  @param message message to show
 */
@@ -113,14 +113,14 @@ void RefPropertyDialog::error(const QString &message) {
 */
 bool RefPropertyDialog::check(bool sayIfOk/*=true*/) {
  assert(pdf);
- if (!isRefValid(pdf,value)) { 
+ if (!isRefValid(pdf,value)) {
   //Not valid
   error(tr("Reference target is not valid"));
   return false;
  }
  //Is valid
  if (!sayIfOk) return true;
- boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(value); 
+ boost::shared_ptr<IProperty> rp=pdf->getIndirectProperty(value);
  QString description=propertyPreview(rp);
  if (description.length()) {
   description=" : "+description;
@@ -129,7 +129,7 @@ bool RefPropertyDialog::check(bool sayIfOk/*=true*/) {
  return true;
 }
 
-/** 
+/**
  Return result of this dialog as string
  @return reference as string
 */

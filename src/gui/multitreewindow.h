@@ -25,7 +25,7 @@ class QTabWidget;
 class QAbstractButton;
 
 namespace gui {
- 
+
 using namespace pdfobjects;
 
 class TreeData;

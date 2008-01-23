@@ -232,7 +232,7 @@ QSPage* QSPdf::getPage(int position) {
 
 /**
  Get first page
- \see CPdf::getFirstPage 
+ \see CPdf::getFirstPage
  @return first page in document
 */
 QSPage* QSPdf::getFirstPage() {
@@ -361,7 +361,7 @@ int QSPdf::getActualRevision() {
 
 /**
  Get last page in document
- \see CPdf::getLastPage 
+ \see CPdf::getLastPage
  @return last page
 */
 QSPage* QSPdf::getLastPage() {
@@ -375,7 +375,7 @@ QSPage* QSPdf::getLastPage() {
 }
 
 /**
- Get CPdf held inside this class. Not exposed to scripting 
+ Get CPdf held inside this class. Not exposed to scripting
  @return CPdf object
 */
 CPdf* QSPdf::get() const {
@@ -383,7 +383,7 @@ CPdf* QSPdf::get() const {
 }
 
 /**
- Set CPdf held inside this class. Not exposed to scripting 
+ Set CPdf held inside this class. Not exposed to scripting
  @param pdf CPdf object
 */
 void QSPdf::set(CPdf* pdf) {
@@ -401,4 +401,4 @@ QString QSPdf::encryption() {
  return util::convertToUnicode(filter,util::PDF);
 }
 
-} // namespace gui 
+} // namespace gui

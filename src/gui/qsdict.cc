@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around CDict<br>
  Export some functions to scripting.<br>
@@ -66,7 +66,7 @@ QSCObject* QSDict::property(const QString &name) {
   CDict *dict=dynamic_cast<CDict*>(obj.get());
   boost::shared_ptr<IProperty> property=dict->getProperty(util::convertFromUnicode(name,util::PDF));
   return QSImporter::createQSObject(property,base);
- } catch (...) { 
+ } catch (...) {
   //Some error, probably the property does not exist
   return NULL;
  }
@@ -229,7 +229,7 @@ QSCObject* QSDict::child(const QString &name) {
   boost::shared_ptr<CDict> dict=boost::dynamic_pointer_cast<CDict>(obj);
   boost::shared_ptr<IProperty> property=util::recursiveProperty(dict,name);
   return QSImporter::createQSObject(property,base);
- } catch (...) { 
+ } catch (...) {
   //Some error, probably the property does not exist
   return NULL;
  }

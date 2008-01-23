@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __REVISIONTOOL_H__
 #define __REVISIONTOOL_H__
 
@@ -21,7 +21,7 @@ namespace pdfobjects {
 
 namespace gui {
 
-/** 
+/**
  Toolbutton listing revisions of current PDF document, with ability to switch revisions<br>
  Can be placed in toolbar in place of ordinary button
  \brief Toolbar widget for changing revision

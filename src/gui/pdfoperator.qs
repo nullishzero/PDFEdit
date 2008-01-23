@@ -435,7 +435,7 @@ function operatorSetColor(operator,r,g,b, globchange) {
 	// --------  set color of operator  ---------
 
 	//
-	// Create 
+	// Create
 	//  q
 	//  r g b rg/RG
 	//  oper
@@ -457,7 +457,7 @@ function operatorSetColor(operator,r,g,b, globchange) {
 	}
 	if (cntStr) {
 		putscolor (composite,r,g,b);
-	} 
+	}
 	
 	// It the operator does not contain any known operators put them both
 	if (!cntNon && !cntStr)	{
@@ -472,7 +472,7 @@ function operatorSetColor(operator,r,g,b, globchange) {
 	operator.stream().replace(operator, composite);
 }
 
-/** 
+/**
  * Get font and font size of a text operator.
  * We have to find preceding Font operator.
  *
@@ -487,9 +487,9 @@ function operatorGetFont(operator) {
 		return;
 	}
 
-	// ===  Get the preceding font operator ===  
+	// ===  Get the preceding font operator ===
 
-	//  Traverse it backwards 
+	//  Traverse it backwards
 	var fontoper = operator.fontIterator(false).current();
 	if (undefined == fontoper) {
 		warn (tr("No preceding font operator found..."));
@@ -527,7 +527,7 @@ function getFontOperatorForOp( operator ) {
 	return ;
 }
 
-/** 
+/**
  * Set font and font size of a text operator.
  * We have to find preceding Font operator.
  *
@@ -578,7 +578,7 @@ function operatorSetFont(thepage, operator, fontid, fontsize) {
 	operator.stream().replace (operator, composite);
 }
 
-/** 
+/**
  * Set linewidth of an operator.
  *
  * @param operator Pdf operator.
@@ -619,7 +619,7 @@ function operatorSetLineWidth(operator, linewidth, globchange) {
 	operator.stream().replace (operator, composite);
 }
 
-/** 
+/**
  * Set simple dash pattern from provided alternatives.
  *
  * @param alt Dash style.
@@ -646,7 +646,7 @@ function operatorSetSimpleDashPattern(alt,operator,globchange) {
 	return true;
  }
 
-/** 
+/**
  * Set dash pattern of an operator.
  *
  * @param operator Pdf operator.
@@ -702,13 +702,13 @@ function operatorSetDashPattern(operator, array, phase, globchange) {
 /**
  * Get all system fonts from pdf specification v 1.5.
  * Every viewer should have default metrics for these fonts avaliable.
- */ 
+ */
 function getSystemFonts() {
  return ["Times-Roman", "Helvetica", "Courier",
  		 "Symbol", "Times-Bold", "Helvetica-Bold",
 		 "Courier-Bold", "ZapfDingbats", "Times-Italic",
-		 "Helvetica-Oblique", "Courier-Oblique", 
-		 "Times-BoldItalic", "Helvetica-BoldOblique", 
+		 "Helvetica-Oblique", "Courier-Oblique",
+		 "Times-BoldItalic", "Helvetica-BoldOblique",
 		 "Courier-BoldOblique"];
 }
 
@@ -760,7 +760,7 @@ function getPosInfoOfOperator (operator) {
 	var txtit = operator.iterator();
 	while (!txtit.isBegin()) {
 		print (txtit.current().getName());
-		if ("TD" == txtit.current().getName() || 
+		if ("TD" == txtit.current().getName() ||
 				"Td" == txtit.current().getName())
 			return txtit.current();
 		txtit.prev();

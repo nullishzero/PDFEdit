@@ -97,7 +97,7 @@ function removePage(pos)
 {
         if(pos < 1 || pos > document.getPageCount())
         {
-               warn(pos+" "+tr("out of range")); 
+               warn(pos+" "+tr("out of range"));
                return -1;
         }
 
@@ -136,7 +136,7 @@ function calcDiff(positions, value, n)
  * @param positions Array of positions for pages (see below).
  *
  * Inserts all pages from given array each to the position from given array.
- * positions members are positions of pages in original document where to 
+ * positions members are positions of pages in original document where to
  * insert coresponding page. If positions array is shorter than pages, missing
  * members are calculated as successors of the highest positions member.
  * If pages array is shorther than positions array, positions's redundant
@@ -175,7 +175,7 @@ function calcDiff(positions, value, n)
  *
  * // 3.)
  * // merge pp1, pp2, pp3 behind current pages (join documents with
- * // current in front part. 
+ * // current in front part.
  * mergeWithPages([pp1,pp2,pp3], [document.getPageCount()+1])
  *
  * // As a result:
@@ -194,7 +194,7 @@ function mergeWithPages(pages, positions)
 {
         var maxPos=0;
         var pos;
-        
+
         // stores all pages which have their position
         for(i=0;i<pages.length && i<positions.length; ++i)
         {
@@ -207,7 +207,7 @@ function mergeWithPages(pages, positions)
                         continue;
                 }
 
-                // cheks maximum of positions for pages which don't have 
+                // cheks maximum of positions for pages which don't have
                 // their position
                 if(maxPos<pos)
                         maxPos=pos;

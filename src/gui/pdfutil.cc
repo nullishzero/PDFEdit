@@ -224,7 +224,7 @@ bool isRefValid(CPdf *pdf,IndiRef ref) {
 bool isSimple(IProperty* prop) {
  PropertyType pt=prop->getType();
  switch(pt) {
-  case pNull: 
+  case pNull:
   case pBool:
   case pInt:
   case pReal:
@@ -233,7 +233,7 @@ bool isSimple(IProperty* prop) {
    return true;
   default:
    return false;
- } 
+ }
 }
 
 /**
@@ -389,7 +389,7 @@ QString annotType(CAnnotation::AnnotType at) {
  return "?";
 }
 
-/** 
+/**
  Return type identifier of annotation
  @param anot Annotation
 */
@@ -397,7 +397,7 @@ QString annotType(boost::shared_ptr<CAnnotation> anot) {
  return annotType(anot->getType());
 }
 
-/** 
+/**
  Return human readable, localized type identifier of annotation
  @param anot Annotation
 */

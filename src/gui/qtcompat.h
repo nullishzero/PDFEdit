@@ -11,7 +11,7 @@
 #define __QTCOMPAT_H__
 
 /**
- @file 
+ @file
  Compatibility fixes to allow Qt3 code to work in Qt4
 */
 #include <qglobal.h>
@@ -62,11 +62,11 @@ typedef Qt::WindowFlags WFlags;
 //Include aliases
 #define QBUTTONGROUP	<Q3ButtonGroup>
 #define QBYTEARRAY	<QByteArray>
-#define QCOMBOBOX	<Q3ComboBox> 
+#define QCOMBOBOX	<Q3ComboBox>
 #define QDICT		<Q3Dict>
-#define QGROUPBOX	<Q3GroupBox> 
+#define QGROUPBOX	<Q3GroupBox>
 #define QICON		<QIcon>
-#define QLISTBOX	<Q3ListBox> 
+#define QLISTBOX	<Q3ListBox>
 #define QLISTVIEW	<Q3ListView>
 #define QPOPUPMENU	<Q3PopupMenu>
 #define QPTRDICT	<Q3PtrDict>
@@ -118,11 +118,11 @@ typedef Qt::WindowFlags WFlags;
 //Include aliases
 #define QBUTTONGROUP	<qbuttongroup.h>
 #define QBYTEARRAY	<qcstring.h>
-#define QCOMBOBOX	<qcombobox.h> 
+#define QCOMBOBOX	<qcombobox.h>
 #define QDICT		<qdict.h>
-#define QGROUPBOX	<qgroupbox.h> 
+#define QGROUPBOX	<qgroupbox.h>
 #define QICON		<qiconset.h>
-#define QLISTBOX	<qlistbox.h> 
+#define QLISTBOX	<qlistbox.h>
 #define QLISTVIEW	<qlistview.h>
 #define QPOPUPMENU	<qpopupmenu.h>
 #define QPTRDICT	<qptrdict.h>

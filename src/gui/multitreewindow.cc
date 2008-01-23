@@ -115,7 +115,7 @@ void MultiTreeWindow::tabSwitchPopup() {
  cornerLeft->setDown(false);
  if (id==-1) return;//Nothing selected
  QWidget* targetTab=tab->page(id);
- tab->showPage(targetTab); 
+ tab->showPage(targetTab);
 }
 
 /**
@@ -210,7 +210,7 @@ TreeItemAbstract* MultiTreeWindow::rootMain() {
 }
 
 /**
- Called when any settings are updated (in script, option editor, etc ...) 
+ Called when any settings are updated (in script, option editor, etc ...)
  @param key Key of setting which have changed
 */
 void MultiTreeWindow::settingUpdate(QString key) {
@@ -262,7 +262,7 @@ TreeWindow* MultiTreeWindow::getTree(const QString &name) {
  return NULL;
 }
 
-/** 
+/**
  In current tree:
  \copydoc TreeWindow::getSelected()
  @param name Name of tree to use for getting selection
@@ -274,7 +274,7 @@ QSCObject* MultiTreeWindow::getSelected(const QString &name) {
  return treeSelection->getSelected();
 }
 
-/** 
+/**
  In specified tree:
  \copydoc TreeWindow::getSelectedItem()
  @param name Name of tree to use for getting selection
@@ -286,7 +286,7 @@ TreeItemAbstract* MultiTreeWindow::getSelectedItem(const QString &name) {
  return treeSelection->getSelectedItem();
 }
 
-/** 
+/**
  In specified tree:
  \copydoc TreeWindow::nextSelected()
 */

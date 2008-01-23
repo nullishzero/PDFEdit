@@ -35,7 +35,7 @@ Property::Property(const QString &_name/*=0*/,QWidget *parent/*=0*/, PropertyFla
  : QWidget (parent){
  name=_name;
  changed=false;
- effectiveReadonly=hidden=readonly=false; 
+ effectiveReadonly=hidden=readonly=false;
  setFlags(_flags);
 }
 
@@ -75,7 +75,7 @@ void Property::modifyColor(QWidget* widget) {
  }
 }
 
-/** 
+/**
  Initialize label belonging to this property.<br>
  Called after setting text to the label.<br>
  Guaranteed to be called before override.<br>

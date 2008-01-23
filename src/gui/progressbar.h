@@ -30,17 +30,17 @@ namespace gui {
  *
  * // Creates adapter
  * ProgressBar * progressBar=new ProgressBar(qtProgressBar);
- * 
- * // Creates and registers observer to process which progress we 
+ *
+ * // Creates and registers observer to process which progress we
  * // want to display
  * shared_ptr<ProgressObserver> progressObserver(new ProgressObserver(progressBar));
  * process->registerObserver(progressObserver);
  *
  * </pre>
- * 
+ *
  * In single thread application we can reuse progressObserver on more processes
- * and have one progress bar vizualizator for all of them. In multithread 
- * applications where such processes runs in different threads this may be 
+ * and have one progress bar vizualizator for all of them. In multithread
+ * applications where such processes runs in different threads this may be
  * problem because this class doesn't use any kind of synchronization.
  */
 class ProgressBar: public pdfobjects::utils::IProgressBar
@@ -56,7 +56,7 @@ public:
         ProgressBar(QProgressBar * pB):progressBar(pB)
         {
         }
-        
+
         /** Returns qt progress bar visualizator.
          * @return progressBar pointer.
          */

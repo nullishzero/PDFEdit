@@ -84,9 +84,10 @@ QString QSMenu::popup() {
 }
 
 
-/** For given ID get associated action (script)
+/**
+ For given ID get associated action (script)
  @param id ID of menu action
- @return script corresponding to 
+ @return script corresponding to the action
 */
 QString QSMenu::getAction(int id) {
  if (id<0) return QString::null;//Menu cancelled
@@ -106,7 +107,7 @@ QString QSMenu::getAction(int id) {
  @param def Definition of menu item (same format as used in application menus)
 */
 void QSMenu::addItemDef(QString def) {
- if (def.isNull()) return;//Empty definition? 
+ if (def.isNull()) return;//Empty definition?
  guiPrintDbg(debug::DBG_DBG, "++" << Q_OUT(def));
  try {
   if (!def.startsWith("item ")) {
@@ -183,7 +184,7 @@ void QSMenu::addSeparator() {
 void QSMenu::reset() {
  menu->clear(); //This will remove also all temporary items
  actionId=0;
- actions.clear(); 
+ actions.clear();
 }
 
 /** destructor */

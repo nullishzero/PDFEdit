@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 #ifndef __QSTREEITEM_H__
 #define __QSTREEITEM_H__
 
@@ -60,7 +60,7 @@ public slots:
  /*- Return child of this tree item with given name, or NULL if this item have no child with such name */
  QSTreeItem* child(const QString &name);
  /*-
-  Get names of all visible childs items of this treeitem 
+  Get names of all visible childs items of this treeitem
   Childs that are not shown in tree (because of treeview settings, etc ...) are not returned.
   Childs that are "not yet known" (unopened references) are not returned too.
  */

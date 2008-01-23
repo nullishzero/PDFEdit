@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around CStream<br>
  Export some functions to scripting.<br>
@@ -23,7 +23,7 @@
 namespace gui {
 
 /**
- Construct wrapper with given CStream 
+ Construct wrapper with given CStream
  @param _cs CStream shared pointer
  @param _base scripting base
 */
@@ -153,11 +153,11 @@ bool QSStream::loadRawBuffer(const QString &fileName) {
  return true;
 }
 
-/** 
+/**
  Load contents of given file into specified QByteArray
  @param fileName name of the file
  @param qb [out] QByteArray into which the file will be loaded
- @return true on success, false on failure while reading from file 
+ @return true on success, false on failure while reading from file
 */
 bool QSStream::loadFile(const QString &fileName,QByteArray &qb) {
  if (fileName.isNull()) return false;
@@ -226,7 +226,7 @@ void QSStream::setRawBuffer(const QByteArray &a) {
  }
 }
 
-/** 
+/**
  Return data from buffer
  @return buffer as QString
 */
@@ -236,7 +236,7 @@ QString QSStream::getBufferString() {
  return stringFromBuffer(st->getBuffer());
 }
 
-/** 
+/**
  Return data from buffer
  @return buffer as QByteArray
 */

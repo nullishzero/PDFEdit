@@ -110,7 +110,7 @@ QSPdfOperatorIterator* QSPdfOperator::iterator() {
 
 /**
  Create new text operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new text iterator
 */
@@ -127,13 +127,13 @@ QSPdfOperatorIterator* QSPdfOperator::textIterator(bool forwardDir/*=true*/) {
 */
 bool QSPdfOperator::equals(QObject* otherObject) {
  QSPdfOperator* other=dynamic_cast<QSPdfOperator*>(otherObject);
- if (!other) return false;	//It's not even IProperty ... 
+ if (!other) return false;	//It's not even IProperty ...
  return obj==other->get();
 }
 
 /**
  Create new font operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item.
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new font iterator
 */
@@ -145,7 +145,7 @@ QSPdfOperatorIterator* QSPdfOperator::fontIterator(bool forwardDir/*=true*/) {
 
 /**
  Create new changeable operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item.
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new changeable iterator
 */
@@ -157,7 +157,7 @@ QSPdfOperatorIterator* QSPdfOperator::changeableIterator(bool forwardDir/*=true*
 
 /**
  Create new stroking operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item.
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new stroking iterator
 */
@@ -169,7 +169,7 @@ QSPdfOperatorIterator* QSPdfOperator::strokingIterator(bool forwardDir/*=true*/)
 
 /**
  Create new non stroking operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item.
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new non stroking iterator
 */
@@ -181,7 +181,7 @@ QSPdfOperatorIterator* QSPdfOperator::nonStrokingIterator(bool forwardDir/*=true
 
 /**
  Create new graphical operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item.
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new graphical iterator
 */
@@ -193,7 +193,7 @@ QSPdfOperatorIterator* QSPdfOperator::graphicalIterator(bool forwardDir/*=true*/
 
 /**
  Create new inline image operator iterator from this PDF operator.
- The iterator will be initialized from this item 
+ The iterator will be initialized from this item.
  @param forwardDir Direction of traversing the operators for first valid item.
  @return new inline image iterator
 */

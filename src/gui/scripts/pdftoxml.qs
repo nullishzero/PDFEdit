@@ -3,7 +3,7 @@
 //  jmisutka (06/12/03)
 //
 
-/** 
+/**
  * Invoke pdf to xml.
  */
 function pdftoxml_gui() {
@@ -48,5 +48,5 @@ function pdftoxml_gui() {
 // Install the plugin
 //
 
-// Install the menu/toolbar items that are used by the plugin 
+// Install the menu/toolbar items that are used by the plugin
 createMenuItem ('toolsmenu','pdftoxml',tr('Pdf to xml'),'pdftoxml_gui()','','pdftoxml.png');

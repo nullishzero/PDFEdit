@@ -53,7 +53,7 @@ public:
   @param disabled True to disable, false to enable
  */
  virtual void setDisabled(bool disabled) = 0;
- /** 
+ /**
   Apply this value of "read only" to the property
   @param _readonly True for read-only, false for read-write
  */
@@ -68,7 +68,7 @@ public:
   @param pdfObject Objet to read from
  */
  virtual void readValue(IProperty *pdfObject) = 0;
- /** 
+ /**
   Check if edited property is currently valid.
   @return true if valid, false if not
  */
@@ -80,13 +80,13 @@ signals:
   @param prop Pointer to changed property item
  */
  void propertyChanged(Property *prop);
- /** 
+ /**
   Send informational message when mouse cursor enters/leaves the property
   The message is sent on enter and QString::null on leave.
   @param message Message
  */
  void infoText(const QString &message);
- /** 
+ /**
   Send warning message on some events (only once when the event occurs)
   @param message Message
  */

@@ -28,7 +28,7 @@ class Option;
  Widget for editing program options<br>
  Options are arranged to tabs and it is ensured, that only one dialog at once is active
  (via Private constructor and static method to invoke the dialog, which will focus on
- existing dialog if it exists, instead of creating second one) 
+ existing dialog if it exists, instead of creating second one)
  \brief Window for showing/editing program settings
 */
 class OptionWindow : public QWidget {
@@ -64,7 +64,7 @@ private:
  Q_Dict<Option> *items;
  /** Dictionary with option labels */
  Q_Dict<QLabel> *labels;
- /** Main tab widget */ 
+ /** Main tab widget */
  QTabWidget *tab;
  /** Grid layout for the tab */
  QMap<QWidget*,QGridLayout*> gridl;

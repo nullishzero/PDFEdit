@@ -293,7 +293,7 @@ void PropertyEditor::setObject(boost::shared_ptr<IProperty> pdfObject) {
   }
   grid->update();
  } else if (pdfObject->getType()==pStream) {	//Object is CCtream -> edit its properties.
-  //Basically the same as CDict  .... 
+  //Basically the same as CDict  ....
   CStream *cstream=dynamic_cast<CStream*>(pdfObject.get());
   vector<string> list;
   cstream->getAllPropertyNames(list);
@@ -425,7 +425,7 @@ void PropertyEditor::commitProperty() {
  }
 }
 
-/** 
+/**
  Receive and resend informational text
  @param message Message
 */
@@ -433,7 +433,7 @@ void PropertyEditor::receiveInfoText(const QString &message) {
  emit infoText(message);
 }
 
-/** 
+/**
  Receive and resend warning message
  @param message Message
 */

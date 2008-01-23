@@ -297,8 +297,8 @@ class PageViewMode: public QObject {
 			 */
 			virtual void resizedSelectedObjects ( QMouseEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ * 
-			 * --- mouse press (and coresponding release) events not above selection area --- * 
+			/* ------------------------------------------------------------------------------ *
+			 * --- mouse press (and coresponding release) events not above selection area --- *
 			 * ------------------------------------------------------------------------------ */
 
 			/** Method is calling if is press left mouse button.
@@ -386,8 +386,8 @@ class PageViewMode: public QObject {
 			 */
 			virtual void mouseMoveWithPressedLeftButton ( QMouseEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ * 
-			 * ---        mouse events - equivalents of method called in QWidget          --- * 
+			/* ------------------------------------------------------------------------------ *
+			 * ---        mouse events - equivalents of method called in QWidget          --- *
 			 * ------------------------------------------------------------------------------ */
 
 			/** Method is call if press mouse button (see Qt::QWidget::mousePressEvent)
@@ -456,8 +456,8 @@ class PageViewMode: public QObject {
 			 */
 			virtual void wheelEvent ( QWheelEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ * 
-			 * ---         key events - equivalents of method called in QWidget           --- * 
+			/* ------------------------------------------------------------------------------ *
+			 * ---         key events - equivalents of method called in QWidget           --- *
 			 * ------------------------------------------------------------------------------ */
 
 			/** Method is call if press key event (see Qt::QWidget::keyPressEvent)
@@ -479,8 +479,8 @@ class PageViewMode: public QObject {
 			 */
 			virtual void keyReleaseEvent ( QKeyEvent * e, QPainter * p, QWidget * w );
 
-			/* ------------------------------------------------------------------------------ * 
-			 * ---        focus events - equivalents of method called in QWidget          --- * 
+			/* ------------------------------------------------------------------------------ *
+			 * ---        focus events - equivalents of method called in QWidget          --- *
 			 * ------------------------------------------------------------------------------ */
 
 			/** Method is call if focus-in event (see Qt::QWidget::focusInEvent)
@@ -549,7 +549,7 @@ class PageViewMode: public QObject {
 
 			/** Extra initialization mode.
 			 * @param page			Page which are viewed.
-			 * @param displayParams	Display parameters viewed page. 
+			 * @param displayParams	Display parameters viewed page.
 			 *
 			 * This method is good called after change viewed page, or change display parameters (zoom, rotation, ...)
 			 * Is good for initialize other objects then operators (E.g. for annotation).
@@ -609,7 +609,7 @@ class PageViewMode: public QObject {
 			/** Method for calculation resizing mode
 			 * @param r rectsngle for resizing
 			 * @param p cursor position
-			 * 
+			 *
 			 * @return combination of enum resizingParts
 			 */
 			virtual int	theNeerestResizingMode ( const QRegion & r, const QPoint & p );
@@ -687,7 +687,7 @@ class PageViewMode: public QObject {
 			 * 		%4	will be replaced with global position of y2 (global Y position at mouse release)
 			 *
 			 * @see QString::arg
-			 * 
+			 *
 			 * Function in script:
 			 * 			fncName ( x1:Number, y1:Number, x2:Number, y2:Number )  { ... }
 			 */
@@ -700,7 +700,7 @@ class PageViewMode: public QObject {
 			 * 		%2	will be replaced with dy
 			 *
 			 * @see QString::arg
-			 * 
+			 *
 			 * Function in script:
 			 * 			fncName ( dx:Number, dy:Number )  { ... }
 			 */
@@ -715,7 +715,7 @@ class PageViewMode: public QObject {
 			 * 		%4	will be replaced with dbottom
 			 *
 			 * @see QString::arg
-			 * 
+			 *
 			 * Function in script:
 			 * 			fncName ( dleft:Number, dtop:Number, dright:Number, dbottom:Number )  { ... }
 			 *
@@ -885,7 +885,7 @@ class PageViewMode_TextSelection: public PageViewMode {
 			 * @param last	Last selected operator (pointer to sorted structure by line and word on line)
 			 * @param selOpsRegion	Bounding region of all selected operators.
 			 * @param selOps		Vector of selected operators.
-			 * 
+			 *
 			 * Method find the nearest text operator to mouse cursor and select all text operator from first selected
 			 * text operator to it respecting word and line order.
 			 * New selected operators add to \a selOps. Removed selected operators remove from that.
@@ -1124,7 +1124,7 @@ class PageViewMode_Annotations: public PageViewMode {
 			virtual void actualizeSelection ();
 			/** Extra initialization mode.
 			 * @param page			Page which are viewed.
-			 * @param displayParams	Display parameters viewed page. 
+			 * @param displayParams	Display parameters viewed page.
 			 *
 			 * This method is good called after change viewed page, or change display parameters (zoom, rotation, ...)
 			 * Initialize annotation for selecting on the page \a page.

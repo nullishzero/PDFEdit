@@ -1159,9 +1159,9 @@ PageViewMode_OperatorsSelection::PageViewMode_OperatorsSelection ( const QString
 																	const QString & _scriptFncAtMouseRelease,
 																	const QString & _scriptFncAtMoveSelectedObjects,
 																	const QString & _scriptFncAtResizeSelectedObjects ) :
-			PageViewMode ( drawingObject, 
-							_scriptFncAtMouseRelease, 
-							_scriptFncAtMoveSelectedObjects, 
+			PageViewMode ( drawingObject,
+							_scriptFncAtMouseRelease,
+							_scriptFncAtMoveSelectedObjects,
 							_scriptFncAtResizeSelectedObjects )
 		{
 			lastSelectedOperator = workOperators.end();
@@ -1334,9 +1334,9 @@ PageViewMode_Annotations::PageViewMode_Annotations ( const QString & drawingObje
 														const QString & _scriptFncAtMouseRelease,
 														const QString & _scriptFncAtMoveSelectedObjects,
 														const QString & _scriptFncAtResizeSelectedObjects ) :
-			PageViewMode ( drawingObject, 
-							_scriptFncAtMouseRelease, 
-							_scriptFncAtMoveSelectedObjects, 
+			PageViewMode ( drawingObject,
+							_scriptFncAtMouseRelease,
+							_scriptFncAtMoveSelectedObjects,
 							_scriptFncAtResizeSelectedObjects )
 		{
 			// initialize mapping cursors
@@ -1500,9 +1500,9 @@ PageViewMode_TextMarking::PageViewMode_TextMarking ( const QString & drawingObje
 														const QString & _scriptFncAtMouseRelease,
 														const QString & _scriptFncAtMoveSelectedObjects,
 														const QString & _scriptFncAtResizeSelectedObjects )
-		: PageViewMode_TextSelection( drawingObject, 
-										_scriptFncAtMouseRelease, 
-										_scriptFncAtMoveSelectedObjects, 
+		: PageViewMode_TextSelection( drawingObject,
+										_scriptFncAtMouseRelease,
+										_scriptFncAtMoveSelectedObjects,
 										_scriptFncAtResizeSelectedObjects )
 		{
 			// initialize mapping cursors

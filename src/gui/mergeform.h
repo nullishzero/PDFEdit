@@ -45,7 +45,7 @@ private:
         MergeArray():length(0), mergeItems(NULL), mergePositions(NULL)
         {
         }
-public:        
+public:
 	/**
  	  Construct MergeArray with arrays of specified length
 	  @param _length Length of item and position arrays
@@ -112,11 +112,11 @@ public:
 /** Dialog for merging documents.
  * <pre>
  * Usage:
- * 
+ *
  * // Create dialog instance
  * MergeDialog * dialog=new MergeDialog();
  *
- * // Inits original document (one which is currently opened) with its page 
+ * // Inits original document (one which is currently opened) with its page
  * // count.
  * dialog->initOriginal(pageCount);
  *
@@ -142,7 +142,7 @@ public:
  * // dialog cleanup
  * dialog->destroyOpenFile();
  * delete dialog;
- * 
+ *
  * </pre>
  @brief Dialog for merging documents.
  */
@@ -176,17 +176,17 @@ public:
     QPushButton* okBtn;
 
     /** Returns result of merging.
-     * 
+     *
      * Creates MergeArray instance (Note that caller is responsible for
      * deallocation) and fills it according current state of mergeList as
      * follows:
      * <br>
-     * Collects all ListItems from mergeList with FROMFILE node data type. 
+     * Collects all ListItems from mergeList with FROMFILE node data type.
      * MergeArray's length is number of these items. Items arrray is then
      * initialized with ORIGINAL item position which is before FROMFILE
      * item (starting from 1 for items which are at the begining).
      * <br>
-     * As a result items array contains page positions (in opened file) 
+     * As a result items array contains page positions (in opened file)
      * which should be merged and positions array contains page positions
      * from original file before which they should be inserted.
      * <br>
@@ -197,7 +197,7 @@ public:
     /** Initializes mergeList with pages from original document.
      * @param count Original document page count.
      *
-     * Creates ListItems (for count pages) with ORIGINAL type for 
+     * Creates ListItems (for count pages) with ORIGINAL type for
      * mergeList. These items represents pages from document where
      * we want to merg (insert pages from opened file).
      * <br>
@@ -240,7 +240,7 @@ public slots:
     virtual void fileNameBtn_clicked();
 
 protected:
-    /** Fills fileList with ListItems corresponding to pdf document given by 
+    /** Fills fileList with ListItems corresponding to pdf document given by
      * name.
      * @param fileName Pdf document name to merge with original one.
      *

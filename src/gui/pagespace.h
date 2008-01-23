@@ -228,7 +228,7 @@ class PageSpace : public QWidget {
 		 * @see PageViewModeFactory
 		 * @see DrawingObjectFactory
 		 */
-		void setSelectionMode( QString mode, 
+		void setSelectionMode( QString mode,
 								QString drawingObject = QString::null,
 								QString scriptFncAtMouseRelease = QString::null,
 								QString scriptFncAtMoveSelectedObjects = QString::null,
@@ -245,7 +245,7 @@ class PageSpace : public QWidget {
 		void setSelectArea ( int left, int top, int right, int bottom );
 		/** Select objects (PdfOperators) on page.
 		 * @param ops Vector of PdfOperators for select.
-		 * 
+		 *
 		 * @see addSelectedObjectOnPage
 		 * @see unselectObjectOnPage
 		 * @see isSomeoneSelected

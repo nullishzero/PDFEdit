@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  RefProperty - class for widget containing one editable property of type "Ref"<br>
  Represented by editable line and button allowing to pick reference target from the list<br>
@@ -139,7 +139,7 @@ void RefProperty::setValue(IProperty *pdfObject) {
  }
  if (pdf) {
   //We can check for validity
-  if (!isRefValid(pdf,val)) { 
+  if (!isRefValid(pdf,val)) {
    emit warnText("Reference is not valid!");
    ed->setFocus();
    return; //not valid

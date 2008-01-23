@@ -73,6 +73,6 @@ public slots:
  QStringList propertyNames();
 };
 
-} // namespace gui 
+} // namespace gui
 
 #endif

@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  RevisionTool - Toolbutton listing revisions of current PDF document, with ability to switch revisions
  @author Martin Petricek
@@ -100,16 +100,16 @@ void RevisionTool::setDocument(pdfobjects::CPdf *newDocument) {
   if (document->isLinearized()) {
    revList->insertItem(tr("Linearized PDF"));
    revList->setEnabled(false);
-   return;   
+   return;
   }
   if (revs==0) {
    revList->insertItem(tr("No revisions"));
    revList->setEnabled(false);
-   return;   
+   return;
   }
   for(size_t i=0;i<revs;i++) {
    size_t revSize=document->getRevisionSize(i,true);
-   revList->insertItem(tr("Revision: ")+QString::number(i)+" ("+QString::number(revSize)+" "+tr("bytes")+")");  
+   revList->insertItem(tr("Revision: ")+QString::number(i)+" ("+QString::number(revSize)+" "+tr("bytes")+")");
   }
   revList->setCurrentItem(curr);
   revList->setEnabled(true);

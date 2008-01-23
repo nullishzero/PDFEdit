@@ -51,6 +51,6 @@ private:
  std::vector<boost::shared_ptr<IProperty> > obj;
 };
 
-} // namespace gui 
+} // namespace gui
 
 #endif

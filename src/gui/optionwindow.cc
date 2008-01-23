@@ -11,14 +11,14 @@
  OptionWindow - widget for editing program options
  Options are arranged to tabs and it is ensured, that only one dialog at once is active
  (via Private constructor and static method to invoke the dialog, which will focus on
- existing dialog if it exists, instead of creating second one) 
+ existing dialog if it exists, instead of creating second one)
  @author Martin Petricek
 */
 
 #include "optionwindow.h"
 #include <qdir.h>
 #include <qlabel.h>
-#include <qtabwidget.h> 
+#include <qtabwidget.h>
 #include <qlayout.h>
 #include <utils/debug.h>
 #include "util.h"
@@ -114,7 +114,7 @@ OptionWindow::OptionWindow(Menu *msystem,const QStringList &units,const QStringL
  QObject::connect(btCancel, SIGNAL(clicked()), this, SLOT(close()));
  QObject::connect(btApply,  SIGNAL(clicked()), this, SLOT(apply()));
  QObject::connect(btOk,	    SIGNAL(clicked()), this, SLOT(ok()));
- globalSettings->restoreWindow(this,"options"); 
+ globalSettings->restoreWindow(this,"options");
  init();
 }
 
@@ -196,7 +196,8 @@ QWidget* OptionWindow::addBreak(QWidget *otab) {
  return grid;
 }
 
-/** add Option to the window
+/**
+ Add Option to the window
  @param otab Tab holding that option
  @param caption Label for this option
  @param opt Option to be added to this widget
@@ -222,7 +223,8 @@ void OptionWindow::addOption(QWidget *otab,const QString &caption,Option *opt) {
  label->show();
 }
 
-/** add any widget to option (typically some label)
+/**
+ Add any widget to option (typically some label)
  The widget will take one line
  @param otab Tab holding that option
  @param elem element to add
@@ -236,7 +238,8 @@ void OptionWindow::addWidget(QWidget *otab,QWidget *elem) {
  elem->show();
 }
 
-/** add description text to option 
+/**
+ Add description text to option
  @param otab Tab holding that option
  @param text Text to add. Using rich text format, so basically you can use HTML here
  */
@@ -246,7 +249,8 @@ void OptionWindow::addText(QWidget *otab,const QString &text) {
  addWidget(otab,txt);
 }
 
-/** Add padding to pad the tab window
+/**
+ Add padding to pad the tab window
  @param otab Tab holding that option
  */
 void OptionWindow::finishTab(QWidget *otab) {
@@ -256,7 +260,8 @@ void OptionWindow::finishTab(QWidget *otab) {
  addWidget(otab,pad);
 }
 
-/** add Option to the window (type of option is string)
+/**
+ Add Option to the window (type of option is string)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -267,7 +272,7 @@ void OptionWindow::addOption(QWidget *otab,const QString &caption,const QString 
 }
 
 /**
- add Option to the window (type of option is file)
+ Add Option to the window (type of option is file)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -278,7 +283,7 @@ void OptionWindow::addOptionFile(QWidget *otab,const QString &caption,const QStr
 }
 
 /**
- add Option to the window (type of option is font)
+ Add Option to the window (type of option is font)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -289,7 +294,7 @@ void OptionWindow::addOptionFont(QWidget *otab,const QString &caption,const QStr
 }
 
 /**
- add Option to the window (type of option is string, edited by combobox)
+ Add Option to the window (type of option is string, edited by combobox)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -301,7 +306,7 @@ void OptionWindow::addOptionCombo(QWidget *otab,const QString &caption,const QSt
 }
 
 /**
- add Option to the window (type of option is string, edited by combobox)
+ Add Option to the window (type of option is string, edited by combobox)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -311,7 +316,8 @@ void OptionWindow::addOptionCombo(QWidget *otab,const QString &caption,const QSt
  addOption(otab,caption,new ComboOption(values,key,otab));
 }
 
-/** add Option to the window (type of option is float)
+/**
+ Add Option to the window (type of option is float)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -320,7 +326,8 @@ void OptionWindow::addOptionFloat(QWidget *otab,const QString &caption,const QSt
  addOption(otab,caption,new RealOption(key,otab));
 }
 
-/** add Option to the window (type of option is bool)
+/**
+ Add Option to the window (type of option is bool)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -330,7 +337,8 @@ void OptionWindow::addOptionBool(QWidget *otab,const QString &caption,const QStr
  addOption(otab,caption,new BoolOption(key,otab,defValue));
 }
 
-/** add Option to the window (type of option is int)
+/**
+ Add Option to the window (type of option is int)
  @param otab Tab holding that option
  @param caption Label for this option
  @param key Key of the given option
@@ -465,14 +473,15 @@ void OptionWindow::init() {
 /** default destructor */
 OptionWindow::~OptionWindow() {
  guiPrintDbg(debug::DBG_DBG,"Options closing ...");
- globalSettings->saveWindow(this,"options"); 
+ globalSettings->saveWindow(this,"options");
  delete labels;
  delete items;
  delete list;
  opt=NULL;//No instance active now
 }
 
-/** applies look and feel settings from options
+/**
+ Applies look and feel settings from options
  @param notify If true, all fonts will be immediately changed in all widgets
  */
 void applyLookAndFeel(bool notify) {

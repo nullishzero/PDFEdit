@@ -40,9 +40,9 @@ Property* propertyFactory(pdfobjects::IProperty *prop,const QString &_name/*=0*/
  PropertyFlags _flags=prop->getMode();
  switch (typ) {
   case pNull:   return NULL;
-  case pBool:   return new BoolProperty(_name,parent,_flags); 
-  case pInt:    return new IntProperty(_name,parent,_flags); 
-  case pReal:   return new RealProperty(_name,parent,_flags); 
+  case pBool:   return new BoolProperty(_name,parent,_flags);
+  case pInt:    return new IntProperty(_name,parent,_flags);
+  case pReal:   return new RealProperty(_name,parent,_flags);
   case pString: return new StringProperty(_name,parent,_flags);
   case pName:   return new NameProperty(_name,parent,_flags);
   case pRef:    return new RefProperty(_name,parent,_flags);

@@ -1,16 +1,15 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /*
  * =====================================================================================
  *        Filename:  selectpagesdialog.cc
- *     Description:  
  *         Created:  03/12/2006 07:41:44 PM CET
  *          Author:  jmisutka ()
  * =====================================================================================
@@ -39,14 +38,12 @@ using namespace pdfobjects;
 namespace {
 //=====================================================================================
 
-	/** 
+	/**
 	 * List box item.
 	 * Inherits from QListBoxText item type and adds NodeData data field.
 	 */
-	struct ListItem : public Q_ListBoxText 
-	{
+	struct ListItem : public Q_ListBoxText {
 			typedef size_t Position;
-
 
 		protected:
 			Position _position;
@@ -55,14 +52,14 @@ namespace {
 			// Ctor
 			//
 		public:
-			ListItem (Position pos, Q_ListBox* _parent, const QString& text = QString::null) 
+			ListItem (Position pos, Q_ListBox* _parent, const QString& text = QString::null)
 				: Q_ListBoxText(_parent, text),_position(pos) 	{}
-			ListItem (Position pos, const QString&  text = QString::null) 
+			ListItem (Position pos, const QString&  text = QString::null)
 				: Q_ListBoxText(text),_position(pos) {}
-			ListItem (Position pos, Q_ListBox* _parent, const QString& text, Q_ListBoxItem* after) 
+			ListItem (Position pos, Q_ListBox* _parent, const QString& text, Q_ListBoxItem* after)
 				: Q_ListBoxText(_parent, text, after),_position(pos) {}
 
-			/** 
+			/**
 			 * Returns position.
 			 */
 			Position position () const
@@ -81,11 +78,9 @@ namespace {
 //
 // Constructor
 //
-SelectPagesDialog::SelectPagesDialog (const QString& filename)
-    : QDialog (NULL, NULL, false, 0)
-{
+SelectPagesDialog::SelectPagesDialog (const QString& filename) : QDialog (NULL, NULL, false, 0) {
 	setName ("Select page dialog.");
-    SelectPagesDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "SelectPagesDialogLayout"); 
+    SelectPagesDialogLayout = new QGridLayout( this, 1, 1, 11, 6, "SelectPagesDialogLayout");
 
     layout48 = new QVBoxLayout();
     layout48->setMargin(0);
@@ -106,7 +101,7 @@ SelectPagesDialog::SelectPagesDialog (const QString& filename)
     selectedList = new Q_ListBox( this, "selectedList" );
     selectedList->setEnabled( FALSE );
     layout47->addWidget( selectedList );
-    layout4 = new QVBoxLayout( 0, 0, 6, "layout4"); 
+    layout4 = new QVBoxLayout( 0, 0, 6, "layout4");
 	// Add buttno
     addBtn = new QPushButton( this, "addBtn" );
     addBtn->setEnabled( FALSE );
@@ -125,7 +120,7 @@ SelectPagesDialog::SelectPagesDialog (const QString& filename)
     originalList->setSelectionMode( Q_ListBox::Extended );
     layout47->addWidget( originalList );
     layout48->addLayout( layout47 );
-    layout6 = new QHBoxLayout( 0, 0, 5, "layout6"); 
+    layout6 = new QHBoxLayout( 0, 0, 5, "layout6");
     spacer5 = new QSpacerItem( 61, 21, QSizePolicy::Expanding, QSizePolicy::Minimum );
     layout6->addItem( spacer5 );
 	// Ok button
@@ -179,9 +174,7 @@ SelectPagesDialog::SelectPagesDialog (const QString& filename)
 //
 //
 //
-void 
-SelectPagesDialog::originalList_changed (Q_ListBoxItem* item)
-{
+void SelectPagesDialog::originalList_changed (Q_ListBoxItem* item) {
 	ListItem * listItem=dynamic_cast<ListItem *>(item);
 	if(listItem==NULL)
 			return;
@@ -193,9 +186,7 @@ SelectPagesDialog::originalList_changed (Q_ListBoxItem* item)
 //
 //
 //
-void 
-SelectPagesDialog::selectedList_changed (Q_ListBoxItem*)
-{
+void SelectPagesDialog::selectedList_changed (Q_ListBoxItem*) {
 	// allways enable add button when something is selected
 	removeBtn->setEnabled(TRUE);
 }
@@ -203,9 +194,7 @@ SelectPagesDialog::selectedList_changed (Q_ListBoxItem*)
 //
 // !source code copied from MergeDialog!
 //
-void 
-SelectPagesDialog::addBtn_clicked ()
-{
+void SelectPagesDialog::addBtn_clicked () {
 	int oldPos=-1;
 	ListItem * oldItem=NULL;
 
@@ -263,9 +252,7 @@ SelectPagesDialog::addBtn_clicked ()
 //
 // !source code copied from MergeDialog!
 //
-void 
-SelectPagesDialog::removeBtn_clicked ()
-{
+void SelectPagesDialog::removeBtn_clicked () {
 	if(selectedList->selectedItem())
 	{
 			ListItem * mergeItem=dynamic_cast<ListItem *>(selectedList->selectedItem());
@@ -308,10 +295,7 @@ SelectPagesDialog::removeBtn_clicked ()
 // Helper functions
 //
 
-template<typename Container> 
-void 
-SelectPagesDialog::getResult (Container& cont) const
-{
+template<typename Container> void SelectPagesDialog::getResult (Container& cont) const {
 	for (size_t pos = 0; pos < selectedList->count(); ++pos)
 	{
 		ListItem* item = dynamic_cast<ListItem*>(selectedList->item(pos));
@@ -326,9 +310,7 @@ template void SelectPagesDialog::getResult<list<size_t> > (list<size_t>& cont) c
 //
 //
 //
-void 
-SelectPagesDialog::init (size_t count) 
-{
+void SelectPagesDialog::init (size_t count) {
  char itemLabel[128];
  for(size_t i=1; i<=count; ++i) {
   snprintf(itemLabel, 127, "Page%d", (int)i);
@@ -340,9 +322,7 @@ SelectPagesDialog::init (size_t count)
 //
 //
 //
-bool 
-SelectPagesDialog::init (const QString& fileName) 
-{
+bool SelectPagesDialog::init (const QString& fileName) {
 	CPdf* document;
 	CPdf::OpenMode mode = CPdf::ReadOnly;
 
@@ -353,8 +333,7 @@ SelectPagesDialog::init (const QString& fileName)
 		assert(document);
 		guiPrintDbg (debug::DBG_DBG,"Document opened.");
 	
-	}catch (PdfOpenException& e) 
-	{
+	} catch (PdfOpenException& e) {
 		std::string err;
 		e.getMessage(err);
 		//TODO: some messagebox?
@@ -373,9 +352,7 @@ SelectPagesDialog::init (const QString& fileName)
 //
 //  Sets the strings of the subwidgets using the current language.
 //
-void 
-SelectPagesDialog::languageChange() 
-{
+void SelectPagesDialog::languageChange() {
  setCaption(tr("Convert pdf to xml"));
  textLabel1->setText(tr(textLabel1->text()));
  addBtn->setText("<<");

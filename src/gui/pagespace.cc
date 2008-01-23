@@ -310,12 +310,12 @@ int PageSpace::getResizingZone() {
 	// else
 	return globalSettings->readNum( PAGESPC + RESIZINGZONE, DEFAULT__RESIZINGZONE );
 }
-void PageSpace::setSelectionMode( QString mode, 
+void PageSpace::setSelectionMode( QString mode,
 									QString drawingObject,
 									QString scriptFncAtMouseRelease,
 									QString scriptFncAtMoveSelectedObjects,
 									QString scriptFncAtResizeSelectedObjects ) {
-	selectionMode.reset( 
+	selectionMode.reset(
 					PageViewModeFactory::create( mode,
 												drawingObject,
 												scriptFncAtMouseRelease,

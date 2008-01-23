@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  Reference validator - checks if given String is valid Reference in given document
  Does validate only format, not if the reference exists (that would be too slow)
@@ -16,8 +16,8 @@
 
 #include "refvalidator.h"
 #include "qtcompat.h"
-#include <qstring.h> 
-#include <utils/debug.h> 
+#include <qstring.h>
+#include <utils/debug.h>
 #include "util.h"
 
 namespace gui {

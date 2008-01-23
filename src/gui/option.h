@@ -38,6 +38,6 @@ protected:
  bool changed;
 };
 
-} // namespace gui 
+} // namespace gui
 
 #endif

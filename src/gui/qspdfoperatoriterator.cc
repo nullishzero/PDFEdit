@@ -1,12 +1,12 @@
-/*                                                                              
- * PDFedit - free program for PDF document manipulation.                        
- * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko, 
- *                                              Miroslav Jahoda,       
- *                                              Jozef Misutka, 
- *                                              Martin Petricek                                             
+/*
+ * PDFedit - free program for PDF document manipulation.
+ * Copyright (C) 2006, 2007  PDFedit team:      Michal Hocko,
+ *                                              Miroslav Jahoda,
+ *                                              Jozef Misutka,
+ *                                              Martin Petricek
  *
- * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
- */ 
+ * Project is hosted on http://sourceforge.net/projects/pdfedit
+ */
 /** @file
  QObject wrapper around PdfOperator Iterator<br>
  Export some functions to scripting.<br>
@@ -156,7 +156,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::next() {
   return new QSPdfOperatorIterator(copyIterator(obj),csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
-  return NULL; ///a.k.a. false ... 
+  return NULL; ///a.k.a. false ...
  }
 }
 
@@ -174,7 +174,7 @@ QSPdfOperatorIterator* QSPdfOperatorIterator::prev() {
   return new QSPdfOperatorIterator(copyIterator(obj),csRef,base);
  } catch (iterator::IteratorInvalidObjectException &e) {
   //Already at invalid position
-  return NULL; ///a.k.a. false ... 
+  return NULL; ///a.k.a. false ...
  }
 }
 
