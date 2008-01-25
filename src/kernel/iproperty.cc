@@ -226,21 +226,6 @@ std::ostream& operator<< (std::ostream& out, ::ObjType type)
 	return out;
 }
 
-std::ostream & operator << (std::ostream & out, const IndiRef & ref)
-{
-	out<< "ref=[";
-	out<<ref.num;
-	out<<", ";
-	out<<ref.gen;
-	out<<"]";
-	return out;
-}
-
-std::ostream & operator << (std::ostream & out, const ::Ref & ref)
-{
-	IndiRef indiRef(ref.num, ref.gen);
-	return out<<indiRef;
-}
 
 //=====================================================================================
 } // namespace pdfobjects

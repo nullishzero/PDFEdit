@@ -59,7 +59,8 @@
 //============================================
 
 //this includes <windows.h> - BEWARE of max min
-#include "xpdf.h"
+#include "kernel/pdfspecification.h"
+#include "kernel/xpdf.h"
 
 #ifdef max
 	#undef max
@@ -87,8 +88,8 @@ using boost::noncopyable;
 using libs::NullType;
 
 // other includes
-#include "exceptions.h"
-#include "utils.h"
+#include "kernel/exceptions.h"
+#include "kernel/utils.h"
 
 
 #endif // _STATIC_H_

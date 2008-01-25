@@ -417,27 +417,6 @@ std::ostream& operator<< (std::ostream& out, PropertyType type);
  */
 std::ostream& operator<< (std::ostream& out, ::ObjType type);
 
-/** 
- * Prints reference.
- * Prints given reference in ref[num, gen] format.
- * 
- * @param out String where to print.
- * @param ref Reference to print.
- * @return reference to given string.
- */
-std::ostream & operator << (std::ostream & out, const IndiRef & ref);
-
-/** 
- * Prints reference.
- * Prints given xpdf reference in ref[num, gen] format.
- * 
- * @param out String where to print.
- * @param ref Reference to print.
- * @return reference to given string.
- */
-std::ostream & operator << (std::ostream & out, const ::Ref & ref);
-
-
 // =====================================================================================
 } // namespace pdfobjects
 // =====================================================================================

@@ -71,6 +71,40 @@ struct IndiRef
 			
 } IndiRef;
 
+
+
+/** 
+ * Prints reference.
+ * Prints given reference according to pdf specification.
+ * 
+ * @param out String where to print.
+ * @param ref Reference to print.
+ * @return reference to given string.
+ */
+inline std::ostream& 
+operator<< (std::ostream& out, const IndiRef& ref)
+{
+	out << ref.num << " " << ref.gen;
+	return out;
+}
+
+
+/** 
+ * Prints reference.
+ * Prints given xpdf reference in ref[num, gen] format.
+ * 
+ * @param out String where to print.
+ * @param ref Reference to print.
+ * @return reference to given string.
+ */
+inline std::ostream& 
+operator<< (std::ostream& out, const ::Ref& ref)
+{
+	return out << IndiRef (ref);
+}
+
+
+
 //=====================================================================================
 } // pdfobjects 
 //=====================================================================================

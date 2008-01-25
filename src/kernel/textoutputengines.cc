@@ -131,7 +131,7 @@ namespace {
 					result += tmp;
 			
 			}else
-				result += static_cast<char> (u);
+				result += static_cast<char> (u&0xFF);
 		}
 
 		return result;

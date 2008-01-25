@@ -12,6 +12,7 @@
 // static
 #include "kernel/static.h"
 // xpdf
+#include "kernel/pdfspecification.h"
 #include "kernel/xpdf.h"
 //
 #include "kernel/factories.h"
@@ -55,61 +56,6 @@ void xpdfObjToString (Object& obj, string& str);
 // =====================================================================================
 namespace {
 // =====================================================================================
-
-	//
-	// String constants used when converting objects to strings
-	//
-	// CObjectSimple
-	/** Object Null string representation. */
-	const string CNULL_NULL = "null";
-		
-	/** Object Bool false repersentation. */
-	const string CBOOL_TRUE  = "true";
-	/** Object Bool true representation. */
-	const string CBOOL_FALSE = "false";
-
-	/** Object Name string representation. */
-	const string CNAME_PREFIX = "/";
-
-	/** Object String representation prefix string. */
-	const string CSTRING_PREFIX = "(";
-	/** Object String representation suffix string. */
-	const string CSTRING_SUFFIX = ")";
-
-	/** Object Ref representation middle string. */
-	const string CREF_MIDDLE = " ";
-	/** Object Ref representation string suffix. */
-	const string CREF_SUFFIX = " R";
-
-	// CObjectComplex
-	/** Object Array representation prefix string. */
-	const string CARRAY_PREFIX = "[";
-	/** Object Array representation middle string. */
-	const string CARRAY_MIDDLE = " ";
-	/** Object Array representation suffix string. */
-	const string CARRAY_SUFFIX = " ]";
-
-	/** Object Dictionary representation specifics. */
-	const string CDICT_PREFIX = "<<";
-	/** Object Dictionary representation specifics. */
-	const string CDICT_MIDDLE = "\n/";
-	/** Object Dictionary representation specifics. */
-	const string CDICT_BETWEEN_NAMES = " ";
-	/** Object Dictionary representation specifics. */
-	const string CDICT_SUFFIX = "\n>>";
-
-	/** Object Stream string representation specifics. */
-	const string CSTREAM_HEADER = "\nstream\n";
-	/** Object Stream string representation specifics. */
-	const string CSTREAM_FOOTER = "\nendstream";
-
-	/** Xpdf error object string representation specifics. */
-	const string OBJERROR = "\n";
-
-	/** Indirect Object heaser. */
-	const string INDIRECT_HEADER = "obj ";
-	/** Indirect Object footer. */
-	const string INDIRECT_FOOTER = "\nendobj";
 
 	/**
 	 * Read processors for simple types.
@@ -447,153 +393,482 @@ namespace {
 		{typedef struct xpdfDictReader<T,U>		xpdfReadProcessor;};
 
 
+	//
+	// helper 
+	//
+	size_t 
+	total_size_stream (size_t dict_size, size_t streambuf_size)
+	{
+		return dict_size + Specification::CSTREAM_HEADER.length() 
+				+ streambuf_size + Specification::CSTREAM_FOOTER.length();
+	}
+
 // =====================================================================================
 } // namespace
 // =====================================================================================
 
-/**
-* Convert simple xpdf object to string.
-*
-* @param obj Object to parse.
-* @param str Result string representation.
-*/
+
+
+// =====================================================================================
+//  CObject 2 String / String 2 CObject functions
+// =====================================================================================
+
+
+//
+//
+//
 void
-simpleXpdfObjToString (Object& obj,string& str)
+simpleValueFromString (const std::string& str, bool& val)
 {
-	utilsPrintDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
+	static const string __true ("true");
+	static const string __false ("false");
+	
+	if (str.size() == __true.size() && equal(str.begin(), str.end(), __true.begin(), nocase_compare))
+		val = true;
+	else if (str.size() == __false.size() && equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
+		val = false;
+	else
+		throw CObjBadValue ();
+}
 
-	ostringstream oss;
-
-	switch (obj.getType()) 
+void
+simpleValueFromString (const std::string& str, int& val)
+{
+	std::stringstream ss (str);
+	ss.exceptions (stringstream::failbit | stringstream::badbit);
+	try {
+		ss >> val;
+	}catch (stringstream::failure&) 
 	{
-	case objBool:
-		oss << ((obj.getBool()) ? CBOOL_TRUE : CBOOL_FALSE);
-		break;
+		throw CObjBadValue ();
+	}					
+}
 
-	case objInt:
-		oss << obj.getInt();
-		break;
+void
+simpleValueFromString (const std::string& str, double& val)
+{
+	shared_ptr<Object> ptrObj (xpdfObjFromString (str), xpdf::object_deleter());
+	
+	assert (objReal == ptrObj->getType ());
+	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
+		throw CObjBadValue ();
+					
+	ProcessorTraitSimple<Object&, double&, pReal>::xpdfReadProcessor rp;
+	rp (*ptrObj, val);
+}
 
-	case objReal:
-		oss << obj.getReal ();
-		break;
+void
+simpleValueFromString (const std::string& str, std::string& val)
+{
+	val = str;
+}
 
-	case objString:
-		oss << CSTRING_PREFIX  << utils::makeStringPdfValid(obj.getString()) << CSTRING_SUFFIX;
-		break;
-
-	case objName:
-		oss << CNAME_PREFIX << utils::makeNamePdfValid(obj.getName());
-		break;
-
-	case objNull:
-		oss << CNULL_NULL;
-		break;
-
-	case objRef:
-		oss << obj.getRefNum() << CREF_MIDDLE << obj.getRefGen() << CREF_SUFFIX;
-		break;
-
-	case objCmd:
-		oss << obj.getCmd ();
-		break;
-
-	case objError:
-		oss << OBJERROR;
-		break;
-		
-	default:
-		assert (!"Bad object passed to simpleXpdfObjToString.");
-		throw XpdfInvalidObject (); 
-		break;
+void
+simpleValueFromString (const std::string& str, IndiRef& val)
+{
+	std::stringstream ss (str);
+	ss.exceptions (stringstream::failbit | stringstream::badbit);
+	try {
+		ss >> val.num;
+		ss >> val.gen;
+	}catch (stringstream::failure&) 
+	{
+		throw CObjBadValue ();
 	}
+}
 
+
+
+//
+// To string functions
+// 
+
+
+//
+// Convert simple value from CObjectSimple to string
+//
+template <>
+void
+simpleValueToString<pBool> (bool val, string& str)
+{
+	str = ((val) ? Specification::CBOOL_TRUE : Specification::CBOOL_FALSE);
+}
+//
+//
+//
+template <>
+void
+simpleValueToString<pInt> (int val, string& str)
+{
+	char buf[24];
+	sprintf(buf,"%d",val);
+	str=buf;
+}
+//
+//
+//
+template <>
+void
+simpleValueToString<pReal> (double val, string& str)
+{
+	char buf[64];
+	sprintf(buf, "%g", val);
+ 	str.assign(buf);
+}
+
+//
+// Special case for pNull
+//
+template<>
+void
+simpleValueToString<pNull> (const NullType&, string& str)
+{
+	str = Specification::CNULL_NULL;
+}
+//
+// Special case for pRef
+//
+template<>
+void
+simpleValueToString<pRef> (const IndiRef& ref, string& str)
+{
+	ostringstream oss;
+	oss << ref.num << Specification::CREF_MIDDLE << ref.gen << Specification::CREF_SUFFIX;
 	// convert oss to string
 	str = oss.str ();
 }
 
-/**
- * Convert complex xpdf object to string.
- *
- * @param obj Object to parse.
- * @param str Result string representation.
- */
+//
+// Special case for pString and pName
+//
+template<PropertyType Tp>
 void
-complexXpdfObjToString (Object& obj, string& str)
+simpleValueToString (const std::string& val, std::string& str)
 {
-	
-	utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
+	STATIC_CHECK ((pString == Tp) || (pName == Tp), COBJECT_INCORRECT_USE_OF_simpleObjToString_FUNCTION);
 
-	ostringstream oss;
-	xpdf::XpdfObject o;
-	int i;
-
-	switch (obj.getType()) 
+	switch (Tp)
 	{
-	
-	case objArray:
-		oss << CARRAY_PREFIX;
-		for (i = 0; i < obj.arrayGetLength(); ++i) 
-		{
-			oss << CARRAY_MIDDLE;
-			obj.arrayGetNF (i,o.get());
-			string tmp;
-			xpdfObjToString (*o,tmp);
-			oss << tmp;
-			o.reset ();
-		}
-		oss << CARRAY_SUFFIX;
-		break;
+		case pString:
+			str = Specification::CSTRING_PREFIX + makeStringPdfValid (val.begin(), val.end()) + Specification::CSTRING_SUFFIX;
+			break;
 
-	case objDict:
-		oss << CDICT_PREFIX;
-		for (i = 0; i <obj.dictGetLength(); ++i) 
-		{
-			oss << CDICT_MIDDLE << obj.dictGetKey(i) << CDICT_BETWEEN_NAMES;
-			obj.dictGetValNF(i, o.get());
-			string tmp;
-			xpdfObjToString (*o,tmp);
-			oss << tmp;
-			o.reset ();
-		}
-		oss << CDICT_SUFFIX;
-		break;
+		case pName:
+			str = Specification::CNAME_PREFIX + makeNamePdfValid (val.begin(), val.end());
+			break;
 
-	case objStream:
-		obj.streamReset ();
-		{
-			Dict* dict = obj.streamGetDict ();
-			assert (NULL != dict);
-			o->initDict (dict);
-			std::string str;
-			complexXpdfObjToString (*o, str);
-			oss << str;
-		}
+		default:
+			assert (0);
+			break;
+	}
+}
+
+template void simpleValueToString<pString> (const string& val, string& str);
+template void simpleValueToString<pName> (const string& val, string& str);
+
+
+//
+// Convert complex value from CObjectComplex to string
+//
+template<>
+void
+complexValueToString<CArray> (const CArray::Value& val, string& str)
+{
+	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
 		
-		oss << CSTREAM_HEADER;
-		obj.streamReset ();
-		{
-		int c = 0;
-		while (EOF != (c = obj.streamGetChar())) 
-			oss << static_cast<string::value_type> (c);
-		}
-		obj.streamClose ();
-		oss << CSTREAM_FOOTER;
-		break;
-	
-	default:
-		assert (false);	
-		break;
+	ostringstream oss;
+
+	// start tag
+	str = Specification::CARRAY_PREFIX;
+		
+	//
+	// Loop through all items and get each string and append it to the result
+	//
+	CArray::Value::const_iterator it = val.begin();
+	for (; it != val.end(); ++it) 
+	{
+		str += Specification::CARRAY_MIDDLE;
+		string tmp;
+		(*it)->getStringRepresentation (tmp);
+		str += tmp;
+	}
+		
+	// end tag
+	str += Specification::CARRAY_SUFFIX;
+}
+//
+//
+//
+template<>
+void
+complexValueToString<CDict> (const CDict::Value& val, string& str)
+{
+	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
+
+	// start tag
+	str = Specification::CDICT_PREFIX;
+
+	//
+	// Loop through all items and get each items name + string representation
+	// and append it to the result
+	//
+	CDict::Value::const_iterator it = val.begin ();
+	for (; it != val.end(); ++it) 
+	{
+		str += Specification::CDICT_MIDDLE + (*it).first + Specification::CDICT_BETWEEN_NAMES;
+		string tmp;
+		(*it).second->getStringRepresentation (tmp);
+		str += tmp;
 	}
 
-	// convert oss to string
-	str = oss.str ();
+	// end tag
+	str += Specification::CDICT_SUFFIX;
+}
+
+//
+//
+//
+template<typename ITERATOR, typename OUTITERATOR>
+void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out)
+{
+	// Insert dictionary
+	std::copy (strDict.begin(), strDict.end(), out);
+	
+	// Insert header
+	std::copy (Specification::CSTREAM_HEADER.begin(), Specification::CSTREAM_HEADER.end(), out);
+	
+	//Insert buffer
+	std::copy (begin, end, out);
+
+	// Insert footer
+	std::copy (Specification::CSTREAM_FOOTER.begin(), Specification::CSTREAM_FOOTER.end(), out);
+}
+// Explicit initialization
+template void streamToString<CStream::Buffer::const_iterator, std::back_insert_iterator<std::string> > 
+	(const std::string& strDict, 
+	 CStream::Buffer::const_iterator begin, 
+	 CStream::Buffer::const_iterator end,
+	 std::back_insert_iterator<std::string> out);
+
+//
+//
+//
+size_t 
+stringToCharBuffer (Object & stringObject, CharBuffer & outputBuf)
+{
+using namespace std;
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "");
+	if(stringObject.getType()!=objString)
+	{
+		utilsPrintDbg(DBG_ERR, "Given object is not a string. Object type="<<stringObject.getType());
+		return 0;
+	}
+
+	// gets all bytes from xpdf string object, makes string valid (to some
+	// escaping)
+	::GString * s=stringObject.getString(); 
+	string str;
+	for(int i=0; i<s->getLength(); i++)
+		str.append(1, s->getChar(i));
+	string validStr;
+	simpleValueToString<pString>(str, validStr);
+
+	// creates buffer and fills it byte after byte from valid string
+	// representation
+	size_t len=validStr.length();
+	char* buf = char_buffer_new (len);
+	outputBuf = CharBuffer (buf, char_buffer_delete()); 
+	for(size_t i=0; i<len; i++)
+		buf[i]=validStr[i];
+	
+	return len;
+}
+
+
+//
+//
+// TODO asIndirect parameter
+size_t streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf)
+{
+	utilsPrintDbg (debug::DBG_DBG, "");
+	
+	// Calculate overall length and allocate buffer
+	size_t len = total_size_stream (strDict.length(), streambuf.size());
+	char* buf = char_buffer_new (len);
+	outbuf = CharBuffer (buf, char_buffer_delete()); 
+	// Make pdf representation
+	streamToString (strDict, streambuf.begin(), streambuf.end(), buf);
+	return len;
+}
+
+
+size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect)
+{
+using namespace std;
+using namespace debug;
+
+	utilsPrintDbg(DBG_DBG, "");
+	if(streamObject.getType()!=objStream)
+	{
+		utilsPrintDbg(DBG_ERR, "Given object is not a stream. Object type="<<streamObject.getType());
+		return 0;
+	}
+	
+	// gets stream dictionary string at first
+	string dict;
+	Dict *streamDict = streamObject.streamGetDict();
+
+	// FIXME dirty workaround because we don't have dedicated function
+	// for Dict -> String conversion
+	// initDict increases streamDict's reference thus we need to
+	// decrease it by free method.
+	Object streamDictObj;
+	streamDictObj.initDict(streamDict);
+	xpdfObjToString(streamDictObj, dict);
+	streamDictObj.free();
+
+	// gets buffer len from stream dictionary Length field
+	Object lenghtObj;
+	streamDict->lookup("Length", &lenghtObj);
+	if(!lenghtObj.isInt())
+	{
+		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
+		lenghtObj.free();
+		return 0;
+	}
+	// we don't need to call free for lenghtObj because it is 
+	// int which doesn't allocate any memory for internal data
+	if(0>lenghtObj.getInt())
+	{
+		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
+		return 0;
+	}
+	size_t bufferLen=(size_t)lenghtObj.getInt();
+
+	// indirect header is filled only if asIndirect flag is set
+	// same way footer
+	string header="";
+	string footer="";
+	if(asIndirect)
+	{
+		ostringstream indirectHeader;
+		indirectHeader << ref << " " << Specification::INDIRECT_HEADER << "\n";
+		header += indirectHeader.str();
+		footer = Specification::INDIRECT_FOOTER;
+	}
+
+	// gets total length and allocates CharBuffer for output	
+	size_t len = header.length() + total_size_stream (dict.length(), bufferLen) + footer.length(); 
+	char* buf = char_buffer_new (len);
+	outputBuf = CharBuffer (buf, char_buffer_delete()); 
+	
+	// get everything together into created buf - we can't use
+	// str* functions here, because there may be \0 inside
+	// dictionary string represenatation (string entries)
+	size_t copied=0;
+	memcpy(buf, header.c_str(), header.length());
+	copied+=header.length();
+	memcpy(buf+copied, dict.c_str(), dict.length());
+	copied+=dict.length();
+	memcpy(buf+copied, Specification::CSTREAM_HEADER.c_str(), Specification::CSTREAM_HEADER.length());
+	copied+=Specification::CSTREAM_HEADER.length();
+	// streamBuffer may contain '\0' so rest has to be copied by memcpy
+	BaseStream * base=streamObject.getStream()->getBaseStream();
+	base->reset();
+	size_t i=0;
+	for(; i<bufferLen; i++)
+	{
+		int ch=base->getChar();
+		if(ch==EOF)
+			break;
+		// NOTE that we are reducing int -> char here, so multi-bytes
+		// returned from a stream will be stripped to 1B
+		if((unsigned char)ch != ch)
+			utilsPrintDbg(DBG_DBG, "Too wide character("<<ch<<") in the stream at pos="<<i);
+		buf[copied+i]=ch;
+	}
+	// checks number of written bytes and if any problem (more or less data),
+	// clears buffer and returns with 0
+	if(i!=bufferLen)
+	{
+		utilsPrintDbg(DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read.");
+		// TODO do we really need to clear whole buffer here? Is it enough to clear
+		// the first byte?
+		memset(buf, '\0', len);
+		streamObject.getStream()->reset();
+		return 0;
+	}
+	if(base->getChar()!=EOF)
+	{
+		utilsPrintDbg(DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
+		// TODO do we really need to clear whole buffer here? Is it enough to clear
+		// the first byte?
+		memset(buf, '\0', len);
+		streamObject.getStream()->reset();
+		return 0;
+	}
+	copied+=bufferLen;
+	memcpy(buf + copied, Specification::CSTREAM_FOOTER.c_str(), Specification::CSTREAM_FOOTER.length());
+	copied+=Specification::CSTREAM_FOOTER.length();
+	memcpy(buf + copied, footer.c_str(), footer.length());
+	copied+=footer.length();
+	
+	// just to be sure
+	assert(copied==len);
+	
+	// restore stream object to the begining
+	streamObject.getStream()->reset();
+	return len;
+}
+
+
+//
+//
+//
+void 
+createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& val, std::string& output)
+{
+	ostringstream oss;
+
+	oss << rf << " " << Specification::INDIRECT_HEADER << "\n";
+	oss << val;
+	oss << Specification::INDIRECT_FOOTER;
+
+	output = oss.str ();
 }
 
 
 // =====================================================================================
-//  Creation functions
+//  Xpdf 2 String / String 3 Xpdf functions
 // =====================================================================================
+
+//
+//
+//
+void
+getStringFromXpdfStream (std::string& str, ::Object& obj)
+{
+	if (!obj.isStream())
+	{
+		assert (!"Object is not stream.");
+		throw XpdfInvalidObject ();
+	}
+
+	// Clear string
+	str.clear ();
+
+	// Reset stream
+	obj.streamReset ();
+	// Save chars
+	int c;
+	while (EOF != (c = obj.streamGetChar())) 
+		str += static_cast<std::string::value_type> (c);
+	// Cleanup
+	obj.streamClose ();
+}
+
 
 //
 // Creates CObject from xpdf object.
@@ -747,68 +1022,6 @@ template void complexValueFromXpdfObj<pDict, CDict::Value&>
 		 Object& obj, 
 		 CDict::Value& val);
 
-//
-//
-//
-void
-simpleValueFromString (const std::string& str, bool& val)
-{
-	static const string __true ("true");
-	static const string __false ("false");
-	
-	if (str.size() == __true.size() && equal(str.begin(), str.end(), __true.begin(), nocase_compare))
-		val = true;
-	else if (str.size() == __false.size() && equal (str.begin(), str.end(), __false.begin(), nocase_compare)) 
-		val = false;
-	else
-		throw CObjBadValue ();
-}
-
-void
-simpleValueFromString (const std::string& str, int& val)
-{
-	std::stringstream ss (str);
-	ss.exceptions (stringstream::failbit | stringstream::badbit);
-	try {
-		ss >> val;
-	}catch (stringstream::failure&) 
-	{
-		throw CObjBadValue ();
-	}					
-}
-
-void
-simpleValueFromString (const std::string& str, double& val)
-{
-	shared_ptr<Object> ptrObj (xpdfObjFromString (str), xpdf::object_deleter());
-	
-	assert (objReal == ptrObj->getType ());
-	if (objReal != ptrObj->getType() && objInt != ptrObj->getType())
-		throw CObjBadValue ();
-					
-	ProcessorTraitSimple<Object&, double&, pReal>::xpdfReadProcessor rp;
-	rp (*ptrObj, val);
-}
-
-void
-simpleValueFromString (const std::string& str, std::string& val)
-{
-	val = str;
-}
-
-void
-simpleValueFromString (const std::string& str, IndiRef& val)
-{
-	std::stringstream ss (str);
-	ss.exceptions (stringstream::failbit | stringstream::badbit);
-	try {
-		ss >> val.num;
-		ss >> val.gen;
-	}catch (stringstream::failure&) 
-	{
-		throw CObjBadValue ();
-	}
-}
 
 //
 //
@@ -910,11 +1123,11 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	//
 	// Copy buffer and use parser to make stream object
 	//
-	char* tmpbuf = static_cast<char*> (gmalloc (buffer.size() + CSTREAM_FOOTER.length()));
+	char* tmpbuf = static_cast<char*> (gmalloc (buffer.size() + Specification::CSTREAM_FOOTER.length()));
 	size_t i = 0;
 	for (CStream::Buffer::const_iterator it = buffer.begin(); it != buffer.end (); ++it)
 		tmpbuf [i++] = static_cast<char> ((unsigned char)(*it));
-	std::copy (CSTREAM_FOOTER.begin(), CSTREAM_FOOTER.end(), &(tmpbuf[i]));
+	std::copy (Specification::CSTREAM_FOOTER.begin(), Specification::CSTREAM_FOOTER.end(), &(tmpbuf[i]));
 	assert (i == buffer.size());
 	//utilsPrintDbg (debug::DBG_DBG, tmpbuf);
 	
@@ -935,14 +1148,147 @@ xpdfStreamObjFromBuffer (const CStream::Buffer& buffer, const CDict& dict)
 	return obj;
 }
 
-// =====================================================================================
-//  To/From string functions
-// =====================================================================================
 
+/**
+* Convert simple xpdf object to string.
+*
+* @param obj Object to parse.
+* @param str Result string representation.
+*/
+void
+simpleXpdfObjToString (Object& obj,string& str)
+{
+	utilsPrintDbg (debug::DBG_DBG," objType:" << obj.getTypeName() );
 
-//
-// To string functions
-// 
+	switch (obj.getType()) 
+	{
+	case objBool:
+		simpleValueToString<pBool> (gTrue == obj.getBool(), str);
+		break;
+
+	case objInt:
+		simpleValueToString<pInt> (obj.getInt(), str);
+		break;
+
+	case objReal:
+		simpleValueToString<pReal> (obj.getReal(), str);
+		break;
+
+	case objString:
+		simpleValueToString<pString> (string(obj.getString()->getCString()), str);
+		break;
+
+	case objName:
+		simpleValueToString<pName> (string(obj.getName()), str);
+		break;
+
+	case objNull:
+		simpleValueToString<pNull> (NullType (), str);
+		break;
+
+	case objRef:
+		simpleValueToString<pRef> (Ref(obj.getRef()), str);
+		break;
+
+	case objCmd: {
+		ostringstream oss;
+		oss << obj.getCmd ();
+		str = oss.str();
+		}
+		break;
+
+	case objError: {
+		ostringstream oss;
+		oss << Specification::OBJERROR;
+		str = oss.str();
+		}
+		break;
+		
+	default:
+		assert (!"Bad object passed to simpleXpdfObjToString.");
+		throw XpdfInvalidObject (); 
+		break;
+	
+	} // switch
+}
+
+/**
+ * Convert complex xpdf object to string.
+ *
+ * @param obj Object to parse.
+ * @param str Result string representation.
+ */
+void
+complexXpdfObjToString (Object& obj, string& str)
+{
+	
+	utilsPrintDbg (debug::DBG_DBG,"\tobjType = " << obj.getTypeName() );
+
+	ostringstream oss;
+	xpdf::XpdfObject o;
+	int i;
+
+	switch (obj.getType()) 
+	{
+	
+	case objArray:
+		oss << Specification::CARRAY_PREFIX;
+		for (i = 0; i < obj.arrayGetLength(); ++i) 
+		{
+			oss << Specification::CARRAY_MIDDLE;
+			obj.arrayGetNF (i,o.get());
+			string tmp;
+			xpdfObjToString (*o,tmp);
+			oss << tmp;
+			o.reset ();
+		}
+		oss << Specification::CARRAY_SUFFIX;
+		break;
+
+	case objDict:
+		oss << Specification::CDICT_PREFIX;
+		for (i = 0; i <obj.dictGetLength(); ++i) 
+		{
+			oss << Specification::CDICT_MIDDLE << obj.dictGetKey(i) << Specification::CDICT_BETWEEN_NAMES;
+			obj.dictGetValNF(i, o.get());
+			string tmp;
+			xpdfObjToString (*o,tmp);
+			oss << tmp;
+			o.reset ();
+		}
+		oss << Specification::CDICT_SUFFIX;
+		break;
+
+	case objStream:
+		obj.streamReset ();
+		{
+			Dict* dict = obj.streamGetDict ();
+			assert (NULL != dict);
+			o->initDict (dict);
+			std::string str;
+			complexXpdfObjToString (*o, str);
+			oss << str;
+		}
+		
+		oss << Specification::CSTREAM_HEADER;
+		obj.streamReset ();
+		{
+		int c = 0;
+		while (EOF != (c = obj.streamGetChar())) 
+			oss << static_cast<string::value_type> (c);
+		}
+		obj.streamClose ();
+		oss << Specification::CSTREAM_FOOTER;
+		break;
+	
+	default:
+		assert (false);	
+		break;
+	}
+
+	// convert oss to string
+	str = oss.str ();
+}
 
 //
 //
@@ -962,386 +1308,6 @@ xpdfObjToString (Object& obj, string& str)
 			simpleXpdfObjToString (obj,str);
 			break;
 	}
-}
-
-//
-// Convert simple value from CObjectSimple to string
-//
-template <>
-void
-simpleValueToString<pBool> (bool val, string& str)
-{
-	str = ((val) ? CBOOL_TRUE : CBOOL_FALSE);
-}
-//
-//
-//
-template <>
-void
-simpleValueToString<pInt> (int val, string& str)
-{
-	char buf[24];
-	sprintf(buf,"%d",val);
-	str=buf;
-}
-//
-//
-//
-template <>
-void
-simpleValueToString<pReal> (double val, string& str)
-{
-	char buf[64];
-	sprintf(buf,"%g",val);
-	str.assign(buf);
-}
-//
-// Special case for pString and pName
-//
-template<PropertyType Tp>
-void
-simpleValueToString (const std::string& val, std::string& str)
-{
-	STATIC_CHECK ((pString == Tp) || (pName == Tp), COBJECT_INCORRECT_USE_OF_simpleObjToString_FUNCTION);
-
-	switch (Tp)
-	{
-		case pString:
-			str = CSTRING_PREFIX + makeStringPdfValid (val.begin(), val.end()) + CSTRING_SUFFIX;
-			break;
-
-		case pName:
-			str = CNAME_PREFIX + makeNamePdfValid (val.begin(), val.end());
-			break;
-
-		default:
-			assert (0);
-			break;
-	}
-}
-
-size_t stringToCharBuffer (Object & stringObject, CharBuffer & outputBuf)
-{
-using namespace std;
-using namespace debug;
-
-	utilsPrintDbg(DBG_DBG, "");
-	if(stringObject.getType()!=objString)
-	{
-		utilsPrintDbg(DBG_ERR, "Given object is not a string. Object type="<<stringObject.getType());
-		return 0;
-	}
-
-	// gets all bytes from xpdf string object, makes string valid (to some
-	// escaping)
-	::GString * s=stringObject.getString(); 
-	string str;
-	for(int i=0; i<s->getLength(); i++)
-		str.append(1, s->getChar(i));
-	string validStr;
-	simpleValueToString<pString>(str, validStr);
-
-	// creates buffer and fills it byte after byte from valid string
-	// representation
-	size_t len=validStr.length();
-	char* buf = char_buffer_new (len);
-	outputBuf = CharBuffer (buf, char_buffer_delete()); 
-	for(size_t i=0; i<len; i++)
-		buf[i]=validStr[i];
-	
-	return len;
-}
-
-template void simpleValueToString<pString> (const string& val, string& str);
-template void simpleValueToString<pName> (const string& val, string& str);
-//
-// Special case for pNull
-//
-template<>
-void
-simpleValueToString<pNull> (const NullType&, string& str)
-{
-	str = CNULL_NULL;
-}
-//
-// Special case for pRef
-//
-template<>
-void
-simpleValueToString<pRef> (const IndiRef& ref, string& str)
-{
-	ostringstream oss;
-	oss << ref.num << CREF_MIDDLE << ref.gen << CREF_SUFFIX;
-	// convert oss to string
-	str = oss.str ();
-}
-
-
-
-//
-// Convert complex value from CObjectComplex to string
-//
-template<>
-void
-complexValueToString<CArray> (const CArray::Value& val, string& str)
-{
-	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pArray>()" );
-		
-	ostringstream oss;
-
-	// start tag
-	str = CARRAY_PREFIX;
-		
-	//
-	// Loop through all items and get each string and append it to the result
-	//
-	CArray::Value::const_iterator it = val.begin();
-	for (; it != val.end(); ++it) 
-	{
-		str += CARRAY_MIDDLE;
-		string tmp;
-		(*it)->getStringRepresentation (tmp);
-		str += tmp;
-	}
-		
-	// end tag
-	str += CARRAY_SUFFIX;
-}
-//
-//
-//
-template<>
-void
-complexValueToString<CDict> (const CDict::Value& val, string& str)
-{
-	utilsPrintDbg (debug::DBG_DBG,"complexValueToString<pDict>()");
-
-	// start tag
-	str = CDICT_PREFIX;
-
-	//
-	// Loop through all items and get each items name + string representation
-	// and append it to the result
-	//
-	CDict::Value::const_iterator it = val.begin ();
-	for (; it != val.end(); ++it) 
-	{
-		str += CDICT_MIDDLE + (*it).first + CDICT_BETWEEN_NAMES;
-		string tmp;
-		(*it).second->getStringRepresentation (tmp);
-		str += tmp;
-	}
-
-	// end tag
-	str += CDICT_SUFFIX;
-}
-
-//
-//
-//
-template<typename ITERATOR, typename OUTITERATOR>
-void streamToString (const std::string& strDict, ITERATOR begin, ITERATOR end, OUTITERATOR out)
-{
-	// Insert dictionary
-	std::copy (strDict.begin(), strDict.end(), out);
-	
-	// Insert header
-	std::copy (CSTREAM_HEADER.begin(), CSTREAM_HEADER.end(), out);
-	
-	//Insert buffer
-	std::copy (begin, end, out);
-
-	// Insert footer
-	std::copy (CSTREAM_FOOTER.begin(), CSTREAM_FOOTER.end(), out);
-}
-// Explicit initialization
-template void streamToString<CStream::Buffer::const_iterator, std::back_insert_iterator<std::string> > 
-	(const std::string& strDict, 
-	 CStream::Buffer::const_iterator begin, 
-	 CStream::Buffer::const_iterator end,
-	 std::back_insert_iterator<std::string> out);
-
-//
-//
-// TODO asIndirect parameter
-size_t 
-streamToCharBuffer (const std::string& strDict, const CStream::Buffer& streambuf, CharBuffer& outbuf)
-{
-	utilsPrintDbg (debug::DBG_DBG, "");
-	
-	// Calculate overall length and allocate buffer
-	size_t len = strDict.length() + CSTREAM_HEADER.length() + streambuf.size() + CSTREAM_FOOTER.length();
-	char* buf = char_buffer_new (len);
-	outbuf = CharBuffer (buf, char_buffer_delete()); 
-	// Make pdf representation
-	streamToString (strDict, streambuf.begin(), streambuf.end(), buf);
-	return len;
-}
-
-
-size_t streamToCharBuffer (Object & streamObject, Ref ref, CharBuffer & outputBuf, bool asIndirect)
-{
-using namespace std;
-using namespace debug;
-
-	utilsPrintDbg(DBG_DBG, "");
-	if(streamObject.getType()!=objStream)
-	{
-		utilsPrintDbg(DBG_ERR, "Given object is not a stream. Object type="<<streamObject.getType());
-		return 0;
-	}
-	
-	// gets stream dictionary string at first
-	string dict;
-	Dict *streamDict = streamObject.streamGetDict();
-
-	// FIXME dirty workaround because we don't have dedicated function
-	// for Dict -> String conversion
-	// initDict increases streamDict's reference thus we need to
-	// decrease it by free method.
-	Object streamDictObj;
-	streamDictObj.initDict(streamDict);
-	xpdfObjToString(streamDictObj, dict);
-	streamDictObj.free();
-
-	// gets buffer len from stream dictionary Length field
-	Object lenghtObj;
-	streamDict->lookup("Length", &lenghtObj);
-	if(!lenghtObj.isInt())
-	{
-		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field is not int. type="<<lenghtObj.getType());
-		lenghtObj.free();
-		return 0;
-	}
-	// we don't need to call free for lenghtObj because it is 
-	// int which doesn't allocate any memory for internal data
-	if(0>lenghtObj.getInt())
-	{
-		utilsPrintDbg(DBG_ERR, "Stream dictionary Length field doesn't have correct value. value="<<lenghtObj.getInt());
-		return 0;
-	}
-	size_t bufferLen=(size_t)lenghtObj.getInt();
-
-	// indirect header is filled only if asIndirect flag is set
-	// same way footer
-	string header="";
-	string footer="";
-	if(asIndirect)
-	{
-		ostringstream indirectHeader;
-		indirectHeader << ref.num << " " << ref.gen << " " << INDIRECT_HEADER << "\n";
-		header += indirectHeader.str();
-		footer = INDIRECT_FOOTER;
-	}
-
-	// gets total length and allocates CharBuffer for output	
-	size_t len = 
-		header.length() 
-		+ dict.length()
-		+ CSTREAM_HEADER.length() + bufferLen + CSTREAM_FOOTER.length() 
-		+ footer.length(); 
-	char* buf = char_buffer_new (len);
-	outputBuf = CharBuffer (buf, char_buffer_delete()); 
-	
-	// get everything together into created buf - we can't use
-	// str* functions here, because there may be \0 inside
-	// dictionary string represenatation (string entries)
-	size_t copied=0;
-	memcpy(buf, header.c_str(), header.length());
-	copied+=header.length();
-	memcpy(buf+copied, dict.c_str(), dict.length());
-	copied+=dict.length();
-	memcpy(buf+copied, CSTREAM_HEADER.c_str(), CSTREAM_HEADER.length());
-	copied+=CSTREAM_HEADER.length();
-	// streamBuffer may contain '\0' so rest has to be copied by memcpy
-	BaseStream * base=streamObject.getStream()->getBaseStream();
-	base->reset();
-	size_t i=0;
-	for(; i<bufferLen; i++)
-	{
-		int ch=base->getChar();
-		if(ch==EOF)
-			break;
-		// NOTE that we are reducing int -> char here, so multi-bytes
-		// returned from a stream will be stripped to 1B
-		if((unsigned char)ch != ch)
-			utilsPrintDbg(DBG_DBG, "Too wide character("<<ch<<") in the stream at pos="<<i);
-		buf[copied+i]=ch;
-	}
-	// checks number of written bytes and if any problem (more or less data),
-	// clears buffer and returns with 0
-	if(i!=bufferLen)
-	{
-		utilsPrintDbg(DBG_ERR, "Unexpected end of stream. "<<i<<" bytes read.");
-		// TODO do we really need to clear whole buffer here? Is it enough to clear
-		// the first byte?
-		memset(buf, '\0', len);
-		streamObject.getStream()->reset();
-		return 0;
-	}
-	if(base->getChar()!=EOF)
-	{
-		utilsPrintDbg(DBG_ERR, "stream contains more data than claimed by dictionary Length field.");
-		// TODO do we really need to clear whole buffer here? Is it enough to clear
-		// the first byte?
-		memset(buf, '\0', len);
-		streamObject.getStream()->reset();
-		return 0;
-	}
-	copied+=bufferLen;
-	memcpy(buf + copied, CSTREAM_FOOTER.c_str(), CSTREAM_FOOTER.length());
-	copied+=CSTREAM_FOOTER.length();
-	memcpy(buf + copied, footer.c_str(), footer.length());
-	copied+=footer.length();
-	
-	// just to be sure
-	assert(copied==len);
-	
-	// restore stream object to the begining
-	streamObject.getStream()->reset();
-	return len;
-}
-
-
-//
-//
-//
-void
-getStringFromXpdfStream (std::string& str, ::Object& obj)
-{
-	if (!obj.isStream())
-	{
-		assert (!"Object is not stream.");
-		throw XpdfInvalidObject ();
-	}
-
-	// Clear string
-	str.clear ();
-
-	// Reset stream
-	obj.streamReset ();
-	// Save chars
-	int c;
-	while (EOF != (c = obj.streamGetChar())) 
-		str += static_cast<std::string::value_type> (c);
-	// Cleanup
-	obj.streamClose ();
-}
-
-
-//
-//
-//
-void 
-createIndirectObjectStringFromString  ( const IndiRef& rf, const std::string& val, std::string& output)
-{
-	ostringstream oss;
-
-	oss << rf.num << " " << rf.gen << " " << INDIRECT_HEADER << "\n";
-	oss << val;
-	oss << INDIRECT_FOOTER;
-
-	output = oss.str ();
 }
 
 

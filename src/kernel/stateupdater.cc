@@ -315,19 +315,19 @@ namespace {
 	GfxState *
 	opTfUpdate (GfxState* state, boost::shared_ptr<GfxResources> res, const boost::shared_ptr<PdfOperator>, const PdfOperator::Operands& args, BBox* rc)
 	{
-		assert (2 <= args.size ());
+			assert (2 <= args.size());
 		// Set edge of rectangle from actual position on output devices
 		state->transform(state->getCurX (), state->getCurY(), & rc->xleft, & rc->yleft);
 		rc->xright = rc->xleft;
 		rc->yright = rc->yleft;
 
-		assert( isName( args[0] ) );
+			assert (isName(args[0]));
 		std::string val;
-		IProperty::getSmartCObjectPtr<CName> (args[0]) ->getValue (val);
+		IProperty::getSmartCObjectPtr<CName>(args[0])->getValue (val);
 
-		GfxFont *font = NULL;
+		GfxFont* font = NULL;
 
-		if (!(font = res.get()->lookupFont (val.c_str())))
+		if (!(font = res->lookupFont (val.c_str())))
 			return state;		// same as displaing with xpdf/Gfx
 		
 		state->setFont (font, getDoubleFromIProperty (args[1]));
