@@ -597,6 +597,8 @@ cstreamsreader (__attribute__((unused))	ostream& oss, const char* fileName)
 
 		/// Intermezzo cstreamsreader
 		boost::scoped_ptr<PDFDoc> doc  (new PDFDoc (new GString(fileName), NULL, NULL));
+		if (doc->isEncrypted())
+			continue;
 		int pagesNum = i + 1;
 		Object obj;
 		XRef* xref = doc->getXRef();
