@@ -8,8 +8,9 @@
  * Project is hosted on http://sourceforge.net/projects/pdfedit                                                                      
  */ 
 // vim:tabstop=4:shiftwidth=4:noexpandtab:textwidth=80
-#include <errno.h>
 #include "kernel/static.h"
+
+#include <errno.h>
 
 #include "kernel/cobject.h"
 #include "kernel/cpdf.h"
