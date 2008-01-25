@@ -416,7 +416,7 @@ public:
 		
 		e.r.xr = e.r.r	= -3.2313;						
 		e.r.value		= "-3.2313";
-		e.r.expected	= "-3.2313";
+		e.r.expected	= "-3.231300";
 		
 		e.n.xn = new char [100]; strncpy (e.n.xn, "name",10);
 		e.n.n = new string ("name");
