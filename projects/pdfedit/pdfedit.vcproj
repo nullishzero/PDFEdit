@@ -55,7 +55,7 @@
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="kernel/static.h"
 				BrowseInformation="1"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4250"
@@ -73,9 +73,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				UseLibraryDependencyInputs="true"
+				UseLibraryDependencyInputs="false"
 				AdditionalDependencies="cppunitd.lib xpdf.lib user32.lib Advapi32.lib Gdi32.lib"
-				ShowProgress="2"
+				ShowProgress="0"
 				OutputFile="$(SolutionDir)\output\$(ConfigurationName)\$(ProjectName).exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\libs&quot;"
@@ -85,6 +85,7 @@
 				GenerateDebugInformation="true"
 				MapExports="false"
 				SubSystem="1"
+				TurnOffAssemblyGeneration="false"
 				TargetMachine="1"
 				Profile="false"
 			/>
@@ -291,6 +292,28 @@
 			<File
 				RelativePath="..\..\src\kernel\pdfoperatorsiter.cc"
 				>
+			</File>
+			<File
+				RelativePath="..\..\src\kernel\pdfspecification.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\kernel\pdfwriter.cc"
@@ -540,6 +563,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\kernel\pdfoperatorsiter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\kernel\pdfspecification.h"
 				>
 			</File>
 			<File
