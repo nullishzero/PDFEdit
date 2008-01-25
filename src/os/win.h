@@ -63,7 +63,7 @@ localtime_r (const time_t *clock, struct tm *result) {
 //
 // snprintf
 //
-#define snprintf(a,b,c,d)	_snprintf ((a), (b), (c), (d))
+#define snprintf _snprintf
 
 //
 // Do not use GCC specifics if in win
