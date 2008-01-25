@@ -719,7 +719,7 @@ GBool XRef::constructXRef() {
       delete parser;
 
     // look for object
-    } else if (isdigit(*p)) {
+    } else if (isdigit((unsigned char)(*p))) {
       num = atoi(p);
       if (num > 0) {
 	do {

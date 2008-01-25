@@ -713,13 +713,13 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
 	// and 'xx' is two hex digits
 	if ((strlen(charName) == 3 &&
 	     isalpha(charName[0]) &&
-	     isxdigit(charName[1]) && isxdigit(charName[2]) &&
+	     isxdigit((unsigned char)charName[1]) && isxdigit((unsigned char)charName[2]) &&
 	     ((charName[1] >= 'a' && charName[1] <= 'f') ||
 	      (charName[1] >= 'A' && charName[1] <= 'F') ||
 	      (charName[2] >= 'a' && charName[2] <= 'f') ||
 	      (charName[2] >= 'A' && charName[2] <= 'F'))) ||
 	    (strlen(charName) == 2 &&
-	     isxdigit(charName[0]) && isxdigit(charName[1]) &&
+	     isxdigit((unsigned char)charName[0]) && isxdigit((unsigned char)charName[1]) &&
 	     ((charName[0] >= 'a' && charName[0] <= 'f') ||
 	      (charName[0] >= 'A' && charName[0] <= 'F') ||
 	      (charName[1] >= 'a' && charName[1] <= 'f') ||
@@ -744,19 +744,19 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, char *tagA, Ref idA, GString *nameA,
 	n = strlen(charName);
 	code2 = -1;
 	if (hex && n == 3 && isalpha(charName[0]) &&
-	    isxdigit(charName[1]) && isxdigit(charName[2])) {
+	    isxdigit((unsigned char)charName[1]) && isxdigit((unsigned char)charName[2])) {
 	  sscanf(charName+1, "%x", &code2);
 	} else if (hex && n == 2 &&
-		   isxdigit(charName[0]) && isxdigit(charName[1])) {
+		   isxdigit((unsigned char)charName[0]) && isxdigit((unsigned char)charName[1])) {
 	  sscanf(charName, "%x", &code2);
 	} else if (!hex && n >= 2 && n <= 4 &&
-		   isdigit(charName[0]) && isdigit(charName[1])) {
+		   isdigit((unsigned char)charName[0]) && isdigit((unsigned char)charName[1])) {
 	  code2 = atoi(charName);
 	} else if (n >= 3 && n <= 5 &&
-		   isdigit(charName[1]) && isdigit(charName[2])) {
+		   isdigit((unsigned char)charName[1]) && isdigit((unsigned char)charName[2])) {
 	  code2 = atoi(charName+1);
 	} else if (n >= 4 && n <= 6 &&
-		   isdigit(charName[2]) && isdigit(charName[3])) {
+		   isdigit((unsigned char)charName[2]) && isdigit((unsigned char)charName[3])) {
 	  code2 = atoi(charName+2);
 	}
 	if (code2 >= 0 && code2 <= 0xff) {
