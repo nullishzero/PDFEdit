@@ -278,13 +278,13 @@ delAllOper (__attribute__((unused))	ostream& oss, const char* fileName)
 		cs->getPdfOperators (opers);
 
 		operands.clear ();
-		operands.push_back (shared_ptr<IProperty> (new CName ("R19")));
-		operands.push_back (shared_ptr<IProperty> (new CInt (42)));
-		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("Tf", 2, operands));
-		cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
-		cs->getPdfOperators (opers);
-		cs->getStringRepresentation (strr);
-		_working (oss);
+//		operands.push_back (shared_ptr<IProperty> (new CName ("R19")));
+//		operands.push_back (shared_ptr<IProperty> (new CInt (42)));
+//		oper = shared_ptr<PdfOperator> (new SimpleGenericOperator ("Tf", 2, operands));
+//		cs->insertOperator (PdfOperator::getIterator(opers.back()), oper, false);
+//		cs->getPdfOperators (opers);
+//		cs->getStringRepresentation (strr);
+//		_working (oss);
 
 		operands.clear ();
 		operands.push_back (shared_ptr<IProperty> (new CInt (200)));
