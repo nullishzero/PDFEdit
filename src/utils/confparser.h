@@ -12,6 +12,7 @@
 #define _CONFPARSER_H_
 
 #include<iostream>
+#include<cstring>
 #include<string>
 #include<vector>
 
