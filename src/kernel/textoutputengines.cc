@@ -11,7 +11,6 @@
 
 #include "kernel/static.h"
 #include "kernel/iproperty.h"
-#include <math.h>
 #include "kernel/carray.h"
 #include "kernel/cobjectsimple.h"
 #include "kernel/textoutputengines.h"

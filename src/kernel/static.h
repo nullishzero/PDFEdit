@@ -26,6 +26,10 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <math.h>
+#include <errno.h>
+#include <cstring>
+#include <stdio.h>
 
 //============================================
 // stl
@@ -36,6 +40,7 @@
 #include <sstream>
 
 #include <string>
+#include <cstring>
 #include <iomanip>
 
 #include <list>
