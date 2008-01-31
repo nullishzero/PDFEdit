@@ -783,6 +783,7 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 		  if (charProc->isStream())
 		  {
 			  // Make parser
+			  charProc->getStream()->incRef();	// FIX - charproc's stream was deallocated in ~Lexer
 			  scoped_ptr<Parser> parser (new ::Parser (NULL, 
 						  new ::Lexer(NULL, charProc->getStream()),
 						  gFalse
@@ -840,6 +841,8 @@ StateUpdater::printTextUpdate (GfxState* state, const std::string& txt, BBox* rc
 			} // if (charProc->isStream())
 
 			// Free resources
+				assert (2 == charProc->getStream()->incRef());
+				assert (1 == charProc->getStream()->decRef());
 			charProc.reset ();
 
 			//
