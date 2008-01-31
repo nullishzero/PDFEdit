@@ -230,6 +230,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\kernel\cobject2string.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\kernel\cobject2xpdf.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\kernel\cobjecthelpers.cc"
 				>
 			</File>
@@ -424,6 +432,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\kernel\xpdf.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\kernel\xrefwriter.cc"
 				>
 			</File>
@@ -519,6 +531,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\kernel\delinearizator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\kernel\displayparams.h"
 				>
 			</File>
 			<File
@@ -627,6 +643,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\kernel\textoutputentities.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\kernel\textsearchparams.h"
 				>
 			</File>
 			<File
