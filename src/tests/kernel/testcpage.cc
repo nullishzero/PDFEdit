@@ -81,11 +81,10 @@ mediabox (__attribute__((unused)) ostream& __attribute__((unused)) oss, const ch
 
 		if (42 == page->getMediabox ().xleft &&
 				62 == page->getMediabox ().yleft)
-			continue;
+			_working (oss);
 		else
 			return false;
 
-		_working (oss);
 	}
 
 	return true;
@@ -209,9 +208,11 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 				oss << "FONTS ARE EMPTY !!!" << flush;
 			else
 			{
-				oss << "Fonts on " << (i + 1) << "-th page: " << flush;
-				for (CPage::FontList::iterator it = fs.begin(); it != fs.end(); ++it)
-					oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+				#if REALLY_ALL_OUTPUT
+					oss << "Fonts on " << (i + 1) << "-th page: " << flush;
+					for (CPage::FontList::iterator it = fs.begin(); it != fs.end(); ++it)
+						oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+				#endif
 			}
 			
 		}
@@ -262,10 +263,12 @@ getSetFonts (__attribute__((unused)) ostream& oss, const char* fileName)
 
 				page->getFontIdsAndNames (fs);
 				CPPUNIT_ASSERT (!fs.empty());
-				oss << "After change: " << (i + 1) << "-th page: " << flush;
-				for (CPage::FontList::iterator it = fs.begin(); 
-						it != fs.end(); ++it)
-					oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+				#if REALLY_ALL_OUTPUT
+					oss << "After change: " << (i + 1) << "-th page: " << flush;
+					for (CPage::FontList::iterator it = fs.begin(); 
+							it != fs.end(); ++it)
+						oss << "(" << (*it).first << ", " << (*it).second << ") " << flush;
+				#endif
 			}
 
 		}
@@ -487,7 +490,7 @@ class TestCPage : public CppUnit::TestFixture
 		CPPUNIT_TEST(TestDisplay);
 		CPPUNIT_TEST(TestExport);
 		CPPUNIT_TEST(TestFind);
-		CPPUNIT_TEST(TestAnnotations);
+		//CPPUNIT_TEST(TestAnnotations);
 		CPPUNIT_TEST(TestChanges);
 		CPPUNIT_TEST(TestMoveUpDown);
 		CPPUNIT_TEST(TestSet);
